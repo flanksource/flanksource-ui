@@ -1,0 +1,479 @@
+{
+  "checks": [
+    {
+      "serverURL": "local",
+      "key": "pre-prod/Docs-acme-intranet-Docs-prerequisite/http:Docs Prerequisite",
+      "type": "http",
+      "name": "Docs-acme-intranet-Docs-prerequisite",
+      "namespace": "pre-prod",
+      "canaryName": "Docs-acme-intranet-Docs-prerequisite",
+      "description": "Docs Prerequisite",
+      "endpoint": "http://Docs-acme.intranet/DigitalAssetRepository.svcwsdl",
+      "health": {
+        "kubernetes": {
+          "latency": "10ms",
+          "uptime": "770/770 (100%)"
+        }
+      },
+      "checkStatuses": {
+        "kubernetes": [
+          {
+            "status": true,
+            "invalid": false,
+            "time": "2021-08-14 21:46:06",
+            "duration": 5,
+            "message": ""
+          },
+          {
+            "status": true,
+            "invalid": false,
+            "time": "2021-08-14 21:45:06",
+            "duration": 5,
+            "message": ""
+          },
+          {
+            "status": true,
+            "invalid": false,
+            "time": "2021-08-14 21:44:06",
+            "duration": 7,
+            "message": ""
+          },
+          {
+            "status": true,
+            "invalid": false,
+            "time": "2021-08-14 21:43:06",
+            "duration": 8,
+            "message": ""
+          },
+          {
+            "status": true,
+            "invalid": false,
+            "time": "2021-08-14 21:42:06",
+            "duration": 4,
+            "message": ""
+          }
+        ]
+      },
+      "interval": 60,
+      "owner": "",
+      "severity": "",
+      "displayType": ""
+    },
+    {
+      "serverURL": "local",
+      "key": "pre-prod/Docs-acme-intranet-Docs-query/http:Docs Query",
+      "type": "http",
+      "name": "Docs-acme-intranet-Docs-query",
+      "namespace": "pre-prod",
+      "canaryName": "Docs-acme-intranet-Docs-query",
+      "description": "Docs Query",
+      "endpoint": "http://Docs-acme.intranet/DigitalAssetRepository/EP.Query/QueryService.svc?wsdl",
+      "health": {
+        "kubernetes": {
+          "latency": "10ms",
+          "uptime": "771/771 (100%)"
+        }
+      },
+      "checkStatuses": {
+        "kubernetes": [
+          {
+            "status": true,
+            "invalid": false,
+            "time": "2021-08-14 21:46:06",
+            "duration": 4,
+            "message": ""
+          },
+          {
+            "status": true,
+            "invalid": false,
+            "time": "2021-08-14 21:45:06",
+            "duration": 4,
+            "message": ""
+          },
+          {
+            "status": true,
+            "invalid": false,
+            "time": "2021-08-14 21:44:06",
+            "duration": 4,
+            "message": ""
+          },
+          {
+            "status": true,
+            "invalid": false,
+            "time": "2021-08-14 21:43:06",
+            "duration": 7,
+            "message": ""
+          },
+          {
+            "status": true,
+            "invalid": false,
+            "time": "2021-08-14 21:42:06",
+            "duration": 4,
+            "message": ""
+          }
+        ]
+      },
+      "interval": 60,
+      "owner": "",
+      "severity": "",
+      "displayType": ""
+    },
+    {
+      "serverURL": "local",
+      "key": "pre-prod/Docs-acme-intranet-Docsadhocendpoint/http:DocsAdhocEndpoint",
+      "type": "http",
+      "name": "Docs-acme-intranet-Docsadhocendpoint",
+      "namespace": "pre-prod",
+      "canaryName": "Docs-acme-intranet-Docsadhocendpoint",
+      "description": "DocsAdhocEndpoint",
+      "endpoint": "http://Docs-acme.intranet/DigitalAssetRepository/EP.ReceiverChannel/AdhocChannelService.svc",
+      "health": {
+        "kubernetes": {
+          "latency": "10ms",
+          "uptime": "762/762 (100%)"
+        }
+      },
+      "checkStatuses": {
+        "kubernetes": [
+          {
+            "status": true,
+            "invalid": false,
+            "time": "2021-08-14 21:46:06",
+            "duration": 4,
+            "message": ""
+          },
+          {
+            "status": true,
+            "invalid": false,
+            "time": "2021-08-14 21:45:06",
+            "duration": 10,
+            "message": ""
+          },
+          {
+            "status": true,
+            "invalid": false,
+            "time": "2021-08-14 21:44:06",
+            "duration": 7,
+            "message": ""
+          },
+          {
+            "status": true,
+            "invalid": false,
+            "time": "2021-08-14 21:43:06",
+            "duration": 7,
+            "message": ""
+          },
+          {
+            "status": true,
+            "invalid": false,
+            "time": "2021-08-14 21:42:06",
+            "duration": 3,
+            "message": ""
+          }
+        ]
+      },
+      "interval": 60,
+      "owner": "",
+      "severity": "",
+      "displayType": ""
+    },
+    {
+      "serverURL": "local",
+      "key": "pre-prod/Docs-acme-intranet-Docs/http:Docs",
+      "type": "http",
+      "name": "Docs-acme-intranet-Docs",
+      "namespace": "pre-prod",
+      "canaryName": "Docs-acme-intranet-Docs",
+      "description": "Docs",
+      "endpoint": "http://Docs-acme.intranet/Docs.svc",
+      "health": {
+        "kubernetes": {
+          "latency": "10ms",
+          "uptime": "772/772 (100%)"
+        }
+      },
+      "checkStatuses": {
+        "kubernetes": [
+          {
+            "status": true,
+            "invalid": false,
+            "time": "2021-08-14 21:46:06",
+            "duration": 4,
+            "message": ""
+          },
+          {
+            "status": true,
+            "invalid": false,
+            "time": "2021-08-14 21:45:06",
+            "duration": 4,
+            "message": ""
+          },
+          {
+            "status": true,
+            "invalid": false,
+            "time": "2021-08-14 21:44:06",
+            "duration": 3,
+            "message": ""
+          },
+          {
+            "status": true,
+            "invalid": false,
+            "time": "2021-08-14 21:43:06",
+            "duration": 7,
+            "message": ""
+          },
+          {
+            "status": true,
+            "invalid": false,
+            "time": "2021-08-14 21:42:06",
+            "duration": 4,
+            "message": ""
+          }
+        ]
+      },
+      "interval": 60,
+      "owner": "",
+      "severity": "",
+      "displayType": ""
+    },
+    {
+      "serverURL": "local",
+      "key": "pre-prod/acme-intranet-App-render/http:App Render",
+      "type": "http",
+      "name": "acme-intranet-App-render",
+      "namespace": "pre-prod",
+      "canaryName": "acme-intranet-App-render",
+      "description": "App Render",
+      "endpoint": "http://acme.intranet/acme_App/jquery/webparts/desktop/portal/pages/webpart.htm?type=activityForm",
+      "health": {
+        "kubernetes": {
+          "latency": "9ms",
+          "uptime": "776/776 (100%)"
+        }
+      },
+      "checkStatuses": {
+        "kubernetes": [
+          {
+            "status": true,
+            "invalid": false,
+            "time": "2021-08-14 21:46:06",
+            "duration": 4,
+            "message": ""
+          },
+          {
+            "status": true,
+            "invalid": false,
+            "time": "2021-08-14 21:45:06",
+            "duration": 3,
+            "message": ""
+          },
+          {
+            "status": true,
+            "invalid": false,
+            "time": "2021-08-14 21:44:06",
+            "duration": 5,
+            "message": ""
+          },
+          {
+            "status": true,
+            "invalid": false,
+            "time": "2021-08-14 21:43:06",
+            "duration": 6,
+            "message": ""
+          },
+          {
+            "status": true,
+            "invalid": false,
+            "time": "2021-08-14 21:42:06",
+            "duration": 4,
+            "message": ""
+          }
+        ]
+      },
+      "interval": 60,
+      "owner": "",
+      "severity": "",
+      "displayType": ""
+    },
+    {
+      "serverURL": "local",
+      "key": "pre-prod/logs/smb:Prod - FreeForms",
+      "type": "smb",
+      "name": "logs",
+      "namespace": "pre-prod",
+      "canaryName": "logs",
+      "description": "Prod - FreeForms",
+      "endpoint": "\\\\localhost:445/omoi-Prod - FreeForms",
+      "health": {
+        "kubernetes": {
+          "latency": "2.021s",
+          "uptime": "41/50 (82%)"
+        }
+      },
+      "checkStatuses": {
+        "kubernetes": [
+          {
+            "status": false,
+            "invalid": false,
+            "time": "2021-08-10 21:44:16",
+            "duration": 0,
+            "message": "File Age: 10 hours; File count: 0\nage of latest object 10h41m41.341558909s is more than the maximum age: 10h0m0s "
+          },
+          {
+            "status": false,
+            "invalid": false,
+            "time": "2021-08-14 21:39:16",
+            "duration": 0,
+            "message": "File Age: 10 hours; File count: 0\nage of latest object 10h36m41.494486834s is more than the maximum age: 10h0m0s "
+          },
+          {
+            "status": false,
+            "invalid": false,
+            "time": "2021-08-14 21:34:16",
+            "duration": 0,
+            "message": "File Age: 10 hours; File count: 0\nage of latest object 10h31m41.485760243s is more than the maximum age: 10h0m0s "
+          },
+          {
+            "status": false,
+            "invalid": false,
+            "time": "2021-08-14 21:29:16",
+            "duration": 0,
+            "message": "File Age: 10 hours; File count: 0\nage of latest object 10h26m41.314610682s is more than the maximum age: 10h0m0s "
+          },
+          {
+            "status": false,
+            "invalid": false,
+            "time": "2021-08-14 21:24:16",
+            "duration": 0,
+            "message": "File Age: 10 hours; File count: 0\nage of latest object 10h21m41.47953173s is more than the maximum age: 10h0m0s "
+          }
+        ]
+      },
+      "interval": 300,
+      "owner": "",
+      "severity": "",
+      "displayType": "Text"
+    },
+    {
+      "serverURL": "local",
+      "key": "pre-prod/logs/smb:MWRacmeV01 - EmailToFolderService",
+      "type": "smb",
+      "name": "logs",
+      "namespace": "pre-prod",
+      "canaryName": "logs",
+      "description": "MWRacmeV01 - EmailToFolderService",
+      "endpoint": "\\\\MWRacmeV01\\websoftware$\\NT_Services\\OldMutual.EmailToFolderService\\Logs:445/websoftware$-MWRacmeV01 - EmailToFolderService",
+      "health": {
+        "kubernetes": {
+          "latency": "109ms",
+          "uptime": "146/146 (100%)"
+        }
+      },
+      "checkStatuses": {
+        "kubernetes": [
+          {
+            "status": true,
+            "invalid": false,
+            "time": "2021-08-14 21:44:16",
+            "duration": 28,
+            "message": "File Age: 2 hours; File count: 18"
+          },
+          {
+            "status": true,
+            "invalid": false,
+            "time": "2021-08-14 21:39:16",
+            "duration": 73,
+            "message": "File Age: 2 hours; File count: 18"
+          },
+          {
+            "status": true,
+            "invalid": false,
+            "time": "2021-08-14 21:34:16",
+            "duration": 45,
+            "message": "File Age: 2 hours; File count: 18"
+          },
+          {
+            "status": true,
+            "invalid": false,
+            "time": "2021-08-14 21:29:16",
+            "duration": 28,
+            "message": "File Age: 2 hours; File count: 18"
+          },
+          {
+            "status": true,
+            "invalid": false,
+            "time": "2021-08-14 21:24:16",
+            "duration": 61,
+            "message": "File Age: 2 hours; File count: 18"
+          }
+        ]
+      },
+      "interval": 300,
+      "owner": "",
+      "severity": "",
+      "displayType": "Text"
+    },
+    {
+      "serverURL": "local",
+      "key": "pre-prod/logs/smb:MWRacmeV01 - FreeFormToDocsService",
+      "type": "smb",
+      "name": "logs",
+      "namespace": "pre-prod",
+      "canaryName": "logs",
+      "description": "MWRacmeV01 - FreeFormToDocsService",
+      "endpoint": "\\\\MWRacmeV01\\websoftware$\\NT_Services\\FreeFormToDocsService\\Logs:445/websoftware$-MWRacmeV01 - FreeFormToDocsService",
+      "health": {
+        "kubernetes": {
+          "latency": "49ms",
+          "uptime": "146/146 (100%)"
+        }
+      },
+      "checkStatuses": {
+        "kubernetes": [
+          {
+            "status": true,
+            "invalid": false,
+            "time": "2021-08-14 21:44:16",
+            "duration": 444444444,
+            "message": "File Age: 32 minutes; File count: 10"
+          },
+          {
+            "status": true,
+            "invalid": false,
+            "time": "2021-08-14 21:39:16",
+            "duration": 13,
+            "message": "File Age: 27 minutes; File count: 10"
+          },
+          {
+            "status": true,
+            "invalid": false,
+            "time": "2021-08-14 21:34:16",
+            "duration": 133,
+            "message": "File Age: 22 minutes; File count: 10"
+          },
+          {
+            "status": true,
+            "invalid": false,
+            "time": "2021-08-14 21:29:16",
+            "duration": 14,
+            "message": "File Age: 17 minutes; File count: 10"
+          },
+          {
+            "status": true,
+            "invalid": false,
+            "time": "2021-08-14 21:24:16",
+            "duration": 15004,
+            "message": "File Age: 12 minutes; File count: 10"
+          }
+        ]
+      },
+      "interval": 300,
+      "owner": "",
+      "severity": "",
+      "displayType": "Text"
+    }
+  ],
+  "servers": [
+    "kubernetes"
+  ]
+}
