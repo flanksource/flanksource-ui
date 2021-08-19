@@ -8,6 +8,11 @@ import Table from "../Table";
 import TimeAgo from 'timeago-react';
 import React from 'react';
 import Badge from '../Badge';
+import Toggle from '../Toggle';
+import Dropdown from '../Dropdown';
+import { BsTable } from "react-icons/bs";
+import { RiLayoutGridLine } from "react-icons/ri"
+import { countBy, filter, findIndex, forEach, orderBy, reduce } from 'lodash';
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
@@ -66,9 +71,37 @@ function Labels({ labels }) {
   }
   var items = []
   for (var k in labels) {
-    items.push(<div key={`${k}-${labels[k]}`}><Badge text={`${k}: ${labels[k]}`} /> </div>)
+    if (labels[k] == "true") {
+      items.push(<div key={`${k}`}><Badge text={k} /> </div>)
+    } else {
+      items.push(<div key={`${k}-${labels[k]}`}><Badge text={`${k}: ${labels[k]}`} /> </div>)
+
+    }
   }
   return items
+}
+
+function getLabels(checks) {
+  var labelMap = {}
+  for (const check of checks) {
+    if (check.labels) {
+      for (let k in check.labels) {
+        let v = check.labels[k]
+        var id = `canary:${k}:${v}`
+        labelMap[id] = { type: "canary", id: id, key: k, value: v, label: `${k}: ${v}` }
+      }
+    }
+  }
+
+  var labels = []
+  Object.values(labelMap).map((label) => {
+    if (label.value == "true") {
+      label.label = label.key
+    }
+    labels.push(label)
+  }
+  )
+  return labels
 }
 
 function getDescription(check) {
@@ -131,6 +164,84 @@ function getDescription(check) {
   ]
 }
 
+const table = {
+  name: "table",
+  icon: <RiLayoutGridLine />,
+  label: "Table"
+}
+const card = {
+  name: "card",
+  icon: <BsTable />,
+  label: "Card"
+}
+
+
+function labelIndex(selectedLabels, label) {
+  return findIndex(selectedLabels, (l) => l.id == label.id)
+}
+
+function toggleLabel(selectedLabels, label) {
+  var index = labelIndex(selectedLabels, label)
+  if (index >= 0) {
+    return selectedLabels.filter((i) => i.id != label.id)
+  } else {
+    selectedLabels.push(label)
+  }
+  return selectedLabels
+}
+
+
+function matchesLabel(check, labels) {
+  if (labels.length == 0) {
+    return true
+  }
+  for (let label of labels) {
+    if (label.type == "canary") {
+      if (check.labels == null) {
+        return true
+      }
+      if (check.labels[label.key] == label.value) {
+        return true
+      }
+    } else {
+      return true
+    }
+  }
+  return false
+}
+
+function isHealthy(check) {
+
+  if (check.checkStatuses == null) {
+    return false
+  }
+
+  var passed = true
+  forEach(check.checkStatuses, (s) => {
+    passed = passed && s.status
+  })
+  return passed
+
+}
+
+function filterChecks(checks, hidePassing, labels) {
+  checks = orderBy(checks, (a) => a.description)
+  var filtered = []
+  for (let check of checks) {
+    if (hidePassing && isHealthy(check)) {
+      continue
+    }
+
+    if (!matchesLabel(check, labels)) {
+      continue
+    }
+    filtered.push(check)
+
+  }
+  return filtered
+
+}
+
 
 export default class Canary extends React.Component {
   constructor(props) {
@@ -141,12 +252,25 @@ export default class Canary extends React.Component {
     this.fetch = this.fetch.bind(this)
     this.select = this.select.bind(this)
     this.setStyle = this.setStyle.bind(this)
+    this.toggleLabel = this.toggleLabel.bind(this)
+    this.togglePassing = this.togglePassing.bind(this)
     this.state = {
-      style: props.style ? props.style : "table",
+      style: table,
       selected: null,
       lastFetched: null,
+      hidePassing: true,
+      labels: getLabels(props.checks),
+      selectedLabels: getLabels(props.checks),
       checks: props.checks ? props.checks : []
     }
+  }
+
+  setChecks(checks) {
+    this.setState({
+      checks: checks,
+      labels: getLabels(checks),
+      lastFetched: new Date()
+    })
   }
 
   componentDidMount() {
@@ -164,13 +288,27 @@ export default class Canary extends React.Component {
   fetch() {
     fetch(this.url)
       .then(result => result.json())
-      .then(result => this.setState({ checks: result.checks, lastFetched: new Date() }));
+      .then(this.setChecks);
+  }
+
+  toggleLabel(label) {
+    this.setState((state) => {
+      return { "selectedLabels": toggleLabel(state.selectedLabels, label) }
+    })
   }
 
   setStyle(style) {
     this.setState({
-      "style": style,
+      "style": style
     });
+  }
+
+  togglePassing() {
+    this.setState((state) => {
+      return {
+        "hidePassing": !state.hidePassing,
+      }
+    })
   }
 
   select(check) {
@@ -183,6 +321,14 @@ export default class Canary extends React.Component {
   }
 
   render() {
+    // first filter for pass/faill
+    var checks = filterChecks(this.state.checks, this.state.hidePassing, [])
+    // get labels for the new subset
+    var labels = getLabels(checks)
+    // filter the subset down
+    checks = filterChecks(checks, this.stateHidePassing, this.state.selectedLabels)
+    var passed = reduce(checks, (sum, c) => isHealthy(c) ? sum + 1 : sum, 0)
+    var passedAll = reduce(this.state.checks, (sum, c) => isHealthy(c) ? sum + 1 : sum, 0)
 
     return (
       <>
@@ -197,37 +343,55 @@ export default class Canary extends React.Component {
                   <div className="border-b border-gray-200 xl:border-b-0 xl:flex-shrink-0 xl:w-64 xl:border-r xl:border-gray-200 bg-white">
                     <div className="h-full pl-4 pr-6 py-6 sm:pl-6 lg:pl-8 xl:pl-0">
                       <div className="h-full relative h-min-1" >
+                        <div>
+                          <div className="mt-5 grid grid-cols-1 gap-5  flex-wrap">
+                            <div className="bg-white overflow-hidden shadow rounded-lg">
+                              <div className="px-4 py-5 sm:p-6"><dl><dt className="text-sm leading-5 font-medium text-gray-500 truncate">All Checks</dt><dd className="mt-1 text-3xl leading-9 font-semibold text-gray-900">{this.state.checks.length}
+                                <span className="text-xl font-light">
+                                  {" "} (<span className="text-green-500">{passedAll}</span>/<span className="text-red-500">{this.state.checks.length - passedAll}</span>)
+                                </span>
+                              </dd></dl></div>
+                            </div>
 
-        <Description items={[
-          { name: "URL", value: this.url, colspan: 2 },
-          { name: "Last Run", value: <Badge text={<TimeAgo datetime={this.state.lastFetched} />} /> },
-          {
-            name: "Style", value: <>
+                            {checks.length != this.state.checks.length &&
+                              <div className="bg-white overflow-hidden shadow rounded-lg">
+                                <div className="px-4 py-5 sm:p-6"><dl><dt className="text-sm leading-5 font-medium text-gray-500 truncate">Filtered Checks</dt><dd className="mt-1 text-3xl leading-9 font-semibold text-gray-900">{checks.length}
+                                  <span className="text-xl  font-light">
+                                    {" "} (<span className="text-green-500">{passed}</span>/<span className="text-red-500">{checks.length - passed}</span>)
+                                  </span>
+                                </dd></dl></div>
+                              </div>
+                            }
 
-              <span className="relative z-0 inline-flex shadow-sm rounded-md">
-                <button
-                  type="button"
-                  onClick={() => this.setStyle("card")}
-                  className="relative inline-flex items-center px-4 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
-                >
-                  Card
-                </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="bg-white lg:min-w-0 lg:flex-1">
+                    <div className="h-full py-6 px-4 sm:px-6 lg:px-8">
+                      <div className="relative h-full " style={{ "min-height": "36rem" }}>
 
-                <button
-                  onClick={() => this.setStyle("table")}
-                  type="button"
-                  className="-ml-px relative inline-flex items-center px-4 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
-                >
-                  Table
-                </button>
-              </span>
-            </>
-          }
-        ]} />
+                        {this.state.style.name == "card" && <CanaryCards checks={checks} onClick={this.select} />}
+                        {this.state.style.name == "table" && <CanaryTable checks={checks} onClick={this.select} />}
 
-        <hr className="my-5" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="bg-gray-50 pr-4 sm:pr-6 lg:pr-8 lg:flex-shrink-0 lg:border-l lg:border-gray-200 xl:pr-0">
+                  <div className="h-full pl-6 py-6 lg:w-80">
+                    <div className="h-full relative" style={{ "min-height": "16rem" }}>
 
+                      <Dropdown items={[card, table]} selected={this.state.style} setSelected={this.setStyle} className="mb-3" />
 
+                      <Toggle label="Hide Passing" enabled={this.state.hidePassing} setEnabled={this.togglePassing} className="mb-3" />
+
+                      {
+                        labels.map((label) => (
+                          <Toggle label={label.label} enabled={labelIndex(this.state.selectedLabels, label) >= 0} setEnabled={() => this.toggleLabel(label)} className="mb-3" />
+                        ))
+                      }
                     </div>
                   </div>
                 </div>
@@ -335,6 +499,7 @@ export class CanaryCards extends React.Component {
               )}
             >
               <Icon name={check.icon ? check.icon : check.type} className="inline" size="lg" />
+
             </div>
             <div className="flex-1 flex items-center cursor-pointer justify-between border-t border-r border-b border-gray-200 bg-white rounded-r-md truncate  " onClick={() => this.props.onClick(check)}>
               <div className="flex-1 py-2 text-sm ">
@@ -342,8 +507,8 @@ export class CanaryCards extends React.Component {
                   {check.description}
                 </span>
                 <div className="float-right mr-2">
-                  {check.checkStatuses.message}
-                  {check.checkStatuses.map((status, idx) =>
+                  {check.checkStatuses && check.checkStatuses.message}
+                  {check.checkStatuses && check.checkStatuses.map((status, idx) =>
                     <CanaryStatus key={`${check.key}-s${idx}`} status={status} className="mr-0.5" />
                   )}
                 </div>
