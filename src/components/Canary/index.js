@@ -82,6 +82,10 @@ function Labels({ labels }) {
 }
 
 function getLabels(checks) {
+  if (checks == null || typeof checks[Symbol.iterator] !== 'function') {
+    console.error("unknown check format", checks)
+    return []
+  }
   var labelMap = {}
   for (const check of checks) {
     if (check.labels) {
@@ -252,6 +256,7 @@ export default class Canary extends React.Component {
     this.fetch = this.fetch.bind(this)
     this.select = this.select.bind(this)
     this.setStyle = this.setStyle.bind(this)
+    this.setChecks = this.setChecks.bind(this)
     this.toggleLabel = this.toggleLabel.bind(this)
     this.togglePassing = this.togglePassing.bind(this)
     this.state = {
@@ -266,6 +271,10 @@ export default class Canary extends React.Component {
   }
 
   setChecks(checks) {
+    if (checks.checks) {
+      // FIXME unify pipeline for demo and remote
+      checks = checks.checks
+    }
     this.setState({
       checks: checks,
       labels: getLabels(checks),
