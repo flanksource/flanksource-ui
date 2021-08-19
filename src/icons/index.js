@@ -33,28 +33,33 @@ import smb from "./smb.svg";
 import ssl from "./ssl.svg";
 import trafficlight from "./trafficlight.svg";
 import www from "./www.svg";
-import aws_alb from "./aws-alb.svg"
-import aws_ami from "./aws-ami.svg"
-import aws_api_gateway from "./aws-api-gateway.svg"
-import aws_auto_scaling from "./aws-auto-scaling.svg"
-import aws_ebs from "./aws-ebs.svg"
-import aws_ec2_instances from "./aws-ec2-instances.svg"
-import aws_ec2 from "./aws-ec2.svg"
-import aws_ecr from "./aws-ecr.svg"
-import aws_efs from "./aws-efs.svg"
-import aws_elb from "./aws-elb.svg"
-import aws_ena from "./aws-ena.svg"
-import aws_eni from "./aws-eni.svg"
-import aws_mq from "./aws-mq.svg"
-import aws_nat from "./aws-nat.svg"
-import aws_nlb from "./aws-nlb.svg"
-import aws_r53 from "./aws-r53.svg"
-import aws_s3 from "./aws-s3.svg"
-import aws_sqs_message from "./aws-sqs-message.svg"
-import aws_sqs from "./aws-sqs.svg"
-
+import aws_alb from "./aws-alb.svg";
+import aws_ami from "./aws-ami.svg";
+import aws_api_gateway from "./aws-api-gateway.svg";
+import aws_auto_scaling from "./aws-auto-scaling.svg";
+import aws_ebs from "./aws-ebs.svg";
+import aws_ec2_instances from "./aws-ec2-instances.svg";
+import aws_ec2 from "./aws-ec2.svg";
+import aws_ecr from "./aws-ecr.svg";
+import aws_efs from "./aws-efs.svg";
+import aws_elb from "./aws-elb.svg";
+import aws_ena from "./aws-ena.svg";
+import aws_eni from "./aws-eni.svg";
+import aws_mq from "./aws-mq.svg";
+import aws_nat from "./aws-nat.svg";
+import aws_nlb from "./aws-nlb.svg";
+import aws_r53 from "./aws-r53.svg";
+import aws_s3 from "./aws-s3.svg";
+import aws_sqs_message from "./aws-sqs-message.svg";
+import aws_sqs from "./aws-sqs.svg";
+import aws from "./aws.svg";
+import microsoft from "./microsoft.svg";
+import grafana from "./grafana.svg";
 
 export const Icons = {
+  aws: aws,
+  microsft: microsoft,
+  grafana: grafana,
   "aws-alb": aws_alb,
   "aws-ami": aws_ami,
   "aws-api-gateway": aws_api_gateway,
@@ -74,39 +79,39 @@ export const Icons = {
   "aws-s3": aws_s3,
   "aws-sqs-message": aws_sqs_message,
   "aws-sqs": aws_sqs,
-  "alert": alert,
-  "check": check,
-  "consul": consul,
-  "containerdPull": containerdPull,
-  "containerdPush": containerdPush,
-  "dex": dex,
-  "dns": dns,
-  "dockerPull": dockerPull,
-  "dockerPush": dockerPush,
-  "elastic": elastic,
-  "etcd": etcd,
-  "fire": fire,
-  "harbor": harbor,
-  "helm": helm,
-  "http": http,
-  "https": https,
-  "icmp": icmp,
-  "jmeter": jmeter,
-  "junit": junit,
-  "kubernetes": kubernetes,
-  "ldap": ldap,
-  "mssql": mssql,
-  "namespace": namespace,
-  "opa": opa,
-  "pod": pod,
-  "postgres": postgres,
-  "prometheus": prometheus,
-  "redis": redis,
-  "restic": restic,
-  "s3": s3,
-  "s3Bucket": s3Bucket,
-  "smb": smb,
-  "ssl": ssl,
-  "trafficlight": trafficlight,
-  "www": www,
+  alert: alert,
+  check: check,
+  consul: consul,
+  containerdPull: containerdPull,
+  containerdPush: containerdPush,
+  dex: dex,
+  dns: dns,
+  dockerPull: dockerPull,
+  dockerPush: dockerPush,
+  elastic: elastic,
+  etcd: etcd,
+  fire: fire,
+  harbor: harbor,
+  helm: helm,
+  http: http,
+  https: https,
+  icmp: icmp,
+  jmeter: jmeter,
+  junit: junit,
+  kubernetes: kubernetes,
+  ldap: ldap,
+  mssql: mssql,
+  namespace: namespace,
+  opa: opa,
+  pod: pod,
+  postgres: postgres,
+  prometheus: prometheus,
+  redis: redis,
+  restic: restic,
+  s3: s3,
+  s3Bucket: s3Bucket,
+  smb: smb,
+  ssl: ssl,
+  trafficlight: trafficlight,
+  www: www,
 };
