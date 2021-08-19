@@ -186,7 +186,17 @@ export default class Canary extends React.Component {
 
     return (
       <>
+        <div className="">
+          <div>
+            <div className="fixed top-0 left-0 w-1/2 h-full bg-white" ></div>
+            <div className="fixed top-0 right-0 w-1/2 h-full bg-gray-50" ></div>
+            <div className="relative min-h-screen flex flex-col">
 
+              <div className="flex-grow w-full 2xl:max-w-screen-2xl xl:max-w-screen-xl mx-auto xl:px-8 lg:flex">
+                <div className="flex-1 min-w-0 bg-white xl:flex">
+                  <div className="border-b border-gray-200 xl:border-b-0 xl:flex-shrink-0 xl:w-64 xl:border-r xl:border-gray-200 bg-white">
+                    <div className="h-full pl-4 pr-6 py-6 sm:pl-6 lg:pl-8 xl:pl-0">
+                      <div className="h-full relative h-min-1" >
 
         <Description items={[
           { name: "URL", value: this.url, colspan: 2 },
@@ -218,8 +228,13 @@ export default class Canary extends React.Component {
         <hr className="my-5" />
 
 
-        {this.state.style == "card" && <CanaryCards checks={this.state.checks} onClick={this.select} />}
-        {this.state.style == "table" && <CanaryTable checks={this.state.checks} onClick={this.select} />}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
         {
           this.state.selected != null &&
@@ -246,9 +261,9 @@ export class CanaryTable extends React.Component {
   }
   render() {
     return (
-      <div className="flex flex-col">
+      <div className="flex flex-col max-w-max">
         <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-          <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+          <div className="py-2 align-middle inline-block max-w-full sm:px-6 lg:px-8">
             <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
