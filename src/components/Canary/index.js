@@ -15,6 +15,7 @@ import { CanaryCards } from "./card";
 import { StatusList } from "./status";
 import { CanarySorter, GetName, Title } from "./data";
 import { CanaryDescription } from "./description";
+import { labelIndex } from "./filter";
 
 const table = {
   id: "dropdown-table",

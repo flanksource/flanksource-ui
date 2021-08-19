@@ -1,3 +1,5 @@
+import Badge from "../Badge";
+
 export function Labels({ labels }) {
   if (labels == null) {
     return null;

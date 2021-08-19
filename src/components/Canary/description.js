@@ -17,7 +17,15 @@ export function CanaryDescription({ check }) {
       message: (
         <>
           {" "}
-          <CanaryStatus status={status} /> {status.message} {status.error}
+          <CanaryStatus status={status} />
+          {status.message}{" "}
+          {status.error &&
+            status.error.split("\n").map((item) => (
+              <>
+                {item}
+                <br />
+              </>
+            ))}
         </>
       ),
       duration: <Duration ms={status.duration} />,
