@@ -1,5 +1,4 @@
 
-import { DiTerminal, } from "react-icons/di";
 import { Icons } from "../../icons";
 
 export default function Icon({ size = "sm", name, className, ...props }) {
@@ -23,7 +22,9 @@ export default function Icon({ size = "sm", name, className, ...props }) {
       break;
   }
 
-  if (name != "") {
+  if (name != null && (name.startsWith("http:") || name.startsWith("https://"))) {
+    props.icon = name
+  } else if (name != "") {
     props.icon = Icons[name]
   }
 
