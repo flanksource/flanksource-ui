@@ -1,8 +1,13 @@
-import Icon from '../Icon';
+import Icon from "../Icon";
 
-export default function Button({ className, text, icon, size = "sm", ...props }) {
-
-  var iconClass
+export default function Button({
+  className,
+  text,
+  icon,
+  size = "sm",
+  ...props
+}) {
+  var iconClass;
   switch (size) {
     case "xs":
       className += " px-2.5 py-1.5 text-xs rounded";
@@ -32,16 +37,10 @@ export default function Button({ className, text, icon, size = "sm", ...props })
   return (
     <button
       type="button"
-      {...props}
       className={`" ${className} inline-flex items-center  border border-transparent font-medium  shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"`}
     >
       {icon != null && <Icon icon={icon} size={size} />}
       {text}
     </button>
-
-  )
+  );
 }
-
-
-
-
