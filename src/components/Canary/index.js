@@ -227,7 +227,7 @@ export default class Canary extends React.Component {
             ref={this.modal}
             submitText=""
             title={<>
-              <Icon name={this.state.selected.type} className="inline" size="xl" />
+              <Icon name={this.state.selected.icon ? this.state.selected.icon : this.state.selected.type} className="inline" size="xl" />
               {this.state.selected.description}
             </>}
             body={<Description items={getDescription(this.state.selected)} />}
@@ -276,7 +276,7 @@ export class CanaryTable extends React.Component {
                   {this.props.checks.map((check, idx) => (
                     <tr key={check.key + "table" + idx} onClick={() => this.props.onClick(check)} className="cursor-pointer">
                       <td className="px-6 py-2 whitespace-nowrap">
-                        <Icon name={check.type} className="inline" size="lg" />
+                        <Icon name={check.icon ? check.icon : check.type} className="inline" size="lg" />
                         {check.description}
                       </td >
                       <td className="px-6 py-2 whitespace-nowrap">
@@ -319,7 +319,7 @@ export class CanaryCards extends React.Component {
                 'check-shrink-0 flex items-center justify-center w-12 text-white text-sm font-medium rounded-l-md border-l border-t border-b border-gray-200'
               )}
             >
-              <Icon name={check.type} className="inline" size="lg" />
+              <Icon name={check.icon ? check.icon : check.type} className="inline" size="lg" />
             </div>
             <div className="flex-1 flex items-center cursor-pointer justify-between border-t border-r border-b border-gray-200 bg-white rounded-r-md truncate  " onClick={() => this.props.onClick(check)}>
               <div className="flex-1 py-2 text-sm ">
