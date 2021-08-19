@@ -13,15 +13,17 @@ import { filterChecks, isHealthy } from "./filter";
 import { CanaryTable } from "./table";
 import { CanaryCards } from "./card";
 import { StatusList } from "./status";
-import { GetName, Title } from "./data";
+import { CanarySorter, GetName, Title } from "./data";
 import { CanaryDescription } from "./description";
 
 const table = {
+  id: "dropdown-table",
   name: "table",
   icon: <BsTable />,
   label: "Table",
 };
 const card = {
+  id: "dropdown-card",
   name: "card",
   icon: <RiLayoutGridLine />,
   label: "Card",
@@ -130,7 +132,7 @@ export default class Canary extends React.Component {
       this.stateHidePassing,
       this.state.selectedLabels
     );
-    checks = orderBy(checks, GetName);
+    checks = orderBy(checks, CanarySorter);
     var passed = reduce(checks, (sum, c) => (isHealthy(c) ? sum + 1 : sum), 0);
     var passedAll = reduce(
       this.state.checks,
@@ -210,10 +212,7 @@ export default class Canary extends React.Component {
                   </div>
                   <div className="bg-white lg:min-w-0 lg:flex-1">
                     <div className="h-full py-6 px-4 sm:px-6 lg:px-8">
-                      <div
-                        className="relative h-full "
-                        style={{ "min-height": "36rem" }}
-                      >
+                      <div className="relative h-full">
                         {this.state.style.name == "card" && (
                           <CanaryCards checks={checks} onClick={this.select} />
                         )}
@@ -226,10 +225,7 @@ export default class Canary extends React.Component {
                 </div>
                 <div className="bg-gray-50 pr-4 sm:pr-6 lg:pr-8 lg:flex-shrink-0 lg:border-l lg:border-gray-200 xl:pr-0">
                   <div className="h-full pl-6 py-6 lg:w-80">
-                    <div
-                      className="h-full relative"
-                      style={{ "min-height": "16rem" }}
-                    >
+                    <div className="h-full relative">
                       <Dropdown
                         items={[card, table]}
                         selected={this.state.style}

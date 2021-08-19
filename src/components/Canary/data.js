@@ -14,6 +14,10 @@ export function Uptime({ check }) {
   );
 }
 
+export function CanarySorter(check) {
+  return GetName(check).toLowerCase();
+}
+
 export function GetName(check) {
   var title = check.description;
   if (is_empty(title)) {

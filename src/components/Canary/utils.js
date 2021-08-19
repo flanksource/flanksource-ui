@@ -8,14 +8,17 @@ export function Duration({ ms }) {
     val = ms.toFixed();
     unit = "ms";
   } else if (ms < 1000 * 60) {
-    val = (ms / 1000).toFixed();
+    val = ms / 1000;
     unit = "s";
   } else if (ms < 1000 * 60 * 60) {
-    val = (ms / 1000 / 60).toFixed();
+    val = ms / 1000 / 60;
     unit = "m";
   } else {
-    val = (ms / 1000 / 60 / 6).toFixed(1);
+    val = ms / 1000 / 60 / 6;
     unit = "h";
+  }
+  if (Math.round(val) != val) {
+    val = val.toFixed(1);
   }
   return (
     <>
