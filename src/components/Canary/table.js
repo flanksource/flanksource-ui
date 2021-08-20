@@ -32,7 +32,7 @@ export function CanaryTable({ ...props }) {
               className="cursor-pointer"
             >
               <td className="px-6 py-2 w-full max-w-0 overflow-hidden overflow-ellipsis whitespace-nowrap">
-                asdas dasda sasd asd asd as d
+                <Title check={check} />
               </td>
               <td className="px-6 py-2 whitespace-nowrap">
                 <StatusList check={check} />
