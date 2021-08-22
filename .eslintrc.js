@@ -1,3 +1,5 @@
+// @TODO: enable linting, and fix all linting issues. (!!!)
+
 module.exports = {
   env: {
     browser: true,
@@ -12,8 +14,8 @@ module.exports = {
     sourceType: "module"
   },
   rules: {
-    // "prettier/prettier": ["off"],
-    "react/react-in-jsx-scope": "off",
-    "react/prop-types": "off"
+    // "prettier/prettier": ["error"]
+    // "react/react-in-jsx-scope": "off",
+    // "react/prop-types": "off",
   }
 };

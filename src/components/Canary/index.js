@@ -1,21 +1,20 @@
-import { orderBy, reduce } from "lodash";
 import React from "react";
+import { orderBy, reduce } from "lodash";
 import { BsTable } from "react-icons/bs";
 import { RiLayoutGridLine } from "react-icons/ri";
 
-import Dropdown from "../Dropdown";
-import Icon from "../Icon";
-import Modal from "../Modal";
-
-import Toggle from "../Toggle";
 import { getLabels } from "./labels";
 import { filterChecks, isHealthy } from "./filter";
 import { CanaryTable } from "./table";
 import { CanaryCards } from "./card";
-import { StatusList } from "./status";
-import { CanarySorter, GetName, Title } from "./data";
+import { CanarySorter, Title } from "./data";
 import { CanaryDescription } from "./description";
 import { labelIndex } from "./filter";
+
+import StatCard from "../StatCard";
+import Dropdown from "../Dropdown";
+import Modal from "../Modal";
+import Toggle from "../Toggle";
 
 const table = {
   id: "dropdown-table",
@@ -142,123 +141,85 @@ export default class Canary extends React.Component {
     );
 
     return (
-      <>
-        <div className="">
-          <div>
-            <div className="fixed top-0 left-0 w-1/2 h-full bg-white"></div>
-            <div className="fixed top-0 right-0 w-1/2 h-full bg-gray-50"></div>
-            <div className="relative min-h-screen flex flex-col">
-              <div className="flex-grow w-full 2xl:max-w-screen-2xl xl:max-w-screen-xl mx-auto xl:px-8 lg:flex">
-                <div className="flex-1 min-w-0 bg-white xl:flex">
-                  <div className="border-b border-gray-200 xl:border-b-0 xl:flex-shrink-0 xl:w-64 xl:border-r xl:border-gray-200 bg-white">
-                    <div className="h-full pl-4 pr-6 py-6 sm:pl-6 lg:pl-8 xl:pl-0">
-                      <div className="h-full relative h-min-1">
-                        <div>
-                          <div className="mt-5 grid grid-cols-1 gap-5  flex-wrap">
-                            <div className="bg-white overflow-hidden shadow rounded-lg">
-                              <div className="px-4 py-5 sm:p-6">
-                                <dl>
-                                  <dt className="text-sm leading-5 font-medium text-gray-500 truncate">
-                                    All Checks
-                                  </dt>
-                                  <dd className="mt-1 text-3xl leading-9 font-semibold text-gray-900">
-                                    {this.state.checks.length}
-                                    <span className="text-xl font-light">
-                                      {" "}
-                                      (
-                                      <span className="text-green-500">
-                                        {passedAll}
-                                      </span>
-                                      /
-                                      <span className="text-red-500">
-                                        {this.state.checks.length - passedAll}
-                                      </span>
-                                      )
-                                    </span>
-                                  </dd>
-                                </dl>
-                              </div>
-                            </div>
+      <div className="w-full flex flex-col-reverse lg:flex-row">
+        {/* middle panel */}
+        <div className="w-full p-6">
+          {this.state.style.name === "card" && (
+            <CanaryCards checks={checks} onClick={this.select} />
+          )}
+          {this.state.style.name === "table" && (
+            <CanaryTable checks={checks} onClick={this.select} />
+          )}
+        </div>
 
-                            {checks.length != this.state.checks.length && (
-                              <div className="bg-white overflow-hidden shadow rounded-lg">
-                                <div className="px-4 py-5 sm:p-6">
-                                  <dl>
-                                    <dt className="text-sm leading-5 font-medium text-gray-500 truncate">
-                                      Filtered Checks
-                                    </dt>
-                                    <dd className="mt-1 text-3xl leading-9 font-semibold text-gray-900">
-                                      {checks.length}
-                                      <span className="text-xl  font-light">
-                                        {" "}
-                                        (
-                                        <span className="text-green-500">
-                                          {passed}
-                                        </span>
-                                        /
-                                        <span className="text-red-500">
-                                          {checks.length - passed}
-                                        </span>
-                                        )
-                                      </span>
-                                    </dd>
-                                  </dl>
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="bg-white lg:min-w-0 lg:flex-1">
-                    <div className="h-full py-6 px-4 sm:px-6 lg:px-8">
-                      <div className="relative h-full">
-                        {this.state.style.name == "card" && (
-                          <CanaryCards checks={checks} onClick={this.select} />
-                        )}
-                        {this.state.style.name == "table" && (
-                          <CanaryTable checks={checks} onClick={this.select} />
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="bg-gray-50 pr-4 sm:pr-6 lg:pr-8 lg:flex-shrink-0 lg:border-l lg:border-gray-200 xl:pr-0">
-                  <div className="h-full pl-6 py-6 lg:w-80">
-                    <div className="h-full relative">
-                      <Dropdown
-                        items={[card, table]}
-                        selected={this.state.style}
-                        setSelected={this.setStyle}
-                        className="mb-3"
-                      />
+        {/* right panel */}
+        <div className="bg-gray-50">
+          <div className="p-6 space-y-6 sticky top-0">
+            <StatCard
+              title="All Checks"
+              customValue={
+                <>
+                  {this.state.checks.length}
+                  <span className="text-xl font-light">
+                    {" "}
+                    (<span className="text-green-500">{passedAll}</span>/
+                    <span className="text-red-500">
+                      {this.state.checks.length - passedAll}
+                    </span>
+                    )
+                  </span>
+                </>
+              }
+            />
 
-                      <Toggle
-                        label="Hide Passing"
-                        enabled={this.state.hidePassing}
-                        setEnabled={this.togglePassing}
-                        className="mb-3"
-                      />
+            {/* second card */}
+            {checks.length != this.state.checks.length && (
+              <StatCard
+                title="Filtered Checks"
+                customValue={
+                  <>
+                    {checks.length}
+                    <span className="text-xl  font-light">
+                      {" "}
+                      (<span className="text-green-500">{passed}</span>/
+                      <span className="text-red-500">
+                        {checks.length - passed}
+                      </span>
+                      )
+                    </span>
+                  </>
+                }
+              />
+            )}
 
-                      {labels.map((label) => (
-                        <Toggle
-                          label={label.label}
-                          enabled={
-                            labelIndex(this.state.selectedLabels, label) >= 0
-                          }
-                          setEnabled={() => this.toggleLabel(label)}
-                          className="mb-3"
-                        />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
+            {/* filtering tools */}
+            <div className="h-full relative lg:w-80">
+              <Dropdown
+                items={[card, table]}
+                selected={this.state.style}
+                setSelected={this.setStyle}
+                className="mb-6"
+              />
+
+              <Toggle
+                label="Hide Passing"
+                enabled={this.state.hidePassing}
+                setEnabled={this.togglePassing}
+                className="mb-3"
+              />
+
+              {labels.map((label) => (
+                <Toggle
+                  key={label.label}
+                  label={label.label}
+                  enabled={labelIndex(this.state.selectedLabels, label) >= 0}
+                  setEnabled={() => this.toggleLabel(label)}
+                  className="mb-3"
+                />
+              ))}
             </div>
           </div>
         </div>
-
         {this.state.selected != null && (
           <Modal
             ref={this.modal}
@@ -268,7 +229,7 @@ export default class Canary extends React.Component {
             open={true}
           />
         )}
-      </>
+      </div>
     );
   }
 }

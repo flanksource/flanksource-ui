@@ -5,6 +5,8 @@ import { Percentage } from "./utils";
 export function Uptime({ check }) {
   if (check.uptime == null) {
     return "";
+  } else if (!check.uptime.passed || !check.uptime.failed) {
+    return check.uptime;
   }
   return (
     <Percentage
