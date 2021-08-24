@@ -19,7 +19,7 @@ export function Duration({ ms }) {
     val = ms / 1000 / 60 / 6;
     unit = "h";
   }
-  if (Math.round(val) !== val) {
+  if (val != null && Math.round(val) !== val) {
     val = val.toFixed(1);
   }
   return (

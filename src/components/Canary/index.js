@@ -1,7 +1,11 @@
 import React from "react";
 import { orderBy, reduce } from "lodash";
+import { ImUngroup } from "react-icons/im";
+import { BiLabel } from "react-icons/bi";
 import { BsTable } from "react-icons/bs";
 import { RiLayoutGridLine } from "react-icons/ri";
+import { TiSortAlphabeticallyOutline } from "react-icons/ti";
+import { AiOutlineAlignLeft } from "react-icons/ai";
 
 import { getLabels } from "./labels";
 import { filterChecks, isHealthy, labelIndex } from "./filter";
@@ -15,18 +19,47 @@ import { Dropdown } from "../Dropdown";
 import { Modal } from "../Modal";
 import { Toggle } from "../Toggle";
 
-const table = {
-  id: "dropdown-table",
-  name: "table",
-  icon: <BsTable />,
-  label: "Table"
-};
-const card = {
-  id: "dropdown-card",
-  name: "card",
-  icon: <RiLayoutGridLine />,
-  label: "Card"
-};
+const layoutSelections = [
+  {
+    id: "dropdown-table",
+    name: "table",
+    icon: <BsTable />,
+    label: "Table"
+  },
+  {
+    id: "dropdown-card",
+    name: "card",
+    icon: <RiLayoutGridLine />,
+    label: "Card"
+  }
+];
+
+const groupSelections = [
+  {
+    id: "dropdown-no-group",
+    name: "no-group",
+    icon: <ImUngroup />,
+    label: "No Grouping"
+  },
+  {
+    id: "dropdown-name",
+    name: "name",
+    icon: <TiSortAlphabeticallyOutline />,
+    label: "Name"
+  },
+  {
+    id: "dropdown-description",
+    name: "description",
+    icon: <AiOutlineAlignLeft />,
+    label: "Description"
+  },
+  {
+    id: "dropdown-labels",
+    name: "labels",
+    icon: <BiLabel />,
+    label: "Labels"
+  }
+];
 
 function toggleLabel(selectedLabels, label) {
   const index = labelIndex(selectedLabels, label);
@@ -47,11 +80,13 @@ export class Canary extends React.Component {
     this.fetch = this.fetch.bind(this);
     this.select = this.select.bind(this);
     this.setStyle = this.setStyle.bind(this);
+    this.setGroupBy = this.setGroupBy.bind(this);
     this.setChecks = this.setChecks.bind(this);
     this.toggleLabel = this.toggleLabel.bind(this);
     this.togglePassing = this.togglePassing.bind(this);
     this.state = {
-      style: table,
+      style: layoutSelections[0],
+      groupBy: groupSelections[0],
       selected: null,
       // eslint-disable-next-line react/no-unused-state
       lastFetched: null,
@@ -95,16 +130,16 @@ export class Canary extends React.Component {
     });
   }
 
+  setGroupBy(group) {
+    this.setState({
+      groupBy: group
+    });
+  }
+
   toggleLabel(label) {
     this.setState((state) => ({
       selectedLabels: toggleLabel(state.selectedLabels, label)
     }));
-  }
-
-  fetch() {
-    fetch(this.url)
-      .then((result) => result.json())
-      .then(this.setChecks);
   }
 
   togglePassing() {
@@ -122,6 +157,12 @@ export class Canary extends React.Component {
     }
   }
 
+  fetch() {
+    fetch(this.url)
+      .then((result) => result.json())
+      .then(this.setChecks);
+  }
+
   render() {
     const { state } = this;
     const {
@@ -129,7 +170,8 @@ export class Canary extends React.Component {
       hidePassing,
       selectedLabels,
       style,
-      selected
+      selected,
+      groupBy
     } = state;
 
     // first filter for pass/fail
@@ -204,13 +246,25 @@ export class Canary extends React.Component {
 
             {/* filtering tools */}
             <div className="h-full relative lg:w-80">
-              <Dropdown
-                items={[card, table]}
-                selected={style}
-                setSelected={this.setStyle}
-                className="mb-6"
-              />
+              <div className="mb-8">
+                <Dropdown
+                  items={layoutSelections}
+                  selected={style}
+                  setSelected={this.setStyle}
+                  className="mb-4"
+                  label="Layout"
+                />
 
+                {style.name === "table" && (
+                  <Dropdown
+                    items={groupSelections}
+                    selected={groupBy}
+                    setSelected={this.setGroupBy}
+                    className="mb-4"
+                    label="Group items by"
+                  />
+                )}
+              </div>
               <Toggle
                 label="Hide Passing"
                 enabled={hidePassing}
