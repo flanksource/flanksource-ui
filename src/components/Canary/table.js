@@ -2,12 +2,12 @@ import React from "react";
 import { Title, Uptime, Latency } from "./data";
 import { StatusList } from "./status";
 
-export function CanaryTable({ ...props }) {
+export function CanaryTable({ className, theadClass, ...props }) {
   const tableHeaderClass = `px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-100 first:rounded-tl-md last:rounded-tr-md`;
   return (
-    <div className="rounded-md border border-gray-200">
+    <div className={`rounded-md border border-gray-200 ${className}`}>
       <table className="min-w-full divide-y divide-gray-200 relative">
-        <thead className="sticky top-0">
+        <thead className={theadClass}>
           <tr>
             <th scope="col" className={tableHeaderClass}>
               Check
