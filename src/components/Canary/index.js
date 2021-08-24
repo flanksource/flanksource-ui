@@ -195,12 +195,21 @@ export class Canary extends React.Component {
     return (
       <div className="w-full flex flex-col-reverse lg:flex-row">
         {/* middle panel */}
-        <div className="w-full p-6">
+        <div className="w-full">
           {style.name === "card" && (
-            <CanaryCards checks={checks} onClick={this.select} />
+            <div className="m-6">
+              <CanaryCards checks={checks} onClick={this.select} />
+            </div>
           )}
           {style.name === "table" && (
-            <CanaryTable checks={checks} onClick={this.select} />
+            <div className="m-6 mt-0 relative">
+              <div className="sticky top-0 h-6 bg-white z-10" />
+              <CanaryTable
+                theadClass="sticky top-6"
+                checks={checks}
+                onClick={this.select}
+              />
+            </div>
           )}
         </div>
 
