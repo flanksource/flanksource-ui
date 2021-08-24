@@ -1,3 +1,5 @@
+import React from "react";
+
 export function Duration({ ms }) {
   if (ms === 0) {
     return "";
@@ -32,7 +34,7 @@ export function Percentage({ val, upper, lower }) {
   if (upper != null && lower != null) {
     val = (lower / upper) * 100;
   }
-  if (Math.round(val) !== val) {
+  if (val != null && Math.round(val) !== val) {
     val = val.toFixed(1);
   }
   if (val == null) {
