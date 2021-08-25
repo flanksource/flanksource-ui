@@ -5,7 +5,7 @@ import { Latency, Uptime } from "./data";
 import Description from "../DescriptionCard";
 import Table from "../Table";
 import { CanaryStatus } from "./status";
-import { Duration, duration } from "./utils";
+import { Duration, is_empty } from "./utils";
 
 export function CanaryDescription({ check }) {
   var statii = check.checkStatuses;
@@ -19,7 +19,7 @@ export function CanaryDescription({ check }) {
           {" "}
           <CanaryStatus status={status} />
           {status.message}{" "}
-          {status.error &&
+          {!is_empty(status.error) &&
             status.error.split("\n").map((item) => (
               <>
                 {item}
@@ -28,7 +28,7 @@ export function CanaryDescription({ check }) {
             ))}
         </>
       ),
-      duration: <Duration ms={status.duration} />,
+      duration: <Duration ms={status.duration} />
     });
   });
 
@@ -40,59 +40,59 @@ export function CanaryDescription({ check }) {
         <span>
           {check.namespace}/{check.name}
         </span>
-      ),
+      )
     },
     {
       key: check.key + "namespace",
       name: "Namespace",
-      value: <Badge text={check.namespace} />,
+      value: <Badge text={check.namespace} />
     },
     {
       key: check.key + "latency",
       name: "Latency",
-      value: <Latency check={check} />,
+      value: <Latency check={check} />
     },
     {
       key: check.key + "uptime",
       name: "Uptime",
-      value: <Uptime check={check} />,
+      value: <Uptime check={check} />
     },
     {
       key: check.key + "owner",
       name: "Owner",
-      value: check.owner,
+      value: check.owner
     },
     {
       key: check.key + "severity",
       name: "Severity",
-      value: check.severity,
+      value: check.severity
     },
     {
       key: check.key + "labels",
       name: "Labels",
-      value: <Labels labels={check.labels} />,
+      value: <Labels labels={check.labels} />
     },
     {
       key: check.key + "runner",
       name: "Runner",
-      value: <Labels labels={check.runnerLabels} />,
+      value: <Labels labels={check.runnerLabels} />
     },
 
     {
       key: check.key + "interval",
       name: "Interval",
-      value: check.interval > 0 ? check.interval : check.schedule,
+      value: check.interval > 0 ? check.interval : check.schedule
     },
     {
       key: check.key + "type",
       name: "Type",
-      value: check.type,
+      value: check.type
     },
     {
       key: check.key + "endpoint",
       name: "Endpoint",
       value: check.endpoint,
-      colspan: 2,
+      colspan: 2
     },
     {
       key: check.key + "checks",
@@ -104,8 +104,8 @@ export function CanaryDescription({ check }) {
           columns={["Age", "Duration", "Message"]}
         />
       ),
-      colspan: 2,
-    },
+      colspan: 2
+    }
   ];
   return <Description items={items} />;
 }
