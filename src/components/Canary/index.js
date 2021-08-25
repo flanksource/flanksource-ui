@@ -7,7 +7,7 @@ import { RiLayoutGridLine } from "react-icons/ri";
 import { TiSortAlphabeticallyOutline } from "react-icons/ti";
 import { AiOutlineAlignLeft } from "react-icons/ai";
 
-import { getLabels } from "./labels";
+import { getLabels, getNonBooleanLabels } from "./labels";
 import { filterChecks, isHealthy, labelIndex } from "./filter";
 import { CanaryTable } from "./table";
 import { CanaryCards } from "./card";
@@ -34,7 +34,7 @@ const layoutSelections = [
   }
 ];
 
-const groupSelections = [
+const groupSelectionsTemplate = [
   {
     id: "dropdown-no-group",
     name: "no-group",
@@ -52,12 +52,6 @@ const groupSelections = [
     name: "description",
     icon: <AiOutlineAlignLeft />,
     label: "Description"
-  },
-  {
-    id: "dropdown-labels",
-    name: "labels",
-    icon: <BiLabel />,
-    label: "Labels"
   }
 ];
 
@@ -69,6 +63,22 @@ function toggleLabel(selectedLabels, label) {
   selectedLabels.push(label);
 
   return selectedLabels;
+}
+
+function getNewGroupSelections(checks) {
+  const nonBooleanLabels = getNonBooleanLabels(checks);
+  const newGroupSelections = [...groupSelectionsTemplate];
+  nonBooleanLabels.forEach((label) => {
+    const onlyAlphabets = label.replace(/[^a-zA-Z]/g, "");
+    newGroupSelections.push({
+      id: `dropdown-label-${onlyAlphabets}`,
+      name: onlyAlphabets,
+      icon: <BiLabel />,
+      label,
+      groupKey: label
+    });
+  });
+  return newGroupSelections;
 }
 
 export class Canary extends React.Component {
@@ -86,7 +96,7 @@ export class Canary extends React.Component {
     this.togglePassing = this.togglePassing.bind(this);
     this.state = {
       style: layoutSelections[0],
-      groupBy: groupSelections[0],
+      groupBy: groupSelectionsTemplate[0],
       selected: null,
       // eslint-disable-next-line react/no-unused-state
       lastFetched: null,
@@ -191,6 +201,13 @@ export class Canary extends React.Component {
       (sum, c) => (isHealthy(c) ? sum + 1 : sum),
       0
     );
+
+    const groupSelections = getNewGroupSelections(checks);
+
+    // update available group dropdown selections
+    if (groupSelections.findIndex((o) => o.label === groupBy.label) === -1) {
+      this.setGroupBy(groupSelections[0]);
+    }
 
     return (
       <div className="w-full flex flex-col-reverse lg:flex-row">
