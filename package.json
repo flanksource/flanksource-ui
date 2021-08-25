@@ -16,7 +16,6 @@
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
-    "prettier": "^2.3.2",
     "react": "^17.0.2",
     "react-country-flag": "^2.3.1",
     "react-dom": "^17.0.2",
@@ -28,7 +27,9 @@
     "remark-gfm": "^2.0.0",
     "timeago-react": "^3.0.3",
     "timeago.js": "^4.0.2",
-    "web-vitals": "^1.0.1"
+    "web-vitals": "^1.0.1",
+    "lodash": "^4.17.21",
+    "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.2.7"
   },
   "proxy": "https://canaries.canary.lab.flanksource.com",
   "scripts": {
@@ -36,13 +37,9 @@
     "build": "NODE_ENV=production craco build",
     "compile": "cross-env NODE_ENV=production babel src --out-dir dist --copy-files --ignore __tests__,spec.js,test.js,stories.js,__snapshots__",
     "test": "craco test",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+    "eject": "react-scripts eject",
+    "lint:eslint": "eslint --ext .js,.jsx,.ts,.tsx .",
+    "fix:eslint": "eslint --fix --ext .js,.jsx,.ts,.tsx ."
   },
   "browserslist": {
     "production": [
@@ -62,11 +59,15 @@
     "@babel/preset-react": "^7.14.5",
     "autoprefixer": "^9.8.6",
     "cross-env": "^7.0.3",
+    "eslint": "^7.32.0",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-config-import": "^0.13.0",
     "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-jest": "^24.4.0",
     "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-react": "^7.24.0",
-    "lodash": "^4.17.21",
+    "eslint-plugin-react-hooks": "^4.2.0",
     "postcss": "^7.0.36",
-    "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.2.7"
+    "prettier": "^2.3.2"
   }
 }
