@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { FaChevronRight } from "react-icons/fa";
 import { Title, Uptime, Latency } from "./data";
 import { StatusList } from "./status";
@@ -14,7 +14,10 @@ export function CanaryTable({
 }) {
   const tableHeaderClass = `px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-100 first:rounded-tl-md last:rounded-tr-md`;
   return (
-    <div className={`rounded-md border border-gray-200 ${className}`}>
+    <div
+      className={`rounded-md border border-gray-200 ${className}`}
+      {...props}
+    >
       <table className="min-w-full divide-y divide-gray-200 relative">
         <thead className={theadClass}>
           <tr>
@@ -37,11 +40,12 @@ export function CanaryTable({
           {hasGrouping ? (
             <>
               {Object.keys(checks)
+                // make sure "Others" is sorted to the back
                 .sort((a, b) => {
                   if (b === "Others") {
                     return -1;
                   }
-                  return 1;
+                  return 0;
                 })
                 .map((group) => (
                   <TableGroupRow
