@@ -1,117 +1,197 @@
+// this file is generated using make index.js
 import alert from "./alert.svg";
+import aws from "./aws.svg";
+import azure from "./azure.svg";
+import bash from "./bash.svg";
+import ca from "./ca.svg";
+import canary_checker from "./canary-checker.svg";
+import cassandra from "./cassandra.svg";
 import check from "./check.svg";
+import cisco from "./cisco.svg";
+import cloudformation from "./cloudformation.svg";
+import cloudsql from "./cloudsql.svg";
 import consul from "./consul.svg";
 import containerdPull from "./containerdPull.svg";
 import containerdPush from "./containerdPush.svg";
+import datadog from "./datadog.svg";
 import dex from "./dex.svg";
+import django from "./django.svg";
 import dns from "./dns.svg";
 import dockerPull from "./dockerPull.svg";
 import dockerPush from "./dockerPush.svg";
+import dotnet from "./dotnet.svg";
+import dynatrace from "./dynatrace.svg";
+import ec2 from "./ec2.svg";
+import ecr from "./ecr.svg";
+import eks from "./eks.svg";
 import elastic from "./elastic.svg";
+import elasticsearch from "./elasticsearch.svg";
+import elb from "./elb.svg";
+import envoy from "./envoy.svg";
 import etcd from "./etcd.svg";
 import fire from "./fire.svg";
+import fluentd from "./fluentd.svg";
+import flux from "./flux.svg";
+import gcp from "./gcp.svg";
+import gilab from "./gilab.svg";
+import git from "./git.svg";
+import github from "./github.svg";
+import google from "./google.svg";
+import grafana from "./grafana.svg";
+import graphql from "./graphql.svg";
+import grpc from "./grpc.svg";
+import grpc2 from "./grpc2.svg";
+import haproxy from "./haproxy.svg";
 import harbor from "./harbor.svg";
+import hazelcast from "./hazelcast.svg";
 import helm from "./helm.svg";
+import html from "./html.svg";
 import http from "./http.svg";
 import https from "./https.svg";
+import ibm from "./ibm.svg";
 import icmp from "./icmp.svg";
+import istio from "./istio.svg";
+import jaegar from "./jaegar.svg";
+import java from "./java.svg";
 import jmeter from "./jmeter.svg";
 import junit from "./junit.svg";
+import k8s from "./k8s.svg";
 import kubernetes from "./kubernetes.svg";
 import ldap from "./ldap.svg";
+import letsencrypt from "./letsencrypt.svg";
+import linux from "./linux.svg";
+import lua from "./lua.svg";
+import memchache from "./memchache.svg";
+import microsoft from "./microsoft.svg";
+import mongo from "./mongo.svg";
 import mssql from "./mssql.svg";
 import namespace from "./namespace.svg";
+import newrelic from "./newrelic.svg";
+import nginx from "./nginx.svg";
+import nodejs from "./nodejs.svg";
 import opa from "./opa.svg";
+import openshift from "./openshift.svg";
+import oracle from "./oracle.svg";
+import pagerduty from "./pagerduty.svg";
+import php from "./php.svg";
 import pod from "./pod.svg";
 import postgres from "./postgres.svg";
 import prometheus from "./prometheus.svg";
+import python from "./python.svg";
+import rabbitmq from "./rabbitmq.svg";
+import rancher from "./rancher.svg";
+import redhat from "./redhat.svg";
 import redis from "./redis.svg";
 import restic from "./restic.svg";
+import ruby from "./ruby.svg";
 import s3 from "./s3.svg";
 import s3Bucket from "./s3Bucket.svg";
+import slack from "./slack.svg";
 import smb from "./smb.svg";
+import spring from "./spring.svg";
 import ssl from "./ssl.svg";
+import terraform from "./terraform.svg";
 import trafficlight from "./trafficlight.svg";
+import ubuntu from "./ubuntu.svg";
+import vault from "./vault.svg";
+import vsphere from "./vsphere.svg";
 import www from "./www.svg";
-import aws_alb from "./aws-alb.svg";
-import aws_ami from "./aws-ami.svg";
-import aws_api_gateway from "./aws-api-gateway.svg";
-import aws_auto_scaling from "./aws-auto-scaling.svg";
-import aws_ebs from "./aws-ebs.svg";
-import aws_ec2_instances from "./aws-ec2-instances.svg";
-import aws_ec2 from "./aws-ec2.svg";
-import aws_ecr from "./aws-ecr.svg";
-import aws_efs from "./aws-efs.svg";
-import aws_elb from "./aws-elb.svg";
-import aws_ena from "./aws-ena.svg";
-import aws_eni from "./aws-eni.svg";
-import aws_mq from "./aws-mq.svg";
-import aws_nat from "./aws-nat.svg";
-import aws_nlb from "./aws-nlb.svg";
-import aws_r53 from "./aws-r53.svg";
-import aws_s3 from "./aws-s3.svg";
-import aws_sqs_message from "./aws-sqs-message.svg";
-import aws_sqs from "./aws-sqs.svg";
-import aws from "./aws.svg";
-import microsoft from "./microsoft.svg";
-import grafana from "./grafana.svg";
-
 export const Icons = {
-  aws: aws,
-  microsft: microsoft,
-  grafana: grafana,
-  "aws-alb": aws_alb,
-  "aws-ami": aws_ami,
-  "aws-api-gateway": aws_api_gateway,
-  "aws-auto-scaling": aws_auto_scaling,
-  "aws-ebs": aws_ebs,
-  "aws-ec2-instances": aws_ec2_instances,
-  "aws-ec2": aws_ec2,
-  "aws-ecr": aws_ecr,
-  "aws-efs": aws_efs,
-  "aws-elb": aws_elb,
-  "aws-ena": aws_ena,
-  "aws-eni": aws_eni,
-  "aws-mq": aws_mq,
-  "aws-nat": aws_nat,
-  "aws-nlb": aws_nlb,
-  "aws-r53": aws_r53,
-  "aws-s3": aws_s3,
-  "aws-sqs-message": aws_sqs_message,
-  "aws-sqs": aws_sqs,
   alert: alert,
+  aws: aws,
+  azure: azure,
+  bash: bash,
+  ca: ca,
+  "canary-checker": canary_checker,
+  cassandra: cassandra,
   check: check,
+  cisco: cisco,
+  cloudformation: cloudformation,
+  cloudsql: cloudsql,
   consul: consul,
   containerdPull: containerdPull,
   containerdPush: containerdPush,
+  datadog: datadog,
   dex: dex,
+  django: django,
   dns: dns,
   dockerPull: dockerPull,
   dockerPush: dockerPush,
+  dotnet: dotnet,
+  dynatrace: dynatrace,
+  ec2: ec2,
+  ecr: ecr,
+  eks: eks,
   elastic: elastic,
+  elasticsearch: elasticsearch,
+  elb: elb,
+  envoy: envoy,
   etcd: etcd,
   fire: fire,
+  fluentd: fluentd,
+  flux: flux,
+  gcp: gcp,
+  gilab: gilab,
+  git: git,
+  github: github,
+  google: google,
+  grafana: grafana,
+  graphql: graphql,
+  grpc: grpc,
+  grpc2: grpc2,
+  haproxy: haproxy,
   harbor: harbor,
+  hazelcast: hazelcast,
   helm: helm,
+  html: html,
   http: http,
   https: https,
+  ibm: ibm,
   icmp: icmp,
+  istio: istio,
+  jaegar: jaegar,
+  java: java,
   jmeter: jmeter,
   junit: junit,
+  k8s: k8s,
   kubernetes: kubernetes,
   ldap: ldap,
+  letsencrypt: letsencrypt,
+  linux: linux,
+  lua: lua,
+  memchache: memchache,
+  microsoft: microsoft,
+  mongo: mongo,
   mssql: mssql,
   namespace: namespace,
+  newrelic: newrelic,
+  nginx: nginx,
+  nodejs: nodejs,
   opa: opa,
+  openshift: openshift,
+  oracle: oracle,
+  pagerduty: pagerduty,
+  php: php,
   pod: pod,
   postgres: postgres,
   prometheus: prometheus,
+  python: python,
+  rabbitmq: rabbitmq,
+  rancher: rancher,
+  redhat: redhat,
   redis: redis,
   restic: restic,
+  ruby: ruby,
   s3: s3,
   s3Bucket: s3Bucket,
+  slack: slack,
   smb: smb,
+  spring: spring,
   ssl: ssl,
+  terraform: terraform,
   trafficlight: trafficlight,
-  www: www,
+  ubuntu: ubuntu,
+  vault: vault,
+  vsphere: vsphere,
+  www: www
 };
