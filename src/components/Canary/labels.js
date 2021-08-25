@@ -74,7 +74,6 @@ export function getNonBooleanLabels(checks) {
           nonBooleanLabels.indexOf(key) === -1
         ) {
           nonBooleanLabels.push(key);
-          console.log("check", check);
         }
       });
     }
