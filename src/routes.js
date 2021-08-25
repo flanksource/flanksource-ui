@@ -1,7 +1,5 @@
-
 import Examples from "./pages/Examples";
 import CanaryPage from "./pages/Examples/canary";
-
 
 export const routes = {
   examples: {

@@ -1,5 +1,6 @@
-import Status from "../Status";
-export default function StatusList({ check }) {
+import { Status } from "../Status";
+
+export function StatusList({ check }) {
   if (check.checkStatuses && check.checkStatuses.length >= 1) {
     return (
       <>
@@ -12,9 +13,8 @@ export default function StatusList({ check }) {
         ))}
       </>
     );
-  } else {
-    return "";
   }
+  return "";
 }
 
 export function CanaryStatus({ status, className }) {

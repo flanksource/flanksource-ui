@@ -1,6 +1,5 @@
-import { Duration, is_empty } from "./utils";
-import Icon from "../Icon";
-import { Percentage } from "./utils";
+import { Duration, isEmpty, Percentage } from "./utils";
+import { Icon } from "../Icon";
 
 export function Uptime({ check }) {
   if (check.uptime == null) {
@@ -19,10 +18,10 @@ export function CanarySorter(check) {
 }
 
 export function GetName(check) {
-  var title = check.description;
-  if (is_empty(title)) {
+  let title = check.description;
+  if (isEmpty(title)) {
     title = check.endpoint;
-  } else if (is_empty(title)) {
+  } else if (isEmpty(title)) {
     title = check.name;
   }
   return title;
@@ -47,7 +46,7 @@ export function Latency({ check }) {
   if (check.latency == null) {
     return "";
   }
-  if (is_empty(check.latency.rolling1h)) {
+  if (isEmpty(check.latency.rolling1h)) {
     return "";
   }
   return <Duration ms={check.latency.rolling1h} />;
