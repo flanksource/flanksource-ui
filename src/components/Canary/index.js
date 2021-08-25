@@ -1,12 +1,15 @@
 import React from "react";
 import { orderBy, reduce } from "lodash";
 import { BsTable } from "react-icons/bs";
-import { BiLabel } from "react-icons/bi";
 import { RiLayoutGridLine } from "react-icons/ri";
 
-import { getLabels, getNonBooleanLabels } from "./labels";
+import { getLabels } from "./labels";
 
-import { defaultGroupSelections } from "./grouping";
+import {
+  defaultGroupSelections,
+  getGroupSelections,
+  getGroupedChecks
+} from "./grouping";
 import { filterChecks, isHealthy, labelIndex } from "./filter";
 import { CanaryTable } from "./table";
 import { CanaryCards } from "./card";
@@ -41,22 +44,6 @@ function toggleLabel(selectedLabels, label) {
   selectedLabels.push(label);
 
   return selectedLabels;
-}
-
-function getNewGroupSelections(checks) {
-  const nonBooleanLabels = getNonBooleanLabels(checks);
-  const newGroupSelections = [...groupSelectionsTemplate];
-  nonBooleanLabels.forEach((label) => {
-    const onlyAlphabets = label.replace(/[^a-zA-Z]/g, "");
-    newGroupSelections.push({
-      id: `dropdown-label-${onlyAlphabets}`,
-      name: onlyAlphabets,
-      icon: <BiLabel />,
-      label,
-      groupKey: label
-    });
-  });
-  return newGroupSelections;
 }
 
 export class Canary extends React.Component {
@@ -180,11 +167,20 @@ export class Canary extends React.Component {
       0
     );
 
-    const groupSelections = getNewGroupSelections(checks);
+    // generate available grouping selections for dropdown menu
+    const groupSelections = getGroupSelections(checks);
 
-    // update available group dropdown selections
+    // reset grouping if currently selected groupBy isn't available anymore
     if (groupSelections.findIndex((o) => o.label === groupBy.label) === -1) {
       this.setGroupBy(groupSelections[0]);
+    }
+
+    // if a grouping is selected, create a grouped version of the checks array
+    let hasGrouping = false;
+    let groupedChecks = [];
+    if (groupBy.name !== "no-group") {
+      hasGrouping = true;
+      groupedChecks = getGroupedChecks(checks, groupBy);
     }
 
     return (
@@ -200,8 +196,10 @@ export class Canary extends React.Component {
             <div className="m-6 mt-0 relative">
               <div className="sticky top-0 h-6 bg-white z-10" />
               <CanaryTable
-                theadClass="sticky top-6"
-                checks={checks}
+                theadClass="sticky top-6 z-10"
+                checks={hasGrouping ? groupedChecks : checks}
+                hasGrouping={hasGrouping}
+                groupingLabel={groupBy.label}
                 onClick={this.select}
               />
             </div>
