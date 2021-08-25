@@ -1,13 +1,12 @@
 import React from "react";
 import { orderBy, reduce } from "lodash";
-import { ImUngroup } from "react-icons/im";
-import { BiLabel } from "react-icons/bi";
 import { BsTable } from "react-icons/bs";
+import { BiLabel } from "react-icons/bi";
 import { RiLayoutGridLine } from "react-icons/ri";
-import { TiSortAlphabeticallyOutline } from "react-icons/ti";
-import { AiOutlineAlignLeft } from "react-icons/ai";
 
 import { getLabels, getNonBooleanLabels } from "./labels";
+
+import { defaultGroupSelections } from "./grouping";
 import { filterChecks, isHealthy, labelIndex } from "./filter";
 import { CanaryTable } from "./table";
 import { CanaryCards } from "./card";
@@ -31,27 +30,6 @@ const layoutSelections = [
     name: "card",
     icon: <RiLayoutGridLine />,
     label: "Card"
-  }
-];
-
-const groupSelectionsTemplate = [
-  {
-    id: "dropdown-no-group",
-    name: "no-group",
-    icon: <ImUngroup />,
-    label: "No Grouping"
-  },
-  {
-    id: "dropdown-name",
-    name: "name",
-    icon: <TiSortAlphabeticallyOutline />,
-    label: "Name"
-  },
-  {
-    id: "dropdown-description",
-    name: "description",
-    icon: <AiOutlineAlignLeft />,
-    label: "Description"
   }
 ];
 
@@ -96,7 +74,7 @@ export class Canary extends React.Component {
     this.togglePassing = this.togglePassing.bind(this);
     this.state = {
       style: layoutSelections[0],
-      groupBy: groupSelectionsTemplate[0],
+      groupBy: defaultGroupSelections[0],
       selected: null,
       // eslint-disable-next-line react/no-unused-state
       lastFetched: null,
