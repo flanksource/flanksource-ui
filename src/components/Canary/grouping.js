@@ -4,6 +4,8 @@ import { TiSortAlphabeticallyOutline } from "react-icons/ti";
 import { AiOutlineAlignLeft } from "react-icons/ai";
 import { getNonBooleanLabels } from "./labels";
 
+import { getNonBooleanLabels } from "./labels";
+
 export const defaultGroupSelections = [
   {
     id: "dropdown-no-group",
