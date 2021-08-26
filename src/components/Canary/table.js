@@ -25,9 +25,9 @@ export function CanaryTable({ ...props }) {
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
-          {props.checks.map((check, idx) => (
+          {props.checks.map((check) => (
             <tr
-              key={`${check.key}table${idx}`}
+              key={check.key}
               onClick={() => props.onClick(check)}
               className="cursor-pointer"
             >

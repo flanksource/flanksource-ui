@@ -4,7 +4,7 @@ import aws from "./aws.svg";
 import azure from "./azure.svg";
 import bash from "./bash.svg";
 import ca from "./ca.svg";
-import canary_checker from "./canary-checker.svg";
+import canaryChecker from "./canary-checker.svg";
 import cassandra from "./cassandra.svg";
 import check from "./check.svg";
 import cisco from "./cisco.svg";
@@ -103,7 +103,7 @@ export const Icons = {
   azure,
   bash,
   ca,
-  "canary-checker": canary_checker,
+  "canary-checker": canaryChecker,
   cassandra,
   check,
   cisco,

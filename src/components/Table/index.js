@@ -26,6 +26,7 @@ export function Table({ columns, data, id }) {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {data.map((row, idx) => (
+                  // eslint-disable-next-line react/no-array-index-key
                   <tr key={`${id}.${idx}`}>
                     {columns.map((column) => (
                       <td

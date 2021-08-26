@@ -131,6 +131,7 @@ export class Canary extends React.Component {
       style,
       selected
     } = state;
+
     // first filter for pass/fail
     let checks = filterChecks(stateChecks, hidePassing, []);
     // get labels for the new subset
