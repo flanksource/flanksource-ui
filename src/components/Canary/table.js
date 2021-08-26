@@ -10,14 +10,11 @@ export function CanaryTable({
   checks,
   onClick,
   theadClass,
-  ...props
+  ...rest
 }) {
   const tableHeaderClass = `px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-100 first:rounded-tl-md last:rounded-tr-md`;
   return (
-    <div
-      className={`rounded-md border border-gray-200 ${className}`}
-      {...props}
-    >
+    <div className={`rounded-md border border-gray-200 ${className}`} {...rest}>
       <table className="min-w-full divide-y divide-gray-200 relative">
         <thead className={theadClass}>
           <tr>
@@ -27,7 +24,6 @@ export function CanaryTable({
             <th scope="col" className={tableHeaderClass}>
               Health
             </th>
-
             <th scope="col" className={tableHeaderClass}>
               Uptime
             </th>
@@ -86,7 +82,7 @@ export function CanaryTable({
   );
 }
 
-function TableGroupRow({ title, items, onClick, ...props }) {
+function TableGroupRow({ title, items, onClick, ...rest }) {
   const [expanded, setExpanded] = useState(false);
 
   return (
@@ -98,7 +94,7 @@ function TableGroupRow({ title, items, onClick, ...props }) {
         onClick={() => {
           setExpanded(!expanded);
         }}
-        {...props}
+        {...rest}
       >
         <td className="px-6 py-3 w-full">
           <div className="flex items-center select-none">
@@ -119,7 +115,7 @@ function TableGroupRow({ title, items, onClick, ...props }) {
           <tr
             key={item.key}
             onClick={() => onClick(item)}
-            className="cursor-pointer "
+            className="cursor-pointer"
           >
             <td className="px-6 pl-12 py-2 w-full max-w-0 overflow-hidden overflow-ellipsis whitespace-nowrap">
               <Title check={item} />

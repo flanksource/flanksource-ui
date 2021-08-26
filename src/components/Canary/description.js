@@ -8,14 +8,11 @@ import { CanaryStatus } from "./status";
 import { Duration, isEmpty } from "./utils";
 
 export function CanaryDescription({ check }) {
-  let statii = check.checkStatuses;
+  const statii = check.checkStatuses != null ? check.checkStatuses : [];
   const data = [];
-  if (statii == null) {
-    statii = [];
-  }
-  statii.forEach((status, idx) => {
+  statii.forEach((status) => {
     data.push({
-      key: `${check.key}.${idx}`,
+      key: `${check.key}.${check.description}`,
       age: format(`${status.time} UTC`),
       message: (
         <>
