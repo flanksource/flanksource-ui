@@ -32,16 +32,19 @@ export function getLabels(checks) {
   const labelMap = {};
   for (const check of checks) {
     if (check.labels) {
-      for (const k of check.labels) {
-        const v = check.labels[k];
-        const id = `canary:${k}:${v}`;
-        labelMap[id] = {
-          type: "canary",
-          id,
-          key: k,
-          value: v,
-          label: `${k}: ${v}`
-        };
+      for (const check of checks) {
+        if (check.labels) {
+          for (const [key, value] of Object.entries(check.labels)) {
+            const id = `canary:${key}:${value}`;
+            labelMap[id] = {
+              type: "canary",
+              id,
+              key,
+              value,
+              label: `${key}: ${value}`
+            };
+          }
+        }
       }
     }
   }
