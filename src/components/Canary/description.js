@@ -10,6 +10,9 @@ import { Duration, is_empty } from "./utils";
 export function CanaryDescription({ check }) {
   var statii = check.checkStatuses;
   var data = [];
+  if (statii == null) {
+    statii = []
+  }
   statii.map((status, idx) => {
     data.push({
       key: check.key + "." + idx,
