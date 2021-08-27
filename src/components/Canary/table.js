@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { FaChevronRight } from "react-icons/fa";
 import { Title, Uptime, Latency } from "./data";
-import { StatusList } from "./status";
+import { StatusList, CanaryStatus } from "./status";
+import { Icon } from "../Icon";
 
 export function CanaryTable({
   className,
@@ -45,6 +46,7 @@ export function CanaryTable({
                 })
                 .map((group) => (
                   <TableGroupRow
+                    showIcon
                     key={group}
                     title={group}
                     items={checks[group]}
@@ -82,8 +84,82 @@ export function CanaryTable({
   );
 }
 
-function TableGroupRow({ title, items, onClick, ...rest }) {
+function aggregateIcon(iconList) {
+  iconList = iconList.filter((icon) => icon !== "");
+  if (iconList.length === 0) {
+    return null;
+  }
+  let icon = iconList[0];
+  for (let i = 0; i < iconList.length; i += 1) {
+    if (iconList[i] !== icon) {
+      icon = "multiple";
+      break;
+    }
+  }
+  return icon;
+}
+
+function aggregateType(typeList) {
+  typeList = typeList.filter((type) => type !== "");
+  if (typeList.length === 0) {
+    return null;
+  }
+  let type = typeList[0];
+  for (let i = 0; i < typeList.length; i += 1 {
+    if (typeList[i] !== type) {
+      type = "multiple";
+      break;
+    }
+  }
+  return type;
+}
+
+function aggregateStatuses(statusLists) {
+  const allStatuses = statusLists
+    .filter((item) => item !== null && item.length > 0)
+    .flatMap((item) => item);
+  let n = 0;
+  allStatuses.forEach((item) => {
+    if (item.status) {
+      n += 1;
+    }
+  });
+  const scorePercentage = n / allStatuses.length;
+  const scoreSimple = Math.floor(scorePercentage * 5);
+
+  const aggregated = [];
+  for (let i = 0; i < scoreSimple; i += 1) {
+    aggregated.push({
+      id: aggregated.length,
+      invalid: false,
+      status: true
+    });
+  }
+  while (aggregated.length < 5) {
+    aggregated.push({
+      id: aggregated.length,
+      invalid: false,
+      status: false
+    });
+  }
+  return aggregated;
+}
+
+function TableGroupRow({ title, items, onClick, showIcon, ...rest }) {
   const [expanded, setExpanded] = useState(false);
+  const [aggregatedIcon, setAggregatedIcon] = useState(null);
+  const [aggregatedType, setAggregatedType] = useState(null);
+  const [aggregatedStatuses, setAggregatedStatuses] = useState(null);
+
+  useState(() => {
+    const iconsList = items.map((item) => item.icon);
+    const typesList = items.map((item) => item.type);
+    const statusLists = items.map((item) => item.checkStatuses);
+
+    setAggregatedIcon(aggregateIcon(iconsList));
+    setAggregatedType(aggregateType(typesList));
+    setAggregatedStatuses(aggregateStatuses(statusLists));
+  }, [items, items.length]);
 
   return (
     <>
@@ -101,12 +177,21 @@ function TableGroupRow({ title, items, onClick, ...rest }) {
             <FaChevronRight
               className={`${
                 expanded ? "transform rotate-90" : ""
-              } mr-2 duration-75`}
+              } mr-4 duration-75`}
             />
+            {showIcon && (
+              <Icon
+                name={aggregatedIcon || aggregatedType}
+                className="inline mr-3"
+                size="xl"
+              />
+            )}
             {title}
           </div>
         </td>
-        <td />
+        <td className="px-6 py-2 whitespace-nowrap">
+          <StatusList checkStatuses={aggregatedStatuses} />
+        </td>
         <td />
         <td />
       </tr>
@@ -117,7 +202,7 @@ function TableGroupRow({ title, items, onClick, ...rest }) {
             onClick={() => onClick(item)}
             className="cursor-pointer"
           >
-            <td className="px-6 pl-12 py-2 w-full max-w-0 overflow-hidden overflow-ellipsis whitespace-nowrap">
+            <td className="px-6 pl-14 py-2 w-full max-w-0 overflow-hidden overflow-ellipsis whitespace-nowrap">
               <Title check={item} />
             </td>
             <td className="px-6 py-2 whitespace-nowrap">

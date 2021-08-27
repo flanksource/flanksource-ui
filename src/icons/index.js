@@ -79,6 +79,7 @@ import postgres from "./postgres.svg";
 import prometheus from "./prometheus.svg";
 import python from "./python.svg";
 import rabbitmq from "./rabbitmq.svg";
+import multiple from "./multiple.svg";
 import rancher from "./rancher.svg";
 import redhat from "./redhat.svg";
 import redis from "./redis.svg";
@@ -164,6 +165,7 @@ export const Icons = {
   microsoft,
   mongo,
   mssql,
+  multiple,
   namespace,
   newrelic,
   nginx,
