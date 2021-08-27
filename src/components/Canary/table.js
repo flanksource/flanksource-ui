@@ -84,6 +84,8 @@ export function CanaryTable({
   );
 }
 
+// if all check icons are similar in a given iconList, use that icon.
+// if there are different icons, use a icon that indicate 'mixing'.
 function aggregateIcon(iconList) {
   iconList = iconList.filter((icon) => icon !== "");
   if (iconList.length === 0) {
@@ -99,6 +101,8 @@ function aggregateIcon(iconList) {
   return icon;
 }
 
+// if all check types are similar in a given typeList, use that type.
+// if there are different types, use a type that indicate 'mixing'.
 function aggregateType(typeList) {
   typeList = typeList.filter((type) => type !== "");
   if (typeList.length === 0) {
@@ -114,6 +118,8 @@ function aggregateType(typeList) {
   return type;
 }
 
+// calculate the average health of all checks with valid statuses
+// returns a simplified list of statuses that indicates the overall health.
 function aggregateStatuses(statusLists) {
   const allStatuses = statusLists
     .filter((item) => item !== null && item.length > 0)
