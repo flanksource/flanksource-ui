@@ -1,0 +1,26 @@
+
+name: Lint
+on:
+  push:
+    branches:
+      - master
+      - main
+  pull_request:
+    paths:
+      - 'Makefile'
+      - '**.jsx?'
+      - '**.tsx?'
+      - '**/.babelrc'
+      - '**/.eslint*'
+      - '**/.prettierrc*'
+      - '**/package.json'
+      - '**/github/workflows/lint.yml'
+jobs:
+  eslint:
+    runs-on: ubuntu-latest
+    container:
+      image: node:15.14-alpine
+    steps:
+      - uses: actions/checkout@master
+      - run: npm ci
+      - run: npm run lint:eslint

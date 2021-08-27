@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { routes, routeList } from "./routes";
 
-function App() {
+export function App() {
   return (
     <Router>
       <Switch>
@@ -17,5 +17,3 @@ function App() {
     </Router>
   );
 }
-
-export default App;
