@@ -4,6 +4,12 @@ import { BsTable } from "react-icons/bs";
 import { RiLayoutGridLine } from "react-icons/ri";
 
 import { getLabels } from "./labels";
+
+import {
+  defaultGroupSelections,
+  getGroupSelections,
+  getGroupedChecks
+} from "./grouping";
 import { filterChecks, isHealthy, labelIndex } from "./filter";
 import { CanaryTable } from "./table";
 import { CanaryCards } from "./card";
@@ -15,18 +21,20 @@ import { Dropdown } from "../Dropdown";
 import { Modal } from "../Modal";
 import { Toggle } from "../Toggle";
 
-const table = {
-  id: "dropdown-table",
-  name: "table",
-  icon: <BsTable />,
-  label: "Table"
-};
-const card = {
-  id: "dropdown-card",
-  name: "card",
-  icon: <RiLayoutGridLine />,
-  label: "Card"
-};
+const layoutSelections = [
+  {
+    id: "dropdown-table",
+    name: "table",
+    icon: <BsTable />,
+    label: "Table"
+  },
+  {
+    id: "dropdown-card",
+    name: "card",
+    icon: <RiLayoutGridLine />,
+    label: "Card"
+  }
+];
 
 function toggleLabel(selectedLabels, label) {
   const index = labelIndex(selectedLabels, label);
@@ -47,11 +55,13 @@ export class Canary extends React.Component {
     this.fetch = this.fetch.bind(this);
     this.select = this.select.bind(this);
     this.setStyle = this.setStyle.bind(this);
+    this.setGroupBy = this.setGroupBy.bind(this);
     this.setChecks = this.setChecks.bind(this);
     this.toggleLabel = this.toggleLabel.bind(this);
     this.togglePassing = this.togglePassing.bind(this);
     this.state = {
-      style: table,
+      style: layoutSelections[0],
+      groupBy: defaultGroupSelections[0],
       selected: null,
       // eslint-disable-next-line react/no-unused-state
       lastFetched: null,
@@ -95,16 +105,16 @@ export class Canary extends React.Component {
     });
   }
 
+  setGroupBy(group) {
+    this.setState({
+      groupBy: group
+    });
+  }
+
   toggleLabel(label) {
     this.setState((state) => ({
       selectedLabels: toggleLabel(state.selectedLabels, label)
     }));
-  }
-
-  fetch() {
-    fetch(this.url)
-      .then((result) => result.json())
-      .then(this.setChecks);
   }
 
   togglePassing() {
@@ -122,6 +132,12 @@ export class Canary extends React.Component {
     }
   }
 
+  fetch() {
+    fetch(this.url)
+      .then((result) => result.json())
+      .then(this.setChecks);
+  }
+
   render() {
     const { state } = this;
     const {
@@ -129,7 +145,8 @@ export class Canary extends React.Component {
       hidePassing,
       selectedLabels,
       style,
-      selected
+      selected,
+      groupBy
     } = state;
 
     // first filter for pass/fail
@@ -145,20 +162,47 @@ export class Canary extends React.Component {
       0
     );
     const passedAll = reduce(
-      stateChecks,
+      checks,
       (sum, c) => (isHealthy(c) ? sum + 1 : sum),
       0
     );
 
+    // generate available grouping selections for dropdown menu
+    const groupSelections = getGroupSelections(checks);
+
+    // reset grouping if currently selected groupBy isn't available anymore
+    if (groupSelections.findIndex((o) => o.label === groupBy.label) === -1) {
+      this.setGroupBy(groupSelections[0]);
+    }
+
+    // if a grouping is selected, create a grouped version of the checks array
+    let hasGrouping = false;
+    let groupedChecks = [];
+    if (groupBy.name !== "no-group") {
+      hasGrouping = true;
+      groupedChecks = getGroupedChecks(checks, groupBy);
+    }
+
     return (
       <div className="w-full flex flex-col-reverse lg:flex-row">
         {/* middle panel */}
-        <div className="w-full p-6">
+        <div className="w-full">
           {style.name === "card" && (
-            <CanaryCards checks={checks} onClick={this.select} />
+            <div className="m-6">
+              <CanaryCards checks={checks} onClick={this.select} />
+            </div>
           )}
           {style.name === "table" && (
-            <CanaryTable checks={checks} onClick={this.select} />
+            <div className="m-6 mt-0 relative">
+              <div className="sticky top-0 h-6 bg-white z-10" />
+              <CanaryTable
+                theadClass="sticky top-6 z-10"
+                checks={hasGrouping ? groupedChecks : checks}
+                hasGrouping={hasGrouping}
+                groupingLabel={groupBy.label}
+                onClick={this.select}
+              />
+            </div>
           )}
         </div>
 
@@ -204,13 +248,25 @@ export class Canary extends React.Component {
 
             {/* filtering tools */}
             <div className="h-full relative lg:w-80">
-              <Dropdown
-                items={[card, table]}
-                selected={style}
-                setSelected={this.setStyle}
-                className="mb-6"
-              />
+              <div className="mb-8">
+                <Dropdown
+                  items={layoutSelections}
+                  selected={style}
+                  setSelected={this.setStyle}
+                  className="mb-4"
+                  label="Layout"
+                />
 
+                {style.name === "table" && (
+                  <Dropdown
+                    items={groupSelections}
+                    selected={groupBy}
+                    setSelected={this.setGroupBy}
+                    className="mb-4"
+                    label="Group items by"
+                  />
+                )}
+              </div>
               <Toggle
                 label="Hide Passing"
                 enabled={hidePassing}

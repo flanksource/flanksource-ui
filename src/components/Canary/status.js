@@ -1,11 +1,24 @@
 import { Status } from "../Status";
 
-export function StatusList({ check }) {
-  if (check.checkStatuses && check.checkStatuses.length >= 1) {
+export function StatusList({ check, checkStatuses }) {
+  if (check && check.checkStatuses && check.checkStatuses.length > 0) {
     return (
       <>
         {check.checkStatuses.map((status) => (
-          <CanaryStatus key={check.key} status={status} className="mr-0.5" />
+          <CanaryStatus
+            key={`${status.time}-${status.duration}-${status.message}`}
+            status={status}
+            className="mr-0.5"
+          />
+        ))}
+      </>
+    );
+  }
+  if (checkStatuses && checkStatuses.length > 0) {
+    return (
+      <>
+        {checkStatuses.map((status) => (
+          <CanaryStatus key={status.id} status={status} className="mr-0.5" />
         ))}
       </>
     );
