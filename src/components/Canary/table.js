@@ -105,7 +105,7 @@ function aggregateType(typeList) {
     return null;
   }
   let type = typeList[0];
-  for (let i = 0; i < typeList.length; i += 1 {
+  for (let i = 0; i < typeList.length; i += 1) {
     if (typeList[i] !== type) {
       type = "multiple";
       break;
