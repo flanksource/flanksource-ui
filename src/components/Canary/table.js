@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { FaChevronRight } from "react-icons/fa";
 import { Title, Uptime, Latency } from "./data";
-import { StatusList, CanaryStatus } from "./status";
+import { StatusList } from "./status";
 import { Icon } from "../Icon";
 
 export function CanaryTable({
