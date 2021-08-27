@@ -92,7 +92,8 @@ export function CanaryDescription({ check }) {
       key: `${check.key}endpoint`,
       name: "Endpoint",
       value: check.endpoint,
-      colspan: 2
+      colspan: 2,
+      colstart: 1
     },
     {
       key: `${check.key}checks`,
@@ -104,7 +105,8 @@ export function CanaryDescription({ check }) {
           columns={["Age", "Duration", "Message"]}
         />
       ),
-      colspan: 2
+      colspan: 2,
+      colstart: 1
     }
   ];
   return <DescriptionCard items={items} />;
