@@ -14,7 +14,7 @@ export function CanaryCards(props) {
         >
           <button
             type="button"
-            className="flex-1 flex pl-3 items-center cursor-pointer justify-between border-t border-r border-b border-gray-200 bg-white rounded-r-md truncate  "
+            className="text-left flex-1 flex pl-3 items-center cursor-pointer justify-between border-t border-r border-b border-gray-200 bg-white rounded-r-md truncate  "
             onClick={() => onClick(check)}
           >
             <div className="flex-1 py-2 text-sm ">
