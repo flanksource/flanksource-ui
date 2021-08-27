@@ -15,7 +15,9 @@ export function DescriptionCard({ title, subtitle, items }) {
             {items.map((item) => (
               <div
                 key={item.key}
-                className={`col-span-${item.colspan ? item.colspan : 1}`}
+                className={`col-span-${item.colspan ? item.colspan : 1} ${
+                  item.colstart ? `col-start-${item.colstart}` : ""
+                }`}
               >
                 <dt className="text-sm font-medium text-gray-500">
                   {item.name}

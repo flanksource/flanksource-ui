@@ -8,14 +8,11 @@ import { CanaryStatus } from "./status";
 import { Duration, isEmpty } from "./utils";
 
 export function CanaryDescription({ check }) {
-  let statii = check.checkStatuses;
+  const statii = check.checkStatuses != null ? check.checkStatuses : [];
   const data = [];
-  if (statii == null) {
-    statii = [];
-  }
-  statii.forEach((status, idx) => {
+  statii.forEach((status) => {
     data.push({
-      key: `${check.key}.${idx}`,
+      key: `${check.key}.${check.description}`,
       age: format(`${status.time} UTC`),
       message: (
         <>
@@ -95,7 +92,8 @@ export function CanaryDescription({ check }) {
       key: `${check.key}endpoint`,
       name: "Endpoint",
       value: check.endpoint,
-      colspan: 2
+      colspan: 2,
+      colstart: 1
     },
     {
       key: `${check.key}checks`,
@@ -107,7 +105,8 @@ export function CanaryDescription({ check }) {
           columns={["Age", "Duration", "Message"]}
         />
       ),
-      colspan: 2
+      colspan: 2,
+      colstart: 1
     }
   ];
   return <DescriptionCard items={items} />;
