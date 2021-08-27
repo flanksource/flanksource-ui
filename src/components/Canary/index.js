@@ -162,7 +162,7 @@ export class Canary extends React.Component {
       0
     );
     const passedAll = reduce(
-      stateChecks,
+      checks,
       (sum, c) => (isHealthy(c) ? sum + 1 : sum),
       0
     );
