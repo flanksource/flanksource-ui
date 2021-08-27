@@ -32,7 +32,7 @@
     "lodash": "^4.17.21",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.2.7"
   },
-  "proxy": "https://canaries.mgmt.bpm.dev.za.omapps.net",
+  "proxy": "https://canaries.lab.moshloop.com",
   "scripts": {
     "dev": "cross-env DISABLE_ESLINT_PLUGIN=true NODE_ENV=development craco start",
     "build": "cross-env DISABLE_ESLINT_PLUGIN=true NODE_ENV=production craco build",
