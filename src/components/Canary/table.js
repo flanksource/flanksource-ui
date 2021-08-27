@@ -1,6 +1,6 @@
 import React from "react";
 import { Title, Uptime, Latency } from "./data";
-import StatusList from "./status";
+import { StatusList } from "./status";
 
 export function CanaryTable({ ...props }) {
   const tableHeaderClass = `px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-100 first:rounded-tl-md last:rounded-tr-md`;
@@ -25,9 +25,9 @@ export function CanaryTable({ ...props }) {
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
-          {props.checks.map((check, idx) => (
+          {props.checks.map((check) => (
             <tr
-              key={check.key + "table" + idx}
+              key={check.key}
               onClick={() => props.onClick(check)}
               className="cursor-pointer"
             >

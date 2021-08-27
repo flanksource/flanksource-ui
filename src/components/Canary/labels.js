@@ -1,12 +1,12 @@
-import Badge from "../Badge";
+import { Badge } from "../Badge";
 
 export function Labels({ labels }) {
   if (labels == null) {
     return null;
   }
-  var items = [];
-  for (var k in labels) {
-    if (labels[k] == "true") {
+  const items = [];
+  for (const k of labels) {
+    if (labels[k] === "true") {
       items.push(
         <div key={`${k}`}>
           <Badge text={k} />{" "}
@@ -25,29 +25,33 @@ export function Labels({ labels }) {
 
 export function getLabels(checks) {
   if (checks == null || typeof checks[Symbol.iterator] !== "function") {
+    // eslint-disable-next-line no-console
     console.error("unknown check format", checks);
     return [];
   }
-  var labelMap = {};
+  const labelMap = {};
   for (const check of checks) {
     if (check.labels) {
-      for (let k in check.labels) {
-        let v = check.labels[k];
-        var id = `canary:${k}:${v}`;
-        labelMap[id] = {
-          type: "canary",
-          id: id,
-          key: k,
-          value: v,
-          label: `${k}: ${v}`,
-        };
+      for (const check of checks) {
+        if (check.labels) {
+          for (const [key, value] of Object.entries(check.labels)) {
+            const id = `canary:${key}:${value}`;
+            labelMap[id] = {
+              type: "canary",
+              id,
+              key,
+              value,
+              label: `${key}: ${value}`
+            };
+          }
+        }
       }
     }
   }
 
-  var labels = [];
-  Object.values(labelMap).map((label) => {
-    if (label.value == "true") {
+  const labels = [];
+  Object.values(labelMap).forEach((label) => {
+    if (label.value === "true") {
       label.label = label.key;
     }
     labels.push(label);

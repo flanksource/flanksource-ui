@@ -1,28 +1,28 @@
-import { Labels } from "./labels";
 import { format } from "timeago.js";
-import Badge from "../Badge";
+import { Labels } from "./labels";
+import { Badge } from "../Badge";
 import { Latency, Uptime } from "./data";
-import Description from "../DescriptionCard";
-import Table from "../Table";
+import { DescriptionCard } from "../DescriptionCard";
+import { Table } from "../Table";
 import { CanaryStatus } from "./status";
-import { Duration, is_empty } from "./utils";
+import { Duration, isEmpty } from "./utils";
 
 export function CanaryDescription({ check }) {
-  var statii = check.checkStatuses;
-  var data = [];
+  let statii = check.checkStatuses;
+  const data = [];
   if (statii == null) {
-    statii = []
+    statii = [];
   }
-  statii.map((status, idx) => {
+  statii.forEach((status, idx) => {
     data.push({
-      key: check.key + "." + idx,
-      age: format(status.time + " UTC"),
+      key: `${check.key}.${idx}`,
+      age: format(`${status.time} UTC`),
       message: (
         <>
           {" "}
           <CanaryStatus status={status} />
           {status.message}{" "}
-          {!is_empty(status.error) &&
+          {!isEmpty(status.error) &&
             status.error.split("\n").map((item) => (
               <>
                 {item}
@@ -35,9 +35,9 @@ export function CanaryDescription({ check }) {
     });
   });
 
-  let items = [
+  const items = [
     {
-      key: check.key + "name",
+      key: `${check.key}name`,
       name: "Name",
       value: (
         <span>
@@ -46,63 +46,63 @@ export function CanaryDescription({ check }) {
       )
     },
     {
-      key: check.key + "namespace",
+      key: `${check.key}namespace`,
       name: "Namespace",
       value: <Badge text={check.namespace} />
     },
     {
-      key: check.key + "latency",
+      key: `${check.key}latency`,
       name: "Latency",
       value: <Latency check={check} />
     },
     {
-      key: check.key + "uptime",
+      key: `${check.key}uptime`,
       name: "Uptime",
       value: <Uptime check={check} />
     },
     {
-      key: check.key + "owner",
+      key: `${check.key}owner`,
       name: "Owner",
       value: check.owner
     },
     {
-      key: check.key + "severity",
+      key: `${check.key}severity`,
       name: "Severity",
       value: check.severity
     },
     {
-      key: check.key + "labels",
+      key: `${check.key}labels`,
       name: "Labels",
       value: <Labels labels={check.labels} />
     },
     {
-      key: check.key + "runner",
+      key: `${check.key}runner`,
       name: "Runner",
       value: <Labels labels={check.runnerLabels} />
     },
 
     {
-      key: check.key + "interval",
+      key: `${check.key}interval`,
       name: "Interval",
       value: check.interval > 0 ? check.interval : check.schedule
     },
     {
-      key: check.key + "type",
+      key: `${check.key}type`,
       name: "Type",
       value: check.type
     },
     {
-      key: check.key + "endpoint",
+      key: `${check.key}endpoint`,
       name: "Endpoint",
       value: check.endpoint,
       colspan: 2
     },
     {
-      key: check.key + "checks",
+      key: `${check.key}checks`,
       name: "Checks",
       value: (
         <Table
-          id={check.key + "-table"}
+          id={`${check.key}-table`}
           data={data}
           columns={["Age", "Duration", "Message"]}
         />
@@ -110,5 +110,5 @@ export function CanaryDescription({ check }) {
       colspan: 2
     }
   ];
-  return <Description items={items} />;
+  return <DescriptionCard items={items} />;
 }

@@ -1,9 +1,7 @@
-
 import { Icons } from "../../icons";
 
-export default function Icon({ size = "sm", name, className, ...props }) {
-
-  var iconClassName
+export function Icon({ size = "sm", name, className, alt = "", ...props }) {
+  let iconClassName;
   switch (size) {
     case "xs":
       iconClassName = "-ml-0.5 mr-2 h-4 w-4";
@@ -20,36 +18,38 @@ export default function Icon({ size = "sm", name, className, ...props }) {
     case "xl":
       iconClassName = "-ml-1 mr-2 h-6 w-6";
       break;
+    default:
+      iconClassName = "-ml-0.5 mr-2 h-4 w-4";
   }
 
-  if (name != null && (name.startsWith("http:") || name.startsWith("https://"))) {
-    props.icon = name
-  } else if (name != "") {
-    props.icon = Icons[name]
+  if (
+    name != null &&
+    (name.startsWith("http:") || name.startsWith("https://"))
+  ) {
+    props.icon = name;
+  } else if (name !== "") {
+    props.icon = Icons[name];
   }
 
-  if (typeof (props.icon) == "string") {
+  if (typeof props.icon === "string") {
     return (
-      <img src={props.icon} className={`${iconClassName} ${className}`} />
-    )
+      <img
+        alt={alt}
+        src={props.icon}
+        className={`${iconClassName} ${className}`}
+      />
+    );
   }
 
-  return (
-    <>
-      {props.icon ? <props.icon className={iconClassName} /> : null}
-    </>
-  );
+  return <>{props.icon ? <props.icon className={iconClassName} /> : null}</>;
 }
 
-
-
-export function Avatar({ url }) {
+export function Avatar({ url, alt = "" }) {
   return (
     <img
       className="h-10 w-10 rounded-full bg-gray-400 flex items-center justify-center ring-8 ring-white"
       src={url}
-      alt=""
+      alt={alt}
     />
-
   );
 }
