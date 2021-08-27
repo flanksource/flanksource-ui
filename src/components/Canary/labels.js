@@ -61,12 +61,12 @@ export function getLabels(checks) {
 
 // function to get an array of labels that isnt "true or calse"
 export function getNonBooleanLabels(checks) {
-  let nonBooleanLabels = [];
+  const nonBooleanLabels = [];
   checks.forEach((check) => {
     if (check.labels) {
-      let labelKeys = Object.keys(check.labels);
+      const labelKeys = Object.keys(check.labels);
       labelKeys.forEach((key) => {
-        let val = check.labels[key];
+        const val = check.labels[key];
         // push new label to non-boolean-labels array if it doesnt exist yet
         if (
           val !== "true" &&
