@@ -1,28 +1,3 @@
-import { Badge } from "../Badge";
-
-export function Labels({ labels }) {
-  if (labels == null) {
-    return null;
-  }
-  const items = [];
-  for (const k of labels) {
-    if (labels[k] === "true") {
-      items.push(
-        <div key={`${k}`}>
-          <Badge text={k} />{" "}
-        </div>
-      );
-    } else {
-      items.push(
-        <div key={`${k}-${labels[k]}`}>
-          <Badge text={`${k}: ${labels[k]}`} />{" "}
-        </div>
-      );
-    }
-  }
-  return items;
-}
-
 export function getLabels(checks) {
   if (checks == null || typeof checks[Symbol.iterator] !== "function") {
     // eslint-disable-next-line no-console

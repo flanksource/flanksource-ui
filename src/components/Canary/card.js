@@ -1,5 +1,5 @@
 import React from "react";
-import { Title } from "./data";
+import { Title } from "./renderers";
 import { StatusList } from "./status";
 
 export function CanaryCards(props) {
