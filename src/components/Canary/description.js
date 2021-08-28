@@ -1,5 +1,4 @@
 import { format } from "timeago.js";
-import { Labels } from "./labels";
 import { Badge } from "../Badge";
 import { Latency, Uptime, Duration, Labels } from "./renderers";
 import { DescriptionCard } from "../DescriptionCard";
@@ -16,9 +15,7 @@ export function CanaryDescription({ check }) {
       age: format(`${status.time} UTC`),
       message: (
         <>
-          {" "}
-          <CanaryStatus status={status} />
-          {status.message}{" "}
+          <CanaryStatus status={status} /> {status.message}{" "}
           {!isEmpty(status.error) &&
             status.error.split("\n").map((item) => (
               <>
