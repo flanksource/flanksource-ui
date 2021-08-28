@@ -13,13 +13,14 @@ import {
 import { filterChecks, isHealthy, labelIndex } from "./filter";
 import { CanaryTable } from "./table";
 import { CanaryCards } from "./card";
-import { CanarySorter, Title } from "./data";
+import { CanarySorter } from "./data";
 import { CanaryDescription } from "./description";
 
 import { StatCard } from "../StatCard";
 import { Dropdown } from "../Dropdown";
 import { Modal } from "../Modal";
 import { Toggle } from "../Toggle";
+import { Title } from "./renderers";
 
 const layoutSelections = [
   {

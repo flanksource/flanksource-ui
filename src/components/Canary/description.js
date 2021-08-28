@@ -1,11 +1,11 @@
 import { format } from "timeago.js";
 import { Labels } from "./labels";
 import { Badge } from "../Badge";
-import { Latency, Uptime } from "./data";
+import { Latency, Uptime, Duration, Labels } from "./renderers";
 import { DescriptionCard } from "../DescriptionCard";
 import { Table } from "../Table";
 import { CanaryStatus } from "./status";
-import { Duration, isEmpty } from "./utils";
+import { isEmpty } from "./utils";
 
 export function CanaryDescription({ check }) {
   const statii = check.checkStatuses != null ? check.checkStatuses : [];
