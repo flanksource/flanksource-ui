@@ -18,9 +18,6 @@ import { Table } from "../../components/Table";
 import { Input } from "../../components/Input";
 
 import { Icons } from "../../icons";
-import { Canary } from "../../components/Canary";
-
-import canaries from "../../data/checks.json";
 
 const activity = [
   {
@@ -222,6 +219,11 @@ export function Examples() {
           <h4>Icon</h4>
           <div className="mt-4 bg-gray-50 p-8 rounded-md">
             <Icon icon={Icons.s3} />
+            <Icon name="s3" />
+            <Icon name="mongo" />
+            <Status good={true} />
+            <Status good={false} className="h-16 w-16" />
+            <Status mixed={true} className="h-16 w-16" />
           </div>
         </section>
         <section className="p-8 rounded-md shadow-md mb-12 border border-gray-200">
@@ -258,12 +260,6 @@ export function Examples() {
           </div>
         </section>
 
-        <section className="p-8 rounded-md shadow-md mb-12 border border-gray-200">
-          <h4>Canary</h4>
-          <div className="mt-4 bg-gray-50 p-8 rounded-md">
-            <Canary checks={canaries.checks} />
-          </div>
-        </section>
 
         <section className="p-8 rounded-md shadow-md mb-12 border border-gray-200">
           <h4>Card</h4>
