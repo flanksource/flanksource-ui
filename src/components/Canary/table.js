@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { FaChevronRight } from "react-icons/fa";
-import { Title, Uptime, Latency, Percentage, Duration } from "./renderers";
+import aggregate from "./aggregate";
+import { Title, Uptime, Latency, Duration } from "./renderers";
 import { StatusList } from "./status";
-import { Icon } from "../Icon";
 
 export function CanaryTable({
   className,
@@ -46,7 +46,6 @@ export function CanaryTable({
                 })
                 .map((group) => (
                   <TableGroupRow
-                    showIcon
                     key={group}
                     title={group}
                     items={checks[group]}
@@ -84,88 +83,14 @@ export function CanaryTable({
   );
 }
 
-// if all check icons are similar in a given iconList, use that icon.
-// if there are different icons, use a icon that indicate 'mixing'.
-function aggregateIcon(iconList) {
-  iconList = iconList.filter((icon) => icon !== "");
-  if (iconList.length === 0) {
-    return null;
-  }
-  let icon = iconList[0];
-  for (let i = 0; i < iconList.length; i += 1) {
-    if (iconList[i] !== icon) {
-      icon = "multiple";
-      break;
-    }
-  }
-  return icon;
-}
 
-// if all check types are similar in a given typeList, use that type.
-// if there are different types, use a type that indicate 'mixing'.
-function aggregateType(typeList) {
-  typeList = typeList.filter((type) => type !== "");
-  if (typeList.length === 0) {
-    return null;
-  }
-  let type = typeList[0];
-  for (let i = 0; i < typeList.length; i += 1) {
-    if (typeList[i] !== type) {
-      type = "multiple";
-      break;
-    }
-  }
-  return type;
-}
-
-// calculate the average health of all checks with valid statuses
-// returns a simplified list of statuses that indicates the overall health.
-function aggregateStatuses(statusLists) {
-  const allStatuses = statusLists
-    .filter((item) => item !== null && item.length > 0)
-    .flatMap((item) => item);
-  let n = 0;
-  allStatuses.forEach((item) => {
-    if (item.status) {
-      n += 1;
-    }
-  });
-  const scorePercentage = n / allStatuses.length;
-  const scoreSimple = Math.floor(scorePercentage * 5);
-
-  const aggregated = [];
-  for (let i = 0; i < scoreSimple; i += 1) {
-    aggregated.push({
-      id: aggregated.length,
-      invalid: false,
-      status: true
-    });
-  }
-  while (aggregated.length < 5) {
-    aggregated.push({
-      id: aggregated.length,
-      invalid: false,
-      status: false
-    });
-  }
-  return aggregated;
-}
-
-function TableGroupRow({ title, items, onClick, showIcon, ...rest }) {
+function TableGroupRow({ title, items, onClick, ...rest }) {
+  const [_items, setItems] = useState(items)
   const [expanded, setExpanded] = useState(false);
-  const [aggregatedIcon, setAggregatedIcon] = useState(null);
-  const [aggregatedType, setAggregatedType] = useState(null);
-  const [aggregatedStatuses, setAggregatedStatuses] = useState(null);
 
-  useState(() => {
-    const iconsList = items.map((item) => item.icon);
-    const typesList = items.map((item) => item.type);
-    const statusLists = items.map((item) => item.checkStatuses);
-
-    setAggregatedIcon(aggregateIcon(iconsList));
-    setAggregatedType(aggregateType(typesList));
-    setAggregatedStatuses(aggregateStatuses(statusLists));
-  }, [items, items.length]);
+  const aggregated = useMemo(() => {
+    return aggregate(title, _items)
+  }, [_items])
 
   return (
     <>
@@ -181,25 +106,22 @@ function TableGroupRow({ title, items, onClick, showIcon, ...rest }) {
         <td className="px-6 py-3 w-full">
           <div className="flex items-center select-none">
             <FaChevronRight
-              className={`${
-                expanded ? "transform rotate-90" : ""
-              } mr-4 duration-75`}
+              className={`${expanded ? "transform rotate-90" : ""
+                } mr-4 duration-75`}
             />
-            {showIcon && (
-              <Icon
-                name={aggregatedIcon || aggregatedType}
-                className="inline mr-3"
-                size="xl"
-              />
-            )}
-            {title}
+            <Title check={aggregated} />
           </div>
         </td>
         <td className="px-6 py-2 whitespace-nowrap">
-          <StatusList checkStatuses={aggregatedStatuses} />
+          <StatusList check={aggregated} />
         </td>
-        <td />
-        <td />
+
+        <td className="px-6 py-2 whitespace-nowrap">
+          <Uptime check={aggregated} />
+        </td>
+        <td className="px-6 py-2 whitespace-nowrap">
+          <Latency check={aggregated} />
+        </td>
       </tr>
       {expanded &&
         items.map((item) => (
