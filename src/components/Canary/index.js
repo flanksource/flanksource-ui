@@ -2,25 +2,21 @@ import React from "react";
 import { orderBy, reduce } from "lodash";
 import { BsTable } from "react-icons/bs";
 import { RiLayoutGridLine } from "react-icons/ri";
-
-import { getLabels } from "./labels";
-
-import {
-  defaultGroupSelections,
-  getGroupSelections,
-  getGroupedChecks
-} from "./grouping";
-import { filterChecks, isHealthy, labelIndex } from "./filter";
-import { CanaryTable } from "./table";
-import { CanaryCards } from "./card";
-import { CanarySorter } from "./data";
-import { CanaryDescription } from "./description";
-
-import { StatCard } from "../StatCard";
 import { Dropdown } from "../Dropdown";
 import { Modal } from "../Modal";
+import { StatCard } from "../StatCard";
 import { Toggle } from "../Toggle";
+import { CanaryCards } from "./card";
+import { CanarySorter } from "../../store/Canary/data";
+import { CanaryDescription } from "./description";
+import { filterChecks, isHealthy, labelIndex } from "../../store/Canary/filter";
+import {
+  defaultGroupSelections, getGroupedChecks, getGroupSelections
+} from "../../store/Canary/grouping";
+import { getLabels } from "../../store/Canary/labels";
 import { Title } from "./renderers";
+import { CanaryTable } from "./table";
+
 
 const layoutSelections = [
   {
@@ -47,7 +43,7 @@ function toggleLabel(selectedLabels, label) {
   return selectedLabels;
 }
 
-export class Canary extends React.Component {
+export default class Canary extends React.Component {
   constructor(props) {
     super(props);
     this.url = props.url;

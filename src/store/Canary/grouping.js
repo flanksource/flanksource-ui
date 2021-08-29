@@ -4,13 +4,14 @@ import { TiSortAlphabeticallyOutline } from "react-icons/ti";
 import { AiOutlineAlignLeft } from "react-icons/ai";
 import { getNonBooleanLabels } from "./labels";
 
+export const NO_GROUP = {
+  id: "dropdown-no-group",
+  name: "no-group",
+  icon: <ImUngroup />,
+  label: "No Grouping"
+}
 export const defaultGroupSelections = [
-  {
-    id: "dropdown-no-group",
-    name: "no-group",
-    icon: <ImUngroup />,
-    label: "No Grouping"
-  },
+  NO_GROUP,
   {
     id: "dropdown-name",
     name: "name",

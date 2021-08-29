@@ -12,7 +12,7 @@ export function CanaryDescription({ check }) {
   statii.forEach((status) => {
     data.push({
       key: `${check.key}.${check.description}`,
-      age: format(`${status.time} UTC`),
+      age: format(`${status.time} UTC`, "en_short"),
       message: (
         <>
           <CanaryStatus status={status} /> {status.message}{" "}

@@ -2,6 +2,8 @@ import { Badge } from "../Badge";
 import { isEmpty } from "./utils";
 import { Icon } from "../Icon";
 
+import { GetName } from "../../store/Canary/data";
+
 export function Duration({ ms }) {
   if (ms == null || ms === 0) {
     return "";
@@ -72,7 +74,7 @@ export function Latency({ check }) {
 }
 
 export function Percentage({ val, upper, lower }) {
-  const empty = <span className="text-gray-500 text-light text-xs">-</span>;
+  const empty = <span className="text-gray-500 text-light text-xs" title={`${lower}/${upper}`}> -</ span>;
   if ((isEmpty(lower) && isEmpty(val)) || (upper == 0 && lower == 0)) {
     return empty;
   }
