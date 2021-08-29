@@ -1,6 +1,7 @@
 import { Badge } from "../Badge";
 import { isEmpty } from "./utils";
 import { Icon } from "../Icon";
+import { GetName } from "./data";
 
 export function Duration({ ms }) {
   if (ms == null || ms === 0) {
