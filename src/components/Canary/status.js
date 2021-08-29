@@ -27,5 +27,8 @@ export function StatusList({ check, checkStatuses }) {
 }
 
 export function CanaryStatus({ status, className }) {
-  return <Status state={status.status ? "ok" : "bad"} className={className} />;
+  if (status.mixed) {
+    return <Status mixed={status.mixed} className={className} />;
+  }
+  return <Status good={status.status} className={className} />;
 }

@@ -1,0 +1,5 @@
+.bg-mixed {
+  border-radius: 2;
+  border: 3px solid  rgba(52, 211, 153, var(--tw-bg-opacity)); ;
+  background: rgba(248, 113, 113, var(--tw-bg-opacity));
+}
