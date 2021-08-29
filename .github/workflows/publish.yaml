@@ -1,4 +1,4 @@
-on: 
+on:
   push:
     branches:
       - master
@@ -12,7 +12,12 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 10
+      - uses: actions/checkout@v2
       - run: npm install
+      - uses: codfish/semantic-release-action@v1
+        id: semantic
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: npm test
       - run: npm run compile
       - uses: JS-DevTools/npm-publish@v1
@@ -20,3 +25,4 @@ jobs:
           token: ${{ secrets.NPM_TOKEN }}
           access: public
           check-version: false
+        name: Create Release
