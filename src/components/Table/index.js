@@ -31,7 +31,7 @@ export function Table({ columns, data, id }) {
                     {columns.map((column) => (
                       <td
                         key={column.name}
-                        className="px-6 py-4 whitespace-nowrap"
+                        className="px-6 py-4 "
                       >
                         <div className="text-sm text-gray-900">
                           {row[column.name.toLowerCase()]}
