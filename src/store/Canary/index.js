@@ -1,5 +1,5 @@
 import { orderBy, reduce } from "lodash"
-import { action, computed, makeObservable, observable } from "mobx"
+import { action, computed, makeObservable, observable, flow } from "mobx"
 import { CanarySorter } from "./data"
 import { filterChecks, isHealthy, labelIndex } from "./filter"
 import { getGroupedChecks, getGroupSelections, NO_GROUP } from "./grouping"
@@ -30,28 +30,23 @@ export default class CanaryStore {
       passed: computed,
       failed: computed,
       filtered: computed,
+      load: flow,
       // groups: computed,
-      toggleLabel: action,
-      togglePassing: action,
-      setGroupBy: action
+      toggleLabel: action.bound,
+      togglePassing: action.bound,
+      setGroupBy: action.bound
     })
     this.url = url
     this.hidePassing = true
   }
 
-  load() {
-    fetch(this.url)
-      .then((result) => result.json())
-      .then(
-        action("fetchSuccess", (checks) => {
-          this.checks = checks.checks
-          // let checks = await result.json();
-          // this.checks = checks
-          this.lastFetched = new Date();
-          console.log("fetched", checks, this.passed)
-        }),
-        action("fetchFailure", (e) =>
-          this.error = e))
+  *load() {
+    const response = fetch(this.url).then((r) => r.json());
+    return response.then((r) => {
+      if (r != null) {
+        this.checks = r.checks
+      }
+    })
   }
 
   togglePassing() {
@@ -103,9 +98,8 @@ export default class CanaryStore {
   }
 
   get filtered() {
-    console.log(this.checks, this.hidePassing)
     let checks = filterChecks(this.checks, this.hidePassing, this.filters);
-    // return orderBy(checks, CanarySorter);
+    return orderBy(checks, CanarySorter);
     return this.checks
   }
 
