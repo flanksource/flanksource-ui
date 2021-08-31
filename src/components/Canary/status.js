@@ -6,7 +6,7 @@ export function StatusList({ check, checkStatuses }) {
       <>
         {check.checkStatuses.map((status) => (
           <CanaryStatus
-            key={`${status.time}-${status.duration}-${status.message}`}
+            key={status.id}
             status={status}
             className="mr-0.5"
           />
