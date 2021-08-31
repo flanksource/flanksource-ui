@@ -100,6 +100,9 @@ export function Percentage({ val, upper, lower }) {
 }
 
 export function Title({ check, showIcon = true }) {
+  if (check == null) {
+    return <span className="bg-red-400" > null</span>
+  }
   return (
     <>
       {showIcon && (

@@ -154,15 +154,15 @@ export class Canary extends React.Component {
     let checks = filterChecks(stateChecks, hidePassing, []);
     // get labels for the new subset
     const labels = getLabels(checks);
+    const passedAll = reduce(
+      stateChecks,
+      (sum, c) => (isHealthy(c) ? sum + 1 : sum),
+      0
+    );
     // filter the subset down
     checks = filterChecks(checks, this.stateHidePassing, selectedLabels);
     checks = orderBy(checks, CanarySorter);
     const passed = reduce(
-      checks,
-      (sum, c) => (isHealthy(c) ? sum + 1 : sum),
-      0
-    );
-    const passedAll = reduce(
       checks,
       (sum, c) => (isHealthy(c) ? sum + 1 : sum),
       0
