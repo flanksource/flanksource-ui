@@ -55,3 +55,48 @@ export function getNonBooleanLabels(checks) {
   });
   return nonBooleanLabels;
 }
+
+// filter checks based on exclusion/inclusion label filters
+// exclusion has a higher priority, and is considered prior to inclusion
+export function filterChecksByLabels(checks, labelFilters) {
+  const newChecks = [];
+  const excludedLabels = labelFilters.exclude;
+  const includedLabels = labelFilters.include;
+  checks.forEach((check) => {
+    let included = true; // initialized as true
+    if (check.labels) {
+      const currentLabels = Object.keys(check.labels);
+
+      // exclusion step
+      currentLabels.forEach((label) => {
+        // if current label exists in excluded labels, dont include this check
+        if (excludedLabels.indexOf(label) >= 0) {
+          included = false;
+        }
+      });
+
+      // inclusion step. Only considered if 'includedLabels' is not empty.
+      if (includedLabels.length > 0) {
+        let inclusionPass = false;
+        // if a label is found to be in 'includedLabels', pass the inclusion check
+        currentLabels.forEach((label) => {
+          if (includedLabels.indexOf(label) >= 0) {
+            inclusionPass = true;
+          }
+        });
+        // if this check already passes the exclusion check, apply results of inclusion check
+        if (included) {
+          included = inclusionPass;
+        }
+      }
+    } else if (includedLabels.length > 0) {
+      // do not include checks with null labels if 'includedLabels' are not empty
+      included = false;
+    }
+    // push current check into result array if included.
+    if (included) {
+      newChecks.push(check);
+    }
+  });
+  return newChecks;
+}

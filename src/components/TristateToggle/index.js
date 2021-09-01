@@ -18,7 +18,8 @@ export function TristateToggle({ onChange, defaultValue, label, className }) {
   useEffect(() => {
     // trigger onChange callback on value change
     onChange(value);
-  }, [value, onChange]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
 
   // cycle between toggle states
   function onToggle() {
@@ -36,17 +37,17 @@ export function TristateToggle({ onChange, defaultValue, label, className }) {
       case -1:
         pos = "left";
         bgIndex = 1;
-        tooltip = `${label || "This item"} is currently excluded`;
+        tooltip = `${label || "This item"} is excluded`;
         break;
       case 1:
         pos = "right";
         bgIndex = 2;
-        tooltip = `${label || "This item"} is currently included`;
+        tooltip = `${label || "This item"} is included`;
         break;
       default:
         pos = undefined;
         bgIndex = 0;
-        tooltip = `${label || "This item"} is currently unaffected`;
+        tooltip = `${label || "This item"} is unaffected`;
     }
     setPosition(pos);
     setBgColor(colors[bgIndex]);

@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { findIndex, orderBy, reduce } from "lodash";
+import React from "react";
+import { orderBy, reduce } from "lodash";
 import { BsTable } from "react-icons/bs";
 import { RiLayoutGridLine } from "react-icons/ri";
 
-import { getLabels } from "./labels";
+import { getLabels, filterChecksByLabels } from "./labels";
 
 import {
   defaultGroupSelections,
   getGroupSelections,
   getGroupedChecks
 } from "./grouping";
-import { filterChecks, isHealthy, labelIndex } from "./filter";
+import { filterChecks, isHealthy } from "./filter";
 import { CanaryTable } from "./table";
 import { CanaryCards } from "./card";
 import { CanarySorter } from "./data";
@@ -60,7 +60,10 @@ export class Canary extends React.Component {
       hidePassing: true,
       // eslint-disable-next-line react/no-unused-state
       labels: getLabels(props.checks),
-      selectedLabels: getLabels(props.checks),
+      labelFilters: {
+        exclude: [],
+        include: []
+      },
       checks: props.checks ? props.checks : []
     };
   }
@@ -89,7 +92,6 @@ export class Canary extends React.Component {
       // eslint-disable-next-line react/no-unused-state
       lastFetched: new Date()
     });
-    console.log("checks", checks);
   }
 
   setStyle(style) {
@@ -101,12 +103,6 @@ export class Canary extends React.Component {
   setGroupBy(group) {
     this.setState({
       groupBy: group
-    });
-  }
-
-  setSelectedLabels(selectedLabels) {
-    this.setState({
-      selectedLabels
     });
   }
 
@@ -125,6 +121,35 @@ export class Canary extends React.Component {
     }
   }
 
+  // update labelFilters array based on a label's toggle state change
+  updateLabelFilters(labelKey, labelValue) {
+    const { labelFilters } = this.state;
+    const newLabelFilters = { ...labelFilters };
+
+    // clearing labelKey in both 'include' and 'exclude' arrays
+    newLabelFilters.include = newLabelFilters.include.filter(
+      (o) => o !== labelKey
+    );
+    newLabelFilters.exclude = newLabelFilters.exclude.filter(
+      (o) => o !== labelKey
+    );
+
+    switch (labelValue) {
+      // label should be excluded
+      case -1:
+        newLabelFilters.exclude.push(labelKey);
+        break;
+      // label should be included
+      case 1:
+        newLabelFilters.include.push(labelKey);
+        break;
+      // label should be unaffected
+      default:
+        break;
+    }
+    this.setState({ labelFilters: newLabelFilters });
+  }
+
   fetch() {
     fetch(this.url)
       .then((result) => result.json())
@@ -136,10 +161,10 @@ export class Canary extends React.Component {
     const {
       checks: stateChecks,
       hidePassing,
-      selectedLabels,
       style,
       selected,
-      groupBy
+      groupBy,
+      labelFilters
     } = state;
 
     // first filter for pass/fail
@@ -147,7 +172,7 @@ export class Canary extends React.Component {
     // get labels for the new subset
     const labels = getLabels(checks);
     // filter the subset down
-    checks = filterChecks(checks, this.stateHidePassing, selectedLabels);
+    checks = filterChecksByLabels(checks, labelFilters); // filters checks by its 'include/exclude' filters
     checks = orderBy(checks, CanarySorter);
     const passed = reduce(
       checks,
@@ -275,10 +300,16 @@ export class Canary extends React.Component {
                 <div className="uppercase font-semibold text-sm mb-3 text-indigo-700">
                   Filter By Label
                 </div>
-                <TristateToggles
-                  labels={labels}
-                  setSelectedLabels={this.setSelectedLabels}
-                />
+                {labels.map((label) => (
+                  <TristateToggle
+                    key={label.key}
+                    className="mb-2"
+                    onChange={(state) => {
+                      this.updateLabelFilters(label.key, state);
+                    }}
+                    label={label.label}
+                  />
+                ))}
               </div>
             </div>
           </div>
@@ -295,21 +326,4 @@ export class Canary extends React.Component {
       </div>
     );
   }
-}
-
-function TristateToggles({ labels, setSelectedLabels }) {
-  const [labelState, setLabelState] = useState([...labels]);
-
-  return (
-    <>
-      {labelState.map((label) => (
-        <TristateToggle
-          key={label.key}
-          className="mb-2"
-          onChange={(val) => {}}
-          label={label.label}
-        />
-      ))}
-    </>
-  );
 }
