@@ -8,9 +8,15 @@ export function TristateToggle({ onChange, defaultValue, label, className }) {
   const [value, setValue] = useState(defaultValue || states[0]);
   const [position, setPosition] = useState(undefined);
   const [bgColor, setBgColor] = useState(colors[0]);
+  const [tooltipText, setTooltipText] = useState("");
 
-  // trigger onChange callback on value change
   useEffect(() => {
+    updateButton(value);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    // trigger onChange callback on value change
     onChange(value);
   }, [value, onChange]);
 
@@ -18,25 +24,33 @@ export function TristateToggle({ onChange, defaultValue, label, className }) {
   function onToggle() {
     const nextState = getNextState(value);
     setValue(nextState);
+    updateButton(nextState);
+  }
 
-    // map and update position and bgColor
+  function updateButton(value) {
+    // map and update position, bgColor, and tooltip text
     let pos;
     let bgIndex;
-    switch (nextState) {
+    let tooltip;
+    switch (value) {
       case -1:
         pos = "left";
         bgIndex = 1;
+        tooltip = `${label || "This item"} is currently excluded`;
         break;
       case 1:
         pos = "right";
         bgIndex = 2;
+        tooltip = `${label || "This item"} is currently included`;
         break;
       default:
         pos = undefined;
         bgIndex = 0;
+        tooltip = `${label || "This item"} is currently unaffected`;
     }
     setPosition(pos);
     setBgColor(colors[bgIndex]);
+    setTooltipText(tooltip);
   }
 
   // retrieve next state, given current state
@@ -48,6 +62,7 @@ export function TristateToggle({ onChange, defaultValue, label, className }) {
   return (
     <button
       type="button"
+      title={tooltipText}
       onClick={onToggle}
       className={`${className} flex w-full`}
     >
