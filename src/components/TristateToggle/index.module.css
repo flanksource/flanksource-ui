@@ -1,0 +1,31 @@
+.toggle {
+  border-radius: 40px;
+  min-width: 44px;
+  height: 24px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition-duration: 100ms;
+}
+
+.buttonInnerCircle {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: white;
+
+  box-shadow: 0px 0px 4px -1px rgb(0 0 0 / 30%);
+
+  transition-duration: 100ms;
+  transform: translateX(0);
+}
+
+.buttonInnerCircle.left {
+  transform: translateX(-10px);
+}
+
+.buttonInnerCircle.right {
+  transform: translateX(10px);
+}

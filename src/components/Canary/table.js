@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaChevronRight } from "react-icons/fa";
-import { Title, Uptime, Latency, Percentage, Duration } from "./renderers";
+import { Title, Uptime, Latency } from "./renderers";
 import { StatusList } from "./status";
 import { Icon } from "../Icon";
 
@@ -157,7 +157,7 @@ function TableGroupRow({ title, items, onClick, showIcon, ...rest }) {
   const [aggregatedType, setAggregatedType] = useState(null);
   const [aggregatedStatuses, setAggregatedStatuses] = useState(null);
 
-  useState(() => {
+  useEffect(() => {
     const iconsList = items.map((item) => item.icon);
     const typesList = items.map((item) => item.type);
     const statusLists = items.map((item) => item.checkStatuses);

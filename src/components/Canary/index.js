@@ -1,5 +1,5 @@
-import React from "react";
-import { orderBy, reduce } from "lodash";
+import React, { useEffect, useState } from "react";
+import { findIndex, orderBy, reduce } from "lodash";
 import { BsTable } from "react-icons/bs";
 import { RiLayoutGridLine } from "react-icons/ri";
 
@@ -22,6 +22,8 @@ import { Modal } from "../Modal";
 import { Toggle } from "../Toggle";
 import { Title } from "./renderers";
 
+import { TristateToggle } from "../TristateToggle";
+
 const layoutSelections = [
   {
     id: "dropdown-table",
@@ -37,16 +39,6 @@ const layoutSelections = [
   }
 ];
 
-function toggleLabel(selectedLabels, label) {
-  const index = labelIndex(selectedLabels, label);
-  if (index >= 0) {
-    return selectedLabels.filter((i) => i.id !== label.id);
-  }
-  selectedLabels.push(label);
-
-  return selectedLabels;
-}
-
 export class Canary extends React.Component {
   constructor(props) {
     super(props);
@@ -58,7 +50,6 @@ export class Canary extends React.Component {
     this.setStyle = this.setStyle.bind(this);
     this.setGroupBy = this.setGroupBy.bind(this);
     this.setChecks = this.setChecks.bind(this);
-    this.toggleLabel = this.toggleLabel.bind(this);
     this.togglePassing = this.togglePassing.bind(this);
     this.state = {
       style: layoutSelections[0],
@@ -98,6 +89,7 @@ export class Canary extends React.Component {
       // eslint-disable-next-line react/no-unused-state
       lastFetched: new Date()
     });
+    console.log("checks", checks);
   }
 
   setStyle(style) {
@@ -112,10 +104,10 @@ export class Canary extends React.Component {
     });
   }
 
-  toggleLabel(label) {
-    this.setState((state) => ({
-      selectedLabels: toggleLabel(state.selectedLabels, label)
-    }));
+  setSelectedLabels(selectedLabels) {
+    this.setState({
+      selectedLabels
+    });
   }
 
   togglePassing() {
@@ -264,9 +256,13 @@ export class Canary extends React.Component {
                     selected={groupBy}
                     setSelected={this.setGroupBy}
                     className="mb-4"
-                    label="Group items by"
+                    label="Group By"
                   />
                 )}
+              </div>
+
+              <div className="uppercase font-semibold text-sm mb-3 text-indigo-700">
+                Filter By Health
               </div>
               <Toggle
                 label="Hide Passing"
@@ -275,15 +271,15 @@ export class Canary extends React.Component {
                 className="mb-3"
               />
 
-              {labels.map((label) => (
-                <Toggle
-                  key={label.label}
-                  label={label.label}
-                  enabled={labelIndex(selectedLabels, label) >= 0}
-                  setEnabled={() => this.toggleLabel(label)}
-                  className="mb-3"
+              <div className="mt-8">
+                <div className="uppercase font-semibold text-sm mb-3 text-indigo-700">
+                  Filter By Label
+                </div>
+                <TristateToggles
+                  labels={labels}
+                  setSelectedLabels={this.setSelectedLabels}
                 />
-              ))}
+              </div>
             </div>
           </div>
         </div>
@@ -299,4 +295,21 @@ export class Canary extends React.Component {
       </div>
     );
   }
+}
+
+function TristateToggles({ labels, setSelectedLabels }) {
+  const [labelState, setLabelState] = useState([...labels]);
+
+  return (
+    <>
+      {labelState.map((label) => (
+        <TristateToggle
+          key={label.key}
+          className="mb-2"
+          onChange={(val) => {}}
+          label={label.label}
+        />
+      ))}
+    </>
+  );
 }
