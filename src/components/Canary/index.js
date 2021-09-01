@@ -226,7 +226,7 @@ export class Canary extends React.Component {
 
         {/* right panel */}
         <div className="bg-gray-50">
-          <div className="p-6 space-y-6 sticky top-0">
+          <div className="p-6 space-y-6 sticky top-0 h-screen overflow-y-auto">
             <StatCard
               title="All Checks"
               customValue={
@@ -265,7 +265,7 @@ export class Canary extends React.Component {
             )}
 
             {/* filtering tools */}
-            <div className="h-full relative lg:w-80">
+            <div className="relative lg:w-80">
               <div className="mb-8">
                 <Dropdown
                   items={layoutSelections}
