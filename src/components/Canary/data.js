@@ -1,4 +1,5 @@
 import { isEmpty } from "./utils";
+
 export function CanarySorter(check) {
   return GetName(check).toLowerCase();
 }

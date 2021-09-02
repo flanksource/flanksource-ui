@@ -5,11 +5,7 @@ export function StatusList({ check, checkStatuses }) {
     return (
       <>
         {check.checkStatuses.map((status) => (
-          <CanaryStatus
-            key={status.id}
-            status={status}
-            className="mr-0.5"
-          />
+          <CanaryStatus key={status.id} status={status} className="mr-0.5" />
         ))}
       </>
     );

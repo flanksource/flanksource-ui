@@ -2,8 +2,7 @@ import React, { useEffect, useState } from "react";
 import { FaChevronRight } from "react-icons/fa";
 import { Title, Uptime, Latency } from "./renderers";
 import { StatusList } from "./status";
-import { aggregate } from "./aggregate"
-
+import { aggregate } from "./aggregate";
 
 export function CanaryTable({
   className,
@@ -85,14 +84,13 @@ export function CanaryTable({
   );
 }
 
-
 function TableGroupRow({ title, items, onClick, showIcon, ...rest }) {
   const [expanded, setExpanded] = useState(false);
   const [aggregated, setAggregated] = useState(null);
 
   useEffect(() => {
-    setAggregated(aggregate(title, items))
-  }, [items, items.length]);
+    setAggregated(aggregate(title, items));
+  }, [items, title]);
 
   return (
     <>
@@ -108,8 +106,9 @@ function TableGroupRow({ title, items, onClick, showIcon, ...rest }) {
         <td className="px-6 py-3 w-full">
           <div className="flex items-center select-none">
             <FaChevronRight
-              className={`${expanded ? "transform rotate-90" : ""
-                } mr-4 duration-75`}
+              className={`${
+                expanded ? "transform rotate-90" : ""
+              } mr-4 duration-75`}
             />
             <Title check={aggregated} />
           </div>

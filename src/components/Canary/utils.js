@@ -2,10 +2,7 @@ export function getPercentage(uptime) {
   if (uptime == null) {
     return null;
   }
-  if (uptime.uptime) {
-    uptime = uptime;
-  }
-  if (uptime.passed + uptime.failed == 0) {
+  if (uptime.passed + uptime.failed === 0) {
     return null;
   }
   return uptime.passed / (uptime.passed + uptime.failed);

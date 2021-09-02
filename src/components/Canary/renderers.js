@@ -10,6 +10,7 @@ export function Duration({ ms }) {
   try {
     ms = Number(ms);
   } catch (e) {
+    // eslint-disable-next-line no-console
     console.error("invalid number format", ms);
     return "";
   }
@@ -74,7 +75,7 @@ export function Latency({ check }) {
 
 export function Percentage({ val, upper, lower }) {
   const empty = <span className="text-gray-500 text-light text-xs">-</span>;
-  if ((isEmpty(lower) && isEmpty(val)) || (upper == 0 && lower == 0)) {
+  if ((isEmpty(lower) && isEmpty(val)) || (upper === 0 && lower === 0)) {
     return empty;
   }
   if (upper != null && lower != null) {
@@ -101,7 +102,7 @@ export function Percentage({ val, upper, lower }) {
 
 export function Title({ check, showIcon = true }) {
   if (check == null) {
-    return <span className="bg-red-400" > null</span>
+    return <span className="bg-red-400"> null</span>;
   }
   return (
     <>
