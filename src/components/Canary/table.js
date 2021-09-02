@@ -90,7 +90,7 @@ function TableGroupRow({ title, items, onClick, showIcon, ...rest }) {
 
   useEffect(() => {
     setAggregated(aggregate(title, items));
-  }, [items, items.length]);
+  }, [items, title]);
 
   return (
     <>
