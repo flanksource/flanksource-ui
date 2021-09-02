@@ -1,4 +1,5 @@
-import "./style.css"
+import "./style.css";
+
 export function Status({ good, mixed, className = "" }) {
   if (mixed) {
     className += " bg-mixed";

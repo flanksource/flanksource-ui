@@ -221,9 +221,9 @@ export function Examples() {
             <Icon icon={Icons.s3} />
             <Icon name="s3" />
             <Icon name="mongo" />
-            <Status good={true} />
+            <Status good />
             <Status good={false} className="h-16 w-16" />
-            <Status mixed={true} className="h-16 w-16" />
+            <Status mixed className="h-16 w-16" />
           </div>
         </section>
         <section className="p-8 rounded-md shadow-md mb-12 border border-gray-200">
@@ -259,7 +259,6 @@ export function Examples() {
             <Button text="medium" size="lg" icon={PlusIconSolid} />
           </div>
         </section>
-
 
         <section className="p-8 rounded-md shadow-md mb-12 border border-gray-200">
           <h4>Card</h4>

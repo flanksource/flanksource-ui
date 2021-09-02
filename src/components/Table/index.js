@@ -29,10 +29,7 @@ export function Table({ columns, data, id }) {
                   // eslint-disable-next-line react/no-array-index-key
                   <tr key={`${id}.${idx}`}>
                     {columns.map((column) => (
-                      <td
-                        key={column.name}
-                        className="px-6 py-4 "
-                      >
+                      <td key={column.name} className="px-6 py-4 ">
                         <div className="text-sm text-gray-900">
                           {row[column.name.toLowerCase()]}
                         </div>
