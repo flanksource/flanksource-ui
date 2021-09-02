@@ -1,7 +1,5 @@
-
 import { reduce } from "lodash";
 import { getPercentage } from "./utils";
-
 
 // if all check icons are similar in a given iconList, use that icon.
 // if there are different icons, use a icon that indicate 'mixing'.
@@ -40,11 +38,6 @@ function aggregateType(typeList) {
 // calculate the average health of all checks with valid statuses
 // returns a simplified list of statuses that indicates the overall health.
 function aggregateStatuses(statusLists) {
-  const allStatuses = statusLists
-    .filter((item) => item !== null && item.length > 0)
-    .flatMap((item) => item);
-
-
   const count = reduce(
     statusLists,
     (sum, i) => Math.max(sum, i == null ? 0 : i.length),
@@ -52,15 +45,17 @@ function aggregateStatuses(statusLists) {
   );
 
   const aggregated = [];
-  for (let i = 0; i < count; i++) {
+  for (let i = 0; i < count; i += 1) {
     const allPass = reduce(
       statusLists,
-      (sum, list) => sum && list != null && list.length >= i && list[i] && list[i].status,
+      (sum, list) =>
+        sum && list != null && list.length >= i && list[i] && list[i].status,
       true
     );
     const allFail = reduce(
       statusLists,
-      (sum, list) => sum && list != null && list.length >= i && list[i] && !list[i].status,
+      (sum, list) =>
+        sum && list != null && list.length >= i && list[i] && !list[i].status,
       true
     );
     if (allPass) {
@@ -84,16 +79,11 @@ function aggregateStatuses(statusLists) {
 }
 
 // The uptime for a group, is defined as the minimum uptime with the group
+// eslint-disable-next-line no-unused-vars
 function minUptime(items) {
   return reduce(
     items,
     (old, item) => {
-      console.log(
-        old,
-        item,
-        getPercentage(old.uptime),
-        getPercentage(item.uptime)
-      );
       if (getPercentage(old.uptime) > getPercentage(item.uptime)) {
         return item;
       }
@@ -123,12 +113,12 @@ function avgLatency(items) {
 
 export function aggregate(title, items) {
   if (items == null) {
-    return {
-    }
+    return {};
   }
-  let _title = title
+  // eslint-disable-next-line no-underscore-dangle
+  let _title = title;
   if (items.length > 1) {
-    _title += ` (${items.length})`
+    _title += ` (${items.length})`;
   }
   return {
     description: _title,
@@ -139,5 +129,5 @@ export function aggregate(title, items) {
     uptime: sumUptime(items),
     checkStatuses: aggregateStatuses(items.map((item) => item.checkStatuses)),
     type: aggregateType(items.map((item) => item.type))
-  }
+  };
 }
