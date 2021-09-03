@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FaChevronRight } from "react-icons/fa";
+import { TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti";
 import { Title, Uptime, Latency } from "./renderers";
 import { StatusList } from "./status";
 import { aggregate } from "./aggregate";
@@ -13,24 +14,54 @@ export function CanaryTable({
   theadClass,
   ...rest
 }) {
-  const tableHeaderClass = `px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-100 first:rounded-tl-md last:rounded-tr-md`;
+  const sortValues = ["none", "asc", "desc"];
+  const initialSortState = {
+    check: sortValues[0],
+    health: sortValues[0],
+    uptime: sortValues[0],
+    latency: sortValues[0]
+  };
+  const [sortState, setSortState] = useState(initialSortState);
+
+  const handleSort = (columnKey) => {
+    console.log("click", columnKey);
+    const currentIndex = sortValues.indexOf(sortState[columnKey]);
+    const newIndex = (currentIndex + 1) % sortValues.length;
+    const newSortDirection = sortValues[newIndex];
+    const newSortState = { ...initialSortState };
+    newSortState[columnKey] = newSortDirection;
+    setSortState(newSortState);
+  };
+
   return (
     <div className={`rounded-md border border-gray-200 ${className}`} {...rest}>
       <table className="min-w-full divide-y divide-gray-200 relative">
         <thead className={theadClass}>
           <tr>
-            <th scope="col" className={tableHeaderClass}>
-              {hasGrouping ? groupingLabel : "Check"}
-            </th>
-            <th scope="col" className={tableHeaderClass}>
-              Health
-            </th>
-            <th scope="col" className={tableHeaderClass}>
-              Uptime
-            </th>
-            <th scope="col" className={tableHeaderClass}>
-              Latency
-            </th>
+            <TableHeader
+              label={hasGrouping ? groupingLabel : "Check"}
+              onSortChange={(key) => handleSort(key)}
+              sortDirection={sortState.check}
+              columnKey="check"
+            />
+            <TableHeader
+              label="Health"
+              onSortChange={handleSort}
+              sortDirection={sortState.health}
+              columnKey="health"
+            />
+            <TableHeader
+              label="Uptime"
+              onSortChange={handleSort}
+              sortDirection={sortState.uptime}
+              columnKey="uptime"
+            />
+            <TableHeader
+              label="Latency"
+              onSortChange={handleSort}
+              sortDirection={sortState.latency}
+              columnKey="latency"
+            />
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
@@ -81,6 +112,41 @@ export function CanaryTable({
         </tbody>
       </table>
     </div>
+  );
+}
+
+function TableHeader({
+  label,
+  columnKey,
+  onSortChange,
+  sortDirection,
+  className
+}) {
+  const handleSort = () => {
+    if (onSortChange) {
+      onSortChange(columnKey);
+    }
+  };
+
+  return (
+    <th
+      scope="col"
+      onClick={handleSort}
+      className={`${className} px-6 py-3 bg-gray-100 first:rounded-tl-md last:rounded-tr-md hover:text-indigo-700 text-gray-500 cursor-pointer`}
+    >
+      <div className="flex select-none text-left text-xs font-medium uppercase tracking-wider">
+        <span className="">{label}</span>
+        <span className="text-indigo-700 ml-1">
+          {sortDirection === "asc" ? (
+            <TiArrowSortedDown />
+          ) : sortDirection === "desc" ? (
+            <TiArrowSortedUp />
+          ) : (
+            ""
+          )}
+        </span>
+      </div>
+    </th>
   );
 }
 
