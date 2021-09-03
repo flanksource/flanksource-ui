@@ -5,6 +5,46 @@ import { Title, Uptime, Latency } from "./renderers";
 import { StatusList } from "./status";
 import { aggregate } from "./aggregate";
 
+const sortValues = ["none", "asc", "desc"];
+
+const sortingFunctions = {
+  check: (a, b) =>
+    a.description === b.description
+      ? 0
+      : a.description > b.description
+      ? 1
+      : -1,
+  health: (a, b) => {
+    const getHealthPercentageScore = (check) => {
+      if (check.checkStatuses && check.checkStatuses.length > 0) {
+        let positives = 0;
+        check.checkStatuses.forEach((statusObj) => {
+          if (statusObj.status) {
+            positives += 1;
+          }
+        });
+        return positives / check.checkStatuses.length;
+      }
+      return 0;
+    };
+    return getHealthPercentageScore(b) - getHealthPercentageScore(a);
+  },
+  // TODO: sorting function for uptime
+  uptime: (a, b) => -1,
+  // TODO: sorting function for latency
+  latency: (a, b) => -1
+};
+
+// sort checks based on a column's sorting function
+const sortChecks = (checks, columnKey, sortDirection) => {
+  let newChecks = [...checks];
+  newChecks = newChecks.sort(sortingFunctions[columnKey]);
+  if (sortDirection === "desc") {
+    newChecks = newChecks.reverse();
+  }
+  return newChecks;
+};
+
 export function CanaryTable({
   className,
   hasGrouping,
@@ -14,7 +54,7 @@ export function CanaryTable({
   theadClass,
   ...rest
 }) {
-  const sortValues = ["none", "asc", "desc"];
+  const [sortedChecks, setSortedChecks] = useState(checks);
   const initialSortState = {
     check: sortValues[0],
     health: sortValues[0],
@@ -23,15 +63,41 @@ export function CanaryTable({
   };
   const [sortState, setSortState] = useState(initialSortState);
 
-  const handleSort = (columnKey) => {
-    console.log("click", columnKey);
-    const currentIndex = sortValues.indexOf(sortState[columnKey]);
-    const newIndex = (currentIndex + 1) % sortValues.length;
+  const resetSortState = () => {
+    setSortState(initialSortState);
+  };
+
+  // handle table header click. updates sort column/direction.
+  const handleSortChange = (columnKey) => {
+    // cycle between sortValues on consecutive clicks
+    const sortValueIndex = sortValues.indexOf(sortState[columnKey]);
+    const newIndex = (sortValueIndex + 1) % sortValues.length;
     const newSortDirection = sortValues[newIndex];
+
+    // reset other columns and update sortState
     const newSortState = { ...initialSortState };
     newSortState[columnKey] = newSortDirection;
     setSortState(newSortState);
+
+    // if no direction selected, reset sort to initial state
+    if (newSortDirection === sortValues[0]) {
+      setSortedChecks(checks);
+    } else if (!hasGrouping) {
+      // perform sorting on Checks
+      setSortedChecks(sortChecks(checks, columnKey, newSortDirection));
+    } else if (hasGrouping) {
+      // TODO: sorting for grouped checks
+    }
   };
+
+  // reset sort state and update table on checks change
+  useEffect(() => {
+    resetSortState();
+    if (checks) {
+      setSortedChecks(checks);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [checks]);
 
   return (
     <div className={`rounded-md border border-gray-200 ${className}`} {...rest}>
@@ -40,27 +106,31 @@ export function CanaryTable({
           <tr>
             <TableHeader
               label={hasGrouping ? groupingLabel : "Check"}
-              onSortChange={(key) => handleSort(key)}
+              hasSorting={!hasGrouping} // TODO: remove this condition when sorting for grouped checks is done
+              onSortChange={(key) => handleSortChange(key)}
               sortDirection={sortState.check}
-              columnKey="check"
+              columnKey={hasGrouping ? "checkGroup" : "check"}
             />
             <TableHeader
               label="Health"
-              onSortChange={handleSort}
+              hasSorting={!hasGrouping} // TODO: remove this condition when sorting for grouped checks is done
+              onSortChange={handleSortChange}
               sortDirection={sortState.health}
-              columnKey="health"
+              columnKey={hasGrouping ? "healthGroup" : "health"}
             />
             <TableHeader
               label="Uptime"
-              onSortChange={handleSort}
+              hasSorting={!hasGrouping} // TODO: remove this condition when sorting for grouped checks is done
+              onSortChange={handleSortChange}
               sortDirection={sortState.uptime}
-              columnKey="uptime"
+              columnKey={hasGrouping ? "healthGroup" : "uptime"}
             />
             <TableHeader
               label="Latency"
-              onSortChange={handleSort}
+              hasSorting={!hasGrouping} // TODO: remove this condition when sorting for grouped checks is done
+              onSortChange={handleSortChange}
               sortDirection={sortState.latency}
-              columnKey="latency"
+              columnKey={hasGrouping ? "healthGroup" : "latency"}
             />
           </tr>
         </thead>
@@ -87,26 +157,27 @@ export function CanaryTable({
             </>
           ) : (
             <>
-              {checks.map((check) => (
-                <tr
-                  key={check.key}
-                  onClick={() => onClick(check)}
-                  className="cursor-pointer"
-                >
-                  <td className="px-6 py-2 w-full max-w-0 overflow-hidden overflow-ellipsis whitespace-nowrap">
-                    <Title key={`${check.key}-title`} check={check} />
-                  </td>
-                  <td className="px-6 py-2 whitespace-nowrap">
-                    <StatusList key={`${check.key}-status`} check={check} />
-                  </td>
-                  <td className="px-6 py-2 whitespace-nowrap">
-                    <Uptime key={`${check.key}-uptime`} check={check} />
-                  </td>
-                  <td className="px-6 py-2 whitespace-nowrap">
-                    <Latency key={`${check.key}-latency`} check={check} />
-                  </td>
-                </tr>
-              ))}
+              {sortedChecks.length > 0 &&
+                sortedChecks.map((check) => (
+                  <tr
+                    key={check.key}
+                    onClick={() => onClick(check)}
+                    className="cursor-pointer"
+                  >
+                    <td className="px-6 py-2 w-full max-w-0 overflow-hidden overflow-ellipsis whitespace-nowrap">
+                      <Title check={check} />
+                    </td>
+                    <td className="px-6 py-2 whitespace-nowrap">
+                      <StatusList check={check} />
+                    </td>
+                    <td className="px-6 py-2 whitespace-nowrap">
+                      <Uptime check={check} />
+                    </td>
+                    <td className="px-6 py-2 whitespace-nowrap">
+                      <Latency check={check} />
+                    </td>
+                  </tr>
+                ))}
             </>
           )}
         </tbody>
@@ -117,6 +188,7 @@ export function CanaryTable({
 
 function TableHeader({
   label,
+  hasSorting,
   columnKey,
   onSortChange,
   sortDirection,
@@ -131,8 +203,10 @@ function TableHeader({
   return (
     <th
       scope="col"
-      onClick={handleSort}
-      className={`${className} px-6 py-3 bg-gray-100 first:rounded-tl-md last:rounded-tr-md hover:text-indigo-700 text-gray-500 cursor-pointer`}
+      onClick={hasSorting ? handleSort : () => {}}
+      className={`${className} px-6 py-3 bg-gray-100 first:rounded-tl-md last:rounded-tr-md  text-gray-500  ${
+        hasSorting ? "hover:text-indigo-700 cursor-pointer" : ""
+      }`}
     >
       <div className="flex select-none text-left text-xs font-medium uppercase tracking-wider">
         <span className="">{label}</span>
