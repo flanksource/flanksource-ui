@@ -1,31 +1,47 @@
 .toggle {
-  border-radius: 40px;
-  min-width: 44px;
-  height: 24px;
-
   display: flex;
   align-items: center;
   justify-content: center;
+  min-width: 66px;
+  height: 24px;
+  border-radius: 40px;
+  transition-duration: 200ms;
+  overflow: hidden;
+}
 
+.button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 22px;
+  height: 100%;
   transition-duration: 100ms;
 }
 
+.button svg {
+  transition-duration: 100ms;
+}
+
+.button svg:hover {
+  color: #202020 !important;
+}
+
 .buttonInnerCircle {
+  position: absolute;
   width: 20px;
   height: 20px;
   border-radius: 50%;
   background-color: white;
-
+  pointer-events: none;
   box-shadow: 0px 0px 4px -1px rgb(0 0 0 / 30%);
-
-  transition-duration: 100ms;
+  transition-duration: 150ms;
   transform: translateX(0);
 }
 
 .buttonInnerCircle.left {
-  transform: translateX(-10px);
+  transform: translateX(-21px);
 }
 
 .buttonInnerCircle.right {
-  transform: translateX(10px);
+  transform: translateX(21px);
 }
