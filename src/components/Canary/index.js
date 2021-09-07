@@ -162,7 +162,8 @@ export class Canary extends React.Component {
               <div className="sticky top-0 h-6 bg-white z-10" />
               <CanaryTable
                 theadClass="sticky top-6 z-10"
-                checks={groupedChecks}
+                checks={checks}
+                groupedChecks={groupedChecks}
                 hasGrouping={hasGrouping}
                 groupingLabel={groupBy}
                 onClick={this.select}
