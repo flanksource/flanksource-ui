@@ -5,56 +5,20 @@ import { Title, Uptime, Latency } from "./renderers";
 import { StatusList } from "./status";
 import { aggregate } from "./aggregate";
 
-const sortValues = ["none", "asc", "desc"];
-
-const sortingFunctions = {
-  check: (a, b) =>
-    a.description === b.description
-      ? 0
-      : a.description > b.description
-      ? 1
-      : -1,
-  health: (a, b) => {
-    const getHealthPercentageScore = (check) => {
-      if (check.checkStatuses && check.checkStatuses.length > 0) {
-        let positives = 0;
-        check.checkStatuses.forEach((statusObj) => {
-          if (statusObj.status) {
-            positives += 1;
-          }
-        });
-        return positives / check.checkStatuses.length;
-      }
-      return 0;
-    };
-    return getHealthPercentageScore(b) - getHealthPercentageScore(a);
-  },
-  // TODO: sorting function for uptime
-  uptime: (a, b) => -1,
-  // TODO: sorting function for latency
-  latency: (a, b) => -1
-};
-
-// sort checks based on a column's sorting function
-const sortChecks = (checks, columnKey, sortDirection) => {
-  let newChecks = [...checks];
-  newChecks = newChecks.sort(sortingFunctions[columnKey]);
-  if (sortDirection === "desc") {
-    newChecks = newChecks.reverse();
-  }
-  return newChecks;
-};
+import { sortChecks, sortGroupedChecks, sortValues } from "./sorting";
 
 export function CanaryTable({
   className,
   hasGrouping,
   groupingLabel,
   checks,
+  groupedChecks,
   onClick,
   theadClass,
   ...rest
 }) {
   const [sortedChecks, setSortedChecks] = useState(checks);
+  const [sortedGroups, setSortedGroups] = useState(Object.keys(groupedChecks));
   const initialSortState = {
     check: sortValues[0],
     health: sortValues[0],
@@ -79,25 +43,32 @@ export function CanaryTable({
     newSortState[columnKey] = newSortDirection;
     setSortState(newSortState);
 
-    // if no direction selected, reset sort to initial state
     if (newSortDirection === sortValues[0]) {
+      // if no direction selected, reset sort to initial state
       setSortedChecks(checks);
+      setSortedGroups(Object.keys(groupedChecks));
     } else if (!hasGrouping) {
       // perform sorting on Checks
       setSortedChecks(sortChecks(checks, columnKey, newSortDirection));
-    } else if (hasGrouping) {
-      // TODO: sorting for grouped checks
+    } else {
+      // perform sorting on grouped Checks
+      setSortedGroups(
+        sortGroupedChecks(groupedChecks, columnKey, newSortDirection)
+      );
     }
   };
 
-  // reset sort state and update table on checks change
+  // reset sort state and update table on checks/groups change
   useEffect(() => {
     resetSortState();
     if (checks) {
       setSortedChecks(checks);
     }
+    if (groupedChecks) {
+      setSortedGroups(Object.keys(groupedChecks));
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [checks]);
+  }, [checks, groupedChecks]);
 
   return (
     <div className={`rounded-md border border-gray-200 ${className}`} {...rest}>
@@ -106,54 +77,46 @@ export function CanaryTable({
           <tr>
             <TableHeader
               label={hasGrouping ? groupingLabel : "Check"}
-              hasSorting={!hasGrouping} // TODO: remove this condition when sorting for grouped checks is done
+              hasSorting
               onSortChange={(key) => handleSortChange(key)}
               sortDirection={sortState.check}
-              columnKey={hasGrouping ? "checkGroup" : "check"}
+              columnKey="check"
             />
             <TableHeader
               label="Health"
-              hasSorting={!hasGrouping} // TODO: remove this condition when sorting for grouped checks is done
+              hasSorting
               onSortChange={handleSortChange}
               sortDirection={sortState.health}
-              columnKey={hasGrouping ? "healthGroup" : "health"}
+              columnKey="health"
             />
             <TableHeader
               label="Uptime"
-              hasSorting={!hasGrouping} // TODO: remove this condition when sorting for grouped checks is done
+              hasSorting
               onSortChange={handleSortChange}
               sortDirection={sortState.uptime}
-              columnKey={hasGrouping ? "healthGroup" : "uptime"}
+              columnKey="uptime"
             />
             <TableHeader
               label="Latency"
-              hasSorting={!hasGrouping} // TODO: remove this condition when sorting for grouped checks is done
+              hasSorting
               onSortChange={handleSortChange}
               sortDirection={sortState.latency}
-              columnKey={hasGrouping ? "healthGroup" : "latency"}
+              columnKey="latency"
             />
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
           {hasGrouping ? (
             <>
-              {Object.keys(checks)
-                // make sure "Others" is sorted to the back
-                .sort((a, b) => {
-                  if (b === "Others") {
-                    return -1;
-                  }
-                  return 0;
-                })
-                .map((group) => (
-                  <TableGroupRow
-                    showIcon
-                    key={group}
-                    title={group}
-                    items={checks[group]}
-                    onClick={onClick}
-                  />
-                ))}
+              {sortedGroups.map((groupName) => (
+                <TableGroupRow
+                  showIcon
+                  key={groupName}
+                  title={groupName}
+                  items={groupedChecks[groupName]}
+                  onClick={onClick}
+                />
+              ))}
             </>
           ) : (
             <>
