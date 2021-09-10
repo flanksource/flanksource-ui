@@ -3,33 +3,33 @@ import { BiCheck, BiX } from "react-icons/bi";
 import { BsDot } from "react-icons/bs";
 import style from "./index.module.css";
 
-export function TristateToggle({ onChange, defaultValue, label, className }) {
+export function TristateToggle({ onChange, value, label, className }) {
   const states = [0, 1, -1];
   const colors = ["#e5e7eb", "#e05858", "#58b358"];
   const fgColors = ["#909090", "#fafafa", "#fafafa"];
 
-  const [value, setValue] = useState(defaultValue || states[0]);
+  const [stateValue, setValue] = useState(value || states[0]);
   const [position, setPosition] = useState(undefined);
   const [bgColor, setBgColor] = useState(colors[0]);
   const [fgColor, setFgColor] = useState(fgColors[0]);
 
   useEffect(() => {
-    updateButton(value);
+    updateButton(stateValue);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    // trigger onChange callback on value change
-    onChange(value);
-    updateButton(value);
+    // trigger onChange callback on stateValue change
+    onChange(stateValue);
+    updateButton(stateValue);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value]);
+  }, [stateValue]);
 
-  function updateButton(value) {
+  function updateButton(stateValue) {
     // map and update position, bgColor, and tooltip text
     let pos;
     let colorIndex;
-    switch (value) {
+    switch (stateValue) {
       case -1:
         pos = "left";
         colorIndex = 1;
@@ -54,20 +54,20 @@ export function TristateToggle({ onChange, defaultValue, label, className }) {
           type="button"
           onClick={() => {
             setValue(-1);
-            updateButton(value);
+            updateButton(stateValue);
           }}
           className={`${style.button} ${style.buttonLeft}`}
-          title={`Exclude ${label}`}
+          title={`Exclude ${label.label}`}
         >
           <BiX style={{ color: fgColor, marginLeft: "4px" }} />
         </button>
         <button
           className={style.button}
           type="button"
-          title={`Do not filter ${label}`}
+          title={`Do not filter ${label.label}`}
           onClick={() => {
             setValue(0);
-            updateButton(value);
+            updateButton(stateValue);
           }}
         >
           <BsDot style={{ color: fgColor }} />
@@ -76,10 +76,10 @@ export function TristateToggle({ onChange, defaultValue, label, className }) {
           type="button"
           onClick={() => {
             setValue(1);
-            updateButton(value);
+            updateButton(stateValue);
           }}
           className={`${style.button} ${style.buttonLeft}`}
-          title={`Include ${label}`}
+          title={`Include ${label.label}`}
         >
           <BiCheck style={{ color: fgColor, marginRight: "4px" }} />
         </button>
@@ -92,14 +92,19 @@ export function TristateToggle({ onChange, defaultValue, label, className }) {
 
       {states.map((state) => (
         <input
+          name={label.id}
+          onChange={onChange}
           className="hidden"
           key={state}
           type="radio"
-          checked={state === value}
+          value={stateValue}
+          checked={state === stateValue}
         />
       ))}
 
-      {label && <span className="ml-3 text-sm text-left">{label}</span>}
+      {label.label && (
+        <span className="ml-3 text-sm text-left">{label.label}</span>
+      )}
     </div>
   );
 }
