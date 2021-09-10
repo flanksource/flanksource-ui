@@ -1,5 +1,8 @@
 import { isPlainObject } from "../isPlainObject";
 
+function Foo() {
+  this.a = 1;
+}
 describe("isPlainObject", () => {
   test("isPlainObject(plainObj) => true || isPlainObject(!plainObj) => false", () => {
     [
@@ -13,7 +16,8 @@ describe("isPlainObject", () => {
       Symbol("Sym"),
       BigInt(90),
       new ArrayBuffer(8),
-      Object
+      Object,
+      new Foo()
     ].forEach((val) => {
       expect(isPlainObject(val)).toEqual(false);
     });
