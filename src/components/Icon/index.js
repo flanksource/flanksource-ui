@@ -21,7 +21,6 @@ export function Icon({ size = "sm", name, className, alt = "", ...props }) {
     default:
       iconClassName = "-ml-0.5 mr-2 h-4 w-4";
   }
-
   if (
     name != null &&
     (name.startsWith("http:") || name.startsWith("https://"))

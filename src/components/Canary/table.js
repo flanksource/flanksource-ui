@@ -63,16 +63,16 @@ export function CanaryTable({
                   className="cursor-pointer"
                 >
                   <td className="px-6 py-2 w-full max-w-0 overflow-hidden overflow-ellipsis whitespace-nowrap">
-                    <Title check={check} />
+                    <Title key={`${check.key}-title`} check={check} />
                   </td>
                   <td className="px-6 py-2 whitespace-nowrap">
-                    <StatusList check={check} />
+                    <StatusList key={`${check.key}-status`} check={check} />
                   </td>
                   <td className="px-6 py-2 whitespace-nowrap">
-                    <Uptime check={check} />
+                    <Uptime key={`${check.key}-uptime`} check={check} />
                   </td>
                   <td className="px-6 py-2 whitespace-nowrap">
-                    <Latency check={check} />
+                    <Latency key={`${check.key}-latency`} check={check} />
                   </td>
                 </tr>
               ))}
@@ -131,16 +131,16 @@ function TableGroupRow({ title, items, onClick, showIcon, ...rest }) {
             className="cursor-pointer"
           >
             <td className="px-6 pl-14 py-2 w-full max-w-0 overflow-hidden overflow-ellipsis whitespace-nowrap">
-              <Title check={item} />
+              <Title key={`${item.key}-title`} check={item} />
             </td>
             <td className="px-6 py-2 whitespace-nowrap">
-              <StatusList check={item} />
+              <StatusList key={`${item.key}-status`} check={item} />
             </td>
             <td className="px-6 py-2 whitespace-nowrap">
-              <Uptime check={item} />
+              <Uptime key={`${item.key}-uptime`} check={item} />
             </td>
             <td className="px-6 py-2 whitespace-nowrap">
-              <Latency check={item} />
+              <Latency key={`${item.key}-latency`} check={item} />
             </td>
           </tr>
         ))}

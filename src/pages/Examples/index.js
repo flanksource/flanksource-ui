@@ -6,11 +6,9 @@ import {
 } from "@heroicons/react/solid";
 import { Badge } from "../../components/Badge";
 import { Button } from "../../components/Button";
-import { Toggle } from "../../components/Toggle";
 
 import { Card, HorizontalCard } from "../../components/Card";
 import { DescriptionCard } from "../../components/DescriptionCard";
-import { Dropdown } from "../../components/Dropdown";
 import { Status } from "../../components/Status";
 import { Feed } from "../../components/Feed";
 import { Icon, Avatar } from "../../components/Icon";
@@ -152,25 +150,10 @@ const cards = [
   }
 ];
 
-const people = [
-  { id: 1, name: "Wade Cooper", icon: <Status state="ok" /> },
-  { id: 2, name: "Arlene Mccoy", online: false },
-  { id: 3, name: "Devon Webb", icon: <Status state="ok" /> },
-  { id: 4, name: "Tom Cook", icon: <Status state="bad" /> },
-  { id: 5, name: "Tanya Fox", icon: <Status /> },
-  { id: 6, name: "Hellen Schmidt", online: true },
-  { id: 7, name: "Caroline Schultz", online: true },
-  { id: 8, name: "Mason Heaney", online: false },
-  { id: 9, name: "Claudie Smitham", online: true },
-  { id: 10, name: "Emil Schaefer", online: false }
-];
-
 const items = [
   { name: "Name", value: "John DOe" },
-  { name: "Active", value: <Toggle enabled /> },
   { name: "Age", value: 12 },
 
-  { name: "Parent", value: <Dropdown items={people} /> },
   {
     name: "Parent",
     value: <Input label="Leading" type="email" leadingIcon={MailIcon} />
@@ -197,8 +180,6 @@ const items = [
     )
   },
   { name: "Parent", value: <Input label="Website" prefix="https://" /> },
-  { name: "Parent", value: <Dropdown items={people} /> },
-  { name: "Parent", value: <Dropdown items={people} /> },
 
   {
     colspan: 2,
@@ -226,13 +207,7 @@ export function Examples() {
             <Status mixed className="h-16 w-16" />
           </div>
         </section>
-        <section className="p-8 rounded-md shadow-md mb-12 border border-gray-200">
-          <h4 className="mb-4">Toggle</h4>
-          <div className="mt-4 bg-gray-50 p-8 rounded-md">
-            <Toggle label="toggle1" />
-            <Toggle label="toggle2" help="lorem ipsum" />
-          </div>
-        </section>
+
         <section className="p-8 rounded-md shadow-md mb-12 border border-gray-200">
           <h4>Badge</h4>
           <div className="mt-4 bg-gray-50 p-8 rounded-md">
