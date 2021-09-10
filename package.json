@@ -1,6 +1,6 @@
 {
   "name": "@flanksource/flanksource-ui",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": false,
   "files": [
     "build",
@@ -72,6 +72,7 @@
     "fix:eslint": "cross-env NODE_ENV=development eslint --fix --ext .js,.jsx,.ts,.tsx .",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
+    "check:browserslist": "npx browserslist",
     "prepare": "husky install"
   },
   "husky": {
@@ -81,7 +82,9 @@
   },
   "browserslist": {
     "production": [
+      "defaults",
       ">0.2%",
+      "not IE 11",
       "not dead",
       "not op_mini all"
     ],
