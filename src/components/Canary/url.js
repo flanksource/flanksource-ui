@@ -7,11 +7,11 @@ const cleaner = (key, value) =>
 export function encodeObjectToUrlSearchParams(object) {
   const encoded = Object.entries(object).map(([k, v]) => {
     if (Array.isArray(v) || isPlainObject(v)) {
-      return [k, JSON.stringify(v)];
+      return [k, encodeURIComponent(JSON.stringify(v))];
     }
     return [k, v];
   });
-  return encodeURIComponent(new URLSearchParams(encoded).toString());
+  return new URLSearchParams(encoded).toString();
 }
 
 export function decodeUrlSearchParams(url) {
