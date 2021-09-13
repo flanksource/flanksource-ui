@@ -19,6 +19,24 @@ import { StatCard } from "../StatCard";
 import { Modal } from "../Modal";
 import { Title } from "./renderers";
 
+import { TristateToggle } from "../TristateToggle";
+import { NewCanaryTable } from "./newTable";
+
+const layoutSelections = [
+  {
+    id: "dropdown-table",
+    name: "table",
+    icon: <BsTable />,
+    label: "Table"
+  },
+  {
+    id: "dropdown-card",
+    name: "card",
+    icon: <RiLayoutGridLine />,
+    label: "Card"
+  }
+];
+
 export class Canary extends React.Component {
   constructor(props) {
     super(props);
@@ -160,14 +178,15 @@ export class Canary extends React.Component {
           {layout === "table" && (
             <div className="m-6 mt-0 relative">
               <div className="sticky top-0 h-6 bg-white z-10" />
-              <CanaryTable
+              {/* <CanaryTable
                 theadClass="sticky top-6 z-10"
                 checks={checks}
                 groupedChecks={groupedChecks}
                 hasGrouping={hasGrouping}
                 groupingLabel={groupBy}
                 onClick={this.select}
-              />
+              /> */}
+              <NewCanaryTable checks={checks} />
             </div>
           )}
         </div>
