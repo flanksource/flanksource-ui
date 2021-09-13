@@ -1,88 +1,110 @@
 import { useState, useEffect } from "react";
+import { BiCheck, BiX } from "react-icons/bi";
+import { BsDot } from "react-icons/bs";
 import style from "./index.module.css";
 
-export function TristateToggle({ onChange, defaultValue, label, className }) {
+export function TristateToggle({ onChange, value, label, className }) {
   const states = [0, 1, -1];
   const colors = ["#e5e7eb", "#e05858", "#58b358"];
+  const fgColors = ["#909090", "#fafafa", "#fafafa"];
 
-  const [value, setValue] = useState(defaultValue || states[0]);
+  const [stateValue, setValue] = useState(value || states[0]);
   const [position, setPosition] = useState(undefined);
   const [bgColor, setBgColor] = useState(colors[0]);
-  const [tooltipText, setTooltipText] = useState("");
+  const [fgColor, setFgColor] = useState(fgColors[0]);
 
   useEffect(() => {
-    updateButton(value);
+    updateButton(stateValue);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    // trigger onChange callback on value change
-    onChange(value);
+    // trigger onChange callback on stateValue change
+    onChange(stateValue);
+    updateButton(stateValue);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value]);
+  }, [stateValue]);
 
-  // cycle between toggle states
-  function onToggle() {
-    const nextState = getNextState(value);
-    setValue(nextState);
-    updateButton(nextState);
-  }
-
-  function updateButton(value) {
+  function updateButton(stateValue) {
     // map and update position, bgColor, and tooltip text
     let pos;
-    let bgIndex;
-    let tooltip;
-    switch (value) {
+    let colorIndex;
+    switch (stateValue) {
       case -1:
         pos = "left";
-        bgIndex = 1;
-        tooltip = `${label || "This item"} is excluded`;
+        colorIndex = 1;
         break;
       case 1:
         pos = "right";
-        bgIndex = 2;
-        tooltip = `${label || "This item"} is included`;
+        colorIndex = 2;
         break;
       default:
         pos = undefined;
-        bgIndex = 0;
-        tooltip = `${label || "This item"} is unaffected`;
+        colorIndex = 0;
     }
     setPosition(pos);
-    setBgColor(colors[bgIndex]);
-    setTooltipText(tooltip);
-  }
-
-  // retrieve next state, given current state
-  function getNextState(currentState) {
-    const nextStateIndex = states.indexOf(currentState) + 1;
-    return states[nextStateIndex % states.length];
+    setBgColor(colors[colorIndex]);
+    setFgColor(fgColors[colorIndex]);
   }
 
   return (
-    <button
-      type="button"
-      title={tooltipText}
-      onClick={onToggle}
-      className={`${className} flex w-full`}
-    >
+    <div className={`${className} flex w-full`}>
       <div className={`${style.toggle}`} style={{ backgroundColor: bgColor }}>
+        <button
+          type="button"
+          onClick={() => {
+            setValue(-1);
+            updateButton(stateValue);
+          }}
+          className={`${style.button} ${style.buttonLeft}`}
+          title={`Exclude ${label.label}`}
+        >
+          <BiX style={{ color: fgColor, marginLeft: "4px" }} />
+        </button>
+        <button
+          className={style.button}
+          type="button"
+          title={`Do not filter ${label.label}`}
+          onClick={() => {
+            setValue(0);
+            updateButton(stateValue);
+          }}
+        >
+          <BsDot style={{ color: fgColor }} />
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setValue(1);
+            updateButton(stateValue);
+          }}
+          className={`${style.button} ${style.buttonLeft}`}
+          title={`Include ${label.label}`}
+        >
+          <BiCheck style={{ color: fgColor, marginRight: "4px" }} />
+        </button>
         <div
-          className={`${style.buttonInnerCircle} ${
+          className={`${style.buttonInnerCircle}  ${
             position && style[position]
           }`}
         />
-        {states.map((state) => (
-          <input
-            className="hidden"
-            key={state}
-            type="radio"
-            checked={state === value}
-          />
-        ))}
       </div>
-      {label && <span className="ml-3 text-sm text-left">{label}</span>}
-    </button>
+
+      {states.map((state) => (
+        <input
+          name={label.id}
+          onChange={onChange}
+          className="hidden"
+          key={state}
+          type="radio"
+          value={stateValue}
+          checked={state === stateValue}
+        />
+      ))}
+
+      {label.label && (
+        <span className="ml-3 text-sm text-left">{label.label}</span>
+      )}
+    </div>
   );
 }

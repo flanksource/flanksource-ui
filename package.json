@@ -1,6 +1,6 @@
 {
   "name": "@flanksource/flanksource-ui",
-  "version": "0.1.17",
+  "version": "0.2.0",
   "private": false,
   "files": [
     "dist",
@@ -16,10 +16,12 @@
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
+    "history": "^5.0.1",
     "lodash": "^4.17.21",
     "react": "^17.0.2",
     "react-country-flag": "^2.3.1",
     "react-dom": "^17.0.2",
+    "react-hook-form": "^7.15.0",
     "react-icons": "^4.2.0",
     "react-markdown": "^6.0.3",
     "react-router-dom": "^5.2.0",
@@ -37,7 +39,7 @@
     "dev": "cross-env DISABLE_ESLINT_PLUGIN=true NODE_ENV=development craco start",
     "build": "cross-env DISABLE_ESLINT_PLUGIN=true NODE_ENV=production craco build",
     "compile": "cross-env NODE_ENV=production babel src --out-dir dist --copy-files --ignore __tests__,spec.js,test.js,stories.js,__snapshots__",
-    "test": "craco test",
+    "test": "craco test --transformIgnorePatterns \"node_modules/(?!(history))/\"",
     "eject": "react-scripts eject",
     "lint:eslint": "eslint --ext .js,.jsx,.ts,.tsx .",
     "fix:eslint": "eslint --fix --ext .js,.jsx,.ts,.tsx ."

@@ -4,52 +4,63 @@ import { TiSortAlphabeticallyOutline } from "react-icons/ti";
 import { AiOutlineAlignLeft } from "react-icons/ai";
 import { getNonBooleanLabels } from "./labels";
 
-export const defaultGroupSelections = [
-  {
-    id: "dropdown-no-group",
+export const defaultGroupSelections = {
+  "no-group": {
+    id: "no-group",
     name: "no-group",
     icon: <ImUngroup />,
-    label: "No Grouping"
+    description: "No Grouping",
+    value: "no-group",
+    labelValue: null,
+    key: "no-group"
   },
-  {
-    id: "dropdown-name",
+  name: {
+    id: "name",
     name: "name",
     icon: <TiSortAlphabeticallyOutline />,
-    label: "Name"
+    description: "Name",
+    value: "name",
+    labelValue: null,
+    key: "name"
   },
-  {
-    id: "dropdown-description",
+  description: {
+    id: "description",
     name: "description",
     icon: <AiOutlineAlignLeft />,
-    label: "Description"
+    description: "Description",
+    value: "description",
+    labelValue: null,
+    key: "description"
   }
-];
+};
 
 // provide a list of group selections that includes (non-boolean) labels, given a list of checks.
-export function getGroupSelections(checks) {
-  const nonBooleanLabels = getNonBooleanLabels(checks);
-  const newGroupSelections = [...defaultGroupSelections];
-  nonBooleanLabels.forEach((label) => {
-    const onlyAlphabets = label.replace(/[^a-zA-Z]/g, "");
-    newGroupSelections.push({
-      id: `dropdown-label-${onlyAlphabets}`,
+export function getGroupSelections(checks, defaultGroupSelections) {
+  const nonBooleanLabels = getNonBooleanLabels(Object.values(checks));
+  const newGroupSelections = defaultGroupSelections;
+  Object.entries(nonBooleanLabels).forEach(([k, v]) => {
+    const onlyAlphabets = k.replace(/[^a-zA-Z]/g, "");
+    newGroupSelections[k] = {
+      id: k,
       name: onlyAlphabets,
       icon: <BiLabel />,
-      label,
-      groupLabelKey: label
-    });
+      description: `${v.key}:${v.value}`,
+      value: k,
+      labelValue: v.value,
+      key: v.key
+    };
   });
   return newGroupSelections;
 }
 
 // process table groupings, given a list of checks and a 'groupBy' object
 export function getGroupedChecks(checks, groupBy) {
-  if (groupBy.name === "name" || groupBy.name === "description") {
+  if (groupBy === "name" || groupBy === "description") {
     // case A: grouping by 'name' or 'description'
     const groupedChecks = {};
     const groupNames = [];
     checks.forEach((check) => {
-      const value = check[groupBy.name];
+      const value = check[groupBy];
       // if current name/description doesn't exist yet
       if (groupNames.indexOf(value) === -1) {
         // add name/description to list
@@ -69,13 +80,15 @@ export function getGroupedChecks(checks, groupBy) {
   checks.forEach((check) => {
     let hasValidGroup = false;
     let groupName;
+
     if (check.labels) {
-      const labelKeys = Object.keys(check.labels);
-      labelKeys.forEach((key) => {
+      const labelKeys = Object.entries(check.labels);
+      labelKeys.forEach(([k, v]) => {
+        const id = `canary:${k}:${v}`;
         // if current item has a matching label with the currently selected groupBy
-        if (key === groupBy.groupLabelKey) {
+        if (id === groupBy) {
           hasValidGroup = true;
-          groupName = check.labels[key];
+          groupName = check.labels[k];
           // if current groupName doesn't exist yet
           if (groupNames.indexOf(groupName) === -1) {
             // add name/description to list

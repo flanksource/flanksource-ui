@@ -6,13 +6,19 @@ import { Duration, Percentage } from "./renderers";
 import { StatusList } from "./status";
 
 const styles = {
-  tableClass: "border border-green-500",
-  theadClass: "border border-red-500",
-  theadRowClass: "",
-  theadHeaderClass: "",
-  tbodyClass: "",
-  tbodyRowClass: "",
-  tbodyDataClass: ""
+  outerDivClass: "",
+  tableClass: "min-w-full relative",
+  theadClass: "sticky top-6 z-10",
+  tableHeaderBg: "h-10 absolute top-0",
+  tableHeaderBgFront:
+    "bg-gray-100 rounded-tl-md rounded-tr-md border border-b-0",
+  tableHeaderBgBack: "bg-white",
+  theadRowClass: "z-10",
+  theadHeaderClass:
+    "px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider",
+  tbodyClass: "mt-4 rounded-md",
+  tbodyRowClass: "border",
+  tbodyDataClass: "px-6 py-2 whitespace-nowrap "
 };
 
 function HealthCell({ value }) {
@@ -30,34 +36,39 @@ function LatencyCell({ value }) {
 }
 
 export function NewCanaryTable({ checks, ...rest }) {
-  const data = useMemo(() => {
-    console.log(checks);
-    return checks.map((check) => ({
-      ...check,
-      name: GetName(check)
-    }));
-  }, [checks]);
+  const data = useMemo(
+    () =>
+      checks.map((check) => ({
+        ...check,
+        name: GetName(check)
+      })),
+    [checks]
+  );
 
   const columns = useMemo(
     () => [
       {
         Header: "Checks",
-        accessor: "name"
+        accessor: "name",
+        cellClass: "w-full max-w-0 overflow-hidden overflow-ellipsis"
       },
       {
         Header: "Health",
         accessor: "checkStatuses",
-        Cell: HealthCell
+        Cell: HealthCell,
+        cellClass: ""
       },
       {
         Header: "Uptime",
         accessor: "uptime",
-        Cell: UptimeCell
+        Cell: UptimeCell,
+        cellClass: ""
       },
       {
         Header: "Latency",
         accessor: "latency",
-        Cell: LatencyCell
+        Cell: LatencyCell,
+        cellClass: ""
       }
     ],
     []
@@ -67,46 +78,61 @@ export function NewCanaryTable({ checks, ...rest }) {
     useTable({ columns, data });
 
   return (
-    <table className={styles.tableClass} {...getTableProps()}>
-      <thead className={styles.theadClass}>
-        {headerGroups.map((headerGroup) => (
-          <tr
-            className={styles.theadRowClass}
-            {...headerGroup.getHeaderGroupProps()}
-          >
-            {headerGroup.headers.map((column) => (
-              <th
-                className={styles.theadHeaderClass}
-                {...column.getHeaderProps()}
-              >
-                {column.render("Header")}
-              </th>
-            ))}
-          </tr>
-        ))}
-      </thead>
-      <tbody className={styles.tbodyClass} {...getTableBodyProps()}>
-        {rows.map((row) => {
-          prepareRow(row);
-          return (
+    <div className={styles.outerDivClass}>
+      <table className={styles.tableClass} {...getTableProps()}>
+        <thead className={styles.theadClass}>
+          {headerGroups.map((headerGroup) => (
             <tr
-              key={row.id}
-              className={styles.tbodyRowClass}
-              {...row.getRowProps()}
+              key={headerGroup.getHeaderGroupProps().key}
+              className={styles.theadRowClass}
+              {...headerGroup.getHeaderGroupProps()}
             >
-              {row.cells.map((cell) => (
-                <td
-                  key={cell.column.Header}
-                  className={styles.tbodyDataClass}
-                  {...cell.getCellProps()}
+              {headerGroup.headers.map((column) => (
+                <th
+                  key={column.Header}
+                  className={styles.theadHeaderClass}
+                  {...column.getHeaderProps()}
                 >
-                  {cell.render("Cell")}
-                </td>
+                  {column.render("Header")}
+                </th>
               ))}
             </tr>
-          );
-        })}
-      </tbody>
-    </table>
+          ))}
+          <div
+            className={`${styles.tableHeaderBg} ${styles.tableHeaderBgFront}`}
+            style={{ zIndex: "-1", left: "-1px", width: "calc(100% + 1px)" }}
+          />
+          <div
+            className={`${styles.tableHeaderBg} ${styles.tableHeaderBgBack}`}
+            style={{ zIndex: "-2", left: "-1px", width: "calc(100% + 1px)" }}
+          />
+        </thead>
+        <tbody className={styles.tbodyClass} {...getTableBodyProps()}>
+          {rows.map((row) => {
+            prepareRow(row);
+            return (
+              <tr
+                key={row.id}
+                className={`${styles.tbodyRowClass}`}
+                style={{}}
+                {...row.getRowProps()}
+              >
+                {row.cells.map((cell) => (
+                  <td
+                    key={cell.column.Header}
+                    className={`${styles.tbodyDataClass} ${
+                      cell.column.cellClass || ""
+                    }`}
+                    {...cell.getCellProps()}
+                  >
+                    {cell.render("Cell")}
+                  </td>
+                ))}
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
   );
 }

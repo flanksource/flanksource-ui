@@ -1,44 +1,23 @@
 import React from "react";
 import { orderBy, reduce } from "lodash";
-import { BsTable } from "react-icons/bs";
-import { RiLayoutGridLine } from "react-icons/ri";
 
-import { getLabels, filterChecksByLabels } from "./labels";
+import history from "history/browser";
 
-import {
-  defaultGroupSelections,
-  getGroupSelections,
-  getGroupedChecks
-} from "./grouping";
+import { FilterForm } from "./FilterForm/index";
+import { getLabels, filterChecksByLabels, getLabelFilters } from "./labels";
+
+import { readCanaryState, getDefaultForm } from "./state";
+
+import { getGroupedChecks } from "./grouping";
 import { filterChecks, isHealthy } from "./filter";
-import { CanaryTable } from "./table";
+import { NewCanaryTable } from "./newTable";
 import { CanaryCards } from "./card";
 import { CanarySorter } from "./data";
 import { CanaryDescription } from "./description";
 
 import { StatCard } from "../StatCard";
-import { Dropdown } from "../Dropdown";
 import { Modal } from "../Modal";
-import { Toggle } from "../Toggle";
 import { Title } from "./renderers";
-
-import { TristateToggle } from "../TristateToggle";
-import { NewCanaryTable } from "./newTable";
-
-const layoutSelections = [
-  {
-    id: "dropdown-table",
-    name: "table",
-    icon: <BsTable />,
-    label: "Table"
-  },
-  {
-    id: "dropdown-card",
-    name: "card",
-    icon: <RiLayoutGridLine />,
-    label: "Card"
-  }
-];
 
 export class Canary extends React.Component {
   constructor(props) {
@@ -48,19 +27,19 @@ export class Canary extends React.Component {
     this.modal = React.createRef();
     this.fetch = this.fetch.bind(this);
     this.select = this.select.bind(this);
-    this.setStyle = this.setStyle.bind(this);
-    this.setGroupBy = this.setGroupBy.bind(this);
     this.setChecks = this.setChecks.bind(this);
-    this.togglePassing = this.togglePassing.bind(this);
+    this.history = history;
+    this.unhistory = () => {};
+
+    const labels = getLabels(props.checks);
+
     this.state = {
-      style: layoutSelections[0],
-      groupBy: defaultGroupSelections[0],
+      urlState: getDefaultForm(labels),
       selected: null,
       // eslint-disable-next-line react/no-unused-state
       lastFetched: null,
-      hidePassing: true,
       // eslint-disable-next-line react/no-unused-state
-      labels: getLabels(props.checks),
+      labels,
       labelFilters: {
         exclude: [],
         include: []
@@ -70,14 +49,30 @@ export class Canary extends React.Component {
   }
 
   componentDidMount() {
+    const { canaryState: urlState } = readCanaryState(window.location.search);
+    const { labels } = this.state;
+    const { labels: labelStates } = urlState;
+    const labelFilters = getLabelFilters(labelStates, labels);
+    this.setState({ urlState, labelFilters });
+
+    this.unhistory = this.history.listen(({ location }) => {
+      // See https://github.com/remix-run/history/blob/main/docs/getting-started.md
+      const { canaryState: urlState } = readCanaryState(location.search);
+      const { labels } = this.state;
+      const { labels: labelStates } = urlState;
+      const labelFilters = getLabelFilters(labelStates, labels);
+      this.setState({ urlState, labelFilters });
+    });
+
+    this.fetch();
     if (this.url == null) {
       return;
     }
-    this.fetch();
     this.timer = setInterval(() => this.fetch(), this.interval * 1000);
   }
 
   componentWillUnmount() {
+    this.unhistory();
     this.timer = null;
   }
 
@@ -86,31 +81,14 @@ export class Canary extends React.Component {
       // FIXME unify pipeline for demo and remote
       checks = checks.checks;
     }
+    const labels = getLabels(checks);
     this.setState({
       checks,
       // eslint-disable-next-line react/no-unused-state
-      labels: getLabels(checks),
+      labels,
       // eslint-disable-next-line react/no-unused-state
       lastFetched: new Date()
     });
-  }
-
-  setStyle(style) {
-    this.setState({
-      style
-    });
-  }
-
-  setGroupBy(group) {
-    this.setState({
-      groupBy: group
-    });
-  }
-
-  togglePassing() {
-    this.setState((state) => ({
-      hidePassing: !state.hidePassing
-    }));
   }
 
   select(check) {
@@ -122,36 +100,10 @@ export class Canary extends React.Component {
     }
   }
 
-  // update labelFilters array based on a label's toggle state change
-  updateLabelFilters(labelKey, labelValue) {
-    const { labelFilters } = this.state;
-    const newLabelFilters = { ...labelFilters };
-
-    // clearing labelKey in both 'include' and 'exclude' arrays
-    newLabelFilters.include = newLabelFilters.include.filter(
-      (o) => o !== labelKey
-    );
-    newLabelFilters.exclude = newLabelFilters.exclude.filter(
-      (o) => o !== labelKey
-    );
-
-    switch (labelValue) {
-      // label should be excluded
-      case -1:
-        newLabelFilters.exclude.push(labelKey);
-        break;
-      // label should be included
-      case 1:
-        newLabelFilters.include.push(labelKey);
-        break;
-      // label should be unaffected
-      default:
-        break;
-    }
-    this.setState({ labelFilters: newLabelFilters });
-  }
-
   fetch() {
+    if (this.url == null) {
+      return;
+    }
     fetch(this.url)
       .then((result) => result.json())
       .then(this.setChecks);
@@ -160,25 +112,24 @@ export class Canary extends React.Component {
   render() {
     const { state } = this;
     const {
-      checks: stateChecks,
-      hidePassing,
-      style,
       selected,
-      groupBy,
-      labelFilters
+      labelFilters,
+      urlState,
+      checks: stateChecks,
+      labels
     } = state;
+    const { hidePassing, groupBy, layout } = urlState;
 
     // first filter for pass/fail
     let checks = filterChecks(stateChecks, hidePassing, []);
-    // get labels for the new subset
-    const labels = getLabels(checks);
+
     const passedAll = reduce(
       stateChecks,
       (sum, c) => (isHealthy(c) ? sum + 1 : sum),
       0
     );
     // filter the subset down
-    checks = filterChecksByLabels(checks, labelFilters); // filters checks by its 'include/exclude' filters
+    checks = Object.values(filterChecksByLabels(checks, labelFilters)); // filters checks by its 'include/exclude' filters
     checks = orderBy(checks, CanarySorter);
     const passed = reduce(
       checks,
@@ -186,40 +137,39 @@ export class Canary extends React.Component {
       0
     );
 
-    // generate available grouping selections for dropdown menu
-    const groupSelections = getGroupSelections(checks);
+    const hasGrouping = groupBy !== "no-group";
+    const groupedChecks = hasGrouping
+      ? getGroupedChecks(checks, groupBy)
+      : checks;
 
-    // reset grouping if currently selected groupBy isn't available anymore
-    if (groupSelections.findIndex((o) => o.label === groupBy.label) === -1) {
-      this.setGroupBy(groupSelections[0]);
-    }
+    console.log("groupedChecks", checks);
 
-    // if a grouping is selected, create a grouped version of the checks array
-    let hasGrouping = false;
-    let groupedChecks = [];
-    if (groupBy.name !== "no-group") {
-      hasGrouping = true;
-      groupedChecks = getGroupedChecks(checks, groupBy);
-    }
+    const filterProps = {
+      labels,
+      checks: stateChecks,
+      history: this.history
+    };
 
     return (
       <div className="w-full flex flex-col-reverse lg:flex-row">
         {/* middle panel */}
         <div className="w-full">
-          {style.name === "card" && (
+          {layout === "card" && (
             <div className="m-6">
               <CanaryCards checks={checks} onClick={this.select} />
             </div>
           )}
-          {style.name === "table" && (
+          {layout === "table" && (
             <div className="m-6 mt-0 relative">
-              <div className="sticky top-0 h-6 bg-white z-10" />
+              <div
+                className="sticky top-0 h-6 bg-white z-10"
+                style={{ marginLeft: "-1px" }}
+              />
               {/* <CanaryTable
                 theadClass="sticky top-6 z-10"
-                checks={checks}
-                groupedChecks={groupedChecks}
+                checks={groupedChecks}
                 hasGrouping={hasGrouping}
-                groupingLabel={groupBy.label}
+                groupingLabel={groupBy}
                 onClick={this.select}
               /> */}
               <NewCanaryTable checks={checks} />
@@ -268,53 +218,7 @@ export class Canary extends React.Component {
             )}
 
             {/* filtering tools */}
-            <div className="relative lg:w-80">
-              <div className="mb-8">
-                <Dropdown
-                  items={layoutSelections}
-                  selected={style}
-                  setSelected={this.setStyle}
-                  className="mb-4"
-                  label="Layout"
-                />
-
-                {style.name === "table" && (
-                  <Dropdown
-                    items={groupSelections}
-                    selected={groupBy}
-                    setSelected={this.setGroupBy}
-                    className="mb-4"
-                    label="Group By"
-                  />
-                )}
-              </div>
-
-              <div className="uppercase font-semibold text-sm mb-3 text-indigo-700">
-                Filter By Health
-              </div>
-              <Toggle
-                label="Hide Passing"
-                enabled={hidePassing}
-                setEnabled={this.togglePassing}
-                className="mb-3"
-              />
-
-              <div className="mt-8">
-                <div className="uppercase font-semibold text-sm mb-3 text-indigo-700">
-                  Filter By Label
-                </div>
-                {labels.map((label) => (
-                  <TristateToggle
-                    key={label.key}
-                    className="mb-2"
-                    onChange={(state) => {
-                      this.updateLabelFilters(label.key, state);
-                    }}
-                    label={label.label}
-                  />
-                ))}
-              </div>
-            </div>
+            <FilterForm {...filterProps} />
           </div>
         </div>
         {selected != null && (
