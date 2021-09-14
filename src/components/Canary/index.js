@@ -8,7 +8,6 @@ import { getLabels, filterChecksByLabels, getLabelFilters } from "./labels";
 
 import { readCanaryState, getDefaultForm } from "./state";
 
-import { getGroupedChecks } from "./grouping";
 import { filterChecks, isHealthy } from "./filter";
 import { NewCanaryTable } from "./newTable";
 import { CanaryCards } from "./card";
@@ -138,11 +137,6 @@ export class Canary extends React.Component {
     );
 
     const hasGrouping = groupBy !== "no-group";
-    const groupedChecks = hasGrouping
-      ? getGroupedChecks(checks, groupBy)
-      : checks;
-
-    console.log("groupedChecks", checks);
 
     const filterProps = {
       labels,
@@ -163,16 +157,14 @@ export class Canary extends React.Component {
             <div className="m-6 mt-0 relative">
               <div
                 className="sticky top-0 h-6 bg-white z-10"
-                style={{ marginLeft: "-1px" }}
+                style={{ marginLeft: "-1px", width: "calc(100% + 2px)" }}
               />
-              {/* <CanaryTable
-                theadClass="sticky top-6 z-10"
-                checks={groupedChecks}
+              <NewCanaryTable
+                checks={checks}
+                labels={labels}
+                history={history}
                 hasGrouping={hasGrouping}
-                groupingLabel={groupBy}
-                onClick={this.select}
-              /> */}
-              <NewCanaryTable checks={checks} />
+              />
             </div>
           )}
         </div>

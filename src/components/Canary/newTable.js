@@ -1,9 +1,16 @@
-import React, { useEffect, useState, useMemo } from "react";
-import { RiContactsBookLine } from "react-icons/ri";
-import { useTable } from "react-table";
+import React, { useEffect, useMemo } from "react";
+import { useForm } from "react-hook-form";
+import { TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti";
+import { useTable, useSortBy } from "react-table";
 import { GetName } from "./data";
 import { Duration, Percentage } from "./renderers";
+import {
+  getHealthPercentageScore,
+  getLatency,
+  getUptimeScore
+} from "./sorting";
 import { StatusList } from "./status";
+import { decodeUrlSearchParams, encodeObjectToUrlSearchParams } from "./url";
 
 const styles = {
   outerDivClass: "",
@@ -15,10 +22,10 @@ const styles = {
   tableHeaderBgBack: "bg-white",
   theadRowClass: "z-10",
   theadHeaderClass:
-    "px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider",
+    "px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ",
   tbodyClass: "mt-4 rounded-md",
   tbodyRowClass: "border",
-  tbodyDataClass: "px-6 py-2 whitespace-nowrap "
+  tbodyDataClass: "px-6 py-2 whitespace-nowrap"
 };
 
 function HealthCell({ value }) {
@@ -35,7 +42,7 @@ function LatencyCell({ value }) {
   return <Duration ms={value.rolling1h} />;
 }
 
-export function NewCanaryTable({ checks, ...rest }) {
+export function NewCanaryTable({ checks, labels, history, ...rest }) {
   const data = useMemo(
     () =>
       checks.map((check) => ({
@@ -56,29 +63,91 @@ export function NewCanaryTable({ checks, ...rest }) {
         Header: "Health",
         accessor: "checkStatuses",
         Cell: HealthCell,
-        cellClass: ""
+        cellClass: "",
+        sortType: (a, b) =>
+          getHealthPercentageScore(a.values) <
+          getHealthPercentageScore(b.values)
+            ? 1
+            : -1
       },
       {
         Header: "Uptime",
         accessor: "uptime",
         Cell: UptimeCell,
-        cellClass: ""
+        cellClass: "",
+        sortType: (a, b) =>
+          getUptimeScore(a.values) < getUptimeScore(b.values) ? 1 : -1
       },
       {
         Header: "Latency",
         accessor: "latency",
         Cell: LatencyCell,
-        cellClass: ""
+        cellClass: "",
+        sortType: (a, b) =>
+          getLatency(a.values) < getLatency(b.values) ? -1 : 1
       }
     ],
     []
   );
 
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
-    useTable({ columns, data });
+  const {
+    state: tableState,
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    rows,
+    setSortBy,
+    prepareRow
+  } = useTable(
+    { columns, data, disableMultiSort: true, autoResetSortBy: false },
+    useSortBy
+  );
+
+  const { watch, setValue } = useForm({
+    defaultValues: decodeUrlSearchParams(window.location.search)
+  });
+
+  const watchSortBy = watch("sortBy");
+  const watchSortDesc = watch("sortDesc");
+
+  // Set table's sort state according to url params on page load
+  useEffect(() => {
+    const searchParams = window.location.search;
+    const decodedParams = decodeUrlSearchParams(searchParams);
+    setSortBy([{ id: decodedParams.sortBy, desc: decodedParams.sortDesc }]);
+  }, [setSortBy]);
+
+  // Sorm's sortBy and sortDesc state changes updates url
+  useEffect(() => {
+    const searchParams = window.location.search;
+    const decodedParams = decodeUrlSearchParams(searchParams);
+    const newFormState = {
+      ...decodedParams,
+      sortBy: watchSortBy,
+      sortDesc: watchSortDesc
+    };
+    const encoded = encodeObjectToUrlSearchParams(newFormState);
+    if (window.location.search !== `?${encoded}`) {
+      // See https://github.com/remix-run/history/blob/main/docs/getting-started.md
+      history.push(`/canary?${encoded}`);
+    }
+  }, [watchSortBy, watchSortDesc, history]);
+
+  // Table state triggers changes on the formstate
+  useEffect(() => {
+    if (tableState?.sortBy) {
+      if (tableState.sortBy.length > 0) {
+        setValue("sortBy", tableState.sortBy[0].id);
+        setValue("sortDesc", tableState.sortBy[0].desc);
+      } else {
+        setValue("sortBy", null);
+        setValue("sortDesc", null);
+      }
+    }
+  }, [tableState, setValue]);
 
   return (
-    <div className={styles.outerDivClass}>
+    <div className={styles.outerDivClass} {...rest}>
       <table className={styles.tableClass} {...getTableProps()}>
         <thead className={styles.theadClass}>
           {headerGroups.map((headerGroup) => (
@@ -91,20 +160,33 @@ export function NewCanaryTable({ checks, ...rest }) {
                 <th
                   key={column.Header}
                   className={styles.theadHeaderClass}
-                  {...column.getHeaderProps()}
+                  {...column.getHeaderProps(column.getSortByToggleProps())}
                 >
-                  {column.render("Header")}
+                  <div className="flex select-none">
+                    {column.render("Header")}
+                    <span>
+                      {column.isSorted ? (
+                        column.isSortedDesc ? (
+                          <TiArrowSortedUp />
+                        ) : (
+                          <TiArrowSortedDown />
+                        )
+                      ) : (
+                        ""
+                      )}
+                    </span>
+                  </div>
                 </th>
               ))}
             </tr>
           ))}
-          <div
+          <tr
             className={`${styles.tableHeaderBg} ${styles.tableHeaderBgFront}`}
-            style={{ zIndex: "-1", left: "-1px", width: "calc(100% + 1px)" }}
+            style={{ zIndex: "-1", left: "-1px", width: "calc(100% + 2px)" }}
           />
-          <div
+          <tr
             className={`${styles.tableHeaderBg} ${styles.tableHeaderBgBack}`}
-            style={{ zIndex: "-2", left: "-1px", width: "calc(100% + 1px)" }}
+            style={{ zIndex: "-2", left: "-1px", width: "calc(100% + 2px)" }}
           />
         </thead>
         <tbody className={styles.tbodyClass} {...getTableBodyProps()}>
