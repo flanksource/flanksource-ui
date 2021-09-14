@@ -13,15 +13,6 @@ import { StatusList } from "./status";
 import { decodeUrlSearchParams, encodeObjectToUrlSearchParams } from "./url";
 
 const styles = {
-<<<<<<< HEAD
-  tableClass: "border border-green-500",
-  theadClass: "border border-red-500",
-  theadRowClass: "",
-  theadHeaderClass: "",
-  tbodyClass: "",
-  tbodyRowClass: "",
-  tbodyDataClass: ""
-=======
   outerDivClass: "",
   tableClass: "min-w-full relative",
   theadClass: "sticky top-6 z-10",
@@ -35,7 +26,6 @@ const styles = {
   tbodyClass: "mt-4 rounded-md",
   tbodyRowClass: "border",
   tbodyDataClass: "px-6 py-2 whitespace-nowrap"
->>>>>>> feat: sorting implementation with React-Table lib, integrated with URL param state
 };
 
 function HealthCell({ value }) {
@@ -52,16 +42,6 @@ function LatencyCell({ value }) {
   return <Duration ms={value.rolling1h} />;
 }
 
-<<<<<<< HEAD
-export function NewCanaryTable({ checks, ...rest }) {
-  const data = useMemo(() => {
-    console.log(checks);
-    return checks.map((check) => ({
-      ...check,
-      name: GetName(check)
-    }));
-  }, [checks]);
-=======
 export function NewCanaryTable({ checks, labels, history, ...rest }) {
   const data = useMemo(
     () =>
@@ -71,7 +51,6 @@ export function NewCanaryTable({ checks, labels, history, ...rest }) {
       })),
     [checks]
   );
->>>>>>> feat: sorting implementation with React-Table lib, integrated with URL param state
 
   const columns = useMemo(
     () => [
@@ -82,9 +61,6 @@ export function NewCanaryTable({ checks, labels, history, ...rest }) {
       {
         Header: "Health",
         accessor: "checkStatuses",
-<<<<<<< HEAD
-        Cell: HealthCell
-=======
         Cell: HealthCell,
         cellClass: "",
         sortType: (a, b) =>
@@ -92,31 +68,22 @@ export function NewCanaryTable({ checks, labels, history, ...rest }) {
           getHealthPercentageScore(b.values)
             ? 1
             : -1
->>>>>>> feat: sorting implementation with React-Table lib, integrated with URL param state
       },
       {
         Header: "Uptime",
         accessor: "uptime",
-<<<<<<< HEAD
-        Cell: UptimeCell
-=======
         Cell: UptimeCell,
         cellClass: "",
         sortType: (a, b) =>
           getUptimeScore(a.values) < getUptimeScore(b.values) ? 1 : -1
->>>>>>> feat: sorting implementation with React-Table lib, integrated with URL param state
       },
       {
         Header: "Latency",
         accessor: "latency",
-<<<<<<< HEAD
-        Cell: LatencyCell
-=======
         Cell: LatencyCell,
         cellClass: "",
         sortType: (a, b) =>
           getLatency(a.values) < getLatency(b.values) ? -1 : 1
->>>>>>> feat: sorting implementation with React-Table lib, integrated with URL param state
       }
     ],
     []
@@ -179,56 +146,15 @@ export function NewCanaryTable({ checks, labels, history, ...rest }) {
   }, [tableState, setValue]);
 
   return (
-<<<<<<< HEAD
-    <table className={styles.tableClass} {...getTableProps()}>
-      <thead className={styles.theadClass}>
-        {headerGroups.map((headerGroup) => (
-          <tr
-            className={styles.theadRowClass}
-            {...headerGroup.getHeaderGroupProps()}
-          >
-            {headerGroup.headers.map((column) => (
-              <th
-                className={styles.theadHeaderClass}
-                {...column.getHeaderProps()}
-              >
-                {column.render("Header")}
-              </th>
-            ))}
-          </tr>
-        ))}
-      </thead>
-      <tbody className={styles.tbodyClass} {...getTableBodyProps()}>
-        {rows.map((row) => {
-          prepareRow(row);
-          return (
-=======
     <div className={styles.outerDivClass} {...rest}>
       <table className={styles.tableClass} {...getTableProps()}>
         <thead className={styles.theadClass}>
           {headerGroups.map((headerGroup) => (
->>>>>>> feat: sorting implementation with React-Table lib, integrated with URL param state
             <tr
               key={row.id}
               className={styles.tbodyRowClass}
               {...row.getRowProps()}
             >
-<<<<<<< HEAD
-              {row.cells.map((cell) => (
-                <td
-                  key={cell.column.Header}
-                  className={styles.tbodyDataClass}
-                  {...cell.getCellProps()}
-                >
-                  {cell.render("Cell")}
-                </td>
-              ))}
-            </tr>
-          );
-        })}
-      </tbody>
-    </table>
-=======
               {headerGroup.headers.map((column) => (
                 <th
                   key={column.Header}
@@ -289,6 +215,5 @@ export function NewCanaryTable({ checks, labels, history, ...rest }) {
         </tbody>
       </table>
     </div>
->>>>>>> feat: sorting implementation with React-Table lib, integrated with URL param state
   );
 }
