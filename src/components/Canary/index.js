@@ -9,7 +9,7 @@ import { getLabels, filterChecksByLabels, getLabelFilters } from "./labels";
 import { readCanaryState, getDefaultForm } from "./state";
 
 import { filterChecks, isHealthy } from "./filter";
-import { NewCanaryTable } from "./newTable";
+import { CanaryTable } from "./table";
 import { CanaryCards } from "./card";
 import { CanarySorter } from "./data";
 import { CanaryDescription } from "./description";
@@ -159,7 +159,7 @@ export class Canary extends React.Component {
                 className="sticky top-0 h-6 bg-white z-10"
                 style={{ marginLeft: "-1px", width: "calc(100% + 2px)" }}
               />
-              <NewCanaryTable
+              <CanaryTable
                 checks={checks}
                 labels={labels}
                 history={history}

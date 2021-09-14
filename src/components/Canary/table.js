@@ -1,251 +1,220 @@
-import React, { useEffect, useState } from "react";
-import { FaChevronRight } from "react-icons/fa";
+import React, { useEffect, useMemo } from "react";
+import { useForm } from "react-hook-form";
 import { TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti";
-import { Title, Uptime, Latency } from "./renderers";
+import { useTable, useSortBy } from "react-table";
+import { GetName } from "./data";
+import { Duration, Percentage } from "./renderers";
+import {
+  getHealthPercentageScore,
+  getLatency,
+  getUptimeScore
+} from "./sorting";
 import { StatusList } from "./status";
-import { aggregate } from "./aggregate";
+import { decodeUrlSearchParams, encodeObjectToUrlSearchParams } from "./url";
 
-import { sortChecks, sortGroupedChecks, sortValues } from "./sorting";
+const styles = {
+  outerDivClass: "",
+  tableClass: "min-w-full relative",
+  theadClass: "sticky top-6 z-10",
+  tableHeaderBg: "h-10 absolute top-0",
+  tableHeaderBgFront:
+    "bg-gray-100 rounded-tl-md rounded-tr-md border border-b-0",
+  tableHeaderBgBack: "bg-white",
+  theadRowClass: "z-10",
+  theadHeaderClass:
+    "px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ",
+  tbodyClass: "mt-4 rounded-md",
+  tbodyRowClass: "border",
+  tbodyDataClass: "px-6 py-2 whitespace-nowrap"
+};
 
-export function CanaryTable({
-  className,
-  hasGrouping,
-  groupingLabel,
-  checks,
-  groupedChecks,
-  onClick,
-  theadClass,
-  ...rest
-}) {
-  const [sortedChecks, setSortedChecks] = useState(checks);
-  const [sortedGroups, setSortedGroups] = useState(Object.keys(groupedChecks));
-  const initialSortState = {
-    check: sortValues[0],
-    health: sortValues[0],
-    uptime: sortValues[0],
-    latency: sortValues[0]
-  };
-  const [sortState, setSortState] = useState(initialSortState);
+function HealthCell({ value }) {
+  return <StatusList checkStatuses={value} />;
+}
 
-  const resetSortState = () => {
-    setSortState(initialSortState);
-  };
+function UptimeCell({ value }) {
+  return (
+    <Percentage upper={value.passed + value.failed} lower={value.passed} />
+  );
+}
 
-  // handle table header click. updates sort column/direction.
-  const handleSortChange = (columnKey) => {
-    // cycle between sortValues on consecutive clicks
-    const sortValueIndex = sortValues.indexOf(sortState[columnKey]);
-    const newIndex = (sortValueIndex + 1) % sortValues.length;
-    const newSortDirection = sortValues[newIndex];
+function LatencyCell({ value }) {
+  return <Duration ms={value.rolling1h} />;
+}
 
-    // reset other columns and update sortState
-    const newSortState = { ...initialSortState };
-    newSortState[columnKey] = newSortDirection;
-    setSortState(newSortState);
+export function CanaryTable({ checks, labels, history, ...rest }) {
+  const data = useMemo(
+    () =>
+      checks.map((check) => ({
+        ...check,
+        name: GetName(check)
+      })),
+    [checks]
+  );
 
-    if (newSortDirection === sortValues[0]) {
-      // if no direction selected, reset sort to initial state
-      setSortedChecks(checks);
-      setSortedGroups(Object.keys(groupedChecks));
-    } else if (!hasGrouping) {
-      // perform sorting on Checks
-      setSortedChecks(sortChecks(checks, columnKey, newSortDirection));
-    } else {
-      // perform sorting on grouped Checks
-      setSortedGroups(
-        sortGroupedChecks(groupedChecks, columnKey, newSortDirection)
-      );
-    }
-  };
+  const columns = useMemo(
+    () => [
+      {
+        Header: "Checks",
+        accessor: "name",
+        cellClass: "w-full max-w-0 overflow-hidden overflow-ellipsis"
+      },
+      {
+        Header: "Health",
+        accessor: "checkStatuses",
+        Cell: HealthCell,
+        cellClass: "",
+        sortType: (a, b) =>
+          getHealthPercentageScore(a.values) <
+          getHealthPercentageScore(b.values)
+            ? 1
+            : -1
+      },
+      {
+        Header: "Uptime",
+        accessor: "uptime",
+        Cell: UptimeCell,
+        cellClass: "",
+        sortType: (a, b) =>
+          getUptimeScore(a.values) < getUptimeScore(b.values) ? 1 : -1
+      },
+      {
+        Header: "Latency",
+        accessor: "latency",
+        Cell: LatencyCell,
+        cellClass: "",
+        sortType: (a, b) =>
+          getLatency(a.values) < getLatency(b.values) ? -1 : 1
+      }
+    ],
+    []
+  );
 
-  // reset sort state and update table on checks/groups change
+  const {
+    state: tableState,
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    rows,
+    setSortBy,
+    prepareRow
+  } = useTable(
+    { columns, data, disableMultiSort: true, autoResetSortBy: false },
+    useSortBy
+  );
+
+  const { watch, setValue } = useForm({
+    defaultValues: decodeUrlSearchParams(window.location.search)
+  });
+
+  const watchSortBy = watch("sortBy");
+  const watchSortDesc = watch("sortDesc");
+
+  // Set table's sort state according to url params on page load
   useEffect(() => {
-    resetSortState();
-    if (checks) {
-      setSortedChecks(checks);
+    const searchParams = window.location.search;
+    const decodedParams = decodeUrlSearchParams(searchParams);
+    setSortBy([{ id: decodedParams.sortBy, desc: decodedParams.sortDesc }]);
+  }, [setSortBy]);
+
+  // Form's sortBy and sortDesc state changes updates url
+  useEffect(() => {
+    const searchParams = window.location.search;
+    const decodedParams = decodeUrlSearchParams(searchParams);
+    const newFormState = {
+      ...decodedParams,
+      sortBy: watchSortBy,
+      sortDesc: watchSortDesc
+    };
+    const encoded = encodeObjectToUrlSearchParams(newFormState);
+    if (window.location.search !== `?${encoded}`) {
+      // See https://github.com/remix-run/history/blob/main/docs/getting-started.md
+      history.push(`/canary?${encoded}`);
     }
-    if (groupedChecks) {
-      setSortedGroups(Object.keys(groupedChecks));
+  }, [watchSortBy, watchSortDesc, history]);
+
+  // Table-state changes will in turn trigger changes in the formState
+  useEffect(() => {
+    if (tableState?.sortBy) {
+      if (tableState.sortBy.length > 0) {
+        setValue("sortBy", tableState.sortBy[0].id);
+        setValue("sortDesc", tableState.sortBy[0].desc);
+      } else {
+        setValue("sortBy", null);
+        setValue("sortDesc", null);
+      }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [checks, groupedChecks]);
+  }, [tableState, setValue]);
 
   return (
-    <div className={`rounded-md border border-gray-200 ${className}`} {...rest}>
-      <table className="min-w-full divide-y divide-gray-200 relative">
-        <thead className={theadClass}>
-          <tr>
-            <TableHeader
-              label={hasGrouping ? groupingLabel : "Check"}
-              hasSorting
-              onSortChange={(key) => handleSortChange(key)}
-              sortDirection={sortState.check}
-              columnKey="check"
-            />
-            <TableHeader
-              label="Health"
-              hasSorting
-              onSortChange={handleSortChange}
-              sortDirection={sortState.health}
-              columnKey="health"
-            />
-            <TableHeader
-              label="Uptime"
-              hasSorting
-              onSortChange={handleSortChange}
-              sortDirection={sortState.uptime}
-              columnKey="uptime"
-            />
-            <TableHeader
-              label="Latency"
-              hasSorting
-              onSortChange={handleSortChange}
-              sortDirection={sortState.latency}
-              columnKey="latency"
-            />
-          </tr>
-        </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
-          {hasGrouping ? (
-            <>
-              {sortedGroups.map((groupName) => (
-                <TableGroupRow
-                  showIcon
-                  key={groupName}
-                  title={groupName}
-                  items={groupedChecks[groupName]}
-                  onClick={onClick}
-                />
-              ))}
-            </>
-          ) : (
-            <>
-              {checks.map((check) => (
-                <tr
-                  key={check.key}
-                  onClick={() => onClick(check)}
-                  className="cursor-pointer"
+    <div className={styles.outerDivClass} {...rest}>
+      <table className={styles.tableClass} {...getTableProps()}>
+        <thead className={styles.theadClass}>
+          {headerGroups.map((headerGroup) => (
+            <tr
+              key={headerGroup.getHeaderGroupProps().key}
+              className={styles.theadRowClass}
+              {...headerGroup.getHeaderGroupProps()}
+            >
+              {headerGroup.headers.map((column) => (
+                <th
+                  key={column.Header}
+                  className={styles.theadHeaderClass}
+                  {...column.getHeaderProps(column.getSortByToggleProps())}
                 >
-                  <td className="px-6 py-2 w-full max-w-0 overflow-hidden overflow-ellipsis whitespace-nowrap">
-                    <Title key={`${check.key}-title`} check={check} />
-                  </td>
-                  <td className="px-6 py-2 whitespace-nowrap">
-                    <StatusList key={`${check.key}-status`} check={check} />
-                  </td>
-                  <td className="px-6 py-2 whitespace-nowrap">
-                    <Uptime key={`${check.key}-uptime`} check={check} />
-                  </td>
-                  <td className="px-6 py-2 whitespace-nowrap">
-                    <Latency key={`${check.key}-latency`} check={check} />
-                  </td>
-                </tr>
+                  <div className="flex select-none">
+                    {column.render("Header")}
+                    <span>
+                      {column.isSorted ? (
+                        column.isSortedDesc ? (
+                          <TiArrowSortedUp />
+                        ) : (
+                          <TiArrowSortedDown />
+                        )
+                      ) : (
+                        ""
+                      )}
+                    </span>
+                  </div>
+                </th>
               ))}
-            </>
-          )}
+            </tr>
+          ))}
+          <tr
+            className={`${styles.tableHeaderBg} ${styles.tableHeaderBgFront}`}
+            style={{ zIndex: "-1", left: "-1px", width: "calc(100% + 2px)" }}
+          />
+          <tr
+            className={`${styles.tableHeaderBg} ${styles.tableHeaderBgBack}`}
+            style={{ zIndex: "-2", left: "-1px", width: "calc(100% + 2px)" }}
+          />
+        </thead>
+        <tbody className={styles.tbodyClass} {...getTableBodyProps()}>
+          {rows.map((row) => {
+            prepareRow(row);
+            return (
+              <tr
+                key={row.id}
+                className={`${styles.tbodyRowClass}`}
+                style={{}}
+                {...row.getRowProps()}
+              >
+                {row.cells.map((cell) => (
+                  <td
+                    key={cell.column.Header}
+                    className={`${styles.tbodyDataClass} ${
+                      cell.column.cellClass || ""
+                    }`}
+                    {...cell.getCellProps()}
+                  >
+                    {cell.render("Cell")}
+                  </td>
+                ))}
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>
-  );
-}
-
-function TableHeader({
-  label,
-  hasSorting,
-  columnKey,
-  onSortChange,
-  sortDirection,
-  className
-}) {
-  const handleSort = () => {
-    if (onSortChange) {
-      onSortChange(columnKey);
-    }
-  };
-
-  return (
-    <th
-      scope="col"
-      onClick={hasSorting ? handleSort : () => {}}
-      className={`${className} px-6 py-3 bg-gray-100 first:rounded-tl-md last:rounded-tr-md  text-gray-500  ${
-        hasSorting ? "hover:text-indigo-700 cursor-pointer" : ""
-      }`}
-    >
-      <div className="flex select-none text-left text-xs font-medium uppercase tracking-wider">
-        <span className="">{label}</span>
-        <span className="text-indigo-700 ml-1">
-          {sortDirection === "asc" ? (
-            <TiArrowSortedDown />
-          ) : sortDirection === "desc" ? (
-            <TiArrowSortedUp />
-          ) : (
-            ""
-          )}
-        </span>
-      </div>
-    </th>
-  );
-}
-
-function TableGroupRow({ title, items, onClick, showIcon, ...rest }) {
-  const [expanded, setExpanded] = useState(false);
-  const [aggregated, setAggregated] = useState(null);
-
-  useEffect(() => {
-    setAggregated(aggregate(title, items));
-  }, [items, title]);
-
-  return (
-    <>
-      <tr
-        title="Click to expand row"
-        aria-expanded={expanded}
-        className="cursor-pointer bg-white"
-        onClick={() => {
-          setExpanded(!expanded);
-        }}
-        {...rest}
-      >
-        <td className="px-6 py-3 w-full">
-          <div className="flex items-center select-none">
-            <FaChevronRight
-              className={`${
-                expanded ? "transform rotate-90" : ""
-              } mr-4 duration-75`}
-            />
-            <Title check={aggregated} />
-          </div>
-        </td>
-        <td className="px-6 py-2 whitespace-nowrap">
-          <StatusList check={aggregated} />
-        </td>
-        <td className="px-6 py-2 whitespace-nowrap">
-          <Uptime check={aggregated} />
-        </td>
-        <td className="px-6 py-2 whitespace-nowrap">
-          <Latency check={aggregated} />
-        </td>
-      </tr>
-      {expanded &&
-        items.map((item) => (
-          <tr
-            key={item.key}
-            onClick={() => onClick(item)}
-            className="cursor-pointer"
-          >
-            <td className="px-6 pl-14 py-2 w-full max-w-0 overflow-hidden overflow-ellipsis whitespace-nowrap">
-              <Title key={`${item.key}-title`} check={item} />
-            </td>
-            <td className="px-6 py-2 whitespace-nowrap">
-              <StatusList key={`${item.key}-status`} check={item} />
-            </td>
-            <td className="px-6 py-2 whitespace-nowrap">
-              <Uptime key={`${item.key}-uptime`} check={item} />
-            </td>
-            <td className="px-6 py-2 whitespace-nowrap">
-              <Latency key={`${item.key}-latency`} check={item} />
-            </td>
-          </tr>
-        ))}
-    </>
   );
 }
