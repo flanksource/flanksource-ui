@@ -1,4 +1,4 @@
-import { aggregate } from "./aggregate";
+import { aggregate, getAggregatedGroupedChecks } from "./aggregate";
 
 export const sortValues = ["none", "asc", "desc"];
 
@@ -58,13 +58,7 @@ export const sortChecks = (checks, sortFunc, sortDirection) => {
 // sorts aggregated groupedChecks based on a sorting function
 // returns a sorted string array (of group key names).
 export const sortGroupedChecks = (groupedChecks, sortFunc, sortDirection) => {
-  const groupKeys = Object.keys(groupedChecks);
-  // aggregates each group before sorting
-  let aggregated = groupKeys.map((key) => {
-    const aggr = aggregate(key, groupedChecks[key]);
-    aggr.groupKey = key;
-    return aggr;
-  });
+  let aggregated = getAggregatedGroupedChecks(groupedChecks);
   // perform sorting based on aggregated values
   aggregated = aggregated.sort(sortingFunctions[sortFunc]);
   let sortedKeys = aggregated.map((group) => group.groupKey);

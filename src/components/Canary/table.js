@@ -1,7 +1,8 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti";
-import { useTable, useSortBy, useGroupBy, useExpanded } from "react-table";
+import { useTable, useSortBy, useExpanded } from "react-table";
+import { getAggregatedGroupedChecks } from "./aggregate";
 import { GetName } from "./data";
 import { getGroupedChecks } from "./grouping";
 import { Duration, Percentage } from "./renderers";
@@ -26,7 +27,8 @@ const styles = {
     "px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ",
   tbodyClass: "mt-4 rounded-md",
   tbodyRowClass: "border",
-  tbodyDataClass: "px-6 py-2 whitespace-nowrap"
+  tbodyRowExpandableClass: "cursor-pointer",
+  tbodyDataClass: "whitespace-nowrap"
 };
 
 function HealthCell({ value }) {
@@ -43,33 +45,58 @@ function LatencyCell({ value }) {
   return <Duration ms={value.rolling1h} />;
 }
 
-export function CanaryTable({ checks, labels, history, hasGrouping, ...rest }) {
+export function CanaryTable({ checks, labels, history, ...rest }) {
   const searchParams = window.location.search;
+
+  const [tableData, setTableData] = useState(checks);
+  const [hasGrouping, setHasGrouping] = useState(false);
+
+  // update table data if searchParam or check data changes
   useEffect(() => {
     const decodedParams = decodeUrlSearchParams(searchParams);
-  }, [searchParams]);
+    const { groupBy } = decodedParams;
+    let aggregatedGroups = null;
+
+    // if has grouping, perform grouping and aggregate each group of checks
+    if (groupBy !== "no-group") {
+      const grouped = getGroupedChecks(checks, groupBy);
+      aggregatedGroups = getAggregatedGroupedChecks(grouped);
+      setHasGrouping(true);
+    } else {
+      setHasGrouping(false);
+    }
+
+    setTableData(aggregatedGroups || checks);
+  }, [searchParams, checks]);
 
   const data = useMemo(
     () =>
-      checks.map((check) => ({
+      tableData.map((check) => ({
         ...check,
         name: GetName(check)
       })),
-    [checks]
+    [tableData]
   );
 
   const columns = useMemo(
     () => [
       {
+        id: "expander",
+        // eslint-disable-next-line react/display-name
+        Cell: ({ row }) =>
+          row.canExpand ? <span>{row.isExpanded ? "👇" : "👉"}</span> : null,
+        cellClass: "pl-6 py-0"
+      },
+      {
         Header: "Checks",
         accessor: "name",
-        cellClass: "w-full max-w-0 overflow-hidden overflow-ellipsis"
+        cellClass: "px-6 py-1 w-full max-w-0 overflow-hidden overflow-ellipsis"
       },
       {
         Header: "Health",
         accessor: "checkStatuses",
         Cell: HealthCell,
-        cellClass: "",
+        cellClass: "px-4 py-1",
         sortType: (a, b) =>
           getHealthPercentageScore(a.values) <
           getHealthPercentageScore(b.values)
@@ -80,7 +107,7 @@ export function CanaryTable({ checks, labels, history, hasGrouping, ...rest }) {
         Header: "Uptime",
         accessor: "uptime",
         Cell: UptimeCell,
-        cellClass: "",
+        cellClass: "px-4 py-1",
         sortType: (a, b) =>
           getUptimeScore(a.values) < getUptimeScore(b.values) ? 1 : -1
       },
@@ -88,7 +115,7 @@ export function CanaryTable({ checks, labels, history, hasGrouping, ...rest }) {
         Header: "Latency",
         accessor: "latency",
         Cell: LatencyCell,
-        cellClass: "",
+        cellClass: "px-4 py-1",
         sortType: (a, b) =>
           getLatency(a.values) < getLatency(b.values) ? -1 : 1
       }
@@ -125,13 +152,22 @@ export function Table({
     headerGroups,
     rows,
     setSortBy,
-    prepareRow
+    prepareRow,
+    toggleHideColumn,
+    toggleRowExpanded
   } = useTable(
     { columns, data, disableMultiSort: true, autoResetSortBy: false },
-    useGroupBy,
     useSortBy,
     useExpanded
   );
+
+  useEffect(() => {
+    if (hasGrouping) {
+      toggleHideColumn("expander", false);
+    } else {
+      toggleHideColumn("expander", true);
+    }
+  }, [hasGrouping, toggleHideColumn]);
 
   const { watch, setValue } = useForm({
     defaultValues: decodeUrlSearchParams(window.location.search)
@@ -148,7 +184,8 @@ export function Table({
 
   // Form's sortBy and sortDesc state changes updates url
   useEffect(() => {
-    const decodedParams = decodeUrlSearchParams(searchParams);
+    const currentSearchParams = window.location.search;
+    const decodedParams = decodeUrlSearchParams(currentSearchParams);
     const newFormState = {
       ...decodedParams,
       sortBy: watchSortBy,
@@ -223,9 +260,13 @@ export function Table({
             return (
               <tr
                 key={row.id}
-                className={`${styles.tbodyRowClass}`}
+                className={`${styles.tbodyRowClass} ${
+                  row.canExpand ? styles.tbodyRowExpandableClass : ""
+                }`}
                 style={{}}
-                onClick={() => console.log("click")}
+                onClick={
+                  row.canExpand ? () => toggleRowExpanded(row.id) : () => {}
+                }
                 {...row.getRowProps()}
               >
                 {row.cells.map((cell) => (
