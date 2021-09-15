@@ -1,4 +1,4 @@
-import { aggregate, getAggregatedGroupedChecks } from "./aggregate";
+import { getAggregatedGroupedChecks } from "./aggregate";
 
 export const sortValues = ["none", "asc", "desc"];
 
