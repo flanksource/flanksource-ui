@@ -1,8 +1,9 @@
 import React, { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti";
-import { useTable, useSortBy } from "react-table";
+import { useTable, useSortBy, useGroupBy, useExpanded } from "react-table";
 import { GetName } from "./data";
+import { getGroupedChecks } from "./grouping";
 import { Duration, Percentage } from "./renderers";
 import {
   getHealthPercentageScore,
@@ -42,7 +43,12 @@ function LatencyCell({ value }) {
   return <Duration ms={value.rolling1h} />;
 }
 
-export function CanaryTable({ checks, labels, history, ...rest }) {
+export function CanaryTable({ checks, labels, history, hasGrouping, ...rest }) {
+  const searchParams = window.location.search;
+  useEffect(() => {
+    const decodedParams = decodeUrlSearchParams(searchParams);
+  }, [searchParams]);
+
   const data = useMemo(
     () =>
       checks.map((check) => ({
@@ -90,6 +96,28 @@ export function CanaryTable({ checks, labels, history, ...rest }) {
     []
   );
 
+  return (
+    <Table
+      data={data}
+      columns={columns}
+      labels={labels}
+      history={history}
+      hasGrouping={hasGrouping}
+      {...rest}
+    />
+  );
+}
+
+export function Table({
+  data,
+  columns,
+  labels,
+  history,
+  hasGrouping,
+  ...rest
+}) {
+  const searchParams = window.location.search;
+
   const {
     state: tableState,
     getTableProps,
@@ -100,7 +128,9 @@ export function CanaryTable({ checks, labels, history, ...rest }) {
     prepareRow
   } = useTable(
     { columns, data, disableMultiSort: true, autoResetSortBy: false },
-    useSortBy
+    useGroupBy,
+    useSortBy,
+    useExpanded
   );
 
   const { watch, setValue } = useForm({
@@ -110,16 +140,14 @@ export function CanaryTable({ checks, labels, history, ...rest }) {
   const watchSortBy = watch("sortBy");
   const watchSortDesc = watch("sortDesc");
 
-  // Set table's sort state according to url params on page load
+  // Set table's sort state according to url params on page load or url change
   useEffect(() => {
-    const searchParams = window.location.search;
     const decodedParams = decodeUrlSearchParams(searchParams);
     setSortBy([{ id: decodedParams.sortBy, desc: decodedParams.sortDesc }]);
-  }, [setSortBy]);
+  }, [setSortBy, searchParams]);
 
   // Form's sortBy and sortDesc state changes updates url
   useEffect(() => {
-    const searchParams = window.location.search;
     const decodedParams = decodeUrlSearchParams(searchParams);
     const newFormState = {
       ...decodedParams,
@@ -197,6 +225,7 @@ export function CanaryTable({ checks, labels, history, ...rest }) {
                 key={row.id}
                 className={`${styles.tbodyRowClass}`}
                 style={{}}
+                onClick={() => console.log("click")}
                 {...row.getRowProps()}
               >
                 {row.cells.map((cell) => (

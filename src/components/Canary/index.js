@@ -189,7 +189,7 @@ export class Canary extends React.Component {
 
         {/* right panel */}
         <div className="bg-gray-50">
-          <div className="p-6 space-y-6 sticky top-0 h-screen min-h-screen overflow-y-auto">
+          <div className="p-6 space-y-6 sticky top-0 lg:h-screen lg:min-h-screen overflow-y-auto">
             <StatCard
               title="All Checks"
               customValue={
