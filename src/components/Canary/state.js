@@ -1,12 +1,13 @@
 import { decodeUrlSearchParams } from "./url";
 import { isPlainObject } from "../../lib/isPlainObject";
+import { defaultGroupSelections } from "./grouping";
 
 export function getDefaultForm(labels, incoming = {}) {
   const initialLabelState = initialiseLabelState(labels, incoming);
 
   return {
     layout: "table",
-    groupBy: "name",
+    groupBy: defaultGroupSelections["no-group"].name,
     hidePassing: true,
     labels: { ...initialLabelState }
   };
@@ -53,7 +54,9 @@ export function initialiseFormState(defaultValues, url) {
     ...Object.entries(newLabelState)
   ]);
 
-  const groupByValueOrDefault = groupByDefaults.has(groupBy) ? groupBy : "name";
+  const groupByValueOrDefault = groupByDefaults.has(groupBy)
+    ? groupBy
+    : "no-group";
 
   const formState = {
     ...defaultValues,
@@ -78,7 +81,9 @@ export function updateFormState(update, url, labels) {
     ...Object.entries(newLabels)
   ]);
 
-  const groupByValueOrDefault = groupByDefaults.has(groupBy) ? groupBy : "name";
+  const groupByValueOrDefault = groupByDefaults.has(groupBy)
+    ? groupBy
+    : "no-group";
 
   const formState = {
     ...rest,
