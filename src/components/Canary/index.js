@@ -117,7 +117,7 @@ export class Canary extends React.Component {
       checks: stateChecks,
       labels
     } = state;
-    const { hidePassing, groupBy, layout } = urlState;
+    const { hidePassing, layout } = urlState;
 
     // first filter for pass/fail
     let checks = filterChecks(stateChecks, hidePassing, []);
@@ -135,8 +135,6 @@ export class Canary extends React.Component {
       (sum, c) => (isHealthy(c) ? sum + 1 : sum),
       0
     );
-
-    const hasGrouping = groupBy !== "no-group";
 
     const filterProps = {
       labels,
@@ -159,12 +157,7 @@ export class Canary extends React.Component {
                 className="sticky top-0 h-6 bg-white z-10"
                 style={{ marginLeft: "-1px", width: "calc(100% + 2px)" }}
               />
-              <CanaryTable
-                checks={checks}
-                labels={labels}
-                history={history}
-                hasGrouping={hasGrouping}
-              />
+              <CanaryTable checks={checks} labels={labels} history={history} />
             </div>
           )}
         </div>

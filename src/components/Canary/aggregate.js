@@ -131,3 +131,15 @@ export function aggregate(title, items) {
     type: aggregateType(items.map((item) => item.type))
   };
 }
+
+export const getAggregatedGroupedChecks = (groupedChecks) => {
+  const groupKeys = Object.keys(groupedChecks);
+  const aggregated = groupKeys.map((key) => {
+    const aggr = aggregate(key, groupedChecks[key]);
+    aggr.groupKey = key;
+    aggr.subRows = groupedChecks[key];
+    return aggr;
+  });
+
+  return aggregated;
+};
