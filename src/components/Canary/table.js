@@ -1,11 +1,12 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti";
+import { IoChevronForwardOutline } from "react-icons/io5";
 import { useTable, useSortBy, useExpanded } from "react-table";
 import { getAggregatedGroupedChecks } from "./aggregate";
 import { GetName } from "./data";
 import { getGroupedChecks } from "./grouping";
-import { Duration, Percentage } from "./renderers";
+import { Duration, Percentage, Title } from "./renderers";
 import {
   getHealthPercentageScore,
   getLatency,
@@ -24,11 +25,12 @@ const styles = {
   tableHeaderBgBack: "bg-white",
   theadRowClass: "z-10",
   theadHeaderClass:
-    "px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ",
+    "px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ",
   tbodyClass: "mt-4 rounded-md",
-  tbodyRowClass: "border",
+  tbodyRowClass: "border cursor-pointer",
   tbodyRowExpandableClass: "cursor-pointer",
-  tbodyDataClass: "whitespace-nowrap"
+  tbodyDataClass: "whitespace-nowrap",
+  expandArrowIconClass: "ml-6 flex"
 };
 
 function HealthCell({ value }) {
@@ -45,7 +47,13 @@ function LatencyCell({ value }) {
   return <Duration ms={value.rolling1h} />;
 }
 
-export function CanaryTable({ checks, labels, history, ...rest }) {
+export function CanaryTable({
+  checks,
+  labels,
+  history,
+  onCheckClick,
+  ...rest
+}) {
   const searchParams = window.location.search;
 
   const [tableData, setTableData] = useState(checks);
@@ -84,19 +92,39 @@ export function CanaryTable({ checks, labels, history, ...rest }) {
         id: "expander",
         // eslint-disable-next-line react/display-name
         Cell: ({ row }) =>
-          row.canExpand ? <span>{row.isExpanded ? "👇" : "👉"}</span> : null,
-        cellClass: "pl-6 py-0"
+          row.canExpand ? (
+            <div className={styles.expandArrowIconClass}>
+              <div
+                className={`transform duration-200 ${
+                  row.isExpanded ? "rotate-90" : ""
+                }`}
+              >
+                <IoChevronForwardOutline />
+              </div>
+            </div>
+          ) : null,
+        cellClass: ""
       },
       {
         Header: "Checks",
         accessor: "name",
-        cellClass: "px-6 py-1 w-full max-w-0 overflow-hidden overflow-ellipsis"
+        cellClass: "px-5 py-2 w-full max-w-0 overflow-hidden overflow-ellipsis",
+        // eslint-disable-next-line react/display-name
+        Cell: ({ row }) => (
+          <span
+            style={{
+              paddingLeft: `${row.depth * 1.1}rem`
+            }}
+          >
+            <Title check={row.original} />
+          </span>
+        )
       },
       {
         Header: "Health",
         accessor: "checkStatuses",
         Cell: HealthCell,
-        cellClass: "px-4 py-1",
+        cellClass: "px-5 py-2",
         sortType: (a, b) =>
           getHealthPercentageScore(a.values) <
           getHealthPercentageScore(b.values)
@@ -107,7 +135,7 @@ export function CanaryTable({ checks, labels, history, ...rest }) {
         Header: "Uptime",
         accessor: "uptime",
         Cell: UptimeCell,
-        cellClass: "px-4 py-1",
+        cellClass: "px-5 py-2",
         sortType: (a, b) =>
           getUptimeScore(a.values) < getUptimeScore(b.values) ? 1 : -1
       },
@@ -115,7 +143,7 @@ export function CanaryTable({ checks, labels, history, ...rest }) {
         Header: "Latency",
         accessor: "latency",
         Cell: LatencyCell,
-        cellClass: "px-4 py-1",
+        cellClass: "px-5 py-2",
         sortType: (a, b) =>
           getLatency(a.values) < getLatency(b.values) ? -1 : 1
       }
@@ -129,6 +157,7 @@ export function CanaryTable({ checks, labels, history, ...rest }) {
       columns={columns}
       labels={labels}
       history={history}
+      onUnexpandableRowClick={onCheckClick}
       hasGrouping={hasGrouping}
       {...rest}
     />
@@ -141,6 +170,7 @@ export function Table({
   labels,
   history,
   hasGrouping,
+  onUnexpandableRowClick,
   ...rest
 }) {
   const searchParams = window.location.search;
@@ -265,7 +295,9 @@ export function Table({
                 }`}
                 style={{}}
                 onClick={
-                  row.canExpand ? () => toggleRowExpanded(row.id) : () => {}
+                  row.canExpand
+                    ? () => toggleRowExpanded(row.id)
+                    : () => onUnexpandableRowClick(row.original)
                 }
                 {...row.getRowProps()}
               >

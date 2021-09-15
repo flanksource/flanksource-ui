@@ -26,8 +26,6 @@ export function StatusList({ check, checkStatuses }) {
   return "";
 }
 
-
-
 export function CanaryStatus({ status, className }) {
   if (status.mixed) {
     return <Status mixed={status.mixed} className={className} />;

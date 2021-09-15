@@ -175,7 +175,12 @@ export class Canary extends React.Component {
                 className="sticky top-0 h-6 bg-white z-10"
                 style={{ marginLeft: "-1px", width: "calc(100% + 2px)" }}
               />
-              <CanaryTable checks={checks} labels={labels} history={history} />
+              <CanaryTable
+                checks={checks}
+                labels={labels}
+                history={history}
+                onCheckClick={this.select}
+              />
             </div>
           )}
         </div>
