@@ -33,6 +33,32 @@ const styles = {
   expandArrowIconClass: "ml-6 flex"
 };
 
+function ExpandArrow({ row }) {
+  return row.canExpand ? (
+    <div className={styles.expandArrowIconClass}>
+      <div
+        className={`transform duration-200 ${
+          row.isExpanded ? "rotate-90" : ""
+        }`}
+      >
+        <IoChevronForwardOutline />
+      </div>
+    </div>
+  ) : null;
+}
+
+function TitleCell({ row }) {
+  return (
+    <span
+      style={{
+        paddingLeft: `${row.depth * 1.1}rem`
+      }}
+    >
+      <Title check={row.original} />
+    </span>
+  );
+}
+
 function HealthCell({ value }) {
   return <StatusList checkStatuses={value} />;
 }
@@ -55,27 +81,20 @@ export function CanaryTable({
   ...rest
 }) {
   const searchParams = window.location.search;
+  const { groupBy } = decodeUrlSearchParams(searchParams);
 
   const [tableData, setTableData] = useState(checks);
-  const [hasGrouping, setHasGrouping] = useState(false);
 
   // update table data if searchParam or check data changes
   useEffect(() => {
-    const decodedParams = decodeUrlSearchParams(searchParams);
-    const { groupBy } = decodedParams;
-    let aggregatedGroups = null;
-
-    // if has grouping, perform grouping and aggregate each group of checks
-    if (groupBy !== "no-group") {
-      const grouped = getGroupedChecks(checks, groupBy);
-      aggregatedGroups = getAggregatedGroupedChecks(grouped);
-      setHasGrouping(true);
-    } else {
-      setHasGrouping(false);
-    }
-
-    setTableData(aggregatedGroups || checks);
-  }, [searchParams, checks]);
+    setTableData(
+      groupBy !== "no-group"
+        ? Object.values(
+            getAggregatedGroupedChecks(getGroupedChecks(checks, groupBy))
+          )
+        : checks
+    );
+  }, [searchParams, checks, groupBy]);
 
   const data = useMemo(
     () =>
@@ -90,35 +109,14 @@ export function CanaryTable({
     () => [
       {
         id: "expander",
-        // eslint-disable-next-line react/display-name
-        Cell: ({ row }) =>
-          row.canExpand ? (
-            <div className={styles.expandArrowIconClass}>
-              <div
-                className={`transform duration-200 ${
-                  row.isExpanded ? "rotate-90" : ""
-                }`}
-              >
-                <IoChevronForwardOutline />
-              </div>
-            </div>
-          ) : null,
+        Cell: ExpandArrow,
         cellClass: ""
       },
       {
         Header: "Checks",
         accessor: "name",
         cellClass: "px-5 py-2 w-full max-w-0 overflow-hidden overflow-ellipsis",
-        // eslint-disable-next-line react/display-name
-        Cell: ({ row }) => (
-          <span
-            style={{
-              paddingLeft: `${row.depth * 1.1}rem`
-            }}
-          >
-            <Title check={row.original} />
-          </span>
-        )
+        Cell: TitleCell
       },
       {
         Header: "Health",
@@ -158,7 +156,7 @@ export function CanaryTable({
       labels={labels}
       history={history}
       onUnexpandableRowClick={onCheckClick}
-      hasGrouping={hasGrouping}
+      hasGrouping={groupBy !== "no-group"}
       {...rest}
     />
   );
@@ -191,12 +189,9 @@ export function Table({
     useExpanded
   );
 
+  // hide expander column if there is no grouping
   useEffect(() => {
-    if (hasGrouping) {
-      toggleHideColumn("expander", false);
-    } else {
-      toggleHideColumn("expander", true);
-    }
+    toggleHideColumn("expander", !hasGrouping);
   }, [hasGrouping, toggleHideColumn]);
 
   const { watch, setValue } = useForm({
