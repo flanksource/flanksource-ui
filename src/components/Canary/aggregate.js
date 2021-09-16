@@ -132,14 +132,12 @@ export function aggregate(title, items) {
   };
 }
 
-export const getAggregatedGroupedChecks = (groupedChecks) => {
-  const groupKeys = Object.keys(groupedChecks);
-  const aggregated = groupKeys.map((key) => {
-    const aggr = aggregate(key, groupedChecks[key]);
-    aggr.groupKey = key;
-    aggr.subRows = groupedChecks[key];
-    return aggr;
-  });
-
-  return aggregated;
-};
+export const getAggregatedGroupedChecks = (groupedChecks) =>
+  Object.entries(groupedChecks).reduce((acc, [k, v]) => {
+    acc[k] = {
+      ...aggregate(k, v),
+      subRows: v,
+      name: k
+    };
+    return acc;
+  }, {});
