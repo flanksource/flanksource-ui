@@ -7,7 +7,7 @@ export function getDefaultForm(labels, incoming = {}) {
 
   return {
     layout: "table",
-    groupBy: defaultGroupSelections["no-group"].name,
+    groupBy: defaultGroupSelections.name.name,
     hidePassing: true,
     labels: { ...initialLabelState }
   };
@@ -49,14 +49,13 @@ export function initialiseFormState(defaultValues, url) {
       : initialiseLabelState(defaultValues.labels, decodedLabels);
 
   const groupByDefaults = new Map([
+    ["no-group", null],
     ["description", null],
     ["name", null],
     ...Object.entries(newLabelState)
   ]);
 
-  const groupByValueOrDefault = groupByDefaults.has(groupBy)
-    ? groupBy
-    : "no-group";
+  const groupByValueOrDefault = groupByDefaults.has(groupBy) ? groupBy : "name";
 
   const formState = {
     ...defaultValues,
