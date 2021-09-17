@@ -5,6 +5,7 @@ module.exports = {
     es2020: true,
     "jest/globals": true
   },
+  parser: "@babel/eslint-parser",
   settings: {
     jest: {
       version: "27"

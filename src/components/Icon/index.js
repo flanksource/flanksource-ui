@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/named
 import { Icons } from "../../icons";
 
 export function Icon({ size = "sm", name, className, alt = "", ...props }) {
