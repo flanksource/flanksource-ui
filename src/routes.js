@@ -5,13 +5,13 @@ export const routes = {
   examples: {
     name: "Examples",
     exact: true,
-    path: `/`,
+    path: `/examples`,
     component: <Examples />
   },
   canary: {
     name: "Canary",
     exact: true,
-    path: `/canary`,
+    path: `/`,
     component: <CanaryPage />
   }
 };
