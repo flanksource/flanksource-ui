@@ -72,6 +72,45 @@ function LatencyCell({ value }) {
   return <Duration ms={value.rolling1h} />;
 }
 
+const columnsKeyed = {
+  expander: {
+    id: "expander",
+    Cell: ExpandArrow,
+    cellClass: ""
+  },
+  name: {
+    Header: "Checks",
+    accessor: "name",
+    cellClass: "px-5 py-2 w-full max-w-0 overflow-hidden overflow-ellipsis",
+    Cell: TitleCell
+  },
+  health: {
+    Header: "Health",
+    accessor: "checkStatuses",
+    Cell: HealthCell,
+    cellClass: "px-5 py-2",
+    sortType: (a, b) =>
+      getHealthPercentageScore(a.values) < getHealthPercentageScore(b.values)
+        ? 1
+        : -1
+  },
+  uptime: {
+    Header: "Uptime",
+    accessor: "uptime",
+    Cell: UptimeCell,
+    cellClass: "px-5 py-2",
+    sortType: (a, b) =>
+      getUptimeScore(a.values) < getUptimeScore(b.values) ? 1 : -1
+  },
+  latency: {
+    Header: "Latency",
+    accessor: "latency",
+    Cell: LatencyCell,
+    cellClass: "px-5 py-2",
+    sortType: (a, b) => (getLatency(a.values) < getLatency(b.values) ? -1 : 1)
+  }
+};
+
 export function CanaryTable({
   checks,
   labels,
@@ -104,49 +143,8 @@ export function CanaryTable({
     [tableData]
   );
 
-  const columns = useMemo(
-    () => [
-      {
-        id: "expander",
-        Cell: ExpandArrow,
-        cellClass: ""
-      },
-      {
-        Header: "Checks",
-        accessor: "name",
-        cellClass: "px-5 py-2 w-full max-w-0 overflow-hidden overflow-ellipsis",
-        Cell: TitleCell
-      },
-      {
-        Header: "Health",
-        accessor: "checkStatuses",
-        Cell: HealthCell,
-        cellClass: "px-5 py-2",
-        sortType: (a, b) =>
-          getHealthPercentageScore(a.values) <
-          getHealthPercentageScore(b.values)
-            ? 1
-            : -1
-      },
-      {
-        Header: "Uptime",
-        accessor: "uptime",
-        Cell: UptimeCell,
-        cellClass: "px-5 py-2",
-        sortType: (a, b) =>
-          getUptimeScore(a.values) < getUptimeScore(b.values) ? 1 : -1
-      },
-      {
-        Header: "Latency",
-        accessor: "latency",
-        Cell: LatencyCell,
-        cellClass: "px-5 py-2",
-        sortType: (a, b) =>
-          getLatency(a.values) < getLatency(b.values) ? -1 : 1
-      }
-    ],
-    []
-  );
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const columns = useMemo(() => Object.values(columnsKeyed), []);
 
   return (
     <Table
@@ -197,7 +195,11 @@ export function Table({
   useEffect(() => {
     const searchParams = window.location.search;
     const decodedParams = decodeUrlSearchParams(searchParams);
-    setSortBy([{ id: decodedParams.sortBy, desc: decodedParams.sortDesc }]);
+    if (decodedParams.sortBy) {
+      setSortBy([{ id: decodedParams.sortBy, desc: decodedParams.sortDesc }]);
+    } else {
+      setSortBy([{ id: columnsKeyed.name.accessor, desc: false }]);
+    }
   }, [setSortBy]);
 
   // Table-state changes will trigger url changes
@@ -218,8 +220,6 @@ export function Table({
 
     if (tableSortState.length > 0) {
       updateURL(tableSortState[0].id, tableSortState[0].desc);
-    } else {
-      updateURL(null, null);
     }
   }, [tableSortState, history]);
 
@@ -238,6 +238,13 @@ export function Table({
                   key={column.Header}
                   className={styles.theadHeaderClass}
                   {...column.getHeaderProps(column.getSortByToggleProps())}
+                  // Table header onClick sorting override:
+                  // sortDesc cannot be null, only either true/false
+                  onClick={() =>
+                    column.toggleSortBy(
+                      column.isSortedDesc != null ? !column.isSortedDesc : false
+                    )
+                  }
                 >
                   <div className="flex select-none">
                     {column.render("Header")}
