@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
 import { TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti";
 import { IoChevronForwardOutline } from "react-icons/io5";
 import { useTable, useSortBy, useExpanded } from "react-table";
@@ -167,12 +166,10 @@ export function Table({
   columns,
   labels,
   history,
-  hasGrouping,
+  hasGrouping = false,
   onUnexpandableRowClick,
   ...rest
 }) {
-  const searchParams = window.location.search;
-
   const {
     state: tableState,
     getTableProps,
@@ -189,52 +186,42 @@ export function Table({
     useExpanded
   );
 
-  // hide expander column if there is no grouping
+  const tableSortState = tableState?.sortBy;
+
+  // Hide expander column if there is no grouping
   useEffect(() => {
     toggleHideColumn("expander", !hasGrouping);
   }, [hasGrouping, toggleHideColumn]);
 
-  const { watch, setValue } = useForm({
-    defaultValues: decodeUrlSearchParams(window.location.search)
-  });
-
-  const watchSortBy = watch("sortBy");
-  const watchSortDesc = watch("sortDesc");
-
   // Set table's sort state according to url params on page load or url change
   useEffect(() => {
+    const searchParams = window.location.search;
     const decodedParams = decodeUrlSearchParams(searchParams);
     setSortBy([{ id: decodedParams.sortBy, desc: decodedParams.sortDesc }]);
-  }, [setSortBy, searchParams]);
+  }, [setSortBy]);
 
-  // Form's sortBy and sortDesc state changes updates url
+  // Table-state changes will trigger url changes
   useEffect(() => {
-    const currentSearchParams = window.location.search;
-    const decodedParams = decodeUrlSearchParams(currentSearchParams);
-    const newFormState = {
-      ...decodedParams,
-      sortBy: watchSortBy,
-      sortDesc: watchSortDesc
-    };
-    const encoded = encodeObjectToUrlSearchParams(newFormState);
-    if (window.location.search !== `?${encoded}`) {
-      // See https://github.com/remix-run/history/blob/main/docs/getting-started.md
-      history.push(`/canary?${encoded}`);
-    }
-  }, [watchSortBy, watchSortDesc, history]);
-
-  // Table-state changes will in turn trigger changes in the formState
-  useEffect(() => {
-    if (tableState?.sortBy) {
-      if (tableState.sortBy.length > 0) {
-        setValue("sortBy", tableState.sortBy[0].id);
-        setValue("sortDesc", tableState.sortBy[0].desc);
-      } else {
-        setValue("sortBy", null);
-        setValue("sortDesc", null);
+    const updateURL = (sortBy, sortDesc) => {
+      const searchParams = window.location.search;
+      const decodedParams = decodeUrlSearchParams(searchParams);
+      const newFormState = {
+        ...decodedParams,
+        sortBy,
+        sortDesc
+      };
+      const encoded = encodeObjectToUrlSearchParams(newFormState);
+      if (window.location.search !== `?${encoded}`) {
+        history.push(`/canary?${encoded}`);
       }
+    };
+
+    if (tableSortState.length > 0) {
+      updateURL(tableSortState[0].id, tableSortState[0].desc);
+    } else {
+      updateURL(null, null);
     }
-  }, [tableState, setValue]);
+  }, [tableSortState, history]);
 
   return (
     <div className={styles.outerDivClass} {...rest}>
