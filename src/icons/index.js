@@ -1,3 +1,4 @@
+/* eslint-disable */
 // this file is generated using make index.js
 import acr from "./acr.svg";
 import aks from "./aks.svg";
