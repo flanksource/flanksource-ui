@@ -26,7 +26,7 @@ export function FilterForm({ labels, checks, history }) {
   useEffect(() => {
     const encoded = encodeObjectToUrlSearchParams(fullState);
     if (window.location.search !== `?${encoded}`) {
-      history.push(`/canary?${encoded}`);
+      history.push(`${window.location.pathname}?${encoded}`);
       reset(formState);
     }
   }, [formState, fullState, labels, history, reset]);
@@ -40,7 +40,7 @@ export function FilterForm({ labels, checks, history }) {
       const encoded = encodeObjectToUrlSearchParams(formState);
       if (window.location.search !== `?${encoded}`) {
         // See https://github.com/remix-run/history/blob/main/docs/getting-started.md
-        history.push(`/canary?${encoded}`);
+        history.push(`${window.location.pathname}?${encoded}`);
       }
     });
     return () => {
