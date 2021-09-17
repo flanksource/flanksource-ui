@@ -82,7 +82,10 @@ const columnsKeyed = {
     Header: "Checks",
     accessor: "name",
     cellClass: "px-5 py-2 w-full max-w-0 overflow-hidden overflow-ellipsis",
-    Cell: TitleCell
+    Cell: TitleCell,
+    sortType: (a, b) =>
+      // case insensitive name sorting
+      a.values.name.toLowerCase() < b.values.name.toLowerCase() ? -1 : 1
   },
   health: {
     Header: "Health",
