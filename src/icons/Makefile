@@ -3,7 +3,7 @@
 define IMPORTS
 	@for img in $(shell ls *.svg); do \
 		name=$${img%.*}; \
-		name=$${name/-/_}; \
+		name=$${name//-/_}; \
 		echo  import  $$name from '"'./$$img'";'  ;\
 	done
 endef
@@ -11,7 +11,7 @@ endef
 define VARS
 	@for img in $(shell ls *.svg); do \
 		name=$${img%.*}; \
-		name=$${name/-/_}; \
+		name=$${name//-/_}; \
 		echo  '"'$${img%.*}'"': $$name,  ;\
 	done
 endef

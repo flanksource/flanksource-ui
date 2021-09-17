@@ -26,7 +26,7 @@ export function FilterForm({ labels, checks, history }) {
   useEffect(() => {
     const encoded = encodeObjectToUrlSearchParams(fullState);
     if (window.location.search !== `?${encoded}`) {
-      history.push(`/canary?${encoded}`);
+      history.push(`${window.location.pathname}?${encoded}`);
       reset(formState);
     }
   }, [formState, fullState, labels, history, reset]);
@@ -40,7 +40,7 @@ export function FilterForm({ labels, checks, history }) {
       const encoded = encodeObjectToUrlSearchParams(formState);
       if (window.location.search !== `?${encoded}`) {
         // See https://github.com/remix-run/history/blob/main/docs/getting-started.md
-        history.push(`/canary?${encoded}`);
+        history.push(`${window.location.pathname}?${encoded}`);
       }
     });
     return () => {
@@ -83,21 +83,33 @@ export function FilterForm({ labels, checks, history }) {
         <div className="uppercase font-semibold text-sm mb-3 text-indigo-700">
           Filter By Label
         </div>
-        {Object.values(labels).map((label) => (
-          <Controller
-            key={label.id}
-            name={`labels.${label.id}`}
-            control={control}
-            render={({ field: { ref, ...rest } }) => (
-              <TristateToggle
-                key={label.key}
-                className="mb-2"
-                label={label}
-                {...rest}
-              />
-            )}
-          />
-        ))}
+        {Object.values(labels)
+          .sort((a, b) => {
+            let _a = a.key.toLowerCase()
+            let _b = b.key.toLowerCase()
+            if (_a < _b) {
+              return -1
+            }
+            if (_a > b) {
+              return 1
+            }
+            return 0
+          })
+          .map((label) => (
+            <Controller
+              key={label.id}
+              name={`labels.${label.id}`}
+              control={control}
+              render={({ field: { ref, ...rest } }) => (
+                <TristateToggle
+                  key={label.key}
+                  className="mb-2"
+                  label={label}
+                  {...rest}
+                />
+              )}
+            />
+          ))}
       </div>
     </form>
   );
