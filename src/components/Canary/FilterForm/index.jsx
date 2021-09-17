@@ -83,21 +83,33 @@ export function FilterForm({ labels, checks, history }) {
         <div className="uppercase font-semibold text-sm mb-3 text-indigo-700">
           Filter By Label
         </div>
-        {Object.values(labels).map((label) => (
-          <Controller
-            key={label.id}
-            name={`labels.${label.id}`}
-            control={control}
-            render={({ field: { ref, ...rest } }) => (
-              <TristateToggle
-                key={label.key}
-                className="mb-2"
-                label={label}
-                {...rest}
-              />
-            )}
-          />
-        ))}
+        {Object.values(labels)
+          .sort((a, b) => {
+            let _a = a.key.toLowerCase()
+            let _b = b.key.toLowerCase()
+            if (_a < _b) {
+              return -1
+            }
+            if (_a > b) {
+              return 1
+            }
+            return 0
+          })
+          .map((label) => (
+            <Controller
+              key={label.id}
+              name={`labels.${label.id}`}
+              control={control}
+              render={({ field: { ref, ...rest } }) => (
+                <TristateToggle
+                  key={label.key}
+                  className="mb-2"
+                  label={label}
+                  {...rest}
+                />
+              )}
+            />
+          ))}
       </div>
     </form>
   );
