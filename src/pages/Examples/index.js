@@ -15,6 +15,7 @@ import { Icon, Avatar } from "../../components/Icon";
 import { Table } from "../../components/Table";
 import { Input } from "../../components/Input";
 
+// eslint-disable-next-line import/named
 import { Icons } from "../../icons";
 
 const activity = [
