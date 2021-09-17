@@ -1,3 +1,4 @@
+/* eslint-disable */
 // this file is generated using make index.js
 import alert from "./alert.svg";
 import aws from "./aws.svg";

@@ -16,6 +16,7 @@ define VARS
 	done
 endef
 index.js:
+	echo "/* eslint-disable */" > index.js
 	echo "// this file is generated using make index.js" > index.js
 	$(call IMPORTS) >> index.js
 	@echo "export const Icons = {" >> index.js
