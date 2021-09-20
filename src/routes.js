@@ -1,5 +1,6 @@
 import { Examples } from "./pages/Examples";
 import { CanaryPage } from "./pages/Examples/canary";
+import { JsonFormPage } from "./pages/Examples/jsonForm";
 
 export const routes = {
   examples: {
@@ -13,6 +14,12 @@ export const routes = {
     exact: true,
     path: `/`,
     component: <CanaryPage />
+  },
+  jsonForm: {
+    name: "JsonForm",
+    exact: true,
+    path: `/jsonForm`,
+    component: <JsonFormPage />
   }
 };
 

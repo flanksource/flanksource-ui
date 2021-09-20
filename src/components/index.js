@@ -7,6 +7,7 @@ import { Dropdown } from "./Dropdown";
 import { Feed } from "./Feed";
 import { Icon } from "./Icon";
 import { Input } from "./Input";
+import { JsonForm } from "./JsonForm";
 import { Notification } from "./Notification";
 import { Modal } from "./Modal";
 import { Status } from "./Status";
@@ -23,6 +24,7 @@ export {
   Feed,
   Icon,
   Input,
+  JsonForm,
   Notification,
   Modal,
   Status,
