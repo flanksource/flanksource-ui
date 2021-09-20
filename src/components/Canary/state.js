@@ -75,14 +75,13 @@ export function updateFormState(update, url, labels) {
   const newLabels = initialiseLabelState(labels, incoming);
 
   const groupByDefaults = new Map([
+    ["no-group", null],
     ["description", null],
     ["name", null],
     ...Object.entries(newLabels)
   ]);
 
-  const groupByValueOrDefault = groupByDefaults.has(groupBy)
-    ? groupBy
-    : "no-group";
+  const groupByValueOrDefault = groupByDefaults.has(groupBy) ? groupBy : "name";
 
   const formState = {
     ...rest,

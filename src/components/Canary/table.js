@@ -32,6 +32,13 @@ const styles = {
   expandArrowIconClass: "ml-6 flex"
 };
 
+const sortByValidValues = new Map([
+  ["name", null],
+  ["checkStatuses", null],
+  ["uptime", null],
+  ["latency", null]
+]);
+
 function ExpandArrow({ row }) {
   return row.canExpand ? (
     <div className={styles.expandArrowIconClass}>
@@ -146,7 +153,6 @@ export function CanaryTable({
     [tableData]
   );
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const columns = useMemo(() => Object.values(columnsKeyed), []);
 
   return (
@@ -198,31 +204,38 @@ export function Table({
   useEffect(() => {
     const searchParams = window.location.search;
     const decodedParams = decodeUrlSearchParams(searchParams);
-    if (decodedParams.sortBy) {
-      setSortBy([{ id: decodedParams.sortBy, desc: decodedParams.sortDesc }]);
-    } else {
-      setSortBy([{ id: columnsKeyed.name.accessor, desc: false }]);
-    }
+    const { sortBy, sortDesc } = decodedParams;
+
+    // check for validity, else reset to default values
+    const sortByChecked = sortByValidValues.has(sortBy) ? sortBy : "name";
+    const sortDescChecked = typeof sortDesc === "boolean" ? sortDesc : false;
+
+    setSortBy([{ id: sortByChecked, desc: sortDescChecked }]);
   }, [setSortBy]);
 
   // Table-state changes will trigger url changes
   useEffect(() => {
-    const updateURL = (sortBy, sortDesc) => {
+    const updateURLBySortState = (sortBy, sortDesc) => {
       const searchParams = window.location.search;
       const decodedParams = decodeUrlSearchParams(searchParams);
+
+      // check for validity, else reset to default values
+      const sortByChecked = sortByValidValues.has(sortBy) ? sortBy : "name";
+      const sortDescChecked = typeof sortDesc === "boolean" ? sortDesc : false;
+
       const newFormState = {
         ...decodedParams,
-        sortBy,
-        sortDesc
+        sortBy: sortByChecked,
+        sortDesc: sortDescChecked
       };
       const encoded = encodeObjectToUrlSearchParams(newFormState);
       if (window.location.search !== `?${encoded}`) {
-        history.push(`/canary?${encoded}`);
+        history.push(`${window.location.pathname}?${encoded}`);
       }
     };
 
     if (tableSortState.length > 0) {
-      updateURL(tableSortState[0].id, tableSortState[0].desc);
+      updateURLBySortState(tableSortState[0].id, tableSortState[0].desc);
     }
   }, [tableSortState, history]);
 
