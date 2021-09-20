@@ -18,24 +18,6 @@ import { StatCard } from "../StatCard";
 import { Modal } from "../Modal";
 import { Title } from "./renderers";
 
-import { TristateToggle } from "../TristateToggle";
-import { NewCanaryTable } from "./newTable";
-
-const layoutSelections = [
-  {
-    id: "dropdown-table",
-    name: "table",
-    icon: <BsTable />,
-    label: "Table"
-  },
-  {
-    id: "dropdown-card",
-    name: "card",
-    icon: <RiLayoutGridLine />,
-    label: "Card"
-  }
-];
-
 export class Canary extends React.Component {
   constructor(props) {
     super(props);

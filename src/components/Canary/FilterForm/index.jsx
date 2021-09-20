@@ -85,15 +85,15 @@ export function FilterForm({ labels, checks, history }) {
         </div>
         {Object.values(labels)
           .sort((a, b) => {
-            let _a = a.key.toLowerCase()
-            let _b = b.key.toLowerCase()
-            if (_a < _b) {
-              return -1
+            const aLower = a.key.toLowerCase();
+            const bLower = b.key.toLowerCase();
+            if (aLower < bLower) {
+              return -1;
             }
-            if (_a > b) {
-              return 1
+            if (aLower > bLower) {
+              return 1;
             }
-            return 0
+            return 0;
           })
           .map((label) => (
             <Controller
