@@ -2,7 +2,7 @@ import { withTheme } from "@rjsf/core";
 import { Theme as MaterialUITheme } from "@rjsf/material-ui";
 import { Theme as TailwindTheme } from "./tailwindTheme";
 
-export function JsonForm({ schema, theme }) {
+export function JsonForm({ schema, theme, onSubmit, onChange, onError }) {
   let ThemeObj;
   switch (theme) {
     case "tailwind":
@@ -16,9 +16,9 @@ export function JsonForm({ schema, theme }) {
 
   const formProps = {
     schema,
-    onChange: () => {},
-    onSubmit: () => {},
-    onError: () => {}
+    onChange,
+    onSubmit,
+    onError
   };
 
   return <ThemedForm {...formProps} />;
