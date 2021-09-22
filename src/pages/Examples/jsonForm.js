@@ -1,5 +1,5 @@
 import { JsonForm } from "../../components";
-import schema from "../../data/formSchemaSample.real.json";
+import schema from "../../data/formSchemaSample.json";
 
 export function JsonFormPage() {
   return (

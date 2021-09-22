@@ -1,0 +1,242 @@
+{
+  "description": "Canary is the Schema for the canaries API",
+  "properties": {
+    "apiVersion": {
+      "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+      "type": "string"
+    },
+    "kind": {
+      "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+      "type": "string"
+    },
+    "metadata": {
+      "type": "object"
+    },
+    "spec": {
+      "description": "CanarySpec defines the desired state of Canary",
+      "properties": {
+        "Example Canary Item": {
+          "items": {
+            "properties": {
+              "accessKey": {
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "string"
+                  },
+                  "valueFrom": {
+                    "properties": {
+                      "configMapKeyRef": {
+                        "properties": {
+                          "key": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "optional": {
+                            "type": "boolean"
+                          }
+                        },
+                        "required": ["key"],
+                        "type": "object"
+                      },
+                      "secretKeyRef": {
+                        "properties": {
+                          "key": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "optional": {
+                            "type": "boolean"
+                          }
+                        },
+                        "required": ["key"],
+                        "type": "object"
+                      }
+                    },
+                    "type": "object"
+                  }
+                },
+                "type": "object"
+              },
+              "ami": {
+                "type": "string"
+              },
+              "canaryRef": {
+                "items": {
+                  "description": "LocalObjectReference contains enough information to let you locate the referenced object inside the same namespace.",
+                  "properties": {
+                    "name": {
+                      "description": "Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "description": {
+                "description": "Description for the check",
+                "type": "string"
+              },
+              "endpoint": {
+                "type": "string"
+              },
+              "icon": {
+                "description": "Icon for overwriting default icon on the dashboard",
+                "type": "string"
+              },
+              "keepAlive": {
+                "type": "boolean"
+              },
+              "name": {
+                "description": "Name of the check",
+                "type": "string"
+              },
+              "region": {
+                "type": "string"
+              },
+              "secretKey": {
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "string"
+                  },
+                  "valueFrom": {
+                    "properties": {
+                      "configMapKeyRef": {
+                        "properties": {
+                          "key": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "optional": {
+                            "type": "boolean"
+                          }
+                        },
+                        "required": ["key"],
+                        "type": "object"
+                      },
+                      "secretKeyRef": {
+                        "properties": {
+                          "key": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "optional": {
+                            "type": "boolean"
+                          }
+                        },
+                        "required": ["key"],
+                        "type": "object"
+                      }
+                    },
+                    "type": "object"
+                  }
+                },
+                "type": "object"
+              },
+              "securityGroup": {
+                "type": "string"
+              },
+              "skipTLSVerify": {
+                "description": "Skip TLS verify when connecting to aws",
+                "type": "boolean"
+              },
+              "timeOut": {
+                "type": "integer"
+              },
+              "userData": {
+                "type": "string"
+              },
+              "waitTime": {
+                "type": "integer"
+              }
+            },
+            "required": ["accessKey", "region", "secretKey"],
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "status": {
+      "description": "CanaryStatus defines the observed state of Canary",
+      "properties": {
+        "checkStatus": {
+          "additionalProperties": {
+            "properties": {
+              "errorMessage": {
+                "type": "string"
+              },
+              "lastCheck": {
+                "format": "date-time",
+                "type": "string"
+              },
+              "lastTransitionedTime": {
+                "format": "date-time",
+                "type": "string"
+              },
+              "latency1h": {
+                "description": "Average latency to complete all checks",
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              },
+              "uptime1h": {
+                "description": "Availibility over a rolling 1h period",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "type": "object"
+        },
+        "errorMessage": {
+          "type": "string"
+        },
+        "lastCheck": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "lastTransitionedTime": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "latency1h": {
+          "description": "Average latency to complete all checks",
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "observedGeneration": {
+          "format": "int64",
+          "type": "integer"
+        },
+        "status": {
+          "type": "string"
+        },
+        "uptime1h": {
+          "description": "Availibility over a rolling 1h period",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  },
+  "type": "object"
+}
