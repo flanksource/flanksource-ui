@@ -14,7 +14,6 @@ import { Feed } from "../../components/Feed";
 import { Icon, Avatar } from "../../components/Icon";
 import { Table } from "../../components/Table";
 import { Input } from "../../components/Input";
-
 import { Icons } from "../../icons";
 
 const activity = [

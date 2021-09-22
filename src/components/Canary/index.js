@@ -8,7 +8,6 @@ import { getLabels, filterChecksByLabels, getLabelFilters } from "./labels";
 
 import { readCanaryState, getDefaultForm } from "./state";
 
-import { getGroupedChecks } from "./grouping";
 import { filterChecks, isHealthy } from "./filter";
 import { CanaryTable } from "./table";
 import { CanaryCards } from "./card";
@@ -118,7 +117,7 @@ export class Canary extends React.Component {
       checks: stateChecks,
       labels
     } = state;
-    const { hidePassing, groupBy, layout } = urlState;
+    const { hidePassing, layout } = urlState;
 
     // first filter for pass/fail
     let checks = filterChecks(stateChecks, hidePassing, []);
@@ -137,11 +136,6 @@ export class Canary extends React.Component {
       0
     );
 
-    const hasGrouping = groupBy !== "no-group";
-    const groupedChecks = hasGrouping
-      ? getGroupedChecks(checks, groupBy)
-      : checks;
-
     const filterProps = {
       labels,
       checks: stateChecks,
@@ -159,13 +153,15 @@ export class Canary extends React.Component {
           )}
           {layout === "table" && (
             <div className="m-6 mt-0 relative">
-              <div className="sticky top-0 h-6 bg-white z-10" />
+              <div
+                className="sticky top-0 h-6 bg-white z-10"
+                style={{ marginLeft: "-1px", width: "calc(100% + 2px)" }}
+              />
               <CanaryTable
-                theadClass="sticky top-6 z-10"
-                checks={groupedChecks}
-                hasGrouping={hasGrouping}
-                groupingLabel={groupBy}
-                onClick={this.select}
+                checks={checks}
+                labels={labels}
+                history={history}
+                onCheckClick={this.select}
               />
             </div>
           )}
@@ -173,7 +169,7 @@ export class Canary extends React.Component {
 
         {/* right panel */}
         <div className="bg-gray-50">
-          <div className="p-6 space-y-6 sticky top-0 h-screen min-h-screen overflow-y-auto">
+          <div className="p-6 space-y-6 sticky top-0 lg:h-screen lg:min-h-screen overflow-y-auto">
             <StatCard
               title="All Checks"
               customValue={

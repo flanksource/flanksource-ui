@@ -27,6 +27,7 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
     "react-syntax-highlighter": "^15.4.4",
+    "react-table": "^7.7.0",
     "remark-gfm": "^2.0.0",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.2.7",
     "timeago-react": "^3.0.3",
