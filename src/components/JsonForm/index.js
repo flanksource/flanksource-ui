@@ -1,38 +1,25 @@
-import Form from "@rjsf/core";
-import { useEffect } from "react";
+import { withTheme } from "@rjsf/core";
+import { Theme as MaterialUITheme } from "@rjsf/material-ui";
+import { Theme as TailwindTheme } from "./tailwindTheme";
 
-const theme = { widgets: { test: () => <div>test</div> } };
-const ThemedForm = withTheme(theme);
+export function JsonForm({ schema, theme }) {
+  let ThemeObj;
+  switch (theme) {
+    case "tailwind":
+      ThemeObj = TailwindTheme;
+      break;
+    default:
+      ThemeObj = MaterialUITheme;
+  }
 
-// const exampleSchema = {
-//   title: "Todo",
-//   type: "object",
-//   required: ["title"],
-//   properties: {
-//     title: { type: "string", title: "Title", default: "A new task" },
-//     done: { type: "boolean", title: "Done?", default: false }
-//   }
-// };
+  const ThemedForm = withTheme(ThemeObj);
 
-// const log = (type) => console.log.bind(console, type);
+  const formProps = {
+    schema,
+    onChange: () => {},
+    onSubmit: () => {},
+    onError: () => {}
+  };
 
-export function JsonForm({ schema }) {
-  useEffect(() => {
-    console.log("schema", schema);
-  }, []);
-
-  return (
-    <Form
-      schema={schema}
-      onChange={(o) => {
-        console.log("changed", o);
-      }}
-      onSubmit={(o) => {
-        console.log("submit", o);
-      }}
-      onError={(o) => {
-        console.log("error", o);
-      }}
-    />
-  );
+  return <ThemedForm {...formProps} />;
 }
