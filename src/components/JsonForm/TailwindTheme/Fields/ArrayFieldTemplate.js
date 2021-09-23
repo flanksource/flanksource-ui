@@ -1,4 +1,4 @@
-const ArrayFieldTemplate = (props) => {
+export const ArrayFieldTemplate = (props) => {
   const { items, canAdd, onAddClick, title } = props;
   return (
     <div className="flex flex-col border border-blue-400">
@@ -6,7 +6,7 @@ const ArrayFieldTemplate = (props) => {
 
       <div className="flex flex-col">
         {items.map((element) => (
-          <div className="flex flex-row" key={element.key}>
+          <div className="flex flex-row mb-4 last:mb-0" key={element.key}>
             <div className="flex-grow">{element.children}</div>
             {element.hasRemove ? (
               <button
@@ -31,12 +31,4 @@ const ArrayFieldTemplate = (props) => {
       )}
     </div>
   );
-};
-
-const myWidgets = {};
-
-export const Theme = {
-  widgets: myWidgets,
-  fields: {},
-  ArrayFieldTemplate
 };
