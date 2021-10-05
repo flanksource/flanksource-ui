@@ -67,6 +67,30 @@ export function getNonBooleanLabels(checks) {
   return nonBooleanLabels;
 }
 
+export function getUniqueNonBooleanLabelKeys(checks) {
+  const nonBooleanLabels = getNonBooleanLabels(Object.values(checks));
+  const uniqueLabels = new Set(
+    Object.values(nonBooleanLabels).map((o) => o.key)
+  );
+  const uniqueLabelsWithValues = Array.from(uniqueLabels).reduce((acc, k) => {
+    acc[k] = Object.entries(nonBooleanLabels)
+      .filter((label) => label[1].key === k)
+      .map((label) => label[1].value);
+    return acc;
+  }, {});
+  return uniqueLabelsWithValues;
+}
+
+export const getLabelKeys = (labels) =>
+  Array.from([
+    ...new Set(
+      Object.keys(labels).map((label) => label.match(/(?<=:)(.*?)(?=:)/g)[0])
+    )
+  ]).reduce((acc, k) => {
+    acc[k] = null;
+    return acc;
+  }, {});
+
 // // filter checks based on exclusion/inclusion label filters
 // // exclusion has a higher priority, and is considered prior to inclusion
 export function filterChecksByLabels(checks, labelFilters) {
