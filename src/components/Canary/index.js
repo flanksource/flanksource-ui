@@ -17,6 +17,7 @@ import { CanaryDescription } from "./description";
 import { StatCard } from "../StatCard";
 import { Modal } from "../Modal";
 import { Title } from "./renderers";
+import { CanaryTabs, filterChecksByTabSelection } from "./tabs";
 
 export class Canary extends React.Component {
   constructor(props) {
@@ -26,6 +27,7 @@ export class Canary extends React.Component {
     this.modal = React.createRef();
     this.fetch = this.fetch.bind(this);
     this.select = this.select.bind(this);
+    this.handleTabSelect = this.handleTabSelect.bind(this);
     this.setChecks = this.setChecks.bind(this);
     this.history = history;
     this.unhistory = () => {};
@@ -43,6 +45,7 @@ export class Canary extends React.Component {
         exclude: [],
         include: []
       },
+      selectedTab: null,
       checks: props.checks ? props.checks : []
     };
   }
@@ -73,6 +76,13 @@ export class Canary extends React.Component {
   componentWillUnmount() {
     this.unhistory();
     this.timer = null;
+  }
+
+  handleTabSelect(tabSelection) {
+    this.setState({
+      // eslint-disable-next-line react/no-unused-state
+      selectedTab: tabSelection
+    });
   }
 
   setChecks(checks) {
@@ -115,9 +125,10 @@ export class Canary extends React.Component {
       labelFilters,
       urlState,
       checks: stateChecks,
-      labels
+      labels,
+      selectedTab
     } = state;
-    const { hidePassing, layout } = urlState;
+    const { hidePassing, layout, tabBy } = urlState;
 
     // first filter for pass/fail
     let checks = filterChecks(stateChecks, hidePassing, []);
@@ -130,6 +141,10 @@ export class Canary extends React.Component {
     // filter the subset down
     checks = Object.values(filterChecksByLabels(checks, labelFilters)); // filters checks by its 'include/exclude' filters
     checks = orderBy(checks, CanarySorter);
+
+    const tabChecks = [...checks]; // list of checks used to generate tabs
+
+    checks = filterChecksByTabSelection(tabBy, selectedTab, checks);
     const passed = reduce(
       checks,
       (sum, c) => (isHealthy(c) ? sum + 1 : sum),
@@ -145,14 +160,18 @@ export class Canary extends React.Component {
     return (
       <div className="w-full flex flex-col-reverse lg:flex-row">
         {/* middle panel */}
-        <div className="w-full">
+        <div className="w-full m-6">
+          <CanaryTabs
+            className={layout === "table" ? "relative z-20 -mb-3" : ""}
+            checks={tabChecks}
+            tabBy={tabBy}
+            setTabSelection={this.handleTabSelect}
+          />
           {layout === "card" && (
-            <div className="m-6">
-              <CanaryCards checks={checks} onClick={this.select} />
-            </div>
+            <CanaryCards checks={checks} onClick={this.select} />
           )}
           {layout === "table" && (
-            <div className="m-6 mt-0 relative">
+            <div className="mt-0 z-10 relative">
               <div
                 className="sticky top-0 h-6 bg-white z-10"
                 style={{ marginLeft: "-1px", width: "calc(100% + 2px)" }}
