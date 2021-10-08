@@ -132,12 +132,20 @@ export function aggregate(title, items) {
   };
 }
 
-export const getAggregatedGroupedChecks = (groupedChecks) =>
+export const getAggregatedGroupedChecks = (groupedChecks, prefixToRemove) =>
   Object.entries(groupedChecks).reduce((acc, [k, v]) => {
-    acc[k] = {
+    const aggregated = {
       ...aggregate(k, v),
       subRows: v,
       name: k
     };
+    if (
+      prefixToRemove &&
+      Object.prototype.hasOwnProperty.call(aggregated, "description")
+    ) {
+      const regexp = new RegExp(`^${prefixToRemove}/`, "g");
+      aggregated.description = aggregated.description.replace(regexp, "");
+    }
+    acc[k] = aggregated;
     return acc;
   }, {});

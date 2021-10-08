@@ -126,6 +126,7 @@ export function CanaryTable({
   labels,
   history,
   onCheckClick,
+  selectedTab,
   ...rest
 }) {
   const searchParams = window.location.search;
@@ -138,11 +139,14 @@ export function CanaryTable({
     setTableData(
       groupBy !== "no-group"
         ? Object.values(
-            getAggregatedGroupedChecks(getGroupedChecks(checks, groupBy))
+            getAggregatedGroupedChecks(
+              getGroupedChecks(checks, groupBy),
+              selectedTab || null
+            )
           )
         : checks
     );
-  }, [searchParams, checks, groupBy]);
+  }, [searchParams, checks, groupBy, selectedTab]);
 
   const data = useMemo(
     () =>
