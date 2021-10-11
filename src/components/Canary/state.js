@@ -1,6 +1,8 @@
 import { decodeUrlSearchParams } from "./url";
 import { isPlainObject } from "../../lib/isPlainObject";
 import { defaultGroupSelections } from "./grouping";
+import { defaultTabSelections } from "../Dropdown/TabByDropdown";
+import { getGroupByLabels, getLabelKeys } from "./labels";
 
 export function getDefaultForm(labels, incoming = {}) {
   const initialLabelState = initialiseLabelState(labels, incoming);
@@ -8,6 +10,7 @@ export function getDefaultForm(labels, incoming = {}) {
   return {
     layout: "table",
     groupBy: defaultGroupSelections.name.name,
+    tabBy: defaultTabSelections.namespace.name,
     hidePassing: true,
     labels: { ...initialLabelState }
   };
@@ -21,9 +24,11 @@ export function initialiseLabelState(labelMap, incoming) {
 }
 
 export function readCanaryState(url) {
-  const { layout, groupBy, hidePassing, labels } = decodeUrlSearchParams(url);
+  const { layout, tabBy, groupBy, hidePassing, labels } =
+    decodeUrlSearchParams(url);
   const canaryState = {
     ...(layout != null && typeof layout === "string" && { layout }),
+    ...(tabBy != null && typeof groupBy === "string" && { tabBy }),
     ...(hidePassing != null &&
       typeof hidePassing === "boolean" && { hidePassing }),
     ...(groupBy != null && typeof groupBy === "string" && { groupBy }),
@@ -37,6 +42,7 @@ export function readCanaryState(url) {
 export function initialiseFormState(defaultValues, url) {
   const {
     layout,
+    tabBy,
     groupBy,
     hidePassing,
     labels: decodedLabels = {},
@@ -52,14 +58,21 @@ export function initialiseFormState(defaultValues, url) {
     ["no-group", null],
     ["description", null],
     ["name", null],
-    ...Object.entries(newLabelState)
+    ...Object.entries(getGroupByLabels(newLabelState))
+  ]);
+
+  const tabByDefaults = new Map([
+    ["namespace", null],
+    ...Object.entries(getLabelKeys(defaultValues.labels))
   ]);
 
   const groupByValueOrDefault = groupByDefaults.has(groupBy) ? groupBy : "name";
+  const tabByValueOrDefault = tabByDefaults.has(tabBy) ? tabBy : "namespace";
 
   const formState = {
     ...defaultValues,
     ...(layout != null && typeof layout === "string" && { layout }),
+    tabBy: tabByValueOrDefault,
     ...(hidePassing != null &&
       typeof hidePassing === "boolean" && { hidePassing }),
     groupBy: groupByValueOrDefault,
@@ -69,7 +82,13 @@ export function initialiseFormState(defaultValues, url) {
 }
 
 export function updateFormState(update, url, labels) {
-  const { layout, groupBy, hidePassing, labels: updateLabels = {} } = update;
+  const {
+    layout,
+    tabBy,
+    groupBy,
+    hidePassing,
+    labels: updateLabels = {}
+  } = update;
   const { labels: decodedLabels = {}, ...rest } = decodeUrlSearchParams(url);
   const incoming = { ...decodedLabels, ...updateLabels };
   const newLabels = initialiseLabelState(labels, incoming);
@@ -78,14 +97,21 @@ export function updateFormState(update, url, labels) {
     ["no-group", null],
     ["description", null],
     ["name", null],
-    ...Object.entries(newLabels)
+    ...Object.entries(getGroupByLabels(newLabels))
+  ]);
+
+  const tabByDefaults = new Map([
+    ["namespace", null],
+    ...Object.entries(labels).map((label) => [label[1].key, null])
   ]);
 
   const groupByValueOrDefault = groupByDefaults.has(groupBy) ? groupBy : "name";
+  const tabByValueOrDefault = tabByDefaults.has(tabBy) ? tabBy : "namespace";
 
   const formState = {
     ...rest,
     ...(layout != null && typeof layout === "string" && { layout }),
+    tabBy: tabByValueOrDefault,
     ...(hidePassing != null &&
       typeof hidePassing === "boolean" && { hidePassing }),
     groupBy: groupByValueOrDefault,

@@ -38,16 +38,20 @@ export const defaultGroupSelections = {
 export function getGroupSelections(checks, defaultGroupSelections) {
   const nonBooleanLabels = getNonBooleanLabels(Object.values(checks));
   const newGroupSelections = defaultGroupSelections;
-  Object.entries(nonBooleanLabels).forEach(([k, v]) => {
-    const onlyAlphabets = k.replace(/[^a-zA-Z]/g, "");
-    newGroupSelections[k] = {
-      id: k,
+
+  const uniqueLabels = [
+    ...new Set(Object.values(nonBooleanLabels).map((o) => o.key))
+  ];
+  uniqueLabels.forEach((label) => {
+    const onlyAlphabets = label.replace(/[^a-zA-Z]/g, "");
+    newGroupSelections[label] = {
+      id: label,
       name: onlyAlphabets,
       icon: <BiLabel />,
-      description: `${v.key}:${v.value}`,
-      value: k,
-      labelValue: v.value,
-      key: v.key
+      description: label,
+      value: label,
+      labelValue: label,
+      key: label
     };
   });
   return newGroupSelections;
@@ -82,13 +86,12 @@ export function getGroupedChecks(checks, groupBy) {
     let groupName;
 
     if (check.labels) {
-      const labelKeys = Object.entries(check.labels);
-      labelKeys.forEach(([k, v]) => {
-        const id = `canary:${k}:${v}`;
+      const labelKeys = Object.keys(check.labels);
+      labelKeys.forEach((key) => {
         // if current item has a matching label with the currently selected groupBy
-        if (id === groupBy) {
+        if (key === groupBy) {
           hasValidGroup = true;
-          groupName = check.labels[k];
+          groupName = check.labels[key];
           // if current groupName doesn't exist yet
           if (groupNames.indexOf(groupName) === -1) {
             // add name/description to list

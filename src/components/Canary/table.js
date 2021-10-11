@@ -79,6 +79,11 @@ function LatencyCell({ value }) {
   return <Duration ms={value.rolling1h} />;
 }
 
+function getChecksHeaderTitle() {
+  const { groupBy } = decodeUrlSearchParams(window.location.search);
+  return `Checks ${groupBy !== "no-group" ? `(Grouped by ${groupBy})` : ""}`;
+}
+
 const columnsKeyed = {
   expander: {
     id: "expander",
@@ -86,7 +91,7 @@ const columnsKeyed = {
     cellClass: ""
   },
   name: {
-    Header: "Checks",
+    Header: getChecksHeaderTitle,
     accessor: "name",
     cellClass: "px-5 py-2 w-full max-w-0 overflow-hidden overflow-ellipsis",
     Cell: TitleCell,
@@ -126,6 +131,7 @@ export function CanaryTable({
   labels,
   history,
   onCheckClick,
+  selectedTab,
   ...rest
 }) {
   const searchParams = window.location.search;
@@ -138,11 +144,14 @@ export function CanaryTable({
     setTableData(
       groupBy !== "no-group"
         ? Object.values(
-            getAggregatedGroupedChecks(getGroupedChecks(checks, groupBy))
+            getAggregatedGroupedChecks(
+              getGroupedChecks(checks, groupBy),
+              selectedTab || null
+            )
           )
         : checks
     );
-  }, [searchParams, checks, groupBy]);
+  }, [searchParams, checks, groupBy, selectedTab]);
 
   const data = useMemo(
     () =>

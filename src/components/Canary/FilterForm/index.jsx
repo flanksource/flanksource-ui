@@ -4,6 +4,7 @@ import { useForm, Controller } from "react-hook-form";
 import React, { useEffect } from "react";
 import { LayoutDropdown } from "../../Dropdown/LayoutDropdown";
 import { GroupByDropdown } from "../../Dropdown/GroupByDropdown";
+import { TabByDropdown } from "../../Dropdown/TabByDropdown";
 import { Toggle } from "../../Toggle";
 
 import { initialiseFormState, updateFormState, getDefaultForm } from "../state";
@@ -65,6 +66,13 @@ export function FilterForm({ labels, checks, history }) {
             checks={checks}
           />
         )}
+        <TabByDropdown
+          name="tabBy"
+          control={control}
+          className="mb-4"
+          label="Tab By"
+          checks={checks}
+        />
       </div>
 
       <div className="uppercase font-semibold text-sm mb-3 text-indigo-700">
