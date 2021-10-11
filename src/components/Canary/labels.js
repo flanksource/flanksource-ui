@@ -160,3 +160,13 @@ export function filterChecksByLabels(checks, labelFilters) {
   }, {});
   return filtered;
 }
+
+export function getGroupByLabels(labelState) {
+  return Object.keys(labelState).reduce((acc, fullLabel) => {
+    const start = new RegExp("^([^:]*:)");
+    const end = new RegExp("(:[^:]*)$");
+    const label = fullLabel.replace(start, "").replace(end, "");
+    acc[label] = null;
+    return acc;
+  }, {});
+}

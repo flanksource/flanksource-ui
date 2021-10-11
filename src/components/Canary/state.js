@@ -2,7 +2,7 @@ import { decodeUrlSearchParams } from "./url";
 import { isPlainObject } from "../../lib/isPlainObject";
 import { defaultGroupSelections } from "./grouping";
 import { defaultTabSelections } from "../Dropdown/TabByDropdown";
-import { getLabelKeys } from "./labels";
+import { getGroupByLabels, getLabelKeys } from "./labels";
 
 export function getDefaultForm(labels, incoming = {}) {
   const initialLabelState = initialiseLabelState(labels, incoming);
@@ -58,7 +58,7 @@ export function initialiseFormState(defaultValues, url) {
     ["no-group", null],
     ["description", null],
     ["name", null],
-    ...Object.entries(newLabelState)
+    ...Object.entries(getGroupByLabels(newLabelState))
   ]);
 
   const tabByDefaults = new Map([
@@ -97,7 +97,7 @@ export function updateFormState(update, url, labels) {
     ["no-group", null],
     ["description", null],
     ["name", null],
-    ...Object.entries(newLabels)
+    ...Object.entries(getGroupByLabels(newLabels))
   ]);
 
   const tabByDefaults = new Map([
