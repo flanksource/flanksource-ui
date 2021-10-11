@@ -4,14 +4,14 @@ import { getGroupSelections, defaultGroupSelections } from "../grouping";
 
 const output = {
   ...defaultGroupSelections,
-  "canary:test:istest": {
-    description: "test:istest",
+  test: {
+    description: "test",
     icon: <BiLabel />,
-    id: "canary:test:istest",
+    id: "test",
     key: "test",
-    labelValue: "istest",
-    name: "canarytestistest",
-    value: "canary:test:istest"
+    labelValue: "test",
+    name: "test",
+    value: "test"
   }
 };
 
