@@ -15,20 +15,17 @@ import { StatusList } from "./status";
 import { decodeUrlSearchParams, encodeObjectToUrlSearchParams } from "./url";
 
 const styles = {
-  outerDivClass: "",
-  tableClass: "min-w-full relative",
-  theadClass: "sticky top-6 z-10",
-  tableHeaderBg: "h-10 absolute top-0",
-  tableHeaderBgFront:
-    "bg-gray-100 rounded-tl-md rounded-tr-md border border-b-0",
-  tableHeaderBgBack: "bg-white",
+  outerDivClass: "border-l border-r border-gray-300",
+  topBgClass: "bg-red-500",
+  tableClass: "min-w-full  border-separate",
+  theadClass: "sticky top-11 bg-white z-10",
   theadRowClass: "z-10",
   theadHeaderClass:
-    "px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ",
+    "px-5 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-300",
   tbodyClass: "mt-4 rounded-md",
   tbodyRowClass: "border cursor-pointer",
   tbodyRowExpandableClass: "cursor-pointer",
-  tbodyDataClass: "whitespace-nowrap",
+  tbodyDataClass: "whitespace-nowrap border-gray-300 border-b",
   expandArrowIconClass: "ml-6 flex"
 };
 
@@ -250,7 +247,12 @@ export function Table({
 
   return (
     <div className={styles.outerDivClass} {...rest}>
-      <table className={styles.tableClass} {...getTableProps()}>
+      <div className={styles.topBgClass} />
+      <table
+        className={styles.tableClass}
+        style={{ borderSpacing: "0" }}
+        {...getTableProps()}
+      >
         <thead className={styles.theadClass}>
           {headerGroups.map((headerGroup) => (
             <tr
@@ -289,14 +291,6 @@ export function Table({
               ))}
             </tr>
           ))}
-          <tr
-            className={`${styles.tableHeaderBg} ${styles.tableHeaderBgFront}`}
-            style={{ zIndex: "-1", left: "-1px", width: "calc(100% + 2px)" }}
-          />
-          <tr
-            className={`${styles.tableHeaderBg} ${styles.tableHeaderBgBack}`}
-            style={{ zIndex: "-2", left: "-1px", width: "calc(100% + 2px)" }}
-          />
         </thead>
         <tbody className={styles.tbodyClass} {...getTableBodyProps()}>
           {rows.map((row) => {
