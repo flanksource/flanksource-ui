@@ -160,9 +160,9 @@ export class Canary extends React.Component {
     return (
       <div className="w-full flex flex-col-reverse lg:flex-row">
         {/* middle panel */}
-        <div className="w-full m-6">
+        <div className="w-full m-6 relative">
           <CanaryTabs
-            className={layout === "table" ? "relative z-20 -mb-3" : ""}
+            className="sticky top-0 z-20 bg-white"
             checks={tabChecks}
             tabBy={tabBy}
             setTabSelection={this.handleTabSelect}
@@ -171,20 +171,13 @@ export class Canary extends React.Component {
             <CanaryCards checks={checks} onClick={this.select} />
           )}
           {layout === "table" && (
-            <div className="mt-0 z-10 relative">
-              <div
-                className="sticky top-0 h-6 bg-white z-10"
-                style={{ marginLeft: "-1px", width: "calc(100% + 2px)" }}
-              />
-
-              <CanaryTable
-                checks={checks}
-                labels={labels}
-                history={history}
-                onCheckClick={this.select}
-                selectedTab={selectedTab}
-              />
-            </div>
+            <CanaryTable
+              checks={checks}
+              labels={labels}
+              history={history}
+              onCheckClick={this.select}
+              selectedTab={selectedTab}
+            />
           )}
         </div>
 
