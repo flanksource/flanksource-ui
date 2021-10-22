@@ -194,7 +194,13 @@ export function Table({
     toggleHideColumn,
     toggleRowExpanded
   } = useTable(
-    { columns, data, disableMultiSort: true, autoResetSortBy: false },
+    {
+      columns,
+      data,
+      disableMultiSort: true,
+      autoResetSortBy: false,
+      autoResetExpanded: false
+    },
     useSortBy,
     useExpanded
   );
