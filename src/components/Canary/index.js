@@ -154,6 +154,11 @@ export class Canary extends React.Component {
     const filterProps = {
       labels,
       checks: stateChecks,
+      currentTabChecks: filterChecksByTabSelection(
+        tabBy,
+        selectedTab,
+        stateChecks
+      ),
       history: this.history
     };
 
