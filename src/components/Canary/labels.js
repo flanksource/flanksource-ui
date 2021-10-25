@@ -170,3 +170,20 @@ export function getGroupByLabels(labelState) {
     return acc;
   }, {});
 }
+
+// filter labels based on the currently available checks
+// (only include labels present in current checks list)
+export function getFilteredLabelsByChecks(checks, allLabels) {
+  const hasProperty = (obj, keyName) =>
+    Object.prototype.hasOwnProperty.call(obj, keyName);
+
+  const checkLabels = {};
+  checks.forEach((check) => {
+    Object.entries(check.labels).forEach(([k, v]) => {
+      if (!hasProperty(checkLabels, `canary:${k}:${v}`)) {
+        checkLabels[`canary:${k}:${v}`] = allLabels[`canary:${k}:${v}`];
+      }
+    });
+  });
+  return checkLabels;
+}

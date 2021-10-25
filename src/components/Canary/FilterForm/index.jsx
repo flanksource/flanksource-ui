@@ -12,8 +12,14 @@ import { initialiseFormState, updateFormState, getDefaultForm } from "../state";
 import { encodeObjectToUrlSearchParams } from "../url";
 
 import { TristateToggle } from "../../TristateToggle";
+import { getFilteredLabelsByChecks } from "../labels";
 
-export function FilterForm({ labels, checks, history }) {
+export function FilterForm({
+  labels,
+  checks,
+  history,
+  currentTabChecks = null
+}) {
   const searchParams = window.location.search;
   const { formState, fullState } = initialiseFormState(
     getDefaultForm(labels),
@@ -23,6 +29,12 @@ export function FilterForm({ labels, checks, history }) {
   const { control, watch, reset } = useForm({
     defaultValues: formState
   });
+
+  let filteredLabels = labels;
+  // only show labels that affect the current list of checks
+  if (currentTabChecks && currentTabChecks.length > 0) {
+    filteredLabels = getFilteredLabelsByChecks(currentTabChecks, labels);
+  }
 
   useEffect(() => {
     const encoded = encodeObjectToUrlSearchParams(fullState);
@@ -91,7 +103,7 @@ export function FilterForm({ labels, checks, history }) {
         <div className="uppercase font-semibold text-sm mb-3 text-indigo-700">
           Filter By Label
         </div>
-        {Object.values(labels)
+        {Object.values(filteredLabels)
           .sort((a, b) => {
             const aLower = a.key.toLowerCase();
             const bLower = b.key.toLowerCase();
