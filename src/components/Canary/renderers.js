@@ -34,8 +34,8 @@ export function Duration({ ms }) {
   }
   return (
     <>
-      <span className="text-lg">{val}</span>
-      <span className="text-gray-500 text-light text-xs">{unit}</span>
+      <span className="text-md">{val}</span>
+      <span className="text-gray-500 text-light text-xs ml-0.5">{unit}</span>
     </>
   );
 }
@@ -92,10 +92,10 @@ export function Percentage({ val, upper, lower }) {
 
   return (
     <>
-      <span className="text-lg" title={`${lower}/${upper}`}>
+      <span className="text-md" title={`${lower}/${upper}`}>
         {val}
       </span>
-      <span className="text-gray-500 text-light text-xs">%</span>
+      <span className="text-gray-500 text-light text-xs ml-0.5">%</span>
     </>
   );
 }
@@ -113,7 +113,7 @@ export function Title({ check, showIcon = true }) {
           size="xl"
         />
       )}
-      {GetName(check)}
+      <span className="text-sm">{GetName(check)}</span>
     </>
   );
 }

@@ -1,5 +1,13 @@
-export function Badge({ text, size = "sm", dot }) {
-  let spanClassname = "text-xs px-2";
+export function Badge({
+  text,
+  size = "sm",
+  dot,
+  title,
+  className,
+  colorClass = "bg-indigo-100 text-indigo-800",
+  roundedClass = "rounded"
+}) {
+  let spanClassname = "text-xs px-1.5";
   let svgClassName = "-ml-0.5 mr-1.5 h-2 w-2";
   if (size === "sm") {
     spanClassname = "text-sm px-2.5";
@@ -8,7 +16,8 @@ export function Badge({ text, size = "sm", dot }) {
   return (
     <>
       <span
-        className={`${spanClassname} inline-flex items-center py-0.5 rounded font-medium bg-indigo-100 text-indigo-800`}
+        className={`${className} ${spanClassname} inline-flex items-center py-0.5 ${roundedClass} font-medium ${colorClass}`}
+        title={title}
       >
         {dot != null && (
           <svg

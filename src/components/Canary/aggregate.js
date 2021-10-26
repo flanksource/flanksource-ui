@@ -115,20 +115,16 @@ export function aggregate(title, items) {
   if (items == null) {
     return {};
   }
-  // eslint-disable-next-line no-underscore-dangle
-  let _title = title;
-  if (items.length > 1) {
-    _title += ` (${items.length})`;
-  }
   return {
-    description: _title,
+    description: title,
     icon: aggregateIcon(items.map((item) => item.icon)),
     latency: {
       rolling1h: avgLatency(items)
     },
     uptime: sumUptime(items),
     checkStatuses: aggregateStatuses(items.map((item) => item.checkStatuses)),
-    type: aggregateType(items.map((item) => item.type))
+    type: aggregateType(items.map((item) => item.type)),
+    namespaces: [...new Set(items.map((item) => item.namespace))]
   };
 }
 
