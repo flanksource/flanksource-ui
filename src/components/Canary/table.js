@@ -14,6 +14,7 @@ import {
 import { StatusList } from "./status";
 import { decodeUrlSearchParams, encodeObjectToUrlSearchParams } from "./url";
 import { Badge } from "../Badge";
+import style from "./index.module.css";
 
 const styles = {
   outerDivClass: "border-l border-r border-gray-300",
@@ -53,47 +54,45 @@ function ExpandArrow({ row }) {
 
 function TitleCell({ row }) {
   return (
-    <span
-      className="flex flex-row items-center"
-      style={{
-        paddingLeft: `${row.depth * 1.1}rem`
-      }}
-    >
-      <Title check={row.original} />
-      {row.canExpand && row.subRows && row.subRows.length > 1 && (
-        <span className="ml-1 flex items-center">
-          <Badge
-            className="ml-1"
-            colorClass="bg-gray-200 text-gray-800"
-            roundedClass="rounded-xl"
-            text={row.subRows.length}
-            size="xs"
-          />
-        </span>
-      )}
-      {row.showNamespaceTags && (
-        <div className="flex-grow flex items-center justify-end">
-          {row.original.namespaces ? (
-            <>
-              <Badge
-                className="ml-2"
-                text={`${row.original.namespaces[0]}${
-                  row.original.namespaces.length > 1 ? ", ..." : ""
-                }`}
-                title={
-                  row.original.namespaces.length > 1
-                    ? row.original.namespaces.join(", ")
-                    : null
-                }
-                size="xs"
-              />
-            </>
-          ) : row.original.namespace ? (
-            <Badge className="ml-2" text={row.original.namespace} size="xs" />
-          ) : null}
-        </div>
-      )}
-    </span>
+    <div className={style.checkTitleRow}>
+      <span
+        className="flex flex-row items-center"
+        style={{
+          paddingLeft: `${row.depth * 1.1}rem`
+        }}
+      >
+        <Title check={row.original} />
+        {row.canExpand && row.subRows && row.subRows.length > 1 && (
+          <span className="ml-1 flex items-center">
+            <Badge
+              className="ml-1"
+              colorClass="bg-gray-200 text-gray-800"
+              roundedClass="rounded-xl"
+              text={row.subRows.length}
+              size="xs"
+            />
+          </span>
+        )}
+        {row.showNamespaceTags && row.original.namespaces ? (
+          <>
+            <Badge
+              className="ml-2"
+              text={`${row.original.namespaces[0]}${
+                row.original.namespaces.length > 1 ? ", ..." : ""
+              }`}
+              title={
+                row.original.namespaces.length > 1
+                  ? row.original.namespaces.join(", ")
+                  : null
+              }
+              size="xs"
+            />
+          </>
+        ) : row.original.namespace ? (
+          <Badge className="ml-2" text={row.original.namespace} size="xs" />
+        ) : null}
+      </span>
+    </div>
   );
 }
 
@@ -125,7 +124,7 @@ const columnsKeyed = {
   name: {
     Header: getChecksHeaderTitle,
     accessor: "name",
-    cellClass: "px-5 py-2 w-full max-w-0 overflow-hidden overflow-ellipsis",
+    cellClass: `px-5 py-2 w-full max-w-0 overflow-hidden overflow-ellipsis relative`,
     Cell: TitleCell,
     sortType: (a, b) =>
       // case insensitive name sorting
