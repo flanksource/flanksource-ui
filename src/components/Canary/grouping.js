@@ -42,7 +42,7 @@ export function getGroupSelections(checks, defaultGroupSelections) {
   const uniqueLabels = [
     ...new Set(Object.values(nonBooleanLabels).map((o) => o.key))
   ];
-  uniqueLabels.forEach((label) => {
+  uniqueLabels.sort().forEach((label) => {
     const onlyAlphabets = label.replace(/[^a-zA-Z]/g, "");
     newGroupSelections[label] = {
       id: label,

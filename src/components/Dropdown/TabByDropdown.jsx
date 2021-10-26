@@ -20,19 +20,21 @@ export function getTabSelections(checks, defaultTabSelections) {
   const uniqueLabelKeys = getUniqueNonBooleanLabelKeys(checks);
   const newTabSelections = defaultTabSelections;
 
-  Object.entries(uniqueLabelKeys).forEach((o) => {
-    const k = o[0];
-    const onlyAlphabets = k.replace(/[^a-zA-Z]/g, "");
-    newTabSelections[k] = {
-      id: k,
-      name: onlyAlphabets,
-      icon: <BiLabel />,
-      description: k,
-      value: k,
-      labelValue: k,
-      key: k
-    };
-  });
+  Object.entries(uniqueLabelKeys)
+    .sort((a, b) => (b[0] > a[0] ? -1 : 1))
+    .forEach((o) => {
+      const k = o[0];
+      const onlyAlphabets = k.replace(/[^a-zA-Z]/g, "");
+      newTabSelections[k] = {
+        id: k,
+        name: onlyAlphabets,
+        icon: <BiLabel />,
+        description: k,
+        value: k,
+        labelValue: k,
+        key: k
+      };
+    });
   return newTabSelections;
 }
 
