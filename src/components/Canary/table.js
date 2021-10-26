@@ -71,26 +71,28 @@ function TitleCell({ row }) {
           />
         </span>
       )}
-      <div className="flex-grow flex items-center justify-end">
-        {row.original.namespaces ? (
-          <>
-            <Badge
-              className="ml-2"
-              text={`${row.original.namespaces[0]}${
-                row.original.namespaces.length > 1 ? ", ..." : ""
-              }`}
-              title={
-                row.original.namespaces.length > 1
-                  ? row.original.namespaces.join(", ")
-                  : null
-              }
-              size="xs"
-            />
-          </>
-        ) : row.original.namespace ? (
-          <Badge className="ml-2" text={row.original.namespace} size="xs" />
-        ) : null}
-      </div>
+      {row.showNamespaceTags && (
+        <div className="flex-grow flex items-center justify-end">
+          {row.original.namespaces ? (
+            <>
+              <Badge
+                className="ml-2"
+                text={`${row.original.namespaces[0]}${
+                  row.original.namespaces.length > 1 ? ", ..." : ""
+                }`}
+                title={
+                  row.original.namespaces.length > 1
+                    ? row.original.namespaces.join(", ")
+                    : null
+                }
+                size="xs"
+              />
+            </>
+          ) : row.original.namespace ? (
+            <Badge className="ml-2" text={row.original.namespace} size="xs" />
+          ) : null}
+        </div>
+      )}
     </span>
   );
 }
@@ -162,6 +164,7 @@ export function CanaryTable({
   history,
   onCheckClick,
   selectedTab,
+  showNamespaceTags,
   ...rest
 }) {
   const searchParams = window.location.search;
@@ -202,6 +205,7 @@ export function CanaryTable({
       history={history}
       onUnexpandableRowClick={onCheckClick}
       hasGrouping={groupBy !== "no-group"}
+      showNamespaceTags={showNamespaceTags}
       {...rest}
     />
   );
@@ -214,6 +218,7 @@ export function Table({
   history,
   hasGrouping = false,
   onUnexpandableRowClick,
+  showNamespaceTags,
   ...rest
 }) {
   const {
@@ -334,6 +339,7 @@ export function Table({
         <tbody className={styles.tbodyClass} {...getTableBodyProps()}>
           {rows.map((row) => {
             prepareRow(row);
+            row.showNamespaceTags = showNamespaceTags;
             return (
               <tr
                 key={row.id}
