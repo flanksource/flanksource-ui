@@ -11,7 +11,7 @@ import { readCanaryState, getDefaultForm } from "./state";
 import { filterChecks, isHealthy } from "./filter";
 import { CanaryTable } from "./table";
 import { CanaryCards } from "./card";
-import { CanarySorter } from "./data";
+import { CanarySorter, GetName } from "./data";
 import { CanaryDescription } from "./description";
 
 import { StatCard } from "../StatCard";
@@ -180,6 +180,7 @@ export class Canary extends React.Component {
               showNamespaceTags={
                 tabBy !== "namespace" ? true : selectedTab === "all"
               }
+              hideNamespacePrefix
             />
           )}
         </div>
@@ -232,7 +233,12 @@ export class Canary extends React.Component {
           <Modal
             ref={this.modal}
             submitText=""
-            title={<Title check={selected} />}
+            title={
+              <Title
+                title={GetName(selected)}
+                icon={selected.icon || selected.type}
+              />
+            }
             body={<CanaryDescription check={selected} />}
             open
           />

@@ -15,6 +15,7 @@ import { StatusList } from "./status";
 import { decodeUrlSearchParams, encodeObjectToUrlSearchParams } from "./url";
 import { Badge } from "../Badge";
 import style from "./index.module.css";
+import { removeNamespacePrefix } from "./utils";
 
 const styles = {
   outerDivClass: "border-l border-r border-gray-300",
@@ -53,6 +54,11 @@ function ExpandArrow({ row }) {
 }
 
 function TitleCell({ row }) {
+  let title = GetName(row.original);
+  if (row.hideNamespacePrefix) {
+    title = removeNamespacePrefix(title, row.original);
+  }
+
   return (
     <div className={style.checkTitleRow}>
       <span
@@ -61,7 +67,7 @@ function TitleCell({ row }) {
           paddingLeft: `${row.depth * 1.1}rem`
         }}
       >
-        <Title check={row.original} />
+        <Title title={title} icon={row.original.icon || row.original.type} />
         {row.canExpand && row.subRows && row.subRows.length > 1 && (
           <span className="ml-1 flex items-center">
             <Badge
@@ -73,8 +79,8 @@ function TitleCell({ row }) {
             />
           </span>
         )}
-        {row.showNamespaceTags && row.original.namespaces ? (
-          <>
+        {row.showNamespaceTags ? (
+          row.original.namespaces ? (
             <Badge
               className="ml-2"
               text={`${row.original.namespaces[0]}${
@@ -87,9 +93,9 @@ function TitleCell({ row }) {
               }
               size="xs"
             />
-          </>
-        ) : row.original.namespace ? (
-          <Badge className="ml-2" text={row.original.namespace} size="xs" />
+          ) : row.original.namespace ? (
+            <Badge className="ml-2" text={row.original.namespace} size="xs" />
+          ) : null
         ) : null}
       </span>
     </div>
@@ -162,8 +168,8 @@ export function CanaryTable({
   labels,
   history,
   onCheckClick,
-  selectedTab,
   showNamespaceTags,
+  hideNamespacePrefix,
   ...rest
 }) {
   const searchParams = window.location.search;
@@ -176,14 +182,11 @@ export function CanaryTable({
     setTableData(
       groupBy !== "no-group"
         ? Object.values(
-            getAggregatedGroupedChecks(
-              getGroupedChecks(checks, groupBy),
-              selectedTab || null
-            )
+            getAggregatedGroupedChecks(getGroupedChecks(checks, groupBy))
           )
         : checks
     );
-  }, [searchParams, checks, groupBy, selectedTab]);
+  }, [searchParams, checks, groupBy]);
 
   const data = useMemo(
     () =>
@@ -205,6 +208,7 @@ export function CanaryTable({
       onUnexpandableRowClick={onCheckClick}
       hasGrouping={groupBy !== "no-group"}
       showNamespaceTags={showNamespaceTags}
+      hideNamespacePrefix={hideNamespacePrefix}
       {...rest}
     />
   );
@@ -217,7 +221,8 @@ export function Table({
   history,
   hasGrouping = false,
   onUnexpandableRowClick,
-  showNamespaceTags,
+  showNamespaceTags = false,
+  hideNamespacePrefix = false,
   ...rest
 }) {
   const {
@@ -339,6 +344,7 @@ export function Table({
           {rows.map((row) => {
             prepareRow(row);
             row.showNamespaceTags = showNamespaceTags;
+            row.hideNamespacePrefix = hideNamespacePrefix;
             return (
               <tr
                 key={row.id}

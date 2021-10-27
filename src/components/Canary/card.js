@@ -1,4 +1,5 @@
 import React from "react";
+import { GetName } from "./data";
 import { Title } from "./renderers";
 import { StatusList } from "./status";
 
@@ -19,7 +20,7 @@ export function CanaryCards(props) {
           >
             <div className="flex-1 py-2 text-sm ">
               <span className="text-gray-900 font-medium hover:text-gray-600 truncate">
-                <Title check={check} />
+                <Title title={GetName(check)} icon={check.icon || check.type} />
               </span>
               <div className="float-right mr-2">
                 <StatusList check={check} />
