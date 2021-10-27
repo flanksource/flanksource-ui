@@ -5,9 +5,11 @@ export function CanarySorter(check) {
 }
 
 export function GetName(check) {
-  return isEmpty(check.name)
-    ? isEmpty(check.endpoint)
-      ? check.description
-      : check.endpoint
-    : check.name;
+  let title = check.description;
+  if (isEmpty(title)) {
+    title = check.endpoint;
+  } else if (isEmpty(title)) {
+    title = check.name;
+  }
+  return title;
 }
