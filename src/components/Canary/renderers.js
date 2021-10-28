@@ -1,7 +1,6 @@
 import { Badge } from "../Badge";
 import { isEmpty } from "./utils";
 import { Icon } from "../Icon";
-import { GetName } from "./data";
 
 export function Duration({ ms }) {
   if (ms == null || ms === 0) {
@@ -34,8 +33,8 @@ export function Duration({ ms }) {
   }
   return (
     <>
-      <span className="text-lg">{val}</span>
-      <span className="text-gray-500 text-light text-xs">{unit}</span>
+      <span className="text-md">{val}</span>
+      <span className="text-gray-500 text-light text-xs ml-0.5">{unit}</span>
     </>
   );
 }
@@ -92,28 +91,19 @@ export function Percentage({ val, upper, lower }) {
 
   return (
     <>
-      <span className="text-lg" title={`${lower}/${upper}`}>
+      <span className="text-md" title={`${lower}/${upper}`}>
         {val}
       </span>
-      <span className="text-gray-500 text-light text-xs">%</span>
+      <span className="text-gray-500 text-light text-xs ml-0.5">%</span>
     </>
   );
 }
 
-export function Title({ check, showIcon = true }) {
-  if (check == null) {
-    return <span className="bg-red-400"> null</span>;
-  }
+export function Title({ icon, title }) {
   return (
     <>
-      {showIcon && (
-        <Icon
-          name={check.icon ? check.icon : check.type}
-          className="inline"
-          size="xl"
-        />
-      )}
-      {GetName(check)}
+      {icon && <Icon name={icon} className="inline" size="xl" />}
+      <span className="text-sm">{title}</span>
     </>
   );
 }
