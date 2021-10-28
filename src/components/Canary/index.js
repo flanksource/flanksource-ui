@@ -182,6 +182,7 @@ export class Canary extends React.Component {
               history={history}
               onCheckClick={this.select}
               selectedTab={selectedTab}
+              groupSingleItems={false}
             />
           )}
         </div>

@@ -129,11 +129,11 @@ export function CanaryTable({
   history,
   onCheckClick,
   selectedTab,
+  groupSingleItems = true,
   ...rest
 }) {
   const searchParams = window.location.search;
   const { groupBy } = decodeUrlSearchParams(searchParams);
-
   const [tableData, setTableData] = useState(checks);
 
   // update table data if searchParam or check data changes
@@ -143,12 +143,12 @@ export function CanaryTable({
         ? Object.values(
             getAggregatedGroupedChecks(
               getGroupedChecks(checks, groupBy),
-              selectedTab || null
+              groupSingleItems
             )
           )
         : checks
     );
-  }, [searchParams, checks, groupBy, selectedTab]);
+  }, [searchParams, checks, groupBy, selectedTab, groupSingleItems]);
 
   const data = useMemo(
     () =>
