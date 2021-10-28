@@ -17,14 +17,14 @@ export function classNames(...classes) {
 }
 
 export function removeNamespacePrefix(name, check) {
-  if (check.namespaces?.length > 0) {
+  if (name && check.namespaces?.length > 0) {
     const split = name.split("/");
     if (split.length > 1 && check.namespaces.includes(split[0])) {
       return split.slice(1).join("/");
     }
     return name;
   }
-  if (check.namespace) {
+  if (name && check.namespace) {
     const split = name.split("/");
     if (split.length > 1 && check.namespace === split[0]) {
       return split.slice(1).join("/");

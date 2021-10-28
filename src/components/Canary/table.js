@@ -134,7 +134,9 @@ const columnsKeyed = {
     Cell: TitleCell,
     sortType: (a, b) =>
       // case insensitive name sorting
-      a.values.name?.toLowerCase() < b.values.name?.toLowerCase() ? -1 : 1
+      a.original.sortKey?.toLowerCase() < b.original.sortKey?.toLowerCase()
+        ? -1
+        : 1
   },
   health: {
     Header: "Health",
@@ -142,7 +144,8 @@ const columnsKeyed = {
     Cell: HealthCell,
     cellClass: "px-5 py-2",
     sortType: (a, b) =>
-      getHealthPercentageScore(a.values) < getHealthPercentageScore(b.values)
+      getHealthPercentageScore(a.original) <
+      getHealthPercentageScore(b.original)
         ? 1
         : -1
   },
@@ -152,14 +155,15 @@ const columnsKeyed = {
     Cell: UptimeCell,
     cellClass: "px-5 py-2",
     sortType: (a, b) =>
-      getUptimeScore(a.values) < getUptimeScore(b.values) ? 1 : -1
+      getUptimeScore(a.original) < getUptimeScore(b.original) ? 1 : -1
   },
   latency: {
     Header: "Latency",
     accessor: "latency",
     Cell: LatencyCell,
     cellClass: "px-5 py-2",
-    sortType: (a, b) => (getLatency(a.values) < getLatency(b.values) ? -1 : 1)
+    sortType: (a, b) =>
+      getLatency(a.original) < getLatency(b.original) ? -1 : 1
   }
 };
 
@@ -190,11 +194,14 @@ export function CanaryTable({
 
   const data = useMemo(
     () =>
-      tableData.map((check) => ({
-        ...check,
-        name: GetName(check)
+      tableData.map((row) => ({
+        ...row,
+        name: GetName(row),
+        sortKey: hideNamespacePrefix
+          ? removeNamespacePrefix(GetName(row), row)
+          : GetName(row)
       })),
-    [tableData]
+    [hideNamespacePrefix, tableData]
   );
 
   const columns = useMemo(() => Object.values(columnsKeyed), []);

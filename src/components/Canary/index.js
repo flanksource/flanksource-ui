@@ -176,7 +176,6 @@ export class Canary extends React.Component {
               labels={labels}
               history={history}
               onCheckClick={this.select}
-              selectedTab={selectedTab}
               showNamespaceTags={
                 tabBy !== "namespace" ? true : selectedTab === "all"
               }
