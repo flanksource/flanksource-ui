@@ -64,7 +64,7 @@ export function getGroupedChecks(checks, groupBy) {
     const groupedChecks = {};
     const groupNames = [];
     checks.forEach((check) => {
-      const value = check[groupBy];
+      const value = check[groupBy] || "(none)"; // provide (none) as name/description if null or empty;
       // if current name/description doesn't exist yet
       if (groupNames.indexOf(value) === -1) {
         // add name/description to list
