@@ -186,6 +186,7 @@ export class Canary extends React.Component {
                 tabBy !== "namespace" ? true : selectedTab === "all"
               }
               hideNamespacePrefix
+              groupSingleItems={false}
             />
           )}
         </div>
