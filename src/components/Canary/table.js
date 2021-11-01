@@ -132,11 +132,13 @@ const columnsKeyed = {
     accessor: "name",
     cellClass: `px-5 py-2 w-full max-w-0 overflow-hidden overflow-ellipsis relative`,
     Cell: TitleCell,
-    sortType: (a, b) =>
-      // case insensitive name sorting
-      a.original.sortKey?.toLowerCase() < b.original.sortKey?.toLowerCase()
-        ? -1
-        : 1
+    sortType: (a, b) => {
+      const getSortString = (original) =>
+        // case insensitive name sorting, with namespace as a secondary sort
+        `${original.sortKey?.toLowerCase()}${original.namespace?.toLowerCase()}`;
+
+      return getSortString(a.original) < getSortString(b.original) ? -1 : 1;
+    }
   },
   health: {
     Header: "Health",
