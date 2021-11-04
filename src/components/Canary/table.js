@@ -1,21 +1,13 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti";
-import { IoChevronForwardOutline } from "react-icons/io5";
 import { useTable, useSortBy, useExpanded } from "react-table";
 import { getAggregatedGroupedChecks } from "./aggregate";
 import { GetName } from "./data";
 import { getGroupedChecks } from "./grouping";
-import { Duration, Percentage, Title } from "./renderers";
-import {
-  getHealthPercentageScore,
-  getLatency,
-  getUptimeScore
-} from "./sorting";
-import { StatusList } from "./status";
+import { getColumns } from "./Columns";
 import { decodeUrlSearchParams, encodeObjectToUrlSearchParams } from "./url";
-import { Badge } from "../Badge";
-import style from "./index.module.css";
 import { removeNamespacePrefix } from "./utils";
+import { columnObject } from "./Columns/columns";
 
 const styles = {
   outerDivClass: "border-l border-r border-gray-300",
@@ -39,136 +31,6 @@ const sortByValidValues = new Map([
   ["latency", null]
 ]);
 
-function ExpandArrow({ row }) {
-  return row.canExpand ? (
-    <div className={styles.expandArrowIconClass}>
-      <div
-        className={`transform duration-200 ${
-          row.isExpanded ? "rotate-90" : ""
-        }`}
-      >
-        <IoChevronForwardOutline />
-      </div>
-    </div>
-  ) : null;
-}
-
-function TitleCell({ row }) {
-  let title = GetName(row.original);
-  if (row.hideNamespacePrefix) {
-    title = removeNamespacePrefix(title, row.original);
-  }
-
-  return (
-    <div className={style.checkTitleRow}>
-      <span
-        className="flex flex-row items-center"
-        style={{
-          paddingLeft: `${row.depth * 1.1}rem`
-        }}
-      >
-        <Title title={title} icon={row.original.icon || row.original.type} />
-        {row.canExpand && row.subRows && row.subRows.length > 1 && (
-          <span className="ml-1 flex items-center">
-            <Badge
-              className="ml-1"
-              colorClass="bg-gray-200 text-gray-800"
-              roundedClass="rounded-xl"
-              text={row.subRows.length}
-              size="xs"
-            />
-          </span>
-        )}
-        {row.showNamespaceTags ? (
-          row.original.namespaces ? (
-            <Badge
-              className="ml-2"
-              text={`${row.original.namespaces[0]}${
-                row.original.namespaces.length > 1 ? ", ..." : ""
-              }`}
-              title={
-                row.original.namespaces.length > 1
-                  ? row.original.namespaces.join(", ")
-                  : null
-              }
-              size="xs"
-            />
-          ) : row.original.namespace ? (
-            <Badge className="ml-2" text={row.original.namespace} size="xs" />
-          ) : null
-        ) : null}
-      </span>
-    </div>
-  );
-}
-
-function HealthCell({ value }) {
-  return <StatusList checkStatuses={value} />;
-}
-
-function UptimeCell({ value }) {
-  return (
-    <Percentage upper={value.passed + value.failed} lower={value.passed} />
-  );
-}
-
-function LatencyCell({ value }) {
-  return <Duration ms={value.rolling1h} />;
-}
-
-function getChecksHeaderTitle() {
-  const { groupBy } = decodeUrlSearchParams(window.location.search);
-  return `Checks ${groupBy !== "no-group" ? `(Grouped by ${groupBy})` : ""}`;
-}
-
-const columnsKeyed = {
-  expander: {
-    id: "expander",
-    Cell: ExpandArrow,
-    cellClass: ""
-  },
-  name: {
-    Header: getChecksHeaderTitle,
-    accessor: "name",
-    cellClass: `px-5 py-2 w-full max-w-0 overflow-hidden overflow-ellipsis relative`,
-    Cell: TitleCell,
-    sortType: (a, b) => {
-      const getSortString = (original) =>
-        // case insensitive name sorting, with namespace as a secondary sort
-        `${original.sortKey?.toLowerCase()}${original.namespace?.toLowerCase()}`;
-
-      return getSortString(a.original) < getSortString(b.original) ? -1 : 1;
-    }
-  },
-  health: {
-    Header: "Health",
-    accessor: "checkStatuses",
-    Cell: HealthCell,
-    cellClass: "px-5 py-2",
-    sortType: (a, b) =>
-      getHealthPercentageScore(a.original) <
-      getHealthPercentageScore(b.original)
-        ? 1
-        : -1
-  },
-  uptime: {
-    Header: "Uptime",
-    accessor: "uptime",
-    Cell: UptimeCell,
-    cellClass: "px-5 py-2",
-    sortType: (a, b) =>
-      getUptimeScore(a.original) < getUptimeScore(b.original) ? 1 : -1
-  },
-  latency: {
-    Header: "Latency",
-    accessor: "latency",
-    Cell: LatencyCell,
-    cellClass: "px-5 py-2",
-    sortType: (a, b) =>
-      getLatency(a.original) < getLatency(b.original) ? -1 : 1
-  }
-};
-
 export function CanaryTable({
   checks,
   labels,
@@ -182,6 +44,7 @@ export function CanaryTable({
   const searchParams = window.location.search;
   const { groupBy } = decodeUrlSearchParams(searchParams);
   const [tableData, setTableData] = useState(checks);
+  const [pivotCellType] = useState(null);
 
   // update table data if searchParam or check data changes
   useEffect(() => {
@@ -209,7 +72,14 @@ export function CanaryTable({
     [hideNamespacePrefix, tableData]
   );
 
-  const columns = useMemo(() => Object.values(columnsKeyed), []);
+  const columns = useMemo(
+    () =>
+      getColumns({
+        columnObject,
+        pivotCellType
+      }),
+    [pivotCellType]
+  );
 
   return (
     <Table
@@ -217,6 +87,7 @@ export function CanaryTable({
       columns={columns}
       labels={labels}
       history={history}
+      pivotCellType={pivotCellType}
       onUnexpandableRowClick={onCheckClick}
       hasGrouping={groupBy !== "no-group"}
       showNamespaceTags={showNamespaceTags}
@@ -231,6 +102,7 @@ export function Table({
   columns,
   labels,
   history,
+  pivotCellType,
   hasGrouping = false,
   onUnexpandableRowClick,
   showNamespaceTags = false,
@@ -253,7 +125,16 @@ export function Table({
       data,
       disableMultiSort: true,
       autoResetSortBy: false,
-      autoResetExpanded: false
+      autoResetExpanded: false,
+      useControlledState: (state) =>
+        useMemo(
+          () => ({
+            ...state,
+            pivotCellType
+          }),
+          // eslint-disable-next-line react-hooks/exhaustive-deps
+          [state, pivotCellType]
+        )
     },
     useSortBy,
     useExpanded
