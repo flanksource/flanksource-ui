@@ -39,7 +39,9 @@ export function readCanaryState(url) {
   return { canaryState };
 }
 
-export function initialiseFormState(defaultValues, url) {
+export function initialiseFormState(defaultValues, url, savedFormState) {
+  const decodedUrlSearchParams = decodeUrlSearchParams(url);
+  const initialFormState = { ...savedFormState, ...decodedUrlSearchParams };
   const {
     layout,
     tabBy,
@@ -47,7 +49,7 @@ export function initialiseFormState(defaultValues, url) {
     hidePassing,
     labels: decodedLabels = {},
     ...rest
-  } = decodeUrlSearchParams(url);
+  } = initialFormState;
 
   const newLabelState =
     Object.keys(defaultValues.labels).length === 0
