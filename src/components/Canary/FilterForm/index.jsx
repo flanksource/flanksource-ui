@@ -13,6 +13,15 @@ import { encodeObjectToUrlSearchParams } from "../url";
 
 import { TristateToggle } from "../../TristateToggle";
 import { getFilteredLabelsByChecks } from "../labels";
+import { getLocalItem, setLocalItem } from "../../../utils/storage";
+
+function saveFormState(state) {
+  setLocalItem("canaryFilterFormState", JSON.stringify(state));
+}
+
+function getSavedFormState() {
+  return JSON.parse(getLocalItem("canaryFilterFormState"));
+}
 
 export function FilterForm({
   labels,
@@ -21,9 +30,11 @@ export function FilterForm({
   currentTabChecks = null
 }) {
   const searchParams = window.location.search;
+  const savedFormState = getSavedFormState();
   const { formState, fullState } = initialiseFormState(
     getDefaultForm(labels),
-    searchParams
+    searchParams,
+    savedFormState
   );
 
   const { control, watch, reset } = useForm({
@@ -37,6 +48,7 @@ export function FilterForm({
   }
 
   useEffect(() => {
+    saveFormState(fullState);
     const encoded = encodeObjectToUrlSearchParams(fullState);
     if (window.location.search !== `?${encoded}`) {
       history.push(`${window.location.pathname}?${encoded}`);
