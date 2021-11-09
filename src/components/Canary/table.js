@@ -13,7 +13,7 @@ const styles = {
   outerDivClass: "border-l border-r border-gray-300",
   topBgClass: "bg-red-500",
   tableClass: "min-w-full  border-separate",
-  theadClass: "sticky top-11 bg-white z-10",
+  theadClass: "bg-white z-10",
   theadRowClass: "z-10",
   theadHeaderClass:
     "px-5 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-300",
@@ -39,6 +39,7 @@ export function CanaryTable({
   showNamespaceTags,
   hideNamespacePrefix,
   groupSingleItems = true,
+  theadStyle = {},
   ...rest
 }) {
   const searchParams = window.location.search;
@@ -92,6 +93,7 @@ export function CanaryTable({
       hasGrouping={groupBy !== "no-group"}
       showNamespaceTags={showNamespaceTags}
       hideNamespacePrefix={hideNamespacePrefix}
+      theadStyle={theadStyle}
       {...rest}
     />
   );
@@ -107,6 +109,7 @@ export function Table({
   onUnexpandableRowClick,
   showNamespaceTags = false,
   hideNamespacePrefix = false,
+  theadStyle = {},
   ...rest
 }) {
   const {
@@ -194,7 +197,7 @@ export function Table({
         style={{ borderSpacing: "0" }}
         {...getTableProps()}
       >
-        <thead className={styles.theadClass}>
+        <thead className={styles.theadClass} style={theadStyle}>
           {headerGroups.map((headerGroup) => (
             <tr
               key={headerGroup.getHeaderGroupProps().key}

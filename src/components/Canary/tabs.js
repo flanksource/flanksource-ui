@@ -128,7 +128,7 @@ export function Tabs({ tabs, value, onClick, className, ...rest }) {
           }}
           className={classNames(
             tab.value === value ? "text-gray-900" : "text-gray-500",
-            "px-4 py-2 mt-2 font-medium text-sm rounded-t-md border border-gray-300 hover:text-gray-900"
+            "px-4 py-2 font-medium text-sm rounded-t-md border border-gray-300 hover:text-gray-900"
           )}
         >
           {tab.label}

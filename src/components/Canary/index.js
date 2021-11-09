@@ -1,6 +1,5 @@
 import React from "react";
-import { orderBy, reduce } from "lodash";
-
+import { orderBy, reduce, debounce } from "lodash";
 import history from "history/browser";
 
 import { FilterForm } from "./FilterForm/index";
@@ -8,7 +7,7 @@ import { getLabels, filterChecksByLabels, getLabelFilters } from "./labels";
 
 import { readCanaryState, getDefaultForm } from "./state";
 
-import { filterChecks, isHealthy } from "./filter";
+import { filterChecks, filterChecksByText, isHealthy } from "./filter";
 import { CanaryTable } from "./table";
 import { CanaryCards } from "./card";
 import { CanarySorter, GetName } from "./data";
@@ -18,6 +17,7 @@ import { StatCard } from "../StatCard";
 import { Modal } from "../Modal";
 import { Title } from "./renderers";
 import { CanaryTabs, filterChecksByTabSelection } from "./tabs";
+import { CanarySearchBar } from "./CanarySearchBar";
 
 export class Canary extends React.Component {
   constructor(props) {
@@ -27,6 +27,8 @@ export class Canary extends React.Component {
     this.modal = React.createRef();
     this.fetch = this.fetch.bind(this);
     this.select = this.select.bind(this);
+    this.handleSearch = this.handleSearch.bind(this);
+    this.handleSearchClear = this.handleSearchClear.bind(this);
     this.handleTabSelect = this.handleTabSelect.bind(this);
     this.setChecks = this.setChecks.bind(this);
     this.history = history;
@@ -46,6 +48,7 @@ export class Canary extends React.Component {
         include: []
       },
       selectedTab: null,
+      searchQuery: "",
       checks: props.checks ? props.checks : []
     };
   }
@@ -82,6 +85,18 @@ export class Canary extends React.Component {
     this.setState({
       // eslint-disable-next-line react/no-unused-state
       selectedTab: tabSelection
+    });
+  }
+
+  handleSearch(value) {
+    this.setState({
+      searchQuery: value
+    });
+  }
+
+  handleSearchClear() {
+    this.setState({
+      searchQuery: ""
     });
   }
 
@@ -126,7 +141,8 @@ export class Canary extends React.Component {
       urlState,
       checks: stateChecks,
       labels,
-      selectedTab
+      selectedTab,
+      searchQuery
     } = state;
     const { hidePassing, layout, tabBy } = urlState;
 
@@ -138,6 +154,10 @@ export class Canary extends React.Component {
       (sum, c) => (isHealthy(c) ? sum + 1 : sum),
       0
     );
+
+    // filter by name, description, endpoint
+    checks = filterChecksByText(checks, searchQuery);
+
     // filter the subset down
     checks = Object.values(filterChecksByLabels(checks, labelFilters)); // filters checks by its 'include/exclude' filters
     checks = orderBy(checks, CanarySorter);
@@ -165,9 +185,19 @@ export class Canary extends React.Component {
     return (
       <div className="w-full flex flex-col-reverse lg:flex-row">
         {/* middle panel */}
-        <div className="w-full m-6 relative">
+        <div className="w-full px-4 mb-4 relative">
+          <CanarySearchBar
+            onChange={debounce((e) => this.handleSearch(e.target.value), 500)}
+            onSubmit={(value) => this.handleSearch(value)}
+            onClear={this.handleSearchClear}
+            className="pt-4 pb-2 sticky top-0 z-10 bg-white"
+            inputClassName="w-full"
+            inputOuterClassName="z-10 w-full md:w-1/2"
+            placeholder="Search by name, description, or endpoint"
+          />
           <CanaryTabs
-            className="sticky top-0 z-20 bg-white"
+            className="sticky z-20 bg-white"
+            style={{ top: "58px" }}
             checks={tabChecks}
             tabBy={tabBy}
             setTabSelection={this.handleTabSelect}
@@ -186,6 +216,7 @@ export class Canary extends React.Component {
               }
               hideNamespacePrefix
               groupSingleItems={false}
+              theadStyle={{ position: "sticky", top: "96px" }}
             />
           )}
         </div>
