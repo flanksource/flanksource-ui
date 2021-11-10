@@ -73,7 +73,7 @@ export function FilterForm({
     };
   });
   return (
-    <form className="relative lg:w-80">
+    <form className="relative">
       <div className="mb-8">
         <LayoutDropdown
           control={control}
