@@ -18,6 +18,7 @@ import { StatCard } from "../StatCard";
 import { Modal } from "../Modal";
 import { Title } from "./renderers";
 import { CanaryTabs, filterChecksByTabSelection } from "./tabs";
+import { Sidebar } from "../Sidebar";
 
 export class Canary extends React.Component {
   constructor(props) {
@@ -163,11 +164,11 @@ export class Canary extends React.Component {
     };
 
     return (
-      <div className="w-full flex flex-col-reverse lg:flex-row">
+      <div className="w-full flex flex-row">
         {/* middle panel */}
         <div className="w-full m-6 relative">
           <CanaryTabs
-            className="sticky top-0 z-20 bg-white"
+            className="sticky top-0 z-20 bg-white w-full"
             checks={tabChecks}
             tabBy={tabBy}
             setTabSelection={this.handleTabSelect}
@@ -189,12 +190,11 @@ export class Canary extends React.Component {
             />
           )}
         </div>
-
-        {/* right panel */}
-        <div className="bg-gray-50">
-          <div className="p-6 space-y-6 sticky top-0 lg:h-screen lg:min-h-screen overflow-y-auto">
+        <div className="mr-6">
+          <Sidebar animated>
             <StatCard
               title="All Checks"
+              className="mb-4"
               customValue={
                 <>
                   {stateChecks.length}
@@ -210,10 +210,10 @@ export class Canary extends React.Component {
               }
             />
 
-            {/* second card */}
             {checks.length !== stateChecks.length && (
               <StatCard
                 title="Filtered Checks"
+                className="mb-4"
                 customValue={
                   <>
                     {checks.length}
@@ -232,7 +232,7 @@ export class Canary extends React.Component {
 
             {/* filtering tools */}
             <FilterForm {...filterProps} />
-          </div>
+          </Sidebar>
         </div>
         {selected != null && (
           <Modal
