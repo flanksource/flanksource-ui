@@ -1,6 +1,6 @@
-export function StatCard({ title, value, customValue }) {
+export function StatCard({ className, title, value, customValue }) {
   return (
-    <div className="bg-white overflow-hidden shadow rounded-lg">
+    <div className={`bg-white overflow-hidden shadow rounded-lg ${className}`}>
       <div className="px-4 py-5 sm:p-6">
         <dl>
           <dt className="text-sm leading-5 font-medium text-gray-500 truncate">

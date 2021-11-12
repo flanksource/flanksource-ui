@@ -112,7 +112,7 @@ function classNames(...classes) {
 export function Tabs({ tabs, value, onClick, className, ...rest }) {
   return (
     <div
-      className={`flex flex-wrap ${className} border-b border-gray-300`}
+      className={`flex flex-wrap border-b border-gray-300 ${className}`}
       aria-label="Tabs"
       {...rest}
     >
