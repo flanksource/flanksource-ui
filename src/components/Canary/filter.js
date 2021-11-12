@@ -52,3 +52,19 @@ export function filterChecks(checks, hidePassing, labels) {
 export function labelIndex(selectedLabels, label) {
   return findIndex(selectedLabels, (l) => l.id === label.id);
 }
+
+export function hasStringMatch(pattern, text) {
+  return text.indexOf(pattern) >= 0;
+}
+
+export function filterChecksByText(checks, textQuery) {
+  const text = textQuery.toLowerCase();
+  const filtered = [...checks].filter((check) => {
+    const match =
+      hasStringMatch(text, check.description.toLowerCase()) ||
+      hasStringMatch(text, check.canaryName.toLowerCase()) ||
+      hasStringMatch(text, check.endpoint.toLowerCase());
+    return match;
+  });
+  return filtered;
+}
