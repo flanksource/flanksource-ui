@@ -1,6 +1,7 @@
 import React from "react";
 import { orderBy, reduce, debounce } from "lodash";
 import history from "history/browser";
+import dayjs from "dayjs";
 
 import { FilterForm } from "./FilterForm/index";
 import { getLabels, filterChecksByLabels, getLabelFilters } from "./labels";
@@ -20,11 +21,13 @@ import { CanaryTabs, filterChecksByTabSelection } from "./tabs";
 import { CanarySearchBar } from "./CanarySearchBar";
 import { Sidebar } from "../Sidebar";
 
+const defaultRefreshInterval = 10;
+
 export class Canary extends React.Component {
   constructor(props) {
     super(props);
+    this.timer = this.startRefreshTimer(defaultRefreshInterval);
     this.url = props.url;
-    this.interval = 10;
     this.modal = React.createRef();
     this.fetch = this.fetch.bind(this);
     this.select = this.select.bind(this);
@@ -32,6 +35,7 @@ export class Canary extends React.Component {
     this.handleSearchClear = this.handleSearchClear.bind(this);
     this.handleTabSelect = this.handleTabSelect.bind(this);
     this.setChecks = this.setChecks.bind(this);
+    this.setLastUpdated = this.setLastUpdated.bind(this);
     this.history = history;
     this.unhistory = () => {};
 
@@ -40,9 +44,8 @@ export class Canary extends React.Component {
     this.state = {
       urlState: getDefaultForm(labels),
       selected: null,
-      // eslint-disable-next-line react/no-unused-state
-      lastFetched: null,
-      // eslint-disable-next-line react/no-unused-state
+      refreshInterval: defaultRefreshInterval,
+      lastUpdated: null,
       labels,
       labelFilters: {
         exclude: [],
@@ -56,7 +59,7 @@ export class Canary extends React.Component {
 
   componentDidMount() {
     const { canaryState: urlState } = readCanaryState(window.location.search);
-    const { labels } = this.state;
+    const { labels, refreshInterval } = this.state;
     const { labels: labelStates } = urlState;
     const labelFilters = getLabelFilters(labelStates, labels);
     this.setState({ urlState, labelFilters });
@@ -74,7 +77,7 @@ export class Canary extends React.Component {
     if (this.url == null) {
       return;
     }
-    this.timer = setInterval(() => this.fetch(), this.interval * 1000);
+    this.startRefreshTimer(refreshInterval);
   }
 
   componentWillUnmount() {
@@ -101,6 +104,10 @@ export class Canary extends React.Component {
     });
   }
 
+  handleRefreshIntervalChange(newValue) {
+    this.startRefreshTimer(newValue);
+  }
+
   setChecks(checks) {
     if (checks.checks) {
       // FIXME unify pipeline for demo and remote
@@ -110,9 +117,13 @@ export class Canary extends React.Component {
     this.setState({
       checks,
       // eslint-disable-next-line react/no-unused-state
-      labels,
-      // eslint-disable-next-line react/no-unused-state
-      lastFetched: new Date()
+      labels
+    });
+  }
+
+  setLastUpdated(date) {
+    this.setState({
+      lastUpdated: date
     });
   }
 
@@ -125,13 +136,21 @@ export class Canary extends React.Component {
     }
   }
 
+  startRefreshTimer(interval) {
+    clearInterval(this.timer);
+    this.timer = setInterval(() => this.fetch(), interval * 1000);
+  }
+
   fetch() {
     if (this.url == null) {
       return;
     }
     fetch(this.url)
       .then((result) => result.json())
-      .then(this.setChecks);
+      .then((e) => {
+        this.setChecks(e);
+        this.setLastUpdated(new Date());
+      });
   }
 
   render() {
@@ -141,6 +160,7 @@ export class Canary extends React.Component {
       labelFilters,
       urlState,
       checks: stateChecks,
+      lastUpdated,
       labels,
       selectedTab,
       searchQuery
@@ -196,6 +216,7 @@ export class Canary extends React.Component {
             inputOuterClassName="z-10 w-full md:w-1/2"
             placeholder="Search by name, description, or endpoint"
           />
+
           <CanaryTabs
             className="sticky top-0 z-20 bg-white w-full"
             style={{ top: "58px" }}
@@ -220,6 +241,15 @@ export class Canary extends React.Component {
               theadStyle={{ position: "sticky", top: "96px" }}
             />
           )}
+
+          <div className="mt-4 text-xs text-gray-500 flex justify-end">
+            {lastUpdated && (
+              <>
+                Last updated at{" "}
+                {dayjs(lastUpdated).format("h:mm:ss A DD[th] MMMM YYYY")}
+              </>
+            )}
+          </div>
         </div>
         <div className="mr-6">
           <Sidebar animated>
