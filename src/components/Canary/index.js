@@ -20,6 +20,9 @@ import { Title } from "./renderers";
 import { CanaryTabs, filterChecksByTabSelection } from "./tabs";
 import { CanarySearchBar } from "./CanarySearchBar";
 import { Sidebar } from "../Sidebar";
+import { Toggle } from "../Toggle";
+import { SidebarSubPanel } from "./SidebarSubPanel";
+import { AiFillSetting } from "react-icons/ai";
 
 const defaultRefreshInterval = 10;
 
@@ -33,6 +36,10 @@ export class Canary extends React.Component {
     this.select = this.select.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
     this.handleSearchClear = this.handleSearchClear.bind(this);
+    this.handleDisableRefreshChange =
+      this.handleDisableRefreshChange.bind(this);
+    this.handleRefreshIntervalChange =
+      this.handleRefreshIntervalChange.bind(this);
     this.handleTabSelect = this.handleTabSelect.bind(this);
     this.setChecks = this.setChecks.bind(this);
     this.setLastUpdated = this.setLastUpdated.bind(this);
@@ -44,6 +51,7 @@ export class Canary extends React.Component {
     this.state = {
       urlState: getDefaultForm(labels),
       selected: null,
+      disableRefresh: false,
       refreshInterval: defaultRefreshInterval,
       lastUpdated: null,
       labels,
@@ -104,8 +112,25 @@ export class Canary extends React.Component {
     });
   }
 
-  handleRefreshIntervalChange(newValue) {
-    this.startRefreshTimer(newValue);
+  handleRefreshIntervalChange(e) {
+    if (!Number.isNaN(e.target.value) && e.target.value >= 1) {
+      this.setState({
+        refreshInterval: e.target.value
+      });
+      this.startRefreshTimer(e.target.value);
+    }
+  }
+
+  handleDisableRefreshChange(disabled) {
+    const { refreshInterval } = this.state;
+    this.setState({
+      disableRefresh: disabled
+    });
+    if (!disabled) {
+      this.startRefreshTimer(refreshInterval);
+    } else {
+      clearInterval(this.timer);
+    }
   }
 
   setChecks(checks) {
@@ -163,6 +188,8 @@ export class Canary extends React.Component {
       lastUpdated,
       labels,
       selectedTab,
+      disableRefresh,
+      refreshInterval,
       searchQuery
     } = state;
     const { hidePassing, layout, tabBy } = urlState;
@@ -253,46 +280,90 @@ export class Canary extends React.Component {
         </div>
         <div className="mr-6">
           <Sidebar animated>
-            <StatCard
-              title="All Checks"
-              className="mb-4"
-              customValue={
+            <SidebarSubPanel
+              icon={
+                <AiFillSetting
+                  title="Show settings panel"
+                  className="text-gray-600 h-6 w-6"
+                />
+              }
+              subpanelContent={
                 <>
-                  {stateChecks.length}
-                  <span className="text-xl font-light">
-                    {" "}
-                    (<span className="text-green-500">{passedAll}</span>/
-                    <span className="text-red-500">
-                      {stateChecks.length - passedAll}
-                    </span>
-                    )
-                  </span>
+                  <div className="uppercase font-semibold text-sm mb-4 text-gray-700">
+                    More Settings
+                  </div>
+                  <div className="mb-4">
+                    <Toggle
+                      label="Disable auto-refresh"
+                      className="mb-3"
+                      value={disableRefresh}
+                      onChange={this.handleDisableRefreshChange}
+                    />
+                  </div>
+
+                  <div className="mb-4">
+                    <label
+                      htmlFor="canary-refresh-interval"
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
+                      Refresh interval
+                    </label>
+                    <div className="flex rounded-md shadow-sm">
+                      <input
+                        disabled={disableRefresh}
+                        type="number"
+                        name="canary-refresh-interval"
+                        id="canary-refresh-interval"
+                        className="focus:ring-indigo-500 disabled:bg-gray-100 disabled:text-gray-400 focus:border-indigo-500 flex-1 block w-full rounded-md sm:text-sm border-gray-300"
+                        value={refreshInterval}
+                        onChange={this.handleRefreshIntervalChange}
+                      />
+                    </div>
+                  </div>
                 </>
               }
-            />
-
-            {checks.length !== stateChecks.length && (
+            >
               <StatCard
-                title="Filtered Checks"
+                title="All Checks"
                 className="mb-4"
                 customValue={
                   <>
-                    {checks.length}
-                    <span className="text-xl  font-light">
+                    {stateChecks.length}
+                    <span className="text-xl font-light">
                       {" "}
-                      (<span className="text-green-500">{passed}</span>/
+                      (<span className="text-green-500">{passedAll}</span>/
                       <span className="text-red-500">
-                        {checks.length - passed}
+                        {stateChecks.length - passedAll}
                       </span>
                       )
                     </span>
                   </>
                 }
               />
-            )}
 
-            {/* filtering tools */}
-            <FilterForm {...filterProps} />
+              {checks.length !== stateChecks.length && (
+                <StatCard
+                  title="Filtered Checks"
+                  className="mb-4"
+                  customValue={
+                    <>
+                      {checks.length}
+                      <span className="text-xl  font-light">
+                        {" "}
+                        (<span className="text-green-500">{passed}</span>/
+                        <span className="text-red-500">
+                          {checks.length - passed}
+                        </span>
+                        )
+                      </span>
+                    </>
+                  }
+                />
+              )}
+
+              {/* filtering tools */}
+              <FilterForm {...filterProps} />
+            </SidebarSubPanel>
           </Sidebar>
         </div>
         {selected != null && (

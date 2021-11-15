@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { IoChevronBackCircle } from "react-icons/io5";
 
-export function Sidebar({ animated = false, ...rest }) {
+export function Sidebar({ animated = false, settings, ...rest }) {
   const { children, className } = rest;
   const [collapsed, setCollapsed] = useState(false);
   return (
@@ -26,7 +26,7 @@ export function Sidebar({ animated = false, ...rest }) {
         } ${className || ""}`}
         style={{ width: collapsed ? "0" : "310px" }}
       >
-        <div className="p-5" style={{ minWidth: animated ? "300px" : "" }}>
+        <div className="p-4" style={{ minWidth: animated ? "300px" : "" }}>
           {animated ? children : !collapsed && children}
         </div>
       </div>
