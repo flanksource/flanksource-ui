@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { BsArrowReturnLeft } from "react-icons/bs";
+import { BiChevronLeft } from "react-icons/bi";
 
 export function SidebarSubPanel({ subpanelContent, icon, ...rest }) {
   const { children } = rest;
@@ -19,13 +19,13 @@ export function SidebarSubPanel({ subpanelContent, icon, ...rest }) {
         >
           {showSubpanel ? (
             <>
-              <span className="uppercase font-semibold text-sm text-gray-600 mr-2">
-                Back
-              </span>
-              <BsArrowReturnLeft
+              <BiChevronLeft
                 title="Go back"
                 className="text-gray-600 h-6 w-6"
               />
+              <span className="uppercase font-semibold text-sm text-gray-600 ml-1">
+                Back
+              </span>
             </>
           ) : (
             icon

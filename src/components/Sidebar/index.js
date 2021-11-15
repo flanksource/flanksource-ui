@@ -27,7 +27,7 @@ export function Sidebar({ animated = false, settings, ...rest }) {
         style={{ width: collapsed ? "0" : "310px" }}
       >
         <div className="p-4" style={{ minWidth: animated ? "300px" : "" }}>
-          {animated ? children : !collapsed && children}
+          {!collapsed && children}
         </div>
       </div>
     </div>

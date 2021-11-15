@@ -3,6 +3,8 @@ import { orderBy, reduce, debounce } from "lodash";
 import history from "history/browser";
 import dayjs from "dayjs";
 
+import { AiFillSetting } from "react-icons/ai";
+
 import { FilterForm } from "./FilterForm/index";
 import { getLabels, filterChecksByLabels, getLabelFilters } from "./labels";
 
@@ -22,14 +24,11 @@ import { CanarySearchBar } from "./CanarySearchBar";
 import { Sidebar } from "../Sidebar";
 import { Toggle } from "../Toggle";
 import { SidebarSubPanel } from "./SidebarSubPanel";
-import { AiFillSetting } from "react-icons/ai";
-
-const defaultRefreshInterval = 10;
 
 export class Canary extends React.Component {
   constructor(props) {
     super(props);
-    this.timer = this.startRefreshTimer(defaultRefreshInterval);
+    this.timer = null;
     this.url = props.url;
     this.modal = React.createRef();
     this.fetch = this.fetch.bind(this);
@@ -52,7 +51,7 @@ export class Canary extends React.Component {
       urlState: getDefaultForm(labels),
       selected: null,
       disableRefresh: false,
-      refreshInterval: defaultRefreshInterval,
+      refreshInterval: 10, // @TODO: default refresh interval is always 10. might want to memoize this to local state. - john
       lastUpdated: null,
       labels,
       labelFilters: {
@@ -122,14 +121,13 @@ export class Canary extends React.Component {
   }
 
   handleDisableRefreshChange(disabled) {
-    const { refreshInterval } = this.state;
+    clearInterval(this.timer);
     this.setState({
       disableRefresh: disabled
     });
     if (!disabled) {
+      const { refreshInterval } = this.state;
       this.startRefreshTimer(refreshInterval);
-    } else {
-      clearInterval(this.timer);
     }
   }
 
@@ -278,6 +276,8 @@ export class Canary extends React.Component {
             )}
           </div>
         </div>
+
+        {/* sidebar panel */}
         <div className="mr-6">
           <Sidebar animated>
             <SidebarSubPanel
@@ -306,14 +306,13 @@ export class Canary extends React.Component {
                       htmlFor="canary-refresh-interval"
                       className="block text-sm font-medium text-gray-700 mb-1"
                     >
-                      Refresh interval
+                      Refresh interval (seconds)
                     </label>
-                    <div className="flex rounded-md shadow-sm">
+                    <div className="flex rounded-md shadow-sm relative">
                       <input
                         disabled={disableRefresh}
                         type="number"
                         name="canary-refresh-interval"
-                        id="canary-refresh-interval"
                         className="focus:ring-indigo-500 disabled:bg-gray-100 disabled:text-gray-400 focus:border-indigo-500 flex-1 block w-full rounded-md sm:text-sm border-gray-300"
                         value={refreshInterval}
                         onChange={this.handleRefreshIntervalChange}
