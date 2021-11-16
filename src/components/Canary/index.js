@@ -241,41 +241,43 @@ export class Canary extends React.Component {
     return (
       <div className="w-full flex flex-row">
         {/* middle panel */}
-        <div className="w-full px-4 mb-4 relative">
-          <CanarySearchBar
-            onChange={debounce((e) => this.handleSearch(e.target.value), 500)}
-            onSubmit={(value) => this.handleSearch(value)}
-            onClear={this.handleSearchClear}
-            className="pt-4 pb-2 sticky top-0 z-10 bg-white"
-            inputClassName="w-full"
-            inputOuterClassName="z-10 w-full md:w-1/2"
-            placeholder="Search by name, description, or endpoint"
-          />
-
-          <CanaryTabs
-            className="sticky top-0 z-20 bg-white w-full"
-            style={{ top: "58px" }}
-            checks={tabChecks}
-            tabBy={tabBy}
-            setTabSelection={this.handleTabSelect}
-          />
-          {layout === "card" && (
-            <CanaryCards checks={checks} onClick={this.select} />
-          )}
-          {layout === "table" && (
-            <CanaryTable
-              checks={checks}
-              labels={labels}
-              history={history}
-              onCheckClick={this.select}
-              showNamespaceTags={
-                tabBy !== "namespace" ? true : selectedTab === "all"
-              }
-              hideNamespacePrefix
-              groupSingleItems={false}
-              theadStyle={{ position: "sticky", top: "96px" }}
+        <div className="w-full flex flex-col justify-between px-4 mb-4">
+          <div className="relative">
+            <CanarySearchBar
+              onChange={debounce((e) => this.handleSearch(e.target.value), 500)}
+              onSubmit={(value) => this.handleSearch(value)}
+              onClear={this.handleSearchClear}
+              className="pt-4 pb-2 sticky top-0 z-10 bg-white"
+              inputClassName="w-full"
+              inputOuterClassName="z-10 w-full md:w-1/2"
+              placeholder="Search by name, description, or endpoint"
             />
-          )}
+
+            <CanaryTabs
+              className="sticky top-0 z-20 bg-white w-full"
+              style={{ top: "58px" }}
+              checks={tabChecks}
+              tabBy={tabBy}
+              setTabSelection={this.handleTabSelect}
+            />
+            {layout === "card" && (
+              <CanaryCards checks={checks} onClick={this.select} />
+            )}
+            {layout === "table" && (
+              <CanaryTable
+                checks={checks}
+                labels={labels}
+                history={history}
+                onCheckClick={this.select}
+                showNamespaceTags={
+                  tabBy !== "namespace" ? true : selectedTab === "all"
+                }
+                hideNamespacePrefix
+                groupSingleItems={false}
+                theadStyle={{ position: "sticky", top: "96px" }}
+              />
+            )}
+          </div>
 
           <div className="mt-4 text-xs text-gray-500 flex flex-col-reverse md:flex-row justify-between">
             <div>
