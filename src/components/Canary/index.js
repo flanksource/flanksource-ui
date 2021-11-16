@@ -25,6 +25,7 @@ import { CanarySearchBar } from "./CanarySearchBar";
 import { Sidebar } from "../Sidebar";
 import { Toggle } from "../Toggle";
 import { SidebarSubPanel } from "./SidebarSubPanel";
+import { RefreshIntervalDropdown } from "../Dropdown/RefreshIntervalDropdown";
 
 export class Canary extends React.Component {
   constructor(props) {
@@ -36,8 +37,7 @@ export class Canary extends React.Component {
     this.select = this.select.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
     this.handleSearchClear = this.handleSearchClear.bind(this);
-    this.handleDisableRefreshChange =
-      this.handleDisableRefreshChange.bind(this);
+    this.handleAutoRefreshChange = this.handleAutoRefreshChange.bind(this);
     this.handleRefreshIntervalChange =
       this.handleRefreshIntervalChange.bind(this);
     this.handleTabSelect = this.handleTabSelect.bind(this);
@@ -52,7 +52,7 @@ export class Canary extends React.Component {
       apiVersion: null,
       urlState: getDefaultForm(labels),
       selected: null,
-      disableRefresh: false,
+      autoRefresh: true,
       refreshInterval: 10, // @TODO: default refresh interval is always 10. might want to memoize this to local state. - john
       lastUpdated: null,
       labels,
@@ -113,21 +113,22 @@ export class Canary extends React.Component {
     });
   }
 
-  handleRefreshIntervalChange(e) {
-    if (!Number.isNaN(e.target.value) && e.target.value >= 1) {
+  handleRefreshIntervalChange(value) {
+    const { refreshInterval: prevValue } = this.state;
+    if (prevValue !== value && !Number.isNaN(value) && value >= 1) {
       this.setState({
-        refreshInterval: e.target.value
+        refreshInterval: value
       });
-      this.startRefreshTimer(e.target.value);
+      this.startRefreshTimer(value);
     }
   }
 
-  handleDisableRefreshChange(disabled) {
+  handleAutoRefreshChange(enableRefresh) {
     clearInterval(this.timer);
     this.setState({
-      disableRefresh: disabled
+      autoRefresh: enableRefresh
     });
-    if (!disabled) {
+    if (enableRefresh) {
       const { refreshInterval } = this.state;
       this.startRefreshTimer(refreshInterval);
     }
@@ -194,7 +195,7 @@ export class Canary extends React.Component {
       lastUpdated,
       labels,
       selectedTab,
-      disableRefresh,
+      autoRefresh,
       refreshInterval,
       searchQuery,
       apiVersion
@@ -309,30 +310,19 @@ export class Canary extends React.Component {
                   </div>
                   <div className="mb-4">
                     <Toggle
-                      label="Disable auto-refresh"
+                      label="Auto-refresh"
                       className="mb-3"
-                      value={disableRefresh}
-                      onChange={this.handleDisableRefreshChange}
+                      value={autoRefresh}
+                      onChange={this.handleAutoRefreshChange}
                     />
                   </div>
 
                   <div className="mb-4">
-                    <label
-                      htmlFor="canary-refresh-interval"
-                      className="block text-sm font-medium text-gray-700 mb-1"
-                    >
-                      Refresh interval (seconds)
-                    </label>
-                    <div className="flex rounded-md shadow-sm relative">
-                      <input
-                        disabled={disableRefresh}
-                        type="number"
-                        name="canary-refresh-interval"
-                        className="focus:ring-indigo-500 disabled:bg-gray-100 disabled:text-gray-400 focus:border-indigo-500 flex-1 block w-full rounded-md sm:text-sm border-gray-300"
-                        value={refreshInterval}
-                        onChange={this.handleRefreshIntervalChange}
-                      />
-                    </div>
+                    <RefreshIntervalDropdown
+                      className="w-full"
+                      defaultValue={refreshInterval}
+                      onChange={this.handleRefreshIntervalChange}
+                    />
                   </div>
                 </>
               }
