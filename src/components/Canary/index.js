@@ -15,6 +15,7 @@ import { CanaryTable } from "./table";
 import { CanaryCards } from "./card";
 import { CanarySorter, GetName } from "./data";
 import { CanaryDescription } from "./description";
+import { version as appVersion } from "../../../package.json";
 
 import { StatCard } from "../StatCard";
 import { Modal } from "../Modal";
@@ -48,6 +49,7 @@ export class Canary extends React.Component {
     const labels = getLabels(props.checks);
 
     this.state = {
+      apiVersion: null,
       urlState: getDefaultForm(labels),
       selected: null,
       disableRefresh: false,
@@ -132,6 +134,11 @@ export class Canary extends React.Component {
   }
 
   setChecks(checks) {
+    // set api Version from response (yet to be provided by API)
+    let apiVersion;
+    if (checks.apiVersion) {
+      apiVersion = checks.apiVersion;
+    }
     if (checks.checks) {
       // FIXME unify pipeline for demo and remote
       checks = checks.checks;
@@ -139,6 +146,7 @@ export class Canary extends React.Component {
     const labels = getLabels(checks);
     this.setState({
       checks,
+      apiVersion,
       // eslint-disable-next-line react/no-unused-state
       labels
     });
@@ -188,7 +196,8 @@ export class Canary extends React.Component {
       selectedTab,
       disableRefresh,
       refreshInterval,
-      searchQuery
+      searchQuery,
+      apiVersion
     } = state;
     const { hidePassing, layout, tabBy } = urlState;
 
@@ -267,13 +276,19 @@ export class Canary extends React.Component {
             />
           )}
 
-          <div className="mt-4 text-xs text-gray-500 flex justify-end">
-            {lastUpdated && (
-              <>
-                Last updated at{" "}
-                {dayjs(lastUpdated).format("h:mm:ss A DD[th] MMMM YYYY")}
-              </>
-            )}
+          <div className="mt-4 text-xs text-gray-500 flex flex-col-reverse md:flex-row justify-between">
+            <div>
+              {appVersion && <div>UI version: {appVersion}</div>}
+              {apiVersion && <div>API version: {apiVersion}</div>}
+            </div>
+            <div>
+              {lastUpdated && (
+                <>
+                  Checks last updated at{" "}
+                  {dayjs(lastUpdated).format("h:mm:ss A, DD[th] MMMM YYYY")}
+                </>
+              )}
+            </div>
           </div>
         </div>
 
