@@ -22,7 +22,7 @@ export function Sidebar({ animated = false, settings, ...rest }) {
       </button>
       <div
         className={`flex-shrink-0 bg-gray-50 h-full overflow-x-hidden overflow-y-auto ${
-          animated ? "transform duration-300" : ""
+          animated ? "transform duration-200" : ""
         } ${className || ""}`}
         style={{ width: collapsed ? "0" : "310px" }}
       >

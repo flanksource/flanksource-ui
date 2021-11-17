@@ -26,6 +26,7 @@ import { Sidebar } from "../Sidebar";
 import { Toggle } from "../Toggle";
 import { SidebarSubPanel } from "./SidebarSubPanel";
 import { RefreshIntervalDropdown } from "../Dropdown/RefreshIntervalDropdown";
+import { getLocalItem, setLocalItem } from "../../utils/storage";
 
 export class Canary extends React.Component {
   constructor(props) {
@@ -52,8 +53,9 @@ export class Canary extends React.Component {
       apiVersion: null,
       urlState: getDefaultForm(labels),
       selected: null,
-      autoRefresh: true,
-      refreshInterval: 10, // @TODO: default refresh interval is always 10. might want to memoize this to local state. - john
+      autoRefresh: JSON.parse(getLocalItem("canaryAutoRefreshState")) ?? true,
+      // @TODO: default refresh interval is always 10. might want to memoize this to local state. - john
+      refreshInterval: getLocalItem("canaryRefreshIntervalState") || 10,
       lastUpdated: null,
       labels,
       labelFilters: {
@@ -120,6 +122,7 @@ export class Canary extends React.Component {
         refreshInterval: value
       });
       this.startRefreshTimer(value);
+      setLocalItem("canaryRefreshIntervalState", value);
     }
   }
 
@@ -128,6 +131,7 @@ export class Canary extends React.Component {
     this.setState({
       autoRefresh: enableRefresh
     });
+    setLocalItem("canaryAutoRefreshState", enableRefresh);
     if (enableRefresh) {
       const { refreshInterval } = this.state;
       this.startRefreshTimer(refreshInterval);
@@ -319,13 +323,15 @@ export class Canary extends React.Component {
                     />
                   </div>
 
-                  <div className="mb-4">
-                    <RefreshIntervalDropdown
-                      className="w-full"
-                      defaultValue={refreshInterval}
-                      onChange={this.handleRefreshIntervalChange}
-                    />
-                  </div>
+                  {autoRefresh && (
+                    <div className="mb-4">
+                      <RefreshIntervalDropdown
+                        className="w-full"
+                        defaultValue={refreshInterval}
+                        onChange={this.handleRefreshIntervalChange}
+                      />
+                    </div>
+                  )}
                 </>
               }
             >
