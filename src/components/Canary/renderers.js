@@ -116,7 +116,11 @@ export function Percentage({ val, upper, lower }) {
 export function Title({ icon, title }) {
   return (
     <>
-      {icon && <Icon name={icon} className="inline" size="xl" />}
+      {icon && (
+        <span className="w-6 flex-shrink-0 mr-2">
+          <Icon name={icon} className="inline" size="xl" />
+        </span>
+      )}
       <span className="text-sm">{title}</span>
     </>
   );
