@@ -14,12 +14,10 @@ import { filterChecks, filterChecksByText, isHealthy } from "./filter";
 import { CanaryTable } from "./table";
 import { CanaryCards } from "./card";
 import { CanarySorter, GetName } from "./data";
-import { CanaryDescription } from "./description";
 import { version as appVersion } from "../../../package.json";
 
 import { StatCard } from "../StatCard";
 import { Modal } from "../Modal";
-import { Title } from "./renderers";
 import { CanaryTabs, filterChecksByTabSelection } from "./tabs";
 import { CanarySearchBar } from "./CanarySearchBar";
 import { Sidebar } from "../Sidebar";
@@ -27,6 +25,7 @@ import { Toggle } from "../Toggle";
 import { SidebarSubPanel } from "./SidebarSubPanel";
 import { RefreshIntervalDropdown } from "../Dropdown/RefreshIntervalDropdown";
 import { getLocalItem, setLocalItem } from "../../utils/storage";
+import { Icon } from "../Icon";
 
 export class Canary extends React.Component {
   constructor(props) {
@@ -378,21 +377,38 @@ export class Canary extends React.Component {
             </SidebarSubPanel>
           </Sidebar>
         </div>
-        {selected != null && (
-          <Modal
-            ref={this.modal}
-            submitText=""
-            title={
-              <Title
-                title={GetName(selected)}
-                icon={selected.icon || selected.type}
-              />
-            }
-            body={<CanaryDescription check={selected} />}
-            open
-          />
-        )}
+        <Modal
+          ref={this.modal}
+          submitText=""
+          title={
+            selected && (
+              <div className="text-gray-800 font-semibold text-2xl flex items-center">
+                <Icon
+                  name={selected.icon || selected.type}
+                  className="inline mr-3"
+                  size="2xl"
+                />
+                <span
+                  title={GetName(selected)}
+                  className="whitespace-nowrap w- mr-10 overflow-hidden overflow-ellipsis"
+                >
+                  {GetName(selected)}
+                </span>
+              </div>
+            )
+          }
+          body={<CheckDetails check={selected} />}
+          containerClassName="w-full max-w-3xl"
+          hideActionButtons
+          closeButtonPadding="7"
+          open={selected != null}
+        />
       </div>
     );
   }
+}
+
+function CheckDetails({ check, ...rest }) {
+  console.log("check >", check);
+  return <div>WIP</div>;
 }

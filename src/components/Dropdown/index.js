@@ -8,7 +8,14 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export function Dropdown({ className, label, control, items = {}, name }) {
+export function Dropdown({
+  className,
+  label,
+  control,
+  items = {},
+  name,
+  ...rest
+}) {
   return (
     <>
       <div className={className}>
@@ -26,6 +33,7 @@ export function Dropdown({ className, label, control, items = {}, name }) {
                 onChange={(e) => {
                   onChange(e);
                 }}
+                {...rest}
               >
                 {({ open }) => (
                   <>
