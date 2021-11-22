@@ -22,7 +22,7 @@ describe("filterChecksByLabels", () => {
     };
 
     const value = filterChecksByLabels(checks, labelFilters);
-    expect(Object.keys(value).length).toBe(2);
+    expect(Object.keys(value).length).toBe(7);
   });
   test("No inclusions; exclusion", () => {
     const labelFilters = {
@@ -31,6 +31,6 @@ describe("filterChecksByLabels", () => {
     };
 
     const value = filterChecksByLabels(checks, labelFilters);
-    expect(Object.keys(value).length).toBe(37);
+    expect(Object.keys(value).length).toBe(32);
   });
 });
