@@ -13,12 +13,11 @@ import { readCanaryState, getDefaultForm } from "./state";
 import { filterChecks, filterChecksByText, isHealthy } from "./filter";
 import { CanaryTable } from "./table";
 import { CanaryCards } from "./card";
-import { CanarySorter, GetName } from "./data";
+import { CanarySorter } from "./data";
 import { version as appVersion } from "../../../package.json";
 import { CanaryDescription, Title } from "./renderers";
 
 import { StatCard } from "../StatCard";
-import { Modal } from "../Modal";
 import { CanaryTabs, filterChecksByTabSelection } from "./tabs";
 import { CanarySearchBar } from "./CanarySearchBar";
 import { Sidebar } from "../Sidebar";
@@ -26,16 +25,19 @@ import { Toggle } from "../Toggle";
 import { SidebarSubPanel } from "./SidebarSubPanel";
 import { RefreshIntervalDropdown } from "../Dropdown/RefreshIntervalDropdown";
 import { getLocalItem, setLocalItem } from "../../utils/storage";
+import { CanaryModal } from "./CanaryModal";
 import { Icon } from "../Icon";
+import { Badge } from "../Badge";
+import { usePrevious } from "../../utils/hooks";
 
 export class Canary extends React.Component {
   constructor(props) {
     super(props);
     this.timer = null;
     this.url = props.url;
-    this.modal = React.createRef();
     this.fetch = this.fetch.bind(this);
-    this.select = this.select.bind(this);
+    this.handleSelect = this.handleSelect.bind(this);
+    this.handleModalClose = this.handleModalClose.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
     this.handleSearchClear = this.handleSearchClear.bind(this);
     this.handleAutoRefreshChange = this.handleAutoRefreshChange.bind(this);
@@ -138,6 +140,18 @@ export class Canary extends React.Component {
     }
   }
 
+  handleSelect(check) {
+    this.setState({
+      selected: check
+    });
+  }
+
+  handleModalClose() {
+    this.setState({
+      selected: null
+    });
+  }
+
   setChecks(checks) {
     // set api Version from response (yet to be provided by API)
     let apiVersion;
@@ -161,15 +175,6 @@ export class Canary extends React.Component {
     this.setState({
       lastUpdated: date
     });
-  }
-
-  select(check) {
-    this.setState({
-      selected: check
-    });
-    if (this.modal.current != null) {
-      this.modal.current.show();
-    }
   }
 
   startRefreshTimer(interval) {
@@ -265,14 +270,14 @@ export class Canary extends React.Component {
               setTabSelection={this.handleTabSelect}
             />
             {layout === "card" && (
-              <CanaryCards checks={checks} onClick={this.select} />
+              <CanaryCards checks={checks} onClick={this.handleSelect} />
             )}
             {layout === "table" && (
               <CanaryTable
                 checks={checks}
                 labels={labels}
                 history={history}
-                onCheckClick={this.select}
+                onCheckClick={this.handleSelect}
                 showNamespaceTags={
                   tabBy !== "namespace" ? true : selectedTab === "all"
                 }
@@ -378,35 +383,48 @@ export class Canary extends React.Component {
             </SidebarSubPanel>
           </Sidebar>
         </div>
-        <Modal
-          ref={this.modal}
-          submitText=""
-          title={
-            selected && (
-              <div className="text-gray-800 font-semibold text-2xl flex items-center">
-                <Icon
-                  name={selected.icon || selected.type}
-                  className="inline mr-3"
-                  size="2xl"
-                />
-                <span
-                  title={GetName(selected)}
-                  className="whitespace-nowrap w- mr-10 overflow-hidden overflow-ellipsis"
-                >
-                  {GetName(selected)}
-                </span>
-              </div>
-            )
-          }
-          body={<CheckDetails check={selected} />}
-          containerClassName="w-full max-w-3xl"
-          hideActionButtons
-          closeButtonPadding="7"
+        <CanaryModal
+          closeButtonPadding={8}
+          onClose={this.handleModalClose}
           open={selected != null}
+          title={<CheckTitle check={selected} />}
+          body={<CheckDetails check={selected} />}
+          cardClass="px-7 py-6"
+          cardStyle={{ width: "100%", maxWidth: "730px" }}
         />
       </div>
     );
   }
+}
+
+function CheckTitle({ check, ...rest }) {
+  const prevCheck = usePrevious(check);
+  const validCheck = check || prevCheck;
+
+  return (
+    <div className="mb-6">
+      <div className="flex flex-row items-center pr-10">
+        <Icon
+          name={validCheck?.icon || validCheck?.type}
+          className="mr-3"
+          size="2xl"
+        />
+        <span
+          style={{ fontSize: "26px" }}
+          title={validCheck?.name}
+          className="text-gray-800 font-semibold whitespace-nowrap overflow-ellipsis overflow-hidden pr-4"
+        >
+          {validCheck?.name}
+        </span>
+        <span style={{ paddingTop: "1px" }}>
+          <Badge text={validCheck?.namespace} />
+        </span>
+      </div>
+      {true && (
+        <div className="text-sm text-gray-400">{validCheck?.endpoint}</div>
+      )}
+    </div>
+  );
 }
 
 function CheckDetails({ check, ...rest }) {
