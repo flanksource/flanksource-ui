@@ -17,7 +17,7 @@ export function CanaryStatus({ status, className }) {
   return <Status good={status.status} className={className} />;
 }
 
-export function Duration({ ms }) {
+export function toFormattedDuration(ms) {
   if (ms == null || ms === 0) {
     return empty;
   }
@@ -26,7 +26,7 @@ export function Duration({ ms }) {
   } catch (e) {
     // eslint-disable-next-line no-console
     console.error("invalid number format", ms);
-    return "";
+    return ["", ""];
   }
   let val;
   let unit;
@@ -46,6 +46,11 @@ export function Duration({ ms }) {
   if (val != null && Math.round(val) !== val) {
     val = Number(val).toFixed(0);
   }
+  return [val, unit];
+}
+
+export function Duration({ ms }) {
+  const [val, unit] = toFormattedDuration(ms, true);
   return (
     <>
       <span className="text-md">{val}</span>
