@@ -24,10 +24,8 @@ import { Toggle } from "../Toggle";
 import { SidebarSubPanel } from "./SidebarSubPanel";
 import { RefreshIntervalDropdown } from "../Dropdown/RefreshIntervalDropdown";
 import { getLocalItem, setLocalItem } from "../../utils/storage";
-import { CanaryModal } from "./CanaryModal";
-import { Icon } from "../Icon";
-import { Badge } from "../Badge";
-import { usePrevious } from "../../utils/hooks";
+import { Modal } from "../Modal";
+import { CheckDetails, CheckTitle } from "./CanaryPopup";
 
 export class Canary extends React.Component {
   constructor(props) {
@@ -382,51 +380,16 @@ export class Canary extends React.Component {
             </SidebarSubPanel>
           </Sidebar>
         </div>
-        <CanaryModal
+        <Modal
           closeButtonPadding={8}
           onClose={this.handleModalClose}
           open={selected != null}
           title={<CheckTitle check={selected} />}
           body={<CheckDetails check={selected} />}
-          cardClass="px-7 py-6"
+          cardClass="px-8 py-6 my-12"
           cardStyle={{ width: "100%", maxWidth: "730px" }}
         />
       </div>
     );
   }
-}
-
-function CheckTitle({ check, ...rest }) {
-  const prevCheck = usePrevious(check);
-  const validCheck = check || prevCheck;
-
-  return (
-    <div className="mb-6">
-      <div className="flex flex-row items-center pr-10">
-        <Icon
-          name={validCheck?.icon || validCheck?.type}
-          className="mr-3"
-          size="2xl"
-        />
-        <span
-          style={{ fontSize: "26px" }}
-          title={validCheck?.name}
-          className="text-gray-800 font-semibold whitespace-nowrap overflow-ellipsis overflow-hidden pr-4"
-        >
-          {validCheck?.name}
-        </span>
-        <span style={{ paddingTop: "1px" }}>
-          <Badge text={validCheck?.namespace} />
-        </span>
-      </div>
-      {true && (
-        <div className="text-sm text-gray-400">{validCheck?.endpoint}</div>
-      )}
-    </div>
-  );
-}
-
-function CheckDetails({ check, ...rest }) {
-  console.log("check >", check);
-  return <div>WIP</div>;
 }
