@@ -385,7 +385,7 @@ export class Canary extends React.Component {
           closeButtonPadding={8}
           onClose={this.handleModalClose}
           open={selected != null}
-          title={<CheckTitle check={selected} />}
+          title={<CheckTitle check={selected} className="mb-6" />}
           body={<CheckDetails check={selected} />}
           cardClass="px-8 py-6 my-12"
           cardStyle={{ width: "100%", maxWidth: "730px" }}
