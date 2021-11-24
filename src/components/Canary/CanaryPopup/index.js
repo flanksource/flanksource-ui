@@ -65,8 +65,6 @@ export function CheckDetails({ check, ...rest }) {
   const prevCheck = usePrevious(check);
   const validCheck = check || prevCheck;
 
-  console.log("check > ", validCheck);
-
   const [val, unit] = toFormattedDuration(validCheck?.latency?.rolling1h);
   const latencyValue = validCheck?.latency?.rolling1h ? `${val}${unit}` : "-";
   const uptimeValue = toFixedIfNecessary(getUptimePercentage(validCheck), 2);
@@ -185,9 +183,16 @@ export function CheckDetails({ check, ...rest }) {
   );
 }
 
-function CheckStat({ title, value, append, containerClass, ...rest }) {
+function CheckStat({
+  title,
+  value,
+  append,
+  containerClass,
+  className,
+  ...rest
+}) {
   return (
-    <div className={`flex flex-col ${containerClass}`}>
+    <div className={`flex flex-col ${containerClass} ${className}`} {...rest}>
       <div className="text-sm font-medium text-gray-500">{title}</div>
       <div className="flex">
         <span className="text-4xl font-bold">{value}</span>
@@ -207,7 +212,7 @@ export function getUptimePercentage(check) {
 
 function DetailField({ label, value, className, ...rest }) {
   return (
-    <div className={`flex flex-col flex-shrink-0 pr-6 ${className}`}>
+    <div className={`flex flex-col flex-shrink-0 pr-6 ${className}`} {...rest}>
       <div className="text-sm font-medium text-gray-500 break-all">{label}</div>
       <div className="mt-1 text-sm text-gray-900 break-all">{value}</div>
     </div>

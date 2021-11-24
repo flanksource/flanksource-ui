@@ -23,6 +23,7 @@ export function Modal({
         auto-reopen="true"
         className="fixed z-50 inset-0 overflow-y-auto"
         onClose={onClose}
+        {...rest}
       >
         <div
           className={`flex items-center justify-center min-h-screen ${containerClass}`}
