@@ -51,7 +51,10 @@ module.exports = {
     }
   },
   variants: {
-    extend: {}
+    extend: {
+      backgroundColor: ["disabled"],
+      textColor: ["disabled"]
+    }
   }, // eslint-disable-next-line global-require
   plugins: [require("@tailwindcss/forms"), require("@tailwindcss/typography")]
 };

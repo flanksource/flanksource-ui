@@ -29,7 +29,7 @@ export function Toggle({ value = false, className, label, help, onChange }) {
       </Switch>
 
       <Switch.Label as="span" className="ml-3">
-        <span className="text-sm font-medium text-gray-900">{label}</span>
+        <span className="text-sm font-medium text-gray-700 ">{label}</span>
         <span className="text-sm text-gray-500">{help}</span>
       </Switch.Label>
 

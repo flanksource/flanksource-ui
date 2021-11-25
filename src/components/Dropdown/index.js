@@ -32,7 +32,7 @@ export function Dropdown({ className, label, control, items = {}, name }) {
                     {label && (
                       <Listbox.Label
                         as="span"
-                        className="text-sm font-medium text-gray-900"
+                        className="text-sm font-medium text-gray-700"
                       >
                         {label}
                       </Listbox.Label>

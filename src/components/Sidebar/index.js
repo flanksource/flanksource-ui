@@ -1,18 +1,18 @@
 import { useState } from "react";
 import { IoChevronBackCircle } from "react-icons/io5";
 
-export function Sidebar({ animated = false, ...rest }) {
+export function Sidebar({ animated = false, settings, ...rest }) {
   const { children, className } = rest;
   const [collapsed, setCollapsed] = useState(false);
   return (
     <div
-      className={`border h-screen sticky top-0 ${
+      className={`border border-gray-200 h-screen sticky top-0 ${
         collapsed ? "border-l-0" : ""
       }`}
     >
       <button
         title={`${collapsed ? "Show" : "Hide"} sidebar`}
-        className={`z-10 transform absolute top-8 -left-3 ${
+        className={`z-10 transform absolute top-5 -left-3 ${
           collapsed ? "" : "rotate-180"
         }`}
         type="button"
@@ -22,12 +22,12 @@ export function Sidebar({ animated = false, ...rest }) {
       </button>
       <div
         className={`flex-shrink-0 bg-gray-50 h-full overflow-x-hidden overflow-y-auto ${
-          animated ? "transform duration-300" : ""
+          animated ? "transform duration-200" : ""
         } ${className || ""}`}
         style={{ width: collapsed ? "0" : "310px" }}
       >
-        <div className="p-5" style={{ minWidth: animated ? "300px" : "" }}>
-          {animated ? children : !collapsed && children}
+        <div className="p-4" style={{ minWidth: animated ? "300px" : "" }}>
+          {!collapsed && children}
         </div>
       </div>
     </div>

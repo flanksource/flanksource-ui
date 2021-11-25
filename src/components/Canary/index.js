@@ -1,6 +1,9 @@
 import React from "react";
 import { orderBy, reduce, debounce } from "lodash";
 import history from "history/browser";
+import dayjs from "dayjs";
+
+import { AiFillSetting } from "react-icons/ai";
 
 import { FilterForm } from "./FilterForm/index";
 import { getLabels, filterChecksByLabels, getLabelFilters } from "./labels";
@@ -11,6 +14,7 @@ import { filterChecks, filterChecksByText, isHealthy } from "./filter";
 import { CanaryTable } from "./table";
 import { CanaryCards } from "./card";
 import { CanarySorter, GetName } from "./data";
+import { version as appVersion } from "../../../package.json";
 import { CanaryDescription, Title } from "./renderers";
 
 import { StatCard } from "../StatCard";
@@ -18,30 +22,40 @@ import { Modal } from "../Modal";
 import { CanaryTabs, filterChecksByTabSelection } from "./tabs";
 import { CanarySearchBar } from "./CanarySearchBar";
 import { Sidebar } from "../Sidebar";
+import { Toggle } from "../Toggle";
+import { SidebarSubPanel } from "./SidebarSubPanel";
+import { RefreshIntervalDropdown } from "../Dropdown/RefreshIntervalDropdown";
+import { getLocalItem, setLocalItem } from "../../utils/storage";
 
 export class Canary extends React.Component {
   constructor(props) {
     super(props);
+    this.timer = null;
     this.url = props.url;
-    this.interval = 10;
     this.modal = React.createRef();
     this.fetch = this.fetch.bind(this);
     this.select = this.select.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
     this.handleSearchClear = this.handleSearchClear.bind(this);
+    this.handleAutoRefreshChange = this.handleAutoRefreshChange.bind(this);
+    this.handleRefreshIntervalChange =
+      this.handleRefreshIntervalChange.bind(this);
     this.handleTabSelect = this.handleTabSelect.bind(this);
     this.setChecks = this.setChecks.bind(this);
+    this.setLastUpdated = this.setLastUpdated.bind(this);
     this.history = history;
     this.unhistory = () => {};
 
     const labels = getLabels(props.checks);
 
     this.state = {
+      apiVersion: null,
       urlState: getDefaultForm(labels),
       selected: null,
-      // eslint-disable-next-line react/no-unused-state
-      lastFetched: null,
-      // eslint-disable-next-line react/no-unused-state
+      autoRefresh: JSON.parse(getLocalItem("canaryAutoRefreshState")) ?? true,
+      // @TODO: default refresh interval is always 10. might want to memoize this to local state. - john
+      refreshInterval: getLocalItem("canaryRefreshIntervalState") || 10,
+      lastUpdated: null,
       labels,
       labelFilters: {
         exclude: [],
@@ -55,7 +69,7 @@ export class Canary extends React.Component {
 
   componentDidMount() {
     const { canaryState: urlState } = readCanaryState(window.location.search);
-    const { labels } = this.state;
+    const { labels, refreshInterval } = this.state;
     const { labels: labelStates } = urlState;
     const labelFilters = getLabelFilters(labelStates, labels);
     this.setState({ urlState, labelFilters });
@@ -73,7 +87,7 @@ export class Canary extends React.Component {
     if (this.url == null) {
       return;
     }
-    this.timer = setInterval(() => this.fetch(), this.interval * 1000);
+    this.startRefreshTimer(refreshInterval);
   }
 
   componentWillUnmount() {
@@ -100,7 +114,35 @@ export class Canary extends React.Component {
     });
   }
 
+  handleRefreshIntervalChange(value) {
+    const { refreshInterval: prevValue } = this.state;
+    if (prevValue !== value && !Number.isNaN(value) && value >= 1) {
+      this.setState({
+        refreshInterval: value
+      });
+      this.startRefreshTimer(value);
+      setLocalItem("canaryRefreshIntervalState", value);
+    }
+  }
+
+  handleAutoRefreshChange(enableRefresh) {
+    clearInterval(this.timer);
+    this.setState({
+      autoRefresh: enableRefresh
+    });
+    setLocalItem("canaryAutoRefreshState", enableRefresh);
+    if (enableRefresh) {
+      const { refreshInterval } = this.state;
+      this.startRefreshTimer(refreshInterval);
+    }
+  }
+
   setChecks(checks) {
+    // set api Version from response (yet to be provided by API)
+    let apiVersion;
+    if (checks.apiVersion) {
+      apiVersion = checks.apiVersion;
+    }
     if (checks.checks) {
       // FIXME unify pipeline for demo and remote
       checks = checks.checks;
@@ -108,10 +150,15 @@ export class Canary extends React.Component {
     const labels = getLabels(checks);
     this.setState({
       checks,
+      apiVersion,
       // eslint-disable-next-line react/no-unused-state
-      labels,
-      // eslint-disable-next-line react/no-unused-state
-      lastFetched: new Date()
+      labels
+    });
+  }
+
+  setLastUpdated(date) {
+    this.setState({
+      lastUpdated: date
     });
   }
 
@@ -124,13 +171,21 @@ export class Canary extends React.Component {
     }
   }
 
+  startRefreshTimer(interval) {
+    clearInterval(this.timer);
+    this.timer = setInterval(() => this.fetch(), interval * 1000);
+  }
+
   fetch() {
     if (this.url == null) {
       return;
     }
     fetch(this.url)
       .then((result) => result.json())
-      .then(this.setChecks);
+      .then((e) => {
+        this.setChecks(e);
+        this.setLastUpdated(new Date());
+      });
   }
 
   render() {
@@ -140,9 +195,13 @@ export class Canary extends React.Component {
       labelFilters,
       urlState,
       checks: stateChecks,
+      lastUpdated,
       labels,
       selectedTab,
-      searchQuery
+      autoRefresh,
+      refreshInterval,
+      searchQuery,
+      apiVersion
     } = state;
     const { hidePassing, layout, tabBy } = urlState;
 
@@ -185,83 +244,137 @@ export class Canary extends React.Component {
     return (
       <div className="w-full flex flex-row">
         {/* middle panel */}
-        <div className="w-full px-4 mb-4 relative">
-          <CanarySearchBar
-            onChange={debounce((e) => this.handleSearch(e.target.value), 500)}
-            onSubmit={(value) => this.handleSearch(value)}
-            onClear={this.handleSearchClear}
-            className="pt-4 pb-2 sticky top-0 z-10 bg-white"
-            inputClassName="w-full"
-            inputOuterClassName="z-10 w-full md:w-1/2"
-            placeholder="Search by name, description, or endpoint"
-          />
-          <CanaryTabs
-            className="sticky top-0 z-20 bg-white w-full"
-            style={{ top: "58px" }}
-            checks={tabChecks}
-            tabBy={tabBy}
-            setTabSelection={this.handleTabSelect}
-          />
-          {layout === "card" && (
-            <CanaryCards checks={checks} onClick={this.select} />
-          )}
-          {layout === "table" && (
-            <CanaryTable
-              checks={checks}
-              labels={labels}
-              history={history}
-              onCheckClick={this.select}
-              showNamespaceTags={
-                tabBy !== "namespace" ? true : selectedTab === "all"
-              }
-              hideNamespacePrefix
-              groupSingleItems={false}
-              theadStyle={{ position: "sticky", top: "96px" }}
-            />
-          )}
-        </div>
-        <div className="mr-6">
-          <Sidebar animated>
-            <StatCard
-              title="All Checks"
-              className="mb-4"
-              customValue={
-                <>
-                  {stateChecks.length}
-                  <span className="text-xl font-light">
-                    {" "}
-                    (<span className="text-green-500">{passedAll}</span>/
-                    <span className="text-red-500">
-                      {stateChecks.length - passedAll}
-                    </span>
-                    )
-                  </span>
-                </>
-              }
+        <div className="w-full flex flex-col justify-between px-4 mb-4">
+          <div className="relative">
+            <CanarySearchBar
+              onChange={debounce((e) => this.handleSearch(e.target.value), 500)}
+              onSubmit={(value) => this.handleSearch(value)}
+              onClear={this.handleSearchClear}
+              className="pt-4 pb-2 sticky top-0 z-10 bg-white"
+              inputClassName="w-full"
+              inputOuterClassName="z-10 w-full md:w-1/2"
+              placeholder="Search by name, description, or endpoint"
             />
 
-            {checks.length !== stateChecks.length && (
+            <CanaryTabs
+              className="sticky top-0 z-20 bg-white w-full"
+              style={{ top: "58px" }}
+              checks={tabChecks}
+              tabBy={tabBy}
+              setTabSelection={this.handleTabSelect}
+            />
+            {layout === "card" && (
+              <CanaryCards checks={checks} onClick={this.select} />
+            )}
+            {layout === "table" && (
+              <CanaryTable
+                checks={checks}
+                labels={labels}
+                history={history}
+                onCheckClick={this.select}
+                showNamespaceTags={
+                  tabBy !== "namespace" ? true : selectedTab === "all"
+                }
+                hideNamespacePrefix
+                groupSingleItems={false}
+                theadStyle={{ position: "sticky", top: "96px" }}
+              />
+            )}
+          </div>
+
+          <div className="mt-4 text-xs text-gray-500 flex flex-col-reverse md:flex-row justify-between">
+            <div>
+              {appVersion && <div>UI version: {appVersion}</div>}
+              {apiVersion && <div>API version: {apiVersion}</div>}
+            </div>
+            <div>
+              {lastUpdated && (
+                <>
+                  Checks last updated at{" "}
+                  {dayjs(lastUpdated).format("h:mm:ss A, DD[th] MMMM YYYY")}
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* sidebar panel */}
+        <div className="mr-6">
+          <Sidebar animated>
+            <SidebarSubPanel
+              icon={
+                <AiFillSetting
+                  title="Show settings panel"
+                  className="text-gray-600 h-6 w-6"
+                />
+              }
+              subpanelContent={
+                <>
+                  <div className="uppercase font-semibold text-sm mb-4 text-gray-700">
+                    More Settings
+                  </div>
+                  <div className="mb-4">
+                    <Toggle
+                      label="Auto-refresh"
+                      className="mb-3"
+                      value={autoRefresh}
+                      onChange={this.handleAutoRefreshChange}
+                    />
+                  </div>
+
+                  {autoRefresh && (
+                    <div className="mb-4">
+                      <RefreshIntervalDropdown
+                        className="w-full"
+                        defaultValue={refreshInterval}
+                        onChange={this.handleRefreshIntervalChange}
+                      />
+                    </div>
+                  )}
+                </>
+              }
+            >
               <StatCard
-                title="Filtered Checks"
+                title="All Checks"
                 className="mb-4"
                 customValue={
                   <>
-                    {checks.length}
-                    <span className="text-xl  font-light">
+                    {stateChecks.length}
+                    <span className="text-xl font-light">
                       {" "}
-                      (<span className="text-green-500">{passed}</span>/
+                      (<span className="text-green-500">{passedAll}</span>/
                       <span className="text-red-500">
-                        {checks.length - passed}
+                        {stateChecks.length - passedAll}
                       </span>
                       )
                     </span>
                   </>
                 }
               />
-            )}
 
-            {/* filtering tools */}
-            <FilterForm {...filterProps} />
+              {checks.length !== stateChecks.length && (
+                <StatCard
+                  title="Filtered Checks"
+                  className="mb-4"
+                  customValue={
+                    <>
+                      {checks.length}
+                      <span className="text-xl  font-light">
+                        {" "}
+                        (<span className="text-green-500">{passed}</span>/
+                        <span className="text-red-500">
+                          {checks.length - passed}
+                        </span>
+                        )
+                      </span>
+                    </>
+                  }
+                />
+              )}
+
+              {/* filtering tools */}
+              <FilterForm {...filterProps} />
+            </SidebarSubPanel>
           </Sidebar>
         </div>
         {selected != null && (

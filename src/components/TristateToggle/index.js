@@ -103,7 +103,9 @@ export function TristateToggle({ onChange, value, label, className }) {
       ))}
 
       {label.label && (
-        <span className="ml-3 text-sm text-left">{label.label}</span>
+        <span className="ml-3 text-sm text-left text-gray-700">
+          {label.label}
+        </span>
       )}
     </div>
   );
