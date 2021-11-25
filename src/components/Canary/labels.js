@@ -49,38 +49,6 @@ export function getLabelFilters(stateful = {}, labels) {
   return filters;
 }
 
-export function getNonBooleanLabels(checks) {
-  const nonBooleanLabels = checks.reduce((acc, check) => {
-    if ("labels" in check) {
-      const labels = Object.entries(check.labels).reduce((accum, [k, v]) => {
-        const id = `canary:${k}:${v}`;
-        if (typeof v === "boolean" || v === "true" || v === "false") {
-          return accum;
-        }
-        accum[id] = { key: k, value: v };
-        return accum;
-      }, {});
-      return { ...acc, ...labels };
-    }
-    return acc;
-  }, {});
-  return nonBooleanLabels;
-}
-
-export function getUniqueNonBooleanLabelKeys(checks) {
-  const nonBooleanLabels = getNonBooleanLabels(Object.values(checks));
-  const uniqueLabels = new Set(
-    Object.values(nonBooleanLabels).map((o) => o.key)
-  );
-  const uniqueLabelsWithValues = Array.from(uniqueLabels).reduce((acc, k) => {
-    acc[k] = Object.entries(nonBooleanLabels)
-      .filter((label) => label[1].key === k)
-      .map((label) => label[1].value);
-    return acc;
-  }, {});
-  return uniqueLabelsWithValues;
-}
-
 export const getLabelKeys = (labels) =>
   Array.from([
     ...new Set(
@@ -127,7 +95,7 @@ export function filterChecksByLabels(checks, labelFilters) {
     if (
       "labels" in check &&
       Object.keys(check.labels).length > 0 &&
-      includedLabels.length > 0
+      includedLabels.length >= 0
     ) {
       const { hasExclusion, hasInclusion } = Object.entries(
         check.labels
@@ -138,12 +106,19 @@ export function filterChecksByLabels(checks, labelFilters) {
           }
 
           const id = `canary:${k}:${v}`;
-          if (excludedLabels.length > 0 && excludedLabels.indexOf(id) >= 0) {
+
+          if (
+            excludedLabels.length > 0 &&
+            excludedLabels.includes(id) === true
+          ) {
             accum.hasExclusion = true;
             return accum;
           }
 
-          if (includedLabels.length > 0 && includedLabels.indexOf(id) >= 0) {
+          if (
+            includedLabels.length > 0 &&
+            includedLabels.includes(id) === true
+          ) {
             accum.hasInclusion = true;
             return accum;
           }
@@ -154,21 +129,14 @@ export function filterChecksByLabels(checks, labelFilters) {
       if (hasInclusion && hasExclusion === false) {
         acc[check.key] = check;
       }
+      if (includedLabels.length === 0 && hasExclusion === false) {
+        acc[check.key] = check;
+      }
     }
 
     return acc;
   }, {});
   return filtered;
-}
-
-export function getGroupByLabels(labelState) {
-  return Object.keys(labelState).reduce((acc, fullLabel) => {
-    const start = new RegExp("^([^:]*:)");
-    const end = new RegExp("(:[^:]*)$");
-    const label = fullLabel.replace(start, "").replace(end, "");
-    acc[label] = null;
-    return acc;
-  }, {});
 }
 
 // filter labels based on the currently available checks

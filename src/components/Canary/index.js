@@ -14,12 +14,11 @@ import { filterChecks, filterChecksByText, isHealthy } from "./filter";
 import { CanaryTable } from "./table";
 import { CanaryCards } from "./card";
 import { CanarySorter, GetName } from "./data";
-import { CanaryDescription } from "./description";
 import { version as appVersion } from "../../../package.json";
+import { CanaryDescription, Title } from "./renderers";
 
 import { StatCard } from "../StatCard";
 import { Modal } from "../Modal";
-import { Title } from "./renderers";
 import { CanaryTabs, filterChecksByTabSelection } from "./tabs";
 import { CanarySearchBar } from "./CanarySearchBar";
 import { Sidebar } from "../Sidebar";

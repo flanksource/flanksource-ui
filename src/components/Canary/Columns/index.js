@@ -1,28 +1,43 @@
-import { Duration, Percentage, Title } from "../renderers";
 import {
   getHealthPercentageScore,
   getLatency,
   getUptimeScore
-} from "../sorting";
-import { StatusList } from "../status";
+} from "./sorting";
+import { Duration, Percentage, Title, empty, StatusList } from "../renderers";
 import { removeNamespacePrefix } from "../utils";
 import { GetName } from "../data";
 import { Badge } from "../../Badge";
 import style from "../index.module.css";
 
-export function Cell({ value, row, column }) {
+export function Cell({ state, value, row, column }) {
+  const { pivotCellType } = state;
+
   if (column.id === "name") {
     return TitleCell({ row });
   }
-  if (column.id === "checkStatuses") {
-    return HealthCell({ value });
+  if (pivotCellType === "uptime" || column.id === "uptime") {
+    if (value == null) {
+      return empty;
+    }
+    const newValue = value?.uptime ?? value;
+    return UptimeCell({ value: newValue });
   }
-  if (column.id === "latency") {
-    return LatencyCell({ value });
+
+  if (pivotCellType === "checkStatuses" || column.id === "checkStatuses") {
+    if (value == null) {
+      return empty;
+    }
+    const newValue = value?.checkStatuses ?? value;
+    return HealthCell({ value: newValue });
   }
-  if (column.id === "uptime") {
-    return UptimeCell({ value });
+  if (pivotCellType === "latency" || column.id === "latency") {
+    if (value == null) {
+      return empty;
+    }
+    const newValue = value?.latency ?? value;
+    return LatencyCell({ value: newValue });
   }
+  return null;
 }
 
 export function HealthCell({ value }) {
@@ -40,9 +55,13 @@ export function LatencyCell({ value }) {
 }
 
 export function TitleCell({ row }) {
-  let title = GetName(row.original);
+  const rowValues =
+    row.original?.pivoted === true
+      ? row.original[row.original.valueLookup] ?? null
+      : row.original;
+  let title = GetName(rowValues);
   if (row.hideNamespacePrefix) {
-    title = removeNamespacePrefix(title, row.original);
+    title = removeNamespacePrefix(title, rowValues);
   }
 
   return (
@@ -53,34 +72,34 @@ export function TitleCell({ row }) {
           paddingLeft: `${row.depth * 1.1}rem`
         }}
       >
-        <Title title={title} icon={row.original.icon || row.original.type} />
-        {row.canExpand && row.subRows && row.subRows.length > 1 && (
+        <Title title={title} icon={rowValues.icon || rowValues.type} />
+        {row.canExpand && rowValues.subRows && rowValues?.subRows.length > 1 && (
           <span className="ml-1 flex items-center">
             <Badge
               className="ml-1"
               colorClass="bg-gray-200 text-gray-800"
               roundedClass="rounded-xl"
-              text={row.subRows.length}
+              text={rowValues?.subRows.length}
               size="xs"
             />
           </span>
         )}
         {row.showNamespaceTags ? (
-          row.original.namespaces ? (
+          rowValues.namespaces ? (
             <Badge
               className="ml-2"
-              text={`${row.original.namespaces[0]}${
-                row.original.namespaces.length > 1 ? ", ..." : ""
+              text={`${rowValues.namespaces[0]}${
+                rowValues.namespaces.length > 1 ? ", ..." : ""
               }`}
               title={
-                row.original.namespaces.length > 1
-                  ? row.original.namespaces.join(", ")
+                rowValues.namespaces.length > 1
+                  ? rowValues.namespaces.join(", ")
                   : null
               }
               size="xs"
             />
-          ) : row.original.namespace ? (
-            <Badge className="ml-2" text={row.original.namespace} size="xs" />
+          ) : rowValues.namespace ? (
+            <Badge className="ml-2" text={rowValues.namespace} size="xs" />
           ) : null
         ) : null}
       </span>
@@ -88,42 +107,129 @@ export function TitleCell({ row }) {
   );
 }
 
-export function getSortType(pivotCellTypeOrAccessor) {
-  const sortTypes = {
-    latency: (a, b) =>
-      getLatency(a.original) < getLatency(b.original) ? -1 : 1,
-    uptime: (a, b) =>
-      getUptimeScore(a.original) < getUptimeScore(b.original) ? 1 : -1,
-    checkStatuses: (a, b) =>
-      getHealthPercentageScore(a.original) <
-      getHealthPercentageScore(b.original)
-        ? 1
-        : -1,
-    name: (a, b) => {
-      const getSortString = (original) =>
-        // case insensitive name sorting, with namespace as a secondary sort
-        `${original.sortKey?.toLowerCase()}${original.namespace?.toLowerCase()}`;
+function getSortString(original) {
+  // case insensitive name sorting, with namespace as a secondary sort
+  const sortString = `${original.sortKey?.toLowerCase()}${original.namespace?.toLowerCase()}`;
+  return sortString;
+}
 
-      return getSortString(a.original) < getSortString(b.original) ? -1 : 1;
+function getPivotSortValueOrDefault(a, b, pivotAccessor) {
+  if (pivotAccessor === "name") {
+    const aValue =
+      a.original?.pivoted === true
+        ? a?.original[a?.original?.valueLookup] ??
+          a?.original?.aggregate ??
+          undefined
+        : a?.original;
+    const bValue =
+      b?.original?.pivoted === true
+        ? b?.original[b?.original?.valueLookup] ??
+          b?.original?.aggregate ??
+          undefined
+        : b?.original;
+    return { aValue, bValue };
+  }
+
+  const aValue =
+    a.original?.pivoted === true
+      ? a.original[pivotAccessor] ?? a.original.aggregate ?? undefined
+      : a.original;
+  const bValue =
+    b.original?.pivoted === true
+      ? b.original[pivotAccessor] ?? b.original.aggregate ?? undefined
+      : b.original;
+
+  return { aValue, bValue };
+}
+
+export function getSortType(pivotCellTypeOrAccessor, pivotAccessor) {
+  const sortTypes = {
+    latency: (a, b) => {
+      const { aValue, bValue } = getPivotSortValueOrDefault(
+        a,
+        b,
+        pivotAccessor
+      );
+      return getLatency(aValue) < getLatency(bValue) ? -1 : 1;
+    },
+
+    uptime: (a, b) => {
+      const { aValue, bValue } = getPivotSortValueOrDefault(
+        a,
+        b,
+        pivotAccessor
+      );
+      return getUptimeScore(aValue) < getUptimeScore(bValue) ? 1 : -1;
+    },
+    checkStatuses: (a, b) => {
+      const { aValue, bValue } = getPivotSortValueOrDefault(
+        a,
+        b,
+        pivotAccessor
+      );
+      return getHealthPercentageScore(aValue) < getHealthPercentageScore(bValue)
+        ? 1
+        : -1;
+    },
+    name: (a, b) => {
+      const { aValue, bValue } = getPivotSortValueOrDefault(
+        a,
+        b,
+        pivotAccessor
+      );
+      return getSortString(aValue) < getSortString(bValue) ? -1 : 1;
     }
   };
-  return sortTypes[pivotCellTypeOrAccessor] ?? "alphanumeric";
+  return pivotAccessor === "name"
+    ? sortTypes[pivotAccessor]
+    : sortTypes[pivotCellTypeOrAccessor] ?? "alphanumeric";
+}
+
+export function makeColumnsForPivot({
+  pivotSet,
+  pivotCellType,
+  firstColumns,
+  cellClass = `px-5 py-2`
+} = {}) {
+  // For syntax https://stackoverflow.com/a/26578323/15581317
+  const columns = [];
+  for (const [, value] of pivotSet.entries()) {
+    columns[columns.length] = {
+      Header: value.replace("piv0t-", ""),
+      accessor: value,
+      cellClass,
+      Cell,
+      sortType:
+        pivotCellType != null
+          ? getSortType(pivotCellType, value)
+          : "alphanumeric"
+    };
+  }
+  const firsts = getColumns({ columnObject: firstColumns, pivotCellType });
+  return [...firsts, ...columns];
 }
 
 export function getColumns({ columnObject, pivotCellType = null }) {
-  return Object.entries(columnObject).reduce((acc, [, v], i) => {
+  return Object.entries(columnObject).reduce((acc, [k, v], i) => {
     const { Header, accessor, cellClass, Cell: IncomingCell, id } = v;
+    const pivotAccessor =
+      accessor == null || typeof accessor === "function"
+        ? id == null
+          ? k
+          : id
+        : accessor;
     acc[i] = {
       ...(id != null && { id }),
+      ...(id == null && typeof accessor === "function" && { id: k }),
+      ...(accessor != null && { accessor }),
       Header: Header ?? (() => null),
-      ...(id == null && accessor != null && { accessor }),
       cellClass: cellClass ?? `px-5 py-2`,
       Cell: IncomingCell ?? Cell,
       sortType:
         pivotCellType != null
-          ? getSortType(pivotCellType)
+          ? getSortType(pivotCellType, pivotAccessor)
           : accessor != null
-          ? getSortType(accessor)
+          ? getSortType(accessor, pivotAccessor)
           : "alphanumeric"
     };
     return acc;
