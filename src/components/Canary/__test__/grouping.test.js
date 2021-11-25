@@ -1,9 +1,21 @@
 import { BiLabel } from "react-icons/bi";
 import { testData } from "../../../data/testData";
-import { getGroupSelections, defaultGroupSelections } from "../grouping";
+import {
+  getLabelSelections,
+  defaultGroupSelections
+} from "../../Dropdown/lib/lists";
 
 const output = {
   ...defaultGroupSelections,
+  anothertest: {
+    description: "anothertest",
+    icon: <BiLabel />,
+    id: "anothertest",
+    key: "anothertest",
+    labelValue: "anothertest",
+    name: "anothertest",
+    value: "anothertest"
+  },
   test: {
     description: "test",
     icon: <BiLabel />,
@@ -15,9 +27,9 @@ const output = {
   }
 };
 
-describe("getGroupSelections", () => {
-  test("getGroupSelections(checks, defaultGroupSelections) => output", () => {
-    expect(getGroupSelections(testData.checks, defaultGroupSelections)).toEqual(
+describe("getLabelSelections", () => {
+  test("getLabelSelections(checks, defaultGroupSelections) => output", () => {
+    expect(getLabelSelections(testData.checks, defaultGroupSelections)).toEqual(
       output
     );
   });

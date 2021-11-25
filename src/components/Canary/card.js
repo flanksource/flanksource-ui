@@ -1,7 +1,6 @@
 import React from "react";
 import { GetName } from "./data";
-import { Title } from "./renderers";
-import { StatusList } from "./status";
+import { Title, StatusList } from "./renderers";
 
 export function CanaryCards(props) {
   const { checks, onClick } = props;

@@ -2,12 +2,12 @@ import React, { useEffect, useMemo, useState } from "react";
 import { TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti";
 import { useTable, useSortBy, useExpanded } from "react-table";
 import { getAggregatedGroupedChecks } from "./aggregate";
-import { GetName } from "./data";
 import { getGroupedChecks } from "./grouping";
-import { getColumns } from "./Columns";
+import { getColumns, makeColumnsForPivot } from "./Columns";
 import { decodeUrlSearchParams, encodeObjectToUrlSearchParams } from "./url";
-import { removeNamespacePrefix } from "./utils";
-import { columnObject } from "./Columns/columns";
+import { columnObject, firstColumns } from "./Columns/columns";
+import { prepareRows } from "./Rows/lib";
+import { useCheckSetEqualityForPreviousVsCurrent } from "../Hooks/useCheckSetEqualityForPreviousVsCurrent";
 
 const styles = {
   outerDivClass: "border-l border-r border-gray-300",
@@ -43,9 +43,13 @@ export function CanaryTable({
   ...rest
 }) {
   const searchParams = window.location.search;
-  const { groupBy } = decodeUrlSearchParams(searchParams);
+  const {
+    groupBy,
+    pivotBy,
+    pivotCellType,
+    pivotLabel: pivotLookup
+  } = decodeUrlSearchParams(searchParams);
   const [tableData, setTableData] = useState(checks);
-  const [pivotCellType] = useState(null);
 
   // update table data if searchParam or check data changes
   useEffect(() => {
@@ -61,34 +65,45 @@ export function CanaryTable({
     );
   }, [searchParams, checks, groupBy, groupSingleItems]);
 
-  const data = useMemo(
-    () =>
-      tableData.map((row) => ({
-        ...row,
-        name: GetName(row),
-        sortKey: hideNamespacePrefix
-          ? removeNamespacePrefix(GetName(row), row)
-          : GetName(row)
-      })),
-    [hideNamespacePrefix, tableData]
+  const { rows, meta } = useMemo(
+    () => prepareRows({ tableData, hideNamespacePrefix, pivotBy, pivotLookup }),
+    [hideNamespacePrefix, tableData, pivotBy, pivotLookup]
   );
 
-  const columns = useMemo(
-    () =>
-      getColumns({
-        columnObject,
-        pivotCellType
-      }),
-    [pivotCellType]
-  );
+  const isNewPivotSet = useCheckSetEqualityForPreviousVsCurrent(meta.pivotSet);
+
+  const shouldPivot =
+    pivotCellType != null &&
+    pivotCellType !== "" &&
+    pivotBy != null &&
+    pivotBy !== "none";
+
+  const columns = useMemo(() => {
+    if (shouldPivot) {
+      return makeColumnsForPivot({
+        pivotSet: meta.pivotSet,
+        pivotCellType,
+        firstColumns
+      });
+    }
+    return getColumns({
+      columnObject,
+      pivotCellType: null
+    });
+    // isNewPivotSet checks the old pivotSet against the new on, so it's a much better test
+    // than 'meta.pivotSet', which will probably be referentially new on every fetch of data.
+    // Testing the set directly meant we won't have to rebuild the columns, which is predicted to
+    // be an expensive operation.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pivotCellType, isNewPivotSet, pivotBy, pivotLookup]);
 
   return (
     <Table
-      data={data}
+      data={rows}
       columns={columns}
       labels={labels}
       history={history}
-      pivotCellType={pivotCellType}
+      pivotCellType={shouldPivot ? pivotCellType : null}
       onUnexpandableRowClick={onCheckClick}
       hasGrouping={groupBy !== "no-group"}
       showNamespaceTags={showNamespaceTags}
@@ -112,6 +127,12 @@ export function Table({
   theadStyle = {},
   ...rest
 }) {
+  const rowFinder = (row) => {
+    const rowValues =
+      row?.pivoted === true ? row[row.valueLookup] ?? null : row;
+    return rowValues?.subRows || [];
+  };
+
   const {
     state: tableState,
     getTableProps,
@@ -129,6 +150,7 @@ export function Table({
       disableMultiSort: true,
       autoResetSortBy: false,
       autoResetExpanded: false,
+      getSubRows: rowFinder,
       useControlledState: (state) =>
         useMemo(
           () => ({

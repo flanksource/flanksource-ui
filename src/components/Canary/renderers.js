@@ -1,10 +1,25 @@
+import { format } from "timeago.js";
 import { Badge } from "../Badge";
-import { isEmpty } from "./utils";
 import { Icon } from "../Icon";
+import { DescriptionCard } from "../DescriptionCard";
+import { Table } from "../Table";
+import { isEmpty } from "./utils";
+import { Status } from "../Status";
+
+export const empty = (
+  <span className="text-gray-500 text-light text-xs">-</span>
+);
+
+export function CanaryStatus({ status, className }) {
+  if (status.mixed) {
+    return <Status mixed={status.mixed} className={className} />;
+  }
+  return <Status good={status.status} className={className} />;
+}
 
 export function Duration({ ms }) {
   if (ms == null || ms === 0) {
-    return "";
+    return empty;
   }
   try {
     ms = Number(ms);
@@ -64,7 +79,7 @@ export function Labels({ labels }) {
 
 export function Latency({ check }) {
   if (check == null || check.latency == null) {
-    return "";
+    return empty;
   }
   if (isEmpty(check.latency.rolling1h)) {
     return "";
@@ -73,7 +88,6 @@ export function Latency({ check }) {
 }
 
 export function Percentage({ val, upper, lower }) {
-  const empty = <span className="text-gray-500 text-light text-xs">-</span>;
   if ((isEmpty(lower) && isEmpty(val)) || (upper === 0 && lower === 0)) {
     return empty;
   }
@@ -118,4 +132,135 @@ export function Uptime({ check }) {
       lower={check.uptime.passed}
     />
   );
+}
+
+export function CanaryDescription({ check: incoming }) {
+  const check =
+    incoming?.pivoted === true
+      ? incoming[incoming.valueLookup] ?? null
+      : incoming;
+  const statii = check.checkStatuses != null ? check.checkStatuses : [];
+  const data = [];
+  statii.forEach((status) => {
+    data.push({
+      key: `${check.key}.${check.description}`,
+      age: format(`${status.time} UTC`),
+      message: (
+        <>
+          <CanaryStatus status={status} /> {status.message}{" "}
+          {!isEmpty(status.error) &&
+            status.error.split("\n").map((item) => (
+              <>
+                {item}
+                <br />
+              </>
+            ))}
+        </>
+      ),
+      duration: <Duration ms={status.duration} />
+    });
+  });
+
+  const items = [
+    {
+      key: `${check.key}name`,
+      name: "Name",
+      value: (
+        <span>
+          {check.namespace}/{check.name}
+        </span>
+      )
+    },
+    {
+      key: `${check.key}namespace`,
+      name: "Namespace",
+      value: <Badge text={check.namespace} />
+    },
+    {
+      key: `${check.key}latency`,
+      name: "Latency",
+      value: <Latency check={check} />
+    },
+    {
+      key: `${check.key}uptime`,
+      name: "Uptime",
+      value: <Uptime check={check} />
+    },
+    {
+      key: `${check.key}owner`,
+      name: "Owner",
+      value: check.owner
+    },
+    {
+      key: `${check.key}severity`,
+      name: "Severity",
+      value: check.severity
+    },
+    {
+      key: `${check.key}labels`,
+      name: "Labels",
+      value: <Labels labels={check.labels} />
+    },
+    {
+      key: `${check.key}runner`,
+      name: "Runner",
+      value: <Labels labels={check.runnerLabels} />
+    },
+
+    {
+      key: `${check.key}interval`,
+      name: "Interval",
+      value: check.interval > 0 ? check.interval : check.schedule
+    },
+    {
+      key: `${check.key}type`,
+      name: "Type",
+      value: check.type
+    },
+    {
+      key: `${check.key}endpoint`,
+      name: "Endpoint",
+      value: check.endpoint,
+      colspan: 2
+    },
+    {
+      key: `${check.key}checks`,
+      name: "Checks",
+      value: (
+        <Table
+          id={`${check.key}-table`}
+          data={data}
+          columns={["Age", "Duration", "Message"]}
+        />
+      ),
+      colspan: 2
+    }
+  ];
+  return <DescriptionCard items={items} />;
+}
+
+export function StatusList({ check, checkStatuses }) {
+  if (check && check.checkStatuses && check.checkStatuses.length > 0) {
+    return (
+      <>
+        {check.checkStatuses.map((status, idx) => (
+          // Can't think of stable keys for this
+          // eslint-disable-next-line react/no-array-index-key
+          <CanaryStatus key={idx} status={status} className="mr-0.5" />
+        ))}
+      </>
+    );
+  }
+  if (checkStatuses && checkStatuses.length > 0) {
+    return (
+      <>
+        {checkStatuses.map((status, idx) => (
+          // Can't think of stable keys for this
+          // eslint-disable-next-line react/no-array-index-key
+          <CanaryStatus key={idx} status={status} className="mr-0.5" />
+        ))}
+      </>
+    );
+  }
+  return empty;
 }

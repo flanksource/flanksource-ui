@@ -1,7 +1,7 @@
 import { Dropdown } from ".";
-import { getGroupSelections, defaultGroupSelections } from "../Canary/grouping";
+import { defaultGroupSelections, getLabelSelections } from "./lib/lists";
 
 export function GroupByDropdown({ checks, ...rest }) {
-  const items = getGroupSelections(checks, defaultGroupSelections);
+  const items = getLabelSelections(checks, defaultGroupSelections);
   return <Dropdown {...rest} items={items} />;
 }

@@ -1,204 +1,236 @@
+export const subsetOne = [
+  {
+    key: "demo/http-pass/http:http://status.savanttools.com/?code=404",
+    type: "http",
+    name: "demo/http-pass",
+    namespace: "demo",
+    labels: {
+      DBAdmin: "true",
+      high: "true",
+      test: "istest2"
+    },
+    runnerLabels: null,
+    canaryName: "http-pass",
+    description: "",
+    endpoint: "http://status.savanttools.com/?code=404",
+    uptime: { passed: 820, failed: 0 },
+    latency: { rolling1h: 166.5 },
+    checkStatuses: null,
+    interval: 30,
+    schedule: "",
+    owner: "",
+    severity: "",
+    icon: "",
+    displayType: ""
+  },
+  {
+    key: "demo/http-fail-timeout/http:http://httpstat.us/200?sleep=200",
+    type: "http",
+    name: "demo/http-fail-timeout",
+    namespace: "",
+    labels: {},
+    runnerLabels: null,
+    canaryName: "http-fail-timeout",
+    description: "",
+    endpoint: "http://httpstat.us/200?sleep=200",
+    uptime: { passed: 0, failed: 120 },
+    latency: { rolling1h: 1310.5 },
+    checkStatuses: null,
+    interval: 30,
+    schedule: "",
+    owner: "",
+    severity: "",
+    icon: "",
+    displayType: ""
+  },
+  {
+    key: "demo/junit-pass/junit:jes",
+    type: "junit",
+    name: "demo/junit-pass",
+    namespace: "",
+    labels: { DBAdmin: "true", high: "true", test: "istest" },
+    runnerLabels: null,
+    canaryName: "junit-pass",
+    description: "",
+    endpoint: "jes",
+    uptime: {
+      passed: 0,
+      failed: 317
+    },
+    latency: {
+      rolling1h: 50500
+    },
+    checkStatuses: [
+      {
+        status: false,
+        invalid: false,
+        time: "2021-09-07T07:17:51Z",
+        duration: 50500,
+        message: "",
+        error:
+          'error executing template ✅ {{.results.passed}} ❌ {{.results.failed}} in 🕑 {{.results.duration}}: template: :1:14: executing "" at <.results.passed>: can\'t evaluate field passed in type interface {}'
+      },
+      {
+        status: false,
+        invalid: false,
+        time: "2021-09-07T07:15:51Z",
+        duration: 50500,
+        message: "",
+        error:
+          'error executing template ✅ {{.results.passed}} ❌ {{.results.failed}} in 🕑 {{.results.duration}}: template: :1:14: executing "" at <.results.passed>: can\'t evaluate field passed in type interface {}'
+      },
+      {
+        status: false,
+        invalid: false,
+        time: "2021-09-07T07:13:51Z",
+        duration: 50500,
+        message: "",
+        error:
+          'error executing template ✅ {{.results.passed}} ❌ {{.results.failed}} in 🕑 {{.results.duration}}: template: :1:14: executing "" at <.results.passed>: can\'t evaluate field passed in type interface {}'
+      },
+      {
+        status: false,
+        invalid: false,
+        time: "2021-09-07T07:11:51Z",
+        duration: 50500,
+        message: "",
+        error:
+          'error executing template ✅ {{.results.passed}} ❌ {{.results.failed}} in 🕑 {{.results.duration}}: template: :1:14: executing "" at <.results.passed>: can\'t evaluate field passed in type interface {}'
+      },
+      {
+        status: false,
+        invalid: false,
+        time: "2021-09-07T07:09:51Z",
+        duration: 50500,
+        message: "",
+        error:
+          'error executing template ✅ {{.results.passed}} ❌ {{.results.failed}} in 🕑 {{.results.duration}}: template: :1:14: executing "" at <.results.passed>: can\'t evaluate field passed in type interface {}'
+      }
+    ],
+    interval: 120,
+    schedule: "",
+    owner: "DBAdmin",
+    severity: "high",
+    icon: "",
+    displayType: ""
+  },
+  {
+    key: "demo/http-pass/http:http://status.savanttools.com/?code=200",
+    type: "http",
+    name: "demo/http-pass",
+    namespace: "demo",
+    labels: {
+      DBAdmin: "true",
+      high: "true",
+      test: "istest"
+    },
+    runnerLabels: null,
+    canaryName: "http-pass",
+    description: "",
+    endpoint: "http://status.savanttools.com/?code=200",
+    uptime: { passed: 820, failed: 0 },
+    latency: { rolling1h: 181.5 },
+    checkStatuses: null,
+    interval: 30,
+    schedule: "",
+    owner: "",
+    severity: "",
+    icon: "",
+    displayType: ""
+  },
+  {
+    key: "demo/dns-fail/dns:CNAME/dns.google@8.8.8.8:53",
+    type: "dns",
+    name: "demo/dns-fail",
+    namespace: "demo",
+    labels: {
+      anothertest: "istest"
+    },
+    runnerLabels: null,
+    canaryName: "dns-fail",
+    description: "",
+    endpoint: "CNAME/dns.google@8.8.8.8:53",
+    uptime: { passed: 0, failed: 354 },
+    latency: { rolling1h: 18.80000000000001 },
+    checkStatuses: [
+      {
+        status: false,
+        invalid: false,
+        time: "2021-10-29T05:54:24Z",
+        duration: 13,
+        message: "",
+        error:
+          "CNAME dns.google on 8.8.8.8: Got [dns.google.], expected [wrong.google.]"
+      },
+      {
+        status: false,
+        invalid: false,
+        time: "2021-10-29T05:53:54Z",
+        duration: 13,
+        message: "",
+        error:
+          "CNAME dns.google on 8.8.8.8: Got [dns.google.], expected [wrong.google.]"
+      },
+      {
+        status: false,
+        invalid: false,
+        time: "2021-10-29T05:53:24Z",
+        duration: 14,
+        message: "",
+        error:
+          "CNAME dns.google on 8.8.8.8: Got [dns.google.], expected [wrong.google.]"
+      }
+    ],
+    interval: 30,
+    schedule: "",
+    owner: "",
+    severity: "",
+    icon: "",
+    displayType: ""
+  },
+  {
+    key: "demo/docker-fail/dockerPull:docker.io/busybox",
+    type: "dockerPull",
+    name: "demo/docker-fail",
+    namespace: "nametest",
+    labels: {
+      anothertest: "istest2"
+    },
+    runnerLabels: null,
+    canaryName: "docker-fail",
+    description: "",
+    endpoint: "docker.io/busybox",
+    uptime: { passed: 0, failed: 111 },
+    latency: { rolling1h: 3140.8 },
+    checkStatuses: [
+      {
+        status: false,
+        invalid: false,
+        time: "2021-10-29T05:53:58Z",
+        duration: 2779,
+        message: "",
+        error:
+          "Failed to pull image: Error response from daemon: toomanyrequests: You have reached your pull rate limit. You may increase the limit by authenticating and upgrading: https://www.docker.com/increase-rate-limit"
+      }
+    ],
+    interval: 30,
+    schedule: "",
+    owner: "",
+    severity: "",
+    icon: "",
+    displayType: ""
+  }
+];
+
 export const testData = {
   runnerName: "local",
   checks: [
-    {
-      key: "demo/http-fail-timeout/http:http://httpstat.us/200?sleep=200",
-      type: "http",
-      name: "demo/http-fail-timeout",
-      namespace: "demo",
-      labels: {},
-      runnerLabels: null,
-      canaryName: "http-fail-timeout",
-      description: "",
-      endpoint: "http://httpstat.us/200?sleep=200",
-      uptime: { passed: 0, failed: 120 },
-      latency: { rolling1h: 1310.5 },
-      checkStatuses: null,
-      interval: 30,
-      schedule: "",
-      owner: "",
-      severity: "",
-      icon: "",
-      displayType: ""
-    },
-    {
-      key: "demo/junit-pass/junit:jes",
-      type: "junit",
-      name: "demo/junit-pass",
-      namespace: "demo",
-      labels: {
-        DBAdmin: "true",
-        high: "true",
-        test: "istest"
-      },
-      runnerLabels: null,
-      canaryName: "junit-pass",
-      description: "",
-      endpoint: "jes",
-      uptime: {
-        passed: 0,
-        failed: 317
-      },
-      latency: {
-        rolling1h: 50500
-      },
-      checkStatuses: [
-        {
-          status: false,
-          invalid: false,
-          time: "2021-09-07T07:17:51Z",
-          duration: 50500,
-          message: "",
-          error:
-            'error executing template ✅ {{.results.passed}} ❌ {{.results.failed}} in 🕑 {{.results.duration}}: template: :1:14: executing "" at <.results.passed>: can\'t evaluate field passed in type interface {}'
-        },
-        {
-          status: false,
-          invalid: false,
-          time: "2021-09-07T07:15:51Z",
-          duration: 50500,
-          message: "",
-          error:
-            'error executing template ✅ {{.results.passed}} ❌ {{.results.failed}} in 🕑 {{.results.duration}}: template: :1:14: executing "" at <.results.passed>: can\'t evaluate field passed in type interface {}'
-        },
-        {
-          status: false,
-          invalid: false,
-          time: "2021-09-07T07:13:51Z",
-          duration: 50500,
-          message: "",
-          error:
-            'error executing template ✅ {{.results.passed}} ❌ {{.results.failed}} in 🕑 {{.results.duration}}: template: :1:14: executing "" at <.results.passed>: can\'t evaluate field passed in type interface {}'
-        },
-        {
-          status: false,
-          invalid: false,
-          time: "2021-09-07T07:11:51Z",
-          duration: 50500,
-          message: "",
-          error:
-            'error executing template ✅ {{.results.passed}} ❌ {{.results.failed}} in 🕑 {{.results.duration}}: template: :1:14: executing "" at <.results.passed>: can\'t evaluate field passed in type interface {}'
-        },
-        {
-          status: false,
-          invalid: false,
-          time: "2021-09-07T07:09:51Z",
-          duration: 50500,
-          message: "",
-          error:
-            'error executing template ✅ {{.results.passed}} ❌ {{.results.failed}} in 🕑 {{.results.duration}}: template: :1:14: executing "" at <.results.passed>: can\'t evaluate field passed in type interface {}'
-        }
-      ],
-      interval: 120,
-      schedule: "",
-      owner: "DBAdmin",
-      severity: "high",
-      icon: "",
-      displayType: ""
-    },
-    {
-      key: "demo/http-pass/http:http://status.savanttools.com/?code=200",
-      type: "http",
-      name: "demo/http-pass",
-      namespace: "demo",
-      labels: {},
-      runnerLabels: null,
-      canaryName: "http-pass",
-      description: "",
-      endpoint: "http://status.savanttools.com/?code=200",
-      uptime: { passed: 820, failed: 0 },
-      latency: { rolling1h: 181.5 },
-      checkStatuses: null,
-      interval: 30,
-      schedule: "",
-      owner: "",
-      severity: "",
-      icon: "",
-      displayType: ""
-    },
-    {
-      key: "demo/dns-fail/dns:CNAME/dns.google@8.8.8.8:53",
-      type: "dns",
-      name: "demo/dns-fail",
-      namespace: "demo",
-      labels: {},
-      runnerLabels: null,
-      canaryName: "dns-fail",
-      description: "",
-      endpoint: "CNAME/dns.google@8.8.8.8:53",
-      uptime: { passed: 0, failed: 354 },
-      latency: { rolling1h: 18.80000000000001 },
-      checkStatuses: [
-        {
-          status: false,
-          invalid: false,
-          time: "2021-10-29T05:54:24Z",
-          duration: 13,
-          message: "",
-          error:
-            "CNAME dns.google on 8.8.8.8: Got [dns.google.], expected [wrong.google.]"
-        },
-        {
-          status: false,
-          invalid: false,
-          time: "2021-10-29T05:53:54Z",
-          duration: 13,
-          message: "",
-          error:
-            "CNAME dns.google on 8.8.8.8: Got [dns.google.], expected [wrong.google.]"
-        },
-        {
-          status: false,
-          invalid: false,
-          time: "2021-10-29T05:53:24Z",
-          duration: 14,
-          message: "",
-          error:
-            "CNAME dns.google on 8.8.8.8: Got [dns.google.], expected [wrong.google.]"
-        }
-      ],
-      interval: 30,
-      schedule: "",
-      owner: "",
-      severity: "",
-      icon: "",
-      displayType: ""
-    },
-    {
-      key: "demo/docker-fail/dockerPull:docker.io/busybox",
-      type: "dockerPull",
-      name: "demo/docker-fail",
-      namespace: "demo",
-      labels: {},
-      runnerLabels: null,
-      canaryName: "docker-fail",
-      description: "",
-      endpoint: "docker.io/busybox",
-      uptime: { passed: 0, failed: 111 },
-      latency: { rolling1h: 3140.8 },
-      checkStatuses: [
-        {
-          status: false,
-          invalid: false,
-          time: "2021-10-29T05:53:58Z",
-          duration: 2779,
-          message: "",
-          error:
-            "Failed to pull image: Error response from daemon: toomanyrequests: You have reached your pull rate limit. You may increase the limit by authenticating and upgrading: https://www.docker.com/increase-rate-limit"
-        }
-      ],
-      interval: 30,
-      schedule: "",
-      owner: "",
-      severity: "",
-      icon: "",
-      displayType: ""
-    },
+    ...subsetOne,
     {
       key: "demo/docker-push-fail/dockerPush:docker.io/flanksource/busybox:1.30",
       type: "dockerPush",
       name: "demo/docker-push-fail",
-      namespace: "demo",
+      namespace: "nametest",
       labels: {},
       runnerLabels: null,
       canaryName: "docker-push-fail",
@@ -344,30 +376,10 @@ export const testData = {
       displayType: ""
     },
     {
-      key: "demo/junit-pass/junit:jes",
-      type: "junit",
-      name: "demo/junit-pass",
-      namespace: "demo",
-      labels: { DBAdmin: "true", high: "true" },
-      runnerLabels: null,
-      canaryName: "junit-pass",
-      description: "",
-      endpoint: "jes",
-      uptime: { passed: 25, failed: 0 },
-      latency: { rolling1h: 50500 },
-      checkStatuses: null,
-      interval: 120,
-      schedule: "",
-      owner: "DBAdmin",
-      severity: "high",
-      icon: "",
-      displayType: ""
-    },
-    {
       key: "demo/docker-fail/dockerPull:docker.io/library/busybox:random",
       type: "dockerPull",
       name: "demo/docker-fail",
-      namespace: "demo",
+      namespace: "nametest",
       labels: {},
       runnerLabels: null,
       canaryName: "docker-fail",
@@ -464,7 +476,7 @@ export const testData = {
       canaryName: "http-fail",
       description: "",
       endpoint: "http://status.savanttools.com/?code=500",
-      uptime: { passed: 0, failed: 352 },
+      uptime: { passed: 20, failed: 352 },
       latency: { rolling1h: 184 },
       checkStatuses: null,
       interval: 30,
@@ -478,13 +490,13 @@ export const testData = {
       key: "demo/dns-pass/dns:MX/flanksource.com@8.8.8.8:53",
       type: "dns",
       name: "demo/dns-pass",
-      namespace: "demo",
-      labels: {},
+      namespace: "nametest",
+      labels: { DBAdmin: "true", high: "true" },
       runnerLabels: null,
       canaryName: "dns-pass",
       description: "",
       endpoint: "MX/flanksource.com@8.8.8.8:53",
-      uptime: { passed: 353, failed: 0 },
+      uptime: { passed: 353, failed: 80 },
       latency: { rolling1h: 17 },
       checkStatuses: [
         {
@@ -507,12 +519,12 @@ export const testData = {
       type: "dns",
       name: "demo/dns-pass",
       namespace: "demo",
-      labels: {},
+      labels: { DBAdmin: "true", high: "true" },
       runnerLabels: null,
       canaryName: "dns-pass",
       description: "",
       endpoint: "NS/flanksource.com@8.8.8.8:53",
-      uptime: { passed: 353, failed: 0 },
+      uptime: { passed: 353, failed: 6 },
       latency: { rolling1h: 18 },
       checkStatuses: [
         {
@@ -531,30 +543,10 @@ export const testData = {
       displayType: ""
     },
     {
-      key: "demo/http-pass/http:http://status.savanttools.com/?code=404",
-      type: "http",
-      name: "demo/http-pass",
-      namespace: "demo",
-      labels: {},
-      runnerLabels: null,
-      canaryName: "http-pass",
-      description: "",
-      endpoint: "http://status.savanttools.com/?code=404",
-      uptime: { passed: 820, failed: 0 },
-      latency: { rolling1h: 166.5 },
-      checkStatuses: null,
-      interval: 30,
-      schedule: "",
-      owner: "",
-      severity: "",
-      icon: "",
-      displayType: ""
-    },
-    {
       key: "demo/docker-fail/dockerPull:docker.io/library/busybox:1.31.1",
       type: "dockerPull",
       name: "demo/docker-fail",
-      namespace: "demo",
+      namespace: "nametest",
       labels: {},
       runnerLabels: null,
       canaryName: "docker-fail",
@@ -584,7 +576,7 @@ export const testData = {
       key: "demo/junit-fail/junit:jes",
       type: "junit",
       name: "demo/junit-fail",
-      namespace: "demo",
+      namespace: "nametest",
       labels: { DBAdmin: "true", high: "true" },
       runnerLabels: null,
       canaryName: "junit-fail",
@@ -604,7 +596,7 @@ export const testData = {
       key: "demo/namespace-pass/namespace:check",
       type: "namespace",
       name: "demo/namespace-pass",
-      namespace: "demo",
+      namespace: "nametest",
       labels: {},
       runnerLabels: null,
       canaryName: "namespace-pass",
@@ -665,7 +657,7 @@ export const testData = {
       key: "demo/postgres-fail/postgres:user=$(username) dbname=pqgotest sslmode=verify-full",
       type: "postgres",
       name: "demo/postgres-fail",
-      namespace: "demo",
+      namespace: "nametest",
       labels: {},
       runnerLabels: null,
       canaryName: "postgres-fail",
@@ -744,7 +736,11 @@ export const testData = {
       type: "http",
       name: "demo/http-pass",
       namespace: "demo",
-      labels: {},
+      labels: {
+        DBAdmin: "true",
+        high: "true",
+        test: "istest"
+      },
       runnerLabels: null,
       canaryName: "http-pass",
       description: "",
@@ -820,7 +816,7 @@ export const testData = {
       key: "demo/mssql-fail/mssql:server=mssql.platformsystem;user id=sa;password=###;port=32010;database=master",
       type: "mssql",
       name: "demo/mssql-fail",
-      namespace: "demo",
+      namespace: "nametest",
       labels: {},
       runnerLabels: null,
       canaryName: "mssql-fail",
@@ -841,7 +837,7 @@ export const testData = {
       key: "demo/mongo/dns:/mongo.default.svc",
       type: "dns",
       name: "demo/mongo",
-      namespace: "demo",
+      namespace: "nametest",
       labels: {},
       runnerLabels: null,
       canaryName: "mongo",
@@ -861,7 +857,7 @@ export const testData = {
       key: "demo/dns-pass/dns:PTR/8.8.8.8@8.8.8.8:53",
       type: "dns",
       name: "demo/dns-pass",
-      namespace: "demo",
+      namespace: "nametest",
       labels: {},
       runnerLabels: null,
       canaryName: "dns-pass",
@@ -889,8 +885,8 @@ export const testData = {
       key: "demo/docker-push-fail/dockerPush:ttl.sh/flanksource-busybox:not-found-tag",
       type: "dockerPush",
       name: "demo/docker-push-fail",
-      namespace: "demo",
-      labels: {},
+      namespace: "nametest",
+      labels: { test: "istest2" },
       runnerLabels: null,
       canaryName: "docker-push-fail",
       description: "",
@@ -950,7 +946,7 @@ export const testData = {
       key: "demo/docker-pass/dockerPull:docker.io/library/busybox:1.31.1@sha256:b20c55f6bfac8828690ec2f4e2da29790c80aa3d7801a119f0ea6b045d2d2da1",
       type: "dockerPull",
       name: "demo/docker-pass",
-      namespace: "demo",
+      namespace: "nametest",
       labels: {},
       runnerLabels: null,
       canaryName: "docker-pass",
@@ -1001,7 +997,7 @@ export const testData = {
       key: "demo/dns-fail/dns:PTR/8.8.8.8@8.8.8.8:53",
       type: "dns",
       name: "demo/dns-fail",
-      namespace: "demo",
+      namespace: "nametest",
       labels: {},
       runnerLabels: null,
       canaryName: "dns-fail",

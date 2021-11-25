@@ -5,6 +5,9 @@ import React, { useEffect } from "react";
 import { LayoutDropdown } from "../../Dropdown/LayoutDropdown";
 import { GroupByDropdown } from "../../Dropdown/GroupByDropdown";
 import { TabByDropdown } from "../../Dropdown/TabByDropdown";
+import { PivotByDropdown } from "../../Dropdown/PivotByDropdown";
+import { PivotLabelDropdown } from "../../Dropdown/PivotLabelDropdown";
+import { PivotCellTypeDropdown } from "../../Dropdown/PivotCellTypeDropdown";
 import { Toggle } from "../../Toggle";
 
 import { initialiseFormState, updateFormState, getDefaultForm } from "../state";
@@ -13,15 +16,6 @@ import { encodeObjectToUrlSearchParams } from "../url";
 
 import { TristateToggle } from "../../TristateToggle";
 import { getFilteredLabelsByChecks } from "../labels";
-import { getLocalItem, setLocalItem } from "../../../utils/storage";
-
-function saveFormState(state) {
-  setLocalItem("canaryFilterFormState", JSON.stringify(state));
-}
-
-function getSavedFormState() {
-  return JSON.parse(getLocalItem("canaryFilterFormState"));
-}
 
 export function FilterForm({
   labels,
@@ -30,25 +24,21 @@ export function FilterForm({
   currentTabChecks = null
 }) {
   const searchParams = window.location.search;
-  const savedFormState = getSavedFormState();
   const { formState, fullState } = initialiseFormState(
     getDefaultForm(labels),
-    searchParams,
-    savedFormState
+    searchParams
   );
 
   const { control, watch, reset } = useForm({
     defaultValues: formState
   });
 
-  let filteredLabels = labels;
-  // only show labels that affect the current list of checks
-  if (currentTabChecks && currentTabChecks.length > 0) {
-    filteredLabels = getFilteredLabelsByChecks(currentTabChecks, labels);
-  }
+  const filteredLabels =
+    currentTabChecks && currentTabChecks.length > 0
+      ? getFilteredLabelsByChecks(currentTabChecks, labels)
+      : labels;
 
   useEffect(() => {
-    saveFormState(fullState);
     const encoded = encodeObjectToUrlSearchParams(fullState);
     if (window.location.search !== `?${encoded}`) {
       history.push(`${window.location.pathname}?${encoded}`);
@@ -57,6 +47,7 @@ export function FilterForm({
   }, [formState, fullState, labels, history, reset]);
 
   const watchLayout = watch("layout");
+  const watchPivotBy = watch("pivotBy");
 
   useEffect(() => {
     const watchAll = watch((data) => {
@@ -81,14 +72,42 @@ export function FilterForm({
           className="mb-4"
           label="Layout"
         />
+
         {watchLayout === "table" && (
-          <GroupByDropdown
-            name="groupBy"
-            control={control}
-            className="mb-4"
-            label="Group By"
-            checks={checks}
-          />
+          <>
+            <GroupByDropdown
+              name="groupBy"
+              control={control}
+              className="mb-4"
+              label="Group By"
+              checks={checks}
+            />
+            <PivotByDropdown
+              name="pivotBy"
+              control={control}
+              className="mb-4"
+              label="Pivot By"
+              checks={checks}
+            />
+            {watchPivotBy === "labels" && (
+              <PivotLabelDropdown
+                name="pivotLabel"
+                control={control}
+                className="mb-4"
+                label="Pivot Label"
+                checks={checks}
+              />
+            )}
+            {watchPivotBy !== "none" && (
+              <PivotCellTypeDropdown
+                name="pivotCellType"
+                control={control}
+                className="mb-4"
+                label="Cell Type"
+                checks={checks}
+              />
+            )}
+          </>
         )}
         <TabByDropdown
           name="tabBy"
