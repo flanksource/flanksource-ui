@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { format } from "timeago.js";
 import { usePrevious } from "../../../utils/hooks";
 import { Badge } from "../../Badge";
@@ -12,6 +12,7 @@ import {
   capitalizeFirstLetter,
   toFixedIfNecessary
 } from "../../../utils/common";
+import styles from "../index.module.css";
 
 export function CheckTitle({ check, className, ...rest }) {
   const prevCheck = usePrevious(check);
@@ -86,10 +87,7 @@ export function CheckDetails({ check, ...rest }) {
           })}
       </>
     ),
-    Owner: validCheck?.owner || "-"
-  };
-
-  const hiddenDetails = {
+    Owner: validCheck?.owner || "-",
     Interval: validCheck?.interval || "-",
     Location: validCheck?.location || "-",
     Schedule: validCheck?.schedule || "-"
@@ -133,52 +131,51 @@ export function CheckDetails({ check, ...rest }) {
         />
       </div>
       {/* chart section */}
-      <div className="mb-10">
+      <div className="mb-8">
         <div className="flex justify-between items-center mb-2">
           <span className="text-lg font-medium">Health overview</span>
           <span className="text-sm font-medium">(time dropdown)</span>
         </div>
         <div className="bg-gray-100 w-full h-52" />
       </div>
-      {/* check details section */}
-      <div className="mb-10">
-        <div className="flex mb-2">
-          <span className="text-lg font-medium">Check details</span>
-        </div>
-        <AccordionBox
-          content={
-            <div className="flex flex-row flex-wrap">
-              {Object.entries(details).map(([label, value]) => (
-                <DetailField
-                  key={label}
-                  className="w-1/2 mb-3"
-                  label={label}
-                  value={value}
+      <PopupTabs
+        contentStyle={{ minHeight: "270px" }}
+        tabs={{
+          statusHistory: {
+            label: "Status history",
+            content: (
+              <div
+                key="status-history"
+                className={`border overflow-hidden overflow-y-auto relative ${styles.appleScrollbar}`}
+                style={{ maxHeight: "270px" }}
+              >
+                <StatusHistory check={validCheck} sticky />
+              </div>
+            )
+          },
+          checkDetails: {
+            label: "Check details",
+            content: (
+              <div key="check-details" className="mb-6">
+                <AccordionBox
+                  content={
+                    <div className="flex flex-row flex-wrap">
+                      {Object.entries(details).map(([label, value]) => (
+                        <DetailField
+                          key={label}
+                          className="w-1/2 mb-3"
+                          label={label}
+                          value={value}
+                        />
+                      ))}
+                    </div>
+                  }
                 />
-              ))}
-            </div>
+              </div>
+            )
           }
-          hiddenContent={
-            <div className="flex flex-row flex-wrap">
-              {Object.entries(hiddenDetails).map(([label, value]) => (
-                <DetailField
-                  key={label}
-                  className="w-1/2 mb-3"
-                  label={label}
-                  value={value}
-                />
-              ))}
-            </div>
-          }
-        />
-      </div>
-      {/* status history section */}
-      <div className="mb-10">
-        <div className="flex mb-2">
-          <span className="text-lg font-medium">Status history</span>
-        </div>
-        <StatusHistory check={validCheck} />
-      </div>
+        }}
+      />
     </div>
   );
 }
@@ -219,7 +216,7 @@ function DetailField({ label, value, className, ...rest }) {
   );
 }
 
-function StatusHistory({ check }) {
+function StatusHistory({ check, sticky = "false" }) {
   const statii = check
     ? check.checkStatuses != null
       ? check.checkStatuses
@@ -252,7 +249,37 @@ function StatusHistory({ check }) {
         id={`${check.key}-table`}
         data={data}
         columns={["Age", "Duration", "Message"]}
+        sticky={sticky}
       />
     )
+  );
+}
+
+export function PopupTabs({ tabs, contentStyle, ...rest }) {
+  const [selected, setSelected] = useState(Object.keys(tabs)[0]);
+  return (
+    <div {...rest}>
+      <div className="flex space-x-4 mb-4" aria-label="Tabs">
+        {Object.entries(tabs).map(([key, tab]) => (
+          <button
+            type="button"
+            key={key}
+            onClick={() => setSelected(key)}
+            className={`px-3 py-2 font-medium text-sm rounded-md ${
+              selected === key
+                ? "bg-indigo-100 text-indigo-700"
+                : "text-gray-500 hover:text-gray-700"
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+      <div style={contentStyle}>
+        {Object.entries(tabs).map(
+          ([key, tab]) => selected === key && <div key={key}>{tab.content}</div>
+        )}
+      </div>
+    </div>
   );
 }

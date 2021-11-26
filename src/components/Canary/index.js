@@ -28,6 +28,8 @@ import { getLocalItem, setLocalItem } from "../../utils/storage";
 import { Modal } from "../Modal";
 import { CheckDetails, CheckTitle } from "./CanaryPopup";
 
+import styles from "./index.module.css";
+
 export class Canary extends React.Component {
   constructor(props) {
     super(props);
@@ -382,13 +384,23 @@ export class Canary extends React.Component {
           </Sidebar>
         </div>
         <Modal
-          closeButtonPadding={8}
-          onClose={this.handleModalClose}
           open={selected != null}
-          title={<CheckTitle check={selected} className="mb-6" />}
-          body={<CheckDetails check={selected} />}
-          cardClass="px-8 py-6 my-12"
-          cardStyle={{ width: "100%", maxWidth: "730px" }}
+          onClose={this.handleModalClose}
+          title={<CheckTitle check={selected} className="pb-2" />}
+          body={
+            <CheckDetails
+              check={selected}
+              className={`flex-grow overflow-y-auto overflow-x-hidden pt-2 -mr-4 pr-3.5 ${styles.appleScrollbar}`}
+            />
+          }
+          containerClass="py-4 h-full"
+          cardClass="w-full h-full flex flex-col"
+          cardStyle={{
+            maxWidth: "820px",
+            maxHeight: "900px"
+          }}
+          contentClass="flex flex-col h-full p-8"
+          closeButtonPadding={8}
         />
       </div>
     );

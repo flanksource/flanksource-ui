@@ -1,4 +1,4 @@
-export function Table({ columns, data, id }) {
+export function Table({ columns, data, id, sticky = "false" }) {
   columns = columns.map((c) => {
     if (typeof c === "string") {
       return { name: c };
@@ -7,40 +7,39 @@ export function Table({ columns, data, id }) {
   });
   return (
     <div className="flex flex-col">
-      <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-        <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-          <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  {columns.map((column) => (
-                    <th
-                      key={column.name}
-                      scope="col"
-                      className={`px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ${column.className}`}
-                    >
-                      {column.name}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {data.map((row, idx) => (
-                  // eslint-disable-next-line react/no-array-index-key
-                  <tr key={`${id}.${idx}`}>
-                    {columns.map((column) => (
-                      <td key={column.name} className="px-4 py-2">
-                        <div className="text-xs text-gray-900">
-                          {row[column.name.toLowerCase()]}
-                        </div>
-                      </td>
-                    ))}
-                  </tr>
+      <div className="align-middle inline-block min-w-full">
+        <table
+          className="min-w-full divide-y divide-gray-200 border-separate"
+          style={{ borderSpacing: "0px" }}
+        >
+          <thead className={sticky ? "sticky top-0 bg-white" : ""}>
+            <tr>
+              {columns.map((column) => (
+                <th
+                  key={column.name}
+                  scope="col"
+                  className={`px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b ${column.className}`}
+                >
+                  {column.name}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200" style={{}}>
+            {data.map((row, idx) => (
+              // eslint-disable-next-line react/no-array-index-key
+              <tr key={`${id}.${idx}`}>
+                {columns.map((column) => (
+                  <td key={column.name} className="px-4 py-3 border-b">
+                    <div className="text-sm text-gray-900">
+                      {row[column.name.toLowerCase()]}
+                    </div>
+                  </td>
                 ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );

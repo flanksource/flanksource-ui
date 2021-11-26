@@ -1,5 +1,6 @@
 // eslint-disable-next-line global-require
 const colors = require("tailwindcss/colors");
+const { borderWidth } = require("tailwindcss/defaultTheme");
 
 module.exports = {
   purge: ["./src/**/*.{js,jsx,ts,tsx}", "./public/index.html"],
@@ -53,7 +54,8 @@ module.exports = {
   variants: {
     extend: {
       backgroundColor: ["disabled"],
-      textColor: ["disabled"]
+      textColor: ["disabled"],
+      borderWidth: ["last"]
     }
   }, // eslint-disable-next-line global-require
   plugins: [require("@tailwindcss/forms"), require("@tailwindcss/typography")]
