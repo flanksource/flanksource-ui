@@ -8,7 +8,8 @@ export function Modal({
   actions,
   open,
   onClose,
-  closeButtonPadding,
+  closeButtonClass,
+  closeButtonStyle,
   containerClass,
   contentClass,
   cardClass = "p-4",
@@ -60,7 +61,8 @@ export function Modal({
             >
               {/* top-right close button */}
               <div
-                className={`opacity-0 pointer-events-none sm:pointer-events-auto sm:opacity-100 absolute top-0 right-0 pt-${closeButtonPadding} pr-${closeButtonPadding}`}
+                style={closeButtonStyle}
+                className={`opacity-0 pointer-events-none sm:pointer-events-auto sm:opacity-100 absolute top-0 right-0 ${closeButtonClass}`}
               >
                 <button
                   type="button"

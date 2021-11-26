@@ -399,7 +399,7 @@ export class Canary extends React.Component {
             maxHeight: "900px"
           }}
           contentClass="flex flex-col h-full p-8"
-          closeButtonPadding={8}
+          closeButtonStyle={{ paddingTop: "2.25rem", paddingRight: "2.25rem" }}
         />
       </div>
     );
