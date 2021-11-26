@@ -95,7 +95,7 @@ export function CheckDetails({ check, ...rest }) {
   return (
     <div {...rest}>
       {/* stats section */}
-      <div className="flex flex-row flex-wrap mb-4">
+      <div className="flex flex-row flex-wrap mb-2">
         <CheckStat
           containerClass="w-52 mb-4"
           title="Uptime"
@@ -130,7 +130,7 @@ export function CheckDetails({ check, ...rest }) {
         />
       </div>
       {/* chart section */}
-      <div className="mb-8">
+      <div className="mb-6">
         <div className="flex justify-between items-center mb-2">
           <span className="text-lg font-medium">Health overview</span>
           <span className="text-sm font-medium">(time dropdown)</span>
@@ -138,14 +138,14 @@ export function CheckDetails({ check, ...rest }) {
         <div className="bg-gray-100 w-full h-52" />
       </div>
       <PopupTabs
-        contentStyle={{ minHeight: "270px" }}
+        contentStyle={{ minHeight: "270px", marginTop: "-1px" }}
         tabs={{
           statusHistory: {
             label: "Status history",
             content: (
               <div
                 key="status-history"
-                className={`border overflow-hidden overflow-y-auto relative ${styles.appleScrollbar}`}
+                className={`border border-gray-300 overflow-hidden overflow-y-auto relative ${styles.appleScrollbar}`}
                 style={{ maxHeight: "270px" }}
               >
                 <StatusHistory check={validCheck} sticky />
@@ -155,14 +155,17 @@ export function CheckDetails({ check, ...rest }) {
           checkDetails: {
             label: "Check details",
             content: (
-              <div key="check-details" className="mb-6">
+              <div
+                key="check-details"
+                className="px-6 py-6 border border-gray-300"
+              >
                 <AccordionBox
                   content={
                     <div className="flex flex-row flex-wrap">
                       {Object.entries(details).map(([label, value]) => (
                         <DetailField
                           key={label}
-                          className="w-1/2 mb-3"
+                          className="w-1/2 mb-3 whitespace-nowrap"
                           label={label}
                           value={value}
                         />
@@ -209,8 +212,12 @@ export function getUptimePercentage(check) {
 function DetailField({ label, value, className, ...rest }) {
   return (
     <div className={`flex flex-col flex-shrink-0 pr-6 ${className}`} {...rest}>
-      <div className="text-sm font-medium text-gray-500 break-all">{label}</div>
-      <div className="mt-1 text-sm text-gray-900 break-all">{value}</div>
+      <div className="text-sm font-medium text-gray-500 break-all overflow-hidden overflow-ellipsis">
+        {label}
+      </div>
+      <div className="mt-1 text-sm text-gray-900 break-all overflow-hidden overflow-ellipsis">
+        {value}
+      </div>
     </div>
   );
 }
@@ -254,21 +261,49 @@ function StatusHistory({ check, sticky = "false" }) {
   );
 }
 
-export function PopupTabs({ tabs, contentStyle, ...rest }) {
+export function PopupTabs({ tabs, contentStyle, variant = "line", ...rest }) {
   const [selected, setSelected] = useState(Object.keys(tabs)[0]);
+
+  const buttonStyles = {
+    line: {
+      container: "flex space-x-4 border-b border-gray-300 z-10",
+      button: "border-b-2 font-medium text-sm py-2 px-1",
+      active: "border-indigo-500 text-indigo-600",
+      inactive:
+        "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+    },
+    simple: {
+      container: "flex flex-wrap border-b border-gray-300 z-10",
+      button:
+        "-mb-px z-10 bg-white px-4 py-2 font-medium text-sm rounded-t-md border-gray-300 hover:text-gray-900",
+      active: "text-gray-900 border",
+      inactive: "text-gray-500 border-b",
+      styles: {
+        active: {
+          borderBottomColor: "white"
+        }
+      }
+    }
+  };
   return (
     <div {...rest}>
-      <div className="flex space-x-4 mb-4" aria-label="Tabs">
+      <div className={buttonStyles[variant].container} aria-label="Tabs">
         {Object.entries(tabs).map(([key, tab]) => (
           <button
             type="button"
             key={key}
             onClick={() => setSelected(key)}
-            className={`px-3 py-2 font-medium text-sm rounded-md ${
+            className={`${buttonStyles[variant].button} ${
               selected === key
-                ? "bg-indigo-100 text-indigo-700"
-                : "text-gray-500 hover:text-gray-700"
+                ? buttonStyles[variant].active
+                : buttonStyles[variant].inactive
             }`}
+            style={{
+              ...buttonStyles[variant]?.styles?.button,
+              ...(selected === key
+                ? buttonStyles[variant]?.styles?.active
+                : buttonStyles[variant]?.styles?.inactive)
+            }}
           >
             {tab.label}
           </button>
