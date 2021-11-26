@@ -15,7 +15,6 @@ import { CanaryTable } from "./table";
 import { CanaryCards } from "./card";
 import { CanarySorter } from "./data";
 import { version as appVersion } from "../../../package.json";
-import { CanaryDescription, Title } from "./renderers";
 
 import { StatCard } from "../StatCard";
 import { CanaryTabs, filterChecksByTabSelection } from "./tabs";

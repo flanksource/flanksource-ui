@@ -19,7 +19,7 @@ export function CanaryStatus({ status, className }) {
 
 export function toFormattedDuration(ms) {
   if (ms == null || ms === 0) {
-    return empty;
+    return ["", ""];
   }
   try {
     ms = Number(ms);
@@ -50,7 +50,7 @@ export function toFormattedDuration(ms) {
 }
 
 export function Duration({ ms }) {
-  const [val, unit] = toFormattedDuration(ms, true);
+  const [val, unit] = toFormattedDuration(ms);
   return (
     <>
       <span className="text-md">{val}</span>

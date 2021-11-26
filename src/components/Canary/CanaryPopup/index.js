@@ -3,10 +3,9 @@ import { format } from "timeago.js";
 import { usePrevious } from "../../../utils/hooks";
 import { Badge } from "../../Badge";
 import { Icon } from "../../Icon";
-import { Duration, toFormattedDuration } from "../renderers";
+import { CanaryStatus, Duration, toFormattedDuration } from "../renderers";
 import { AccordionBox } from "../../AccordionBox";
 import { Table } from "../../Table";
-import { CanaryStatus } from "../status";
 import { isEmpty } from "../utils";
 import {
   capitalizeFirstLetter,
