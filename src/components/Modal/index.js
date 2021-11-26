@@ -10,6 +10,7 @@ export function Modal({
   onClose,
   closeButtonPadding,
   containerClass,
+  contentClass,
   cardClass = "p-4",
   cancelText = "Close",
   hideActions,
@@ -21,12 +22,14 @@ export function Modal({
       <Dialog
         as="div"
         auto-reopen="true"
-        className="fixed z-50 inset-0 overflow-y-auto"
+        className="fixed z-50 inset-0"
         onClose={onClose}
         {...rest}
       >
         <div
-          className={`flex items-center justify-center min-h-screen ${containerClass}`}
+          className={`flex items-center justify-center min-h-screen ${
+            containerClass || ""
+          }`}
         >
           <Transition.Child
             as={Fragment}
@@ -51,8 +54,11 @@ export function Modal({
           >
             <div
               style={cardStyle}
-              className={`bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all ${cardClass}`}
+              className={`bg-white rounded-lg text-left shadow-xl transform transition-all overflow-hidden ${
+                cardClass || ""
+              }`}
             >
+              {/* top-right close button */}
               <div
                 className={`opacity-0 pointer-events-none sm:pointer-events-auto sm:opacity-100 absolute top-0 right-0 pt-${closeButtonPadding} pr-${closeButtonPadding}`}
               >
@@ -65,21 +71,21 @@ export function Modal({
                   <XIcon className="h-6 w-6" aria-hidden="true" />
                 </button>
               </div>
-              <div className="">
+              <div className={contentClass}>
                 {title && title}
                 {body}
+                {!hideActions && (
+                  <div className="flex justify-end mt-2">
+                    <button
+                      type="button"
+                      className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm"
+                      onClick={onClose}
+                    >
+                      {cancelText}
+                    </button>
+                  </div>
+                )}
               </div>
-              {!hideActions && (
-                <div className="flex justify-end">
-                  <button
-                    type="button"
-                    className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm"
-                    onClick={onClose}
-                  >
-                    {cancelText}
-                  </button>
-                </div>
-              )}
             </div>
           </Transition.Child>
         </div>

@@ -12,7 +12,7 @@ import { columnObject } from "./Columns/columns";
 const styles = {
   outerDivClass: "border-l border-r border-gray-300",
   topBgClass: "bg-red-500",
-  tableClass: "min-w-full  border-separate",
+  tableClass: "min-w-full border-separate",
   theadClass: "bg-white z-10",
   theadRowClass: "z-10",
   theadHeaderClass:
