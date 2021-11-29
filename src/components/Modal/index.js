@@ -18,6 +18,7 @@ export function Modal({
   cardStyle = {},
   ...rest
 }) {
+  const { children } = { ...rest };
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog
@@ -28,7 +29,7 @@ export function Modal({
         {...rest}
       >
         <div
-          className={`flex items-center justify-center min-h-screen ${
+          className={`flex items-center justify-center h-full ${
             containerClass || ""
           }`}
         >
@@ -55,7 +56,7 @@ export function Modal({
           >
             <div
               style={cardStyle}
-              className={`bg-white rounded-lg text-left shadow-xl transform transition-all overflow-hidden ${
+              className={`bg-white rounded-lg text-left shadow-xl transform transition-all ${
                 cardClass || ""
               }`}
             >
@@ -74,8 +75,7 @@ export function Modal({
                 </button>
               </div>
               <div className={contentClass}>
-                {title && title}
-                {body}
+                {children}
                 {!hideActions && (
                   <div className="flex justify-end mt-2">
                     <button

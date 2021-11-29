@@ -72,6 +72,7 @@ export function CheckDetails({ check, ...rest }) {
     !Number.isNaN(validCheck?.uptime?.passed) &&
     !Number.isNaN(validCheck?.uptime?.failed);
   const severityValue = validCheck?.severity || "-";
+  const statusHistoryList = validCheck?.checkStatuses;
 
   const details = {
     Name:
@@ -138,27 +139,40 @@ export function CheckDetails({ check, ...rest }) {
         <div className="bg-gray-100 w-full h-52" />
       </div>
       <PopupTabs
-        contentStyle={{ minHeight: "270px", marginTop: "-1px" }}
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          overflowY: "hidden"
+        }}
+        contentStyle={{
+          marginTop: "-1px",
+          display: "flex",
+          flexDirection: "column",
+          overflowY: "hidden"
+        }}
         tabs={{
           statusHistory: {
             label: "Status history",
             content: (
               <div
                 key="status-history"
-                className={`border border-gray-300 overflow-hidden overflow-y-auto relative ${styles.appleScrollbar}`}
-                style={{ maxHeight: "270px" }}
+                className={`border border-b-0 border-gray-300 overflow-hidden overflow-y-auto relative -mb-px ${styles.appleScrollbar}`}
               >
-                <StatusHistory check={validCheck} sticky />
+                {statusHistoryList && statusHistoryList.length > 0 ? (
+                  <StatusHistory check={validCheck} sticky />
+                ) : (
+                  <div className="h-64 flex items-center justify-center text-gray-400 text-md">
+                    No status history available
+                  </div>
+                )}
               </div>
-            )
+            ),
+            class: "flex flex-col overflow-y-hidden border-b border-gray-300"
           },
           checkDetails: {
             label: "Check details",
             content: (
-              <div
-                key="check-details"
-                className="px-6 py-6 border border-gray-300"
-              >
+              <div key="check-details" className="px-6 py-6">
                 <AccordionBox
                   content={
                     <div className="flex flex-row flex-wrap">
@@ -174,7 +188,8 @@ export function CheckDetails({ check, ...rest }) {
                   }
                 />
               </div>
-            )
+            ),
+            class: `flex flex-col overflow-y-auto  border border-gray-300 ${styles.appleScrollbar}`
           }
         }}
       />
@@ -261,7 +276,13 @@ function StatusHistory({ check, sticky = "false" }) {
   );
 }
 
-export function PopupTabs({ tabs, contentStyle, variant = "line", ...rest }) {
+export function PopupTabs({
+  tabs,
+  contentStyle,
+  contentClass,
+  variant = "line",
+  ...rest
+}) {
   const [selected, setSelected] = useState(Object.keys(tabs)[0]);
 
   const buttonStyles = {
@@ -309,9 +330,14 @@ export function PopupTabs({ tabs, contentStyle, variant = "line", ...rest }) {
           </button>
         ))}
       </div>
-      <div style={contentStyle}>
+      <div style={contentStyle} className={contentClass}>
         {Object.entries(tabs).map(
-          ([key, tab]) => selected === key && <div key={key}>{tab.content}</div>
+          ([key, tab]) =>
+            selected === key && (
+              <div className={tab.class} key={key}>
+                {tab.content}
+              </div>
+            )
         )}
       </div>
     </div>

@@ -385,22 +385,26 @@ export class Canary extends React.Component {
         <Modal
           open={selected != null}
           onClose={this.handleModalClose}
-          title={<CheckTitle check={selected} className="pb-2" />}
-          body={
+          containerClass="py-8"
+          cardClass="w-full"
+          cardStyle={{
+            maxWidth: "820px"
+          }}
+          contentClass="h-full px-8"
+          closeButtonStyle={{ padding: "2.25rem 2.25rem 0 0" }}
+          hideActions
+        >
+          <div
+            className="flex flex-col h-full py-8"
+            style={{ maxHeight: "calc(100vh - 4rem)" }}
+          >
+            <CheckTitle check={selected} className="pb-4" />
             <CheckDetails
               check={selected}
-              className={`flex-grow overflow-y-auto overflow-x-hidden pt-2 -mr-4 pr-3.5 ${styles.appleScrollbar}`}
+              className={`flex flex-col overflow-y-hidden ${styles.appleScrollbar}`}
             />
-          }
-          containerClass="py-4 h-full"
-          cardClass="w-full h-full flex flex-col"
-          cardStyle={{
-            maxWidth: "820px",
-            maxHeight: "900px"
-          }}
-          contentClass="flex flex-col h-full p-8"
-          closeButtonStyle={{ paddingTop: "2.25rem", paddingRight: "2.25rem" }}
-        />
+          </div>
+        </Modal>
       </div>
     );
   }
