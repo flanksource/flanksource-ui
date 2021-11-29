@@ -25,7 +25,8 @@ import { SidebarSubPanel } from "./SidebarSubPanel";
 import { RefreshIntervalDropdown } from "../Dropdown/RefreshIntervalDropdown";
 import { getLocalItem, setLocalItem } from "../../utils/storage";
 import { Modal } from "../Modal";
-import { CheckDetails, CheckTitle } from "./CanaryPopup";
+import { CheckTitle } from "./CanaryPopup/CheckTitle";
+import { CheckDetails } from "./CanaryPopup/CheckDetails";
 
 import styles from "./index.module.css";
 
