@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { IoChevronBackCircle } from "react-icons/io5";
 
+import mixins from "../../utils/mixins.module.css";
+
 export function Sidebar({ animated = false, settings, ...rest }) {
   const { children, className } = rest;
   const [collapsed, setCollapsed] = useState(false);
@@ -23,7 +25,7 @@ export function Sidebar({ animated = false, settings, ...rest }) {
       <div
         className={`flex-shrink-0 bg-gray-50 h-full overflow-x-hidden overflow-y-auto ${
           animated ? "transform duration-200" : ""
-        } ${className || ""}`}
+        } ${mixins.appleScrollbar} ${className || ""}`}
         style={{ width: collapsed ? "0" : "310px" }}
       >
         <div className="p-4" style={{ minWidth: animated ? "300px" : "" }}>

@@ -28,7 +28,7 @@ import { Modal } from "../Modal";
 import { CheckTitle } from "./CanaryPopup/CheckTitle";
 import { CheckDetails } from "./CanaryPopup/CheckDetails";
 
-import styles from "./index.module.css";
+import mixins from "../../utils/mixins.module.css";
 
 export class Canary extends React.Component {
   constructor(props) {
@@ -402,7 +402,7 @@ export class Canary extends React.Component {
             <CheckTitle check={selected} className="pb-4" />
             <CheckDetails
               check={selected}
-              className={`flex flex-col overflow-y-hidden ${styles.appleScrollbar}`}
+              className={`flex flex-col overflow-y-hidden ${mixins.appleScrollbar}`}
             />
           </div>
         </Modal>

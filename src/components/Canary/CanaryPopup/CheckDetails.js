@@ -7,7 +7,7 @@ import {
   capitalizeFirstLetter,
   toFixedIfNecessary
 } from "../../../utils/common";
-import styles from "../index.module.css";
+import mixins from "../../../utils/mixins.module.css";
 import { PopupTabs } from "./tabs";
 import { CheckStat } from "./CheckStat";
 import { getUptimePercentage } from "./utils";
@@ -109,7 +109,7 @@ export function CheckDetails({ check, ...rest }) {
             content: (
               <div
                 key="status-history"
-                className={`border border-b-0 border-gray-300 overflow-hidden overflow-y-auto relative -mb-px ${styles.appleScrollbar}`}
+                className={`border border-b-0 border-gray-300 overflow-hidden overflow-y-auto relative -mb-px ${mixins.appleScrollbar}`}
               >
                 {statusHistoryList && statusHistoryList.length > 0 ? (
                   <StatusHistory check={validCheck} sticky />
@@ -142,7 +142,7 @@ export function CheckDetails({ check, ...rest }) {
                 />
               </div>
             ),
-            class: `flex flex-col overflow-y-auto  border border-gray-300 ${styles.appleScrollbar}`
+            class: `flex flex-col overflow-y-auto  border border-gray-300 ${mixins.appleScrollbar}`
           }
         }}
       />
