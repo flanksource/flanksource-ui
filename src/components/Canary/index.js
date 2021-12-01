@@ -336,7 +336,7 @@ export class Canary extends React.Component {
         </div>
 
         {/* sidebar panel */}
-        <div className="mr-6">
+        <div className="mr-6 flex-grow">
           <Sidebar animated>
             <SidebarSubPanel
               icon={
