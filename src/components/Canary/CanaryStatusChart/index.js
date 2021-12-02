@@ -46,11 +46,10 @@ export function CanaryStatusChart({ data = sampleCheckData, ...rest }) {
         margin={{ top: 12, right: 0, bottom: 0, left: 0 }}
         data={data}
       >
-        <CartesianGrid stroke="rgba(0, 0, 0, 0.08)" strokeWidth={1} />
         <YAxis
           tickSize={0}
           tick={<CustomYTick tickFormatter={formatDuration} />}
-          stroke="rgba(0, 0, 0, 0.16)"
+          stroke="rgba(200, 200, 200, 1)"
           tickMargin={6}
           tickFormatter={formatDuration}
           fontSize={12}
@@ -60,14 +59,20 @@ export function CanaryStatusChart({ data = sampleCheckData, ...rest }) {
         <XAxis
           tickSize={0}
           tick={<CustomXTick tickFormatter={formatDate} />}
-          stroke="rgba(0, 0, 0, 0.16)"
+          stroke="rgba(200, 200, 200, 1)"
           tickMargin={4}
           tickFormatter={formatDate}
           fontSize={12}
           dataKey="time"
           name="Time"
         />
+        <CartesianGrid
+          stroke="rgba(230, 230, 230, 1)"
+          strokeWidth={1}
+          strokeDasharray="8 8"
+        />
         <Tooltip
+          animationDuration={0}
           cursor={{ stroke: "rgba(0, 0, 0, 0.12)" }}
           content={<CustomTooltip />}
         />
@@ -118,7 +123,7 @@ function CustomYTick({ tickFormatter = (value) => value, ...rest }) {
 const CustomTooltip = ({ active, payload }) => {
   if (active && payload && payload.length) {
     return (
-      <div className="flex flex-col bg-white p-3 border rounded-sm text-sm">
+      <div className="flex flex-col bg-white p-3 border rounded-sm text-xs">
         <p className="">
           <span className="text-gray-500">{payload[0].name}: </span>
           <span className="ml-1 text-gray-700">
