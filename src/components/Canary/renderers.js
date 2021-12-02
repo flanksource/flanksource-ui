@@ -5,6 +5,7 @@ import { DescriptionCard } from "../DescriptionCard";
 import { Table } from "../Table";
 import { isEmpty } from "./utils";
 import { Status } from "../Status";
+import { CanaryStatusChart } from "./CanaryStatusChart";
 
 export const empty = (
   <span className="text-gray-500 text-light text-xs">-</span>
@@ -236,7 +237,15 @@ export function CanaryDescription({ check: incoming }) {
       colspan: 2
     }
   ];
-  return <DescriptionCard items={items} />;
+  return (
+    <div>
+      {/* temporary chart. remove prior to merging to main. */}
+      <div className="h-80 pb-4">
+        <CanaryStatusChart />
+      </div>
+      <DescriptionCard items={items} />
+    </div>
+  );
 }
 
 export function StatusList({ check, checkStatuses }) {
