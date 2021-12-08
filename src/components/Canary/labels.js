@@ -147,11 +147,13 @@ export function getFilteredLabelsByChecks(checks, allLabels) {
 
   const checkLabels = {};
   checks.forEach((check) => {
-    Object.entries(check.labels).forEach(([k, v]) => {
-      if (!hasProperty(checkLabels, `canary:${k}:${v}`)) {
-        checkLabels[`canary:${k}:${v}`] = allLabels[`canary:${k}:${v}`];
-      }
-    });
+    if (check.labels && check.labels !== null) {
+      Object.entries(check.labels).forEach(([k, v]) => {
+        if (!hasProperty(checkLabels, `canary:${k}:${v}`)) {
+          checkLabels[`canary:${k}:${v}`] = allLabels[`canary:${k}:${v}`];
+        }
+      });
+    }
   });
   return checkLabels;
 }
