@@ -259,40 +259,46 @@ export function Table({
           ))}
         </thead>
         <tbody className={styles.tbodyClass} {...getTableBodyProps()}>
-          {rows.map((row) => {
-            prepareRow(row);
-            row.showNamespaceTags = showNamespaceTags;
-            row.hideNamespacePrefix = hideNamespacePrefix;
-            return (
-              <tr
-                key={row.id}
-                className={`${styles.tbodyRowClass} ${
-                  row.canExpand ? styles.tbodyRowExpandableClass : ""
-                }`}
-                style={{}}
-                onClick={
-                  row.canExpand
-                    ? () => toggleRowExpanded(row.id)
-                    : () => onUnexpandableRowClick(row.original)
-                }
-                {...row.getRowProps()}
-              >
-                {row.cells.map((cell) => (
-                  <td
-                    key={cell.column.Header}
-                    className={`${styles.tbodyDataClass} ${
-                      cell.column.cellClass || ""
-                    }`}
-                    {...cell.getCellProps()}
-                  >
-                    {cell.render("Cell")}
-                  </td>
-                ))}
-              </tr>
-            );
-          })}
+          {rows.length > 0 &&
+            rows.map((row) => {
+              prepareRow(row);
+              row.showNamespaceTags = showNamespaceTags;
+              row.hideNamespacePrefix = hideNamespacePrefix;
+              return (
+                <tr
+                  key={row.id}
+                  className={`${styles.tbodyRowClass} ${
+                    row.canExpand ? styles.tbodyRowExpandableClass : ""
+                  }`}
+                  style={{}}
+                  onClick={
+                    row.canExpand
+                      ? () => toggleRowExpanded(row.id)
+                      : () => onUnexpandableRowClick(row.original)
+                  }
+                  {...row.getRowProps()}
+                >
+                  {row.cells.map((cell) => (
+                    <td
+                      key={cell.column.Header}
+                      className={`${styles.tbodyDataClass} ${
+                        cell.column.cellClass || ""
+                      }`}
+                      {...cell.getCellProps()}
+                    >
+                      {cell.render("Cell")}
+                    </td>
+                  ))}
+                </tr>
+              );
+            })}
         </tbody>
       </table>
+      {rows.length <= 0 && (
+        <div className="flex items-center justify-center py-20 px-2  border-b border-gray-300 text-center text-gray-400">
+          No data available
+        </div>
+      )}
     </div>
   );
 }
