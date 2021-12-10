@@ -32,8 +32,11 @@ export function isHealthy(check) {
 }
 
 export function filterChecks(checks, hidePassing, labels) {
-  checks = orderBy(checks, (a) => a.description);
   const filtered = [];
+  if (checks == null) {
+    return filtered;
+  }
+  checks = orderBy(checks, (a) => a.description);
   for (const check of checks) {
     if (hidePassing && isHealthy(check)) {
       // eslint-disable-next-line no-continue
@@ -58,6 +61,9 @@ export function hasStringMatch(pattern, text) {
 }
 
 export function filterChecksByText(checks, textQuery) {
+  if (checks == null) {
+    return [];
+  }
   const text = textQuery.toLowerCase();
   const filtered = [...checks].filter((check) => {
     const match =
