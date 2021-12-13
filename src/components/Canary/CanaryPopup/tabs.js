@@ -1,12 +1,15 @@
-import React, { useState } from "react";
+import React, { useLayoutEffect, useRef, useState } from "react";
+import { classNames } from "../utils";
 
 export function PopupTabs({
   tabs,
   contentStyle,
+  shareHeight = false, // all tab content height would be determined by the tab with the tallest content
   contentClass,
   variant = "line",
   ...rest
 }) {
+  const [sharedHeight, setSharedHeight] = useState(0);
   const [selected, setSelected] = useState(Object.keys(tabs)[0]);
 
   const buttonStyles = {
@@ -30,6 +33,24 @@ export function PopupTabs({
       }
     }
   };
+
+  // Get shared tabContent height from the tallest tab element.
+  const sharedHeightRef = useRef();
+  useLayoutEffect(() => {
+    if (
+      sharedHeightRef.current &&
+      sharedHeightRef.current.children.length > 0
+    ) {
+      requestAnimationFrame(() => {
+        let maxHeight = 0;
+        Array.from(sharedHeightRef.current.children).forEach((o) => {
+          maxHeight = Math.max(o.clientHeight, maxHeight);
+        });
+        setSharedHeight(maxHeight);
+      });
+    }
+  }, [sharedHeightRef]);
+
   return (
     <div {...rest}>
       <div className={buttonStyles[variant].container} aria-label="Tabs">
@@ -54,14 +75,35 @@ export function PopupTabs({
           </button>
         ))}
       </div>
-      <div style={contentStyle} className={contentClass}>
+      <div
+        style={contentStyle}
+        className={classNames(
+          contentClass,
+          shareHeight && `relative ${sharedHeight}`
+        )}
+      >
         {Object.entries(tabs).map(
           ([key, tab]) =>
             selected === key && (
-              <div className={tab.class} key={key}>
+              <div
+                className={classNames(tab.class)}
+                style={{
+                  height: shareHeight ? `${sharedHeight + 2}px` : null
+                }}
+                key={key}
+              >
                 {tab.content}
               </div>
             )
+        )}
+        {shareHeight && (
+          <div className="absolute invisible" ref={sharedHeightRef}>
+            {Object.entries(tabs).map(([key, tab]) => (
+              <div className={classNames(tab.class)} key={key}>
+                {tab.content}
+              </div>
+            ))}
+          </div>
         )}
       </div>
     </div>

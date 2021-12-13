@@ -92,6 +92,7 @@ export function CheckDetails({ check, ...rest }) {
         <div className="bg-gray-100 w-full h-52" />
       </div>
       <PopupTabs
+        shareHeight
         style={{
           display: "flex",
           flexDirection: "column",
@@ -101,7 +102,8 @@ export function CheckDetails({ check, ...rest }) {
           marginTop: "-1px",
           display: "flex",
           flexDirection: "column",
-          overflowY: "hidden"
+          overflowY: "hidden",
+          overflowX: "hidden"
         }}
         tabs={{
           statusHistory: {
@@ -109,7 +111,7 @@ export function CheckDetails({ check, ...rest }) {
             content: (
               <div
                 key="status-history"
-                className={`border border-b-0 border-gray-300 overflow-hidden overflow-y-auto relative -mb-px ${mixins.appleScrollbar}`}
+                className={`border border-b-0 border-gray-300 bg-gray-50 overflow-hidden overflow-y-auto h-full relative -mb-px ${mixins.appleScrollbar}`}
               >
                 {statusHistoryList && statusHistoryList.length > 0 ? (
                   <StatusHistory check={validCheck} sticky />
@@ -120,7 +122,8 @@ export function CheckDetails({ check, ...rest }) {
                 )}
               </div>
             ),
-            class: "flex flex-col overflow-y-hidden border-b border-gray-300"
+            class:
+              "flex flex-col overflow-y-hidden border-b h-full border-gray-300"
           },
           checkDetails: {
             label: "Check details",
