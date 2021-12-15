@@ -13,12 +13,10 @@ import { readCanaryState, getDefaultForm } from "./state";
 import { filterChecks, filterChecksByText, isHealthy } from "./filter";
 import { CanaryTable } from "./table";
 import { CanaryCards } from "./card";
-import { CanarySorter, GetName } from "./data";
+import { CanarySorter } from "./data";
 import { version as appVersion } from "../../../package.json";
-import { CanaryDescription, Title } from "./renderers";
 
 import { StatCard } from "../StatCard";
-import { Modal } from "../Modal";
 import { CanaryTabs, filterChecksByTabSelection } from "./tabs";
 import { CanarySearchBar } from "./CanarySearchBar";
 import { Sidebar } from "../Sidebar";
@@ -26,15 +24,20 @@ import { Toggle } from "../Toggle";
 import { SidebarSubPanel } from "./SidebarSubPanel";
 import { RefreshIntervalDropdown } from "../Dropdown/RefreshIntervalDropdown";
 import { getLocalItem, setLocalItem } from "../../utils/storage";
+import { Modal } from "../Modal";
+import { CheckTitle } from "./CanaryPopup/CheckTitle";
+import { CheckDetails } from "./CanaryPopup/CheckDetails";
+
+import mixins from "../../utils/mixins.module.css";
 
 export class Canary extends React.Component {
   constructor(props) {
     super(props);
     this.timer = null;
     this.url = props.url;
-    this.modal = React.createRef();
     this.fetch = this.fetch.bind(this);
-    this.select = this.select.bind(this);
+    this.handleSelect = this.handleSelect.bind(this);
+    this.handleModalClose = this.handleModalClose.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
     this.handleSearchClear = this.handleSearchClear.bind(this);
     this.handleAutoRefreshChange = this.handleAutoRefreshChange.bind(this);
@@ -137,6 +140,18 @@ export class Canary extends React.Component {
     }
   }
 
+  handleSelect(check) {
+    this.setState({
+      selected: check
+    });
+  }
+
+  handleModalClose() {
+    this.setState({
+      selected: null
+    });
+  }
+
   setChecks(checks) {
     // set api Version from response (yet to be provided by API)
     let apiVersion;
@@ -160,15 +175,6 @@ export class Canary extends React.Component {
     this.setState({
       lastUpdated: date
     });
-  }
-
-  select(check) {
-    this.setState({
-      selected: check
-    });
-    if (this.modal.current != null) {
-      this.modal.current.show();
-    }
   }
 
   startRefreshTimer(interval) {
@@ -264,14 +270,14 @@ export class Canary extends React.Component {
               setTabSelection={this.handleTabSelect}
             />
             {layout === "card" && (
-              <CanaryCards checks={checks} onClick={this.select} />
+              <CanaryCards checks={checks} onClick={this.handleSelect} />
             )}
             {layout === "table" && (
               <CanaryTable
                 checks={checks}
                 labels={labels}
                 history={history}
-                onCheckClick={this.select}
+                onCheckClick={this.handleSelect}
                 showNamespaceTags={
                   tabBy !== "namespace" ? true : selectedTab === "all"
                 }
@@ -377,20 +383,29 @@ export class Canary extends React.Component {
             </SidebarSubPanel>
           </Sidebar>
         </div>
-        {selected != null && (
-          <Modal
-            ref={this.modal}
-            submitText=""
-            title={
-              <Title
-                title={GetName(selected)}
-                icon={selected.icon || selected.type}
-              />
-            }
-            body={<CanaryDescription check={selected} />}
-            open
-          />
-        )}
+        <Modal
+          open={selected != null}
+          onClose={this.handleModalClose}
+          containerClass="py-8"
+          cardClass="w-full"
+          cardStyle={{
+            maxWidth: "820px"
+          }}
+          contentClass="h-full px-8"
+          closeButtonStyle={{ padding: "2.25rem 2.25rem 0 0" }}
+          hideActions
+        >
+          <div
+            className="flex flex-col h-full py-8"
+            style={{ maxHeight: "calc(100vh - 4rem)" }}
+          >
+            <CheckTitle check={selected} className="pb-4" />
+            <CheckDetails
+              check={selected}
+              className={`flex flex-col overflow-y-hidden ${mixins.appleScrollbar}`}
+            />
+          </div>
+        </Modal>
       </div>
     );
   }

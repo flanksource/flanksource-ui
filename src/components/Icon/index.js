@@ -4,22 +4,25 @@ export function Icon({ size = "sm", name, className, alt = "", ...props }) {
   let iconClassName;
   switch (size) {
     case "xs":
-      iconClassName = "-ml-0.5 mr-2 h-4 w-4";
+      iconClassName = "h-4 w-4";
       break;
     case "sm":
-      iconClassName = "-ml-0.5 mr-2 h-4 w-4";
+      iconClassName = "h-4 w-4";
       break;
     case "md":
-      iconClassName = "-ml-1 mr-2 h-5 w-5";
+      iconClassName = "h-5 w-5";
       break;
     case "lg":
-      iconClassName = "-ml-1 mr-2 h-5 w-5";
+      iconClassName = "h-5 w-5";
       break;
     case "xl":
-      iconClassName = "-ml-1 mr-2 h-6 w-6";
+      iconClassName = "h-6 w-6";
+      break;
+    case "2xl":
+      iconClassName = "h-8 w-8";
       break;
     default:
-      iconClassName = "-ml-0.5 mr-2 h-4 w-4";
+      iconClassName = "h-4 w-4";
   }
   if (
     name != null &&
