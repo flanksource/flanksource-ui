@@ -83,14 +83,6 @@ export function CheckDetails({ check, ...rest }) {
           value={capitalizeFirstLetter(severityValue)}
         />
       </div>
-      {/* chart section */}
-      <div className="mb-6">
-        <div className="flex justify-between items-center mb-2">
-          <span className="text-lg font-medium">Health overview</span>
-          <span className="text-sm font-medium">(time dropdown)</span>
-        </div>
-        <div className="bg-gray-100 w-full h-52" />
-      </div>
       <PopupTabs
         shareHeight
         style={{
