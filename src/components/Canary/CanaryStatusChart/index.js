@@ -43,16 +43,17 @@ export function CanaryStatusChart({ data = sampleCheckData, ...rest }) {
   return (
     <ResponsiveContainer width="100%" height="100%" {...rest}>
       <ScatterChart
-        margin={{ top: 12, right: 0, bottom: 0, left: 0 }}
+        margin={{ top: 12, right: 0, bottom: 0, left: -20 }}
         data={data}
       >
         <YAxis
           tickSize={0}
           tick={<CustomYTick tickFormatter={formatDuration} />}
           stroke="rgba(200, 200, 200, 1)"
-          tickMargin={6}
+          tickMargin={4}
           tickFormatter={formatDuration}
           fontSize={12}
+          padding={{}}
           dataKey="duration"
           name="Latency"
         />
@@ -113,7 +114,14 @@ function CustomYTick({ tickFormatter = (value) => value, ...rest }) {
 
   return (
     <g transform={`translate(${x},${y})`}>
-      <text x={0} y={0} dy={6} textAnchor="end" fill="#666" fontSize={fontSize}>
+      <text
+        x={-36}
+        y={0}
+        dy={3}
+        textAnchor="start"
+        fill="#666"
+        fontSize={fontSize}
+      >
         {tickFormatter(payload.value)}
       </text>
     </g>
