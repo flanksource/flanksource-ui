@@ -246,15 +246,7 @@ export function CanaryDescription({ check: incoming }) {
       colspan: 2
     }
   ];
-  return (
-    <div>
-      {/* temporary chart. remove prior to merging to main. */}
-      <div className="h-80 pb-4">
-        <CanaryStatusChart />
-      </div>
-      <DescriptionCard items={items} />
-    </div>
-  );
+  return <DescriptionCard items={items} />;
 }
 
 export function StatusList({ check, checkStatuses }) {

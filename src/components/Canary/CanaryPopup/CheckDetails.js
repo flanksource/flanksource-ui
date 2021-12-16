@@ -13,6 +13,7 @@ import { CheckStat } from "./CheckStat";
 import { getUptimePercentage } from "./utils";
 import { StatusHistory } from "./StatusHistory";
 import { DetailField } from "./DetailField";
+import { CanaryStatusChart } from "../CanaryStatusChart";
 
 export function CheckDetails({ check, ...rest }) {
   const prevCheck = usePrevious(check);
@@ -82,6 +83,16 @@ export function CheckDetails({ check, ...rest }) {
           title="Severity"
           value={capitalizeFirstLetter(severityValue)}
         />
+      </div>
+      {/* chart section */}
+      <div className="mb-3">
+        <div className="flex justify-between items-center mb-2">
+          <span className="text-lg font-medium">Health overview</span>
+          <span className="text-sm font-medium">(time dropdown)</span>
+        </div>
+        <div className="w-full h-52 overflow-visible">
+          <CanaryStatusChart />
+        </div>
       </div>
       <PopupTabs
         shareHeight
