@@ -16,12 +16,12 @@ const styles = {
   theadClass: "bg-white z-10",
   theadRowClass: "z-10",
   theadHeaderClass:
-    "px-5 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-300",
+    "px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-300",
   tbodyClass: "mt-4 rounded-md",
   tbodyRowClass: "border cursor-pointer",
   tbodyRowExpandableClass: "cursor-pointer",
   tbodyDataClass: "whitespace-nowrap border-gray-300 border-b",
-  expandArrowIconClass: "ml-6 flex"
+  expandArrowIconClass: "ml-4 flex"
 };
 
 const sortByValidValues = new Map([
@@ -295,7 +295,7 @@ export function Table({
         </tbody>
       </table>
       {rows.length <= 0 && (
-        <div className="flex items-center justify-center py-20 px-2  border-b border-gray-300 text-center text-gray-400">
+        <div className="flex items-center justify-center py-20 px-2 border-b border-gray-300 text-center text-gray-400">
           No data available
         </div>
       )}

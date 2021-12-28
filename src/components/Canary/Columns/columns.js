@@ -8,7 +8,7 @@ function getChecksHeaderTitle() {
 
 function ExpandArrow({ row }) {
   return row.canExpand ? (
-    <div className="ml-6 flex">
+    <div className="ml-4 flex">
       <div
         className={`transform duration-200 ${
           row.isExpanded ? "rotate-90" : ""
@@ -29,7 +29,7 @@ export const firstColumns = {
   name: {
     Header: getChecksHeaderTitle,
     accessor: "name",
-    cellClass: `px-5 py-2 w-full max-w-0 overflow-hidden overflow-ellipsis relative`
+    cellClass: `px-4 py-2 w-full max-w-0 overflow-hidden overflow-ellipsis relative`
   }
 };
 

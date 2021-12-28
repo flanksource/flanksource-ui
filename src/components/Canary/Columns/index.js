@@ -7,7 +7,6 @@ import { Duration, Percentage, Title, empty, StatusList } from "../renderers";
 import { removeNamespacePrefix } from "../utils";
 import { GetName } from "../data";
 import { Badge } from "../../Badge";
-import style from "../index.module.css";
 
 export function Cell({ state, value, row, column }) {
   const { pivotCellType } = state;
@@ -65,29 +64,39 @@ export function TitleCell({ row }) {
   }
 
   return (
-    <div className={style.checkTitleRow}>
-      <span
-        className="flex flex-row items-center"
-        style={{
-          paddingLeft: `${row.depth * 1.1}rem`
-        }}
-      >
-        <Title title={title} icon={rowValues.icon || rowValues.type} />
-        {row.canExpand && rowValues.subRows && rowValues?.subRows.length > 1 && (
-          <span className="ml-1 flex items-center">
+    <div
+      className="flex flex-row items-center"
+      style={{
+        paddingLeft: `${row.depth * 1.1}rem`
+      }}
+    >
+      <Title
+        title={title}
+        icon={rowValues.icon || rowValues.type}
+        className="overflow-hidden overflow-ellipsis"
+      />
+      {row.canExpand && rowValues.subRows && rowValues?.subRows.length > 1 && (
+        <span className="ml-1 flex items-center">
+          <Badge
+            className="ml-1"
+            colorClass="bg-gray-200 text-gray-800"
+            roundedClass="rounded-xl"
+            text={rowValues?.subRows.length}
+            size="xs"
+          />
+        </span>
+      )}
+      {row.showNamespaceTags ? (
+        <div
+          className="flex items-center ml-2"
+          style={{
+            position: "sticky",
+            right: "-20px"
+          }}
+        >
+          {rowValues.namespaces ? (
             <Badge
-              className="ml-1"
-              colorClass="bg-gray-200 text-gray-800"
-              roundedClass="rounded-xl"
-              text={rowValues?.subRows.length}
-              size="xs"
-            />
-          </span>
-        )}
-        {row.showNamespaceTags ? (
-          rowValues.namespaces ? (
-            <Badge
-              className="ml-2"
+              className="z-10"
               text={`${rowValues.namespaces[0]}${
                 rowValues.namespaces.length > 1 ? ", ..." : ""
               }`}
@@ -99,10 +108,10 @@ export function TitleCell({ row }) {
               size="xs"
             />
           ) : rowValues.namespace ? (
-            <Badge className="ml-2" text={rowValues.namespace} size="xs" />
-          ) : null
-        ) : null}
-      </span>
+            <Badge className="z-10" text={rowValues.namespace} size="xs" />
+          ) : null}
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -189,7 +198,7 @@ export function makeColumnsForPivot({
   pivotSet,
   pivotCellType,
   firstColumns,
-  cellClass = `px-5 py-2`
+  cellClass = `px-4 py-2`
 } = {}) {
   // For syntax https://stackoverflow.com/a/26578323/15581317
   const columns = [];
@@ -223,7 +232,7 @@ export function getColumns({ columnObject, pivotCellType = null }) {
       ...(id == null && typeof accessor === "function" && { id: k }),
       ...(accessor != null && { accessor }),
       Header: Header ?? (() => null),
-      cellClass: cellClass ?? `px-5 py-2`,
+      cellClass: cellClass ?? `px-4 py-2`,
       Cell: IncomingCell ?? Cell,
       sortType:
         pivotCellType != null
