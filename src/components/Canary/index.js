@@ -418,9 +418,9 @@ export class Canary extends React.Component {
           open={selected != null}
           onClose={this.handleModalClose}
           containerClass="py-8"
-          cardClass="w-full"
+          cardClass="w-full h-full"
           cardStyle={{
-            maxWidth: "820px"
+            maxWidth: "1280px"
           }}
           contentClass="h-full px-8"
           closeButtonStyle={{ padding: "2.25rem 2.25rem 0 0" }}
