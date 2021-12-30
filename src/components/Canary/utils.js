@@ -9,7 +9,7 @@ export function getPercentage(uptime) {
 }
 
 export function isEmpty(val) {
-  return val == null || val === "";
+  return val == null || val === undefined | val === "";
 }
 
 export function classNames(...classes) {

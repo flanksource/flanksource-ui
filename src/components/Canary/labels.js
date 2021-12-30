@@ -1,7 +1,7 @@
+
 export function getLabels(checks) {
   if (checks == null || typeof checks[Symbol.iterator] !== "function") {
     // eslint-disable-next-line no-console
-    console.error("unknown check format", checks);
     return {};
   }
   const labelMap = {};
@@ -59,8 +59,8 @@ export const getLabelKeys = (labels) =>
     return acc;
   }, {});
 
-// // filter checks based on exclusion/inclusion label filters
-// // exclusion has a higher priority, and is considered prior to inclusion
+// filter checks based on exclusion/inclusion label filters
+// exclusion has a higher priority, and is considered prior to inclusion
 export function filterChecksByLabels(checks, labelFilters) {
   const excludedLabels = labelFilters.exclude;
   const includedLabels = labelFilters.include;
@@ -147,13 +147,13 @@ export function getFilteredLabelsByChecks(checks, allLabels) {
 
   const checkLabels = {};
   checks.forEach((check) => {
-    if (check.labels && check.labels !== null) {
-      Object.entries(check.labels).forEach(([k, v]) => {
-        if (!hasProperty(checkLabels, `canary:${k}:${v}`)) {
-          checkLabels[`canary:${k}:${v}`] = allLabels[`canary:${k}:${v}`];
-        }
-      });
+    if (_.isNil(check.labels)) {
+      return
     }
+    _.forEach(check.labels, (v, k) => {
+      const id = `canary:${k}:${v}`
+      checkLabels[id] = allLabels[id];
+    });
   });
   return checkLabels;
 }
