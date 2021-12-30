@@ -23,6 +23,7 @@ export function getDefaultForm(labels, incoming = {}) {
     tabBy: defaultTabSelections.namespace.value,
     pivotBy: defaultPivotSelections.none.value,
     pivotLabel: "",
+    timeRange: "1h",
     pivotCellType: "checkStatuses",
     hidePassing: true,
     labels: { ...initialLabelState }
@@ -45,9 +46,11 @@ export function readCanaryState(url) {
     labels,
     pivotBy,
     pivotLabel,
-    pivotCellType
+    pivotCellType,
+    timeRange
   } = decodeUrlSearchParams(url);
   const canaryState = {
+    timeRange,
     ...(layout != null && typeof layout === "string" && { layout }),
     ...(tabBy != null && typeof groupBy === "string" && { tabBy }),
     ...(hidePassing != null &&
@@ -73,6 +76,7 @@ export function initialiseFormState(defaultValues, url) {
     pivotLabel,
     hidePassing,
     pivotCellType,
+    timeRange,
     labels: decodedLabels = {},
     ...rest
   } = decodeUrlSearchParams(url);
@@ -127,7 +131,8 @@ export function initialiseFormState(defaultValues, url) {
     pivotBy: pivotByValueOrDefault,
     pivotLabel: pivotLabelValueOrDefault,
     pivotCellType: pivotCellTypeValueOrDefault,
-    labels: newLabelState
+    labels: newLabelState,
+    timeRange: timeRange
   };
   return { formState, fullState: { ...rest, ...formState } };
 }
@@ -135,6 +140,7 @@ export function initialiseFormState(defaultValues, url) {
 export function updateFormState(update, url, labels) {
   const {
     layout,
+    timeRange,
     tabBy,
     groupBy,
     pivotBy,
@@ -191,7 +197,8 @@ export function updateFormState(update, url, labels) {
     pivotBy: pivotByValueOrDefault,
     pivotLabel: pivotLabelValueOrDefault,
     pivotCellType: pivotCellTypeValueOrDefault,
-    labels: newLabels
+    labels: newLabels,
+    timeRange: timeRange
   };
   return { formState };
 }

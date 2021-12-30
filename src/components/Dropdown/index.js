@@ -16,6 +16,24 @@ export function Dropdown({
   name,
   ...rest
 }) {
+
+  let _items = items
+  if (_.isArray(items)) {
+    _items = {}
+    items.forEach(item => {
+      let i = {
+        label: item.label || item.description,
+        name: item.name || item.id,
+        id: item.id || item.name || item.value,
+        key: item.id || item.name || item.value,
+        icon: item.icon,
+        description: item.description,
+        value: item.value,
+      }
+      _items[i.id] = i
+    })
+  }
+  items = _items
   return (
     <>
       <div className={className}>

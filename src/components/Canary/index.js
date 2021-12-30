@@ -2,7 +2,7 @@ import React from "react";
 import { orderBy, reduce, debounce } from "lodash";
 import history from "history/browser";
 import dayjs from "dayjs";
-
+import { encodeObjectToUrlSearchParams } from "./url";
 import { AiFillSetting } from "react-icons/ai";
 
 import { FilterForm } from "./FilterForm/index";
@@ -182,15 +182,24 @@ export class Canary extends React.Component {
     this.timer = setInterval(() => this.fetch(), interval * 1000);
   }
 
+
   fetch() {
     if (this.url == null) {
       return;
     }
-    fetch(this.url)
+    let params = encodeObjectToUrlSearchParams({
+      "start": this.state.urlState.timeRange
+    })
+
+    fetch(this.url + "?" + params)
       .then((result) => result.json())
       .then((e) => {
+        if (!_.isEmpty(e.error)) {
+          console.error(e.error);
+        } else {
         this.setChecks(e);
         this.setLastUpdated(new Date());
+        }
       });
   }
 
@@ -237,6 +246,7 @@ export class Canary extends React.Component {
     );
 
     const filterProps = {
+      onServerSideFilterChange: this.fetch,
       labels,
       checks: stateChecks,
       currentTabChecks: filterChecksByTabSelection(
