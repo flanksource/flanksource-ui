@@ -34,6 +34,7 @@ export class Canary extends React.Component {
   constructor(props) {
     super(props);
     this.timer = null;
+    this.ticker = null
     this.url = props.url;
     this.fetch = this.fetch.bind(this);
     this.handleSelect = this.handleSelect.bind(this);
@@ -47,12 +48,13 @@ export class Canary extends React.Component {
     this.setChecks = this.setChecks.bind(this);
     this.setLastUpdated = this.setLastUpdated.bind(this);
     this.history = history;
-    this.unhistory = () => {};
+    this.unhistory = () => { };
 
     const labels = getLabels(props.checks);
 
     this.state = {
       apiVersion: null,
+      requestDuration: null,
       urlState: getDefaultForm(labels),
       selected: null,
       autoRefresh: JSON.parse(getLocalItem("canaryAutoRefreshState")) ?? true,
@@ -95,6 +97,9 @@ export class Canary extends React.Component {
 
   componentWillUnmount() {
     this.unhistory();
+    clearInterval(this.timer);
+    clearInterval(this.ticker);
+    this.ticker = null;
     this.timer = null;
   }
 
@@ -158,13 +163,21 @@ export class Canary extends React.Component {
     if (checks.apiVersion) {
       apiVersion = checks.apiVersion;
     }
+    let duration;
+    if (checks.duration) {
+      duration = checks.duration;
+    }
     if (checks.checks) {
       // FIXME unify pipeline for demo and remote
       checks = checks.checks;
     }
+    if (checks == null) {
+      checks = []
+    }
     const labels = getLabels(checks);
     this.setState({
       checks,
+      requestDuration: duration,
       apiVersion,
       // eslint-disable-next-line react/no-unused-state
       labels
@@ -180,6 +193,12 @@ export class Canary extends React.Component {
   startRefreshTimer(interval) {
     clearInterval(this.timer);
     this.timer = setInterval(() => this.fetch(), interval * 1000);
+    clearInterval(this.ticker);
+    this.ticker = setInterval(() => {
+      this.setState({
+        lastUpdatedAge: dayjs(this.state.lastUpdated).fromNow()
+      });
+    }, 3000);
   }
 
 
@@ -211,12 +230,14 @@ export class Canary extends React.Component {
       urlState,
       checks: stateChecks,
       lastUpdated,
+      lastUpdatedAge,
       labels,
       selectedTab,
       autoRefresh,
       refreshInterval,
       searchQuery,
-      apiVersion
+      apiVersion,
+      requestDuration
     } = state;
     const { hidePassing, layout, tabBy } = urlState;
 
@@ -304,12 +325,12 @@ export class Canary extends React.Component {
               {apiVersion && <div>API version: {apiVersion}</div>}
             </div>
             <div>
-              {lastUpdated && (
+              {lastUpdatedAge && (
                 <>
-                  Checks last updated at{" "}
-                  {dayjs(lastUpdated).format("h:mm:ss A, DD[th] MMMM YYYY")}
+                  Last updated {lastUpdatedAge}
                 </>
               )}
+              {requestDuration && ` in ${requestDuration}ms`}
             </div>
           </div>
         </div>
