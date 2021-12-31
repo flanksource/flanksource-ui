@@ -207,7 +207,7 @@ export class Canary extends React.Component {
       return;
     }
     let params = encodeObjectToUrlSearchParams({
-      "start": this.state.urlState.timeRange
+      "start": _.isEmpty(this.state.urlState.timeRange) || this.state.urlState.timeRange === "undefined" ? "1h" : this.state.urlState.timeRange,
     })
 
     fetch(this.url + "?" + params)

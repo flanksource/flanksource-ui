@@ -19,6 +19,9 @@ export function CheckDetails({ check, ...rest }) {
   const prevCheck = usePrevious(check);
   const validCheck = check || prevCheck;
 
+  if (validCheck == null) {
+    return <></>
+  }
   const [val, unit] = toFormattedDuration(validCheck?.latency?.rolling1h);
   const latencyValue = validCheck?.latency?.rolling1h ? `${val}${unit}` : "-";
   const uptimeValue = toFixedIfNecessary(getUptimePercentage(validCheck), 2);

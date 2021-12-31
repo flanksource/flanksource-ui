@@ -132,7 +132,7 @@ export function initialiseFormState(defaultValues, url) {
     pivotLabel: pivotLabelValueOrDefault,
     pivotCellType: pivotCellTypeValueOrDefault,
     labels: newLabelState,
-    timeRange: timeRange
+    timeRange: _.isEmpty(timeRange) || timeRange === "undefined" ? "1h" : timeRange
   };
   return { formState, fullState: { ...rest, ...formState } };
 }
@@ -198,7 +198,7 @@ export function updateFormState(update, url, labels) {
     pivotLabel: pivotLabelValueOrDefault,
     pivotCellType: pivotCellTypeValueOrDefault,
     labels: newLabels,
-    timeRange: timeRange
+    timeRange: _.isEmpty(timeRange) || timeRange == "undefined" ? "1h" : timeRange
   };
   return { formState };
 }
