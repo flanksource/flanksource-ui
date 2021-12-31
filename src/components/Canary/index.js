@@ -36,7 +36,7 @@ export class Canary extends React.Component {
     this.timer = null;
     this.ticker = null
     this.url = props.url;
-    this.fetch = this.fetch.bind(this);
+    this.fetch = _.throttle(this.fetch.bind(this), 1000);
     this.handleSelect = this.handleSelect.bind(this);
     this.handleModalClose = this.handleModalClose.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
@@ -57,6 +57,7 @@ export class Canary extends React.Component {
       requestDuration: null,
       urlState: getDefaultForm(labels),
       selected: null,
+      graphData: null,
       autoRefresh: JSON.parse(getLocalItem("canaryAutoRefreshState")) ?? true,
       // @TODO: default refresh interval is always 10. might want to memoize this to local state. - john
       refreshInterval: getLocalItem("canaryRefreshIntervalState") || 10,
@@ -146,9 +147,28 @@ export class Canary extends React.Component {
   }
 
   handleSelect(check) {
+    let params = encodeObjectToUrlSearchParams({
+      "check": check.key,
+      "start": "7d",
+      "count": 300,
+    })
     this.setState({
-      selected: check
-    });
+      selected: check,
+      graphData: null,
+    })
+
+    fetch(this.url + "/graph" + "?" + params)
+      .then((result) => result.json())
+      .then((e) => {
+        if (!_.isEmpty(e.error)) {
+          console.error(e.error);
+        } else {
+          console.log(e)
+          this.setState({
+            graphData: e.status,
+          })
+        }
+      });
   }
 
   handleModalClose() {
@@ -216,8 +236,8 @@ export class Canary extends React.Component {
         if (!_.isEmpty(e.error)) {
           console.error(e.error);
         } else {
-        this.setChecks(e);
-        this.setLastUpdated(new Date());
+          this.setChecks(e);
+          this.setLastUpdated(new Date());
         }
       });
   }
@@ -226,6 +246,7 @@ export class Canary extends React.Component {
     const { state } = this;
     const {
       selected,
+      graphData,
       labelFilters,
       urlState,
       checks: stateChecks,
@@ -433,6 +454,7 @@ export class Canary extends React.Component {
             <CheckTitle check={selected} className="pb-4" />
             <CheckDetails
               check={selected}
+              graphData={graphData}
               className={`flex flex-col overflow-y-hidden ${mixins.appleScrollbar}`}
             />
           </div>

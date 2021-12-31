@@ -14,18 +14,30 @@ import {
 // @TODO: duration should be formatted properly, not just by ms
 const formatDuration = (duration) => `${duration}ms`;
 
-// @TODO: color should depend on a pass/fail boolean rather than avgduration
-const getFillByDuration = (duration, avgDuration) =>
-  duration > avgDuration ? "#df1a1a" : "#2cbd27";
+const getFill = (entry) =>
+  entry.status ? "#2cbd27" : "#df1a1a";
 
-export function CanaryStatusChart({ data = sampleCheckData, ...rest }) {
-  // @TODO: color should depend on a pass/fail boolean rather than avgduration
+export function CanaryStatusChart({ data, ...rest }) {
+
+  data = data || []
+  let timeRange = 0;
+  if (data.length > 0) {
+    (new Date(data[0].time) - new Date(data[data.length - 1].time)) / 1000 / 60
+  }
+
+  // @TODO: date should be formatted properly depending on selection, not just by DD/MM
+  var formatDate = (date) => dayjs(date).format("HH:mm");
+  if (timeRange > 60 * 24 * 30) {
+    formatDate = (date) => dayjs(date).format("MMM DD");
+  } else if (timeRange > 60 * 24) {
+    formatDate = (date) => dayjs(date).format("MMM DD HH:mm");
+  }
   const averageDuration =
     data && data.length > 0
       ? Object.values(data).reduce(
-          (acc, current) => acc + current.duration,
-          0
-        ) / data.length
+        (acc, current) => acc + current.duration,
+        0
+      ) / data.length
       : null;
 
   return (
@@ -52,6 +64,10 @@ export function CanaryStatusChart({ data = sampleCheckData, ...rest }) {
           tickMargin={4}
           tickFormatter={formatDate}
           fontSize={12}
+          reversed={true}
+          // type="number"
+          allowDuplicatedCategory={false}
+          // scale="time"
           dataKey="time"
           name="Time"
         />
@@ -69,7 +85,7 @@ export function CanaryStatusChart({ data = sampleCheckData, ...rest }) {
           {data.map((entry) => (
             <Cell
               key={`cell-${entry.time}`}
-              fill={getFillByDuration(entry.duration, averageDuration)}
+              fill={getFill(entry)}
             />
           ))}
         </Scatter>
@@ -123,7 +139,7 @@ const CustomTooltip = ({ active, payload }) => {
         <p className="">
           <span className="text-gray-500">{payload[0].name}: </span>
           <span className="ml-1 text-gray-700">
-            {formatDate(payload[0].value)}
+            {payload[0].value}
           </span>
         </p>
         <p className="">

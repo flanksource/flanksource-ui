@@ -15,7 +15,7 @@ import { StatusHistory } from "./StatusHistory";
 import { DetailField } from "./DetailField";
 import { CanaryStatusChart } from "../CanaryStatusChart";
 
-export function CheckDetails({ check, ...rest }) {
+export function CheckDetails({ check, graphData, ...rest }) {
   const prevCheck = usePrevious(check);
   const validCheck = check || prevCheck;
 
@@ -38,9 +38,15 @@ export function CheckDetails({ check, ...rest }) {
     Labels: (
       <>
         {validCheck?.labels &&
-          Object.entries(validCheck?.labels).map((entry) => {
+          Object.entries(validCheck?.labels).map((entry, v) => {
             const key = entry[0];
-            return <Badge className="mr-1 mb-1" key={key} text={key} />;
+            let value = entry[1];
+            if (value == "true") {
+              value = ""
+            }
+            return <>
+              <Badge className="mr-1 mb-1" key={key} text={key} value={value} /> <br />
+            </>;
           })}
       </>
     ),
@@ -91,10 +97,10 @@ export function CheckDetails({ check, ...rest }) {
       <div className="mb-3">
         <div className="flex justify-between items-center mb-2">
           <span className="text-lg font-medium">Health overview</span>
-          <span className="text-sm font-medium">(time dropdown)</span>
+          {/* <span className="text-sm font-medium">(time dropdown)</span> */}
         </div>
         <div className="w-full h-52 overflow-visible">
-          <CanaryStatusChart />
+          <CanaryStatusChart data={graphData} />
         </div>
       </div>
       <PopupTabs
