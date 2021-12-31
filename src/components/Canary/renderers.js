@@ -1,11 +1,6 @@
-import { format } from "timeago.js";
-import { Badge } from "../Badge";
 import { Icon } from "../Icon";
-import { DescriptionCard } from "../DescriptionCard";
-import { Table } from "../Table";
-import { isEmpty } from "./utils";
 import { Status } from "../Status";
-import { CanaryStatusChart } from "./CanaryStatusChart";
+import { isEmpty } from "./utils";
 
 export const empty = (
   <span className="text-gray-500 text-light text-xs">-</span>
@@ -60,28 +55,6 @@ export function Duration({ ms }) {
   );
 }
 
-export function Labels({ labels }) {
-  if (labels == null) {
-    return null;
-  }
-  const items = [];
-  for (const k in labels) {
-    if (labels[k] === "true") {
-      items.push(
-        <div key={`${k}`}>
-          <Badge text={k} />{" "}
-        </div>
-      );
-    } else {
-      items.push(
-        <div key={`${k}-${labels[k]}`}>
-          <Badge text={`${k}: ${labels[k]}`} />{" "}
-        </div>
-      );
-    }
-  }
-  return items;
-}
 
 export function Latency({ check }) {
   if (check == null || check.latency == null) {
@@ -144,110 +117,6 @@ export function Uptime({ check }) {
   );
 }
 
-export function CanaryDescription({ check: incoming }) {
-  const check =
-    incoming?.pivoted === true
-      ? incoming[incoming.valueLookup] ?? null
-      : incoming;
-  const statii = check.checkStatuses != null ? check.checkStatuses : [];
-  const data = [];
-  statii.forEach((status) => {
-    data.push({
-      key: `${check.key}.${check.description}`,
-      age: format(`${status.time} UTC`),
-      message: (
-        <>
-          <CanaryStatus status={status} /> {status.message}{" "}
-          {!isEmpty(status.error) &&
-            status.error.split("\n").map((item) => (
-              <>
-                {item}
-                <br />
-              </>
-            ))}
-        </>
-      ),
-      duration: <Duration ms={status.duration} />
-    });
-  });
-
-  const items = [
-    {
-      key: `${check.key}name`,
-      name: "Name",
-      value: (
-        <span>
-          {check.namespace}/{check.name}
-        </span>
-      )
-    },
-    {
-      key: `${check.key}namespace`,
-      name: "Namespace",
-      value: <Badge text={check.namespace} />
-    },
-    {
-      key: `${check.key}latency`,
-      name: "Latency",
-      value: <Latency check={check} />
-    },
-    {
-      key: `${check.key}uptime`,
-      name: "Uptime",
-      value: <Uptime check={check} />
-    },
-    {
-      key: `${check.key}owner`,
-      name: "Owner",
-      value: check.owner
-    },
-    {
-      key: `${check.key}severity`,
-      name: "Severity",
-      value: check.severity
-    },
-    {
-      key: `${check.key}labels`,
-      name: "Labels",
-      value: <Labels labels={check.labels} />
-    },
-    {
-      key: `${check.key}runner`,
-      name: "Runner",
-      value: <Labels labels={check.runnerLabels} />
-    },
-
-    {
-      key: `${check.key}interval`,
-      name: "Interval",
-      value: check.interval > 0 ? check.interval : check.schedule
-    },
-    {
-      key: `${check.key}type`,
-      name: "Type",
-      value: check.type
-    },
-    {
-      key: `${check.key}endpoint`,
-      name: "Endpoint",
-      value: check.endpoint,
-      colspan: 2
-    },
-    {
-      key: `${check.key}checks`,
-      name: "Checks",
-      value: (
-        <Table
-          id={`${check.key}-table`}
-          data={data}
-          columns={["Age", "Duration", "Message"]}
-        />
-      ),
-      colspan: 2
-    }
-  ];
-  return <DescriptionCard items={items} />;
-}
 
 export function StatusList({ check, checkStatuses }) {
   if (check && check.checkStatuses && check.checkStatuses.length > 0) {

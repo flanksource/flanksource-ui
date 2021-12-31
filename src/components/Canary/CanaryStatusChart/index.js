@@ -10,19 +10,7 @@ import {
   YAxis
 } from "recharts";
 
-const sampleCheckData = [
-  { time: "2021-12-01T07:27:00Z", duration: 400, status: true },
-  { time: "2021-12-02T07:27:00Z", duration: 300, status: true },
-  { time: "2021-12-03T07:27:00Z", duration: 500, status: false },
-  { time: "2021-12-04T07:27:00Z", duration: 100, status: true },
-  { time: "2021-12-05T07:27:00Z", duration: 140, status: true },
-  { time: "2021-12-06T07:27:00Z", duration: 500, status: false },
-  { time: "2021-12-07T07:27:00Z", duration: 320, status: true },
-  { time: "2021-12-08T07:27:00Z", duration: 520, status: false }
-];
 
-// @TODO: date should be formatted properly depending on selection, not just by DD/MM
-const formatDate = (date) => dayjs(date).format("DD/MM");
 // @TODO: duration should be formatted properly, not just by ms
 const formatDuration = (duration) => `${duration}ms`;
 
