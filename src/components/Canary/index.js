@@ -1,5 +1,5 @@
 import React from "react";
-import { orderBy, reduce, debounce, _ } from "lodash";
+import { orderBy, reduce, debounce, throttle, isEmpty } from "lodash";
 import history from "history/browser";
 import dayjs from "dayjs";
 import { AiFillSetting } from "react-icons/ai";
@@ -35,7 +35,7 @@ export class Canary extends React.Component {
     this.timer = null;
     this.ticker = null;
     this.url = props.url;
-    this.fetch = _.throttle(this.fetch.bind(this), 1000);
+    this.fetch = throttle(this.fetch.bind(this), 1000);
     this.handleSelect = this.handleSelect.bind(this);
     this.handleModalClose = this.handleModalClose.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
@@ -47,7 +47,8 @@ export class Canary extends React.Component {
     this.setChecks = this.setChecks.bind(this);
     this.setLastUpdated = this.setLastUpdated.bind(this);
     this.history = history;
-    this.unhistory = () => {};
+    // eslint-disable-next-line prettier/prettier
+    this.unhistory = () => { };
 
     const labels = getLabels(props.checks);
 
@@ -159,7 +160,7 @@ export class Canary extends React.Component {
     fetch(`${this.url}/graph?${params}`)
       .then((result) => result.json())
       .then((e) => {
-        if (!_.isEmpty(e.error)) {
+        if (!isEmpty(e.error)) {
           // eslint-disable-next-line no-console
           console.error(e.error);
         } else {
@@ -229,14 +230,13 @@ export class Canary extends React.Component {
     const { urlState } = this.state;
     const { timeRange } = urlState;
     const params = encodeObjectToUrlSearchParams({
-      start:
-        _.isEmpty(timeRange) || timeRange === "undefined" ? "1h" : timeRange
+      start: isEmpty(timeRange) || timeRange === "undefined" ? "1h" : timeRange
     });
 
     fetch(`${this.url}?${params}`)
       .then((result) => result.json())
       .then((e) => {
-        if (!_.isEmpty(e.error)) {
+        if (!isEmpty(e.error)) {
           // eslint-disable-next-line no-console
           console.error(e.error);
         } else {
