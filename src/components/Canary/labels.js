@@ -1,4 +1,4 @@
-import { _ } from "lodash";
+import { isNil, forEach } from "lodash";
 
 export function getLabels(checks) {
   if (checks == null || typeof checks[Symbol.iterator] !== "function") {
@@ -145,10 +145,10 @@ export function filterChecksByLabels(checks, labelFilters) {
 export function getFilteredLabelsByChecks(checks, allLabels) {
   const checkLabels = {};
   checks.forEach((check) => {
-    if (_.isNil(check.labels)) {
+    if (isNil(check.labels)) {
       return;
     }
-    _.forEach(check.labels, (v, k) => {
+    forEach(check.labels, (v, k) => {
       const id = `canary:${k}:${v}`;
       checkLabels[id] = allLabels[id];
     });
