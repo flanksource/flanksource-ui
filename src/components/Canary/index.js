@@ -1,10 +1,9 @@
 import React from "react";
-import { orderBy, reduce, debounce } from "lodash";
+import { orderBy, reduce, debounce, throttle, isEmpty } from "lodash";
 import history from "history/browser";
 import dayjs from "dayjs";
-
 import { AiFillSetting } from "react-icons/ai";
-
+import { encodeObjectToUrlSearchParams } from "./url";
 import { FilterForm } from "./FilterForm/index";
 import { getLabels, filterChecksByLabels, getLabelFilters } from "./labels";
 
@@ -34,8 +33,9 @@ export class Canary extends React.Component {
   constructor(props) {
     super(props);
     this.timer = null;
+    this.ticker = null;
     this.url = props.url;
-    this.fetch = this.fetch.bind(this);
+    this.fetch = throttle(this.fetch.bind(this), 1000);
     this.handleSelect = this.handleSelect.bind(this);
     this.handleModalClose = this.handleModalClose.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
@@ -47,14 +47,17 @@ export class Canary extends React.Component {
     this.setChecks = this.setChecks.bind(this);
     this.setLastUpdated = this.setLastUpdated.bind(this);
     this.history = history;
-    this.unhistory = () => {};
+    // eslint-disable-next-line prettier/prettier
+    this.unhistory = () => { };
 
     const labels = getLabels(props.checks);
 
     this.state = {
       apiVersion: null,
+      requestDuration: null,
       urlState: getDefaultForm(labels),
       selected: null,
+      graphData: null,
       autoRefresh: JSON.parse(getLocalItem("canaryAutoRefreshState")) ?? true,
       // @TODO: default refresh interval is always 10. might want to memoize this to local state. - john
       refreshInterval: getLocalItem("canaryRefreshIntervalState") || 10,
@@ -95,6 +98,9 @@ export class Canary extends React.Component {
 
   componentWillUnmount() {
     this.unhistory();
+    clearInterval(this.timer);
+    clearInterval(this.ticker);
+    this.ticker = null;
     this.timer = null;
   }
 
@@ -141,9 +147,28 @@ export class Canary extends React.Component {
   }
 
   handleSelect(check) {
-    this.setState({
-      selected: check
+    const params = encodeObjectToUrlSearchParams({
+      check: check.key,
+      start: "7d",
+      count: 300
     });
+    this.setState({
+      selected: check,
+      graphData: null
+    });
+
+    fetch(`${this.url}/graph?${params}`)
+      .then((result) => result.json())
+      .then((e) => {
+        if (!isEmpty(e.error)) {
+          // eslint-disable-next-line no-console
+          console.error(e.error);
+        } else {
+          this.setState({
+            graphData: e.status
+          });
+        }
+      });
   }
 
   handleModalClose() {
@@ -158,13 +183,21 @@ export class Canary extends React.Component {
     if (checks.apiVersion) {
       apiVersion = checks.apiVersion;
     }
+    let duration;
+    if (checks.duration) {
+      duration = checks.duration;
+    }
     if (checks.checks) {
       // FIXME unify pipeline for demo and remote
       checks = checks.checks;
     }
+    if (checks == null) {
+      checks = [];
+    }
     const labels = getLabels(checks);
     this.setState({
       checks,
+      requestDuration: duration,
       apiVersion,
       // eslint-disable-next-line react/no-unused-state
       labels
@@ -180,17 +213,36 @@ export class Canary extends React.Component {
   startRefreshTimer(interval) {
     clearInterval(this.timer);
     this.timer = setInterval(() => this.fetch(), interval * 1000);
+    clearInterval(this.ticker);
+    this.ticker = setInterval(() => {
+      const { lastUpdated } = this.state;
+      const age = dayjs(lastUpdated).fromNow();
+      this.setState({
+        lastUpdatedAge: age
+      });
+    }, 3000);
   }
 
   fetch() {
     if (this.url == null) {
       return;
     }
-    fetch(this.url)
+    const { urlState } = this.state;
+    const { timeRange } = urlState;
+    const params = encodeObjectToUrlSearchParams({
+      start: isEmpty(timeRange) || timeRange === "undefined" ? "1h" : timeRange
+    });
+
+    fetch(`${this.url}?${params}`)
       .then((result) => result.json())
       .then((e) => {
-        this.setChecks(e);
-        this.setLastUpdated(new Date());
+        if (!isEmpty(e.error)) {
+          // eslint-disable-next-line no-console
+          console.error(e.error);
+        } else {
+          this.setChecks(e);
+          this.setLastUpdated(new Date());
+        }
       });
   }
 
@@ -198,16 +250,18 @@ export class Canary extends React.Component {
     const { state } = this;
     const {
       selected,
+      graphData,
       labelFilters,
       urlState,
       checks: stateChecks,
-      lastUpdated,
+      lastUpdatedAge,
       labels,
       selectedTab,
       autoRefresh,
       refreshInterval,
       searchQuery,
-      apiVersion
+      apiVersion,
+      requestDuration
     } = state;
     const { hidePassing, layout, tabBy } = urlState;
 
@@ -237,6 +291,7 @@ export class Canary extends React.Component {
     );
 
     const filterProps = {
+      onServerSideFilterChange: this.fetch,
       labels,
       checks: stateChecks,
       currentTabChecks: filterChecksByTabSelection(
@@ -294,18 +349,14 @@ export class Canary extends React.Component {
               {apiVersion && <div>API version: {apiVersion}</div>}
             </div>
             <div>
-              {lastUpdated && (
-                <>
-                  Checks last updated at{" "}
-                  {dayjs(lastUpdated).format("h:mm:ss A, DD[th] MMMM YYYY")}
-                </>
-              )}
+              {lastUpdatedAge && <>Last updated {lastUpdatedAge}</>}
+              {requestDuration && ` in ${requestDuration}ms`}
             </div>
           </div>
         </div>
 
         {/* sidebar panel */}
-        <div className="mr-6">
+        <div className="mr-6 flex-grow">
           <Sidebar animated>
             <SidebarSubPanel
               icon={
@@ -387,9 +438,9 @@ export class Canary extends React.Component {
           open={selected != null}
           onClose={this.handleModalClose}
           containerClass="py-8"
-          cardClass="w-full"
+          cardClass="w-full h-full"
           cardStyle={{
-            maxWidth: "820px"
+            maxWidth: "1280px"
           }}
           contentClass="h-full px-8"
           closeButtonStyle={{ padding: "2.25rem 2.25rem 0 0" }}
@@ -402,6 +453,7 @@ export class Canary extends React.Component {
             <CheckTitle check={selected} className="pb-4" />
             <CheckDetails
               check={selected}
+              graphData={graphData}
               className={`flex flex-col overflow-y-hidden ${mixins.appleScrollbar}`}
             />
           </div>

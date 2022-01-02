@@ -1,5 +1,6 @@
 export function Badge({
   text,
+  value,
   size = "sm",
   dot,
   title,
@@ -28,6 +29,7 @@ export function Badge({
         )}
         {text}
       </span>
+      {value != null && `: ${value}`}
     </>
   );
 }
