@@ -62,13 +62,9 @@ export const timeRanges = [
     icon: <BsClock />,
     description: "3 weeks",
     value: "3w"
-  },
+  }
 ];
 
-
-
-export function TimeRange({
-  ...rest
-}) {
-  return (<Dropdown {...rest} items={timeRanges} />);
+export function TimeRange({ ...rest }) {
+  return <Dropdown {...rest} items={timeRanges} />;
 }

@@ -20,7 +20,7 @@ export function CheckDetails({ check, graphData, ...rest }) {
   const validCheck = check || prevCheck;
 
   if (validCheck == null) {
-    return <></>
+    return <></>;
   }
   const [val, unit] = toFormattedDuration(validCheck?.latency?.rolling1h);
   const latencyValue = validCheck?.latency?.rolling1h ? `${val}${unit}` : "-";
@@ -38,15 +38,23 @@ export function CheckDetails({ check, graphData, ...rest }) {
     Labels: (
       <>
         {validCheck?.labels &&
-          Object.entries(validCheck?.labels).map((entry, v) => {
+          Object.entries(validCheck?.labels).map((entry) => {
             const key = entry[0];
             let value = entry[1];
-            if (value == "true") {
-              value = ""
+            if (value === "true" || value === true) {
+              value = "";
             }
-            return <>
-              <Badge className="mr-1 mb-1" key={key} text={key} value={value} /> <br />
-            </>;
+            return (
+              <>
+                <Badge
+                  className="mr-1 mb-1"
+                  key={key}
+                  text={key}
+                  value={value}
+                />{" "}
+                <br />
+              </>
+            );
           })}
       </>
     ),

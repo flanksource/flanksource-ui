@@ -55,7 +55,6 @@ export function Duration({ ms }) {
   );
 }
 
-
 export function Latency({ check }) {
   if (check == null || check.latency == null) {
     return empty;
@@ -116,7 +115,6 @@ export function Uptime({ check }) {
     />
   );
 }
-
 
 export function StatusList({ check, checkStatuses }) {
   if (check && check.checkStatuses && check.checkStatuses.length > 0) {

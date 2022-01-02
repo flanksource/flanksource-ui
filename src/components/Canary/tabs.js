@@ -20,9 +20,10 @@ export function filterChecksByTabSelection(tabBy, selectedTab, checks) {
       filteredChecks = checks.filter((o) => o.namespace === selectedTab);
     } else {
       // filtered by non-boolean labels
-      filteredChecks = checks.filter((o) =>
-        Object.prototype.hasOwnProperty.call(o.labels, tabBy) &&
-        o.labels[tabBy] === selectedTab
+      filteredChecks = checks.filter(
+        (o) =>
+          Object.prototype.hasOwnProperty.call(o.labels, tabBy) &&
+          o.labels[tabBy] === selectedTab
       );
     }
   }
@@ -52,7 +53,7 @@ export function generateTabs(tabBy, checks) {
     const label = tabBy;
     const matchingLabelValues = checks.reduce((acc, o) => {
       if (o.labels == null) {
-        return acc
+        return acc;
       }
       const labelKeys = Object.keys(o.labels);
       if (labelKeys.length > 0 && labelKeys.includes(label)) {

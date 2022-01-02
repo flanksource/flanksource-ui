@@ -1,3 +1,4 @@
+import { _ } from "lodash";
 import { decodeUrlSearchParams } from "../url";
 import { isPlainObject } from "../../../lib/isPlainObject";
 import {
@@ -132,7 +133,8 @@ export function initialiseFormState(defaultValues, url) {
     pivotLabel: pivotLabelValueOrDefault,
     pivotCellType: pivotCellTypeValueOrDefault,
     labels: newLabelState,
-    timeRange: _.isEmpty(timeRange) || timeRange === "undefined" ? "1h" : timeRange
+    timeRange:
+      _.isEmpty(timeRange) || timeRange === "undefined" ? "1h" : timeRange
   };
   return { formState, fullState: { ...rest, ...formState } };
 }
@@ -198,7 +200,8 @@ export function updateFormState(update, url, labels) {
     pivotLabel: pivotLabelValueOrDefault,
     pivotCellType: pivotCellTypeValueOrDefault,
     labels: newLabels,
-    timeRange: _.isEmpty(timeRange) || timeRange == "undefined" ? "1h" : timeRange
+    timeRange:
+      _.isEmpty(timeRange) || timeRange === "undefined" ? "1h" : timeRange
   };
   return { formState };
 }

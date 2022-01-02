@@ -1,10 +1,9 @@
 import React from "react";
-import { orderBy, reduce, debounce } from "lodash";
+import { orderBy, reduce, debounce, _ } from "lodash";
 import history from "history/browser";
 import dayjs from "dayjs";
-import { encodeObjectToUrlSearchParams } from "./url";
 import { AiFillSetting } from "react-icons/ai";
-
+import { encodeObjectToUrlSearchParams } from "./url";
 import { FilterForm } from "./FilterForm/index";
 import { getLabels, filterChecksByLabels, getLabelFilters } from "./labels";
 
@@ -34,7 +33,7 @@ export class Canary extends React.Component {
   constructor(props) {
     super(props);
     this.timer = null;
-    this.ticker = null
+    this.ticker = null;
     this.url = props.url;
     this.fetch = _.throttle(this.fetch.bind(this), 1000);
     this.handleSelect = this.handleSelect.bind(this);
@@ -48,7 +47,7 @@ export class Canary extends React.Component {
     this.setChecks = this.setChecks.bind(this);
     this.setLastUpdated = this.setLastUpdated.bind(this);
     this.history = history;
-    this.unhistory = () => { };
+    this.unhistory = () => {};
 
     const labels = getLabels(props.checks);
 
@@ -147,26 +146,26 @@ export class Canary extends React.Component {
   }
 
   handleSelect(check) {
-    let params = encodeObjectToUrlSearchParams({
-      "check": check.key,
-      "start": "7d",
-      "count": 300,
-    })
+    const params = encodeObjectToUrlSearchParams({
+      check: check.key,
+      start: "7d",
+      count: 300
+    });
     this.setState({
       selected: check,
-      graphData: null,
-    })
+      graphData: null
+    });
 
-    fetch(this.url + "/graph" + "?" + params)
+    fetch(`${this.url}/graph?${params}`)
       .then((result) => result.json())
       .then((e) => {
         if (!_.isEmpty(e.error)) {
+          // eslint-disable-next-line no-console
           console.error(e.error);
         } else {
-          console.log(e)
           this.setState({
-            graphData: e.status,
-          })
+            graphData: e.status
+          });
         }
       });
   }
@@ -192,7 +191,7 @@ export class Canary extends React.Component {
       checks = checks.checks;
     }
     if (checks == null) {
-      checks = []
+      checks = [];
     }
     const labels = getLabels(checks);
     this.setState({
@@ -215,25 +214,30 @@ export class Canary extends React.Component {
     this.timer = setInterval(() => this.fetch(), interval * 1000);
     clearInterval(this.ticker);
     this.ticker = setInterval(() => {
+      const { lastUpdated } = this.state;
+      const age = dayjs(lastUpdated).fromNow();
       this.setState({
-        lastUpdatedAge: dayjs(this.state.lastUpdated).fromNow()
+        lastUpdatedAge: age
       });
     }, 3000);
   }
-
 
   fetch() {
     if (this.url == null) {
       return;
     }
-    let params = encodeObjectToUrlSearchParams({
-      "start": _.isEmpty(this.state.urlState.timeRange) || this.state.urlState.timeRange === "undefined" ? "1h" : this.state.urlState.timeRange,
-    })
+    const { urlState } = this.state;
+    const { timeRange } = urlState;
+    const params = encodeObjectToUrlSearchParams({
+      start:
+        _.isEmpty(timeRange) || timeRange === "undefined" ? "1h" : timeRange
+    });
 
-    fetch(this.url + "?" + params)
+    fetch(`${this.url}?${params}`)
       .then((result) => result.json())
       .then((e) => {
         if (!_.isEmpty(e.error)) {
+          // eslint-disable-next-line no-console
           console.error(e.error);
         } else {
           this.setChecks(e);
@@ -250,7 +254,6 @@ export class Canary extends React.Component {
       labelFilters,
       urlState,
       checks: stateChecks,
-      lastUpdated,
       lastUpdatedAge,
       labels,
       selectedTab,
@@ -346,11 +349,7 @@ export class Canary extends React.Component {
               {apiVersion && <div>API version: {apiVersion}</div>}
             </div>
             <div>
-              {lastUpdatedAge && (
-                <>
-                  Last updated {lastUpdatedAge}
-                </>
-              )}
+              {lastUpdatedAge && <>Last updated {lastUpdatedAge}</>}
               {requestDuration && ` in ${requestDuration}ms`}
             </div>
           </div>

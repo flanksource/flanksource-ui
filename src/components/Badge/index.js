@@ -29,7 +29,7 @@ export function Badge({
         )}
         {text}
       </span>
-      {value != null && ": " + value}
+      {value != null && `: ${value}`}
     </>
   );
 }

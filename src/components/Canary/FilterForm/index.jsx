@@ -22,7 +22,7 @@ export function FilterForm({
   checks,
   history,
   currentTabChecks = null,
-  onServerSideFilterChange = null,
+  onServerSideFilterChange = null
 }) {
   const searchParams = window.location.search;
   const { formState, fullState } = initialiseFormState(
@@ -38,8 +38,7 @@ export function FilterForm({
       ? getFilteredLabelsByChecks(currentTabChecks, labels)
       : labels;
 
-
-  filteredLabels = Object.values(filteredLabels)
+  filteredLabels = Object.values(filteredLabels);
 
   filteredLabels = filteredLabels.sort((a, b) => {
     const aLower = a.key.toLowerCase();
@@ -60,11 +59,12 @@ export function FilterForm({
     }
   }, [formState, fullState, labels, history, reset]);
 
-  if (onServerSideFilterChange != null) {
-    useEffect(() => {
-      onServerSideFilterChange()
-    }, [formState.timeRange]);
-  }
+  useEffect(() => {
+    if (onServerSideFilterChange != null) {
+      onServerSideFilterChange();
+    }
+  }, [formState.timeRange, onServerSideFilterChange]);
+
   const watchLayout = watch("layout");
   const watchPivotBy = watch("pivotBy");
 
@@ -85,7 +85,6 @@ export function FilterForm({
   return (
     <form className="relative">
       <div className="mb-8">
-
         <TimeRange
           control={control}
           name="timeRange"
@@ -102,7 +101,6 @@ export function FilterForm({
 
         {watchLayout === "table" && (
           <>
-
             <GroupByDropdown
               name="groupBy"
               control={control}

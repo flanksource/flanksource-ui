@@ -1,3 +1,4 @@
+import { _ } from "lodash";
 
 export function getLabels(checks) {
   if (checks == null || typeof checks[Symbol.iterator] !== "function") {
@@ -142,16 +143,13 @@ export function filterChecksByLabels(checks, labelFilters) {
 // filter labels based on the currently available checks
 // (only include labels present in current checks list)
 export function getFilteredLabelsByChecks(checks, allLabels) {
-  const hasProperty = (obj, keyName) =>
-    Object.prototype.hasOwnProperty.call(obj, keyName);
-
   const checkLabels = {};
   checks.forEach((check) => {
     if (_.isNil(check.labels)) {
-      return
+      return;
     }
     _.forEach(check.labels, (v, k) => {
-      const id = `canary:${k}:${v}`
+      const id = `canary:${k}:${v}`;
       checkLabels[id] = allLabels[id];
     });
   });

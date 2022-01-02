@@ -10,35 +10,28 @@ import {
   YAxis
 } from "recharts";
 
-
 // @TODO: duration should be formatted properly, not just by ms
 const formatDuration = (duration) => `${duration}ms`;
 
-const getFill = (entry) =>
-  entry.status ? "#2cbd27" : "#df1a1a";
+const getFill = (entry) => (entry.status ? "#2cbd27" : "#df1a1a");
 
 export function CanaryStatusChart({ data, ...rest }) {
-
-  data = data || []
+  data = data || [];
   let timeRange = 0;
   if (data.length > 0) {
-    (new Date(data[0].time) - new Date(data[data.length - 1].time)) / 1000 / 60
+    timeRange =
+      (new Date(data[0].time) - new Date(data[data.length - 1].time)) /
+      1000 /
+      60;
   }
 
   // @TODO: date should be formatted properly depending on selection, not just by DD/MM
-  var formatDate = (date) => dayjs(date).format("HH:mm");
+  let formatDate = (date) => dayjs(date).format("HH:mm");
   if (timeRange > 60 * 24 * 30) {
     formatDate = (date) => dayjs(date).format("MMM DD");
   } else if (timeRange > 60 * 24) {
     formatDate = (date) => dayjs(date).format("MMM DD HH:mm");
   }
-  const averageDuration =
-    data && data.length > 0
-      ? Object.values(data).reduce(
-        (acc, current) => acc + current.duration,
-        0
-      ) / data.length
-      : null;
 
   return (
     <ResponsiveContainer width="100%" height="100%" {...rest}>
@@ -64,7 +57,7 @@ export function CanaryStatusChart({ data, ...rest }) {
           tickMargin={4}
           tickFormatter={formatDate}
           fontSize={12}
-          reversed={true}
+          reversed
           // type="number"
           allowDuplicatedCategory={false}
           // scale="time"
@@ -83,10 +76,7 @@ export function CanaryStatusChart({ data, ...rest }) {
         />
         <Scatter name="Check Statuses" data={data} fill="rgba(0, 255, 0, 1)">
           {data.map((entry) => (
-            <Cell
-              key={`cell-${entry.time}`}
-              fill={getFill(entry)}
-            />
+            <Cell key={`cell-${entry.time}`} fill={getFill(entry)} />
           ))}
         </Scatter>
       </ScatterChart>
@@ -138,9 +128,7 @@ const CustomTooltip = ({ active, payload }) => {
       <div className="flex flex-col bg-white p-3 border rounded-sm text-xs">
         <p className="">
           <span className="text-gray-500">{payload[0].name}: </span>
-          <span className="ml-1 text-gray-700">
-            {payload[0].value}
-          </span>
+          <span className="ml-1 text-gray-700">{payload[0].value}</span>
         </p>
         <p className="">
           <span className="text-gray-500">{payload[1].name}: </span>
