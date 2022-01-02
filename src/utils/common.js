@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime"
+import relativeTime from "dayjs/plugin/relativeTime";
 
-dayjs.extend(relativeTime)
+dayjs.extend(relativeTime);
 
 export function toFixedIfNecessary(value, dp) {
   return +parseFloat(value).toFixed(dp);
