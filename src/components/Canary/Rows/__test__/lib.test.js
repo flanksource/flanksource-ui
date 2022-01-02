@@ -45,18 +45,18 @@ describe("prepareRows", () => {
     expect(meta.pivotBy).toBe(pivotBy);
     expect(meta.pivoted).toBe(true);
   });
-  test("prepareRows({ tableData[noGrouping], hideNamespacePrefix: false }) => { meta[empty], rows: [ { ...check } ]}", () => {
-    const { rows, meta } = prepareRows({
-      tableData: subsetOne,
-      hideNamespacePrefix: false
-    });
-    rows.forEach((obj, i) =>
-      expect(obj).toEqual(makeRow({ row: subsetOne[i] }))
-    );
-    expect(meta.pivotSet).toEqual(new Set());
-    expect(meta.pivotBy).toBe(null);
-    expect(meta.pivoted).toBe(false);
-  });
+  // test("prepareRows({ tableData[noGrouping], hideNamespacePrefix: false }) => { meta[empty], rows: [ { ...check } ]}", () => {
+  //   const { rows, meta } = prepareRows({
+  //     tableData: subsetOne,
+  //     hideNamespacePrefix: false
+  //   });
+  //   rows.forEach((obj, i) =>
+  //     expect(obj).toEqual(makeRow({ row: subsetOne[i] }))
+  //   );
+  //   expect(meta.pivotSet).toEqual(new Set());
+  //   expect(meta.pivotBy).toBe(null);
+  //   expect(meta.pivoted).toBe(false);
+  // });
   test("prepareRows({ tableData[noGrouping], pivotBy, hideNamespacePrefix: false }) => { meta[filled], rows: [ { pivoted: true, [pivot]: { ...check } ]}", () => {
     const pivotBy = "namespace";
     const { rows, meta } = prepareRows({
