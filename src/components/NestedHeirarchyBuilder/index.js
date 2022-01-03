@@ -33,18 +33,6 @@ export function NestedHeirarchyBuilder({ ...rest }) {
   };
 
   const setDeepValue = (rootNode, traverseOrder, key, value) => {
-    console.log(
-      "[setDeepVal]",
-      "rootNode:",
-      rootNode,
-      ", traverseOrder:",
-      traverseOrder,
-      ", key:",
-      key,
-      ", value",
-      value
-    );
-
     if (rootNode.id !== traverseOrder[0]) {
       return undefined;
     }
@@ -55,7 +43,6 @@ export function NestedHeirarchyBuilder({ ...rest }) {
       currentNode = nextNode;
     });
     currentNode[key] = value;
-    console.log("newTree", newTree);
     return newTree;
   };
 
@@ -74,9 +61,23 @@ export function NestedHeirarchyBuilder({ ...rest }) {
     setTree(newTree);
   };
 
+  const handleDeleteNode = (traverseOrder) => {
+    const IdToDelete = traverseOrder.pop();
+    const children = getDeepValue(tree, traverseOrder, "children");
+    const deleted = children.filter((obj) => obj.id !== IdToDelete);
+    const newTree = setDeepValue(
+      { ...tree },
+      traverseOrder,
+      "children",
+      deleted
+    );
+    setTree(newTree);
+  };
+
   const treeFunctions = {
     handleNodeChange,
     handleAddNode,
+    handleDeleteNode,
     setTree
   };
 
@@ -87,55 +88,66 @@ export function NestedHeirarchyBuilder({ ...rest }) {
       </div>
       <div className="mt-12 w-full">
         <div>Generated tree:</div>
-        <textarea className="w-full" value={JSON.stringify(tree)} />
+        <textarea
+          onChange={() => {}}
+          className="w-full"
+          value={JSON.stringify(tree)}
+        />
       </div>
     </div>
   );
 }
 
 function Node({ node, treeFunctions, parentArray }) {
-  const { handleNodeChange, handleAddNode } = treeFunctions;
+  const { handleNodeChange, handleAddNode, handleDeleteNode } = treeFunctions;
   const [editMode, setEditMode] = useState(false);
   const [descriptionInputValue, setDescriptionInputValue] = useState(
     node.description
   );
 
-  const handleDescriptionSave = () => {
-    handleNodeChange(
-      [...parentArray, node.id],
-      "description",
-      descriptionInputValue
-    );
-  };
-
   return (
     <div key={node.id} className="border border-red-500 p-3 w-full">
-      <div className="border border-black flex flex-col">
-        <div className="flex">
-          <div className="flex-grow">
-            {!editMode ? (
-              node.description
-            ) : (
-              <input
-                className="w-full"
-                defaultValue={descriptionInputValue}
-                onChange={(e) => setDescriptionInputValue(e.target.value)}
-              />
-            )}
+      <div className="flex flex-row">
+        <div className="border border-black flex flex-col flex-grow">
+          <div className="flex">
+            <div className="flex-grow">
+              {!editMode ? (
+                node.description
+              ) : (
+                <input
+                  className="w-full"
+                  defaultValue={descriptionInputValue}
+                  onChange={(e) => setDescriptionInputValue(e.target.value)}
+                />
+              )}
+            </div>
           </div>
-          <button
-            className="px-2 bg-blue-700 text-white"
-            type="button"
-            onClick={() => {
-              if (editMode) {
-                handleDescriptionSave();
-              }
-              setEditMode(!editMode);
-            }}
-          >
-            {editMode ? "save" : "edit"}
-          </button>
         </div>
+        <button
+          className="ml-2 px-2 bg-blue-700 text-white"
+          type="button"
+          onClick={() => {
+            if (editMode) {
+              handleNodeChange(
+                [...parentArray, node.id],
+                "description",
+                descriptionInputValue
+              );
+            }
+            setEditMode(!editMode);
+          }}
+        >
+          {editMode ? "save" : "edit"}
+        </button>
+        {parentArray.length > 0 && (
+          <button
+            className="ml-2 px-2 bg-blue-700 text-white"
+            type="button"
+            onClick={() => handleDeleteNode([...parentArray, node.id])}
+          >
+            delete
+          </button>
+        )}
       </div>
 
       {node.children && node.children.length > 0 && (
