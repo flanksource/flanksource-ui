@@ -12,6 +12,7 @@ import { Modal } from "./Modal";
 import { Status } from "./Status";
 import { Table } from "./Table";
 import { Toggle } from "./Toggle";
+import { NestedHeirarchyBuilder } from "./NestedHeirarchyBuilder";
 
 export {
   Badge,
@@ -27,5 +28,6 @@ export {
   Modal,
   Status,
   Table,
-  Toggle
+  Toggle,
+  NestedHeirarchyBuilder
 };

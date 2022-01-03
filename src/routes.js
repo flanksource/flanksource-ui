@@ -1,5 +1,6 @@
 import { Examples } from "./pages/Examples";
 import { CanaryPage } from "./pages/Examples/canary";
+import { HeirarchyTestPage } from "./pages/Examples/heirarchyTest";
 
 export const routes = {
   examples: {
@@ -13,6 +14,12 @@ export const routes = {
     exact: true,
     path: `/`,
     component: <CanaryPage />
+  },
+  heirarchyTest: {
+    name: "HeirarchyTestPage",
+    exact: true,
+    path: `/heirarchyTest`,
+    component: <HeirarchyTestPage />
   }
 };
 
