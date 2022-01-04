@@ -171,7 +171,7 @@ function Node({ node, treeFunctions, parentArray }) {
           </MiniButton>
 
           <div className="flex">
-            {!isRoot && (
+            {!isRoot && editMode && (
               <MiniButton
                 className="rounded-md bg-red-400 text-white"
                 onClick={() => handleDeleteNode([...parentArray, node.id])}
