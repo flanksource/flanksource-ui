@@ -1,15 +1,19 @@
 import React, { useState } from "react";
 import Randomstring from "randomstring";
 
-import { IoMdAdd } from "react-icons/io";
-import { BsXDiamond } from "react-icons/bs";
+import { IoMdAdd, IoMdSave } from "react-icons/io";
+import { BsPencil, BsInfoCircle } from "react-icons/bs";
+
+import { AiFillDelete } from "react-icons/ai";
+import "./index.css";
+import { Icon } from "../Icon";
 
 const sampleTree = {
   id: 1,
   description: "",
   hasRating: false,
   rating: 0,
-  icon: "azure",
+  icon: "junit",
   children: []
 };
 
@@ -116,88 +120,122 @@ function Node({ node, treeFunctions, parentArray }) {
   return (
     <div
       key={node.id}
-      className="w-full border border-gray-150 mb-1 last:mb-0"
+      className="w-full flex border border-gray-150 mb-1 last:mb-0"
       style={{
-        padding: "6px 0 3px 2px",
+        padding: "4px 0 2px 3px",
         borderRightWidth: isRoot ? "1px" : "0",
         borderTopLeftRadius: "4px",
-        borderBottomLeftRadius: "4px"
+        borderBottomLeftRadius: "4px",
+        animation: !isRoot && "1.2s ease-out 0s 1 highlightOnLoad"
       }}
     >
-      <div className="flex flex-row items-center pr-2">
-        <div
-          className="flex items-center justify-center  rounded-full mr-0"
-          style={{ width: "29px", height: "29px" }}
-        >
-          <BsXDiamond style={{ fontSize: "19px" }} />
-        </div>
-        <div className="flex flex-col flex-grow">
-          <div className="flex">
-            <div className="flex-grow">
-              {!editMode ? (
-                <span className="px-1">{node.description}</span>
-              ) : (
-                <input
-                  className="w-full px-1 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 border border-gray-300 rounded-md"
-                  defaultValue={descriptionInputValue}
-                  placeholder="Hypothesis"
-                  onChange={(e) => setDescriptionInputValue(e.target.value)}
-                />
-              )}
-            </div>
-          </div>
-        </div>
-        <button
-          className="ml-2 px-2 bg-blue-700 text-white"
-          type="button"
-          onClick={() => {
-            if (editMode) {
-              handleNodeChange(
-                [...parentArray, node.id],
-                "description",
-                descriptionInputValue
-              );
-            }
-            setEditMode(!editMode);
-          }}
-        >
-          {editMode ? "save" : "edit"}
-        </button>
-        {!isRoot && (
-          <button
-            className="ml-2 px-2 bg-blue-700 text-white"
-            type="button"
-            onClick={() => handleDeleteNode([...parentArray, node.id])}
-          >
-            delete
-          </button>
+      <div
+        className="flex items-center justify-center flex-shrink-0 rounded-full mr-0.5"
+        style={{ width: "26px", height: "26px" }}
+      >
+        {node.icon ? (
+          <Icon name={node.icon} className="" size="md" />
+        ) : (
+          <span className=" text-md text-gray-400">
+            <BsInfoCircle style={{ fontSize: "20px" }} />
+          </span>
         )}
       </div>
 
-      <div className="flex items-center text-xs text-gray-500 mt-1 mb-1.5 ml-7">
-        <button
-          type="button"
-          className="px-2 py-0.5 flex items-center justify-center border border-gray-300 text-gray-600 rounded-full"
-          style={{}}
-          onClick={() => handleAddNode([...parentArray, node.id])}
-        >
-          <IoMdAdd style={{ fontSize: "13px" }} />
-          <span className="ml-1">Add hypothesis</span>
-        </button>
-      </div>
-
-      {node.children && node.children.length > 0 && (
-        <div className="ml-7">
-          {node.children.map((child) => (
-            <Node
-              node={child}
-              treeFunctions={treeFunctions}
-              parentArray={[...parentArray, node.id]}
-              key={child.id}
+      <div className="flex flex-col w-full">
+        <div className="flex flex-col pr-2">
+          {!editMode ? (
+            <div
+              className={`ml-0.5 ${!node.description && "text-gray-400"}`}
+              style={{ marginTop: "1px", marginBottom: "1px" }}
+            >
+              {node.description || "(none)"}
+            </div>
+          ) : (
+            <input
+              className="w-full px-1 mr-2 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 border border-gray-300 rounded-md"
+              defaultValue={descriptionInputValue}
+              placeholder="Hypothesis"
+              onChange={(e) => setDescriptionInputValue(e.target.value)}
             />
-          ))}
+          )}
         </div>
-      )}
+
+        <div className="flex items-center justify-between mt-1 mb-1.5 mr-2">
+          <MiniButton
+            className="border border-gray-300 text-gray-500 rounded-md"
+            onClick={() => handleAddNode([...parentArray, node.id])}
+          >
+            <IoMdAdd style={{ fontSize: "13px" }} />
+            <span className="ml-1 text-xs">Add hypothesis</span>
+          </MiniButton>
+
+          <div className="flex">
+            {!isRoot && (
+              <MiniButton
+                className="rounded-md bg-red-400 text-white"
+                onClick={() => handleDeleteNode([...parentArray, node.id])}
+              >
+                <AiFillDelete style={{ fontSize: "14px" }} />
+                <span className="ml-1 mt-0.5 text-xs">Delete</span>
+              </MiniButton>
+            )}
+            <MiniButton
+              className={`ml-2 rounded-md border ${
+                editMode
+                  ? "bg-blue-500 border-blue-500 text-gray-50"
+                  : "text-gray-500 border-gray-300"
+              }`}
+              onClick={() => {
+                if (editMode) {
+                  handleNodeChange(
+                    [...parentArray, node.id],
+                    "description",
+                    descriptionInputValue
+                  );
+                }
+                setEditMode(!editMode);
+              }}
+            >
+              {editMode ? (
+                <IoMdSave style={{ fontSize: "13px" }} />
+              ) : (
+                <BsPencil style={{ fontSize: "13px" }} />
+              )}
+              <span className="ml-1 text-xs mt-0.5">
+                {editMode ? "Save" : "Edit"}
+              </span>
+            </MiniButton>
+          </div>
+        </div>
+
+        {node.children && node.children.length > 0 && (
+          <div className="">
+            {node.children.map((child) => (
+              <Node
+                node={child}
+                treeFunctions={treeFunctions}
+                parentArray={[...parentArray, node.id]}
+                key={child.id}
+              />
+            ))}
+          </div>
+        )}
+      </div>
     </div>
+  );
+}
+
+function MiniButton({ className, onClick, children, ...rest }) {
+  return (
+    <button
+      type="button"
+      className={`${className} px-2 py-0.5 flex items-center justify-center`}
+      style={{}}
+      onClick={onClick}
+      {...rest}
+    >
+      {children}
+    </button>
   );
 }

@@ -4,7 +4,7 @@ export function Icon({ size = "sm", name, className, alt = "", ...props }) {
   let iconClassName;
   switch (size) {
     case "xs":
-      iconClassName = "h-4 w-4";
+      iconClassName = "h-3 w-3";
       break;
     case "sm":
       iconClassName = "h-4 w-4";
