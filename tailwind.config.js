@@ -53,7 +53,8 @@ module.exports = {
   variants: {
     extend: {
       backgroundColor: ["disabled"],
-      textColor: ["disabled"]
+      textColor: ["disabled"],
+      margin: ["last"]
     }
   }, // eslint-disable-next-line global-require
   plugins: [require("@tailwindcss/forms"), require("@tailwindcss/typography")]

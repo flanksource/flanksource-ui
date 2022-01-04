@@ -1,11 +1,15 @@
 import React, { useState } from "react";
 import Randomstring from "randomstring";
 
+import { IoMdAdd } from "react-icons/io";
+import { BsXDiamond } from "react-icons/bs";
+
 const sampleTree = {
   id: 1,
-  description: "root node",
+  description: "",
   hasRating: false,
   rating: 0,
+  icon: "azure",
   children: []
 };
 
@@ -14,10 +18,11 @@ const nodeTemplate = {
   description: "",
   hasRating: false,
   rating: 0,
+  icon: null,
   children: []
 };
 
-export function NestedHeirarchyBuilder({ ...rest }) {
+export function NestedHeirarchyBuilder({ showJSON, ...rest }) {
   const [tree, setTree] = useState(sampleTree);
 
   const getDeepValue = (rootNode, traverseOrder, key) => {
@@ -55,8 +60,8 @@ export function NestedHeirarchyBuilder({ ...rest }) {
     newNode.id = Randomstring.generate(10);
     const existingChildrenNodes = getDeepValue(tree, traverseOrder, "children");
     const newTree = setDeepValue({ ...tree }, traverseOrder, "children", [
-      ...existingChildrenNodes,
-      newNode
+      newNode,
+      ...existingChildrenNodes
     ]);
     setTree(newTree);
   };
@@ -86,37 +91,56 @@ export function NestedHeirarchyBuilder({ ...rest }) {
       <div className="w-full" {...rest}>
         <Node node={tree} treeFunctions={treeFunctions} parentArray={[]} />
       </div>
-      <div className="mt-12 w-full">
-        <div>Generated tree:</div>
-        <textarea
-          onChange={() => {}}
-          className="w-full"
-          value={JSON.stringify(tree)}
-        />
-      </div>
+      {showJSON && (
+        <div className="mt-12 w-full">
+          <div>Generated tree:</div>
+          <textarea
+            onChange={() => {}}
+            className="w-full"
+            value={JSON.stringify(tree)}
+          />
+        </div>
+      )}
     </div>
   );
 }
 
 function Node({ node, treeFunctions, parentArray }) {
   const { handleNodeChange, handleAddNode, handleDeleteNode } = treeFunctions;
-  const [editMode, setEditMode] = useState(false);
+  const [editMode, setEditMode] = useState(true);
   const [descriptionInputValue, setDescriptionInputValue] = useState(
     node.description
   );
+  const isRoot = parentArray.length <= 0;
 
   return (
-    <div key={node.id} className="border border-red-500 p-3 w-full">
-      <div className="flex flex-row">
-        <div className="border border-black flex flex-col flex-grow">
+    <div
+      key={node.id}
+      className="w-full border border-gray-150 mb-1 last:mb-0"
+      style={{
+        padding: "6px 0 3px 2px",
+        borderRightWidth: isRoot ? "1px" : "0",
+        borderTopLeftRadius: "4px",
+        borderBottomLeftRadius: "4px"
+      }}
+    >
+      <div className="flex flex-row items-center pr-2">
+        <div
+          className="flex items-center justify-center  rounded-full mr-0"
+          style={{ width: "29px", height: "29px" }}
+        >
+          <BsXDiamond style={{ fontSize: "19px" }} />
+        </div>
+        <div className="flex flex-col flex-grow">
           <div className="flex">
             <div className="flex-grow">
               {!editMode ? (
-                node.description
+                <span className="px-1">{node.description}</span>
               ) : (
                 <input
-                  className="w-full"
+                  className="w-full px-1 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 border border-gray-300 rounded-md"
                   defaultValue={descriptionInputValue}
+                  placeholder="Hypothesis"
                   onChange={(e) => setDescriptionInputValue(e.target.value)}
                 />
               )}
@@ -139,7 +163,7 @@ function Node({ node, treeFunctions, parentArray }) {
         >
           {editMode ? "save" : "edit"}
         </button>
-        {parentArray.length > 0 && (
+        {!isRoot && (
           <button
             className="ml-2 px-2 bg-blue-700 text-white"
             type="button"
@@ -150,8 +174,20 @@ function Node({ node, treeFunctions, parentArray }) {
         )}
       </div>
 
+      <div className="flex items-center text-xs text-gray-500 mt-1 mb-1.5 ml-7">
+        <button
+          type="button"
+          className="px-2 py-0.5 flex items-center justify-center border border-gray-300 text-gray-600 rounded-full"
+          style={{}}
+          onClick={() => handleAddNode([...parentArray, node.id])}
+        >
+          <IoMdAdd style={{ fontSize: "13px" }} />
+          <span className="ml-1">Add hypothesis</span>
+        </button>
+      </div>
+
       {node.children && node.children.length > 0 && (
-        <div className="mt-3">
+        <div className="ml-7">
           {node.children.map((child) => (
             <Node
               node={child}
@@ -162,16 +198,6 @@ function Node({ node, treeFunctions, parentArray }) {
           ))}
         </div>
       )}
-
-      <div className="">
-        <button
-          type="button"
-          className="mt-2 px-2 bg-blue-700 text-white"
-          onClick={() => handleAddNode([...parentArray, node.id])}
-        >
-          add node
-        </button>
-      </div>
     </div>
   );
 }
