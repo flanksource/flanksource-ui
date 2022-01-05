@@ -12,7 +12,7 @@ import { Modal } from "./Modal";
 import { Status } from "./Status";
 import { Table } from "./Table";
 import { Toggle } from "./Toggle";
-import { NestedHeirarchyBuilder } from "./NestedHeirarchyBuilder";
+import { NestedHeirarchyBuilder } from "./NestedHeirarchy";
 
 export {
   Badge,
