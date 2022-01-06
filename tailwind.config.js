@@ -54,7 +54,7 @@ module.exports = {
     extend: {
       backgroundColor: ["disabled"],
       textColor: ["disabled"],
-      margin: ["last"],
+      margin: ["first", "last"],
       borderWidth: ["first"],
       borderRadius: ["first", "last"]
     }

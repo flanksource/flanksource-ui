@@ -1,10 +1,8 @@
 import React from "react";
 import Randomstring from "randomstring";
 
-const minimalNodeTemplate = {
-  id: "",
-  description: "",
-  icon: null,
+export const minimalNodeTemplate = {
+  id: null,
   children: []
 };
 
@@ -13,6 +11,7 @@ export function NestedHeirarchy({
   tree,
   setTree,
   nodeTemplate = minimalNodeTemplate,
+  additionalNodeFields,
   depthLimit,
   ...rest
 }) {
@@ -47,8 +46,8 @@ export function NestedHeirarchy({
   };
 
   const handleAddNode = (traverseOrder) => {
-    const newNode = { ...nodeTemplate };
-    newNode.id = Randomstring.generate(10);
+    const newNode = { ...nodeTemplate, ...additionalNodeFields };
+    newNode.id = Randomstring.generate(16);
     const existingChildrenNodes = getDeepValue(tree, traverseOrder, "children");
     const newTree = setDeepValue({ ...tree }, traverseOrder, "children", [
       newNode,
@@ -85,5 +84,8 @@ export function NestedHeirarchy({
     ...rest
   };
 
-  return React.createElement(children.type, childProps);
+  return React.createElement(children.type, {
+    ...children.props,
+    ...childProps
+  });
 }
