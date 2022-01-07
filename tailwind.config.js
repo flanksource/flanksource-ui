@@ -55,8 +55,9 @@ module.exports = {
       backgroundColor: ["disabled"],
       textColor: ["disabled"],
       margin: ["first", "last"],
-      borderWidth: ["first"],
-      borderRadius: ["first", "last"]
+      borderWidth: ["first", "hover"],
+      borderRadius: ["first", "last"],
+      borderColor: ["hover"]
     }
   }, // eslint-disable-next-line global-require
   plugins: [require("@tailwindcss/forms"), require("@tailwindcss/typography")]

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { ThumbDownIcon, ThumbUpIcon } from "@heroicons/react/solid";
 import { IoMdAdd, IoMdSave } from "react-icons/io";
@@ -9,34 +9,34 @@ import "./index.css";
 
 export const hypothesisStates = {
   0: {
-    title: "Unlikely",
-    icon: <ThumbDownIcon />,
-    color: "#808080"
+    title: "Proven",
+    icon: <ThumbUpIcon />,
+    color: "#459E45"
   },
   1: {
-    title: "Improbable",
-    icon: <ThumbDownIcon />,
-    color: "#F59337"
-  },
-  2: {
-    title: "Disproven",
-    icon: <ThumbDownIcon />,
-    color: "#DD4F4F"
-  },
-  3: {
-    title: "Possible",
-    icon: <ThumbUpIcon />,
-    color: "#808080"
-  },
-  4: {
     title: "Likely",
     icon: <ThumbUpIcon />,
     color: "#AAA526"
   },
-  5: {
-    title: "Proven",
+  2: {
+    title: "Possible",
     icon: <ThumbUpIcon />,
-    color: "#459E45"
+    color: "#808080"
+  },
+  3: {
+    title: "Unlikely",
+    icon: <ThumbDownIcon />,
+    color: "#808080"
+  },
+  4: {
+    title: "Improbable",
+    icon: <ThumbDownIcon />,
+    color: "#F59337"
+  },
+  5: {
+    title: "Disproven",
+    icon: <ThumbDownIcon />,
+    color: "#DD4F4F"
   }
 };
 
@@ -44,11 +44,16 @@ export const hypothesisInitialFields = {
   state: null,
   evidences: [],
   links: [],
-  comments: []
+  comments: [],
+  depth: null
 };
 
 const addButtonLabels = ["Add issue", "Add potential solution"];
-const textPlaceholders = ["Root hypothesis", "Issue", "Potential solution"];
+export const textPlaceholders = [
+  "Root hypothesis",
+  "Issue",
+  "Potential solution"
+];
 
 export function HypothesisNode({
   node,
@@ -56,7 +61,7 @@ export function HypothesisNode({
   parentArray,
   depthLimit,
   setModalIsOpen,
-  setSelectedNode
+  setSelectedNodePath
 }) {
   const { handleNodeChange, handleAddNode, handleDeleteNode } = treeFunctions;
   const [editMode, setEditMode] = useState(true);
@@ -65,8 +70,13 @@ export function HypothesisNode({
   );
   const isRoot = parentArray.length <= 0;
 
+  // listen to potential changes to the tree by some other component & update accordingly.
+  useEffect(() => {
+    setDescriptionInputValue(node.description);
+  }, [node]);
+
   const handleOpenModal = () => {
-    setSelectedNode(node);
+    setSelectedNodePath([...parentArray, node.id]);
     setModalIsOpen(true);
   };
 
@@ -100,7 +110,13 @@ export function HypothesisNode({
               className={`ml-0.5 ${!node.description && "text-gray-400"}`}
               style={{ marginTop: "1px", marginBottom: "1px" }}
             >
-              {node.description || "(none)"}
+              <button
+                className="text-left hover:text-indigo-800"
+                type="button"
+                onClick={handleOpenModal}
+              >
+                {node.description || "(none)"}
+              </button>
             </div>
           ) : (
             <input
@@ -118,8 +134,13 @@ export function HypothesisNode({
               <>
                 {depthLimit > parentArray.length && (
                   <MiniButton
-                    className="border border-gray-300 text-gray-500 rounded-md"
-                    onClick={() => handleAddNode([...parentArray, node.id])}
+                    className="border border-gray-300 text-gray-500 rounded-md mr-2"
+                    onClick={() =>
+                      handleAddNode([...parentArray, node.id], {
+                        depth: parentArray.length + 1,
+                        parentArray: [...parentArray, node.id]
+                      })
+                    }
                   >
                     <IoMdAdd style={{ fontSize: "13px" }} />
                     <span className="ml-1 text-xs">
@@ -132,7 +153,7 @@ export function HypothesisNode({
                   (node.links.length > 0 ||
                     node.comments.length > 0 ||
                     node.evidences.length > 0) && (
-                    <Separator color="rgba(209, 213, 219)" xMargins="12px" />
+                    <Separator color="rgba(209, 213, 219)" className="mr-2" />
                   )}
 
                 {node.links.length > 0 && (
@@ -140,6 +161,7 @@ export function HypothesisNode({
                     number={node.links.length}
                     text="Linked items"
                     textStyle={{ fontSize: "12px" }}
+                    className="mr-2"
                   />
                 )}
                 {node.comments.length > 0 && (
@@ -147,7 +169,7 @@ export function HypothesisNode({
                     number={node.comments.length}
                     text="Comments"
                     textStyle={{ fontSize: "12px" }}
-                    className="ml-3"
+                    className="mr-2"
                   />
                 )}
                 {node.evidences.length > 0 && (
@@ -155,17 +177,15 @@ export function HypothesisNode({
                     number={node.evidences.length}
                     text="Evidences"
                     textStyle={{ fontSize: "12px" }}
-                    className="ml-3"
+                    className="mr-2"
                   />
                 )}
 
-                {(node.links.length > 0 ||
-                  node.comments.length > 0 ||
-                  node.evidences.length > 0) && (
-                  <Separator color="rgba(209, 213, 219)" xMargins="12px" />
-                )}
-
                 <>
+                  {depthLimit > parentArray.length && (
+                    <Separator color="rgba(209, 213, 219)" className="mr-2" />
+                  )}
+
                   <MiniButton
                     className="rounded-md border border-gray-300 text-gray-500"
                     onClick={handleOpenModal}
@@ -226,7 +246,7 @@ export function HypothesisNode({
                 key={child.id}
                 depthLimit={depthLimit}
                 setModalIsOpen={setModalIsOpen}
-                setSelectedNode={setSelectedNode}
+                setSelectedNodePath={setSelectedNodePath}
               />
             ))}
           </div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Randomstring from "randomstring";
 import { Modal } from "../../components/Modal";
 import {
@@ -13,19 +13,17 @@ import { HypothesisDetails } from "../../components/NestedHeirarchy/HypothesisDe
 
 export function HeirarchyTestPage() {
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [selectedNode, setSelectedNode] = useState(null);
+  const [selectedNodePath, setSelectedNodePath] = useState(null);
   const [tree, setTree] = useState({
     ...minimalNodeTemplate,
     ...hypothesisInitialFields,
-    id: Randomstring.generate(16)
+    depth: 0,
+    id: Randomstring.generate(16),
+    parentArray: []
   });
 
-  useEffect(() => {
-    console.log("selectedNode", selectedNode);
-  }, [selectedNode]);
-
   return (
-    <div className="max-w-screen-xl mx-auto flex justify-center">
+    <div className="max-w-screen-xl mx-auto flex flex-col justify-center">
       <div className="mt-12 w-full px-4">
         <NestedHeirarchy
           tree={tree}
@@ -35,17 +33,31 @@ export function HeirarchyTestPage() {
         >
           <HypothesisNode
             setModalIsOpen={setModalIsOpen}
-            setSelectedNode={setSelectedNode}
+            setSelectedNodePath={setSelectedNodePath}
           />
         </NestedHeirarchy>
       </div>
       <Modal
         open={modalIsOpen}
         onClose={() => setModalIsOpen(false)}
+        cardClass="w-full"
+        contentClass="h-full px-8"
+        cardStyle={{
+          maxWidth: "820px"
+        }}
+        closeButtonStyle={{ padding: "2.2rem 2.1rem 0 0" }}
         hideActions
       >
-        <HypothesisDetails node={selectedNode} tree={tree} setTree={setTree} />
+        <HypothesisDetails
+          nodePath={selectedNodePath}
+          tree={tree}
+          setTree={setTree}
+        />
       </Modal>
+
+      <div className="mt-12 w-full px-4">
+        generated tree: {JSON.stringify(tree)}
+      </div>
     </div>
   );
 }

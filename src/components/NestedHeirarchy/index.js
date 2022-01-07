@@ -6,6 +6,35 @@ export const minimalNodeTemplate = {
   children: []
 };
 
+export const getNode = (rootNode, traverseOrder) => {
+  if (rootNode.id !== traverseOrder[0]) {
+    return undefined;
+  }
+  let currentNode = rootNode;
+  [...traverseOrder].slice(1).forEach((nextId) => {
+    const nextNode = currentNode.children.find((o) => o.id === nextId); // TODO: handle non-existing keys
+    currentNode = nextNode;
+  });
+  return currentNode;
+};
+
+export const getDeepValue = (rootNode, traverseOrder, key) =>
+  getNode(rootNode, traverseOrder)[key];
+
+export const setDeepValue = (rootNode, traverseOrder, key, value) => {
+  if (rootNode.id !== traverseOrder[0]) {
+    return undefined;
+  }
+  const newTree = { ...rootNode };
+  let currentNode = newTree;
+  [...traverseOrder].slice(1).forEach((nextId) => {
+    const nextNode = currentNode.children.find((o) => o.id === nextId);
+    currentNode = nextNode;
+  });
+  currentNode[key] = value;
+  return newTree;
+};
+
 export function NestedHeirarchy({
   children,
   tree,
@@ -15,38 +44,16 @@ export function NestedHeirarchy({
   depthLimit,
   ...rest
 }) {
-  const getDeepValue = (rootNode, traverseOrder, key) => {
-    if (rootNode.id !== traverseOrder[0]) {
-      return undefined;
-    }
-    let currentNode = rootNode;
-    [...traverseOrder].slice(1).forEach((key) => {
-      const nextNode = currentNode.children.find((o) => o.id === key); // TODO: handle non-existing keys
-      currentNode = nextNode;
-    });
-    return currentNode[key];
-  };
-
-  const setDeepValue = (rootNode, traverseOrder, key, value) => {
-    if (rootNode.id !== traverseOrder[0]) {
-      return undefined;
-    }
-    const newTree = { ...rootNode };
-    let currentNode = newTree;
-    [...traverseOrder].slice(1).forEach((key) => {
-      const nextNode = currentNode.children.find((o) => o.id === key);
-      currentNode = nextNode;
-    });
-    currentNode[key] = value;
-    return newTree;
-  };
-
   const handleNodeChange = (traverseOrder, key, value) => {
     setTree(setDeepValue(tree, traverseOrder, key, value));
   };
 
-  const handleAddNode = (traverseOrder) => {
-    const newNode = { ...nodeTemplate, ...additionalNodeFields };
+  const handleAddNode = (traverseOrder, additionalProps = {}) => {
+    const newNode = {
+      ...nodeTemplate,
+      ...additionalNodeFields,
+      ...additionalProps
+    };
     newNode.id = Randomstring.generate(16);
     const existingChildrenNodes = getDeepValue(tree, traverseOrder, "children");
     const newTree = setDeepValue({ ...tree }, traverseOrder, "children", [
