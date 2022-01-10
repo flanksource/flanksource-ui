@@ -55,7 +55,7 @@ module.exports = {
       backgroundColor: ["disabled"],
       textColor: ["disabled"],
       margin: ["first", "last"],
-      borderWidth: ["first", "hover"],
+      borderWidth: ["first", "hover", "last"],
       borderRadius: ["first", "last"],
       borderColor: ["hover"]
     }

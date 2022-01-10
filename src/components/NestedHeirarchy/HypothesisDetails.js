@@ -4,6 +4,7 @@ import { getNode, setDeepValue } from ".";
 import { Badge } from "../Badge";
 import { Dropdown } from "../Dropdown";
 import { hypothesisStates } from "./HypothesisNode";
+import { LinkedItems } from "./LinkedItems";
 
 const badgeMap = {
   0: "Hypothesis",
@@ -42,10 +43,6 @@ export function HypothesisDetails({ nodePath, tree, setTree, ...rest }) {
     defaultValues: { state: node.state || Object.values(stateItems)[2].value }
   });
 
-  useEffect(() => {
-    // console.log("nodechange", node);
-  }, [node]);
-
   const watchState = watch("state");
   useEffect(
     () => handleCurrentNodeValueChangeMemoized("state", watchState),
@@ -80,7 +77,14 @@ export function HypothesisDetails({ nodePath, tree, setTree, ...rest }) {
         <HypothesisTitle>Evidences</HypothesisTitle>
       </div>
       <div className="mb-6">
-        <HypothesisTitle>Linked Items</HypothesisTitle>
+        <LinkedItems
+          currentNode={node}
+          fullTree={tree}
+          titlePrepend={<HypothesisTitle>Linked Items</HypothesisTitle>}
+          onLinksChange={(newItems) =>
+            handleCurrentNodeValueChange("links", newItems)
+          }
+        />
       </div>
       <div className="mb-6">
         <HypothesisTitle>Comments</HypothesisTitle>

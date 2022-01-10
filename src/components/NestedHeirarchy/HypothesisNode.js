@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import { ThumbDownIcon, ThumbUpIcon } from "@heroicons/react/solid";
 import { IoMdAdd, IoMdSave } from "react-icons/io";
@@ -180,7 +180,10 @@ export function HypothesisNode({
                 )}
 
                 <>
-                  {depthLimit > parentArray.length && (
+                  {(depthLimit > parentArray.length ||
+                    node.evidences.length > 0 ||
+                    node.links.length > 0 ||
+                    node.comments.length > 0) && (
                     <Separator color="rgba(209, 213, 219)" className="mr-2" />
                   )}
 
