@@ -65,15 +65,7 @@ export function HypothesisNode({
 }) {
   const { handleNodeChange, handleAddNode, handleDeleteNode } = treeFunctions;
   const [editMode, setEditMode] = useState(true);
-  const [descriptionInputValue, setDescriptionInputValue] = useState(
-    node.description
-  );
   const isRoot = parentArray.length <= 0;
-
-  // listen to potential changes to the tree by some other component & update accordingly.
-  useEffect(() => {
-    setDescriptionInputValue(node.description);
-  }, [node]);
 
   const handleOpenModal = () => {
     setSelectedNodePath([...parentArray, node.id]);
@@ -121,9 +113,15 @@ export function HypothesisNode({
           ) : (
             <input
               className="w-full px-1 mr-2 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 border border-gray-300 rounded-md"
-              defaultValue={descriptionInputValue}
+              defaultValue={node.description}
               placeholder={textPlaceholders[parentArray.length]}
-              onChange={(e) => setDescriptionInputValue(e.target.value)}
+              onChange={(e) =>
+                handleNodeChange(
+                  [...parentArray, node.id],
+                  "description",
+                  e.target.value
+                )
+              }
             />
           )}
         </div>
@@ -214,13 +212,6 @@ export function HypothesisNode({
                   : "text-gray-500 border-gray-300"
               }`}
               onClick={() => {
-                if (editMode) {
-                  handleNodeChange(
-                    [...parentArray, node.id],
-                    "description",
-                    descriptionInputValue
-                  );
-                }
                 setEditMode(!editMode);
               }}
             >
@@ -230,7 +221,7 @@ export function HypothesisNode({
                 <BsPencil style={{ fontSize: "13px" }} />
               )}
               <span className="ml-1 text-xs mt-0.5">
-                {editMode ? "Save" : "Edit"}
+                {editMode ? "Done editing" : "Edit"}
               </span>
             </MiniButton>
           </div>
