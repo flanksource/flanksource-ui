@@ -2,7 +2,7 @@ import { Menu, Transition } from "@headlessui/react";
 import React, { useEffect, Fragment, useState } from "react";
 import { differenceWith } from "lodash";
 import { AiFillDelete } from "react-icons/ai";
-import { findNodeById, getAllNodes } from "../../utils";
+import { findNodeById, getAllNodes } from "../../../NestedHeirarchy/utils";
 import { Badge } from "../../../Badge";
 import { badgeMap } from "../../data";
 
@@ -11,6 +11,7 @@ const getLinkableNodes = (allNodes, nonLinkableIDs) =>
 
 export function LinkedItems({
   currentNode,
+  currentNodePath,
   titlePrepend,
   fullTree,
   onLinksChange,
@@ -69,8 +70,8 @@ export function LinkedItems({
 }
 
 export function LinkedItem({ id, fullTree, onClick, onDelete, ...rest }) {
-  const item = findNodeById(id, fullTree);
-  const { description, depth } = item.node;
+  const { node, traverseOrder } = findNodeById(id, fullTree);
+  const { description } = node;
   return (
     <div
       className="flex justify-between border-b last:border-b-0 py-1.5 px-4"
@@ -78,9 +79,11 @@ export function LinkedItem({ id, fullTree, onClick, onDelete, ...rest }) {
     >
       <button type="button" onClick={onClick}>
         <span className="mr-4 text-sm text-gray-800 text-left">
-          {description}
+          {description || (
+            <span className="text-gray-400">No description given</span>
+          )}
         </span>
-        <Badge size="xs" text={badgeMap[depth]} />
+        <Badge size="xs" text={badgeMap[traverseOrder.length - 1]} />
       </button>
       <button type="button" title="Remove link" onClick={onDelete}>
         <AiFillDelete className="text-red-400" />

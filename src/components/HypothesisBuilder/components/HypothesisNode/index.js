@@ -4,8 +4,13 @@ import { IoMdAdd, IoMdSave } from "react-icons/io";
 import { BsPencil, BsInfoCircle } from "react-icons/bs";
 import { AiFillDelete } from "react-icons/ai";
 import { Icon } from "../../../Icon";
-import "../../index.css";
+import "./index.css";
 import { addButtonLabels, textPlaceholders } from "../../data";
+import {
+  deleteNodeInTree,
+  getAllNodeIds,
+  removeLinksFromTree
+} from "../../../NestedHeirarchy/utils";
 
 export function HypothesisNode({
   node,
@@ -16,7 +21,7 @@ export function HypothesisNode({
   setModalIsOpen,
   setSelectedNodePath
 }) {
-  const { handleNodeChange, handleAddNode, handleDeleteNode } = treeFunctions;
+  const { handleNodeChange, handleAddNode, tree, setTree } = treeFunctions;
   const [editMode, setEditMode] = useState(defaultEditMode);
   const isRoot = parentArray.length <= 0;
 
@@ -86,12 +91,7 @@ export function HypothesisNode({
                 {depthLimit > parentArray.length && (
                   <MiniButton
                     className="border border-gray-300 text-gray-500 rounded-md mr-2"
-                    onClick={() =>
-                      handleAddNode([...parentArray, node.id], {
-                        depth: parentArray.length + 1,
-                        parentArray: [...parentArray, node.id]
-                      })
-                    }
+                    onClick={() => handleAddNode([...parentArray, node.id])}
                   >
                     <IoMdAdd style={{ fontSize: "13px" }} />
                     <span className="ml-1 text-xs">
@@ -155,7 +155,15 @@ export function HypothesisNode({
             {!isRoot && editMode && (
               <MiniButton
                 className="rounded-md bg-red-400 text-white"
-                onClick={() => handleDeleteNode([...parentArray, node.id])}
+                onClick={() => {
+                  const idsToRemove = getAllNodeIds(node);
+                  const newTree = removeLinksFromTree(
+                    tree,
+                    idsToRemove,
+                    node.id
+                  );
+                  setTree(deleteNodeInTree([...parentArray, node.id], newTree));
+                }}
               >
                 <AiFillDelete style={{ fontSize: "14px" }} />
                 <span className="ml-1 mt-0.5 text-xs">Delete</span>

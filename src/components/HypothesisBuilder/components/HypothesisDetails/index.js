@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { getNode, setDeepValue } from "../..";
 import { Badge } from "../../../Badge";
 import { Dropdown } from "../../../Dropdown";
 import { badgeMap, hypothesisStates } from "../../data";
+import { getNode, setDeepValue } from "../../../NestedHeirarchy/utils";
 import { LinkedItems } from "../LinkedItems";
 
 const stateItems = {
@@ -56,7 +56,7 @@ export function HypothesisDetails({ nodePath, tree, setTree, ...rest }) {
       </div>
 
       <div className="mb-6">
-        <Badge size="sm" text={badgeMap[node.depth]} />
+        <Badge size="sm" text={badgeMap[nodePath.length - 1]} />
       </div>
       <div className="mb-6">
         <HypothesisTitle>Hypothesis State</HypothesisTitle>
@@ -73,6 +73,7 @@ export function HypothesisDetails({ nodePath, tree, setTree, ...rest }) {
       <div className="mb-6">
         <LinkedItems
           currentNode={node}
+          currentNodePath={nodePath}
           fullTree={tree}
           titlePrepend={<HypothesisTitle>Linked Items</HypothesisTitle>}
           onLinksChange={(newItems) =>

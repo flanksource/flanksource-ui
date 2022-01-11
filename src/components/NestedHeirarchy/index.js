@@ -1,38 +1,15 @@
 import React from "react";
 import Randomstring from "randomstring";
+import {
+  addNodeToTree,
+  deleteNodeInTree,
+  getTraverseOrderById,
+  setDeepValue
+} from "./utils";
 
 export const minimalNodeTemplate = {
   id: null,
   children: []
-};
-
-export const getNode = (rootNode, traverseOrder) => {
-  if (rootNode.id !== traverseOrder[0]) {
-    return undefined;
-  }
-  let currentNode = rootNode;
-  [...traverseOrder].slice(1).forEach((nextId) => {
-    const nextNode = currentNode.children.find((o) => o.id === nextId); // TODO: handle non-existing keys
-    currentNode = nextNode;
-  });
-  return currentNode;
-};
-
-export const getDeepValue = (rootNode, traverseOrder, key) =>
-  getNode(rootNode, traverseOrder)[key];
-
-export const setDeepValue = (rootNode, traverseOrder, key, value) => {
-  if (rootNode.id !== traverseOrder[0]) {
-    return undefined;
-  }
-  const newTree = { ...rootNode };
-  let currentNode = newTree;
-  [...traverseOrder].slice(1).forEach((nextId) => {
-    const nextNode = currentNode.children.find((o) => o.id === nextId);
-    currentNode = nextNode;
-  });
-  currentNode[key] = value;
-  return newTree;
 };
 
 export function NestedHeirarchy({
@@ -48,6 +25,13 @@ export function NestedHeirarchy({
     setTree(setDeepValue(tree, traverseOrder, key, value));
   };
 
+  const handleNodeChangeByID = (nodeID, key, value) => {
+    const traverseOrder = getTraverseOrderById(nodeID);
+    if (traverseOrder) {
+      handleNodeChange(traverseOrder, key, value);
+    }
+  };
+
   const handleAddNode = (traverseOrder, additionalProps = {}) => {
     const newNode = {
       ...nodeTemplate,
@@ -55,32 +39,20 @@ export function NestedHeirarchy({
       ...additionalProps
     };
     newNode.id = Randomstring.generate(16);
-    const existingChildrenNodes = getDeepValue(tree, traverseOrder, "children");
-    const newTree = setDeepValue({ ...tree }, traverseOrder, "children", [
-      newNode,
-      ...existingChildrenNodes
-    ]);
-    setTree(newTree);
+    setTree(addNodeToTree(traverseOrder, tree, newNode));
   };
 
   const handleDeleteNode = (traverseOrder) => {
-    const IdToDelete = traverseOrder.pop();
-    const children = getDeepValue(tree, traverseOrder, "children");
-    const deleted = children.filter((obj) => obj.id !== IdToDelete);
-    const newTree = setDeepValue(
-      { ...tree },
-      traverseOrder,
-      "children",
-      deleted
-    );
-    setTree(newTree);
+    setTree(deleteNodeInTree(traverseOrder, tree));
   };
 
   const treeFunctions = {
     handleNodeChange,
+    handleNodeChangeByID,
     handleAddNode,
     handleDeleteNode,
-    setTree
+    setTree,
+    tree
   };
 
   const childProps = {
