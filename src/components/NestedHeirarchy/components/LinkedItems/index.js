@@ -1,5 +1,13 @@
 import { Menu, Transition } from "@headlessui/react";
 import React, { useEffect, Fragment, useState } from "react";
+import { differenceWith } from "lodash";
+import { AiFillDelete } from "react-icons/ai";
+import { findNodeById, getAllNodes } from "../../utils";
+import { Badge } from "../../../Badge";
+import { badgeMap } from "../../data";
+
+const getLinkableNodes = (allNodes, nonLinkableIDs) =>
+  differenceWith(allNodes, nonLinkableIDs, (node, id) => node.id === id);
 
 export function LinkedItems({
   currentNode,
@@ -8,22 +16,26 @@ export function LinkedItems({
   onLinksChange,
   ...rest
 }) {
-  const { links, id } = currentNode;
-  const [nodeList, setNodeList] = useState(
-    getAllNodes(fullTree).filter((o) => o.id !== id)
+  const { links, id: nodeId } = currentNode;
+  const [allNodes, setAllNodes] = useState(getAllNodes(fullTree));
+  const [linkableNodes, setLinkableNodes] = useState(
+    getLinkableNodes(allNodes || [], [...links, nodeId])
   );
-  useEffect(() => {
-    const allNodes = getAllNodes(fullTree).filter((o) => o.id !== id);
-    setNodeList(allNodes);
-  }, [fullTree, id]);
 
-  const handleLinkClick = (node) => {
-    const searchIndex = links.findIndex((o) => o === node.id);
-    if (searchIndex > -1) {
-      onLinksChange(links.filter((o) => o !== node.id));
-    } else {
-      onLinksChange([...links, node.id]);
-    }
+  useEffect(() => {
+    setAllNodes(getAllNodes(fullTree));
+  }, [fullTree, setAllNodes]);
+
+  useEffect(() => {
+    setLinkableNodes(getLinkableNodes(allNodes || [], [...links, nodeId]));
+  }, [allNodes, links, nodeId]);
+
+  const handleLinkAdd = (id) => {
+    onLinksChange([...links, id]);
+  };
+
+  const handleLinkDelete = (id) => {
+    onLinksChange(links.filter((oid) => oid !== id));
   };
 
   return (
@@ -31,16 +43,21 @@ export function LinkedItems({
       <div className="flex justify-between items-center">
         <div className="">{titlePrepend}</div>
         <LinkedItemsDropdownButton
-          items={nodeList}
-          onItemClick={(id) => handleLinkClick(id)}
+          items={linkableNodes}
+          onItemClick={(node) => handleLinkAdd(node.id)}
         />
       </div>
       <div className="border mt-2">
-        {links && links.length > 0 ? (
-          links.map((id) => {
-            const item = nodeList.find((o) => o.id === id);
+        {links && links.length > 0 && allNodes ? (
+          links.map((linkId) => {
+            const item = allNodes.find((o) => o.id === linkId);
             return (
-              <LinkedItem id={item.id} fullTree={fullTree} key={item.id} />
+              <LinkedItem
+                id={item.id}
+                fullTree={fullTree}
+                key={item.id}
+                onDelete={() => handleLinkDelete(linkId)}
+              />
             );
           })
         ) : (
@@ -50,12 +67,24 @@ export function LinkedItems({
     </div>
   );
 }
-export function LinkedItem({ id, fullTree, onClick, ...rest }) {
+
+export function LinkedItem({ id, fullTree, onClick, onDelete, ...rest }) {
   const item = findNodeById(id, fullTree);
-  const { description } = item.node;
+  const { description, depth } = item.node;
   return (
-    <div className="border-b last:border-b-0 py-1.5 px-4" {...rest}>
-      {description}
+    <div
+      className="flex justify-between border-b last:border-b-0 py-1.5 px-4"
+      {...rest}
+    >
+      <button type="button" onClick={onClick}>
+        <span className="mr-4 text-sm text-gray-800 text-left">
+          {description}
+        </span>
+        <Badge size="xs" text={badgeMap[depth]} />
+      </button>
+      <button type="button" title="Remove link" onClick={onDelete}>
+        <AiFillDelete className="text-red-400" />
+      </button>
     </div>
   );
 }
@@ -115,55 +144,4 @@ function LinkedItemsDropdownButton({ items, onItemClick, ...rest }) {
       </Transition>
     </Menu>
   );
-}
-
-export function getAllNodes(tree) {
-  let result = [];
-  result = getAllNodesAux(tree, result);
-  return result;
-}
-
-export function getAllNodeIds(tree) {
-  let result = [];
-  result = getAllNodesAux(tree, result, true);
-  return result;
-}
-
-function getAllNodesAux(currentNode, accumulator, onlyIds) {
-  if (currentNode?.children?.length > 0) {
-    let childResult = [onlyIds ? currentNode.id : currentNode];
-    currentNode?.children?.forEach((child) => {
-      childResult = [
-        ...childResult,
-        ...getAllNodesAux(child, accumulator, onlyIds)
-      ];
-    });
-    return [...accumulator, ...childResult];
-  }
-  return [...accumulator, onlyIds ? currentNode.id : currentNode];
-}
-
-export function findNodeById(id, tree) {
-  return findNodeByIdAux(id, tree);
-}
-
-function findNodeByIdAux(id, currentNode) {
-  if (currentNode?.id === id) {
-    return { id, traverseOrder: [id], node: currentNode };
-  }
-  let result = null;
-  if (currentNode?.children?.length > 0) {
-    currentNode?.children?.every((child) => {
-      const childResult = findNodeByIdAux(id, child);
-      if (childResult?.id === id) {
-        result = childResult;
-        return false;
-      }
-      return true;
-    });
-  }
-  if (result?.traverseOrder) {
-    result.traverseOrder = [id, ...result.traverseOrder];
-  }
-  return result;
 }

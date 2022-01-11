@@ -1,16 +1,10 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { getNode, setDeepValue } from ".";
-import { Badge } from "../Badge";
-import { Dropdown } from "../Dropdown";
-import { hypothesisStates } from "./HypothesisNode";
-import { LinkedItems } from "./LinkedItems";
-
-const badgeMap = {
-  0: "Hypothesis",
-  1: "Issue",
-  2: "Solution"
-};
+import { getNode, setDeepValue } from "../..";
+import { Badge } from "../../../Badge";
+import { Dropdown } from "../../../Dropdown";
+import { badgeMap, hypothesisStates } from "../../data";
+import { LinkedItems } from "../LinkedItems";
 
 const stateItems = {
   ...Object.values(hypothesisStates).reduce((acc, obj) => {

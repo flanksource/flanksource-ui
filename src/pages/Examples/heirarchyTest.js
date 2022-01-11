@@ -5,22 +5,62 @@ import {
   minimalNodeTemplate,
   NestedHeirarchy
 } from "../../components/NestedHeirarchy";
-import {
-  hypothesisInitialFields,
-  HypothesisNode
-} from "../../components/NestedHeirarchy/HypothesisNode";
-import { HypothesisDetails } from "../../components/NestedHeirarchy/HypothesisDetails";
+import { HypothesisNode } from "../../components/NestedHeirarchy/components/HypothesisNode";
+import { HypothesisDetails } from "../../components/NestedHeirarchy/components/HypothesisDetails";
+import { hypothesisInitialFields } from "../../components/NestedHeirarchy/data";
+
+const testTree = {
+  id: "HFLK0kTVGuxCwKa5",
+  children: [
+    {
+      id: "Bn1MoSdY566btHPS",
+      children: [
+        {
+          id: "OKvja5AcPCbct2ng",
+          children: [],
+          state: null,
+          evidences: [],
+          links: [],
+          comments: [],
+          depth: 2,
+          parentArray: ["HFLK0kTVGuxCwKa5", "Bn1MoSdY566btHPS"],
+          description: "asd3"
+        }
+      ],
+      state: null,
+      evidences: [],
+      links: [],
+      comments: [],
+      depth: 1,
+      parentArray: ["HFLK0kTVGuxCwKa5"],
+      description: "asd2"
+    }
+  ],
+  state: "possible",
+  evidences: [],
+  links: [],
+  comments: [],
+  depth: 0,
+  parentArray: [],
+  description: "asd"
+};
+
+const useExistingTree = true;
 
 export function HeirarchyTestPage() {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedNodePath, setSelectedNodePath] = useState(null);
-  const [tree, setTree] = useState({
-    ...minimalNodeTemplate,
-    ...hypothesisInitialFields,
-    depth: 0,
-    id: Randomstring.generate(16),
-    parentArray: []
-  });
+  const [tree, setTree] = useState(
+    useExistingTree
+      ? testTree
+      : {
+          ...minimalNodeTemplate,
+          ...hypothesisInitialFields,
+          depth: 0,
+          id: Randomstring.generate(16),
+          parentArray: []
+        }
+  );
 
   return (
     <div className="max-w-screen-xl mx-auto flex flex-col justify-center">
@@ -34,6 +74,7 @@ export function HeirarchyTestPage() {
           <HypothesisNode
             setModalIsOpen={setModalIsOpen}
             setSelectedNodePath={setSelectedNodePath}
+            defaultEditMode={!useExistingTree}
           />
         </NestedHeirarchy>
       </div>
@@ -56,7 +97,7 @@ export function HeirarchyTestPage() {
       </Modal>
 
       <div className="mt-12 w-full px-4">
-        generated tree: {JSON.stringify(tree)}
+        {/* generated tree: {JSON.stringify(tree)} */}
       </div>
     </div>
   );

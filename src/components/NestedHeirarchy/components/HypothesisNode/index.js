@@ -1,62 +1,15 @@
 import React, { useState } from "react";
 
-import { ThumbDownIcon, ThumbUpIcon } from "@heroicons/react/solid";
 import { IoMdAdd, IoMdSave } from "react-icons/io";
 import { BsPencil, BsInfoCircle } from "react-icons/bs";
 import { AiFillDelete } from "react-icons/ai";
-import { Icon } from "../Icon";
-import "./index.css";
-
-export const hypothesisStates = {
-  0: {
-    title: "Proven",
-    icon: <ThumbUpIcon />,
-    color: "#459E45"
-  },
-  1: {
-    title: "Likely",
-    icon: <ThumbUpIcon />,
-    color: "#AAA526"
-  },
-  2: {
-    title: "Possible",
-    icon: <ThumbUpIcon />,
-    color: "#808080"
-  },
-  3: {
-    title: "Unlikely",
-    icon: <ThumbDownIcon />,
-    color: "#808080"
-  },
-  4: {
-    title: "Improbable",
-    icon: <ThumbDownIcon />,
-    color: "#F59337"
-  },
-  5: {
-    title: "Disproven",
-    icon: <ThumbDownIcon />,
-    color: "#DD4F4F"
-  }
-};
-
-export const hypothesisInitialFields = {
-  state: null,
-  evidences: [],
-  links: [],
-  comments: [],
-  depth: null
-};
-
-const addButtonLabels = ["Add issue", "Add potential solution"];
-export const textPlaceholders = [
-  "Root hypothesis",
-  "Issue",
-  "Potential solution"
-];
+import { Icon } from "../../../Icon";
+import "../../index.css";
+import { addButtonLabels, textPlaceholders } from "../../data";
 
 export function HypothesisNode({
   node,
+  defaultEditMode = true,
   treeFunctions,
   parentArray,
   depthLimit,
@@ -64,7 +17,7 @@ export function HypothesisNode({
   setSelectedNodePath
 }) {
   const { handleNodeChange, handleAddNode, handleDeleteNode } = treeFunctions;
-  const [editMode, setEditMode] = useState(true);
+  const [editMode, setEditMode] = useState(defaultEditMode);
   const isRoot = parentArray.length <= 0;
 
   const handleOpenModal = () => {
@@ -241,6 +194,7 @@ export function HypothesisNode({
                 depthLimit={depthLimit}
                 setModalIsOpen={setModalIsOpen}
                 setSelectedNodePath={setSelectedNodePath}
+                defaultEditMode={defaultEditMode}
               />
             ))}
           </div>
