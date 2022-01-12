@@ -5,7 +5,11 @@ import { BsPencil, BsInfoCircle } from "react-icons/bs";
 import { AiFillDelete } from "react-icons/ai";
 import { Icon } from "../../../Icon";
 import "./index.css";
-import { addButtonLabels, textPlaceholders } from "../../data";
+import {
+  addButtonLabels,
+  hypothesisStates,
+  textPlaceholders
+} from "../../data";
 import {
   deleteNodeInTree,
   getAllNodeIds,
@@ -30,6 +34,10 @@ export function HypothesisNode({
     setModalIsOpen(true);
   };
 
+  const stateInfo = Object.values(hypothesisStates).find(
+    (o) => o.value === node.state
+  );
+
   return (
     <div
       key={node.id}
@@ -44,10 +52,13 @@ export function HypothesisNode({
         className="flex items-center justify-center flex-shrink-0 rounded-full mr-1"
         style={{ width: "26px", height: "26px" }}
       >
-        {node.icon ? (
-          <Icon name={node.icon} className="" size="md" />
+        {node.state && stateInfo ? (
+          React.createElement(stateInfo.icon.type, {
+            color: stateInfo.color,
+            style: { width: "20px" }
+          })
         ) : (
-          <span className=" text-md text-gray-400">
+          <span className="text-md text-gray-400">
             <BsInfoCircle style={{ fontSize: "20px" }} />
           </span>
         )}
