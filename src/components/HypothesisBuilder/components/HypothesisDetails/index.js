@@ -5,6 +5,9 @@ import { Dropdown } from "../../../Dropdown";
 import { badgeMap, hypothesisStates } from "../../data";
 import { getNode, setDeepValue } from "../../../NestedHeirarchy/utils";
 import { LinkedItems } from "../LinkedItems";
+import { EvidenceSection } from "../EvidenceSection";
+import { Modal } from "../../../Modal";
+import { EvidenceBuilder } from "../EvidenceBuilder";
 
 const stateItems = {
   ...Object.values(hypothesisStates).reduce((acc, obj) => {
@@ -24,6 +27,8 @@ const stateItems = {
 };
 
 export function HypothesisDetails({ nodePath, tree, setTree, ...rest }) {
+  const [evidenceBuilderOpen, setEvidenceBuilderOpen] = useState(false);
+
   const node = getNode(tree, nodePath);
   const handleCurrentNodeValueChange = (key, value) => {
     setTree(setDeepValue(tree, nodePath, key, value));
@@ -44,47 +49,71 @@ export function HypothesisDetails({ nodePath, tree, setTree, ...rest }) {
   );
 
   return (
-    <div className={`py-7 ${rest.className || ""}`} {...rest}>
-      <div className="mt-1 mr-2 mb-2 pr-8">
-        <EditableText
-          value={node.description}
-          sharedClassName="text-xl font-medium text-gray-800"
-          onChange={(e) =>
-            handleCurrentNodeValueChange("description", e.target.value)
-          }
-        />
-      </div>
+    <>
+      <div className={`py-7 ${rest.className || ""}`} {...rest}>
+        <div className="mt-1 mr-2 mb-2 pr-8">
+          <EditableText
+            value={node.description}
+            sharedClassName="text-xl font-medium text-gray-800"
+            onChange={(e) =>
+              handleCurrentNodeValueChange("description", e.target.value)
+            }
+          />
+        </div>
 
-      <div className="mb-6">
-        <Badge size="sm" text={badgeMap[nodePath.length - 1]} />
+        <div className="mb-6">
+          <Badge size="sm" text={badgeMap[nodePath.length - 1]} />
+        </div>
+        <div className="mb-6">
+          <HypothesisTitle>Hypothesis State</HypothesisTitle>
+          <Dropdown
+            control={control}
+            name="state"
+            className="mb-4 w-72"
+            items={stateItems}
+          />
+        </div>
+        <div className="mb-6">
+          <EvidenceSection
+            currentNode={node}
+            nodePath={nodePath}
+            tree={tree}
+            setTree={setTree}
+            titlePrepend={<HypothesisTitle>Evidence</HypothesisTitle>}
+            onButtonClick={() => setEvidenceBuilderOpen(true)}
+          />
+        </div>
+        <div className="mb-6">
+          <LinkedItems
+            currentNode={node}
+            currentNodePath={nodePath}
+            fullTree={tree}
+            titlePrepend={<HypothesisTitle>Linked Items</HypothesisTitle>}
+            onLinksChange={(newItems) =>
+              handleCurrentNodeValueChange("links", newItems)
+            }
+          />
+        </div>
+        <div className="mb-6">
+          <HypothesisTitle>Comments</HypothesisTitle>
+        </div>
       </div>
-      <div className="mb-6">
-        <HypothesisTitle>Hypothesis State</HypothesisTitle>
-        <Dropdown
-          control={control}
-          name="state"
-          className="mb-4 w-72"
-          items={stateItems}
-        />
-      </div>
-      <div className="mb-6">
-        <HypothesisTitle>Evidences</HypothesisTitle>
-      </div>
-      <div className="mb-6">
-        <LinkedItems
-          currentNode={node}
-          currentNodePath={nodePath}
-          fullTree={tree}
-          titlePrepend={<HypothesisTitle>Linked Items</HypothesisTitle>}
-          onLinksChange={(newItems) =>
-            handleCurrentNodeValueChange("links", newItems)
-          }
-        />
-      </div>
-      <div className="mb-6">
-        <HypothesisTitle>Comments</HypothesisTitle>
-      </div>
-    </div>
+      <Modal
+        open={evidenceBuilderOpen}
+        onClose={() => setEvidenceBuilderOpen(false)}
+        // allowBackgroundClose={false}
+        // hideCloseButton
+        cardClass="w-full"
+        contentClass="h-full px-8"
+        cardStyle={{
+          maxWidth: "1024px"
+        }}
+        closeButtonStyle={{ padding: "2.2rem 2.1rem 0 0" }}
+        hideActions
+      >
+        <EvidenceBuilder />
+      </Modal>
+    </>
   );
 }
 
