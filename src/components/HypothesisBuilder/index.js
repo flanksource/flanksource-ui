@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Randomstring from "randomstring";
 import { minimalNodeTemplate, NestedHeirarchy } from "../NestedHeirarchy";
 import { hypothesisInitialFields } from "./data";
@@ -8,12 +8,14 @@ import { HypothesisDetails } from "./components/HypothesisDetails";
 
 export function HypothesisBuilder({
   showGeneratedOutput,
-  initialTree = null,
+  initialTree,
+  loadedTree,
   initialEditMode = true,
   ...rest
 }) {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedNodePath, setSelectedNodePath] = useState(null);
+  const defaultEditMode = loadedTree ? false : initialEditMode;
   const [tree, setTree] = useState(
     initialTree || {
       ...minimalNodeTemplate,
@@ -21,6 +23,12 @@ export function HypothesisBuilder({
       id: Randomstring.generate(16)
     }
   );
+
+  useEffect(() => {
+    if (loadedTree) {
+      setTree(loadedTree);
+    }
+  }, [loadedTree]);
 
   return (
     <div {...rest}>
@@ -34,7 +42,7 @@ export function HypothesisBuilder({
           <HypothesisNode
             setModalIsOpen={setModalIsOpen}
             setSelectedNodePath={setSelectedNodePath}
-            defaultEditMode={initialEditMode}
+            defaultEditMode={defaultEditMode}
           />
         </NestedHeirarchy>
       </div>
@@ -57,11 +65,11 @@ export function HypothesisBuilder({
       </Modal>
 
       {showGeneratedOutput && (
-        <div className="w-full px-2 flex flex-col">
+        <div className="w-full flex flex-col mt-4">
           generated tree:
           <textarea
             readOnly
-            className="text-xs"
+            className="text-xs mt-2"
             contentEditable={false}
             style={{ minHeight: "200px" }}
             value={JSON.stringify(tree, undefined, 4)}

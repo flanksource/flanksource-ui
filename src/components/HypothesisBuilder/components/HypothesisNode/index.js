@@ -23,7 +23,7 @@ export function HypothesisNode({
 }) {
   const { handleNodeChange, handleAddNode, tree, setTree } = treeFunctions;
   const [editMode, setEditMode] = useState(defaultEditMode);
-  const isRoot = parentArray.length <= 0;
+  const isRoot = parentArray?.length <= 0;
 
   const handleOpenModal = () => {
     setSelectedNodePath([...parentArray, node.id]);
@@ -72,7 +72,7 @@ export function HypothesisNode({
             <input
               className="w-full px-1 mr-2 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 border border-gray-300 rounded-md"
               defaultValue={node.description}
-              placeholder={textPlaceholders[parentArray.length]}
+              placeholder={textPlaceholders[parentArray?.length]}
               onChange={(e) =>
                 handleNodeChange(
                   [...parentArray, node.id],
@@ -88,34 +88,34 @@ export function HypothesisNode({
           <div className="flex">
             {!editMode && (
               <>
-                {depthLimit > parentArray.length && (
+                {depthLimit > parentArray?.length && (
                   <MiniButton
                     className="border border-gray-300 text-gray-500 rounded-md mr-2"
                     onClick={() => handleAddNode([...parentArray, node.id])}
                   >
                     <IoMdAdd style={{ fontSize: "13px" }} />
                     <span className="ml-1 text-xs">
-                      {addButtonLabels[parentArray.length]}
+                      {addButtonLabels[parentArray?.length]}
                     </span>
                   </MiniButton>
                 )}
 
-                {depthLimit > parentArray.length &&
-                  (node.links.length > 0 ||
-                    node.comments.length > 0 ||
-                    node.evidences.length > 0) && (
+                {depthLimit > parentArray?.length &&
+                  (node.links?.length > 0 ||
+                    node.comments?.length > 0 ||
+                    node.evidences?.length > 0) && (
                     <Separator color="rgba(209, 213, 219)" className="mr-2" />
                   )}
 
-                {node.links.length > 0 && (
+                {node.links?.length > 0 && (
                   <NumberedText
-                    number={node.links.length}
+                    number={node.links?.length}
                     text="Linked items"
                     textStyle={{ fontSize: "12px" }}
                     className="mr-2"
                   />
                 )}
-                {node.comments.length > 0 && (
+                {node.comments?.length > 0 && (
                   <NumberedText
                     number={node.comments.length}
                     text="Comments"
@@ -123,9 +123,9 @@ export function HypothesisNode({
                     className="mr-2"
                   />
                 )}
-                {node.evidences.length > 0 && (
+                {node.evidences?.length > 0 && (
                   <NumberedText
-                    number={node.evidences.length}
+                    number={node.evidences?.length}
                     text="Evidences"
                     textStyle={{ fontSize: "12px" }}
                     className="mr-2"
@@ -133,10 +133,10 @@ export function HypothesisNode({
                 )}
 
                 <>
-                  {(depthLimit > parentArray.length ||
-                    node.evidences.length > 0 ||
-                    node.links.length > 0 ||
-                    node.comments.length > 0) && (
+                  {(depthLimit > parentArray?.length ||
+                    node.evidences?.length > 0 ||
+                    node.links?.length > 0 ||
+                    node.comments?.length > 0) && (
                     <Separator color="rgba(209, 213, 219)" className="mr-2" />
                   )}
 
