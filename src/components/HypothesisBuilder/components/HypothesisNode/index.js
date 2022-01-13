@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { IoMdAdd, IoMdSave } from "react-icons/io";
 import { BsPencil, BsInfoCircle } from "react-icons/bs";
 import { AiFillDelete } from "react-icons/ai";
-import { Icon } from "../../../Icon";
 import "./index.css";
 import {
   addButtonLabels,
@@ -114,7 +113,7 @@ export function HypothesisNode({
                 {depthLimit > parentArray?.length &&
                   (node.links?.length > 0 ||
                     node.comments?.length > 0 ||
-                    node.evidences?.length > 0) && (
+                    node.evidence?.length > 0) && (
                     <Separator color="rgba(209, 213, 219)" className="mr-2" />
                   )}
 
@@ -134,9 +133,9 @@ export function HypothesisNode({
                     className="mr-2"
                   />
                 )}
-                {node.evidences?.length > 0 && (
+                {node.evidence?.length > 0 && (
                   <NumberedText
-                    number={node.evidences?.length}
+                    number={node.evidence?.length}
                     text="Evidences"
                     textStyle={{ fontSize: "12px" }}
                     className="mr-2"
@@ -145,7 +144,7 @@ export function HypothesisNode({
 
                 <>
                   {(depthLimit > parentArray?.length ||
-                    node.evidences?.length > 0 ||
+                    node.evidence?.length > 0 ||
                     node.links?.length > 0 ||
                     node.comments?.length > 0) && (
                     <Separator color="rgba(209, 213, 219)" className="mr-2" />

@@ -47,7 +47,7 @@ export const hypothesisStates = {
 
 export const hypothesisInitialFields = {
   state: null,
-  evidences: [],
+  evidence: [],
   links: [],
   comments: []
 };

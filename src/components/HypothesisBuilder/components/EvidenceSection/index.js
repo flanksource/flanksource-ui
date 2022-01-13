@@ -9,7 +9,7 @@ export function EvidenceSection({
   onButtonClick,
   ...rest
 }) {
-  const { evidences, id: nodeId } = currentNode;
+  const { evidence, id: nodeId } = currentNode;
   return (
     <div className={rest.className} {...rest}>
       <div className="flex justify-between items-center">
@@ -23,8 +23,8 @@ export function EvidenceSection({
         </button>
       </div>
       <div className="border mt-2">
-        {evidences && evidences.length > 0 ? (
-          evidences.map((evidence) => <div key={evidence}>{evidence}</div>)
+        {evidence && evidence.length > 0 ? (
+          evidence.map((evidence) => <div key={evidence}>{evidence}</div>)
         ) : (
           <div className="py-2 px-4 text-sm text-gray-400">No evidence</div>
         )}
