@@ -46,7 +46,46 @@ module.exports = {
       },
       colors: {
         "warm-gray": colors.warmGray,
-        teal: colors.teal
+        teal: colors.teal,
+        "warm-blue": "#CCDAF8",
+        "gray-color": "#C4C4C4",
+        "dark-gray": "#242423",
+        "column-background": "#F9FAFB",
+        "card-top-border": "#FBBE67"
+      },
+      fontFamily: {
+        inter: ["Inter"]
+      },
+      fontSize: {
+        2.8: "0.6875rem"
+      },
+      borderWidth: {
+        6: "6px"
+      },
+      borderRadius: {
+        "6px": "6px",
+        "8px": "8px"
+      },
+      boxShadow: {
+        card: "0px 0px 0px 1px #0000000D, 0px 4px 6px -2px #0000000D, 0px 10px 15px -3px #0000001A"
+      },
+      maxWidth: {
+        full: "100%",
+        "1/4": "25%",
+        "1/2": "50%",
+        "3/4": "75%",
+        "1/10": "10%",
+        "2/10": "20%",
+        "3/10": "30%",
+        "4/10": "40%",
+        "5/10": "50%",
+        "6/10": "60%",
+        "7/10": "70%",
+        "8/10": "80%",
+        "9/10": "90%"
+      },
+      flex: {
+        "0-0-a": "0 0 auto"
       }
     }
   },

@@ -1,0 +1,257 @@
+[
+  {
+    "name": "cluster",
+    "namespace": "default",
+    "components": [
+      {
+        "name": "nodes",
+        "icon": "server",
+        "summary": {
+          "healthy": 3
+        },
+        "components": [
+          {
+            "name": "ip-10-0-3-135.eu-west-2.compute.internal",
+            "status": "healthy",
+            "summary": {},
+            "properties": [
+              {
+                "name": "cpu",
+                "unit": "millicores",
+                "max": 3920
+              },
+              {
+                "name": "memory",
+                "unit": "bytes",
+                "max": 15553609728
+              },
+              {
+                "name": "ephemeral-storage",
+                "unit": "bytes",
+                "max": 47233297124
+              },
+              {
+                "name": "instance-type",
+                "text": "t3.xlarge"
+              },
+              {
+                "name": "zone"
+              },
+              {
+                "name": "ami",
+                "text": "ami-04e51ead8aae0ca0d"
+              },
+              {
+                "name": "machineID",
+                "text": "ec28fbd32a02aee47c44d2719d32721d"
+              },
+              {
+                "name": "kernelVersion",
+                "text": "5.4.156-83.273.amzn2.x86_64"
+              },
+              {
+                "name": "osImage",
+                "text": "Amazon Linux 2"
+              },
+              {
+                "name": "containerRuntimeVersion",
+                "text": "docker://20.10.7"
+              },
+              {
+                "name": "kubeletVersion",
+                "text": "v1.20.11-eks-f17b81"
+              },
+              {
+                "name": "systemUUID",
+                "text": "ec28fbd3-2a02-aee4-7c44-d2719d32721d"
+              },
+              {
+                "name": "bootID",
+                "text": "808577a3-48d5-4b77-bb6c-21477f2f2f3f"
+              },
+              {
+                "name": "kubeProxyVersion",
+                "text": "v1.20.11-eks-f17b81"
+              },
+              {
+                "name": "operatingSystem",
+                "text": "linux"
+              },
+              {
+                "name": "architecture",
+                "text": "amd64"
+              }
+            ]
+          },
+          {
+            "name": "ip-10-0-5-82.eu-west-2.compute.internal",
+            "status": "healthy",
+            "summary": {},
+            "properties": [
+              {
+                "name": "cpu",
+                "unit": "millicores",
+                "max": 3920
+              },
+              {
+                "name": "memory",
+                "unit": "bytes",
+                "max": 15553609728
+              },
+              {
+                "name": "ephemeral-storage",
+                "unit": "bytes",
+                "max": 47233297124
+              },
+              {
+                "name": "instance-type",
+                "text": "t3.xlarge"
+              },
+              {
+                "name": "zone"
+              },
+              {
+                "name": "ami",
+                "text": "ami-04e51ead8aae0ca0d"
+              },
+              {
+                "name": "kernelVersion",
+                "text": "5.4.156-83.273.amzn2.x86_64"
+              },
+              {
+                "name": "kubeProxyVersion",
+                "text": "v1.20.11-eks-f17b81"
+              },
+              {
+                "name": "machineID",
+                "text": "ec2f4e04f625c27a22493bed328ae504"
+              },
+              {
+                "name": "bootID",
+                "text": "ebb6f22f-0cf2-4d24-854e-4195811ca519"
+              },
+              {
+                "name": "containerRuntimeVersion",
+                "text": "docker://20.10.7"
+              },
+              {
+                "name": "kubeletVersion",
+                "text": "v1.20.11-eks-f17b81"
+              },
+              {
+                "name": "operatingSystem",
+                "text": "linux"
+              },
+              {
+                "name": "architecture",
+                "text": "amd64"
+              },
+              {
+                "name": "systemUUID",
+                "text": "ec2f4e04-f625-c27a-2249-3bed328ae504"
+              },
+              {
+                "name": "osImage",
+                "text": "Amazon Linux 2"
+              }
+            ]
+          },
+          {
+            "name": "ip-10-0-6-82.eu-west-2.compute.internal",
+            "status": "healthy",
+            "summary": {},
+            "properties": [
+              {
+                "name": "cpu",
+                "unit": "millicores",
+                "max": 3920
+              },
+              {
+                "name": "memory",
+                "unit": "bytes",
+                "max": 15554052096
+              },
+              {
+                "name": "ephemeral-storage",
+                "unit": "bytes",
+                "max": 76224326324
+              },
+              {
+                "name": "instance-type",
+                "text": "t3.xlarge"
+              },
+              {
+                "name": "zone"
+              },
+              {
+                "name": "ami"
+              },
+              {
+                "name": "kubeletVersion",
+                "text": "v1.20.4-eks-6b7464"
+              },
+              {
+                "name": "kubeProxyVersion",
+                "text": "v1.20.4-eks-6b7464"
+              },
+              {
+                "name": "operatingSystem",
+                "text": "linux"
+              },
+              {
+                "name": "architecture",
+                "text": "amd64"
+              },
+              {
+                "name": "machineID",
+                "text": "ec22e2bbe36b0f58fe145d52fe168bf7"
+              },
+              {
+                "name": "kernelVersion",
+                "text": "5.4.129-63.229.amzn2.x86_64"
+              },
+              {
+                "name": "osImage",
+                "text": "Amazon Linux 2"
+              },
+              {
+                "name": "systemUUID",
+                "text": "ec22e2bb-e36b-0f58-fe14-5d52fe168bf7"
+              },
+              {
+                "name": "bootID",
+                "text": "13c7abe8-e0e3-4e59-9a16-f548bc5c64ed"
+              },
+              {
+                "name": "containerRuntimeVersion",
+                "text": "docker://19.3.13"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "properties": [
+      {
+        "name": "dns",
+        "text": "canary.lab.flanksource.com"
+      },
+      {
+        "name": "name",
+        "text": "flanksource-canary-cluster"
+      },
+      {
+        "name": "account",
+        "text": "745897381572"
+      },
+      {
+        "name": "region",
+        "text": "eu-west-2"
+      }
+    ],
+    "summary": {
+      "healthy": 3
+    },
+    "status": "healthy"
+  }
+]
