@@ -173,6 +173,14 @@ import ubuntu from "./ubuntu.svg";
 import vault from "./vault.svg";
 import vsphere from "./vsphere.svg";
 import www from "./www.svg";
+import dots from './dots-triple.svg'
+import clock from './clock.svg'
+import cluster from './cluster.svg'
+import timezone from './timezone.svg'
+import world from './world.svg'
+import nods from './nodes.svg'
+import databases from './databases.svg'
+
 export const Icons = {
 "acr": acr,
 "aks": aks,
@@ -348,4 +356,11 @@ export const Icons = {
 "vault": vault,
 "vsphere": vsphere,
 "www": www,
+"dots": dots,
+"account": clock,
+"name": cluster,
+"region": timezone,
+"world": world,
+"nodes": nods,
+"databases": databases
 }
