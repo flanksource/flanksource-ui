@@ -66,7 +66,7 @@ export function Modal({
               {!hideCloseButton && (
                 <div
                   style={closeButtonStyle}
-                  className={`opacity-0 pointer-events-none sm:pointer-events-auto sm:opacity-100 absolute top-0 right-0 ${closeButtonClass}`}
+                  className={`pointer-events-none sm:pointer-events-auto absolute top-0 right-0 ${closeButtonClass}`}
                 >
                   <button
                     type="button"

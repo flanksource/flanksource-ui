@@ -49,12 +49,15 @@ export function HypothesisBuilder({
       <Modal
         open={modalIsOpen}
         onClose={() => setModalIsOpen(false)}
-        cardClass="w-full"
+        cardClass="w-full overflow-y-scroll"
         contentClass="h-full px-8"
         cardStyle={{
-          maxWidth: "820px"
+          maxWidth: "820px",
+          maxHeight: "calc(100vh - 4rem)"
         }}
-        closeButtonStyle={{ padding: "2.2rem 2.1rem 0 0" }}
+        closeButtonStyle={{
+          padding: "2.2rem 2.1rem 0 0"
+        }}
         hideActions
       >
         <HypothesisDetails

@@ -9,15 +9,19 @@ export function EvidenceSection({
   onButtonClick,
   ...rest
 }) {
-  const { evidence, id: nodeId } = currentNode;
+  const {
+    evidence
+    //  id: nodeId
+  } = currentNode;
   return (
     <div className={rest.className} {...rest}>
       <div className="flex justify-between items-center">
         <div className="">{titlePrepend}</div>
         <button
           type="button"
+          disabled
           onClick={onButtonClick}
-          className="inline-flex items-center px-2.5 py-1.5 mb-1 border border-transparent text-xs font-medium rounded text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          className="inline-flex items-center px-2.5 py-1.5 mb-1 border border-transparent text-xs font-medium rounded text-indigo-700 bg-indigo-100 disabled:bg-gray-200 disabled:text-gray-400 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
         >
           Add evidence
         </button>

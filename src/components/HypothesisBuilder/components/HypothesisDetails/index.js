@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Badge } from "../../../Badge";
 import { Dropdown } from "../../../Dropdown";
@@ -7,7 +7,9 @@ import { getNode, setDeepValue } from "../../../NestedHeirarchy/utils";
 import { LinkedItems } from "../LinkedItems";
 import { EvidenceSection } from "../EvidenceSection";
 import { Modal } from "../../../Modal";
-import { EvidenceBuilder } from "../EvidenceBuilder";
+import { EvidenceBuilder } from "../../../EvidenceBuilder";
+import { CommentsSection } from "../CommentsSection";
+import { EditableText } from "../../../EditableText";
 
 const stateItems = {
   ...Object.values(hypothesisStates).reduce((acc, obj) => {
@@ -95,16 +97,19 @@ export function HypothesisDetails({ nodePath, tree, setTree, ...rest }) {
           />
         </div>
         <div className="mb-6">
-          <HypothesisTitle>Comments</HypothesisTitle>
+          <CommentsSection
+            // comments={}
+            titlePrepend={
+              <HypothesisTitle className="mb-4">Comments</HypothesisTitle>
+            }
+          />
         </div>
       </div>
       <Modal
         open={evidenceBuilderOpen}
         onClose={() => setEvidenceBuilderOpen(false)}
-        // allowBackgroundClose={false}
-        // hideCloseButton
         cardClass="w-full"
-        contentClass="h-full px-8"
+        contentClass="h-full p-8"
         cardStyle={{
           maxWidth: "1024px"
         }}
@@ -117,61 +122,10 @@ export function HypothesisDetails({ nodePath, tree, setTree, ...rest }) {
   );
 }
 
-function HypothesisTitle({ ...rest }) {
+function HypothesisTitle({ className, ...rest }) {
   return (
-    <div
-      className={`text-md font-medium text-gray-800 ${rest.children}`}
-      {...rest}
-    >
+    <div className={`text-md font-medium text-gray-800 ${className}`} {...rest}>
       {rest.children}
-    </div>
-  );
-}
-
-function EditableText({
-  value,
-  textAreaClassName,
-  buttonClassName,
-  sharedClassName,
-  placeholder,
-  append,
-  onChange,
-  ...rest
-}) {
-  const [editMode, setEditMode] = useState(false);
-  const inputRef = useRef();
-
-  useEffect(() => {
-    if (editMode) {
-      inputRef.current.focus();
-      const val = inputRef.current.value;
-      inputRef.current.value = "";
-      inputRef.current.value = val;
-    }
-  }, [editMode]);
-  return (
-    <div className="relative" {...rest}>
-      {editMode && (
-        <textarea
-          className={`w-full py-0 px-px resize-none rounded-sm absolute top-0 bottom-0 left-0 right-0 overflow-y-hidden ${textAreaClassName} ${sharedClassName}`}
-          defaultValue={value}
-          onChange={onChange}
-          onBlur={() => setEditMode(false)}
-          ref={inputRef}
-        />
-      )}
-
-      <button
-        type="button"
-        className={`w-full px-px text-left border border-transparent hover:border-gray-300 rounded-sm cursor-text ${buttonClassName} ${sharedClassName}`}
-        style={{ overflowX: "hidden", wordWrap: "break-word" }}
-        onClick={() => setEditMode(true)}
-      >
-        {value || (
-          <span className="text-gray-400 ">{placeholder || "(empty)"}</span>
-        )}
-        {append}
-      </button>
     </div>
   );
 }
