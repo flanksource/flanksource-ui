@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Icon } from "../../Icon";
-import TopologySubHeader from "../TopologySubHeader/TopologySubHeader";
+import { TopologySubHeader } from "../TopologySubHeader/TopologySubHeader";
 import { NodeSpecification } from "../NodeSpecification/NodeSpecification";
 import { Chips } from "../Chips/Chips";
 import {
