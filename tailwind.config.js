@@ -51,20 +51,32 @@ module.exports = {
         "gray-color": "#C4C4C4",
         "dark-gray": "#242423",
         "column-background": "#F9FAFB",
-        "card-top-border": "#FBBE67"
+        "card-top-border-orange": "#FBBE67",
+        "card-top-border-red": "#EF978A",
+        "card-top-border-white": "#FFFFFF",
+        "card-top-border-gray": "#D2D2D2",
+        "card-top-border-green": "#98C373"
       },
       fontFamily: {
         inter: ["Inter"]
       },
       fontSize: {
-        2.8: "0.6875rem"
+        2.8: "0.6875rem",
+        ten: "0.625rem",
+        fifteen: "0.938rem",
+        "9.64px": "0.603rem"
       },
       borderWidth: {
         6: "6px"
       },
       borderRadius: {
+        "4px": "4px",
         "6px": "6px",
         "8px": "8px"
+      },
+      padding: {
+        "3px": "0.188rem",
+        "6px": "0.375rem"
       },
       boxShadow: {
         card: "0px 0px 0px 1px #0000000D, 0px 4px 6px -2px #0000000D, 0px 10px 15px -3px #0000001A"

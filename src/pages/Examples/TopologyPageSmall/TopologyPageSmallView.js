@@ -2,11 +2,16 @@ import React from "react";
 import PropTypes from "prop-types";
 
 import { TopologyColumn } from "../../../components/TopologyColumn/TopologyColumn";
-import { TopologyCard } from "../../../components/TopologyColumn/TopologyCard";
+import { TopologyCardSmall } from "../../../components/TopologyColumn/TopologyCardSmall/TopologyCardSmall";
+import { colorHandler } from "../../../utils/common";
 
-export const TopologyPageView = ({ topology }) => {
-  const cards = topology.map(({ name }) => (
-    <TopologyCard key={name} title={name} />
+export const TopologyPageSmallView = ({ topology }) => {
+  const cards = topology.map(({ name, color }) => (
+    <TopologyCardSmall
+      key={name}
+      title={name}
+      color={colorHandler("border", color)}
+    />
   ));
   return (
     <div className="font-inter flex">
@@ -15,6 +20,7 @@ export const TopologyPageView = ({ topology }) => {
         className="flex-0-0-a h-screen bg-column-background mr-4 lg"
       />
       <div className="flex-auto">
+        <p className="text-2xl my-6">Title</p>
         <div className="grid grid-cols-4 xl:grid-cols-5 gap-4">
           <div>
             <TopologyColumn title="zone 1" cards={cards} />
@@ -37,6 +43,6 @@ export const TopologyPageView = ({ topology }) => {
   );
 };
 
-TopologyPageView.propTypes = {
+TopologyPageSmallView.propTypes = {
   topology: PropTypes.arrayOf(PropTypes.shape({})).isRequired
 };

@@ -1,11 +1,9 @@
 import React from "react";
+import { TopologyPageMediumView } from "./TopologyPageMediumView";
 import topology from "../../../data/topology.json";
-import { TopologyPageView } from "./TopologyPageView";
 
-export const TopologyPage = () => (
-  <TopologyPageView
+export const TopologyPageMedium = () => (
+  <TopologyPageMediumView
     topology={topology[0].components[0].components[0].properties}
   />
 );
-
-TopologyPage.propTypes = {};
