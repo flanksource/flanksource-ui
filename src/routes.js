@@ -1,6 +1,7 @@
 import { Examples } from "./pages/Examples";
 import { CanaryPage } from "./pages/Examples/canary";
-import { HeirarchyTestPage } from "./pages/Examples/heirarchyTest";
+import { HeirarchyTestPageOld } from "./pages/Examples/heirarchyTestOld";
+import { IncidentDetails } from "./pages/TopologyViewer/Incident/IncidentDetails";
 
 export const routes = {
   examples: {
@@ -19,7 +20,13 @@ export const routes = {
     name: "HeirarchyTestPage",
     exact: true,
     path: `/heirarchyTest`,
-    component: <HeirarchyTestPage />
+    component: <HeirarchyTestPageOld />
+  },
+  incidentDetails: {
+    name: "Incident Details",
+    exact: true,
+    path: `/incident/:id`,
+    component: <IncidentDetails />
   }
 };
 
