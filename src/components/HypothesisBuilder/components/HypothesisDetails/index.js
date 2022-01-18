@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Badge } from "../../../Badge";
 import { Dropdown } from "../../../Dropdown";
-import { badgeMap, hypothesisStates } from "../../data";
+import { badgeMap, hypothesisStatuses } from "../../data";
 import { getNode, setDeepValue } from "../../../NestedHeirarchy/utils";
 import { LinkedItems } from "../LinkedItems";
 import { EvidenceSection } from "../EvidenceSection";
@@ -11,8 +11,8 @@ import { EvidenceBuilder } from "../../../EvidenceBuilder";
 import { CommentsSection } from "../CommentsSection";
 import { EditableText } from "../../../EditableText";
 
-const stateItems = {
-  ...Object.values(hypothesisStates).reduce((acc, obj) => {
+const statusItems = {
+  ...Object.values(hypothesisStatuses).reduce((acc, obj) => {
     const title = obj.title.toLowerCase();
     acc[title] = {
       id: `dropdown-${title}`,
@@ -41,13 +41,15 @@ export function HypothesisDetails({ nodePath, tree, setTree, ...rest }) {
     []
   );
   const { control, watch } = useForm({
-    defaultValues: { state: node.state || Object.values(stateItems)[2].value }
+    defaultValues: {
+      status: node.status || Object.values(statusItems)[2].value
+    }
   });
 
-  const watchState = watch("state");
+  const watchStatus = watch("status");
   useEffect(
-    () => handleCurrentNodeValueChangeMemoized("state", watchState),
-    [watchState, handleCurrentNodeValueChangeMemoized]
+    () => handleCurrentNodeValueChangeMemoized("status", watchStatus),
+    [watchStatus, handleCurrentNodeValueChangeMemoized]
   );
 
   return (
@@ -55,10 +57,10 @@ export function HypothesisDetails({ nodePath, tree, setTree, ...rest }) {
       <div className={`py-7 ${rest.className || ""}`} {...rest}>
         <div className="mt-1 mr-2 mb-2 pr-8">
           <EditableText
-            value={node.description}
+            value={node.title}
             sharedClassName="text-xl font-medium text-gray-800"
             onChange={(e) =>
-              handleCurrentNodeValueChange("description", e.target.value)
+              handleCurrentNodeValueChange("title", e.target.value)
             }
           />
         </div>
@@ -67,12 +69,12 @@ export function HypothesisDetails({ nodePath, tree, setTree, ...rest }) {
           <Badge size="sm" text={badgeMap[nodePath.length - 1]} />
         </div>
         <div className="mb-6">
-          <HypothesisTitle>Hypothesis State</HypothesisTitle>
+          <HypothesisTitle>Hypothesis Status</HypothesisTitle>
           <Dropdown
             control={control}
-            name="state"
+            name="status"
             className="mb-4 w-72"
-            items={stateItems}
+            items={statusItems}
           />
         </div>
         <div className="mb-6">

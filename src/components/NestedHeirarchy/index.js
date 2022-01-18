@@ -1,5 +1,5 @@
 import React from "react";
-import Randomstring from "randomstring";
+import { v4 as uuidv4 } from "uuid";
 import {
   addNodeToTree,
   deleteNodeInTree,
@@ -34,11 +34,11 @@ export function NestedHeirarchy({
 
   const handleAddNode = (traverseOrder, additionalProps = {}) => {
     const newNode = {
-      ...nodeTemplate,
+      ...additionalProps,
       ...additionalNodeFields,
-      ...additionalProps
+      ...nodeTemplate
     };
-    newNode.id = Randomstring.generate(16);
+    newNode.id = uuidv4();
     setTree(addNodeToTree(traverseOrder, tree, newNode));
   };
 

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import Randomstring from "randomstring";
+
+import { v4 as uuidv4 } from "uuid";
 import { minimalNodeTemplate, NestedHeirarchy } from "../NestedHeirarchy";
 import { hypothesisInitialFields } from "./data";
 import { HypothesisNode } from "./components/HypothesisNode";
@@ -16,13 +17,11 @@ export function HypothesisBuilder({
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedNodePath, setSelectedNodePath] = useState(null);
   const defaultEditMode = loadedTree ? false : initialEditMode;
-  const [tree, setTree] = useState(
-    initialTree || {
-      ...minimalNodeTemplate,
-      ...hypothesisInitialFields,
-      id: Randomstring.generate(16)
-    }
-  );
+  const [tree, setTree] = useState({
+    title: "",
+    ...hypothesisInitialFields,
+    ...{ ...minimalNodeTemplate, id: uuidv4() }
+  });
 
   useEffect(() => {
     if (loadedTree) {

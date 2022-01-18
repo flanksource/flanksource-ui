@@ -71,7 +71,7 @@ export function LinkedItems({
 
 export function LinkedItem({ id, fullTree, onClick, onDelete, ...rest }) {
   const { node, traverseOrder } = findNodeById(id, fullTree);
-  const { description } = node;
+  const { title } = node;
   return (
     <div
       className="flex justify-between border-b last:border-b-0 py-1.5 px-4"
@@ -79,9 +79,7 @@ export function LinkedItem({ id, fullTree, onClick, onDelete, ...rest }) {
     >
       <button type="button" onClick={onClick}>
         <span className="mr-4 text-sm text-gray-800 text-left">
-          {description || (
-            <span className="text-gray-400">No description given</span>
-          )}
+          {title || <span className="text-gray-400">No title given</span>}
         </span>
         <Badge size="xs" text={badgeMap[traverseOrder.length - 1]} />
       </button>
@@ -113,7 +111,7 @@ function LinkedItemsDropdownButton({ items, onItemClick, ...rest }) {
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Menu.Items className="origin-top-right absolute right-0 mt-0 w-72 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+        <Menu.Items className="z-20 origin-top-right absolute right-0 mt-0 w-72 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
           <div className="py-1">
             {items?.length > 0 ? (
               items.map((item) => (
@@ -127,12 +125,10 @@ function LinkedItemsDropdownButton({ items, onItemClick, ...rest }) {
                       )}
                       onClick={() => onItemClick(item)}
                     >
-                      {item?.description || (
-                        <span className="text-gray-400">
-                          (no description given )
-                        </span>
+                      {item?.title || (
+                        <span className="text-gray-400">(no title given )</span>
                       )}
-                      {/* {item.description} {item.id} */}
+                      {/* {item.title} {item.id} */}
                     </button>
                   )}
                 </Menu.Item>

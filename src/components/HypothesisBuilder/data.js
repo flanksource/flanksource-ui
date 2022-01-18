@@ -6,7 +6,7 @@ export const badgeMap = {
   2: "Solution"
 };
 
-export const hypothesisStates = {
+export const hypothesisStatuses = {
   0: {
     title: "Proven",
     value: "proven",
@@ -46,7 +46,7 @@ export const hypothesisStates = {
 };
 
 export const hypothesisInitialFields = {
-  state: null,
+  status: null,
   evidence: [],
   links: [],
   comments: []
