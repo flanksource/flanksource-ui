@@ -1,12 +1,12 @@
-import React, { useState } from "react";
-
+import React, { useEffect, useState } from "react";
 import { IoMdAdd, IoMdSave } from "react-icons/io";
 import { BsPencil, BsInfoCircle } from "react-icons/bs";
 import { AiFillDelete } from "react-icons/ai";
 import "./index.css";
 import {
   addButtonLabels,
-  hypothesisStates,
+  hypothesisNodeTypes,
+  hypothesisStatuses,
   textPlaceholders
 } from "../../data";
 import {
@@ -22,10 +22,13 @@ export function HypothesisNode({
   parentArray,
   depthLimit,
   setModalIsOpen,
-  setSelectedNodePath
+  setSelectedNodePath,
+  api
 }) {
   const { handleNodeChange, handleAddNode, tree, setTree } = treeFunctions;
-  const [editMode, setEditMode] = useState(defaultEditMode);
+  const [editMode, setEditMode] = useState(
+    !node?.title.length > 0 ?? defaultEditMode
+  );
   const isRoot = parentArray?.length <= 0;
 
   const handleOpenModal = () => {
@@ -33,8 +36,8 @@ export function HypothesisNode({
     setModalIsOpen(true);
   };
 
-  const stateInfo = Object.values(hypothesisStates).find(
-    (o) => o.value === node.state
+  const statusInfo = Object.values(hypothesisStatuses).find(
+    (o) => o.value === node.status
   );
 
   return (
@@ -51,9 +54,9 @@ export function HypothesisNode({
         className="flex items-center justify-center flex-shrink-0 rounded-full mr-1"
         style={{ width: "26px", height: "26px" }}
       >
-        {node.state && stateInfo ? (
-          React.createElement(stateInfo.icon.type, {
-            color: stateInfo.color,
+        {node.status && statusInfo ? (
+          React.createElement(statusInfo.icon.type, {
+            color: statusInfo.color,
             style: { width: "20px" }
           })
         ) : (
@@ -67,7 +70,7 @@ export function HypothesisNode({
         <div className="flex flex-col pr-2">
           {!editMode ? (
             <div
-              className={`ml-0.5 ${!node.description && "text-gray-400"}`}
+              className={`ml-0.5 ${!node.title && "text-gray-400"}`}
               style={{ marginTop: "1px", marginBottom: "1px" }}
             >
               <button
@@ -75,18 +78,18 @@ export function HypothesisNode({
                 type="button"
                 onClick={handleOpenModal}
               >
-                {node.description || "(none)"}
+                {node.title || "(none)"}
               </button>
             </div>
           ) : (
             <input
               className="w-full px-1 mr-2 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 border border-gray-300 rounded-md"
-              defaultValue={node.description}
+              defaultValue={node.title}
               placeholder={textPlaceholders[parentArray?.length]}
               onChange={(e) =>
                 handleNodeChange(
                   [...parentArray, node.id],
-                  "description",
+                  "title",
                   e.target.value
                 )
               }
@@ -101,7 +104,19 @@ export function HypothesisNode({
                 {depthLimit > parentArray?.length && (
                   <MiniButton
                     className="border border-gray-300 text-gray-500 rounded-md mr-2"
-                    onClick={() => handleAddNode([...parentArray, node.id])}
+                    onClick={() => {
+                      const newNodeID = handleAddNode(
+                        [...parentArray, node.id],
+                        { title: "" }
+                      );
+                      if (api?.create) {
+                        api.create(newNodeID, api.incidentId, {
+                          title: "",
+                          type: hypothesisNodeTypes[parentArray.length + 1],
+                          status: hypothesisStatuses[2].value
+                        });
+                      }
+                    }}
                   >
                     <IoMdAdd style={{ fontSize: "13px" }} />
                     <span className="ml-1 text-xs">
@@ -167,6 +182,9 @@ export function HypothesisNode({
                 className="rounded-md bg-red-400 text-white"
                 onClick={() => {
                   const idsToRemove = getAllNodeIds(node);
+                  if (api?.deleteBulk) {
+                    api.deleteBulk(idsToRemove);
+                  }
                   const newTree = removeLinksFromTree(
                     tree,
                     idsToRemove,
@@ -186,6 +204,9 @@ export function HypothesisNode({
                   : "text-gray-500 border-gray-300"
               }`}
               onClick={() => {
+                if (editMode && api?.update) {
+                  api.update(node.id, { title: node.title });
+                }
                 setEditMode(!editMode);
               }}
             >
@@ -213,6 +234,7 @@ export function HypothesisNode({
                 setModalIsOpen={setModalIsOpen}
                 setSelectedNodePath={setSelectedNodePath}
                 defaultEditMode={defaultEditMode}
+                api={api}
               />
             ))}
           </div>

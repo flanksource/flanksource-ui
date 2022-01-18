@@ -6,7 +6,7 @@ export const badgeMap = {
   2: "Solution"
 };
 
-export const hypothesisStates = {
+export const hypothesisStatuses = {
   0: {
     title: "Proven",
     value: "proven",
@@ -46,15 +46,17 @@ export const hypothesisStates = {
 };
 
 export const hypothesisInitialFields = {
-  state: null,
+  status: null,
   evidence: [],
   links: [],
   comments: []
 };
 
-export const addButtonLabels = ["Add issue", "Add potential solution"];
-export const textPlaceholders = [
-  "Root hypothesis",
-  "Issue",
-  "Potential solution"
-];
+export const addButtonLabels = ["Add issue", "Add solution"];
+export const textPlaceholders = ["Root hypothesis", "Issue", "Solution"];
+
+export const hypothesisNodeTypes = {
+  0: "root",
+  1: "factor",
+  2: "solution"
+};

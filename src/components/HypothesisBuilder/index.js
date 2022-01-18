@@ -1,50 +1,53 @@
 import React, { useEffect, useState } from "react";
-import Randomstring from "randomstring";
+
+import { v4 as uuidv4 } from "uuid";
 import { minimalNodeTemplate, NestedHeirarchy } from "../NestedHeirarchy";
 import { hypothesisInitialFields } from "./data";
 import { HypothesisNode } from "./components/HypothesisNode";
 import { Modal } from "../Modal";
 import { HypothesisDetails } from "./components/HypothesisDetails";
 
+const newTree = {
+  title: "",
+  ...hypothesisInitialFields,
+  ...{ ...minimalNodeTemplate, id: uuidv4() }
+};
+
 export function HypothesisBuilder({
   showGeneratedOutput,
   initialTree,
   loadedTree,
-  initialEditMode = true,
+  initialEditMode = false,
+  api,
   ...rest
 }) {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedNodePath, setSelectedNodePath] = useState(null);
   const defaultEditMode = loadedTree ? false : initialEditMode;
-  const [tree, setTree] = useState(
-    initialTree || {
-      ...minimalNodeTemplate,
-      ...hypothesisInitialFields,
-      id: Randomstring.generate(16)
-    }
-  );
+  const [tree, setTree] = useState(null);
 
   useEffect(() => {
-    if (loadedTree) {
-      setTree(loadedTree);
-    }
+    setTree(loadedTree || newTree);
   }, [loadedTree]);
 
   return (
     <div {...rest}>
       <div className="w-full">
-        <NestedHeirarchy
-          tree={tree}
-          setTree={setTree}
-          depthLimit={2}
-          additionalNodeFields={hypothesisInitialFields}
-        >
-          <HypothesisNode
-            setModalIsOpen={setModalIsOpen}
-            setSelectedNodePath={setSelectedNodePath}
-            defaultEditMode={defaultEditMode}
-          />
-        </NestedHeirarchy>
+        {tree && (
+          <NestedHeirarchy
+            tree={tree}
+            setTree={setTree}
+            depthLimit={2}
+            additionalNodeFields={hypothesisInitialFields}
+          >
+            <HypothesisNode
+              setModalIsOpen={setModalIsOpen}
+              setSelectedNodePath={setSelectedNodePath}
+              defaultEditMode={defaultEditMode}
+              api={api}
+            />
+          </NestedHeirarchy>
+        )}
       </div>
       <Modal
         open={modalIsOpen}
@@ -64,12 +67,12 @@ export function HypothesisBuilder({
           nodePath={selectedNodePath}
           tree={tree}
           setTree={setTree}
+          api={api}
         />
       </Modal>
 
       {showGeneratedOutput && (
         <div className="w-full flex flex-col mt-4">
-          generated tree:
           <textarea
             readOnly
             className="text-xs mt-2"

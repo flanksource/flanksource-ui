@@ -13,8 +13,8 @@ import { Status } from "../../components/Status";
 import { Feed } from "../../components/Feed";
 import { Icon, Avatar } from "../../components/Icon";
 import { Table } from "../../components/Table";
-import { Input } from "../../components/Input";
 import { Icons } from "../../icons";
+import { TextInput } from "../../components/TextInput";
 
 const activity = [
   {
@@ -155,12 +155,12 @@ const items = [
 
   {
     name: "Parent",
-    value: <Input label="Leading" type="email" leadingIcon={MailIcon} />
+    value: <TextInput label="Leading" type="email" leadingIcon={MailIcon} />
   },
   {
     name: "Parent",
     value: (
-      <Input
+      <TextInput
         label="Name"
         help="just your name for now"
         trailingIcon={QuestionMarkCircleIcon}
@@ -170,7 +170,7 @@ const items = [
   {
     name: "Parent",
     value: (
-      <Input
+      <TextInput
         label="Email"
         error="just your name for now"
         type="email"
@@ -178,7 +178,7 @@ const items = [
       />
     )
   },
-  { name: "Parent", value: <Input label="Website" prefix="https://" /> },
+  { name: "Parent", value: <TextInput label="Website" prefix="https://" /> },
 
   {
     colspan: 2,

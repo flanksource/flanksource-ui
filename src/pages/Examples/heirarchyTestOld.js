@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { HypothesisBuilder } from "../../components/HypothesisBuilder";
 
-export function HeirarchyTestPage() {
+export function HeirarchyTestPageOld() {
   const [existing, setExisting] = useState(false);
   const [showOuptut, setShowOuptut] = useState(false);
   const [treeDraft, setTreeDraft] = useState(null);

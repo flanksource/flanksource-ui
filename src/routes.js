@@ -3,6 +3,9 @@ import { CanaryPage } from "./pages/Examples/canary";
 import { TopologyPageSmall } from "./pages/Examples/TopologyPageSmall/TopologyPageSmall";
 import { TopologyPageMedium } from "./pages/Examples/TopologyPageMedium/TopologyPageMedium";
 import { TopologyPageLarge } from "./pages/Examples/TopologyPageLarge/TopologyPageLarge";
+import { HeirarchyTestPageOld } from "./pages/Examples/heirarchyTestOld";
+import { IncidentDetailsPage } from "./pages/TopologyViewer/Incident/IncidentDetails";
+import { IncidentListPage } from "./pages/TopologyViewer/Incident/IncidentList";
 
 export const routes = {
   examples: {
@@ -34,6 +37,24 @@ export const routes = {
     exact: true,
     path: `/`,
     component: <CanaryPage />
+  },
+  heirarchyTest: {
+    name: "HeirarchyTestPage",
+    exact: true,
+    path: `/heirarchyTest`,
+    component: <HeirarchyTestPageOld />
+  },
+  incidentList: {
+    name: "Incident List",
+    exact: true,
+    path: `/incident`,
+    component: <IncidentListPage />
+  },
+  incidentDetails: {
+    name: "Incident Details",
+    exact: true,
+    path: `/incident/:id`,
+    component: <IncidentDetailsPage />
   }
 };
 
