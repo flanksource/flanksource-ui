@@ -1,7 +1,8 @@
 import { Examples } from "./pages/Examples";
 import { CanaryPage } from "./pages/Examples/canary";
-import { TopologyPageSmall } from "./pages/Examples/TopologyPageSmall/TopologyPageSmall";
+import { TopologyPageCompact } from "./pages/Examples/TopologyPageSmall/TopologyPageCompact";
 import { TopologyPageMedium } from "./pages/Examples/TopologyPageMedium/TopologyPageMedium";
+import { TopologyPageFull } from "./pages/Examples/TopologyPageFull/TopologyPageFull";
 
 export const routes = {
   examples: {
@@ -14,13 +15,19 @@ export const routes = {
     name: "Topology",
     exact: true,
     path: `/topology-small`,
-    component: <TopologyPageSmall />
+    component: <TopologyPageCompact />
   },
   topologyMedium: {
     name: "TopologyMedium",
     exact: true,
     path: `/topology-medium`,
     component: <TopologyPageMedium />
+  },
+  topologyLarge: {
+    name: "TopologyLarge",
+    exact: true,
+    path: `/topology-large`,
+    component: <TopologyPageFull />
   },
   canary: {
     name: "Canary",

@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import { TopologyColumn } from "../../../components/TopologyColumn/TopologyColumn";
 import { TopologyCard } from "../../../components/TopologyCards/TopologyCard";
 
-export const TopologyPageSmallView = ({ topology }) => (
+export const TopologyPageCompactView = ({ topology }) => (
   <div className="font-inter flex">
     <div
       style={{ width: "226px" }}
@@ -88,6 +88,6 @@ export const TopologyPageSmallView = ({ topology }) => (
   </div>
 );
 
-TopologyPageSmallView.propTypes = {
+TopologyPageCompactView.propTypes = {
   topology: PropTypes.arrayOf(PropTypes.shape({})).isRequired
 };

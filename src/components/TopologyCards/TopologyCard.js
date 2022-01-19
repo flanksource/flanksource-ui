@@ -1,6 +1,10 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { TopologyCardMedium, TopologyCardCompact } from "./index";
+import {
+  TopologyCardMedium,
+  TopologyCardCompact,
+  TopologyCardFull
+} from "./index";
 
 export const TopologyCard = ({ variant, name, properties, status }) => (
   <div>
@@ -11,7 +15,7 @@ export const TopologyCard = ({ variant, name, properties, status }) => (
       <TopologyCardMedium name={name} status={status} properties={properties} />
     )}
     {variant === "full" && (
-      <TopologyCardMedium name={name} status={status} properties={properties} />
+      <TopologyCardFull name={name} status={status} properties={properties} />
     )}
   </div>
 );
