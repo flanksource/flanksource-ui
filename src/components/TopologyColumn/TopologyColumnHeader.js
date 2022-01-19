@@ -5,7 +5,7 @@ export const TopologyColumnHeader = ({ name, className }) => (
   <div
     className={`text-center bg-warm-blue p-4 rounded-md font-bold text-sm ${className}`}
   >
-    <h1>{name}</h1>
+    <h6>{name}</h6>
   </div>
 );
 

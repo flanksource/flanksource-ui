@@ -14,24 +14,24 @@ export function capitalizeFirstLetter(string) {
 export const cardStatusBorderTop = (status) => {
   switch (status) {
     case "healthy":
-      return "border-card-top-border-orange";
+      return "border-light-orange";
     case "unhealthy":
-      return "border-card-top-border-red";
+      return "border-light-red";
     default:
-      return "border-card-top-border-white";
+      return "border-white";
   }
 };
 export const chipBackgroundColor = (color) => {
   switch (color) {
     case "red":
-      return "bg-card-top-border-red";
+      return "bg-light-red";
     case "orange":
-      return "bg-card-top-border-orange";
+      return "bg-light-orange";
     case "green":
-      return "bg-card-top-border-green";
+      return "bg-light-green";
     case "gray":
-      return "bg-card-top-border-gray";
+      return "bg-light-gray";
     default:
-      return "border-card-top-border-green";
+      return "bg-light-green";
   }
 };

@@ -51,11 +51,10 @@ module.exports = {
         "gray-color": "#C4C4C4",
         "dark-gray": "#242423",
         "column-background": "#F9FAFB",
-        "card-top-border-orange": "#FBBE67",
-        "card-top-border-red": "#EF978A",
-        "card-top-border-white": "#FFFFFF",
-        "card-top-border-gray": "#D2D2D2",
-        "card-top-border-green": "#98C373"
+        "light-orange": "#FBBE67",
+        "light-red": "#EF978A",
+        "light-gray": "#D2D2D2",
+        "light-green": "#98C373"
       },
       fontFamily: {
         inter: ["Inter"]
