@@ -1,4 +1,5 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { debounce } from "lodash";
 import { useForm } from "react-hook-form";
 import { Badge } from "../../../Badge";
 import { Dropdown } from "../../../Dropdown";
@@ -40,6 +41,17 @@ export function HypothesisDetails({ nodePath, tree, setTree, api, ...rest }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
+
+  const handleApiUpdate = useRef(
+    debounce((key, value) => {
+      if (api?.update && node?.id) {
+        const params = {};
+        params[key] = value;
+        api.update(node.id, params);
+      }
+    }, 1000)
+  ).current;
+
   const { control, watch } = useForm({
     defaultValues: {
       status: node.status || Object.values(statusItems)[2].value
@@ -47,10 +59,10 @@ export function HypothesisDetails({ nodePath, tree, setTree, api, ...rest }) {
   });
 
   const watchStatus = watch("status");
-  useEffect(
-    () => handleCurrentNodeValueChangeMemoized("status", watchStatus),
-    [watchStatus, handleCurrentNodeValueChangeMemoized]
-  );
+  useEffect(() => {
+    handleApiUpdate("status", watchStatus);
+    handleCurrentNodeValueChangeMemoized("status", watchStatus);
+  }, [watchStatus, handleCurrentNodeValueChangeMemoized, handleApiUpdate]);
 
   return (
     <>
@@ -59,9 +71,10 @@ export function HypothesisDetails({ nodePath, tree, setTree, api, ...rest }) {
           <EditableText
             value={node.title}
             sharedClassName="text-xl font-medium text-gray-800"
-            onChange={(e) =>
-              handleCurrentNodeValueChange("title", e.target.value)
-            }
+            onChange={(e) => {
+              handleApiUpdate("title", e.target.value);
+              handleCurrentNodeValueChange("title", e.target.value);
+            }}
           />
         </div>
 
