@@ -18,7 +18,9 @@ import azure_sql from "./azure-sql.svg";
 import azure_subscription from "./azure-subscription.svg";
 import azure_vnet from "./azure-vnet.svg";
 import azure from "./azure.svg";
+import badge from "./badge.svg";
 import bash from "./bash.svg";
+import brain from "./brain.svg";
 import ca from "./ca.svg";
 import canary_checker from "./canary-checker.svg";
 import cassandra from "./cassandra.svg";
@@ -31,20 +33,28 @@ import cloudwatch_alarm from "./cloudwatch-alarm.svg";
 import cloudwatch_config from "./cloudwatch-config.svg";
 import cloudwatch from "./cloudwatch.svg";
 import compute_engine from "./compute-engine.svg";
+import connected from "./connected.svg";
+import console from "./console.svg";
 import consul from "./consul.svg";
 import containerdPull from "./containerdPull.svg";
 import containerdPush from "./containerdPush.svg";
+import cpu from "./cpu.svg";
+import database2 from "./database2.svg";
 import datadog from "./datadog.svg";
 import datapower_monitoring from "./datapower-monitoring.svg";
 import datapower_routing from "./datapower-routing.svg";
 import datapower_threat from "./datapower-threat.svg";
 import datapower from "./datapower.svg";
+import debian from "./debian.svg";
+import decrease from "./decrease.svg";
 import dex from "./dex.svg";
+import disk from "./disk.svg";
 import django from "./django.svg";
 import dns from "./dns.svg";
 import dockerPull from "./dockerPull.svg";
 import dockerPush from "./dockerPush.svg";
 import dotnet from "./dotnet.svg";
+import download from "./download.svg";
 import dynatrace from "./dynatrace.svg";
 import ec2 from "./ec2.svg";
 import ecr from "./ecr.svg";
@@ -53,6 +63,7 @@ import elastic from "./elastic.svg";
 import elasticsearch from "./elasticsearch.svg";
 import elb from "./elb.svg";
 import envoy from "./envoy.svg";
+import error from "./error.svg";
 import etcd from "./etcd.svg";
 import fire from "./fire.svg";
 import fluentd from "./fluentd.svg";
@@ -68,6 +79,7 @@ import gke from "./gke.svg";
 import google from "./google.svg";
 import grafana from "./grafana.svg";
 import graphql from "./graphql.svg";
+import group from "./group.svg";
 import grpc from "./grpc.svg";
 import grpc2 from "./grpc2.svg";
 import haproxy from "./haproxy.svg";
@@ -81,6 +93,10 @@ import ibm_cloud from "./ibm-cloud.svg";
 import ibm_mq from "./ibm-mq.svg";
 import ibm from "./ibm.svg";
 import icmp from "./icmp.svg";
+import increase from "./increase.svg";
+import increase2 from "./increase2.svg";
+import infinity from "./infinity.svg";
+import ip from "./ip.svg";
 import istio from "./istio.svg";
 import jaegar from "./jaegar.svg";
 import java from "./java.svg";
@@ -90,8 +106,10 @@ import k8s from "./k8s.svg";
 import kubernetes from "./kubernetes.svg";
 import ldap from "./ldap.svg";
 import letsencrypt from "./letsencrypt.svg";
+import lifebuoy from "./lifebuoy.svg";
 import linux from "./linux.svg";
 import lua from "./lua.svg";
+import mem from "./mem.svg";
 import memchache from "./memchache.svg";
 import microsoft from "./microsoft.svg";
 import mongo from "./mongo.svg";
@@ -99,10 +117,12 @@ import mongodb from "./mongodb.svg";
 import mssql from "./mssql.svg";
 import multiple from "./multiple.svg";
 import mysql from "./mysql.svg";
+import mysql_logo from "./mysql_logo.svg";
 import namespace from "./namespace.svg";
 import newrelic from "./newrelic.svg";
 import nginx from "./nginx.svg";
 import nodejs from "./nodejs.svg";
+import npm from "./npm.svg";
 import opa from "./opa.svg";
 import openshift from "./openshift.svg";
 import oracle from "./oracle.svg";
@@ -117,20 +137,38 @@ import rancher from "./rancher.svg";
 import redhat from "./redhat.svg";
 import redis from "./redis.svg";
 import restic from "./restic.svg";
+import restrict from "./restrict.svg";
+import rocket from "./rocket.svg";
 import ruby from "./ruby.svg";
 import s3 from "./s3.svg";
 import s3Bucket from "./s3Bucket.svg";
+import seal from "./seal.svg";
+import server from "./server.svg";
+import servers from "./servers.svg";
+import servers2 from "./servers2.svg";
+import settings from "./settings.svg";
+import shield from "./shield.svg";
+import silence from "./silence.svg";
 import slack from "./slack.svg";
 import smb from "./smb.svg";
+import source from "./source.svg";
+import speak from "./speak.svg";
 import spring from "./spring.svg";
 import sql from "./sql.svg";
 import sqlserver from "./sqlserver.svg";
 import ssl from "./ssl.svg";
+import ssl2 from "./ssl2.svg";
 import stackdriver_monitoring from "./stackdriver-monitoring.svg";
 import stackdriver_trace from "./stackdriver-trace.svg";
 import stackdriver from "./stackdriver.svg";
+import star from "./star.svg";
+import structure from "./structure.svg";
+import tag from "./tag.svg";
+import talk from "./talk.svg";
+import target from "./target.svg";
 import terraform from "./terraform.svg";
 import trafficlight from "./trafficlight.svg";
+import tree from "./tree.svg";
 import ubuntu from "./ubuntu.svg";
 import vault from "./vault.svg";
 import vsphere from "./vsphere.svg";
@@ -155,7 +193,9 @@ export const Icons = {
 "azure-subscription": azure_subscription,
 "azure-vnet": azure_vnet,
 "azure": azure,
+"badge": badge,
 "bash": bash,
+"brain": brain,
 "ca": ca,
 "canary-checker": canary_checker,
 "cassandra": cassandra,
@@ -168,20 +208,28 @@ export const Icons = {
 "cloudwatch-config": cloudwatch_config,
 "cloudwatch": cloudwatch,
 "compute-engine": compute_engine,
+"connected": connected,
+"console": console,
 "consul": consul,
 "containerdPull": containerdPull,
 "containerdPush": containerdPush,
+"cpu": cpu,
+"database2": database2,
 "datadog": datadog,
 "datapower-monitoring": datapower_monitoring,
 "datapower-routing": datapower_routing,
 "datapower-threat": datapower_threat,
 "datapower": datapower,
+"debian": debian,
+"decrease": decrease,
 "dex": dex,
+"disk": disk,
 "django": django,
 "dns": dns,
 "dockerPull": dockerPull,
 "dockerPush": dockerPush,
 "dotnet": dotnet,
+"download": download,
 "dynatrace": dynatrace,
 "ec2": ec2,
 "ecr": ecr,
@@ -190,6 +238,7 @@ export const Icons = {
 "elasticsearch": elasticsearch,
 "elb": elb,
 "envoy": envoy,
+"error": error,
 "etcd": etcd,
 "fire": fire,
 "fluentd": fluentd,
@@ -205,6 +254,7 @@ export const Icons = {
 "google": google,
 "grafana": grafana,
 "graphql": graphql,
+"group": group,
 "grpc": grpc,
 "grpc2": grpc2,
 "haproxy": haproxy,
@@ -218,6 +268,10 @@ export const Icons = {
 "ibm-mq": ibm_mq,
 "ibm": ibm,
 "icmp": icmp,
+"increase": increase,
+"increase2": increase2,
+"infinity": infinity,
+"ip": ip,
 "istio": istio,
 "jaegar": jaegar,
 "java": java,
@@ -227,8 +281,10 @@ export const Icons = {
 "kubernetes": kubernetes,
 "ldap": ldap,
 "letsencrypt": letsencrypt,
+"lifebuoy": lifebuoy,
 "linux": linux,
 "lua": lua,
+"mem": mem,
 "memchache": memchache,
 "microsoft": microsoft,
 "mongo": mongo,
@@ -236,10 +292,12 @@ export const Icons = {
 "mssql": mssql,
 "multiple": multiple,
 "mysql": mysql,
+"mysql_logo": mysql_logo,
 "namespace": namespace,
 "newrelic": newrelic,
 "nginx": nginx,
 "nodejs": nodejs,
+"npm": npm,
 "opa": opa,
 "openshift": openshift,
 "oracle": oracle,
@@ -254,20 +312,38 @@ export const Icons = {
 "redhat": redhat,
 "redis": redis,
 "restic": restic,
+"restrict": restrict,
+"rocket": rocket,
 "ruby": ruby,
 "s3": s3,
 "s3Bucket": s3Bucket,
+"seal": seal,
+"server": server,
+"servers": servers,
+"servers2": servers2,
+"settings": settings,
+"shield": shield,
+"silence": silence,
 "slack": slack,
 "smb": smb,
+"source": source,
+"speak": speak,
 "spring": spring,
 "sql": sql,
 "sqlserver": sqlserver,
 "ssl": ssl,
+"ssl2": ssl2,
 "stackdriver-monitoring": stackdriver_monitoring,
 "stackdriver-trace": stackdriver_trace,
 "stackdriver": stackdriver,
+"star": star,
+"structure": structure,
+"tag": tag,
+"talk": talk,
+"target": target,
 "terraform": terraform,
 "trafficlight": trafficlight,
+"tree": tree,
 "ubuntu": ubuntu,
 "vault": vault,
 "vsphere": vsphere,

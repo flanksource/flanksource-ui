@@ -57,6 +57,9 @@ export function labelIndex(selectedLabels, label) {
 }
 
 export function hasStringMatch(pattern, text) {
+  if (text == null) {
+    return false;
+  }
   return text.indexOf(pattern) >= 0;
 }
 
@@ -67,9 +70,9 @@ export function filterChecksByText(checks, textQuery) {
   const text = textQuery.toLowerCase();
   const filtered = [...checks].filter((check) => {
     const match =
-      hasStringMatch(text, check.description.toLowerCase()) ||
-      hasStringMatch(text, check.canaryName.toLowerCase()) ||
-      hasStringMatch(text, check.endpoint.toLowerCase());
+      hasStringMatch(text, check.description) ||
+      hasStringMatch(text, check.canaryName) ||
+      hasStringMatch(text, check.endpoint);
     return match;
   });
   return filtered;
