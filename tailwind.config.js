@@ -61,10 +61,9 @@ module.exports = {
         inter: ["Inter"]
       },
       fontSize: {
-        2.8: "0.6875rem",
-        ten: "0.625rem",
-        fifteen: "0.938rem",
-        "9.64px": "0.603rem"
+        "2xsi": ["0.6875rem", "1.1875rem"],
+        "2xs": ["0.625rem", "1.125rem"],
+        "15pxinrem": ["0.9375rem", "1.125rem"]
       },
       borderWidth: {
         6: "6px"
@@ -75,8 +74,7 @@ module.exports = {
         "8px": "8px"
       },
       padding: {
-        "3px": "0.188rem",
-        "6px": "0.375rem"
+        0.75: "0.1875rem"
       },
       boxShadow: {
         card: "0px 0px 0px 1px #0000000D, 0px 4px 6px -2px #0000000D, 0px 10px 15px -3px #0000001A"
@@ -95,6 +93,12 @@ module.exports = {
         "7/10": "70%",
         "8/10": "80%",
         "9/10": "90%"
+      },
+      minWidth: {
+        8: "2rem"
+      },
+      gridTemplateColumns: {
+        "4minmax": "repeat(4, minmax(min-content, max-content))"
       },
       flex: {
         "0-0-a": "0 0 auto"

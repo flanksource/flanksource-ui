@@ -42,9 +42,3 @@ export const databases = [
     id: 4
   }
 ];
-export const nodeSpecification = [
-  { icon: "world", title: "petclinic.demo.com", id: 1 },
-  { icon: "timezone", title: "eu-west-1", id: 2 },
-  { icon: "cluster", title: "prod-cluster", id: 3 },
-  { icon: "clock", title: "2h ago", id: 4 }
-];

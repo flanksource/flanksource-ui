@@ -357,9 +357,9 @@ export const Icons = {
 "vsphere": vsphere,
 "www": www,
 "dots": dots,
-"clock": clock,
-"cluster": cluster,
-"timezone": timezone,
+"account": clock,
+"name": cluster,
+"region": timezone,
 "world": world,
 "nodes": nods,
 "databases": databases

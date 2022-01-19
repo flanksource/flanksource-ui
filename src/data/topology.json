@@ -18,84 +18,68 @@
               {
                 "name": "cpu",
                 "unit": "millicores",
-                "color": "red",
                 "max": 3920
               },
               {
                 "name": "memory",
                 "unit": "bytes",
-                "color": "white",
                 "max": 15553609728
               },
               {
                 "name": "ephemeral-storage",
                 "unit": "bytes",
-                "color": "red",
                 "max": 47233297124
               },
               {
                 "name": "instance-type",
-                "text": "t3.xlarge",
-                "color": "white"
+                "text": "t3.xlarge"
               },
               {
-                "name": "zone",
-                "color": "white"
+                "name": "zone"
               },
               {
                 "name": "ami",
-                "text": "ami-04e51ead8aae0ca0d",
-                "color": "white"
+                "text": "ami-04e51ead8aae0ca0d"
               },
               {
                 "name": "machineID",
-                "text": "ec28fbd32a02aee47c44d2719d32721d",
-                "color": "orange"
+                "text": "ec28fbd32a02aee47c44d2719d32721d"
               },
               {
                 "name": "kernelVersion",
-                "text": "5.4.156-83.273.amzn2.x86_64",
-                "color": "white"
+                "text": "5.4.156-83.273.amzn2.x86_64"
               },
               {
                 "name": "osImage",
-                "text": "Amazon Linux 2",
-                "color": "orange"
+                "text": "Amazon Linux 2"
               },
               {
                 "name": "containerRuntimeVersion",
-                "color": "red",
                 "text": "docker://20.10.7"
               },
               {
                 "name": "kubeletVersion",
-                "text": "v1.20.11-eks-f17b81",
-                "color": "white"
+                "text": "v1.20.11-eks-f17b81"
               },
               {
                 "name": "systemUUID",
-                "text": "ec28fbd3-2a02-aee4-7c44-d2719d32721d",
-                "color": "white"
+                "text": "ec28fbd3-2a02-aee4-7c44-d2719d32721d"
               },
               {
                 "name": "bootID",
-                "text": "808577a3-48d5-4b77-bb6c-21477f2f2f3f",
-                "color": "white"
+                "text": "808577a3-48d5-4b77-bb6c-21477f2f2f3f"
               },
               {
                 "name": "kubeProxyVersion",
-                "text": "v1.20.11-eks-f17b81",
-                "color": "orange"
+                "text": "v1.20.11-eks-f17b81"
               },
               {
                 "name": "operatingSystem",
-                "text": "linux",
-                "color": "white"
+                "text": "linux"
               },
               {
                 "name": "architecture",
-                "text": "amd64",
-                "color": "white"
+                "text": "amd64"
               }
             ]
           },
