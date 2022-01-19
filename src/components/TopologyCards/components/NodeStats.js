@@ -4,10 +4,10 @@ import { Icon } from "../../Icon";
 import { NodeStatsChip } from "./NodeStatsChip";
 
 export const NodeStats = ({ title, icon, chips }) => (
-  <div className="">
+  <div>
     <div className="flex">
       <Icon name={icon} className="mr-2" />
-      <p className="mb-2 text-xs">{title}</p>
+      <h5 className="mb-2 text-xs">{title}</h5>
     </div>
     <div className="grid gap-2 grid-cols-4minmax">
       {chips.map(({ number, id, color }) => (

@@ -1,4 +1,4 @@
-import { TopologyCardSmall } from "./TopologyCardSmall";
+import { TopologyCardCompact } from "./TopologyCardCompact";
 import { TopologyCardMedium } from "./TopologyCardMedium";
 
-export { TopologyCardSmall, TopologyCardMedium };
+export { TopologyCardCompact, TopologyCardMedium };

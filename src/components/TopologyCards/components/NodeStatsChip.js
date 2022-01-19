@@ -1,5 +1,5 @@
 import React from "react";
-import { chipBackgroundColor } from "../../../utils/common";
+import { chipBackgroundColor } from "../utils/chipBackgroundColor";
 
 export const NodeStatsChip = ({ text, color }) => (
   <div

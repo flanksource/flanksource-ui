@@ -5,7 +5,7 @@ import { TopologySubHeader } from "./components/TopologySubHeader";
 import { NodeSpecification } from "./components/NodeSpecification";
 import { NodeStats } from "./components/NodeStats";
 import { databases, nodes } from "../../data/topologyDatas";
-import { cardStatusBorderTop } from "../../utils/common";
+import { cardStatusBorderTop } from "./utils/cardStatusBorderTop";
 
 export const TopologyCardMedium = ({ name, properties, status }) => (
   <div

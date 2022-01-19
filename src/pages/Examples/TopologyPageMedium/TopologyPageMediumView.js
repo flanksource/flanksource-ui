@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { TopologyColumn } from "../../../components/TopologyColumn/TopologyColumn";
-import { TopologyCardMedium } from "../../../components/TopologyCards";
+import { TopologyCard } from "../../../components/TopologyCards/TopologyCard";
 
 export const TopologyPageMediumView = ({ topology }) => (
   <div className="font-inter flex">
@@ -16,11 +16,12 @@ export const TopologyPageMediumView = ({ topology }) => (
           <TopologyColumn
             title="zone 1"
             cards={topology.map(({ name, properties, status }) => (
-              <TopologyCardMedium
+              <TopologyCard
                 key={name}
                 properties={properties}
                 status={status}
                 name={name}
+                variant="medium"
               />
             ))}
           />
@@ -29,7 +30,8 @@ export const TopologyPageMediumView = ({ topology }) => (
           <TopologyColumn
             title="zone 2"
             cards={topology.map(({ name, properties, status }) => (
-              <TopologyCardMedium
+              <TopologyCard
+                variant="medium"
                 key={name}
                 properties={properties}
                 status={status}
@@ -42,7 +44,8 @@ export const TopologyPageMediumView = ({ topology }) => (
           <TopologyColumn
             title="zone 3"
             cards={topology.map(({ name, properties, status }) => (
-              <TopologyCardMedium
+              <TopologyCard
+                variant="medium"
                 key={name}
                 properties={properties}
                 status={status}

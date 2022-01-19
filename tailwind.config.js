@@ -62,7 +62,7 @@ module.exports = {
       fontSize: {
         "2xsi": ["0.6875rem", "1.1875rem"],
         "2xs": ["0.625rem", "1.125rem"],
-        "15pxinrem": ["0.9375rem", "1.125rem"]
+        "15pxinrem": "0.9375rem"
       },
       borderWidth: {
         6: "6px"

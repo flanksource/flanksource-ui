@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 
 import { TopologyColumn } from "../../../components/TopologyColumn/TopologyColumn";
-import { TopologyCardSmall } from "../../../components/TopologyCards";
+import { TopologyCard } from "../../../components/TopologyCards/TopologyCard";
 
 export const TopologyPageSmallView = ({ topology }) => (
   <div className="font-inter flex">
@@ -16,40 +16,70 @@ export const TopologyPageSmallView = ({ topology }) => (
         <div>
           <TopologyColumn
             title="zone 1"
-            cards={topology.map(({ name, status }) => (
-              <TopologyCardSmall key={name} title={name} status={status} />
+            cards={topology.map(({ name, status, properties }) => (
+              <TopologyCard
+                variant="compact"
+                key={name}
+                name={name}
+                status={status}
+                properties={properties}
+              />
             ))}
           />
         </div>
         <div>
           <TopologyColumn
             title="zone 2"
-            cards={topology.map(({ name, status }) => (
-              <TopologyCardSmall key={name} title={name} status={status} />
+            cards={topology.map(({ name, status, properties }) => (
+              <TopologyCard
+                variant="compact"
+                key={name}
+                name={name}
+                status={status}
+                properties={properties}
+              />
             ))}
           />
         </div>
         <div>
           <TopologyColumn
             title="zone 3"
-            cards={topology.map(({ name, status }) => (
-              <TopologyCardSmall key={name} title={name} status={status} />
+            cards={topology.map(({ name, status, properties }) => (
+              <TopologyCard
+                variant="compact"
+                key={name}
+                name={name}
+                status={status}
+                properties={properties}
+              />
             ))}
           />
         </div>
         <div>
           <TopologyColumn
             title="zone 4"
-            cards={topology.map(({ name, status }) => (
-              <TopologyCardSmall key={name} title={name} status={status} />
+            cards={topology.map(({ name, status, properties }) => (
+              <TopologyCard
+                variant="compact"
+                key={name}
+                name={name}
+                status={status}
+                properties={properties}
+              />
             ))}
           />
         </div>
         <div>
           <TopologyColumn
             title="zone 5"
-            cards={topology.map(({ name, status }) => (
-              <TopologyCardSmall key={name} title={name} status={status} />
+            cards={topology.map(({ name, status, properties }) => (
+              <TopologyCard
+                variant="compact"
+                key={name}
+                name={name}
+                status={status}
+                properties={properties}
+              />
             ))}
           />
         </div>
