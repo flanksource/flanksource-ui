@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IoMdAdd, IoMdSave } from "react-icons/io";
 import { BsPencil, BsInfoCircle } from "react-icons/bs";
 import { AiFillDelete } from "react-icons/ai";
@@ -26,7 +26,9 @@ export function HypothesisNode({
   api
 }) {
   const { handleNodeChange, handleAddNode, tree, setTree } = treeFunctions;
-  const [editMode, setEditMode] = useState(defaultEditMode);
+  const [editMode, setEditMode] = useState(
+    !node?.title.length > 0 ?? defaultEditMode
+  );
   const isRoot = parentArray?.length <= 0;
 
   const handleOpenModal = () => {

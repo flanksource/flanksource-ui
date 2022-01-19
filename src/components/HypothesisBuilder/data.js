@@ -52,12 +52,8 @@ export const hypothesisInitialFields = {
   comments: []
 };
 
-export const addButtonLabels = ["Add issue", "Add potential solution"];
-export const textPlaceholders = [
-  "Root hypothesis",
-  "Issue",
-  "Potential solution"
-];
+export const addButtonLabels = ["Add issue", "Add solution"];
+export const textPlaceholders = ["Root hypothesis", "Issue", "Solution"];
 
 export const hypothesisNodeTypes = {
   0: "root",

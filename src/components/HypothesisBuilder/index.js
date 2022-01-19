@@ -7,45 +7,47 @@ import { HypothesisNode } from "./components/HypothesisNode";
 import { Modal } from "../Modal";
 import { HypothesisDetails } from "./components/HypothesisDetails";
 
+const newTree = {
+  title: "",
+  ...hypothesisInitialFields,
+  ...{ ...minimalNodeTemplate, id: uuidv4() }
+};
+
 export function HypothesisBuilder({
   showGeneratedOutput,
   initialTree,
   loadedTree,
-  initialEditMode = true,
+  initialEditMode = false,
   api,
   ...rest
 }) {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedNodePath, setSelectedNodePath] = useState(null);
   const defaultEditMode = loadedTree ? false : initialEditMode;
-  const [tree, setTree] = useState({
-    title: "",
-    ...hypothesisInitialFields,
-    ...{ ...minimalNodeTemplate, id: uuidv4() }
-  });
+  const [tree, setTree] = useState(null);
 
   useEffect(() => {
-    if (loadedTree) {
-      setTree(loadedTree);
-    }
+    setTree(loadedTree || newTree);
   }, [loadedTree]);
 
   return (
     <div {...rest}>
       <div className="w-full">
-        <NestedHeirarchy
-          tree={tree}
-          setTree={setTree}
-          depthLimit={2}
-          additionalNodeFields={hypothesisInitialFields}
-        >
-          <HypothesisNode
-            setModalIsOpen={setModalIsOpen}
-            setSelectedNodePath={setSelectedNodePath}
-            defaultEditMode={defaultEditMode}
-            api={api}
-          />
-        </NestedHeirarchy>
+        {tree && (
+          <NestedHeirarchy
+            tree={tree}
+            setTree={setTree}
+            depthLimit={2}
+            additionalNodeFields={hypothesisInitialFields}
+          >
+            <HypothesisNode
+              setModalIsOpen={setModalIsOpen}
+              setSelectedNodePath={setSelectedNodePath}
+              defaultEditMode={defaultEditMode}
+              api={api}
+            />
+          </NestedHeirarchy>
+        )}
       </div>
       <Modal
         open={modalIsOpen}
