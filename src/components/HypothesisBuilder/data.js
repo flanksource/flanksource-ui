@@ -58,3 +58,9 @@ export const textPlaceholders = [
   "Issue",
   "Potential solution"
 ];
+
+export const hypothesisNodeTypes = {
+  0: "root",
+  1: "factor",
+  2: "solution"
+};

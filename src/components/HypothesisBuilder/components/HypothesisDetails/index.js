@@ -28,7 +28,7 @@ const statusItems = {
   }, {})
 };
 
-export function HypothesisDetails({ nodePath, tree, setTree, ...rest }) {
+export function HypothesisDetails({ nodePath, tree, setTree, api, ...rest }) {
   const [evidenceBuilderOpen, setEvidenceBuilderOpen] = useState(false);
 
   const node = getNode(tree, nodePath);

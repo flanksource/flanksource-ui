@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getAllHypothesisByIncident } from "../../../api/services/hypothesis";
+import {
+  createHypothesis,
+  deleteHypothesis,
+  deleteHypothesisBulk,
+  getAllHypothesisByIncident,
+  updateHypothesis
+} from "../../../api/services/hypothesis";
 import { HypothesisBuilder } from "../../../components/HypothesisBuilder";
 
 function mapNode(node) {
@@ -50,7 +56,17 @@ export function IncidentDetails() {
         {isLoading ? (
           <div>loading...</div>
         ) : incidentId ? (
-          <HypothesisBuilder loadedTree={loadedTree} showGeneratedOutput />
+          <HypothesisBuilder
+            loadedTree={loadedTree}
+            showGeneratedOutput
+            api={{
+              incidentId,
+              create: createHypothesis,
+              delete: deleteHypothesis,
+              deleteBulk: deleteHypothesisBulk,
+              update: updateHypothesis
+            }}
+          />
         ) : (
           <div>Unable to find incident</div>
         )}

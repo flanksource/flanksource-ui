@@ -12,6 +12,7 @@ export function HypothesisBuilder({
   initialTree,
   loadedTree,
   initialEditMode = true,
+  api,
   ...rest
 }) {
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -42,6 +43,7 @@ export function HypothesisBuilder({
             setModalIsOpen={setModalIsOpen}
             setSelectedNodePath={setSelectedNodePath}
             defaultEditMode={defaultEditMode}
+            api={api}
           />
         </NestedHeirarchy>
       </div>
@@ -63,12 +65,12 @@ export function HypothesisBuilder({
           nodePath={selectedNodePath}
           tree={tree}
           setTree={setTree}
+          api={api}
         />
       </Modal>
 
       {showGeneratedOutput && (
         <div className="w-full flex flex-col mt-4">
-          generated tree:
           <textarea
             readOnly
             className="text-xs mt-2"

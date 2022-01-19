@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-
 import { IoMdAdd, IoMdSave } from "react-icons/io";
 import { BsPencil, BsInfoCircle } from "react-icons/bs";
 import { AiFillDelete } from "react-icons/ai";
 import "./index.css";
 import {
   addButtonLabels,
+  hypothesisNodeTypes,
   hypothesisStatuses,
   textPlaceholders
 } from "../../data";
@@ -22,7 +22,8 @@ export function HypothesisNode({
   parentArray,
   depthLimit,
   setModalIsOpen,
-  setSelectedNodePath
+  setSelectedNodePath,
+  api
 }) {
   const { handleNodeChange, handleAddNode, tree, setTree } = treeFunctions;
   const [editMode, setEditMode] = useState(defaultEditMode);
@@ -101,11 +102,19 @@ export function HypothesisNode({
                 {depthLimit > parentArray?.length && (
                   <MiniButton
                     className="border border-gray-300 text-gray-500 rounded-md mr-2"
-                    onClick={() =>
-                      handleAddNode([...parentArray, node.id], {
-                        title: ""
-                      })
-                    }
+                    onClick={() => {
+                      const newNodeID = handleAddNode(
+                        [...parentArray, node.id],
+                        { title: "" }
+                      );
+                      if (api?.create) {
+                        api.create(newNodeID, api.incidentId, {
+                          title: "",
+                          type: hypothesisNodeTypes[parentArray.length + 1],
+                          status: hypothesisStatuses[2].value
+                        });
+                      }
+                    }}
                   >
                     <IoMdAdd style={{ fontSize: "13px" }} />
                     <span className="ml-1 text-xs">
@@ -171,6 +180,9 @@ export function HypothesisNode({
                 className="rounded-md bg-red-400 text-white"
                 onClick={() => {
                   const idsToRemove = getAllNodeIds(node);
+                  if (api?.deleteBulk) {
+                    api.deleteBulk(idsToRemove);
+                  }
                   const newTree = removeLinksFromTree(
                     tree,
                     idsToRemove,
@@ -190,6 +202,9 @@ export function HypothesisNode({
                   : "text-gray-500 border-gray-300"
               }`}
               onClick={() => {
+                if (editMode && api?.update) {
+                  api.update(node.id, { title: node.title });
+                }
                 setEditMode(!editMode);
               }}
             >
@@ -217,6 +232,7 @@ export function HypothesisNode({
                 setModalIsOpen={setModalIsOpen}
                 setSelectedNodePath={setSelectedNodePath}
                 defaultEditMode={defaultEditMode}
+                api={api}
               />
             ))}
           </div>

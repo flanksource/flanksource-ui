@@ -40,6 +40,7 @@ export function NestedHeirarchy({
     };
     newNode.id = uuidv4();
     setTree(addNodeToTree(traverseOrder, tree, newNode));
+    return newNode.id;
   };
 
   const handleDeleteNode = (traverseOrder) => {
