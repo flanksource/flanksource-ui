@@ -7,9 +7,9 @@ export const TopologySubHeader = ({ isLarge }) => (
     <div>
       <div className={cx("text-gray-800", { "flex pt-3": isLarge })}>
         <h6
-          className={`text-gray-color text-2xs font-medium font-inter ${
-            isLarge && "leading-4"
-          }`}
+          className={cx("text-gray-color text-2xs font-medium font-inter", {
+            "leading-4": isLarge
+          })}
         >
           RPS:
         </h6>
@@ -43,9 +43,9 @@ export const TopologySubHeader = ({ isLarge }) => (
         })}
       >
         <h6
-          className={`text-gray-color text-2xs font-medium font-inter ${
-            isLarge && "leading-4"
-          } `}
+          className={cx("text-gray-color text-2xs font-medium font-inter", {
+            "leading-4": isLarge
+          })}
         >
           Latency:
         </h6>
