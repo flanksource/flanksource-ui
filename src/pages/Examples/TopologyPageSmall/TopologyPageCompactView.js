@@ -18,7 +18,7 @@ export const TopologyPageCompactView = ({ topology }) => (
             title="zone 1"
             cards={topology.map(({ name, status, properties }) => (
               <TopologyCard
-                variant="compact"
+                size="compact"
                 key={name}
                 name={name}
                 status={status}
@@ -32,7 +32,7 @@ export const TopologyPageCompactView = ({ topology }) => (
             title="zone 2"
             cards={topology.map(({ name, status, properties }) => (
               <TopologyCard
-                variant="compact"
+                size="compact"
                 key={name}
                 name={name}
                 status={status}
@@ -46,7 +46,7 @@ export const TopologyPageCompactView = ({ topology }) => (
             title="zone 3"
             cards={topology.map(({ name, status, properties }) => (
               <TopologyCard
-                variant="compact"
+                size="compact"
                 key={name}
                 name={name}
                 status={status}
@@ -60,7 +60,7 @@ export const TopologyPageCompactView = ({ topology }) => (
             title="zone 4"
             cards={topology.map(({ name, status, properties }) => (
               <TopologyCard
-                variant="compact"
+                size="compact"
                 key={name}
                 name={name}
                 status={status}
@@ -74,7 +74,7 @@ export const TopologyPageCompactView = ({ topology }) => (
             title="zone 5"
             cards={topology.map(({ name, status, properties }) => (
               <TopologyCard
-                variant="compact"
+                size="compact"
                 key={name}
                 name={name}
                 status={status}
