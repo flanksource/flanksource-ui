@@ -1,13 +1,15 @@
 import React from "react";
 import PropTypes from "prop-types";
+import cx from "clsx";
 import { Icon } from "../Icon";
 import { cardStatusBorderTop } from "./utils/cardStatusBorderTop";
 
 export const TopologyCardCompact = ({ name, status }) => (
   <div
-    className={`rounded-8px mb-4 shadow-card border-t-6 ${cardStatusBorderTop(
-      status
-    )} card cursor-pointer`}
+    className={cx(
+      "rounded-8px mb-4 shadow-card border-t-6 card cursor-pointer",
+      cardStatusBorderTop(status)
+    )}
   >
     <div className="flex flex-row flex-nowrap rounded-t-8px pt-2.5 pr-2.5 pb-4 pl-4 bg-white">
       <div className="text-gray-color pt-3 mr-2.5 flex-initial max-w-1/4">
