@@ -6,21 +6,21 @@ import {
   TopologyCardFull
 } from "./index";
 
-const variantToComponentMapping = {
+const sizeToComponentMapping = {
   compact: TopologyCardCompact,
   medium: TopologyCardMedium,
   full: TopologyCardFull,
   fallback: TopologyCardCompact
 };
 
-export const TopologyCard = ({ variant, ...rest }) => {
+export const TopologyCard = ({ size, ...rest }) => {
   const Component =
-    variantToComponentMapping[variant] || variantToComponentMapping.fallback;
+    sizeToComponentMapping[size] || sizeToComponentMapping.fallback;
   return <Component {...rest} />;
 };
 
 TopologyCard.propTypes = {
-  variant: PropTypes.oneOf(["compact", "medium", "full"]).isRequired,
+  size: PropTypes.oneOf(["compact", "medium", "full"]).isRequired,
   name: PropTypes.string.isRequired,
   properties: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
   status: PropTypes.string.isRequired

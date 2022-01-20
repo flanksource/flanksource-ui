@@ -180,6 +180,8 @@ import timezone from './timezone.svg'
 import world from './world.svg'
 import nods from './nodes.svg'
 import databases from './databases.svg'
+import namespaces from "./namespaces.svg";
+import pods from './pods.svg'
 
 export const Icons = {
 "acr": acr,
@@ -362,5 +364,7 @@ export const Icons = {
 "region": timezone,
 "world": world,
 "nodes": nods,
-"databases": databases
+"databases": databases,
+"namespaces": namespaces,
+"pods": pods
 }
