@@ -1,6 +1,6 @@
 import React from "react";
-import { chipBackgroundColor } from "../utils/chipBackgroundColor";
 import cx from "clsx";
+import { chipBackgroundColor } from "../utils/chipBackgroundColor";
 
 export const NodeStatsChip = ({ text, color }) => (
   <div

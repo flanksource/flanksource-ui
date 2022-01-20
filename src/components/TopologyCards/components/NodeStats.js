@@ -9,7 +9,7 @@ export const NodeStats = ({ title, icon, chips }) => (
       <Icon name={icon} className="mr-2" />
       <h5 className="mb-2 text-xs">{title}</h5>
     </div>
-    <div className="grid gap-2 grid-cols-4minmax">
+    <div className="grid gap-2 grid-cols-node-stats">
       {chips.map(({ number, id, color }) => (
         <NodeStatsChip key={id} text={number} color={color} />
       ))}

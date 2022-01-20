@@ -1,7 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { TopologyColumn } from "../../../components/TopologyColumn/TopologyColumn";
-import { TopologyCardFull } from "../../../components/TopologyCards";
 import { TopologyCard } from "../../../components/TopologyCards/TopologyCard";
 
 export const TopologyPageFullView = ({ topology }) => (
@@ -12,7 +11,7 @@ export const TopologyPageFullView = ({ topology }) => (
     />
     <div className="flex-auto">
       <h1 className="text-2xl my-6 font-semibold">Title</h1>
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 xl:grid-cols-2 gap-4">
         <div>
           <TopologyColumn
             title="zone 1"

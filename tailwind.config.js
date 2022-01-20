@@ -97,7 +97,9 @@ module.exports = {
         8: "2rem"
       },
       gridTemplateColumns: {
-        "4minmax": "repeat(4, minmax(min-content, max-content))"
+        "4minmax": "repeat(4, minmax(min-content, max-content))",
+        "node-stats": "repeat(auto-fill, minmax(2rem, max-content))",
+        "1-to-2": "minmax(0, 1fr) minmax(0, 2fr)"
       },
       flex: {
         "0-0-a": "0 0 auto"
