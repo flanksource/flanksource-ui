@@ -7,9 +7,9 @@ import {
 } from "./index";
 
 const sizeToComponentMapping = {
-  compact: TopologyCardSmall,
+  small: TopologyCardSmall,
   medium: TopologyCardMedium,
-  full: TopologyCardLarge,
+  large: TopologyCardLarge,
   fallback: TopologyCardSmall
 };
 
@@ -20,7 +20,7 @@ export const TopologyCard = ({ size, ...rest }) => {
 };
 
 TopologyCard.propTypes = {
-  size: PropTypes.oneOf(["compact", "medium", "full"]).isRequired,
+  size: PropTypes.oneOf(["small", "medium", "large"]).isRequired,
   name: PropTypes.string.isRequired,
   properties: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
   status: PropTypes.string.isRequired

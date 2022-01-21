@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import { TopologyColumn } from "../../../components/TopologyColumn/TopologyColumn";
 import { TopologyCard } from "../../../components/TopologyCard/TopologyCard";
 
-export const TopologyPageCompactView = ({ topology }) => (
+export const TopologyPageSmallView = ({ topology }) => (
   <div className="font-inter flex leading-1.21rel">
     <div
       style={{ width: "226px" }}
@@ -18,7 +18,7 @@ export const TopologyPageCompactView = ({ topology }) => (
             title="zone 1"
             cards={topology.map(({ name, status, properties }) => (
               <TopologyCard
-                size="compact"
+                size="small"
                 key={name}
                 name={name}
                 status={status}
@@ -32,7 +32,7 @@ export const TopologyPageCompactView = ({ topology }) => (
             title="zone 2"
             cards={topology.map(({ name, status, properties }) => (
               <TopologyCard
-                size="compact"
+                size="small"
                 key={name}
                 name={name}
                 status={status}
@@ -46,7 +46,7 @@ export const TopologyPageCompactView = ({ topology }) => (
             title="zone 3"
             cards={topology.map(({ name, status, properties }) => (
               <TopologyCard
-                size="compact"
+                size="small"
                 key={name}
                 name={name}
                 status={status}
@@ -60,7 +60,7 @@ export const TopologyPageCompactView = ({ topology }) => (
             title="zone 4"
             cards={topology.map(({ name, status, properties }) => (
               <TopologyCard
-                size="compact"
+                size="small"
                 key={name}
                 name={name}
                 status={status}
@@ -74,7 +74,7 @@ export const TopologyPageCompactView = ({ topology }) => (
             title="zone 5"
             cards={topology.map(({ name, status, properties }) => (
               <TopologyCard
-                size="compact"
+                size="small"
                 key={name}
                 name={name}
                 status={status}
@@ -88,6 +88,6 @@ export const TopologyPageCompactView = ({ topology }) => (
   </div>
 );
 
-TopologyPageCompactView.propTypes = {
+TopologyPageSmallView.propTypes = {
   topology: PropTypes.arrayOf(PropTypes.shape({})).isRequired
 };

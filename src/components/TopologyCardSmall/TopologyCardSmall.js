@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import cx from "clsx";
 import { Icon } from "../Icon";
 import { getTopologyCardStatusBorderTopColor } from "../../utils/getTopologyCardStatusBorderTopColor";
+import { BottomStats } from "./components/BottomStats";
 
 export const TopologyCardSmall = ({ name, status }) => (
   <div
@@ -32,32 +33,13 @@ export const TopologyCardSmall = ({ name, status }) => (
         <Icon name="dots" className="" />
       </div>
     </div>
-    <div className="grid grid-cols-3 bg-lightest-gray px-2 py-4 rounded-b-8px divide-x leading-none">
-      <div>
-        <div className="text-gray-800 px-2">
-          <span className="text-gray-color text-xs font-medium leading-1.21rel">
-            RPS:
-          </span>
-          <p className="font-bold text-sm leading-1.21rel">165/s</p>
-        </div>
-      </div>
-      <div className="flex justify-center">
-        <div className="text-gray-800 px-2">
-          <span className="text-gray-color text-xs font-medium leading-1.21rel">
-            Errors:
-          </span>
-          <p className="font-bold text-sm leading-1.21rel">0.1%</p>
-        </div>
-      </div>
-      <div className="flex justify-center">
-        <div className="text-gray-800 px-2">
-          <span className="text-gray-color text-xs font-medium leading-1.21rel">
-            Latency:
-          </span>
-          <p className="font-bold text-sm leading-1.21rel">225ms</p>
-        </div>
-      </div>
-    </div>
+    <BottomStats
+      items={[
+        { name: "RPS:", value: "165/s" },
+        { name: "Errors:", value: "0.1%" },
+        { name: "Latency:", value: "225ms" }
+      ]}
+    />
   </div>
 );
 

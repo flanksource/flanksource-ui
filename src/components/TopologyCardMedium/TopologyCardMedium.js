@@ -6,6 +6,7 @@ import { NodeSpecification } from "../NodeSpecification/NodeSpecification";
 import { NodeStats } from "../NodeStats/NodeStats";
 import { databases, nodes } from "../../data/topologyDatas";
 import { getTopologyCardStatusBorderTopColor } from "../../utils/getTopologyCardStatusBorderTopColor";
+import { SubHeaderStats } from "./components/SubHeaderStats";
 
 export const TopologyCardMedium = ({ name, properties, status }) => (
   <div
@@ -36,54 +37,13 @@ export const TopologyCardMedium = ({ name, properties, status }) => (
       </div>
 
       <div className="flex w-med-card-right justify-between pl-1 pr-1.5 pb-3.5 pt-3">
-        <div className="grid grid-cols-3 rounded-b-8px divide-x">
-          <div>
-            <div className={cx("text-gray-800 flex flex-col")}>
-              <h6
-                className={cx(
-                  "text-gray-color text-2xs font-bold leading-1.21rel mb-0.5"
-                )}
-              >
-                RPS:
-              </h6>
-              <span className={cx("font-bold text-xs leading-1.21rel")}>
-                165/s
-              </span>
-            </div>
-          </div>
-          <div className="flex justify-center">
-            <div
-              className={cx("text-gray-800 px-2 align-middle flex flex-col")}
-            >
-              <h6
-                className={cx(
-                  "text-gray-color text-2xs font-bold leading-1.21rel mb-0.5"
-                )}
-              >
-                Errors:
-              </h6>
-              <span className={cx("font-bold text-xs leading-1.21rel")}>
-                0.1%
-              </span>
-            </div>
-          </div>
-          <div className="flex justify-center">
-            <div
-              className={cx("text-gray-800 px-2 align-middle flex flex-col")}
-            >
-              <h6
-                className={cx(
-                  "text-gray-color text-2xs font-bold leading-1.21rel mb-0.5"
-                )}
-              >
-                Latency:
-              </h6>
-              <span className={cx("font-bold text-xs leading-1.21rel")}>
-                225ms
-              </span>
-            </div>
-          </div>
-        </div>
+        <SubHeaderStats
+          items={[
+            { name: "RPS:", value: "165/s" },
+            { name: "Errors:", value: "0.1%" },
+            { name: "Latency:", value: "225ms" }
+          ]}
+        />
         <div className="flex-initial text-1 p-1.5">
           <Icon name="dots" className="" />
         </div>

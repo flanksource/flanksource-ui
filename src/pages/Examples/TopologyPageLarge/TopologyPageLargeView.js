@@ -4,7 +4,7 @@ import { TopologyColumn } from "../../../components/TopologyColumn/TopologyColum
 import { TopologyCard } from "../../../components/TopologyCard/TopologyCard";
 import { properties } from "../../../data/topologyDatas";
 
-export const TopologyPageFullView = ({ topology }) => (
+export const TopologyPageLargeView = ({ topology }) => (
   <div className="font-inter flex leading-1.21rel">
     <div
       style={{ width: "226px" }}
@@ -18,7 +18,7 @@ export const TopologyPageFullView = ({ topology }) => (
             title="zone 1"
             cards={topology.map(({ name, status }) => (
               <TopologyCard
-                size="full"
+                size="large"
                 key={name}
                 properties={properties}
                 status={status}
@@ -32,7 +32,7 @@ export const TopologyPageFullView = ({ topology }) => (
             title="zone 2"
             cards={topology.map(({ name, status }) => (
               <TopologyCard
-                size="full"
+                size="large"
                 key={name}
                 properties={properties}
                 status={status}
@@ -46,6 +46,6 @@ export const TopologyPageFullView = ({ topology }) => (
   </div>
 );
 
-TopologyPageFullView.propTypes = {
+TopologyPageLargeView.propTypes = {
   topology: PropTypes.arrayOf(PropTypes.shape({})).isRequired
 };
