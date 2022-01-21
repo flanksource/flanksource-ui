@@ -2,15 +2,15 @@ import React from "react";
 import PropTypes from "prop-types";
 import {
   TopologyCardMedium,
-  TopologyCardCompact,
-  TopologyCardFull
+  TopologyCardSmall,
+  TopologyCardLarge
 } from "./index";
 
 const sizeToComponentMapping = {
-  compact: TopologyCardCompact,
+  small: TopologyCardSmall,
   medium: TopologyCardMedium,
-  full: TopologyCardFull,
-  fallback: TopologyCardCompact
+  large: TopologyCardLarge,
+  fallback: TopologyCardSmall
 };
 
 export const TopologyCard = ({ size, ...rest }) => {
@@ -20,7 +20,7 @@ export const TopologyCard = ({ size, ...rest }) => {
 };
 
 TopologyCard.propTypes = {
-  size: PropTypes.oneOf(["compact", "medium", "full"]).isRequired,
+  size: PropTypes.oneOf(["small", "medium", "large"]).isRequired,
   name: PropTypes.string.isRequired,
   properties: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
   status: PropTypes.string.isRequired

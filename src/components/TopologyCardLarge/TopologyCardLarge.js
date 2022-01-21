@@ -2,17 +2,17 @@ import React from "react";
 import PropTypes from "prop-types";
 import cx from "clsx";
 import { Icon } from "../Icon";
-import { NodeSpecification } from "./components/NodeSpecification";
-import { NodeStats } from "./components/NodeStats";
+import { NodeSpecification } from "../NodeSpecification/NodeSpecification";
+import { NodeStats } from "../NodeStats/NodeStats";
 import { databases, namespaces, nodes, pods } from "../../data/topologyDatas";
-import { cardStatusBorderTop } from "./utils/cardStatusBorderTop";
+import { getTopologyCardStatusBorderTopColor } from "../../utils/getTopologyCardStatusBorderTopColor";
 import { TopologyFullSubheader } from "./components/TopologyFullSubheader";
 
-export const TopologyCardFull = ({ name, properties, status }) => (
+export const TopologyCardLarge = ({ name, properties, status }) => (
   <div
     className={cx(
       "rounded-8px mb-4 shadow-card border-t-6 card cursor-pointer",
-      cardStatusBorderTop(status)
+      getTopologyCardStatusBorderTopColor(status)
     )}
   >
     <div className="flex flex-row flex-nowrap rounded-t-8px pt-2.5 pr-2.5 pb-3.5 pl-4 bg-white">
@@ -79,7 +79,7 @@ export const TopologyCardFull = ({ name, properties, status }) => (
   </div>
 );
 
-TopologyCardFull.propTypes = {
+TopologyCardLarge.propTypes = {
   name: PropTypes.string.isRequired,
   properties: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
   status: PropTypes.string.isRequired

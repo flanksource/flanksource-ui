@@ -3,6 +3,12 @@ import { Icons } from "../../icons";
 export function Icon({ size = "sm", name, className, alt = "", ...props }) {
   let iconClassName;
   switch (size) {
+    case "2xs":
+      iconClassName = "h-3 w-3";
+      break;
+    case "2xsi":
+      iconClassName = "h-3.5 w-3.5";
+      break;
     case "xs":
       iconClassName = "h-4 w-4";
       break;

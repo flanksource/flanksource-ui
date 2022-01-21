@@ -51,6 +51,7 @@ module.exports = {
         "gray-color": "#C4C4C4",
         "dark-gray": "#242423",
         "column-background": "#F9FAFB",
+        "lightest-gray": "#F9FAFB",
         "light-orange": "#FBBE67",
         "light-red": "#EF978A",
         "light-gray": "#D2D2D2",
@@ -76,7 +77,7 @@ module.exports = {
         0.75: "0.1875rem"
       },
       boxShadow: {
-        card: "0px 0px 0px 1px #0000000D, 0px 4px 6px -2px #0000000D, 0px 10px 15px -3px #0000001A"
+        card: "0px 10px 15px -3px rgba(0, 0, 0, 0.1), 0px 4px 6px -2px rgba(0, 0, 0, 0.05), 0px 0px 0px 1px rgba(0, 0, 0, 0.05)"
       },
       maxWidth: {
         full: "100%",
@@ -93,6 +94,10 @@ module.exports = {
         "8/10": "80%",
         "9/10": "90%"
       },
+      width: {
+        "med-card-left": "48%",
+        "med-card-right": "52%"
+      },
       minWidth: {
         8: "2rem"
       },
@@ -103,6 +108,9 @@ module.exports = {
       },
       flex: {
         "0-0-a": "0 0 auto"
+      },
+      lineHeight: {
+        "1.21rel": "1.21"
       }
     }
   },
