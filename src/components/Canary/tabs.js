@@ -10,6 +10,9 @@ const defaultTabs = {
 
 // filter checks according to the 'tabBy' and selected tab
 export function filterChecksByTabSelection(tabBy, selectedTab, checks) {
+  if (checks == null) {
+    return checks;
+  }
   let filteredChecks = checks;
   if (selectedTab !== "all") {
     if (tabBy === "namespace") {
@@ -49,6 +52,9 @@ export function generateTabs(tabBy, checks) {
     // generate tabs by non boolean label
     const label = tabBy;
     const matchingLabelValues = checks.reduce((acc, o) => {
+      if (o.labels == null) {
+        return acc;
+      }
       const labelKeys = Object.keys(o.labels);
       if (labelKeys.length > 0 && labelKeys.includes(label)) {
         acc = { ...acc, [o.labels[label]]: null };

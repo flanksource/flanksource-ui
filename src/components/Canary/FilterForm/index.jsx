@@ -8,8 +8,8 @@ import { TabByDropdown } from "../../Dropdown/TabByDropdown";
 import { PivotByDropdown } from "../../Dropdown/PivotByDropdown";
 import { PivotLabelDropdown } from "../../Dropdown/PivotLabelDropdown";
 import { PivotCellTypeDropdown } from "../../Dropdown/PivotCellTypeDropdown";
+import { TimeRange } from "../../Dropdown/TimeRange";
 import { Toggle } from "../../Toggle";
-
 import { initialiseFormState, updateFormState, getDefaultForm } from "../state";
 
 import { encodeObjectToUrlSearchParams } from "../url";
@@ -21,7 +21,8 @@ export function FilterForm({
   labels,
   checks,
   history,
-  currentTabChecks = null
+  currentTabChecks = null,
+  onServerSideFilterChange = null
 }) {
   const searchParams = window.location.search;
   const { formState, fullState } = initialiseFormState(
@@ -32,12 +33,24 @@ export function FilterForm({
   const { control, watch, reset } = useForm({
     defaultValues: formState
   });
-
-  const filteredLabels =
+  let filteredLabels =
     currentTabChecks && currentTabChecks.length > 0
       ? getFilteredLabelsByChecks(currentTabChecks, labels)
       : labels;
 
+  filteredLabels = Object.values(filteredLabels);
+
+  filteredLabels = filteredLabels.sort((a, b) => {
+    const aLower = a.key.toLowerCase();
+    const bLower = b.key.toLowerCase();
+    if (aLower < bLower) {
+      return -1;
+    }
+    if (aLower > bLower) {
+      return 1;
+    }
+    return 0;
+  });
   useEffect(() => {
     const encoded = encodeObjectToUrlSearchParams(fullState);
     if (window.location.search !== `?${encoded}`) {
@@ -45,6 +58,12 @@ export function FilterForm({
       reset(formState);
     }
   }, [formState, fullState, labels, history, reset]);
+
+  useEffect(() => {
+    if (onServerSideFilterChange != null) {
+      onServerSideFilterChange();
+    }
+  }, [formState.timeRange, onServerSideFilterChange]);
 
   const watchLayout = watch("layout");
   const watchPivotBy = watch("pivotBy");
@@ -66,6 +85,13 @@ export function FilterForm({
   return (
     <form className="relative">
       <div className="mb-8">
+        <TimeRange
+          control={control}
+          name="timeRange"
+          className="mb-4"
+          label="Time Range"
+        />
+
         <LayoutDropdown
           control={control}
           name="layout"
@@ -134,33 +160,21 @@ export function FilterForm({
         <div className="uppercase font-semibold text-sm mb-3 text-indigo-700">
           Filter By Label
         </div>
-        {Object.values(filteredLabels)
-          .sort((a, b) => {
-            const aLower = a.key.toLowerCase();
-            const bLower = b.key.toLowerCase();
-            if (aLower < bLower) {
-              return -1;
-            }
-            if (aLower > bLower) {
-              return 1;
-            }
-            return 0;
-          })
-          .map((label) => (
-            <Controller
-              key={label.id}
-              name={`labels.${label.id}`}
-              control={control}
-              render={({ field: { ref, ...rest } }) => (
-                <TristateToggle
-                  key={label.key}
-                  className="mb-2"
-                  label={label}
-                  {...rest}
-                />
-              )}
-            />
-          ))}
+        {filteredLabels.map((label) => (
+          <Controller
+            key={label.id}
+            name={`labels.${label.id}`}
+            control={control}
+            render={({ field: { ref, ...rest } }) => (
+              <TristateToggle
+                key={label.key}
+                className="mb-2"
+                label={label}
+                {...rest}
+              />
+            )}
+          />
+        ))}
       </div>
     </form>
   );

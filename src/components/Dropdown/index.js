@@ -3,6 +3,7 @@ import { Fragment } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, SelectorIcon } from "@heroicons/react/solid";
 import { Controller } from "react-hook-form";
+import { isArray } from "lodash";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -16,6 +17,24 @@ export function Dropdown({
   name,
   ...rest
 }) {
+  // eslint-disable-next-line no-underscore-dangle
+  let _items = items;
+  if (isArray(items)) {
+    _items = {};
+    items.forEach((item) => {
+      const i = {
+        label: item.label || item.description,
+        name: item.name || item.id,
+        id: item.id || item.name || item.value,
+        key: item.id || item.name || item.value,
+        icon: item.icon,
+        description: item.description,
+        value: item.value
+      };
+      _items[i.id] = i;
+    });
+  }
+  items = _items;
   return (
     <>
       <div className={className}>
