@@ -1,9 +1,10 @@
 import React from "react";
 import PropTypes from "prop-types";
 import cx from "clsx";
+import { Icon } from "../Icon";
 import { getTopologyCardStatusBorderTopColor } from "../../utils/getTopologyCardStatusBorderTopColor";
 import { BottomStats } from "./components/BottomStats";
-import { TopologyDropdown } from "../TopologyDropdown/TopologyDropdown";
+import { TopologyDropdownMenu } from "../TopologyDropdownMenu/TopologyDropdownMenu";
 
 export const TopologyCardSmall = ({
   name,
@@ -43,13 +44,20 @@ export const TopologyCardSmall = ({
           onChange={onSelectionChange}
         />
       ) : (
-        <TopologyDropdown
-          items={[
-            { title: "Duplicate" },
-            { title: "Share" },
-            { title: "Delete" }
-          ]}
-        />
+          <div className="mt-1.5">
+              <TopologyDropdownMenu
+                  renderButton={() => (
+                      <div className="flex-initial text-1 p-1.5">
+                          <Icon name="dots" className="" />
+                      </div>
+                  )}
+                  items={[
+                      { title: "Duplicate" },
+                      { title: "Share" },
+                      { title: "Delete" }
+                  ]}
+              />
+          </div>
       )}
     </div>
     <BottomStats
