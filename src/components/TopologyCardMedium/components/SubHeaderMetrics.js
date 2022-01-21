@@ -1,11 +1,11 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-export const SubHeaderStats = ({ items }) => {
+export const SubHeaderMetrics = ({ items }) => {
   const [firstItem, secondItem, thirdItem] = items;
 
   return (
-    <div className="grid grid-cols-3 rounded-b-8px divide-x">
+    <div className="grid grid-cols-medium-card-metrics rounded-b-8px divide-x flex-1">
       <div>
         <div className="text-gray-800 flex flex-col">
           <h6 className="text-gray-color text-2xs font-bold leading-1.21rel mb-0.5">
@@ -40,7 +40,7 @@ export const SubHeaderStats = ({ items }) => {
   );
 };
 
-SubHeaderStats.propTypes = {
+SubHeaderMetrics.propTypes = {
   items: PropTypes.arrayOf(
     PropTypes.shape({
       name: PropTypes.string.isRequired,

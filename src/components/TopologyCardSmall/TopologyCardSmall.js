@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import cx from "clsx";
 import { Icon } from "../Icon";
 import { getTopologyCardStatusBorderTopColor } from "../../utils/getTopologyCardStatusBorderTopColor";
-import { BottomStats } from "./components/BottomStats";
+import { BottomMetrics } from "./components/BottomMetrics";
 import { TopologyDropdownMenu } from "../TopologyDropdownMenu/TopologyDropdownMenu";
 
 export const TopologyCardSmall = ({
@@ -19,7 +19,7 @@ export const TopologyCardSmall = ({
       getTopologyCardStatusBorderTopColor(status)
     )}
   >
-    <div className="flex flex-row flex-nowrap rounded-t-8px pt-2.5 pr-1.5 pb-3.5 pl-4 bg-white relative">
+    <div className="flex flex-row flex-nowrap rounded-t-8px pt-2.5 pr-1.5 pb-2.5 pl-4 bg-white relative">
       <div className="text-gray-color pt-2.5 mr-2.5 flex-initial max-w-1/4 leading-1.21rel">
         <span className="text-gray-color text-2xsi leading-1.21rel">
           http://
@@ -37,7 +37,7 @@ export const TopologyCardSmall = ({
         </span>
       </div>
       {selectionMode ? (
-        <div className="mr-1.5 mt-1 flex">
+        <div className="mr-1.5 mt-1 flex min-w-7 justify-end items-start">
           <input
             type="checkbox"
             className="h-4 w-4 text-dark-blue outline-none rounded-4px focus:outline-none"
@@ -50,7 +50,7 @@ export const TopologyCardSmall = ({
           <TopologyDropdownMenu
             className="flex flex-initial"
             renderButton={() => (
-              <div className="flex-initial text-1 p-1.5">
+              <div className="flex-initial text-1 p-1.5 min-w-7">
                 <Icon name="dots" className="" />
               </div>
             )}
@@ -63,7 +63,7 @@ export const TopologyCardSmall = ({
         </div>
       )}
     </div>
-    <BottomStats
+    <BottomMetrics
       items={[
         { name: "RPS:", value: "165/s" },
         { name: "Errors:", value: "0.1%" },

@@ -97,21 +97,33 @@ module.exports = {
       },
       width: {
         "med-card-left": "48%",
-        "med-card-right": "52%"
+        "med-card-right": "52%",
+        "large-card-left": "36%",
+        "large-card-right": "64%"
       },
       minWidth: {
-        8: "2rem"
+        8: "2rem",
+        7: "1.75rem"
       },
       gridTemplateColumns: {
         "4minmax": "repeat(4, minmax(min-content, max-content))",
         "node-stats": "repeat(auto-fill, minmax(2rem, max-content))",
-        "1-to-2": "minmax(0, 1fr) minmax(0, 2fr)"
+        "1-to-2": "minmax(0, 1fr) minmax(0, 2fr)",
+        "small-card-metrics":
+          "minmax(25%, 30%) minmax(25%, 32%) minmax(25%, 38%)",
+        "medium-card-metrics":
+          "minmax(25%, 30%) minmax(25%, 32%) minmax(25%, 38%)",
+        "large-card-metrics":
+          "minmax(25%, 30%) minmax(25%, 32%) minmax(25%, 38%)"
       },
       flex: {
         "0-0-a": "0 0 auto"
       },
       lineHeight: {
         "1.21rel": "1.21"
+      },
+      gap: {
+        6.5: "1.625rem"
       }
     }
   },

@@ -32,7 +32,7 @@ export const TopologyPageSmallView = ({
           Selection Mode
         </label>
       </div>
-      <div className="grid grid-cols-4 xl:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 xl:grid-cols-2 gap-2">
         <div>
           <TopologyColumn
             title="zone 1"
