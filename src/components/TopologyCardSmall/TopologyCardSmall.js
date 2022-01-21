@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import cx from "clsx";
+import { Icon } from "../Icon";
 import { getTopologyCardStatusBorderTopColor } from "../../utils/getTopologyCardStatusBorderTopColor";
 import { BottomStats } from "./components/BottomStats";
 import { TopologyDropdown } from "../TopologyDropdown/TopologyDropdown";
@@ -30,6 +31,12 @@ export const TopologyCardSmall = ({ name, status }) => (
         </span>
       </div>
       <TopologyDropdown
+        className="mt-1.5"
+        renderButton={() => (
+          <div className="flex-initial text-1 p-1.5">
+            <Icon name="dots" className="" />
+          </div>
+        )}
         items={[
           { title: "Duplicate" },
           { title: "Share" },
