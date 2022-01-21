@@ -1,9 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
 import cx from "clsx";
-import { Icon } from "../Icon";
 import { getTopologyCardStatusBorderTopColor } from "../../utils/getTopologyCardStatusBorderTopColor";
 import { BottomStats } from "./components/BottomStats";
+import { TopologyDropdown } from "../TopologyDropdown/TopologyDropdown";
 
 export const TopologyCardSmall = ({ name, status }) => (
   <div
@@ -12,7 +12,7 @@ export const TopologyCardSmall = ({ name, status }) => (
       getTopologyCardStatusBorderTopColor(status)
     )}
   >
-    <div className="flex flex-row flex-nowrap rounded-t-8px pt-2.5 pr-1.5 pb-3.5 pl-4 bg-white">
+    <div className="flex flex-row flex-nowrap rounded-t-8px pt-2.5 pr-1.5 pb-3.5 pl-4 bg-white relative">
       <div className="text-gray-color pt-2.5 mr-2.5 flex-initial max-w-1/4 leading-1.21rel">
         <span className="text-gray-color text-2xsi leading-1.21rel">
           http://
@@ -29,9 +29,13 @@ export const TopologyCardSmall = ({ name, status }) => (
           jobs-demo
         </span>
       </div>
-      <div className="flex-initial text-1 p-1.5 mt-1.5">
-        <Icon name="dots" className="" />
-      </div>
+      <TopologyDropdown
+        items={[
+          { title: "Duplicate" },
+          { title: "Share" },
+          { title: "Delete" }
+        ]}
+      />
     </div>
     <BottomStats
       items={[
