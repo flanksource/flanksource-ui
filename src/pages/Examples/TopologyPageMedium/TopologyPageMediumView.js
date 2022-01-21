@@ -1,11 +1,11 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { TopologyColumn } from "../../../components/TopologyColumn/TopologyColumn";
-import { TopologyCard } from "../../../components/TopologyCards/TopologyCard";
+import { TopologyCard } from "../../../components/TopologyCard/TopologyCard";
 import { properties } from "../../../data/topologyDatas";
 
 export const TopologyPageMediumView = ({ topology }) => (
-  <div className="font-inter flex">
+  <div className="font-inter flex leading-1.21rel">
     <div
       style={{ width: "226px" }}
       className="flex-0-0-a h-screen bg-column-background mr-4 lg"

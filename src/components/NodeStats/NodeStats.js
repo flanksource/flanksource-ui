@@ -1,13 +1,13 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Icon } from "../../Icon";
-import { NodeStatsChip } from "./NodeStatsChip";
+import { Icon } from "../Icon";
+import { NodeStatsChip } from "./components/NodeStatsChip";
 
-export const NodeStats = ({ title, icon, chips }) => (
+export const NodeStats = ({ title, icon, chips, iconSize }) => (
   <div>
     <div className="flex">
-      <Icon name={icon} className="mr-2" />
-      <h5 className="mb-2 text-xs">{title}</h5>
+      <Icon name={icon} className="mr-2" size={iconSize} />
+      <h5 className="mb-2 text-xs linear-1.21rel">{title}</h5>
     </div>
     <div className="grid gap-2 grid-cols-node-stats">
       {chips.map(({ number, id, color }) => (
@@ -20,5 +20,10 @@ export const NodeStats = ({ title, icon, chips }) => (
 NodeStats.propTypes = {
   title: PropTypes.string.isRequired,
   icon: PropTypes.string.isRequired,
+  iconSize: PropTypes.string,
   chips: PropTypes.arrayOf(PropTypes.shape({})).isRequired
+};
+
+NodeStats.defaultProps = {
+  iconSize: "sm"
 };

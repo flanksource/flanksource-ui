@@ -1,4 +1,4 @@
-export const cardStatusBorderTop = (status) => {
+export const getTopologyCardStatusBorderTopColor = (status) => {
   switch (status) {
     case "healthy":
       return "border-light-orange";

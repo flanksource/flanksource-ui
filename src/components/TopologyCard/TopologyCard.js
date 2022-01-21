@@ -2,15 +2,15 @@ import React from "react";
 import PropTypes from "prop-types";
 import {
   TopologyCardMedium,
-  TopologyCardCompact,
-  TopologyCardFull
+  TopologyCardSmall,
+  TopologyCardLarge
 } from "./index";
 
 const sizeToComponentMapping = {
-  compact: TopologyCardCompact,
+  compact: TopologyCardSmall,
   medium: TopologyCardMedium,
-  full: TopologyCardFull,
-  fallback: TopologyCardCompact
+  full: TopologyCardLarge,
+  fallback: TopologyCardSmall
 };
 
 export const TopologyCard = ({ size, ...rest }) => {
