@@ -4,7 +4,13 @@ import PropTypes from "prop-types";
 import { TopologyColumn } from "../../../components/TopologyColumn/TopologyColumn";
 import { TopologyCard } from "../../../components/TopologyCard/TopologyCard";
 
-export const TopologyPageSmallView = ({ topology }) => (
+export const TopologyPageSmallView = ({
+  topology,
+  checked,
+  selectionMode,
+  setSelectionMode,
+  toggleChecked
+}) => (
   <div className="font-inter flex leading-1.21rel">
     <div
       style={{ width: "226px" }}
@@ -12,6 +18,20 @@ export const TopologyPageSmallView = ({ topology }) => (
     />
     <div className="flex-auto">
       <p className="text-2xl my-6">Title</p>
+      <div className="form-check  mb-4">
+        <input
+          id="ch1"
+          type="checkbox"
+          className="h-4 w-4 text-dark-blue outline-none rounded-4px focus:outline-none"
+          checked={selectionMode}
+          onChange={(event) => {
+            setSelectionMode(event.target.checked);
+          }}
+        />
+        <label className="form-check-label inline-block ml-4" htmlFor="ch1">
+          Selection Mode
+        </label>
+      </div>
       <div className="grid grid-cols-4 xl:grid-cols-5 gap-4">
         <div>
           <TopologyColumn
@@ -23,6 +43,11 @@ export const TopologyPageSmallView = ({ topology }) => (
                 name={name}
                 status={status}
                 properties={properties}
+                selectionMode={selectionMode}
+                selected={!!checked.column_1_card_1}
+                onSelectionChange={(event) => {
+                  toggleChecked("column_1_card_1", event.target.checked);
+                }}
               />
             ))}
           />
@@ -37,6 +62,11 @@ export const TopologyPageSmallView = ({ topology }) => (
                 name={name}
                 status={status}
                 properties={properties}
+                selectionMode={selectionMode}
+                selected={!!checked.column_2_card_1}
+                onSelectionChange={(event) => {
+                  toggleChecked("column_2_card_1", event.target.checked);
+                }}
               />
             ))}
           />
@@ -51,6 +81,11 @@ export const TopologyPageSmallView = ({ topology }) => (
                 name={name}
                 status={status}
                 properties={properties}
+                selectionMode={selectionMode}
+                selected={!!checked.column_3_card_1}
+                onSelectionChange={(event) => {
+                  toggleChecked("column_3_card_1", event.target.checked);
+                }}
               />
             ))}
           />
@@ -65,6 +100,11 @@ export const TopologyPageSmallView = ({ topology }) => (
                 name={name}
                 status={status}
                 properties={properties}
+                selectionMode={selectionMode}
+                selected={!!checked.column_4_card_1}
+                onSelectionChange={(event) => {
+                  toggleChecked("column_4_card_1", event.target.checked);
+                }}
               />
             ))}
           />
@@ -79,6 +119,11 @@ export const TopologyPageSmallView = ({ topology }) => (
                 name={name}
                 status={status}
                 properties={properties}
+                selectionMode={selectionMode}
+                selected={!!checked.column_5_card_1}
+                onSelectionChange={(event) => {
+                  toggleChecked("column_5_card_1", event.target.checked);
+                }}
               />
             ))}
           />

@@ -5,7 +5,13 @@ import { getTopologyCardStatusBorderTopColor } from "../../utils/getTopologyCard
 import { BottomStats } from "./components/BottomStats";
 import { TopologyDropdown } from "../TopologyDropdown/TopologyDropdown";
 
-export const TopologyCardSmall = ({ name, status }) => (
+export const TopologyCardSmall = ({
+  name,
+  status,
+  selectionMode,
+  selected,
+  onSelectionChange
+}) => (
   <div
     className={cx(
       "rounded-8px mb-4 shadow-card border-t-6 card cursor-pointer bg-white",
@@ -29,13 +35,22 @@ export const TopologyCardSmall = ({ name, status }) => (
           jobs-demo
         </span>
       </div>
-      <TopologyDropdown
-        items={[
-          { title: "Duplicate" },
-          { title: "Share" },
-          { title: "Delete" }
-        ]}
-      />
+      {selectionMode ? (
+        <input
+          type="checkbox"
+          className="h-4 w-4 text-dark-blue outline-none rounded-4px mr-1.5 mt-1 focus:outline-none"
+          checked={selected}
+          onChange={onSelectionChange}
+        />
+      ) : (
+        <TopologyDropdown
+          items={[
+            { title: "Duplicate" },
+            { title: "Share" },
+            { title: "Delete" }
+          ]}
+        />
+      )}
     </div>
     <BottomStats
       items={[

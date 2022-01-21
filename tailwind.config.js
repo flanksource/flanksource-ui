@@ -48,6 +48,7 @@ module.exports = {
         "warm-gray": colors.warmGray,
         teal: colors.teal,
         "warm-blue": "#CCDAF8",
+        "dark-blue": "#326CE5",
         "gray-color": "#C4C4C4",
         "dark-gray": "#242423",
         "column-background": "#F9FAFB",
