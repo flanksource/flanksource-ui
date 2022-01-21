@@ -10,6 +10,8 @@ export function Modal({
   onClose,
   closeButtonClass,
   closeButtonStyle,
+  allowBackgroundClose = true,
+  hideCloseButton,
   containerClass,
   contentClass,
   cardClass = "p-4",
@@ -25,7 +27,7 @@ export function Modal({
         as="div"
         auto-reopen="true"
         className="fixed z-50 inset-0"
-        onClose={onClose}
+        onClose={allowBackgroundClose ? onClose : () => {}}
         {...rest}
       >
         <div
@@ -61,19 +63,21 @@ export function Modal({
               }`}
             >
               {/* top-right close button */}
-              <div
-                style={closeButtonStyle}
-                className={`opacity-0 pointer-events-none sm:pointer-events-auto sm:opacity-100 absolute top-0 right-0 ${closeButtonClass}`}
-              >
-                <button
-                  type="button"
-                  className="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none"
-                  onClick={onClose}
+              {!hideCloseButton && (
+                <div
+                  style={closeButtonStyle}
+                  className={`pointer-events-none sm:pointer-events-auto absolute top-0 right-0 ${closeButtonClass}`}
                 >
-                  <span className="sr-only">Close</span>
-                  <XIcon className="h-6 w-6" aria-hidden="true" />
-                </button>
-              </div>
+                  <button
+                    type="button"
+                    className="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none"
+                    onClick={onClose}
+                  >
+                    <span className="sr-only">Close</span>
+                    <XIcon className="h-6 w-6" aria-hidden="true" />
+                  </button>
+                </div>
+              )}
               <div className={contentClass}>
                 {children}
                 {!hideActions && (
