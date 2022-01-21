@@ -30,19 +30,20 @@ export const TopologyCardSmall = ({ name, status }) => (
           jobs-demo
         </span>
       </div>
-      <TopologyDropdown
-        className="mt-1.5"
-        renderButton={() => (
-          <div className="flex-initial text-1 p-1.5">
-            <Icon name="dots" className="" />
-          </div>
-        )}
-        items={[
-          { title: "Duplicate" },
-          { title: "Share" },
-          { title: "Delete" }
-        ]}
-      />
+      <div className="mt-1.5">
+        <TopologyDropdown
+          renderButton={() => (
+            <div className="flex-initial text-1 p-1.5">
+              <Icon name="dots" className="" />
+            </div>
+          )}
+          items={[
+            { title: "Duplicate" },
+            { title: "Share" },
+            { title: "Delete" }
+          ]}
+        />
+      </div>
     </div>
     <BottomStats
       items={[
