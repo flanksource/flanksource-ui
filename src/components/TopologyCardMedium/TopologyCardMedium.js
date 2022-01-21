@@ -7,6 +7,7 @@ import { NodeStats } from "../NodeStats/NodeStats";
 import { databases, nodes } from "../../data/topologyDatas";
 import { getTopologyCardStatusBorderTopColor } from "../../utils/getTopologyCardStatusBorderTopColor";
 import { SubHeaderStats } from "./components/SubHeaderStats";
+import { TopologyDropdownMenu } from "../TopologyDropdownMenu/TopologyDropdownMenu";
 
 export const TopologyCardMedium = ({ name, properties, status }) => (
   <div
@@ -44,9 +45,19 @@ export const TopologyCardMedium = ({ name, properties, status }) => (
             { name: "Latency:", value: "225ms" }
           ]}
         />
-        <div className="flex-initial text-1 p-1.5">
-          <Icon name="dots" className="" />
-        </div>
+        <TopologyDropdownMenu
+          className="flex flex-initial"
+          renderButton={() => (
+            <div className="p-1.5">
+              <Icon name="dots" className="" />
+            </div>
+          )}
+          items={[
+            { title: "Duplicate" },
+            { title: "Share" },
+            { title: "Delete" }
+          ]}
+        />
       </div>
     </div>
     <div className="flex flex-nowrap bg-lightest-gray rounded-b-8px py-4 px-5">

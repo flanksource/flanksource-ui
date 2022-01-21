@@ -4,7 +4,7 @@ import cx from "clsx";
 import { Icon } from "../Icon";
 import { getTopologyCardStatusBorderTopColor } from "../../utils/getTopologyCardStatusBorderTopColor";
 import { BottomStats } from "./components/BottomStats";
-import { TopologyDropdown } from "../TopologyDropdown/TopologyDropdown";
+import { TopologyDropdownMenu } from "../TopologyDropdownMenu/TopologyDropdownMenu";
 
 export const TopologyCardSmall = ({ name, status }) => (
   <div
@@ -31,7 +31,7 @@ export const TopologyCardSmall = ({ name, status }) => (
         </span>
       </div>
       <div className="mt-1.5">
-        <TopologyDropdown
+        <TopologyDropdownMenu
           renderButton={() => (
             <div className="flex-initial text-1 p-1.5">
               <Icon name="dots" className="" />
