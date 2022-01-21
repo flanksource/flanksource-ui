@@ -9,7 +9,6 @@ import {
   updateHypothesis
 } from "../../../api/services/hypothesis";
 import { getIncident } from "../../../api/services/incident";
-import { Button } from "../../../components/Button";
 import { HypothesisBuilder } from "../../../components/HypothesisBuilder";
 
 function mapNode(node) {

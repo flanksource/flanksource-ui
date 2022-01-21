@@ -14,3 +14,6 @@ export const getAllIncidentByCurrentUser = async () =>
 
 export const getIncident = async (id) =>
   resolve(apiRequestIC.get(`/incident?id=eq.${id}`).then((res) => res.data));
+
+export const createIncident = async (params) =>
+  resolve(apiRequestIC.post(`/incident`, params));
