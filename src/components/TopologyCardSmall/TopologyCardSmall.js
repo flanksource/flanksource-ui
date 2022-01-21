@@ -37,27 +37,30 @@ export const TopologyCardSmall = ({
         </span>
       </div>
       {selectionMode ? (
-        <input
-          type="checkbox"
-          className="h-4 w-4 text-dark-blue outline-none rounded-4px mr-1.5 mt-1 focus:outline-none"
-          checked={selected}
-          onChange={onSelectionChange}
-        />
+        <div className="mr-1.5 mt-1 flex">
+          <input
+            type="checkbox"
+            className="h-4 w-4 text-dark-blue outline-none rounded-4px focus:outline-none"
+            checked={selected}
+            onChange={onSelectionChange}
+          />
+        </div>
       ) : (
-          <div className="mt-1.5">
-              <TopologyDropdownMenu
-                  renderButton={() => (
-                      <div className="flex-initial text-1 p-1.5">
-                          <Icon name="dots" className="" />
-                      </div>
-                  )}
-                  items={[
-                      { title: "Duplicate" },
-                      { title: "Share" },
-                      { title: "Delete" }
-                  ]}
-              />
-          </div>
+        <div className="mt-1.5">
+          <TopologyDropdownMenu
+            className="flex flex-initial"
+            renderButton={() => (
+              <div className="flex-initial text-1 p-1.5">
+                <Icon name="dots" className="" />
+              </div>
+            )}
+            items={[
+              { title: "Duplicate" },
+              { title: "Share" },
+              { title: "Delete" }
+            ]}
+          />
+        </div>
       )}
     </div>
     <BottomStats
@@ -72,5 +75,14 @@ export const TopologyCardSmall = ({
 
 TopologyCardSmall.propTypes = {
   name: PropTypes.string.isRequired,
-  status: PropTypes.string.isRequired
+  status: PropTypes.string.isRequired,
+  selectionMode: PropTypes.bool,
+  selected: PropTypes.bool,
+  onSelectionChange: PropTypes.func
+};
+
+TopologyCardSmall.defaultProps = {
+  selectionMode: false,
+  selected: false,
+  onSelectionChange: () => {}
 };

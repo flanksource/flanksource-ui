@@ -9,7 +9,14 @@ import { getTopologyCardStatusBorderTopColor } from "../../utils/getTopologyCard
 import { SubHeaderStats } from "./components/SubHeaderStats";
 import { TopologyDropdownMenu } from "../TopologyDropdownMenu/TopologyDropdownMenu";
 
-export const TopologyCardMedium = ({ name, properties, status }) => (
+export const TopologyCardMedium = ({
+  name,
+  properties,
+  status,
+  selectionMode,
+  selected,
+  onSelectionChange
+}) => (
   <div
     className={cx(
       "rounded-8px mb-4 shadow-card border-t-6 card cursor-pointer bg-white",
@@ -45,19 +52,30 @@ export const TopologyCardMedium = ({ name, properties, status }) => (
             { name: "Latency:", value: "225ms" }
           ]}
         />
-        <TopologyDropdownMenu
-          className="flex flex-initial"
-          renderButton={() => (
-            <div className="p-1.5">
-              <Icon name="dots" className="" />
-            </div>
-          )}
-          items={[
-            { title: "Duplicate" },
-            { title: "Share" },
-            { title: "Delete" }
-          ]}
-        />
+        {selectionMode ? (
+          <div className="mr-1.5 mt-1 flex">
+            <input
+              type="checkbox"
+              className="h-4 w-4 text-dark-blue outline-none rounded-4px focus:outline-none"
+              checked={selected}
+              onChange={onSelectionChange}
+            />
+          </div>
+        ) : (
+          <TopologyDropdownMenu
+            className="flex flex-initial"
+            renderButton={() => (
+              <div className="p-1.5">
+                <Icon name="dots" className="" />
+              </div>
+            )}
+            items={[
+              { title: "Duplicate" },
+              { title: "Share" },
+              { title: "Delete" }
+            ]}
+          />
+        )}
       </div>
     </div>
     <div className="flex flex-nowrap bg-lightest-gray rounded-b-8px py-4 px-5">
@@ -91,5 +109,14 @@ export const TopologyCardMedium = ({ name, properties, status }) => (
 TopologyCardMedium.propTypes = {
   name: PropTypes.string.isRequired,
   properties: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
-  status: PropTypes.string.isRequired
+  status: PropTypes.string.isRequired,
+  selectionMode: PropTypes.bool,
+  selected: PropTypes.bool,
+  onSelectionChange: PropTypes.func
+};
+
+TopologyCardMedium.defaultProps = {
+  selectionMode: false,
+  selected: false,
+  onSelectionChange: () => {}
 };

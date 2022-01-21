@@ -18,11 +18,11 @@ export const TopologyPageSmallView = ({
     />
     <div className="flex-auto">
       <p className="text-2xl my-6">Title</p>
-      <div className="form-check  mb-4">
+      <div className="form-check mb-4">
         <input
           id="ch1"
           type="checkbox"
-          className="h-4 w-4 text-dark-blue outline-none rounded-4px focus:outline-none"
+          className="h-4 w-4 text-dark-blue rounded-4px"
           checked={selectionMode}
           onChange={(event) => {
             setSelectionMode(event.target.checked);
@@ -36,7 +36,7 @@ export const TopologyPageSmallView = ({
         <div>
           <TopologyColumn
             title="zone 1"
-            cards={topology.map(({ name, status, properties }) => (
+            cards={topology.map(({ name, status, properties }, index) => (
               <TopologyCard
                 size="small"
                 key={name}
@@ -44,9 +44,9 @@ export const TopologyPageSmallView = ({
                 status={status}
                 properties={properties}
                 selectionMode={selectionMode}
-                selected={!!checked.column_1_card_1}
+                selected={!!checked[`column_1_card_${index}`]}
                 onSelectionChange={(event) => {
-                  toggleChecked("column_1_card_1", event.target.checked);
+                  toggleChecked(`column_1_card_${index}`, event.target.checked);
                 }}
               />
             ))}
@@ -55,7 +55,7 @@ export const TopologyPageSmallView = ({
         <div>
           <TopologyColumn
             title="zone 2"
-            cards={topology.map(({ name, status, properties }) => (
+            cards={topology.map(({ name, status, properties }, index) => (
               <TopologyCard
                 size="small"
                 key={name}
@@ -63,9 +63,9 @@ export const TopologyPageSmallView = ({
                 status={status}
                 properties={properties}
                 selectionMode={selectionMode}
-                selected={!!checked.column_2_card_1}
+                selected={!!checked[`column_2_card_${index}`]}
                 onSelectionChange={(event) => {
-                  toggleChecked("column_2_card_1", event.target.checked);
+                  toggleChecked(`column_2_card_${index}`, event.target.checked);
                 }}
               />
             ))}
@@ -74,7 +74,7 @@ export const TopologyPageSmallView = ({
         <div>
           <TopologyColumn
             title="zone 3"
-            cards={topology.map(({ name, status, properties }) => (
+            cards={topology.map(({ name, status, properties }, index) => (
               <TopologyCard
                 size="small"
                 key={name}
@@ -82,9 +82,9 @@ export const TopologyPageSmallView = ({
                 status={status}
                 properties={properties}
                 selectionMode={selectionMode}
-                selected={!!checked.column_3_card_1}
+                selected={!!checked[`column_3_card_${index}`]}
                 onSelectionChange={(event) => {
-                  toggleChecked("column_3_card_1", event.target.checked);
+                  toggleChecked(`column_3_card_${index}`, event.target.checked);
                 }}
               />
             ))}
@@ -93,7 +93,7 @@ export const TopologyPageSmallView = ({
         <div>
           <TopologyColumn
             title="zone 4"
-            cards={topology.map(({ name, status, properties }) => (
+            cards={topology.map(({ name, status, properties }, index) => (
               <TopologyCard
                 size="small"
                 key={name}
@@ -101,9 +101,9 @@ export const TopologyPageSmallView = ({
                 status={status}
                 properties={properties}
                 selectionMode={selectionMode}
-                selected={!!checked.column_4_card_1}
+                selected={!!checked[`column_4_card_${index}`]}
                 onSelectionChange={(event) => {
-                  toggleChecked("column_4_card_1", event.target.checked);
+                  toggleChecked(`column_4_card_${index}`, event.target.checked);
                 }}
               />
             ))}
@@ -112,7 +112,7 @@ export const TopologyPageSmallView = ({
         <div>
           <TopologyColumn
             title="zone 5"
-            cards={topology.map(({ name, status, properties }) => (
+            cards={topology.map(({ name, status, properties }, index) => (
               <TopologyCard
                 size="small"
                 key={name}
@@ -120,9 +120,9 @@ export const TopologyPageSmallView = ({
                 status={status}
                 properties={properties}
                 selectionMode={selectionMode}
-                selected={!!checked.column_5_card_1}
+                selected={!!checked[`column_5_card_${index}`]}
                 onSelectionChange={(event) => {
-                  toggleChecked("column_5_card_1", event.target.checked);
+                  toggleChecked(`column_5_card_${index}`, event.target.checked);
                 }}
               />
             ))}
