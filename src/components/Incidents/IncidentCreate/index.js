@@ -15,7 +15,6 @@ import { AiOutlineClose } from "react-icons/ai";
 import { TextInput } from "../../TextInput";
 import { Dropdown } from "../../Dropdown";
 import { createIncident } from "../../../api/services/incident";
-import { getUserID } from "../../../api/auth";
 import { createHypothesis } from "../../../api/services/hypothesis";
 
 const severityItems = {
@@ -72,7 +71,7 @@ const typeItems = {
 const validationSchema = yup
   .object({
     title: yup.string().required(),
-    description: yup.string().required(),
+    description: yup.string(),
     // communicator_id: yup.string().required(),
     // commander_id: yup.string().required(),
     // tracking: yup.string().email().required(),
@@ -81,15 +80,6 @@ const validationSchema = yup
     type: yup.string().required()
   })
   .required();
-
-// temporarily hardcode user IDs to current user
-function hardcodeUserIDs(obj) {
-  const fields = ["created_by", "communicator_id", "commander_id"];
-  fields.forEach((key) => {
-    obj[key] = getUserID();
-  });
-  return obj;
-}
 
 export function IncidentCreate({ callback, ...rest }) {
   const {
@@ -118,19 +108,19 @@ export function IncidentCreate({ callback, ...rest }) {
   };
 
   const onSubmit = (data) => {
-    let payload = { ...data, ...additionalFields };
+    const payload = { ...data, ...additionalFields };
     payload.id = uuidv4();
-    payload = hardcodeUserIDs(payload); // TODO: integrate commander id and communicator id field
     createIncident(payload)
-      .then((res) => {
+      .then((created) => {
         createHypothesis(uuidv4(), payload.id, {
-          title: "",
+          title: payload.title,
           type: "root",
-          status: ""
+          status: "possible"
         });
-        callback(res);
+        callback(created.data[0]);
       })
       .catch((err) => {
+        console.error(err);
         callback(err);
       });
   };

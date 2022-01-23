@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { getUserID } from "../../../api/auth";
-import { getAllIncidentByCurrentUser } from "../../../api/services/incident";
+import { useNavigate } from "react-router-dom";
+import { getAllIncident } from "../../../api/services/incident";
 import { IncidentCreate } from "../../../components/Incidents/IncidentCreate";
 import { IncidentList } from "../../../components/Incidents/IncidentList";
 import { Modal } from "../../../components/Modal";
 
 export function IncidentListPage() {
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [incidents, setIncidents] = useState([]);
   const [incidentModalIsOpen, setIncidentModalIsOpen] = useState(false);
-  const userID = getUserID();
 
   const loadIncidents = () => {
     setIsLoading(true);
-    getAllIncidentByCurrentUser().then((res) => {
+    getAllIncident().then((res) => {
       setIncidents(res.data);
       setIsLoading(false);
     });
@@ -23,21 +23,9 @@ export function IncidentListPage() {
     loadIncidents();
   }, []);
 
-  const handleIncidentCreate = (response) => {
-    if (response?.error) {
-      console.error(response.error?.message);
-    }
-    if (response?.data?.status === 201) {
-      loadIncidents();
-    }
-  };
-
   return (
     <div className="max-w-screen-xl mx-auto flex flex-col justify-center">
       <div className="mt-4 w-full px-4">
-        <div className="flex justify-between items-center pb-4">
-          <div className="">logged in as user {userID}</div>
-        </div>
         <div className="flex justify-between items-center pb-4">
           <h1 className="text-xl font-semibold">Incident List</h1>
           <button
@@ -73,8 +61,7 @@ export function IncidentListPage() {
       >
         <IncidentCreate
           callback={(response) => {
-            handleIncidentCreate(response);
-            setIncidentModalIsOpen(false);
+            navigate(`/incidents/${response.id}`, { replace: true });
           }}
         />
       </Modal>

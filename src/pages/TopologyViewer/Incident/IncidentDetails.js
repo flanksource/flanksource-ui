@@ -5,7 +5,6 @@ import {
   createHypothesis,
   deleteHypothesis,
   deleteHypothesisBulk,
-  getAllHypothesisByIncident,
   updateHypothesis
 } from "../../../api/services/hypothesis";
 import { getIncident } from "../../../api/services/incident";
@@ -47,17 +46,21 @@ export function IncidentDetailsPage() {
   const isNewlyCreated = false; // TODO: set this to true if its a newly created incident
   const [loadedTree, setLoadedTree] = useState(null);
   const [incidentDetails, setIncidentDetails] = useState(null);
-
+  const [error, setError] = useState(null);
   useEffect(() => {
     if (incidentId) {
       getIncident(incidentId).then((res) => {
+        if (res.data == null || res.data.length === 0) {
+          setError("incident not found");
+          return;
+        }
         setIncidentDetails(res.data[0]);
-        setIsLoading((previous) => ({ ...previous, incident: false }));
-      });
-
-      getAllHypothesisByIncident(incidentId).then((res) => {
-        setLoadedTree(buildTreeFromHypothesisList(res.data.data)); // temporarily build tree incorrectly
-        setIsLoading((previous) => ({ ...previous, hypothesis: false }));
+        setLoadedTree(buildTreeFromHypothesisList(res.data[0].hypothesis));
+        setIsLoading((previous) => ({
+          ...previous,
+          incident: false,
+          hypothesis: false
+        }));
       });
     }
   }, [incidentId]);
@@ -67,7 +70,7 @@ export function IncidentDetailsPage() {
       <div className="mt-4 w-full px-4">
         <div className="mb-4">
           <Link
-            to="/incident"
+            to="/incidents"
             className="flex items-center text-sm font-semibold"
           >
             <BiChevronLeft
@@ -77,10 +80,13 @@ export function IncidentDetailsPage() {
           </Link>
         </div>
         <div className="mb-4">
-          {!isLoading.incident ? (
+          {!isLoading.incident && !error ? (
             <IncidentDetails incident={incidentDetails} />
           ) : (
-            <div>fetching incident...</div>
+            <div>
+              {error && error}
+              {!error && "fetching incident..."}
+            </div>
           )}
         </div>
 
@@ -98,7 +104,7 @@ export function IncidentDetailsPage() {
             }}
           />
         ) : (
-          <div>fetching tree...</div>
+          <div>{!error && "fetching tree..."}</div>
         )}
       </div>
     </div>
