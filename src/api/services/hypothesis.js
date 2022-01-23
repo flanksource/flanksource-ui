@@ -2,15 +2,15 @@ import {
   hypothesisNodeTypes,
   hypothesisStatuses
 } from "../../components/HypothesisBuilder/data";
-import { getUserID } from "../auth";
-import { apiRequestIC } from "../axios";
+import { User } from "../auth";
+import { IncidentCommander } from "../axios";
 import { resolve } from "../resolve";
 
 export const getAllHypothesisByIncident = async (incidentId) =>
-  resolve(apiRequestIC.get(`/hypothesis?incident_id=eq.${incidentId}`));
+  resolve(IncidentCommander.get(`/hypothesis?incident_id=eq.${incidentId}`));
 
 export const getHypothesis = async (id) =>
-  resolve(apiRequestIC.get(`/hypothesis?id=eq.${id}`).then((res) => res.data));
+  resolve(IncidentCommander.get(`/hypothesis?id=eq.${id}`));
 
 export const createHypothesis = async (
   id,
@@ -22,19 +22,20 @@ export const createHypothesis = async (
   }
 ) =>
   resolve(
-    apiRequestIC.post(`/hypothesis`, {
+    IncidentCommander.post(`/hypothesis`, {
       id,
-      created_by: getUserID(),
+      created_by: User.id,
       incident_id: incidentId,
       ...params
     })
   );
 
 export const updateHypothesis = async (id, params) => {
-  resolve(apiRequestIC.patch(`/hypothesis?id=eq.${id}`, { ...params }));
+  resolve(IncidentCommander.patch(`/hypothesis?id=eq.${id}`, { ...params }));
 };
+
 export const deleteHypothesis = async (id) =>
-  resolve(apiRequestIC.delete(`/hypothesis?id=eq.${id}`).then((res) => res));
+  resolve(IncidentCommander.delete(`/hypothesis?id=eq.${id}`));
 
 export const deleteHypothesisBulk = async (idList) => {
   let ids = "";
@@ -44,7 +45,5 @@ export const deleteHypothesisBulk = async (idList) => {
       ids += ",";
     }
   });
-  return resolve(
-    apiRequestIC.delete(`/hypothesis?id=in.(${ids})`).then((res) => res)
-  );
+  return resolve(IncidentCommander.delete(`/hypothesis?id=in.(${ids})`));
 };

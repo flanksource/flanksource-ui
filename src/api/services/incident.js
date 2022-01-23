@@ -1,19 +1,21 @@
-import { getUserID } from "../auth";
-import { apiRequestIC } from "../axios";
+import { getUser } from "../auth";
+import { IncidentCommander } from "../axios";
 import { resolve } from "../resolve";
 
 export const getAllIncident = async () =>
-  resolve(apiRequestIC.get(`/incident`).then((res) => res.data));
-
-export const getAllIncidentByCurrentUser = async () =>
-  resolve(
-    apiRequestIC
-      .get(`/incident?created_by=eq.${getUserID()}`)
-      .then((res) => res.data)
-  );
+  resolve(IncidentCommander.get(`/incident?order=created_at.desc`));
 
 export const getIncident = async (id) =>
-  resolve(apiRequestIC.get(`/incident?id=eq.${id}`).then((res) => res.data));
+  resolve(
+    IncidentCommander.get(
+      `/incident?id=eq.${id}&select=*,hypothesis!hypothesis_incident_id_fkey(*)`
+    )
+  );
 
 export const createIncident = async (params) =>
-  resolve(apiRequestIC.post(`/incident`, params));
+  getUser().then((user) => {
+    params.created_by = user.id;
+    params.commander_id = user.id;
+    params.communicator_id = user.id;
+    return IncidentCommander.post(`/incident?select=*`, params);
+  });
