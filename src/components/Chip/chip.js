@@ -16,7 +16,7 @@ const getBackgroundColorClass = (color) => {
   }
 };
 
-export const NodeStatsChip = ({ text, color }) => (
+export const Chip = ({ text, color }) => (
   <div
     className={cx(
       "text-center align-baseline min-w-8 min-h-8 text-2xs font-inter rounded-4px font-bold break-all",
@@ -27,4 +27,4 @@ export const NodeStatsChip = ({ text, color }) => (
   </div>
 );
 
-NodeStatsChip.propTypes = {};
+Chip.propTypes = {};
