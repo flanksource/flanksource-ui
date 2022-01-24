@@ -78,8 +78,8 @@ export const TopologyCardMedium = ({
         )}
       </div>
     </div>
-    <div className="flex flex-nowrap bg-lightest-gray rounded-b-8px py-4 px-5">
-      <div className="w-med-card-left pr-1">
+    <div className="flex flex-nowrap bg-lightest-gray rounded-b-8px">
+      <div className="w-med-card-left py-4 pl-5 pr-1">
         {properties.map(({ name, text }, index) => (
           <NodeSpecification
             key={text}
@@ -89,7 +89,7 @@ export const TopologyCardMedium = ({
           />
         ))}
       </div>
-      <div className="w-med-card-right pl-1">
+      <div className="w-med-card-right pl-1 py-4 pr-5">
         <div className="mb-4">
           <NodeStats title="nodes" icon="nodes" chips={nodes} />
         </div>
