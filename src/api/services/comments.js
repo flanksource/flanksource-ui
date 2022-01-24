@@ -1,10 +1,10 @@
-import { getUserID } from "../auth";
-import { apiRequestIC } from "../axios";
+import { User } from "../auth";
+import { IncidentCommander } from "../axios";
 import { resolve } from "../resolve";
 
 export const getCommentsByHypothesis = async (hypothesisId) =>
   resolve(
-    apiRequestIC.get(
+    IncidentCommander.get(
       `/comment?select=*,created_by(name)&hypothesis_id=eq.${hypothesisId}`
     )
   );
@@ -17,9 +17,9 @@ export const createComment = async (
   params
 ) =>
   resolve(
-    apiRequestIC.post(`/comment`, {
+    IncidentCommander.post(`/comment`, {
       id: commentId,
-      created_by: getUserID(),
+      created_by: User.id,
       incident_id: incidentId,
       hypothesis_id: hypothesisId,
       comment,

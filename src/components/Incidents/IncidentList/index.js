@@ -15,7 +15,7 @@ export function IncidentList({ list, ...rest }) {
 function IncidentItem({ incident, ...rest }) {
   const { title, id, description, severity, status, type } = incident;
   return (
-    <Link to={`/incident/${id}`} {...rest}>
+    <Link to={`/incidents/${id}`} {...rest}>
       <div className="px-6 py-3">
         <div className="text-gray-800 font-semibold">{title}</div>
         <div className="text-gray-400 text-sm">description: {description}</div>

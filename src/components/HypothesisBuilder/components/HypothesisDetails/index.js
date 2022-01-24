@@ -50,8 +50,8 @@ export function HypothesisDetails({ nodePath, tree, setTree, api, ...rest }) {
 
   const fetchComments = (id) =>
     getCommentsByHypothesis(id)
-      .then((data) => {
-        setComments(data?.data?.data || []);
+      .then((comments) => {
+        setComments(comments?.data || []);
       })
       .catch((err) => console.error(err));
 
