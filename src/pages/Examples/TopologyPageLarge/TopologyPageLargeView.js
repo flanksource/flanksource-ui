@@ -1,7 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { TopologyColumn } from "../../../components/TopologyColumn/TopologyColumn";
-import { TopologyCard } from "../../../components/TopologyCard/TopologyCard";
+import { TopologyColumn, TopologyCard } from "../../../components/Topology";
 import { properties } from "../../../data/topologyDatas";
 
 export const TopologyPageLargeView = ({
