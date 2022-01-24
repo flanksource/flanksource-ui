@@ -5,9 +5,9 @@ import { NodeStatsChip } from "./components/NodeStatsChip";
 
 export const NodeStats = ({ title, icon, chips, iconSize }) => (
   <div>
-    <div className="flex">
+    <div className="flex mb-1.5">
       <Icon name={icon} className="mr-2" size={iconSize} />
-      <h5 className="mb-2 text-xs linear-1.21rel">{title}</h5>
+      <h5 className="text-xs linear-1.21rel">{title}</h5>
     </div>
     <div className="grid gap-2 grid-cols-node-stats">
       {chips.map(({ number, id, color }) => (

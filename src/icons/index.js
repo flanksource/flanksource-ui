@@ -183,6 +183,8 @@ import vault from "./vault.svg";
 import vsphere from "./vsphere.svg";
 import world from "./world.svg";
 import www from "./www.svg";
+import dots from './dots-triple.svg'
+
 export const Icons = {
 "acr": acr,
 "aks": aks,
@@ -368,4 +370,8 @@ export const Icons = {
 "vsphere": vsphere,
 "world": world,
 "www": www,
+"dots": dots,
+"account": clock,
+"name": cluster,
+"region": timezone
 }

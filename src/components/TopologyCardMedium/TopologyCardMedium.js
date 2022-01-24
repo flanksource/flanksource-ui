@@ -6,7 +6,7 @@ import { NodeSpecification } from "../NodeSpecification/NodeSpecification";
 import { NodeStats } from "../NodeStats/NodeStats";
 import { databases, nodes } from "../../data/topologyDatas";
 import { getTopologyCardStatusBorderTopColor } from "../../utils/getTopologyCardStatusBorderTopColor";
-import { SubHeaderStats } from "./components/SubHeaderStats";
+import { SubHeaderMetrics } from "./components/SubHeaderMetrics";
 import { TopologyDropdownMenu } from "../TopologyDropdownMenu/TopologyDropdownMenu";
 
 export const TopologyCardMedium = ({
@@ -30,7 +30,7 @@ export const TopologyCardMedium = ({
         </div>
         <div className="flex-1 overflow-hidden">
           <p
-            className="font-bold overflow-hidden truncate text-15pxinrem leading-1.21rel mb-px"
+            className="font-bold overflow-hidden truncate text-15pxinrem leading-1.21rel"
             title={name}
           >
             {name}
@@ -45,7 +45,7 @@ export const TopologyCardMedium = ({
       </div>
 
       <div className="flex w-med-card-right justify-between pl-1 pr-1.5 pb-3.5 pt-3">
-        <SubHeaderStats
+        <SubHeaderMetrics
           items={[
             { name: "RPS:", value: "165/s" },
             { name: "Errors:", value: "0.1%" },
@@ -53,7 +53,7 @@ export const TopologyCardMedium = ({
           ]}
         />
         {selectionMode ? (
-          <div className="mr-1.5 mt-1 flex">
+          <div className="pr-1.5 pt-1 flex min-w-7 justify-end items-start">
             <input
               type="checkbox"
               className="h-4 w-4 text-dark-blue outline-none rounded-4px focus:outline-none"
@@ -65,7 +65,7 @@ export const TopologyCardMedium = ({
           <TopologyDropdownMenu
             className="flex flex-initial"
             renderButton={() => (
-              <div className="p-1.5">
+              <div className="p-1.5 min-w-7">
                 <Icon name="dots" className="" />
               </div>
             )}
@@ -78,8 +78,8 @@ export const TopologyCardMedium = ({
         )}
       </div>
     </div>
-    <div className="flex flex-nowrap bg-lightest-gray rounded-b-8px py-4 px-5">
-      <div className="w-med-card-left pr-1">
+    <div className="flex flex-nowrap bg-lightest-gray rounded-b-8px">
+      <div className="w-med-card-left py-4 pl-5 pr-1">
         {properties.map(({ name, text }, index) => (
           <NodeSpecification
             key={text}
@@ -89,7 +89,7 @@ export const TopologyCardMedium = ({
           />
         ))}
       </div>
-      <div className="w-med-card-right pl-1">
+      <div className="w-med-card-right pl-1 py-4 pr-5">
         <div className="mb-4">
           <NodeStats title="nodes" icon="nodes" chips={nodes} />
         </div>

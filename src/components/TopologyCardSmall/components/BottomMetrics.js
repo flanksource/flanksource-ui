@@ -1,11 +1,11 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-export const BottomStats = ({ items }) => {
+export const BottomMetrics = ({ items }) => {
   const [firstItem, secondItem, thirdItem] = items;
 
   return (
-    <div className="grid grid-cols-3 bg-lightest-gray px-2 py-4 rounded-b-8px divide-x leading-none">
+    <div className="grid grid-cols-small-card-metrics bg-lightest-gray px-2 py-4 rounded-b-8px divide-x leading-none">
       <div>
         <div className="text-gray-800 px-2">
           <span className="text-gray-color text-xs font-medium leading-1.21rel">
@@ -36,7 +36,7 @@ export const BottomStats = ({ items }) => {
   );
 };
 
-BottomStats.propTypes = {
+BottomMetrics.propTypes = {
   items: PropTypes.arrayOf(
     PropTypes.shape({
       name: PropTypes.string.isRequired,
