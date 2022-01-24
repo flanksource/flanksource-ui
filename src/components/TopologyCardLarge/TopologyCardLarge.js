@@ -83,7 +83,7 @@ export const TopologyCardLarge = ({
         ))}
       </div>
       <div className="w-large-card-right pl-1 pr-5 py-4">
-        <div className="grid grid-cols-2 gap-x-6.5 gap-y-4">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-4">
           <div>
             <NodeStats title="nodes" icon="nodes" chips={nodes} />
           </div>

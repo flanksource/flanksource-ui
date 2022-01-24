@@ -12,10 +12,6 @@ export const TopologyPageMediumView = ({
   toggleChecked
 }) => (
   <div className="font-inter flex leading-1.21rel">
-    <div
-      style={{ width: "226px" }}
-      className="flex-0-0-a h-screen bg-column-background mr-4 lg"
-    />
     <div className="flex-auto">
       <p className="text-2xl my-6 font-semibold">Title</p>
       <div className="form-check mb-4">
@@ -32,7 +28,10 @@ export const TopologyPageMediumView = ({
           Selection Mode
         </label>
       </div>
-      <div className="grid grid-cols-2 xl:grid-cols-3 gap-4">
+      <div
+        className="grid gap-4"
+        style={{ gridTemplateColumns: "repeat(2, 384px)" }}
+      >
         <div>
           <TopologyColumn
             title="zone 1"

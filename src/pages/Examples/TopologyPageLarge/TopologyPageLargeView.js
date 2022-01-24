@@ -12,10 +12,6 @@ export const TopologyPageLargeView = ({
   toggleChecked
 }) => (
   <div className="font-inter flex leading-1.21rel">
-    <div
-      style={{ width: "226px" }}
-      className="flex-0-0-a h-screen bg-column-background mr-4 lg"
-    />
     <div className="flex-auto">
       <h1 className="text-2xl my-6 font-semibold">Title</h1>
       <div className="form-check mb-4">
@@ -32,7 +28,10 @@ export const TopologyPageLargeView = ({
           Selection Mode
         </label>
       </div>
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+      <div
+        className="grid gap-4"
+        style={{ gridTemplateColumns: "repeat(1, 580px)" }}
+      >
         <div style={{ width: "578px" }}>
           <TopologyColumn
             title="zone 1"

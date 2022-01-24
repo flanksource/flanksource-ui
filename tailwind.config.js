@@ -119,9 +119,6 @@ module.exports = {
       },
       lineHeight: {
         "1.21rel": "1.21"
-      },
-      gap: {
-        6.5: "1.625rem"
       }
     }
   },
