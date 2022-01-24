@@ -6,9 +6,7 @@ import dayjs from "dayjs";
 import { getLogs } from "../../api/services/logs";
 import { IncidentCreate } from "../Incidents/IncidentCreate";
 import { Modal } from "../Modal";
-
-// const { window } = new JSDOM("");
-// const DOMPurify = createDOMPurify(window);
+import { Loading } from "../Loading";
 
 export function LogsViewer() {
   const [isLoading, setIsLoading] = useState(true);
@@ -98,7 +96,9 @@ export function LogsViewer() {
                 </div>
               </div>
             ) : (
-              <div>fetching logs...</div>
+              <div>
+                <Loading text="fetching logs..." />
+              </div>
             )}
           </div>
         </div>
