@@ -138,7 +138,9 @@ export function HypothesisDetails({ nodePath, tree, setTree, api, ...rest }) {
             comments={comments}
             onComment={(value) => handleComment(value)}
             titlePrepend={
-              <HypothesisTitle className="mb-4">Comments</HypothesisTitle>
+              <HypothesisTitle className="mb-4">
+                Comments {comments.length > 0 && `(${comments.length})`}
+              </HypothesisTitle>
             }
           />
         </div>

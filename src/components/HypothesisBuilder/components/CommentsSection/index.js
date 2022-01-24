@@ -103,7 +103,7 @@ export function CommentsSection({
                       </p>
                     </div>
                     <div className="mt-2 text-sm text-gray-700">
-                      <p>{comment.comment}</p>
+                      <p className="whitespace-pre">{comment.comment}</p>
                     </div>
                   </div>
                 </div>
