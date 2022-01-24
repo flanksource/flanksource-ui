@@ -15,6 +15,7 @@ import SidebarLayout from "./components/Layout/sidebar";
 import { LogsViewer } from "./components/Logs";
 import { TopologyPageSmall } from "./pages/Examples/TopologyPageSmall/TopologyPageSmall";
 import { TopologyPageLarge } from "./pages/Examples/TopologyPageLarge/TopologyPageLarge";
+import { TopologyViewer } from "./components/Topology/viewer";
 
 const navigation = [
   {
@@ -71,7 +72,7 @@ export function App() {
       </Route>
 
       <Route path="topology" element={sidebar}>
-        <Route index element={<TopologyPageMedium url="/canary/api" />} />
+        <Route index element={<TopologyViewer url="/canary/api" />} />
       </Route>
 
       <Route path="topology-small" element={sidebar}>
