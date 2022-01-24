@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { debounce } from "lodash";
 import { useForm } from "react-hook-form";
+import { v4 as uuidv4 } from "uuid";
 import { Badge } from "../../../Badge";
 import { Dropdown } from "../../../Dropdown";
 import { badgeMap, hypothesisStatuses } from "../../data";
@@ -11,6 +12,10 @@ import { Modal } from "../../../Modal";
 import { EvidenceBuilder } from "../../../EvidenceBuilder";
 import { CommentsSection } from "../CommentsSection";
 import { EditableText } from "../../../EditableText";
+import {
+  getCommentsByHypothesis,
+  createComment
+} from "../../../../api/services/comments";
 
 const statusItems = {
   ...Object.values(hypothesisStatuses).reduce((acc, obj) => {
@@ -31,6 +36,7 @@ const statusItems = {
 
 export function HypothesisDetails({ nodePath, tree, setTree, api, ...rest }) {
   const [evidenceBuilderOpen, setEvidenceBuilderOpen] = useState(false);
+  const [comments, setComments] = useState([]);
 
   const node = getNode(tree, nodePath);
   const handleCurrentNodeValueChange = (key, value) => {
@@ -41,6 +47,22 @@ export function HypothesisDetails({ nodePath, tree, setTree, api, ...rest }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
+
+  const fetchComments = (id) =>
+    getCommentsByHypothesis(id)
+      .then((data) => {
+        setComments(data?.data?.data || []);
+      })
+      .catch((err) => console.error(err));
+
+  const handleComment = (value) =>
+    createComment(uuidv4(), node.incident_id, node.id, value).then(() => {
+      fetchComments(node.id);
+    });
+
+  useEffect(() => {
+    fetchComments(node.id);
+  }, [node.id]);
 
   const handleApiUpdate = useRef(
     debounce((key, value) => {
@@ -113,7 +135,8 @@ export function HypothesisDetails({ nodePath, tree, setTree, api, ...rest }) {
         </div>
         <div className="mb-6">
           <CommentsSection
-            // comments={}
+            comments={comments}
+            onComment={(value) => handleComment(value)}
             titlePrepend={
               <HypothesisTitle className="mb-4">Comments</HypothesisTitle>
             }
