@@ -112,8 +112,6 @@ module.exports = {
         "small-card-metrics":
           "minmax(25%, 30%) minmax(25%, 32%) minmax(25%, 38%)",
         "medium-card-metrics":
-          "minmax(25%, 30%) minmax(25%, 32%) minmax(25%, 38%)",
-        "large-card-metrics":
           "minmax(25%, 30%) minmax(25%, 32%) minmax(25%, 38%)"
       },
       flex: {
