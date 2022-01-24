@@ -1,13 +1,17 @@
 import React from "react";
 import PropTypes from "prop-types";
 import cx from "clsx";
-import { Icon } from "../Icon";
-import { NodeSpecification } from "../NodeSpecification/NodeSpecification";
-import { NodeStats } from "../NodeStats/NodeStats";
-import { databases, namespaces, nodes, pods } from "../../data/topologyDatas";
-import { getTopologyCardStatusBorderTopColor } from "../../utils/getTopologyCardStatusBorderTopColor";
+import { Icon } from "../../Icon";
+import { Property } from "../Property";
+import {
+  databases,
+  namespaces,
+  nodes,
+  pods
+} from "../../../data/topologyDatas";
 import { SubHeaderMetrics } from "./components/SubHeaderMetrics";
 import { TopologyDropdownMenu } from "../TopologyDropdownMenu/TopologyDropdownMenu";
+import { HealthSummary } from "../../HealthSummary";
 
 export const TopologyCardLarge = ({
   name,
@@ -20,7 +24,7 @@ export const TopologyCardLarge = ({
   <div
     className={cx(
       "rounded-8px mb-4 shadow-card border-t-6 card cursor-pointer",
-      getTopologyCardStatusBorderTopColor(status)
+      status
     )}
   >
     <div className="flex flex-row flex-nowrap rounded-t-8px bg-white">
@@ -74,7 +78,7 @@ export const TopologyCardLarge = ({
     <div className="flex flex-nowrap bg-lightest-gray rounded-b-8px">
       <div className="w-large-card-left pr-1 py-4 pl-5">
         {properties.map(({ name, text }, index) => (
-          <NodeSpecification
+          <Property
             key={text}
             className={index === properties.length - 1 ? "mb-0" : "mb-2"}
             name={name}
@@ -85,20 +89,24 @@ export const TopologyCardLarge = ({
       <div className="w-large-card-right pl-1 pr-5 py-4">
         <div className="grid grid-cols-2 gap-x-6 gap-y-4">
           <div>
-            <NodeStats title="nodes" icon="nodes" chips={nodes} />
+            <HealthSummary title="nodes" icon="nodes" chips={nodes} />
           </div>
           <div>
-            <NodeStats
+            <HealthSummary
               title="namespaces"
               icon="namespaces"
               chips={namespaces}
             />
           </div>
           <div>
-            <NodeStats title="databases" icon="databases" chips={databases} />
+            <HealthSummary
+              title="databases"
+              icon="databases"
+              chips={databases}
+            />
           </div>
           <div>
-            <NodeStats title="pods" icon="pods" chips={pods} />
+            <HealthSummary title="pods" icon="pods" chips={pods} />
           </div>
         </div>
       </div>

@@ -1,8 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import cx from "clsx";
-import { Icon } from "../Icon";
-import { getTopologyCardStatusBorderTopColor } from "../../utils/getTopologyCardStatusBorderTopColor";
+import { Icon } from "../../Icon";
 import { BottomMetrics } from "./components/BottomMetrics";
 import { TopologyDropdownMenu } from "../TopologyDropdownMenu/TopologyDropdownMenu";
 
@@ -15,8 +14,7 @@ export const TopologyCardSmall = ({
 }) => (
   <div
     className={cx(
-      "rounded-8px mb-4 shadow-card border-t-6 card cursor-pointer bg-white",
-      getTopologyCardStatusBorderTopColor(status)
+      "rounded-8px mb-4 shadow-card border-t-6 card cursor-pointer bg-white topology-card"
     )}
   >
     <div className="flex flex-row flex-nowrap rounded-t-8px pt-2.5 pr-1.5 pb-2.5 pl-4 bg-white relative">
