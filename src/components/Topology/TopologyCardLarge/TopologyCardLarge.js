@@ -61,11 +61,8 @@ export const TopologyCardLarge = ({
         ) : (
           <TopologyDropdownMenu
             className="flex flex-initial"
-            renderButton={() => (
-              <div className="p-1.5 min-w-7">
-                <Icon name="dots" className="" />
-              </div>
-            )}
+            menuButtonClassName="p-1.5 min-w-7 rounded-full hover:bg-gray-200 active:bg-gray-200 focus:outline-none focus:ring focus:ring-gray-200"
+            renderButton={() => <Icon name="dots" className="" />}
             items={[
               { title: "Duplicate" },
               { title: "Share" },

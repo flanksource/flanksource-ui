@@ -7,7 +7,6 @@ import { TopologyDropdownMenu } from "../TopologyDropdownMenu/TopologyDropdownMe
 
 export const TopologyCardSmall = ({
   name,
-  status,
   selectionMode,
   selected,
   onSelectionChange
@@ -47,11 +46,8 @@ export const TopologyCardSmall = ({
         <div className="mt-1.5">
           <TopologyDropdownMenu
             className="flex flex-initial"
-            renderButton={() => (
-              <div className="flex-initial text-1 p-1.5 min-w-7">
-                <Icon name="dots" className="" />
-              </div>
-            )}
+            menuButtonClassName="flex-initial text-1 p-1.5 min-w-7 rounded-full hover:bg-gray-200 active:bg-gray-200 focus:outline-none focus:ring focus:ring-gray-200"
+            renderButton={() => <Icon name="dots" className="" />}
             items={[
               { title: "Duplicate" },
               { title: "Share" },
@@ -73,7 +69,6 @@ export const TopologyCardSmall = ({
 
 TopologyCardSmall.propTypes = {
   name: PropTypes.string.isRequired,
-  status: PropTypes.string.isRequired,
   selectionMode: PropTypes.bool,
   selected: PropTypes.bool,
   onSelectionChange: PropTypes.func
