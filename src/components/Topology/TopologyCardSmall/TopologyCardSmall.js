@@ -1,16 +1,17 @@
 import React from "react";
-import PropTypes from "prop-types";
 import cx from "clsx";
-import { Icon } from "../../Icon";
 import { BottomMetrics } from "./components/BottomMetrics";
 import { TopologyDropdownMenu } from "../TopologyDropdownMenu/TopologyDropdownMenu";
+import { DotsVerticalIcon } from "@heroicons/react/outline";
+import { topologyCardCommonPropTypes } from "../prop-types";
 
 export const TopologyCardSmall = ({
-  name,
+  topology,
   selectionMode,
   selected,
   onSelectionChange
 }) => {
+  const { name } = topology;
   const handleCheckedStateChange = (nextState, event) => {
     onSelectionChange(nextState, event);
   };
@@ -20,13 +21,8 @@ export const TopologyCardSmall = ({
         onClick: (event) => {
           handleCheckedStateChange(!selected, event);
         },
-        onKeyUp: (event) => {
-          if (event.code === "Space" || event.code === "Enter") {
-            handleCheckedStateChange(!selected, event);
-          }
-        },
-        role: "button",
-        tabIndex: 0
+        onKeyUp: () => {},
+        role: "button"
       }
     : {
         role: "none"
@@ -69,8 +65,8 @@ export const TopologyCardSmall = ({
           <div className="mt-1.5">
             <TopologyDropdownMenu
               className="flex flex-initial"
-              menuButtonClassName="flex-initial text-1 p-1.5 min-w-7 rounded-full hover:bg-gray-200 active:bg-gray-200 focus:outline-none focus-visible:ring-2  focus:ring-gray-200 focus-visible:ring-opacity-75"
-              renderButton={() => <Icon name="dots" className="" />}
+              menuButtonClassName="flex-initial text-1 p-0.5 min-w-7 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              renderButton={() => <DotsVerticalIcon className="h-6 w-6" />}
               items={[
                 { title: "Duplicate" },
                 { title: "Share" },
@@ -91,12 +87,7 @@ export const TopologyCardSmall = ({
   );
 };
 
-TopologyCardSmall.propTypes = {
-  name: PropTypes.string.isRequired,
-  selectionMode: PropTypes.bool,
-  selected: PropTypes.bool,
-  onSelectionChange: PropTypes.func
-};
+TopologyCardSmall.propTypes = topologyCardCommonPropTypes;
 
 TopologyCardSmall.defaultProps = {
   selectionMode: false,

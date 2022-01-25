@@ -5,6 +5,7 @@ import {
   TopologyCardSmall,
   TopologyCardLarge
 } from "./index";
+import { topologyCardCommonPropTypes } from "../prop-types";
 
 const sizeToComponentMapping = {
   small: TopologyCardSmall,
@@ -21,15 +22,5 @@ export const TopologyCard = ({ size, ...rest }) => {
 
 TopologyCard.propTypes = {
   size: PropTypes.oneOf(["small", "medium", "large"]).isRequired,
-  topology: PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    status: PropTypes.string.isRequired,
-    icon: PropTypes.string,
-    properties: PropTypes.arrayOf(
-      PropTypes.shape({
-        name: PropTypes.string.isRequired,
-        text: PropTypes.string
-      }).isRequired
-    )
-  }).isRequired
+  ...topologyCardCommonPropTypes
 };

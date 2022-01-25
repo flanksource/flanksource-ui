@@ -1,173 +1,35 @@
 [
   {
     "name": "cluster",
-    "namespace": "default",
+    "id": "017e83b4-719a-4217-abee-4c57f45905d2",
+    "icon": "kubernetes",
     "components": [
       {
         "name": "nodes",
+        "id": "017e83c0-2b1e-bad9-6085-f5a5b32a23a2",
         "icon": "server",
+        "status": "healthy",
         "summary": {
           "healthy": 3
         },
         "components": [
           {
-            "name": "ip-10-0-3-135.eu-west-2.compute.internal",
-            "status": "healthy",
-            "summary": {},
-            "properties": [
-              {
-                "name": "cpu",
-                "unit": "millicores",
-                "max": 3920
-              },
-              {
-                "name": "memory",
-                "unit": "bytes",
-                "max": 15553609728
-              },
-              {
-                "name": "ephemeral-storage",
-                "unit": "bytes",
-                "max": 47233297124
-              },
-              {
-                "name": "instance-type",
-                "text": "t3.xlarge"
-              },
-              {
-                "name": "zone"
-              },
-              {
-                "name": "ami",
-                "text": "ami-04e51ead8aae0ca0d"
-              },
-              {
-                "name": "machineID",
-                "text": "ec28fbd32a02aee47c44d2719d32721d"
-              },
-              {
-                "name": "kernelVersion",
-                "text": "5.4.156-83.273.amzn2.x86_64"
-              },
-              {
-                "name": "osImage",
-                "text": "Amazon Linux 2"
-              },
-              {
-                "name": "containerRuntimeVersion",
-                "text": "docker://20.10.7"
-              },
-              {
-                "name": "kubeletVersion",
-                "text": "v1.20.11-eks-f17b81"
-              },
-              {
-                "name": "systemUUID",
-                "text": "ec28fbd3-2a02-aee4-7c44-d2719d32721d"
-              },
-              {
-                "name": "bootID",
-                "text": "808577a3-48d5-4b77-bb6c-21477f2f2f3f"
-              },
-              {
-                "name": "kubeProxyVersion",
-                "text": "v1.20.11-eks-f17b81"
-              },
-              {
-                "name": "operatingSystem",
-                "text": "linux"
-              },
-              {
-                "name": "architecture",
-                "text": "amd64"
-              }
-            ]
-          },
-          {
-            "name": "ip-10-0-5-82.eu-west-2.compute.internal",
-            "status": "healthy",
-            "summary": {},
-            "properties": [
-              {
-                "name": "cpu",
-                "unit": "millicores",
-                "max": 3920
-              },
-              {
-                "name": "memory",
-                "unit": "bytes",
-                "max": 15553609728
-              },
-              {
-                "name": "ephemeral-storage",
-                "unit": "bytes",
-                "max": 47233297124
-              },
-              {
-                "name": "instance-type",
-                "text": "t3.xlarge"
-              },
-              {
-                "name": "zone"
-              },
-              {
-                "name": "ami",
-                "text": "ami-04e51ead8aae0ca0d"
-              },
-              {
-                "name": "kernelVersion",
-                "text": "5.4.156-83.273.amzn2.x86_64"
-              },
-              {
-                "name": "kubeProxyVersion",
-                "text": "v1.20.11-eks-f17b81"
-              },
-              {
-                "name": "machineID",
-                "text": "ec2f4e04f625c27a22493bed328ae504"
-              },
-              {
-                "name": "bootID",
-                "text": "ebb6f22f-0cf2-4d24-854e-4195811ca519"
-              },
-              {
-                "name": "containerRuntimeVersion",
-                "text": "docker://20.10.7"
-              },
-              {
-                "name": "kubeletVersion",
-                "text": "v1.20.11-eks-f17b81"
-              },
-              {
-                "name": "operatingSystem",
-                "text": "linux"
-              },
-              {
-                "name": "architecture",
-                "text": "amd64"
-              },
-              {
-                "name": "systemUUID",
-                "text": "ec2f4e04-f625-c27a-2249-3bed328ae504"
-              },
-              {
-                "name": "osImage",
-                "text": "Amazon Linux 2"
-              }
-            ]
-          },
-          {
             "name": "ip-10-0-6-82.eu-west-2.compute.internal",
+            "id": "017e83c8-c74c-c6b3-0bdb-8a6cc43982c5",
+            "icon": "server",
             "status": "healthy",
+            "type": "KubernetesNode",
             "summary": {},
             "properties": [
               {
                 "name": "cpu",
+                "value": 630,
                 "unit": "millicores",
                 "max": 3920
               },
               {
                 "name": "memory",
+                "value": 13940244480,
                 "unit": "bytes",
                 "max": 15554052096
               },
@@ -181,30 +43,15 @@
                 "text": "t3.xlarge"
               },
               {
-                "name": "zone"
+                "name": "zone",
+                "text": "eu-west-2c"
               },
               {
                 "name": "ami"
               },
               {
-                "name": "kubeletVersion",
-                "text": "v1.20.4-eks-6b7464"
-              },
-              {
-                "name": "kubeProxyVersion",
-                "text": "v1.20.4-eks-6b7464"
-              },
-              {
                 "name": "operatingSystem",
                 "text": "linux"
-              },
-              {
-                "name": "architecture",
-                "text": "amd64"
-              },
-              {
-                "name": "machineID",
-                "text": "ec22e2bbe36b0f58fe145d52fe168bf7"
               },
               {
                 "name": "kernelVersion",
@@ -215,26 +62,178 @@
                 "text": "Amazon Linux 2"
               },
               {
-                "name": "systemUUID",
-                "text": "ec22e2bb-e36b-0f58-fe14-5d52fe168bf7"
+                "name": "containerRuntimeVersion",
+                "text": "docker://19.3.13"
               },
               {
-                "name": "bootID",
-                "text": "13c7abe8-e0e3-4e59-9a16-f548bc5c64ed"
+                "name": "kubeProxyVersion",
+                "text": "v1.20.4-eks-6b7464"
+              },
+              {
+                "name": "architecture",
+                "text": "amd64"
+              },
+              {
+                "name": "kubeletVersion",
+                "text": "v1.20.4-eks-6b7464"
+              }
+            ],
+            "created_at": "2022-01-22T21:54:40.587458",
+            "updated_at": "2022-01-23T07:21:23.452554",
+            "external_id": "eu-west-2c/ip-10-0-6-82.eu-west-2.compute.internal"
+          },
+          {
+            "name": "ip-10-0-6-82.eu-west-2.compute.internal",
+            "id": "017e83c8-c74c-c6b3-0bdb-8a6cc43982c5",
+            "icon": "server",
+            "status": "healthy",
+            "type": "KubernetesNode",
+            "summary": {},
+            "properties": [
+              {
+                "name": "cpu",
+                "value": 630,
+                "unit": "millicores",
+                "max": 3920
+              },
+              {
+                "name": "memory",
+                "value": 13940244480,
+                "unit": "bytes",
+                "max": 15554052096
+              },
+              {
+                "name": "ephemeral-storage",
+                "unit": "bytes",
+                "max": 76224326324
+              },
+              {
+                "name": "instance-type",
+                "text": "t3.xlarge"
+              },
+              {
+                "name": "zone",
+                "text": "eu-west-2c"
+              },
+              {
+                "name": "ami"
+              },
+              {
+                "name": "operatingSystem",
+                "text": "linux"
+              },
+              {
+                "name": "kernelVersion",
+                "text": "5.4.129-63.229.amzn2.x86_64"
+              },
+              {
+                "name": "osImage",
+                "text": "Amazon Linux 2"
               },
               {
                 "name": "containerRuntimeVersion",
                 "text": "docker://19.3.13"
+              },
+              {
+                "name": "kubeProxyVersion",
+                "text": "v1.20.4-eks-6b7464"
+              },
+              {
+                "name": "architecture",
+                "text": "amd64"
+              },
+              {
+                "name": "kubeletVersion",
+                "text": "v1.20.4-eks-6b7464"
               }
-            ]
+            ],
+            "created_at": "2022-01-22T21:54:40.587458",
+            "updated_at": "2022-01-23T07:21:23.452554",
+            "external_id": "eu-west-2c/ip-10-0-6-82.eu-west-2.compute.internal"
+          },
+          {
+            "name": "ip-10-0-6-82.eu-west-2.compute.internal",
+            "id": "017e83c8-c74c-c6b3-0bdb-8a6cc43982c5",
+            "icon": "server",
+            "status": "healthy",
+            "type": "KubernetesNode",
+            "summary": {},
+            "properties": [
+              {
+                "name": "cpu",
+                "value": 630,
+                "unit": "millicores",
+                "max": 3920
+              },
+              {
+                "name": "memory",
+                "value": 13940244480,
+                "unit": "bytes",
+                "max": 15554052096
+              },
+              {
+                "name": "ephemeral-storage",
+                "unit": "bytes",
+                "max": 76224326324
+              },
+              {
+                "name": "instance-type",
+                "text": "t3.xlarge"
+              },
+              {
+                "name": "zone",
+                "text": "eu-west-2c"
+              },
+              {
+                "name": "ami"
+              },
+              {
+                "name": "operatingSystem",
+                "text": "linux"
+              },
+              {
+                "name": "kernelVersion",
+                "text": "5.4.129-63.229.amzn2.x86_64"
+              },
+              {
+                "name": "osImage",
+                "text": "Amazon Linux 2"
+              },
+              {
+                "name": "containerRuntimeVersion",
+                "text": "docker://19.3.13"
+              },
+              {
+                "name": "kubeProxyVersion",
+                "text": "v1.20.4-eks-6b7464"
+              },
+              {
+                "name": "architecture",
+                "text": "amd64"
+              },
+              {
+                "name": "kubeletVersion",
+                "text": "v1.20.4-eks-6b7464"
+              }
+            ],
+            "created_at": "2022-01-22T21:54:40.587458",
+            "updated_at": "2022-01-23T07:21:23.452554",
+            "external_id": "eu-west-2c/ip-10-0-6-82.eu-west-2.compute.internal"
           }
-        ]
+        ],
+        "created_at": "2022-01-22T21:45:16.317433",
+        "updated_at": "2022-01-23T07:21:23.44984"
       }
     ],
     "properties": [
       {
         "name": "dns",
         "text": "canary.lab.flanksource.com"
+      },
+      {
+        "name": "id",
+        "type": "hidden",
+        "text": "arn:aws:eks:eu-west-2:745897381572:cluster/flanksource-canary-cluster"
       },
       {
         "name": "name",
@@ -249,9 +248,10 @@
         "text": "eu-west-2"
       }
     ],
-    "summary": {
-      "healthy": 3
-    },
-    "status": "healthy"
+    "summary": {},
+    "status": "healthy",
+    "created_at": "2022-01-22T21:32:27.921212",
+    "updated_at": "2022-01-23T07:21:23.44703",
+    "external_id": "arn:aws:eks:eu-west-2:745897381572:cluster/flanksource-canary-cluster"
   }
 ]

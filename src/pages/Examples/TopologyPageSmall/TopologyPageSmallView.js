@@ -34,13 +34,11 @@ export const TopologyPageSmallView = ({
         <div>
           <TopologyColumn
             title="zone 1"
-            cards={topology.map(({ name, status, properties }, index) => (
+            cards={topology.map((item, index) => (
               <TopologyCard
                 size="small"
-                key={name}
-                name={name}
-                status={status}
-                properties={properties}
+                key={item.id}
+                topology={item}
                 selectionMode={selectionMode}
                 selected={!!checked[`column_1_card_${index}`]}
                 onSelectionChange={(state) => {
@@ -53,13 +51,11 @@ export const TopologyPageSmallView = ({
         <div>
           <TopologyColumn
             title="zone 2"
-            cards={topology.map(({ name, status, properties }, index) => (
+            cards={topology.map((item, index) => (
               <TopologyCard
                 size="small"
-                key={name}
-                name={name}
-                status={status}
-                properties={properties}
+                key={item.id}
+                topology={item}
                 selectionMode={selectionMode}
                 selected={!!checked[`column_2_card_${index}`]}
                 onSelectionChange={(state) => {
@@ -72,13 +68,11 @@ export const TopologyPageSmallView = ({
         <div>
           <TopologyColumn
             title="zone 3"
-            cards={topology.map(({ name, status, properties }, index) => (
+            cards={topology.map((item, index) => (
               <TopologyCard
                 size="small"
-                key={name}
-                name={name}
-                status={status}
-                properties={properties}
+                key={item.id}
+                topology={item}
                 selectionMode={selectionMode}
                 selected={!!checked[`column_3_card_${index}`]}
                 onSelectionChange={(state) => {
@@ -91,13 +85,11 @@ export const TopologyPageSmallView = ({
         <div>
           <TopologyColumn
             title="zone 4"
-            cards={topology.map(({ name, status, properties }, index) => (
+            cards={topology.map((item, index) => (
               <TopologyCard
                 size="small"
-                key={name}
-                name={name}
-                status={status}
-                properties={properties}
+                key={item.id}
+                topology={item}
                 selectionMode={selectionMode}
                 selected={!!checked[`column_4_card_${index}`]}
                 onSelectionChange={(state) => {
@@ -110,13 +102,11 @@ export const TopologyPageSmallView = ({
         <div>
           <TopologyColumn
             title="zone 5"
-            cards={topology.map(({ name, status, properties }, index) => (
+            cards={topology.map((item, index) => (
               <TopologyCard
                 size="small"
-                key={name}
-                name={name}
-                status={status}
-                properties={properties}
+                key={item.id}
+                topology={item}
                 selectionMode={selectionMode}
                 selected={!!checked[`column_5_card_${index}`]}
                 onSelectionChange={(state) => {

@@ -1,7 +1,7 @@
 import React from "react";
-import PropTypes from "prop-types";
 import cx from "clsx";
 import clsx from "clsx";
+import { DotsVerticalIcon } from "@heroicons/react/outline";
 import { Icon } from "../../Icon";
 import { Property } from "../Property";
 import { HealthSummary } from "../../HealthSummary/summary";
@@ -13,6 +13,7 @@ import {
   nodes,
   pods
 } from "../../../data/topologyDatas";
+import { topologyCardCommonPropTypes } from "../prop-types";
 
 export function TopologyCardMedium({
   topology,
@@ -31,13 +32,8 @@ export function TopologyCardMedium({
         onClick: (event) => {
           handleCheckedStateChange(!selected, event);
         },
-        onKeyUp: (event) => {
-          if (event.code === "Space" || event.code === "Enter") {
-            handleCheckedStateChange(!selected, event);
-          }
-        },
-        role: "button",
-        tabIndex: 0
+        onKeyUp: () => {},
+        role: "button"
       }
     : {
         role: "none"
@@ -91,8 +87,8 @@ export function TopologyCardMedium({
           ) : (
             <TopologyDropdownMenu
               className="flex flex-initial"
-              menuButtonClassName="p-1.5 min-w-7 rounded-md hover:bg-gray-200 active:bg-gray-200 focus:outline-none focus-visible:ring-2  focus:ring-gray-200 focus-visible:ring-opacity-75"
-              renderButton={() => <Icon name="dots" className="" />}
+              menuButtonClassName="p-0.5 min-w-7 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              renderButton={() => <DotsVerticalIcon className="h-6 w-6" />}
               items={[
                 { title: "Duplicate" },
                 { title: "Share" },
@@ -127,22 +123,7 @@ export function TopologyCardMedium({
   );
 }
 
-TopologyCardMedium.propTypes = {
-  selectionMode: PropTypes.bool,
-  selected: PropTypes.bool,
-  onSelectionChange: PropTypes.func,
-  topology: PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    status: PropTypes.string.isRequired,
-    icon: PropTypes.string,
-    properties: PropTypes.arrayOf(
-      PropTypes.shape({
-        name: PropTypes.string.isRequired,
-        text: PropTypes.string
-      }).isRequired
-    )
-  }).isRequired
-};
+TopologyCardMedium.propTypes = topologyCardCommonPropTypes;
 
 TopologyCardMedium.defaultProps = {
   selectionMode: false,

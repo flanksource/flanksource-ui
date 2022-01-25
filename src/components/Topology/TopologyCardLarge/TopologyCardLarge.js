@@ -1,7 +1,6 @@
 import React from "react";
-import PropTypes from "prop-types";
 import cx from "clsx";
-import { Icon } from "../../Icon";
+import { DotsVerticalIcon } from "@heroicons/react/outline";
 import { Property } from "../Property";
 import {
   databases,
@@ -12,15 +11,16 @@ import {
 import { SubHeaderMetrics } from "./components/SubHeaderMetrics";
 import { TopologyDropdownMenu } from "../TopologyDropdownMenu/TopologyDropdownMenu";
 import { HealthSummary } from "../../HealthSummary";
+import { topologyCardCommonPropTypes } from "../prop-types";
 
 export const TopologyCardLarge = ({
-  name,
-  properties,
-  status,
+  topology,
   selectionMode,
   selected,
   onSelectionChange
 }) => {
+  const { name, status, components, properties } = topology;
+
   const handleCheckedStateChange = (nextState, event) => {
     onSelectionChange(nextState, event);
   };
@@ -30,13 +30,8 @@ export const TopologyCardLarge = ({
         onClick: (event) => {
           handleCheckedStateChange(!selected, event);
         },
-        onKeyUp: (event) => {
-          if (event.code === "Space" || event.code === "Enter") {
-            handleCheckedStateChange(!selected, event);
-          }
-        },
-        role: "button",
-        tabIndex: 0
+        onKeyUp: () => {},
+        role: "button"
       }
     : {
         role: "none"
@@ -85,9 +80,9 @@ export const TopologyCardLarge = ({
             </div>
           ) : (
             <TopologyDropdownMenu
-              className="flex flex-initial"
-              menuButtonClassName="p-1.5 min-w-7 rounded-full hover:bg-gray-200 active:bg-gray-200 focus:outline-none focus:ring focus:ring-gray-200"
-              renderButton={() => <Icon name="dots" className="" />}
+              className="flex-initial"
+              menuButtonClassName="p-0.5 min-w-7 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              renderButton={() => <DotsVerticalIcon className="h-6 w-6" />}
               items={[
                 { title: "Duplicate" },
                 { title: "Share" },
@@ -99,37 +94,21 @@ export const TopologyCardLarge = ({
       </div>
       <div className="flex flex-nowrap bg-lightest-gray rounded-b-8px">
         <div className="w-large-card-left pr-1 py-4 pl-5">
-          {properties.map(({ name, text }, index) => (
+          {properties.map((property, index) => (
             <Property
-              key={text}
+              key={property.text}
+              property={property}
               className={index === properties.length - 1 ? "mb-0" : "mb-2"}
-              name={name}
-              text={text}
             />
           ))}
         </div>
         <div className="w-large-card-right pl-1 pr-5 py-4">
           <div className="grid grid-cols-2 gap-x-6 gap-y-4">
-            <div>
-              <HealthSummary title="nodes" icon="nodes" chips={nodes} />
-            </div>
-            <div>
-              <HealthSummary
-                title="namespaces"
-                icon="namespaces"
-                chips={namespaces}
-              />
-            </div>
-            <div>
-              <HealthSummary
-                title="databases"
-                icon="databases"
-                chips={databases}
-              />
-            </div>
-            <div>
-              <HealthSummary title="pods" icon="pods" chips={pods} />
-            </div>
+            {components.map((component) => (
+              <div key={component.id}>
+                <HealthSummary component={component} />
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -137,8 +116,4 @@ export const TopologyCardLarge = ({
   );
 };
 
-TopologyCardLarge.propTypes = {
-  name: PropTypes.string.isRequired,
-  properties: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
-  status: PropTypes.string.isRequired
-};
+TopologyCardLarge.propTypes = topologyCardCommonPropTypes;
