@@ -21,12 +21,35 @@ export function TopologyCardMedium({
   onSelectionChange
 }) {
   const { name, status, components, properties } = topology;
+
+  const handleCheckedStateChange = (nextState, event) => {
+    onSelectionChange(nextState, event);
+  };
+
+  const selectionModeRootProps = selectionMode
+    ? {
+        onClick: (event) => {
+          handleCheckedStateChange(!selected, event);
+        },
+        onKeyUp: (event) => {
+          if (event.code === "Space" || event.code === "Enter") {
+            handleCheckedStateChange(!selected, event);
+          }
+        },
+        role: "button",
+        tabIndex: 0
+      }
+    : {
+        role: "none"
+      };
+
   return (
     <div
       className={cx(
         "rounded-8px mb-4 shadow-card border-t-6 card cursor-pointer bg-white topology-card",
         status
       )}
+      {...selectionModeRootProps}
     >
       <div className="flex flex-row flex-nowrap rounded-t-8px bg-white">
         <div className="flex w-med-card-left pr-1 pt-2.5 pb-3.5 pl-5">
@@ -62,7 +85,7 @@ export function TopologyCardMedium({
                 type="checkbox"
                 className="h-4 w-4 text-dark-blue outline-none rounded-4px focus:outline-none"
                 checked={selected}
-                onChange={onSelectionChange}
+                readOnly
               />
             </div>
           ) : (
@@ -105,6 +128,9 @@ export function TopologyCardMedium({
 }
 
 TopologyCardMedium.propTypes = {
+  selectionMode: PropTypes.bool,
+  selected: PropTypes.bool,
+  onSelectionChange: PropTypes.func,
   topology: PropTypes.shape({
     name: PropTypes.string.isRequired,
     status: PropTypes.string.isRequired,
@@ -121,5 +147,5 @@ TopologyCardMedium.propTypes = {
 TopologyCardMedium.defaultProps = {
   selectionMode: false,
   selected: false,
-  onSelectionChange: () => { }
+  onSelectionChange: () => {}
 };

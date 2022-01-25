@@ -43,8 +43,8 @@ export const TopologyPageMediumView = ({
                 size="medium"
                 selectionMode={selectionMode}
                 selected={!!checked[`column_1_card_${index}`]}
-                onSelectionChange={(event) => {
-                  toggleChecked(`column_1_card_${index}`, event.target.checked);
+                onSelectionChange={(state) => {
+                  toggleChecked(`column_1_card_${index}`, state);
                 }}
               />
             ))}
@@ -62,8 +62,8 @@ export const TopologyPageMediumView = ({
                 name={name}
                 selectionMode={selectionMode}
                 selected={!!checked[`column_2_card_${index}`]}
-                onSelectionChange={(event) => {
-                  toggleChecked(`column_2_card_${index}`, event.target.checked);
+                onSelectionChange={(state) => {
+                  toggleChecked(`column_2_card_${index}`, state);
                 }}
               />
             ))}
@@ -81,8 +81,8 @@ export const TopologyPageMediumView = ({
                 name={name}
                 selectionMode={selectionMode}
                 selected={!!checked[`column_3_card_${index}`]}
-                onSelectionChange={(event) => {
-                  toggleChecked(`column_3_card_${index}`, event.target.checked);
+                onSelectionChange={(state) => {
+                  toggleChecked(`column_3_card_${index}`, state);
                 }}
               />
             ))}
