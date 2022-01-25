@@ -1,0 +1,1096 @@
+[
+  {
+    "total": 99,
+    "results": [
+      {
+        "timestamp": "2022-01-25T07:03:07.000Z",
+        "message": "\u001b[35mDEBUG\u001b[0m\t[containerd-pull-pass] checking 1 checks",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:07.000Z",
+        "message": "\u001b[35mDEBUG\u001b[0m\t[http-fail-timeout] checking 1 checks",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:07.000Z",
+        "message": "\u001b[35mDEBUG\u001b[0m\t[docker-push0-pass] checking 1 checks",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:07.000Z",
+        "message": "\u001b[35mDEBUG\u001b[0m\t[docker-push-fail] checking 2 checks",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:07.000Z",
+        "message": "\u001b[35mDEBUG\u001b[0m\t[mssql-pass] checking 1 checks",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:07.001Z",
+        "message": "\u001b[35mDEBUG\u001b[0m\t[mssql-fail] checking 1 checks",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:07.000Z",
+        "message": "\u001b[35mDEBUG\u001b[0m\t[mysql-pass] checking 1 checks",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:07.002Z",
+        "message": "\u001b[35mDEBUG\u001b[0m\t[abp-microservice] checking 4 checks",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:07.002Z",
+        "message": "\u001b[35mDEBUG\u001b[0m\t[mongo] checking 2 checks",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:07.002Z",
+        "message": "\u001b[35mDEBUG\u001b[0m\t[petclinic-cloud-http-checks] checking 3 checks",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:07.005Z",
+        "message": "\u001b[34mINFO\u001b[0m\tcontrollers.canary\tFAIL [dockerPush] //ttl.sh/flanksource-busybox:1.33.1 duration=0 Failed to push An image does not exist locally with the tag: ttl.sh/flanksource-busybox",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:07.006Z",
+        "message": "\u001b[35mDEBUG\u001b[0m\tfailed to get secret default/github-token: secrets \"github-token\" not found",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:07.007Z",
+        "message": "\u001b[34mINFO\u001b[0m\tcontrollers.canary\tFAIL [github] default/github-pass/SELECT-*-FROM-github_repo_checks('flanksource/template-operator')-where-branch='master'-and-conclusion='FAILURE' duration=6  error fetching github token: Could not get contents of secret github-token from namespace default, error executing template {{- if (eq (len .results) 0) }}: template: :1:12: executing \"\" at \u003clen .results\u003e: error calling len: reflect: call of reflect.Value.Type on zero Value",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:07.009Z",
+        "message": "\u001b[34mINFO\u001b[0m\tcontrollers.canary\tFAIL [dockerPush] //docker.io/flanksource/busybox:1.30 duration=0 Failed to push An image does not exist locally with the tag: flanksource/busybox",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:07.013Z",
+        "message": "\u001b[35mDEBUG\u001b[0m\tcontroller-runtime.manager.events\tWarning\t{\"object\": {\"kind\":\"Canary\",\"namespace\":\"default\",\"name\":\"docker-push0-pass\",\"uid\":\"fe337d83-40b7-4bf7-bad0-e9552bf81078\",\"apiVersion\":\"canaries.flanksource.com/v1\",\"resourceVersion\":\"188019015\"}, \"reason\": \"Failed\", \"message\": \"dockerPush-ttl.sh/flanksource-busybox:1.33.1: Failed to push An image does not exist locally with the tag: ttl.sh/flanksource-busybox\"}",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:07.014Z",
+        "message": "\u001b[35mDEBUG\u001b[0m\tcontroller-runtime.manager.events\tWarning\t{\"object\": {\"kind\":\"Canary\",\"namespace\":\"default\",\"name\":\"github-pass\",\"uid\":\"29d212f1-3145-4259-af03-eca7e20999e4\",\"apiVersion\":\"canaries.flanksource.com/v1\",\"resourceVersion\":\"188019021\"}, \"reason\": \"Failed\", \"message\": \"github-SELECT-*-FROM-github_repo_checks('flanksource/template-operator')-where-branch='master'-and-conclusion='FAILURE': \"}",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:07.017Z",
+        "message": "\u001b[34mINFO\u001b[0m\tcontrollers.canary\tFAIL [dockerPush] //ttl.sh/flanksource-busybox:not-found-tag duration=0 Failed to push An image does not exist locally with the tag: ttl.sh/flanksource-busybox",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:07.017Z",
+        "message": "\u001b[35mDEBUG\u001b[0m\tcontroller-runtime.manager.events\tWarning\t{\"object\": {\"kind\":\"Canary\",\"namespace\":\"default\",\"name\":\"docker-push-fail\",\"uid\":\"a7d29aba-00c8-429a-aed3-314a7e3534c5\",\"apiVersion\":\"canaries.flanksource.com/v1\",\"resourceVersion\":\"188019012\"}, \"reason\": \"Failed\", \"message\": \"dockerPush-docker.io/flanksource/busybox:1.30: Failed to push An image does not exist locally with the tag: flanksource/busybox\"}",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:07.017Z",
+        "message": "\u001b[34mINFO\u001b[0m\tcontrollers.canary\tFAIL [mssql] default/mssql-fail/server=mssql.platformsystem;user id=sa;password=###;port=32010;database=master duration=16  failed to query db: lookup mssql.platformsystem on 172.20.0.10:53: no such host",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:07.018Z",
+        "message": "\u001b[31mERROR\u001b[0m\tcontrollers.canary\tfailed to patch\t{\"canary\": \"docker-push0-pass\", \"error\": \"Operation cannot be fulfilled on canaries.canaries.flanksource.com \\\"docker-push0-pass\\\": the object has been modified; please apply your changes to the latest version and try again\"}",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:07.018Z",
+        "message": "\u001b[31mERROR\u001b[0m\tcontrollers.canary\tfailed to patch\t{\"canary\": \"prometheus\", \"error\": \"Operation cannot be fulfilled on canaries.canaries.flanksource.com \\\"prometheus\\\": the object has been modified; please apply your changes to the latest version and try again\"}",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:07.023Z",
+        "message": "\u001b[31mERROR\u001b[0m\tcontrollers.canary\tfailed to patch\t{\"canary\": \"github-pass\", \"error\": \"Operation cannot be fulfilled on canaries.canaries.flanksource.com \\\"github-pass\\\": the object has been modified; please apply your changes to the latest version and try again\"}",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:07.023Z",
+        "message": "\u001b[35mDEBUG\u001b[0m\tcontroller-runtime.manager.events\tWarning\t{\"object\": {\"kind\":\"Canary\",\"namespace\":\"default\",\"name\":\"docker-push-fail\",\"uid\":\"a7d29aba-00c8-429a-aed3-314a7e3534c5\",\"apiVersion\":\"canaries.flanksource.com/v1\",\"resourceVersion\":\"188019012\"}, \"reason\": \"Failed\", \"message\": \"dockerPush-ttl.sh/flanksource-busybox:not-found-tag: Failed to push An image does not exist locally with the tag: ttl.sh/flanksource-busybox\"}",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:07.024Z",
+        "message": "\u001b[35mDEBUG\u001b[0m\tcontroller-runtime.manager.events\tWarning\t{\"object\": {\"kind\":\"Canary\",\"namespace\":\"default\",\"name\":\"mssql-fail\",\"uid\":\"792a2bb2-4b89-4032-afad-5bfccb2b0859\",\"apiVersion\":\"canaries.flanksource.com/v1\",\"resourceVersion\":\"188019007\"}, \"reason\": \"Failed\", \"message\": \"mssql-server=mssql.platformsystem;user id=sa;password=###;port=32010;database=master: \"}",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:07.025Z",
+        "message": "\u001b[34mINFO\u001b[0m\tcontrollers.canary\tFAIL [namespace] //check duration=0 unexpected error unable to create namespace: namespaces \"test-foo-7\" already exists",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:07.025Z",
+        "message": "\u001b[31mERROR\u001b[0m\tcontrollers.canary\tfailed to patch\t{\"canary\": \"mysql-pass\", \"error\": \"Operation cannot be fulfilled on canaries.canaries.flanksource.com \\\"mysql-pass\\\": the object has been modified; please apply your changes to the latest version and try again\"}",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:07.028Z",
+        "message": "\u001b[34mINFO\u001b[0m\tcontrollers.canary\tFAIL [ldap] //ldap://apacheds.ldap.svc:10389 duration=0 Failed to connect LDAP Result Code 200 \"Network Error\": dial tcp: lookup apacheds.ldap.svc on 172.20.0.10:53: no such host",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:07.030Z",
+        "message": "\u001b[35mDEBUG\u001b[0m\tcontroller-runtime.manager.events\tWarning\t{\"object\": {\"kind\":\"Canary\",\"namespace\":\"default\",\"name\":\"namespace-pass\",\"uid\":\"d789fcb1-11cc-43de-8f39-68e981629e89\",\"apiVersion\":\"canaries.flanksource.com/v1\",\"resourceVersion\":\"188019037\"}, \"reason\": \"Failed\", \"message\": \"namespace-check: unexpected error unable to create namespace: namespaces \\\"test-foo-7\\\" already exists\"}",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:07.035Z",
+        "message": "\u001b[31mERROR\u001b[0m\tcontrollers.canary\tfailed to patch\t{\"canary\": \"mssql-pass\", \"error\": \"Operation cannot be fulfilled on canaries.canaries.flanksource.com \\\"mssql-pass\\\": the object has been modified; please apply your changes to the latest version and try again\"}",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:07.036Z",
+        "message": "\u001b[31mERROR\u001b[0m\tcontrollers.canary\tfailed to patch\t{\"canary\": \"mssql-fail\", \"error\": \"Operation cannot be fulfilled on canaries.canaries.flanksource.com \\\"mssql-fail\\\": the object has been modified; please apply your changes to the latest version and try again\"}",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:07.037Z",
+        "message": "\u001b[34mINFO\u001b[0m\tcontrollers.canary\tFAIL [ldap] //ldap://apacheds.ldap.svc:10389 duration=0 Failed to connect LDAP Result Code 200 \"Network Error\": dial tcp: lookup apacheds.ldap.svc on 172.20.0.10:53: no such host",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:07.037Z",
+        "message": "\u001b[35mDEBUG\u001b[0m\tcontroller-runtime.manager.events\tWarning\t{\"object\": {\"kind\":\"Canary\",\"namespace\":\"default\",\"name\":\"ldap-pass\",\"uid\":\"4b4221d5-cc5f-471a-9ce5-af0ef75cbf24\",\"apiVersion\":\"canaries.flanksource.com/v1\",\"resourceVersion\":\"188019006\"}, \"reason\": \"Failed\", \"message\": \"ldap-ldap://apacheds.ldap.svc:10389: Failed to connect LDAP Result Code 200 \\\"Network Error\\\": dial tcp: lookup apacheds.ldap.svc on 172.20.0.10:53: no such host\"}",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:07.037Z",
+        "message": "\u001b[31mERROR\u001b[0m\tcontrollers.canary\tfailed to patch\t{\"canary\": \"docker-push-fail\", \"error\": \"Operation cannot be fulfilled on canaries.canaries.flanksource.com \\\"docker-push-fail\\\": the object has been modified; please apply your changes to the latest version and try again\"}",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:07.037Z",
+        "message": "\u001b[31mERROR\u001b[0m\tcontrollers.canary\tfailed to patch\t{\"canary\": \"namespace-pass\", \"error\": \"Operation cannot be fulfilled on canaries.canaries.flanksource.com \\\"namespace-pass\\\": the object has been modified; please apply your changes to the latest version and try again\"}",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:07.046Z",
+        "message": "\u001b[35mDEBUG\u001b[0m\tcontroller-runtime.manager.events\tWarning\t{\"object\": {\"kind\":\"Canary\",\"namespace\":\"default\",\"name\":\"ldap-pass\",\"uid\":\"4b4221d5-cc5f-471a-9ce5-af0ef75cbf24\",\"apiVersion\":\"canaries.flanksource.com/v1\",\"resourceVersion\":\"188019006\"}, \"reason\": \"Failed\", \"message\": \"ldap-ldap://apacheds.ldap.svc:10389: Failed to connect LDAP Result Code 200 \\\"Network Error\\\": dial tcp: lookup apacheds.ldap.svc on 172.20.0.10:53: no such host\"}",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:07.054Z",
+        "message": "\u001b[31mERROR\u001b[0m\tcontrollers.canary\tfailed to patch\t{\"canary\": \"ldap-pass\", \"error\": \"Operation cannot be fulfilled on canaries.canaries.flanksource.com \\\"ldap-pass\\\": the object has been modified; please apply your changes to the latest version and try again\"}",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:07.069Z",
+        "message": "\u001b[31mERROR\u001b[0m\tcontrollers.canary\tfailed to patch\t{\"canary\": \"mongo\", \"error\": \"Operation cannot be fulfilled on canaries.canaries.flanksource.com \\\"mongo\\\": the object has been modified; please apply your changes to the latest version and try again\"}",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:07.076Z",
+        "message": "\u001b[31mERROR\u001b[0m\tcontrollers.canary\tfailed to patch\t{\"canary\": \"petclinic-cloud-http-checks\", \"error\": \"Operation cannot be fulfilled on canaries.canaries.flanksource.com \\\"petclinic-cloud-http-checks\\\": the object has been modified; please apply your changes to the latest version and try again\"}",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:07.082Z",
+        "message": "\u001b[31mERROR\u001b[0m\tcontrollers.canary\tfailed to patch\t{\"canary\": \"petclinic-cloud-http-checks\", \"error\": \"Operation cannot be fulfilled on canaries.canaries.flanksource.com \\\"petclinic-cloud-http-checks\\\": the object has been modified; please apply your changes to the latest version and try again\"}",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:07.104Z",
+        "message": "\u001b[34mINFO\u001b[0m\tcontrollers.canary\tFAIL [http] prod/abp-microservice/ABP Microservices demo authentication portal duration=25  response code invalid 503 != [200]",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:07.108Z",
+        "message": "\u001b[31mERROR\u001b[0m\tcontrollers.canary\tfailed to patch\t{\"canary\": \"petclinic-cloud-mysql-checks\", \"error\": \"Operation cannot be fulfilled on canaries.canaries.flanksource.com \\\"petclinic-cloud-mysql-checks\\\": the object has been modified; please apply your changes to the latest version and try again\"}",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:07.109Z",
+        "message": "\u001b[34mINFO\u001b[0m\tcontrollers.canary\tFAIL [http] prod/abp-microservice/ABP Microservices demo administration interface duration=25  response code invalid 503 != [200]",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:07.109Z",
+        "message": "\u001b[35mDEBUG\u001b[0m\tcontroller-runtime.manager.events\tWarning\t{\"object\": {\"kind\":\"Canary\",\"namespace\":\"prod\",\"name\":\"abp-microservice\",\"uid\":\"5cbd293b-16ae-47a6-ab40-dbde7e6726a3\",\"apiVersion\":\"canaries.flanksource.com/v1\",\"resourceVersion\":\"188019035\"}, \"reason\": \"Failed\", \"message\": \"http-https://abp-sample-auth-prod.canary.lab.flanksource.com: \"}",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:07.114Z",
+        "message": "\u001b[34mINFO\u001b[0m\tcontrollers.canary\tFAIL [http] prod/abp-microservice/ABP Microservices demo public website duration=32  response code invalid 503 != [200]",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:07.114Z",
+        "message": "\u001b[35mDEBUG\u001b[0m\tcontroller-runtime.manager.events\tWarning\t{\"object\": {\"kind\":\"Canary\",\"namespace\":\"prod\",\"name\":\"abp-microservice\",\"uid\":\"5cbd293b-16ae-47a6-ab40-dbde7e6726a3\",\"apiVersion\":\"canaries.flanksource.com/v1\",\"resourceVersion\":\"188019035\"}, \"reason\": \"Failed\", \"message\": \"http-https://abp-sample-admin-prod.canary.lab.flanksource.com: \"}",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:07.120Z",
+        "message": "\u001b[35mDEBUG\u001b[0m\tcontroller-runtime.manager.events\tWarning\t{\"object\": {\"kind\":\"Canary\",\"namespace\":\"prod\",\"name\":\"abp-microservice\",\"uid\":\"5cbd293b-16ae-47a6-ab40-dbde7e6726a3\",\"apiVersion\":\"canaries.flanksource.com/v1\",\"resourceVersion\":\"188019035\"}, \"reason\": \"Failed\", \"message\": \"http-https://abp-sample-prod.canary.lab.flanksource.com: \"}",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:07.136Z",
+        "message": "\u001b[31mERROR\u001b[0m\tcontrollers.canary\tfailed to patch\t{\"canary\": \"abp-microservice\", \"error\": \"Operation cannot be fulfilled on canaries.canaries.flanksource.com \\\"abp-microservice\\\": the object has been modified; please apply your changes to the latest version and try again\"}",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:07.441Z",
+        "message": "\u001b[34mINFO\u001b[0m\tcontrollers.canary\tFAIL [http] default/http-fail-timeout/http://httpstat.us/200?sleep=200 duration=440  threshold exceeded 440ms \u003e 100",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:07.448Z",
+        "message": "\u001b[35mDEBUG\u001b[0m\tcontroller-runtime.manager.events\tWarning\t{\"object\": {\"kind\":\"Canary\",\"namespace\":\"default\",\"name\":\"http-fail-timeout\",\"uid\":\"9cd905dd-3251-42fc-8381-0f308a9d795d\",\"apiVersion\":\"canaries.flanksource.com/v1\",\"resourceVersion\":\"188019065\"}, \"reason\": \"Failed\", \"message\": \"http-http://httpstat.us/200?sleep=200: \"}",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:07.456Z",
+        "message": "\u001b[31mERROR\u001b[0m\tcontrollers.canary\tfailed to patch\t{\"canary\": \"http-fail-timeout\", \"error\": \"Operation cannot be fulfilled on canaries.canaries.flanksource.com \\\"http-fail-timeout\\\": the object has been modified; please apply your changes to the latest version and try again\"}",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:07.524Z",
+        "message": "\u001b[31mERROR\u001b[0m\tcontrollers.canary\tfailed to patch\t{\"canary\": \"http-pass\", \"error\": \"Operation cannot be fulfilled on canaries.canaries.flanksource.com \\\"http-pass\\\": the object has been modified; please apply your changes to the latest version and try again\"}",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:08.003Z",
+        "message": "\u001b[35mDEBUG\u001b[0m\t[dns-fail] checking 6 checks",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:08.003Z",
+        "message": "\u001b[35mDEBUG\u001b[0m\t[postgres-fail] checking 1 checks",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:08.003Z",
+        "message": "\u001b[35mDEBUG\u001b[0m\t[mongo-fail] checking 1 checks",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:08.003Z",
+        "message": "\u001b[34mINFO\u001b[0m\tcontrollers.canary\tFAIL [postgres] default/postgres-fail/user=$(username) dbname=pqgotest sslmode=verify-full duration=0  must specify either value or valueFrom",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:08.003Z",
+        "message": "\u001b[35mDEBUG\u001b[0m\t[http-fail] checking 2 checks",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:08.003Z",
+        "message": "\u001b[35mDEBUG\u001b[0m\t[abp-microservice] checking 4 checks",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:08.008Z",
+        "message": "\u001b[35mDEBUG\u001b[0m\tcontroller-runtime.manager.events\tWarning\t{\"object\": {\"kind\":\"Canary\",\"namespace\":\"default\",\"name\":\"postgres-fail\",\"uid\":\"2b8d1da4-7b2d-498a-bd14-4d24f13d1634\",\"apiVersion\":\"canaries.flanksource.com/v1\",\"resourceVersion\":\"188019003\"}, \"reason\": \"Failed\", \"message\": \"postgres-user=$(username) dbname=pqgotest sslmode=verify-full: \"}",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:08.018Z",
+        "message": "\u001b[31mERROR\u001b[0m\tcontrollers.canary\tfailed to patch\t{\"canary\": \"postgres-fail\", \"error\": \"Operation cannot be fulfilled on canaries.canaries.flanksource.com \\\"postgres-fail\\\": the object has been modified; please apply your changes to the latest version and try again\"}",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:08.077Z",
+        "message": "\u001b[34mINFO\u001b[0m\tcontrollers.canary\tFAIL [dns] default/dns-fail/A/1.2.3.4.nip.io@8.8.8.8:53 duration=3  A 1.2.3.4.nip.io on 8.8.8.8: Got [1.2.3.4], expected [8.8.8.8]",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:08.082Z",
+        "message": "\u001b[34mINFO\u001b[0m\tcontrollers.canary\tFAIL [dns] default/dns-fail/PTR/8.8.8.8@8.8.8.8:53 duration=2  PTR 8.8.8.8 on 8.8.8.8: returned 1 results, expecting 10",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:08.082Z",
+        "message": "\u001b[35mDEBUG\u001b[0m\tcontroller-runtime.manager.events\tWarning\t{\"object\": {\"kind\":\"Canary\",\"namespace\":\"default\",\"name\":\"dns-fail\",\"uid\":\"42d8b23e-f7d3-4a2f-bbef-47776dcfed06\",\"apiVersion\":\"canaries.flanksource.com/v1\",\"resourceVersion\":\"188275413\"}, \"reason\": \"Failed\", \"message\": \"dns-A/1.2.3.4.nip.io@8.8.8.8:53: \"}",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:08.087Z",
+        "message": "\u001b[34mINFO\u001b[0m\tcontrollers.canary\tFAIL [dns] default/dns-fail/CNAME/dns.google@8.8.8.8:53 duration=17  CNAME dns.google on 8.8.8.8: Got [dns.google.], expected [wrong.google.]",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:08.087Z",
+        "message": "\u001b[35mDEBUG\u001b[0m\tcontroller-runtime.manager.events\tWarning\t{\"object\": {\"kind\":\"Canary\",\"namespace\":\"default\",\"name\":\"dns-fail\",\"uid\":\"42d8b23e-f7d3-4a2f-bbef-47776dcfed06\",\"apiVersion\":\"canaries.flanksource.com/v1\",\"resourceVersion\":\"188275413\"}, \"reason\": \"Failed\", \"message\": \"dns-PTR/8.8.8.8@8.8.8.8:53: \"}",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:08.092Z",
+        "message": "\u001b[34mINFO\u001b[0m\tcontrollers.canary\tFAIL [dns] default/dns-fail/MX/flanksource.com@8.8.8.8:53 duration=15  MX flanksource.com on 8.8.8.8: Got [alt1.aspmx.l.google.com. 5 alt2.aspmx.l.google.com. 5 aspmx.l.google.com. 1 aspmx2.googlemail.com. 10 aspmx3.googlemail.com. 10], expected [alt1.aspmx.l.google.com. 5 alt2.aspmx.l.google.com. 5 aspmx.l.google.com. 1]",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:08.092Z",
+        "message": "\u001b[35mDEBUG\u001b[0m\tcontroller-runtime.manager.events\tWarning\t{\"object\": {\"kind\":\"Canary\",\"namespace\":\"default\",\"name\":\"dns-fail\",\"uid\":\"42d8b23e-f7d3-4a2f-bbef-47776dcfed06\",\"apiVersion\":\"canaries.flanksource.com/v1\",\"resourceVersion\":\"188275413\"}, \"reason\": \"Failed\", \"message\": \"dns-CNAME/dns.google@8.8.8.8:53: \"}",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:08.097Z",
+        "message": "\u001b[34mINFO\u001b[0m\tcontrollers.canary\tFAIL [dns] default/dns-fail/TXT/flanksource.com@8.8.8.8:53 duration=18  TXT flanksource.com on 8.8.8.8: Got [MS=A335A42E8524D9CE2A69F77C5C50B40C2A810871 google-site-verification=IIE1aJuvqseLUKSXSIhu2O2lgdU_d8csfJjjIQVc-q0 v=spf1 include:_spf.google.com ~all], expected [google-site-verification=IIE1aJuvqseLUKSXSIhu2O2lgdU_d8csfJjjIQVc-q0]",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:08.097Z",
+        "message": "\u001b[35mDEBUG\u001b[0m\tcontroller-runtime.manager.events\tWarning\t{\"object\": {\"kind\":\"Canary\",\"namespace\":\"default\",\"name\":\"dns-fail\",\"uid\":\"42d8b23e-f7d3-4a2f-bbef-47776dcfed06\",\"apiVersion\":\"canaries.flanksource.com/v1\",\"resourceVersion\":\"188275413\"}, \"reason\": \"Failed\", \"message\": \"dns-MX/flanksource.com@8.8.8.8:53: \"}",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:08.104Z",
+        "message": "\u001b[34mINFO\u001b[0m\tcontrollers.canary\tFAIL [dns] default/dns-fail/NS/flanksource.com@8.8.8.8:53 duration=16  NS flanksource.com on 8.8.8.8: Got [ns-1450.awsdns-53.org. ns-1896.awsdns-45.co.uk. ns-908.awsdns-49.net. ns-91.awsdns-11.com.], expected [ns-91.awsdns-11.com.]",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:08.104Z",
+        "message": "\u001b[35mDEBUG\u001b[0m\tcontroller-runtime.manager.events\tWarning\t{\"object\": {\"kind\":\"Canary\",\"namespace\":\"default\",\"name\":\"dns-fail\",\"uid\":\"42d8b23e-f7d3-4a2f-bbef-47776dcfed06\",\"apiVersion\":\"canaries.flanksource.com/v1\",\"resourceVersion\":\"188275413\"}, \"reason\": \"Failed\", \"message\": \"dns-TXT/flanksource.com@8.8.8.8:53: \"}",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:08.107Z",
+        "message": "\u001b[34mINFO\u001b[0m\tcontrollers.canary\tFAIL [http] qa/abp-microservice/ABP Microservices demo authentication portal duration=41  response code invalid 503 != [200]",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:08.108Z",
+        "message": "\u001b[35mDEBUG\u001b[0m\tcontroller-runtime.manager.events\tWarning\t{\"object\": {\"kind\":\"Canary\",\"namespace\":\"default\",\"name\":\"dns-fail\",\"uid\":\"42d8b23e-f7d3-4a2f-bbef-47776dcfed06\",\"apiVersion\":\"canaries.flanksource.com/v1\",\"resourceVersion\":\"188275413\"}, \"reason\": \"Failed\", \"message\": \"dns-NS/flanksource.com@8.8.8.8:53: \"}",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:08.113Z",
+        "message": "\u001b[34mINFO\u001b[0m\tcontrollers.canary\tFAIL [http] qa/abp-microservice/ABP Microservices demo administration interface duration=19  response code invalid 503 != [200]",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:08.113Z",
+        "message": "\u001b[35mDEBUG\u001b[0m\tcontroller-runtime.manager.events\tWarning\t{\"object\": {\"kind\":\"Canary\",\"namespace\":\"qa\",\"name\":\"abp-microservice\",\"uid\":\"c5d9c4e3-89d8-4174-b83a-6f906781c596\",\"apiVersion\":\"canaries.flanksource.com/v1\",\"resourceVersion\":\"188019019\"}, \"reason\": \"Failed\", \"message\": \"http-https://abp-sample-auth-qa.canary.lab.flanksource.com: \"}",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:08.118Z",
+        "message": "\u001b[34mINFO\u001b[0m\tcontrollers.canary\tFAIL [http] qa/abp-microservice/ABP Microservices demo public website duration=25  response code invalid 503 != [200]",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:08.118Z",
+        "message": "\u001b[35mDEBUG\u001b[0m\tcontroller-runtime.manager.events\tWarning\t{\"object\": {\"kind\":\"Canary\",\"namespace\":\"qa\",\"name\":\"abp-microservice\",\"uid\":\"c5d9c4e3-89d8-4174-b83a-6f906781c596\",\"apiVersion\":\"canaries.flanksource.com/v1\",\"resourceVersion\":\"188019019\"}, \"reason\": \"Failed\", \"message\": \"http-https://abp-sample-admin-qa.canary.lab.flanksource.com: \"}",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:08.123Z",
+        "message": "\u001b[35mDEBUG\u001b[0m\tcontroller-runtime.manager.events\tWarning\t{\"object\": {\"kind\":\"Canary\",\"namespace\":\"qa\",\"name\":\"abp-microservice\",\"uid\":\"c5d9c4e3-89d8-4174-b83a-6f906781c596\",\"apiVersion\":\"canaries.flanksource.com/v1\",\"resourceVersion\":\"188019019\"}, \"reason\": \"Failed\", \"message\": \"http-https://abp-sample-qa.canary.lab.flanksource.com: \"}",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:08.128Z",
+        "message": "\u001b[34mINFO\u001b[0m\tcontrollers.canary\tremoving stale check\t{\"canary\": \"default/dns-fail\", \"key\": \"local/default/dns-fail/dns:/MX/flanksource.com@8.8.8.8:53:74ee201332eb5ace0eb4235a6a345da3\"}",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:08.143Z",
+        "message": "\u001b[31mERROR\u001b[0m\tcontrollers.canary\tfailed to patch\t{\"canary\": \"abp-microservice\", \"error\": \"Operation cannot be fulfilled on canaries.canaries.flanksource.com \\\"abp-microservice\\\": the object has been modified; please apply your changes to the latest version and try again\"}",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:08.333Z",
+        "message": "\u001b[34mINFO\u001b[0m\tcontrollers.canary\tFAIL [http] default/http-fail/http://status.savanttools.com/?code=500 duration=167  response code invalid 500 != [200]",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:08.338Z",
+        "message": "\u001b[34mINFO\u001b[0m\tcontrollers.canary\tFAIL [http] default/http-fail/http://status.savanttools.com/?code=200 duration=160  unknown func sprint (1:1)",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:08.338755698Z",
+        "message": "| sprint(code) + \" should be 500\"",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:08.338766621Z",
+        "message": "| ^,",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:08.338Z",
+        "message": "\u001b[35mDEBUG\u001b[0m\tcontroller-runtime.manager.events\tWarning\t{\"object\": {\"kind\":\"Canary\",\"namespace\":\"default\",\"name\":\"http-fail\",\"uid\":\"2a95eef7-ae62-4988-830f-fc401fdbfaa4\",\"apiVersion\":\"canaries.flanksource.com/v1\",\"resourceVersion\":\"188019041\"}, \"reason\": \"Failed\", \"message\": \"http-http://status.savanttools.com/?code=500: \"}",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:08.343Z",
+        "message": "\u001b[35mDEBUG\u001b[0m\tcontroller-runtime.manager.events\tWarning\t{\"object\": {\"kind\":\"Canary\",\"namespace\":\"default\",\"name\":\"http-fail\",\"uid\":\"2a95eef7-ae62-4988-830f-fc401fdbfaa4\",\"apiVersion\":\"canaries.flanksource.com/v1\",\"resourceVersion\":\"188019041\"}, \"reason\": \"Failed\", \"message\": \"http-http://status.savanttools.com/?code=200: \"}",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:08.352Z",
+        "message": "\u001b[31mERROR\u001b[0m\tcontrollers.canary\tfailed to patch\t{\"canary\": \"http-fail\", \"error\": \"Operation cannot be fulfilled on canaries.canaries.flanksource.com \\\"http-fail\\\": the object has been modified; please apply your changes to the latest version and try again\"}",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:09.000Z",
+        "message": "\u001b[35mDEBUG\u001b[0m\t[dns-pass] checking 6 checks",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:09.143Z",
+        "message": "\u001b[34mINFO\u001b[0m\tcontrollers.canary\tremoving stale check\t{\"canary\": \"default/dns-pass\", \"key\": \"local/default/dns-pass/dns:/NS/flanksource.com@8.8.8.8:53:f39f16cedd8523a575ad7801fb062285\"}",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:09.150Z",
+        "message": "\u001b[34mINFO\u001b[0m\tcontrollers.canary\tremoving stale check\t{\"canary\": \"default/dns-pass\", \"key\": \"local/default/dns-pass/dns:/MX/flanksource.com@8.8.8.8:53:8e09b823ef5e8a50318cf93ec101c5f7\"}",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:09.906Z",
+        "message": "\u001b[34mINFO\u001b[0m\tcontrollers.canary\tFAIL [dockerPull] default/docker-fail/public.ecr.aws/docker/library/busybox:1.31.0 duration=3905  Failed to pull image: Error response from daemon: manifest for public.ecr.aws/docker/library/busybox:1.31.0 not found: manifest unknown: Requested image not found",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:09.912Z",
+        "message": "\u001b[34mINFO\u001b[0m\tcontrollers.canary\tFAIL [dockerPull] default/docker-fail/public.ecr.aws/docker/library/busybox:1.31.0 duration=2598  Failed to pull image: Error response from daemon: manifest for public.ecr.aws/docker/library/busybox:1.31.0 not found: manifest unknown: Requested image not found",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:09.912Z",
+        "message": "\u001b[35mDEBUG\u001b[0m\tcontroller-runtime.manager.events\tWarning\t{\"object\": {\"kind\":\"Canary\",\"namespace\":\"default\",\"name\":\"docker-fail\",\"uid\":\"75f64bdf-88bb-46e3-91e3-46641e7164b7\",\"apiVersion\":\"canaries.flanksource.com/v1\",\"resourceVersion\":\"188019133\"}, \"reason\": \"Failed\", \"message\": \"dockerPull-public.ecr.aws/docker/library/busybox:1.31.0: \"}",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:09.916Z",
+        "message": "\u001b[34mINFO\u001b[0m\tcontrollers.canary\tFAIL [dockerPull] default/docker-fail/public.ecr.aws/docker/library/busybox:1.31.0 duration=1295  Failed to pull image: Error response from daemon: manifest for public.ecr.aws/docker/library/busybox:1.31.0 not found: manifest unknown: Requested image not found",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:09.916Z",
+        "message": "\u001b[35mDEBUG\u001b[0m\tcontroller-runtime.manager.events\tWarning\t{\"object\": {\"kind\":\"Canary\",\"namespace\":\"default\",\"name\":\"docker-fail\",\"uid\":\"75f64bdf-88bb-46e3-91e3-46641e7164b7\",\"apiVersion\":\"canaries.flanksource.com/v1\",\"resourceVersion\":\"188019133\"}, \"reason\": \"Failed\", \"message\": \"dockerPull-public.ecr.aws/docker/library/busybox:1.31.0: \"}",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:09.921Z",
+        "message": "\u001b[35mDEBUG\u001b[0m\tcontroller-runtime.manager.events\tWarning\t{\"object\": {\"kind\":\"Canary\",\"namespace\":\"default\",\"name\":\"docker-fail\",\"uid\":\"75f64bdf-88bb-46e3-91e3-46641e7164b7\",\"apiVersion\":\"canaries.flanksource.com/v1\",\"resourceVersion\":\"188019133\"}, \"reason\": \"Failed\", \"message\": \"dockerPull-public.ecr.aws/docker/library/busybox:1.31.0: \"}",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:09.930Z",
+        "message": "\u001b[31mERROR\u001b[0m\tcontrollers.canary\tfailed to patch\t{\"canary\": \"docker-fail\", \"error\": \"Operation cannot be fulfilled on canaries.canaries.flanksource.com \\\"docker-fail\\\": the object has been modified; please apply your changes to the latest version and try again\"}",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:13.006Z",
+        "message": "\u001b[34mINFO\u001b[0m\tcontrollers.canary\tFAIL [mongodb] default/mongo-fail/test mongo instance duration=5003  server selection error: context deadline exceeded, current topology: { Type: Unknown, Servers: [{ Addr: mongo2.default.svc:27017, Type: Unknown, Last error: connection() error occured during connection handshake: dial tcp: lookup mongo2.default.svc on 172.20.0.10:53: no such host }, ] }",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:13.013Z",
+        "message": "\u001b[35mDEBUG\u001b[0m\tcontroller-runtime.manager.events\tWarning\t{\"object\": {\"kind\":\"Canary\",\"namespace\":\"default\",\"name\":\"mongo-fail\",\"uid\":\"f84966ca-656a-4a48-a248-aeb6ce032050\",\"apiVersion\":\"canaries.flanksource.com/v1\",\"resourceVersion\":\"188019152\"}, \"reason\": \"Failed\", \"message\": \"mongodb-mongodb://mongo2.default.svc:27017/?authSource=admin: \"}",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      },
+      {
+        "timestamp": "2022-01-25T07:03:13.024Z",
+        "message": "\u001b[31mERROR\u001b[0m\tcontrollers.canary\tfailed to patch\t{\"canary\": \"mongo-fail\", \"error\": \"Operation cannot be fulfilled on canaries.canaries.flanksource.com \\\"mongo-fail\\\": the object has been modified; please apply your changes to the latest version and try again\"}",
+        "labels": {
+          "containerName": "canary-checker",
+          "deployment": "canary-checker",
+          "namespace": "demo",
+          "nodeName": "ip-10-0-5-82.eu-west-2.compute.internal",
+          "pod": "canary-checker-9768c779f-9xdqd"
+        }
+      }
+    ]
+  }
+]

@@ -22,7 +22,7 @@ export function TextInput({
         type={type}
         name={id}
         id={id}
-        className={`h-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 py-1 sm:text-sm border-gray-300 rounded-md ${className}`}
+        className={`h-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 py-2 sm:text-sm border-gray-300 rounded-md ${className}`}
         {...rest}
       />
     </>
