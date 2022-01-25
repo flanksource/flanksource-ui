@@ -1,7 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { TopologyColumn, TopologyCard } from "../../../components/Topology";
-import { properties } from "../../../data/topologyDatas";
 
 export const TopologyPageMediumView = ({
   topology,
@@ -34,17 +33,15 @@ export const TopologyPageMediumView = ({
         <div>
           <TopologyColumn
             title="zone 1"
-            cards={topology.map(({ name, status }, index) => (
+            cards={topology.map((item, index) => (
               <TopologyCard
-                key={name}
-                properties={properties}
-                status={status}
-                name={name}
                 size="medium"
+                key={item.id}
+                topology={item}
                 selectionMode={selectionMode}
                 selected={!!checked[`column_1_card_${index}`]}
-                onSelectionChange={(event) => {
-                  toggleChecked(`column_1_card_${index}`, event.target.checked);
+                onSelectionChange={(state) => {
+                  toggleChecked(`column_1_card_${index}`, state);
                 }}
               />
             ))}
@@ -53,17 +50,15 @@ export const TopologyPageMediumView = ({
         <div>
           <TopologyColumn
             title="zone 2"
-            cards={topology.map(({ name, status }, index) => (
+            cards={topology.map((item, index) => (
               <TopologyCard
                 size="medium"
-                key={name}
-                properties={properties}
-                status={status}
-                name={name}
+                key={item.id}
+                topology={item}
                 selectionMode={selectionMode}
                 selected={!!checked[`column_2_card_${index}`]}
-                onSelectionChange={(event) => {
-                  toggleChecked(`column_2_card_${index}`, event.target.checked);
+                onSelectionChange={(state) => {
+                  toggleChecked(`column_2_card_${index}`, state);
                 }}
               />
             ))}
@@ -72,17 +67,15 @@ export const TopologyPageMediumView = ({
         <div>
           <TopologyColumn
             title="zone 3"
-            cards={topology.map(({ name, status, index }) => (
+            cards={topology.map((item, index) => (
               <TopologyCard
                 size="medium"
-                key={name}
-                properties={properties}
-                status={status}
-                name={name}
+                key={item.id}
+                topology={item}
                 selectionMode={selectionMode}
                 selected={!!checked[`column_3_card_${index}`]}
-                onSelectionChange={(event) => {
-                  toggleChecked(`column_3_card_${index}`, event.target.checked);
+                onSelectionChange={(state) => {
+                  toggleChecked(`column_3_card_${index}`, state);
                 }}
               />
             ))}

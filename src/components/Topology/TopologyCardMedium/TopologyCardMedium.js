@@ -1,7 +1,7 @@
 import React from "react";
-import PropTypes from "prop-types";
 import cx from "clsx";
 import clsx from "clsx";
+import { DotsVerticalIcon } from "@heroicons/react/outline";
 import { Icon } from "../../Icon";
 import { Property } from "../Property";
 import { HealthSummary } from "../../HealthSummary/summary";
@@ -13,6 +13,7 @@ import {
   nodes,
   pods
 } from "../../../data/topologyDatas";
+import { topologyCardCommonPropTypes } from "../prop-types";
 
 export function TopologyCardMedium({
   topology,
@@ -21,12 +22,30 @@ export function TopologyCardMedium({
   onSelectionChange
 }) {
   const { name, status, components, properties } = topology;
+
+  const handleCheckedStateChange = (nextState, event) => {
+    onSelectionChange(nextState, event);
+  };
+
+  const selectionModeRootProps = selectionMode
+    ? {
+        onClick: (event) => {
+          handleCheckedStateChange(!selected, event);
+        },
+        onKeyUp: () => {},
+        role: "button"
+      }
+    : {
+        role: "none"
+      };
+
   return (
     <div
       className={cx(
         "rounded-8px mb-4 shadow-card border-t-6 card cursor-pointer bg-white topology-card",
         status
       )}
+      {...selectionModeRootProps}
     >
       <div className="flex flex-row flex-nowrap rounded-t-8px bg-white">
         <div className="flex w-med-card-left pr-1 pt-2.5 pb-3.5 pl-5">
@@ -62,17 +81,14 @@ export function TopologyCardMedium({
                 type="checkbox"
                 className="h-4 w-4 text-dark-blue outline-none rounded-4px focus:outline-none"
                 checked={selected}
-                onChange={onSelectionChange}
+                readOnly
               />
             </div>
           ) : (
             <TopologyDropdownMenu
               className="flex flex-initial"
-              renderButton={() => (
-                <div className="p-1.5 min-w-7">
-                  <Icon name="dots" className="" />
-                </div>
-              )}
+              menuButtonClassName="p-0.5 min-w-7 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              renderButton={() => <DotsVerticalIcon className="h-6 w-6" />}
               items={[
                 { title: "Duplicate" },
                 { title: "Share" },
@@ -107,22 +123,10 @@ export function TopologyCardMedium({
   );
 }
 
-TopologyCardMedium.propTypes = {
-  topology: PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    status: PropTypes.string.isRequired,
-    icon: PropTypes.string,
-    properties: PropTypes.arrayOf(
-      PropTypes.shape({
-        name: PropTypes.string.isRequired,
-        text: PropTypes.string
-      }).isRequired
-    )
-  }).isRequired
-};
+TopologyCardMedium.propTypes = topologyCardCommonPropTypes;
 
 TopologyCardMedium.defaultProps = {
   selectionMode: false,
   selected: false,
-  onSelectionChange: () => { }
+  onSelectionChange: () => {}
 };

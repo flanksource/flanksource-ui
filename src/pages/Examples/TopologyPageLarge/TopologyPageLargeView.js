@@ -1,7 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { TopologyColumn, TopologyCard } from "../../../components/Topology";
-import { properties } from "../../../data/topologyDatas";
 
 export const TopologyPageLargeView = ({
   topology,
@@ -34,17 +33,15 @@ export const TopologyPageLargeView = ({
         <div style={{ width: "578px" }}>
           <TopologyColumn
             title="zone 1"
-            cards={topology.map(({ name, status }, index) => (
+            cards={topology.map((item, index) => (
               <TopologyCard
                 size="large"
-                key={name}
-                properties={properties}
-                status={status}
-                name="Pet Service"
+                key={item.id}
+                topology={item}
                 selectionMode={selectionMode}
                 selected={!!checked[`column_1_card_${index}`]}
-                onSelectionChange={(event) => {
-                  toggleChecked(`column_1_card_${index}`, event.target.checked);
+                onSelectionChange={(state) => {
+                  toggleChecked(`column_1_card_${index}`, state);
                 }}
               />
             ))}
@@ -53,17 +50,15 @@ export const TopologyPageLargeView = ({
         <div style={{ width: "578px" }}>
           <TopologyColumn
             title="zone 2"
-            cards={topology.map(({ name, status }, index) => (
+            cards={topology.map((item, index) => (
               <TopologyCard
                 size="large"
-                key={name}
-                properties={properties}
-                status={status}
-                name="Pet Service"
+                topology={item}
+                key={item.id}
                 selectionMode={selectionMode}
                 selected={!!checked[`column_2_card_${index}`]}
-                onSelectionChange={(event) => {
-                  toggleChecked(`column_2_card_${index}`, event.target.checked);
+                onSelectionChange={(state) => {
+                  toggleChecked(`column_2_card_${index}`, state);
                 }}
               />
             ))}

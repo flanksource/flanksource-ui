@@ -57,7 +57,6 @@ import dns from "./dns.svg";
 import dockerPull from "./dockerPull.svg";
 import dockerPush from "./dockerPush.svg";
 import dotnet from "./dotnet.svg";
-import dots_triple from "./dots-triple.svg";
 import download from "./download.svg";
 import dynatrace from "./dynatrace.svg";
 import ec2 from "./ec2.svg";
@@ -244,7 +243,6 @@ export const Icons = {
 "dockerPull": dockerPull,
 "dockerPush": dockerPush,
 "dotnet": dotnet,
-"dots-triple": dots_triple,
 "download": download,
 "dynatrace": dynatrace,
 "ec2": ec2,
