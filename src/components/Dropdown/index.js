@@ -64,7 +64,7 @@ export function Dropdown({
                         {label}
                       </Listbox.Label>
                     )}
-                    <div className="mt-1 relative">
+                    <div className={`${label && "mt-1"} relative`}>
                       <Listbox.Button className="relative cursor-pointer w-full bg-white border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left  focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                         <div className="flex items-center">
                           {items[value] && items[value].icon}

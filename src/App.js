@@ -12,10 +12,10 @@ import { TopologyPageMedium } from "./pages/Examples/TopologyPageMedium/Topology
 import { IncidentDetailsPage } from "./pages/TopologyViewer/Incident/IncidentDetails";
 import { IncidentListPage } from "./pages/TopologyViewer/Incident/IncidentList";
 import SidebarLayout from "./components/Layout/sidebar";
-import { LogsViewer } from "./components/Logs";
 import { TopologyPageSmall } from "./pages/Examples/TopologyPageSmall/TopologyPageSmall";
 import { TopologyPageLarge } from "./pages/Examples/TopologyPageLarge/TopologyPageLarge";
 import { TopologyViewer } from "./components/Topology/viewer";
+import { LogsPage } from "./pages/Logs";
 
 const navigation = [
   {
@@ -88,7 +88,7 @@ export function App() {
       </Route>
 
       <Route path="logs" element={sidebar}>
-        <Route index element={<LogsViewer />} />
+        <Route index element={<LogsPage />} />
       </Route>
 
       <Route path="metrics" element={sidebar}>

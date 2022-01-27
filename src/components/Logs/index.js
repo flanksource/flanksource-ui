@@ -1,34 +1,19 @@
-import React, { useEffect, useState } from "react";
-import { getLogs } from "../../api/services/logs";
+import React, { useState } from "react";
+// import { getLogs } from "../../api/services/logs";
 import { Modal } from "../Modal";
 import { Loading } from "../Loading";
 import { LogsIncidentLinker } from "./LogsIncidentLinker";
 import { LogsTable } from "./Table/logs-table";
 
-export function LogsViewer() {
-  const [isLoading, setIsLoading] = useState(true);
-  const [logs, setLogs] = useState([]);
+export function LogsViewer({ logs, isLoading }) {
   const [selectedList, setSelectedList] = useState([]);
   const [incidentModalIsOpen, setIncidentModalIsOpen] = useState(false);
-  const loadLogs = () => {
-    setIsLoading(true);
-
-    getLogs().then((res) => {
-      if (res.data != null) {
-        setLogs(res.data.results);
-      }
-      setIsLoading(false);
-    });
-  };
-
-  useEffect(() => {
-    loadLogs();
-  }, []);
 
   return (
     <>
-      {isLoading && <Loading text="Loading logs..." />}
-      {!isLoading && (
+      {isLoading ? (
+        <Loading text="Loading logs..." />
+      ) : (
         <LogsTable
           logs={logs}
           actions={[
