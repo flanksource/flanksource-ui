@@ -1,9 +1,10 @@
 import { isArray, flattenDepth } from "lodash";
 import { React, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { TopologyCard } from ".";
-import { getTopology } from "../../api/services/topology";
-import { Loading } from "../Loading";
+import { TopologyCard } from "../components/Topology";
+import { getTopology } from "../api/services/topology";
+import { Loading } from "../components/Loading";
+import { SearchLayout } from "../components/Layout";
 
 function unroll(topology, depth) {
   if (topology == null) {
@@ -26,10 +27,10 @@ function unroll(topology, depth) {
   return flattenDepth(items, 3);
 }
 
-export function TopologyViewer() {
+export function TopologyPage() {
   // const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
-  const [topology, setTopology] = useState(null);
+  let [topology, setTopology] = useState(null);
   const { id } = useParams();
 
   useEffect(() => {
@@ -45,12 +46,14 @@ export function TopologyViewer() {
   }
   topology = unroll(topology, id == null ? 0 : 3);
   return (
-    <div className="font-inter flex leading-1.21rel">
-      <div className="flex-none flex-wrap space-x-2 space-y-2">
-        {topology.map((item, index) => (
-          <TopologyCard key={item.id} topology={item} size="medium" />
-        ))}
+    <SearchLayout title="Topology">
+      <div className="font-inter flex leading-1.21rel">
+        <div className="flex-none flex-wrap space-x-2 space-y-2">
+          {topology.map((item, index) => (
+            <TopologyCard key={item.id} topology={item} size="medium" />
+          ))}
+        </div>
       </div>
-    </div>
+    </SearchLayout>
   );
 }
