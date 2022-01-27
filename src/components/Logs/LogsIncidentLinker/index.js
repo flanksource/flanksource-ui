@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
-import { Controller, useForm, useWatch } from "react-hook-form";
-import { BiPlus } from "react-icons/bi";
 import { createEvidence } from "../../../api/services/evidence";
 import { getAllHypothesisByIncident } from "../../../api/services/hypothesis";
-import { getAllIncident, getIncident } from "../../../api/services/incident";
-
+import { getAllIncident } from "../../../api/services/incident";
+import { useUser } from "../../../context";
 import { Dropdown } from "../../Dropdown";
 import { TextInput } from "../../TextInput";
 
@@ -44,6 +43,7 @@ export function LogsIncidentLinker({ selectedLogs, callback, ...rest }) {
     }
   });
   const selectedIncident = watch("incident");
+  const user = useUser();
   const [incidentsList, setIncidentsList] = useState([]);
   const [hypothesisList, setHypothesisList] = useState([]);
   const [isLoading, setIsLoading] = useState({
@@ -110,10 +110,16 @@ export function LogsIncidentLinker({ selectedLogs, callback, ...rest }) {
 
   const onSubmit = (data) => {
     setIsLoading((previous) => ({ ...previous, submit: true }));
-    createEvidence(uuidv4, data.hypothesis, JSON.stringify(selectedLogs), {
-      type: data.type,
-      description: data.description
-    })
+    createEvidence(
+      user,
+      uuidv4,
+      data.hypothesis,
+      JSON.stringify(selectedLogs),
+      {
+        type: data.type,
+        description: data.description
+      }
+    )
       .then(() => {
         callback(true);
       })
@@ -201,11 +207,10 @@ export function LogsIncidentLinker({ selectedLogs, callback, ...rest }) {
             disabled={
               isLoading.incident || isLoading.hypothesis || isLoading.submit
             }
-            className={`${
-              !isLoading.incident && !isLoading.hypothesis && !isLoading.submit
+            className={`${!isLoading.incident && !isLoading.hypothesis && !isLoading.submit
                 ? "text-indigo-700 bg-indigo-100 hover:bg-indigo-200"
                 : "text-gray-400 bg-gray-200"
-            } inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`}
+              } inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`}
           >
             {isLoading.submit ? "Adding.." : "Add"}
           </button>

@@ -18,6 +18,7 @@ import { Dropdown } from "../../Dropdown";
 import { createIncident } from "../../../api/services/incident";
 import { createHypothesis } from "../../../api/services/hypothesis";
 import { createEvidence } from "../../../api/services/evidence";
+import { useUser } from "../../../context";
 
 const severityItems = {
   0: {
@@ -85,6 +86,7 @@ const validationSchema = yup
 
 export function IncidentCreate({ callback, evidence, ...rest }) {
   const navigate = useNavigate();
+  const user = useUser();
   const location = useLocation();
   const {
     control,
@@ -114,9 +116,9 @@ export function IncidentCreate({ callback, evidence, ...rest }) {
   const onSubmit = (data) => {
     const payload = { ...data, ...additionalFields };
     payload.id = uuidv4();
-    createIncident(payload)
+    createIncident(user, payload)
       .then((created) => {
-        const create = createHypothesis(uuidv4(), payload.id, {
+        const create = createHypothesis(user, uuidv4(), payload.id, {
           title: payload.title,
           type: "root",
           status: "possible"
@@ -125,6 +127,7 @@ export function IncidentCreate({ callback, evidence, ...rest }) {
         if (location.state.evidence != null) {
           create.then((hypotheis) => {
             createEvidence(
+              user,
               uuidv4(),
               hypotheis.data[0].id,
               location.state.evidence,
@@ -136,11 +139,12 @@ export function IncidentCreate({ callback, evidence, ...rest }) {
           });
         }
 
-        if (callback != null) {
-          callback(created.data[0]);
-        } else {
-          navigate(`/incidents/${created.data[0].id}`, { replace: true });
-        }
+        if (created)
+          if (callback != null) {
+            callback(created.data[0]);
+          } else {
+            navigate(`/incidents/${created.data[0].id}`, { replace: true });
+          }
       })
       .catch((err) => {
         console.error(err);

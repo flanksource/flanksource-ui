@@ -14,6 +14,7 @@ import {
   getAllNodeIds,
   removeLinksFromTree
 } from "../../../NestedHeirarchy/utils";
+import { useUser } from "../../../../context";
 
 export function HypothesisNode({
   node,
@@ -26,6 +27,7 @@ export function HypothesisNode({
   api
 }) {
   const { handleNodeChange, handleAddNode, tree, setTree } = treeFunctions;
+  const user = useUser()
   const [editMode, setEditMode] = useState(
     !node?.title.length > 0 ?? defaultEditMode
   );
@@ -110,7 +112,7 @@ export function HypothesisNode({
                         { title: "" }
                       );
                       if (api?.create) {
-                        api.create(newNodeID, api.incidentId, {
+                        api.create(user, newNodeID, api.incidentId, {
                           title: "",
                           type: hypothesisNodeTypes[parentArray.length + 1],
                           status: hypothesisStatuses[2].value
@@ -162,8 +164,8 @@ export function HypothesisNode({
                     node.evidence?.length > 0 ||
                     node.links?.length > 0 ||
                     node.comments?.length > 0) && (
-                    <Separator color="rgba(209, 213, 219)" className="mr-2" />
-                  )}
+                      <Separator color="rgba(209, 213, 219)" className="mr-2" />
+                    )}
 
                   <MiniButton
                     className="rounded-md border border-gray-300 text-gray-500"
@@ -198,11 +200,10 @@ export function HypothesisNode({
               </MiniButton>
             )}
             <MiniButton
-              className={`ml-2 rounded-md border ${
-                editMode
-                  ? "bg-blue-500 border-blue-500 text-gray-50"
-                  : "text-gray-500 border-gray-300"
-              }`}
+              className={`ml-2 rounded-md border ${editMode
+                ? "bg-blue-500 border-blue-500 text-gray-50"
+                : "text-gray-500 border-gray-300"
+                }`}
               onClick={() => {
                 if (editMode && api?.update) {
                   api.update(node.id, { title: node.title });
@@ -248,9 +249,8 @@ function MiniButton({ className, onClick, children, ...rest }) {
   return (
     <button
       type="button"
-      className={`px-2 py-0.5 flex items-center justify-center ${
-        className || ""
-      }`}
+      className={`px-2 py-0.5 flex items-center justify-center ${className || ""
+        }`}
       style={{}}
       onClick={onClick}
       {...rest}
@@ -290,17 +290,15 @@ function NumberedText({
 }) {
   return (
     <button
-      className={`flex items-center ${!onClick ? "pointer-events-none" : ""} ${
-        className || ""
-      }`}
+      className={`flex items-center ${!onClick ? "pointer-events-none" : ""} ${className || ""
+        }`}
       type="button"
       onClick={onClick}
       {...rest}
     >
       <span
-        className={`bg-gray-400 rounded-full mb-px text-white text-xs ${
-          numberClass || ""
-        }`}
+        className={`bg-gray-400 rounded-full mb-px text-white text-xs ${numberClass || ""
+          }`}
         style={{ paddingLeft: "5px", paddingRight: "5px", ...numberStyle }}
       >
         {number}

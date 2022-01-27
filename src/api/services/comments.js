@@ -1,4 +1,3 @@
-import { User } from "../auth";
 import { IncidentCommander } from "../axios";
 import { resolve } from "../resolve";
 
@@ -10,6 +9,7 @@ export const getCommentsByHypothesis = async (hypothesisId) =>
   );
 
 export const createComment = async (
+  user,
   commentId,
   incidentId,
   hypothesisId,
@@ -19,7 +19,7 @@ export const createComment = async (
   resolve(
     IncidentCommander.post(`/comment`, {
       id: commentId,
-      created_by: User.id,
+      created_by: user.id,
       incident_id: incidentId,
       hypothesis_id: hypothesisId,
       comment,

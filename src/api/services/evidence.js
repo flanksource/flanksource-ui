@@ -1,4 +1,3 @@
-import { User } from "../auth";
 import { IncidentCommander } from "../axios";
 import { resolve } from "../resolve";
 
@@ -11,6 +10,7 @@ export const getEvidence = async (id) =>
   resolve(IncidentCommander.get(`/evidence?id=eq.${id}`));
 
 export const createEvidence = async (
+  user,
   id,
   hypothesisId,
   evidence,
@@ -23,7 +23,7 @@ export const createEvidence = async (
   resolve(
     IncidentCommander.post(`/evidence`, {
       id,
-      created_by: User.id,
+      created_by: user.id,
       hypothesis_id: hypothesisId,
       evidence,
       ...params

@@ -2,7 +2,6 @@ import {
   hypothesisNodeTypes,
   hypothesisStatuses
 } from "../../components/HypothesisBuilder/data";
-import { User } from "../auth";
 import { IncidentCommander } from "../axios";
 import { resolve } from "../resolve";
 
@@ -13,6 +12,7 @@ export const getHypothesis = async (id) =>
   resolve(IncidentCommander.get(`/hypothesis?id=eq.${id}`));
 
 export const createHypothesis = async (
+  user,
   id,
   incidentId,
   params = {
@@ -24,7 +24,7 @@ export const createHypothesis = async (
   resolve(
     IncidentCommander.post(`/hypothesis`, {
       id,
-      created_by: User.id,
+      created_by: user.id,
       incident_id: incidentId,
       ...params
     })

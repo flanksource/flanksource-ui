@@ -1,4 +1,3 @@
-import { getUser } from "../auth";
 import { IncidentCommander } from "../axios";
 import { resolve } from "../resolve";
 
@@ -12,10 +11,9 @@ export const getIncident = async (id) =>
     )
   );
 
-export const createIncident = async (params) =>
-  getUser().then((user) => {
-    params.created_by = user.id;
-    params.commander_id = user.id;
-    params.communicator_id = user.id;
-    return IncidentCommander.post(`/incident?select=*`, params);
-  });
+export const createIncident = async (user, params) => {
+  params.created_by = user.id;
+  params.commander_id = user.id;
+  params.communicator_id = user.id;
+  return IncidentCommander.post(`/incident?select=*`, params);
+};

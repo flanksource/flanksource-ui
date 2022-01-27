@@ -6,7 +6,7 @@ import { Badge } from "../../../Badge";
 import { Dropdown } from "../../../Dropdown";
 import { badgeMap, hypothesisStatuses } from "../../data";
 import { getNode, setDeepValue } from "../../../NestedHeirarchy/utils";
-import { LinkedItems } from "../LinkedItems";
+
 import { EvidenceSection } from "../EvidenceSection";
 import { Modal } from "../../../Modal";
 import { EvidenceBuilder } from "../../../EvidenceBuilder";
@@ -17,6 +17,7 @@ import {
   createComment
 } from "../../../../api/services/comments";
 import { getAllEvidenceByHypothesis } from "../../../../api/services/evidence";
+import { useUser } from "../../../../context";
 
 const statusItems = {
   ...Object.values(hypothesisStatuses).reduce((acc, obj) => {
@@ -37,6 +38,7 @@ const statusItems = {
 
 export function HypothesisDetails({ nodePath, tree, setTree, api, ...rest }) {
   const [evidenceBuilderOpen, setEvidenceBuilderOpen] = useState(false);
+  const user = useUser();
   const [comments, setComments] = useState([]);
   const [evidence, setEvidence] = useState([]);
 
@@ -64,7 +66,7 @@ export function HypothesisDetails({ nodePath, tree, setTree, api, ...rest }) {
       .catch((err) => console.error(err));
 
   const handleComment = (value) =>
-    createComment(uuidv4(), node.incident_id, node.id, value).then(() => {
+    createComment(user, uuidv4(), node.incident_id, node.id, value).then(() => {
       fetchComments(node.id);
     });
 
