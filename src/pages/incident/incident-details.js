@@ -6,9 +6,9 @@ import {
   deleteHypothesis,
   deleteHypothesisBulk,
   updateHypothesis
-} from "../../../api/services/hypothesis";
-import { getIncident } from "../../../api/services/incident";
-import { HypothesisBuilder } from "../../../components/HypothesisBuilder";
+} from "../../api/services/hypothesis";
+import { getIncident } from "../../api/services/incident";
+import { HypothesisBuilder } from "../../components/HypothesisBuilder";
 
 function mapNode(node) {
   return {
