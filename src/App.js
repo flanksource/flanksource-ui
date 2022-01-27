@@ -12,12 +12,13 @@ import {
   LogsPage,
   TopologyPage,
   IncidentDetailsPage,
-  IncidentListPage
+  IncidentListPage,
+  IncidentCreatePage
 } from "./pages";
-import { IncidentCreate } from "./components/Incidents/IncidentCreate";
 import { getUser } from "./api/auth";
 import { AuthContext } from "./context";
 import { Loading } from "./components/Loading";
+import { Toast, ToastContext, ToastProvider } from "./components/Toast/toast";
 
 export const navigation = [
   {
@@ -45,6 +46,12 @@ export const navigation = [
 
 export function App() {
   const [user, setUser] = useState();
+  const [toasts, setToasts] = useState([]);
+
+  const toast = (title, message) => {
+    setToasts([{ title, message }]);
+    setTimeout(() => setToasts([]), 5000);
+  }
 
   useEffect(() => {
     getUser()
@@ -59,41 +66,47 @@ export function App() {
 
   const sidebar = <SidebarLayout navigation={navigation} />;
   return (
-    <AuthContext.Provider value={user}>
-      <Routes path="/" element={sidebar}>
-        <Route path="" element={<Navigate to="/topology" />} />
-        <Route path="incidents" element={sidebar}>
-          <Route path=":id" element={<IncidentDetailsPage />} />
-          <Route path="create" element={<IncidentCreate />} />
-          <Route index element={<IncidentListPage />} />
-        </Route>
-        <Route path="health" element={sidebar}>
-          <Route index element={<CanaryPage url="/canary/api" />} />
-        </Route>
+    <ToastContext.Provider value={{ toasts, setToasts, toast }}>
+      <AuthContext.Provider value={user}>
+        <Toast />
+        <Routes path="/" element={sidebar}>
+          <Route path="" element={<Navigate to="/topology" />} />
+          <Route path="incidents" element={sidebar}>
+            <Route path=":id" element={<IncidentDetailsPage />} />
+            <Route path="create" element={<IncidentCreatePage />} />
+            <Route index element={<IncidentListPage />} />
+          </Route>
+          <Route path="health" element={sidebar}>
+            <Route index element={<CanaryPage url="/canary/api" />} />
+          </Route>
 
-        <Route path="topology" element={sidebar}>
-          <Route path=":id" element={<TopologyPage url="/canary/api" />} />
-          <Route index element={<TopologyPage url="/canary/api" />} />
-        </Route>
+          <Route path="topology" element={sidebar}>
+            <Route path=":id" element={<TopologyPage url="/canary/api" />} />
+            <Route index element={<TopologyPage url="/canary/api" />} />
+          </Route>
 
-        <Route path="examples" element={sidebar}>
-          <Route path="topology" element={<TopologyPage url="/canary/api" />} />
-        </Route>
+          <Route path="examples" element={sidebar}>
+            <Route
+              path="topology"
+              element={<TopologyPage url="/canary/api" />}
+            />
+          </Route>
 
-        <Route path="logs" element={sidebar}>
-          <Route index element={<LogsPage />} />
-        </Route>
+          <Route path="logs" element={sidebar}>
+            <Route index element={<LogsPage />} />
+          </Route>
 
-        <Route path="metrics" element={sidebar}>
-          <Route index element={<Placeholder text="metrics" />} />
-        </Route>
-        <Route path="layout">
-          <Route index element={sidebar} />
-        </Route>
-        <Route path="traces" element={sidebar}>
-          <Route index element={<TraceView />} />
-        </Route>
-      </Routes>
-    </AuthContext.Provider>
+          <Route path="metrics" element={sidebar}>
+            <Route index element={<Placeholder text="metrics" />} />
+          </Route>
+          <Route path="layout">
+            <Route index element={sidebar} />
+          </Route>
+          <Route path="traces" element={sidebar}>
+            <Route index element={<TraceView />} />
+          </Route>
+        </Routes>
+      </AuthContext.Provider>
+    </ToastContext.Provider>
   );
 }

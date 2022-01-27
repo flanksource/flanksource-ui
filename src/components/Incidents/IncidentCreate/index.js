@@ -19,6 +19,7 @@ import { createIncident } from "../../../api/services/incident";
 import { createHypothesis } from "../../../api/services/hypothesis";
 import { createEvidence } from "../../../api/services/evidence";
 import { useUser } from "../../../context";
+import { useToaster } from "../../Toast/toast";
 
 const severityItems = {
   0: {
@@ -86,6 +87,7 @@ const validationSchema = yup
 
 export function IncidentCreate({ callback, evidence, ...rest }) {
   const navigate = useNavigate();
+  const { toast } = useToaster();
   const user = useUser();
   const location = useLocation();
   const {
@@ -124,7 +126,7 @@ export function IncidentCreate({ callback, evidence, ...rest }) {
           status: "possible"
         });
 
-        if (location.state.evidence != null) {
+        if (location.state && location.state.evidence != null) {
           create.then((hypotheis) => {
             createEvidence(
               user,
@@ -148,15 +150,12 @@ export function IncidentCreate({ callback, evidence, ...rest }) {
       })
       .catch((err) => {
         console.error(err);
-        callback(err);
+        toast("Error", err.message);
       });
   };
 
   return (
     <div className={`py-7 ${rest.className || ""}`} {...rest}>
-      <div className="text-xl font-medium text-gray-800 mb-6">
-        Create new incident
-      </div>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="mb-4">
           <Controller
