@@ -18,7 +18,7 @@ import {
 import { getUser } from "./api/auth";
 import { AuthContext } from "./context";
 import { Loading } from "./components/Loading";
-import { Toast, ToastContext, ToastProvider } from "./components/Toast/toast";
+import { Toast, ToastContext } from "./components/Toast/toast";
 
 export const navigation = [
   {

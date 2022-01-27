@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAllIncident } from "../../../api/services/incident";
-import { IncidentCreate } from "../../../components/Incidents/IncidentCreate";
-import { IncidentList } from "../../../components/Incidents/IncidentList";
-import { Modal } from "../../../components/Modal";
+import { getAllIncident } from "../../api/services/incident";
+import { IncidentCreate } from "../../components/Incidents/IncidentCreate";
+import { IncidentList } from "../../components/Incidents/IncidentList";
+import { Modal } from "../../components/Modal";
 
 export function IncidentListPage() {
   const navigate = useNavigate();
