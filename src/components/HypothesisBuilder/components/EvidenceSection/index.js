@@ -1,15 +1,18 @@
 import React from "react";
 import { LogsTable } from "../../../Logs/Table/logs-table";
+import { TopologyCard } from "../../../Topology";
 
 export function EvidenceItem({ evidence }) {
   if (evidence.type === "log") {
     return <LogsTable logs={evidence.evidence} title="" />;
   }
+  if (evidence.type === "topology") {
+    return <TopologyCard topologyId={evidence.evidence.id} />
+  }
   return (
     <div>
       {evidence.type}
       {evidence.description}
-      {evidence.evidence}
     </div>
   );
 }
@@ -33,7 +36,7 @@ export function EvidenceSection({
           Add evidence
         </button>
       </div>
-      <div className="border mt-2">
+      <div className="mt-2">
         {evidence && evidence.length > 0 ? (
           evidence.map((evidence) => (
             <EvidenceItem key={evidence.id} evidence={evidence} />

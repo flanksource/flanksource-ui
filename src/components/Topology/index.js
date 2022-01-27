@@ -1,5 +1,4 @@
-import { TopologyCard } from "./TopologyCard/TopologyCard";
-import { TopologyColumn } from "./TopologyColumn/TopologyColumn";
-import { TopologyDropdownMenu } from "./TopologyDropdownMenu/TopologyDropdownMenu";
+import { TopologyCard } from "./topology-card";
+import { TopologyColumn } from "./topology-column";
 
-export { TopologyCard, TopologyColumn, TopologyDropdownMenu };
+export { TopologyCard, TopologyColumn };

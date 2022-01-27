@@ -12,10 +12,12 @@ import {
 import { RiLightbulbFill } from "react-icons/ri";
 import { AiOutlineClose } from "react-icons/ai";
 
+import { useNavigate, useLocation } from "react-router-dom";
 import { TextInput } from "../../TextInput";
 import { Dropdown } from "../../Dropdown";
 import { createIncident } from "../../../api/services/incident";
 import { createHypothesis } from "../../../api/services/hypothesis";
+import { createEvidence } from "../../../api/services/evidence";
 
 const severityItems = {
   0: {
@@ -81,7 +83,9 @@ const validationSchema = yup
   })
   .required();
 
-export function IncidentCreate({ callback, ...rest }) {
+export function IncidentCreate({ callback, evidence, ...rest }) {
+  const navigate = useNavigate();
+  const location = useLocation();
   const {
     control,
     formState: { errors },
@@ -112,12 +116,31 @@ export function IncidentCreate({ callback, ...rest }) {
     payload.id = uuidv4();
     createIncident(payload)
       .then((created) => {
-        createHypothesis(uuidv4(), payload.id, {
+        const create = createHypothesis(uuidv4(), payload.id, {
           title: payload.title,
           type: "root",
           status: "possible"
         });
-        callback(created.data[0]);
+
+        if (location.state.evidence != null) {
+          create.then((hypotheis) => {
+            createEvidence(
+              uuidv4(),
+              hypotheis.data[0].id,
+              location.state.evidence,
+              {
+                description: "test",
+                type: location.state.evidenceType
+              }
+            );
+          });
+        }
+
+        if (callback != null) {
+          callback(created.data[0]);
+        } else {
+          navigate(`/incidents/${created.data[0].id}`, { replace: true });
+        }
       })
       .catch((err) => {
         console.error(err);

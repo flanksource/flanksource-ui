@@ -1,38 +1,55 @@
+import { isArray, flattenDepth } from "lodash";
 import { React, useEffect, useState } from "react";
-import { TopologyColumn, TopologyCard } from ".";
+import { useParams } from "react-router-dom";
+import { TopologyCard } from ".";
 import { getTopology } from "../../api/services/topology";
 import { Loading } from "../Loading";
+
+function unroll(topology, depth) {
+  if (topology == null) {
+    return [];
+  }
+  topology = flattenDepth([topology], 3);
+  if (depth === 0) {
+    return topology;
+  }
+
+  const items = [];
+
+  if (isArray(topology)) {
+    items.push(topology);
+
+    for (const item of topology) {
+      items.push(...unroll(item.components, depth - 1));
+    }
+  }
+  return flattenDepth(items, 3);
+}
 
 export function TopologyViewer() {
   // const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
-  const [topology, setTopology] = useState([]);
-  const [topologyModalIsOpen, setTopologyModalIsOpen] = useState(false);
+  const [topology, setTopology] = useState(null);
+  const { id } = useParams();
 
-  const load = () => {
+  useEffect(() => {
     setIsLoading(true);
-    getTopology().then((res) => {
+    getTopology(id).then((res) => {
       setTopology(res.data);
       setIsLoading(false);
     });
-  };
-
-  useEffect(() => {
-    load();
   }, []);
 
-  if (isLoading) {
+  if (isLoading || topology == null) {
     return <Loading text="Loading topology..." />;
   }
+  topology = unroll(topology, id == null ? 0 : 3);
   return (
     <div className="font-inter flex leading-1.21rel">
-      <div className="flex-auto">
-        <TopologyColumn
-          title=""
-          cards={topology.map((item, index) => (
-            <TopologyCard key={item.name} topology={item} size="medium" />
-          ))}
-        />
+      <div className="flex-none flex-wrap space-x-2 space-y-2">
+        {topology.map((item, index) => (
+          <TopologyCard key={item.id} topology={item} size="medium" />
+        ))}
       </div>
     </div>
   );

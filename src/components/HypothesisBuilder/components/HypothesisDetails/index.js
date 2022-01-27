@@ -16,6 +16,7 @@ import {
   getCommentsByHypothesis,
   createComment
 } from "../../../../api/services/comments";
+import { getAllEvidenceByHypothesis } from "../../../../api/services/evidence";
 
 const statusItems = {
   ...Object.values(hypothesisStatuses).reduce((acc, obj) => {
@@ -37,6 +38,7 @@ const statusItems = {
 export function HypothesisDetails({ nodePath, tree, setTree, api, ...rest }) {
   const [evidenceBuilderOpen, setEvidenceBuilderOpen] = useState(false);
   const [comments, setComments] = useState([]);
+  const [evidence, setEvidence] = useState([]);
 
   const node = getNode(tree, nodePath);
   const handleCurrentNodeValueChange = (key, value) => {
@@ -47,6 +49,12 @@ export function HypothesisDetails({ nodePath, tree, setTree, api, ...rest }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
+
+  const fetchEvidence = (hypothesisId) => {
+    getAllEvidenceByHypothesis(hypothesisId).then((evidence) => {
+      setEvidence(evidence?.data || []);
+    });
+  };
 
   const fetchComments = (id) =>
     getCommentsByHypothesis(id)
@@ -61,6 +69,7 @@ export function HypothesisDetails({ nodePath, tree, setTree, api, ...rest }) {
     });
 
   useEffect(() => {
+    fetchEvidence(node.id);
     fetchComments(node.id);
   }, [node.id]);
 
@@ -114,15 +123,13 @@ export function HypothesisDetails({ nodePath, tree, setTree, api, ...rest }) {
         </div>
         <div className="mb-6">
           <EvidenceSection
-            currentNode={node}
-            nodePath={nodePath}
-            tree={tree}
-            setTree={setTree}
+            hypothesis={node}
+            evidence={evidence}
             titlePrepend={<HypothesisTitle>Evidence</HypothesisTitle>}
             onButtonClick={() => setEvidenceBuilderOpen(true)}
           />
         </div>
-        <div className="mb-6">
+        {/* <div className="mb-6">
           <LinkedItems
             currentNode={node}
             currentNodePath={nodePath}
@@ -132,7 +139,7 @@ export function HypothesisDetails({ nodePath, tree, setTree, api, ...rest }) {
               handleCurrentNodeValueChange("links", newItems)
             }
           />
-        </div>
+        </div> */}
         <div className="mb-6">
           <CommentsSection
             comments={comments}

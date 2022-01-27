@@ -55,7 +55,7 @@ export function HypothesisBuilder({
         cardClass="w-full overflow-y-scroll"
         contentClass="h-full px-8"
         cardStyle={{
-          maxWidth: "820px",
+          maxWidth: "1024px",
           maxHeight: "calc(100vh - 4rem)"
         }}
         closeButtonStyle={{
