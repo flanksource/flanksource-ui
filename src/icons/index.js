@@ -183,7 +183,7 @@ import vsphere from "./vsphere.svg";
 import world from "./world.svg";
 import www from "./www.svg";
 import dots from './dots-triple.svg'
-import caretDoubleUp from './CaretDoubleUp.svg'
+import chevronDoubleUp from './chevron-double-up.svg'
 export const Icons = {
 "acr": acr,
 "aks": aks,
@@ -372,5 +372,5 @@ export const Icons = {
 "account": clock,
 "name": cluster,
 "region": timezone,
-"caretDoubleUp": caretDoubleUp
+"chevron-double-up": chevronDoubleUp
 }

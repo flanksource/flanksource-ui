@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Switch } from "@headlessui/react";
+import cx from "clsx";
 import { getAllIncident } from "../../../api/services/incident";
 import { IncidentCreate } from "../../../components/Incidents/IncidentCreate";
 import { IncidentList } from "../../../components/Incidents/IncidentList";
@@ -41,14 +42,16 @@ export function IncidentListPage() {
             <Switch
               checked={enabled}
               onChange={setEnabled}
-              className={`${
+              className={cx(
+                "relative inline-flex items-center h-6 rounded-full w-11 transition ease-in-out duration-400",
                 enabled ? "bg-dark-blue" : "bg-gray-200"
-              } relative inline-flex items-center h-6 rounded-full w-11 transition ease-in-out duration-400`}
+              )}
             >
               <span
-                className={`${
+                className={cx(
+                  "inline-block w-4 h-4 transform bg-white rounded-full",
                   enabled ? "translate-x-6" : "translate-x-1"
-                } inline-block w-4 h-4 transform bg-white rounded-full`}
+                )}
               />
             </Switch>
           </div>
