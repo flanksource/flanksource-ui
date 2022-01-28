@@ -52,6 +52,7 @@ module.exports = {
         "gray-color": "#C4C4C4",
         "dark-gray": "#242423",
         "medium-gray": "#6B7280",
+        "darker-black": "#111827",
         "light-black": "#1F2937",
         "border-color": "#E5E7EB",
         "column-background": "#F9FAFB",
