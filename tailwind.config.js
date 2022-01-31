@@ -51,6 +51,10 @@ module.exports = {
         "dark-blue": "#326CE5",
         "gray-color": "#C4C4C4",
         "dark-gray": "#242423",
+        "medium-gray": "#6B7280",
+        "darker-black": "#111827",
+        "light-black": "#1F2937",
+        "border-color": "#E5E7EB",
         "column-background": "#F9FAFB",
         "lightest-gray": "#F9FAFB",
         "light-orange": "#FBBE67",
@@ -72,7 +76,8 @@ module.exports = {
       borderRadius: {
         "4px": "4px",
         "6px": "6px",
-        "8px": "8px"
+        "8px": "8px",
+        "10px": "10px"
       },
       padding: {
         0.75: "0.1875rem"

@@ -1,15 +1,19 @@
+import cx from "clsx";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { AiFillPlusCircle } from "react-icons/ai/";
 import { getAllIncident } from "../../api/services/incident";
 import { IncidentCreate } from "../../components/Incidents/IncidentCreate";
 import { IncidentList } from "../../components/Incidents/IncidentList";
 import { Modal } from "../../components/Modal";
-
+import { SearchLayout } from "../../components/Layout";
+import { Loading } from "../../components/Loading";
 export function IncidentListPage() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [incidents, setIncidents] = useState([]);
   const [incidentModalIsOpen, setIncidentModalIsOpen] = useState(false);
+  const [enabled, setEnabled] = useState(false);
 
   const loadIncidents = () => {
     setIsLoading(true);
@@ -24,26 +28,39 @@ export function IncidentListPage() {
   }, []);
 
   return (
-    <div className="max-w-screen-xl mx-auto flex flex-col justify-center">
-      <div className="mt-4 w-full px-4">
-        <div className="flex justify-between items-center pb-4">
-          <h1 className="text-xl font-semibold">Incident List</h1>
-          <button
-            type="button"
-            onClick={() => setIncidentModalIsOpen(true)}
-            className="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          >
-            Create New Incident
-          </button>
+    <>
+      <SearchLayout
+        title={
+          <>
+            <div className="flex my-auto pt-4">
+              <span className="text-xl flex font-semibold">Incidents / </span>
+              <div className="flex">
+                <button
+                  type="button"
+                  className=""
+                  onClick={() => setIncidentModalIsOpen(true)}
+                >
+                  <AiFillPlusCircle size={24} color="#326CE5" />
+                </button>
+              </div>
+            </div>
+          </>
+        }
+        onRefresh={loadIncidents}
+        extra={<></>}
+      >
+        <div className="leading-1.21rel">
+          <div className="flex-none flex-wrap space-x-2 space-y-2">
+            <div className="max-w-screen-xl mx-auto flex flex-col justify-center">
+              {!isLoading ? (
+                <IncidentList list={incidents || []} />
+              ) : (
+                <Loading text="fetching incidents" />
+              )}
+            </div>
+          </div>
         </div>
-        <div className="pb-12">
-          {!isLoading ? (
-            <IncidentList list={incidents || []} />
-          ) : (
-            <div>fetching incidents...</div>
-          )}
-        </div>
-      </div>
+      </SearchLayout >
 
       <Modal
         open={incidentModalIsOpen}
@@ -65,6 +82,6 @@ export function IncidentListPage() {
           }}
         />
       </Modal>
-    </div>
+    </>
   );
 }

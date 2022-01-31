@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { BiChevronLeft } from "react-icons/bi";
 import { Link, useParams } from "react-router-dom";
 import {
   createHypothesis,
@@ -9,6 +8,7 @@ import {
 } from "../../api/services/hypothesis";
 import { getIncident } from "../../api/services/incident";
 import { HypothesisBuilder } from "../../components/HypothesisBuilder";
+import { SearchLayout } from "../../components/Layout";
 
 function mapNode(node) {
   return {
@@ -47,7 +47,8 @@ export function IncidentDetailsPage() {
   const [loadedTree, setLoadedTree] = useState(null);
   const [incidentDetails, setIncidentDetails] = useState(null);
   const [error, setError] = useState(null);
-  useEffect(() => {
+
+  const load = () => {
     if (incidentId) {
       getIncident(incidentId).then((res) => {
         if (res.data == null || res.data.length === 0) {
@@ -63,22 +64,33 @@ export function IncidentDetailsPage() {
         }));
       });
     }
-  }, [incidentId]);
+  };
+  useEffect(load, [incidentId]);
 
   return (
-    <div className="max-w-screen-xl mx-auto flex flex-col justify-center">
-      <div className="mt-4 w-full px-4">
-        <div className="mb-4">
-          <Link
-            to="/incidents"
-            className="flex items-center text-sm font-semibold"
-          >
-            <BiChevronLeft
-              style={{ width: "20px", height: "20px", marginRight: "8px" }}
-            />
-            Back to Incidents
-          </Link>
-        </div>
+    <SearchLayout
+      onRefresh={load}
+      title={
+        <>
+          <div className="flex my-auto">
+            <span className="text-xl flex">
+              {" "}
+              <Link to="/incidents">Incidents&nbsp;</Link>
+              {" / "}
+              {!isLoading.incident && (
+                <>
+                  <div className="font-semibold">
+                    <div>&nbsp;{incidentDetails.title}</div>
+                  </div>
+                </>
+              )}
+            </span>
+          </div>
+        </>
+      }
+      extra={<></>}
+    >
+      <div>
         <div className="mb-4">
           {!isLoading.incident && !error ? (
             <IncidentDetails incident={incidentDetails} />
@@ -107,7 +119,7 @@ export function IncidentDetailsPage() {
           <div>{!error && "fetching tree..."}</div>
         )}
       </div>
-    </div>
+    </SearchLayout>
   );
 }
 
