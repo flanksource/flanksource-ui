@@ -12,7 +12,11 @@ function classNames(...classes) {
 }
 
 // eslint-disable-next-line import/no-default-export
-export default function SidebarLayout({ navigation, userNavigation }) {
+export default function SidebarLayout({
+  children,
+  navigation,
+  userNavigation
+}) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [user, setUser] = useState(null);
   if (user == null) {
@@ -32,7 +36,6 @@ export default function SidebarLayout({ navigation, userNavigation }) {
         ```
       */}
       <div>
-
         <Transition.Root show={sidebarOpen} as={Fragment}>
           <Dialog
             as="div"
@@ -234,11 +237,7 @@ export default function SidebarLayout({ navigation, userNavigation }) {
             </div>
 
             <main className="flex-1">
-              <div className="py-6">
-                <div className="px-4 sm:px-6 md:px-0">
-                  <Outlet />
-                </div>
-              </div>
+              <div className="py-6">{children}</div>
             </main>
           </div>
         </div>

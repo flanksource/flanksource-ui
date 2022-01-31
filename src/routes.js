@@ -6,54 +6,81 @@ import { TopologyPageLarge } from "./pages/Examples/TopologyPageLarge/TopologyPa
 import { HeirarchyTestPageOld } from "./pages/Examples/heirarchyTestOld";
 import { IncidentDetailsPage } from "./pages/TopologyViewer/Incident/IncidentDetails";
 import { IncidentListPage } from "./pages/TopologyViewer/Incident/IncidentList";
+import { TopologyViewer } from "./components/Topology/viewer";
+import { TraceView } from "./components/Traces";
+import { LogsPage } from "./pages/Logs";
+import { Placeholder } from "./pages/Examples/Placeholder";
 
 export const routes = {
   examples: {
     name: "Examples",
-    exact: true,
     path: `/examples`,
     component: <Examples />
   },
   topology: {
     name: "Topology",
-    exact: true,
+    path: "/",
+    useSidebarLayout: "true",
+    component: <TopologyViewer url="/canary/api" />
+  },
+  topologySmall: {
+    name: "TopologySmall",
     path: `/topology-small`,
-    component: <TopologyPageSmall />
+    useSidebarLayout: "true",
+    component: <TopologyPageSmall url="/canary/api" />
   },
   topologyMedium: {
     name: "TopologyMedium",
-    exact: true,
     path: `/topology-medium`,
-    component: <TopologyPageMedium />
+    useSidebarLayout: "true",
+    component: <TopologyPageMedium url="/canary/api" />
   },
   topologyLarge: {
     name: "TopologyLarge",
-    exact: true,
     path: `/topology-large`,
-    component: <TopologyPageLarge />
+    useSidebarLayout: "true",
+    component: <TopologyPageLarge url="/canary/api" />
+  },
+  logs: {
+    name: "Logs",
+    path: `/logs`,
+    useSidebarLayout: "true",
+    component: <LogsPage />
+  },
+  traces: {
+    name: "Traces",
+    path: `/traces`,
+    useSidebarLayout: "true",
+    component: <TraceView />
+  },
+  metrics: {
+    name: "Metrics",
+    path: `/metrics`,
+    useSidebarLayout: "true",
+    component: <Placeholder text="metrics" />
   },
   canary: {
     name: "Canary",
-    exact: true,
-    path: `/`,
-    component: <CanaryPage />
+    path: `/health`,
+    useSidebarLayout: "true",
+    component: <CanaryPage url="/canary/api" />
   },
   heirarchyTest: {
     name: "HeirarchyTestPage",
-    exact: true,
     path: `/heirarchyTest`,
+    useSidebarLayout: "true",
     component: <HeirarchyTestPageOld />
   },
   incidentList: {
     name: "Incident List",
-    exact: true,
-    path: `/incident`,
+    path: `/incidents`,
+    useSidebarLayout: "true",
     component: <IncidentListPage />
   },
   incidentDetails: {
     name: "Incident Details",
-    exact: true,
-    path: `/incident/:id`,
+    path: `/incidents/:id`,
+    useSidebarLayout: "true",
     component: <IncidentDetailsPage />
   }
 };
