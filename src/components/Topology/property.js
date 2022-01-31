@@ -18,7 +18,8 @@ export const Property = ({ property, className }) => {
 Property.propTypes = {
   property: PropTypes.shape({
     name: PropTypes.string.isRequired,
-    text: PropTypes.string.isRequired
+    text: PropTypes.string,
+    value: PropTypes.number
   }).isRequired,
   className: PropTypes.string
 };

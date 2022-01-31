@@ -1,25 +1,26 @@
-import { isArray } from "lodash";
+import { isArray, flattenDepth } from "lodash";
 import { CanaryChecker } from "../axios";
 import { resolve } from "../resolve";
 
 function unroll(topology, depth) {
+  if (topology == null) {
+    return [];
+  }
+  topology = flattenDepth([topology], 3);
   if (depth === 0) {
-    if (isArray(topology)) {
-      return topology;
-    }
-    return [topology];
+    return topology;
   }
 
   const items = [];
 
   if (isArray(topology)) {
+    items.push(topology);
+
     for (const item of topology) {
-      items.push(...unroll(item, depth - 1));
+      items.push(...unroll(item.components, depth - 1));
     }
-  } else {
-    items.push(...unroll(topology, depth - 1));
   }
-  return items;
+  return flattenDepth(items, 3);
 }
 
 export const getTopology = async (id, depth = 3) => {
@@ -29,7 +30,7 @@ export const getTopology = async (id, depth = 3) => {
   }
   return resolve(
     CanaryChecker.get(`/api/topology${query}`)
-
+      .then((results) => ({ data: unroll(results.data, depth) }))
       .catch((e) => console.error("failed", e))
   );
 };
