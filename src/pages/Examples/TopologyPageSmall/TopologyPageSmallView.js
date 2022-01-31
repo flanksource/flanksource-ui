@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 
 import { TopologyColumn, TopologyCard } from "../../../components/Topology";
+import {TopologyCardSmall2} from "../../../components/Topology/TopologyCard2/TopologyCard2";
 
 export const TopologyPageSmallView = ({
   topology,
@@ -10,7 +11,7 @@ export const TopologyPageSmallView = ({
   setSelectionMode,
   toggleChecked
 }) => (
-  <div className="font-inter flex leading-1.21rel">
+  <div className="font-inter flex leading-tightly">
     <div className="flex-auto">
       <p className="text-2xl my-6">Title</p>
       <div className="form-check mb-4">
@@ -35,7 +36,7 @@ export const TopologyPageSmallView = ({
           <TopologyColumn
             title="zone 1"
             cards={topology.map((item, index) => (
-              <TopologyCard
+              <TopologyCardSmall2
                 size="small"
                 key={item.id}
                 topology={item}

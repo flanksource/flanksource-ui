@@ -25,7 +25,7 @@ export function TopologyViewer() {
     return <Loading text="Loading topology..." />;
   }
   return (
-    <div className="font-inter flex leading-1.21rel">
+    <div className="font-inter flex leading-tightly">
       <div className="flex-auto">
         <TopologyColumn
           title=""

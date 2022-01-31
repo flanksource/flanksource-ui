@@ -1,0 +1,36 @@
+@layer components {
+    .topology-card2.small {
+
+    }
+    .topology-card2.small .section-row {
+
+    }
+    .topology-card2.small .top-section {
+        @apply flex;
+    }
+    .topology-card2.small .bottom-section {
+        @apply bg-lightest-gray;
+    }
+    .topology-card2.small .top-section .section-left {
+        @apply flex-1 pl-4 pr-0.5 py-2.5;
+    }
+    .topology-card2.small .top-section .section-right {
+        @apply pr-1.5 pl-0.5 py-2.5
+    }
+
+    .topology-card2.small .bottom-section .section-left {
+        @apply w-full px-2 py-4 rounded-b-8px;
+    }
+
+    .topology-card2.small .bottom-section .section-right {
+        display: none;
+    }
+
+    .topology-card2.small .checkbox-container {
+        @apply mr-1.5 mt-1 flex min-w-7 justify-end items-start;
+    }
+
+    .topology-card2.small .menu-container {
+        @apply mt-1.5;
+    }
+}

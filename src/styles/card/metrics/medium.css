@@ -1,0 +1,22 @@
+@layer components {
+    .metrics.medium {
+        @apply grid divide-x flex-1;
+        grid-template-columns: theme('gridTemplateColumns.medium-card-metrics');
+    }
+
+    .metrics.medium .metrics-col {
+        @apply text-gray-800 flex flex-col;
+    }
+
+    .metrics.medium .metrics-col-not-first {
+        @apply flex justify-center px-2;
+    }
+
+    .metrics.medium .metrics-label {
+        @apply text-gray-color text-2xs font-bold leading-tightly mb-0.5;
+    }
+
+    .metrics.medium .metrics-value {
+        @apply font-bold text-xs leading-tightly;
+    }
+}

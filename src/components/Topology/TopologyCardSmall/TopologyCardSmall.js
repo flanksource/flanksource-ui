@@ -31,22 +31,22 @@ export const TopologyCardSmall = ({
   return (
     <div
       className={cx(
-        "rounded-8px mb-4 shadow-card border-t-6 card cursor-pointer bg-white topology-card"
+        "rounded-8px mb-4 shadow-card border-t-6 card cursor-pointer bg-white topology-card small"
       )}
       {...selectionModeRootProps}
     >
       <div className="flex flex-row flex-nowrap rounded-t-8px pt-2.5 pr-1.5 pb-2.5 pl-4 bg-white relative">
-        <div className="text-gray-color pt-2.5 mr-2.5 flex-initial max-w-1/4 leading-1.21rel">
-          <span className="text-gray-color text-2xsi leading-1.21rel">
+        <div className="text-gray-color pt-2.5 mr-2.5 flex-initial max-w-1/4 leading-tightly">
+          <span className="text-gray-color text-2xsi leading-tightly">
             http://
           </span>
         </div>
         <div className="flex-1 flex flex-col overflow-hidden">
-          <p className="font-bold overflow-hidden truncate text-1 leading-1.21rel mb-px">
+          <p className="font-bold overflow-hidden truncate text-1 leading-tightly mb-px">
             {name}
           </p>
           <span
-            className="text-gray-color overflow-hidden truncate text-xs leading-1.21rel"
+            className="text-gray-color overflow-hidden truncate text-xs leading-tightly asd"
             title="jobs-demo"
           >
             jobs-demo

@@ -9,7 +9,7 @@ export const TopologyPageLargeView = ({
   setSelectionMode,
   toggleChecked
 }) => (
-  <div className="font-inter flex leading-1.21rel">
+  <div className="font-inter flex leading-tightly">
     <div className="flex-auto">
       <h1 className="text-2xl my-6 font-semibold">Title</h1>
       <div className="form-check mb-4">

@@ -112,13 +112,14 @@ module.exports = {
         "small-card-metrics":
           "minmax(25%, 30%) minmax(25%, 32%) minmax(25%, 38%)",
         "medium-card-metrics":
-          "minmax(25%, 30%) minmax(25%, 32%) minmax(25%, 38%)"
+          "minmax(25%, 30%) minmax(25%, 32%) minmax(25%, 38%)",
+        "sections-medium": "48% 52%"
       },
       flex: {
         "0-0-a": "0 0 auto"
       },
       lineHeight: {
-        "1.21rel": "1.21"
+        "tightly": "1.21"
       }
     }
   },

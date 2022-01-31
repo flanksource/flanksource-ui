@@ -8,28 +8,28 @@ export const BottomMetrics = ({ items }) => {
     <div className="grid grid-cols-small-card-metrics bg-lightest-gray px-2 py-4 rounded-b-8px divide-x leading-none">
       <div>
         <div className="text-gray-800 px-2">
-          <span className="text-gray-color text-xs font-medium leading-1.21rel">
+          <span className="text-gray-color text-xs font-medium leading-tightly">
             {firstItem.name}
           </span>
-          <p className="font-bold text-sm leading-1.21rel">{firstItem.value}</p>
+          <p className="font-bold text-sm leading-tightly">{firstItem.value}</p>
         </div>
       </div>
       <div className="flex justify-center">
         <div className="text-gray-800 px-2">
-          <span className="text-gray-color text-xs font-medium leading-1.21rel">
+          <span className="text-gray-color text-xs font-medium leading-tightly">
             {secondItem.name}
           </span>
-          <p className="font-bold text-sm leading-1.21rel">
+          <p className="font-bold text-sm leading-tightly">
             {secondItem.value}
           </p>
         </div>
       </div>
       <div className="flex justify-center">
         <div className="text-gray-800 px-2">
-          <span className="text-gray-color text-xs font-medium leading-1.21rel">
+          <span className="text-gray-color text-xs font-medium leading-tightly">
             {thirdItem.name}
           </span>
-          <p className="font-bold text-sm leading-1.21rel">{thirdItem.value}</p>
+          <p className="font-bold text-sm leading-tightly">{thirdItem.value}</p>
         </div>
       </div>
     </div>

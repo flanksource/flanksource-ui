@@ -1,0 +1,18 @@
+@layer components {
+    .metrics.small {
+        @apply grid divide-x leading-none;
+        grid-template-columns: theme('gridTemplateColumns.small-card-metrics');
+    }
+
+    .metrics.small .metrics-col {
+        @apply text-gray-800 px-2;
+    }
+
+    .metrics.small .metrics-label {
+        @apply text-gray-color text-xs font-medium leading-tightly;
+    }
+
+    .metrics.small .metrics-value {
+        @apply font-bold text-sm leading-tightly;
+    }
+}

@@ -1,0 +1,25 @@
+@layer components {
+    .heading.small {
+        @apply flex;
+    }
+
+    .heading.small .heading-protocol {
+        @apply text-gray-color pt-2 mr-2.5 flex-initial max-w-1/4 leading-tightly overflow-hidden;
+    }
+
+    .heading.small .heading-protocol span {
+        @apply text-gray-color text-2xsi leading-tightly;
+    }
+
+    .heading.small .heading-name {
+        @apply flex-1 flex flex-col overflow-hidden;
+    }
+
+    .heading.small .heading-name h6 {
+        @apply font-bold overflow-hidden truncate leading-tightly mb-px;
+    }
+
+    .heading.small .heading-name span {
+        @apply text-gray-color overflow-hidden truncate text-xs leading-tightly;
+    }
+}

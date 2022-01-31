@@ -1,0 +1,13 @@
+@import "small.css";
+@import "medium.css";
+@import "large.css";
+
+@import "./heading/index.css";
+@import "./metrics/index.css";
+
+@layer components {
+    .topology-card2 {
+        @apply rounded-8px border-t-6 cursor-pointer bg-white;
+        box-shadow: theme('boxShadow.card');
+    }
+}

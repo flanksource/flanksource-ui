@@ -47,20 +47,20 @@ export const TopologyCardLarge = ({
     >
       <div className="flex flex-row flex-nowrap rounded-t-8px bg-white">
         <div className="flex w-large-card-left pr-1 pt-2.5 pb-3.5 pl-4">
-          <div className="text-gray-color pt-2.5 mr-2.5 flex-initial max-w-1/4 leading-1.21rel">
-            <h3 className="text-gray-color text-2xsi leading-1.21rel">
+          <div className="text-gray-color pt-2.5 mr-2.5 flex-initial max-w-1/4 leading-tightly">
+            <h3 className="text-gray-color text-2xsi leading-tightly">
               http://
             </h3>
           </div>
           <div className="flex-1 overflow-hidden">
             <p
-              className="font-bold overflow-hidden truncate text-15pxinrem leading-1.21rel pb-px"
+              className="font-bold overflow-hidden truncate text-15pxinrem leading-tightly pb-px"
               title={name}
             >
               {name}
             </p>
             <h3
-              className="text-gray-color overflow-hidden truncate text-2xsi leading-1.21rel font-medium pt-px"
+              className="text-gray-color overflow-hidden truncate text-2xsi leading-tightly font-medium pt-px"
               title="jobs-demo"
             >
               jobs-demo

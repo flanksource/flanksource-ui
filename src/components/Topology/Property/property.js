@@ -8,10 +8,10 @@ export const Property = ({ property, className }) => {
   return (
     <div className={cx("flex", { [className]: className })}>
       <Icon name={icon} className="mr-2.5" size="2xsi" />
-      <span className="text-xs overflow-hidden truncate leading-1.21rel font-medium text-gray-400 pr-2">
+      <span className="text-xs overflow-hidden truncate leading-tightly font-medium text-gray-400 pr-2">
         {name}:
       </span>
-      <span className="text-xs overflow-hidden truncate leading-1.21rel font-medium">
+      <span className="text-xs overflow-hidden truncate leading-tightly font-medium">
         {text}
       </span>
     </div>
