@@ -56,7 +56,6 @@ export function Placeholder({ text }) {
   );
 }
 
-
 export function App() {
   const [user, setUser] = useState();
   const [toasts, setToasts] = useState([]);
