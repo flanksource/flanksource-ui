@@ -1,17 +1,14 @@
-import React, { useEffect, useState } from "react";
 import clsx from "clsx";
+import { filter } from "lodash";
 import PropTypes from "prop-types";
-import { Navigate, useNavigate } from "react-router-dom";
-import { Icon } from "../Icon";
-import { Property } from "./property";
-import { HealthSummary } from "../HealthSummary/summary";
-import { MetricsHeader } from "./metrics-header";
-import { TopologyDropdownMenu } from "./topology-menu";
+import React, { useEffect, useState } from "react";
 import { getTopology } from "../../api/services/topology";
+import { HealthSummary } from "../HealthSummary/summary";
+import { Icon } from "../Icon";
 import { Loading } from "../Loading";
-
-
-
+import { MetricsHeader } from "./metrics-header";
+import { Property } from "./property";
+import { TopologyDropdownMenu } from "./topology-menu";
 export function TopologyCard({
   size,
   topology,
@@ -45,6 +42,8 @@ export function TopologyCard({
     return <Loading text={`Loading ${topologyId}`} />;
   }
 
+  const properties = filter(topology.properties, (i) => !i.headline);
+  const heading = filter(topology.properties, (i) => i.headline);
 
   return (
     <div
@@ -67,7 +66,7 @@ export function TopologyCard({
               className="font-bold overflow-hidden truncate align-middle text-15pxinrem leading-1.21rel"
               title={_topology.name}
             >
-              {_topology.name}
+              {_topology.text || _topology.name}
             </p>
             {_topology.description != null && (
               <h3 className="text-gray-color overflow-hidden truncate text-2xsi leading-1.21rel font-medium">
@@ -78,13 +77,7 @@ export function TopologyCard({
         </div>
 
         <div className="flex ml-auto pl-1 pr-1.5 pb-3.5 pt-3">
-          <MetricsHeader
-            items={[
-              { name: "RPS:", value: "165/s" },
-              { name: "Errors:", value: "0.1%" },
-              { name: "Latency:", value: "225ms" },
-            ]}
-          />
+          <MetricsHeader items={heading} />
         </div>
 
         <div className="flex  ml-auto pl-1 pr-1.5 pb-3.5 pt-3">
@@ -104,16 +97,15 @@ export function TopologyCard({
       </div>
       <div className="flex flex-nowrap bg-lightest-gray rounded-b-8px">
         <div className="w-med-card-left py-4 pl-5 pr-1 max-h-[100px] overflow-x-auto">
-          {_topology.properties &&
-            _topology.properties.map((property, index) => (
-              <Property
-                key={property.name}
-                property={property}
-                className={
-                  index === _topology.properties.length - 1 ? "mb-0" : "mb-2.5"
-                }
-              />
-            ))}
+          {properties.map((property, index) => (
+            <Property
+              key={property.name}
+              property={property}
+              className={
+                index === _topology.properties.length - 1 ? "mb-0" : "mb-2.5"
+              }
+            />
+          ))}
         </div>
         <div className="w-med-card-right pl-1 py-4 pr-5">
           {_topology.components &&
@@ -133,30 +125,31 @@ export function TopologyCard({
   );
 }
 
-TopologyCard.propTypes = {
-  size: PropTypes.string,
-  selectionMode: PropTypes.bool,
-  selected: PropTypes.bool,
-  onSelectionChange: PropTypes.func,
-  topologyId: PropTypes.string,
-  topology: PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    status: PropTypes.string.isRequired,
-    icon: PropTypes.string,
-    properties: PropTypes.arrayOf(
-      PropTypes.shape({
-        name: PropTypes.string.isRequired,
-        text: PropTypes.string
-      }).isRequired
-    )
-  })
-};
+// TopologyCard.propTypes = {
+//   size: PropTypes.string,
+//   selectionMode: PropTypes.bool,
+//   selected: PropTypes.bool,
+//   onSelectionChange: PropTypes.func,
+//   topologyId: PropTypes.string,
+//   topology: PropTypes.shape({
+//     name: PropTypes.string,
+//     status: PropTypes.string,
+//     icon: PropTypes.string,
+//     properties: PropTypes.arrayOf(
+//       PropTypes.shape({
+//         name: PropTypes.string,
+//         text: PropTypes.string
+//         value
+//       }).isRequired
+//     )
+//   })
+// };
 
-TopologyCard.defaultProps = {
-  selectionMode: false,
-  selected: false,
-  topology: null,
-  topologyId: null,
-  size: "md",
-  onSelectionChange: () => { }
-};
+// TopologyCard.defaultProps = {
+//   selectionMode: false,
+//   selected: false,
+//   topology: null,
+//   topologyId: null,
+//   size: "md",
+//   onSelectionChange: () => { }
+// };

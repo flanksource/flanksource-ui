@@ -48,11 +48,9 @@ export const HealthSummary = ({ component, iconSize }) => {
   return (
     <div>
       <div className="flex mb-1.5">
-        <Icon name={icon} className="mr-2" size={iconSize} />
-        <h5 className="text-xs linear-1.21rel">{name}</h5>
-      </div>
-      <div className="grid gap-2 grid-cols-node-stats">
-        {getChipsFromSummary(summary)}
+        <Icon name={icon} className="mr-1" size={iconSize} />
+        <h5 className="text-xs linear-1.21rel mr-1">{name}</h5>
+        <div className="flex gap-2">{getChipsFromSummary(summary)}</div>
       </div>
     </div>
   );

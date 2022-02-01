@@ -11,19 +11,20 @@ export function TopologyPage() {
   const [topology, setTopology] = useState(null);
   const { id } = useParams();
 
-  useEffect(() => {
+  const load = () => {
     setIsLoading(true);
     getTopology(id, id == null ? 0 : 3).then((res) => {
       setTopology(res.data);
       setIsLoading(false);
     });
-  }, [id]);
+  };
+  useEffect(load, [id]);
 
   if (isLoading || topology == null) {
     return <Loading text="Loading topology..." />;
   }
   return (
-    <SearchLayout title="Topology">
+    <SearchLayout title="Topology" onRefresh={load}>
       <div className="font-inter flex leading-1.21rel">
         <div className="flex-none flex-wrap space-x-2 space-y-2">
           {topology.map((item) => (

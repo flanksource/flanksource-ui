@@ -102,8 +102,8 @@ module.exports = {
       },
       width: {
         "med-card": "550px",
-        "med-card-left": "70%",
-        "med-card-right": "30%",
+        "med-card-left": "63%",
+        "med-card-right": "37%",
         "large-card-left": "36%",
         "large-card-right": "64%"
       },
