@@ -183,8 +183,6 @@ import vsphere from "./vsphere.svg";
 import world from "./world.svg";
 import www from "./www.svg";
 import dots from './dots-triple.svg'
-import chevronDoubleUp from './chevron-double-up.svg'
-import chevronDoubleDown from  './chevron-double-down.svg'
 
 export const Icons = {
 "acr": acr,
@@ -374,6 +372,4 @@ export const Icons = {
 "account": clock,
 "name": cluster,
 "region": timezone,
-"chevron-double-up": chevronDoubleUp,
-"chevron-double-down": chevronDoubleDown
 }
