@@ -43,13 +43,14 @@ export function IncidentListPage() {
               checked={enabled}
               onChange={setEnabled}
               className={cx(
-                "relative inline-flex items-center h-6 rounded-full w-11 transition ease-in-out duration-400",
+                "relative inline-flex h-6 w-11 rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none",
                 enabled ? "bg-dark-blue" : "bg-gray-200"
               )}
             >
+              <span className="sr-only">Use setting</span>
               <span
                 className={cx(
-                  "inline-block w-4 h-4 transform bg-white rounded-full",
+                  "absolute pointer-events-none inline-block w-4 h-4 transform transition bg-white rounded-full ease-in-out duration-200 top-1",
                   enabled ? "translate-x-6" : "translate-x-1"
                 )}
               />

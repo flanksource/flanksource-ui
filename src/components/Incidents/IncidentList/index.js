@@ -1,38 +1,53 @@
+import React, { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import cx from "clsx";
 import dayjs from "dayjs";
 import { v4 as uuid } from "uuid";
 import { Icon } from "../../Icon";
 import responders from "../../../data/responders.json";
-import { severityData } from "../../../data/severityData";
+
+const IncidentStatus = {
+  Open: "open",
+  Closed: "closed"
+};
+
+const IncidentStatusLabel = {
+  [IncidentStatus.Open]: "Open",
+  [IncidentStatus.Closed]: "Closed"
+};
+
+const severityData = {
+  low: { icon: "chevron-double-down", text: "Low" },
+  high: { icon: "chevron-double-up", text: "High" }
+};
 
 export function IncidentList({ list, ...rest }) {
   return (
-    <div className="border border-border-color rounded-md flex flex-col">
+    <div className="border border-border-color rounded-md">
       <table
-        className="table-fixed table-auto w-full relative"
+        className="table-fixed table-auto w-full"
         aria-label="table"
         {...rest}
       >
-        <thead className="rounded-md sticky top-16 z-20">
-          <tr className="border-b border-border-color uppercase bg-column-background rounded-t-md  items-center">
+        <thead className="rounded-md">
+          <tr className="border-b border-border-color uppercase bg-column-background rounded-t-md items-center">
             <th
-              className="px-6 py-3 text-medium-gray font-medium text-xs col-span-2 sticky top-0 text-left"
+              className="px-6 py-3 text-medium-gray font-medium text-xs col-span-2 text-left"
               colSpan={2}
             >
               Name
             </th>
-            <th className="py-3 text-medium-gray font-medium text-xs sticky top-0 text-left">
+            <th className="px-3 py-3 text-medium-gray font-medium text-xs text-left">
               Severity
             </th>
-            <th className="py-3 text-medium-gray font-medium text-xs sticky top-0 text-left">
+            <th className="px-3 py-3 text-medium-gray font-medium text-xs text-left">
               Status
             </th>
-            <th className="py-3 text-medium-gray font-medium text-xs sticky top-0 text-left">
+            <th className="px-3 py-3 text-medium-gray font-medium text-xs text-left">
               Age
             </th>
             <th
-              className="py-3 text-medium-gray font-medium text-xs col-span-2 sticky top-0 text-left"
+              className="px-3 py-3 text-medium-gray font-medium text-xs col-span-2 text-left"
               colSpan={2}
             >
               Responders
@@ -56,32 +71,31 @@ function IncidentItem({ incident }) {
   const navigateToIncidentDetails = (id) => {
     navigate(`/incidents/${id}`);
   };
-  const getSeverity = () => {
-    let data;
+
+  const severityInfo = useMemo(() => {
     switch (severity) {
       case 0:
-        data = severityData.low;
-        break;
+        return severityData.low;
       case 1:
-      case 2:
-      case 3:
-      case 4:
-      case 5:
-      case 6:
-      case 7:
-      case 8:
-      case 9:
-      case 10:
-        data = severityData.high;
-        break;
+        return severityData.high;
       default:
-        data = severityData.high;
+        return severityData.low;
     }
-    return data;
-  };
+  }, [severity]);
+
+  const statusLabel = useMemo(
+    () => IncidentStatusLabel[status] ?? status,
+    [status]
+  );
+
+  const statusColorClass = cx({
+    "bg-light-green": status === IncidentStatus.Open,
+    "bg-gray-100": status === IncidentStatus.Closed
+  });
+
   return (
     <tr
-      className=" items-center last:border-b-0 border-b cursor-pointer"
+      className="last:border-b-0 border-b cursor-pointer"
       onClick={() => navigateToIncidentDetails(id)}
     >
       <td
@@ -90,25 +104,27 @@ function IncidentItem({ incident }) {
       >
         {title}
       </td>
-      <td className="flex flex-row items-center py-3">
-        <Icon name={getSeverity().icon} />
-        <p className="text-darker-black text-sm leading-5 font-normal ml-2.5">
-          {getSeverity().text}
-        </p>
+      <td className="px-3 py-3">
+        <div className="flex flex-row items-center">
+          <Icon name={severityInfo.icon} />
+          <p className="text-darker-black text-sm leading-5 font-normal ml-2.5">
+            {severityInfo.text}
+          </p>
+        </div>
       </td>
-      <td className="py-4">
+      <td className="px-3 py-4">
         <button
           className={cx(
             "text-light-black text-xs leading-4 font-medium py-0.5 px-2.5 rounded-10px",
-            status === "open" ? "bg-light-green" : "bg-gray-100"
+            statusColorClass || "bg-blue-100"
           )}
           type="button"
         >
-          {status === "open" ? "Active" : "Resolved"}
+          {statusLabel}
         </button>
       </td>
-      <td className="text-medium-gray text-sm py-4">{age}</td>
-      <td className="text-sm py-4" colSpan={2}>
+      <td className="px-3 text-medium-gray text-sm py-4">{age}</td>
+      <td className="px-3 text-sm py-4" colSpan={2}>
         <div className="flex">
           {responders.map(({ image, name }) => (
             <div
@@ -116,7 +132,7 @@ function IncidentItem({ incident }) {
               key={name}
             >
               <img
-                className="h-6 w-6 rounded-full bg-gray-400 flex items-center justify-center ring-8 ring-white"
+                className="h-6 w-6 rounded-full bg-gray-400"
                 src={image}
                 alt=""
               />
