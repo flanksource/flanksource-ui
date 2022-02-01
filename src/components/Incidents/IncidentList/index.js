@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import cx from "clsx";
 import dayjs from "dayjs";
 import { v4 as uuid } from "uuid";
-import { Icon } from "../../Icon";
+import { BsChevronDoubleDown, BsChevronDoubleUp } from "react-icons/all";
 import responders from "../../../data/responders.json";
 
 const IncidentStatus = {
@@ -17,10 +17,9 @@ const IncidentStatusLabel = {
 };
 
 const severityData = {
-  low: { icon: "chevron-double-down", text: "Low" },
-  high: { icon: "chevron-double-up", text: "High" }
+  low: { icon: <BsChevronDoubleDown color="#EB391E" />, text: "Low" },
+  high: { icon: <BsChevronDoubleUp color="#EB391E" />, text: "High" }
 };
-
 export function IncidentList({ list, ...rest }) {
   return (
     <div className="border border-border-color rounded-md">
@@ -106,7 +105,7 @@ function IncidentItem({ incident }) {
       </td>
       <td className="px-3 py-3">
         <div className="flex flex-row items-center">
-          <Icon name={severityInfo.icon} />
+          {severityInfo.icon}
           <p className="text-darker-black text-sm leading-5 font-normal ml-2.5">
             {severityInfo.text}
           </p>
