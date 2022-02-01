@@ -6,21 +6,12 @@ import {
 
 const getSeverity = (incident) => {
   switch (incident.severity) {
-    case 0:
+    case 2:
       return { icon: <HiOutlineChevronDoubleUp color="red" />, text: "High" };
     case 1:
-    case 2:
-    case 3:
-    case 4:
-    case 5:
-    case 6:
-    case 7:
-    case 8:
-    case 9:
-    case 10:
       return { icon: <HiOutlineChevronUp color="red" />, text: "Medium" };
     default:
-      return { icon: <HiOutlineChevronDown color="green" />, text: "Medium" };
+      return { icon: <HiOutlineChevronDown color="green" />, text: "Low" };
   }
 };
 
