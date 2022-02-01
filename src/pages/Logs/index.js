@@ -66,7 +66,7 @@ export function LogsPage() {
   }, [isDirty]);
 
   return (
-    <div className="max-w-screen-xl mx-auto flex flex-col justify-center border-green-500">
+    <div className="max-w-screen-xl mx-auto flex flex-col justify-center">
       <div className="mt-4 w-full px-4">
         <div className="flex flex-row items-center justify-between mb-4">
           <h1 className="text-xl font-semibold">Logs</h1>

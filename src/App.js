@@ -1,5 +1,7 @@
-import { Routes, Route, BrowserRouter } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
+
 import { FolderIcon, HomeIcon } from "@heroicons/react/outline";
+
 import { ImLifebuoy } from "react-icons/im";
 import { AiFillHeart } from "react-icons/ai";
 import { FaProjectDiagram } from "react-icons/fa";
@@ -20,7 +22,7 @@ import { AuthContext } from "./context";
 import { Loading } from "./components/Loading";
 import { Toast, ToastContext } from "./components/Toast/toast";
 
-export const navigation = [
+const navigation = [
   {
     name: "Dashboard",
     href: "/",
@@ -44,6 +46,17 @@ export const navigation = [
   }
 ];
 
+export function Placeholder({ text }) {
+  return (
+    <div className="py-4">
+      <div className="h-96 border-4 border-dashed border-gray-200 rounded-lg">
+        {text}
+      </div>
+    </div>
+  );
+}
+
+
 export function App() {
   const [user, setUser] = useState();
   const [toasts, setToasts] = useState([]);
@@ -51,7 +64,7 @@ export function App() {
   const toast = (title, message) => {
     setToasts([{ title, message }]);
     setTimeout(() => setToasts([]), 5000);
-  }
+  };
 
   useEffect(() => {
     getUser()

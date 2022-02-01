@@ -49,6 +49,7 @@ const userNavigation = [
 export const routes = {
   examples: {
     name: "Examples",
+    exact: true,
     path: `/examples`,
     component: <Examples />
   },
@@ -62,68 +63,44 @@ export const routes = {
   },
   topology: {
     name: "Topology",
-    path: "/",
-    useSidebarLayout: "true",
-    component: <TopologyViewer url="/canary/api" />
-  },
-  topologySmall: {
-    name: "TopologySmall",
+    exact: true,
     path: `/topology-small`,
-    useSidebarLayout: "true",
-    component: <TopologyPageSmall url="/canary/api" />
+    component: <TopologyPageSmall />
   },
   topologyMedium: {
     name: "TopologyMedium",
+    exact: true,
     path: `/topology-medium`,
-    useSidebarLayout: "true",
-    component: <TopologyPageMedium url="/canary/api" />
+    component: <TopologyPageMedium />
   },
   topologyLarge: {
     name: "TopologyLarge",
+    exact: true,
     path: `/topology-large`,
-    useSidebarLayout: "true",
-    component: <TopologyPageLarge url="/canary/api" />
-  },
-  logs: {
-    name: "Logs",
-    path: `/logs`,
-    useSidebarLayout: "true",
-    component: <LogsPage />
-  },
-  traces: {
-    name: "Traces",
-    path: `/traces`,
-    useSidebarLayout: "true",
-    component: <TraceView />
-  },
-  metrics: {
-    name: "Metrics",
-    path: `/metrics`,
-    useSidebarLayout: "true",
-    component: <Placeholder text="metrics" />
+    component: <TopologyPageLarge />
   },
   canary: {
     name: "Canary",
-    path: `/health`,
-    useSidebarLayout: "true",
-    component: <CanaryPage url="/canary/api" />
+    exact: true,
+    path: `/`,
+    component: <CanaryPage />
   },
   heirarchyTest: {
     name: "HeirarchyTestPage",
+    exact: true,
     path: `/heirarchyTest`,
-    useSidebarLayout: "true",
     component: <HeirarchyTestPageOld />
   },
   incidentList: {
     name: "Incident List",
-    path: `/incidents`,
-    useSidebarLayout: "true",
+    exact: true,
+    path: `/incident`,
     component: <IncidentListPage />
   },
   incidentDetails: {
     name: "Incident Details",
-    path: `/incidents/:id`,
-    useSidebarLayout: "true",
+    exact: true,
+    path: `/incident/:id`,
     component: <IncidentDetailsPage />
   }
 };
