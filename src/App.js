@@ -1,28 +1,24 @@
-import { Routes, Route, Navigate } from "react-router-dom";
-
 import { FolderIcon, HomeIcon } from "@heroicons/react/outline";
-
-import { ImLifebuoy } from "react-icons/im";
 import { AiFillHeart } from "react-icons/ai";
 import { FaProjectDiagram } from "react-icons/fa";
 import { ImLifebuoy } from "react-icons/im";
 import { VscGraph } from "react-icons/vsc";
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { getUser } from "./api/auth";
 import { IncidentCreate } from "./components/Incidents/IncidentCreate";
 import SidebarLayout from "./components/Layout/sidebar";
 import { Loading } from "./components/Loading";
+import { ToastContext } from "./components/Toast/toast";
 import { TraceView } from "./components/Traces";
 import { AuthContext } from "./context";
 import {
   IncidentDetailsPage,
-  IncidentListPage, LogsPage,
+  IncidentListPage,
+  LogsPage,
+  CanaryPage,
   TopologyPage
 } from "./pages";
-import { getUser } from "./api/auth";
-import { AuthContext } from "./context";
-import { Loading } from "./components/Loading";
-import { Toast, ToastContext } from "./components/Toast/toast";
 
 const navigation = [
   {
@@ -99,7 +95,10 @@ export function App() {
           </Route>
 
           <Route path="examples" element={sidebar}>
-            <Route path="topology" element={<TopologyPage url="/canary/api" />} />
+            <Route
+              path="topology"
+              element={<TopologyPage url="/canary/api" />}
+            />
           </Route>
 
           <Route path="logs" element={sidebar}>

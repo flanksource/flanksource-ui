@@ -1,4 +1,4 @@
-import { Canary } from "../../components/Canary";
+import { Canary } from "../components/Canary";
 
 export function CanaryPage({ url = "/api" }) {
   return (
