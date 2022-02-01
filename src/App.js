@@ -5,17 +5,19 @@ import { FolderIcon, HomeIcon } from "@heroicons/react/outline";
 import { ImLifebuoy } from "react-icons/im";
 import { AiFillHeart } from "react-icons/ai";
 import { FaProjectDiagram } from "react-icons/fa";
+import { ImLifebuoy } from "react-icons/im";
 import { VscGraph } from "react-icons/vsc";
-import { useEffect, useState } from "react";
-import { TraceView } from "./components/Traces";
-import { CanaryPage } from "./pages/Examples/canary";
+import { Route, Routes } from "react-router-dom";
+import { getUser } from "./api/auth";
+import { IncidentCreate } from "./components/Incidents/IncidentCreate";
 import SidebarLayout from "./components/Layout/sidebar";
+import { Loading } from "./components/Loading";
+import { TraceView } from "./components/Traces";
+import { AuthContext } from "./context";
 import {
-  LogsPage,
-  TopologyPage,
   IncidentDetailsPage,
-  IncidentListPage,
-  IncidentCreatePage
+  IncidentListPage, LogsPage,
+  TopologyPage
 } from "./pages";
 import { getUser } from "./api/auth";
 import { AuthContext } from "./context";
@@ -78,14 +80,13 @@ export function App() {
 
   const sidebar = <SidebarLayout navigation={navigation} />;
   return (
-    <ToastContext.Provider value={{ toasts, setToasts, toast }}>
+    <ToastContext.Provider value={toast}>
       <AuthContext.Provider value={user}>
-        <Toast />
         <Routes path="/" element={sidebar}>
           <Route path="" element={<Navigate to="/topology" />} />
           <Route path="incidents" element={sidebar}>
             <Route path=":id" element={<IncidentDetailsPage />} />
-            <Route path="create" element={<IncidentCreatePage />} />
+            <Route path="create" element={<IncidentCreate />} />
             <Route index element={<IncidentListPage />} />
           </Route>
           <Route path="health" element={sidebar}>
@@ -98,10 +99,7 @@ export function App() {
           </Route>
 
           <Route path="examples" element={sidebar}>
-            <Route
-              path="topology"
-              element={<TopologyPage url="/canary/api" />}
-            />
+            <Route path="topology" element={<TopologyPage url="/canary/api" />} />
           </Route>
 
           <Route path="logs" element={sidebar}>
