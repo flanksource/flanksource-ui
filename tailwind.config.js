@@ -85,6 +85,11 @@ module.exports = {
       boxShadow: {
         card: "0px 10px 15px -3px rgba(0, 0, 0, 0.1), 0px 4px 6px -2px rgba(0, 0, 0, 0.05), 0px 0px 0px 1px rgba(0, 0, 0, 0.05)"
       },
+      maxHeight: {
+        large: "250px",
+        medium: "200px",
+        small: "125px"
+      },
       maxWidth: {
         full: "100%",
         "1/4": "25%",
