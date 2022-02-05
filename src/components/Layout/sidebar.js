@@ -2,6 +2,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
 import { Fragment, useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 import { getUser } from "../../api/auth";
 import { Icon } from "../Icon";
 
@@ -21,14 +22,7 @@ export default function SidebarLayout({ navigation }) {
   }
   return (
     <>
-      {/*
-        This example requires updating your template:
-
-        ```
-        <html class="h-full">
-        <body class="h-full">
-        ```
-      */}
+      <Toaster position="top-right" reverseOrder={false} />
       <div>
         <Transition.Root show={sidebarOpen} as={Fragment}>
           <Dialog
@@ -145,7 +139,7 @@ export default function SidebarLayout({ navigation }) {
           </div>
         </div>
         <Outlet />
-      </div >
+      </div>
     </>
   );
 }

@@ -19,7 +19,7 @@ import { createIncident } from "../../../api/services/incident";
 import { createHypothesis } from "../../../api/services/hypothesis";
 import { createEvidence } from "../../../api/services/evidence";
 import { useUser } from "../../../context";
-import { useToaster } from "../../Toast/toast";
+import { toastError } from "../../Toast/toast";
 
 const severityItems = {
   0: {
@@ -87,7 +87,6 @@ const validationSchema = yup
 
 export function IncidentCreate({ callback, evidence, ...rest }) {
   const navigate = useNavigate();
-  const { toast } = useToaster();
   const user = useUser();
   const location = useLocation();
   const {
@@ -149,8 +148,7 @@ export function IncidentCreate({ callback, evidence, ...rest }) {
           }
       })
       .catch((err) => {
-        console.error(err);
-        toast("Error", err.message);
+        toastError(err.message);
       });
   };
 
