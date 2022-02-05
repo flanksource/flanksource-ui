@@ -1,10 +1,10 @@
 import { IncidentCreate } from "../../components/Incidents/IncidentCreate";
-import { MinimalLayout } from "../../components/Layout";
+import { SearchLayout } from "../../components/Layout";
 
 export function IncidentCreatePage() {
   return (
-    <MinimalLayout title="Create Incident">
+    <SearchLayout title="Create Incident">
       <IncidentCreate />
-    </MinimalLayout>
+    </SearchLayout>
   );
 }
