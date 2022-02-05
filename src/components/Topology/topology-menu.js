@@ -3,12 +3,14 @@ import PropTypes from "prop-types";
 import { Menu, Transition } from "@headlessui/react";
 import { DotsVerticalIcon } from "@heroicons/react/outline";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import { BiHide, BiZoomIn } from "react-icons/bi";
+import { MdAlarmAdd, MdTableRows } from "react-icons/md";
 
 export const TopologyDropdownMenu = ({ topology }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const viewLogs = () => {
-    navigate(`/logs?topology=${topology.id}`);
+    navigate(`/logs?topologyId=${topology.id}`);
   };
 
   return (
@@ -32,7 +34,8 @@ export const TopologyDropdownMenu = ({ topology }) => {
               type="button"
               className="flex items-center w-full text-gray-700 hover:bg-gray-200"
             >
-              <span className="py-3 pl-4 pr-3 text-sm block">View Logs</span>
+              <MdTableRows className="ml-3" />
+              <span className="py-3 pl-2 pr-3 text-sm block">View Logs</span>
             </button>
           </Menu.Item>
           <Menu.Item>
@@ -45,7 +48,8 @@ export const TopologyDropdownMenu = ({ topology }) => {
                 evidence: { id: topology.id }
               }}
             >
-              <span className="py-3 pl-4 pr-3 text-sm block">
+              <MdAlarmAdd className="ml-3" />
+              <span className="py-3 pl-2 pr-3 text-sm block">
                 Create Incident
               </span>
             </Link>
@@ -56,7 +60,19 @@ export const TopologyDropdownMenu = ({ topology }) => {
               to={`/topology/${topology.id}`}
               className="flex items-center w-full text-gray-700 hover:bg-gray-200"
             >
-              <span className="py-3 pl-4 pr-3 text-sm block">Zoom In</span>
+              <BiZoomIn className="ml-3" />
+              <span className="py-3 pl-2 pr-3 text-sm block">Zoom In</span>
+            </Link>
+          </Menu.Item>
+
+          <Menu.Item>
+            <Link
+              to={`/topology/${topology.id}`}
+              className="flex items-center w-full text-gray-700 hover:bg-gray-200"
+            >
+              {" "}
+              <BiHide className="ml-3" />
+              <span className="py-3 pl-2 pr-3 text-sm block">Hide</span>
             </Link>
           </Menu.Item>
         </Menu.Items>

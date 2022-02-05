@@ -1,6 +1,17 @@
-import { isArray, flattenDepth } from "lodash";
+import { flattenDepth, isArray } from "lodash";
+import { stringify } from "qs";
 import { CanaryChecker } from "../axios";
 import { resolve } from "../resolve";
+
+function compareStatus(a, b) {
+  if (a.status === b.status) {
+    return 0;
+  }
+  if (a.status === "unhealthy") {
+    return -1;
+  }
+  return 1;
+}
 
 function unroll(topology, depth) {
   if (topology == null) {
@@ -11,28 +22,33 @@ function unroll(topology, depth) {
     return topology;
   }
 
-  const items = [];
+  let items = [];
 
   if (isArray(topology)) {
-    items.push(topology);
+    if (topology.type !== "summary") {
+      items.push(topology);
+    }
 
     for (const item of topology) {
       items.push(...unroll(item.components, depth - 1));
     }
   }
+  items.sort((a, b) => {
+    const status = compareStatus(a, b);
+    if (status !== 0) {
+      return status;
+    }
+    return a.name > b.name;
+  });
+
   return flattenDepth(items, 3);
 }
 
-export const getTopology = async (id, depth = 3) => {
-  let query = "";
-  if (id != null) {
-    query = `?id=eq.${id}`;
-  }
-  return resolve(
-    CanaryChecker.get(`/api/topology${query}`)
-      .then((results) => ({ data: unroll(results.data, depth) }))
-      .catch((e) => console.error("failed", e))
-  );
+export const getTopology = async (params) => {
+  const query = stringify(params);
+  return CanaryChecker.get(`/api/topology?${query}`).then((results) => ({
+    data: unroll(results.data, query == "" ? 0 : 2, false)
+  }));
 };
 
 export const getCanaries = async () => resolve(CanaryChecker.get("/api"));

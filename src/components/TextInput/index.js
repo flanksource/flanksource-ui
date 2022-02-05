@@ -6,6 +6,7 @@ export function TextInput({
   className,
   labelClassName,
   onEnter,
+  value,
   type = "text",
   ...rest
 }) {
@@ -21,6 +22,7 @@ export function TextInput({
       )}
       <input
         type={type}
+        value={value || ""}
         name={id}
         id={id}
         onKeyUp={(e) => {
