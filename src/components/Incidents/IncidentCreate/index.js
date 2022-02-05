@@ -1,45 +1,44 @@
+import { yupResolver } from "@hookform/resolvers/yup";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
-import * as yup from "yup";
-import { v4 as uuidv4 } from "uuid";
-import { yupResolver } from "@hookform/resolvers/yup";
-import {
-  BsChevronDown,
-  BsChevronUp,
-  BsDot,
-  BsExclamation
-} from "react-icons/bs";
-import { RiLightbulbFill } from "react-icons/ri";
 import { AiOutlineClose } from "react-icons/ai";
-
-import { useNavigate, useLocation } from "react-router-dom";
-import { TextInput } from "../../TextInput";
-import { Dropdown } from "../../Dropdown";
-import { createIncident } from "../../../api/services/incident";
-import { createHypothesis } from "../../../api/services/hypothesis";
+import { BsExclamation } from "react-icons/bs";
+import {
+  HiOutlineChevronDoubleUp,
+  HiOutlineChevronDown,
+  HiOutlineChevronUp
+} from "react-icons/hi";
+import { RiLightbulbFill } from "react-icons/ri";
+import { useLocation, useNavigate } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid";
+import * as yup from "yup";
 import { createEvidence } from "../../../api/services/evidence";
+import { createHypothesis } from "../../../api/services/hypothesis";
+import { createIncident } from "../../../api/services/incident";
 import { useUser } from "../../../context";
+import { Dropdown } from "../../Dropdown";
+import { TextInput } from "../../TextInput";
 import { toastError } from "../../Toast/toast";
 
 const severityItems = {
   0: {
     id: "dropdown-severity-low",
     name: "low",
-    icon: <BsChevronDown />,
+    icon: <HiOutlineChevronDown color="green" />,
     description: "Low",
     value: 0
   },
   1: {
     id: "dropdown-severity-medium",
     name: "medium",
-    icon: <BsDot />,
+    icon: <HiOutlineChevronUp color="red" />,
     description: "Medium",
     value: 1
   },
   2: {
     id: "dropdown-severity-high",
     name: "high",
-    icon: <BsChevronUp />,
+    icon: <HiOutlineChevronDoubleUp color="red" />,
     description: "High",
     value: 2
   }
