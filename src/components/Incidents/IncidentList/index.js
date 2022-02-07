@@ -5,6 +5,7 @@ import dayjs from "dayjs";
 import { v4 as uuid } from "uuid";
 import responders from "../../../data/responders.json";
 import { IncidentSeverity } from "../incident-severity";
+import { IncidentStatus } from "../incident-status";
 
 export function IncidentList({ list, ...rest }) {
   return (
@@ -49,15 +50,7 @@ export function IncidentList({ list, ...rest }) {
   );
 }
 
-const IncidentStatus = {
-  Open: "open",
-  Closed: "closed"
-};
 
-const IncidentStatusLabel = {
-  [IncidentStatus.Open]: "Open",
-  [IncidentStatus.Closed]: "Closed"
-};
 
 function IncidentItem({ incident }) {
   const { title, id, created_at: createdAt, status } = incident;
@@ -66,16 +59,6 @@ function IncidentItem({ incident }) {
   const navigateToIncidentDetails = (id) => {
     navigate(`/incidents/${id}`);
   };
-  const statusLabel = useMemo(
-    () => IncidentStatusLabel[status] ?? status,
-    [status]
-  );
-
-  const statusColorClass = cx({
-    "bg-light-green": status === IncidentStatus.Open,
-    "bg-gray-100": status === IncidentStatus.Closed
-  });
-
   return (
     <tr
       className="last:border-b-0 border-b cursor-pointer"
@@ -90,16 +73,8 @@ function IncidentItem({ incident }) {
       <td className="flex flex-row items-center py-3">
         <IncidentSeverity incident={incident} />
       </td>
-      <td className="px-3 py-4">
-        <button
-          className={cx(
-            "text-light-black text-xs leading-4 font-medium py-0.5 px-2.5 rounded-10px",
-            statusColorClass || "bg-blue-100"
-          )}
-          type="button"
-        >
-          {statusLabel}
-        </button>
+      <td className="px-3 py-4 shrink-0">
+        <IncidentStatus incident={incident} />
       </td>
       <td className="px-3 text-medium-gray text-sm py-4">{age}</td>
       <td className="px-3 text-sm py-4" colSpan={2}>

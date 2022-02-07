@@ -16,13 +16,11 @@ export const createComment = async (
   comment,
   params
 ) =>
-  resolve(
-    IncidentCommander.post(`/comment`, {
-      id: commentId,
-      created_by: user.id,
-      incident_id: incidentId,
-      hypothesis_id: hypothesisId,
-      comment,
-      ...params
-    })
-  );
+  IncidentCommander.post(`/comment`, {
+    id: commentId,
+    created_by: user.id,
+    incident_id: incidentId,
+    hypothesis_id: hypothesisId,
+    comment,
+    ...params
+  });

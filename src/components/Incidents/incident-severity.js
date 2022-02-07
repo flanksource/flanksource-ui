@@ -19,12 +19,8 @@ export function IncidentSeverity({ incident, iconOnly }) {
   const severity = getSeverity(incident);
   return (
     <>
-      {severity.icon}
-      {!iconOnly && (
-        <p className="text-darker-black text-sm leading-5 font-normal ml-2.5">
-          {severity.text}
-        </p>
-      )}
+      <div className="my-auto">{severity.icon}</div>
+      {!iconOnly && <p className="leading-5  ml-1.5">{severity.text}</p>}
     </>
   );
 }

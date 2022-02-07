@@ -146,9 +146,7 @@ export function IncidentCreate({ callback, evidence, ...rest }) {
             navigate(`/incidents/${created.data[0].id}`, { replace: true });
           }
       })
-      .catch((err) => {
-        toastError(err.message);
-      });
+      .catch(toastError);
   };
 
   return (
