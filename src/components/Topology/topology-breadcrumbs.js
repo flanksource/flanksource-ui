@@ -1,6 +1,6 @@
-import { isEmpty } from "lodash";
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { isEmpty } from "lodash";
 import { getTopology } from "../../api/services/topology";
 import { Icon } from "../Icon";
 import { Loading } from "../Loading";
@@ -8,7 +8,7 @@ import { Loading } from "../Loading";
 function isTopologyEmpty(topology) {
   return (
     topology == null ||
-    (isEmpty(topology.id) && topology.components.length === 0)
+    (isEmpty(topology.id) && topology.components.length == 0)
   );
 }
 
@@ -46,8 +46,11 @@ export function TopologyBreadcrumbs({ topology, topologyId, depth }) {
           </>
         )} */}
       &nbsp;/&nbsp;
-      <Link to={`/topology/${_topology.id}`} className="flex flex-nowrap">
-        <Icon name={_topology.icon} size="xl" />
+      <Link
+        to={`/topology/${_topology.id}`}
+        className="flex flex-nowrap hover:text-gray-500 my-auto "
+      >
+        <Icon name={_topology.icon} size="xl" className="mr-1" />
         {_topology.name || _topology.title}
       </Link>
     </>

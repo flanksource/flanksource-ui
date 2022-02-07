@@ -8,7 +8,6 @@ import { Loading } from "../components/Loading";
 import { toastError } from "../components/Toast/toast";
 import { TopologyCard } from "../components/Topology";
 import { TopologyBreadcrumbs } from "../components/Topology/topology-breadcrumbs";
-
 export function TopologyPage() {
   // const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
@@ -37,18 +36,13 @@ export function TopologyPage() {
 
         const topology = filter(
           res.data,
-          (i) => i.name != null || i.title != null
+          (i) => (i.name != null || i.title != null) && i.type !== "summary"
         );
         setTopology(topology);
-        return null;
       })
       .catch((e) => {
         setIsLoading(false);
-        if (e.response && e.response.data.error) {
-          toastError(e.response.data.error);
-        } else {
-          toastError(e);
-        }
+        toastError(e);
       });
   };
   useEffect(() => {
@@ -65,8 +59,8 @@ export function TopologyPage() {
   return (
     <SearchLayout
       title={
-        <div className="flex text-xl  ">
-          <Link to="/topology">Topology</Link>
+        <div className="flex text-xl text-gray-400  ">
+          <Link to="/topology" className="hover:text-gray-500 ">Topology</Link>
           <TopologyBreadcrumbs topology={root} depth={3} />
         </div>
       }

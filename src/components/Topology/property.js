@@ -11,18 +11,28 @@ export const FormatProperty = ({ property, short = false }) => {
   }
   let { text } = property;
 
+  if (property.type === "url") {
+    return `<a href="${property.text}" target="_blank">${property.text}</a>`;
+  }
+
   if (property.value != null) {
-    if (property.unit && property.unit.startsWith("milli")) {
-      text = (property.value / 1000).toFixed(2);
+    if (property.max != null) {
+      const percent = ((property.value / property.max) * 100).toFixed(0);
+      text = `${percent}%`;
+      if (percent > 70) {
+        text = <span className="text-red-500">{text}</span>;
+      }
+    } else if (property.unit && property.unit.startsWith("milli")) {
+      text = (property.value / 1000).toFixed;
     } else if (property.unit === "bytes") {
-      text = formatBytes(property.value);
+      text = formatBytes(property.value, 0);
     }
 
     if (!short && property.max != null) {
       if (property.unit.startsWith("milli")) {
         text += ` of ${(property.max / 1000).toFixed(2)}`;
       } else if (property.unit === "bytes") {
-        text += ` of ${formatBytes(property.max)}`;
+        text += ` of ${formatBytes(property.max, 0)}`;
       }
     }
   }
@@ -35,12 +45,17 @@ export const FormatProperty = ({ property, short = false }) => {
 export const Property = ({ property, className }) => {
   const { name, icon, color } = property;
 
+  if (isEmpty(property.text) && isEmpty(property.value)) {
+    return null;
+  }
   return (
     <div className={cx("flex", { [className]: className })}>
-      <Icon name={icon} className="mr-2.5" size="2xsi" />
-      <span className="text-xs overflow-hidden truncate text-gray-400 pr-1">
-        {name}:
-      </span>
+      <Icon name={icon} className="mr-1" size="2xsi" />
+      {!isEmpty(name) && (
+        <span className="text-xs overflow-hidden truncate text-gray-400 pr-1">
+          {name}:
+        </span>
+      )}
       <span className="text-xs overflow-hidden truncate">
         <FormatProperty property={property} />
       </span>

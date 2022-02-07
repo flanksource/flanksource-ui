@@ -1,4 +1,4 @@
-import { flattenDepth, isArray } from "lodash";
+import { flattenDepth, isArray, isEmpty } from "lodash";
 import { stringify } from "qs";
 import { CanaryChecker } from "../axios";
 import { resolve } from "../resolve";
@@ -22,7 +22,7 @@ function unroll(topology, depth) {
     return topology;
   }
 
-  let items = [];
+  const items = [];
 
   if (isArray(topology)) {
     if (topology.type !== "summary") {
@@ -41,7 +41,15 @@ function unroll(topology, depth) {
     return a.name > b.name;
   });
 
-  return flattenDepth(items, 3);
+  const flattened = flattenDepth(items, 3);
+  if (
+    isEmpty(flattened.id) &&
+    flattened.components != null &&
+    flattened.components.length === 1
+  ) {
+    return flattened.components[0];
+  }
+  return flattened;
 }
 
 export const getTopology = async (params) => {
