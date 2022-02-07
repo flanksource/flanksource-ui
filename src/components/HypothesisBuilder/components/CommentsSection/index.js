@@ -42,11 +42,8 @@ export function CommentsSection({
             disabled={isLoading || !commentTextValue}
             type="button"
             onClick={handleComment}
-            className={`${
-              isLoading || !commentTextValue
-                ? "bg-gray-200  text-gray-400"
-                : "bg-indigo-100 hover:bg-indigo-200 text-indigo-700"
-            } inline-flex items-center px-2.5 py-1.5 mb-1 border border-transparent text-xs font-medium rounded   focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`}
+            className={`${isLoading || !commentTextValue ? "btn-disabled" : "btn-primary"
+              }`}
           >
             Comment
           </button>
