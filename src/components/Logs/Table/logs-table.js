@@ -4,6 +4,7 @@ import DOMPurify from "dompurify";
 import { isArray } from "lodash";
 import dayjs from "dayjs";
 import { useTable } from "react-table";
+import { v4 as uuidv4 } from "uuid";
 
 export function LogsTable({ logs, actions = [] }) {
   if (logs != null && !isArray(logs)) {
@@ -25,17 +26,44 @@ export function LogsTable({ logs, actions = [] }) {
     } else {
       setSelectedList([...selectedList].filter((obj) => log !== obj));
     }
+    console.log(selectedList);
   };
-  console.log(logs);
   const columns = useMemo(
     () => [
       {
-        Header: "Name",
-        accessor: "timestamp"
+        Header: "Time",
+        accessor: "timestamp",
+        Cell: ({ cell, cell: { value, row } }) => (
+          <div className="flex">
+            {/* {actions.length >= 0 && ( */}
+            <div className="border-gray-100 ">
+              <input
+                type="checkbox"
+                className="focus:ring-indigo-400 h-4 w-4 text-indigo-600 border-gray-300 rounded mr-2"
+                onChange={(e) => {
+                  handleSelect(row.values, e.target.checked);
+                }}
+                value={selectedList.indexOf(row.values) >= 0}
+              />
+            </div>
+            {/* )} */}
+
+            {dayjs(value).format("MMM DD, YYYY HH:mm.ss.mmm")}
+          </div>
+        )
       },
       {
-        Header: "Info",
-        accessor: "message"
+        Header: "Message",
+        accessor: "message",
+        Cell: ({ cell: { value } }) => (
+          <div
+            className=""
+            // eslint-disable-next-line react/no-danger
+            dangerouslySetInnerHTML={{
+              __html: DOMPurify.sanitize(convert.toHtml(value || ""))
+            }}
+          />
+        )
       }
     ],
     []
@@ -46,11 +74,10 @@ export function LogsTable({ logs, actions = [] }) {
       columns,
       data
     });
-  console.log(logs);
   return (
     <>
       <div className="mx-auto flex flex-col justify-center relative">
-        {actions.length > 0 && (
+        {actions.length >= 0 && (
           <div
             className="flex justify-between items-center overflow-y-hidden mb-4"
             style={{
@@ -86,28 +113,48 @@ export function LogsTable({ logs, actions = [] }) {
         <div className="pb-12">
           <div className="flex flex-col">
             <div className="align-middle inline-block min-w-full">
-              <table {...getTableProps()}>
-                <thead>
+              <table
+                className="w-full border rounded-t-6px"
+                {...getTableProps()}
+              >
+                <thead className="bg-lightest-gray border rounded-t-6px">
                   {headerGroups.map((headerGroup) => (
-                    <tr {...headerGroup.getHeaderGroupProps()}>
+                    <tr key={uuidv4()} {...headerGroup.getHeaderGroupProps()}>
                       {headerGroup.headers.map((column) => (
-                        <th {...column.getHeaderProps()}>
+                        <th
+                          key={uuidv4()}
+                          className="pl-6 text-medium-gray text-xs leading-4 font-medium tracking-wider uppercase text-left"
+                          {...column.getHeaderProps()}
+                        >
                           {column.render("Header")}
                         </th>
                       ))}
+                      <th className="py-0.75 text-right">
+                        <button
+                          className="bg-dark-blue text-white text-sm leading-4 font-medium px-3.5 py-2 mr-2 rounded-6px"
+                          type="button"
+                        >
+                          Create new hypothesis
+                        </button>
+                      </th>
                     </tr>
                   ))}
                 </thead>
                 <tbody {...getTableBodyProps()}>
-                  {rows.map((row, i) => {
+                  {rows.map((row) => {
                     prepareRow(row);
                     return (
-                      <tr {...row.getRowProps()}>
+                      <tr key={uuidv4()} {...row.getRowProps()}>
                         {row.cells.map((cell) => (
-                          <td {...cell.getCellProps()}>
+                          <td
+                            key={uuidv4()}
+                            className="pl-6 border-b py-4 text-darker-black text-sm text-left"
+                            {...cell.getCellProps()}
+                          >
                             {cell.render("Cell")}
                           </td>
                         ))}
+                        <td className="pl-6 border-b" />
                       </tr>
                     );
                   })}
