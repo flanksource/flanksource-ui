@@ -4,8 +4,16 @@ import DOMPurify from "dompurify";
 import { isArray } from "lodash";
 
 export function LogsTable({ logs, actions = [] }) {
-  if (!isArray(logs)) {
-    logs = JSON.parse(logs);
+  if (logs != null && !isArray(logs)) {
+    try {
+      logs = JSON.parse(logs);
+    } catch (e) {
+      console.error("cannot parse logs", logs);
+      logs = [];
+    }
+  }
+  if (logs == null) {
+    logs = [];
   }
   const [selectedList, setSelectedList] = useState([]);
   const convert = new Convert();
@@ -41,11 +49,10 @@ export function LogsTable({ logs, actions = [] }) {
                 type="button"
                 disabled={!(selectedList.length > 0)}
                 onClick={() => action.handler(selectedList)}
-                className={`${
-                  selectedList.length > 0
-                    ? "text-indigo-700 bg-indigo-100 hover:bg-indigo-200"
-                    : "text-gray-400 bg-gray-200"
-                } inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded`}
+                className={`${selectedList.length > 0
+                  ? "text-indigo-700 bg-indigo-100 hover:bg-indigo-200"
+                  : "text-gray-400 bg-gray-200"
+                  } inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded`}
               >
                 {action.label}
               </button>

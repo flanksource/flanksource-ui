@@ -27,7 +27,7 @@ export function HypothesisNode({
   api
 }) {
   const { handleNodeChange, handleAddNode, tree, setTree } = treeFunctions;
-  const user = useUser()
+  const user = useUser();
   const [editMode, setEditMode] = useState(
     !node?.title.length > 0 ?? defaultEditMode
   );
@@ -45,10 +45,9 @@ export function HypothesisNode({
   return (
     <div
       key={node.id}
-      className="w-full flex border border-t-0 border-gray-300 last:mb-1.5 first:border-t first:rounded-tl-md last:rounded-bl-md"
+      className="w-full flex last:mb-1.5 "
       style={{
         padding: "6px 0 2px 5px",
-        borderRightWidth: isRoot ? "1px" : "0",
         animation: !isRoot && "0.8s ease-out 0s 1 highlightOnLoad"
       }}
     >
@@ -74,6 +73,8 @@ export function HypothesisNode({
             <div
               className={`ml-0.5 ${!node.title && "text-gray-400"}`}
               style={{ marginTop: "1px", marginBottom: "1px" }}
+              onClick={handleOpenModal}
+              role="button"
             >
               <button
                 className="text-left hover:text-indigo-800"
@@ -158,22 +159,6 @@ export function HypothesisNode({
                     className="mr-2"
                   />
                 )}
-
-                <>
-                  {(depthLimit > parentArray?.length ||
-                    node.evidence?.length > 0 ||
-                    node.links?.length > 0 ||
-                    node.comments?.length > 0) && (
-                      <Separator color="rgba(209, 213, 219)" className="mr-2" />
-                    )}
-
-                  <MiniButton
-                    className="rounded-md border border-gray-300 text-gray-500"
-                    onClick={handleOpenModal}
-                  >
-                    <span className="text-xs">Details</span>
-                  </MiniButton>
-                </>
               </>
             )}
           </div>

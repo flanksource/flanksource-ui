@@ -18,6 +18,7 @@ import {
 } from "../../../../api/services/comments";
 import { getAllEvidenceByHypothesis } from "../../../../api/services/evidence";
 import { useUser } from "../../../../context";
+import { toastError } from "../../../Toast/toast";
 
 const statusItems = {
   ...Object.values(hypothesisStatuses).reduce((acc, obj) => {
@@ -66,9 +67,11 @@ export function HypothesisDetails({ nodePath, tree, setTree, api, ...rest }) {
       .catch((err) => console.error(err));
 
   const handleComment = (value) =>
-    createComment(user, uuidv4(), node.incident_id, node.id, value).then(() => {
-      fetchComments(node.id);
-    });
+    createComment(user, uuidv4(), node.incident_id, node.id, value)
+      .catch(toastError)
+      .then(() => {
+        fetchComments(node.id);
+      });
 
   useEffect(() => {
     fetchEvidence(node.id);
@@ -100,10 +103,17 @@ export function HypothesisDetails({ nodePath, tree, setTree, api, ...rest }) {
   return (
     <>
       <div className={`py-7 ${rest.className || ""}`} {...rest}>
-        <div className="mt-1 mr-2 mb-2 pr-8">
+        <div className="mt-1 mr-2 mb-2 pr-8 flex flex-nowrap">
+          <Dropdown
+            control={control}
+            name="status"
+            className="mb-4 w-40 mr-2"
+            items={statusItems}
+          />
+          {/* <Badge size="sm" text={badgeMap[nodePath.length - 1]} className="mr-2" /> */}
           <EditableText
             value={node.title}
-            sharedClassName="text-xl font-medium text-gray-800"
+            sharedClassName="text-xl font-medium text-gray-800 grow"
             onChange={(e) => {
               handleApiUpdate("title", e.target.value);
               handleCurrentNodeValueChange("title", e.target.value);
@@ -111,18 +121,6 @@ export function HypothesisDetails({ nodePath, tree, setTree, api, ...rest }) {
           />
         </div>
 
-        <div className="mb-6">
-          <Badge size="sm" text={badgeMap[nodePath.length - 1]} />
-        </div>
-        <div className="mb-6">
-          <HypothesisTitle>Hypothesis Status</HypothesisTitle>
-          <Dropdown
-            control={control}
-            name="status"
-            className="mb-4 w-72"
-            items={statusItems}
-          />
-        </div>
         <div className="mb-6">
           <EvidenceSection
             hypothesis={node}
