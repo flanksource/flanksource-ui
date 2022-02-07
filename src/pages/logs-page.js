@@ -17,8 +17,14 @@ export function LogsPage() {
   const [topology, setTopology] = useState(null);
   useEffect(() => {
     if (topologyId != null && topology == null) {
-      getTopology(topologyId).then((topology) => {
-        setTopology(topology.data[0]);
+      getTopology({ id: topologyId }).then((topology) => {
+        let result = topology.data[0]
+
+        if (isEmpty(result.id) && result.components != null && result.components.length == 1) {
+          setTopology(result.components[0])
+        } else {
+          setTopology(result);
+        }
       });
     }
   });
@@ -36,10 +42,22 @@ export function LogsPage() {
 
   const [logs, setLogs] = useState([]);
   const loadLogs = () => {
-    console.log("search", query);
+
+    if (topology == null) {
+      setLogsIsLoading(false);
+      return null;
+    }
     saveQueryParams();
     setLogsIsLoading(true);
-    getLogs().then((res) => {
+
+    const queryBody = {
+      query,
+      type: topology.type,
+      id: topology.external_id
+    };
+    console.log("search", queryBody);
+
+    getLogs(queryBody).then((res) => {
       if (res.data != null) {
         setLogs(res.data.results);
       }
@@ -49,7 +67,7 @@ export function LogsPage() {
 
   useEffect(() => {
     loadLogs();
-  }, []);
+  }, [topology]);
 
   if (!isEmpty(topologyId) && topology == null) {
     return <Loading text={`Loading topology ${topologyId}`} />;
