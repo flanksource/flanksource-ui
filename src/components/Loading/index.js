@@ -1,12 +1,8 @@
+import { Oval } from "react-loading-icons";
 export function Loading({ text = "Loading..." }) {
   return (
     <div className="flex justify-center items-center">
-      <div
-        className="spinner-border animate-spin inline-block w-6 h-6 border-2 rounded-full"
-        role="status"
-      >
-        <span className="visually-hidden"> </span>
-      </div>
+      <Oval stroke="gray" height="1.5em" />
       <span className="text-sm ml-3">{text}</span>
     </div>
   );
