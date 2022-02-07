@@ -10,7 +10,7 @@ export function UserProfile() {
     { name: "Sign out", href: "#" }
   ];
   return (
-    <Menu as="div" className="ml-3 relative">
+    <Menu as="div" className="ml-3 relative flex-shrink-0">
       <div>
         <Menu.Button className="max-w-xs flex items-center text-sm rounded-full">
           <span className="sr-only">Open user menu</span>
