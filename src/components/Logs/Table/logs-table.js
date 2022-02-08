@@ -5,6 +5,9 @@ import { isArray } from "lodash";
 import dayjs from "dayjs";
 import { useTable } from "react-table";
 import { v4 as uuidv4 } from "uuid";
+import { Menu } from "@headlessui/react";
+import { Modal } from "../../Modal";
+import { LogsDropdown } from "./LogsDropdown";
 
 export function LogsTable({ logs, actions = [] }) {
   if (logs != null && !isArray(logs)) {
@@ -19,6 +22,7 @@ export function LogsTable({ logs, actions = [] }) {
     logs = [];
   }
   const [selectedList, setSelectedList] = useState([]);
+  const [isModal, setIsModal] = useState(false);
   const convert = new Convert();
   const handleSelect = (log, selected) => {
     if (selected) {
@@ -26,16 +30,14 @@ export function LogsTable({ logs, actions = [] }) {
     } else {
       setSelectedList([...selectedList].filter((obj) => log !== obj));
     }
-    console.log(selectedList);
   };
   const columns = useMemo(
     () => [
       {
         Header: "Time",
         accessor: "timestamp",
-        Cell: ({ cell, cell: { value, row } }) => (
+        Cell: ({ cell: { value, row } }) => (
           <div className="flex">
-            {/* {actions.length >= 0 && ( */}
             <div className="border-gray-100 ">
               <input
                 type="checkbox"
@@ -43,10 +45,9 @@ export function LogsTable({ logs, actions = [] }) {
                 onChange={(e) => {
                   handleSelect(row.values, e.target.checked);
                 }}
-                value={selectedList.indexOf(row.values) >= 0}
+                checked={selectedList.indexOf(row.values) >= 0}
               />
             </div>
-            {/* )} */}
 
             {dayjs(value).format("MMM DD, YYYY HH:mm.ss.mmm")}
           </div>
@@ -133,6 +134,7 @@ export function LogsTable({ logs, actions = [] }) {
                         <button
                           className="bg-dark-blue text-white text-sm leading-4 font-medium px-3.5 py-2 mr-2 rounded-6px"
                           type="button"
+                          onClick={() => setIsModal(true)}
                         >
                           Create new hypothesis
                         </button>
@@ -160,6 +162,50 @@ export function LogsTable({ logs, actions = [] }) {
                   })}
                 </tbody>
               </table>
+              <Modal
+                open={isModal}
+                onClose={() => setIsModal(false)}
+                cardClass="w-full"
+                contentClass="h-full p-10"
+                cardStyle={{
+                  maxWidth: "392px"
+                }}
+                closeButtonStyle={{ padding: "2.2rem 2.1rem 0 0" }}
+                hideActions
+              >
+                <div className="">
+                  <h3 className="pb-4 text-darkest-gray text-2xl font-semibold">
+                    Сhoose incident
+                  </h3>
+                  <div className="my-4">
+                    <LogsDropdown
+                      buttonTitle="Сhoose incident"
+                      items={[
+                        "Add new incident",
+                        "Arlene Mccoy",
+                        "Devon Webb",
+                        "Tom Cook"
+                      ]}
+                    />
+                  </div>
+                  <div className="my-4">
+                    <LogsDropdown
+                      buttonTitle="Choose hypothesis"
+                      items={[
+                        "Add new incident",
+                        "Arlene Mccoy",
+                        "Devon Webb",
+                        "Tom Cook"
+                      ]}
+                    />
+                  </div>
+                  <div className="w-full flex items-end ">
+                    <button className="content-end" type="button">
+                      Add
+                    </button>
+                  </div>
+                </div>
+              </Modal>
               {/* <table */}
               {/*  className="min-w-full divide-y divide-gray-300 border-separate" */}
               {/*  style={{ borderSpacing: "0px" }} */}
