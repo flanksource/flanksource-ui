@@ -18,6 +18,7 @@ import { Loading } from "../components/Loading";
 import { LogsViewer } from "../components/Logs";
 import { TextInput } from "../components/TextInput";
 import { timeRanges } from "../components/Dropdown/TimeRange";
+import { RefreshButton } from "../components/RefreshButton";
 
 export const logTypes = [
   {
@@ -127,7 +128,6 @@ export function LogsPage() {
           </h1>
         </div>
       }
-      onRefresh={() => loadLogs()}
       extra={
         <>
           <Dropdown
@@ -135,12 +135,6 @@ export function LogsPage() {
             name="type"
             className="w-36 mr-2 flex-shrink-0"
             items={logTypes}
-          />
-          <Dropdown
-            control={control}
-            name="start"
-            className="w-40 mr-2 flex-shrink-0"
-            items={timeRanges}
           />
           <div className="mr-2 w-full relative rounded-md shadow-sm">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
@@ -168,6 +162,13 @@ export function LogsPage() {
               value={searchID}
             />
           </div>
+          <RefreshButton onClick={() => loadLogs()} />
+          <Dropdown
+            control={control}
+            name="start"
+            className="w-40 mr-2 flex-shrink-0"
+            items={timeRanges}
+          />
 
           <div className="mr-2 w-full relative rounded-md shadow-sm">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
