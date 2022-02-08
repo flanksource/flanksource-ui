@@ -47,8 +47,7 @@ export function LogsPage() {
   const [logsIsLoading, setLogsIsLoading] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
   const [query, setQuery] = useState(searchParams.get("query"));
-  const [searchID, setSearchID] = useState(searchParams.get("id"));
-  const topologyId = searchParams.get("topologyId");
+  const [topologyId, setTopologyId] = useState(searchParams.get("topologyId"));
   const [topology, setTopology] = useState(null);
   const [logs, setLogs] = useState([]);
 
@@ -77,7 +76,7 @@ export function LogsPage() {
   });
 
   const saveQueryParams = () => {
-    const paramsList = { query, topologyId, id: searchID, ...getValues() };
+    const paramsList = { query, id: topologyId, ...getValues() };
     const params = {};
     Object.entries(paramsList).forEach(([key, value]) => {
       if (value) {
@@ -93,7 +92,7 @@ export function LogsPage() {
 
     const queryBody = {
       query,
-      id: searchID,
+      id: topologyId,
       ...getValues()
     };
     console.log("search", queryBody);
@@ -157,9 +156,9 @@ export function LogsPage() {
               onEnter={() => loadLogs()}
               onChange={(e) => {
                 e.preventDefault();
-                setSearchID(e.target.value);
+                setTopologyId(e.target.value);
               }}
-              value={searchID}
+              value={topologyId}
             />
           </div>
           <RefreshButton onClick={() => loadLogs()} />
