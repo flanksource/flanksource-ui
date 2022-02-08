@@ -73,10 +73,10 @@ export function LogsPage() {
         }
       });
     }
-  });
+  }, []);
 
   const saveQueryParams = () => {
-    const paramsList = { query, id: topologyId, ...getValues() };
+    const paramsList = { query, topologyId, ...getValues() };
     const params = {};
     Object.entries(paramsList).forEach(([key, value]) => {
       if (value) {
@@ -107,7 +107,7 @@ export function LogsPage() {
 
   useEffect(() => {
     loadLogs();
-  }, [topology]);
+  }, [topologyId]);
 
   if (!isEmpty(topologyId) && topology == null) {
     return <Loading text={`Loading topology ${topologyId}`} />;
@@ -149,16 +149,14 @@ export function LogsPage() {
               </button>
             </div>
             <TextInput
-              placeholder="Id"
+              defaultValue={topologyId}
+              placeholder="Topology ID"
               className="pl-10 pb-2.5 w-full flex-shrink-0"
               style={{ height: "38px" }}
-              id="id"
-              onEnter={() => loadLogs()}
-              onChange={(e) => {
-                e.preventDefault();
+              id="topologyId"
+              onEnter={(e) => {
                 setTopologyId(e.target.value);
               }}
-              value={topologyId}
             />
           </div>
           <RefreshButton onClick={() => loadLogs()} />
