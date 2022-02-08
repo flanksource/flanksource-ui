@@ -163,13 +163,6 @@ export function LogsPage() {
             />
           </div>
           <RefreshButton onClick={() => loadLogs()} />
-          <Dropdown
-            control={control}
-            name="start"
-            className="w-40 mr-2 flex-shrink-0"
-            items={timeRanges}
-          />
-
           <div className="mr-2 w-full relative rounded-md shadow-sm">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
               <button
@@ -196,6 +189,12 @@ export function LogsPage() {
               value={query}
             />
           </div>
+          <Dropdown
+            control={control}
+            name="start"
+            className="w-40 mr-2 flex-shrink-0"
+            items={timeRanges}
+          />
         </>
       }
     >
