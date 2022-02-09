@@ -1,3 +1,5 @@
+import { BsClock, BiMapAlt, BiGlobe, IoHardwareChip } from "react-icons/all";
+
 export const nodes = [
   {
     color: "green",
@@ -75,10 +77,4 @@ export const pods = [
     number: 3,
     id: 3
   }
-];
-export const properties = [
-  { name: "world", text: "petclinic.demo.com" },
-  { name: "region", text: "eu-west-2" },
-  { name: "name", text: "prod-cluster" },
-  { name: "account", text: "2h ago" }
 ];

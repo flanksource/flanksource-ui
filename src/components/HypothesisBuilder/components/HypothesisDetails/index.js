@@ -2,9 +2,9 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { debounce } from "lodash";
 import { useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
-import { Badge } from "../../../Badge";
+import clsx from "clsx";
 import { Dropdown } from "../../../Dropdown";
-import { badgeMap, hypothesisStatuses } from "../../data";
+import { hypothesisStatuses } from "../../data";
 import { getNode, setDeepValue } from "../../../NestedHeirarchy/utils";
 
 import { EvidenceSection } from "../EvidenceSection";
@@ -102,8 +102,18 @@ export function HypothesisDetails({ nodePath, tree, setTree, api, ...rest }) {
 
   return (
     <>
-      <div className={`py-7 ${rest.className || ""}`} {...rest}>
-        <div className="mt-1 mr-2 mb-2 pr-8 flex flex-nowrap">
+      <div className={clsx("py-7", rest.className || "")} {...rest}>
+        <div className="flex mt-3">
+          <img
+            className="h-6 w-6  rounded-full bg-gray-400 flex items-center justify-center"
+            src="https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=256&h=256&q=80"
+            alt="avatar"
+          />
+          <p className="font-inter text-dark-gray font-normal text-sm ml-1.5 mt-0.5">
+            John Crewer
+          </p>
+        </div>
+        <div className="mt-5 mr-2 mb-2 pr-8 flex flex-nowrap">
           <Dropdown
             control={control}
             name="status"
@@ -120,8 +130,15 @@ export function HypothesisDetails({ nodePath, tree, setTree, api, ...rest }) {
             }}
           />
         </div>
-
-        <div className="mb-6">
+        <div className="my-6">
+          <Dropdown
+            control={control}
+            name="status"
+            className="mb-4 w-72"
+            items={statusItems}
+          />
+        </div>
+        <div className="mb-9">
           <EvidenceSection
             hypothesis={node}
             evidence={evidence}
@@ -145,9 +162,7 @@ export function HypothesisDetails({ nodePath, tree, setTree, api, ...rest }) {
             comments={comments}
             onComment={(value) => handleComment(value)}
             titlePrepend={
-              <HypothesisTitle className="mb-4">
-                Comments {comments.length > 0 && `(${comments.length})`}
-              </HypothesisTitle>
+              <HypothesisTitle className="mb-3">Comments</HypothesisTitle>
             }
           />
         </div>
