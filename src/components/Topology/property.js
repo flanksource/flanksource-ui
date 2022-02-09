@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import cx from "clsx";
+import clsx from "clsx";
 import { Icon } from "../Icon";
 import { formatBytes } from "../../utils/common";
 import { isEmpty } from "../Canary/utils";
@@ -12,7 +13,16 @@ export const FormatProperty = ({ property, short = false }) => {
   let { text } = property;
 
   if (property.type === "url") {
-    return `<a href="${property.text}" target="_blank">${property.text}</a>`;
+    return (
+      <a
+        href={property.text}
+        target="_blank"
+        rel="noreferrer"
+        className="underline"
+      >
+        {property.text.replace("https://", "")}
+      </a>
+    );
   }
 
   if (property.value != null) {
@@ -45,7 +55,10 @@ export const FormatProperty = ({ property, short = false }) => {
 export const Property = ({ property, className }) => {
   const { name, icon, color } = property;
 
-  if (isEmpty(property.text) && isEmpty(property.value)) {
+  if (
+    property.type === "hidden" ||
+    (isEmpty(property.text) && isEmpty(property.value))
+  ) {
     return null;
   }
   return (
@@ -56,7 +69,12 @@ export const Property = ({ property, className }) => {
           {name}:
         </span>
       )}
-      <span className="text-xs overflow-hidden truncate">
+      <span
+        className={clsx(
+          "text-xs overflow-hidden truncate",
+          `text-${color}-500`
+        )}
+      >
         <FormatProperty property={property} />
       </span>
     </div>
