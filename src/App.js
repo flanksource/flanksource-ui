@@ -1,29 +1,32 @@
 import { FolderIcon, HomeIcon } from "@heroicons/react/outline";
+import { useEffect, useState } from "react";
 import { AiFillHeart } from "react-icons/ai";
 import { FaProjectDiagram } from "react-icons/fa";
 import { ImLifebuoy } from "react-icons/im";
-import { VscGraph } from "react-icons/vsc";
+import { MdTimeline } from "react-icons/md";
+import { VscGraph, VscJson } from "react-icons/vsc";
 import { Navigate, Route, Routes } from "react-router-dom";
-import { useState, useEffect } from "react";
 import { getUser } from "./api/auth";
-import { IncidentCreate } from "./components/Incidents/IncidentCreate";
 import SidebarLayout from "./components/Layout/sidebar";
 import { Loading } from "./components/Loading";
 import { TraceView } from "./components/Traces";
 import { AuthContext } from "./context";
+import { TopologyPage as ExamplesTopologyPage } from "./pages/Examples/Topology/topology-page";
 import {
+  CanaryPage,
+  ConfigPage,
+  IncidentCreatePage,
   IncidentDetailsPage,
   IncidentListPage,
   LogsPage,
-  CanaryPage,
-  TopologyPage,
-  IncidentCreatePage
+  TimelinePage,
+  TopologyPage
 } from "./pages";
 import { RsDemoPage } from "./pages/Examples/rs-demo";
 
 const navigation = [
   {
-    name: "Dashboard",
+    name: "Topology",
     href: "/",
     icon: HomeIcon,
     current: false
@@ -37,11 +40,17 @@ const navigation = [
   { name: "Logs", href: "/logs", icon: FolderIcon, current: false },
   { name: "Metrics", href: "/metrics", icon: VscGraph, current: false },
   { name: "Traces", href: "/traces", icon: FaProjectDiagram, current: false },
+  { name: "Config", href: "/config", icon: VscJson, current: false },
+  {
+    name: "Timeline",
+    href: "/timeline",
+    icon: MdTimeline,
+    current: false
+  },
   {
     name: "Incidents",
     href: "/incidents",
-    icon: ImLifebuoy,
-    current: true
+    icon: ImLifebuoy
   }
 ];
 
@@ -95,12 +104,23 @@ export function App() {
         </Route>
 
         <Route path="examples" element={sidebar}>
-          <Route path="topology" element={<TopologyPage url="/canary/api" />} />
           <Route path="rs" element={<RsDemoPage />} />
+          <Route
+            path="topology"
+            element={<ExamplesTopologyPage url="/canary/api" />}
+          />
         </Route>
 
         <Route path="logs" element={sidebar}>
           <Route index element={<LogsPage />} />
+        </Route>
+
+        <Route path="config" element={sidebar}>
+          <Route index element={<ConfigPage />} />
+        </Route>
+
+        <Route path="timeline" element={sidebar}>
+          <Route index element={<TimelinePage />} />
         </Route>
 
         <Route path="metrics" element={sidebar}>
