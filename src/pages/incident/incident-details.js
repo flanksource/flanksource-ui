@@ -16,6 +16,8 @@ import { SearchLayout } from "../../components/Layout";
 import { Loading } from "../../components/Loading";
 import { Description } from "../../components/Description/description";
 import { Button } from "../../components/Button";
+import { Changelog } from "../../components/Change";
+import { TopologyCard } from "../../components/Topology/topology-card";
 
 function mapNode(node) {
   return {
@@ -109,31 +111,17 @@ export function IncidentDetailsPage() {
     >
       <div className="mt-2 max-w-3xl mx-auto grid grid-cols-1 gap-6 sm:px-6 lg:max-w-7xl lg:grid-flow-col-dense lg:grid-cols-3">
         <div className="space-y-6 lg:col-start-1 lg:col-span-2">
-          {/* Description list */}
-          {/* <section aria-labelledby="applicant-information-title">
-            <div className="bg-white shadow sm:rounded-lg">
-              <div className="px-4 py-5 sm:px-6">
-                <h2
-                  id="applicant-information-title"
-                  className="text-lg leading-6 font-medium text-gray-900"
-                >
-                  Applicant Information
-                </h2>
-                <p className="mt-1 max-w-2xl text-sm text-gray-500">
-                  Personal details and application.
-                </p>
-              </div>
-
-              <div>
-                <a
-                  href="#"
-                  className="block bg-gray-50 text-sm font-medium text-gray-500 text-center px-4 py-4 hover:text-gray-700 sm:rounded-b-lg"
-                >
-                  Read full application
-                </a>
+          <section aria-labelledby="notes-title">
+            <div className="bg-white sm:overflow-hidden">
+              <div className="px-2 py-2 flex flex-nowrap">
+                <TopologyCard
+                  size="medium"
+                  topologyId="017ed3af-c25a-5362-175d-40e7864ed7b7"
+                  depth={0}
+                />
               </div>
             </div>
-          </section> */}
+          </section>
 
           <section aria-labelledby="notes-title">
             <div className="bg-white shadow sm:rounded-lg sm:overflow-hidden">
@@ -195,6 +183,11 @@ export function IncidentDetailsPage() {
                 />
               </div>
             </div>
+          </div>
+          <div className="bg-white px-4 py-5 mt-4  shadow sm:rounded-lg sm:px-6">
+            <section aria-labelledby="applicant-information-title">
+              <Changelog />
+            </section>
           </div>
         </section>
       </div>
