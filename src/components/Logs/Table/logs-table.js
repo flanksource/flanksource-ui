@@ -1,13 +1,14 @@
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import Convert from "ansi-to-html";
 import DOMPurify from "dompurify";
 import { isArray } from "lodash";
 import dayjs from "dayjs";
 import { useTable } from "react-table";
 import { v4 as uuidv4 } from "uuid";
-import { Menu } from "@headlessui/react";
 import { Modal } from "../../Modal";
-import { LogsDropdown } from "./LogsDropdown";
+import { ListBoxLogs } from "./ListBoxLogs";
+
+const convert = new Convert();
 
 export function LogsTable({ logs, actions = [] }) {
   if (logs != null && !isArray(logs)) {
@@ -23,14 +24,14 @@ export function LogsTable({ logs, actions = [] }) {
   }
   const [selectedList, setSelectedList] = useState([]);
   const [isModal, setIsModal] = useState(false);
-  const convert = new Convert();
-  const handleSelect = (log, selected) => {
+
+  const handleSelect = useCallback((log, selected) => {
     if (selected) {
-      setSelectedList([...selectedList, log]);
+      setSelectedList((prevState) => [...prevState, log]);
     } else {
-      setSelectedList([...selectedList].filter((obj) => log !== obj));
+      setSelectedList((prevState) => prevState.filter((obj) => log !== obj));
     }
-  };
+  }, []);
   const columns = useMemo(
     () => [
       {
@@ -67,7 +68,7 @@ export function LogsTable({ logs, actions = [] }) {
         )
       }
     ],
-    []
+    [handleSelect, selectedList]
   );
   const data = useMemo(() => logs, [logs]);
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
@@ -165,10 +166,11 @@ export function LogsTable({ logs, actions = [] }) {
               <Modal
                 open={isModal}
                 onClose={() => setIsModal(false)}
-                cardClass="w-full"
+                cardClass="w-full overflow-y-auto"
                 contentClass="h-full p-10"
                 cardStyle={{
-                  maxWidth: "392px"
+                  maxWidth: "392px",
+                  maxHeight: "356px"
                 }}
                 closeButtonStyle={{ padding: "2.2rem 2.1rem 0 0" }}
                 hideActions
@@ -178,29 +180,36 @@ export function LogsTable({ logs, actions = [] }) {
                     Сhoose incident
                   </h3>
                   <div className="my-4">
-                    <LogsDropdown
-                      buttonTitle="Сhoose incident"
+                    <p className="text-left text-sm font-medium text-darkest-gray">
+                      Choose incident
+                    </p>
+                    <ListBoxLogs
                       items={[
-                        "Add new incident",
-                        "Arlene Mccoy",
-                        "Devon Webb",
-                        "Tom Cook"
+                        { name: "Add new incident", id: uuidv4() },
+                        { name: "Arlene Mccoy", id: uuidv4() },
+                        { name: "Devon Webb", id: uuidv4() },
+                        { name: "Tom Cook", id: uuidv4() }
                       ]}
                     />
                   </div>
+                  <p className="text-left text-sm font-medium text-darkest-gray">
+                    Choose hypothesis
+                  </p>
                   <div className="my-4">
-                    <LogsDropdown
-                      buttonTitle="Choose hypothesis"
+                    <ListBoxLogs
                       items={[
-                        "Add new incident",
-                        "Arlene Mccoy",
-                        "Devon Webb",
-                        "Tom Cook"
+                        { name: "Add new incident", id: uuidv4() },
+                        { name: "Arlene Mccoy", id: uuidv4() },
+                        { name: "Devon Webb", id: uuidv4() },
+                        { name: "Tom Cook", id: uuidv4() }
                       ]}
                     />
                   </div>
-                  <div className="w-full flex items-end ">
-                    <button className="content-end" type="button">
+                  <div className="flex justify-end">
+                    <button
+                      className="bg-dark-blue text-white rounded-6px py-2 px-4"
+                      type="button"
+                    >
                       Add
                     </button>
                   </div>
