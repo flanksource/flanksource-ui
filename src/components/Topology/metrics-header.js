@@ -16,7 +16,7 @@ export const MetricsHeader = ({ items }) => (
         className="text-gray-800 px-2 align-middle text-center flex flex-col"
       >
         <h6 className="text-gray-color text-xs mb-0.5">{item.name}</h6>
-        <span className="font-bold text-xs leading-1.21rel">
+        <span className={clsx("font-bold text-xs leading-1.21rel", `text-${item.color}-500`)}>
           {" "}
           <FormatProperty property={item} short />
         </span>
