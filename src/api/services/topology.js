@@ -54,9 +54,19 @@ function unroll(topology, depth) {
 
 export const getTopology = async (params) => {
   const query = stringify(params);
-  return CanaryChecker.get(`/api/topology?${query}`).then((results) => ({
-    data: unroll(results.data, query == "" ? 0 : 2, false)
-  }));
+  return CanaryChecker.get(`/api/topology?${query}`).then((results) => {
+    let depth = query === "" ? 0 : 2;
+    if (params.depth != null) {
+      depth = params.depth;
+    }
+    let { data } = results;
+    if (data.length === 2 && isEmpty(data[0].id)) {
+      data = [data[1]];
+    }
+    return {
+      data: unroll(data, depth, false)
+    };
+  });
 };
 
 export const getCanaries = async () => resolve(CanaryChecker.get("/api"));
