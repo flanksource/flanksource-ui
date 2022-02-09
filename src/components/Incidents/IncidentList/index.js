@@ -1,6 +1,5 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
-import cx from "clsx";
 import dayjs from "dayjs";
 import { v4 as uuid } from "uuid";
 import responders from "../../../data/responders.json";
@@ -49,8 +48,6 @@ export function IncidentList({ list, ...rest }) {
     </div>
   );
 }
-
-
 
 function IncidentItem({ incident }) {
   const { title, id, created_at: createdAt, status } = incident;

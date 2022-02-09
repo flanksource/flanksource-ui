@@ -26,14 +26,12 @@ import canary_checker from "./canary-checker.svg";
 import cassandra from "./cassandra.svg";
 import check from "./check.svg";
 import cisco from "./cisco.svg";
-import clock from "./clock.svg";
 import cloud_build from "./cloud-build.svg";
 import cloudformation from "./cloudformation.svg";
 import cloudsql from "./cloudsql.svg";
 import cloudwatch_alarm from "./cloudwatch-alarm.svg";
 import cloudwatch_config from "./cloudwatch-config.svg";
 import cloudwatch from "./cloudwatch.svg";
-import cluster from "./cluster.svg";
 import compute_engine from "./compute-engine.svg";
 import connected from "./connected.svg";
 import console from "./console.svg";
@@ -180,9 +178,12 @@ import tree from "./tree.svg";
 import ubuntu from "./ubuntu.svg";
 import vault from "./vault.svg";
 import vsphere from "./vsphere.svg";
-import world from "./world.svg";
 import www from "./www.svg";
 import dots from './dots-triple.svg'
+import addButton from './add-button.svg'
+import clock from './clock.svg'
+import cluster from './cluster.svg'
+import world from './world.svg'
 
 export const Icons = {
 "acr": acr,
@@ -212,14 +213,12 @@ export const Icons = {
 "cassandra": cassandra,
 "check": check,
 "cisco": cisco,
-"clock": clock,
 "cloud-build": cloud_build,
 "cloudformation": cloudformation,
 "cloudsql": cloudsql,
 "cloudwatch-alarm": cloudwatch_alarm,
 "cloudwatch-config": cloudwatch_config,
 "cloudwatch": cloudwatch,
-"cluster": cluster,
 "compute-engine": compute_engine,
 "connected": connected,
 "console": console,
@@ -366,10 +365,10 @@ export const Icons = {
 "ubuntu": ubuntu,
 "vault": vault,
 "vsphere": vsphere,
-"world": world,
 "www": www,
 "dots": dots,
+"addButton": addButton,
 "account": clock,
 "name": cluster,
-"region": timezone
+"world": world,
 }

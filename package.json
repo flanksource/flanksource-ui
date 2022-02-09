@@ -19,6 +19,7 @@
     "@testing-library/user-event": "^12.1.10",
     "ansi-to-html": "^0.7.2",
     "axios": "^0.24.0",
+    "caniuse-lite": "^1.0.30001306",
     "clsx": "^1.1.1",
     "dayjs": "^1.10.7",
     "dompurify": "^2.3.4",

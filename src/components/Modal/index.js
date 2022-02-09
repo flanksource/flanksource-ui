@@ -10,6 +10,7 @@ export function Modal({
   onClose,
   closeButtonClass,
   closeButtonStyle,
+  dropDownVisible,
   allowBackgroundClose = true,
   hideCloseButton,
   containerClass,

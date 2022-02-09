@@ -7,7 +7,7 @@ export const getAllIncident = async () =>
 export const getIncident = async (id) =>
   resolve(
     IncidentCommander.get(
-      `/incident?id=eq.${id}&select=*,hypothesis!hypothesis_incident_id_fkey(*)`
+      `/incident?id=eq.${id}&select=*,hypothesis!hypothesis_incident_id_fkey(*,created_by(name,avatar))`
     )
   );
 

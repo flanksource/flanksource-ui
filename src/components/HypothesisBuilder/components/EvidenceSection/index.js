@@ -1,6 +1,9 @@
 import React from "react";
+import dayjs from "dayjs";
+import { BsFillBarChartFill } from "react-icons/all";
 import { LogsTable } from "../../../Logs/Table/logs-table";
 import { TopologyCard } from "../../../Topology";
+import { Icon } from "../../../Icon";
 
 export function EvidenceItem({ evidence }) {
   if (evidence.type === "log") {
@@ -11,12 +14,22 @@ export function EvidenceItem({ evidence }) {
   }
   return (
     <div>
-      {evidence.type}
-      {evidence.description}
+      <div className="flex flex-row gap-x-10 py-1.5 border-b" key={evidence.id}>
+        <div className="flex flex-row">
+          <div className="text-dark-blue">
+            <BsFillBarChartFill />
+          </div>
+          <p className="ml-2.5 text-sm leading-5 font-medium">
+            {dayjs(evidence.created_at).format("MMM DD, YYYY HH:mm.ss.mmm")}
+          </p>
+        </div>
+        <p className="max-w-5/10 text-sm leading-5 font-medium truncate">
+          {evidence.description}
+        </p>
+      </div>
     </div>
   );
 }
-
 export function EvidenceSection({
   evidence,
   hypothesis,
@@ -27,7 +40,12 @@ export function EvidenceSection({
   return (
     <div className={rest.className} {...rest}>
       <div className="flex justify-between items-center">
-        <div className="">{titlePrepend}</div>
+        <div className="flex align-baseline font-inter text-large font-semibold">
+          <h2 className="text-dark-gray mr-3">{titlePrepend}</h2>
+          <div className="bg-dark-blue rounded-full p-2">
+            <Icon name="addButton" className="w-2.5 h-2.5" />
+          </div>
+        </div>
         <button
           type="button"
           onClick={onButtonClick}
@@ -36,7 +54,7 @@ export function EvidenceSection({
           Add evidence
         </button>
       </div>
-      <div className="mt-2">
+      <div className="mt-3.5">
         {evidence && evidence.length > 0 ? (
           evidence.map((evidence) => (
             <EvidenceItem key={evidence.id} evidence={evidence} />

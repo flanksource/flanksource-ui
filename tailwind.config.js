@@ -50,17 +50,25 @@ module.exports = {
         "warm-blue": "#CCDAF8",
         "dark-blue": "#326CE5",
         "gray-color": "#C4C4C4",
+        "darker-gray": "#9CA3AF",
+        "lighter-gray": "#F3F4F6",
         "dark-gray": "#242423",
         "medium-gray": "#6B7280",
         "darker-black": "#111827",
         "light-black": "#1F2937",
         "border-color": "#E5E7EB",
+        "light-blue": "#F6F7FFC9",
         "column-background": "#F9FAFB",
         "lightest-gray": "#F9FAFB",
         "light-orange": "#FBBE67",
         "light-red": "#EF978A",
         "light-gray": "#D2D2D2",
-        "light-green": "#98C373"
+        "light-green": "#98C373",
+        "bright-green": "#459E45",
+        "warm-green": "#AAA526",
+        "warmer-gray": "#808080",
+        "bright-orange": "#F59337",
+        "bright-red": "#DD4F4F"
       },
       fontFamily: {
         inter: ["Inter"]

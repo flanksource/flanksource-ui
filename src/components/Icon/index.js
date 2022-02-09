@@ -1,3 +1,5 @@
+import React from "react";
+import clsx from "clsx";
 import { Icons } from "../../icons";
 
 export function Icon({ size = "sm", name, className, alt = "", ...props }) {
@@ -51,7 +53,36 @@ export function Icon({ size = "sm", name, className, alt = "", ...props }) {
 
   return <>{props.icon ? <props.icon className={iconClassName} /> : null}</>;
 }
-
+export const AvatarWithDefaultImage = ({ image, className }) => (
+  <div>
+    {/(http)?s?:?(\/\/[^"']*\.(?:png|jpg|jpeg|gif|svg))/g.test(image) ? (
+      <img
+        className={clsx(
+          "rounded-full bg-gray-400 flex items-center justify-center",
+          className
+        )}
+        src={image}
+        alt={image}
+      />
+    ) : (
+      <div
+        className={clsx(
+          "rounded-full bg-gray-400 flex items-center justify-center text-2xs",
+          className
+        )}
+      >
+        {image !== null
+          ? image
+              .toUpperCase()
+              .split(" ")
+              .map((n) => n[0])
+              .join("")
+              .slice(0, 2)
+          : ""}
+      </div>
+    )}
+  </div>
+);
 export function Avatar({ url, alt = "" }) {
   return (
     <img

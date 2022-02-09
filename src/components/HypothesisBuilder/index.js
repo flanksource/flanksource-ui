@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
-
 import { v4 as uuidv4 } from "uuid";
 import { minimalNodeTemplate, NestedHeirarchy } from "../NestedHeirarchy";
 import { hypothesisInitialFields } from "./data";
-import { HypothesisNode } from "./components/HypothesisNode";
 import { Modal } from "../Modal";
 import { HypothesisDetails } from "./components/HypothesisDetails";
+import { HypothesisTree } from "./components/HypothesisTree";
 
 const newTree = {
   title: "",
@@ -40,7 +39,7 @@ export function HypothesisBuilder({
             depthLimit={2}
             additionalNodeFields={hypothesisInitialFields}
           >
-            <HypothesisNode
+            <HypothesisTree
               setModalIsOpen={setModalIsOpen}
               setSelectedNodePath={setSelectedNodePath}
               defaultEditMode={defaultEditMode}
@@ -53,7 +52,7 @@ export function HypothesisBuilder({
         open={modalIsOpen}
         onClose={() => setModalIsOpen(false)}
         cardClass="w-full overflow-y-scroll"
-        contentClass="h-full px-8"
+        contentClass="h-full px-10"
         cardStyle={{
           maxWidth: "1024px",
           maxHeight: "calc(100vh - 4rem)"

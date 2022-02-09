@@ -16,8 +16,9 @@ export function CommentsSection({
   const [commentTextValue, setCommentTextValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleComment = () => {
-    if (commentTextValue) {
+  const handleComment = (event) => {
+    const key = event.keyCode || event.which;
+    if (commentTextValue && key === 13) {
       setIsLoading(true);
       onComment(commentTextValue).finally(() => {
         setCommentTextValue("");
@@ -32,36 +33,21 @@ export function CommentsSection({
       <div>
         <textarea
           disabled={isLoading}
-          className="w-full text-sm p-2 border-gray-200 rounded-md h-20"
+          className="w-full border-gray-200 resize-none rounded-6px text-base leading-6 font-normal font-inter outline-none text-dark-gray mb-2"
           onChange={(e) => setCommentTextValue(e.target.value)}
+          placeholder="Type something"
           value={commentTextValue}
-          style={{ minHeight: "80px" }}
+          style={{ minHeight: "70px" }}
+          onKeyPress={(event) => handleComment(event)}
         />
-        <div className="flex justify-end">
-          <button
-            disabled={isLoading || !commentTextValue}
-            type="button"
-            onClick={handleComment}
-            className={`${isLoading || !commentTextValue ? "btn-disabled" : "btn-primary"
-              }`}
-          >
-            Comment
-          </button>
-        </div>
       </div>
       {comments.length <= 0 ? (
         <div className="text-sm text-gray-400">No comments yet</div>
       ) : (
         <ul className="-mb-8">
-          {comments.map((comment, commentIdx) => (
+          {comments.map((comment) => (
             <li key={comment.id}>
               <div className="relative pb-8">
-                {commentIdx !== comments.length - 1 ? (
-                  <span
-                    className="absolute top-5 left-5 -ml-px h-full w-0.5 bg-gray-200"
-                    aria-hidden="true"
-                  />
-                ) : null}
                 <div className="relative flex items-start space-x-3">
                   <div className="relative">
                     {comment.imageUrl ? (
@@ -95,8 +81,7 @@ export function CommentsSection({
                         </span>
                       </div>
                       <p className="mt-0.5 text-xs text-gray-400">
-                        commented on{" "}
-                        {dayjs(comment.created_at).format("DD-MM-YYYY, hh:mma")}
+                        commented {dayjs(comment.created_at).fromNow()}
                       </p>
                     </div>
                     <div className="mt-2 text-sm text-gray-700">
