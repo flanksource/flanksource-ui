@@ -16,6 +16,7 @@ export function TopologyCard({
   topology,
   topologyId,
   selectionMode,
+  depth,
   selected,
   onSelectionChange
 }) {
@@ -23,7 +24,7 @@ export function TopologyCard({
 
   useEffect(() => {
     if (topologyId != null && _topology == null) {
-      getTopology({ id: topologyId }).then((topology) => {
+      getTopology({ id: topologyId, depth }).then((topology) => {
         setTopology(topology.data[0]);
       });
     }
