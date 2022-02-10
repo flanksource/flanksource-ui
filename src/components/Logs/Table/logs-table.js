@@ -31,7 +31,7 @@ export const LogsTable = ({ logs, actions }) => {
         accessor: "timestamp",
         Cell: function timestampCell({ cell: { row } }) {
           return (
-            <div className="min-w-max pl-6 pr-20 flex flex-row">
+            <div className="min-w-max flex flex-row">
               <div className="mr-1.5">
                 <IndeterminateCheckbox
                   className="focus:ring-indigo-400 h-4 w-4 text-indigo-600 border-gray-300 rounded"
@@ -53,7 +53,7 @@ export const LogsTable = ({ logs, actions }) => {
             <div className="flex justify-between">
               <span className="align-middle my-auto">Message</span>
               <button
-                className="bg-dark-blue text-white text-sm leading-4 font-medium py-2 my-1 mr-2 rounded-6px px-3.5"
+                className="btn-primary btn-primary-sm left-5 relative"
                 type="button"
                 onClick={() => {}}
               >
@@ -67,7 +67,7 @@ export const LogsTable = ({ logs, actions }) => {
         Cell: function messageCell({ cell: { value } }) {
           return (
             <div
-              className="pl-6 break-all pr-2"
+              className="break-all"
               // eslint-disable-next-line react/no-danger
               dangerouslySetInnerHTML={{
                 __html: DOMPurify.sanitize(convert.toHtml(value || ""))
@@ -138,19 +138,18 @@ export const LogsTable = ({ logs, actions }) => {
       )}
 
       <div className="pb-12">
-        <table className="border rounded-t-6px shadow-md" {...getTableProps()}>
-          <thead className="bg-lightest-gray border rounded-t-6px">
+        <table
+          className="w-full standard-table standard-table-cells-padding"
+          {...getTableProps()}
+        >
+          <thead>
             {headerGroups.map((headerGroup) => {
               const { key, ...restHeaderGroupProps } =
                 headerGroup.getHeaderGroupProps();
               return (
                 <tr key={key} {...restHeaderGroupProps}>
                   {headerGroup.headers.map((column) => (
-                    <th
-                      key={column.id}
-                      className="pl-6 text-medium-gray text-xs leading-4 font-medium tracking-wider uppercase text-left"
-                      {...column.getHeaderProps()}
-                    >
+                    <th key={column.id} {...column.getHeaderProps()}>
                       {column.render("Header")}
                     </th>
                   ))}
@@ -162,13 +161,9 @@ export const LogsTable = ({ logs, actions }) => {
             {rows.map((row) => {
               prepareRow(row);
               return (
-                <tr className="border-b" key={row.id} {...row.getRowProps()}>
+                <tr key={row.id} {...row.getRowProps()}>
                   {row.cells.map((cell) => (
-                    <td
-                      key={cell.row.id}
-                      className="py-4 text-darker-black text-sm"
-                      {...cell.getCellProps()}
-                    >
+                    <td key={cell.row.id} {...cell.getCellProps()}>
                       {cell.render("Cell")}
                     </td>
                   ))}

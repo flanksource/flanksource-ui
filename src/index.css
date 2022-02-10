@@ -8,6 +8,10 @@
     @apply inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-blue-500;
   }
 
+  .btn-primary-sm {
+    @apply leading-4 py-2 px-3;
+  }
+
   .btn-disabled {
     @apply inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-300;
   }
@@ -18,6 +22,60 @@
 
   nav a.active {
     @apply bg-gray-100
+  }
+
+  .standard-table {
+    border-collapse: separate;
+    border-spacing: 0;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 8px;
+    -moz-border-radius: 8px;
+    -webkit-border-radius: 8px;
+    @apply border-border-color shadow-md;
+  }
+
+  .standard-table td, .standard-table th {
+    @apply border-border-color;
+  }
+
+  .standard-table.standard-table-cells-padding th {
+    @apply px-6;
+  }
+
+  .standard-table.standard-table-cells-padding td {
+    @apply py-4 px-6;
+  }
+
+  .standard-table th {
+    @apply text-medium-gray text-xs leading-4 font-medium tracking-wider uppercase text-left;
+  }
+
+  .standard-table td {
+    @apply text-darker-black text-sm;
+  }
+
+  .standard-table th {
+    border-bottom-width: 1px;
+    @apply bg-lightest-gray;
+  }
+  .standard-table th:first-of-type {
+    border-top-left-radius: 8px;
+  }
+  .standard-table th:last-of-type {
+    border-top-right-radius: 8px;
+  }
+  .standard-table tr td {
+    border-bottom-width: 1px;
+  }
+  .standard-table tr:last-of-type td {
+    border-bottom-width: 0;
+  }
+  .standard-table tr:last-of-type td:first-of-type {
+    border-bottom-left-radius: 8px;
+  }
+  .standard-table tr:last-of-type td:last-of-type {
+    border-bottom-right-radius: 8px;
   }
 }
 
