@@ -48,6 +48,7 @@ export function LogsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [query, setQuery] = useState(searchParams.get("query"));
   const [topologyId, setTopologyId] = useState(searchParams.get("topologyId"));
+  const [externalId, setExternalId] = useState(searchParams.get("externalId"));
   const [topology, setTopology] = useState(null);
   const [logs, setLogs] = useState([]);
 
@@ -76,7 +77,7 @@ export function LogsPage() {
   }, []);
 
   const saveQueryParams = () => {
-    const paramsList = { query, topologyId, ...getValues() };
+    const paramsList = { query, topologyId, externalId, ...getValues() };
     const params = {};
     Object.entries(paramsList).forEach(([key, value]) => {
       if (value) {
@@ -92,7 +93,7 @@ export function LogsPage() {
 
     const queryBody = {
       query,
-      id: topologyId,
+      id: externalId,
       ...getValues()
     };
     console.log("search", queryBody);
@@ -149,14 +150,16 @@ export function LogsPage() {
               </button>
             </div>
             <TextInput
-              defaultValue={topologyId}
-              placeholder="Topology ID"
+              placeholder="External ID"
               className="pl-10 pb-2.5 w-full flex-shrink-0"
               style={{ height: "38px" }}
-              id="topologyId"
-              onEnter={(e) => {
-                setTopologyId(e.target.value);
+              id="externalId"
+              onChange={(e) => {
+                e.preventDefault();
+                setExternalId(e.target.value);
               }}
+              onEnter={() => loadLogs()}
+              value={externalId}
             />
           </div>
           <RefreshButton onClick={() => loadLogs()} />
