@@ -4,10 +4,9 @@ import DOMPurify from "dompurify";
 import { isArray } from "lodash";
 import dayjs from "dayjs";
 import { useTable, useRowSelect } from "react-table";
-import { v4 as uuidv4 } from "uuid";
 import clsx from "clsx";
 import PropTypes from "prop-types";
-import { IndeterminateCheckbox } from "./IndeterminateCheckbox";
+import { IndeterminateCheckbox } from "../../IndeterminateCheckbox/IndeterminateCheckbox";
 
 const convert = new Convert();
 
@@ -26,12 +25,38 @@ export function LogsTable({ logs, actions }) {
   const columns = useMemo(
     () => [
       {
+        id: "selection",
+        Header: "Time",
+        accessor: "timestamp",
+        Cell: function dataItems({
+          cell: {
+            row,
+            row: {
+              original: { timestamp }
+            }
+          }
+        }) {
+          return (
+            <div className="min-w-max pl-6 pr-20 flex flex-row">
+              <div className="mr-1.5">
+                <IndeterminateCheckbox
+                  className="focus:ring-indigo-400 h-4 w-4 text-indigo-600 border-gray-300 rounded"
+                  {...row.getToggleRowSelectedProps()}
+                />
+              </div>
+              <p>{dayjs(timestamp).format("MMM DD, YYYY HH:mm.ss.SSS")}</p>
+            </div>
+          );
+        }
+      },
+      {
         Header: "Message",
         accessor: "message",
+        id: "message",
         Cell: function dataMessage({ cell: { value } }) {
           return (
             <div
-              className="pl-6"
+              className="pl-6 pr-12"
               // eslint-disable-next-line react/no-danger
               dangerouslySetInnerHTML={{
                 __html: DOMPurify.sanitize(convert.toHtml(value || ""))
@@ -39,11 +64,25 @@ export function LogsTable({ logs, actions }) {
             />
           );
         }
+      },
+      {
+        Header: function butonHeader() {
+          return (
+            <button
+              className="bg-dark-blue text-white text-sm leading-4 font-medium py-2 my-1 mr-2 rounded-6px w-44"
+              type="button"
+              onClick={() => {}}
+            >
+              Create new hypothesis
+            </button>
+          );
+        },
+        id: "button"
       }
     ],
     []
   );
-  const data = useMemo(() => logs, []);
+  const data = useMemo(() => logs, [logs]);
   const {
     getTableProps,
     getTableBodyProps,
@@ -59,24 +98,7 @@ export function LogsTable({ logs, actions }) {
     },
     useRowSelect,
     (hooks) => {
-      hooks.visibleColumns.push((columns) => [
-        {
-          id: "selection",
-          Header: "Time",
-          accessor: "timestamp",
-          Cell: function dataItems({ cell: { value, row } }) {
-            return (
-              <div className="min-w-max w-72 ml-6 flex flex-row">
-                <div className="mr-1 5">
-                  <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
-                </div>
-                <p>{dayjs(value).format("MMM DD, YYYY HH:mm.ss.mmm")}</p>
-              </div>
-            );
-          }
-        },
-        ...columns
-      ]);
+      hooks.visibleColumns.push((columns) => [...columns]);
     }
   );
   return (
@@ -103,24 +125,13 @@ export function LogsTable({ logs, actions }) {
                 key={action.label}
                 type="button"
                 disabled={!Object.keys(selectedRowIds).length}
-                onClick={() =>
-                  action.handler(
-                    JSON.stringify(
-                      {
-                        selectedRowIds,
-                        "selectedFlatRows[].original": selectedFlatRows.map(
-                          (d) => d.original
-                        )
-                      },
-                      null,
-                      2
-                    )
-                  )
-                }
+                onClick={() => {
+                  action.handler(selectedFlatRows.map((d) => d.original));
+                }}
                 className={clsx(
                   Object.keys(selectedRowIds).length > 0
-                  ? "text-indigo-700 bg-indigo-100 hover:bg-indigo-200"
-                  : "text-gray-400 bg-gray-200",
+                    ? "text-indigo-700 bg-indigo-100 hover:bg-indigo-200"
+                    : "text-gray-400 bg-gray-200",
                   "inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded"
                 )}
               >
@@ -138,26 +149,23 @@ export function LogsTable({ logs, actions }) {
                 {...getTableProps()}
               >
                 <thead className="bg-lightest-gray border rounded-t-6px">
-                  {headerGroups.map((headerGroup) => (
-                    <tr key={uuidv4()} {...headerGroup.getHeaderGroupProps()}>
-                      {headerGroup.headers.map((column) => (
-                        <th
-                          key={uuidv4()}
-                          className="pl-6 text-medium-gray text-xs leading-4 font-medium tracking-wider uppercase text-left"
-                          {...column.getHeaderProps()}
-                        >
-                          {column.render("Header")}
-                        </th>
-                      ))}
-                      <button
-                        className="bg-dark-blue text-white text-sm leading-4 font-medium py-2 my-1 mr-2 rounded-6px w-44"
-                        type="button"
-                        onClick={() => {}}
-                      >
-                        Create new hypothesis
-                      </button>
-                    </tr>
-                  ))}
+                  {headerGroups.map((headerGroup) => {
+                    const { key, ...restHeaderGroupProps } =
+                      headerGroup.getHeaderGroupProps();
+                    return (
+                      <tr key={key} {...restHeaderGroupProps}>
+                        {headerGroup.headers.map((column) => (
+                          <th
+                            key={column.id}
+                            className="pl-6 text-medium-gray text-xs leading-4 font-medium tracking-wider uppercase text-left"
+                            {...column.getHeaderProps()}
+                          >
+                            {column.render("Header")}
+                          </th>
+                        ))}
+                      </tr>
+                    );
+                  })}
                 </thead>
                 <tbody {...getTableBodyProps()}>
                   {rows.map((row) => {
@@ -165,12 +173,12 @@ export function LogsTable({ logs, actions }) {
                     return (
                       <tr
                         className="border-b"
-                        key={uuidv4()}
+                        key={row.id}
                         {...row.getRowProps()}
                       >
                         {row.cells.map((cell) => (
                           <td
-                            key={uuidv4()}
+                            key={cell.row.id}
                             className=" py-4 text-darker-black text-sm"
                             {...cell.getCellProps()}
                           >
@@ -182,20 +190,6 @@ export function LogsTable({ logs, actions }) {
                   })}
                 </tbody>
               </table>
-              {/* <pre> */}
-              {/*  <code> */}
-              {/*    {JSON.stringify( */}
-              {/*      { */}
-              {/*        selectedRowIds, */}
-              {/*        "selectedFlatRows[].original": selectedFlatRows.map( */}
-              {/*          (d) => d.original */}
-              {/*        ) */}
-              {/*      }, */}
-              {/*      null, */}
-              {/*      2 */}
-              {/*    )} */}
-              {/*  </code> */}
-              {/* </pre> */}
             </div>
           </div>
         </div>
