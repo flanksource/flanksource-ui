@@ -67,8 +67,10 @@ function IncidentItem({ incident }) {
       >
         {title}
       </td>
-      <td className="flex flex-row items-center py-3">
-        <IncidentSeverity incident={incident} />
+      <td className="py-4 px-3">
+        <div className="flex flex-row items-center">
+          <IncidentSeverity incident={incident} />
+        </div>
       </td>
       <td className="px-3 py-4 shrink-0">
         <IncidentStatus incident={incident} />

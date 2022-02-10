@@ -36,6 +36,7 @@
     "react-hook-form": "^7.15.0",
     "react-hot-toast": "^2.2.0",
     "react-icons": "^4.3.1",
+    "react-image": "^4.0.3",
     "react-loading-icons": "^1.0.8",
     "react-markdown": "^6.0.3",
     "react-router-dom": "^6.2.1",
