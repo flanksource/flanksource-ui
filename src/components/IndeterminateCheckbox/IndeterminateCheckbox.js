@@ -1,8 +1,7 @@
 import React, { forwardRef, useEffect, useRef } from "react";
-import clsx from "clsx";
 
 export const IndeterminateCheckbox = forwardRef(
-  ({ indeterminate, className, ...rest }, ref) => {
+  ({ indeterminate, ...rest }, ref) => {
     const defaultRef = useRef();
     const resolvedRef = ref || defaultRef;
 
@@ -12,12 +11,7 @@ export const IndeterminateCheckbox = forwardRef(
 
     return (
       <>
-        <input
-          type="checkbox"
-          className={clsx("", className)}
-          ref={resolvedRef}
-          {...rest}
-        />
+        <input type="checkbox" ref={resolvedRef} {...rest} />
       </>
     );
   }

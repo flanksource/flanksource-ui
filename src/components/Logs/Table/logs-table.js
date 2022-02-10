@@ -22,35 +22,6 @@ export const LogsTable = ({ logs, actions }) => {
   if (logs == null) {
     logs = [];
   }
-  const timestampCell = ({ cell: { row } }) => (
-    <div className="min-w-max pl-6 pr-20 flex flex-row">
-      <div className="mr-1.5">
-        <IndeterminateCheckbox
-          className="focus:ring-indigo-400 h-4 w-4 text-indigo-600 border-gray-300 rounded"
-          {...row.getToggleRowSelectedProps()}
-        />
-      </div>
-      <p>{dayjs(row.original.timestamp).format("MMM DD, YYYY HH:mm.ss.SSS")}</p>
-    </div>
-  );
-  const messageCell = ({ cell: { value } }) => (
-    <div
-      className="pl-6 pr-12"
-      // eslint-disable-next-line react/no-danger
-      dangerouslySetInnerHTML={{
-        __html: DOMPurify.sanitize(convert.toHtml(value || ""))
-      }}
-    />
-  );
-  const buttonHeader = () => (
-    <button
-      className="bg-dark-blue text-white text-sm leading-4 font-medium py-2 my-1 mr-2 rounded-6px w-44"
-      type="button"
-      onClick={() => {}}
-    >
-      Create new hypothesis
-    </button>
-  );
 
   const columns = useMemo(
     () => [
@@ -58,17 +29,52 @@ export const LogsTable = ({ logs, actions }) => {
         id: "selection",
         Header: "Time",
         accessor: "timestamp",
-        Cell: timestampCell
+        Cell: function timestampCell({ cell: { row } }) {
+          return (
+            <div className="min-w-max pl-6 pr-20 flex flex-row">
+              <div className="mr-1.5">
+                <IndeterminateCheckbox
+                  className="focus:ring-indigo-400 h-4 w-4 text-indigo-600 border-gray-300 rounded"
+                  {...row.getToggleRowSelectedProps()}
+                />
+              </div>
+              <p>
+                {dayjs(row.original.timestamp).format(
+                  "MMM DD, YYYY HH:mm.ss.SSS"
+                )}
+              </p>
+            </div>
+          );
+        }
       },
       {
-        Header: "Message",
+        Header: function MessageHeader() {
+          return (
+            <div className="flex justify-between">
+              <span className="align-middle my-auto">Message</span>
+              <button
+                className="bg-dark-blue text-white text-sm leading-4 font-medium py-2 my-1 mr-2 rounded-6px px-3.5"
+                type="button"
+                onClick={() => {}}
+              >
+                Create new hypothesis
+              </button>
+            </div>
+          );
+        },
         accessor: "message",
         id: "message",
-        Cell: messageCell
-      },
-      {
-        Header: buttonHeader,
-        id: "button"
+        Cell: function messageCell({ cell: { value } }) {
+          return (
+            <div
+              className="pl-6 break-all pr-2"
+              // eslint-disable-next-line react/no-danger
+              dangerouslySetInnerHTML={{
+                __html: DOMPurify.sanitize(convert.toHtml(value || ""))
+              }}
+            />
+          );
+        }
       }
     ],
     []
@@ -132,53 +138,45 @@ export const LogsTable = ({ logs, actions }) => {
       )}
 
       <div className="pb-12">
-        <div className="flex flex-col">
-          <div className="inline-block min-w-full">
-            <table className="w-full border rounded-t-6px" {...getTableProps()}>
-              <thead className="bg-lightest-gray border rounded-t-6px">
-                {headerGroups.map((headerGroup) => {
-                  const { key, ...restHeaderGroupProps } =
-                    headerGroup.getHeaderGroupProps();
-                  return (
-                    <tr key={key} {...restHeaderGroupProps}>
-                      {headerGroup.headers.map((column) => (
-                        <th
-                          key={column.id}
-                          className="pl-6 text-medium-gray text-xs leading-4 font-medium tracking-wider uppercase text-left"
-                          {...column.getHeaderProps()}
-                        >
-                          {column.render("Header")}
-                        </th>
-                      ))}
-                    </tr>
-                  );
-                })}
-              </thead>
-              <tbody {...getTableBodyProps()}>
-                {rows.map((row) => {
-                  prepareRow(row);
-                  return (
-                    <tr
-                      className="border-b"
-                      key={row.id}
-                      {...row.getRowProps()}
+        <table className="border rounded-t-6px shadow-md" {...getTableProps()}>
+          <thead className="bg-lightest-gray border rounded-t-6px">
+            {headerGroups.map((headerGroup) => {
+              const { key, ...restHeaderGroupProps } =
+                headerGroup.getHeaderGroupProps();
+              return (
+                <tr key={key} {...restHeaderGroupProps}>
+                  {headerGroup.headers.map((column) => (
+                    <th
+                      key={column.id}
+                      className="pl-6 text-medium-gray text-xs leading-4 font-medium tracking-wider uppercase text-left"
+                      {...column.getHeaderProps()}
                     >
-                      {row.cells.map((cell) => (
-                        <td
-                          key={cell.row.id}
-                          className=" py-4 text-darker-black text-sm"
-                          {...cell.getCellProps()}
-                        >
-                          {cell.render("Cell")}
-                        </td>
-                      ))}
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </div>
+                      {column.render("Header")}
+                    </th>
+                  ))}
+                </tr>
+              );
+            })}
+          </thead>
+          <tbody {...getTableBodyProps()}>
+            {rows.map((row) => {
+              prepareRow(row);
+              return (
+                <tr className="border-b" key={row.id} {...row.getRowProps()}>
+                  {row.cells.map((cell) => (
+                    <td
+                      key={cell.row.id}
+                      className="py-4 text-darker-black text-sm"
+                      {...cell.getCellProps()}
+                    >
+                      {cell.render("Cell")}
+                    </td>
+                  ))}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
       </div>
     </div>
   );
