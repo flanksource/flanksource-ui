@@ -98,6 +98,9 @@ module.exports = {
         medium: "200px",
         small: "125px"
       },
+      minHeight: {
+        12: "3rem"
+      },
       maxWidth: {
         full: "100%",
         "1/4": "25%",
@@ -118,7 +121,13 @@ module.exports = {
         "med-card-left": "63%",
         "med-card-right": "37%",
         "large-card-left": "36%",
-        "large-card-right": "64%"
+        "large-card-right": "64%",
+        "btn-round-2xs": "1.5rem",
+        "btn-round-xs": "1.875rem",
+        "btn-round-sm": "2.125rem",
+        "btn-round-md": "2.375rem",
+        "btn-round-lg": "2.625rem",
+        "btn-round-xl": "3.125rem"
       },
       minWidth: {
         8: "2rem",
@@ -138,6 +147,14 @@ module.exports = {
       },
       lineHeight: {
         "1.21rel": "1.21"
+      },
+      height: {
+        "btn-round-2xs": "1.5rem",
+        "btn-round-xs": "1.875rem",
+        "btn-round-sm": "2.125rem",
+        "btn-round-md": "2.375rem",
+        "btn-round-lg": "2.625rem",
+        "btn-round-xl": "3.125rem"
       }
     }
   },

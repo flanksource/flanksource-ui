@@ -101,5 +101,37 @@
   .compact-table tr td {
     border-bottom-width: 1px;
   }
+
+  .btn-round {
+    @apply rounded-full;
+  }
+
+  .btn-round-primary {
+    @apply bg-blue-600  text-white inline-flex items-center justify-center p-1 border-transparent hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-blue-500;
+  }
+
+  .btn-round-2xs {
+    @apply h-btn-round-2xs w-btn-round-2xs text-xs;
+  }
+
+  .btn-round-xs {
+    @apply h-btn-round-xs w-btn-round-xs text-xs;
+  }
+
+  .btn-round-sm {
+    @apply h-btn-round-sm w-btn-round-sm text-xs;
+  }
+
+  .btn-round-md {
+    @apply h-btn-round-md w-btn-round-md text-xs;
+  }
+
+  .btn-round-lg {
+    @apply h-btn-round-lg w-btn-round-lg text-xs;
+  }
+
+  .btn-round-xl {
+    @apply h-btn-round-xl w-btn-round-xl text-xs;
+  }
 }
 

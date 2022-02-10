@@ -1,5 +1,3 @@
-import { BsClock, BiMapAlt, BiGlobe, IoHardwareChip } from "react-icons/all";
-
 export const nodes = [
   {
     color: "green",
