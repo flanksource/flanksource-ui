@@ -19,6 +19,7 @@ import {
 import { getAllEvidenceByHypothesis } from "../../../../api/services/evidence";
 import { useUser } from "../../../../context";
 import { toastError } from "../../../Toast/toast";
+import { Avatar } from "../../../Avatar";
 
 const statusItems = {
   ...Object.values(hypothesisStatuses).reduce((acc, obj) => {
@@ -99,38 +100,27 @@ export function HypothesisDetails({ nodePath, tree, setTree, api, ...rest }) {
     handleApiUpdate("status", watchStatus);
     handleCurrentNodeValueChangeMemoized("status", watchStatus);
   }, [watchStatus, handleCurrentNodeValueChangeMemoized, handleApiUpdate]);
-
   return (
     <>
       <div className={clsx("py-7", rest.className || "")} {...rest}>
-        <div className="flex mt-3">
-          <img
-            className="h-6 w-6  rounded-full bg-gray-400 flex items-center justify-center"
-            src="https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=256&h=256&q=80"
-            alt="avatar"
-          />
+        <div className="flex pt-3">
+          <Avatar size="sm" srcList={node.created_by.avatar} />
           <p className="font-inter text-dark-gray font-normal text-sm ml-1.5 mt-0.5">
-            John Crewer
+            {node.created_by.name}
           </p>
         </div>
-        <div className="mt-5 mr-2 mb-2 pr-8 flex flex-nowrap">
-          <Dropdown
-            control={control}
-            name="status"
-            className="mb-4 w-40 mr-2"
-            items={statusItems}
-          />
+        <div className="mt-4 mr-2 mb-2 pr-8 flex flex-nowrap">
           {/* <Badge size="sm" text={badgeMap[nodePath.length - 1]} className="mr-2" /> */}
           <EditableText
             value={node.title}
-            sharedClassName="text-xl font-medium text-gray-800 grow"
+            sharedClassName="text-2xl font-semibold text-gray-dark grow"
             onChange={(e) => {
               handleApiUpdate("title", e.target.value);
               handleCurrentNodeValueChange("title", e.target.value);
             }}
           />
         </div>
-        <div className="my-6">
+        <div className="mt-6 mb-7">
           <Dropdown
             control={control}
             name="status"
@@ -138,7 +128,7 @@ export function HypothesisDetails({ nodePath, tree, setTree, api, ...rest }) {
             items={statusItems}
           />
         </div>
-        <div className="mb-9">
+        <div className="mb-8 mt-4">
           <EvidenceSection
             hypothesis={node}
             evidence={evidence}
@@ -157,12 +147,12 @@ export function HypothesisDetails({ nodePath, tree, setTree, api, ...rest }) {
             }
           />
         </div> */}
-        <div className="mb-6">
+        <div className="">
           <CommentsSection
             comments={comments}
             onComment={(value) => handleComment(value)}
             titlePrepend={
-              <HypothesisTitle className="mb-3">Comments</HypothesisTitle>
+              <HypothesisTitle className="mb-2.5">Comments</HypothesisTitle>
             }
           />
         </div>
@@ -186,7 +176,10 @@ export function HypothesisDetails({ nodePath, tree, setTree, api, ...rest }) {
 
 function HypothesisTitle({ className, ...rest }) {
   return (
-    <div className={`text-md font-medium text-gray-800 ${className}`} {...rest}>
+    <div
+      className={`text-lg font-medium text-gray-dark font-semibold ${className}`}
+      {...rest}
+    >
       {rest.children}
     </div>
   );

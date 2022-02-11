@@ -50,11 +50,13 @@ export function HypothesisBuilder({
       </div>
       <Modal
         open={modalIsOpen}
-        onClose={() => setModalIsOpen(false)}
-        cardClass="w-full overflow-y-scroll"
+        onClose={() => {
+          setModalIsOpen(false);
+        }}
+        cardClass="w-full"
         contentClass="h-full px-10"
         cardStyle={{
-          maxWidth: "1024px",
+          maxWidth: "605px",
           maxHeight: "calc(100vh - 4rem)"
         }}
         closeButtonStyle={{
