@@ -31,7 +31,10 @@ export const HypothesisTree = ({
             <HypothesisBar hypothesis={node} onTitleClick={handleOpenModal} />
           </div>
           <div className="bg-light-blue p-5 mt-3 rounded-8px border border-dashed">
-            <HypothesisRootChildrenList node={node} />
+            <HypothesisRootChildrenList
+              node={node}
+              onTitleClick={handleOpenModal}
+            />
           </div>
         </div>
       </div>

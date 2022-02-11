@@ -3,7 +3,7 @@ import clsx from "clsx";
 import { HypothesisBlockHeader } from "../HypothesisBlockHeader";
 import { HypothesisBar } from "../HypothesisBar";
 
-export const HypothesisRootChildrenList = ({ node }) => (
+export const HypothesisRootChildrenList = ({ node, onTitleClick }) => (
   <>
     <HypothesisBlockHeader
       title="Issues"
@@ -14,7 +14,7 @@ export const HypothesisRootChildrenList = ({ node }) => (
     />
     {node.children.map((item, index) => (
       <div key={item.id} className={clsx(index !== 0 && "mt-5")}>
-        <HypothesisBar hypothesis={item} />
+        <HypothesisBar hypothesis={item} onTitleClick={onTitleClick} />
         <div className="ml-7">
           <div>
             <HypothesisBlockHeader
@@ -26,7 +26,7 @@ export const HypothesisRootChildrenList = ({ node }) => (
             />
             {item.children.map((item) => (
               <div key={item.id} className="flex flex-col mb-0.5">
-                <HypothesisBar hypothesis={item} />
+                <HypothesisBar hypothesis={item} onTitleClick={onTitleClick} />
               </div>
             ))}
           </div>
