@@ -2,16 +2,15 @@ import React from "react";
 import { BsPlusLg } from "react-icons/all";
 import { LogsTable } from "../../../Logs/Table/logs-table";
 import { TopologyCard } from "../../../Topology";
-import { EvidenceLogTable } from "../../../EvidenceLogTable/EvidenceLogTable";
 
 export function EvidenceItem({ evidence }) {
   if (evidence.type === "log") {
-    return <EvidenceLogTable evidence={evidence} />;
+    return <LogsTable logs={evidence.evidence} title="" />;
   }
   if (evidence.type === "topology") {
     return <TopologyCard topologyId={evidence.evidence.id} size="small" />;
   }
-  return <LogsTable logs={evidence.evidence} title="" />;
+  return null;
 }
 export function EvidenceSection({
   evidence,
@@ -24,7 +23,7 @@ export function EvidenceSection({
     <div className={rest.className} {...rest}>
       <div className="flex justify-between items-center">
         <div className="flex align-baseline font-inter text-large font-semibold">
-          <h2 className="text-gray-dark mr-2">{titlePrepend}</h2>
+          <h2 className="text-gray-900 mr-2">{titlePrepend}</h2>
           <button
             type="button"
             className="btn-round btn-round-primary btn-round-xs"

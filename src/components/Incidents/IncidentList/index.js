@@ -17,22 +17,22 @@ export function IncidentList({ list, ...rest }) {
         <thead className="rounded-md">
           <tr className="border-b border-border-color uppercase bg-column-background rounded-t-md items-center">
             <th
-              className="px-6 py-3 text-medium-gray font-medium text-xs col-span-2 text-left"
+              className="px-6 py-3 text-gray-500 font-medium text-xs col-span-2 text-left"
               colSpan={2}
             >
               Name
             </th>
-            <th className="px-3 py-3 text-medium-gray font-medium text-xs text-left">
+            <th className="px-3 py-3 text-gray-500 font-medium text-xs text-left">
               Severity
             </th>
-            <th className="px-3 py-3 text-medium-gray font-medium text-xs text-left">
+            <th className="px-3 py-3 text-gray-500 font-medium text-xs text-left">
               Status
             </th>
-            <th className="px-3 py-3 text-medium-gray font-medium text-xs text-left">
+            <th className="px-3 py-3 text-gray-500 font-medium text-xs text-left">
               Age
             </th>
             <th
-              className="px-3 py-3 text-medium-gray font-medium text-xs col-span-2 text-left"
+              className="px-3 py-3 text-gray-500 font-medium text-xs col-span-2 text-left"
               colSpan={2}
             >
               Responders
@@ -63,7 +63,7 @@ function IncidentItem({ incident }) {
     >
       <td
         colSpan={2}
-        className="px-6 py-4 text-darker-black col-span-2 text-sm leading-5 font-medium"
+        className="px-6 py-4 text-gray-900 col-span-2 text-sm leading-5 font-medium"
       >
         {title}
       </td>
@@ -75,7 +75,7 @@ function IncidentItem({ incident }) {
       <td className="px-3 py-4 shrink-0">
         <IncidentStatus incident={incident} />
       </td>
-      <td className="px-3 text-medium-gray text-sm py-4">{age}</td>
+      <td className="px-3 text-gray-500 text-sm py-4">{age}</td>
       <td className="px-3 text-sm py-4" colSpan={2}>
         <div className="flex">
           {responders.map(({ image, name }) => (

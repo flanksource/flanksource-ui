@@ -32,7 +32,7 @@ export function CommentsSection({
       <div>
         <textarea
           disabled={isLoading}
-          className="w-full border-gray-200 resize-none rounded-6px text-base leading-6 font-normal font-inter outline-none placeholder-darker-gray mb-2"
+          className="w-full border-gray-200 resize-none rounded-6px text-base leading-6 font-normal font-inter outline-none placeholder-gray-400 mb-2"
           onChange={(e) => setCommentTextValue(e.target.value)}
           placeholder="Type something"
           value={commentTextValue}
@@ -75,15 +75,15 @@ export function CommentsSection({
                   <div className="min-w-0 flex-1">
                     <div>
                       <div className="text-sm">
-                        <span className="text-darker-black text-sm leading-5 font-medium">
+                        <span className="text-gray-900 text-sm leading-5 font-medium">
                           {comment.created_by.name}
                         </span>
                       </div>
-                      <p className="mt-0.5 text-medium-gray text-sm leading-5 font-normal">
+                      <p className="mt-0.5 text-gray-500 text-sm leading-5 font-normal">
                         commented {dayjs(comment.created_at).fromNow()}
                       </p>
                     </div>
-                    <div className="mt-2 text-sm text-gray-light leading-5 font-normal">
+                    <div className="mt-2 text-sm text-gray-700 leading-5 font-normal">
                       <p className="whitespace-pre">{comment.comment}</p>
                     </div>
                   </div>
