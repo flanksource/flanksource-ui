@@ -113,7 +113,7 @@ export function HypothesisDetails({ nodePath, tree, setTree, api, ...rest }) {
           {/* <Badge size="sm" text={badgeMap[nodePath.length - 1]} className="mr-2" /> */}
           <EditableText
             value={node.title}
-            sharedClassName="text-2xl font-semibold text-gray-dark grow"
+            sharedClassName="text-2xl font-semibold text-gray-900 grow"
             onChange={(e) => {
               handleApiUpdate("title", e.target.value);
               handleCurrentNodeValueChange("title", e.target.value);
@@ -177,7 +177,10 @@ export function HypothesisDetails({ nodePath, tree, setTree, api, ...rest }) {
 function HypothesisTitle({ className, ...rest }) {
   return (
     <div
-      className={`text-lg font-medium text-gray-dark font-semibold ${className}`}
+      className={clsx(
+        "text-lg font-medium text-gray-900 font-semibold",
+        className
+      )}
       {...rest}
     >
       {rest.children}

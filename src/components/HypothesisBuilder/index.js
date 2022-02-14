@@ -28,7 +28,6 @@ export function HypothesisBuilder({
   useEffect(() => {
     setTree(loadedTree || newTree);
   }, [loadedTree]);
-
   return (
     <div {...rest}>
       <div className="w-full">
@@ -53,7 +52,7 @@ export function HypothesisBuilder({
         onClose={() => {
           setModalIsOpen(false);
         }}
-        cardClass="w-full"
+        cardClass="w-full overflow-y-auto"
         contentClass="h-full px-10"
         cardStyle={{
           maxWidth: "605px",
