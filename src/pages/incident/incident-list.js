@@ -1,5 +1,5 @@
 import cx from "clsx";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   AiFillPlusCircle,
@@ -8,7 +8,10 @@ import {
 } from "react-icons/ai/";
 import { BsFilter } from "react-icons/bs/";
 import { useForm } from "react-hook-form";
-import { getAllIncident } from "../../api/services/incident";
+import {
+  getAllIncident,
+  getIncidentsWithParams
+} from "../../api/services/incident";
 import { IncidentCreate } from "../../components/Incidents/IncidentCreate";
 import { IncidentList } from "../../components/Incidents/IncidentList";
 import { Modal } from "../../components/Modal";
@@ -17,6 +20,9 @@ import { Loading } from "../../components/Loading";
 import { Dropdown } from "../../components/Dropdown";
 import { MultiSelectDropdown } from "../../components/MultiSelectDropdown";
 import { DropdownMenu } from "../../components/DropdownMenu";
+import { severityItems, statusItems } from "../../components/Incidents/data";
+import { getPersons } from "../../api/services/users";
+import { debounce } from "lodash";
 
 export const tempTypes = [
   {
@@ -40,6 +46,14 @@ export const tempTypes = [
     value: "value3"
   }
 ];
+
+const defaultSelections = {
+  all: {
+    description: "All",
+    value: "all",
+    order: 0
+  }
+};
 
 // to be removed after integrating with API
 const mockLabels = [
@@ -73,9 +87,13 @@ export function IncidentListPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const { control, getValues, watch } = useForm({
     defaultValues: {
-      severity: searchParams.get("severity") || tempTypes[0].value,
-      status: searchParams.get("status") || tempTypes[0].value,
-      owner: searchParams.get("owner") || tempTypes[0].value
+      severity:
+        searchParams.get("severity") ||
+        Object.values(defaultSelections)[0].value,
+      status:
+        searchParams.get("status") || Object.values(defaultSelections)[0].value,
+      owner:
+        searchParams.get("owner") || Object.values(defaultSelections)[0].value
     }
   });
   const [selectedLabels, setSelectedLabels] = useState([]);
@@ -85,14 +103,49 @@ export function IncidentListPage() {
   const [incidents, setIncidents] = useState([]);
   const [incidentModalIsOpen, setIncidentModalIsOpen] = useState(false);
   const [enabled, setEnabled] = useState(false);
+  const [ownerSelections, setOwnerSelections] = useState([]);
 
-  const loadIncidents = () => {
-    setIsLoading(true);
-    getAllIncident().then((res) => {
-      setIncidents(res.data);
-      setIsLoading(false);
+  const watchSeverity = watch("severity");
+  const watchStatus = watch("status");
+  const watchOwner = watch("owner");
+
+  useEffect(() => {
+    getPersons().then((res) => {
+      const owners = res.data.reduce((acc, current) => {
+        acc[current.id] = {
+          ...current,
+          value: current.id,
+          description: current.name
+        };
+        return acc;
+      }, {});
+      setOwnerSelections(owners);
     });
-  };
+  }, []);
+
+  const loadIncidents = useRef(
+    debounce((severity, status, owner, labels) => {
+      // TODO: integrate labels
+      setIsLoading(true);
+      const params = {
+        severity,
+        status,
+        created_by: owner
+      };
+      Object.entries(params).forEach(([key, value]) => {
+        if (value === "all") {
+          delete params[key];
+        } else {
+          params[key] = `eq.${value}`;
+        }
+      });
+      console.log("lol", params);
+      getIncidentsWithParams(params).then((res) => {
+        setIncidents(res.data);
+        setIsLoading(false);
+      });
+    }, 100)
+  ).current;
 
   useEffect(() => {
     loadIncidents();
@@ -102,8 +155,8 @@ export function IncidentListPage() {
     const labelsArray = selectedLabels.map((o) => o.value);
     const encodedLabels = encodeURIComponent(JSON.stringify(labelsArray));
     const paramsList = {
-      labels: encodedLabels,
-      ...getValues()
+      ...getValues(),
+      labels: encodedLabels
     };
     const params = {};
     Object.entries(paramsList).forEach(([key, value]) => {
@@ -114,12 +167,9 @@ export function IncidentListPage() {
     setSearchParams(params);
   };
 
-  const watchSeverity = watch("severity");
-  const watchStatus = watch("status");
-  const watchOwner = watch("owner");
-
   useEffect(() => {
     saveQueryParams();
+    loadIncidents(watchSeverity, watchStatus, watchOwner, selectedLabels);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [watchSeverity, watchStatus, watchOwner, selectedLabels]);
 
@@ -153,7 +203,7 @@ export function IncidentListPage() {
                 control={control}
                 name="severity"
                 className="w-36 mr-2 flex-shrink-0"
-                items={tempTypes}
+                items={{ ...defaultSelections, ...severityItems }}
               />
             </div>
             <div className="flex items-center mr-4">
@@ -162,7 +212,7 @@ export function IncidentListPage() {
                 control={control}
                 name="status"
                 className="w-36 mr-2 flex-shrink-0"
-                items={tempTypes}
+                items={{ ...defaultSelections, ...statusItems }}
               />
             </div>
             <div className="flex items-center mr-4">
@@ -171,7 +221,7 @@ export function IncidentListPage() {
                 control={control}
                 name="owner"
                 className="w-36 mr-2 flex-shrink-0"
-                items={tempTypes}
+                items={{ ...defaultSelections, ...ownerSelections }}
               />
             </div>
             <div className="flex items-center">
@@ -179,7 +229,7 @@ export function IncidentListPage() {
               <MultiSelectDropdown
                 styles={labelDropdownStyles}
                 className="w-full"
-                options={mockLabels} // change this to actual labels fetched from API
+                options={mockLabels} // TODO: change this to actual labels fetched from API
                 onChange={(labels) => setSelectedLabels(labels)}
                 value={selectedLabels}
               />
