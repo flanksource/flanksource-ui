@@ -52,10 +52,7 @@ module.exports = {
         "gray-color": "#C4C4C4",
         "dark-gray": "#242423",
         "medium-gray": "#6B7280",
-        "gray-warmer": "#A4A4A4",
-        "gray-medium": "#D1D5DB",
         "darker-black": "#111827",
-        "darkest-gray": "#383A40",
         "light-black": "#1F2937",
         "border-color": "#E5E7EB",
         "column-background": "#F9FAFB",
@@ -138,12 +135,13 @@ module.exports = {
   },
   variants: {
     extend: {
-      backgroundColor: ["disabled"],
+      backgroundColor: ["disabled", "checked"],
       textColor: ["disabled"],
       margin: ["first", "last"],
+      padding: ["first", "last"],
       borderWidth: ["first", "hover", "last"],
       borderRadius: ["first", "last"],
-      borderColor: ["hover"]
+      borderColor: ["hover", "checked"]
     }
   }, // eslint-disable-next-line global-require
   plugins: [require("@tailwindcss/forms"), require("@tailwindcss/typography")]

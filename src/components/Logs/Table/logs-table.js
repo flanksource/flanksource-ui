@@ -6,11 +6,12 @@ import dayjs from "dayjs";
 import { useTable, useRowSelect } from "react-table";
 import clsx from "clsx";
 import PropTypes from "prop-types";
+import { BsFillBarChartFill } from "react-icons/all";
 import { IndeterminateCheckbox } from "../../IndeterminateCheckbox/IndeterminateCheckbox";
 
 const convert = new Convert();
 
-export const LogsTable = ({ logs, actions }) => {
+export const LogsTable = ({ logs, actions, variant }) => {
   if (logs != null && !isArray(logs)) {
     try {
       logs = JSON.parse(logs);
@@ -31,13 +32,16 @@ export const LogsTable = ({ logs, actions }) => {
         accessor: "timestamp",
         Cell: function timestampCell({ cell: { row } }) {
           return (
-            <div className="min-w-max flex flex-row">
-              <div className="mr-1.5">
-                <IndeterminateCheckbox
-                  className="focus:ring-indigo-400 h-4 w-4 text-indigo-600 border-gray-300 rounded"
-                  {...row.getToggleRowSelectedProps()}
-                />
-              </div>
+            <div className="min-w-max flex flex-row items-center">
+              {variant === "comfortable" ? (
+                <div className="mr-1.5">
+                  <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
+                </div>
+              ) : (
+                <div className="mr-2.5">
+                  <BsFillBarChartFill className="text-dark-blue text-base" />
+                </div>
+              )}
               <p>
                 {dayjs(row.original.timestamp).format(
                   "MMM DD, YYYY HH:mm.ss.SSS"
@@ -48,17 +52,32 @@ export const LogsTable = ({ logs, actions }) => {
         }
       },
       {
-        Header: function MessageHeader() {
+        Header: function MessageHeader(props) {
           return (
             <div className="flex justify-between">
               <span className="align-middle my-auto">Message</span>
-              <button
-                className="btn-primary btn-primary-sm left-5 relative"
-                type="button"
-                onClick={() => {}}
-              >
-                Create new hypothesis
-              </button>
+              <div className="flex justify-end -m-2 flex-wrap">
+                {actions.map((action) => (
+                  <div key={action.label} className="p-2">
+                    <button
+                      type="button"
+                      disabled={!Object.keys(props.state.selectedRowIds).length}
+                      onClick={() => {
+                        action.handler(
+                          props.selectedFlatRows.map((d) => d.original)
+                        );
+                      }}
+                      className={clsx(
+                        Object.keys(props.state.selectedRowIds).length === 0
+                          ? "btn-disabled"
+                          : "btn-primary"
+                      )}
+                    >
+                      {action.label}
+                    </button>
+                  </div>
+                ))}
+              </div>
             </div>
           );
         },
@@ -77,109 +96,68 @@ export const LogsTable = ({ logs, actions }) => {
         }
       }
     ],
-    []
+    [actions, variant]
   );
   const data = useMemo(() => logs, [logs]);
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    prepareRow,
-    selectedFlatRows,
-    state: { selectedRowIds }
-  } = useTable(
-    {
-      columns,
-      data
-    },
-    useRowSelect,
-    (hooks) => {
-      hooks.visibleColumns.push((columns) => [...columns]);
-    }
-  );
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
+    useTable(
+      {
+        columns,
+        data
+      },
+      useRowSelect,
+      (hooks) => {
+        hooks.visibleColumns.push((columns) => [...columns]);
+      }
+    );
   return (
-    <div className="mx-auto flex flex-col justify-center relative">
-      {actions.length >= 0 && (
-        <div
-          className="flex justify-between items-center overflow-y-hidden mb-4"
-          style={{
-            maxHeight: Object.keys(selectedRowIds).length ? "100px" : "0px",
-            transition: "max-height 0.25s  ease-in-out"
-          }}
-        >
-          <div>
-            {Object.keys(selectedRowIds).length > 0 && (
-              <span className="text-sm text-gray-400">
-                {Object.keys(selectedRowIds).length} selected
-              </span>
-            )}
-          </div>
-
-          {actions.map((action) => (
-            <button
-              key={action.label}
-              type="button"
-              disabled={!Object.keys(selectedRowIds).length}
-              onClick={() => {
-                action.handler(selectedFlatRows.map((d) => d.original));
-              }}
-              className={clsx(
-                Object.keys(selectedRowIds).length > 0
-                  ? "text-indigo-700 bg-indigo-100 hover:bg-indigo-200"
-                  : "text-gray-400 bg-gray-200",
-                "inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded"
-              )}
-            >
-              {action.label}
-            </button>
-          ))}
-        </div>
-      )}
-
-      <div className="pb-12">
-        <table
-          className="w-full standard-table standard-table-cells-padding"
-          {...getTableProps()}
-        >
-          <thead>
-            {headerGroups.map((headerGroup) => {
-              const { key, ...restHeaderGroupProps } =
-                headerGroup.getHeaderGroupProps();
-              return (
-                <tr key={key} {...restHeaderGroupProps}>
-                  {headerGroup.headers.map((column) => (
-                    <th key={column.id} {...column.getHeaderProps()}>
-                      {column.render("Header")}
-                    </th>
-                  ))}
-                </tr>
-              );
-            })}
-          </thead>
-          <tbody {...getTableBodyProps()}>
-            {rows.map((row) => {
-              prepareRow(row);
-              return (
-                <tr key={row.id} {...row.getRowProps()}>
-                  {row.cells.map((cell) => (
-                    <td key={cell.row.id} {...cell.getCellProps()}>
-                      {cell.render("Cell")}
-                    </td>
-                  ))}
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+    <div className="pb-12">
+      <table
+        className={clsx(
+          "w-full",
+          variant === "comfortable" ? "comfortable-table" : "compact-table"
+        )}
+        {...getTableProps()}
+      >
+        <thead>
+          {headerGroups.map((headerGroup) => {
+            const { key, ...restHeaderGroupProps } =
+              headerGroup.getHeaderGroupProps();
+            return (
+              <tr key={key} {...restHeaderGroupProps}>
+                {headerGroup.headers.map((column) => (
+                  <th key={column.id} {...column.getHeaderProps()}>
+                    {column.render("Header")}
+                  </th>
+                ))}
+              </tr>
+            );
+          })}
+        </thead>
+        <tbody {...getTableBodyProps()}>
+          {rows.map((row) => {
+            prepareRow(row);
+            return (
+              <tr key={row.id} {...row.getRowProps()}>
+                {row.cells.map((cell) => (
+                  <td key={cell.row.id} {...cell.getCellProps()}>
+                    {cell.render("Cell")}
+                  </td>
+                ))}
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
     </div>
   );
 };
 LogsTable.propTypes = {
   logs: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
-  actions: PropTypes.arrayOf(PropTypes.shape({}))
+  actions: PropTypes.arrayOf(PropTypes.shape({})),
+  variant: PropTypes.oneOf(["comfortable", "compact"])
 };
 LogsTable.defaultProps = {
-  actions: []
+  actions: [],
+  variant: "comfortable"
 };

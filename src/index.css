@@ -8,10 +8,6 @@
     @apply inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-blue-500;
   }
 
-  .btn-primary-sm {
-    @apply leading-4 py-2 px-3;
-  }
-
   .btn-disabled {
     @apply inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-300;
   }
@@ -20,11 +16,15 @@
     @apply inline-flex items-center justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-blue-500;
   }
 
+  .checkbox {
+    @apply h-4 w-4 border border-gray-300 rounded bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 bg-no-repeat bg-center bg-contain float-left cursor-pointer;
+  }
+
   nav a.active {
     @apply bg-gray-100
   }
 
-  .standard-table {
+  .comfortable-table {
     border-collapse: separate;
     border-spacing: 0;
     border-width: 1px;
@@ -35,47 +35,71 @@
     @apply border-border-color shadow-md;
   }
 
-  .standard-table td, .standard-table th {
+  .comfortable-table td, .comfortable-table th {
     @apply border-border-color;
   }
 
-  .standard-table.standard-table-cells-padding th {
-    @apply px-6;
+  .comfortable-table td {
+    @apply text-gray-900 text-sm py-4 px-6;
   }
 
-  .standard-table.standard-table-cells-padding td {
-    @apply py-4 px-6;
-  }
-
-  .standard-table th {
-    @apply text-medium-gray text-xs leading-4 font-medium tracking-wider uppercase text-left;
-  }
-
-  .standard-table td {
-    @apply text-darker-black text-sm;
-  }
-
-  .standard-table th {
+  .comfortable-table th {
     border-bottom-width: 1px;
-    @apply bg-lightest-gray;
+    @apply text-medium-gray text-xs leading-4 font-medium tracking-wider uppercase text-left px-6;
   }
-  .standard-table th:first-of-type {
+
+  .comfortable-table th:first-of-type {
     border-top-left-radius: 8px;
   }
-  .standard-table th:last-of-type {
+
+  .comfortable-table th:last-of-type {
     border-top-right-radius: 8px;
   }
-  .standard-table tr td {
+
+  .comfortable-table tr td {
     border-bottom-width: 1px;
   }
-  .standard-table tr:last-of-type td {
+
+  .comfortable-table tr:last-of-type td {
     border-bottom-width: 0;
   }
-  .standard-table tr:last-of-type td:first-of-type {
+
+  .comfortable-table tr:last-of-type td:first-of-type {
     border-bottom-left-radius: 8px;
   }
-  .standard-table tr:last-of-type td:last-of-type {
+
+  .comfortable-table tr:last-of-type td:last-of-type {
     border-bottom-right-radius: 8px;
+  }
+
+  .compact-table {
+    border-collapse: separate;
+    border-spacing: 0;
+    border-width: 0;
+    border-style: solid;
+    border-radius: 0;
+    -moz-border-radius: 0;
+    -webkit-border-radius: 0;
+  }
+
+  .compact-table td, .compact-table th {
+    @apply border-border-color;
+  }
+
+  .compact-table th {
+    @apply text-gray-500 text-sm font-medium tracking-wider uppercase text-left px-1 py-1;
+  }
+
+  .compact-table td {
+    @apply text-gray-900 text-sm font-medium py-2 px-1;
+  }
+
+  .compact-table th {
+    border-bottom-width: 1px;
+  }
+
+  .compact-table tr td {
+    border-bottom-width: 1px;
   }
 }
 
