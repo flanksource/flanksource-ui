@@ -4,7 +4,7 @@ import { minimalNodeTemplate, NestedHeirarchy } from "../NestedHeirarchy";
 import { hypothesisInitialFields } from "./data";
 import { Modal } from "../Modal";
 import { HypothesisDetails } from "./components/HypothesisDetails";
-import { HypothesisTree } from "./components/HypothesisTree";
+import { HypothesisNode } from "./components/HypothesisNode";
 
 const newTree = {
   title: "",
@@ -39,7 +39,7 @@ export function HypothesisBuilder({
             depthLimit={2}
             additionalNodeFields={hypothesisInitialFields}
           >
-            <HypothesisTree
+            <HypothesisNode
               setModalIsOpen={setModalIsOpen}
               setSelectedNodePath={setSelectedNodePath}
               defaultEditMode={defaultEditMode}
