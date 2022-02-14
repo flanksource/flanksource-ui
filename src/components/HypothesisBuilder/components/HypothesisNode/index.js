@@ -1,299 +1,86 @@
-import React, { useEffect, useState } from "react";
-import { IoMdAdd, IoMdSave } from "react-icons/io";
-import { BsPencil, BsInfoCircle } from "react-icons/bs";
-import { AiFillDelete } from "react-icons/ai";
-import "./index.css";
-import {
-  addButtonLabels,
-  hypothesisNodeTypes,
-  hypothesisStatuses,
-  textPlaceholders
-} from "../../data";
-import {
-  deleteNodeInTree,
-  getAllNodeIds,
-  removeLinksFromTree
-} from "../../../NestedHeirarchy/utils";
-import { useUser } from "../../../../context";
+import React from "react";
+import { BsPlusLg } from "react-icons/all";
+import clsx from "clsx";
+import { HypothesisBar } from "../HypothesisBar";
+import { HypothesisBlockHeader } from "../HypothesisBlockHeader";
 
-export function HypothesisNode({
-  node,
-  defaultEditMode = true,
-  treeFunctions,
-  parentArray,
-  depthLimit,
-  setModalIsOpen,
-  setSelectedNodePath,
-  api
-}) {
-  const { handleNodeChange, handleAddNode, tree, setTree } = treeFunctions;
-  const user = useUser();
-  const [editMode, setEditMode] = useState(
-    !node?.title.length > 0 ?? defaultEditMode
-  );
+const UNKNOWN_TYPE = "unknown_type";
+
+export const HypothesisNode = (props) => {
+  const { node, parentArray, setModalIsOpen, setSelectedNodePath, depthLimit } =
+    props;
+
   const isRoot = parentArray?.length <= 0;
+  const type = node.type || UNKNOWN_TYPE;
 
   const handleOpenModal = () => {
     setSelectedNodePath([...parentArray, node.id]);
     setModalIsOpen(true);
   };
 
-  const statusInfo = Object.values(hypothesisStatuses).find(
-    (o) => o.value === node.status
-  );
+  const isDeepLimitNotReached = depthLimit > parentArray?.length;
+  const nodeChildrenExist = !!node.children?.length;
 
   return (
-    <div
-      key={node.id}
-      className="w-full flex last:mb-1.5 "
-      style={{
-        padding: "6px 0 2px 5px",
-        animation: !isRoot && "0.8s ease-out 0s 1 highlightOnLoad"
-      }}
-    >
-      <div
-        className="flex items-center justify-center flex-shrink-0 rounded-full mr-1"
-        style={{ width: "26px", height: "26px" }}
-      >
-        {node.status && statusInfo ? (
-          React.createElement(statusInfo.icon.type, {
-            color: statusInfo.color,
-            style: { width: "20px" }
-          })
-        ) : (
-          <span className="text-md text-gray-400">
-            <BsInfoCircle style={{ fontSize: "20px" }} />
-          </span>
-        )}
-      </div>
+    <div>
+      {isRoot && (
+        <div className="flex items-center text-base font-semibold mb-6 mb-5">
+          <h2 className="text-dark-gray mr-3 text-2xl">Action plan</h2>
+          <button
+            type="button"
+            className="btn-round btn-round-primary btn-round-xs"
+          >
+            <BsPlusLg />
+          </button>
+        </div>
+      )}
 
-      <div className="flex flex-col w-full">
-        <div className="flex flex-col pr-2">
-          {!editMode ? (
-            <div
-              className={`ml-0.5 ${!node.title && "text-gray-400"}`}
-              style={{ marginTop: "1px", marginBottom: "1px" }}
-              onClick={handleOpenModal}
-              role="button"
-            >
-              <button
-                className="text-left hover:text-indigo-800"
-                type="button"
-                onClick={handleOpenModal}
-              >
-                {node.title || "(none)"}
-              </button>
-            </div>
-          ) : (
-            <input
-              className="w-full px-1 mr-2 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 border border-gray-300 rounded-md"
-              defaultValue={node.title}
-              placeholder={textPlaceholders[parentArray?.length]}
-              onChange={(e) =>
-                handleNodeChange(
-                  [...parentArray, node.id],
-                  "title",
-                  e.target.value
-                )
-              }
-            />
-          )}
+      <div className="w-full">
+        <div className="w-full mb-0.5">
+          <HypothesisBar hypothesis={node} onTitleClick={handleOpenModal} />
         </div>
 
-        <div className="flex items-center justify-between mt-1 mb-1.5 mr-2">
-          <div className="flex">
-            {!editMode && (
-              <>
-                {depthLimit > parentArray?.length && (
-                  <MiniButton
-                    className="border border-gray-300 text-gray-500 rounded-md mr-2"
-                    onClick={() => {
-                      const newNodeID = handleAddNode(
-                        [...parentArray, node.id],
-                        { title: "" }
-                      );
-                      if (api?.create) {
-                        api.create(user, newNodeID, api.incidentId, {
-                          title: "",
-                          type: hypothesisNodeTypes[parentArray.length + 1],
-                          status: hypothesisStatuses[2].value
-                        });
-                      }
-                    }}
-                  >
-                    <IoMdAdd style={{ fontSize: "13px" }} />
-                    <span className="ml-1 text-xs">
-                      {addButtonLabels[parentArray?.length]}
-                    </span>
-                  </MiniButton>
-                )}
-
-                {depthLimit > parentArray?.length &&
-                  (node.links?.length > 0 ||
-                    node.comments?.length > 0 ||
-                    node.evidence?.length > 0) && (
-                    <Separator color="rgba(209, 213, 219)" className="mr-2" />
-                  )}
-
-                {node.links?.length > 0 && (
-                  <NumberedText
-                    number={node.links?.length}
-                    text="Linked items"
-                    textStyle={{ fontSize: "12px" }}
-                    className="mr-2"
-                  />
-                )}
-                {node.comments?.length > 0 && (
-                  <NumberedText
-                    number={node.comments.length}
-                    text="Comments"
-                    textStyle={{ fontSize: "12px" }}
-                    className="mr-2"
-                  />
-                )}
-                {node.evidence?.length > 0 && (
-                  <NumberedText
-                    number={node.evidence?.length}
-                    text="Evidences"
-                    textStyle={{ fontSize: "12px" }}
-                    className="mr-2"
-                  />
-                )}
-              </>
-            )}
-          </div>
-
-          <div className="flex">
-            {!isRoot && editMode && (
-              <MiniButton
-                className="rounded-md bg-red-400 text-white"
-                onClick={() => {
-                  const idsToRemove = getAllNodeIds(node);
-                  if (api?.deleteBulk) {
-                    api.deleteBulk(idsToRemove);
-                  }
-                  const newTree = removeLinksFromTree(
-                    tree,
-                    idsToRemove,
-                    node.id
-                  );
-                  setTree(deleteNodeInTree([...parentArray, node.id], newTree));
-                }}
-              >
-                <AiFillDelete style={{ fontSize: "14px" }} />
-                <span className="ml-1 mt-0.5 text-xs">Delete</span>
-              </MiniButton>
-            )}
-            <MiniButton
-              className={`ml-2 rounded-md border ${editMode
-                ? "bg-blue-500 border-blue-500 text-gray-50"
-                : "text-gray-500 border-gray-300"
-                }`}
-              onClick={() => {
-                if (editMode && api?.update) {
-                  api.update(node.id, { title: node.title });
-                }
-                setEditMode(!editMode);
-              }}
-            >
-              {editMode ? (
-                <IoMdSave style={{ fontSize: "13px" }} />
-              ) : (
-                <BsPencil style={{ fontSize: "13px" }} />
-              )}
-              <span className="ml-1 text-xs mt-0.5">
-                {editMode ? "Done editing" : "Edit"}
-              </span>
-            </MiniButton>
-          </div>
-        </div>
-
-        {node.children && node.children.length > 0 && (
-          <div className="">
-            {node.children.map((child) => (
-              <HypothesisNode
-                node={child}
-                treeFunctions={treeFunctions}
-                parentArray={[...parentArray, node.id]}
-                key={child.id}
-                depthLimit={depthLimit}
-                setModalIsOpen={setModalIsOpen}
-                setSelectedNodePath={setSelectedNodePath}
-                defaultEditMode={defaultEditMode}
-                api={api}
+        {(nodeChildrenExist || isDeepLimitNotReached) && (
+          <div
+            className={clsx({
+              "bg-light-blue p-5 mt-3 rounded-8px border border-dashed": isRoot,
+              "pl-7 my-2.5": !isRoot
+            })}
+          >
+            {isDeepLimitNotReached && (
+              <HypothesisBlockHeader
+                title="Node"
+                noResults={!nodeChildrenExist}
+                noResultsTitle="No nodes created yet"
+                onButtonClick={() => {}}
+                className="mb-2.5"
+                {...(type === "root"
+                  ? {
+                      title: "Issues",
+                      noResultsTitle: "No issues created yet"
+                    }
+                  : {})}
+                {...(type === "factor"
+                  ? {
+                      title: "Potential Solution",
+                      noResultsTitle: "No potential solutions created yet"
+                    }
+                  : {})}
               />
-            ))}
+            )}
+
+            {nodeChildrenExist &&
+              node.children.map((item) => (
+                <HypothesisNode
+                  {...props}
+                  node={item}
+                  parentArray={[...parentArray, node.id]}
+                  key={item.id}
+                />
+              ))}
           </div>
         )}
       </div>
     </div>
   );
-}
-
-function MiniButton({ className, onClick, children, ...rest }) {
-  return (
-    <button
-      type="button"
-      className={`px-2 py-0.5 flex items-center justify-center ${className || ""
-        }`}
-      style={{}}
-      onClick={onClick}
-      {...rest}
-    >
-      {children}
-    </button>
-  );
-}
-
-function Separator({ xMargins, yMargins, color, width, style, ...rest }) {
-  return (
-    <div
-      style={{
-        width: width ? `${width}px` : "1px",
-        backgroundColor: color || "#909090",
-        marginLeft: xMargins,
-        marginRight: xMargins,
-        marginTop: yMargins,
-        marginBottom: yMargins,
-        ...style
-      }}
-      {...rest}
-    />
-  );
-}
-
-function NumberedText({
-  text = "",
-  number = 0,
-  onClick,
-  className,
-  numberClass,
-  numberStyle,
-  textClass,
-  textStyle,
-  ...rest
-}) {
-  return (
-    <button
-      className={`flex items-center ${!onClick ? "pointer-events-none" : ""} ${className || ""
-        }`}
-      type="button"
-      onClick={onClick}
-      {...rest}
-    >
-      <span
-        className={`bg-gray-400 rounded-full mb-px text-white text-xs ${numberClass || ""
-          }`}
-        style={{ paddingLeft: "5px", paddingRight: "5px", ...numberStyle }}
-      >
-        {number}
-      </span>{" "}
-      <span
-        className={`text-gray-500 text-sm ml-1 ${textClass || ""}`}
-        style={textStyle}
-      >
-        {text}
-      </span>
-    </button>
-  );
-}
+};

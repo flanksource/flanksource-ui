@@ -7,7 +7,7 @@ export const HypothesisBlockHeader = ({
   title,
   noResults,
   noResultsTitle,
-  onButtonClock,
+  onButtonClick,
   className
 }) => (
   <div className={clsx("flex align-baseline text-sm font-medium", className)}>
@@ -17,7 +17,7 @@ export const HypothesisBlockHeader = ({
     <button
       type="button"
       className="btn-round btn-round-primary btn-round-2xs"
-      onClick={onButtonClock}
+      onClick={onButtonClick}
     >
       <BsPlusLg />
     </button>
@@ -29,7 +29,7 @@ HypothesisBlockHeader.propTypes = {
   noResults: PropTypes.bool,
   noResultsTitle: PropTypes.string,
   className: PropTypes.string,
-  onButtonClock: PropTypes.func.isRequired
+  onButtonClick: PropTypes.func.isRequired
 };
 
 HypothesisBlockHeader.defaultProps = {
