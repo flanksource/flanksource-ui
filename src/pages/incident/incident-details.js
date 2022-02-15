@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import dayjs from "dayjs";
 import {
@@ -18,6 +18,7 @@ import { Description } from "../../components/Description/description";
 import { Button } from "../../components/Button";
 import { Changelog } from "../../components/Change";
 import { TopologyCard } from "../../components/Topology/topology-card";
+import { useIncidentQuery } from "../../components/query-hooks/useIncidentQuery";
 
 function mapNode(node) {
   return {
@@ -48,48 +49,44 @@ function buildTreeFromHypothesisList(list) {
 
 export function IncidentDetailsPage() {
   const { id: incidentId } = useParams();
-  const [isLoading, setIsLoading] = useState({
-    incident: true,
-    hypothesis: true
-  });
   const isNewlyCreated = false; // TODO: set this to true if its a newly created incident
-  const [loadedTree, setLoadedTree] = useState(null);
-  const [incident, setIncidentDetails] = useState(null);
-  const [error, setError] = useState(null);
-  const [status, setStatus] = useState(null);
 
-  const load = () => {
-    if (incidentId) {
-      getIncident(incidentId).then((res) => {
-        if (res.data == null || res.data.length === 0) {
-          setError("incident not found");
-          return;
-        }
-        setStatus(res.data[0].status);
-        setIncidentDetails(res.data[0]);
-        setLoadedTree(buildTreeFromHypothesisList(res.data[0].hypothesis));
-        setIsLoading((previous) => ({
-          ...previous,
-          incident: false,
-          hypothesis: false
-        }));
-      });
-    }
-  };
+  const incidentQuery = useIncidentQuery(incidentId);
+
+  const { isLoading } = incidentQuery;
+
+  const incidentData = useMemo(
+    () => incidentQuery.data?.data,
+    [incidentQuery.data]
+  );
+
+  const error = incidentData == null || !incidentData?.length;
+
+  const incident = useMemo(
+    () => (incidentData?.length ? incidentData[0] : null),
+    [incidentData]
+  );
+
+  const status = useMemo(() => incident?.status ?? null, [incident]);
+
+  const loadedTree = useMemo(
+    () => (incident ? buildTreeFromHypothesisList(incident.hypothesis) : null),
+    [incident]
+  );
 
   const updateStatus = (status) => {
-    incident.status = status;
-    return updateIncident(incident.id, { status }).then(load);
+    return updateIncident(incident.id, { status }).then(() =>
+      incidentQuery.refetch()
+    );
   };
 
-  useEffect(load, [incidentId, status]);
   if (incident == null) {
     return <Loading />;
   }
 
   return (
     <SearchLayout
-      onRefresh={load}
+      onRefresh={() => incidentQuery.refetch()}
       title={
         <>
           <div className="flex my-auto">
@@ -97,7 +94,7 @@ export function IncidentDetailsPage() {
               {" "}
               <Link to="/incidents">Incidents&nbsp;</Link>
               {" / "}
-              {!isLoading.incident && (
+              {!isLoading && (
                 <>
                   <div className="font-semibold">
                     <div>&nbsp;{incident.title}</div>
@@ -126,7 +123,7 @@ export function IncidentDetailsPage() {
           <section aria-labelledby="notes-title">
             <div className="bg-white shadow sm:rounded-lg sm:overflow-hidden">
               <div className="px-2 py-2">
-                {!isLoading.hypothesis ? (
+                {!isLoading ? (
                   <HypothesisBuilder
                     loadedTree={loadedTree}
                     // showGeneratedOutput
