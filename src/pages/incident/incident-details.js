@@ -18,7 +18,9 @@ import { Description } from "../../components/Description/description";
 import { Button } from "../../components/Button";
 import { Changelog } from "../../components/Change";
 import { TopologyCard } from "../../components/Topology/topology-card";
-import { useIncidentQuery } from "../../components/query-hooks/useIncidentQuery";
+import { createIncidentQueryKey, useIncidentQuery } from "../../components/query-hooks/useIncidentQuery";
+import { useUpdateHypothesisMutation } from "../../components/mutations/useUpdateHypothesisMutation";
+import { useQueryClient } from "react-query";
 
 function mapNode(node) {
   return {
@@ -50,7 +52,7 @@ function buildTreeFromHypothesisList(list) {
 export function IncidentDetailsPage() {
   const { id: incidentId } = useParams();
   const isNewlyCreated = false; // TODO: set this to true if its a newly created incident
-
+  const queryClient = useQueryClient();
   const incidentQuery = useIncidentQuery(incidentId);
 
   const { isLoading } = incidentQuery;
@@ -73,6 +75,12 @@ export function IncidentDetailsPage() {
     () => (incident ? buildTreeFromHypothesisList(incident.hypothesis) : null),
     [incident]
   );
+
+  const updateMutation = useUpdateHypothesisMutation({
+    onSettled: () => {
+      queryClient.invalidateQueries(createIncidentQueryKey(incidentId));
+    }
+  });
 
   const updateStatus = (status) => {
     return updateIncident(incident.id, { status }).then(() =>
@@ -133,7 +141,8 @@ export function IncidentDetailsPage() {
                       create: createHypothesis,
                       delete: deleteHypothesis,
                       deleteBulk: deleteHypothesisBulk,
-                      update: updateHypothesis
+                      update: updateHypothesis,
+                      updateMutation,
                     }}
                   />
                 ) : (

@@ -81,10 +81,10 @@ export function HypothesisDetails({ nodePath, tree, setTree, api, ...rest }) {
 
   const handleApiUpdate = useRef(
     debounce((key, value) => {
-      if (api?.update && node?.id) {
+      if (api?.updateMutation && node?.id) {
         const params = {};
         params[key] = value;
-        api.update(node.id, params);
+        api.updateMutation.mutate({id: node.id, params});
       }
     }, 1000)
   ).current;
@@ -98,8 +98,7 @@ export function HypothesisDetails({ nodePath, tree, setTree, api, ...rest }) {
   const watchStatus = watch("status");
   useEffect(() => {
     handleApiUpdate("status", watchStatus);
-    handleCurrentNodeValueChangeMemoized("status", watchStatus);
-  }, [watchStatus, handleCurrentNodeValueChangeMemoized, handleApiUpdate]);
+  }, [watchStatus, handleApiUpdate]);
   return (
     <>
       <div className={clsx("py-7", rest.className || "")} {...rest}>
