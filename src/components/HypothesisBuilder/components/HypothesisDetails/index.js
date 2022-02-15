@@ -112,7 +112,7 @@ export function HypothesisDetails({ nodePath, tree, setTree, api, ...rest }) {
         <div className="mt-4 mr-2 mb-2 pr-8 flex flex-nowrap">
           {/* <Badge size="sm" text={badgeMap[nodePath.length - 1]} className="mr-2" /> */}
           <EditableText
-            value={node.title}
+            value={node.title?.trim()}
             sharedClassName="text-2xl font-semibold text-gray-900 grow"
             onChange={(e) => {
               handleApiUpdate("title", e.target.value);
