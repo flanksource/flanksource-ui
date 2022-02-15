@@ -54,7 +54,9 @@ const renderInfoIcon = (icon, props = {}) => {
 };
 
 export const HypothesisBar = ({ hypothesis, onTitleClick, startAdornment }) => {
-  const { title, status, created_by: createdBy } = hypothesis;
+  const { title: rawTitle, status, created_by: createdBy } = hypothesis;
+
+  const title = useMemo(() => (rawTitle ?? "").trim(), [rawTitle]);
 
   const { StatusIcon, statusColorClass } = useMemo(
     () =>
@@ -79,7 +81,7 @@ export const HypothesisBar = ({ hypothesis, onTitleClick, startAdornment }) => {
           <StatusIcon />
         </div>
         <span
-          className="ml-3 text-sm font-normal w-full text-left flex-1"
+          className="ml-3 text-sm font-normal w-full text-left flex-1 min-h-full inline-flex items-center"
           onClick={onTitleClick}
           role="presentation"
         >
