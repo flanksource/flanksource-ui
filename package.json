@@ -39,6 +39,7 @@
     "react-image": "^4.0.3",
     "react-loading-icons": "^1.0.8",
     "react-markdown": "^6.0.3",
+    "react-query": "^3.34.15",
     "react-router-dom": "^6.2.1",
     "react-scripts": "4.0.3",
     "react-select": "^5.2.2",
