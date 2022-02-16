@@ -2,7 +2,7 @@ import React from "react";
 import { BsFillBarChartFill } from "react-icons/all";
 import dayjs from "dayjs";
 
-export const EvidenceLogTable = ({ evidence }) => (
+export const EvidenceLogList = ({ evidence }) => (
   <div className="flex flex-row gap-x-10 py-1.5 border-b" key={evidence.id}>
     <div className="flex flex-row">
       <div className="text-dark-blue">
@@ -17,5 +17,3 @@ export const EvidenceLogTable = ({ evidence }) => (
     </p>
   </div>
 );
-
-EvidenceLogTable.propTypes = {};

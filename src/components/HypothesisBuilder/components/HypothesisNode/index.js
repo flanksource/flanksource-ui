@@ -7,8 +7,14 @@ import { HypothesisBlockHeader } from "../HypothesisBlockHeader";
 const UNKNOWN_TYPE = "unknown_type";
 
 export const HypothesisNode = (props) => {
-  const { node, parentArray, setModalIsOpen, setSelectedNodePath, depthLimit } =
-    props;
+  const {
+    node,
+    parentArray,
+    setModalIsOpen,
+    setSelectedNodePath,
+    depthLimit,
+    setCreateHypothesisModalIsOpen
+  } = props;
 
   const isRoot = parentArray?.length <= 0;
   const type = node.type || UNKNOWN_TYPE;
@@ -17,7 +23,10 @@ export const HypothesisNode = (props) => {
     setSelectedNodePath([...parentArray, node.id]);
     setModalIsOpen(true);
   };
-
+  const handlerOpenCreateHypothesisModal = () => {
+    setSelectedNodePath([...parentArray, node.id]);
+    setCreateHypothesisModalIsOpen(true);
+  };
   const isDeepLimitNotReached = depthLimit > parentArray?.length;
   const nodeChildrenExist = !!node.children?.length;
 
@@ -52,7 +61,7 @@ export const HypothesisNode = (props) => {
                 title="Node"
                 noResults={!nodeChildrenExist}
                 noResultsTitle="No nodes created yet"
-                onButtonClick={() => {}}
+                onButtonClick={handlerOpenCreateHypothesisModal}
                 className="mb-2.5"
                 {...(type === "root"
                   ? {

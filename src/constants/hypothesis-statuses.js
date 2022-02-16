@@ -3,6 +3,6 @@ export const HypothesisStatuses = {
   Likely: "likely",
   Possible: "possible",
   Unlikely: "unlikely",
-  Improvable: "improvable",
+  Improbable: "improbable",
   Disproven: "disproven"
 };

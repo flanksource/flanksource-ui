@@ -84,7 +84,7 @@ export function HypothesisDetails({ nodePath, tree, setTree, api, ...rest }) {
       if (api?.updateMutation && node?.id) {
         const params = {};
         params[key] = value;
-        api.updateMutation.mutate({id: node.id, params});
+        api.updateMutation.mutate({ id: node.id, params });
       }
     }, 1000)
   ).current;

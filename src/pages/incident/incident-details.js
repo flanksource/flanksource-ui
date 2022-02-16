@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import dayjs from "dayjs";
+import { useQueryClient } from "react-query";
 import {
   createHypothesis,
   deleteHypothesis,
@@ -18,9 +19,12 @@ import { Description } from "../../components/Description/description";
 import { Button } from "../../components/Button";
 import { Changelog } from "../../components/Change";
 import { TopologyCard } from "../../components/Topology/topology-card";
-import { createIncidentQueryKey, useIncidentQuery } from "../../components/query-hooks/useIncidentQuery";
+import {
+  createIncidentQueryKey,
+  useIncidentQuery
+} from "../../components/query-hooks/useIncidentQuery";
 import { useUpdateHypothesisMutation } from "../../components/mutations/useUpdateHypothesisMutation";
-import { useQueryClient } from "react-query";
+import { useCreateHypothesisMutation } from "../../components/mutations/useCreateHypothesis";
 
 function mapNode(node) {
   return {
@@ -81,12 +85,14 @@ export function IncidentDetailsPage() {
       queryClient.invalidateQueries(createIncidentQueryKey(incidentId));
     }
   });
+  const createMutation = useCreateHypothesisMutation({
+    onSettled: () => {
+      queryClient.invalidateQueries(createIncidentQueryKey(incidentId));
+    }
+  });
 
-  const updateStatus = (status) => {
-    return updateIncident(incident.id, { status }).then(() =>
-      incidentQuery.refetch()
-    );
-  };
+  const updateStatus = (status) =>
+    updateIncident(incident.id, { status }).then(() => incidentQuery.refetch());
 
   if (incident == null) {
     return <Loading />;
@@ -143,6 +149,7 @@ export function IncidentDetailsPage() {
                       deleteBulk: deleteHypothesisBulk,
                       update: updateHypothesis,
                       updateMutation,
+                      createMutation
                     }}
                   />
                 ) : (
