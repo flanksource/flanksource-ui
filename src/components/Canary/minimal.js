@@ -62,11 +62,11 @@ export function MinimalCanary({ checks, labels, selectedTab }) {
           style={{ maxHeight: "calc(100vh - 4rem)" }}
         >
           <CheckTitle
-            check={checks.find((o) => o?.id === selectedCheck?.id)}
+            check={checks?.find((o) => o?.id === selectedCheck?.id)}
             className="pb-4"
           />
           <CheckDetails
-            check={checks.find((o) => o?.id === selectedCheck?.id)}
+            check={checks?.find((o) => o?.id === selectedCheck?.id)}
             // graphData={graphData}
             className={`flex flex-col overflow-y-hidden ${mixins.appleScrollbar}`}
           />

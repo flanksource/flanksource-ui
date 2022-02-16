@@ -160,21 +160,23 @@ export function FilterForm({
         <div className="uppercase font-semibold text-sm mb-3 text-indigo-700">
           Filter By Label
         </div>
-        {filteredLabels.map((label) => (
-          <Controller
-            key={label.id}
-            name={`labels.${label.id}`}
-            control={control}
-            render={({ field: { ref, ...rest } }) => (
-              <TristateToggle
-                key={label.key}
-                className="mb-2"
-                label={label}
-                {...rest}
-              />
-            )}
-          />
-        ))}
+        {filteredLabels
+          .filter((o) => o && o !== undefined)
+          .map((label) => (
+            <Controller
+              key={label.id}
+              name={`labels.${label.id}`}
+              control={control}
+              render={({ field: { ref, ...rest } }) => (
+                <TristateToggle
+                  key={label.key}
+                  className="mb-2"
+                  label={label}
+                  {...rest}
+                />
+              )}
+            />
+          ))}
       </div>
     </form>
   );
