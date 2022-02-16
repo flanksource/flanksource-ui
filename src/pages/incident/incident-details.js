@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { Link, useParams } from "react-router-dom";
 import dayjs from "dayjs";
 import { useQueryClient } from "react-query";
@@ -8,7 +8,7 @@ import {
   deleteHypothesisBulk,
   updateHypothesis
 } from "../../api/services/hypothesis";
-import { getIncident, updateIncident } from "../../api/services/incident";
+import { updateIncident } from "../../api/services/incident";
 import { HypothesisBuilder } from "../../components/HypothesisBuilder";
 import { IncidentSeverity } from "../../components/Incidents/incident-severity";
 import { IncidentStatus } from "../../components/Incidents/incident-status";
@@ -61,10 +61,7 @@ export function IncidentDetailsPage() {
 
   const { isLoading } = incidentQuery;
 
-  const incidentData = useMemo(
-    () => incidentQuery.data?.data,
-    [incidentQuery.data]
-  );
+  const incidentData = useMemo(() => incidentQuery.data, [incidentQuery.data]);
 
   const error = incidentData == null || !incidentData?.length;
 
@@ -80,11 +77,7 @@ export function IncidentDetailsPage() {
     [incident]
   );
 
-  const updateMutation = useUpdateHypothesisMutation({
-    onSettled: () => {
-      queryClient.invalidateQueries(createIncidentQueryKey(incidentId));
-    }
-  });
+  const updateMutation = useUpdateHypothesisMutation({ incidentId });
   const createMutation = useCreateHypothesisMutation({
     onSettled: () => {
       queryClient.invalidateQueries(createIncidentQueryKey(incidentId));

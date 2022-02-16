@@ -1,11 +1,11 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { debounce } from "lodash";
 import { useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 import clsx from "clsx";
 import { Dropdown } from "../../../Dropdown";
 import { hypothesisStatuses } from "../../data";
-import { getNode, setDeepValue } from "../../../NestedHeirarchy/utils";
+import { getNode } from "../../../NestedHeirarchy/utils";
 
 import { EvidenceSection } from "../EvidenceSection";
 import { Modal } from "../../../Modal";
@@ -44,15 +44,7 @@ export function HypothesisDetails({ nodePath, tree, setTree, api, ...rest }) {
   const [comments, setComments] = useState([]);
   const [evidence, setEvidence] = useState([]);
 
-  const node = getNode(tree, nodePath);
-  const handleCurrentNodeValueChange = (key, value) => {
-    setTree(setDeepValue(tree, nodePath, key, value));
-  };
-  const handleCurrentNodeValueChangeMemoized = useCallback(
-    handleCurrentNodeValueChange,
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
-  );
+  const node = useMemo(() => getNode(tree, nodePath), [tree, nodePath]);
 
   const fetchEvidence = (hypothesisId) => {
     getAllEvidenceByHypothesis(hypothesisId).then((evidence) => {
@@ -80,25 +72,29 @@ export function HypothesisDetails({ nodePath, tree, setTree, api, ...rest }) {
   }, [node.id]);
 
   const handleApiUpdate = useRef(
-    debounce((key, value) => {
+    debounce((params) => {
       if (api?.updateMutation && node?.id) {
-        const params = {};
-        params[key] = value;
         api.updateMutation.mutate({ id: node.id, params });
       }
     }, 1000)
   ).current;
 
-  const { control, watch } = useForm({
+  const { control, watch, setValue, getValues } = useForm({
     defaultValues: {
-      status: node.status || Object.values(statusItems)[2].value
+      status: node.status || Object.values(statusItems)[2].value,
+      title: node.title?.trim() ?? ""
     }
   });
 
-  const watchStatus = watch("status");
+  watch();
+
   useEffect(() => {
-    handleApiUpdate("status", watchStatus);
-  }, [watchStatus, handleApiUpdate]);
+    const subscription = watch((value) => {
+      handleApiUpdate(value);
+    });
+    return () => subscription.unsubscribe();
+  }, [watch, getValues, handleApiUpdate]);
+
   return (
     <>
       <div className={clsx("py-7", rest.className || "")} {...rest}>
@@ -111,11 +107,10 @@ export function HypothesisDetails({ nodePath, tree, setTree, api, ...rest }) {
         <div className="mt-4 mr-2 mb-2 pr-8 flex flex-nowrap">
           {/* <Badge size="sm" text={badgeMap[nodePath.length - 1]} className="mr-2" /> */}
           <EditableText
-            value={node.title?.trim()}
+            value={getValues("title")}
             sharedClassName="text-2xl font-semibold text-gray-900 grow"
             onChange={(e) => {
-              handleApiUpdate("title", e.target.value);
-              handleCurrentNodeValueChange("title", e.target.value);
+              setValue("title", e.target.value);
             }}
           />
         </div>
