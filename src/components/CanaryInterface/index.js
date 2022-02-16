@@ -3,8 +3,6 @@ import history from "history/browser";
 import { orderBy } from "lodash";
 import { CanaryTabs, filterChecksByTabSelection } from "../Canary/tabs";
 import { MinimalCanary } from "../Canary/minimal";
-import { FilterForm } from "../Canary/FilterForm";
-import mockChecksData from "../../data/14-2-2022.canary.checks.real.json";
 import {
   filterChecksByLabels,
   getLabelFilters,
@@ -13,8 +11,9 @@ import {
 import { getParamsFromURL } from "../Canary/utils";
 import { filterChecks, filterChecksByText } from "../Canary/filter";
 import { CanarySorter } from "../Canary/data";
+import { updateParams } from "../Canary/url";
 
-export function CanaryInterface({ checks = mockChecksData.checks }) {
+export function CanaryInterface({ checks = [] }) {
   const [searchParams, setSearchParams] = useState(
     getParamsFromURL(window.location.search)
   );
@@ -40,6 +39,13 @@ export function CanaryInterface({ checks = mockChecksData.checks }) {
     setLabels(getLabels(checks));
   }, [checks]);
 
+  // group by name by default
+  useEffect(() => {
+    if (!groupBy) {
+      updateParams({ groupBy: "name" });
+    }
+  }, [groupBy]);
+
   // update label filters state
   useEffect(() => {
     const decoded = decodeURIComponent(labelStates ?? null);
@@ -63,13 +69,6 @@ export function CanaryInterface({ checks = mockChecksData.checks }) {
     setFilteredChecks(filtered);
   }, [checks, tabBy, groupBy, hidePassing, query, labelFilters, selectedTab]);
 
-  const filterProps = {
-    onServerSideFilterChange: handleFetch,
-    labels,
-    checks,
-    currentTabChecks: filterChecksByTabSelection(tabBy, selectedTab, checks),
-    history
-  };
   return (
     <>
       <CanaryTabs
@@ -80,9 +79,6 @@ export function CanaryInterface({ checks = mockChecksData.checks }) {
         setTabSelection={setSelectedTab}
       />
       <MinimalCanary checks={filteredChecks} selectedTab={selectedTab} />
-      <div className="hidden">
-        <FilterForm {...filterProps} />
-      </div>
     </>
   );
 }
