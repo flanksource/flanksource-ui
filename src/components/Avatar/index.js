@@ -17,7 +17,6 @@ export const Avatar = ({
     srcList: Array.isArray(srcList) ? srcList : [srcList],
     useSuspense: false
   });
-
   const sizeClass = useMemo(() => {
     switch (size) {
       case "sm":
@@ -72,7 +71,7 @@ export const Avatar = ({
 
 Avatar.propTypes = {
   size: PropTypes.string,
-  srcList: PropTypes.oneOf([
+  srcList: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.arrayOf(PropTypes.string)
   ]).isRequired,
