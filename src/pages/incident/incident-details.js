@@ -1,7 +1,6 @@
 import React, { useMemo } from "react";
 import { Link, useParams } from "react-router-dom";
 import dayjs from "dayjs";
-import { useQueryClient } from "react-query";
 import {
   createHypothesis,
   deleteHypothesis,
@@ -19,12 +18,9 @@ import { Description } from "../../components/Description/description";
 import { Button } from "../../components/Button";
 import { Changelog } from "../../components/Change";
 import { TopologyCard } from "../../components/Topology/topology-card";
-import {
-  createIncidentQueryKey,
-  useIncidentQuery
-} from "../../components/query-hooks/useIncidentQuery";
+import { useIncidentQuery } from "../../components/query-hooks/useIncidentQuery";
 import { useUpdateHypothesisMutation } from "../../components/mutations/useUpdateHypothesisMutation";
-import { useCreateHypothesisMutation } from "../../components/mutations/useCreateHypothesis";
+import { useCreateHypothesisMutation } from "../../components/mutations/useCreateHypothesisMutation";
 
 function mapNode(node) {
   return {
@@ -56,7 +52,6 @@ function buildTreeFromHypothesisList(list) {
 export function IncidentDetailsPage() {
   const { id: incidentId } = useParams();
   const isNewlyCreated = false; // TODO: set this to true if its a newly created incident
-  const queryClient = useQueryClient();
   const incidentQuery = useIncidentQuery(incidentId);
 
   const { isLoading } = incidentQuery;
@@ -78,11 +73,7 @@ export function IncidentDetailsPage() {
   );
 
   const updateMutation = useUpdateHypothesisMutation({ incidentId });
-  const createMutation = useCreateHypothesisMutation({
-    onSettled: () => {
-      queryClient.invalidateQueries(createIncidentQueryKey(incidentId));
-    }
-  });
+  const createMutation = useCreateHypothesisMutation({ incidentId });
 
   const updateStatus = (status) =>
     updateIncident(incident.id, { status }).then(() => incidentQuery.refetch());

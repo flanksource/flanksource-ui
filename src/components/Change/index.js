@@ -3,10 +3,8 @@ import React, { Fragment } from "react";
 import { CheckIcon, ThumbUpIcon, UserIcon } from "@heroicons/react/solid";
 import { BsFillGearFill, BsArrowUpRight } from "react-icons/bs";
 import { AiFillAlert } from "react-icons/ai";
-import { v4 as uuidv4 } from "uuid";
 
 function Avatar({ person }) {
-  console.log(person, person.imageUrl);
   return (
     <img src={person.imageUrl} alt={person.name} className="rounded-full" />
   );
@@ -91,7 +89,8 @@ export function Changelog() {
     <div className="flow-root">
       <ul role="list" className="-mb-4">
         {timeline.map((event, eventIdx) => (
-          <li key={uuidv4()}>
+          // eslint-disable-next-line react/no-array-index-key
+          <li key={eventIdx}>
             <div className="relative pb-4">
               {eventIdx !== timeline.length - 1 ? (
                 <span

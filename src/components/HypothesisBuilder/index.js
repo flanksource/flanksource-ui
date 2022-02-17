@@ -97,31 +97,15 @@ export function HypothesisBuilder({
         }}
         hideActions
       >
-        <div {...rest}>
-          {tree && (
-            <NestedHeirarchy
-              tree={tree}
-              setTree={setTree}
-              depthLimit={2}
-              additionalNodeFields={hypothesisInitialFields}
-            >
-              {(heirarchyProps) => (
-                <>
-                  <CreateHypothesis
-                    {...heirarchyProps}
-                    nodePath={selectedNodePath}
-                    tree={tree}
-                    setTree={setTree}
-                    api={api}
-                    onHypothesisCreated={() => {
-                      setCreateHypothesisModalIsOpen(false);
-                    }}
-                  />
-                </>
-              )}
-            </NestedHeirarchy>
-          )}
-        </div>
+        <CreateHypothesis
+          nodePath={selectedNodePath}
+          tree={tree}
+          setTree={setTree}
+          api={api}
+          onHypothesisCreated={() => {
+            setCreateHypothesisModalIsOpen(false);
+          }}
+        />
       </Modal>
       {showGeneratedOutput && (
         <div className="w-full flex flex-col mt-4">
