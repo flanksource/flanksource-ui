@@ -2,13 +2,20 @@ import { IncidentCommander } from "../axios";
 import { resolve } from "../resolve";
 
 export const getAllIncident = async () =>
-  resolve(IncidentCommander.get(`/incident?order=created_at.desc&status=eq.open`));
+  resolve(IncidentCommander.get(`/incident?order=created_at.desc`));
 
 export const getIncident = async (id) =>
   resolve(
     IncidentCommander.get(
       `/incident?id=eq.${id}&select=*,hypothesis!hypothesis_incident_id_fkey(*)`
     )
+  );
+
+export const getIncidentsWithParams = async (params) =>
+  resolve(
+    IncidentCommander.get(`/incident?order=created_at.desc`, {
+      params
+    })
   );
 
 export const updateIncident = async (id, incident) => {

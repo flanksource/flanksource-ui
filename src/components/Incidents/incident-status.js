@@ -8,6 +8,7 @@ export function IncidentStatus({ incident }) {
   });
   return (
     <button
+      type="button"
       className={clsx(
         "text-light-black text-xs leading-4 font-medium py-0.5 px-2.5 rounded-10px shrink cursor-default",
         statusColorClass || "bg-blue-100"

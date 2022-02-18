@@ -88,54 +88,77 @@ export function Dropdown({
                         leaveTo="opacity-0"
                       >
                         <Listbox.Options className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
-                          {Object.values(items).map((item) => (
-                            <Listbox.Option
-                              key={item.id}
-                              className={({ active }) =>
-                                classNames(
-                                  active
-                                    ? "text-white bg-indigo-600"
-                                    : "text-gray-900",
-                                  "cursor-pointer select-none relative py-2 pl-3 pr-9"
-                                )
+                          {Object.values(items)
+                            .sort((a, b) => {
+                              if (
+                                Object.prototype.hasOwnProperty.call(
+                                  a,
+                                  "order"
+                                ) &&
+                                Object.prototype.hasOwnProperty.call(b, "order")
+                              ) {
+                                return a.order - b.order;
                               }
-                              value={item.value}
-                            >
-                              {({ selected, active }) => (
-                                <>
-                                  <div className="flex items-center">
-                                    {item.icon}
-                                    <span
-                                      className={classNames(
-                                        selected
-                                          ? "font-semibold"
-                                          : "font-normal",
-                                        "ml-3 block truncate"
-                                      )}
-                                    >
-                                      {item.description}
-                                    </span>
-                                  </div>
+                              if (
+                                Object.prototype.hasOwnProperty.call(a, "order")
+                              ) {
+                                return -1;
+                              }
+                              if (
+                                Object.prototype.hasOwnProperty.call(b, "order")
+                              ) {
+                                return 1;
+                              }
+                              return 0;
+                            })
+                            .map((item) => (
+                              <Listbox.Option
+                                key={item.id}
+                                className={({ active }) =>
+                                  classNames(
+                                    active
+                                      ? "text-white bg-indigo-600"
+                                      : "text-gray-900",
+                                    "cursor-pointer select-none relative py-2 pl-3 pr-9"
+                                  )
+                                }
+                                value={item.value}
+                              >
+                                {({ selected, active }) => (
+                                  <>
+                                    <div className="flex items-center">
+                                      {item.icon}
+                                      <span
+                                        className={classNames(
+                                          selected
+                                            ? "font-semibold"
+                                            : "font-normal",
+                                          "ml-3 block truncate"
+                                        )}
+                                      >
+                                        {item.description}
+                                      </span>
+                                    </div>
 
-                                  {selected ? (
-                                    <span
-                                      className={classNames(
-                                        active
-                                          ? "text-white"
-                                          : "text-indigo-600",
-                                        "absolute inset-y-0 right-0 flex items-center pr-4"
-                                      )}
-                                    >
-                                      <CheckIcon
-                                        className="h-5 w-5"
-                                        aria-hidden="true"
-                                      />
-                                    </span>
-                                  ) : null}
-                                </>
-                              )}
-                            </Listbox.Option>
-                          ))}
+                                    {selected ? (
+                                      <span
+                                        className={classNames(
+                                          active
+                                            ? "text-white"
+                                            : "text-indigo-600",
+                                          "absolute inset-y-0 right-0 flex items-center pr-4"
+                                        )}
+                                      >
+                                        <CheckIcon
+                                          className="h-5 w-5"
+                                          aria-hidden="true"
+                                        />
+                                      </span>
+                                    ) : null}
+                                  </>
+                                )}
+                              </Listbox.Option>
+                            ))}
                         </Listbox.Options>
                       </Transition>
                     </div>
