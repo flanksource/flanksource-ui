@@ -155,6 +155,9 @@ export const defaultCellTypeSelections = {
 
 export function getNonBooleanLabels(checks) {
   const nonBooleanLabels = checks.reduce((acc, check) => {
+    if (check === null || typeof check === "string") {
+      return acc;
+    }
     if ("labels" in check && check.labels !== null) {
       const labels = Object.entries(check.labels).reduce((accum, [k, v]) => {
         const id = `canary:${k}:${v}`;
