@@ -21,6 +21,13 @@ export function FilterForm({
   labels,
   checks,
   history,
+  hideLabelFilters,
+  hideTimeRange,
+  className,
+  filterContainerClassName,
+  filterControllerClassName,
+  healthFilterClassName,
+  labelFilterClassName,
   currentTabChecks = null,
   onServerSideFilterChange = null
 }) {
@@ -83,19 +90,21 @@ export function FilterForm({
     };
   });
   return (
-    <form className="relative">
-      <div className="mb-8">
-        <TimeRange
-          control={control}
-          name="timeRange"
-          className="mb-4"
-          label="Time Range"
-        />
-
+    <form className={`relative ${className}`}>
+      <SectionTitle>Controls</SectionTitle>
+      <div className={filterContainerClassName}>
+        {!hideTimeRange && (
+          <TimeRange
+            control={control}
+            name="timeRange"
+            className={filterControllerClassName}
+            label="Time Range"
+          />
+        )}
         <LayoutDropdown
           control={control}
           name="layout"
-          className="mb-4"
+          className={filterControllerClassName}
           label="Layout"
         />
 
@@ -104,80 +113,99 @@ export function FilterForm({
             <GroupByDropdown
               name="groupBy"
               control={control}
-              className="mb-4"
+              className={filterControllerClassName}
               label="Group By"
               checks={checks}
             />
             <PivotByDropdown
               name="pivotBy"
               control={control}
-              className="mb-4"
+              className={filterControllerClassName}
               label="Pivot By"
               checks={checks}
             />
-            {watchPivotBy === "labels" && (
-              <PivotLabelDropdown
-                name="pivotLabel"
-                control={control}
-                className="mb-4"
-                label="Pivot Label"
-                checks={checks}
-              />
-            )}
-            {watchPivotBy !== "none" && (
-              <PivotCellTypeDropdown
-                name="pivotCellType"
-                control={control}
-                className="mb-4"
-                label="Cell Type"
-                checks={checks}
-              />
-            )}
           </>
         )}
         <TabByDropdown
           name="tabBy"
           control={control}
-          className="mb-4"
+          className={filterControllerClassName}
           label="Tab By"
           checks={checks}
         />
       </div>
 
-      <div className="uppercase font-semibold text-sm mb-3 text-indigo-700">
-        Filter By Health
-      </div>
-      <Controller
-        key="hidePassing"
-        name="hidePassing"
-        control={control}
-        render={({ field: { ref, ...rest } }) => (
-          <Toggle label="Hide Passing" className="mb-3" {...rest} />
-        )}
-      />
-
-      <div className="mt-8">
-        <div className="uppercase font-semibold text-sm mb-3 text-indigo-700">
-          Filter By Label
+      {!(watchPivotBy == null || watchPivotBy === "none") && (
+        <div>
+          <SectionTitle>Pivot Settings</SectionTitle>
+          <div className={filterContainerClassName}>
+            {watchPivotBy !== "none" && (
+              <PivotCellTypeDropdown
+                name="pivotCellType"
+                control={control}
+                className={filterControllerClassName}
+                label="Cell Type"
+                checks={checks}
+              />
+            )}
+            {watchPivotBy === "labels" && (
+              <PivotLabelDropdown
+                name="pivotLabel"
+                control={control}
+                className={filterControllerClassName}
+                label="Pivot Label"
+                checks={checks}
+              />
+            )}
+          </div>
         </div>
-        {filteredLabels
-          .filter((o) => o && o !== undefined)
-          .map((label) => (
-            <Controller
-              key={label.id}
-              name={`labels.${label.id}`}
-              control={control}
-              render={({ field: { ref, ...rest } }) => (
-                <TristateToggle
-                  key={label.key}
-                  className="mb-2"
-                  label={label}
-                  {...rest}
-                />
-              )}
-            />
-          ))}
+      )}
+
+      <div className={healthFilterClassName}>
+        <SectionTitle>Filter By Health</SectionTitle>
+        <Controller
+          key="hidePassing"
+          name="hidePassing"
+          control={control}
+          render={({ field: { ref, ...rest } }) => (
+            <Toggle label="Hide Passing" {...rest} />
+          )}
+        />
       </div>
+
+      {!hideLabelFilters && (
+        <div className={labelFilterClassName}>
+          <div className="uppercase font-semibold text-sm mb-3 text-indigo-700">
+            Filter By Label
+          </div>
+          {filteredLabels
+            .filter((o) => o && o !== undefined)
+            .map((label) => (
+              <Controller
+                key={label.id}
+                name={`labels.${label.id}`}
+                control={control}
+                render={({ field: { ref, ...rest } }) => (
+                  <TristateToggle
+                    key={label.key}
+                    className="mb-2"
+                    label={label}
+                    {...rest}
+                  />
+                )}
+              />
+            ))}
+        </div>
+      )}
     </form>
   );
 }
+
+const SectionTitle = ({ className, children, ...props }) => (
+  <div
+    className={`uppercase font-semibold text-sm mb-3 text-indigo-700 ${className}`}
+    {...props}
+  >
+    {children}
+  </div>
+);

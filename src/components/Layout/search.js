@@ -11,14 +11,16 @@ export function SearchLayout({ children, title, extra, onRefresh }) {
               <div>{title}</div>
             </div>
             <div className="ml-4 flex items-center md:ml-6">
-              <button
-                onClick={onRefresh}
-                type="button"
-                className="bg-white p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none mr-2 "
-              >
-                <span className="sr-only">Refresh</span>
-                <HiOutlineRefresh className="h-6 w-6" aria-hidden="true" />
-              </button>
+              {!onRefresh && (
+                <button
+                  onClick={onRefresh}
+                  type="button"
+                  className="bg-white p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none mr-2 "
+                >
+                  <span className="sr-only">Refresh</span>
+                  <HiOutlineRefresh className="h-6 w-6" aria-hidden="true" />
+                </button>
+              )}
               {extra}
               <UserProfile />
             </div>

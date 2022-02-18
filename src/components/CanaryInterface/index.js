@@ -12,8 +12,9 @@ import { getParamsFromURL } from "../Canary/utils";
 import { filterChecks, filterChecksByText } from "../Canary/filter";
 import { CanarySorter } from "../Canary/data";
 import { updateParams } from "../Canary/url";
+import { FilterForm } from "../Canary/FilterForm";
 
-export function CanaryInterface({ checks = [] }) {
+export function CanaryInterface({ checks = [], onFilterCallback }) {
   const [searchParams, setSearchParams] = useState(
     getParamsFromURL(window.location.search)
   );
@@ -57,8 +58,6 @@ export function CanaryInterface({ checks = [] }) {
     setLabels(getLabels(checks));
   }, [checks]);
 
-  const handleFetch = () => {};
-
   useEffect(() => {
     let filtered = filterChecks(checks, hidePassing, []); // first filter for pass/fail
     filtered = filterChecksByText(filtered, query || ""); // filter by name, description, endpoint
@@ -67,10 +66,43 @@ export function CanaryInterface({ checks = [] }) {
     setChecksForTabGeneration(filtered);
     filtered = filterChecksByTabSelection(tabBy, selectedTab, filtered); // filter based on selected tab
     setFilteredChecks(filtered);
-  }, [checks, tabBy, groupBy, hidePassing, query, labelFilters, selectedTab]);
+    if (onFilterCallback) {
+      onFilterCallback(filtered);
+    }
+  }, [
+    checks,
+    tabBy,
+    groupBy,
+    hidePassing,
+    query,
+    labelFilters,
+    selectedTab,
+    onFilterCallback
+  ]);
+
+  const filterProps = {
+    onServerSideFilterChange: () => {},
+    labels,
+    checks: filteredChecks,
+    currentTabChecks: filterChecksByTabSelection(
+      tabBy,
+      selectedTab,
+      filteredChecks
+    ),
+    history
+  };
 
   return (
     <>
+      <FilterForm
+        className="mb-8"
+        filterContainerClassName="flex flex-wrap mb-2"
+        filterControllerClassName="mb-4 mr-4 w-48"
+        healthFilterClassName=""
+        hideTimeRange
+        hideLabelFilters
+        {...filterProps}
+      />
       <CanaryTabs
         className=""
         style={{}}
