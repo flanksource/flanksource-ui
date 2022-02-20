@@ -1,26 +1,75 @@
-import React, { useEffect, useState } from "react";
-import { debounce, reduce } from "lodash";
+import React, { useEffect, useMemo, useState } from "react";
+import { debounce, isEmpty, reduce, throttle } from "lodash";
+import { useForm } from "react-hook-form";
+import { BiLoaderAlt } from "react-icons/bi";
 import { CanaryInterface } from "../components/CanaryInterface";
 import { SearchLayout } from "../components/Layout";
-import { updateParams } from "../components/Canary/url";
-import mockChecksData from "../data/14-2-2022.canary.checks.real.json";
+import {
+  encodeObjectToUrlSearchParams,
+  updateParams
+} from "../components/Canary/url";
 import { StatCard } from "../components/StatCard";
 import { isHealthy } from "../components/Canary/filter";
 import { CanarySearchBar } from "../components/Canary/CanarySearchBar";
+import { TimeRange, timeRanges } from "../components/Dropdown/TimeRange";
+import { getParamsFromURL } from "../components/Canary/utils";
 
 const getPassedChecks = (checks) =>
   reduce(checks, (sum, c) => (isHealthy(c) ? sum + 1 : sum), 0);
 
-export function HealthPage() {
+const getSearchParams = () => getParamsFromURL(window.location.search);
+
+export function HealthPage({ url }) {
+  const { control, watch } = useForm({
+    defaultValues: {
+      timeRange:
+        timeRanges.find((o) => o.value === getSearchParams()?.timeRange)
+          ?.value || timeRanges[0].value
+    }
+  });
+  const watchTimeRange = watch("timeRange");
+  useEffect(() => {
+    updateParams({ timeRange: watchTimeRange });
+  }, [watchTimeRange]);
+
   const [checks, setChecks] = useState([]);
   const [filteredChecks, setFilteredChecks] = useState([]);
-  useEffect(() => {
-    setChecks(mockChecksData.checks);
-  }, []);
+  const [isLoading, setIsLoading] = useState(true);
+  const [lastUpdated, setLastUpdated] = useState("");
 
   const handleSearch = debounce((value) => {
     updateParams({ query: value });
   }, 400);
+
+  const handleFetch = useMemo(
+    () =>
+      throttle(() => {
+        if (url == null) {
+          return;
+        }
+        const timeRange = getParamsFromURL(window.location.search)?.timeRange;
+        const params = encodeObjectToUrlSearchParams({
+          start:
+            isEmpty(timeRange) || timeRange === "undefined" ? "1h" : timeRange
+        });
+        setIsLoading(true);
+        fetch(`${url}?${params}`)
+          .then((result) => result.json())
+          .then((e) => {
+            if (!isEmpty(e.error)) {
+              // eslint-disable-next-line no-console
+              console.error(e.error);
+            } else {
+              setChecks(e.checks);
+              setLastUpdated(new Date());
+            }
+          })
+          .finally(() => {
+            setIsLoading(false);
+          });
+      }, 1000),
+    []
+  );
 
   return (
     <SearchLayout
@@ -32,12 +81,21 @@ export function HealthPage() {
       onRefresh={() => {}}
       extra={
         <>
+          <span className="text-sm font-medium text-gray-700 mr-3">
+            Time Range
+          </span>
+          <TimeRange
+            disabled={isLoading}
+            control={control}
+            name="timeRange"
+            className="mr-4 w-42"
+          />
           <CanarySearchBar
             onChange={(e) => handleSearch(e.target.value)}
             onSubmit={(value) => handleSearch(value)}
             onClear={() => handleSearch("")}
             className=""
-            inputClassName="w-full"
+            inputClassName="w-full py-2 mb-px"
             inputOuterClassName="w-80"
             placeholder="Search by name, description, or endpoint"
           />
@@ -46,27 +104,35 @@ export function HealthPage() {
     >
       <div className="flex mb-8">
         <StatCard
-          title="All Checks"
+          title={isLoading ? "Loading Checks.." : "All Checks"}
           className="mr-4 w-64"
           customValue={
             <>
-              {checks.length}
-              <span className="text-xl font-light">
-                {" "}
-                (
-                <span className="text-green-500">
-                  {getPassedChecks(checks)}
-                </span>
-                /
-                <span className="text-red-500">
-                  {checks.length - getPassedChecks(checks)}
-                </span>
-                )
-              </span>
+              {isLoading ? (
+                <>
+                  <BiLoaderAlt className="animate-spin w-6 h-6 text-gray-400 mt-4" />
+                </>
+              ) : (
+                <>
+                  {checks.length}
+                  <span className="text-xl font-light">
+                    {" "}
+                    (
+                    <span className="text-green-500">
+                      {getPassedChecks(checks)}
+                    </span>
+                    /
+                    <span className="text-red-500">
+                      {checks.length - getPassedChecks(checks)}
+                    </span>
+                    )
+                  </span>
+                </>
+              )}
             </>
           }
         />
-        {checks.length > filteredChecks.length && (
+        {!isLoading && checks.length > filteredChecks.length && (
           <StatCard
             title="Filtered Checks"
             className="mr-4 w-64"
@@ -94,6 +160,8 @@ export function HealthPage() {
       <CanaryInterface
         checks={checks}
         onFilterCallback={setFilteredChecks}
+        handleFetch={handleFetch}
+        showTable={!isLoading}
         tabsStyle={{
           position: "sticky",
           top: "84px",
@@ -119,6 +187,13 @@ export function HealthPage() {
               zIndex: 1
             }}
           />
+        }
+        afterTable={
+          isLoading && (
+            <div className="flex items-center justify-center w-full h-48">
+              <BiLoaderAlt className="animate-spin w-12 h-12 text-gray-400" />
+            </div>
+          )
         }
       />
     </SearchLayout>

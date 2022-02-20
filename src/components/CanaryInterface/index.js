@@ -14,11 +14,14 @@ import { CanarySorter } from "../Canary/data";
 import { FilterForm } from "../Canary/FilterForm";
 
 export function CanaryInterface({
+  handleFetch,
+  showTable,
   checks = [],
   tabsStyle = {},
   tableHeadStyle = {},
   onFilterCallback,
-  beforeTabs
+  beforeTabs,
+  afterTable
 }) {
   const [searchParams, setSearchParams] = useState(
     getParamsFromURL(window.location.search)
@@ -79,7 +82,7 @@ export function CanaryInterface({
   ]);
 
   const filterProps = {
-    onServerSideFilterChange: () => {},
+    onServerSideFilterChange: handleFetch,
     labels,
     checks: filteredChecks,
     currentTabChecks: filterChecksByTabSelection(
@@ -102,18 +105,23 @@ export function CanaryInterface({
         {...filterProps}
       />
       {beforeTabs}
-      <CanaryTabs
-        className=""
-        style={tabsStyle}
-        checks={checksForTabGeneration}
-        tabBy={tabBy}
-        setTabSelection={setSelectedTab}
-      />
-      <MinimalCanary
-        tableHeadStyle={tableHeadStyle}
-        checks={filteredChecks}
-        selectedTab={selectedTab}
-      />
+      {showTable && (
+        <>
+          <CanaryTabs
+            className=""
+            style={tabsStyle}
+            checks={checksForTabGeneration}
+            tabBy={tabBy}
+            setTabSelection={setSelectedTab}
+          />
+          <MinimalCanary
+            tableHeadStyle={tableHeadStyle}
+            checks={filteredChecks}
+            selectedTab={selectedTab}
+          />
+        </>
+      )}
+      {afterTable}
     </>
   );
 }

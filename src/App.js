@@ -96,7 +96,7 @@ export function App() {
           <Route index element={<IncidentListPage />} />
         </Route>
         <Route path="health" element={sidebar}>
-          <Route index element={<HealthPage />} />
+          <Route index element={<HealthPage url="/canary/api" />} />
         </Route>
 
         <Route path="topology" element={sidebar}>
