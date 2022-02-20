@@ -11,10 +11,15 @@ import {
 import { getParamsFromURL } from "../Canary/utils";
 import { filterChecks, filterChecksByText } from "../Canary/filter";
 import { CanarySorter } from "../Canary/data";
-import { updateParams } from "../Canary/url";
 import { FilterForm } from "../Canary/FilterForm";
 
-export function CanaryInterface({ checks = [], onFilterCallback }) {
+export function CanaryInterface({
+  checks = [],
+  tabsStyle = {},
+  tableHeadStyle = {},
+  onFilterCallback,
+  beforeTabs
+}) {
   const [searchParams, setSearchParams] = useState(
     getParamsFromURL(window.location.search)
   );
@@ -39,13 +44,6 @@ export function CanaryInterface({ checks = [], onFilterCallback }) {
   useEffect(() => {
     setLabels(getLabels(checks));
   }, [checks]);
-
-  // group by name by default
-  useEffect(() => {
-    if (!groupBy) {
-      updateParams({ groupBy: "name" });
-    }
-  }, [groupBy]);
 
   // update label filters state
   useEffect(() => {
@@ -103,14 +101,19 @@ export function CanaryInterface({ checks = [], onFilterCallback }) {
         hideLabelFilters
         {...filterProps}
       />
+      {beforeTabs}
       <CanaryTabs
         className=""
-        style={{}}
+        style={tabsStyle}
         checks={checksForTabGeneration}
         tabBy={tabBy}
         setTabSelection={setSelectedTab}
       />
-      <MinimalCanary checks={filteredChecks} selectedTab={selectedTab} />
+      <MinimalCanary
+        tableHeadStyle={tableHeadStyle}
+        checks={filteredChecks}
+        selectedTab={selectedTab}
+      />
     </>
   );
 }

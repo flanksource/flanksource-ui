@@ -8,7 +8,12 @@ import { CanaryTable } from "./table";
 import mixins from "../../utils/mixins.module.css";
 import { getParamsFromURL } from "./utils";
 
-export function MinimalCanary({ checks, labels, selectedTab }) {
+export function MinimalCanary({
+  checks,
+  labels,
+  selectedTab,
+  tableHeadStyle = {}
+}) {
   const [searchParams, setSearchParams] = useState(
     getParamsFromURL(window.location.search)
   );
@@ -42,7 +47,7 @@ export function MinimalCanary({ checks, labels, selectedTab }) {
           }
           hideNamespacePrefix
           groupSingleItems={false}
-          theadStyle={{}}
+          theadStyle={tableHeadStyle}
         />
       )}
       <Modal

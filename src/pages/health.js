@@ -38,7 +38,7 @@ export function HealthPage() {
             onClear={() => handleSearch("")}
             className=""
             inputClassName="w-full"
-            inputOuterClassName="w-72"
+            inputOuterClassName="w-80"
             placeholder="Search by name, description, or endpoint"
           />
         </>
@@ -90,7 +90,37 @@ export function HealthPage() {
           />
         )}
       </div>
-      <CanaryInterface checks={checks} onFilterCallback={setFilteredChecks} />
+
+      <CanaryInterface
+        checks={checks}
+        onFilterCallback={setFilteredChecks}
+        tabsStyle={{
+          position: "sticky",
+          top: "84px",
+          background: "white",
+          zIndex: 1
+        }}
+        tableHeadStyle={{
+          position: "sticky",
+          top: "122px",
+          background: "white",
+          zIndex: 1
+        }}
+        beforeTabs={
+          <div
+            style={{
+              position: "sticky",
+              marginTop: "-20px",
+              top: "64px",
+              border: "",
+              width: "100%",
+              height: "20px",
+              background: "white",
+              zIndex: 1
+            }}
+          />
+        }
+      />
     </SearchLayout>
   );
 }
