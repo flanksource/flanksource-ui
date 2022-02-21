@@ -63,7 +63,7 @@
 
   .comfortable-table th {
     border-bottom-width: 1px;
-    @apply text-medium-gray text-xs leading-4 font-medium tracking-wider uppercase text-left px-6;
+    @apply text-gray-500 text-xs leading-4 font-medium tracking-wider uppercase text-left px-6;
   }
 
   .comfortable-table th:first-of-type {
