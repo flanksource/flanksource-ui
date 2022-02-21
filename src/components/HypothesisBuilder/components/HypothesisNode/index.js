@@ -37,7 +37,7 @@ export const HypothesisNode = (props) => {
           <h2 className="text-dark-gray mr-3 text-2xl">Action plan</h2>
           <button
             type="button"
-            className="btn-round btn-round-primary btn-round-xs"
+            className="btn-round btn-round-primary btn-round-sm"
           >
             <BsPlusLg />
           </button>

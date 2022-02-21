@@ -16,7 +16,7 @@ export const HypothesisBlockHeader = ({
     </p>
     <button
       type="button"
-      className="btn-round btn-round-primary btn-round-2xs"
+      className="btn-round btn-round-primary btn-round-xs"
       onClick={onButtonClick}
     >
       <BsPlusLg />
