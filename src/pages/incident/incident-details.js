@@ -21,6 +21,7 @@ import { TopologyCard } from "../../components/Topology/topology-card";
 import { useIncidentQuery } from "../../components/query-hooks/useIncidentQuery";
 import { useUpdateHypothesisMutation } from "../../components/mutations/useUpdateHypothesisMutation";
 import { useCreateHypothesisMutation } from "../../components/mutations/useCreateHypothesisMutation";
+import { Details } from "../../components/Details";
 
 function mapNode(node) {
   return {
@@ -143,13 +144,12 @@ export function IncidentDetailsPage() {
             </div>
           </section>
         </div>
-
         <section
           aria-labelledby="timeline-title"
           className="lg:col-start-3 lg:col-span-1"
         >
           <div className="bg-white px-4 py-5  shadow sm:rounded-lg sm:px-6">
-            {/* <h2 className="text-lg font-medium text-gray-900">Details</h2> */}
+            {/* <h2 className="text-lg font-medium text-gray-900">Index</h2> */}
             <div className="py-2 space-y-5">
               <div className="flex flex-nowrap space-x-10">
                 <Description
@@ -186,6 +186,7 @@ export function IncidentDetailsPage() {
               <Changelog />
             </section>
           </div>
+          <Details />
         </section>
       </div>
     </SearchLayout>

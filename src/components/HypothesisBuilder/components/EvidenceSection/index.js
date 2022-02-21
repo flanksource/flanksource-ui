@@ -26,7 +26,7 @@ export function EvidenceSection({
           <h2 className="text-gray-900 mr-2">{titlePrepend}</h2>
           <button
             type="button"
-            className="btn-round btn-round-primary btn-round-xs"
+            className="btn-round btn-round-primary btn-round-sm"
           >
             <BsPlusLg />
           </button>
