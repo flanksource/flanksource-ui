@@ -2,6 +2,8 @@ import React, { useEffect, useMemo, useState } from "react";
 import { debounce, isEmpty, reduce, throttle } from "lodash";
 import { useForm } from "react-hook-form";
 import { BiLoaderAlt } from "react-icons/bi";
+import { CgSmileSad } from "react-icons/cg";
+
 import { CanaryInterface } from "../components/CanaryInterface";
 import { SearchLayout } from "../components/Layout";
 import {
@@ -13,6 +15,7 @@ import { isHealthy } from "../components/Canary/filter";
 import { CanarySearchBar } from "../components/Canary/CanarySearchBar";
 import { TimeRange, timeRanges } from "../components/Dropdown/TimeRange";
 import { getParamsFromURL } from "../components/Canary/utils";
+import { BannerMessage } from "../components/BannerMessage";
 
 const getPassedChecks = (checks) =>
   reduce(checks, (sum, c) => (isHealthy(c) ? sum + 1 : sum), 0);
@@ -88,7 +91,7 @@ export function HealthPage({ url }) {
             disabled={isLoading}
             control={control}
             name="timeRange"
-            className="mr-4 w-42"
+            className="mr-4 w-40"
           />
           <CanarySearchBar
             onChange={(e) => handleSearch(e.target.value)}
@@ -103,36 +106,38 @@ export function HealthPage({ url }) {
       }
     >
       <div className="flex mb-8">
-        <StatCard
-          title={isLoading ? "Loading Checks.." : "All Checks"}
-          className="mr-4 w-64"
-          customValue={
-            <>
-              {isLoading ? (
-                <>
-                  <BiLoaderAlt className="animate-spin w-6 h-6 text-gray-400 mt-4" />
-                </>
-              ) : (
-                <>
-                  {checks.length}
-                  <span className="text-xl font-light">
-                    {" "}
-                    (
-                    <span className="text-green-500">
-                      {getPassedChecks(checks)}
+        {checks && (
+          <StatCard
+            title={isLoading ? "Loading Checks.." : "All Checks"}
+            className="mr-4 w-64"
+            customValue={
+              <>
+                {isLoading ? (
+                  <>
+                    <BiLoaderAlt className="animate-spin w-6 h-6 text-gray-400 mt-4" />
+                  </>
+                ) : (
+                  <>
+                    {checks?.length}
+                    <span className="text-xl font-light">
+                      {" "}
+                      (
+                      <span className="text-green-500">
+                        {getPassedChecks(checks)}
+                      </span>
+                      /
+                      <span className="text-red-500">
+                        {checks?.length - getPassedChecks(checks)}
+                      </span>
+                      )
                     </span>
-                    /
-                    <span className="text-red-500">
-                      {checks.length - getPassedChecks(checks)}
-                    </span>
-                    )
-                  </span>
-                </>
-              )}
-            </>
-          }
-        />
-        {!isLoading && checks.length > filteredChecks.length && (
+                  </>
+                )}
+              </>
+            }
+          />
+        )}
+        {!isLoading && checks?.length > filteredChecks?.length && (
           <StatCard
             title="Filtered Checks"
             className="mr-4 w-64"
@@ -159,9 +164,10 @@ export function HealthPage({ url }) {
 
       <CanaryInterface
         checks={checks}
+        hideFilters={isLoading || !checks || checks?.length <= 0}
+        hideTable={isLoading || !checks}
         onFilterCallback={setFilteredChecks}
         handleFetch={handleFetch}
-        showTable={!isLoading}
         tabsStyle={{
           position: "sticky",
           top: "84px",
@@ -196,6 +202,27 @@ export function HealthPage({ url }) {
           )
         }
       />
+
+      {!isLoading && (!checks || checks.length <= 0) && (
+        <BannerMessage
+          prepend={
+            <div className="mb-4">
+              <CgSmileSad className="h-24 w-24 text-indigo-600" />
+            </div>
+          }
+          title="No checks found"
+          subtitle="Please try again"
+          append={
+            <button
+              className="mt-4 font-semibold text-gray-50 bg-indigo-600 rounded-md py-2 px-4"
+              type="button"
+              onClick={handleFetch}
+            >
+              Refetch checks
+            </button>
+          }
+        />
+      )}
     </SearchLayout>
   );
 }

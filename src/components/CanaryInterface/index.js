@@ -15,7 +15,8 @@ import { FilterForm } from "../Canary/FilterForm";
 
 export function CanaryInterface({
   handleFetch,
-  showTable,
+  hideFilters,
+  hideTable,
   checks = [],
   tabsStyle = {},
   tableHeadStyle = {},
@@ -30,6 +31,7 @@ export function CanaryInterface({
     history.listen(({ location }) => {
       setSearchParams(getParamsFromURL(location.search));
     });
+    handleFetch();
   }, []);
 
   const [selectedTab, setSelectedTab] = useState(null);
@@ -45,7 +47,9 @@ export function CanaryInterface({
 
   // get labels from checks
   useEffect(() => {
-    setLabels(getLabels(checks));
+    if (checks?.length > 0) {
+      setLabels(getLabels(checks));
+    }
   }, [checks]);
 
   // update label filters state
@@ -56,19 +60,17 @@ export function CanaryInterface({
   }, [labels, labelStates]);
 
   useEffect(() => {
-    setLabels(getLabels(checks));
-  }, [checks]);
-
-  useEffect(() => {
-    let filtered = filterChecks(checks, hidePassing, []); // first filter for pass/fail
-    filtered = filterChecksByText(filtered, query || ""); // filter by name, description, endpoint
-    filtered = Object.values(filterChecksByLabels(filtered, labelFilters)); // filters checks by its 'include/exclude' filters
-    filtered = orderBy(filtered, CanarySorter); // do sorting
-    setChecksForTabGeneration(filtered);
-    filtered = filterChecksByTabSelection(tabBy, selectedTab, filtered); // filter based on selected tab
-    setFilteredChecks(filtered);
-    if (onFilterCallback) {
-      onFilterCallback(filtered);
+    if (checks?.length > 0) {
+      let filtered = filterChecks(checks, hidePassing, []); // first filter for pass/fail
+      filtered = filterChecksByText(filtered, query || ""); // filter by name, description, endpoint
+      filtered = Object.values(filterChecksByLabels(filtered, labelFilters)); // filters checks by its 'include/exclude' filters
+      filtered = orderBy(filtered, CanarySorter); // do sorting
+      setChecksForTabGeneration(filtered);
+      filtered = filterChecksByTabSelection(tabBy, selectedTab, filtered); // filter based on selected tab
+      setFilteredChecks(filtered);
+      if (onFilterCallback) {
+        onFilterCallback(filtered);
+      }
     }
   }, [
     checks,
@@ -95,17 +97,20 @@ export function CanaryInterface({
 
   return (
     <>
-      <FilterForm
-        className="mb-8"
-        filterContainerClassName="flex flex-wrap mb-2"
-        filterControllerClassName="mb-4 mr-4 w-48"
-        healthFilterClassName=""
-        hideTimeRange
-        hideLabelFilters
-        {...filterProps}
-      />
+      {!hideFilters && (
+        <FilterForm
+          className="mb-8"
+          filterContainerClassName="flex flex-wrap mb-2"
+          filterControllerClassName="mb-4 mr-4 w-48"
+          healthFilterClassName=""
+          hideTimeRange
+          hideLabelFilters
+          {...filterProps}
+        />
+      )}
+
       {beforeTabs}
-      {showTable && (
+      {!hideTable && (
         <>
           <CanaryTabs
             className=""
@@ -121,6 +126,7 @@ export function CanaryInterface({
           />
         </>
       )}
+
       {afterTable}
     </>
   );

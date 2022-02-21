@@ -1,7 +1,7 @@
 import { useForm, Controller } from "react-hook-form";
 // import history from "history/browser";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useLayoutEffect, useRef } from "react";
 import { LayoutDropdown } from "../../Dropdown/LayoutDropdown";
 import { GroupByDropdown } from "../../Dropdown/GroupByDropdown";
 import { TabByDropdown } from "../../Dropdown/TabByDropdown";
@@ -66,8 +66,12 @@ export function FilterForm({
     }
   }, [formState, fullState, labels, history, reset]);
 
+  // only trigger filter change on 2nd render and onwards
+  const firstUpdate = useRef(true);
   useEffect(() => {
-    if (onServerSideFilterChange != null) {
+    if (firstUpdate.current) {
+      firstUpdate.current = false;
+    } else if (onServerSideFilterChange != null) {
       onServerSideFilterChange();
     }
   }, [formState.timeRange, onServerSideFilterChange]);
