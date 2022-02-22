@@ -94,23 +94,21 @@ const selectAllOptionFeatureDecorator = (originalProps) => {
 };
 
 const selectColourStyles = {
-  control: (styles, { isFocused }) => {
-    return {
-      ...styles,
-      minHeight: "42px",
-      border: "1px solid #D1D5DB",
-      borderColor: isFocused ? "#6366F1" : undefined,
-      boxShadow: isFocused
-        ? "0px 0px 0px 2px rgba(99, 102, 241, 1), 0px 1px 2px 0px rgba(0, 0, 0, 0.05)"
-        : "0px 1px 2px rgba(0, 0, 0, 0.05)",
-      borderRadius: "6px",
-      "&:hover": {
-        ...styles["&:hover"],
-        borderColor: undefined,
-        boxShadow: undefined
-      }
-    };
-  },
+  control: (styles, { isFocused }) => ({
+    ...styles,
+    minHeight: "42px",
+    border: "1px solid #D1D5DB",
+    borderColor: isFocused ? "#6366F1" : undefined,
+    boxShadow: isFocused
+      ? "0px 0px 0px 2px rgba(99, 102, 241, 1), 0px 1px 2px 0px rgba(0, 0, 0, 0.05)"
+      : "0px 1px 2px rgba(0, 0, 0, 0.05)",
+    borderRadius: "6px",
+    "&:hover": {
+      ...styles["&:hover"],
+      borderColor: undefined,
+      boxShadow: undefined
+    }
+  }),
   option: (styles, { isSelected, isFocused }) => ({
     ...styles,
     backgroundColor: isSelected ? "#4e45df" : isFocused ? "#e6e4fa" : undefined,

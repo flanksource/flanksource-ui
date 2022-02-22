@@ -135,12 +135,13 @@ module.exports = {
   },
   variants: {
     extend: {
-      backgroundColor: ["disabled"],
+      backgroundColor: ["disabled", "checked"],
       textColor: ["disabled"],
       margin: ["first", "last"],
+      padding: ["first", "last"],
       borderWidth: ["first", "hover", "last"],
       borderRadius: ["first", "last"],
-      borderColor: ["hover"]
+      borderColor: ["hover", "checked"]
     }
   }, // eslint-disable-next-line global-require
   plugins: [require("@tailwindcss/forms"), require("@tailwindcss/typography")]
