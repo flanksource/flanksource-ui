@@ -1,4 +1,3 @@
-// Temporary mock, in the future you need to replace it with an array of real respondents received from the apis
 import {
   HiOutlineChevronDoubleUp,
   HiOutlineChevronDown,
@@ -7,6 +6,7 @@ import {
 import React from "react";
 import { IncidentPriority } from "../../constants/incident-priority";
 
+// Temporary mock, in the future you need to replace it with an array of real respondents received from the apis
 export const personRespondents = [
   {
     label: "Lindsay Walton",

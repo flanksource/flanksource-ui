@@ -35,8 +35,7 @@ export const IncidentDetails = ({
   const { control, getValues, watch } = useForm({
     defaultValues: {
       tracking: "123456",
-      started: incident.created_at,
-      duration: incident.created_at,
+      created_at: incident.created_at,
       chartRoomTitle: "#Slack",
       chartRoom: "https://google.com.ua",
       statusPageTitle: "StatusPage.io",
@@ -47,11 +46,22 @@ export const IncidentDetails = ({
     }
   });
   watch();
-  const formatDate = (date, fallback = "-") => {
-    const getDate = date ? dayjs(date).format("DD.MM.YYYY") : fallback;
-    const getDuration = date ? dayjs(incident.created_at).fromNow() : fallback;
-    return { getDate, getDuration };
-  };
+  const DATE_FORMAT = "DD.MM.YYYY";
+  const formatDate = ({ date, format = DATE_FORMAT, fallback = "-" }) =>
+    date ? dayjs(date).format(format) : fallback;
+  const dateToDuration = ({ date, withoutSuffix = false, fallback = "-" }) =>
+    date ? dayjs(date).fromNow(withoutSuffix) : fallback;
+
+  const watchCreatedAt = watch("created_at");
+
+  const formattedCreatedAt = useMemo(
+    () => formatDate({ date: watchCreatedAt }),
+    [watchCreatedAt]
+  );
+  const formattedDuration = useMemo(
+    () => dateToDuration({ date: watchCreatedAt }),
+    [watchCreatedAt]
+  );
   return (
     <div className="px-6 pt-3.5">
       <div className="flex justify-between mb-7">
@@ -140,7 +150,7 @@ export const IncidentDetails = ({
         title="Started"
         value={
           <span className="text-dark-gray text-sm font-normal">
-            {formatDate(getValues("started")).getDate}
+            {formattedCreatedAt}
           </span>
         }
       />
@@ -148,7 +158,7 @@ export const IncidentDetails = ({
         title="Duration"
         value={
           <span className="text-dark-gray text-sm font-normal">
-            {formatDate(getValues("duration")).getDuration}
+            {formattedDuration}
           </span>
         }
       />
