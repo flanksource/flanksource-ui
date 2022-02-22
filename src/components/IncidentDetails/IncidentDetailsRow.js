@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-export const RowDetail = ({ title, value }) => (
+export const IncidentDetailsRow = ({ title, value }) => (
   <div className="grid grid-cols-1-to-2 gap-6 pb-4 items-center">
     <div>
       <h6 className="text-dark-gray text-sm font-medium">{title}</h6>
@@ -10,6 +10,6 @@ export const RowDetail = ({ title, value }) => (
   </div>
 );
 
-RowDetail.propTypes = {
+IncidentDetailsRow.propTypes = {
   title: PropTypes.string.isRequired
 };
