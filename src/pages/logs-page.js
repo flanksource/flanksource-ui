@@ -18,6 +18,7 @@ import { Loading } from "../components/Loading";
 import { LogsViewer } from "../components/Logs";
 import { TextInput } from "../components/TextInput";
 import { timeRanges } from "../components/Dropdown/TimeRange";
+import { RefreshButton } from "../components/RefreshButton";
 
 export const logTypes = [
   {
@@ -46,8 +47,8 @@ export function LogsPage() {
   const [logsIsLoading, setLogsIsLoading] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
   const [query, setQuery] = useState(searchParams.get("query"));
-  const [searchID, setSearchID] = useState(searchParams.get("id"));
-  const topologyId = searchParams.get("topologyId");
+  const [topologyId, setTopologyId] = useState(searchParams.get("topologyId"));
+  const [externalId, setExternalId] = useState(searchParams.get("externalId"));
   const [topology, setTopology] = useState(null);
   const [logs, setLogs] = useState([]);
 
@@ -73,10 +74,10 @@ export function LogsPage() {
         }
       });
     }
-  });
+  }, []);
 
   const saveQueryParams = () => {
-    const paramsList = { query, topologyId, id: searchID, ...getValues() };
+    const paramsList = { query, topologyId, externalId, ...getValues() };
     const params = {};
     Object.entries(paramsList).forEach(([key, value]) => {
       if (value) {
@@ -92,7 +93,7 @@ export function LogsPage() {
 
     const queryBody = {
       query,
-      id: searchID,
+      id: externalId,
       ...getValues()
     };
     console.log("search", queryBody);
@@ -107,7 +108,7 @@ export function LogsPage() {
 
   useEffect(() => {
     loadLogs();
-  }, [topology]);
+  }, [topologyId]);
 
   if (!isEmpty(topologyId) && topology == null) {
     return <Loading text={`Loading topology ${topologyId}`} />;
@@ -127,7 +128,6 @@ export function LogsPage() {
           </h1>
         </div>
       }
-      onRefresh={() => loadLogs()}
       extra={
         <>
           <Dropdown
@@ -135,12 +135,6 @@ export function LogsPage() {
             name="type"
             className="w-36 mr-2 flex-shrink-0"
             items={logTypes}
-          />
-          <Dropdown
-            control={control}
-            name="start"
-            className="w-40 mr-2 flex-shrink-0"
-            items={timeRanges}
           />
           <div className="mr-2 w-full relative rounded-md shadow-sm">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
@@ -156,19 +150,19 @@ export function LogsPage() {
               </button>
             </div>
             <TextInput
-              placeholder="Id"
+              placeholder="External ID"
               className="pl-10 pb-2.5 w-full flex-shrink-0"
               style={{ height: "38px" }}
-              id="id"
-              onEnter={() => loadLogs()}
+              id="externalId"
               onChange={(e) => {
                 e.preventDefault();
-                setSearchID(e.target.value);
+                setExternalId(e.target.value);
               }}
-              value={searchID}
+              onEnter={() => loadLogs()}
+              value={externalId}
             />
           </div>
-
+          <RefreshButton onClick={() => loadLogs()} />
           <div className="mr-2 w-full relative rounded-md shadow-sm">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
               <button
@@ -195,6 +189,12 @@ export function LogsPage() {
               value={query}
             />
           </div>
+          <Dropdown
+            control={control}
+            name="start"
+            className="w-40 mr-2 flex-shrink-0"
+            items={timeRanges}
+          />
         </>
       }
     >

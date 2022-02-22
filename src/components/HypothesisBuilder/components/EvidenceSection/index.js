@@ -7,7 +7,7 @@ export function EvidenceItem({ evidence }) {
     return <LogsTable logs={evidence.evidence} title="" />;
   }
   if (evidence.type === "topology") {
-    return <TopologyCard topologyId={evidence.evidence.id} />
+    return <TopologyCard topologyId={evidence.evidence.id} />;
   }
   return (
     <div>
