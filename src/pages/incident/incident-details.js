@@ -21,7 +21,7 @@ import { TopologyCard } from "../../components/Topology/topology-card";
 import { useIncidentQuery } from "../../components/query-hooks/useIncidentQuery";
 import { useUpdateHypothesisMutation } from "../../components/mutations/useUpdateHypothesisMutation";
 import { useCreateHypothesisMutation } from "../../components/mutations/useCreateHypothesisMutation";
-import { Details } from "../../components/Details";
+import { IncidentDetails } from "../../components/IncidentDetails";
 
 function mapNode(node) {
   return {
@@ -32,7 +32,6 @@ function mapNode(node) {
     children: node.children || []
   };
 }
-
 // temporary tree-building method that is incorrect.
 function buildTreeFromHypothesisList(list) {
   const root = mapNode(list.find((o) => o.type === "root"));
@@ -82,7 +81,6 @@ export function IncidentDetailsPage() {
   if (incident == null) {
     return <Loading />;
   }
-
   return (
     <SearchLayout
       onRefresh={() => incidentQuery.refetch()}
@@ -148,6 +146,16 @@ export function IncidentDetailsPage() {
           aria-labelledby="timeline-title"
           className="lg:col-start-3 lg:col-span-1"
         >
+          <IncidentDetails
+            incident={incident}
+            node={loadedTree}
+            updateStatusHandler={() =>
+              updateStatus(status === "open" ? "closed" : "open")
+            }
+            textButton={
+              status === "open" ? "Mark as resolved" : "Mark as reopen"
+            }
+          />
           <div className="bg-white px-4 py-5  shadow sm:rounded-lg sm:px-6">
             {/* <h2 className="text-lg font-medium text-gray-900">Index</h2> */}
             <div className="py-2 space-y-5">
@@ -186,7 +194,6 @@ export function IncidentDetailsPage() {
               <Changelog />
             </section>
           </div>
-          <Details />
         </section>
       </div>
     </SearchLayout>
