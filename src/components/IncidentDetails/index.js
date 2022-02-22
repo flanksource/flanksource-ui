@@ -10,10 +10,9 @@ import {
   IncidentPriorityOption,
   IncidentPrioritySingleValue,
   IncidentRespondentsMultiValueLabel,
-  IncidentRespondentsOption,
-  priorities
+  IncidentRespondentsOption
 } from "./select-components";
-import { personRespondents } from "./data";
+import { personRespondents, priorities } from "./data";
 
 export const IncidentDetails = ({
   incident,
@@ -21,6 +20,7 @@ export const IncidentDetails = ({
   updateStatusHandler,
   textButton
 }) => {
+  // Temporary mock, in the future you need to replace it with an array of real users received from the api
   const commandersArray = useMemo(
     () => [
       {
@@ -35,8 +35,8 @@ export const IncidentDetails = ({
   const { control, getValues, watch } = useForm({
     defaultValues: {
       tracking: "123456",
-      started: dayjs(incident.created_at).format("DD.MM.YYYY") || "01.01.2022",
-      duration: dayjs(incident.created_at).fromNow() || "13 days",
+      started: incident.created_at,
+      duration: incident.created_at,
       chartRoomTitle: "#Slack",
       chartRoom: "https://google.com.ua",
       statusPageTitle: "StatusPage.io",
@@ -47,6 +47,11 @@ export const IncidentDetails = ({
     }
   });
   watch();
+  const formatDate = (date, fallback = "-") => {
+    const getDate = date ? dayjs(date).format("DD.MM.YYYY") : fallback;
+    const getDuration = date ? dayjs(incident.created_at).fromNow() : fallback;
+    return { getDate, getDuration };
+  };
   return (
     <div className="px-6 pt-3.5">
       <div className="flex justify-between mb-7">
@@ -111,6 +116,7 @@ export const IncidentDetails = ({
         value={
           <Select
             name="commanders"
+            isClearable
             control={control}
             hideSelectedOptions={false}
             components={{
@@ -134,7 +140,7 @@ export const IncidentDetails = ({
         title="Started"
         value={
           <span className="text-dark-gray text-sm font-normal">
-            {getValues("started")}
+            {formatDate(getValues("started")).getDate}
           </span>
         }
       />
@@ -142,7 +148,7 @@ export const IncidentDetails = ({
         title="Duration"
         value={
           <span className="text-dark-gray text-sm font-normal">
-            {getValues("duration")}
+            {formatDate(getValues("duration")).getDuration}
           </span>
         }
       />
