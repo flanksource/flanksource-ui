@@ -156,39 +156,39 @@ export function IncidentDetailsPage() {
               status === "open" ? "Mark as resolved" : "Mark as reopen"
             }
           />
-          <div className="bg-white px-4 py-5  shadow sm:rounded-lg sm:px-6">
-            {/* <h2 className="text-lg font-medium text-gray-900">Index</h2> */}
-            <div className="py-2 space-y-5">
-              <div className="flex flex-nowrap space-x-10">
-                <Description
-                  label="Started"
-                  value={dayjs(incident.created_at).fromNow()}
-                />
-                <Description
-                  label="Updated"
-                  value={dayjs(incident.updated_at).fromNow()}
-                />
-              </div>
+          {/* <div className="bg-white px-4 py-5  shadow sm:rounded-lg sm:px-6"> */}
+          {/*  /!* <h2 className="text-lg font-medium text-gray-900">Index</h2> *!/ */}
+          {/*  <div className="py-2 space-y-5"> */}
+          {/*    <div className="flex flex-nowrap space-x-10"> */}
+          {/*      <Description */}
+          {/*        label="Started" */}
+          {/*        value={dayjs(incident.created_at).fromNow()} */}
+          {/*      /> */}
+          {/*      <Description */}
+          {/*        label="Updated" */}
+          {/*        value={dayjs(incident.updated_at).fromNow()} */}
+          {/*      /> */}
+          {/*    </div> */}
 
-              <Description
-                label="Severity"
-                value={<IncidentSeverity incident={incident} />}
-              />
+          {/*    <Description */}
+          {/*      label="Severity" */}
+          {/*      value={<IncidentSeverity incident={incident} />} */}
+          {/*    /> */}
 
-              <Description
-                label="Status"
-                value={<IncidentStatus incident={incident} />}
-              />
-              <div className="mt-6 flex flex-col justify-stretch">
-                <Button
-                  text={status === "open" ? "Resolve" : "Reopen"}
-                  onClick={() =>
-                    updateStatus(status === "open" ? "closed" : "open")
-                  }
-                />
-              </div>
-            </div>
-          </div>
+          {/*    <Description */}
+          {/*      label="Status" */}
+          {/*      value={<IncidentStatus incident={incident} />} */}
+          {/*    /> */}
+          {/*    <div className="mt-6 flex flex-col justify-stretch"> */}
+          {/*      <Button */}
+          {/*        text={status === "open" ? "Resolve" : "Reopen"} */}
+          {/*        onClick={() => */}
+          {/*          updateStatus(status === "open" ? "closed" : "open") */}
+          {/*        } */}
+          {/*      /> */}
+          {/*    </div> */}
+          {/*  </div> */}
+          {/* </div> */}
           <div className="bg-white px-4 py-5 mt-4  shadow sm:rounded-lg sm:px-6">
             <section aria-labelledby="applicant-information-title">
               <Changelog />
