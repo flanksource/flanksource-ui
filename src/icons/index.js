@@ -184,7 +184,7 @@ import addButton from './add-button.svg'
 import clock from './clock.svg'
 import cluster from './cluster.svg'
 import world from './world.svg'
-
+import databasePlus from './database-plus.svg'
 export const Icons = {
 "acr": acr,
 "aks": aks,
@@ -371,4 +371,5 @@ export const Icons = {
 "account": clock,
 "name": cluster,
 "world": world,
+"databasePlus": databasePlus
 }

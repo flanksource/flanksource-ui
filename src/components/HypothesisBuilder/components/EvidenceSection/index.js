@@ -2,7 +2,7 @@ import React from "react";
 import { BsPlusLg } from "react-icons/all";
 import { LogsTable } from "../../../Logs/Table/logs-table";
 import { TopologyCard } from "../../../Topology";
-import { DatabasePlusIcon } from "../../../svg-icons";
+import { Icon } from "../../../Icon";
 
 export function EvidenceItem({ evidence }) {
   if (evidence.type === "log") {
@@ -49,7 +49,11 @@ export function EvidenceSection({
           <div className="border border-dashed border-gray-300 rounded-8px flex justify-center pt-8 mt-2.5">
             <div className="flex flex-col mx-auto mb-6">
               <div className="mx-auto">
-                <DatabasePlusIcon className="text-gray-400 w-10 h-10" />
+                <Icon
+                  name="databasePlus"
+                  alt="databasePlus"
+                  className="w-10 h-10"
+                />
               </div>
               <p className="text-sm leading-5 font-medium pt-2.5">
                 Add evidence
