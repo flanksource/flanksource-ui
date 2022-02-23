@@ -86,47 +86,50 @@ export const IncidentDetails = ({
           </a>
         }
       />
-      <div className="-mt-1.5">
-        <IncidentDetailsRow
-          title="Status Page"
-          value={
-            <a
-              href={getValues("statusPage")}
-              className="underline text-dark-blue text-sm font-normal"
-            >
-              {getValues("statusPageTitle")}
-            </a>
-          }
-        />
-      </div>
-      <div className="-mt-1.5">
-        <IncidentDetailsRow
-          title="Respondents"
-          value={
-            <Select
-              name="respondents"
-              control={control}
-              hideSelectedOptions={false}
-              components={{
-                MultiValueLabel: IncidentRespondentsMultiValueLabel,
-                Option: IncidentRespondentsOption,
-                IndicatorSeparator: () => null,
-                MultiValueRemove: () => null,
-                ClearIndicator: () => null
-              }}
-              styles={{
-                multiValue: () => ({
-                  marginLeft: -4
-                })
-              }}
-              options={personRespondents}
-              isMulti
-            />
-          }
-        />
-      </div>
+      {/* <div className="-mt-1.5"> */}
+      <IncidentDetailsRow
+        title="Status Page"
+        className="mt-2.5"
+        value={
+          <a
+            href={getValues("statusPage")}
+            className="underline text-dark-blue text-sm font-normal"
+          >
+            {getValues("statusPageTitle")}
+          </a>
+        }
+      />
+      {/* </div> */}
+      {/* <div className="-mt-1.5"> */}
+      <IncidentDetailsRow
+        title="Respondents"
+        className="mt-2.5"
+        value={
+          <Select
+            name="respondents"
+            control={control}
+            hideSelectedOptions={false}
+            components={{
+              MultiValueLabel: IncidentRespondentsMultiValueLabel,
+              Option: IncidentRespondentsOption,
+              IndicatorSeparator: () => null,
+              MultiValueRemove: () => null,
+              ClearIndicator: () => null
+            }}
+            styles={{
+              multiValue: () => ({
+                marginLeft: -4
+              })
+            }}
+            options={personRespondents}
+            isMulti
+          />
+        }
+      />
+      {/* </div> */}
       <IncidentDetailsRow
         title="Commanders"
+        className="mt-4"
         value={
           <Select
             name="commanders"
@@ -142,58 +145,62 @@ export const IncidentDetails = ({
           />
         }
       />
-      <div className="-mt-0.5">
-        <IncidentDetailsRow
-          title="Tracking"
-          value={
-            <span className="text-dark-gray text-sm font-normal">
-              {getValues("tracking")}
-            </span>
-          }
-        />
-      </div>
-      <div className="-mt-1.5">
-        <IncidentDetailsRow
-          title="Started"
-          value={
-            <span className="text-dark-gray text-sm font-normal">
-              {formattedCreatedAt}
-            </span>
-          }
-        />
-      </div>
-      <div className="-mt-1.5">
-        <IncidentDetailsRow
-          title="Duration"
-          value={
-            <span className="text-dark-gray text-sm font-normal">
-              {formattedDuration}
-            </span>
-          }
-        />
-      </div>
-      <div className="-mt-1.5">
-        <IncidentDetailsRow
-          title="Priority"
-          value={
-            <Select
-              name="priority"
-              control={control}
-              components={{
-                SingleValue: IncidentPrioritySingleValue,
-                Option: IncidentPriorityOption,
-                IndicatorSeparator: () => null
-              }}
-              options={priorities}
-              isSearchable={false}
-            />
-          }
-        />
-      </div>
+      {/* <div className="-mt-0.5"> */}
+      <IncidentDetailsRow
+        title="Tracking"
+        className="mt-3"
+        value={
+          <span className="text-dark-gray text-sm font-normal">
+            {getValues("tracking")}
+          </span>
+        }
+      />
+      {/* </div> */}
+      {/* <div className="-mt-1.5"> */}
+      <IncidentDetailsRow
+        title="Started"
+        className="mt-2.5"
+        value={
+          <span className="text-dark-gray text-sm font-normal">
+            {formattedCreatedAt}
+          </span>
+        }
+      />
+      {/* </div> */}
+      {/* <div className="-mt-1.5"> */}
+      <IncidentDetailsRow
+        title="Duration"
+        className="mt-2.5"
+        value={
+          <span className="text-dark-gray text-sm font-normal">
+            {formattedDuration}
+          </span>
+        }
+      />
+      {/* </div> */}
+      {/* <div className="-mt-1.5"> */}
+      <IncidentDetailsRow
+        title="Priority"
+        className="mt-3"
+        value={
+          <Select
+            name="priority"
+            control={control}
+            components={{
+              SingleValue: IncidentPrioritySingleValue,
+              Option: IncidentPriorityOption,
+              IndicatorSeparator: () => null
+            }}
+            options={priorities}
+            isSearchable={false}
+          />
+        }
+      />
+      {/* </div> */}
 
       <button
         type="button"
-        className="btn-primary mt-1.5 w-full"
+        className="btn-primary mt-6 w-full mb-10"
         onClick={updateStatusHandler}
       >
         {textButton}
