@@ -86,7 +86,6 @@ export const IncidentDetails = ({
           </a>
         }
       />
-      {/* <div className="-mt-1.5"> */}
       <IncidentDetailsRow
         title="Status Page"
         className="mt-2.5"
@@ -99,8 +98,6 @@ export const IncidentDetails = ({
           </a>
         }
       />
-      {/* </div> */}
-      {/* <div className="-mt-1.5"> */}
       <IncidentDetailsRow
         title="Respondents"
         className="mt-2.5"
@@ -126,7 +123,6 @@ export const IncidentDetails = ({
           />
         }
       />
-      {/* </div> */}
       <IncidentDetailsRow
         title="Commanders"
         className="mt-4"
@@ -145,7 +141,6 @@ export const IncidentDetails = ({
           />
         }
       />
-      {/* <div className="-mt-0.5"> */}
       <IncidentDetailsRow
         title="Tracking"
         className="mt-3"
@@ -155,8 +150,6 @@ export const IncidentDetails = ({
           </span>
         }
       />
-      {/* </div> */}
-      {/* <div className="-mt-1.5"> */}
       <IncidentDetailsRow
         title="Started"
         className="mt-2.5"
@@ -166,8 +159,6 @@ export const IncidentDetails = ({
           </span>
         }
       />
-      {/* </div> */}
-      {/* <div className="-mt-1.5"> */}
       <IncidentDetailsRow
         title="Duration"
         className="mt-2.5"
@@ -177,8 +168,6 @@ export const IncidentDetails = ({
           </span>
         }
       />
-      {/* </div> */}
-      {/* <div className="-mt-1.5"> */}
       <IncidentDetailsRow
         title="Priority"
         className="mt-3"
@@ -196,8 +185,6 @@ export const IncidentDetails = ({
           />
         }
       />
-      {/* </div> */}
-
       <button
         type="button"
         className="btn-primary mt-6 w-full mb-10"
