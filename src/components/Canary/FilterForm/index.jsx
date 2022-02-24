@@ -1,13 +1,16 @@
 import { useForm, Controller } from "react-hook-form";
 // import history from "history/browser";
 
-import React, { useEffect, useLayoutEffect, useRef } from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
+import { HiCheck } from "react-icons/hi";
+import { ChevronDownIcon } from "@heroicons/react/solid";
 import { LayoutDropdown } from "../../Dropdown/LayoutDropdown";
 import { GroupByDropdown } from "../../Dropdown/GroupByDropdown";
 import { TabByDropdown } from "../../Dropdown/TabByDropdown";
 import { PivotByDropdown } from "../../Dropdown/PivotByDropdown";
 import { PivotLabelDropdown } from "../../Dropdown/PivotLabelDropdown";
 import { PivotCellTypeDropdown } from "../../Dropdown/PivotCellTypeDropdown";
+import { components, Select } from "../../Select";
 import { TimeRange } from "../../Dropdown/TimeRange";
 import { Toggle } from "../../Toggle";
 import { initialiseFormState, updateFormState, getDefaultForm } from "../state";
@@ -15,20 +18,23 @@ import { initialiseFormState, updateFormState, getDefaultForm } from "../state";
 import { encodeObjectToUrlSearchParams } from "../url";
 
 import { TristateToggle } from "../../TristateToggle";
-import { getFilteredLabelsByChecks } from "../labels";
+import { DropdownMenu } from "../../DropdownMenu";
+import { separateLabelsByBooleanType } from "../labels";
+import { setDeepWithString } from "../CanaryPopup/utils";
 
 export function FilterForm({
   labels,
   checks,
+  filterLabels,
   history,
   hideLabelFilters,
   hideTimeRange,
   className,
-  filterContainerClassName,
-  filterControllerClassName,
+  controlsContainerClassName,
+  controlsControllerClassName,
+  filtersContainerClassName,
   healthFilterClassName,
   labelFilterClassName,
-  currentTabChecks = null,
   onServerSideFilterChange = null
 }) {
   const searchParams = window.location.search;
@@ -37,27 +43,10 @@ export function FilterForm({
     searchParams
   );
 
-  const { control, watch, reset } = useForm({
+  const { control, watch, reset, getValues, setValue } = useForm({
     defaultValues: formState
   });
-  let filteredLabels =
-    currentTabChecks && currentTabChecks.length > 0
-      ? getFilteredLabelsByChecks(currentTabChecks, labels)
-      : labels;
 
-  filteredLabels = Object.values(filteredLabels);
-
-  filteredLabels = filteredLabels.sort((a, b) => {
-    const aLower = a.key.toLowerCase();
-    const bLower = b.key.toLowerCase();
-    if (aLower < bLower) {
-      return -1;
-    }
-    if (aLower > bLower) {
-      return 1;
-    }
-    return 0;
-  });
   useEffect(() => {
     const encoded = encodeObjectToUrlSearchParams(fullState);
     if (window.location.search !== `?${encoded}`) {
@@ -93,22 +82,27 @@ export function FilterForm({
       watchAll.unsubscribe();
     };
   });
+
+  const [booleanLabels, nonBooleanLabels] = separateLabelsByBooleanType(
+    Object.values(filterLabels)
+  );
+
   return (
     <form className={`relative ${className}`}>
       <SectionTitle>Controls</SectionTitle>
-      <div className={filterContainerClassName}>
+      <div className={controlsContainerClassName}>
         {!hideTimeRange && (
           <TimeRange
             control={control}
             name="timeRange"
-            className={filterControllerClassName}
+            className={controlsControllerClassName}
             label="Time Range"
           />
         )}
         <LayoutDropdown
           control={control}
           name="layout"
-          className={filterControllerClassName}
+          className={controlsControllerClassName}
           label="Layout"
         />
 
@@ -117,14 +111,14 @@ export function FilterForm({
             <GroupByDropdown
               name="groupBy"
               control={control}
-              className={filterControllerClassName}
+              className={controlsControllerClassName}
               label="Group By"
               checks={checks}
             />
             <PivotByDropdown
               name="pivotBy"
               control={control}
-              className={filterControllerClassName}
+              className={controlsControllerClassName}
               label="Pivot By"
               checks={checks}
             />
@@ -133,7 +127,7 @@ export function FilterForm({
         <TabByDropdown
           name="tabBy"
           control={control}
-          className={filterControllerClassName}
+          className={controlsControllerClassName}
           label="Tab By"
           checks={checks}
         />
@@ -142,12 +136,12 @@ export function FilterForm({
       {!(watchPivotBy == null || watchPivotBy === "none") && (
         <div>
           <SectionTitle>Pivot Settings</SectionTitle>
-          <div className={filterContainerClassName}>
+          <div className={controlsContainerClassName}>
             {watchPivotBy !== "none" && (
               <PivotCellTypeDropdown
                 name="pivotCellType"
                 control={control}
-                className={filterControllerClassName}
+                className={controlsControllerClassName}
                 label="Cell Type"
                 checks={checks}
               />
@@ -156,7 +150,7 @@ export function FilterForm({
               <PivotLabelDropdown
                 name="pivotLabel"
                 control={control}
-                className={filterControllerClassName}
+                className={controlsControllerClassName}
                 label="Pivot Label"
                 checks={checks}
               />
@@ -165,42 +159,98 @@ export function FilterForm({
         </div>
       )}
 
-      <div className={healthFilterClassName}>
-        <SectionTitle>Filter By Health</SectionTitle>
-        <Controller
-          key="hidePassing"
-          name="hidePassing"
-          control={control}
-          render={({ field: { ref, ...rest } }) => (
-            <Toggle label="Hide Passing" {...rest} />
-          )}
-        />
-      </div>
-
-      {!hideLabelFilters && (
-        <div className={labelFilterClassName}>
-          <div className="uppercase font-semibold text-sm mb-3 text-indigo-700">
-            Filter By Label
-          </div>
-          {filteredLabels
-            .filter((o) => o && o !== undefined)
-            .map((label) => (
-              <Controller
-                key={label.id}
-                name={`labels.${label.id}`}
-                control={control}
-                render={({ field: { ref, ...rest } }) => (
-                  <TristateToggle
-                    key={label.key}
-                    className="mb-2"
-                    label={label}
-                    {...rest}
-                  />
-                )}
-              />
-            ))}
+      <div className={filtersContainerClassName}>
+        <div className={healthFilterClassName}>
+          <SectionTitle>Filter By Health</SectionTitle>
+          <Controller
+            key="hidePassing"
+            name="hidePassing"
+            control={control}
+            render={({ field: { ref, ...rest } }) => (
+              <Toggle label="Hide Passing" {...rest} />
+            )}
+          />
         </div>
-      )}
+        {!hideLabelFilters && (
+          <div className={labelFilterClassName}>
+            <SectionTitle>Filter By Label</SectionTitle>
+            <div className="flex w-full">
+              <div
+                className={filtersContainerClassName}
+                style={{ zIndex: 5, maxWidth: "300px" }}
+              >
+                <LabelFilterDropdown
+                  name="labelFilter"
+                  labels={nonBooleanLabels}
+                  onChange={(selected, all) => {
+                    // get current label state
+                    let newState = getValues("labels");
+
+                    // initialize all nonBooleanLabels with 0s
+                    all.forEach((label) => {
+                      newState = setDeepWithString(label.value, 0, newState);
+                    });
+
+                    // alter selected labels with 1s
+                    selected.forEach((label) => {
+                      newState = setDeepWithString(label.value, 1, newState);
+                    });
+
+                    // set form
+                    setValue("labels", newState);
+                  }}
+                />
+              </div>
+              <div
+                className={filtersContainerClassName}
+                style={{ zIndex: "5" }}
+              >
+                <DropdownMenu
+                  buttonClass="w-full"
+                  buttonElement={
+                    <div
+                      className="border border-gray-300 w-full flex items-center justify-between px-2 py-2"
+                      style={{ height: "38px", borderRadius: "4px" }}
+                    >
+                      <span className="text-sm text-gray-500">
+                        Boolean labels
+                      </span>
+                      <ChevronDownIcon
+                        style={{
+                          height: "20px",
+                          color: "#8f8f8f",
+                          marginLeft: "12px"
+                        }}
+                      />
+                    </div>
+                  }
+                  content={
+                    <div className="px-4 py-2">
+                      {booleanLabels
+                        .filter((o) => o && o !== undefined)
+                        .map((label) => (
+                          <Controller
+                            key={label.id}
+                            name={`labels.${label.id}`}
+                            control={control}
+                            render={({ field: { ref, ...rest } }) => (
+                              <TristateToggle
+                                key={label.key}
+                                className="mb-2"
+                                label={label}
+                                {...rest}
+                              />
+                            )}
+                          />
+                        ))}
+                    </div>
+                  }
+                />
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </form>
   );
 }
@@ -213,3 +263,99 @@ const SectionTitle = ({ className, children, ...props }) => (
     {children}
   </div>
 );
+
+const Option = (props) => {
+  const { isSelected, children } = props;
+
+  return (
+    <components.Option {...props}>
+      <div className="flex justify-between">
+        <span>{children}</span>
+        <span className="ml-2">
+          {isSelected && <HiCheck className="h-5 w-5" />}
+        </span>
+      </div>
+    </components.Option>
+  );
+};
+
+const ConciseLabelsValueContainer = ({
+  children,
+  conciseLimit = 4,
+  ...props
+}) => {
+  const currentValues = props.getValue();
+  let toBeRendered = children;
+
+  if (
+    currentValues.some(
+      (val) => val.value === props.selectProps.allOption?.value
+    )
+  ) {
+    toBeRendered = React.Children.toArray(children).filter(
+      (c) =>
+        !c.props.data ||
+        c.props.data.value !== props.selectProps.allOption?.value
+    );
+  }
+
+  return (
+    <components.ValueContainer {...props}>
+      {currentValues.length < conciseLimit ? (
+        toBeRendered
+      ) : (
+        <div className="text-md text-gray-500">
+          including {currentValues.length === props.options.length && "all "}
+          <span className="text-sm font-semibold">
+            {currentValues.length === props.options.length
+              ? currentValues.length - 1
+              : currentValues.length}
+          </span>{" "}
+          labels
+        </div>
+      )}
+    </components.ValueContainer>
+  );
+};
+
+const LabelFilterDropdown = ({ labels, onChange, name, ...rest }) => {
+  const [selected, setSelected] = useState([]);
+
+  const options = labels.map((label) => ({
+    value: label.id,
+    label: label.label
+  }));
+
+  useEffect(() => {
+    onChange(selected, options);
+  }, [selected, options, onChange]);
+
+  return (
+    <Select
+      name={name}
+      styles={{
+        control: (styles) => ({ ...styles, minWidth: "200px" }),
+        menu: (styles) => ({ ...styles, zIndex: 5 }),
+        option: (styles) => ({
+          ...styles,
+          overflowX: "hidden",
+          overflowWrap: "anywhere",
+          fontSize: "12px"
+        }),
+        valueContainer: (styles) => ({
+          ...styles,
+          flexWrap: "nowrap"
+        })
+      }}
+      options={options}
+      value={selected}
+      isMulti
+      allowSelectAll
+      hideSelectedOptions={false}
+      components={{ Option }}
+      onChange={setSelected}
+      customValueContainer={ConciseLabelsValueContainer}
+      {...rest}
+    />
+  );
+};

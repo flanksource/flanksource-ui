@@ -37,6 +37,9 @@ export function CanaryInterface({
   const [selectedTab, setSelectedTab] = useState(null);
   const [labels, setLabels] = useState(getLabels(checks));
   const [filteredChecks, setFilteredChecks] = useState(checks);
+  const [labelsForFilterGeneration, setLabelsForFilterGeneration] = useState(
+    getLabels(checks)
+  );
   const [checksForTabGeneration, setChecksForTabGeneration] = useState(checks);
 
   const { labels: labelStates, tabBy, groupBy, query } = searchParams;
@@ -63,10 +66,11 @@ export function CanaryInterface({
     if (checks?.length > 0) {
       let filtered = filterChecks(checks, hidePassing, []); // first filter for pass/fail
       filtered = filterChecksByText(filtered, query || ""); // filter by name, description, endpoint
-      filtered = Object.values(filterChecksByLabels(filtered, labelFilters)); // filters checks by its 'include/exclude' filters
-      filtered = orderBy(filtered, CanarySorter); // do sorting
       setChecksForTabGeneration(filtered);
       filtered = filterChecksByTabSelection(tabBy, selectedTab, filtered); // filter based on selected tab
+      setLabelsForFilterGeneration(getLabels(filtered));
+      filtered = Object.values(filterChecksByLabels(filtered, labelFilters)); // filters checks by its 'include/exclude' filters
+      filtered = orderBy(filtered, CanarySorter); // do sorting
       setFilteredChecks(filtered);
       if (onFilterCallback) {
         onFilterCallback(filtered);
@@ -87,11 +91,8 @@ export function CanaryInterface({
     onServerSideFilterChange: handleFetch,
     labels,
     checks: filteredChecks,
-    currentTabChecks: filterChecksByTabSelection(
-      tabBy,
-      selectedTab,
-      filteredChecks
-    ),
+    filterLabels: labelsForFilterGeneration,
+    currentTabChecks: filterChecksByTabSelection(tabBy, selectedTab, checks),
     history
   };
 
@@ -99,12 +100,14 @@ export function CanaryInterface({
     <>
       {!hideFilters && (
         <FilterForm
-          className="mb-8"
-          filterContainerClassName="flex flex-wrap mb-2"
-          filterControllerClassName="mb-4 mr-4 w-48"
-          healthFilterClassName=""
+          className="mb-4"
+          controlsContainerClassName="flex flex-wrap mb-4"
+          controlsControllerClassName="mb-4 mr-4 w-48"
+          healthFilterClassName="mb-8 mr-8"
+          labelFilterClassName="mb-4 mr-4"
+          filtersContainerClassName="mb-4 mr-4 w-72 flex-shrink-0"
           hideTimeRange
-          hideLabelFilters
+          useDropdownForLabels
           {...filterProps}
         />
       )}

@@ -13,9 +13,7 @@ export function DropdownMenu({
 }) {
   return (
     <Menu as="div" className={`${className} relative flex-shrink-0`}>
-      <div>
-        <Menu.Button className={`${buttonClass}`}>{buttonElement}</Menu.Button>
-      </div>
+      <Menu.Button className={`${buttonClass}`}>{buttonElement}</Menu.Button>
       <Transition
         as={Fragment}
         enter="transition ease-out duration-100"

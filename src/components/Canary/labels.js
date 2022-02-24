@@ -155,3 +155,17 @@ export function getFilteredLabelsByChecks(checks, allLabels) {
   });
   return checkLabels;
 }
+
+export const separateLabelsByBooleanType = (labelList) => {
+  const boolean = [];
+  const nonBoolean = [];
+  labelList.forEach((label) => {
+    const v = label.value;
+    if (typeof v === "boolean" || v === "true" || v === "false") {
+      boolean.push(label);
+    } else {
+      nonBoolean.push(label);
+    }
+  });
+  return [boolean, nonBoolean];
+};

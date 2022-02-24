@@ -81,7 +81,7 @@ export function HealthPage({ url }) {
           <h1 className="text-xl font-semibold">Health</h1>
         </div>
       }
-      onRefresh={() => {}}
+      onRefresh={handleFetch}
       extra={
         <>
           <span className="text-sm font-medium text-gray-700 mr-3">
@@ -101,12 +101,13 @@ export function HealthPage({ url }) {
             inputClassName="w-full py-2 mb-px"
             inputOuterClassName="w-80"
             placeholder="Search by name, description, or endpoint"
+            defaultValue={getSearchParams()?.query}
           />
         </>
       }
     >
-      <div className="flex mb-8">
-        {checks && (
+      {checks?.length > 0 && (
+        <div className="flex mb-8">
           <StatCard
             title={isLoading ? "Loading Checks.." : "All Checks"}
             className="mr-4 w-64"
@@ -136,47 +137,47 @@ export function HealthPage({ url }) {
               </>
             }
           />
-        )}
-        {!isLoading && checks?.length > filteredChecks?.length && (
-          <StatCard
-            title="Filtered Checks"
-            className="mr-4 w-64"
-            customValue={
-              <>
-                {filteredChecks.length}
-                <span className="text-xl  font-light">
-                  {" "}
-                  (
-                  <span className="text-green-500">
-                    {getPassedChecks(filteredChecks)}
+          {!isLoading && checks?.length > filteredChecks?.length && (
+            <StatCard
+              title="Filtered Checks"
+              className="mr-4 w-64"
+              customValue={
+                <>
+                  {filteredChecks.length}
+                  <span className="text-xl  font-light">
+                    {" "}
+                    (
+                    <span className="text-green-500">
+                      {getPassedChecks(filteredChecks)}
+                    </span>
+                    /
+                    <span className="text-red-500">
+                      {filteredChecks.length - getPassedChecks(filteredChecks)}
+                    </span>
+                    )
                   </span>
-                  /
-                  <span className="text-red-500">
-                    {filteredChecks.length - getPassedChecks(filteredChecks)}
-                  </span>
-                  )
-                </span>
-              </>
-            }
-          />
-        )}
-      </div>
+                </>
+              }
+            />
+          )}
+        </div>
+      )}
 
       <CanaryInterface
         checks={checks}
         hideFilters={isLoading || !checks || checks?.length <= 0}
-        hideTable={isLoading || !checks}
+        hideTable={isLoading || !checks || checks?.length <= 0}
         onFilterCallback={setFilteredChecks}
         handleFetch={handleFetch}
         tabsStyle={{
           position: "sticky",
-          top: "84px",
+          top: "82px",
           background: "white",
           zIndex: 1
         }}
         tableHeadStyle={{
           position: "sticky",
-          top: "122px",
+          top: "120px",
           background: "white",
           zIndex: 1
         }}
@@ -185,7 +186,7 @@ export function HealthPage({ url }) {
             style={{
               position: "sticky",
               marginTop: "-20px",
-              top: "64px",
+              top: "62px",
               border: "",
               width: "100%",
               height: "20px",
@@ -203,7 +204,7 @@ export function HealthPage({ url }) {
         }
       />
 
-      {!isLoading && (!checks || checks.length <= 0) && (
+      {!isLoading && (!checks || checks?.length <= 0) && (
         <BannerMessage
           prepend={
             <div className="mb-4">
