@@ -9,7 +9,7 @@ export function CanaryCards(props) {
     <ul className={`mt-1 grid grid-cols-1 gap-1 sm:gap-2 `}>
       {checks.map((check) => (
         <li
-          key={check.key}
+          key={check.id}
           className="col-span-1 flex shadow-sm rounded-md  rounded-l-md border-l border-t border-b border-gray-200 "
         >
           <button
