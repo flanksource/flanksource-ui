@@ -52,7 +52,7 @@ export function TopologyCard({
   return (
     <div
       className={clsx(
-        "rounded-8px mb-3 shadow-card card bg-white topology-card w-med-card max-w-full",
+        "rounded-8px mb-3 mr-3 shadow-card card bg-white topology-card w-med-card",
         _topology.status,
         selectionMode ? "cursor-pointer" : ""
       )}
@@ -102,7 +102,7 @@ export function TopologyCard({
           )}
         </div>
       </div>
-      <div className="flex flex-nowrap bg-lightest-gray rounded-b-8px h-topology-card">
+      <div className="flex flex-nowrap bg-lightest-gray rounded-b-8px">
         <div
           className={clsx(
             "w-med-card-left py-4 pl-5 pr-1 overflow-auto",

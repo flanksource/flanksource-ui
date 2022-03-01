@@ -30,7 +30,7 @@ export const TopologyView = ({
         className="grid gap-4"
         style={{ gridTemplateColumns: "repeat(2, 384px)" }}
       >
-
+        <div>
           <TopologyColumn
             title="zone 1"
             cards={topology.map((item, index) => (
@@ -46,8 +46,8 @@ export const TopologyView = ({
               />
             ))}
           />
-
-
+        </div>
+        <div>
           <TopologyColumn
             title="zone 2"
             cards={topology.map((item, index) => (
@@ -63,7 +63,8 @@ export const TopologyView = ({
               />
             ))}
           />
-
+        </div>
+        <div>
           <TopologyColumn
             title="zone 3"
             cards={topology.map((item, index) => (
@@ -79,7 +80,7 @@ export const TopologyView = ({
               />
             ))}
           />
-
+        </div>
       </div>
     </div>
   </div>

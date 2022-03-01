@@ -31,10 +31,7 @@ module.exports = {
     }
   },
   rules: {
-    "no-unused-vars": "warn",
-    "import/order": "warn",
-    "consistent-return": "warn",
-    // "prettier/prettier": "warn",
+    "prettier/prettier": ["error"],
     "react/react-in-jsx-scope": "off",
     "react/prop-types": "off",
     "react/jsx-filename-extension": "off",
