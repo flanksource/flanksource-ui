@@ -15,17 +15,28 @@ const listClasses = {
     cardStyle: {
       maxWidth: "420px",
       maxHeight: "calc(100vh - 4rem)"
-    }
+    },
+    closeButtonClass: "w-6 h-6"
   },
   medium: {
-    cardClass: "w-full overflow-y-scroll",
+    cardClass: "w-full overflow-y-auto",
     contentClass: "h-full px-8",
     cardStyle: {
-      maxWidth: "1024px",
+      maxWidth: "840px",
       maxHeight: "calc(100vh - 4rem)"
-    }
+    },
+    closeButtonClass: "w-7 h-7"
   },
-  full: {}
+  full: {
+    cardClass: "w-full",
+    contentClass: "h-full px-8",
+    cardStyle: {
+      maxWidth: "100%",
+      maxHeight: "calc(100vh - 4rem)",
+      margin: "0 15px"
+    },
+    closeButtonClass: "w-8 h-8"
+  }
 };
 
 export function Modal({
@@ -34,11 +45,11 @@ export function Modal({
   actions,
   open,
   onClose,
-  closeButtonClass,
-  closeButtonStyle,
+  // closeButtonClass,
+  // closeButtonStyle,
   allowBackgroundClose = true,
   hideCloseButton,
-  containerClass,
+  // containerClass,
   // contentClass,
   // cardClass = "p-4",
   cancelText = "Close",
@@ -48,7 +59,8 @@ export function Modal({
   ...rest
 }) {
   const { children } = { ...rest };
-  const { cardClass, contentClass, cardStyle } = listClasses[size];
+  const { cardClass, contentClass, cardStyle, closeButtonClass } =
+    listClasses[size];
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog
@@ -58,11 +70,7 @@ export function Modal({
         onClose={allowBackgroundClose ? onClose : () => {}}
         {...rest}
       >
-        <div
-          className={`flex items-center justify-center h-full ${
-            containerClass || ""
-          }`}
-        >
+        <div className="flex items-center justify-center h-full">
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -94,17 +102,17 @@ export function Modal({
                 <h1 className="font-semibold text-lg">{title}</h1>
                 {/* top-right close button */}
                 {!hideCloseButton && (
-                  <div
-                    style={closeButtonStyle}
-                    className={`pointer-events-none sm:pointer-events-auto ${closeButtonClass}`}
-                  >
+                  <div className="pointer-events-none sm:pointer-events-auto">
                     <button
                       type="button"
                       className="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none"
                       onClick={onClose}
                     >
                       <span className="sr-only">Close</span>
-                      <XIcon className="h-6 w-6" aria-hidden="true" />
+                      <XIcon
+                        className={`${closeButtonClass}`}
+                        aria-hidden="true"
+                      />
                     </button>
                   </div>
                 )}
