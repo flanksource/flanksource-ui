@@ -2,6 +2,32 @@ import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/solid";
 import React, { Fragment } from "react";
 
+const sizeModal = {
+  small: "small",
+  medium: "medium",
+  full: "full"
+};
+
+const listClasses = {
+  small: {
+    cardClass: "w-full",
+    contentClass: "h-full px-8",
+    cardStyle: {
+      maxWidth: "420px",
+      maxHeight: "calc(100vh - 4rem)"
+    }
+  },
+  medium: {
+    cardClass: "w-full overflow-y-scroll",
+    contentClass: "h-full px-8",
+    cardStyle: {
+      maxWidth: "1024px",
+      maxHeight: "calc(100vh - 4rem)"
+    }
+  },
+  full: {}
+};
+
 export function Modal({
   title,
   body,
@@ -13,14 +39,16 @@ export function Modal({
   allowBackgroundClose = true,
   hideCloseButton,
   containerClass,
-  contentClass,
-  cardClass = "p-4",
+  // contentClass,
+  // cardClass = "p-4",
   cancelText = "Close",
   hideActions,
-  cardStyle = {},
+  // cardStyle = {},
+  size = sizeModal.medium,
   ...rest
 }) {
   const { children } = { ...rest };
+  const { cardClass, contentClass, cardStyle } = listClasses[size];
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog
@@ -62,22 +90,25 @@ export function Modal({
                 cardClass || ""
               }`}
             >
-              {/* top-right close button */}
-              {!hideCloseButton && (
-                <div
-                  style={closeButtonStyle}
-                  className={`pointer-events-none sm:pointer-events-auto absolute top-0 right-0 ${closeButtonClass}`}
-                >
-                  <button
-                    type="button"
-                    className="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none"
-                    onClick={onClose}
+              <div className="mt-8 px-8 flex justify-between items-center ">
+                <h1 className="font-semibold text-lg">{title}</h1>
+                {/* top-right close button */}
+                {!hideCloseButton && (
+                  <div
+                    style={closeButtonStyle}
+                    className={`pointer-events-none sm:pointer-events-auto ${closeButtonClass}`}
                   >
-                    <span className="sr-only">Close</span>
-                    <XIcon className="h-6 w-6" aria-hidden="true" />
-                  </button>
-                </div>
-              )}
+                    <button
+                      type="button"
+                      className="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none"
+                      onClick={onClose}
+                    >
+                      <span className="sr-only">Close</span>
+                      <XIcon className="h-6 w-6" aria-hidden="true" />
+                    </button>
+                  </div>
+                )}
+              </div>
               <div className={contentClass}>
                 {children}
                 {!hideActions && (
