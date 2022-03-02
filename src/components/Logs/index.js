@@ -58,15 +58,7 @@ export function LogsViewer({ logs, isLoading }) {
       <Modal
         open={incidentModalIsOpen}
         onClose={() => setIncidentModalIsOpen(false)}
-        cardClass="w-full"
-        contentClass="h-full px-8"
-        cardStyle={{
-          maxWidth: "420px",
-          maxHeight: "calc(100vh - 4rem)"
-        }}
-        closeButtonStyle={{
-          padding: "2.2rem 2.1rem 0 0"
-        }}
+        size="small"
         hideActions
       >
         <LogsIncidentLinker

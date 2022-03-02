@@ -253,13 +253,7 @@ export function IncidentListPage() {
       <Modal
         open={incidentModalIsOpen}
         onClose={() => setIncidentModalIsOpen(false)}
-        // cardClass="w-full"
-        // contentClass="h-full px-8"
-        // cardStyle={{
-        //   maxWidth: "420px",
-        //   maxHeight: "calc(100vh - 4rem)"
-        // }}
-        size="small"
+        size="full"
         hideActions
         title="Create New Incident"
       >

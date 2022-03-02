@@ -10,11 +10,12 @@ const sizeModal = {
 
 const listClasses = {
   small: {
-    cardClass: "w-full",
+    cardClass: "w-full overflow-y-auto",
     contentClass: "h-full px-8",
     cardStyle: {
       maxWidth: "420px",
-      maxHeight: "calc(100vh - 4rem)"
+      maxHeight: "calc(100vh - 4rem)",
+      margin: "0 10px"
     },
     closeButtonClass: "w-6 h-6"
   },
@@ -22,20 +23,22 @@ const listClasses = {
     cardClass: "w-full overflow-y-auto",
     contentClass: "h-full px-8",
     cardStyle: {
-      maxWidth: "840px",
-      maxHeight: "calc(100vh - 4rem)"
-    },
-    closeButtonClass: "w-7 h-7"
-  },
-  full: {
-    cardClass: "w-full",
-    contentClass: "h-full px-8",
-    cardStyle: {
-      maxWidth: "100%",
+      maxWidth: "1024px",
       maxHeight: "calc(100vh - 4rem)",
       margin: "0 15px"
     },
-    closeButtonClass: "w-8 h-8"
+    closeButtonClass: "w-6 h-6"
+  },
+  full: {
+    cardClass: "w-full overflow-y-auto",
+    contentClass: "h-full px-8",
+    cardStyle: {
+      maxWidth: "1280px",
+      maxHeight: "calc(100vh - 4rem)",
+      margin: "0 20px"
+    },
+    closeButtonClass: "w-6 h-6",
+    containerClass: "py-8"
   }
 };
 
@@ -45,22 +48,22 @@ export function Modal({
   actions,
   open,
   onClose,
-  // closeButtonClass,
-  // closeButtonStyle,
   allowBackgroundClose = true,
   hideCloseButton,
-  // containerClass,
-  // contentClass,
-  // cardClass = "p-4",
   cancelText = "Close",
   hideActions,
-  // cardStyle = {},
   size = sizeModal.medium,
   ...rest
 }) {
   const { children } = { ...rest };
-  const { cardClass, contentClass, cardStyle, closeButtonClass } =
-    listClasses[size];
+  const {
+    cardClass,
+    contentClass,
+    cardStyle,
+    closeButtonClass,
+    closeButtonStyle = {},
+    containerClass = ""
+  } = listClasses[size];
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog
@@ -70,7 +73,9 @@ export function Modal({
         onClose={allowBackgroundClose ? onClose : () => {}}
         {...rest}
       >
-        <div className="flex items-center justify-center h-full">
+        <div
+          className={`flex items-center justify-center h-full ${containerClass}`}
+        >
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -94,15 +99,16 @@ export function Modal({
           >
             <div
               style={cardStyle}
-              className={`bg-white rounded-lg text-left shadow-xl transform transition-all ${
-                cardClass || ""
-              }`}
+              className={`bg-white rounded-lg text-left shadow-xl transform transition-all ${cardClass}`}
             >
               <div className="mt-8 px-8 flex justify-between items-center ">
                 <h1 className="font-semibold text-lg">{title}</h1>
                 {/* top-right close button */}
                 {!hideCloseButton && (
-                  <div className="pointer-events-none sm:pointer-events-auto">
+                  <div
+                    className="pointer-events-none sm:pointer-events-auto"
+                    style={closeButtonStyle}
+                  >
                     <button
                       type="button"
                       className="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none"
