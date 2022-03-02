@@ -54,7 +54,6 @@ export function Dropdown({
 
   // check if emptyable
   if (emptyable && Object.values(items).length === 0) {
-    console.log("emptyable", items);
     const emptyObj = {
       description: "No available selections",
       name: "_empty",
