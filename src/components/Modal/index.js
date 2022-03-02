@@ -45,7 +45,7 @@ const listClasses = {
 export function Modal({
   title,
   body,
-  actions,
+  actions = [],
   open,
   onClose,
   allowBackgroundClose = true,
@@ -136,6 +136,19 @@ export function Modal({
                     </button>
                   </div>
                 )}
+                <div className="flex items-center justify-center mb-5">
+                  {actions &&
+                    actions.map((action) => (
+                      <button
+                        key={action.btnTitle}
+                        type="button"
+                        className="py-3 px-6 bg-dark-blue rounded-6px text-white mx-3 hover:bg-warm-blue"
+                        onClick={action.btnAction}
+                      >
+                        {action.btnTitle}
+                      </button>
+                    ))}
+                </div>
               </div>
             </div>
           </Transition.Child>

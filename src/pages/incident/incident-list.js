@@ -257,7 +257,6 @@ export function IncidentListPage() {
         hideActions
         title="Create New Incident"
       >
-        {/* <h1 className="mt-8 font-semibold text-lg">Create New Incident</h1> */}
         <IncidentCreate
           callback={(response) => {
             navigate(`/incidents/${response.id}`, { replace: true });
