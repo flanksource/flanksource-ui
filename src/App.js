@@ -23,6 +23,7 @@ import {
   TopologyPage
 } from "./pages";
 import { RsDemoPage } from "./pages/Examples/rs-demo";
+import { DropdownDemoPage } from "./pages/Examples/dropdown-demo";
 
 const navigation = [
   {
@@ -105,6 +106,7 @@ export function App() {
 
         <Route path="examples" element={sidebar}>
           <Route path="rs" element={<RsDemoPage />} />
+          <Route path="dropdown" element={<DropdownDemoPage />} />
           <Route
             path="topology"
             element={<ExamplesTopologyPage url="/canary/api" />}
