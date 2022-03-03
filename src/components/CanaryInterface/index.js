@@ -66,10 +66,10 @@ export function CanaryInterface({
     if (checks?.length > 0) {
       let filtered = filterChecks(checks, hidePassing, []); // first filter for pass/fail
       filtered = filterChecksByText(filtered, query || ""); // filter by name, description, endpoint
-      setChecksForTabGeneration(filtered);
-      filtered = filterChecksByTabSelection(tabBy, selectedTab, filtered); // filter based on selected tab
       setLabelsForFilterGeneration(getLabels(filtered));
       filtered = Object.values(filterChecksByLabels(filtered, labelFilters)); // filters checks by its 'include/exclude' filters
+      setChecksForTabGeneration(filtered);
+      filtered = filterChecksByTabSelection(tabBy, selectedTab, filtered); // filter based on selected tab
       filtered = orderBy(filtered, CanarySorter); // do sorting
       setFilteredChecks(filtered);
       if (onFilterCallback) {
