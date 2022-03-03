@@ -253,7 +253,7 @@ export function IncidentListPage() {
       <Modal
         open={incidentModalIsOpen}
         onClose={() => setIncidentModalIsOpen(false)}
-        size="full"
+        size="small"
         hideActions
         title="Create New Incident"
       >

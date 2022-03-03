@@ -122,8 +122,13 @@ export function Modal({
                   </div>
                 )}
               </div>
-              <div className={contentClass}>
+              <div
+                className={contentClass}
+                style={{ maxHeight: "80vh", overflowY: "auto" }}
+              >
                 {children}
+              </div>
+              <div style={{ minHeight: "1vh" }}>
                 {!hideActions && (
                   <div className="flex justify-end mt-2">
                     <button
