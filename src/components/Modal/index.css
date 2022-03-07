@@ -1,0 +1,22 @@
+.modal-card-small {
+    max-width: 420px;
+    max-height: calc(100vh - 4rem);
+    margin: 0 10px;
+}
+
+.modal-card-medium {
+    max-width: 1024px;
+    max-height: calc(100vh - 4rem);
+    margin: 0 15px;
+}
+
+.modal-card-full {
+    max-width: 1280px;
+    max-height: calc(100vh - 4rem);
+    margin: 0 20px;
+}
+
+.modal-card__container {
+    max-height: 80vh;
+    overflow-y: auto;
+}
