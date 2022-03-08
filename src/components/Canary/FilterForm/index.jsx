@@ -318,7 +318,13 @@ const ConciseLabelsValueContainer = ({
   );
 };
 
-export const LabelFilterDropdown = ({ labels, onChange, name, ...rest }) => {
+export const LabelFilterDropdown = ({
+  labels,
+  onChange,
+  loadFromURL,
+  name,
+  ...rest
+}) => {
   const [selected, setSelected] = useState([]);
   const [options, setOptions] = useState([]);
 
@@ -336,22 +342,25 @@ export const LabelFilterDropdown = ({ labels, onChange, name, ...rest }) => {
 
   // get initial selected labels from URL params on first load
   useEffect(() => {
-    const { labels: urlLabelState } = decodeUrlSearchParams(
-      window.location.search
-    );
-    const initialSelected = Object.entries(urlLabelState).reduce(
-      (acc, [labelKey, v]) => {
-        if (v === 1) {
-          acc.push({
-            value: labelKey,
-            label: labels.find((o) => o.id === labelKey)?.label || labelKey
-          });
-        }
-        return acc;
-      },
-      []
-    );
-    setSelected(initialSelected);
+    if (loadFromURL) {
+      const { labels: urlLabelState } = decodeUrlSearchParams(
+        window.location.search
+      );
+      const initialSelected = Object.entries(urlLabelState).reduce(
+        (acc, [labelKey, v]) => {
+          if (v === 1) {
+            acc.push({
+              value: labelKey,
+              label: labels.find((o) => o.id === labelKey)?.label || labelKey
+            });
+          }
+          return acc;
+        },
+        []
+      );
+      setSelected(initialSelected);
+    }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
