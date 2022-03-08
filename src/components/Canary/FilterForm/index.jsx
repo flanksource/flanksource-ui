@@ -327,6 +327,7 @@ export const LabelFilterDropdown = ({
 }) => {
   const [selected, setSelected] = useState([]);
   const [options, setOptions] = useState([]);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   useEffect(() => {
     const newOptions = labels.map((label) => ({
@@ -338,17 +339,18 @@ export const LabelFilterDropdown = ({
 
   useEffect(() => {
     onChange(selected, options);
-  }, [selected, options, onChange]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selected]);
 
   // get initial selected labels from URL params on first load
   useEffect(() => {
-    if (loadFromURL) {
+    if (loadFromURL && isInitialLoad && labels?.length > 0) {
       const { labels: urlLabelState } = decodeUrlSearchParams(
         window.location.search
       );
       const initialSelected = Object.entries(urlLabelState).reduce(
         (acc, [labelKey, v]) => {
-          if (v === 1) {
+          if (v === 1 && labels.findIndex((o) => o.id === labelKey) > -1) {
             acc.push({
               value: labelKey,
               label: labels.find((o) => o.id === labelKey)?.label || labelKey
@@ -359,10 +361,10 @@ export const LabelFilterDropdown = ({
         []
       );
       setSelected(initialSelected);
+      setIsInitialLoad(false);
     }
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isInitialLoad, labels]);
 
   return (
     <Select

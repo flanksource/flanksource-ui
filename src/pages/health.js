@@ -35,6 +35,8 @@ import {
   separateLabelsByBooleanType
 } from "../components/Canary/labels";
 import { DropdownMenu } from "../components/DropdownMenu";
+import { parse } from "qs";
+import { TristateToggle } from "../components/TristateToggle";
 
 const getSearchParams = () => getParamsFromURL(window.location.search);
 
@@ -279,26 +281,28 @@ export const MultiSelectLabelsDropdownStandalone = ({ labels = [] }) => {
       const { labels: urlLabelState } = decodeUrlSearchParams(
         window.location.search
       );
-      let labelState = {};
-      all.forEach((selection) => {
-        // reset unselected labels to 0
-        labelState[selection.value] = 0;
-      });
+      const labelState = { ...urlLabelState };
+
+      if (!isFirstLoad) {
+        all.forEach((selection) => {
+          // set unselected labels to 0
+          labelState[selection.value] = 0;
+        });
+      }
+
       selected.forEach((selection) => {
         // set selected labels to 1
         labelState[selection.value] = 1;
       });
-
-      if (isFirstLoad) {
-        // avoid overwrite labels from URL params on first load
-        labelState = { ...labelState, ...urlLabelState };
-        setIsFirstLoad(false);
-      }
       const conciseLabelState = getConciseLabelState(labelState);
       updateParams({ labels: conciseLabelState });
     },
     [isFirstLoad]
   );
+
+  useEffect(() => {
+    setIsFirstLoad(false);
+  }, []);
   return (
     <LabelFilterDropdown labels={labels} onChange={handleChange} loadFromURL />
   );
@@ -307,34 +311,80 @@ export const MultiSelectLabelsDropdownStandalone = ({ labels = [] }) => {
 export const SimpleLabelsDropdownStandalone = ({
   labels = [],
   buttonTitle
-}) => (
-  <DropdownMenu
-    menuDropdownStyle={{ zIndex: "5" }}
-    buttonClass="w-full"
-    buttonElement={
-      <div
-        className="border border-gray-300 w-full flex items-center justify-between px-2 py-2"
-        style={{ height: "38px", borderRadius: "4px" }}
-      >
-        <span className="text-sm text-gray-500">{buttonTitle}</span>
-        <ChevronDownIcon
-          style={{
-            height: "20px",
-            color: "#8f8f8f",
-            marginLeft: "12px"
-          }}
-        />
-      </div>
-    }
-    content={
-      <div className="px-4 py-2 ">
-        (work in progress)
-        {labels
-          .filter((o) => o && o !== undefined)
-          .map((label) => (
-            <div key={label.id}>{label.id}</div>
-          ))}
-      </div>
-    }
-  />
-);
+}) => {
+  const [labelStates, setLabelStates] = useState({});
+
+  // first load or label change: set label states
+  useEffect(() => {
+    const { labels: urlLabelState } = decodeUrlSearchParams(
+      window.location.search
+    );
+    const labelMap = labels.reduce((acc, current) => {
+      acc[current.id] = true;
+      return acc;
+    }, {});
+    const newLabelStates = Object.entries(urlLabelState).reduce(
+      (acc, [k, v]) => {
+        if (Object.prototype.hasOwnProperty.call(labelMap, k)) {
+          acc[k] = v;
+        }
+        return acc;
+      },
+      {}
+    );
+    setLabelStates(newLabelStates);
+  }, [labels]);
+
+  const handleToggleChange = (labelKey, value) => {
+    const { labels: urlLabelState } = decodeUrlSearchParams(
+      window.location.search
+    );
+    const newState = { ...urlLabelState };
+    newState[labelKey] = value;
+    const conciseLabelState = getConciseLabelState(newState);
+    updateParams({ labels: conciseLabelState });
+  };
+
+  return (
+    <DropdownMenu
+      menuDropdownStyle={{ zIndex: "5" }}
+      buttonClass="w-full"
+      buttonElement={
+        <div
+          className="border border-gray-300 w-full flex items-center justify-between px-2 py-2"
+          style={{ height: "38px", borderRadius: "4px" }}
+        >
+          <span className="text-sm text-gray-500">{buttonTitle}</span>
+          <ChevronDownIcon
+            style={{
+              height: "20px",
+              color: "#8f8f8f",
+              marginLeft: "12px"
+            }}
+          />
+        </div>
+      }
+      content={
+        <div className="px-4 py-2">
+          {labels
+            .filter((o) => o && o !== undefined)
+            .map((label) => (
+              <div key={label.id}>
+                <TristateToggle
+                  key={label.key}
+                  value={
+                    Object.prototype.hasOwnProperty.call(labelStates, label.id)
+                      ? labelStates[label.id]
+                      : 0
+                  }
+                  onChange={(v) => handleToggleChange(label.id, v)}
+                  className="mb-2"
+                  label={label}
+                />
+              </div>
+            ))}
+        </div>
+      }
+    />
+  );
+};
