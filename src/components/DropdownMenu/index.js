@@ -9,7 +9,8 @@ export function DropdownMenu({
   anchor,
   content,
   dropdownClass,
-  buttonClass
+  buttonClass,
+  menuDropdownStyle
 }) {
   return (
     <Menu as="div" className={`${className} relative flex-shrink-0`}>
@@ -24,6 +25,7 @@ export function DropdownMenu({
         leaveTo="transform opacity-0 scale-95"
       >
         <Menu.Items
+          style={menuDropdownStyle}
           className={`${dropdownClass} origin-${anchor} absolute mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 py-1 focus:outline-none`}
         >
           {content}

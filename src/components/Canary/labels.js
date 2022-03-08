@@ -169,3 +169,13 @@ export const separateLabelsByBooleanType = (labelList) => {
   });
   return [boolean, nonBoolean];
 };
+
+export const getConciseLabelState = (labelState) => {
+  const conciseLabelState = Object.entries(labelState).reduce((acc, [k, v]) => {
+    if (v !== 0) {
+      acc[k] = v;
+    }
+    return acc;
+  }, {});
+  return conciseLabelState;
+};

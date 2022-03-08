@@ -15,7 +15,7 @@ import { TimeRange } from "../../Dropdown/TimeRange";
 import { Toggle } from "../../Toggle";
 import { initialiseFormState, updateFormState, getDefaultForm } from "../state";
 
-import { encodeObjectToUrlSearchParams } from "../url";
+import { decodeUrlSearchParams, encodeObjectToUrlSearchParams } from "../url";
 
 import { TristateToggle } from "../../TristateToggle";
 import { DropdownMenu } from "../../DropdownMenu";
@@ -318,17 +318,42 @@ const ConciseLabelsValueContainer = ({
   );
 };
 
-const LabelFilterDropdown = ({ labels, onChange, name, ...rest }) => {
+export const LabelFilterDropdown = ({ labels, onChange, name, ...rest }) => {
   const [selected, setSelected] = useState([]);
+  const [options, setOptions] = useState([]);
 
-  const options = labels.map((label) => ({
-    value: label.id,
-    label: label.label
-  }));
+  useEffect(() => {
+    const newOptions = labels.map((label) => ({
+      value: label.id,
+      label: label.label
+    }));
+    setOptions(newOptions);
+  }, [labels]);
 
   useEffect(() => {
     onChange(selected, options);
   }, [selected, options, onChange]);
+
+  // get initial selected labels from URL params on first load
+  useEffect(() => {
+    const { labels: urlLabelState } = decodeUrlSearchParams(
+      window.location.search
+    );
+    const initialSelected = Object.entries(urlLabelState).reduce(
+      (acc, [labelKey, v]) => {
+        if (v === 1) {
+          acc.push({
+            value: labelKey,
+            label: labels.find((o) => o.id === labelKey)?.label || labelKey
+          });
+        }
+        return acc;
+      },
+      []
+    );
+    setSelected(initialSelected);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Select
