@@ -119,7 +119,7 @@ export function TopologyCard({
       </div>
       <div className="flex flex-nowrap bg-lightest-gray rounded-b-8px">
         {metricsInFooter ? (
-          <div className="flex p-4 flex-1">
+          <div className="flex py-4 flex-1">
             <Metrics items={heading} />
           </div>
         ) : (

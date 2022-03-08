@@ -4,19 +4,17 @@ import clsx from "clsx";
 import { FormatProperty } from "./property";
 
 export const Metrics = ({ items, row }) => (
-  <div
-    className={clsx(
-      "grid rounded-b-8px divide-x flex-1",
-      `grid-cols-${items.length}`
-    )}
-  >
+  <div className="flex rounded-b-8px divide-x flex-1 justify-between items-center">
     {items.map((item) => (
       <div
         key={item.name}
-        className={clsx("text-gray-800 px-2 align-middle text-center flex", {
-          "flex-col": !row,
-          "flex-row items-center justify-center": row
-        })}
+        className={clsx(
+          "text-gray-800 px-2 align-middle text-center flex flex-1",
+          {
+            "flex-col": !row,
+            "flex-row items-center justify-center": row
+          }
+        )}
       >
         <h6 className="text-gray-color text-xs mb-0.5">
           {item.name}
