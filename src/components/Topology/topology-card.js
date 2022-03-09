@@ -52,7 +52,7 @@ export function TopologyCard({
   return (
     <div
       className={clsx(
-        "rounded-8px mb-3 shadow-card card topology-card bg-lightest-gray",
+        "rounded-8px mb-3 mr-3 shadow-card card topology-card bg-lightest-gray",
         _topology.status,
         selectionMode ? "cursor-pointer" : ""
       )}
