@@ -17,6 +17,5 @@
 }
 
 .modal-card__container {
-    max-height: 80vh;
-    overflow-y: auto;
+    max-height: calc(100vh - 12rem);
 }

@@ -55,7 +55,7 @@ export function Modal({
           >
             <div
               className={clsx(
-                "bg-white rounded-lg text-left shadow-xl transform transition-all w-full overflow-y-auto",
+                "bg-white rounded-lg text-left shadow-xl transform transition-all w-full",
                 `modal-card-${size}`
               )}
             >
@@ -75,7 +75,8 @@ export function Modal({
                   </div>
                 )}
               </div>
-              <div className="h-full px-8 modal-card__container">
+
+              <div className="px-8 overflow-y-scroll modal-card__container">
                 {children}
               </div>
 
