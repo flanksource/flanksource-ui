@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { updateParams } from "../Canary/url";
-import { getParamsFromURL } from "../Canary/utils";
+import { decodeUrlSearchParams, updateParams } from "../Canary/url";
 
-const getSearchParams = () => getParamsFromURL(window.location.search);
+const getSearchParams = () => decodeUrlSearchParams(window.location.search);
 
 export const DropdownStandaloneWrapper = ({
   dropdownElem,
