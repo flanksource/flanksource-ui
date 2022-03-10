@@ -3,7 +3,13 @@ import { BiCheck, BiX } from "react-icons/bi";
 import { BsDot } from "react-icons/bs";
 import style from "./index.module.css";
 
-export function TristateToggle({ onChange, value, label, className }) {
+export function TristateToggle({
+  onChange,
+  value,
+  label,
+  labelClass,
+  className
+}) {
   const states = [0, 1, -1];
   const colors = ["#e5e7eb", "#e05858", "#58b358"];
   const fgColors = ["#909090", "#fafafa", "#fafafa"];
@@ -103,7 +109,9 @@ export function TristateToggle({ onChange, value, label, className }) {
       ))}
 
       {label.label && (
-        <span className="ml-3 text-xs text-left text-gray-700">
+        <span
+          className={`${labelClass || "ml-3 text-xs text-left text-gray-700"}`}
+        >
           {label.label}
         </span>
       )}

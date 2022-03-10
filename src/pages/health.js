@@ -27,6 +27,7 @@ import {
 } from "../components/Canary/labels";
 import { DropdownMenu } from "../components/DropdownMenu";
 import { TristateToggle } from "../components/TristateToggle";
+import mixins from "../utils/mixins.module.css";
 
 const getSearchParams = () => getParamsFromURL(window.location.search);
 
@@ -121,48 +122,73 @@ export function HealthPage({ url }) {
           />
         </>
       }
+      contentClass="p-0"
     >
-      <div className="flex flex-wrap mb-2">
-        <div className="mb-4 mr-2">
-          <DropdownStandaloneWrapper
-            dropdownElem={<GroupByDropdown />}
+      <div className="flex flex-row">
+        <SidebarSticky>
+          <SectionTitle className="mb-4">Filter by Health</SectionTitle>
+          <div className="mb-4 flex items-center">
+            <div className="h-9 flex items-center">
+              <HidePassingToggle />
+            </div>
+            <div className="text-sm text-gray-800 mb-0">Hide Passing</div>
+          </div>
+
+          <SectionTitle className="mb-4">Filter by Label</SectionTitle>
+          <div className="mb-4 mr-2 w-full">
+            <MultiSelectLabelsDropdownStandalone labels={nonBooleanLabels} />
+          </div>
+          <div className="mb-4 mr-2 w-full">
+            <TristateLabels
+              labels={booleanLabels}
+              buttonTitle="Boolean labels"
+            />
+          </div>
+        </SidebarSticky>
+
+        <div className="flex-grow p-6">
+          <div className="flex flex-wrap mb-2">
+            <div className="mb-4 mr-2">
+              <DropdownStandaloneWrapper
+                dropdownElem={<GroupByDropdown />}
+                checks={checks}
+                defaultValue={defaultGroupSelections.name.value}
+                paramKey="groupBy"
+                className="w-64"
+                prefix={
+                  <>
+                    <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
+                      Group By:
+                    </div>
+                  </>
+                }
+              />
+            </div>
+            <div className="mb-4 mr-2">
+              <DropdownStandaloneWrapper
+                dropdownElem={<TabByDropdown />}
+                defaultValue={defaultTabSelections.namespace.value}
+                paramKey="tabBy"
+                checks={checks}
+                emptyable
+                className="w-64"
+                prefix={
+                  <>
+                    <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
+                      Tab By:
+                    </div>
+                  </>
+                }
+              />
+            </div>
+          </div>
+          <CanaryInterfaceMinimal
             checks={checks}
-            defaultValue={defaultGroupSelections.name.value}
-            paramKey="groupBy"
-            className="w-64"
-            prefix={
-              <>
-                <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
-                  Group By:
-                </div>
-              </>
-            }
-          />
-        </div>
-        <div className="mb-4 mr-2">
-          <DropdownStandaloneWrapper
-            dropdownElem={<TabByDropdown />}
-            defaultValue={defaultTabSelections.namespace.value}
-            paramKey="tabBy"
-            checks={checks}
-            emptyable
-            className="w-64"
-            prefix={
-              <>
-                <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
-                  Tab By:
-                </div>
-              </>
-            }
+            handleFetch={handleFetch}
+            onLabelFiltersCallback={labelUpdateCallback}
           />
         </div>
       </div>
-
-      <CanaryInterfaceMinimal
-        checks={checks}
-        handleFetch={handleFetch}
-        onLabelFiltersCallback={labelUpdateCallback}
-      />
     </SearchLayout>
   );
 }
@@ -229,10 +255,7 @@ export const MultiSelectLabelsDropdownStandalone = ({ labels = [] }) => {
   );
 };
 
-export const SimpleLabelsDropdownStandalone = ({
-  labels = [],
-  buttonTitle
-}) => {
+export const TristateLabels = ({ labels = [] }) => {
   const [labelStates, setLabelStates] = useState({});
 
   // first load or label change: set label states
@@ -267,45 +290,59 @@ export const SimpleLabelsDropdownStandalone = ({
   };
 
   return (
-    <DropdownMenu
-      menuDropdownStyle={{ zIndex: "5" }}
-      buttonClass="w-full"
-      buttonElement={
-        <div
-          className="border border-gray-300 w-full flex items-center justify-between px-2 py-2"
-          style={{ height: "38px", borderRadius: "4px" }}
-        >
-          <span className="text-sm text-gray-500">{buttonTitle}</span>
-          <ChevronDownIcon
-            style={{
-              height: "20px",
-              color: "#8f8f8f",
-              marginLeft: "12px"
-            }}
-          />
-        </div>
-      }
-      content={
-        <div className="px-4 py-2">
-          {labels
-            .filter((o) => o && o !== undefined)
-            .map((label) => (
-              <div key={label.id}>
-                <TristateToggle
-                  key={label.key}
-                  value={
-                    Object.prototype.hasOwnProperty.call(labelStates, label.id)
-                      ? labelStates[label.id]
-                      : 0
-                  }
-                  onChange={(v) => handleToggleChange(label.id, v)}
-                  className="mb-2"
-                  label={label}
-                />
-              </div>
-            ))}
-        </div>
-      }
-    />
+    <div className="w-full break">
+      {labels
+        .filter((o) => o && o !== undefined)
+        .map((label) => (
+          <div key={label.id}>
+            <TristateToggle
+              key={label.key}
+              value={
+                Object.prototype.hasOwnProperty.call(labelStates, label.id)
+                  ? labelStates[label.id]
+                  : 0
+              }
+              onChange={(v) => handleToggleChange(label.id, v)}
+              className="mb-2 flex items-center"
+              labelClass="ml-3 text-xs text-left text-gray-700 break-all overflow-ellipsis overflow-x-hidden"
+              label={label}
+            />
+          </div>
+        ))}
+    </div>
   );
 };
+
+const SectionTitle = ({ className, children, ...props }) => (
+  <div
+    className={`uppercase font-semibold text-sm mb-3 text-indigo-700 ${className}`}
+    {...props}
+  >
+    {children}
+  </div>
+);
+
+const SidebarSticky = ({
+  className,
+  style,
+  children,
+  topHeight = 64,
+  ...props
+}) => (
+  <div
+    className={className || "flex flex-col w-72 border-r"}
+    style={style || { minHeight: `calc(100vh - ${topHeight}px)` }}
+    {...props}
+  >
+    <div
+      className={`h-full overflow-y-auto overflow-x-hidden p-4 ${mixins.appleScrollbar}`}
+      style={{
+        position: "sticky",
+        top: `${topHeight}px`,
+        maxHeight: `calc(100vh - ${topHeight}px)`
+      }}
+    >
+      {children}
+    </div>
+  </div>
+);
