@@ -103,7 +103,7 @@ export function TopologyCard({
         )}
 
         <div className="flex ml-auto pl-1 pr-1.5 pb-3.5 pt-3">
-          {selectionMode === "select" ? (
+          {selectionMode ? (
             <div className="pr-1.5 pt-1 flex min-w-7 justify-end items-start">
               <input
                 type="checkbox"

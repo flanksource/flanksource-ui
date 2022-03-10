@@ -29,11 +29,14 @@ export const TopologySelectorModal = ({
     }
   }, [defaultChecked, isOpen, previousIsOpen]);
 
-  const toggleChecked = (id, checked) => {
+  const toggleChecked = (id) => {
     setChecked((prevState) =>
-      checked ? prevState.concat([id]) : prevState.filter((i) => i !== id)
+      prevState.includes(id)
+        ? prevState.filter((i) => i !== id)
+        : [...prevState, id]
     );
   };
+
   return (
     <Modal
       open={isOpen}
@@ -61,10 +64,8 @@ export const TopologySelectorModal = ({
                 topology={item}
                 key={item.id}
                 selectionMode
-                selected={checked.indexOf(item.id) > -1}
-                onSelectionChange={(state) => {
-                  toggleChecked(item.id, state);
-                }}
+                selected={checked.includes(item.id)}
+                onSelectionChange={() => toggleChecked(item.id)}
               />
             ))}
           </div>
