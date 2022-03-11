@@ -76,7 +76,7 @@ export function Modal({
                 )}
               </div>
 
-              <div className="px-8 overflow-y-scroll modal-card__container">
+              <div className="px-8 overflow-y-auto modal-card__container">
                 {children}
               </div>
 
