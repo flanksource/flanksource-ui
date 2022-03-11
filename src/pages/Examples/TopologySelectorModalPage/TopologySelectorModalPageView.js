@@ -25,6 +25,7 @@ export const TopologySelectorModalPageView = ({
       submitButtonTitle="Add"
       onSubmit={(data) => {
         console.log("array of checked cards ids:", data);
+        setModal(false);
       }}
       defaultChecked={[topologies[0][0].id]}
     />
