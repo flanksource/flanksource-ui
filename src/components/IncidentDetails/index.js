@@ -12,7 +12,7 @@ import {
   IncidentRespondentsMultiValueLabel,
   IncidentRespondentsOption
 } from "./select-components";
-import { personRespondents, priorities } from "./data";
+import { priorities } from "./data";
 
 export const IncidentDetails = ({
   incident,
@@ -32,6 +32,17 @@ export const IncidentDetails = ({
     [incident]
   );
 
+  const respondersArray = useMemo(() =>
+    incident.responder.map(
+      (item, index) => ({
+        label: item.created_by.name,
+        value: `${index}`,
+        avatar: item.created_by.avatar
+      }),
+      [incident]
+    )
+  );
+
   const { control, getValues, watch } = useForm({
     defaultValues: {
       tracking: "123456",
@@ -42,7 +53,7 @@ export const IncidentDetails = ({
       statusPage: "https://www.atlassian.com/software/statuspage",
       priority: incident.severity || IncidentPriority.High,
       commanders: incident.commander_id.id,
-      respondents: personRespondents[0].value || null
+      respondents: respondersArray?.[0]?.value || null
     }
   });
   watch();
@@ -118,7 +129,7 @@ export const IncidentDetails = ({
                 marginLeft: -4
               })
             }}
-            options={personRespondents}
+            options={respondersArray}
             isMulti
           />
         }
