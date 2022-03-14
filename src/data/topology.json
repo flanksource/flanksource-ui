@@ -246,6 +246,21 @@
       {
         "name": "region",
         "text": "eu-west-2"
+      },
+      {
+        "name": "RPS",
+        "text": "165/s",
+        "headline": true
+      },
+      {
+        "name": "Errors",
+        "text": "0.1%",
+        "headline": true
+      },
+      {
+        "name": "Latency",
+        "text": "225ms",
+        "headline": true
       }
     ],
     "summary": {},

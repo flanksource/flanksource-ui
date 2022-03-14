@@ -126,6 +126,9 @@ module.exports = {
         "btn-round-lg": "2.625rem",
         "btn-round-xl": "3.125rem"
       },
+      height: {
+        "topology-card": "200px"
+      },
       minWidth: {
         8: "2rem",
         7: "1.75rem"
