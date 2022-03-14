@@ -156,7 +156,6 @@ export function HypothesisDetails({ nodePath, tree, setTree, api, ...rest }) {
         open={evidenceBuilderOpen}
         onClose={() => setEvidenceBuilderOpen(false)}
         size="medium"
-        hideActions
       >
         <EvidenceBuilder />
       </Modal>

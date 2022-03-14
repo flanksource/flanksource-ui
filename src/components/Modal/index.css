@@ -15,11 +15,3 @@
     height: calc(100vh - 4rem);
     margin: 0 20px;
 }
-
-.modal-card__container {
-    max-height: calc(100vh - 12rem);
-}
-
-.modal-card-full .modal-card__container {
-    height: calc(100vh - 12rem);
-}

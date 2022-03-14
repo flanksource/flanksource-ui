@@ -59,7 +59,6 @@ export function LogsViewer({ logs, isLoading }) {
         open={incidentModalIsOpen}
         onClose={() => setIncidentModalIsOpen(false)}
         size="small"
-        hideActions
       >
         <LogsIncidentLinker
           selectedLogs={selectedList}

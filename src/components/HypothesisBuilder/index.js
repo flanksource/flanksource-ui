@@ -53,7 +53,6 @@ export function HypothesisBuilder({
         open={modalIsOpen}
         onClose={() => setModalIsOpen(false)}
         size="medium"
-        hideActions
       >
         <HypothesisDetails
           nodePath={selectedNodePath}

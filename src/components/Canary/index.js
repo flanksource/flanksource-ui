@@ -438,7 +438,6 @@ export class Canary extends React.Component {
           open={selected != null}
           onClose={this.handleModalClose}
           size="full"
-          hideActions
         >
           <div
             className="flex flex-col h-full py-8"

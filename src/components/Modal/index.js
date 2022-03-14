@@ -7,13 +7,14 @@ import "./index.css";
 
 export function Modal({
   title,
+  titleClass,
+  footerClassName,
+  actions,
   body,
   open,
   onClose,
   allowBackgroundClose,
   hideCloseButton,
-  cancelText,
-  hideActions,
   size,
   ...rest
 }) {
@@ -55,12 +56,14 @@ export function Modal({
           >
             <div
               className={clsx(
-                "bg-white rounded-lg text-left shadow-xl transform transition-all w-full",
+                "bg-white rounded-lg text-left shadow-xl transform transition-all w-full flex flex-col",
                 `modal-card-${size}`
               )}
             >
               <div className="mt-8 px-8 flex justify-between items-center ">
-                <h1 className="font-semibold text-lg">{title}</h1>
+                <h1 className={clsx("font-semibold text-lg", titleClass)}>
+                  {title}
+                </h1>
                 {/* top-right close button */}
                 {!hideCloseButton && (
                   <div className="pointer-events-none sm:pointer-events-auto">
@@ -80,17 +83,11 @@ export function Modal({
                 {children}
               </div>
 
-              {!hideActions && (
-                <div className="flex justify-end my-2 px-8">
-                  <button
-                    type="button"
-                    className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm"
-                    onClick={onClose}
-                  >
-                    {cancelText}
-                  </button>
-                </div>
-              )}
+              <div
+                className={clsx("flex my-2 px-8 justify-end", footerClassName)}
+              >
+                {actions?.length && actions}
+              </div>
             </div>
           </Transition.Child>
         </div>
@@ -101,20 +98,20 @@ export function Modal({
 
 Modal.propTypes = {
   title: PropTypes.string,
+  titleClass: PropTypes.string,
+  footerClassName: PropTypes.string,
   open: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   allowBackgroundClose: PropTypes.bool,
   hideCloseButton: PropTypes.bool,
-  cancelText: PropTypes.string,
-  hideActions: PropTypes.bool,
   size: PropTypes.oneOf(["small", "medium", "full"])
 };
 
 Modal.defaultProps = {
   title: "",
+  titleClass: "",
+  footerClassName: "",
   allowBackgroundClose: true,
   hideCloseButton: false,
-  cancelText: "Close",
-  hideActions: false,
   size: "medium"
 };
