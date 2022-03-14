@@ -112,6 +112,9 @@ module.exports = {
         "large-card-left": "36%",
         "large-card-right": "64%"
       },
+      height: {
+        "topology-card": "200px"
+      },
       minWidth: {
         8: "2rem",
         7: "1.75rem"
