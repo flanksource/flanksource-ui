@@ -16,10 +16,18 @@ import {
   getCommentsByHypothesis,
   createComment
 } from "../../../../api/services/comments";
-import { getAllEvidenceByHypothesis } from "../../../../api/services/evidence";
+import {
+  createEvidence,
+  deleteEvidenceBulk,
+  getAllEvidenceByHypothesis
+} from "../../../../api/services/evidence";
 import { useUser } from "../../../../context";
 import { toastError } from "../../../Toast/toast";
 import { Avatar } from "../../../Avatar";
+import { TopologySelectorModal } from "../../../TopologySelectorModal/TopologySelectorModal";
+import { topologiesFactory } from "../../../../data/topologies";
+
+const topologies = topologiesFactory(22);
 
 const statusItems = {
   ...Object.values(hypothesisStatuses).reduce((acc, obj) => {
@@ -43,12 +51,27 @@ export function HypothesisDetails({ nodePath, tree, setTree, api, ...rest }) {
   const user = useUser();
   const [comments, setComments] = useState([]);
   const [evidence, setEvidence] = useState([]);
+  const [topologySelectorModal, setTopologySelectorModal] = useState(false);
 
   const node = useMemo(() => getNode(tree, nodePath), [tree, nodePath]);
 
+  const selectedTopologies = useMemo(
+    () =>
+      evidence
+        .filter(({ type }) => type === "topology")
+        .map(({ evidence }) => evidence?.id),
+    [evidence]
+  );
+
   const fetchEvidence = (hypothesisId) => {
     getAllEvidenceByHypothesis(hypothesisId).then((evidence) => {
-      setEvidence(evidence?.data || []);
+      const evidencePrepared =
+        evidence?.data?.map((item) => ({
+          ...item,
+          type: "topology", // TODO remove this row after added topology type on backend
+          evidence: JSON.parse(item.evidence)
+        })) || [];
+      setEvidence(evidencePrepared);
     });
   };
 
@@ -95,6 +118,40 @@ export function HypothesisDetails({ nodePath, tree, setTree, api, ...rest }) {
     return () => subscription.unsubscribe();
   }, [watch, getValues, handleApiUpdate]);
 
+  const createEvidences = (topologiesId) => {
+    const requests = topologies
+      .filter(({ id }) => topologiesId.includes(id))
+      .map((newEvidence) =>
+        createEvidence(user, uuidv4(), node.id, JSON.stringify(newEvidence), {
+          type: "topology"
+        })
+      );
+    Promise.all(requests).then(() => {
+      fetchEvidence(node.id);
+    });
+  };
+
+  const deleteEvidences = (topologiesId) => {
+    const evidencesIds = evidence
+      .filter(({ evidence: topology }) => topologiesId.includes(topology.id))
+      .map((evidence) => evidence.id);
+    deleteEvidenceBulk(evidencesIds).then(() => {
+      fetchEvidence(node.id);
+    });
+  };
+
+  const topologyFilter = (topologiesIds) => {
+    const newTopologiesId = topologiesIds.filter(
+      (id) => !selectedTopologies.includes(id)
+    );
+    createEvidences(newTopologiesId);
+
+    const oldTopologiesId = selectedTopologies.filter(
+      (id) => !topologiesIds.includes(id)
+    );
+    deleteEvidences(oldTopologiesId);
+  };
+
   return (
     <>
       <div className={clsx("py-7", rest.className || "")} {...rest}>
@@ -127,7 +184,7 @@ export function HypothesisDetails({ nodePath, tree, setTree, api, ...rest }) {
             hypothesis={node}
             evidence={evidence}
             titlePrepend={<HypothesisTitle>Evidence</HypothesisTitle>}
-            onButtonClick={() => setEvidenceBuilderOpen(true)}
+            onButtonClick={() => setTopologySelectorModal(true)}
           />
         </div>
         {/* <div className="mb-6">
@@ -158,6 +215,18 @@ export function HypothesisDetails({ nodePath, tree, setTree, api, ...rest }) {
       >
         <EvidenceBuilder />
       </Modal>
+      <TopologySelectorModal
+        handleModalClose={() => setTopologySelectorModal(false)}
+        isOpen={topologySelectorModal}
+        topologies={topologies}
+        title="Add evidence"
+        submitButtonTitle="Add"
+        onSubmit={(data) => {
+          topologyFilter(data);
+          setTopologySelectorModal(false);
+        }}
+        defaultChecked={selectedTopologies}
+      />
     </>
   );
 }

@@ -58,11 +58,7 @@ export function HypothesisBuilder({
           </NestedHeirarchy>
         )}
       </div>
-      <Modal
-        open={modalIsOpen}
-        onClose={() => setModalIsOpen(false)}
-        size="medium"
-      >
+      <Modal open={modalIsOpen} onClose={() => setModalIsOpen(false)}>
         <HypothesisDetails
           nodePath={selectedNodePath}
           tree={tree}
@@ -72,19 +68,7 @@ export function HypothesisBuilder({
       </Modal>
       <Modal
         open={createHypothesisModalIsOpen}
-        onClose={() => {
-          setCreateHypothesisModalIsOpen(false);
-        }}
-        cardClass="w-full overflow-y-auto"
-        contentClass="h-full p-10"
-        cardStyle={{
-          maxWidth: "605px",
-          maxHeight: "calc(100vh - 4rem)"
-        }}
-        closeButtonStyle={{
-          padding: "1.7rem 2.9rem 0 0"
-        }}
-        hideActions
+        onClose={() => setCreateHypothesisModalIsOpen(false)}
       >
         <CreateHypothesis
           nodePath={selectedNodePath}

@@ -9,7 +9,13 @@ export function EvidenceItem({ evidence }) {
     return <LogsTable logs={evidence.evidence} title="" />;
   }
   if (evidence.type === "topology") {
-    return <TopologyCard topologyId={evidence.evidence.id} size="small" />;
+    return (
+      <TopologyCard
+        topology={evidence.evidence}
+        topologyId={evidence.evidence.id}
+        size="small"
+      />
+    );
   }
   return null;
 }
@@ -28,6 +34,7 @@ export function EvidenceSection({
           <button
             type="button"
             className="btn-round btn-round-primary btn-round-sm"
+            onClick={onButtonClick}
           >
             <BsPlusLg />
           </button>
@@ -41,7 +48,7 @@ export function EvidenceSection({
         </button>
       </div>
       <div className="mt-2.5">
-        {evidence && evidence.length > 0 ? (
+        {evidence?.length ? (
           evidence.map((evidence) => (
             <EvidenceItem key={evidence.id} evidence={evidence} />
           ))

@@ -1,7 +1,7 @@
 import { IncidentCommander } from "../axios";
 import { resolve } from "../resolve";
 
-const evidenceTypes = ["log"];
+const evidenceTypes = ["log", "topology"];
 
 export const getAllEvidenceByHypothesis = async (hypothesisId) =>
   resolve(IncidentCommander.get(`/evidence?hypothesis_id=eq.${hypothesisId}`));
