@@ -138,8 +138,9 @@ export function HealthPage({ url }) {
 
           <SectionTitle className="mb-4">Filter by Label</SectionTitle>
           <div className="mb-4 mr-2 w-full">
-            {Object.entries(nonBooleanLabelsGroupedByKeys).map(
-              ([labelKey, labels]) => (
+            {Object.entries(nonBooleanLabelsGroupedByKeys)
+              .sort((a, b) => (a[0] > b[0] ? 1 : -1))
+              .map(([labelKey, labels]) => (
                 <div key={labelKey} className="mb-2">
                   <div className="text-xs whitespace-nowrap overflow-ellipsis w-full overflow-hidden mb-1">
                     {labelKey}
@@ -149,8 +150,7 @@ export function HealthPage({ url }) {
                     selectAllByDefault
                   />
                 </div>
-              )
-            )}
+              ))}
           </div>
           <div className="mb-4 mr-2 w-full">
             <TristateLabels
