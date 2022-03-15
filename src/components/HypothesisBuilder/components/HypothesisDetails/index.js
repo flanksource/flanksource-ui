@@ -68,7 +68,6 @@ export function HypothesisDetails({ nodePath, tree, setTree, api, ...rest }) {
       const evidencePrepared =
         evidence?.data?.map((item) => ({
           ...item,
-          type: "topology", // TODO remove this row after added topology type on backend
           evidence: JSON.parse(item.evidence)
         })) || [];
       setEvidence(evidencePrepared);
@@ -119,25 +118,30 @@ export function HypothesisDetails({ nodePath, tree, setTree, api, ...rest }) {
   }, [watch, getValues, handleApiUpdate]);
 
   const createEvidences = (topologiesId) => {
-    const requests = topologies
-      .filter(({ id }) => topologiesId.includes(id))
-      .map((newEvidence) =>
-        createEvidence(user, uuidv4(), node.id, JSON.stringify(newEvidence), {
-          type: "topology"
-        })
-      );
-    Promise.all(requests).then(() => {
-      fetchEvidence(node.id);
-    });
+    if (topologiesId?.length) {
+      const requests = topologies
+        .filter(({ id }) => topologiesId.includes(id))
+        .map((newEvidence) =>
+          createEvidence(user, uuidv4(), node.id, JSON.stringify(newEvidence), {
+            type: "topology",
+            description: ""
+          })
+        );
+      Promise.all(requests).then(() => {
+        fetchEvidence(node.id);
+      });
+    }
   };
 
   const deleteEvidences = (topologiesId) => {
-    const evidencesIds = evidence
-      .filter(({ evidence: topology }) => topologiesId.includes(topology.id))
-      .map((evidence) => evidence.id);
-    deleteEvidenceBulk(evidencesIds).then(() => {
-      fetchEvidence(node.id);
-    });
+    if (topologiesId?.length) {
+      const evidencesIds = evidence
+        .filter(({ evidence: topology }) => topologiesId.includes(topology.id))
+        .map((evidence) => evidence.id);
+      deleteEvidenceBulk(evidencesIds).then(() => {
+        fetchEvidence(node.id);
+      });
+    }
   };
 
   const topologyFilter = (topologiesIds) => {
