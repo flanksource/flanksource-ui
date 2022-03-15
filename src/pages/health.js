@@ -23,6 +23,7 @@ import { Toggle } from "../components/Toggle";
 import { LabelFilterDropdown } from "../components/Canary/FilterForm";
 import {
   getConciseLabelState,
+  groupLabelsByKey,
   separateLabelsByBooleanType
 } from "../components/Canary/labels";
 import { DropdownMenu } from "../components/DropdownMenu";
@@ -49,12 +50,13 @@ export function HealthPage({ url }) {
   const [isLoading, setIsLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState("");
   const [booleanLabels, setBooleanLabels] = useState([]);
-  const [nonBooleanLabels, setNonBooleanLabels] = useState([]);
+  const [nonBooleanLabelsGroupedByKeys, setNonBooleanLabelsGroupedByKeys] =
+    useState({});
 
   const labelUpdateCallback = useCallback((newLabels) => {
     const [bl, nbl] = separateLabelsByBooleanType(Object.values(newLabels));
     setBooleanLabels(bl);
-    setNonBooleanLabels(nbl);
+    setNonBooleanLabelsGroupedByKeys(groupLabelsByKey(nbl));
   }, []);
 
   const handleSearch = debounce((value) => {
@@ -136,7 +138,19 @@ export function HealthPage({ url }) {
 
           <SectionTitle className="mb-4">Filter by Label</SectionTitle>
           <div className="mb-4 mr-2 w-full">
-            <MultiSelectLabelsDropdownStandalone labels={nonBooleanLabels} />
+            {Object.entries(nonBooleanLabelsGroupedByKeys).map(
+              ([labelKey, labels]) => (
+                <div key={labelKey} className="mb-2">
+                  <div className="text-xs whitespace-nowrap overflow-ellipsis w-full overflow-hidden mb-1">
+                    {labelKey}
+                  </div>
+                  <MultiSelectLabelsDropdownStandalone
+                    labels={labels}
+                    selectAllByDefault
+                  />
+                </div>
+              )
+            )}
           </div>
           <div className="mb-4 mr-2 w-full">
             <TristateLabels
@@ -216,8 +230,12 @@ export const HidePassingToggle = ({ defaultValue = true }) => {
   );
 };
 
-export const MultiSelectLabelsDropdownStandalone = ({ labels = [] }) => {
+export const MultiSelectLabelsDropdownStandalone = ({
+  labels = []
+  // selectAllByDefault
+}) => {
   const [isFirstLoad, setIsFirstLoad] = useState(true);
+  const [dropdownValue, setDropdownValue] = useState([]);
   const handleChange = useCallback(
     (selected, all) => {
       const { labels: urlLabelState } = decodeUrlSearchParams(
@@ -236,21 +254,41 @@ export const MultiSelectLabelsDropdownStandalone = ({ labels = [] }) => {
         // set selected labels to 1
         labelState[selection.value] = 1;
       });
+
+      // if (isFirstLoad && selected.length === 0 && selectAllByDefault) {
+      //   setDropdownValue(all);
+      // } else {
+      setDropdownValue(selected);
+      // }
+
+      // if (selected.length === 0) {
+      //   // if empty, include alall items
+      //   all.forEach((selection) => {
+      //     labelState[selection.value] = 1;
+      //   });
+      // }
+
       const conciseLabelState = getConciseLabelState(labelState);
       updateParams({ labels: conciseLabelState });
+      setIsFirstLoad(false);
     },
-    [isFirstLoad]
+    [
+      isFirstLoad
+      //  selectAllByDefault
+    ]
   );
 
   useEffect(() => {
-    setIsFirstLoad(false);
+    setIsFirstLoad(true);
   }, []);
+
   return (
     <LabelFilterDropdown
       name="HealthMultiLabelFilter"
       labels={labels}
       onChange={handleChange}
       loadFromURL
+      value={dropdownValue}
     />
   );
 };
@@ -258,9 +296,9 @@ export const MultiSelectLabelsDropdownStandalone = ({ labels = [] }) => {
 export const TristateLabels = ({ labels = [] }) => {
   const [labelStates, setLabelStates] = useState({});
 
-  // first load or label change: set label states
+  // first load or label change: set label statesgood hooker irl
   useEffect(() => {
-    const { labels: urlLabelState } = decodeUrlSearchParams(
+    const { labels: urlLabelState = {} } = decodeUrlSearchParams(
       window.location.search
     );
     const labelMap = labels.reduce((acc, current) => {

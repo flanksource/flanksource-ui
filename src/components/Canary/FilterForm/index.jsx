@@ -332,7 +332,7 @@ export const LabelFilterDropdown = ({
   useEffect(() => {
     const newOptions = labels.map((label) => ({
       value: label.id,
-      label: label.label
+      label: label.value
     }));
     setOptions(newOptions);
   }, [labels]);
@@ -353,7 +353,7 @@ export const LabelFilterDropdown = ({
           if (v === 1 && labels.findIndex((o) => o.id === labelKey) > -1) {
             acc.push({
               value: labelKey,
-              label: labels.find((o) => o.id === labelKey)?.label || labelKey
+              label: labels.find((o) => o.id === labelKey)?.value || labelKey
             });
           }
           return acc;
@@ -380,7 +380,8 @@ export const LabelFilterDropdown = ({
         }),
         valueContainer: (styles) => ({
           ...styles,
-          flexWrap: "nowrap"
+          flexWrap: "nowrap",
+          fontSize: "14px"
         })
       }}
       options={options}

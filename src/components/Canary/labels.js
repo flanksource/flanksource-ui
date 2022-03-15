@@ -179,3 +179,12 @@ export const getConciseLabelState = (labelState) => {
   }, {});
   return conciseLabelState;
 };
+
+export const groupLabelsByKey = (labels) => {
+  const result = {};
+  labels.forEach((label) => {
+    const existing = result[label.key] || [];
+    result[label.key] = [...existing, label];
+  });
+  return result;
+};
