@@ -1,10 +1,10 @@
 import { ChatAltIcon } from "@heroicons/react/solid";
 import dayjs from "dayjs";
-import React, { useState, useEffect, useCallback } from "react";
-import { MentionsInput, Mention } from "react-mentions";
+import React, { useCallback, useEffect, useState } from "react";
+import { Mention, MentionsInput } from "react-mentions";
 import { getPersons } from "../../../../api/services/users";
 import { Icon } from "../../../Icon";
-import mentionsStyle from "./mentionsStyle";
+import { mentionsStyle } from "./mentionsStyle";
 
 function getInitials(name) {
   const matches = name.match(/\b(\w)/g);
@@ -47,6 +47,34 @@ export function CommentsSection({
     ),
     []
   );
+
+  const onClickUserTag = (userId) => {
+    console.log("userId", userId);
+  };
+
+  const swapTags = (text) => {
+    const tags = text.match(/@\[.*?\]\(user:.*?\)/gi) || [];
+    const otherText = text.split(/@\[.*?\]\(user:.*?\)/gi);
+    return tags.reduce(
+      (display, myTag, index) => {
+        const tagDisplay = myTag.match(/\[.*?\]/gi)[0].slice(1, -1);
+        const tagData = myTag.match(/\(user:.*?\)/gi)[0].slice(6, -1);
+        return [
+          ...display,
+          <button
+            type="button"
+            key={tagData}
+            onClick={() => onClickUserTag(tagData)}
+            className="bg-blue-200 rounded"
+          >
+            {tagDisplay}
+          </button>,
+          otherText[index + 1]
+        ];
+      },
+      [otherText[0]]
+    );
+  };
 
   return (
     <div className={rest.className} {...rest}>
@@ -132,7 +160,9 @@ export function CommentsSection({
                       </p>
                     </div>
                     <div className="mt-2 text-sm text-gray-700">
-                      <p className="whitespace-pre">{comment.comment}</p>
+                      <p className="whitespace-pre">
+                        {swapTags(comment.comment)}
+                      </p>
                     </div>
                   </div>
                 </div>
