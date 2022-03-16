@@ -1,6 +1,10 @@
 import { ChatAltIcon } from "@heroicons/react/solid";
 import dayjs from "dayjs";
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
+import { MentionsInput, Mention } from "react-mentions";
+import { getPersons } from "../../../../api/services/users";
+import { Icon } from "../../../Icon";
+import mentionsStyle from "./mentionsStyle";
 
 function getInitials(name) {
   const matches = name.match(/\b(\w)/g);
@@ -15,6 +19,7 @@ export function CommentsSection({
 }) {
   const [commentTextValue, setCommentTextValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [users, setUsers] = useState([]);
 
   const handleComment = () => {
     if (commentTextValue) {
@@ -26,24 +31,51 @@ export function CommentsSection({
     }
   };
 
+  useEffect(() => {
+    getPersons().then(({ data }) => {
+      const usersDate = data.map((user) => ({ ...user, display: user.name }));
+      setUsers(usersDate);
+    });
+  }, []);
+
+  const renderSuggestion = useCallback(
+    ({ name, avatar }) => (
+      <div className="flex items-center">
+        <Icon name={avatar} size="xl" />
+        <p className="pl-2">{name}</p>
+      </div>
+    ),
+    []
+  );
+
   return (
     <div className={rest.className} {...rest}>
       {titlePrepend}
       <div>
-        <textarea
-          disabled={isLoading}
-          className="w-full text-sm p-2 border-gray-200 rounded-md h-20"
-          onChange={(e) => setCommentTextValue(e.target.value)}
+        <MentionsInput
           value={commentTextValue}
-          style={{ minHeight: "80px" }}
-        />
+          onChange={(e) => setCommentTextValue(e.target.value)}
+          a11ySuggestionsListLabel="Suggested mentions"
+          style={mentionsStyle}
+          allowSpaceInQuery
+          allowSuggestionsAboveCursor
+        >
+          <Mention
+            markup="@[__display__](user:__id__)"
+            trigger="@"
+            data={users}
+            renderSuggestion={renderSuggestion}
+            className="bg-blue-200 rounded"
+          />
+        </MentionsInput>
         <div className="flex justify-end">
           <button
             disabled={isLoading || !commentTextValue}
             type="button"
             onClick={handleComment}
-            className={`${isLoading || !commentTextValue ? "btn-disabled" : "btn-primary"
-              }`}
+            className={
+              isLoading || !commentTextValue ? "btn-disabled" : "btn-primary"
+            }
           >
             Comment
           </button>
