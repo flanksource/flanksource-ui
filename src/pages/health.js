@@ -26,6 +26,7 @@ import {
 } from "../components/Canary/labels";
 import { TristateToggle } from "../components/TristateToggle";
 import mixins from "../utils/mixins.module.css";
+import { Button } from "../components/Button";
 
 const getSearchParams = () => getParamsFromURL(window.location.search);
 
@@ -114,13 +115,24 @@ export function HealthPage({ url }) {
       <div className="flex flex-row">
         <SidebarSticky>
           <SectionTitle className="mb-4">Filter by Health</SectionTitle>
-          <div className="mb-4 flex items-center">
+          <div className="mb-6 flex items-center">
             <div className="h-9 flex items-center">
               <HidePassingToggle />
             </div>
             <div className="text-sm text-gray-800 mb-0">Hide Passing</div>
           </div>
-          <SectionTitle className="mb-4">Filter by Label</SectionTitle>
+          <SectionTitle className="mb-5 flex justify-between items-center">
+            Filter by Label{" "}
+            {/* <button
+              type="button"
+              onClick={() => {
+                updateParams({ labels: {} });
+              }}
+              className="bg-gray-200 text-gray-500 font-semibold text-xs px-2 py-1 rounded-md"
+            >
+              Clear All
+            </button> */}
+          </SectionTitle>
           <div className="mb-4 mr-2 w-full">
             <LabelFilterList labels={filteredLabels} />
           </div>
@@ -303,6 +315,9 @@ export const TristateLabelStandalone = ({
   labelClass,
   ...rest
 }) => {
+  const { labels: urlLabelState = {} } = decodeUrlSearchParams(
+    window.location.search
+  );
   const [isFirstLoad, setIsFirstLoad] = useState(true);
   const [toggleState, setToggleState] = useState(0);
 
@@ -326,8 +341,10 @@ export const TristateLabelStandalone = ({
     );
     if (Object.prototype.hasOwnProperty.call(urlLabelState, label.id)) {
       setToggleState(urlLabelState[label.id]);
+    } else {
+      setToggleState(0);
     }
-  }, [label]);
+  }, [label, urlLabelState]);
 
   useEffect(() => {
     setIsFirstLoad(false);
