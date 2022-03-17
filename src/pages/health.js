@@ -1,7 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import history from "history/browser";
 import { debounce, isEmpty, throttle } from "lodash";
-import { ChevronDownIcon } from "@heroicons/react/outline";
 import { SearchLayout } from "../components/Layout";
 import {
   encodeObjectToUrlSearchParams,
@@ -26,21 +24,12 @@ import {
   groupLabelsByKey,
   separateLabelsByBooleanType
 } from "../components/Canary/labels";
-import { DropdownMenu } from "../components/DropdownMenu";
 import { TristateToggle } from "../components/TristateToggle";
 import mixins from "../utils/mixins.module.css";
 
 const getSearchParams = () => getParamsFromURL(window.location.search);
 
 export function HealthPage({ url }) {
-  // get search params & listen to params change
-  const [searchParams, setSearchParams] = useState(window.location.search);
-  useEffect(() => {
-    history.listen(({ location }) => {
-      setSearchParams(location.search);
-    });
-  }, []);
-
   // force-set layout to table
   useEffect(() => {
     updateParams({ layout: "table" });
@@ -49,14 +38,10 @@ export function HealthPage({ url }) {
   const [checks, setChecks] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState("");
-  const [booleanLabels, setBooleanLabels] = useState([]);
-  const [nonBooleanLabelsGroupedByKeys, setNonBooleanLabelsGroupedByKeys] =
-    useState({});
+  const [filteredLabels, setFilteredLabels] = useState();
 
   const labelUpdateCallback = useCallback((newLabels) => {
-    const [bl, nbl] = separateLabelsByBooleanType(Object.values(newLabels));
-    setBooleanLabels(bl);
-    setNonBooleanLabelsGroupedByKeys(groupLabelsByKey(nbl));
+    setFilteredLabels(newLabels);
   }, []);
 
   const handleSearch = debounce((value) => {
@@ -135,28 +120,9 @@ export function HealthPage({ url }) {
             </div>
             <div className="text-sm text-gray-800 mb-0">Hide Passing</div>
           </div>
-
           <SectionTitle className="mb-4">Filter by Label</SectionTitle>
           <div className="mb-4 mr-2 w-full">
-            {Object.entries(nonBooleanLabelsGroupedByKeys)
-              .sort((a, b) => (a[0] > b[0] ? 1 : -1))
-              .map(([labelKey, labels]) => (
-                <div key={labelKey} className="mb-2">
-                  <div className="text-xs whitespace-nowrap overflow-ellipsis w-full overflow-hidden mb-1">
-                    {labelKey}
-                  </div>
-                  <MultiSelectLabelsDropdownStandalone
-                    labels={labels}
-                    selectAllByDefault
-                  />
-                </div>
-              ))}
-          </div>
-          <div className="mb-4 mr-2 w-full">
-            <TristateLabels
-              labels={booleanLabels}
-              buttonTitle="Boolean labels"
-            />
+            <LabelFilterList labels={filteredLabels} />
           </div>
         </SidebarSticky>
 
@@ -207,6 +173,58 @@ export function HealthPage({ url }) {
   );
 }
 
+export const LabelFilterList = ({ labels }) => {
+  const [list, setList] = useState({});
+  useEffect(() => {
+    if (labels) {
+      const [bl, nbl] = separateLabelsByBooleanType(Object.values(labels));
+      const groupedNbl = groupLabelsByKey(nbl);
+      const keyedBl = bl
+        .map((o) => ({ ...o, isBoolean: true }))
+        .reduce((acc, current) => {
+          acc[current.key] = [current];
+          return acc;
+        }, {});
+
+      const mergedLabels = { ...keyedBl, ...groupedNbl };
+      setList(mergedLabels);
+    }
+  }, [labels]);
+  return (
+    <div>
+      {Object.entries(list)
+        .sort((a, b) => (a[0] > b[0] ? 1 : -1))
+        .map(([labelKey, labels]) => (
+          <div key={labelKey} className="mb-2">
+            {labels.length > 1 ? (
+              <>
+                <div className="text-xs whitespace-nowrap overflow-ellipsis w-full overflow-hidden mb-1">
+                  {labelKey}
+                </div>
+                <MultiSelectLabelsDropdownStandalone
+                  labels={labels}
+                  selectAllByDefault
+                />
+              </>
+            ) : labels.length === 1 ? (
+              <div className="flex w-full mb-3">
+                <div className="mr-3 w-full text-xs text-left text-gray-700 break-all overflow-ellipsis overflow-x-hidden flex items-center">
+                  {labels[0].key}
+                </div>
+                <TristateLabelStandalone
+                  label={labels[0]}
+                  className="flex items-center"
+                  labelClass=""
+                  hideLabel
+                />
+              </div>
+            ) : null}
+          </div>
+        ))}
+    </div>
+  );
+};
+
 export const HidePassingToggle = ({ defaultValue = true }) => {
   const searchParams = getParamsFromURL(window.location.search);
   const paramsValue = searchParams.hidePassing
@@ -230,10 +248,7 @@ export const HidePassingToggle = ({ defaultValue = true }) => {
   );
 };
 
-export const MultiSelectLabelsDropdownStandalone = ({
-  labels = []
-  // selectAllByDefault
-}) => {
+export const MultiSelectLabelsDropdownStandalone = ({ labels = [] }) => {
   const [isFirstLoad, setIsFirstLoad] = useState(true);
   const [dropdownValue, setDropdownValue] = useState([]);
   const handleChange = useCallback(
@@ -255,18 +270,7 @@ export const MultiSelectLabelsDropdownStandalone = ({
         labelState[selection.value] = 1;
       });
 
-      // if (isFirstLoad && selected.length === 0 && selectAllByDefault) {
-      //   setDropdownValue(all);
-      // } else {
       setDropdownValue(selected);
-      // }
-
-      // if (selected.length === 0) {
-      //   // if empty, include alall items
-      //   all.forEach((selection) => {
-      //     labelState[selection.value] = 1;
-      //   });
-      // }
 
       const conciseLabelState = getConciseLabelState(labelState);
       updateParams({ labels: conciseLabelState });
@@ -293,10 +297,60 @@ export const MultiSelectLabelsDropdownStandalone = ({
   );
 };
 
+export const TristateLabelStandalone = ({
+  label,
+  className,
+  labelClass,
+  ...rest
+}) => {
+  const [isFirstLoad, setIsFirstLoad] = useState(true);
+  const [toggleState, setToggleState] = useState(0);
+
+  const handleToggleChange = (v) => {
+    if (!isFirstLoad) {
+      const { labels: urlLabelState } = decodeUrlSearchParams(
+        window.location.search
+      );
+      const newState = { ...urlLabelState };
+      newState[label.id] = v;
+      const conciseLabelState = getConciseLabelState(newState);
+      updateParams({ labels: conciseLabelState });
+      setToggleState(v);
+    }
+  };
+
+  // get initial state from URL
+  useEffect(() => {
+    const { labels: urlLabelState = {} } = decodeUrlSearchParams(
+      window.location.search
+    );
+    if (Object.prototype.hasOwnProperty.call(urlLabelState, label.id)) {
+      setToggleState(urlLabelState[label.id]);
+    }
+  }, [label]);
+
+  useEffect(() => {
+    setIsFirstLoad(false);
+  }, []);
+
+  return (
+    <>
+      <TristateToggle
+        value={toggleState}
+        onChange={(v) => handleToggleChange(v)}
+        className={className}
+        labelClass={labelClass}
+        label={label}
+        {...rest}
+      />
+    </>
+  );
+};
+
 export const TristateLabels = ({ labels = [] }) => {
   const [labelStates, setLabelStates] = useState({});
 
-  // first load or label change: set label statesgood hooker irl
+  // first load or label change: set label states
   useEffect(() => {
     const { labels: urlLabelState = {} } = decodeUrlSearchParams(
       window.location.search

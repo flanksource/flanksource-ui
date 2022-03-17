@@ -8,6 +8,7 @@ export function TristateToggle({
   value,
   label,
   labelClass,
+  hideLabel,
   className
 }) {
   const states = [0, 1, -1];
@@ -21,8 +22,11 @@ export function TristateToggle({
 
   useEffect(() => {
     updateButton(stateValue);
+    if (value !== null) {
+      setValue(value);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [value]);
 
   useEffect(() => {
     // trigger onChange callback on stateValue change
@@ -54,7 +58,7 @@ export function TristateToggle({
   }
 
   return (
-    <div className={`${className} flex w-full`}>
+    <div className={`${className} flex`}>
       <div className={`${style.toggle}`} style={{ backgroundColor: bgColor }}>
         <button
           type="button"
@@ -95,7 +99,6 @@ export function TristateToggle({
           }`}
         />
       </div>
-
       {states.map((state) => (
         <input
           name={label.id}
@@ -107,8 +110,7 @@ export function TristateToggle({
           checked={state === stateValue}
         />
       ))}
-
-      {label.label && (
+      {label.label && !hideLabel && (
         <span
           className={`${labelClass || "ml-3 text-xs text-left text-gray-700"}`}
         >
