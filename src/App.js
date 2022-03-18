@@ -7,7 +7,7 @@ import { MdTimeline } from "react-icons/md";
 import { VscGraph, VscJson } from "react-icons/vsc";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { getUser } from "./api/auth";
-import SidebarLayout from "./components/Layout/sidebar";
+import { SidebarLayout } from "./components/Layout";
 import { Loading } from "./components/Loading";
 import { TraceView } from "./components/Traces";
 import { AuthContext } from "./context";

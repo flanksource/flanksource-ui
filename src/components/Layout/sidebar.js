@@ -1,29 +1,50 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState, useCallback } from "react";
 import { NavLink, Outlet } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
+import clsx from "clsx";
+import { IoChevronForwardOutline } from "react-icons/io5";
 import { getUser } from "../../api/auth";
 import { Icon } from "../Icon";
+import { useOuterClick } from "../../lib/useOuterClick";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-// eslint-disable-next-line import/no-default-export
-export default function SidebarLayout({ navigation }) {
+export function SidebarLayout({ navigation }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [user, setUser] = useState(null);
-  if (user == null) {
+  const [collapseSidebar, setCollapseSidebar] = useState(false);
+
+  useEffect(() => {
     getUser().then((user) => {
       setUser(user);
     });
+  }, []);
+
+  useEffect(() => {
+    if (window.innerWidth < 1024) {
+      setCollapseSidebar(true);
+    }
+  }, []);
+
+  const closeOnOuterClick = useCallback(() => {
+    if (!collapseSidebar && window.innerWidth < 1024) {
+      setCollapseSidebar(true);
+    }
+  }, [collapseSidebar]);
+
+  const innerRef = useOuterClick(closeOnOuterClick);
+
+  if (user == null) {
     return <div>Loading...</div>;
   }
   return (
     <>
       <Toaster position="top-right" reverseOrder={false} />
-      <div>
+      <div className="flex">
         <Transition.Root show={sidebarOpen} as={Fragment}>
           <Dialog
             as="div"
@@ -103,38 +124,67 @@ export default function SidebarLayout({ navigation }) {
         </Transition.Root>
 
         {/* Static sidebar for desktop */}
-        <div className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0">
-          {/* Sidebar component, swap this element with another sidebar if you like */}
-          <div className="border-r border-gray-200 pt-5 flex flex-col flex-grow bg-white overflow-y-auto">
-            <div className="flex-shrink-0 px-4 flex items-center">
-              <Icon name="flanksource" className="h-8 w-auto" />
-            </div>
-            <div className="flex-grow mt-5 flex flex-col">
-              <nav className="flex-1 px-2 pb-4 space-y-1">
-                {navigation.map((item) => (
-                  <NavLink
-                    key={item.name}
-                    to={item.href}
-                    className={classNames(
-                      item.current
-                        ? "bg-gray-100 text-gray-900"
-                        : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
-                      "group rounded-md py-2 px-2 flex items-center text-sm font-medium"
-                    )}
-                  >
-                    <item.icon
+        <div
+          className={clsx("transform duration-500 w-14 z-20", {
+            "lg:w-64": !collapseSidebar
+          })}
+          ref={innerRef}
+        >
+          <div
+            className={clsx("h-full transform duration-500 w-14", {
+              "w-64": !collapseSidebar
+            })}
+          >
+            <button
+              type="button"
+              className={clsx(
+                "absolute bg-white -right-2 top-14 border border-gray-300 rounded-full transform duration-500",
+                { "rotate-180": !collapseSidebar }
+              )}
+              onClick={() => setCollapseSidebar((value) => !value)}
+            >
+              <IoChevronForwardOutline />
+            </button>
+
+            {/* Sidebar component, swap this element with another sidebar if you like */}
+            <div className="h-full border-r border-gray-200 pt-5 flex flex-col flex-grow bg-white overflow-hidden">
+              <div className="flex-shrink-0 px-4 flex items-center">
+                <Icon name="flanksource" className="h-8 w-auto" />
+              </div>
+              <div className="flex-grow mt-5 flex flex-col">
+                <nav className="flex-1 px-2 pb-4 space-y-1">
+                  {navigation.map((item) => (
+                    <NavLink
+                      key={item.name}
+                      to={item.href}
                       className={classNames(
                         item.current
-                          ? "text-gray-500"
-                          : "text-gray-400 group-hover:text-gray-500",
-                        "mr-3 flex-shrink-0 h-6 w-6"
+                          ? "bg-gray-100 text-gray-900"
+                          : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
+                        "group rounded-md py-2 px-2 flex items-center text-sm font-medium"
                       )}
-                      aria-hidden="true"
-                    />
-                    {item.name}
-                  </NavLink>
-                ))}
-              </nav>
+                    >
+                      <item.icon
+                        className={classNames(
+                          item.current
+                            ? "text-gray-500"
+                            : "text-gray-400 group-hover:text-gray-500",
+                          "mr-3 flex-shrink-0 h-6 w-6"
+                        )}
+                        aria-hidden="true"
+                      />
+                      <p
+                        className={clsx("duration-300 transition-opacity ", {
+                          // "opacity-100": !collapseSidebar,
+                          "opacity-0": collapseSidebar
+                        })}
+                      >
+                        {item.name}
+                      </p>
+                    </NavLink>
+                  ))}
+                </nav>
+              </div>
             </div>
           </div>
         </div>
