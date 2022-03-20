@@ -63,9 +63,5 @@ export function NestedHeirarchy({
     depthLimit,
     ...rest
   };
-
-  return React.createElement(children.type, {
-    ...children.props,
-    ...childProps
-  });
+  return children(childProps);
 }

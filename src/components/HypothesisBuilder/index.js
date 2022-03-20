@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-
 import { v4 as uuidv4 } from "uuid";
 import { minimalNodeTemplate, NestedHeirarchy } from "../NestedHeirarchy";
 import { hypothesisInitialFields } from "./data";
-import { HypothesisNode } from "./components/HypothesisNode";
 import { Modal } from "../Modal";
 import { HypothesisDetails } from "./components/HypothesisDetails";
+import { HypothesisNode } from "./components/HypothesisNode";
+import { CreateHypothesis } from "./components/CreateHypothesis";
 
 const newTree = {
   title: "",
@@ -23,13 +23,14 @@ export function HypothesisBuilder({
 }) {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedNodePath, setSelectedNodePath] = useState(null);
+  const [createHypothesisModalIsOpen, setCreateHypothesisModalIsOpen] =
+    useState(false);
   const defaultEditMode = loadedTree ? false : initialEditMode;
   const [tree, setTree] = useState(null);
 
   useEffect(() => {
     setTree(loadedTree || newTree);
   }, [loadedTree]);
-
   return (
     <div {...rest}>
       <div className="w-full">
@@ -40,12 +41,20 @@ export function HypothesisBuilder({
             depthLimit={2}
             additionalNodeFields={hypothesisInitialFields}
           >
-            <HypothesisNode
-              setModalIsOpen={setModalIsOpen}
-              setSelectedNodePath={setSelectedNodePath}
-              defaultEditMode={defaultEditMode}
-              api={api}
-            />
+            {(heirarchyProps) => (
+              <>
+                <HypothesisNode
+                  {...heirarchyProps}
+                  setModalIsOpen={setModalIsOpen}
+                  setSelectedNodePath={setSelectedNodePath}
+                  defaultEditMode={defaultEditMode}
+                  setCreateHypothesisModalIsOpen={
+                    setCreateHypothesisModalIsOpen
+                  }
+                  api={api}
+                />
+              </>
+            )}
           </NestedHeirarchy>
         )}
       </div>
@@ -61,7 +70,32 @@ export function HypothesisBuilder({
           api={api}
         />
       </Modal>
-
+      <Modal
+        open={createHypothesisModalIsOpen}
+        onClose={() => {
+          setCreateHypothesisModalIsOpen(false);
+        }}
+        cardClass="w-full overflow-y-auto"
+        contentClass="h-full p-10"
+        cardStyle={{
+          maxWidth: "605px",
+          maxHeight: "calc(100vh - 4rem)"
+        }}
+        closeButtonStyle={{
+          padding: "1.7rem 2.9rem 0 0"
+        }}
+        hideActions
+      >
+        <CreateHypothesis
+          nodePath={selectedNodePath}
+          tree={tree}
+          setTree={setTree}
+          api={api}
+          onHypothesisCreated={() => {
+            setCreateHypothesisModalIsOpen(false);
+          }}
+        />
+      </Modal>
       {showGeneratedOutput && (
         <div className="w-full flex flex-col mt-4">
           <textarea

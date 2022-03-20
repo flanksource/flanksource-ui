@@ -148,7 +148,7 @@ export class Canary extends React.Component {
 
   handleSelect(check) {
     const params = encodeObjectToUrlSearchParams({
-      check: check.key,
+      check: check.id,
       start: "7d",
       count: 300
     });

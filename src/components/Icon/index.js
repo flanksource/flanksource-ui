@@ -1,3 +1,5 @@
+import React from "react";
+import clsx from "clsx";
 import { Icons } from "../../icons";
 
 export function Icon({ size = "sm", name, className, alt = "", ...props }) {
@@ -51,7 +53,6 @@ export function Icon({ size = "sm", name, className, alt = "", ...props }) {
 
   return <>{props.icon ? <props.icon className={iconClassName} /> : null}</>;
 }
-
 export function Avatar({ url, alt = "" }) {
   return (
     <img

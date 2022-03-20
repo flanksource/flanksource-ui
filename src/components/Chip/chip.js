@@ -1,5 +1,5 @@
 import React from "react";
-import cx from "clsx";
+import clsx from "clsx";
 
 const getBackgroundColorClass = (color) => {
   switch (color) {
@@ -18,7 +18,7 @@ const getBackgroundColorClass = (color) => {
 
 export const Chip = ({ text, color }) => (
   <div
-    className={cx(
+    className={clsx(
       "text-center align-baseline min-w-8 min-h-8 text-2xs font-inter rounded-4px font-bold break-all",
       getBackgroundColorClass(color)
     )}

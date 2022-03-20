@@ -1,22 +1,18 @@
 import React from "react";
+import { BsPlusLg } from "react-icons/all";
 import { LogsTable } from "../../../Logs/Table/logs-table";
 import { TopologyCard } from "../../../Topology";
+import { Icon } from "../../../Icon";
 
 export function EvidenceItem({ evidence }) {
   if (evidence.type === "log") {
     return <LogsTable logs={evidence.evidence} title="" />;
   }
   if (evidence.type === "topology") {
-    return <TopologyCard topologyId={evidence.evidence.id} />;
+    return <TopologyCard topologyId={evidence.evidence.id} size="small" />;
   }
-  return (
-    <div>
-      {evidence.type}
-      {evidence.description}
-    </div>
-  );
+  return null;
 }
-
 export function EvidenceSection({
   evidence,
   hypothesis,
@@ -27,7 +23,15 @@ export function EvidenceSection({
   return (
     <div className={rest.className} {...rest}>
       <div className="flex justify-between items-center">
-        <div className="">{titlePrepend}</div>
+        <div className="flex align-baseline font-inter text-large font-semibold">
+          <h2 className="text-gray-900 mr-2">{titlePrepend}</h2>
+          <button
+            type="button"
+            className="btn-round btn-round-primary btn-round-sm"
+          >
+            <BsPlusLg />
+          </button>
+        </div>
         <button
           type="button"
           onClick={onButtonClick}
@@ -36,13 +40,26 @@ export function EvidenceSection({
           Add evidence
         </button>
       </div>
-      <div className="mt-2">
+      <div className="mt-2.5">
         {evidence && evidence.length > 0 ? (
           evidence.map((evidence) => (
             <EvidenceItem key={evidence.id} evidence={evidence} />
           ))
         ) : (
-          <div className="py-2 px-4 text-sm text-gray-400">No evidence</div>
+          <div className="border border-dashed border-gray-300 rounded-8px flex justify-center pt-8 mt-2.5">
+            <div className="flex flex-col mx-auto mb-6">
+              <div className="mx-auto">
+                <Icon
+                  name="databasePlus"
+                  alt="databasePlus"
+                  className="w-10 h-10"
+                />
+              </div>
+              <p className="text-sm leading-5 font-medium pt-2.5">
+                Add evidence
+              </p>
+            </div>
+          </div>
         )}
       </div>
     </div>

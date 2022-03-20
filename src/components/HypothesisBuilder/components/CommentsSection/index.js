@@ -21,7 +21,8 @@ export function CommentsSection({
   const [isLoading, setIsLoading] = useState(false);
   const [users, setUsers] = useState([]);
 
-  const handleComment = () => {
+  const handleComment = (event) => {
+    // const key = event.keyCode || event.which;
     if (commentTextValue) {
       setIsLoading(true);
       onComment(commentTextValue).finally(() => {
@@ -96,7 +97,7 @@ export function CommentsSection({
             className="bg-blue-200 rounded"
           />
         </MentionsInput>
-        <div className="flex justify-end">
+        <div className="flex justify-end mt-2">
           <button
             disabled={isLoading || !commentTextValue}
             type="button"
@@ -113,15 +114,9 @@ export function CommentsSection({
         <div className="text-sm text-gray-400">No comments yet</div>
       ) : (
         <ul className="-mb-8">
-          {comments.map((comment, commentIdx) => (
+          {comments.map((comment) => (
             <li key={comment.id}>
               <div className="relative pb-8">
-                {commentIdx !== comments.length - 1 ? (
-                  <span
-                    className="absolute top-5 left-5 -ml-px h-full w-0.5 bg-gray-200"
-                    aria-hidden="true"
-                  />
-                ) : null}
                 <div className="relative flex items-start space-x-3">
                   <div className="relative">
                     {comment.imageUrl ? (
@@ -150,13 +145,12 @@ export function CommentsSection({
                   <div className="min-w-0 flex-1">
                     <div>
                       <div className="text-sm">
-                        <span className="font-medium text-gray-900">
+                        <span className="text-gray-900 text-sm leading-5 font-medium">
                           {comment.created_by.name}
                         </span>
                       </div>
-                      <p className="mt-0.5 text-xs text-gray-400">
-                        commented on{" "}
-                        {dayjs(comment.created_at).format("DD-MM-YYYY, hh:mma")}
+                      <p className="mt-0.5 text-gray-500 text-sm leading-5 font-normal">
+                        commented {dayjs(comment.created_at).fromNow()}
                       </p>
                     </div>
                     <div className="mt-2 text-sm text-gray-700">

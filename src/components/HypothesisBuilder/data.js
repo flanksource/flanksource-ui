@@ -49,7 +49,8 @@ export const hypothesisInitialFields = {
   status: null,
   evidence: [],
   links: [],
-  comments: []
+  comments: [],
+  created_by: []
 };
 
 export const addButtonLabels = ["Add issue", "Add solution"];

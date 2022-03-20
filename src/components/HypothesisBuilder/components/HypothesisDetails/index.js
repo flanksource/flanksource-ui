@@ -1,11 +1,11 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { debounce } from "lodash";
 import { useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
-import { Badge } from "../../../Badge";
+import clsx from "clsx";
 import { Dropdown } from "../../../Dropdown";
-import { badgeMap, hypothesisStatuses } from "../../data";
-import { getNode, setDeepValue } from "../../../NestedHeirarchy/utils";
+import { hypothesisStatuses } from "../../data";
+import { getNode } from "../../../NestedHeirarchy/utils";
 
 import { EvidenceSection } from "../EvidenceSection";
 import { Modal } from "../../../Modal";
@@ -19,6 +19,7 @@ import {
 import { getAllEvidenceByHypothesis } from "../../../../api/services/evidence";
 import { useUser } from "../../../../context";
 import { toastError } from "../../../Toast/toast";
+import { Avatar } from "../../../Avatar";
 
 const statusItems = {
   ...Object.values(hypothesisStatuses).reduce((acc, obj) => {
@@ -43,15 +44,7 @@ export function HypothesisDetails({ nodePath, tree, setTree, api, ...rest }) {
   const [comments, setComments] = useState([]);
   const [evidence, setEvidence] = useState([]);
 
-  const node = getNode(tree, nodePath);
-  const handleCurrentNodeValueChange = (key, value) => {
-    setTree(setDeepValue(tree, nodePath, key, value));
-  };
-  const handleCurrentNodeValueChangeMemoized = useCallback(
-    handleCurrentNodeValueChange,
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
-  );
+  const node = useMemo(() => getNode(tree, nodePath), [tree, nodePath]);
 
   const fetchEvidence = (hypothesisId) => {
     getAllEvidenceByHypothesis(hypothesisId).then((evidence) => {
@@ -79,49 +72,57 @@ export function HypothesisDetails({ nodePath, tree, setTree, api, ...rest }) {
   }, [node.id]);
 
   const handleApiUpdate = useRef(
-    debounce((key, value) => {
-      if (api?.update && node?.id) {
-        const params = {};
-        params[key] = value;
-        api.update(node.id, params);
+    debounce((params) => {
+      if (api?.updateMutation && node?.id) {
+        api.updateMutation.mutate({ id: node.id, params });
       }
     }, 1000)
   ).current;
 
-  const { control, watch } = useForm({
+  const { control, watch, setValue, getValues } = useForm({
     defaultValues: {
-      status: node.status || Object.values(statusItems)[2].value
+      status: node.status || Object.values(statusItems)[2].value,
+      title: node.title?.trim() ?? ""
     }
   });
 
-  const watchStatus = watch("status");
+  watch();
+
   useEffect(() => {
-    handleApiUpdate("status", watchStatus);
-    handleCurrentNodeValueChangeMemoized("status", watchStatus);
-  }, [watchStatus, handleCurrentNodeValueChangeMemoized, handleApiUpdate]);
+    const subscription = watch((value) => {
+      handleApiUpdate(value);
+    });
+    return () => subscription.unsubscribe();
+  }, [watch, getValues, handleApiUpdate]);
 
   return (
     <>
-      <div className={`py-7 ${rest.className || ""}`} {...rest}>
-        <div className="mt-1 mr-2 mb-2 pr-8 flex flex-nowrap">
-          <Dropdown
-            control={control}
-            name="status"
-            className="mb-4 w-40 mr-2"
-            items={statusItems}
-          />
+      <div className={clsx("py-7", rest.className || "")} {...rest}>
+        <div className="flex pt-3">
+          <Avatar size="sm" srcList={node.created_by.avatar} />
+          <p className="font-inter text-dark-gray font-normal text-sm ml-1.5 mt-0.5">
+            {node.created_by.name}
+          </p>
+        </div>
+        <div className="mt-4 mr-2 mb-2 pr-8 flex flex-nowrap">
           {/* <Badge size="sm" text={badgeMap[nodePath.length - 1]} className="mr-2" /> */}
           <EditableText
-            value={node.title}
-            sharedClassName="text-xl font-medium text-gray-800 grow"
+            value={getValues("title")}
+            sharedClassName="text-2xl font-semibold text-gray-900 grow"
             onChange={(e) => {
-              handleApiUpdate("title", e.target.value);
-              handleCurrentNodeValueChange("title", e.target.value);
+              setValue("title", e.target.value);
             }}
           />
         </div>
-
-        <div className="mb-6">
+        <div className="mt-6 mb-7">
+          <Dropdown
+            control={control}
+            name="status"
+            className="mb-4 w-72"
+            items={statusItems}
+          />
+        </div>
+        <div className="mb-8 mt-4">
           <EvidenceSection
             hypothesis={node}
             evidence={evidence}
@@ -140,14 +141,12 @@ export function HypothesisDetails({ nodePath, tree, setTree, api, ...rest }) {
             }
           />
         </div> */}
-        <div className="mb-6">
+        <div className="">
           <CommentsSection
             comments={comments}
             onComment={(value) => handleComment(value)}
             titlePrepend={
-              <HypothesisTitle className="mb-4">
-                Comments {comments.length > 0 && `(${comments.length})`}
-              </HypothesisTitle>
+              <HypothesisTitle className="mb-2.5">Comments</HypothesisTitle>
             }
           />
         </div>
@@ -165,7 +164,13 @@ export function HypothesisDetails({ nodePath, tree, setTree, api, ...rest }) {
 
 function HypothesisTitle({ className, ...rest }) {
   return (
-    <div className={`text-md font-medium text-gray-800 ${className}`} {...rest}>
+    <div
+      className={clsx(
+        "text-lg font-medium text-gray-900 font-semibold",
+        className
+      )}
+      {...rest}
+    >
       {rest.children}
     </div>
   );
