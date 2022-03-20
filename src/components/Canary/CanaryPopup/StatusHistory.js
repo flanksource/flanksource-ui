@@ -13,7 +13,7 @@ export function StatusHistory({ check, sticky = "false" }) {
   const data = [];
   statii.forEach((status) => {
     data.push({
-      key: `${check.key}.${check.description}`,
+      key: `${check.id}.${check.description}`,
       age: format(`${status.time} UTC`),
       message: (
         <>
@@ -34,7 +34,7 @@ export function StatusHistory({ check, sticky = "false" }) {
   return (
     check && (
       <Table
-        id={`${check.key}-table`}
+        id={`${check.id}-table`}
         data={data}
         columns={["Age", "Duration", "Message"]}
         sticky={sticky}

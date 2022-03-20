@@ -148,7 +148,7 @@ export class Canary extends React.Component {
 
   handleSelect(check) {
     const params = encodeObjectToUrlSearchParams({
-      check: check.key,
+      check: check.id,
       start: "7d",
       count: 300
     });
@@ -437,14 +437,7 @@ export class Canary extends React.Component {
         <Modal
           open={selected != null}
           onClose={this.handleModalClose}
-          containerClass="py-8"
-          cardClass="w-full h-full"
-          cardStyle={{
-            maxWidth: "1280px"
-          }}
-          contentClass="h-full px-8"
-          closeButtonStyle={{ padding: "2.25rem 2.25rem 0 0" }}
-          hideActions
+          size="full"
         >
           <div
             className="flex flex-col h-full py-8"

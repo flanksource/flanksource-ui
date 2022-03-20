@@ -50,17 +50,22 @@ module.exports = {
         "warm-blue": "#CCDAF8",
         "dark-blue": "#326CE5",
         "gray-color": "#C4C4C4",
+        "lighter-gray": "#F3F4F6",
         "dark-gray": "#242423",
-        "medium-gray": "#6B7280",
-        "darker-black": "#111827",
         "light-black": "#1F2937",
         "border-color": "#E5E7EB",
+        "light-blue": "#F6F7FFC9",
         "column-background": "#F9FAFB",
         "lightest-gray": "#F9FAFB",
         "light-orange": "#FBBE67",
         "light-red": "#EF978A",
         "light-gray": "#D2D2D2",
-        "light-green": "#98C373"
+        "light-green": "#98C373",
+        "bright-green": "#459E45",
+        "warm-green": "#AAA526",
+        "warmer-gray": "#808080",
+        "bright-orange": "#F59337",
+        "bright-red": "#DD4F4F"
       },
       fontFamily: {
         inter: ["Inter"]
@@ -90,6 +95,9 @@ module.exports = {
         medium: "200px",
         small: "125px"
       },
+      minHeight: {
+        12: "3rem"
+      },
       maxWidth: {
         full: "100%",
         "1/4": "25%",
@@ -110,7 +118,16 @@ module.exports = {
         "med-card-left": "63%",
         "med-card-right": "37%",
         "large-card-left": "36%",
-        "large-card-right": "64%"
+        "large-card-right": "64%",
+        "btn-round-2xs": "1.5rem",
+        "btn-round-xs": "1.875rem",
+        "btn-round-sm": "2.125rem",
+        "btn-round-md": "2.375rem",
+        "btn-round-lg": "2.625rem",
+        "btn-round-xl": "3.125rem"
+      },
+      height: {
+        "topology-card": "200px"
       },
       minWidth: {
         8: "2rem",
@@ -130,6 +147,14 @@ module.exports = {
       },
       lineHeight: {
         "1.21rel": "1.21"
+      },
+      height: {
+        "btn-round-2xs": "1.5rem",
+        "btn-round-xs": "1.875rem",
+        "btn-round-sm": "2.125rem",
+        "btn-round-md": "2.375rem",
+        "btn-round-lg": "2.625rem",
+        "btn-round-xl": "3.125rem"
       }
     }
   },

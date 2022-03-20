@@ -1,4 +1,4 @@
-import { orderBy, findIndex, forEach } from "lodash";
+import { orderBy, findIndex, forEach, isEmpty } from "lodash";
 
 export function matchesLabel(check, labels) {
   if (labels.length === 0) {
@@ -66,6 +66,9 @@ export function hasStringMatch(pattern, text) {
 export function filterChecksByText(checks, textQuery) {
   if (checks == null) {
     return [];
+  }
+  if (isEmpty(textQuery)) {
+    return checks;
   }
   const text = textQuery.toLowerCase();
   const filtered = [...checks].filter((check) => {

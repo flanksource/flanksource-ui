@@ -35,7 +35,7 @@ export const TopologyView = ({
             title="zone 1"
             cards={topology.map((item, index) => (
               <TopologyCard
-                size="medium"
+                size="small"
                 key={item.id}
                 topology={item}
                 selectionMode={selectionMode}
@@ -69,7 +69,24 @@ export const TopologyView = ({
             title="zone 3"
             cards={topology.map((item, index) => (
               <TopologyCard
-                size="medium"
+                size="large"
+                key={item.id}
+                topology={item}
+                selectionMode={selectionMode}
+                selected={!!checked[`column_3_card_${index}`]}
+                onSelectionChange={(state) => {
+                  toggleChecked(`column_3_card_${index}`, state);
+                }}
+              />
+            ))}
+          />
+        </div>
+        <div>
+          <TopologyColumn
+            title="zone 4"
+            cards={topology.map((item, index) => (
+              <TopologyCard
+                size="extra-large"
                 key={item.id}
                 topology={item}
                 selectionMode={selectionMode}
