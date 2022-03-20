@@ -1,15 +1,13 @@
 import React, { Fragment } from "react";
 /* This example requires Tailwind CSS v2.0+ */
 import { CheckIcon, ThumbUpIcon, UserIcon } from "@heroicons/react/solid";
-
 import { BsFillGearFill, BsArrowUpRight } from "react-icons/bs";
 import { AiFillAlert } from "react-icons/ai";
 
-
 function Avatar({ person }) {
-
-  console.log(person, person.imageUrl)
-  return <img src={person.imageUrl} alt={person.name} className="rounded-full" />;
+  return (
+    <img src={person.imageUrl} alt={person.name} className="rounded-full" />
+  );
 }
 
 const people = [
@@ -24,8 +22,6 @@ const people = [
       "https://images.unsplash.com/photo-1520785643438-5bf77931f493?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=256&h=256&q=80"
   }
 ];
-
-
 
 const timeline = [
   {
@@ -71,9 +67,12 @@ const timeline = [
     datetime: "2020-09-30",
     icon: <Avatar person={people[1]} />,
     iconBackground: "bg-blue-500 "
-  }, {
+  },
+  {
     id: 4,
-    content: <span className="text-red-700">us-east-1 canary failing for 2h</span>,
+    content: (
+      <span className="text-red-700">us-east-1 canary failing for 2h</span>
+    ),
     date: "2h ago",
     datetime: "2020-09-28",
     icon: <AiFillAlert className="h-5 w-5 text-white" />,
@@ -85,14 +84,13 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-
-
 export function Changelog() {
   return (
     <div className="flow-root">
       <ul role="list" className="-mb-4">
         {timeline.map((event, eventIdx) => (
-          <li key={event.id}>
+          // eslint-disable-next-line react/no-array-index-key
+          <li key={eventIdx}>
             <div className="relative pb-4">
               {eventIdx !== timeline.length - 1 ? (
                 <span

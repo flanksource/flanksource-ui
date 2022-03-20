@@ -1,6 +1,5 @@
 import React from "react";
 import PropTypes from "prop-types";
-import cx from "clsx";
 import clsx from "clsx";
 import { Icon } from "../Icon";
 import { formatBytes } from "../../utils/common";
@@ -62,7 +61,7 @@ export const Property = ({ property, className }) => {
     return null;
   }
   return (
-    <div className={cx("flex", { [className]: className })}>
+    <div className={clsx("flex", { [className]: className })}>
       <Icon name={icon} className="mr-1" size="2xsi" />
       {!isEmpty(name) && (
         <span className="text-xs overflow-hidden truncate text-gray-400 pr-1">

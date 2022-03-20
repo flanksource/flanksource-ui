@@ -31,7 +31,9 @@ export const createHypothesis = async (
   );
 
 export const updateHypothesis = async (id, params) => {
-  resolve(IncidentCommander.patch(`/hypothesis?id=eq.${id}`, { ...params }));
+  return resolve(
+    IncidentCommander.patch(`/hypothesis?id=eq.${id}`, { ...params })
+  );
 };
 
 export const deleteHypothesis = async (id) =>
