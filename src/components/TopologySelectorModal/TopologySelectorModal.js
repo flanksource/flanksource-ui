@@ -37,59 +37,48 @@ export const TopologySelectorModal = ({
     );
   };
 
+  const action = (
+    <button
+      type="button"
+      className={cx(
+        "py-3 px-6 bg-dark-blue rounded-6px text-white ml-6 hover:bg-warm-blue",
+        submitButtonClassName
+      )}
+      onClick={() => onSubmit(checked)}
+      disabled={checked.length === 0}
+    >
+      {submitButtonTitle}
+    </button>
+  );
+
+  const counterAction = (
+    <p className={cx("flex items-center", footerTextClassName)}>
+      <span>{`${checked.length} cards selected`}</span>
+    </p>
+  );
+
+  const actions = [!hideCounter && counterAction, action];
+
   return (
     <Modal
       open={isOpen}
       onClose={handleModalClose}
-      cardClass="w-full"
-      contentClass="h-full pt-10 pl-10 pb-10 pr-7 font-inter"
-      cardStyle={{ maxWidth: "77.6rem" }}
-      closeButtonStyle={{ padding: "2.375rem 2.375rem 0 0" }}
-      containerClass="p-4"
-      hideActions
+      title={title}
+      titleClass={cx("text-2xl", titleClassName)}
+      footerClassName={footerClassName}
+      actions={actions}
     >
-      <h1 className={cx("text-2xl font-semibold mb mb-6", titleClassName)}>
-        {title}
-      </h1>
-      <div
-        className="grid gap-4 w-full px-0.5 overflow-x-auto"
-        style={{ gridTemplateColumns: "repeat(5, minmax(12.375rem, 1fr))" }}
-      >
-        {topologies.map((topology, index) => (
-          // eslint-disable-next-line react/no-array-index-key
-          <div key={index}>
-            {topology.map((item) => (
-              <TopologyCard
-                size="small"
-                topology={item}
-                key={item.id}
-                selectionMode
-                selected={checked.includes(item.id)}
-                onSelectionChange={() => toggleChecked(item.id)}
-              />
-            ))}
-          </div>
+      <div className="grid grid-cols-4">
+        {topologies.map((item) => (
+          <TopologyCard
+            size="small"
+            topology={item}
+            key={item.id}
+            selectionMode
+            selected={checked.includes(item.id)}
+            onSelectionChange={() => toggleChecked(item.id)}
+          />
         ))}
-      </div>
-      <div
-        className={cx("flex justify-end mt-7 align-baseline", footerClassName)}
-      >
-        {!hideCounter && (
-          <p className={cx("flex items-center", footerTextClassName)}>
-            <span>{`${checked.length} cards selected`}</span>
-          </p>
-        )}
-        <button
-          type="button"
-          className={cx(
-            "py-3 px-6 bg-dark-blue rounded-6px text-white ml-6 hover:bg-warm-blue",
-            submitButtonClassName
-          )}
-          onClick={() => onSubmit(checked)}
-          disabled={checked.length === 0}
-        >
-          {submitButtonTitle}
-        </button>
       </div>
     </Modal>
   );

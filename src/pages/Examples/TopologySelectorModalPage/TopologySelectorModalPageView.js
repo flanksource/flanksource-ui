@@ -27,7 +27,7 @@ export const TopologySelectorModalPageView = ({
         console.log("array of checked cards ids:", data);
         setModal(false);
       }}
-      defaultChecked={[topologies[0][0].id]}
+      defaultChecked={[topologies[0].id]}
     />
   </div>
 );

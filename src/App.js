@@ -25,6 +25,7 @@ import {
 import { RsDemoPage } from "./pages/Examples/rs-demo";
 import { DropdownDemoPage } from "./pages/Examples/dropdown-demo";
 import { TopologySelectorModalPage } from "./pages/Examples/TopologySelectorModalPage/TopologySelectorModalPage";
+import { ModalPage } from "./pages/Examples/Modal/modal-page";
 
 const navigation = [
   {
@@ -116,6 +117,7 @@ export function App() {
             path="topology-selector"
             element={<TopologySelectorModalPage url="/canary/api" />}
           />
+          <Route path="modal" element={<ModalPage />} />
         </Route>
 
         <Route path="logs" element={sidebar}>

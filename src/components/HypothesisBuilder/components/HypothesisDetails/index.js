@@ -155,13 +155,7 @@ export function HypothesisDetails({ nodePath, tree, setTree, api, ...rest }) {
       <Modal
         open={evidenceBuilderOpen}
         onClose={() => setEvidenceBuilderOpen(false)}
-        cardClass="w-full"
-        contentClass="h-full p-8"
-        cardStyle={{
-          maxWidth: "1024px"
-        }}
-        closeButtonStyle={{ padding: "2.2rem 2.1rem 0 0" }}
-        hideActions
+        size="medium"
       >
         <EvidenceBuilder />
       </Modal>
