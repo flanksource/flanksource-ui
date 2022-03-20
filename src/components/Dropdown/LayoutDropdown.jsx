@@ -3,7 +3,7 @@ import { BsTable } from "react-icons/bs";
 import { RiLayoutGridLine } from "react-icons/ri";
 import { Dropdown } from ".";
 
-const layoutItems = {
+export const layoutItems = {
   table: {
     id: "dropdown-table",
     name: "table",

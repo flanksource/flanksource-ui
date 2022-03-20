@@ -32,7 +32,8 @@ const selectAllOptionFeatureDecorator = (originalProps) => {
     allOption,
     onChange: initialOnChange,
     options,
-    value
+    value,
+    customValueContainer
   } = originalProps;
 
   if (!allowSelectAll) {
@@ -88,7 +89,7 @@ const selectAllOptionFeatureDecorator = (originalProps) => {
     value: isAllOptionSelected ? [allOption, ...value] : value,
     components: {
       ...originalProps.components,
-      ValueContainer: SelectAllFeatureValueContainer
+      ValueContainer: customValueContainer || SelectAllFeatureValueContainer
     }
   };
 };
@@ -149,7 +150,7 @@ const selectColourStyles = {
 };
 
 export const Select = (props) => {
-  const { name, control, styles } = props;
+  const { name, control, styles, customValueContainer } = props;
   if (control) {
     return (
       <Controller
@@ -166,7 +167,8 @@ export const Select = (props) => {
             onChange: props.isMulti
               ? (value) => onChange(value.map((i) => i.value))
               : (value) => onChange(value?.value),
-            styles: { ...selectColourStyles, ...(props.styles || {}) }
+            styles: { ...selectColourStyles, ...(props.styles || {}) },
+            customValueContainer
           };
           const selectAllProps = selectAllOptionFeatureDecorator(composedProps);
           return <ReactSelect {...composedProps} {...selectAllProps} />;

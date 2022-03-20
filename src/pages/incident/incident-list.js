@@ -139,7 +139,6 @@ export function IncidentListPage() {
           params[key] = `eq.${value}`;
         }
       });
-      console.log("lol", params);
       getIncidentsWithParams(params).then((res) => {
         setIncidents(res.data);
         setIsLoading(false);

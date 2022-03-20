@@ -14,7 +14,6 @@ import { TraceView } from "./components/Traces";
 import { AuthContext } from "./context";
 import { TopologyPage as ExamplesTopologyPage } from "./pages/Examples/Topology/topology-page";
 import {
-  CanaryPage,
   ConfigPage,
   IncidentCreatePage,
   IncidentDetailsPage,
@@ -25,6 +24,7 @@ import {
 } from "./pages";
 import { RsDemoPage } from "./pages/Examples/rs-demo";
 import { DropdownDemoPage } from "./pages/Examples/dropdown-demo";
+import { HealthPage } from "./pages/health";
 import { TopologySelectorModalPage } from "./pages/Examples/TopologySelectorModalPage/TopologySelectorModalPage";
 import { ModalPage } from "./pages/Examples/Modal/modal-page";
 
@@ -110,7 +110,7 @@ export function App() {
             <Route index element={<IncidentListPage />} />
           </Route>
           <Route path="health" element={sidebar}>
-            <Route index element={<CanaryPage url="/canary/api" />} />
+            <Route index element={<HealthPage url="/canary/api" />} />
           </Route>
 
           <Route path="topology" element={sidebar}>
@@ -121,16 +121,16 @@ export function App() {
           <Route path="examples" element={sidebar}>
             <Route path="rs" element={<RsDemoPage />} />
             <Route path="dropdown" element={<DropdownDemoPage />} />
-          <Route
+            <Route
               path="topology"
               element={<ExamplesTopologyPage url="/canary/api" />}
             />
-          <Route
-            path="topology-selector"
-            element={<TopologySelectorModalPage url="/canary/api" />}
-          />
-          <Route path="modal" element={<ModalPage />} />
-        </Route>
+            <Route
+              path="topology-selector"
+              element={<TopologySelectorModalPage url="/canary/api" />}
+            />
+            <Route path="modal" element={<ModalPage />} />
+          </Route>
 
           <Route path="logs" element={sidebar}>
             <Route index element={<LogsPage />} />
