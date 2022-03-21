@@ -75,10 +75,9 @@ export function HypothesisDetails({ node, api, ...rest }) {
     }, 1000)
   ).current;
 
-  const { control, watch, setValue, getValues } = useForm({
+  const { control, watch, getValues } = useForm({
     defaultValues: {
-      status: node.status || Object.values(statusItems)[2].value,
-      title: node.title?.trim() ?? ""
+      status: node.status || Object.values(statusItems)[2].value
     }
   });
 
@@ -93,23 +92,7 @@ export function HypothesisDetails({ node, api, ...rest }) {
 
   return (
     <>
-      <div className={clsx("py-7", rest.className || "")} {...rest}>
-        <div className="flex pt-3">
-          <Avatar size="sm" user={node.created_by} />
-          <p className="font-inter text-dark-gray font-normal text-sm ml-1.5 mt-0.5">
-            {node.created_by.name}
-          </p>
-        </div>
-        <div className="mt-4 mr-2 mb-2 pr-8 flex flex-nowrap">
-          {/* <Badge size="sm" text={badgeMap[nodePath.length - 1]} className="mr-2" /> */}
-          <EditableText
-            value={getValues("title")}
-            sharedClassName="text-2xl font-semibold text-gray-900 grow"
-            onChange={(e) => {
-              setValue("title", e.target.value);
-            }}
-          />
-        </div>
+      <div className={clsx("pb-7", rest.className || "")} {...rest}>
         <div className="mt-6 mb-7">
           <Dropdown
             control={control}
