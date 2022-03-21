@@ -16,7 +16,6 @@ import { priorities } from "./data";
 
 export const IncidentDetails = ({
   incident,
-  node,
   updateStatusHandler,
   textButton
 }) => {
@@ -57,10 +56,10 @@ export const IncidentDetails = ({
     }
   });
   watch();
-  const DATE_FORMAT = "DD.MM.YYYY";
+  const DATE_FORMAT = "YYYY-MM-DD HH:mm:ss";
   const formatDate = ({ date, format = DATE_FORMAT, fallback = "-" }) =>
     date ? dayjs(date).format(format) : fallback;
-  const dateToDuration = ({ date, withoutSuffix = false, fallback = "-" }) =>
+  const dateToDuration = ({ date, withoutSuffix = true, fallback = "-" }) =>
     date ? dayjs(date).fromNow(withoutSuffix) : fallback;
 
   const watchCreatedAt = watch("created_at");
@@ -86,7 +85,7 @@ export const IncidentDetails = ({
           Share
         </button>
       </div>
-      <IncidentDetailsRow
+      {/* <IncidentDetailsRow
         title="Chart Room"
         value={
           <a
@@ -108,7 +107,7 @@ export const IncidentDetails = ({
             {getValues("statusPageTitle")}
           </a>
         }
-      />
+      /> */}
       <IncidentDetailsRow
         title="Respondents"
         className="mt-2.5"
@@ -152,7 +151,7 @@ export const IncidentDetails = ({
           />
         }
       />
-      <IncidentDetailsRow
+      {/* <IncidentDetailsRow
         title="Tracking"
         className="mt-3"
         value={
@@ -160,7 +159,7 @@ export const IncidentDetails = ({
             {getValues("tracking")}
           </span>
         }
-      />
+      /> */}
       <IncidentDetailsRow
         title="Started"
         className="mt-2.5"

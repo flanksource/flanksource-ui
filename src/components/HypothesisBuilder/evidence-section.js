@@ -1,8 +1,8 @@
 import React from "react";
 import { BsPlusLg } from "react-icons/all";
-import { LogsTable } from "../../../Logs/Table/logs-table";
-import { TopologyCard } from "../../../Topology";
-import { Icon } from "../../../Icon";
+import { LogsTable } from "../Logs/Table/logs-table";
+import { TopologyCard } from "../Topology";
+import { Icon } from "../Icon";
 
 export function EvidenceItem({ evidence }) {
   if (evidence.type === "log") {

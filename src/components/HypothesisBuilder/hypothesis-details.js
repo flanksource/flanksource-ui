@@ -1,25 +1,23 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { debounce } from "lodash";
 import { useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 import clsx from "clsx";
-import { Dropdown } from "../../../Dropdown";
-import { hypothesisStatuses } from "../../data";
-import { getNode } from "../../../NestedHeirarchy/utils";
-
-import { EvidenceSection } from "../EvidenceSection";
-import { Modal } from "../../../Modal";
-import { EvidenceBuilder } from "../../../EvidenceBuilder";
-import { CommentsSection } from "../CommentsSection";
-import { EditableText } from "../../../EditableText";
+import { Dropdown } from "../Dropdown";
+import { hypothesisStatuses } from "./data";
+import { EvidenceSection } from "./evidence-section";
+import { Modal } from "../Modal";
+import { EvidenceBuilder } from "../EvidenceBuilder";
+import { CommentsSection } from "./comments";
+import { EditableText } from "../EditableText";
 import {
   getCommentsByHypothesis,
   createComment
-} from "../../../../api/services/comments";
-import { getAllEvidenceByHypothesis } from "../../../../api/services/evidence";
-import { useUser } from "../../../../context";
-import { toastError } from "../../../Toast/toast";
-import { Avatar } from "../../../Avatar";
+} from "../../api/services/comments";
+import { getAllEvidenceByHypothesis } from "../../api/services/evidence";
+import { useUser } from "../../context";
+import { toastError } from "../Toast/toast";
+import { Avatar } from "../Avatar";
 
 const statusItems = {
   ...Object.values(hypothesisStatuses).reduce((acc, obj) => {
@@ -38,13 +36,11 @@ const statusItems = {
   }, {})
 };
 
-export function HypothesisDetails({ nodePath, tree, setTree, api, ...rest }) {
+export function HypothesisDetails({ node, api, ...rest }) {
   const [evidenceBuilderOpen, setEvidenceBuilderOpen] = useState(false);
   const user = useUser();
   const [comments, setComments] = useState([]);
   const [evidence, setEvidence] = useState([]);
-
-  const node = useMemo(() => getNode(tree, nodePath), [tree, nodePath]);
 
   const fetchEvidence = (hypothesisId) => {
     getAllEvidenceByHypothesis(hypothesisId).then((evidence) => {
@@ -99,7 +95,7 @@ export function HypothesisDetails({ nodePath, tree, setTree, api, ...rest }) {
     <>
       <div className={clsx("py-7", rest.className || "")} {...rest}>
         <div className="flex pt-3">
-          <Avatar size="sm" srcList={node.created_by.avatar} />
+          <Avatar size="sm" user={node.created_by} />
           <p className="font-inter text-dark-gray font-normal text-sm ml-1.5 mt-0.5">
             {node.created_by.name}
           </p>

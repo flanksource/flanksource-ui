@@ -2,14 +2,49 @@ import { ChatAltIcon } from "@heroicons/react/solid";
 import dayjs from "dayjs";
 import React, { useCallback, useEffect, useState } from "react";
 import { Mention, MentionsInput } from "react-mentions";
-import { getPersons } from "../../../../api/services/users";
-import { Icon } from "../../../Icon";
-import { mentionsStyle } from "./mentionsStyle";
+import { getPersons } from "../../api/services/users";
+import { Icon } from "../Icon";
 
 function getInitials(name) {
   const matches = name.match(/\b(\w)/g);
   return matches.slice(0, 2);
 }
+
+const mentionsStyle = {
+  control: {
+    fontSize: 14
+  },
+
+  "&multiLine": {
+    control: {
+      minHeight: 80
+    },
+    highlighter: {
+      padding: 9,
+      paddingTop: 11
+    },
+    input: {
+      padding: 9,
+      borderRadius: "0.375rem",
+      borderColor: "rgb(229 231 235)"
+    }
+  },
+
+  suggestions: {
+    list: {
+      backgroundColor: "white",
+      border: "1px solid rgba(0,0,0,0.15)",
+      fontSize: 14
+    },
+    item: {
+      padding: 5,
+      borderBottom: "1px solid rgba(0,0,0,0.15)",
+      "&focused": {
+        backgroundColor: "#cee4e5"
+      }
+    }
+  }
+};
 
 export function CommentsSection({
   comments,
@@ -168,3 +203,4 @@ export function CommentsSection({
     </div>
   );
 }
+
