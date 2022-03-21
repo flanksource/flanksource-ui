@@ -21,7 +21,7 @@ export const IncidentPriorityOption = ({ children, ...props }) => (
 export const IncidentCommandersSingleValue = ({ ...props }) => (
   <components.SingleValue {...props}>
     <div className="flex flex-wrap gap-1.5 text-sm align-baseline">
-      <Avatar srcList={props.data.avatar} size="sm" />
+      <Avatar user={props.data} size="sm" />
       <p className="mt-0.5">{props.data.label.split(" ")[0]}</p>
     </div>
   </components.SingleValue>
@@ -29,7 +29,7 @@ export const IncidentCommandersSingleValue = ({ ...props }) => (
 export const IncidentCommandersOption = ({ ...props }) => (
   <components.Option {...props}>
     <div className="flex flex-row gap-1.5 text-sm">
-      <Avatar srcList={props.data.avatar} size="sm" />
+      <Avatar user={props.data} size="sm" />
       <p className="mt-0.5">{props.data.label.split(" ")[0]}</p>
     </div>
   </components.Option>
@@ -37,7 +37,7 @@ export const IncidentCommandersOption = ({ ...props }) => (
 export const IncidentRespondentsMultiValueLabel = ({ ...props }) => (
   <components.MultiValueLabel {...props}>
     <div className="flex flex-wrap gap-1.5 text-sm">
-      <Avatar srcList={props.data.avatar} size="sm" />
+      <Avatar user={props.data} size="sm" />
       <p className="mt-0.5">{props.data.label.split(" ")[0]}</p>
     </div>
   </components.MultiValueLabel>
@@ -46,7 +46,7 @@ export const IncidentRespondentsMultiValueLabel = ({ ...props }) => (
 export const IncidentRespondentsOption = ({ ...props }) => (
   <components.Option {...props}>
     <div className="flex flex-row gap-1.5 text-sm">
-      <Avatar srcList={props.data.avatar} size="sm" />
+      <Avatar user={props.data} size="sm" />
       <p className="mt-0.5">{props.data.label.split(" ")[0]}</p>
     </div>
   </components.Option>
