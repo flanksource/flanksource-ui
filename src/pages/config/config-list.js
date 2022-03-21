@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useTable } from "react-table";
 
 import { SearchLayout } from "../../components/Layout";
+import { TextInputClearable } from "../../components/TextInputClearable";
 import { DateCell, TagsCell } from "./columns";
 
 const sampleRow = {
@@ -26,48 +27,46 @@ const tableStyles = {
   tbodyDataClass: "whitespace-nowrap border-gray-300 border-b p-2"
 };
 
-export function ConfigListPage() {
-  const data = React.useMemo(() => [...Array(10).fill(sampleRow)], []);
-  const navigate = useNavigate();
+const defaultTableColumns = [
+  {
+    Header: "Type",
+    accessor: "type",
+    cellClass: `px-5 py-2`
+  },
+  {
+    Header: "Name",
+    accessor: "name",
+    cellClass: `px-5 py-2`
+  },
+  {
+    Header: "Tags",
+    accessor: "tags",
+    Cell: TagsCell,
+    cellClass: `px-5 py-2`
+  },
+  {
+    Header: "ID",
+    accessor: "id",
+    cellClass: `px-5 py-2`
+  },
+  {
+    Header: "Created",
+    accessor: "created_at",
+    Cell: DateCell,
+    cellClass: `px-5 py-2`
+  },
+  {
+    Header: "Last Updated",
+    accessor: "updated_at",
+    Cell: DateCell,
+    cellClass: `px-5 py-2`
+  }
+];
 
-  const columns = React.useMemo(
-    () => [
-      {
-        Header: "Type",
-        accessor: "type",
-        cellClass: `px-5 py-2`
-      },
-      {
-        Header: "Name",
-        accessor: "name",
-        cellClass: `px-5 py-2`
-      },
-      {
-        Header: "Tags",
-        accessor: "tags",
-        Cell: TagsCell,
-        cellClass: `px-5 py-2`
-      },
-      {
-        Header: "ID",
-        accessor: "id",
-        cellClass: `px-5 py-2`
-      },
-      {
-        Header: "Created",
-        accessor: "created_at",
-        Cell: DateCell,
-        cellClass: `px-5 py-2`
-      },
-      {
-        Header: "Last Updated",
-        accessor: "updated_at",
-        Cell: DateCell,
-        cellClass: `px-5 py-2`
-      }
-    ],
-    []
-  );
+export function ConfigListPage() {
+  const navigate = useNavigate();
+  const data = React.useMemo(() => [...Array(10).fill(sampleRow)], []);
+  const columns = React.useMemo(() => defaultTableColumns, []);
 
   const handleRowClick = (row) => {
     const id = row?.original?.id;
@@ -77,7 +76,20 @@ export function ConfigListPage() {
   };
 
   return (
-    <SearchLayout title="Config List">
+    <SearchLayout
+      extra={
+        <>
+          <TextInputClearable
+            onChange={(v) => console.log("onchange", v)}
+            className="w-80"
+            placeholder="Search for configs"
+          />
+        </>
+      }
+      title="Config List"
+    >
+      <div></div>
+
       <ConfigListTable
         columns={columns}
         data={data}
