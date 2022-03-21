@@ -148,8 +148,14 @@ export function SidebarLayout({ navigation }) {
 
             {/* Sidebar component, swap this element with another sidebar if you like */}
             <div className="h-full border-r border-gray-200 pt-5 flex flex-col flex-grow bg-white overflow-hidden">
-              <div className="flex-shrink-0 px-4 flex items-center">
-                <Icon name="flanksource" className="h-8 w-auto" />
+              <div className="w-14">
+                <div
+                  className={clsx("w-9 mx-auto overflow-hidden", {
+                    "ml-4 min-w-max": !collapseSidebar
+                  })}
+                >
+                  <Icon name="flanksource" className="h-8 min-w-max" />
+                </div>
               </div>
               <div className="flex-grow mt-5 flex flex-col">
                 <nav className="flex-1 px-2 pb-4 space-y-1">
@@ -174,8 +180,7 @@ export function SidebarLayout({ navigation }) {
                         aria-hidden="true"
                       />
                       <p
-                        className={clsx("duration-300 transition-opacity ", {
-                          // "opacity-100": !collapseSidebar,
+                        className={clsx("duration-300 transition-opacity", {
                           "opacity-0": collapseSidebar
                         })}
                       >
