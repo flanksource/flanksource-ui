@@ -5,6 +5,7 @@ import { NavLink, Outlet } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import clsx from "clsx";
 import { IoChevronForwardOutline } from "react-icons/io5";
+import ReactTooltip from "react-tooltip";
 import { getUser } from "../../api/auth";
 import { Icon } from "../Icon";
 import { useOuterClick } from "../../lib/useOuterClick";
@@ -43,6 +44,7 @@ export function SidebarLayout({ navigation }) {
   }
   return (
     <>
+      <ReactTooltip disable={!collapseSidebar} />
       <Toaster position="top-right" reverseOrder={false} />
       <div className="flex">
         <Transition.Root show={sidebarOpen} as={Fragment}>
@@ -160,33 +162,35 @@ export function SidebarLayout({ navigation }) {
               <div className="flex-grow mt-5 flex flex-col">
                 <nav className="flex-1 px-2 pb-4 space-y-1">
                   {navigation.map((item) => (
-                    <NavLink
-                      key={item.name}
-                      to={item.href}
-                      className={classNames(
-                        item.current
-                          ? "bg-gray-100 text-gray-900"
-                          : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
-                        "group rounded-md py-2 px-2 flex items-center text-sm font-medium"
-                      )}
-                    >
-                      <item.icon
+                    <p key={item.name} data-tip={item.name}>
+                      <NavLink
+                        key={item.name}
+                        to={item.href}
                         className={classNames(
                           item.current
-                            ? "text-gray-500"
-                            : "text-gray-400 group-hover:text-gray-500",
-                          "mr-3 flex-shrink-0 h-6 w-6"
+                            ? "bg-gray-100 text-gray-900"
+                            : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
+                          "group rounded-md py-2 px-2 flex items-center text-sm font-medium"
                         )}
-                        aria-hidden="true"
-                      />
-                      <p
-                        className={clsx("duration-300 transition-opacity", {
-                          "opacity-0": collapseSidebar
-                        })}
                       >
-                        {item.name}
-                      </p>
-                    </NavLink>
+                        <item.icon
+                          className={classNames(
+                            item.current
+                              ? "text-gray-500"
+                              : "text-gray-400 group-hover:text-gray-500",
+                            "mr-3 flex-shrink-0 h-6 w-6"
+                          )}
+                          aria-hidden="true"
+                        />
+                        <p
+                          className={clsx("duration-300 transition-opacity", {
+                            "opacity-0": collapseSidebar
+                          })}
+                        >
+                          {item.name}
+                        </p>
+                      </NavLink>
+                    </p>
                   ))}
                 </nav>
               </div>
