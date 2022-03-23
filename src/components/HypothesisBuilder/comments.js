@@ -2,8 +2,7 @@ import { ChatAltIcon } from "@heroicons/react/solid";
 import dayjs from "dayjs";
 import React, { useMemo, useEffect, useState } from "react";
 import { getPersons } from "../../api/services/users";
-import { Comment } from "../Comment/comment";
-import { swapTags } from "../../utils/comment";
+import { CommentInput, CommentText } from "../Comment";
 
 function getInitials(name) {
   const matches = name.match(/\b(\w)/g);
@@ -61,8 +60,7 @@ export function CommentsSection({
     <div className={rest.className} {...rest}>
       {titlePrepend}
       <div>
-        {commentTextValue}
-        <Comment
+        <CommentInput
           data={commentData}
           value={commentTextValue}
           onChange={setCommentTextValue}
@@ -125,7 +123,10 @@ export function CommentsSection({
                     </div>
                     <div className="mt-2 text-sm text-gray-700">
                       <p className="whitespace-pre">
-                        {swapTags(comment.comment, onClickUserTag)}
+                        <CommentText
+                          text={comment.comment}
+                          onClickTag={onClickUserTag}
+                        />
                       </p>
                     </div>
                   </div>

@@ -1,6 +1,7 @@
 import React from "react";
+import PropTypes from "prop-types";
 
-export const swapTags = (text, onClickTag) => {
+export const CommentText = ({ text, onClickTag }) => {
   // markup @[__display__](user:__id__)
   const tags = text.match(/@\[.*?\]\(user:.*?\)/gi) || [];
   const otherText = text.split(/@\[.*?\]\(user:.*?\)/gi);
@@ -23,4 +24,9 @@ export const swapTags = (text, onClickTag) => {
     },
     [otherText[0]]
   );
+};
+
+CommentText.propTypes = {
+  text: PropTypes.string.isRequired,
+  onClickTag: PropTypes.func.isRequired
 };

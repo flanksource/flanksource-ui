@@ -1,5 +1,6 @@
 import React from "react";
 import { Mention, MentionsInput } from "react-mentions";
+import PropTypes from "prop-types";
 import { Icon } from "../Icon";
 
 const mentionsStyle = {
@@ -45,7 +46,7 @@ const Suggestion = ({ display, icon }) => (
   </div>
 );
 
-export const Comment = ({ data: dataList, value, onChange }) => (
+export const CommentInput = ({ data: dataList, value, onChange }) => (
   <MentionsInput
     value={value}
     onChange={(e) => onChange(e.target.value)}
@@ -66,3 +67,20 @@ export const Comment = ({ data: dataList, value, onChange }) => (
     ))}
   </MentionsInput>
 );
+
+CommentInput.propTypes = {
+  data: PropTypes.arrayOf(
+    PropTypes.shape({
+      data: PropTypes.arrayOf(
+        PropTypes.shape({
+          display: PropTypes.string,
+          icon: PropTypes.string
+        })
+      ),
+      trigger: PropTypes.string,
+      markup: PropTypes.string
+    })
+  ).isRequired,
+  value: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired
+};
