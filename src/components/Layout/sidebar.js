@@ -9,6 +9,7 @@ import ReactTooltip from "react-tooltip";
 import { getUser } from "../../api/auth";
 import { Icon } from "../Icon";
 import { useOuterClick } from "../../lib/useOuterClick";
+import { getLocalItem, setLocalItem } from "../../utils/storage";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -26,10 +27,13 @@ export function SidebarLayout({ navigation }) {
   }, []);
 
   useEffect(() => {
-    if (window.innerWidth < 1024) {
-      setCollapseSidebar(true);
-    }
+    const sidebarCollapsed = getLocalItem("sidebarCollapsed") || false;
+    setCollapseSidebar(sidebarCollapsed);
   }, []);
+
+  useEffect(() => {
+    setLocalItem("sidebarCollapsed", collapseSidebar);
+  }, [collapseSidebar]);
 
   const closeOnOuterClick = useCallback(() => {
     if (!collapseSidebar && window.innerWidth < 1024) {
