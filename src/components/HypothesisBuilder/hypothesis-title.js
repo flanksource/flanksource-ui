@@ -2,10 +2,10 @@ import React, { useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import { debounce } from "lodash";
 import { useForm } from "react-hook-form";
-import { Avatar } from "../../../Avatar";
-import { EditableText } from "../../../EditableText";
+import { Avatar } from "../Avatar";
+import { EditableText } from "../EditableText";
 
-export const HypothesisDetailsTitle = ({ node, api }) => {
+export const HypothesisTitle = ({ node, api }) => {
   const handleApiUpdate = useRef(
     debounce((params) => {
       if (api?.updateMutation && node?.id) {
@@ -50,7 +50,7 @@ export const HypothesisDetailsTitle = ({ node, api }) => {
   );
 };
 
-HypothesisDetailsTitle.propTypes = {
+HypothesisTitle.propTypes = {
   node: PropTypes.shape({
     id: PropTypes.string,
     title: PropTypes.string,
