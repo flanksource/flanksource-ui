@@ -45,15 +45,7 @@ export function CheckDetails({ check, graphData, ...rest }) {
               value = "";
             }
             return (
-              <>
-                <Badge
-                  className="mr-1 mb-1"
-                  key={key}
-                  text={key}
-                  value={value}
-                />{" "}
-                <br />
-              </>
+              <Badge className="mr-1 mb-1" key={key} text={key} value={value} />
             );
           })}
       </>

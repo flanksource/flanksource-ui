@@ -6,6 +6,7 @@ import { ImLifebuoy } from "react-icons/im";
 import { MdTimeline } from "react-icons/md";
 import { VscGraph, VscJson } from "react-icons/vsc";
 import { Navigate, Route, Routes } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "react-query";
 import { getUser } from "./api/auth";
 import SidebarLayout from "./components/Layout/sidebar";
 import { Loading } from "./components/Loading";
@@ -13,7 +14,6 @@ import { TraceView } from "./components/Traces";
 import { AuthContext } from "./context";
 import { TopologyPage as ExamplesTopologyPage } from "./pages/Examples/Topology/topology-page";
 import {
-  CanaryPage,
   ConfigDetailsPage,
   ConfigListPage,
   IncidentCreatePage,
@@ -25,7 +25,19 @@ import {
 } from "./pages";
 import { RsDemoPage } from "./pages/Examples/rs-demo";
 import { DropdownDemoPage } from "./pages/Examples/dropdown-demo";
+import { HealthPage } from "./pages/health";
 import { TopologySelectorModalPage } from "./pages/Examples/TopologySelectorModalPage/TopologySelectorModalPage";
+import { ModalPage } from "./pages/Examples/Modal/modal-page";
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: true,
+      refetchOnMount: true,
+      refetchOnReconnect: true
+    }
+  }
+});
 
 const navigation = [
   {

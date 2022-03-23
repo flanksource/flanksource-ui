@@ -10,6 +10,7 @@ export function CanarySearchBar({
   onClear,
   placeholder,
   hideClearButton = false,
+  defaultValue,
   ...rest
 }) {
   const { handleSubmit, control, setValue, watch } = useForm();
@@ -25,7 +26,7 @@ export function CanarySearchBar({
         <Controller
           name="CanarySearchTextbox"
           control={control}
-          defaultValue=""
+          defaultValue={defaultValue}
           rules={{ required: true }}
           render={({ field }) => (
             <input

@@ -33,3 +33,18 @@ export function removeNamespacePrefix(name, check) {
   }
   return name;
 }
+
+export function paramsToObject(entries) {
+  const result = {};
+  for (const [key, value] of entries) {
+    // each 'entry' is a [key, value] tupple
+    result[key] = value;
+  }
+  return result;
+}
+
+export const getParamsFromURL = (searchParams) => {
+  const urlParams = new URLSearchParams(searchParams);
+  const entries = urlParams.entries();
+  return paramsToObject(entries);
+};

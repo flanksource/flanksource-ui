@@ -19,6 +19,10 @@ export function Dropdown({
   value = null,
   placeholder,
   emptyable,
+  prefix = "",
+  suffix = "",
+  labelPrefix = "",
+  labelSuffix = "",
   ...rest
 }) {
   // eslint-disable-next-line no-underscore-dangle
@@ -93,6 +97,10 @@ export function Dropdown({
             rest={rest}
             onChange={onChange}
             value={value}
+            prefix={prefix}
+            suffix={suffix}
+            labelPrefix={labelPrefix}
+            labelSuffix={labelSuffix}
           />
         )}
       </div>
@@ -100,7 +108,17 @@ export function Dropdown({
   );
 }
 
-export const DropdownListbox = ({ onChange, value, label, items, ...rest }) => (
+export const DropdownListbox = ({
+  onChange,
+  value,
+  label,
+  items,
+  prefix = "",
+  suffix = "",
+  labelPrefix = "",
+  labelSuffix = "",
+  ...rest
+}) => (
   <Listbox
     value={value}
     onChange={(e) => {
@@ -125,10 +143,14 @@ export const DropdownListbox = ({ onChange, value, label, items, ...rest }) => (
             `}
           >
             <div className="flex items-center">
-              {items[value] && items[value].icon}
-              <span className="ml-3 block truncate">
+              {prefix}
+              {items[value] && <div>{items[value].icon}</div>}
+              <span className="ml-2 block truncate">
+                {labelPrefix}
                 {items[value] && items[value].description}
+                {labelSuffix}
               </span>
+              {suffix}
             </div>
             <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
               <SelectorIcon
@@ -176,11 +198,11 @@ export const DropdownListbox = ({ onChange, value, label, items, ...rest }) => (
                     {({ selected, active }) => (
                       <>
                         <div className="flex items-center">
-                          {item.icon}
+                          <div>{item.icon}</div>
                           <span
                             className={classNames(
                               selected ? "font-semibold" : "font-normal",
-                              "ml-3 block truncate"
+                              "ml-2 block truncate"
                             )}
                           >
                             {item.description}

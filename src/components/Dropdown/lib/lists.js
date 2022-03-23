@@ -155,10 +155,12 @@ export const defaultCellTypeSelections = {
 
 export function getNonBooleanLabels(checks) {
   const nonBooleanLabels = checks.reduce((acc, check) => {
-    if (check === null || typeof check === "string") {
-      return acc;
-    }
-    if ("labels" in check && check.labels !== null) {
+    if (
+      check &&
+      typeof check !== "string" &&
+      "labels" in check &&
+      check.labels !== null
+    ) {
       const labels = Object.entries(check.labels).reduce((accum, [k, v]) => {
         const id = `canary:${k}:${v}`;
         if (typeof v === "boolean" || v === "true" || v === "false") {
@@ -209,4 +211,27 @@ export function getTabSelections(checks, defaultTabSelections) {
       };
     });
   return newTabSelections;
+}
+
+export function getBooleanLabels(checks) {
+  const booleanLabels = checks.reduce((acc, check) => {
+    if (
+      check &&
+      typeof check !== "string" &&
+      "labels" in check &&
+      check.labels !== null
+    ) {
+      const labels = Object.entries(check.labels).reduce((accum, [k, v]) => {
+        const id = `canary:${k}:${v}`;
+        if (!(typeof v === "boolean" || v === "true" || v === "false")) {
+          return accum;
+        }
+        accum[id] = { key: k, value: v };
+        return accum;
+      }, {});
+      return { ...acc, ...labels };
+    }
+    return acc;
+  }, {});
+  return booleanLabels;
 }

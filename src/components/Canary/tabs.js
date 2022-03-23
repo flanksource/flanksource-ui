@@ -10,7 +10,12 @@ const defaultTabs = {
 
 // filter checks according to the 'tabBy' and selected tab
 export function filterChecksByTabSelection(tabBy, selectedTab, checks) {
-  if (checks == null) {
+  if (
+    checks == null ||
+    (checks &&
+      Object.keys(checks).length === 0 &&
+      Object.getPrototypeOf(checks) === Object.prototype)
+  ) {
     return checks;
   }
   let filteredChecks = checks;
@@ -31,6 +36,9 @@ export function filterChecksByTabSelection(tabBy, selectedTab, checks) {
 }
 
 export function generateTabs(tabBy, checks) {
+  if (checks == null) {
+    return defaultTabs;
+  }
   let tabs = defaultTabs;
   if (tabBy === "namespace") {
     const namespaces = [...new Set(checks.map((o) => o.namespace))];

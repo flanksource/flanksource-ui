@@ -1,6 +1,10 @@
 import { ChatAltIcon } from "@heroicons/react/solid";
 import dayjs from "dayjs";
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
+import { Mention, MentionsInput } from "react-mentions";
+import { getPersons } from "../../../../api/services/users";
+import { Icon } from "../../../Icon";
+import { mentionsStyle } from "./mentionsStyle";
 
 function getInitials(name) {
   const matches = name.match(/\b(\w)/g);
@@ -15,8 +19,10 @@ export function CommentsSection({
 }) {
   const [commentTextValue, setCommentTextValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [users, setUsers] = useState([]);
 
-  const handleComment = () => {
+  const handleComment = (event) => {
+    // const key = event.keyCode || event.which;
     if (commentTextValue) {
       setIsLoading(true);
       onComment(commentTextValue).finally(() => {
@@ -26,24 +32,79 @@ export function CommentsSection({
     }
   };
 
+  useEffect(() => {
+    getPersons().then(({ data }) => {
+      const usersDate = data.map((user) => ({ ...user, display: user.name }));
+      setUsers(usersDate);
+    });
+  }, []);
+
+  const renderSuggestion = useCallback(
+    ({ name, avatar }) => (
+      <div className="flex items-center">
+        <Icon name={avatar} size="xl" />
+        <p className="pl-2">{name}</p>
+      </div>
+    ),
+    []
+  );
+
+  const onClickUserTag = (userId) => {
+    console.log("userId", userId);
+  };
+
+  const swapTags = (text) => {
+    const tags = text.match(/@\[.*?\]\(user:.*?\)/gi) || [];
+    const otherText = text.split(/@\[.*?\]\(user:.*?\)/gi);
+    return tags.reduce(
+      (display, myTag, index) => {
+        const tagDisplay = myTag.match(/\[.*?\]/gi)[0].slice(1, -1);
+        const tagData = myTag.match(/\(user:.*?\)/gi)[0].slice(6, -1);
+        return [
+          ...display,
+          <button
+            type="button"
+            key={tagData}
+            onClick={() => onClickUserTag(tagData)}
+            className="bg-blue-200 rounded"
+          >
+            {tagDisplay}
+          </button>,
+          otherText[index + 1]
+        ];
+      },
+      [otherText[0]]
+    );
+  };
+
   return (
     <div className={rest.className} {...rest}>
       {titlePrepend}
       <div>
-        <textarea
-          disabled={isLoading}
-          className="w-full text-sm p-2 border-gray-200 rounded-md h-20"
-          onChange={(e) => setCommentTextValue(e.target.value)}
+        <MentionsInput
           value={commentTextValue}
-          style={{ minHeight: "80px" }}
-        />
-        <div className="flex justify-end">
+          onChange={(e) => setCommentTextValue(e.target.value)}
+          a11ySuggestionsListLabel="Suggested mentions"
+          style={mentionsStyle}
+          allowSpaceInQuery
+          allowSuggestionsAboveCursor
+        >
+          <Mention
+            markup="@[__display__](user:__id__)"
+            trigger="@"
+            data={users}
+            renderSuggestion={renderSuggestion}
+            className="bg-blue-200 rounded"
+          />
+        </MentionsInput>
+        <div className="flex justify-end mt-2">
           <button
             disabled={isLoading || !commentTextValue}
             type="button"
             onClick={handleComment}
-            className={`${isLoading || !commentTextValue ? "btn-disabled" : "btn-primary"
-              }`}
+            className={
+              isLoading || !commentTextValue ? "btn-disabled" : "btn-primary"
+            }
           >
             Comment
           </button>
@@ -53,15 +114,9 @@ export function CommentsSection({
         <div className="text-sm text-gray-400">No comments yet</div>
       ) : (
         <ul className="-mb-8">
-          {comments.map((comment, commentIdx) => (
+          {comments.map((comment) => (
             <li key={comment.id}>
               <div className="relative pb-8">
-                {commentIdx !== comments.length - 1 ? (
-                  <span
-                    className="absolute top-5 left-5 -ml-px h-full w-0.5 bg-gray-200"
-                    aria-hidden="true"
-                  />
-                ) : null}
                 <div className="relative flex items-start space-x-3">
                   <div className="relative">
                     {comment.imageUrl ? (
@@ -90,17 +145,18 @@ export function CommentsSection({
                   <div className="min-w-0 flex-1">
                     <div>
                       <div className="text-sm">
-                        <span className="font-medium text-gray-900">
+                        <span className="text-gray-900 text-sm leading-5 font-medium">
                           {comment.created_by.name}
                         </span>
                       </div>
-                      <p className="mt-0.5 text-xs text-gray-400">
-                        commented on{" "}
-                        {dayjs(comment.created_at).format("DD-MM-YYYY, hh:mma")}
+                      <p className="mt-0.5 text-gray-500 text-sm leading-5 font-normal">
+                        commented {dayjs(comment.created_at).fromNow()}
                       </p>
                     </div>
                     <div className="mt-2 text-sm text-gray-700">
-                      <p className="whitespace-pre">{comment.comment}</p>
+                      <p className="whitespace-pre">
+                        {swapTags(comment.comment)}
+                      </p>
                     </div>
                   </div>
                 </div>
