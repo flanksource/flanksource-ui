@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import dayjs from "dayjs";
 import { IncidentDetailsRow } from "./IncidentDetailsRow";
@@ -17,6 +17,7 @@ import { priorities } from "./data";
 export const IncidentDetails = ({
   incident,
   updateStatusHandler,
+  updateIncidentHandler,
   textButton
 }) => {
   // Temporary mock, in the future you need to replace it with an array of real users received from the api
@@ -50,7 +51,7 @@ export const IncidentDetails = ({
       chartRoom: "https://google.com.ua",
       statusPageTitle: "StatusPage.io",
       statusPage: "https://www.atlassian.com/software/statuspage",
-      priority: incident.severity || IncidentPriority.High,
+      priority: incident.severity ?? IncidentPriority.High,
       commanders: incident.commander_id.id,
       respondents: respondersArray?.[0]?.value || null
     }
@@ -72,6 +73,14 @@ export const IncidentDetails = ({
     () => dateToDuration({ date: watchCreatedAt }),
     [watchCreatedAt]
   );
+
+  useEffect(() => {
+    const subscription = watch(({ priority }) => {
+      updateIncidentHandler({ severity: priority });
+    });
+    return () => subscription.unsubscribe();
+  }, [watch, updateIncidentHandler]);
+
   return (
     <div className="px-6 pt-3.5">
       <div className="flex justify-between mb-7">

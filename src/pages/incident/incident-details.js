@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useCallback } from "react";
 import { Link, useParams } from "react-router-dom";
 import { values } from "lodash";
 import {
@@ -86,6 +86,15 @@ export function IncidentDetailsPage() {
   const updateStatus = (status) =>
     updateIncident(incident.id, { status }).then(() => incidentQuery.refetch());
 
+  const updateIncidentHandler = useCallback(
+    (newDataIncident) => {
+      updateIncident(incident.id, newDataIncident).then(() =>
+        incidentQuery.refetch()
+      );
+    },
+    [updateIncident, incidentQuery, incident]
+  );
+
   if (incident == null) {
     return <Loading />;
   }
@@ -159,6 +168,7 @@ export function IncidentDetailsPage() {
             updateStatusHandler={() =>
               updateStatus(status === "open" ? "closed" : "open")
             }
+            updateIncidentHandler={updateIncidentHandler}
             textButton={status === "open" ? "Close" : "Reopen"}
           />
           <div className="bg-white px-4 py-5 mt-4  shadow sm:rounded-lg sm:px-6">
