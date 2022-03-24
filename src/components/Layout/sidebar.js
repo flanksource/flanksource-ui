@@ -27,7 +27,11 @@ export function SidebarLayout({ navigation }) {
   }, []);
 
   useEffect(() => {
-    const sidebarCollapsed = getLocalItem("sidebarCollapsed") || false;
+    const localCollapsed = getLocalItem("sidebarCollapsed") ?? false;
+    const sidebarCollapsed =
+      typeof localCollapsed === "string"
+        ? JSON.parse(localCollapsed)
+        : localCollapsed;
     setCollapseSidebar(sidebarCollapsed);
   }, []);
 
@@ -154,15 +158,16 @@ export function SidebarLayout({ navigation }) {
 
             {/* Sidebar component, swap this element with another sidebar if you like */}
             <div className="h-full border-r border-gray-200 pt-5 flex flex-col flex-grow bg-white overflow-hidden">
-              <div className="w-14">
-                {collapseSidebar ? (
-                  <div className="px-0.5">
-                    <Icon name="flanksource-icon" className="w-auto h-auto" />
-                  </div>
-                ) : (
-                  <Icon name="flanksource" className="ml-4 h-8 min-w-max" />
-                )}
-              </div>
+              {collapseSidebar ? (
+                <div className="w-14">
+                  <Icon
+                    name="flanksource-icon"
+                    className="px-3 w-auto h-auto"
+                  />
+                </div>
+              ) : (
+                <Icon name="flanksource" className="w-auto h-auto px-4" />
+              )}
               <div className="flex-grow mt-5 flex flex-col">
                 <nav className="flex-1 px-2 pb-4 space-y-1">
                   {navigation.map((item) => (
