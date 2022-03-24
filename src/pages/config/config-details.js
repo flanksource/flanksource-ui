@@ -7,6 +7,7 @@ import {
 } from "../../components/Canary/url";
 
 import { SearchLayout } from "../../components/Layout";
+import { toastError } from "../../components/Toast/toast";
 import jsonString from "../../data/sampleConfig.json";
 
 const mockName = "package.json"; // TODO: get actual name from API call
@@ -60,9 +61,15 @@ export function ConfigDetailsPage() {
   const handleShare = () => {
     const { origin, pathname } = window.location;
     const copyString = `${origin}${pathname}?selected=${getSelectedEncodedURL()}`;
-    navigator.clipboard.writeText(copyString).then(() => {
-      toast("Copied to clipboard");
-    });
+    if (window.isSecureContext) {
+      navigator.clipboard.writeText(copyString).then(() => {
+        toast("Copied to clipboard");
+      });
+    } else {
+      toastError(
+        "Unable to copy to clipboard due to lack of HTTPS. Please contact the system administrator about this issue."
+      );
+    }
   };
 
   return (
@@ -85,6 +92,15 @@ export function ConfigDetailsPage() {
                 className="border rounded-md px-3 py-1 mr-2 text-sm"
                 type="button"
                 onClick={() => {
+                  setChecked({});
+                }}
+              >
+                Clear
+              </button>
+              <button
+                className="border rounded-md px-3 py-1 mr-2 text-sm"
+                type="button"
+                onClick={() => {
                   handleShare();
                 }}
               >
@@ -100,9 +116,16 @@ export function ConfigDetailsPage() {
             </>
           )}
         </div>
-        <div className="flex flex-col w-full">
+        <div className="flex flex-col w-full border">
           {Object.entries(linesArrayWithIndex).map(([lineIndex, line]) => (
-            <div key={lineIndex} className="border flex flex-row">
+            <div
+              key={lineIndex}
+              style={{
+                background: checked[lineIndex] ? "#cfe3ff" : "",
+                borderColor: checked[lineIndex] ? "#cfe3ff" : ""
+              }}
+              className="border-b flex flex-row"
+            >
               <div className="px-1 flex items-center justify-center">
                 <input
                   checked={checked[lineIndex]}
@@ -111,7 +134,12 @@ export function ConfigDetailsPage() {
                 />
               </div>
 
-              <div className="border-l border-r w-10 mr-2 text-sm flex items-center justify-end px-1">
+              <div
+                className="border-l border-r w-10 mr-2 text-sm flex items-center justify-end px-1"
+                style={{
+                  borderColor: checked[lineIndex] ? "#cfe3ff" : ""
+                }}
+              >
                 {lineIndex}
               </div>
               <code className="whitespace-pre-wrap text-sm">{line}</code>
