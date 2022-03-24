@@ -73,6 +73,7 @@ import error from "./error.svg";
 import etcd from "./etcd.svg";
 import fire from "./fire.svg";
 import flanksource from "./flanksource.svg";
+import flanksource_icon from './flanksource-icon.svg';
 import fluentd from "./fluentd.svg";
 import flux from "./flux.svg";
 import folder from "./folder.svg";
@@ -261,6 +262,7 @@ export const Icons = {
 "etcd": etcd,
 "fire": fire,
 "flanksource": flanksource,
+"flanksource-icon": flanksource_icon,
 "fluentd": fluentd,
 "flux": flux,
 "folder": folder,
