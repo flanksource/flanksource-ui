@@ -3,6 +3,7 @@ import { Modal } from "../Modal";
 import { HypothesisDetails } from "./hypothesis-details";
 import { HypothesisNode } from "./hypothesis-node";
 import { CreateHypothesis } from "./create-hypothesis";
+import { HypothesisTitle } from "./hypothesis-title";
 
 export function HypothesisBuilder({
   initialTree,
@@ -37,7 +38,7 @@ export function HypothesisBuilder({
         open={modalIsOpen}
         onClose={() => setModalIsOpen(false)}
         size="medium"
-        title={selectedNode ? selectedNode.title : ""}
+        title={<HypothesisTitle node={selectedNode} api={api} />}
       >
         <HypothesisDetails node={selectedNode} api={api} />
       </Modal>
