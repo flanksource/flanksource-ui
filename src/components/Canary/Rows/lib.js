@@ -36,7 +36,7 @@ export function prepareRows({
   pivotLookup = null
 }) {
   if (pivotBy == null || pivotBy === "none") {
-    const values = tableData.reduce(
+    const values = tableData?.reduce(
       (acc, row, i) => {
         acc.rows[i] = makeRow({ row, hideNamespacePrefix });
         return acc;

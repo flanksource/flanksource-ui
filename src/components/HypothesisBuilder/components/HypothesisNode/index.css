@@ -1,8 +1,0 @@
-@keyframes highlightOnLoad {
-  0% {
-    background-color: rgb(234, 237, 243);
-  }
-  100% {
-    background-color: rgba(255, 255, 255, 0);
-  }
-}

@@ -12,5 +12,5 @@ export function GetName(check) {
   if (isEmpty(title)) {
     title = check.endpoint;
   }
-  return title;
+  return title || "";
 }

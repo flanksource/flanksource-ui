@@ -6,7 +6,11 @@ import { IncidentCommander } from "../axios";
 import { resolve } from "../resolve";
 
 export const getAllHypothesisByIncident = async (incidentId) =>
-  resolve(IncidentCommander.get(`/hypothesis?incident_id=eq.${incidentId}`));
+  resolve(
+    IncidentCommander.get(
+      `/hypothesis?incident_id=eq.${incidentId}&order=created_at.asc`
+    )
+  );
 
 export const getHypothesis = async (id) =>
   resolve(IncidentCommander.get(`/hypothesis?id=eq.${id}`));
@@ -21,17 +25,15 @@ export const createHypothesis = async (
     status: hypothesisStatuses[2].value
   }
 ) =>
-  resolve(
-    IncidentCommander.post(`/hypothesis`, {
-      id,
-      created_by: user.id,
-      incident_id: incidentId,
-      ...params
-    })
-  );
+  IncidentCommander.post(`/hypothesis`, {
+    id,
+    created_by: user.id,
+    incident_id: incidentId,
+    ...params
+  });
 
 export const updateHypothesis = async (id, params) => {
-  resolve(IncidentCommander.patch(`/hypothesis?id=eq.${id}`, { ...params }));
+  IncidentCommander.patch(`/hypothesis?id=eq.${id}`, { ...params });
 };
 
 export const deleteHypothesis = async (id) =>

@@ -8,6 +8,7 @@ import { Loading } from "../components/Loading";
 import { toastError } from "../components/Toast/toast";
 import { TopologyCard } from "../components/Topology";
 import { TopologyBreadcrumbs } from "../components/Topology/topology-breadcrumbs";
+
 export function TopologyPage() {
   // const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
@@ -69,7 +70,7 @@ export function TopologyPage() {
       <div className="flex leading-1.21rel">
         <div className="flex flex-wrap">
           {topology.map((item) => (
-            <TopologyCard key={item.id} topology={item} size="medium" />
+            <TopologyCard key={item.id} topology={item} size="extra-large" />
           ))}
         </div>
       </div>

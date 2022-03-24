@@ -8,6 +8,7 @@ import {
 } from "react-icons/ai/";
 import { BsFilter } from "react-icons/bs/";
 import { useForm } from "react-hook-form";
+import { debounce } from "lodash";
 import {
   getAllIncident,
   getIncidentsWithParams
@@ -22,7 +23,6 @@ import { MultiSelectDropdown } from "../../components/MultiSelectDropdown";
 import { DropdownMenu } from "../../components/DropdownMenu";
 import { severityItems, statusItems } from "../../components/Incidents/data";
 import { getPersons } from "../../api/services/users";
-import { debounce } from "lodash";
 
 export const tempTypes = [
   {
@@ -139,7 +139,6 @@ export function IncidentListPage() {
           params[key] = `eq.${value}`;
         }
       });
-      console.log("lol", params);
       getIncidentsWithParams(params).then((res) => {
         setIncidents(res.data);
         setIsLoading(false);
@@ -253,18 +252,9 @@ export function IncidentListPage() {
       <Modal
         open={incidentModalIsOpen}
         onClose={() => setIncidentModalIsOpen(false)}
-        cardClass="w-full"
-        contentClass="h-full px-8"
-        cardStyle={{
-          maxWidth: "420px",
-          maxHeight: "calc(100vh - 4rem)"
-        }}
-        closeButtonStyle={{
-          padding: "2.2rem 2.1rem 0 0"
-        }}
-        hideActions
+        size="small"
+        title="Create New Incident"
       >
-        <h1 className="mt-8 font-semibold text-lg">Create New Incident</h1>
         <IncidentCreate
           callback={(response) => {
             navigate(`/incidents/${response.id}`, { replace: true });

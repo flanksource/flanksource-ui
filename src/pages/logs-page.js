@@ -96,7 +96,6 @@ export function LogsPage() {
       id: externalId,
       ...getValues()
     };
-    console.log("search", queryBody);
 
     getLogs(queryBody).then((res) => {
       if (res.data != null) {

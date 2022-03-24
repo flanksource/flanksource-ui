@@ -3,7 +3,7 @@ import { TopologySelectorModalPageView } from "./TopologySelectorModalPageView";
 import { topologiesFactory } from "../../../data/topologies";
 import { MinimalLayout } from "../../../components/Layout";
 
-const topologies = topologiesFactory(5, 4);
+const topologies = topologiesFactory(22);
 
 export const TopologySelectorModalPage = () => {
   const [modal, setModal] = useState(false);

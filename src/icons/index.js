@@ -1,5 +1,6 @@
 // this file is generated using make index.js
 import acr from "./acr.svg";
+import add_button from "./add-button.svg";
 import aks from "./aks.svg";
 import alert from "./alert.svg";
 import ansible from "./ansible.svg";
@@ -41,6 +42,7 @@ import consul from "./consul.svg";
 import containerdPull from "./containerdPull.svg";
 import containerdPush from "./containerdPush.svg";
 import cpu from "./cpu.svg";
+import database_plus from "./database-plus.svg";
 import database2 from "./database2.svg";
 import databases from "./databases.svg";
 import datadog from "./datadog.svg";
@@ -57,6 +59,7 @@ import dns from "./dns.svg";
 import dockerPull from "./dockerPull.svg";
 import dockerPush from "./dockerPush.svg";
 import dotnet from "./dotnet.svg";
+import dots_triple from "./dots-triple.svg";
 import download from "./download.svg";
 import dynatrace from "./dynatrace.svg";
 import ec2 from "./ec2.svg";
@@ -133,6 +136,7 @@ import npm from "./npm.svg";
 import opa from "./opa.svg";
 import openshift from "./openshift.svg";
 import oracle from "./oracle.svg";
+import oracle_icon from "./oracle_icon.svg";
 import pagerduty from "./pagerduty.svg";
 import php from "./php.svg";
 import pod from "./pod.svg";
@@ -183,10 +187,9 @@ import vault from "./vault.svg";
 import vsphere from "./vsphere.svg";
 import world from "./world.svg";
 import www from "./www.svg";
-import dots from './dots-triple.svg'
-
 export const Icons = {
 "acr": acr,
+"add-button": add_button,
 "aks": aks,
 "alert": alert,
 "ansible": ansible,
@@ -228,6 +231,7 @@ export const Icons = {
 "containerdPull": containerdPull,
 "containerdPush": containerdPush,
 "cpu": cpu,
+"database-plus": database_plus,
 "database2": database2,
 "databases": databases,
 "datadog": datadog,
@@ -244,6 +248,7 @@ export const Icons = {
 "dockerPull": dockerPull,
 "dockerPush": dockerPush,
 "dotnet": dotnet,
+"dots-triple": dots_triple,
 "download": download,
 "dynatrace": dynatrace,
 "ec2": ec2,
@@ -320,6 +325,7 @@ export const Icons = {
 "opa": opa,
 "openshift": openshift,
 "oracle": oracle,
+"oracle_icon": oracle_icon,
 "pagerduty": pagerduty,
 "php": php,
 "pod": pod,
@@ -370,8 +376,4 @@ export const Icons = {
 "vsphere": vsphere,
 "world": world,
 "www": www,
-"dots": dots,
-"account": clock,
-"name": cluster,
-"region": timezone
 }
