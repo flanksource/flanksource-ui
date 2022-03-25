@@ -45,23 +45,12 @@ export function CommentsSection({
     console.log("type tag", type, "value", id);
   };
 
-  const commentData = useMemo(
-    () => [
-      {
-        data: users,
-        markup: "@[__display__](user:__id__)",
-        trigger: "@"
-      }
-    ],
-    [users]
-  );
-
   return (
     <div className={rest.className} {...rest}>
       {titlePrepend}
       <div>
         <CommentInput
-          data={commentData}
+          data={users}
           value={commentTextValue}
           onChange={setCommentTextValue}
         />

@@ -46,7 +46,7 @@ const Suggestion = ({ display, icon }) => (
   </div>
 );
 
-export const CommentInput = ({ data: dataList, value, onChange }) => (
+export const CommentInput = ({ data, value, onChange, markup, trigger }) => (
   <MentionsInput
     value={value}
     onChange={(e) => onChange(e.target.value)}
@@ -55,32 +55,30 @@ export const CommentInput = ({ data: dataList, value, onChange }) => (
     allowSpaceInQuery
     allowSuggestionsAboveCursor
   >
-    {dataList.map(({ data, trigger, markup }) => (
-      <Mention
-        key={trigger}
-        markup={markup}
-        trigger={trigger}
-        data={data}
-        renderSuggestion={Suggestion}
-        className="bg-blue-200 rounded"
-      />
-    ))}
+    <Mention
+      markup={markup}
+      trigger={trigger}
+      data={data}
+      renderSuggestion={Suggestion}
+      className="bg-blue-200 rounded"
+    />
   </MentionsInput>
 );
 
 CommentInput.propTypes = {
   data: PropTypes.arrayOf(
     PropTypes.shape({
-      data: PropTypes.arrayOf(
-        PropTypes.shape({
-          display: PropTypes.string,
-          icon: PropTypes.string
-        })
-      ),
-      trigger: PropTypes.string,
-      markup: PropTypes.string
+      display: PropTypes.string,
+      icon: PropTypes.string
     })
   ).isRequired,
   value: PropTypes.string.isRequired,
-  onChange: PropTypes.func.isRequired
+  onChange: PropTypes.func.isRequired,
+  trigger: PropTypes.string,
+  markup: PropTypes.string
+};
+
+CommentInput.defaultProps = {
+  trigger: "@",
+  markup: "@[__display__](user:__id__)"
 };
