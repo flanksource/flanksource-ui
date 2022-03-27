@@ -1,50 +1,13 @@
 import { ChatAltIcon } from "@heroicons/react/solid";
 import dayjs from "dayjs";
-import React, { useCallback, useEffect, useState } from "react";
-import { Mention, MentionsInput } from "react-mentions";
+import React, { useMemo, useEffect, useState } from "react";
 import { getPersons } from "../../api/services/users";
-import { Icon } from "../Icon";
+import { CommentInput, CommentText } from "../Comment";
 
 function getInitials(name) {
   const matches = name.match(/\b(\w)/g);
   return matches.slice(0, 2);
 }
-
-const mentionsStyle = {
-  control: {
-    fontSize: 14
-  },
-
-  "&multiLine": {
-    control: {
-      minHeight: 80
-    },
-    highlighter: {
-      padding: 9,
-      paddingTop: 11
-    },
-    input: {
-      padding: 9,
-      borderRadius: "0.375rem",
-      borderColor: "rgb(229 231 235)"
-    }
-  },
-
-  suggestions: {
-    list: {
-      backgroundColor: "white",
-      border: "1px solid rgba(0,0,0,0.15)",
-      fontSize: 14
-    },
-    item: {
-      padding: 5,
-      borderBottom: "1px solid rgba(0,0,0,0.15)",
-      "&focused": {
-        backgroundColor: "#cee4e5"
-      }
-    }
-  }
-};
 
 export function CommentsSection({
   comments,
@@ -69,69 +32,28 @@ export function CommentsSection({
 
   useEffect(() => {
     getPersons().then(({ data }) => {
-      const usersDate = data.map((user) => ({ ...user, display: user.name }));
+      const usersDate = data.map((user) => ({
+        ...user,
+        display: user.name,
+        icon: user.avatar
+      }));
       setUsers(usersDate);
     });
   }, []);
 
-  const renderSuggestion = useCallback(
-    ({ name, avatar }) => (
-      <div className="flex items-center">
-        <Icon name={avatar} size="xl" />
-        <p className="pl-2">{name}</p>
-      </div>
-    ),
-    []
-  );
-
-  const onClickUserTag = (userId) => {
-    console.log("userId", userId);
-  };
-
-  const swapTags = (text) => {
-    const tags = text.match(/@\[.*?\]\(user:.*?\)/gi) || [];
-    const otherText = text.split(/@\[.*?\]\(user:.*?\)/gi);
-    return tags.reduce(
-      (display, myTag, index) => {
-        const tagDisplay = myTag.match(/\[.*?\]/gi)[0].slice(1, -1);
-        const tagData = myTag.match(/\(user:.*?\)/gi)[0].slice(6, -1);
-        return [
-          ...display,
-          <button
-            type="button"
-            key={tagData}
-            onClick={() => onClickUserTag(tagData)}
-            className="bg-blue-200 rounded"
-          >
-            {tagDisplay}
-          </button>,
-          otherText[index + 1]
-        ];
-      },
-      [otherText[0]]
-    );
+  const onClickUserTag = (type, id) => {
+    console.log("type tag", type, "value", id);
   };
 
   return (
     <div className={rest.className} {...rest}>
       {titlePrepend}
       <div>
-        <MentionsInput
+        <CommentInput
+          data={users}
           value={commentTextValue}
-          onChange={(e) => setCommentTextValue(e.target.value)}
-          a11ySuggestionsListLabel="Suggested mentions"
-          style={mentionsStyle}
-          allowSpaceInQuery
-          allowSuggestionsAboveCursor
-        >
-          <Mention
-            markup="@[__display__](user:__id__)"
-            trigger="@"
-            data={users}
-            renderSuggestion={renderSuggestion}
-            className="bg-blue-200 rounded"
-          />
-        </MentionsInput>
+          onChange={setCommentTextValue}
+        />
         <div className="flex justify-end mt-2">
           <button
             disabled={isLoading || !commentTextValue}
@@ -190,7 +112,10 @@ export function CommentsSection({
                     </div>
                     <div className="mt-2 text-sm text-gray-700">
                       <p className="whitespace-pre">
-                        {swapTags(comment.comment)}
+                        <CommentText
+                          text={comment.comment}
+                          onClickTag={onClickUserTag}
+                        />
                       </p>
                     </div>
                   </div>
@@ -203,4 +128,3 @@ export function CommentsSection({
     </div>
   );
 }
-
