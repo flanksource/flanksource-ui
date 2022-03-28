@@ -56,7 +56,7 @@ export function EditableText({
   return (
     <div className="relative" {...rest}>
       {editMode && (
-        <div>
+        <>
           <textarea
             className={`w-full min-w-full py-0 px-px resize-none rounded-sm absolute top-0 bottom-0 left-0 right-0 overflow-y-hidden ${textAreaClassName} ${sharedClassName}`}
             defaultValue={localValue}
@@ -82,7 +82,7 @@ export function EditableText({
               <IoClose />
             </button>
           </div>
-        </div>
+        </>
       )}
 
       <button
