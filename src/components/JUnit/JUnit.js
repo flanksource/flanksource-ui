@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
-import { Suite } from "./Suite";
 import { ModalTestCase } from "./ModalTestCase";
+import { JUnitTable } from "./JUnitTable";
 
 export function JUnit({ suites, duration, failed, passed }) {
   const [selectedTestCase, setSelectedTestCase] = useState(null);
@@ -14,19 +14,7 @@ export function JUnit({ suites, duration, failed, passed }) {
         <div>passed: {passed}</div>
       </div>
 
-      <div>
-        {suites.map(({ name, tests, passed, failed, duration }) => (
-          <Suite
-            key={name}
-            name={name}
-            tests={tests}
-            passed={passed}
-            failed={failed}
-            duration={duration}
-            onSelectTestCase={setSelectedTestCase}
-          />
-        ))}
-      </div>
+      <JUnitTable suites={suites} onSelecteTestCase={setSelectedTestCase} />
 
       <ModalTestCase
         testCase={selectedTestCase}

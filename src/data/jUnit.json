@@ -10,7 +10,7 @@
           "name": "Default user agent matches /CasperJS/",
           "classname": "tests/suites/casper/agent",
           "duration": 0.103,
-          "status": "error"
+          "status": "failed"
         },
         {
           "name": "Default user agent matches /plop/",
