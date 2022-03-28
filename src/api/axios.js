@@ -9,6 +9,15 @@ export const IncidentCommander = axios.create({
   }
 });
 
+export const ConfigDB = axios.create({
+  baseURL: "/config/db",
+  headers: {
+    Accept: "application/json",
+    Prefer: "return=representation",
+    "Content-Type": "application/json"
+  }
+});
+
 export const Logs = axios.create({
   baseURL: "/apm/search",
   headers: {
@@ -35,5 +44,3 @@ export const Config = axios.create({
     "Content-Type": "application/json"
   }
 });
-
-
