@@ -1,5 +1,41 @@
 import dayjs from "dayjs";
 
+export const defaultTableColumns = [
+  {
+    Header: "Type",
+    accessor: "type",
+    cellClass: `px-5 py-2`
+  },
+  {
+    Header: "Name",
+    accessor: "name",
+    cellClass: `px-5 py-2`
+  },
+  {
+    Header: "Tags",
+    accessor: "tags",
+    Cell: TagsCell,
+    cellClass: `px-5 py-2`
+  },
+  {
+    Header: "ID",
+    accessor: "id",
+    cellClass: `px-5 py-2`
+  },
+  {
+    Header: "Created",
+    accessor: "created_at",
+    Cell: DateCell,
+    cellClass: `px-5 py-2`
+  },
+  {
+    Header: "Last Updated",
+    accessor: "updated_at",
+    Cell: DateCell,
+    cellClass: `px-5 py-2`
+  }
+];
+
 export function TagsCell({ row, column }) {
   const tags = row?.values[column.id];
   return (

@@ -5,7 +5,6 @@ import { IoCloseCircle } from "react-icons/io5";
 export function TextInputClearable({
   className,
   defaultValue,
-  value,
   onChange = () => {},
   onSubmit = () => {},
   inputClassName,
@@ -19,23 +18,18 @@ export function TextInputClearable({
 }) {
   const [textValue, setTextValue] = useState(defaultValue || "");
 
-  useEffect(() => {
-    if (onChange) {
-      onChange(value);
-    }
-  }, [onChange, value]);
-
   return (
     <div className={`flex ${className}`}>
       <div className={`relative flex-grow ${inputOuterClassName}`}>
         <input
-          value={value}
+          defaultValue={defaultValue}
           onChange={onChange}
           type="text"
           className={`h-full w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block py-1 sm:text-sm border-gray-300 ${
             hideButton ? "rounded-md" : "rounded-l-md"
           } ${inputClassName}`}
           placeholder={placeholder}
+          {...rest}
         />
         {!hideClearButton && textValue && (
           <div className="absolute inset-y-0 right-0 pr-2 flex items-center">
