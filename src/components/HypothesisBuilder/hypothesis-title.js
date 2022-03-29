@@ -41,8 +41,8 @@ export const HypothesisTitle = ({ node, api }) => {
         <EditableText
           value={getValues("title")}
           sharedClassName="text-2xl font-semibold text-gray-900 grow"
-          onChange={(e) => {
-            setValue("title", e.target.value);
+          onChange={(value) => {
+            setValue("title", value);
           }}
         />
       </div>
