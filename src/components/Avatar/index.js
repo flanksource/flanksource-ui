@@ -5,14 +5,16 @@ import { BsFillPersonFill } from "react-icons/all";
 import clsx from "clsx";
 
 export const Avatar = ({
+  user,
   size,
-  srcList,
   unload,
   alt,
   containerProps,
-  imageProps,
-  fallbackInitials
+  imageProps
 }) => {
+  const srcList = user?.avatar;
+  const fallbackInitials = user?.name || "?";
+
   const { src, isLoading } = useImage({
     srcList: Array.isArray(srcList) ? srcList : [srcList],
     useSuspense: false
@@ -71,23 +73,18 @@ export const Avatar = ({
 
 Avatar.propTypes = {
   size: PropTypes.string,
-  srcList: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.arrayOf(PropTypes.string)
-  ]),
+  user: PropTypes.shape({}),
   unload: PropTypes.node,
   alt: PropTypes.string,
   containerProps: PropTypes.shape({}),
-  imageProps: PropTypes.shape({}),
-  fallbackInitials: PropTypes.string
+  imageProps: PropTypes.shape({})
 };
 
 Avatar.defaultProps = {
   size: "md",
   unload: undefined,
-  srcList: "",
+  user: null,
   alt: "",
   containerProps: {},
   imageProps: {},
-  fallbackInitials: ""
 };

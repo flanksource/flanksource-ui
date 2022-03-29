@@ -1,5 +1,6 @@
 // this file is generated using make index.js
 import acr from "./acr.svg";
+import add_button from "./add-button.svg";
 import aks from "./aks.svg";
 import alert from "./alert.svg";
 import ansible from "./ansible.svg";
@@ -26,12 +27,14 @@ import canary_checker from "./canary-checker.svg";
 import cassandra from "./cassandra.svg";
 import check from "./check.svg";
 import cisco from "./cisco.svg";
+import clock from "./clock.svg";
 import cloud_build from "./cloud-build.svg";
 import cloudformation from "./cloudformation.svg";
 import cloudsql from "./cloudsql.svg";
 import cloudwatch_alarm from "./cloudwatch-alarm.svg";
 import cloudwatch_config from "./cloudwatch-config.svg";
 import cloudwatch from "./cloudwatch.svg";
+import cluster from "./cluster.svg";
 import compute_engine from "./compute-engine.svg";
 import connected from "./connected.svg";
 import console from "./console.svg";
@@ -39,6 +42,7 @@ import consul from "./consul.svg";
 import containerdPull from "./containerdPull.svg";
 import containerdPush from "./containerdPush.svg";
 import cpu from "./cpu.svg";
+import database_plus from "./database-plus.svg";
 import database2 from "./database2.svg";
 import databases from "./databases.svg";
 import datadog from "./datadog.svg";
@@ -55,6 +59,7 @@ import dns from "./dns.svg";
 import dockerPull from "./dockerPull.svg";
 import dockerPush from "./dockerPush.svg";
 import dotnet from "./dotnet.svg";
+import dots_triple from "./dots-triple.svg";
 import download from "./download.svg";
 import dynatrace from "./dynatrace.svg";
 import ec2 from "./ec2.svg";
@@ -68,6 +73,7 @@ import error from "./error.svg";
 import etcd from "./etcd.svg";
 import fire from "./fire.svg";
 import flanksource from "./flanksource.svg";
+import flanksource_icon from './flanksource-icon.svg';
 import fluentd from "./fluentd.svg";
 import flux from "./flux.svg";
 import folder from "./folder.svg";
@@ -130,6 +136,7 @@ import npm from "./npm.svg";
 import opa from "./opa.svg";
 import openshift from "./openshift.svg";
 import oracle from "./oracle.svg";
+import oracle_icon from "./oracle_icon.svg";
 import pagerduty from "./pagerduty.svg";
 import php from "./php.svg";
 import pod from "./pod.svg";
@@ -178,15 +185,11 @@ import tree from "./tree.svg";
 import ubuntu from "./ubuntu.svg";
 import vault from "./vault.svg";
 import vsphere from "./vsphere.svg";
+import world from "./world.svg";
 import www from "./www.svg";
-import dots from './dots-triple.svg'
-import addButton from './add-button.svg'
-import clock from './clock.svg'
-import cluster from './cluster.svg'
-import world from './world.svg'
-import databasePlus from './database-plus.svg'
 export const Icons = {
 "acr": acr,
+"add-button": add_button,
 "aks": aks,
 "alert": alert,
 "ansible": ansible,
@@ -213,12 +216,14 @@ export const Icons = {
 "cassandra": cassandra,
 "check": check,
 "cisco": cisco,
+"clock": clock,
 "cloud-build": cloud_build,
 "cloudformation": cloudformation,
 "cloudsql": cloudsql,
 "cloudwatch-alarm": cloudwatch_alarm,
 "cloudwatch-config": cloudwatch_config,
 "cloudwatch": cloudwatch,
+"cluster": cluster,
 "compute-engine": compute_engine,
 "connected": connected,
 "console": console,
@@ -226,6 +231,7 @@ export const Icons = {
 "containerdPull": containerdPull,
 "containerdPush": containerdPush,
 "cpu": cpu,
+"database-plus": database_plus,
 "database2": database2,
 "databases": databases,
 "datadog": datadog,
@@ -242,6 +248,7 @@ export const Icons = {
 "dockerPull": dockerPull,
 "dockerPush": dockerPush,
 "dotnet": dotnet,
+"dots-triple": dots_triple,
 "download": download,
 "dynatrace": dynatrace,
 "ec2": ec2,
@@ -255,6 +262,7 @@ export const Icons = {
 "etcd": etcd,
 "fire": fire,
 "flanksource": flanksource,
+"flanksource-icon": flanksource_icon,
 "fluentd": fluentd,
 "flux": flux,
 "folder": folder,
@@ -317,6 +325,7 @@ export const Icons = {
 "opa": opa,
 "openshift": openshift,
 "oracle": oracle,
+"oracle_icon": oracle_icon,
 "pagerduty": pagerduty,
 "php": php,
 "pod": pod,
@@ -365,11 +374,6 @@ export const Icons = {
 "ubuntu": ubuntu,
 "vault": vault,
 "vsphere": vsphere,
-"www": www,
-"dots": dots,
-"addButton": addButton,
-"account": clock,
-"name": cluster,
 "world": world,
-"databasePlus": databasePlus
+"www": www,
 }

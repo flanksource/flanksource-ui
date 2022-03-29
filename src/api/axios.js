@@ -1,5 +1,7 @@
 import axios from "axios";
 
+import { toastError } from "../components/Toast/toast";
+
 export const IncidentCommander = axios.create({
   baseURL: "/db",
   headers: {
@@ -8,6 +10,15 @@ export const IncidentCommander = axios.create({
     "Content-Type": "application/json"
   }
 });
+
+
+IncidentCommander.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    toastError(error.response.data.message);
+    return Promise.reject(error);
+  }
+);
 
 export const ConfigDB = axios.create({
   baseURL: "/config/db",
