@@ -1,3 +1,4 @@
+import { TimeRangePicker } from "../../pages/Examples/TimeRangePicker/TimeRangePicker";
 import { RefreshButton } from "../RefreshButton";
 import { UserProfile } from "../UserProfile/user-profile";
 
@@ -14,6 +15,10 @@ export function SearchLayout({
         <div className="flex-1 px-4 flex justify-between">
           <div className="flex items-center">
             <div>{title}</div>
+          </div>
+          <div>
+            {/* temporary for example view */}
+            <TimeRangePicker />
           </div>
           <div className="ml-4 flex items-center md:ml-6">
             {onRefresh && <RefreshButton onClick={onRefresh} />}
