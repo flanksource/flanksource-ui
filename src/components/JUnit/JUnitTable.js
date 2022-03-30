@@ -17,6 +17,11 @@ const columns = [
   {
     Header: "Summary",
     accessor: "status"
+  },
+  {
+    Header: "Duration",
+    accessor: "duration",
+    Cell: ({ value }) => value.toFixed(3)
   }
 ];
 
@@ -25,7 +30,7 @@ function Cell({ row, value }) {
     <span
       className={clsx(
         "flex items-center py-1",
-        `pl-${4 * row.depth + (row.canExpand ? 1 : 4)}`
+        `pl-${4 * row.depth + (row.canExpand ? 0 : 3)}`
       )}
     >
       {row.canExpand && (
@@ -59,10 +64,12 @@ const groupTestsByClassname = (tests) =>
     const isFailed = subRows.some(
       ({ status }) => status === TEST_STATUS.FAILED
     );
+    const duration = subRows.reduce((acc, row) => acc + row.duration, 0);
     return {
       name,
       subRows,
-      status: isFailed ? TEST_STATUS.FAILED : TEST_STATUS.PASSED
+      status: isFailed ? TEST_STATUS.FAILED : TEST_STATUS.PASSED,
+      duration
     };
   });
 
@@ -95,7 +102,7 @@ export function JUnitTable({ suites, onSelectTestCase }) {
               {headerGroup.headers.map((column) => {
                 const headerProps = column.getHeaderProps(
                   column.getSortByToggleProps({
-                    className: "font-light text-left"
+                    className: "font-light text-left px-2"
                   })
                 );
                 return (
@@ -129,7 +136,7 @@ export function JUnitTable({ suites, onSelectTestCase }) {
           return (
             <tr key={rowProps.key} {...rowProps}>
               {row.cells.map((cell) => {
-                const cellProps = cell.getCellProps();
+                const cellProps = cell.getCellProps({ className: "px-2" });
                 return (
                   <td key={cellProps.key} {...cellProps}>
                     {cell.render("Cell")}
