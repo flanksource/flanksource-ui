@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import dayjs from "dayjs";
 import { IncidentDetailsRow } from "./IncidentDetailsRow";
 import { Select } from "../Select";
+import { EditableSelect } from "../EditableSelect";
 import { IncidentPriority } from "../../constants/incident-priority";
 import {
   IncidentCommandersOption,
@@ -191,7 +192,7 @@ export const IncidentDetails = ({
         title="Priority"
         className="mt-3"
         value={
-          <Select
+          <EditableSelect
             name="priority"
             control={control}
             components={{
