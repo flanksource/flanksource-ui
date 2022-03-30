@@ -52,7 +52,6 @@ export function ConfigListPage() {
   };
 
   useEffect(() => {
-    console.log("data update", data);
     let filteredData = data;
     if (data?.length > 0) {
       // do filtering here
