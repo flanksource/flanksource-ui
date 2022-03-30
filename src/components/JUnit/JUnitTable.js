@@ -36,7 +36,7 @@ function Cell({ row, value }) {
     <span
       className={clsx(
         "flex items-center py-1",
-        `pl-${4 * row.depth + (row.canExpand ? 0 : 3)}`
+        `pl-${3 * row.depth + (row.canExpand ? 0 : 4)}`
       )}
     >
       {row.canExpand && (
