@@ -26,6 +26,12 @@ const columns = [
 ];
 
 function Cell({ row, value }) {
+  const failedCount = row.canExpand
+    ? row.subRows.filter(
+        ({ values: { status } }) => status === TEST_STATUS.FAILED
+      ).length
+    : null;
+
   return (
     <span
       className={clsx(
@@ -47,6 +53,11 @@ function Cell({ row, value }) {
           <IoCheckmark color="green" className="mr-1" />
         ))}
       {value}
+      {row.canExpand && (
+        <span className="pl-2 text-gray-400 text-sm">
+          ({failedCount} / {row.subRows.length})
+        </span>
+      )}
     </span>
   );
 }
