@@ -1,15 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
-import { debounce } from "lodash";
-import { useForm } from "react-hook-form";
+import React, { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import clsx from "clsx";
-import { Dropdown } from "../Dropdown";
-import { hypothesisStatuses } from "./data";
 import { EvidenceSection } from "./evidence-section";
 import { Modal } from "../Modal";
 import { EvidenceBuilder } from "../EvidenceBuilder";
 import { CommentsSection } from "./comments";
-import { EditableText } from "../EditableText";
 import {
   getCommentsByHypothesis,
   createComment
@@ -17,24 +12,6 @@ import {
 import { getAllEvidenceByHypothesis } from "../../api/services/evidence";
 import { useUser } from "../../context";
 import { toastError } from "../Toast/toast";
-import { Avatar } from "../Avatar";
-
-const statusItems = {
-  ...Object.values(hypothesisStatuses).reduce((acc, obj) => {
-    const title = obj.title.toLowerCase();
-    acc[title] = {
-      id: `dropdown-${title}`,
-      name: title,
-      icon: React.createElement(obj.icon.type, {
-        color: obj.color,
-        style: { width: "20px" }
-      }),
-      description: obj.title,
-      value: title
-    };
-    return acc;
-  }, {})
-};
 
 export function HypothesisDetails({ node, api, ...rest }) {
   const [evidenceBuilderOpen, setEvidenceBuilderOpen] = useState(false);
@@ -67,40 +44,9 @@ export function HypothesisDetails({ node, api, ...rest }) {
     fetchComments(node.id);
   }, [node.id]);
 
-  const handleApiUpdate = useRef(
-    debounce((params) => {
-      if (api?.updateMutation && node?.id) {
-        api.updateMutation.mutate({ id: node.id, params });
-      }
-    }, 1000)
-  ).current;
-
-  const { control, watch, getValues } = useForm({
-    defaultValues: {
-      status: node.status || Object.values(statusItems)[2].value
-    }
-  });
-
-  watch();
-
-  useEffect(() => {
-    const subscription = watch((value) => {
-      handleApiUpdate(value);
-    });
-    return () => subscription.unsubscribe();
-  }, [watch, getValues, handleApiUpdate]);
-
   return (
     <>
       <div className={clsx("pb-7", rest.className || "")} {...rest}>
-        <div className="mt-6 mb-7">
-          <Dropdown
-            control={control}
-            name="status"
-            className="mb-4 w-72"
-            items={statusItems}
-          />
-        </div>
         <div className="mb-8 mt-4">
           <EvidenceSection
             hypothesis={node}

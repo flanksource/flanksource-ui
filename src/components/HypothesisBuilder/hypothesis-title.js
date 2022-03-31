@@ -2,8 +2,27 @@ import React, { useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import { debounce } from "lodash";
 import { useForm } from "react-hook-form";
-import { Avatar } from "../Avatar";
 import { EditableText } from "../EditableText";
+import { Dropdown } from "../Dropdown";
+import { hypothesisStatuses } from "./data";
+import { AvatarGroup } from "../AvatarGroup";
+
+const statusItems = {
+  ...Object.values(hypothesisStatuses).reduce((acc, obj) => {
+    const title = obj.title.toLowerCase();
+    acc[title] = {
+      id: `dropdown-${title}`,
+      name: title,
+      icon: React.createElement(obj.icon.type, {
+        color: obj.color,
+        style: { width: "20px" }
+      }),
+      description: obj.title,
+      value: title
+    };
+    return acc;
+  }, {})
+};
 
 export const HypothesisTitle = ({ node, api }) => {
   const handleApiUpdate = useRef(
@@ -14,9 +33,10 @@ export const HypothesisTitle = ({ node, api }) => {
     }, 1000)
   ).current;
 
-  const { watch, setValue, getValues } = useForm({
+  const { watch, control, setValue, getValues } = useForm({
     defaultValues: {
-      title: node.title?.trim() ?? ""
+      title: node.title?.trim() ?? "",
+      status: node.status || Object.values(statusItems)[2].value
     }
   });
 
@@ -30,23 +50,19 @@ export const HypothesisTitle = ({ node, api }) => {
   }, [watch, getValues, handleApiUpdate]);
 
   return (
-    <>
-      <div className="flex">
-        <Avatar size="sm" user={node?.created_by} />
-        <p className="font-inter text-dark-gray font-normal text-sm ml-1.5 mt-0.5">
-          {node?.created_by?.name}
-        </p>
+    <div className="flex w-full items-center pr-3">
+      <Dropdown control={control} name="status" items={statusItems} />
+      <div className="flex flex-1 px-3">
+        <div className="w-full">
+          <EditableText
+            value={getValues("title")}
+            sharedClassName="text-2xl font-semibold text-gray-900 grow"
+            onChange={(value) => setValue("title", value)}
+          />
+        </div>
       </div>
-      <div className="mt-2 mr-2 mb-2 pr-8 flex flex-nowrap">
-        <EditableText
-          value={getValues("title")}
-          sharedClassName="text-2xl font-semibold text-gray-900 grow"
-          onChange={(value) => {
-            setValue("title", value);
-          }}
-        />
-      </div>
-    </>
+      <AvatarGroup users={[node.created_by]} />
+    </div>
   );
 };
 

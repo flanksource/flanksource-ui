@@ -38,6 +38,7 @@ export function HypothesisBuilder({
         open={modalIsOpen}
         onClose={() => setModalIsOpen(false)}
         size="medium"
+        titleClass="w-full"
         title={<HypothesisTitle node={selectedNode} api={api} />}
       >
         <HypothesisDetails node={selectedNode} api={api} />
