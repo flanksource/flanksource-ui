@@ -27,6 +27,7 @@ import { DropdownDemoPage } from "./pages/Examples/dropdown-demo";
 import { HealthPage } from "./pages/health";
 import { TopologySelectorModalPage } from "./pages/Examples/TopologySelectorModalPage/TopologySelectorModalPage";
 import { ModalPage } from "./pages/Examples/Modal/modal-page";
+import { TimeRangePickerDemo } from './pages/Examples/TimeRangePickerDemo';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -121,6 +122,7 @@ export function App() {
           <Route path="examples" element={sidebar}>
             <Route path="rs" element={<RsDemoPage />} />
             <Route path="dropdown" element={<DropdownDemoPage />} />
+            <Route path="timerangepicker" element={<TimeRangePickerDemo />} />
             <Route
               path="topology"
               element={<ExamplesTopologyPage url="/canary/api" />}

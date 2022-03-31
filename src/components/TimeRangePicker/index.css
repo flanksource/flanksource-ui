@@ -1,0 +1,31 @@
+.time-range-picker-widget {
+  width: fit-content;
+}
+
+.time-range-picker-body {
+  visibility: hidden;
+  opacity: 0;
+  top: calc(100% + 2px);
+  left: -1px;
+  width: 550px;
+  transition: 0.2s ease;
+}
+
+.time-range-picker-body.active {
+  visibility: visible;
+  opacity: 1;
+}
+
+.calendar-wrapper {
+  visibility: hidden;
+  opacity: 0;
+  top: calc(0% - 1px);
+  right: calc(100% + 1px);
+  width: 270px;
+  transition: 0.2s ease;
+}
+
+.calendar-wrapper.active {
+  visibility: visible;
+  opacity: 1;
+}
