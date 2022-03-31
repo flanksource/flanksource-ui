@@ -12,7 +12,7 @@ const columns = [
   {
     Header: "Description",
     accessor: "name",
-    Cell
+    Cell: CellName
   },
   {
     Header: "Summary",
@@ -21,11 +21,20 @@ const columns = [
   {
     Header: "Duration",
     accessor: "duration",
-    Cell: ({ value }) => value.toFixed(3)
+    Cell: ({ value }) => formatDuration(value)
   }
 ];
 
-function Cell({ row, value }) {
+function formatDuration(valueInSeconds) {
+  const date = new Date(valueInSeconds * 1000);
+  const ms = `000${date.getUTCMilliseconds()}`.slice(-3);
+  const s = `00${date.getUTCSeconds()}`.slice(-2);
+  const m = `00${date.getUTCMinutes()}`.slice(-2);
+  const h = date.getUTCHours() || 0;
+  return `${h}:${m}:${s}.${ms}`;
+}
+
+function CellName({ row, value }) {
   return (
     <span
       className={clsx(
