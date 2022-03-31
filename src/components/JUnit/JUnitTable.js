@@ -26,12 +26,6 @@ const columns = [
 ];
 
 function Cell({ row, value }) {
-  const failedCount = row.canExpand
-    ? row.subRows.filter(
-        ({ values: { status } }) => status === TEST_STATUS.FAILED
-      ).length
-    : null;
-
   return (
     <span
       className={clsx(
@@ -55,7 +49,7 @@ function Cell({ row, value }) {
       {value}
       {row.canExpand && (
         <span className="pl-2 text-gray-400 text-sm">
-          ({failedCount} / {row.subRows.length})
+          ({row.original.passed} / {row.original.countTest})
         </span>
       )}
     </span>
@@ -76,11 +70,16 @@ const groupTestsByClassname = (tests) =>
       ({ status }) => status === TEST_STATUS.FAILED
     );
     const duration = subRows.reduce((acc, row) => acc + row.duration, 0);
+    const passed = subRows.filter(
+      ({ status }) => status === TEST_STATUS.PASSED
+    ).length;
     return {
       name,
       subRows,
       status: isFailed ? TEST_STATUS.FAILED : TEST_STATUS.PASSED,
-      duration
+      duration,
+      passed,
+      countTest: subRows.length
     };
   });
 
@@ -89,10 +88,15 @@ export function JUnitTable({ suites, onSelectTestCase }) {
     () =>
       suites.map((suite) => {
         const subRows = groupTestsByClassname(suite.tests);
+        const passed = suite.tests.filter(
+          ({ status }) => status === TEST_STATUS.PASSED
+        ).length;
         return {
           ...suite,
           subRows,
-          status: suite.failed ? TEST_STATUS.FAILED : TEST_STATUS.PASSED
+          status: suite.failed ? TEST_STATUS.FAILED : TEST_STATUS.PASSED,
+          countTest: suite.tests.length,
+          passed
         };
       }),
     [suites]
