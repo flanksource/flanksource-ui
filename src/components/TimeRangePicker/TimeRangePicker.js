@@ -1,24 +1,35 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useState } from "react";
+import { FiClock } from "react-icons/fi";
 import { TimeRangePickerBody } from "./TimeRangePickerBody";
 import "./index.css";
-import { MiniClockIcon } from "../../icons/mini-clock";
 
 export const TimeRangePicker = () => {
-  let [isPickerOpen, setIsPickerOpen] = useState(false);
+  const [isPickerOpen, setIsPickerOpen] = useState(false);
+  const [currentRangeDisplay, setCurrentRangeDisplay] = useState("some-range");
 
   return (
-    <div className="relative">
+    <div className="relative text-sm">
       <div
         className="time-range-picker-widget flex items-center justify-center px-2 py-1 bg-gray-50 cursor-pointer rounded-sm border border-gray-300"
-        onClick={() => setIsPickerOpen(!isPickerOpen)}>
+        onClick={() =>
+          setIsPickerOpen((prevIsPickerValue) => !prevIsPickerValue)
+        }
+      >
         <div>
-          <MiniClockIcon />
+          <FiClock />
         </div>
-        <div className="ml-2">
-          Time range: <span>2 hours</span>
+        <div className="ml-2 font-medium">
+          Time range: <span>{currentRangeDisplay}</span>
         </div>
       </div>
-      <TimeRangePickerBody isOpen={isPickerOpen} closePicker={() => setIsPickerOpen(false)}/>
+      <TimeRangePickerBody
+        isOpen={isPickerOpen}
+        closePicker={() => setIsPickerOpen(false)}
+        currentRange={currentRangeDisplay}
+        setCurrentRange={setCurrentRangeDisplay}
+      />
     </div>
   );
 };

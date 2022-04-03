@@ -3,6 +3,8 @@ import { TimeRangePicker } from "../../components/TimeRangePicker/TimeRangePicke
 
 export const TimeRangePickerDemo = () => (
   <SearchLayout title="time-picker">
-    <TimeRangePicker />
+    <div className="ml-10">
+      <TimeRangePicker />
+    </div>
   </SearchLayout>
 );
