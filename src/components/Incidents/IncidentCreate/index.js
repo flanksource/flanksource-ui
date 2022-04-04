@@ -73,8 +73,8 @@ export function IncidentCreate({ callback, evidence, ...rest }) {
               hypothesis.data[0].id,
               {
                 lines: evidence?.lines,
-                configId: evidence?.configId,
-                fullConfig: evidence?.config
+                config_id: evidence?.configId,
+                config_full: evidence?.config
               },
               {
                 description: evidence?.configName,
