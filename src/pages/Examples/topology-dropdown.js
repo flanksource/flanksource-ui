@@ -12,11 +12,8 @@ export const TypologyDropdownDemo = () => {
   const searchTopology = useCallback(
     (name) =>
       new Promise((resolve, reject) => {
-        getTopology({ name })
-          .then(({ data }) => resolve(data))
-          .catch((e) => {
-            resolve(topologies); // todo remove this if getTopology works
-          });
+        resolve(topologies); // todo remove this if getTopology works
+        // getTopology({ name }).then(({ data }) => resolve(data));
       }),
     []
   );
