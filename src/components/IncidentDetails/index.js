@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import dayjs from "dayjs";
 import { IncidentDetailsRow } from "./IncidentDetailsRow";
@@ -16,8 +16,8 @@ import { priorities } from "./data";
 
 export const IncidentDetails = ({
   incident,
-  node,
   updateStatusHandler,
+  updateIncidentHandler,
   textButton
 }) => {
   // Temporary mock, in the future you need to replace it with an array of real users received from the api
@@ -51,16 +51,16 @@ export const IncidentDetails = ({
       chartRoom: "https://google.com.ua",
       statusPageTitle: "StatusPage.io",
       statusPage: "https://www.atlassian.com/software/statuspage",
-      priority: incident.severity || IncidentPriority.High,
+      priority: incident.severity ?? IncidentPriority.High,
       commanders: incident.commander_id.id,
       respondents: respondersArray?.[0]?.value || null
     }
   });
   watch();
-  const DATE_FORMAT = "DD.MM.YYYY";
+  const DATE_FORMAT = "YYYY-MM-DD HH:mm:ss";
   const formatDate = ({ date, format = DATE_FORMAT, fallback = "-" }) =>
     date ? dayjs(date).format(format) : fallback;
-  const dateToDuration = ({ date, withoutSuffix = false, fallback = "-" }) =>
+  const dateToDuration = ({ date, withoutSuffix = true, fallback = "-" }) =>
     date ? dayjs(date).fromNow(withoutSuffix) : fallback;
 
   const watchCreatedAt = watch("created_at");
@@ -73,6 +73,14 @@ export const IncidentDetails = ({
     () => dateToDuration({ date: watchCreatedAt }),
     [watchCreatedAt]
   );
+
+  useEffect(() => {
+    const subscription = watch(({ priority }) => {
+      updateIncidentHandler({ severity: priority });
+    });
+    return () => subscription.unsubscribe();
+  }, [watch, updateIncidentHandler]);
+
   return (
     <div className="px-6 pt-3.5">
       <div className="flex justify-between mb-7">
@@ -86,7 +94,7 @@ export const IncidentDetails = ({
           Share
         </button>
       </div>
-      <IncidentDetailsRow
+      {/* <IncidentDetailsRow
         title="Chart Room"
         value={
           <a
@@ -108,7 +116,7 @@ export const IncidentDetails = ({
             {getValues("statusPageTitle")}
           </a>
         }
-      />
+      /> */}
       <IncidentDetailsRow
         title="Respondents"
         className="mt-2.5"
@@ -152,7 +160,7 @@ export const IncidentDetails = ({
           />
         }
       />
-      <IncidentDetailsRow
+      {/* <IncidentDetailsRow
         title="Tracking"
         className="mt-3"
         value={
@@ -160,7 +168,7 @@ export const IncidentDetails = ({
             {getValues("tracking")}
           </span>
         }
-      />
+      /> */}
       <IncidentDetailsRow
         title="Started"
         className="mt-2.5"

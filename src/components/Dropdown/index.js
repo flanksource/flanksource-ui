@@ -75,8 +75,9 @@ export function Dropdown({
             control={control}
             name={name}
             render={({ field }) => {
-              const { onChangeControlled, valueControlled } = field;
-              if (items[value] == null) {
+              const { onChange: onChangeControlled, value: valueControlled } =
+                field;
+              if (items[valueControlled] == null) {
                 return null;
               }
               return (
