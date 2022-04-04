@@ -1,3 +1,5 @@
+/* eslint-disable react/require-default-props */
+import PropTypes from "prop-types";
 import Calendar from "react-calendar";
 import clsx from "clsx";
 import { useState } from "react";
@@ -6,21 +8,51 @@ import { FaRegCalendarAlt, FaAngleLeft, FaAngleRight } from "react-icons/fa";
 import dayjs from "dayjs";
 import { TimeRangeList } from "./TimeRangeList";
 import "./index.css";
+import { defaultValue } from "./rangeOptions";
 
 export const TimeRangePickerBody = ({
   isOpen,
   closePicker,
-  currentRangeDisplay,
-  setCurrentRangeDisplay
+  rangeDisplayValue,
+  setRangeDisplayValue,
+  setRangeValue
 }) => {
-  const timeFormat = "YYYY-MM-DD HH:mm";
+  const displayTimeFormat = "YYYY-MM-DD HH:mm";
   const [showCalendar, setShowCalendar] = useState(false);
-  const [value, setValue] = useState(new Date());
+  const [calendarValue, setCalendarValue] = useState(null);
+  const [inputValue, setInputValue] = useState({
+    from: defaultValue.from,
+    to: defaultValue.to
+  });
 
   const onChangeRange = (value) => {
-    setValue(value);
-    console.log(value[0].getTime());
-    setCurrentRangeDisplay(dayjs(value[0]).format(timeFormat));
+    const from = dayjs(value[0]).format(displayTimeFormat);
+    const to = dayjs(value[1]).format(displayTimeFormat);
+
+    setCalendarValue(value);
+    setInputValue((prevState) => ({ ...prevState, from, to }));
+  };
+
+  const applyTimeRange = () => {
+    if (inputValue.from.includes("now") || inputValue.to.includes("now")) {
+      setShowCalendar(false);
+      closePicker();
+      return;
+    }
+
+    const from = dayjs(inputValue.from).format(displayTimeFormat);
+    const to = dayjs(inputValue.to).format(displayTimeFormat);
+    setRangeDisplayValue({
+      from,
+      to,
+      display: `${from} - ${to}`
+    });
+    setRangeValue({
+      from: dayjs(inputValue.from).format(),
+      to: dayjs(inputValue.to).format()
+    });
+    setShowCalendar(false);
+    closePicker();
   };
 
   return (
@@ -58,7 +90,7 @@ export const TimeRangePickerBody = ({
             prevLabel={<FaAngleLeft size="18px" color="#272727" />}
             className="react-calendar-custom"
             tileClassName="react-calendar-custom__tile"
-            value={value}
+            value={calendarValue}
             onChange={onChangeRange}
           />
         </div>
@@ -71,7 +103,16 @@ export const TimeRangePickerBody = ({
               <div className="text-sm mb-1">From</div>
               <div className="flex">
                 <div>
-                  <input className="px-1 py-0.5 border border-gray-300 rounded-sm focus:border-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-300" />
+                  <input
+                    value={inputValue.from}
+                    onChange={(e) =>
+                      setInputValue((prevState) => ({
+                        ...prevState,
+                        from: e.target.value
+                      }))
+                    }
+                    className="px-1 py-0.5 border border-gray-300 rounded-sm focus:border-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                  />
                 </div>
                 <div className="flex bg-gray-200 ml-0.5 rounded-sm">
                   <button
@@ -88,7 +129,16 @@ export const TimeRangePickerBody = ({
               <div className="text-sm mb-1">To</div>
               <div className="flex">
                 <div>
-                  <input className="px-1 py-0.5 border border-gray-300 rounded-sm focus:border-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-300" />
+                  <input
+                    value={inputValue.to}
+                    onChange={(e) =>
+                      setInputValue((prevState) => ({
+                        ...prevState,
+                        to: e.target.value
+                      }))
+                    }
+                    className="px-1 py-0.5 border border-gray-300 rounded-sm focus:border-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                  />
                 </div>
                 <div className="flex bg-gray-200 ml-0.5 rounded-sm">
                   <button
@@ -103,10 +153,7 @@ export const TimeRangePickerBody = ({
             </div>
           </div>
           <button
-            onClick={() => {
-              setCurrentRangeDisplay(value);
-              console.log(currentRangeDisplay);
-            }}
+            onClick={applyTimeRange}
             type="button"
             className="block bg-blue-200 hover:bg-blue-300 rounded-sm px-2 py-1 transition duration-200 ease"
           >
@@ -115,8 +162,24 @@ export const TimeRangePickerBody = ({
         </div>
       </div>
       <div className="w-2/5 overflow-y-auto">
-        <TimeRangeList />
+        <TimeRangeList
+          closePicker={closePicker}
+          rangeDisplayValue={rangeDisplayValue}
+          setRangeDisplayValue={setRangeDisplayValue}
+          setRangeValue={setRangeValue}
+          setInputValue={setInputValue}
+          setCalendarValue={setCalendarValue}
+          setShowCalendar={setShowCalendar}
+        />
       </div>
     </div>
   );
+};
+
+TimeRangePickerBody.propTypes = {
+  isOpen: PropTypes.bool,
+  closePicker: PropTypes.bool,
+  rangeDisplayValue: PropTypes.shape({}),
+  setRangeDisplayValue: PropTypes.func,
+  setRangeValue: PropTypes.func
 };

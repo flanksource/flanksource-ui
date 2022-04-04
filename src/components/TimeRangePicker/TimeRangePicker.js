@@ -4,31 +4,35 @@ import { useState } from "react";
 import { FiClock } from "react-icons/fi";
 import { TimeRangePickerBody } from "./TimeRangePickerBody";
 import "./index.css";
+import { defaultValue } from "./rangeOptions";
 
 export const TimeRangePicker = () => {
   const [isPickerOpen, setIsPickerOpen] = useState(false);
-  const [currentRangeDisplay, setCurrentRangeDisplay] = useState("some-range");
+  const [rangeDisplayValue, setRangeDisplayValue] = useState({
+    ...defaultValue
+  });
+  const [rangeValue, setRangeValue] = useState({});
 
   return (
     <div className="relative text-sm">
       <div
         className="time-range-picker-widget flex items-center justify-center px-2 py-1 bg-gray-50 cursor-pointer rounded-sm border border-gray-300"
-        onClick={() =>
-          setIsPickerOpen((prevIsPickerValue) => !prevIsPickerValue)
-        }
+        onClick={() => setIsPickerOpen((prevState) => !prevState)}
       >
         <div>
           <FiClock />
         </div>
         <div className="ml-2 font-medium">
-          Time range: <span>{currentRangeDisplay}</span>
+          Time range: <span>{rangeDisplayValue.display}</span>
         </div>
       </div>
       <TimeRangePickerBody
         isOpen={isPickerOpen}
         closePicker={() => setIsPickerOpen(false)}
-        currentRange={currentRangeDisplay}
-        setCurrentRange={setCurrentRangeDisplay}
+        rangeDisplayValue={rangeDisplayValue}
+        setRangeDisplayValue={setRangeDisplayValue}
+        rangeValue={rangeValue}
+        setRangeValue={setRangeValue}
       />
     </div>
   );

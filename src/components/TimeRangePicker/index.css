@@ -30,6 +30,10 @@
   opacity: 1;
 }
 
+.option-item.active {
+  background-color: #d0e4fc;
+}
+
 /*calendar*/
 .react-calendar-custom__tile {
   color: #000;
