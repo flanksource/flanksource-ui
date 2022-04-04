@@ -187,6 +187,16 @@ export function ConfigDetailsPage() {
             callback={(response) => {
               navigate(`/incidents/${response.id}`, { replace: true });
             }}
+            evidence={{
+              configId: id,
+              configName: configDetails?.name,
+              config: jsonLines,
+              type: "config",
+              lines: Object.keys(checked).reduce((acc, lineNum) => {
+                acc[lineNum] = jsonLines[lineNum];
+                return acc;
+              }, {})
+            }}
           />
         </Modal>
       </div>

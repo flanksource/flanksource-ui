@@ -61,26 +61,28 @@ export function IncidentCreate({ callback, evidence, ...rest }) {
     payload.id = uuidv4();
     createIncident(user, payload)
       .then((created) => {
-        const create = createHypothesis(user, uuidv4(), payload.id, {
+        createHypothesis(user, uuidv4(), payload.id, {
           title: payload.title,
           type: "root",
           status: "possible"
-        });
-
-        if (location.state && location.state.evidence != null) {
-          create.then((hypotheis) => {
+        }).then((hypothesis) => {
+          if (hypothesis?.data[0]?.id && evidence) {
             createEvidence(
               user,
               uuidv4(),
-              hypotheis.data[0].id,
-              location.state.evidence,
+              hypothesis.data[0].id,
               {
-                description: "test",
-                type: location.state.evidenceType
+                lines: evidence?.lines,
+                configId: evidence?.configId,
+                fullConfig: evidence?.config
+              },
+              {
+                description: evidence?.configName,
+                type: evidence?.type
               }
             );
-          });
-        }
+          }
+        });
 
         if (created)
           if (callback != null) {
