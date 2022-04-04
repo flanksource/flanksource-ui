@@ -27,6 +27,7 @@ import { DropdownDemoPage } from "./pages/Examples/dropdown-demo";
 import { HealthPage } from "./pages/health";
 import { TopologySelectorModalPage } from "./pages/Examples/TopologySelectorModalPage/TopologySelectorModalPage";
 import { ModalPage } from "./pages/Examples/Modal/modal-page";
+import { TypologyDropdownDemo } from "./pages/Examples/topology-dropdown";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -130,6 +131,10 @@ export function App() {
               element={<TopologySelectorModalPage url="/canary/api" />}
             />
             <Route path="modal" element={<ModalPage />} />
+            <Route
+              path="topology-dropdown"
+              element={<TypologyDropdownDemo />}
+            />
           </Route>
 
           <Route path="logs" element={sidebar}>
