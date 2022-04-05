@@ -1,4 +1,3 @@
-/* eslint-disable react/require-default-props */
 import PropTypes from "prop-types";
 import Calendar from "react-calendar";
 import clsx from "clsx";
@@ -9,6 +8,7 @@ import dayjs from "dayjs";
 import { TimeRangeList } from "./TimeRangeList";
 import "./index.css";
 import { defaultValue } from "./rangeOptions";
+import { createIntervalName, getIntervalData } from "./helpers";
 
 export const TimeRangePickerBody = ({
   isOpen,
@@ -35,22 +35,53 @@ export const TimeRangePickerBody = ({
 
   const applyTimeRange = () => {
     if (inputValue.from.includes("now") || inputValue.to.includes("now")) {
-      setShowCalendar(false);
-      closePicker();
-      return;
+      let from;
+      let to;
+      let display;
+
+      if (inputValue.from === "now") {
+        from = dayjs().format();
+      } else {
+        from = dayjs()
+          .subtract(...getIntervalData(inputValue.from))
+          .format();
+      }
+
+      if (inputValue.to === "now") {
+        to = dayjs().format();
+        display = createIntervalName(...getIntervalData(inputValue.from));
+      } else {
+        to = dayjs()
+          .subtract(...getIntervalData(inputValue.to))
+          .format();
+        display = `${dayjs(from).format(displayTimeFormat)} - ${dayjs()
+          .subtract(...getIntervalData(inputValue.to))
+          .format(displayTimeFormat)}`;
+      }
+
+      setRangeDisplayValue({
+        from: inputValue.from,
+        to: inputValue.to,
+        display
+      });
+      setRangeValue({
+        from,
+        to
+      });
+    } else {
+      const from = dayjs(inputValue.from).format(displayTimeFormat);
+      const to = dayjs(inputValue.to).format(displayTimeFormat);
+      setRangeDisplayValue({
+        from,
+        to,
+        display: `${from} to ${to}`
+      });
+      setRangeValue({
+        from: dayjs(inputValue.from).format(),
+        to: dayjs(inputValue.to).format()
+      });
     }
 
-    const from = dayjs(inputValue.from).format(displayTimeFormat);
-    const to = dayjs(inputValue.to).format(displayTimeFormat);
-    setRangeDisplayValue({
-      from,
-      to,
-      display: `${from} - ${to}`
-    });
-    setRangeValue({
-      from: dayjs(inputValue.from).format(),
-      to: dayjs(inputValue.to).format()
-    });
     setShowCalendar(false);
     closePicker();
   };
@@ -95,7 +126,7 @@ export const TimeRangePickerBody = ({
           />
         </div>
       </div>
-      <div className="p-3 border-r border-gray-300 w-3/5">
+      <div className="p-3 border-r border-gray-300 w-4/6">
         <div className="font-medium">Absolute time range</div>
         <div>
           <div className="mb-6">
@@ -114,7 +145,7 @@ export const TimeRangePickerBody = ({
                     className="px-1 py-0.5 border border-gray-300 rounded-sm focus:border-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-300"
                   />
                 </div>
-                <div className="flex bg-gray-200 ml-0.5 rounded-sm">
+                <div className="flex bg-gray-200 hover:bg-gray-300 ml-0.5 rounded-sm">
                   <button
                     type="button"
                     onClick={() => setShowCalendar((prevState) => !prevState)}
@@ -140,7 +171,7 @@ export const TimeRangePickerBody = ({
                     className="px-1 py-0.5 border border-gray-300 rounded-sm focus:border-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-300"
                   />
                 </div>
-                <div className="flex bg-gray-200 ml-0.5 rounded-sm">
+                <div className="flex bg-gray-200 hover:bg-gray-300 ml-0.5 rounded-sm">
                   <button
                     type="button"
                     onClick={() => setShowCalendar((prevState) => !prevState)}
@@ -155,13 +186,16 @@ export const TimeRangePickerBody = ({
           <button
             onClick={applyTimeRange}
             type="button"
-            className="block bg-blue-200 hover:bg-blue-300 rounded-sm px-2 py-1 transition duration-200 ease"
+            className="block font-medium bg-blue-200 hover:bg-blue-300 rounded-sm px-2.5 py-1.5 transition duration-200 ease"
           >
             Apply time range
           </button>
         </div>
+        {/* <div className="font-medium mt-2 mb-1">
+          Recently used absolute ranges
+        </div> */}
       </div>
-      <div className="w-2/5 overflow-y-auto">
+      <div className="w-2/6 overflow-y-auto">
         <TimeRangeList
           closePicker={closePicker}
           rangeDisplayValue={rangeDisplayValue}
@@ -178,8 +212,16 @@ export const TimeRangePickerBody = ({
 
 TimeRangePickerBody.propTypes = {
   isOpen: PropTypes.bool,
-  closePicker: PropTypes.bool,
+  closePicker: PropTypes.func,
   rangeDisplayValue: PropTypes.shape({}),
   setRangeDisplayValue: PropTypes.func,
   setRangeValue: PropTypes.func
+};
+
+TimeRangePickerBody.defaultProps = {
+  isOpen: false,
+  closePicker: () => {},
+  rangeDisplayValue: {},
+  setRangeDisplayValue: () => {},
+  setRangeValue: () => {}
 };

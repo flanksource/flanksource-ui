@@ -1,14 +1,23 @@
+.time-picker-main {
+  width: fit-content;
+  margin-left: auto;
+}
+
 .time-range-picker-widget {
   width: fit-content;
+}
+
+.timepicker-arrow-indicator.active {
+  transform: rotate(180deg);
 }
 
 .time-range-picker-body {
   visibility: hidden;
   opacity: 0;
   top: calc(100% + 2px);
-  left: -1px;
-  width: 550px;
-  height: 320px;
+  right: 0;
+  width: 480px;
+  height: 390px;
   transition: 0.2s ease;
 }
 

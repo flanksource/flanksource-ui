@@ -1,12 +1,9 @@
-/* eslint-disable react/require-default-props */
-/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
 import PropTypes from "prop-types";
 import { v4 as uuidv4 } from "uuid";
 import clsx from "clsx";
 import dayjs from "dayjs";
 import { rangeOptions } from "./rangeOptions";
-import { getFromValues } from "./helpers";
+import { getIntervalData } from "./helpers";
 
 export const TimeRangeList = ({
   closePicker,
@@ -26,8 +23,7 @@ export const TimeRangeList = ({
   };
 
   const setOption = (option) => {
-    const { from } = option;
-    const { to } = option;
+    const { from, to } = option;
     setRangeDisplayValue({
       from,
       to,
@@ -36,7 +32,7 @@ export const TimeRangeList = ({
     setInputValue((prevState) => ({ ...prevState, from, to }));
     setRangeValue({
       from: dayjs()
-        .subtract(...getFromValues(option.from))
+        .subtract(...getIntervalData(option.from))
         .format(),
       to: dayjs().format()
     });
@@ -46,19 +42,20 @@ export const TimeRangeList = ({
   };
 
   return (
-    <ul>
+    <div>
       {rangeOptions.map((option) => {
         const id = uuidv4();
         return (
-          <li
+          <button
+            type="button"
             onClick={() => setOption(option)}
-            key={id}
+            key={option.display}
             className={clsx(
-              "option-item py-1 px-2 hover:bg-blue-200 flex justify-between items-center",
+              "option-item hover:bg-blue-200 flex justify-between items-center w-full",
               { active: isChecked(option, rangeDisplayValue) }
             )}
           >
-            <label htmlFor={id} className="cursor-pointer w-full">
+            <label htmlFor={id} className="cursor-pointer py-1.5 px-2">
               {option.display}
             </label>
             <input
@@ -69,10 +66,10 @@ export const TimeRangeList = ({
               name="range-checkbox"
               id={id}
             />
-          </li>
+          </button>
         );
       })}
-    </ul>
+    </div>
   );
 };
 
@@ -84,4 +81,14 @@ TimeRangeList.propTypes = {
   setInputValue: PropTypes.func,
   setCalendarValue: PropTypes.func,
   setShowCalendar: PropTypes.func
+};
+
+TimeRangeList.defaultProps = {
+  closePicker: () => {},
+  rangeDisplayValue: {},
+  setRangeDisplayValue: () => {},
+  setRangeValue: () => {},
+  setInputValue: () => {},
+  setCalendarValue: () => {},
+  setShowCalendar: () => {}
 };

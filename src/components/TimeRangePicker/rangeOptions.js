@@ -15,7 +15,10 @@ export const rangeOptions = [
   { display: "7 days", from: "now-7d", to: "now" },
   { display: "2 weeks", from: "now-2w", to: "now" },
   { display: "3 weeks", from: "now-3w", to: "now" },
-  { display: "1 month", from: "now-1M", to: "now" }
+  { display: "1 month", from: "now-1M", to: "now" },
+  { display: "3 months", from: "now-3M", to: "now" },
+  { display: "6 months", from: "now-6M", to: "now" },
+  { display: "1 year", from: "now-1y", to: "now" }
 ];
 
 export const defaultValue = { display: "1 hour", from: "now-1h", to: "now" };
