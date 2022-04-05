@@ -1,44 +1,82 @@
 import React, { Fragment } from "react";
+/* This example requires Tailwind CSS v2.0+ */
+import { CheckIcon, ThumbUpIcon, UserIcon } from "@heroicons/react/solid";
+import { BsFillGearFill, BsArrowUpRight } from "react-icons/bs";
+import { AiFillAlert } from "react-icons/ai";
 
-import { TagIcon, UserCircleIcon } from "@heroicons/react/solid";
+function Avatar({ person }) {
+  return (
+    <img src={person.imageUrl} alt={person.name} className="rounded-full" />
+  );
+}
 
-const activity = [
+const people = [
+  {
+    name: "Lindsay Walton",
+    imageUrl:
+      "https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=3&w=256&h=256&q=80"
+  },
+  {
+    name: "Eduardo Benz",
+    imageUrl:
+      "https://images.unsplash.com/photo-1520785643438-5bf77931f493?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=256&h=256&q=80"
+  }
+];
+
+const timeline = [
   {
     id: 1,
-    type: "comment",
-    person: { name: "Eduardo Benz", href: "#" },
-    imageUrl:
-      "https://images.unsplash.com/photo-1520785643438-5bf77931f493?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=256&h=256&q=80",
-    comment:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Tincidunt nunc ipsum tempor purus vitae id. Morbi in vestibulum nec varius. Et diam cursus quis sed purus nam. ",
-    date: "6d ago"
+    content: "Scaled backend app to 3 pods",
+    // target: 'Front End Developer',
+    href: "#",
+    date: "30m ago",
+    datetime: "2020-09-20",
+    icon: <BsArrowUpRight className="h-5 w-5 text-white" />,
+    iconBackground: "bg-gray-400"
   },
   {
     id: 2,
-    type: "assignment",
-    person: { name: "Hilary Mahy", href: "#" },
-    assigned: { name: "Kristin Watson", href: "#" },
-    date: "2d ago"
+    content: "Changed db.pool.size from 100 -> 125",
+    href: "#",
+    date: "45m ago",
+    datetime: "2020-09-22",
+    icon: <BsFillGearFill className="h-5 w-5 text-white" />,
+    iconBackground: "bg-gray-400"
   },
   {
     id: 3,
-    type: "tags",
-    person: { name: "Hilary Mahy", href: "#" },
-    tags: [
-      { name: "Bug", href: "#", color: "bg-rose-500" },
-      { name: "Accessibility", href: "#", color: "bg-indigo-500" }
-    ],
-    date: "6h ago"
+    content: "us-east-1 canary failed for 25m",
+    date: "2h",
+    datetime: "2020-09-28",
+    icon: <AiFillAlert className="h-5 w-5 text-white" />,
+    iconBackground: "bg-gray-500"
+  },
+
+  {
+    id: 5,
+    content: <>{people[0].name} assigned as commander</>,
+    date: "1h ago",
+    datetime: "2020-09-30",
+    icon: <Avatar person={people[0]} />,
+    iconBackground: "bg-blue-500 "
+  },
+  {
+    id: 5,
+    content: <>{people[1].name} assigned as communicator</>,
+    date: "1h ago",
+    datetime: "2020-09-30",
+    icon: <Avatar person={people[1]} />,
+    iconBackground: "bg-blue-500 "
   },
   {
     id: 4,
-    type: "comment",
-    person: { name: "Jason Meyers", href: "#" },
-    imageUrl:
-      "https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=256&h=256&q=80",
-    comment:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Tincidunt nunc ipsum tempor purus vitae id. Morbi in vestibulum nec varius. Et diam cursus quis sed purus nam. Scelerisque amet elit non sit ut tincidunt condimentum. Nisl ultrices eu venenatis diam.",
-    date: "2h ago"
+    content: (
+      <span className="text-red-700">us-east-1 canary failing for 2h</span>
+    ),
+    date: "2h ago",
+    datetime: "2020-09-28",
+    icon: <AiFillAlert className="h-5 w-5 text-white" />,
+    iconBackground: "bg-red-500"
   }
 ];
 
@@ -46,141 +84,52 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export function App() {
+export function Changelog() {
   return (
-    <div className="container mx-auto">
-      <div className="flow-root">
-        <ul className="-mb-4">
-          {activity.map((activityItem, activityItemIdx) => (
-            <li key={activityItem.id}>
-              <div className="relative pb-4">
-                {activityItemIdx !== activity.length - 1 ? (
+    <div className="flow-root">
+      <ul role="list" className="-mb-4">
+        {timeline.map((event, eventIdx) => (
+          // eslint-disable-next-line react/no-array-index-key
+          <li key={eventIdx}>
+            <div className="relative pb-4">
+              {eventIdx !== timeline.length - 1 ? (
+                <span
+                  className="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200"
+                  aria-hidden="true"
+                />
+              ) : null}
+              <div className="relative flex space-x-3">
+                <div>
                   <span
-                    className="absolute top-5 left-5 -ml-px h-full w-0.5 bg-gray-200"
-                    aria-hidden="true"
-                  />
-                ) : null}
-                <div className="relative flex items-start space-x-3">
-                  {activityItem.type === "comment" ? (
-                    <>
-                      <div className="relative">
-                        <img
-                          className="h-10 w-10 rounded-full bg-gray-400 flex items-center justify-center ring-8 ring-white"
-                          src={activityItem.imageUrl}
-                          alt=""
-                        />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <div>
-                          <div className="text-sm">
-                            <a
-                              href={activityItem.person.href}
-                              className="font-medium text-gray-900"
-                            >
-                              {activityItem.person.name}
-                            </a>
-                          </div>
-                          <p className="mt-0.5 text-sm text-gray-500">
-                            Commented {activityItem.date}
-                          </p>
-                        </div>
-                        <div className="mt-2 text-sm text-gray-700">
-                          <p>{activityItem.comment}</p>
-                        </div>
-                      </div>
-                    </>
-                  ) : activityItem.type === "assignment" ? (
-                    <>
-                      <div>
-                        <div className="relative px-1">
-                          <div className="h-8 w-8 bg-gray-100 rounded-full ring-8 ring-white flex items-center justify-center">
-                            <UserCircleIcon
-                              className="h-5 w-5 text-gray-500"
-                              aria-hidden="true"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                      <div className="min-w-0 flex-1 py-1.5">
-                        <div className="text-sm text-gray-500">
-                          <a
-                            href={activityItem.person.href}
-                            className="font-medium text-gray-900"
-                          >
-                            {activityItem.person.name}
-                          </a>{" "}
-                          assigned{" "}
-                          <a
-                            href={activityItem.assigned.href}
-                            className="font-medium text-gray-900"
-                          >
-                            {activityItem.assigned.name}
-                          </a>{" "}
-                          <span className="whitespace-nowrap">
-                            {activityItem.date}
-                          </span>
-                        </div>
-                      </div>
-                    </>
-                  ) : activityItem.type === "tags" ? (
-                    <>
-                      <div>
-                        <div className="relative px-1">
-                          <div className="h-8 w-8 bg-gray-100 rounded-full ring-8 ring-white flex items-center justify-center">
-                            <TagIcon
-                              className="h-5 w-5 text-gray-500"
-                              aria-hidden="true"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                      <div className="min-w-0 flex-1 py-0">
-                        <div className="text-sm leading-8 text-gray-500">
-                          <span className="mr-0.5">
-                            <a
-                              href={activityItem.person.href}
-                              className="font-medium text-gray-900"
-                            >
-                              {activityItem.person.name}
-                            </a>{" "}
-                            added tags
-                          </span>{" "}
-                          <span className="mr-0.5">
-                            {activityItem.tags.map((tag) => (
-                              <Fragment key={tag.name}>
-                                <a
-                                  href={tag.href}
-                                  className="relative inline-flex items-center rounded-full border border-gray-300 px-3 py-0.5 text-sm"
-                                >
-                                  <span className="absolute flex-shrink-0 flex items-center justify-center">
-                                    <span
-                                      className={classNames(
-                                        tag.color,
-                                        "h-1.5 w-1.5 rounded-full"
-                                      )}
-                                      aria-hidden="true"
-                                    />
-                                  </span>
-                                  <span className="ml-3.5 font-medium text-gray-900">
-                                    {tag.name}
-                                  </span>
-                                </a>{" "}
-                              </Fragment>
-                            ))}
-                          </span>
-                          <span className="whitespace-nowrap">
-                            {activityItem.date}
-                          </span>
-                        </div>
-                      </div>
-                    </>
-                  ) : null}
+                    className={classNames(
+                      event.iconBackground,
+                      "h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white"
+                    )}
+                  >
+                    {event.icon}
+                  </span>
+                </div>
+                <div className="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
+                  <div>
+                    <p className="text-sm text-gray-500">
+                      {event.content}{" "}
+                      <a
+                        href={event.href}
+                        className="font-medium text-gray-900"
+                      >
+                        {event.target}
+                      </a>
+                    </p>
+                  </div>
+                  <div className="text-right text-sm whitespace-nowrap text-gray-500">
+                    <time dateTime={event.datetime}>{event.date}</time>
+                  </div>
                 </div>
               </div>
-            </li>
-          ))}
-        </ul>
-      </div>
+            </div>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

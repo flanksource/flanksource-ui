@@ -1,0 +1,28 @@
+.topology-card.unhealthy .topology-card-header {
+  --tw-border-opacity: 1;
+  border-top-width: 6px;
+  border-color: rgba(239, 151, 138, var(--tw-border-opacity));
+}
+
+.topology-card.warning {
+  border-top: 2px orange solid;
+  --tw-border-opacity: 1;
+  border-top-width: 6px;
+  border-color: rgba(239, 151, 138, var(--tw-border-opacity));
+}
+
+.topology-card-small {
+  width: 198px
+}
+
+.topology-card-medium {
+  width: 258px
+}
+
+.topology-card-large {
+  width: 356px
+}
+
+.topology-card-extra-large {
+  width: 554px
+}

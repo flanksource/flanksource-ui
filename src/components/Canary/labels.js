@@ -66,12 +66,10 @@ export function filterChecksByLabels(checks, labelFilters) {
   const excludedLabels = labelFilters.exclude;
   const includedLabels = labelFilters.include;
 
+  if (excludedLabels.length === 0 && includedLabels.length === 0) {
+    return checks;
+  }
   const filtered = checks.reduce((acc, check) => {
-    if (excludedLabels.length === 0 && includedLabels.length === 0) {
-      acc[check.key] = check;
-      return acc;
-    }
-
     if ("labels" in check === false && includedLabels.length > 0) {
       // "labels: null" cannot be included
       return acc;
@@ -79,7 +77,7 @@ export function filterChecksByLabels(checks, labelFilters) {
 
     if ("labels" in check === false && includedLabels.length === 0) {
       // "labels: null" cannot be excluded
-      acc[check.key] = check;
+      acc[check.id] = check;
       return acc;
     }
 
@@ -89,7 +87,7 @@ export function filterChecksByLabels(checks, labelFilters) {
       includedLabels.length === 0
     ) {
       // "labels: {}" cannot be excluded
-      acc[check.key] = check;
+      acc[check.id] = check;
       return acc;
     }
 
@@ -128,14 +126,14 @@ export function filterChecksByLabels(checks, labelFilters) {
         { hasExclusion: false, hasInclusion: false }
       );
       if (hasInclusion && hasExclusion === false) {
-        acc[check.key] = check;
+        acc[check.id] = check;
       }
       if (includedLabels.length === 0 && hasExclusion === false) {
-        acc[check.key] = check;
+        acc[check.id] = check;
       }
     }
 
-    return acc;
+    return Object.values(acc);
   }, {});
   return filtered;
 }
@@ -155,3 +153,36 @@ export function getFilteredLabelsByChecks(checks, allLabels) {
   });
   return checkLabels;
 }
+
+export const separateLabelsByBooleanType = (labelList) => {
+  const boolean = [];
+  const nonBoolean = [];
+  labelList.forEach((label) => {
+    const v = label.value;
+    if (typeof v === "boolean" || v === "true" || v === "false") {
+      boolean.push(label);
+    } else {
+      nonBoolean.push(label);
+    }
+  });
+  return [boolean, nonBoolean];
+};
+
+export const getConciseLabelState = (labelState) => {
+  const conciseLabelState = Object.entries(labelState).reduce((acc, [k, v]) => {
+    if (v !== 0) {
+      acc[k] = v;
+    }
+    return acc;
+  }, {});
+  return conciseLabelState;
+};
+
+export const groupLabelsByKey = (labels) => {
+  const result = {};
+  labels.forEach((label) => {
+    const existing = result[label.key] || [];
+    result[label.key] = [...existing, label];
+  });
+  return result;
+};

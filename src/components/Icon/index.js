@@ -1,10 +1,18 @@
+import React from "react";
+import clsx from "clsx";
 import { Icons } from "../../icons";
 
 export function Icon({ size = "sm", name, className, alt = "", ...props }) {
   let iconClassName;
   switch (size) {
+    case "2xs":
+      iconClassName = "h-3 w-3";
+      break;
+    case "2xsi":
+      iconClassName = "h-3.5 w-3.5";
+      break;
     case "xs":
-      iconClassName = "h-4 w-4";
+      iconClassName = "h-3 w-3";
       break;
     case "sm":
       iconClassName = "h-4 w-4";
@@ -45,7 +53,6 @@ export function Icon({ size = "sm", name, className, alt = "", ...props }) {
 
   return <>{props.icon ? <props.icon className={iconClassName} /> : null}</>;
 }
-
 export function Avatar({ url, alt = "" }) {
   return (
     <img

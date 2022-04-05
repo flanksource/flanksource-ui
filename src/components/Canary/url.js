@@ -1,3 +1,4 @@
+import history from "history/browser";
 import { isPlainObject } from "../../lib/isPlainObject";
 
 const cleaner = (key, value) =>
@@ -26,3 +27,10 @@ export function decodeUrlSearchParams(url) {
   }
   return decoded;
 }
+
+// updates provided params, while retaining existing params.
+export const updateParams = (params) => {
+  const decoded = decodeUrlSearchParams(window.location.search);
+  const encoded = encodeObjectToUrlSearchParams({ ...decoded, ...params });
+  history.push(`${window.location.pathname}?${encoded}`);
+};
