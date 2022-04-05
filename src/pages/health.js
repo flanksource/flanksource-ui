@@ -26,7 +26,6 @@ import {
 } from "../components/Canary/labels";
 import { TristateToggle } from "../components/TristateToggle";
 import mixins from "../utils/mixins.module.css";
-import { Button } from "../components/Button";
 
 const getSearchParams = () => getParamsFromURL(window.location.search);
 
@@ -37,7 +36,9 @@ export function HealthPage({ url }) {
   }, []);
 
   const [checks, setChecks] = useState([]);
+  // eslint-disable-next-line no-unused-vars
   const [isLoading, setIsLoading] = useState(true);
+  // eslint-disable-next-line no-unused-vars
   const [lastUpdated, setLastUpdated] = useState("");
   const [filteredLabels, setFilteredLabels] = useState();
 

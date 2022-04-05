@@ -80,12 +80,6 @@ export function Placeholder({ text }) {
 
 export function App() {
   const [user, setUser] = useState();
-  const [toasts, setToasts] = useState([]);
-
-  const toast = (title, message) => {
-    setToasts([{ title, message }]);
-    setTimeout(() => setToasts([]), 5000);
-  };
 
   useEffect(() => {
     getUser()

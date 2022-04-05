@@ -13,6 +13,8 @@ export function TopologyPage() {
   // const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [topology, setTopology] = useState(null);
+
+  // eslint-disable-next-line no-unused-vars
   const [searchParams, setSearchParams] = useSearchParams();
   const [root, setRoot] = useState(null);
   const { id } = useParams();
@@ -40,6 +42,7 @@ export function TopologyPage() {
           (i) => (i.name != null || i.title != null) && i.type !== "summary"
         );
         setTopology(topology);
+        return null;
       })
       .catch((e) => {
         setIsLoading(false);
@@ -61,7 +64,9 @@ export function TopologyPage() {
     <SearchLayout
       title={
         <div className="flex text-xl text-gray-400  ">
-          <Link to="/topology" className="hover:text-gray-500 ">Topology</Link>
+          <Link to="/topology" className="hover:text-gray-500 ">
+            Topology
+          </Link>
           <TopologyBreadcrumbs topology={root} depth={3} />
         </div>
       }

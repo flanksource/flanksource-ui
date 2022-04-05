@@ -29,12 +29,10 @@ export const HypothesisNode = (props) => {
     setCreateHypothesisModalIsOpen(true);
   };
 
-  const isParent = !!node.children?.length;
-
   return (
     <div>
       {isRoot && (
-        <div className="flex items-center text-base font-semibold mb-6 mb-5">
+        <div className="flex items-center text-base font-semibold mb-5">
           <h2 className="text-dark-gray mr-3 text-2xl">Action plan</h2>
           <button
             type="button"
@@ -65,15 +63,15 @@ export const HypothesisNode = (props) => {
             className="mb-2.5"
             {...(type === "root"
               ? {
-                title: "Add new issue",
-                noResultsTitle: "No issues created yet"
-              }
+                  title: "Add new issue",
+                  noResultsTitle: "No issues created yet"
+                }
               : {})}
             {...(type === "factor"
               ? {
-                title: "Add new potential solution",
-                noResultsTitle: "No potential solutions created yet"
-              }
+                  title: "Add new potential solution",
+                  noResultsTitle: "No potential solutions created yet"
+                }
               : {})}
           />
         </div>
