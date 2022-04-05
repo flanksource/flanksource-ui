@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form";
 import { BsAlarm, BsApp, BsTable } from "react-icons/bs";
 import { RiLayoutGridLine } from "react-icons/ri";
 import { Dropdown } from "../../components/Dropdown";
-import { GroupByDropdown } from "../../components/Dropdown/GroupByDropdown";
 import { SearchLayout } from "../../components/Layout";
 
 const exampleItems = {

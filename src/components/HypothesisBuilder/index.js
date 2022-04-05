@@ -20,7 +20,7 @@ export function HypothesisBuilder({
   const [tree, setTree] = useState(null);
 
   useEffect(() => {
-    setTree(loadedTree || newTree);
+    setTree(loadedTree);
   }, [loadedTree]);
   return (
     <div {...rest}>
