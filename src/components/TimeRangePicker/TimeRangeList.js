@@ -1,17 +1,13 @@
 import PropTypes from "prop-types";
 import { v4 as uuidv4 } from "uuid";
 import clsx from "clsx";
-import dayjs from "dayjs";
 import { rangeOptions } from "./rangeOptions";
-import { getIntervalData } from "./helpers";
+import { storage } from "./helpers";
 
 export const TimeRangeList = ({
   closePicker,
-  rangeDisplayValue,
-  setRangeDisplayValue,
-  setRangeValue,
-  setInputValue,
-  setCalendarValue,
+  currentRange,
+  changeRangeValue,
   setShowCalendar
 }) => {
   const isChecked = (option, value) => {
@@ -24,21 +20,13 @@ export const TimeRangeList = ({
 
   const setOption = (option) => {
     const { from, to } = option;
-    setRangeDisplayValue({
+    changeRangeValue({
       from,
-      to,
-      display: option.display
+      to
     });
-    setInputValue((prevState) => ({ ...prevState, from, to }));
-    setRangeValue({
-      from: dayjs()
-        .subtract(...getIntervalData(option.from))
-        .format(),
-      to: dayjs().format()
-    });
+    storage.setItem("currentRange", { from, to });
     closePicker();
     setShowCalendar(false);
-    setCalendarValue(null);
   };
 
   return (
@@ -52,7 +40,7 @@ export const TimeRangeList = ({
             key={option.display}
             className={clsx(
               "option-item hover:bg-blue-200 flex justify-between items-center w-full",
-              { active: isChecked(option, rangeDisplayValue) }
+              { active: isChecked(option, currentRange) }
             )}
           >
             <label htmlFor={id} className="cursor-pointer py-1.5 px-2">
@@ -61,7 +49,7 @@ export const TimeRangeList = ({
             <input
               type="checkbox"
               className="opacity-0 cursor-pointer"
-              checked={isChecked(option, rangeDisplayValue)}
+              checked={isChecked(option, currentRange)}
               onChange={() => {}}
               name="range-checkbox"
               id={id}
@@ -75,20 +63,14 @@ export const TimeRangeList = ({
 
 TimeRangeList.propTypes = {
   closePicker: PropTypes.func,
-  rangeDisplayValue: PropTypes.shape({}),
-  setRangeDisplayValue: PropTypes.func,
-  setRangeValue: PropTypes.func,
-  setInputValue: PropTypes.func,
-  setCalendarValue: PropTypes.func,
+  currentRange: PropTypes.shape({}),
+  changeRangeValue: PropTypes.func,
   setShowCalendar: PropTypes.func
 };
 
 TimeRangeList.defaultProps = {
   closePicker: () => {},
-  rangeDisplayValue: {},
-  setRangeDisplayValue: () => {},
-  setRangeValue: () => {},
-  setInputValue: () => {},
-  setCalendarValue: () => {},
+  currentRange: {},
+  changeRangeValue: () => {},
   setShowCalendar: () => {}
 };

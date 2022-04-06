@@ -1,31 +1,52 @@
 import PropTypes from "prop-types";
 import Calendar from "react-calendar";
 import clsx from "clsx";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { GrClose } from "react-icons/gr";
 import { FaRegCalendarAlt, FaAngleLeft, FaAngleRight } from "react-icons/fa";
 import dayjs from "dayjs";
 import { TimeRangeList } from "./TimeRangeList";
 import "./index.css";
-import { defaultValue } from "./rangeOptions";
-import { createIntervalName, getIntervalData } from "./helpers";
+import { storage, createValueForInput, convertRangeValue } from "./helpers";
+import { RecentlyRanges } from "./RecentlyRanges";
+import { displayTimeFormat } from "./rangeOptions";
 
 export const TimeRangePickerBody = ({
   isOpen,
   closePicker,
-  rangeDisplayValue,
-  setRangeDisplayValue,
-  setRangeValue
+  currentRange,
+  changeRangeValue
 }) => {
-  const displayTimeFormat = "YYYY-MM-DD HH:mm";
+  const [recentRanges, setRecentRanges] = useState(
+    storage.getItem("timePickerRanges") || []
+  );
   const [showCalendar, setShowCalendar] = useState(false);
   const [calendarValue, setCalendarValue] = useState(null);
   const [inputValue, setInputValue] = useState({
-    from: defaultValue.from,
-    to: defaultValue.to
+    from: createValueForInput(currentRange.from),
+    to: createValueForInput(currentRange.to)
   });
 
-  const onChangeRange = (value) => {
+  const changeRecentRangesList = (range) => {
+    if (
+      !recentRanges.find(
+        (el) =>
+          dayjs(el.from).toISOString() === dayjs(range.from).toISOString() &&
+          dayjs(el.to).toISOString() === dayjs(range.to).toISOString()
+      )
+    ) {
+      let newRanges;
+      if (recentRanges.length < 4) {
+        newRanges = [range, ...recentRanges];
+      } else {
+        newRanges = [range, ...recentRanges.slice(0, 3)];
+      }
+      setRecentRanges([...newRanges]);
+      storage.setItem("timePickerRanges", newRanges);
+    }
+  };
+
+  const onChangeCalendarRange = (value) => {
     const from = dayjs(value[0]).format(displayTimeFormat);
     const to = dayjs(value[1]).format(displayTimeFormat);
 
@@ -33,58 +54,36 @@ export const TimeRangePickerBody = ({
     setInputValue((prevState) => ({ ...prevState, from, to }));
   };
 
-  const applyTimeRange = () => {
-    if (inputValue.from.includes("now") || inputValue.to.includes("now")) {
-      let from;
-      let to;
-      let display;
-
-      if (inputValue.from === "now") {
-        from = dayjs().format();
-      } else {
-        from = dayjs()
-          .subtract(...getIntervalData(inputValue.from))
-          .format();
-      }
-
-      if (inputValue.to === "now") {
-        to = dayjs().format();
-        display = createIntervalName(...getIntervalData(inputValue.from));
-      } else {
-        to = dayjs()
-          .subtract(...getIntervalData(inputValue.to))
-          .format();
-        display = `${dayjs(from).format(displayTimeFormat)} - ${dayjs()
-          .subtract(...getIntervalData(inputValue.to))
-          .format(displayTimeFormat)}`;
-      }
-
-      setRangeDisplayValue({
-        from: inputValue.from,
-        to: inputValue.to,
-        display
-      });
-      setRangeValue({
-        from,
-        to
-      });
-    } else {
-      const from = dayjs(inputValue.from).format(displayTimeFormat);
-      const to = dayjs(inputValue.to).format(displayTimeFormat);
-      setRangeDisplayValue({
-        from,
-        to,
-        display: `${from} to ${to}`
-      });
-      setRangeValue({
-        from: dayjs(inputValue.from).format(),
-        to: dayjs(inputValue.to).format()
+  const applyTimeRange = (range) => {
+    changeRangeValue(range);
+    if (dayjs(range.from).isValid() && dayjs(range.to).isValid()) {
+      changeRecentRangesList({
+        from: dayjs(range.from).toISOString(),
+        to: dayjs(range.to).toISOString()
       });
     }
-
+    storage.setItem("currentRange", range);
     setShowCalendar(false);
     closePicker();
   };
+
+  useEffect(() => {
+    if (
+      dayjs(currentRange.from).isValid() &&
+      dayjs(currentRange.to).isValid()
+    ) {
+      setCalendarValue([
+        convertRangeValue(currentRange.from, "jsDate"),
+        convertRangeValue(currentRange.to, "jsDate")
+      ]);
+    } else {
+      setCalendarValue(null);
+    }
+    setInputValue({
+      from: createValueForInput(currentRange.from),
+      to: createValueForInput(currentRange.to)
+    });
+  }, [currentRange]);
 
   return (
     <div
@@ -122,87 +121,87 @@ export const TimeRangePickerBody = ({
             className="react-calendar-custom"
             tileClassName="react-calendar-custom__tile"
             value={calendarValue}
-            onChange={onChangeRange}
+            onChange={onChangeCalendarRange}
           />
         </div>
       </div>
-      <div className="p-3 border-r border-gray-300 w-4/6">
-        <div className="font-medium">Absolute time range</div>
-        <div>
-          <div className="mb-6">
-            <div className="my-3">
-              <div className="text-sm mb-1">From</div>
-              <div className="flex">
-                <div>
-                  <input
-                    value={inputValue.from}
-                    onChange={(e) =>
-                      setInputValue((prevState) => ({
-                        ...prevState,
-                        from: e.target.value
-                      }))
-                    }
-                    className="px-1 py-0.5 border border-gray-300 rounded-sm focus:border-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-300"
-                  />
+      <div className="border-r border-gray-300 w-4/6">
+        <div className="p-3">
+          <div className="font-medium">Absolute time range</div>
+          <div>
+            <div className="mb-5">
+              <div className="my-3">
+                <div className="text-sm mb-1">From</div>
+                <div className="flex">
+                  <div>
+                    <input
+                      value={inputValue.from}
+                      onChange={(e) =>
+                        setInputValue((prevState) => ({
+                          ...prevState,
+                          from: e.target.value
+                        }))
+                      }
+                      className="px-1 py-0.5 border border-gray-300 rounded-sm focus:border-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                    />
+                  </div>
+                  <div className="flex bg-gray-200 hover:bg-gray-300 ml-0.5 rounded-sm">
+                    <button
+                      type="button"
+                      onClick={() => setShowCalendar((prevState) => !prevState)}
+                      className="px-1 mx-1"
+                    >
+                      <FaRegCalendarAlt color="#303030" />
+                    </button>
+                  </div>
                 </div>
-                <div className="flex bg-gray-200 hover:bg-gray-300 ml-0.5 rounded-sm">
-                  <button
-                    type="button"
-                    onClick={() => setShowCalendar((prevState) => !prevState)}
-                    className="px-1 mx-1"
-                  >
-                    <FaRegCalendarAlt color="#303030" />
-                  </button>
+              </div>
+              <div>
+                <div className="text-sm mb-1">To</div>
+                <div className="flex">
+                  <div>
+                    <input
+                      value={inputValue.to}
+                      onChange={(e) =>
+                        setInputValue((prevState) => ({
+                          ...prevState,
+                          to: e.target.value
+                        }))
+                      }
+                      className="px-1 py-0.5 border border-gray-300 rounded-sm focus:border-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                    />
+                  </div>
+                  <div className="flex bg-gray-200 hover:bg-gray-300 ml-0.5 rounded-sm">
+                    <button
+                      type="button"
+                      onClick={() => setShowCalendar((prevState) => !prevState)}
+                      className="px-1 mx-1"
+                    >
+                      <FaRegCalendarAlt color="#303030" />
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
-            <div>
-              <div className="text-sm mb-1">To</div>
-              <div className="flex">
-                <div>
-                  <input
-                    value={inputValue.to}
-                    onChange={(e) =>
-                      setInputValue((prevState) => ({
-                        ...prevState,
-                        to: e.target.value
-                      }))
-                    }
-                    className="px-1 py-0.5 border border-gray-300 rounded-sm focus:border-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-300"
-                  />
-                </div>
-                <div className="flex bg-gray-200 hover:bg-gray-300 ml-0.5 rounded-sm">
-                  <button
-                    type="button"
-                    onClick={() => setShowCalendar((prevState) => !prevState)}
-                    className="px-1 mx-1"
-                  >
-                    <FaRegCalendarAlt color="#303030" />
-                  </button>
-                </div>
-              </div>
-            </div>
+            <button
+              onClick={() => applyTimeRange(inputValue)}
+              type="button"
+              className="block font-medium bg-blue-200 hover:bg-blue-300 rounded-sm px-2.5 py-1.5 transition duration-200 ease"
+            >
+              Apply time range
+            </button>
           </div>
-          <button
-            onClick={applyTimeRange}
-            type="button"
-            className="block font-medium bg-blue-200 hover:bg-blue-300 rounded-sm px-2.5 py-1.5 transition duration-200 ease"
-          >
-            Apply time range
-          </button>
         </div>
-        {/* <div className="font-medium mt-2 mb-1">
-          Recently used absolute ranges
-        </div> */}
+        <RecentlyRanges
+          recentRanges={recentRanges}
+          applyTimeRange={applyTimeRange}
+        />
       </div>
       <div className="w-2/6 overflow-y-auto">
         <TimeRangeList
           closePicker={closePicker}
-          rangeDisplayValue={rangeDisplayValue}
-          setRangeDisplayValue={setRangeDisplayValue}
-          setRangeValue={setRangeValue}
-          setInputValue={setInputValue}
-          setCalendarValue={setCalendarValue}
+          currentRange={currentRange}
+          changeRangeValue={changeRangeValue}
           setShowCalendar={setShowCalendar}
         />
       </div>
@@ -213,15 +212,13 @@ export const TimeRangePickerBody = ({
 TimeRangePickerBody.propTypes = {
   isOpen: PropTypes.bool,
   closePicker: PropTypes.func,
-  rangeDisplayValue: PropTypes.shape({}),
-  setRangeDisplayValue: PropTypes.func,
-  setRangeValue: PropTypes.func
+  currentRange: PropTypes.shape({}),
+  changeRangeValue: PropTypes.func
 };
 
 TimeRangePickerBody.defaultProps = {
   isOpen: false,
   closePicker: () => {},
-  rangeDisplayValue: {},
-  setRangeDisplayValue: () => {},
-  setRangeValue: () => {}
+  currentRange: {},
+  changeRangeValue: () => {}
 };
