@@ -4,7 +4,7 @@ import { SearchLayout } from "../components/Layout";
 import { TimeRange, timeRanges } from "../components/Dropdown/TimeRange";
 import { DropdownStandaloneWrapper } from "../components/Dropdown/StandaloneWrapper";
 import { CanarySearchBar } from "../components/Canary/CanarySearchBar";
-import { CanaryStandalone } from "../components/CanaryStandalone";
+import { Canary } from "../components/Canary";
 import { updateParams } from "../components/Canary/url";
 import { getParamsFromURL } from "../components/Canary/utils";
 
@@ -47,12 +47,7 @@ export function HealthPage({ url }) {
       }
       contentClass="p-0"
     >
-      <CanaryStandalone
-        url={url}
-        topLayoutOffset={64}
-        hideSearch
-        hideTimeRange
-      />
+      <Canary url={url} topLayoutOffset={64} hideSearch hideTimeRange />
     </SearchLayout>
   );
 }
