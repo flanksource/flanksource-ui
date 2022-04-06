@@ -43,7 +43,11 @@ export const IncidentDetails = ({
     )
   );
 
-  const { control, getValues, watch } = useForm({
+  const {
+    control,
+    // getValues,
+    watch
+  } = useForm({
     defaultValues: {
       tracking: "123456",
       created_at: incident.created_at,

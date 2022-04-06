@@ -1,18 +1,9 @@
-import cx from "clsx";
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import {
-  AiFillPlusCircle,
-  AiOutlineStop,
-  AiOutlineQuestion
-} from "react-icons/ai/";
-import { BsFilter } from "react-icons/bs/";
+import { AiFillPlusCircle, AiOutlineQuestion } from "react-icons/ai/";
 import { useForm } from "react-hook-form";
 import { debounce } from "lodash";
-import {
-  getAllIncident,
-  getIncidentsWithParams
-} from "../../api/services/incident";
+import { getIncidentsWithParams } from "../../api/services/incident";
 import { IncidentCreate } from "../../components/Incidents/IncidentCreate";
 import { IncidentList } from "../../components/Incidents/IncidentList";
 import { Modal } from "../../components/Modal";
@@ -20,7 +11,6 @@ import { SearchLayout } from "../../components/Layout";
 import { Loading } from "../../components/Loading";
 import { Dropdown } from "../../components/Dropdown";
 import { MultiSelectDropdown } from "../../components/MultiSelectDropdown";
-import { DropdownMenu } from "../../components/DropdownMenu";
 import { severityItems, statusItems } from "../../components/Incidents/data";
 import { getPersons } from "../../api/services/users";
 
@@ -102,7 +92,6 @@ export function IncidentListPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [incidents, setIncidents] = useState([]);
   const [incidentModalIsOpen, setIncidentModalIsOpen] = useState(false);
-  const [enabled, setEnabled] = useState(false);
   const [ownerSelections, setOwnerSelections] = useState([]);
 
   const watchSeverity = watch("severity");
@@ -124,26 +113,34 @@ export function IncidentListPage() {
   }, []);
 
   const loadIncidents = useRef(
-    debounce((severity, status, owner, labels) => {
-      // TODO: integrate labels
-      setIsLoading(true);
-      const params = {
+    debounce(
+      (
         severity,
         status,
-        created_by: owner
-      };
-      Object.entries(params).forEach(([key, value]) => {
-        if (value === "all") {
-          delete params[key];
-        } else {
-          params[key] = `eq.${value}`;
-        }
-      });
-      getIncidentsWithParams(params).then((res) => {
-        setIncidents(res.data);
-        setIsLoading(false);
-      });
-    }, 100)
+        owner
+        // labels
+      ) => {
+        // TODO: integrate labels
+        setIsLoading(true);
+        const params = {
+          severity,
+          status,
+          created_by: owner
+        };
+        Object.entries(params).forEach(([key, value]) => {
+          if (value === "all") {
+            delete params[key];
+          } else {
+            params[key] = `eq.${value}`;
+          }
+        });
+        getIncidentsWithParams(params).then((res) => {
+          setIncidents(res.data);
+          setIsLoading(false);
+        });
+      },
+      100
+    )
   ).current;
 
   useEffect(() => {

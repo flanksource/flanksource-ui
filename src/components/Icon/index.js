@@ -1,5 +1,4 @@
 import React from "react";
-import clsx from "clsx";
 import { Icons } from "../../icons";
 
 export function Icon({ size = "sm", name, className, alt = "", ...props }) {
