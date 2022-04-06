@@ -1,9 +1,9 @@
-import { Canary } from "../components/Canary";
+import { CanaryStandalone } from "../components/CanaryStandalone";
 
-export function CanaryPage({ url = "/api" }) {
+export function CanaryPage({ url = "/canary/api", ...rest }) {
   return (
-    <div className="max-w-screen-xl mx-auto flex justify-center">
-      <Canary url={url} />
+    <div className="border" {...rest}>
+      <CanaryStandalone url={url} topLayoutHeight={0} />
     </div>
   );
 }
