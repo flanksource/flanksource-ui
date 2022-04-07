@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useRef } from "react";
 import AsyncSelect from "react-select/async";
 import { components } from "react-select";
 import { debounce } from "lodash";
@@ -15,7 +15,7 @@ const prepareTopologies = (topologies) =>
 const ValueContainer = ({ children, ...props }) => {
   const { isMulti } = props;
   const { inputValue } = props?.selectProps || {};
-  const { icon, status } = props?.selectProps?.value || {};
+  const { icon } = props?.selectProps?.value || {};
 
   return (
     <components.ValueContainer {...props}>
@@ -24,9 +24,6 @@ const ValueContainer = ({ children, ...props }) => {
           <Icon name={icon} size="xl" className="mr-1" />
         )}
         {children}
-        {!isMulti && !inputValue && status && (
-          <span className="bg-blue-200 px-2 rounded">{status}</span>
-        )}
       </div>
     </components.ValueContainer>
   );
@@ -47,15 +44,12 @@ const Option = ({ children, ...props }) => {
 
 const MultiValueLabel = (props) => {
   const {
-    data: { icon, status }
+    data: { icon }
   } = props;
   return (
-    <div className="flex p-1 items-center">
+    <div className="flex px-1 items-center">
       <Icon name={icon} size="xl" />
       <components.MultiValueLabel {...props} />
-      <span className="bg-blue-200 px-2 rounded ml-1 font-light text-sm">
-        {status}
-      </span>
     </div>
   );
 };
@@ -67,19 +61,19 @@ export const TypologyDropdown = ({
   multiple,
   ...props
 }) => {
-  const handleSearch = useCallback(
+  const handleSearch = useRef(
     debounce((name, callback) => {
       onSearch(name).then((topologies) => {
         callback(prepareTopologies(topologies));
       });
-    }, debounceTime),
-    [onSearch]
-  );
+    }, debounceTime)
+  ).current;
 
   return (
     <AsyncSelect
       cacheOptions
       isClearable
+      defaultOptions
       loadOptions={handleSearch}
       placeholder="Input topology name..."
       components={{ ValueContainer, Option, MultiValueLabel }}
