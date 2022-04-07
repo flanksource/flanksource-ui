@@ -1,8 +1,12 @@
 import dayjs from "dayjs";
 import { displayTimeFormat } from "./rangeOptions";
 
+const rangeRegexp = /^now-\d{1,4}[mhdwMy]$/;
+
 export const getIntervalData = (interval) => {
-  if (interval === "now" || !interval.includes("now-")) return [0, "h"];
+  if (interval === "now") return [0, "h"];
+  if (typeof interval !== "string" || !rangeRegexp.test(interval))
+    return "invalid interval";
   const data = interval.replace("now-", "");
   const intervalName = data.slice(-1);
   const intervalTime = Number(data.slice(0, -1));
@@ -25,7 +29,12 @@ export const createIntervalName = (interval, letter) => {
 };
 
 export const convertRangeValue = (value, format = "jsDate") => {
-  if (dayjs(value).isValid()) {
+  if (
+    (typeof value === "string" &&
+      dayjs(value).isValid() &&
+      !value.includes("now-")) ||
+    (typeof value !== "string" && dayjs(value).isValid())
+  ) {
     return format === "jsDate"
       ? dayjs(value).toDate()
       : format === "iso"

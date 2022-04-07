@@ -13,7 +13,9 @@ export const TimeRangePicker = ({ onChange }) => {
   const [currentRange, setCurrentRange] = useState(
     storage.getItem("currentRange") || defaultRange
   );
-  const [rangeDisplayValue, setRangeDisplayValue] = useState("");
+  const [rangeDisplayValue, setRangeDisplayValue] = useState(
+    createDisplayValue(currentRange)
+  );
 
   const changeRangeValue = (range) => {
     const { from, to } = range;

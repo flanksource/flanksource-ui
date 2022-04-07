@@ -4,6 +4,7 @@ import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { GrClose } from "react-icons/gr";
 import { FaRegCalendarAlt, FaAngleLeft, FaAngleRight } from "react-icons/fa";
+import { FiAlertTriangle } from "react-icons/fi";
 import dayjs from "dayjs";
 import { TimeRangeList } from "./TimeRangeList";
 import "./index.css";
@@ -26,6 +27,8 @@ export const TimeRangePickerBody = ({
     from: createValueForInput(currentRange.from),
     to: createValueForInput(currentRange.to)
   });
+  const [errorInputFrom, setErrorInputFrom] = useState(null);
+  const [errorInputTo, setErrorInputTo] = useState(null);
 
   const changeRecentRangesList = (range) => {
     if (
@@ -52,6 +55,8 @@ export const TimeRangePickerBody = ({
 
     setCalendarValue(value);
     setInputValue((prevState) => ({ ...prevState, from, to }));
+    setErrorInputFrom(null);
+    setErrorInputTo(null);
   };
 
   const applyTimeRange = (range) => {
@@ -65,6 +70,34 @@ export const TimeRangePickerBody = ({
     storage.setItem("currentRange", range);
     setShowCalendar(false);
     closePicker();
+  };
+
+  const confirmValidRange = (range) => {
+    if (!errorInputFrom && !errorInputTo) {
+      applyTimeRange(range);
+    }
+  };
+
+  const validateInputRange = (range) => {
+    const from = convertRangeValue(range.from, "jsDate");
+    const to = convertRangeValue(range.to, "jsDate");
+    if (!dayjs(from).isValid()) {
+      setErrorInputFrom("Invaid date!");
+    } else {
+      setErrorInputFrom(null);
+    }
+    if (!dayjs(to).isValid()) {
+      setErrorInputTo("Invaid date!");
+    } else {
+      setErrorInputTo(null);
+    }
+    if (dayjs(from).isValid() && dayjs(to).isValid()) {
+      if (from > to) {
+        setErrorInputFrom('"From" can\'t be after "To"');
+      } else {
+        setErrorInputFrom(null);
+      }
+    }
   };
 
   useEffect(() => {
@@ -83,6 +116,8 @@ export const TimeRangePickerBody = ({
       from: createValueForInput(currentRange.from),
       to: createValueForInput(currentRange.to)
     });
+    setErrorInputFrom(null);
+    setErrorInputTo(null);
   }, [currentRange]);
 
   return (
@@ -125,66 +160,100 @@ export const TimeRangePickerBody = ({
           />
         </div>
       </div>
-      <div className="border-r border-gray-300 w-4/6">
+      <div className="border-r border-gray-300 w-4/6 overflow-hidden">
         <div className="p-3">
           <div className="font-medium">Absolute time range</div>
           <div>
-            <div className="mb-5">
-              <div className="my-3">
+            <div className="range-inputs-container mb-5">
+              <div className="range-input my-3">
                 <div className="text-sm mb-1">From</div>
-                <div className="flex">
-                  <div>
-                    <input
-                      value={inputValue.from}
-                      onChange={(e) =>
-                        setInputValue((prevState) => ({
-                          ...prevState,
-                          from: e.target.value
-                        }))
-                      }
-                      className="px-1 py-0.5 border border-gray-300 rounded-sm focus:border-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-300"
-                    />
+                <div className="input-range-box">
+                  <div className="flex">
+                    <div>
+                      <input
+                        value={inputValue.from}
+                        onChange={(e) => {
+                          const from = e.target.value;
+                          setInputValue((prevState) => ({
+                            ...prevState,
+                            from
+                          }));
+                          validateInputRange({ from, to: inputValue.to });
+                        }}
+                        onClick={() => setShowCalendar(false)}
+                        className={clsx(
+                          "px-1 py-0.5 border border-gray-300 rounded-sm focus:border-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-300",
+                          { "border-red-300": errorInputFrom }
+                        )}
+                      />
+                    </div>
+                    <div className="flex bg-gray-200 hover:bg-gray-300 ml-0.5 rounded-sm">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setShowCalendar((prevState) => !prevState);
+                        }}
+                        className="px-1 mx-1"
+                      >
+                        <FaRegCalendarAlt color="#303030" />
+                      </button>
+                    </div>
                   </div>
-                  <div className="flex bg-gray-200 hover:bg-gray-300 ml-0.5 rounded-sm">
-                    <button
-                      type="button"
-                      onClick={() => setShowCalendar((prevState) => !prevState)}
-                      className="px-1 mx-1"
-                    >
-                      <FaRegCalendarAlt color="#303030" />
-                    </button>
-                  </div>
+                  {errorInputFrom && (
+                    <div className="error-range-box">
+                      <div className="mt-0.5 mr-1">
+                        <FiAlertTriangle />
+                      </div>
+                      <div>{errorInputFrom}</div>
+                    </div>
+                  )}
                 </div>
               </div>
-              <div>
+              <div className="range-input my-3">
                 <div className="text-sm mb-1">To</div>
                 <div className="flex">
                   <div>
                     <input
                       value={inputValue.to}
-                      onChange={(e) =>
+                      onChange={(e) => {
+                        const to = e.target.value;
                         setInputValue((prevState) => ({
                           ...prevState,
-                          to: e.target.value
-                        }))
-                      }
-                      className="px-1 py-0.5 border border-gray-300 rounded-sm focus:border-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                          to
+                        }));
+                        validateInputRange({ from: inputValue.from, to });
+                      }}
+                      onClick={() => setShowCalendar(false)}
+                      className={clsx(
+                        "px-1 py-0.5 border border-gray-300 rounded-sm focus:border-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-300",
+                        { "border-red-300": errorInputTo }
+                      )}
                     />
                   </div>
                   <div className="flex bg-gray-200 hover:bg-gray-300 ml-0.5 rounded-sm">
                     <button
                       type="button"
-                      onClick={() => setShowCalendar((prevState) => !prevState)}
+                      onClick={() => {
+                        setShowCalendar((prevState) => !prevState);
+                      }}
                       className="px-1 mx-1"
                     >
                       <FaRegCalendarAlt color="#303030" />
                     </button>
                   </div>
                 </div>
+                {errorInputTo && (
+                  <div className="error-range-box">
+                    <div className="mt-0.5 mr-1">
+                      <FiAlertTriangle />
+                    </div>
+                    <div>{errorInputTo}</div>
+                  </div>
+                )}
               </div>
             </div>
             <button
-              onClick={() => applyTimeRange(inputValue)}
+              onClick={() => confirmValidRange(inputValue)}
               type="button"
               className="block font-medium bg-blue-200 hover:bg-blue-300 rounded-sm px-2.5 py-1.5 transition duration-200 ease"
             >
