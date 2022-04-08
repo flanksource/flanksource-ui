@@ -24,36 +24,6 @@ export function getLabelsFromState(labelState) {
   );
 }
 
-export const defaultGroupSelections = {
-  "no-group": {
-    id: "no-group",
-    name: "no-group",
-    icon: <ImUngroup />,
-    description: "No Grouping",
-    value: "no-group",
-    labelValue: null,
-    key: "no-group"
-  },
-  name: {
-    id: "name",
-    name: "name",
-    icon: <TiSortAlphabeticallyOutline />,
-    description: "Name",
-    value: "name",
-    labelValue: null,
-    key: "name"
-  },
-  description: {
-    id: "description",
-    name: "description",
-    icon: <AiOutlineAlignLeft />,
-    description: "Description",
-    value: "description",
-    labelValue: null,
-    key: "description"
-  }
-};
-
 // provide a list of group selections that includes (non-boolean) labels, given a list of checks.
 export function getLabelSelections(
   checks,
