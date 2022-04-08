@@ -111,8 +111,6 @@ import java from "./java.svg";
 import jmeter from "./jmeter.svg";
 import json from "./json.svg";
 import junit from "./junit.svg";
-import jwt from "./jwt";
-import copy from "./copy.svg";
 import jwt from "./jwt.svg";
 import k8s from "./k8s.svg";
 import kubernetes from "./kubernetes.svg";
@@ -138,8 +136,6 @@ import nodejs from "./nodejs.svg";
 import nodes from "./nodes.svg";
 import npm from "./npm.svg";
 import opa from "./opa.svg";
-import openid from "./openid";
-import copy from "./copy.svg";
 import openid from "./openid.svg";
 import openshift from "./openshift.svg";
 import oracle from "./oracle.svg";
@@ -310,8 +306,6 @@ export const Icons = {
 "json": json,
 "junit": junit,
 "jwt": jwt,
-"copy": copy,
-"jwt": jwt,
 "k8s": k8s,
 "kubernetes": kubernetes,
 "ldap": ldap,
@@ -336,8 +330,6 @@ export const Icons = {
 "nodes": nodes,
 "npm": npm,
 "opa": opa,
-"openid": openid,
-"copy": copy,
 "openid": openid,
 "openshift": openshift,
 "oracle": oracle,
