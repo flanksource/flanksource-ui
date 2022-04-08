@@ -59,23 +59,18 @@ export function MinimalCanary({
       <Modal
         open={selectedCheck != null}
         onClose={() => setSelectedCheck(null)}
-        containerClass="py-8"
-        cardClass="w-full h-full"
-        cardStyle={{
-          maxWidth: "1280px"
-        }}
-        contentClass="h-full px-8"
-        closeButtonStyle={{ padding: "2.25rem 2.25rem 0 0" }}
+        title={
+          <CheckTitle
+            check={checks?.find((o) => o?.id === selectedCheck?.id)}
+          />
+        }
+        size="medium"
         hideActions
       >
         <div
           className="flex flex-col h-full py-8"
           style={{ maxHeight: "calc(100vh - 4rem)" }}
         >
-          <CheckTitle
-            check={checks?.find((o) => o?.id === selectedCheck?.id)}
-            className="pb-4"
-          />
           <CheckDetails
             check={checks?.find((o) => o?.id === selectedCheck?.id)}
             // graphData={graphData}
