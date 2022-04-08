@@ -69,4 +69,7 @@ export const getTopology = async (params) => {
   });
 };
 
-export const getCanaries = async () => resolve(CanaryChecker.get("/api"));
+export const getCanaries = async (params) => {
+  const query = stringify(params);
+  return CanaryChecker.get(`/api?${query}`);
+};

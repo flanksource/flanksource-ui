@@ -7,6 +7,7 @@ import { CanaryCards } from "./card";
 import { CanaryTable } from "./table";
 import mixins from "../../utils/mixins.module.css";
 import { getParamsFromURL } from "./utils";
+import { getCanaries } from "../../api/services/topology";
 
 export function MinimalCanary({
   checks,
@@ -28,7 +29,12 @@ export function MinimalCanary({
   const [selectedCheck, setSelectedCheck] = useState(null);
 
   const handleCheckSelect = (check) => {
-    setSelectedCheck(check);
+    getCanaries({ check: check.id, includeMessages: true }).then((results) => {
+      if (results == null || results.data.checks.length === 0) {
+        return;
+      }
+      setSelectedCheck(results.data.checks[0]);
+    });
   };
 
   return (

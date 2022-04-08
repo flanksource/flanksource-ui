@@ -11,14 +11,6 @@ export const IncidentCommander = axios.create({
   }
 });
 
-IncidentCommander.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    toastError(error.response.data.message);
-    return Promise.reject(error);
-  }
-);
-
 export const Logs = axios.create({
   baseURL: "/apm/search",
   headers: {
@@ -45,3 +37,13 @@ export const Config = axios.create({
     "Content-Type": "application/json"
   }
 });
+
+for (const client of [IncidentCommander, Logs, CanaryChecker, Config]) {
+  client.interceptors.response.use(
+    (response) => response,
+    (error) => {
+      toastError(error.response.data.message);
+      return Promise.reject(error);
+    }
+  );
+}
