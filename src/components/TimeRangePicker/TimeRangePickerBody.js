@@ -55,8 +55,6 @@ export const TimeRangePickerBody = ({
 
     setCalendarValue(value);
     setInputValue((prevState) => ({ ...prevState, from, to }));
-    setErrorInputFrom(null);
-    setErrorInputTo(null);
   };
 
   const applyTimeRange = (range) => {
@@ -116,9 +114,11 @@ export const TimeRangePickerBody = ({
       from: createValueForInput(currentRange.from),
       to: createValueForInput(currentRange.to)
     });
-    setErrorInputFrom(null);
-    setErrorInputTo(null);
   }, [currentRange]);
+
+  useEffect(() => {
+    validateInputRange({ from: inputValue.from, to: inputValue.to });
+  }, [inputValue]);
 
   return (
     <div
@@ -172,14 +172,12 @@ export const TimeRangePickerBody = ({
                     <div>
                       <input
                         value={inputValue.from}
-                        onChange={(e) => {
-                          const from = e.target.value;
+                        onChange={(e) =>
                           setInputValue((prevState) => ({
                             ...prevState,
-                            from
-                          }));
-                          validateInputRange({ from, to: inputValue.to });
-                        }}
+                            from: e.target.value
+                          }))
+                        }
                         onClick={() => setShowCalendar(false)}
                         className={clsx(
                           "px-1 py-0.5 border border-gray-300 rounded-sm focus:border-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-300",
@@ -215,14 +213,12 @@ export const TimeRangePickerBody = ({
                   <div>
                     <input
                       value={inputValue.to}
-                      onChange={(e) => {
-                        const to = e.target.value;
+                      onChange={(e) =>
                         setInputValue((prevState) => ({
                           ...prevState,
-                          to
-                        }));
-                        validateInputRange({ from: inputValue.from, to });
-                      }}
+                          to: e.target.value
+                        }))
+                      }
                       onClick={() => setShowCalendar(false)}
                       className={clsx(
                         "px-1 py-0.5 border border-gray-300 rounded-sm focus:border-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-300",
