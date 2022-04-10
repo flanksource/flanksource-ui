@@ -14,7 +14,8 @@ import { TraceView } from "./components/Traces";
 import { AuthContext } from "./context";
 import { TopologyPage as ExamplesTopologyPage } from "./pages/Examples/Topology/topology-page";
 import {
-  ConfigPage,
+  ConfigDetailsPage,
+  ConfigListPage,
   IncidentCreatePage,
   IncidentDetailsPage,
   IncidentListPage,
@@ -131,7 +132,8 @@ export function App() {
           </Route>
 
           <Route path="config" element={sidebar}>
-            <Route index element={<ConfigPage />} />
+            <Route index element={<ConfigListPage />} />
+            <Route path=":id" element={<ConfigDetailsPage />} />
           </Route>
 
           <Route path="timeline" element={sidebar}>
