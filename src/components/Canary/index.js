@@ -129,7 +129,7 @@ export function Canary({
             <DropdownStandaloneWrapper
               dropdownElem={<GroupByDropdown />}
               checks={checks}
-              defaultValue="canary_name"
+              defaultValue="canaryName"
               paramKey="groupBy"
               className="w-64"
               prefix={
