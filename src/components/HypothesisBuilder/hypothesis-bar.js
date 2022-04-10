@@ -110,6 +110,6 @@ HypothesisBar.propTypes = {
 };
 
 HypothesisBar.defaultProps = {
-  onTitleClick: () => { },
+  onTitleClick: () => {},
   startAdornment: null
 };

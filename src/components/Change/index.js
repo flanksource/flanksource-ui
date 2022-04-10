@@ -1,6 +1,5 @@
 import React, { Fragment } from "react";
 /* This example requires Tailwind CSS v2.0+ */
-import { CheckIcon, ThumbUpIcon, UserIcon } from "@heroicons/react/solid";
 import { BsFillGearFill, BsArrowUpRight } from "react-icons/bs";
 import { AiFillAlert } from "react-icons/ai";
 
@@ -87,7 +86,7 @@ function classNames(...classes) {
 export function Changelog() {
   return (
     <div className="flow-root">
-      <ul role="list" className="-mb-4">
+      <ul className="-mb-4">
         {timeline.map((event, eventIdx) => (
           // eslint-disable-next-line react/no-array-index-key
           <li key={eventIdx}>

@@ -5,6 +5,6 @@ export function toastError(message) {
   if (message.response && message.response.data.error) {
     toast.error(message.response.data.error);
   } else {
-    toast.error("" + message);
+    toast.error(message);
   }
 }

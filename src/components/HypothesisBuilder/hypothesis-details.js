@@ -9,7 +9,6 @@ import { EvidenceSection } from "./evidence-section";
 import { Modal } from "../Modal";
 import { EvidenceBuilder } from "../EvidenceBuilder";
 import { CommentsSection } from "./comments";
-import { EditableText } from "../EditableText";
 import {
   getCommentsByHypothesis,
   createComment
@@ -17,7 +16,6 @@ import {
 import { getAllEvidenceByHypothesis } from "../../api/services/evidence";
 import { useUser } from "../../context";
 import { toastError } from "../Toast/toast";
-import { Avatar } from "../Avatar";
 
 const statusItems = {
   ...Object.values(hypothesisStatuses).reduce((acc, obj) => {

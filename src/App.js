@@ -53,15 +53,15 @@ const navigation = [
     current: false
   },
   { name: "Logs", href: "/logs", icon: FolderIcon, current: false },
-  { name: "Metrics", href: "/metrics", icon: VscGraph, current: false },
-  { name: "Traces", href: "/traces", icon: FaProjectDiagram, current: false },
+  // { name: "Metrics", href: "/metrics", icon: VscGraph, current: false },
+  // { name: "Traces", href: "/traces", icon: FaProjectDiagram, current: false },
   { name: "Config", href: "/config", icon: VscJson, current: false },
-  {
-    name: "Timeline",
-    href: "/timeline",
-    icon: MdTimeline,
-    current: false
-  },
+  // {
+  //   name: "Timeline",
+  //   href: "/timeline",
+  //   icon: MdTimeline,
+  //   current: false
+  // },
   {
     name: "Incidents",
     href: "/incidents",
@@ -81,12 +81,6 @@ export function Placeholder({ text }) {
 
 export function App() {
   const [user, setUser] = useState();
-  const [toasts, setToasts] = useState([]);
-
-  const toast = (title, message) => {
-    setToasts([{ title, message }]);
-    setTimeout(() => setToasts([]), 5000);
-  };
 
   useEffect(() => {
     getUser()

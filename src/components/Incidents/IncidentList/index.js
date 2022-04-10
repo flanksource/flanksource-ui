@@ -9,11 +9,7 @@ import { IncidentStatus } from "../incident-status";
 export function IncidentList({ list, ...rest }) {
   return (
     <div className="border border-border-color rounded-md">
-      <table
-        className="table-fixed table-auto w-full"
-        aria-label="table"
-        {...rest}
-      >
+      <table className="table-auto w-full" aria-label="table" {...rest}>
         <thead className="rounded-md">
           <tr className="border-b border-border-color uppercase bg-column-background rounded-t-md items-center">
             <th
@@ -50,7 +46,12 @@ export function IncidentList({ list, ...rest }) {
 }
 
 function IncidentItem({ incident }) {
-  const { title, id, created_at: createdAt, status } = incident;
+  const {
+    title,
+    id,
+    created_at: createdAt
+    // status
+  } = incident;
   const age = dayjs(createdAt).fromNow();
   const navigate = useNavigate();
   const navigateToIncidentDetails = (id) => {
