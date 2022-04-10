@@ -1,7 +1,6 @@
 import { flattenDepth, isArray, isEmpty } from "lodash";
 import { stringify } from "qs";
 import { CanaryChecker } from "../axios";
-import { resolve } from "../resolve";
 
 function compareStatus(a, b) {
   if (a.status === b.status) {

@@ -10,10 +10,7 @@ export function CheckTitle({ check, className, ...rest }) {
   return (
     <div className={`flex flex-row ${className}`} {...rest}>
       <div className="w-14 flex-shrink-0 pr-1">
-        <Icon
-          name={validCheck?.icon || validCheck?.type}
-          size="2xl"
-        />
+        <Icon name={validCheck?.icon || validCheck?.type} size="2xl" />
       </div>
       <div className="overflow-hidden mr-10">
         <div className="flex flex-row items-center">
