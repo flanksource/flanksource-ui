@@ -22,6 +22,7 @@ import {
 } from "./pages";
 import { DropdownDemoPage } from "./pages/Examples/dropdown-demo";
 import { ModalPage } from "./pages/Examples/Modal/modal-page";
+import { TypologyDropdownDemo } from "./pages/Examples/topology-dropdown";
 import { RsDemoPage } from "./pages/Examples/rs-demo";
 import { TopologyPage as ExamplesTopologyPage } from "./pages/Examples/Topology/topology-page";
 import { TopologySelectorModalPage } from "./pages/Examples/TopologySelectorModalPage/TopologySelectorModalPage";
@@ -121,6 +122,10 @@ export function App() {
               element={<TopologySelectorModalPage url="/canary/api" />}
             />
             <Route path="modal" element={<ModalPage />} />
+            <Route
+              path="topology-dropdown"
+              element={<TypologyDropdownDemo />}
+            />
           </Route>
 
           <Route path="logs" element={sidebar}>
