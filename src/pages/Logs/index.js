@@ -38,6 +38,7 @@ export function LogsPage() {
   });
 
   const handleSearch = (searchQuery, timeRange) => {
+    // eslint-disable-next-line no-console
     console.log("search", searchQuery, timeRange);
     // Call search API & update logs list here
   };

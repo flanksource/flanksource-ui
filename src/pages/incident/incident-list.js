@@ -145,7 +145,7 @@ export function IncidentListPage() {
 
   useEffect(() => {
     loadIncidents();
-  }, []);
+  }, [loadIncidents]);
 
   const saveQueryParams = () => {
     const labelsArray = selectedLabels.map((o) => o.value);
