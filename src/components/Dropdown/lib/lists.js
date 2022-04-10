@@ -1,7 +1,6 @@
-import { ImUngroup } from "react-icons/im";
 import { BiLabel } from "react-icons/bi";
+import { ImUngroup } from "react-icons/im";
 import { TiSortAlphabeticallyOutline } from "react-icons/ti";
-import { AiOutlineAlignLeft } from "react-icons/ai";
 import { isBooleanValue } from "../../../lib/isBooleanValue";
 
 export function getLabelsFromState(labelState) {

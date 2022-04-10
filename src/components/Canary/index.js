@@ -11,10 +11,7 @@ import { CanaryInterfaceMinimal } from "../CanaryInterface/minimal";
 import { GroupByDropdown } from "../Dropdown/GroupByDropdown";
 import { DropdownStandaloneWrapper } from "../Dropdown/StandaloneWrapper";
 import { TimeRange, timeRanges } from "../Dropdown/TimeRange";
-import {
-  defaultGroupSelections,
-  defaultTabSelections
-} from "../Dropdown/lib/lists";
+import { defaultTabSelections } from "../Dropdown/lib/lists";
 import { TabByDropdown } from "../Dropdown/TabByDropdown";
 import { Toggle } from "../Toggle";
 import { LabelFilterDropdown } from "./FilterForm";
@@ -77,7 +74,7 @@ export function Canary({
             setIsLoading(false);
           });
       }, 1000),
-    []
+    [url]
   );
 
   const handleSearch = debounce((value) => {
@@ -132,7 +129,7 @@ export function Canary({
             <DropdownStandaloneWrapper
               dropdownElem={<GroupByDropdown />}
               checks={checks}
-              defaultValue="canary_name"
+              defaultValue="canaryName"
               paramKey="groupBy"
               className="w-64"
               prefix={

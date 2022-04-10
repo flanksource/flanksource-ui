@@ -1,18 +1,15 @@
 import { FolderIcon, HomeIcon } from "@heroicons/react/outline";
 import { useEffect, useState } from "react";
 import { AiFillHeart } from "react-icons/ai";
-import { FaProjectDiagram } from "react-icons/fa";
 import { ImLifebuoy } from "react-icons/im";
-import { MdTimeline } from "react-icons/md";
-import { VscGraph, VscJson } from "react-icons/vsc";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { VscJson } from "react-icons/vsc";
 import { QueryClient, QueryClientProvider } from "react-query";
+import { Navigate, Route, Routes } from "react-router-dom";
 import { getUser } from "./api/auth";
 import { SidebarLayout } from "./components/Layout";
 import { Loading } from "./components/Loading";
 import { TraceView } from "./components/Traces";
 import { AuthContext } from "./context";
-import { TopologyPage as ExamplesTopologyPage } from "./pages/Examples/Topology/topology-page";
 import {
   ConfigDetailsPage,
   ConfigListPage,
@@ -23,11 +20,12 @@ import {
   TimelinePage,
   TopologyPage
 } from "./pages";
-import { RsDemoPage } from "./pages/Examples/rs-demo";
 import { DropdownDemoPage } from "./pages/Examples/dropdown-demo";
-import { HealthPage } from "./pages/health";
-import { TopologySelectorModalPage } from "./pages/Examples/TopologySelectorModalPage/TopologySelectorModalPage";
 import { ModalPage } from "./pages/Examples/Modal/modal-page";
+import { RsDemoPage } from "./pages/Examples/rs-demo";
+import { TopologyPage as ExamplesTopologyPage } from "./pages/Examples/Topology/topology-page";
+import { TopologySelectorModalPage } from "./pages/Examples/TopologySelectorModalPage/TopologySelectorModalPage";
+import { HealthPage } from "./pages/health";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -83,11 +81,9 @@ export function App() {
   const [user, setUser] = useState();
 
   useEffect(() => {
-    getUser()
-      .then((u) => {
-        setUser(u);
-      })
-      .catch(console.error);
+    getUser().then((u) => {
+      setUser(u);
+    });
   }, []);
   if (user == null) {
     return <Loading text="Logging in" />;

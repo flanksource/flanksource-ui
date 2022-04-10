@@ -52,11 +52,9 @@ export function HypothesisDetails({ node, api, ...rest }) {
   };
 
   const fetchComments = (id) =>
-    getCommentsByHypothesis(id)
-      .then((comments) => {
-        setComments(comments?.data || []);
-      })
-      .catch((err) => console.error(err));
+    getCommentsByHypothesis(id).then((comments) => {
+      setComments(comments?.data || []);
+    });
 
   const handleComment = (value) =>
     createComment(user, uuidv4(), node.incident_id, node.id, value)
