@@ -41,7 +41,7 @@
   }
 
   .checkbox {
-    @apply h-4 w-4 border border-gray-300 rounded bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 bg-no-repeat bg-center bg-contain float-left cursor-pointer;
+    @apply h-4 w-4 border border-gray-300 rounded bg-white focus:outline-none transition duration-200 bg-no-repeat bg-center bg-contain float-left cursor-pointer;
   }
 
   nav a.active {
