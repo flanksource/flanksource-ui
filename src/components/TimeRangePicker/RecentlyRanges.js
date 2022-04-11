@@ -28,7 +28,7 @@ export const RecentlyRanges = ({ recentRanges, applyTimeRange }) => (
 );
 
 RecentlyRanges.propTypes = {
-  recentRanges: PropTypes.arrayOf(PropTypes.shape({})),
+  recentRanges: PropTypes.arrayOf(PropTypes.object),
   applyTimeRange: PropTypes.func
 };
 
