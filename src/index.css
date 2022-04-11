@@ -56,12 +56,12 @@
     border-radius: 8px;
     -moz-border-radius: 8px;
     -webkit-border-radius: 8px;
-    @apply border-border-color shadow-md;
+    @apply border-gray-200 shadow-md;
   }
 
   .comfortable-table td,
   .comfortable-table th {
-    @apply border-border-color;
+    @apply border-gray-200;
   }
 
   .comfortable-table td {
@@ -109,7 +109,7 @@
 
   .compact-table td,
   .compact-table th {
-    @apply border-border-color;
+    @apply border-gray-200;
   }
 
   .compact-table th {
