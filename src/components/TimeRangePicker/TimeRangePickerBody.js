@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import clsx from "clsx";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { TimeRangeList } from "./TimeRangeList";
 import "./index.css";
@@ -11,6 +11,7 @@ import { TimePickerCalendar } from "./TimePickerCalendar";
 import { TimePickerInput } from "./TimePickerInput";
 
 export const TimeRangePickerBody = ({
+  pickerLeft,
   isOpen,
   closePicker,
   currentRange,
@@ -30,54 +31,62 @@ export const TimeRangePickerBody = ({
   const [errorInputFrom, setErrorInputFrom] = useState(null);
   const [errorInputTo, setErrorInputTo] = useState(null);
 
-  const changeRecentRangesList = (range) => {
-    if (
-      !recentRanges.find(
-        (el) =>
-          dayjs(el.from).toISOString() === dayjs(range.from).toISOString() &&
-          dayjs(el.to).toISOString() === dayjs(range.to).toISOString()
-      )
-    ) {
-      let newRanges;
-      if (recentRanges.length < 4) {
-        newRanges = [range, ...recentRanges];
-      } else {
-        newRanges = [range, ...recentRanges.slice(0, 3)];
+  const changeRecentRangesList = useCallback(
+    (range) => {
+      if (
+        !recentRanges.find(
+          (el) =>
+            dayjs(el.from).toISOString() === dayjs(range.from).toISOString() &&
+            dayjs(el.to).toISOString() === dayjs(range.to).toISOString()
+        )
+      ) {
+        let newRanges;
+        if (recentRanges.length < 4) {
+          newRanges = [range, ...recentRanges];
+        } else {
+          newRanges = [range, ...recentRanges.slice(0, 3)];
+        }
+        setRecentRanges([...newRanges]);
+        storage.setItem("timePickerRanges", newRanges);
       }
-      setRecentRanges([...newRanges]);
-      storage.setItem("timePickerRanges", newRanges);
-    }
-  };
+    },
+    [recentRanges]
+  );
 
-  const onChangeCalendarRange = (value) => {
+  const onChangeCalendarRange = useCallback((value) => {
     const from = dayjs(value[0]).format(displayTimeFormat);
     const to = dayjs(value[1]).format(displayTimeFormat);
 
     setCalendarValue(value);
     setInputValueFrom(from);
     setInputValueTo(to);
-  };
+  }, []);
 
-  const applyTimeRange = (range) => {
-    changeRangeValue(range);
-    if (dayjs(range.from).isValid() && dayjs(range.to).isValid()) {
-      changeRecentRangesList({
-        from: dayjs(range.from).toISOString(),
-        to: dayjs(range.to).toISOString()
-      });
-    }
-    storage.setItem("currentRange", range);
-    setShowCalendar(false);
-    closePicker();
-  };
+  const applyTimeRange = useCallback(
+    (range) => {
+      changeRangeValue(range);
+      if (dayjs(range.from).isValid() && dayjs(range.to).isValid()) {
+        changeRecentRangesList({
+          from: dayjs(range.from).toISOString(),
+          to: dayjs(range.to).toISOString()
+        });
+      }
+      setShowCalendar(false);
+      closePicker();
+    },
+    [changeRangeValue, changeRecentRangesList, closePicker]
+  );
 
-  const confirmValidRange = (range) => {
-    if (!errorInputFrom && !errorInputTo) {
-      applyTimeRange(range);
-    }
-  };
+  const confirmValidRange = useCallback(
+    (range) => {
+      if (!errorInputFrom && !errorInputTo) {
+        applyTimeRange(range);
+      }
+    },
+    [applyTimeRange, errorInputFrom, errorInputTo]
+  );
 
-  const validateInputRange = (range) => {
+  const validateInputRange = useCallback((range) => {
     const from = convertRangeValue(range.from, "jsDate");
     const to = convertRangeValue(range.to, "jsDate");
     if (!dayjs(from).isValid()) {
@@ -97,7 +106,7 @@ export const TimeRangePickerBody = ({
         setErrorInputFrom(null);
       }
     }
-  };
+  }, []);
 
   useEffect(() => {
     if (
@@ -123,12 +132,13 @@ export const TimeRangePickerBody = ({
     <div
       className={clsx(
         "time-range-picker-body flex justify-center cursor-auto w-max bg-gray-50 absolute rounded-sm border border-gray-300 z-50 shadow-lg shadow-gray-200",
-        { active: isOpen }
+        { active: isOpen, alignPickerRight: pickerLeft > 600 }
       )}
     >
       <div
         className={clsx("calendar-wrapper absolute shadow-lg shadow-gray-200", {
-          active: showCalendar
+          active: showCalendar,
+          calendarRight: pickerLeft < 300
         })}
       >
         <TimePickerCalendar
@@ -190,6 +200,7 @@ export const TimeRangePickerBody = ({
 };
 
 TimeRangePickerBody.propTypes = {
+  pickerLeft: PropTypes.number,
   isOpen: PropTypes.bool,
   closePicker: PropTypes.func,
   currentRange: PropTypes.shape({}),
@@ -197,6 +208,7 @@ TimeRangePickerBody.propTypes = {
 };
 
 TimeRangePickerBody.defaultProps = {
+  pickerLeft: 0,
   isOpen: false,
   closePicker: () => {},
   currentRange: {},

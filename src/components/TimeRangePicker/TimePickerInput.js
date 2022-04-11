@@ -26,9 +26,7 @@ export const TimePickerInput = ({
       <div className="flex bg-gray-200 hover:bg-gray-300 ml-0.5 rounded-sm">
         <button
           type="button"
-          onClick={() => {
-            setShowCalendar((prevState) => !prevState);
-          }}
+          onClick={() => setShowCalendar((prevState) => !prevState)}
           className="px-1 mx-1"
         >
           <FaRegCalendarAlt color="#303030" />

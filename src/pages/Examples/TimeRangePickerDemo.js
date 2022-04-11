@@ -3,7 +3,8 @@ import { TimeRangePicker } from "../../components/TimeRangePicker/TimeRangePicke
 
 export const TimeRangePickerDemo = () => (
   <SearchLayout title="time-picker">
-    <div>
+    <div className="flex justify-between">
+      <TimeRangePicker />
       <TimeRangePicker />
     </div>
   </SearchLayout>

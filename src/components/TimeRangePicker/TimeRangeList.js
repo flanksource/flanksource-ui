@@ -1,8 +1,8 @@
 import PropTypes from "prop-types";
 import { v4 as uuidv4 } from "uuid";
 import clsx from "clsx";
+import { useCallback } from "react";
 import { rangeOptions } from "./rangeOptions";
-import { storage } from "./helpers";
 
 export const TimeRangeList = ({
   closePicker,
@@ -10,24 +10,26 @@ export const TimeRangeList = ({
   changeRangeValue,
   setShowCalendar
 }) => {
-  const isChecked = (option, value) => {
+  const isChecked = useCallback((option, value) => {
     if (!option || !value) {
       return false;
     }
 
     return option.from === value.from && option.to === value.to;
-  };
+  }, []);
 
-  const setOption = (option) => {
-    const { from, to } = option;
-    changeRangeValue({
-      from,
-      to
-    });
-    storage.setItem("currentRange", { from, to });
-    closePicker();
-    setShowCalendar(false);
-  };
+  const setOption = useCallback(
+    (option) => {
+      const { from, to } = option;
+      changeRangeValue({
+        from,
+        to
+      });
+      closePicker();
+      setShowCalendar(false);
+    },
+    [changeRangeValue, closePicker, setShowCalendar]
+  );
 
   return (
     <div>

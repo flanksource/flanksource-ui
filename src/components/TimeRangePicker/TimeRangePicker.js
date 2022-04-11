@@ -1,30 +1,40 @@
 import PropTypes from "prop-types";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FiClock } from "react-icons/fi";
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
 import clsx from "clsx";
+import dayjs from "dayjs";
 import { TimeRangePickerBody } from "./TimeRangePickerBody";
 import "./index.css";
-import { defaultRange } from "./rangeOptions";
-import { convertRangeValue, createDisplayValue, storage } from "./helpers";
+import { convertRangeValue, createDisplayValue } from "./helpers";
 
-export const TimeRangePicker = ({ onChange }) => {
+export const TimeRangePicker = ({ onChange, from, to }) => {
   const [isPickerOpen, setIsPickerOpen] = useState(false);
-  const [currentRange, setCurrentRange] = useState(
-    storage.getItem("currentRange") || defaultRange
-  );
-  const [rangeDisplayValue, setRangeDisplayValue] = useState(
-    createDisplayValue(currentRange)
+  const [currentRange, setCurrentRange] = useState({ from, to });
+  const [pickerLeft, setPickerLeft] = useState(0);
+  const pickerRef = useRef();
+
+  const updateDisplayValue = useMemo(
+    () => createDisplayValue(currentRange),
+    [currentRange]
   );
 
-  const changeRangeValue = (range) => {
-    const { from, to } = range;
-    setCurrentRange({ from, to });
-    onChange(
-      convertRangeValue(from, "jsDate"),
-      convertRangeValue(to, "jsDate")
-    );
-  };
+  useEffect(() => {
+    const pickerPosLeft = pickerRef.current.getBoundingClientRect().left;
+    setPickerLeft(pickerPosLeft);
+  }, []);
+
+  const changeRangeValue = useCallback(
+    (range) => {
+      const { from, to } = range;
+      setCurrentRange({ from, to });
+      onChange(
+        convertRangeValue(from, "jsDate"),
+        convertRangeValue(to, "jsDate")
+      );
+    },
+    [onChange]
+  );
 
   useEffect(() => {
     const { from, to } = currentRange;
@@ -34,13 +44,10 @@ export const TimeRangePicker = ({ onChange }) => {
     );
   }, []);
 
-  useEffect(() => {
-    setRangeDisplayValue(createDisplayValue(currentRange));
-  }, [currentRange]);
-
   return (
     <div className="relative text-sm time-picker-main">
       <button
+        ref={pickerRef}
         type="button"
         className="time-range-picker-widget flex items-center justify-center px-2 py-1 bg-gray-50 cursor-pointer rounded-sm border border-gray-300"
         onClick={() => setIsPickerOpen((prevState) => !prevState)}
@@ -49,7 +56,7 @@ export const TimeRangePicker = ({ onChange }) => {
           <FiClock />
         </div>
         <div className="ml-2 font-medium">
-          Time range: <span>{rangeDisplayValue}</span>
+          Time range: <span>{updateDisplayValue}</span>
         </div>
         <div
           className={clsx("timepicker-arrow-indicator ml-2", {
@@ -60,6 +67,7 @@ export const TimeRangePicker = ({ onChange }) => {
         </div>
       </button>
       <TimeRangePickerBody
+        pickerLeft={pickerLeft}
         isOpen={isPickerOpen}
         closePicker={() => setIsPickerOpen(false)}
         currentRange={currentRange}
@@ -70,11 +78,15 @@ export const TimeRangePicker = ({ onChange }) => {
 };
 
 TimeRangePicker.propTypes = {
-  onChange: PropTypes.func
+  onChange: PropTypes.func,
+  from: PropTypes.shape({}),
+  to: PropTypes.shape({})
 };
 
 TimeRangePicker.defaultProps = {
   onChange: (from, to) => {
     console.log("FROM: ", from, "\n", "TO: ", to);
-  }
+  },
+  from: dayjs(new Date()).subtract(1, "h"),
+  to: new Date()
 };

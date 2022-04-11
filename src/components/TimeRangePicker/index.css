@@ -1,6 +1,6 @@
 .time-picker-main {
   width: fit-content;
-  margin-left: auto;
+  /* margin-left: auto; */
 }
 
 .time-range-picker-widget {
@@ -15,11 +15,15 @@
   visibility: hidden;
   opacity: 0;
   top: calc(100% + 2px);
-  right: 0;
   width: 480px;
   height: 384px;
   transition: 0.2s ease;
 }
+
+.time-range-picker-body.alignPickerRight {
+  right: 0;
+}
+
 
 .time-range-picker-body.active {
   visibility: visible;
@@ -32,6 +36,10 @@
   top: -1px;
   right: calc(100% + 1px);
   transition: 0.2s ease;
+}
+
+.calendar-wrapper.calendarRight {
+  right: -70px;
 }
 
 .calendar-wrapper.active {
