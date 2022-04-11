@@ -8,10 +8,10 @@ import { IncidentStatus } from "../incident-status";
 
 export function IncidentList({ list, ...rest }) {
   return (
-    <div className="border border-border-color rounded-md">
+    <div className="border border-gray-200 rounded-md">
       <table className="table-auto w-full" aria-label="table" {...rest}>
         <thead className="rounded-md">
-          <tr className="border-b border-border-color uppercase bg-column-background rounded-t-md items-center">
+          <tr className="border-b border-gray-200 uppercase bg-column-background rounded-t-md items-center">
             <th
               className="px-6 py-3 text-gray-500 font-medium text-xs col-span-2 text-left"
               colSpan={2}
