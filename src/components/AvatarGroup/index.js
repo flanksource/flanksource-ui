@@ -1,20 +1,26 @@
-import React from "react";
+import React, { useMemo } from "react";
 import PropTypes from "prop-types";
 import { Avatar } from "../Avatar";
 
-export const AvatarGroup = ({ users, size, ...props }) => (
-  <div className="flex -space-x-2 overflow-hidden">
-    {users?.map((user) => (
-      <Avatar
-        key={user.avatar}
-        user={user}
-        size={size}
-        containerProps={{ className: "rounded-full ring-2 ring-white" }}
-        {...props}
-      />
-    ))}
-  </div>
-);
+export const AvatarGroup = ({ users, size, maxCount, ...props }) => {
+  const sliceUsers = useMemo(
+    () => users?.slice(0, maxCount) || [],
+    [users, maxCount]
+  );
+  return (
+    <div className="flex -space-x-2 overflow-hidden">
+      {sliceUsers?.map((user) => (
+        <Avatar
+          key={user.avatar}
+          user={user}
+          size={size}
+          containerProps={{ className: "rounded-full ring-2 ring-white" }}
+          {...props}
+        />
+      ))}
+    </div>
+  );
+};
 
 AvatarGroup.propTypes = {
   users: PropTypes.arrayOf(
@@ -23,9 +29,11 @@ AvatarGroup.propTypes = {
       name: PropTypes.string
     })
   ).isRequired,
-  size: PropTypes.string
+  size: PropTypes.string,
+  maxCount: PropTypes.number
 };
 
 AvatarGroup.defaultProps = {
-  size: "md"
+  size: "md",
+  maxCount: 5
 };

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useMemo } from "react";
 import PropTypes from "prop-types";
 import { debounce } from "lodash";
 import { useForm } from "react-hook-form";
@@ -24,7 +24,7 @@ const statusItems = {
   }, {})
 };
 
-export const HypothesisTitle = ({ node, api }) => {
+export const HypothesisTitle = ({ node, api, comments }) => {
   const handleApiUpdate = useRef(
     debounce((params) => {
       if (api?.updateMutation && node?.id) {
@@ -39,6 +39,14 @@ export const HypothesisTitle = ({ node, api }) => {
       status: node.status || Object.values(statusItems)[2].value
     }
   });
+
+  const users = useMemo(() => {
+    const commentsUser = comments?.map(
+      ({ created_by: commentUser }) => commentUser
+    );
+    const { created_by: nodeUser } = node;
+    return [nodeUser, ...commentsUser];
+  }, [node, comments]);
 
   watch();
 
@@ -61,7 +69,7 @@ export const HypothesisTitle = ({ node, api }) => {
           />
         </div>
       </div>
-      <AvatarGroup users={[node.created_by]} />
+      <AvatarGroup users={users} />
     </div>
   );
 };

@@ -1,22 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
 import clsx from "clsx";
 import { EvidenceSection } from "./evidence-section";
 import { Modal } from "../Modal";
 import { EvidenceBuilder } from "../EvidenceBuilder";
 import { CommentsSection } from "./comments";
-import {
-  getCommentsByHypothesis,
-  createComment
-} from "../../api/services/comments";
 import { getAllEvidenceByHypothesis } from "../../api/services/evidence";
-import { useUser } from "../../context";
-import { toastError } from "../Toast/toast";
 
-export function HypothesisDetails({ node, api, ...rest }) {
+export function HypothesisDetails({
+  node,
+  api,
+  comments,
+  handleComment,
+  ...rest
+}) {
   const [evidenceBuilderOpen, setEvidenceBuilderOpen] = useState(false);
-  const user = useUser();
-  const [comments, setComments] = useState([]);
   const [evidence, setEvidence] = useState([]);
 
   const fetchEvidence = (hypothesisId) => {
@@ -25,23 +22,8 @@ export function HypothesisDetails({ node, api, ...rest }) {
     });
   };
 
-  const fetchComments = (id) =>
-    getCommentsByHypothesis(id)
-      .then((comments) => {
-        setComments(comments?.data || []);
-      })
-      .catch((err) => console.error(err));
-
-  const handleComment = (value) =>
-    createComment(user, uuidv4(), node.incident_id, node.id, value)
-      .catch(toastError)
-      .then(() => {
-        fetchComments(node.id);
-      });
-
   useEffect(() => {
     fetchEvidence(node.id);
-    fetchComments(node.id);
   }, [node.id]);
 
   return (
