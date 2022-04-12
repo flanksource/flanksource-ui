@@ -59,7 +59,13 @@ export const HypothesisTitle = ({ node, api, comments }) => {
 
   return (
     <div className="flex w-full items-center pr-3">
-      <Dropdown control={control} name="status" items={statusItems} />
+      <Dropdown
+        control={control}
+        name="status"
+        items={statusItems}
+        hideDescription
+        autoSizeOptions
+      />
       <div className="flex flex-1 px-3">
         <div className="w-full">
           <EditableText

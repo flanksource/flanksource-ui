@@ -4,6 +4,7 @@ import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, SelectorIcon } from "@heroicons/react/solid";
 import { Controller } from "react-hook-form";
 import { isArray } from "lodash";
+import clsx from "clsx";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -23,6 +24,8 @@ export function Dropdown({
   suffix = "",
   labelPrefix = "",
   labelSuffix = "",
+  autoSizeOptions,
+  hideDescription,
   ...rest
 }) {
   // eslint-disable-next-line no-underscore-dangle
@@ -87,6 +90,8 @@ export function Dropdown({
                   label={label}
                   items={items}
                   rest={rest}
+                  autoSizeOptions={autoSizeOptions}
+                  hideDescription={hideDescription}
                 />
               );
             }}
@@ -102,6 +107,8 @@ export function Dropdown({
             suffix={suffix}
             labelPrefix={labelPrefix}
             labelSuffix={labelSuffix}
+            autoSizeOptions={autoSizeOptions}
+            hideDescription={hideDescription}
           />
         )}
       </div>
@@ -118,6 +125,8 @@ export const DropdownListbox = ({
   suffix = "",
   labelPrefix = "",
   labelSuffix = "",
+  autoSizeOptions = false,
+  hideDescription = false,
   ...rest
 }) => (
   <Listbox
@@ -146,11 +155,13 @@ export const DropdownListbox = ({
             <div className="flex items-center">
               {prefix}
               {items[value] && <div>{items[value].icon}</div>}
-              <span className="ml-2 block truncate">
-                {labelPrefix}
-                {items[value] && items[value].description}
-                {labelSuffix}
-              </span>
+              {!hideDescription && (
+                <span className="ml-2 block truncate">
+                  {labelPrefix}
+                  {!hideDescription && items[value] && items[value].description}
+                  {labelSuffix}
+                </span>
+              )}
               {suffix}
             </div>
             <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
@@ -168,7 +179,12 @@ export const DropdownListbox = ({
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <Listbox.Options className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
+            <Listbox.Options
+              className={clsx(
+                "absolute z-10 mt-1 bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm",
+                { "w-full": !autoSizeOptions }
+              )}
+            >
               {Object.values(items)
                 .sort((a, b) => {
                   if (
