@@ -1,6 +1,6 @@
 import { ChatAltIcon } from "@heroicons/react/solid";
 import dayjs from "dayjs";
-import React, { useMemo, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { getPersons } from "../../api/services/users";
 import { CommentInput, CommentText } from "../Comment";
 
@@ -19,6 +19,7 @@ export function CommentsSection({
   const [isLoading, setIsLoading] = useState(false);
   const [users, setUsers] = useState([]);
 
+  // eslint-disable-next-line no-unused-vars
   const handleComment = (event) => {
     // const key = event.keyCode || event.which;
     if (commentTextValue) {
@@ -42,6 +43,7 @@ export function CommentsSection({
   }, []);
 
   const onClickUserTag = (type, id) => {
+    // eslint-disable-next-line no-console
     console.log("type tag", type, "value", id);
   };
 

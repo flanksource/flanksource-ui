@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { Modal } from "../Modal";
 import { HypothesisDetails } from "./hypothesis-details";
@@ -29,31 +29,23 @@ export function HypothesisBuilder({
 
   const user = useUser();
 
-  const fetchComments = useCallback(
-    (id) =>
-      getCommentsByHypothesis(id)
-        .then((comments) => {
-          setComments(comments?.data || []);
-        })
-        .catch((err) => console.error(err)),
-    []
-  );
+  const fetchComments = (id) =>
+    getCommentsByHypothesis(id).then((comments) => {
+      setComments(comments?.data || []);
+    });
 
-  const handleComment = useCallback(
-    (value) =>
-      createComment(user, uuidv4(), tree.incident_id, tree.id, value)
-        .catch(toastError)
-        .then(() => {
-          fetchComments(tree.id);
-        }),
-    [fetchComments, tree, user]
-  );
+  const handleComment = (value) =>
+    createComment(user, uuidv4(), tree.incident_id, tree.id, value)
+      .catch(toastError)
+      .then(() => {
+        fetchComments(tree.id);
+      });
 
   useEffect(() => {
     if (tree?.id) {
       fetchComments(tree.id);
     }
-  }, [fetchComments, tree?.id]);
+  }, [tree?.id]);
 
   useEffect(() => {
     setTree(loadedTree);

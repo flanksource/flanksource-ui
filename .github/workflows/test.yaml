@@ -6,17 +6,17 @@ on:
       - master
       - main
   pull_request:
-      paths:
-      - '**.jsx?'
-      - '**.tsx?'
-      - '**/babel.config.js'
-      - '**/craco.config.js'
-      - '**/package.json'
-      - '**/github/workflows/**/test.yml'
-      - 'Makefile'
+    paths:
+      - "**.jsx?"
+      - "**.tsx?"
+      - "**/babel.config.js"
+      - "**/craco.config.js"
+      - "**/package.json"
+      - "**/github/workflows/**/test.yml"
+      - "Makefile"
 name: Test
 jobs:
-  jest:
+  test:
     runs-on: ubuntu-latest
     container:
       image: node:15.14-alpine
@@ -24,3 +24,11 @@ jobs:
       - uses: actions/checkout@master
       - run: npm ci
       - run: npm run test
+  production-build:
+    runs-on: ubuntu-latest
+    container:
+      image: node:15.14-alpine
+    steps:
+      - uses: actions/checkout@master
+      - run: npm ci
+      - run: npm run build

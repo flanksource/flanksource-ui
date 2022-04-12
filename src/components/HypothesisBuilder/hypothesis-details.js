@@ -15,11 +15,16 @@ export function HypothesisDetails({
 }) {
   const [evidenceBuilderOpen, setEvidenceBuilderOpen] = useState(false);
   const [evidence, setEvidence] = useState([]);
+  const [evidenceLoading, setEvidenceLoading] = useState(true);
 
   const fetchEvidence = (hypothesisId) => {
-    getAllEvidenceByHypothesis(hypothesisId).then((evidence) => {
-      setEvidence(evidence?.data || []);
-    });
+    getAllEvidenceByHypothesis(hypothesisId)
+      .then((evidence) => {
+        setEvidence(evidence?.data || []);
+      })
+      .finally(() => {
+        setEvidenceLoading(false);
+      });
   };
 
   useEffect(() => {
@@ -32,9 +37,10 @@ export function HypothesisDetails({
         <div className="mb-8 mt-4">
           <EvidenceSection
             hypothesis={node}
-            evidence={evidence}
+            evidenceList={evidence}
             titlePrepend={<HypothesisTitle>Evidence</HypothesisTitle>}
             onButtonClick={() => setEvidenceBuilderOpen(true)}
+            isLoading={evidenceLoading}
           />
         </div>
         {/* <div className="mb-6">

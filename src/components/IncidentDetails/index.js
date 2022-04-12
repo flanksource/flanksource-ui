@@ -32,18 +32,21 @@ export const IncidentDetails = ({
     [incident]
   );
 
-  const respondersArray = useMemo(() =>
-    incident.responder.map(
-      (item, index) => ({
+  const respondersArray = useMemo(
+    () =>
+      incident.responder.map((item, index) => ({
         label: item.created_by.name,
         value: `${index}`,
         avatar: item.created_by.avatar
-      }),
-      [incident]
-    )
+      })),
+    [incident]
   );
 
-  const { control, getValues, watch } = useForm({
+  const {
+    control,
+    // getValues,
+    watch
+  } = useForm({
     defaultValues: {
       tracking: "123456",
       created_at: incident.created_at,

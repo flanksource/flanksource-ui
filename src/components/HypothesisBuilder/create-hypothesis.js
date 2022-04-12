@@ -1,13 +1,10 @@
 import React from "react";
 import { useForm, Controller } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
-import { isEmpty } from "lodash";
 import { Dropdown } from "../Dropdown";
 import { hypothesisStatuses } from "./data";
 import { EvidenceSection } from "./evidence-section";
 import { useUser } from "../../context";
-import { createComment } from "../../api/services/comments";
-import { toastError } from "../Toast/toast";
 import { HypothesisStatuses } from "../../constants/hypothesis-statuses";
 
 const statusItems = {
@@ -47,15 +44,16 @@ export const CreateHypothesis = ({ node, api, onHypothesisCreated }) => {
     }
   });
   const evidenceValue = watch("evidence");
-  const handleComment = (nodeId, value) =>
-    createComment(user, uuidv4(), node.incident_id, nodeId, value)
-      .then((response) => console.log(response))
-      .catch(toastError);
+  // const handleComment = (nodeId, value) =>
+  //   createComment(user, uuidv4(), node.incident_id, nodeId, value)
+  //     .then((response) => console.log(response))
+  //     .catch(toastError);
 
   const onSubmit = async () => {
     const newNodeID = uuidv4();
     if (api?.createMutation) {
       // try {
+      // eslint-disable-next-line no-unused-vars
       const newNodeResponse = await api.createMutation.mutateAsync({
         user,
         id: newNodeID,

@@ -1,7 +1,6 @@
 import { flattenDepth, isArray, isEmpty } from "lodash";
 import { stringify } from "qs";
 import { CanaryChecker } from "../axios";
-import { resolve } from "../resolve";
 
 function compareStatus(a, b) {
   if (a.status === b.status) {
@@ -69,4 +68,7 @@ export const getTopology = async (params) => {
   });
 };
 
-export const getCanaries = async () => resolve(CanaryChecker.get("/api"));
+export const getCanaries = async (params) => {
+  const query = stringify(params);
+  return CanaryChecker.get(`/api?${query}`);
+};

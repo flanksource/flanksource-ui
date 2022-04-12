@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { Icon } from "../Icon";
-
 import { Oval } from "react-loading-icons";
+import { Icon } from "../Icon";
 
 export function Button({
   className = "btn-primary",
@@ -30,12 +29,10 @@ export function Button({
       className += "  px-3 py-2 text-sm  leading-4 rounded-md ";
   }
 
-  const [_text, setText] = useState(text);
   const [_icon, setIcon] = useState(<Icon icon={icon} size={size} />);
   const [_className, setClassName] = useState(className);
 
   const handleOnClick = () => {
-    const oldText = _text;
     const oldIcon = _icon;
     // setText("Updating...");
     setClassName("btn-disabled");
