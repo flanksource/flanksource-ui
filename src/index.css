@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
 @layer components {
   .btn-primary {
     @apply inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-blue-500;
@@ -17,27 +16,27 @@
   }
 
   .btn-secondary-disabled {
-    @apply inline-flex items-center justify-center border-none shadow-sm font-medium rounded-md text-indigo-100 bg-gray-100 opacity-50 cursor-not-allowed
+    @apply inline-flex items-center justify-center border-none shadow-sm font-medium rounded-md text-indigo-100 bg-gray-100 opacity-50 cursor-not-allowed;
   }
 
   .btn-secondary-xs {
-    @apply px-2.5 py-1.5 rounded-sm text-xs leading-4 font-medium
+    @apply px-2.5 py-1.5 rounded-sm text-xs leading-4 font-medium;
   }
 
   .btn-secondary-sm {
-    @apply px-3.5 py-2.5 rounded-sm text-sm leading-4 font-medium
+    @apply px-3.5 py-2.5 rounded-sm text-sm leading-4 font-medium;
   }
 
   .btn-secondary-base {
-    @apply px-4 py-2 rounded text-sm leading-5 font-medium
+    @apply px-4 py-2 rounded text-sm leading-5 font-medium;
   }
 
   .btn-secondary-l {
-    @apply px-4 py-2 rounded-l text-base leading-6 font-medium
+    @apply px-4 py-2 rounded-l text-base leading-6 font-medium;
   }
 
   .btn-secondary-xl {
-    @apply px-6 py-3 rounded-xl text-base leading-6 font-medium
+    @apply px-6 py-3 rounded-xl text-base leading-6 font-medium;
   }
 
   .checkbox {
@@ -45,7 +44,7 @@
   }
 
   nav a.active {
-    @apply bg-gray-100
+    @apply bg-gray-100;
   }
 
   .comfortable-table {
@@ -137,26 +136,38 @@
   }
 
   .btn-round-xs {
-    @apply h-btn-round-2xs w-btn-round-2xs text-xs;
+    @apply text-xs;
+    width: 1.5rem;
+    height: 1.5rem;
   }
 
   .btn-round-sm {
-    @apply h-btn-round-xs w-btn-round-xs text-xs;
+    @apply text-xs;
+    width: 1.875rem;
+    height: 1.875rem;
   }
 
   .btn-round-base {
-    @apply h-btn-round-sm w-btn-round-sm text-xs;
+    @apply text-xs;
+    width: 2.125rem;
+    height: 2.125rem;
   }
 
   .btn-round-md {
-    @apply h-btn-round-md w-btn-round-md text-xs;
+    @apply text-xs;
+    width: 2.375rem;
+    height: 2.375rem;
   }
 
   .btn-round-l {
-    @apply h-btn-round-lg w-btn-round-lg text-xs;
+    @apply text-xs;
+    width: 2.625rem;
+    height: 2.625rem;
   }
 
   .btn-round-xl {
-    @apply h-btn-round-xl w-btn-round-xl text-xs;
+    @apply text-xs;
+    width: 3.125rem;
+    height: 3.125rem;
   }
 }
