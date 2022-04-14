@@ -1,7 +1,8 @@
-import React, { useMemo } from "react";
-import { useTable, useExpanded, useSortBy } from "react-table";
+import React, { useEffect, useMemo } from "react";
+import { useTable, useExpanded, useSortBy, useFilters } from "react-table";
 import { IoCaretUpOutline, IoClose, IoCheckmark } from "react-icons/io5";
 import clsx from "clsx";
+import PropTypes from "prop-types";
 
 const TEST_STATUS = {
   FAILED: "failed",
@@ -92,7 +93,7 @@ const groupTestsByClassname = (tests) =>
     };
   });
 
-export function JUnitTable({ suites, onSelectTestCase }) {
+export function JUnitTable({ suites, onSelectTestCase, hidePassing }) {
   const data = useMemo(
     () =>
       suites.map((suite) => {
@@ -110,9 +111,18 @@ export function JUnitTable({ suites, onSelectTestCase }) {
       }),
     [suites]
   );
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    rows,
+    setFilter,
+    prepareRow
+  } = useTable({ columns, data }, useFilters, useSortBy, useExpanded);
 
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
-    useTable({ columns, data }, useSortBy, useExpanded);
+  useEffect(() => {
+    setFilter("status", hidePassing ? TEST_STATUS.FAILED : null);
+  }, [hidePassing]);
 
   return (
     <table {...getTableProps()}>
@@ -174,3 +184,29 @@ export function JUnitTable({ suites, onSelectTestCase }) {
     </table>
   );
 }
+
+JUnitTable.propTypes = {
+  suites: PropTypes.arrayOf(
+    PropTypes.shape({
+      name: PropTypes.string,
+      passed: PropTypes.number,
+      failed: PropTypes.number,
+      duration: PropTypes.number,
+      tests: PropTypes.arrayOf(
+        PropTypes.shape({
+          name: PropTypes.string,
+          classname: PropTypes.string,
+          duration: PropTypes.number,
+          status: PropTypes.string
+        })
+      )
+    })
+  ).isRequired,
+  onSelectTestCase: PropTypes.func,
+  hidePassing: PropTypes.bool
+};
+
+JUnitTable.defaultProps = {
+  onSelectTestCase: () => {},
+  hidePassing: true
+};

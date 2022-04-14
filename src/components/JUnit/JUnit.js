@@ -4,14 +4,18 @@ import { ModalTestCase } from "./ModalTestCase";
 import { JUnitTable } from "./JUnitTable";
 import { Summary } from "./Summery";
 
-export function JUnit({ suites, duration, failed, passed }) {
+export function JUnit({ suites, duration, failed, passed, hidePassing }) {
   const [selectedTestCase, setSelectedTestCase] = useState(null);
 
   return (
     <div>
       <Summary suites={suites} failed={failed} passed={passed} />
 
-      <JUnitTable suites={suites} onSelectTestCase={setSelectedTestCase} />
+      <JUnitTable
+        suites={suites}
+        onSelectTestCase={setSelectedTestCase}
+        hidePassing={hidePassing}
+      />
 
       <ModalTestCase
         testCase={selectedTestCase}
