@@ -4,7 +4,14 @@ import { ModalTestCase } from "./ModalTestCase";
 import { JUnitTable } from "./JUnitTable";
 import { Summary } from "./Summery";
 
-export function JUnit({ suites, duration, failed, passed, hidePassing }) {
+export function JUnit({
+  suites,
+  duration,
+  failed,
+  passed,
+  hidePassing,
+  hideStatusCol
+}) {
   const [selectedTestCase, setSelectedTestCase] = useState(null);
 
   return (
@@ -15,6 +22,7 @@ export function JUnit({ suites, duration, failed, passed, hidePassing }) {
         suites={suites}
         onSelectTestCase={setSelectedTestCase}
         hidePassing={hidePassing}
+        hideStatusCol={hideStatusCol}
       />
 
       <ModalTestCase
@@ -37,5 +45,12 @@ JUnit.propTypes = {
   ).isRequired,
   duration: PropTypes.number.isRequired,
   failed: PropTypes.number.isRequired,
-  passed: PropTypes.number.isRequired
+  passed: PropTypes.number.isRequired,
+  hidePassing: PropTypes.bool,
+  hideStatusCol: PropTypes.bool
+};
+
+JUnit.defaultProps = {
+  hidePassing: true,
+  hideStatusCol: false
 };

@@ -93,7 +93,12 @@ const groupTestsByClassname = (tests) =>
     };
   });
 
-export function JUnitTable({ suites, onSelectTestCase, hidePassing }) {
+export function JUnitTable({
+  suites,
+  onSelectTestCase,
+  hidePassing,
+  hideStatusCol
+}) {
   const data = useMemo(
     () =>
       suites.map((suite) => {
@@ -117,12 +122,17 @@ export function JUnitTable({ suites, onSelectTestCase, hidePassing }) {
     headerGroups,
     rows,
     setFilter,
+    toggleHideColumn,
     prepareRow
   } = useTable({ columns, data }, useFilters, useSortBy, useExpanded);
 
   useEffect(() => {
     setFilter("status", hidePassing ? TEST_STATUS.FAILED : null);
   }, [hidePassing]);
+
+  useEffect(() => {
+    toggleHideColumn("status", hideStatusCol);
+  }, [hideStatusCol]);
 
   return (
     <table {...getTableProps()}>
@@ -203,10 +213,12 @@ JUnitTable.propTypes = {
     })
   ).isRequired,
   onSelectTestCase: PropTypes.func,
-  hidePassing: PropTypes.bool
+  hidePassing: PropTypes.bool,
+  hideStatusCol: PropTypes.bool
 };
 
 JUnitTable.defaultProps = {
   onSelectTestCase: () => {},
-  hidePassing: true
+  hidePassing: true,
+  hideStatusCol: false
 };
