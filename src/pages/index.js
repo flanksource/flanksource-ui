@@ -4,12 +4,14 @@ import { IncidentCreatePage } from "./incident/incident-create";
 import { LogsPage } from "./logs-page";
 import { TopologyPage } from "./topology-page";
 import { CanaryPage } from "./canary";
-import { ConfigPage } from "./config-page";
+import { ConfigListPage } from "./config/config-list";
+import { ConfigDetailsPage } from "./config/config-details";
 import { TimelinePage } from "./timeline-page";
 
 export {
   LogsPage,
-  ConfigPage,
+  ConfigDetailsPage,
+  ConfigListPage,
   TimelinePage,
   CanaryPage,
   TopologyPage,

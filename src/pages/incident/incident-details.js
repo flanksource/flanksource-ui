@@ -1,5 +1,6 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useCallback } from "react";
 import { Link, useParams } from "react-router-dom";
+import { values } from "lodash";
 import {
   createHypothesis,
   deleteHypothesis,
@@ -27,21 +28,33 @@ function mapNode(node) {
     children: node.children || []
   };
 }
+
+const NULL_NODE = mapNode({ title: "Empty", id: "empty_tree", children: [] });
 // temporary tree-building method that is incorrect.
 function buildTreeFromHypothesisList(list) {
-  const root = mapNode(list.find((o) => o.type === "root"));
-  const factors = list.filter((o) => o.type === "factor");
-  const solutions = list.filter((o) => o.type === "solution");
-  factors.forEach((factor) => {
-    root.children = [...root.children, mapNode(factor)];
-  });
-  if (root.children.length > 0) {
-    solutions.forEach((solution) => {
-      const firstFactor = root.children[0];
-      firstFactor.children = [...firstFactor.children, mapNode(solution)];
-    });
+  const tree = {};
+
+  if (list.length === 0) {
+    return NULL_NODE;
   }
-  return root;
+
+  list.forEach((node) => {
+    tree[node.id] = mapNode(node);
+  });
+  // 2nd pass to add children
+  list.forEach((node) => {
+    if (node.parent_id != null) {
+      tree[node.parent_id].children.push(tree[node.id]);
+    }
+  });
+  // 3rd pass to remove children from root
+  list.forEach((node) => {
+    if (node.parent_id != null) {
+      delete tree[node.id];
+    }
+  });
+
+  return values(tree)[0];
 }
 
 export function IncidentDetailsPage() {
@@ -72,6 +85,15 @@ export function IncidentDetailsPage() {
 
   const updateStatus = (status) =>
     updateIncident(incident.id, { status }).then(() => incidentQuery.refetch());
+
+  const updateIncidentHandler = useCallback(
+    (newDataIncident) => {
+      updateIncident(incident.id, newDataIncident).then(() =>
+        incidentQuery.refetch()
+      );
+    },
+    [incidentQuery, incident]
+  );
 
   if (incident == null) {
     return <Loading />;
@@ -106,7 +128,7 @@ export function IncidentDetailsPage() {
                 <TopologyCard
                   size="medium"
                   topologyId="017ed3af-c25a-5362-175d-40e7864ed7b7"
-                  depth={0}
+                  depth={2}
                 />
               </div>
             </div>
@@ -143,13 +165,11 @@ export function IncidentDetailsPage() {
         >
           <IncidentDetails
             incident={incident}
-            node={loadedTree}
             updateStatusHandler={() =>
               updateStatus(status === "open" ? "closed" : "open")
             }
-            textButton={
-              status === "open" ? "Mark as resolved" : "Mark as reopen"
-            }
+            updateIncidentHandler={updateIncidentHandler}
+            textButton={status === "open" ? "Close" : "Reopen"}
           />
           <div className="bg-white px-4 py-5 mt-4  shadow sm:rounded-lg sm:px-6">
             <section aria-labelledby="applicant-information-title">

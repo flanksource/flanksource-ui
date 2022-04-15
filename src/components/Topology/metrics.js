@@ -38,7 +38,7 @@ Metrics.propTypes = {
   items: PropTypes.arrayOf(
     PropTypes.shape({
       name: PropTypes.string.isRequired,
-      color: PropTypes.string.isRequired
+      color: PropTypes.string
     })
   ).isRequired,
   row: PropTypes.bool

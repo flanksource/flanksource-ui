@@ -1,457 +1,456 @@
-import React from "react";
-import { orderBy, reduce, debounce, throttle, isEmpty } from "lodash";
-import history from "history/browser";
-import dayjs from "dayjs";
-import { AiFillSetting } from "react-icons/ai";
-import { encodeObjectToUrlSearchParams } from "./url";
-import { FilterForm } from "./FilterForm/index";
-import { getLabels, filterChecksByLabels, getLabelFilters } from "./labels";
-
-import { readCanaryState, getDefaultForm } from "./state";
-
-import { filterChecks, filterChecksByText, isHealthy } from "./filter";
-import { CanaryTable } from "./table";
-import { CanaryCards } from "./card";
-import { CanarySorter } from "./data";
-import { version as appVersion } from "../../../package.json";
-
-import { StatCard } from "../StatCard";
-import { CanaryTabs, filterChecksByTabSelection } from "./tabs";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { debounce, isEmpty, throttle } from "lodash";
+import {
+  encodeObjectToUrlSearchParams,
+  updateParams,
+  decodeUrlSearchParams
+} from "./url";
 import { CanarySearchBar } from "./CanarySearchBar";
-import { Sidebar } from "../Sidebar";
+import { getParamsFromURL } from "./utils";
+import { CanaryInterfaceMinimal } from "../CanaryInterface/minimal";
+import { GroupByDropdown } from "../Dropdown/GroupByDropdown";
+import { DropdownStandaloneWrapper } from "../Dropdown/StandaloneWrapper";
+import { TimeRange, timeRanges } from "../Dropdown/TimeRange";
+import { defaultTabSelections } from "../Dropdown/lib/lists";
+import { TabByDropdown } from "../Dropdown/TabByDropdown";
 import { Toggle } from "../Toggle";
-import { SidebarSubPanel } from "./SidebarSubPanel";
-import { RefreshIntervalDropdown } from "../Dropdown/RefreshIntervalDropdown";
-import { getLocalItem, setLocalItem } from "../../utils/storage";
-import { Modal } from "../Modal";
-import { CheckTitle } from "./CanaryPopup/CheckTitle";
-import { CheckDetails } from "./CanaryPopup/CheckDetails";
-
+import { LabelFilterDropdown } from "./FilterForm";
+import {
+  getConciseLabelState,
+  groupLabelsByKey,
+  separateLabelsByBooleanType
+} from "./labels";
+import { TristateToggle } from "../TristateToggle";
 import mixins from "../../utils/mixins.module.css";
 
-export class Canary extends React.Component {
-  constructor(props) {
-    super(props);
-    this.timer = null;
-    this.ticker = null;
-    this.url = props.url;
-    this.fetch = throttle(this.fetch.bind(this), 1000);
-    this.handleSelect = this.handleSelect.bind(this);
-    this.handleModalClose = this.handleModalClose.bind(this);
-    this.handleSearch = this.handleSearch.bind(this);
-    this.handleSearchClear = this.handleSearchClear.bind(this);
-    this.handleAutoRefreshChange = this.handleAutoRefreshChange.bind(this);
-    this.handleRefreshIntervalChange =
-      this.handleRefreshIntervalChange.bind(this);
-    this.handleTabSelect = this.handleTabSelect.bind(this);
-    this.setChecks = this.setChecks.bind(this);
-    this.setLastUpdated = this.setLastUpdated.bind(this);
-    this.history = history;
-    // eslint-disable-next-line prettier/prettier
-    this.unhistory = () => { };
+const getSearchParams = () => getParamsFromURL(window.location.search);
 
-    const labels = getLabels(props.checks);
+export function Canary({
+  url = "/canary/api",
+  topLayoutOffset = 0,
+  hideSearch,
+  hideTimeRange
+}) {
+  // force-set layout to table
+  useEffect(() => {
+    updateParams({ layout: "table" });
+  }, []);
 
-    this.state = {
-      apiVersion: null,
-      requestDuration: null,
-      urlState: getDefaultForm(labels),
-      selected: null,
-      graphData: null,
-      autoRefresh: JSON.parse(getLocalItem("canaryAutoRefreshState")) ?? true,
-      // @TODO: default refresh interval is always 10. might want to memoize this to local state. - john
-      refreshInterval: getLocalItem("canaryRefreshIntervalState") || 10,
-      lastUpdated: null,
-      labels,
-      labelFilters: {
-        exclude: [],
-        include: []
-      },
-      selectedTab: null,
-      searchQuery: "",
-      checks: props.checks ? props.checks : []
-    };
-  }
+  const [checks, setChecks] = useState([]);
+  // eslint-disable-next-line no-unused-vars
+  const [isLoading, setIsLoading] = useState(true);
+  // eslint-disable-next-line no-unused-vars
+  const [lastUpdated, setLastUpdated] = useState("");
+  const [filteredLabels, setFilteredLabels] = useState();
 
-  componentDidMount() {
-    const { canaryState: urlState } = readCanaryState(window.location.search);
-    const { labels, refreshInterval } = this.state;
-    const { labels: labelStates } = urlState;
-    const labelFilters = getLabelFilters(labelStates, labels);
-    this.setState({ urlState, labelFilters });
+  const labelUpdateCallback = useCallback((newLabels) => {
+    setFilteredLabels(newLabels);
+  }, []);
 
-    this.unhistory = this.history.listen(({ location }) => {
-      // See https://github.com/remix-run/history/blob/main/docs/getting-started.md
-      const { canaryState: urlState } = readCanaryState(location.search);
-      const { labels } = this.state;
-      const { labels: labelStates } = urlState;
-      const labelFilters = getLabelFilters(labelStates, labels);
-      this.setState({ urlState, labelFilters });
-    });
-
-    this.fetch();
-    if (this.url == null) {
-      return;
-    }
-    this.startRefreshTimer(refreshInterval);
-  }
-
-  componentWillUnmount() {
-    this.unhistory();
-    clearInterval(this.timer);
-    clearInterval(this.ticker);
-    this.ticker = null;
-    this.timer = null;
-  }
-
-  handleTabSelect(tabSelection) {
-    this.setState({
-      // eslint-disable-next-line react/no-unused-state
-      selectedTab: tabSelection
-    });
-  }
-
-  handleSearch(value) {
-    this.setState({
-      searchQuery: value
-    });
-  }
-
-  handleSearchClear() {
-    this.setState({
-      searchQuery: ""
-    });
-  }
-
-  handleRefreshIntervalChange(value) {
-    const { refreshInterval: prevValue } = this.state;
-    if (prevValue !== value && !Number.isNaN(value) && value >= 1) {
-      this.setState({
-        refreshInterval: value
-      });
-      this.startRefreshTimer(value);
-      setLocalItem("canaryRefreshIntervalState", value);
-    }
-  }
-
-  handleAutoRefreshChange(enableRefresh) {
-    clearInterval(this.timer);
-    this.setState({
-      autoRefresh: enableRefresh
-    });
-    setLocalItem("canaryAutoRefreshState", enableRefresh);
-    if (enableRefresh) {
-      const { refreshInterval } = this.state;
-      this.startRefreshTimer(refreshInterval);
-    }
-  }
-
-  handleSelect(check) {
-    const params = encodeObjectToUrlSearchParams({
-      check: check.id,
-      start: "7d",
-      count: 300
-    });
-    this.setState({
-      selected: check,
-      graphData: null
-    });
-
-    fetch(`${this.url}/graph?${params}`)
-      .then((result) => result.json())
-      .then((e) => {
-        if (!isEmpty(e.error)) {
-          // eslint-disable-next-line no-console
-          console.error(e.error);
-        } else {
-          this.setState({
-            graphData: e.status
+  const handleFetch = useMemo(
+    () =>
+      throttle(() => {
+        if (url == null) {
+          return;
+        }
+        const timeRange = getParamsFromURL(window.location.search)?.timeRange;
+        const params = encodeObjectToUrlSearchParams({
+          start:
+            isEmpty(timeRange) || timeRange === "undefined" ? "1h" : timeRange
+        });
+        setIsLoading(true);
+        fetch(`${url}?${params}`)
+          .then((result) => result.json())
+          .then((e) => {
+            if (!isEmpty(e.error)) {
+              // eslint-disable-next-line no-console
+              console.error(e.error);
+            } else {
+              setChecks(e.checks);
+              setLastUpdated(new Date());
+            }
+          })
+          .finally(() => {
+            setIsLoading(false);
           });
-        }
-      });
-  }
+      }, 1000),
+    [url]
+  );
 
-  handleModalClose() {
-    this.setState({
-      selected: null
-    });
-  }
+  const handleSearch = debounce((value) => {
+    updateParams({ query: value });
+  }, 400);
 
-  setChecks(checks) {
-    // set api Version from response (yet to be provided by API)
-    let apiVersion;
-    if (checks.apiVersion) {
-      apiVersion = checks.apiVersion;
-    }
-    let duration;
-    if (checks.duration) {
-      duration = checks.duration;
-    }
-    if (checks.checks) {
-      // FIXME unify pipeline for demo and remote
-      checks = checks.checks;
-    }
-    if (checks == null) {
-      checks = [];
-    }
-    const labels = getLabels(checks);
-    this.setState({
-      checks,
-      requestDuration: duration,
-      apiVersion,
-      // eslint-disable-next-line react/no-unused-state
-      labels
-    });
-  }
-
-  setLastUpdated(date) {
-    this.setState({
-      lastUpdated: date
-    });
-  }
-
-  startRefreshTimer(interval) {
-    clearInterval(this.timer);
-    this.timer = setInterval(() => this.fetch(), interval * 1000);
-    clearInterval(this.ticker);
-    this.ticker = setInterval(() => {
-      const { lastUpdated } = this.state;
-      const age = dayjs(lastUpdated).fromNow();
-      this.setState({
-        lastUpdatedAge: age
-      });
-    }, 3000);
-  }
-
-  fetch() {
-    if (this.url == null) {
-      return;
-    }
-    const { urlState } = this.state;
-    const { timeRange } = urlState;
-    const params = encodeObjectToUrlSearchParams({
-      start: isEmpty(timeRange) || timeRange === "undefined" ? "1h" : timeRange
-    });
-
-    fetch(`${this.url}?${params}`)
-      .then((result) => result.json())
-      .then((e) => {
-        if (!isEmpty(e.error)) {
-          // eslint-disable-next-line no-console
-          console.error(e.error);
-        } else {
-          this.setChecks(e);
-          this.setLastUpdated(new Date());
-        }
-      });
-  }
-
-  render() {
-    const { state } = this;
-    const {
-      selected,
-      graphData,
-      labelFilters,
-      urlState,
-      checks: stateChecks,
-      lastUpdatedAge,
-      labels,
-      selectedTab,
-      autoRefresh,
-      refreshInterval,
-      searchQuery,
-      apiVersion,
-      requestDuration
-    } = state;
-    const { hidePassing, layout, tabBy } = urlState;
-
-    // first filter for pass/fail
-    let checks = filterChecks(stateChecks, hidePassing, []);
-
-    const passedAll = reduce(
-      stateChecks,
-      (sum, c) => (isHealthy(c) ? sum + 1 : sum),
-      0
-    );
-
-    // filter by name, description, endpoint
-    checks = filterChecksByText(checks, searchQuery);
-
-    // filter the subset down
-    checks = Object.values(filterChecksByLabels(checks, labelFilters)); // filters checks by its 'include/exclude' filters
-    checks = orderBy(checks, CanarySorter);
-
-    const tabChecks = [...checks]; // list of checks used to generate tabs
-
-    checks = filterChecksByTabSelection(tabBy, selectedTab, checks);
-    const passed = reduce(
-      checks,
-      (sum, c) => (isHealthy(c) ? sum + 1 : sum),
-      0
-    );
-
-    const filterProps = {
-      onServerSideFilterChange: this.fetch,
-      labels,
-      checks: stateChecks,
-      currentTabChecks: filterChecksByTabSelection(
-        tabBy,
-        selectedTab,
-        stateChecks
-      ),
-      history: this.history
-    };
-
-    return (
-      <div className="w-full flex flex-row">
-        {/* middle panel */}
-        <div className="w-full flex flex-col justify-between px-4 mb-4">
-          <div className="relative">
-            <CanarySearchBar
-              onChange={debounce((e) => this.handleSearch(e.target.value), 500)}
-              onSubmit={(value) => this.handleSearch(value)}
-              onClear={this.handleSearchClear}
-              className="pt-4 pb-2 sticky top-0 z-10 bg-white"
-              inputClassName="w-full"
-              inputOuterClassName="z-10 w-full md:w-1/2"
-              placeholder="Search by name, description, or endpoint"
-            />
-
-            <CanaryTabs
-              className="sticky top-0 z-20 bg-white w-full"
-              style={{ top: "58px" }}
-              checks={tabChecks}
-              tabBy={tabBy}
-              setTabSelection={this.handleTabSelect}
-            />
-            {layout === "card" && (
-              <CanaryCards checks={checks} onClick={this.handleSelect} />
-            )}
-            {layout === "table" && (
-              <CanaryTable
-                checks={checks}
-                labels={labels}
-                history={history}
-                onCheckClick={this.handleSelect}
-                showNamespaceTags={
-                  tabBy !== "namespace" ? true : selectedTab === "all"
-                }
-                hideNamespacePrefix
-                groupSingleItems={false}
-                theadStyle={{ position: "sticky", top: "96px" }}
-              />
-            )}
+  return (
+    <div className="flex flex-row">
+      <SidebarSticky topHeight={topLayoutOffset}>
+        <SectionTitle className="mb-4">Filter by Health</SectionTitle>
+        <div className="mb-6 flex items-center">
+          <div className="h-9 flex items-center">
+            <HidePassingToggle />
           </div>
-
-          <div className="mt-4 text-xs text-gray-500 flex flex-col-reverse md:flex-row justify-between">
-            <div>
-              {appVersion && <div>UI version: {appVersion}</div>}
-              {apiVersion && <div>API version: {apiVersion}</div>}
-            </div>
-            <div>
-              {lastUpdatedAge && <>Last updated {lastUpdatedAge}</>}
-              {requestDuration && ` in ${requestDuration}ms`}
-            </div>
-          </div>
+          <div className="text-sm text-gray-800 mb-0">Hide Passing</div>
         </div>
+        <SectionTitle className="mb-5 flex justify-between items-center">
+          Filter by Label{" "}
+          {/* <button
+              type="button"
+              onClick={() => {
+                updateParams({ labels: {} });
+              }}
+              className="bg-gray-200 text-gray-500 font-semibold text-xs px-2 py-1 rounded-md"
+            >
+              Clear All
+            </button> */}
+        </SectionTitle>
+        <div className="mb-4 mr-2 w-full">
+          <LabelFilterList labels={filteredLabels} />
+        </div>
+      </SidebarSticky>
 
-        {/* sidebar panel */}
-        <div className="mr-6 flex-grow">
-          <Sidebar animated>
-            <SidebarSubPanel
-              icon={
-                <AiFillSetting
-                  title="Show settings panel"
-                  className="text-gray-600 h-6 w-6"
-                />
-              }
-              subpanelContent={
+      <div className="flex-grow p-6">
+        {!hideSearch && (
+          <div className="flex flex-wrap mb-2">
+            <CanarySearchBar
+              onChange={(e) => handleSearch(e.target.value)}
+              onSubmit={(value) => handleSearch(value)}
+              onClear={() => handleSearch("")}
+              style={{ maxWidth: "480px", width: "100%" }}
+              inputClassName="w-full py-2 mr-2 mb-px"
+              inputOuterClassName="w-full"
+              placeholder="Search by name, description, or endpoint"
+              defaultValue={getSearchParams()?.query}
+            />
+          </div>
+        )}
+
+        <div className="flex flex-wrap mb-2">
+          <div className="mb-2 mr-2">
+            <DropdownStandaloneWrapper
+              dropdownElem={<GroupByDropdown />}
+              checks={checks}
+              defaultValue="canaryName"
+              paramKey="groupBy"
+              className="w-64"
+              prefix={
                 <>
-                  <div className="uppercase font-semibold text-sm mb-4 text-gray-700">
-                    More Settings
+                  <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
+                    Group By:
                   </div>
-                  <div className="mb-4">
-                    <Toggle
-                      label="Auto-refresh"
-                      className="mb-3"
-                      value={autoRefresh}
-                      onChange={this.handleAutoRefreshChange}
-                    />
-                  </div>
-
-                  {autoRefresh && (
-                    <div className="mb-4">
-                      <RefreshIntervalDropdown
-                        className="w-full"
-                        defaultValue={refreshInterval}
-                        onChange={this.handleRefreshIntervalChange}
-                      />
-                    </div>
-                  )}
                 </>
               }
-            >
-              <StatCard
-                title="All Checks"
-                className="mb-4"
-                customValue={
-                  <>
-                    {stateChecks.length}
-                    <span className="text-xl font-light">
-                      {" "}
-                      (<span className="text-green-500">{passedAll}</span>/
-                      <span className="text-red-500">
-                        {stateChecks.length - passedAll}
-                      </span>
-                      )
-                    </span>
-                  </>
-                }
-              />
-
-              {checks.length !== stateChecks.length && (
-                <StatCard
-                  title="Filtered Checks"
-                  className="mb-4"
-                  customValue={
-                    <>
-                      {checks.length}
-                      <span className="text-xl  font-light">
-                        {" "}
-                        (<span className="text-green-500">{passed}</span>/
-                        <span className="text-red-500">
-                          {checks.length - passed}
-                        </span>
-                        )
-                      </span>
-                    </>
-                  }
-                />
-              )}
-
-              {/* filtering tools */}
-              <FilterForm {...filterProps} />
-            </SidebarSubPanel>
-          </Sidebar>
-        </div>
-        <Modal
-          open={selected != null}
-          onClose={this.handleModalClose}
-          size="full"
-        >
-          <div
-            className="flex flex-col h-full py-8"
-            style={{ maxHeight: "calc(100vh - 4rem)" }}
-          >
-            <CheckTitle check={selected} className="pb-4" />
-            <CheckDetails
-              check={selected}
-              graphData={graphData}
-              className={`flex flex-col overflow-y-hidden ${mixins.appleScrollbar}`}
             />
           </div>
-        </Modal>
+          <div className="mb-2 mr-2">
+            <DropdownStandaloneWrapper
+              dropdownElem={<TabByDropdown />}
+              defaultValue={defaultTabSelections.namespace.value}
+              paramKey="tabBy"
+              checks={checks}
+              emptyable
+              className="w-64"
+              prefix={
+                <>
+                  <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
+                    Tab By:
+                  </div>
+                </>
+              }
+            />
+          </div>
+          {!hideTimeRange && (
+            <DropdownStandaloneWrapper
+              dropdownElem={<TimeRange />}
+              defaultValue={timeRanges[0].value}
+              paramKey="timeRange"
+              className="w-56 mb-2 mr-2"
+              prefix={
+                <>
+                  <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
+                    Time Range:
+                  </div>
+                </>
+              }
+            />
+          )}
+        </div>
+        <CanaryInterfaceMinimal
+          checks={checks}
+          handleFetch={handleFetch}
+          onLabelFiltersCallback={labelUpdateCallback}
+        />
       </div>
-    );
-  }
+    </div>
+  );
 }
+
+export const LabelFilterList = ({ labels }) => {
+  const [list, setList] = useState({});
+  useEffect(() => {
+    if (labels) {
+      const [bl, nbl] = separateLabelsByBooleanType(Object.values(labels));
+      const groupedNbl = groupLabelsByKey(nbl);
+      const keyedBl = bl
+        .map((o) => ({ ...o, isBoolean: true }))
+        .reduce((acc, current) => {
+          acc[current.key] = [current];
+          return acc;
+        }, {});
+
+      const mergedLabels = { ...keyedBl, ...groupedNbl };
+      setList(mergedLabels);
+    }
+  }, [labels]);
+  return (
+    <div>
+      {Object.entries(list)
+        .sort((a, b) => (a[0] > b[0] ? 1 : -1))
+        .map(([labelKey, labels]) => (
+          <div key={labelKey} className="mb-2">
+            {labels.length > 1 ? (
+              <>
+                <div className="text-xs whitespace-nowrap overflow-ellipsis w-full overflow-hidden mb-1">
+                  {labelKey}
+                </div>
+                <MultiSelectLabelsDropdownStandalone
+                  labels={labels}
+                  selectAllByDefault
+                />
+              </>
+            ) : labels.length === 1 ? (
+              <div className="flex w-full mb-3">
+                <div className="mr-3 w-full text-xs text-left text-gray-700 break-all overflow-ellipsis overflow-x-hidden flex items-center">
+                  {labels[0].key}
+                </div>
+                <TristateLabelStandalone
+                  label={labels[0]}
+                  className="flex items-center"
+                  labelClass=""
+                  hideLabel
+                />
+              </div>
+            ) : null}
+          </div>
+        ))}
+    </div>
+  );
+};
+
+export const HidePassingToggle = ({ defaultValue = true }) => {
+  const searchParams = getParamsFromURL(window.location.search);
+  const paramsValue = searchParams.hidePassing
+    ? searchParams.hidePassing === "true"
+    : null;
+
+  const [value, setValue] = useState(paramsValue ?? defaultValue);
+
+  useEffect(() => {
+    updateParams({ hidePassing: value });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  return (
+    <Toggle
+      value={value}
+      onChange={(val) => {
+        setValue(val);
+        updateParams({ hidePassing: val });
+      }}
+    />
+  );
+};
+
+export const MultiSelectLabelsDropdownStandalone = ({ labels = [] }) => {
+  const [isFirstLoad, setIsFirstLoad] = useState(true);
+  const [dropdownValue, setDropdownValue] = useState([]);
+  const handleChange = useCallback(
+    (selected, all) => {
+      const { labels: urlLabelState } = decodeUrlSearchParams(
+        window.location.search
+      );
+      const labelState = { ...urlLabelState };
+
+      if (!isFirstLoad) {
+        all.forEach((selection) => {
+          // set unselected labels to 0
+          labelState[selection.value] = 0;
+        });
+      }
+
+      selected.forEach((selection) => {
+        // set selected labels to 1
+        labelState[selection.value] = 1;
+      });
+
+      setDropdownValue(selected);
+
+      const conciseLabelState = getConciseLabelState(labelState);
+      updateParams({ labels: conciseLabelState });
+      setIsFirstLoad(false);
+    },
+    [
+      isFirstLoad
+      //  selectAllByDefault
+    ]
+  );
+
+  useEffect(() => {
+    setIsFirstLoad(true);
+  }, []);
+
+  return (
+    <LabelFilterDropdown
+      name="HealthMultiLabelFilter"
+      labels={labels}
+      onChange={handleChange}
+      loadFromURL
+      value={dropdownValue}
+    />
+  );
+};
+
+export const TristateLabelStandalone = ({
+  label,
+  className,
+  labelClass,
+  ...rest
+}) => {
+  const { labels: urlLabelState = {} } = decodeUrlSearchParams(
+    window.location.search
+  );
+  const [isFirstLoad, setIsFirstLoad] = useState(true);
+  const [toggleState, setToggleState] = useState(0);
+
+  const handleToggleChange = (v) => {
+    if (!isFirstLoad) {
+      const { labels: urlLabelState } = decodeUrlSearchParams(
+        window.location.search
+      );
+      const newState = { ...urlLabelState };
+      newState[label.id] = v;
+      const conciseLabelState = getConciseLabelState(newState);
+      updateParams({ labels: conciseLabelState });
+      setToggleState(v);
+    }
+  };
+
+  // get initial state from URL
+  useEffect(() => {
+    const { labels: urlLabelState = {} } = decodeUrlSearchParams(
+      window.location.search
+    );
+    if (Object.prototype.hasOwnProperty.call(urlLabelState, label.id)) {
+      setToggleState(urlLabelState[label.id]);
+    } else {
+      setToggleState(0);
+    }
+  }, [label, urlLabelState]);
+
+  useEffect(() => {
+    setIsFirstLoad(false);
+  }, []);
+
+  return (
+    <>
+      <TristateToggle
+        value={toggleState}
+        onChange={(v) => handleToggleChange(v)}
+        className={className}
+        labelClass={labelClass}
+        label={label}
+        {...rest}
+      />
+    </>
+  );
+};
+
+export const TristateLabels = ({ labels = [] }) => {
+  const [labelStates, setLabelStates] = useState({});
+
+  // first load or label change: set label states
+  useEffect(() => {
+    const { labels: urlLabelState = {} } = decodeUrlSearchParams(
+      window.location.search
+    );
+    const labelMap = labels.reduce((acc, current) => {
+      acc[current.id] = true;
+      return acc;
+    }, {});
+    const newLabelStates = Object.entries(urlLabelState).reduce(
+      (acc, [k, v]) => {
+        if (Object.prototype.hasOwnProperty.call(labelMap, k)) {
+          acc[k] = v;
+        }
+        return acc;
+      },
+      {}
+    );
+    setLabelStates(newLabelStates);
+  }, [labels]);
+
+  const handleToggleChange = (labelKey, value) => {
+    const { labels: urlLabelState } = decodeUrlSearchParams(
+      window.location.search
+    );
+    const newState = { ...urlLabelState };
+    newState[labelKey] = value;
+    const conciseLabelState = getConciseLabelState(newState);
+    updateParams({ labels: conciseLabelState });
+  };
+
+  return (
+    <div className="w-full break">
+      {labels
+        .filter((o) => o && o !== undefined)
+        .map((label) => (
+          <div key={label.id}>
+            <TristateToggle
+              key={label.key}
+              value={
+                Object.prototype.hasOwnProperty.call(labelStates, label.id)
+                  ? labelStates[label.id]
+                  : 0
+              }
+              onChange={(v) => handleToggleChange(label.id, v)}
+              className="mb-2 flex items-center"
+              labelClass="ml-3 text-xs text-left text-gray-700 break-all overflow-ellipsis overflow-x-hidden"
+              label={label}
+            />
+          </div>
+        ))}
+    </div>
+  );
+};
+
+const SectionTitle = ({ className, children, ...props }) => (
+  <div
+    className={`uppercase font-semibold text-sm mb-3 text-indigo-700 ${className}`}
+    {...props}
+  >
+    {children}
+  </div>
+);
+
+const SidebarSticky = ({
+  className,
+  style,
+  children,
+  topHeight = 64,
+  ...props
+}) => (
+  <div
+    className={className || "flex flex-col w-72 border-r"}
+    style={style || { minHeight: `calc(100vh - ${topHeight}px)` }}
+    {...props}
+  >
+    <div
+      className={`h-full overflow-y-auto overflow-x-hidden p-4 ${mixins.appleScrollbar}`}
+      style={{
+        position: "sticky",
+        top: `${topHeight}px`,
+        maxHeight: `calc(100vh - ${topHeight}px)`
+      }}
+    >
+      {children}
+    </div>
+  </div>
+);

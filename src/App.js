@@ -1,20 +1,18 @@
 import { FolderIcon, HomeIcon } from "@heroicons/react/outline";
 import { useEffect, useState } from "react";
 import { AiFillHeart } from "react-icons/ai";
-import { FaProjectDiagram } from "react-icons/fa";
 import { ImLifebuoy } from "react-icons/im";
-import { MdTimeline } from "react-icons/md";
-import { VscGraph, VscJson } from "react-icons/vsc";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { VscJson } from "react-icons/vsc";
 import { QueryClient, QueryClientProvider } from "react-query";
+import { Navigate, Route, Routes } from "react-router-dom";
 import { getUser } from "./api/auth";
-import SidebarLayout from "./components/Layout/sidebar";
+import { SidebarLayout } from "./components/Layout";
 import { Loading } from "./components/Loading";
 import { TraceView } from "./components/Traces";
 import { AuthContext } from "./context";
-import { TopologyPage as ExamplesTopologyPage } from "./pages/Examples/Topology/topology-page";
 import {
-  ConfigPage,
+  ConfigDetailsPage,
+  ConfigListPage,
   IncidentCreatePage,
   IncidentDetailsPage,
   IncidentListPage,
@@ -22,11 +20,13 @@ import {
   TimelinePage,
   TopologyPage
 } from "./pages";
-import { RsDemoPage } from "./pages/Examples/rs-demo";
 import { DropdownDemoPage } from "./pages/Examples/dropdown-demo";
-import { HealthPage } from "./pages/health";
-import { TopologySelectorModalPage } from "./pages/Examples/TopologySelectorModalPage/TopologySelectorModalPage";
 import { ModalPage } from "./pages/Examples/Modal/modal-page";
+import { TypologyDropdownDemo } from "./pages/Examples/topology-dropdown";
+import { RsDemoPage } from "./pages/Examples/rs-demo";
+import { TopologyPage as ExamplesTopologyPage } from "./pages/Examples/Topology/topology-page";
+import { TopologySelectorModalPage } from "./pages/Examples/TopologySelectorModalPage/TopologySelectorModalPage";
+import { HealthPage } from "./pages/health";
 import { JUnitPage } from "./pages/Examples/JUnitPage";
 
 const queryClient = new QueryClient({
@@ -53,15 +53,15 @@ const navigation = [
     current: false
   },
   { name: "Logs", href: "/logs", icon: FolderIcon, current: false },
-  { name: "Metrics", href: "/metrics", icon: VscGraph, current: false },
-  { name: "Traces", href: "/traces", icon: FaProjectDiagram, current: false },
+  // { name: "Metrics", href: "/metrics", icon: VscGraph, current: false },
+  // { name: "Traces", href: "/traces", icon: FaProjectDiagram, current: false },
   { name: "Config", href: "/config", icon: VscJson, current: false },
-  {
-    name: "Timeline",
-    href: "/timeline",
-    icon: MdTimeline,
-    current: false
-  },
+  // {
+  //   name: "Timeline",
+  //   href: "/timeline",
+  //   icon: MdTimeline,
+  //   current: false
+  // },
   {
     name: "Incidents",
     href: "/incidents",
@@ -81,19 +81,11 @@ export function Placeholder({ text }) {
 
 export function App() {
   const [user, setUser] = useState();
-  const [toasts, setToasts] = useState([]);
-
-  const toast = (title, message) => {
-    setToasts([{ title, message }]);
-    setTimeout(() => setToasts([]), 5000);
-  };
 
   useEffect(() => {
-    getUser()
-      .then((u) => {
-        setUser(u);
-      })
-      .catch(console.error);
+    getUser().then((u) => {
+      setUser(u);
+    });
   }, []);
   if (user == null) {
     return <Loading text="Logging in" />;
@@ -131,6 +123,10 @@ export function App() {
               element={<TopologySelectorModalPage url="/canary/api" />}
             />
             <Route path="modal" element={<ModalPage />} />
+            <Route
+              path="topology-dropdown"
+              element={<TypologyDropdownDemo />}
+            />
             <Route path="junit" element={<JUnitPage />} />
           </Route>
 
@@ -139,7 +135,8 @@ export function App() {
           </Route>
 
           <Route path="config" element={sidebar}>
-            <Route index element={<ConfigPage />} />
+            <Route index element={<ConfigListPage />} />
+            <Route path=":id" element={<ConfigDetailsPage />} />
           </Route>
 
           <Route path="timeline" element={sidebar}>

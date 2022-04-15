@@ -8,10 +8,13 @@ import { Loading } from "../components/Loading";
 import { toastError } from "../components/Toast/toast";
 import { TopologyCard } from "../components/Topology";
 import { TopologyBreadcrumbs } from "../components/Topology/topology-breadcrumbs";
+
 export function TopologyPage() {
   // const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [topology, setTopology] = useState(null);
+
+  // eslint-disable-next-line no-unused-vars
   const [searchParams, setSearchParams] = useSearchParams();
   const [root, setRoot] = useState(null);
   const { id } = useParams();
@@ -39,6 +42,7 @@ export function TopologyPage() {
           (i) => (i.name != null || i.title != null) && i.type !== "summary"
         );
         setTopology(topology);
+        return null;
       })
       .catch((e) => {
         setIsLoading(false);
@@ -60,7 +64,9 @@ export function TopologyPage() {
     <SearchLayout
       title={
         <div className="flex text-xl text-gray-400  ">
-          <Link to="/topology" className="hover:text-gray-500 ">Topology</Link>
+          <Link to="/topology" className="hover:text-gray-500 ">
+            Topology
+          </Link>
           <TopologyBreadcrumbs topology={root} depth={3} />
         </div>
       }
@@ -69,7 +75,7 @@ export function TopologyPage() {
       <div className="flex leading-1.21rel">
         <div className="flex flex-wrap">
           {topology.map((item) => (
-            <TopologyCard key={item.id} topology={item} size="medium" />
+            <TopologyCard key={item.id} topology={item} size="extra-large" />
           ))}
         </div>
       </div>

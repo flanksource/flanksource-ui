@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useForm } from "react-hook-form";
 import { BsAlarm, BsApp, BsTable } from "react-icons/bs";
 import { RiLayoutGridLine } from "react-icons/ri";
 import { Dropdown } from "../../components/Dropdown";
@@ -36,9 +37,40 @@ const exampleItems2 = {
   }
 };
 
+export const exampleItems3 = {
+  item1: {
+    id: "item1",
+    name: "item1",
+    icon: <BsAlarm />,
+    description: "item1",
+    value: "item1",
+    key: "item1"
+  },
+  item2: {
+    id: "item2",
+    name: "item2",
+    icon: <BsAlarm />,
+    description: "item2",
+    value: "item2",
+    key: "item2"
+  },
+  item3: {
+    id: "item3",
+    name: "item3",
+    icon: <BsAlarm />,
+    description: "item3",
+    value: "item3",
+    key: "item3"
+  }
+};
+
 export function DropdownDemoPage() {
   const [selected, setSelected] = useState(exampleItems.table.value);
   const [selected2, setSelected2] = useState(null);
+
+  const { control } = useForm({
+    defaultValues: { dropdownControlled: "item1" }
+  });
 
   return (
     <SearchLayout title="Dropdown Demo">
@@ -69,6 +101,17 @@ export function DropdownDemoPage() {
       <div className="mb-6">
         <h1 className="mb-4 font-semibold">Emptyable Dropdown with 0 items</h1>
         <Dropdown items={{}} emptyable />
+      </div>
+      <div className="mb-6">
+        <h1 className="mb-4 font-semibold">
+          Dropdown that uses React Hook Form and Control
+        </h1>
+        <Dropdown
+          items={exampleItems3}
+          name="dropdownControlled"
+          control={control}
+          label="Controlled Dropdown"
+        />
       </div>
 
       <p className="mb-6 text-sm">

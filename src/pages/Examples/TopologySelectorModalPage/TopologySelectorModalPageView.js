@@ -24,6 +24,7 @@ export const TopologySelectorModalPageView = ({
       title="Add Card"
       submitButtonTitle="Add"
       onSubmit={(data) => {
+        // eslint-disable-next-line no-console
         console.log("array of checked cards ids:", data);
         setModal(false);
       }}

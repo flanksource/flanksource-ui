@@ -1,25 +1,21 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { debounce } from "lodash";
 import { useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 import clsx from "clsx";
-import { Dropdown } from "../../../Dropdown";
-import { hypothesisStatuses } from "../../data";
-import { getNode } from "../../../NestedHeirarchy/utils";
-
-import { EvidenceSection } from "../EvidenceSection";
-import { Modal } from "../../../Modal";
-import { EvidenceBuilder } from "../../../EvidenceBuilder";
-import { CommentsSection } from "../CommentsSection";
-import { EditableText } from "../../../EditableText";
+import { Dropdown } from "../Dropdown";
+import { hypothesisStatuses } from "./data";
+import { EvidenceSection } from "./evidence-section";
+import { Modal } from "../Modal";
+import { EvidenceBuilder } from "../EvidenceBuilder";
+import { CommentsSection } from "./comments";
 import {
   getCommentsByHypothesis,
   createComment
-} from "../../../../api/services/comments";
-import { getAllEvidenceByHypothesis } from "../../../../api/services/evidence";
-import { useUser } from "../../../../context";
-import { toastError } from "../../../Toast/toast";
-import { Avatar } from "../../../Avatar";
+} from "../../api/services/comments";
+import { getAllEvidenceByHypothesis } from "../../api/services/evidence";
+import { useUser } from "../../context";
+import { toastError } from "../Toast/toast";
 
 const statusItems = {
   ...Object.values(hypothesisStatuses).reduce((acc, obj) => {
@@ -38,26 +34,27 @@ const statusItems = {
   }, {})
 };
 
-export function HypothesisDetails({ nodePath, tree, setTree, api, ...rest }) {
+export function HypothesisDetails({ node, api, ...rest }) {
   const [evidenceBuilderOpen, setEvidenceBuilderOpen] = useState(false);
   const user = useUser();
   const [comments, setComments] = useState([]);
   const [evidence, setEvidence] = useState([]);
-
-  const node = useMemo(() => getNode(tree, nodePath), [tree, nodePath]);
+  const [evidenceLoading, setEvidenceLoading] = useState(true);
 
   const fetchEvidence = (hypothesisId) => {
-    getAllEvidenceByHypothesis(hypothesisId).then((evidence) => {
-      setEvidence(evidence?.data || []);
-    });
+    getAllEvidenceByHypothesis(hypothesisId)
+      .then((evidence) => {
+        setEvidence(evidence?.data || []);
+      })
+      .finally(() => {
+        setEvidenceLoading(false);
+      });
   };
 
   const fetchComments = (id) =>
-    getCommentsByHypothesis(id)
-      .then((comments) => {
-        setComments(comments?.data || []);
-      })
-      .catch((err) => console.error(err));
+    getCommentsByHypothesis(id).then((comments) => {
+      setComments(comments?.data || []);
+    });
 
   const handleComment = (value) =>
     createComment(user, uuidv4(), node.incident_id, node.id, value)
@@ -79,10 +76,9 @@ export function HypothesisDetails({ nodePath, tree, setTree, api, ...rest }) {
     }, 1000)
   ).current;
 
-  const { control, watch, setValue, getValues } = useForm({
+  const { control, watch, getValues } = useForm({
     defaultValues: {
-      status: node.status || Object.values(statusItems)[2].value,
-      title: node.title?.trim() ?? ""
+      status: node.status || Object.values(statusItems)[2].value
     }
   });
 
@@ -97,23 +93,7 @@ export function HypothesisDetails({ nodePath, tree, setTree, api, ...rest }) {
 
   return (
     <>
-      <div className={clsx("py-7", rest.className || "")} {...rest}>
-        <div className="flex pt-3">
-          <Avatar size="sm" srcList={node.created_by.avatar} />
-          <p className="font-inter text-dark-gray font-normal text-sm ml-1.5 mt-0.5">
-            {node.created_by.name}
-          </p>
-        </div>
-        <div className="mt-4 mr-2 mb-2 pr-8 flex flex-nowrap">
-          {/* <Badge size="sm" text={badgeMap[nodePath.length - 1]} className="mr-2" /> */}
-          <EditableText
-            value={getValues("title")}
-            sharedClassName="text-2xl font-semibold text-gray-900 grow"
-            onChange={(e) => {
-              setValue("title", e.target.value);
-            }}
-          />
-        </div>
+      <div className={clsx("pb-7", rest.className || "")} {...rest}>
         <div className="mt-6 mb-7">
           <Dropdown
             control={control}
@@ -125,9 +105,10 @@ export function HypothesisDetails({ nodePath, tree, setTree, api, ...rest }) {
         <div className="mb-8 mt-4">
           <EvidenceSection
             hypothesis={node}
-            evidence={evidence}
+            evidenceList={evidence}
             titlePrepend={<HypothesisTitle>Evidence</HypothesisTitle>}
             onButtonClick={() => setEvidenceBuilderOpen(true)}
+            isLoading={evidenceLoading}
           />
         </div>
         {/* <div className="mb-6">

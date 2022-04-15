@@ -4,8 +4,8 @@ import clsx from "clsx";
 import { BsFillBarChartFill, BsFillChatSquareTextFill } from "react-icons/all";
 import { ThumbDownIcon, ThumbUpIcon } from "@heroicons/react/solid";
 import { AiOutlineSearch } from "react-icons/ai";
-import { HypothesisStatuses } from "../../../../constants/hypothesis-statuses";
-import { Avatar } from "../../../Avatar";
+import { HypothesisStatuses } from "../../constants/hypothesis-statuses";
+import { Avatar } from "../Avatar";
 
 const statusToStatusIconMapping = {
   [HypothesisStatuses.Proven]: {
@@ -96,11 +96,7 @@ export const HypothesisBar = ({ hypothesis, onTitleClick, startAdornment }) => {
           ))}
         </div>
         <div className="ml-3">
-          <Avatar
-            srcList={createdBy.avatar}
-            size="sm"
-            fallbackInitials={createdBy.name}
-          />
+          <Avatar user={createdBy} size="sm" />
         </div>
       </div>
     </div>

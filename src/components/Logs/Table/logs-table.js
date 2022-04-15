@@ -16,6 +16,7 @@ export const LogsTable = ({ logs, actions, variant }) => {
     try {
       logs = JSON.parse(logs);
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.error("cannot parse logs", logs);
       logs = [];
     }

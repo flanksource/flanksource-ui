@@ -1,14 +1,11 @@
 import React from "react";
 import { useForm, Controller } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
-import { Dropdown } from "../../../Dropdown";
-import { hypothesisStatuses } from "../../data";
-import { getNode } from "../../../NestedHeirarchy/utils";
-import { EvidenceSection } from "../EvidenceSection";
-import { useUser } from "../../../../context";
-import { createComment } from "../../../../api/services/comments";
-import { toastError } from "../../../Toast/toast";
-import { HypothesisStatuses } from "../../../../constants/hypothesis-statuses";
+import { Dropdown } from "../Dropdown";
+import { hypothesisStatuses } from "./data";
+import { EvidenceSection } from "./evidence-section";
+import { useUser } from "../../context";
+import { HypothesisStatuses } from "../../constants/hypothesis-statuses";
 
 const statusItems = {
   ...Object.values(hypothesisStatuses).reduce((acc, obj) => {
@@ -27,20 +24,13 @@ const statusItems = {
   }, {})
 };
 
-const nodePathLengthToNewNodeTypeMapping = {
-  1: "root",
-  2: "factor",
-  3: "solution"
+const nextNodePath = {
+  root: "factor",
+  factor: "solution"
 };
 
-export const CreateHypothesis = ({
-  nodePath,
-  tree,
-  api,
-  onHypothesisCreated
-}) => {
+export const CreateHypothesis = ({ node, api, onHypothesisCreated }) => {
   const user = useUser();
-  const parentNode = getNode(tree, nodePath);
   const { control, getValues, setValue, handleSubmit, watch } = useForm({
     defaultValues: {
       hypothesis: {
@@ -54,36 +44,39 @@ export const CreateHypothesis = ({
     }
   });
   const evidenceValue = watch("evidence");
-  const handleComment = (nodeId, value) =>
-    createComment(user, uuidv4(), parentNode.incident_id, nodeId, value)
-      .then((response) => console.log(response))
-      .catch(toastError);
+  // const handleComment = (nodeId, value) =>
+  //   createComment(user, uuidv4(), node.incident_id, nodeId, value)
+  //     .then((response) => console.log(response))
+  //     .catch(toastError);
 
   const onSubmit = async () => {
     const newNodeID = uuidv4();
     if (api?.createMutation) {
-      try {
-        const newNodeResponse = await api.createMutation.mutateAsync({
-          user,
-          id: newNodeID,
-          incidentId: api.incidentId,
-          params: {
-            title: getValues("hypothesis.title"),
-            type: nodePathLengthToNewNodeTypeMapping[nodePath.length + 1],
-            status: getValues("hypothesis.status")
-          }
-        });
-        const newNode = newNodeResponse.data[0];
-        await handleComment(newNode.id, getValues("comment.text"));
-      } catch (e) {
-        toastError(e);
-      }
+      // try {
+      // eslint-disable-next-line no-unused-vars
+      const newNodeResponse = await api.createMutation.mutateAsync({
+        user,
+        id: newNodeID,
+        incidentId: api.incidentId,
+        params: {
+          parent_id: node.id,
+          title: getValues("hypothesis.title"),
+          type: nextNodePath[node.type],
+          status: getValues("hypothesis.status")
+        }
+      });
+      // const newNode = newNodeResponse.data[0];
+      // if (isEmpty(getValues("comment.text"))) {
+      //   await handleComment(newNode.id, getValues("comment.text"));
+      // }
     }
     onHypothesisCreated();
   };
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <h2 className="text-2xl font-semibold text-gray-700">Creat hypothesis</h2>
+      <h2 className="text-2xl font-semibold text-gray-700">
+        Create {nextNodePath[node.type]}: {node.title}
+      </h2>
       <div className="mt-6">
         <div className="text-sm font-medium text-gray-700 mb-1.5">
           <label htmlFor="name">Name</label>
@@ -111,7 +104,7 @@ export const CreateHypothesis = ({
         />
       </div>
       <EvidenceSection
-        hypothesis={parentNode}
+        hypothesis={node}
         evidence={evidenceValue}
         titlePrepend={
           <div className="mr-2 text-sm font-medium text-gray-700 mt-1.5">

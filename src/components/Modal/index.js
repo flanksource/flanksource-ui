@@ -60,7 +60,7 @@ export function Modal({
                 `modal-card-${size}`
               )}
             >
-              <div className="mt-8 px-8 flex justify-between items-center ">
+              <div className="mt-8 px-8 flex justify-between">
                 <h1 className={clsx("font-semibold text-lg", titleClass)}>
                   {title}
                 </h1>
@@ -97,7 +97,7 @@ export function Modal({
 }
 
 Modal.propTypes = {
-  title: PropTypes.string,
+  title: PropTypes.oneOfType([PropTypes.node, PropTypes.string]),
   titleClass: PropTypes.string,
   footerClassName: PropTypes.string,
   open: PropTypes.bool.isRequired,
