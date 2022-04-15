@@ -1,33 +1,43 @@
 import PropTypes from "prop-types";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { FiClock } from "react-icons/fi";
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
 import clsx from "clsx";
 import dayjs from "dayjs";
 import { TimeRangePickerBody } from "./TimeRangePickerBody";
 import "./index.css";
-import { convertRangeValue, createDisplayValue } from "./helpers";
+import { areDatesSame, convertRangeValue, createDisplayValue } from "./helpers";
 
 export const TimeRangePicker = ({ onChange, from, to }) => {
   const [isPickerOpen, setIsPickerOpen] = useState(false);
-  const [currentRange, setCurrentRange] = useState({ from, to });
-  const [pickerLeft, setPickerLeft] = useState(0);
   const pickerRef = useRef();
+  const [sentRange, setSentRange] = useState(null);
+  const [memoRange, setMemoRange] = useState(null);
+
+  const currentRange = useMemo(() => {
+    if (
+      sentRange &&
+      areDatesSame(from, sentRange.from) &&
+      areDatesSame(to, sentRange.to)
+    ) {
+      return memoRange;
+    }
+    return { from, to };
+  }, [from, to]);
 
   const updateDisplayValue = useMemo(
     () => createDisplayValue(currentRange),
     [currentRange]
   );
 
-  useEffect(() => {
-    const pickerPosLeft = pickerRef.current.getBoundingClientRect().left;
-    setPickerLeft(pickerPosLeft);
-  }, []);
-
   const changeRangeValue = useCallback(
     (range) => {
       const { from, to } = range;
-      setCurrentRange({ from, to });
+      setMemoRange({ from, to });
+      setSentRange({
+        from: convertRangeValue(from, "jsDate"),
+        to: convertRangeValue(to, "jsDate")
+      });
       onChange(
         convertRangeValue(from, "jsDate"),
         convertRangeValue(to, "jsDate")
@@ -35,14 +45,6 @@ export const TimeRangePicker = ({ onChange, from, to }) => {
     },
     [onChange]
   );
-
-  useEffect(() => {
-    const { from, to } = currentRange;
-    onChange(
-      convertRangeValue(from, "jsDate"),
-      convertRangeValue(to, "jsDate")
-    );
-  }, []);
 
   return (
     <div className="relative text-sm time-picker-main">
@@ -67,7 +69,7 @@ export const TimeRangePicker = ({ onChange, from, to }) => {
         </div>
       </button>
       <TimeRangePickerBody
-        pickerLeft={pickerLeft}
+        pickerRef={pickerRef}
         isOpen={isPickerOpen}
         closePicker={() => setIsPickerOpen(false)}
         currentRange={currentRange}
@@ -87,6 +89,6 @@ TimeRangePicker.defaultProps = {
   onChange: (from, to) => {
     console.log("FROM: ", from, "\n", "TO: ", to);
   },
-  from: dayjs(new Date()).subtract(1, "h"),
+  from: dayjs(new Date()).subtract(1, "h").toDate(),
   to: new Date()
 };

@@ -11,11 +11,11 @@ import { TimePickerCalendar } from "./TimePickerCalendar";
 import { TimePickerInput } from "./TimePickerInput";
 
 export const TimeRangePickerBody = ({
-  pickerLeft,
   isOpen,
   closePicker,
   currentRange,
-  changeRangeValue
+  changeRangeValue,
+  pickerRef
 }) => {
   const [recentRanges, setRecentRanges] = useState(
     storage.getItem("timePickerRanges") || []
@@ -128,6 +128,8 @@ export const TimeRangePickerBody = ({
     validateInputRange({ from: inputValueFrom, to: inputValueTo });
   }, [inputValueFrom, inputValueTo]);
 
+  const pickerLeft = pickerRef?.current?.getBoundingClientRect()?.left || 0;
+
   return (
     <div
       className={clsx(
@@ -200,7 +202,6 @@ export const TimeRangePickerBody = ({
 };
 
 TimeRangePickerBody.propTypes = {
-  pickerLeft: PropTypes.number,
   isOpen: PropTypes.bool,
   closePicker: PropTypes.func,
   currentRange: PropTypes.shape({}),
@@ -208,7 +209,6 @@ TimeRangePickerBody.propTypes = {
 };
 
 TimeRangePickerBody.defaultProps = {
-  pickerLeft: 0,
   isOpen: false,
   closePicker: () => {},
   currentRange: {},

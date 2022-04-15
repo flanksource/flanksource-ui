@@ -93,6 +93,13 @@ export const createDisplayValue = (range) => {
   return "invalid date";
 };
 
+export const areDatesSame = (...dates) => {
+  const date1 = dayjs(dates[0]);
+  const date2 = dayjs(dates[1]);
+  if (date1.diff(date2) < 1500) return true;
+  return false;
+};
+
 export const storage = {
   setItem: (name, item) => {
     if (item) {

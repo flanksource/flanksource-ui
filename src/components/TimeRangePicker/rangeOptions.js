@@ -1,6 +1,8 @@
 export const displayTimeFormat = "YYYY-MM-DD HH:mm";
 
 export const rangeOptions = [
+  { display: "10 minutes", from: "now-10m", to: "now" },
+  { display: "30 minutes", from: "now-30m", to: "now" },
   { display: "1 hour", from: "now-1h", to: "now" },
   { display: "2 hours", from: "now-2h", to: "now" },
   { display: "3 hours", from: "now-3h", to: "now" },
@@ -22,5 +24,3 @@ export const rangeOptions = [
   { display: "6 months", from: "now-6M", to: "now" },
   { display: "1 year", from: "now-1y", to: "now" }
 ];
-
-export const defaultRange = { display: "1 hour", from: "now-1h", to: "now" };
