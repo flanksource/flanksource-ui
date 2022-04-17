@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import history from "history/browser";
 import { orderBy } from "lodash";
 import { CanaryTabs, filterChecksByTabSelection } from "../Canary/tabs";
 import { MinimalCanary } from "../Canary/minimal";
@@ -14,21 +13,10 @@ import { decodeUrlSearchParams } from "../Canary/url";
 
 export function CanaryInterfaceMinimal({
   checks = [],
-  handleFetch,
+  searchParams,
   onFilterCallback,
   onLabelFiltersCallback
 }) {
-  // listen to URL params change
-  const [searchParams, setSearchParams] = useState(window.location.search);
-  useEffect(() => {
-    history.listen(({ location }) => {
-      setSearchParams(location.search);
-    });
-    if (handleFetch) {
-      handleFetch();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const [filteredChecks, setFilteredChecks] = useState(checks);
   const [checksForTabGeneration, setChecksForTabGeneration] = useState(checks);

@@ -31,8 +31,8 @@ export const getUptimeScore = (check) => {
 export const getLatency = (check) => {
   if (check != null) {
     const { latency } = check;
-    if (latency && latency.rolling1h) {
-      return latency.rolling1h;
+    if (latency && latency.p95) {
+      return latency.p95;
     }
     return Number.POSITIVE_INFINITY;
   }

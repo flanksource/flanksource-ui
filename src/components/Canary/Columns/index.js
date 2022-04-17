@@ -51,7 +51,7 @@ export function UptimeCell({ value }) {
 }
 
 export function LatencyCell({ value }) {
-  return <Duration ms={value.rolling1h} />;
+  return <Duration ms={value.p95} />;
 }
 
 export function TitleCell({ row }) {
@@ -88,9 +88,8 @@ export function TitleCell({ row }) {
           rowValues.namespaces ? (
             <Badge
               className="ml-2"
-              text={`${rowValues.namespaces[0]}${
-                rowValues.namespaces.length > 1 ? ", ..." : ""
-              }`}
+              text={`${rowValues.namespaces[0]}${rowValues.namespaces.length > 1 ? ", ..." : ""
+                }`}
               title={
                 rowValues.namespaces.length > 1
                   ? rowValues.namespaces.join(", ")
@@ -118,14 +117,14 @@ function getPivotSortValueOrDefault(a, b, pivotAccessor) {
     const aValue =
       a.original?.pivoted === true
         ? a?.original[a?.original?.valueLookup] ??
-          a?.original?.aggregate ??
-          undefined
+        a?.original?.aggregate ??
+        undefined
         : a?.original;
     const bValue =
       b?.original?.pivoted === true
         ? b?.original[b?.original?.valueLookup] ??
-          b?.original?.aggregate ??
-          undefined
+        b?.original?.aggregate ??
+        undefined
         : b?.original;
     return { aValue, bValue };
   }
@@ -229,8 +228,8 @@ export function getColumns({ columnObject, pivotCellType = null }) {
         pivotCellType != null
           ? getSortType(pivotCellType, pivotAccessor)
           : accessor != null
-          ? getSortType(accessor, pivotAccessor)
-          : "alphanumeric"
+            ? getSortType(accessor, pivotAccessor)
+            : "alphanumeric"
     };
     return acc;
   }, []);

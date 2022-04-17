@@ -71,6 +71,11 @@ export const getTopology = async (params) => {
   });
 };
 
+export const getCanaryGraph = async (params) => {
+  const query = stringify(params);
+  return CanaryChecker.get(`/api/graph?${query}`);
+};
+
 export const getCanaries = async (params) => {
   const query = stringify(params);
   return CanaryChecker.get(`/api?${query}`);

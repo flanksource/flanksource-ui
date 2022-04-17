@@ -9,14 +9,29 @@ import {
   XAxis,
   YAxis
 } from "recharts";
+import { useMemo, useState } from "react";
+import { getCanaryGraph } from "../../../api/services/topology";
+import { Loading } from "../../Loading";
 
 // @TODO: duration should be formatted properly, not just by ms
 const formatDuration = (duration) => `${duration}ms`;
 
 const getFill = (entry) => (entry.status ? "#2cbd27" : "#df1a1a");
 
-export function CanaryStatusChart({ data, ...rest }) {
-  data = data || [];
+export function CanaryStatusChart({ check, ...rest }) {
+  const [data, setData] = useState([]);
+  useMemo(() => {
+    getCanaryGraph({ check: check.id, start: "1d", count: 300 }).then(
+      (results) => {
+        setData(results.data.status);
+      }
+    );
+  }, [check]);
+
+  if (data.length === 0) {
+    return <Loading />;
+  }
+
   let timeRange = 0;
   if (data.length > 0) {
     timeRange =

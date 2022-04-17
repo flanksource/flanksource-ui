@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { debounce, isEmpty, throttle } from "lodash";
+import history from "history/browser";
 import {
   encodeObjectToUrlSearchParams,
   updateParams,
@@ -27,6 +28,7 @@ const getSearchParams = () => getParamsFromURL(window.location.search);
 
 export function Canary({
   url = "/canary/api",
+  refreshInterval = 15 * 1000,
   topLayoutOffset = 0,
   hideSearch,
   hideTimeRange
@@ -47,42 +49,52 @@ export function Canary({
     setFilteredLabels(newLabels);
   }, []);
 
-  const handleFetch = useMemo(
-    () =>
-      throttle(() => {
-        if (url == null) {
-          return;
+  const handleFetch = throttle(() => {
+    if (url == null) {
+      return;
+    }
+    const timeRange = getParamsFromURL(window.location.search)?.timeRange;
+    const params = encodeObjectToUrlSearchParams({
+      start: isEmpty(timeRange) || timeRange === "undefined" ? "1h" : timeRange
+    });
+    setIsLoading(true);
+    fetch(`${url}?${params}`)
+      .then((result) => result.json())
+      .then((e) => {
+        if (!isEmpty(e.error)) {
+          // eslint-disable-next-line no-console
+          console.error(e.error);
+        } else {
+          setChecks(e.checks);
+          setLastUpdated(new Date());
         }
-        const timeRange = getParamsFromURL(window.location.search)?.timeRange;
-        const params = encodeObjectToUrlSearchParams({
-          start:
-            isEmpty(timeRange) || timeRange === "undefined" ? "1h" : timeRange
-        });
-        setIsLoading(true);
-        fetch(`${url}?${params}`)
-          .then((result) => result.json())
-          .then((e) => {
-            if (!isEmpty(e.error)) {
-              // eslint-disable-next-line no-console
-              console.error(e.error);
-            } else {
-              setChecks(e.checks);
-              setLastUpdated(new Date());
-            }
-          })
-          .finally(() => {
-            setIsLoading(false);
-          });
-      }, 1000),
-    [url]
-  );
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }, 1000);
+
+  useMemo(() => {
+    handleFetch();
+    const interval = setInterval(handleFetch, refreshInterval);
+    return () => clearInterval(interval);
+  }, [handleFetch, refreshInterval]);
+
+  // listen to URL params change
+  const [searchParams, setSearchParams] = useState(window.location.search);
+  useEffect(() => {
+    history.listen(({ location }) => {
+      setSearchParams(location.search);
+      handleFetch();
+    });
+  }, [handleFetch]);
 
   const handleSearch = debounce((value) => {
     updateParams({ query: value });
   }, 400);
 
   return (
-    <div className="flex flex-row">
+    <div className="flex flex-row place-content-center">
       <SidebarSticky topHeight={topLayoutOffset}>
         <SectionTitle className="mb-4">Filter by Health</SectionTitle>
         <div className="mb-6 flex items-center">
@@ -108,7 +120,7 @@ export function Canary({
         </div>
       </SidebarSticky>
 
-      <div className="flex-grow p-6">
+      <div className="flex-grow p-6 max-w-7xl">
         {!hideSearch && (
           <div className="flex flex-wrap mb-2">
             <CanarySearchBar
@@ -176,7 +188,7 @@ export function Canary({
         </div>
         <CanaryInterfaceMinimal
           checks={checks}
-          handleFetch={handleFetch}
+          searchParams={searchParams}
           onLabelFiltersCallback={labelUpdateCallback}
         />
       </div>
@@ -438,7 +450,7 @@ const SidebarSticky = ({
   ...props
 }) => (
   <div
-    className={className || "flex flex-col w-72 border-r"}
+    className={className || "flex flex-col w-100 border-r"}
     style={style || { minHeight: `calc(100vh - ${topHeight}px)` }}
     {...props}
   >
