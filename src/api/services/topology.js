@@ -59,6 +59,9 @@ export const getTopology = async (params) => {
       depth = params.depth;
     }
     let { data } = results;
+    if (data == null) {
+      return { data: [] };
+    }
     if (data.length === 2 && isEmpty(data[0].id)) {
       data = [data[1]];
     }
