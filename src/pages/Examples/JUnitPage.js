@@ -37,7 +37,7 @@ export const JUnitPage = () => {
             className="form-check-label inline-block text-gray-800"
             htmlFor="hideStatusColCheckbox"
           >
-            Hide summery
+            Hide summary
           </label>
         </div>
       </div>
