@@ -34,8 +34,11 @@ export function ConfigDetailsPage() {
   }, []);
 
   useEffect(() => {
-    const json = configDetails?.config;
+    let json = configDetails?.config;
     if (json) {
+      if (typeof json !== "string") {
+        json = JSON.stringify(json, null, 2);
+      }
       const jsonLines = json.split("\n");
       setJsonLines(
         jsonLines.reduce((acc, currLine, idx) => {
