@@ -5,7 +5,7 @@ import { JUnit } from "../../components/JUnit";
 
 export const JUnitPage = () => {
   const [isHidePassing, setIsHidePassing] = useState(true);
-  const [isHideStatusCol, setIsHideStatusCol] = useState(false);
+  const [isHideSummary, setIsHideSummary] = useState(false);
   return (
     <MinimalLayout>
       <div className="flex">
@@ -30,16 +30,14 @@ export const JUnitPage = () => {
             className="form-check-input appearance-none h-4 w-4 border border-gray-300 rounded-sm bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer"
             type="checkbox"
             id="hideStatusColCheckbox"
-            checked={isHideStatusCol}
-            onClick={() =>
-              setIsHideStatusCol((isHideStatusCol) => !isHideStatusCol)
-            }
+            checked={isHideSummary}
+            onClick={() => setIsHideSummary((isHideSummary) => !isHideSummary)}
           />
           <label
             className="form-check-label inline-block text-gray-800"
             htmlFor="hideStatusColCheckbox"
           >
-            Hide status column
+            Hide summery
           </label>
         </div>
       </div>
@@ -50,7 +48,7 @@ export const JUnitPage = () => {
         failed={jUnitData.failed}
         passed={jUnitData.passed}
         hidePassing={isHidePassing}
-        hideStatusCol={isHideStatusCol}
+        hideSummary={isHideSummary}
       />
     </MinimalLayout>
   );

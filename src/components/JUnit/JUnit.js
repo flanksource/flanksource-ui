@@ -10,19 +10,20 @@ export function JUnit({
   failed,
   passed,
   hidePassing,
-  hideStatusCol
+  hideSummary
 }) {
   const [selectedTestCase, setSelectedTestCase] = useState(null);
 
   return (
     <div>
-      <Summary suites={suites} failed={failed} passed={passed} />
+      {!hideSummary && (
+        <Summary suites={suites} failed={failed} passed={passed} />
+      )}
 
       <JUnitTable
         suites={suites}
         onSelectTestCase={setSelectedTestCase}
         hidePassing={hidePassing}
-        hideStatusCol={hideStatusCol}
       />
 
       <ModalTestCase
@@ -47,10 +48,10 @@ JUnit.propTypes = {
   failed: PropTypes.number.isRequired,
   passed: PropTypes.number.isRequired,
   hidePassing: PropTypes.bool,
-  hideStatusCol: PropTypes.bool
+  hideSummary: PropTypes.bool
 };
 
 JUnit.defaultProps = {
   hidePassing: true,
-  hideStatusCol: false
+  hideSummary: false
 };
