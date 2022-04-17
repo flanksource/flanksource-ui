@@ -78,7 +78,8 @@ export function Canary({
     handleFetch();
     const interval = setInterval(handleFetch, refreshInterval);
     return () => clearInterval(interval);
-  }, [handleFetch, refreshInterval]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refreshInterval]);
 
   // listen to URL params change
   const [searchParams, setSearchParams] = useState(window.location.search);
@@ -87,7 +88,8 @@ export function Canary({
       setSearchParams(location.search);
       handleFetch();
     });
-  }, [handleFetch]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleSearch = debounce((value) => {
     updateParams({ query: value });

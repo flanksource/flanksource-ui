@@ -56,7 +56,7 @@
     "web-vitals": "^1.0.1",
     "yup": "^0.32.11"
   },
-  "proxy": "http://localhost:8080",
+  "proxy": "https://incident-commander.canary.lab.flanksource.com",
   "scripts": {
     "dev": "cross-env DISABLE_ESLINT_PLUGIN=true NODE_ENV=development craco start",
     "build": "cross-env DISABLE_ESLINT_PLUGIN=true NODE_ENV=production craco build",

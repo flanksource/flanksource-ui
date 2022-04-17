@@ -1,7 +1,6 @@
 import React from "react";
 import { usePrevious } from "../../../utils/hooks";
 import { Badge } from "../../Badge";
-import { toFormattedDuration } from "../renderers";
 import { AccordionBox } from "../../AccordionBox";
 import {
   capitalizeFirstLetter,
@@ -22,7 +21,7 @@ export function CheckDetails({ check, ...rest }) {
   if (validCheck == null) {
     return <></>;
   }
-  const uptimeValue = toFixedIfNecessary(getUptimePercentage(validCheck), 2);
+  const uptimeValue = toFixedIfNecessary(getUptimePercentage(validCheck), 0);
   const validUptime =
     !Number.isNaN(validCheck?.uptime?.passed) &&
     !Number.isNaN(validCheck?.uptime?.failed);
