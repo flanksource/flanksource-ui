@@ -71,10 +71,8 @@ module.exports = {
   },
   overrides: [
     {
-      "files": [
-        "**/*.stories.*"
-      ],
-      "rules": {
+      files: ["**/*.stories.*"],
+      rules: {
         "import/no-anonymous-default-export": "off",
         "import/no-default-export": "off"
       }
