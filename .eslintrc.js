@@ -18,8 +18,8 @@ module.exports = {
     "plugin:jsx-a11y/recommended",
     "plugin:jest/recommended",
     "plugin:react-hooks/recommended",
-    "prettier",
-    "plugin:storybook/recommended"
+    "plugin:storybook/recommended",
+    "prettier"
   ],
   plugins: ["prettier"],
   parserOptions: {
