@@ -1,7 +1,5 @@
 import { EvidenceLogList } from "./EvidenceLogList";
 
-// export default required by storybook
-// eslint-disable-next-line import/no-default-export
 export default {
   title: "EvidenceLogList",
   component: EvidenceLogList

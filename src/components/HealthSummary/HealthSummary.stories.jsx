@@ -1,7 +1,5 @@
 import { HealthSummary } from "./index";
 
-// export default required by storybook
-// eslint-disable-next-line import/no-default-export
 export default {
   title: "HealthSummary",
   component: HealthSummary

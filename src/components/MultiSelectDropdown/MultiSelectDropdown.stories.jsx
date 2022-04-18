@@ -1,7 +1,5 @@
 import { MultiSelectDropdown } from "./index";
 
-// export default required by storybook
-// eslint-disable-next-line import/no-default-export
 export default {
   title: "MultiSelectDropdown",
   component: MultiSelectDropdown

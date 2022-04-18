@@ -1,8 +1,6 @@
 import { Avatar } from "../Icon";
 import { Feed } from "./index";
 
-// export default required by storybook
-// eslint-disable-next-line import/no-default-export
 export default {
   title: "Feed",
   component: Feed

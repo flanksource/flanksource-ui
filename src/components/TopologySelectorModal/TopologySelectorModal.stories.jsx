@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { TopologySelectorModal } from "./TopologySelectorModal";
 
-// export default required by storybook
-// eslint-disable-next-line import/no-default-export
 export default {
   title: "TopologySelectorModal",
   component: TopologySelectorModal

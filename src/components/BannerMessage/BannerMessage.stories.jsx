@@ -1,7 +1,6 @@
 import { CgSmileSad } from "react-icons/cg";
 import { BannerMessage } from "./index";
-// export default required by storybook
-// eslint-disable-next-line import/no-default-export
+
 export default {
   title: "BannerMessage",
   component: BannerMessage
