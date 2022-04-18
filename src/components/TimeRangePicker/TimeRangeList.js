@@ -65,7 +65,9 @@ export const TimeRangeList = ({
 
 TimeRangeList.propTypes = {
   closePicker: PropTypes.func,
-  currentRange: PropTypes.shape({}),
+  currentRange: PropTypes.objectOf(
+    PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)])
+  ),
   changeRangeValue: PropTypes.func,
   setShowCalendar: PropTypes.func
 };

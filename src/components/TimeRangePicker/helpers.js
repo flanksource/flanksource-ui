@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import { getLocalItem, setLocalItem } from "../../utils/storage";
 import { displayTimeFormat } from "./rangeOptions";
 
 const rangeRegexp = /^now-\d{1,4}[mhdwMy]$/;
@@ -96,19 +97,19 @@ export const createDisplayValue = (range) => {
 export const areDatesSame = (...dates) => {
   const date1 = dayjs(dates[0]);
   const date2 = dayjs(dates[1]);
-  if (date1.diff(date2) < 1500) return true;
-  return false;
+  return date1.diff(date2) < 1500;
 };
 
 export const storage = {
   setItem: (name, item) => {
     if (item) {
-      localStorage.setItem(name, JSON.stringify(item));
+      const jsonItem = JSON.stringify(item);
+      setLocalItem(name, jsonItem);
     }
   },
 
   getItem: (name) => {
-    const item = localStorage.getItem(name);
+    const item = getLocalItem(name);
     if (item && item !== "undefined") {
       return JSON.parse(item);
     }

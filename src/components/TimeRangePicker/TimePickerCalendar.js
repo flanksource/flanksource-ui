@@ -40,7 +40,7 @@ export const TimePickerCalendar = ({
 );
 
 TimePickerCalendar.propTypes = {
-  calendarValue: PropTypes.arrayOf(PropTypes.object),
+  calendarValue: PropTypes.arrayOf(PropTypes.instanceOf(Date)),
   onChangeCalendarRange: PropTypes.func,
   setShowCalendar: PropTypes.func
 };
