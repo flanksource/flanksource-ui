@@ -1,16 +1,11 @@
 import { SearchIcon } from "@heroicons/react/solid";
+import React from "react";
+import { Controller } from "react-hook-form";
+import { Dropdown } from "../Dropdown";
+import { timeRanges } from "../Dropdown/TimeRange";
+import { TextInput } from "../TextInput";
 
-import React, { useEffect, useRef, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-
-import { Dropdown } from "../../components/Dropdown";
-import { timeRanges } from "../../components/Dropdown/TimeRange";
-
-import { TextInput } from "../../components/TextInput";
-
-
-
-export function LogSearchBar({ control, }) {
+export function LogSearchBar({ control }) {
   return (
     <div className="flex flex-row items-center justify-between mb-4">
       <h1 className="text-xl font-semibold">Logs</h1>

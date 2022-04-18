@@ -8,7 +8,7 @@ import {
   BsStack,
   BsListOl
 } from "react-icons/bs";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { getLogs } from "../api/services/logs";
 import { getTopology } from "../api/services/topology";
@@ -75,7 +75,7 @@ export function LogsPage() {
         }
       });
     }
-  }, []);
+  }, [topology, topologyId]);
 
   const saveQueryParams = () => {
     const paramsList = { query, topologyId, externalId, ...getValues() };
@@ -88,7 +88,8 @@ export function LogsPage() {
     setSearchParams(params);
   };
 
-  const loadLogs = () => {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const loadLogs = useCallback(() => {
     saveQueryParams();
     setLogsIsLoading(true);
 
@@ -104,11 +105,11 @@ export function LogsPage() {
       }
       setLogsIsLoading(false);
     });
-  };
+  });
 
   useEffect(() => {
     loadLogs();
-  }, [topologyId]);
+  }, [loadLogs, topologyId]);
 
   if (!isEmpty(topologyId) && topology == null) {
     return <Loading text={`Loading topology ${topologyId}`} />;

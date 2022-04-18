@@ -92,7 +92,7 @@ export function IncidentDetailsPage() {
         incidentQuery.refetch()
       );
     },
-    [updateIncident, incidentQuery, incident]
+    [incidentQuery, incident]
   );
 
   if (incident == null) {

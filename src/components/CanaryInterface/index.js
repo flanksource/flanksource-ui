@@ -32,7 +32,7 @@ export function CanaryInterface({
       setSearchParams(getParamsFromURL(location.search));
     });
     handleFetch();
-  }, []);
+  }, [handleFetch]);
 
   const [selectedTab, setSelectedTab] = useState(null);
   const [labels, setLabels] = useState(getLabels(checks));

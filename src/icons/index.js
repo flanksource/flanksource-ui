@@ -72,8 +72,8 @@ import envoy from "./envoy.svg";
 import error from "./error.svg";
 import etcd from "./etcd.svg";
 import fire from "./fire.svg";
+import flanksource_icon from "./flanksource-icon.svg";
 import flanksource from "./flanksource.svg";
-import flanksource_icon from './flanksource-icon.svg';
 import fluentd from "./fluentd.svg";
 import flux from "./flux.svg";
 import folder from "./folder.svg";
@@ -109,7 +109,9 @@ import istio from "./istio.svg";
 import jaegar from "./jaegar.svg";
 import java from "./java.svg";
 import jmeter from "./jmeter.svg";
+import json from "./json.svg";
 import junit from "./junit.svg";
+import jwt from "./jwt.svg";
 import k8s from "./k8s.svg";
 import kubernetes from "./kubernetes.svg";
 import ldap from "./ldap.svg";
@@ -134,6 +136,7 @@ import nodejs from "./nodejs.svg";
 import nodes from "./nodes.svg";
 import npm from "./npm.svg";
 import opa from "./opa.svg";
+import openid from "./openid.svg";
 import openshift from "./openshift.svg";
 import oracle from "./oracle.svg";
 import oracle_icon from "./oracle_icon.svg";
@@ -175,6 +178,7 @@ import stackdriver_trace from "./stackdriver-trace.svg";
 import stackdriver from "./stackdriver.svg";
 import star from "./star.svg";
 import structure from "./structure.svg";
+import swagger from "./swagger.svg";
 import tag from "./tag.svg";
 import talk from "./talk.svg";
 import target from "./target.svg";
@@ -187,6 +191,7 @@ import vault from "./vault.svg";
 import vsphere from "./vsphere.svg";
 import world from "./world.svg";
 import www from "./www.svg";
+import xml from "./xml.svg";
 export const Icons = {
 "acr": acr,
 "add-button": add_button,
@@ -261,8 +266,8 @@ export const Icons = {
 "error": error,
 "etcd": etcd,
 "fire": fire,
-"flanksource": flanksource,
 "flanksource-icon": flanksource_icon,
+"flanksource": flanksource,
 "fluentd": fluentd,
 "flux": flux,
 "folder": folder,
@@ -298,7 +303,9 @@ export const Icons = {
 "jaegar": jaegar,
 "java": java,
 "jmeter": jmeter,
+"json": json,
 "junit": junit,
+"jwt": jwt,
 "k8s": k8s,
 "kubernetes": kubernetes,
 "ldap": ldap,
@@ -323,6 +330,7 @@ export const Icons = {
 "nodes": nodes,
 "npm": npm,
 "opa": opa,
+"openid": openid,
 "openshift": openshift,
 "oracle": oracle,
 "oracle_icon": oracle_icon,
@@ -364,6 +372,7 @@ export const Icons = {
 "stackdriver": stackdriver,
 "star": star,
 "structure": structure,
+"swagger": swagger,
 "tag": tag,
 "talk": talk,
 "target": target,
@@ -376,4 +385,5 @@ export const Icons = {
 "vsphere": vsphere,
 "world": world,
 "www": www,
+"xml": xml,
 }

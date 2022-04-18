@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
@@ -87,7 +88,7 @@ export function LogsIncidentLinker({ selectedLogs, callback, ...rest }) {
       setIncidentsList(res.data);
       setIsLoading((previous) => ({ ...previous, incident: false }));
     });
-  }, []);
+  }, [setValue]);
 
   // fetch hypotheses on incident selection
   useEffect(() => {
@@ -101,7 +102,6 @@ export function LogsIncidentLinker({ selectedLogs, callback, ...rest }) {
           }
           setHypothesisList(res.data);
         })
-        .catch((error) => console.error(error))
         .finally(() => {
           setIsLoading((previous) => ({ ...previous, hypothesis: false }));
         });
@@ -123,8 +123,7 @@ export function LogsIncidentLinker({ selectedLogs, callback, ...rest }) {
       .then(() => {
         callback(true);
       })
-      .catch((err) => {
-        console.error(err);
+      .catch(() => {
         callback(false);
       })
       .finally(() => {
@@ -207,11 +206,10 @@ export function LogsIncidentLinker({ selectedLogs, callback, ...rest }) {
             disabled={
               isLoading.incident || isLoading.hypothesis || isLoading.submit
             }
-            className={`${
-              !isLoading.incident && !isLoading.hypothesis && !isLoading.submit
-                ? "text-indigo-700 bg-indigo-100 hover:bg-indigo-200"
-                : "text-gray-400 bg-gray-200"
-            } inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`}
+            className={`${!isLoading.incident && !isLoading.hypothesis && !isLoading.submit
+              ? "text-indigo-700 bg-indigo-100 hover:bg-indigo-200"
+              : "text-gray-400 bg-gray-200"
+              } inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`}
           >
             {isLoading.submit ? "Adding.." : "Add"}
           </button>

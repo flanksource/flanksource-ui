@@ -43,6 +43,7 @@ export function CommentsSection({
   }, []);
 
   const onClickUserTag = (type, id) => {
+    // eslint-disable-next-line no-console
     console.log("type tag", type, "value", id);
   };
 

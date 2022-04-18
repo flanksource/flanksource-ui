@@ -28,7 +28,7 @@ export function TopologyBreadcrumbs({
         setTopology(results.data[0]);
       });
     }
-  }, []);
+  }, [_topology, topologyId]);
 
   if (_topology == null && isEmpty(topologyId)) {
     return "";
