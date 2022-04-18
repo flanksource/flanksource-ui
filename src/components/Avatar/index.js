@@ -86,5 +86,5 @@ Avatar.defaultProps = {
   user: null,
   alt: "",
   containerProps: {},
-  imageProps: {},
+  imageProps: {}
 };

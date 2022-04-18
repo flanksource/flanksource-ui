@@ -2,10 +2,8 @@ import { isEmpty } from "lodash";
 import { decodeUrlSearchParams } from "../url";
 import { isPlainObject } from "../../../lib/isPlainObject";
 import {
-  defaultGroupSelections,
   defaultPivotSelections,
-  getLabelsFromState,
-  defaultTabSelections
+  getLabelsFromState
 } from "../../Dropdown/lib/lists";
 import { getLabelKeys } from "../labels";
 
@@ -20,9 +18,9 @@ export function getDefaultForm(labels, incoming = {}) {
 
   return {
     layout: "table",
-    groupBy: defaultGroupSelections.name.value,
-    tabBy: defaultTabSelections.namespace.value,
-    pivotBy: defaultPivotSelections.none.value,
+    groupBy: "canaryName",
+    tabBy: "namespace",
+    pivotBy: "none",
     pivotLabel: "",
     timeRange: "1h",
     pivotCellType: "checkStatuses",

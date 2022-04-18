@@ -1,4 +1,5 @@
 import { Oval } from "react-loading-icons";
+
 export function Loading({ text = "Loading..." }) {
   return (
     <div className="flex justify-center items-center">

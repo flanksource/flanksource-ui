@@ -8,11 +8,15 @@ import { Loading } from "../Loading";
 function isTopologyEmpty(topology) {
   return (
     topology == null ||
-    (isEmpty(topology.id) && topology.components.length == 0)
+    (isEmpty(topology.id) && topology.components.length === 0)
   );
 }
 
-export function TopologyBreadcrumbs({ topology, topologyId, depth }) {
+export function TopologyBreadcrumbs({
+  topology,
+  topologyId
+  // depth
+}) {
   const [_topology, setTopology] = useState(topology);
 
   useEffect(() => {
@@ -24,7 +28,7 @@ export function TopologyBreadcrumbs({ topology, topologyId, depth }) {
         setTopology(results.data[0]);
       });
     }
-  }, []);
+  }, [_topology, topologyId]);
 
   if (_topology == null && isEmpty(topologyId)) {
     return "";

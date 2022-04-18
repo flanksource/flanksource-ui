@@ -127,7 +127,13 @@ module.exports = {
         "btn-round-xl": "3.125rem"
       },
       height: {
-        "topology-card": "200px"
+        "topology-card": "200px",
+        "btn-round-2xs": "1.5rem",
+        "btn-round-xs": "1.875rem",
+        "btn-round-sm": "2.125rem",
+        "btn-round-md": "2.375rem",
+        "btn-round-lg": "2.625rem",
+        "btn-round-xl": "3.125rem"
       },
       minWidth: {
         8: "2rem",
@@ -147,14 +153,6 @@ module.exports = {
       },
       lineHeight: {
         "1.21rel": "1.21"
-      },
-      height: {
-        "btn-round-2xs": "1.5rem",
-        "btn-round-xs": "1.875rem",
-        "btn-round-sm": "2.125rem",
-        "btn-round-md": "2.375rem",
-        "btn-round-lg": "2.625rem",
-        "btn-round-xl": "3.125rem"
       }
     }
   },

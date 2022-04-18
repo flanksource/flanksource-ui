@@ -46,7 +46,7 @@ export function EditableText({
   const onClickCheck = useCallback(() => {
     onChange(localValue);
     setEditMode(false);
-  }, [localValue]);
+  }, [localValue, onChange]);
 
   const onClickClose = useCallback(() => {
     setLocalValue(value);

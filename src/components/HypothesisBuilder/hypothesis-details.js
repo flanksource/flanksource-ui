@@ -9,7 +9,6 @@ import { EvidenceSection } from "./evidence-section";
 import { Modal } from "../Modal";
 import { EvidenceBuilder } from "../EvidenceBuilder";
 import { CommentsSection } from "./comments";
-import { EditableText } from "../EditableText";
 import {
   getCommentsByHypothesis,
   createComment
@@ -17,7 +16,6 @@ import {
 import { getAllEvidenceByHypothesis } from "../../api/services/evidence";
 import { useUser } from "../../context";
 import { toastError } from "../Toast/toast";
-import { Avatar } from "../Avatar";
 
 const statusItems = {
   ...Object.values(hypothesisStatuses).reduce((acc, obj) => {
@@ -41,19 +39,22 @@ export function HypothesisDetails({ node, api, ...rest }) {
   const user = useUser();
   const [comments, setComments] = useState([]);
   const [evidence, setEvidence] = useState([]);
+  const [evidenceLoading, setEvidenceLoading] = useState(true);
 
   const fetchEvidence = (hypothesisId) => {
-    getAllEvidenceByHypothesis(hypothesisId).then((evidence) => {
-      setEvidence(evidence?.data || []);
-    });
+    getAllEvidenceByHypothesis(hypothesisId)
+      .then((evidence) => {
+        setEvidence(evidence?.data || []);
+      })
+      .finally(() => {
+        setEvidenceLoading(false);
+      });
   };
 
   const fetchComments = (id) =>
-    getCommentsByHypothesis(id)
-      .then((comments) => {
-        setComments(comments?.data || []);
-      })
-      .catch((err) => console.error(err));
+    getCommentsByHypothesis(id).then((comments) => {
+      setComments(comments?.data || []);
+    });
 
   const handleComment = (value) =>
     createComment(user, uuidv4(), node.incident_id, node.id, value)
@@ -104,9 +105,10 @@ export function HypothesisDetails({ node, api, ...rest }) {
         <div className="mb-8 mt-4">
           <EvidenceSection
             hypothesis={node}
-            evidence={evidence}
+            evidenceList={evidence}
             titlePrepend={<HypothesisTitle>Evidence</HypothesisTitle>}
             onButtonClick={() => setEvidenceBuilderOpen(true)}
+            isLoading={evidenceLoading}
           />
         </div>
         {/* <div className="mb-6">
