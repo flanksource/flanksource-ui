@@ -68,5 +68,16 @@ module.exports = {
         assert: "either"
       }
     ]
-  }
+  },
+  overrides: [
+    {
+      "files": [
+        "**/*.stories.*"
+      ],
+      "rules": {
+        "import/no-anonymous-default-export": "off",
+        "import/no-default-export": "off"
+      }
+    }
+  ]
 };
