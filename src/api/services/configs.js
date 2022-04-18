@@ -5,6 +5,13 @@ import { resolve } from "../resolve";
 
 export const getAllConfigs = async () => resolve(ConfigDB.get(`/config_item`));
 
+export const searchConfigs = async (type, input) =>
+  resolve(
+    ConfigDB.get(
+      `/config_item?config_type=ilike.${type}&or=(name.ilike.*${input}*,external_id.ilike.*${input}*)`
+    )
+  );
+
 export const getConfig = async (id) =>
   resolve(ConfigDB.get(`/config_item?id=eq.${id}`));
 

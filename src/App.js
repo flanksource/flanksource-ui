@@ -27,6 +27,7 @@ import { RsDemoPage } from "./pages/Examples/rs-demo";
 import { TopologyPage as ExamplesTopologyPage } from "./pages/Examples/Topology/topology-page";
 import { TopologySelectorModalPage } from "./pages/Examples/TopologySelectorModalPage/TopologySelectorModalPage";
 import { HealthPage } from "./pages/health";
+import { ConfigItemDropDown } from "./pages/Examples/config-item-dropdown";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -126,6 +127,7 @@ export function App() {
               path="topology-dropdown"
               element={<TypologyDropdownDemo />}
             />
+            <Route path="config-item" element={<ConfigItemDropDown />} />
           </Route>
 
           <Route path="logs" element={sidebar}>
