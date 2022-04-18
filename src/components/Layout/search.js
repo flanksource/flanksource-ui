@@ -23,7 +23,7 @@ export function SearchLayout({
         </div>
       </div>
 
-      <main>
+      <main className="overflow-y-auto">
         <div className={contentClass || "p-6"}>{children}</div>
       </main>
     </div>
