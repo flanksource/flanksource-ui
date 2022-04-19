@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import {
   decodeUrlSearchParams,
   updateParams
@@ -91,16 +91,13 @@ export function ConfigDetailsPage() {
           ? `Config Details for ${configDetails.name}`
           : "Config Details"
       }
+      button={<Link className="underline mr-3"
+        to={`/topology`}>
+        Home
+      </Link>}
     >
       <div className="flex flex-col items-start">
         <div className="mb-4 flex flex-row iems-center">
-          <button
-            className="border rounded-md px-3 py-1 text-sm"
-            type="button"
-            onClick={() => navigate("/config")}
-          >
-            Back
-          </button>
           {Object.keys(checked).length > 0 && (
             <>
               <div className="flex items-center mx-4">
