@@ -54,7 +54,7 @@ export function SidebarLayout({ navigation }) {
     <>
       <ReactTooltip disable={!collapseSidebar} />
       <Toaster position="top-right" reverseOrder={false} />
-      <div className="flex">
+      <div className="flex h-screen overflow-hidden">
         <Transition.Root show={sidebarOpen} as={Fragment}>
           <Dialog
             as="div"
