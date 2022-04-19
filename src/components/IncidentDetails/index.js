@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import dayjs from "dayjs";
 import { IncidentDetailsRow } from "./IncidentDetailsRow";
@@ -13,6 +13,7 @@ import {
   IncidentRespondentsOption
 } from "./select-components";
 import { priorities } from "./data";
+import { AddResponder } from "./AddResponder";
 
 export const IncidentDetails = ({
   incident,
@@ -84,6 +85,10 @@ export const IncidentDetails = ({
     return () => subscription.unsubscribe();
   }, [watch, updateIncidentHandler]);
 
+  const onAddResponder = useCallback((responder, responderType) => {
+    console.log("add responder", { responder, responderType });
+  }, []);
+
   return (
     <div className="px-6 pt-3.5">
       <div className="flex justify-between mb-7">
@@ -120,6 +125,7 @@ export const IncidentDetails = ({
           </a>
         }
       /> */}
+      <AddResponder onAddResponder={onAddResponder} />
       <IncidentDetailsRow
         title="Respondents"
         className="mt-2.5"

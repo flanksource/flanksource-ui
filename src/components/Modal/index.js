@@ -79,9 +79,7 @@ export function Modal({
                 )}
               </div>
 
-              <div className="px-8 overflow-y-auto modal-card__container">
-                {children}
-              </div>
+              <div className="px-8 modal-card__container">{children}</div>
 
               <div
                 className={clsx("flex my-2 px-8 justify-end", footerClassName)}
