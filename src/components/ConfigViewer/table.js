@@ -2,10 +2,10 @@ import { TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti";
 import { useSortBy, useTable } from "react-table";
 
 const tableStyles = {
-  outerDivClass: "border border-b-0 border-gray-300",
-  tableClass: "min-w-full border-separate",
+  outerDivClass: "border border-b-0 border-gray-300 block overflow-y-scroll",
+  tableClass: "min-w-full border-separate relative",
   theadClass: "bg-white z-10",
-  theadRowClass: "z-10",
+  theadRowClass: "z-10 sticky top-0 bg-white ",
   theadHeaderClass:
     "px-5 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-300",
   tbodyClass: "rounded-md",
@@ -27,10 +27,9 @@ export const ConfigListTable = ({
     tableInstance;
 
   return (
-    <div className={tableStyles.outerDivClass} {...rest}>
+    <div className={tableStyles.outerDivClass} style={{ height: '500px' }} {...rest}>
       <table
         className={tableStyles.tableClass}
-        style={tableStyle}
         {...getTableProps()}
       >
         <thead className={tableStyles.theadClass}>
@@ -80,7 +79,7 @@ export const ConfigListTable = ({
                     key={cell.column.Header}
                     className={`${tableStyles.tbodyDataClass} ${
                       cell.column.cellClass || ""
-                    }`}
+                      }`}
                     {...cell.getCellProps()}
                   >
                     {cell.render("Cell")}
@@ -99,3 +98,4 @@ export const ConfigListTable = ({
     </div>
   );
 };
+
