@@ -139,7 +139,7 @@ export const TimeRangePickerBody = ({
     >
       <div
         className={clsx("calendar-wrapper absolute shadow-lg shadow-gray-200", {
-          active: showCalendar,
+          active: showCalendar && isOpen,
           calendarRight: pickerLeft < 300
         })}
       >

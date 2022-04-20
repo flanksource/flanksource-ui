@@ -56,7 +56,7 @@
 
 .error-range-box {
   position: relative;
-  width:fit-content;
+  width: fit-content;
   display: flex;
   align-items: center;
   margin-top: 6px;
