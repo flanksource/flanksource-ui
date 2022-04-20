@@ -1,0 +1,4645 @@
+{
+  "suites": [
+    {
+      "name": "Untitled suite in /Users/niko/Sites/casperjs/tests/suites/casper/agent.js",
+      "passed": 2,
+      "failed": 1,
+      "duration": 0.256,
+      "tests": [
+        {
+          "name": "Default user agent matches /CasperJS/",
+          "classname": "tests/suites/casper/agent",
+          "duration": 0.103,
+          "status": "failed"
+        },
+        {
+          "name": "Default user agent matches /plop/",
+          "classname": "tests/suites/casper/agent",
+          "duration": 0.146,
+          "status": "passed"
+        },
+        {
+          "name": "Default user agent matches /plop/",
+          "classname": "tests/suites/casper/agent",
+          "duration": 0.007,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "Untitled suite in /Users/niko/Sites/casperjs/tests/suites/casper/alert.js",
+      "passed": 1,
+      "failed": 0,
+      "duration": 0.449,
+      "tests": [
+        {
+          "name": "alert event has been intercepted",
+          "classname": "tests/suites/casper/alert",
+          "duration": 0.449,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "Untitled suite in /Users/niko/Sites/casperjs/tests/suites/casper/auth.js",
+      "passed": 8,
+      "failed": 0,
+      "duration": 0.101,
+      "tests": [
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/casper/auth",
+          "duration": 0.1,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/casper/auth",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/casper/auth",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/casper/auth",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/casper/auth",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/casper/auth",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/casper/auth",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/casper/auth",
+          "duration": 0,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "Untitled suite in /Users/niko/Sites/casperjs/tests/suites/casper/capture.js",
+      "passed": 4,
+      "failed": 0,
+      "duration": 0.945,
+      "tests": [
+        {
+          "name": "Casper.capture() captured a screenshot",
+          "classname": "tests/suites/casper/capture",
+          "duration": 0.681,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.captureBase64() rendered a page capture as base64",
+          "classname": "tests/suites/casper/capture",
+          "duration": 0.174,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.captureBase64() rendered a capture from a selector as base64",
+          "classname": "tests/suites/casper/capture",
+          "duration": 0.046,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.captureBase64() rendered a capture from a clipRect as base64",
+          "classname": "tests/suites/casper/capture",
+          "duration": 0.044,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "Untitled suite in /Users/niko/Sites/casperjs/tests/suites/casper/click.js",
+      "passed": 22,
+      "failed": 0,
+      "duration": 1.211,
+      "tests": [
+        {
+          "name": "Casper.click() can click on a link",
+          "classname": "tests/suites/casper/click",
+          "duration": 0.405,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.thenClick() can click on a link",
+          "classname": "tests/suites/casper/click",
+          "duration": 0.2,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.click() can click an `href=\"javascript:` link",
+          "classname": "tests/suites/casper/click",
+          "duration": 0.204,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.click() can click an `href=\"#\"` link",
+          "classname": "tests/suites/casper/click",
+          "duration": 0.002,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.click() can click an `onclick=\".*; return false\"` link",
+          "classname": "tests/suites/casper/click",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.click() can click an unobstrusive js handled link",
+          "classname": "tests/suites/casper/click",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.click() has clicked an `href=\"javascript:` link",
+          "classname": "tests/suites/casper/click",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.click() has clicked an `href=\"#\"` link",
+          "classname": "tests/suites/casper/click",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.click() has clicked an `onclick=\".*; return false\"` link",
+          "classname": "tests/suites/casper/click",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.click() has clicked an unobstrusive js handled link",
+          "classname": "tests/suites/casper/click",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.clickLabel() can click an `href=\"javascript:` link",
+          "classname": "tests/suites/casper/click",
+          "duration": 0.193,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.clickLabel() can click an `href=\"#\"` link",
+          "classname": "tests/suites/casper/click",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.clickLabel() can click an `onclick=\".*; return false\"` link",
+          "classname": "tests/suites/casper/click",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.clickLabel() can click an unobstrusive js handled link",
+          "classname": "tests/suites/casper/click",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.clickLabel() has clicked an `href=\"javascript:` link",
+          "classname": "tests/suites/casper/click",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.clickLabel() has clicked an `href=\"#\"` link",
+          "classname": "tests/suites/casper/click",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.clickLabel() has clicked an `onclick=\".*; return false\"` link",
+          "classname": "tests/suites/casper/click",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.clickLabel() has clicked an unobstrusive js handled link",
+          "classname": "tests/suites/casper/click",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Mouse.down() has pressed button to the specified position",
+          "classname": "tests/suites/casper/click",
+          "duration": 0.095,
+          "status": "passed"
+        },
+        {
+          "name": "Mouse.up() has released button to the specified position",
+          "classname": "tests/suites/casper/click",
+          "duration": 0.002,
+          "status": "passed"
+        },
+        {
+          "name": "Mouse.move() has moved to the specified position",
+          "classname": "tests/suites/casper/click",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.click() sets the focus on clicked element",
+          "classname": "tests/suites/casper/click",
+          "duration": 0.102,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "Untitled suite in /Users/niko/Sites/casperjs/tests/suites/casper/confirm.js",
+      "passed": 2,
+      "failed": 0,
+      "duration": 0.496,
+      "tests": [
+        {
+          "name": "confirmation received",
+          "classname": "tests/suites/casper/confirm",
+          "duration": 0.398,
+          "status": "passed"
+        },
+        {
+          "name": "confirmation message is ok",
+          "classname": "tests/suites/casper/confirm",
+          "duration": 0.098,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "Untitled suite in /Users/niko/Sites/casperjs/tests/suites/casper/debug.js",
+      "passed": 2,
+      "failed": 0,
+      "duration": 0.303,
+      "tests": [
+        {
+          "name": "Casper.getHTML() retrieves inner HTML by default",
+          "classname": "tests/suites/casper/debug",
+          "duration": 0.302,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.getHTML() can retrieve outer HTML",
+          "classname": "tests/suites/casper/debug",
+          "duration": 0.001,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "Untitled suite in /Users/niko/Sites/casperjs/tests/suites/casper/elementattribute.js",
+      "passed": 1,
+      "failed": 0,
+      "duration": 0.4,
+      "tests": [
+        {
+          "name": "Casper.getElementAttribute() works as intended",
+          "classname": "tests/suites/casper/elementattribute",
+          "duration": 0.4,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "Untitled suite in /Users/niko/Sites/casperjs/tests/suites/casper/encode.js",
+      "passed": 2,
+      "failed": 0,
+      "duration": 0.41,
+      "tests": [
+        {
+          "name": "Casper.base64encode() can retrieve base64 contents",
+          "classname": "tests/suites/casper/encode",
+          "duration": 0.405,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.download() downloads a file",
+          "classname": "tests/suites/casper/encode",
+          "duration": 0.005,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "Untitled suite in /Users/niko/Sites/casperjs/tests/suites/casper/evaluate.js",
+      "passed": 13,
+      "failed": 0,
+      "duration": 0.395,
+      "tests": [
+        {
+          "name": "Casper.evaluate() handles passed argument context correcly",
+          "classname": "tests/suites/casper/evaluate",
+          "duration": 0.189,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.evaluate() handles evaluation with no context passed",
+          "classname": "tests/suites/casper/evaluate",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.evaluate() accepts an object as arguments context",
+          "classname": "tests/suites/casper/evaluate",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.evaluate() accepts an object as arguments context",
+          "classname": "tests/suites/casper/evaluate",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.evaluate() accepts an object as arguments context",
+          "classname": "tests/suites/casper/evaluate",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.evaluate() accepts an array as arguments context",
+          "classname": "tests/suites/casper/evaluate",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.evaluate() accepts an array as arguments context",
+          "classname": "tests/suites/casper/evaluate",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.evaluate() accepts an array as arguments context",
+          "classname": "tests/suites/casper/evaluate",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.evaluate() accepts natural arguments context",
+          "classname": "tests/suites/casper/evaluate",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.evaluate() accepts natural arguments context",
+          "classname": "tests/suites/casper/evaluate",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.evaluate() accepts natural arguments context",
+          "classname": "tests/suites/casper/evaluate",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.thenEvaluate() sets args",
+          "classname": "tests/suites/casper/evaluate",
+          "duration": 0.202,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.thenEvaluate() sets args the same way evaluate() does",
+          "classname": "tests/suites/casper/evaluate",
+          "duration": 0,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "Untitled suite in /Users/niko/Sites/casperjs/tests/suites/casper/events.js",
+      "passed": 5,
+      "failed": 0,
+      "duration": 0.194,
+      "tests": [
+        {
+          "name": "on() has set an event handler",
+          "classname": "tests/suites/casper/events",
+          "duration": 0.193,
+          "status": "passed"
+        },
+        {
+          "name": "emit() emits an event",
+          "classname": "tests/suites/casper/events",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "setFilter() has set a filter",
+          "classname": "tests/suites/casper/events",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "filter() filters a value",
+          "classname": "tests/suites/casper/events",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "filter() applies the correct context",
+          "classname": "tests/suites/casper/events",
+          "duration": 0,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "Untitled suite in /Users/niko/Sites/casperjs/tests/suites/casper/exists.js",
+      "passed": 1,
+      "failed": 0,
+      "duration": 0.302,
+      "tests": [
+        {
+          "name": "Casper.exists() can check if an element exists",
+          "classname": "tests/suites/casper/exists",
+          "duration": 0.302,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "Untitled suite in /Users/niko/Sites/casperjs/tests/suites/casper/fetchtext.js",
+      "passed": 1,
+      "failed": 0,
+      "duration": 0.401,
+      "tests": [
+        {
+          "name": "Casper.fetchText() can retrieve text contents",
+          "classname": "tests/suites/casper/fetchtext",
+          "duration": 0.401,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "Untitled suite in /Users/niko/Sites/casperjs/tests/suites/casper/flow.coffee",
+      "passed": 13,
+      "failed": 0,
+      "duration": 4.775,
+      "tests": [
+        {
+          "name": "step 1",
+          "classname": "tests/suites/casper/flow",
+          "duration": 0.467,
+          "status": "passed"
+        },
+        {
+          "name": "step 1.1",
+          "classname": "tests/suites/casper/flow",
+          "duration": 0.501,
+          "status": "passed"
+        },
+        {
+          "name": "step 1.1.1",
+          "classname": "tests/suites/casper/flow",
+          "duration": 0.3,
+          "status": "passed"
+        },
+        {
+          "name": "step 1.1.1.1",
+          "classname": "tests/suites/casper/flow",
+          "duration": 0.301,
+          "status": "passed"
+        },
+        {
+          "name": "step 1.1.2.1",
+          "classname": "tests/suites/casper/flow",
+          "duration": 0.101,
+          "status": "passed"
+        },
+        {
+          "name": "step 1.2",
+          "classname": "tests/suites/casper/flow",
+          "duration": 0.5,
+          "status": "passed"
+        },
+        {
+          "name": "step 2",
+          "classname": "tests/suites/casper/flow",
+          "duration": 0.301,
+          "status": "passed"
+        },
+        {
+          "name": "step 3 sucessfully timed out",
+          "classname": "tests/suites/casper/flow",
+          "duration": 1.103,
+          "status": "passed"
+        },
+        {
+          "name": "step 4",
+          "classname": "tests/suites/casper/flow",
+          "duration": 0.1,
+          "status": "passed"
+        },
+        {
+          "name": "step 4.1",
+          "classname": "tests/suites/casper/flow",
+          "duration": 0.4,
+          "status": "passed"
+        },
+        {
+          "name": "step 4.1.1",
+          "classname": "tests/suites/casper/flow",
+          "duration": 0.4,
+          "status": "passed"
+        },
+        {
+          "name": "step 5.2",
+          "classname": "tests/suites/casper/flow",
+          "duration": 0.201,
+          "status": "passed"
+        },
+        {
+          "name": "last step",
+          "classname": "tests/suites/casper/flow",
+          "duration": 0.1,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "Untitled suite in /Users/niko/Sites/casperjs/tests/suites/casper/formfill.js",
+      "passed": 19,
+      "failed": 0,
+      "duration": 1.341,
+      "tests": [
+        {
+          "name": "Casper.fill() can fill an input[type=text] form field",
+          "classname": "tests/suites/casper/formfill",
+          "duration": 0.346,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.fill() can fill an input[type=password] form field",
+          "classname": "tests/suites/casper/formfill",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.fill() can fill a textarea form field",
+          "classname": "tests/suites/casper/formfill",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.fill() can pick a value from a select form field",
+          "classname": "tests/suites/casper/formfill",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.fill() can check a form checkbox",
+          "classname": "tests/suites/casper/formfill",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.fill() can check a form radio button 1/2",
+          "classname": "tests/suites/casper/formfill",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.fill() can check a form radio button 2/2",
+          "classname": "tests/suites/casper/formfill",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.fill() can select a file to upload",
+          "classname": "tests/suites/casper/formfill",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.fill() can fill a list of checkboxes",
+          "classname": "tests/suites/casper/formfill",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.getFormValues() retrieves filled values",
+          "classname": "tests/suites/casper/formfill",
+          "duration": 0.089,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.fill() input[type=email] field was submitted",
+          "classname": "tests/suites/casper/formfill",
+          "duration": 0.102,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.fill() input[type=password] field was submitted",
+          "classname": "tests/suites/casper/formfill",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.fill() textarea field was submitted",
+          "classname": "tests/suites/casper/formfill",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.fill() input[type=checkbox] field was submitted",
+          "classname": "tests/suites/casper/formfill",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.fill() input[type=radio] field was submitted",
+          "classname": "tests/suites/casper/formfill",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.fill() select field was submitted",
+          "classname": "tests/suites/casper/formfill",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.fill() raises an exception when unable to fill a form",
+          "classname": "tests/suites/casper/formfill",
+          "duration": 0.197,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.fill() handles multiple forms",
+          "classname": "tests/suites/casper/formfill",
+          "duration": 0.299,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.fill() handles array syntax field names",
+          "classname": "tests/suites/casper/formfill",
+          "duration": 0.301,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "Untitled suite in /Users/niko/Sites/casperjs/tests/suites/casper/frames.js",
+      "passed": 14,
+      "failed": 0,
+      "duration": 2.002,
+      "tests": [
+        {
+          "name": "Page title is: \"CasperJS frame 1\"",
+          "classname": "tests/suites/casper/frames",
+          "duration": 0.604,
+          "status": "passed"
+        },
+        {
+          "name": "Found an element matching: #f1",
+          "classname": "tests/suites/casper/frames",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "No element found matching selector: #f2",
+          "classname": "tests/suites/casper/frames",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "__utils__ object is available in child frame",
+          "classname": "tests/suites/casper/frames",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Page title is: \"CasperJS frame 2\"",
+          "classname": "tests/suites/casper/frames",
+          "duration": 0.298,
+          "status": "passed"
+        },
+        {
+          "name": "Found an element matching: #f2",
+          "classname": "tests/suites/casper/frames",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "No element found matching selector: #f1",
+          "classname": "tests/suites/casper/frames",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "__utils__ object is available in other child frame",
+          "classname": "tests/suites/casper/frames",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Page title is: \"CasperJS frame 3\"",
+          "classname": "tests/suites/casper/frames",
+          "duration": 0.297,
+          "status": "passed"
+        },
+        {
+          "name": "Page title is: \"CasperJS frame 1\"",
+          "classname": "tests/suites/casper/frames",
+          "duration": 0.301,
+          "status": "passed"
+        },
+        {
+          "name": "Found an element matching: #f1",
+          "classname": "tests/suites/casper/frames",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "No element found matching selector: #f2",
+          "classname": "tests/suites/casper/frames",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Page title is: \"CasperJS frame 3\"",
+          "classname": "tests/suites/casper/frames",
+          "duration": 0.298,
+          "status": "passed"
+        },
+        {
+          "name": "Page title is: \"CasperJS test frames\"",
+          "classname": "tests/suites/casper/frames",
+          "duration": 0.2,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "Untitled suite in /Users/niko/Sites/casperjs/tests/suites/casper/global.js",
+      "passed": 3,
+      "failed": 0,
+      "duration": 0.309,
+      "tests": [
+        {
+          "name": "Casper.getGlobal() can retrieve a remote global variable",
+          "classname": "tests/suites/casper/global",
+          "duration": 0.307,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.getGlobal() can retrieves a serializable object",
+          "classname": "tests/suites/casper/global",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.getGlobal() does not fail trying to encode an unserializable global",
+          "classname": "tests/suites/casper/global",
+          "duration": 0.001,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "Untitled suite in /Users/niko/Sites/casperjs/tests/suites/casper/headers.js",
+      "passed": 4,
+      "failed": 0,
+      "duration": 0.599,
+      "tests": [
+        {
+          "name": "No response available on local page",
+          "classname": "tests/suites/casper/headers",
+          "duration": 0.395,
+          "status": "passed"
+        },
+        {
+          "name": "Checking existing header (case sensitive)",
+          "classname": "tests/suites/casper/headers",
+          "duration": 0.203,
+          "status": "passed"
+        },
+        {
+          "name": "Checking existing header (case insensitive)",
+          "classname": "tests/suites/casper/headers",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Checking unexisting header",
+          "classname": "tests/suites/casper/headers",
+          "duration": 0,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "Untitled suite in /Users/niko/Sites/casperjs/tests/suites/casper/history.js",
+      "passed": 4,
+      "failed": 0,
+      "duration": 1.098,
+      "tests": [
+        {
+          "name": "Casper.back() can go back an history step",
+          "classname": "tests/suites/casper/history",
+          "duration": 0.801,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.forward() can go forward an history step",
+          "classname": "tests/suites/casper/history",
+          "duration": 0.2,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.history contains urls",
+          "classname": "tests/suites/casper/history",
+          "duration": 0.097,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.history has the correct first url",
+          "classname": "tests/suites/casper/history",
+          "duration": 0,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "Untitled suite in /Users/niko/Sites/casperjs/tests/suites/casper/hooks.js",
+      "passed": 5,
+      "failed": 0,
+      "duration": 0.505,
+      "tests": [
+        {
+          "name": "Casper.options.onStepComplete() is called on step complete",
+          "classname": "tests/suites/casper/hooks",
+          "duration": 0.305,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.options.onResourceRequested() retrieve a request object",
+          "classname": "tests/suites/casper/hooks",
+          "duration": 0.198,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.options.onResourceRequested() retrieve a valid request object",
+          "classname": "tests/suites/casper/hooks",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.options.onResourceReceived() retrieve a resource object",
+          "classname": "tests/suites/casper/hooks",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.options.onResourceReceived() retrieve a valid resource object",
+          "classname": "tests/suites/casper/hooks",
+          "duration": 0,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "Untitled suite in /Users/niko/Sites/casperjs/tests/suites/casper/keys.js",
+      "passed": 2,
+      "failed": 0,
+      "duration": 0.522,
+      "tests": [
+        {
+          "name": "Casper.sendKeys() sends keys to given input",
+          "classname": "tests/suites/casper/keys",
+          "duration": 0.522,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.sendKeys() sends keys to given textarea",
+          "classname": "tests/suites/casper/keys",
+          "duration": 0,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "Untitled suite in /Users/niko/Sites/casperjs/tests/suites/casper/logging.js",
+      "passed": 4,
+      "failed": 0,
+      "duration": 0.578,
+      "tests": [
+        {
+          "name": "Casper.log() adds a log entry",
+          "classname": "tests/suites/casper/logging",
+          "duration": 0.177,
+          "status": "passed"
+        },
+        {
+          "name": "ClientUtils.log() adds a log entry",
+          "classname": "tests/suites/casper/logging",
+          "duration": 0.304,
+          "status": "passed"
+        },
+        {
+          "name": "ClientUtils.log() adds a log entry at a given level",
+          "classname": "tests/suites/casper/logging",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.log() logged messages",
+          "classname": "tests/suites/casper/logging",
+          "duration": 0.096,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "Untitled suite in /Users/niko/Sites/casperjs/tests/suites/casper/mouseevents.js",
+      "passed": 16,
+      "failed": 0,
+      "duration": 0.41,
+      "tests": [
+        {
+          "name": "CasperUtils.mouseEvent() can dispatch a mousedown event",
+          "classname": "tests/suites/casper/mouseevents",
+          "duration": 0.403,
+          "status": "passed"
+        },
+        {
+          "name": "CasperUtils.mouseEvent() can dispatch a mousedown event handled by unobstrusive js",
+          "classname": "tests/suites/casper/mouseevents",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "CasperUtils.mouseEvent() can dispatch a mouseup event",
+          "classname": "tests/suites/casper/mouseevents",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "CasperUtils.mouseEvent() can dispatch a mouseup event handled by unobstrusive js",
+          "classname": "tests/suites/casper/mouseevents",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "CasperUtils.mouseEvent() can dispatch a mouseover event",
+          "classname": "tests/suites/casper/mouseevents",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "CasperUtils.mouseEvent() can dispatch a mouseover event handled by unobstrusive js",
+          "classname": "tests/suites/casper/mouseevents",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "CasperUtils.mouseEvent() can dispatch a mouseout event",
+          "classname": "tests/suites/casper/mouseevents",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "CasperUtils.mouseEvent() can dispatch a mouseout event handled by unobstrusive js",
+          "classname": "tests/suites/casper/mouseevents",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "CasperUtils.mouseEvent() triggered mousedown",
+          "classname": "tests/suites/casper/mouseevents",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "CasperUtils.mouseEvent() triggered mousedown via unobstrusive js",
+          "classname": "tests/suites/casper/mouseevents",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "CasperUtils.mouseEvent() triggered mouseup",
+          "classname": "tests/suites/casper/mouseevents",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "CasperUtils.mouseEvent() triggered mouseup via unobstrusive js",
+          "classname": "tests/suites/casper/mouseevents",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "CasperUtils.mouseEvent() triggered mouseover",
+          "classname": "tests/suites/casper/mouseevents",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "CasperUtils.mouseEvent() triggered mouseover via unobstrusive js",
+          "classname": "tests/suites/casper/mouseevents",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "CasperUtils.mouseEvent() triggered mouseout",
+          "classname": "tests/suites/casper/mouseevents",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "CasperUtils.mouseEvent() triggered mouseout via unobstrusive js",
+          "classname": "tests/suites/casper/mouseevents",
+          "duration": 0,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "Untitled suite in /Users/niko/Sites/casperjs/tests/suites/casper/onerror.js",
+      "passed": 2,
+      "failed": 0,
+      "duration": 0.395,
+      "tests": [
+        {
+          "name": "page.error event has been caught OK",
+          "classname": "tests/suites/casper/onerror",
+          "duration": 0.395,
+          "status": "passed"
+        },
+        {
+          "name": "page.error retrieves correct stack trace",
+          "classname": "tests/suites/casper/onerror",
+          "duration": 0,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "Untitled suite in /Users/niko/Sites/casperjs/tests/suites/casper/open.js",
+      "passed": 16,
+      "failed": 0,
+      "duration": 1.4060000000000001,
+      "tests": [
+        {
+          "name": "Casper.open() used the expected GET settings",
+          "classname": "tests/suites/casper/open",
+          "duration": 0.198,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.open() used the expected POST settings",
+          "classname": "tests/suites/casper/open",
+          "duration": 0.002,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.open() used the expected PUT settings",
+          "classname": "tests/suites/casper/open",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.open() used the expected HTTP auth settings",
+          "classname": "tests/suites/casper/open",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.open() can open and load a location using GET",
+          "classname": "tests/suites/casper/open",
+          "duration": 0.103,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.open() can open and load a location using POST",
+          "classname": "tests/suites/casper/open",
+          "duration": 0.099,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.open() can open and load a location using PUT",
+          "classname": "tests/suites/casper/open",
+          "duration": 0.1,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.open() can open and load a location using HTTP auth",
+          "classname": "tests/suites/casper/open",
+          "duration": 0.1,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.thenOpen() used the expected GET settings",
+          "classname": "tests/suites/casper/open",
+          "duration": 0.101,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.thenOpen() can open and load a location using GET",
+          "classname": "tests/suites/casper/open",
+          "duration": 0.1,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.thenOpen() used the expected POST settings",
+          "classname": "tests/suites/casper/open",
+          "duration": 0.101,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.thenOpen() can open and load a location using POST",
+          "classname": "tests/suites/casper/open",
+          "duration": 0.101,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.thenOpen() used the expected PUT settings",
+          "classname": "tests/suites/casper/open",
+          "duration": 0.098,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.thenOpen() can open and load a location using PUT",
+          "classname": "tests/suites/casper/open",
+          "duration": 0.102,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.thenOpen() used the expected HTTP auth settings",
+          "classname": "tests/suites/casper/open",
+          "duration": 0.098,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.thenOpen() can open and load a location using HTTP auth",
+          "classname": "tests/suites/casper/open",
+          "duration": 0.101,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "Untitled suite in /Users/niko/Sites/casperjs/tests/suites/casper/popup.js",
+      "passed": 25,
+      "failed": 0,
+      "duration": 3.11,
+      "tests": [
+        {
+          "name": "\"popup.created\" event is fired",
+          "classname": "tests/suites/casper/popup",
+          "duration": 0.308,
+          "status": "passed"
+        },
+        {
+          "name": "\"popup.created\" event callback get a popup page instance",
+          "classname": "tests/suites/casper/popup",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "\"popup.loaded\" event is fired",
+          "classname": "tests/suites/casper/popup",
+          "duration": 0.022,
+          "status": "passed"
+        },
+        {
+          "name": "\"popup.loaded\" is triggered when popup content is actually loaded",
+          "classname": "tests/suites/casper/popup",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.waitForPopup() waits for a popup being created",
+          "classname": "tests/suites/casper/popup",
+          "duration": 0.47,
+          "status": "passed"
+        },
+        {
+          "name": "A popup has been added",
+          "classname": "tests/suites/casper/popup",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "A popup is a WebPage",
+          "classname": "tests/suites/casper/popup",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.withPopup() switched to popup as current active one",
+          "classname": "tests/suites/casper/popup",
+          "duration": 0.202,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.withPopup() has client utils injected",
+          "classname": "tests/suites/casper/popup",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.withPopup() can perform assertions on the DOM",
+          "classname": "tests/suites/casper/popup",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.withPopup() can perform assertions on the DOM using XPath",
+          "classname": "tests/suites/casper/popup",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.withPopup() has reverted to main page after using the popup",
+          "classname": "tests/suites/casper/popup",
+          "duration": 0.196,
+          "status": "passed"
+        },
+        {
+          "name": "\"popup.closed\" event is fired",
+          "classname": "tests/suites/casper/popup",
+          "duration": 0.102,
+          "status": "passed"
+        },
+        {
+          "name": "Popup is removed when closed",
+          "classname": "tests/suites/casper/popup",
+          "duration": 0.103,
+          "status": "passed"
+        },
+        {
+          "name": "\"popup.created\" event is fired",
+          "classname": "tests/suites/casper/popup",
+          "duration": 0.103,
+          "status": "passed"
+        },
+        {
+          "name": "\"popup.created\" event callback get a popup page instance",
+          "classname": "tests/suites/casper/popup",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "\"popup.loaded\" event is fired",
+          "classname": "tests/suites/casper/popup",
+          "duration": 0.021,
+          "status": "passed"
+        },
+        {
+          "name": "\"popup.loaded\" is triggered when popup content is actually loaded",
+          "classname": "tests/suites/casper/popup",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.waitForPopup() waits for a popup being created",
+          "classname": "tests/suites/casper/popup",
+          "duration": 0.373,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.withPopup() can use a regexp to identify popup",
+          "classname": "tests/suites/casper/popup",
+          "duration": 0.202,
+          "status": "passed"
+        },
+        {
+          "name": "\"popup.closed\" event is fired",
+          "classname": "tests/suites/casper/popup",
+          "duration": 0.2,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.withPopup() has reverted to main page after using the popup",
+          "classname": "tests/suites/casper/popup",
+          "duration": 0.104,
+          "status": "passed"
+        },
+        {
+          "name": "Popup is removed when closed",
+          "classname": "tests/suites/casper/popup",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.waitForPopup() waits when clicked on a link with target=_blank",
+          "classname": "tests/suites/casper/popup",
+          "duration": 0.496,
+          "status": "passed"
+        },
+        {
+          "name": "Page title is: \"CasperJS test form\"",
+          "classname": "tests/suites/casper/popup",
+          "duration": 0.203,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "Untitled suite in /Users/niko/Sites/casperjs/tests/suites/casper/prompt.js",
+      "passed": 1,
+      "failed": 0,
+      "duration": 0.501,
+      "tests": [
+        {
+          "name": "prompted value has been received",
+          "classname": "tests/suites/casper/prompt",
+          "duration": 0.501,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "Untitled suite in /Users/niko/Sites/casperjs/tests/suites/casper/request.js",
+      "passed": 3,
+      "failed": 0,
+      "duration": 0.502,
+      "tests": [
+        {
+          "name": "Casper.open() sets no custom header by default",
+          "classname": "tests/suites/casper/request",
+          "duration": 0.3,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.open() can set a custom header",
+          "classname": "tests/suites/casper/request",
+          "duration": 0.102,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.open() custom headers option is not persistent",
+          "classname": "tests/suites/casper/request",
+          "duration": 0.1,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "Untitled suite in /Users/niko/Sites/casperjs/tests/suites/casper/resources.coffee",
+      "passed": 5,
+      "failed": 0,
+      "duration": 1.616,
+      "tests": [
+        {
+          "name": "only one resource found",
+          "classname": "tests/suites/casper/resources",
+          "duration": 0.415,
+          "status": "passed"
+        },
+        {
+          "name": "two resources found",
+          "classname": "tests/suites/casper/resources",
+          "duration": 1.201,
+          "status": "passed"
+        },
+        {
+          "name": "phantom image found via test RegExp",
+          "classname": "tests/suites/casper/resources",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "phantom image found via test Function",
+          "classname": "tests/suites/casper/resources",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "phantom image found via test String",
+          "classname": "tests/suites/casper/resources",
+          "duration": 0,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "Untitled suite in /Users/niko/Sites/casperjs/tests/suites/casper/scripts.js",
+      "passed": 6,
+      "failed": 0,
+      "duration": 0.993,
+      "tests": [
+        {
+          "name": "Casper.includeRemoteScripts() includes a first remote script on start",
+          "classname": "tests/suites/casper/scripts",
+          "duration": 0.789,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.includeRemoteScripts() includes a second remote script on start",
+          "classname": "tests/suites/casper/scripts",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.includeRemoteScripts() includes a really remote file on first step",
+          "classname": "tests/suites/casper/scripts",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.includeRemoteScripts() includes a first remote script on second step",
+          "classname": "tests/suites/casper/scripts",
+          "duration": 0.201,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.includeRemoteScripts() includes a second remote script on second step",
+          "classname": "tests/suites/casper/scripts",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.includeRemoteScripts() includes a really remote file on second step",
+          "classname": "tests/suites/casper/scripts",
+          "duration": 0.001,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "Untitled suite in /Users/niko/Sites/casperjs/tests/suites/casper/start.js",
+      "passed": 4,
+      "failed": 0,
+      "duration": 0.4,
+      "tests": [
+        {
+          "name": "Casper.start() started",
+          "classname": "tests/suites/casper/start",
+          "duration": 0.197,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.start() can chain a next step",
+          "classname": "tests/suites/casper/start",
+          "duration": 0.202,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.start() opened the passed url",
+          "classname": "tests/suites/casper/start",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.start() injects ClientUtils instance within remote DOM",
+          "classname": "tests/suites/casper/start",
+          "duration": 0,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "Untitled suite in /Users/niko/Sites/casperjs/tests/suites/casper/steps.js",
+      "passed": 8,
+      "failed": 0,
+      "duration": 0.808,
+      "tests": [
+        {
+          "name": "Casper.then() can add a new step",
+          "classname": "tests/suites/casper/steps",
+          "duration": 0.2,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.thenOpen() can add a new step",
+          "classname": "tests/suites/casper/steps",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.thenOpen() can add a new step for opening, plus another step",
+          "classname": "tests/suites/casper/steps",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.each() passes a contextualized index",
+          "classname": "tests/suites/casper/steps",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.each() passes a contextualized index",
+          "classname": "tests/suites/casper/steps",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.each() passes a contextualized index",
+          "classname": "tests/suites/casper/steps",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.then() added a new step",
+          "classname": "tests/suites/casper/steps",
+          "duration": 0.305,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.thenOpen() opened a location and executed a step",
+          "classname": "tests/suites/casper/steps",
+          "duration": 0.301,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "Untitled suite in /Users/niko/Sites/casperjs/tests/suites/casper/urls.js",
+      "passed": 6,
+      "failed": 0,
+      "duration": 0.696,
+      "tests": [
+        {
+          "name": "HTTP status code is: 200",
+          "classname": "tests/suites/casper/urls",
+          "duration": 0.496,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.getCurrentUrl() retrieves a raw unicode URL",
+          "classname": "tests/suites/casper/urls",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 200",
+          "classname": "tests/suites/casper/urls",
+          "duration": 0.099,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.getCurrentUrl() retrieves an escaped URL",
+          "classname": "tests/suites/casper/urls",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 200",
+          "classname": "tests/suites/casper/urls",
+          "duration": 0.098,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.getCurrentUrl() retrieves a decoded URL",
+          "classname": "tests/suites/casper/urls",
+          "duration": 0.001,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "Untitled suite in /Users/niko/Sites/casperjs/tests/suites/casper/viewport.js",
+      "passed": 3,
+      "failed": 0,
+      "duration": 0.098,
+      "tests": [
+        {
+          "name": "Casper.viewport() can change the width of page viewport",
+          "classname": "tests/suites/casper/viewport",
+          "duration": 0.097,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.viewport() can change the height of page viewport",
+          "classname": "tests/suites/casper/viewport",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.viewport() validates viewport size data",
+          "classname": "tests/suites/casper/viewport",
+          "duration": 0.001,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "Untitled suite in /Users/niko/Sites/casperjs/tests/suites/casper/visible.js",
+      "passed": 4,
+      "failed": 0,
+      "duration": 1.502,
+      "tests": [
+        {
+          "name": "Casper.visible() can detect if an element is visible",
+          "classname": "tests/suites/casper/visible",
+          "duration": 0.303,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.visible() can detect if an element is invisible",
+          "classname": "tests/suites/casper/visible",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.visible() can detect if an element is invisible",
+          "classname": "tests/suites/casper/visible",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.waitWhileVisible() can wait while an element is visible",
+          "classname": "tests/suites/casper/visible",
+          "duration": 1.198,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "Untitled suite in /Users/niko/Sites/casperjs/tests/suites/casper/wait.js",
+      "passed": 3,
+      "failed": 0,
+      "duration": 6.212,
+      "tests": [
+        {
+          "name": "Casper.wait() can wait for a given amount of time",
+          "classname": "tests/suites/casper/wait",
+          "duration": 1.505,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.waitFor() can wait for something to happen",
+          "classname": "tests/suites/casper/wait",
+          "duration": 2.303,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.waitForText() can wait for text",
+          "classname": "tests/suites/casper/wait",
+          "duration": 2.404,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "Untitled suite in /Users/niko/Sites/casperjs/tests/suites/casper/xpath.js",
+      "passed": 6,
+      "failed": 0,
+      "duration": 0.608,
+      "tests": [
+        {
+          "name": "XPath selector can find an element",
+          "classname": "tests/suites/casper/xpath",
+          "duration": 0.406,
+          "status": "passed"
+        },
+        {
+          "name": "XPath selector does not retrieve an unexistent element",
+          "classname": "tests/suites/casper/xpath",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "selectXPath() shortcut can find an element as well",
+          "classname": "tests/suites/casper/xpath",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Correct number of elements are found",
+          "classname": "tests/suites/casper/xpath",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Clicking XPath works as expected",
+          "classname": "tests/suites/casper/xpath",
+          "duration": 0.196,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.fill() can fill an input[type=text] form field",
+          "classname": "tests/suites/casper/xpath",
+          "duration": 0.003,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "Untitled suite in /Users/niko/Sites/casperjs/tests/suites/cli.js",
+      "passed": 76,
+      "failed": 0,
+      "duration": 0.209,
+      "tests": [
+        {
+          "name": "parse() returns expected positional args array",
+          "classname": "tests/suites/cli",
+          "duration": 0.194,
+          "status": "passed"
+        },
+        {
+          "name": "parse() returns expected options object",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "parse() does not return inexistant positional arg",
+          "classname": "tests/suites/cli",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "parse() does not return inexistant option",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "has() checks if an arg is set",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "has() checks if an option is set",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "parse() returns expected positional args array",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "parse() returns expected options object",
+          "classname": "tests/suites/cli",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "parse() does not return inexistant positional arg",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "parse() does not return inexistant option",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "has() checks if a raw arg is set",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "has() checks if a raw option is set",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "parse() returns expected positional args array",
+          "classname": "tests/suites/cli",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "parse() returns expected options object",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "parse() retrieve first positional arg",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "parse() retrieve second positional arg",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "has() checks if an arg is set",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "has() checks if an arg is set",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "has() checks if an arg is not set",
+          "classname": "tests/suites/cli",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "parse() returns expected positional raw args array",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "parse() returns expected raw options object",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "parse() retrieve first positional raw arg",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "parse() retrieve second positional raw arg",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "has() checks if a arw arg is set",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "has() checks if a arw arg is set",
+          "classname": "tests/suites/cli",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "has() checks if a arw arg is not set",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "parse() returns expected positional args array",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "parse() returns expected options object",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "parse() retrieve an option value",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "parse() retrieve boolean option flag",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "has() checks if an option is set",
+          "classname": "tests/suites/cli",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "has() checks if an option is set",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "parse() returns expected positional raw args array",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "parse() returns expected options raw object",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "parse() retrieve an option raw value",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "parse() retrieve boolean raw option flag",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "has() checks if a raw option is set",
+          "classname": "tests/suites/cli",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "has() checks if a raw option is set",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "parse() returns expected positional args array",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "parse() returns expected options object",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "parse() handles options with exotic names",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "has() checks if an option is set",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "parse() returns expected positional raw args array",
+          "classname": "tests/suites/cli",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "parse() returns expected options raw object",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "parse() handles raw options with exotic names",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "has() checks if a raw option is set",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "parse() returns expected positional args array",
+          "classname": "tests/suites/cli",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "parse() returns expected options object",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "parse() can cast a numeric option value",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "parse() can cast a float option value",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "parse() can cast a boolean value",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "parse() can get a flag value by its option name",
+          "classname": "tests/suites/cli",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "parse() can cast a boolean value",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "parse() can cast a boolean value",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "has() checks if an arg is set",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "has() checks if an arg is set",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "has() checks if an option is set",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "has() checks if an option is set",
+          "classname": "tests/suites/cli",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "has() checks if an option is set",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "has() checks if an option is set",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "drop() dropped arg",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "drop() dropped option",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "drop() did not affect other args",
+          "classname": "tests/suites/cli",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "drop() did not affect other options",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "parse() returns expected positional raw args array",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "parse() returns expected options raw object",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "parse() does not a raw numeric option value",
+          "classname": "tests/suites/cli",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "parse() does not cast a raw float option value",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "parse() does not cast a numeric value",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "parse() can get a flag value by its option name",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "parse() can cast a boolean value",
+          "classname": "tests/suites/cli",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "parse() can cast a boolean value",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "drop() dropped raw arg",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "drop() dropped raw option",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "drop() did not affect other raw args",
+          "classname": "tests/suites/cli",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "drop() did not affect other raw options",
+          "classname": "tests/suites/cli",
+          "duration": 0.001,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "Untitled suite in /Users/niko/Sites/casperjs/tests/suites/clientutils.js",
+      "passed": 40,
+      "failed": 0,
+      "duration": 0.211,
+      "tests": [
+        {
+          "name": "ClientUtils.encode() encodes and decodes an empty string",
+          "classname": "tests/suites/clientutils",
+          "duration": 0.086,
+          "status": "passed"
+        },
+        {
+          "name": "ClientUtils.encode() encodes and decodes a word",
+          "classname": "tests/suites/clientutils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "ClientUtils.encode() encodes and decodes a null char",
+          "classname": "tests/suites/clientutils",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "ClientUtils.encode() encodes and decodes an utf8 string",
+          "classname": "tests/suites/clientutils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "ClientUtils.encode() encodes and decodes song lyrics",
+          "classname": "tests/suites/clientutils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "ClientUtils.encode() encodes and decodes a file contents",
+          "classname": "tests/suites/clientutils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "ClientUtils.exists() checks that an element exist",
+          "classname": "tests/suites/clientutils",
+          "duration": 0.002,
+          "status": "passed"
+        },
+        {
+          "name": "ClientUtils.exists() checks that an element exist",
+          "classname": "tests/suites/clientutils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "ClientUtils.exists() checks that an element exist",
+          "classname": "tests/suites/clientutils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "ClientUtils.exists() checks that an element exist using XPath",
+          "classname": "tests/suites/clientutils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "ClientUtils.exists() checks that an element exist using XPath",
+          "classname": "tests/suites/clientutils",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "ClientUtils.findAll() can find matching DOM elements",
+          "classname": "tests/suites/clientutils",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "ClientUtils.findAll() can find matching DOM elements",
+          "classname": "tests/suites/clientutils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "ClientUtils.findAll() can find matching DOM elements",
+          "classname": "tests/suites/clientutils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "ClientUtils.findAll() can find matching DOM elements",
+          "classname": "tests/suites/clientutils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "ClientUtils.findAll() can find matching DOM elements within a given scope",
+          "classname": "tests/suites/clientutils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "ClientUtils.findAll() can find matching DOM elements within a given scope",
+          "classname": "tests/suites/clientutils",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "ClientUtils.findAll() can find matching DOM elements using XPath within a given scope",
+          "classname": "tests/suites/clientutils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "ClientUtils.findOne() can find a matching DOM element",
+          "classname": "tests/suites/clientutils",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "ClientUtils.findOne() can find a matching DOM element",
+          "classname": "tests/suites/clientutils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "ClientUtils.findOne() can find a matching DOM element within a given scope",
+          "classname": "tests/suites/clientutils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "ClientUtils.findOne() can find a matching DOM element using XPath within a given scope",
+          "classname": "tests/suites/clientutils",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "ClientUtils.processSelector() can process a CSS3 selector",
+          "classname": "tests/suites/clientutils",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "ClientUtils.processSelector() can process a CSS3 selector",
+          "classname": "tests/suites/clientutils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "ClientUtils.processSelector() can process a CSS3 selector",
+          "classname": "tests/suites/clientutils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "ClientUtils.processSelector() can process a XPath selector",
+          "classname": "tests/suites/clientutils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "ClientUtils.processSelector() can process a XPath selector",
+          "classname": "tests/suites/clientutils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "ClientUtils.processSelector() can process a XPath selector",
+          "classname": "tests/suites/clientutils",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "ClientUtils.getElementInfo() retrieves element name",
+          "classname": "tests/suites/clientutils",
+          "duration": 0.005,
+          "status": "passed"
+        },
+        {
+          "name": "ClientUtils.getElementInfo() retrieves element attributes",
+          "classname": "tests/suites/clientutils",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "ClientUtils.getElementInfo() retrieves element html content",
+          "classname": "tests/suites/clientutils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "ClientUtils.getElementInfo() retrieves element text",
+          "classname": "tests/suites/clientutils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "ClientUtils.getElementInfo() retrieves element x pos",
+          "classname": "tests/suites/clientutils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "ClientUtils.getElementInfo() retrieves element y pos",
+          "classname": "tests/suites/clientutils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "ClientUtils.getElementInfo() retrieves element width",
+          "classname": "tests/suites/clientutils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "ClientUtils.getElementInfo() retrieves element height",
+          "classname": "tests/suites/clientutils",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "ClientUtils.getElementInfo() retrieves element visibility",
+          "classname": "tests/suites/clientutils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "ClientUtils.getElementInfo() retrieves element whole tag contents",
+          "classname": "tests/suites/clientutils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "ClientUtils.getElementsBounds() retrieves multiple elements boundaries",
+          "classname": "tests/suites/clientutils",
+          "duration": 0.107,
+          "status": "passed"
+        },
+        {
+          "name": "ClientUtils.getElementsBounds() retrieves multiple elements boundaries",
+          "classname": "tests/suites/clientutils",
+          "duration": 0.001,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "Untitled suite in /Users/niko/Sites/casperjs/tests/suites/coffee.coffee",
+      "passed": 4,
+      "failed": 0,
+      "duration": 0.593,
+      "tests": [
+        {
+          "name": "Casper.start() casper can start itself an open an url",
+          "classname": "tests/suites/coffee",
+          "duration": 0.394,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.fetchText() can retrieves text contents",
+          "classname": "tests/suites/coffee",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.click() casper can click on a text link",
+          "classname": "tests/suites/coffee",
+          "duration": 0.099,
+          "status": "passed"
+        },
+        {
+          "name": "Casper.options.onStepComplete() is called on step complete",
+          "classname": "tests/suites/coffee",
+          "duration": 0.099,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "Untitled suite in /Users/niko/Sites/casperjs/tests/suites/fs.js",
+      "passed": 14,
+      "failed": 0,
+      "duration": 0.084,
+      "tests": [
+        {
+          "name": "fs.dirname() does its job for /local/plop/foo.js",
+          "classname": "tests/suites/fs",
+          "duration": 0.081,
+          "status": "passed"
+        },
+        {
+          "name": "fs.dirname() does its job for local/plop/foo.js",
+          "classname": "tests/suites/fs",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "fs.dirname() does its job for ./local/plop/foo.js",
+          "classname": "tests/suites/fs",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "fs.dirname() does its job for c:\\local\\plop\\foo.js",
+          "classname": "tests/suites/fs",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "fs.dirname() does its job for D:\\local\\plop\\foo.js",
+          "classname": "tests/suites/fs",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "fs.dirname() does its job for D:\\local\\plop\\",
+          "classname": "tests/suites/fs",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "fs.dirname() does its job for c:\\",
+          "classname": "tests/suites/fs",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "fs.dirname() does its job for c:",
+          "classname": "tests/suites/fs",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "fs.isWindows() does its job for /",
+          "classname": "tests/suites/fs",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "fs.isWindows() does its job for /local/plop/foo.js",
+          "classname": "tests/suites/fs",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "fs.isWindows() does its job for D:\\local\\plop\\",
+          "classname": "tests/suites/fs",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "fs.isWindows() does its job for c:\\",
+          "classname": "tests/suites/fs",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "fs.isWindows() does its job for c:",
+          "classname": "tests/suites/fs",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "fs.isWindows() does its job for \\\\Server\\Plop",
+          "classname": "tests/suites/fs",
+          "duration": 0.001,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "Untitled suite in /Users/niko/Sites/casperjs/tests/suites/http_status.js",
+      "passed": 109,
+      "failed": 0,
+      "duration": 11.124,
+      "tests": [
+        {
+          "name": "file:// protocol does not set a HTTP status",
+          "classname": "tests/suites/http_status",
+          "duration": 0.305,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.199,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 101",
+          "classname": "tests/suites/http_status",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.2,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 102",
+          "classname": "tests/suites/http_status",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.2,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 118",
+          "classname": "tests/suites/http_status",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.2,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 200",
+          "classname": "tests/suites/http_status",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.2,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 201",
+          "classname": "tests/suites/http_status",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.2,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 202",
+          "classname": "tests/suites/http_status",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.2,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 203",
+          "classname": "tests/suites/http_status",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.199,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 204",
+          "classname": "tests/suites/http_status",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.2,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 205",
+          "classname": "tests/suites/http_status",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.203,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 206",
+          "classname": "tests/suites/http_status",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.203,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 207",
+          "classname": "tests/suites/http_status",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.197,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 210",
+          "classname": "tests/suites/http_status",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.2,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 300",
+          "classname": "tests/suites/http_status",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.2,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 301",
+          "classname": "tests/suites/http_status",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.199,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 302",
+          "classname": "tests/suites/http_status",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.202,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 303",
+          "classname": "tests/suites/http_status",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.197,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 304",
+          "classname": "tests/suites/http_status",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.201,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 305",
+          "classname": "tests/suites/http_status",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.199,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 307",
+          "classname": "tests/suites/http_status",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.201,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 310",
+          "classname": "tests/suites/http_status",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.198,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 400",
+          "classname": "tests/suites/http_status",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.203,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 401",
+          "classname": "tests/suites/http_status",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.196,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 402",
+          "classname": "tests/suites/http_status",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.2,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 403",
+          "classname": "tests/suites/http_status",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.2,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 404",
+          "classname": "tests/suites/http_status",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.201,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 405",
+          "classname": "tests/suites/http_status",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.2,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 406",
+          "classname": "tests/suites/http_status",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.204,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 407",
+          "classname": "tests/suites/http_status",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.196,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 408",
+          "classname": "tests/suites/http_status",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.2,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 409",
+          "classname": "tests/suites/http_status",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.201,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 410",
+          "classname": "tests/suites/http_status",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.199,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 411",
+          "classname": "tests/suites/http_status",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.201,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 412",
+          "classname": "tests/suites/http_status",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.199,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 413",
+          "classname": "tests/suites/http_status",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.202,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 414",
+          "classname": "tests/suites/http_status",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.2,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 415",
+          "classname": "tests/suites/http_status",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.201,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 416",
+          "classname": "tests/suites/http_status",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.2,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 417",
+          "classname": "tests/suites/http_status",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.2,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 418",
+          "classname": "tests/suites/http_status",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.201,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 422",
+          "classname": "tests/suites/http_status",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.201,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 423",
+          "classname": "tests/suites/http_status",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.199,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 424",
+          "classname": "tests/suites/http_status",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.201,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 425",
+          "classname": "tests/suites/http_status",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.2,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 426",
+          "classname": "tests/suites/http_status",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.201,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 449",
+          "classname": "tests/suites/http_status",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.2,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 450",
+          "classname": "tests/suites/http_status",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.2,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 500",
+          "classname": "tests/suites/http_status",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.2,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 501",
+          "classname": "tests/suites/http_status",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.201,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 502",
+          "classname": "tests/suites/http_status",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.202,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 503",
+          "classname": "tests/suites/http_status",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.2,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 504",
+          "classname": "tests/suites/http_status",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.2,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 505",
+          "classname": "tests/suites/http_status",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.201,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 507",
+          "classname": "tests/suites/http_status",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/http_status",
+          "duration": 0.202,
+          "status": "passed"
+        },
+        {
+          "name": "HTTP status code is: 509",
+          "classname": "tests/suites/http_status",
+          "duration": 0,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "Untitled suite in /Users/niko/Sites/casperjs/tests/suites/injector.js",
+      "passed": 12,
+      "failed": 0,
+      "duration": 0.208,
+      "tests": [
+        {
+          "name": "FunctionArgsInjector.extract() returns an object",
+          "classname": "tests/suites/injector",
+          "duration": 0.204,
+          "status": "passed"
+        },
+        {
+          "name": "FunctionArgsInjector.extract() process function name as expected",
+          "classname": "tests/suites/injector",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "FunctionArgsInjector.extract() process function body as expected",
+          "classname": "tests/suites/injector",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "FunctionArgsInjector.extract() process function args as expected",
+          "classname": "tests/suites/injector",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "FunctionArgsInjector.extract() handles named functions with arguments and body",
+          "classname": "tests/suites/injector",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "FunctionArgsInjector.extract() handles functions with no arguments",
+          "classname": "tests/suites/injector",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "FunctionArgsInjector.extract() handles functions with no body",
+          "classname": "tests/suites/injector",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "FunctionArgsInjector.extract() handles anonymous functions with complex args passed",
+          "classname": "tests/suites/injector",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "FunctionArgsInjector.extract() handles can filter comments in function args",
+          "classname": "tests/suites/injector",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "FunctionArgsInjector.process() processed a function",
+          "classname": "tests/suites/injector",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "FunctionArgsInjector.process() processed the function correctly",
+          "classname": "tests/suites/injector",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "FunctionArgsInjector.process() has issue #129 fixed",
+          "classname": "tests/suites/injector",
+          "duration": 0.001,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "Untitled suite in /Users/niko/Sites/casperjs/tests/suites/popup.js",
+      "passed": 14,
+      "failed": 0,
+      "duration": 0.112,
+      "tests": [
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/popup",
+          "duration": 0.099,
+          "status": "passed"
+        },
+        {
+          "name": "Subject is strictly true",
+          "classname": "tests/suites/popup",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/popup",
+          "duration": 0.004,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/popup",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/popup",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/popup",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Subject is strictly true",
+          "classname": "tests/suites/popup",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/popup",
+          "duration": 0.004,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/popup",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/popup",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/popup",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/popup",
+          "duration": 0.003,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/popup",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/popup",
+          "duration": 0,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "Untitled suite in /Users/niko/Sites/casperjs/tests/suites/require.js",
+      "passed": 3,
+      "failed": 0,
+      "duration": 0.098,
+      "tests": [
+        {
+          "name": "require() patched version can load a js module",
+          "classname": "tests/suites/require",
+          "duration": 0.088,
+          "status": "passed"
+        },
+        {
+          "name": "require() patched version can load a coffeescript module",
+          "classname": "tests/suites/require",
+          "duration": 0.009,
+          "status": "passed"
+        },
+        {
+          "name": "require() patched version can load a json module",
+          "classname": "tests/suites/require",
+          "duration": 0.001,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "Untitled suite in /Users/niko/Sites/casperjs/tests/suites/tester.js",
+      "passed": 55,
+      "failed": 0,
+      "duration": 0.706,
+      "tests": [
+        {
+          "name": "findTestFiles() find test files and sort them",
+          "classname": "tests/suites/tester",
+          "duration": 0.089,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assertTextExists() checks that page body contains text",
+          "classname": "tests/suites/tester",
+          "duration": 0.205,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assertTextExist() checks that page body contains text [alias]",
+          "classname": "tests/suites/tester",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assertTextDoesntExist() checks that page body doesn't contain provided text",
+          "classname": "tests/suites/tester",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assertSelectorHasText() works as expected",
+          "classname": "tests/suites/tester",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assertSelectorDoesntHaveText() works as expected",
+          "classname": "tests/suites/tester",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assert() works as expected",
+          "classname": "tests/suites/tester",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assertTrue() works as expected [alias]",
+          "classname": "tests/suites/tester",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assertTruthy() works as expected",
+          "classname": "tests/suites/tester",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assertFalsy() works as expected",
+          "classname": "tests/suites/tester",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assertNot() works as expected",
+          "classname": "tests/suites/tester",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assertEquals() works as expected",
+          "classname": "tests/suites/tester",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assertEqual() works as expected [alias]",
+          "classname": "tests/suites/tester",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assertNotEquals() works as expected",
+          "classname": "tests/suites/tester",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assertEval() works as expected",
+          "classname": "tests/suites/tester",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assertEvaluate() works as expected [alias]",
+          "classname": "tests/suites/tester",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assertEvalEquals() works as expected",
+          "classname": "tests/suites/tester",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assertEvalEqual() works as expected [alias]",
+          "classname": "tests/suites/tester",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assertExists() works as expected",
+          "classname": "tests/suites/tester",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assertExist() works as expected [alias]",
+          "classname": "tests/suites/tester",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assertSelectorExists() works as expected [alias]",
+          "classname": "tests/suites/tester",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assertSelectorExist() works as expected [alias]",
+          "classname": "tests/suites/tester",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assertDoesntExist() works as expected",
+          "classname": "tests/suites/tester",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assertNotExist() works as expected [alias]",
+          "classname": "tests/suites/tester",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assertHttpStatus() works as expected",
+          "classname": "tests/suites/tester",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assertMatch() works as expected",
+          "classname": "tests/suites/tester",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assertMatches() works as expected [alias]",
+          "classname": "tests/suites/tester",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assertRaises() works as expected",
+          "classname": "tests/suites/tester",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assertRaise() works as expected [alias]",
+          "classname": "tests/suites/tester",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assertThrows() works as expected [alias]",
+          "classname": "tests/suites/tester",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assertResourceExists() works as expected",
+          "classname": "tests/suites/tester",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assertResourceExist() works as expected [alias]",
+          "classname": "tests/suites/tester",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assertTitle() works as expected",
+          "classname": "tests/suites/tester",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assertTitleMatch() works as expected",
+          "classname": "tests/suites/tester",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assertTitleMatches() works as expected [alias]",
+          "classname": "tests/suites/tester",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assertType() works as expected",
+          "classname": "tests/suites/tester",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assertUrlMatch() works as expected",
+          "classname": "tests/suites/tester",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assertUrlMatches() works as expected [alias]",
+          "classname": "tests/suites/tester",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assertVisible() works as expected",
+          "classname": "tests/suites/tester",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assertNotVisible() works as expected",
+          "classname": "tests/suites/tester",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assertInvisible() works as expected [alias]",
+          "classname": "tests/suites/tester",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assertField() works as expected with inputs",
+          "classname": "tests/suites/tester",
+          "duration": 0.192,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assertField() works as expected with textarea",
+          "classname": "tests/suites/tester",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assertField() works as expected with checkboxes",
+          "classname": "tests/suites/tester",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assertField() works as expected with radios",
+          "classname": "tests/suites/tester",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assertField() works as expected with selects",
+          "classname": "tests/suites/tester",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assertField() works as expected with file inputs",
+          "classname": "tests/suites/tester",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assertField() works as expected with check lists",
+          "classname": "tests/suites/tester",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assertField() works as expected with inputs",
+          "classname": "tests/suites/tester",
+          "duration": 0.196,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assertField() works as expected with textarea",
+          "classname": "tests/suites/tester",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assertField() works as expected with checkboxes",
+          "classname": "tests/suites/tester",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assertField() works as expected with radios",
+          "classname": "tests/suites/tester",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assertField() works as expected with selects",
+          "classname": "tests/suites/tester",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assertField() works as expected with file inputs",
+          "classname": "tests/suites/tester",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Tester.assertField() works as expected with check lists",
+          "classname": "tests/suites/tester",
+          "duration": 0.001,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "utils.betterTypeOf() tests",
+      "passed": 10,
+      "failed": 0,
+      "duration": 0.187,
+      "tests": [
+        {
+          "name": "betterTypeOf() detects expected type \"number\"",
+          "classname": "tests/suites/utils",
+          "duration": 0.184,
+          "status": "passed"
+        },
+        {
+          "name": "betterTypeOf() detects expected type \"string\"",
+          "classname": "tests/suites/utils",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "betterTypeOf() detects expected type \"object\"",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "betterTypeOf() detects expected type \"array\"",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "betterTypeOf() detects expected type \"undefined\"",
+          "classname": "tests/suites/utils",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "betterTypeOf() detects expected type \"null\"",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "betterTypeOf() detects expected type \"function\"",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "betterTypeOf() detects expected type \"domwindow\"",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "betterTypeOf() detects expected type \"date\"",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "betterTypeOf() detects expected type \"regexp\"",
+          "classname": "tests/suites/utils",
+          "duration": 0.001,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "utils.cleanUrl() tests",
+      "passed": 10,
+      "failed": 0,
+      "duration": 0.002,
+      "tests": [
+        {
+          "name": "cleanUrl() cleans an URL",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "cleanUrl() cleans an URL",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "cleanUrl() cleans an URL",
+          "classname": "tests/suites/utils",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "cleanUrl() cleans an URL",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "cleanUrl() cleans an URL",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "cleanUrl() cleans an URL",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "cleanUrl() cleans an URL",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "cleanUrl() cleans an URL",
+          "classname": "tests/suites/utils",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "cleanUrl() cleans an URL",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "cleanUrl() cleans an URL",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "utils.clone() tests",
+      "passed": 2,
+      "failed": 0,
+      "duration": 0.001,
+      "tests": [
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Subject equals the expected value",
+          "classname": "tests/suites/utils",
+          "duration": 0.001,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "equals() tests",
+      "passed": 23,
+      "failed": 0,
+      "duration": 0.004,
+      "tests": [
+        {
+          "name": "equals() null equality",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "equals() null vs. undefined inequality",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "equals() string equality",
+          "classname": "tests/suites/utils",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "equals() string inequality",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "equals() number equality",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "equals() number equality without implicit cast",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "equals() number equality with cast",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "equals() number inequality",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "equals() empty array equality",
+          "classname": "tests/suites/utils",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "equals() array equality",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "equals() complex array equality",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "equals() complex array inequality",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "equals() shuffled array inequality",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "equals() array length inequality",
+          "classname": "tests/suites/utils",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "equals() empty object equality",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "equals() object length equality",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "equals() shuffled object keys equality",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "equals() object inequality",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "equals() complex object equality",
+          "classname": "tests/suites/utils",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "equals() complex object inequality",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "equals() function equality",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "equals() function inequality",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "equals() arrays of objects",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "fileExt() tests",
+      "passed": 6,
+      "failed": 0,
+      "duration": 0.002,
+      "tests": [
+        {
+          "name": "fileExt() extract file extension",
+          "classname": "tests/suites/utils",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "fileExt() extract file extension",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "fileExt() extract file extension",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "fileExt() extract file extension",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "fileExt() extract file extension",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "fileExt() extract file extension",
+          "classname": "tests/suites/utils",
+          "duration": 0.001,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "fillBlanks() tests",
+      "passed": 3,
+      "failed": 0,
+      "duration": 0,
+      "tests": [
+        {
+          "name": "fillBlanks() fills blanks",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "fillBlanks() fills blanks",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "fillBlanks() fills blanks",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "getPropertyPath() tests",
+      "passed": 7,
+      "failed": 0,
+      "duration": 0.002,
+      "tests": [
+        {
+          "name": "getPropertyPath() gets a property using a path",
+          "classname": "tests/suites/utils",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "getPropertyPath() gets a property using a path",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "getPropertyPath() gets a property using a path",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "getPropertyPath() gets a property using a path",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "getPropertyPath() gets a property using a path",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "getPropertyPath() gets a property using a path",
+          "classname": "tests/suites/utils",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "getPropertyPath() gets a property using a path",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "isArray() tests",
+      "passed": 3,
+      "failed": 0,
+      "duration": 0,
+      "tests": [
+        {
+          "name": "isArray() checks for an Array",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "isArray() checks for an Array",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "isArray() checks for an Array",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "isClipRect() tests",
+      "passed": 5,
+      "failed": 0,
+      "duration": 0.002,
+      "tests": [
+        {
+          "name": "isClipRect() checks for a ClipRect",
+          "classname": "tests/suites/utils",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "isClipRect() checks for a ClipRect",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "isClipRect() checks for a ClipRect",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "isClipRect() checks for a ClipRect",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "isClipRect() checks for a ClipRect",
+          "classname": "tests/suites/utils",
+          "duration": 0.001,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "isHTTPResource() tests",
+      "passed": 6,
+      "failed": 0,
+      "duration": 0.001,
+      "tests": [
+        {
+          "name": "isHTTPResource() checks for an HTTP resource",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "isHTTPResource() checks for an HTTP resource",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "isHTTPResource() checks for an HTTP resource",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "isHTTPResource() checks for an HTTP resource",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "isHTTPResource() checks for an HTTP resource",
+          "classname": "tests/suites/utils",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "isHTTPResource() checks for an HTTP resource",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "isObject() tests",
+      "passed": 8,
+      "failed": 0,
+      "duration": 0.004,
+      "tests": [
+        {
+          "name": "isObject() checks for an Object",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "isObject() checks for an Object",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "isObject() checks for an Object",
+          "classname": "tests/suites/utils",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "isObject() checks for an Object",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "isObject() checks for an Object",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "isObject() checks for an Object",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "isObject() checks for an Object",
+          "classname": "tests/suites/utils",
+          "duration": 0.002,
+          "status": "passed"
+        },
+        {
+          "name": "isObject() checks for an Object",
+          "classname": "tests/suites/utils",
+          "duration": 0.001,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "isValidSelector() tests",
+      "passed": 10,
+      "failed": 0,
+      "duration": 0.002,
+      "tests": [
+        {
+          "name": "isValidSelector() checks for a valid selector",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "isValidSelector() checks for a valid selector",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "isValidSelector() checks for a valid selector",
+          "classname": "tests/suites/utils",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "isValidSelector() checks for a valid selector",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "isValidSelector() checks for a valid selector",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "isValidSelector() checks for a valid selector",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "isValidSelector() checks for a valid selector",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "isValidSelector() checks for a valid selector",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "isValidSelector() checks for a valid selector",
+          "classname": "tests/suites/utils",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "isValidSelector() checks for a valid selector",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "isWebPage() tests",
+      "passed": 3,
+      "failed": 0,
+      "duration": 0.002,
+      "tests": [
+        {
+          "name": "isWebPage() checks for a WebPage instance",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "isWebPage() checks for a WebPage instance",
+          "classname": "tests/suites/utils",
+          "duration": 0.002,
+          "status": "passed"
+        },
+        {
+          "name": "isWebPage() checks for a WebPage instance",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "isJsFile() tests",
+      "passed": 5,
+      "failed": 0,
+      "duration": 0.001,
+      "tests": [
+        {
+          "name": "isJsFile() checks for js file",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "isJsFile() checks for js file",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "isJsFile() checks for js file",
+          "classname": "tests/suites/utils",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "isJsFile() checks for js file",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "isJsFile() checks for js file",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "mergeObjects() tests",
+      "passed": 5,
+      "failed": 0,
+      "duration": 0.002,
+      "tests": [
+        {
+          "name": "mergeObjects() can merge objects",
+          "classname": "tests/suites/utils",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "mergeObjects() can merge objects",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "mergeObjects() can merge objects",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "mergeObjects() can merge objects",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "mergeObjects() can merge objects",
+          "classname": "tests/suites/utils",
+          "duration": 0.001,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "unique() tests",
+      "passed": 4,
+      "failed": 0,
+      "duration": 0.001,
+      "tests": [
+        {
+          "name": "unique() computes unique values of an array",
+          "classname": "tests/suites/utils",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "unique() computes unique values of an array",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "unique() computes unique values of an array",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "unique() computes unique values of an array",
+          "classname": "tests/suites/utils",
+          "duration": 0,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "XUnitReporter() initialization",
+      "passed": 1,
+      "failed": 0,
+      "duration": 0.075,
+      "tests": [
+        {
+          "name": "Subject is truthy",
+          "classname": "tests/suites/xunit",
+          "duration": 0.075,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "XUnitReporter() can hold test suites",
+      "passed": 4,
+      "failed": 0,
+      "duration": 0.008,
+      "tests": [
+        {
+          "name": "Evaluated function returns the expected value",
+          "classname": "tests/suites/xunit",
+          "duration": 0.007,
+          "status": "passed"
+        },
+        {
+          "name": "Found an element matching: testsuites[duration]",
+          "classname": "tests/suites/xunit",
+          "duration": 0,
+          "status": "passed"
+        },
+        {
+          "name": "Found an element matching: testsuite[name=\"foo\"][package=\"foo\"]",
+          "classname": "tests/suites/xunit",
+          "duration": 0.001,
+          "status": "passed"
+        },
+        {
+          "name": "Found an element matching: testsuite[name=\"bar\"][package=\"bar\"]",
+          "classname": "tests/suites/xunit",
+          "duration": 0,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "XUnitReporter() can hold a suite with a succesful test",
+      "passed": 1,
+      "failed": 0,
+      "duration": 0.005,
+      "tests": [
+        {
+          "name": "Found an element matching: testsuite[name=\"foo\"][package=\"foo\"][tests=\"1\"][failures=\"0\"] testcase[name=\"footext\"]",
+          "classname": "tests/suites/xunit",
+          "duration": 0.005,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "XUnitReporter() can handle a failed test",
+      "passed": 1,
+      "failed": 0,
+      "duration": 0.005,
+      "tests": [
+        {
+          "name": "Found an element matching: testsuite[name=\"foo\"][package=\"foo\"][tests=\"1\"][failures=\"1\"] testcase[name=\"footext\"] failure[type=\"footype\"]",
+          "classname": "tests/suites/xunit",
+          "duration": 0.005,
+          "status": "passed"
+        }
+      ]
+    }
+  ],
+  "passed": 684,
+  "failed": 1,
+  "duration": 50.5
+}
