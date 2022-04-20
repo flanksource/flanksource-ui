@@ -54,6 +54,8 @@ export const LogsTable = ({ logs, actions, variant }) => {
       },
       {
         Header: function MessageHeader(props) {
+          const { state, selectedFlatRows } = props;
+          const { selectedRowIds } = state;
           return (
             <div className="flex justify-between">
               <span className="align-middle my-auto">Message</span>
@@ -62,14 +64,12 @@ export const LogsTable = ({ logs, actions, variant }) => {
                   <div key={action.label} className="p-2">
                     <button
                       type="button"
-                      disabled={!Object.keys(props.state.selectedRowIds).length}
+                      disabled={!Object.keys(selectedRowIds).length}
                       onClick={() => {
-                        action.handler(
-                          props.selectedFlatRows.map((d) => d.original)
-                        );
+                        action.handler(selectedFlatRows.map((d) => d.original));
                       }}
                       className={clsx(
-                        Object.keys(props.state.selectedRowIds).length === 0
+                        Object.keys(selectedRowIds).length === 0
                           ? "btn-disabled"
                           : "btn-primary"
                       )}
