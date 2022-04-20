@@ -1,3 +1,4 @@
+/*w-fit not work in tailwind */
 .time-picker-main {
   width: fit-content;
 }
@@ -6,75 +7,43 @@
   width: fit-content;
 }
 
+/* rotate-180 not work in tailwind */
 .timepicker-arrow-indicator.active {
   transform: rotate(180deg);
 }
 
 .time-range-picker-body {
-  visibility: hidden;
-  opacity: 0;
   top: calc(100% + 2px);
   width: 480px;
   height: 384px;
-  transition: 0.2s ease;
-}
-
-.time-range-picker-body.alignPickerRight {
-  right: 0;
-}
-
-
-.time-range-picker-body.active {
-  visibility: visible;
-  opacity: 1;
 }
 
 .calendar-wrapper {
-  visibility: hidden;
-  opacity: 0;
   top: -1px;
   right: calc(100% + 1px);
-  transition: 0.2s ease;
 }
 
 .calendar-wrapper.calendarRight {
   right: -21px;
 }
 
-.calendar-wrapper.active {
-  visibility: visible;
-  opacity: 1;
-}
-
-.option-item.active {
-  background-color: #d0e4fc;
-}
 
 .input-range-box {
   width: fit-content;
 }
 
 .error-range-box {
-  position: relative;
   width: fit-content;
-  display: flex;
-  align-items: center;
-  margin-top: 6px;
-  background-color: #f9ccde;
-  font-size: 12px;
-  font-weight: 500;
-  padding: 2px 8px 4px;
-  border-radius: 2px;
 }
 
 .error-range-box:before {
   content: "";
   position: absolute;
-  left: 9px;
-  top: -5px;
+  left: 10px;
+  top: -4px;
   width: 0px;
   height: 0px;
-  border-width: 0px 4px 5px;
+  border-width: 0px 4px 4px;
   border-color: transparent transparent #f9ccde;
   border-style: solid;
 }

@@ -134,14 +134,17 @@ export const TimeRangePickerBody = ({
     <div
       className={clsx(
         "time-range-picker-body flex justify-center cursor-auto w-max bg-gray-50 absolute rounded-sm border border-gray-300 z-50 shadow-lg shadow-gray-200",
-        { active: isOpen, alignPickerRight: pickerLeft > 600 }
+        { "invisible opacity-0": !isOpen, "right-0": pickerLeft > 600 }
       )}
     >
       <div
-        className={clsx("calendar-wrapper absolute shadow-lg shadow-gray-200", {
-          active: showCalendar && isOpen,
-          calendarRight: pickerLeft < 300
-        })}
+        className={clsx(
+          "calendar-wrapper absolute shadow-lg shadow-gray-200",
+          {
+            calendarRight: pickerLeft < 300
+          },
+          showCalendar && isOpen ? "" : "invisible opacity-0"
+        )}
       >
         <TimePickerCalendar
           calendarValue={calendarValue}

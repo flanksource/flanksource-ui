@@ -42,7 +42,7 @@ export const TimeRangeList = ({
             key={option.display}
             className={clsx(
               "option-item hover:bg-blue-200 flex justify-between items-center w-full",
-              { active: isChecked(option, currentRange) }
+              { "bg-blue-100": isChecked(option, currentRange) }
             )}
           >
             <label htmlFor={id} className="cursor-pointer py-1.5 px-2">

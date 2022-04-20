@@ -47,11 +47,11 @@ export const TimeRangePicker = ({ onChange, from, to }) => {
   );
 
   return (
-    <div className="relative text-sm time-picker-main">
+    <div className="relative text-sm w-fit time-picker-main">
       <button
         ref={pickerRef}
         type="button"
-        className="time-range-picker-widget flex items-center justify-center px-2 py-1 bg-gray-50 cursor-pointer rounded-sm border border-gray-300"
+        className="time-range-picker-widget flex items-center justify-center px-2 py-1 bg-gray-50 cursor-pointer rounded-sm border border-gray-300 w-fit"
         onClick={() => setIsPickerOpen((prevState) => !prevState)}
       >
         <div>
