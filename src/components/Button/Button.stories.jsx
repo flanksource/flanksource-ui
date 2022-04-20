@@ -25,6 +25,7 @@ Variant1.args = {
   icon: "alert",
   size: "sm",
   onClick: () => {
+    // eslint-disable-next-line no-alert
     alert("hello");
   }
 };

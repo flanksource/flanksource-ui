@@ -848,6 +848,7 @@ Variant1.args = {
   topologies: data,
   title: "Add Card",
   submitButtonTitle: "Add",
+  // eslint-disable-next-line no-alert
   onSubmit: () => alert("submit"),
   defaultChecked: [data[0].id]
 };

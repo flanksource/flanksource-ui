@@ -4,7 +4,8 @@ export default {
   title: "RefreshButton",
   component: RefreshButton,
   args: {
-    onClick: () => alert("hillo!"),
+    // eslint-disable-next-line no-alert
+    onClick: () => alert("hello!"),
     className: ""
   }
 };
