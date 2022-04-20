@@ -16,6 +16,7 @@ import {
 } from "../../components/Canary/url";
 import { ConfigListTable } from "../../components/ConfigViewer/table";
 import { filterConfigsByText } from "../../components/ConfigViewer/utils";
+import { QueryBuilder } from "../../components/QueryBuilder";
 
 export function ConfigListPage() {
   const [searchParams, setSearchParams] = useState(
@@ -80,6 +81,9 @@ export function ConfigListPage() {
       <div className="flex mb-4">
         <TypeDropdown className="mr-2" />
         <TagsDropdown />
+      </div>
+      <div className="flex mb-4">
+        <QueryBuilder />
       </div>
 
       <ConfigListTable
