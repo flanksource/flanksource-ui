@@ -31,7 +31,7 @@ export function ConfigDetailsPage() {
       .finally(() => {
         setIsLoading(false);
       });
-  }, []);
+  }, [id]);
 
   useEffect(() => {
     const json = configDetails?.config;
