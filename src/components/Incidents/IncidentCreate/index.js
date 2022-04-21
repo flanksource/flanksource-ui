@@ -2,7 +2,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import * as yup from "yup";
 import { createEvidence } from "../../../api/services/evidence";
@@ -30,7 +30,6 @@ const validationSchema = yup
 export function IncidentCreate({ callback, evidence, ...rest }) {
   const navigate = useNavigate();
   const user = useUser();
-  const location = useLocation();
   const {
     control,
     formState: { errors },

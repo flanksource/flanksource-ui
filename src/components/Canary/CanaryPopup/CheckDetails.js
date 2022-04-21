@@ -14,6 +14,7 @@ import { StatusHistory } from "./StatusHistory";
 import { DetailField } from "./DetailField";
 import { CanaryStatusChart } from "../CanaryStatusChart";
 import { Duration } from "../renderers";
+
 export function CheckDetails({ check, ...rest }) {
   const prevCheck = usePrevious(check);
   const validCheck = check || prevCheck;

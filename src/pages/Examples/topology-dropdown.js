@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { MinimalLayout } from "../../components/Layout";
 import { TypologyDropdown } from "../../components/TopologyDropdown";
-import { getTopology } from "../../api/services/topology";
+// import { getTopology } from "../../api/services/topology";
 import { topologiesFactory } from "../../data/topologies";
 
 const topologies = topologiesFactory(22);
@@ -10,11 +10,17 @@ export const TypologyDropdownDemo = () => {
   const [selectTopology, setSelectTopology] = useState(null);
   const [isMulti, setIsMulti] = useState(false);
   const searchTopology = useCallback(
-    (name) =>
-      new Promise((resolve, reject) => {
-        resolve(topologies); // todo remove this if getTopology works
-        // getTopology({ name }).then(({ data }) => resolve(data));
-      }),
+    // (name) =>
+    () =>
+      new Promise(
+        (
+          resolve
+          // , reject
+        ) => {
+          resolve(topologies); // todo remove this if getTopology works
+          // getTopology({ name }).then(({ data }) => resolve(data));
+        }
+      ),
     []
   );
 

@@ -1,5 +1,5 @@
 import { SearchIcon } from "@heroicons/react/solid";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { IoCloseCircle } from "react-icons/io5";
 
 export function TextInputClearable({

@@ -47,7 +47,13 @@ export const Config = axios.create({
   }
 });
 
-for (const client of [IncidentCommander, Logs, CanaryChecker, Config, ConfigDB]) {
+for (const client of [
+  IncidentCommander,
+  Logs,
+  CanaryChecker,
+  Config,
+  ConfigDB
+]) {
   client.interceptors.response.use(
     (response) => response,
     (error) => {
