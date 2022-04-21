@@ -11,6 +11,8 @@ export function filterConfigsByText(configs, textQuery) {
   const filtered = [...configs].filter((config) => {
     const match =
       hasStringMatch(text, config.name?.toLowerCase()) ||
+      hasStringMatch(text, config.config_type?.toLowerCase()) ||
+      hasStringMatch(text, config.description?.toLowerCase()) ||
       hasStringMatch(text, config.namespace?.toLowerCase());
     return match;
   });
