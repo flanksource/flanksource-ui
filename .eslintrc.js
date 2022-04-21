@@ -18,6 +18,7 @@ module.exports = {
     "plugin:jsx-a11y/recommended",
     "plugin:jest/recommended",
     "plugin:react-hooks/recommended",
+    "plugin:storybook/recommended",
     "prettier"
   ],
   plugins: ["prettier"],
@@ -36,12 +37,24 @@ module.exports = {
     "react/prop-types": "off",
     "react/jsx-filename-extension": "off",
     "react/jsx-props-no-spreading": 0,
-    "no-use-before-define": ["error", { functions: false, classes: true }],
+    "no-use-before-define": [
+      "error",
+      {
+        functions: false,
+        classes: true
+      }
+    ],
     "no-shadow": "off",
     "no-param-reassign": "off",
     "import/prefer-default-export": "off",
     "import/no-default-export": "error",
-    eqeqeq: ["error", "always", { null: "ignore" }],
+    eqeqeq: [
+      "error",
+      "always",
+      {
+        null: "ignore"
+      }
+    ],
     "no-restricted-syntax": [
       "off",
       {
@@ -55,5 +68,14 @@ module.exports = {
         assert: "either"
       }
     ]
-  }
+  },
+  overrides: [
+    {
+      files: ["**/*.stories.*"],
+      rules: {
+        "import/no-anonymous-default-export": "off",
+        "import/no-default-export": "off"
+      }
+    }
+  ]
 };

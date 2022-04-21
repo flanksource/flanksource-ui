@@ -29,7 +29,7 @@ export function EvidenceItem({ evidence }) {
 export function EvidenceAccordion({ title, date, children, ...rest }) {
   const [expanded, setExpanded] = useState(false);
   return (
-    <div className="border-b last:border-b-0 flex flex-col">
+    <div className="border-b last:border-b-0 flex flex-col" {...rest}>
       <button
         className={`${
           expanded && "border-b"

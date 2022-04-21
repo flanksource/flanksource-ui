@@ -150,7 +150,8 @@ const selectColourStyles = {
 };
 
 export const Select = (props) => {
-  const { name, control, styles, customValueContainer } = props;
+  const { name, control, styles, customValueContainer, isMulti, options } =
+    props;
   if (control) {
     return (
       <Controller
@@ -161,13 +162,13 @@ export const Select = (props) => {
             ...props,
             inputRef: ref,
             name,
-            value: props.isMulti
-              ? props.options.filter((o) => value?.includes(o.value))
-              : props.options.find((o) => o.value === value),
-            onChange: props.isMulti
+            value: isMulti
+              ? options.filter((o) => value?.includes(o.value))
+              : options.find((o) => o.value === value),
+            onChange: isMulti
               ? (value) => onChange(value.map((i) => i.value))
               : (value) => onChange(value?.value),
-            styles: { ...selectColourStyles, ...(props.styles || {}) },
+            styles: { ...selectColourStyles, ...(styles || {}) },
             customValueContainer
           };
           const selectAllProps = selectAllOptionFeatureDecorator(composedProps);
@@ -186,7 +187,7 @@ export const Select = (props) => {
 };
 
 Select.propTypes = {
-  // eslint-disable-next-line react/require-default-props
+  // eslint-disable-next-line react/forbid-prop-types,react/require-default-props
   options: PropTypes.arrayOf(PropTypes.any),
   // eslint-disable-next-line react/forbid-prop-types,react/require-default-props
   allowSelectAll: PropTypes.bool,
