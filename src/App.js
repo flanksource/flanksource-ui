@@ -25,6 +25,10 @@ import { ModalPage } from "./pages/Examples/Modal/modal-page";
 import { TypologyDropdownDemo } from "./pages/Examples/topology-dropdown";
 import { RsDemoPage } from "./pages/Examples/rs-demo";
 import { TopologyPage as ExamplesTopologyPage } from "./pages/Examples/Topology/topology-page";
+
+//Follow the routing and naming convention for rendering the page and component in the examples section
+import { FileExplorerPage as ExamplesFileExplorerPage } from "./pages/file-explorer-page";
+
 import { TopologySelectorModalPage } from "./pages/Examples/TopologySelectorModalPage/TopologySelectorModalPage";
 import { HealthPage } from "./pages/health";
 
@@ -65,7 +69,13 @@ const navigation = [
     name: "Incidents",
     href: "/incidents",
     icon: ImLifebuoy
-  }
+  },
+  {
+    name: "File Explorer",
+    href: "/fileExplorer",
+    icon: FolderIcon,
+    current: false
+  },
 ];
 
 export function Placeholder({ text }) {
@@ -104,6 +114,9 @@ export function App() {
           <Route path="health" element={sidebar}>
             <Route index element={<HealthPage url="/canary/api" />} />
           </Route>
+          <Route path="fileExplorer" element={sidebar}>
+            <Route index element={<ExamplesFileExplorerPage url="/canary/api" />} />
+          </Route>
 
           <Route path="topology" element={sidebar}>
             <Route path=":id" element={<TopologyPage url="/canary/api" />} />
@@ -111,6 +124,7 @@ export function App() {
           </Route>
 
           <Route path="examples" element={sidebar}>
+          
             <Route path="rs" element={<RsDemoPage />} />
             <Route path="dropdown" element={<DropdownDemoPage />} />
             <Route

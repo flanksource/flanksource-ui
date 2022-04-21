@@ -170,4 +170,74 @@
     width: 3.125rem;
     height: 3.125rem;
   }
+
+  .spacing {
+    flex: 1;
+    margin-left: 25%;
+    margin-top: 20vh;
+  }
+  
+  .folder {
+    margin-left: 15px;
+  }
+  
+  .folder-title {
+    cursor: pointer;
+  }
+  
+  .file {
+    margin: 0;
+    padding: 0;
+    margin-left: 15px;
+    display: flex;
+    cursor: pointer;
+  }
+
+  .file-explorer-container {
+    min-height: calc(100vh - 64px);
+    display: flex;
+    width: 18rem;
+    border-right-width: 1px;
+    flex-direction: column;
+    padding: 1rem;
+  }
+
+  .file-viewer-container {
+    min-height: calc(100vh - 64px);
+    padding: 1.5rem;
+    flex-grow: 1;
+  }
+
+  .section-headline {
+    --tw-text-opacity: 1;
+    color: rgba(67,56,202,var(--tw-text-opacity));
+    text-transform: uppercase;
+    font-weight: 600;
+    font-size: .875rem;
+    line-height: 1.25rem;
+    margin-bottom: 1rem;
+  }
+
+  .folder-headline {
+    --tw-text-opacity: 1;
+    color: rgba(67,56,202,var(--tw-text-opacity));
+    font-weight: 500;
+    font-size: .875rem;
+    line-height: 1.25rem;
+    margin-bottom: 1rem;
+    cursor: pointer;
+    display: flex;
+    margin-left: 5px;
+  }
+
+  .file-headline{
+    --tw-text-opacity: 1;
+    color: rgba(75,85,99,var(--tw-text-opacity));
+    font-weight: 500;
+    font-size: .875rem;
+    line-height: 1.25rem;
+    margin-bottom: 1rem;
+    display: flex;
+    margin-left: 5px;
+  }
 }

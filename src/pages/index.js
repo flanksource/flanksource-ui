@@ -7,6 +7,7 @@ import { CanaryPage } from "./canary";
 import { ConfigListPage } from "./config/config-list";
 import { ConfigDetailsPage } from "./config/config-details";
 import { TimelinePage } from "./timeline-page";
+import { FileExplorerPage } from "./file-explorer-page";
 
 export {
   LogsPage,
@@ -17,5 +18,6 @@ export {
   TopologyPage,
   IncidentDetailsPage,
   IncidentListPage,
-  IncidentCreatePage
+  IncidentCreatePage,
+  FileExplorerPage
 };
