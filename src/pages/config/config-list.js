@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import history from "history/browser";
 import { debounce } from "lodash";
-import { BsTable } from "react-icons/bs";
-import { RiLayoutGridLine } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { getAllConfigs } from "../../api/services/configs";
 import { Dropdown } from "../../components/Dropdown";
@@ -15,7 +13,41 @@ import {
   updateParams
 } from "../../components/Canary/url";
 import { ConfigListTable } from "../../components/ConfigViewer/table";
-import { filterConfigsByText } from "../../components/ConfigViewer/utils";
+import {
+  filterConfigsByText,
+  filterConfigsByType
+} from "../../components/ConfigViewer/utils";
+
+const getTypes = (configs) =>
+  configs.reduce((acc, current) => {
+    if (!Object.prototype.hasOwnProperty.call(acc, current.config_type)) {
+      acc[current.config_type] = {
+        id: `dropdown-config-type-${current.config_type}`,
+        name: current.config_type,
+        description: current.config_type,
+        value: current.config_type
+      };
+    }
+    return acc;
+  }, {});
+
+const getTags = (configs) =>
+  configs.reduce((acc, current) => {
+    const { tags } = current;
+    if (tags && tags.length > 0) {
+      tags.forEach((tag) => {
+        if (!Object.prototype.hasOwnProperty.call(acc, tag)) {
+          acc[tag] = {
+            id: `dropdown-tag-${tag}`,
+            name: tag,
+            description: tag,
+            value: tag
+          };
+        }
+      });
+    }
+    return acc;
+  }, {});
 
 export function ConfigListPage() {
   const [searchParams, setSearchParams] = useState(
@@ -26,7 +58,7 @@ export function ConfigListPage() {
       setSearchParams(decodeUrlSearchParams(location.search));
     });
   }, []);
-  const { query } = searchParams;
+  const { query, type } = searchParams;
 
   const navigate = useNavigate();
   const [data, setData] = useState([]);
@@ -34,7 +66,7 @@ export function ConfigListPage() {
   const [isLoading, setIsLoading] = useState(true);
   const columns = React.useMemo(() => defaultTableColumns, []);
 
-  useState(() => {
+  const fetch = () => {
     getAllConfigs()
       .then((res) => {
         setData(res.data);
@@ -42,6 +74,10 @@ export function ConfigListPage() {
       .finally(() => {
         setIsLoading(false);
       });
+  };
+
+  useState(() => {
+    fetch();
   }, []);
 
   const handleRowClick = (row) => {
@@ -56,9 +92,11 @@ export function ConfigListPage() {
     if (data?.length > 0) {
       // do filtering here
       filteredData = filterConfigsByText(filteredData, query);
+      filteredData = filterConfigsByType(filteredData, type);
+      // filteredData = filterConfigsByTag(filteredData, tag);
     }
     setFilteredData(filteredData);
-  }, [data, query]);
+  }, [data, query, type]);
 
   return (
     <SearchLayout
@@ -78,8 +116,8 @@ export function ConfigListPage() {
       title="Config List"
     >
       <div className="flex mb-4">
-        <TypeDropdown className="mr-2" />
-        <TagsDropdown />
+        <TypeDropdown options={getTypes(data)} className="mr-2 w-56" />
+        <TagsDropdown options={getTags(data)} className="mr-2 w-56" />
       </div>
 
       <ConfigListTable
@@ -93,31 +131,27 @@ export function ConfigListPage() {
   );
 }
 
-const TypeDropdown = ({ ...rest }) => {
-  const exampleItems = {
-    type1: {
-      id: "dropdown-type1",
-      name: "type1",
-      icon: <BsTable />,
-      description: "Type 1",
-      value: "type1"
-    },
-    type2: {
-      id: "dropdown-type2",
-      name: "type2",
-      icon: <RiLayoutGridLine />,
-      description: "Type 2",
-      value: "type2"
+const TypeDropdown = ({ options = {}, ...rest }) => {
+  const { type: initialType } = decodeUrlSearchParams(window.location.search);
+  const [selected, setSelected] = useState(initialType);
+
+  const optionsTemplate = {
+    null: {
+      id: "any",
+      name: "any",
+      description: "Any",
+      value: null
     }
   };
 
-  const [selected, setSelected] = useState(
-    Object.values(exampleItems)[0].value
-  );
+  useEffect(() => {
+    updateParams({ type: selected });
+  }, [selected]);
 
   return (
     <Dropdown
-      items={exampleItems}
+      emptyable
+      items={{ ...optionsTemplate, ...options }}
       onChange={(value) => setSelected(value)}
       value={selected}
       prefix={
@@ -132,29 +166,27 @@ const TypeDropdown = ({ ...rest }) => {
   );
 };
 
-const TagsDropdown = ({ ...rest }) => {
-  const exampleItems = {
-    tag1: {
-      id: "dropdown-tag1",
-      name: "tag1",
-      description: "Tag 1",
-      value: "tag1"
-    },
-    tag2: {
-      id: "dropdown-tag2",
-      name: "tag2",
-      description: "Tag 2",
-      value: "tag2"
+const TagsDropdown = ({ options = {}, ...rest }) => {
+  const { tag: initialTag } = decodeUrlSearchParams(window.location.search);
+  const [selected, setSelected] = useState(initialTag);
+
+  const optionsTemplate = {
+    null: {
+      id: "none",
+      name: "none",
+      description: "None",
+      value: null
     }
   };
 
-  const [selected, setSelected] = useState(
-    Object.values(exampleItems)[0].value
-  );
+  useEffect(() => {
+    updateParams({ tag: selected });
+  }, [selected]);
 
   return (
     <Dropdown
-      items={exampleItems}
+      emptyable
+      items={{ ...optionsTemplate, ...options }}
       onChange={(value) => setSelected(value)}
       value={selected}
       prefix={

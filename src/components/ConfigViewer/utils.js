@@ -17,6 +17,20 @@ export function filterConfigsByText(configs, textQuery) {
   return filtered;
 }
 
+export function filterConfigsByType(configs, type) {
+  if (configs == null) {
+    return [];
+  }
+  if (isEmpty(type)) {
+    return configs;
+  }
+  const typeLower = type.toLowerCase();
+  const filtered = [...configs].filter((config) =>
+    hasStringMatch(typeLower, config.config_type?.toLowerCase())
+  );
+  return filtered;
+}
+
 export function hasStringMatch(pattern, text) {
   if (text == null) {
     return false;

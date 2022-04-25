@@ -17,7 +17,6 @@ export function CanaryInterfaceMinimal({
   onFilterCallback,
   onLabelFiltersCallback
 }) {
-
   const [filteredChecks, setFilteredChecks] = useState(checks);
   const [checksForTabGeneration, setChecksForTabGeneration] = useState(checks);
   const [selectedTab, setSelectedTab] = useState(null);
