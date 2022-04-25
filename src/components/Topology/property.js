@@ -32,7 +32,7 @@ export const FormatProperty = ({ property, short = false }) => {
         text = <span className="text-red-500">{text}</span>;
       }
     } else if (property.unit && property.unit.startsWith("milli")) {
-      text = (property.value / 1000).toFixed;
+      text = (property.value / 1000).toFixed(2);
     } else if (property.unit === "bytes") {
       text = formatBytes(property.value, 0);
     }
