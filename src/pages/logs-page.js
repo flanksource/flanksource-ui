@@ -109,7 +109,7 @@ export function LogsPage() {
 
   useEffect(() => {
     loadLogs();
-  }, [loadLogs, topologyId]);
+  }, [topologyId]);
 
   if (!isEmpty(topologyId) && topology == null) {
     return <Loading text={`Loading topology ${topologyId}`} />;
