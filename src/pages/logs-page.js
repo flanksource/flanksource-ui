@@ -109,6 +109,7 @@ export function LogsPage() {
 
   useEffect(() => {
     loadLogs();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [topologyId]);
 
   if (!isEmpty(topologyId) && topology == null) {
