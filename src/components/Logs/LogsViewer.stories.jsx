@@ -7,135 +7,298 @@ export default {
 
 const logsExample = [
   {
-    timestamp: "2022-04-14T11:49:12.705934543Z",
+    timestamp: "2022-02-08T16:11:53.795232458Z",
     message:
-      "W0414 11:49:12.705797       1 warnings.go:67] extensions/v1beta1 Ingress is deprecated in v1.14+, unavailable in v1.22+; use networking.k8s.io/v1 Ingress",
+      "Application startup exception: Volo.Abp.Http.Client.AbpRemoteCallException: An internal error occurred during your request!",
     labels: {
-      containerName: "cert-manager",
-      namespace: "cert-manager",
-      nodeName: "ip-10-0-6-82.eu-west-2.compute.internal",
-      pod: "cert-manager-55c7f45676-ldt2x"
-    }
-  },
-  {
-    timestamp: "2022-04-14T11:56:31.562Z",
-    message:
-      "\u001b[34mINFO\u001b[0m\tcontrollers.canary\tFAIL [http] dev/abp-microservice/ABP Microservices demo public website duration=32  response code invalid 503 != [200]",
-    labels: {
-      containerName: "canary-checker",
-      namespace: "demo",
+      containerName: "backend-admin-app",
+      namespace: "dev",
       nodeName: "ip-10-0-5-82.eu-west-2.compute.internal",
-      pod: "canary-checker-5d484488bf-sxbpb"
+      pod: "backend-admin-app-6c4f67756c-wm8bl"
     }
   },
   {
-    timestamp: "2022-04-14T11:56:55.581Z",
+    timestamp: "2022-02-08T16:11:53.795279759Z",
     message:
-      '\u001b[35mDEBUG\u001b[0m\tcontroller-runtime.manager.events\tWarning\t{"object": {"kind":"Canary","namespace":"prod","name":"abp-microservice","uid":"e821fd8a-ca3f-448e-bd16-2b4003444128","apiVersion":"canaries.flanksource.com/v1","resourceVersion":"234790132"}, "reason": "Failed", "message": "http-https://abp-sample-admin-prod.canary.lab.flanksource.com: "}',
+      "at Volo.Abp.Http.Client.DynamicProxying.DynamicHttpProxyInterceptor`1.ThrowExceptionForResponseAsync(HttpResponseMessage response) in /src/framework/src/Volo.Abp.Http.Client/Volo/Abp/Http/Client/DynamicProxying/DynamicHttpProxyInterceptor.cs:line 255",
     labels: {
-      containerName: "canary-checker",
-      namespace: "demo",
+      containerName: "backend-admin-app",
+      namespace: "dev",
       nodeName: "ip-10-0-5-82.eu-west-2.compute.internal",
-      pod: "canary-checker-5d484488bf-sxbpb"
+      pod: "backend-admin-app-6c4f67756c-wm8bl"
     }
   },
   {
-    timestamp: "2022-04-14T11:49:12.705934543Z",
+    timestamp: "2022-02-08T16:11:53.795287689Z",
     message:
-      "W0414 11:49:12.705797       1 warnings.go:67] extensions/v1beta1 Ingress is deprecated in v1.14+, unavailable in v1.22+; use networking.k8s.io/v1 Ingress",
+      "at Volo.Abp.Http.Client.DynamicProxying.DynamicHttpProxyInterceptor`1.MakeRequestAsync(IAbpMethodInvocation invocation) in /src/framework/src/Volo.Abp.Http.Client/Volo/Abp/Http/Client/DynamicProxying/DynamicHttpProxyInterceptor.cs:line 163",
     labels: {
-      containerName: "cert-manager",
-      namespace: "cert-manager",
-      nodeName: "ip-10-0-6-82.eu-west-2.compute.internal",
-      pod: "cert-manager-55c7f45676-ldt2x"
-    }
-  },
-  {
-    timestamp: "2022-04-14T11:56:31.562Z",
-    message:
-      "\u001b[34mINFO\u001b[0m\tcontrollers.canary\tFAIL [http] dev/abp-microservice/ABP Microservices demo public website duration=32  response code invalid 503 != [200]",
-    labels: {
-      containerName: "canary-checker",
-      namespace: "demo",
+      containerName: "backend-admin-app",
+      namespace: "dev",
       nodeName: "ip-10-0-5-82.eu-west-2.compute.internal",
-      pod: "canary-checker-5d484488bf-sxbpb"
+      pod: "backend-admin-app-6c4f67756c-wm8bl"
     }
   },
   {
-    timestamp: "2022-04-14T11:56:55.581Z",
+    timestamp: "2022-02-08T16:11:53.795292056Z",
     message:
-      '\u001b[35mDEBUG\u001b[0m\tcontroller-runtime.manager.events\tWarning\t{"object": {"kind":"Canary","namespace":"prod","name":"abp-microservice","uid":"e821fd8a-ca3f-448e-bd16-2b4003444128","apiVersion":"canaries.flanksource.com/v1","resourceVersion":"234790132"}, "reason": "Failed", "message": "http-https://abp-sample-admin-prod.canary.lab.flanksource.com: "}',
+      "at Volo.Abp.Http.Client.DynamicProxying.DynamicHttpProxyInterceptor`1.MakeRequestAndGetResultAsync[T](IAbpMethodInvocation invocation) in /src/framework/src/Volo.Abp.Http.Client/Volo/Abp/Http/Client/DynamicProxying/DynamicHttpProxyInterceptor.cs:line 118",
     labels: {
-      containerName: "canary-checker",
-      namespace: "demo",
+      containerName: "backend-admin-app",
+      namespace: "dev",
       nodeName: "ip-10-0-5-82.eu-west-2.compute.internal",
-      pod: "canary-checker-5d484488bf-sxbpb"
+      pod: "backend-admin-app-6c4f67756c-wm8bl"
     }
   },
   {
-    timestamp: "2022-04-14T11:49:12.705934543Z",
+    timestamp: "2022-02-08T16:11:53.795296005Z",
     message:
-      "W0414 11:49:12.705797       1 warnings.go:67] extensions/v1beta1 Ingress is deprecated in v1.14+, unavailable in v1.22+; use networking.k8s.io/v1 Ingress",
+      "at Volo.Abp.Castle.DynamicProxy.CastleAbpInterceptorAdapter`1.ExecuteWithReturnValueAsync[T](IInvocation invocation, IInvocationProceedInfo proceedInfo)",
     labels: {
-      containerName: "cert-manager",
-      namespace: "cert-manager",
-      nodeName: "ip-10-0-6-82.eu-west-2.compute.internal",
-      pod: "cert-manager-55c7f45676-ldt2x"
-    }
-  },
-  {
-    timestamp: "2022-04-14T11:56:31.562Z",
-    message:
-      "\u001b[34mINFO\u001b[0m\tcontrollers.canary\tFAIL [http] dev/abp-microservice/ABP Microservices demo public website duration=32  response code invalid 503 != [200]",
-    labels: {
-      containerName: "canary-checker",
-      namespace: "demo",
+      containerName: "backend-admin-app",
+      namespace: "dev",
       nodeName: "ip-10-0-5-82.eu-west-2.compute.internal",
-      pod: "canary-checker-5d484488bf-sxbpb"
+      pod: "backend-admin-app-6c4f67756c-wm8bl"
     }
   },
   {
-    timestamp: "2022-04-14T11:56:55.581Z",
+    timestamp: "2022-02-08T16:11:53.795299436Z",
     message:
-      '\u001b[35mDEBUG\u001b[0m\tcontroller-runtime.manager.events\tWarning\t{"object": {"kind":"Canary","namespace":"prod","name":"abp-microservice","uid":"e821fd8a-ca3f-448e-bd16-2b4003444128","apiVersion":"canaries.flanksource.com/v1","resourceVersion":"234790132"}, "reason": "Failed", "message": "http-https://abp-sample-admin-prod.canary.lab.flanksource.com: "}',
+      "at Volo.Abp.AspNetCore.Mvc.Client.CachedApplicationConfigurationClient.<GetAsync>b__14_0() in /src/framework/src/Volo.Abp.AspNetCore.Mvc.Client/Volo/Abp/AspNetCore/Mvc/Client/CachedApplicationConfigurationClient.cs:line 46",
     labels: {
-      containerName: "canary-checker",
-      namespace: "demo",
+      containerName: "backend-admin-app",
+      namespace: "dev",
       nodeName: "ip-10-0-5-82.eu-west-2.compute.internal",
-      pod: "canary-checker-5d484488bf-sxbpb"
+      pod: "backend-admin-app-6c4f67756c-wm8bl"
     }
   },
   {
-    timestamp: "2022-04-14T11:49:12.705934543Z",
+    timestamp: "2022-02-08T16:11:53.795303358Z",
     message:
-      "W0414 11:49:12.705797       1 warnings.go:67] extensions/v1beta1 Ingress is deprecated in v1.14+, unavailable in v1.22+; use networking.k8s.io/v1 Ingress",
+      "at Volo.Abp.Caching.DistributedCache`1.GetOrAddAsync(String key, Func`1 factory, Func`1 optionsFactory, Nullable`1 hideErrors, CancellationToken token)",
     labels: {
-      containerName: "cert-manager",
-      namespace: "cert-manager",
-      nodeName: "ip-10-0-6-82.eu-west-2.compute.internal",
-      pod: "cert-manager-55c7f45676-ldt2x"
-    }
-  },
-  {
-    timestamp: "2022-04-14T11:56:31.562Z",
-    message:
-      "\u001b[34mINFO\u001b[0m\tcontrollers.canary\tFAIL [http] dev/abp-microservice/ABP Microservices demo public website duration=32  response code invalid 503 != [200]",
-    labels: {
-      containerName: "canary-checker",
-      namespace: "demo",
+      containerName: "backend-admin-app",
+      namespace: "dev",
       nodeName: "ip-10-0-5-82.eu-west-2.compute.internal",
-      pod: "canary-checker-5d484488bf-sxbpb"
+      pod: "backend-admin-app-6c4f67756c-wm8bl"
     }
   },
   {
-    timestamp: "2022-04-14T11:56:55.581Z",
+    timestamp: "2022-02-08T16:11:53.795306633Z",
     message:
-      '\u001b[35mDEBUG\u001b[0m\tcontroller-runtime.manager.events\tWarning\t{"object": {"kind":"Canary","namespace":"prod","name":"abp-microservice","uid":"e821fd8a-ca3f-448e-bd16-2b4003444128","apiVersion":"canaries.flanksource.com/v1","resourceVersion":"234790132"}, "reason": "Failed", "message": "http-https://abp-sample-admin-prod.canary.lab.flanksource.com: "}',
+      "at Volo.Abp.AspNetCore.Mvc.Client.CachedApplicationConfigurationClient.GetAsync() in /src/framework/src/Volo.Abp.AspNetCore.Mvc.Client/Volo/Abp/AspNetCore/Mvc/Client/CachedApplicationConfigurationClient.cs:line 44",
     labels: {
-      containerName: "canary-checker",
-      namespace: "demo",
+      containerName: "backend-admin-app",
+      namespace: "dev",
       nodeName: "ip-10-0-5-82.eu-west-2.compute.internal",
-      pod: "canary-checker-5d484488bf-sxbpb"
+      pod: "backend-admin-app-6c4f67756c-wm8bl"
+    }
+  },
+  {
+    timestamp: "2022-02-08T16:11:53.795309711Z",
+    message:
+      "at Volo.Abp.AspNetCore.Mvc.Client.RemoteLanguageProvider.GetLanguagesAsync() in /src/framework/src/Volo.Abp.AspNetCore.Mvc.Client/Volo/Abp/AspNetCore/Mvc/Client/RemoteLanguageProvider.cs:line 19",
+    labels: {
+      containerName: "backend-admin-app",
+      namespace: "dev",
+      nodeName: "ip-10-0-5-82.eu-west-2.compute.internal",
+      pod: "backend-admin-app-6c4f67756c-wm8bl"
+    }
+  },
+  {
+    timestamp: "2022-02-08T16:11:53.795312905Z",
+    message:
+      "at Nito.AsyncEx.Synchronous.TaskExtensions.WaitAndUnwrapException[TResult](Task`1 task)",
+    labels: {
+      containerName: "backend-admin-app",
+      namespace: "dev",
+      nodeName: "ip-10-0-5-82.eu-west-2.compute.internal",
+      pod: "backend-admin-app-6c4f67756c-wm8bl"
+    }
+  },
+  {
+    timestamp: "2022-02-08T16:11:53.795316095Z",
+    message:
+      "at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()",
+    labels: {
+      containerName: "backend-admin-app",
+      namespace: "dev",
+      nodeName: "ip-10-0-5-82.eu-west-2.compute.internal",
+      pod: "backend-admin-app-6c4f67756c-wm8bl"
+    }
+  },
+  {
+    timestamp: "2022-02-08T16:11:53.795320475Z",
+    message:
+      "at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)",
+    labels: {
+      containerName: "backend-admin-app",
+      namespace: "dev",
+      nodeName: "ip-10-0-5-82.eu-west-2.compute.internal",
+      pod: "backend-admin-app-6c4f67756c-wm8bl"
+    }
+  },
+  {
+    timestamp: "2022-02-08T16:11:53.795323876Z",
+    message:
+      "--- End of stack trace from previous location where exception was thrown ---",
+    labels: {
+      containerName: "backend-admin-app",
+      namespace: "dev",
+      nodeName: "ip-10-0-5-82.eu-west-2.compute.internal",
+      pod: "backend-admin-app-6c4f67756c-wm8bl"
+    }
+  },
+  {
+    timestamp: "2022-02-08T16:11:53.795326931Z",
+    message:
+      "at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot)",
+    labels: {
+      containerName: "backend-admin-app",
+      namespace: "dev",
+      nodeName: "ip-10-0-5-82.eu-west-2.compute.internal",
+      pod: "backend-admin-app-6c4f67756c-wm8bl"
+    }
+  },
+  {
+    timestamp: "2022-02-08T16:11:53.795330091Z",
+    message:
+      "--- End of stack trace from previous location where exception was thrown ---",
+    labels: {
+      containerName: "backend-admin-app",
+      namespace: "dev",
+      nodeName: "ip-10-0-5-82.eu-west-2.compute.internal",
+      pod: "backend-admin-app-6c4f67756c-wm8bl"
+    }
+  },
+  {
+    timestamp: "2022-02-08T16:11:53.795333286Z",
+    message:
+      "at Nito.AsyncEx.Synchronous.TaskExtensions.WaitAndUnwrapException[TResult](Task`1 task)",
+    labels: {
+      containerName: "backend-admin-app",
+      namespace: "dev",
+      nodeName: "ip-10-0-5-82.eu-west-2.compute.internal",
+      pod: "backend-admin-app-6c4f67756c-wm8bl"
+    }
+  },
+  {
+    timestamp: "2022-02-08T16:11:53.795336290Z",
+    message: "at Nito.AsyncEx.AsyncContext.Run[TResult](Func`1 action)",
+    labels: {
+      containerName: "backend-admin-app",
+      namespace: "dev",
+      nodeName: "ip-10-0-5-82.eu-west-2.compute.internal",
+      pod: "backend-admin-app-6c4f67756c-wm8bl"
+    }
+  },
+  {
+    timestamp: "2022-02-08T16:11:53.795339542Z",
+    message:
+      "at Microsoft.AspNetCore.Builder.AbpApplicationBuilderExtensions.UseAbpRequestLocalization(IApplicationBuilder app) in /src/framework/src/Volo.Abp.AspNetCore/Microsoft/AspNetCore/Builder/AbpApplicationBuilderExtensions.cs:line 55",
+    labels: {
+      containerName: "backend-admin-app",
+      namespace: "dev",
+      nodeName: "ip-10-0-5-82.eu-west-2.compute.internal",
+      pod: "backend-admin-app-6c4f67756c-wm8bl"
+    }
+  },
+  {
+    timestamp: "2022-02-08T16:11:53.795343283Z",
+    message:
+      "at BackendAdminApp.Host.BackendAdminAppHostModule.OnApplicationInitialization(ApplicationInitializationContext context) in /src/samples/MicroserviceDemo/applications/BackendAdminApp.Host/BackendAdminAppHostModule.cs:line 101",
+    labels: {
+      containerName: "backend-admin-app",
+      namespace: "dev",
+      nodeName: "ip-10-0-5-82.eu-west-2.compute.internal",
+      pod: "backend-admin-app-6c4f67756c-wm8bl"
+    }
+  },
+  {
+    timestamp: "2022-02-08T16:11:53.795352322Z",
+    message:
+      "at Volo.Abp.Modularity.ModuleManager.InitializeModules(ApplicationInitializationContext context) in /src/framework/src/Volo.Abp.Core/Volo/Abp/Modularity/ModuleManager.cs:line 39",
+    labels: {
+      containerName: "backend-admin-app",
+      namespace: "dev",
+      nodeName: "ip-10-0-5-82.eu-west-2.compute.internal",
+      pod: "backend-admin-app-6c4f67756c-wm8bl"
+    }
+  },
+  {
+    timestamp: "2022-02-08T16:11:53.795355995Z",
+    message:
+      "at Volo.Abp.AbpApplicationBase.InitializeModules() in /src/framework/src/Volo.Abp.Core/Volo/Abp/AbpApplicationBase.cs:line 72",
+    labels: {
+      containerName: "backend-admin-app",
+      namespace: "dev",
+      nodeName: "ip-10-0-5-82.eu-west-2.compute.internal",
+      pod: "backend-admin-app-6c4f67756c-wm8bl"
+    }
+  },
+  {
+    timestamp: "2022-02-08T16:11:53.795359415Z",
+    message:
+      "--- End of stack trace from previous location where exception was thrown ---",
+    labels: {
+      containerName: "backend-admin-app",
+      namespace: "dev",
+      nodeName: "ip-10-0-5-82.eu-west-2.compute.internal",
+      pod: "backend-admin-app-6c4f67756c-wm8bl"
+    }
+  },
+  {
+    timestamp: "2022-02-08T16:11:53.795362566Z",
+    message:
+      "at Microsoft.AspNetCore.Hosting.ConventionBasedStartup.Configure(IApplicationBuilder app)",
+    labels: {
+      containerName: "backend-admin-app",
+      namespace: "dev",
+      nodeName: "ip-10-0-5-82.eu-west-2.compute.internal",
+      pod: "backend-admin-app-6c4f67756c-wm8bl"
+    }
+  },
+  {
+    timestamp: "2022-02-08T16:11:53.795365651Z",
+    message:
+      "at Microsoft.AspNetCore.Mvc.Internal.MiddlewareFilterBuilderStartupFilter.<>c__DisplayClass0_0.<Configure>g__MiddlewareFilterBuilder|0(IApplicationBuilder builder)",
+    labels: {
+      containerName: "backend-admin-app",
+      namespace: "dev",
+      nodeName: "ip-10-0-5-82.eu-west-2.compute.internal",
+      pod: "backend-admin-app-6c4f67756c-wm8bl"
+    }
+  },
+  {
+    timestamp: "2022-02-08T16:11:53.795369399Z",
+    message:
+      "at Microsoft.AspNetCore.Hosting.Internal.AutoRequestServicesStartupFilter.<>c__DisplayClass0_0.<Configure>b__0(IApplicationBuilder builder)",
+    labels: {
+      containerName: "backend-admin-app",
+      namespace: "dev",
+      nodeName: "ip-10-0-5-82.eu-west-2.compute.internal",
+      pod: "backend-admin-app-6c4f67756c-wm8bl"
+    }
+  },
+  {
+    timestamp: "2022-02-08T16:11:53.795372798Z",
+    message:
+      "at Microsoft.AspNetCore.Hosting.Internal.WebHost.BuildApplication()",
+    labels: {
+      containerName: "backend-admin-app",
+      namespace: "dev",
+      nodeName: "ip-10-0-5-82.eu-west-2.compute.internal",
+      pod: "backend-admin-app-6c4f67756c-wm8bl"
+    }
+  },
+  {
+    timestamp: "2022-02-08T16:11:53.815029488Z",
+    message: "Application is shutting down...",
+    labels: {
+      containerName: "backend-admin-app",
+      namespace: "dev",
+      nodeName: "ip-10-0-5-82.eu-west-2.compute.internal",
+      pod: "backend-admin-app-6c4f67756c-wm8bl"
     }
   }
 ];
