@@ -59,11 +59,7 @@ export function MinimalCanary({
       <Modal
         open={selectedCheck != null}
         onClose={() => setSelectedCheck(null)}
-        title={
-          <CheckTitle
-            check={checks?.find((o) => o?.id === selectedCheck?.id)}
-          />
-        }
+        title={<CheckTitle check={selectedCheck} />}
         size="medium"
         hideActions
       >
@@ -72,8 +68,7 @@ export function MinimalCanary({
           style={{ maxHeight: "calc(100vh - 4rem)" }}
         >
           <CheckDetails
-            check={checks?.find((o) => o?.id === selectedCheck?.id)}
-            // graphData={graphData}
+            check={selectedCheck}
             className={`flex flex-col overflow-y-hidden ${mixins.appleScrollbar}`}
           />
         </div>

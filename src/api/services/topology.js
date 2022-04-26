@@ -59,6 +59,9 @@ export const getTopology = async (params) => {
       depth = params.depth;
     }
     let { data } = results;
+    if (data == null) {
+      return { data: [] };
+    }
     if (data.length === 2 && isEmpty(data[0].id)) {
       data = [data[1]];
     }
@@ -66,6 +69,11 @@ export const getTopology = async (params) => {
       data: unroll(data, depth, false)
     };
   });
+};
+
+export const getCanaryGraph = async (params) => {
+  const query = stringify(params);
+  return CanaryChecker.get(`/api/graph?${query}`);
 };
 
 export const getCanaries = async (params) => {

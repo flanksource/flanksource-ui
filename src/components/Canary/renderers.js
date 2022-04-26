@@ -59,10 +59,10 @@ export function Latency({ check }) {
   if (check == null || check.latency == null) {
     return empty;
   }
-  if (isEmpty(check.latency.rolling1h)) {
+  if (isEmpty(check.latency.p95)) {
     return "";
   }
-  return <Duration ms={check.latency.rolling1h} />;
+  return <Duration ms={check.latency.p95} />;
 }
 
 export function Percentage({ val, upper, lower }) {

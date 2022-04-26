@@ -24,14 +24,7 @@ export function HealthPage({ url }) {
             dropdownElem={<TimeRange />}
             defaultValue={timeRanges[0].value}
             paramKey="timeRange"
-            className="w-56 mr-2"
-            prefix={
-              <>
-                <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
-                  Time Range:
-                </div>
-              </>
-            }
+            className="w-40 mr-2"
           />
           <CanarySearchBar
             onChange={(e) => handleSearch(e.target.value)}

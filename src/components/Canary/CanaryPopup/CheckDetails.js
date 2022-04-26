@@ -1,7 +1,6 @@
 import React from "react";
 import { usePrevious } from "../../../utils/hooks";
 import { Badge } from "../../Badge";
-import { toFormattedDuration } from "../renderers";
 import { AccordionBox } from "../../AccordionBox";
 import {
   capitalizeFirstLetter,
@@ -14,17 +13,15 @@ import { getUptimePercentage } from "./utils";
 import { StatusHistory } from "./StatusHistory";
 import { DetailField } from "./DetailField";
 import { CanaryStatusChart } from "../CanaryStatusChart";
-
-export function CheckDetails({ check, graphData, ...rest }) {
+import { Duration } from "../renderers";
+export function CheckDetails({ check, ...rest }) {
   const prevCheck = usePrevious(check);
   const validCheck = check || prevCheck;
 
   if (validCheck == null) {
     return <></>;
   }
-  const [val, unit] = toFormattedDuration(validCheck?.latency?.rolling1h);
-  const latencyValue = validCheck?.latency?.rolling1h ? `${val}${unit}` : "-";
-  const uptimeValue = toFixedIfNecessary(getUptimePercentage(validCheck), 2);
+  const uptimeValue = toFixedIfNecessary(getUptimePercentage(validCheck), 0);
   const validUptime =
     !Number.isNaN(validCheck?.uptime?.passed) &&
     !Number.isNaN(validCheck?.uptime?.failed);
@@ -83,12 +80,22 @@ export function CheckDetails({ check, graphData, ...rest }) {
           }
         />
         <CheckStat
-          containerClass="w-52 mb-4"
-          title="Latency"
-          value={latencyValue}
+          containerClass="w-40 mb-4"
+          title="Latency (95%)"
+          value={<Duration ms={validCheck.latency.p95} />}
         />
         <CheckStat
-          containerClass="w-52 mb-4"
+          containerClass="w-40 mb-4"
+          title="Latency  (97%)"
+          value={<Duration ms={validCheck.latency.p97} />}
+        />
+        <CheckStat
+          containerClass="w-40 mb-4"
+          title="Latency  (99%)"
+          value={<Duration ms={validCheck.latency.p99} />}
+        />
+        <CheckStat
+          containerClass="w-40 mb-4"
           title="Severity"
           value={capitalizeFirstLetter(severityValue)}
         />
@@ -100,7 +107,7 @@ export function CheckDetails({ check, graphData, ...rest }) {
           {/* <span className="text-sm font-medium">(time dropdown)</span> */}
         </div>
         <div className="w-full h-52 overflow-visible">
-          <CanaryStatusChart data={graphData} />
+          <CanaryStatusChart check={validCheck} />
         </div>
       </div>
       <PopupTabs

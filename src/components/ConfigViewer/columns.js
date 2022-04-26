@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 export const defaultTableColumns = [
   {
     Header: "Type",
-    accessor: "type",
+    accessor: "config_type",
     cellClass: `px-5 py-2`
   },
   {
@@ -15,11 +15,6 @@ export const defaultTableColumns = [
     Header: "Tags",
     accessor: "tags",
     Cell: TagsCell,
-    cellClass: `px-5 py-2`
-  },
-  {
-    Header: "ID",
-    accessor: "id",
     cellClass: `px-5 py-2`
   },
   {
@@ -60,7 +55,7 @@ export function DateCell({ row, column }) {
   const dateString = row?.values[column.id];
   return (
     <div className="text-xs">
-      {dateString ? dayjs(dateString).format("h:mm A, DD-MM-YYYY") : "None"}
+      {dateString ? dayjs(dateString).format("YYYY-DD-MM h:mm A") : "None"}
     </div>
   );
 }
