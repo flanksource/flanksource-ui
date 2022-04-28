@@ -1,3 +1,5 @@
+import React from "react";
+
 /* This example requires Tailwind CSS v2.0+ */
 import { Icon } from "../Icon";
 
@@ -14,11 +16,8 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export function Card({
-  cards,
-  className = "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
-}) {
-  return (
+export const Card = React.memo(
+  ({ cards, className = "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4" }) => (
     <>
       <ul className={`mt-3 grid gap-5 sm:gap-6 ${className} "`}>
         {cards.map((card) => (
@@ -46,15 +45,17 @@ export function Card({
         ))}
       </ul>
     </>
-  );
-}
+  )
+);
 
-export function HorizontalCard({
-  cards,
+Card.displayName = "Card";
 
-  className = "grid-cols-1 gap-4 sm:grid-cols-2"
-}) {
-  return (
+export const HorizontalCard = React.memo(
+  ({
+    cards,
+
+    className = "grid-cols-1 gap-4 sm:grid-cols-2"
+  }) => (
     <div className={`grid ${className}"`}>
       {cards.map((card) => (
         <div
@@ -83,5 +84,7 @@ export function HorizontalCard({
         </div>
       ))}
     </div>
-  );
-}
+  )
+);
+
+HorizontalCard.displayName = "HorizontalCard";

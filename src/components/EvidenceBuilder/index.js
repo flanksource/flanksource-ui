@@ -22,7 +22,7 @@ export const evidenceSteps = {
   }
 };
 
-export function EvidenceBuilder({ className, ...rest }) {
+export const EvidenceBuilder = React.memo(({ className, ...rest }) => {
   const [currentStep, setCurrentStep] = useState(0);
   return (
     <div
@@ -55,4 +55,6 @@ export function EvidenceBuilder({ className, ...rest }) {
       </div>
     </div>
   );
-}
+});
+
+EvidenceBuilder.displayName = "EvidenceBuilder";

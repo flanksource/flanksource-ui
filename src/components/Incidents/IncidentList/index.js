@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import { v4 as uuid } from "uuid";
@@ -6,46 +6,7 @@ import responders from "../../../data/responders.json";
 import { IncidentSeverity } from "../incident-severity";
 import { IncidentStatus } from "../incident-status";
 
-export function IncidentList({ list, ...rest }) {
-  return (
-    <div className="border border-gray-200 rounded-md">
-      <table className="table-auto w-full" aria-label="table" {...rest}>
-        <thead className="rounded-md">
-          <tr className="border-b border-gray-200 uppercase bg-column-background rounded-t-md items-center">
-            <th
-              className="px-6 py-3 text-gray-500 font-medium text-xs col-span-2 text-left"
-              colSpan={2}
-            >
-              Name
-            </th>
-            <th className="px-3 py-3 text-gray-500 font-medium text-xs text-left">
-              Severity
-            </th>
-            <th className="px-3 py-3 text-gray-500 font-medium text-xs text-left">
-              Status
-            </th>
-            <th className="px-3 py-3 text-gray-500 font-medium text-xs text-left">
-              Age
-            </th>
-            <th
-              className="px-3 py-3 text-gray-500 font-medium text-xs col-span-2 text-left"
-              colSpan={2}
-            >
-              Responders
-            </th>
-          </tr>
-        </thead>
-        <tbody className="flex-1 overflow-y-auto">
-          {list.map((incident) => (
-            <IncidentItem incident={incident} key={uuid()} />
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-function IncidentItem({ incident }) {
+const IncidentItem = React.memo(({ incident }) => {
   const {
     title,
     id,
@@ -96,4 +57,48 @@ function IncidentItem({ incident }) {
       </td>
     </tr>
   );
-}
+});
+IncidentItem.displayName = "IncidentItem";
+
+export const IncidentList = React.memo(({ list, ...rest }) => {
+  const IncidentItems = useMemo(
+    () =>
+      list.map((incident) => <IncidentItem incident={incident} key={uuid()} />),
+    [list]
+  );
+
+  return (
+    <div className="border border-gray-200 rounded-md">
+      <table className="table-auto w-full" aria-label="table" {...rest}>
+        <thead className="rounded-md">
+          <tr className="border-b border-gray-200 uppercase bg-column-background rounded-t-md items-center">
+            <th
+              className="px-6 py-3 text-gray-500 font-medium text-xs col-span-2 text-left"
+              colSpan={2}
+            >
+              Name
+            </th>
+            <th className="px-3 py-3 text-gray-500 font-medium text-xs text-left">
+              Severity
+            </th>
+            <th className="px-3 py-3 text-gray-500 font-medium text-xs text-left">
+              Status
+            </th>
+            <th className="px-3 py-3 text-gray-500 font-medium text-xs text-left">
+              Age
+            </th>
+            <th
+              className="px-3 py-3 text-gray-500 font-medium text-xs col-span-2 text-left"
+              colSpan={2}
+            >
+              Responders
+            </th>
+          </tr>
+        </thead>
+        <tbody className="flex-1 overflow-y-auto">{IncidentItems}</tbody>
+      </table>
+    </div>
+  );
+});
+
+IncidentList.displayName = "IncidentList";

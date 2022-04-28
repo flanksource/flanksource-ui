@@ -39,31 +39,37 @@ const mentionsStyle = {
   }
 };
 
-const Suggestion = ({ display, icon }) => (
+const Suggestion = React.memo(({ display, icon }) => (
   <div className="flex items-center">
     {icon && <Icon name={icon} size="xl" />}
     <p className="pl-2">{display}</p>
   </div>
+));
+
+Suggestion.displayName = "Suggestion";
+
+export const CommentInput = React.memo(
+  ({ data, value, onChange, markup, trigger }) => (
+    <MentionsInput
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      a11ySuggestionsListLabel="Suggested mentions"
+      style={mentionsStyle}
+      allowSpaceInQuery
+      allowSuggestionsAboveCursor
+    >
+      <Mention
+        markup={markup}
+        trigger={trigger}
+        data={data}
+        renderSuggestion={Suggestion}
+        className="bg-blue-200 rounded"
+      />
+    </MentionsInput>
+  )
 );
 
-export const CommentInput = ({ data, value, onChange, markup, trigger }) => (
-  <MentionsInput
-    value={value}
-    onChange={(e) => onChange(e.target.value)}
-    a11ySuggestionsListLabel="Suggested mentions"
-    style={mentionsStyle}
-    allowSpaceInQuery
-    allowSuggestionsAboveCursor
-  >
-    <Mention
-      markup={markup}
-      trigger={trigger}
-      data={data}
-      renderSuggestion={Suggestion}
-      className="bg-blue-200 rounded"
-    />
-  </MentionsInput>
-);
+CommentInput.displayName = "CommentInput";
 
 CommentInput.propTypes = {
   data: PropTypes.arrayOf(

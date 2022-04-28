@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState, memo } from "react";
 import history from "history/browser";
 import { Modal } from "../Modal";
 import { CheckDetails } from "./CanaryPopup/CheckDetails";
@@ -9,70 +9,71 @@ import mixins from "../../utils/mixins.module.css";
 import { getParamsFromURL } from "./utils";
 import { getCanaries } from "../../api/services/topology";
 
-export function MinimalCanary({
-  checks,
-  labels,
-  selectedTab,
-  tableHeadStyle = {}
-}) {
-  const [searchParams, setSearchParams] = useState(
-    getParamsFromURL(window.location.search)
-  );
+export const MinimalCanary = memo(
+  ({ checks, labels, selectedTab, tableHeadStyle = {} }) => {
+    const [searchParams, setSearchParams] = useState(
+      getParamsFromURL(window.location.search)
+    );
 
-  useEffect(() => {
-    history.listen(({ location }) => {
-      setSearchParams(getParamsFromURL(location.search));
-    });
-  }, []);
-  const { tabBy, layout } = searchParams;
+    useEffect(() => {
+      history.listen(({ location }) => {
+        setSearchParams(getParamsFromURL(location.search));
+      });
+    }, []);
+    const { tabBy, layout } = searchParams;
 
-  const [selectedCheck, setSelectedCheck] = useState(null);
+    const [selectedCheck, setSelectedCheck] = useState(null);
 
-  const handleCheckSelect = (check) => {
-    getCanaries({ check: check.id, includeMessages: true }).then((results) => {
-      if (results == null || results.data.checks.length === 0) {
-        return;
-      }
-      setSelectedCheck(results.data.checks[0]);
-    });
-  };
-
-  return (
-    <>
-      {layout === "card" && (
-        <CanaryCards checks={checks} onClick={handleCheckSelect} />
-      )}
-      {(layout === "table" || !layout) && (
-        <CanaryTable
-          checks={checks}
-          labels={labels}
-          history={history}
-          onCheckClick={handleCheckSelect}
-          showNamespaceTags={
-            tabBy !== "namespace" ? true : selectedTab === "all"
+    const handleCheckSelect = (check) => {
+      getCanaries({ check: check.id, includeMessages: true }).then(
+        (results) => {
+          if (results == null || results.data.checks.length === 0) {
+            return;
           }
-          hideNamespacePrefix
-          groupSingleItems={false}
-          theadStyle={tableHeadStyle}
-        />
-      )}
-      <Modal
-        open={selectedCheck != null}
-        onClose={() => setSelectedCheck(null)}
-        title={<CheckTitle check={selectedCheck} />}
-        size="medium"
-        hideActions
-      >
-        <div
-          className="flex flex-col h-full py-8"
-          style={{ maxHeight: "calc(100vh - 4rem)" }}
-        >
-          <CheckDetails
-            check={selectedCheck}
-            className={`flex flex-col overflow-y-hidden ${mixins.appleScrollbar}`}
+          setSelectedCheck(results.data.checks[0]);
+        }
+      );
+    };
+
+    return (
+      <>
+        {layout === "card" && (
+          <CanaryCards checks={checks} onClick={handleCheckSelect} />
+        )}
+        {(layout === "table" || !layout) && (
+          <CanaryTable
+            checks={checks}
+            labels={labels}
+            history={history}
+            onCheckClick={handleCheckSelect}
+            showNamespaceTags={
+              tabBy !== "namespace" ? true : selectedTab === "all"
+            }
+            hideNamespacePrefix
+            groupSingleItems={false}
+            theadStyle={tableHeadStyle}
           />
-        </div>
-      </Modal>
-    </>
-  );
-}
+        )}
+        <Modal
+          open={selectedCheck != null}
+          onClose={() => setSelectedCheck(null)}
+          title={<CheckTitle check={selectedCheck} />}
+          size="medium"
+          hideActions
+        >
+          <div
+            className="flex flex-col h-full py-8"
+            style={{ maxHeight: "calc(100vh - 4rem)" }}
+          >
+            <CheckDetails
+              check={selectedCheck}
+              className={`flex flex-col overflow-y-hidden ${mixins.appleScrollbar}`}
+            />
+          </div>
+        </Modal>
+      </>
+    );
+  }
+);
+
+MinimalCanary.displayName = "MinimalCanary";

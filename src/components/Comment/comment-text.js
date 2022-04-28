@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-export const CommentText = ({ text, onClickTag }) => {
+export const CommentText = React.memo(({ text, onClickTag }) => {
   // markup @[__display__](user:__id__)
   const tags = text.match(/@\[.*?\]\(user:.*?\)/gi) || [];
   const otherText = text.split(/@\[.*?\]\(user:.*?\)/gi);
@@ -24,9 +24,11 @@ export const CommentText = ({ text, onClickTag }) => {
     },
     [otherText[0]]
   );
-};
+});
 
 CommentText.propTypes = {
   text: PropTypes.string.isRequired,
   onClickTag: PropTypes.func.isRequired
 };
+
+CommentText.displayName = "CommentText";

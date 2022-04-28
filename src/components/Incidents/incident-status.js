@@ -1,7 +1,8 @@
+import React from "react";
 import clsx from "clsx";
 import { capitalize } from "lodash";
 
-export function IncidentStatus({ incident }) {
+export const IncidentStatus = React.memo(({ incident }) => {
   const statusColorClass = clsx({
     "bg-light-green": incident.status === "open",
     "bg-gray-100": incident.status === "closed"
@@ -17,4 +18,6 @@ export function IncidentStatus({ incident }) {
       {capitalize(incident.status)}
     </button>
   );
-}
+});
+
+IncidentStatus.displayName = "IncidentStatus";

@@ -16,7 +16,7 @@ const getBackgroundColorClass = (color) => {
   }
 };
 
-export const Chip = ({ text, color }) => (
+export const Chip = React.memo(({ text, color }) => (
   <div
     className={clsx(
       "text-center align-baseline min-w-8 min-h-8 text-2xs font-inter rounded-4px font-bold break-all",
@@ -25,6 +25,8 @@ export const Chip = ({ text, color }) => (
   >
     {text}
   </div>
-);
+));
 
 Chip.propTypes = {};
+
+Chip.displayName = "Chip";

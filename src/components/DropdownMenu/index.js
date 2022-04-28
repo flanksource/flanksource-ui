@@ -1,18 +1,18 @@
 import { Menu, Transition } from "@headlessui/react";
-import { Fragment } from "react";
+import React, { Fragment } from "react";
 
 // anchors: top-right top-left bottom-right bottom-left
 
-export function DropdownMenu({
-  buttonElement,
-  className,
-  anchor,
-  content,
-  dropdownClass,
-  buttonClass,
-  menuDropdownStyle
-}) {
-  return (
+export const DropdownMenu = React.memo(
+  ({
+    buttonElement,
+    className,
+    anchor,
+    content,
+    dropdownClass,
+    buttonClass,
+    menuDropdownStyle
+  }) => (
     <Menu as="div" className={`${className} relative flex-shrink-0`}>
       <Menu.Button className={`${buttonClass}`}>{buttonElement}</Menu.Button>
       <Transition
@@ -32,5 +32,7 @@ export function DropdownMenu({
         </Menu.Items>
       </Transition>
     </Menu>
-  );
-}
+  )
+);
+
+DropdownMenu.displayName = "DropdownMenu";

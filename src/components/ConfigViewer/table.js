@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti";
 import { useSortBy, useTable } from "react-table";
 
@@ -26,6 +27,69 @@ export const ConfigListTable = ({
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     tableInstance;
 
+  const headerGroupElements = useMemo(
+    () =>
+      headerGroups.map((headerGroup) => (
+        <tr
+          key={headerGroup.getHeaderGroupProps().key}
+          className={tableStyles.theadRowClass}
+          {...headerGroup.getHeaderGroupProps()}
+        >
+          {headerGroup.headers.map((column) => (
+            <th
+              key={column.Header}
+              className={tableStyles.theadHeaderClass}
+              {...column.getHeaderProps(column.getSortByToggleProps())}
+            >
+              <div className="flex select-none">
+                {column.render("Header")}
+                {column.isSorted ? (
+                  <span className="ml-2">
+                    {column.isSortedDesc ? (
+                      <TiArrowSortedUp />
+                    ) : (
+                      <TiArrowSortedDown />
+                    )}
+                  </span>
+                ) : (
+                  ""
+                )}
+              </div>
+            </th>
+          ))}
+        </tr>
+      )),
+    [headerGroups]
+  );
+
+  const rowElements = useMemo(
+    () =>
+      rows.map((row) => {
+        prepareRow(row);
+        return (
+          <tr
+            key={row.id}
+            className={tableStyles.tbodyRowClass}
+            {...row.getRowProps()}
+            onClick={handleRowClick ? () => handleRowClick(row) : () => {}}
+          >
+            {row.cells.map((cell) => (
+              <td
+                key={cell.column.Header}
+                className={`${tableStyles.tbodyDataClass} ${
+                  cell.column.cellClass || ""
+                }`}
+                {...cell.getCellProps()}
+              >
+                {cell.render("Cell")}
+              </td>
+            ))}
+          </tr>
+        );
+      }),
+    [rows, handleRowClick, prepareRow]
+  );
+
   return (
     <div className={tableStyles.outerDivClass} {...rest}>
       <table
@@ -33,62 +97,9 @@ export const ConfigListTable = ({
         style={tableStyle}
         {...getTableProps()}
       >
-        <thead className={tableStyles.theadClass}>
-          {headerGroups.map((headerGroup) => (
-            <tr
-              key={headerGroup.getHeaderGroupProps().key}
-              className={tableStyles.theadRowClass}
-              {...headerGroup.getHeaderGroupProps()}
-            >
-              {headerGroup.headers.map((column) => (
-                <th
-                  key={column.Header}
-                  className={tableStyles.theadHeaderClass}
-                  {...column.getHeaderProps(column.getSortByToggleProps())}
-                >
-                  <div className="flex select-none">
-                    {column.render("Header")}
-                    {column.isSorted ? (
-                      <span className="ml-2">
-                        {column.isSortedDesc ? (
-                          <TiArrowSortedUp />
-                        ) : (
-                          <TiArrowSortedDown />
-                        )}
-                      </span>
-                    ) : (
-                      ""
-                    )}
-                  </div>
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
+        <thead className={tableStyles.theadClass}>{headerGroupElements}</thead>
         <tbody className={tableStyles.tbodyClass} {...getTableBodyProps()}>
-          {rows.map((row) => {
-            prepareRow(row);
-            return (
-              <tr
-                key={row.id}
-                className={tableStyles.tbodyRowClass}
-                {...row.getRowProps()}
-                onClick={handleRowClick ? () => handleRowClick(row) : () => {}}
-              >
-                {row.cells.map((cell) => (
-                  <td
-                    key={cell.column.Header}
-                    className={`${tableStyles.tbodyDataClass} ${
-                      cell.column.cellClass || ""
-                    }`}
-                    {...cell.getCellProps()}
-                  >
-                    {cell.render("Cell")}
-                  </td>
-                ))}
-              </tr>
-            );
-          })}
+          {rowElements}
         </tbody>
       </table>
       {rows.length <= 0 && (

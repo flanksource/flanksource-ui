@@ -1,3 +1,4 @@
+import React from "react";
 import {
   HiOutlineChevronDoubleUp,
   HiOutlineChevronUp,
@@ -15,7 +16,7 @@ const getSeverity = (incident) => {
   }
 };
 
-export function IncidentSeverity({ incident, iconOnly }) {
+export const IncidentSeverity = React.memo(({ incident, iconOnly }) => {
   const severity = getSeverity(incident);
   return (
     <>
@@ -23,4 +24,6 @@ export function IncidentSeverity({ incident, iconOnly }) {
       {!iconOnly && <p className="leading-5  ml-1.5">{severity.text}</p>}
     </>
   );
-}
+});
+
+IncidentSeverity.displayName = "IncidentSeverity";

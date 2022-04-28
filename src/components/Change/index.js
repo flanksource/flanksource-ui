@@ -84,51 +84,48 @@ function classNames(...classes) {
 }
 
 export function Changelog() {
+  const timelineOptions = timeline.map((event, eventIdx) => (
+    // eslint-disable-next-line react/no-array-index-key
+    <li key={eventIdx}>
+      <div className="relative pb-4">
+        {eventIdx !== timeline.length - 1 ? (
+          <span
+            className="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200"
+            aria-hidden="true"
+          />
+        ) : null}
+        <div className="relative flex space-x-3">
+          <div>
+            <span
+              className={classNames(
+                event.iconBackground,
+                "h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white"
+              )}
+            >
+              {event.icon}
+            </span>
+          </div>
+          <div className="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
+            <div>
+              <p className="text-sm text-gray-500">
+                {event.content}{" "}
+                <a href={event.href} className="font-medium text-gray-900">
+                  {event.target}
+                </a>
+              </p>
+            </div>
+            <div className="text-right text-sm whitespace-nowrap text-gray-500">
+              <time dateTime={event.datetime}>{event.date}</time>
+            </div>
+          </div>
+        </div>
+      </div>
+    </li>
+  ));
+
   return (
     <div className="flow-root">
-      <ul className="-mb-4">
-        {timeline.map((event, eventIdx) => (
-          // eslint-disable-next-line react/no-array-index-key
-          <li key={eventIdx}>
-            <div className="relative pb-4">
-              {eventIdx !== timeline.length - 1 ? (
-                <span
-                  className="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200"
-                  aria-hidden="true"
-                />
-              ) : null}
-              <div className="relative flex space-x-3">
-                <div>
-                  <span
-                    className={classNames(
-                      event.iconBackground,
-                      "h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white"
-                    )}
-                  >
-                    {event.icon}
-                  </span>
-                </div>
-                <div className="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
-                  <div>
-                    <p className="text-sm text-gray-500">
-                      {event.content}{" "}
-                      <a
-                        href={event.href}
-                        className="font-medium text-gray-900"
-                      >
-                        {event.target}
-                      </a>
-                    </p>
-                  </div>
-                  <div className="text-right text-sm whitespace-nowrap text-gray-500">
-                    <time dateTime={event.datetime}>{event.date}</time>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </li>
-        ))}
-      </ul>
+      <ul className="-mb-4">{timelineOptions}</ul>
     </div>
   );
 }
