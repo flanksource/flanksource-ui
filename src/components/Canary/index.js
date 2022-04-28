@@ -23,6 +23,7 @@ import {
 } from "./labels";
 import { TristateToggle } from "../TristateToggle";
 import mixins from "../../utils/mixins.module.css";
+import { CheckStat } from "./CanaryPopup/CheckStat";
 
 const getSearchParams = () => getParamsFromURL(window.location.search);
 
@@ -39,6 +40,7 @@ export function Canary({
   }, []);
 
   const [checks, setChecks] = useState([]);
+  const [filteredCount, setFilteredCount] = useState(0);
   // eslint-disable-next-line no-unused-vars
   const [isLoading, setIsLoading] = useState(true);
   // eslint-disable-next-line no-unused-vars
@@ -47,6 +49,10 @@ export function Canary({
 
   const labelUpdateCallback = useCallback((newLabels) => {
     setFilteredLabels(newLabels);
+  }, []);
+
+  const updateFilteredChecks = useCallback((newFilteredChecks) => {
+    setFilteredCount(newFilteredChecks.length || 0);
   }, []);
 
   const handleFetch = throttle(() => {
@@ -98,6 +104,39 @@ export function Canary({
   return (
     <div className="flex flex-row place-content-center">
       <SidebarSticky topHeight={topLayoutOffset}>
+        <div className="mb-4">
+          <CheckStat
+            containerClass="shadow-md rounded-lg p-5 mb-2"
+            valueContainerClass="items-end"
+            title="All Checks"
+            value={checks.length || 0}
+            append={
+              <div className="ml-2 text-sm text-gray-600">total checks</div>
+            }
+          />
+          {filteredCount !== checks.length && (
+            <CheckStat
+              containerClass="shadow-md rounded-lg p-5 mb-2"
+              valueContainerClass="items-end"
+              title="Check Filtering"
+              value={filteredCount}
+              valueClass={filteredCount > 0 && "text-green-600"}
+              append={
+                <div className="ml-2 text-sm text-gray-600">
+                  currently showing
+                </div>
+              }
+              bottomAppend={
+                checks.length - filteredCount > 0 && (
+                  <span className="mt-1 text-xs text-red-600">
+                    <strong>{checks.length - filteredCount}</strong> hidden
+                  </span>
+                )
+              }
+            />
+          )}
+        </div>
+
         <SectionTitle className="mb-4">Filter by Health</SectionTitle>
         <div className="mb-6 flex items-center">
           <div className="h-9 flex items-center">
@@ -192,6 +231,7 @@ export function Canary({
           checks={checks}
           searchParams={searchParams}
           onLabelFiltersCallback={labelUpdateCallback}
+          onFilterCallback={updateFilteredChecks}
         />
       </div>
     </div>
