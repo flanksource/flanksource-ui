@@ -448,7 +448,7 @@ const SidebarSticky = ({
   className,
   style,
   children,
-  topHeight = 64,
+  topHeight = 0,
   ...props
 }) => (
   <div

@@ -27,6 +27,7 @@ import { RsDemoPage } from "./pages/Examples/rs-demo";
 import { TopologyPage as ExamplesTopologyPage } from "./pages/Examples/Topology/topology-page";
 import { TopologySelectorModalPage } from "./pages/Examples/TopologySelectorModalPage/TopologySelectorModalPage";
 import { HealthPage } from "./pages/health";
+import { Canary } from "./components/Canary";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -112,6 +113,7 @@ export function App() {
 
           <Route path="examples" element={sidebar}>
             <Route path="rs" element={<RsDemoPage />} />
+
             <Route path="dropdown" element={<DropdownDemoPage />} />
             <Route
               path="topology"
@@ -127,6 +129,10 @@ export function App() {
               element={<TypologyDropdownDemo />}
             />
           </Route>
+          <Route
+            path="examples/canary-only"
+            element={<Canary url="/canary/api" />}
+          />
 
           <Route path="logs" element={sidebar}>
             <Route index element={<LogsPage />} />
