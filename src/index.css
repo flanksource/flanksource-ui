@@ -218,6 +218,16 @@
     margin-bottom: 1rem;
   }
 
+  .section-table-headline {
+    --tw-text-opacity: 1;
+    color: rgba(67,56,202,var(--tw-text-opacity));
+    text-transform: uppercase;
+    font-weight: 600;
+    font-size: .999rem;
+    line-height: 1.25rem;
+    margin-bottom: 1rem;
+  }
+
   .folder-headline {
     --tw-text-opacity: 1;
     color: rgba(67,56,202,var(--tw-text-opacity));
@@ -239,5 +249,23 @@
     margin-bottom: 1rem;
     display: flex;
     margin-left: 5px;
+    border: 1px;
   }
+
+  .folder-table-headline {
+    --tw-text-opacity: 1;
+    color: rgba(156,163,175,var(--tw-text-opacity));
+    font-weight: 500;
+    font-size: .875rem;
+    line-height: 1.25rem;
+    padding-bottom: 15px;
+    cursor: pointer;
+    padding-left: 10px;
+  }
+
+  .search-input{
+    width: 90%;
+    padding-left: 10px;
+  }
+
 }
