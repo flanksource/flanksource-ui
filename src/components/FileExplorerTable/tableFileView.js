@@ -5,7 +5,7 @@ import { useTable, useFilters } from "react-table";
 
 
 //Simple recursive TreeView Component
-export const TableFileView = ({ columns, data }) => {
+export const TableFileView = ({ columns, data, stateChanger}) => {
 
     //use the state to keep track of open/closed folders
     const [isExpanded, toggleExpanded] = useState(false);
@@ -18,9 +18,9 @@ export const TableFileView = ({ columns, data }) => {
         prepareRow, // Prepare the row (this function needs to be called for each row before getting the row props)
         setFilter
     } = useTable({
-            columns,
-            data
-        },
+        columns,
+        data
+    },
         useFilters);
 
     // Create a state
@@ -37,6 +37,7 @@ export const TableFileView = ({ columns, data }) => {
     return (
         <>
             <input
+                className="search-input"
                 value={filterInput}
                 onChange={handleFilterChange}
                 placeholder={"Search by file name"}
@@ -60,7 +61,7 @@ export const TableFileView = ({ columns, data }) => {
                     {rows.map((row, i) => {
                         prepareRow(row);
                         return (
-                            <tr {...row.getRowProps()}>
+                            <tr {...row.getRowProps()} onClick={() => stateChanger(row.original.path)}>
                                 {row.cells.map(cell => {
                                     return <td className="folder-table-headline"
                                         {...cell.getCellProps()}>{cell.render("Cell")}</td>;

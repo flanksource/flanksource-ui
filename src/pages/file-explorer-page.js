@@ -14,9 +14,8 @@ export const FileExplorerPage = () => {
   const [selectedFile, setSelectedFile] = useState({});
 
   const changeFilePath = (file) => {
-    if (file.type !== 'folder') {
       setSelectedFile(file);
-    }
+      console.log(file);
   }
 
   const onError = e => {
@@ -81,8 +80,8 @@ export const FileExplorerPage = () => {
 
   return (
     <>
-      <div className="file-viewer-container">
-        <TableFileView columns={columns} data={files} />
+      <div className="file-explorer-container">
+        <TableFileView columns={columns} data={files} stateChanger={changeFilePath} />
       </div>
     </>
   );

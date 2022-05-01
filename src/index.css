@@ -196,7 +196,7 @@
   .file-explorer-container {
     min-height: calc(100vh - 64px);
     display: flex;
-    width: 18rem;
+    width: 30%;
     border-right-width: 1px;
     flex-direction: column;
     padding: 1rem;
