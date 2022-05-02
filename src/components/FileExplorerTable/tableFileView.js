@@ -1,26 +1,20 @@
 import { useState, useEffect } from "react";
-import { FolderIcon, FolderOpenIcon } from "@heroicons/react/solid";
-import { Icon } from "../Icon";
 import { useTable, useFilters, usePagination } from "react-table";
 
 
-//Simple recursive TreeView Component
 export const TableFileView = ({ columns, data, stateChanger }) => {
+    // Setting up the State
+    const [filterInput, setFilterInput] = useState("");
 
-    //use the state to keep track of open/closed folders
-    const [isExpanded, toggleExpanded] = useState(false);
-
+    // Set up react-table 
     const {
-        getTableProps, // table props from react-table
-        getTableBodyProps, // table body props from react-table
-        headerGroups, // headerGroups, if your table has groupings
-        rows, // rows for the table based on the data passed
-        prepareRow, // Prepare the row (this function needs to be called for each row before getting the row props)
+        getTableProps,
+        getTableBodyProps, // Table body props from react-table
+        headerGroups, // Group the table headers
+        prepareRow, // Preparing table row - this function is being called for each row before getting the row props
         setFilter,
-        page, // Instead of using 'rows', we'll use page,
-        // which has only the rows for the active page
-
-        // The rest of these things are super handy, too ;)
+        // Setting pagination
+        page,
         canPreviousPage,
         canNextPage,
         pageOptions,
@@ -33,22 +27,20 @@ export const TableFileView = ({ columns, data, stateChanger }) => {
     } = useTable({
         columns,
         data,
-        initialState: { pageIndex: 1 },
+        initialState: { pageIndex: 0 },
     },
         useFilters,
         usePagination);
 
-    // Create a state
-    const [filterInput, setFilterInput] = useState("");
 
-    // Update the state when input changes
+    // Update the state on changing the search text
     const handleFilterChange = e => {
         const value = e.target.value || undefined;
-        setFilter("path", value); // Update the show.name filter. Now our table will filter and show only the rows which have a matching value
+        setFilter("path", value);
         setFilterInput(value);
     };
 
-
+    //Render Table component with Pagination
     return (
         <>
             <input
@@ -60,8 +52,10 @@ export const TableFileView = ({ columns, data, stateChanger }) => {
             <table {...getTableProps()}>
                 <thead>
                     {headerGroups.map(headerGroup => (
-                        <tr className="section-table-headline"
-                            {...headerGroup.getHeaderGroupProps()}>
+                        <tr
+                            className="section-table-headline"
+                            {...headerGroup.getHeaderGroupProps()}
+                        >
                             {headerGroup.headers.map(column => (
                                 <th
                                     {...column.getHeaderProps()}
@@ -76,7 +70,10 @@ export const TableFileView = ({ columns, data, stateChanger }) => {
                     {page.map((row, i) => {
                         prepareRow(row);
                         return (
-                            <tr {...row.getRowProps()} onClick={() => stateChanger(row.original.path)}>
+                            <tr
+                                {...row.getRowProps()}
+                                onClick={() => stateChanger(row.original.path)}
+                            >
                                 {row.cells.map(cell => {
                                     return <td className="folder-table-headline"
                                         {...cell.getCellProps()}>{cell.render("Cell")}</td>;
@@ -87,18 +84,38 @@ export const TableFileView = ({ columns, data, stateChanger }) => {
                 </tbody>
             </table>
             <div className="pagination">
-                <button className="paging-element" onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
+                <button
+                    className="paging-element"
+                    onClick={() => gotoPage(0)}
+                    disabled={!canPreviousPage}
+                >
                     {'<<'}
-                </button>{' '}
-                <button className="paging-element" onClick={() => previousPage()} disabled={!canPreviousPage}>
+                </button>
+                {' '}
+                <button
+                    className="paging-element"
+                    onClick={() => previousPage()}
+                    disabled={!canPreviousPage}
+                >
                     {'<'}
-                </button>{' '}
-                <button className="paging-element" onClick={() => nextPage()} disabled={!canNextPage}>
+                </button>
+                {' '}
+                <button
+                    className="paging-element"
+                    onClick={() => nextPage()}
+                    disabled={!canNextPage}
+                >
                     {'>'}
-                </button>{' '}
-                <button className="paging-element" onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>
+                </button>
+                {' '}
+                <button
+                    className="paging-element"
+                    onClick={() => gotoPage(pageCount - 1)}
+                    disabled={!canNextPage}
+                >
                     {'>>'}
-                </button>{' '}
+                </button>
+                {' '}
                 <span className="paging-element">
                     Page{' '}
                     <strong>

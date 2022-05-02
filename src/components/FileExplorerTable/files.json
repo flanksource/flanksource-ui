@@ -1,842 +1,506 @@
 [
     {
-        "path": "data/JordanAtanasovCV.pdf",
+        "path": "data/LogSamlple.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
         "icon": "star"
     },
     {
-        "path": "data/TextSamlple.txt",
+        "path": "data/ExampleLog.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
-        "icon": "star"
+        "icon": "xml"
     },
     {
-        "path": "data/TextSamlple2.txt",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "star"
-    },
-    {
-        "path": "data/JordanAtanasovCV.docx",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "download"
-    },
-    {
-        "path": "data/cool_sample_movie.mp4",
+        "path": "data/LogSamlple3.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
         "icon": "brain"
     },
     {
-        "path": "data/cool_audio_sample.mp3",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "alert"
-    },
-    {
-        "path": "data/JordanAtanasovCV.pdf",
+        "path": "data/LogSamlple.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
         "icon": "star"
     },
     {
-        "path": "data/TextSamlple.txt",
+        "path": "data/LogSample3.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
-        "icon": "star"
+        "icon": "xml"
     },
     {
-        "path": "data/TextSamlple2.txt",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "star"
-    },
-    {
-        "path": "data/JordanAtanasovCV.docx",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "download"
-    },
-    {
-        "path": "data/cool_sample_movie.mp4",
+        "path": "data/LogSamlple3.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
         "icon": "brain"
     },
     {
-        "path": "data/cool_audio_sample.mp3",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "alert"
-    },
-    {
-        "path": "data/JordanAtanasovCV.pdf",
+        "path": "data/ExampleLog.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
         "icon": "star"
     },
     {
-        "path": "data/TextSamlple.txt",
+        "path": "data/LogSample3.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
-        "icon": "star"
+        "icon": "xml"
     },
     {
-        "path": "data/TextSamlple2.txt",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "star"
-    },
-    {
-        "path": "data/JordanAtanasovCV.docx",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "download"
-    },
-    {
-        "path": "data/cool_sample_movie.mp4",
+        "path": "data/LogSamlple3.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
         "icon": "brain"
     },
     {
-        "path": "data/cool_audio_sample.mp3",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "alert"
-    },
-    {
-        "path": "data/JordanAtanasovCV.pdf",
+        "path": "data/LogSamlple.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
         "icon": "star"
     },
     {
-        "path": "data/TextSamlple.txt",
+        "path": "data/LogSample3.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
-        "icon": "star"
+        "icon": "xml"
     },
     {
-        "path": "data/TextSamlple2.txt",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "star"
-    },
-    {
-        "path": "data/JordanAtanasovCV.docx",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "download"
-    },
-    {
-        "path": "data/cool_sample_movie.mp4",
+        "path": "data/LogSamlple3.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
         "icon": "brain"
     },
     {
-        "path": "data/cool_audio_sample.mp3",
-        "size": "102400",
+        "path": "data/LogSamlple.txt",
+        "size": "2024",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
-        "icon": "alert"
+        "icon": "star"
     },
     {
-        "path": "data/JordanAtanasovCV.pdf",
+        "path": "data/LogSample3.txt",
+        "size": "2024",
+        "createdDate": "2022-01-01",
+        "lastModified": "2022-02-02",
+        "icon": "xml"
+    },
+    {
+        "path": "data/LogSamlple3.txt",
+        "size": "15240",
+        "createdDate": "2022-01-01",
+        "lastModified": "2022-02-02",
+        "icon": "brain"
+    },
+    {
+        "path": "data/LogSamlple.txt",
+        "size": "15240",
+        "createdDate": "2022-01-01",
+        "lastModified": "2022-02-02",
+        "icon": "star"
+    },
+    {
+        "path": "data/LogSample3.txt",
+        "size": "15240",
+        "createdDate": "2022-01-01",
+        "lastModified": "2022-02-02",
+        "icon": "xml"
+    },
+    {
+        "path": "data/LogSamlple3.txt",
+        "size": "15240",
+        "createdDate": "2022-01-01",
+        "lastModified": "2022-02-02",
+        "icon": "brain"
+    },
+    {
+        "path": "data/LogSamlple.txt",
+        "size": "15240",
+        "createdDate": "2022-01-01",
+        "lastModified": "2022-02-02",
+        "icon": "star"
+    },
+    {
+        "path": "data/LogSample3.txt",
+        "size": "15240",
+        "createdDate": "2022-01-01",
+        "lastModified": "2022-02-02",
+        "icon": "xml"
+    },
+    {
+        "path": "data/LogSamlple3.txt",
+        "size": "15240",
+        "createdDate": "2022-01-01",
+        "lastModified": "2022-02-02",
+        "icon": "brain"
+    },
+    {
+        "path": "data/LogSamlple.txt",
+        "size": "15240",
+        "createdDate": "2022-01-01",
+        "lastModified": "2022-02-02",
+        "icon": "star"
+    },
+    {
+        "path": "data/LogSample3.txt",
+        "size": "15240",
+        "createdDate": "2022-01-01",
+        "lastModified": "2022-02-02",
+        "icon": "xml"
+    },
+    {
+        "path": "data/LogSamlple3.txt",
+        "size": "15240",
+        "createdDate": "2022-01-01",
+        "lastModified": "2022-02-02",
+        "icon": "brain"
+    },
+    {
+        "path": "data/LogSamlple.txt",
+        "size": "15240",
+        "createdDate": "2022-01-01",
+        "lastModified": "2022-02-02",
+        "icon": "star"
+    },
+    {
+        "path": "data/LogSample3.txt",
+        "size": "15240",
+        "createdDate": "2022-01-01",
+        "lastModified": "2022-02-02",
+        "icon": "xml"
+    },
+    {
+        "path": "data/LogSamlple3.txt",
+        "size": "15240",
+        "createdDate": "2022-01-01",
+        "lastModified": "2022-02-02",
+        "icon": "brain"
+    },
+    {
+        "path": "data/LogSamlple.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
         "icon": "star"
     },
     {
-        "path": "data/TextSamlple.txt",
+        "path": "data/LogSample3.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
-        "icon": "star"
+        "icon": "xml"
     },
     {
-        "path": "data/TextSamlple2.txt",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "star"
-    },
-    {
-        "path": "data/JordanAtanasovCV.docx",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "download"
-    },
-    {
-        "path": "data/cool_sample_movie.mp4",
+        "path": "data/LogSamlple3.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
         "icon": "brain"
     },
     {
-        "path": "data/cool_audio_sample.mp3",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "alert"
-    },
-    {
-        "path": "data/JordanAtanasovCV.pdf",
+        "path": "data/LogSamlple.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
         "icon": "star"
     },
     {
-        "path": "data/TextSamlple.txt",
+        "path": "data/LogSample3.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
-        "icon": "star"
+        "icon": "xml"
     },
     {
-        "path": "data/TextSamlple2.txt",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "star"
-    },
-    {
-        "path": "data/JordanAtanasovCV.docx",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "download"
-    },
-    {
-        "path": "data/cool_sample_movie.mp4",
+        "path": "data/LogSamlple3.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
         "icon": "brain"
     },
     {
-        "path": "data/cool_audio_sample.mp3",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "alert"
-    },
-    {
-        "path": "data/JordanAtanasovCV.pdf",
+        "path": "data/LogSamlple.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
         "icon": "star"
     },
     {
-        "path": "data/TextSamlple.txt",
+        "path": "data/LogSample3.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
-        "icon": "star"
+        "icon": "xml"
     },
     {
-        "path": "data/TextSamlple2.txt",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "star"
-    },
-    {
-        "path": "data/JordanAtanasovCV.docx",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "download"
-    },
-    {
-        "path": "data/cool_sample_movie.mp4",
+        "path": "data/LogSamlple3.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
         "icon": "brain"
     },
     {
-        "path": "data/cool_audio_sample.mp3",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "alert"
-    },
-    {
-        "path": "data/JordanAtanasovCV.pdf",
+        "path": "data/LogSamlple.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
         "icon": "star"
     },
     {
-        "path": "data/TextSamlple.txt",
+        "path": "data/LogSample3.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
-        "icon": "star"
+        "icon": "xml"
     },
     {
-        "path": "data/TextSamlple2.txt",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "star"
-    },
-    {
-        "path": "data/JordanAtanasovCV.docx",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "download"
-    },
-    {
-        "path": "data/cool_sample_movie.mp4",
+        "path": "data/LogSamlple3.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
         "icon": "brain"
     },
     {
-        "path": "data/cool_audio_sample.mp3",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "alert"
-    },
-    {
-        "path": "data/JordanAtanasovCV.pdf",
+        "path": "data/LogSamlple.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
         "icon": "star"
     },
     {
-        "path": "data/TextSamlple.txt",
+        "path": "data/LogSample3.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
-        "icon": "star"
+        "icon": "xml"
     },
     {
-        "path": "data/TextSamlple2.txt",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "star"
-    },
-    {
-        "path": "data/JordanAtanasovCV.docx",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "download"
-    },
-    {
-        "path": "data/cool_sample_movie.mp4",
+        "path": "data/LogSamlple3.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
         "icon": "brain"
     },
     {
-        "path": "data/cool_audio_sample.mp3",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "alert"
-    },
-    {
-        "path": "data/JordanAtanasovCV.pdf",
+        "path": "data/LogSamlple.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
         "icon": "star"
     },
     {
-        "path": "data/TextSamlple.txt",
+        "path": "data/LogSample3.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
-        "icon": "star"
+        "icon": "xml"
     },
     {
-        "path": "data/TextSamlple2.txt",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "star"
-    },
-    {
-        "path": "data/JordanAtanasovCV.docx",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "download"
-    },
-    {
-        "path": "data/cool_sample_movie.mp4",
+        "path": "data/LogSamlple3.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
         "icon": "brain"
     },
     {
-        "path": "data/cool_audio_sample.mp3",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "alert"
-    },
-    {
-        "path": "data/JordanAtanasovCV.pdf",
+        "path": "data/LogSamlple.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
         "icon": "star"
     },
     {
-        "path": "data/TextSamlple.txt",
+        "path": "data/LogSample3.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
-        "icon": "star"
+        "icon": "xml"
     },
     {
-        "path": "data/TextSamlple2.txt",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "star"
-    },
-    {
-        "path": "data/JordanAtanasovCV.docx",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "download"
-    },
-    {
-        "path": "data/cool_sample_movie.mp4",
+        "path": "data/LogSamlple3.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
         "icon": "brain"
     },
     {
-        "path": "data/cool_audio_sample.mp3",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "alert"
-    },
-    {
-        "path": "data/JordanAtanasovCV.pdf",
+        "path": "data/LogSamlple.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
         "icon": "star"
     },
     {
-        "path": "data/TextSamlple.txt",
+        "path": "data/LogSample3.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
-        "icon": "star"
+        "icon": "xml"
     },
     {
-        "path": "data/TextSamlple2.txt",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "star"
-    },
-    {
-        "path": "data/JordanAtanasovCV.docx",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "download"
-    },
-    {
-        "path": "data/cool_sample_movie.mp4",
+        "path": "data/LogSamlple3.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
         "icon": "brain"
     },
     {
-        "path": "data/cool_audio_sample.mp3",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "alert"
-    },
-    {
-        "path": "data/JordanAtanasovCV.pdf",
+        "path": "data/LogSamlple.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
         "icon": "star"
     },
     {
-        "path": "data/TextSamlple.txt",
+        "path": "data/LogSample3.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
-        "icon": "star"
+        "icon": "xml"
     },
     {
-        "path": "data/TextSamlple2.txt",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "star"
-    },
-    {
-        "path": "data/JordanAtanasovCV.docx",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "download"
-    },
-    {
-        "path": "data/cool_sample_movie.mp4",
+        "path": "data/LogSamlple3.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
         "icon": "brain"
     },
     {
-        "path": "data/cool_audio_sample.mp3",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "alert"
-    },
-    {
-        "path": "data/JordanAtanasovCV.pdf",
+        "path": "data/LogSamlple.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
         "icon": "star"
     },
     {
-        "path": "data/TextSamlple.txt",
+        "path": "data/LogSample3.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
-        "icon": "star"
+        "icon": "xml"
     },
     {
-        "path": "data/TextSamlple2.txt",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "star"
-    },
-    {
-        "path": "data/JordanAtanasovCV.docx",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "download"
-    },
-    {
-        "path": "data/cool_sample_movie.mp4",
+        "path": "data/LogSamlple3.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
         "icon": "brain"
     },
     {
-        "path": "data/cool_audio_sample.mp3",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "alert"
-    },
-    {
-        "path": "data/JordanAtanasovCV.pdf",
+        "path": "data/LogSamlple.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
         "icon": "star"
     },
     {
-        "path": "data/TextSamlple.txt",
+        "path": "data/LogSample3.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
-        "icon": "star"
+        "icon": "xml"
     },
     {
-        "path": "data/TextSamlple2.txt",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "star"
-    },
-    {
-        "path": "data/JordanAtanasovCV.docx",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "download"
-    },
-    {
-        "path": "data/cool_sample_movie.mp4",
+        "path": "data/LogSamlple3.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
         "icon": "brain"
     },
     {
-        "path": "data/cool_audio_sample.mp3",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "alert"
-    },
-    {
-        "path": "data/JordanAtanasovCV.pdf",
+        "path": "data/LogSamlple.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
         "icon": "star"
     },
     {
-        "path": "data/TextSamlple.txt",
+        "path": "data/LogSample3.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
-        "icon": "star"
+        "icon": "xml"
     },
     {
-        "path": "data/TextSamlple2.txt",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "star"
-    },
-    {
-        "path": "data/JordanAtanasovCV.docx",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "download"
-    },
-    {
-        "path": "data/cool_sample_movie.mp4",
+        "path": "data/LogSamlple3.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
         "icon": "brain"
     },
     {
-        "path": "data/cool_audio_sample.mp3",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "alert"
-    },
-    {
-        "path": "data/JordanAtanasovCV.pdf",
+        "path": "data/LogSamlple.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
         "icon": "star"
     },
     {
-        "path": "data/TextSamlple.txt",
+        "path": "data/LogSample3.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
-        "icon": "star"
+        "icon": "xml"
     },
     {
-        "path": "data/TextSamlple2.txt",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "star"
-    },
-    {
-        "path": "data/JordanAtanasovCV.docx",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "download"
-    },
-    {
-        "path": "data/cool_sample_movie.mp4",
+        "path": "data/LogSamlple3.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
         "icon": "brain"
     },
     {
-        "path": "data/cool_audio_sample.mp3",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "alert"
-    },
-    {
-        "path": "data/JordanAtanasovCV.pdf",
+        "path": "data/LogSamlple.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
         "icon": "star"
     },
     {
-        "path": "data/TextSamlple.txt",
+        "path": "data/LogSample3.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
-        "icon": "star"
+        "icon": "xml"
     },
     {
-        "path": "data/TextSamlple2.txt",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "star"
-    },
-    {
-        "path": "data/JordanAtanasovCV.docx",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "download"
-    },
-    {
-        "path": "data/cool_sample_movie.mp4",
-        "size": "102400",
+        "path": "data/LogSamlple3.txt",
+        "size": "2024",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
         "icon": "brain"
     },
     {
-        "path": "data/cool_audio_sample.mp3",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "alert"
-    },
-    {
-        "path": "data/JordanAtanasovCV.pdf",
-        "size": "102400",
+        "path": "data/LogSamlple.txt",
+        "size": "2024",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
         "icon": "star"
     },
     {
-        "path": "data/TextSamlple.txt",
-        "size": "102400",
+        "path": "data/LogSample3.txt",
+        "size": "2024",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
-        "icon": "star"
+        "icon": "xml"
     },
     {
-        "path": "data/TextSamlple2.txt",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "star"
-    },
-    {
-        "path": "data/JordanAtanasovCV.docx",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "download"
-    },
-    {
-        "path": "data/cool_sample_movie.mp4",
+        "path": "data/LogSamlple3.txt",
         "size": "102400",
         "createdDate": "2022-01-01",
         "lastModified": "2022-02-02",
         "icon": "brain"
-    },
-    {
-        "path": "data/cool_audio_sample.mp3",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "alert"
-    },
-    {
-        "path": "data/JordanAtanasovCV.pdf",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "star"
-    },
-    {
-        "path": "data/TextSamlple.txt",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "star"
-    },
-    {
-        "path": "data/TextSamlple2.txt",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "star"
-    },
-    {
-        "path": "data/JordanAtanasovCV.docx",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "download"
-    },
-    {
-        "path": "data/cool_sample_movie.mp4",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "brain"
-    },
-    {
-        "path": "data/cool_audio_sample.mp3",
-        "size": "102400",
-        "createdDate": "2022-01-01",
-        "lastModified": "2022-02-02",
-        "icon": "alert"
     }
 ]
