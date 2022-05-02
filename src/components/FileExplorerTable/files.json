@@ -7,6 +7,20 @@
         "icon": "star"
     },
     {
+        "path": "data/TextSamlple.txt",
+        "size": "102400",
+        "createdDate": "2022-01-01",
+        "lastModified": "2022-02-02",
+        "icon": "star"
+    },
+    {
+        "path": "data/TextSamlple2.txt",
+        "size": "102400",
+        "createdDate": "2022-01-01",
+        "lastModified": "2022-02-02",
+        "icon": "star"
+    },
+    {
         "path": "data/JordanAtanasovCV.docx",
         "size": "102400",
         "createdDate": "2022-01-01",
