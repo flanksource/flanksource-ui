@@ -285,6 +285,21 @@
     font-weight: 500;
     font-size: .875rem;
     line-height: 1.25rem;
+    width: 100%;
+  }
+
+  .paging-element {
+    padding-left: 15px;
+    --tw-text-opacity: 1;
+    color: rgba(67,56,202,var(--tw-text-opacity));
+    font-weight: 500;
+    font-size: .875rem;
+    line-height: 1.25rem;
+    cursor: pointer;
+  }
+
+  .paging-input {
+    border: 0;
   }
 
 }

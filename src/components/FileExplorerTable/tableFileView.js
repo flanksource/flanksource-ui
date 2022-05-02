@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { FolderIcon, FolderOpenIcon } from "@heroicons/react/solid";
 import { Icon } from "../Icon";
-import { useTable, useFilters } from "react-table";
+import { useTable, useFilters, usePagination } from "react-table";
 
 
 //Simple recursive TreeView Component
@@ -16,12 +16,27 @@ export const TableFileView = ({ columns, data, stateChanger }) => {
         headerGroups, // headerGroups, if your table has groupings
         rows, // rows for the table based on the data passed
         prepareRow, // Prepare the row (this function needs to be called for each row before getting the row props)
-        setFilter
+        setFilter,
+        page, // Instead of using 'rows', we'll use page,
+        // which has only the rows for the active page
+
+        // The rest of these things are super handy, too ;)
+        canPreviousPage,
+        canNextPage,
+        pageOptions,
+        pageCount,
+        gotoPage,
+        nextPage,
+        previousPage,
+        setPageSize,
+        state: { pageIndex, pageSize },
     } = useTable({
         columns,
-        data
+        data,
+        initialState: { pageIndex: 1 },
     },
-        useFilters);
+        useFilters,
+        usePagination);
 
     // Create a state
     const [filterInput, setFilterInput] = useState("");
@@ -58,7 +73,7 @@ export const TableFileView = ({ columns, data, stateChanger }) => {
                     ))}
                 </thead>
                 <tbody {...getTableBodyProps()}>
-                    {rows.map((row, i) => {
+                    {page.map((row, i) => {
                         prepareRow(row);
                         return (
                             <tr {...row.getRowProps()} onClick={() => stateChanger(row.original.path)}>
@@ -72,44 +87,45 @@ export const TableFileView = ({ columns, data, stateChanger }) => {
                 </tbody>
             </table>
             <div className="pagination">
-                <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
+                <button className="paging-element" onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
                     {'<<'}
                 </button>{' '}
-                <button onClick={() => previousPage()} disabled={!canPreviousPage}>
+                <button className="paging-element" onClick={() => previousPage()} disabled={!canPreviousPage}>
                     {'<'}
                 </button>{' '}
-                <button onClick={() => nextPage()} disabled={!canNextPage}>
+                <button className="paging-element" onClick={() => nextPage()} disabled={!canNextPage}>
                     {'>'}
                 </button>{' '}
-                <button onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>
+                <button className="paging-element" onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>
                     {'>>'}
                 </button>{' '}
-                <span>
+                <span className="paging-element">
                     Page{' '}
                     <strong>
                         {pageIndex + 1} of {pageOptions.length}
                     </strong>{' '}
                 </span>
-                <span>
+                <span className="paging-element">
                     | Go to page:{' '}
                     <input
+                        className="paging-input"
                         type="number"
                         defaultValue={pageIndex + 1}
                         onChange={e => {
                             const page = e.target.value ? Number(e.target.value) - 1 : 0
                             gotoPage(page)
                         }}
-                        style={{ width: '100px' }}
                     />
                 </span>{' '}
                 <select
+                    className="paging-element"
                     value={pageSize}
                     onChange={e => {
                         setPageSize(Number(e.target.value))
                     }}
                 >
                     {[10, 20, 30, 40, 50].map(pageSize => (
-                        <option key={pageSize} value={pageSize}>
+                        <option className="paging-input" key={pageSize} value={pageSize}>
                             Show {pageSize}
                         </option>
                     ))}
