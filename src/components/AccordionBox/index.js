@@ -1,7 +1,7 @@
 import { ChevronDownIcon } from "@heroicons/react/solid";
 import React, { useState } from "react";
 
-export function AccordionBox({ content, hiddenContent, ...rest }) {
+const AccordionBoxFC = ({ content, hiddenContent, ...rest }) => {
   const [show, setShow] = useState(false);
 
   return (
@@ -34,4 +34,6 @@ export function AccordionBox({ content, hiddenContent, ...rest }) {
       )}
     </div>
   );
-}
+};
+
+export const AccordionBox = React.memo(AccordionBoxFC);

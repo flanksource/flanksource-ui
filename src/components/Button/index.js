@@ -1,14 +1,14 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Oval } from "react-loading-icons";
 import { Icon } from "../Icon";
 
-export function Button({
+const ButtonFC = ({
   className = "btn-primary",
   text,
   icon,
   size = "sm",
   onClick
-}) {
+}) => {
   switch (size) {
     case "xs":
       className += " px-2.5 py-1.5 text-xs rounded";
@@ -49,4 +49,6 @@ export function Button({
       {text}
     </button>
   );
-}
+};
+
+export const Button = React.memo(ButtonFC);

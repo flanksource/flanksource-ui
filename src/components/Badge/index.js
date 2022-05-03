@@ -1,4 +1,6 @@
-export function Badge({
+import React from "react";
+
+const BadgeFC = ({
   text,
   value,
   size = "sm",
@@ -7,7 +9,7 @@ export function Badge({
   className,
   colorClass = "bg-indigo-100 text-indigo-800",
   roundedClass = "rounded"
-}) {
+}) => {
   let spanClassname = "text-xs px-1.5";
   let svgClassName = "-ml-0.5 mr-1.5 h-2 w-2";
   if (size === "sm") {
@@ -32,4 +34,6 @@ export function Badge({
       {value != null && `: ${value}`}
     </>
   );
-}
+};
+
+export const Badge = React.memo(BadgeFC);
