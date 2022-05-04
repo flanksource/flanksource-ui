@@ -67,7 +67,8 @@
     "lint:eslint": "eslint --ext .js,.jsx,.ts,.tsx .",
     "fix:eslint": "eslint --fix --ext .js,.jsx,.ts,.tsx .",
     "storybook": "start-storybook -p 6006 -s public",
-    "build-storybook": "build-storybook -s public"
+    "build-storybook": "build-storybook -s public",
+    "prepare": "husky install"
   },
   "browserslist": {
     "production": [
@@ -106,6 +107,7 @@
     "eslint-plugin-react": "^7.24.0",
     "eslint-plugin-react-hooks": "^4.2.0",
     "eslint-plugin-storybook": "^0.5.8",
+    "husky": "^7.0.4",
     "postcss": "^7.0.36",
     "prettier": "^2.3.2"
   }
