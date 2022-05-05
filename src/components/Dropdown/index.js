@@ -86,6 +86,10 @@ export function Dropdown({
                   value={valueControlled}
                   label={label}
                   items={items}
+                  prefix={prefix}
+                  suffix={suffix}
+                  labelPrefix={labelPrefix}
+                  labelSuffix={labelSuffix}
                   rest={rest}
                 />
               );

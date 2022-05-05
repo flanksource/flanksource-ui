@@ -3,7 +3,21 @@ import { useForm } from "react-hook-form";
 import { BsClock } from "react-icons/bs";
 import { Dropdown } from ".";
 
-const refreshIntervalSelections = {
+export const refreshIntervalSelections = {
+  1: {
+    id: "1second",
+    name: 1,
+    icon: <BsClock />,
+    description: "1 second",
+    value: 1
+  },
+  5: {
+    id: "5seconds",
+    name: 5,
+    icon: <BsClock />,
+    description: "5 seconds",
+    value: 5
+  },
   10: {
     id: "10seconds",
     name: 10,
@@ -45,6 +59,7 @@ export function RefreshIntervalDropdown({
   defaultValue,
   onChange,
   className,
+  defaultLabel = "Refresh Interval",
   ...rest
 }) {
   const { control, watch } = useForm({
@@ -63,9 +78,10 @@ export function RefreshIntervalDropdown({
     <Dropdown
       name="refreshInterval"
       className={className}
-      label="Refresh Interval"
+      label={defaultLabel}
       items={refreshIntervalSelections}
       control={control}
+      prefix={<div>lolol</div>}
       {...rest}
     />
   );

@@ -23,15 +23,19 @@ import {
 } from "./labels";
 import { TristateToggle } from "../TristateToggle";
 import mixins from "../../utils/mixins.module.css";
+import { RefreshIntervalDropdown } from "../Dropdown/RefreshIntervalDropdown";
 
 const getSearchParams = () => getParamsFromURL(window.location.search);
 
+let fetchInterval;
+
 export function Canary({
   url = "/canary/api",
-  refreshInterval = 15 * 1000,
+  defaultRefreshInterval = 15,
   topLayoutOffset = 0,
   hideSearch,
-  hideTimeRange
+  hideTimeRange,
+  hideRefreshInterval
 }) {
   // force-set layout to table
   useEffect(() => {
@@ -44,6 +48,9 @@ export function Canary({
   // eslint-disable-next-line no-unused-vars
   const [lastUpdated, setLastUpdated] = useState("");
   const [filteredLabels, setFilteredLabels] = useState();
+  const [refreshInterval, setRefreshInterval] = useState(
+    defaultRefreshInterval
+  );
 
   const labelUpdateCallback = useCallback((newLabels) => {
     setFilteredLabels(newLabels);
@@ -74,13 +81,6 @@ export function Canary({
       });
   }, 1000);
 
-  useMemo(() => {
-    handleFetch();
-    const interval = setInterval(handleFetch, refreshInterval);
-    return () => clearInterval(interval);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refreshInterval]);
-
   // listen to URL params change
   const [searchParams, setSearchParams] = useState(window.location.search);
   useEffect(() => {
@@ -90,6 +90,13 @@ export function Canary({
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useMemo(() => {
+    handleFetch();
+    clearInterval(fetchInterval);
+    fetchInterval = setInterval(handleFetch, refreshInterval * 1000);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refreshInterval]);
 
   const handleSearch = debounce((value) => {
     updateParams({ query: value });
@@ -182,6 +189,20 @@ export function Canary({
                 <>
                   <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
                     Time Range:
+                  </div>
+                </>
+              }
+            />
+          )}
+          {!hideRefreshInterval && (
+            <RefreshIntervalDropdown
+              defaultValue={10}
+              onChange={setRefreshInterval}
+              defaultLabel=""
+              prefix={
+                <>
+                  <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
+                    Refresh Interval:
                   </div>
                 </>
               }
