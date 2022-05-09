@@ -32,6 +32,25 @@ export const defaultTableColumns = [
   }
 ];
 
+export const historyTableColumns = [
+  {
+    Header: "Type",
+    accessor: "change_type",
+    cellClass: `px-5 py-2`
+  },
+  {
+    Header: "Summary",
+    accessor: "summary",
+    cellClass: `px-5 py-2`
+  },
+  {
+    Header: "Created",
+    accessor: "created_at",
+    Cell: DateCell,
+    cellClass: `px-5 py-2`
+  }
+];
+
 export function TagsCell({ row, column }) {
   const tags = row?.values[column.id];
   const tagElements = useMemo(

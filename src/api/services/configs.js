@@ -5,6 +5,9 @@ import { resolve } from "../resolve";
 
 export const getAllConfigs = async () => resolve(ConfigDB.get(`/config_item`));
 
+export const getAllChanges = async () =>
+  resolve(ConfigDB.get(`/config_change`));
+
 export const getConfig = async (id) =>
   resolve(ConfigDB.get(`/config_item?id=eq.${id}`));
 
