@@ -22,10 +22,21 @@ import {
   separateLabelsByBooleanType
 } from "./labels";
 import { TristateToggle } from "../TristateToggle";
+import { StatCard } from "../StatCard";
+import { isHealthy } from "./filter"; 
 import mixins from "../../utils/mixins.module.css";
-import { CheckStat } from "./CanaryPopup/CheckStat";
 
 const getSearchParams = () => getParamsFromURL(window.location.search);
+
+const getPassingCount = (checks) => {
+  let count = 0;
+  checks.forEach((check) => {
+    if (isHealthy(check)) {
+      count += 1;
+    }
+  });
+  return count;
+};
 
 export function Canary({
   url = "/canary/api",
@@ -40,19 +51,31 @@ export function Canary({
   }, []);
 
   const [checks, setChecks] = useState([]);
-  const [filteredCount, setFilteredCount] = useState(0);
+  const [filteredChecks, setFilteredChecks] = useState([]);
   // eslint-disable-next-line no-unused-vars
   const [isLoading, setIsLoading] = useState(true);
   // eslint-disable-next-line no-unused-vars
   const [lastUpdated, setLastUpdated] = useState("");
   const [filteredLabels, setFilteredLabels] = useState();
+  const [passing, setPassing] = useState({
+    checks: 0,
+    filtered: 0
+  });
 
   const labelUpdateCallback = useCallback((newLabels) => {
     setFilteredLabels(newLabels);
   }, []);
 
+  useEffect(() => {
+    setPassing({ ...passing, checks: getPassingCount(checks) });
+  }, [checks]);
+
+  useEffect(() => {
+    setPassing({ ...passing, filtered: getPassingCount(filteredChecks) });
+  }, [filteredChecks]);
+
   const updateFilteredChecks = useCallback((newFilteredChecks) => {
-    setFilteredCount(newFilteredChecks.length || 0);
+    setFilteredChecks(newFilteredChecks || []);
   }, []);
 
   const handleFetch = throttle(() => {
@@ -105,33 +128,41 @@ export function Canary({
     <div className="flex flex-row place-content-center">
       <SidebarSticky topHeight={topLayoutOffset}>
         <div className="mb-4">
-          <CheckStat
-            containerClass="shadow-md rounded-lg p-5 mb-2"
-            valueContainerClass="items-end"
+          <StatCard
             title="All Checks"
-            value={checks.length || 0}
-            append={
-              <div className="ml-2 text-sm text-gray-600">total checks</div>
+            className="mb-4"
+            customValue={
+              <>
+                {checks.length || 0}
+                <span className="text-xl font-light">
+                  {" "}
+                  (<span className="text-green-500">{passing.checks}</span>/
+                  <span className="text-red-500">
+                    {" "}
+                    {checks.length - passing.checks}
+                  </span>
+                  )
+                </span>
+              </>
             }
           />
-          {filteredCount !== checks.length && (
-            <CheckStat
-              containerClass="shadow-md rounded-lg p-5 mb-2"
-              valueContainerClass="items-end"
-              title="Check Filtering"
-              value={filteredCount}
-              valueClass={filteredCount > 0 && "text-green-600"}
-              append={
-                <div className="ml-2 text-sm text-gray-600">
-                  currently showing
-                </div>
-              }
-              bottomAppend={
-                checks.length - filteredCount > 0 && (
-                  <span className="mt-1 text-xs text-red-600">
-                    <strong>{checks.length - filteredCount}</strong> hidden
+
+          {filteredChecks.length !== checks.length && (
+            <StatCard
+              title="Filtered Checks"
+              className="mb-4"
+              customValue={
+                <>
+                  {filteredChecks.length}
+                  <span className="text-xl  font-light">
+                    {" "}
+                    (<span className="text-green-500">{passing.filtered}</span>/
+                    <span className="text-red-500">
+                      {filteredChecks.length - passing.filtered}
+                    </span>
+                    )
                   </span>
-                )
+                </>
               }
             />
           )}
