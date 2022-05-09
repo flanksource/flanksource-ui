@@ -23,7 +23,7 @@ import {
 } from "./labels";
 import { TristateToggle } from "../TristateToggle";
 import { StatCard } from "../StatCard";
-import { isHealthy } from "./filter"; 
+import { isHealthy } from "./filter";
 import mixins from "../../utils/mixins.module.css";
 
 const getSearchParams = () => getParamsFromURL(window.location.search);
@@ -68,10 +68,12 @@ export function Canary({
 
   useEffect(() => {
     setPassing({ ...passing, checks: getPassingCount(checks) });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [checks]);
 
   useEffect(() => {
     setPassing({ ...passing, filtered: getPassingCount(filteredChecks) });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filteredChecks]);
 
   const updateFilteredChecks = useCallback((newFilteredChecks) => {
