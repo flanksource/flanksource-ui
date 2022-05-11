@@ -1,17 +1,20 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
+import { Tab } from "@headlessui/react";
+import clsx from "clsx";
 import {
   decodeUrlSearchParams,
   updateParams
 } from "../../components/Canary/url";
-
 import { SearchLayout } from "../../components/Layout";
 import { toastError } from "../../components/Toast/toast";
 import { Modal } from "../../components/Modal";
 import { IncidentCreate } from "../../components/Incidents/IncidentCreate";
-import { getConfig } from "../../api/services/configs";
+import { getConfig, getConfigChange } from "../../api/services/configs";
 import { Loading } from "../../components/Loading";
+import { historyTableColumns } from "../../components/ConfigViewer/columns";
+import { ConfigHistoryTable } from "../../components/ConfigViewer/changeTable";
 
 export function ConfigDetailsPage() {
   const navigate = useNavigate();
@@ -21,6 +24,8 @@ export function ConfigDetailsPage() {
   const [checked, setChecked] = useState({});
   const [configDetails, setConfigDetails] = useState();
   const [jsonLines, setJsonLines] = useState([]);
+  const [historyData, setHistoryData] = useState([]);
+  const historyColumns = useMemo(() => historyTableColumns, []);
 
   useEffect(() => {
     getConfig(id)
@@ -84,58 +89,30 @@ export function ConfigDetailsPage() {
     }
   };
 
-  return (
-    <SearchLayout
-      title={
-        configDetails?.name
-          ? `Config Details for ${configDetails.name}`
-          : "Config Details"
-      }
-    >
-      <div className="flex flex-col items-start">
-        <div className="mb-4 flex flex-row iems-center">
-          <button
-            className="border rounded-md px-3 py-1 text-sm"
-            type="button"
-            onClick={() => navigate("/config")}
-          >
-            Back
-          </button>
-          {Object.keys(checked).length > 0 && (
-            <>
-              <div className="flex items-center mx-4">
-                {Object.keys(checked).length} lines selected
-              </div>
-              <button
-                className="border rounded-md px-3 py-1 mr-2 text-sm"
-                type="button"
-                onClick={() => {
-                  setChecked({});
-                  updateParams({ selected: null });
-                }}
-              >
-                Clear
-              </button>
-              <button
-                className="border rounded-md px-3 py-1 mr-2 text-sm"
-                type="button"
-                onClick={() => {
-                  handleShare();
-                }}
-              >
-                Share
-              </button>
-              <button
-                className="border rounded-md px-3 py-1 text-sm"
-                type="button"
-                onClick={() => setShowIncidentModal(true)}
-              >
-                Create Incident
-              </button>
-            </>
-          )}
-        </div>
-        <div className="flex flex-col w-full border rounded-md">
+  const onTabChange = (index) => {
+    setIsLoading(true);
+    if (index === 1) {
+      getConfigChange(id)
+        .then((res) => {
+          if (res.data.length === 0) {
+            setHistoryData([]);
+          } else {
+            setHistoryData(res?.data);
+          }
+        })
+        .catch((err) => toastError(err))
+        .finally(() => {
+          setIsLoading(false);
+        });
+    }
+  };
+
+  const tabs = [
+    {
+      text: "Config",
+      panel: (
+        <div className="flex flex-col w-full border rounded-md rounded-tl-none">
+          {/* config code render */}
           {!isLoading ? (
             Object.entries(jsonLines).map(([lineIndex, line]) => (
               <div
@@ -180,6 +157,106 @@ export function ConfigDetailsPage() {
             </div>
           )}
         </div>
+      )
+    },
+    {
+      text: "Changes",
+      panel: (
+        <ConfigHistoryTable
+          columns={historyColumns}
+          data={historyData}
+          tableStyle={{ borderSpacing: "0" }}
+          isLoading={isLoading}
+        />
+      )
+    }
+  ];
+
+  return (
+    <SearchLayout
+      title={
+        configDetails?.name
+          ? `Config Details for ${configDetails.name}`
+          : "Config Details"
+      }
+    >
+      <div className="flex flex-col items-start">
+        <div className="mb-4 flex flex-row iems-center">
+          <button
+            className="border rounded-md px-3 py-1 text-sm"
+            type="button"
+            onClick={() => navigate("/config")}
+          >
+            Back
+          </button>
+
+          {Object.keys(checked).length > 0 && (
+            <>
+              <div className="flex items-center mx-4">
+                {Object.keys(checked).length} lines selected
+              </div>
+              <button
+                className="border rounded-md px-3 py-1 mr-2 text-sm"
+                type="button"
+                onClick={() => {
+                  setChecked({});
+                  updateParams({ selected: null });
+                }}
+              >
+                Clear
+              </button>
+              <button
+                className="border rounded-md px-3 py-1 mr-2 text-sm"
+                type="button"
+                onClick={() => {
+                  handleShare();
+                }}
+              >
+                Share
+              </button>
+              <button
+                className="border rounded-md px-3 py-1 text-sm"
+                type="button"
+                onClick={() => setShowIncidentModal(true)}
+              >
+                Create Incident
+              </button>
+            </>
+          )}
+        </div>
+        {/* Tabs */}
+        <Tab.Group onChange={onTabChange}>
+          <Tab.List className=" flex space-x-1 border-gray-300">
+            {tabs.map((tab) => (
+              <Tab
+                key={tab.text}
+                className={({ selected }) =>
+                  clsx(
+                    "rounded-t-md py-2.5 px-4 text-sm leading-5",
+                    "ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400",
+                    selected ? "border border-b-0 border-gray-300" : ""
+                  )
+                }
+              >
+                {tab.text}
+              </Tab>
+            ))}
+          </Tab.List>
+          <Tab.Panels className="">
+            {tabs.map((tab) => (
+              <Tab.Panel
+                key={tab.text}
+                className={clsx(
+                  "rounded-xl bg-white",
+                  "ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400"
+                )}
+              >
+                {tab.panel}
+              </Tab.Panel>
+            ))}
+          </Tab.Panels>
+        </Tab.Group>
+        {/* Modal */}
         <Modal
           open={showIncidentModal}
           onClose={() => setShowIncidentModal(false)}
