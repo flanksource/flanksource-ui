@@ -4,13 +4,6 @@ import { BsClock } from "react-icons/bs";
 import { Dropdown } from ".";
 
 export const refreshIntervalSelections = {
-  1: {
-    id: "1second",
-    name: 1,
-    icon: <BsClock />,
-    description: "1 second",
-    value: 1
-  },
   5: {
     id: "5seconds",
     name: 5,
@@ -81,7 +74,6 @@ export function RefreshIntervalDropdown({
       label={defaultLabel}
       items={refreshIntervalSelections}
       control={control}
-      prefix={<div>lolol</div>}
       {...rest}
     />
   );
