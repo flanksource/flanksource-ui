@@ -27,6 +27,7 @@ import { RsDemoPage } from "./pages/Examples/rs-demo";
 import { TopologyPage as ExamplesTopologyPage } from "./pages/Examples/Topology/topology-page";
 import { TopologySelectorModalPage } from "./pages/Examples/TopologySelectorModalPage/TopologySelectorModalPage";
 import { HealthPage } from "./pages/health";
+import { Canary } from "./components/Canary";
 
 const queryClient = new QueryClient({
   defaultOptions: {
