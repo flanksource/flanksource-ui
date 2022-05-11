@@ -4,24 +4,18 @@ import { debounce } from "lodash";
 import { BsTable } from "react-icons/bs";
 import { RiLayoutGridLine } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
-import { Tab } from "@headlessui/react";
-import clsx from "clsx";
-import { getAllConfigs, getAllChanges } from "../../api/services/configs";
+import { getAllConfigs } from "../../api/services/configs";
 import { Dropdown } from "../../components/Dropdown";
 
 import { SearchLayout } from "../../components/Layout";
 import { TextInputClearable } from "../../components/TextInputClearable";
-import {
-  defaultTableColumns,
-  historyTableColumns
-} from "../../components/ConfigViewer/columns";
+import { defaultTableColumns } from "../../components/ConfigViewer/columns";
 import {
   decodeUrlSearchParams,
   updateParams
 } from "../../components/Canary/url";
 import { ConfigListTable } from "../../components/ConfigViewer/table";
 import { filterConfigsByText } from "../../components/ConfigViewer/utils";
-import { ConfigHistoryTable } from "../../components/ConfigViewer/changeTable";
 
 export function ConfigListPage() {
   const [searchParams, setSearchParams] = useState(
@@ -36,11 +30,9 @@ export function ConfigListPage() {
 
   const navigate = useNavigate();
   const [data, setData] = useState([]);
-  const [historyData, setHistoryData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const columns = React.useMemo(() => defaultTableColumns, []);
-  const historyColumns = React.useMemo(() => historyTableColumns, []);
 
   useState(() => {
     getAllConfigs()
@@ -59,32 +51,6 @@ export function ConfigListPage() {
     }
   };
 
-  const tabs = [
-    {
-      text: "Config",
-      panel: (
-        <ConfigListTable
-          columns={columns}
-          data={filteredData}
-          handleRowClick={handleRowClick}
-          tableStyle={{ borderSpacing: "0" }}
-          isLoading={isLoading}
-        />
-      )
-    },
-    {
-      text: "Changes",
-      panel: (
-        <ConfigHistoryTable
-          columns={historyColumns}
-          data={historyData}
-          tableStyle={{ borderSpacing: "0" }}
-          isLoading={isLoading}
-        />
-      )
-    }
-  ];
-
   useEffect(() => {
     let filteredData = data;
     if (data?.length > 0) {
@@ -93,27 +59,6 @@ export function ConfigListPage() {
     }
     setFilteredData(filteredData);
   }, [data, query]);
-
-  const onTabChange = (index) => {
-    setIsLoading(true);
-    if (index === 1) {
-      getAllChanges()
-        .then((res) => {
-          setHistoryData(res.data);
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
-    } else if (index === 0) {
-      getAllConfigs()
-        .then((res) => {
-          setData(res.data);
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
-    }
-  };
 
   return (
     <SearchLayout
@@ -137,37 +82,13 @@ export function ConfigListPage() {
         <TagsDropdown />
       </div>
 
-      <Tab.Group onChange={onTabChange}>
-        <Tab.List className=" flex space-x-1 border-gray-300">
-          {tabs.map((tab) => (
-            <Tab
-              key={tab.text}
-              className={({ selected }) =>
-                clsx(
-                  "rounded-t-md py-2.5 px-4 text-sm leading-5",
-                  "ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400",
-                  selected ? "border border-b-0 border-gray-300" : ""
-                )
-              }
-            >
-              {tab.text}
-            </Tab>
-          ))}
-        </Tab.List>
-        <Tab.Panels className="">
-          {tabs.map((tab) => (
-            <Tab.Panel
-              key={tab.text}
-              className={clsx(
-                "rounded-xl bg-white",
-                "ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400"
-              )}
-            >
-              {tab.panel}
-            </Tab.Panel>
-          ))}
-        </Tab.Panels>
-      </Tab.Group>
+      <ConfigListTable
+        columns={columns}
+        data={filteredData}
+        handleRowClick={handleRowClick}
+        tableStyle={{ borderSpacing: "0" }}
+        isLoading={isLoading}
+      />
     </SearchLayout>
   );
 }
