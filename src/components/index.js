@@ -10,6 +10,7 @@ import { Notification } from "./Notification";
 import { Modal } from "./Modal";
 import { Status } from "./Status";
 import { Table } from "./Table";
+import { DataTable } from "./DataTable";
 import { Toggle } from "./Toggle";
 
 export {
@@ -25,5 +26,6 @@ export {
   Modal,
   Status,
   Table,
+  DataTable,
   Toggle
 };

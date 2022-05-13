@@ -16,6 +16,7 @@ import {
 } from "../../components/Canary/url";
 import { ConfigListTable } from "../../components/ConfigViewer/table";
 import { filterConfigsByText } from "../../components/ConfigViewer/utils";
+import { DataTable } from "../../components";
 
 export function ConfigListPage() {
   const [searchParams, setSearchParams] = useState(
@@ -81,8 +82,7 @@ export function ConfigListPage() {
         <TypeDropdown className="mr-2" />
         <TagsDropdown />
       </div>
-
-      <ConfigListTable
+      <DataTable
         columns={columns}
         data={filteredData}
         handleRowClick={handleRowClick}

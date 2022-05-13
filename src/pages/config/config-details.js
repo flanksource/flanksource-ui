@@ -15,6 +15,7 @@ import { getConfig, getConfigChange } from "../../api/services/configs";
 import { Loading } from "../../components/Loading";
 import { historyTableColumns } from "../../components/ConfigViewer/columns";
 import { ConfigHistoryTable } from "../../components/ConfigViewer/changeTable";
+import { DataTable } from "../../components/DataTable";
 
 export function ConfigDetailsPage() {
   const navigate = useNavigate();
@@ -90,8 +91,8 @@ export function ConfigDetailsPage() {
   };
 
   const onTabChange = (index) => {
-    setIsLoading(true);
     if (index === 1) {
+      setIsLoading(true);
       getConfigChange(id)
         .then((res) => {
           if (res.data.length === 0) {
@@ -162,12 +163,14 @@ export function ConfigDetailsPage() {
     {
       text: "Changes",
       panel: (
-        <ConfigHistoryTable
-          columns={historyColumns}
-          data={historyData}
-          tableStyle={{ borderSpacing: "0" }}
-          isLoading={isLoading}
-        />
+        <>
+          <DataTable
+            columns={historyColumns}
+            data={historyData}
+            tableStyle={{ borderSpacing: "0" }}
+            isLoading={isLoading}
+          />
+        </>
       )
     }
   ];
