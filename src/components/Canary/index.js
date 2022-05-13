@@ -22,9 +22,21 @@ import {
   separateLabelsByBooleanType
 } from "./labels";
 import { TristateToggle } from "../TristateToggle";
+import { StatCard } from "../StatCard";
+import { isHealthy } from "./filter";
 import mixins from "../../utils/mixins.module.css";
 
 const getSearchParams = () => getParamsFromURL(window.location.search);
+
+const getPassingCount = (checks) => {
+  let count = 0;
+  checks.forEach((check) => {
+    if (isHealthy(check)) {
+      count += 1;
+    }
+  });
+  return count;
+};
 
 export function Canary({
   url = "/canary/api",
@@ -39,14 +51,33 @@ export function Canary({
   }, []);
 
   const [checks, setChecks] = useState([]);
+  const [filteredChecks, setFilteredChecks] = useState([]);
   // eslint-disable-next-line no-unused-vars
   const [isLoading, setIsLoading] = useState(true);
   // eslint-disable-next-line no-unused-vars
   const [lastUpdated, setLastUpdated] = useState("");
   const [filteredLabels, setFilteredLabels] = useState();
+  const [passing, setPassing] = useState({
+    checks: 0,
+    filtered: 0
+  });
 
   const labelUpdateCallback = useCallback((newLabels) => {
     setFilteredLabels(newLabels);
+  }, []);
+
+  useEffect(() => {
+    setPassing({ ...passing, checks: getPassingCount(checks) });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [checks]);
+
+  useEffect(() => {
+    setPassing({ ...passing, filtered: getPassingCount(filteredChecks) });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filteredChecks]);
+
+  const updateFilteredChecks = useCallback((newFilteredChecks) => {
+    setFilteredChecks(newFilteredChecks || []);
   }, []);
 
   const handleFetch = throttle(() => {
@@ -98,6 +129,47 @@ export function Canary({
   return (
     <div className="flex flex-row place-content-center">
       <SidebarSticky topHeight={topLayoutOffset}>
+        <div className="mb-4">
+          <StatCard
+            title="All Checks"
+            className="mb-4"
+            customValue={
+              <>
+                {checks.length || 0}
+                <span className="text-xl font-light">
+                  {" "}
+                  (<span className="text-green-500">{passing.checks}</span>/
+                  <span className="text-red-500">
+                    {" "}
+                    {checks.length - passing.checks}
+                  </span>
+                  )
+                </span>
+              </>
+            }
+          />
+
+          {filteredChecks.length !== checks.length && (
+            <StatCard
+              title="Filtered Checks"
+              className="mb-4"
+              customValue={
+                <>
+                  {filteredChecks.length}
+                  <span className="text-xl  font-light">
+                    {" "}
+                    (<span className="text-green-500">{passing.filtered}</span>/
+                    <span className="text-red-500">
+                      {filteredChecks.length - passing.filtered}
+                    </span>
+                    )
+                  </span>
+                </>
+              }
+            />
+          )}
+        </div>
+
         <SectionTitle className="mb-4">Filter by Health</SectionTitle>
         <div className="mb-6 flex items-center">
           <div className="h-9 flex items-center">
@@ -192,6 +264,7 @@ export function Canary({
           checks={checks}
           searchParams={searchParams}
           onLabelFiltersCallback={labelUpdateCallback}
+          onFilterCallback={updateFilteredChecks}
         />
       </div>
     </div>
@@ -448,7 +521,7 @@ const SidebarSticky = ({
   className,
   style,
   children,
-  topHeight = 64,
+  topHeight = 0,
   ...props
 }) => (
   <div

@@ -40,7 +40,7 @@ export function HealthPage({ url }) {
       }
       contentClass="p-0"
     >
-      <Canary url={url} topLayoutOffset={64} hideSearch hideTimeRange />
+      <Canary url={url} hideSearch hideTimeRange />
     </SearchLayout>
   );
 }
