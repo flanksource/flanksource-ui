@@ -14,7 +14,6 @@ import {
   decodeUrlSearchParams,
   updateParams
 } from "../../components/Canary/url";
-import { ConfigListTable } from "../../components/ConfigViewer/table";
 import { filterConfigsByText } from "../../components/ConfigViewer/utils";
 import { DataTable } from "../../components";
 
