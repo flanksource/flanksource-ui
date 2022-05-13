@@ -14,7 +14,6 @@ import { IncidentCreate } from "../../components/Incidents/IncidentCreate";
 import { getConfig, getConfigChange } from "../../api/services/configs";
 import { Loading } from "../../components/Loading";
 import { historyTableColumns } from "../../components/ConfigViewer/columns";
-import { ConfigHistoryTable } from "../../components/ConfigViewer/changeTable";
 import { DataTable } from "../../components/DataTable";
 
 export function ConfigDetailsPage() {
