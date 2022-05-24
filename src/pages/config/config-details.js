@@ -1,12 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import toast from "react-hot-toast";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { Tab } from "@headlessui/react";
 import clsx from "clsx";
-import {
-  decodeUrlSearchParams,
-  updateParams
-} from "../../components/Canary/url";
 import { SearchLayout } from "../../components/Layout";
 import { toastError } from "../../components/Toast/toast";
 import { Modal } from "../../components/Modal";
@@ -19,11 +15,11 @@ import { JSONViewer } from "../../components/JSONViewer";
 export function ConfigDetailsPage() {
   const navigate = useNavigate();
   const { id } = useParams();
+  const [params, setParams] = useSearchParams();
   const [isLoading, setIsLoading] = useState(true);
   const [showIncidentModal, setShowIncidentModal] = useState(false);
   const [checked, setChecked] = useState({});
   const [configDetails, setConfigDetails] = useState();
-  const [jsonLines, setJsonLines] = useState([]);
   const [historyData, setHistoryData] = useState([]);
 
   useEffect(() => {
@@ -38,39 +34,26 @@ export function ConfigDetailsPage() {
   }, [id]);
 
   useEffect(() => {
-    let json = configDetails?.config;
-    if (json) {
-      if (typeof json !== "string") {
-        json = JSON.stringify(json, null, 2);
-      }
-      const jsonLines = json.split("\n");
-      setJsonLines(
-        jsonLines.reduce((acc, currLine, idx) => {
-          acc[idx] = currLine;
-          return acc;
-        }, {})
-      );
-      const { selected } = decodeUrlSearchParams(window.location.search);
-      if (selected) {
-        const newChecked = selected.reduce((acc, lineNum) => {
-          acc[lineNum] = true;
-          return acc;
-        }, {});
-        setChecked(newChecked);
-      }
+    if (!configDetails?.config) {
+      return;
     }
-  }, [configDetails]);
 
-  const handleClick = (index) => {
-    const selected = !checked[index];
-    const newChecked = { ...checked };
-    newChecked[index] = selected;
-    if (!selected) {
-      delete newChecked[index];
-    }
-    setChecked(newChecked);
-    updateParams({
-      selected: Object.keys(newChecked).map((key) => parseInt(key, 10))
+    const selected = params.getAll("selected");
+    setChecked(Object.fromEntries(selected.map((x) => [x, true])));
+  }, [params, configDetails]);
+
+  const handleClick = (idx) => {
+    setChecked((checked) => {
+      const obj = { ...checked };
+      if (obj[idx]) {
+        delete obj[idx];
+      } else {
+        obj[idx] = true;
+      }
+
+      const selected = Object.keys(obj);
+      setParams({ selected });
+      return obj;
     });
   };
 
@@ -106,8 +89,14 @@ export function ConfigDetailsPage() {
     }
   };
 
-  const code =
-    configDetails?.config && JSON.stringify(configDetails.config, null, 2);
+  const code = useMemo(
+    () =>
+      configDetails?.config && JSON.stringify(configDetails.config, null, 2),
+    [configDetails]
+  );
+
+  // TODO(ciju): make this lazy. Only needed for IncidentCreate.
+  const configLines = useMemo(() => code && code.split("\n"), [code]);
 
   const tabs = [
     {
@@ -135,6 +124,8 @@ export function ConfigDetailsPage() {
     }
   ];
 
+  const selectedCount = Object.keys(checked).length;
+
   return (
     <SearchLayout
       title={
@@ -153,17 +144,17 @@ export function ConfigDetailsPage() {
             Back
           </button>
 
-          {Object.keys(checked).length > 0 && (
+          {selectedCount > 0 && (
             <>
               <div className="flex items-center mx-4">
-                {Object.keys(checked).length} lines selected
+                {selectedCount} lines selected
               </div>
               <button
                 className="border rounded-md px-3 py-1 mr-2 text-sm"
                 type="button"
                 onClick={() => {
                   setChecked({});
-                  updateParams({ selected: null });
+                  setParams({ selected: null });
                 }}
               >
                 Clear
@@ -233,12 +224,11 @@ export function ConfigDetailsPage() {
             evidence={{
               configId: id,
               configName: configDetails?.name,
-              config: jsonLines,
+              config: configLines,
               type: "config",
-              lines: Object.keys(checked).reduce((acc, lineNum) => {
-                acc[lineNum] = jsonLines[lineNum];
-                return acc;
-              }, {})
+              lines: Object.fromEntries(
+                Object.keys(checked).map((n) => [n, configLines[n]])
+              )
             }}
           />
         </Modal>
