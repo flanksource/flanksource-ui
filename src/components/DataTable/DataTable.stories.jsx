@@ -1,7 +1,4 @@
-import {
-  defaultTableColumns,
-  historyTableColumns
-} from "../ConfigViewer/columns";
+import { defaultTableColumns } from "../ConfigViewer/columns";
 import { DataTable } from "./index";
 
 export default {
@@ -9,20 +6,6 @@ export default {
   component: DataTable
 };
 
-const changesData = [
-  {
-    id: "0180a6af-39bf-6d57-b02b-40fdd83c740b",
-    config_id: "018099cf-5322-3407-8b60-5732d41d4058",
-    change_type: "diff",
-    summary: null,
-    patches: {
-      Inventory: {
-        CaptureTime: "2022-05-02T01:49:54Z"
-      }
-    },
-    created_at: "2022-05-09T02:39:03.110379"
-  }
-];
 const configData = [
   {
     id: "018099cf-530e-5b8a-9e10-3e6bec11ab98",
@@ -1395,14 +1378,7 @@ const configData = [
 
 const Template = (arg) => <DataTable {...arg} />;
 
-export const ChangesTable = Template.bind({});
 export const ConfigTable = Template.bind({});
-ChangesTable.args = {
-  data: changesData,
-  columns: historyTableColumns,
-  isLoading: false,
-  tableStyle: { borderSpacing: "0" }
-};
 ConfigTable.args = {
   data: configData,
   columns: defaultTableColumns,
