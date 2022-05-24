@@ -1,38 +1,23 @@
 import React, { useEffect, useState } from "react";
-import history from "history/browser";
-import { debounce } from "lodash";
 import { BsTable } from "react-icons/bs";
 import { RiLayoutGridLine } from "react-icons/ri";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { getAllConfigs } from "../../api/services/configs";
 import { Dropdown } from "../../components/Dropdown";
 
-import { SearchLayout } from "../../components/Layout";
-import { TextInputClearable } from "../../components/TextInputClearable";
 import { defaultTableColumns } from "../../components/ConfigViewer/columns";
-import {
-  decodeUrlSearchParams,
-  updateParams
-} from "../../components/Canary/url";
 import { filterConfigsByText } from "../../components/ConfigViewer/utils";
 import { DataTable } from "../../components";
 
 export function ConfigListPage() {
-  const [searchParams, setSearchParams] = useState(
-    decodeUrlSearchParams(window.location.search)
-  );
-  useEffect(() => {
-    history.listen(({ location }) => {
-      setSearchParams(decodeUrlSearchParams(location.search));
-    });
-  }, []);
-  const { query } = searchParams;
-
+  const [params] = useSearchParams();
   const navigate = useNavigate();
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const columns = React.useMemo(() => defaultTableColumns, []);
+
+  const query = params.get("query");
 
   useState(() => {
     getAllConfigs()
@@ -61,22 +46,7 @@ export function ConfigListPage() {
   }, [data, query]);
 
   return (
-    <SearchLayout
-      extra={
-        <>
-          <TextInputClearable
-            onChange={debounce((e) => {
-              const query = e?.target?.value || "";
-              updateParams({ query });
-            }, 800)}
-            className="w-80"
-            placeholder="Search for configs"
-            defaultValue={query}
-          />
-        </>
-      }
-      title="Config List"
-    >
+    <>
       <div className="flex mb-4">
         <TypeDropdown className="mr-2" />
         <TagsDropdown />
@@ -88,7 +58,7 @@ export function ConfigListPage() {
         tableStyle={{ borderSpacing: "0" }}
         isLoading={isLoading}
       />
-    </SearchLayout>
+    </>
   );
 }
 
@@ -120,11 +90,9 @@ const TypeDropdown = ({ ...rest }) => {
       onChange={(value) => setSelected(value)}
       value={selected}
       prefix={
-        <>
-          <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
-            Type:
-          </div>
-        </>
+        <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
+          Type:
+        </div>
       }
       {...rest}
     />
