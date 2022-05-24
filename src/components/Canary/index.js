@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { debounce, isEmpty, throttle } from "lodash";
 import history from "history/browser";
 import {
@@ -61,6 +61,7 @@ export function Canary({
     checks: 0,
     filtered: 0
   });
+  const [componentUnMounted, setComponentUnMounted] = useState(false);
 
   const labelUpdateCallback = useCallback((newLabels) => {
     setFilteredLabels(newLabels);
@@ -92,6 +93,9 @@ export function Canary({
     fetch(`${url}?${params}`)
       .then((result) => result.json())
       .then((e) => {
+        if (componentUnMounted) {
+          return;
+        }
         if (!isEmpty(e.error)) {
           // eslint-disable-next-line no-console
           console.error(e.error);
@@ -101,24 +105,33 @@ export function Canary({
         }
       })
       .finally(() => {
+        if (componentUnMounted) {
+          return;
+        }
         setIsLoading(false);
       });
   }, 1000);
 
-  useMemo(() => {
+  useEffect(() => {
     handleFetch();
-    const interval = setInterval(handleFetch, refreshInterval);
-    return () => clearInterval(interval);
+    const intervalRef = setInterval(handleFetch, refreshInterval);
+    return () => {
+      clearInterval(intervalRef);
+      setComponentUnMounted(true);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshInterval]);
 
   // listen to URL params change
   const [searchParams, setSearchParams] = useState(window.location.search);
   useEffect(() => {
-    history.listen(({ location }) => {
+    const unlisten = history.listen(({ location }) => {
       setSearchParams(location.search);
       handleFetch();
     });
+    return () => {
+      unlisten();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
