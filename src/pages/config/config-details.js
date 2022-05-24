@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import { Tab } from "@headlessui/react";
@@ -13,8 +13,8 @@ import { Modal } from "../../components/Modal";
 import { IncidentCreate } from "../../components/Incidents/IncidentCreate";
 import { getConfig, getConfigChange } from "../../api/services/configs";
 import { Loading } from "../../components/Loading";
-import { historyTableColumns } from "../../components/ConfigViewer/columns";
-import { DataTable } from "../../components/DataTable";
+import { ConfigChangeHistory } from "../../components/ConfigChangeHistory";
+import { JSONViewer } from "../../components/JSONViewer";
 
 export function ConfigDetailsPage() {
   const navigate = useNavigate();
@@ -25,7 +25,6 @@ export function ConfigDetailsPage() {
   const [configDetails, setConfigDetails] = useState();
   const [jsonLines, setJsonLines] = useState([]);
   const [historyData, setHistoryData] = useState([]);
-  const historyColumns = useMemo(() => historyTableColumns, []);
 
   useEffect(() => {
     getConfig(id)
@@ -107,50 +106,21 @@ export function ConfigDetailsPage() {
     }
   };
 
+  const code =
+    configDetails?.config && JSON.stringify(configDetails.config, null, 2);
+
   const tabs = [
     {
       text: "Config",
       panel: (
         <div className="flex flex-col w-full border rounded-md rounded-tl-none">
-          {/* config code render */}
           {!isLoading ? (
-            Object.entries(jsonLines).map(([lineIndex, line]) => (
-              <div
-                key={lineIndex}
-                style={{
-                  background: checked[lineIndex] ? "#cfe3ff" : "",
-                  borderColor: checked[lineIndex] ? "#cfe3ff" : ""
-                }}
-                className="flex flex-row"
-              >
-                <button
-                  type="button"
-                  onClick={() => handleClick(lineIndex)}
-                  className="flex text-xs mr-2 select-none border-r w-12 justify-between pb-px"
-                >
-                  <span
-                    className="w-4 flex items-center justify-center"
-                    style={{
-                      color: checked[lineIndex] ? "#dd0707" : "#086008"
-                    }}
-                  >
-                    {checked[lineIndex] ? "-" : "+"}
-                  </span>
-                  <div
-                    className="text-xs flex items-center justify-end px-1 text-gray-600"
-                    style={{
-                      borderColor: checked[lineIndex] ? "#cfe3ff" : ""
-                    }}
-                  >
-                    {lineIndex}
-                  </div>
-                </button>
-
-                <code className="whitespace-pre-wrap text-xs text-gray-800">
-                  {line}
-                </code>
-              </div>
-            ))
+            <JSONViewer
+              code={code}
+              showLineNo
+              onClick={handleClick}
+              selections={checked}
+            />
           ) : (
             <div className="h-32 flex items-center justify-center">
               <Loading />
@@ -161,16 +131,7 @@ export function ConfigDetailsPage() {
     },
     {
       text: "Changes",
-      panel: (
-        <>
-          <DataTable
-            columns={historyColumns}
-            data={historyData}
-            tableStyle={{ borderSpacing: "0" }}
-            isLoading={isLoading}
-          />
-        </>
-      )
+      panel: <ConfigChangeHistory data={historyData} isLoading={isLoading} />
     }
   ];
 
