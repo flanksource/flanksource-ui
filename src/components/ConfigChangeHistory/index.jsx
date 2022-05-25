@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 import { DateCell } from "../ConfigViewer/columns";
 import { DataTable } from "../index";
@@ -33,10 +34,30 @@ const columns = [
   }
 ];
 
-export function ConfigChangeHistory({ data, isLoading }) {
+const configLinkCol = [
+  {
+    Header: "Config",
+    accessor: "config_id",
+    Cell: function ConfigLink({ row, column }) {
+      const id = row?.values[column.id];
+
+      return (
+        <Link
+          className="underline text-blue-600 hover:text-blue-800 visited:text-purple-600"
+          to={`/config/${id}`}
+        >
+          Show Config
+        </Link>
+      );
+    },
+    cellClass: "px-5 py-2"
+  }
+];
+
+export function ConfigChangeHistory({ data, isLoading, linkConfig }) {
   return (
     <DataTable
-      columns={columns}
+      columns={linkConfig ? columns.concat(configLinkCol) : columns}
       data={data}
       tableStyle={{ borderSpacing: "0" }}
       isLoading={isLoading}

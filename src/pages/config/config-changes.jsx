@@ -21,5 +21,5 @@ export function ConfigChangesPage() {
       });
   }, []);
 
-  return <ConfigChangeHistory data={data} isLoading={isLoading} />;
+  return <ConfigChangeHistory data={data} isLoading={isLoading} linkConfig />;
 }

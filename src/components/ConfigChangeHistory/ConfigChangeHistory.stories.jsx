@@ -1,8 +1,17 @@
+import { MemoryRouter } from "react-router-dom";
+
 import { ConfigChangeHistory } from "./index";
 
 export default {
   title: "ConfigChangeHistory",
-  component: ConfigChangeHistory
+  component: ConfigChangeHistory,
+  decorators: [
+    (Story) => (
+      <MemoryRouter>
+        <Story />
+      </MemoryRouter>
+    )
+  ]
 };
 
 const Template = (args) => <ConfigChangeHistory {...args} />;
@@ -26,7 +35,16 @@ const data = Array(10)
     change_type: "diff",
     summary: `Summary - ${i}`,
     created_at: new Date(),
+    config_id: `id-${i}`,
     patches: codeSample(i)
   }));
 
-Default.args = { data, isLoading: false };
+Default.args = { data: Array.from(data), isLoading: false };
+
+export const WithConfigLink = Template.bind({});
+
+WithConfigLink.args = {
+  data: Array.from(data),
+  isLoading: false,
+  linkConfig: true
+};
