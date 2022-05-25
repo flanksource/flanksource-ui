@@ -37,7 +37,7 @@ export function ConfigLayout({
   ) : null;
 
   const back = backPath ? (
-    <div className="mb-4 flex flex-row iems-center">
+    <div className="inline flex flex-row">
       <button
         className="border rounded-md px-3 py-1 text-sm"
         type="button"
@@ -91,8 +91,15 @@ export function ConfigLayout({
   );
 
   return (
-    <SearchLayout {...props} title={title}>
-      {back}
+    <SearchLayout
+      {...props}
+      title={
+        <div className="flex space-x-2">
+          {back}
+          {title}
+        </div>
+      }
+    >
       {nav}
       <Outlet context={{ title, setTitle }} />
     </SearchLayout>
