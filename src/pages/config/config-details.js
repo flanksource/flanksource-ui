@@ -1,6 +1,11 @@
 import { useEffect, useState, useMemo } from "react";
 import toast from "react-hot-toast";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import {
+  useNavigate,
+  useParams,
+  useSearchParams,
+  useOutletContext
+} from "react-router-dom";
 import { toastError } from "../../components/Toast/toast";
 import { Modal } from "../../components/Modal";
 import { IncidentCreate } from "../../components/Incidents/IncidentCreate";
@@ -16,12 +21,18 @@ export function ConfigDetailsPage() {
   const [showIncidentModal, setShowIncidentModal] = useState(false);
   const [checked, setChecked] = useState({});
   const [configDetails, setConfigDetails] = useState();
+  const { setTitle } = useOutletContext();
 
   useEffect(() => {
     getConfig(id)
       .then((res) => {
         const data = res?.data[0];
         setConfigDetails(data);
+        setTitle(
+          <span className="text-lg">
+            Config details for <b>{data?.name}</b>
+          </span>
+        );
       })
       .catch((err) => toastError(err))
       .finally(() => {

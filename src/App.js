@@ -12,6 +12,7 @@ import { TraceView } from "./components/Traces";
 import { AuthContext } from "./context";
 import {
   ConfigDetailsPage,
+  ConfigDetailsChangesPage,
   ConfigListPage,
   ConfigChangesPage,
   IncidentCreatePage,
@@ -138,13 +139,31 @@ export function App() {
               {/* https://github.com/remix-run/react-router/issues/7239#issuecomment-898747642 */}
               <Route
                 path=""
-                element={<ConfigLayout title="Config" showSearchInput />}
+                element={
+                  <ConfigLayout
+                    title="Config"
+                    showSearchInput
+                    basePath="/config"
+                  />
+                }
               >
                 <Route index element={<ConfigListPage />} />
                 <Route path="changes" element={<ConfigChangesPage />} />
               </Route>
 
-              <Route path=":id" element={<ConfigDetailsPage />} />
+              <Route
+                path=":id"
+                element={
+                  <ConfigLayout
+                    backPath="/config"
+                    title="Config Details"
+                    basePath="/config/:id"
+                  />
+                }
+              >
+                <Route index element={<ConfigDetailsPage />} />
+                <Route path="changes" element={<ConfigDetailsChangesPage />} />
+              </Route>
             </Route>
 
             <Route path="timeline" element={sidebar}>

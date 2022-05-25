@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useOutletContext } from "react-router-dom";
 
 import { getConfigChange, getConfig } from "../../api/services/configs";
 import { toastError } from "../../components/Toast/toast";
@@ -9,6 +9,7 @@ export function ConfigDetailsChangesPage() {
   const { id } = useParams();
   const [isLoading, setIsLoading] = useState(true);
   const [historyData, setHistoryData] = useState([]);
+  const { setTitle } = useOutletContext();
 
   useEffect(() => {
     setIsLoading(true);
@@ -26,6 +27,16 @@ export function ConfigDetailsChangesPage() {
         setIsLoading(false);
       });
 
+    getConfig(id)
+      .then((res) => {
+        const data = res?.data[0];
+        setTitle(
+          <span className="text-xl">
+            Config details for <b>{data?.name}</b>
+          </span>
+        );
+      })
+      .catch((err) => toastError(err));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
