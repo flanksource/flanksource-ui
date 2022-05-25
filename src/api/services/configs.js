@@ -6,13 +6,15 @@ import { resolve } from "../resolve";
 export const getAllConfigs = async () => resolve(ConfigDB.get(`/config_item`));
 
 export const getAllChanges = async () =>
-  resolve(ConfigDB.get(`/config_change`));
+  resolve(ConfigDB.get(`/config_change?order=created_at.desc`));
 
 export const getConfig = async (id) =>
   resolve(ConfigDB.get(`/config_item?id=eq.${id}`));
 
 export const getConfigChange = async (id) =>
-  resolve(ConfigDB.get(`/config_change?config_id=eq.${id}`));
+  resolve(
+    ConfigDB.get(`/config_change?config_id=eq.${id}&order=created_at.desc`)
+  );
 
 export const createConfigItem = async (type, params) =>
   resolve(
