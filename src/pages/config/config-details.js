@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import toast from "react-hot-toast";
 import {
   useNavigate,
@@ -13,6 +13,7 @@ import { getConfig } from "../../api/services/configs";
 import { Loading } from "../../components/Loading";
 import { JSONViewer } from "../../components/JSONViewer";
 import { BreadcrumbNav } from "../../components/BreadcrumbNav";
+import { Button } from "../../components/Button";
 
 export function ConfigDetailsPage() {
   const navigate = useNavigate();
@@ -22,7 +23,7 @@ export function ConfigDetailsPage() {
   const [showIncidentModal, setShowIncidentModal] = useState(false);
   const [checked, setChecked] = useState({});
   const [configDetails, setConfigDetails] = useState();
-  const { setTitle } = useOutletContext();
+  const { setTitle, setTabRight } = useOutletContext();
 
   useEffect(() => {
     getConfig(id)
@@ -54,7 +55,12 @@ export function ConfigDetailsPage() {
     setChecked(Object.fromEntries(selected.map((x) => [x, true])));
   }, [params, configDetails]);
 
-  const handleClick = (idx) => {
+  useEffect(() => {
+    const selected = Object.keys(checked);
+    setParams({ selected });
+  }, [checked]);
+
+  const handleClick = useCallback((idx) => {
     setChecked((checked) => {
       const obj = { ...checked };
       if (obj[idx]) {
@@ -62,12 +68,9 @@ export function ConfigDetailsPage() {
       } else {
         obj[idx] = true;
       }
-
-      const selected = Object.keys(obj);
-      setParams({ selected });
       return obj;
     });
-  };
+  }, []);
 
   const handleShare = () => {
     const { href } = window.location;
@@ -94,44 +97,44 @@ export function ConfigDetailsPage() {
 
   const selectedCount = Object.keys(checked).length;
 
+  const selectionControls =
+    selectedCount > 0 ? (
+      <div className="flex flex-row space-x-2">
+        <div className="flex items-center mx-4">
+          {selectedCount} lines selected
+        </div>
+        <Button
+          className="btn-secondary"
+          text="Clear"
+          onClick={() => {
+            setChecked({});
+            return Promise.resolve();
+          }}
+        />
+        <Button
+          text="Share"
+          onClick={() => {
+            handleShare();
+            return Promise.resolve();
+          }}
+        />
+        <Button
+          text="Create Incident"
+          onClick={() => {
+            setShowIncidentModal(true);
+            return Promise.resolve();
+          }}
+        />
+      </div>
+    ) : null;
+
+  useEffect(() => {
+    setTabRight(selectionControls);
+    return () => setTabRight(null);
+  }, [checked]);
+
   return (
     <div className="flex flex-col items-start">
-      <div className="mb-4 flex flex-row">
-        {selectedCount > 0 && (
-          <>
-            <div className="flex items-center mx-4">
-              {selectedCount} lines selected
-            </div>
-            <button
-              className="button"
-              type="button"
-              onClick={() => {
-                setChecked({});
-                setParams({ selected: null });
-              }}
-            >
-              Clear
-            </button>
-            <button
-              className="border rounded-md px-3 py-1 mr-2 text-sm"
-              type="button"
-              onClick={() => {
-                handleShare();
-              }}
-            >
-              Share
-            </button>
-            <button
-              className="border rounded-md px-3 py-1 text-sm"
-              type="button"
-              onClick={() => setShowIncidentModal(true)}
-            >
-              Create Incident
-            </button>
-          </>
-        )}
-      </div>
-
       <div className="flex flex-col w-full border rounded-md rounded-tl-none">
         {!isLoading ? (
           <JSONViewer

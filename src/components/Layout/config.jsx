@@ -13,6 +13,7 @@ export function ConfigLayout({
 }) {
   const [title, setTitle] = useState(props.title || "");
   const [titleExtras, setTitleExtras] = useState();
+  const [tabRight, setTabRight] = useState();
   const mt = useMatch({ path: basePath, end: false });
 
   const nav = (
@@ -41,6 +42,7 @@ export function ConfigLayout({
           </NavLink>
         ))}
       </span>
+      <span>{tabRight}</span>
     </nav>
   );
 
@@ -55,7 +57,16 @@ export function ConfigLayout({
       extra={titleExtras}
     >
       {nav}
-      <Outlet context={{ title, setTitle, titleExtras, setTitleExtras }} />
+      <Outlet
+        context={{
+          title,
+          setTitle,
+          titleExtras,
+          setTitleExtras,
+          tabRight,
+          setTabRight
+        }}
+      />
     </SearchLayout>
   );
 }
