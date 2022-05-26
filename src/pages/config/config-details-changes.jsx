@@ -4,6 +4,7 @@ import { useParams, useOutletContext } from "react-router-dom";
 import { getConfigChange, getConfig } from "../../api/services/configs";
 import { toastError } from "../../components/Toast/toast";
 import { ConfigChangeHistory } from "../../components/ConfigChangeHistory";
+import { BreadcrumbNav } from "../../components/BreadcrumbNav";
 
 export function ConfigDetailsChangesPage() {
   const { id } = useParams();
@@ -31,9 +32,12 @@ export function ConfigDetailsChangesPage() {
       .then((res) => {
         const data = res?.data[0];
         setTitle(
-          <span className="text-xl">
-            Config details for <b>{data?.name}</b>
-          </span>
+          <BreadcrumbNav
+            list={[
+              { to: "/config", title: "Config" },
+              <b key="title">{data?.name}</b>
+            ]}
+          />
         );
       })
       .catch((err) => toastError(err));

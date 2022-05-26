@@ -12,6 +12,7 @@ import { IncidentCreate } from "../../components/Incidents/IncidentCreate";
 import { getConfig } from "../../api/services/configs";
 import { Loading } from "../../components/Loading";
 import { JSONViewer } from "../../components/JSONViewer";
+import { BreadcrumbNav } from "../../components/BreadcrumbNav";
 
 export function ConfigDetailsPage() {
   const navigate = useNavigate();
@@ -29,9 +30,12 @@ export function ConfigDetailsPage() {
         const data = res?.data[0];
         setConfigDetails(data);
         setTitle(
-          <span className="text-lg">
-            Config details for <b>{data?.name}</b>
-          </span>
+          <BreadcrumbNav
+            list={[
+              { to: "/config", title: "Config" },
+              <b key="title">{data?.name}</b>
+            ]}
+          />
         );
       })
       .catch((err) => toastError(err))
@@ -92,14 +96,14 @@ export function ConfigDetailsPage() {
 
   return (
     <div className="flex flex-col items-start">
-      <div className="mb-4 flex flex-row iems-center">
+      <div className="mb-4 flex flex-row">
         {selectedCount > 0 && (
           <>
             <div className="flex items-center mx-4">
               {selectedCount} lines selected
             </div>
             <button
-              className="border rounded-md px-3 py-1 mr-2 text-sm"
+              className="button"
               type="button"
               onClick={() => {
                 setChecked({});

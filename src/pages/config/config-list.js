@@ -1,13 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { BsTable } from "react-icons/bs";
 import { RiLayoutGridLine } from "react-icons/ri";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import {
+  useNavigate,
+  useSearchParams,
+  useOutletContext
+} from "react-router-dom";
 import { getAllConfigs } from "../../api/services/configs";
 import { Dropdown } from "../../components/Dropdown";
 
 import { defaultTableColumns } from "../../components/ConfigViewer/columns";
 import { filterConfigsByText } from "../../components/ConfigViewer/utils";
 import { DataTable } from "../../components";
+import { BreadcrumbNav } from "../../components/BreadcrumbNav";
 
 export function ConfigListPage() {
   const [params] = useSearchParams();
@@ -15,6 +20,7 @@ export function ConfigListPage() {
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { setTitle } = useOutletContext();
   const columns = React.useMemo(() => defaultTableColumns, []);
 
   const query = params.get("query");
@@ -38,6 +44,7 @@ export function ConfigListPage() {
 
   useEffect(() => {
     let filteredData = data;
+    setTitle(<BreadcrumbNav list={["Config"]} />);
     if (data?.length > 0) {
       // do filtering here
       filteredData = filterConfigsByText(filteredData, query);

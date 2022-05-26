@@ -144,6 +144,10 @@ export function App() {
                     title="Config"
                     showSearchInput
                     basePath="/config"
+                    navLinks={[
+                      { title: "Items", index: true },
+                      { title: "Changes", path: "changes" }
+                    ]}
                   />
                 }
               >
@@ -156,8 +160,12 @@ export function App() {
                 element={
                   <ConfigLayout
                     backPath="/config"
-                    title="Config Details"
+                    title="Config"
                     basePath="/config/:id"
+                    navLinks={[
+                      { title: "Config", index: true },
+                      { title: "Changes", path: "changes" }
+                    ]}
                   />
                 }
               >

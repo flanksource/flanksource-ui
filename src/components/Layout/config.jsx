@@ -1,11 +1,5 @@
 import { useState } from "react";
-import {
-  Outlet,
-  useSearchParams,
-  NavLink,
-  useMatch,
-  useNavigate
-} from "react-router-dom";
+import { Outlet, useSearchParams, NavLink, useMatch } from "react-router-dom";
 import { debounce } from "lodash";
 import clsx from "clsx";
 
@@ -17,11 +11,11 @@ export function ConfigLayout({
   showSearchInput,
   basePath,
   backPath,
+  navLinks,
   ...props
 }) {
   const [params, setParams] = useSearchParams();
-  const [title, setTitle] = useState("");
-  const navigate = useNavigate();
+  const [title, setTitle] = useState(props.title || "");
   const mt = useMatch({ path: basePath, end: false });
 
   const extra = showSearchInput ? (
@@ -36,18 +30,6 @@ export function ConfigLayout({
     />
   ) : null;
 
-  const back = backPath ? (
-    <div className="inline flex flex-row">
-      <button
-        className="border rounded-md px-3 py-1 text-sm"
-        type="button"
-        onClick={() => navigate(backPath)}
-      >
-        Back
-      </button>
-    </div>
-  ) : null;
-
   const nav = (
     <nav
       className="flex justify-between"
@@ -57,34 +39,22 @@ export function ConfigLayout({
       }}
     >
       <span className="flex self-center">
-        <NavLink
-          className={({ isActive }) =>
-            clsx(
-              "rounded-t-md py-2.5 px-4 text-sm leading-5",
-              "ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400",
-              isActive ? "border border-b-0 border-gray-300" : ""
-            )
-          }
-          key="config"
-          to={mt.pathname}
-          end
-        >
-          Config List
-        </NavLink>
-        <NavLink
-          className={({ isActive }) =>
-            clsx(
-              "rounded-t-md py-2.5 px-4 text-sm leading-5",
-              "ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400",
-              isActive ? "border border-b-0 border-gray-300" : ""
-            )
-          }
-          key="changes"
-          to={`${mt.pathname}/changes`}
-          end
-        >
-          Config Changes
-        </NavLink>
+        {navLinks.map((nav) => (
+          <NavLink
+            className={({ isActive }) =>
+              clsx(
+                "rounded-t-md py-2.5 px-4 text-sm leading-5",
+                "ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400",
+                isActive ? "border border-b-0 border-gray-300" : ""
+              )
+            }
+            key={nav.title}
+            to={nav.index ? mt.pathname : `${mt.pathname}/${nav.path}`}
+            end
+          >
+            {nav.title}
+          </NavLink>
+        ))}
       </span>
       <span>{extra}</span>
     </nav>
@@ -95,8 +65,7 @@ export function ConfigLayout({
       {...props}
       title={
         <div className="flex space-x-2">
-          {back}
-          {title}
+          <span className="text-lg">{title}</span>
         </div>
       }
     >
