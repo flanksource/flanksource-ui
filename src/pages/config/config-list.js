@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { BsTable } from "react-icons/bs";
 import { RiLayoutGridLine } from "react-icons/ri";
+import { debounce } from "lodash";
 import {
   useNavigate,
   useSearchParams,
@@ -13,14 +14,15 @@ import { defaultTableColumns } from "../../components/ConfigViewer/columns";
 import { filterConfigsByText } from "../../components/ConfigViewer/utils";
 import { DataTable } from "../../components";
 import { BreadcrumbNav } from "../../components/BreadcrumbNav";
+import { TextInputClearable } from "../../components/TextInputClearable";
 
 export function ConfigListPage() {
-  const [params] = useSearchParams();
+  const [params, setParams] = useSearchParams();
   const navigate = useNavigate();
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { setTitle } = useOutletContext();
+  const { setTitle, setTitleExtras } = useOutletContext();
   const columns = React.useMemo(() => defaultTableColumns, []);
 
   const query = params.get("query");
@@ -42,6 +44,27 @@ export function ConfigListPage() {
     }
   };
 
+  const extra = (
+    <div className="flex space-x-2 mr-4">
+      <TypeDropdown />
+      <TagsDropdown />
+      <TextInputClearable
+        onChange={debounce((e) => {
+          const query = e.target.value || "";
+          setParams({ query });
+        }, 200)}
+        className="w-80"
+        placeholder="Search for configs"
+        defaultValue={params.get("query")}
+      />
+    </div>
+  );
+
+  useEffect(() => {
+    setTitleExtras(extra);
+    return () => setTitleExtras(null);
+  }, []);
+
   useEffect(() => {
     let filteredData = data;
     setTitle(<BreadcrumbNav list={["Config"]} />);
@@ -54,10 +77,6 @@ export function ConfigListPage() {
 
   return (
     <>
-      <div className="flex mb-4">
-        <TypeDropdown className="mr-2" />
-        <TagsDropdown />
-      </div>
       <DataTable
         columns={columns}
         data={filteredData}

@@ -1,11 +1,8 @@
 import { useState } from "react";
-import { Outlet, useSearchParams, NavLink, useMatch } from "react-router-dom";
-import { debounce } from "lodash";
+import { Outlet, NavLink, useMatch } from "react-router-dom";
 import clsx from "clsx";
 
 import { SearchLayout } from "./search";
-
-import { TextInputClearable } from "../TextInputClearable";
 
 export function ConfigLayout({
   showSearchInput,
@@ -14,21 +11,9 @@ export function ConfigLayout({
   navLinks,
   ...props
 }) {
-  const [params, setParams] = useSearchParams();
   const [title, setTitle] = useState(props.title || "");
+  const [titleExtras, setTitleExtras] = useState();
   const mt = useMatch({ path: basePath, end: false });
-
-  const extra = showSearchInput ? (
-    <TextInputClearable
-      onChange={debounce((e) => {
-        const query = e.target.value || "";
-        setParams({ query });
-      }, 200)}
-      className="w-80"
-      placeholder="Search for configs"
-      defaultValue={params.get("query")}
-    />
-  ) : null;
 
   const nav = (
     <nav
@@ -56,7 +41,6 @@ export function ConfigLayout({
           </NavLink>
         ))}
       </span>
-      <span>{extra}</span>
     </nav>
   );
 
@@ -68,9 +52,10 @@ export function ConfigLayout({
           <span className="text-lg">{title}</span>
         </div>
       }
+      extra={titleExtras}
     >
       {nav}
-      <Outlet context={{ title, setTitle }} />
+      <Outlet context={{ title, setTitle, titleExtras, setTitleExtras }} />
     </SearchLayout>
   );
 }
