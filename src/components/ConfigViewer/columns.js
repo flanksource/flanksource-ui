@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import { useMemo } from "react";
 
 export const defaultTableColumns = [
   {
@@ -33,17 +34,22 @@ export const defaultTableColumns = [
 
 export function TagsCell({ row, column }) {
   const tags = row?.values[column.id];
+  const tagElements = useMemo(
+    () =>
+      tags?.map((tag) => (
+        <div
+          className="bg-gray-200 px-1 py-0.5 mr-1 rounded-md text-gray-600 font-semibold text-xs"
+          key={tag}
+        >
+          {tag}
+        </div>
+      )),
+    [tags]
+  );
   return (
     <div className="flex">
-      {tags?.length > 0 ? (
-        tags.map((tag) => (
-          <div
-            className="bg-gray-200 px-1 py-0.5 mr-1 rounded-md text-gray-600 font-semibold text-xs"
-            key={tag}
-          >
-            {tag}
-          </div>
-        ))
+      {tagElements?.length > 0 ? (
+        tagElements
       ) : (
         <span className="text-gray-400">none</span>
       )}

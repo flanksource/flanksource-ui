@@ -11,12 +11,12 @@ import {
 import { CanarySorter } from "../Canary/data";
 import { decodeUrlSearchParams } from "../Canary/url";
 
-export function CanaryInterfaceMinimal({
+const CanaryInterfaceMinimalFC = ({
   checks = [],
   searchParams,
   onFilterCallback,
   onLabelFiltersCallback
-}) {
+}) => {
   const [filteredChecks, setFilteredChecks] = useState(checks);
   const [checksForTabGeneration, setChecksForTabGeneration] = useState(checks);
   const [selectedTab, setSelectedTab] = useState(null);
@@ -70,4 +70,6 @@ export function CanaryInterfaceMinimal({
       />
     </>
   );
-}
+};
+
+export const CanaryInterfaceMinimal = React.memo(CanaryInterfaceMinimalFC);

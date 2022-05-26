@@ -9,12 +9,12 @@ import mixins from "../../utils/mixins.module.css";
 import { getParamsFromURL } from "./utils";
 import { getCanaries } from "../../api/services/topology";
 
-export function MinimalCanary({
+const MinimalCanaryFC = ({
   checks,
   labels,
   selectedTab,
   tableHeadStyle = {}
-}) {
+}) => {
   const [searchParams, setSearchParams] = useState(
     getParamsFromURL(window.location.search)
   );
@@ -75,4 +75,6 @@ export function MinimalCanary({
       </Modal>
     </>
   );
-}
+};
+
+export const MinimalCanary = React.memo(MinimalCanaryFC);

@@ -4,14 +4,7 @@ import { useImage } from "react-image";
 import { BsFillPersonFill } from "react-icons/all";
 import clsx from "clsx";
 
-export const Avatar = ({
-  user,
-  size,
-  unload,
-  alt,
-  containerProps,
-  imageProps
-}) => {
+const AvatarFC = ({ user, size, unload, alt, containerProps, imageProps }) => {
   const srcList = user?.avatar;
   const fallbackInitials = user?.name || "?";
 
@@ -71,7 +64,7 @@ export const Avatar = ({
   );
 };
 
-Avatar.propTypes = {
+AvatarFC.propTypes = {
   size: PropTypes.string,
   user: PropTypes.shape({}),
   unload: PropTypes.node,
@@ -80,7 +73,7 @@ Avatar.propTypes = {
   imageProps: PropTypes.shape({})
 };
 
-Avatar.defaultProps = {
+AvatarFC.defaultProps = {
   size: "md",
   unload: undefined,
   user: null,
@@ -88,3 +81,5 @@ Avatar.defaultProps = {
   containerProps: {},
   imageProps: {}
 };
+
+export const Avatar = React.memo(AvatarFC);
