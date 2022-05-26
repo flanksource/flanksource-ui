@@ -12,18 +12,13 @@ const columns = [
     cellClass: `px-5 py-2`
   },
   {
-    Header: "Summary",
-    accessor: "summary",
-    cellClass: `px-5 py-2`
-  },
-  {
     Header: "Created",
     accessor: "created_at",
     Cell: DateCell,
     cellClass: `px-5 py-2`
   },
   {
-    Header: "Diff",
+    Header: "Changes",
     accessor: "patches",
     Cell: function JSONViewCell({ row, column }) {
       return (
