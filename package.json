@@ -56,8 +56,8 @@
     "eject": "react-scripts eject",
     "lint:eslint": "eslint --ext .js,.jsx,.ts,.tsx .",
     "fix:eslint": "eslint --fix --ext .js,.jsx,.ts,.tsx .",
-    "storybook": "start-storybook -p 6006 -s public",
-    "build-storybook": "build-storybook -s public",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook",
     "prepare": "husky install"
   },
   "browserslist": {
@@ -81,6 +81,8 @@
     "@storybook/addon-interactions": "^6.4.21",
     "@storybook/addon-links": "^6.4.21",
     "@storybook/addon-postcss": "^2.0.0",
+    "@storybook/builder-webpack5": "^6.5.5",
+    "@storybook/manager-webpack5": "^6.5.5",
     "@storybook/node-logger": "^6.4.21",
     "@storybook/preset-create-react-app": "^4.1.1",
     "@storybook/react": "^6.4.21",
@@ -101,7 +103,8 @@
     "postcss": "^8.4.14",
     "prettier": "^2.3.2",
     "react-refresh": "^0.11.0",
-    "source-map-explorer": "^2.5.2"
+    "source-map-explorer": "^2.5.2",
+    "webpack": "^5.72.1"
   },
   "resolutions": {
     "@svgr/webpack": "6.2.1",
