@@ -1,5 +1,5 @@
 /* This example requires Tailwind CSS v2.0+ */
-import Icon from "../../Icon";
+import { Icon } from "../../Icon";
 
 /**
  * bgColor,
