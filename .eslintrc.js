@@ -19,6 +19,7 @@ module.exports = {
     "plugin:jest/recommended",
     "plugin:react-hooks/recommended",
     "plugin:storybook/recommended",
+    "plugin:import/recommended",
     "prettier"
   ],
   plugins: ["prettier"],
