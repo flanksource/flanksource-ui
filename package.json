@@ -55,6 +55,7 @@
     "build": "cross-env DISABLE_ESLINT_PLUGIN=true NODE_ENV=production craco build",
     "compile": "cross-env NODE_ENV=production babel src --out-dir dist --copy-files --ignore __tests__,spec.js,test.js,stories.js,__snapshots__",
     "test": "craco test --transformIgnorePatterns \"node_modules/(?!(history))/\"",
+    "analyze": "source-map-explorer 'build/static/js/*.js'",
     "eject": "react-scripts eject",
     "lint:eslint": "eslint --ext .js,.jsx,.ts,.tsx .",
     "fix:eslint": "eslint --fix --ext .js,.jsx,.ts,.tsx .",
@@ -101,6 +102,7 @@
     "eslint-plugin-storybook": "^0.5.8",
     "husky": "^7.0.4",
     "postcss": "^7.0.36",
-    "prettier": "^2.3.2"
+    "prettier": "^2.3.2",
+    "source-map-explorer": "^2.5.2"
   }
 }
