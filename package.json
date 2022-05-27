@@ -101,7 +101,7 @@
     "eslint-plugin-react-hooks": "^4.2.0",
     "eslint-plugin-storybook": "^0.5.8",
     "husky": "^7.0.4",
-    "postcss": "^7.0.36",
+    "postcss": "^8.4.14",
     "prettier": "^2.3.2",
     "source-map-explorer": "^2.5.2"
   }
