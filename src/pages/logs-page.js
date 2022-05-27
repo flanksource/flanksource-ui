@@ -19,6 +19,8 @@ import { LogsViewer } from "../components/Logs";
 import { TextInput } from "../components/TextInput";
 import { timeRanges } from "../components/Dropdown/TimeRange";
 import { RefreshButton } from "../components/RefreshButton";
+import { LoadingStates } from "../constants";
+import { Icon } from "../components";
 
 export const logTypes = [
   {
@@ -44,18 +46,20 @@ export const logTypes = [
 ];
 
 export function LogsPage() {
-  const [logsIsLoading, setLogsIsLoading] = useState(true);
+  const [logsLoadingState, setLogsLoadingState] = useState(LoadingStates.idle);
   const [searchParams, setSearchParams] = useSearchParams();
   const [query, setQuery] = useState(searchParams.get("query"));
   const [topologyId] = useState(searchParams.get("topologyId"));
-  const [externalId, setExternalId] = useState(searchParams.get("externalId"));
+  const [externalId] = useState(searchParams.get("externalId"));
   const [topology, setTopology] = useState(null);
+  const [type, setType] = useState('');
   const [logs, setLogs] = useState([]);
+  const [topologies, setTopologies] = useState([]);
 
-  const { control, getValues } = useForm({
+  const { control, getValues, watch, setValue } = useForm({
     defaultValues: {
-      type: searchParams.get("type") || logTypes[0].value,
-      start: searchParams.get("start") || timeRanges[0].value
+      start: searchParams.get("start") || timeRanges[0].value,
+      topologyId
     }
   });
 
@@ -69,12 +73,37 @@ export function LogsPage() {
           result.components.length === 1
         ) {
           setTopology(result.components[0]);
+          setType(result.components[0].type);
         } else {
           setTopology(result);
+          setType(result.type);
         }
       });
     }
   }, [topology, topologyId]);
+
+  useEffect(() => {
+    if (topologyId) {
+      return;
+    }
+    async function fetchTopologies() {
+      try {
+        const result = await getTopology({});
+        const topologyList = result.data.map(item => {
+          return {
+            icon: <Icon name={item.icon} size="2xl" />,
+            description: item.name,
+            label: item.name,
+            value: item.id
+          };
+        });
+        setTopologies(topologyList);
+      } catch (ex) {
+        setTopologies([]);
+      }
+    }
+    fetchTopologies();
+  }, [topologyId]);
 
   const saveQueryParams = () => {
     const paramsList = { query, topologyId, externalId, ...getValues() };
@@ -88,27 +117,40 @@ export function LogsPage() {
   };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const loadLogs = useCallback(() => {
+  const loadLogs = useCallback((type = '') => {
+    const values = getValues();
+    if (!values.topologyId) {
+      return;
+    }
+
     saveQueryParams();
-    setLogsIsLoading(true);
+    setLogsLoadingState(LoadingStates.loading);
 
     const queryBody = {
       query,
       id: externalId,
-      ...getValues()
+      ...values,
+      type
     };
-
     getLogs(queryBody).then((res) => {
-      if (res.data != null) {
-        setLogs(res.data.results);
-      }
-      setLogsIsLoading(false);
+      setLogs(res?.data?.results || []);
+      setLogsLoadingState(LoadingStates.loaded);
     });
   }, []);
 
   useEffect(() => {
-    loadLogs();
-  }, [loadLogs, topologyId]);
+    const subscription = watch(() => {
+      loadLogs();
+    });
+    return () => subscription.unsubscribe();
+  }, [watch]);
+
+  useEffect(() => {
+    if (!topologyId) {
+      return;
+    }
+    loadLogs(type);
+  }, [type, topologyId]);
 
   if (!isEmpty(topologyId) && topology == null) {
     return <Loading text={`Loading topology ${topologyId}`} />;
@@ -130,38 +172,6 @@ export function LogsPage() {
       }
       extra={
         <>
-          <Dropdown
-            control={control}
-            name="type"
-            className="w-36 mr-2 flex-shrink-0"
-            items={logTypes}
-          />
-          <div className="mr-2 w-full relative rounded-md shadow-sm">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
-              <button
-                type="button"
-                onClick={() => loadLogs()}
-                className="hover"
-              >
-                <BsListOl
-                  className="h-5 w-5 text-gray-400 hover:text-gray-600"
-                  aria-hidden="true"
-                />
-              </button>
-            </div>
-            <TextInput
-              placeholder="External ID"
-              className="pl-10 pb-2.5 w-full flex-shrink-0"
-              style={{ height: "38px" }}
-              id="externalId"
-              onChange={(e) => {
-                e.preventDefault();
-                setExternalId(e.target.value);
-              }}
-              onEnter={() => loadLogs()}
-              value={externalId}
-            />
-          </div>
           <RefreshButton onClick={() => loadLogs()} />
           <div className="mr-2 w-full relative rounded-md shadow-sm">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
@@ -198,7 +208,21 @@ export function LogsPage() {
         </>
       }
     >
-      <LogsViewer logs={logs} isLoading={logsIsLoading} />
+      {logsLoadingState === LoadingStates.loaded && (
+        <LogsViewer logs={logs} isLoading={logsLoadingState} />
+      )}
+      {
+        logsLoadingState === LoadingStates.idle && (
+        <div className="px-4 py-5 sm:px-6 min-h-screen	">
+          <Dropdown
+            control={control}
+            name="topologyId"
+            className="w-80 mr-2 flex-shrink-0"
+            items={topologies}
+            placeholder="Select Topology"
+          />
+        </div>
+      )}
     </SearchLayout>
   );
 }
