@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { BsPlusLg } from "react-icons/all";
+import { BsPlusLg } from "react-icons/bs";
 import clsx from "clsx";
 
 export const HypothesisBlockHeader = ({

@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import PropTypes from "prop-types";
 import { useImage } from "react-image";
-import { BsFillPersonFill } from "react-icons/all";
+import { BsFillPersonFill } from "react-icons/bs";
 import clsx from "clsx";
 
 const AvatarFC = ({ user, size, unload, alt, containerProps, imageProps }) => {

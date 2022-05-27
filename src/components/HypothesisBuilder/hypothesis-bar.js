@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import PropTypes from "prop-types";
 import clsx from "clsx";
-import { BsFillBarChartFill, BsFillChatSquareTextFill } from "react-icons/all";
+import { BsFillBarChartFill, BsFillChatSquareTextFill } from "react-icons/bs";
 import { ThumbDownIcon, ThumbUpIcon } from "@heroicons/react/solid";
 import { AiOutlineSearch } from "react-icons/ai";
 import { HypothesisStatuses } from "../../constants/hypothesis-statuses";

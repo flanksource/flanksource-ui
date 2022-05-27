@@ -1,5 +1,5 @@
 import React from "react";
-import { BsPlusLg } from "react-icons/all";
+import { BsPlusLg } from "react-icons/bs";
 import clsx from "clsx";
 import { HypothesisBar } from "./hypothesis-bar";
 import { HypothesisBlockHeader } from "./hypothesis-header";
