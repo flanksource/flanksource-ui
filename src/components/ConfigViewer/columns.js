@@ -1,5 +1,5 @@
-import dayjs from "dayjs";
 import { useMemo } from "react";
+import * as timeago from "timeago.js";
 
 export const defaultTableColumns = [
   {
@@ -61,7 +61,7 @@ export function DateCell({ row, column }) {
   const dateString = row?.values[column.id];
   return (
     <div className="text-xs">
-      {dateString ? dayjs(dateString).format("YYYY-DD-MM h:mm A") : "None"}
+      {dateString ? timeago.format(dateString) : "None"}
     </div>
   );
 }

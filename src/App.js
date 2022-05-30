@@ -6,13 +6,15 @@ import { VscJson } from "react-icons/vsc";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { getUser } from "./api/auth";
-import { SidebarLayout } from "./components/Layout";
+import { SidebarLayout, ConfigLayout } from "./components/Layout";
 import { Loading } from "./components/Loading";
 import { TraceView } from "./components/Traces";
 import { AuthContext } from "./context";
 import {
   ConfigDetailsPage,
+  ConfigDetailsChangesPage,
   ConfigListPage,
+  ConfigChangesPage,
   IncidentCreatePage,
   IncidentDetailsPage,
   IncidentListPage,
@@ -134,8 +136,42 @@ export function App() {
             </Route>
 
             <Route path="config" element={sidebar}>
-              <Route index element={<ConfigListPage />} />
-              <Route path=":id" element={<ConfigDetailsPage />} />
+              {/* https://github.com/remix-run/react-router/issues/7239#issuecomment-898747642 */}
+              <Route
+                path=""
+                element={
+                  <ConfigLayout
+                    title="Config"
+                    showSearchInput
+                    basePath="/config"
+                    navLinks={[
+                      { title: "Items", index: true },
+                      { title: "Changes", path: "changes" }
+                    ]}
+                  />
+                }
+              >
+                <Route index element={<ConfigListPage />} />
+                <Route path="changes" element={<ConfigChangesPage />} />
+              </Route>
+
+              <Route
+                path=":id"
+                element={
+                  <ConfigLayout
+                    backPath="/config"
+                    title="Config"
+                    basePath="/config/:id"
+                    navLinks={[
+                      { title: "Config", index: true },
+                      { title: "Changes", path: "changes" }
+                    ]}
+                  />
+                }
+              >
+                <Route index element={<ConfigDetailsPage />} />
+                <Route path="changes" element={<ConfigDetailsChangesPage />} />
+              </Route>
             </Route>
 
             <Route path="timeline" element={sidebar}>

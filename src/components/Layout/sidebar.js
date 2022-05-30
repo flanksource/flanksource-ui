@@ -171,7 +171,7 @@ export function SidebarLayout({ navigation }) {
               <div className="flex-grow mt-5 flex flex-col">
                 <nav className="flex-1 px-2 pb-4 space-y-1">
                   {navigation.map((item) => (
-                    <p key={item.name} data-tip={item.name}>
+                    <div key={item.name} data-tip={item.name}>
                       <NavLink
                         key={item.name}
                         to={item.href}
@@ -199,7 +199,7 @@ export function SidebarLayout({ navigation }) {
                           {item.name}
                         </p>
                       </NavLink>
-                    </p>
+                    </div>
                   ))}
                 </nav>
               </div>

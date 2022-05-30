@@ -3,17 +3,18 @@ import { useSortBy, useTable } from "react-table";
 
 const tableStyles = {
   outerDivClass: "border border-b-0 border-gray-300",
-  tableClass: "min-w-full border-separate",
-  theadClass: "bg-white z-10",
-  theadRowClass: "z-10",
+  tableClass: "table-auto w-full",
+  // theadClass: "z-10",
+  theadRowClass:
+    "border-b border-gray-200 rounded-t-md uppercase bg-column-background",
   theadHeaderClass:
-    "px-5 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-300",
+    "px-5 py-4 text-left text-xs font-medium text-gray-500 tracking-wider",
   tbodyClass: "rounded-md",
-  tbodyRowClass: "border cursor-pointer text-sm",
+  tbodyRowClass: "cursor-pointer text-sm",
   tbodyDataClass: "whitespace-nowrap border-gray-300 border-b p-2"
 };
 
-export const ConfigListTable = ({
+export const DataTable = ({
   columns,
   data,
   handleRowClick,
