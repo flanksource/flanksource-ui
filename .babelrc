@@ -1,0 +1,13 @@
+{
+  "presets": [
+    [
+      "react-app",
+      {
+        "absoluteRuntime": false,
+        "flow": false,
+        "typescript": true,
+        "runtime": "automatic"
+      }
+    ]
+  ]
+}
