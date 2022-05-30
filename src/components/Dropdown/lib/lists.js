@@ -6,9 +6,9 @@ import { isBooleanValue } from "../../../lib/isBooleanValue";
 export function getLabelsFromState(labelState) {
   return Object.keys(labelState).reduce(
     (acc, fullLabel) => {
-      const start = new RegExp("^([^:]*:)");
-      const end = new RegExp("(:[^:]*)$");
-      const value = new RegExp("([^:]*)$");
+      const start = /^([^:]*:)/;
+      const end = /(:[^:]*)$/;
+      const value = /([^:]*)$/;
       const label = fullLabel.replace(start, "").replace(end, "");
       const [labelValue] = value.exec(fullLabel);
       // Need to decide here what kinds of values are representations of bools.

@@ -32,7 +32,7 @@ export function SidebarSubPanel({ subpanelContent, icon, ...rest }) {
           )}
         </button>
       </div>
-      {showSubpanel ? <>{subpanelContent}</> : <>{children}</>}
+      {showSubpanel ? subpanelContent : children}
     </div>
   );
 }

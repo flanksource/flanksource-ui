@@ -10,14 +10,7 @@ export const IndeterminateCheckbox = forwardRef(
     }, [resolvedRef, indeterminate]);
 
     return (
-      <>
-        <input
-          type="checkbox"
-          ref={resolvedRef}
-          className="checkbox"
-          {...rest}
-        />
-      </>
+      <input type="checkbox" ref={resolvedRef} className="checkbox" {...rest} />
     );
   }
 );

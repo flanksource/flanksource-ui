@@ -30,7 +30,7 @@ const ValueContainer = ({ children, ...props }) => {
 };
 
 const Option = ({ children, ...props }) => {
-  const { icon, status } = props?.data;
+  const { icon, status } = props?.data || {};
   return (
     <components.Option {...props}>
       <div className="flex w-full items-center">

@@ -25,6 +25,8 @@ export const LogsTable = ({ logs, actions, variant }) => {
     logs = [];
   }
 
+  // TODO(ciju): fix this
+  /* eslint-disable react/no-unstable-nested-components */
   const columns = useMemo(
     () => [
       {
@@ -99,6 +101,7 @@ export const LogsTable = ({ logs, actions, variant }) => {
     ],
     [actions, variant]
   );
+  /* eslint-enable react/no-unstable-nested-components */
   const data = useMemo(() => logs, [logs]);
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     useTable(
