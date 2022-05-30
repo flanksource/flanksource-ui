@@ -173,22 +173,20 @@ export function IncidentListPage() {
     <>
       <SearchLayout
         title={
-          <>
-            <div className="flex items-center flex-shrink-0">
-              <span className="text-xl font-semibold mr-4 whitespace-nowrap">
-                Incidents /{" "}
-              </span>
-              <div className="flex">
-                <button
-                  type="button"
-                  className=""
-                  onClick={() => setIncidentModalIsOpen(true)}
-                >
-                  <AiFillPlusCircle size={36} color="#326CE5" />
-                </button>
-              </div>
+          <div className="flex items-center flex-shrink-0">
+            <span className="text-xl font-semibold mr-4 whitespace-nowrap">
+              Incidents /{" "}
+            </span>
+            <div className="flex">
+              <button
+                type="button"
+                className=""
+                onClick={() => setIncidentModalIsOpen(true)}
+              >
+                <AiFillPlusCircle size={36} color="#326CE5" />
+              </button>
             </div>
-          </>
+          </div>
         }
         onRefresh={loadIncidents}
         extra={

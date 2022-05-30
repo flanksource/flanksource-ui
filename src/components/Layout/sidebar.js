@@ -142,7 +142,7 @@ export function SidebarLayout({ navigation }) {
         >
           <div
             className={clsx("h-full transform duration-500 w-14", {
-              "w-64": !collapseSidebar
+              "lg:w-64": !collapseSidebar
             })}
           >
             <button

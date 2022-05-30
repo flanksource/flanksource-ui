@@ -50,7 +50,7 @@ export function Icon({ size = "sm", name, className, alt = "", ...props }) {
     );
   }
 
-  return <>{props.icon ? <props.icon className={iconClassName} /> : null}</>;
+  return props.icon ? <props.icon className={iconClassName} /> : null;
 }
 export function Avatar({ url, alt = "" }) {
   return (

@@ -102,22 +102,18 @@ export function IncidentDetailsPage() {
     <SearchLayout
       onRefresh={() => incidentQuery.refetch()}
       title={
-        <>
-          <div className="flex my-auto">
-            <span className="text-xl flex">
-              {" "}
-              <Link to="/incidents">Incidents&nbsp;</Link>
-              {" / "}
-              {!isLoading && (
-                <>
-                  <div className="font-semibold">
-                    <div>&nbsp;{incident.title}</div>
-                  </div>
-                </>
-              )}
-            </span>
-          </div>
-        </>
+        <div className="flex my-auto">
+          <span className="text-xl flex">
+            {" "}
+            <Link to="/incidents">Incidents&nbsp;</Link>
+            {" / "}
+            {!isLoading && (
+              <div className="font-semibold">
+                <div>&nbsp;{incident.title}</div>
+              </div>
+            )}
+          </span>
+        </div>
       }
     >
       <div className="mt-2 max-w-3xl mx-auto grid grid-cols-1 gap-6 sm:px-6 lg:max-w-7xl lg:grid-flow-col-dense lg:grid-cols-3">

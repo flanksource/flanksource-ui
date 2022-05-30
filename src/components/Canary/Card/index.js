@@ -1,5 +1,5 @@
 /* This example requires Tailwind CSS v2.0+ */
-import Icon from "../../Icon";
+import { Icon } from "../../Icon";
 
 /**
  * bgColor,
@@ -19,33 +19,31 @@ export function Card({
   className = "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
 }) {
   return (
-    <>
-      <ul className={`mt-3 grid gap-5 sm:gap-6 ${className} "`}>
-        {cards.map((card) => (
-          <li key={card.name} className="col-span-1 flex shadow-sm rounded-md">
-            <div
-              className={classNames(
-                card.bgColor,
-                "flex-shrink-0 flex items-center justify-center w-16 text-white text-sm font-medium rounded-l-md"
-              )}
-            >
-              {card.initials}
+    <ul className={`mt-3 grid gap-5 sm:gap-6 ${className} "`}>
+      {cards.map((card) => (
+        <li key={card.name} className="col-span-1 flex shadow-sm rounded-md">
+          <div
+            className={classNames(
+              card.bgColor,
+              "flex-shrink-0 flex items-center justify-center w-16 text-white text-sm font-medium rounded-l-md"
+            )}
+          >
+            {card.initials}
+          </div>
+          <div className="flex-1 flex items-center justify-between border-t border-r border-b border-gray-200 bg-white rounded-r-md truncate">
+            <div className="flex-1 px-4 py-2 text-sm truncate">
+              <a
+                href={card.href}
+                className="text-gray-900 font-medium hover:text-gray-600"
+              >
+                {card.title}
+              </a>
+              <p className="text-gray-500">{card.subtitle}</p>
             </div>
-            <div className="flex-1 flex items-center justify-between border-t border-r border-b border-gray-200 bg-white rounded-r-md truncate">
-              <div className="flex-1 px-4 py-2 text-sm truncate">
-                <a
-                  href={card.href}
-                  className="text-gray-900 font-medium hover:text-gray-600"
-                >
-                  {card.title}
-                </a>
-                <p className="text-gray-500">{card.subtitle}</p>
-              </div>
-            </div>
-          </li>
-        ))}
-      </ul>
-    </>
+          </div>
+        </li>
+      ))}
+    </ul>
   );
 }
 

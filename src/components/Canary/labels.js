@@ -23,7 +23,7 @@ export function getLabels(checks) {
   return labelMap;
 }
 
-export function getLabelFilters(stateful = {}, labels) {
+export function getLabelFilters(stateful = {}, labels = null) {
   const labelLen = Object.keys(labels).length;
   const filters = Object.entries(stateful).reduce(
     (acc, [k, v]) => {

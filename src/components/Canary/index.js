@@ -232,11 +232,9 @@ export function Canary({
               paramKey="groupBy"
               className="w-64"
               prefix={
-                <>
-                  <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
-                    Group By:
-                  </div>
-                </>
+                <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
+                  Group By:
+                </div>
               }
             />
           </div>
@@ -249,11 +247,9 @@ export function Canary({
               emptyable
               className="w-64"
               prefix={
-                <>
-                  <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
-                    Tab By:
-                  </div>
-                </>
+                <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
+                  Tab By:
+                </div>
               }
             />
           </div>
@@ -264,11 +260,9 @@ export function Canary({
               paramKey="timeRange"
               className="w-56 mb-2 mr-2"
               prefix={
-                <>
-                  <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
-                    Time Range:
-                  </div>
-                </>
+                <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
+                  Time Range:
+                </div>
               }
             />
           )}
@@ -450,16 +444,14 @@ export const TristateLabelStandalone = ({
   }, []);
 
   return (
-    <>
-      <TristateToggle
-        value={toggleState}
-        onChange={(v) => handleToggleChange(v)}
-        className={className}
-        labelClass={labelClass}
-        label={label}
-        {...rest}
-      />
-    </>
+    <TristateToggle
+      value={toggleState}
+      onChange={(v) => handleToggleChange(v)}
+      className={className}
+      labelClass={labelClass}
+      label={label}
+      {...rest}
+    />
   );
 };
 

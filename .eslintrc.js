@@ -1,81 +1,22 @@
+// https://github.com/facebook/create-react-app/blob/main/packages/eslint-config-react-app/index.js
+
 module.exports = {
   env: {
+    es2020: true, // Bigint
     browser: true,
-    commonjs: true,
-    es2020: true,
-    "jest/globals": true
+    node: true,
+    mocha: true
   },
-  settings: {
-    jest: {
-      version: "27"
-    }
-  },
-  root: true,
-  extends: [
-    "eslint:recommended",
-    "airbnb",
-    "plugin:react/recommended",
-    "plugin:jsx-a11y/recommended",
-    "plugin:jest/recommended",
-    "plugin:react-hooks/recommended",
-    "plugin:storybook/recommended",
-    "prettier"
-  ],
-  plugins: ["prettier"],
-  parserOptions: {
-    ecmaVersion: 12,
-    sourceType: "module",
-    jsx: true,
-    allowImportExportEverywhere: true,
-    ecmaFeatures: {
-      impliedStrict: true
-    }
-  },
+  extends: ["react-app", "react-app/jest", "plugin:storybook/recommended"],
   rules: {
-    "prettier/prettier": ["error"],
-    "react/react-in-jsx-scope": "off",
-    "react/prop-types": "off",
-    "react/jsx-filename-extension": "off",
-    "react/jsx-props-no-spreading": 0,
-    "no-use-before-define": [
-      "error",
+    "react/function-component-definition": [
+      2,
       {
-        functions: false,
-        classes: true
+        namedComponents: ["function-declaration", "arrow-function"],
+        unnamedComponents: "arrow-function"
       }
     ],
-    "no-shadow": "off",
-    "no-param-reassign": "off",
-    "import/prefer-default-export": "off",
-    "import/no-default-export": "error",
-    eqeqeq: [
-      "error",
-      "always",
-      {
-        null: "ignore"
-      }
-    ],
-    "no-restricted-syntax": [
-      "off",
-      {
-        selector: "ForOfStatement"
-      }
-    ],
-    "no-nested-ternary": "off",
-    "jsx-a11y/label-has-associated-control": [
-      "error",
-      {
-        assert: "either"
-      }
-    ]
-  },
-  overrides: [
-    {
-      files: ["**/*.stories.*"],
-      rules: {
-        "import/no-anonymous-default-export": "off",
-        "import/no-default-export": "off"
-      }
-    }
-  ]
+    "react/jsx-fragments": [2, "syntax"],
+    "react/jsx-no-useless-fragment": [2]
+  }
 };

@@ -68,44 +68,42 @@ export function Dropdown({
     items = { null: emptyObj, ...items };
   }
   return (
-    <>
-      <div className={className}>
-        {control ? (
-          <Controller
-            control={control}
-            name={name}
-            render={({ field }) => {
-              const { onChange: onChangeControlled, value: valueControlled } =
-                field;
-              if (items[valueControlled] == null) {
-                return null;
-              }
-              return (
-                <DropdownListbox
-                  onChange={onChangeControlled}
-                  value={valueControlled}
-                  label={label}
-                  items={items}
-                  rest={rest}
-                />
-              );
-            }}
-          />
-        ) : (
-          <DropdownListbox
-            label={label}
-            items={items}
-            rest={rest}
-            onChange={onChange}
-            value={value}
-            prefix={prefix}
-            suffix={suffix}
-            labelPrefix={labelPrefix}
-            labelSuffix={labelSuffix}
-          />
-        )}
-      </div>
-    </>
+    <div className={className}>
+      {control ? (
+        <Controller
+          control={control}
+          name={name}
+          render={({ field }) => {
+            const { onChange: onChangeControlled, value: valueControlled } =
+              field;
+            if (items[valueControlled] == null) {
+              return null;
+            }
+            return (
+              <DropdownListbox
+                onChange={onChangeControlled}
+                value={valueControlled}
+                label={label}
+                items={items}
+                rest={rest}
+              />
+            );
+          }}
+        />
+      ) : (
+        <DropdownListbox
+          label={label}
+          items={items}
+          rest={rest}
+          onChange={onChange}
+          value={value}
+          prefix={prefix}
+          suffix={suffix}
+          labelPrefix={labelPrefix}
+          labelSuffix={labelSuffix}
+        />
+      )}
+    </div>
   );
 }
 
@@ -139,7 +137,7 @@ export const DropdownListbox = ({
         )}
         <div className={`${label && "mt-1"} relative`}>
           <Listbox.Button
-            className={`relative cursor-pointer w-full bg-white border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left  focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm 
+            className={`relative cursor-pointer w-full bg-white border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left  focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm
               ${items[value]?.id === "_empty" && "text-gray-400"}
             `}
           >

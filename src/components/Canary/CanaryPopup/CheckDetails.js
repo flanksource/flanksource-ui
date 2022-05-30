@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import { usePrevious } from "../../../utils/hooks";
 import { Badge } from "../../Badge";
 import { AccordionBox } from "../../AccordionBox";
@@ -12,15 +12,20 @@ import { CheckStat } from "./CheckStat";
 import { getUptimePercentage } from "./utils";
 import { StatusHistory } from "./StatusHistory";
 import { DetailField } from "./DetailField";
-import { CanaryStatusChart } from "../CanaryStatusChart";
 import { Duration } from "../renderers";
+
+const CanaryStatusChart = React.lazy(() =>
+  import("../CanaryStatusChart").then(({ CanaryStatusChart }) => ({
+    default: CanaryStatusChart
+  }))
+);
 
 export function CheckDetails({ check, ...rest }) {
   const prevCheck = usePrevious(check);
   const validCheck = check || prevCheck;
 
   if (validCheck == null) {
-    return <></>;
+    return null;
   }
   const uptimeValue = toFixedIfNecessary(getUptimePercentage(validCheck), 0);
   const validUptime =
@@ -33,21 +38,18 @@ export function CheckDetails({ check, ...rest }) {
     Name:
       validCheck?.name || validCheck?.canaryName || validCheck?.endpoint || "-",
     Type: validCheck?.type || "-",
-    Labels: (
-      <>
-        {validCheck?.labels &&
-          Object.entries(validCheck?.labels).map((entry) => {
-            const key = entry[0];
-            let value = entry[1];
-            if (value === "true" || value === true) {
-              value = "";
-            }
-            return (
-              <Badge className="mr-1 mb-1" key={key} text={key} value={value} />
-            );
-          })}
-      </>
-    ),
+    Labels:
+      validCheck?.labels &&
+      Object.entries(validCheck?.labels).map((entry) => {
+        const key = entry[0];
+        let value = entry[1];
+        if (value === "true" || value === true) {
+          value = "";
+        }
+        return (
+          <Badge className="mr-1 mb-1" key={key} text={key} value={value} />
+        );
+      }),
     Owner: validCheck?.owner || "-",
     Interval: validCheck?.interval || "-",
     Location: validCheck?.location || "-",
@@ -108,7 +110,9 @@ export function CheckDetails({ check, ...rest }) {
           {/* <span className="text-sm font-medium">(time dropdown)</span> */}
         </div>
         <div className="w-full h-52 overflow-visible">
-          <CanaryStatusChart check={validCheck} />
+          <Suspense fallback={<div>Loading..</div>}>
+            <CanaryStatusChart check={validCheck} />
+          </Suspense>
         </div>
       </div>
       <PopupTabs

@@ -6,7 +6,7 @@ import dayjs from "dayjs";
 import { useTable, useRowSelect } from "react-table";
 import clsx from "clsx";
 import PropTypes from "prop-types";
-import { BsFillBarChartFill } from "react-icons/all";
+import { BsFillBarChartFill } from "react-icons/bs";
 import { IndeterminateCheckbox } from "../../IndeterminateCheckbox/IndeterminateCheckbox";
 
 const convert = new Convert();
@@ -25,6 +25,8 @@ export const LogsTable = ({ logs, actions, variant }) => {
     logs = [];
   }
 
+  // TODO(ciju): fix this
+  /* eslint-disable react/no-unstable-nested-components */
   const columns = useMemo(
     () => [
       {
@@ -99,6 +101,7 @@ export const LogsTable = ({ logs, actions, variant }) => {
     ],
     [actions, variant]
   );
+  /* eslint-enable react/no-unstable-nested-components */
   const data = useMemo(() => logs, [logs]);
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     useTable(

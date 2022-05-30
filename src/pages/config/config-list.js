@@ -76,15 +76,13 @@ export function ConfigListPage() {
   }, [data, query]);
 
   return (
-    <>
-      <DataTable
-        columns={columns}
-        data={filteredData}
-        handleRowClick={handleRowClick}
-        tableStyle={{ borderSpacing: "0" }}
-        isLoading={isLoading}
-      />
-    </>
+    <DataTable
+      columns={columns}
+      data={filteredData}
+      handleRowClick={handleRowClick}
+      tableStyle={{ borderSpacing: "0" }}
+      isLoading={isLoading}
+    />
   );
 }
 
@@ -151,11 +149,7 @@ const TagsDropdown = ({ ...rest }) => {
       onChange={(value) => setSelected(value)}
       value={selected}
       prefix={
-        <>
-          <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
-            Tag:
-          </div>
-        </>
+        <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">Tag:</div>
       }
       {...rest}
     />

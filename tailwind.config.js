@@ -4,7 +4,7 @@ const colors = require("tailwindcss/colors");
 module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}", "./public/index.html"],
   purge: false,
-  darkMode: false, // or 'media' or 'class'
+  media: false, // or 'media' or 'class'
   theme: {
     extend: {
       keyframes: {
@@ -46,7 +46,7 @@ module.exports = {
         fadeIn: "fadeIn ease-in normal"
       },
       colors: {
-        "warm-gray": colors.warmGray,
+        "warm-gray": colors.stone,
         teal: colors.teal,
         "warm-blue": "#CCDAF8",
         "dark-blue": "#326CE5",

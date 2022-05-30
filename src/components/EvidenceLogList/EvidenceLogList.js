@@ -1,5 +1,5 @@
 import React from "react";
-import { BsFillBarChartFill } from "react-icons/all";
+import { BsFillBarChartFill } from "react-icons/bs";
 import dayjs from "dayjs";
 
 export const EvidenceLogList = ({ evidence }) => (

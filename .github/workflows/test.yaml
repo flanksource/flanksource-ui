@@ -12,17 +12,20 @@ jobs:
   test:
     runs-on: ubuntu-latest
     container:
-      image: node:15.14-alpine
+      image: node:16-alpine
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v3
       - run: npm ci
       - run: npm run test
 
   storybook:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - run: yarn
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Install dependencies
+        run: npm ci
       - uses: chromaui/action@v1
         with:
           projectToken: ${{ secrets.CHROMATIC_TOKEN }}
@@ -30,8 +33,8 @@ jobs:
   production-build:
     runs-on: ubuntu-latest
     container:
-      image: node:15.14-alpine
+      image: node:16-alpine
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v3
       - run: npm ci
       - run: npm run build
