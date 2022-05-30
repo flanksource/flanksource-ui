@@ -47,6 +47,12 @@
     "yup": "^0.32.11"
   },
   "proxy": "https://incident-commander.canary.lab.flanksource.com",
+  "lint-staged": {
+    "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
+      "npx eslint --fix --ext .js,.jsx,.ts,.tsx",
+      "npx prettier --write"
+    ]
+  },
   "scripts": {
     "dev": "react-scripts start",
     "build": "cross-env DISABLE_ESLINT_PLUGIN=true NODE_ENV=production react-scripts build",
@@ -59,6 +65,11 @@
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "prepare": "husky install"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   },
   "browserslist": {
     "production": [
@@ -100,6 +111,7 @@
     "eslint-plugin-react-hooks": "^4.2.0",
     "eslint-plugin-storybook": "^0.5.8",
     "husky": "^8.0.1",
+    "lint-staged": "^12.4.2",
     "postcss": "^8.4.14",
     "prettier": "^2.3.2",
     "react-refresh": "^0.11.0",
