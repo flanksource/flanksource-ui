@@ -62,6 +62,7 @@
   "scripts": {
     "dev": "react-scripts start",
     "build": "cross-env DISABLE_ESLINT_PLUGIN=true NODE_ENV=production react-scripts build",
+    "serve-build": "gzip --keep build/static/*/*.{js,css} && node scripts/serve-build.js",
     "compile": "cross-env NODE_ENV=production babel src --out-dir dist --copy-files --ignore __tests__,spec.js,test.js,stories.js,__snapshots__",
     "test": "react-scripts test --transformIgnorePatterns \"node_modules/(?!(history))/\"",
     "analyze": "source-map-explorer 'build/static/js/*.js'",
@@ -109,8 +110,10 @@
     "cross-env": "^7.0.3",
     "eslint-config-react-app": "^7.0.1",
     "eslint-plugin-storybook": "^0.5.8",
+    "http-proxy": "^1.18.1",
     "husky": "^8.0.1",
     "lint-staged": "^12.4.2",
+    "node-static": "^0.7.11",
     "postcss": "^8.4.14",
     "prettier": "^2.3.2",
     "react-refresh": "^0.11.0",
