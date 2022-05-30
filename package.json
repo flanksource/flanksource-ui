@@ -68,8 +68,8 @@
     "test": "react-scripts test --transformIgnorePatterns \"node_modules/(?!(history))/\"",
     "analyze": "source-map-explorer 'build/static/js/*.js'",
     "eject": "react-scripts eject",
-    "lint:eslint": "eslint --ext .js,.jsx,.ts,.tsx .",
-    "fix:eslint": "eslint --fix --ext .js,.jsx,.ts,.tsx .",
+    "lint:eslint": "cross-env NODE_ENV=development eslint --ext .js,.jsx,.ts,.tsx .",
+    "fix:eslint": "cross-env NODE_ENV=development eslint --fix --ext .js,.jsx,.ts,.tsx .",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "prepare": "husky install"
