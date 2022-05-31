@@ -130,7 +130,11 @@ export const LogsTable = ({ logs, actions, variant }) => {
             return (
               <tr key={key} {...restHeaderGroupProps}>
                 {headerGroup.headers.map((column) => (
-                  <th key={column.id} {...column.getHeaderProps()}>
+                  <th
+                    key={column.id}
+                    {...column.getHeaderProps()}
+                    className="py-2"
+                  >
                     {column.render("Header")}
                   </th>
                 ))}
@@ -151,6 +155,13 @@ export const LogsTable = ({ logs, actions, variant }) => {
               </tr>
             );
           })}
+          {!rows.length && (
+            <tr>
+              <td className="text-center" colSpan={columns.length}>
+                There are no logs matching the search query
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
     </div>

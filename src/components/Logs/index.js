@@ -4,8 +4,9 @@ import { Modal } from "../Modal";
 import { Loading } from "../Loading";
 import { LogsIncidentLinker } from "./LogsIncidentLinker";
 import { LogsTable } from "./Table/logs-table";
+import { LoadingStates } from "../../constants";
 
-export function LogsViewer({ logs, isLoading }) {
+export const LogsViewer = React.memo(function LogsViewer({ logs, loadingState }) {
   const [selectedList, setSelectedList] = useState([]);
   const [incidentModalIsOpen, setIncidentModalIsOpen] = useState(false);
   const [variant, setVariant] = useState("comfortable");
@@ -23,9 +24,13 @@ export function LogsViewer({ logs, isLoading }) {
     []
   );
 
+  if (loadingState === LoadingStates.idle) {
+    return null;
+  }
+
   return (
     <>
-      {isLoading ? (
+      {loadingState === LoadingStates.loading ? (
         <Loading text="Loading logs..." />
       ) : (
         <>
@@ -72,4 +77,6 @@ export function LogsViewer({ logs, isLoading }) {
       </Modal>
     </>
   );
-}
+});
+
+LogsViewer.displayName = "LogsViewer";
