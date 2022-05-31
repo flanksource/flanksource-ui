@@ -13,6 +13,7 @@ import { Dropdown } from "../../components/Dropdown";
 import { MultiSelectDropdown } from "../../components/MultiSelectDropdown";
 import { severityItems, statusItems } from "../../components/Incidents/data";
 import { getPersons } from "../../api/services/users";
+import { getResponder } from "../../api/services/responder";
 
 export const tempTypes = [
   {
@@ -112,6 +113,29 @@ export function IncidentListPage() {
     });
   }, []);
 
+  async function fetchIncidents(params) {
+    try {
+      const res = await getIncidentsWithParams(params);
+      const personIds = [];
+      res.data.forEach((item) => {
+        if (!personIds.includes(item.communicator_id)) {
+          personIds.push(item.communicator_id);
+        }
+      });
+      const persons = (await getResponder(personIds.toString())).data;
+      res.data.forEach((item) => {
+        item.person = persons.find(
+          (person) => person.id === item.communicator_id
+        );
+      });
+      setIncidents(res.data);
+      setIsLoading(false);
+    } catch (ex) {
+      setIncidents([]);
+      setIsLoading(false);
+    }
+  }
+
   const loadIncidents = useRef(
     debounce(
       (
@@ -134,10 +158,7 @@ export function IncidentListPage() {
             params[key] = `eq.${value}`;
           }
         });
-        getIncidentsWithParams(params).then((res) => {
-          setIncidents(res.data);
-          setIsLoading(false);
-        });
+        fetchIncidents(params);
       },
       100
     )

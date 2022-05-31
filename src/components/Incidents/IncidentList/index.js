@@ -1,10 +1,9 @@
-import React from "react";
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import { v4 as uuid } from "uuid";
-import responders from "../../../data/responders.json";
 import { IncidentSeverity } from "../incident-severity";
 import { IncidentStatus } from "../incident-status";
+import { IoPersonCircleOutline } from "react-icons/io5";
 
 export function IncidentList({ list, ...rest }) {
   return (
@@ -57,6 +56,16 @@ function IncidentItem({ incident }) {
   const navigateToIncidentDetails = (id) => {
     navigate(`/incidents/${id}`);
   };
+
+  const getAvatar = (avatar) => {
+    if (avatar) {
+      return (
+        <img className="h-6 w-6 rounded-full bg-gray-400" src={avatar} alt="" />
+      );
+    }
+    return <IoPersonCircleOutline />;
+  };
+
   return (
     <tr
       className="last:border-b-0 border-b cursor-pointer"
@@ -79,19 +88,12 @@ function IncidentItem({ incident }) {
       <td className="px-3 text-gray-500 text-sm py-4">{age}</td>
       <td className="px-3 text-sm py-4" colSpan={2}>
         <div className="flex">
-          {responders.map(({ image, name }) => (
-            <div
-              className="flex flex-row mr-4 items-center justify-between"
-              key={name}
-            >
-              <img
-                className="h-6 w-6 rounded-full bg-gray-400"
-                src={image}
-                alt=""
-              />
-              <p className="ml-1 text-sm text-dark-gray font-normal">{name}</p>
-            </div>
-          ))}
+          <div className="flex flex-row mr-4 items-center justify-between">
+            {getAvatar(incident.person.avatar)}
+            <p className="ml-1 text-sm text-dark-gray font-normal">
+              {incident.person.name}
+            </p>
+          </div>
         </div>
       </td>
     </tr>
