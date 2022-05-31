@@ -2,3 +2,4 @@
 /api/*  https://canaries.canary.lab.flanksource.com/api/:splat  200
 /config/db/*  https://incident-commander.canary.lab.flanksource.com/config/db/:splat  200
 /* /index.html 200
+/canary/api/* https://incident-commander.canary.lab.flanksource.com/canary/api/:splat 200
