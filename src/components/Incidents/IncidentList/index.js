@@ -3,7 +3,6 @@ import dayjs from "dayjs";
 import { v4 as uuid } from "uuid";
 import { IncidentSeverity } from "../incident-severity";
 import { IncidentStatus } from "../incident-status";
-import { IoPersonCircleOutline } from "react-icons/io5";
 import { AvatarGroup } from "../../AvatarGroup";
 
 export function IncidentList({ list, ...rest }) {
@@ -56,13 +55,6 @@ function IncidentItem({ incident }) {
   const navigate = useNavigate();
   const navigateToIncidentDetails = (id) => {
     navigate(`/incidents/${id}`);
-  };
-
-  const getAvatar = (avatar) => {
-    if (avatar) {
-      return <img className="h-6 w-6 rounded-full" src={avatar} alt="" />;
-    }
-    return <IoPersonCircleOutline className="h-6 w-6 rounded-full" />;
   };
 
   return (
