@@ -8,14 +8,12 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: 16
-      - uses: actions/checkout@v2
-      - run: npm install
-      - run: npm test
-      - run: npm run compile
+      - run: npm ci
+      - run: npm run build
       - uses: codfish/semantic-release-action@v1
         id: semantic
         env:
