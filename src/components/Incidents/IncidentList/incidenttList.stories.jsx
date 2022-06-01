@@ -19,7 +19,10 @@ const incidents = [
     type: "issue",
     status: "open",
     created_at: "2022-04-10T11:32:37.285341",
-    updated_at: "2022-04-10T11:32:37.285341"
+    updated_at: "2022-04-10T11:32:37.285341",
+    person: {
+      name: "Responder 1"
+    }
   },
   {
     id: "749f6387-11a2-4b67-b6dd-625987e6dc60",
@@ -32,7 +35,10 @@ const incidents = [
     type: "issue",
     status: "open",
     created_at: "2022-04-05T07:55:30.479768",
-    updated_at: "2022-04-05T07:55:30.479768"
+    updated_at: "2022-04-05T07:55:30.479768",
+    person: {
+      name: "Responder 1"
+    }
   },
   {
     id: "9419252b-aea4-4a49-8fff-e2d022fff588",
@@ -45,7 +51,10 @@ const incidents = [
     type: "issue",
     status: "open",
     created_at: "2022-04-05T07:23:11.288297",
-    updated_at: "2022-04-05T07:23:11.288297"
+    updated_at: "2022-04-05T07:23:11.288297",
+    person: {
+      name: "Responder 1"
+    }
   },
   {
     id: "1aa1a99a-b487-495c-9cd9-a13cf717bc10",
@@ -58,7 +67,12 @@ const incidents = [
     type: "issue",
     status: "open",
     created_at: "2022-04-05T07:19:03.546871",
-    updated_at: "2022-04-05T07:19:03.546871"
+    updated_at: "2022-04-05T07:19:03.546871",
+    person: {
+      name: "Responder 1",
+      avatar:
+        "https://avatars.dicebear.com/v2/female/8e24031284dae52f5e21bc4b3310340b.svg"
+    }
   }
 ];
 

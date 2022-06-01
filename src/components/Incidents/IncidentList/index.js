@@ -59,11 +59,9 @@ function IncidentItem({ incident }) {
 
   const getAvatar = (avatar) => {
     if (avatar) {
-      return (
-        <img className="h-6 w-6 rounded-full bg-gray-400" src={avatar} alt="" />
-      );
+      return <img className="h-6 w-6 rounded-full" src={avatar} alt="" />;
     }
-    return <IoPersonCircleOutline />;
+    return <IoPersonCircleOutline className="h-6 w-6 rounded-full" />;
   };
 
   return (
