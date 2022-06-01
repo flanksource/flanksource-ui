@@ -3,8 +3,9 @@
   "version": "0.2.0",
   "private": false,
   "files": [
-    "dist",
-    "README.md"
+    "build",
+    "README.md",
+    "scripts/serve-build.js"
   ],
   "dependencies": {
     "@babel/plugin-syntax-jsx": "^7.14.5",
