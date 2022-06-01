@@ -41,6 +41,7 @@ const AvatarFC = ({ user, size, unload, alt, containerProps, imageProps }) => {
         containerProps.className,
         !src && initials ? "bg-dark-blue text-white" : "bg-lighter-gray"
       )}
+      title={user.name}
     >
       {src ? (
         <img

@@ -13,9 +13,12 @@ export const getIncident = async (id) =>
 
 export const getIncidentsWithParams = async (params) =>
   resolve(
-    IncidentCommander.get(`/incident?order=created_at.desc`, {
-      params
-    })
+    IncidentCommander.get(
+      `/incident?&select=*,hypothesis!hypothesis_incident_id_fkey(*,created_by(name,avatar)),commander_id(name,avatar),communicator_id(name,avatar),responder!responder_incident_id_fkey(created_by(name,avatar))&order=created_at.desc`,
+      {
+        params
+      }
+    )
   );
 
 export const updateIncident = async (id, incident) => {

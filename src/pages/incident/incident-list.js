@@ -116,17 +116,8 @@ export function IncidentListPage() {
   async function fetchIncidents(params) {
     try {
       const res = await getIncidentsWithParams(params);
-      const personIds = [];
-      res.data.forEach((item) => {
-        if (!personIds.includes(item.communicator_id)) {
-          personIds.push(item.communicator_id);
-        }
-      });
-      const persons = (await getResponder(personIds.toString())).data;
-      res.data.forEach((item) => {
-        item.person = persons.find(
-          (person) => person.id === item.communicator_id
-        );
+      res.data.forEach((incident) => {
+        incident.responders = [incident.communicator_id, incident.commander_id];
       });
       setIncidents(res.data);
       setIsLoading(false);
