@@ -80,6 +80,120 @@ export function Placeholder({ text }) {
   );
 }
 
+export function HealthRoutes({ sidebar }) {
+  return (
+    <Routes path="/" element={sidebar}>
+      <Route index element={<HealthPage url="/canary/api" />} />
+    </Routes>
+  );
+}
+
+export function IncidentManagerRoutes({ sidebar }) {
+  return (
+    <Routes path="/" element={sidebar}>
+      <Route path="" element={<Navigate to="/topology" />} />
+
+      <Route path="topology" element={sidebar}>
+        <Route path=":id" element={<TopologyPage url="/canary/api" />} />
+        <Route index element={<TopologyPage url="/canary/api" />} />
+      </Route>
+
+      <Route path="incidents" element={sidebar}>
+        <Route path=":id" element={<IncidentDetailsPage />} />
+        <Route path="create" element={<IncidentCreatePage />} />
+        <Route index element={<IncidentListPage />} />
+      </Route>
+
+      <Route path="health" element={sidebar}>
+        <Route index element={<HealthPage url="/canary/api" />} />
+      </Route>
+
+      <Route path="logs" element={sidebar}>
+        <Route index element={<LogsPage />} />
+      </Route>
+
+      <Route path="config" element={sidebar}>
+        {/* https://github.com/remix-run/react-router/issues/7239#issuecomment-898747642 */}
+        <Route
+          path=""
+          element={
+            <ConfigLayout
+              title="Config"
+              showSearchInput
+              basePath="/config"
+              navLinks={[
+                { title: "Items", index: true },
+                { title: "Changes", path: "changes" }
+              ]}
+            />
+          }
+        >
+          <Route index element={<ConfigListPage />} />
+          <Route path="changes" element={<ConfigChangesPage />} />
+        </Route>
+
+        <Route
+          path=":id"
+          element={
+            <ConfigLayout
+              backPath="/config"
+              title="Config"
+              basePath="/config/:id"
+              navLinks={[
+                { title: "Config", index: true },
+                { title: "Changes", path: "changes" }
+              ]}
+            />
+          }
+        >
+          <Route index element={<ConfigDetailsPage />} />
+          <Route path="changes" element={<ConfigDetailsChangesPage />} />
+        </Route>
+      </Route>
+
+      <Route path="examples" element={sidebar}>
+        <Route path="rs" element={<RsDemoPage />} />
+        <Route path="dropdown" element={<DropdownDemoPage />} />
+        <Route
+          path="topology"
+          element={<ExamplesTopologyPage url="/canary/api" />}
+        />
+        <Route
+          path="topology-selector"
+          element={<TopologySelectorModalPage url="/canary/api" />}
+        />
+        <Route path="modal" element={<ModalPage />} />
+        <Route path="topology-dropdown" element={<TypologyDropdownDemo />} />
+      </Route>
+
+      <Route path="timeline" element={sidebar}>
+        <Route index element={<TimelinePage />} />
+      </Route>
+
+      <Route path="metrics" element={sidebar}>
+        <Route index element={<Placeholder text="metrics" />} />
+      </Route>
+      <Route path="layout">
+        <Route index element={sidebar} />
+      </Route>
+      <Route path="traces" element={sidebar}>
+        <Route index element={<TraceView />} />
+      </Route>
+    </Routes>
+  );
+}
+
+function AppRoutes({ appDeployment, sidebar }) {
+  switch (appDeployment) {
+    case "INCIDENT_MANAGER":
+      return <IncidentManagerRoutes sidebar={sidebar} />;
+    case "CANARY_CHECKER":
+      return <HealthRoutes sidebar={sidebar} />;
+    default:
+      return <div>Please set the APP_DEPLOYMENT config.</div>;
+  }
+}
+
 export function App() {
   const [user, setUser] = useState();
 
@@ -97,97 +211,7 @@ export function App() {
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>
         <AuthContext.Provider value={user}>
-          <Routes path="/" element={sidebar}>
-            <Route path="" element={<Navigate to="/topology" />} />
-            <Route path="incidents" element={sidebar}>
-              <Route path=":id" element={<IncidentDetailsPage />} />
-              <Route path="create" element={<IncidentCreatePage />} />
-              <Route index element={<IncidentListPage />} />
-            </Route>
-            <Route path="health" element={sidebar}>
-              <Route index element={<HealthPage url="/canary/api" />} />
-            </Route>
-
-            <Route path="topology" element={sidebar}>
-              <Route path=":id" element={<TopologyPage url="/canary/api" />} />
-              <Route index element={<TopologyPage url="/canary/api" />} />
-            </Route>
-
-            <Route path="examples" element={sidebar}>
-              <Route path="rs" element={<RsDemoPage />} />
-              <Route path="dropdown" element={<DropdownDemoPage />} />
-              <Route
-                path="topology"
-                element={<ExamplesTopologyPage url="/canary/api" />}
-              />
-              <Route
-                path="topology-selector"
-                element={<TopologySelectorModalPage url="/canary/api" />}
-              />
-              <Route path="modal" element={<ModalPage />} />
-              <Route
-                path="topology-dropdown"
-                element={<TypologyDropdownDemo />}
-              />
-            </Route>
-
-            <Route path="logs" element={sidebar}>
-              <Route index element={<LogsPage />} />
-            </Route>
-
-            <Route path="config" element={sidebar}>
-              {/* https://github.com/remix-run/react-router/issues/7239#issuecomment-898747642 */}
-              <Route
-                path=""
-                element={
-                  <ConfigLayout
-                    title="Config"
-                    showSearchInput
-                    basePath="/config"
-                    navLinks={[
-                      { title: "Items", index: true },
-                      { title: "Changes", path: "changes" }
-                    ]}
-                  />
-                }
-              >
-                <Route index element={<ConfigListPage />} />
-                <Route path="changes" element={<ConfigChangesPage />} />
-              </Route>
-
-              <Route
-                path=":id"
-                element={
-                  <ConfigLayout
-                    backPath="/config"
-                    title="Config"
-                    basePath="/config/:id"
-                    navLinks={[
-                      { title: "Config", index: true },
-                      { title: "Changes", path: "changes" }
-                    ]}
-                  />
-                }
-              >
-                <Route index element={<ConfigDetailsPage />} />
-                <Route path="changes" element={<ConfigDetailsChangesPage />} />
-              </Route>
-            </Route>
-
-            <Route path="timeline" element={sidebar}>
-              <Route index element={<TimelinePage />} />
-            </Route>
-
-            <Route path="metrics" element={sidebar}>
-              <Route index element={<Placeholder text="metrics" />} />
-            </Route>
-            <Route path="layout">
-              <Route index element={sidebar} />
-            </Route>
-            <Route path="traces" element={sidebar}>
-              <Route index element={<TraceView />} />
-            </Route>
-          </Routes>
+          <AppRoutes appDeployment={window.APP_DEPLOYMENT} sidebar={sidebar} />
         </AuthContext.Provider>
       </QueryClientProvider>
     </BrowserRouter>
