@@ -89,9 +89,9 @@ function IncidentItem({ incident }) {
       <td className="px-3 text-sm py-4" colSpan={2}>
         <div className="flex">
           <div className="flex flex-row mr-4 items-center justify-between">
-            {getAvatar(incident.person.avatar)}
+            {getAvatar(incident?.person?.avatar)}
             <p className="ml-1 text-sm text-dark-gray font-normal">
-              {incident.person.name}
+              {incident?.person?.name}
             </p>
           </div>
         </div>
