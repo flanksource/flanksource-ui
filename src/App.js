@@ -5,6 +5,7 @@ import { ImLifebuoy } from "react-icons/im";
 import { VscJson } from "react-icons/vsc";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import ReactTooltip from "react-tooltip";
 import { getUser } from "./api/auth";
 import { SidebarLayout, ConfigLayout } from "./components/Layout";
 import { Loading } from "./components/Loading";
@@ -211,6 +212,7 @@ export function App() {
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>
         <AuthContext.Provider value={user}>
+          <ReactTooltip />
           <AppRoutes appDeployment={window.APP_DEPLOYMENT} sidebar={sidebar} />
         </AuthContext.Provider>
       </QueryClientProvider>

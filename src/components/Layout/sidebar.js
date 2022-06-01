@@ -5,7 +5,6 @@ import { NavLink, Outlet } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import clsx from "clsx";
 import { IoChevronForwardOutline } from "react-icons/io5";
-import ReactTooltip from "react-tooltip";
 import { getUser } from "../../api/auth";
 import { Icon } from "../Icon";
 import { useOuterClick } from "../../lib/useOuterClick";
@@ -52,7 +51,6 @@ export function SidebarLayout({ navigation }) {
   }
   return (
     <>
-      <ReactTooltip disable={!collapseSidebar} />
       <Toaster position="top-right" reverseOrder={false} />
       <div className="flex h-screen overflow-hidden">
         <Transition.Root show={sidebarOpen} as={Fragment}>
