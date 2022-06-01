@@ -1,8 +1,9 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import PropTypes from "prop-types";
 import { useImage } from "react-image";
 import { BsFillPersonFill } from "react-icons/bs";
 import clsx from "clsx";
+import ReactTooltip from "react-tooltip";
 
 const AvatarFC = ({ user, size, unload, alt, containerProps, imageProps }) => {
   const srcList = user?.avatar;
@@ -32,6 +33,10 @@ const AvatarFC = ({ user, size, unload, alt, containerProps, imageProps }) => {
     [fallbackInitials]
   );
 
+  useEffect(() => {
+    ReactTooltip.rebuild();
+  }, []);
+
   return (
     <div
       {...containerProps}
@@ -41,7 +46,7 @@ const AvatarFC = ({ user, size, unload, alt, containerProps, imageProps }) => {
         containerProps.className,
         !src && initials ? "bg-dark-blue text-white" : "bg-lighter-gray"
       )}
-      title={user.name}
+      data-tip={user.name}
     >
       {src ? (
         <img

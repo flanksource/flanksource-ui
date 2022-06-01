@@ -117,7 +117,14 @@ export function IncidentListPage() {
     try {
       const res = await getIncidentsWithParams(params);
       res.data.forEach((incident) => {
-        incident.responders = [incident.communicator_id, incident.commander_id];
+        if (incident.commander_id.id !== incident.communicator_id.id) {
+          incident.responders = [
+            incident.communicator_id,
+            incident.commander_id
+          ];
+        } else {
+          incident.responders = [incident.commander_id];
+        }
       });
       setIncidents(res.data);
       setIsLoading(false);
