@@ -1,17 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+  </head>
 
-<head>
-  <meta charset="utf-8" />
-  <link rel="icon" href="%PUBLIC_URL%/favicon.png" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#000000" />
+  <!-- https://create-react-app.dev/docs/title-and-meta-tags#injecting-data-from-the-server-into-the-page -->
+  <script>
+    window.APP_DEPLOYMENT = "__APP_DEPLOYMENT__";
+    const appTypes = ["INCIDENT_MANAGER", "CANARY_CHECKER"];
 
-</head>
+    if (window.APP_DEPLOYMENT == "__" + "APP_DEPLOYMENT" + "__") {
+      window.APP_DEPLOYMENT = "INCIDENT_MANAGER";
+    }
 
-<body>
-  <noscript>You need to enable JavaScript to run this app.</noscript>
-  <div id="root"></div>
-</body>
+    if (!appTypes.includes(window.APP_DEPLOYMENT)) {
+      console.error(
+        "window.APP_DEPLOYMENT should be one of [" +
+          appTypes.join(",") +
+          "]. Given '" +
+          window.APP_DEPLOYMENT +
+          "'. Please fix this."
+      );
+    }
+  </script>
 
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+  </body>
 </html>
