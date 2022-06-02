@@ -1383,5 +1383,6 @@ ConfigTable.args = {
   data: configData,
   columns: defaultTableColumns,
   isLoading: false,
-  tableStyle: { borderSpacing: "0" }
+  tableStyle: { borderSpacing: "0" },
+  stickyHead: false
 };

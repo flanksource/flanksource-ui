@@ -72,9 +72,15 @@ function TagsCell({ row, column }: CellProp) {
         e.stopPropagation();
         setShowMore((showMore) => !showMore);
       }}
-      className="relative"
+      className="flex items-start"
     >
-      <div className="font-mono flex flex-wrap w-96 pl-5">
+      {tagKeys.length > MIN_ITEMS && (
+        <button className="text-sm focus:outline-none">
+          {showMore ? "▼" : "►"}
+        </button>
+      )}
+
+      <div className="font-mono flex flex-wrap w-96 pl-1">
         {renderKeys.map((key) => (
           <div
             className="bg-gray-200 border border-gray-300 px-1 py-0.75 mr-1 rounded-md text-gray-600 font-semibold text-xs"
@@ -84,12 +90,6 @@ function TagsCell({ row, column }: CellProp) {
           </div>
         ))}
       </div>
-
-      {tagKeys.length > MIN_ITEMS && (
-        <button className="absolute top-0 left-0 mt-1 text-sm focus:outline-none">
-          {showMore ? "▼" : "►"}
-        </button>
-      )}
     </div>
   );
 }
@@ -120,6 +120,7 @@ export interface Props {
 function ConfigList({ data, handleRowClick, isLoading }: Props) {
   return (
     <DataTable
+      stickyHead
       columns={columns}
       data={data}
       handleRowClick={handleRowClick}
