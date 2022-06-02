@@ -228,7 +228,7 @@ export function Canary({
             <DropdownStandaloneWrapper
               dropdownElem={<GroupByDropdown />}
               checks={checks}
-              defaultValue="canaryName"
+              defaultValue="canary_name"
               paramKey="groupBy"
               className="w-64"
               prefix={
@@ -290,7 +290,6 @@ export const LabelFilterList = ({ labels }) => {
           acc[current.key] = [current];
           return acc;
         }, {});
-
       const mergedLabels = { ...keyedBl, ...groupedNbl };
       setList(mergedLabels);
     }

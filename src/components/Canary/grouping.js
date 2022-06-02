@@ -3,7 +3,7 @@ export function getGroupedChecks(checks, groupBy) {
   if (
     groupBy === "name" ||
     groupBy === "description" ||
-    groupBy === "canaryName"
+    groupBy === "canary_name"
   ) {
     const groupedChecks = {};
     const groupNames = [];

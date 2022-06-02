@@ -14,14 +14,14 @@ const defaultGroupSelections = {
     labelValue: null,
     key: "no-group"
   },
-  canaryName: {
-    id: "canaryName",
-    name: "canaryName",
+  canary_name: {
+    id: "canary_name",
+    name: "canary_name",
     icon: <TiSortAlphabeticallyOutline />,
     description: "Group Name",
-    value: "canaryName",
+    value: "canary_name",
     labelValue: null,
-    key: "canaryName"
+    key: "canary_name"
   },
   name: {
     id: "name",
