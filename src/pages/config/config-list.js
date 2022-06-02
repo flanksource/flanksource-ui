@@ -10,11 +10,10 @@ import {
 import { getAllConfigs } from "../../api/services/configs";
 import { Dropdown } from "../../components/Dropdown";
 
-import { defaultTableColumns } from "../../components/ConfigViewer/columns";
 import { filterConfigsByText } from "../../components/ConfigViewer/utils";
-import { DataTable } from "../../components";
 import { BreadcrumbNav } from "../../components/BreadcrumbNav";
 import { TextInputClearable } from "../../components/TextInputClearable";
+import ConfigList from "../../components/ConfigList";
 
 export function ConfigListPage() {
   const [params, setParams] = useSearchParams();
@@ -23,7 +22,6 @@ export function ConfigListPage() {
   const [filteredData, setFilteredData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const { setTitle, setTitleExtras } = useOutletContext();
-  const columns = React.useMemo(() => defaultTableColumns, []);
 
   const query = params.get("query");
 
@@ -76,11 +74,9 @@ export function ConfigListPage() {
   }, [data, query]);
 
   return (
-    <DataTable
-      columns={columns}
+    <ConfigList
       data={filteredData}
       handleRowClick={handleRowClick}
-      tableStyle={{ borderSpacing: "0" }}
       isLoading={isLoading}
     />
   );
