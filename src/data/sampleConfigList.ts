@@ -25,7 +25,7 @@ const data = [
     network: "vpc-f3c6e49a",
     subnet: "subnet-8ed885f5",
     config: {
-      Tags: null,
+      Tags: { Name: "A name" },
       State: "available",
       VpcId: "vpc-f3c6e49a",
       OwnerId: "745897381572",

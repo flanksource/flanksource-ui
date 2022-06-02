@@ -1,3 +1,4 @@
+import { useState } from "react";
 import * as timeago from "timeago.js";
 
 import { DataTable } from "../";
@@ -45,9 +46,15 @@ interface CellProp {
   column: { id: string };
 }
 
+const MIN_ITEMS = 2;
+
 function TagsCell({ row, column }: CellProp) {
-  const tags = row?.values[column.id];
-  if (!tags || Object.keys(tags).length === 0) {
+  const [showMore, setShowMore] = useState(false);
+
+  const tagMap = row?.values[column.id] || {};
+  const tagKeys = Object.keys(tagMap).sort();
+
+  if (tagKeys.length === 0) {
     return (
       <div className="flex">
         <span className="text-gray-400">none</span>
@@ -55,16 +62,34 @@ function TagsCell({ row, column }: CellProp) {
     );
   }
 
+  const renderKeys = showMore ? tagKeys : tagKeys.slice(0, MIN_ITEMS);
+
   return (
-    <div className="font-mono flex flex-wrap w-96 space-y-1.5">
-      {Object.keys(tags).map((key) => (
-        <div
-          className="bg-gray-200 border border-gray-300 px-1 py-0.75 mr-1 rounded-md text-gray-600 font-semibold text-xs"
-          key={key}
-        >
-          {key}: <span className="font-light">{tags[key]}</span>
-        </div>
-      ))}
+    <div
+      onClick={(e) => {
+        /* Don't trigger click for parent. E.g without stopPropagation,
+           handleRowClick would be called. */
+        e.stopPropagation();
+        setShowMore((showMore) => !showMore);
+      }}
+      className="relative"
+    >
+      <div className="font-mono flex flex-wrap w-96 pl-5">
+        {renderKeys.map((key) => (
+          <div
+            className="bg-gray-200 border border-gray-300 px-1 py-0.75 mr-1 rounded-md text-gray-600 font-semibold text-xs"
+            key={key}
+          >
+            {key}: <span className="font-light">{tagMap[key]}</span>
+          </div>
+        ))}
+      </div>
+
+      {tagKeys.length > MIN_ITEMS && (
+        <button className="absolute top-0 left-0 mt-1 text-sm focus:outline-none">
+          {showMore ? "▼" : "►"}
+        </button>
+      )}
     </div>
   );
 }

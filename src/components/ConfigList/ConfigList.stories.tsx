@@ -1,6 +1,6 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 import sampleConfigList from "../../data/sampleConfigList";
-import ConfigList from "./ConfigList";
+import ConfigList from "./index";
 
 export default {
   title: "ConfigList",
