@@ -1,15 +1,10 @@
 import { SearchIcon } from "@heroicons/react/solid";
 import { isEmpty } from "lodash";
 import { useForm } from "react-hook-form";
-import {
-  BsGearFill,
-  BsFlower2,
-  BsGridFill,
-  BsStack,
-  BsListOl
-} from "react-icons/bs";
-import React, { useCallback, useEffect, useState } from "react";
+import { BsGearFill, BsFlower2, BsGridFill, BsStack } from "react-icons/bs";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import { useLoader } from "../hooks";
 import { getLogs } from "../api/services/logs";
 import { getTopology } from "../api/services/topology";
 import { Dropdown } from "../components/Dropdown";
@@ -19,7 +14,6 @@ import { LogsViewer } from "../components/Logs";
 import { TextInput } from "../components/TextInput";
 import { timeRanges } from "../components/Dropdown/TimeRange";
 import { RefreshButton } from "../components/RefreshButton";
-import { LoadingStates } from "../constants";
 import { Icon } from "../components";
 
 export const logTypes = [
@@ -46,17 +40,21 @@ export const logTypes = [
 ];
 
 export function LogsPage() {
-  const [logsLoadingState, setLogsLoadingState] = useState(LoadingStates.idle);
+  const [idle, loading, loaded, setLoading] = useLoader();
   const [searchParams, setSearchParams] = useSearchParams();
   const [query, setQuery] = useState(searchParams.get("query"));
-  const [topologyId] = useState(searchParams.get("topologyId"));
+  const [topologyId, setTopologyId] = useState(searchParams.get("topologyId"));
   const [externalId] = useState(searchParams.get("externalId"));
-  const [topology, setTopology] = useState(null);
-  const [type, setType] = useState('');
+  const [start, setStart] = useState(
+    searchParams.get("start") || timeRanges[0].value
+  );
+  const [type, setType] = useState();
+
+  const [topology, setTopology] = useState();
   const [logs, setLogs] = useState([]);
   const [topologies, setTopologies] = useState([]);
 
-  const { control, getValues, watch, setValue } = useForm({
+  const { control, getValues, watch } = useForm({
     defaultValues: {
       start: searchParams.get("start") || timeRanges[0].value,
       topologyId
@@ -64,23 +62,24 @@ export function LogsPage() {
   });
 
   useEffect(() => {
-    if (topologyId != null && topology == null) {
-      getTopology({ id: topologyId }).then((topology) => {
-        const result = topology.data[0];
-        if (
-          isEmpty(result.id) &&
-          result.components != null &&
-          result.components.length === 1
-        ) {
-          setTopology(result.components[0]);
-          setType(result.components[0].type);
-        } else {
-          setTopology(result);
-          setType(result.type);
-        }
-      });
+    if (topologyId === null) {
+      return;
     }
-  }, [topology, topologyId]);
+    getTopology({ id: topologyId }).then((topology) => {
+      const result = topology.data[0];
+      if (
+        isEmpty(result.id) &&
+        result.components != null &&
+        result.components.length === 1
+      ) {
+        setTopology(result.components[0]);
+        setType(result.components[0].type);
+      } else {
+        setTopology(result);
+        setType(result.type);
+      }
+    });
+  }, [topologyId]);
 
   useEffect(() => {
     if (topologyId) {
@@ -89,7 +88,7 @@ export function LogsPage() {
     async function fetchTopologies() {
       try {
         const result = await getTopology({});
-        const topologyList = result.data.map(item => {
+        const topologyList = result.data.map((item) => {
           return {
             icon: <Icon name={item.icon} size="2xl" />,
             description: item.name,
@@ -117,14 +116,14 @@ export function LogsPage() {
   };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const loadLogs = useCallback((type = '') => {
+  const loadLogs = () => {
     const values = getValues();
-    if (!values.topologyId) {
+    if (!values.topologyId || !type) {
       return;
     }
 
     saveQueryParams();
-    setLogsLoadingState(LoadingStates.loading);
+    setLoading(true);
 
     const queryBody = {
       query,
@@ -134,27 +133,21 @@ export function LogsPage() {
     };
     getLogs(queryBody).then((res) => {
       setLogs(res?.data?.results || []);
-      setLogsLoadingState(LoadingStates.loaded);
+      setLoading(false);
     });
-  }, []);
+  };
 
   useEffect(() => {
-    const subscription = watch(() => {
-      loadLogs();
+    const subscription = watch((value) => {
+      setTopologyId(value.topologyId);
+      setStart(value.start);
     });
     return () => subscription.unsubscribe();
   }, [watch]);
 
   useEffect(() => {
-    if (!topologyId) {
-      return;
-    }
-    loadLogs(type);
-  }, [type, topologyId]);
-
-  if (!isEmpty(topologyId) && topology == null) {
-    return <Loading text={`Loading topology ${topologyId}`} />;
-  }
+    loadLogs();
+  }, [start, type, topologyId]);
 
   return (
     <SearchLayout
@@ -162,7 +155,7 @@ export function LogsPage() {
         <div>
           <h1 className="text-xl font-semibold">
             Logs
-            {topology != null && (
+            {topology && (
               <span className="text-gray-600">
                 / {topology.name || topology.text}
               </span>
@@ -208,11 +201,7 @@ export function LogsPage() {
         </>
       }
     >
-      {logsLoadingState === LoadingStates.loaded && (
-        <LogsViewer logs={logs} isLoading={logsLoadingState} />
-      )}
-      {
-        logsLoadingState === LoadingStates.idle && (
+      {idle && (
         <div className="px-4 py-5 sm:px-6 min-h-screen	">
           <Dropdown
             control={control}
@@ -223,6 +212,8 @@ export function LogsPage() {
           />
         </div>
       )}
+      {loading && <Loading text="Loading logs..." />}
+      {loaded && <LogsViewer logs={logs} />}
     </SearchLayout>
   );
 }
