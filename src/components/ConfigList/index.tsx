@@ -1,5 +1,6 @@
 import { useState } from "react";
 import * as timeago from "timeago.js";
+import { IoMdArrowDropright, IoMdArrowDropdown } from "react-icons/io";
 
 import { DataTable } from "../";
 
@@ -76,7 +77,11 @@ function TagsCell({ row, column }: CellProp) {
     >
       {tagKeys.length > MIN_ITEMS && (
         <button className="text-sm focus:outline-none">
-          {showMore ? "▼" : "►"}
+          {showMore ? (
+            <IoMdArrowDropdown size={24} />
+          ) : (
+            <IoMdArrowDropright size={24} />
+          )}
         </button>
       )}
 
