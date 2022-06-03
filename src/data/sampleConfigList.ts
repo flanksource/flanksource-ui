@@ -1,12 +1,16 @@
-import { defaultTableColumns } from "../ConfigViewer/columns";
-import { DataTable } from "./index";
+function canonTags(
+  tags: undefined | { Key: string; Value: string }[] | { [index: string]: any }
+) {
+  if (!tags) return {};
 
-export default {
-  title: "DataTable",
-  component: DataTable
-};
+  if (!Array.isArray(tags)) {
+    return tags;
+  }
 
-const configData = [
+  return Object.fromEntries(tags.map((kv) => [kv["Key"], kv["Value"]]));
+}
+
+const data = [
   {
     id: "018099cf-530e-5b8a-9e10-3e6bec11ab98",
     scraper_id: null,
@@ -21,7 +25,7 @@ const configData = [
     network: "vpc-f3c6e49a",
     subnet: "subnet-8ed885f5",
     config: {
-      Tags: null,
+      Tags: { Name: "A name" },
       State: "available",
       VpcId: "vpc-f3c6e49a",
       OwnerId: "745897381572",
@@ -1374,15 +1378,9 @@ const configData = [
     created_at: "0001-01-01T00:00:00",
     updated_at: "2022-05-13T14:39:03.172868"
   }
-];
+].map((r) => {
+  let tags = canonTags(r.config["Tags"] || r.config.tags);
+  return { ...r, tags };
+});
 
-const Template = (arg) => <DataTable {...arg} />;
-
-export const ConfigTable = Template.bind({});
-ConfigTable.args = {
-  data: configData,
-  columns: defaultTableColumns,
-  isLoading: false,
-  tableStyle: { borderSpacing: "0" },
-  stickyHead: false
-};
+export default data;
