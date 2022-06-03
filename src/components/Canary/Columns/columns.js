@@ -1,11 +1,6 @@
 import { IoChevronForwardOutline } from "react-icons/io5";
 import { decodeUrlSearchParams } from "../url";
 
-function getChecksHeaderTitle() {
-  const { groupBy } = decodeUrlSearchParams(window.location.search);
-  return `Checks ${groupBy !== "no-group" ? `(Grouped by ${groupBy})` : ""}`;
-}
-
 function ExpandArrow({ row }) {
   return row.canExpand ? (
     <div className="ml-6 flex">
@@ -27,7 +22,7 @@ export const firstColumns = {
     cellClass: ""
   },
   name: {
-    Header: getChecksHeaderTitle,
+    Header: "Checks",
     accessor: "name",
     cellClass: `px-5 py-2 w-full max-w-0 overflow-hidden overflow-ellipsis relative`
   }

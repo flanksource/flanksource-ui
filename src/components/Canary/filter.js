@@ -74,7 +74,7 @@ export function filterChecksByText(checks, textQuery) {
   const filtered = [...checks].filter((check) => {
     const match =
       hasStringMatch(text, check.description?.toLowerCase()) ||
-      hasStringMatch(text, check.canaryName?.toLowerCase()) ||
+      hasStringMatch(text, check.canary_name?.toLowerCase()) ||
       hasStringMatch(text, check.endpoint?.toLowerCase()) ||
       hasStringMatch(text, check.name?.toLowerCase());
     return match;
