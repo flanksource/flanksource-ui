@@ -55,7 +55,9 @@
   "proxy": "https://incident-commander.canary.lab.flanksource.com",
   "lint-staged": {
     "src/**/*.{js,jsx,ts,tsx}": [
-      "cross-env NODE_ENV=development npx eslint --fix --ext .js,.jsx,.ts,.tsx",
+      "cross-env NODE_ENV=development npx eslint --fix --ext .js,.jsx,.ts,.tsx"
+    ],
+    "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
       "cross-env NODE_ENV=development npx prettier --write"
     ]
   },
