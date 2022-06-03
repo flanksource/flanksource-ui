@@ -25,5 +25,3 @@ yarn-error.log*
 src/data/*.real.json
 .vscode
 .idea/
-
-/src/setupProxy.js
