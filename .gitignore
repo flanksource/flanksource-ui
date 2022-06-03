@@ -25,3 +25,4 @@ yarn-error.log*
 src/data/*.real.json
 .vscode
 .idea/
+.log/
