@@ -158,7 +158,7 @@ export function LogsPage() {
 
     const queryBody = {
       query,
-      id: externalId,
+      externalId,
       type,
       start
     };
