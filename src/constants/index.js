@@ -1,2 +1,2 @@
-export * from "./hypothesis-statuses";
-export * from "./incident-priority";
+export { HypothesisStatuses } from "./hypothesis-statuses";
+export { IncidentPriority } from "./incident-priority";
