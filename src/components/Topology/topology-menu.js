@@ -10,10 +10,6 @@ export const TopologyDropdownMenu = ({ topology }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const viewLogs = () => {
-    console.log(topology);
-    if (!(topology.system_id && topology.external_id)) {
-      return;
-    }
     navigate(
       `/logs?topologyId=${topology.system_id}&externalId=${topology.external_id}&type=${topology.type}`
     );
@@ -34,16 +30,18 @@ export const TopologyDropdownMenu = ({ topology }) => {
         leaveTo="transform opacity-0 scale-95"
       >
         <Menu.Items className="absolute right-0 top-full font-inter w-56 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-card  focus:outline-none ">
-          <Menu.Item>
-            <button
-              onClick={viewLogs}
-              type="button"
-              className="flex items-center w-full text-gray-700 hover:bg-gray-200"
-            >
-              <MdTableRows className="ml-3" />
-              <span className="py-3 pl-2 pr-3 text-sm block">View Logs</span>
-            </button>
-          </Menu.Item>
+          {topology.system_id && topology.external_id && (
+            <Menu.Item>
+              <button
+                onClick={viewLogs}
+                type="button"
+                className="flex items-center w-full text-gray-700 hover:bg-gray-200"
+              >
+                <MdTableRows className="ml-3" />
+                <span className="py-3 pl-2 pr-3 text-sm block">View Logs</span>
+              </button>
+            </Menu.Item>
+          )}
           <Menu.Item>
             <Link
               to={`/incidents/create?topology=${topology.id}`}
