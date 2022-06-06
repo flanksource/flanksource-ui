@@ -170,7 +170,8 @@ export function LogsPage() {
 
   const onComponentSelect = (component) => {
     setTopologyId(component.system_id);
-    setExternalId(component.id);
+    setExternalId(component.external_id);
+    setType(component.type);
   };
 
   useEffect(() => {
