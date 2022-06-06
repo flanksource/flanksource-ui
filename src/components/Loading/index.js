@@ -1,8 +1,9 @@
+import clsx from "clsx";
 import { Oval } from "react-loading-icons";
 
-export function Loading({ text = "Loading..." }) {
+export function Loading({ text = "Loading...", ...props }) {
   return (
-    <div className="flex justify-center items-center">
+    <div className={clsx("flex justify-center items-center", props.className)}>
       <Oval stroke="gray" height="1.5em" />
       <span className="text-sm ml-3">{text}</span>
     </div>

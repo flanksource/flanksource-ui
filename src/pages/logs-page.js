@@ -1,5 +1,4 @@
 import { SearchIcon } from "@heroicons/react/solid";
-import { isEmpty } from "lodash";
 import { useForm } from "react-hook-form";
 import { BsGearFill, BsFlower2, BsGridFill, BsStack } from "react-icons/bs";
 import { useEffect, useMemo, useState } from "react";
@@ -50,7 +49,10 @@ const optionStyles = {
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
-  paddingLeft: "10px"
+  paddingLeft: "10px",
+  overflow: "hidden",
+  whiteSpace: "nowrap",
+  textOverflow: "ellipsis"
 };
 
 const groupBadgeStyles = {
@@ -76,7 +78,7 @@ const formatGroupLabel = (data) => (
 );
 
 const formatOptionLabel = (data) => (
-  <div style={optionStyles}>
+  <div style={optionStyles} title={data.label}>
     <span>
       <Icon className="inline" name={data.icon} size="xl" /> {data.label}
     </span>
@@ -93,7 +95,6 @@ export function LogsPage() {
     searchParams.get("start") || timeRanges[0].value
   );
 
-  const [topology, setTopology] = useState();
   const [topologies, setTopologies] = useState([]);
   const [logs, setLogs] = useState([]);
   const selectedPodOrNode = useMemo(() => {
@@ -114,24 +115,6 @@ export function LogsPage() {
       topologyId
     }
   });
-
-  useEffect(() => {
-    if (topologyId === null) {
-      return;
-    }
-    getTopology({ id: topologyId }).then((topology) => {
-      const result = topology.data[0];
-      if (
-        isEmpty(result.id) &&
-        result.components != null &&
-        result.components.length === 1
-      ) {
-        setTopology(result.components[0]);
-      } else {
-        setTopology(result);
-      }
-    });
-  }, [topologyId]);
 
   useEffect(() => {
     async function fetchTopologies() {
@@ -181,7 +164,7 @@ export function LogsPage() {
 
     const queryBody = {
       query,
-      externalId,
+      id: externalId,
       type,
       start
     };
@@ -212,16 +195,16 @@ export function LogsPage() {
   return (
     <SearchLayout
       title={
-        <div>
-          <h1 className="text-xl font-semibold">
-            Logs
-            {topology && (
-              <span className="text-gray-600">
-                / {topology.name || topology.text}
-              </span>
-            )}
-          </h1>
-        </div>
+        <SearchableDropdown
+          className="w-96"
+          options={topologies}
+          formatGroupLabel={formatGroupLabel}
+          onChange={onComponentSelect}
+          formatOptionLabel={formatOptionLabel}
+          isLoading={loading}
+          isDisabled={loading}
+          value={selectedPodOrNode}
+        />
       }
       extra={
         <>
@@ -262,27 +245,7 @@ export function LogsPage() {
       }
     >
       <div className="h-screen">
-        {topologies.length > 0 && (
-          <div class="col-span-6 sm:col-span-3 pb-6">
-            <label
-              htmlFor="country"
-              className="block text-sm font-medium text-gray-700 pb-2"
-            >
-              Please select any pod or node to view the logs
-            </label>
-            <SearchableDropdown
-              className="w-1/4"
-              options={topologies}
-              formatGroupLabel={formatGroupLabel}
-              onChange={onComponentSelect}
-              formatOptionLabel={formatOptionLabel}
-              isLoading={loading}
-              isDisabled={loading}
-              value={selectedPodOrNode}
-            />
-          </div>
-        )}
-        {loading && <Loading text="Loading logs..." />}
+        {loading && <Loading className="mt-40" text="Loading logs..." />}
         {loaded && <LogsViewer className="pt-4" logs={logs} />}
       </div>
     </SearchLayout>
