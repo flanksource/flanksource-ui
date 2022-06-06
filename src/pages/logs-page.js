@@ -1,15 +1,10 @@
 import { SearchIcon } from "@heroicons/react/solid";
 import { isEmpty } from "lodash";
 import { useForm } from "react-hook-form";
-import {
-  BsGearFill,
-  BsFlower2,
-  BsGridFill,
-  BsStack,
-  BsListOl
-} from "react-icons/bs";
-import React, { useCallback, useEffect, useState } from "react";
+import { BsGearFill, BsFlower2, BsGridFill, BsStack } from "react-icons/bs";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import { useLoader } from "../hooks";
 import { getLogs } from "../api/services/logs";
 import { getTopology } from "../api/services/topology";
 import { Dropdown } from "../components/Dropdown";
@@ -19,8 +14,8 @@ import { LogsViewer } from "../components/Logs";
 import { TextInput } from "../components/TextInput";
 import { timeRanges } from "../components/Dropdown/TimeRange";
 import { RefreshButton } from "../components/RefreshButton";
-import { LoadingStates } from "../constants";
 import { Icon } from "../components";
+import { SearchableDropdown } from "../components/SearchableDropdown";
 
 export const logTypes = [
   {
@@ -45,18 +40,75 @@ export const logTypes = [
   }
 ];
 
+const groupStyles = {
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between"
+};
+
+const optionStyles = {
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  paddingLeft: "10px"
+};
+
+const groupBadgeStyles = {
+  backgroundColor: "#EBECF0",
+  borderRadius: "2em",
+  color: "#172B4D",
+  display: "inline-block",
+  fontSize: 12,
+  fontWeight: "normal",
+  lineHeight: "1",
+  minWidth: 1,
+  padding: "0.16666666666667em 0.5em",
+  textAlign: "center"
+};
+
+const formatGroupLabel = (data) => (
+  <div style={groupStyles}>
+    <span>
+      <Icon className="inline" name={data.icon} size="xl" /> {data.label}
+    </span>
+    <span style={groupBadgeStyles}>{data?.options?.length}</span>
+  </div>
+);
+
+const formatOptionLabel = (data) => (
+  <div style={optionStyles}>
+    <span>
+      <Icon className="inline" name={data.icon} size="xl" /> {data.label}
+    </span>
+  </div>
+);
 export function LogsPage() {
-  const [logsLoadingState, setLogsLoadingState] = useState(LoadingStates.idle);
+  const { loading, loaded, setLoading } = useLoader();
   const [searchParams, setSearchParams] = useSearchParams();
   const [query, setQuery] = useState(searchParams.get("query"));
-  const [topologyId] = useState(searchParams.get("topologyId"));
-  const [externalId] = useState(searchParams.get("externalId"));
-  const [topology, setTopology] = useState(null);
-  const [type, setType] = useState('');
-  const [logs, setLogs] = useState([]);
-  const [topologies, setTopologies] = useState([]);
+  const [topologyId, setTopologyId] = useState(searchParams.get("topologyId"));
+  const [externalId, setExternalId] = useState(searchParams.get("externalId"));
+  const [type, setType] = useState(searchParams.get("type"));
+  const [start, setStart] = useState(
+    searchParams.get("start") || timeRanges[0].value
+  );
 
-  const { control, getValues, watch, setValue } = useForm({
+  const [topology, setTopology] = useState();
+  const [topologies, setTopologies] = useState([]);
+  const [logs, setLogs] = useState([]);
+  const selectedPodOrNode = useMemo(() => {
+    let value = null;
+    topologies.forEach((topology) => {
+      topology.options.forEach((option) => {
+        if (option.external_id === externalId) {
+          value = option;
+        }
+      });
+    });
+    return value;
+  }, [externalId, topologies, topologyId]);
+
+  const { control, watch } = useForm({
     defaultValues: {
       start: searchParams.get("start") || timeRanges[0].value,
       topologyId
@@ -64,49 +116,51 @@ export function LogsPage() {
   });
 
   useEffect(() => {
-    if (topologyId != null && topology == null) {
-      getTopology({ id: topologyId }).then((topology) => {
-        const result = topology.data[0];
-        if (
-          isEmpty(result.id) &&
-          result.components != null &&
-          result.components.length === 1
-        ) {
-          setTopology(result.components[0]);
-          setType(result.components[0].type);
-        } else {
-          setTopology(result);
-          setType(result.type);
-        }
-      });
-    }
-  }, [topology, topologyId]);
-
-  useEffect(() => {
-    if (topologyId) {
+    if (topologyId === null) {
       return;
     }
+    getTopology({ id: topologyId }).then((topology) => {
+      const result = topology.data[0];
+      if (
+        isEmpty(result.id) &&
+        result.components != null &&
+        result.components.length === 1
+      ) {
+        setTopology(result.components[0]);
+      } else {
+        setTopology(result);
+      }
+    });
+  }, [topologyId]);
+
+  useEffect(() => {
     async function fetchTopologies() {
       try {
         const result = await getTopology({});
-        const topologyList = result.data.map(item => {
-          return {
-            icon: <Icon name={item.icon} size="2xl" />,
-            description: item.name,
-            label: item.name,
-            value: item.id
+        const groups = [];
+        result.data.map((topology) => {
+          const group = {
+            label: topology.name,
+            icon: topology.icon,
+            options: []
           };
+          topology.components.forEach((component) => {
+            component.components.forEach((item) => {
+              item.label = item.name;
+              item.value = item.id;
+              group.options.push(item);
+            });
+          });
+          groups.push(group);
         });
-        setTopologies(topologyList);
-      } catch (ex) {
-        setTopologies([]);
-      }
+        setTopologies(groups);
+      } catch (ex) {}
     }
     fetchTopologies();
-  }, [topologyId]);
+  }, []);
 
   const saveQueryParams = () => {
-    const paramsList = { query, topologyId, externalId, ...getValues() };
+    const paramsList = { query, topologyId, externalId, start, type };
     const params = {};
     Object.entries(paramsList).forEach(([key, value]) => {
       if (value) {
@@ -117,44 +171,43 @@ export function LogsPage() {
   };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const loadLogs = useCallback((type = '') => {
-    const values = getValues();
-    if (!values.topologyId) {
+  const loadLogs = () => {
+    if (!topologyId) {
       return;
     }
 
     saveQueryParams();
-    setLogsLoadingState(LoadingStates.loading);
+    setLoading(true);
 
     const queryBody = {
       query,
-      id: externalId,
-      ...values,
-      type
+      externalId,
+      type,
+      start
     };
     getLogs(queryBody).then((res) => {
       setLogs(res?.data?.results || []);
-      setLogsLoadingState(LoadingStates.loaded);
+      setLoading(false);
     });
-  }, []);
+  };
+
+  const onComponentSelect = (component) => {
+    setTopologyId(component?.system_id);
+    setExternalId(component?.external_id);
+    setType(component?.type);
+  };
 
   useEffect(() => {
-    const subscription = watch(() => {
-      loadLogs();
+    const subscription = watch((value) => {
+      setTopologyId(value.topologyId);
+      setStart(value.start);
     });
     return () => subscription.unsubscribe();
   }, [watch]);
 
   useEffect(() => {
-    if (!topologyId) {
-      return;
-    }
-    loadLogs(type);
-  }, [type, topologyId]);
-
-  if (!isEmpty(topologyId) && topology == null) {
-    return <Loading text={`Loading topology ${topologyId}`} />;
-  }
+    loadLogs();
+  }, [start, topologyId, externalId]);
 
   return (
     <SearchLayout
@@ -162,7 +215,7 @@ export function LogsPage() {
         <div>
           <h1 className="text-xl font-semibold">
             Logs
-            {topology != null && (
+            {topology && (
               <span className="text-gray-600">
                 / {topology.name || topology.text}
               </span>
@@ -208,21 +261,30 @@ export function LogsPage() {
         </>
       }
     >
-      {logsLoadingState === LoadingStates.loaded && (
-        <LogsViewer logs={logs} isLoading={logsLoadingState} />
-      )}
-      {
-        logsLoadingState === LoadingStates.idle && (
-        <div className="px-4 py-5 sm:px-6 min-h-screen	">
-          <Dropdown
-            control={control}
-            name="topologyId"
-            className="w-80 mr-2 flex-shrink-0"
-            items={topologies}
-            placeholder="Select Topology"
-          />
-        </div>
-      )}
+      <div className="h-screen">
+        {topologies.length > 0 && (
+          <div class="col-span-6 sm:col-span-3 pb-6">
+            <label
+              htmlFor="country"
+              className="block text-sm font-medium text-gray-700 pb-2"
+            >
+              Please select any pod or node to view the logs
+            </label>
+            <SearchableDropdown
+              className="w-1/4"
+              options={topologies}
+              formatGroupLabel={formatGroupLabel}
+              onChange={onComponentSelect}
+              formatOptionLabel={formatOptionLabel}
+              isLoading={loading}
+              isDisabled={loading}
+              value={selectedPodOrNode}
+            />
+          </div>
+        )}
+        {loading && <Loading text="Loading logs..." />}
+        {loaded && <LogsViewer className="pt-4" logs={logs} />}
+      </div>
     </SearchLayout>
   );
 }

@@ -1,5 +1,2 @@
-export const LoadingStates = {
-  idle: "idle",
-  loading: "loading",
-  loaded: "loaded"
-};
+export { HypothesisStatuses } from "./hypothesis-statuses";
+export { IncidentPriority } from "./incident-priority";
