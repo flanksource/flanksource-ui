@@ -195,18 +195,16 @@ export function LogsPage() {
   return (
     <SearchLayout
       title={
-        <div className="flex">
-          <SearchableDropdown
-            className="w-96"
-            options={topologies}
-            formatGroupLabel={formatGroupLabel}
-            onChange={onComponentSelect}
-            formatOptionLabel={formatOptionLabel}
-            isLoading={loading}
-            isDisabled={loading}
-            value={selectedPodOrNode}
-          />
-        </div>
+        <SearchableDropdown
+          className="w-96"
+          options={topologies}
+          formatGroupLabel={formatGroupLabel}
+          onChange={onComponentSelect}
+          formatOptionLabel={formatOptionLabel}
+          isLoading={loading}
+          isDisabled={loading}
+          value={selectedPodOrNode}
+        />
       }
       extra={
         <>
