@@ -18,5 +18,13 @@ module.exports = {
     ],
     "react/jsx-fragments": [2, "syntax"],
     "react/jsx-no-useless-fragment": [2]
-  }
+  },
+  overrides: [
+    {
+      files: ["**/*.stories.*"],
+      rules: {
+        "import/no-anonymous-default-export": "off"
+      }
+    }
+  ]
 };
