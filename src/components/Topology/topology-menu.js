@@ -10,7 +10,13 @@ export const TopologyDropdownMenu = ({ topology }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const viewLogs = () => {
-    navigate(`/logs?topologyId=${topology.id}`);
+    console.log(topology);
+    if (!(topology.system_id && topology.external_id)) {
+      return;
+    }
+    navigate(
+      `/logs?topologyId=${topology.system_id}&externalId=${topology.external_id}&type=${topology.type}`
+    );
   };
 
   return (

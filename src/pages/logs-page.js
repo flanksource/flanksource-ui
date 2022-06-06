@@ -15,6 +15,7 @@ import { TextInput } from "../components/TextInput";
 import { timeRanges } from "../components/Dropdown/TimeRange";
 import { RefreshButton } from "../components/RefreshButton";
 import { Icon } from "../components";
+import { SearchableDropdown } from "../components/SearchableDropdown";
 
 export const logTypes = [
   {
@@ -39,20 +40,47 @@ export const logTypes = [
   }
 ];
 
+const groupStyles = {
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between"
+};
+const groupBadgeStyles = {
+  backgroundColor: "#EBECF0",
+  borderRadius: "2em",
+  color: "#172B4D",
+  display: "inline-block",
+  fontSize: 12,
+  fontWeight: "normal",
+  lineHeight: "1",
+  minWidth: 1,
+  padding: "0.16666666666667em 0.5em",
+  textAlign: "center"
+};
+
+const formatGroupLabel = (data) => (
+  <div style={groupStyles}>
+    <span>
+      <Icon className="inline" name={data.icon} size="xl" /> {data.label}
+    </span>
+    <span style={groupBadgeStyles}>{data.options.length}</span>
+  </div>
+);
+
 export function LogsPage() {
-  const [idle, loading, loaded, setLoading] = useLoader();
+  const { idle, loading, loaded, setLoading } = useLoader();
   const [searchParams, setSearchParams] = useSearchParams();
   const [query, setQuery] = useState(searchParams.get("query"));
   const [topologyId, setTopologyId] = useState(searchParams.get("topologyId"));
-  const [externalId] = useState(searchParams.get("externalId"));
+  const [externalId, setExternalId] = useState(searchParams.get("externalId"));
+  const [type, setType] = useState(searchParams.get("type"));
   const [start, setStart] = useState(
     searchParams.get("start") || timeRanges[0].value
   );
-  const [type, setType] = useState();
 
   const [topology, setTopology] = useState();
-  const [logs, setLogs] = useState([]);
   const [topologies, setTopologies] = useState([]);
+  const [logs, setLogs] = useState([]);
 
   const { control, getValues, watch } = useForm({
     defaultValues: {
@@ -73,10 +101,8 @@ export function LogsPage() {
         result.components.length === 1
       ) {
         setTopology(result.components[0]);
-        setType(result.components[0].type);
       } else {
         setTopology(result);
-        setType(result.type);
       }
     });
   }, [topologyId]);
@@ -88,18 +114,24 @@ export function LogsPage() {
     async function fetchTopologies() {
       try {
         const result = await getTopology({});
-        const topologyList = result.data.map((item) => {
-          return {
-            icon: <Icon name={item.icon} size="2xl" />,
-            description: item.name,
-            label: item.name,
-            value: item.id
+        const groups = [];
+        result.data.map((topology) => {
+          const group = {
+            label: topology.name,
+            icon: topology.icon,
+            options: []
           };
+          topology.components.forEach((component) => {
+            component.components.forEach((item) => {
+              item.label = item.name;
+              item.value = item.id;
+              group.options.push(item);
+            });
+          });
+          groups.push(group);
         });
-        setTopologies(topologyList);
-      } catch (ex) {
-        setTopologies([]);
-      }
+        setTopologies(groups);
+      } catch (ex) {}
     }
     fetchTopologies();
   }, [topologyId]);
@@ -117,8 +149,7 @@ export function LogsPage() {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const loadLogs = () => {
-    const values = getValues();
-    if (!values.topologyId || !type) {
+    if (!topologyId) {
       return;
     }
 
@@ -128,13 +159,18 @@ export function LogsPage() {
     const queryBody = {
       query,
       id: externalId,
-      ...values,
-      type
+      type,
+      start
     };
     getLogs(queryBody).then((res) => {
       setLogs(res?.data?.results || []);
       setLoading(false);
     });
+  };
+
+  const onComponentSelect = (component) => {
+    setTopologyId(component.system_id);
+    setExternalId(component.id);
   };
 
   useEffect(() => {
@@ -147,7 +183,7 @@ export function LogsPage() {
 
   useEffect(() => {
     loadLogs();
-  }, [start, type, topologyId]);
+  }, [start, topologyId, externalId]);
 
   return (
     <SearchLayout
@@ -202,14 +238,22 @@ export function LogsPage() {
       }
     >
       {idle && (
-        <div className="px-4 py-5 sm:px-6 min-h-screen	">
-          <Dropdown
-            control={control}
-            name="topologyId"
-            className="w-80 mr-2 flex-shrink-0"
-            items={topologies}
-            placeholder="Select Topology"
-          />
+        <div className="bg-white shadow overflow-hidden sm:rounded-lg min-h-screen">
+          <div className="px-4 py-5 sm:px-6">
+            <h3 className="text-lg leading-6 font-medium text-gray-900">
+              Please select any pod or node for which you want to see the logs.
+            </h3>
+          </div>
+          <div className="border-t border-gray-200">
+            <div className="px-4 py-5 sm:px-6">
+              <SearchableDropdown
+                className="w-1/4"
+                options={topologies}
+                formatGroupLabel={formatGroupLabel}
+                onChange={onComponentSelect}
+              />
+            </div>
+          </div>
         </div>
       )}
       {loading && <Loading text="Loading logs..." />}

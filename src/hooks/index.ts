@@ -1,1 +1,1 @@
-export * from "./useLoader";
+export { default as useLoader } from "./useLoader";
