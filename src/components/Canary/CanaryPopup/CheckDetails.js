@@ -36,7 +36,10 @@ export function CheckDetails({ check, ...rest }) {
 
   const details = {
     Name:
-      validCheck?.name || validCheck?.canaryName || validCheck?.endpoint || "-",
+      validCheck?.name ||
+      validCheck?.canary_name ||
+      validCheck?.endpoint ||
+      "-",
     Type: validCheck?.type || "-",
     Labels:
       validCheck?.labels &&

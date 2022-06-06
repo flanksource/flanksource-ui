@@ -18,7 +18,7 @@ export function getDefaultForm(labels, incoming = {}) {
 
   return {
     layout: "table",
-    groupBy: "canaryName",
+    groupBy: "canary_name",
     tabBy: "namespace",
     pivotBy: "none",
     pivotLabel: "",

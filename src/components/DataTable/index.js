@@ -1,10 +1,10 @@
 import { TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti";
 import { useSortBy, useTable } from "react-table";
+import clsx from "clsx";
 
 const tableStyles = {
   outerDivClass: "border border-b-0 border-gray-300",
   tableClass: "table-auto w-full",
-  // theadClass: "z-10",
   theadRowClass:
     "border-b border-gray-200 rounded-t-md uppercase bg-column-background",
   theadHeaderClass:
@@ -19,6 +19,7 @@ export const DataTable = ({
   data,
   handleRowClick,
   tableStyle,
+  stickyHead,
   isLoading,
   ...rest
 }) => {
@@ -30,11 +31,13 @@ export const DataTable = ({
   return (
     <div className={tableStyles.outerDivClass} {...rest}>
       <table
-        className={tableStyles.tableClass}
+        className={clsx(tableStyles.tableClass, stickyHead && "relative")}
         style={tableStyle}
         {...getTableProps()}
       >
-        <thead className={tableStyles.theadClass}>
+        <thead
+          className={clsx(tableStyles.theadClass, stickyHead && "sticky top-0")}
+        >
           {headerGroups.map((headerGroup) => (
             <tr
               key={headerGroup.getHeaderGroupProps().key}
