@@ -44,7 +44,7 @@ const queryClient = new QueryClient({
 const navigation = [
   {
     name: "Topology",
-    href: "/",
+    href: "/topology",
     icon: HomeIcon,
     current: false
   },
