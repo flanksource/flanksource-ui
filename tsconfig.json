@@ -12,6 +12,8 @@
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
     "jsx": "react-jsx",
+    "__COMMENT__": "https://github.com/emotion-js/emotion/issues/1249#issuecomment-828088254",
+    "jsxImportSource": "@emotion/react",
     "module": "esnext",
     "moduleResolution": "node",
     "noEmit": true,
