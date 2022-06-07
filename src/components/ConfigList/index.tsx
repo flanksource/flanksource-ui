@@ -85,7 +85,7 @@ function TagsCell({ row, column }: CellProp) {
         </button>
       )}
 
-      <div className="font-mono flex flex-wrap w-96 pl-1">
+      <div className="font-mono flex flex-wrap w-96 pl-1 space-y-1">
         {renderKeys.map((key) => (
           <div
             className="bg-gray-200 border border-gray-300 px-1 py-0.75 mr-1 rounded-md text-gray-600 font-semibold text-xs"
