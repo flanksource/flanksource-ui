@@ -151,7 +151,7 @@ export function TopologyCard({
                 ))}
               </div>
             )}
-            <div className="w-med-card-right pl-1 py-4 pr-5 overflow-y-auto">
+            <div className="pl-1 py-4 pr-5 overflow-y-auto">
               {_topology.components &&
                 _topology.components.map((component, index) => (
                   <div
