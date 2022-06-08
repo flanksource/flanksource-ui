@@ -11,19 +11,20 @@ import { IndeterminateCheckbox } from "../../IndeterminateCheckbox/Indeterminate
 
 const convert = new Convert();
 
-export const LogsTable = ({ logs, actions, variant }) => {
-  if (logs != null && !isArray(logs)) {
+export const LogsTable = ({ logs: logsParam, actions, variant }) => {
+  const logs = useMemo(() => {
+    if (logsParam == null || Array.isArray(logsParam)) {
+      return logsParam || [];
+    }
+
     try {
-      logs = JSON.parse(logs);
+      return JSON.parse(logsParam);
     } catch (e) {
       // eslint-disable-next-line no-console
-      console.error("cannot parse logs", logs);
-      logs = [];
+      console.error("cannot parse logs", logsParam);
+      return [];
     }
-  }
-  if (logs == null) {
-    logs = [];
-  }
+  }, [logsParam]);
 
   // TODO(ciju): fix this
   /* eslint-disable react/no-unstable-nested-components */

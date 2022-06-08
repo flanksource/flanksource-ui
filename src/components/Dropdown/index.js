@@ -185,7 +185,7 @@ export const DropdownListbox = ({
                 })
                 .map((item) => (
                   <Listbox.Option
-                    key={item.id}
+                    key={item.id || item.value}
                     className={({ active }) =>
                       classNames(
                         active ? "text-white bg-indigo-600" : "text-gray-900",
