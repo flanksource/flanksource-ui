@@ -95,7 +95,10 @@ export function TopologyCard({
               className="font-bold overflow-hidden truncate align-middle text-15pxinrem leading-1.21rel"
               title={_topology.name}
             >
-              <Link to={prepareTopologyLink(_topology)}>
+              <Link
+                className="hover:underline"
+                to={prepareTopologyLink(_topology)}
+              >
                 {_topology.text || _topology.name}
               </Link>
             </p>

@@ -57,7 +57,10 @@ export const HealthSummary = ({ component, iconSize, link }) => {
   return (
     <div className="flex mb-1.5">
       <Icon name={icon} className="mr-1" size={iconSize} />
-      <Link className="text-xs linear-1.21rel mr-1 cursor-pointer" to={link}>
+      <Link
+        className="text-xs linear-1.21rel mr-1 cursor-pointer hover:underline"
+        to={link}
+      >
         {name}
       </Link>
       <div className="flex gap-2 ">
