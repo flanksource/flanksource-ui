@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { BsTable } from "react-icons/bs";
-import { RiLayoutGridLine } from "react-icons/ri";
+import React, { useEffect, useState, useMemo } from "react";
 import { debounce } from "lodash";
 import {
   useNavigate,
   useSearchParams,
   useOutletContext
 } from "react-router-dom";
+
 import { getAllConfigs } from "../../api/services/configs";
 import { Dropdown } from "../../components/Dropdown";
 
@@ -14,6 +13,7 @@ import { filterConfigsByText } from "../../components/ConfigViewer/utils";
 import { BreadcrumbNav } from "../../components/BreadcrumbNav";
 import { TextInputClearable } from "../../components/TextInputClearable";
 import ConfigList from "../../components/ConfigList";
+import { SearchSelectTag } from "../../components/SearchSelectTag";
 
 export function ConfigListPage() {
   const [params, setParams] = useSearchParams();
@@ -23,7 +23,19 @@ export function ConfigListPage() {
   const [isLoading, setIsLoading] = useState(true);
   const { setTitle, setTitleExtras } = useOutletContext();
 
+  const configTypes = useMemo(
+    () => [...new Set(data.map((d) => d.config_type))],
+    [data]
+  );
+
+  const configTagItems = useMemo(
+    () => data.flatMap((d) => Object.entries(d.tags)),
+    [data]
+  );
+
   const query = params.get("query");
+  const tag = decodeURIComponent(params.get("tag") || "All");
+  const configType = decodeURIComponent(params.get("type") || "All");
 
   useState(() => {
     getAllConfigs()
@@ -44,12 +56,29 @@ export function ConfigListPage() {
 
   const extra = (
     <div className="flex space-x-2 mr-4">
-      <TypeDropdown />
-      <TagsDropdown />
+      <TypeDropdown
+        value={configType}
+        onChange={(ct) => {
+          params.set("type", encodeURIComponent(ct || ""));
+          setParams(params);
+        }}
+      />
+      <span className="w-80">
+        <SearchSelectTag
+          tags={configTagItems}
+          value={tag}
+          onChange={(ct) => {
+            params.set("tag", encodeURIComponent(ct.value || ""));
+            setParams(params);
+          }}
+        />
+      </span>
+
       <TextInputClearable
         onChange={debounce((e) => {
           const query = e.target.value || "";
-          setParams({ query });
+          params.set("query", query);
+          setParams(params);
         }, 200)}
         className="w-80"
         placeholder="Search for configs"
@@ -61,7 +90,7 @@ export function ConfigListPage() {
   useEffect(() => {
     setTitleExtras(extra);
     return () => setTitleExtras(null);
-  }, []);
+  }, [data, configType, tag, query, configTagItems]);
 
   useEffect(() => {
     let filteredData = data;
@@ -69,9 +98,25 @@ export function ConfigListPage() {
     if (data?.length > 0) {
       // do filtering here
       filteredData = filterConfigsByText(filteredData, query);
+
+      if (configType && configType !== "All") {
+        filteredData = filteredData.filter((d) => configType === d.config_type);
+      }
+
+      if (tag && tag !== "All") {
+        filteredData = filteredData.filter((d) => {
+          if (Array.isArray(tag)) {
+            const kvs = tag.map((x) => x.split("__:__"));
+            return kvs.some(([key, val]) => d.tags[key] === val);
+          } else {
+            const [k, v] = tag.split("__:__");
+            return d.tags[k] === v;
+          }
+        });
+      }
     }
     setFilteredData(filteredData);
-  }, [data, query]);
+  }, [data, query, configType, tag]);
 
   return (
     <ConfigList
@@ -83,69 +128,38 @@ export function ConfigListPage() {
 }
 
 const TypeDropdown = ({ ...rest }) => {
-  const exampleItems = {
-    type1: {
-      id: "dropdown-type1",
-      name: "type1",
-      icon: <BsTable />,
-      description: "Type 1",
-      value: "type1"
+  const items = {
+    All: {
+      id: "All",
+      name: "All",
+      description: "All",
+      value: "All"
     },
-    type2: {
-      id: "dropdown-type2",
-      name: "type2",
-      icon: <RiLayoutGridLine />,
-      description: "Type 2",
-      value: "type2"
+    EC2Instance: {
+      id: "EC2Instance",
+      name: "EC2 Instance",
+      description: "EC2 Instance",
+      value: "EC2Instance"
+    },
+    Subnet: {
+      id: "Subnet",
+      name: "Subnet",
+      description: "Subnet",
+      value: "Subnet"
     }
   };
 
-  const [selected, setSelected] = useState(
-    Object.values(exampleItems)[0].value
-  );
+  const [selected, setSelected] = useState(Object.values(items)[0].value);
 
   return (
     <Dropdown
-      items={exampleItems}
+      items={items}
       onChange={(value) => setSelected(value)}
       value={selected}
       prefix={
         <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
           Type:
         </div>
-      }
-      {...rest}
-    />
-  );
-};
-
-const TagsDropdown = ({ ...rest }) => {
-  const exampleItems = {
-    tag1: {
-      id: "dropdown-tag1",
-      name: "tag1",
-      description: "Tag 1",
-      value: "tag1"
-    },
-    tag2: {
-      id: "dropdown-tag2",
-      name: "tag2",
-      description: "Tag 2",
-      value: "tag2"
-    }
-  };
-
-  const [selected, setSelected] = useState(
-    Object.values(exampleItems)[0].value
-  );
-
-  return (
-    <Dropdown
-      items={exampleItems}
-      onChange={(value) => setSelected(value)}
-      value={selected}
-      prefix={
-        <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">Tag:</div>
       }
       {...rest}
     />
