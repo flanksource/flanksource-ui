@@ -20,7 +20,7 @@ export function Chip({ text, color }) {
   return (
     <div
       className={clsx(
-        "text-center align-baseline min-w-8 min-h-8 text-2xs font-inter rounded-4px font-bold break-all",
+        "text-center align-baseline min-w-8 min-h-8 text-2xs rounded-4px font-bold break-all",
         getBackgroundColorClass(color)
       )}
     >

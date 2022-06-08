@@ -9,7 +9,7 @@ export const TopologyView = ({
   setSelectionMode,
   toggleChecked
 }) => (
-  <div className="font-inter flex leading-1.21rel">
+  <div className="flex leading-1.21rel">
     <div className="flex-auto">
       <p className="text-2xl my-6 font-semibold">Title</p>
       <div className="form-check mb-4">

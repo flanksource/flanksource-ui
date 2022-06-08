@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import { Icon } from "../Icon";
 import { Chip } from "../Chip";
+import { Link } from "react-router-dom";
 
 function getChipsFromSummary(component, summary) {
   if (!summary) {
@@ -50,17 +51,15 @@ function getChipsFromSummary(component, summary) {
   return chips;
 }
 
-export const HealthSummary = ({ component, iconSize, exploreTopology }) => {
+export const HealthSummary = ({ component, iconSize, link }) => {
   const { name, icon, summary } = component;
+
   return (
     <div className="flex mb-1.5">
       <Icon name={icon} className="mr-1" size={iconSize} />
-      <h5
-        className="text-xs linear-1.21rel mr-1 cursor-pointer"
-        onClick={(e) => exploreTopology(component)}
-      >
+      <Link className="text-xs linear-1.21rel mr-1 cursor-pointer" to={link}>
         {name}
-      </h5>
+      </Link>
       <div className="flex gap-2 ">
         {getChipsFromSummary(component, summary)}
       </div>
@@ -70,7 +69,8 @@ export const HealthSummary = ({ component, iconSize, exploreTopology }) => {
 
 HealthSummary.propTypes = {
   iconSize: PropTypes.string,
-  component: PropTypes.shape({}).isRequired
+  component: PropTypes.shape({}).isRequired,
+  link: PropTypes.string
 };
 
 HealthSummary.defaultProps = {

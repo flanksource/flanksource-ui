@@ -95,7 +95,14 @@ export function IncidentManagerRoutes({ sidebar }) {
       <Route path="" element={<Navigate to="/topology" />} />
 
       <Route path="topology" element={sidebar}>
-        <Route path=":id" element={<TopologyPage url="/canary/api" />} />
+        <Route path=":clusterId" element={<TopologyPage url="/canary/api" />}>
+          <Route path=":groupId" element={<TopologyPage url="/canary/api" />}>
+            <Route
+              path=":podOrNodeId"
+              element={<TopologyPage url="/canary/api" />}
+            ></Route>
+          </Route>
+        </Route>
         <Route index element={<TopologyPage url="/canary/api" />} />
       </Route>
 
