@@ -76,7 +76,7 @@ export function TopologyCard({
   return (
     <div
       className={clsx(
-        "rounded-8px mb-3 mr-3 shadow-card card topology-card bg-lightest-gray",
+        "rounded-8px mb-3 mr-3 shadow-card card topology-card bg-lightest-gray self-start",
         _topology.status,
         selectionMode ? "cursor-pointer" : "",
         `topology-card-${size}`
@@ -151,7 +151,7 @@ export function TopologyCard({
                 ))}
               </div>
             )}
-            <div className="pl-1 py-4 pr-5 overflow-y-auto">
+            <div className="pl-1 py-4 pr-5 overflow-y-auto max-h-36">
               {_topology.components &&
                 _topology.components.map((component, index) => (
                   <div
