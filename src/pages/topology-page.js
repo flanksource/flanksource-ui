@@ -60,6 +60,10 @@ export function TopologyPage() {
     return <Loading text="Loading topology..." />;
   }
 
+  const exploreTopology = (component) => {
+    console.log(component);
+  };
+
   return (
     <SearchLayout
       title={
@@ -75,7 +79,12 @@ export function TopologyPage() {
       <div className="flex leading-1.21rel">
         <div className="flex flex-wrap">
           {topology.map((item) => (
-            <TopologyCard key={item.id} topology={item} size="extra-large" />
+            <TopologyCard
+              key={item.id}
+              topology={item}
+              size="extra-large"
+              exploreTopology={exploreTopology}
+            />
           ))}
         </div>
       </div>

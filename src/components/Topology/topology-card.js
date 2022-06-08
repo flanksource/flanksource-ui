@@ -1,8 +1,6 @@
 import clsx from "clsx";
 import { filter } from "lodash";
-import React, { useEffect, useState, useMemo } from "react";
-import { Link } from "react-router-dom";
-import { getTopology } from "../../api/services/topology";
+import { useMemo } from "react";
 import { HealthSummary } from "../HealthSummary";
 import { Icon } from "../Icon";
 import { Loading } from "../Loading";
@@ -23,20 +21,10 @@ export function TopologyCard({
   topology,
   topologyId,
   selectionMode,
-  depth,
   selected,
-  onSelectionChange
+  onSelectionChange,
+  exploreTopology
 }) {
-  const [_topology, setTopology] = useState(topology);
-
-  useEffect(() => {
-    if (topologyId != null && _topology == null) {
-      getTopology({ id: topologyId, depth }).then((topology) => {
-        setTopology(topology.data[0]);
-      });
-    }
-  });
-
   let selectionModeRootProps = null;
 
   if (selectionMode) {
@@ -53,19 +41,19 @@ export function TopologyCard({
     [size]
   );
 
-  if (_topology == null) {
+  if (topology == null) {
     return <Loading text={`Loading ${topologyId}`} />;
   }
 
-  _topology.properties = _topology.properties || [];
-  const properties = filter(_topology.properties, (i) => !i.headline);
-  const heading = filter(_topology.properties, (i) => i.headline);
+  topology.properties = topology.properties || [];
+  const properties = filter(topology.properties, (i) => !i.headline);
+  const heading = filter(topology.properties, (i) => i.headline);
 
   return (
     <div
       className={clsx(
         "rounded-8px mb-3 mr-3 shadow-card card topology-card bg-lightest-gray",
-        _topology.status,
+        topology.status,
         selectionMode ? "cursor-pointer" : "",
         `topology-card-${size}`
       )}
@@ -75,22 +63,21 @@ export function TopologyCard({
         <div className="flex pr-1 pt-2.5 pb-3.5 pl-5 overflow-hidden">
           <div className="text-gray-color m-auto mr-2.5 flex-initial max-w-1/4 leading-1.21rel">
             <h3 className="text-gray-color text-2xsi leading-1.21rel">
-              <Icon name={_topology.icon} size="2xl" />
+              <Icon name={topology.icon} size="2xl" />
             </h3>
           </div>
           <div className="flex-1 m-auto overflow-hidden">
-            <p
-              className="font-bold overflow-hidden truncate align-middle text-15pxinrem leading-1.21rel"
-              title={_topology.name}
+            <div
+              className="font-bold overflow-hidden truncate align-middle text-15pxinrem leading-1.21rel cursor-pointer"
+              title={topology.name}
+              onClick={(e) => exploreTopology(topology)}
             >
-              <Link to={`/topology/${_topology.id}`}>
-                {_topology.text || _topology.name}
-              </Link>
-            </p>
-            {_topology.description != null ||
-              (_topology.id != null && (
+              {topology.text || topology.name}
+            </div>
+            {topology.description != null ||
+              (topology.id != null && (
                 <h3 className="text-gray-color overflow-hidden truncate text-2xsi leading-1.21rel font-medium">
-                  {_topology.description || _topology.id}
+                  {topology.description || topology.id}
                 </h3>
               ))}
           </div>
@@ -113,7 +100,7 @@ export function TopologyCard({
               />
             </div>
           ) : (
-            <TopologyDropdownMenu topology={_topology} />
+            <TopologyDropdownMenu topology={topology} />
           )}
         </div>
       </div>
@@ -124,31 +111,36 @@ export function TopologyCard({
           </div>
         ) : (
           <>
-            <div className="w-med-card-left py-4 pl-5 pr-1 overflow-auto">
-              {properties.map((property, index) => (
-                <Property
-                  key={property.name}
-                  property={property}
-                  className={
-                    index === _topology.properties.length - 1
-                      ? "mb-0"
-                      : "mb-2.5"
-                  }
-                />
-              ))}
-            </div>
+            {properties.length > 0 && (
+              <div className="w-med-card-left py-4 pl-5 pr-1 overflow-auto">
+                {properties.map((property, index) => (
+                  <Property
+                    key={property.name}
+                    property={property}
+                    className={
+                      index === topology.properties.length - 1
+                        ? "mb-0"
+                        : "mb-2.5"
+                    }
+                  />
+                ))}
+              </div>
+            )}
             <div className="w-med-card-right pl-1 py-4 pr-5 overflow-y-auto">
-              {_topology.components &&
-                _topology.components.map((component, index) => (
+              {topology.components &&
+                topology.components.map((component, index) => (
                   <div
                     className={
-                      index === _topology.components.length - 1
+                      index === topology.components.length - 1
                         ? "mb-0"
                         : "mb-2.5"
                     }
                     key={component.id}
                   >
-                    <HealthSummary component={component} />
+                    <HealthSummary
+                      component={component}
+                      exploreTopology={exploreTopology}
+                    />
                   </div>
                 ))}
             </div>
@@ -158,32 +150,3 @@ export function TopologyCard({
     </div>
   );
 }
-
-// TopologyCard.propTypes = {
-//   size: PropTypes.string,
-//   selectionMode: PropTypes.bool,
-//   selected: PropTypes.bool,
-//   onSelectionChange: PropTypes.func,
-//   topologyId: PropTypes.string,
-//   topology: PropTypes.shape({
-//     name: PropTypes.string,
-//     status: PropTypes.string,
-//     icon: PropTypes.string,
-//     properties: PropTypes.arrayOf(
-//       PropTypes.shape({
-//         name: PropTypes.string,
-//         text: PropTypes.string
-//         value
-//       }).isRequired
-//     )
-//   })
-// };
-
-// TopologyCard.defaultProps = {
-//   selectionMode: false,
-//   selected: false,
-//   topology: null,
-//   topologyId: null,
-//   size: "md",
-//   onSelectionChange: () => { }
-// };
