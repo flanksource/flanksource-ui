@@ -59,7 +59,7 @@ export function TopologyCard({
       "/topology",
       clusterId || topologyItem.parent_id,
       groupId || (clusterId ? topologyItem.parent_id : null),
-      topologyItem.id
+      topologyItem.id !== groupId ? topologyItem.id : null
     ]
       .filter((v) => v?.trim())
       .join("/");
