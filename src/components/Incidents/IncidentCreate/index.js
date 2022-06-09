@@ -2,10 +2,10 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import * as yup from "yup";
-import { createEvidence } from "../../../api/services/evidence";
+import { createEvidence, EvidenceType } from "../../../api/services/evidence";
 import { createHypothesis } from "../../../api/services/hypothesis";
 import { createIncident } from "../../../api/services/incident";
 import { useUser } from "../../../context";
@@ -29,6 +29,9 @@ const validationSchema = yup
 
 export function IncidentCreate({ callback, evidence, ...rest }) {
   const navigate = useNavigate();
+  const [params] = useSearchParams();
+  const topologyId = params.get("topology");
+
   const user = useUser();
   const {
     control,
@@ -65,21 +68,37 @@ export function IncidentCreate({ callback, evidence, ...rest }) {
           type: "root",
           status: "possible"
         }).then((hypothesis) => {
-          if (hypothesis?.data[0]?.id && evidence) {
-            createEvidence(
-              user,
-              uuidv4(),
-              hypothesis.data[0].id,
-              {
+          if (hypothesis?.data[0]?.id && (evidence || topologyId)) {
+            let details = {};
+            let description;
+            let type;
+
+            if (evidence) {
+              details = {
+                id: evidence?.configId,
                 lines: evidence?.lines,
-                config_id: evidence?.configId,
-                config_full: evidence?.config
-              },
-              {
-                description: evidence?.configName,
-                type: evidence?.type
-              }
-            );
+                selected_lines: evidence?.selected_lines
+              };
+              type = EvidenceType.Config;
+              description = evidence?.configName;
+            }
+            if (topologyId) {
+              details = {
+                id: topologyId
+              };
+
+              type = EvidenceType.Topology;
+              description = "Topology";
+            }
+
+            createEvidence({
+              user,
+              id: uuidv4(),
+              hypothesisId: hypothesis.data[0].id,
+              evidence: details,
+              description,
+              type
+            });
           }
         });
 
@@ -94,7 +113,7 @@ export function IncidentCreate({ callback, evidence, ...rest }) {
   };
 
   return (
-    <div className={`py-7 ${rest.className || ""}`} {...rest}>
+    <div className={`max-w-prose py-7 ${rest.className || ""}`} {...rest}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="mb-4">
           <Controller

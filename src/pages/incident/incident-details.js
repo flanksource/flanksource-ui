@@ -7,7 +7,7 @@ import {
   deleteHypothesisBulk,
   updateHypothesis
 } from "../../api/services/hypothesis";
-import { updateIncident } from "../../api/services/incident";
+import { updateIncident, deleteIncident } from "../../api/services/incident";
 import { HypothesisBuilder } from "../../components/HypothesisBuilder";
 import { SearchLayout } from "../../components/Layout";
 
@@ -73,6 +73,10 @@ export function IncidentDetailsPage() {
     [incidentData]
   );
 
+  const topologyIds = incident?.hypothesis?.flatMap((h) =>
+    h.evidence.map((e) => e.evidence.id)
+  );
+
   const status = useMemo(() => incident?.status ?? null, [incident]);
 
   const loadedTree = useMemo(
@@ -118,17 +122,17 @@ export function IncidentDetailsPage() {
     >
       <div className="mt-2 max-w-3xl mx-auto grid grid-cols-1 gap-6 sm:px-6 lg:max-w-7xl lg:grid-flow-col-dense lg:grid-cols-3">
         <div className="space-y-6 lg:col-start-1 lg:col-span-2">
-          <section aria-labelledby="notes-title">
-            <div className="bg-white sm:overflow-hidden">
-              <div className="px-2 py-2 flex flex-nowrap">
-                <TopologyCard
-                  size="medium"
-                  topologyId="017ed3af-c25a-5362-175d-40e7864ed7b7"
-                  depth={2}
-                />
+          {topologyIds.length ? (
+            <section aria-labelledby="notes-title">
+              <div className="bg-white sm:overflow-hidden">
+                <div className="px-2 py-2 flex flex-nowrap">
+                  {topologyIds.map((id) => (
+                    <TopologyCard size="large" topologyId={id} depth={2} />
+                  ))}
+                </div>
               </div>
-            </div>
-          </section>
+            </section>
+          ) : null}
 
           <section aria-labelledby="notes-title">
             <div className="bg-white shadow sm:rounded-lg sm:overflow-hidden">

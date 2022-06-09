@@ -32,6 +32,7 @@ export function IncidentList({ list, ...rest }) {
             >
               Responders
             </th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody className="flex-1 overflow-y-auto">
@@ -79,7 +80,9 @@ function IncidentItem({ incident }) {
       <td className="px-3 text-gray-500 text-sm py-4">{age}</td>
       <td className="px-3 text-sm py-4" colSpan={2}>
         <div className="flex">
-          <AvatarGroup users={incident.responders} />
+          {incident?.responders?.length && (
+            <AvatarGroup users={incident.responders} />
+          )}
         </div>
       </td>
     </tr>

@@ -59,15 +59,16 @@ export function EvidenceAccordion({ title, date, children, ...rest }) {
 
 export function ConfigEvidenceView({ evidenceItem }) {
   const hunkLineGap = 3;
-  const fullConfig = evidenceItem?.evidence?.config_full || {};
-  const selectedLines = Object.keys(evidenceItem?.evidence?.lines) || [];
+  const fullConfig = evidenceItem?.evidence?.lines || {};
+  const selectedLines =
+    Object.keys(evidenceItem?.evidence?.selected_lines) || [];
   const [hunks, setHunks] = useState([]);
 
   useEffect(() => {
     setHunks(
       createHunks(
-        evidenceItem?.evidence?.config_full,
         evidenceItem?.evidence?.lines,
+        evidenceItem?.evidence?.selected_lines,
         hunkLineGap
       )
     );

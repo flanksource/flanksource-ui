@@ -163,9 +163,9 @@ export function ConfigDetailsPage() {
           evidence={{
             configId: id,
             configName: configDetails?.name,
-            config: configLines,
+            lines: configLines,
             type: "config",
-            lines: Object.fromEntries(
+            selected_lines: Object.fromEntries(
               Object.keys(checked).map((n) => [n, configLines[n]])
             )
           }}

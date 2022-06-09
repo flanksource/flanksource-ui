@@ -2,7 +2,7 @@ import clsx from "clsx";
 import { filter } from "lodash";
 import { useEffect, useState, useMemo } from "react";
 import { Link, useParams } from "react-router-dom";
-import { getTopology } from "../../api/services/topology";
+import { getTopologyWithoutUnroll } from "../../api/services/topology";
 import { HealthSummary } from "../HealthSummary";
 import { Icon } from "../Icon";
 import { Loading } from "../Loading";
@@ -32,11 +32,11 @@ export function TopologyCard({
 
   useEffect(() => {
     if (topologyId != null && _topology == null) {
-      getTopology({ id: topologyId, depth }).then((topology) => {
+      getTopologyWithoutUnroll({ id: topologyId, depth }).then((topology) => {
         setTopology(topology.data[0]);
       });
     }
-  });
+  }, [topologyId, _topology, depth]);
 
   let selectionModeRootProps = null;
 

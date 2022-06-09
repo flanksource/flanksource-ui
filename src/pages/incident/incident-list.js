@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { AiFillPlusCircle, AiOutlineQuestion } from "react-icons/ai/";
+import { AiFillPlusCircle } from "react-icons/ai/";
 import { useForm } from "react-hook-form";
 import { debounce } from "lodash";
 import { getIncidentsWithParams } from "../../api/services/incident";
@@ -14,29 +14,6 @@ import { MultiSelectDropdown } from "../../components/MultiSelectDropdown";
 import { severityItems, statusItems } from "../../components/Incidents/data";
 import { getPersons } from "../../api/services/users";
 import { getResponder } from "../../api/services/responder";
-
-export const tempTypes = [
-  {
-    icon: <AiOutlineQuestion />,
-    description: "All",
-    value: "all"
-  },
-  {
-    icon: <AiOutlineQuestion />,
-    description: "Value 1",
-    value: "value1"
-  },
-  {
-    icon: <AiOutlineQuestion />,
-    description: "Value 2",
-    value: "value2"
-  },
-  {
-    icon: <AiOutlineQuestion />,
-    description: "Value 3",
-    value: "value3"
-  }
-];
 
 const defaultSelections = {
   all: {
@@ -74,6 +51,23 @@ const labelDropdownStyles = {
   })
 };
 
+const removeNullValues = (obj) =>
+  Object.fromEntries(
+    Object.entries(obj).filter(([k, v]) => v !== null && v !== undefined)
+  );
+
+const toPostgresqlSearchParam = ({ severity, status, owner }) => {
+  const params = Object.entries({
+    severity,
+    status,
+    created_by: owner
+  })
+    .filter(([k, v]) => v && v !== "all")
+    .map(([k, v]) => [k, `eq.${v}`]);
+
+  return Object.fromEntries(params);
+};
+
 export function IncidentListPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const { control, getValues, watch } = useForm({
@@ -101,32 +95,27 @@ export function IncidentListPage() {
 
   useEffect(() => {
     getPersons().then((res) => {
-      const owners = res.data.reduce((acc, current) => {
-        acc[current.id] = {
-          ...current,
-          value: current.id,
-          description: current.name
-        };
-        return acc;
-      }, {});
-      setOwnerSelections(owners);
+      const owners = res.data.map(({ name, id }) => [
+        id,
+        { name, value: id, description: name }
+      ]);
+      setOwnerSelections(Object.fromEntries(owners));
     });
   }, []);
 
   async function fetchIncidents(params) {
     try {
       const res = await getIncidentsWithParams(params);
-      res.data.forEach((incident) => {
-        if (incident.commander_id.id !== incident.communicator_id.id) {
-          incident.responders = [
-            incident.communicator_id,
-            incident.commander_id
-          ];
-        } else {
-          incident.responders = [incident.commander_id];
-        }
+      const data = res.data.map((x) => {
+        const responders =
+          x.commander_id.id === x.communicator_id.id
+            ? [x.commander_id]
+            : [x.communicator_id, x.commander_id];
+
+        return { ...x, responders };
       });
-      setIncidents(res.data);
+
+      setIncidents(data);
       setIsLoading(false);
     } catch (ex) {
       setIncidents([]);
@@ -135,31 +124,12 @@ export function IncidentListPage() {
   }
 
   const loadIncidents = useRef(
-    debounce(
-      (
-        severity,
-        status,
-        owner
-        // labels
-      ) => {
-        // TODO: integrate labels
-        setIsLoading(true);
-        const params = {
-          severity,
-          status,
-          created_by: owner
-        };
-        Object.entries(params).forEach(([key, value]) => {
-          if (value === "all") {
-            delete params[key];
-          } else {
-            params[key] = `eq.${value}`;
-          }
-        });
-        fetchIncidents(params);
-      },
-      100
-    )
+    debounce((params) => {
+      // TODO: integrate labels
+      setIsLoading(true);
+
+      fetchIncidents(toPostgresqlSearchParam(params));
+    }, 100)
   ).current;
 
   useEffect(() => {
@@ -169,23 +139,19 @@ export function IncidentListPage() {
   const saveQueryParams = () => {
     const labelsArray = selectedLabels.map((o) => o.value);
     const encodedLabels = encodeURIComponent(JSON.stringify(labelsArray));
-    const paramsList = {
-      ...getValues(),
-      labels: encodedLabels
-    };
-    const params = {};
-    Object.entries(paramsList).forEach(([key, value]) => {
-      if (value) {
-        params[key] = value;
-      }
-    });
-    setSearchParams(params);
+    const paramsList = { ...getValues(), labels: encodedLabels };
+
+    setSearchParams(removeNullValues(paramsList));
   };
 
   useEffect(() => {
     saveQueryParams();
-    loadIncidents(watchSeverity, watchStatus, watchOwner, selectedLabels);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    loadIncidents({
+      severity: watchSeverity,
+      status: watchStatus,
+      owner: watchOwner,
+      labels: selectedLabels
+    });
   }, [watchSeverity, watchStatus, watchOwner, selectedLabels]);
 
   return (
