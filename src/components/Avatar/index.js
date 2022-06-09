@@ -46,7 +46,7 @@ const AvatarFC = ({ user, size, unload, alt, containerProps, imageProps }) => {
         containerProps.className,
         !src && initials ? "bg-dark-blue text-white" : "bg-lighter-gray"
       )}
-      data-tip={user.name}
+      data-tip={user?.name}
     >
       {src ? (
         <img
