@@ -96,7 +96,7 @@ export const HypothesisBar = ({ hypothesis, onTitleClick, startAdornment }) => {
           ))}
         </div>
         <div className="ml-3">
-          <Avatar user={createdBy} size="sm" />
+          {createdBy && <Avatar user={createdBy} size="sm" />}
         </div>
       </div>
     </div>
