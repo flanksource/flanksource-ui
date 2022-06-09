@@ -71,6 +71,24 @@ export const getTopology = async (params) => {
   });
 };
 
+export const getTopologyWithoutUnroll = async (params) => {
+  const query = stringify(params);
+  return await CanaryChecker.get(`/api/topology?${query}`).then((results) => {
+    let { data } = results;
+    if (data == null) {
+      console.warn("returning empty");
+      return { data: [] };
+    }
+    if (data.length === 2 && isEmpty(data[0].id)) {
+      data = [data[1]];
+    }
+    if (data[0].id === "00000000-0000-0000-0000-000000000000") {
+      data = [data[0]?.components[0]];
+    }
+    return { data };
+  });
+};
+
 export const getCanaryGraph = async (params) => {
   const query = stringify(params);
   return CanaryChecker.get(`/api/graph?${query}`);
