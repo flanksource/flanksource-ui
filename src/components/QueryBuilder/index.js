@@ -132,11 +132,9 @@ export const QueryBuilder = () => {
           onChange={(value) => setSelectedQuery(value)}
           value={selectedQuery}
           prefix={
-            <>
-              <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
-                Preset Query:
-              </div>
-            </>
+            <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
+              Preset Query:
+            </div>
           }
         />
         {selectedQuery && (

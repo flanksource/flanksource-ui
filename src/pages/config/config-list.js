@@ -14,6 +14,7 @@ import { BreadcrumbNav } from "../../components/BreadcrumbNav";
 import { TextInputClearable } from "../../components/TextInputClearable";
 import ConfigList from "../../components/ConfigList";
 import { SearchSelectTag } from "../../components/SearchSelectTag";
+import { QueryBuilder } from "../../components/QueryBuilder";
 
 export function ConfigListPage() {
   const [params, setParams] = useSearchParams();
@@ -119,11 +120,16 @@ export function ConfigListPage() {
   }, [data, query, configType, tag]);
 
   return (
-    <ConfigList
-      data={filteredData}
-      handleRowClick={handleRowClick}
-      isLoading={isLoading}
-    />
+    <>
+      <div className="flex mb-4">
+        <QueryBuilder />
+      </div>
+      <ConfigList
+        data={filteredData}
+        handleRowClick={handleRowClick}
+        isLoading={isLoading}
+      />
+    </>
   );
 }
 
