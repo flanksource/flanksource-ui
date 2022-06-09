@@ -13,8 +13,8 @@ const convert = new Convert();
 
 export const LogsTable = ({ logs: logsParam, actions, variant }) => {
   const logs = useMemo(() => {
-    if (logsParam == null || Array.isArray(logsParam)) {
-      return logsParam || [];
+    if (logsParam == null || Array.isArray(logsParam?.logLines)) {
+      return logsParam?.logLines || [];
     }
 
     try {

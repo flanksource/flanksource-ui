@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
-import { createEvidence } from "../../../api/services/evidence";
+import { createEvidence, EvidenceType } from "../../../api/services/evidence";
 import { getAllHypothesisByIncident } from "../../../api/services/hypothesis";
 import { getAllIncident } from "../../../api/services/incident";
 import { useUser } from "../../../context";
@@ -38,7 +38,7 @@ export function LogsIncidentLinker({ selectedLogs, callback, ...rest }) {
     defaultValues: {
       incident: "new",
       hypothesis: null,
-      type: "log",
+      type: EvidenceType.Log,
       description: ""
     }
   });
@@ -109,16 +109,16 @@ export function LogsIncidentLinker({ selectedLogs, callback, ...rest }) {
 
   const onSubmit = (data) => {
     setIsLoading((previous) => ({ ...previous, submit: true }));
-    createEvidence(
-      user,
-      uuidv4,
-      data.hypothesis,
-      JSON.stringify(selectedLogs),
-      {
-        type: data.type,
-        description: data.description
-      }
-    )
+    const evidence = {
+      user: user,
+      id: uuidv4,
+      hypothesisId: data.hypothesis,
+      evidence: { logLines: selectedLogs },
+      type: EvidenceType.Log,
+      description: data.description
+    };
+
+    createEvidence(evidence)
       .then(() => {
         callback(true);
       })
