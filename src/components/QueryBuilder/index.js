@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import history from "history/browser";
+import { useEffect, useState } from "react";
 import { TrashIcon } from "@heroicons/react/solid";
 import toast from "react-hot-toast";
 import {
@@ -7,20 +6,13 @@ import {
   deleteSavedQuery,
   getAllSavedQueries
 } from "../../api/services/configs";
-import { decodeUrlSearchParams, updateParams } from "../Canary/url";
 import { Dropdown } from "../Dropdown";
 import { Modal } from "../Modal";
 import { toastError } from "../Toast/toast";
+import { useSearchParams } from "react-router-dom";
 
 export const QueryBuilder = () => {
-  const [searchParams, setSearchParams] = useState(
-    decodeUrlSearchParams(window.location.search)
-  );
-  useEffect(() => {
-    history.listen(({ location }) => {
-      setSearchParams(decodeUrlSearchParams(location.search));
-    });
-  }, []);
+  const [searchParams, setSearchParams] = useSearchParams();
   const { query } = searchParams;
 
   const [selectedQuery, setSelectedQuery] = useState(null);
@@ -45,15 +37,15 @@ export const QueryBuilder = () => {
       const queryObj = queryList.find((o) => o.id === selectedQuery);
       if (queryObj) {
         const { query } = queryObj;
-        updateParams({ query });
+        setSearchParams({ ...searchParams, query });
       }
     } else {
-      updateParams({ query: "" });
+      setSearchParams({ ...searchParams, query: "" });
     }
   }, [selectedQuery, queryList]);
 
   const handleSearch = (value) => {
-    updateParams({ query: value });
+    setSearchParams({ ...searchParams, query: value });
   };
 
   const handleQuerySave = () => {
