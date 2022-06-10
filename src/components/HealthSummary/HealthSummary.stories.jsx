@@ -1,8 +1,16 @@
+import { MemoryRouter } from "react-router-dom";
 import { HealthSummary } from "./index";
 
 export default {
   title: "HealthSummary",
-  component: HealthSummary
+  component: HealthSummary,
+  decorators: [
+    (Story) => (
+      <MemoryRouter>
+        <Story />
+      </MemoryRouter>
+    )
+  ]
 };
 
 const component = {

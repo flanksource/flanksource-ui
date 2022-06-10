@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { filter } from "lodash";
 import { useEffect, useState, useMemo } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { getTopologyWithoutUnroll } from "../../api/services/topology";
 import { HealthSummary } from "../HealthSummary";
 import { Icon } from "../Icon";
@@ -28,7 +28,6 @@ export function TopologyCard({
   onSelectionChange
 }) {
   const [_topology, setTopology] = useState(topology);
-  const { clusterId, groupId } = useParams();
 
   useEffect(() => {
     if (topologyId != null && _topology == null) {
@@ -55,14 +54,6 @@ export function TopologyCard({
   );
 
   const prepareTopologyLink = (topologyItem) => {
-    // return [
-    //   "/topology",
-    //   clusterId || topologyItem.parent_id,
-    //   groupId || (clusterId ? topologyItem.parent_id : null),
-    //   topologyItem.id !== groupId ? topologyItem.id : null
-    // ]
-    //   .filter((v) => v?.trim())
-    //   .join("/");
     return `/topology/${topologyItem.id}`;
   };
 
