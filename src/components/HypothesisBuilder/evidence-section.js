@@ -8,7 +8,7 @@ import { Icon } from "../Icon";
 
 export function EvidenceItem({ evidence }) {
   if (evidence.type === "log") {
-    return <LogsTable logs={evidence.evidence} title="" />;
+    return <LogsTable logs={evidence.evidence.logLines} title="" />;
   }
   if (evidence.type === "topology") {
     return <TopologyCard topologyId={evidence.evidence.id} size="small" />;

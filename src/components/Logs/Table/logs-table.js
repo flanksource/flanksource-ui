@@ -1,7 +1,6 @@
 import React, { useMemo } from "react";
 import Convert from "ansi-to-html";
 import DOMPurify from "dompurify";
-import { isArray } from "lodash";
 import dayjs from "dayjs";
 import { useTable, useRowSelect } from "react-table";
 import clsx from "clsx";
@@ -13,8 +12,12 @@ const convert = new Convert();
 
 export const LogsTable = ({ logs: logsParam, actions, variant }) => {
   const logs = useMemo(() => {
-    if (logsParam == null || Array.isArray(logsParam?.logLines)) {
-      return logsParam?.logLines || [];
+    if (logsParam == null) {
+      return [];
+    }
+
+    if (Array.isArray(logsParam)) {
+      return logsParam;
     }
 
     try {

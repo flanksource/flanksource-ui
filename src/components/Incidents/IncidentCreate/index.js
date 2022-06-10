@@ -58,58 +58,61 @@ export function IncidentCreate({ callback, evidence, ...rest }) {
     updated_at: "now()"
   };
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     const payload = { ...data, ...additionalFields };
     payload.id = uuidv4();
-    createIncident(user, payload)
-      .then((created) => {
-        createHypothesis(user, uuidv4(), payload.id, {
-          title: payload.title,
-          type: "root",
-          status: "possible"
-        }).then((hypothesis) => {
-          if (hypothesis?.data[0]?.id && (evidence || topologyId)) {
-            let details = {};
-            let description;
-            let type;
+    // TODO(ciju): Handle failure cases
+    try {
+      const created = await createIncident(user, payload);
+      const hypothesis = await createHypothesis(user, uuidv4(), payload.id, {
+        title: payload.title,
+        type: "root",
+        status: "possible"
+      });
 
-            if (evidence) {
-              details = {
-                id: evidence?.configId,
-                lines: evidence?.lines,
-                selected_lines: evidence?.selected_lines
-              };
-              type = EvidenceType.Config;
-              description = evidence?.configName;
-            }
-            if (topologyId) {
-              details = {
-                id: topologyId
-              };
+      if (!hypothesis?.data[0]?.id || (!evidence && !topologyId)) {
+        return;
+      }
 
-              type = EvidenceType.Topology;
-              description = "Topology";
-            }
+      let details = {};
+      let description;
+      let type;
 
-            createEvidence({
-              user,
-              id: uuidv4(),
-              hypothesisId: hypothesis.data[0].id,
-              evidence: details,
-              description,
-              type
-            });
-          }
-        });
+      if (evidence) {
+        details = {
+          id: evidence?.configId,
+          lines: evidence?.lines,
+          selected_lines: evidence?.selected_lines
+        };
+        type = EvidenceType.Config;
+        description = evidence?.configName;
+      }
+      if (topologyId) {
+        details = {
+          id: topologyId
+        };
 
-        if (created)
-          if (callback != null) {
-            callback(created.data[0]);
-          } else {
-            navigate(`/incidents/${created.data[0].id}`, { replace: true });
-          }
-      })
-      .catch(toastError);
+        type = EvidenceType.Topology;
+        description = "Topology";
+      }
+
+      await createEvidence({
+        user,
+        id: uuidv4(),
+        hypothesisId: hypothesis.data[0].id,
+        evidence: details,
+        description,
+        type
+      });
+
+      if (callback != null) {
+        callback(created.data[0]);
+      } else {
+        navigate(`/incidents/${created.data[0].id}`, { replace: true });
+      }
+    } catch (e) {
+      toastError(e);
+    }
   };
 
   return (
