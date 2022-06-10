@@ -1,5 +1,4 @@
 import { SearchIcon } from "@heroicons/react/solid";
-import { useForm } from "react-hook-form";
 import { BsGearFill, BsFlower2, BsGridFill, BsStack } from "react-icons/bs";
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
@@ -91,9 +90,7 @@ export function LogsPage() {
   const [topologyId, setTopologyId] = useState(searchParams.get("topologyId"));
   const [externalId, setExternalId] = useState(searchParams.get("externalId"));
   const [type, setType] = useState(searchParams.get("type"));
-  const [start, setStart] = useState(
-    searchParams.get("start") || timeRanges[0].value
-  );
+  const [start, setStart] = useState(timeRanges[0].value);
 
   const [topologies, setTopologies] = useState([]);
   const [logs, setLogs] = useState([]);
@@ -108,13 +105,6 @@ export function LogsPage() {
     });
     return value;
   }, [externalId, topologies, topologyId]);
-
-  const { control, watch } = useForm({
-    defaultValues: {
-      start: searchParams.get("start") || timeRanges[0].value,
-      topologyId
-    }
-  });
 
   useEffect(() => {
     async function fetchTopologies() {
@@ -181,14 +171,6 @@ export function LogsPage() {
   };
 
   useEffect(() => {
-    const subscription = watch((value) => {
-      setTopologyId(value.topologyId);
-      setStart(value.start);
-    });
-    return () => subscription.unsubscribe();
-  }, [watch]);
-
-  useEffect(() => {
     loadLogs();
   }, [start, topologyId, externalId]);
 
@@ -236,10 +218,11 @@ export function LogsPage() {
             />
           </div>
           <Dropdown
-            control={control}
             name="start"
             className="w-40 mr-2 flex-shrink-0"
             items={timeRanges}
+            onChange={(e) => setStart(e)}
+            value={start}
           />
         </>
       }
