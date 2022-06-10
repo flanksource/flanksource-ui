@@ -1,7 +1,12 @@
 import React, { useMemo } from "react";
 import PropTypes from "prop-types";
 import clsx from "clsx";
-import { BsFillBarChartFill, BsFillChatSquareTextFill } from "react-icons/bs";
+import {
+  BsBraces,
+  BsFillBarChartFill,
+  BsFillChatSquareTextFill
+} from "react-icons/bs";
+import { VscTypeHierarchy } from "react-icons/vsc";
 import { ThumbDownIcon, ThumbUpIcon } from "@heroicons/react/solid";
 import { AiOutlineSearch } from "react-icons/ai";
 import { HypothesisStatuses } from "../../constants/hypothesis-statuses";
@@ -41,7 +46,9 @@ const statusToStatusIconMapping = {
 const renderInfoIcon = (icon, props = {}) => {
   const mapping = {
     comment: BsFillChatSquareTextFill,
-    log: BsFillBarChartFill
+    config: BsBraces,
+    log: BsFillBarChartFill,
+    topology: VscTypeHierarchy
   };
 
   if (mapping[icon]) {
@@ -53,7 +60,13 @@ const renderInfoIcon = (icon, props = {}) => {
 };
 
 export const HypothesisBar = ({ hypothesis, onTitleClick, startAdornment }) => {
-  const { title: rawTitle, status, created_by: createdBy } = hypothesis;
+  const {
+    title: rawTitle,
+    status,
+    created_by: createdBy,
+    evidence,
+    comment
+  } = hypothesis;
 
   const title = useMemo(() => (rawTitle ?? "").trim(), [rawTitle]);
 
@@ -63,7 +76,9 @@ export const HypothesisBar = ({ hypothesis, onTitleClick, startAdornment }) => {
     [status]
   );
 
-  const infoIcons = ["comment", "log"];
+  const infoIcons = evidence
+    .map((e) => e.type)
+    .concat(comment.length ? ["comment"] : []);
 
   return (
     <div className="w-full flex justify-between rounded-8px border focus:outline-none bg-white cursor-pointer">
