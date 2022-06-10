@@ -55,14 +55,15 @@ export function TopologyCard({
   );
 
   const prepareTopologyLink = (topologyItem) => {
-    return [
-      "/topology",
-      clusterId || topologyItem.parent_id,
-      groupId || (clusterId ? topologyItem.parent_id : null),
-      topologyItem.id !== groupId ? topologyItem.id : null
-    ]
-      .filter((v) => v?.trim())
-      .join("/");
+    // return [
+    //   "/topology",
+    //   clusterId || topologyItem.parent_id,
+    //   groupId || (clusterId ? topologyItem.parent_id : null),
+    //   topologyItem.id !== groupId ? topologyItem.id : null
+    // ]
+    //   .filter((v) => v?.trim())
+    //   .join("/");
+    return `/topology/${topologyItem.id}`;
   };
 
   if (_topology == null) {
@@ -95,10 +96,7 @@ export function TopologyCard({
               className="font-bold overflow-hidden truncate align-middle text-15pxinrem leading-1.21rel"
               title={_topology.name}
             >
-              <Link
-                className="hover:underline"
-                to={prepareTopologyLink(_topology)}
-              >
+              <Link to={prepareTopologyLink(_topology)}>
                 {_topology.text || _topology.name}
               </Link>
             </p>

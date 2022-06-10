@@ -1,16 +1,8 @@
-import { MemoryRouter } from "react-router-dom";
 import { HealthSummary } from "./index";
 
 export default {
   title: "HealthSummary",
-  component: HealthSummary,
-  decorators: [
-    (Story) => (
-      <MemoryRouter>
-        <Story />
-      </MemoryRouter>
-    )
-  ]
+  component: HealthSummary
 };
 
 const component = {
@@ -20,7 +12,6 @@ const component = {
   status: "healthy",
   type: "KubernetesNode",
   summary: { title: "wtf s" },
-  link: "http://example.com",
   properties: [
     {
       name: "cpu",
@@ -89,6 +80,5 @@ const Template = (arg) => <HealthSummary {...arg} />;
 export const Variant1 = Template.bind({});
 Variant1.args = {
   component,
-  summary: "",
-  link: "http://example.com"
+  summary: ""
 };
