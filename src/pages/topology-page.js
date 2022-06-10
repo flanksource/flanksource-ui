@@ -1,62 +1,53 @@
 import { filter } from "lodash";
 import qs from "qs";
-import { React, useEffect, useState } from "react";
-import { Link, useParams, useSearchParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useParams, useSearchParams } from "react-router-dom";
 import { getTopology } from "../api/services/topology";
 import { SearchLayout } from "../components/Layout";
 import { Loading } from "../components/Loading";
 import { toastError } from "../components/Toast/toast";
 import { TopologyCard } from "../components/Topology";
 import { TopologyBreadcrumbs } from "../components/Topology/topology-breadcrumbs";
+import { useLoader } from "../hooks";
 
 export function TopologyPage() {
-  // const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(true);
+  const { loading, setLoading } = useLoader();
   const [topology, setTopology] = useState(null);
 
-  // eslint-disable-next-line no-unused-vars
   const [searchParams, setSearchParams] = useSearchParams();
-  const [root, setRoot] = useState(null);
   const { id } = useParams();
-  const load = () => {
-    setIsLoading(true);
+  const load = async () => {
     const params = qs.parse(searchParams.toString());
     if (id != null) {
       params.id = id;
     }
-    getTopology(params)
-      .then((res) => {
-        setIsLoading(false);
-
-        if (res == null) {
-          return null;
-        }
-
-        if (res.error != null) {
-          toastError(res.error);
-          return null;
-        }
-
-        const topology = filter(
-          res.data,
-          (i) => (i.name != null || i.title != null) && i.type !== "summary"
-        );
-        setTopology(topology);
-        return null;
-      })
-      .catch((e) => {
-        setIsLoading(false);
-        toastError(e);
+    setLoading(true);
+    try {
+      const res = await getTopology({
+        id,
+        status: params.status
       });
-  };
-  useEffect(() => {
-    if (topology != null) {
-      setRoot(topology.find((i) => i.id === id));
+      if (res.error) {
+        toastError(res.error);
+        return;
+      }
+      const topology = filter(
+        res.data,
+        (item) =>
+          (item.name || item.title) && item.type !== "summary" && item.id !== id
+      );
+      setTopology(topology);
+    } catch (ex) {
+      toastError(ex);
     }
-  }, [topology, id]);
-  useEffect(load, [id, searchParams]);
+    setLoading(false);
+  };
 
-  if (isLoading || topology == null) {
+  useEffect(() => {
+    load();
+  }, [searchParams, id]);
+
+  if (loading || topology == null) {
     return <Loading text="Loading topology..." />;
   }
 
@@ -64,10 +55,7 @@ export function TopologyPage() {
     <SearchLayout
       title={
         <div className="flex text-xl text-gray-400  ">
-          <Link to="/topology" className="hover:text-gray-500 ">
-            Topology
-          </Link>
-          <TopologyBreadcrumbs topology={root} depth={3} />
+          <TopologyBreadcrumbs topologyId={id} />
         </div>
       }
       onRefresh={load}

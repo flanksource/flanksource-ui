@@ -58,7 +58,7 @@ function getChipsFromSummary(component, summary) {
     chips.push(
       <Link
         key={`${component.id}-unknown`}
-        to={`/topology?/${component.id}?status=unknown`}
+        to={`/topology/${component.id}?status=unknown`}
       >
         <Chip
           text={summary.unknown}
@@ -78,7 +78,12 @@ export const HealthSummary = ({ component, iconSize }) => {
     <div>
       <div className="flex mb-1.5">
         <Icon name={icon} className="mr-1" size={iconSize} />
-        <h5 className="text-xs linear-1.21rel mr-1">{name}</h5>
+        <Link
+          className="text-xs linear-1.21rel mr-1 cursor-pointer"
+          to={`/topology/${component.id}`}
+        >
+          {name}
+        </Link>
         <div className="flex gap-2 ">
           {getChipsFromSummary(component, summary)}
         </div>

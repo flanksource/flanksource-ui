@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { filter } from "lodash";
-import React, { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { getTopologyWithoutUnroll } from "../../api/services/topology";
 import { HealthSummary } from "../HealthSummary";
@@ -53,6 +53,10 @@ export function TopologyCard({
     [size]
   );
 
+  const prepareTopologyLink = (topologyItem) => {
+    return `/topology/${topologyItem.id}`;
+  };
+
   if (_topology == null) {
     return <Loading text={`Loading ${topologyId}`} />;
   }
@@ -83,7 +87,7 @@ export function TopologyCard({
               className="font-bold overflow-hidden truncate align-middle text-15pxinrem leading-1.21rel"
               title={_topology.name}
             >
-              <Link to={`/topology/${_topology.id}`}>
+              <Link to={prepareTopologyLink(_topology)}>
                 {_topology.text || _topology.name}
               </Link>
             </p>
@@ -124,20 +128,22 @@ export function TopologyCard({
           </div>
         ) : (
           <>
-            <div className="w-med-card-left py-4 pl-5 pr-1 overflow-auto">
-              {properties.map((property, index) => (
-                <Property
-                  key={property.name}
-                  property={property}
-                  className={
-                    index === _topology.properties.length - 1
-                      ? "mb-0"
-                      : "mb-2.5"
-                  }
-                />
-              ))}
-            </div>
-            <div className="w-med-card-right pl-1 py-4 pr-5 overflow-y-auto">
+            {Boolean(properties.length) && (
+              <div className="py-4 pl-5 pr-1 overflow-y-auto max-h-36">
+                {properties.map((property, index) => (
+                  <Property
+                    key={property.name}
+                    property={property}
+                    className={
+                      index === _topology.properties.length - 1
+                        ? "mb-0"
+                        : "mb-2.5"
+                    }
+                  />
+                ))}
+              </div>
+            )}
+            <div className="pl-1 py-4 pr-5 overflow-y-auto max-h-36">
               {_topology.components &&
                 _topology.components.map((component, index) => (
                   <div
@@ -148,7 +154,10 @@ export function TopologyCard({
                     }
                     key={component.id}
                   >
-                    <HealthSummary component={component} />
+                    <HealthSummary
+                      component={component}
+                      link={prepareTopologyLink(component)}
+                    />
                   </div>
                 ))}
             </div>

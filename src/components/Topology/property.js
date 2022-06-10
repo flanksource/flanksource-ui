@@ -4,6 +4,7 @@ import clsx from "clsx";
 import { Icon } from "../Icon";
 import { formatBytes } from "../../utils/common";
 import { isEmpty } from "../Canary/utils";
+import { NodePodPropToLabelMap } from "../../constants";
 
 export const FormatProperty = ({ property, short = false }) => {
   if (property == null) {
@@ -53,6 +54,7 @@ export const FormatProperty = ({ property, short = false }) => {
 
 export const Property = ({ property, className }) => {
   const { name, icon, color } = property;
+  const label = NodePodPropToLabelMap[name] || name;
 
   if (
     property.type === "hidden" ||
@@ -63,9 +65,9 @@ export const Property = ({ property, className }) => {
   return (
     <div className={clsx("flex", { [className]: className })}>
       <Icon name={icon} className="mr-1" size="2xsi" />
-      {!isEmpty(name) && (
+      {!isEmpty(label) && (
         <span className="text-xs overflow-hidden truncate text-gray-400 pr-1">
-          {name}:
+          {label}:
         </span>
       )}
       <span
