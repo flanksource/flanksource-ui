@@ -12,23 +12,6 @@ import { Dropdown } from "../Dropdown";
 import { Modal } from "../Modal";
 import { toastError } from "../Toast/toast";
 
-//   const columnSelectDropdownStyles = {
-//     valueContainer: (provided) => ({
-//       ...provided
-//     }),
-//     option: (provided) => ({
-//       ...provided,
-//       fontSize: "14px"
-//     }),
-//     multiValueLabel: (provided) => ({
-//       ...provided,
-//       fontSize: "12px"
-//     }),
-//     container: (provided) => ({
-//       ...provided
-//     })
-//   };
-
 export const QueryBuilder = () => {
   const [searchParams, setSearchParams] = useState(
     decodeUrlSearchParams(window.location.search)
@@ -40,7 +23,6 @@ export const QueryBuilder = () => {
   }, []);
   const { query } = searchParams;
 
-  //   const [selectedColumns, setSelectedColumns] = useState([]);
   const [selectedQuery, setSelectedQuery] = useState(null);
   const [queryList, setQueryList] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -49,7 +31,7 @@ export const QueryBuilder = () => {
 
   const fetchQueries = () => {
     getAllSavedQueries().then((res) => {
-      setQueryList(res.data);
+      setQueryList(res?.data || []);
       setSelectedQuery(null);
     });
   };
@@ -164,14 +146,6 @@ export const QueryBuilder = () => {
           style={{ minWidth: "300px" }}
           placeholder="Query text (name, namespace, type, or description)"
         />
-        {/* <MultiSelectDropdown
-            placeholder="Columns"
-            className="w-full mr-2 mb-2"
-            styles={columnSelectDropdownStyles}
-            options={columns} // should be dynamic
-            onChange={(selected) => setSelectedColumns(selected)}
-            value={selectedColumns}
-          /> */}
       </div>
       <Modal
         open={modalIsOpen}
