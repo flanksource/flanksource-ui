@@ -64,9 +64,9 @@ export function ConfigListPage() {
 
   const extra = (
     <div className="flex space-x-2 mr-4">
-      <Switch onChange={setConfigFilterView} options={options} />
-
-      {configFilterView === ConfigFilterViewTypes.advanced && <QueryBuilder />}
+      {configFilterView === ConfigFilterViewTypes.advanced && (
+        <QueryBuilder refreshConfigs={(e) => setData(e)} />
+      )}
 
       {configFilterView === ConfigFilterViewTypes.basic && (
         <>
@@ -101,6 +101,8 @@ export function ConfigListPage() {
           />
         </>
       )}
+
+      <Switch onChange={setConfigFilterView} options={options} />
     </div>
   );
 

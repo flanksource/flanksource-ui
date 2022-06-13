@@ -1,14 +1,13 @@
 import toast from "react-hot-toast";
 
-export function toastError(message) {
-  if (message == null) {
-    message = "An error occurred";
-  }
-  // eslint-disable-next-line no-console
-  console.error(message);
-  if (message.response && message.response.data.error) {
+export function toastError(message = "An error occurred") {
+  if (message.response?.data?.error) {
     toast.error(message.response.data.error);
   } else {
     toast.error(message);
   }
+}
+
+export function toastSuccess(message) {
+  toast.success(message);
 }
