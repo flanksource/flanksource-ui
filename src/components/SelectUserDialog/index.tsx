@@ -2,13 +2,18 @@ import { Dialog } from "@headlessui/react";
 import { useState, useEffect, useMemo } from "react";
 
 import { useUser } from "../../context";
-import { getPersons } from "../../api/services/users";
+import { getPersons, User } from "../../api/services/users";
 import { Dropdown } from "../Dropdown";
 
-export function SelectUserDialog({ isOpen, onClose }) {
+interface Props {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export function SelectUserDialog({ isOpen, onClose }: Props) {
   const { user, setUser } = useUser();
 
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState<User[]>([]);
 
   useEffect(() => {
     getPersons().then((res) => {
@@ -27,8 +32,12 @@ export function SelectUserDialog({ isOpen, onClose }) {
     [users]
   );
 
-  const onSelect = (id) => {
+  const onSelect = (id: string) => {
     const newUser = users.find((u) => u.id === id);
+    if (!newUser) {
+      console.warn("No such user", id);
+      return;
+    }
     setUser(newUser);
     onClose();
   };
@@ -41,7 +50,11 @@ export function SelectUserDialog({ isOpen, onClose }) {
         <div className="flex min-h-full items-center justify-center p-4 text-center">
           <Dialog.Panel className="bg-white p-4 rounded-md">
             <Dialog.Title className="text-left">Switch to user </Dialog.Title>
-            <Dropdown value={user.id} onChange={onSelect} items={userOptions} />
+            <Dropdown
+              value={user?.id}
+              onChange={onSelect}
+              items={userOptions}
+            />
           </Dialog.Panel>
         </div>
       </div>
