@@ -5,4 +5,5 @@
 /db/* https://incident-commander.canary.lab.flanksource.com/db/:splat  200
 /apm/search https://incident-commander.canary.lab.flanksource.com/apm/search 200
 /apm/search/* https://incident-commander.canary.lab.flanksource.com/apm/search/:splat 200
+/config/*  https://incident-commander.canary.lab.flanksource.com/config/:splat  200
 /* /index.html 200
