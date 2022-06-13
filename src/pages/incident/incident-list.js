@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { AiFillPlusCircle } from "react-icons/ai/";
 import { useForm } from "react-hook-form";
@@ -13,7 +13,6 @@ import { Dropdown } from "../../components/Dropdown";
 import { MultiSelectDropdown } from "../../components/MultiSelectDropdown";
 import { severityItems, statusItems } from "../../components/Incidents/data";
 import { getPersons } from "../../api/services/users";
-import { getResponder } from "../../api/services/responder";
 
 const defaultSelections = {
   all: {
@@ -53,7 +52,7 @@ const labelDropdownStyles = {
 
 const removeNullValues = (obj) =>
   Object.fromEntries(
-    Object.entries(obj).filter(([k, v]) => v !== null && v !== undefined)
+    Object.entries(obj).filter(([_k, v]) => v !== null && v !== undefined)
   );
 
 const toPostgresqlSearchParam = ({ severity, status, owner }) => {
@@ -62,7 +61,7 @@ const toPostgresqlSearchParam = ({ severity, status, owner }) => {
     status,
     created_by: owner
   })
-    .filter(([k, v]) => v && v !== "all")
+    .filter(([_k, v]) => v && v !== "all")
     .map(([k, v]) => [k, `eq.${v}`]);
 
   return Object.fromEntries(params);
