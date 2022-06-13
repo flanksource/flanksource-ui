@@ -43,7 +43,7 @@ export function LogsIncidentLinker({ selectedLogs, callback, ...rest }) {
     }
   });
   const selectedIncident = watch("incident");
-  const user = useUser();
+  const { user } = useUser();
   const [incidentsList, setIncidentsList] = useState([]);
   const [hypothesisList, setHypothesisList] = useState([]);
   const [isLoading, setIsLoading] = useState({
