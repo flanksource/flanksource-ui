@@ -268,8 +268,7 @@ function QueryBuilderActionMenu({ onSelect, options }) {
               return (
                 <Menu.Item key={option}>
                   {({ active }) => (
-                    <a
-                      href="#"
+                    <div
                       className={clsx(
                         active ? "bg-gray-100 text-gray-900" : "text-gray-700",
                         "block px-4 py-2 text-sm"
@@ -277,7 +276,7 @@ function QueryBuilderActionMenu({ onSelect, options }) {
                       onClick={() => onSelect(option)}
                     >
                       {option}
-                    </a>
+                    </div>
                   )}
                 </Menu.Item>
               );
