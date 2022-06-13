@@ -3,7 +3,7 @@ import { Fragment } from "react";
 import { useUser } from "../../context";
 
 export function UserProfile() {
-  const user = useUser();
+  const { user } = useUser();
   const userNavigation = [
     { name: "Your Profile", href: "#" },
     { name: "Settings", href: "#" },
