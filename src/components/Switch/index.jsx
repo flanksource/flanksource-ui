@@ -40,34 +40,6 @@ export function Switch({ onChange, options, value, className, ...props }) {
           </button>
         );
       })}
-      {/* <button
-        type="button"
-        className="rounded-md flex-1 items-center text-sm text-gray-600 font-medium focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2 focus:outline-none focus-visible:ring-offset-gray-100"
-        tabIndex="0"
-        onClick={(e) => handleClick(options[0])}
-      >
-        <span
-          className={
-            activeOption === options[0] ? activeClasses : inActiveClasses
-          }
-        >
-          {options[0]}
-        </span>
-      </button>
-      <button
-        x-ref="code"
-        type="button"
-        className="rounded-md flex-1 items-center text-sm text-gray-600 font-medium focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2 focus:outline-none focus-visible:ring-offset-gray-100"
-        onClick={(e) => handleClick(options[1])}
-      >
-        <span
-          className={
-            activeOption === options[1] ? activeClasses : inActiveClasses
-          }
-        >
-          {options[1]}
-        </span>
-      </button> */}
     </div>
   );
 }
