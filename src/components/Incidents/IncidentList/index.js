@@ -32,7 +32,6 @@ export function IncidentList({ list, ...rest }) {
             >
               Responders
             </th>
-            <th>Action</th>
           </tr>
         </thead>
         <tbody className="flex-1 overflow-y-auto">
