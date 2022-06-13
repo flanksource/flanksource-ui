@@ -211,7 +211,7 @@ export function App() {
   return (
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>
-        <AuthContext.Provider value={user}>
+        <AuthContext.Provider value={{ user, setUser }}>
           <ReactTooltip />
           <AppRoutes appDeployment={window.APP_DEPLOYMENT} sidebar={sidebar} />
         </AuthContext.Provider>

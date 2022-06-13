@@ -36,7 +36,7 @@ const statusItems = {
 
 export function HypothesisDetails({ node, api, ...rest }) {
   const [evidenceBuilderOpen, setEvidenceBuilderOpen] = useState(false);
-  const user = useUser();
+  const { user } = useUser();
   const [comments, setComments] = useState([]);
   const [evidence, setEvidence] = useState([]);
   const [evidenceLoading, setEvidenceLoading] = useState(true);

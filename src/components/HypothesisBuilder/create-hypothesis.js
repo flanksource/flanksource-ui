@@ -30,7 +30,7 @@ const nextNodePath = {
 };
 
 export const CreateHypothesis = ({ node, api, onHypothesisCreated }) => {
-  const user = useUser();
+  const { user } = useUser();
   const { control, getValues, setValue, handleSubmit, watch } = useForm({
     defaultValues: {
       hypothesis: {

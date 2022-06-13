@@ -32,7 +32,7 @@ export function IncidentCreate({ callback, evidence, ...rest }) {
   const [params] = useSearchParams();
   const topologyId = params.get("topology");
 
-  const user = useUser();
+  const { user } = useUser();
   const {
     control,
     formState: { errors },
