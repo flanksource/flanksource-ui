@@ -79,8 +79,8 @@ function IncidentItem({ incident }) {
       <td className="px-3 text-gray-500 text-sm py-4">{age}</td>
       <td className="px-3 text-sm py-4" colSpan={2}>
         <div className="flex">
-          {incident?.responders?.length && (
-            <AvatarGroup users={incident.responders} />
+          {incident?.involved?.length && (
+            <AvatarGroup maxCount={5} users={incident.involved} />
           )}
         </div>
       </td>

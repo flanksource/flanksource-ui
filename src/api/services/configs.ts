@@ -10,15 +10,32 @@ export const getAllConfigs = () => resolve(ConfigDB.get(`/config_item`));
 export const getAllChanges = () =>
   resolve(ConfigDB.get(`/config_change?order=created_at.desc`));
 
-export const getConfig = (id) =>
+export const getConfig = (id: string) =>
   resolve(ConfigDB.get(`/config_item?id=eq.${id}`));
 
-export const getConfigChange = (id) =>
+export const getConfigChange = (id: string) =>
   resolve(
     ConfigDB.get(`/config_change?config_id=eq.${id}&order=created_at.desc`)
   );
 
-export const createConfigItem = (type, params) =>
+interface ConfigItem {
+  name: string;
+  external_id: string;
+  config_type: string;
+  id: string;
+}
+
+export const searchConfigs = (
+  type: string,
+  input: string
+): Promise<{ data: ConfigItem[] }> =>
+  resolve(
+    ConfigDB.get(
+      `/config_item?select=id,external_id,name,config_type&config_type=ilike.${type}&or=(name.ilike.*${input}*,external_id.ilike.*${input}*)`
+    )
+  );
+
+export const createConfigItem = (type: string, params: {}) =>
   resolve(
     ConfigDB.post(`/config_item`, {
       config_type: type,
@@ -26,10 +43,10 @@ export const createConfigItem = (type, params) =>
     })
   );
 
-export const updateConfigItem = (id, params) =>
+export const updateConfigItem = (id: string, params: {}) =>
   resolve(ConfigDB.patch(`/config_item?id=eq.${id}`, { ...params }));
 
-export const deleteConfigItem = (id) =>
+export const deleteConfigItem = (id: string) =>
   resolve(ConfigDB.delete(`/config_item?id=eq.${id}`));
 
 // Saved Queries

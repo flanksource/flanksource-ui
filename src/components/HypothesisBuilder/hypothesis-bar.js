@@ -4,13 +4,16 @@ import clsx from "clsx";
 import {
   BsBraces,
   BsFillBarChartFill,
-  BsFillChatSquareTextFill
+  BsFillChatSquareTextFill,
+  BsTrash
 } from "react-icons/bs";
 import { VscTypeHierarchy } from "react-icons/vsc";
 import { ThumbDownIcon, ThumbUpIcon } from "@heroicons/react/solid";
 import { AiOutlineSearch } from "react-icons/ai";
 import { HypothesisStatuses } from "../../constants/hypothesis-statuses";
+import { deleteHypothesis } from "../../api/services/hypothesis";
 import { Avatar } from "../Avatar";
+import { AvatarGroup } from "../AvatarGroup";
 
 const statusToStatusIconMapping = {
   [HypothesisStatuses.Proven]: {
@@ -53,7 +56,7 @@ const renderInfoIcon = (icon, props = {}) => {
 
   if (mapping[icon]) {
     const Component = mapping[icon];
-    return <Component key={icon} {...props} />;
+    return <Component size={18} key={icon} {...props} />;
   }
 
   return null;
@@ -80,6 +83,12 @@ export const HypothesisBar = ({ hypothesis, onTitleClick, startAdornment }) => {
     .map((e) => e.type)
     .concat(comment.length ? ["comment"] : []);
 
+  const commentsMap = new Map(
+    comment.map((c) => [c?.created_by?.id, c?.created_by])
+  );
+  commentsMap.delete(createdBy.id);
+  const involved = [createdBy].concat(Array.from(commentsMap.values()));
+
   return (
     <div className="w-full flex justify-between rounded-8px border focus:outline-none bg-white cursor-pointer">
       <div className="flex items-center min-h-12 w-full py-2">
@@ -102,16 +111,23 @@ export const HypothesisBar = ({ hypothesis, onTitleClick, startAdornment }) => {
           {title || "(none)"}
         </span>
       </div>
-      <div className="flex items-center min-h-12 pr-3 ml-1.5 py-2">
-        <div className="-mx-1 flex flex-row">
+      <div className="flex items-end pb-3.5 pr-3 space-x-4">
+        <div className="flex flex-row">
           {infoIcons.map((i) => (
             <div key={i} className="px-1">
               {renderInfoIcon(i, { className: "text-dark-blue" })}
             </div>
           ))}
         </div>
-        <div className="ml-3">
-          {createdBy && <Avatar user={createdBy} size="sm" />}
+        <div>
+          {createdBy && <AvatarGroup maxCount={5} users={involved} size="sm" />}
+        </div>
+        <div>
+          <BsTrash
+            className="text-gray-600 border-0 border-l-1 border-gray-200"
+            size={18}
+            onClick={() => deleteHypothesis(hypothesis.id)}
+          />
         </div>
       </div>
     </div>

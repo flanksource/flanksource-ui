@@ -111,7 +111,16 @@ export function IncidentListPage() {
             ? [x.commander_id]
             : [x.communicator_id, x.commander_id];
 
-        return { ...x, responders };
+        const commentsSet = new Map(
+          x?.comment.map((x) => [x?.created_by?.id, x?.created_by])
+        );
+        responders.forEach((x) => commentsSet.delete(x.id));
+
+        return {
+          ...x,
+          responders,
+          involved: responders.concat(Array.from(commentsSet.values()))
+        };
       });
 
       setIncidents(data);
