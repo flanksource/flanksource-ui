@@ -104,7 +104,8 @@ export const QueryBuilder = ({ refreshConfigs, className, ...props }) => {
   const handleSaveQuery = () => {
     setSavedQueryValue("");
     if (!query) {
-      return toastError("Please provide query details");
+      toastError("Please provide query details");
+      return;
     }
     setModalIsOpen(true);
   };
@@ -256,43 +257,31 @@ export const QueryBuilder = ({ refreshConfigs, className, ...props }) => {
 function QueryBuilderActionMenu({ onOptionClick, options }) {
   return (
     <Menu as="div" className="relative inline-block text-left">
-      <div>
-        <Menu.Button className="inline-flex justify-center w-full p-3 bg-white text-sm font-medium text-gray-700">
-          <BiCog className="content-center" />
-        </Menu.Button>
-      </div>
-      <Transition
-        as={Fragment}
-        enter="transition ease-out duration-100"
-        enterFrom="transform opacity-0 scale-95"
-        enterTo="transform opacity-100 scale-100"
-        leave="transition ease-in duration-75"
-        leaveFrom="transform opacity-100 scale-100"
-        leaveTo="transform opacity-0 scale-95"
-      >
-        <Menu.Items className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
-          <div className="py-1">
-            {options.map((option) => {
-              return (
-                <Menu.Item key={option.id}>
-                  {({ active }) => (
-                    <div
-                      className={clsx(
-                        active ? "bg-gray-100 text-gray-900" : "text-gray-700",
-                        "block px-4 py-2 text-sm",
-                        "cursor-pointer"
-                      )}
-                      onClick={() => onOptionClick(option)}
-                    >
-                      {option.label}
-                    </div>
-                  )}
-                </Menu.Item>
-              );
-            })}
-          </div>
-        </Menu.Items>
-      </Transition>
+      <Menu.Button className="inline-flex justify-center w-full p-3 bg-white text-sm font-medium text-gray-700">
+        <BiCog className="content-center" />
+      </Menu.Button>
+      <Menu.Items className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
+        <div className="py-1">
+          {options.map((option) => {
+            return (
+              <Menu.Item key={option.id}>
+                {({ active }) => (
+                  <div
+                    className={clsx(
+                      active ? "bg-gray-100 text-gray-900" : "text-gray-700",
+                      "block px-4 py-2 text-sm",
+                      "cursor-pointer"
+                    )}
+                    onClick={() => onOptionClick(option)}
+                  >
+                    {option.label}
+                  </div>
+                )}
+              </Menu.Item>
+            );
+          })}
+        </div>
+      </Menu.Items>
     </Menu>
   );
 }
