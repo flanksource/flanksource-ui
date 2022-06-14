@@ -24,45 +24,17 @@ export const QueryBuilder = ({ refreshConfigs, className, ...props }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [savedQueryValue, setSavedQueryValue] = useState("");
   const { loading, setLoading } = useLoader();
-  const options = useMemo(() => {
-    const data = [];
 
-    if (!selectedQuery) {
-      data.push({
-        id: "save",
-        label: "Save",
-        type: "action_save",
-        context: {}
-      });
-    }
-
-    if (selectedQuery) {
-      data.push({
-        id: "update",
-        label: "Update",
-        type: "action_update",
-        context: {}
-      });
-      data.push({
-        id: "save_as",
-        label: "Save As",
-        type: "action_save",
-        context: {}
-      });
-    }
-
-    queryList.forEach((queryItem) => {
-      data.push({
-        id: queryItem.id,
-        label: queryItem.description,
-        type: "action_saved_query",
-        context: {
-          ...queryItem
-        }
-      });
-    });
-    return data;
-  }, [queryList, selectedQuery]);
+  const options = useMemo(
+    () =>
+      queryList.map((q) => ({
+        ...q,
+        id: q.id,
+        label: q.description,
+        context: { ...q }
+      })),
+    [queryList, selectedQuery]
+  );
 
   const fetchQueries = async () => {
     setLoading(true);
@@ -91,14 +63,8 @@ export const QueryBuilder = ({ refreshConfigs, className, ...props }) => {
   };
 
   const handleQueryBuilderAction = (option) => {
-    if (option.type === "action_save") {
-      handleSaveQuery();
-    } else if (option.type === "action_saved_query") {
-      setSelectedQuery(option.context);
-      setQuery(option.context.query);
-    } else if (option.type === "action_update") {
-      updateQuery();
-    }
+    setSelectedQuery(option.context);
+    setQuery(option.context.query);
   };
 
   const handleSaveQuery = () => {
@@ -188,6 +154,24 @@ export const QueryBuilder = ({ refreshConfigs, className, ...props }) => {
     setLoading(false);
   };
 
+  const actions = selectedQuery
+    ? [
+        {
+          id: "update",
+          element: <div onClick={updateQuery}>Update</div>
+        },
+        {
+          id: "save_as",
+          element: <div onClick={handleSaveQuery}>Save as</div>
+        }
+      ]
+    : [
+        {
+          id: "save",
+          element: <div onClick={handleSaveQuery}>Save</div>
+        }
+      ];
+
   return (
     <div className={clsx("flex flex-col", className)} {...props}>
       <div className="flex">
@@ -220,6 +204,7 @@ export const QueryBuilder = ({ refreshConfigs, className, ...props }) => {
           </button>
         )}
         <QueryBuilderActionMenu
+          actions={actions}
           options={options}
           onOptionClick={handleQueryBuilderAction}
         />
@@ -254,7 +239,7 @@ export const QueryBuilder = ({ refreshConfigs, className, ...props }) => {
   );
 };
 
-function QueryBuilderActionMenu({ onOptionClick, options }) {
+function QueryBuilderActionMenu({ onOptionClick, options, actions, children }) {
   return (
     <Menu as="div" className="relative inline-block text-left">
       <Menu.Button className="inline-flex justify-center w-full p-3 bg-white text-sm font-medium text-gray-700">
@@ -262,24 +247,40 @@ function QueryBuilderActionMenu({ onOptionClick, options }) {
       </Menu.Button>
       <Menu.Items className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
         <div className="py-1">
-          {options.map((option) => {
-            return (
-              <Menu.Item key={option.id}>
-                {({ active }) => (
-                  <div
-                    className={clsx(
-                      active ? "bg-gray-100 text-gray-900" : "text-gray-700",
-                      "block px-4 py-2 text-sm",
-                      "cursor-pointer"
-                    )}
-                    onClick={() => onOptionClick(option)}
-                  >
-                    {option.label}
-                  </div>
-                )}
+          <Menu.Items
+            as="section"
+            className="border border-0 border-b-2 border-gray-400"
+          >
+            {(actions || []).map((action) => (
+              <Menu.Item
+                className="block px-4 py-2 text-sm text-gray-700 cursor-pointer"
+                key={action.id}
+              >
+                {action.element}
               </Menu.Item>
-            );
-          })}
+            ))}
+          </Menu.Items>
+
+          <Menu.Items as="section">
+            {options.map((option) => {
+              return (
+                <Menu.Item key={option.id}>
+                  {({ active }) => (
+                    <div
+                      className={clsx(
+                        active ? "bg-gray-100 text-gray-900" : "text-gray-700",
+                        "block px-4 py-2 text-sm",
+                        "cursor-pointer"
+                      )}
+                      onClick={() => onOptionClick(option)}
+                    >
+                      {option.label}
+                    </div>
+                  )}
+                </Menu.Item>
+              );
+            })}
+          </Menu.Items>
         </div>
       </Menu.Items>
     </Menu>
