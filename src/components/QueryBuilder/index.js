@@ -98,6 +98,7 @@ export const QueryBuilder = ({ refreshConfigs, className, ...props }) => {
 
   const handleQueryBuilderAction = (option) => {
     if (option.type === "action_save") {
+      setSaveAsEnabled(false);
       handleSaveQuery();
     } else if (option.type === "action_saved_query") {
       setSelectedQuery(option.context);
