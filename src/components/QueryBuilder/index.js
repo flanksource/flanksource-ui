@@ -188,7 +188,7 @@ export const QueryBuilder = ({ refreshConfigs, className, ...props }) => {
           value={query}
           onChange={(e) => handleSearch(e.target.value)}
           className="w-full sm:text-sm border-gray-300"
-          placeholder="Query text (name, namespace, type, or description)"
+          placeholder="Search configs by using custom queries written here"
           onSubmit={handleRunQuery}
           style={{ width: "500px" }}
           onKeyDown={(e) => {
