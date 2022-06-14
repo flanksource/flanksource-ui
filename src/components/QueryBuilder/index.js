@@ -4,7 +4,6 @@ import { MdDelete } from "react-icons/md";
 import { BiCog } from "react-icons/bi";
 import clsx from "clsx";
 import { useSearchParams } from "react-router-dom";
-import { Dropdown } from "../Dropdown";
 import {
   createSavedQuery,
   deleteSavedQuery,
@@ -23,27 +22,35 @@ export const QueryBuilder = ({ refreshConfigs, className, ...props }) => {
   const [selectedQuery, setSelectedQuery] = useState(null);
   const [queryList, setQueryList] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [saveAsEnabled, setSaveAsEnabled] = useState(false);
   const [savedQueryValue, setSavedQueryValue] = useState("");
-  const [saveASQueryId, setSaveAsQueryId] = useState("");
   const { loading, setLoading } = useLoader();
   const options = useMemo(() => {
-    const data = [
-      {
+    const data = [];
+
+    if (!selectedQuery) {
+      data.push({
         id: "save",
         label: "Save",
         type: "action_save",
         context: {}
-      }
-    ];
+      });
+    }
+
     if (selectedQuery) {
+      data.push({
+        id: "update",
+        label: "Update",
+        type: "action_update",
+        context: {}
+      });
       data.push({
         id: "save_as",
         label: "Save As",
-        type: "action_save_as",
+        type: "action_save",
         context: {}
       });
     }
+
     queryList.forEach((queryItem) => {
       data.push({
         id: queryItem.id,
@@ -98,14 +105,12 @@ export const QueryBuilder = ({ refreshConfigs, className, ...props }) => {
 
   const handleQueryBuilderAction = (option) => {
     if (option.type === "action_save") {
-      setSaveAsEnabled(false);
       handleSaveQuery();
     } else if (option.type === "action_saved_query") {
       setSelectedQuery(option.context);
       setQuery(option.context.query);
-    } else if (option.type === "action_save_as") {
-      setSaveAsEnabled(true);
-      handleSaveQuery();
+    } else if (option.type === "action_update") {
+      updateQuery();
     }
   };
 
@@ -136,22 +141,37 @@ export const QueryBuilder = ({ refreshConfigs, className, ...props }) => {
   };
 
   const saveQuery = async () => {
-    if (!saveAsEnabled && !savedQueryValue) {
+    if (!savedQueryValue) {
       toastError("Please provide query name");
-      return;
-    } else if (saveAsEnabled && !saveASQueryId) {
-      toastError("Please select the query name to be saved as");
       return;
     }
     setLoading(true);
     try {
-      if (!saveAsEnabled) {
-        await createSavedQuery(query, { description: savedQueryValue });
-      } else {
-        await updateSavedQuery(saveASQueryId, { query });
-      }
+      await createSavedQuery(query, { description: savedQueryValue });
       toastSuccess(`${savedQueryValue || query} saved successfully`);
       setQuery("");
+      setParams({});
+      fetchQueries();
+    } catch (ex) {
+      toastError(ex);
+    }
+    setModalIsOpen(false);
+    setLoading(false);
+  };
+
+  const updateQuery = async () => {
+    if (!query) {
+      toastError("Please provide query");
+      return;
+    }
+    setLoading(true);
+    try {
+      await updateSavedQuery(selectedQuery.id, { query });
+      toastSuccess(
+        `${selectedQuery.description || query} updated successfully`
+      );
+      setQuery("");
+      setSelectedQuery("");
       setParams({});
       fetchQueries();
     } catch (ex) {
@@ -214,34 +234,18 @@ export const QueryBuilder = ({ refreshConfigs, className, ...props }) => {
       <Modal
         open={modalIsOpen}
         onClose={() => setModalIsOpen(false)}
-        title={saveAsEnabled ? "Save Current Query As" : "Save Current Query"}
+        title="Save Current Query"
         size="small"
       >
         <div className="flex flex-col pt-5 pb-3 max-w-lg" style={{}}>
-          {!saveAsEnabled && (
-            <input
-              type="text"
-              defaultValue={savedQueryValue}
-              className="w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-400 block py-2 sm:text-sm border-gray-300 rounded-md mr-2 mb-2"
-              style={{ minWidth: "300px" }}
-              placeholder="Query name"
-              onChange={(e) => setSavedQueryValue(e.target.value)}
-            />
-          )}
-          {saveAsEnabled && (
-            <Dropdown
-              emptyable
-              className="w-full mr-2"
-              items={savedQueriesList}
-              onChange={setSaveAsQueryId}
-              value={saveASQueryId}
-              prefix={
-                <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
-                  Saved Query:
-                </div>
-              }
-            />
-          )}
+          <input
+            type="text"
+            defaultValue={savedQueryValue}
+            className="w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-400 block py-2 sm:text-sm border-gray-300 rounded-md mr-2 mb-2"
+            style={{ minWidth: "300px" }}
+            placeholder="Query name"
+            onChange={(e) => setSavedQueryValue(e.target.value)}
+          />
           <div className="flex justify-end mt-3">
             <button
               className={`border border-gray-300 rounded-md px-3 py-2 text-sm whitespace-nowrap bg-indigo-700 text-gray-50 cursor-pointer}`}
