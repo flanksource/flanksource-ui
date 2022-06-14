@@ -30,7 +30,9 @@ export function ConfigListPage() {
   const [isLoading, setIsLoading] = useState(true);
   const { setTitle, setTitleExtras } = useOutletContext();
   const [configFilterView, setConfigFilterView] = useState(
-    ConfigFilterViewTypes.basic
+    params.get("query")
+      ? ConfigFilterViewTypes.advanced
+      : ConfigFilterViewTypes.basic
   );
   const options = useMemo(() => {
     return [ConfigFilterViewTypes.basic, ConfigFilterViewTypes.advanced];
@@ -41,7 +43,7 @@ export function ConfigListPage() {
     [data]
   );
 
-  const query = params.get("query");
+  const search = params.get("search");
   const tag = decodeURIComponent(params.get("tag") || "All");
   const configType = decodeURIComponent(params.get("type") || "All");
 
@@ -92,31 +94,46 @@ export function ConfigListPage() {
           <TextInputClearable
             onChange={debounce((e) => {
               const query = e.target.value || "";
-              params.set("query", query);
+              params.set("search", query);
               setParams(params);
             }, 200)}
             className="w-80"
             placeholder="Search for configs"
-            defaultValue={params.get("query")}
+            defaultValue={params.get("search")}
           />
         </>
       )}
 
-      <Switch onChange={setConfigFilterView} options={options} />
+      <Switch
+        onChange={(e) => {
+          setConfigFilterView(e);
+          setParams({});
+        }}
+        options={options}
+        value={configFilterView}
+      />
     </div>
   );
 
   useEffect(() => {
     setTitleExtras(extra);
     return () => setTitleExtras(null);
-  }, [data, configType, tag, query, configTagItems, options, configFilterView]);
+  }, [
+    data,
+    configType,
+    tag,
+    search,
+    configTagItems,
+    options,
+    configFilterView
+  ]);
 
   useEffect(() => {
     let filteredData = data;
     setTitle(<BreadcrumbNav list={["Config"]} />);
     if (data?.length > 0) {
       // do filtering here
-      filteredData = filterConfigsByText(filteredData, query);
+      filteredData = filterConfigsByText(filteredData, search);
 
       if (configType && configType !== "All") {
         filteredData = filteredData.filter((d) => configType === d.config_type);
@@ -135,7 +152,7 @@ export function ConfigListPage() {
       }
     }
     setFilteredData(filteredData);
-  }, [data, query, configType, tag]);
+  }, [data, search, configType, tag]);
 
   return (
     <ConfigList
