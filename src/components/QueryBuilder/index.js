@@ -192,7 +192,7 @@ export const QueryBuilder = ({ refreshConfigs, className, ...props }) => {
         toastSuccess(`${queryName} deleted successfully`);
         fetchQueries();
         setQuery("");
-        setSelectedQuery("");
+        setSelectedQuery();
       }
     } catch (ex) {
       toastError(ex);
@@ -211,6 +211,11 @@ export const QueryBuilder = ({ refreshConfigs, className, ...props }) => {
           placeholder="Search configs by using custom queries written here"
           onSubmit={handleRunQuery}
           style={{ width: "500px" }}
+          onClear={(e) => {
+            setSelectedQuery();
+            setQuery("");
+            setParams({});
+          }}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               handleRunQuery();

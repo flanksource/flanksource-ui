@@ -14,10 +14,9 @@ export function TextInputClearable({
   onClear,
   placeholder,
   hideClearButton = false,
+  value,
   ...rest
 }) {
-  const [textValue, setTextValue] = useState(defaultValue || "");
-
   return (
     <div className={`flex ${className}`}>
       <div className={`relative flex-grow ${inputOuterClassName}`}>
@@ -30,14 +29,14 @@ export function TextInputClearable({
           } ${inputClassName}`}
           placeholder={placeholder}
           {...rest}
+          value={value}
         />
-        {!hideClearButton && textValue && (
+        {!hideClearButton && value && (
           <div className="absolute inset-y-0 right-0 pr-2 flex items-center">
             <button
               className="p-1"
               type="button"
               onClick={() => {
-                setTextValue("");
                 if (onClear) {
                   onClear();
                 }
@@ -53,7 +52,7 @@ export function TextInputClearable({
       </div>
       {!hideButton && (
         <button
-          onClick={() => onSubmit(textValue)}
+          onClick={() => onSubmit(value)}
           type="submit"
           className="py-2 px-3 border border-l-0 border-gray-300 rounded-r-md bg-gray-50 hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
         >
