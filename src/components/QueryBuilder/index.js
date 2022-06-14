@@ -64,19 +64,6 @@ export const QueryBuilder = ({ refreshConfigs, className, ...props }) => {
     return data;
   }, [queryList, selectedQuery]);
 
-  const savedQueriesList = useMemo(() => {
-    const data = [];
-    queryList.forEach((queryItem) => {
-      data.push({
-        id: queryItem.id,
-        label: queryItem.description,
-        description: queryItem.description,
-        value: queryItem.id
-      });
-    });
-    return data;
-  }, [queryList]);
-
   const fetchQueries = async () => {
     setLoading(true);
     try {
