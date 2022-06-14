@@ -47,7 +47,7 @@ export function ConfigListPage() {
   const tag = decodeURIComponent(params.get("tag") || "All");
   const configType = decodeURIComponent(params.get("type") || "All");
 
-  useState(() => {
+  useEffect(() => {
     getAllConfigs()
       .then((res) => {
         setData(res.data);
@@ -55,7 +55,7 @@ export function ConfigListPage() {
       .finally(() => {
         setIsLoading(false);
       });
-  }, []);
+  }, [configFilterView]);
 
   const handleRowClick = (row) => {
     const id = row?.original?.id;
