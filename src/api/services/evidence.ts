@@ -1,7 +1,6 @@
 import { IncidentCommander } from "../axios";
 import { resolve } from "../resolve";
-
-const evidenceTypes = ["log"];
+import { User } from "./users";
 
 export enum EvidenceType {
   Log = "log",
@@ -10,7 +9,7 @@ export enum EvidenceType {
 }
 
 interface EvidenceBase {
-  user: { id: string };
+  user: User;
   id: string;
   hypothesisId: string;
   description: string;
@@ -40,15 +39,15 @@ interface TopologyEvidence extends EvidenceBase {
   };
 }
 
-export const getAllEvidenceByHypothesis = async (hypothesisId) =>
+export type Evidence = LogEvidence | ConfigEvidence | TopologyEvidence;
+
+export const getAllEvidenceByHypothesis = async (hypothesisId: string) =>
   resolve(IncidentCommander.get(`/evidence?hypothesis_id=eq.${hypothesisId}`));
 
-export const getEvidence = async (id) =>
+export const getEvidence = async (id: string) =>
   resolve(IncidentCommander.get(`/evidence?id=eq.${id}`));
 
-type CreateEvidenceProp = LogEvidence | ConfigEvidence | TopologyEvidence;
-
-export const createEvidence = async (args: CreateEvidenceProp) => {
+export const createEvidence = async (args: Evidence) => {
   const { user, id, hypothesisId, evidence, type, description, properties } =
     args;
 
@@ -65,35 +64,13 @@ export const createEvidence = async (args: CreateEvidenceProp) => {
   );
 };
 
-export const createEvidenceOld = async (
-  user,
-  id,
-  hypothesisId,
-  evidence,
-  params = {
-    type: evidenceTypes[0],
-    description: "",
-    properties: ""
-  }
-) =>
-  resolve(
-    IncidentCommander.post(`/evidence`, {
-      id,
-      created_by: user.id,
-      hypothesis_id: hypothesisId,
-      evidence,
-      ...params
-    })
-  );
-
-export const updateEvidence = async (id, params) => {
+export const updateEvidence = async (id: string, params: {}) =>
   resolve(IncidentCommander.patch(`/evidence?id=eq.${id}`, { ...params }));
-};
 
-export const deleteEvidence = async (id) =>
+export const deleteEvidence = async (id: string) =>
   resolve(IncidentCommander.delete(`/evidence?id=eq.${id}`));
 
-export const deleteEvidenceBulk = async (idList) => {
+export const deleteEvidenceBulk = async (idList: string[]) => {
   let ids = "";
   idList.forEach((id, index) => {
     ids += `"${id}"`;
