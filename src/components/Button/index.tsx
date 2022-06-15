@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import React, { useState } from "react";
 import { Oval } from "react-loading-icons";
 import { Icon } from "../Icon";
@@ -29,14 +30,16 @@ const ButtonFC = ({
       className += "  px-3 py-2 text-sm  leading-4 rounded-md ";
   }
 
-  const [_icon, setIcon] = useState(<Icon icon={icon} size={size} />);
+  const [_icon, setIcon] = useState(
+    React.isValidElement(icon) ? icon : <Icon icon={icon} size={size} />
+  );
   const [_className, setClassName] = useState(className);
 
   const handleOnClick = () => {
     const oldIcon = _icon;
     // setText("Updating...");
     setClassName("btn-disabled");
-    setIcon(<Oval color="white" height="1.5em" />);
+    setIcon(<Oval width="18px" height="18px" color="white" />);
     onClick().finally(() => {
       // setText(oldText);
       setIcon(oldIcon);
@@ -44,9 +47,13 @@ const ButtonFC = ({
     });
   };
   return (
-    <button type="button" onClick={handleOnClick} className={_className}>
+    <button
+      type="button"
+      onClick={handleOnClick}
+      className={clsx(_className, "space-x-2")}
+    >
       {_icon != null && _icon}
-      {text}
+      <span>{text}</span>
     </button>
   );
 };
