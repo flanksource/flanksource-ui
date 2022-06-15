@@ -19,7 +19,7 @@ import { TextWithDivider } from "../TextWithDivider";
 
 export const QueryBuilder = ({ refreshConfigs, className, ...props }) => {
   const [params, setParams] = useSearchParams();
-  const [query, setQuery] = useState(params.get("query") || "");
+  const query = params.get("query") || "";
   const [selectedQuery, setSelectedQuery] = useState(null);
   const [queryList, setQueryList] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -89,7 +89,6 @@ export const QueryBuilder = ({ refreshConfigs, className, ...props }) => {
   }, []);
 
   const handleSearch = (query) => {
-    setQuery(query);
     setParams({
       query
     });
@@ -100,7 +99,6 @@ export const QueryBuilder = ({ refreshConfigs, className, ...props }) => {
       handleSaveQuery();
     } else if (option.type === "action_saved_query") {
       setSelectedQuery(option.context);
-      setQuery(option.context.query);
       setParams({
         query: option.context.query
       });
@@ -118,8 +116,8 @@ export const QueryBuilder = ({ refreshConfigs, className, ...props }) => {
     setModalIsOpen(true);
   };
 
-  const handleRunQuery = async () => {
-    if (!query) {
+  const handleRunQuery = async (ignoreQueryCheck) => {
+    if (!query && !ignoreQueryCheck) {
       toastError("Please provide a query before running");
       return;
     }
@@ -141,7 +139,6 @@ export const QueryBuilder = ({ refreshConfigs, className, ...props }) => {
     try {
       await createSavedQuery(query, { description: savedQueryValue });
       toastSuccess(`${savedQueryValue || query} saved successfully`);
-      setQuery("");
       setParams({});
       fetchQueries();
     } catch (ex) {
@@ -162,7 +159,6 @@ export const QueryBuilder = ({ refreshConfigs, className, ...props }) => {
       toastSuccess(
         `${selectedQuery.description || query} updated successfully`
       );
-      setQuery("");
       setSelectedQuery("");
       setParams({});
       fetchQueries();
@@ -183,7 +179,6 @@ export const QueryBuilder = ({ refreshConfigs, className, ...props }) => {
       if (status === 200 || status === 201) {
         toastSuccess(`${queryName} deleted successfully`);
         fetchQueries();
-        setQuery("");
         setSelectedQuery();
         setParams({});
       }
@@ -206,7 +201,6 @@ export const QueryBuilder = ({ refreshConfigs, className, ...props }) => {
           style={{ width: "750px" }}
           onClear={(e) => {
             setSelectedQuery();
-            setQuery("");
             setParams({});
           }}
           onKeyDown={(e) => {
@@ -297,10 +291,12 @@ function QueryBuilderActionMenu({ onOptionClick, optionCategories }) {
               </Menu.Item>
             );
           })}
-          <TextWithDivider
-            className="text-gray-500 text-md font-semibold"
-            text="Saved Queries"
-          />
+          {!!optionCategories.savedQueryLoadActions.length && (
+            <TextWithDivider
+              className="text-gray-500 text-md font-semibold"
+              text="Saved Queries"
+            />
+          )}
           {optionCategories.savedQueryLoadActions.map((option) => {
             return (
               <Menu.Item key={option.id}>

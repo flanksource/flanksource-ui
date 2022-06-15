@@ -48,6 +48,9 @@ export function ConfigListPage() {
   const configType = decodeURIComponent(params.get("type") || "All");
 
   useEffect(() => {
+    if (params.get("query")) {
+      return;
+    }
     getAllConfigs()
       .then((res) => {
         setData(res.data);
@@ -55,7 +58,7 @@ export function ConfigListPage() {
       .finally(() => {
         setIsLoading(false);
       });
-  }, [configFilterView]);
+  }, [configFilterView, params]);
 
   const handleRowClick = (row) => {
     const id = row?.original?.id;
