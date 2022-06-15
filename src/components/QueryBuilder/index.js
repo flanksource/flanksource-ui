@@ -51,6 +51,12 @@ export const QueryBuilder = ({ refreshConfigs, className, ...props }) => {
         type: "action_save",
         context: {}
       });
+      actions.push({
+        id: "delete",
+        label: "Delete",
+        type: "action_delete",
+        context: {}
+      });
     }
 
     queryList.forEach((queryItem) => {
@@ -83,8 +89,8 @@ export const QueryBuilder = ({ refreshConfigs, className, ...props }) => {
 
   useEffect(() => {
     fetchQueries();
-    if (params.get("query")) {
-      handleRunQuery();
+    if (query) {
+      handleRunQuery(query);
     }
   }, []);
 
@@ -102,8 +108,11 @@ export const QueryBuilder = ({ refreshConfigs, className, ...props }) => {
       setParams({
         query: option.context.query
       });
+      handleRunQuery(option.context.query);
     } else if (option.type === "action_update") {
       updateQuery();
+    } else if (option.type === "action_delete") {
+      handleQueryDelete(selectedQuery.id);
     }
   };
 
@@ -116,14 +125,14 @@ export const QueryBuilder = ({ refreshConfigs, className, ...props }) => {
     setModalIsOpen(true);
   };
 
-  const handleRunQuery = async (ignoreQueryCheck) => {
-    if (!query && !ignoreQueryCheck) {
+  const handleRunQuery = async (queryToRun) => {
+    if (!queryToRun) {
       toastError("Please provide a query before running");
       return;
     }
     refreshConfigs([]);
     try {
-      const result = await getConfigsByQuery(query);
+      const result = await getConfigsByQuery(queryToRun);
       refreshConfigs(result.data.results);
     } catch (ex) {
       toastError(ex.message);
@@ -139,8 +148,7 @@ export const QueryBuilder = ({ refreshConfigs, className, ...props }) => {
     try {
       await createSavedQuery(query, { description: savedQueryValue });
       toastSuccess(`${savedQueryValue || query} saved successfully`);
-      setParams({});
-      fetchQueries();
+      await fetchQueries();
     } catch (ex) {
       toastError(ex);
     }
@@ -159,9 +167,7 @@ export const QueryBuilder = ({ refreshConfigs, className, ...props }) => {
       toastSuccess(
         `${selectedQuery.description || query} updated successfully`
       );
-      setSelectedQuery("");
-      setParams({});
-      fetchQueries();
+      await fetchQueries();
     } catch (ex) {
       toastError(ex);
     }
@@ -178,9 +184,8 @@ export const QueryBuilder = ({ refreshConfigs, className, ...props }) => {
       const { status } = res;
       if (status === 200 || status === 201) {
         toastSuccess(`${queryName} deleted successfully`);
-        fetchQueries();
+        await fetchQueries();
         setSelectedQuery();
-        setParams({});
       }
     } catch (ex) {
       toastError(ex);
@@ -197,7 +202,7 @@ export const QueryBuilder = ({ refreshConfigs, className, ...props }) => {
           onChange={(e) => handleSearch(e.target.value)}
           className="sm:text-sm border-gray-300"
           placeholder="Search configs by using custom queries written here"
-          onSubmit={handleRunQuery}
+          onSubmit={(e) => handleRunQuery(query)}
           style={{ width: "750px" }}
           onClear={(e) => {
             setSelectedQuery();
@@ -205,19 +210,10 @@ export const QueryBuilder = ({ refreshConfigs, className, ...props }) => {
           }}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
-              handleRunQuery();
+              handleRunQuery(query);
             }
           }}
         />
-        {selectedQuery && (
-          <button
-            className="px-1.5 py-1.5 text-lg whitespace-nowrap text-white text-red-500 mr-2"
-            type="button"
-            onClick={() => handleQueryDelete(selectedQuery.id)}
-          >
-            <MdDelete height={18} width={18} />
-          </button>
-        )}
         <QueryBuilderActionMenu
           optionCategories={optionCategories}
           onOptionClick={handleQueryBuilderAction}
@@ -305,7 +301,7 @@ function QueryBuilderActionMenu({ onOptionClick, optionCategories }) {
                     className={clsx(
                       active ? "bg-gray-100 text-gray-900" : "text-gray-700",
                       "block px-4 py-2 text-sm",
-                      "cursor-pointer"
+                      "cursor-pointer break-words"
                     )}
                     onClick={() => onOptionClick(option)}
                   >
