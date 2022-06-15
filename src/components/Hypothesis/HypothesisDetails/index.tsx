@@ -6,7 +6,7 @@ import clsx from "clsx";
 import { Dropdown } from "../../Dropdown";
 import { hypothesisStatuses } from "../../HypothesisBuilder/data";
 
-import { EvidenceSection } from "../../HypothesisBuilder/evidence-section";
+import { EvidenceSection } from "../EvidenceSection";
 import { Modal } from "../../Modal";
 import { CommentsSection } from "../../HypothesisBuilder/comments";
 import {

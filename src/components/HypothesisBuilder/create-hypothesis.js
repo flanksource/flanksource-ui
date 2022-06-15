@@ -3,8 +3,8 @@ import { useForm, Controller } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 import { Dropdown } from "../Dropdown";
 import { hypothesisStatuses } from "./data";
-import { EvidenceSection } from "./evidence-section";
 import { useUser } from "../../context";
+import { EvidenceSection } from "../Hypothesis/EvidenceSection";
 import { HypothesisStatuses } from "../../constants/hypothesis-statuses";
 
 const statusItems = {
