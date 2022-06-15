@@ -15,6 +15,7 @@ import { Modal } from "../Modal";
 import { toastError, toastSuccess } from "../Toast/toast";
 import { useLoader } from "../../hooks";
 import { TextInputClearable } from "../TextInputClearable";
+import { TextWithDivider } from "../TextWithDivider";
 
 export const QueryBuilder = ({ refreshConfigs, className, ...props }) => {
   const [params, setParams] = useSearchParams();
@@ -24,11 +25,12 @@ export const QueryBuilder = ({ refreshConfigs, className, ...props }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [savedQueryValue, setSavedQueryValue] = useState("");
   const { loading, setLoading } = useLoader();
-  const options = useMemo(() => {
-    const data = [];
+  const optionCategories = useMemo(() => {
+    const actions = [];
+    const savedQueryLoadActions = [];
 
     if (!selectedQuery) {
-      data.push({
+      actions.push({
         id: "save",
         label: "Save",
         type: "action_save",
@@ -37,13 +39,13 @@ export const QueryBuilder = ({ refreshConfigs, className, ...props }) => {
     }
 
     if (selectedQuery) {
-      data.push({
+      actions.push({
         id: "update",
         label: "Update",
         type: "action_update",
         context: {}
       });
-      data.push({
+      actions.push({
         id: "save_as",
         label: "Save As",
         type: "action_save",
@@ -52,7 +54,7 @@ export const QueryBuilder = ({ refreshConfigs, className, ...props }) => {
     }
 
     queryList.forEach((queryItem) => {
-      data.push({
+      savedQueryLoadActions.push({
         id: queryItem.id,
         label: queryItem.description,
         type: "action_saved_query",
@@ -61,7 +63,10 @@ export const QueryBuilder = ({ refreshConfigs, className, ...props }) => {
         }
       });
     });
-    return data;
+    return {
+      actions,
+      savedQueryLoadActions
+    };
   }, [queryList, selectedQuery]);
 
   const fetchQueries = async () => {
@@ -96,6 +101,9 @@ export const QueryBuilder = ({ refreshConfigs, className, ...props }) => {
     } else if (option.type === "action_saved_query") {
       setSelectedQuery(option.context);
       setQuery(option.context.query);
+      setParams({
+        query: option.context.query
+      });
     } else if (option.type === "action_update") {
       updateQuery();
     }
@@ -104,20 +112,20 @@ export const QueryBuilder = ({ refreshConfigs, className, ...props }) => {
   const handleSaveQuery = () => {
     setSavedQueryValue("");
     if (!query) {
-      return toastError("Please provide query details");
+      toastError("Please provide query details");
+      return;
     }
     setModalIsOpen(true);
   };
 
   const handleRunQuery = async () => {
-    const queryToRun = query;
-    if (!queryToRun) {
+    if (!query) {
       toastError("Please provide a query before running");
       return;
     }
     refreshConfigs([]);
     try {
-      const result = (await getConfigsByQuery(queryToRun))?.data?.results || [];
+      const result = (await getConfigsByQuery(query))?.data?.results || [];
       result.forEach((item) => {
         item.tags = JSON.parse(item.tags);
       });
@@ -180,6 +188,7 @@ export const QueryBuilder = ({ refreshConfigs, className, ...props }) => {
         fetchQueries();
         setQuery("");
         setSelectedQuery();
+        setParams({});
       }
     } catch (ex) {
       toastError(ex);
@@ -219,7 +228,7 @@ export const QueryBuilder = ({ refreshConfigs, className, ...props }) => {
           </button>
         )}
         <QueryBuilderActionMenu
-          options={options}
+          optionCategories={optionCategories}
           onOptionClick={handleQueryBuilderAction}
         />
       </div>
@@ -253,14 +262,12 @@ export const QueryBuilder = ({ refreshConfigs, className, ...props }) => {
   );
 };
 
-function QueryBuilderActionMenu({ onOptionClick, options }) {
+function QueryBuilderActionMenu({ onOptionClick, optionCategories }) {
   return (
     <Menu as="div" className="relative inline-block text-left">
-      <div>
-        <Menu.Button className="inline-flex justify-center w-full p-3 bg-white text-sm font-medium text-gray-700">
-          <BiCog className="content-center" />
-        </Menu.Button>
-      </div>
+      <Menu.Button className="inline-flex justify-center w-full p-3 bg-white text-sm font-medium text-gray-700">
+        <BiCog className="content-center" />
+      </Menu.Button>
       <Transition
         as={Fragment}
         enter="transition ease-out duration-100"
@@ -271,26 +278,50 @@ function QueryBuilderActionMenu({ onOptionClick, options }) {
         leaveTo="transform opacity-0 scale-95"
       >
         <Menu.Items className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
-          <div className="py-1">
-            {options.map((option) => {
-              return (
-                <Menu.Item key={option.id}>
-                  {({ active }) => (
-                    <div
-                      className={clsx(
-                        active ? "bg-gray-100 text-gray-900" : "text-gray-700",
-                        "block px-4 py-2 text-sm",
-                        "cursor-pointer"
-                      )}
-                      onClick={() => onOptionClick(option)}
-                    >
-                      {option.label}
-                    </div>
-                  )}
-                </Menu.Item>
-              );
-            })}
-          </div>
+          <TextWithDivider
+            className="text-gray-500 text-md font-semibold"
+            text="Actions"
+          />
+          {optionCategories.actions.map((option) => {
+            return (
+              <Menu.Item key={option.id}>
+                {({ active }) => (
+                  <div
+                    className={clsx(
+                      active ? "bg-gray-100 text-gray-900" : "text-gray-700",
+                      "block px-4 py-2 text-sm",
+                      "cursor-pointer"
+                    )}
+                    onClick={() => onOptionClick(option)}
+                  >
+                    {option.label}
+                  </div>
+                )}
+              </Menu.Item>
+            );
+          })}
+          <TextWithDivider
+            className="text-gray-500 text-md font-semibold"
+            text="Saved Queries"
+          />
+          {optionCategories.savedQueryLoadActions.map((option) => {
+            return (
+              <Menu.Item key={option.id}>
+                {({ active }) => (
+                  <div
+                    className={clsx(
+                      active ? "bg-gray-100 text-gray-900" : "text-gray-700",
+                      "block px-4 py-2 text-sm",
+                      "cursor-pointer"
+                    )}
+                    onClick={() => onOptionClick(option)}
+                  >
+                    {option.label}
+                  </div>
+                )}
+              </Menu.Item>
+            );
+          })}
         </Menu.Items>
       </Transition>
     </Menu>
