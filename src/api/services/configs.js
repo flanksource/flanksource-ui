@@ -53,5 +53,10 @@ export const updateSavedQuery = (id, params) =>
 export const deleteSavedQuery = (id) =>
   resolve(ConfigDB.delete(`/saved_query?id=eq.${id}`));
 
-export const getConfigsByQuery = (query) =>
-  resolve(Config.get(`/query?query=${query}`));
+export const getConfigsByQuery = async (query) => {
+  const result = await resolve(Config.get(`/query?query=${query}`));
+  (result?.data?.results || []).forEach((item) => {
+    item.tags = JSON.parse(item.tags);
+  });
+  return result;
+};

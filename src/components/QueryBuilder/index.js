@@ -88,10 +88,10 @@ export const QueryBuilder = ({ refreshConfigs, className, ...props }) => {
     }
   }, []);
 
-  const handleSearch = (value) => {
-    setQuery(value);
+  const handleSearch = (query) => {
+    setQuery(query);
     setParams({
-      query: value
+      query
     });
   };
 
@@ -125,11 +125,8 @@ export const QueryBuilder = ({ refreshConfigs, className, ...props }) => {
     }
     refreshConfigs([]);
     try {
-      const result = (await getConfigsByQuery(query))?.data?.results || [];
-      result.forEach((item) => {
-        item.tags = JSON.parse(item.tags);
-      });
-      refreshConfigs(result);
+      const result = await getConfigsByQuery(query);
+      refreshConfigs(result.data.results);
     } catch (ex) {
       toastError(ex.message);
     }
@@ -206,7 +203,7 @@ export const QueryBuilder = ({ refreshConfigs, className, ...props }) => {
           className="sm:text-sm border-gray-300"
           placeholder="Search configs by using custom queries written here"
           onSubmit={handleRunQuery}
-          style={{ width: "500px" }}
+          style={{ width: "750px" }}
           onClear={(e) => {
             setSelectedQuery();
             setQuery("");
