@@ -1,20 +1,32 @@
 import { IncidentCommander } from "../axios";
 import { resolve } from "../resolve";
+import { Evidence } from "./evidence";
 import { User } from "./users";
 
-enum HypothesisNodeType {
+export enum HypothesisNodeType {
   Root = "root",
   Factor = "factor",
   Solution = "solution"
 }
 
-enum HypothesisStatus {
+export enum HypothesisStatus {
   Proven = "proven",
   Likely = "likely",
   Possible = "possible",
   Unlikely = "unlikely",
   Improbable = "improbable",
   Disproven = "disproven"
+}
+
+export interface Hypothesis {
+  title: string;
+  status: HypothesisStatus;
+  created_by: User;
+  evidence?: Evidence[];
+  comment?: any[];
+  id: string;
+  incident_id: string;
+  type: HypothesisNodeType;
 }
 
 export const getAllHypothesisByIncident = async (incidentId: string) =>

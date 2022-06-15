@@ -3,13 +3,21 @@ import React, { useState } from "react";
 import { Oval } from "react-loading-icons";
 import { Icon } from "../Icon";
 
+interface Props {
+  className?: string;
+  text: React.ReactElement;
+  icon?: React.ReactElement | string | undefined;
+  size?: "xs" | "sm" | "md" | "lg" | "xl";
+  onClick: () => Promise<void>;
+}
+
 const ButtonFC = ({
   className = "btn-primary",
   text,
   icon,
   size = "sm",
   onClick
-}) => {
+}: Props) => {
   switch (size) {
     case "xs":
       className += " px-2.5 py-1.5 text-xs rounded";
@@ -30,7 +38,8 @@ const ButtonFC = ({
       className += "  px-3 py-2 text-sm  leading-4 rounded-md ";
   }
 
-  const [_icon, setIcon] = useState(
+  const [_icon, setIcon] = useState<React.ReactElement>(
+    // @ts-ignore:next-line
     React.isValidElement(icon) ? icon : <Icon icon={icon} size={size} />
   );
   const [_className, setClassName] = useState(className);
