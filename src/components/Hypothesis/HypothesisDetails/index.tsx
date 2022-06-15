@@ -13,7 +13,10 @@ import {
   getCommentsByHypothesis,
   createComment
 } from "../../../api/services/comments";
-import { getAllEvidenceByHypothesis } from "../../../api/services/evidence";
+import {
+  getAllEvidenceByHypothesis,
+  deleteEvidence
+} from "../../../api/services/evidence";
 import { useUser } from "../../../context";
 import { toastError } from "../../Toast/toast";
 import { EvidenceBuilder } from "../../EvidenceBuilder";
@@ -64,6 +67,18 @@ export function HypothesisDetails({ node, api, ...rest }) {
         fetchComments(node.id);
       });
 
+  const deleteEvidenceCb = async (id: string) => {
+    const { data, error } = await deleteEvidence(id);
+    console.log({ data });
+
+    if (error) {
+      console.error("delete failed", error);
+      return;
+    }
+
+    setEvidence((evidence) => evidence.filter((e) => e.id !== id));
+  };
+
   useEffect(() => {
     fetchEvidence(node.id);
     fetchComments(node.id);
@@ -109,6 +124,7 @@ export function HypothesisDetails({ node, api, ...rest }) {
             evidenceList={evidence}
             titlePrepend={<HypothesisTitle>Evidence</HypothesisTitle>}
             onButtonClick={() => setEvidenceBuilderOpen(true)}
+            onDeleteEvidence={deleteEvidenceCb}
             isLoading={evidenceLoading}
           />
         </div>
