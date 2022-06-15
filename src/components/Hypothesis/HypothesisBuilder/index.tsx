@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Modal } from "../../Modal";
 import { HypothesisNode } from "../HypothesisNode";
 import { HypothesisTitle } from "../HypothesisTitle";
-import { HypothesisDetails } from "../../HypothesisBuilder/hypothesis-details";
+import { HypothesisDetails } from "../HypothesisDetails";
 import { CreateHypothesis } from "../../HypothesisBuilder/create-hypothesis";
 
 export function HypothesisBuilder({

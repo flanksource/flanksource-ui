@@ -3,19 +3,20 @@ import { debounce } from "lodash";
 import { useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 import clsx from "clsx";
-import { Dropdown } from "../Dropdown";
-import { hypothesisStatuses } from "./data";
-import { EvidenceSection } from "./evidence-section";
-import { Modal } from "../Modal";
-import { EvidenceBuilder } from "../EvidenceBuilder";
-import { CommentsSection } from "./comments";
+import { Dropdown } from "../../Dropdown";
+import { hypothesisStatuses } from "../../HypothesisBuilder/data";
+
+import { EvidenceSection } from "../../HypothesisBuilder/evidence-section";
+import { Modal } from "../../Modal";
+import { CommentsSection } from "../../HypothesisBuilder/comments";
 import {
   getCommentsByHypothesis,
   createComment
-} from "../../api/services/comments";
-import { getAllEvidenceByHypothesis } from "../../api/services/evidence";
-import { useUser } from "../../context";
-import { toastError } from "../Toast/toast";
+} from "../../../api/services/comments";
+import { getAllEvidenceByHypothesis } from "../../../api/services/evidence";
+import { useUser } from "../../../context";
+import { toastError } from "../../Toast/toast";
+import { EvidenceBuilder } from "../../EvidenceBuilder";
 
 const statusItems = {
   ...Object.values(hypothesisStatuses).reduce((acc, obj) => {
