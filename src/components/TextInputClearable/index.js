@@ -1,4 +1,5 @@
 import { SearchIcon } from "@heroicons/react/solid";
+import clsx from "clsx";
 import { useState } from "react";
 import { IoCloseCircle } from "react-icons/io5";
 
@@ -14,10 +15,9 @@ export function TextInputClearable({
   onClear,
   placeholder,
   hideClearButton = false,
+  value,
   ...rest
 }) {
-  const [textValue, setTextValue] = useState(defaultValue || "");
-
   return (
     <div className={`flex ${className}`}>
       <div className={`relative flex-grow ${inputOuterClassName}`}>
@@ -25,19 +25,22 @@ export function TextInputClearable({
           defaultValue={defaultValue}
           onChange={onChange}
           type="text"
-          className={`h-full w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block py-1 sm:text-sm border-gray-300 ${
-            hideButton ? "rounded-md" : "rounded-l-md"
-          } ${inputClassName}`}
+          className={clsx(
+            `h-full w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block py-1 sm:text-sm border-gray-300 ${
+              hideButton ? "rounded-md" : "rounded-l-md"
+            } ${inputClassName}`,
+            !hideClearButton && value && "pr-6"
+          )}
           placeholder={placeholder}
           {...rest}
+          value={value}
         />
-        {!hideClearButton && textValue && (
-          <div className="absolute inset-y-0 right-0 pr-2 flex items-center">
+        {!hideClearButton && value && (
+          <div className="absolute inset-y-0 right-0 flex items-center">
             <button
               className="p-1"
               type="button"
               onClick={() => {
-                setTextValue("");
                 if (onClear) {
                   onClear();
                 }
@@ -53,7 +56,7 @@ export function TextInputClearable({
       </div>
       {!hideButton && (
         <button
-          onClick={() => onSubmit(textValue)}
+          onClick={() => onSubmit(value)}
           type="submit"
           className="py-2 px-3 border border-l-0 border-gray-300 rounded-r-md bg-gray-50 hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
         >

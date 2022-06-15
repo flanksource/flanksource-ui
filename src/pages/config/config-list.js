@@ -14,6 +14,13 @@ import { BreadcrumbNav } from "../../components/BreadcrumbNav";
 import { TextInputClearable } from "../../components/TextInputClearable";
 import ConfigList from "../../components/ConfigList";
 import { SearchSelectTag } from "../../components/SearchSelectTag";
+import { QueryBuilder } from "../../components/QueryBuilder";
+import { Switch } from "../../components/Switch";
+
+const ConfigFilterViewTypes = {
+  basic: "Basic",
+  advanced: "Advanced"
+};
 
 export function ConfigListPage() {
   const [params, setParams] = useSearchParams();
@@ -22,22 +29,28 @@ export function ConfigListPage() {
   const [filteredData, setFilteredData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const { setTitle, setTitleExtras } = useOutletContext();
-
-  const configTypes = useMemo(
-    () => [...new Set(data.map((d) => d.config_type))],
-    [data]
+  const [configFilterView, setConfigFilterView] = useState(
+    params.get("query")
+      ? ConfigFilterViewTypes.advanced
+      : ConfigFilterViewTypes.basic
   );
+  const options = useMemo(() => {
+    return [ConfigFilterViewTypes.basic, ConfigFilterViewTypes.advanced];
+  }, []);
 
   const configTagItems = useMemo(
     () => data.flatMap((d) => Object.entries(d.tags)),
     [data]
   );
 
-  const query = params.get("query");
+  const search = params.get("search");
   const tag = decodeURIComponent(params.get("tag") || "All");
   const configType = decodeURIComponent(params.get("type") || "All");
 
-  useState(() => {
+  useEffect(() => {
+    if (params.get("query")) {
+      return;
+    }
     getAllConfigs()
       .then((res) => {
         setData(res.data);
@@ -45,7 +58,7 @@ export function ConfigListPage() {
       .finally(() => {
         setIsLoading(false);
       });
-  }, []);
+  }, [configFilterView, params]);
 
   const handleRowClick = (row) => {
     const id = row?.original?.id;
@@ -56,33 +69,51 @@ export function ConfigListPage() {
 
   const extra = (
     <div className="flex space-x-2 mr-4">
-      <TypeDropdown
-        value={configType}
-        onChange={(ct) => {
-          params.set("type", encodeURIComponent(ct || ""));
-          setParams(params);
-        }}
-      />
-      <span className="w-80">
-        <SearchSelectTag
-          tags={configTagItems}
-          value={tag}
-          onChange={(ct) => {
-            params.set("tag", encodeURIComponent(ct.value || ""));
-            setParams(params);
-          }}
-        />
-      </span>
+      {configFilterView === ConfigFilterViewTypes.advanced && (
+        <QueryBuilder refreshConfigs={(e) => setData(e)} />
+      )}
 
-      <TextInputClearable
-        onChange={debounce((e) => {
-          const query = e.target.value || "";
-          params.set("query", query);
-          setParams(params);
-        }, 200)}
-        className="w-80"
-        placeholder="Search for configs"
-        defaultValue={params.get("query")}
+      {configFilterView === ConfigFilterViewTypes.basic && (
+        <>
+          <TypeDropdown
+            value={configType}
+            onChange={(ct) => {
+              params.set("type", encodeURIComponent(ct || ""));
+              setParams(params);
+            }}
+          />
+
+          <span className="w-80">
+            <SearchSelectTag
+              tags={configTagItems}
+              value={tag}
+              onChange={(ct) => {
+                params.set("tag", encodeURIComponent(ct.value || ""));
+                setParams(params);
+              }}
+            />
+          </span>
+
+          <TextInputClearable
+            onChange={debounce((e) => {
+              const query = e.target.value || "";
+              params.set("search", query);
+              setParams(params);
+            }, 200)}
+            className="w-80"
+            placeholder="Search for configs"
+            defaultValue={params.get("search")}
+          />
+        </>
+      )}
+
+      <Switch
+        onChange={(e) => {
+          setConfigFilterView(e);
+          setParams({});
+        }}
+        options={options}
+        value={configFilterView}
       />
     </div>
   );
@@ -90,14 +121,22 @@ export function ConfigListPage() {
   useEffect(() => {
     setTitleExtras(extra);
     return () => setTitleExtras(null);
-  }, [data, configType, tag, query, configTagItems]);
+  }, [
+    data,
+    configType,
+    tag,
+    search,
+    configTagItems,
+    options,
+    configFilterView
+  ]);
 
   useEffect(() => {
     let filteredData = data;
     setTitle(<BreadcrumbNav list={["Config"]} />);
     if (data?.length > 0) {
       // do filtering here
-      filteredData = filterConfigsByText(filteredData, query);
+      filteredData = filterConfigsByText(filteredData, search);
 
       if (configType && configType !== "All") {
         filteredData = filteredData.filter((d) => configType === d.config_type);
@@ -116,7 +155,7 @@ export function ConfigListPage() {
       }
     }
     setFilteredData(filteredData);
-  }, [data, query, configType, tag]);
+  }, [data, search, configType, tag]);
 
   return (
     <ConfigList

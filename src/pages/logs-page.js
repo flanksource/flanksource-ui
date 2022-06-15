@@ -90,7 +90,9 @@ export function LogsPage() {
   const [topologyId, setTopologyId] = useState(searchParams.get("topologyId"));
   const [externalId, setExternalId] = useState(searchParams.get("externalId"));
   const [type, setType] = useState(searchParams.get("type"));
-  const [start, setStart] = useState(timeRanges[0].value);
+  const [start, setStart] = useState(
+    searchParams.get("start") || timeRanges[0].value
+  );
 
   const [topologies, setTopologies] = useState([]);
   const [logs, setLogs] = useState([]);

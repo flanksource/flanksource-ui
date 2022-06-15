@@ -1,22 +1,24 @@
 // http://incident-commander.canary.lab.flanksource.com/config/db
 
-import { ConfigDB } from "../axios";
+import { Config, ConfigDB } from "../axios";
 import { resolve } from "../resolve";
 
-export const getAllConfigs = async () => resolve(ConfigDB.get(`/config_item`));
+// Config Items
 
-export const getAllChanges = async () =>
+export const getAllConfigs = () => resolve(ConfigDB.get(`/config_item`));
+
+export const getAllChanges = () =>
   resolve(ConfigDB.get(`/config_change?order=created_at.desc`));
 
-export const getConfig = async (id) =>
+export const getConfig = (id) =>
   resolve(ConfigDB.get(`/config_item?id=eq.${id}`));
 
-export const getConfigChange = async (id) =>
+export const getConfigChange = (id) =>
   resolve(
     ConfigDB.get(`/config_change?config_id=eq.${id}&order=created_at.desc`)
   );
 
-export const createConfigItem = async (type, params) =>
+export const createConfigItem = (type, params) =>
   resolve(
     ConfigDB.post(`/config_item`, {
       config_type: type,
@@ -24,8 +26,37 @@ export const createConfigItem = async (type, params) =>
     })
   );
 
-export const updateConfigItem = async (id, params) =>
+export const updateConfigItem = (id, params) =>
   resolve(ConfigDB.patch(`/config_item?id=eq.${id}`, { ...params }));
 
-export const deleteConfigItem = async (id) =>
+export const deleteConfigItem = (id) =>
   resolve(ConfigDB.delete(`/config_item?id=eq.${id}`));
+
+// Saved Queries
+
+export const getAllSavedQueries = () => resolve(ConfigDB.get(`/saved_query`));
+
+export const getSavedQuery = (id) =>
+  resolve(ConfigDB.get(`/saved_query?id=eq.${id}`));
+
+export const createSavedQuery = (query, params) =>
+  resolve(
+    ConfigDB.post(`/saved_query`, {
+      query,
+      ...params
+    })
+  );
+
+export const updateSavedQuery = (id, params) =>
+  resolve(ConfigDB.patch(`/saved_query?id=eq.${id}`, { ...params }));
+
+export const deleteSavedQuery = (id) =>
+  resolve(ConfigDB.delete(`/saved_query?id=eq.${id}`));
+
+export const getConfigsByQuery = async (query) => {
+  const result = await resolve(Config.get(`/query?query=${query}`));
+  (result?.data?.results || []).forEach((item) => {
+    item.tags = JSON.parse(item.tags);
+  });
+  return result;
+};
