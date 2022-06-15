@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Modal } from "../Modal";
-import { HypothesisDetails } from "./hypothesis-details";
-import { HypothesisNode } from "./hypothesis-node";
-import { CreateHypothesis } from "./create-hypothesis";
-import { HypothesisTitle } from "./hypothesis-title";
+
+import { Modal } from "../../Modal";
+import { HypothesisNode } from "../HypothesisNode";
+import { HypothesisTitle } from "../HypothesisTitle";
+import { HypothesisDetails } from "../../HypothesisBuilder/hypothesis-details";
+import { CreateHypothesis } from "../../HypothesisBuilder/create-hypothesis";
 
 export function HypothesisBuilder({
   initialTree,

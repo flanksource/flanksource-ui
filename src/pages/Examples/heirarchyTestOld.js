@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { HypothesisBuilder } from "../../components/HypothesisBuilder";
+import { HypothesisBuilder } from "../../components/Hypothesis/HypothesisBuilder";
 
 export function HeirarchyTestPageOld() {
   const [existing, setExisting] = useState(false);

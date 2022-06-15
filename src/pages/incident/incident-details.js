@@ -9,7 +9,7 @@ import {
 } from "../../api/services/hypothesis";
 import { updateIncident } from "../../api/services/incident";
 import { EvidenceType } from "../../api/services/evidence";
-import { HypothesisBuilder } from "../../components/HypothesisBuilder";
+import { HypothesisBuilder } from "../../components/Hypothesis/HypothesisBuilder";
 import { SearchLayout } from "../../components/Layout";
 
 import { Loading } from "../../components/Loading";
