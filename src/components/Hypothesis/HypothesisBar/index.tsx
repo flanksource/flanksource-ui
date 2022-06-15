@@ -1,5 +1,4 @@
-import React, { useMemo } from "react";
-import PropTypes from "prop-types";
+import { MouseEventHandler, useMemo } from "react";
 import clsx from "clsx";
 import {
   BsBraces,
@@ -10,10 +9,12 @@ import {
 import { VscTypeHierarchy } from "react-icons/vsc";
 import { ThumbDownIcon, ThumbUpIcon } from "@heroicons/react/solid";
 import { AiOutlineSearch } from "react-icons/ai";
-import { HypothesisStatuses } from "../../constants/hypothesis-statuses";
-import { deleteHypothesis } from "../../api/services/hypothesis";
-import { Avatar } from "../Avatar";
-import { AvatarGroup } from "../AvatarGroup";
+
+import { HypothesisStatuses } from "../../../constants/hypothesis-statuses";
+import { deleteHypothesis, Hypothesis } from "../../../api/services/hypothesis";
+import { AvatarGroup } from "../../AvatarGroup";
+import { EvidenceType } from "../../../api/services/evidence";
+import { IconBaseProps, IconType } from "react-icons/lib";
 
 const statusToStatusIconMapping = {
   [HypothesisStatuses.Proven]: {
@@ -46,32 +47,48 @@ const statusToStatusIconMapping = {
   }
 };
 
-const renderInfoIcon = (icon, props = {}) => {
-  const mapping = {
-    comment: BsFillChatSquareTextFill,
-    config: BsBraces,
-    log: BsFillBarChartFill,
-    topology: VscTypeHierarchy
-  };
+enum CommentInfo {
+  Comment = "comment"
+}
 
-  if (mapping[icon]) {
-    const Component = mapping[icon];
-    return <Component size={18} key={icon} {...props} />;
-  }
+type InfoType = CommentInfo | EvidenceType;
 
-  return null;
+interface InfoIconProps extends IconBaseProps {
+  icon: InfoType;
+  key: string;
+}
+
+const ICON_MAP: { [key in InfoType]: IconType } = {
+  comment: BsFillChatSquareTextFill,
+  config: BsBraces,
+  log: BsFillBarChartFill,
+  topology: VscTypeHierarchy
 };
 
-export const HypothesisBar = ({ hypothesis, onTitleClick, startAdornment }) => {
+const InfoIcon: React.FC<InfoIconProps> = ({
+  icon,
+  ...props
+}: InfoIconProps) => {
+  const Component = ICON_MAP[icon];
+  return <Component size={24} {...props} />;
+};
+
+interface HypothesisBarProps {
+  hypothesis: Hypothesis;
+  onTitleClick: MouseEventHandler<HTMLSpanElement>;
+}
+
+export const HypothesisBar = ({
+  hypothesis,
+  onTitleClick
+}: HypothesisBarProps) => {
   const {
-    title: rawTitle,
+    title,
     status,
     created_by: createdBy,
     evidence,
     comment
   } = hypothesis;
-
-  const title = useMemo(() => (rawTitle ?? "").trim(), [rawTitle]);
 
   const { StatusIcon, statusColorClass } = useMemo(
     () =>
@@ -79,22 +96,20 @@ export const HypothesisBar = ({ hypothesis, onTitleClick, startAdornment }) => {
     [status]
   );
 
-  const infoIcons = evidence
-    .map((e) => e.type)
-    .concat(comment.length ? ["comment"] : []);
+  const infoIcons: InfoType[] = (evidence || [])
+    .map((e): InfoType => e.type)
+    .concat(comment?.length ? [CommentInfo.Comment] : []);
 
   const commentsMap = new Map(
-    comment.map((c) => [c?.created_by?.id, c?.created_by])
+    (comment || []).map((c) => [c?.created_by?.id, c?.created_by])
   );
-  commentsMap.delete(createdBy.id);
+
+  createdBy && commentsMap.delete(createdBy.id);
   const involved = [createdBy].concat(Array.from(commentsMap.values()));
 
   return (
     <div className="w-full flex justify-between rounded-8px border focus:outline-none bg-white cursor-pointer">
       <div className="flex items-center min-h-12 w-full py-2">
-        {startAdornment && (
-          <div className="w-5 h-5 ml-4 mr-1 flex-0-0-a">{startAdornment}</div>
-        )}
         <div
           className={clsx(
             "ml-2 bg-lighter-gray rounded-full p-2 w-8 h-8 flex-0-0-a",
@@ -108,16 +123,18 @@ export const HypothesisBar = ({ hypothesis, onTitleClick, startAdornment }) => {
           onClick={onTitleClick}
           role="presentation"
         >
-          {title || "(none)"}
+          {(title ?? "").trim() || (
+            <span className="text-gray-400">"Click to edit"</span>
+          )}
         </span>
       </div>
       <div className="flex items-end pb-3.5 pr-3 space-x-4">
         <div className="flex flex-row">
-          {infoIcons.map((i) => (
-            <div key={i} className="px-1">
-              {renderInfoIcon(i, { className: "text-dark-blue" })}
-            </div>
-          ))}
+          {infoIcons
+            .filter((i) => ICON_MAP[i])
+            .map((i) => (
+              <InfoIcon key={i} icon={i} className="px-1 text-dark-blue" />
+            ))}
         </div>
         <div>
           {createdBy && <AvatarGroup maxCount={5} users={involved} size="sm" />}
@@ -132,15 +149,4 @@ export const HypothesisBar = ({ hypothesis, onTitleClick, startAdornment }) => {
       </div>
     </div>
   );
-};
-
-HypothesisBar.propTypes = {
-  onTitleClick: PropTypes.func,
-  startAdornment: PropTypes.node,
-  hypothesis: PropTypes.shape({}).isRequired
-};
-
-HypothesisBar.defaultProps = {
-  onTitleClick: () => {},
-  startAdornment: null
 };
