@@ -113,7 +113,7 @@ export function LogsIncidentLinker({ selectedLogs, callback, ...rest }) {
       user: user,
       id: uuidv4,
       hypothesisId: data.hypothesis,
-      evidence: { logLines: selectedLogs },
+      evidence: { lines: selectedLogs },
       type: EvidenceType.Log,
       description: data.description
     };

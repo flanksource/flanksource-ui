@@ -19,7 +19,11 @@ interface EvidenceBase {
 interface LogEvidence extends EvidenceBase {
   type: EvidenceType.Log;
   evidence: {
-    lines: any[];
+    lines: {
+      timestamp: string;
+      message: string;
+      labels: { [index: string]: string };
+    }[];
   };
 }
 
@@ -41,9 +45,33 @@ interface TopologyEvidence extends EvidenceBase {
 
 export type Evidence = LogEvidence | ConfigEvidence | TopologyEvidence;
 
-export const getAllEvidenceByHypothesis = async (hypothesisId: string) =>
-  resolve(IncidentCommander.get(`/evidence?hypothesis_id=eq.${hypothesisId}`));
+export const getAllEvidenceByHypothesis = async (hypothesisId: string) => {
+  const { data, error } = await resolve(
+    IncidentCommander.get(`/evidence?hypothesis_id=eq.${hypothesisId}`)
+  );
+  if (error) {
+    return { error };
+  }
 
+  return {
+    data: data.map((e: Evidence) => {
+      if (e.type !== EvidenceType.Log) {
+        return e;
+      }
+
+      return {
+        ...e,
+        evidence: {
+          ...e.evidence,
+          // NOTE: logLines was changed to lines. This is for backwarn
+          // compatibility. Remove by 20th Jun 2022.
+          // @ts-ignore:next-line
+          lines: e.evidence.logLines
+        }
+      };
+    })
+  };
+};
 export const getEvidence = async (id: string) =>
   resolve(IncidentCommander.get(`/evidence?id=eq.${id}`));
 
