@@ -1,9 +1,8 @@
-import React, { useEffect, useRef } from "react";
-import PropTypes from "prop-types";
+import { useEffect, useRef } from "react";
 import { debounce } from "lodash";
 import { useForm } from "react-hook-form";
-import { Avatar } from "../Avatar";
-import { EditableText } from "../EditableText";
+import { Avatar } from "../../Avatar";
+import { EditableText } from "../../EditableText";
 
 export const HypothesisTitle = ({ node, api }) => {
   const handleApiUpdate = useRef(
@@ -16,7 +15,7 @@ export const HypothesisTitle = ({ node, api }) => {
 
   const { watch, setValue, getValues } = useForm({
     defaultValues: {
-      title: node.title?.trim() ?? ""
+      title: node?.title?.trim() ?? ""
     }
   });
 
@@ -48,16 +47,4 @@ export const HypothesisTitle = ({ node, api }) => {
       </div>
     </>
   );
-};
-
-HypothesisTitle.propTypes = {
-  node: PropTypes.shape({
-    id: PropTypes.string,
-    title: PropTypes.string,
-    created_by: PropTypes.shape({
-      name: PropTypes.string,
-      avatar: PropTypes.string
-    })
-  }).isRequired,
-  api: PropTypes.shape({}).isRequired
 };
