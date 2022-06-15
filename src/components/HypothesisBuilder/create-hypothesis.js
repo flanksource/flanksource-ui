@@ -25,6 +25,7 @@ const statusItems = {
 };
 
 const nextNodePath = {
+  default: "root",
   root: "factor",
   factor: "solution"
 };
@@ -59,9 +60,9 @@ export const CreateHypothesis = ({ node, api, onHypothesisCreated }) => {
         id: newNodeID,
         incidentId: api.incidentId,
         params: {
-          parent_id: node.id,
+          parent_id: node?.id,
           title: getValues("hypothesis.title"),
-          type: nextNodePath[node.type],
+          type: nextNodePath[node?.type || "default"],
           status: getValues("hypothesis.status")
         }
       });
@@ -75,7 +76,7 @@ export const CreateHypothesis = ({ node, api, onHypothesisCreated }) => {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <h2 className="text-2xl font-semibold text-gray-700">
-        Create {nextNodePath[node.type]}: {node.title}
+        Create {nextNodePath[node?.type || "default"]}: {node?.title}
       </h2>
       <div className="mt-6">
         <div className="text-sm font-medium text-gray-700 mb-1.5">
