@@ -1,6 +1,5 @@
 import React, { useMemo, useCallback } from "react";
 import { Link, useParams } from "react-router-dom";
-import { values } from "lodash";
 import {
   createHypothesis,
   deleteHypothesis,
@@ -9,7 +8,7 @@ import {
 } from "../../api/services/hypothesis";
 import { updateIncident } from "../../api/services/incident";
 import { EvidenceType } from "../../api/services/evidence";
-import { HypothesisBuilder } from "../../components/HypothesisBuilder";
+import { HypothesisBuilder } from "../../components/Hypothesis/HypothesisBuilder";
 import { SearchLayout } from "../../components/Layout";
 
 import { Loading } from "../../components/Loading";
@@ -20,34 +19,28 @@ import { useUpdateHypothesisMutation } from "../../components/mutations/useUpdat
 import { useCreateHypothesisMutation } from "../../components/mutations/useCreateHypothesisMutation";
 import { IncidentDetails } from "../../components/IncidentDetails";
 
-function mapNode(node) {
-  return {
-    ...node,
-    evidence: node.evidence || [],
-    links: node.links || [],
-    comments: node.comments || [],
-    children: node.children || []
-  };
-}
-
-const NULL_NODE = mapNode({ title: "Empty", id: "empty_tree", children: [] });
 // temporary tree-building method that is incorrect.
 function buildTreeFromHypothesisList(list) {
   const tree = {};
 
   if (list.length === 0) {
-    return NULL_NODE;
+    return null;
   }
 
   list.forEach((node) => {
-    tree[node.id] = mapNode(node);
+    tree[node.id] = { ...node }; // mapNode(node);
   });
+
   // 2nd pass to add children
   list.forEach((node) => {
     if (node.parent_id != null) {
-      tree[node.parent_id].children.push(tree[node.id]);
+      tree[node.parent_id].children = [
+        ...(tree[node.parent_id].children || []),
+        tree[node.id]
+      ];
     }
   });
+
   // 3rd pass to remove children from root
   list.forEach((node) => {
     if (node.parent_id != null) {
@@ -55,7 +48,7 @@ function buildTreeFromHypothesisList(list) {
     }
   });
 
-  return values(tree)[0];
+  return Object.values(tree)[0];
 }
 
 export function IncidentDetailsPage() {

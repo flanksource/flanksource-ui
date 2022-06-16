@@ -60,7 +60,7 @@ export function Modal({
                 `modal-card-${size}`
               )}
             >
-              <div className="mt-8 px-8 flex justify-between">
+              <div className="py-4 px-8 flex justify-between bg-gray-100">
                 <h1 className={clsx("font-semibold text-lg", titleClass)}>
                   {title}
                 </h1>
@@ -69,7 +69,7 @@ export function Modal({
                   <div className="pointer-events-none sm:pointer-events-auto">
                     <button
                       type="button"
-                      className="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none"
+                      className="rounded-md text-gray-400 hover:text-gray-500 focus:outline-none"
                       onClick={onClose}
                     >
                       <span className="sr-only">Close</span>

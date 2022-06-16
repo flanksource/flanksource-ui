@@ -1,10 +1,30 @@
-import React from "react";
 import { BsPlusLg } from "react-icons/bs";
 import clsx from "clsx";
-import { HypothesisBar } from "./hypothesis-bar";
-import { HypothesisBlockHeader } from "./hypothesis-header";
+import { HypothesisBar } from "../HypothesisBar";
+import { HypothesisBlockHeader } from "../../HypothesisBuilder/hypothesis-header";
 
-const UNKNOWN_TYPE = "unknown_type";
+const propsByType = (type: string) => {
+  if (!type) {
+    return {
+      title: "Add main issue",
+      noResultsTitle: "No root issue created yet."
+    };
+  }
+  if (type === "root") {
+    return {
+      title: "Add new issue",
+      noResultsTitle: "No issues created yet"
+    };
+  }
+  if (type === "factor") {
+    return {
+      title: "Add new potential solution",
+      noResultsTitle: "No potential solutions created yet"
+    };
+  }
+
+  return {};
+};
 
 export const HypothesisNode = (props) => {
   const {
@@ -14,11 +34,8 @@ export const HypothesisNode = (props) => {
     setCreateHypothesisModalIsOpen
   } = props;
 
-  if (node == null) {
-    return <div>empty</div>;
-  }
-  const isRoot = node.type === "root" || node.parent_id == null;
-  const type = node.type || UNKNOWN_TYPE;
+  const isRoot = node?.type === "root" || node?.parent_id == null;
+  const type = node?.type;
 
   const handleOpenModal = () => {
     setSelectedNode(node);
@@ -45,7 +62,9 @@ export const HypothesisNode = (props) => {
 
       <div className="w-full">
         <div className="w-full mb-0.5">
-          <HypothesisBar hypothesis={node} onTitleClick={handleOpenModal} />
+          {Boolean(node) && (
+            <HypothesisBar hypothesis={node} onTitleClick={handleOpenModal} />
+          )}
         </div>
 
         <div
@@ -54,25 +73,13 @@ export const HypothesisNode = (props) => {
             "pl-7 my-2.5": !isRoot
           })}
         >
-          {node.children.map((item) => (
+          {(node?.children || []).map((item) => (
             <HypothesisNode {...props} node={item} key={item.id} />
           ))}
           <HypothesisBlockHeader
-            title=""
             onButtonClick={handlerOpenCreateHypothesisModal}
             className="mb-2.5"
-            {...(type === "root"
-              ? {
-                  title: "Add new issue",
-                  noResultsTitle: "No issues created yet"
-                }
-              : {})}
-            {...(type === "factor"
-              ? {
-                  title: "Add new potential solution",
-                  noResultsTitle: "No potential solutions created yet"
-                }
-              : {})}
+            {...propsByType(type)}
           />
         </div>
       </div>

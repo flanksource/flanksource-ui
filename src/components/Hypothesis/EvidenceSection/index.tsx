@@ -2,18 +2,21 @@ import React, { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { ChevronRightIcon, DotsVerticalIcon } from "@heroicons/react/outline";
 import { BsPlusLg } from "react-icons/bs";
-import { LogsTable } from "../Logs/Table/logs-table";
-import { TopologyCard } from "../Topology";
-import { Icon } from "../Icon";
+import { LogsTable } from "../../Logs/Table/logs-table";
+import { TopologyCard } from "../../Topology";
+import { Icon } from "../../Icon";
+import { Button } from "../../Button";
+import { BsTrash } from "react-icons/bs";
+import { Evidence, EvidenceType } from "../../../api/services/evidence";
 
-export function EvidenceItem({ evidence }) {
-  if (evidence.type === "log") {
-    return <LogsTable logs={evidence.evidence.logLines} title="" />;
+function EvidenceItem({ evidence }: { evidence: Evidence }) {
+  if (evidence.type === EvidenceType.Log) {
+    return <LogsTable logs={evidence.evidence.lines} title="" />;
   }
-  if (evidence.type === "topology") {
-    return <TopologyCard topologyId={evidence.evidence.id} size="small" />;
+  if (evidence.type === EvidenceType.Topology) {
+    return <TopologyCard topologyId={evidence.evidence.id} size="large" />;
   }
-  if (evidence.type === "config") {
+  if (evidence.type === EvidenceType.Config) {
     return (
       <EvidenceAccordion
         date={evidence.created_at}
@@ -26,7 +29,7 @@ export function EvidenceItem({ evidence }) {
   return null;
 }
 
-export function EvidenceAccordion({ title, date, children, ...rest }) {
+function EvidenceAccordion({ title, date, children, ...rest }) {
   const [expanded, setExpanded] = useState(false);
   return (
     <div className="border-b last:border-b-0 flex flex-col" {...rest}>
@@ -57,7 +60,7 @@ export function EvidenceAccordion({ title, date, children, ...rest }) {
   );
 }
 
-export function ConfigEvidenceView({ evidenceItem }) {
+function ConfigEvidenceView({ evidenceItem }) {
   const hunkLineGap = 3;
   const fullConfig = evidenceItem?.evidence?.lines || {};
   const selectedLines =
@@ -121,7 +124,7 @@ export function ConfigEvidenceView({ evidenceItem }) {
   );
 }
 
-export function createHunks(fullConfig, selectedLines, hunkLineGap) {
+function createHunks(fullConfig, selectedLines, hunkLineGap) {
   const hunks = [];
   const lineNumbers = Object.keys(selectedLines);
   let hunkStart = Math.max(0, parseInt(lineNumbers[0], 10) - hunkLineGap);
@@ -152,6 +155,7 @@ export function EvidenceSection({
   hypothesis,
   titlePrepend,
   onButtonClick,
+  onDeleteEvidence,
   isLoading,
   ...rest
 }) {
@@ -178,9 +182,21 @@ export function EvidenceSection({
       <div className="mt-2.5">
         {!isLoading ? (
           evidenceList && evidenceList.length > 0 ? (
-            <div className="border rounded-md">
+            <div className="border rounded-md flex flex-col space-y-2">
               {evidenceList.map((evidence) => (
-                <EvidenceItem key={evidence.id} evidence={evidence} />
+                <div key={evidence.id} className="relative">
+                  {onDeleteEvidence && (
+                    <span className="absolute right-0 top-0">
+                      <Button
+                        className="btn-primary bg-opacity-40 hover:bg-opacity-100"
+                        icon={<BsTrash className="mr-1" size={18} />}
+                        text="Delete"
+                        onClick={() => onDeleteEvidence(evidence.id)}
+                      />
+                    </span>
+                  )}
+                  <EvidenceItem evidence={evidence} />
+                </div>
               ))}
             </div>
           ) : (

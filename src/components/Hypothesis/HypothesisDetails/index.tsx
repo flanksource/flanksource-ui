@@ -3,19 +3,23 @@ import { debounce } from "lodash";
 import { useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 import clsx from "clsx";
-import { Dropdown } from "../Dropdown";
-import { hypothesisStatuses } from "./data";
-import { EvidenceSection } from "./evidence-section";
-import { Modal } from "../Modal";
-import { EvidenceBuilder } from "../EvidenceBuilder";
-import { CommentsSection } from "./comments";
+import { Dropdown } from "../../Dropdown";
+import { hypothesisStatuses } from "../../HypothesisBuilder/data";
+
+import { EvidenceSection } from "../EvidenceSection";
+import { Modal } from "../../Modal";
+import { CommentsSection } from "../../HypothesisBuilder/comments";
 import {
   getCommentsByHypothesis,
   createComment
-} from "../../api/services/comments";
-import { getAllEvidenceByHypothesis } from "../../api/services/evidence";
-import { useUser } from "../../context";
-import { toastError } from "../Toast/toast";
+} from "../../../api/services/comments";
+import {
+  getAllEvidenceByHypothesis,
+  deleteEvidence
+} from "../../../api/services/evidence";
+import { useUser } from "../../../context";
+import { toastError } from "../../Toast/toast";
+import { EvidenceBuilder } from "../../EvidenceBuilder";
 
 const statusItems = {
   ...Object.values(hypothesisStatuses).reduce((acc, obj) => {
@@ -63,6 +67,18 @@ export function HypothesisDetails({ node, api, ...rest }) {
         fetchComments(node.id);
       });
 
+  const deleteEvidenceCb = async (id: string) => {
+    const { data, error } = await deleteEvidence(id);
+    console.log({ data });
+
+    if (error) {
+      console.error("delete failed", error);
+      return;
+    }
+
+    setEvidence((evidence) => evidence.filter((e) => e.id !== id));
+  };
+
   useEffect(() => {
     fetchEvidence(node.id);
     fetchComments(node.id);
@@ -108,6 +124,7 @@ export function HypothesisDetails({ node, api, ...rest }) {
             evidenceList={evidence}
             titlePrepend={<HypothesisTitle>Evidence</HypothesisTitle>}
             onButtonClick={() => setEvidenceBuilderOpen(true)}
+            onDeleteEvidence={deleteEvidenceCb}
             isLoading={evidenceLoading}
           />
         </div>
