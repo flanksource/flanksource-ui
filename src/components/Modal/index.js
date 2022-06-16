@@ -69,7 +69,7 @@ export function Modal({
                   <div className="pointer-events-none sm:pointer-events-auto">
                     <button
                       type="button"
-                      className="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none"
+                      className="rounded-md text-gray-400 hover:text-gray-500 focus:outline-none"
                       onClick={onClose}
                     >
                       <span className="sr-only">Close</span>
