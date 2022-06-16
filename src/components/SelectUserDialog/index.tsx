@@ -24,10 +24,10 @@ export function SelectUserDialog({ isOpen, onClose }: Props) {
   const userOptions = useMemo(
     () =>
       Object.fromEntries(
-        users.map(({ name, id }) => [
+        users?.map(({ name, id }) => [
           id,
           { name, value: id, description: name }
-        ])
+        ]) || []
       ),
     [users]
   );
