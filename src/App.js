@@ -30,6 +30,7 @@ import { RsDemoPage } from "./pages/Examples/rs-demo";
 import { TopologyPage as ExamplesTopologyPage } from "./pages/Examples/Topology/topology-page";
 import { TopologySelectorModalPage } from "./pages/Examples/TopologySelectorModalPage/TopologySelectorModalPage";
 import { HealthPage } from "./pages/health";
+import { Canary } from "./components";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -184,15 +185,8 @@ export function IncidentManagerRoutes({ sidebar }) {
   );
 }
 
-function AppRoutes({ appDeployment, sidebar }) {
-  switch (appDeployment) {
-    case "INCIDENT_MANAGER":
-      return <IncidentManagerRoutes sidebar={sidebar} />;
-    case "CANARY_CHECKER":
-      return <HealthRoutes sidebar={sidebar} />;
-    default:
-      return <div>Please set the APP_DEPLOYMENT config.</div>;
-  }
+export function CanaryCheckerApp() {
+  return <Canary url="/api" />;
 }
 
 export function App() {
@@ -213,7 +207,7 @@ export function App() {
       <QueryClientProvider client={queryClient}>
         <AuthContext.Provider value={{ user, setUser }}>
           <ReactTooltip />
-          <AppRoutes appDeployment={window.APP_DEPLOYMENT} sidebar={sidebar} />
+          <IncidentManagerRoutes sidebar={sidebar} />
         </AuthContext.Provider>
       </QueryClientProvider>
     </BrowserRouter>

@@ -64,7 +64,7 @@
   "scripts": {
     "dev": "react-scripts start",
     "build": "cross-env DISABLE_ESLINT_PLUGIN=true NODE_ENV=production react-scripts build",
-    "serve-build": "gzip --keep build/static/*/*.{js,css} && node scripts/serve-build.js",
+    "serve-build": "gzip -f --keep build/static/*/*.{js,css} && node scripts/serve-build.js",
     "test": "react-scripts test --transformIgnorePatterns \"node_modules/(?!(history))/\"",
     "analyze": "source-map-explorer 'build/static/js/*.js'",
     "eject": "react-scripts eject",
