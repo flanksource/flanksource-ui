@@ -4,7 +4,7 @@ import { resolve } from "../resolve";
 export const getCommentsByHypothesis = async (hypothesisId) =>
   resolve(
     IncidentCommander.get(
-      `/comment?select=*,created_by(name)&hypothesis_id=eq.${hypothesisId}`
+      `/comment?select=*,created_by(name)&hypothesis_id=eq.${hypothesisId}&order=created_at.desc`
     )
   );
 
