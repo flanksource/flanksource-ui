@@ -66,7 +66,7 @@ export const getAllEvidenceByHypothesis = async (hypothesisId: string) => {
           // NOTE: logLines was changed to lines. This is for backwarn
           // compatibility. Remove by 20th Jun 2022.
           // @ts-ignore:next-line
-          lines: e.evidence.logLines
+          lines: e.evidence.logLines || e.evidence.lines
         }
       };
     })

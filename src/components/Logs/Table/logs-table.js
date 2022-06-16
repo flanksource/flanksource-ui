@@ -10,7 +10,7 @@ import { IndeterminateCheckbox } from "../../IndeterminateCheckbox/Indeterminate
 
 const convert = new Convert();
 
-export const LogsTable = ({ logs: logsParam, actions, variant }) => {
+export const LogsTable = ({ logs: logsParam, actions, variant, viewOnly }) => {
   const logs = useMemo(() => {
     if (logsParam == null) {
       return [];
@@ -40,7 +40,7 @@ export const LogsTable = ({ logs: logsParam, actions, variant }) => {
         Cell: function timestampCell({ cell: { row } }) {
           return (
             <div className="min-w-max flex flex-row items-center">
-              {variant === "comfortable" ? (
+              {variant === "comfortable" && !viewOnly ? (
                 <div className="mr-1.5">
                   <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
                 </div>
