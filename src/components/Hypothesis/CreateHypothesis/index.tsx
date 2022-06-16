@@ -1,11 +1,11 @@
 import React from "react";
 import { useForm, Controller } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
-import { Dropdown } from "../Dropdown";
-import { hypothesisStatuses } from "./data";
-import { useUser } from "../../context";
-import { EvidenceSection } from "../Hypothesis/EvidenceSection";
-import { HypothesisStatuses } from "../../constants/hypothesis-statuses";
+import { hypothesisStatuses } from "../../HypothesisBuilder/data";
+import { HypothesisStatuses } from "../../../constants";
+import { EvidenceSection } from "../EvidenceSection";
+import { useUser } from "../../../context";
+import { Dropdown } from "../../Dropdown";
 
 const statusItems = {
   ...Object.values(hypothesisStatuses).reduce((acc, obj) => {

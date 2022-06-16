@@ -4,7 +4,7 @@ import { Modal } from "../../Modal";
 import { HypothesisNode } from "../HypothesisNode";
 import { HypothesisTitle } from "../HypothesisTitle";
 import { HypothesisDetails } from "../HypothesisDetails";
-import { CreateHypothesis } from "../../HypothesisBuilder/create-hypothesis";
+import { CreateHypothesis } from "../CreateHypothesis";
 
 export function HypothesisBuilder({
   initialTree,
