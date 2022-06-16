@@ -1,18 +1,22 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react";
+import { QueryClient, QueryClientProvider } from "react-query";
 import {
   HypothesisNodeType,
   HypothesisStatus
 } from "../../../api/services/hypothesis";
 import { HypothesisBar } from "./index";
 
+const defaultQueryClient = new QueryClient();
+
 export default {
   title: "HypothesisBar",
-  component: HypothesisBar,
-  parameters: { actions: { argTypesRegex: "^on.*" } }
+  component: HypothesisBar
 } as ComponentMeta<typeof HypothesisBar>;
 
 const Template: ComponentStory<typeof HypothesisBar> = (arg: any) => (
-  <HypothesisBar {...arg} />
+  <QueryClientProvider client={defaultQueryClient}>
+    <HypothesisBar {...arg} />
+  </QueryClientProvider>
 );
 
 export const Basic = Template.bind({});
@@ -42,5 +46,5 @@ Basic.args = {
       }
     ]
   },
-  onTitleClick: () => {}
+  onTitleClick: () => console.log("title click")
 };

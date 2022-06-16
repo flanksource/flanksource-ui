@@ -1,4 +1,4 @@
-import { MouseEventHandler, useMemo } from "react";
+import { MouseEventHandler, useMemo, useState, useCallback } from "react";
 import clsx from "clsx";
 import {
   BsBraces,
@@ -15,6 +15,9 @@ import { deleteHypothesis, Hypothesis } from "../../../api/services/hypothesis";
 import { AvatarGroup } from "../../AvatarGroup";
 import { EvidenceType } from "../../../api/services/evidence";
 import { IconBaseProps, IconType } from "react-icons/lib";
+import { IconButton } from "../../IconButton";
+import { useQueryClient } from "react-query";
+import { createIncidentQueryKey } from "../../query-hooks/useIncidentQuery";
 
 const statusToStatusIconMapping = {
   [HypothesisStatuses.Proven]: {
@@ -78,7 +81,7 @@ interface HypothesisBarProps {
   onTitleClick: MouseEventHandler<HTMLSpanElement>;
 }
 
-export const HypothesisBar = ({
+export const HypothesisBar: React.FunctionComponent<HypothesisBarProps> = ({
   hypothesis,
   onTitleClick
 }: HypothesisBarProps) => {
@@ -90,11 +93,15 @@ export const HypothesisBar = ({
     comment
   } = hypothesis;
 
+  const [deleting, setDeleting] = useState<Boolean>(false);
+
   const { StatusIcon, statusColorClass } = useMemo(
     () =>
       statusToStatusIconMapping[status] || statusToStatusIconMapping.fallback,
     [status]
   );
+
+  const queryClient = useQueryClient();
 
   const infoIcons: InfoType[] = (evidence || [])
     .map((e): InfoType => e.type)
@@ -107,8 +114,28 @@ export const HypothesisBar = ({
   createdBy && commentsMap.delete(createdBy.id);
   const involved = [createdBy].concat(Array.from(commentsMap.values()));
 
+  const onDelete = useCallback(() => {
+    setDeleting(true);
+    const delHypo = async () => {
+      try {
+        await deleteHypothesis(hypothesis.id);
+        const key = createIncidentQueryKey(hypothesis.incident_id);
+        await queryClient.invalidateQueries(key);
+      } catch (e) {
+        console.error("Error while deleting", e);
+      }
+      setDeleting(false);
+    };
+    return delHypo();
+  }, [hypothesis, queryClient]);
+
   return (
-    <div className="w-full flex justify-between rounded-8px border focus:outline-none bg-white cursor-pointer">
+    <div
+      className={clsx(
+        "w-full flex justify-between rounded-8px border focus:outline-none bg-white cursor-pointer",
+        deleting && "pointer-events-none cursor-not-allowed blur-[2px]"
+      )}
+    >
       <div className="flex items-center min-h-12 w-full py-2">
         <div
           className={clsx(
@@ -139,11 +166,22 @@ export const HypothesisBar = ({
         <div>
           {createdBy && <AvatarGroup maxCount={5} users={involved} size="sm" />}
         </div>
-        <div>
-          <BsTrash
-            className="text-gray-600 border-0 border-l-1 border-gray-200"
-            size={18}
-            onClick={() => deleteHypothesis(hypothesis.id)}
+        <div className="flex">
+          <IconButton
+            className="bg-transparent"
+            onClick={onDelete}
+            ovalProps={{
+              stroke: "blue",
+              height: "18px",
+              width: "18px",
+              fill: "transparent"
+            }}
+            icon={
+              <BsTrash
+                className="text-gray-600 border-0 border-l-1 border-gray-200"
+                size={18}
+              />
+            }
           />
         </div>
       </div>
