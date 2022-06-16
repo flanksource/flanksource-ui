@@ -1,13 +1,9 @@
 import { ChatAltIcon } from "@heroicons/react/solid";
 import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
-import { getPersons } from "../../api/services/users";
-import { CommentInput, CommentText } from "../Comment";
-
-function getInitials(name) {
-  const matches = name.match(/\b(\w)/g);
-  return matches.slice(0, 2);
-}
+import { getPersons } from "../../../api/services/users";
+import { CommentInput, CommentText } from "../../Comment";
+import { Avatar } from "../../Avatar";
 
 export function CommentsSection({
   comments,
@@ -90,7 +86,7 @@ export function CommentsSection({
                         src={comment.imageUrl}
                         alt=""
                       >
-                        {getInitials(comment.created_by.name)}
+                        <Avatar user={comment.created_by} />
                       </div>
                     )}
 

@@ -8,7 +8,6 @@ import { hypothesisStatuses } from "../../HypothesisBuilder/data";
 
 import { EvidenceSection } from "../EvidenceSection";
 import { Modal } from "../../Modal";
-import { CommentsSection } from "../../HypothesisBuilder/comments";
 import {
   getCommentsByHypothesis,
   createComment
@@ -20,6 +19,7 @@ import {
 import { useUser } from "../../../context";
 import { toastError } from "../../Toast/toast";
 import { EvidenceBuilder } from "../../EvidenceBuilder";
+import { CommentsSection } from "../Comments";
 
 const statusItems = {
   ...Object.values(hypothesisStatuses).reduce((acc, obj) => {
@@ -68,8 +68,7 @@ export function HypothesisDetails({ node, api, ...rest }) {
       });
 
   const deleteEvidenceCb = async (id: string) => {
-    const { data, error } = await deleteEvidence(id);
-    console.log({ data });
+    const { error } = await deleteEvidence(id);
 
     if (error) {
       console.error("delete failed", error);
