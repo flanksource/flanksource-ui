@@ -73,22 +73,8 @@ export function CommentsSection({
             <li key={comment.id}>
               <div className="relative pb-8">
                 <div className="relative flex items-start space-x-3">
-                  <div className="relative">
-                    {comment.imageUrl ? (
-                      <img
-                        className="h-10 w-10 rounded-full bg-gray-400 flex items-center justify-center ring-8 ring-white"
-                        src={comment.imageUrl}
-                        alt=""
-                      />
-                    ) : (
-                      <div
-                        className="h-10 w-10 font-semibold rounded-full bg-gray-300 flex items-center justify-center ring-8 ring-white"
-                        src={comment.imageUrl}
-                        alt=""
-                      >
-                        <Avatar user={comment.created_by} />
-                      </div>
-                    )}
+                  <div className="relative pt-0.5">
+                    <Avatar size="lg" user={comment.created_by} />
 
                     <span className="absolute -bottom-0.5 -right-1 bg-white rounded-tl px-0.5 py-px">
                       <ChatAltIcon

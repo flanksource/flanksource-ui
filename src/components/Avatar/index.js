@@ -17,6 +17,8 @@ const AvatarFC = ({ user, size, unload, alt, containerProps, imageProps }) => {
     switch (size) {
       case "sm":
         return "w-6 h-6 text-xs";
+      case "lg":
+        return "w-12 h-12 text-base";
       case "md":
       default:
         return "w-8 h-8 text-base";
