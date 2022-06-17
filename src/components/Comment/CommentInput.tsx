@@ -1,6 +1,5 @@
 import React from "react";
 import { Mention, MentionsInput } from "react-mentions";
-import PropTypes from "prop-types";
 import { Icon } from "../Icon";
 
 const mentionsStyle = {
@@ -46,7 +45,24 @@ const Suggestion = ({ display, icon }) => (
   </div>
 );
 
-export const CommentInput = ({ data, value, onChange, markup, trigger }) => (
+interface Props {
+  data: { display: string; id: string }[];
+  value: string;
+  trigger?: string;
+  markup?: string;
+  onChange: (text: string) => void;
+}
+
+export const MENTION_MARKUP = "@[__display__](user:__id__)";
+export const MENTION_TRIGGER = "@";
+
+export const CommentInput = ({
+  data,
+  value,
+  onChange,
+  markup = MENTION_MARKUP,
+  trigger = MENTION_TRIGGER
+}: Props) => (
   <MentionsInput
     value={value}
     onChange={(e) => onChange(e.target.value)}
@@ -64,21 +80,3 @@ export const CommentInput = ({ data, value, onChange, markup, trigger }) => (
     />
   </MentionsInput>
 );
-
-CommentInput.propTypes = {
-  data: PropTypes.arrayOf(
-    PropTypes.shape({
-      display: PropTypes.string,
-      icon: PropTypes.string
-    })
-  ).isRequired,
-  value: PropTypes.string.isRequired,
-  onChange: PropTypes.func.isRequired,
-  trigger: PropTypes.string,
-  markup: PropTypes.string
-};
-
-CommentInput.defaultProps = {
-  trigger: "@",
-  markup: "@[__display__](user:__id__)"
-};

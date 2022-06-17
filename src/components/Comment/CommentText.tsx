@@ -1,10 +1,19 @@
 import React from "react";
-import PropTypes from "prop-types";
 
-export const CommentText = ({ text, onClickTag }) => {
-  // markup @[__display__](user:__id__)
+interface Tag {
+  display: string;
+  id: string;
+}
+
+interface Props {
+  text: string;
+  onClickTag: (type: string, user: Tag) => void;
+}
+
+export const CommentText = ({ text, onClickTag }: Props) => {
   const tags = text.match(/@\[.*?\]\(user:.*?\)/gi) || [];
   const otherText = text.split(/@\[.*?\]\(user:.*?\)/gi);
+
   return tags.reduce(
     (display, myTag, index) => {
       const tagDisplay = myTag.match(/\[.*?\]/gi)[0].slice(1, -1);
@@ -24,9 +33,4 @@ export const CommentText = ({ text, onClickTag }) => {
     },
     [otherText[0]]
   );
-};
-
-CommentText.propTypes = {
-  text: PropTypes.string.isRequired,
-  onClickTag: PropTypes.func.isRequired
 };
