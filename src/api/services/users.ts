@@ -11,18 +11,18 @@ export interface User extends NewUser {
   id: string;
 }
 
-export const getPerson = async (id: string): Promise<{ data: User }> =>
+type ApiResp<Resource> = Promise<{
+  data: Resource;
+}>;
+
+export const getPerson = async (id: string): ApiResp<User> =>
   resolve(IncidentCommander.get(`/person?id=eq.${id}`));
 
-export const getPersons = (): Promise<{ data: User[] }> =>
+export const getPersons = (): ApiResp<User[]> =>
   resolve(IncidentCommander.get(`/person`));
 
-export const getPersonWithEmail = (email: string): Promise<{ data: User }> =>
+export const getPersonWithEmail = (email: string): ApiResp<User> =>
   resolve(IncidentCommander.get(`/person?email=eq.${email}`));
 
-export const createPerson = ({
-  name,
-  email,
-  avatar
-}: NewUser): Promise<{ data: User }> =>
+export const createPerson = ({ name, email, avatar }: NewUser): ApiResp<User> =>
   resolve(IncidentCommander.post("/person", { name, email, avatar }));
