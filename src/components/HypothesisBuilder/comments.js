@@ -32,7 +32,7 @@ export function CommentsSection({
   };
 
   useEffect(() => {
-    getPersons().then(({ data }) => {
+    getPersons().then(({ data = [] }) => {
       const usersDate = data.map((user) => ({
         ...user,
         display: user.name,
