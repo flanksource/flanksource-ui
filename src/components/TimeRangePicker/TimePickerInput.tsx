@@ -3,13 +3,23 @@ import { FaRegCalendarAlt } from "react-icons/fa";
 import { FiAlertTriangle } from "react-icons/fi";
 import clsx from "clsx";
 import "./index.css";
+import { memo } from "react";
 
-export const TimePickerInput = ({
+type ShowCalendarCallback = (val: boolean) => boolean;
+
+type TimePickerInputProps = {
+  inputValue: string;
+  setInputValue: (val: any) => void;
+  setShowCalendar: (val: ShowCalendarCallback | boolean) => void;
+  error: string;
+};
+
+export const TimePickerInputFC = ({
   inputValue,
   setInputValue,
   setShowCalendar,
   error
-}) => (
+}: TimePickerInputProps) => (
   <div className="input-range-box">
     <div className="flex">
       <div>
@@ -26,7 +36,7 @@ export const TimePickerInput = ({
       <div className="flex bg-gray-200 hover:bg-gray-300 ml-0.5 rounded-sm">
         <button
           type="button"
-          onClick={() => setShowCalendar((prevState) => !prevState)}
+          onClick={() => setShowCalendar((prevState: boolean) => !prevState)}
           className="px-1 mx-1"
         >
           <FaRegCalendarAlt color="#303030" />
@@ -44,16 +54,18 @@ export const TimePickerInput = ({
   </div>
 );
 
-TimePickerInput.propTypes = {
+TimePickerInputFC.propTypes = {
   inputValue: PropTypes.string,
   setInputValue: PropTypes.func,
   error: PropTypes.string,
   setShowCalendar: PropTypes.func
 };
 
-TimePickerInput.defaultProps = {
+TimePickerInputFC.defaultProps = {
   inputValue: "",
   setInputValue: () => {},
   error: null,
   setShowCalendar: () => {}
 };
+
+export const TimePickerInput = memo(TimePickerInputFC);

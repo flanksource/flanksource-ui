@@ -1,14 +1,21 @@
+import { ChangeEvent, memo } from "react";
 import PropTypes from "prop-types";
-import Calendar from "react-calendar";
+import Calendar, { OnChangeDateRangeCallback } from "react-calendar";
 import "./index.css";
 import { GrClose } from "react-icons/gr";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
 
-export const TimePickerCalendar = ({
+type TimePickerCalendarProps = {
+  calendarValue: [Date, Date] | Date;
+  onChangeCalendarRange: OnChangeDateRangeCallback;
+  setShowCalendar: (val: boolean) => void;
+};
+
+export const TimePickerCalendarFC = ({
   calendarValue,
   onChangeCalendarRange,
   setShowCalendar
-}) => (
+}: TimePickerCalendarProps) => (
   <div className="p-2 bg-gray-50 rounded-sm border border-gray-300">
     <div className="flex justify-between align-center mb-2">
       <div className="font-medium">Select a time range</div>
@@ -39,14 +46,16 @@ export const TimePickerCalendar = ({
   </div>
 );
 
-TimePickerCalendar.propTypes = {
+TimePickerCalendarFC.propTypes = {
   calendarValue: PropTypes.arrayOf(PropTypes.instanceOf(Date)),
   onChangeCalendarRange: PropTypes.func,
   setShowCalendar: PropTypes.func
 };
 
-TimePickerCalendar.defaultProps = {
+TimePickerCalendarFC.defaultProps = {
   calendarValue: null,
   onChangeCalendarRange: () => {},
   setShowCalendar: () => {}
 };
+
+export const TimePickerCalendar = memo(TimePickerCalendarFC);

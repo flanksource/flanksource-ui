@@ -1,8 +1,18 @@
+import { memo } from "react";
 import PropTypes from "prop-types";
 import dayjs from "dayjs";
-import { displayTimeFormat } from "./rangeOptions";
 
-export const RecentlyRanges = ({ recentRanges, applyTimeRange }) => (
+import { displayTimeFormat, RangeOption } from "./rangeOptions";
+
+type RecentlyRangesProps = {
+  recentRanges: RangeOption[];
+  applyTimeRange: (val: RangeOption) => void;
+};
+
+const RecentlyRangesFC = ({
+  recentRanges,
+  applyTimeRange
+}: RecentlyRangesProps) => (
   <div>
     <div className="font-medium mt-3.5 px-3">
       Recently used absolute ranges:
@@ -24,12 +34,14 @@ export const RecentlyRanges = ({ recentRanges, applyTimeRange }) => (
   </div>
 );
 
-RecentlyRanges.propTypes = {
+RecentlyRangesFC.propTypes = {
   recentRanges: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.string)),
   applyTimeRange: PropTypes.func
 };
 
-RecentlyRanges.defaultProps = {
+RecentlyRangesFC.defaultProps = {
   recentRanges: [],
   applyTimeRange: () => {}
 };
+
+export const RecentlyRanges = memo(RecentlyRangesFC);

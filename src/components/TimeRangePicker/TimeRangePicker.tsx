@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useMemo, useRef, useState } from "react";
 import { FiClock } from "react-icons/fi";
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
 import clsx from "clsx";
@@ -7,20 +7,37 @@ import dayjs from "dayjs";
 import { TimeRangePickerBody } from "./TimeRangePickerBody";
 import "./index.css";
 import { areDatesSame, convertRangeValue, createDisplayValue } from "./helpers";
+import { RangeOption } from "./rangeOptions";
 
-export const TimeRangePicker = ({ onChange, from, to }) => {
+type DateOrString = Date | string;
+
+type TimeRangePickerType = {
+  from: string;
+  to: string;
+  onChange: (...args: DateOrString[]) => void;
+};
+
+export const TimeRangePickerFC = ({
+  onChange,
+  from,
+  to
+}: TimeRangePickerType) => {
   const [isPickerOpen, setIsPickerOpen] = useState(false);
-  const pickerRef = useRef();
-  const [sentRange, setSentRange] = useState(null);
-  const [memoRange, setMemoRange] = useState(null);
+  const pickerRef =
+    useRef<HTMLButtonElement>() as React.LegacyRef<HTMLButtonElement>;
+  const [sentRange, setSentRange] = useState<{
+    from: DateOrString;
+    to: DateOrString;
+  }>();
+  const [memoRange, setMemoRange] = useState<RangeOption>();
 
-  const currentRange = useMemo(() => {
+  const currentRange = useMemo((): RangeOption => {
     if (
       sentRange &&
       areDatesSame(from, sentRange.from) &&
       areDatesSame(to, sentRange.to)
     ) {
-      return memoRange;
+      return memoRange as RangeOption;
     }
     return { from, to };
   }, [from, to]);
@@ -31,7 +48,7 @@ export const TimeRangePicker = ({ onChange, from, to }) => {
   );
 
   const changeRangeValue = useCallback(
-    (range) => {
+    (range: RangeOption) => {
       const { from, to } = range;
       setMemoRange({ from, to });
       setSentRange({
@@ -79,16 +96,18 @@ export const TimeRangePicker = ({ onChange, from, to }) => {
   );
 };
 
-TimeRangePicker.propTypes = {
+TimeRangePickerFC.propTypes = {
   onChange: PropTypes.func,
   from: PropTypes.shape({}),
   to: PropTypes.shape({})
 };
 
-TimeRangePicker.defaultProps = {
-  onChange: (from, to) => {
+TimeRangePickerFC.defaultProps = {
+  onChange: (from: string, to: string) => {
     console.log("FROM: ", from, "\n", "TO: ", to);
   },
   from: dayjs(new Date()).subtract(1, "h").toDate(),
   to: new Date()
 };
+
+export const TimeRangePicker = memo(TimeRangePickerFC);

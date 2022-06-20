@@ -1,41 +1,53 @@
 import PropTypes from "prop-types";
 import clsx from "clsx";
-import { useCallback, useEffect, useState } from "react";
+import { ChangeEvent, memo, useCallback, useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { TimeRangeList } from "./TimeRangeList";
 import "./index.css";
 import { storage, createValueForInput, convertRangeValue } from "./helpers";
 import { RecentlyRanges } from "./RecentlyRanges";
-import { displayTimeFormat } from "./rangeOptions";
+import { displayTimeFormat, RangeOption } from "./rangeOptions";
 import { TimePickerCalendar } from "./TimePickerCalendar";
 import { TimePickerInput } from "./TimePickerInput";
+import {
+  OnChangeDateCallback,
+  OnChangeDateRangeCallback
+} from "react-calendar";
 
-export const TimeRangePickerBody = ({
+type TimeRangePickerBodyProps = {
+  isOpen: any;
+  closePicker: any;
+  currentRange: any;
+  changeRangeValue: any;
+  pickerRef: any;
+};
+
+const TimeRangePickerBodyFC = ({
   isOpen,
   closePicker,
   currentRange,
   changeRangeValue,
   pickerRef
-}) => {
+}: TimeRangePickerBodyProps) => {
   const [recentRanges, setRecentRanges] = useState(
     storage.getItem("timePickerRanges") || []
   );
   const [showCalendar, setShowCalendar] = useState(false);
-  const [calendarValue, setCalendarValue] = useState(null);
+  const [calendarValue, setCalendarValue] = useState<[Date, Date]>();
   const [inputValueFrom, setInputValueFrom] = useState(
     createValueForInput(currentRange.from)
   );
   const [inputValueTo, setInputValueTo] = useState(
     createValueForInput(currentRange.to)
   );
-  const [errorInputFrom, setErrorInputFrom] = useState(null);
-  const [errorInputTo, setErrorInputTo] = useState(null);
+  const [errorInputFrom, setErrorInputFrom] = useState<string | undefined>();
+  const [errorInputTo, setErrorInputTo] = useState<string | undefined>();
 
   const changeRecentRangesList = useCallback(
-    (range) => {
+    (range: RangeOption) => {
       if (
         !recentRanges.find(
-          (el) =>
+          (el: RangeOption) =>
             dayjs(el.from).toISOString() === dayjs(range.from).toISOString() &&
             dayjs(el.to).toISOString() === dayjs(range.to).toISOString()
         )
@@ -53,7 +65,7 @@ export const TimeRangePickerBody = ({
     [recentRanges]
   );
 
-  const onChangeCalendarRange = useCallback((value) => {
+  const onChangeCalendarRange = useCallback((value: [Date, Date]) => {
     const from = dayjs(value[0]).format(displayTimeFormat);
     const to = dayjs(value[1]).format(displayTimeFormat);
 
@@ -63,7 +75,7 @@ export const TimeRangePickerBody = ({
   }, []);
 
   const applyTimeRange = useCallback(
-    (range) => {
+    (range: RangeOption) => {
       changeRangeValue(range);
       if (dayjs(range.from).isValid() && dayjs(range.to).isValid()) {
         changeRecentRangesList({
@@ -78,7 +90,7 @@ export const TimeRangePickerBody = ({
   );
 
   const confirmValidRange = useCallback(
-    (range) => {
+    (range: RangeOption) => {
       if (!errorInputFrom && !errorInputTo) {
         applyTimeRange(range);
       }
@@ -86,24 +98,24 @@ export const TimeRangePickerBody = ({
     [applyTimeRange, errorInputFrom, errorInputTo]
   );
 
-  const validateInputRange = useCallback((range) => {
+  const validateInputRange = useCallback((range: RangeOption) => {
     const from = convertRangeValue(range.from, "jsDate");
     const to = convertRangeValue(range.to, "jsDate");
     if (!dayjs(from).isValid()) {
       setErrorInputFrom("Invaid date!");
     } else {
-      setErrorInputFrom(null);
+      setErrorInputFrom(undefined);
     }
     if (!dayjs(to).isValid()) {
       setErrorInputTo("Invaid date!");
     } else {
-      setErrorInputTo(null);
+      setErrorInputTo(undefined);
     }
     if (dayjs(from).isValid() && dayjs(to).isValid()) {
       if (from > to) {
         setErrorInputFrom('"From" can\'t be after "To"');
       } else {
-        setErrorInputFrom(null);
+        setErrorInputFrom(undefined);
       }
     }
   }, []);
@@ -114,18 +126,21 @@ export const TimeRangePickerBody = ({
       dayjs(currentRange.to).isValid()
     ) {
       setCalendarValue([
-        convertRangeValue(currentRange.from, "jsDate"),
-        convertRangeValue(currentRange.to, "jsDate")
+        convertRangeValue(currentRange.from, "jsDate") as Date,
+        convertRangeValue(currentRange.to, "jsDate") as Date
       ]);
     } else {
-      setCalendarValue(null);
+      setCalendarValue(undefined);
     }
     setInputValueFrom(createValueForInput(currentRange.from));
     setInputValueTo(createValueForInput(currentRange.to));
   }, [currentRange]);
 
   useEffect(() => {
-    validateInputRange({ from: inputValueFrom, to: inputValueTo });
+    validateInputRange({
+      from: inputValueFrom as string,
+      to: inputValueTo as string
+    });
   }, [inputValueFrom, inputValueTo]);
 
   const pickerLeft = pickerRef?.current?.getBoundingClientRect()?.left || 0;
@@ -148,7 +163,7 @@ export const TimeRangePickerBody = ({
       >
         <TimePickerCalendar
           calendarValue={calendarValue}
-          onChangeCalendarRange={onChangeCalendarRange}
+          onChangeCalendarRange={onChangeCalendarRange as any}
           setShowCalendar={setShowCalendar}
         />
       </div>
@@ -178,7 +193,10 @@ export const TimeRangePickerBody = ({
             </div>
             <button
               onClick={() =>
-                confirmValidRange({ from: inputValueFrom, to: inputValueTo })
+                confirmValidRange({
+                  from: inputValueFrom as string,
+                  to: inputValueTo as string
+                })
               }
               type="button"
               className="block font-medium bg-blue-200 hover:bg-blue-300 rounded-sm px-2.5 py-1.5 transition duration-200 ease"
@@ -204,16 +222,18 @@ export const TimeRangePickerBody = ({
   );
 };
 
-TimeRangePickerBody.propTypes = {
+TimeRangePickerBodyFC.propTypes = {
   isOpen: PropTypes.bool,
   closePicker: PropTypes.func,
   currentRange: PropTypes.shape({}),
   changeRangeValue: PropTypes.func
 };
 
-TimeRangePickerBody.defaultProps = {
+TimeRangePickerBodyFC.defaultProps = {
   isOpen: false,
   closePicker: () => {},
   currentRange: {},
   changeRangeValue: () => {}
 };
+
+export const TimeRangePickerBody = memo(TimeRangePickerBodyFC);

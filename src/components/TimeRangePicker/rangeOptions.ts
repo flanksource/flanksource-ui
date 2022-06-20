@@ -1,6 +1,12 @@
+export type RangeOption = {
+  display?: string;
+  from: string;
+  to: string;
+};
+
 export const displayTimeFormat = "YYYY-MM-DD HH:mm";
 
-export const rangeOptions = [
+export const rangeOptions: RangeOption[] = [
   { display: "10 minutes", from: "now-10m", to: "now" },
   { display: "30 minutes", from: "now-30m", to: "now" },
   { display: "1 hour", from: "now-1h", to: "now" },

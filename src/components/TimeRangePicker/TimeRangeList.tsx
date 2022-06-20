@@ -1,16 +1,23 @@
 import PropTypes from "prop-types";
 import { v4 as uuidv4 } from "uuid";
 import clsx from "clsx";
-import { useCallback } from "react";
-import { rangeOptions } from "./rangeOptions";
+import { memo, useCallback } from "react";
+import { RangeOption, rangeOptions } from "./rangeOptions";
 
-export const TimeRangeList = ({
+type TimeRangeListProps = {
+  closePicker: () => void;
+  currentRange: RangeOption;
+  changeRangeValue: (val: RangeOption) => void;
+  setShowCalendar: (val: boolean) => void;
+};
+
+export const TimeRangeListFC = ({
   closePicker,
   currentRange,
   changeRangeValue,
   setShowCalendar
-}) => {
-  const isChecked = useCallback((option, value) => {
+}: TimeRangeListProps) => {
+  const isChecked = useCallback((option: RangeOption, value: RangeOption) => {
     if (!option || !value) {
       return false;
     }
@@ -19,7 +26,7 @@ export const TimeRangeList = ({
   }, []);
 
   const setOption = useCallback(
-    (option) => {
+    (option: RangeOption) => {
       const { from, to } = option;
       changeRangeValue({
         from,
@@ -63,7 +70,7 @@ export const TimeRangeList = ({
   );
 };
 
-TimeRangeList.propTypes = {
+TimeRangeListFC.propTypes = {
   closePicker: PropTypes.func,
   currentRange: PropTypes.objectOf(
     PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)])
@@ -72,9 +79,11 @@ TimeRangeList.propTypes = {
   setShowCalendar: PropTypes.func
 };
 
-TimeRangeList.defaultProps = {
+TimeRangeListFC.defaultProps = {
   closePicker: () => {},
   currentRange: {},
   changeRangeValue: () => {},
   setShowCalendar: () => {}
 };
+
+export const TimeRangeList = memo(TimeRangeListFC);
