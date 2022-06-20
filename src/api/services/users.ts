@@ -1,5 +1,5 @@
 import { IncidentCommander } from "../axios";
-import { resolve, ApiResp } from "../resolve";
+import { resolve } from "../resolve";
 
 interface NewUser {
   name: string;
