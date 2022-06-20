@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo } from "react";
 import { debounce } from "lodash";
 import { useForm } from "react-hook-form";
 import { EditableText } from "../../EditableText";
@@ -12,13 +12,17 @@ interface Props {
 }
 
 export const HypothesisTitle = ({ node, api }: Props) => {
-  const handleApiUpdate = useRef(
-    debounce((params) => {
-      if (api?.updateMutation && node?.id) {
-        api.updateMutation.mutate({ id: node.id, params });
-      }
-    }, 1000)
-  ).current;
+  const nodeId = node?.id;
+
+  const handleApiUpdate = useMemo(
+    () =>
+      debounce((params) => {
+        if (api?.updateMutation && nodeId) {
+          api.updateMutation.mutate({ id: nodeId, params });
+        }
+      }, 1000),
+    [nodeId, api]
+  );
 
   const { watch, setValue, getValues } = useForm({
     defaultValues: {

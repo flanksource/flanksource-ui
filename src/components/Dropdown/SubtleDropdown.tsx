@@ -5,10 +5,6 @@ import { CheckIcon } from "@heroicons/react/solid";
 import { Controller } from "react-hook-form";
 import clsx from "clsx";
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
-
 export function SubtleDropdown({
   className,
   label,

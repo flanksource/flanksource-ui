@@ -1,7 +1,7 @@
-import { debounce } from "lodash";
-import React, { useEffect, useMemo } from "react";
-import { useForm } from "react-hook-form";
-import { HypothesisStatus } from "../../../api/services/hypothesis";
+import React from "react";
+import { MutationFunction } from "react-query";
+import { Hypothesis, HypothesisStatus } from "../../../api/services/hypothesis";
+import useHypothesisStatusForm from "../../../hooks/useHypothesisStatusForm";
 import { SubtleDropdown } from "../../Dropdown/SubtleDropdown";
 import { hypothesisStatuses } from "../../HypothesisBuilder/data";
 
@@ -26,29 +26,22 @@ const statusItems = Object.fromEntries(
   ])
 );
 
-export function StatusDropdownContainer({ nodeId, status, updateMutation }) {
-  const { control, watch, getValues } = useForm({
-    defaultValues: {
-      status: status || statusItems[HypothesisStatus.Likely].value
-    }
+interface Props {
+  nodeId: string;
+  status: HypothesisStatus;
+  updateMutation: MutationFunction<Hypothesis, { status: HypothesisStatus }>;
+}
+
+export function StatusDropdownContainer({
+  nodeId,
+  status,
+  updateMutation
+}: Props) {
+  const { control } = useHypothesisStatusForm({
+    status: status || statusItems[HypothesisStatus.Likely].value,
+    updateMutation,
+    id: nodeId
   });
-
-  watch();
-
-  const handleApiUpdate = useMemo(
-    () =>
-      debounce(({ status }) => {
-        if (updateMutation && nodeId) {
-          updateMutation.mutate({ id: nodeId, params: { status } });
-        }
-      }, 200),
-    [updateMutation, nodeId]
-  );
-
-  useEffect(() => {
-    const subscription = watch(handleApiUpdate);
-    return () => subscription.unsubscribe();
-  }, [watch, getValues, handleApiUpdate]);
 
   return (
     <SubtleDropdown
