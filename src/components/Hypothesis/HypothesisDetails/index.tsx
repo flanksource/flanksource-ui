@@ -61,7 +61,12 @@ export function HypothesisDetails({ node, api, ...rest }) {
     });
 
   const handleComment = (value) =>
-    createComment(user, uuidv4(), node.incident_id, node.id, value)
+    createComment({
+      user,
+      incidentId: node.incident_id,
+      hypothesisId: node.id,
+      comment: value
+    })
       .catch(toastError)
       .then(() => {
         fetchComments(node.id);
