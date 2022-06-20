@@ -123,7 +123,7 @@ export const DropdownListbox = ({
                 <Listbox.Option
                   key={item.id}
                   className={({ active }) =>
-                    classNames(
+                    clsx(
                       active ? "text-white bg-indigo-600" : "text-gray-900",
                       "cursor-pointer select-none relative py-2 pl-3 pr-9"
                     )
@@ -135,7 +135,7 @@ export const DropdownListbox = ({
                       <div className="flex items-center">
                         <div>{item.icon}</div>
                         <span
-                          className={classNames(
+                          className={clsx(
                             selected ? "font-semibold" : "font-normal",
                             "ml-2 block truncate"
                           )}
@@ -146,7 +146,7 @@ export const DropdownListbox = ({
 
                       {selected ? (
                         <span
-                          className={classNames(
+                          className={clsx(
                             active ? "text-white" : "text-indigo-600",
                             "absolute inset-y-0 right-0 flex items-center pr-4"
                           )}

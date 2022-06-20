@@ -3,28 +3,7 @@ import { MutationFunction } from "react-query";
 import { Hypothesis, HypothesisStatus } from "../../../api/services/hypothesis";
 import useHypothesisStatusForm from "../../../hooks/useHypothesisStatusForm";
 import { SubtleDropdown } from "../../Dropdown/SubtleDropdown";
-import { hypothesisStatuses } from "../../HypothesisBuilder/data";
-
-const statusItems = Object.fromEntries(
-  Object.values(hypothesisStatuses).map((x) => [
-    x.value,
-    {
-      id: `dropdown-${x.value}`,
-      name: x.title,
-      iconTitle: React.createElement(x.icon.type, {
-        className: "drop-shadow",
-        color: x.color,
-        style: { width: "24px" }
-      }),
-      icon: React.createElement(x.icon.type, {
-        color: x.color,
-        style: { width: "20px" }
-      }),
-      description: x.title,
-      value: x.value
-    }
-  ])
-);
+import { hypothesisStatusDropdownOptions } from "../../../constants/hypothesisStatusOptions";
 
 interface Props {
   nodeId: string;
@@ -38,7 +17,7 @@ export function StatusDropdownContainer({
   updateMutation
 }: Props) {
   const { control } = useHypothesisStatusForm({
-    status: status || statusItems[HypothesisStatus.Likely].value,
+    status: status || HypothesisStatus.Likely,
     updateMutation,
     id: nodeId
   });
@@ -48,7 +27,7 @@ export function StatusDropdownContainer({
       className="-ml-2"
       control={control}
       name="status"
-      items={statusItems}
+      items={hypothesisStatusDropdownOptions}
     />
   );
 }

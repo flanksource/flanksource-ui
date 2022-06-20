@@ -6,48 +6,18 @@ import {
   BsFillChatSquareTextFill
 } from "react-icons/bs";
 import { VscTypeHierarchy } from "react-icons/vsc";
-import { ThumbDownIcon, ThumbUpIcon } from "@heroicons/react/solid";
-import { AiOutlineSearch } from "react-icons/ai";
-
-import { HypothesisStatuses } from "../../../constants/hypothesis-statuses";
-import { deleteHypothesis, Hypothesis } from "../../../api/services/hypothesis";
+import {
+  deleteHypothesis,
+  Hypothesis,
+  HypothesisStatus
+} from "../../../api/services/hypothesis";
 import { AvatarGroup } from "../../AvatarGroup";
 import { EvidenceType } from "../../../api/services/evidence";
 import { IconBaseProps, IconType } from "react-icons/lib";
 import { useQueryClient } from "react-query";
 import { createIncidentQueryKey } from "../../query-hooks/useIncidentQuery";
 import { HypothesisBarDeleteDialog } from "./HypothesisBarDeleteDialog";
-
-const statusToStatusIconMapping = {
-  [HypothesisStatuses.Proven]: {
-    StatusIcon: ThumbUpIcon,
-    statusColorClass: "text-bright-green"
-  },
-  [HypothesisStatuses.Likely]: {
-    StatusIcon: ThumbUpIcon,
-    statusColorClass: "text-warm-green"
-  },
-  [HypothesisStatuses.Possible]: {
-    StatusIcon: ThumbUpIcon,
-    statusColorClass: "text-warmer-gray"
-  },
-  [HypothesisStatuses.Unlikely]: {
-    StatusIcon: ThumbDownIcon,
-    statusColorClass: "text-warmer-gray"
-  },
-  [HypothesisStatuses.Improbable]: {
-    StatusIcon: ThumbDownIcon,
-    statusColorClass: "text-bright-orange"
-  },
-  [HypothesisStatuses.Disproven]: {
-    StatusIcon: ThumbDownIcon,
-    statusColorClass: "text-bright-red"
-  },
-  fallback: {
-    StatusIcon: AiOutlineSearch,
-    statusColorClass: "text-bright-red"
-  }
-};
+import { hypothesisStatusDropdownOptions } from "../../../constants/hypothesisStatusOptions";
 
 enum CommentInfo {
   Comment = "comment"
@@ -97,9 +67,8 @@ export const HypothesisBar: React.FunctionComponent<HypothesisBarProps> = ({
   const [deleting, setDeleting] = useState<boolean>(false);
   const [showConfirm, setShowConfirm] = useState<boolean>(false);
 
-  const { StatusIcon, statusColorClass } = useMemo(
-    () =>
-      statusToStatusIconMapping[status] || statusToStatusIconMapping.fallback,
+  const { icon: statusIcon } = useMemo(
+    () => hypothesisStatusDropdownOptions[status || HypothesisStatus.Possible],
     [status]
   );
 
@@ -147,13 +116,8 @@ export const HypothesisBar: React.FunctionComponent<HypothesisBarProps> = ({
       )}
     >
       <div className="flex items-center min-h-12 w-full py-2">
-        <div
-          className={clsx(
-            "ml-2 bg-lighter-gray rounded-full p-2 w-8 h-8 flex-0-0-a",
-            statusColorClass
-          )}
-        >
-          <StatusIcon />
+        <div className="ml-2 bg-lighter-gray rounded-full p-1.5 w-8 h-8 flex-0-0-a">
+          {statusIcon}
         </div>
         <span
           className="ml-3 text-sm font-normal w-full text-left flex-1 min-h-full inline-flex items-center"

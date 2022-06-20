@@ -1,28 +1,12 @@
 import React from "react";
 import { useForm, Controller } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
-import { hypothesisStatuses } from "../../HypothesisBuilder/data";
-import { HypothesisStatuses } from "../../../constants";
 import { EvidenceSection } from "../EvidenceSection";
 import { useUser } from "../../../context";
 import { Dropdown } from "../../Dropdown";
-
-const statusItems = {
-  ...Object.values(hypothesisStatuses).reduce((acc, obj) => {
-    const title = obj.title.toLowerCase();
-    acc[title] = {
-      id: `dropdown-${title}`,
-      name: title,
-      icon: React.createElement(obj.icon.type, {
-        color: obj.color,
-        style: { width: "20px" }
-      }),
-      description: obj.title,
-      value: title
-    };
-    return acc;
-  }, {})
-};
+import { createComment } from "../../../api/services/comments";
+import { hypothesisStatusDropdownOptions } from "../../../constants/hypothesisStatusOptions";
+import { HypothesisStatus } from "../../../api/services/hypothesis";
 
 const nextNodePath = {
   default: "root",
@@ -35,7 +19,7 @@ export const CreateHypothesis = ({ node, api, onHypothesisCreated }) => {
   const { control, getValues, setValue, handleSubmit, watch } = useForm({
     defaultValues: {
       hypothesis: {
-        status: HypothesisStatuses.Possible,
+        status: HypothesisStatus.Possible,
         title: ""
       },
       evidence: {},
@@ -45,10 +29,15 @@ export const CreateHypothesis = ({ node, api, onHypothesisCreated }) => {
     }
   });
   const evidenceValue = watch("evidence");
-  // const handleComment = (nodeId, value) =>
-  //   createComment(user, uuidv4(), node.incident_id, nodeId, value)
-  //     .then((response) => console.log(response))
-  //     .catch(toastError);
+  const handleComment = (nodeId, value) =>
+    createComment({
+      user,
+      incidentId: node.incident_id,
+      hypothesisId: nodeId,
+      comment: value
+    })
+      .then((response) => console.log(response))
+      .catch(toastError);
 
   const onSubmit = async () => {
     const newNodeID = uuidv4();
@@ -66,10 +55,10 @@ export const CreateHypothesis = ({ node, api, onHypothesisCreated }) => {
           status: getValues("hypothesis.status")
         }
       });
-      // const newNode = newNodeResponse.data[0];
-      // if (isEmpty(getValues("comment.text"))) {
-      //   await handleComment(newNode.id, getValues("comment.text"));
-      // }
+      const newNode = newNodeResponse.data[0];
+      if (isEmpty(getValues("comment.text"))) {
+        await handleComment(newNode.id, getValues("comment.text"));
+      }
     }
     onHypothesisCreated();
   };
@@ -100,7 +89,7 @@ export const CreateHypothesis = ({ node, api, onHypothesisCreated }) => {
           control={control}
           name="hypothesis.status"
           className="mb-4 w-72"
-          items={statusItems}
+          items={hypothesisStatusDropdownOptions}
           label="State"
         />
       </div>
