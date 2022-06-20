@@ -1,7 +1,13 @@
 import React from "react";
 import { Icons } from "../../icons";
 
-export function Icon({ size = "sm", name, className, alt = "", ...props }) {
+export function Icon({
+  size = "sm",
+  name,
+  className = "",
+  alt = "",
+  ...props
+}) {
   let iconClassName;
   switch (size) {
     case "2xs":

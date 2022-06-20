@@ -1,5 +1,7 @@
-import React from "react";
-import { Mention, MentionsInput } from "react-mentions";
+import React, { useEffect, useState } from "react";
+import { Mention, MentionsInput, SuggestionDataItem } from "react-mentions";
+
+import { getPersons, User } from "../../api/services/users";
 import { Icon } from "../Icon";
 
 const mentionsStyle = {
@@ -38,15 +40,17 @@ const mentionsStyle = {
   }
 };
 
-const Suggestion = ({ display, icon }) => (
+const Suggestion = ({
+  display,
+  avatar
+}: SuggestionDataItem & { avatar?: string }) => (
   <div className="flex items-center">
-    {icon && <Icon name={icon} size="xl" />}
+    {avatar && <Icon name={avatar} size="xl" />}
     <p className="pl-2">{display}</p>
   </div>
 );
 
 interface Props {
-  data: { display: string; id: string }[];
   value: string;
   trigger?: string;
   markup?: string;
@@ -57,26 +61,40 @@ export const MENTION_MARKUP = "@[__display__](user:__id__)";
 export const MENTION_TRIGGER = "@";
 
 export const CommentInput = ({
-  data,
   value,
   onChange,
   markup = MENTION_MARKUP,
   trigger = MENTION_TRIGGER
-}: Props) => (
-  <MentionsInput
-    value={value}
-    onChange={(e) => onChange(e.target.value)}
-    a11ySuggestionsListLabel="Suggested mentions"
-    style={mentionsStyle}
-    allowSpaceInQuery
-    allowSuggestionsAboveCursor
-  >
-    <Mention
-      markup={markup}
-      trigger={trigger}
-      data={data}
-      renderSuggestion={Suggestion}
-      className="bg-blue-200 rounded"
-    />
-  </MentionsInput>
-);
+}: Props) => {
+  const [users, setUsers] = useState<Array<User & SuggestionDataItem>>([]);
+
+  /* TODO: lazy load user list, based on typing */
+  useEffect(() => {
+    getPersons().then(({ data }) => {
+      const users = (data || []).map((user) => ({
+        ...user,
+        display: user.name
+      }));
+      setUsers(users);
+    });
+  }, []);
+
+  return (
+    <MentionsInput
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      a11ySuggestionsListLabel="Suggested mentions"
+      style={mentionsStyle}
+      allowSpaceInQuery
+      allowSuggestionsAboveCursor
+    >
+      <Mention
+        markup={markup}
+        trigger={trigger}
+        data={users}
+        renderSuggestion={Suggestion}
+        className="bg-blue-200 rounded"
+      />
+    </MentionsInput>
+  );
+};

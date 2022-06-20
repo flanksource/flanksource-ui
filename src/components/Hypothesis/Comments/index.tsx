@@ -1,22 +1,28 @@
+import React, { useState } from "react";
 import { ChatAltIcon } from "@heroicons/react/solid";
 import dayjs from "dayjs";
-import React, { useEffect, useState } from "react";
-import { getPersons } from "../../../api/services/users";
+
 import { CommentInput, CommentText } from "../../Comment";
 import { Avatar } from "../../Avatar";
+import { Comment } from "../../../api/services/comments";
+
+interface Props {
+  comments: Comment[];
+  titlePrepend: React.ReactElement;
+  onComment: (str: string) => Promise<void>;
+}
 
 export function CommentsSection({
   comments,
   titlePrepend,
   onComment,
   ...rest
-}) {
+}: Props & React.HTMLProps<HTMLDivElement>) {
   const [commentTextValue, setCommentTextValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [users, setUsers] = useState([]);
 
   // eslint-disable-next-line no-unused-vars
-  const handleComment = (event) => {
+  const handleComment = () => {
     // const key = event.keyCode || event.which;
     if (commentTextValue) {
       setIsLoading(true);
@@ -27,18 +33,7 @@ export function CommentsSection({
     }
   };
 
-  useEffect(() => {
-    getPersons().then(({ data }) => {
-      const usersDate = data.map((user) => ({
-        ...user,
-        display: user.name,
-        icon: user.avatar
-      }));
-      setUsers(usersDate);
-    });
-  }, []);
-
-  const onClickUserTag = (type, id) => {
+  const onClickUserTag = (type: string, id: string) => {
     // eslint-disable-next-line no-console
     console.log("type tag", type, "value", id);
   };
@@ -47,11 +42,7 @@ export function CommentsSection({
     <div className={rest.className} {...rest}>
       {titlePrepend}
       <div>
-        <CommentInput
-          data={users}
-          value={commentTextValue}
-          onChange={setCommentTextValue}
-        />
+        <CommentInput value={commentTextValue} onChange={setCommentTextValue} />
         <div className="flex justify-end mt-2">
           <button
             disabled={isLoading || !commentTextValue}
