@@ -1,6 +1,9 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 import { HypothesisNode } from "./index";
 import { sampleIncidentNode } from "../../../data/sampleIncident";
+import { QueryClient, QueryClientProvider } from "react-query";
+
+const defaultQueryClient = new QueryClient();
 
 export default {
   title: "HypothesisNode",
@@ -9,7 +12,9 @@ export default {
 } as ComponentMeta<typeof HypothesisNode>;
 
 const Template: ComponentStory<typeof HypothesisNode> = (arg: any) => (
-  <HypothesisNode {...arg} />
+  <QueryClientProvider client={defaultQueryClient}>
+    <HypothesisNode {...arg} />
+  </QueryClientProvider>
 );
 
 export const Base = Template.bind({});
