@@ -3,8 +3,7 @@ import clsx from "clsx";
 import {
   BsBraces,
   BsFillBarChartFill,
-  BsFillChatSquareTextFill,
-  BsTrash
+  BsFillChatSquareTextFill
 } from "react-icons/bs";
 import { VscTypeHierarchy } from "react-icons/vsc";
 import { ThumbDownIcon, ThumbUpIcon } from "@heroicons/react/solid";
@@ -15,9 +14,9 @@ import { deleteHypothesis, Hypothesis } from "../../../api/services/hypothesis";
 import { AvatarGroup } from "../../AvatarGroup";
 import { EvidenceType } from "../../../api/services/evidence";
 import { IconBaseProps, IconType } from "react-icons/lib";
-import { IconButton } from "../../IconButton";
 import { useQueryClient } from "react-query";
 import { createIncidentQueryKey } from "../../query-hooks/useIncidentQuery";
+import { HypothesisBarDeleteDialog } from "./HypothesisBarDeleteDialog";
 
 const statusToStatusIconMapping = {
   [HypothesisStatuses.Proven]: {
@@ -79,11 +78,13 @@ const InfoIcon: React.FC<InfoIconProps> = ({
 interface HypothesisBarProps {
   hypothesis: Hypothesis;
   onTitleClick: MouseEventHandler<HTMLSpanElement>;
+  onDisprove: () => void;
 }
 
 export const HypothesisBar: React.FunctionComponent<HypothesisBarProps> = ({
   hypothesis,
-  onTitleClick
+  onTitleClick,
+  onDisprove: onDisproveCb
 }: HypothesisBarProps) => {
   const {
     title,
@@ -93,7 +94,8 @@ export const HypothesisBar: React.FunctionComponent<HypothesisBarProps> = ({
     comment
   } = hypothesis;
 
-  const [deleting, setDeleting] = useState<Boolean>(false);
+  const [deleting, setDeleting] = useState<boolean>(false);
+  const [showConfirm, setShowConfirm] = useState<boolean>(false);
 
   const { StatusIcon, statusColorClass } = useMemo(
     () =>
@@ -118,16 +120,24 @@ export const HypothesisBar: React.FunctionComponent<HypothesisBarProps> = ({
     setDeleting(true);
     const delHypo = async () => {
       try {
+        setShowConfirm(false);
         await deleteHypothesis(hypothesis.id);
         const key = createIncidentQueryKey(hypothesis.incident_id);
         await queryClient.invalidateQueries(key);
+        setDeleting(false);
       } catch (e) {
+        setShowConfirm(false);
+        setDeleting(false);
         console.error("Error while deleting", e);
       }
-      setDeleting(false);
     };
-    return delHypo();
+    delHypo();
   }, [hypothesis, queryClient]);
+
+  const onDisprove = () => {
+    onDisproveCb();
+    setShowConfirm(false);
+  };
 
   return (
     <div
@@ -167,21 +177,12 @@ export const HypothesisBar: React.FunctionComponent<HypothesisBarProps> = ({
           {createdBy && <AvatarGroup maxCount={5} users={involved} size="sm" />}
         </div>
         <div className="flex">
-          <IconButton
-            className="bg-transparent"
-            onClick={onDelete}
-            ovalProps={{
-              stroke: "blue",
-              height: "18px",
-              width: "18px",
-              fill: "transparent"
-            }}
-            icon={
-              <BsTrash
-                className="text-gray-600 border-0 border-l-1 border-gray-200"
-                size={18}
-              />
-            }
+          <HypothesisBarDeleteDialog
+            isOpen={showConfirm}
+            onClose={() => setShowConfirm(false)}
+            onDelete={onDelete}
+            onDisprove={onDisprove}
+            onOpen={() => setShowConfirm(true)}
           />
         </div>
       </div>
