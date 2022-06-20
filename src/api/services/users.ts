@@ -1,5 +1,5 @@
 import { IncidentCommander } from "../axios";
-import { resolve } from "../resolve";
+import { resolve, ApiResp } from "../resolve";
 
 interface NewUser {
   name: string;
@@ -11,18 +11,14 @@ export interface User extends NewUser {
   id: string;
 }
 
-type ApiResp<Resource> = Promise<{
-  data: Resource;
-}>;
+export const getPerson = (id: string) =>
+  resolve<User>(IncidentCommander.get(`/person?id=eq.${id}`));
 
-export const getPerson = async (id: string): ApiResp<User> =>
-  resolve(IncidentCommander.get(`/person?id=eq.${id}`));
+export const getPersons = () =>
+  resolve<User[]>(IncidentCommander.get(`/person`));
 
-export const getPersons = (): ApiResp<User[]> =>
-  resolve(IncidentCommander.get(`/person`));
+export const getPersonWithEmail = (email: string) =>
+  resolve<User>(IncidentCommander.get(`/person?email=eq.${email}`));
 
-export const getPersonWithEmail = (email: string): ApiResp<User> =>
-  resolve(IncidentCommander.get(`/person?email=eq.${email}`));
-
-export const createPerson = ({ name, email, avatar }: NewUser): ApiResp<User> =>
-  resolve(IncidentCommander.post("/person", { name, email, avatar }));
+export const createPerson = ({ name, email, avatar }: NewUser) =>
+  resolve<User>(IncidentCommander.post("/person", { name, email, avatar }));
