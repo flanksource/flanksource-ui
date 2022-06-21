@@ -2,6 +2,7 @@ import { BsPlusLg } from "react-icons/bs";
 import clsx from "clsx";
 import { HypothesisBar } from "../HypothesisBar";
 import { HypothesisBlockHeader } from "../../HypothesisBuilder/hypothesis-header";
+import { HypothesisStatus } from "../../../api/services/hypothesis";
 
 const propsByType = (type: string) => {
   if (!type) {
@@ -63,7 +64,18 @@ export const HypothesisNode = (props) => {
       <div className="w-full">
         <div className="w-full mb-0.5">
           {Boolean(node) && (
-            <HypothesisBar hypothesis={node} onTitleClick={handleOpenModal} />
+            <HypothesisBar
+              hypothesis={node}
+              onTitleClick={handleOpenModal}
+              onDisprove={() => {
+                props.api.updateMutation.mutate({
+                  id: node.id,
+                  params: {
+                    status: HypothesisStatus.Disproven
+                  }
+                });
+              }}
+            />
           )}
         </div>
 

@@ -11,7 +11,7 @@ import { Evidence, EvidenceType } from "../../../api/services/evidence";
 
 function EvidenceItem({ evidence }: { evidence: Evidence }) {
   if (evidence.type === EvidenceType.Log) {
-    return <LogsTable logs={evidence.evidence.lines} title="" />;
+    return <LogsTable viewOnly logs={evidence?.evidence?.lines} title="" />;
   }
   if (evidence.type === EvidenceType.Topology) {
     return <TopologyCard topologyId={evidence.evidence.id} size="large" />;

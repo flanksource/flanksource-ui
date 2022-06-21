@@ -1,14 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
-import { debounce } from "lodash";
-import { useForm } from "react-hook-form";
-import { v4 as uuidv4 } from "uuid";
+import React, { useEffect, useState } from "react";
 import clsx from "clsx";
-import { Dropdown } from "../../Dropdown";
-import { hypothesisStatuses } from "../../HypothesisBuilder/data";
 
 import { EvidenceSection } from "../EvidenceSection";
 import { Modal } from "../../Modal";
-import { CommentsSection } from "../../HypothesisBuilder/comments";
 import {
   getCommentsByHypothesis,
   createComment
@@ -20,23 +14,7 @@ import {
 import { useUser } from "../../../context";
 import { toastError } from "../../Toast/toast";
 import { EvidenceBuilder } from "../../EvidenceBuilder";
-
-const statusItems = {
-  ...Object.values(hypothesisStatuses).reduce((acc, obj) => {
-    const title = obj.title.toLowerCase();
-    acc[title] = {
-      id: `dropdown-${title}`,
-      name: title,
-      icon: React.createElement(obj.icon.type, {
-        color: obj.color,
-        style: { width: "20px" }
-      }),
-      description: obj.title,
-      value: title
-    };
-    return acc;
-  }, {})
-};
+import { CommentsSection } from "../Comments";
 
 export function HypothesisDetails({ node, api, ...rest }) {
   const [evidenceBuilderOpen, setEvidenceBuilderOpen] = useState(false);
@@ -61,15 +39,19 @@ export function HypothesisDetails({ node, api, ...rest }) {
     });
 
   const handleComment = (value) =>
-    createComment(user, uuidv4(), node.incident_id, node.id, value)
+    createComment({
+      user,
+      incidentId: node.incident_id,
+      hypothesisId: node.id,
+      comment: value
+    })
       .catch(toastError)
       .then(() => {
         fetchComments(node.id);
       });
 
   const deleteEvidenceCb = async (id: string) => {
-    const { data, error } = await deleteEvidence(id);
-    console.log({ data });
+    const { error } = await deleteEvidence(id);
 
     if (error) {
       console.error("delete failed", error);
@@ -84,40 +66,9 @@ export function HypothesisDetails({ node, api, ...rest }) {
     fetchComments(node.id);
   }, [node.id]);
 
-  const handleApiUpdate = useRef(
-    debounce((params) => {
-      if (api?.updateMutation && node?.id) {
-        api.updateMutation.mutate({ id: node.id, params });
-      }
-    }, 1000)
-  ).current;
-
-  const { control, watch, getValues } = useForm({
-    defaultValues: {
-      status: node.status || Object.values(statusItems)[2].value
-    }
-  });
-
-  watch();
-
-  useEffect(() => {
-    const subscription = watch((value) => {
-      handleApiUpdate(value);
-    });
-    return () => subscription.unsubscribe();
-  }, [watch, getValues, handleApiUpdate]);
-
   return (
     <>
       <div className={clsx("pb-7", rest.className || "")} {...rest}>
-        <div className="mt-6 mb-7">
-          <Dropdown
-            control={control}
-            name="status"
-            className="mb-4 w-72"
-            items={statusItems}
-          />
-        </div>
         <div className="mb-8 mt-4">
           <EvidenceSection
             hypothesis={node}

@@ -4,7 +4,7 @@ import { Modal } from "../../Modal";
 import { HypothesisNode } from "../HypothesisNode";
 import { HypothesisTitle } from "../HypothesisTitle";
 import { HypothesisDetails } from "../HypothesisDetails";
-import { CreateHypothesis } from "../../HypothesisBuilder/create-hypothesis";
+import { CreateHypothesis } from "../CreateHypothesis";
 
 export function HypothesisBuilder({
   initialTree,
@@ -38,26 +38,19 @@ export function HypothesisBuilder({
       <Modal
         open={modalIsOpen}
         onClose={() => setModalIsOpen(false)}
-        size="medium"
+        size="full"
         title={<HypothesisTitle node={selectedNode} api={api} />}
       >
         <HypothesisDetails node={selectedNode} api={api} />
       </Modal>
-      <Modal
-        open={createHypothesisModalIsOpen}
-        onClose={() => {
+      <CreateHypothesis
+        node={selectedNode}
+        api={api}
+        isOpen={createHypothesisModalIsOpen}
+        onHypothesisCreated={() => {
           setCreateHypothesisModalIsOpen(false);
         }}
-        size="medium"
-      >
-        <CreateHypothesis
-          node={selectedNode}
-          api={api}
-          onHypothesisCreated={() => {
-            setCreateHypothesisModalIsOpen(false);
-          }}
-        />
-      </Modal>
+      />
     </div>
   );
 }
