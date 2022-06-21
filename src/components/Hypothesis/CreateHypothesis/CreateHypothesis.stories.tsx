@@ -2,7 +2,7 @@ import { ComponentMeta, ComponentStory } from "@storybook/react";
 import { CreateHypothesis } from "./index";
 
 export default {
-  title: "CreateHypothesis",
+  title: "Hypothesis/CreateHypothesis",
   component: CreateHypothesis,
   parameters: { actions: { argTypesRegex: "^on.*" } }
 } as ComponentMeta<typeof CreateHypothesis>;
@@ -17,5 +17,6 @@ Base.args = {
   node: {
     incident_id: "i-123"
   },
-  api: {}
+  api: {},
+  isOpen: true
 };

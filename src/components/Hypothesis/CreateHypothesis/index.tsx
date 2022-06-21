@@ -7,6 +7,8 @@ import { Dropdown } from "../../Dropdown";
 import { createComment } from "../../../api/services/comments";
 import { hypothesisStatusDropdownOptions } from "../../../constants/hypothesisStatusOptions";
 import { HypothesisStatus } from "../../../api/services/hypothesis";
+import { Modal } from "../../Modal";
+import { toastError } from "../../Toast/toast";
 
 const nextNodePath = {
   default: "root",
@@ -14,7 +16,12 @@ const nextNodePath = {
   factor: "solution"
 };
 
-export const CreateHypothesis = ({ node, api, onHypothesisCreated }) => {
+export const CreateHypothesis = ({
+  node,
+  api,
+  onHypothesisCreated,
+  isOpen
+}) => {
   const { user } = useUser();
   const { control, getValues, setValue, handleSubmit, watch } = useForm({
     defaultValues: {
@@ -55,22 +62,28 @@ export const CreateHypothesis = ({ node, api, onHypothesisCreated }) => {
           status: getValues("hypothesis.status")
         }
       });
+      console.log({ newNodeResponse });
       const newNode = newNodeResponse.data[0];
-      if (isEmpty(getValues("comment.text"))) {
+      if (getValues("comment.text")) {
         await handleComment(newNode.id, getValues("comment.text"));
       }
     }
     onHypothesisCreated();
   };
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <h2 className="text-2xl font-semibold text-gray-700">
-        Create {nextNodePath[node?.type || "default"]}: {node?.title}
-      </h2>
-      <div className="mt-6">
-        <div className="text-sm font-medium text-gray-700 mb-1.5">
-          <label htmlFor="name">Name</label>
-        </div>
+    <Modal
+      open={isOpen}
+      onClose={onHypothesisCreated}
+      wrapWith={({ children }) => (
+        <form
+          onSubmit={(...args) =>
+            console.log(...args) || handleSubmit(onSubmit)(...args)
+          }
+        >
+          {children}
+        </form>
+      )}
+      title={
         <Controller
           name="hypothesis.title"
           control={control}
@@ -83,7 +96,9 @@ export const CreateHypothesis = ({ node, api, onHypothesisCreated }) => {
             />
           )}
         />
-      </div>
+      }
+      size="medium"
+    >
       <div className="mt-4">
         <Dropdown
           control={control}
@@ -130,6 +145,6 @@ export const CreateHypothesis = ({ node, api, onHypothesisCreated }) => {
           value="Create"
         />
       </div>
-    </form>
+    </Modal>
   );
 };

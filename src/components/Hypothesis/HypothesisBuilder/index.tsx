@@ -43,21 +43,14 @@ export function HypothesisBuilder({
       >
         <HypothesisDetails node={selectedNode} api={api} />
       </Modal>
-      <Modal
-        open={createHypothesisModalIsOpen}
-        onClose={() => {
+      <CreateHypothesis
+        node={selectedNode}
+        api={api}
+        isOpen={createHypothesisModalIsOpen}
+        onHypothesisCreated={() => {
           setCreateHypothesisModalIsOpen(false);
         }}
-        size="medium"
-      >
-        <CreateHypothesis
-          node={selectedNode}
-          api={api}
-          onHypothesisCreated={() => {
-            setCreateHypothesisModalIsOpen(false);
-          }}
-        />
-      </Modal>
+      />
     </div>
   );
 }

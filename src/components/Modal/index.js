@@ -16,9 +16,12 @@ export function Modal({
   allowBackgroundClose,
   hideCloseButton,
   size,
+  wrapWith = "div",
   ...rest
 }) {
   const { children } = { ...rest };
+  const Wrapper = wrapWith;
+
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog
@@ -60,37 +63,42 @@ export function Modal({
                 `modal-card-${size}`
               )}
             >
-              <div className="py-4 px-8 flex item-center rounded-t-lg justify-between bg-gray-100">
-                <h1 className={clsx("font-semibold text-lg", titleClass)}>
-                  {title}
-                </h1>
-                {/* top-right close button */}
-                {!hideCloseButton && (
-                  <div className="flex pointer-events-none sm:pointer-events-auto">
-                    <button
-                      type="button"
-                      className="text-gray-400 hover:text-gray-500 focus:outline-none"
-                      onClick={onClose}
-                    >
-                      <span className="sr-only">Close</span>
-                      <XIcon
-                        className="drop-shadow w-6 h-6"
-                        aria-hidden="true"
-                      />
-                    </button>
-                  </div>
-                )}
-              </div>
+              <Wrapper>
+                <div className="py-4 px-8 flex item-center rounded-t-lg justify-between bg-gray-100">
+                  <h1 className={clsx("font-semibold text-lg", titleClass)}>
+                    {title}
+                  </h1>
+                  {/* top-right close button */}
+                  {!hideCloseButton && (
+                    <div className="flex pointer-events-none sm:pointer-events-auto">
+                      <button
+                        type="button"
+                        className="text-gray-400 hover:text-gray-500 focus:outline-none"
+                        onClick={onClose}
+                      >
+                        <span className="sr-only">Close</span>
+                        <XIcon
+                          className="drop-shadow w-6 h-6"
+                          aria-hidden="true"
+                        />
+                      </button>
+                    </div>
+                  )}
+                </div>
 
-              <div className="px-8 overflow-y-auto modal-card__container">
-                {children}
-              </div>
+                <div className="px-8 overflow-y-auto modal-card__container">
+                  {children}
+                </div>
 
-              <div
-                className={clsx("flex my-2 px-8 justify-end", footerClassName)}
-              >
-                {actions?.length && actions}
-              </div>
+                <div
+                  className={clsx(
+                    "flex my-2 px-8 justify-end",
+                    footerClassName
+                  )}
+                >
+                  {actions?.length && actions}
+                </div>
+              </Wrapper>
             </div>
           </Transition.Child>
         </div>
