@@ -2,15 +2,14 @@ import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FiClock } from "react-icons/fi";
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
 import clsx from "clsx";
-import dayjs from "dayjs";
 import { TimeRangePickerBody } from "./TimeRangePickerBody";
 import "./index.css";
-import { areDatesSame, convertRangeValue, createDisplayValue } from "./helpers";
+import { convertRangeValue, createDisplayValue } from "./helpers";
 import { RangeOption } from "./rangeOptions";
 
 type DateOrString = Date | string;
 
-type TimeRangePickerType = {
+type TimeRangePickerType = React.HTMLProps<HTMLDivElement> & {
   from: string;
   to: string;
   onChange: (...args: DateOrString[]) => void;
@@ -19,24 +18,14 @@ type TimeRangePickerType = {
 export const TimeRangePickerFC = ({
   onChange = () => {},
   from,
-  to
+  to,
+  className,
+  ...rest
 }: TimeRangePickerType) => {
   const [isPickerOpen, setIsPickerOpen] = useState(false);
   const pickerRef = useRef<any>();
-  const [sentRange, setSentRange] = useState<{
-    from: DateOrString;
-    to: DateOrString;
-  }>();
-  const [memoRange, setMemoRange] = useState<RangeOption>();
 
   const currentRange = useMemo((): RangeOption => {
-    if (
-      sentRange &&
-      areDatesSame(from, sentRange.from) &&
-      areDatesSame(to, sentRange.to)
-    ) {
-      return memoRange as RangeOption;
-    }
     return { from, to };
   }, [from, to]);
 
@@ -48,11 +37,6 @@ export const TimeRangePickerFC = ({
   const changeRangeValue = useCallback(
     (range: RangeOption) => {
       const { from, to } = range;
-      setMemoRange({ from, to });
-      setSentRange({
-        from: convertRangeValue(from, "jsDate"),
-        to: convertRangeValue(to, "jsDate")
-      });
       onChange(
         convertRangeValue(from, "jsDate"),
         convertRangeValue(to, "jsDate")
@@ -74,7 +58,11 @@ export const TimeRangePickerFC = ({
   }, []);
 
   return (
-    <div className="relative text-sm w-fit" ref={pickerRef}>
+    <div
+      className={clsx("relative text-sm w-fit", className)}
+      ref={pickerRef}
+      {...rest}
+    >
       <button
         type="button"
         className="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-2 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500"
