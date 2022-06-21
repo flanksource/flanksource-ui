@@ -8,9 +8,6 @@ export const getIntervalData = (interval: string): [number, ManipulateType] => {
   if (interval === "now") {
     return [0, "h"];
   }
-  // if (typeof interval !== "string" || !rangeRegexp.test(interval)) {
-  //   return [];
-  // }
   const data = interval.replace("now-", "");
   const intervalName = <ManipulateType>data.slice(-1);
   const intervalTime = Number(data.slice(0, -1));
