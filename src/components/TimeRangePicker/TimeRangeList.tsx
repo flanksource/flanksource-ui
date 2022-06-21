@@ -1,5 +1,4 @@
 import PropTypes from "prop-types";
-import { v4 as uuidv4 } from "uuid";
 import clsx from "clsx";
 import { memo, useCallback } from "react";
 import { RangeOption, rangeOptions } from "./rangeOptions";
@@ -40,8 +39,7 @@ export const TimeRangeListFC = ({
 
   return (
     <div>
-      {rangeOptions.map((option) => {
-        const id = uuidv4();
+      {rangeOptions.map((option, index) => {
         return (
           <button
             type="button"
@@ -52,7 +50,10 @@ export const TimeRangeListFC = ({
               { "bg-gray-50": isChecked(option, currentRange) }
             )}
           >
-            <label htmlFor={id} className="cursor-pointer py-1.5 px-2">
+            <label
+              htmlFor={`checkbox-${index}`}
+              className="cursor-pointer py-1.5 px-2"
+            >
               {option.display}
             </label>
             <input
@@ -61,7 +62,7 @@ export const TimeRangeListFC = ({
               checked={isChecked(option, currentRange)}
               onChange={() => {}}
               name="range-checkbox"
-              id={id}
+              id={`checkbox-${index}`}
             />
           </button>
         );

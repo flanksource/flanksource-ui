@@ -34,8 +34,8 @@ export const TimePickerCalendarFC = ({
         selectRange
         next2Label={null}
         prev2Label={null}
-        nextLabel={<FaAngleRight size="18px" color="#272727" />}
-        prevLabel={<FaAngleLeft size="18px" color="#272727" />}
+        nextLabel={<FaAngleRight size="18px" className="text-dark-gray" />}
+        prevLabel={<FaAngleLeft size="18px" className="text-dark-gray" />}
         className="react-calendar-custom"
         tileClassName="react-calendar-custom__tile"
         value={calendarValue}

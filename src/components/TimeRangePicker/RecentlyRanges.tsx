@@ -10,8 +10,8 @@ type RecentlyRangesProps = {
 };
 
 const RecentlyRangesFC = ({
-  recentRanges,
-  applyTimeRange
+  recentRanges = [],
+  applyTimeRange = () => {}
 }: RecentlyRangesProps) => (
   <div>
     <div className="font-medium mt-3.5 px-3">
@@ -37,11 +37,6 @@ const RecentlyRangesFC = ({
 RecentlyRangesFC.propTypes = {
   recentRanges: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.string)),
   applyTimeRange: PropTypes.func
-};
-
-RecentlyRangesFC.defaultProps = {
-  recentRanges: [],
-  applyTimeRange: () => {}
 };
 
 export const RecentlyRanges = memo(RecentlyRangesFC);
