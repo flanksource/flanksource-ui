@@ -149,7 +149,7 @@ const TimeRangePickerBodyFC = ({
     >
       <div
         className={clsx(
-          "calendar-wrapper absolute shadow-lg shadow-gray-200",
+          "absolute shadow-lg shadow-gray-200",
           {
             calendarRight: pickerLeft < 300
           },
@@ -166,8 +166,8 @@ const TimeRangePickerBodyFC = ({
         <div className="p-3">
           <div className="font-medium">Absolute time range</div>
           <div>
-            <div className="range-inputs-container mb-5">
-              <div className="range-input my-3">
+            <div className="mb-5">
+              <div className="my-3">
                 <div className="text-sm mb-1">From</div>
                 <TimePickerInput
                   inputValue={inputValueFrom}
@@ -176,7 +176,7 @@ const TimeRangePickerBodyFC = ({
                   error={errorInputFrom}
                 />
               </div>
-              <div className="range-input my-3">
+              <div className="my-3">
                 <div className="text-sm mb-1">To</div>
                 <TimePickerInput
                   inputValue={inputValueTo}

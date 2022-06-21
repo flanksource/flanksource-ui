@@ -17,13 +17,13 @@ const RecentlyRangesFC = ({
     <div className="font-medium mt-3.5 px-3">
       Recently used absolute ranges:
     </div>
-    <div>
+    <div className="overflow-y-auto max-h-24">
       {recentRanges?.map((range) => (
         <button
           type="button"
           onClick={() => applyTimeRange(range)}
           key={`${dayjs(range.from).format()}${dayjs(range.to).format()}`}
-          className="hover:bg-blue-100 flex justify-between items-center w-full cursor-pointer py-1.5 px-3"
+          className="hover:bg-gray-100 flex justify-between items-center w-full cursor-pointer py-1.5 px-3 text-sm"
         >
           {`${dayjs(range.from).format(displayTimeFormat)} to ${dayjs(
             range.to

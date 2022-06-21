@@ -75,19 +75,19 @@ export const TimeRangePickerFC = ({
   }, []);
 
   return (
-    <div className="relative text-sm w-fit time-picker-main" ref={pickerRef}>
+    <div className="relative text-sm w-fit" ref={pickerRef}>
       <button
         type="button"
         className="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-2 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500"
         onClick={() => setIsPickerOpen((prevState) => !prevState)}
       >
-        <FiClock className="items-center" />
+        <FiClock className="mt-1" />
         <div className="ml-2 font-medium items-center">
           Time range: <span>{updateDisplayValue}</span>
         </div>
         <div
-          className={clsx("timepicker-arrow-indicator ml-2", {
-            active: isPickerOpen
+          className={clsx("ml-2 mt-1", {
+            "rotate-180": isPickerOpen
           })}
         >
           <MdOutlineKeyboardArrowDown />

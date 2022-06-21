@@ -43,7 +43,7 @@ export const TimePickerInputFC = ({
       </div>
     </div>
     {error && (
-      <div className="error-range-box relative flex items-center mt-1.5 bg-pink-200 text-xs font-medium rounded-sm pt-1 pb-1.5 px-2.5">
+      <div className="relative flex items-center mt-1.5 bg-pink-200 text-xs font-medium rounded-sm pt-1 pb-1.5 px-2.5">
         <div className="mt-0.5 mr-1">
           <FiAlertTriangle />
         </div>
