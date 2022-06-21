@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import clsx from "clsx";
 import { memo, useCallback, useEffect, useState } from "react";
 import dayjs from "dayjs";
@@ -19,9 +18,9 @@ type TimeRangePickerBodyProps = {
 
 const TimeRangePickerBodyFC = ({
   isOpen,
-  closePicker,
+  closePicker = () => {},
   currentRange,
-  changeRangeValue,
+  changeRangeValue = () => {},
   pickerRef
 }: TimeRangePickerBodyProps) => {
   const [recentRanges, setRecentRanges] = useState(
@@ -35,8 +34,8 @@ const TimeRangePickerBodyFC = ({
   const [inputValueTo, setInputValueTo] = useState(
     createValueForInput(currentRange.to)
   );
-  const [errorInputFrom, setErrorInputFrom] = useState<string | undefined>();
-  const [errorInputTo, setErrorInputTo] = useState<string | undefined>();
+  const [errorInputFrom, setErrorInputFrom] = useState<string>("");
+  const [errorInputTo, setErrorInputTo] = useState<string>("");
 
   const changeRecentRangesList = useCallback(
     (range: RangeOption) => {
@@ -99,18 +98,18 @@ const TimeRangePickerBodyFC = ({
     if (!dayjs(from).isValid()) {
       setErrorInputFrom("Invaid date!");
     } else {
-      setErrorInputFrom(undefined);
+      setErrorInputFrom("");
     }
     if (!dayjs(to).isValid()) {
       setErrorInputTo("Invaid date!");
     } else {
-      setErrorInputTo(undefined);
+      setErrorInputTo("");
     }
     if (dayjs(from).isValid() && dayjs(to).isValid()) {
       if (from > to) {
         setErrorInputFrom('"From" can\'t be after "To"');
       } else {
-        setErrorInputFrom(undefined);
+        setErrorInputFrom("");
       }
     }
   }, []);
@@ -215,20 +214,6 @@ const TimeRangePickerBodyFC = ({
       </div>
     </div>
   );
-};
-
-TimeRangePickerBodyFC.propTypes = {
-  isOpen: PropTypes.bool,
-  closePicker: PropTypes.func,
-  currentRange: PropTypes.shape({}),
-  changeRangeValue: PropTypes.func
-};
-
-TimeRangePickerBodyFC.defaultProps = {
-  isOpen: false,
-  closePicker: () => {},
-  currentRange: {},
-  changeRangeValue: () => {}
 };
 
 export const TimeRangePickerBody = memo(TimeRangePickerBodyFC);

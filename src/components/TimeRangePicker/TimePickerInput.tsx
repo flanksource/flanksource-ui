@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { FaRegCalendarAlt } from "react-icons/fa";
 import { FiAlertTriangle } from "react-icons/fi";
 import clsx from "clsx";
@@ -14,10 +13,10 @@ type TimePickerInputProps = {
 };
 
 export const TimePickerInputFC = ({
-  inputValue,
-  setInputValue,
-  setShowCalendar,
-  error
+  inputValue = "",
+  setInputValue = () => {},
+  setShowCalendar = () => {},
+  error = ""
 }: TimePickerInputProps) => (
   <div className="input-range-box">
     <div className="flex">
@@ -52,19 +51,5 @@ export const TimePickerInputFC = ({
     )}
   </div>
 );
-
-TimePickerInputFC.propTypes = {
-  inputValue: PropTypes.string,
-  setInputValue: PropTypes.func,
-  error: PropTypes.string,
-  setShowCalendar: PropTypes.func
-};
-
-TimePickerInputFC.defaultProps = {
-  inputValue: "",
-  setInputValue: () => {},
-  error: null,
-  setShowCalendar: () => {}
-};
 
 export const TimePickerInput = memo(TimePickerInputFC);

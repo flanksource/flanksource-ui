@@ -1,5 +1,4 @@
 import { memo } from "react";
-import PropTypes from "prop-types";
 import dayjs from "dayjs";
 
 import { displayTimeFormat, RangeOption } from "./rangeOptions";
@@ -33,10 +32,5 @@ const RecentlyRangesFC = ({
     </div>
   </div>
 );
-
-RecentlyRangesFC.propTypes = {
-  recentRanges: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.string)),
-  applyTimeRange: PropTypes.func
-};
 
 export const RecentlyRanges = memo(RecentlyRangesFC);

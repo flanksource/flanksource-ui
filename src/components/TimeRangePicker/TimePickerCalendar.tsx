@@ -1,19 +1,18 @@
 import { memo } from "react";
-import PropTypes from "prop-types";
 import Calendar, { OnChangeDateRangeCallback } from "react-calendar";
 import { GrClose } from "react-icons/gr";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
 
 type TimePickerCalendarProps = {
-  calendarValue: [Date, Date] | Date;
+  calendarValue: [Date, Date] | undefined;
   onChangeCalendarRange: OnChangeDateRangeCallback;
   setShowCalendar: (val: boolean) => void;
 };
 
 export const TimePickerCalendarFC = ({
   calendarValue,
-  onChangeCalendarRange,
-  setShowCalendar
+  onChangeCalendarRange = () => {},
+  setShowCalendar = () => {}
 }: TimePickerCalendarProps) => (
   <div className="p-2 bg-gray-50 rounded-sm border border-gray-300">
     <div className="flex justify-between align-center mb-2">
@@ -44,17 +43,5 @@ export const TimePickerCalendarFC = ({
     </div>
   </div>
 );
-
-TimePickerCalendarFC.propTypes = {
-  calendarValue: PropTypes.arrayOf(PropTypes.instanceOf(Date)),
-  onChangeCalendarRange: PropTypes.func,
-  setShowCalendar: PropTypes.func
-};
-
-TimePickerCalendarFC.defaultProps = {
-  calendarValue: null,
-  onChangeCalendarRange: () => {},
-  setShowCalendar: () => {}
-};
 
 export const TimePickerCalendar = memo(TimePickerCalendarFC);

@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import clsx from "clsx";
 import { memo, useCallback } from "react";
 import { RangeOption, rangeOptions } from "./rangeOptions";
@@ -11,10 +10,10 @@ type TimeRangeListProps = {
 };
 
 export const TimeRangeListFC = ({
-  closePicker,
+  closePicker = () => {},
   currentRange,
-  changeRangeValue,
-  setShowCalendar
+  changeRangeValue = () => {},
+  setShowCalendar = () => {}
 }: TimeRangeListProps) => {
   const isChecked = useCallback((option: RangeOption, value: RangeOption) => {
     if (!option || !value) {
@@ -69,22 +68,6 @@ export const TimeRangeListFC = ({
       })}
     </div>
   );
-};
-
-TimeRangeListFC.propTypes = {
-  closePicker: PropTypes.func,
-  currentRange: PropTypes.objectOf(
-    PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)])
-  ),
-  changeRangeValue: PropTypes.func,
-  setShowCalendar: PropTypes.func
-};
-
-TimeRangeListFC.defaultProps = {
-  closePicker: () => {},
-  currentRange: {},
-  changeRangeValue: () => {},
-  setShowCalendar: () => {}
 };
 
 export const TimeRangeList = memo(TimeRangeListFC);

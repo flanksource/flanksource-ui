@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FiClock } from "react-icons/fi";
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
@@ -18,7 +17,7 @@ type TimeRangePickerType = {
 };
 
 export const TimeRangePickerFC = ({
-  onChange,
+  onChange = () => {},
   from,
   to
 }: TimeRangePickerType) => {
@@ -102,20 +101,6 @@ export const TimeRangePickerFC = ({
       />
     </div>
   );
-};
-
-TimeRangePickerFC.propTypes = {
-  onChange: PropTypes.func,
-  from: PropTypes.shape({}),
-  to: PropTypes.shape({})
-};
-
-TimeRangePickerFC.defaultProps = {
-  onChange: (from: string, to: string) => {
-    console.log("FROM: ", from, "\n", "TO: ", to);
-  },
-  from: dayjs(new Date()).subtract(1, "h").toDate(),
-  to: new Date()
 };
 
 export const TimeRangePicker = memo(TimeRangePickerFC);
