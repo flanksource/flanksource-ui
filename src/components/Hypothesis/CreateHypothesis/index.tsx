@@ -62,7 +62,6 @@ export const CreateHypothesis = ({
           status: getValues("hypothesis.status")
         }
       });
-      console.log({ newNodeResponse });
       const newNode = newNodeResponse.data[0];
       if (getValues("comment.text")) {
         await handleComment(newNode.id, getValues("comment.text"));
@@ -75,11 +74,7 @@ export const CreateHypothesis = ({
       open={isOpen}
       onClose={onHypothesisCreated}
       wrapWith={({ children }) => (
-        <form
-          onSubmit={(...args) =>
-            console.log(...args) || handleSubmit(onSubmit)(...args)
-          }
-        >
+        <form onSubmit={(...args) => handleSubmit(onSubmit)(...args)}>
           {children}
         </form>
       )}

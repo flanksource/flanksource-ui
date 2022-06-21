@@ -64,7 +64,7 @@ export const HypothesisTitle = ({ node, api }: Props) => {
         <span className="pl-4">
           <AvatarGroup
             maxCount={5}
-            users={[node?.created_by].concat(involved)}
+            users={[node?.created_by].concat(involved).filter(Boolean)}
             size="sm"
           />
         </span>

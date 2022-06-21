@@ -70,8 +70,8 @@ export const CommentInput = ({
 
   /* TODO: lazy load user list, based on typing */
   useEffect(() => {
-    getPersons().then(({ data }) => {
-      const users = (data || []).map((user) => ({
+    getPersons().then(({ data = [] }) => {
+      const users = data.map((user) => ({
         ...user,
         display: user.name
       }));
