@@ -9,10 +9,6 @@ import { RecentlyRanges } from "./RecentlyRanges";
 import { displayTimeFormat, RangeOption } from "./rangeOptions";
 import { TimePickerCalendar } from "./TimePickerCalendar";
 import { TimePickerInput } from "./TimePickerInput";
-import {
-  OnChangeDateCallback,
-  OnChangeDateRangeCallback
-} from "react-calendar";
 
 type TimeRangePickerBodyProps = {
   isOpen: any;
@@ -148,7 +144,7 @@ const TimeRangePickerBodyFC = ({
   return (
     <div
       className={clsx(
-        "time-range-picker-body flex justify-center cursor-auto w-max bg-gray-50 absolute rounded-sm border border-gray-300 z-50 shadow-lg shadow-gray-200",
+        "absolute right-0 mt-2 flex justify-center cursor-auto w-full max-h-96 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50 shadow-lg shadow-gray-200",
         { "invisible opacity-0": !isOpen, "right-0": pickerLeft > 600 }
       )}
     >
@@ -199,7 +195,7 @@ const TimeRangePickerBodyFC = ({
                 })
               }
               type="button"
-              className="block font-medium bg-blue-200 hover:bg-blue-300 rounded-sm px-2.5 py-1.5 transition duration-200 ease"
+              className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
               Apply time range
             </button>

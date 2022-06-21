@@ -48,8 +48,8 @@ export const TimeRangeListFC = ({
             onClick={() => setOption(option)}
             key={option.display}
             className={clsx(
-              "option-item hover:bg-blue-200 flex justify-between items-center w-full",
-              { "bg-blue-100": isChecked(option, currentRange) }
+              "option-item hover:bg-gray-100 flex justify-between items-center w-full",
+              { "bg-gray-50": isChecked(option, currentRange) }
             )}
           >
             <label htmlFor={id} className="cursor-pointer py-1.5 px-2">

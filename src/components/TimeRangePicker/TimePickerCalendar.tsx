@@ -1,4 +1,4 @@
-import { ChangeEvent, memo } from "react";
+import { memo } from "react";
 import PropTypes from "prop-types";
 import Calendar, { OnChangeDateRangeCallback } from "react-calendar";
 import "./index.css";
