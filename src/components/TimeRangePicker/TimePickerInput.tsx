@@ -2,7 +2,6 @@ import PropTypes from "prop-types";
 import { FaRegCalendarAlt } from "react-icons/fa";
 import { FiAlertTriangle } from "react-icons/fi";
 import clsx from "clsx";
-import "./index.css";
 import { memo } from "react";
 
 type ShowCalendarCallback = (val: boolean) => boolean;

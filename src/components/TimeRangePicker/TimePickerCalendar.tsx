@@ -1,7 +1,6 @@
 import { memo } from "react";
 import PropTypes from "prop-types";
 import Calendar, { OnChangeDateRangeCallback } from "react-calendar";
-import "./index.css";
 import { GrClose } from "react-icons/gr";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
 

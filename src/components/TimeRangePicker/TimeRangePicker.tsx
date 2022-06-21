@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { memo, useCallback, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FiClock } from "react-icons/fi";
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
 import clsx from "clsx";
@@ -23,8 +23,7 @@ export const TimeRangePickerFC = ({
   to
 }: TimeRangePickerType) => {
   const [isPickerOpen, setIsPickerOpen] = useState(false);
-  const pickerRef =
-    useRef<HTMLButtonElement>() as React.LegacyRef<HTMLButtonElement>;
+  const pickerRef = useRef<any>();
   const [sentRange, setSentRange] = useState<{
     from: DateOrString;
     to: DateOrString;
@@ -63,10 +62,21 @@ export const TimeRangePickerFC = ({
     [onChange]
   );
 
+  useEffect(() => {
+    const listener = (event: MouseEvent) => {
+      if (!pickerRef?.current?.contains(event.target)) {
+        setIsPickerOpen(false);
+      }
+    };
+    document.addEventListener("click", listener);
+    return () => {
+      document.removeEventListener("click", listener);
+    };
+  }, []);
+
   return (
-    <div className="relative text-sm w-fit time-picker-main">
+    <div className="relative text-sm w-fit time-picker-main" ref={pickerRef}>
       <button
-        ref={pickerRef}
         type="button"
         className="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-2 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500"
         onClick={() => setIsPickerOpen((prevState) => !prevState)}

@@ -1,9 +1,8 @@
 import PropTypes from "prop-types";
 import clsx from "clsx";
-import { ChangeEvent, memo, useCallback, useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { TimeRangeList } from "./TimeRangeList";
-import "./index.css";
 import { storage, createValueForInput, convertRangeValue } from "./helpers";
 import { RecentlyRanges } from "./RecentlyRanges";
 import { displayTimeFormat, RangeOption } from "./rangeOptions";
