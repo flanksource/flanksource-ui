@@ -1,28 +1,14 @@
 import React from "react";
 import { useForm, Controller } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
-import { Dropdown } from "../Dropdown";
-import { hypothesisStatuses } from "./data";
-import { useUser } from "../../context";
-import { EvidenceSection } from "../Hypothesis/EvidenceSection";
-import { HypothesisStatuses } from "../../constants/hypothesis-statuses";
-
-const statusItems = {
-  ...Object.values(hypothesisStatuses).reduce((acc, obj) => {
-    const title = obj.title.toLowerCase();
-    acc[title] = {
-      id: `dropdown-${title}`,
-      name: title,
-      icon: React.createElement(obj.icon.type, {
-        color: obj.color,
-        style: { width: "20px" }
-      }),
-      description: obj.title,
-      value: title
-    };
-    return acc;
-  }, {})
-};
+import { EvidenceSection } from "../EvidenceSection";
+import { useUser } from "../../../context";
+import { Dropdown } from "../../Dropdown";
+import { createComment } from "../../../api/services/comments";
+import { hypothesisStatusDropdownOptions } from "../../../constants/hypothesisStatusOptions";
+import { HypothesisStatus } from "../../../api/services/hypothesis";
+import { Modal } from "../../Modal";
+import { toastError } from "../../Toast/toast";
 
 const nextNodePath = {
   default: "root",
@@ -30,12 +16,17 @@ const nextNodePath = {
   factor: "solution"
 };
 
-export const CreateHypothesis = ({ node, api, onHypothesisCreated }) => {
+export const CreateHypothesis = ({
+  node,
+  api,
+  onHypothesisCreated,
+  isOpen
+}) => {
   const { user } = useUser();
   const { control, getValues, setValue, handleSubmit, watch } = useForm({
     defaultValues: {
       hypothesis: {
-        status: HypothesisStatuses.Possible,
+        status: HypothesisStatus.Possible,
         title: ""
       },
       evidence: {},
@@ -45,10 +36,15 @@ export const CreateHypothesis = ({ node, api, onHypothesisCreated }) => {
     }
   });
   const evidenceValue = watch("evidence");
-  // const handleComment = (nodeId, value) =>
-  //   createComment(user, uuidv4(), node.incident_id, nodeId, value)
-  //     .then((response) => console.log(response))
-  //     .catch(toastError);
+  const handleComment = (nodeId, value) =>
+    createComment({
+      user,
+      incidentId: node.incident_id,
+      hypothesisId: nodeId,
+      comment: value
+    })
+      .then((response) => console.log(response))
+      .catch(toastError);
 
   const onSubmit = async () => {
     const newNodeID = uuidv4();
@@ -66,22 +62,23 @@ export const CreateHypothesis = ({ node, api, onHypothesisCreated }) => {
           status: getValues("hypothesis.status")
         }
       });
-      // const newNode = newNodeResponse.data[0];
-      // if (isEmpty(getValues("comment.text"))) {
-      //   await handleComment(newNode.id, getValues("comment.text"));
-      // }
+      const newNode = newNodeResponse.data[0];
+      if (getValues("comment.text")) {
+        await handleComment(newNode.id, getValues("comment.text"));
+      }
     }
     onHypothesisCreated();
   };
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <h2 className="text-2xl font-semibold text-gray-700">
-        Create {nextNodePath[node?.type || "default"]}: {node?.title}
-      </h2>
-      <div className="mt-6">
-        <div className="text-sm font-medium text-gray-700 mb-1.5">
-          <label htmlFor="name">Name</label>
-        </div>
+    <Modal
+      open={isOpen}
+      onClose={onHypothesisCreated}
+      wrapWith={({ children }) => (
+        <form onSubmit={(...args) => handleSubmit(onSubmit)(...args)}>
+          {children}
+        </form>
+      )}
+      title={
         <Controller
           name="hypothesis.title"
           control={control}
@@ -94,13 +91,15 @@ export const CreateHypothesis = ({ node, api, onHypothesisCreated }) => {
             />
           )}
         />
-      </div>
+      }
+      size="medium"
+    >
       <div className="mt-4">
         <Dropdown
           control={control}
           name="hypothesis.status"
           className="mb-4 w-72"
-          items={statusItems}
+          items={hypothesisStatusDropdownOptions}
           label="State"
         />
       </div>
@@ -141,6 +140,6 @@ export const CreateHypothesis = ({ node, api, onHypothesisCreated }) => {
           value="Create"
         />
       </div>
-    </form>
+    </Modal>
   );
 };

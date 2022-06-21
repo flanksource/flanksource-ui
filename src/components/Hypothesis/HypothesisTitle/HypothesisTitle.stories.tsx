@@ -27,6 +27,11 @@ Variant1.args = {
 export const MinimalNode = Template.bind({});
 MinimalNode.args = {
   node: {
-    title: "Minimal Node"
+    title: "Minimal Node",
+    created_by: {
+      id: "123",
+      name: "Test User",
+      avatar: "https://i.pravatar.cc/150?u=newton@flanksource.com"
+    }
   }
 };

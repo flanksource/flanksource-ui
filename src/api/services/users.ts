@@ -11,18 +11,14 @@ export interface User extends NewUser {
   id: string;
 }
 
-export const getPerson = async (id: string): Promise<{ data: User }> =>
-  resolve(IncidentCommander.get(`/person?id=eq.${id}`));
+export const getPerson = (id: string) =>
+  resolve<User>(IncidentCommander.get(`/person?id=eq.${id}`));
 
-export const getPersons = (): Promise<{ data: User[] }> =>
-  resolve(IncidentCommander.get(`/person`));
+export const getPersons = () =>
+  resolve<User[]>(IncidentCommander.get(`/person`));
 
-export const getPersonWithEmail = (email: string): Promise<{ data: User }> =>
-  resolve(IncidentCommander.get(`/person?email=eq.${email}`));
+export const getPersonWithEmail = (email: string) =>
+  resolve<User>(IncidentCommander.get(`/person?email=eq.${email}`));
 
-export const createPerson = ({
-  name,
-  email,
-  avatar
-}: NewUser): Promise<{ data: User }> =>
-  resolve(IncidentCommander.post("/person", { name, email, avatar }));
+export const createPerson = ({ name, email, avatar }: NewUser) =>
+  resolve<User>(IncidentCommander.post("/person", { name, email, avatar }));

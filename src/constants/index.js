@@ -1,4 +1,3 @@
-export { HypothesisStatuses } from "./hypothesis-statuses";
 export { IncidentPriority } from "./incident-priority";
 
 export const NodePodPropToLabelMap = {
