@@ -4,7 +4,7 @@ import { MdOutlineKeyboardArrowDown } from "react-icons/md";
 import clsx from "clsx";
 import { TimeRangePickerBody } from "./TimeRangePickerBody";
 import "./index.css";
-import { convertRangeValue, createDisplayValue } from "./helpers";
+import { createDisplayValue } from "./helpers";
 import { RangeOption } from "./rangeOptions";
 
 type DateOrString = Date | string;
@@ -27,7 +27,7 @@ export const TimeRangePickerFC = ({
 
   const currentRange = useMemo((): RangeOption => {
     return { from, to };
-  }, [from, to]);
+  }, [from, to, isPickerOpen]);
 
   const updateDisplayValue = useMemo(
     () => createDisplayValue(currentRange),
@@ -37,10 +37,7 @@ export const TimeRangePickerFC = ({
   const changeRangeValue = useCallback(
     (range: RangeOption) => {
       const { from, to } = range;
-      onChange(
-        convertRangeValue(from, "jsDate"),
-        convertRangeValue(to, "jsDate")
-      );
+      onChange(from, to);
     },
     [onChange]
   );
@@ -69,9 +66,16 @@ export const TimeRangePickerFC = ({
         onClick={() => setIsPickerOpen((prevState) => !prevState)}
       >
         <FiClock className="mt-1" />
-        <div className="ml-2 font-medium items-center">
-          Time range: <span>{updateDisplayValue}</span>
-        </div>
+        {updateDisplayValue && (
+          <div className="ml-2 font-medium items-center">
+            Time range: <span>{updateDisplayValue}</span>
+          </div>
+        )}
+        {!updateDisplayValue && (
+          <div className="ml-2 font-medium items-center">
+            Please select time range
+          </div>
+        )}
         <div
           className={clsx("ml-2 mt-1", {
             "rotate-180": isPickerOpen

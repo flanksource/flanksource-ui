@@ -27,13 +27,12 @@ const TimeRangePickerBodyFC = ({
     storage.getItem("timePickerRanges") || []
   );
   const [showCalendar, setShowCalendar] = useState(false);
-  const [calendarValue, setCalendarValue] = useState<[Date, Date]>();
-  const [inputValueFrom, setInputValueFrom] = useState(
-    createValueForInput(currentRange.from)
-  );
-  const [inputValueTo, setInputValueTo] = useState(
-    createValueForInput(currentRange.to)
-  );
+  const [calendarValue, setCalendarValue] = useState<[Date, Date]>([
+    new Date(),
+    new Date()
+  ]);
+  const [inputValueFrom, setInputValueFrom] = useState(currentRange.from);
+  const [inputValueTo, setInputValueTo] = useState(currentRange.to);
   const [errorInputFrom, setErrorInputFrom] = useState<string>("");
   const [errorInputTo, setErrorInputTo] = useState<string>("");
 
@@ -124,10 +123,13 @@ const TimeRangePickerBodyFC = ({
         convertRangeValue(currentRange.to, "jsDate") as Date
       ]);
     } else {
-      setCalendarValue(undefined);
+      setCalendarValue([
+        convertRangeValue(new Date().toISOString(), "jsDate") as Date,
+        convertRangeValue(new Date().toISOString(), "jsDate") as Date
+      ]);
     }
-    setInputValueFrom(createValueForInput(currentRange.from));
-    setInputValueTo(createValueForInput(currentRange.to));
+    setInputValueFrom(currentRange.from);
+    setInputValueTo(currentRange.to);
   }, [currentRange]);
 
   useEffect(() => {

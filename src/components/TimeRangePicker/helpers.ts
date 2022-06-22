@@ -96,7 +96,7 @@ export const createDisplayValue = (range: RangeOption) => {
       displayTimeFormat
     )} to ${convertRangeValue(range.to, displayTimeFormat)}`;
   }
-  return "invalid date";
+  return "";
 };
 
 type DateOrString = Date | string;
