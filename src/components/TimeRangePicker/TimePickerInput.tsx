@@ -18,28 +18,24 @@ export const TimePickerInputFC = ({
   setShowCalendar = () => {},
   error = ""
 }: TimePickerInputProps) => (
-  <div className="input-range-box">
-    <div className="flex">
-      <div>
-        <input
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          onClick={() => setShowCalendar(false)}
-          className={clsx(
-            "px-1 py-0.5 border border-gray-300 rounded-sm focus:border-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-300",
-            { "border-red-300": error }
-          )}
-        />
-      </div>
-      <div className="flex bg-gray-200 hover:bg-gray-300 ml-0.5 rounded-sm">
-        <button
-          type="button"
-          onClick={() => setShowCalendar((prevState: boolean) => !prevState)}
-          className="px-1 mx-1"
-        >
-          <FaRegCalendarAlt color="#303030" />
-        </button>
-      </div>
+  <div>
+    <div className="flex sm:text-sm border border-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500">
+      <input
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
+        onClick={() => setShowCalendar(false)}
+        className={clsx("px-1 py-0.5 rounded-sm flex-grow focus:border-none", {
+          "border-red-300": error
+        })}
+        readOnly
+      />
+      <button
+        type="button"
+        onClick={() => setShowCalendar((prevState: boolean) => !prevState)}
+        className="py-2 px-3 bg-gray-50 hover:bg-gray-100"
+      >
+        <FaRegCalendarAlt color="#303030" />
+      </button>
     </div>
     {error && (
       <div className="relative flex items-center mt-1.5 bg-pink-200 text-xs font-medium rounded-sm pt-1 pb-1.5 px-2.5">

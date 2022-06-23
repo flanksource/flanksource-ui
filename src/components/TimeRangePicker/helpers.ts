@@ -1,8 +1,10 @@
-import dayjs, { Dayjs, ManipulateType } from "dayjs";
+import dayjs, { ManipulateType } from "dayjs";
 import { getLocalItem, setLocalItem } from "../../utils/storage";
-import { displayTimeFormat, RangeOption } from "./rangeOptions";
-
-const rangeRegexp = /^now-\d{1,4}[mhdwMy]$/;
+import {
+  displayTimeFormat,
+  RangeOption,
+  rangeOptionsCategories
+} from "./rangeOptions";
 
 export const getIntervalData = (interval: string): [number, ManipulateType] => {
   if (interval === "now") {
@@ -69,32 +71,19 @@ export const createValueForInput = (value: Date): string =>
   dayjs(value).format(displayTimeFormat);
 
 export const createDisplayValue = (range: RangeOption) => {
-  if (
-    typeof range.from === "string" &&
-    range.from.includes("now") &&
-    typeof range.to === "string" &&
-    range.to === "now"
-  ) {
-    return createIntervalName(...getIntervalData(range.from));
+  let label;
+  rangeOptionsCategories.forEach((category) => {
+    category.options.forEach((option) => {
+      if (option.from === range.from && option.to === range.to) {
+        label = option.display;
+      }
+    });
+  });
+  if (label) {
+    return label;
   }
-  if (dayjs(range.from).isValid() && range.to === "now") {
-    return `${dayjs(range.from).format(displayTimeFormat)} to now`;
-  }
-  if (dayjs(range.from).isValid() && dayjs(range.to).isValid()) {
-    return `${dayjs(range.from).format(displayTimeFormat)} to ${dayjs(
-      range.to
-    ).format(displayTimeFormat)}`;
-  }
-  if (
-    typeof range.from === "string" &&
-    range.from.includes("now") &&
-    typeof range.to === "string" &&
-    range.to.includes("now")
-  ) {
-    return `${convertRangeValue(
-      range.from,
-      displayTimeFormat
-    )} to ${convertRangeValue(range.to, displayTimeFormat)}`;
+  if (range.from && range.to) {
+    return `${range.from} to ${range.to}`;
   }
   return "";
 };

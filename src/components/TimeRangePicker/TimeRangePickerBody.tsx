@@ -2,9 +2,13 @@ import clsx from "clsx";
 import { memo, useCallback, useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { TimeRangeList } from "./TimeRangeList";
-import { storage, createValueForInput, convertRangeValue } from "./helpers";
+import { storage, convertRangeValue } from "./helpers";
 import { RecentlyRanges } from "./RecentlyRanges";
-import { displayTimeFormat, RangeOption } from "./rangeOptions";
+import {
+  displayTimeFormat,
+  RangeOption,
+  rangeOptionsCategories
+} from "./rangeOptions";
 import { TimePickerCalendar } from "./TimePickerCalendar";
 import { TimePickerInput } from "./TimePickerInput";
 
@@ -33,8 +37,6 @@ const TimeRangePickerBodyFC = ({
   ]);
   const [inputValueFrom, setInputValueFrom] = useState(currentRange.from);
   const [inputValueTo, setInputValueTo] = useState(currentRange.to);
-  const [errorInputFrom, setErrorInputFrom] = useState<string>("");
-  const [errorInputTo, setErrorInputTo] = useState<string>("");
 
   const changeRecentRangesList = useCallback(
     (range: RangeOption) => {
@@ -84,34 +86,10 @@ const TimeRangePickerBodyFC = ({
 
   const confirmValidRange = useCallback(
     (range: RangeOption) => {
-      if (!errorInputFrom && !errorInputTo) {
-        applyTimeRange(range);
-      }
+      applyTimeRange(range);
     },
-    [applyTimeRange, errorInputFrom, errorInputTo]
+    [applyTimeRange]
   );
-
-  const validateInputRange = useCallback((range: RangeOption) => {
-    const from = convertRangeValue(range.from, "jsDate");
-    const to = convertRangeValue(range.to, "jsDate");
-    if (!dayjs(from).isValid()) {
-      setErrorInputFrom("Invaid date!");
-    } else {
-      setErrorInputFrom("");
-    }
-    if (!dayjs(to).isValid()) {
-      setErrorInputTo("Invaid date!");
-    } else {
-      setErrorInputTo("");
-    }
-    if (dayjs(from).isValid() && dayjs(to).isValid()) {
-      if (from > to) {
-        setErrorInputFrom('"From" can\'t be after "To"');
-      } else {
-        setErrorInputFrom("");
-      }
-    }
-  }, []);
 
   useEffect(() => {
     if (
@@ -132,19 +110,12 @@ const TimeRangePickerBodyFC = ({
     setInputValueTo(currentRange.to);
   }, [currentRange]);
 
-  useEffect(() => {
-    validateInputRange({
-      from: inputValueFrom as string,
-      to: inputValueTo as string
-    });
-  }, [inputValueFrom, inputValueTo]);
-
   const pickerLeft = pickerRef?.current?.getBoundingClientRect()?.left || 0;
 
   return (
     <div
       className={clsx(
-        "absolute right-0 mt-2 flex justify-center cursor-auto w-full max-h-96 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50 shadow-lg shadow-gray-200",
+        "absolute right-0 mt-2 flex cursor-auto w-full max-h-96 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50 shadow-lg shadow-gray-200",
         { "invisible opacity-0": !isOpen, "right-0": pickerLeft > 600 }
       )}
     >
@@ -163,42 +134,50 @@ const TimeRangePickerBodyFC = ({
           setShowCalendar={setShowCalendar}
         />
       </div>
-      <div className="border-r border-gray-300 w-4/6 overflow-hidden">
+      <div className="border-r border-gray-300 w-3.5/6 overflow-hidden">
         <div className="p-3">
-          <div className="font-medium">Absolute time range</div>
+          <div className="text-gray-500 text-base sm:space-x-2 whitespace-nowrap font-semibold">
+            Absolute time range
+          </div>
           <div>
             <div className="mb-5">
               <div className="my-3">
-                <div className="text-sm mb-1">From</div>
+                <div className="text-sm font-medium sm:space-x-2 whitespace-nowrap mb-1">
+                  From
+                </div>
                 <TimePickerInput
                   inputValue={inputValueFrom}
                   setInputValue={setInputValueFrom}
                   setShowCalendar={setShowCalendar}
-                  error={errorInputFrom}
+                  error=""
                 />
               </div>
               <div className="my-3">
-                <div className="text-sm mb-1">To</div>
+                <div className="text-sm font-medium sm:space-x-2 whitespace-nowrap mb-1">
+                  To
+                </div>
                 <TimePickerInput
                   inputValue={inputValueTo}
                   setInputValue={setInputValueTo}
                   setShowCalendar={setShowCalendar}
-                  error={errorInputTo}
+                  error=""
                 />
               </div>
             </div>
-            <button
-              onClick={() =>
-                confirmValidRange({
-                  from: inputValueFrom as string,
-                  to: inputValueTo as string
-                })
-              }
-              type="button"
-              className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              Apply time range
-            </button>
+            <div className="flex">
+              <button
+                onClick={() =>
+                  confirmValidRange({
+                    from: inputValueFrom as string,
+                    to: inputValueTo as string
+                  })
+                }
+                type="button"
+                className="inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-2 py-1 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500"
+              >
+                Apply time range
+              </button>
+            </div>
           </div>
         </div>
         <RecentlyRanges
@@ -206,8 +185,9 @@ const TimeRangePickerBodyFC = ({
           applyTimeRange={applyTimeRange}
         />
       </div>
-      <div className="w-2/6 overflow-y-auto">
+      <div className="w-2.5/6 overflow-y-hidden">
         <TimeRangeList
+          className="overflow-y-auto h-full"
           closePicker={closePicker}
           currentRange={currentRange}
           changeRangeValue={changeRangeValue}
