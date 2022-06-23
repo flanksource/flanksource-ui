@@ -111,7 +111,7 @@ export function LogsPage() {
   useEffect(() => {
     async function fetchTopologies() {
       try {
-        const result = await getTopology({});
+        const result = await getTopology({ depth: 0 });
         const groups = [];
         result.data.map((topology) => {
           const group = {
@@ -119,14 +119,17 @@ export function LogsPage() {
             icon: topology.icon,
             options: []
           };
-          topology.components.forEach((component) => {
-            component.components.forEach((item) => {
-              item.label = item.name;
-              item.value = item.id;
-              group.options.push(item);
+          if (topology?.components?.length) {
+            topology?.components?.forEach((component) => {
+              group.options.push({
+                ...component,
+                label: component.name,
+                value: component.id
+              });
             });
-          });
-          groups.push(group);
+
+            groups.push(group);
+          }
         });
         setTopologies(groups);
       } catch (ex) {}
