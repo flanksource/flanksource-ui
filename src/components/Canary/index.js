@@ -25,6 +25,7 @@ import { TristateToggle } from "../TristateToggle";
 import { StatCard } from "../StatCard";
 import { isHealthy } from "./filter";
 import mixins from "../../utils/mixins.module.css";
+import { Loading } from "../Loading";
 
 const getSearchParams = () => getParamsFromURL(window.location.search);
 
@@ -138,6 +139,10 @@ export function Canary({
   const handleSearch = debounce((value) => {
     updateParams({ query: value });
   }, 400);
+
+  if (isLoading && !checks.length) {
+    return <Loading className="mt-16" text="Please wait, Loading ..." />;
+  }
 
   return (
     <div className="flex flex-row place-content-center">
