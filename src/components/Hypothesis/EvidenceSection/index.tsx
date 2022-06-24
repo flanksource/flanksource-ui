@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { ChevronRightIcon, DotsVerticalIcon } from "@heroicons/react/outline";
-import { BsPlusLg } from "react-icons/bs";
 import { LogsTable } from "../../Logs/Table/logs-table";
 import { TopologyCard } from "../../Topology";
 import { Icon } from "../../Icon";
@@ -164,12 +163,6 @@ export function EvidenceSection({
       <div className="flex justify-between items-center">
         <div className="flex align-baseline font-inter text-large font-semibold">
           <h2 className="text-gray-900 mr-2">{titlePrepend}</h2>
-          <button
-            type="button"
-            className="btn-round btn-round-primary btn-round-sm"
-          >
-            <BsPlusLg />
-          </button>
         </div>
         <button
           type="button"
