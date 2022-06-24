@@ -13,9 +13,11 @@ const RecentlyRangesFC = ({
   applyTimeRange = () => {}
 }: RecentlyRangesProps) => (
   <div>
-    <div className="text-gray-500 text-base my-2 px-3 font-semibold">
-      Recently used absolute ranges
-    </div>
+    {Boolean(recentRanges.length) && (
+      <div className="text-gray-500 text-base my-2 px-3 font-semibold">
+        Recently used absolute ranges
+      </div>
+    )}
     <div className="overflow-y-auto max-h-24">
       {recentRanges?.map((range) => (
         <button

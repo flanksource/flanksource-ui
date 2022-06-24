@@ -33,12 +33,22 @@ const TimeRangePickerBodyFC = ({
   );
   const [showCalendar, setShowCalendar] = useState(false);
   const [calendarValue, setCalendarValue] = useState<Date>(new Date());
-  const [inputValueFrom, setInputValueFrom] = useState(currentRange.from);
-  const [inputValueTo, setInputValueTo] = useState(currentRange.to);
+  const [inputValueFrom, setInputValueFrom] = useState(
+    formatDateValue(currentRange.from)
+  );
+  const [inputValueTo, setInputValueTo] = useState(
+    formatDateValue(currentRange.to)
+  );
   const [valueType, setValueType] = useState<"from" | "to">();
   const [inputValueError, setInputValueError] = useState<string>();
-  const [focusFromInput, setFocusFromInput] = useState<boolean>(true);
   const [focusToInput, setFocusToInput] = useState<boolean>();
+
+  function formatDateValue(val: string) {
+    if (dayjs(val).isValid()) {
+      return dayjs(val).format(displayTimeFormat);
+    }
+    return val;
+  }
 
   const changeRecentRangesList = useCallback(
     (range: RangeOption) => {
@@ -68,42 +78,34 @@ const TimeRangePickerBodyFC = ({
       setInputValueFrom(from);
       setInputValueTo(dayjs(inputValueTo).isValid() ? inputValueTo : "");
       setFocusToInput(true);
-      setFocusFromInput(false);
     } else if (valueType === "to") {
       const to = dayjs(value).format(displayTimeFormat);
       setInputValueTo(to);
       setInputValueFrom(dayjs(inputValueFrom).isValid() ? inputValueFrom : "");
-      setFocusFromInput(true);
       setFocusToInput(false);
     }
     setCalendarValue(value);
     setShowCalendar(false);
   };
 
-  const isValidDate = (val: string): boolean => {
-    return (new Date(val) as any) == "Invalid Date" ? false : true;
-  };
-
   const applyTimeRange = useCallback(
     (range: RangeOption) => {
       setInputValueError("");
-      if (isValidDate(range.from) && isValidDate(range.to)) {
+      if (dayjs(range.from).isValid() && dayjs(range.to).isValid()) {
         changeRecentRangesList({
           from: dayjs(range.from).toISOString(),
           to: dayjs(range.to).toISOString()
         });
         setShowCalendar(false);
         closePicker();
-        setFocusFromInput(true);
         setFocusToInput(false);
-        changeRangeValue(range);
-      } else if (isSupportedRelativeRange(range.from, range.to)) {
-        changeRecentRangesList({
-          ...range
+        changeRangeValue({
+          from: dayjs(range.from).toISOString(),
+          to: dayjs(range.to).toISOString()
         });
+      } else if (isSupportedRelativeRange(range.from, range.to)) {
         setShowCalendar(false);
         closePicker();
-        setFocusFromInput(true);
         setFocusToInput(false);
         changeRangeValue(range);
       } else {
@@ -131,8 +133,8 @@ const TimeRangePickerBodyFC = ({
   };
 
   useEffect(() => {
-    setInputValueFrom(currentRange.from);
-    setInputValueTo(currentRange.to);
+    setInputValueFrom(formatDateValue(currentRange.from));
+    setInputValueTo(formatDateValue(currentRange.to));
   }, [currentRange]);
 
   const pickerLeft = pickerRef?.current?.getBoundingClientRect()?.left || 0;
@@ -177,7 +179,6 @@ const TimeRangePickerBodyFC = ({
                     onShowCalendar("from");
                   }}
                   error=""
-                  focus={focusFromInput}
                 />
               </div>
               <div className="my-3">
