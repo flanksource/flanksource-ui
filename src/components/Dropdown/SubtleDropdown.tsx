@@ -1,9 +1,20 @@
-/* This example requires Tailwind CSS v2.0+ */
 import { Fragment } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon } from "@heroicons/react/solid";
 import { Controller } from "react-hook-form";
 import clsx from "clsx";
+import { IItem } from "../../types/IItem";
+
+interface Props {
+  className: string;
+  value: string;
+  label: string;
+  control: any;
+  onChange: (value: string) => void;
+  name: string;
+  items: { [k: string]: IItem };
+  placeholder: string;
+}
 
 export function SubtleDropdown({
   className,
@@ -12,24 +23,18 @@ export function SubtleDropdown({
   items = {},
   name,
   onChange = () => {},
-  value = null,
-  placeholder,
-  emptyable,
-  prefix = "",
-  suffix = "",
-  labelPrefix = "",
-  labelSuffix = "",
-  ...rest
-}) {
+  value,
+  placeholder
+}: Props) {
   items = Object.fromEntries(
     (Object.values(items) || []).map((item) => [
       item.value,
       {
         ...item,
-        label: item.label || item.description,
-        name: item.name || item.id,
-        id: item.id || item.name || item.value,
-        key: item.id || item.name || item.value
+        label: item.description,
+        name: item.description,
+        id: item.value,
+        key: item.value
       }
     ])
   );
@@ -44,7 +49,7 @@ export function SubtleDropdown({
             const { onChange: onChangeControlled, value: valueControlled } =
               field;
             if (items[valueControlled] == null) {
-              return null;
+              return <div />;
             }
             return (
               <DropdownListbox
@@ -52,7 +57,6 @@ export function SubtleDropdown({
                 value={valueControlled}
                 label={label}
                 items={items}
-                rest={rest}
               />
             );
           }}
@@ -61,37 +65,28 @@ export function SubtleDropdown({
         <DropdownListbox
           label={label}
           items={items}
-          rest={rest}
           onChange={onChange}
           value={value}
-          prefix={prefix}
-          suffix={suffix}
-          labelPrefix={labelPrefix}
-          labelSuffix={labelSuffix}
         />
       )}
     </div>
   );
 }
 
+interface IDropdownListbox {
+  onChange: (val: string) => void;
+  value: string;
+  label: string;
+  items: { [k: string]: IItem };
+}
+
 export const DropdownListbox = ({
   onChange,
   value,
   label,
-  items,
-  prefix = "",
-  suffix = "",
-  labelPrefix = "",
-  labelSuffix = "",
-  ...rest
-}) => (
-  <Listbox
-    value={value}
-    onChange={(e) => {
-      onChange(e);
-    }}
-    {...rest}
-  >
+  items
+}: IDropdownListbox) => (
+  <Listbox value={value} onChange={onChange}>
     {({ open }) => (
       <>
         {label && (
@@ -103,11 +98,7 @@ export const DropdownListbox = ({
           </Listbox.Label>
         )}
         <div className={`${label && "mt-1"} group relative h-full`}>
-          <Listbox.Button
-            className={`relative cursor-pointer w-full group-hover:bg-white border border-transparent group-hover:border-gray-300 rounded-md group-hover:shadow-sm px-2 py-2 text-left focus:outline-none sm:text-sm
-              ${items[value]?.id === "_empty" && "text-gray-400"}
-            `}
-          >
+          <Listbox.Button className="relative cursor-pointer w-full group-hover:bg-white border border-transparent group-hover:border-gray-300 rounded-md group-hover:shadow-sm px-2 py-2 text-left focus:outline-none sm:text-sm">
             {items[value].iconTitle}
           </Listbox.Button>
 
@@ -121,7 +112,7 @@ export const DropdownListbox = ({
             <Listbox.Options className="absolute z-10 mt-1 bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
               {Object.values(items).map((item) => (
                 <Listbox.Option
-                  key={item.id}
+                  key={`option-${item.value}`}
                   className={({ active }) =>
                     clsx(
                       active ? "text-white bg-indigo-600" : "text-gray-900",

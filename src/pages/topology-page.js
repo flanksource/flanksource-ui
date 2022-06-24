@@ -23,10 +23,15 @@ export function TopologyPage() {
     }
     setLoading(true);
     try {
-      const res = await getTopology({
+      const apiParams = {
         id,
         status: params.status
-      });
+      };
+      if (id) {
+        apiParams.depth = 0;
+      }
+
+      const res = await getTopology(apiParams);
       if (res.error) {
         toastError(res.error);
         return;
@@ -39,7 +44,7 @@ export function TopologyPage() {
       if (!topology.length) {
         topology = [res.data.find((x) => x.id === id)];
       }
-      
+
       setTopology(topology);
     } catch (ex) {
       toastError(ex);

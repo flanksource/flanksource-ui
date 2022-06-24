@@ -8,7 +8,7 @@
     "scripts/serve-build.js"
   ],
   "dependencies": {
-    "@headlessui/react": "^1.4.0",
+    "@headlessui/react": "^0.0.0-insiders.6253aa5",
     "@heroicons/react": "^1.0.3",
     "@hookform/resolvers": "^2.8.8",
     "@storybook/client-api": "^6.5.7",
@@ -53,6 +53,9 @@
     "uuid": "^8.3.2",
     "web-vitals": "^2.1.4",
     "yup": "^0.32.11"
+  },
+  "dependecyComments": {
+    "@headlessui/react": "We are using incsiders version to use `by` property on `Combobox`. Without `by`, selected item logic was difficult to achieve."
   },
   "proxy": "https://incident-commander.canary.lab.flanksource.com",
   "lint-staged": {

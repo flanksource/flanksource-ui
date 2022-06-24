@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "react-query";
-import { createHypothesis } from "../../api/services/hypothesis";
+import { createHypothesisOld } from "../../api/services/hypothesis";
 import { createIncidentQueryKey } from "../query-hooks/useIncidentQuery";
 
 export const useCreateHypothesisMutation = (options = {}) => {
@@ -7,7 +7,7 @@ export const useCreateHypothesisMutation = (options = {}) => {
   const queryClient = useQueryClient();
   return useMutation(
     ({ user, id, incidentId, params }) =>
-      createHypothesis(user, id, incidentId, params),
+      createHypothesisOld(user, id, incidentId, params),
     {
       onSettled: () => {
         queryClient.invalidateQueries(createIncidentQueryKey(incidentId));

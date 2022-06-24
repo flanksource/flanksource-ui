@@ -5,20 +5,33 @@ import { XIcon } from "@heroicons/react/solid";
 import clsx from "clsx";
 import "./index.css";
 
+interface IModalProps {
+  title: React.ReactNode;
+  titleClass: string;
+  footerClassName: string;
+  actions?: React.ReactNode[];
+  open: boolean;
+  onClose: () => void;
+  allowBackgroundClose: boolean;
+  hideCloseButton: boolean;
+  size: "small" | "medium" | "large" | "full";
+  wrapWith?: React.FunctionComponent<{ children: React.ReactNode }>;
+  children: JSX.Element;
+}
+
 export function Modal({
   title,
   titleClass,
   footerClassName,
   actions,
-  body,
   open,
   onClose,
   allowBackgroundClose,
   hideCloseButton,
   size,
-  wrapWith = "div",
+  wrapWith = ({ children }) => children,
   ...rest
-}) {
+}: IModalProps) {
   const { children } = { ...rest };
   const Wrapper = wrapWith;
 
@@ -86,9 +99,7 @@ export function Modal({
                   )}
                 </div>
 
-                <div className="px-8 overflow-y-auto modal-card__container">
-                  {children}
-                </div>
+                <div className="px-8">{children}</div>
 
                 <div
                   className={clsx(

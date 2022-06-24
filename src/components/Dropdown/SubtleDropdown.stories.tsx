@@ -4,7 +4,7 @@ import { SubtleDropdown } from "./SubtleDropdown";
 import { hypothesisStatusDropdownOptions } from "../../constants/hypothesisStatusOptions";
 
 export default {
-  title: "SubtleDropdown",
+  title: "Dropdown/SubtleDropdown",
   component: SubtleDropdown,
   parameters: { actions: { argTypesRegex: "^on.*" } }
 } as ComponentMeta<typeof SubtleDropdown>;
@@ -19,6 +19,6 @@ Base.args = {
   items: hypothesisStatusDropdownOptions,
   name: "status",
   value: "likely",
-  className: "w-44",
+  className: "flex",
   onChange: (...args) => console.log(args)
 };

@@ -4,9 +4,55 @@ import { User } from "./users";
 
 const AVATAR_INFO = `id,name,avatar`;
 
-export const getAllIncident = async () =>
-  resolve(IncidentCommander.get(`/incident?order=created_at.desc`));
+export enum IncidentSeverity {
+  Low = 0,
+  Medium,
+  High
+}
 
+export enum IncidentStatus {
+  Open = "open",
+  Closed = "closed"
+}
+
+export enum IncidentType {
+  Issue = "issue"
+}
+
+export interface NewIncident {
+  title: string;
+  description: string;
+
+  severity: IncidentSeverity;
+  type?: IncidentType;
+  status?: IncidentStatus;
+
+  created_by: string;
+  commander_id: string;
+  communicator_id: string;
+}
+
+export interface Incident extends NewIncident {
+  id: string;
+}
+
+export const searchIncident = (query: string) => {
+  const hypothesis = `hypothesis!hypothesis_incident_id_fkey(id, type)`;
+  return resolve<Incident[]>(
+    IncidentCommander.get(
+      `/incident?order=created_at.desc&title=ilike.*${query}*&select=*,${hypothesis}`
+    )
+  );
+};
+export const getAllIncident = ({ limit = 10 }) => {
+  const limitStr = limit ? `limit=${limit}` : "";
+  const hypothesis = `hypothesis!hypothesis_incident_id_fkey(id, type)`;
+  return resolve<Incident[]>(
+    IncidentCommander.get(
+      `/incident?order=created_at.desc&${limitStr}&select=*,${hypothesis}`
+    )
+  );
+};
 export const getIncident = async (id: string) => {
   const hypothesis = `hypothesis!hypothesis_incident_id_fkey(*,created_by(${AVATAR_INFO}),evidence(id,evidence,type),comment(comment,created_by(id,${AVATAR_INFO}),id))`;
 
@@ -32,13 +78,30 @@ export const getIncidentsWithParams = async (params) => {
   );
 };
 
-export const updateIncident = async (id: string, incident) => {
+export const updateIncident = async (id: string, incident: Incident) => {
   IncidentCommander.patch(`/incident?id=eq.${id}`, incident);
 };
 
-export const createIncident = async (user: User, params) => {
-  params.created_by = user.id;
-  params.commander_id = user.id;
-  params.communicator_id = user.id;
-  return IncidentCommander.post(`/incident?select=*`, params);
+export const createIncident = async (
+  user: User,
+  incident: Omit<NewIncident, "created_by" | "commander_id" | "communicator_id">
+) => {
+  const params = {
+    ...incident,
+    type: incident.type ?? IncidentType.Issue,
+    status: incident.status ?? IncidentStatus.Open,
+    created_by: user.id,
+    commander_id: user.id,
+    communicator_id: user.id
+  };
+
+  const { data, error } = await resolve<Incident[]>(
+    IncidentCommander.post(`/incident?select=*`, params)
+  );
+
+  if (error) {
+    return { error };
+  }
+
+  return { data: data && data[0] };
 };

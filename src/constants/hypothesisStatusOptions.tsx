@@ -1,5 +1,6 @@
 import { ThumbDownIcon, ThumbUpIcon } from "@heroicons/react/solid";
 import clsx from "clsx";
+import { ComponentProps } from "react";
 import { HypothesisStatus } from "../api/services/hypothesis";
 
 const { Proven, Likely, Possible, Unlikely, Improbable, Disproven } =
@@ -7,68 +8,60 @@ const { Proven, Likely, Possible, Unlikely, Improbable, Disproven } =
 
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
+interface Props extends ComponentProps<"svg"> {}
+
 const hypothesisStatusIconMap = {
   [Proven]: {
-    Icon: ({ className, ...props }) => (
-      <ThumbUpIcon
-        className={clsx("text-bright-green", className)}
-        {...props}
-      />
-    )
+    Icon: (props: Props) => <ThumbUpIcon {...props} />,
+    className: "text-bright-green"
   },
   [Likely]: {
-    Icon: ({ className, ...props }) => (
-      <ThumbUpIcon className={clsx("text-warm-green", className)} {...props} />
-    )
+    Icon: (props: Props) => <ThumbUpIcon {...props} />,
+    className: "text-warm-green"
   },
   [Possible]: {
-    Icon: ({ className, ...props }) => (
-      <ThumbUpIcon className={clsx("text-warmer-gray", className)} {...props} />
-    )
+    Icon: (props: Props) => <ThumbUpIcon {...props} />,
+    className: "text-warmer-gray"
   },
   [Unlikely]: {
-    Icon: ({ className, ...props }) => (
-      <ThumbDownIcon
-        className={clsx("text-warmer-gray", className)}
-        {...props}
-      />
-    )
+    Icon: (props: Props) => <ThumbDownIcon {...props} />,
+    className: "text-warmer-gray"
   },
   [Improbable]: {
-    Icon: ({ className, ...props }) => (
-      <ThumbDownIcon
-        className={clsx("text-bright-orange", className)}
-        {...props}
-      />
-    )
+    Icon: (props: Props) => <ThumbDownIcon {...props} />,
+    className: "text-bright-orange"
   },
   [Disproven]: {
-    Icon: ({ className, ...props }) => (
-      <ThumbDownIcon
-        className={clsx("text-bright-red", className)}
-        {...props}
-      />
-    )
+    Icon: (props: Props) => <ThumbDownIcon {...props} />,
+    className: "text-bright-red"
   }
 };
 
 export const hypothesisStatusOptions = Object.values(HypothesisStatus).map(
-  (name) =>
-    console.log(name, hypothesisStatusIconMap[name]) || {
-      title: capitalize(name),
-      value: name.toLowerCase(),
-      ...hypothesisStatusIconMap[name]
-    }
+  (name) => ({
+    title: capitalize(name),
+    value: name.toLowerCase(),
+    ...hypothesisStatusIconMap[name]
+  })
 );
 
 export const hypothesisStatusDropdownOptions = Object.fromEntries(
   hypothesisStatusOptions.map(({ Icon, ...o }) => [
     o.value,
     {
-      id: `dropdown-${o.value}`,
       name: o.title,
-      iconTitle: <Icon style={{ width: "24px" }} className="drop-shadow" />,
-      icon: <Icon style={{ width: "20px" }} className="drop-shadow" />,
+      iconTitle: (
+        <Icon
+          style={{ width: "24px" }}
+          className={clsx(o.className, "drop-shadow")}
+        />
+      ),
+      icon: (
+        <Icon
+          style={{ width: "20px" }}
+          className={clsx(o.className, "drop-shadow")}
+        />
+      ),
       description: o.title,
       value: o.value
     }
