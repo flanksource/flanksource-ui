@@ -38,7 +38,7 @@ const TimeRangePickerContainerForAbsoluteVersion = () => {
 };
 
 const TimeRangePickerContainerForRangeVersion = () => {
-  const [from, setFrom] = useState("now-2h");
+  const [from, setFrom] = useState("now-3h");
   const [to, setTo] = useState("now");
   const onChange = (...dates: any[]) => {
     setFrom(dates[0]);

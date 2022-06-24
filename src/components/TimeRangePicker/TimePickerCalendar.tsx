@@ -1,17 +1,17 @@
 import { memo } from "react";
-import Calendar, { OnChangeDateRangeCallback } from "react-calendar";
+import Calendar, { OnChangeDateCallback } from "react-calendar";
 import { GrClose } from "react-icons/gr";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
 
 type TimePickerCalendarProps = {
-  calendarValue: [Date, Date] | undefined;
-  onChangeCalendarRange: OnChangeDateRangeCallback;
+  calendarValue: Date | undefined;
+  onChange: OnChangeDateCallback;
   setShowCalendar: (val: boolean) => void;
 };
 
 export const TimePickerCalendarFC = ({
   calendarValue,
-  onChangeCalendarRange = () => {},
+  onChange = () => {},
   setShowCalendar = () => {}
 }: TimePickerCalendarProps) => (
   <div className="p-2 bg-gray-50 rounded-sm border border-gray-300">
@@ -30,15 +30,14 @@ export const TimePickerCalendarFC = ({
     <div>
       <Calendar
         locale="en"
-        selectRange
         next2Label={null}
         prev2Label={null}
         nextLabel={<FaAngleRight size="18px" className="text-dark-gray" />}
         prevLabel={<FaAngleLeft size="18px" className="text-dark-gray" />}
-        className="react-calendar-custom"
+        className="react-calendar-custom w-full"
         tileClassName="react-calendar-custom__tile"
         value={calendarValue}
-        onChange={onChangeCalendarRange}
+        onChange={onChange}
       />
     </div>
   </div>

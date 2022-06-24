@@ -39,7 +39,7 @@ export const TimeRangeListFC = ({
       {rangeOptionsCategories.map((category, index) => {
         return (
           <div key={category.name}>
-            <div className="text-gray-500 text-sm my-2 px-3 font-semibold">
+            <div className="text-gray-500 text-sm my-2 px-1 font-semibold">
               {category.name}
             </div>
             {category.options.map((option) => {
@@ -50,7 +50,7 @@ export const TimeRangeListFC = ({
                   key={option.display}
                   className={clsx(
                     "option-item hover:bg-gray-100 flex justify-between items-center w-full",
-                    { "bg-gray-50": isChecked(option, currentRange) }
+                    { "bg-gray-100": isChecked(option, currentRange) }
                   )}
                 >
                   <label

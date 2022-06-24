@@ -4,11 +4,7 @@ import dayjs from "dayjs";
 import { TimeRangeList } from "./TimeRangeList";
 import { storage, convertRangeValue } from "./helpers";
 import { RecentlyRanges } from "./RecentlyRanges";
-import {
-  displayTimeFormat,
-  RangeOption,
-  rangeOptionsCategories
-} from "./rangeOptions";
+import { displayTimeFormat, RangeOption } from "./rangeOptions";
 import { TimePickerCalendar } from "./TimePickerCalendar";
 import { TimePickerInput } from "./TimePickerInput";
 
@@ -31,12 +27,14 @@ const TimeRangePickerBodyFC = ({
     storage.getItem("timePickerRanges") || []
   );
   const [showCalendar, setShowCalendar] = useState(false);
-  const [calendarValue, setCalendarValue] = useState<[Date, Date]>([
-    new Date(),
-    new Date()
-  ]);
+  const [calendarValue, setCalendarValue] = useState<Date>(new Date());
   const [inputValueFrom, setInputValueFrom] = useState(currentRange.from);
   const [inputValueTo, setInputValueTo] = useState(currentRange.to);
+  const [valueType, setValueType] = useState<"from" | "to">();
+  const [fromInputValueError, setFromInputValueError] = useState<string>();
+  const [toInputValueError, setToInputValueError] = useState<string>();
+  const [focusFromInput, setFocusFromInput] = useState<boolean>(true);
+  const [focusToInput, setFocusToInput] = useState<boolean>();
 
   const changeRecentRangesList = useCallback(
     (range: RangeOption) => {
@@ -60,14 +58,25 @@ const TimeRangePickerBodyFC = ({
     [recentRanges]
   );
 
-  const onChangeCalendarRange = useCallback((value: [Date, Date]) => {
-    const from = dayjs(value[0]).format(displayTimeFormat);
-    const to = dayjs(value[1]).format(displayTimeFormat);
-
+  const onChangeCalendarValue = (value: Date) => {
+    if (valueType === "from") {
+      const from = dayjs(value).format(displayTimeFormat);
+      setInputValueFrom(from);
+      setInputValueTo(dayjs(inputValueTo).isValid() ? inputValueTo : "");
+      setFromInputValueError("");
+      setFocusToInput(true);
+      setFocusFromInput(false);
+    } else if (valueType === "to") {
+      const to = dayjs(value).format(displayTimeFormat);
+      setInputValueTo(to);
+      setInputValueFrom(dayjs(inputValueFrom).isValid() ? inputValueFrom : "");
+      setToInputValueError("");
+      setFocusFromInput(true);
+      setFocusToInput(false);
+    }
     setCalendarValue(value);
-    setInputValueFrom(from);
-    setInputValueTo(to);
-  }, []);
+    setShowCalendar(false);
+  };
 
   const applyTimeRange = useCallback(
     (range: RangeOption) => {
@@ -77,9 +86,14 @@ const TimeRangePickerBodyFC = ({
           from: dayjs(range.from).toISOString(),
           to: dayjs(range.to).toISOString()
         });
+        setShowCalendar(false);
+        closePicker();
+        setFocusFromInput(true);
+        setFocusToInput(false);
+      } else {
+        setFromInputValueError(!range.from ? "Please provide value" : "");
+        setToInputValueError(!range.to ? "Please provide value" : "");
       }
-      setShowCalendar(false);
-      closePicker();
     },
     [changeRangeValue, changeRecentRangesList, closePicker]
   );
@@ -91,21 +105,17 @@ const TimeRangePickerBodyFC = ({
     [applyTimeRange]
   );
 
-  useEffect(() => {
-    if (
-      dayjs(currentRange.from).isValid() &&
-      dayjs(currentRange.to).isValid()
-    ) {
-      setCalendarValue([
-        convertRangeValue(currentRange.from, "jsDate") as Date,
-        convertRangeValue(currentRange.to, "jsDate") as Date
-      ]);
-    } else {
-      setCalendarValue([
-        convertRangeValue(new Date().toISOString(), "jsDate") as Date,
-        convertRangeValue(new Date().toISOString(), "jsDate") as Date
-      ]);
+  const onShowCalendar = (calendarFor: "from" | "to") => {
+    setValueType(calendarFor);
+    setShowCalendar((val) => !val);
+    if (calendarFor === "from" && dayjs(inputValueFrom).isValid()) {
+      setCalendarValue(convertRangeValue(inputValueFrom, "jsDate") as Date);
+    } else if (calendarFor === "to" && dayjs(inputValueTo).isValid()) {
+      setCalendarValue(convertRangeValue(inputValueTo, "jsDate") as Date);
     }
+  };
+
+  useEffect(() => {
     setInputValueFrom(currentRange.from);
     setInputValueTo(currentRange.to);
   }, [currentRange]);
@@ -130,7 +140,7 @@ const TimeRangePickerBodyFC = ({
       >
         <TimePickerCalendar
           calendarValue={calendarValue}
-          onChangeCalendarRange={onChangeCalendarRange as any}
+          onChange={onChangeCalendarValue as any}
           setShowCalendar={setShowCalendar}
         />
       </div>
@@ -140,7 +150,7 @@ const TimeRangePickerBodyFC = ({
             Absolute time range
           </div>
           <div>
-            <div className="mb-5">
+            <div className="mb-2">
               <div className="my-3">
                 <div className="text-sm font-medium sm:space-x-2 whitespace-nowrap mb-1">
                   From
@@ -148,8 +158,11 @@ const TimeRangePickerBodyFC = ({
                 <TimePickerInput
                   inputValue={inputValueFrom}
                   setInputValue={setInputValueFrom}
-                  setShowCalendar={setShowCalendar}
-                  error=""
+                  showCalendar={() => {
+                    onShowCalendar("from");
+                  }}
+                  error={fromInputValueError}
+                  focus={focusFromInput}
                 />
               </div>
               <div className="my-3">
@@ -159,12 +172,15 @@ const TimeRangePickerBodyFC = ({
                 <TimePickerInput
                   inputValue={inputValueTo}
                   setInputValue={setInputValueTo}
-                  setShowCalendar={setShowCalendar}
-                  error=""
+                  showCalendar={() => {
+                    onShowCalendar("to");
+                  }}
+                  error={toInputValueError}
+                  focus={focusToInput}
                 />
               </div>
             </div>
-            <div className="flex">
+            <div className="flex justify-end">
               <button
                 onClick={() =>
                   confirmValidRange({
