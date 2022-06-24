@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { debounce, isEmpty, throttle } from "lodash";
 import history from "history/browser";
 import {
@@ -82,42 +82,37 @@ export function Canary({
     setFilteredChecks(newFilteredChecks || []);
   }, []);
 
-  const handleFetch = throttle(() => {
+  const timerRef = useRef();
+
+  const handleFetch = async () => {
     if (url == null) {
       return;
     }
+    clearTimeout(timerRef.current);
     const timeRange = getParamsFromURL(window.location.search)?.timeRange;
     const params = encodeObjectToUrlSearchParams({
       start: isEmpty(timeRange) || timeRange === "undefined" ? "1h" : timeRange
     });
     setIsLoading(true);
-    fetch(`${url}?${params}`)
-      .then((result) => result.json())
-      .then((e) => {
-        if (componentUnMounted) {
-          return;
-        }
-        if (!isEmpty(e.error)) {
-          // eslint-disable-next-line no-console
-          console.error(e.error);
-        } else {
-          setChecks(e.checks);
-          setLastUpdated(new Date());
-        }
-      })
-      .finally(() => {
-        if (componentUnMounted) {
-          return;
-        }
-        setIsLoading(false);
-      });
-  }, 1000);
+    try {
+      const result = await fetch(`${url}?${params}`);
+      const data = await result.json();
+      if (componentUnMounted) {
+        return;
+      }
+      setChecks(data?.checks || []);
+      if (data?.checks?.length) {
+        setLastUpdated(new Date());
+      }
+    } catch (ex) {}
+    setIsLoading(false);
+    timerRef.current = setTimeout(handleFetch, refreshInterval);
+  };
 
   useEffect(() => {
     handleFetch();
-    const intervalRef = setInterval(handleFetch, refreshInterval);
     return () => {
-      clearInterval(intervalRef);
+      clearTimeout(timerRef.current);
       setComponentUnMounted(true);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
