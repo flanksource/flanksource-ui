@@ -6,6 +6,18 @@ import {
   rangeOptionsCategories
 } from "./rangeOptions";
 
+export const isSupportedRelativeRange = (from: string, to: string): boolean => {
+  for (let i = 0; i < rangeOptionsCategories.length; i++) {
+    let options = rangeOptionsCategories[i].options;
+    for (let j = 0; j < options.length; j++) {
+      if (options[j].from === from && options[i].to === to) {
+        return true;
+      }
+    }
+  }
+  return false;
+};
+
 export const getIntervalData = (interval: string): [number, ManipulateType] => {
   if (interval === "now") {
     return [0, "h"];

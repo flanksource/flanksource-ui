@@ -2,11 +2,16 @@ import clsx from "clsx";
 import { memo, useCallback, useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { TimeRangeList } from "./TimeRangeList";
-import { storage, convertRangeValue } from "./helpers";
+import {
+  storage,
+  convertRangeValue,
+  isSupportedRelativeRange
+} from "./helpers";
 import { RecentlyRanges } from "./RecentlyRanges";
 import { displayTimeFormat, RangeOption } from "./rangeOptions";
 import { TimePickerCalendar } from "./TimePickerCalendar";
 import { TimePickerInput } from "./TimePickerInput";
+import { FiAlertTriangle } from "react-icons/fi";
 
 type TimeRangePickerBodyProps = {
   isOpen: any;
@@ -31,8 +36,7 @@ const TimeRangePickerBodyFC = ({
   const [inputValueFrom, setInputValueFrom] = useState(currentRange.from);
   const [inputValueTo, setInputValueTo] = useState(currentRange.to);
   const [valueType, setValueType] = useState<"from" | "to">();
-  const [fromInputValueError, setFromInputValueError] = useState<string>();
-  const [toInputValueError, setToInputValueError] = useState<string>();
+  const [inputValueError, setInputValueError] = useState<string>();
   const [focusFromInput, setFocusFromInput] = useState<boolean>(true);
   const [focusToInput, setFocusToInput] = useState<boolean>();
 
@@ -63,14 +67,12 @@ const TimeRangePickerBodyFC = ({
       const from = dayjs(value).format(displayTimeFormat);
       setInputValueFrom(from);
       setInputValueTo(dayjs(inputValueTo).isValid() ? inputValueTo : "");
-      setFromInputValueError("");
       setFocusToInput(true);
       setFocusFromInput(false);
     } else if (valueType === "to") {
       const to = dayjs(value).format(displayTimeFormat);
       setInputValueTo(to);
       setInputValueFrom(dayjs(inputValueFrom).isValid() ? inputValueFrom : "");
-      setToInputValueError("");
       setFocusFromInput(true);
       setFocusToInput(false);
     }
@@ -78,10 +80,14 @@ const TimeRangePickerBodyFC = ({
     setShowCalendar(false);
   };
 
+  const isValidDate = (val: string): boolean => {
+    return (new Date(val) as any) == "Invalid Date" ? false : true;
+  };
+
   const applyTimeRange = useCallback(
     (range: RangeOption) => {
-      changeRangeValue(range);
-      if (dayjs(range.from).isValid() && dayjs(range.to).isValid()) {
+      setInputValueError("");
+      if (isValidDate(range.from) && isValidDate(range.to)) {
         changeRecentRangesList({
           from: dayjs(range.from).toISOString(),
           to: dayjs(range.to).toISOString()
@@ -90,9 +96,18 @@ const TimeRangePickerBodyFC = ({
         closePicker();
         setFocusFromInput(true);
         setFocusToInput(false);
+        changeRangeValue(range);
+      } else if (isSupportedRelativeRange(range.from, range.to)) {
+        changeRecentRangesList({
+          ...range
+        });
+        setShowCalendar(false);
+        closePicker();
+        setFocusFromInput(true);
+        setFocusToInput(false);
+        changeRangeValue(range);
       } else {
-        setFromInputValueError(!range.from ? "Please provide value" : "");
-        setToInputValueError(!range.to ? "Please provide value" : "");
+        setInputValueError("Please provide valid values");
       }
     },
     [changeRangeValue, changeRecentRangesList, closePicker]
@@ -161,7 +176,7 @@ const TimeRangePickerBodyFC = ({
                   showCalendar={() => {
                     onShowCalendar("from");
                   }}
-                  error={fromInputValueError}
+                  error=""
                   focus={focusFromInput}
                 />
               </div>
@@ -175,10 +190,18 @@ const TimeRangePickerBodyFC = ({
                   showCalendar={() => {
                     onShowCalendar("to");
                   }}
-                  error={toInputValueError}
+                  error=""
                   focus={focusToInput}
                 />
               </div>
+              {inputValueError && (
+                <div className="relative flex items-center mt-1 text-red-500 text-xs font-medium rounded-sm pt-1 pb-1 px-2.5 z-0">
+                  <div className="mt-0.5 mr-1">
+                    <FiAlertTriangle />
+                  </div>
+                  <div>{inputValueError}</div>
+                </div>
+              )}
             </div>
             <div className="flex justify-end">
               <button

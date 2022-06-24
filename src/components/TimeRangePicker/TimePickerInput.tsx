@@ -40,7 +40,6 @@ export const TimePickerInputFC = ({
               "border-red-300": error
             }
           )}
-          readOnly
           ref={inputRef}
         />
         <button
