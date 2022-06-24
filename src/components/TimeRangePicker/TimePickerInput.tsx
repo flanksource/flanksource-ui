@@ -34,7 +34,6 @@ export const TimePickerInputFC = ({
         <input
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
-          onClick={showCalendar}
           className={clsx(
             "px-1 py-0.5 rounded-sm flex-grow focus:border-none",
             {
