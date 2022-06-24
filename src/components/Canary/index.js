@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { debounce, isEmpty, throttle } from "lodash";
 import history from "history/browser";
 import {
@@ -25,6 +25,7 @@ import { TristateToggle } from "../TristateToggle";
 import { StatCard } from "../StatCard";
 import { isHealthy } from "./filter";
 import mixins from "../../utils/mixins.module.css";
+import { Loading } from "../Loading";
 
 const getSearchParams = () => getParamsFromURL(window.location.search);
 
@@ -81,42 +82,37 @@ export function Canary({
     setFilteredChecks(newFilteredChecks || []);
   }, []);
 
-  const handleFetch = throttle(() => {
+  const timerRef = useRef();
+
+  const handleFetch = throttle(async () => {
     if (url == null) {
       return;
     }
+    clearTimeout(timerRef.current);
     const timeRange = getParamsFromURL(window.location.search)?.timeRange;
     const params = encodeObjectToUrlSearchParams({
       start: isEmpty(timeRange) || timeRange === "undefined" ? "1h" : timeRange
     });
     setIsLoading(true);
-    fetch(`${url}?${params}`)
-      .then((result) => result.json())
-      .then((e) => {
-        if (componentUnMounted) {
-          return;
-        }
-        if (!isEmpty(e.error)) {
-          // eslint-disable-next-line no-console
-          console.error(e.error);
-        } else {
-          setChecks(e.checks);
-          setLastUpdated(new Date());
-        }
-      })
-      .finally(() => {
-        if (componentUnMounted) {
-          return;
-        }
-        setIsLoading(false);
-      });
+    try {
+      const result = await fetch(`${url}?${params}`);
+      const data = await result.json();
+      if (componentUnMounted) {
+        return;
+      }
+      setChecks(data?.checks || []);
+      if (data?.checks?.length) {
+        setLastUpdated(new Date());
+      }
+    } catch (ex) {}
+    setIsLoading(false);
+    timerRef.current = setTimeout(handleFetch, refreshInterval);
   }, 1000);
 
   useEffect(() => {
     handleFetch();
-    const intervalRef = setInterval(handleFetch, refreshInterval);
     return () => {
-      clearInterval(intervalRef);
+      clearTimeout(timerRef.current);
       setComponentUnMounted(true);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -138,6 +134,10 @@ export function Canary({
   const handleSearch = debounce((value) => {
     updateParams({ query: value });
   }, 400);
+
+  if (isLoading && !checks.length) {
+    return <Loading className="mt-16" text="Please wait, Loading ..." />;
+  }
 
   return (
     <div className="flex flex-row place-content-center">
