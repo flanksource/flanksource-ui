@@ -84,7 +84,7 @@ export function Canary({
 
   const timerRef = useRef();
 
-  const handleFetch = async () => {
+  const handleFetch = throttle(async () => {
     if (url == null) {
       return;
     }
@@ -107,7 +107,7 @@ export function Canary({
     } catch (ex) {}
     setIsLoading(false);
     timerRef.current = setTimeout(handleFetch, refreshInterval);
-  };
+  }, 1000);
 
   useEffect(() => {
     handleFetch();
