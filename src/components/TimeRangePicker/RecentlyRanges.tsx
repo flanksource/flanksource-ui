@@ -24,7 +24,7 @@ const RecentlyRangesFC = ({
           type="button"
           onClick={() => applyTimeRange(range)}
           key={`${dayjs(range.from).format()}${dayjs(range.to).format()}`}
-          className="hover:bg-gray-100 flex justify-between items-center w-full cursor-pointer py-1.5 px-3 text-sm"
+          className="hover:bg-gray-100 flex justify-between w-full cursor-pointer py-1.5 px-3 text-sm"
         >
           {`${dayjs(range.from).format(displayTimeFormat)} to ${dayjs(
             range.to

@@ -79,7 +79,7 @@ export const convertRangeValue = (
     .format(format);
 };
 
-export const createValueForInput = (value: Date): string =>
+export const createValueForInput = (value: Date | string): string =>
   dayjs(value).format(displayTimeFormat);
 
 export const createDisplayValue = (range: RangeOption) => {
@@ -95,7 +95,9 @@ export const createDisplayValue = (range: RangeOption) => {
     return label;
   }
   if (range.from && range.to) {
-    return `${range.from} to ${range.to}`;
+    return `${createValueForInput(range.from)} to ${createValueForInput(
+      range.to
+    )}`;
   }
   return "";
 };
