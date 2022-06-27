@@ -39,7 +39,7 @@ export const TimeRangeListFC = ({
       {rangeOptionsCategories.map((category, index) => {
         return (
           <div key={category.name}>
-            <div className="text-gray-500 text-base sm:space-x-2 pl-1 whitespace-nowrap font-semibold">
+            <div className="text-gray-500 text-base sm:space-x-2 pl-1 my-1 whitespace-nowrap font-semibold">
               {category.name}
             </div>
             {category.options.map((option) => {
