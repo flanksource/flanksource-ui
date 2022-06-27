@@ -148,7 +148,7 @@ const TimeRangePickerBodyFC = ({
     >
       <div
         className={clsx(
-          "absolute shadow-lg shadow-gray-200",
+          "absolute shadow-lg shadow-gray-200 z-50",
           {
             calendarRight: pickerLeft < 300
           },
