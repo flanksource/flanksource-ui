@@ -13,6 +13,7 @@ import {
   IncidentRespondentsOption
 } from "./select-components";
 import { priorities } from "./data";
+import { AddResponder } from "./AddResponder";
 
 export const IncidentDetails = ({
   incident,
@@ -97,6 +98,7 @@ export const IncidentDetails = ({
           Share
         </button>
       </div>
+      <AddResponder />
       {/* <IncidentDetailsRow
         title="Chart Room"
         value={

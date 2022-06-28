@@ -134,7 +134,8 @@ module.exports = {
         "btn-round-sm": "2.125rem",
         "btn-round-md": "2.375rem",
         "btn-round-lg": "2.625rem",
-        "btn-round-xl": "3.125rem"
+        "btn-round-xl": "3.125rem",
+        "half-screen": "50vh"
       },
       minWidth: {
         8: "2rem",

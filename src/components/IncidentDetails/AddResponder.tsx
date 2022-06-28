@@ -1,20 +1,17 @@
-import React, { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { components } from "react-select";
 import { SiJira } from "react-icons/si";
 import { MdEmail } from "react-icons/md";
 import { GrVmware } from "react-icons/gr";
-import PropTypes from "prop-types";
 import clsx from "clsx";
 import { Modal } from "../Modal";
 import { Select } from "../Select";
-import { ConfigItem } from "../ConfigItem/config-item";
 import { Icon } from "../Icon";
-import { TextInput } from "../TextInput";
 
 const RESPONDER_TYPE = [
-  { type: "Email", icon: MdEmail, customInput: true },
+  { type: "Email", icon: MdEmail },
   { type: "Jira", icon: SiJira },
-  { type: "ServiceNow", icon: "SN" },
+  { type: "ServiceNow", icon: "service-now" },
   { type: "CA", icon: "ca" },
   { type: "AWS Support", icon: "aws" },
   { type: "AWS AMS Service Request", icon: "aws" },
@@ -82,7 +79,7 @@ export const AddResponder = ({ onAddResponder }) => {
         open={isOpen}
         size="small"
       >
-        <div className="my-6">
+        <div className="my-6 h-half-screen">
           <Select
             name="responderType"
             options={options}
@@ -91,23 +88,6 @@ export const AddResponder = ({ onAddResponder }) => {
             className="mb-3"
             components={{ Option: ResponderOptions }}
           />
-          {selectedType?.customInput ? (
-            <TextInput
-              id="responder"
-              type="email"
-              placeholder="example@company.com"
-              className="w-full"
-              value={responder}
-              onChange={(e) => setResponder(e.target.value)}
-            />
-          ) : (
-            <ConfigItem
-              onSelect={setResponder}
-              type={selectedType?.type}
-              placeholder="Select responder..."
-              isDisabled={!selectedType}
-            />
-          )}
         </div>
         <button
           disabled={!(responder && selectedType)}
@@ -123,8 +103,4 @@ export const AddResponder = ({ onAddResponder }) => {
       </Modal>
     </div>
   );
-};
-
-AddResponder.propTypes = {
-  onAddResponder: PropTypes.func.isRequired
 };
