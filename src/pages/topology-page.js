@@ -31,11 +31,15 @@ export function TopologyPage() {
         toastError(res.error);
         return;
       }
-      const topology = filter(
+      let topology = filter(
         res.data,
         (item) =>
           (item.name || item.title) && item.type !== "summary" && item.id !== id
       );
+      if (!topology.length) {
+        topology = [res.data.find((x) => x.id === id)];
+      }
+      
       setTopology(topology);
     } catch (ex) {
       toastError(ex);
