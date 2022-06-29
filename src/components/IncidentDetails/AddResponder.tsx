@@ -3,10 +3,26 @@ import { components } from "react-select";
 import { SiJira } from "react-icons/si";
 import { MdEmail } from "react-icons/md";
 import { GrVmware } from "react-icons/gr";
+import { useForm } from "react-hook-form";
+import { FiUser } from "react-icons/fi";
 import clsx from "clsx";
 import { Modal } from "../Modal";
 import { Select } from "../Select";
 import { Icon } from "../Icon";
+
+import {
+  AwsServiceRequest,
+  AwsSupport,
+  CA,
+  Email,
+  Jira,
+  Microsoft,
+  Oracle,
+  Person,
+  Redhat,
+  ServiceNow,
+  VMWare
+} from "./ResponderTypes";
 
 const RESPONDER_TYPE = [
   { type: "Email", icon: MdEmail },
@@ -18,7 +34,8 @@ const RESPONDER_TYPE = [
   { type: "Redhat", icon: "redhat" },
   { type: "Oracle", icon: "oracle_icon" },
   { type: "Microsoft", icon: "microsoft" },
-  { type: "VMWare", icon: GrVmware }
+  { type: "VMWare", icon: GrVmware },
+  { type: "Person", icon: FiUser }
 ];
 
 const ResponderOptions = ({ children, ...props }) => {
@@ -38,10 +55,29 @@ const ResponderOptions = ({ children, ...props }) => {
   );
 };
 
-export const AddResponder = ({ onAddResponder }) => {
+export const AddResponder = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedType, setSelectedType] = useState(null);
-  const [responder, setResponder] = useState(null);
+  const {
+    control,
+    formState: { errors },
+    handleSubmit,
+    getValues,
+    reset
+  } = useForm({
+    defaultValues: {
+      to: "",
+      subject: "",
+      body: "",
+      category: "",
+      description: "",
+      project: "",
+      issueType: "",
+      summary: "",
+      product: "",
+      person: ""
+    }
+  });
 
   const options = useMemo(
     () =>
@@ -56,13 +92,49 @@ export const AddResponder = ({ onAddResponder }) => {
   const onCloseModal = useCallback(() => {
     setIsOpen(false);
     setSelectedType(null);
-    setResponder(null);
   }, []);
 
   const onChangeResponderType = useCallback((responderType) => {
     setSelectedType(responderType);
-    setResponder(null);
+    reset();
   }, []);
+
+  const getResponderTypeForm = () => {
+    switch (selectedType?.type) {
+      case "Email":
+        return <Email control={control} errors={errors} />;
+      case "Jira":
+        return <Jira control={control} errors={errors} />;
+      case "ServiceNow":
+        return <ServiceNow control={control} errors={errors} />;
+      case "CA":
+        return <CA control={control} errors={errors} />;
+      case "AWS Support":
+        return <AwsSupport control={control} errors={errors} />;
+      case "AWS AMS Service Request":
+        return <AwsServiceRequest control={control} errors={errors} />;
+      case "Redhat":
+        return <Redhat control={control} errors={errors} />;
+      case "Oracle":
+        return <Oracle control={control} errors={errors} />;
+      case "Microsoft":
+        return <Microsoft control={control} errors={errors} />;
+      case "VMWare":
+        return <VMWare control={control} errors={errors} />;
+      case "Person":
+        return <Person control={control} errors={errors} />;
+      default:
+        return null;
+    }
+  };
+
+  const onSubmit = (data, e) => {
+    console.log(data, e);
+  };
+
+  const onError = (errors, e) => {
+    console.log(errors, e);
+  };
 
   return (
     <div className="flex flex-1 justify-end">
@@ -79,27 +151,29 @@ export const AddResponder = ({ onAddResponder }) => {
         open={isOpen}
         size="small"
       >
-        <div className="my-6 h-half-screen">
-          <Select
-            name="responderType"
-            options={options}
-            onChange={onChangeResponderType}
-            placeholder="Responder type..."
-            className="mb-3"
-            components={{ Option: ResponderOptions }}
-          />
+        <div className="my-6 min-h-50vh">
+          <form onSubmit={handleSubmit(onSubmit, onError)}>
+            <Select
+              name="responderType"
+              options={options}
+              onChange={onChangeResponderType}
+              placeholder="Responder type..."
+              className="mb-3"
+              components={{ Option: ResponderOptions }}
+            />
+            <div className="my-2">{getResponderTypeForm()}</div>
+            <button
+              disabled={!selectedType}
+              type="submit"
+              className={clsx("w-full", {
+                "btn-disabled": !selectedType,
+                "btn-primary": selectedType
+              })}
+            >
+              Add Responder
+            </button>
+          </form>
         </div>
-        <button
-          disabled={!(responder && selectedType)}
-          type="button"
-          className={clsx("w-full", {
-            "btn-disabled": !(responder && selectedType),
-            "btn-primary": responder && selectedType
-          })}
-          onClick={() => onAddResponder(responder, selectedType)}
-        >
-          Add Responder
-        </button>
       </Modal>
     </div>
   );

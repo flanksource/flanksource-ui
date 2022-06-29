@@ -94,10 +94,12 @@ module.exports = {
       maxHeight: {
         large: "250px",
         medium: "200px",
-        small: "125px"
+        small: "125px",
+        "50vh": "50vh"
       },
       minHeight: {
-        12: "3rem"
+        12: "3rem",
+        "50vh": "50vh"
       },
       maxWidth: {
         full: "100%",
@@ -135,7 +137,7 @@ module.exports = {
         "btn-round-md": "2.375rem",
         "btn-round-lg": "2.625rem",
         "btn-round-xl": "3.125rem",
-        "half-screen": "50vh"
+        "50vh": "50vh"
       },
       minWidth: {
         8: "2rem",
