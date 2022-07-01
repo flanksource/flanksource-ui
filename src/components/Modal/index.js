@@ -90,14 +90,16 @@ export function Modal({
                   {children}
                 </div>
 
-                <div
-                  className={clsx(
-                    "flex my-2 px-8 justify-end",
-                    footerClassName
-                  )}
-                >
-                  {actions?.length && actions}
-                </div>
+                {Boolean(actions?.length) && (
+                  <div
+                    className={clsx(
+                      "flex my-2 px-8 justify-end",
+                      footerClassName
+                    )}
+                  >
+                    {actions?.length && actions}
+                  </div>
+                )}
               </Wrapper>
             </div>
           </Transition.Child>

@@ -1,15 +1,12 @@
-import { useState, useMemo, useCallback } from "react";
-import { components } from "react-select";
+import { useState, useCallback, MouseEventHandler } from "react";
+import clsx from "clsx";
 import { SiJira } from "react-icons/si";
 import { MdEmail } from "react-icons/md";
 import { GrVmware } from "react-icons/gr";
 import { useForm } from "react-hook-form";
 import { FiUser } from "react-icons/fi";
-import clsx from "clsx";
-import { Modal } from "../Modal";
-import { Select } from "../Select";
-import { Icon } from "../Icon";
 
+import { Modal } from "../Modal";
 import {
   AwsServiceRequest,
   AwsSupport,
@@ -23,47 +20,81 @@ import {
   ServiceNow,
   VMWare
 } from "./ResponderTypes";
+import { OptionsList } from "../OptionsList";
+import { Step, StepProgressBar } from "../StepProgressBar";
+import { Icon } from "../Icon";
 
-const RESPONDER_TYPE = [
-  { type: "Email", icon: MdEmail },
-  { type: "Jira", icon: SiJira },
-  { type: "ServiceNow", icon: "service-now" },
-  { type: "CA", icon: "ca" },
-  { type: "AWS Support", icon: "aws" },
-  { type: "AWS AMS Service Request", icon: "aws" },
-  { type: "Redhat", icon: "redhat" },
-  { type: "Oracle", icon: "oracle_icon" },
-  { type: "Microsoft", icon: "microsoft" },
-  { type: "VMWare", icon: GrVmware },
-  { type: "Person", icon: FiUser }
+type Action = {
+  label: string;
+  disabled: boolean;
+  handler: MouseEventHandler<HTMLButtonElement>;
+};
+
+type ActionButtonGroupProps = {
+  previousAction?: Action;
+  nextAction?: Action;
+};
+
+const options = [
+  { label: "Email", value: "Email", icon: MdEmail },
+  { label: "Jira", value: "Jira", icon: SiJira },
+  { label: "ServiceNow", value: "ServiceNow", icon: "service-now" },
+  { label: "CA", value: "CA", icon: "ca" },
+  { label: "AWS Support", value: "AWS Support", icon: "aws" },
+  {
+    label: "AWS AMS Service Request",
+    value: "AWS AMS Service Request",
+    icon: "aws"
+  },
+  { label: "Redhat", value: "Redhat", icon: "redhat" },
+  { label: "Oracle", value: "Oracle", icon: "oracle_icon" },
+  { label: "Microsoft", value: "Microsoft", icon: "microsoft" },
+  { label: "VMWare", value: "VMWare", icon: GrVmware },
+  { label: "Person", value: "Person", icon: FiUser }
 ];
 
-const ResponderOptions = ({ children, ...props }) => {
-  const { icon: IconName } = props.data;
-  return (
-    <components.Option {...props}>
-      <div className="flex flex-row gap-1.5 text-sm items-center">
-        {IconName &&
-          (typeof IconName === "string" ? (
-            <Icon name={IconName} />
-          ) : (
-            <IconName />
-          ))}
-        {children}
-      </div>
-    </components.Option>
-  );
+const keyToLabelMap = {
+  to: "To",
+  subject: "Subject",
+  body: "Body",
+  category: "Category",
+  description: "Description",
+  project: "Project",
+  issueType: "Issue Type",
+  summary: "Summary",
+  product: "Product",
+  person: "Person"
 };
 
 export const AddResponder = () => {
+  const [steps, setSteps] = useState([
+    {
+      label: "Responder Type",
+      position: 1,
+      inProgress: true,
+      finished: false
+    },
+    {
+      label: "Details",
+      position: 2,
+      inProgress: false,
+      finished: false
+    },
+    {
+      label: "Preview",
+      position: 3,
+      inProgress: false,
+      finished: false
+    }
+  ]);
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedType, setSelectedType] = useState(null);
+  const [selectedType, setSelectedType] = useState<any>(null);
   const {
     control,
     formState: { errors },
-    handleSubmit,
     getValues,
-    reset
+    reset,
+    handleSubmit
   } = useForm({
     defaultValues: {
       to: "",
@@ -79,28 +110,27 @@ export const AddResponder = () => {
     }
   });
 
-  const options = useMemo(
-    () =>
-      RESPONDER_TYPE.map((item) => ({
-        ...item,
-        value: item.type,
-        label: item.type
-      })),
-    []
-  );
-
   const onCloseModal = useCallback(() => {
     setIsOpen(false);
     setSelectedType(null);
   }, []);
 
-  const onChangeResponderType = useCallback((responderType) => {
-    setSelectedType(responderType);
-    reset();
-  }, []);
+  const goToStep = (nextStep: Step, currentStep: Step) => {
+    currentStep.inProgress = false;
+    currentStep.finished = true;
+    for (let i = steps.length - 1; i >= 0; i--) {
+      steps[i].inProgress = false;
+      steps[i].finished = false;
+      if (steps[i] === nextStep) {
+        steps[i].inProgress = true;
+        break;
+      }
+    }
+    setSteps([...steps]);
+  };
 
   const getResponderTypeForm = () => {
-    switch (selectedType?.type) {
+    switch (selectedType.value) {
       case "Email":
         return <Email control={control} errors={errors} />;
       case "Jira":
@@ -128,12 +158,28 @@ export const AddResponder = () => {
     }
   };
 
-  const onSubmit = (data, e) => {
-    console.log(data, e);
+  const onSubmit = async () => {
+    await handleSubmit(
+      () => {
+        goToStep(steps[2], steps[1]);
+      },
+      () => {}
+    )();
   };
 
-  const onError = (errors, e) => {
-    console.log(errors, e);
+  const getResponderDetailsList = () => {
+    const values = getValues();
+    const options: any[] = [];
+    Object.keys(values).forEach((key) => {
+      if (!values[key]) {
+        return;
+      }
+      options.push({
+        label: keyToLabelMap[key],
+        value: values[key]
+      });
+    });
+    return options;
   };
 
   return (
@@ -145,36 +191,165 @@ export const AddResponder = () => {
       >
         Add Responder
       </button>
-      <Modal
-        title="Add Responder"
-        onClose={onCloseModal}
-        open={isOpen}
-        size="small"
-      >
-        <div className="my-6 min-h-50vh">
-          <form onSubmit={handleSubmit(onSubmit, onError)}>
-            <Select
-              name="responderType"
-              options={options}
-              onChange={onChangeResponderType}
-              placeholder="Responder type..."
-              className="mb-3"
-              components={{ Option: ResponderOptions }}
-            />
-            <div className="my-2">{getResponderTypeForm()}</div>
-            <button
-              disabled={!selectedType}
-              type="submit"
-              className={clsx("w-full", {
-                "btn-disabled": !selectedType,
-                "btn-primary": selectedType
-              })}
-            >
-              Add Responder
-            </button>
-          </form>
+      <Modal title="Add Responder" onClose={onCloseModal} open={isOpen}>
+        <div className="mt-3">
+          <StepProgressBar className="mb-4" steps={steps} />
+          {steps[0].inProgress && (
+            <>
+              <label
+                htmlFor="responder-types"
+                className="block text-base font-medium text-gray-500 my-2 font-bold"
+              >
+                Responder Types
+              </label>
+              <OptionsList
+                name="responder-types"
+                options={options}
+                onSelect={(e: any) => {
+                  setSelectedType(e);
+                  reset();
+                }}
+                value={selectedType}
+                className="h-64 overflow-y-scroll m-1"
+              />
+              <ActionButtonGroup
+                nextAction={{
+                  label: "Next",
+                  disabled: !selectedType,
+                  handler: () => goToStep(steps[1], steps[0])
+                }}
+              />
+            </>
+          )}
+          {steps[1].inProgress && (
+            <div>
+              <div className="bg-white shadow-md sm:rounded-lg px-3 py-3">
+                <label
+                  htmlFor="responder-types"
+                  className="block text-base font-medium text-gray-500 my-2 font-bold"
+                >
+                  Responder Details
+                </label>
+                {getResponderTypeForm()}
+              </div>
+              <ActionButtonGroup
+                nextAction={{
+                  label: "Next",
+                  disabled: !selectedType,
+                  handler: onSubmit
+                }}
+                previousAction={{
+                  label: "Previous",
+                  disabled: !selectedType,
+                  handler: () => goToStep(steps[0], steps[1])
+                }}
+              />
+            </div>
+          )}
+          {steps[2].inProgress && (
+            <div>
+              <div className="bg-white shadow overflow-hidden sm:rounded-lg">
+                <div className="px-4 py-5 sm:px-6">
+                  <h3 className="text-lg leading-6 font-medium text-gray-900">
+                    {selectedType.icon &&
+                      (typeof selectedType.icon === "string" ? (
+                        <Icon
+                          className="inline-block"
+                          name={selectedType.icon}
+                        />
+                      ) : (
+                        <selectedType.icon className="inline-block" />
+                      ))}{" "}
+                    {selectedType.label} Details
+                  </h3>
+                  <p className="mt-1 max-w-2xl text-sm text-gray-500 hidden">
+                    Personal details and application.
+                  </p>
+                </div>
+                <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
+                  <dl className="sm:divide-y sm:divide-gray-200">
+                    {getResponderDetailsList().map((option) => {
+                      return (
+                        <div
+                          key={option.label}
+                          className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6"
+                        >
+                          <dt className="text-sm font-medium text-gray-500">
+                            {option.label}
+                          </dt>
+                          <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                            {option.value}
+                          </dd>
+                        </div>
+                      );
+                    })}
+                  </dl>
+                </div>
+              </div>
+              <ActionButtonGroup
+                nextAction={{
+                  label: "Save",
+                  disabled: !selectedType,
+                  handler: () => {
+                    console.log("saved");
+                  }
+                }}
+                previousAction={{
+                  label: "Previous",
+                  disabled: !selectedType,
+                  handler: () => goToStep(steps[1], steps[2])
+                }}
+              />
+            </div>
+          )}
         </div>
       </Modal>
+    </div>
+  );
+};
+
+const ActionButtonGroup = ({
+  previousAction,
+  nextAction
+}: ActionButtonGroupProps) => {
+  return (
+    <div className="flex mb-4">
+      <div className="flex flex-1">
+        {previousAction && (
+          <button
+            disabled={previousAction.disabled}
+            type="submit"
+            className={clsx(
+              "inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm",
+              "mt-4",
+              {
+                "btn-disabled": previousAction.disabled
+              }
+            )}
+            onClick={previousAction.handler}
+          >
+            {previousAction.label}
+          </button>
+        )}
+      </div>
+      <div className="flex flex-1 justify-end">
+        {nextAction && (
+          <button
+            disabled={nextAction.disabled}
+            type="submit"
+            className={clsx(
+              "inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm",
+              "mt-4",
+              {
+                "btn-disabled": nextAction.disabled
+              }
+            )}
+            onClick={nextAction.handler}
+          >
+            {nextAction.label}
+          </button>
+        )}
+      </div>
     </div>
   );
 };
