@@ -70,23 +70,25 @@ export const LogsTable = ({ logs: logsParam, actions, variant, viewOnly }) => {
           return (
             <div className="flex justify-between">
               <span className="align-middle my-auto">Message</span>
-              <div className="flex justify-end -m-2 flex-wrap">
-                <div className="p-2">
-                  <button
-                    type="button"
-                    disabled={!hasSelectedRows}
-                    onClick={() => {
-                      setLines(selectedFlatRows.map((d) => d.original));
-                      setAttachAsAsset(true);
-                    }}
-                    className={clsx(
-                      hasSelectedRows ? "btn-primary" : "btn-disabled"
-                    )}
-                  >
-                    Attach as Evidence
-                  </button>
+              {!viewOnly && (
+                <div className="flex justify-end -m-2 flex-wrap">
+                  <div className="p-2">
+                    <button
+                      type="button"
+                      disabled={!hasSelectedRows}
+                      onClick={() => {
+                        setLines(selectedFlatRows.map((d) => d.original));
+                        setAttachAsAsset(true);
+                      }}
+                      className={clsx(
+                        hasSelectedRows ? "btn-primary" : "btn-disabled"
+                      )}
+                    >
+                      Attach as Evidence
+                    </button>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           );
         },
