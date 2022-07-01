@@ -1,8 +1,16 @@
+import { MemoryRouter } from "react-router-dom";
 import { LogsViewer } from "./index";
 
 export default {
   title: "LogsViewer",
-  component: LogsViewer
+  component: LogsViewer,
+  decorators: [
+    (Story) => (
+      <MemoryRouter>
+        <Story />
+      </MemoryRouter>
+    )
+  ]
 };
 
 const logsExample = [

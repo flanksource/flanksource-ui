@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import { useEffect, useState, useMemo, useCallback } from "react";
 import toast from "react-hot-toast";
 import {
@@ -14,6 +15,8 @@ import { Loading } from "../../components/Loading";
 import { JSONViewer } from "../../components/JSONViewer";
 import { BreadcrumbNav } from "../../components/BreadcrumbNav";
 import { Button } from "../../components/Button";
+import { EvidenceType } from "../../api/services/evidence";
+import { AttachEvidenceDialog } from "../../components/AttachEvidenceDialog";
 
 export function ConfigDetailsPage() {
   const navigate = useNavigate();
@@ -21,6 +24,8 @@ export function ConfigDetailsPage() {
   const [params, setParams] = useSearchParams();
   const [isLoading, setIsLoading] = useState(true);
   const [showIncidentModal, setShowIncidentModal] = useState(false);
+  const [attachAsAsset, setAttachAsAsset] = useState(false);
+  const [dialogKey, setDialogKey] = useState(0);
   const [checked, setChecked] = useState({});
   const [configDetails, setConfigDetails] = useState();
   const { setTitle, setTabRight } = useOutletContext();
@@ -118,20 +123,25 @@ export function ConfigDetailsPage() {
             return Promise.resolve();
           }}
         />
-        <Button
-          text="Create Incident"
+        <button
+          type="button"
           onClick={() => {
-            setShowIncidentModal(true);
-            return Promise.resolve();
+            setAttachAsAsset(true);
+            setDialogKey(Math.floor(Math.random() * 1000));
           }}
-        />
+          className={clsx(
+            Object.keys(checked).length === 0 ? "btn-disabled" : "btn-primary"
+          )}
+        >
+          Attach as Evidence
+        </button>
       </div>
     ) : null;
 
   useEffect(() => {
     setTabRight(selectionControls);
     return () => setTabRight(null);
-  }, [checked]);
+  }, [checked, showIncidentModal]);
 
   return (
     <div className="flex flex-col items-start">
@@ -150,27 +160,22 @@ export function ConfigDetailsPage() {
         )}
       </div>
 
-      <Modal
-        open={showIncidentModal}
-        onClose={() => setShowIncidentModal(false)}
-        size="small"
-        title="Create New Incident from Selected Evidence"
-      >
-        <IncidentCreate
-          callback={(response) => {
-            navigate(`/incidents/${response.id}`, { replace: true });
-          }}
-          evidence={{
-            configId: id,
-            configName: configDetails?.name,
-            lines: configLines,
-            type: "config",
-            selected_lines: Object.fromEntries(
-              Object.keys(checked).map((n) => [n, configLines[n]])
-            )
-          }}
-        />
-      </Modal>
+      <AttachEvidenceDialog
+        key={`link-${dialogKey}`}
+        isOpen={attachAsAsset}
+        onClose={() => setAttachAsAsset(false)}
+        evidence={{
+          id,
+          lines: configLines,
+          selected_lines: Object.fromEntries(
+            Object.keys(checked).map((n) => [n, configLines[n]])
+          )
+        }}
+        type={EvidenceType.Config}
+        callback={(success) => {
+          setChecked({});
+        }}
+      />
     </div>
   );
 }

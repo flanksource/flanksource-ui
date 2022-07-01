@@ -16,12 +16,19 @@ const nextNodePath = {
   factor: "solution"
 };
 
+interface IProps {
+  node: any;
+  api: { [k: string]: any };
+  onHypothesisCreated: () => void;
+  isOpen: boolean;
+}
+
 export const CreateHypothesis = ({
   node,
   api,
   onHypothesisCreated,
   isOpen
-}) => {
+}: IProps) => {
   const { user } = useUser();
   const { control, getValues, setValue, handleSubmit, watch } = useForm({
     defaultValues: {
@@ -36,7 +43,7 @@ export const CreateHypothesis = ({
     }
   });
   const evidenceValue = watch("evidence");
-  const handleComment = (nodeId, value) =>
+  const handleComment = (nodeId: string, value: string) =>
     createComment({
       user,
       incidentId: node.incident_id,

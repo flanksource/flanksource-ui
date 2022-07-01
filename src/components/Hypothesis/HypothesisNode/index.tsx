@@ -27,7 +27,19 @@ const propsByType = (type: string) => {
   return {};
 };
 
-export const HypothesisNode = (props) => {
+interface IHypothesisNode {
+  [k: string]: any;
+}
+
+interface IHypothesisNodeProps {
+  node: IHypothesisNode;
+  setModalIsOpen: (v: boolean) => void;
+  setSelectNode: (v: IHypothesisNode) => void;
+  setCreateHypothesisModalIsOpen: (v: boolean) => void;
+  api: { [k: string]: any };
+}
+
+export const HypothesisNode = (props: IHypothesisNodeProps) => {
   const {
     node,
     setModalIsOpen,

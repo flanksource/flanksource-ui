@@ -6,7 +6,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import * as yup from "yup";
 import { createEvidence, EvidenceType } from "../../../api/services/evidence";
-import { createHypothesis } from "../../../api/services/hypothesis";
+import { createHypothesisOld } from "../../../api/services/hypothesis";
 import { createIncident } from "../../../api/services/incident";
 import { useUser } from "../../../context";
 import { Dropdown } from "../../Dropdown";
@@ -63,8 +63,9 @@ export function IncidentCreate({ callback, evidence, ...rest }) {
     payload.id = uuidv4();
     // TODO(ciju): Handle failure cases
     try {
-      const created = await createIncident(user, payload);
-      const hypothesis = await createHypothesis(user, uuidv4(), payload.id, {
+      const { data: incident, error } = await createIncident(user, payload);
+
+      const hypothesis = await createHypothesisOld(user, uuidv4(), payload.id, {
         title: payload.title,
         type: "root",
         status: "possible"
@@ -106,9 +107,9 @@ export function IncidentCreate({ callback, evidence, ...rest }) {
       });
 
       if (callback != null) {
-        callback(created.data[0]);
+        callback(incident);
       } else {
-        navigate(`/incidents/${created.data[0].id}`, { replace: true });
+        navigate(`/incidents/${incident.id}`, { replace: true });
       }
     } catch (e) {
       toastError(e);

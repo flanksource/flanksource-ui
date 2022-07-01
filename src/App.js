@@ -31,6 +31,7 @@ import { TopologyPage as ExamplesTopologyPage } from "./pages/Examples/Topology/
 import { TopologySelectorModalPage } from "./pages/Examples/TopologySelectorModalPage/TopologySelectorModalPage";
 import { HealthPage } from "./pages/health";
 import { Canary } from "./components";
+import { ErrorBoundary } from "./components/ErrorBoundary";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -111,7 +112,14 @@ export function IncidentManagerRoutes({ sidebar }) {
       </Route>
 
       <Route path="logs" element={sidebar}>
-        <Route index element={<LogsPage />} />
+        <Route
+          index
+          element={
+            <ErrorBoundary>
+              <LogsPage />
+            </ErrorBoundary>
+          }
+        />
       </Route>
 
       <Route path="config" element={sidebar}>
@@ -148,7 +156,14 @@ export function IncidentManagerRoutes({ sidebar }) {
             />
           }
         >
-          <Route index element={<ConfigDetailsPage />} />
+          <Route
+            index
+            element={
+              <ErrorBoundary>
+                <ConfigDetailsPage />
+              </ErrorBoundary>
+            }
+          />
           <Route path="changes" element={<ConfigDetailsChangesPage />} />
         </Route>
       </Route>

@@ -79,17 +79,6 @@ export function HypothesisDetails({ node, api, ...rest }) {
             isLoading={evidenceLoading}
           />
         </div>
-        {/* <div className="mb-6">
-          <LinkedItems
-            currentNode={node}
-            currentNodePath={nodePath}
-            fullTree={tree}
-            titlePrepend={<HypothesisTitle>Linked Items</HypothesisTitle>}
-            onLinksChange={(newItems) =>
-              handleCurrentNodeValueChange("links", newItems)
-            }
-          />
-        </div> */}
         <div className="">
           <CommentsSection
             comments={comments}
