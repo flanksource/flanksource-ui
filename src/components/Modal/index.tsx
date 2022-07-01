@@ -49,7 +49,7 @@ export function Modal({
       <Dialog
         as="div"
         auto-reopen="true"
-        className="fixed z-50 inset-0"
+        className="fixed z-50 inset-0 overflow-y-auto"
         onClose={allowBackgroundClose ? onClose : () => {}}
         {...rest}
       >
@@ -80,9 +80,6 @@ export function Modal({
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
             <div
-              style={{
-                height: "calc(100vh - 4rem)"
-              }}
               className={clsx(
                 "bg-white rounded-lg text-left shadow-xl transform transition-all w-full flex flex-col",
                 "max-w-prose",

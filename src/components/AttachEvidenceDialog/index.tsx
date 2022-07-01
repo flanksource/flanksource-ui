@@ -177,7 +177,7 @@ export function AttachEvidenceDialog({
         details: {
           rootId: x.hypothesis?.find(
             (h: Hypothesis) => h.type === HypothesisNodeType.Root
-          )?.value,
+          )?.id,
           status: x.status,
           severity: x.severity
         }
