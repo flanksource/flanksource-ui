@@ -66,27 +66,29 @@ const keyToLabelMap = {
   person: "Person"
 };
 
+const ResponderSteps = [
+  {
+    label: "Responder Type",
+    position: 1,
+    inProgress: true,
+    finished: false
+  },
+  {
+    label: "Details",
+    position: 2,
+    inProgress: false,
+    finished: false
+  },
+  {
+    label: "Preview",
+    position: 3,
+    inProgress: false,
+    finished: false
+  }
+];
+
 export const AddResponder = () => {
-  const [steps, setSteps] = useState([
-    {
-      label: "Responder Type",
-      position: 1,
-      inProgress: true,
-      finished: false
-    },
-    {
-      label: "Details",
-      position: 2,
-      inProgress: false,
-      finished: false
-    },
-    {
-      label: "Preview",
-      position: 3,
-      inProgress: false,
-      finished: false
-    }
-  ]);
+  const [steps, setSteps] = useState(deepCloneSteps());
   const [isOpen, setIsOpen] = useState(false);
   const [selectedType, setSelectedType] = useState<any>(null);
   const {
@@ -110,6 +112,10 @@ export const AddResponder = () => {
     }
   });
 
+  function deepCloneSteps() {
+    return ResponderSteps.map((v) => ({ ...v }));
+  }
+
   const onCloseModal = useCallback(() => {
     setIsOpen(false);
     setSelectedType(null);
@@ -130,7 +136,7 @@ export const AddResponder = () => {
   };
 
   const getResponderTypeForm = () => {
-    switch (selectedType.value) {
+    switch (selectedType?.value) {
       case "Email":
         return <Email control={control} errors={errors} />;
       case "Jira":
@@ -187,7 +193,12 @@ export const AddResponder = () => {
       <button
         type="button"
         className="btn-primary"
-        onClick={() => setIsOpen(true)}
+        onClick={() => {
+          setSelectedType(null);
+          reset();
+          setIsOpen(true);
+          setSteps(deepCloneSteps());
+        }}
       >
         Add Responder
       </button>
@@ -228,7 +239,7 @@ export const AddResponder = () => {
                   htmlFor="responder-types"
                   className="block text-base font-medium text-gray-500 my-2 font-bold"
                 >
-                  Responder Details
+                  {selectedType?.label} Responder Details
                 </label>
                 {getResponderTypeForm()}
               </div>
@@ -251,16 +262,16 @@ export const AddResponder = () => {
               <div className="bg-white shadow overflow-hidden sm:rounded-lg">
                 <div className="px-4 py-5 sm:px-6">
                   <h3 className="text-lg leading-6 font-medium text-gray-900">
-                    {selectedType.icon &&
-                      (typeof selectedType.icon === "string" ? (
+                    {selectedType?.icon &&
+                      (typeof selectedType?.icon === "string" ? (
                         <Icon
                           className="inline-block"
-                          name={selectedType.icon}
+                          name={selectedType?.icon}
                         />
                       ) : (
                         <selectedType.icon className="inline-block" />
                       ))}{" "}
-                    {selectedType.label} Details
+                    {selectedType?.label} Responder Details
                   </h3>
                   <p className="mt-1 max-w-2xl text-sm text-gray-500 hidden">
                     Personal details and application.
