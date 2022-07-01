@@ -27,6 +27,8 @@ import { RadioOptionsGroup } from "../RadioOptionsGroup";
 import { IncidentStatusTag } from "../IncidentStatusTag";
 import { IncidentSeverityTag } from "../IncidentSeverityTag";
 import { IItem } from "../../types/IItem";
+import { toastSuccess } from "../Toast/toast";
+import { Link } from "react-router-dom";
 
 interface Props {
   title: string;
@@ -262,7 +264,22 @@ export function AttachEvidenceDialog({
     };
 
     createEvidence(evidence)
-      .then(() => callback(true))
+      .then(() => {
+        toastSuccess(
+          <div>
+            Evidence was attached successfully.{" "}
+            <Link
+              className="underline text-blue-600 hover:text-blue-800 visited:text-purple-600"
+              to={`/incidents/${incidentId}`}
+            >
+              Click to open incident
+            </Link>
+            .
+          </div>,
+          { position: "top-center", duration: 10000 }
+        );
+        callback(true);
+      })
       .catch(() => callback(false))
       .finally(() => {
         setIsSubmitting(false);
