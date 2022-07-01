@@ -23,11 +23,17 @@ import {
 import { OptionsList } from "../OptionsList";
 import { Step, StepProgressBar } from "../StepProgressBar";
 import { Icon } from "../Icon";
+import { useParams } from "react-router-dom";
+import { useUser } from "../../context";
+import { saveResponder } from "../../api/services/responder";
+import { useLoader } from "../../hooks";
+import { toastError, toastSuccess } from "../Toast/toast";
 
 type Action = {
   label: string;
   disabled: boolean;
   handler: MouseEventHandler<HTMLButtonElement>;
+  primary?: boolean;
 };
 
 type ActionButtonGroupProps = {
@@ -88,6 +94,9 @@ const ResponderSteps = [
 ];
 
 export const AddResponder = () => {
+  const { loading, setLoading } = useLoader();
+  const { id } = useParams();
+  const { user } = useUser();
   const [steps, setSteps] = useState(deepCloneSteps());
   const [isOpen, setIsOpen] = useState(false);
   const [selectedType, setSelectedType] = useState<any>(null);
@@ -186,6 +195,38 @@ export const AddResponder = () => {
       });
     });
     return options;
+  };
+
+  const saveResponderDetails = async () => {
+    const data = { ...getValues() };
+    Object.keys(data).forEach((key) => {
+      if (!data[key]) {
+        delete data[key];
+      }
+    });
+    const payload = {
+      type: selectedType.type === "Person" ? "person" : "system",
+      incident_id: id,
+      acknowledge_time: new Date(Date.now())
+        .toISOString()
+        .replace("T", " ")
+        .replace("Z", "")
+        .split(".")[0],
+      created_by: user.id,
+      properties: {
+        responderType: selectedType.label,
+        ...data
+      }
+    };
+    try {
+      setLoading(true);
+      await saveResponder(payload);
+      toastSuccess("Added responder successfully");
+    } catch (ex) {
+      toastError(ex.message);
+    }
+    setLoading(false);
+    setIsOpen(false);
   };
 
   return (
@@ -299,10 +340,11 @@ export const AddResponder = () => {
               </div>
               <ActionButtonGroup
                 nextAction={{
-                  label: "Save",
-                  disabled: !selectedType,
+                  label: loading ? "Saving..." : "Save",
+                  disabled: !selectedType || loading,
+                  primary: true,
                   handler: () => {
-                    console.log("saved");
+                    saveResponderDetails();
                   }
                 }}
                 previousAction={{
@@ -331,7 +373,9 @@ const ActionButtonGroup = ({
             disabled={previousAction.disabled}
             type="submit"
             className={clsx(
-              "inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm",
+              !previousAction.primary
+                ? "inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm"
+                : "btn-primary",
               "mt-4",
               {
                 "btn-disabled": previousAction.disabled
@@ -349,7 +393,9 @@ const ActionButtonGroup = ({
             disabled={nextAction.disabled}
             type="submit"
             className={clsx(
-              "inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm",
+              !nextAction.primary
+                ? "inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm"
+                : "btn-primary",
               "mt-4",
               {
                 "btn-disabled": nextAction.disabled
