@@ -3,7 +3,16 @@ import PropTypes from "prop-types";
 import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/solid";
 import clsx from "clsx";
-import "./index.css";
+
+type ModalSize = "small" | "slightly-small" | "medium" | "large" | "full";
+
+const modalClassMap: { [k: ModalSize]: string } = {
+  small: "max-w-md my-0 mx-2.5",
+  "slightly-small": "max-w-prose my-0 mx-4",
+  medium: "max-w-5xl my-0 mx-4",
+  large: "max-w-5xl my-0 mx-5",
+  full: "max-w-5xl my-0 mx-5"
+};
 
 interface IModalProps {
   title: React.ReactNode;
@@ -14,7 +23,7 @@ interface IModalProps {
   onClose: () => void;
   allowBackgroundClose: boolean;
   hideCloseButton: boolean;
-  size: "small" | "medium" | "large" | "full";
+  size: ModalSize;
   wrapWith?: React.FunctionComponent<{ children: React.ReactNode }>;
   children: JSX.Element;
 }
@@ -71,9 +80,13 @@ export function Modal({
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
             <div
+              style={{
+                height: "calc(100vh - 4rem)"
+              }}
               className={clsx(
                 "bg-white rounded-lg text-left shadow-xl transform transition-all w-full flex flex-col",
-                `modal-card-${size}`
+                "max-w-prose",
+                modalClassMap[size]
               )}
             >
               <Wrapper>
