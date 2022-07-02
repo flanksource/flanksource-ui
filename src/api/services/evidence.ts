@@ -16,7 +16,7 @@ interface EvidenceBase {
   properties: string;
 }
 
-interface LogEvidence extends EvidenceBase {
+type LogEvidenceAttachment = {
   type: EvidenceType.Log;
   evidence: {
     lines: {
@@ -25,25 +25,34 @@ interface LogEvidence extends EvidenceBase {
       labels: { [index: string]: string };
     }[];
   };
-}
+};
 
-interface ConfigEvidence extends EvidenceBase {
+type ConfigEvidenceAttachment = {
   type: EvidenceType.Config;
   evidence: {
     id: string;
     lines: string[];
     selected_lines: { [index: string]: string };
   };
-}
+};
 
-interface TopologyEvidence extends EvidenceBase {
+type TopologyEvidenceAttachment = {
   type: EvidenceType.Topology;
   evidence: {
     id: string;
   };
-}
+};
 
-export type Evidence = LogEvidence | ConfigEvidence | TopologyEvidence;
+export type EvidenceAttachment =
+  | TopologyEvidenceAttachment
+  | ConfigEvidenceAttachment
+  | LogEvidenceAttachment;
+
+type LogEvidence = LogEvidenceAttachment & EvidenceBase;
+type ConfigEvidence = ConfigEvidenceAttachment & EvidenceBase;
+type TopologyEvidence = TopologyEvidenceAttachment & EvidenceBase;
+
+export type Evidence = TopologyEvidence | ConfigEvidence | LogEvidence;
 
 export const getAllEvidenceByHypothesis = async (hypothesisId: string) => {
   const { data, error } = await resolve<Evidence[]>(
@@ -53,24 +62,7 @@ export const getAllEvidenceByHypothesis = async (hypothesisId: string) => {
     return { error };
   }
 
-  return {
-    data: data?.map((e: Evidence) => {
-      if (e.type !== EvidenceType.Log) {
-        return e;
-      }
-
-      return {
-        ...e,
-        evidence: {
-          ...e.evidence,
-          // NOTE: logLines was changed to lines. This is for backwarn
-          // compatibility. Remove by 20th Jun 2022.
-          // @ts-ignore:next-line
-          lines: e.evidence.logLines || e.evidence.lines
-        }
-      };
-    })
-  };
+  return { data };
 };
 export const getEvidence = async (id: string) =>
   resolve(IncidentCommander.get(`/evidence?id=eq.${id}`));

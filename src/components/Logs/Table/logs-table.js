@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import Convert from "ansi-to-html";
 import DOMPurify from "dompurify";
 import dayjs from "dayjs";
@@ -7,10 +7,14 @@ import clsx from "clsx";
 import PropTypes from "prop-types";
 import { BsFillBarChartFill } from "react-icons/bs";
 import { IndeterminateCheckbox } from "../../IndeterminateCheckbox/IndeterminateCheckbox";
+import { EvidenceType } from "../../../api/services/evidence";
+import { AttachEvidenceDialog } from "../../AttachEvidenceDialog";
 
 const convert = new Convert();
 
 export const LogsTable = ({ logs: logsParam, actions, variant, viewOnly }) => {
+  const [attachAsAsset, setAttachAsAsset] = useState(false);
+  const [lines, setLines] = useState([]);
   const logs = useMemo(() => {
     if (logsParam == null) {
       return [];
@@ -62,29 +66,29 @@ export const LogsTable = ({ logs: logsParam, actions, variant, viewOnly }) => {
         Header: function MessageHeader(props) {
           const { state, selectedFlatRows } = props;
           const { selectedRowIds } = state;
+          const hasSelectedRows = Object.keys(selectedRowIds).length !== 0;
           return (
             <div className="flex justify-between">
               <span className="align-middle my-auto">Message</span>
-              <div className="flex justify-end -m-2 flex-wrap">
-                {actions.map((action) => (
-                  <div key={action.label} className="p-2">
+              {!viewOnly && (
+                <div className="flex justify-end -m-2 flex-wrap">
+                  <div className="p-2">
                     <button
                       type="button"
-                      disabled={!Object.keys(selectedRowIds).length}
+                      disabled={!hasSelectedRows}
                       onClick={() => {
-                        action.handler(selectedFlatRows.map((d) => d.original));
+                        setLines(selectedFlatRows.map((d) => d.original));
+                        setAttachAsAsset(true);
                       }}
                       className={clsx(
-                        Object.keys(selectedRowIds).length === 0
-                          ? "btn-disabled"
-                          : "btn-primary"
+                        hasSelectedRows ? "btn-primary" : "btn-disabled"
                       )}
                     >
-                      {action.label}
+                      Attach as Evidence
                     </button>
                   </div>
-                ))}
-              </div>
+                </div>
+              )}
             </div>
           );
         },
@@ -120,6 +124,17 @@ export const LogsTable = ({ logs: logsParam, actions, variant, viewOnly }) => {
     );
   return (
     <div className="pb-12">
+      <AttachEvidenceDialog
+        isOpen={attachAsAsset}
+        onClose={() => setAttachAsAsset(false)}
+        evidence={{ lines }}
+        type={EvidenceType.Log}
+        callback={(success) => {
+          if (success) {
+            setLines([]);
+          }
+        }}
+      />
       <table
         className={clsx(
           "w-full",

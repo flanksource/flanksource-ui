@@ -133,8 +133,12 @@ export const HypothesisBar: React.FunctionComponent<HypothesisBarProps> = ({
         <div className="flex flex-row">
           {infoIcons
             .filter((i) => ICON_MAP[i])
-            .map((i) => (
-              <InfoIcon key={i} icon={i} className="px-1 text-dark-blue" />
+            .map((typ, idx) => (
+              <InfoIcon
+                key={`${typ}-${idx}`}
+                icon={typ}
+                className="px-1 text-dark-blue"
+              />
             ))}
         </div>
         <div>

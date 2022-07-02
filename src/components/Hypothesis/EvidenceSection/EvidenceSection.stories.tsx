@@ -1,11 +1,19 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react";
+import { MemoryRouter } from "react-router-dom";
 import { sampleIncidentNode } from "../../../data/sampleIncident";
 import { EvidenceSection } from "./index";
 
 export default {
   title: "EvidenceSection",
   component: EvidenceSection,
-  parameters: { actions: { argTypesRegex: "^on.*" } }
+  parameters: { actions: { argTypesRegex: "^on.*" } },
+  decorators: [
+    (Story) => (
+      <MemoryRouter>
+        <Story />
+      </MemoryRouter>
+    )
+  ]
 } as ComponentMeta<typeof EvidenceSection>;
 
 const Template: ComponentStory<typeof EvidenceSection> = (arg: any) => (

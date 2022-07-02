@@ -71,9 +71,16 @@ export const deleteSavedQuery = (id: string) =>
   resolve(ConfigDB.delete(`/saved_query?id=eq.${id}`));
 
 export const getConfigsByQuery = async (query: string) => {
-  const result = await resolve(Config.get(`/query?query=${query}`));
-  (result?.data?.results || []).forEach((item) => {
-    item.tags = JSON.parse(item.tags);
-  });
-  return result;
+  const { data, error } = await resolve<{ results: { tags: any }[] }>(
+    Config.get(`/query?query=${query}`)
+  );
+  if (error) {
+    console.error(error);
+    return [];
+  }
+
+  return (data?.results || []).map((d) => ({
+    ...d,
+    tags: JSON.parse(d.tags)
+  }));
 };

@@ -1,25 +1,12 @@
 import React, { useState, useMemo } from "react";
+import { EvidenceType } from "../../api/services/evidence";
 import { Modal } from "../Modal";
-import { LogsIncidentLinker } from "./LogsIncidentLinker";
 import { LogsTable } from "./Table/logs-table";
 
 export const LogsViewer = React.memo(function LogsViewer({ logs }) {
   const [selectedList, setSelectedList] = useState([]);
   const [incidentModalIsOpen, setIncidentModalIsOpen] = useState(false);
   const [variant, setVariant] = useState("comfortable");
-
-  const actions = useMemo(
-    () => [
-      {
-        label: "Link to Incident",
-        handler: (selected) => {
-          setSelectedList(selected);
-          setIncidentModalIsOpen(true);
-        }
-      }
-    ],
-    []
-  );
 
   return (
     <>
@@ -42,26 +29,7 @@ export const LogsViewer = React.memo(function LogsViewer({ logs }) {
           Compact
         </button>
       </div>
-      <LogsTable
-        logs={logs}
-        variant={variant}
-        actions={variant === "comfortable" ? actions : undefined}
-      />
-      <Modal
-        open={incidentModalIsOpen}
-        onClose={() => setIncidentModalIsOpen(false)}
-        size="small"
-      >
-        <LogsIncidentLinker
-          selectedLogs={selectedList}
-          callback={(success) => {
-            if (success) {
-              setSelectedList([]);
-            }
-            setIncidentModalIsOpen(false);
-          }}
-        />
-      </Modal>
+      <LogsTable logs={logs} variant={variant} />
     </>
   );
 });

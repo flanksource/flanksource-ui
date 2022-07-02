@@ -3,22 +3,44 @@ import PropTypes from "prop-types";
 import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/solid";
 import clsx from "clsx";
-import "./index.css";
+
+type ModalSize = "small" | "slightly-small" | "medium" | "large" | "full";
+
+const modalClassMap: { [k: ModalSize]: string } = {
+  small: "max-w-md my-0 mx-2.5",
+  "slightly-small": "max-w-prose my-0 mx-4",
+  medium: "max-w-5xl my-0 mx-4",
+  large: "max-w-5xl my-0 mx-5",
+  full: "max-w-5xl my-0 mx-5"
+};
+
+interface IModalProps {
+  title: React.ReactNode;
+  titleClass: string;
+  footerClassName: string;
+  actions?: React.ReactNode[];
+  open: boolean;
+  onClose: () => void;
+  allowBackgroundClose: boolean;
+  hideCloseButton: boolean;
+  size: ModalSize;
+  wrapWith?: React.FunctionComponent<{ children: React.ReactNode }>;
+  children: JSX.Element;
+}
 
 export function Modal({
   title,
   titleClass,
   footerClassName,
   actions,
-  body,
   open,
   onClose,
   allowBackgroundClose,
   hideCloseButton,
   size,
-  wrapWith = "div",
+  wrapWith = ({ children }) => children,
   ...rest
-}) {
+}: IModalProps) {
   const { children } = { ...rest };
   const Wrapper = wrapWith;
 
@@ -27,7 +49,7 @@ export function Modal({
       <Dialog
         as="div"
         auto-reopen="true"
-        className="fixed z-50 inset-0"
+        className="fixed z-50 inset-0 overflow-y-auto"
         onClose={allowBackgroundClose ? onClose : () => {}}
         {...rest}
       >
@@ -60,7 +82,8 @@ export function Modal({
             <div
               className={clsx(
                 "bg-white rounded-lg text-left shadow-xl transform transition-all w-full flex flex-col",
-                `modal-card-${size}`
+                "max-w-prose",
+                modalClassMap[size]
               )}
             >
               <Wrapper>
@@ -86,9 +109,7 @@ export function Modal({
                   )}
                 </div>
 
-                <div className="px-8 overflow-y-auto modal-card__container">
-                  {children}
-                </div>
+                <div className="px-8">{children}</div>
 
                 {Boolean(actions?.length) && (
                   <div

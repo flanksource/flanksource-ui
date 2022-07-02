@@ -21,7 +21,8 @@ export enum HypothesisStatus {
 export interface Hypothesis {
   title: string;
   status: HypothesisStatus;
-  created_by: User;
+  created_by?: User;
+  parent_id?: string;
   evidence?: Evidence[];
   comment?: any[];
   id: string;
@@ -29,8 +30,8 @@ export interface Hypothesis {
   type: HypothesisNodeType;
 }
 
-export const getAllHypothesisByIncident = async (incidentId: string) =>
-  resolve(
+export const getAllHypothesisByIncident = (incidentId: string) =>
+  resolve<Hypothesis[]>(
     IncidentCommander.get(
       `/hypothesis?incident_id=eq.${incidentId}&order=created_at.asc`
     )
@@ -44,13 +45,52 @@ export const getHypothesis = async (id: string) => {
   );
 };
 
+export const searchHypothesis = (incidentId: string, query: string) =>
+  resolve<Hypothesis[]>(
+    IncidentCommander.get(
+      `/hypothesis?order=created_at.desc&title=ilike.*${query}*&incident_id=eq.${incidentId}`
+    )
+  );
+
 interface HypothesisInfo {
   type: HypothesisNodeType;
   title: string;
   status: HypothesisStatus;
 }
 
-export const createHypothesis = async (
+interface NewBaseHypothesis {
+  user: User;
+  incident_id: string;
+  title?: string;
+  status: HypothesisStatus;
+}
+
+type NewRootNode = {
+  type: HypothesisNodeType.Root;
+} & NewBaseHypothesis;
+
+type NewChildNode = {
+  type: HypothesisNodeType.Factor | HypothesisNodeType.Solution;
+  parent_id?: string;
+} & NewBaseHypothesis;
+
+type NewHypothesis = NewRootNode | NewChildNode;
+
+export const createHypothesis = async ({ user, ...params }: NewHypothesis) => {
+  const { data, error } = await resolve<[Hypothesis]>(
+    IncidentCommander.post(`/hypothesis`, {
+      ...params,
+      created_by: user.id
+    })
+  );
+  if (error) {
+    return { error, data: null };
+  }
+
+  return { data: data && data[0], error };
+};
+
+export const createHypothesisOld = async (
   user: User,
   id: string,
   incidentId: string,

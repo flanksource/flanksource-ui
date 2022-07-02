@@ -1,4 +1,16 @@
 import React from "react";
+import { HTMLInputTypeAttribute } from "react";
+
+interface IProps {
+  label: string;
+  id: string;
+  className?: string;
+  labelClassName?: string;
+  onEnter?: (e: React.KeyboardEvent) => void;
+  value?: string;
+  defaultValue?: string;
+  type?: HTMLInputTypeAttribute;
+}
 
 export function TextInput({
   label,
@@ -10,13 +22,13 @@ export function TextInput({
   defaultValue,
   type = "text",
   ...rest
-}) {
+}: IProps & React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <>
       {label && (
         <label
           htmlFor={id}
-          className={`block text-sm font-medium text-gray-700 mb-2 ${labelClassName}`}
+          className={`block text-sm font-bold text-gray-700 mb-2 ${labelClassName}`}
         >
           {label}
         </label>

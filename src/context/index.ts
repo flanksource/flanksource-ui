@@ -7,12 +7,12 @@ interface IAuthContext {
 }
 
 interface IInitialAuthContext {
-  user: {};
+  user: null;
   setUser: () => void;
 }
 
 export const AuthContext = createContext<IAuthContext | IInitialAuthContext>({
-  user: {},
+  user: null,
   setUser: () => {}
 });
 

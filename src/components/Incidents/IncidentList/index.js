@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import { v4 as uuid } from "uuid";
-import { IncidentSeverity } from "../incident-severity";
-import { IncidentStatus } from "../incident-status";
 import { AvatarGroup } from "../../AvatarGroup";
+import { IncidentStatusTag } from "../../IncidentStatusTag";
+import { IncidentSeverityTag } from "../../IncidentSeverityTag";
 
 export function IncidentList({ list, ...rest }) {
   return (
@@ -70,11 +70,11 @@ function IncidentItem({ incident }) {
       </td>
       <td className="py-4 px-3">
         <div className="flex flex-row items-center">
-          <IncidentSeverity incident={incident} />
+          <IncidentSeverityTag severity={incident.severity} />
         </div>
       </td>
       <td className="px-3 py-4 shrink-0">
-        <IncidentStatus incident={incident} />
+        <IncidentStatusTag status={incident.status} />
       </td>
       <td className="px-3 text-gray-500 text-sm py-4">{age}</td>
       <td className="px-3 text-sm py-4" colSpan={2}>
