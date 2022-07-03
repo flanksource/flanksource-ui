@@ -41,10 +41,10 @@ type ActionButtonGroupProps = {
   nextAction?: Action;
 };
 
-const options = [
+export const ResponderTypeOptions = [
   { label: "Email", value: "Email", icon: MdEmail },
   { label: "Jira", value: "Jira", icon: SiJira },
-  { label: "ServiceNow", value: "ServiceNow", icon: "service-now" },
+  { label: "ServiceNow", value: "ServiceNow", icon: "servicenow" },
   { label: "CA", value: "CA", icon: "ca" },
   { label: "AWS Support", value: "AWS Support", icon: "aws" },
   {
@@ -233,7 +233,7 @@ export const AddResponder = () => {
     <div className="flex flex-1 justify-end">
       <button
         type="button"
-        className="btn-primary"
+        className="btn-secondary btn-secondary-sm text-dark-blue"
         onClick={() => {
           setSelectedType(null);
           reset();
@@ -256,7 +256,7 @@ export const AddResponder = () => {
               </label>
               <OptionsList
                 name="responder-types"
-                options={options}
+                options={ResponderTypeOptions}
                 onSelect={(e: any) => {
                   setSelectedType(e);
                   reset();
@@ -291,7 +291,7 @@ export const AddResponder = () => {
                   handler: onSubmit
                 }}
                 previousAction={{
-                  label: "Previous",
+                  label: "Back",
                   disabled: !selectedType,
                   handler: () => goToStep(steps[0], steps[1])
                 }}
@@ -348,7 +348,7 @@ export const AddResponder = () => {
                   }
                 }}
                 previousAction={{
-                  label: "Previous",
+                  label: "Back",
                   disabled: !selectedType,
                   handler: () => goToStep(steps[1], steps[2])
                 }}

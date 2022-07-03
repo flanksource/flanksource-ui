@@ -356,7 +356,7 @@ export const Icons = {
   server: server,
   servers: servers,
   servers2: servers2,
-  "service-now": servicenow,
+  servicenow,
   settings: settings,
   shield: shield,
   silence: silence,

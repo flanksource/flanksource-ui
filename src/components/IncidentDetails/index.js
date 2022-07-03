@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import dayjs from "dayjs";
 import { IncidentDetailsRow } from "./IncidentDetailsRow";
@@ -8,12 +8,11 @@ import {
   IncidentCommandersOption,
   IncidentCommandersSingleValue,
   IncidentPriorityOption,
-  IncidentPrioritySingleValue,
-  IncidentRespondentsMultiValueLabel,
-  IncidentRespondentsOption
+  IncidentPrioritySingleValue
 } from "./select-components";
 import { priorities } from "./data";
 import { AddResponder } from "./AddResponder";
+import { AvatarGroup } from "../AvatarGroup";
 
 export const IncidentDetails = ({
   incident,
@@ -122,31 +121,35 @@ export const IncidentDetails = ({
           </a>
         }
       /> */}
-      <IncidentDetailsRow
-        title="Respondents"
-        className="mt-2.5"
-        value={
-          <Select
-            name="respondents"
-            control={control}
-            hideSelectedOptions={false}
-            components={{
-              MultiValueLabel: IncidentRespondentsMultiValueLabel,
-              Option: IncidentRespondentsOption,
-              IndicatorSeparator: () => null,
-              MultiValueRemove: () => null,
-              ClearIndicator: () => null
-            }}
-            styles={{
-              multiValue: () => ({
-                marginLeft: -4
-              })
-            }}
-            options={respondersArray}
-            isMulti
-          />
-        }
-      />
+      <div className="mt-1">
+        <h2 className="text-base font-medium">Responders</h2>
+        <div className="max-h-48 overflow-y-scroll shadow sm:rounded-lg p-2">
+          {respondersArray.map((responder) => {
+            return (
+              <div className="mt-1" key={responder.id}>
+                <div className="relative rounded-lg border border-gray-300 bg-white px-2 py-2 shadow-sm flex items-center space-x-3">
+                  <div className="flex-shrink-0">
+                    <AvatarGroup
+                      users={[{ ...responder, name: responder.label }]}
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <a href="#" className="focus:outline-none">
+                      <span
+                        className="absolute inset-0"
+                        aria-hidden="true"
+                      ></span>
+                      <p className="text-sm font-medium text-gray-900">
+                        {responder.label}
+                      </p>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
       <IncidentDetailsRow
         title="Commanders"
         className="mt-4"
