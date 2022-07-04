@@ -55,6 +55,7 @@ interface Props {
   trigger?: string;
   markup?: string;
   onChange: (text: string) => void;
+  singleLine: boolean;
 }
 
 export const MENTION_MARKUP = "@[__display__](user:__id__)";
@@ -64,7 +65,8 @@ export const CommentInput = ({
   value,
   onChange,
   markup = MENTION_MARKUP,
-  trigger = MENTION_TRIGGER
+  trigger = MENTION_TRIGGER,
+  singleLine
 }: Props) => {
   const [users, setUsers] = useState<Array<User & SuggestionDataItem>>([]);
 
@@ -81,6 +83,7 @@ export const CommentInput = ({
 
   return (
     <MentionsInput
+      singleLine
       value={value}
       onChange={(e) => onChange(e.target.value)}
       a11ySuggestionsListLabel="Suggested mentions"

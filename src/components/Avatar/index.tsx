@@ -43,7 +43,7 @@ const AvatarFC = ({ user, size, unload, alt, containerProps, imageProps }) => {
     <div
       {...containerProps}
       className={clsx(
-        "rounded-full overflow-hidden flex justify-center items-center leading-none",
+        "overflow-hidden rounded-md flex justify-center items-center leading-none",
         sizeClass,
         containerProps.className,
         !src && initials ? "bg-dark-blue text-white" : "bg-lighter-gray"
@@ -56,7 +56,7 @@ const AvatarFC = ({ user, size, unload, alt, containerProps, imageProps }) => {
           alt={alt}
           {...imageProps}
           className={clsx(
-            "w-full h-full rounded-full overflow-hidden",
+            "w-full h-full rounded-md overflow-hidden",
             imageProps.className
           )}
         />
