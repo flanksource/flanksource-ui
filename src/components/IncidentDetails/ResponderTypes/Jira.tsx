@@ -1,7 +1,12 @@
-import { Controller } from "react-hook-form";
+import { Control, Controller, FieldErrors } from "react-hook-form";
 import { TextInput } from "../../TextInput";
 
-export const Jira = ({ control, errors }) => {
+type JiraProps = {
+  control: Control;
+  errors: FieldErrors;
+};
+
+export const Jira = ({ control, errors }: JiraProps) => {
   return (
     <div>
       <div className="mb-4">

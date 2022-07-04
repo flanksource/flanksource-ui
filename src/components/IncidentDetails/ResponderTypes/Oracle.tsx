@@ -1,7 +1,12 @@
-import { Controller } from "react-hook-form";
+import { Control, Controller, FieldErrors } from "react-hook-form";
 import { TextInput } from "../../TextInput";
 
-export const Oracle = ({ control, errors }) => {
+type OracleProps = {
+  control: Control;
+  errors: FieldErrors;
+};
+
+export const Oracle = ({ control, errors }: OracleProps) => {
   return (
     <div>
       <div className="mb-4">

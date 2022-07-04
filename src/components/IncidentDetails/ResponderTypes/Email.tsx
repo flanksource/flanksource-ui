@@ -1,7 +1,12 @@
-import { Controller } from "react-hook-form";
+import { Control, Controller, FieldErrors } from "react-hook-form";
 import { TextInput } from "../../TextInput";
 
-export const Email = ({ control, errors }) => {
+type EmailProps = {
+  control: Control;
+  errors: FieldErrors;
+};
+
+export const Email = ({ control, errors }: EmailProps) => {
   return (
     <div>
       <div className="mb-4">

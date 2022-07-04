@@ -1,7 +1,12 @@
-import { Controller } from "react-hook-form";
+import { Control, Controller, FieldErrors } from "react-hook-form";
 import { TextInput } from "../../TextInput";
 
-export const VMWare = ({ control, errors }) => {
+type VMWareProps = {
+  control: Control;
+  errors: FieldErrors;
+};
+
+export const VMWare = ({ control, errors }: VMWareProps) => {
   return (
     <div>
       <div className="mb-4">

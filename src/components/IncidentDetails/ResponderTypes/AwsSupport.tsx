@@ -1,7 +1,12 @@
-import { Controller } from "react-hook-form";
+import { Control, Controller, FieldErrors } from "react-hook-form";
 import { TextInput } from "../../TextInput";
 
-export const AwsSupport = ({ control, errors }) => {
+type AwsSupportProps = {
+  control: Control;
+  errors: FieldErrors;
+};
+
+export const AwsSupport = ({ control, errors }: AwsSupportProps) => {
   return (
     <div>
       <div className="mb-4">

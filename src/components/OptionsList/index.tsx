@@ -5,7 +5,7 @@ import { Icon } from "../Icon";
 
 type Option = {
   label: string;
-  description: string;
+  description?: string;
   value: string;
   icon: string | IconType;
 };

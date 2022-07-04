@@ -1,7 +1,12 @@
-import { Controller } from "react-hook-form";
+import { Control, Controller, FieldErrors } from "react-hook-form";
 import { TextInput } from "../../TextInput";
 
-export const CA = ({ control, errors }) => {
+type CAProps = {
+  control: Control;
+  errors: FieldErrors;
+};
+
+export const CA = ({ control, errors }: CAProps) => {
   return (
     <div>
       <div className="mb-4">

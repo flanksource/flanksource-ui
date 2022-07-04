@@ -1,7 +1,12 @@
-import { Controller } from "react-hook-form";
+import { Control, Controller, FieldErrors } from "react-hook-form";
 import { TextInput } from "../../TextInput";
 
-export const Microsoft = ({ control, errors }) => {
+type MicrosoftProps = {
+  control: Control;
+  errors: FieldErrors;
+};
+
+export const Microsoft = ({ control, errors }: MicrosoftProps) => {
   return (
     <div>
       <div className="mb-4">

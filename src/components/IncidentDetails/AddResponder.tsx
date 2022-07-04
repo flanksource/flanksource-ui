@@ -93,6 +93,21 @@ const ResponderSteps = [
   }
 ];
 
+type AddResponderFormValues = {
+  to?: string;
+  subject?: string;
+  body?: string;
+  category?: string;
+  description?: string;
+  project?: string;
+  issueType?: string;
+  summary?: string;
+  product?: string;
+  person?: string;
+};
+
+type formPropKey = keyof AddResponderFormValues;
+
 export const AddResponder = () => {
   const { loading, setLoading } = useLoader();
   const { id } = useParams();
@@ -106,7 +121,7 @@ export const AddResponder = () => {
     getValues,
     reset,
     handleSubmit
-  } = useForm({
+  } = useForm<AddResponderFormValues>({
     defaultValues: {
       to: "",
       subject: "",
@@ -185,7 +200,7 @@ export const AddResponder = () => {
   const getResponderDetailsList = () => {
     const values = getValues();
     const options: any[] = [];
-    Object.keys(values).forEach((key) => {
+    Object.keys(values).forEach((key: formPropKey) => {
       if (!values[key]) {
         return;
       }
@@ -199,7 +214,7 @@ export const AddResponder = () => {
 
   const saveResponderDetails = async () => {
     const data = { ...getValues() };
-    Object.keys(data).forEach((key) => {
+    Object.keys(data).forEach((key: formPropKey) => {
       if (!data[key]) {
         delete data[key];
       }

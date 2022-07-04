@@ -1,7 +1,12 @@
-import { Controller } from "react-hook-form";
+import { Control, Controller, FieldErrors } from "react-hook-form";
 import { TextInput } from "../../TextInput";
 
-export const Redhat = ({ control, errors }) => {
+type RedhatProps = {
+  control: Control;
+  errors: FieldErrors;
+};
+
+export const Redhat = ({ control, errors }: RedhatProps) => {
   return (
     <div>
       <div className="mb-4">
