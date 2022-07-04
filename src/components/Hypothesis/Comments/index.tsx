@@ -77,7 +77,7 @@ export function CommentsSection({
           ))}
         </ul>
       )}
-      <div>
+      <div className="relative">
         <CommentInput
           singleLine
           value={commentTextValue}

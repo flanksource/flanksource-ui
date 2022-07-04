@@ -24,6 +24,26 @@ const mentionsStyle = {
     }
   },
 
+  "&singleLine": {
+    display: "inline-block",
+    width: "100%",
+
+    highlighter: {
+      padding: 1,
+      border: "2px inset transparent"
+    },
+    input: {
+      backgroundColor: "white",
+      padding: 1,
+      borderRadius: "0.375rem",
+      borderColor: "rgb(229 231 235)",
+      "--tw-shadow": "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+      "--tw-shadow-colored": "0 1px 2px 0 var(--tw- shadow - color)",
+      boxShadow:
+        "var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)"
+    }
+  },
+
   suggestions: {
     list: {
       backgroundColor: "white",
