@@ -17,6 +17,7 @@ const modalClassMap: { [k: ModalSize]: string } = {
 interface IModalProps {
   title: React.ReactNode;
   titleClass: string;
+  bodyClass: string;
   footerClassName: string;
   actions?: React.ReactNode[];
   open: boolean;
@@ -31,6 +32,7 @@ interface IModalProps {
 export function Modal({
   title,
   titleClass,
+  bodyClass,
   footerClassName,
   actions,
   open,
@@ -108,7 +110,7 @@ export function Modal({
                   )}
                 </div>
 
-                <div className="px-8">{children}</div>
+                <div className={bodyClass ?? "px-8"}>{children}</div>
 
                 {Boolean(actions?.length) && (
                   <div

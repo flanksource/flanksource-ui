@@ -21,7 +21,7 @@ import {
   VMWare
 } from "./ResponderTypes";
 import { OptionsList } from "../OptionsList";
-import { Step, StepProgressBar } from "../StepProgressBar";
+import { Step } from "../StepProgressBar";
 import { Icon } from "../Icon";
 import { useParams } from "react-router-dom";
 import { useUser } from "../../context";
@@ -39,7 +39,7 @@ type Action = {
 type ActionButtonGroupProps = {
   previousAction?: Action;
   nextAction?: Action;
-};
+} & React.HTMLProps<HTMLDivElement>;
 
 export const ResponderTypeOptions = [
   { label: "Email", value: "Email", icon: MdEmail },
@@ -59,19 +59,6 @@ export const ResponderTypeOptions = [
   { label: "Person", value: "Person", icon: FiUser }
 ];
 
-const keyToLabelMap = {
-  to: "To",
-  subject: "Subject",
-  body: "Body",
-  category: "Category",
-  description: "Description",
-  project: "Project",
-  issueType: "Issue Type",
-  summary: "Summary",
-  product: "Product",
-  person: "Person"
-};
-
 const ResponderSteps = [
   {
     label: "Responder Type",
@@ -82,12 +69,6 @@ const ResponderSteps = [
   {
     label: "Details",
     position: 2,
-    inProgress: false,
-    finished: false
-  },
-  {
-    label: "Preview",
-    position: 3,
     inProgress: false,
     finished: false
   }
@@ -191,25 +172,10 @@ export const AddResponder = () => {
   const onSubmit = async () => {
     await handleSubmit(
       () => {
-        goToStep(steps[2], steps[1]);
+        saveResponderDetails();
       },
       () => {}
     )();
-  };
-
-  const getResponderDetailsList = () => {
-    const values = getValues();
-    const options: any[] = [];
-    Object.keys(values).forEach((key: formPropKey) => {
-      if (!values[key]) {
-        return;
-      }
-      options.push({
-        label: keyToLabelMap[key],
-        value: values[key]
-      });
-    });
-    return options;
   };
 
   const saveResponderDetails = async () => {
@@ -244,6 +210,23 @@ export const AddResponder = () => {
     setIsOpen(false);
   };
 
+  const getModalTitle = () => {
+    if (steps[0].inProgress) {
+      return `Add Responder`;
+    }
+    return (
+      <>
+        {selectedType?.icon &&
+          (typeof selectedType?.icon === "string" ? (
+            <Icon className="inline-block" name={selectedType?.icon} />
+          ) : (
+            <selectedType.icon className="inline-block" />
+          ))}{" "}
+        <span>{selectedType?.label} Details</span>
+      </>
+    );
+  };
+
   return (
     <div className="flex flex-1 justify-end">
       <button
@@ -258,11 +241,15 @@ export const AddResponder = () => {
       >
         Add Responder
       </button>
-      <Modal title="Add Responder" onClose={onCloseModal} open={isOpen}>
-        <div className="mt-3">
-          <StepProgressBar className="mb-4" steps={steps} />
+      <Modal
+        title={getModalTitle()}
+        onClose={onCloseModal}
+        open={isOpen}
+        bodyClass=""
+      >
+        <>
           {steps[0].inProgress && (
-            <>
+            <div className="px-8 py-4 h-modal-body-md">
               <label
                 htmlFor="responder-types"
                 className="block text-base font-medium text-gray-500 my-2 font-bold"
@@ -275,102 +262,34 @@ export const AddResponder = () => {
                 onSelect={(e: any) => {
                   setSelectedType(e);
                   reset();
+                  goToStep(steps[1], steps[0]);
                 }}
                 value={selectedType}
-                className="h-64 overflow-y-scroll m-1"
+                className="h-5/6 overflow-y-scroll m-1"
               />
-              <ActionButtonGroup
-                nextAction={{
-                  label: "Next",
-                  disabled: !selectedType,
-                  handler: () => goToStep(steps[1], steps[0])
-                }}
-              />
-            </>
+            </div>
           )}
           {steps[1].inProgress && (
             <div>
-              <div className="bg-white shadow-md sm:rounded-lg px-3 py-3">
-                <label
-                  htmlFor="responder-types"
-                  className="block text-base font-medium text-gray-500 my-2 font-bold"
-                >
-                  {selectedType?.label} Responder Details
-                </label>
+              <div className="px-8 py-3 h-modal-body-md">
                 {getResponderTypeForm()}
+                <ActionButtonGroup
+                  className="absolute w-full bottom-0 left-0"
+                  nextAction={{
+                    label: !loading ? "Save" : "Saving...",
+                    disabled: !selectedType,
+                    handler: onSubmit
+                  }}
+                  previousAction={{
+                    label: "Back",
+                    disabled: !selectedType,
+                    handler: () => goToStep(steps[0], steps[1])
+                  }}
+                />
               </div>
-              <ActionButtonGroup
-                nextAction={{
-                  label: "Next",
-                  disabled: !selectedType,
-                  handler: onSubmit
-                }}
-                previousAction={{
-                  label: "Back",
-                  disabled: !selectedType,
-                  handler: () => goToStep(steps[0], steps[1])
-                }}
-              />
             </div>
           )}
-          {steps[2].inProgress && (
-            <div>
-              <div className="bg-white shadow overflow-hidden sm:rounded-lg">
-                <div className="px-4 py-5 sm:px-6">
-                  <h3 className="text-lg leading-6 font-medium text-gray-900">
-                    {selectedType?.icon &&
-                      (typeof selectedType?.icon === "string" ? (
-                        <Icon
-                          className="inline-block"
-                          name={selectedType?.icon}
-                        />
-                      ) : (
-                        <selectedType.icon className="inline-block" />
-                      ))}{" "}
-                    {selectedType?.label} Responder Details
-                  </h3>
-                  <p className="mt-1 max-w-2xl text-sm text-gray-500 hidden">
-                    Personal details and application.
-                  </p>
-                </div>
-                <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
-                  <dl className="sm:divide-y sm:divide-gray-200">
-                    {getResponderDetailsList().map((option) => {
-                      return (
-                        <div
-                          key={option.label}
-                          className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6"
-                        >
-                          <dt className="text-sm font-medium text-gray-500">
-                            {option.label}
-                          </dt>
-                          <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                            {option.value}
-                          </dd>
-                        </div>
-                      );
-                    })}
-                  </dl>
-                </div>
-              </div>
-              <ActionButtonGroup
-                nextAction={{
-                  label: loading ? "Saving..." : "Save",
-                  disabled: !selectedType || loading,
-                  primary: true,
-                  handler: () => {
-                    saveResponderDetails();
-                  }
-                }}
-                previousAction={{
-                  label: "Back",
-                  disabled: !selectedType,
-                  handler: () => goToStep(steps[1], steps[2])
-                }}
-              />
-            </div>
-          )}
-        </div>
+        </>
       </Modal>
     </div>
   );
@@ -378,10 +297,18 @@ export const AddResponder = () => {
 
 const ActionButtonGroup = ({
   previousAction,
-  nextAction
+  nextAction,
+  className,
+  ...rest
 }: ActionButtonGroupProps) => {
   return (
-    <div className="flex mb-4">
+    <div
+      className={clsx(
+        "flex rounded-t-lg justify-between bg-gray-100 px-8 pb-4 items-end",
+        className
+      )}
+      {...rest}
+    >
       <div className="flex flex-1">
         {previousAction && (
           <button
