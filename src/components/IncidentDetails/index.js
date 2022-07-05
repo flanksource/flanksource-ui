@@ -21,7 +21,7 @@ import {
   getRespondersForTheIncident
 } from "../../api/services/responder";
 import { MdDelete } from "react-icons/md";
-import { toastError } from "../Toast/toast";
+import { toastError, toastSuccess } from "../Toast/toast";
 
 export const IncidentDetails = ({
   incident,
@@ -141,6 +141,7 @@ export const IncidentDetails = ({
       const result = await deleteResponder(id);
       if (!result?.error) {
         fetchResponders();
+        toastSuccess("Responder deleted successfully");
       } else {
         toastError("Responder delete failed");
       }
