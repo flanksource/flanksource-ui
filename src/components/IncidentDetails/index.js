@@ -84,15 +84,38 @@ export const IncidentDetails = ({
     return () => subscription.unsubscribe();
   }, [watch, updateIncidentHandler]);
 
+  const getResponderTitle = (properties) => {
+    if (properties.responderType === "Email") {
+      return properties.to;
+    } else if (properties.responderType === "AWS AMS Service Request") {
+      return properties.category;
+    } else if (properties.responderType === "AWS Support") {
+      return properties.category;
+    } else if (properties.responderType === "ServiceNow") {
+      return properties.category;
+    } else if (properties.responderType === "CA") {
+      return properties.category;
+    } else if (properties.responderType === "Redhat") {
+      return properties.product;
+    } else if (properties.responderType === "Oracle") {
+      return properties.product;
+    } else if (properties.responderType === "Microsoft") {
+      return properties.product;
+    } else if (properties.responderType === "VMWare") {
+      return properties.product;
+    } else if (properties.responderType === "Person") {
+      return properties.person;
+    } else if (properties.responderType === "Jira") {
+      return properties.project;
+    }
+  };
+
   async function fetchResponders() {
     try {
       const result = await getRespondersForTheIncident(incident.id);
       const data = (result?.data || []).map((item) => {
         return {
-          name:
-            item.properties.responderType !== "Person"
-              ? item.properties.responderType
-              : item.properties.person,
+          name: getResponderTitle(item.properties),
           icon: ResponderTypeOptions.find(
             (option) => option.label === item.properties.responderType
           )?.icon,
@@ -183,7 +206,7 @@ export const IncidentDetails = ({
                   </div>
                 )}
                 <div className="flex-1 min-w-0 group">
-                  <div className="text-sm font-medium text-gray-900 inline-block">
+                  <div className="text-dark-gray text-sm font-medium inline-block">
                     {responder.name}
                   </div>
                   <div
