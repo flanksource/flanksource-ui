@@ -11,8 +11,17 @@ import {
   IncidentPrioritySingleValue
 } from "./select-components";
 import { priorities } from "./data";
-import { AddResponder } from "./AddResponder";
-import { AvatarGroup } from "../AvatarGroup";
+import {
+  AddResponder,
+  ResponderPropsKeyToLabelMap,
+  ResponderTypeOptions
+} from "./AddResponder";
+import {
+  deleteResponder,
+  getRespondersForTheIncident
+} from "../../api/services/responder";
+import { MdDelete } from "react-icons/md";
+import { toastError } from "../Toast/toast";
 
 export const IncidentDetails = ({
   incident,
@@ -20,6 +29,8 @@ export const IncidentDetails = ({
   updateIncidentHandler,
   textButton
 }) => {
+  const [responders, setResponders] = useState([]);
+
   // Temporary mock, in the future you need to replace it with an array of real users received from the api
   const commandersArray = useMemo(
     () => [
@@ -29,16 +40,6 @@ export const IncidentDetails = ({
         avatar: incident.commander_id.avatar
       }
     ],
-    [incident]
-  );
-
-  const respondersArray = useMemo(
-    () =>
-      incident.responder.map((item, index) => ({
-        label: item.created_by.name,
-        value: `${index}`,
-        avatar: item.created_by.avatar
-      })),
     [incident]
   );
 
@@ -55,8 +56,7 @@ export const IncidentDetails = ({
       statusPageTitle: "StatusPage.io",
       statusPage: "https://www.atlassian.com/software/statuspage",
       priority: incident.severity ?? IncidentPriority.High,
-      commanders: incident.commander_id.id,
-      respondents: respondersArray?.[0]?.value || null
+      commanders: incident.commander_id.id
     }
   });
   watch();
@@ -84,6 +84,55 @@ export const IncidentDetails = ({
     return () => subscription.unsubscribe();
   }, [watch, updateIncidentHandler]);
 
+  async function fetchResponders() {
+    try {
+      const result = await getRespondersForTheIncident(incident.id);
+      const data = (result?.data || []).map((item) => {
+        return {
+          name:
+            item.properties.responderType !== "Person"
+              ? item.properties.responderType
+              : item.properties.person,
+          icon: ResponderTypeOptions.find(
+            (option) => option.label === item.properties.responderType
+          )?.icon,
+          properties: Object.keys(item.properties)
+            .map((key) => {
+              if (key !== "responderType") {
+                return {
+                  label: ResponderPropsKeyToLabelMap[key],
+                  value: item.properties[key]
+                };
+              }
+            })
+            .filter((v) => v),
+          json: item
+        };
+      });
+      setResponders(data);
+    } catch (ex) {}
+  }
+
+  async function initiateDeleteResponder(id) {
+    try {
+      const result = await deleteResponder(id);
+      if (!result?.error) {
+        fetchResponders();
+      } else {
+        toastError("Responder delete failed");
+      }
+    } catch (ex) {
+      toastError("Responder delete failed");
+    }
+  }
+
+  useEffect(() => {
+    if (!incident?.id) {
+      return;
+    }
+    fetchResponders();
+  }, [incident]);
+
   return (
     <div className="px-6 pt-3.5">
       <div className="flex justify-between mb-7">
@@ -97,7 +146,6 @@ export const IncidentDetails = ({
           Share
         </button>
       </div>
-      <AddResponder />
       {/* <IncidentDetailsRow
         title="Chart Room"
         value={
@@ -122,33 +170,34 @@ export const IncidentDetails = ({
         }
       /> */}
       <div className="mt-1">
-        <h2 className="text-base font-medium">Responders</h2>
-        <div className="max-h-48 overflow-y-scroll shadow sm:rounded-lg p-2">
-          {respondersArray.map((responder) => {
-            return (
-              <div className="mt-1" key={responder.id}>
-                <div className="relative rounded-lg border border-gray-300 bg-white px-2 py-2 shadow-sm flex items-center space-x-3">
+        {Boolean(responders.length) && (
+          <h2 className="text-dark-gray text-sm font-medium">Responders</h2>
+        )}
+        {responders.map((responder) => {
+          return (
+            <div className="mt-1 cursor-pointer" key={responder.json.id}>
+              <div className="relative py-2 flex items-center space-x-3">
+                {responder.icon && (
                   <div className="flex-shrink-0">
-                    <AvatarGroup
-                      users={[{ ...responder, name: responder.label }]}
-                    />
+                    {<responder.icon className="inline-block" />}
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <a href="#" className="focus:outline-none">
-                      <span
-                        className="absolute inset-0"
-                        aria-hidden="true"
-                      ></span>
-                      <p className="text-sm font-medium text-gray-900">
-                        {responder.label}
-                      </p>
-                    </a>
+                )}
+                <div className="flex-1 min-w-0 group">
+                  <div className="text-sm font-medium text-gray-900 inline-block">
+                    {responder.name}
+                  </div>
+                  <div
+                    className="inline-block ml-10 cursor-pointer"
+                    onClick={(e) => initiateDeleteResponder(responder.json.id)}
+                  >
+                    <MdDelete className="hidden group-hover:inline-block text-red-500" />
                   </div>
                 </div>
               </div>
-            );
-          })}
-        </div>
+            </div>
+          );
+        })}
+        <AddResponder className="py-2" onSuccess={() => fetchResponders()} />
       </div>
       <IncidentDetailsRow
         title="Commanders"

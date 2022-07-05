@@ -1,4 +1,4 @@
-import { useState, useCallback, MouseEventHandler } from "react";
+import { useState, useCallback, MouseEventHandler, useMemo } from "react";
 import clsx from "clsx";
 import { SiJira } from "react-icons/si";
 import { MdEmail } from "react-icons/md";
@@ -41,20 +41,57 @@ type ActionButtonGroupProps = {
   nextAction?: Action;
 } & React.HTMLProps<HTMLDivElement>;
 
+export const ResponderPropsKeyToLabelMap = {
+  to: "To",
+  subject: "Subject",
+  body: "Body",
+  category: "Category",
+  description: "Description",
+  project: "Project",
+  issueType: "Issue Type",
+  summary: "Summary",
+  product: "Product",
+  person: "Person"
+};
+
 export const ResponderTypeOptions = [
   { label: "Email", value: "Email", icon: MdEmail },
   { label: "Jira", value: "Jira", icon: SiJira },
-  { label: "ServiceNow", value: "ServiceNow", icon: "servicenow" },
-  { label: "CA", value: "CA", icon: "ca" },
-  { label: "AWS Support", value: "AWS Support", icon: "aws" },
+  {
+    label: "ServiceNow",
+    value: "ServiceNow",
+    icon: () => <Icon className="inline-block" name="servicenow" />
+  },
+  {
+    label: "CA",
+    value: "CA",
+    icon: () => <Icon className="inline-block" name="ca" />
+  },
+  {
+    label: "AWS Support",
+    value: "AWS Support",
+    icon: () => <Icon className="inline-block" name="aws" />
+  },
   {
     label: "AWS AMS Service Request",
     value: "AWS AMS Service Request",
-    icon: "aws"
+    icon: () => <Icon className="inline-block" name="aws" />
   },
-  { label: "Redhat", value: "Redhat", icon: "redhat" },
-  { label: "Oracle", value: "Oracle", icon: "oracle_icon" },
-  { label: "Microsoft", value: "Microsoft", icon: "microsoft" },
+  {
+    label: "Redhat",
+    value: "Redhat",
+    icon: () => <Icon className="inline-block" name="redhat" />
+  },
+  {
+    label: "Oracle",
+    value: "Oracle",
+    icon: () => <Icon className="inline-block" name="oracle_icon" />
+  },
+  {
+    label: "Microsoft",
+    value: "Microsoft",
+    icon: () => <Icon className="inline-block" name="microsoft" />
+  },
   { label: "VMWare", value: "VMWare", icon: GrVmware },
   { label: "Person", value: "Person", icon: FiUser }
 ];
@@ -89,7 +126,17 @@ type AddResponderFormValues = {
 
 type formPropKey = keyof AddResponderFormValues;
 
-export const AddResponder = () => {
+type AddResponderProps = {
+  onSuccess?: () => void;
+  onError?: () => void;
+} & React.HTMLProps<HTMLDivElement>;
+
+export const AddResponder = ({
+  onSuccess = () => {},
+  onError = () => {},
+  className,
+  ...rest
+}: AddResponderProps) => {
   const { loading, setLoading } = useLoader();
   const { id } = useParams();
   const { user } = useUser();
@@ -140,7 +187,7 @@ export const AddResponder = () => {
     setSteps([...steps]);
   };
 
-  const getResponderTypeForm = () => {
+  const getResponderTypeForm = useMemo(() => {
     switch (selectedType?.value) {
       case "Email":
         return <Email control={control} errors={errors} />;
@@ -167,7 +214,7 @@ export const AddResponder = () => {
       default:
         return null;
     }
-  };
+  }, [selectedType, control]);
 
   const onSubmit = async () => {
     await handleSubmit(
@@ -201,10 +248,17 @@ export const AddResponder = () => {
     };
     try {
       setLoading(true);
-      await saveResponder(payload);
-      toastSuccess("Added responder successfully");
+      const result = await saveResponder(payload);
+      if (!result?.error) {
+        toastSuccess("Added responder successfully");
+        onSuccess();
+      } else {
+        onError();
+        toastSuccess("Adding responder failed");
+      }
     } catch (ex) {
       toastError(ex.message);
+      onError();
     }
     setLoading(false);
     setIsOpen(false);
@@ -216,23 +270,19 @@ export const AddResponder = () => {
     }
     return (
       <>
-        {selectedType?.icon &&
-          (typeof selectedType?.icon === "string" ? (
-            <Icon className="inline-block" name={selectedType?.icon} />
-          ) : (
-            <selectedType.icon className="inline-block" />
-          ))}{" "}
+        {selectedType?.icon && <selectedType.icon className="inline-block" />}{" "}
         <span>{selectedType?.label} Details</span>
       </>
     );
   };
 
   return (
-    <div className="flex flex-1 justify-end">
-      <button
-        type="button"
-        className="btn-secondary btn-secondary-sm text-dark-blue"
-        onClick={() => {
+    <div className={clsx("flex flex-1", className)} {...rest}>
+      <a
+        href=""
+        className="text-gray-500 text-sm font-medium hover:underline mt-1"
+        onClick={(event) => {
+          event.preventDefault();
           setSelectedType(null);
           reset();
           setIsOpen(true);
@@ -240,7 +290,7 @@ export const AddResponder = () => {
         }}
       >
         Add Responder
-      </button>
+      </a>
       <Modal
         title={getModalTitle()}
         onClose={onCloseModal}
@@ -272,17 +322,17 @@ export const AddResponder = () => {
           {steps[1].inProgress && (
             <div>
               <div className="px-8 py-3 h-modal-body-md">
-                {getResponderTypeForm()}
+                {getResponderTypeForm}
                 <ActionButtonGroup
                   className="absolute w-full bottom-0 left-0"
                   nextAction={{
                     label: !loading ? "Save" : "Saving...",
-                    disabled: !selectedType,
+                    disabled: !selectedType || !loading,
                     handler: onSubmit
                   }}
                   previousAction={{
                     label: "Back",
-                    disabled: !selectedType,
+                    disabled: !selectedType || !loading,
                     handler: () => goToStep(steps[0], steps[1])
                   }}
                 />
