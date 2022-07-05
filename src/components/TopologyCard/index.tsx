@@ -6,10 +6,33 @@ import { getTopologyWithoutUnroll } from "../../api/services/topology";
 import { HealthSummary } from "../HealthSummary";
 import { Icon } from "../Icon";
 import { Loading } from "../Loading";
-import "./index.css";
 import { CardMetrics } from "./CardMetrics";
 import { Property } from "./Property";
 import { TopologyDropdownMenu } from "./TopologyDropdownMenu";
+
+export enum CardSize {
+  small = "small",
+  medium = "medium",
+  large = "large",
+  extra_large = "extra_large"
+}
+
+enum ComponentStatus {
+  unhealthy = "unhealthy",
+  warning = "warning"
+}
+
+const CardWidth: { [k: keyof typeof CardSize]: string } = {
+  [CardSize.small]: "198px",
+  [CardSize.medium]: "258px",
+  [CardSize.large]: "356px",
+  [CardSize.extra_large]: "554px"
+};
+
+const StatusStyles: { [k: keyof typeof ComponentStatus]: string } = {
+  [ComponentStatus.unhealthy]: "border-red-300",
+  [ComponentStatus.warning]: "border-orange-300"
+};
 
 const CARD_SIZE = {
   SMALL: "small",
@@ -19,7 +42,7 @@ const CARD_SIZE = {
 };
 
 interface IProps {
-  size: "small" | "medium" | "large" | "extra-large";
+  size: CardSize;
   topologyId: string;
   topology: any;
   selectionMode: boolean;
@@ -57,15 +80,13 @@ export function TopologyCard({
   }
 
   const metricsInFooter = useMemo(
-    () => size === CARD_SIZE.SMALL || size === CARD_SIZE.MEDIUM,
+    () => size === CardSize.small || size === CardSize.medium,
     [size]
   );
 
   const prepareTopologyLink = (topologyItem: { id: string }) => {
     return `/topology/${topologyItem.id}`;
   };
-
-  console.log({ topology });
 
   if (topology == null) {
     return <Loading text={`Loading ${topologyId}`} />;
@@ -77,16 +98,16 @@ export function TopologyCard({
 
   return (
     <div
+      style={{ width: CardWidth[size] }}
       className={clsx(
-        "rounded-8px mb-3 mr-3 shadow-card card topology-card bg-lightest-gray",
-        topology.status,
-        selectionMode ? "cursor-pointer" : "",
-        `topology-card-${size}`
+        "rounded-8px mb-3 mr-3 shadow-card card bg-lightest-gray border-0 border-t-8",
+        StatusStyles[topology.status] || "border-white",
+        selectionMode ? "cursor-pointer" : ""
       )}
       {...selectionModeRootProps}
     >
-      <div className="flex flex-row flex-nowrap topology-card-header rounded-t-8px bg-white">
-        <div className="flex pr-1 pt-2.5 pb-3.5 pl-5 overflow-hidden">
+      <div className="flex flex-row flex-nowrap bg-white -mt-1 rounded-t-md border-b">
+        <div className="flex pr-1 pt-2.5 pb-3.5 pl-2 overflow-hidden">
           <div className="text-gray-color m-auto mr-2.5 flex-initial max-w-1/4 leading-1.21rel">
             <h3 className="text-gray-color text-2xsi leading-1.21rel">
               <Icon name={topology.icon} size="2xl" />
@@ -112,7 +133,7 @@ export function TopologyCard({
 
         {!metricsInFooter && (
           <div className="flex ml-auto pl-1 pr-1.5 pb-3.5 pt-3">
-            <CardMetrics items={heading} row={size === CARD_SIZE.EXTRA_LARGE} />
+            <CardMetrics items={heading} row={size === CardSize.extra_large} />
           </div>
         )}
 
@@ -153,19 +174,10 @@ export function TopologyCard({
                 ))}
               </div>
             )}
-            <div className="pl-1 py-4 pr-5 overflow-y-auto max-h-36">
+            <div className="pl-2 py-4 pr-5 overflow-y-auto max-h-36 space-y-0 last:mb-2.5">
               {topology.components ? (
-                topology.components.map((component: any, index: number) => (
-                  <div
-                    className={
-                      index === topology.components.length - 1
-                        ? "mb-0"
-                        : "mb-2.5"
-                    }
-                    key={component.id}
-                  >
-                    <HealthSummary component={component} />
-                  </div>
+                topology.components.map((component: any) => (
+                  <HealthSummary key={component.id} component={component} />
                 ))
               ) : (
                 <HealthSummary component={topology} />
