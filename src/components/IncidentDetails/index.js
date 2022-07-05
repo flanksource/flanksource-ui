@@ -22,6 +22,9 @@ import {
 } from "../../api/services/responder";
 import { MdDelete } from "react-icons/md";
 import { toastError, toastSuccess } from "../Toast/toast";
+import { IconButton } from "../IconButton";
+import { BsTrash } from "react-icons/bs";
+import { DeleteConfirmDialog } from "../DeleteConfirmDialog";
 
 export const IncidentDetails = ({
   incident,
@@ -30,6 +33,7 @@ export const IncidentDetails = ({
   textButton
 }) => {
   const [responders, setResponders] = useState([]);
+  const [openDeleteConfirmDialog, setOpenDeleteConfirmDialog] = useState(false);
 
   // Temporary mock, in the future you need to replace it with an array of real users received from the api
   const commandersArray = useMemo(
@@ -85,29 +89,12 @@ export const IncidentDetails = ({
   }, [watch, updateIncidentHandler]);
 
   const getResponderTitle = (properties) => {
-    if (properties.responderType === "Email") {
-      return properties.to;
-    } else if (properties.responderType === "AWS AMS Service Request") {
-      return properties.category;
-    } else if (properties.responderType === "AWS Support") {
-      return properties.category;
-    } else if (properties.responderType === "ServiceNow") {
-      return properties.category;
-    } else if (properties.responderType === "CA") {
-      return properties.category;
-    } else if (properties.responderType === "Redhat") {
-      return properties.product;
-    } else if (properties.responderType === "Oracle") {
-      return properties.product;
-    } else if (properties.responderType === "Microsoft") {
-      return properties.product;
-    } else if (properties.responderType === "VMWare") {
-      return properties.product;
-    } else if (properties.responderType === "Person") {
-      return properties.person;
-    } else if (properties.responderType === "Jira") {
-      return properties.project;
-    }
+    return (
+      properties.id ||
+      properties.title ||
+      properties.to ||
+      properties.description
+    );
   };
 
   async function fetchResponders() {
@@ -148,6 +135,7 @@ export const IncidentDetails = ({
     } catch (ex) {
       toastError("Responder delete failed");
     }
+    setOpenDeleteConfirmDialog(false);
   }
 
   useEffect(() => {
@@ -193,9 +181,10 @@ export const IncidentDetails = ({
           </a>
         }
       /> */}
-      <div className="mt-1">
-        {Boolean(responders.length) && (
-          <h2 className="text-dark-gray text-sm font-medium">Responders</h2>
+      <div className="grid grid-cols-1-to-2 gap-6 items-center mt-4">
+        <h2 className="text-dark-gray text-sm font-medium">Responders</h2>
+        {!responders.length && (
+          <AddResponder className="py-2" onSuccess={() => fetchResponders()} />
         )}
         {responders.map((responder) => {
           return (
@@ -203,26 +192,38 @@ export const IncidentDetails = ({
               <div className="relative py-2 flex items-center space-x-3">
                 {responder.icon && (
                   <div className="flex-shrink-0">
-                    {<responder.icon className="inline-block" />}
+                    {<responder.icon className="inline-block w-6 h-6" />}
                   </div>
                 )}
                 <div className="flex-1 min-w-0 group">
-                  <div className="text-dark-gray text-sm font-medium inline-block">
+                  <div className="text-dark-gray text-sm font-medium inline-block relative w-full">
                     {responder.name}
-                  </div>
-                  <div
-                    className="inline-block ml-10 cursor-pointer"
-                    onClick={(e) => initiateDeleteResponder(responder.json.id)}
-                  >
-                    <MdDelete className="hidden group-hover:inline-block text-red-500" />
+                    <div className="inline-block ml-10 cursor-pointer absolute right-0 top-0">
+                      <DeleteConfirmDialog
+                        className="hidden group-hover:inline-block"
+                        isOpen={openDeleteConfirmDialog}
+                        title="Delete Responder ?"
+                        description="Are you sure you want to delete the responder ?"
+                        onOpen={() => setOpenDeleteConfirmDialog(true)}
+                        onClose={() => setOpenDeleteConfirmDialog(false)}
+                        onDelete={() =>
+                          initiateDeleteResponder(responder.json.id)
+                        }
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           );
         })}
-        <AddResponder className="py-2" onSuccess={() => fetchResponders()} />
       </div>
+      {Boolean(responders.length) && (
+        <div className="grid grid-cols-1-to-2 gap-6 items-center">
+          <div></div>
+          <AddResponder onSuccess={() => fetchResponders()} />
+        </div>
+      )}
       <IncidentDetailsRow
         title="Commanders"
         className="mt-4"

@@ -280,7 +280,7 @@ export const AddResponder = ({
     <div className={clsx("flex flex-1", className)} {...rest}>
       <a
         href=""
-        className="text-gray-500 text-sm font-medium underline mt-1"
+        className="underline text-blue-600 hover:text-blue-800 visited:text-purple-600 text-gray-500 text-sm font-medium underline mt-1"
         onClick={(event) => {
           event.preventDefault();
           setSelectedType(null);
