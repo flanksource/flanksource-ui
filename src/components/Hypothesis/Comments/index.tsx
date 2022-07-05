@@ -5,6 +5,7 @@ import dayjs from "dayjs";
 import { CommentInput, CommentText } from "../../Comment";
 import { Avatar } from "../../Avatar";
 import { Comment } from "../../../api/services/comments";
+import clsx from "clsx";
 
 interface Props {
   comments: Comment[];
@@ -41,9 +42,7 @@ export function CommentsSection({
   return (
     <div className={rest.className} {...rest}>
       {titlePrepend}
-      {comments.length <= 0 ? (
-        <div className="text-sm text-gray-400">No comments yet</div>
-      ) : (
+      {!!comments.length && (
         <ul>
           {comments.map((comment) => (
             <li className="pb-4 flex items-start space-x-3" key={comment.id}>
@@ -82,15 +81,17 @@ export function CommentsSection({
           singleLine
           value={commentTextValue}
           onChange={setCommentTextValue}
+          onEnter={() => handleComment()}
         />
-        <div className="flex justify-end mt-2">
+        <div className="absolute m-0.5 top-0 right-0">
           <button
             disabled={isLoading || !commentTextValue}
             type="button"
             onClick={handleComment}
-            className={
+            className={clsx(
+              "p-1",
               isLoading || !commentTextValue ? "btn-disabled" : "btn-primary"
-            }
+            )}
           >
             Comment
           </button>

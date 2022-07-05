@@ -34,7 +34,7 @@ const mentionsStyle = {
     },
     input: {
       backgroundColor: "white",
-      padding: 1,
+      padding: 4,
       borderRadius: "0.375rem",
       borderColor: "rgb(229 231 235)",
       "--tw-shadow": "0 1px 2px 0 rgb(0 0 0 / 0.05)",
@@ -75,6 +75,7 @@ interface Props {
   trigger?: string;
   markup?: string;
   onChange: (text: string) => void;
+  onEnter: () => void;
   singleLine: boolean;
 }
 
@@ -84,6 +85,7 @@ export const MENTION_TRIGGER = "@";
 export const CommentInput = ({
   value,
   onChange,
+  onEnter,
   markup = MENTION_MARKUP,
   trigger = MENTION_TRIGGER,
   singleLine
@@ -103,9 +105,15 @@ export const CommentInput = ({
 
   return (
     <MentionsInput
+      placeholder="Comment"
       singleLine
       value={value}
       onChange={(e) => onChange(e.target.value)}
+      onKeyUp={(e) => {
+        if (e.key === "Enter") {
+          onEnter();
+        }
+      }}
       a11ySuggestionsListLabel="Suggested mentions"
       style={mentionsStyle}
       allowSpaceInQuery
