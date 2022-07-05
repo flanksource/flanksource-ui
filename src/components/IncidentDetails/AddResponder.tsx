@@ -327,12 +327,12 @@ export const AddResponder = ({
                   className="absolute w-full bottom-0 left-0"
                   nextAction={{
                     label: !loading ? "Save" : "Saving...",
-                    disabled: !selectedType || !loading,
+                    disabled: !selectedType || loading,
                     handler: onSubmit
                   }}
                   previousAction={{
                     label: "Back",
-                    disabled: !selectedType || !loading,
+                    disabled: !selectedType || loading,
                     handler: () => goToStep(steps[0], steps[1])
                   }}
                 />
