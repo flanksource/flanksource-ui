@@ -18,11 +18,11 @@ import { HypothesisBuilder } from "../../components/Hypothesis/HypothesisBuilder
 import { SearchLayout } from "../../components/Layout";
 import { Loading } from "../../components/Loading";
 import { Changelog } from "../../components/Change";
-import { TopologyCard } from "../../components/Topology/topology-card";
 import { useIncidentQuery } from "../../components/query-hooks/useIncidentQuery";
 import { useUpdateHypothesisMutation } from "../../components/mutations/useUpdateHypothesisMutation";
 import { useCreateHypothesisMutation } from "../../components/mutations/useCreateHypothesisMutation";
 import { IncidentDetails } from "../../components/IncidentDetails";
+import { TopologyCard } from "../../components/TopologyCard";
 
 type TreeNode<T> = T & {
   children?: T[];

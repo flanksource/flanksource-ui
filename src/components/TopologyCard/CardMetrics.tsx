@@ -1,9 +1,15 @@
-import React from "react";
-import PropTypes from "prop-types";
 import clsx from "clsx";
-import { FormatProperty } from "./property";
+import { FormatProperty } from "./Property";
 
-export const Metrics = ({ items, row }) => (
+interface IProps {
+  items: {
+    name: string;
+    color?: string;
+  };
+  row?: boolean;
+}
+
+export const CardMetrics = ({ items, row }: IProps) => (
   <div className="flex rounded-b-8px divide-x flex-1 justify-between items-center">
     {items.map((item) => (
       <div
@@ -33,17 +39,3 @@ export const Metrics = ({ items, row }) => (
     ))}
   </div>
 );
-
-Metrics.propTypes = {
-  items: PropTypes.arrayOf(
-    PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      color: PropTypes.string
-    })
-  ).isRequired,
-  row: PropTypes.bool
-};
-
-Metrics.defaultProps = {
-  row: false
-};

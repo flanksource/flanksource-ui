@@ -1,5 +1,4 @@
 import React, { Fragment, useState } from "react";
-import PropTypes from "prop-types";
 import { Menu, Transition } from "@headlessui/react";
 import { DotsVerticalIcon } from "@heroicons/react/outline";
 import { Link, useNavigate, useLocation } from "react-router-dom";
@@ -8,7 +7,11 @@ import { MdAdd, MdAlarmAdd, MdTableRows } from "react-icons/md";
 import { EvidenceType } from "../../api/services/evidence";
 import { AttachEvidenceDialog } from "../AttachEvidenceDialog";
 
-export const TopologyDropdownMenu = ({ topology }) => {
+interface IProps {
+  topology: any;
+}
+
+export const TopologyDropdownMenu = ({ topology }: IProps) => {
   const location = useLocation();
   const [attachAsAsset, setAttachAsAsset] = useState(false);
 
@@ -95,8 +98,4 @@ export const TopologyDropdownMenu = ({ topology }) => {
       />
     </>
   );
-};
-
-TopologyDropdownMenu.propTypes = {
-  topology: PropTypes.shape({}).isRequired
 };

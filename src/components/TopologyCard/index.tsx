@@ -7,9 +7,9 @@ import { HealthSummary } from "../HealthSummary";
 import { Icon } from "../Icon";
 import { Loading } from "../Loading";
 import "./index.css";
-import { Metrics } from "./metrics";
-import { Property } from "./property";
-import { TopologyDropdownMenu } from "./topology-menu";
+import { CardMetrics } from "./CardMetrics";
+import { Property } from "./Property";
+import { TopologyDropdownMenu } from "./TopologyDropdownMenu";
 
 const CARD_SIZE = {
   SMALL: "small",
@@ -30,22 +30,22 @@ interface IProps {
 
 export function TopologyCard({
   size,
-  topology,
+  topology: topologyData,
   topologyId,
   selectionMode,
   depth,
   selected,
   onSelectionChange
 }: IProps) {
-  const [_topology, setTopology] = useState(topology);
+  const [topology, setTopology] = useState(topologyData);
 
   useEffect(() => {
-    if (topologyId != null && _topology == null) {
+    if (topologyId != null && topologyData == null) {
       getTopologyWithoutUnroll({ id: topologyId, depth }).then((topology) => {
         setTopology(topology.data[0]);
       });
     }
-  }, [topologyId, _topology, depth]);
+  }, [topologyId, topologyData, depth]);
 
   let selectionModeRootProps = null;
 
@@ -65,19 +65,21 @@ export function TopologyCard({
     return `/topology/${topologyItem.id}`;
   };
 
-  if (_topology == null) {
+  console.log({ topology });
+
+  if (topology == null) {
     return <Loading text={`Loading ${topologyId}`} />;
   }
 
-  _topology.properties = _topology.properties || [];
-  const properties = filter(_topology.properties, (i) => !i.headline);
-  const heading = filter(_topology.properties, (i) => i.headline);
+  topology.properties = topology.properties || [];
+  const properties = filter(topology.properties, (i) => !i.headline);
+  const heading = filter(topology.properties, (i) => i.headline);
 
   return (
     <div
       className={clsx(
         "rounded-8px mb-3 mr-3 shadow-card card topology-card bg-lightest-gray",
-        _topology.status,
+        topology.status,
         selectionMode ? "cursor-pointer" : "",
         `topology-card-${size}`
       )}
@@ -87,22 +89,22 @@ export function TopologyCard({
         <div className="flex pr-1 pt-2.5 pb-3.5 pl-5 overflow-hidden">
           <div className="text-gray-color m-auto mr-2.5 flex-initial max-w-1/4 leading-1.21rel">
             <h3 className="text-gray-color text-2xsi leading-1.21rel">
-              <Icon name={_topology.icon} size="2xl" />
+              <Icon name={topology.icon} size="2xl" />
             </h3>
           </div>
           <div className="flex-1 m-auto overflow-hidden">
             <p
               className="font-bold overflow-hidden truncate align-middle text-15pxinrem leading-1.21rel"
-              title={_topology.name}
+              title={topology.name}
             >
-              <Link to={prepareTopologyLink(_topology)}>
-                {_topology.text || _topology.name}
+              <Link to={prepareTopologyLink(topology)}>
+                {topology.text || topology.name}
               </Link>
             </p>
-            {_topology.description != null ||
-              (_topology.id != null && (
+            {topology.description != null ||
+              (topology.id != null && (
                 <h3 className="text-gray-color overflow-hidden truncate text-2xsi leading-1.21rel font-medium">
-                  {_topology.description || _topology.id}
+                  {topology.description || topology.id}
                 </h3>
               ))}
           </div>
@@ -110,7 +112,7 @@ export function TopologyCard({
 
         {!metricsInFooter && (
           <div className="flex ml-auto pl-1 pr-1.5 pb-3.5 pt-3">
-            <Metrics items={heading} row={size === CARD_SIZE.EXTRA_LARGE} />
+            <CardMetrics items={heading} row={size === CARD_SIZE.EXTRA_LARGE} />
           </div>
         )}
 
@@ -125,14 +127,14 @@ export function TopologyCard({
               />
             </div>
           ) : (
-            <TopologyDropdownMenu topology={_topology} />
+            <TopologyDropdownMenu topology={topology} />
           )}
         </div>
       </div>
       <div className="flex flex-nowrap bg-lightest-gray rounded-b-8px">
         {metricsInFooter ? (
           <div className="flex py-4 flex-1">
-            <Metrics items={heading} />
+            <CardMetrics items={heading} />
           </div>
         ) : (
           <>
@@ -143,7 +145,7 @@ export function TopologyCard({
                     key={property.name}
                     property={property}
                     className={
-                      index === _topology.properties.length - 1
+                      index === topology.properties.length - 1
                         ? "mb-0"
                         : "mb-2.5"
                     }
@@ -152,11 +154,11 @@ export function TopologyCard({
               </div>
             )}
             <div className="pl-1 py-4 pr-5 overflow-y-auto max-h-36">
-              {_topology.components &&
-                _topology.components.map((component: any, index: number) => (
+              {topology.components ? (
+                topology.components.map((component: any, index: number) => (
                   <div
                     className={
-                      index === _topology.components.length - 1
+                      index === topology.components.length - 1
                         ? "mb-0"
                         : "mb-2.5"
                     }
@@ -164,7 +166,10 @@ export function TopologyCard({
                   >
                     <HealthSummary component={component} />
                   </div>
-                ))}
+                ))
+              ) : (
+                <HealthSummary component={topology} />
+              )}
             </div>
           </>
         )}

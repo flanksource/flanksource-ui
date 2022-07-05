@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { TopologyColumn, TopologyCard } from "../../../components/Topology";
+import { TopologyColumn } from "../../../components/Topology";
+import { TopologyCard } from "../../../components/TopologyCard";
 
 export const TopologyView = ({
   topology,
