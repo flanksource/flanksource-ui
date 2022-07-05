@@ -1,8 +1,13 @@
 import React from "react";
-import PropTypes from "prop-types";
 import clsx from "clsx";
 
-export const IncidentDetailsRow = ({ title, value, className }) => (
+interface IProps {
+  title: string;
+  value: React.ReactNode;
+  className: string;
+}
+
+export const IncidentDetailsRow = ({ title, value, className }: IProps) => (
   <div className={clsx("grid grid-cols-1-to-2 gap-6 items-center", className)}>
     <div>
       <h6 className="text-dark-gray text-sm font-medium">{title}</h6>
@@ -10,7 +15,3 @@ export const IncidentDetailsRow = ({ title, value, className }) => (
     <div>{value}</div>
   </div>
 );
-
-IncidentDetailsRow.propTypes = {
-  title: PropTypes.string.isRequired
-};

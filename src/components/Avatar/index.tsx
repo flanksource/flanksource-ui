@@ -1,16 +1,32 @@
 import React, { useEffect, useMemo } from "react";
-import PropTypes from "prop-types";
 import { useImage } from "react-image";
 import { BsFillPersonFill } from "react-icons/bs";
 import clsx from "clsx";
 import ReactTooltip from "react-tooltip";
+import { User } from "../../api/services/users";
 
-const AvatarFC = ({ user, size, unload, alt, containerProps, imageProps }) => {
+interface IProps {
+  size: "sm" | "lg" | "md";
+  alt: string;
+  user: User;
+  imageProps?: React.ComponentPropsWithoutRef<"img">;
+  containerProps?: React.ComponentPropsWithoutRef<"div">;
+  unload: boolean;
+}
+
+export function Avatar({
+  user,
+  size,
+  unload,
+  alt,
+  containerProps,
+  imageProps
+}: IProps) {
   const srcList = user?.avatar;
   const fallbackInitials = user?.name || "?";
 
   const { src, isLoading } = useImage({
-    srcList: Array.isArray(srcList) ? srcList : [srcList],
+    srcList: (Array.isArray(srcList) ? srcList : [srcList]).filter(Boolean),
     useSuspense: false
   });
   const sizeClass = useMemo(() => {
@@ -45,7 +61,7 @@ const AvatarFC = ({ user, size, unload, alt, containerProps, imageProps }) => {
       className={clsx(
         "overflow-hidden rounded-md flex justify-center items-center leading-none",
         sizeClass,
-        containerProps.className,
+        containerProps?.className,
         !src && initials ? "bg-dark-blue text-white" : "bg-lighter-gray"
       )}
       data-tip={user?.name}
@@ -57,7 +73,7 @@ const AvatarFC = ({ user, size, unload, alt, containerProps, imageProps }) => {
           {...imageProps}
           className={clsx(
             "w-full h-full rounded-md overflow-hidden",
-            imageProps.className
+            imageProps?.className
           )}
         />
       ) : (
@@ -70,24 +86,4 @@ const AvatarFC = ({ user, size, unload, alt, containerProps, imageProps }) => {
       )}
     </div>
   );
-};
-
-AvatarFC.propTypes = {
-  size: PropTypes.string,
-  user: PropTypes.shape({}),
-  unload: PropTypes.node,
-  alt: PropTypes.string,
-  containerProps: PropTypes.shape({}),
-  imageProps: PropTypes.shape({})
-};
-
-AvatarFC.defaultProps = {
-  size: "md",
-  unload: undefined,
-  user: null,
-  alt: "",
-  containerProps: {},
-  imageProps: {}
-};
-
-export const Avatar = React.memo(AvatarFC);
+}

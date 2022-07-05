@@ -1,13 +1,21 @@
 import { RefreshButton } from "../RefreshButton";
 import { UserProfile } from "../UserProfile/user-profile";
 
+interface IProps {
+  children: React.ReactNode;
+  contentClass?: string;
+  title: React.ReactNode;
+  onRefresh?: () => void;
+  extra?: React.ReactNode;
+}
+
 export function SearchLayout({
   children,
   contentClass,
   title,
   extra,
   onRefresh
-}) {
+}: IProps) {
   return (
     <div className="flex flex-col flex-1">
       <div className="sticky top-0 z-10 flex-shrink-0 flex py-3 bg-white shadow">

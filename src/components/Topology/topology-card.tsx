@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { filter } from "lodash";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, MouseEventHandler } from "react";
 import { Link } from "react-router-dom";
 import { getTopologyWithoutUnroll } from "../../api/services/topology";
 import { HealthSummary } from "../HealthSummary";
@@ -18,6 +18,16 @@ const CARD_SIZE = {
   EXTRA_LARGE: "extra-large"
 };
 
+interface IProps {
+  size: "small" | "medium" | "large" | "extra-large";
+  topologyId: string;
+  topology: any;
+  selectionMode: boolean;
+  depth: number;
+  selected: boolean;
+  onSelectionChange: MouseEventHandler<HTMLDivElement>;
+}
+
 export function TopologyCard({
   size,
   topology,
@@ -26,7 +36,7 @@ export function TopologyCard({
   depth,
   selected,
   onSelectionChange
-}) {
+}: IProps) {
   const [_topology, setTopology] = useState(topology);
 
   useEffect(() => {
@@ -42,9 +52,7 @@ export function TopologyCard({
   if (selectionMode) {
     selectionModeRootProps = {
       role: "button",
-      onClick: (state, event) => {
-        onSelectionChange(state, event);
-      }
+      onClick: onSelectionChange
     };
   }
 
@@ -53,7 +61,7 @@ export function TopologyCard({
     [size]
   );
 
-  const prepareTopologyLink = (topologyItem) => {
+  const prepareTopologyLink = (topologyItem: { id: string }) => {
     return `/topology/${topologyItem.id}`;
   };
 
@@ -145,7 +153,7 @@ export function TopologyCard({
             )}
             <div className="pl-1 py-4 pr-5 overflow-y-auto max-h-36">
               {_topology.components &&
-                _topology.components.map((component, index) => (
+                _topology.components.map((component: any, index: number) => (
                   <div
                     className={
                       index === _topology.components.length - 1
@@ -154,10 +162,7 @@ export function TopologyCard({
                     }
                     key={component.id}
                   >
-                    <HealthSummary
-                      component={component}
-                      link={prepareTopologyLink(component)}
-                    />
+                    <HealthSummary component={component} />
                   </div>
                 ))}
             </div>
@@ -167,32 +172,3 @@ export function TopologyCard({
     </div>
   );
 }
-
-// TopologyCard.propTypes = {
-//   size: PropTypes.string,
-//   selectionMode: PropTypes.bool,
-//   selected: PropTypes.bool,
-//   onSelectionChange: PropTypes.func,
-//   topologyId: PropTypes.string,
-//   topology: PropTypes.shape({
-//     name: PropTypes.string,
-//     status: PropTypes.string,
-//     icon: PropTypes.string,
-//     properties: PropTypes.arrayOf(
-//       PropTypes.shape({
-//         name: PropTypes.string,
-//         text: PropTypes.string
-//         value
-//       }).isRequired
-//     )
-//   })
-// };
-
-// TopologyCard.defaultProps = {
-//   selectionMode: false,
-//   selected: false,
-//   topology: null,
-//   topologyId: null,
-//   size: "md",
-//   onSelectionChange: () => { }
-// };
