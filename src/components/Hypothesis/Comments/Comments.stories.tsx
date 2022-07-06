@@ -1,4 +1,5 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react";
+import dayjs from "dayjs";
 import { CommentsSection } from "./index";
 
 export default {
@@ -27,6 +28,8 @@ FewComments.args = {
       name: `User ${i}`,
       avatar: `https://i.pravatar.cc/150?u=${i}`
     },
-    created_at: new Date(Date.now()).toISOString()
+    created_at: dayjs()
+      .subtract(Math.max(i - 1, 0), "day")
+      .toString()
   }))
 };

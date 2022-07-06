@@ -13,6 +13,20 @@ interface Props {
   onComment: (str: string) => Promise<void>;
 }
 
+const relativeTime = (ts: string) => {
+  const t = dayjs(ts);
+  const n = dayjs();
+  if (n.isSame(t, "day")) {
+    return t.format("h:mm A");
+  }
+
+  if (n.diff(t, "days") === 1) {
+    return `${t.format("h:mm A")} yesterday`;
+  }
+
+  return t.format("h:mm A, dddd, MMMM D, YYYY");
+};
+
 export function CommentsSection({
   comments,
   titlePrepend,
@@ -60,7 +74,7 @@ export function CommentsSection({
                     </span>
                   </div>
                   <p className="mt-0.5 text-gray-500 text-xs leading-5 font-normal">
-                    {dayjs(comment.created_at).fromNow()}
+                    {relativeTime(comment.created_at)}
                   </p>
                 </div>
                 <div className="text-sm text-gray-700">
