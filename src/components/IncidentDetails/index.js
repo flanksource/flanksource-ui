@@ -20,7 +20,6 @@ import {
   deleteResponder,
   getRespondersForTheIncident
 } from "../../api/services/responder";
-import { MdDelete } from "react-icons/md";
 import { toastError, toastSuccess } from "../Toast/toast";
 import { IconButton } from "../IconButton";
 import { BsTrash } from "react-icons/bs";
@@ -34,6 +33,7 @@ export const IncidentDetails = ({
 }) => {
   const [responders, setResponders] = useState([]);
   const [openDeleteConfirmDialog, setOpenDeleteConfirmDialog] = useState(false);
+  const [deletedResponder, setDeletedResponder] = useState();
 
   // Temporary mock, in the future you need to replace it with an array of real users received from the api
   const commandersArray = useMemo(
@@ -116,6 +116,7 @@ export const IncidentDetails = ({
               }
             })
             .filter((v) => v),
+          id: item.id,
           json: item
         };
       });
@@ -123,7 +124,8 @@ export const IncidentDetails = ({
     } catch (ex) {}
   }
 
-  async function initiateDeleteResponder(id) {
+  async function initiateDeleteResponder() {
+    const id = deletedResponder.id;
     try {
       const result = await deleteResponder(id);
       if (!result?.error) {
@@ -133,7 +135,7 @@ export const IncidentDetails = ({
         toastError("Responder delete failed");
       }
     } catch (ex) {
-      toastError("Responder delete failed");
+      toastError(ex.message);
     }
     setOpenDeleteConfirmDialog(false);
   }
@@ -181,42 +183,54 @@ export const IncidentDetails = ({
           </a>
         }
       /> */}
-      <div className="grid grid-cols-1-to-2 gap-6 items-center mt-4">
+      <div className="grid grid-cols-1-to-2 gap-6 mt-4">
         <h2 className="text-dark-gray text-sm font-medium">Responders</h2>
         {!responders.length && (
-          <AddResponder className="py-2" onSuccess={() => fetchResponders()} />
+          <AddResponder onSuccess={() => fetchResponders()} />
         )}
-        {responders.map((responder) => {
-          return (
-            <div className="mt-1 cursor-pointer" key={responder.json.id}>
-              <div className="relative py-2 flex items-center space-x-3">
-                {responder.icon && (
-                  <div className="flex-shrink-0">
-                    {<responder.icon className="inline-block w-6 h-6" />}
-                  </div>
-                )}
-                <div className="flex-1 min-w-0 group">
-                  <div className="text-dark-gray text-sm font-medium inline-block relative w-full">
-                    {responder.name}
-                    <div className="inline-block ml-10 cursor-pointer absolute right-0 top-0">
-                      <DeleteConfirmDialog
-                        className="hidden group-hover:inline-block"
-                        isOpen={openDeleteConfirmDialog}
-                        title="Delete Responder ?"
-                        description="Are you sure you want to delete the responder ?"
-                        onOpen={() => setOpenDeleteConfirmDialog(true)}
-                        onClose={() => setOpenDeleteConfirmDialog(false)}
-                        onDelete={() =>
-                          initiateDeleteResponder(responder.json.id)
-                        }
-                      />
+        {Boolean(responders.length) && (
+          <div>
+            {responders.map((responder) => {
+              return (
+                <div className="cursor-pointer" key={responder.json.id}>
+                  <div className="relative py-2 flex">
+                    {responder.icon && (
+                      <div className="rounded-full overflow-hidden flex justify-center items-center leading-none w-6 h-6 text-xs bg-lighter-gray">
+                        {<responder.icon className="w-7 h-7" />}
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0 group">
+                      <div className="text-dark-gray text-sm font-medium relative w-full overflow-hidden truncate pr-4 pl-2">
+                        {responder.name}
+                        <div className="ml-10 cursor-pointer absolute right-0 top-0">
+                          <IconButton
+                            className="bg-transparent hidden group-hover:inline-block z-5"
+                            onClick={() => {
+                              setOpenDeleteConfirmDialog(true);
+                              setDeletedResponder(responder);
+                            }}
+                            ovalProps={{
+                              stroke: "blue",
+                              height: "18px",
+                              width: "18px",
+                              fill: "transparent"
+                            }}
+                            icon={
+                              <BsTrash
+                                className="text-gray-600 border-0 border-l-1 border-gray-200"
+                                size={18}
+                              />
+                            }
+                          />
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          );
-        })}
+              );
+            })}
+          </div>
+        )}
       </div>
       {Boolean(responders.length) && (
         <div className="grid grid-cols-1-to-2 gap-6 items-center">
@@ -285,6 +299,15 @@ export const IncidentDetails = ({
             isSearchable={false}
           />
         }
+      />
+      <DeleteConfirmDialog
+        isOpen={openDeleteConfirmDialog}
+        title="Delete Responder ?"
+        description="Are you sure you want to delete the responder ?"
+        onClose={() => setOpenDeleteConfirmDialog(false)}
+        onDelete={() => {
+          initiateDeleteResponder();
+        }}
       />
       <button
         type="button"

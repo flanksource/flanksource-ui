@@ -60,37 +60,37 @@ export const ResponderTypeOptions = [
   {
     label: "ServiceNow",
     value: "ServiceNow",
-    icon: () => <Icon className="inline-block" name="servicenow" />
+    icon: () => <Icon size="md" name="servicenow" />
   },
   {
     label: "CA",
     value: "CA",
-    icon: () => <Icon className="inline-block" name="ca" />
+    icon: () => <Icon size="md" name="ca" />
   },
   {
     label: "AWS Support",
     value: "AWS Support",
-    icon: () => <Icon className="inline-block" name="aws" />
+    icon: () => <Icon size="md" name="aws" />
   },
   {
     label: "AWS AMS Service Request",
     value: "AWS AMS Service Request",
-    icon: () => <Icon className="inline-block" name="aws" />
+    icon: () => <Icon size="md" name="aws" />
   },
   {
     label: "Redhat",
     value: "Redhat",
-    icon: () => <Icon className="inline-block" name="redhat" />
+    icon: () => <Icon size="md" name="redhat" />
   },
   {
     label: "Oracle",
     value: "Oracle",
-    icon: () => <Icon className="inline-block" name="oracle_icon" />
+    icon: () => <Icon size="md" name="oracle_icon" />
   },
   {
     label: "Microsoft",
     value: "Microsoft",
-    icon: () => <Icon className="inline-block" name="microsoft" />
+    icon: () => <Icon size="md" name="microsoft" />
   },
   { label: "VMWare", value: "VMWare", icon: GrVmware },
   { label: "Person", value: "Person", icon: FiUser }
