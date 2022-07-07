@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { ChatAltIcon } from "@heroicons/react/solid";
+import { IoMdSend } from "react-icons/io";
 import dayjs from "dayjs";
 
 import { CommentInput, CommentText } from "../../Comment";
@@ -97,17 +98,18 @@ export function CommentsSection({
           onChange={setCommentTextValue}
           onEnter={() => handleComment()}
         />
-        <div className="absolute m-0.5 top-0 right-0">
+        <div className="flex h-full absolute top-0 right-0">
           <button
             disabled={isLoading || !commentTextValue}
             type="button"
             onClick={handleComment}
             className={clsx(
-              "p-1",
-              isLoading || !commentTextValue ? "btn-disabled" : "btn-primary"
+              "p-1 pl-2",
+              isLoading || !commentTextValue ? "btn-disabled" : "btn-primary",
+              "rounded-l-none"
             )}
           >
-            Comment
+            <IoMdSend size={18} />
           </button>
         </div>
       </div>
