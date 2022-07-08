@@ -223,7 +223,9 @@ export const IncidentDetails = ({
                             <div className="ml-10 cursor-pointer absolute right-0 top-0">
                               <IconButton
                                 className="bg-transparent hidden group-hover:inline-block z-5"
-                                onClick={() => {
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
                                   setOpenDeleteConfirmDialog(true);
                                   setDeletedResponder(responder);
                                 }}
