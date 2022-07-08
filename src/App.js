@@ -201,6 +201,8 @@ export function IncidentManagerRoutes({ sidebar }) {
 }
 
 export function CanaryCheckerApp() {
+  // TODO(ciju): the url is set at two places. axios.js#CanaryChecker and here.
+  // Consolidate logic to one place.
   return <Canary url="/api" />;
 }
 
