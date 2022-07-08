@@ -13,6 +13,7 @@ import {
 import { priorities } from "./data";
 import {
   AddResponder,
+  AddResponderFormValues,
   ResponderPropsKeyToLabelMap,
   ResponderTypeOptions
 } from "./AddResponder";
@@ -93,7 +94,9 @@ export const IncidentDetails = ({
     return () => subscription.unsubscribe();
   }, [watch, updateIncidentHandler]);
 
-  const getResponderTitle = (properties) => {
+  const getResponderTitle = (
+    properties: AddResponderFormValues & { id: string; title: string }
+  ) => {
     return (
       properties.id ||
       properties.title ||
@@ -275,15 +278,6 @@ export const IncidentDetails = ({
           />
         }
       />
-      {/* <IncidentDetailsRow
-        title="Tracking"
-        className="mt-3"
-        value={
-          <span className="text-dark-gray text-sm font-normal">
-            {getValues("tracking")}
-          </span>
-        }
-      /> */}
       <IncidentDetailsRow
         title="Started"
         className="mt-2.5"

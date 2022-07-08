@@ -24,6 +24,26 @@ const mentionsStyle = {
     }
   },
 
+  "&singleLine": {
+    display: "inline-block",
+    width: "100%",
+
+    highlighter: {
+      padding: 1,
+      border: "2px inset transparent"
+    },
+    input: {
+      backgroundColor: "white",
+      padding: 4,
+      borderRadius: "0.375rem",
+      borderColor: "rgb(229 231 235)",
+      "--tw-shadow": "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+      "--tw-shadow-colored": "0 1px 2px 0 var(--tw- shadow - color)",
+      boxShadow:
+        "var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)"
+    }
+  },
+
   suggestions: {
     list: {
       backgroundColor: "white",
@@ -55,6 +75,8 @@ interface Props {
   trigger?: string;
   markup?: string;
   onChange: (text: string) => void;
+  onEnter: () => void;
+  singleLine: boolean;
 }
 
 export const MENTION_MARKUP = "@[__display__](user:__id__)";
@@ -63,8 +85,10 @@ export const MENTION_TRIGGER = "@";
 export const CommentInput = ({
   value,
   onChange,
+  onEnter,
   markup = MENTION_MARKUP,
-  trigger = MENTION_TRIGGER
+  trigger = MENTION_TRIGGER,
+  singleLine
 }: Props) => {
   const [users, setUsers] = useState<Array<User & SuggestionDataItem>>([]);
 
@@ -81,8 +105,15 @@ export const CommentInput = ({
 
   return (
     <MentionsInput
+      placeholder="Comment"
+      singleLine
       value={value}
       onChange={(e) => onChange(e.target.value)}
+      onKeyUp={(e) => {
+        if (e.key === "Enter") {
+          onEnter();
+        }
+      }}
       a11ySuggestionsListLabel="Suggested mentions"
       style={mentionsStyle}
       allowSpaceInQuery

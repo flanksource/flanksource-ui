@@ -22,7 +22,7 @@ export interface Comment {
 export const getCommentsByHypothesis = (hypothesisId: string) =>
   resolve<Comment[]>(
     IncidentCommander.get(
-      `/comment?select=*,created_by(id,name,avatar)&hypothesis_id=eq.${hypothesisId}&order=created_at.desc`
+      `/comment?select=*,created_by(id,name,avatar)&hypothesis_id=eq.${hypothesisId}&order=created_at.asc`
     )
   );
 

@@ -96,9 +96,7 @@ export function ResponderDetailsDialog({
                 </div>
                 <div className="min-w-0 flex-1 ml-2">
                   <p className="text-sm font-medium text-gray-900">
-                    <a href="#" className="hover:underline">
-                      {responder?.type}
-                    </a>
+                    {responder?.type}
                   </p>
                 </div>
                 <button

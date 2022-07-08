@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { ChevronRightIcon, DotsVerticalIcon } from "@heroicons/react/outline";
 import { LogsTable } from "../../Logs/Table/logs-table";
-import { TopologyCard } from "../../Topology";
+import { TopologyCard } from "../../TopologyCard";
 import { Icon } from "../../Icon";
 import { Button } from "../../Button";
 import { BsTrash } from "react-icons/bs";

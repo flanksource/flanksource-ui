@@ -1,5 +1,6 @@
 import { IncidentCommander } from "../axios";
 import { resolve } from "../resolve";
+import { Hypothesis } from "./hypothesis";
 import { User } from "./users";
 
 const AVATAR_INFO = `id,name,avatar`;
@@ -34,6 +35,8 @@ export interface NewIncident {
 
 export interface Incident extends NewIncident {
   id: string;
+  parent_id: string;
+  hypothesis: Hypothesis[];
 }
 
 export const searchIncident = (query: string) => {
@@ -56,7 +59,7 @@ export const getAllIncident = ({ limit = 10 }) => {
 export const getIncident = async (id: string) => {
   const hypothesis = `hypothesis!hypothesis_incident_id_fkey(*,created_by(${AVATAR_INFO}),evidence(id,evidence,type),comment(comment,created_by(id,${AVATAR_INFO}),id))`;
 
-  return resolve(
+  return resolve<Incident[]>(
     IncidentCommander.get(
       `/incident?id=eq.${id}&select=*,${hypothesis},commander_id(${AVATAR_INFO}),communicator_id(${AVATAR_INFO}),responder!responder_incident_id_fkey(created_by(${AVATAR_INFO}))`
     )
@@ -78,7 +81,14 @@ export const getIncidentsWithParams = async (params) => {
   );
 };
 
-export const updateIncident = async (id: string, incident: Incident) => {
+export const updateIncident = async (
+  id: string | null,
+  incident: Partial<Incident>
+) => {
+  if (!id) {
+    console.error("No id", incident);
+    return;
+  }
   IncidentCommander.patch(`/incident?id=eq.${id}`, incident);
 };
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import cx from "clsx";
-import { TopologyCard } from "../Topology";
+import { TopologyCard } from "../TopologyCard";
 import { Modal } from "../Modal";
 import { usePrevious } from "../../utils/hooks";
 
