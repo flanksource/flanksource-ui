@@ -97,29 +97,6 @@ export const IncidentDetails = ({
           Share
         </button>
       </div>
-      {/* <IncidentDetailsRow
-        title="Chart Room"
-        value={
-          <a
-            href={getValues("chartRoom")}
-            className="underline text-dark-blue text-sm font-normal"
-          >
-            {getValues("chartRoomTitle")}
-          </a>
-        }
-      />
-      <IncidentDetailsRow
-        title="Status Page"
-        className="mt-2.5"
-        value={
-          <a
-            href={getValues("statusPage")}
-            className="underline text-dark-blue text-sm font-normal"
-          >
-            {getValues("statusPageTitle")}
-          </a>
-        }
-      /> */}
       <IncidentDetailsRow
         title="Respondents"
         className="mt-2.5"
@@ -163,15 +140,6 @@ export const IncidentDetails = ({
           />
         }
       />
-      {/* <IncidentDetailsRow
-        title="Tracking"
-        className="mt-3"
-        value={
-          <span className="text-dark-gray text-sm font-normal">
-            {getValues("tracking")}
-          </span>
-        }
-      /> */}
       <IncidentDetailsRow
         title="Started"
         className="mt-2.5"
