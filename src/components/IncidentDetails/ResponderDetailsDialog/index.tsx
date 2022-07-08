@@ -163,10 +163,7 @@ export function ResponderDetailsDialog({
             </Dialog.Title>
             <div className="mt-4 h-64 min-h-full mb-4">
               <div className="lg:border-t lg:border-b lg:border-gray-200 mt-5">
-                <nav
-                  className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"
-                  aria-label="Progress"
-                >
+                <nav className="mx-auto max-w-7xl" aria-label="Progress">
                   <ol
                     role="list"
                     className="rounded-md overflow-hidden lg:flex lg:border-l lg:border-r lg:border-gray-200 lg:rounded-none"
