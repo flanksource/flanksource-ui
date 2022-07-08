@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import React, { useRef, useState } from "react";
+import { FiExternalLink } from "react-icons/fi";
 import { formPropKey, ResponderPropsKeyToLabelMap } from "../AddResponder";
 
 type ResponderDetailsToolTipProps = {
@@ -72,6 +73,10 @@ export const ResponderDetailsToolTip = ({
     return options;
   };
 
+  const openLinkInNewTab = (link: string) => {
+    window.open(link);
+  };
+
   return (
     <div
       className={clsx("relative inline-block text-left", className)}
@@ -109,6 +114,16 @@ export const ResponderDetailsToolTip = ({
                   <a href="#" className="hover:underline">
                     {responder?.type}
                   </a>
+                  {responder?.json?.properties?.url && (
+                    <FiExternalLink
+                      className="float-right w-5 h-5"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        openLinkInNewTab(responder?.json?.properties?.url);
+                      }}
+                    />
+                  )}
                 </p>
               </div>
             </div>
