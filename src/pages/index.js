@@ -1,4 +1,4 @@
-import { IncidentDetailsPage } from "./incident/incident-details";
+import { IncidentDetailsPage } from "./incident/IncidentDetails";
 import { IncidentListPage } from "./incident/incident-list";
 import { IncidentCreatePage } from "./incident/incident-create";
 import { LogsPage } from "./logs-page";

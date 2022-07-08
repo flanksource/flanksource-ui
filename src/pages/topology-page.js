@@ -6,7 +6,7 @@ import { getTopology } from "../api/services/topology";
 import { SearchLayout } from "../components/Layout";
 import { Loading } from "../components/Loading";
 import { toastError } from "../components/Toast/toast";
-import { TopologyCard } from "../components/Topology";
+import { TopologyCard } from "../components/TopologyCard";
 import { TopologyBreadcrumbs } from "../components/Topology/topology-breadcrumbs";
 import { useLoader } from "../hooks";
 

@@ -1,27 +1,40 @@
 import React, { useMemo, useCallback } from "react";
 import { Link, useParams } from "react-router-dom";
+
 import {
   createHypothesis,
   deleteHypothesis,
   deleteHypothesisBulk,
+  Hypothesis,
   updateHypothesis
 } from "../../api/services/hypothesis";
-import { updateIncident } from "../../api/services/incident";
+import {
+  Incident,
+  IncidentStatus,
+  updateIncident
+} from "../../api/services/incident";
 import { EvidenceType } from "../../api/services/evidence";
 import { HypothesisBuilder } from "../../components/Hypothesis/HypothesisBuilder";
 import { SearchLayout } from "../../components/Layout";
-
 import { Loading } from "../../components/Loading";
 import { Changelog } from "../../components/Change";
-import { TopologyCard } from "../../components/Topology/topology-card";
 import { useIncidentQuery } from "../../components/query-hooks/useIncidentQuery";
 import { useUpdateHypothesisMutation } from "../../components/mutations/useUpdateHypothesisMutation";
 import { useCreateHypothesisMutation } from "../../components/mutations/useCreateHypothesisMutation";
 import { IncidentDetails } from "../../components/IncidentDetails";
+import { TopologyCard } from "../../components/TopologyCard";
+
+type TreeNode<T> = T & {
+  children?: T[];
+};
+
+interface Tree {
+  [k: string]: TreeNode<Hypothesis>;
+}
 
 // temporary tree-building method that is incorrect.
-function buildTreeFromHypothesisList(list) {
-  const tree = {};
+function buildTreeFromHypothesisList(list: Hypothesis[]) {
+  const tree: Tree = {};
 
   if (list.length === 0) {
     return null;
@@ -69,7 +82,7 @@ export function IncidentDetailsPage() {
 
   const topologyIds = incident?.hypothesis
     ?.flatMap((h) =>
-      h.evidence.map((e) =>
+      h.evidence?.map((e) =>
         e.type === EvidenceType.Topology ? e.evidence.id : null
       )
     )
@@ -85,12 +98,14 @@ export function IncidentDetailsPage() {
   const updateMutation = useUpdateHypothesisMutation({ incidentId });
   const createMutation = useCreateHypothesisMutation({ incidentId });
 
-  const updateStatus = (status) =>
-    updateIncident(incident.id, { status }).then(() => incidentQuery.refetch());
+  const updateStatus = (status: IncidentStatus) =>
+    updateIncident(incident?.id || null, { status }).then(() =>
+      incidentQuery.refetch()
+    );
 
   const updateIncidentHandler = useCallback(
-    (newDataIncident) => {
-      updateIncident(incident.id, newDataIncident).then(() =>
+    (newDataIncident: Partial<Incident>) => {
+      updateIncident(incident?.id || null, newDataIncident).then(() =>
         incidentQuery.refetch()
       );
     },
@@ -120,11 +135,11 @@ export function IncidentDetailsPage() {
     >
       <div className="mt-2 max-w-3xl mx-auto grid grid-cols-1 gap-6 sm:px-6 lg:max-w-7xl lg:grid-flow-col-dense lg:grid-cols-3">
         <div className="space-y-6 lg:col-start-1 lg:col-span-2">
-          {Boolean(topologyIds.length) && (
+          {Boolean(topologyIds?.length) && (
             <section aria-labelledby="notes-title">
               <div className="bg-white sm:overflow-hidden">
                 <div className="px-2 py-2 flex flex-nowrap">
-                  {topologyIds.map((id) => (
+                  {topologyIds?.map((id) => (
                     <TopologyCard
                       key={id}
                       size="large"
@@ -169,10 +184,14 @@ export function IncidentDetailsPage() {
           <IncidentDetails
             incident={incident}
             updateStatusHandler={() =>
-              updateStatus(status === "open" ? "closed" : "open")
+              updateStatus(
+                status === IncidentStatus.Open
+                  ? IncidentStatus.Closed
+                  : IncidentStatus.Open
+              )
             }
             updateIncidentHandler={updateIncidentHandler}
-            textButton={status === "open" ? "Close" : "Reopen"}
+            textButton={status === IncidentStatus.Open ? "Close" : "Reopen"}
           />
           <div className="bg-white px-4 py-5 mt-4  shadow sm:rounded-lg sm:px-6">
             <section aria-labelledby="applicant-information-title">

@@ -3,6 +3,8 @@ import clsx from "clsx";
 import { HypothesisBar } from "../HypothesisBar";
 import { HypothesisBlockHeader } from "../../HypothesisBuilder/hypothesis-header";
 import { HypothesisStatus } from "../../../api/services/hypothesis";
+import { HypothesisTitle } from "../HypothesisTitle";
+import { HypothesisDetails } from "../HypothesisDetails";
 
 const propsByType = (type: string) => {
   if (!type) {
@@ -44,7 +46,8 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
     node,
     setModalIsOpen,
     setSelectedNode,
-    setCreateHypothesisModalIsOpen
+    setCreateHypothesisModalIsOpen,
+    api
   } = props;
 
   const isRoot = node?.type === "root" || node?.parent_id == null;
@@ -73,7 +76,7 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
         </div>
       )}
 
-      <div className="w-full">
+      <div className="w-full bg-white rounded-8px shadow">
         <div className="w-full mb-0.5">
           {Boolean(node) && (
             <HypothesisBar
@@ -91,20 +94,29 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
           )}
         </div>
 
-        <div
-          className={clsx({
-            "bg-light-blue p-5 mt-3 rounded-8px border border-dashed": isRoot,
-            "pl-7 my-2.5": !isRoot
-          })}
-        >
-          {(node?.children || []).map((item) => (
-            <HypothesisNode {...props} node={item} key={item.id} />
-          ))}
-          <HypothesisBlockHeader
-            onButtonClick={handlerOpenCreateHypothesisModal}
-            className="mb-2.5"
-            {...propsByType(type)}
-          />
+        <div>
+          {!!node && (
+            <div className="px-4">
+              <HypothesisDetails node={node} api={api} />
+            </div>
+          )}
+          <div
+            className={clsx({
+              "bg-light-blue p-5 mt-3 rounded-8px border border-dashed": isRoot,
+              "pl-7 my-2.5": !isRoot
+            })}
+          >
+            {(node?.children || []).map((item) => (
+              <HypothesisNode {...props} node={item} key={item.id} />
+            ))}
+            {false && (
+              <HypothesisBlockHeader
+                onButtonClick={handlerOpenCreateHypothesisModal}
+                className="mb-2.5"
+                {...propsByType(type)}
+              />
+            )}
+          </div>
         </div>
       </div>
     </div>

@@ -79,15 +79,10 @@ export function HypothesisDetails({ node, api, ...rest }) {
             isLoading={evidenceLoading}
           />
         </div>
-        <div className="">
-          <CommentsSection
-            comments={comments}
-            onComment={(value) => handleComment(value)}
-            titlePrepend={
-              <HypothesisTitle className="mb-2.5">Comments</HypothesisTitle>
-            }
-          />
-        </div>
+        <CommentsSection
+          comments={comments}
+          onComment={(value) => handleComment(value)}
+        />
       </div>
       <Modal
         open={evidenceBuilderOpen}

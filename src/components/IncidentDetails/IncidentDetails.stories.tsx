@@ -1,9 +1,11 @@
+import { ComponentMeta, ComponentStory } from "@storybook/react";
 import { IncidentDetails } from "./index";
 
 export default {
   title: "IncidentDetails",
-  component: IncidentDetails
-};
+  component: IncidentDetails,
+  parameters: { actions: { argTypesRegex: "^on.*" } }
+} as ComponentMeta<typeof IncidentDetails>;
 
 const incident = {
   id: "1aa1a99a-b487-495c-9cd9-a13cf717bc10",
@@ -42,7 +44,9 @@ const incident = {
   responder: []
 };
 
-const Template = (arg) => <IncidentDetails {...arg} />;
+const Template: ComponentStory<typeof IncidentDetails> = (arg: any) => (
+  <IncidentDetails {...arg} />
+);
 
 export const Variant1 = Template.bind({});
 Variant1.args = {

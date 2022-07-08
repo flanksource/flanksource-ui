@@ -1,16 +1,32 @@
 import React, { useState } from "react";
 import { ChatAltIcon } from "@heroicons/react/solid";
+import { IoMdSend } from "react-icons/io";
 import dayjs from "dayjs";
 
 import { CommentInput, CommentText } from "../../Comment";
 import { Avatar } from "../../Avatar";
 import { Comment } from "../../../api/services/comments";
+import clsx from "clsx";
 
 interface Props {
   comments: Comment[];
   titlePrepend: React.ReactElement;
   onComment: (str: string) => Promise<void>;
 }
+
+const relativeTime = (ts: string) => {
+  const t = dayjs(ts);
+  const n = dayjs();
+  if (n.isSame(t, "day")) {
+    return t.format("h:mm A");
+  }
+
+  if (n.diff(t, "days") === 1) {
+    return `${t.format("h:mm A")} yesterday`;
+  }
+
+  return t.format("h:mm A, dddd, MMMM D, YYYY");
+};
 
 export function CommentsSection({
   comments,
@@ -41,65 +57,62 @@ export function CommentsSection({
   return (
     <div className={rest.className} {...rest}>
       {titlePrepend}
-      <div>
-        <CommentInput value={commentTextValue} onChange={setCommentTextValue} />
-        <div className="flex justify-end mt-2">
-          <button
-            disabled={isLoading || !commentTextValue}
-            type="button"
-            onClick={handleComment}
-            className={
-              isLoading || !commentTextValue ? "btn-disabled" : "btn-primary"
-            }
-          >
-            Comment
-          </button>
-        </div>
-      </div>
-      {comments.length <= 0 ? (
-        <div className="text-sm text-gray-400">No comments yet</div>
-      ) : (
-        <ul className="-mb-8">
+      {!!comments.length && (
+        <ul>
           {comments.map((comment) => (
-            <li key={comment.id}>
-              <div className="relative pb-8">
-                <div className="relative flex items-start space-x-3">
-                  <div className="relative pt-0.5">
-                    <Avatar size="lg" user={comment.created_by} />
-
-                    <span className="absolute -bottom-0.5 -right-1 bg-white rounded-tl px-0.5 py-px">
-                      <ChatAltIcon
-                        className="h-4 w-4 text-gray-400"
-                        aria-hidden="true"
-                      />
+            <li className="pb-4 flex items-start space-x-3" key={comment.id}>
+              <Avatar
+                containerProps={{
+                  className: "mt-1"
+                }}
+                user={comment.created_by}
+              />
+              <div className="min-w-0 flex-1">
+                <div className="flex space-x-2">
+                  <div className="text-sm">
+                    <span className="text-gray-900 text-sm font-bold leading-5">
+                      {comment?.created_by?.name}
                     </span>
                   </div>
-                  <div className="min-w-0 flex-1">
-                    <div>
-                      <div className="text-sm">
-                        <span className="text-gray-900 text-sm leading-5 font-medium">
-                          {comment.created_by.name}
-                        </span>
-                      </div>
-                      <p className="mt-0.5 text-gray-500 text-sm leading-5 font-normal">
-                        commented {dayjs(comment.created_at).fromNow()}
-                      </p>
-                    </div>
-                    <div className="mt-2 text-sm text-gray-700">
-                      <p className="whitespace-pre">
-                        <CommentText
-                          text={comment.comment}
-                          onClickTag={onClickUserTag}
-                        />
-                      </p>
-                    </div>
-                  </div>
+                  <p className="mt-0.5 text-gray-500 text-xs leading-5 font-normal">
+                    {relativeTime(comment.created_at)}
+                  </p>
+                </div>
+                <div className="text-sm text-gray-700">
+                  <p className="whitespace-pre">
+                    <CommentText
+                      text={comment.comment}
+                      onClickTag={onClickUserTag}
+                    />
+                  </p>
                 </div>
               </div>
             </li>
           ))}
         </ul>
       )}
+      <div className="relative">
+        <CommentInput
+          singleLine
+          value={commentTextValue}
+          onChange={setCommentTextValue}
+          onEnter={() => handleComment()}
+        />
+        <div className="flex h-full absolute top-0 right-0">
+          <button
+            disabled={isLoading || !commentTextValue}
+            type="button"
+            onClick={handleComment}
+            className={clsx(
+              "p-1 pl-2",
+              isLoading || !commentTextValue ? "btn-disabled" : "btn-primary",
+              "rounded-l-none"
+            )}
+          >
+            <IoMdSend size={18} />
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
