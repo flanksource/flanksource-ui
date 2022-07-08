@@ -64,10 +64,13 @@ export function ResponderDetailsDialog({
         value: data?.[key]
       });
     });
-    if (!responder?.json?.close_time) {
+    if (responder?.json?.acknowledge_time) {
       options.push({
-        label: "Open since",
-        value: dayjs(responder?.json?.created_at).from(Date.now(), true)
+        label: "Time taken to acknowledge",
+        value: dayjs(responder?.json?.created_at).from(
+          new Date(responder?.json?.acknowledge_time),
+          true
+        )
       });
     }
     return options;
@@ -96,7 +99,7 @@ export function ResponderDetailsDialog({
         <MdTimer className="w-7 h-7 flex items-center justify-center rounded-full" />
       );
     }
-    if (responder.json?.[key]) {
+    if (responder?.json?.[key]) {
       return (
         <span className="w-7 h-7 flex items-center justify-center bg-indigo-600 rounded-full">
           <svg
