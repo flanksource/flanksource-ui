@@ -2,8 +2,9 @@ import { Dialog } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
 import clsx from "clsx";
 import dayjs from "dayjs";
-
 import { MdTimer } from "react-icons/md";
+
+import { relativeTimeFromDate } from "../../../utils/common";
 import {
   AddResponderFormValues,
   formPropKey,
@@ -63,6 +64,12 @@ export function ResponderDetailsDialog({
         value: data?.[key]
       });
     });
+    if (!responder?.json?.close_time) {
+      options.push({
+        label: "Open since",
+        value: dayjs(responder?.json?.created_at).from(Date.now(), true)
+      });
+    }
     return options;
   };
 
@@ -70,7 +77,49 @@ export function ResponderDetailsDialog({
     if (!date) {
       return "";
     }
-    return dayjs(date).format("LT LL");
+    return relativeTimeFromDate(date);
+  };
+
+  const currentStageKey = () => {
+    if (!responder?.json?.acknowledge_time) {
+      return "acknowledge_time";
+    } else if (!responder?.json?.signoff_time) {
+      return "signoff_time";
+    } else if (!responder?.json?.close_time) {
+      return "close_time";
+    }
+  };
+
+  const getStepElement = (key: string, step: string) => {
+    if (currentStageKey() === key) {
+      return (
+        <MdTimer className="w-7 h-7 flex items-center justify-center rounded-full" />
+      );
+    }
+    if (responder.json?.[key]) {
+      return (
+        <span className="w-7 h-7 flex items-center justify-center bg-indigo-600 rounded-full">
+          <svg
+            className="w-6 h-6 text-white"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              fillRule="evenodd"
+              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+              clipRule="evenodd"
+            />
+          </svg>
+        </span>
+      );
+    }
+    return (
+      <span className="w-7 h-7 flex items-center justify-center border-2 border-indigo-600 rounded-full">
+        <span className="text-indigo-600">{step}</span>
+      </span>
+    );
   };
 
   return (
@@ -85,7 +134,7 @@ export function ResponderDetailsDialog({
       <div className="fixed inset-0 bg-black bg-opacity-25" />
       <div className="fixed inset-0 overflow-y-auto">
         <div className="flex min-h-full items-center justify-center p-4 text-center">
-          <Dialog.Panel className="w-2/4 transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+          <Dialog.Panel className="w-dialog-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
             <Dialog.Title
               as="h3"
               className="text-lg font-medium leading-6 text-gray-900"
@@ -122,10 +171,6 @@ export function ResponderDetailsDialog({
                     <li className="relative overflow-hidden lg:flex-1">
                       <div className="border border-gray-200 overflow-hidden border-b-0 rounded-t-md lg:border-0">
                         <a href="#" className="group">
-                          <span
-                            className="absolute top-0 left-0 w-1 h-full bg-transparent group-hover:bg-gray-200 lg:w-full lg:h-1 lg:bottom-0 lg:top-auto"
-                            aria-hidden="true"
-                          ></span>
                           <span className="px-2 py-2 flex items-start text-sm font-medium">
                             <span className="flex-shrink-0">
                               <span className="w-7 h-7 flex items-center justify-center bg-indigo-600 rounded-full">
@@ -146,7 +191,7 @@ export function ResponderDetailsDialog({
                             </span>
                             <span className="mt-0.5 ml-2 min-w-0 flex flex-col">
                               <span className="text-xs font-semibold tracking-wide">
-                                Created at
+                                Created
                               </span>
                               <span className="text-xs font-medium text-gray-500">
                                 {getDateDisplayLabel(
@@ -157,42 +202,23 @@ export function ResponderDetailsDialog({
                           </span>
                         </a>
                       </div>
-                      <MdTimer className="absolute top-4 right-2 w-5 h-5" />
                     </li>
                     <li className="relative overflow-hidden lg:flex-1">
                       <div className="border border-gray-200 overflow-hidden lg:border-0">
                         <a href="#" aria-current="step">
-                          <span
-                            className="absolute top-0 left-0 w-1 h-full bg-indigo-600 lg:w-full lg:h-1 lg:bottom-0 lg:top-auto"
-                            aria-hidden="true"
-                          ></span>
+                          {currentStageKey() === "acknowledge_time" && (
+                            <span
+                              className="absolute top-0 left-0 w-1 h-full bg-indigo-600 lg:w-full lg:h-1 lg:bottom-0 lg:top-auto"
+                              aria-hidden="true"
+                            ></span>
+                          )}
                           <span className="px-2 py-2 flex items-start text-sm font-medium lg:pl-4">
                             <span className="flex-shrink-0">
-                              {responder?.json?.acknowledge_time ? (
-                                <span className="w-7 h-7 flex items-center justify-center bg-indigo-600 rounded-full">
-                                  <svg
-                                    className="w-6 h-6 text-white"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 20 20"
-                                    fill="currentColor"
-                                    aria-hidden="true"
-                                  >
-                                    <path
-                                      fillRule="evenodd"
-                                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                      clipRule="evenodd"
-                                    />
-                                  </svg>
-                                </span>
-                              ) : (
-                                <span className="w-7 h-7 flex items-center justify-center border-2 border-indigo-600 rounded-full">
-                                  <span className="text-indigo-600">02</span>
-                                </span>
-                              )}
+                              {getStepElement("acknowledge_time", "02")}
                             </span>
                             <span className="mt-0.5 ml-2 min-w-0 flex flex-col">
                               <span className="text-xs font-semibold text-indigo-600 tracking-wide">
-                                Acknowledged at
+                                Acknowledged
                               </span>
                               <span className="text-xs font-medium text-gray-500">
                                 {getDateDisplayLabel(
@@ -220,44 +246,24 @@ export function ResponderDetailsDialog({
                           </svg>
                         </div>
                       </div>
-                      <MdTimer className="absolute top-4 right-2 w-5 h-5" />
                     </li>
 
                     <li className="relative overflow-hidden lg:flex-1">
                       <div className="border border-gray-200 overflow-hidden border-t-0 rounded-b-md lg:border-0">
                         <a href="#" className="group">
-                          <span
-                            className="absolute top-0 left-0 w-1 h-full bg-transparent group-hover:bg-gray-200 lg:w-full lg:h-1 lg:bottom-0 lg:top-auto"
-                            aria-hidden="true"
-                          ></span>
+                          {currentStageKey() === "signoff_time" && (
+                            <span
+                              className="absolute top-0 left-0 w-1 h-full bg-indigo-600 group-hover:bg-gray-200 lg:w-full lg:h-1 lg:bottom-0 lg:top-auto"
+                              aria-hidden="true"
+                            ></span>
+                          )}
                           <span className="px-2 py-2 flex items-start text-sm font-medium lg:pl-4">
                             <span className="flex-shrink-0">
-                              {responder?.json?.acknowledge_time &&
-                              responder?.json?.signoff_time ? (
-                                <span className="w-7 h-7 flex items-center justify-center bg-indigo-600 rounded-full">
-                                  <svg
-                                    className="w-6 h-6 text-white"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 20 20"
-                                    fill="currentColor"
-                                    aria-hidden="true"
-                                  >
-                                    <path
-                                      fillRule="evenodd"
-                                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                      clipRule="evenodd"
-                                    />
-                                  </svg>
-                                </span>
-                              ) : (
-                                <span className="w-7 h-7 flex items-center justify-center border-2 border-indigo-600 rounded-full">
-                                  <span className="text-indigo-600">03</span>
-                                </span>
-                              )}
+                              {getStepElement("signoff_time", "03")}
                             </span>
                             <span className="mt-0.5 ml-2 min-w-0 flex flex-col">
                               <span className="text-xs font-semibold text-gray-500 tracking-wide">
-                                Resolved at
+                                Resolved
                               </span>
                               <span className="text-xs font-medium text-gray-500">
                                 {getDateDisplayLabel(
@@ -285,44 +291,24 @@ export function ResponderDetailsDialog({
                           </svg>
                         </div>
                       </div>
-                      <MdTimer className="absolute top-4 right-2 w-5 h-5" />
                     </li>
 
                     <li className="relative overflow-hidden lg:flex-1">
                       <div className="border border-gray-200 overflow-hidden border-t-0 rounded-b-md lg:border-0">
                         <a href="#" className="group">
-                          <span
-                            className="absolute top-0 left-0 w-1 h-full bg-transparent group-hover:bg-gray-200 lg:w-full lg:h-1 lg:bottom-0 lg:top-auto"
-                            aria-hidden="true"
-                          ></span>
+                          {currentStageKey() === "close_time" && (
+                            <span
+                              className="absolute top-0 left-0 w-1 h-full bg-indigo-600 group-hover:bg-gray-200 lg:w-full lg:h-1 lg:bottom-0 lg:top-auto"
+                              aria-hidden="true"
+                            ></span>
+                          )}
                           <span className="px-2 py-2 flex items-start text-sm font-medium lg:pl-4">
                             <span className="flex-shrink-0">
-                              {responder?.json?.signoff_time &&
-                              responder?.json?.close_time ? (
-                                <span className="w-7 h-7 flex items-center justify-center bg-indigo-600 rounded-full">
-                                  <svg
-                                    className="w-6 h-6 text-white"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 20 20"
-                                    fill="currentColor"
-                                    aria-hidden="true"
-                                  >
-                                    <path
-                                      fillRule="evenodd"
-                                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                      clipRule="evenodd"
-                                    />
-                                  </svg>
-                                </span>
-                              ) : (
-                                <span className="w-7 h-7 flex items-center justify-center border-2 border-indigo-600 rounded-full">
-                                  <span className="text-indigo-600">04</span>
-                                </span>
-                              )}
+                              {getStepElement("close_time", "04")}
                             </span>
                             <span className="mt-0.5 ml-2 min-w-0 flex flex-col">
                               <span className="text-xs font-semibold text-gray-500 tracking-wide">
-                                Closed at
+                                Closed
                               </span>
                               <span className="text-xs font-medium text-gray-500">
                                 {getDateDisplayLabel(
@@ -350,7 +336,6 @@ export function ResponderDetailsDialog({
                           </svg>
                         </div>
                       </div>
-                      <MdTimer className="absolute top-4 right-2 w-5 h-5" />
                     </li>
                   </ol>
                 </nav>

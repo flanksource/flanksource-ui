@@ -294,9 +294,8 @@ export const AddResponder = ({
 
   return (
     <div className={clsx("flex flex-1", className)} {...rest}>
-      <a
-        href="#"
-        className="underline text-blue-600 hover:text-blue-800 visited:text-purple-600 text-sm font-medium mt-1"
+      <button
+        className="underline text-blue-600 hover:text-blue-800 text-sm font-medium mt-1"
         onClick={() => {
           setSelectedType(null);
           reset();
@@ -305,7 +304,7 @@ export const AddResponder = ({
         }}
       >
         Add Responder
-      </a>
+      </button>
       <Modal
         title={getModalTitle()}
         onClose={onCloseModal}
