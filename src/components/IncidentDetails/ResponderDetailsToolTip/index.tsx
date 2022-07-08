@@ -19,14 +19,16 @@ export const ResponderDetailsToolTip = ({
 
   const onMouseOver = () => {
     clearTimeout(timerRef.current);
-    setShowDropdown(true);
+    timerRef.current = setTimeout(() => {
+      setShowDropdown(true);
+    }, 1000);
   };
 
   const onMouseLeave = () => {
     clearTimeout(timerRef.current);
     timerRef.current = setTimeout(() => {
       setShowDropdown(false);
-    }, 2000);
+    }, 1000);
   };
 
   const getOrderedKeys = (): formPropKey[] => {

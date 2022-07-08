@@ -25,6 +25,7 @@ import { IconButton } from "../IconButton";
 import { BsTrash } from "react-icons/bs";
 import { DeleteConfirmDialog } from "../DeleteConfirmDialog";
 import { ResponderDetailsToolTip } from "./ResponderDetailsToolTip";
+import { ResponderDetailsDialog } from "./ResponderDetailsDialog";
 
 export const IncidentDetails = ({
   incident,
@@ -35,6 +36,9 @@ export const IncidentDetails = ({
   const [responders, setResponders] = useState([]);
   const [openDeleteConfirmDialog, setOpenDeleteConfirmDialog] = useState(false);
   const [deletedResponder, setDeletedResponder] = useState();
+  const [openResponderDetailsDialog, setOpenResponderDetailsDialog] =
+    useState(false);
+  const [selectedResponder, setSelectedResponder] = useState();
 
   // Temporary mock, in the future you need to replace it with an array of real users received from the api
   const commandersArray = useMemo(
@@ -194,7 +198,14 @@ export const IncidentDetails = ({
           <div>
             {responders.map((responder) => {
               return (
-                <div className="cursor-pointer" key={responder.json.id}>
+                <div
+                  className="cursor-pointer"
+                  key={responder.json.id}
+                  onClick={(e) => {
+                    setOpenResponderDetailsDialog(true);
+                    setSelectedResponder(responder);
+                  }}
+                >
                   <div className="relative py-2 flex">
                     {responder.icon && (
                       <div className="rounded-full overflow-hidden flex justify-center items-center leading-none w-6 h-6 text-xs bg-lighter-gray">
@@ -316,6 +327,15 @@ export const IncidentDetails = ({
         onClose={() => setOpenDeleteConfirmDialog(false)}
         onDelete={() => {
           initiateDeleteResponder();
+        }}
+      />
+      <ResponderDetailsDialog
+        size="medium"
+        open={openResponderDetailsDialog}
+        responder={selectedResponder}
+        data={selectedResponder?.json?.properties}
+        onClose={() => {
+          setOpenResponderDetailsDialog(false);
         }}
       />
       <button
