@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FiExternalLink } from "react-icons/fi";
 import { formPropKey, ResponderPropsKeyToLabelMap } from "../AddResponder";
 
@@ -77,6 +77,19 @@ export const ResponderDetailsToolTip = ({
     window.open(link);
   };
 
+  useEffect(() => {
+    const listener = (event: MouseEvent) => {
+      clearTimeout(timerRef.current);
+      timerRef.current = setTimeout(() => {
+        setShowDropdown(false);
+      });
+    };
+    document.body.addEventListener("click", listener, true);
+    return () => {
+      document.body.removeEventListener("click", listener, true);
+    };
+  }, []);
+
   return (
     <div
       className={clsx("relative inline-block text-left", className)}
@@ -105,9 +118,7 @@ export const ResponderDetailsToolTip = ({
           <div className="bg-white px-2 py-2">
             <div className="flex space-x-3">
               <div className="flex-shrink-0">
-                <div className="rounded-full overflow-hidden flex justify-center items-center leading-none w-6 h-6 text-xs bg-lighter-gray">
-                  {responder?.icon && <responder.icon className="w-7 h-7" />}
-                </div>
+                {responder?.icon && <responder.icon className="w-6 h-6" />}
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium text-gray-900">

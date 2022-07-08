@@ -98,7 +98,8 @@ export const IncidentDetails = ({
       properties.id ||
       properties.title ||
       properties.to ||
-      properties.description
+      properties.description ||
+      properties.person
     );
   };
 
@@ -206,12 +207,8 @@ export const IncidentDetails = ({
                     setSelectedResponder(responder);
                   }}
                 >
-                  <div className="relative py-2 flex">
-                    {responder.icon && (
-                      <div className="rounded-full overflow-hidden flex justify-center items-center leading-none w-6 h-6 text-xs bg-lighter-gray">
-                        {<responder.icon className="w-7 h-7" />}
-                      </div>
-                    )}
+                  <div className="relative flex hover:bg-gray-100 p-1 items-center rounded">
+                    {responder.icon && <responder.icon className="w-6 h-6" />}
                     <div className="flex-1 min-w-0 w-full">
                       <ResponderDetailsToolTip
                         className="w-full"
@@ -220,7 +217,7 @@ export const IncidentDetails = ({
                         element={
                           <div className="text-dark-gray group text-sm font-medium relative w-full overflow-hidden truncate pr-4 pl-2">
                             {responder.name}
-                            <div className="ml-10 cursor-pointer absolute right-0 top-0">
+                            <div className="ml-10 cursor-pointer absolute right-0 top-1">
                               <IconButton
                                 className="bg-transparent hidden group-hover:inline-block z-5"
                                 onClick={(e) => {

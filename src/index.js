@@ -1,8 +1,12 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import dayjs from "dayjs";
 import "./index.css";
 import { App, CanaryCheckerApp } from "./App";
 import reportWebVitals from "./reportWebVitals";
+import localizedFormat from "dayjs/plugin/localizedFormat";
+
+dayjs.extend(localizedFormat);
 
 ReactDOM.render(
   <React.StrictMode>

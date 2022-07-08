@@ -55,45 +55,61 @@ export const ResponderPropsKeyToLabelMap = {
 };
 
 export const ResponderTypeOptions = [
-  { label: "Email", value: "Email", icon: MdEmail },
-  { label: "Jira", value: "Jira", icon: SiJira },
+  {
+    label: "Email",
+    value: "Email",
+    icon: () => <MdEmail className="w-5 h-5 inline-block" />
+  },
+  {
+    label: "Jira",
+    value: "Jira",
+    icon: () => <SiJira className="w-5 h-5 inline-block" />
+  },
   {
     label: "ServiceNow",
     value: "ServiceNow",
-    icon: () => <Icon size="md" name="servicenow" />
+    icon: () => <Icon size="md" className="inline-block" name="servicenow" />
   },
   {
     label: "CA",
     value: "CA",
-    icon: () => <Icon size="md" name="ca" />
+    icon: () => <Icon size="md" className="inline-block" name="ca" />
   },
   {
     label: "AWS Support",
     value: "AWS Support",
-    icon: () => <Icon size="md" name="aws" />
+    icon: () => <Icon size="md" className="inline-block" name="aws" />
   },
   {
     label: "AWS AMS Service Request",
     value: "AWS AMS Service Request",
-    icon: () => <Icon size="md" name="aws" />
+    icon: () => <Icon size="md" className="inline-block" name="aws" />
   },
   {
     label: "Redhat",
     value: "Redhat",
-    icon: () => <Icon size="md" name="redhat" />
+    icon: () => <Icon size="md" className="inline-block" name="redhat" />
   },
   {
     label: "Oracle",
     value: "Oracle",
-    icon: () => <Icon size="md" name="oracle_icon" />
+    icon: () => <Icon size="md" className="inline-block" name="oracle_icon" />
   },
   {
     label: "Microsoft",
     value: "Microsoft",
-    icon: () => <Icon size="md" name="microsoft" />
+    icon: () => <Icon size="md" className="inline-block" name="microsoft" />
   },
-  { label: "VMWare", value: "VMWare", icon: GrVmware },
-  { label: "Person", value: "Person", icon: FiUser }
+  {
+    label: "VMWare",
+    value: "VMWare",
+    icon: () => <GrVmware className="w-5 h-5 inline-block" />
+  },
+  {
+    label: "Person",
+    value: "Person",
+    icon: () => <FiUser className="w-5 h-5 inline-block" />
+  }
 ];
 
 const ResponderSteps = [
@@ -269,20 +285,19 @@ export const AddResponder = ({
       return `Add Responder`;
     }
     return (
-      <>
+      <div className="w-full">
         {selectedType?.icon && <selectedType.icon className="inline-block" />}{" "}
         <span>{selectedType?.label} Details</span>
-      </>
+      </div>
     );
   };
 
   return (
     <div className={clsx("flex flex-1", className)} {...rest}>
       <a
-        href=""
-        className="underline text-blue-600 hover:text-blue-800 visited:text-purple-600 text-gray-500 text-sm font-medium underline mt-1"
-        onClick={(event) => {
-          event.preventDefault();
+        href="#"
+        className="underline text-blue-600 hover:text-blue-800 visited:text-purple-600 text-sm font-medium mt-1"
+        onClick={() => {
           setSelectedType(null);
           reset();
           setIsOpen(true);
