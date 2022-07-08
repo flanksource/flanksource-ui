@@ -111,7 +111,7 @@ const ResponderSteps = [
   }
 ];
 
-type AddResponderFormValues = {
+export type AddResponderFormValues = {
   to?: string;
   subject?: string;
   body?: string;
@@ -124,7 +124,7 @@ type AddResponderFormValues = {
   person?: string;
 };
 
-type formPropKey = keyof AddResponderFormValues;
+export type formPropKey = keyof AddResponderFormValues;
 
 type AddResponderProps = {
   onSuccess?: () => void;
@@ -227,7 +227,7 @@ export const AddResponder = ({
 
   const saveResponderDetails = async () => {
     const data = { ...getValues() };
-    Object.keys(data).forEach((key: formPropKey) => {
+    Object.keys(data).forEach((key: formPropKey, index) => {
       if (!data[key]) {
         delete data[key];
       }

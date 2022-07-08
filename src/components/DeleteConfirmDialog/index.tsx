@@ -20,6 +20,7 @@ export function DeleteConfirmDialog({
   ...rest
 }: DeleteConfirmDialogProps) {
   return (
+    // @ts-ignore:next-line
     <Dialog
       open={isOpen}
       as="div"

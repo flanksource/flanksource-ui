@@ -24,6 +24,7 @@ import { toastError, toastSuccess } from "../Toast/toast";
 import { IconButton } from "../IconButton";
 import { BsTrash } from "react-icons/bs";
 import { DeleteConfirmDialog } from "../DeleteConfirmDialog";
+import { ResponderDetailsToolTip } from "./ResponderDetailsToolTip";
 
 export const IncidentDetails = ({
   incident,
@@ -103,6 +104,7 @@ export const IncidentDetails = ({
       const data = (result?.data || []).map((item) => {
         return {
           name: getResponderTitle(item.properties),
+          type: item.properties.responderType,
           icon: ResponderTypeOptions.find(
             (option) => option.label === item.properties.responderType
           )?.icon,
@@ -199,31 +201,38 @@ export const IncidentDetails = ({
                         {<responder.icon className="w-7 h-7" />}
                       </div>
                     )}
-                    <div className="flex-1 min-w-0 group">
-                      <div className="text-dark-gray text-sm font-medium relative w-full overflow-hidden truncate pr-4 pl-2">
-                        {responder.name}
-                        <div className="ml-10 cursor-pointer absolute right-0 top-0">
-                          <IconButton
-                            className="bg-transparent hidden group-hover:inline-block z-5"
-                            onClick={() => {
-                              setOpenDeleteConfirmDialog(true);
-                              setDeletedResponder(responder);
-                            }}
-                            ovalProps={{
-                              stroke: "blue",
-                              height: "18px",
-                              width: "18px",
-                              fill: "transparent"
-                            }}
-                            icon={
-                              <BsTrash
-                                className="text-gray-600 border-0 border-l-1 border-gray-200"
-                                size={18}
+                    <div className="flex-1 min-w-0 w-full">
+                      <ResponderDetailsToolTip
+                        className="w-full"
+                        responder={responder}
+                        data={responder?.json?.properties}
+                        element={
+                          <div className="text-dark-gray group text-sm font-medium relative w-full overflow-hidden truncate pr-4 pl-2">
+                            {responder.name}
+                            <div className="ml-10 cursor-pointer absolute right-0 top-0">
+                              <IconButton
+                                className="bg-transparent hidden group-hover:inline-block z-5"
+                                onClick={() => {
+                                  setOpenDeleteConfirmDialog(true);
+                                  setDeletedResponder(responder);
+                                }}
+                                ovalProps={{
+                                  stroke: "blue",
+                                  height: "18px",
+                                  width: "18px",
+                                  fill: "transparent"
+                                }}
+                                icon={
+                                  <BsTrash
+                                    className="text-gray-600 border-0 border-l-1 border-gray-200"
+                                    size={18}
+                                  />
+                                }
                               />
-                            }
-                          />
-                        </div>
-                      </div>
+                            </div>
+                          </div>
+                        }
+                      />
                     </div>
                   </div>
                 </div>
