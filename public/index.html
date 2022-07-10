@@ -22,6 +22,9 @@
       window.APP_DEPLOYMENT = "INCIDENT_MANAGER";
     }
 
+    window.CANARY_BASE_URL =
+      window.APP_DEPLOYMENT === "CANARY_CHECKER" ? "" : "/canary";
+
     if (!appTypes.includes(window.APP_DEPLOYMENT)) {
       console.error(
         "window.APP_DEPLOYMENT should be one of [" +
