@@ -30,7 +30,7 @@ export const Logs = axios.create({
 });
 
 export const CanaryChecker = axios.create({
-  baseURL: "/canary",
+  baseURL: window.CANARY_BASE_URL,
   headers: {
     Accept: "application/json",
     Prefer: "return=representation",
