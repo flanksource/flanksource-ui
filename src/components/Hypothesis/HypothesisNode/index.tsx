@@ -1,5 +1,8 @@
-import { BsPlusLg } from "react-icons/bs";
 import clsx from "clsx";
+import { BsPlusLg } from "react-icons/bs";
+import { Switch } from "@headlessui/react";
+import { useSearchParams } from "react-router-dom";
+
 import { HypothesisBar } from "../HypothesisBar";
 import { HypothesisBlockHeader } from "../../HypothesisBuilder/hypothesis-header";
 import { HypothesisStatus } from "../../../api/services/hypothesis";
@@ -50,6 +53,8 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
     api
   } = props;
 
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const isRoot = node?.type === "root" || node?.parent_id == null;
   const type = node?.type;
 
@@ -61,18 +66,48 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
     setSelectedNode(node);
     setCreateHypothesisModalIsOpen(true);
   };
+  const showComments = searchParams.get("comments") === "true";
+
+  const toggleComment = () => {
+    const newParams = new URLSearchParams(
+      showComments ? {} : { comments: "true" }
+    );
+    setSearchParams(newParams);
+  };
 
   return (
     <div>
       {isRoot && (
-        <div className="flex items-center text-base font-semibold mb-5">
-          <h2 className="text-dark-gray mr-3 text-2xl">Action plan</h2>
-          <button
-            type="button"
-            className="btn-round btn-round-primary btn-round-sm"
-          >
-            <BsPlusLg />
-          </button>
+        <div className="flex items-center text-base font-semibold mb-5 justify-between">
+          <div className="flex items-center">
+            <h2 className="text-dark-gray mr-3 text-2xl">Action plan</h2>
+            <button
+              type="button"
+              className="btn-round btn-round-primary btn-round-sm"
+            >
+              <BsPlusLg />
+            </button>
+          </div>
+          <div className="flex items-center py-16">
+            <div className="pr-4">Show Comments</div>
+            <Switch
+              checked={true}
+              onChange={toggleComment}
+              className={clsx(
+                showComments ? "bg-teal-900" : "bg-gray-200",
+                "relative inline-flex shrink-0 h-[30px] w-[50px] cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
+              )}
+            >
+              <span className="sr-only">Show Comments</span>
+              <span
+                aria-hidden="true"
+                className={clsx(
+                  showComments ? "translate-x-5" : "translate-x-0",
+                  "h-[26px] w-[26px] pointer-events-none inline-block transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out"
+                )}
+              />
+            </Switch>
+          </div>
         </div>
       )}
 
@@ -95,7 +130,7 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
         </div>
 
         <div>
-          {!!node && (
+          {!!node && showComments && (
             <div className="px-4">
               <HypothesisDetails node={node} api={api} />
             </div>
