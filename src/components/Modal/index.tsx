@@ -17,6 +17,7 @@ const modalClassMap: { [k: ModalSize]: string } = {
 interface IModalProps {
   title: React.ReactNode;
   titleClass: string;
+  bodyClass: string;
   footerClassName: string;
   actions?: React.ReactNode[];
   open: boolean;
@@ -31,6 +32,7 @@ interface IModalProps {
 export function Modal({
   title,
   titleClass,
+  bodyClass,
   footerClassName,
   actions,
   open,
@@ -82,7 +84,6 @@ export function Modal({
             <div
               className={clsx(
                 "bg-white rounded-lg text-left shadow-xl transform transition-all w-full flex flex-col",
-                "max-w-prose",
                 modalClassMap[size]
               )}
             >
@@ -109,16 +110,18 @@ export function Modal({
                   )}
                 </div>
 
-                <div className="px-8">{children}</div>
+                <div className={bodyClass ?? "px-8"}>{children}</div>
 
-                <div
-                  className={clsx(
-                    "flex my-2 px-8 justify-end",
-                    footerClassName
-                  )}
-                >
-                  {actions?.length && actions}
-                </div>
+                {Boolean(actions?.length) && (
+                  <div
+                    className={clsx(
+                      "flex my-2 px-8 justify-end",
+                      footerClassName
+                    )}
+                  >
+                    {actions?.length && actions}
+                  </div>
+                )}
               </Wrapper>
             </div>
           </Transition.Child>

@@ -94,10 +94,12 @@ module.exports = {
       maxHeight: {
         large: "250px",
         medium: "200px",
-        small: "125px"
+        small: "125px",
+        "50vh": "50vh"
       },
       minHeight: {
-        12: "3rem"
+        12: "3rem",
+        "50vh": "50vh"
       },
       maxWidth: {
         full: "100%",
@@ -125,7 +127,8 @@ module.exports = {
         "btn-round-sm": "2.125rem",
         "btn-round-md": "2.375rem",
         "btn-round-lg": "2.625rem",
-        "btn-round-xl": "3.125rem"
+        "btn-round-xl": "3.125rem",
+        "dialog-md": "850px"
       },
       height: {
         "topology-card": "200px",
@@ -134,7 +137,8 @@ module.exports = {
         "btn-round-sm": "2.125rem",
         "btn-round-md": "2.375rem",
         "btn-round-lg": "2.625rem",
-        "btn-round-xl": "3.125rem"
+        "btn-round-xl": "3.125rem",
+        "modal-body-md": "500px"
       },
       minWidth: {
         8: "2rem",
