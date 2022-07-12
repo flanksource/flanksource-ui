@@ -38,7 +38,7 @@ export const TopologyDropdownMenu = ({ topology }: IProps) => {
           leaveTo="transform opacity-0 scale-95"
         >
           <Menu.Items className="absolute right-0 top-full w-56 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-card  focus:outline-none ">
-            {topology.system_id && topology.external_id && (
+            {topology.external_id && (
               <Menu.Item>
                 <button
                   onClick={viewLogs}
