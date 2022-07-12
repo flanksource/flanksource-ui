@@ -1,19 +1,28 @@
+import { BsTrash } from "react-icons/bs";
+
 import { Evidence } from "../../../api/services/evidence";
 import { User } from "../../../api/services/users";
 import { relativeDateTime } from "../../../utils/relativeDateTime";
 import { Avatar } from "../../Avatar";
 import { CommentText } from "../../Comment";
+import { IconButton } from "../../IconButton";
 import { EvidenceItem } from "../EvidenceSection";
 
 interface IProps {
   created_by: User;
   created_at: string;
   response: string | Evidence;
+  onDelete?: () => void;
 }
 
-export function ResponseLine({ created_by, created_at, response }: IProps) {
+export function ResponseLine({
+  created_by,
+  created_at,
+  response,
+  onDelete
+}: IProps) {
   return (
-    <div className="pb-4 flex items-start space-x-3">
+    <div className="pb-4 flex items-start space-x-3 group">
       <Avatar
         containerProps={{
           className: "mt-1"
@@ -42,6 +51,18 @@ export function ResponseLine({ created_by, created_at, response }: IProps) {
           <EvidenceItem evidence={response} />
         )}
       </div>
+      {onDelete && (
+        <IconButton
+          className="mr-1 items-end invisible group-hover:visible"
+          icon={
+            <BsTrash
+              className="text-gray-600 border-0 border-l-1 border-gray-200"
+              size={18}
+            />
+          }
+          onClick={() => new Promise(onDelete())}
+        />
+      )}
     </div>
   );
 }

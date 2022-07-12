@@ -80,6 +80,7 @@ export function HypothesisDetails({ node, api, ...rest }) {
                 created_at={created_at}
                 created_by={created_by}
                 response={evidence}
+                onDelete={() => deleteEvidenceCb(id)}
               />
             ))}
         </ul>
@@ -96,19 +97,5 @@ export function HypothesisDetails({ node, api, ...rest }) {
         <EvidenceBuilder />
       </Modal>
     </>
-  );
-}
-
-function HypothesisTitle({ className, ...rest }) {
-  return (
-    <div
-      className={clsx(
-        "text-lg font-medium text-gray-900 font-semibold",
-        className
-      )}
-      {...rest}
-    >
-      {rest.children}
-    </div>
   );
 }
