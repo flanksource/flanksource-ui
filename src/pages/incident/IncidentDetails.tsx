@@ -137,7 +137,7 @@ export function IncidentDetailsPage() {
         <div className="space-y-6 lg:col-start-1 lg:col-span-2">
           {Boolean(topologyIds?.length) && (
             <section aria-labelledby="notes-title">
-              <div className="bg-white sm:overflow-hidden">
+              <div className="bg-white">
                 <div className="px-2 py-2 flex flex-nowrap">
                   {topologyIds?.map((id) => (
                     <TopologyCard
