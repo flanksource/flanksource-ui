@@ -8,12 +8,16 @@ import { Button } from "../../Button";
 import { BsTrash } from "react-icons/bs";
 import { Evidence, EvidenceType } from "../../../api/services/evidence";
 
-function EvidenceItem({ evidence }: { evidence: Evidence }) {
+export function EvidenceItem({ evidence }: { evidence: Evidence }) {
   if (evidence.type === EvidenceType.Log) {
     return <LogsTable viewOnly logs={evidence?.evidence?.lines} title="" />;
   }
   if (evidence.type === EvidenceType.Topology) {
-    return <TopologyCard topologyId={evidence.evidence.id} size="large" />;
+    return (
+      <div className="pt-2">
+        <TopologyCard topologyId={evidence.evidence.id} size="large" />
+      </div>
+    );
   }
   if (evidence.type === EvidenceType.Config) {
     return (
@@ -29,13 +33,11 @@ function EvidenceItem({ evidence }: { evidence: Evidence }) {
 }
 
 function EvidenceAccordion({ title, date, children, ...rest }) {
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(true);
   return (
     <div className="border-b last:border-b-0 flex flex-col" {...rest}>
       <button
-        className={`${
-          expanded && "border-b"
-        } py-2 px-2 flex flex-row items-center`}
+        className="py-2 flex flex-row items-center"
         onClick={() => setExpanded(!expanded)}
         type="button"
       >
@@ -77,9 +79,9 @@ function ConfigEvidenceView({ evidenceItem }) {
   }, [evidenceItem]);
 
   return (
-    <div className="">
+    <div>
       {evidenceItem ? (
-        <div className="flex flex-col p-1">
+        <div className="flex flex-col">
           {hunks.map(([hunkStart, hunkEnd], hunkIndex) => (
             <div key={`${hunkStart}-${hunkEnd}`}>
               <div className="border mb-1 last:mb-0">

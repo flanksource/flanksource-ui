@@ -10,8 +10,7 @@ export function HypothesisBuilder({
   initialTree,
   loadedTree,
   initialEditMode = false,
-  api,
-  ...rest
+  api
 }) {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedNode, setSelectedNode] = useState(null);
@@ -24,7 +23,7 @@ export function HypothesisBuilder({
     setTree(loadedTree);
   }, [loadedTree]);
   return (
-    <div {...rest}>
+    <>
       <div className="w-full">
         <HypothesisNode
           node={tree}
@@ -51,6 +50,6 @@ export function HypothesisBuilder({
           setCreateHypothesisModalIsOpen(false);
         }}
       />
-    </div>
+    </>
   );
 }

@@ -4,7 +4,7 @@ import clsx from "clsx";
 import dayjs from "dayjs";
 import { MdTimer } from "react-icons/md";
 
-import { relativeTimeFromDate } from "../../../utils/common";
+import { relativeDateTime } from "../../../utils/relativeDateTime";
 import {
   AddResponderFormValues,
   formPropKey,
@@ -80,7 +80,7 @@ export function ResponderDetailsDialog({
     if (!date) {
       return "";
     }
-    return relativeTimeFromDate(date);
+    return relativeDateTime(date);
   };
 
   const currentStageKey = () => {

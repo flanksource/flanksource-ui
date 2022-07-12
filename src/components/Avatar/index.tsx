@@ -66,7 +66,7 @@ export function Avatar({
       )}
       data-tip={user?.name}
     >
-      {src ? (
+      {srcList && src ? (
         <img
           src={src}
           alt={alt}

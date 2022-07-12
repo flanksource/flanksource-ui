@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import clsx from "clsx";
 
-import { EvidenceSection } from "../EvidenceSection";
+import { EvidenceItem, EvidenceSection } from "../EvidenceSection";
 import { Modal } from "../../Modal";
 import {
   getCommentsByHypothesis,
@@ -15,6 +15,9 @@ import { useUser } from "../../../context";
 import { toastError } from "../../Toast/toast";
 import { EvidenceBuilder } from "../../EvidenceBuilder";
 import { CommentsSection } from "../Comments";
+import { CommentText } from "../../Comment";
+import { Avatar } from "../../Avatar";
+import { ResponseLine } from "../ResponseLine";
 
 export function HypothesisDetails({ node, api, ...rest }) {
   const [evidenceBuilderOpen, setEvidenceBuilderOpen] = useState(false);
@@ -68,17 +71,18 @@ export function HypothesisDetails({ node, api, ...rest }) {
 
   return (
     <>
-      <div className={clsx("pb-7", rest.className || "")} {...rest}>
-        <div className="mb-8 mt-4">
-          <EvidenceSection
-            hypothesis={node}
-            evidenceList={evidence}
-            titlePrepend={<HypothesisTitle>Evidence</HypothesisTitle>}
-            onButtonClick={() => setEvidenceBuilderOpen(true)}
-            onDeleteEvidence={deleteEvidenceCb}
-            isLoading={evidenceLoading}
-          />
-        </div>
+      <div className={clsx("mb-7", rest.className || "")} {...rest}>
+        <ul className="mt-4">
+          {evidence.length > 0 &&
+            evidence.map(({ id, created_by, created_at, ...evidence }) => (
+              <ResponseLine
+                key={id}
+                created_at={created_at}
+                created_by={created_by}
+                response={evidence}
+              />
+            ))}
+        </ul>
         <CommentsSection
           comments={comments}
           onComment={(value) => handleComment(value)}

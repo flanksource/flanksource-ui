@@ -56,7 +56,9 @@ export type Evidence = TopologyEvidence | ConfigEvidence | LogEvidence;
 
 export const getAllEvidenceByHypothesis = async (hypothesisId: string) => {
   const { data, error } = await resolve<Evidence[]>(
-    IncidentCommander.get(`/evidence?hypothesis_id=eq.${hypothesisId}`)
+    IncidentCommander.get(
+      `/evidence?hypothesis_id=eq.${hypothesisId}&select=*,created_by(id,name,avatar)`
+    )
   );
   if (error) {
     return { error };

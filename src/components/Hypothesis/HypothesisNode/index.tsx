@@ -37,6 +37,7 @@ interface IHypothesisNode {
 }
 
 interface IHypothesisNodeProps {
+  hasParent: boolean;
   node: IHypothesisNode;
   setModalIsOpen: (v: boolean) => void;
   setSelectNode: (v: IHypothesisNode) => void;
@@ -46,6 +47,7 @@ interface IHypothesisNodeProps {
 
 export const HypothesisNode = (props: IHypothesisNodeProps) => {
   const {
+    hasParent,
     node,
     setModalIsOpen,
     setSelectedNode,
@@ -88,13 +90,13 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
               <BsPlusLg />
             </button>
           </div>
-          <div className="flex items-center py-16">
+          <div className="flex items-center">
             <div className="pr-4">Show Comments</div>
             <Switch
               checked={true}
               onChange={toggleComment}
               className={clsx(
-                showComments ? "bg-teal-900" : "bg-gray-200",
+                showComments ? "bg-blue-900" : "bg-gray-200",
                 "relative inline-flex shrink-0 h-[30px] w-[50px] cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
               )}
             >
@@ -111,9 +113,20 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
         </div>
       )}
 
-      <div className="w-full bg-white rounded-8px shadow">
-        <div className="w-full mb-0.5">
-          {Boolean(node) && (
+      <div
+        className={clsx(
+          "relative",
+          "before:content-[''] before:absolute before:border-l-2 before:border-gray-200 before:left-2 before:h-full before:z-[-1]"
+        )}
+      >
+        {Boolean(node) && (
+          <div
+            className={clsx(
+              "z-10",
+              hasParent &&
+                "before:content-[''] before:border-gray-200 before:z-0 before:absolute before:w-6 before:h-8 before:-ml-3 before:border-l-2 before:border-b-2 before:rounded-bl-2xl before:z-[-1]"
+            )}
+          >
             <HypothesisBar
               hypothesis={node}
               onTitleClick={handleOpenModal}
@@ -126,23 +139,23 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
                 });
               }}
             />
-          )}
-        </div>
+          </div>
+        )}
 
         <div>
           {!!node && showComments && (
-            <div className="px-4">
+            <div className="px-5">
               <HypothesisDetails node={node} api={api} />
             </div>
           )}
           <div
-            className={clsx({
-              "bg-light-blue p-5 mt-3 rounded-8px border border-dashed": isRoot,
-              "pl-7 my-2.5": !isRoot
+            className={clsx("mt-10", {
+              "pl-5": isRoot,
+              "pl-7": !isRoot
             })}
           >
             {(node?.children || []).map((item) => (
-              <HypothesisNode {...props} node={item} key={item.id} />
+              <HypothesisNode hasParent {...props} node={item} key={item.id} />
             ))}
             {false && (
               <HypothesisBlockHeader
