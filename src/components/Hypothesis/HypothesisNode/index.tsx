@@ -70,6 +70,7 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
           <button
             type="button"
             className="btn-round btn-round-primary btn-round-sm"
+            onClick={handlerOpenCreateHypothesisModal}
           >
             <BsPlusLg />
           </button>
