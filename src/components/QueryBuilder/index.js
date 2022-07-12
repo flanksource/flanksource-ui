@@ -133,7 +133,7 @@ export const QueryBuilder = ({ refreshConfigs, className, ...props }) => {
     refreshConfigs([]);
     try {
       const result = await getConfigsByQuery(queryToRun);
-      refreshConfigs(result.data.results);
+      refreshConfigs(result);
     } catch (ex) {
       toastError(ex.message);
     }
@@ -181,8 +181,7 @@ export const QueryBuilder = ({ refreshConfigs, className, ...props }) => {
     setLoading(true);
     try {
       const res = await deleteSavedQuery(queryId);
-      const { status } = res;
-      if (status === 200 || status === 201) {
+      if (!res?.error) {
         toastSuccess(`${queryName} deleted successfully`);
         await fetchQueries();
         setSelectedQuery();
