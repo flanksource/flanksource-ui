@@ -342,7 +342,8 @@ export const AddResponder = ({
                   nextAction={{
                     label: !loading ? "Save" : "Saving...",
                     disabled: !selectedType || loading,
-                    handler: onSubmit
+                    handler: onSubmit,
+                    primary: true
                   }}
                   previousAction={{
                     label: "Back",
