@@ -133,7 +133,7 @@ export function SidebarLayout({ navigation }) {
 
         {/* Static sidebar for desktop */}
         <div
-          className={clsx("transform duration-500 w-14 z-20", {
+          className={clsx("transform duration-500 w-14", {
             "lg:w-64": !collapseSidebar
           })}
           ref={innerRef}
