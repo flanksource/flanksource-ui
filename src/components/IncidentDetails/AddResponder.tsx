@@ -203,7 +203,7 @@ export const AddResponder = ({
     setSteps([...steps]);
   };
 
-  const getResponderTypeForm = useMemo(() => {
+  const getResponderTypeForm = () => {
     switch (selectedType?.value) {
       case "Email":
         return <Email control={control} errors={errors} />;
@@ -230,7 +230,7 @@ export const AddResponder = ({
       default:
         return null;
     }
-  }, [selectedType, control]);
+  };
 
   const onSubmit = async () => {
     await handleSubmit(
@@ -243,7 +243,7 @@ export const AddResponder = ({
 
   const saveResponderDetails = async () => {
     const data = { ...getValues() };
-    Object.keys(data).forEach((key: formPropKey, index) => {
+    Object.keys(data).forEach((key: formPropKey) => {
       if (!data[key]) {
         delete data[key];
       }
@@ -336,7 +336,7 @@ export const AddResponder = ({
           {steps[1].inProgress && (
             <div>
               <div className="px-8 py-3 h-modal-body-md">
-                {getResponderTypeForm}
+                {getResponderTypeForm()}
                 <ActionButtonGroup
                   className="absolute w-full bottom-0 left-0"
                   nextAction={{
