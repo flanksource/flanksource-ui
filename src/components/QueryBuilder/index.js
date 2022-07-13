@@ -1,4 +1,11 @@
-import { Fragment, useEffect, useMemo, useState } from "react";
+import {
+  Fragment,
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState
+} from "react";
 import { Menu, Transition } from "@headlessui/react";
 import { MdDelete } from "react-icons/md";
 import { BiCog } from "react-icons/bi";
@@ -17,7 +24,7 @@ import { useLoader } from "../../hooks";
 import { TextInputClearable } from "../TextInputClearable";
 import { TextWithDivider } from "../TextWithDivider";
 
-export const QueryBuilder = ({ refreshConfigs, className, ...props }) => {
+const QueryBuilderFC = ({ refreshConfigs, className, ...props }) => {
   const [params, setParams] = useSearchParams();
   const query = params.get("query") || "";
   const [selectedQuery, setSelectedQuery] = useState(null);
@@ -192,6 +199,14 @@ export const QueryBuilder = ({ refreshConfigs, className, ...props }) => {
     setLoading(false);
   };
 
+  const onModalClose = useCallback(() => {
+    setModalIsOpen(false);
+  }, []);
+
+  const onSavedQueryValueChange = useCallback((e) => {
+    setSavedQueryValue(e.target.value);
+  }, []);
+
   return (
     <div className={clsx("flex flex-col", className)} {...props}>
       <div className="flex">
@@ -220,24 +235,24 @@ export const QueryBuilder = ({ refreshConfigs, className, ...props }) => {
       </div>
       <Modal
         open={modalIsOpen}
-        onClose={() => setModalIsOpen(false)}
+        onClose={onModalClose}
         title="Save Current Query"
         size="small"
       >
-        <div className="flex flex-col pt-5 pb-3 max-w-lg" style={{}}>
+        <div className="flex flex-col pt-5 pb-3 max-w-lg">
           <input
             type="text"
-            defaultValue={savedQueryValue}
+            value={savedQueryValue}
             className="w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-400 block py-2 sm:text-sm border-gray-300 rounded-md mr-2 mb-2"
-            style={{ minWidth: "300px" }}
             placeholder="Query name"
-            onChange={(e) => setSavedQueryValue(e.target.value)}
+            onChange={onSavedQueryValueChange}
           />
           <div className="flex justify-end mt-3">
             <button
-              className={`border border-gray-300 rounded-md px-3 py-2 text-sm whitespace-nowrap bg-indigo-700 text-gray-50 cursor-pointer}`}
+              className="border border-gray-300 rounded-md px-3 py-2 text-sm whitespace-nowrap bg-indigo-700 text-gray-50 cursor-pointer"
               type="button"
-              onClick={() => saveQuery()}
+              onClick={saveQuery}
+              disabled={loading}
             >
               Save
             </button>
@@ -315,3 +330,5 @@ function QueryBuilderActionMenu({ onOptionClick, optionCategories }) {
     </Menu>
   );
 }
+
+export const QueryBuilder = memo(QueryBuilderFC);
