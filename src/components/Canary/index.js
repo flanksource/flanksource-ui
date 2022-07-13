@@ -29,6 +29,14 @@ import { Loading } from "../Loading";
 
 const getSearchParams = () => getParamsFromURL(window.location.search);
 
+const FilterKeyToLabelMap = {
+  environment: "Environment",
+  severity: "Severity",
+  technology: "Technology",
+  app: "App",
+  "Expected-Fail": "Expected Fail"
+};
+
 const getPassingCount = (checks) => {
   let count = 0;
   checks.forEach((check) => {
@@ -303,7 +311,7 @@ export const LabelFilterList = ({ labels }) => {
             {labels.length > 1 ? (
               <>
                 <div className="text-xs whitespace-nowrap overflow-ellipsis w-full overflow-hidden mb-1">
-                  {labelKey}
+                  {FilterKeyToLabelMap[labelKey] || labelKey}
                 </div>
                 <MultiSelectLabelsDropdownStandalone
                   labels={labels}
@@ -313,7 +321,7 @@ export const LabelFilterList = ({ labels }) => {
             ) : labels.length === 1 ? (
               <div className="flex w-full mb-3">
                 <div className="mr-3 w-full text-xs text-left text-gray-700 break-all overflow-ellipsis overflow-x-hidden flex items-center">
-                  {labels[0].key}
+                  {FilterKeyToLabelMap[labels[0].key] || labels[0].key}
                 </div>
                 <TristateLabelStandalone
                   label={labels[0]}
