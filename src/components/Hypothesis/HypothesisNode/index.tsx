@@ -119,7 +119,7 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
         {Boolean(node) && (
           <div
             className={clsx(
-              "z-10 relative",
+              "relative",
               hasParent &&
                 "before:content-[''] before:border-gray-200 before:z-0 before:absolute before:w-6 before:h-8 before:-ml-3 before:border-l-2 before:border-b-2 before:rounded-bl-2xl before:z-[-1]"
             )}
@@ -127,6 +127,7 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
             <HypothesisBar
               hypothesis={node}
               onTitleClick={handleOpenModal}
+              api={api}
               onDisprove={() => {
                 props.api.updateMutation.mutate({
                   id: node.id,
@@ -147,7 +148,13 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
           )}
           <div className={clsx("mt-10", isRoot ? "pl-5" : "pl-7")}>
             {(node?.children || []).map((item) => (
-              <HypothesisNode {...props} hasParent node={item} key={item.id} />
+              <HypothesisNode
+                {...props}
+                api={api}
+                hasParent
+                node={item}
+                key={item.id}
+              />
             ))}
           </div>
         </div>

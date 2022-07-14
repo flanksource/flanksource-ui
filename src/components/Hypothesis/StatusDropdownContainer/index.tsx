@@ -24,7 +24,7 @@ export function StatusDropdownContainer({
 
   return (
     <SubtleDropdown
-      className="-ml-2"
+      className="bg-white m-1 rounded-full"
       control={control}
       name="status"
       items={hypothesisStatusDropdownOptions}

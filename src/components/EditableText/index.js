@@ -54,11 +54,11 @@ export function EditableText({
   }, [value]);
 
   return (
-    <div className="relative" {...rest}>
+    <div className="relative w-full" {...rest}>
       {editMode && (
         <>
           <textarea
-            className={`w-full min-w-full py-0 px-px resize-none rounded-sm absolute top-0 bottom-0 left-0 right-0 overflow-y-hidden ${textAreaClassName} ${sharedClassName}`}
+            className={`w-full min-w-full py-1 px-px resize-none rounded-sm absolute top-0 bottom-0 left-0 right-0 overflow-y-hidden ${textAreaClassName} ${sharedClassName}`}
             defaultValue={localValue}
             onChange={onChangeText}
             onBlur={onBlurTextArea}
@@ -87,7 +87,7 @@ export function EditableText({
 
       <button
         type="button"
-        className={`w-full px-px text-left border border-transparent hover:border-gray-300 rounded-sm cursor-text ${buttonClassName} ${sharedClassName}`}
+        className={`w-full py-1 px-px text-left border border-transparent hover:border-gray-300 rounded-sm cursor-text ${buttonClassName} ${sharedClassName}`}
         style={{ overflowX: "hidden", wordWrap: "break-word" }}
         onClick={() => setEditMode(true)}
       >
