@@ -69,8 +69,8 @@ export function TopologyPage() {
       }
       onRefresh={load}
     >
-      <div className="flex leading-1.21rel">
-        <div className="flex flex-wrap">
+      <div className="flex leading-1.21rel w-full">
+        <div className="flex flex-wrap w-full">
           {topology.map((item) => (
             <TopologyCard key={item.id} topology={item} size="extra-large" />
           ))}
