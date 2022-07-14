@@ -82,6 +82,7 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
             <h2 className="text-dark-gray mr-3 text-2xl">Action plan</h2>
             <button
               type="button"
+              onClick={handlerOpenCreateHypothesisModal}
               className="btn-round btn-round-primary btn-round-sm"
             >
               <BsPlusLg />
