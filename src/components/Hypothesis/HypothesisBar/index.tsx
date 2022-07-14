@@ -28,6 +28,7 @@ import { StatusDropdownContainer } from "../StatusDropdownContainer";
 import { EditableText } from "../../EditableText";
 import { useForm } from "react-hook-form";
 import { debounce } from "lodash";
+import { ChevronRightIcon } from "@heroicons/react/outline";
 
 enum CommentInfo {
   Comment = "comment"
@@ -59,6 +60,9 @@ interface HypothesisBarProps {
   hypothesis: Hypothesis;
   onTitleClick: MouseEventHandler<HTMLSpanElement>;
   api: { [k: string]: any };
+  showExpand: boolean;
+  expanded: boolean;
+  onToggleExpand: (expand: boolean) => void;
   onDisprove: () => void;
 }
 
@@ -66,6 +70,9 @@ export const HypothesisBar: React.FunctionComponent<HypothesisBarProps> = ({
   hypothesis,
   onTitleClick,
   api,
+  showExpand,
+  expanded,
+  onToggleExpand,
   onDisprove: onDisproveCb
 }: HypothesisBarProps) => {
   const {
@@ -151,6 +158,17 @@ export const HypothesisBar: React.FunctionComponent<HypothesisBarProps> = ({
       )}
     >
       <div className="flex flex-grow-0 items-center space-x-2 w-full">
+        {showExpand && (
+          <button
+            className="ml-2 py-2 flex flex-row items-center"
+            onClick={() => onToggleExpand && onToggleExpand(!expanded)}
+            type="button"
+          >
+            <ChevronRightIcon
+              className={`h-5 w-5 transform ${expanded && "rotate-90"}`}
+            />
+          </button>
+        )}
         <StatusDropdownContainer
           nodeId={hypothesis?.id}
           status={hypothesis?.status}

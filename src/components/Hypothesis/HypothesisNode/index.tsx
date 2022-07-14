@@ -6,6 +6,7 @@ import { useSearchParams } from "react-router-dom";
 import { HypothesisBar } from "../HypothesisBar";
 import { HypothesisStatus } from "../../../api/services/hypothesis";
 import { HypothesisDetails } from "../HypothesisDetails";
+import { useEffect, useState } from "react";
 
 const propsByType = (type: string) => {
   if (!type) {
@@ -65,11 +66,19 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
     setSelectedNode(node);
     setCreateHypothesisModalIsOpen(true);
   };
-  const showComments = searchParams.get("comments") === "true";
+
+  const showAllComments = searchParams.get("comments") === "true";
+
+  /* Priority over showAllComments */
+  const [showComments, setShowComments] = useState(showAllComments);
+
+  useEffect(() => {
+    setShowComments(showAllComments);
+  }, [showAllComments]);
 
   const toggleComment = () => {
     const newParams = new URLSearchParams(
-      showComments ? {} : { comments: "true" }
+      showAllComments ? {} : { comments: "true" }
     );
     setSearchParams(newParams);
   };
@@ -94,7 +103,7 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
               checked={true}
               onChange={toggleComment}
               className={clsx(
-                showComments ? "bg-blue-900" : "bg-gray-200",
+                showAllComments ? "bg-blue-900" : "bg-gray-200",
                 "relative inline-flex shrink-0 h-[30px] w-[50px] cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
               )}
             >
@@ -102,7 +111,7 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
               <span
                 aria-hidden="true"
                 className={clsx(
-                  showComments ? "translate-x-5" : "translate-x-0",
+                  showAllComments ? "translate-x-5" : "translate-x-0",
                   "h-[26px] w-[26px] pointer-events-none inline-block transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out"
                 )}
               />
@@ -128,6 +137,9 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
               hypothesis={node}
               onTitleClick={handleOpenModal}
               api={api}
+              showExpand={!isRoot}
+              expanded={showComments}
+              onToggleExpand={(show) => setShowComments(show)}
               onDisprove={() => {
                 props.api.updateMutation.mutate({
                   id: node.id,
@@ -140,23 +152,25 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
           </div>
         )}
 
-        <div>
-          {!!node && showComments && (
-            <div className="px-5">
-              <HypothesisDetails node={node} api={api} />
-            </div>
+        <div className="mb-7">
+          {(isRoot || (!!node && showComments)) && (
+            <>
+              <div className="px-5">
+                <HypothesisDetails node={node} api={api} />
+              </div>
+              <div className={clsx("mt-10", isRoot ? "pl-5" : "pl-7")}>
+                {(node?.children || []).map((item) => (
+                  <HypothesisNode
+                    {...props}
+                    api={api}
+                    hasParent
+                    node={item}
+                    key={item.id}
+                  />
+                ))}
+              </div>
+            </>
           )}
-          <div className={clsx("mt-10", isRoot ? "pl-5" : "pl-7")}>
-            {(node?.children || []).map((item) => (
-              <HypothesisNode
-                {...props}
-                api={api}
-                hasParent
-                node={item}
-                key={item.id}
-              />
-            ))}
-          </div>
         </div>
       </div>
     </div>
