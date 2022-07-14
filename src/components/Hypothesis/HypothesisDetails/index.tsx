@@ -74,8 +74,8 @@ export function HypothesisDetails({ node, api, ...rest }: IProps) {
   };
 
   useEffect(() => {
-    fetchResponses(node.id);
-  }, [node.id]);
+    node?.id && fetchResponses(node.id);
+  }, [node?.id]);
 
   return (
     <>

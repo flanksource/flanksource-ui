@@ -50,11 +50,15 @@ export const getHypothesisResponse = async (id: string) => {
   const comments = "comment(id,*,created_by(id,name,avatar))";
   const evidence = "evidence(id,*,created_by(id,name,avatar))";
 
-  const { data, error } = await resolve<{
-    id: string;
-    comment: Comment[];
-    evidence: Evidence[];
-  }>(
+  const { data, error } = await resolve<
+    [
+      {
+        id: string;
+        comment: Comment[];
+        evidence: Evidence[];
+      }
+    ]
+  >(
     IncidentCommander.get(
       `/hypothesis?id=eq.${id}&select=id,${comments},${evidence}`
     )

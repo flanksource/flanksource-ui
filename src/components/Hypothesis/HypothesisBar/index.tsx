@@ -182,7 +182,7 @@ export const HypothesisBar: React.FunctionComponent<HypothesisBarProps> = ({
           }}
         />
       </div>
-      <div className="flex items-end pb-3.5 pr-3 space-x-4">
+      <div className="flex items-center pr-3 space-x-4">
         <div className="flex flex-row">
           {infoIcons
             .filter((i) => ICON_MAP[i])
@@ -197,7 +197,7 @@ export const HypothesisBar: React.FunctionComponent<HypothesisBarProps> = ({
         <div>
           {createdBy && <AvatarGroup maxCount={5} users={involved} size="sm" />}
         </div>
-        <div className="flex">
+        <div className="flex pt-1">
           <HypothesisBarDeleteDialog
             isOpen={showConfirm}
             onClose={() => setShowConfirm(false)}
