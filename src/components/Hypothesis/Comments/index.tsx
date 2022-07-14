@@ -43,7 +43,7 @@ export function CommentsSection({
   return (
     <div className={rest.className} {...rest}>
       {titlePrepend}
-      {!!comments.length && (
+      {!!comments?.length && (
         <div>
           {comments.map(({ id, created_by, created_at, comment }) => (
             <ResponseLine

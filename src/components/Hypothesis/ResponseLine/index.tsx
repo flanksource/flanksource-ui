@@ -1,6 +1,7 @@
 import { BsTrash } from "react-icons/bs";
 
 import { Evidence } from "../../../api/services/evidence";
+import { Comment } from "../../../api/services/comments";
 import { User } from "../../../api/services/users";
 import { relativeDateTime } from "../../../utils/relativeDateTime";
 import { Avatar } from "../../Avatar";
@@ -11,7 +12,7 @@ import { EvidenceItem } from "../EvidenceSection";
 interface IProps {
   created_by: User;
   created_at: string;
-  response: string | Evidence;
+  response: Comment | Evidence;
   onDelete?: () => void;
 }
 
@@ -41,10 +42,10 @@ export function ResponseLine({
           </p>
         </div>
 
-        {typeof response === "string" ? (
+        {!("type" in response) ? (
           <div className="text-sm text-gray-700">
             <p className="whitespace-pre">
-              <CommentText text={response} />
+              <CommentText text={response.comment} />
             </p>
           </div>
         ) : (
@@ -60,7 +61,7 @@ export function ResponseLine({
               size={18}
             />
           }
-          onClick={() => new Promise(onDelete())}
+          onClick={() => Promise.resolve(onDelete())}
         />
       )}
     </div>

@@ -111,7 +111,7 @@ export const HypothesisBar: React.FunctionComponent<HypothesisBarProps> = ({
   return (
     <div
       className={clsx(
-        "w-full flex justify-between shadow rounded-8px border focus:outline-none bg-white cursor-pointer",
+        "relative w-full flex justify-between shadow rounded-8px border focus:outline-none bg-white cursor-pointer",
         deleting && "pointer-events-none cursor-not-allowed blur-[2px]"
       )}
     >

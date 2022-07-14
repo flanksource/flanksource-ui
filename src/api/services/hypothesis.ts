@@ -1,5 +1,6 @@
 import { IncidentCommander } from "../axios";
 import { resolve } from "../resolve";
+import { Comment } from "./comments";
 import { Evidence } from "./evidence";
 import { User } from "./users";
 
@@ -43,6 +44,27 @@ export const getHypothesis = async (id: string) => {
   return resolve(
     IncidentCommander.get(`/hypothesis?id=eq.${id}&select(*,${comments})`)
   );
+};
+
+export const getHypothesisResponse = async (id: string) => {
+  const comments = "comment(id,*,created_by(id,name,avatar))";
+  const evidence = "evidence(id,*,created_by(id,name,avatar))";
+
+  const { data, error } = await resolve<{
+    id: string;
+    comment: Comment[];
+    evidence: Evidence[];
+  }>(
+    IncidentCommander.get(
+      `/hypothesis?id=eq.${id}&select=id,${comments},${evidence}`
+    )
+  );
+
+  if (error) {
+    return { error, data: null };
+  }
+
+  return { data: data && data[0], error };
 };
 
 export const searchHypothesis = (incidentId: string, query: string) =>

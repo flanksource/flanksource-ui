@@ -6,14 +6,20 @@ interface Props {
   className?: string;
   title?: string;
   icon?: React.ReactElement;
-  onClick: (e: MouseEvent) => void | Promise<void>;
-  ovalProps: React.SVGAttributes<SVGSVGElement>;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void | Promise<void>;
+  ovalProps?: React.SVGAttributes<SVGSVGElement>;
 }
 
-export const IconButton = ({ className, icon, onClick, ovalProps }: Props) => {
+export const IconButton = ({
+  className,
+  icon,
+  onClick,
+  ovalProps = {}
+}: Props) => {
   const [inProgress, setInProgress] = useState<boolean>(false);
 
-  const handleOnClick = (e: MouseEvent) => {
+  const handleOnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (!onClick) return;
     setInProgress(true);
     Promise.resolve(onClick(e)).finally(() => setInProgress(false));
   };

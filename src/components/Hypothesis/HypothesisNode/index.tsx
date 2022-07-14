@@ -4,9 +4,7 @@ import { Switch } from "@headlessui/react";
 import { useSearchParams } from "react-router-dom";
 
 import { HypothesisBar } from "../HypothesisBar";
-import { HypothesisBlockHeader } from "../../HypothesisBuilder/hypothesis-header";
 import { HypothesisStatus } from "../../../api/services/hypothesis";
-import { HypothesisTitle } from "../HypothesisTitle";
 import { HypothesisDetails } from "../HypothesisDetails";
 
 const propsByType = (type: string) => {
@@ -58,7 +56,6 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const isRoot = node?.type === "root" || node?.parent_id == null;
-  const type = node?.type;
 
   const handleOpenModal = () => {
     setSelectedNode(node);
@@ -115,14 +112,13 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
 
       <div
         className={clsx(
-          "relative",
-          "before:content-[''] before:absolute before:border-l-2 before:border-gray-200 before:left-2 before:h-full before:z-[-1]"
+          "relative before:content-[''] before:absolute before:border-l-2 before:border-gray-200 before:left-2 before:h-full before:z-[-1]"
         )}
       >
         {Boolean(node) && (
           <div
             className={clsx(
-              "z-10",
+              "z-10 relative",
               hasParent &&
                 "before:content-[''] before:border-gray-200 before:z-0 before:absolute before:w-6 before:h-8 before:-ml-3 before:border-l-2 before:border-b-2 before:rounded-bl-2xl before:z-[-1]"
             )}
@@ -148,22 +144,10 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
               <HypothesisDetails node={node} api={api} />
             </div>
           )}
-          <div
-            className={clsx("mt-10", {
-              "pl-5": isRoot,
-              "pl-7": !isRoot
-            })}
-          >
+          <div className={clsx("mt-10", isRoot ? "pl-5" : "pl-7")}>
             {(node?.children || []).map((item) => (
-              <HypothesisNode hasParent {...props} node={item} key={item.id} />
+              <HypothesisNode {...props} hasParent node={item} key={item.id} />
             ))}
-            {false && (
-              <HypothesisBlockHeader
-                onButtonClick={handlerOpenCreateHypothesisModal}
-                className="mb-2.5"
-                {...propsByType(type)}
-              />
-            )}
           </div>
         </div>
       </div>

@@ -1,47 +1,56 @@
 import React, { useEffect, useState } from "react";
 import clsx from "clsx";
 
-import { EvidenceItem, EvidenceSection } from "../EvidenceSection";
 import { Modal } from "../../Modal";
-import {
-  getCommentsByHypothesis,
-  createComment
-} from "../../../api/services/comments";
-import {
-  getAllEvidenceByHypothesis,
-  deleteEvidence
-} from "../../../api/services/evidence";
+import { Comment, createComment } from "../../../api/services/comments";
+import { deleteEvidence, Evidence } from "../../../api/services/evidence";
 import { useUser } from "../../../context";
 import { toastError } from "../../Toast/toast";
 import { EvidenceBuilder } from "../../EvidenceBuilder";
 import { CommentsSection } from "../Comments";
-import { CommentText } from "../../Comment";
-import { Avatar } from "../../Avatar";
 import { ResponseLine } from "../ResponseLine";
+import {
+  getHypothesisResponse,
+  Hypothesis
+} from "../../../api/services/hypothesis";
+import { TreeNode } from "../../../pages/incident/IncidentDetails";
 
-export function HypothesisDetails({ node, api, ...rest }) {
+interface IProps {
+  node: TreeNode<Hypothesis>;
+  api: any;
+}
+
+type Response = Evidence | Comment;
+
+export function HypothesisDetails({ node, api, ...rest }: IProps) {
   const [evidenceBuilderOpen, setEvidenceBuilderOpen] = useState(false);
   const { user } = useUser();
-  const [comments, setComments] = useState([]);
-  const [evidence, setEvidence] = useState([]);
-  const [evidenceLoading, setEvidenceLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const [responses, setResponses] = useState<Response[]>([]);
 
-  const fetchEvidence = (hypothesisId) => {
-    getAllEvidenceByHypothesis(hypothesisId)
-      .then((evidence) => {
-        setEvidence(evidence?.data || []);
-      })
-      .finally(() => {
-        setEvidenceLoading(false);
-      });
+  const fetchResponses = async (id: string) => {
+    setIsLoading(true);
+
+    try {
+      const { data, error } = await getHypothesisResponse(id);
+      if (error) {
+        toastError(`Error fetching hypothesis responses: ${error?.message}`);
+      }
+
+      const responses = (data.comment || [])
+        .concat(data.evidence || [])
+        .sort((a: Response, b: Response) => {
+          if (a.created_at > b.created_at) return 1;
+          return -1;
+        });
+
+      setResponses(responses);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const fetchComments = (id) =>
-    getCommentsByHypothesis(id).then((comments) => {
-      setComments(comments?.data || []);
-    });
-
-  const handleComment = (value) =>
+  const handleComment = (value: string) =>
     createComment({
       user,
       incidentId: node.incident_id,
@@ -50,7 +59,7 @@ export function HypothesisDetails({ node, api, ...rest }) {
     })
       .catch(toastError)
       .then(() => {
-        fetchComments(node.id);
+        fetchResponses(node.id);
       });
 
   const deleteEvidenceCb = async (id: string) => {
@@ -61,33 +70,29 @@ export function HypothesisDetails({ node, api, ...rest }) {
       return;
     }
 
-    setEvidence((evidence) => evidence.filter((e) => e.id !== id));
+    setResponses((ls) => ls.filter((e) => e.id !== id));
   };
 
   useEffect(() => {
-    fetchEvidence(node.id);
-    fetchComments(node.id);
+    fetchResponses(node.id);
   }, [node.id]);
 
   return (
     <>
       <div className={clsx("mb-7", rest.className || "")} {...rest}>
         <ul className="mt-4">
-          {evidence.length > 0 &&
-            evidence.map(({ id, created_by, created_at, ...evidence }) => (
+          {responses.length > 0 &&
+            responses.map(({ id, created_by, created_at, ...evidence }) => (
               <ResponseLine
                 key={id}
                 created_at={created_at}
                 created_by={created_by}
                 response={evidence}
-                onDelete={() => deleteEvidenceCb(id)}
+                onDelete={evidence.type ? () => deleteEvidenceCb(id) : null}
               />
             ))}
         </ul>
-        <CommentsSection
-          comments={comments}
-          onComment={(value) => handleComment(value)}
-        />
+        <CommentsSection onComment={(value) => handleComment(value)} />
       </div>
       <Modal
         open={evidenceBuilderOpen}

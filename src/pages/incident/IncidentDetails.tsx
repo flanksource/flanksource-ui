@@ -22,9 +22,9 @@ import { useIncidentQuery } from "../../components/query-hooks/useIncidentQuery"
 import { useUpdateHypothesisMutation } from "../../components/mutations/useUpdateHypothesisMutation";
 import { useCreateHypothesisMutation } from "../../components/mutations/useCreateHypothesisMutation";
 import { IncidentDetails } from "../../components/IncidentDetails";
-import { TopologyCard } from "../../components/TopologyCard";
+import { CardSize, TopologyCard } from "../../components/TopologyCard";
 
-type TreeNode<T> = T & {
+export type TreeNode<T> = T & {
   children?: T[];
 };
 
@@ -80,13 +80,13 @@ export function IncidentDetailsPage() {
     [incidentData]
   );
 
-  const topologyIds = incident?.hypothesis
-    ?.flatMap((h) =>
+  const topologyIds = (incident?.hypothesis || [])
+    .flatMap((h) =>
       h.evidence?.map((e) =>
         e.type === EvidenceType.Topology ? e.evidence.id : null
       )
     )
-    .filter(Boolean);
+    .filter((x) => x) as string[];
 
   const status = useMemo(() => incident?.status ?? null, [incident]);
 
@@ -143,9 +143,8 @@ export function IncidentDetailsPage() {
                   {topologyIds?.map((id) => (
                     <TopologyCard
                       key={id}
-                      size="large"
+                      size={CardSize.large}
                       topologyId={id}
-                      depth={2}
                     />
                   ))}
                 </div>

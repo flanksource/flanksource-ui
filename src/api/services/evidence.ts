@@ -14,6 +14,8 @@ interface EvidenceBase {
   hypothesisId: string;
   description: string;
   properties: string;
+  created_at: string;
+  created_by: User;
 }
 
 type LogEvidenceAttachment = {
@@ -66,6 +68,7 @@ export const getAllEvidenceByHypothesis = async (hypothesisId: string) => {
 
   return { data };
 };
+
 export const getEvidence = async (id: string) =>
   resolve(IncidentCommander.get(`/evidence?id=eq.${id}`));
 
