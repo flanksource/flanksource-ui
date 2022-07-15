@@ -100,7 +100,7 @@ export function TopologyCard({
     <div
       style={{ width: CardWidth[size] }}
       className={clsx(
-        "rounded-8px mb-3 mr-3 shadow-card card bg-lightest-gray border-0 border-t-8 flex-1",
+        "rounded-8px mb-3 mr-3 shadow-card card bg-lightest-gray border-0 border-t-8 w-topoylogy-card-md",
         StatusStyles[topology.status] || "border-white",
         selectionMode ? "cursor-pointer" : ""
       )}
@@ -159,7 +159,7 @@ export function TopologyCard({
           </div>
         ) : (
           <>
-            <div className="py-4 pl-5 pr-1 overflow-y-auto max-h-36">
+            <div className="py-4 pl-5 pr-1 overflow-y-auto max-h-36 flex-1">
               {properties.map((property, index) => (
                 <Property
                   key={property.name}
