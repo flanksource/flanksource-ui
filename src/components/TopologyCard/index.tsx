@@ -3,6 +3,7 @@ import { filter } from "lodash";
 import { useEffect, useState, useMemo, MouseEventHandler } from "react";
 import { Link } from "react-router-dom";
 import { getTopologyWithoutUnroll } from "../../api/services/topology";
+import { CustomScroll } from "../CustomScroll";
 import { HealthSummary } from "../HealthSummary";
 import { Icon } from "../Icon";
 import { Loading } from "../Loading";
@@ -159,7 +160,11 @@ export function TopologyCard({
           </div>
         ) : (
           <>
-            <div className="py-4 pl-5 pr-1 overflow-y-auto max-h-36 flex-1">
+            <CustomScroll
+              className="py-4 pl-5 pr-1 flex-1 w-64"
+              showMoreClass="text-xs linear-1.21rel mr-1 cursor-pointer"
+              maxHeight="200px"
+            >
               {properties.map((property, index) => (
                 <Property
                   key={property.name}
@@ -169,8 +174,12 @@ export function TopologyCard({
                   }
                 />
               ))}
-            </div>
-            <div className="pl-2 py-4 pr-5 overflow-y-auto max-h-36 space-y-0 last:mb-2.5">
+            </CustomScroll>
+            <CustomScroll
+              className="pl-2 py-4 pr-5 w-36"
+              showMoreClass="text-xs linear-1.21rel mr-1 cursor-pointer"
+              maxHeight="200px"
+            >
               {topology.components ? (
                 topology.components.map((component: any) => (
                   <HealthSummary key={component.id} component={component} />
@@ -178,7 +187,7 @@ export function TopologyCard({
               ) : (
                 <HealthSummary component={topology} />
               )}
-            </div>
+            </CustomScroll>
           </>
         )}
       </div>

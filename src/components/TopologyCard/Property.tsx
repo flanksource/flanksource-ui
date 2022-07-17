@@ -52,7 +52,7 @@ export const FormatProperty = ({ property, short = false }) => {
   return text;
 };
 
-export const Property = ({ property, className }) => {
+export const Property = ({ property, className, ...rest }) => {
   const { name, icon, color } = property;
   const label = NodePodPropToLabelMap[name] || name;
 
@@ -63,7 +63,7 @@ export const Property = ({ property, className }) => {
     return null;
   }
   return (
-    <div className={clsx("flex", { [className]: className })}>
+    <div className={clsx("flex", { [className]: className })} {...rest}>
       <Icon name={icon} className="mr-1" size="2xsi" />
       {!isEmpty(label) && (
         <span className="text-xs overflow-hidden truncate text-gray-400 pr-1">

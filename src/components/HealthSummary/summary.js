@@ -75,18 +75,16 @@ function getChipsFromSummary(component, summary) {
 export const HealthSummary = ({ component, iconSize }) => {
   const { name, icon, summary } = component;
   return (
-    <div>
-      <div className="flex mb-1.5">
-        <Icon name={icon} className="mr-1" size={iconSize} />
-        <Link
-          className="text-xs linear-1.21rel mr-1 cursor-pointer"
-          to={`/topology/${component.id}`}
-        >
-          {name}
-        </Link>
-        <div className="flex gap-2 ">
-          {getChipsFromSummary(component, summary)}
-        </div>
+    <div className="flex mb-3">
+      <Icon name={icon} className="mr-1" size={iconSize} />
+      <Link
+        className="text-xs linear-1.21rel mr-1 cursor-pointer"
+        to={`/topology/${component.id}`}
+      >
+        {name}
+      </Link>
+      <div className="flex gap-2 ">
+        {getChipsFromSummary(component, summary)}
       </div>
     </div>
   );
