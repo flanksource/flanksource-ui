@@ -75,7 +75,7 @@ function getChipsFromSummary(component, summary) {
 export const HealthSummary = ({ component, iconSize }) => {
   const { name, icon, summary } = component;
   return (
-    <div className="flex mb-3">
+    <div className="flex mb-2">
       <Icon name={icon} className="mr-1" size={iconSize} />
       <Link
         className="text-xs linear-1.21rel mr-1 cursor-pointer"

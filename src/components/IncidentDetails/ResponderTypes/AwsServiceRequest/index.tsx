@@ -1,36 +1,20 @@
+import clsx from "clsx";
 import { Control, Controller, FieldErrors } from "react-hook-form";
-import { TextInput } from "../../TextInput";
+import { TextInput } from "../../../TextInput";
 
-type OracleProps = {
+type AwsServiceRequestProps = {
   control: Control;
   errors: FieldErrors;
-};
+} & React.HTMLProps<HTMLDivElement>;
 
-export const Oracle = ({ control, errors }: OracleProps) => {
+export const AwsServiceRequest = ({
+  control,
+  errors,
+  className,
+  ...rest
+}: AwsServiceRequestProps) => {
   return (
-    <div>
-      <div className="mb-4">
-        <Controller
-          control={control}
-          name="product"
-          rules={{
-            required: "Please provide valid value"
-          }}
-          render={({ field }) => {
-            const { onChange, value } = field;
-            return (
-              <TextInput
-                label="Product"
-                id="product"
-                className="w-full"
-                onChange={onChange}
-                value={value}
-              />
-            );
-          }}
-        />
-        <p className="text-red-600 text-sm">{errors.product?.message}</p>
-      </div>
+    <div className={clsx(className)} {...rest}>
       <div className="mb-4">
         <Controller
           control={control}

@@ -1,14 +1,20 @@
+import clsx from "clsx";
 import { Control, Controller, FieldErrors } from "react-hook-form";
-import { TextInput } from "../../TextInput";
+import { TextInput } from "../../../TextInput";
 
-type RedhatProps = {
+type MicrosoftProps = {
   control: Control;
   errors: FieldErrors;
-};
+} & React.HTMLProps<HTMLDivElement>;
 
-export const Redhat = ({ control, errors }: RedhatProps) => {
+export const Microsoft = ({
+  control,
+  errors,
+  className,
+  ...rest
+}: MicrosoftProps) => {
   return (
-    <div>
+    <div className={clsx(className)} {...rest}>
       <div className="mb-4">
         <Controller
           control={control}
