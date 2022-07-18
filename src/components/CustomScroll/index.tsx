@@ -22,11 +22,7 @@ export const CustomScroll = ({
   useEffect(() => {
     const mHeight = parseInt(ref.current.style.maxHeight, 10);
     const height = ref.current.getBoundingClientRect().height;
-    if (height >= mHeight) {
-      setHasScroll(true);
-    } else {
-      setHasScroll(false);
-    }
+    setHasScroll(height >= mHeight);
   }, [children]);
 
   useEffect(() => {
@@ -38,7 +34,7 @@ export const CustomScroll = ({
       className={clsx(
         "relative overflow-hidden",
         className,
-        hasScroll && !showMore ? "hover:overflow-scroll" : ""
+        hasScroll && !showMore ? "hover:overflow-y-scroll" : ""
       )}
       style={{ ...style, maxHeight, height: "min-content" }}
       {...rest}
