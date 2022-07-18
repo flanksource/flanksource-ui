@@ -13,6 +13,12 @@ module.exports = {
   framework: "@storybook/react",
   logLevel: "debug",
   webpackFinal: async (config) => {
+    // https://stackoverflow.com/a/71759706
+    const tsConfigIndex = config.plugins.findIndex(
+      (v) => v.constructor.name === "ForkTsCheckerWebpackPlugin"
+    );
+    config.plugins.splice(tsConfigIndex, 1);
+
     config.module.rules.push({
       test: /\,css&/,
       use: [

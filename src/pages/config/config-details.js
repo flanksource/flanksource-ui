@@ -1,15 +1,8 @@
 import clsx from "clsx";
 import { useEffect, useState, useMemo, useCallback } from "react";
 import toast from "react-hot-toast";
-import {
-  useNavigate,
-  useParams,
-  useSearchParams,
-  useOutletContext
-} from "react-router-dom";
+import { useParams, useSearchParams, useOutletContext } from "react-router-dom";
 import { toastError } from "../../components/Toast/toast";
-import { Modal } from "../../components/Modal";
-import { IncidentCreate } from "../../components/Incidents/IncidentCreate";
 import { getConfig } from "../../api/services/configs";
 import { Loading } from "../../components/Loading";
 import { JSONViewer } from "../../components/JSONViewer";
@@ -19,11 +12,10 @@ import { EvidenceType } from "../../api/services/evidence";
 import { AttachEvidenceDialog } from "../../components/AttachEvidenceDialog";
 
 export function ConfigDetailsPage() {
-  const navigate = useNavigate();
   const { id } = useParams();
   const [params, setParams] = useSearchParams();
   const [isLoading, setIsLoading] = useState(true);
-  const [showIncidentModal, setShowIncidentModal] = useState(false);
+  const [showIncidentModal] = useState(false);
   const [attachAsAsset, setAttachAsAsset] = useState(false);
   const [dialogKey, setDialogKey] = useState(0);
   const [checked, setChecked] = useState({});

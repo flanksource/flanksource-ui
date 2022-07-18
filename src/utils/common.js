@@ -42,18 +42,3 @@ export function formatBytes(bytes, decimals = 2) {
 
   return `${parseFloat((bytes / k ** i).toFixed(dm))} ${sizes[i]}`;
 }
-
-export const relativeTimeFromDate = (ts) => {
-  const t = dayjs(ts);
-  const n = dayjs();
-
-  if (n.isSame(t, "day")) {
-    return dayjs(ts).fromNow();
-  }
-
-  if (n.diff(t, "days") === 1) {
-    return `${t.format("h:mm A")} yesterday`;
-  }
-
-  return t.format("h:mm A, dddd, MMMM D, YYYY");
-};

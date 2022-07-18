@@ -1,32 +1,18 @@
+import clsx from "clsx";
 import React, { useState } from "react";
 import { ChatAltIcon } from "@heroicons/react/solid";
 import { IoMdSend } from "react-icons/io";
-import dayjs from "dayjs";
 
-import { CommentInput, CommentText } from "../../Comment";
-import { Avatar } from "../../Avatar";
+import { CommentInput } from "../../Comment";
 import { Comment } from "../../../api/services/comments";
-import clsx from "clsx";
+import { relativeDateTime } from "../../../utils/relativeDateTime";
+import { ResponseLine } from "../ResponseLine";
 
 interface Props {
   comments: Comment[];
   titlePrepend: React.ReactElement;
   onComment: (str: string) => Promise<void>;
 }
-
-const relativeTime = (ts: string) => {
-  const t = dayjs(ts);
-  const n = dayjs();
-  if (n.isSame(t, "day")) {
-    return t.format("h:mm A");
-  }
-
-  if (n.diff(t, "days") === 1) {
-    return `${t.format("h:mm A")} yesterday`;
-  }
-
-  return t.format("h:mm A, dddd, MMMM D, YYYY");
-};
 
 export function CommentsSection({
   comments,
@@ -57,39 +43,17 @@ export function CommentsSection({
   return (
     <div className={rest.className} {...rest}>
       {titlePrepend}
-      {!!comments.length && (
-        <ul>
-          {comments.map((comment) => (
-            <li className="pb-4 flex items-start space-x-3" key={comment.id}>
-              <Avatar
-                containerProps={{
-                  className: "mt-1"
-                }}
-                user={comment.created_by}
-              />
-              <div className="min-w-0 flex-1">
-                <div className="flex space-x-2">
-                  <div className="text-sm">
-                    <span className="text-gray-900 text-sm font-bold leading-5">
-                      {comment?.created_by?.name}
-                    </span>
-                  </div>
-                  <p className="mt-0.5 text-gray-500 text-xs leading-5 font-normal">
-                    {relativeTime(comment.created_at)}
-                  </p>
-                </div>
-                <div className="text-sm text-gray-700">
-                  <p className="whitespace-pre">
-                    <CommentText
-                      text={comment.comment}
-                      onClickTag={onClickUserTag}
-                    />
-                  </p>
-                </div>
-              </div>
-            </li>
+      {!!comments?.length && (
+        <div>
+          {comments.map(({ id, created_by, created_at, comment }) => (
+            <ResponseLine
+              key={id}
+              created_by={created_by}
+              created_at={created_at}
+              response={comment}
+            />
           ))}
-        </ul>
+        </div>
       )}
       <div className="relative">
         <CommentInput

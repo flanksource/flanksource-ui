@@ -35,6 +35,7 @@ const mentionsStyle = {
     input: {
       backgroundColor: "white",
       padding: 4,
+      paddingLeft: 8,
       borderRadius: "0.375rem",
       borderColor: "rgb(229 231 235)",
       "--tw-shadow": "0 1px 2px 0 rgb(0 0 0 / 0.05)",

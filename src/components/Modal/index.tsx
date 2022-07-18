@@ -139,7 +139,7 @@ Modal.propTypes = {
   onClose: PropTypes.func.isRequired,
   allowBackgroundClose: PropTypes.bool,
   hideCloseButton: PropTypes.bool,
-  size: PropTypes.oneOf(["small", "medium", "full"])
+  size: PropTypes.oneOf(["small", "medium", "full", "slightly-small"])
 };
 
 Modal.defaultProps = {

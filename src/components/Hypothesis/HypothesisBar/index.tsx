@@ -1,4 +1,10 @@
-import { MouseEventHandler, useMemo, useState, useCallback } from "react";
+import {
+  MouseEventHandler,
+  useMemo,
+  useState,
+  useCallback,
+  useEffect
+} from "react";
 import clsx from "clsx";
 import {
   BsBraces,
@@ -18,6 +24,11 @@ import { useQueryClient } from "react-query";
 import { createIncidentQueryKey } from "../../query-hooks/useIncidentQuery";
 import { HypothesisBarDeleteDialog } from "./HypothesisBarDeleteDialog";
 import { hypothesisStatusDropdownOptions } from "../../../constants/hypothesisStatusOptions";
+import { StatusDropdownContainer } from "../StatusDropdownContainer";
+import { EditableText } from "../../EditableText";
+import { useForm } from "react-hook-form";
+import { debounce } from "lodash";
+import { ChevronRightIcon } from "@heroicons/react/outline";
 
 enum CommentInfo {
   Comment = "comment"
@@ -48,16 +59,24 @@ const InfoIcon: React.FC<InfoIconProps> = ({
 interface HypothesisBarProps {
   hypothesis: Hypothesis;
   onTitleClick: MouseEventHandler<HTMLSpanElement>;
+  api: { [k: string]: any };
+  showExpand: boolean;
+  expanded: boolean;
+  onToggleExpand: (expand: boolean) => void;
   onDisprove: () => void;
 }
 
 export const HypothesisBar: React.FunctionComponent<HypothesisBarProps> = ({
   hypothesis,
   onTitleClick,
+  api,
+  showExpand,
+  expanded,
+  onToggleExpand,
   onDisprove: onDisproveCb
 }: HypothesisBarProps) => {
   const {
-    title,
+    title = "",
     status,
     created_by: createdBy,
     evidence,
@@ -73,6 +92,29 @@ export const HypothesisBar: React.FunctionComponent<HypothesisBarProps> = ({
   );
 
   const queryClient = useQueryClient();
+
+  const handleApiUpdate = useMemo(
+    () =>
+      debounce((params) => {
+        if (api?.updateMutation && hypothesis.id) {
+          api.updateMutation.mutate({ id: hypothesis.id, params });
+        }
+      }, 1000),
+    [hypothesis, api]
+  );
+
+  const { watch, getValues, setValue } = useForm({
+    defaultValues: { title }
+  });
+
+  watch();
+
+  useEffect(() => {
+    const subscription = watch((value) => {
+      handleApiUpdate(value);
+    });
+    return () => subscription.unsubscribe();
+  }, [watch, getValues, handleApiUpdate]);
 
   const infoIcons: InfoType[] = (evidence || [])
     .map((e): InfoType => e.type)
@@ -111,25 +153,36 @@ export const HypothesisBar: React.FunctionComponent<HypothesisBarProps> = ({
   return (
     <div
       className={clsx(
-        "w-full flex justify-between rounded-8px border focus:outline-none bg-white cursor-pointer",
+        "relative bg-zinc-100 w-full flex justify-between shadow-lg rounded-8px border focus:outline-none bg-white cursor-pointer",
         deleting && "pointer-events-none cursor-not-allowed blur-[2px]"
       )}
     >
-      <div className="flex items-center min-h-12 w-full py-2">
-        <div className="ml-2 bg-lighter-gray rounded-full p-1.5 w-8 h-8 flex-0-0-a">
-          {statusIcon}
-        </div>
-        <span
-          className="ml-3 text-sm font-normal w-full text-left flex-1 min-h-full inline-flex items-center"
-          onClick={onTitleClick}
-          role="presentation"
-        >
-          {(title ?? "").trim() || (
-            <span className="text-gray-400">"Click to edit"</span>
-          )}
-        </span>
+      <div className="flex flex-grow-0 items-center space-x-2 w-full">
+        {showExpand && (
+          <button
+            className="ml-2 py-2 flex flex-row items-center"
+            onClick={() => onToggleExpand && onToggleExpand(!expanded)}
+            type="button"
+          >
+            <ChevronRightIcon
+              className={`h-5 w-5 transform ${expanded && "rotate-90"}`}
+            />
+          </button>
+        )}
+        <StatusDropdownContainer
+          nodeId={hypothesis?.id}
+          status={hypothesis?.status}
+          updateMutation={api?.updateMutation}
+        />
+        <EditableText
+          value={getValues("title")}
+          sharedClassName="font-semibold text-gray-900"
+          onChange={(value: string) => {
+            setValue("title", value);
+          }}
+        />
       </div>
-      <div className="flex items-end pb-3.5 pr-3 space-x-4">
+      <div className="flex items-center pr-3 space-x-4">
         <div className="flex flex-row">
           {infoIcons
             .filter((i) => ICON_MAP[i])
@@ -144,7 +197,7 @@ export const HypothesisBar: React.FunctionComponent<HypothesisBarProps> = ({
         <div>
           {createdBy && <AvatarGroup maxCount={5} users={involved} size="sm" />}
         </div>
-        <div className="flex">
+        <div className="flex pt-1">
           <HypothesisBarDeleteDialog
             isOpen={showConfirm}
             onClose={() => setShowConfirm(false)}
