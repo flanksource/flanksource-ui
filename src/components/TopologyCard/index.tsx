@@ -23,7 +23,7 @@ enum ComponentStatus {
   warning = "warning"
 }
 
-const CardWidth: { [k: keyof typeof CardSize]: string } = {
+export const CardWidth: { [k: keyof typeof CardSize]: string } = {
   [CardSize.small]: "198px",
   [CardSize.medium]: "258px",
   [CardSize.large]: "356px",
@@ -99,7 +99,7 @@ export function TopologyCard({
 
   return (
     <div
-      style={{ width: CardWidth[size] }}
+      style={{ width: CardWidth[size] || size }}
       className={clsx(
         "rounded-8px mb-3 mr-3 shadow-card card bg-lightest-gray border-0 border-t-8",
         StatusStyles[topology.status] || "border-white",
