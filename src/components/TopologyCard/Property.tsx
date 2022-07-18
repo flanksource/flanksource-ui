@@ -64,7 +64,11 @@ export const Property = ({ property, className, ...rest }) => {
   }
   return (
     <div
-      className={clsx("flex flex-col", { [className]: className })}
+      className={clsx(
+        "flex",
+        { [className]: className },
+        icon ? "flex-row" : "flex-col"
+      )}
       {...rest}
     >
       <Icon name={icon} className="mr-1" size="2xsi" />
