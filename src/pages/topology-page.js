@@ -6,7 +6,7 @@ import { getTopology } from "../api/services/topology";
 import { SearchLayout } from "../components/Layout";
 import { Loading } from "../components/Loading";
 import { toastError } from "../components/Toast/toast";
-import { TopologyCard } from "../components/TopologyCard";
+import { CardSize, TopologyCard } from "../components/TopologyCard";
 import { TopologyBreadcrumbs } from "../components/Topology/topology-breadcrumbs";
 import { useLoader } from "../hooks";
 
@@ -72,7 +72,11 @@ export function TopologyPage() {
       <div className="flex leading-1.21rel w-full">
         <div className="flex flex-wrap w-full">
           {topology.map((item) => (
-            <TopologyCard key={item.id} topology={item} size="extra-large" />
+            <TopologyCard
+              key={item.id}
+              topology={item}
+              size={CardSize.extra_large}
+            />
           ))}
         </div>
       </div>

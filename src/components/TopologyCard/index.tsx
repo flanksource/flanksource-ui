@@ -101,7 +101,7 @@ export function TopologyCard({
     <div
       style={{ width: CardWidth[size] }}
       className={clsx(
-        "rounded-8px mb-3 mr-3 shadow-card card bg-lightest-gray border-0 border-t-8 w-topoylogy-card-md",
+        "rounded-8px mb-3 mr-3 shadow-card card bg-lightest-gray border-0 border-t-8",
         StatusStyles[topology.status] || "border-white",
         selectionMode ? "cursor-pointer" : ""
       )}
@@ -160,23 +160,27 @@ export function TopologyCard({
           </div>
         ) : (
           <>
+            {Boolean(properties.length) && (
+              <CustomScroll
+                className="py-4 pl-2 flex-1"
+                showMoreClass="text-xs linear-1.21rel mr-1 cursor-pointer"
+                maxHeight="200px"
+              >
+                {properties.map((property, index) => (
+                  <Property
+                    key={property.name}
+                    property={property}
+                    className={
+                      index === topology.properties.length - 1
+                        ? "mb-0"
+                        : "mb-2.5"
+                    }
+                  />
+                ))}
+              </CustomScroll>
+            )}
             <CustomScroll
-              className="py-4 pl-5 pr-1 flex-1 w-64"
-              showMoreClass="text-xs linear-1.21rel mr-1 cursor-pointer"
-              maxHeight="200px"
-            >
-              {properties.map((property, index) => (
-                <Property
-                  key={property.name}
-                  property={property}
-                  className={
-                    index === topology.properties.length - 1 ? "mb-0" : "mb-2.5"
-                  }
-                />
-              ))}
-            </CustomScroll>
-            <CustomScroll
-              className="pl-2 py-4 pr-5 w-36"
+              className="pl-2 py-4 pr-2 flex-1"
               showMoreClass="text-xs linear-1.21rel mr-1 cursor-pointer"
               maxHeight="200px"
             >

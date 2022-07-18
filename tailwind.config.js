@@ -129,8 +129,7 @@ module.exports = {
         "btn-round-md": "2.375rem",
         "btn-round-lg": "2.625rem",
         "btn-round-xl": "3.125rem",
-        "dialog-md": "850px",
-        "topoylogy-card-md": "420px"
+        "dialog-md": "850px"
       },
       height: {
         "topology-card": "200px",

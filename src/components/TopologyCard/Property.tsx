@@ -63,10 +63,13 @@ export const Property = ({ property, className, ...rest }) => {
     return null;
   }
   return (
-    <div className={clsx("flex", { [className]: className })} {...rest}>
+    <div
+      className={clsx("flex flex-col", { [className]: className })}
+      {...rest}
+    >
       <Icon name={icon} className="mr-1" size="2xsi" />
       {!isEmpty(label) && (
-        <span className="text-xs overflow-hidden truncate text-gray-400 pr-1">
+        <span className="text-xs overflow-hidden truncate text-gray-400 pb-1">
           {label}:
         </span>
       )}
