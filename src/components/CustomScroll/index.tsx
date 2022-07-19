@@ -5,6 +5,7 @@ export type CustomScrollProps = {
   maxHeight: string;
   children: JSX.Element | JSX.Element[];
   showMoreClass?: string;
+  minChildCount: number;
 } & React.HTMLProps<HTMLDivElement>;
 
 export const CustomScroll = ({
@@ -13,21 +14,23 @@ export const CustomScroll = ({
   children,
   style,
   className,
+  minChildCount,
   ...rest
 }: CustomScrollProps) => {
-  const ref: any = useRef();
+  const items = React.Children.toArray(children);
   const [showMore, setShowMore] = useState(false);
   const [hasScroll, setHasScroll] = useState(false);
 
   useEffect(() => {
-    const mHeight = parseInt(ref.current.style.maxHeight, 10);
-    const height = ref.current.getBoundingClientRect().height;
-    setHasScroll(height >= mHeight);
+    setShowMore(minChildCount < items.length);
   }, [children]);
 
-  useEffect(() => {
-    setShowMore(hasScroll);
-  }, [hasScroll]);
+  const getCount = () => {
+    if (!showMore) {
+      return items.length;
+    }
+    return minChildCount || items.length;
+  };
 
   return (
     <div
@@ -38,20 +41,22 @@ export const CustomScroll = ({
       )}
       style={{ ...style, maxHeight, height: "min-content" }}
       {...rest}
-      ref={ref}
     >
-      {children}
+      {items.slice(0, getCount()).map((child) => {
+        return child;
+      })}
       {showMore && (
         <div
           onClick={() => {
             setShowMore(false);
+            setHasScroll(true);
           }}
           className={clsx(
-            "absolute bottom-0 m-auto w-full bg-half-black text-center text-white bg-black p-1 z-10 hover:underline",
+            "bottom-0 m-auto w-full hover:underline",
             showMoreClass
           )}
         >
-          show more
+          show more ...
         </div>
       )}
     </div>

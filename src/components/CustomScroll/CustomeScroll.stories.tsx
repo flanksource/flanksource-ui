@@ -12,8 +12,9 @@ Variant1.args = {
   children: new Array(50).fill(0).map((_, i) => {
     return <div>option list item {i + 1}</div>;
   }),
+  minChildCount: 4,
   maxHeight: "150px",
   style: {
-    width: "140px"
+    width: "180px"
   }
 };

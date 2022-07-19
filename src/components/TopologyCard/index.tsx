@@ -156,6 +156,7 @@ export function TopologyCard({
                 className="py-4 pl-2 flex-1"
                 showMoreClass="text-xs linear-1.21rel mr-1 cursor-pointer"
                 maxHeight="200px"
+                minChildCount={6}
               >
                 {properties.map((property, index) => (
                   <Property
@@ -174,6 +175,7 @@ export function TopologyCard({
               className="pl-2 py-4 pr-2 flex-1"
               showMoreClass="text-xs linear-1.21rel mr-1 cursor-pointer"
               maxHeight="200px"
+              minChildCount={6}
             >
               {topology.components ? (
                 topology.components.map((component: any) => (
