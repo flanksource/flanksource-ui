@@ -13,7 +13,7 @@ import { useLoader } from "../hooks";
 export function TopologyPage() {
   const { loading, setLoading } = useLoader();
   const [topology, setTopology] = useState(null);
-  const [size, setSize] = useState(CardWidth[CardSize.extra_large]);
+  const [size, setSize] = useState(() => getCardWidth());
 
   const [searchParams, setSearchParams] = useSearchParams();
   const { id } = useParams();
@@ -57,6 +57,24 @@ export function TopologyPage() {
     load();
   }, [searchParams, id]);
 
+  const setCardWidth = (width) => {
+    setSize(`${width}px`);
+    localStorage.setItem("topology_card_width", `${width}px`);
+  };
+
+  function getCardWidth() {
+    let value = localStorage.getItem("topology_card_width");
+    if (!value?.trim()) {
+      return CardWidth[CardSize.extra_large];
+    }
+    value = parseInt(value, 10);
+    if (isNaN(value)) {
+      return CardWidth[CardSize.extra_large];
+    } else {
+      return `${value}px`;
+    }
+  }
+
   if (loading || topology == null) {
     return <Loading text="Loading topology..." />;
   }
@@ -75,9 +93,9 @@ export function TopologyPage() {
           <>
             <label
               htmlFor="topology-card-width-slider"
-              className="block mb-1 text-sm font-medium text-gray-900 dark:text-gray-300"
+              className="inline-block font-medium mb-1 text-xs linear-1.21rel mr-1 cursor-pointer text-gray-900 dark:text-gray-300"
             >
-              Topology Card Width (250px to 768px): {size}
+              Card Width:
             </label>
             <input
               id="topology-card-width-slider"
@@ -86,8 +104,8 @@ export function TopologyPage() {
               max="768"
               step={2}
               value={parseInt(size, 10)}
-              onChange={(e) => setSize(`${e.target.value}px`)}
-              className="w-64 h-2 bg-gray-200 rounded-lg cursor-pointer dark:bg-gray-700 mb-10"
+              onChange={(e) => setCardWidth(e.target.value)}
+              className="w-64 h-2 bg-gray-200 rounded-lg cursor-pointer dark:bg-gray-700 mb-10 inline-block"
             />
           </>
         )}
