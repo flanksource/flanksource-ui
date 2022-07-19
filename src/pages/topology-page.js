@@ -71,22 +71,26 @@ export function TopologyPage() {
       onRefresh={load}
     >
       <>
-        <label
-          htmlFor="topology-card-width-slider"
-          className="block mb-1 text-sm font-medium text-gray-900 dark:text-gray-300"
-        >
-          Topology Card Width (250px to 768px): {size}
-        </label>
-        <input
-          id="topology-card-width-slider"
-          type="range"
-          min="250"
-          max="768"
-          step={2}
-          value={parseInt(size, 10)}
-          onChange={(e) => setSize(`${e.target.value}px`)}
-          className="w-64 h-2 bg-gray-200 rounded-lg cursor-pointer dark:bg-gray-700 mb-10"
-        />
+        {Boolean(topology?.length) && (
+          <>
+            <label
+              htmlFor="topology-card-width-slider"
+              className="block mb-1 text-sm font-medium text-gray-900 dark:text-gray-300"
+            >
+              Topology Card Width (250px to 768px): {size}
+            </label>
+            <input
+              id="topology-card-width-slider"
+              type="range"
+              min="250"
+              max="768"
+              step={2}
+              value={parseInt(size, 10)}
+              onChange={(e) => setSize(`${e.target.value}px`)}
+              className="w-64 h-2 bg-gray-200 rounded-lg cursor-pointer dark:bg-gray-700 mb-10"
+            />
+          </>
+        )}
         <div className="flex leading-1.21rel w-full">
           <div className="flex flex-wrap w-full">
             {topology.map((item) => (
