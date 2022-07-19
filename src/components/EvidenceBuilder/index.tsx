@@ -4,25 +4,29 @@ import { EvidenceSelect } from "./components/EvidenceSelect";
 import { EvidenceStepper } from "./components/EvidenceStepper";
 import { EvidenceType } from "./components/EvidenceType";
 
-export const evidenceSteps = {
-  0: {
+export const evidenceSteps = [
+  {
     title: "Evidence type",
     description: "Lorem ipsum dolor sit amet",
     component: <EvidenceType />
   },
-  1: {
+  {
     title: "Search",
     description: "Lorem ipsum dolor sit amet",
     component: <EvidenceSearch />
   },
-  2: {
+  {
     title: "Select",
     description: "Lorem ipsum dolor sit amet",
     component: <EvidenceSelect />
   }
-};
+];
 
-export function EvidenceBuilder({ className, ...rest }) {
+interface Props extends React.ComponentPropsWithoutRef<"div"> {
+  className?: string;
+}
+
+export function EvidenceBuilder({ className, ...rest }: Props) {
   const [currentStep, setCurrentStep] = useState(0);
   return (
     <div
