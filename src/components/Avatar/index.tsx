@@ -6,12 +6,12 @@ import ReactTooltip from "react-tooltip";
 import { User } from "../../api/services/users";
 
 interface IProps {
-  size: "sm" | "lg" | "md";
-  alt: string;
+  size?: "sm" | "lg" | "md";
+  alt?: string;
   user: User;
   imageProps?: React.ComponentPropsWithoutRef<"img">;
   containerProps?: React.ComponentPropsWithoutRef<"div">;
-  unload: boolean;
+  unload?: boolean;
 }
 
 export function Avatar({
@@ -66,7 +66,7 @@ export function Avatar({
       )}
       data-tip={user?.name}
     >
-      {src ? (
+      {srcList && src ? (
         <img
           src={src}
           alt={alt}

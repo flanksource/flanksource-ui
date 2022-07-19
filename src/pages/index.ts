@@ -1,6 +1,5 @@
 import { IncidentDetailsPage } from "./incident/IncidentDetails";
-import { IncidentListPage } from "./incident/incident-list";
-import { IncidentCreatePage } from "./incident/incident-create";
+import { IncidentListPage } from "./incident/IncidentListPage";
 import { LogsPage } from "./logs-page";
 import { TopologyPage } from "./topology-page";
 import { CanaryPage } from "./canary";
@@ -20,6 +19,5 @@ export {
   CanaryPage,
   TopologyPage,
   IncidentDetailsPage,
-  IncidentListPage,
-  IncidentCreatePage
+  IncidentListPage
 };

@@ -22,9 +22,9 @@ import { useIncidentQuery } from "../../components/query-hooks/useIncidentQuery"
 import { useUpdateHypothesisMutation } from "../../components/mutations/useUpdateHypothesisMutation";
 import { useCreateHypothesisMutation } from "../../components/mutations/useCreateHypothesisMutation";
 import { IncidentDetails } from "../../components/IncidentDetails";
-import { TopologyCard } from "../../components/TopologyCard";
+import { CardSize, TopologyCard } from "../../components/TopologyCard";
 
-type TreeNode<T> = T & {
+export type TreeNode<T> = T & {
   children?: T[];
 };
 
@@ -80,13 +80,13 @@ export function IncidentDetailsPage() {
     [incidentData]
   );
 
-  const topologyIds = incident?.hypothesis
-    ?.flatMap((h) =>
+  const topologyIds = (incident?.hypothesis || [])
+    .flatMap((h) =>
       h.evidence?.map((e) =>
         e.type === EvidenceType.Topology ? e.evidence.id : null
       )
     )
-    .filter(Boolean);
+    .filter((x) => x) as string[];
 
   const status = useMemo(() => incident?.status ?? null, [incident]);
 
@@ -117,6 +117,7 @@ export function IncidentDetailsPage() {
   }
   return (
     <SearchLayout
+      contentClass="px-6 pb-6"
       onRefresh={() => incidentQuery.refetch()}
       title={
         <div className="flex my-auto">
@@ -136,15 +137,14 @@ export function IncidentDetailsPage() {
       <div className="mt-2 max-w-3xl mx-auto grid grid-cols-1 gap-6 sm:px-6 lg:max-w-7xl lg:grid-flow-col-dense lg:grid-cols-3">
         <div className="space-y-6 lg:col-start-1 lg:col-span-2">
           {Boolean(topologyIds?.length) && (
-            <section aria-labelledby="notes-title">
-              <div className="bg-white">
+            <section>
+              <div className="border-b">
                 <div className="px-2 py-2 flex flex-nowrap">
                   {topologyIds?.map((id) => (
                     <TopologyCard
                       key={id}
-                      size="large"
+                      size={CardSize.large}
                       topologyId={id}
-                      depth={2}
                     />
                   ))}
                 </div>
@@ -152,35 +152,28 @@ export function IncidentDetailsPage() {
             </section>
           )}
 
-          <section aria-labelledby="notes-title">
-            <div className="bg-white shadow sm:rounded-lg sm:overflow-hidden">
-              <div className="px-2 py-2">
-                {!isLoading ? (
-                  <HypothesisBuilder
-                    loadedTree={loadedTree}
-                    // showGeneratedOutput
-                    initialEditMode={isNewlyCreated}
-                    api={{
-                      incidentId,
-                      create: createHypothesis,
-                      delete: deleteHypothesis,
-                      deleteBulk: deleteHypothesisBulk,
-                      update: updateHypothesis,
-                      updateMutation,
-                      createMutation
-                    }}
-                  />
-                ) : (
-                  <div>{!error && "fetching tree..."}</div>
-                )}
-              </div>
-            </div>
+          <section>
+            {!isLoading ? (
+              <HypothesisBuilder
+                loadedTree={loadedTree}
+                // showGeneratedOutput
+                initialEditMode={isNewlyCreated}
+                api={{
+                  incidentId,
+                  create: createHypothesis,
+                  delete: deleteHypothesis,
+                  deleteBulk: deleteHypothesisBulk,
+                  update: updateHypothesis,
+                  updateMutation,
+                  createMutation
+                }}
+              />
+            ) : (
+              <div>{!error && "fetching tree..."}</div>
+            )}
           </section>
         </div>
-        <section
-          aria-labelledby="timeline-title"
-          className="lg:col-start-3 lg:col-span-1"
-        >
+        <section className="border-l lg:col-start-3 lg:col-span-1">
           <IncidentDetails
             incident={incident}
             updateStatusHandler={() =>

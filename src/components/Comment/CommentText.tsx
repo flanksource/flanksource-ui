@@ -1,14 +1,14 @@
+import clsx from "clsx";
 import React from "react";
 
 interface Props {
   text: string;
-  onClickTag: (type: string, user: string) => void;
+  onClickTag?: (type: string, user: string) => void;
 }
 
 export const CommentText = ({ text, onClickTag }: Props) => {
   const tags = text.match(/@\[.*?\]\(user:.*?\)/gi) || [];
   const otherText = text.split(/@\[.*?\]\(user:.*?\)/gi);
-
   return (
     <>
       {otherText[0] || ""}
@@ -20,15 +20,18 @@ export const CommentText = ({ text, onClickTag }: Props) => {
 
         return (
           <React.Fragment key={idx}>
-            {otherText[idx + 1] || ""}
             <button
               type="button"
               key={tagId}
-              onClick={() => onClickTag("user", tagId)}
-              className="bg-blue-200 rounded"
+              onClick={onClickTag && (() => onClickTag("user", tagId))}
+              className={clsx(
+                "bg-blue-200 rounded",
+                !onClickTag && "btn-disabled"
+              )}
             >
               {tagDisplay || ""}
             </button>
+            {otherText[idx + 1] || ""}
           </React.Fragment>
         );
       })}

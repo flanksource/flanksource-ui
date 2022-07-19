@@ -35,21 +35,13 @@ const StatusStyles: { [k: keyof typeof ComponentStatus]: string } = {
   [ComponentStatus.warning]: "border-orange-300"
 };
 
-const CARD_SIZE = {
-  SMALL: "small",
-  MEDIUM: "medium",
-  LARGE: "large",
-  EXTRA_LARGE: "extra-large"
-};
-
 interface IProps {
   size: CardSize;
   topologyId: string;
-  topology: any;
-  selectionMode: boolean;
-  depth: number;
-  selected: boolean;
-  onSelectionChange: MouseEventHandler<HTMLDivElement>;
+  topology?: any;
+  selectionMode?: boolean;
+  selected?: boolean;
+  onSelectionChange?: MouseEventHandler<HTMLDivElement>;
 }
 
 export function TopologyCard({
@@ -57,7 +49,6 @@ export function TopologyCard({
   topology: topologyData,
   topologyId,
   selectionMode,
-  depth,
   selected,
   onSelectionChange
 }: IProps) {
@@ -65,11 +56,11 @@ export function TopologyCard({
 
   useEffect(() => {
     if (topologyId != null && topologyData == null) {
-      getTopologyWithoutUnroll({ id: topologyId, depth }).then((topology) => {
+      getTopologyWithoutUnroll({ id: topologyId }).then((topology) => {
         setTopology(topology.data[0]);
       });
     }
-  }, [topologyId, topologyData, depth]);
+  }, [topologyId, topologyData]);
 
   let selectionModeRootProps = null;
 

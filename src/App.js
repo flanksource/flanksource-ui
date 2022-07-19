@@ -16,7 +16,6 @@ import {
   ConfigDetailsChangesPage,
   ConfigListPage,
   ConfigChangesPage,
-  IncidentCreatePage,
   IncidentDetailsPage,
   IncidentListPage,
   LogsPage,
@@ -103,7 +102,6 @@ export function IncidentManagerRoutes({ sidebar }) {
 
       <Route path="incidents" element={sidebar}>
         <Route path=":id" element={<IncidentDetailsPage />} />
-        <Route path="create" element={<IncidentCreatePage />} />
         <Route index element={<IncidentListPage />} />
       </Route>
 

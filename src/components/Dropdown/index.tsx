@@ -1,13 +1,9 @@
-/* This example requires Tailwind CSS v2.0+ */
+import clsx from "clsx";
 import { Fragment } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, SelectorIcon } from "@heroicons/react/solid";
 import { Controller } from "react-hook-form";
 import { isArray } from "lodash";
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
 
 export function Dropdown({
   className,
@@ -187,7 +183,7 @@ export const DropdownListbox = ({
                   <Listbox.Option
                     key={item.id || item.value}
                     className={({ active }) =>
-                      classNames(
+                      clsx(
                         active ? "text-white bg-indigo-600" : "text-gray-900",
                         "cursor-pointer select-none relative py-2 pl-3 pr-9"
                       )
@@ -199,7 +195,7 @@ export const DropdownListbox = ({
                         <div className="flex items-center">
                           <div>{item.icon}</div>
                           <span
-                            className={classNames(
+                            className={clsx(
                               selected ? "font-semibold" : "font-normal",
                               "ml-2 block truncate"
                             )}
@@ -208,16 +204,16 @@ export const DropdownListbox = ({
                           </span>
                         </div>
 
-                        {selected ? (
+                        {!!selected && (
                           <span
-                            className={classNames(
+                            className={clsx(
                               active ? "text-white" : "text-indigo-600",
                               "absolute inset-y-0 right-0 flex items-center pr-4"
                             )}
                           >
                             <CheckIcon className="h-5 w-5" aria-hidden="true" />
                           </span>
-                        ) : null}
+                        )}
                       </>
                     )}
                   </Listbox.Option>

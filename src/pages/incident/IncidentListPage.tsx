@@ -102,7 +102,7 @@ export function IncidentListPage() {
     });
   }, []);
 
-  async function fetchIncidents(params) {
+  async function fetchIncidents(params): void {
     try {
       const res = await getIncidentsWithParams(params);
       const data = res.data.map((x) => {
@@ -217,7 +217,7 @@ export function IncidentListPage() {
                 styles={labelDropdownStyles}
                 className="w-full"
                 options={mockLabels} // TODO: change this to actual labels fetched from API
-                onChange={(labels) => setSelectedLabels(labels)}
+                onChange={(labels: string[]) => setSelectedLabels(labels)}
                 value={selectedLabels}
               />
             </div>

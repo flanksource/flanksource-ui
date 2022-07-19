@@ -8,7 +8,7 @@
     "scripts/serve-build.js"
   ],
   "dependencies": {
-    "@headlessui/react": "^0.0.0-insiders.6253aa5",
+    "@headlessui/react": "^0.0.0-insiders.5af3bd4",
     "@heroicons/react": "^1.0.3",
     "@hookform/resolvers": "^2.8.8",
     "@storybook/client-api": "^6.5.7",
@@ -55,7 +55,7 @@
     "yup": "^0.32.11"
   },
   "dependecyComments": {
-    "@headlessui/react": "We are using incsiders version to use `by` property on `Combobox`. Without `by`, selected item logic was difficult to achieve."
+    "@headlessui/react": "We are using insiders version to use `by` property on `Combobox`. Without `by`, selected item logic was difficult to achieve."
   },
   "proxy": "https://incident-commander.canary.lab.flanksource.com",
   "lint-staged": {
@@ -68,7 +68,7 @@
   },
   "scripts": {
     "dev": "react-scripts start",
-    "build": "cross-env DISABLE_ESLINT_PLUGIN=true NODE_ENV=production react-scripts build",
+    "build": "cross-env TSC_COMPILE_ON_ERROR=true DISABLE_ESLINT_PLUGIN=true NODE_ENV=production react-scripts build",
     "serve-build": "gzip -f --keep build/static/*/*.{js,css} && node scripts/serve-build.js",
     "test": "react-scripts test --transformIgnorePatterns \"node_modules/(?!(history))/\"",
     "analyze": "source-map-explorer 'build/static/js/*.js'",
