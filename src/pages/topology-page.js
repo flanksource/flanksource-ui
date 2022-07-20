@@ -105,7 +105,7 @@ export function TopologyPage() {
               step={2}
               value={parseInt(size, 10)}
               onChange={(e) => setCardWidth(e.target.value)}
-              className="w-64 h-2 bg-gray-200 rounded-lg cursor-pointer dark:bg-gray-700 mb-10 inline-block"
+              className="w-64 h-1.5 rounded-lg cursor-pointer mb-10 inline-block"
             />
           </>
         )}
