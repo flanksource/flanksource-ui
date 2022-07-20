@@ -3,6 +3,7 @@ import { filter } from "lodash";
 import { useEffect, useState, useMemo, MouseEventHandler } from "react";
 import { Link } from "react-router-dom";
 import { getTopologyWithoutUnroll } from "../../api/services/topology";
+import { CustomScroll } from "../CustomScroll";
 import { HealthSummary } from "../HealthSummary";
 import { Icon } from "../Icon";
 import { Loading } from "../Loading";
@@ -22,7 +23,7 @@ enum ComponentStatus {
   warning = "warning"
 }
 
-const CardWidth: { [k: keyof typeof CardSize]: string } = {
+export const CardWidth: { [k: keyof typeof CardSize]: string } = {
   [CardSize.small]: "198px",
   [CardSize.medium]: "258px",
   [CardSize.large]: "356px",
@@ -89,7 +90,7 @@ export function TopologyCard({
 
   return (
     <div
-      style={{ width: CardWidth[size] }}
+      style={{ width: CardWidth[size] || size }}
       className={clsx(
         "rounded-8px mb-3 mr-3 shadow-card card bg-lightest-gray border-0 border-t-8",
         StatusStyles[topology.status] || "border-white",
@@ -151,7 +152,12 @@ export function TopologyCard({
         ) : (
           <>
             {Boolean(properties.length) && (
-              <div className="py-4 pl-5 pr-1 overflow-y-auto max-h-36">
+              <CustomScroll
+                className="py-4 pl-2 flex-1"
+                showMoreClass="text-xs linear-1.21rel mr-1 cursor-pointer"
+                maxHeight="200px"
+                minChildCount={6}
+              >
                 {properties.map((property, index) => (
                   <Property
                     key={property.name}
@@ -163,9 +169,14 @@ export function TopologyCard({
                     }
                   />
                 ))}
-              </div>
+              </CustomScroll>
             )}
-            <div className="pl-2 py-4 pr-5 overflow-y-auto max-h-36 space-y-0 last:mb-2.5">
+            <CustomScroll
+              className="pl-2 py-4 pr-2 flex-1"
+              showMoreClass="text-xs linear-1.21rel mr-1 cursor-pointer"
+              maxHeight="200px"
+              minChildCount={6}
+            >
               {topology.components ? (
                 topology.components.map((component: any) => (
                   <HealthSummary key={component.id} component={component} />
@@ -173,7 +184,7 @@ export function TopologyCard({
               ) : (
                 <HealthSummary component={topology} />
               )}
-            </div>
+            </CustomScroll>
           </>
         )}
       </div>

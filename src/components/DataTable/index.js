@@ -3,7 +3,7 @@ import { useSortBy, useTable } from "react-table";
 import clsx from "clsx";
 
 const tableStyles = {
-  outerDivClass: "border border-b-0 border-gray-300",
+  outerDivClass: "border border-b-0 border-gray-300 w-full",
   tableClass: "table-auto w-full",
   theadRowClass:
     "border-b border-gray-200 rounded-t-md uppercase bg-column-background",

@@ -1,18 +1,24 @@
+import clsx from "clsx";
 import { Control, Controller, FieldErrors } from "react-hook-form";
-import { TextInput } from "../../TextInput";
+import { TextInput } from "../../../TextInput";
 
-type EmailProps = {
+type AwsSupportProps = {
   control: Control;
   errors: FieldErrors;
-};
+} & React.HTMLProps<HTMLDivElement>;
 
-export const Email = ({ control, errors }: EmailProps) => {
+export const AwsSupport = ({
+  control,
+  errors,
+  className,
+  ...rest
+}: AwsSupportProps) => {
   return (
-    <div>
+    <div className={clsx(className)} {...rest}>
       <div className="mb-4">
         <Controller
           control={control}
-          name="to"
+          name="category"
           rules={{
             required: "Please provide valid value"
           }}
@@ -20,8 +26,8 @@ export const Email = ({ control, errors }: EmailProps) => {
             const { onChange, value } = field;
             return (
               <TextInput
-                label="To"
-                id="to"
+                label="Category"
+                id="category"
                 className="w-full"
                 onChange={onChange}
                 value={value}
@@ -29,12 +35,12 @@ export const Email = ({ control, errors }: EmailProps) => {
             );
           }}
         />
-        <p className="text-red-600 text-sm">{errors.to?.message}</p>
+        <p className="text-red-600 text-sm">{errors.category?.message}</p>
       </div>
       <div className="mb-4">
         <Controller
           control={control}
-          name="subject"
+          name="description"
           rules={{
             required: "Please provide valid value"
           }}
@@ -42,8 +48,8 @@ export const Email = ({ control, errors }: EmailProps) => {
             const { onChange, value } = field;
             return (
               <TextInput
-                label="Subject"
-                id="subject"
+                label="Description"
+                id="description"
                 className="w-full"
                 onChange={onChange}
                 value={value}
@@ -51,7 +57,7 @@ export const Email = ({ control, errors }: EmailProps) => {
             );
           }}
         />
-        <p className="text-red-600 text-sm">{errors.subject?.message}</p>
+        <p className="text-red-600 text-sm">{errors.description?.message}</p>
       </div>
       <div className="mb-4">
         <Controller

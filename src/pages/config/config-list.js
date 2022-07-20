@@ -70,7 +70,7 @@ export function ConfigListPage() {
   const extra = (
     <div className="flex space-x-2 mr-4">
       {configFilterView === ConfigFilterViewTypes.advanced && (
-        <QueryBuilder refreshConfigs={(e) => setData(e)} />
+        <QueryBuilder refreshConfigs={setData} />
       )}
 
       {configFilterView === ConfigFilterViewTypes.basic && (

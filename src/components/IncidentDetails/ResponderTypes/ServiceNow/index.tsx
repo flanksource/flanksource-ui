@@ -1,14 +1,20 @@
+import clsx from "clsx";
 import { Control, Controller, FieldErrors } from "react-hook-form";
-import { TextInput } from "../../TextInput";
+import { TextInput } from "../../../TextInput";
 
 type ServiceNowProps = {
   control: Control;
   errors: FieldErrors;
-};
+} & React.HTMLProps<HTMLDivElement>;
 
-export const ServiceNow = ({ control, errors }: ServiceNowProps) => {
+export const ServiceNow = ({
+  control,
+  errors,
+  className,
+  ...rest
+}: ServiceNowProps) => {
   return (
-    <div>
+    <div className={clsx(className)} {...rest}>
       <div className="mb-4">
         <Controller
           control={control}

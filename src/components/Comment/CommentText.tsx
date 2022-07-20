@@ -7,8 +7,8 @@ interface Props {
 }
 
 export const CommentText = ({ text, onClickTag }: Props) => {
-  const tags = text.match(/@\[.*?\]\(user:.*?\)/gi) || [];
-  const otherText = text.split(/@\[.*?\]\(user:.*?\)/gi);
+  const tags = (text?.match(/@\[.*?\]\(user:.*?\)/gi) || []).filter((v) => v);
+  const otherText = text?.split(/@\[.*?\]\(user:.*?\)/gi) || [];
   return (
     <>
       {otherText[0] || ""}

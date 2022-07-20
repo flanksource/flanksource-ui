@@ -286,7 +286,7 @@ export function ResponderDetailsDialog({
                             <path
                               d="M0.5 0V31L10.5 41L0.5 51V82"
                               stroke="currentcolor"
-                              vector-effect="non-scaling-stroke"
+                              vectorEffect="non-scaling-stroke"
                             />
                           </svg>
                         </div>
@@ -331,7 +331,7 @@ export function ResponderDetailsDialog({
                             <path
                               d="M0.5 0V31L10.5 41L0.5 51V82"
                               stroke="currentcolor"
-                              vector-effect="non-scaling-stroke"
+                              vectorEffect="non-scaling-stroke"
                             />
                           </svg>
                         </div>

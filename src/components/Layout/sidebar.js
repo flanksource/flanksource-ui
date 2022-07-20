@@ -133,7 +133,7 @@ export function SidebarLayout({ navigation }) {
 
         {/* Static sidebar for desktop */}
         <div
-          className={clsx("transform duration-500 w-14 z-20", {
+          className={clsx("transform duration-500 w-14", {
             "lg:w-64": !collapseSidebar
           })}
           ref={innerRef}
@@ -146,7 +146,7 @@ export function SidebarLayout({ navigation }) {
             <button
               type="button"
               className={clsx(
-                "absolute bg-white -right-2 top-14 border border-gray-300 rounded-full transform duration-500",
+                "absolute bg-white -right-2 top-20 border border-gray-300 rounded-full transform duration-500",
                 { "rotate-180": !collapseSidebar }
               )}
               onClick={() => setCollapseSidebar((value) => !value)}
