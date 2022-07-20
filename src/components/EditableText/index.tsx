@@ -6,6 +6,16 @@ const ACTIONS_ID = {
   CLOSE_EDITABLE_TEXT: "closeEditableText"
 };
 
+interface IProps {
+  value: string;
+  textAreaClassName?: string;
+  buttonClassName?: string;
+  sharedClassName?: string;
+  placeholder?: string;
+  append?: React.ReactNode;
+  onChange: (v: string) => void;
+}
+
 export function EditableText({
   value,
   textAreaClassName,
@@ -15,7 +25,7 @@ export function EditableText({
   append,
   onChange,
   ...rest
-}) {
+}: IProps) {
   const [localValue, setLocalValue] = useState(value);
   const [editMode, setEditMode] = useState(false);
   const inputRef = useRef();

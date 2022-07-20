@@ -12,18 +12,13 @@ import {
   BsFillChatSquareTextFill
 } from "react-icons/bs";
 import { VscTypeHierarchy } from "react-icons/vsc";
-import {
-  deleteHypothesis,
-  Hypothesis,
-  HypothesisStatus
-} from "../../../api/services/hypothesis";
+import { deleteHypothesis, Hypothesis } from "../../../api/services/hypothesis";
 import { AvatarGroup } from "../../AvatarGroup";
 import { EvidenceType } from "../../../api/services/evidence";
 import { IconBaseProps, IconType } from "react-icons/lib";
 import { useQueryClient } from "react-query";
 import { createIncidentQueryKey } from "../../query-hooks/useIncidentQuery";
 import { HypothesisBarDeleteDialog } from "./HypothesisBarDeleteDialog";
-import { hypothesisStatusDropdownOptions } from "../../../constants/hypothesisStatusOptions";
 import { StatusDropdownContainer } from "../StatusDropdownContainer";
 import { EditableText } from "../../EditableText";
 import { useForm } from "react-hook-form";
@@ -48,6 +43,8 @@ const ICON_MAP: { [key in InfoType]: IconType } = {
   topology: VscTypeHierarchy
 };
 
+type IconCounts = { [k in InfoType]: number };
+
 const InfoIcon: React.FC<InfoIconProps> = ({
   icon,
   ...props
@@ -66,30 +63,20 @@ interface HypothesisBarProps {
   onDisprove: () => void;
 }
 
+type Entries<T> = { [K in keyof T]: [K, T[K]] }[keyof T];
+
 export const HypothesisBar: React.FunctionComponent<HypothesisBarProps> = ({
   hypothesis,
-  onTitleClick,
   api,
   showExpand,
   expanded,
   onToggleExpand,
   onDisprove: onDisproveCb
 }: HypothesisBarProps) => {
-  const {
-    title = "",
-    status,
-    created_by: createdBy,
-    evidence,
-    comment
-  } = hypothesis;
+  const { title = "", created_by: createdBy, evidence, comment } = hypothesis;
 
   const [deleting, setDeleting] = useState<boolean>(false);
   const [showConfirm, setShowConfirm] = useState<boolean>(false);
-
-  const { icon: statusIcon } = useMemo(
-    () => hypothesisStatusDropdownOptions[status || HypothesisStatus.Possible],
-    [status]
-  );
 
   const queryClient = useQueryClient();
 
@@ -116,9 +103,18 @@ export const HypothesisBar: React.FunctionComponent<HypothesisBarProps> = ({
     return () => subscription.unsubscribe();
   }, [watch, getValues, handleApiUpdate]);
 
-  const infoIcons: InfoType[] = (evidence || [])
+  const infoIcons = (evidence || [])
     .map((e): InfoType => e.type)
-    .concat(comment?.length ? [CommentInfo.Comment] : []);
+    .concat(comment?.length ? [CommentInfo.Comment] : [])
+    .filter((i) => ICON_MAP[i])
+    .reduce<Partial<IconCounts>>((acc, i) => {
+      return {
+        ...acc,
+        [i]: (acc[i] || 0) + 1
+      };
+    }, {});
+
+  const counts = Object.entries(infoIcons) as Entries<IconCounts>[];
 
   const commentsMap = new Map(
     (comment || []).map((c) => [c?.created_by?.id, c?.created_by])
@@ -153,7 +149,7 @@ export const HypothesisBar: React.FunctionComponent<HypothesisBarProps> = ({
   return (
     <div
       className={clsx(
-        "relative bg-zinc-100 w-full flex justify-between shadow-lg rounded-8px border focus:outline-none bg-white cursor-pointer",
+        "relative w-full flex justify-between shadow-lg rounded-8px border focus:outline-none bg-zinc-100 cursor-pointer",
         deleting && "pointer-events-none cursor-not-allowed blur-[2px]"
       )}
     >
@@ -183,16 +179,21 @@ export const HypothesisBar: React.FunctionComponent<HypothesisBarProps> = ({
         />
       </div>
       <div className="flex items-center pr-3 space-x-4">
-        <div className="flex flex-row">
-          {infoIcons
-            .filter((i) => ICON_MAP[i])
-            .map((typ, idx) => (
+        <div className="flex flex-row items-center">
+          {counts.map(([typ, count], idx: number) => (
+            <>
               <InfoIcon
                 key={`${typ}-${idx}`}
                 icon={typ}
                 className="px-1 text-dark-blue"
               />
-            ))}
+              {count > 1 && (
+                <span className="-ml-1 font-bold mr-1 mt-3 text-gray-500 text-xs">
+                  {count}
+                </span>
+              )}
+            </>
+          ))}
         </div>
         <div>
           {createdBy && <AvatarGroup maxCount={5} users={involved} size="sm" />}
