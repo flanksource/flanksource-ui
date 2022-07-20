@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from "react";
+import { useMemo, useCallback } from "react";
 import { Link, useParams } from "react-router-dom";
 
 import {
@@ -23,10 +23,21 @@ import { useUpdateHypothesisMutation } from "../../components/mutations/useUpdat
 import { useCreateHypothesisMutation } from "../../components/mutations/useCreateHypothesisMutation";
 import { IncidentDetails } from "../../components/IncidentDetails";
 import { CardSize, TopologyCard } from "../../components/TopologyCard";
+import { UseMutationResult } from "react-query";
 
 export type TreeNode<T> = T & {
   children?: T[];
 };
+
+export interface HypothesisAPIs {
+  incidentId: string | undefined;
+  create: Function;
+  delete: Function;
+  deleteBulk: Function;
+  update: Function;
+  updateMutation: UseMutationResult;
+  createMutation: UseMutationResult;
+}
 
 interface Tree {
   [k: string]: TreeNode<Hypothesis>;

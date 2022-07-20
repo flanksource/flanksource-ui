@@ -28,31 +28,38 @@ export function EditableText({
 }: IProps) {
   const [localValue, setLocalValue] = useState(value);
   const [editMode, setEditMode] = useState(false);
-  const inputRef = useRef();
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
-  const onBlurTextArea = useCallback((e) => {
-    if (
-      !e?.relatedTarget?.id ||
-      !Object.values(ACTIONS_ID).includes(e.relatedTarget.id)
-    ) {
-      setEditMode(false);
-    }
-  }, []);
+  const onBlurTextArea = useCallback(
+    (e: React.FocusEvent<HTMLTextAreaElement>) => {
+      if (
+        !e?.relatedTarget?.id ||
+        !Object.values(ACTIONS_ID).includes(e.relatedTarget.id)
+      ) {
+        setEditMode(false);
+      }
+    },
+    []
+  );
 
   useEffect(() => {
-    if (editMode) {
-      inputRef.current.focus();
-      const val = inputRef.current.value;
-      inputRef.current.value = "";
-      inputRef.current.value = val;
-    }
+    if (!editMode || !inputRef.current) return;
+
+    inputRef.current.focus();
+    const val = inputRef.current.value;
+    inputRef.current.value = "";
+    inputRef.current.value = val;
   }, [editMode]);
 
   useEffect(() => {
     setLocalValue(value);
   }, [value]);
 
-  const onChangeText = useCallback((e) => setLocalValue(e.target.value), []);
+  const onChangeText = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) =>
+      setLocalValue(e.target.value),
+    []
+  );
   const onClickCheck = useCallback(() => {
     onChange(localValue);
     setEditMode(false);

@@ -33,7 +33,6 @@ type InfoType = CommentInfo | EvidenceType;
 
 interface InfoIconProps extends IconBaseProps {
   icon: InfoType;
-  key: string;
 }
 
 const ICON_MAP: { [key in InfoType]: IconType } = {
@@ -45,13 +44,10 @@ const ICON_MAP: { [key in InfoType]: IconType } = {
 
 type IconCounts = { [k in InfoType]: number };
 
-const InfoIcon: React.FC<InfoIconProps> = ({
-  icon,
-  ...props
-}: InfoIconProps) => {
+function InfoIcon({ icon, ...props }: InfoIconProps) {
   const Component = ICON_MAP[icon];
   return <Component size={24} {...props} />;
-};
+}
 
 interface HypothesisBarProps {
   hypothesis: Hypothesis;
@@ -65,14 +61,14 @@ interface HypothesisBarProps {
 
 type Entries<T> = { [K in keyof T]: [K, T[K]] }[keyof T];
 
-export const HypothesisBar: React.FunctionComponent<HypothesisBarProps> = ({
+export function HypothesisBar({
   hypothesis,
   api,
   showExpand,
   expanded,
   onToggleExpand,
   onDisprove: onDisproveCb
-}: HypothesisBarProps) => {
+}: HypothesisBarProps) {
   const { title = "", created_by: createdBy, evidence, comment } = hypothesis;
 
   const [deleting, setDeleting] = useState<boolean>(false);
@@ -181,18 +177,14 @@ export const HypothesisBar: React.FunctionComponent<HypothesisBarProps> = ({
       <div className="flex items-center pr-3 space-x-4">
         <div className="flex flex-row items-center">
           {counts.map(([typ, count], idx: number) => (
-            <>
-              <InfoIcon
-                key={`${typ}-${idx}`}
-                icon={typ}
-                className="px-1 text-dark-blue"
-              />
+            <span key={`${typ}-${idx}`} className="flex flex-row items-center">
+              <InfoIcon icon={typ} className="px-1 text-dark-blue" />
               {count > 1 && (
                 <span className="-ml-1 font-bold mr-1 mt-3 text-gray-500 text-xs">
                   {count}
                 </span>
               )}
-            </>
+            </span>
           ))}
         </div>
         <div>
@@ -210,4 +202,4 @@ export const HypothesisBar: React.FunctionComponent<HypothesisBarProps> = ({
       </div>
     </div>
   );
-};
+}

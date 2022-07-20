@@ -1,9 +1,9 @@
-import React, { Fragment, useState } from "react";
+import { Fragment, useState } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import { DotsVerticalIcon } from "@heroicons/react/outline";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { BiHide, BiZoomIn } from "react-icons/bi";
-import { MdAdd, MdAlarmAdd, MdTableRows } from "react-icons/md";
+import { MdAlarmAdd, MdTableRows } from "react-icons/md";
 import { EvidenceType } from "../../api/services/evidence";
 import { AttachEvidenceDialog } from "../AttachEvidenceDialog";
 
@@ -12,7 +12,6 @@ interface IProps {
 }
 
 export const TopologyDropdownMenu = ({ topology }: IProps) => {
-  const location = useLocation();
   const [attachAsAsset, setAttachAsAsset] = useState(false);
 
   const navigate = useNavigate();
@@ -24,7 +23,7 @@ export const TopologyDropdownMenu = ({ topology }: IProps) => {
 
   return (
     <>
-      <Menu as="div" className="relative inline-block flex flex-initial">
+      <Menu as="div" className="relative flex flex-initial">
         <Menu.Button className="p-0.5 min-w-7 rounded-full text-gray-400 hover:text-gray-500">
           <DotsVerticalIcon className="h-6 w-6" />
         </Menu.Button>
@@ -93,7 +92,7 @@ export const TopologyDropdownMenu = ({ topology }: IProps) => {
         isOpen={attachAsAsset}
         onClose={() => setAttachAsAsset(false)}
         type={EvidenceType.Topology}
-        description="Topology incident"
+        title="Topology incident"
         evidence={{ id: topology.id }}
       />
     </>

@@ -4,9 +4,10 @@ import { Switch } from "@headlessui/react";
 import { useSearchParams } from "react-router-dom";
 
 import { HypothesisBar } from "../HypothesisBar";
-import { HypothesisStatus } from "../../../api/services/hypothesis";
+import { Hypothesis, HypothesisStatus } from "../../../api/services/hypothesis";
 import { HypothesisDetails } from "../HypothesisDetails";
 import { useEffect, useState } from "react";
+import { HypothesisAPIs } from "../../../pages/incident/IncidentDetails";
 
 const propsByType = (type: string) => {
   if (!type) {
@@ -31,17 +32,13 @@ const propsByType = (type: string) => {
   return {};
 };
 
-interface IHypothesisNode {
-  [k: string]: any;
-}
-
 interface IHypothesisNodeProps {
-  hasParent: boolean;
-  node: IHypothesisNode;
+  hasParent?: boolean;
+  node: Hypothesis;
   setModalIsOpen: (v: boolean) => void;
-  setSelectNode: (v: IHypothesisNode) => void;
+  setSelectedNode: (v: Hypothesis) => void;
   setCreateHypothesisModalIsOpen: (v: boolean) => void;
-  api: { [k: string]: any };
+  api: HypothesisAPIs;
 }
 
 export const HypothesisNode = (props: IHypothesisNodeProps) => {
@@ -130,7 +127,7 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
             className={clsx(
               "relative",
               hasParent &&
-                "before:content-[''] before:border-gray-200 before:z-0 before:absolute before:w-6 before:h-8 before:-ml-3 before:border-l-2 before:border-b-2 before:rounded-bl-2xl before:z-[-1]"
+                "before:content-[''] before:border-gray-200 before:absolute before:w-6 before:h-8 before:-ml-3 before:border-l-2 before:border-b-2 before:rounded-bl-2xl before:z-[-1]"
             )}
           >
             <HypothesisBar
@@ -141,7 +138,7 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
               expanded={showComments}
               onToggleExpand={(show) => setShowComments(show)}
               onDisprove={() => {
-                props.api.updateMutation.mutate({
+                api.updateMutation.mutate({
                   id: node.id,
                   params: {
                     status: HypothesisStatus.Disproven
