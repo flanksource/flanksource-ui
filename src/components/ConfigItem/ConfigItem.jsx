@@ -34,6 +34,7 @@ export const ConfigItem = ({ type, value, onSelect, ...props }) => {
     () =>
       debounce((input, callback) => {
         searchConfigs(type, input).then(({ data }) => {
+          console.log(data);
           const prepareData = data.map((item) => ({
             ...item,
             value: item.id,
