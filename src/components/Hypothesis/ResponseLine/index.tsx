@@ -42,7 +42,7 @@ export function ResponseLine({
           </p>
         </div>
 
-        {!("type" in response) ? (
+        {!response.hasOwnProperty("type") ? (
           <div className="text-sm text-gray-700">
             <p className="whitespace-pre">
               <CommentText text={response.comment} />
