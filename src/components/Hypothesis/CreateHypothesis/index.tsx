@@ -80,11 +80,6 @@ export const CreateHypothesis = ({
     <Modal
       open={isOpen}
       onClose={onHypothesisCreated}
-      wrapWith={({ children }) => (
-        <form onSubmit={(...args) => handleSubmit(onSubmit)(...args)}>
-          {children}
-        </form>
-      )}
       title={
         <Controller
           name="hypothesis.title"
@@ -100,53 +95,58 @@ export const CreateHypothesis = ({
         />
       }
       size="medium"
+      bodyClass=""
     >
-      <div className="mt-4">
-        <Dropdown
-          control={control}
-          name="hypothesis.status"
-          className="mb-4 w-72"
-          items={hypothesisStatusDropdownOptions}
-          label="State"
-        />
-      </div>
-      <EvidenceSection
-        hypothesis={node}
-        evidence={evidenceValue}
-        titlePrepend={
-          <div className="mr-2 text-sm font-medium text-gray-700 mt-1.5">
-            Evidence
-          </div>
-        }
-        onButtonClick={(data) => {
-          setValue("evidence", data);
-        }}
-      />
-      <div>
-        <h3 className="mt-4 text-sm font-medium text-gray-700 mb-1.5">
-          Comment
-        </h3>
-        <Controller
-          name="comment.text"
-          control={control}
-          render={({ field }) => (
-            <textarea
-              className="w-full border-gray-200 resize-none rounded-6px text-base leading-6 font-normal font-inter outline-none placeholder-gray-400"
-              placeholder="Type something"
-              style={{ minHeight: "138px" }}
-              {...field}
+      <form onSubmit={(...args) => handleSubmit(onSubmit)(...args)}>
+        <div className="px-8">
+          <div className="mt-4">
+            <Dropdown
+              control={control}
+              name="hypothesis.status"
+              className="mb-4 w-72"
+              items={hypothesisStatusDropdownOptions}
+              label="State"
             />
-          )}
-        />
-      </div>
-      <div className="flex justify-end mt-4">
-        <input
-          type="submit"
-          className="bg-dark-blue text-white rounded-6px py-3.5 px-6 disabled:bg-gray-200 disabled:text-gray-400 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          disabled={false}
-          value="Create"
-        />
-      </div>
+          </div>
+          <EvidenceSection
+            hypothesis={node}
+            evidence={evidenceValue}
+            titlePrepend={
+              <div className="mr-2 text-sm font-medium text-gray-700 mt-1.5">
+                Evidence
+              </div>
+            }
+            onButtonClick={(data) => {
+              setValue("evidence", data);
+            }}
+          />
+          <div>
+            <h3 className="mt-4 text-sm font-medium text-gray-700 mb-1.5">
+              Comment
+            </h3>
+            <Controller
+              name="comment.text"
+              control={control}
+              render={({ field }) => (
+                <textarea
+                  className="w-full border-gray-200 resize-none rounded-6px text-base leading-6 font-normal font-inter outline-none placeholder-gray-400"
+                  placeholder="Type something"
+                  style={{ minHeight: "138px" }}
+                  {...field}
+                />
+              )}
+            />
+          </div>
+        </div>
+        <div className="flex justify-end mt-4 py-4 px-8 rounded-t-lg bg-gray-100">
+          <input
+            type="submit"
+            className="bg-dark-blue text-white rounded-6px py-2 px-6 disabled:bg-gray-200 disabled:text-gray-400 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            disabled={false}
+            value="Create"
+          />
+        </div>
+      </form>
     </Modal>
   );
 };

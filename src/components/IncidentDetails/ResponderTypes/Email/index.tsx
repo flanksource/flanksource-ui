@@ -1,18 +1,19 @@
+import clsx from "clsx";
 import { Control, Controller, FieldErrors } from "react-hook-form";
-import { TextInput } from "../../TextInput";
+import { TextInput } from "../../../TextInput";
 
-type AwsSupportProps = {
+type EmailProps = {
   control: Control;
   errors: FieldErrors;
-};
+} & React.HTMLProps<HTMLDivElement>;
 
-export const AwsSupport = ({ control, errors }: AwsSupportProps) => {
+export const Email = ({ control, errors, className, ...rest }: EmailProps) => {
   return (
-    <div>
+    <div className={clsx(className)} {...rest}>
       <div className="mb-4">
         <Controller
           control={control}
-          name="category"
+          name="to"
           rules={{
             required: "Please provide valid value"
           }}
@@ -20,8 +21,8 @@ export const AwsSupport = ({ control, errors }: AwsSupportProps) => {
             const { onChange, value } = field;
             return (
               <TextInput
-                label="Category"
-                id="category"
+                label="To"
+                id="to"
                 className="w-full"
                 onChange={onChange}
                 value={value}
@@ -29,12 +30,12 @@ export const AwsSupport = ({ control, errors }: AwsSupportProps) => {
             );
           }}
         />
-        <p className="text-red-600 text-sm">{errors.category?.message}</p>
+        <p className="text-red-600 text-sm">{errors.to?.message}</p>
       </div>
       <div className="mb-4">
         <Controller
           control={control}
-          name="description"
+          name="subject"
           rules={{
             required: "Please provide valid value"
           }}
@@ -42,8 +43,8 @@ export const AwsSupport = ({ control, errors }: AwsSupportProps) => {
             const { onChange, value } = field;
             return (
               <TextInput
-                label="Description"
-                id="description"
+                label="Subject"
+                id="subject"
                 className="w-full"
                 onChange={onChange}
                 value={value}
@@ -51,7 +52,7 @@ export const AwsSupport = ({ control, errors }: AwsSupportProps) => {
             );
           }}
         />
-        <p className="text-red-600 text-sm">{errors.description?.message}</p>
+        <p className="text-red-600 text-sm">{errors.subject?.message}</p>
       </div>
       <div className="mb-4">
         <Controller

@@ -1,14 +1,20 @@
+import clsx from "clsx";
 import { Control, Controller, FieldErrors } from "react-hook-form";
-import { TextInput } from "../../TextInput";
+import { TextInput } from "../../../TextInput";
 
 type PersonProps = {
   control: Control;
   errors: FieldErrors;
-};
+} & React.HTMLProps<HTMLDivElement>;
 
-export const Person = ({ control, errors }: PersonProps) => {
+export const Person = ({
+  control,
+  errors,
+  className,
+  ...rest
+}: PersonProps) => {
   return (
-    <div className="mb-4">
+    <div className={clsx("mb-4", className)} {...rest}>
       <Controller
         control={control}
         name="person"

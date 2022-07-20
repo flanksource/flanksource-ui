@@ -66,7 +66,8 @@ module.exports = {
         "warm-green": "#AAA526",
         "warmer-gray": "#808080",
         "bright-orange": "#F59337",
-        "bright-red": "#DD4F4F"
+        "bright-red": "#DD4F4F",
+        "half-black": "rgba(0, 0, 0, 0.5)"
       },
       fontFamily: {
         inter: ["Inter"]

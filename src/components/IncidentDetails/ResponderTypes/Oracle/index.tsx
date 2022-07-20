@@ -1,14 +1,20 @@
+import clsx from "clsx";
 import { Control, Controller, FieldErrors } from "react-hook-form";
-import { TextInput } from "../../TextInput";
+import { TextInput } from "../../../TextInput";
 
-type MicrosoftProps = {
+type OracleProps = {
   control: Control;
   errors: FieldErrors;
-};
+} & React.HTMLProps<HTMLDivElement>;
 
-export const Microsoft = ({ control, errors }: MicrosoftProps) => {
+export const Oracle = ({
+  control,
+  errors,
+  className,
+  ...rest
+}: OracleProps) => {
   return (
-    <div>
+    <div className={clsx(className)} {...rest}>
       <div className="mb-4">
         <Controller
           control={control}

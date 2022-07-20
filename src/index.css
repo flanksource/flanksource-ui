@@ -6,6 +6,18 @@
   html {
     font-family: "Open Sans", sans-serif;
   }
+  input[type="range"]::-webkit-slider-thumb {
+    box-shadow: 0px 0px 0px 5px #c5d2fe;
+    border-radius: 50%;
+  }
+  input[type="range"]::-moz-range-thumb {
+    box-shadow: 0px 0px 0px 5px #c5d2fe;
+    border-radius: 50%;
+  }
+  input[type="range"]::-ms-thumb {
+    box-shadow: 0px 0px 0px 5px #c5d2fe;
+    border-radius: 50%;
+  }
 }
 
 @layer components {

@@ -7,7 +7,7 @@ import { IncidentSeverityTag } from "../../IncidentSeverityTag";
 
 export function IncidentList({ list, ...rest }) {
   return (
-    <div className="border border-gray-200 rounded-md">
+    <div className="border border-gray-200 rounded-md w-full">
       <table className="table-auto w-full" aria-label="table" {...rest}>
         <thead className="rounded-md">
           <tr className="border-b border-gray-200 uppercase bg-column-background rounded-t-md items-center">

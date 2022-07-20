@@ -118,13 +118,13 @@ export const ResponderDetailsToolTip = ({
           <div className="bg-white px-2 py-2">
             <div className="flex space-x-3">
               <div className="flex-shrink-0">
-                {responder?.icon && <responder.icon className="w-6 h-6" />}
+                {responder?.icon && (
+                  <responder.icon className="w-6 h-6 align-sub" />
+                )}
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium text-gray-900">
-                  <a href="#" className="hover:underline">
-                    {responder?.type}
-                  </a>
+                  <span>{responder?.type}</span>
                   {responder?.json?.properties?.url && (
                     <FiExternalLink
                       className="float-right w-5 h-5"

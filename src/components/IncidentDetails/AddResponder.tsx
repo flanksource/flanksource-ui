@@ -58,57 +58,65 @@ export const ResponderTypeOptions = [
   {
     label: "Email",
     value: "Email",
-    icon: () => <MdEmail className="w-5 h-5 inline-block" />
+    icon: () => <MdEmail className="w-5 h-5 inline-block align-sub" />
   },
   {
     label: "Jira",
     value: "Jira",
-    icon: () => <SiJira className="w-5 h-5 inline-block" />
+    icon: () => <SiJira className="w-5 h-5 inline-block align-sub" />
   },
   {
     label: "ServiceNow",
     value: "ServiceNow",
-    icon: () => <Icon size="md" className="inline-block" name="servicenow" />
+    icon: () => (
+      <Icon size="md" className="inline-block align-sub" name="servicenow" />
+    )
   },
   {
     label: "CA",
     value: "CA",
-    icon: () => <Icon size="md" className="inline-block" name="ca" />
+    icon: () => <Icon size="md" className="inline-block align-sub" name="ca" />
   },
   {
     label: "AWS Support",
     value: "AWS Support",
-    icon: () => <Icon size="md" className="inline-block" name="aws" />
+    icon: () => <Icon size="md" className="inline-block align-sub" name="aws" />
   },
   {
     label: "AWS AMS Service Request",
     value: "AWS AMS Service Request",
-    icon: () => <Icon size="md" className="inline-block" name="aws" />
+    icon: () => <Icon size="md" className="inline-block align-sub" name="aws" />
   },
   {
     label: "Redhat",
     value: "Redhat",
-    icon: () => <Icon size="md" className="inline-block" name="redhat" />
+    icon: () => (
+      <Icon size="md" className="inline-block align-sub" name="redhat" />
+    )
   },
   {
     label: "Oracle",
     value: "Oracle",
-    icon: () => <Icon size="md" className="inline-block" name="oracle_icon" />
+    icon: () => (
+      <Icon size="md" className="inline-block align-sub" name="oracle_icon" />
+    )
   },
   {
     label: "Microsoft",
     value: "Microsoft",
-    icon: () => <Icon size="md" className="inline-block" name="microsoft" />
+    icon: () => (
+      <Icon size="md" className="inline-block align-sub" name="microsoft" />
+    )
   },
   {
     label: "VMWare",
     value: "VMWare",
-    icon: () => <GrVmware className="w-5 h-5 inline-block" />
+    icon: () => <GrVmware className="w-5 h-5 inline-block align-sub" />
   },
   {
     label: "Person",
     value: "Person",
-    icon: () => <FiUser className="w-5 h-5 inline-block" />
+    icon: () => <FiUser className="w-5 h-5 inline-block align-sub" />
   }
 ];
 
@@ -203,7 +211,7 @@ export const AddResponder = ({
     setSteps([...steps]);
   };
 
-  const getResponderTypeForm = useMemo(() => {
+  const getResponderTypeForm = () => {
     switch (selectedType?.value) {
       case "Email":
         return <Email control={control} errors={errors} />;
@@ -230,7 +238,7 @@ export const AddResponder = ({
       default:
         return null;
     }
-  }, [selectedType, control]);
+  };
 
   const onSubmit = async () => {
     await handleSubmit(
@@ -243,7 +251,7 @@ export const AddResponder = ({
 
   const saveResponderDetails = async () => {
     const data = { ...getValues() };
-    Object.keys(data).forEach((key: formPropKey, index) => {
+    Object.keys(data).forEach((key: formPropKey) => {
       if (!data[key]) {
         delete data[key];
       }
@@ -336,13 +344,14 @@ export const AddResponder = ({
           {steps[1].inProgress && (
             <div>
               <div className="px-8 py-3 h-modal-body-md">
-                {getResponderTypeForm}
+                {getResponderTypeForm()}
                 <ActionButtonGroup
                   className="absolute w-full bottom-0 left-0"
                   nextAction={{
                     label: !loading ? "Save" : "Saving...",
                     disabled: !selectedType || loading,
-                    handler: onSubmit
+                    handler: onSubmit,
+                    primary: true
                   }}
                   previousAction={{
                     label: "Back",
