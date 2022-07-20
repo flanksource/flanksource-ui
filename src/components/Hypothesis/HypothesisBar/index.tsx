@@ -1,10 +1,4 @@
-import {
-  MouseEventHandler,
-  useMemo,
-  useState,
-  useCallback,
-  useEffect
-} from "react";
+import { MouseEventHandler, useMemo, useState, useEffect } from "react";
 import clsx from "clsx";
 import {
   BsBraces,
@@ -12,18 +6,16 @@ import {
   BsFillChatSquareTextFill
 } from "react-icons/bs";
 import { VscTypeHierarchy } from "react-icons/vsc";
-import { deleteHypothesis, Hypothesis } from "../../../api/services/hypothesis";
+import { Hypothesis } from "../../../api/services/hypothesis";
 import { AvatarGroup } from "../../AvatarGroup";
 import { EvidenceType } from "../../../api/services/evidence";
 import { IconBaseProps, IconType } from "react-icons/lib";
-import { useQueryClient } from "react-query";
-import { createIncidentQueryKey } from "../../query-hooks/useIncidentQuery";
-import { HypothesisBarDeleteDialog } from "./HypothesisBarDeleteDialog";
 import { StatusDropdownContainer } from "../StatusDropdownContainer";
 import { EditableText } from "../../EditableText";
 import { useForm } from "react-hook-form";
 import { debounce } from "lodash";
 import { ChevronRightIcon } from "@heroicons/react/outline";
+import { HypothesisBarMenu } from "../HypothesisBarMenu";
 
 enum CommentInfo {
   Comment = "comment"
@@ -67,14 +59,11 @@ export function HypothesisBar({
   showExpand,
   expanded,
   onToggleExpand,
-  onDisprove: onDisproveCb
+  onDisprove
 }: HypothesisBarProps) {
   const { title = "", created_by: createdBy, evidence, comment } = hypothesis;
 
   const [deleting, setDeleting] = useState<boolean>(false);
-  const [showConfirm, setShowConfirm] = useState<boolean>(false);
-
-  const queryClient = useQueryClient();
 
   const handleApiUpdate = useMemo(
     () =>
@@ -118,29 +107,6 @@ export function HypothesisBar({
 
   createdBy && commentsMap.delete(createdBy.id);
   const involved = [createdBy].concat(Array.from(commentsMap.values()));
-
-  const onDelete = useCallback(() => {
-    setDeleting(true);
-    const delHypo = async () => {
-      try {
-        setShowConfirm(false);
-        await deleteHypothesis(hypothesis.id);
-        const key = createIncidentQueryKey(hypothesis.incident_id);
-        await queryClient.invalidateQueries(key);
-        setDeleting(false);
-      } catch (e) {
-        setShowConfirm(false);
-        setDeleting(false);
-        console.error("Error while deleting", e);
-      }
-    };
-    delHypo();
-  }, [hypothesis, queryClient]);
-
-  const onDisprove = () => {
-    onDisproveCb();
-    setShowConfirm(false);
-  };
 
   return (
     <div
@@ -191,12 +157,10 @@ export function HypothesisBar({
           {createdBy && <AvatarGroup maxCount={5} users={involved} size="sm" />}
         </div>
         <div className="flex pt-1">
-          <HypothesisBarDeleteDialog
-            isOpen={showConfirm}
-            onClose={() => setShowConfirm(false)}
-            onDelete={onDelete}
+          <HypothesisBarMenu
+            hypothesis={hypothesis}
             onDisprove={onDisprove}
-            onOpen={() => setShowConfirm(true)}
+            setDeleting={setDeleting}
           />
         </div>
       </div>
