@@ -1,6 +1,4 @@
-import { Fragment, useCallback, useState } from "react";
-import { Menu, Transition } from "@headlessui/react";
-import { DotsVerticalIcon } from "@heroicons/react/outline";
+import { useCallback, useState } from "react";
 import { BiHide, BiZoomIn } from "react-icons/bi";
 import { deleteHypothesis, Hypothesis } from "../../../api/services/hypothesis";
 import { createIncidentQueryKey } from "../../query-hooks/useIncidentQuery";
@@ -8,6 +6,7 @@ import { useQueryClient } from "react-query";
 import { IconButton } from "../../IconButton";
 import { BsTrash } from "react-icons/bs";
 import { HypothesisDeleteDialog } from "../HypothesisDeleteDialog";
+import { Menu } from "../../Menu";
 
 interface IProps {
   onDisprove: () => void;
@@ -54,59 +53,38 @@ export const HypothesisBarMenu = ({
         onDelete={onDelete}
         onDisprove={onDisprove}
       />
-      <Menu as="div" className="relative flex flex-initial">
-        <Menu.Button className="p-0.5 min-w-7 rounded-full text-gray-400 hover:text-gray-500">
-          <DotsVerticalIcon className="h-6 w-6" />
-        </Menu.Button>
-        <Transition
-          as={Fragment}
-          enter="transition ease-out duration-100"
-          enterFrom="transform opacity-0 scale-95"
-          enterTo="transform opacity-100 scale-100"
-          leave="transition ease-in duration-75"
-          leaveFrom="transform opacity-100 scale-100"
-          leaveTo="transform opacity-0 scale-95"
-        >
-          <Menu.Items className="absolute right-0 top-full w-56 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-card  focus:outline-none ">
-            <Menu.Item>
-              <div
-                onClick={() => setShowConfirm(true)}
-                className="flex items-center w-full text-gray-700 hover:bg-gray-200 p-3"
-              >
-                <IconButton
-                  className="bg-transparent flex items-center"
-                  ovalProps={{
-                    stroke: "blue",
-                    height: "18px",
-                    width: "18px",
-                    fill: "transparent"
-                  }}
-                  icon={
-                    <BsTrash
-                      className="text-gray-600 border-0 border-l-1 border-gray-200"
-                      size={18}
-                    />
-                  }
+      <Menu>
+        <Menu.VerticalIconButton />
+        <Menu.Items>
+          <Menu.Item onClick={() => setShowConfirm(true)}>
+            <IconButton
+              className="bg-transparent flex items-center"
+              ovalProps={{
+                stroke: "blue",
+                height: "18px",
+                width: "18px",
+                fill: "transparent"
+              }}
+              icon={
+                <BsTrash
+                  className="text-gray-600 border-0 border-l-1 border-gray-200"
+                  size={18}
                 />
-                <span className="pl-2 text-sm block">Delete hypothesis</span>
-              </div>
-            </Menu.Item>
+              }
+            />
+            <span className="pl-2 text-sm block">Delete hypothesis</span>
+          </Menu.Item>
 
-            <Menu.Item>
-              <div className="flex items-center w-full text-gray-700 hover:bg-gray-200 p-3">
-                <BiZoomIn />
-                <span className="pl-2 text-sm block">Add solution</span>
-              </div>
-            </Menu.Item>
+          <Menu.Item>
+            <BiZoomIn />
+            <span className="pl-2 text-sm block">Add solution</span>
+          </Menu.Item>
 
-            <Menu.Item>
-              <div className="flex items-center w-full text-gray-700 hover:bg-gray-200 p-3">
-                <BiHide />
-                <span className="pl-2 text-sm block">Edit title</span>
-              </div>
-            </Menu.Item>
-          </Menu.Items>
-        </Transition>
+          <Menu.Item>
+            <BiHide />
+            <span className="pl-2 text-sm block">Edit title</span>
+          </Menu.Item>
+        </Menu.Items>
       </Menu>
     </>
   );
