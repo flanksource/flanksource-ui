@@ -9,13 +9,15 @@ import { HypothesisDeleteDialog } from "../HypothesisDeleteDialog";
 import { Menu } from "../../Menu";
 
 interface IProps {
-  onDisprove: () => void;
   hypothesis: Hypothesis;
+  onCreateHypothesis: () => void;
+  onDisprove: () => void;
   setDeleting: (state: boolean) => void;
 }
 
 export const HypothesisBarMenu = ({
   hypothesis,
+  onCreateHypothesis,
   onDisprove: onDisproveCB,
   setDeleting
 }: IProps) => {
@@ -75,7 +77,7 @@ export const HypothesisBarMenu = ({
             <span className="pl-2 text-sm block">Delete hypothesis</span>
           </Menu.Item>
 
-          <Menu.Item>
+          <Menu.Item onClick={onCreateHypothesis}>
             <BiZoomIn />
             <span className="pl-2 text-sm block">Add solution</span>
           </Menu.Item>

@@ -49,6 +49,7 @@ interface HypothesisBarProps {
   expanded: boolean;
   onToggleExpand: (expand: boolean) => void;
   onDisprove: () => void;
+  onCreateHypothesis: () => void;
 }
 
 type Entries<T> = { [K in keyof T]: [K, T[K]] }[keyof T];
@@ -59,7 +60,8 @@ export function HypothesisBar({
   showExpand,
   expanded,
   onToggleExpand,
-  onDisprove
+  onDisprove,
+  onCreateHypothesis
 }: HypothesisBarProps) {
   const { title = "", created_by: createdBy, evidence, comment } = hypothesis;
 
@@ -161,6 +163,7 @@ export function HypothesisBar({
             hypothesis={hypothesis}
             onDisprove={onDisprove}
             setDeleting={setDeleting}
+            onCreateHypothesis={onCreateHypothesis}
           />
         </div>
       </div>

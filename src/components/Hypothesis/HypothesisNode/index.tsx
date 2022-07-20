@@ -137,6 +137,7 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
               showExpand={!isRoot}
               expanded={showComments}
               onToggleExpand={(show) => setShowComments(show)}
+              onCreateHypothesis={handlerOpenCreateHypothesisModal}
               onDisprove={() => {
                 api.updateMutation.mutate({
                   id: node.id,
@@ -155,7 +156,7 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
               <div className="px-5">
                 <HypothesisDetails node={node} api={api} />
               </div>
-              <div className={clsx("mt-10", isRoot ? "pl-5" : "pl-7")}>
+              <div className={clsx("mt-10 pl-5")}>
                 {(node?.children || []).map((item) => (
                   <HypothesisNode
                     {...props}
