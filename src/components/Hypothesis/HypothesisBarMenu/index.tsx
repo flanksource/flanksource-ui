@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import { BiHide, BiZoomIn } from "react-icons/bi";
 import { BsTrash } from "react-icons/bs";
-import { useQueryClient } from "react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { deleteHypothesis, Hypothesis } from "../../../api/services/hypothesis";
 import { IconButton } from "../../IconButton";
 import { Menu } from "../../Menu";

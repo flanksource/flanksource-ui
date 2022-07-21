@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from "react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateHypothesis } from "../../api/services/hypothesis";
 import { createIncidentQueryKey } from "../query-hooks/useIncidentQuery";
 

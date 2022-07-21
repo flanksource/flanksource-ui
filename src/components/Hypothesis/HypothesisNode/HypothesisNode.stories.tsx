@@ -1,7 +1,7 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 import { HypothesisNode } from "./index";
 import { sampleIncidentNode } from "../../../data/sampleIncident";
-import { QueryClient, QueryClientProvider } from "react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MemoryRouter } from "react-router-dom";
 
 const defaultQueryClient = new QueryClient();

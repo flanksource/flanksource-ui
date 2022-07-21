@@ -1,9 +1,10 @@
 import { FolderIcon, HomeIcon } from "@heroicons/react/outline";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useEffect, useState } from "react";
 import { AiFillHeart } from "react-icons/ai";
 import { ImLifebuoy } from "react-icons/im";
 import { VscJson } from "react-icons/vsc";
-import { QueryClient, QueryClientProvider } from "react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import ReactTooltip from "react-tooltip";
 import { getUser } from "./api/auth";
@@ -224,6 +225,7 @@ export function App() {
           <ReactTooltip />
           <IncidentManagerRoutes sidebar={sidebar} />
         </AuthContext.Provider>
+        <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </BrowserRouter>
   );

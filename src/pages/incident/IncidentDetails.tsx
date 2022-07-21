@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from "react";
-import { UseMutationResult } from "react-query";
+import { UseMutationResult } from "@tanstack/react-query";
 import { Link, useParams } from "react-router-dom";
 import { EvidenceType } from "../../api/services/evidence";
 import {

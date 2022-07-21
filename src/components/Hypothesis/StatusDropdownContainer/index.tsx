@@ -1,5 +1,5 @@
 import React from "react";
-import { MutationFunction } from "react-query";
+import { MutationFunction } from "@tanstack/react-query";
 import { Hypothesis, HypothesisStatus } from "../../../api/services/hypothesis";
 import useHypothesisStatusForm from "../../../hooks/useHypothesisStatusForm";
 import { SubtleDropdown } from "../../Dropdown/SubtleDropdown";
