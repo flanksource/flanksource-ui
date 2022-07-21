@@ -1,21 +1,21 @@
-import { MouseEventHandler, useMemo, useState, useEffect } from "react";
+import { ChevronRightIcon } from "@heroicons/react/outline";
 import clsx from "clsx";
+import { debounce } from "lodash";
+import { MouseEventHandler, useEffect, useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
 import {
   BsBraces,
   BsFillBarChartFill,
   BsFillChatSquareTextFill
 } from "react-icons/bs";
+import { IconBaseProps, IconType } from "react-icons/lib";
 import { VscTypeHierarchy } from "react-icons/vsc";
+import { EvidenceType } from "../../../api/services/evidence";
 import { Hypothesis } from "../../../api/services/hypothesis";
 import { AvatarGroup } from "../../AvatarGroup";
-import { EvidenceType } from "../../../api/services/evidence";
-import { IconBaseProps, IconType } from "react-icons/lib";
-import { StatusDropdownContainer } from "../StatusDropdownContainer";
 import { EditableText } from "../../EditableText";
-import { useForm } from "react-hook-form";
-import { debounce } from "lodash";
-import { ChevronRightIcon } from "@heroicons/react/outline";
 import { HypothesisBarMenu } from "../HypothesisBarMenu";
+import { StatusDropdownContainer } from "../StatusDropdownContainer";
 
 enum CommentInfo {
   Comment = "comment"

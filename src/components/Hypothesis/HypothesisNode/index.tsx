@@ -1,13 +1,12 @@
-import clsx from "clsx";
-import { BsPlusLg } from "react-icons/bs";
 import { Switch } from "@headlessui/react";
-import { useSearchParams } from "react-router-dom";
-
-import { HypothesisBar } from "../HypothesisBar";
-import { Hypothesis, HypothesisStatus } from "../../../api/services/hypothesis";
-import { HypothesisDetails } from "../HypothesisDetails";
+import clsx from "clsx";
 import { useEffect, useState } from "react";
+import { BsPlusLg } from "react-icons/bs";
+import { useSearchParams } from "react-router-dom";
+import { Hypothesis, HypothesisStatus } from "../../../api/services/hypothesis";
 import { HypothesisAPIs } from "../../../pages/incident/IncidentDetails";
+import { HypothesisBar } from "../HypothesisBar";
+import { HypothesisDetails } from "../HypothesisDetails";
 
 const propsByType = (type: string) => {
   if (!type) {

@@ -1,12 +1,12 @@
 import { useCallback, useState } from "react";
 import { BiHide, BiZoomIn } from "react-icons/bi";
-import { deleteHypothesis, Hypothesis } from "../../../api/services/hypothesis";
-import { createIncidentQueryKey } from "../../query-hooks/useIncidentQuery";
-import { useQueryClient } from "react-query";
-import { IconButton } from "../../IconButton";
 import { BsTrash } from "react-icons/bs";
-import { HypothesisDeleteDialog } from "../HypothesisDeleteDialog";
+import { useQueryClient } from "react-query";
+import { deleteHypothesis, Hypothesis } from "../../../api/services/hypothesis";
+import { IconButton } from "../../IconButton";
 import { Menu } from "../../Menu";
+import { createIncidentQueryKey } from "../../query-hooks/useIncidentQuery";
+import { HypothesisDeleteDialog } from "../HypothesisDeleteDialog";
 
 interface IProps {
   hypothesis: Hypothesis;
