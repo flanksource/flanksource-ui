@@ -142,7 +142,7 @@ export function HypothesisBar({
           }}
         />
       </div>
-      <div className="flex items-center pr-3 space-x-4">
+      <div className="flex items-center space-x-2">
         <div className="flex flex-row items-center">
           {counts.map(([typ, count], idx: number) => (
             <span key={`${typ}-${idx}`} className="flex flex-row items-center">
@@ -158,7 +158,7 @@ export function HypothesisBar({
         <div>
           {createdBy && <AvatarGroup maxCount={5} users={involved} size="sm" />}
         </div>
-        <div className="flex pt-1">
+        <div className="flex pt-0.5">
           <HypothesisBarMenu
             hypothesis={hypothesis}
             onDisprove={onDisprove}
