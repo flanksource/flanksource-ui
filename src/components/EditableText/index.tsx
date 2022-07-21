@@ -12,8 +12,11 @@ interface IProps {
   buttonClassName?: string;
   sharedClassName?: string;
   placeholder?: string;
+  isEditableAtStart?: boolean;
+  disableEditOnBlur?: boolean;
   append?: React.ReactNode;
   onChange: (v: string) => void;
+  onClose?: () => void;
 }
 
 export function EditableText({
@@ -24,23 +27,32 @@ export function EditableText({
   placeholder,
   append,
   onChange,
+  onClose,
+  isEditableAtStart = false,
+  disableEditOnBlur = true,
   ...rest
 }: IProps) {
   const [localValue, setLocalValue] = useState(value);
-  const [editMode, setEditMode] = useState(false);
+  const [editMode, setEditMode] = useState(isEditableAtStart);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const closeFnRef = useRef(onClose);
 
   const onBlurTextArea = useCallback(
     (e: React.FocusEvent<HTMLTextAreaElement>) => {
       if (
-        !e?.relatedTarget?.id ||
-        !Object.values(ACTIONS_ID).includes(e.relatedTarget.id)
+        disableEditOnBlur &&
+        (!e?.relatedTarget?.id ||
+          !Object.values(ACTIONS_ID).includes(e.relatedTarget.id))
       ) {
         setEditMode(false);
       }
     },
-    []
+    [disableEditOnBlur]
   );
+
+  useEffect(() => {
+    closeFnRef.current = onClose;
+  }, [onClose]);
 
   useEffect(() => {
     if (!editMode || !inputRef.current) return;
@@ -68,6 +80,7 @@ export function EditableText({
   const onClickClose = useCallback(() => {
     setLocalValue(value);
     setEditMode(false);
+    closeFnRef.current && closeFnRef.current();
   }, [value]);
 
   return (

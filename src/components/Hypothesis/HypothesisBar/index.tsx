@@ -12,6 +12,8 @@ import { IconBaseProps, IconType } from "react-icons/lib";
 import { VscTypeHierarchy } from "react-icons/vsc";
 import { EvidenceType } from "../../../api/services/evidence";
 import { Hypothesis } from "../../../api/services/hypothesis";
+import useDoubleClick from "../../../hooks/useDoubleClick";
+import { HypothesisAPIs } from "../../../pages/incident/IncidentDetails";
 import { AvatarGroup } from "../../AvatarGroup";
 import { EditableText } from "../../EditableText";
 import { HypothesisBarMenu } from "../HypothesisBarMenu";
@@ -44,7 +46,7 @@ function InfoIcon({ icon, ...props }: InfoIconProps) {
 interface HypothesisBarProps {
   hypothesis: Hypothesis;
   onTitleClick: MouseEventHandler<HTMLSpanElement>;
-  api: { [k: string]: any };
+  api: HypothesisAPIs;
   showExpand: boolean;
   expanded: boolean;
   onToggleExpand: (expand: boolean) => void;
@@ -83,6 +85,9 @@ export function HypothesisBar({
 
   watch();
 
+  const [editTitle, setEditTitle] = useState(false);
+  const titleRef = useDoubleClick({ onDoubleClick: () => setEditTitle(true) });
+
   useEffect(() => {
     const subscription = watch((value) => {
       handleApiUpdate(value);
@@ -113,11 +118,11 @@ export function HypothesisBar({
   return (
     <div
       className={clsx(
-        "relative w-full flex justify-between shadow-lg rounded-8px border focus:outline-none bg-zinc-100 cursor-pointer",
+        "relative w-full flex justify-between shadow-lg rounded-8px border focus:outline-none bg-zinc-100 cursor-pointer space-x-2",
         deleting && "pointer-events-none cursor-not-allowed blur-[2px]"
       )}
     >
-      <div className="flex flex-grow-0 items-center space-x-2 w-full">
+      <div className="flex flex-grow-0 items-center space-x-2 my-1 w-full">
         {showExpand && (
           <button
             className="ml-2 py-2 flex flex-row items-center"
@@ -134,13 +139,24 @@ export function HypothesisBar({
           status={hypothesis?.status}
           updateMutation={api?.updateMutation}
         />
-        <EditableText
-          value={getValues("title")}
-          sharedClassName="font-semibold text-gray-900"
-          onChange={(value: string) => {
-            setValue("title", value);
-          }}
-        />
+        {!editTitle ? (
+          <div className="font-semibold text-gray-900" ref={titleRef}>
+            {getValues("title")}
+          </div>
+        ) : (
+          <EditableText
+            value={getValues("title")}
+            sharedClassName="font-semibold text-gray-900"
+            textAreaClassName="focus:outline-none border-none focus:border-none"
+            onChange={(value: string) => {
+              setValue("title", value);
+              setEditTitle(false);
+            }}
+            isEditableAtStart
+            disableEditOnBlur={false}
+            onClose={() => setEditTitle(false)}
+          />
+        )}
       </div>
       <div className="flex items-center space-x-2">
         <div className="flex flex-row items-center">
@@ -164,6 +180,7 @@ export function HypothesisBar({
             onDisprove={onDisprove}
             setDeleting={setDeleting}
             onCreateHypothesis={onCreateHypothesis}
+            onEditTitle={() => setEditTitle(true)}
           />
         </div>
       </div>

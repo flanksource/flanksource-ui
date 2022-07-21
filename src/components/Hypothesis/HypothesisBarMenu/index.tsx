@@ -12,6 +12,7 @@ interface IProps {
   hypothesis: Hypothesis;
   onCreateHypothesis: () => void;
   onDisprove: () => void;
+  onEditTitle: () => void;
   setDeleting: (state: boolean) => void;
 }
 
@@ -19,6 +20,7 @@ export const HypothesisBarMenu = ({
   hypothesis,
   onCreateHypothesis,
   onDisprove: onDisproveCB,
+  onEditTitle,
   setDeleting
 }: IProps) => {
   const queryClient = useQueryClient();
@@ -82,7 +84,7 @@ export const HypothesisBarMenu = ({
             <span className="pl-2 text-sm block">Add solution</span>
           </Menu.Item>
 
-          <Menu.Item>
+          <Menu.Item onClick={onEditTitle}>
             <BiHide />
             <span className="pl-2 text-sm block">Edit title</span>
           </Menu.Item>
