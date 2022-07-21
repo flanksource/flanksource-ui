@@ -1,9 +1,11 @@
-import { ComponentType, useMemo } from "react";
+import { ComponentType, useCallback, useMemo } from "react";
 import AsyncSelect from "react-select/async";
 import { components, GroupBase, OptionProps } from "react-select";
 import { debounce } from "lodash";
 import { searchConfigs } from "../../api/services/configs";
 import { Props } from "react-select/dist/declarations/src/Select";
+import { useLoader } from "../../hooks";
+import clsx from "clsx";
 
 interface IOption {
   name: string;
@@ -16,21 +18,42 @@ const Option: ComponentType<
   const { data } = props;
   return (
     <components.Option {...props}>
-      <div>
-        {data.name && (
-          <div className="mr-4">
-            <span className="bg-blue-100 rounded mr-1 px-1 text-black">
-              Name:
-            </span>
-            <span>{data.name}</span>
-          </div>
-        )}
-        {data.external_id && (
-          <div>
-            <span className="bg-red-100 rounded mr-1 px-1 text-black">ID:</span>
-            <span>{data.external_id}</span>
-          </div>
-        )}
+      <div
+        className="text-gray-900 cursor-pointer relative p-2 text-sm"
+        id="listbox-option-0"
+        role="option"
+      >
+        <div className="flex flex-col">
+          {data.name && (
+            <div className="flex justify-between">
+              <p className="text-sm">
+                <span className="text-xs font-bold text-gray-400 pr-2 w-12 inline-block">
+                  Name:
+                </span>
+                {data.name}
+              </p>
+            </div>
+          )}
+          {data.external_id && (
+            <p
+              className={clsx(
+                !data.name
+                  ? "text-gray-900 text-sm"
+                  : "text-gray-500 text-xs mt-2"
+              )}
+            >
+              <span
+                className={clsx(
+                  "text-xs font-bold text-gray-400 pr-2 inline-block",
+                  data.external_id && data.name ? "w-12" : "w-6"
+                )}
+              >
+                ID:
+              </span>
+              {data.external_id}
+            </p>
+          )}
+        </div>
       </div>
     </components.Option>
   );
@@ -43,31 +66,47 @@ interface IProps extends Props<IOption, false, GroupBase<IOption>> {
 }
 
 export const ConfigItem = ({ type, value, onSelect, ...props }: IProps) => {
-  const handleSearch = useMemo(
-    () =>
-      debounce(async (input: string) => {
-        const { data } = await searchConfigs(type, input);
+  const { loading, setLoading } = useLoader();
 
-        return (data || []).map((item) => ({
-          ...item,
-          value: item.id,
-          label: item.name || item.external_id
-        }));
-      }, 500),
+  const loadOptions = useCallback(
+    (input: string, callback: (data: any) => void) => {
+      setLoading(true);
+      searchConfigs(type, input)
+        .then(({ data }: any) => {
+          setLoading(false);
+          callback(
+            (data || []).map((item: any) => ({
+              ...item,
+              value: item.id,
+              label: item.name || item.external_id
+            }))
+          );
+        })
+        .catch((err) => {
+          setLoading(false);
+          callback([]);
+        });
+      return;
+    },
     [type]
   );
+
+  const debouncedLoadOptions = useCallback(debounce(loadOptions, 500), [
+    loadOptions
+  ]);
 
   return (
     <AsyncSelect
       key={type} // used to re-render AsyncSelect on update type
       isClearable
       defaultOptions
-      loadOptions={handleSearch}
+      loadOptions={debouncedLoadOptions}
       {...props}
       onChange={onSelect}
       components={{
         Option
       }}
+      isLoading={loading}
     />
   );
 };
