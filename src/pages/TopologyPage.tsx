@@ -37,13 +37,15 @@ export function TopologyPage() {
         toastError(res.error);
         return;
       }
+
+      const data = id ? res.data[0]?.components : res.data;
       let topology = filter(
-        res.data,
+        data,
         (item) =>
           (item.name || item.title) && item.type !== "summary" && item.id !== id
       );
       if (!topology.length) {
-        topology = [res.data.find((x) => x.id === id)];
+        topology = [data.find((x) => x.id === id)];
       }
 
       setTopology(topology);
