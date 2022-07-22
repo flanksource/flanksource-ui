@@ -12,7 +12,6 @@ import { IconBaseProps, IconType } from "react-icons/lib";
 import { VscTypeHierarchy } from "react-icons/vsc";
 import { EvidenceType } from "../../../api/services/evidence";
 import { Hypothesis } from "../../../api/services/hypothesis";
-import useDoubleClick from "../../../hooks/useDoubleClick";
 import { HypothesisAPIs } from "../../../pages/incident/IncidentDetails";
 import { AvatarGroup } from "../../AvatarGroup";
 import { EditableText } from "../../EditableText";
@@ -86,7 +85,6 @@ export function HypothesisBar({
   watch();
 
   const [editTitle, setEditTitle] = useState(false);
-  const titleRef = useDoubleClick({ onDoubleClick: () => setEditTitle(true) });
 
   useEffect(() => {
     const subscription = watch((value) => {
@@ -122,7 +120,10 @@ export function HypothesisBar({
         deleting && "pointer-events-none cursor-not-allowed blur-[2px]"
       )}
     >
-      <div className="flex flex-grow-0 items-center space-x-2 my-1 w-full">
+      <div
+        onClick={() => onToggleExpand && onToggleExpand(!expanded)}
+        className="flex flex-grow-0 items-center space-x-2 my-1 w-full"
+      >
         {showExpand && (
           <button
             className="ml-2 py-2 flex flex-row items-center"
@@ -140,7 +141,7 @@ export function HypothesisBar({
           updateMutation={api?.updateMutation}
         />
         {!editTitle ? (
-          <div className="font-semibold text-gray-900" ref={titleRef}>
+          <div className="font-semibold text-gray-900 w-full">
             {getValues("title")}
           </div>
         ) : (
