@@ -8,6 +8,7 @@
     "scripts/serve-build.js"
   ],
   "dependencies": {
+    "@apidevtools/swagger-parser": "^10.1.0",
     "@headlessui/react": "^0.0.0-insiders.5af3bd4",
     "@heroicons/react": "^1.0.3",
     "@hookform/resolvers": "^2.8.8",
@@ -69,6 +70,7 @@
   "scripts": {
     "dev": "react-scripts start",
     "build": "cross-env TSC_COMPILE_ON_ERROR=true DISABLE_ESLINT_PLUGIN=true NODE_ENV=production react-scripts build",
+    "gen-types": "ts-node --esm src/types/generate-types.ts",
     "serve-build": "gzip -f --keep build/static/*/*.{js,css} && node scripts/serve-build.js",
     "test": "react-scripts test --transformIgnorePatterns \"node_modules/(?!(history))/\"",
     "analyze": "source-map-explorer 'build/static/js/*.js'",
@@ -79,6 +81,9 @@
     "build-storybook": "build-storybook",
     "check:browserslist": "npx browserslist",
     "prepare": "husky install"
+  },
+  "scriptsComments": {
+    "gen-types": "See: https://typestrong.org/ts-node/docs/imports/#native-ecmascript-modules"
   },
   "husky": {
     "hooks": {
@@ -120,12 +125,15 @@
     "eslint-plugin-storybook": "^0.5.12",
     "http-proxy": "^1.18.1",
     "husky": "^8.0.1",
+    "intermock": "^0.2.5",
     "lint-staged": "^12.4.2",
     "node-static": "^0.7.11",
+    "openapi-typescript": "^5.4.1",
     "prettier": "^2.3.2",
     "react-refresh": "^0.11.0",
     "source-map-explorer": "^2.5.2",
     "storybook-addon-mock": "^2.4.1",
+    "ts-node": "^10.9.1",
     "webpack": "^5.73.0"
   },
   "resolutions": {
