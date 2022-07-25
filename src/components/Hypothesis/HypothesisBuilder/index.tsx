@@ -33,6 +33,7 @@ export function HypothesisBuilder({ loadedTree, api }: IProps) {
     <>
       <div className="w-full">
         <HypothesisNode
+          showComments={true}
           node={tree}
           setModalIsOpen={setModalIsOpen}
           setSelectedNode={setSelectedNode}

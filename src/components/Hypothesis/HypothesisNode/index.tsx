@@ -11,6 +11,7 @@ import { HypothesisDetails } from "../HypothesisDetails";
 interface IHypothesisNodeProps {
   hasParent?: boolean;
   node: Hypothesis;
+  showComments: boolean;
   setModalIsOpen: (v: boolean) => void;
   setSelectedNode: (v: Hypothesis) => void;
   setCreateHypothesisModalIsOpen: (v: boolean) => void;
@@ -22,6 +23,7 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
     hasParent,
     node,
     setModalIsOpen,
+    showComments: parentShowComments,
     setSelectedNode,
     setCreateHypothesisModalIsOpen,
     api
@@ -43,7 +45,18 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
   const showAllComments = searchParams.get("comments") === "true";
 
   /* Priority over showAllComments */
-  const [showComments, setShowComments] = useState(showAllComments);
+  const [showComments, doSetShowComments] = useState(
+    isRoot ? true : showAllComments
+  );
+
+  const setShowComments = (showComments: boolean) => {
+    if (isRoot) return;
+    doSetShowComments(showComments);
+  };
+
+  useEffect(() => {
+    setShowComments(parentShowComments);
+  }, [parentShowComments]);
 
   useEffect(() => {
     setShowComments(showAllComments);
@@ -59,9 +72,7 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
   const chldButLast = (node?.children || []).slice(0, -1);
   const chldLast = (node?.children || []).slice(-1)[0];
 
-  const isNotCollapsed = isRoot || (!!node && showComments);
-
-  const showSideLine = !!node?.children?.length && isNotCollapsed;
+  const showSideLine = !!node?.children?.length && showComments;
 
   return (
     <div>
@@ -130,7 +141,7 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
         </div>
       )}
 
-      {isNotCollapsed && (
+      {showComments && (
         <>
           <div
             className={clsx(
@@ -146,6 +157,7 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
                 {chldButLast.map((item) => (
                   <HypothesisNode
                     {...props}
+                    showComments={showComments}
                     api={api}
                     hasParent
                     node={item}
@@ -159,6 +171,7 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
             <div className="pl-5">
               <HypothesisNode
                 {...props}
+                showComments={showComments}
                 api={api}
                 hasParent
                 node={chldLast}
