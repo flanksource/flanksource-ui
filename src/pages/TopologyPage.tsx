@@ -1,4 +1,3 @@
-import { filter } from "lodash";
 import qs from "qs";
 import { useEffect, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
@@ -28,9 +27,6 @@ export function TopologyPage() {
         id,
         status: params.status
       };
-      if (id) {
-        apiParams.depth = 0;
-      }
 
       const res = await getTopology(apiParams);
       if (res.error) {
@@ -38,19 +34,36 @@ export function TopologyPage() {
         return;
       }
 
-      const data = id ? res.data[0]?.components : res.data;
-      let topology = filter(
-        data,
-        (item) =>
-          (item.name || item.title) && item.type !== "summary" && item.id !== id
+      let data;
+
+      if (id) {
+        if (res.data.length > 1) {
+          console.warn("Multiple nodes for same id?");
+          toastError("Response has multiple components for the id.");
+        }
+        data = res.data[0]?.components;
+
+        if (!data) {
+          console.warn("Component doesn't have any child components.");
+          data = res.data;
+        }
+      } else {
+        data = res.data;
+      }
+
+      let topology = data.filter(
+        (item) => (item.name || item.title) && item.id !== id
       );
+
       if (!topology.length) {
         topology = [data.find((x) => x.id === id)];
       }
 
       setTopology(topology);
     } catch (ex) {
-      toastError(ex);
+      if (typeof ex === "string") {
+        toastError(ex);
+      }
     }
     setLoading(false);
   };
