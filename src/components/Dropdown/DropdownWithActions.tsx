@@ -61,7 +61,10 @@ export function DropdownWithActions<T extends IItem>({
     >
       <ComboboxInput
         isFetching={isFetching}
-        onChange={setQuery}
+        onChange={(e) => {
+          setValue(name, { value: null, description: e });
+          setQuery(e);
+        }}
         displayValue={displayValue}
       />
 
