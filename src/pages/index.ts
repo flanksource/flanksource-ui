@@ -7,7 +7,6 @@ import { ConfigListPage } from "./config/config-list";
 import { ConfigDetailsPage } from "./config/config-details";
 import { ConfigChangesPage } from "./config/config-changes";
 import { ConfigDetailsChangesPage } from "./config/config-details-changes";
-import { TimelinePage } from "./timeline-page";
 
 export {
   LogsPage,
@@ -15,7 +14,6 @@ export {
   ConfigListPage,
   ConfigChangesPage,
   ConfigDetailsChangesPage,
-  TimelinePage,
   CanaryPage,
   TopologyPage,
   IncidentDetailsPage,
