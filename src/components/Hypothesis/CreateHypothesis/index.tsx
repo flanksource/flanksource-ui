@@ -1,14 +1,13 @@
-import React from "react";
-import { useForm, Controller } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
-import { EvidenceSection } from "../EvidenceSection";
+import { createComment } from "../../../api/services/comments";
+import { HypothesisStatus } from "../../../api/services/hypothesis";
+import { hypothesisStatusDropdownOptions } from "../../../constants/hypothesisStatusOptions";
 import { useUser } from "../../../context";
 import { Dropdown } from "../../Dropdown";
-import { createComment } from "../../../api/services/comments";
-import { hypothesisStatusDropdownOptions } from "../../../constants/hypothesisStatusOptions";
-import { HypothesisStatus } from "../../../api/services/hypothesis";
 import { Modal } from "../../Modal";
 import { toastError } from "../../Toast/toast";
+import { EvidenceSection } from "../EvidenceSection";
 
 const nextNodePath = {
   default: "root",

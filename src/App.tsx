@@ -1,21 +1,24 @@
 import { FolderIcon, HomeIcon } from "@heroicons/react/outline";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useEffect, useState } from "react";
 import { AiFillHeart } from "react-icons/ai";
 import { ImLifebuoy } from "react-icons/im";
 import { VscJson } from "react-icons/vsc";
-import { QueryClient, QueryClientProvider } from "react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import ReactTooltip from "react-tooltip";
 import { getUser } from "./api/auth";
-import { SidebarLayout, ConfigLayout } from "./components/Layout";
+import { Canary } from "./components";
+import { ErrorBoundary } from "./components/ErrorBoundary";
+import { ConfigLayout, SidebarLayout } from "./components/Layout";
 import { Loading } from "./components/Loading";
 import { TraceView } from "./components/Traces";
 import { AuthContext } from "./context";
 import {
-  ConfigDetailsPage,
-  ConfigDetailsChangesPage,
-  ConfigListPage,
   ConfigChangesPage,
+  ConfigDetailsChangesPage,
+  ConfigDetailsPage,
+  ConfigListPage,
   IncidentDetailsPage,
   IncidentListPage,
   LogsPage,
@@ -24,13 +27,11 @@ import {
 } from "./pages";
 import { DropdownDemoPage } from "./pages/Examples/dropdown-demo";
 import { ModalPage } from "./pages/Examples/Modal/modal-page";
-import { TypologyDropdownDemo } from "./pages/Examples/topology-dropdown";
 import { RsDemoPage } from "./pages/Examples/rs-demo";
+import { TypologyDropdownDemo } from "./pages/Examples/topology-dropdown";
 import { TopologyPage as ExamplesTopologyPage } from "./pages/Examples/Topology/topology-page";
 import { TopologySelectorModalPage } from "./pages/Examples/TopologySelectorModalPage/TopologySelectorModalPage";
 import { HealthPage } from "./pages/health";
-import { Canary } from "./components";
-import { ErrorBoundary } from "./components/ErrorBoundary";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -224,6 +225,7 @@ export function App() {
           <ReactTooltip />
           <IncidentManagerRoutes sidebar={sidebar} />
         </AuthContext.Provider>
+        <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </BrowserRouter>
   );

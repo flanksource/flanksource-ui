@@ -1,6 +1,7 @@
-import React, { useMemo, useCallback } from "react";
+import { useCallback, useMemo } from "react";
+import { UseMutationResult } from "@tanstack/react-query";
 import { Link, useParams } from "react-router-dom";
-
+import { EvidenceType } from "../../api/services/evidence";
 import {
   createHypothesis,
   deleteHypothesis,
@@ -13,20 +14,29 @@ import {
   IncidentStatus,
   updateIncident
 } from "../../api/services/incident";
-import { EvidenceType } from "../../api/services/evidence";
+import { Changelog } from "../../components/Change";
 import { HypothesisBuilder } from "../../components/Hypothesis/HypothesisBuilder";
+import { IncidentDetails } from "../../components/IncidentDetails";
 import { SearchLayout } from "../../components/Layout";
 import { Loading } from "../../components/Loading";
-import { Changelog } from "../../components/Change";
-import { useIncidentQuery } from "../../components/query-hooks/useIncidentQuery";
-import { useUpdateHypothesisMutation } from "../../components/mutations/useUpdateHypothesisMutation";
 import { useCreateHypothesisMutation } from "../../components/mutations/useCreateHypothesisMutation";
-import { IncidentDetails } from "../../components/IncidentDetails";
+import { useUpdateHypothesisMutation } from "../../components/mutations/useUpdateHypothesisMutation";
+import { useIncidentQuery } from "../../components/query-hooks/useIncidentQuery";
 import { CardSize, TopologyCard } from "../../components/TopologyCard";
 
 export type TreeNode<T> = T & {
   children?: T[];
 };
+
+export interface HypothesisAPIs {
+  incidentId: string | undefined;
+  create: Function;
+  delete: Function;
+  deleteBulk: Function;
+  update: Function;
+  updateMutation: UseMutationResult;
+  createMutation: UseMutationResult;
+}
 
 interface Tree {
   [k: string]: TreeNode<Hypothesis>;

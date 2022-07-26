@@ -6,6 +6,19 @@ const ACTIONS_ID = {
   CLOSE_EDITABLE_TEXT: "closeEditableText"
 };
 
+interface IProps {
+  value: string;
+  textAreaClassName?: string;
+  buttonClassName?: string;
+  sharedClassName?: string;
+  placeholder?: string;
+  isEditableAtStart?: boolean;
+  disableEditOnBlur?: boolean;
+  append?: React.ReactNode;
+  onChange: (v: string) => void;
+  onClose?: () => void;
+}
+
 export function EditableText({
   value,
   textAreaClassName,
@@ -14,35 +27,51 @@ export function EditableText({
   placeholder,
   append,
   onChange,
+  onClose,
+  isEditableAtStart = false,
+  disableEditOnBlur = true,
   ...rest
-}) {
+}: IProps) {
   const [localValue, setLocalValue] = useState(value);
-  const [editMode, setEditMode] = useState(false);
-  const inputRef = useRef();
+  const [editMode, setEditMode] = useState(isEditableAtStart);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const closeFnRef = useRef(onClose);
 
-  const onBlurTextArea = useCallback((e) => {
-    if (
-      !e?.relatedTarget?.id ||
-      !Object.values(ACTIONS_ID).includes(e.relatedTarget.id)
-    ) {
-      setEditMode(false);
-    }
-  }, []);
+  const onBlurTextArea = useCallback(
+    (e: React.FocusEvent<HTMLTextAreaElement>) => {
+      if (
+        disableEditOnBlur &&
+        (!e?.relatedTarget?.id ||
+          !Object.values(ACTIONS_ID).includes(e.relatedTarget.id))
+      ) {
+        setEditMode(false);
+      }
+    },
+    [disableEditOnBlur]
+  );
 
   useEffect(() => {
-    if (editMode) {
-      inputRef.current.focus();
-      const val = inputRef.current.value;
-      inputRef.current.value = "";
-      inputRef.current.value = val;
-    }
+    closeFnRef.current = onClose;
+  }, [onClose]);
+
+  useEffect(() => {
+    if (!editMode || !inputRef.current) return;
+
+    inputRef.current.focus();
+    const val = inputRef.current.value;
+    inputRef.current.value = "";
+    inputRef.current.value = val;
   }, [editMode]);
 
   useEffect(() => {
     setLocalValue(value);
   }, [value]);
 
-  const onChangeText = useCallback((e) => setLocalValue(e.target.value), []);
+  const onChangeText = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) =>
+      setLocalValue(e.target.value),
+    []
+  );
   const onClickCheck = useCallback(() => {
     onChange(localValue);
     setEditMode(false);
@@ -51,6 +80,7 @@ export function EditableText({
   const onClickClose = useCallback(() => {
     setLocalValue(value);
     setEditMode(false);
+    closeFnRef.current && closeFnRef.current();
   }, [value]);
 
   return (

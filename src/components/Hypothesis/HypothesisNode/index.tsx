@@ -1,47 +1,21 @@
-import clsx from "clsx";
-import { BsPlusLg } from "react-icons/bs";
 import { Switch } from "@headlessui/react";
-import { useSearchParams } from "react-router-dom";
-
-import { HypothesisBar } from "../HypothesisBar";
-import { HypothesisStatus } from "../../../api/services/hypothesis";
-import { HypothesisDetails } from "../HypothesisDetails";
+import clsx from "clsx";
 import { useEffect, useState } from "react";
-
-const propsByType = (type: string) => {
-  if (!type) {
-    return {
-      title: "Add main issue",
-      noResultsTitle: "No root issue created yet."
-    };
-  }
-  if (type === "root") {
-    return {
-      title: "Add new issue",
-      noResultsTitle: "No issues created yet"
-    };
-  }
-  if (type === "factor") {
-    return {
-      title: "Add new potential solution",
-      noResultsTitle: "No potential solutions created yet"
-    };
-  }
-
-  return {};
-};
-
-interface IHypothesisNode {
-  [k: string]: any;
-}
+import { BsPlusLg } from "react-icons/bs";
+import { useSearchParams } from "react-router-dom";
+import { Hypothesis, HypothesisStatus } from "../../../api/services/hypothesis";
+import { HypothesisAPIs } from "../../../pages/incident/IncidentDetails";
+import { HypothesisBar } from "../HypothesisBar";
+import { HypothesisDetails } from "../HypothesisDetails";
 
 interface IHypothesisNodeProps {
-  hasParent: boolean;
-  node: IHypothesisNode;
+  hasParent?: boolean;
+  node: Hypothesis;
+  showComments: boolean;
   setModalIsOpen: (v: boolean) => void;
-  setSelectNode: (v: IHypothesisNode) => void;
+  setSelectedNode: (v: Hypothesis) => void;
   setCreateHypothesisModalIsOpen: (v: boolean) => void;
-  api: { [k: string]: any };
+  api: HypothesisAPIs;
 }
 
 export const HypothesisNode = (props: IHypothesisNodeProps) => {
@@ -49,6 +23,7 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
     hasParent,
     node,
     setModalIsOpen,
+    showComments: parentShowComments,
     setSelectedNode,
     setCreateHypothesisModalIsOpen,
     api
@@ -67,21 +42,28 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
     setCreateHypothesisModalIsOpen(true);
   };
 
-  const showAllComments = searchParams.get("comments") === "true";
+  const [showComments, doSetShowComments] = useState(parentShowComments);
 
-  /* Priority over showAllComments */
-  const [showComments, setShowComments] = useState(showAllComments);
+  const setShowComments = (showComments: boolean) => {
+    doSetShowComments(showComments);
+  };
 
   useEffect(() => {
-    setShowComments(showAllComments);
-  }, [showAllComments]);
+    setShowComments(parentShowComments);
+  }, [parentShowComments]);
 
+  const showAllComments = searchParams.get("comments") === "true";
   const toggleComment = () => {
     const newParams = new URLSearchParams(
       showAllComments ? {} : { comments: "true" }
     );
     setSearchParams(newParams);
   };
+
+  const chldButLast = (node?.children || []).slice(0, -1);
+  const chldLast = (node?.children || []).slice(-1)[0];
+
+  const showSideLine = !!node?.children?.length && (isRoot || showComments);
 
   return (
     <div>
@@ -98,7 +80,9 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
             </button>
           </div>
           <div className="flex items-center">
-            <div className="pr-4">Show Comments</div>
+            <div className="pr-4">
+              {showAllComments ? "Collapse" : "Expand"} All
+            </div>
             <Switch
               checked={true}
               onChange={toggleComment}
@@ -120,48 +104,53 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
         </div>
       )}
 
-      <div
-        className={clsx(
-          "relative before:content-[''] before:absolute before:border-l-2 before:border-gray-200 before:left-2 before:h-full before:z-[-1]"
-        )}
-      >
-        {Boolean(node) && (
+      {Boolean(node) && (
+        <div
+          className={clsx(
+            "relative pb-4",
+            hasParent &&
+              "before:content-[''] before:border-gray-200 before:absolute before:w-6 before:h-8 before:-ml-3 before:border-l-2 before:border-b-2 before:rounded-bl-2xl before:z-[-1]",
+            !!showSideLine &&
+              "relative after:content-[''] after:absolute after:border-l-2 after:border-gray-200 after:left-2 after:h-full after:z-[-1]"
+          )}
+        >
+          <HypothesisBar
+            hypothesis={node}
+            onTitleClick={handleOpenModal}
+            api={api}
+            showExpand={!isRoot}
+            expanded={showComments}
+            onToggleExpand={(show) => setShowComments(show)}
+            onCreateHypothesis={handlerOpenCreateHypothesisModal}
+            onDisprove={() => {
+              api.updateMutation.mutate({
+                id: node.id,
+                params: {
+                  status: HypothesisStatus.Disproven
+                }
+              });
+            }}
+          />
+        </div>
+      )}
+
+      {(isRoot || showComments) && (
+        <>
           <div
             className={clsx(
-              "relative",
-              hasParent &&
-                "before:content-[''] before:border-gray-200 before:z-0 before:absolute before:w-6 before:h-8 before:-ml-3 before:border-l-2 before:border-b-2 before:rounded-bl-2xl before:z-[-1]"
+              !!showSideLine &&
+                "relative before:content-[''] before:absolute before:border-l-2 before:border-gray-200 before:left-2 before:h-full before:z-[-1]"
             )}
           >
-            <HypothesisBar
-              hypothesis={node}
-              onTitleClick={handleOpenModal}
-              api={api}
-              showExpand={!isRoot}
-              expanded={showComments}
-              onToggleExpand={(show) => setShowComments(show)}
-              onDisprove={() => {
-                props.api.updateMutation.mutate({
-                  id: node.id,
-                  params: {
-                    status: HypothesisStatus.Disproven
-                  }
-                });
-              }}
-            />
-          </div>
-        )}
-
-        <div className="mb-7">
-          {(isRoot || (!!node && showComments)) && (
-            <>
-              <div className="px-5">
-                <HypothesisDetails node={node} api={api} />
-              </div>
-              <div className={clsx("mt-10", isRoot ? "pl-5" : "pl-7")}>
-                {(node?.children || []).map((item) => (
+            <div className="px-5">
+              <HypothesisDetails node={node} api={api} />
+            </div>
+            {!!chldButLast.length && (
+              <div className="pt-5 pl-5">
+                {chldButLast.map((item) => (
                   <HypothesisNode
                     {...props}
+                    showComments={showComments}
                     api={api}
                     hasParent
                     node={item}
@@ -169,10 +158,22 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
                   />
                 ))}
               </div>
-            </>
+            )}
+          </div>
+          {!!chldLast && (
+            <div className="pl-5">
+              <HypothesisNode
+                {...props}
+                showComments={showComments}
+                api={api}
+                hasParent
+                node={chldLast}
+                key={chldLast.id}
+              />
+            </div>
           )}
-        </div>
-      </div>
+        </>
+      )}
     </div>
   );
 };
