@@ -30,7 +30,10 @@ const ConfigItemDropDown = ({ type }: { type: string }) => {
         type={type}
         value={selectedItem}
         autoFetch={true}
-        onSelect={(item) => setSelectedItem(item)}
+        onSelect={(item) => {
+          setSelectedItem(item);
+          setDependentSelectedItem(null);
+        }}
         dependentConfigItems={[
           {
             className: "w-96 mt-2",
