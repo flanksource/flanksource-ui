@@ -136,12 +136,13 @@ export const ConfigItem = ({
       path: itemsPath as string,
       json: data
     });
-    const items = response?.[0].map((item: any) => {
-      return {
-        name: JSONPath({ path: namePath as string, json: item })?.[0],
-        value: JSONPath({ path: valuePath as string, json: item })?.[0]
-      };
-    });
+    const items =
+      response?.[0]?.map((item: any) => {
+        return {
+          name: JSONPath({ path: namePath as string, json: item })?.[0],
+          value: JSONPath({ path: valuePath as string, json: item })?.[0]
+        };
+      }) || [];
     setOptions(items);
   }, [data]);
 
@@ -180,8 +181,10 @@ export const ConfigItem = ({
           isLoading={loading}
         />
         {selectedOption &&
-          dependentConfigItems.map((configItem) => {
-            return <ConfigItem {...configItem} data={dependentOptions} />;
+          dependentConfigItems.map((configItem, index) => {
+            return (
+              <ConfigItem key={index} {...configItem} data={dependentOptions} />
+            );
           })}
       </>
     );
@@ -201,8 +204,10 @@ export const ConfigItem = ({
           getOptionValue={(item: any) => item.value}
         />
         {selectedOption &&
-          dependentConfigItems.map((configItem) => {
-            return <ConfigItem {...configItem} data={dependentOptions} />;
+          dependentConfigItems.map((configItem, index) => {
+            return (
+              <ConfigItem key={index} {...configItem} data={dependentOptions} />
+            );
           })}
       </>
     );
