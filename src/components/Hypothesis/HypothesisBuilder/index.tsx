@@ -7,6 +7,7 @@ import { HypothesisDetails } from "../HypothesisDetails";
 import { CreateHypothesis } from "../CreateHypothesis";
 import { HypothesisAPIs } from "../../../pages/incident/IncidentDetails";
 import { Hypothesis } from "../../../api/services/hypothesis";
+import { useSearchParams } from "react-router-dom";
 
 interface IProps {
   loadedTree: unknown;
@@ -15,11 +16,14 @@ interface IProps {
 }
 
 export function HypothesisBuilder({ loadedTree, api }: IProps) {
+  const [searchParams] = useSearchParams();
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedNode, setSelectedNode] = useState<Hypothesis | null>(null);
   const [createHypothesisModalIsOpen, setCreateHypothesisModalIsOpen] =
     useState(false);
   const [tree, setTree] = useState(null);
+
+  const showAllComments = searchParams.get("comments") === "true";
 
   useEffect(() => {
     setTree(loadedTree);
@@ -33,7 +37,7 @@ export function HypothesisBuilder({ loadedTree, api }: IProps) {
     <>
       <div className="w-full">
         <HypothesisNode
-          showComments={true}
+          showComments={showAllComments}
           node={tree}
           setModalIsOpen={setModalIsOpen}
           setSelectedNode={setSelectedNode}

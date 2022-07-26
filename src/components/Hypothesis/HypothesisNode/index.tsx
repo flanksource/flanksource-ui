@@ -42,15 +42,9 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
     setCreateHypothesisModalIsOpen(true);
   };
 
-  const showAllComments = searchParams.get("comments") === "true";
-
-  /* Priority over showAllComments */
-  const [showComments, doSetShowComments] = useState(
-    isRoot ? true : showAllComments
-  );
+  const [showComments, doSetShowComments] = useState(parentShowComments);
 
   const setShowComments = (showComments: boolean) => {
-    if (isRoot) return;
     doSetShowComments(showComments);
   };
 
@@ -58,10 +52,7 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
     setShowComments(parentShowComments);
   }, [parentShowComments]);
 
-  useEffect(() => {
-    setShowComments(showAllComments);
-  }, [showAllComments]);
-
+  const showAllComments = searchParams.get("comments") === "true";
   const toggleComment = () => {
     const newParams = new URLSearchParams(
       showAllComments ? {} : { comments: "true" }
@@ -72,7 +63,7 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
   const chldButLast = (node?.children || []).slice(0, -1);
   const chldLast = (node?.children || []).slice(-1)[0];
 
-  const showSideLine = !!node?.children?.length && showComments;
+  const showSideLine = !!node?.children?.length && (isRoot || showComments);
 
   return (
     <div>
@@ -143,7 +134,7 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
         </div>
       )}
 
-      {showComments && (
+      {(isRoot || showComments) && (
         <>
           <div
             className={clsx(
