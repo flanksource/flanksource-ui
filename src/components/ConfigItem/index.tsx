@@ -1,16 +1,31 @@
-import { ComponentType, useCallback, useMemo } from "react";
+import {
+  ComponentType,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState
+} from "react";
 import AsyncSelect from "react-select/async";
 import { components, GroupBase, OptionProps } from "react-select";
 import { debounce } from "lodash";
-import { searchConfigs } from "../../api/services/configs";
-import { Props } from "react-select/dist/declarations/src/Select";
+import { getConfig, searchConfigs } from "../../api/services/configs";
+import Select, { Props } from "react-select";
 import { useLoader } from "../../hooks";
 import clsx from "clsx";
+import { JSONPath } from "jsonpath-plus";
 
 interface IOption {
   name: string;
   external_id: string;
 }
+
+export const SingleValue = ({ ...props }) => {
+  return (
+    <components.SingleValue {...props}>
+      <div className="flex flex-wrap">{props.data.name}</div>
+    </components.SingleValue>
+  );
+};
 
 const Option: ComponentType<
   OptionProps<IOption, false, GroupBase<IOption>>
@@ -62,11 +77,32 @@ const Option: ComponentType<
 interface IProps extends Props<IOption, false, GroupBase<IOption>> {
   type: string;
   value: any;
+  autoFetch: boolean;
+  data?: any[];
+  itemsPath?: string;
+  namePath?: string;
+  valuePath?: string;
+  dependentConfigItems?: IProps[];
+  className?: string;
   onSelect: (arg: any) => void;
 }
 
-export const ConfigItem = ({ type, value, onSelect, ...props }: IProps) => {
+export const ConfigItem = ({
+  type,
+  value,
+  onSelect,
+  data,
+  itemsPath,
+  namePath,
+  valuePath,
+  dependentConfigItems = [],
+  autoFetch,
+  ...props
+}: IProps) => {
   const { loading, setLoading } = useLoader();
+  const [options, setOptions] = useState([]);
+  const [selectedOption, setSelectedOption] = useState(null);
+  const [dependentOptions, sentDependentOptions] = useState<any>(null);
 
   const loadOptions = useCallback(
     (input: string, callback: (data: any) => void) => {
@@ -91,22 +127,84 @@ export const ConfigItem = ({ type, value, onSelect, ...props }: IProps) => {
     [type]
   );
 
+  useEffect(() => {
+    if (!data) {
+      setOptions([]);
+      return;
+    }
+    const response = JSONPath({
+      path: itemsPath as string,
+      json: data
+    });
+    const items = response?.[0].map((item: any) => {
+      return {
+        name: JSONPath({ path: namePath as string, json: item })?.[0],
+        value: JSONPath({ path: valuePath as string, json: item })?.[0]
+      };
+    });
+    setOptions(items);
+  }, [data]);
+
+  const getConfigDetails = async (id: string) => {
+    sentDependentOptions(null);
+    if (!id) {
+      return;
+    }
+    const response = await getConfig(id);
+    if (response?.data) {
+      sentDependentOptions(response.data[0]);
+    }
+  };
+
   const debouncedLoadOptions = useCallback(debounce(loadOptions, 500), [
     loadOptions
   ]);
 
-  return (
-    <AsyncSelect
-      key={type} // used to re-render AsyncSelect on update type
-      isClearable
-      defaultOptions
-      loadOptions={debouncedLoadOptions}
-      {...props}
-      onChange={onSelect}
-      components={{
-        Option
-      }}
-      isLoading={loading}
-    />
-  );
+  if (autoFetch) {
+    return (
+      <>
+        <AsyncSelect
+          key={type} // used to re-render AsyncSelect on update type
+          isClearable
+          defaultOptions
+          loadOptions={debouncedLoadOptions}
+          {...props}
+          onChange={(e: any) => {
+            onSelect(e);
+            setSelectedOption(e);
+            getConfigDetails(e?.value);
+          }}
+          components={{
+            Option
+          }}
+          isLoading={loading}
+        />
+        {selectedOption &&
+          dependentConfigItems.map((configItem) => {
+            return <ConfigItem {...configItem} data={dependentOptions} />;
+          })}
+      </>
+    );
+  } else {
+    return (
+      <>
+        <Select
+          options={options}
+          isClearable
+          {...props}
+          onChange={onSelect}
+          components={{
+            Option,
+            SingleValue
+          }}
+          defaultValue={value}
+          getOptionValue={(item: any) => item.value}
+        />
+        {selectedOption &&
+          dependentConfigItems.map((configItem) => {
+            return <ConfigItem {...configItem} data={dependentOptions} />;
+          })}
+      </>
+    );
+  }
 };

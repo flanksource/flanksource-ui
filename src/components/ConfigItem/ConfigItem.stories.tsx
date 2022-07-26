@@ -2,15 +2,30 @@ import { useState } from "react";
 import { ConfigItem } from "./index";
 
 const ConfigItemDropDown = ({ type }: { type: string }) => {
-  console.log(type);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [dependentSelectedItem, setDependentSelectedItem] = useState(null);
   return (
-    <div className="flex">
+    <div className="flex flex-col">
       <ConfigItem
         className="w-96"
         type={type}
         value={selectedItem}
+        autoFetch={true}
         onSelect={(item) => setSelectedItem(item)}
+        dependentConfigItems={[
+          {
+            className: "w-96 mt-2",
+            type: "esb",
+            value: dependentSelectedItem,
+            autoFetch: false,
+            itemsPath: "$..block_device_mappings",
+            namePath: "$.DeviceName",
+            valuePath: "$.Ebs.VolumeId",
+            onSelect: (item: any) => {
+              setDependentSelectedItem(item);
+            }
+          }
+        ]}
       />
     </div>
   );
