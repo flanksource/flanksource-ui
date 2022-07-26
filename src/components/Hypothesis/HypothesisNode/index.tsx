@@ -89,7 +89,9 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
             </button>
           </div>
           <div className="flex items-center">
-            <div className="pr-4">Show Comments</div>
+            <div className="pr-4">
+              {showAllComments ? "Collapse" : "Expand"} All
+            </div>
             <Switch
               checked={true}
               onChange={toggleComment}
