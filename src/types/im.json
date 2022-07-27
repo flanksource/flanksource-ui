@@ -1,0 +1,1400 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "standard public schema",
+    "title": "PostgREST API",
+    "version": "9.0.1"
+  },
+  "host": "localhost:8080",
+  "basePath": "/db",
+  "schemes": ["http"],
+  "consumes": [
+    "application/json",
+    "application/vnd.pgrst.object+json",
+    "text/csv"
+  ],
+  "produces": [
+    "application/json",
+    "application/vnd.pgrst.object+json",
+    "text/csv"
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "tags": ["Introspection"],
+        "summary": "OpenAPI description (this document)",
+        "produces": ["application/openapi+json", "application/json"],
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/comment": {
+      "get": {
+        "tags": ["comment"],
+        "parameters": [
+          { "$ref": "#/parameters/rowFilter.comment.id" },
+          { "$ref": "#/parameters/rowFilter.comment.created_by" },
+          { "$ref": "#/parameters/rowFilter.comment.comment" },
+          { "$ref": "#/parameters/rowFilter.comment.incident_id" },
+          { "$ref": "#/parameters/rowFilter.comment.hypothesis_id" },
+          { "$ref": "#/parameters/rowFilter.comment.created_at" },
+          { "$ref": "#/parameters/rowFilter.comment.updated_at" },
+          { "$ref": "#/parameters/select" },
+          { "$ref": "#/parameters/order" },
+          { "$ref": "#/parameters/range" },
+          { "$ref": "#/parameters/rangeUnit" },
+          { "$ref": "#/parameters/offset" },
+          { "$ref": "#/parameters/limit" },
+          { "$ref": "#/parameters/preferCount" }
+        ],
+        "responses": {
+          "206": { "description": "Partial Content" },
+          "200": {
+            "description": "OK",
+            "schema": {
+              "items": { "$ref": "#/definitions/comment" },
+              "type": "array"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["comment"],
+        "parameters": [
+          { "$ref": "#/parameters/body.comment" },
+          { "$ref": "#/parameters/select" },
+          { "$ref": "#/parameters/preferReturn" }
+        ],
+        "responses": { "201": { "description": "Created" } }
+      },
+      "delete": {
+        "tags": ["comment"],
+        "parameters": [
+          { "$ref": "#/parameters/rowFilter.comment.id" },
+          { "$ref": "#/parameters/rowFilter.comment.created_by" },
+          { "$ref": "#/parameters/rowFilter.comment.comment" },
+          { "$ref": "#/parameters/rowFilter.comment.incident_id" },
+          { "$ref": "#/parameters/rowFilter.comment.hypothesis_id" },
+          { "$ref": "#/parameters/rowFilter.comment.created_at" },
+          { "$ref": "#/parameters/rowFilter.comment.updated_at" },
+          { "$ref": "#/parameters/preferReturn" }
+        ],
+        "responses": { "204": { "description": "No Content" } }
+      },
+      "patch": {
+        "tags": ["comment"],
+        "parameters": [
+          { "$ref": "#/parameters/rowFilter.comment.id" },
+          { "$ref": "#/parameters/rowFilter.comment.created_by" },
+          { "$ref": "#/parameters/rowFilter.comment.comment" },
+          { "$ref": "#/parameters/rowFilter.comment.incident_id" },
+          { "$ref": "#/parameters/rowFilter.comment.hypothesis_id" },
+          { "$ref": "#/parameters/rowFilter.comment.created_at" },
+          { "$ref": "#/parameters/rowFilter.comment.updated_at" },
+          { "$ref": "#/parameters/body.comment" },
+          { "$ref": "#/parameters/preferReturn" }
+        ],
+        "responses": { "204": { "description": "No Content" } }
+      }
+    },
+    "/evidence": {
+      "get": {
+        "tags": ["evidence"],
+        "parameters": [
+          { "$ref": "#/parameters/rowFilter.evidence.id" },
+          { "$ref": "#/parameters/rowFilter.evidence.description" },
+          { "$ref": "#/parameters/rowFilter.evidence.hypothesis_id" },
+          { "$ref": "#/parameters/rowFilter.evidence.created_by" },
+          { "$ref": "#/parameters/rowFilter.evidence.type" },
+          { "$ref": "#/parameters/rowFilter.evidence.evidence" },
+          { "$ref": "#/parameters/rowFilter.evidence.properties" },
+          { "$ref": "#/parameters/rowFilter.evidence.created_at" },
+          { "$ref": "#/parameters/rowFilter.evidence.updated_at" },
+          { "$ref": "#/parameters/select" },
+          { "$ref": "#/parameters/order" },
+          { "$ref": "#/parameters/range" },
+          { "$ref": "#/parameters/rangeUnit" },
+          { "$ref": "#/parameters/offset" },
+          { "$ref": "#/parameters/limit" },
+          { "$ref": "#/parameters/preferCount" }
+        ],
+        "responses": {
+          "206": { "description": "Partial Content" },
+          "200": {
+            "description": "OK",
+            "schema": {
+              "items": { "$ref": "#/definitions/evidence" },
+              "type": "array"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["evidence"],
+        "parameters": [
+          { "$ref": "#/parameters/body.evidence" },
+          { "$ref": "#/parameters/select" },
+          { "$ref": "#/parameters/preferReturn" }
+        ],
+        "responses": { "201": { "description": "Created" } }
+      },
+      "delete": {
+        "tags": ["evidence"],
+        "parameters": [
+          { "$ref": "#/parameters/rowFilter.evidence.id" },
+          { "$ref": "#/parameters/rowFilter.evidence.description" },
+          { "$ref": "#/parameters/rowFilter.evidence.hypothesis_id" },
+          { "$ref": "#/parameters/rowFilter.evidence.created_by" },
+          { "$ref": "#/parameters/rowFilter.evidence.type" },
+          { "$ref": "#/parameters/rowFilter.evidence.evidence" },
+          { "$ref": "#/parameters/rowFilter.evidence.properties" },
+          { "$ref": "#/parameters/rowFilter.evidence.created_at" },
+          { "$ref": "#/parameters/rowFilter.evidence.updated_at" },
+          { "$ref": "#/parameters/preferReturn" }
+        ],
+        "responses": { "204": { "description": "No Content" } }
+      },
+      "patch": {
+        "tags": ["evidence"],
+        "parameters": [
+          { "$ref": "#/parameters/rowFilter.evidence.id" },
+          { "$ref": "#/parameters/rowFilter.evidence.description" },
+          { "$ref": "#/parameters/rowFilter.evidence.hypothesis_id" },
+          { "$ref": "#/parameters/rowFilter.evidence.created_by" },
+          { "$ref": "#/parameters/rowFilter.evidence.type" },
+          { "$ref": "#/parameters/rowFilter.evidence.evidence" },
+          { "$ref": "#/parameters/rowFilter.evidence.properties" },
+          { "$ref": "#/parameters/rowFilter.evidence.created_at" },
+          { "$ref": "#/parameters/rowFilter.evidence.updated_at" },
+          { "$ref": "#/parameters/body.evidence" },
+          { "$ref": "#/parameters/preferReturn" }
+        ],
+        "responses": { "204": { "description": "No Content" } }
+      }
+    },
+    "/goose_db_version": {
+      "get": {
+        "tags": ["goose_db_version"],
+        "parameters": [
+          { "$ref": "#/parameters/rowFilter.goose_db_version.id" },
+          { "$ref": "#/parameters/rowFilter.goose_db_version.version_id" },
+          { "$ref": "#/parameters/rowFilter.goose_db_version.is_applied" },
+          { "$ref": "#/parameters/rowFilter.goose_db_version.tstamp" },
+          { "$ref": "#/parameters/select" },
+          { "$ref": "#/parameters/order" },
+          { "$ref": "#/parameters/range" },
+          { "$ref": "#/parameters/rangeUnit" },
+          { "$ref": "#/parameters/offset" },
+          { "$ref": "#/parameters/limit" },
+          { "$ref": "#/parameters/preferCount" }
+        ],
+        "responses": {
+          "206": { "description": "Partial Content" },
+          "200": {
+            "description": "OK",
+            "schema": {
+              "items": { "$ref": "#/definitions/goose_db_version" },
+              "type": "array"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["goose_db_version"],
+        "parameters": [
+          { "$ref": "#/parameters/body.goose_db_version" },
+          { "$ref": "#/parameters/select" },
+          { "$ref": "#/parameters/preferReturn" }
+        ],
+        "responses": { "201": { "description": "Created" } }
+      },
+      "delete": {
+        "tags": ["goose_db_version"],
+        "parameters": [
+          { "$ref": "#/parameters/rowFilter.goose_db_version.id" },
+          { "$ref": "#/parameters/rowFilter.goose_db_version.version_id" },
+          { "$ref": "#/parameters/rowFilter.goose_db_version.is_applied" },
+          { "$ref": "#/parameters/rowFilter.goose_db_version.tstamp" },
+          { "$ref": "#/parameters/preferReturn" }
+        ],
+        "responses": { "204": { "description": "No Content" } }
+      },
+      "patch": {
+        "tags": ["goose_db_version"],
+        "parameters": [
+          { "$ref": "#/parameters/rowFilter.goose_db_version.id" },
+          { "$ref": "#/parameters/rowFilter.goose_db_version.version_id" },
+          { "$ref": "#/parameters/rowFilter.goose_db_version.is_applied" },
+          { "$ref": "#/parameters/rowFilter.goose_db_version.tstamp" },
+          { "$ref": "#/parameters/body.goose_db_version" },
+          { "$ref": "#/parameters/preferReturn" }
+        ],
+        "responses": { "204": { "description": "No Content" } }
+      }
+    },
+    "/hypothesis": {
+      "get": {
+        "tags": ["hypothesis"],
+        "parameters": [
+          { "$ref": "#/parameters/rowFilter.hypothesis.id" },
+          { "$ref": "#/parameters/rowFilter.hypothesis.created_by" },
+          { "$ref": "#/parameters/rowFilter.hypothesis.incident_id" },
+          { "$ref": "#/parameters/rowFilter.hypothesis.parent_id" },
+          { "$ref": "#/parameters/rowFilter.hypothesis.type" },
+          { "$ref": "#/parameters/rowFilter.hypothesis.title" },
+          { "$ref": "#/parameters/rowFilter.hypothesis.status" },
+          { "$ref": "#/parameters/rowFilter.hypothesis.created_at" },
+          { "$ref": "#/parameters/rowFilter.hypothesis.updated_at" },
+          { "$ref": "#/parameters/select" },
+          { "$ref": "#/parameters/order" },
+          { "$ref": "#/parameters/range" },
+          { "$ref": "#/parameters/rangeUnit" },
+          { "$ref": "#/parameters/offset" },
+          { "$ref": "#/parameters/limit" },
+          { "$ref": "#/parameters/preferCount" }
+        ],
+        "responses": {
+          "206": { "description": "Partial Content" },
+          "200": {
+            "description": "OK",
+            "schema": {
+              "items": { "$ref": "#/definitions/hypothesis" },
+              "type": "array"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["hypothesis"],
+        "parameters": [
+          { "$ref": "#/parameters/body.hypothesis" },
+          { "$ref": "#/parameters/select" },
+          { "$ref": "#/parameters/preferReturn" }
+        ],
+        "responses": { "201": { "description": "Created" } }
+      },
+      "delete": {
+        "tags": ["hypothesis"],
+        "parameters": [
+          { "$ref": "#/parameters/rowFilter.hypothesis.id" },
+          { "$ref": "#/parameters/rowFilter.hypothesis.created_by" },
+          { "$ref": "#/parameters/rowFilter.hypothesis.incident_id" },
+          { "$ref": "#/parameters/rowFilter.hypothesis.parent_id" },
+          { "$ref": "#/parameters/rowFilter.hypothesis.type" },
+          { "$ref": "#/parameters/rowFilter.hypothesis.title" },
+          { "$ref": "#/parameters/rowFilter.hypothesis.status" },
+          { "$ref": "#/parameters/rowFilter.hypothesis.created_at" },
+          { "$ref": "#/parameters/rowFilter.hypothesis.updated_at" },
+          { "$ref": "#/parameters/preferReturn" }
+        ],
+        "responses": { "204": { "description": "No Content" } }
+      },
+      "patch": {
+        "tags": ["hypothesis"],
+        "parameters": [
+          { "$ref": "#/parameters/rowFilter.hypothesis.id" },
+          { "$ref": "#/parameters/rowFilter.hypothesis.created_by" },
+          { "$ref": "#/parameters/rowFilter.hypothesis.incident_id" },
+          { "$ref": "#/parameters/rowFilter.hypothesis.parent_id" },
+          { "$ref": "#/parameters/rowFilter.hypothesis.type" },
+          { "$ref": "#/parameters/rowFilter.hypothesis.title" },
+          { "$ref": "#/parameters/rowFilter.hypothesis.status" },
+          { "$ref": "#/parameters/rowFilter.hypothesis.created_at" },
+          { "$ref": "#/parameters/rowFilter.hypothesis.updated_at" },
+          { "$ref": "#/parameters/body.hypothesis" },
+          { "$ref": "#/parameters/preferReturn" }
+        ],
+        "responses": { "204": { "description": "No Content" } }
+      }
+    },
+    "/incident": {
+      "get": {
+        "tags": ["incident"],
+        "parameters": [
+          { "$ref": "#/parameters/rowFilter.incident.id" },
+          { "$ref": "#/parameters/rowFilter.incident.title" },
+          { "$ref": "#/parameters/rowFilter.incident.created_by" },
+          { "$ref": "#/parameters/rowFilter.incident.commander_id" },
+          { "$ref": "#/parameters/rowFilter.incident.communicator_id" },
+          { "$ref": "#/parameters/rowFilter.incident.severity" },
+          { "$ref": "#/parameters/rowFilter.incident.description" },
+          { "$ref": "#/parameters/rowFilter.incident.type" },
+          { "$ref": "#/parameters/rowFilter.incident.status" },
+          { "$ref": "#/parameters/rowFilter.incident.created_at" },
+          { "$ref": "#/parameters/rowFilter.incident.updated_at" },
+          { "$ref": "#/parameters/select" },
+          { "$ref": "#/parameters/order" },
+          { "$ref": "#/parameters/range" },
+          { "$ref": "#/parameters/rangeUnit" },
+          { "$ref": "#/parameters/offset" },
+          { "$ref": "#/parameters/limit" },
+          { "$ref": "#/parameters/preferCount" }
+        ],
+        "responses": {
+          "206": { "description": "Partial Content" },
+          "200": {
+            "description": "OK",
+            "schema": {
+              "items": { "$ref": "#/definitions/incident" },
+              "type": "array"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["incident"],
+        "parameters": [
+          { "$ref": "#/parameters/body.incident" },
+          { "$ref": "#/parameters/select" },
+          { "$ref": "#/parameters/preferReturn" }
+        ],
+        "responses": { "201": { "description": "Created" } }
+      },
+      "delete": {
+        "tags": ["incident"],
+        "parameters": [
+          { "$ref": "#/parameters/rowFilter.incident.id" },
+          { "$ref": "#/parameters/rowFilter.incident.title" },
+          { "$ref": "#/parameters/rowFilter.incident.created_by" },
+          { "$ref": "#/parameters/rowFilter.incident.commander_id" },
+          { "$ref": "#/parameters/rowFilter.incident.communicator_id" },
+          { "$ref": "#/parameters/rowFilter.incident.severity" },
+          { "$ref": "#/parameters/rowFilter.incident.description" },
+          { "$ref": "#/parameters/rowFilter.incident.type" },
+          { "$ref": "#/parameters/rowFilter.incident.status" },
+          { "$ref": "#/parameters/rowFilter.incident.created_at" },
+          { "$ref": "#/parameters/rowFilter.incident.updated_at" },
+          { "$ref": "#/parameters/preferReturn" }
+        ],
+        "responses": { "204": { "description": "No Content" } }
+      },
+      "patch": {
+        "tags": ["incident"],
+        "parameters": [
+          { "$ref": "#/parameters/rowFilter.incident.id" },
+          { "$ref": "#/parameters/rowFilter.incident.title" },
+          { "$ref": "#/parameters/rowFilter.incident.created_by" },
+          { "$ref": "#/parameters/rowFilter.incident.commander_id" },
+          { "$ref": "#/parameters/rowFilter.incident.communicator_id" },
+          { "$ref": "#/parameters/rowFilter.incident.severity" },
+          { "$ref": "#/parameters/rowFilter.incident.description" },
+          { "$ref": "#/parameters/rowFilter.incident.type" },
+          { "$ref": "#/parameters/rowFilter.incident.status" },
+          { "$ref": "#/parameters/rowFilter.incident.created_at" },
+          { "$ref": "#/parameters/rowFilter.incident.updated_at" },
+          { "$ref": "#/parameters/body.incident" },
+          { "$ref": "#/parameters/preferReturn" }
+        ],
+        "responses": { "204": { "description": "No Content" } }
+      }
+    },
+    "/person": {
+      "get": {
+        "tags": ["person"],
+        "parameters": [
+          { "$ref": "#/parameters/rowFilter.person.id" },
+          { "$ref": "#/parameters/rowFilter.person.name" },
+          { "$ref": "#/parameters/rowFilter.person.avatar" },
+          { "$ref": "#/parameters/rowFilter.person.team" },
+          { "$ref": "#/parameters/rowFilter.person.organization" },
+          { "$ref": "#/parameters/rowFilter.person.title" },
+          { "$ref": "#/parameters/rowFilter.person.email" },
+          { "$ref": "#/parameters/rowFilter.person.phone" },
+          { "$ref": "#/parameters/rowFilter.person.properties" },
+          { "$ref": "#/parameters/rowFilter.person.created_at" },
+          { "$ref": "#/parameters/rowFilter.person.updated_at" },
+          { "$ref": "#/parameters/select" },
+          { "$ref": "#/parameters/order" },
+          { "$ref": "#/parameters/range" },
+          { "$ref": "#/parameters/rangeUnit" },
+          { "$ref": "#/parameters/offset" },
+          { "$ref": "#/parameters/limit" },
+          { "$ref": "#/parameters/preferCount" }
+        ],
+        "responses": {
+          "206": { "description": "Partial Content" },
+          "200": {
+            "description": "OK",
+            "schema": {
+              "items": { "$ref": "#/definitions/person" },
+              "type": "array"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["person"],
+        "parameters": [
+          { "$ref": "#/parameters/body.person" },
+          { "$ref": "#/parameters/select" },
+          { "$ref": "#/parameters/preferReturn" }
+        ],
+        "responses": { "201": { "description": "Created" } }
+      },
+      "delete": {
+        "tags": ["person"],
+        "parameters": [
+          { "$ref": "#/parameters/rowFilter.person.id" },
+          { "$ref": "#/parameters/rowFilter.person.name" },
+          { "$ref": "#/parameters/rowFilter.person.avatar" },
+          { "$ref": "#/parameters/rowFilter.person.team" },
+          { "$ref": "#/parameters/rowFilter.person.organization" },
+          { "$ref": "#/parameters/rowFilter.person.title" },
+          { "$ref": "#/parameters/rowFilter.person.email" },
+          { "$ref": "#/parameters/rowFilter.person.phone" },
+          { "$ref": "#/parameters/rowFilter.person.properties" },
+          { "$ref": "#/parameters/rowFilter.person.created_at" },
+          { "$ref": "#/parameters/rowFilter.person.updated_at" },
+          { "$ref": "#/parameters/preferReturn" }
+        ],
+        "responses": { "204": { "description": "No Content" } }
+      },
+      "patch": {
+        "tags": ["person"],
+        "parameters": [
+          { "$ref": "#/parameters/rowFilter.person.id" },
+          { "$ref": "#/parameters/rowFilter.person.name" },
+          { "$ref": "#/parameters/rowFilter.person.avatar" },
+          { "$ref": "#/parameters/rowFilter.person.team" },
+          { "$ref": "#/parameters/rowFilter.person.organization" },
+          { "$ref": "#/parameters/rowFilter.person.title" },
+          { "$ref": "#/parameters/rowFilter.person.email" },
+          { "$ref": "#/parameters/rowFilter.person.phone" },
+          { "$ref": "#/parameters/rowFilter.person.properties" },
+          { "$ref": "#/parameters/rowFilter.person.created_at" },
+          { "$ref": "#/parameters/rowFilter.person.updated_at" },
+          { "$ref": "#/parameters/body.person" },
+          { "$ref": "#/parameters/preferReturn" }
+        ],
+        "responses": { "204": { "description": "No Content" } }
+      }
+    },
+    "/responder": {
+      "get": {
+        "tags": ["responder"],
+        "parameters": [
+          { "$ref": "#/parameters/rowFilter.responder.id" },
+          { "$ref": "#/parameters/rowFilter.responder.incident_id" },
+          { "$ref": "#/parameters/rowFilter.responder.type" },
+          { "$ref": "#/parameters/rowFilter.responder.person_id" },
+          { "$ref": "#/parameters/rowFilter.responder.properties" },
+          { "$ref": "#/parameters/rowFilter.responder.acknowledge_time" },
+          { "$ref": "#/parameters/rowFilter.responder.signoff_time" },
+          { "$ref": "#/parameters/rowFilter.responder.created_by" },
+          { "$ref": "#/parameters/rowFilter.responder.created_at" },
+          { "$ref": "#/parameters/rowFilter.responder.updated_at" },
+          { "$ref": "#/parameters/select" },
+          { "$ref": "#/parameters/order" },
+          { "$ref": "#/parameters/range" },
+          { "$ref": "#/parameters/rangeUnit" },
+          { "$ref": "#/parameters/offset" },
+          { "$ref": "#/parameters/limit" },
+          { "$ref": "#/parameters/preferCount" }
+        ],
+        "responses": {
+          "206": { "description": "Partial Content" },
+          "200": {
+            "description": "OK",
+            "schema": {
+              "items": { "$ref": "#/definitions/responder" },
+              "type": "array"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["responder"],
+        "parameters": [
+          { "$ref": "#/parameters/body.responder" },
+          { "$ref": "#/parameters/select" },
+          { "$ref": "#/parameters/preferReturn" }
+        ],
+        "responses": { "201": { "description": "Created" } }
+      },
+      "delete": {
+        "tags": ["responder"],
+        "parameters": [
+          { "$ref": "#/parameters/rowFilter.responder.id" },
+          { "$ref": "#/parameters/rowFilter.responder.incident_id" },
+          { "$ref": "#/parameters/rowFilter.responder.type" },
+          { "$ref": "#/parameters/rowFilter.responder.person_id" },
+          { "$ref": "#/parameters/rowFilter.responder.properties" },
+          { "$ref": "#/parameters/rowFilter.responder.acknowledge_time" },
+          { "$ref": "#/parameters/rowFilter.responder.signoff_time" },
+          { "$ref": "#/parameters/rowFilter.responder.created_by" },
+          { "$ref": "#/parameters/rowFilter.responder.created_at" },
+          { "$ref": "#/parameters/rowFilter.responder.updated_at" },
+          { "$ref": "#/parameters/preferReturn" }
+        ],
+        "responses": { "204": { "description": "No Content" } }
+      },
+      "patch": {
+        "tags": ["responder"],
+        "parameters": [
+          { "$ref": "#/parameters/rowFilter.responder.id" },
+          { "$ref": "#/parameters/rowFilter.responder.incident_id" },
+          { "$ref": "#/parameters/rowFilter.responder.type" },
+          { "$ref": "#/parameters/rowFilter.responder.person_id" },
+          { "$ref": "#/parameters/rowFilter.responder.properties" },
+          { "$ref": "#/parameters/rowFilter.responder.acknowledge_time" },
+          { "$ref": "#/parameters/rowFilter.responder.signoff_time" },
+          { "$ref": "#/parameters/rowFilter.responder.created_by" },
+          { "$ref": "#/parameters/rowFilter.responder.created_at" },
+          { "$ref": "#/parameters/rowFilter.responder.updated_at" },
+          { "$ref": "#/parameters/body.responder" },
+          { "$ref": "#/parameters/preferReturn" }
+        ],
+        "responses": { "204": { "description": "No Content" } }
+      }
+    }
+  },
+  "definitions": {
+    "comment": {
+      "required": [
+        "id",
+        "created_by",
+        "comment",
+        "incident_id",
+        "created_at",
+        "updated_at"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid",
+          "default": "public.generate_ulid()",
+          "description": "Note:\nThis is a Primary Key.<pk/>"
+        },
+        "created_by": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Note:\nThis is a Foreign Key to `person.id`.<fk table='person' column='id'/>"
+        },
+        "comment": { "type": "string", "format": "text" },
+        "incident_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Note:\nThis is a Foreign Key to `incident.id`.<fk table='incident' column='id'/>"
+        },
+        "hypothesis_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Note:\nThis is a Foreign Key to `hypothesis.id`.<fk table='hypothesis' column='id'/>"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "timestamp without time zone",
+          "default": "now()"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "timestamp without time zone",
+          "default": "now()"
+        }
+      },
+      "type": "object"
+    },
+    "evidence": {
+      "required": [
+        "id",
+        "description",
+        "hypothesis_id",
+        "created_by",
+        "type",
+        "created_at",
+        "updated_at"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid",
+          "default": "public.generate_ulid()",
+          "description": "Note:\nThis is a Primary Key.<pk/>"
+        },
+        "description": { "type": "string", "format": "text" },
+        "hypothesis_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Note:\nThis is a Foreign Key to `hypothesis.id`.<fk table='hypothesis' column='id'/>"
+        },
+        "created_by": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Note:\nThis is a Foreign Key to `person.id`.<fk table='person' column='id'/>"
+        },
+        "type": { "type": "string", "format": "text" },
+        "evidence": { "format": "jsonb" },
+        "properties": { "format": "jsonb" },
+        "created_at": {
+          "type": "string",
+          "format": "timestamp without time zone",
+          "default": "now()"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "timestamp without time zone",
+          "default": "now()"
+        }
+      },
+      "type": "object"
+    },
+    "goose_db_version": {
+      "required": ["id", "version_id", "is_applied"],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "integer",
+          "description": "Note:\nThis is a Primary Key.<pk/>"
+        },
+        "version_id": { "type": "integer", "format": "bigint" },
+        "is_applied": { "type": "boolean", "format": "boolean" },
+        "tstamp": {
+          "type": "string",
+          "format": "timestamp without time zone",
+          "default": "now()"
+        }
+      },
+      "type": "object"
+    },
+    "hypothesis": {
+      "required": [
+        "id",
+        "created_by",
+        "incident_id",
+        "type",
+        "title",
+        "status",
+        "created_at",
+        "updated_at"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid",
+          "default": "public.generate_ulid()",
+          "description": "Note:\nThis is a Primary Key.<pk/>"
+        },
+        "created_by": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Note:\nThis is a Foreign Key to `person.id`.<fk table='person' column='id'/>"
+        },
+        "incident_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Note:\nThis is a Foreign Key to `incident.id`.<fk table='incident' column='id'/>"
+        },
+        "parent_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Note:\nThis is a Foreign Key to `hypothesis.id`.<fk table='hypothesis' column='id'/>"
+        },
+        "type": { "type": "string", "format": "text" },
+        "title": { "type": "string", "format": "text" },
+        "status": { "type": "string", "enum": ["open", "closed"] },
+        "created_at": {
+          "type": "string",
+          "format": "timestamp without time zone",
+          "default": "now()"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "timestamp without time zone",
+          "default": "now()"
+        }
+      },
+      "type": "object"
+    },
+    "incident": {
+      "required": [
+        "id",
+        "title",
+        "created_by",
+        "severity",
+        "description",
+        "type",
+        "status",
+        "created_at",
+        "updated_at"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid",
+          "default": "public.generate_ulid()",
+          "description": "Note:\nThis is a Primary Key.<pk/>"
+        },
+        "title": { "type": "string", "format": "text" },
+        "created_by": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Note:\nThis is a Foreign Key to `person.id`.<fk table='person' column='id'/>"
+        },
+        "commander_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Note:\nThis is a Foreign Key to `person.id`.<fk table='person' column='id'/>"
+        },
+        "communicator_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Note:\nThis is a Foreign Key to `person.id`.<fk table='person' column='id'/>"
+        },
+        "severity": { "type": "integer", "format": "integer" },
+        "description": { "type": "string", "format": "text" },
+        "type": { "type": "string", "format": "text" },
+        "status": { "type": "string", "format": "text" },
+        "created_at": {
+          "type": "string",
+          "format": "timestamp without time zone",
+          "default": "now()"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "timestamp without time zone",
+          "default": "now()"
+        }
+      },
+      "type": "object"
+    },
+    "person": {
+      "required": ["id", "name", "created_at", "updated_at"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid",
+          "default": "public.generate_ulid()",
+          "description": "Note:\nThis is a Primary Key.<pk/>"
+        },
+        "name": { "type": "string", "format": "text" },
+        "avatar": { "type": "string", "format": "text" },
+        "team": { "type": "string", "format": "text" },
+        "organization": { "type": "string", "format": "text" },
+        "title": { "type": "string", "format": "text" },
+        "email": { "type": "string", "format": "text" },
+        "phone": { "type": "string", "format": "text" },
+        "properties": { "format": "jsonb" },
+        "created_at": {
+          "type": "string",
+          "format": "timestamp without time zone",
+          "default": "now()"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "timestamp without time zone",
+          "default": "now()"
+        }
+      },
+      "type": "object"
+    },
+    "responder": {
+      "required": [
+        "id",
+        "incident_id",
+        "type",
+        "created_by",
+        "created_at",
+        "updated_at"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid",
+          "default": "public.generate_ulid()",
+          "description": "Note:\nThis is a Primary Key.<pk/>"
+        },
+        "incident_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Note:\nThis is a Foreign Key to `incident.id`.<fk table='incident' column='id'/>"
+        },
+        "type": { "type": "string", "format": "text" },
+        "person_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Note:\nThis is a Foreign Key to `person.id`.<fk table='person' column='id'/>"
+        },
+        "properties": { "format": "json" },
+        "acknowledge_time": {
+          "type": "string",
+          "format": "timestamp without time zone"
+        },
+        "signoff_time": {
+          "type": "string",
+          "format": "timestamp without time zone"
+        },
+        "created_by": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Note:\nThis is a Foreign Key to `person.id`.<fk table='person' column='id'/>"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "timestamp without time zone",
+          "default": "now()"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "timestamp without time zone",
+          "default": "now()"
+        }
+      },
+      "type": "object"
+    }
+  },
+  "parameters": {
+    "preferParams": {
+      "name": "Prefer",
+      "description": "Preference",
+      "required": false,
+      "type": "string",
+      "in": "header",
+      "enum": ["params=single-object"]
+    },
+    "preferReturn": {
+      "name": "Prefer",
+      "description": "Preference",
+      "required": false,
+      "type": "string",
+      "in": "header",
+      "enum": ["return=representation", "return=minimal", "return=none"]
+    },
+    "preferCount": {
+      "name": "Prefer",
+      "description": "Preference",
+      "required": false,
+      "type": "string",
+      "in": "header",
+      "enum": ["count=none"]
+    },
+    "select": {
+      "name": "select",
+      "description": "Filtering Columns",
+      "required": false,
+      "type": "string",
+      "in": "query"
+    },
+    "on_conflict": {
+      "name": "on_conflict",
+      "description": "On Conflict",
+      "required": false,
+      "type": "string",
+      "in": "query"
+    },
+    "order": {
+      "name": "order",
+      "description": "Ordering",
+      "required": false,
+      "type": "string",
+      "in": "query"
+    },
+    "range": {
+      "name": "Range",
+      "description": "Limiting and Pagination",
+      "required": false,
+      "type": "string",
+      "in": "header"
+    },
+    "rangeUnit": {
+      "name": "Range-Unit",
+      "description": "Limiting and Pagination",
+      "required": false,
+      "type": "string",
+      "default": "items",
+      "in": "header"
+    },
+    "offset": {
+      "name": "offset",
+      "description": "Limiting and Pagination",
+      "required": false,
+      "type": "string",
+      "in": "query"
+    },
+    "limit": {
+      "name": "limit",
+      "description": "Limiting and Pagination",
+      "required": false,
+      "type": "string",
+      "in": "query"
+    },
+    "body.comment": {
+      "name": "comment",
+      "description": "comment",
+      "required": false,
+      "in": "body",
+      "schema": { "$ref": "#/definitions/comment" }
+    },
+    "rowFilter.comment.id": {
+      "name": "id",
+      "required": false,
+      "type": "string",
+      "format": "uuid",
+      "in": "query"
+    },
+    "rowFilter.comment.created_by": {
+      "name": "created_by",
+      "required": false,
+      "type": "string",
+      "format": "uuid",
+      "in": "query"
+    },
+    "rowFilter.comment.comment": {
+      "name": "comment",
+      "required": false,
+      "type": "string",
+      "format": "text",
+      "in": "query"
+    },
+    "rowFilter.comment.incident_id": {
+      "name": "incident_id",
+      "required": false,
+      "type": "string",
+      "format": "uuid",
+      "in": "query"
+    },
+    "rowFilter.comment.hypothesis_id": {
+      "name": "hypothesis_id",
+      "required": false,
+      "type": "string",
+      "format": "uuid",
+      "in": "query"
+    },
+    "rowFilter.comment.created_at": {
+      "name": "created_at",
+      "required": false,
+      "type": "string",
+      "format": "timestamp without time zone",
+      "in": "query"
+    },
+    "rowFilter.comment.updated_at": {
+      "name": "updated_at",
+      "required": false,
+      "type": "string",
+      "format": "timestamp without time zone",
+      "in": "query"
+    },
+    "body.evidence": {
+      "name": "evidence",
+      "description": "evidence",
+      "required": false,
+      "in": "body",
+      "schema": { "$ref": "#/definitions/evidence" }
+    },
+    "rowFilter.evidence.id": {
+      "name": "id",
+      "required": false,
+      "type": "string",
+      "format": "uuid",
+      "in": "query"
+    },
+    "rowFilter.evidence.description": {
+      "name": "description",
+      "required": false,
+      "type": "string",
+      "format": "text",
+      "in": "query"
+    },
+    "rowFilter.evidence.hypothesis_id": {
+      "name": "hypothesis_id",
+      "required": false,
+      "type": "string",
+      "format": "uuid",
+      "in": "query"
+    },
+    "rowFilter.evidence.created_by": {
+      "name": "created_by",
+      "required": false,
+      "type": "string",
+      "format": "uuid",
+      "in": "query"
+    },
+    "rowFilter.evidence.type": {
+      "name": "type",
+      "required": false,
+      "type": "string",
+      "format": "text",
+      "in": "query"
+    },
+    "rowFilter.evidence.evidence": {
+      "name": "evidence",
+      "required": false,
+      "type": "string",
+      "format": "jsonb",
+      "in": "query"
+    },
+    "rowFilter.evidence.properties": {
+      "name": "properties",
+      "required": false,
+      "type": "string",
+      "format": "jsonb",
+      "in": "query"
+    },
+    "rowFilter.evidence.created_at": {
+      "name": "created_at",
+      "required": false,
+      "type": "string",
+      "format": "timestamp without time zone",
+      "in": "query"
+    },
+    "rowFilter.evidence.updated_at": {
+      "name": "updated_at",
+      "required": false,
+      "type": "string",
+      "format": "timestamp without time zone",
+      "in": "query"
+    },
+    "body.goose_db_version": {
+      "name": "goose_db_version",
+      "description": "goose_db_version",
+      "required": false,
+      "in": "body",
+      "schema": { "$ref": "#/definitions/goose_db_version" }
+    },
+    "rowFilter.goose_db_version.id": {
+      "name": "id",
+      "required": false,
+      "type": "string",
+      "format": "integer",
+      "in": "query"
+    },
+    "rowFilter.goose_db_version.version_id": {
+      "name": "version_id",
+      "required": false,
+      "type": "string",
+      "format": "bigint",
+      "in": "query"
+    },
+    "rowFilter.goose_db_version.is_applied": {
+      "name": "is_applied",
+      "required": false,
+      "type": "string",
+      "format": "boolean",
+      "in": "query"
+    },
+    "rowFilter.goose_db_version.tstamp": {
+      "name": "tstamp",
+      "required": false,
+      "type": "string",
+      "format": "timestamp without time zone",
+      "in": "query"
+    },
+    "body.hypothesis": {
+      "name": "hypothesis",
+      "description": "hypothesis",
+      "required": false,
+      "in": "body",
+      "schema": { "$ref": "#/definitions/hypothesis" }
+    },
+    "rowFilter.hypothesis.id": {
+      "name": "id",
+      "required": false,
+      "type": "string",
+      "format": "uuid",
+      "in": "query"
+    },
+    "rowFilter.hypothesis.created_by": {
+      "name": "created_by",
+      "required": false,
+      "type": "string",
+      "format": "uuid",
+      "in": "query"
+    },
+    "rowFilter.hypothesis.incident_id": {
+      "name": "incident_id",
+      "required": false,
+      "type": "string",
+      "format": "uuid",
+      "in": "query"
+    },
+    "rowFilter.hypothesis.parent_id": {
+      "name": "parent_id",
+      "required": false,
+      "type": "string",
+      "format": "uuid",
+      "in": "query"
+    },
+    "rowFilter.hypothesis.type": {
+      "name": "type",
+      "required": false,
+      "type": "string",
+      "format": "text",
+      "in": "query"
+    },
+    "rowFilter.hypothesis.title": {
+      "name": "title",
+      "required": false,
+      "type": "string",
+      "format": "text",
+      "in": "query"
+    },
+    "rowFilter.hypothesis.status": {
+      "name": "status",
+      "required": false,
+      "type": "string",
+      "format": "text",
+      "in": "query"
+    },
+    "rowFilter.hypothesis.created_at": {
+      "name": "created_at",
+      "required": false,
+      "type": "string",
+      "format": "timestamp without time zone",
+      "in": "query"
+    },
+    "rowFilter.hypothesis.updated_at": {
+      "name": "updated_at",
+      "required": false,
+      "type": "string",
+      "format": "timestamp without time zone",
+      "in": "query"
+    },
+    "body.incident": {
+      "name": "incident",
+      "description": "incident",
+      "required": false,
+      "in": "body",
+      "schema": { "$ref": "#/definitions/incident" }
+    },
+    "rowFilter.incident.id": {
+      "name": "id",
+      "required": false,
+      "type": "string",
+      "format": "uuid",
+      "in": "query"
+    },
+    "rowFilter.incident.title": {
+      "name": "title",
+      "required": false,
+      "type": "string",
+      "format": "text",
+      "in": "query"
+    },
+    "rowFilter.incident.created_by": {
+      "name": "created_by",
+      "required": false,
+      "type": "string",
+      "format": "uuid",
+      "in": "query"
+    },
+    "rowFilter.incident.commander_id": {
+      "name": "commander_id",
+      "required": false,
+      "type": "string",
+      "format": "uuid",
+      "in": "query"
+    },
+    "rowFilter.incident.communicator_id": {
+      "name": "communicator_id",
+      "required": false,
+      "type": "string",
+      "format": "uuid",
+      "in": "query"
+    },
+    "rowFilter.incident.severity": {
+      "name": "severity",
+      "required": false,
+      "type": "string",
+      "format": "integer",
+      "in": "query"
+    },
+    "rowFilter.incident.description": {
+      "name": "description",
+      "required": false,
+      "type": "string",
+      "format": "text",
+      "in": "query"
+    },
+    "rowFilter.incident.type": {
+      "name": "type",
+      "required": false,
+      "type": "string",
+      "format": "text",
+      "in": "query"
+    },
+    "rowFilter.incident.status": {
+      "name": "status",
+      "required": false,
+      "type": "string",
+      "format": "text",
+      "in": "query"
+    },
+    "rowFilter.incident.created_at": {
+      "name": "created_at",
+      "required": false,
+      "type": "string",
+      "format": "timestamp without time zone",
+      "in": "query"
+    },
+    "rowFilter.incident.updated_at": {
+      "name": "updated_at",
+      "required": false,
+      "type": "string",
+      "format": "timestamp without time zone",
+      "in": "query"
+    },
+    "body.person": {
+      "name": "person",
+      "description": "person",
+      "required": false,
+      "in": "body",
+      "schema": { "$ref": "#/definitions/person" }
+    },
+    "rowFilter.person.id": {
+      "name": "id",
+      "required": false,
+      "type": "string",
+      "format": "uuid",
+      "in": "query"
+    },
+    "rowFilter.person.name": {
+      "name": "name",
+      "required": false,
+      "type": "string",
+      "format": "text",
+      "in": "query"
+    },
+    "rowFilter.person.avatar": {
+      "name": "avatar",
+      "required": false,
+      "type": "string",
+      "format": "text",
+      "in": "query"
+    },
+    "rowFilter.person.team": {
+      "name": "team",
+      "required": false,
+      "type": "string",
+      "format": "text",
+      "in": "query"
+    },
+    "rowFilter.person.organization": {
+      "name": "organization",
+      "required": false,
+      "type": "string",
+      "format": "text",
+      "in": "query"
+    },
+    "rowFilter.person.title": {
+      "name": "title",
+      "required": false,
+      "type": "string",
+      "format": "text",
+      "in": "query"
+    },
+    "rowFilter.person.email": {
+      "name": "email",
+      "required": false,
+      "type": "string",
+      "format": "text",
+      "in": "query"
+    },
+    "rowFilter.person.phone": {
+      "name": "phone",
+      "required": false,
+      "type": "string",
+      "format": "text",
+      "in": "query"
+    },
+    "rowFilter.person.properties": {
+      "name": "properties",
+      "required": false,
+      "type": "string",
+      "format": "jsonb",
+      "in": "query"
+    },
+    "rowFilter.person.created_at": {
+      "name": "created_at",
+      "required": false,
+      "type": "string",
+      "format": "timestamp without time zone",
+      "in": "query"
+    },
+    "rowFilter.person.updated_at": {
+      "name": "updated_at",
+      "required": false,
+      "type": "string",
+      "format": "timestamp without time zone",
+      "in": "query"
+    },
+    "body.responder": {
+      "name": "responder",
+      "description": "responder",
+      "required": false,
+      "in": "body",
+      "schema": { "$ref": "#/definitions/responder" }
+    },
+    "rowFilter.responder.id": {
+      "name": "id",
+      "required": false,
+      "type": "string",
+      "format": "uuid",
+      "in": "query"
+    },
+    "rowFilter.responder.incident_id": {
+      "name": "incident_id",
+      "required": false,
+      "type": "string",
+      "format": "uuid",
+      "in": "query"
+    },
+    "rowFilter.responder.type": {
+      "name": "type",
+      "required": false,
+      "type": "string",
+      "format": "text",
+      "in": "query"
+    },
+    "rowFilter.responder.person_id": {
+      "name": "person_id",
+      "required": false,
+      "type": "string",
+      "format": "uuid",
+      "in": "query"
+    },
+    "rowFilter.responder.properties": {
+      "name": "properties",
+      "required": false,
+      "type": "string",
+      "format": "json",
+      "in": "query"
+    },
+    "rowFilter.responder.acknowledge_time": {
+      "name": "acknowledge_time",
+      "required": false,
+      "type": "string",
+      "format": "timestamp without time zone",
+      "in": "query"
+    },
+    "rowFilter.responder.signoff_time": {
+      "name": "signoff_time",
+      "required": false,
+      "type": "string",
+      "format": "timestamp without time zone",
+      "in": "query"
+    },
+    "rowFilter.responder.created_by": {
+      "name": "created_by",
+      "required": false,
+      "type": "string",
+      "format": "uuid",
+      "in": "query"
+    },
+    "rowFilter.responder.created_at": {
+      "name": "created_at",
+      "required": false,
+      "type": "string",
+      "format": "timestamp without time zone",
+      "in": "query"
+    },
+    "rowFilter.responder.updated_at": {
+      "name": "updated_at",
+      "required": false,
+      "type": "string",
+      "format": "timestamp without time zone",
+      "in": "query"
+    }
+  },
+  "externalDocs": {
+    "url": "https://postgrest.org/en/v9.0/api.html",
+    "description": "PostgREST Documentation"
+  }
+}
