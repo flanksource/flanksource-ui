@@ -16,6 +16,10 @@ interface IProps {
   onDelete?: () => void;
 }
 
+function isEvidence(x: Comment | Evidence): x is Evidence {
+  return (x as Evidence).type !== undefined;
+}
+
 export function ResponseLine({
   created_by,
   created_at,
@@ -42,7 +46,7 @@ export function ResponseLine({
           </p>
         </div>
 
-        {!response.hasOwnProperty("type") ? (
+        {!isEvidence(response) ? (
           <div className="text-sm text-gray-700">
             <p className="whitespace-pre">
               <CommentText text={response.comment} />

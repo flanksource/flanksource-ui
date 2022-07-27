@@ -14,6 +14,8 @@
     "@storybook/client-api": "^6.5.7",
     "@tailwindcss/forms": "^0.5.2",
     "@tailwindcss/typography": "^0.5.2",
+    "@tanstack/react-query": "^4.0.9",
+    "@tanstack/react-query-devtools": "^4.0.8",
     "@testing-library/jest-dom": "^5.11.4",
     "@types/jest": "^27.5.1",
     "@types/node": "^17.0.36",
@@ -41,7 +43,6 @@
     "react-image": "^4.0.3",
     "react-loading-icons": "^1.0.8",
     "react-mentions": "4.4.0",
-    "react-query": "^3.34.15",
     "react-router-dom": "^6.2.1",
     "react-scripts": "^5.0.1",
     "react-select": "^5.2.2",
@@ -56,7 +57,8 @@
     "yup": "^0.32.11"
   },
   "dependecyComments": {
-    "@headlessui/react": "We are using insiders version to use `by` property on `Combobox`. Without `by`, selected item logic was difficult to achieve."
+    "@headlessui/react": "We are using insiders version to use `by` property on `Combobox`. Without `by`, selected item logic was difficult to achieve.",
+    "@tanstack/react-query-devtools": "React Query Devtools are only included in bundles when process.env.NODE_ENV === 'development', so we don't have to exclude it from production build. Check it's docs."
   },
   "proxy": "https://incident-commander.canary.lab.flanksource.com",
   "lint-staged": {
@@ -68,7 +70,7 @@
     ]
   },
   "scripts": {
-    "dev": "react-scripts start",
+    "dev": "cross-env TSC_COMPILE_ON_ERROR=true ESLINT_NO_DEV_ERRORS=true react-scripts start",
     "build": "cross-env TSC_COMPILE_ON_ERROR=true DISABLE_ESLINT_PLUGIN=true NODE_ENV=production react-scripts build",
     "serve-build": "gzip -f --keep build/static/*/*.{js,css} && node scripts/serve-build.js",
     "test": "react-scripts test --transformIgnorePatterns \"node_modules/(?!(history))/\"",

@@ -6,7 +6,7 @@ import clsx from "clsx";
 
 type ModalSize = "small" | "slightly-small" | "medium" | "large" | "full";
 
-const modalClassMap: { [k: ModalSize]: string } = {
+const modalClassMap: { [k in ModalSize]: string } = {
   small: "max-w-md my-0 mx-2.5",
   "slightly-small": "max-w-prose my-0 mx-4",
   medium: "max-w-5xl my-0 mx-4",
@@ -17,7 +17,7 @@ const modalClassMap: { [k: ModalSize]: string } = {
 interface IModalProps {
   title: React.ReactNode;
   titleClass: string;
-  bodyClass: string;
+  bodyClass?: string;
   footerClassName: string;
   actions?: React.ReactNode[];
   open: boolean;
@@ -25,8 +25,7 @@ interface IModalProps {
   allowBackgroundClose: boolean;
   hideCloseButton: boolean;
   size: ModalSize;
-  wrapWith?: React.FunctionComponent<{ children: React.ReactNode }>;
-  children: JSX.Element;
+  children: React.ReactNode;
 }
 
 export function Modal({

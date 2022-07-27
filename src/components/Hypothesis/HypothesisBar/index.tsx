@@ -1,34 +1,22 @@
-import {
-  MouseEventHandler,
-  useMemo,
-  useState,
-  useCallback,
-  useEffect
-} from "react";
+import { ChevronRightIcon } from "@heroicons/react/outline";
 import clsx from "clsx";
+import { debounce } from "lodash";
+import { MouseEventHandler, useEffect, useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
 import {
   BsBraces,
   BsFillBarChartFill,
   BsFillChatSquareTextFill
 } from "react-icons/bs";
-import { VscTypeHierarchy } from "react-icons/vsc";
-import {
-  deleteHypothesis,
-  Hypothesis,
-  HypothesisStatus
-} from "../../../api/services/hypothesis";
-import { AvatarGroup } from "../../AvatarGroup";
-import { EvidenceType } from "../../../api/services/evidence";
 import { IconBaseProps, IconType } from "react-icons/lib";
-import { useQueryClient } from "react-query";
-import { createIncidentQueryKey } from "../../query-hooks/useIncidentQuery";
-import { HypothesisBarDeleteDialog } from "./HypothesisBarDeleteDialog";
-import { hypothesisStatusDropdownOptions } from "../../../constants/hypothesisStatusOptions";
-import { StatusDropdownContainer } from "../StatusDropdownContainer";
+import { VscTypeHierarchy } from "react-icons/vsc";
+import { EvidenceType } from "../../../api/services/evidence";
+import { Hypothesis } from "../../../api/services/hypothesis";
+import { HypothesisAPIs } from "../../../pages/incident/IncidentDetails";
+import { AvatarGroup } from "../../AvatarGroup";
 import { EditableText } from "../../EditableText";
-import { useForm } from "react-hook-form";
-import { debounce } from "lodash";
-import { ChevronRightIcon } from "@heroicons/react/outline";
+import { HypothesisBarMenu } from "../HypothesisBarMenu";
+import { StatusDropdownContainer } from "../StatusDropdownContainer";
 
 enum CommentInfo {
   Comment = "comment"
@@ -38,7 +26,6 @@ type InfoType = CommentInfo | EvidenceType;
 
 interface InfoIconProps extends IconBaseProps {
   icon: InfoType;
-  key: string;
 }
 
 const ICON_MAP: { [key in InfoType]: IconType } = {
@@ -48,50 +35,38 @@ const ICON_MAP: { [key in InfoType]: IconType } = {
   topology: VscTypeHierarchy
 };
 
-const InfoIcon: React.FC<InfoIconProps> = ({
-  icon,
-  ...props
-}: InfoIconProps) => {
+type IconCounts = { [k in InfoType]: number };
+
+function InfoIcon({ icon, ...props }: InfoIconProps) {
   const Component = ICON_MAP[icon];
   return <Component size={24} {...props} />;
-};
+}
 
 interface HypothesisBarProps {
   hypothesis: Hypothesis;
   onTitleClick: MouseEventHandler<HTMLSpanElement>;
-  api: { [k: string]: any };
+  api: HypothesisAPIs;
   showExpand: boolean;
   expanded: boolean;
   onToggleExpand: (expand: boolean) => void;
   onDisprove: () => void;
+  onCreateHypothesis: () => void;
 }
 
-export const HypothesisBar: React.FunctionComponent<HypothesisBarProps> = ({
+type Entries<T> = { [K in keyof T]: [K, T[K]] }[keyof T];
+
+export function HypothesisBar({
   hypothesis,
-  onTitleClick,
   api,
   showExpand,
   expanded,
   onToggleExpand,
-  onDisprove: onDisproveCb
-}: HypothesisBarProps) => {
-  const {
-    title = "",
-    status,
-    created_by: createdBy,
-    evidence,
-    comment
-  } = hypothesis;
+  onDisprove,
+  onCreateHypothesis
+}: HypothesisBarProps) {
+  const { title = "", created_by: createdBy, evidence, comment } = hypothesis;
 
   const [deleting, setDeleting] = useState<boolean>(false);
-  const [showConfirm, setShowConfirm] = useState<boolean>(false);
-
-  const { icon: statusIcon } = useMemo(
-    () => hypothesisStatusDropdownOptions[status || HypothesisStatus.Possible],
-    [status]
-  );
-
-  const queryClient = useQueryClient();
 
   const handleApiUpdate = useMemo(
     () =>
@@ -109,6 +84,8 @@ export const HypothesisBar: React.FunctionComponent<HypothesisBarProps> = ({
 
   watch();
 
+  const [editTitle, setEditTitle] = useState(false);
+
   useEffect(() => {
     const subscription = watch((value) => {
       handleApiUpdate(value);
@@ -116,9 +93,18 @@ export const HypothesisBar: React.FunctionComponent<HypothesisBarProps> = ({
     return () => subscription.unsubscribe();
   }, [watch, getValues, handleApiUpdate]);
 
-  const infoIcons: InfoType[] = (evidence || [])
+  const infoIcons = (evidence || [])
     .map((e): InfoType => e.type)
-    .concat(comment?.length ? [CommentInfo.Comment] : []);
+    .concat(comment?.length ? [CommentInfo.Comment] : [])
+    .filter((i) => ICON_MAP[i])
+    .reduce<Partial<IconCounts>>((acc, i) => {
+      return {
+        ...acc,
+        [i]: (acc[i] || 0) + 1
+      };
+    }, {});
+
+  const counts = Object.entries(infoIcons) as Entries<IconCounts>[];
 
   const commentsMap = new Map(
     (comment || []).map((c) => [c?.created_by?.id, c?.created_by])
@@ -127,37 +113,17 @@ export const HypothesisBar: React.FunctionComponent<HypothesisBarProps> = ({
   createdBy && commentsMap.delete(createdBy.id);
   const involved = [createdBy].concat(Array.from(commentsMap.values()));
 
-  const onDelete = useCallback(() => {
-    setDeleting(true);
-    const delHypo = async () => {
-      try {
-        setShowConfirm(false);
-        await deleteHypothesis(hypothesis.id);
-        const key = createIncidentQueryKey(hypothesis.incident_id);
-        await queryClient.invalidateQueries(key);
-        setDeleting(false);
-      } catch (e) {
-        setShowConfirm(false);
-        setDeleting(false);
-        console.error("Error while deleting", e);
-      }
-    };
-    delHypo();
-  }, [hypothesis, queryClient]);
-
-  const onDisprove = () => {
-    onDisproveCb();
-    setShowConfirm(false);
-  };
-
   return (
     <div
       className={clsx(
-        "relative bg-zinc-100 w-full flex justify-between shadow-lg rounded-8px border focus:outline-none bg-white cursor-pointer",
+        "relative w-full flex justify-between shadow-lg rounded-8px border focus:outline-none bg-zinc-100 cursor-pointer space-x-2",
         deleting && "pointer-events-none cursor-not-allowed blur-[2px]"
       )}
     >
-      <div className="flex flex-grow-0 items-center space-x-2 w-full">
+      <div
+        onClick={() => onToggleExpand && onToggleExpand(!expanded)}
+        className="flex flex-grow-0 items-center space-x-2 my-1 w-full"
+      >
         {showExpand && (
           <button
             className="ml-2 py-2 flex flex-row items-center"
@@ -174,39 +140,51 @@ export const HypothesisBar: React.FunctionComponent<HypothesisBarProps> = ({
           status={hypothesis?.status}
           updateMutation={api?.updateMutation}
         />
-        <EditableText
-          value={getValues("title")}
-          sharedClassName="font-semibold text-gray-900"
-          onChange={(value: string) => {
-            setValue("title", value);
-          }}
-        />
+        {!editTitle ? (
+          <div className="font-semibold text-gray-900 w-full">
+            {getValues("title")}
+          </div>
+        ) : (
+          <EditableText
+            value={getValues("title")}
+            sharedClassName="font-semibold text-gray-900"
+            textAreaClassName="focus:outline-none border-none focus:border-none"
+            onChange={(value: string) => {
+              setValue("title", value);
+              setEditTitle(false);
+            }}
+            isEditableAtStart
+            disableEditOnBlur={false}
+            onClose={() => setEditTitle(false)}
+          />
+        )}
       </div>
-      <div className="flex items-center pr-3 space-x-4">
-        <div className="flex flex-row">
-          {infoIcons
-            .filter((i) => ICON_MAP[i])
-            .map((typ, idx) => (
-              <InfoIcon
-                key={`${typ}-${idx}`}
-                icon={typ}
-                className="px-1 text-dark-blue"
-              />
-            ))}
+      <div className="flex items-center space-x-2">
+        <div className="flex flex-row items-center">
+          {counts.map(([typ, count], idx: number) => (
+            <span key={`${typ}-${idx}`} className="flex flex-row items-center">
+              <InfoIcon icon={typ} className="px-1 text-dark-blue" />
+              {count > 1 && (
+                <span className="-ml-1 font-bold mr-1 mt-3 text-gray-500 text-xs">
+                  {count}
+                </span>
+              )}
+            </span>
+          ))}
         </div>
         <div>
           {createdBy && <AvatarGroup maxCount={5} users={involved} size="sm" />}
         </div>
-        <div className="flex pt-1">
-          <HypothesisBarDeleteDialog
-            isOpen={showConfirm}
-            onClose={() => setShowConfirm(false)}
-            onDelete={onDelete}
+        <div className="flex pt-0.5">
+          <HypothesisBarMenu
+            hypothesis={hypothesis}
             onDisprove={onDisprove}
-            onOpen={() => setShowConfirm(true)}
+            setDeleting={setDeleting}
+            onCreateHypothesis={onCreateHypothesis}
+            onEditTitle={() => setEditTitle(true)}
           />
         </div>
       </div>
     </div>
   );
-};
+}

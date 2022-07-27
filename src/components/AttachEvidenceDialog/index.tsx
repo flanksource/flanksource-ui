@@ -32,8 +32,8 @@ import { Link } from "react-router-dom";
 
 interface Props {
   title: string;
-  disabled: boolean;
-  selectedLogs: any;
+  disabled?: boolean;
+  selectedLogs?: any;
   callback?: (success: boolean) => void;
   isOpen: boolean;
   onClose: () => void;
@@ -136,7 +136,7 @@ export function AttachEvidenceDialog({
   callback = () => {},
   isOpen,
   onClose
-}: Props & EvidenceAttachment) {
+}: Props & Partial<EvidenceAttachment>) {
   const {
     control,
     watch,

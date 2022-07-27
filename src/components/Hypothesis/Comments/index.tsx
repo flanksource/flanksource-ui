@@ -1,11 +1,9 @@
 import clsx from "clsx";
 import React, { useState } from "react";
-import { ChatAltIcon } from "@heroicons/react/solid";
 import { IoMdSend } from "react-icons/io";
 
 import { CommentInput } from "../../Comment";
 import { Comment } from "../../../api/services/comments";
-import { relativeDateTime } from "../../../utils/relativeDateTime";
 import { ResponseLine } from "../ResponseLine";
 
 interface Props {
@@ -23,9 +21,7 @@ export function CommentsSection({
   const [commentTextValue, setCommentTextValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  // eslint-disable-next-line no-unused-vars
   const handleComment = () => {
-    // const key = event.keyCode || event.which;
     if (commentTextValue) {
       setIsLoading(true);
       onComment(commentTextValue).finally(() => {
@@ -45,7 +41,7 @@ export function CommentsSection({
       {titlePrepend}
       {!!comments?.length && (
         <div>
-          {comments.map(({ id, created_by, created_at, comment }) => (
+          {comments.map(({ id, created_by, created_at, ...comment }) => (
             <ResponseLine
               key={id}
               created_by={created_by}

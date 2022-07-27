@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Mention, MentionsInput, SuggestionDataItem } from "react-mentions";
 
 import { getPersons, User } from "../../api/services/users";
@@ -88,14 +88,15 @@ export const CommentInput = ({
   onChange,
   onEnter,
   markup = MENTION_MARKUP,
-  trigger = MENTION_TRIGGER,
-  singleLine
+  trigger = MENTION_TRIGGER
 }: Props) => {
   const [users, setUsers] = useState<Array<User & SuggestionDataItem>>([]);
 
   /* TODO: lazy load user list, based on typing */
   useEffect(() => {
     getPersons().then(({ data = [] }) => {
+      if (!data) return;
+
       const users = data.map((user) => ({
         ...user,
         display: user.name

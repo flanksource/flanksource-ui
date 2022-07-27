@@ -79,8 +79,8 @@ export function HypothesisDetails({ node, api, ...rest }: IProps) {
 
   return (
     <>
-      <div className={clsx("mb-7", rest.className || "")} {...rest}>
-        <ul className="mt-4">
+      <div className={clsx("pb-7", rest.className || "")} {...rest}>
+        <ul className="pt-4">
           {responses.length > 0 &&
             responses.map(({ id, created_by, created_at, ...evidence }) => (
               <ResponseLine
