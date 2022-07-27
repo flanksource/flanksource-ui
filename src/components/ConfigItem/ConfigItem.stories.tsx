@@ -34,21 +34,20 @@ const ConfigItemDropDown = ({ type }: { type: string }) => {
           setSelectedItem(item);
           setDependentSelectedItem(null);
         }}
-        dependentConfigItems={[
-          {
-            className: "w-96 mt-2",
-            type: "esb",
-            value: dependentSelectedItem,
-            autoFetch: false,
-            itemsPath: "$..block_device_mappings",
-            namePath: "$.DeviceName",
-            valuePath: "$.Ebs.VolumeId",
-            onSelect: (item: any) => {
-              setDependentSelectedItem(item);
-            }
-          }
-        ]}
-      />
+      >
+        <ConfigItem
+          className="w-96 mt-2"
+          type="esb"
+          value={dependentSelectedItem}
+          autoFetch={false}
+          itemsPath="$..block_device_mappings"
+          namePath="$.DeviceName"
+          valuePath="$.Ebs.VolumeId"
+          onSelect={(item: any) => {
+            setDependentSelectedItem(item);
+          }}
+        />
+      </ConfigItem>
     </div>
   );
 };

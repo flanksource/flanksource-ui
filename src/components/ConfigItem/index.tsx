@@ -1,10 +1,4 @@
-import {
-  ComponentType,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState
-} from "react";
+import React, { ComponentType, useCallback, useEffect, useState } from "react";
 import AsyncSelect from "react-select/async";
 import { components, GroupBase, OptionProps } from "react-select";
 import { debounce } from "lodash";
@@ -82,8 +76,8 @@ interface IProps extends Props<IOption, false, GroupBase<IOption>> {
   itemsPath?: string;
   namePath?: string;
   valuePath?: string;
-  dependentConfigItems?: IProps[];
   className?: string;
+  children?: React.ReactElement | React.ReactElement[];
   onSelect: (arg: any) => void;
 }
 
@@ -95,13 +89,12 @@ export const ConfigItem = ({
   itemsPath,
   namePath,
   valuePath,
-  dependentConfigItems = [],
   autoFetch,
+  children,
   ...props
 }: IProps) => {
   const { loading, setLoading } = useLoader();
   const [options, setOptions] = useState([]);
-  const [selectedOption, setSelectedOption] = useState(null);
   const [dependentOptions, sentDependentOptions] = useState<any>(null);
 
   const loadOptions = useCallback(
@@ -161,18 +154,33 @@ export const ConfigItem = ({
     loadOptions
   ]);
 
+  const getEnhancedChildren = () => {
+    return React.Children.map(children, (Child) => {
+      if (Child?.type?.displayName === "ConfigItem") {
+        return React.cloneElement(
+          Child,
+          {
+            ...Child.props,
+            data: dependentOptions
+          },
+          Child.props.children
+        );
+      }
+      return Child;
+    });
+  };
+
   if (autoFetch) {
     return (
       <>
         <AsyncSelect
-          key={type} // used to re-render AsyncSelect on update type
+          key={type}
           isClearable
           defaultOptions
           loadOptions={debouncedLoadOptions}
           {...props}
           onChange={(e: any) => {
             onSelect(e);
-            setSelectedOption(e);
             getConfigDetails(e?.value);
           }}
           components={{
@@ -180,12 +188,7 @@ export const ConfigItem = ({
           }}
           isLoading={loading}
         />
-        {selectedOption &&
-          dependentConfigItems.map((configItem, index) => {
-            return (
-              <ConfigItem key={index} {...configItem} data={dependentOptions} />
-            );
-          })}
+        {getEnhancedChildren()}
       </>
     );
   } else {
@@ -200,15 +203,10 @@ export const ConfigItem = ({
             Option,
             SingleValue
           }}
-          defaultValue={value}
+          value={value}
           getOptionValue={(item: any) => item.value}
         />
-        {selectedOption &&
-          dependentConfigItems.map((configItem, index) => {
-            return (
-              <ConfigItem key={index} {...configItem} data={dependentOptions} />
-            );
-          })}
+        {getEnhancedChildren()}
       </>
     );
   }
