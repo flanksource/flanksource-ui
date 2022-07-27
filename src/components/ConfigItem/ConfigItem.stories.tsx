@@ -20,6 +20,90 @@ ConfigDB.get = (url: string) => {
   }
 };
 
+const EC2ConfigItemDropDown = ({ type }: { type: string }) => {
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [dependentSelectedItem, setDependentSelectedItem] = useState(null);
+  return (
+    <div className="flex flex-col">
+      <ConfigItem
+        className="w-96"
+        type={type}
+        value={selectedItem}
+        autoFetch={true}
+        label="EC2Instances"
+        description="list of ec2 instances"
+        onSelect={(item) => {
+          setSelectedItem(item);
+          setDependentSelectedItem(null);
+        }}
+      >
+        <ConfigItem
+          className="w-96"
+          type="esb"
+          value={dependentSelectedItem}
+          autoFetch={false}
+          itemsPath="$..block_device_mappings"
+          label="Device Name"
+          description="list of device names"
+          namePath="$.DeviceName"
+          valuePath="$.Ebs.VolumeId"
+          onSelect={(item: any) => {
+            setDependentSelectedItem(item);
+          }}
+          isDisabled={!selectedItem}
+        />
+      </ConfigItem>
+    </div>
+  );
+};
+
+const SubnetConfigItemDropDown = ({ type }: { type: string }) => {
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [dependentSelectedItem, setDependentSelectedItem] = useState(null);
+  return (
+    <div className="flex flex-col">
+      <ConfigItem
+        className="w-96"
+        type={type}
+        value={selectedItem}
+        autoFetch={true}
+        label={<label className="block text-sm font-light">Subnet</label>}
+        description={
+          <div className="px-2 bg-white text-gray-700 text-xs">
+            list of subnets
+          </div>
+        }
+        onSelect={(item) => {
+          setSelectedItem(item);
+          setDependentSelectedItem(null);
+        }}
+      >
+        <ConfigItem
+          className="w-96 mt-1"
+          type="esb"
+          value={dependentSelectedItem}
+          autoFetch={false}
+          itemsPath="$..block_device_mappings"
+          label={
+            <label className="block font-light text-sm mt-2">Device Name</label>
+          }
+          description={
+            <div className="px-2 bg-white text-gray-700 text-xs">
+              list of device names
+            </div>
+          }
+          namePath="$.DeviceName"
+          valuePath="$.Ebs.VolumeId"
+          onSelect={(item: any) => {
+            setDependentSelectedItem(item);
+          }}
+          isDisabled={!selectedItem}
+        />
+      </ConfigItem>
+    </div>
+  );
+};
+
 const ConfigItemDropDown = ({ type }: { type: string }) => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [dependentSelectedItem, setDependentSelectedItem] = useState(null);
@@ -30,13 +114,20 @@ const ConfigItemDropDown = ({ type }: { type: string }) => {
         type={type}
         value={selectedItem}
         autoFetch={true}
+        label={<label className="block text-sm font-light">Subnet</label>}
+        description={
+          <div className="px-2 bg-white text-gray-700 text-xs">
+            list of subnets
+          </div>
+        }
         onSelect={(item) => {
           setSelectedItem(item);
           setDependentSelectedItem(null);
         }}
       >
+        <label className="block font-light text-sm">Device Name</label>
         <ConfigItem
-          className="w-96 mt-2"
+          className="w-96 mt-1"
           type="esb"
           value={dependentSelectedItem}
           autoFetch={false}
@@ -46,7 +137,11 @@ const ConfigItemDropDown = ({ type }: { type: string }) => {
           onSelect={(item: any) => {
             setDependentSelectedItem(item);
           }}
+          isDisabled={!selectedItem}
         />
+        <div className="px-2 bg-white text-gray-700 text-xs">
+          list of device names
+        </div>
       </ConfigItem>
     </div>
   );
@@ -57,15 +152,25 @@ export default {
   component: ConfigItem
 };
 
-const EC2InstanceTemplate = ({ ...props }) => (
+const LabelDescDefaultStyleTemplate = ({ ...props }) => (
+  <EC2ConfigItemDropDown {...{ ...props, type: "EC2Instance" }} />
+);
+
+export const LabelDescpritionDefaultStyle = LabelDescDefaultStyleTemplate.bind(
+  {}
+);
+LabelDescpritionDefaultStyle.args = {};
+
+const LabelDescCustomStyleTemplate = ({ ...props }) => (
+  <SubnetConfigItemDropDown {...{ ...props, type: "Subnet" }} />
+);
+export const LabelDescriptionCustomStyle = LabelDescCustomStyleTemplate.bind(
+  {}
+);
+LabelDescriptionCustomStyle.args = {};
+
+const InlineLabelDescriptionTemplate = ({ ...props }) => (
   <ConfigItemDropDown {...{ ...props, type: "EC2Instance" }} />
 );
-
-export const EC2Instance = EC2InstanceTemplate.bind({});
-EC2Instance.args = {};
-
-const SubnetTemplate = ({ ...props }) => (
-  <ConfigItemDropDown {...{ ...props, type: "Subnet" }} />
-);
-export const Subnet = SubnetTemplate.bind({});
-Subnet.args = {};
+export const InlineLabelDescription = InlineLabelDescriptionTemplate.bind({});
+InlineLabelDescription.args = {};

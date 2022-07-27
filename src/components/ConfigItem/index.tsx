@@ -77,6 +77,8 @@ interface IProps extends Props<IOption, false, GroupBase<IOption>> {
   namePath?: string;
   valuePath?: string;
   className?: string;
+  description?: string | React.ReactElement;
+  label?: string | React.ReactElement;
   children?: React.ReactElement | React.ReactElement[];
   onSelect: (arg: any) => void;
 }
@@ -91,6 +93,8 @@ export const ConfigItem = ({
   valuePath,
   autoFetch,
   children,
+  description,
+  label,
   ...props
 }: IProps) => {
   const { loading, setLoading } = useLoader();
@@ -170,9 +174,36 @@ export const ConfigItem = ({
     });
   };
 
+  const getLabel = () => {
+    return (
+      <>
+        {label && typeof label === "string" && (
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            {label}
+          </label>
+        )}
+        {label && typeof label !== "string" && label}
+      </>
+    );
+  };
+
+  const getDescription = () => {
+    return (
+      <>
+        {description && typeof description === "string" && (
+          <div className="px-2 bg-white text-gray-500 font-semibold text-xs mb-2">
+            {description}
+          </div>
+        )}
+        {description && typeof description !== "string" && description}
+      </>
+    );
+  };
+
   if (autoFetch) {
     return (
       <>
+        {getLabel()}
         <AsyncSelect
           key={type}
           isClearable
@@ -188,12 +219,14 @@ export const ConfigItem = ({
           }}
           isLoading={loading}
         />
+        {getDescription()}
         {getEnhancedChildren()}
       </>
     );
   } else {
     return (
       <>
+        {getLabel()}
         <Select
           options={options}
           isClearable
@@ -206,6 +239,7 @@ export const ConfigItem = ({
           value={value}
           getOptionValue={(item: any) => item.value}
         />
+        {getDescription()}
         {getEnhancedChildren()}
       </>
     );
