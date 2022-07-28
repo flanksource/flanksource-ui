@@ -42,7 +42,7 @@ const EC2ConfigItemDropDown = ({ type }: { type: string }) => {
           type="esb"
           value={dependentSelectedItem}
           autoFetch={false}
-          itemsPath="$..block_device_mappings"
+          itemsPath="$..block_device_mappings[*]"
           label="Device Name"
           description="list of device names"
           namePath="$.DeviceName"
@@ -83,7 +83,7 @@ const SubnetConfigItemDropDown = ({ type }: { type: string }) => {
           type="esb"
           value={dependentSelectedItem}
           autoFetch={false}
-          itemsPath="$..block_device_mappings"
+          itemsPath="$..block_device_mappings[*]"
           label={
             <label className="block font-light text-sm mt-2">Device Name</label>
           }
@@ -131,7 +131,7 @@ const ConfigItemDropDown = ({ type }: { type: string }) => {
           type="esb"
           value={dependentSelectedItem}
           autoFetch={false}
-          itemsPath="$..block_device_mappings"
+          itemsPath="$..block_device_mappings[*]"
           namePath="$.DeviceName"
           valuePath="$.Ebs.VolumeId"
           onSelect={(item: any) => {

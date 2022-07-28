@@ -259,11 +259,6 @@ export const AddResponder = ({
     const payload = {
       type: selectedType.type === "Person" ? "person" : "system",
       incident_id: id,
-      acknowledge_time: new Date(Date.now())
-        .toISOString()
-        .replace("T", " ")
-        .replace("Z", "")
-        .split(".")[0],
       created_by: user.id,
       properties: {
         responderType: selectedType.label,
@@ -343,7 +338,7 @@ export const AddResponder = ({
           )}
           {steps[1].inProgress && (
             <div>
-              <div className="px-8 py-3 h-modal-body-md">
+              <div className="px-8 py-3 h-modal-body-md mb-16">
                 {getResponderTypeForm()}
                 <ActionButtonGroup
                   className="absolute w-full bottom-0 left-0"

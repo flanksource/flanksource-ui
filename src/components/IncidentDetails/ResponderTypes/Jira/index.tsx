@@ -1,5 +1,7 @@
 import clsx from "clsx";
+import { useState } from "react";
 import { Control, Controller, FieldErrors } from "react-hook-form";
+import { ConfigItem } from "../../../ConfigItem";
 import { TextInput } from "../../../TextInput";
 
 type JiraProps = {
@@ -8,6 +10,9 @@ type JiraProps = {
 } & React.HTMLProps<HTMLDivElement>;
 
 export const Jira = ({ control, errors, className, ...rest }: JiraProps) => {
+  const [jiraProjectType, setJiraProjectType] = useState();
+  const [jiraProject, setJiraProject] = useState();
+
   return (
     <div className={clsx(className)} {...rest}>
       <div className="mb-4">
@@ -18,15 +23,43 @@ export const Jira = ({ control, errors, className, ...rest }: JiraProps) => {
             required: "Please provide valid value"
           }}
           render={({ field }) => {
-            const { onChange, value } = field;
+            const { onChange } = field;
             return (
-              <TextInput
-                label="Project"
-                id="project"
-                className="w-full"
-                onChange={onChange}
-                value={value}
-              />
+              <ConfigItem
+                type="Jira"
+                autoFetch={true}
+                onSelect={setJiraProjectType}
+                label={
+                  <label className="block text-sm font-bold text-gray-700 mb-2">
+                    Jira Config Type
+                  </label>
+                }
+                value={jiraProjectType}
+                id="config-type"
+              >
+                <ConfigItem
+                  type="Jira"
+                  value={jiraProject}
+                  autoFetch={false}
+                  onSelect={(selected) => {
+                    setJiraProject(selected);
+                    onChange(selected.value);
+                  }}
+                  itemsPath="$..projects[*]"
+                  namePath="$.name"
+                  valuePath="$.name"
+                  label={
+                    <label
+                      htmlFor="project"
+                      className="block text-sm font-bold text-gray-700 mb-2 mt-4"
+                    >
+                      Project
+                    </label>
+                  }
+                  isDisabled={!jiraProjectType}
+                  id="project"
+                />
+              </ConfigItem>
             );
           }}
         />

@@ -129,18 +129,24 @@ export const ConfigItem = ({
       setOptions([]);
       return;
     }
-    const response = JSONPath({
-      path: itemsPath as string,
-      json: data
-    });
-    const items =
-      response?.[0]?.map((item: any) => {
-        return {
-          name: JSONPath({ path: namePath as string, json: item })?.[0],
-          value: JSONPath({ path: valuePath as string, json: item })?.[0]
-        };
-      }) || [];
-    setOptions(items);
+    try {
+      const response = JSONPath({
+        path: itemsPath as string,
+        json: data
+      });
+      const items =
+        response?.map((item: any) => {
+          return {
+            name: JSONPath({ path: namePath as string, json: item })?.[0],
+            value: JSONPath({ path: valuePath as string, json: item })?.[0]
+          };
+        }) || [];
+      setOptions(items);
+    } catch (ex) {
+      console.warn("please revisit your json paths of items, name & value");
+      console.error(ex);
+      setOptions([]);
+    }
   }, [data]);
 
   const getConfigDetails = async (id: string) => {
@@ -160,7 +166,10 @@ export const ConfigItem = ({
 
   const getEnhancedChildren = () => {
     return React.Children.map(children, (Child) => {
-      if (Child?.type?.displayName === "ConfigItem") {
+      if (
+        Child?.type?.displayName === "ConfigItem" ||
+        Child?.type?.name === "ConfigItem"
+      ) {
         return React.cloneElement(
           Child,
           {
