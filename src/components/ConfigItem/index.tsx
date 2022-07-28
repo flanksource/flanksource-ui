@@ -166,6 +166,7 @@ export const ConfigItem = ({
 
   const getEnhancedChildren = () => {
     return React.Children.map(children, (Child) => {
+      console.log(Child);
       if (
         Child?.type?.displayName === "ConfigItem" ||
         Child?.type?.name === "ConfigItem"
@@ -254,3 +255,5 @@ export const ConfigItem = ({
     );
   }
 };
+
+ConfigItem.displayName = "ConfigItem";
