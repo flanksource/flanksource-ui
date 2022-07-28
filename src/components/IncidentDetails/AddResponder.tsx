@@ -259,7 +259,7 @@ export const AddResponder = ({
     const payload = {
       type: selectedType.type === "Person" ? "person" : "system",
       incident_id: id,
-      created_by: user.id,
+      created_by: user?.id,
       properties: {
         responderType: selectedType.label,
         ...data
@@ -271,16 +271,16 @@ export const AddResponder = ({
       if (!result?.error) {
         toastSuccess("Added responder successfully");
         onSuccess();
+        setIsOpen(false);
       } else {
         onError();
-        toastSuccess("Adding responder failed");
+        toastError("Adding responder failed");
       }
     } catch (ex) {
       toastError(ex.message);
       onError();
     }
     setLoading(false);
-    setIsOpen(false);
   };
 
   const getModalTitle = () => {
