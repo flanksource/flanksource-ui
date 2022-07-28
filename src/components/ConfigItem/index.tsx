@@ -166,11 +166,7 @@ export const ConfigItem = ({
 
   const getEnhancedChildren = () => {
     return React.Children.map(children, (Child) => {
-      console.log(Child);
-      if (
-        Child?.type?.displayName === "ConfigItem" ||
-        Child?.type?.name === "ConfigItem"
-      ) {
+      if (Child?.type?.displayName === "ConfigItem") {
         return React.cloneElement(
           Child,
           {
