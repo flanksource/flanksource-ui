@@ -12,13 +12,13 @@ export interface User extends NewUser {
 }
 
 export const getPerson = (id: string) =>
-  resolve<User>(IncidentCommander.get(`/person?id=eq.${id}`));
+  resolve<User>(IncidentCommander.get(`/people?id=eq.${id}`));
 
 export const getPersons = () =>
-  resolve<User[]>(IncidentCommander.get(`/person`));
+  resolve<User[]>(IncidentCommander.get(`/people`));
 
 export const getPersonWithEmail = (email: string) =>
-  resolve<User>(IncidentCommander.get(`/person?email=eq.${email}`));
+  resolve<User>(IncidentCommander.get(`/people?email=eq.${email}`));
 
 export const createPerson = ({ name, email, avatar }: NewUser) =>
-  resolve<User>(IncidentCommander.post("/person", { name, email, avatar }));
+  resolve<User>(IncidentCommander.post("/people", { name, email, avatar }));

@@ -36,44 +36,44 @@ export interface NewIncident {
 export interface Incident extends NewIncident {
   id: string;
   parent_id: string;
-  hypothesis: Hypothesis[];
+  hypotheses: Hypothesis[];
 }
 
 export const searchIncident = (query: string) => {
-  const hypothesis = `hypothesis!hypothesis_incident_id_fkey(id, type)`;
+  const hypotheses = `hypotheses!hypotheses_incident_id_fkey(id, type)`;
   return resolve<Incident[]>(
     IncidentCommander.get(
-      `/incident?order=created_at.desc&title=ilike.*${query}*&select=*,${hypothesis}`
+      `/incidents?order=created_at.desc&title=ilike.*${query}*&select=*,${hypotheses}`
     )
   );
 };
 export const getAllIncident = ({ limit = 10 }) => {
   const limitStr = limit ? `limit=${limit}` : "";
-  const hypothesis = `hypothesis!hypothesis_incident_id_fkey(id, type)`;
+  const hypotheses = `hypotheses!hypotheses_incident_id_fkey(id, type)`;
   return resolve<Incident[]>(
     IncidentCommander.get(
-      `/incident?order=created_at.desc&${limitStr}&select=*,${hypothesis}`
+      `/incidents?order=created_at.desc&${limitStr}&select=*,${hypotheses}`
     )
   );
 };
 export const getIncident = async (id: string) => {
-  const hypothesis = `hypothesis!hypothesis_incident_id_fkey(*,created_by(${AVATAR_INFO}),evidence(id,evidence,type),comment(comment,created_by(id,${AVATAR_INFO}),id))`;
+  const hypotheses = `hypotheses!hypotheses_incident_id_fkey(*,created_by(${AVATAR_INFO}),evidences(id,evidence,type),comments(comment,created_by(id,${AVATAR_INFO}),id))`;
 
   return resolve<Incident[]>(
     IncidentCommander.get(
-      `/incident?id=eq.${id}&select=*,${hypothesis},commander_id(${AVATAR_INFO}),communicator_id(${AVATAR_INFO}),responder!responder_incident_id_fkey(created_by(${AVATAR_INFO}))`
+      `/incidents?id=eq.${id}&select=*,${hypotheses},commander_id(${AVATAR_INFO}),communicator_id(${AVATAR_INFO}),responders!responders_incident_id_fkey(created_by(${AVATAR_INFO}))`
     )
   );
 };
 
 export const getIncidentsWithParams = async (params) => {
-  const comments = `comment!comment_incident_id_fkey(id,created_by(${AVATAR_INFO}))`;
-  const hypothesis = `hypothesis!hypothesis_incident_id_fkey(*,created_by(${AVATAR_INFO}))`;
-  const responder = `responder!responder_incident_id_fkey(created_by(${AVATAR_INFO}))`;
+  const comments = `comments!comments_incident_id_fkey(id,created_by(${AVATAR_INFO}))`;
+  const hypotheses = `hypotheses!hypotheses_incident_id_fkey(*,created_by(${AVATAR_INFO}))`;
+  const responder = `responders!responders_incident_id_fkey(created_by(${AVATAR_INFO}))`;
 
   return resolve(
     IncidentCommander.get(
-      `/incident?&select=*,${hypothesis},${comments},commander_id(${AVATAR_INFO}),communicator_id(${AVATAR_INFO}),${responder}&order=created_at.desc`,
+      `/incidents?&select=*,${hypotheses},${comments},commander_id(${AVATAR_INFO}),communicator_id(${AVATAR_INFO}),${responder}&order=created_at.desc`,
       {
         params
       }
@@ -83,30 +83,33 @@ export const getIncidentsWithParams = async (params) => {
 
 export const updateIncident = async (
   id: string | null,
-  incident: Partial<Incident>
+  incidents: Partial<Incident>
 ) => {
   if (!id) {
-    console.error("No id", incident);
+    console.error("No id", incidents);
     return;
   }
-  IncidentCommander.patch(`/incident?id=eq.${id}`, incident);
+  IncidentCommander.patch(`/incidents?id=eq.${id}`, incidents);
 };
 
 export const createIncident = async (
   user: User,
-  incident: Omit<NewIncident, "created_by" | "commander_id" | "communicator_id">
+  incidents: Omit<
+    NewIncident,
+    "created_by" | "commander_id" | "communicator_id"
+  >
 ) => {
   const params = {
-    ...incident,
-    type: incident.type ?? IncidentType.Issue,
-    status: incident.status ?? IncidentStatus.Open,
+    ...incidents,
+    type: incidents.type ?? IncidentType.Issue,
+    status: incidents.status ?? IncidentStatus.Open,
     created_by: user.id,
     commander_id: user.id,
     communicator_id: user.id
   };
 
   const { data, error } = await resolve<Incident[]>(
-    IncidentCommander.post(`/incident?select=*`, params)
+    IncidentCommander.post(`/incidents?select=*`, params)
   );
 
   if (error) {

@@ -90,7 +90,7 @@ export function IncidentDetailsPage() {
     [incidentData]
   );
 
-  const topologyIds = (incident?.hypothesis || [])
+  const topologyIds = (incident?.hypotheses || [])
     .flatMap((h) =>
       h.evidence?.map((e) =>
         e.type === EvidenceType.Topology ? e.evidence.id : null
@@ -101,7 +101,7 @@ export function IncidentDetailsPage() {
   const status = useMemo(() => incident?.status ?? null, [incident]);
 
   const loadedTree = useMemo(
-    () => (incident ? buildTreeFromHypothesisList(incident.hypothesis) : null),
+    () => (incident ? buildTreeFromHypothesisList(incident.hypotheses) : null),
     [incident]
   );
 
