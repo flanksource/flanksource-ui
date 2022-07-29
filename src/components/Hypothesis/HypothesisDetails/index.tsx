@@ -37,8 +37,8 @@ export function HypothesisDetails({ node, api, ...rest }: IProps) {
         toastError(`Error fetching hypothesis responses: ${error?.message}`);
       }
 
-      const responses = (data.comment || [])
-        .concat(data.evidence || [])
+      const responses = (data.comments || [])
+        .concat(data.evidences || [])
         .sort((a: Response, b: Response) => {
           if (a.created_at > b.created_at) return 1;
           return -1;

@@ -2,7 +2,6 @@ import clsx from "clsx";
 import { filter } from "lodash";
 import { useEffect, useState, useMemo, MouseEventHandler } from "react";
 import { Link } from "react-router-dom";
-import { getTopologyWithoutUnroll } from "../../api/services/topology";
 import { CustomScroll } from "../CustomScroll";
 import { HealthSummary } from "../HealthSummary";
 import { Icon } from "../Icon";
@@ -56,9 +55,7 @@ export function TopologyCard({
 
   useEffect(() => {
     if (topologyId != null && topologyData == null) {
-      getTopologyWithoutUnroll({ id: topologyId }).then((topology) => {
-        setTopology(topology.data[0]);
-      });
+      getTopology(topologyId).then(({ data }) => setTopology(data[0]));
     }
   }, [topologyId, topologyData]);
 

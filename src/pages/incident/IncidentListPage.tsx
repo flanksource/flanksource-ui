@@ -112,10 +112,9 @@ export function IncidentListPage() {
             : [x.communicator_id, x.commander_id];
 
         const commentsSet = new Map(
-          x?.comment.map((x) => [x?.created_by?.id, x?.created_by])
+          x?.comments.map((x) => [x?.created_by?.id, x?.created_by])
         );
         responders.forEach((x) => commentsSet.delete(x.id));
-
         return {
           ...x,
           responders,

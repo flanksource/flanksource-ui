@@ -39,7 +39,10 @@ export function ConfigListPage() {
   }, []);
 
   const configTagItems = useMemo(
-    () => data.flatMap((d) => Object.entries(d.tags)),
+    () =>
+      data.flatMap((d) => {
+        return Object.entries(d?.tags || {});
+      }),
     [data]
   );
 
