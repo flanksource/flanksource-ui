@@ -8,6 +8,7 @@
     "scripts/serve-build.js"
   ],
   "dependencies": {
+    "@codemirror/lang-json": "^6.0.0",
     "@headlessui/react": "^0.0.0-insiders.5af3bd4",
     "@heroicons/react": "^1.0.3",
     "@hookform/resolvers": "^2.8.8",
@@ -22,6 +23,8 @@
     "@types/react": "^18.0.9",
     "@types/react-dom": "^18.0.5",
     "@types/react-mentions": "^4.1.6",
+    "@uiw/codemirror-theme-github": "^4.11.4",
+    "@uiw/react-codemirror": "^4.11.4",
     "ansi-to-html": "^0.7.2",
     "axios": "^0.27.2",
     "clsx": "^1.1.1",
