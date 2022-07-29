@@ -22,7 +22,7 @@ export interface Comment {
 export const getCommentsByHypothesis = (hypothesisId: string) =>
   resolve<Comment[]>(
     IncidentCommander.get(
-      `/comment?select=*,created_by(id,name,avatar)&hypothesis_id=eq.${hypothesisId}&order=created_at.asc`
+      `/comments?select=*,created_by(id,name,avatar)&hypothesis_id=eq.${hypothesisId}&order=created_at.asc`
     )
   );
 
@@ -33,7 +33,7 @@ export const createComment = async ({
   comment
 }: NewComment) =>
   resolve<Comment>(
-    IncidentCommander.post(`/comment`, {
+    IncidentCommander.post(`/comments`, {
       created_by: user.id,
       incident_id: incidentId,
       hypothesis_id: hypothesisId,
