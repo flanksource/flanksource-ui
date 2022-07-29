@@ -43,7 +43,7 @@ export const Jira = ({ control, errors, className, ...rest }: JiraProps) => {
                   autoFetch={false}
                   onSelect={(selected) => {
                     setJiraProject(selected);
-                    onChange(selected.value);
+                    onChange(selected?.value);
                   }}
                   itemsPath="$..projects[*]"
                   namePath="$.name"
