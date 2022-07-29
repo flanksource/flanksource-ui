@@ -12,7 +12,6 @@ import { Canary } from "./components";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { ConfigLayout, SidebarLayout } from "./components/Layout";
 import { Loading } from "./components/Loading";
-import { TraceView } from "./components/Traces";
 import { AuthContext } from "./context";
 import {
   ConfigChangesPage,
@@ -22,15 +21,8 @@ import {
   IncidentDetailsPage,
   IncidentListPage,
   LogsPage,
-  TimelinePage,
   TopologyPage
 } from "./pages";
-import { DropdownDemoPage } from "./pages/Examples/dropdown-demo";
-import { ModalPage } from "./pages/Examples/Modal/modal-page";
-import { RsDemoPage } from "./pages/Examples/rs-demo";
-import { TypologyDropdownDemo } from "./pages/Examples/topology-dropdown";
-import { TopologyPage as ExamplesTopologyPage } from "./pages/Examples/Topology/topology-page";
-import { TopologySelectorModalPage } from "./pages/Examples/TopologySelectorModalPage/TopologySelectorModalPage";
 import { HealthPage } from "./pages/health";
 
 const queryClient = new QueryClient({
@@ -72,16 +64,6 @@ const navigation = [
     icon: ImLifebuoy
   }
 ];
-
-export function Placeholder({ text }) {
-  return (
-    <div className="py-4">
-      <div className="h-96 border-4 border-dashed border-gray-200 rounded-lg">
-        {text}
-      </div>
-    </div>
-  );
-}
 
 export function HealthRoutes({ sidebar }) {
   return (
@@ -165,35 +147,6 @@ export function IncidentManagerRoutes({ sidebar }) {
           />
           <Route path="changes" element={<ConfigDetailsChangesPage />} />
         </Route>
-      </Route>
-
-      <Route path="examples" element={sidebar}>
-        <Route path="rs" element={<RsDemoPage />} />
-        <Route path="dropdown" element={<DropdownDemoPage />} />
-        <Route
-          path="topology"
-          element={<ExamplesTopologyPage url="/canary/api" />}
-        />
-        <Route
-          path="topology-selector"
-          element={<TopologySelectorModalPage url="/canary/api" />}
-        />
-        <Route path="modal" element={<ModalPage />} />
-        <Route path="topology-dropdown" element={<TypologyDropdownDemo />} />
-      </Route>
-
-      <Route path="timeline" element={sidebar}>
-        <Route index element={<TimelinePage />} />
-      </Route>
-
-      <Route path="metrics" element={sidebar}>
-        <Route index element={<Placeholder text="metrics" />} />
-      </Route>
-      <Route path="layout">
-        <Route index element={sidebar} />
-      </Route>
-      <Route path="traces" element={sidebar}>
-        <Route index element={<TraceView />} />
       </Route>
     </Routes>
   );

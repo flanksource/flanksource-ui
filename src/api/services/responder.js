@@ -5,10 +5,10 @@ export const getResponder = async (ids) =>
   resolve(IncidentCommander.get(`/person?id=in.(${ids})`));
 
 export const saveResponder = (params) =>
-  resolve(IncidentCommander.post(`/responder?select=*`, params));
+  resolve(IncidentCommander.post(`/responders?select=*`, params));
 
 export const getRespondersForTheIncident = (id) =>
-  resolve(IncidentCommander.get(`/responder?incident_id=eq.${id}&select=*`));
+  resolve(IncidentCommander.get(`/responders?incident_id=eq.${id}&select=*`));
 
 export const deleteResponder = (id) =>
-  resolve(IncidentCommander.delete(`/responder?id=eq.${id}`));
+  resolve(IncidentCommander.delete(`/responders?id=eq.${id}`));

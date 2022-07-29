@@ -34,21 +34,21 @@ export interface Hypothesis {
 export const getAllHypothesisByIncident = (incidentId: string) =>
   resolve<Hypothesis[]>(
     IncidentCommander.get(
-      `/hypothesis?incident_id=eq.${incidentId}&order=created_at.asc`
+      `/hypotheses?incident_id=eq.${incidentId}&order=created_at.asc`
     )
   );
 
 export const getHypothesis = async (id: string) => {
-  const comments = `comment!comment_incident_id_fkey(id,created_by(id,name,avatar))`;
+  const comments = `comments!comments_incident_id_fkey(id,created_by(id,name,avatar))`;
 
   return resolve(
-    IncidentCommander.get(`/hypothesis?id=eq.${id}&select(*,${comments})`)
+    IncidentCommander.get(`/hypotheses?id=eq.${id}&select(*,${comments})`)
   );
 };
 
 export const getHypothesisResponse = async (id: string) => {
-  const comments = "comment(id,*,created_by(id,name,avatar))";
-  const evidence = "evidence(id,*,created_by(id,name,avatar))";
+  const comments = "comments(id,*,created_by(id,name,avatar))";
+  const evidence = "evidences(id,*,created_by(id,name,avatar))";
 
   const { data, error } = await resolve<
     [
@@ -60,7 +60,7 @@ export const getHypothesisResponse = async (id: string) => {
     ]
   >(
     IncidentCommander.get(
-      `/hypothesis?id=eq.${id}&select=id,${comments},${evidence}`
+      `/hypotheses?id=eq.${id}&select=id,${comments},${evidence}`
     )
   );
 
@@ -74,7 +74,7 @@ export const getHypothesisResponse = async (id: string) => {
 export const searchHypothesis = (incidentId: string, query: string) =>
   resolve<Hypothesis[]>(
     IncidentCommander.get(
-      `/hypothesis?order=created_at.desc&title=ilike.*${query}*&incident_id=eq.${incidentId}`
+      `/hypotheses?order=created_at.desc&title=ilike.*${query}*&incident_id=eq.${incidentId}`
     )
   );
 
@@ -104,7 +104,7 @@ type NewHypothesis = NewRootNode | NewChildNode;
 
 export const createHypothesis = async ({ user, ...params }: NewHypothesis) => {
   const { data, error } = await resolve<[Hypothesis]>(
-    IncidentCommander.post(`/hypothesis`, {
+    IncidentCommander.post(`/hypotheses`, {
       ...params,
       created_by: user.id
     })
@@ -126,7 +126,7 @@ export const createHypothesisOld = async (
     status: HypothesisStatus.Possible
   }
 ) =>
-  IncidentCommander.post(`/hypothesis`, {
+  IncidentCommander.post(`/hypotheses`, {
     id,
     created_by: user.id,
     incident_id: incidentId,
@@ -134,14 +134,14 @@ export const createHypothesisOld = async (
   });
 
 export const updateHypothesis = async (id: string, params: HypothesisInfo) => {
-  IncidentCommander.patch(`/hypothesis?id=eq.${id}`, { ...params });
+  IncidentCommander.patch(`/hypotheses?id=eq.${id}`, { ...params });
 };
 
 // NOTE: Needs to be a database transaction. Possibility of partial deletes.
 export const deleteHypothesis = async (id: string) => {
-  await resolve(IncidentCommander.delete(`/comment?hypothesis_id=eq.${id}`));
-  await resolve(IncidentCommander.delete(`/evidence?hypothesis_id=eq.${id}`));
-  return resolve(IncidentCommander.delete(`/hypothesis?id=eq.${id}`));
+  await resolve(IncidentCommander.delete(`/comments?hypotheses_id=eq.${id}`));
+  await resolve(IncidentCommander.delete(`/evidences?hypotheses_id=eq.${id}`));
+  return resolve(IncidentCommander.delete(`/hypotheses?id=eq.${id}`));
 };
 
 export const deleteHypothesisBulk = async (idList: string[]) => {
@@ -152,5 +152,5 @@ export const deleteHypothesisBulk = async (idList: string[]) => {
       ids += ",";
     }
   });
-  return resolve(IncidentCommander.delete(`/hypothesis?id=in.(${ids})`));
+  return resolve(IncidentCommander.delete(`/hypotheses?id=in.(${ids})`));
 };
