@@ -24,6 +24,8 @@ import {
   TopologyPage
 } from "./pages";
 import { HealthPage } from "./pages/health";
+import { SideNav } from "./components/Layout/SidebarLayout";
+import { AdjustmentsIcon, UserGroupIcon } from "@heroicons/react/solid";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -35,33 +37,16 @@ const queryClient = new QueryClient({
   }
 });
 
-const navigation = [
+const navigation: SideNav = [
+  { name: "Topology", href: "/topology", icon: HomeIcon },
+  { name: "Health", href: "/health", icon: AiFillHeart },
+  { name: "Logs", href: "/logs", icon: FolderIcon },
+  { name: "Config", href: "/config", icon: VscJson },
+  { name: "Incidents", href: "/incidents", icon: ImLifebuoy },
   {
-    name: "Topology",
-    href: "/topology",
-    icon: HomeIcon,
-    current: false
-  },
-  {
-    name: "Health",
-    href: "/health",
-    icon: AiFillHeart,
-    current: false
-  },
-  { name: "Logs", href: "/logs", icon: FolderIcon, current: false },
-  // { name: "Metrics", href: "/metrics", icon: VscGraph, current: false },
-  // { name: "Traces", href: "/traces", icon: FaProjectDiagram, current: false },
-  { name: "Config", href: "/config", icon: VscJson, current: false },
-  // {
-  //   name: "Timeline",
-  //   href: "/timeline",
-  //   icon: MdTimeline,
-  //   current: false
-  // },
-  {
-    name: "Incidents",
-    href: "/incidents",
-    icon: ImLifebuoy
+    name: "Settings",
+    icon: AdjustmentsIcon,
+    submenu: [{ name: "Teams", href: "/settings/teams", icon: UserGroupIcon }]
   }
 ];
 
@@ -90,6 +75,10 @@ export function IncidentManagerRoutes({ sidebar }) {
 
       <Route path="health" element={sidebar}>
         <Route index element={<HealthPage url="/canary/api" />} />
+      </Route>
+
+      <Route path="/settings/teams" element={sidebar}>
+        <Route index element={<IncidentListPage />} />
       </Route>
 
       <Route path="logs" element={sidebar}>

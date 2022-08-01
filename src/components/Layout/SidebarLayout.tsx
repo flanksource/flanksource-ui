@@ -1,5 +1,5 @@
-import { Dialog, Transition } from "@headlessui/react";
-import { XIcon } from "@heroicons/react/outline";
+import { Dialog, Disclosure, Transition } from "@headlessui/react";
+import { ChevronUpIcon, XIcon } from "@heroicons/react/outline";
 import { Fragment, useEffect, useState, useCallback } from "react";
 import { NavLink, Outlet } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
@@ -9,12 +9,151 @@ import { getUser } from "../../api/auth";
 import { Icon } from "../Icon";
 import { useOuterClick } from "../../lib/useOuterClick";
 import { getLocalItem, setLocalItem } from "../../utils/storage";
+import { IconType } from "react-icons";
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
+interface SideNavItem {
+  name: string;
+  href: string;
+  icon: IconType;
 }
 
-export function SidebarLayout({ navigation }) {
+interface SideNavGroup {
+  name: string;
+  icon: IconType;
+  submenu: SideNavItem[];
+}
+
+export type SideNav = (SideNavItem | SideNavGroup)[];
+
+interface Props {
+  navigation: SideNav;
+}
+
+interface SideNavGroupProps {
+  navs: SideNav;
+  collapseSidebar: boolean;
+  submenu?: boolean;
+}
+
+function SideNavItem({
+  name,
+  current,
+  href,
+  collapseSidebar,
+  icon: Icon
+}: SideNavItem & { collapseSidebar?: boolean; current?: boolean }) {
+  return (
+    <NavLink
+      key={name}
+      to={href}
+      className={clsx(
+        current
+          ? "bg-gray-100 text-gray-900"
+          : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
+        "group rounded-md py-2 px-2 flex items-center text-sm font-medium"
+      )}
+    >
+      <Icon
+        className={clsx(
+          current ? "text-gray-500" : "text-gray-400 group-hover:text-gray-500",
+          "mr-3 flex-shrink-0 h-6 w-6"
+        )}
+        aria-hidden="true"
+      />
+      <p
+        className={clsx("duration-300 transition-opacity", {
+          "opacity-0": collapseSidebar
+        })}
+      >
+        {name}
+      </p>
+    </NavLink>
+  );
+}
+
+function SideNavGroup({
+  submenu,
+  name,
+  icon: Icon,
+  current,
+  collapseSidebar
+}: {
+  submenu: SideNavItem[];
+  name: string;
+  icon: IconType;
+  current?: boolean;
+  collapseSidebar: boolean;
+}) {
+  return (
+    <Disclosure as="div">
+      {({ open }) => (
+        <>
+          <Disclosure.Button
+            className={clsx(
+              current
+                ? "bg-gray-100 text-gray-900"
+                : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
+              "group rounded-md py-2 px-2 flex flex-row w-full justify-between items-center text-sm font-medium"
+            )}
+          >
+            <span className="flex">
+              <Icon
+                className={clsx(
+                  current
+                    ? "text-gray-500"
+                    : "text-gray-400 group-hover:text-gray-500",
+                  "mr-3 flex-shrink-0 h-6 w-6"
+                )}
+                aria-hidden="true"
+              />
+              <p
+                className={clsx("duration-300 transition-opacity", {
+                  "opacity-0": collapseSidebar
+                })}
+              >
+                {name}
+              </p>
+            </span>
+            {!!submenu && (
+              <ChevronUpIcon
+                className={`${
+                  submenu && open ? "rotate-180 transform" : ""
+                } h-5 w-5`}
+              />
+            )}
+          </Disclosure.Button>
+          <Disclosure.Panel className="pl-2">
+            <SideNav navs={submenu} collapseSidebar={collapseSidebar} />
+          </Disclosure.Panel>
+        </>
+      )}
+    </Disclosure>
+  );
+}
+
+function isSubmenu(item: SideNavItem | SideNavGroup): item is SideNavGroup {
+  return "submenu" in item;
+}
+
+function SideNav({ navs, collapseSidebar }: SideNavGroupProps) {
+  console.log(navs);
+
+  return (
+    <nav className="flex-1 px-2 pb-4 space-y-1">
+      {navs.map((item) => (
+        <div key={item.name} data-tip={item.name}>
+          {isSubmenu(item) ? (
+            <SideNavGroup {...item} collapseSidebar={collapseSidebar} />
+          ) : (
+            <SideNavItem {...item} />
+          )}
+        </div>
+      ))}
+    </nav>
+  );
+}
+
+export function SidebarLayout({ navigation }: Props) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [collapseSidebar, setCollapseSidebar] = useState(false);
@@ -167,39 +306,7 @@ export function SidebarLayout({ navigation }) {
                 <Icon name="flanksource" className="w-auto h-auto px-4" />
               )}
               <div className="flex-grow mt-5 flex flex-col">
-                <nav className="flex-1 px-2 pb-4 space-y-1">
-                  {navigation.map((item) => (
-                    <div key={item.name} data-tip={item.name}>
-                      <NavLink
-                        key={item.name}
-                        to={item.href}
-                        className={classNames(
-                          item.current
-                            ? "bg-gray-100 text-gray-900"
-                            : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
-                          "group rounded-md py-2 px-2 flex items-center text-sm font-medium"
-                        )}
-                      >
-                        <item.icon
-                          className={classNames(
-                            item.current
-                              ? "text-gray-500"
-                              : "text-gray-400 group-hover:text-gray-500",
-                            "mr-3 flex-shrink-0 h-6 w-6"
-                          )}
-                          aria-hidden="true"
-                        />
-                        <p
-                          className={clsx("duration-300 transition-opacity", {
-                            "opacity-0": collapseSidebar
-                          })}
-                        >
-                          {item.name}
-                        </p>
-                      </NavLink>
-                    </div>
-                  ))}
-                </nav>
+                <SideNav navs={navigation} collapseSidebar={collapseSidebar} />
               </div>
             </div>
           </div>
