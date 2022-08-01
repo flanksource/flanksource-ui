@@ -1,6 +1,43 @@
 export const MOCK_DATA = [
   {
     id: "0181ebeb-b9e7-009b-a28d-72c2e6d13f1b",
+    config_type: "JIRA",
+    external_id: "JIRA",
+    name: "Jira Projects",
+    tags: {},
+    config: {
+      projects: {
+        Project2: {
+          name: "A Different project",
+          priorities: ["P1", "P2", "P3"],
+          issueTypes: {
+            defect: {
+              status: ["open", "close", "resolved"]
+            },
+            task: {
+              status: ["open", "close", "resolved"]
+            },
+            feat: {
+              status: ["open", "close", "resolved"]
+            }
+          }
+        },
+        TEST: {
+          name: "Test Project",
+          icon: "ABC",
+          priorities: ["High", "Med", "Low"],
+          issueTypes: {
+            task: {
+              status: ["open", "close", "resolved"],
+              fields: ["custom field"]
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    id: "0181ebeb-b9e7-009b-a28d-72c2e6d13f1b",
     scraper_id: null,
     config_type: "Subnet",
     external_id: "subnet-8ed885f5",

@@ -1,12 +1,14 @@
 import React, { ComponentType, useCallback, useEffect, useState } from "react";
 import AsyncSelect from "react-select/async";
 import { components, GroupBase, OptionProps } from "react-select";
-import { debounce } from "lodash";
-import { getConfig, searchConfigs } from "../../api/services/configs";
-import Select, { Props } from "react-select";
-import { useLoader } from "../../hooks";
 import clsx from "clsx";
 import { JSONPath } from "jsonpath-plus";
+import { Control, Controller } from "react-hook-form";
+import { debounce } from "lodash";
+import Select, { Props } from "react-select";
+
+import { getConfig, searchConfigs } from "../../api/services/configs";
+import { useLoader } from "../../hooks";
 
 interface IOption {
   name: string;
@@ -77,10 +79,13 @@ interface IProps extends Props<IOption, false, GroupBase<IOption>> {
   namePath?: string;
   valuePath?: string;
   className?: string;
+  control?: Control;
+  name: string;
   description?: string | React.ReactElement;
   label?: string | React.ReactElement;
   children?: React.ReactElement | React.ReactElement[];
   onSelect: (arg: any) => void;
+  rules?: any;
 }
 
 export const ConfigItem = ({
@@ -93,8 +98,11 @@ export const ConfigItem = ({
   valuePath,
   autoFetch,
   children,
+  control,
+  name,
   description,
   label,
+  rules,
   ...props
 }: IProps) => {
   const { loading, setLoading } = useLoader();
@@ -138,7 +146,8 @@ export const ConfigItem = ({
         response?.map((item: any) => {
           return {
             name: JSONPath({ path: namePath as string, json: item })?.[0],
-            value: JSONPath({ path: valuePath as string, json: item })?.[0]
+            value: JSONPath({ path: valuePath as string, json: item })?.[0],
+            data: item
           };
         }) || [];
       setOptions(items);
@@ -206,50 +215,73 @@ export const ConfigItem = ({
     );
   };
 
-  if (autoFetch) {
-    return (
-      <>
-        {getLabel()}
-        <AsyncSelect
-          key={type}
-          isClearable
-          defaultOptions
-          loadOptions={debouncedLoadOptions}
-          {...props}
-          onChange={(e: any) => {
-            onSelect(e);
-            getConfigDetails(e?.value);
-          }}
-          components={{
-            Option
-          }}
-          isLoading={loading}
-        />
-        {getDescription()}
-        {getEnhancedChildren()}
-      </>
-    );
-  } else {
-    return (
-      <>
-        {getLabel()}
-        <Select
-          options={options}
-          isClearable
-          {...props}
-          onChange={onSelect}
-          components={{
-            Option,
-            SingleValue
-          }}
-          value={value}
-          getOptionValue={(item: any) => item.value}
-        />
-        {getDescription()}
-        {getEnhancedChildren()}
-      </>
-    );
-  }
+  const getControl = (onSelectFn: any, controlValue: any) => {
+    if (autoFetch) {
+      return (
+        <>
+          {getLabel()}
+          <AsyncSelect
+            key={type}
+            isClearable
+            defaultOptions
+            loadOptions={debouncedLoadOptions}
+            {...props}
+            onChange={(e: any) => {
+              onSelectFn(e);
+              getConfigDetails(e?.value);
+            }}
+            components={{
+              Option
+            }}
+            isLoading={loading}
+            value={controlValue}
+          />
+          {getDescription()}
+          {getEnhancedChildren()}
+        </>
+      );
+    } else {
+      return (
+        <>
+          {getLabel()}
+          <Select
+            options={options}
+            isClearable
+            {...props}
+            onChange={(e: any) => {
+              onSelectFn(e);
+              sentDependentOptions(e);
+            }}
+            components={{
+              Option,
+              SingleValue
+            }}
+            value={controlValue}
+            getOptionValue={(item: any) => item.value}
+          />
+          {getDescription()}
+          {getEnhancedChildren()}
+        </>
+      );
+    }
+  };
+
+  return control ? (
+    <Controller
+      control={control}
+      name={name}
+      render={({ field }) => {
+        const { onChange: onChangeControlled, value: valueControlled } = field;
+        return getControl((e: any) => {
+          onSelect(e);
+          onChangeControlled(e);
+        }, valueControlled);
+      }}
+      rules={rules}
+    />
+  ) : (
+    getControl(onSelect, value)
+  );
 };
 
 ConfigItem.displayName = "ConfigItem";

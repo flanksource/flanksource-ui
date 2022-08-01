@@ -4,9 +4,9 @@ import { ConfigDB } from "../../api/axios";
 import { MOCK_DATA } from "./storybook-mock";
 
 ConfigDB.get = (url: string) => {
-  if (url.indexOf("Subnet") > -1) {
+  if (url.indexOf("JIRA") > -1) {
     return Promise.resolve({
-      data: MOCK_DATA.filter((v) => v.config_type === "Subnet")
+      data: MOCK_DATA.filter((v) => v.config_type === "JIRA")
     });
   } else if (url.indexOf("EC2Instance") > -1) {
     return Promise.resolve({
@@ -57,9 +57,10 @@ const EC2ConfigItemDropDown = ({ type }: { type: string }) => {
   );
 };
 
-const SubnetConfigItemDropDown = ({ type }: { type: string }) => {
+const JiraConfigItemDropDown = ({ type }: { type: string }) => {
   const [selectedItem, setSelectedItem] = useState(null);
-  const [dependentSelectedItem, setDependentSelectedItem] = useState(null);
+  const [selectedProject, setSelectedProject] = useState(null);
+  const [selectedIssue, setSelectedIssue] = useState(null);
   return (
     <div className="flex flex-col">
       <ConfigItem
@@ -67,38 +68,67 @@ const SubnetConfigItemDropDown = ({ type }: { type: string }) => {
         type={type}
         value={selectedItem}
         autoFetch={true}
-        label={<label className="block text-sm font-light">Subnet</label>}
+        label={
+          <label className="block text-sm font-light">Jira Config Types</label>
+        }
         description={
           <div className="px-2 bg-white text-gray-700 text-xs">
-            list of subnets
+            list of jira config types
           </div>
         }
         onSelect={(item) => {
           setSelectedItem(item);
-          setDependentSelectedItem(null);
+          setSelectedProject(null);
         }}
       >
         <ConfigItem
+          name="project"
           className="w-96 mt-1"
-          type="esb"
-          value={dependentSelectedItem}
+          type="JIRA"
+          value={selectedProject}
           autoFetch={false}
-          itemsPath="$..block_device_mappings[*]"
+          itemsPath="$..projects[*]"
+          namePath="$.name"
+          valuePath="$.name"
           label={
-            <label className="block font-light text-sm mt-2">Device Name</label>
+            <label className="block font-light text-sm mt-2">Project</label>
           }
           description={
             <div className="px-2 bg-white text-gray-700 text-xs">
-              list of device names
+              Jira project name
             </div>
           }
-          namePath="$.DeviceName"
-          valuePath="$.Ebs.VolumeId"
           onSelect={(item: any) => {
-            setDependentSelectedItem(item);
+            setSelectedProject(item);
+            setSelectedIssue(null);
           }}
           isDisabled={!selectedItem}
-        />
+        >
+          <ConfigItem
+            name="issueType"
+            className="w-96 mt-1"
+            type="JIRA"
+            value={selectedIssue}
+            autoFetch={false}
+            itemsPath="$..task.status[*]"
+            namePath="$"
+            valuePath="$"
+            label={
+              <label className="block font-light text-sm mt-2">
+                Issue Type
+              </label>
+            }
+            description={
+              <div className="px-2 bg-white text-gray-700 text-xs">
+                Issue Type
+              </div>
+            }
+            onSelect={(item: any) => {
+              setSelectedIssue(item);
+            }}
+            isDisabled={!selectedProject}
+          />
+        </ConfigItem>
       </ConfigItem>
     </div>
   );
@@ -162,7 +192,7 @@ export const LabelDescpritionDefaultStyle = LabelDescDefaultStyleTemplate.bind(
 LabelDescpritionDefaultStyle.args = {};
 
 const LabelDescCustomStyleTemplate = ({ ...props }) => (
-  <SubnetConfigItemDropDown {...{ ...props, type: "Subnet" }} />
+  <JiraConfigItemDropDown {...{ ...props, type: "JIRA" }} />
 );
 export const LabelDescriptionCustomStyle = LabelDescCustomStyleTemplate.bind(
   {}

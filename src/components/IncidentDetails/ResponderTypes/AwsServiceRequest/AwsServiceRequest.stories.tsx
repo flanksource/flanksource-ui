@@ -13,6 +13,7 @@ const FormContainer = () => {
     formState: { errors },
     getValues,
     reset,
+    setValue,
     handleSubmit
   } = useForm<AddResponderFormValues>({
     defaultValues: {
@@ -38,7 +39,11 @@ const FormContainer = () => {
   };
   return (
     <div className="flex flex-col">
-      <AwsServiceRequest control={control} errors={errors} />
+      <AwsServiceRequest
+        control={control}
+        errors={errors}
+        setValue={setValue}
+      />
       <div className="flex flex-row">
         <button className="btn-secondary p-2 m-2" onClick={(e) => reset()}>
           reset

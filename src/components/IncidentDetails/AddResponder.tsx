@@ -172,7 +172,8 @@ export const AddResponder = ({
     formState: { errors },
     getValues,
     reset,
-    handleSubmit
+    handleSubmit,
+    setValue
   } = useForm<AddResponderFormValues>({
     defaultValues: {
       to: "",
@@ -214,27 +215,39 @@ export const AddResponder = ({
   const getResponderTypeForm = () => {
     switch (selectedType?.value) {
       case "Email":
-        return <Email control={control} errors={errors} />;
+        return <Email control={control} errors={errors} setValue={setValue} />;
       case "Jira":
-        return <Jira control={control} errors={errors} />;
+        return <Jira control={control} errors={errors} setValue={setValue} />;
       case "ServiceNow":
-        return <ServiceNow control={control} errors={errors} />;
+        return (
+          <ServiceNow control={control} errors={errors} setValue={setValue} />
+        );
       case "CA":
-        return <CA control={control} errors={errors} />;
+        return <CA control={control} errors={errors} setValue={setValue} />;
       case "AWS Support":
-        return <AwsSupport control={control} errors={errors} />;
+        return (
+          <AwsSupport control={control} errors={errors} setValue={setValue} />
+        );
       case "AWS AMS Service Request":
-        return <AwsServiceRequest control={control} errors={errors} />;
+        return (
+          <AwsServiceRequest
+            control={control}
+            errors={errors}
+            setValue={setValue}
+          />
+        );
       case "Redhat":
-        return <Redhat control={control} errors={errors} />;
+        return <Redhat control={control} errors={errors} setValue={setValue} />;
       case "Oracle":
-        return <Oracle control={control} errors={errors} />;
+        return <Oracle control={control} errors={errors} setValue={setValue} />;
       case "Microsoft":
-        return <Microsoft control={control} errors={errors} />;
+        return (
+          <Microsoft control={control} errors={errors} setValue={setValue} />
+        );
       case "VMWare":
-        return <VMWare control={control} errors={errors} />;
+        return <VMWare control={control} errors={errors} setValue={setValue} />;
       case "Person":
-        return <Person control={control} errors={errors} />;
+        return <Person control={control} errors={errors} setValue={setValue} />;
       default:
         return null;
     }
