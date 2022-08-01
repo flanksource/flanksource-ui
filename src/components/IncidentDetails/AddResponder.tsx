@@ -351,7 +351,7 @@ export const AddResponder = ({
           )}
           {steps[1].inProgress && (
             <div>
-              <div className="px-8 py-3 h-modal-body-md mb-16">
+              <div className="px-8 py-3 h-modal-body-md mb-20">
                 {getResponderTypeForm()}
                 <ActionButtonGroup
                   className="absolute w-full bottom-0 left-0"
