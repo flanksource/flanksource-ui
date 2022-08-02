@@ -1,16 +1,19 @@
 import { FolderIcon, HomeIcon } from "@heroicons/react/outline";
+import { AdjustmentsIcon, UserGroupIcon } from "@heroicons/react/solid";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useEffect, useState } from "react";
 import { AiFillHeart } from "react-icons/ai";
 import { ImLifebuoy } from "react-icons/im";
 import { VscJson } from "react-icons/vsc";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import ReactTooltip from "react-tooltip";
+
 import { getUser } from "./api/auth";
 import { Canary } from "./components";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { ConfigLayout, SidebarLayout } from "./components/Layout";
+import { SideNav } from "./components/Layout/SidebarLayout";
 import { Loading } from "./components/Loading";
 import { AuthContext } from "./context";
 import {
@@ -24,8 +27,6 @@ import {
   TopologyPage
 } from "./pages";
 import { HealthPage } from "./pages/health";
-import { SideNav } from "./components/Layout/SidebarLayout";
-import { AdjustmentsIcon, UserGroupIcon } from "@heroicons/react/solid";
 
 const queryClient = new QueryClient({
   defaultOptions: {
