@@ -1,35 +1,27 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { get } from "src/api/schemaResources";
+import { getResource } from "../../api/schemaResources";
 import { CodeEditor } from "../CodeEditor";
 import { SearchLayout } from "../Layout";
-
-export interface SchemaResourceI {
-  name: string;
-  source: string;
-  spec: string;
-  id: string;
-  created_at: string;
-  updated_at: string;
-}
+import { SchemaResource as SchemaResourceI } from "./resourceTypes";
 
 export function SchemaResource({
   resourceInfo
 }: {
-  resourceInfo: { name: string; table: string };
+  resourceInfo: SchemaResourceI;
 }) {
   const [resource, setResource] = useState({});
-  const { table, name } = resourceInfo;
+  const { name } = resourceInfo;
   const { id } = useParams();
 
   useEffect(() => {
     if (!id) return;
 
-    get(table, id).then((res) => {
+    getResource(resourceInfo, id)?.then((res) => {
       console.log(res);
       setResource(res.data[0]);
     });
-  }, [table, id]);
+  }, [resourceInfo]);
 
   return (
     <SearchLayout

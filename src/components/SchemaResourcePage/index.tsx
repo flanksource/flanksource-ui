@@ -1,17 +1,19 @@
 import { capitalize } from "lodash";
 import { useEffect, useState } from "react";
 import { AiFillPlusCircle } from "react-icons/ai";
-import { createResource, getAll } from "src/api/schemaResources";
-import { useUser } from "src/context";
+
+import { createResource, getAll } from "../../api/schemaResources";
+import { useUser } from "../../context";
 import { SearchLayout } from "../Layout";
 import { Modal } from "../Modal";
+import { SchemaResource } from "./resourceTypes";
 import { SchemaResourceEdit } from "./SchemaResourceEdit";
 import { SchemaResourceList } from "./SchemaResourceList";
 
 export function SchemaResourcePage({
   resourceInfo
 }: {
-  resourceInfo: { table: string; name: string; href: string };
+  resourceInfo: SchemaResource;
 }) {
   const { user } = useUser();
   const [list, setList] = useState([]);
@@ -20,11 +22,11 @@ export function SchemaResourcePage({
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
   useEffect(() => {
-    getAll(table).then((res) => {
+    getAll(resourceInfo).then((res) => {
       console.log(res);
       setList(res.data);
     });
-  }, [table]);
+  }, [resourceInfo]);
 
   return (
     <SearchLayout
@@ -33,6 +35,7 @@ export function SchemaResourcePage({
           <div className="text-xl font-semibold mr-4 whitespace-nowrap">
             {name}
           </div>
+          /
           <div className="flex">
             <button
               type="button"
@@ -57,7 +60,7 @@ export function SchemaResourcePage({
       >
         <SchemaResourceEdit
           onSubmit={(data) =>
-            createResource(table, { ...data, created_by: user?.id })
+            createResource(resourceInfo, { ...data, created_by: user?.id })
           }
         />
       </Modal>

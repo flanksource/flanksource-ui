@@ -25,8 +25,6 @@ export function SchemaResourceEdit({
     name: name || ""
   });
   const specValue = watch("spec");
-  const nameValue = watch("name");
-  console.log("set val", nameValue);
 
   useEffect(() => {
     register("spec");

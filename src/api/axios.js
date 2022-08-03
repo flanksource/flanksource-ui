@@ -29,6 +29,15 @@ export const Logs = axios.create({
   }
 });
 
+export const CanaryCheckerDB = axios.create({
+  baseURL: `${window.CANARY_BASE_URL}/db`,
+  headers: {
+    Accept: "application/json",
+    Prefer: "return=representation",
+    "Content-Type": "application/json"
+  }
+});
+
 export const CanaryChecker = axios.create({
   baseURL: window.CANARY_BASE_URL,
   headers: {

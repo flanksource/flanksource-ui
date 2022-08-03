@@ -6,32 +6,23 @@ import { Toaster } from "react-hot-toast";
 import { IconType } from "react-icons";
 import { IoChevronForwardOutline } from "react-icons/io5";
 import { NavLink, Outlet } from "react-router-dom";
+import { User } from "src/api/services/users";
+import { NavigationItems, SettingsNavigationItems } from "src/App";
+import { $ArrElemType } from "src/types/utility";
 
 import { getUser } from "../../api/auth";
 import { useOuterClick } from "../../lib/useOuterClick";
 import { getLocalItem, setLocalItem } from "../../utils/storage";
 import { Icon } from "../Icon";
 
-interface SideNavItemI {
-  name: string;
-  href: string;
-  icon: IconType;
-}
-
-interface SideNavGroupI {
-  name: string;
-  icon: IconType;
-  submenu: SideNavItemI[];
-}
-
-export type SideNav = (SideNavItemI | SideNavGroupI)[];
-
 interface Props {
-  navigation: SideNav;
+  navigation: NavigationItems;
+  settingsNav: SettingsNavigationItems;
 }
 
 interface SideNavGroupProps {
-  navs: SideNav;
+  navs: NavigationItems;
+  settings: SettingsNavigationItems;
   collapseSidebar?: boolean;
 }
 
@@ -94,7 +85,10 @@ function SideNavItem({
   href,
   collapseSidebar,
   icon
-}: SideNavItemI & { collapseSidebar: boolean; current?: boolean }) {
+}: $ArrElemType<NavigationItems> & {
+  collapseSidebar: boolean;
+  current?: boolean;
+}) {
   return (
     <NavItemWrapper as={NavLink} to={href}>
       <NavLabel
@@ -113,10 +107,7 @@ function SideNavGroup({
   icon,
   collapseSidebar,
   current = false
-}: {
-  submenu: SideNavItemI[];
-  name: string;
-  icon: IconType;
+}: SettingsNavigationItems & {
   current?: boolean;
   collapseSidebar: boolean;
 }) {
@@ -167,7 +158,9 @@ function SideNavGroup({
             </NavItemWrapper>
           </Disclosure.Button>
           <Disclosure.Panel className="pl-2">
-            <SideNav navs={submenu} />
+            {submenu.map((item) => (
+              <SideNavItem key={item.name} {...item} collapseSidebar={false} />
+            ))}
           </Disclosure.Panel>
         </>
       )}
@@ -175,28 +168,27 @@ function SideNavGroup({
   );
 }
 
-function isSubmenu(item: SideNavItemI | SideNavGroupI): item is SideNavGroupI {
-  return "submenu" in item;
-}
-
-function SideNav({ navs, collapseSidebar = false }: SideNavGroupProps) {
+function SideNav({
+  navs,
+  settings,
+  collapseSidebar = false
+}: SideNavGroupProps) {
   return (
-    <nav className="flex-1 px-2 space-y-1">
+    <nav className="flex-1 px2 space-y-1">
       {navs.map((item) => (
-        <div key={item.name} data-tip={item.name}>
-          {isSubmenu(item) ? (
-            <SideNavGroup {...item} collapseSidebar={collapseSidebar} />
-          ) : (
-            <SideNavItem {...item} collapseSidebar={collapseSidebar} />
-          )}
-        </div>
+        <SideNavItem
+          key={item.name}
+          {...item}
+          collapseSidebar={collapseSidebar}
+        />
       ))}
+      <SideNavGroup {...settings} collapseSidebar={collapseSidebar} />
     </nav>
   );
 }
 
-export function SidebarLayout({ navigation }: Props) {
-  const [user, setUser] = useState(null);
+export function SidebarLayout({ navigation, settingsNav }: Props) {
+  const [user, setUser] = useState<User | null>(null);
   const [collapseSidebar, setCollapseSidebar] = useState(false);
 
   useEffect(() => {
@@ -267,7 +259,11 @@ export function SidebarLayout({ navigation }: Props) {
                 <Icon name="flanksource" className="w-auto h-auto px-4" />
               )}
               <div className="flex-grow mt-5 flex flex-col">
-                <SideNav navs={navigation} collapseSidebar={collapseSidebar} />
+                <SideNav
+                  navs={navigation}
+                  settings={settingsNav}
+                  collapseSidebar={collapseSidebar}
+                />
               </div>
             </div>
           </div>
