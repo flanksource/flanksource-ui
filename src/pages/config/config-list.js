@@ -16,6 +16,7 @@ import ConfigList from "../../components/ConfigList";
 import { SearchSelectTag } from "../../components/SearchSelectTag";
 import { QueryBuilder } from "../../components/QueryBuilder";
 import { Switch } from "../../components/Switch";
+import { RefreshButton } from "../../components/RefreshButton";
 
 const ConfigFilterViewTypes = {
   basic: "Basic",
@@ -54,6 +55,10 @@ export function ConfigListPage() {
     if (params.get("query")) {
       return;
     }
+    fetchAllConfigs();
+  }, [configFilterView, params]);
+
+  function fetchAllConfigs() {
     getAllConfigs()
       .then((res) => {
         setData(res.data);
@@ -61,7 +66,7 @@ export function ConfigListPage() {
       .finally(() => {
         setIsLoading(false);
       });
-  }, [configFilterView, params]);
+  }
 
   const handleRowClick = (row) => {
     const id = row?.original?.id;
@@ -78,6 +83,7 @@ export function ConfigListPage() {
 
       {configFilterView === ConfigFilterViewTypes.basic && (
         <>
+          <RefreshButton onClick={() => fetchAllConfigs()} />
           <TypeDropdown
             value={configType}
             onChange={(ct) => {

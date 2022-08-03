@@ -7,6 +7,7 @@ import { CanarySearchBar } from "../components/Canary/CanarySearchBar";
 import { Canary } from "../components/Canary";
 import { updateParams } from "../components/Canary/url";
 import { getParamsFromURL } from "../components/Canary/utils";
+import { RefreshButton } from "../components/RefreshButton";
 
 const getSearchParams = () => getParamsFromURL(window.location.search);
 
@@ -20,6 +21,9 @@ export function HealthPage({ url }) {
       title={<h1 className="text-xl font-semibold">Health</h1>}
       extra={
         <>
+          <RefreshButton
+            onClick={() => handleSearch(getSearchParams()?.query || "")}
+          />
           <DropdownStandaloneWrapper
             dropdownElem={<TimeRange />}
             defaultValue={timeRanges[0].value}
