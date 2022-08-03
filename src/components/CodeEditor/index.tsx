@@ -1,6 +1,4 @@
-import CodeMirror from "@uiw/react-codemirror";
-import { json } from "@codemirror/lang-json";
-import { githubLight } from "@uiw/codemirror-theme-github";
+import Editor from "@monaco-editor/react";
 
 interface Props {
   value: string;
@@ -10,13 +8,15 @@ interface Props {
 
 export function CodeEditor({ value, onChange, readOnly = false }: Props) {
   return (
-    <CodeMirror
+    <Editor
+      defaultLanguage="json"
       value={value}
-      theme={githubLight}
-      height="200px"
-      extensions={[json()]}
       onChange={onChange}
-      readOnly={readOnly}
+      height="200px"
+      options={{
+        readOnly,
+        minimap: { enabled: false }
+      }}
     />
   );
 }
