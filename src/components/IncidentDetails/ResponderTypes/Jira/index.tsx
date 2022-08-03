@@ -90,7 +90,7 @@ export const Jira = ({
               onSelect={(selected) => {
                 setIssueType(selected);
               }}
-              itemsPath="$..task.status[*]"
+              itemsPath="$..issueTypes.*~"
               namePath="$"
               valuePath="$"
               label={
