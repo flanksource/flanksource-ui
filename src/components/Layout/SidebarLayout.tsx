@@ -128,7 +128,7 @@ function SideNavGroup({
             <NavLabel icon={icon} active={current} iconOnly name={name} />
           </NavItemWrapper>
         </Menu.Button>
-        <Menu.Items className="absolute bg-gray-100 border left-0 ml-12 shadow-md top-0 z-10">
+        <Menu.Items className="absolute bg-gray-100 border left-0 ml-12 w-48 shadow-md top-0 z-10">
           {submenu.map(({ name, icon, href }) => (
             <Menu.Item key={name}>
               {({ active }) => (

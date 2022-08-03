@@ -1,19 +1,22 @@
-import { useCallback } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { json } from "@codemirror/lang-json";
 import { githubLight } from "@uiw/codemirror-theme-github";
 
-export function CodeEditor() {
-  const onChange = useCallback((value: unknown, viewUpdate: unknown) => {
-    console.log("value:", value);
-  }, []);
+interface Props {
+  value: string;
+  readOnly?: boolean;
+  onChange: (value: unknown, viewUpdate: unknown) => void;
+}
+
+export function CodeEditor({ value, onChange, readOnly = false }: Props) {
   return (
     <CodeMirror
-      value={`{ some: "value" }`}
+      value={value}
       theme={githubLight}
       height="200px"
       extensions={[json()]}
       onChange={onChange}
+      readOnly={readOnly}
     />
   );
 }

@@ -15,6 +15,8 @@ import { ErrorBoundary } from "./components/ErrorBoundary";
 import { ConfigLayout, SidebarLayout } from "./components/Layout";
 import { SideNav } from "./components/Layout/SidebarLayout";
 import { Loading } from "./components/Loading";
+import { SchemaResourcePage } from "./components/SchemaResourcePage";
+import { SchemaResource } from "./components/SchemaResourcePage/SchemaResource";
 import { AuthContext } from "./context";
 import {
   ConfigChangesPage,
@@ -47,7 +49,44 @@ const navigation: SideNav = [
   {
     name: "Settings",
     icon: AdjustmentsIcon,
-    submenu: [{ name: "Teams", href: "/settings/teams", icon: UserGroupIcon }]
+    submenu: [
+      {
+        name: "Teams",
+        table: "teams",
+        href: "/settings/teams",
+        icon: UserGroupIcon
+      },
+      {
+        name: "Roles",
+        table: "roles",
+        href: "/settings/roles",
+        icon: UserGroupIcon
+      },
+      {
+        name: "Config Scraper",
+        table: "config_scrapers",
+        href: "/settings/config_scrapers",
+        icon: UserGroupIcon
+      },
+      {
+        name: "System Templates",
+        table: "system_templates",
+        href: "/settings/system_templates",
+        icon: UserGroupIcon
+      },
+      {
+        name: "Components",
+        table: "components",
+        href: "/settings/components",
+        icon: UserGroupIcon
+      },
+      {
+        name: "Health Checks",
+        table: "health_checks",
+        href: "/settings/health_checks",
+        icon: UserGroupIcon
+      }
+    ]
   }
 ];
 
@@ -78,8 +117,25 @@ export function IncidentManagerRoutes({ sidebar }) {
         <Route index element={<HealthPage url="/canary/api" />} />
       </Route>
 
-      <Route path="/settings/teams" element={sidebar}>
-        <Route index element={<IncidentListPage />} />
+      <Route path="settings" element={sidebar}>
+        {(navigation.find((x) => x.name === "Settings")?.submenu || []).map(
+          (x) => {
+            return (
+              <>
+                <Route
+                  key={x.name}
+                  path={x.table}
+                  element={<SchemaResourcePage resourceInfo={x} />}
+                />
+                <Route
+                  key={x.name}
+                  path={`${x.table}/:id`}
+                  element={<SchemaResource resourceInfo={x} />}
+                />
+              </>
+            );
+          }
+        )}
       </Route>
 
       <Route path="logs" element={sidebar}>

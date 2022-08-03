@@ -88,7 +88,7 @@ const validationSchema = yup
       .test(
         "is-incident",
         "Please search and select an incident or fill title to create one.",
-        (incident: IItem) => {
+        (incident) => {
           return Boolean(incident?.value || incident?.description);
         }
       ),
