@@ -172,7 +172,8 @@ export const AddResponder = ({
     formState: { errors },
     getValues,
     reset,
-    handleSubmit
+    handleSubmit,
+    setValue
   } = useForm<AddResponderFormValues>({
     defaultValues: {
       to: "",
@@ -214,27 +215,39 @@ export const AddResponder = ({
   const getResponderTypeForm = () => {
     switch (selectedType?.value) {
       case "Email":
-        return <Email control={control} errors={errors} />;
+        return <Email control={control} errors={errors} setValue={setValue} />;
       case "Jira":
-        return <Jira control={control} errors={errors} />;
+        return <Jira control={control} errors={errors} setValue={setValue} />;
       case "ServiceNow":
-        return <ServiceNow control={control} errors={errors} />;
+        return (
+          <ServiceNow control={control} errors={errors} setValue={setValue} />
+        );
       case "CA":
-        return <CA control={control} errors={errors} />;
+        return <CA control={control} errors={errors} setValue={setValue} />;
       case "AWS Support":
-        return <AwsSupport control={control} errors={errors} />;
+        return (
+          <AwsSupport control={control} errors={errors} setValue={setValue} />
+        );
       case "AWS AMS Service Request":
-        return <AwsServiceRequest control={control} errors={errors} />;
+        return (
+          <AwsServiceRequest
+            control={control}
+            errors={errors}
+            setValue={setValue}
+          />
+        );
       case "Redhat":
-        return <Redhat control={control} errors={errors} />;
+        return <Redhat control={control} errors={errors} setValue={setValue} />;
       case "Oracle":
-        return <Oracle control={control} errors={errors} />;
+        return <Oracle control={control} errors={errors} setValue={setValue} />;
       case "Microsoft":
-        return <Microsoft control={control} errors={errors} />;
+        return (
+          <Microsoft control={control} errors={errors} setValue={setValue} />
+        );
       case "VMWare":
-        return <VMWare control={control} errors={errors} />;
+        return <VMWare control={control} errors={errors} setValue={setValue} />;
       case "Person":
-        return <Person control={control} errors={errors} />;
+        return <Person control={control} errors={errors} setValue={setValue} />;
       default:
         return null;
     }
@@ -254,17 +267,15 @@ export const AddResponder = ({
     Object.keys(data).forEach((key: formPropKey) => {
       if (!data[key]) {
         delete data[key];
+      } else {
+        data[key] =
+          typeof data[key] === "string" ? data[key] : data[key]?.["value"];
       }
     });
     const payload = {
       type: selectedType.type === "Person" ? "person" : "system",
       incident_id: id,
-      acknowledge_time: new Date(Date.now())
-        .toISOString()
-        .replace("T", " ")
-        .replace("Z", "")
-        .split(".")[0],
-      created_by: user.id,
+      created_by: user?.id,
       properties: {
         responderType: selectedType.label,
         ...data
@@ -276,16 +287,16 @@ export const AddResponder = ({
       if (!result?.error) {
         toastSuccess("Added responder successfully");
         onSuccess();
+        setIsOpen(false);
       } else {
         onError();
-        toastSuccess("Adding responder failed");
+        toastError("Adding responder failed");
       }
     } catch (ex) {
       toastError(ex.message);
       onError();
     }
     setLoading(false);
-    setIsOpen(false);
   };
 
   const getModalTitle = () => {
@@ -343,7 +354,7 @@ export const AddResponder = ({
           )}
           {steps[1].inProgress && (
             <div>
-              <div className="px-8 py-3 h-modal-body-md">
+              <div className="px-8 py-3 h-modal-body-md mb-20">
                 {getResponderTypeForm()}
                 <ActionButtonGroup
                   className="absolute w-full bottom-0 left-0"
