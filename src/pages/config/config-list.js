@@ -17,6 +17,7 @@ import { SearchSelectTag } from "../../components/SearchSelectTag";
 import { QueryBuilder } from "../../components/QueryBuilder";
 import { Switch } from "../../components/Switch";
 import { RefreshButton } from "../../components/RefreshButton";
+import { useLoader } from "../../hooks";
 
 const ConfigFilterViewTypes = {
   basic: "Basic",
@@ -28,7 +29,7 @@ export function ConfigListPage() {
   const navigate = useNavigate();
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { loading, setLoading } = useLoader();
   const { setTitle, setTitleExtras } = useOutletContext();
   const [configFilterView, setConfigFilterView] = useState(
     params.get("query")
@@ -59,12 +60,15 @@ export function ConfigListPage() {
   }, [configFilterView, params]);
 
   function fetchAllConfigs() {
+    setLoading(true);
     getAllConfigs()
       .then((res) => {
         setData(res.data);
+        setLoading(false);
       })
-      .finally(() => {
-        setIsLoading(false);
+      .catch((err) => {
+        console.error(err);
+        setLoading(false);
       });
   }
 
@@ -83,7 +87,7 @@ export function ConfigListPage() {
 
       {configFilterView === ConfigFilterViewTypes.basic && (
         <>
-          <RefreshButton onClick={() => fetchAllConfigs()} />
+          <RefreshButton onClick={() => fetchAllConfigs()} animate={loading} />
           <TypeDropdown
             value={configType}
             onChange={(ct) => {
@@ -137,7 +141,8 @@ export function ConfigListPage() {
     search,
     configTagItems,
     options,
-    configFilterView
+    configFilterView,
+    loading
   ]);
 
   useEffect(() => {
@@ -170,7 +175,7 @@ export function ConfigListPage() {
     <ConfigList
       data={filteredData}
       handleRowClick={handleRowClick}
-      isLoading={isLoading}
+      isLoading={loading}
     />
   );
 }

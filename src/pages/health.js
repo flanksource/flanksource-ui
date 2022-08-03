@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { debounce } from "lodash";
 import { SearchLayout } from "../components/Layout";
 import { TimeRange, timeRanges } from "../components/Dropdown/TimeRange";
@@ -12,6 +12,8 @@ import { RefreshButton } from "../components/RefreshButton";
 const getSearchParams = () => getParamsFromURL(window.location.search);
 
 export function HealthPage({ url }) {
+  const [loading, setLoading] = useState(true);
+
   const handleSearch = debounce((value) => {
     updateParams({ query: value });
   }, 400);
@@ -23,6 +25,7 @@ export function HealthPage({ url }) {
         <>
           <RefreshButton
             onClick={() => handleSearch(getSearchParams()?.query || "")}
+            animate={loading}
           />
           <DropdownStandaloneWrapper
             dropdownElem={<TimeRange />}
@@ -44,7 +47,7 @@ export function HealthPage({ url }) {
       }
       contentClass="p-0"
     >
-      <Canary url={url} hideSearch hideTimeRange />
+      <Canary url={url} hideSearch hideTimeRange onLoading={setLoading} />
     </SearchLayout>
   );
 }

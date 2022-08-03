@@ -164,6 +164,7 @@ export function IncidentListPage() {
   return (
     <>
       <SearchLayout
+        loading={isLoading}
         title={
           <div className="flex items-center flex-shrink-0">
             <span className="text-xl font-semibold mr-4 whitespace-nowrap">
@@ -226,7 +227,7 @@ export function IncidentListPage() {
         <div className="leading-1.21rel">
           <div className="flex-none flex-wrap space-x-2 space-y-2">
             <div className="max-w-screen-xl mx-auto flex flex-col justify-center">
-              {!isLoading ? (
+              {!isLoading || Boolean(incidents?.length) ? (
                 <IncidentList list={incidents || []} />
               ) : (
                 <Loading text="fetching incidents" />

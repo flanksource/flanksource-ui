@@ -150,10 +150,6 @@ export function LogsPage() {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const loadLogs = () => {
-    if (!topologyId) {
-      return;
-    }
-
     saveQueryParams();
     setLoading(true);
 
@@ -163,10 +159,15 @@ export function LogsPage() {
       type,
       start
     };
-    getLogs(queryBody).then((res) => {
-      setLogs(res?.data?.results || []);
-      setLoading(false);
-    });
+    getLogs(queryBody)
+      .then((res) => {
+        setLogs(res?.data?.results || []);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setLoading(false);
+        console.error(err);
+      });
   };
 
   const onComponentSelect = (component) => {
@@ -176,8 +177,11 @@ export function LogsPage() {
   };
 
   useEffect(() => {
+    if (!externalId) {
+      return;
+    }
     loadLogs();
-  }, [start, topologyId, externalId]);
+  }, [start, externalId]);
 
   return (
     <SearchLayout
@@ -195,7 +199,7 @@ export function LogsPage() {
       }
       extra={
         <>
-          <RefreshButton onClick={() => loadLogs()} />
+          <RefreshButton onClick={() => loadLogs()} animate={loading} />
           <div className="mr-2 w-full relative rounded-md shadow-sm">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
               <button

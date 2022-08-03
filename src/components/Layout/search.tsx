@@ -6,6 +6,7 @@ interface IProps {
   contentClass?: string;
   title: React.ReactNode;
   onRefresh?: () => void;
+  loading?: boolean;
   extra?: React.ReactNode;
 }
 
@@ -14,6 +15,7 @@ export function SearchLayout({
   contentClass,
   title,
   extra,
+  loading,
   onRefresh
 }: IProps) {
   return (
@@ -24,7 +26,9 @@ export function SearchLayout({
             <div>{title}</div>
           </div>
           <div className="ml-4 flex items-center md:ml-6">
-            {onRefresh && <RefreshButton onClick={onRefresh} />}
+            {onRefresh && (
+              <RefreshButton onClick={onRefresh} animate={loading} />
+            )}
             {extra}
             <UserProfile />
           </div>

@@ -90,7 +90,7 @@ export function TopologyPage() {
     }
   }
 
-  if (loading || topology == null) {
+  if ((loading && !topology) || !topology) {
     return <Loading text="Loading topology..." />;
   }
 
@@ -102,6 +102,7 @@ export function TopologyPage() {
         </div>
       }
       onRefresh={load}
+      loading={loading}
     >
       <>
         {Boolean(topology?.length) && (

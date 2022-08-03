@@ -52,7 +52,8 @@ export function Canary({
   refreshInterval = 15 * 1000,
   topLayoutOffset = 0,
   hideSearch,
-  hideTimeRange
+  hideTimeRange,
+  onLoading = (loading) => {}
 }) {
   // force-set layout to table
   useEffect(() => {
@@ -102,6 +103,7 @@ export function Canary({
       start: isEmpty(timeRange) || timeRange === "undefined" ? "1h" : timeRange
     });
     setIsLoading(true);
+    onLoading(true);
     try {
       const result = await fetch(`${url}?${params}`);
       const data = await result.json();
@@ -114,6 +116,7 @@ export function Canary({
       }
     } catch (ex) {}
     setIsLoading(false);
+    onLoading(false);
     timerRef.current = setTimeout(handleFetch, refreshInterval);
   }, 1000);
 
