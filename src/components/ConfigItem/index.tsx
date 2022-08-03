@@ -227,7 +227,7 @@ export const ConfigItem = ({
             loadOptions={debouncedLoadOptions}
             {...props}
             onChange={(e: any) => {
-              onSelectFn(e.value);
+              onSelectFn(e);
               getConfigDetails(e?.value);
             }}
             components={{
@@ -249,7 +249,7 @@ export const ConfigItem = ({
             isClearable
             {...props}
             onChange={(e: any) => {
-              onSelectFn(e.value);
+              onSelectFn(e);
               sentDependentOptions(e);
             }}
             components={{

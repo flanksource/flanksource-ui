@@ -267,6 +267,9 @@ export const AddResponder = ({
     Object.keys(data).forEach((key: formPropKey) => {
       if (!data[key]) {
         delete data[key];
+      } else {
+        data[key] =
+          typeof data[key] === "string" ? data[key] : data[key]?.["value"];
       }
     });
     const payload = {
