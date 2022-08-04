@@ -29,7 +29,7 @@ export const schemaResourceTypes = [
   },
   {
     name: "Rules",
-    table: "rules",
+    table: "incident_rules",
     api: "incident-commander",
     icon: UserGroupIcon
   },
