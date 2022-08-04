@@ -33,5 +33,8 @@ export const getAll = ({ table, api }: SchemaApi) => {
 export const createResource = ({ api, table }: SchemaApi, data: unknown) =>
   getBackend(api)?.post(`/${table}`, data);
 
+export const updateResource = ({ api, table }: SchemaApi, data: unknown) =>
+  getBackend(api)?.patch(`/${table}?id=eq.${data?.id}`, data);
+
 export const getResource = ({ api, table }: SchemaApi, id: string) =>
   getBackend(api)?.get(`/${table}?id=eq.${id}`);

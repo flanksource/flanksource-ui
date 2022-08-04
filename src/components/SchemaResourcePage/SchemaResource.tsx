@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getResource } from "../../api/schemaResources";
+import { getResource, updateResource } from "../../api/schemaResources";
 import { BreadcrumbNav } from "../BreadcrumbNav";
 import { CodeEditor } from "../CodeEditor";
 import { SearchLayout } from "../Layout";
@@ -24,7 +24,7 @@ export function SchemaResource({
       console.log(res);
       setResource(res.data[0]);
     });
-  }, [resourceInfo]);
+  }, [resourceInfo, id]);
 
   const onEdit = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -33,6 +33,9 @@ export function SchemaResource({
   };
 
   const onSubmit = (props: any) => {
+    updateResource(resourceInfo, { ...resource, ...props })?.then((res) =>
+      console.log("res", res)
+    );
     console.log(props);
   };
 
