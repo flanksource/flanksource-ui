@@ -26,6 +26,7 @@ import { StatCard } from "../StatCard";
 import { isHealthy } from "./filter";
 import mixins from "../../utils/mixins.module.css";
 import { Loading } from "../Loading";
+import { useHealthPageContext } from "../../context/HealthPageContext";
 
 const getSearchParams = () => getParamsFromURL(window.location.search);
 
@@ -60,35 +61,67 @@ export function Canary({
     updateParams({ layout: "table" });
   }, []);
 
-  const [checks, setChecks] = useState([]);
-  const [filteredChecks, setFilteredChecks] = useState([]);
-  // eslint-disable-next-line no-unused-vars
+  // const [checks, setChecks] = useState([]);
+  // const [filteredChecks, setFilteredChecks] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  // eslint-disable-next-line no-unused-vars
-  const [lastUpdated, setLastUpdated] = useState("");
-  const [filteredLabels, setFilteredLabels] = useState();
-  const [passing, setPassing] = useState({
-    checks: 0,
-    filtered: 0
-  });
+  const [_, setLastUpdated] = useState("");
+  // const [filteredLabels, setFilteredLabels] = useState();
+  // const [passing, setPassing] = useState({
+  //   checks: 0,
+  //   filtered: 0
+  // });
+  const {
+    healthState: { checks, filteredChecks, filteredLabels, passing },
+    setHealthState
+  } = useHealthPageContext();
   const [componentUnMounted, setComponentUnMounted] = useState(false);
 
   const labelUpdateCallback = useCallback((newLabels) => {
-    setFilteredLabels(newLabels);
+    // setFilteredLabels(newLabels);
+    setHealthState((state) => {
+      return {
+        ...state,
+        filteredLabels: newLabels
+      };
+    });
   }, []);
 
   useEffect(() => {
-    setPassing({ ...passing, checks: getPassingCount(checks) });
+    // setPassing({ ...passing, checks: getPassingCount(checks) });
+    setHealthState((state) => {
+      return {
+        ...state,
+        passing: {
+          ...state.passing,
+          checks: getPassingCount(checks)
+        }
+      };
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [checks]);
 
   useEffect(() => {
-    setPassing({ ...passing, filtered: getPassingCount(filteredChecks) });
+    // setPassing({ ...passing, filtered: getPassingCount(filteredChecks) });
+    setHealthState((state) => {
+      return {
+        ...state,
+        passing: {
+          ...state.passing,
+          filtered: getPassingCount(filteredChecks)
+        }
+      };
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filteredChecks]);
 
   const updateFilteredChecks = useCallback((newFilteredChecks) => {
-    setFilteredChecks(newFilteredChecks || []);
+    // setFilteredChecks(newFilteredChecks || []);
+    setHealthState((state) => {
+      return {
+        ...state,
+        filteredChecks: newFilteredChecks || []
+      };
+    });
   }, []);
 
   const timerRef = useRef();
@@ -110,7 +143,13 @@ export function Canary({
       if (componentUnMounted) {
         return;
       }
-      setChecks(data?.checks || []);
+      // setChecks(data?.checks || []);
+      setHealthState((state) => {
+        return {
+          ...state,
+          checks: data?.checks || []
+        };
+      });
       if (data?.checks?.length) {
         setLastUpdated(new Date());
       }
