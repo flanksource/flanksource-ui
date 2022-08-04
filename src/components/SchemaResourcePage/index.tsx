@@ -4,6 +4,7 @@ import { AiFillPlusCircle } from "react-icons/ai";
 
 import { createResource, getAll } from "../../api/schemaResources";
 import { useUser } from "../../context";
+import { BreadcrumbNav } from "../BreadcrumbNav";
 import { SearchLayout } from "../Layout";
 import { Modal } from "../Modal";
 import { SchemaResource } from "./resourceTypes";
@@ -31,12 +32,9 @@ export function SchemaResourcePage({
   return (
     <SearchLayout
       title={
-        <div className="flex items-center flex-shrink-0">
-          <div className="text-xl font-semibold mr-4 whitespace-nowrap">
-            {name}
-          </div>
-          /
-          <div className="flex">
+        <BreadcrumbNav
+          list={[
+            name,
             <button
               type="button"
               className=""
@@ -44,8 +42,8 @@ export function SchemaResourcePage({
             >
               <AiFillPlusCircle size={36} color="#326CE5" />
             </button>
-          </div>
-        </div>
+          ]}
+        />
       }
     >
       <div className="self-center max-w-screen-xl">

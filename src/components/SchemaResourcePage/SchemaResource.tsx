@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getResource } from "../../api/schemaResources";
+import { BreadcrumbNav } from "../BreadcrumbNav";
 import { CodeEditor } from "../CodeEditor";
 import { SearchLayout } from "../Layout";
 import { SchemaResource as SchemaResourceI } from "./resourceTypes";
@@ -38,12 +39,15 @@ export function SchemaResource({
   return (
     <SearchLayout
       title={
-        <div className="flex items-center flex-shrink-0">
-          <div className="text-xl font-semibold mr-4 whitespace-nowrap">
-            {name}
-          </div>
-          /<div className="flex">{id}</div>
-        </div>
+        <BreadcrumbNav
+          list={[
+            {
+              title: name,
+              to: `../${resourceInfo.table}`
+            },
+            id
+          ]}
+        />
       }
     >
       <div className="self-center max-w-screen-xl">
