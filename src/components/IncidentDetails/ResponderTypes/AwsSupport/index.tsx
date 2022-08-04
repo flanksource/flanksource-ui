@@ -1,10 +1,17 @@
 import clsx from "clsx";
-import { Control, Controller, FieldErrors } from "react-hook-form";
+import {
+  Control,
+  Controller,
+  FieldErrors,
+  UseFormSetValue
+} from "react-hook-form";
 import { TextInput } from "../../../TextInput";
+import { AddResponderFormValues } from "../../AddResponder";
 
 type AwsSupportProps = {
   control: Control;
   errors: FieldErrors;
+  setValue: UseFormSetValue<AddResponderFormValues>;
 } & React.HTMLProps<HTMLDivElement>;
 
 export const AwsSupport = ({

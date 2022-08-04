@@ -13,7 +13,8 @@ const FormContainer = () => {
     formState: { errors },
     getValues,
     reset,
-    handleSubmit
+    handleSubmit,
+    setValue
   } = useForm<AddResponderFormValues>({
     defaultValues: {
       to: "",
@@ -38,7 +39,7 @@ const FormContainer = () => {
   };
   return (
     <div className="flex flex-col">
-      <Oracle control={control} errors={errors} />
+      <Oracle control={control} errors={errors} setValue={setValue} />
       <div className="flex flex-row">
         <button className="btn-secondary p-2 m-2" onClick={(e) => reset()}>
           reset
