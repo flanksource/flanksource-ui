@@ -1,7 +1,7 @@
 import React, { useState, createContext, useContext } from "react";
 import { URLSearchParamsInit } from "react-router-dom";
 
-type HealthState = {
+export type HealthState = {
   checks: any[] | null;
   filteredChecks: any[];
   filteredLabels: any;
@@ -12,7 +12,7 @@ type HealthState = {
   searchParams: URLSearchParamsInit;
 };
 
-type HealthPageState = {
+export type HealthPageState = {
   healthState: HealthState;
   setHealthState: ({ ...props }: HealthState) => any;
 };

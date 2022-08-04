@@ -1,13 +1,12 @@
 import React, { useState, createContext, useContext } from "react";
 import { URLSearchParamsInit } from "react-router-dom";
 
-type ConfigState = {
+export type ConfigState = {
   data: any[] | null;
   filteredData: any[] | null;
-  searchParams: URLSearchParamsInit;
 };
 
-type ConfigPageState = {
+export type ConfigPageState = {
   configState: ConfigState;
   setConfigState: ({ ...props }: ConfigState) => any;
 };
@@ -15,8 +14,7 @@ type ConfigPageState = {
 const initialState: ConfigPageState = {
   configState: {
     data: [],
-    filteredData: [],
-    searchParams: {}
+    filteredData: []
   },
   setConfigState: ({ ...props }) => {}
 };

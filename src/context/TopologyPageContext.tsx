@@ -1,12 +1,12 @@
 import React, { useState, createContext, useContext } from "react";
 import { URLSearchParamsInit } from "react-router-dom";
 
-type TopologyState = {
+export type TopologyState = {
   topology: any[] | null;
   searchParams: URLSearchParamsInit;
 };
 
-type TopologyPageState = {
+export type TopologyPageState = {
   topologyState: TopologyState;
   setTopologyState: ({ ...props }: TopologyState) => any;
 };
