@@ -19,7 +19,7 @@ export const getAllChanges = () =>
   resolve(ConfigDB.get(`/config_change?order=created_at.desc`));
 
 export const getConfig = (id: string) =>
-  resolve<ConfigItem>(ConfigDB.get(`/config_item?id=eq.${id}`));
+  resolve<ConfigItem[]>(ConfigDB.get(`/config_item?id=eq.${id}`));
 
 export const getConfigChange = (id: string) =>
   resolve(
