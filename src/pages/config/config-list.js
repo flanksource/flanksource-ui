@@ -18,6 +18,7 @@ import { QueryBuilder } from "../../components/QueryBuilder";
 import { Switch } from "../../components/Switch";
 import { RefreshButton } from "../../components/RefreshButton";
 import { useLoader } from "../../hooks";
+import { useConfigPageContext } from "../../context/ConfigPageContext";
 
 const ConfigFilterViewTypes = {
   basic: "Basic",
@@ -27,8 +28,10 @@ const ConfigFilterViewTypes = {
 export function ConfigListPage() {
   const [params, setParams] = useSearchParams();
   const navigate = useNavigate();
-  const [data, setData] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
+  const {
+    configState: { data, filteredData },
+    setConfigState
+  } = useConfigPageContext();
   const { loading, setLoading } = useLoader();
   const { setTitle, setTitleExtras } = useOutletContext();
   const [configFilterView, setConfigFilterView] = useState(
@@ -63,7 +66,12 @@ export function ConfigListPage() {
     setLoading(true);
     getAllConfigs()
       .then((res) => {
-        setData(res.data);
+        setConfigState((state) => {
+          return {
+            ...state,
+            data: res.data
+          };
+        });
         setLoading(false);
       })
       .catch((err) => {
@@ -82,7 +90,16 @@ export function ConfigListPage() {
   const extra = (
     <div className="flex space-x-2 mr-4">
       {configFilterView === ConfigFilterViewTypes.advanced && (
-        <QueryBuilder refreshConfigs={setData} />
+        <QueryBuilder
+          refreshConfigs={(e) => {
+            setConfigState((state) => {
+              return {
+                ...state,
+                data: e
+              };
+            });
+          }}
+        />
       )}
 
       {configFilterView === ConfigFilterViewTypes.basic && (
@@ -168,7 +185,13 @@ export function ConfigListPage() {
         });
       }
     }
-    setFilteredData(filteredData);
+    setConfigState((state) => {
+      return {
+        ...state,
+        filteredData
+      };
+    });
+    // setFilteredData(filteredData);
   }, [data, search, configType, tag]);
 
   return (

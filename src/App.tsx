@@ -26,6 +26,7 @@ import {
 import { HealthPage } from "./pages/health";
 import { TopologyPageContextProvider } from "./context/TopologyPageContext";
 import { HealthPageContextProvider } from "./context/HealthPageContext";
+import { ConfigPageContextProvider } from "./context/ConfigPageContext";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -178,11 +179,13 @@ export function App() {
       <QueryClientProvider client={queryClient}>
         <TopologyPageContextProvider>
           <HealthPageContextProvider>
-            <AuthContext.Provider value={{ user, setUser }}>
-              <ReactTooltip />
-              <IncidentManagerRoutes sidebar={sidebar} />
-            </AuthContext.Provider>
-            <ReactQueryDevtools initialIsOpen={false} />
+            <ConfigPageContextProvider>
+              <AuthContext.Provider value={{ user, setUser }}>
+                <ReactTooltip />
+                <IncidentManagerRoutes sidebar={sidebar} />
+              </AuthContext.Provider>
+              <ReactQueryDevtools initialIsOpen={false} />
+            </ConfigPageContextProvider>
           </HealthPageContextProvider>
         </TopologyPageContextProvider>
       </QueryClientProvider>
