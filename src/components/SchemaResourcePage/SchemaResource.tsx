@@ -4,6 +4,7 @@ import { getResource } from "../../api/schemaResources";
 import { CodeEditor } from "../CodeEditor";
 import { SearchLayout } from "../Layout";
 import { SchemaResource as SchemaResourceI } from "./resourceTypes";
+import { SchemaResourceEdit } from "./SchemaResourceEdit";
 
 export function SchemaResource({
   resourceInfo
@@ -11,6 +12,7 @@ export function SchemaResource({
   resourceInfo: SchemaResourceI;
 }) {
   const [resource, setResource] = useState({});
+  const [edit, setEdit] = useState(false);
   const { name } = resourceInfo;
   const { id } = useParams();
 
@@ -22,6 +24,16 @@ export function SchemaResource({
       setResource(res.data[0]);
     });
   }, [resourceInfo]);
+
+  const onEdit = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setEdit((edit) => !edit);
+  };
+
+  const onSubmit = (props: any) => {
+    console.log(props);
+  };
 
   return (
     <SearchLayout
@@ -35,8 +47,15 @@ export function SchemaResource({
       }
     >
       <div className="self-center max-w-screen-xl">
-        <div>{resource.name}</div>
-        <CodeEditor value={resource.spec} onChange={() => {}} readOnly />
+        <button onClick={onEdit}>Edit</button>
+        {edit ? (
+          <SchemaResourceEdit id={id} {...resource} onSubmit={onSubmit} />
+        ) : (
+          <>
+            <div>{resource.name}</div>
+            <CodeEditor value={resource.spec} onChange={() => {}} readOnly />
+          </>
+        )}
       </div>
     </SearchLayout>
   );

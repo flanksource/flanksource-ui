@@ -4,14 +4,11 @@ import { CodeEditor } from "../CodeEditor";
 import { useEffect } from "react";
 import { TextInput } from "../TextInput";
 
-export function SchemaResourceEdit({
-  id,
-  spec,
-  name,
-  onSubmit
-}: Partial<Pick<SchemaResourceI, "id" | "spec" | "name">> & {
+type Props = Partial<Pick<SchemaResourceI, "id" | "spec" | "name">> & {
   onSubmit: (val: Partial<SchemaResourceI>) => void;
-}) {
+};
+
+export function SchemaResourceEdit({ id, spec, name, onSubmit }: Props) {
   const {
     control,
     register,
@@ -20,10 +17,9 @@ export function SchemaResourceEdit({
     setValue,
     formState: { errors }
   } = useForm({
-    id: id || "",
-    spec: spec || "",
-    name: name || ""
+    defaultValues: { id: id || "", spec: spec || "", name: name || "" }
   });
+
   const specValue = watch("spec");
 
   useEffect(() => {
