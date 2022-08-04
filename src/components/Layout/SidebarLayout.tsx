@@ -41,17 +41,14 @@ const NavLabel = ({
     <Icon
       className={clsx(
         active ? "text-gray-500" : "text-gray-400 group-hover:text-gray-500",
-        "mr-3 flex-shrink-0 h-6 w-6"
+        "flex-shrink-0",
+        iconOnly ? "h-7 w-7" : "mr-3 h-6 w-6"
       )}
       aria-hidden="true"
     />
-    <p
-      className={clsx("duration-300 transition-opacity", {
-        "opacity-0": iconOnly
-      })}
-    >
-      {name}
-    </p>
+    {!iconOnly && (
+      <p className={clsx("duration-300 transition-opacity")}>{name}</p>
+    )}
   </span>
 );
 
@@ -60,16 +57,19 @@ interface NavItemWrapperProps {
   children: React.ReactNode;
   active?: boolean;
   to?: string;
+  className?: string;
 }
 
 const NavItemWrapper = (props: NavItemWrapperProps) => {
-  const { as: Component = "div", active, children } = props;
+  const { as: Component = "div", active, children, className } = props;
 
+  console.log("class", className);
   const cls = clsx(
     active
       ? "bg-gray-100 text-gray-900"
       : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
-    "group rounded-md py-2 px-2 flex items-center text-sm font-medium"
+    "group rounded-md py-2 px-2 flex items-center text-sm font-medium",
+    className
   );
   return Component === "div" ? (
     <div className={cls}>{children} </div>
@@ -90,7 +90,11 @@ function SideNavItem({
   current?: boolean;
 }) {
   return (
-    <NavItemWrapper as={NavLink} to={href}>
+    <NavItemWrapper
+      className={clsx(collapseSidebar && "justify-center")}
+      as={NavLink}
+      to={href}
+    >
       <NavLabel
         icon={icon}
         active={current}
@@ -115,7 +119,7 @@ function SideNavGroup({
     return (
       <Menu as="div" className="relative">
         <Menu.Button className="w-full">
-          <NavItemWrapper>
+          <NavItemWrapper className="justify-center">
             <NavLabel icon={icon} active={current} iconOnly name={name} />
           </NavItemWrapper>
         </Menu.Button>
