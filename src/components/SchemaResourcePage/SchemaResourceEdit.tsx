@@ -6,7 +6,9 @@ import { Button } from "../Button";
 import { SchemaResourceI } from "src/api/schemaResources";
 import { identity, pickBy } from "lodash";
 
-type FormFields = Partial<Pick<SchemaResourceI, "id" | "spec" | "name">>;
+type FormFields = Partial<
+  Pick<SchemaResourceI, "id" | "spec" | "name" | "source">
+>;
 
 type Props = FormFields & {
   onSubmit: (val: Partial<SchemaResourceI>) => Promise<void>;
@@ -18,6 +20,7 @@ export function SchemaResourceEdit({
   id,
   spec,
   name,
+  source,
   onSubmit,
   onDelete,
   edit: startInEdit
@@ -57,7 +60,7 @@ export function SchemaResourceEdit({
   return (
     <form className="space-y-4" onSubmit={handleSubmit(doSubmit)}>
       <div className="flex justify-between space-x-8">
-        {edit ? (
+        {!source && edit ? (
           <Controller
             control={control}
             name="name"
@@ -78,25 +81,29 @@ export function SchemaResourceEdit({
         ) : (
           <h2 className="text-dark-gray font-bold mr-3 text-xl">{name}</h2>
         )}
-        <div className="space-x-2">
-          {edit ? (
-            <input
-              disabled={disabled}
-              className="btn-primary"
-              type="submit"
-              value="Save"
-            />
-          ) : (
-            !!id && <Button disabled={disabled} text="Edit" onClick={onEdit} />
-          )}
+        {!source && (
+          <div className="space-x-2">
+            {edit ? (
+              <input
+                disabled={disabled}
+                className="btn-primary"
+                type="submit"
+                value="Save"
+              />
+            ) : (
+              !!id && (
+                <Button disabled={disabled} text="Edit" onClick={onEdit} />
+              )
+            )}
 
-          {!!id && (
-            <Button disabled={disabled} text="Delete" onClick={doDelete} />
-          )}
-        </div>
+            {!!id && (
+              <Button disabled={disabled} text="Delete" onClick={doDelete} />
+            )}
+          </div>
+        )}
       </div>
       <CodeEditor
-        readOnly={disabled && !edit}
+        readOnly={source || (disabled && !edit)}
         value={JSON.stringify(values.spec || "", null, 2)}
         onChange={(v) => setValue("spec", v || "")}
       />
