@@ -7,14 +7,14 @@ import { useUser } from "../../context";
 import { BreadcrumbNav } from "../BreadcrumbNav";
 import { SearchLayout } from "../Layout";
 import { Modal } from "../Modal";
-import { SchemaResource } from "./resourceTypes";
+import { SchemaResourceType } from "./resourceTypes";
 import { SchemaResourceEdit } from "./SchemaResourceEdit";
 import { SchemaResourceList } from "./SchemaResourceList";
 
 export function SchemaResourcePage({
   resourceInfo
 }: {
-  resourceInfo: SchemaResource;
+  resourceInfo: SchemaResourceType;
 }) {
   const { user } = useUser();
   const [list, setList] = useState([]);

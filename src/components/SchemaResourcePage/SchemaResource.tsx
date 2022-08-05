@@ -7,13 +7,13 @@ import {
 } from "../../api/schemaResources";
 import { BreadcrumbNav } from "../BreadcrumbNav";
 import { SearchLayout } from "../Layout";
-import { SchemaResource as SchemaResourceI } from "./resourceTypes";
+import { SchemaResourceType } from "./resourceTypes";
 import { SchemaResourceEdit } from "./SchemaResourceEdit";
 
 export function SchemaResource({
   resourceInfo
 }: {
-  resourceInfo: SchemaResourceI;
+  resourceInfo: SchemaResourceType;
 }) {
   const [resource, setResource] = useState({});
   const navigate = useNavigate();

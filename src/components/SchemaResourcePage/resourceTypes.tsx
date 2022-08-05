@@ -14,9 +14,9 @@ type ArrayPick<
 
 export type SchemaResourceTypes = typeof schemaResourceTypes;
 
-export type SchemaResource = ArrayElem<SchemaResourceTypes>;
+export type SchemaResourceType = ArrayElem<SchemaResourceTypes>;
 
-export type SchemaBackends = SchemaResource["api"];
+export type SchemaBackends = SchemaResourceType["api"];
 
 export type SchemaApi = ArrayPick<SchemaResourceTypes, ["table" | "api"]>;
 
