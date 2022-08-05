@@ -2,7 +2,11 @@ import { capitalize } from "lodash";
 import { useEffect, useState } from "react";
 import { AiFillPlusCircle } from "react-icons/ai";
 
-import { createResource, getAll } from "../../api/schemaResources";
+import {
+  createResource,
+  getAll,
+  SchemaResourceI
+} from "../../api/schemaResources";
 import { useUser } from "../../context";
 import { BreadcrumbNav } from "../BreadcrumbNav";
 import { SearchLayout } from "../Layout";
@@ -18,6 +22,7 @@ export function SchemaResourcePage({
 }) {
   const { user } = useUser();
   const [list, setList] = useState([]);
+  const [reload, setReload] = useState(1);
   const { table, name, href } = resourceInfo;
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -27,7 +32,13 @@ export function SchemaResourcePage({
       console.log(res);
       setList(res.data);
     });
-  }, [resourceInfo]);
+  }, [resourceInfo, reload]);
+
+  const onSubmit = async (data: Partial<SchemaResourceI>) => {
+    await createResource(resourceInfo, { ...data, created_by: user?.id });
+    setReload((x) => x + 1);
+    setModalIsOpen(false);
+  };
 
   return (
     <SearchLayout
@@ -57,12 +68,7 @@ export function SchemaResourcePage({
         title={`Create New ${capitalize(table)}`}
       >
         <div className="mx-4 my-8">
-          <SchemaResourceEdit
-            edit
-            onSubmit={(data) =>
-              createResource(resourceInfo, { ...data, created_by: user?.id })
-            }
-          />
+          <SchemaResourceEdit edit onSubmit={onSubmit} />
         </div>
       </Modal>
     </SearchLayout>

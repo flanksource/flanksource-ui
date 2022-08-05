@@ -3,16 +3,14 @@ import { CodeEditor } from "../CodeEditor";
 import { useEffect, useState } from "react";
 import { TextInput } from "../TextInput";
 import { Button } from "../Button";
+import { SchemaResourceI } from "src/api/schemaResources";
+import { identity, pickBy } from "lodash";
 
-interface Schema {
-  id: string;
-  spec: string;
-  name: string;
-}
+type FormFields = Partial<Pick<SchemaResourceI, "id" | "spec" | "name">>;
 
-type Props = Schema & {
-  onSubmit: (val: Partial<Schema>) => Promise<void>;
-  onDelete: (id: string) => void;
+type Props = FormFields & {
+  onSubmit: (val: Partial<SchemaResourceI>) => Promise<void>;
+  onDelete?: (id: string) => void;
   edit: boolean;
 };
 
@@ -27,9 +25,10 @@ export function SchemaResourceEdit({
   const [edit, setEdit] = useState(startInEdit);
   const [disabled, setDisabled] = useState(false);
 
-  const { control, register, handleSubmit, setValue, getValues } = useForm({
-    defaultValues: { id, spec: spec || "", name: name || "" }
-  });
+  const { control, register, handleSubmit, setValue, getValues } =
+    useForm<FormFields>({
+      defaultValues: pickBy({ id, spec, name }, identity)
+    });
 
   const values = getValues();
 
@@ -43,6 +42,14 @@ export function SchemaResourceEdit({
     onSubmit(props).then(() => setEdit(false));
   };
   const doDelete = () => {
+    if (!id) {
+      console.error("Called delete for resource without id");
+      return;
+    }
+    if (!onDelete) {
+      console.error("onDelete called without being passed to the component.");
+      return;
+    }
     setDisabled(true);
     onDelete(id);
   };
@@ -62,7 +69,7 @@ export function SchemaResourceEdit({
                   id="name"
                   disabled={disabled}
                   className="w-full"
-                  value={value}
+                  value={value || ""}
                   onChange={onChange}
                 />
               );
@@ -90,7 +97,7 @@ export function SchemaResourceEdit({
       </div>
       <CodeEditor
         readOnly={disabled && !edit}
-        value={values.spec}
+        value={values.spec || ""}
         onChange={(v) => setValue("spec", v || "")}
       />
     </form>
