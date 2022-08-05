@@ -80,9 +80,11 @@ function SchemaResourceListItem({
       <td className="px-3 text-gray-500 text-sm py-4">
         {dayjs(updated_at).fromNow()}
       </td>
-      <td className="px-3 text-gray-500 text-sm py-4">
-        {<Avatar user={created_by} />}
-      </td>
+      {created_by && (
+        <td className="px-3 text-gray-500 text-sm py-4">
+          {<Avatar user={created_by} />}
+        </td>
+      )}
     </tr>
   );
 }

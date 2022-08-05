@@ -11,7 +11,7 @@ export interface SchemaResourceI {
   source: string;
   created_at: string;
   updated_at: string;
-  created_by: {
+  created_by?: {
     id: string;
     avatar: string;
     name: string;
@@ -39,7 +39,7 @@ export const getAll = ({ table, api }: SchemaApi) => {
   const endpoint = getBackend(api);
   if (endpoint) {
     return endpoint.get<SchemaResourceI[]>(
-      `/${table}?order=created_at.desc&select=*,created_by(id,name,avatar)`
+      `/${table}?order=created_at.desc&select=*`
     );
   }
 
