@@ -35,25 +35,25 @@ export const schemaResourceTypes = [
   },
   {
     name: "Config Scraper",
-    table: "config_scrapers",
+    table: "config_scraper",
     api: "config-db",
     icon: UserGroupIcon
   },
   {
     name: "System Templates",
-    table: "system_templates",
+    table: "templates",
     api: "canary-checker",
     icon: UserGroupIcon
   },
   {
     name: "Components",
-    table: "components",
+    table: "canaries",
     api: "canary-checker",
     icon: UserGroupIcon
   },
   {
     name: "Health Checks",
-    table: "health_checks",
+    table: "checks",
     api: "canary-checker",
     icon: UserGroupIcon
   }

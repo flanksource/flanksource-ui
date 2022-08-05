@@ -7,7 +7,7 @@ import { CanaryCheckerDB, ConfigDB, IncidentCommander } from "./axios";
 export interface SchemaResourceI {
   id: string;
   name: string;
-  spec: string;
+  spec: string | object;
   source: string;
   created_at: string;
   updated_at: string;

@@ -36,11 +36,7 @@ export function SchemaResourceList({ items, baseUrl }: Props) {
         </thead>
         <tbody className="flex-1 overflow-y-auto">
           {items.map((item) => (
-            <SchemaResourceListItem
-              key={item.name}
-              {...item}
-              baseUrl={baseUrl}
-            />
+            <SchemaResourceListItem key={item.id} {...item} baseUrl={baseUrl} />
           ))}
         </tbody>
       </table>
