@@ -5,14 +5,16 @@ import { Icon } from "../Icon";
 
 interface Props {
   className?: string;
-  text: React.ReactElement;
+  text: React.ReactNode;
   icon?: React.ReactElement | string | undefined;
+  disabled?: boolean;
   size?: "xs" | "sm" | "md" | "lg" | "xl";
-  onClick: () => Promise<void>;
+  onClick: (e: React.MouseEvent<HTMLButtonElement>) => Promise<void> | void;
 }
 
 const ButtonFC = ({
   className = "btn-primary",
+  disabled = false,
   text,
   icon,
   size = "sm",
@@ -44,12 +46,13 @@ const ButtonFC = ({
   );
   const [_className, setClassName] = useState(className);
 
-  const handleOnClick = () => {
+  const handleOnClick: React.MouseEventHandler<HTMLButtonElement> = (e) => {
     const oldIcon = _icon;
     // setText("Updating...");
     setClassName("btn-disabled");
     setIcon(<Oval width="18px" height="18px" color="white" />);
-    onClick().finally(() => {
+
+    Promise.resolve(onClick(e)).finally(() => {
       // setText(oldText);
       setIcon(oldIcon);
       setClassName(className);
@@ -57,6 +60,7 @@ const ButtonFC = ({
   };
   return (
     <button
+      disabled={disabled}
       type="button"
       onClick={handleOnClick}
       className={clsx(_className, "space-x-2")}

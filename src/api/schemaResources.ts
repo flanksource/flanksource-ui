@@ -38,3 +38,6 @@ export const updateResource = ({ api, table }: SchemaApi, data: unknown) =>
 
 export const getResource = ({ api, table }: SchemaApi, id: string) =>
   getBackend(api)?.get(`/${table}?id=eq.${id}`);
+
+export const deleteResource = ({ api, table }: SchemaApi, id: string) =>
+  getBackend(api)?.delete(`/${table}?id=eq.${id}`);

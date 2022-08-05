@@ -56,11 +56,14 @@ export function SchemaResourcePage({
         size="full"
         title={`Create New ${capitalize(table)}`}
       >
-        <SchemaResourceEdit
-          onSubmit={(data) =>
-            createResource(resourceInfo, { ...data, created_by: user?.id })
-          }
-        />
+        <div className="mx-4 my-8">
+          <SchemaResourceEdit
+            edit
+            onSubmit={(data) =>
+              createResource(resourceInfo, { ...data, created_by: user?.id })
+            }
+          />
+        </div>
       </Modal>
     </SearchLayout>
   );
