@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom";
-import { SchemaResourceI } from "./SchemaResource";
+import { SchemaResourceI } from "src/api/schemaResources";
+import { Avatar } from "../Avatar";
 
 interface Props {
   items: SchemaResourceI[];
@@ -28,6 +29,9 @@ export function SchemaResourceList({ items, baseUrl }: Props) {
             <th className="px-3 py-3 text-gray-500 font-medium text-xs text-left">
               Updated At
             </th>
+            <th className="px-3 py-3 text-gray-500 font-medium text-xs text-left">
+              Created By
+            </th>
           </tr>
         </thead>
         <tbody className="flex-1 overflow-y-auto">
@@ -50,7 +54,8 @@ function SchemaResourceListItem({
   updated_at,
   id,
   source,
-  baseUrl
+  baseUrl,
+  created_by
 }: SchemaResourceI & {
   baseUrl: string;
 }) {
@@ -74,6 +79,9 @@ function SchemaResourceListItem({
       </td>
       <td className="px-3 text-gray-500 text-sm py-4">
         {dayjs(updated_at).fromNow()}
+      </td>
+      <td className="px-3 text-gray-500 text-sm py-4">
+        {<Avatar user={created_by} />}
       </td>
     </tr>
   );

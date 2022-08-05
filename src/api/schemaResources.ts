@@ -4,6 +4,20 @@ import {
 } from "src/components/SchemaResourcePage/resourceTypes";
 import { CanaryCheckerDB, ConfigDB, IncidentCommander } from "./axios";
 
+export interface SchemaResourceI {
+  id: string;
+  name: string;
+  spec: string;
+  source: string;
+  created_at: string;
+  updated_at: string;
+  created_by: {
+    id: string;
+    avatar: string;
+    name: string;
+  };
+}
+
 const invalidEndpoint = (api: never) => {
   throw Error(`Invalid api endpoint: ${api}`);
 };
@@ -24,7 +38,9 @@ const getBackend = (api: SchemaBackends) => {
 export const getAll = ({ table, api }: SchemaApi) => {
   const endpoint = getBackend(api);
   if (endpoint) {
-    return endpoint.get(`/${table}?order=created_at.desc`);
+    return endpoint.get<SchemaResourceI[]>(
+      `/${table}?order=created_at.desc&select=*,created_by(id,name,avatar)`
+    );
   }
 
   return Promise.resolve({ data: [] });
