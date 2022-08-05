@@ -57,7 +57,7 @@ export function SchemaResourcePage({
         />
       }
     >
-      <div className="self-center max-w-screen-xl">
+      <div className="self-center m-auto max-w-screen-xl">
         <SchemaResourceList items={list} baseUrl={href} />
       </div>
 

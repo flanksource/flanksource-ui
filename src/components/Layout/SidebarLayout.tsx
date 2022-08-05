@@ -37,10 +37,12 @@ const NavLabel = ({
   iconOnly?: boolean;
   name: string;
 }) => (
-  <span className="flex">
+  <span className="flex items-center">
     <Icon
       className={clsx(
-        active ? "text-gray-500" : "text-gray-400 group-hover:text-gray-500",
+        active
+          ? "text-gray-100 font-bold"
+          : "text-gray-200 group-hover:text-gray-100",
         "flex-shrink-0",
         iconOnly ? "h-7 w-7" : "mr-3 h-6 w-6"
       )}
@@ -63,16 +65,16 @@ interface NavItemWrapperProps {
 const NavItemWrapper = (props: NavItemWrapperProps) => {
   const { as: Component = "div", active, children, className } = props;
 
-  console.log("class", className);
-  const cls = clsx(
-    active
-      ? "bg-gray-100 text-gray-900"
-      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
-    "group rounded-md py-2 px-2 flex items-center text-sm font-medium",
-    className
-  );
+  const cls = ({ isActive }: { isActive: boolean }) =>
+    clsx(
+      active || isActive
+        ? "bg-gray-800 text-gray-100"
+        : "text-gray-200 hover:bg-gray-800 hover:text-gray-100",
+      "group rounded-md py-3 px-2 flex items-center text-sm font-medium",
+      className
+    );
   return Component === "div" ? (
-    <div className={cls}>{children} </div>
+    <div className={cls({ isActive: false })}>{children} </div>
   ) : (
     <Component to={props.to} className={cls}>
       {children}
@@ -95,12 +97,14 @@ function SideNavItem({
       as={NavLink}
       to={href}
     >
-      <NavLabel
-        icon={icon}
-        active={current}
-        iconOnly={collapseSidebar}
-        name={name}
-      />
+      {({ isActive }) => (
+        <NavLabel
+          icon={icon}
+          active={current || isActive}
+          iconOnly={collapseSidebar}
+          name={name}
+        />
+      )}
     </NavItemWrapper>
   );
 }
@@ -123,7 +127,7 @@ function SideNavGroup({
             <NavLabel icon={icon} active={current} iconOnly name={name} />
           </NavItemWrapper>
         </Menu.Button>
-        <Menu.Items className="absolute bg-gray-100 border left-0 ml-12 w-48 shadow-md top-0 z-10">
+        <Menu.Items className="absolute border left-0 ml-12 w-48 shadow-md top-0 z-10 bg-gray-700">
           {submenu.map(({ name, icon, href }) => (
             <Menu.Item key={name}>
               {({ active }) => (
@@ -161,7 +165,7 @@ function SideNavGroup({
               </div>
             </NavItemWrapper>
           </Disclosure.Button>
-          <Disclosure.Panel className="pl-2">
+          <Disclosure.Panel className="pl-4">
             {submenu.map((item) => (
               <SideNavItem key={item.name} {...item} collapseSidebar={false} />
             ))}
@@ -178,7 +182,7 @@ function SideNav({
   collapseSidebar = false
 }: SideNavGroupProps) {
   return (
-    <nav className="flex-1 px2 space-y-1">
+    <nav className="flex-col space-y-2">
       {navs.map((item) => (
         <SideNavItem
           key={item.name}
@@ -230,14 +234,14 @@ export function SidebarLayout({ navigation, settingsNav }: Props) {
       <Toaster position="top-right" reverseOrder={false} />
       <div className="flex h-screen">
         <div
-          className={clsx("transform duration-500 w-14 z-10", {
-            "lg:w-64": !collapseSidebar
+          className={clsx("transform duration-500 w-14 z-10 bg-gray-700", {
+            "lg:w-56": !collapseSidebar
           })}
           ref={innerRef}
         >
           <div
             className={clsx("h-full transform duration-500 w-14", {
-              "lg:w-64": !collapseSidebar
+              "lg:w-56": !collapseSidebar
             })}
           >
             <button
@@ -251,17 +255,25 @@ export function SidebarLayout({ navigation, settingsNav }: Props) {
               <IoChevronForwardOutline />
             </button>
 
-            <div className="h-full border-r border-gray-200 pt-5 flex flex-col flex-grow bg-white">
-              {collapseSidebar ? (
-                <div className="w-14">
-                  <Icon
-                    name="flanksource-icon"
-                    className="px-3 w-auto h-auto"
-                  />
-                </div>
-              ) : (
-                <Icon name="flanksource" className="w-auto h-auto px-4" />
+            {collapseSidebar ? (
+              <div className="flex border-b border-b-gray-500 h-16 shadow">
+                <Icon
+                  name="flanksource-icon"
+                  iconClassName="w-10 h-auto m-auto"
+                />
+              </div>
+            ) : (
+              <div className="p-3 border-b border-b-gray-500 shadow">
+                <Icon name="flanksource" iconClassName="h-10" />
+              </div>
+            )}
+
+            <div
+              className={clsx(
+                "h-full flex flex-col flex-grow",
+                collapseSidebar ? "px-1" : "px-3"
               )}
+            >
               <div className="flex-grow mt-5 flex flex-col">
                 <SideNav
                   navs={navigation}
