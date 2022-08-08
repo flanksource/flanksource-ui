@@ -39,7 +39,7 @@ export const getAll = ({ table, api }: SchemaApi) => {
   const endpoint = getBackend(api);
   if (endpoint) {
     return endpoint.get<SchemaResourceI[]>(
-      `/${table}?order=created_at.desc&select=*`
+      `/${table}?order=created_at.desc&select=*&limit=100`
     );
   }
 
