@@ -103,9 +103,9 @@ export function SchemaResourceEdit({
         )}
       </div>
       <CodeEditor
-        readOnly={source || (disabled && !edit)}
-        value={JSON.stringify(values.spec || "", null, 2)}
-        onChange={(v) => setValue("spec", v || "")}
+        readOnly={!!source || (disabled && !edit)}
+        value={values.spec ? JSON.stringify(values.spec, null, 2) : null}
+        onChange={(v) => setValue("spec", v ? JSON.parse(v) : null)}
       />
     </form>
   );

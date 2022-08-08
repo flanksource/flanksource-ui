@@ -29,7 +29,6 @@ export function SchemaResourcePage({
 
   useEffect(() => {
     getAll(resourceInfo).then((res) => {
-      console.log(res);
       setList(res.data);
     });
   }, [resourceInfo, reload]);

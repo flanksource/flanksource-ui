@@ -1,7 +1,7 @@
 import Editor from "@monaco-editor/react";
 
 interface Props {
-  value: string;
+  value: string | null;
   readOnly?: boolean;
   onChange: (value: string | undefined, viewUpdate: unknown) => void;
 }
