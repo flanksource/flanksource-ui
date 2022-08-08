@@ -46,14 +46,8 @@ export const schemaResourceTypes = [
     icon: UserGroupIcon
   },
   {
-    name: "Components",
+    name: "Canary Checks",
     table: "canaries",
-    api: "canary-checker",
-    icon: UserGroupIcon
-  },
-  {
-    name: "Health Checks",
-    table: "checks",
     api: "canary-checker",
     icon: UserGroupIcon
   }
