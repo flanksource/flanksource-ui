@@ -88,25 +88,29 @@ export function LogsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [query, setQuery] = useState(searchParams.get("query"));
   const [topologyId, setTopologyId] = useState(searchParams.get("topologyId"));
-  const [externalId, setExternalId] = useState(searchParams.get("externalId"));
-  const [type, setType] = useState(searchParams.get("type"));
+  const [externalId, setExternalId] = useState();
+  const [topology, setTopology] = useState();
+  const [type, setType] = useState();
   const [start, setStart] = useState(
     searchParams.get("start") || timeRanges[0].value
   );
 
   const [topologies, setTopologies] = useState([]);
   const [logs, setLogs] = useState([]);
-  const selectedPodOrNode = useMemo(() => {
-    let value = null;
-    topologies.forEach((topology) => {
-      topology.options.forEach((option) => {
-        if (option.external_id === externalId) {
-          value = option;
-        }
-      });
+
+  useEffect(() => {
+    if (!topologyId) {
+      return;
+    }
+    getTopology({
+      id: topologyId
+    }).then(({ data }) => {
+      const result = data[0];
+      setTopology(result);
+      setType(result.type);
+      setExternalId(result.external_id);
     });
-    return value;
-  }, [externalId, topologies, topologyId]);
+  }, [topologyId]);
 
   useEffect(() => {
     async function fetchTopologies() {
@@ -181,7 +185,7 @@ export function LogsPage() {
       return;
     }
     loadLogs();
-  }, [start, externalId]);
+  }, [start, externalId, type]);
 
   return (
     <SearchLayout
@@ -194,7 +198,8 @@ export function LogsPage() {
           formatOptionLabel={formatOptionLabel}
           isLoading={loading}
           isDisabled={loading}
-          value={selectedPodOrNode}
+          value={topology?.id}
+          getOptionValue={(option) => option.value}
         />
       }
       extra={

@@ -15,9 +15,7 @@ export const TopologyDropdownMenu = ({ topology }: IProps) => {
 
   const navigate = useNavigate();
   const viewLogs = () => {
-    navigate(
-      `/logs?topologyId=${topology.system_id}&externalId=${topology.external_id}&type=${topology.type}`
-    );
+    navigate(`/logs?topologyId=${topology.id}`);
   };
 
   return (
