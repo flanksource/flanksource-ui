@@ -81,6 +81,12 @@ export function SchemaResourceEdit({
         ) : (
           <h2 className="text-dark-gray font-bold mr-3 text-xl">{name}</h2>
         )}
+
+        {!!source && (
+          <div className="px-2">
+            <a href={`${source}`}>Config source</a>
+          </div>
+        )}
         {!source && (
           <div className="space-x-2">
             {edit ? (
