@@ -270,7 +270,7 @@ export function SidebarLayout({ navigation, settingsNav }: Props) {
 
             <div
               className={clsx(
-                "h-full flex flex-col flex-grow",
+                "flex flex-col flex-grow",
                 collapseSidebar ? "px-1" : "px-3"
               )}
             >
