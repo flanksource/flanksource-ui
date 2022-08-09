@@ -25,7 +25,7 @@ const ButtonFC = ({
       className += " px-2.5 py-1.5 text-xs rounded";
       break;
     case "sm":
-      className += "  px-3 py-2 text-sm  leading-4 rounded-md ";
+      className += " px-3 py-2 text-sm  leading-4 rounded-md ";
       break;
     case "md":
       className += " px-4 py-2 text-sm rounded-md ";
@@ -37,7 +37,7 @@ const ButtonFC = ({
       className += " px-6 py-3  text-base rounded-md ";
       break;
     default:
-      className += "  px-3 py-2 text-sm  leading-4 rounded-md ";
+      className += " px-3 py-2 text-sm  leading-4 rounded-md ";
   }
 
   const [_icon, setIcon] = useState<React.ReactElement>(

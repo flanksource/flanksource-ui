@@ -1,10 +1,10 @@
 import { Controller, useForm } from "react-hook-form";
 import { CodeEditor } from "../CodeEditor";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { TextInput } from "../TextInput";
-import { Button } from "../Button";
 import { SchemaResourceI } from "src/api/schemaResources";
 import { identity, pickBy } from "lodash";
+import { v4 } from "uuid";
 
 type FormFields = Partial<
   Pick<SchemaResourceI, "id" | "spec" | "name" | "source">
@@ -25,10 +25,11 @@ export function SchemaResourceEdit({
   onDelete,
   edit: startInEdit
 }: Props) {
-  const [edit, setEdit] = useState(startInEdit);
+  const [edit, setEdit] = useState(startInEdit || false);
   const [disabled, setDisabled] = useState(false);
+  const keyRef = useRef(v4());
 
-  const { control, register, handleSubmit, setValue, getValues } =
+  const { control, register, handleSubmit, setValue, getValues, resetField } =
     useForm<FormFields>({
       defaultValues: pickBy({ id, spec, name }, identity)
     });
@@ -40,7 +41,14 @@ export function SchemaResourceEdit({
     register("name");
   }, [register]);
 
-  const onEdit = () => setEdit((edit) => !edit);
+  const onEdit = () => setEdit(true);
+  const onCancel = () => {
+    resetField("name");
+    resetField("spec");
+    setEdit(false);
+    keyRef.current = v4();
+  };
+
   const doSubmit = (props: any) => {
     onSubmit(props).then(() => setEdit(false));
   };
@@ -87,32 +95,56 @@ export function SchemaResourceEdit({
             <a href={`${source}`}>Config source</a>
           </div>
         )}
-        {!source && (
-          <div className="space-x-2">
-            {edit ? (
+      </div>
+      <div className="h-[calc(100vh-300px)]">
+        <CodeEditor
+          key={keyRef.current}
+          readOnly={!!source || disabled || !edit}
+          value={values.spec ? JSON.stringify(values.spec, null, 2) : null}
+          onChange={(v) => setValue("spec", v ? JSON.parse(v) : null)}
+        />
+      </div>
+      {!source && (
+        <div className="flex justify-between">
+          {!!id && (
+            <button
+              className="btn-secondary-base btn-secondary"
+              disabled={disabled}
+              onClick={doDelete}
+            >
+              Delete
+            </button>
+          )}
+
+          {edit ? (
+            <div className="space-x-2">
+              <button
+                className="btn-secondary-base btn-secondary"
+                disabled={disabled}
+                onClick={onCancel}
+              >
+                Cancel
+              </button>
               <input
                 disabled={disabled}
                 className="btn-primary"
                 type="submit"
                 value="Save"
               />
-            ) : (
-              !!id && (
-                <Button disabled={disabled} text="Edit" onClick={onEdit} />
-              )
-            )}
-
-            {!!id && (
-              <Button disabled={disabled} text="Delete" onClick={doDelete} />
-            )}
-          </div>
-        )}
-      </div>
-      <CodeEditor
-        readOnly={!!source || (disabled && !edit)}
-        value={values.spec ? JSON.stringify(values.spec, null, 2) : null}
-        onChange={(v) => setValue("spec", v ? JSON.parse(v) : null)}
-      />
+            </div>
+          ) : (
+            !!id && (
+              <button
+                className="btn-primary"
+                disabled={disabled}
+                onClick={onEdit}
+              >
+                Edit
+              </button>
+            )
+          )}
+        </div>
+      )}
     </form>
   );
 }

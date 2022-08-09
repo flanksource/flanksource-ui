@@ -48,7 +48,7 @@ export function SchemaResource({
         />
       }
     >
-      <div className="self-center max-w-screen-xl p-4">
+      <div className="self-center m-auto max-w-screen-xl p-4">
         {loadingState === "success" && id && (
           <SchemaResourceEdit
             id={id}

@@ -263,7 +263,7 @@ export function SidebarLayout({ navigation, settingsNav }: Props) {
                 />
               </div>
             ) : (
-              <div className="p-3 border-b border-b-gray-500 shadow">
+              <div className="p-3 pl-5 border-b border-b-gray-500 shadow">
                 <Icon name="flanksource" iconClassName="h-10" />
               </div>
             )}

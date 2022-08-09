@@ -11,9 +11,9 @@ export function CodeEditor({ value, onChange, readOnly = false }: Props) {
     <Editor
       className="border shadow py-2"
       defaultLanguage="json"
-      value={value}
+      value={value || ""}
       onChange={onChange}
-      height="200px"
+      width="100%"
       options={{
         renderLineHighlight: "none",
         readOnly,
