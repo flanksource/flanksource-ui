@@ -34,7 +34,7 @@ export function ConfigDetailsChangesPage() {
         setTitle(
           <BreadcrumbNav
             list={[
-              { to: "/config", title: "Config" },
+              { to: "/configs", title: "Config" },
               <b key="title">{data?.name}</b>
             ]}
           />

@@ -48,7 +48,7 @@ const navigation = [
   { name: "Topology", href: "/topology", icon: HomeIcon },
   { name: "Health", href: "/health", icon: AiFillHeart },
   { name: "Logs", href: "/logs", icon: FolderIcon },
-  { name: "Config", href: "/config", icon: VscJson },
+  { name: "Config", href: "/configs", icon: VscJson },
   { name: "Incidents", href: "/incidents", icon: ImLifebuoy }
 ];
 
@@ -122,7 +122,7 @@ export function IncidentManagerRoutes({ sidebar }) {
         />
       </Route>
 
-      <Route path="config" element={sidebar}>
+      <Route path="configs" element={sidebar}>
         {/* https://github.com/remix-run/react-router/issues/7239#issuecomment-898747642 */}
         <Route
           path=""
@@ -130,7 +130,7 @@ export function IncidentManagerRoutes({ sidebar }) {
             <ConfigLayout
               title="Config"
               showSearchInput
-              basePath="/config"
+              basePath="/configs"
               navLinks={[
                 { title: "Items", index: true },
                 { title: "Changes", path: "changes" }
@@ -146,9 +146,9 @@ export function IncidentManagerRoutes({ sidebar }) {
           path=":id"
           element={
             <ConfigLayout
-              backPath="/config"
+              backPath="/configs"
               title="Config"
-              basePath="/config/:id"
+              basePath="/configs/:id"
               navLinks={[
                 { title: "Config", index: true },
                 { title: "Changes", path: "changes" }

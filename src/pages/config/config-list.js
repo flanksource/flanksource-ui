@@ -83,7 +83,7 @@ export function ConfigListPage() {
   const handleRowClick = (row) => {
     const id = row?.original?.id;
     if (id) {
-      navigate(`/config/${id}`);
+      navigate(`/configs/${id}`);
     }
   };
 

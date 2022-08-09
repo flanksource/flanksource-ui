@@ -39,7 +39,7 @@ const configLinkCol = [
       return (
         <Link
           className="underline text-blue-600 hover:text-blue-800 visited:text-purple-600"
-          to={`/config/${id}`}
+          to={`/configs/${id}`}
         >
           Show Config
         </Link>
