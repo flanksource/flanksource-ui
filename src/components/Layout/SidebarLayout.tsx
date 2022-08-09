@@ -1,22 +1,202 @@
-import { Dialog, Transition } from "@headlessui/react";
-import { XIcon } from "@heroicons/react/outline";
-import { Fragment, useEffect, useState, useCallback } from "react";
-import { NavLink, Outlet } from "react-router-dom";
-import { Toaster } from "react-hot-toast";
+import { Disclosure, Menu } from "@headlessui/react";
+import { ChevronUpIcon } from "@heroicons/react/outline";
 import clsx from "clsx";
+import { useCallback, useEffect, useState } from "react";
+import { Toaster } from "react-hot-toast";
+import { IconType } from "react-icons";
 import { IoChevronForwardOutline } from "react-icons/io5";
+import { NavLink, Outlet } from "react-router-dom";
+import { User } from "src/api/services/users";
+import { NavigationItems, SettingsNavigationItems } from "src/App";
+import { $ArrElemType } from "src/types/utility";
+
 import { getUser } from "../../api/auth";
-import { Icon } from "../Icon";
 import { useOuterClick } from "../../lib/useOuterClick";
 import { getLocalItem, setLocalItem } from "../../utils/storage";
+import { Icon } from "../Icon";
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
+interface Props {
+  navigation: NavigationItems;
+  settingsNav: SettingsNavigationItems;
 }
 
-export function SidebarLayout({ navigation }) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [user, setUser] = useState(null);
+interface SideNavGroupProps {
+  navs: NavigationItems;
+  settings: SettingsNavigationItems;
+  collapseSidebar?: boolean;
+}
+
+const NavLabel = ({
+  icon: Icon,
+  active,
+  iconOnly = false,
+  name
+}: {
+  icon: IconType;
+  active: boolean;
+  iconOnly?: boolean;
+  name: string;
+}) => (
+  <span className="flex items-center">
+    <Icon
+      className={clsx(
+        active
+          ? "text-gray-100 font-bold"
+          : "text-gray-200 group-hover:text-gray-100",
+        "flex-shrink-0",
+        iconOnly ? "h-7 w-7" : "mr-3 h-6 w-6"
+      )}
+      aria-hidden="true"
+    />
+    {!iconOnly && (
+      <p className={clsx("duration-300 transition-opacity")}>{name}</p>
+    )}
+  </span>
+);
+
+interface NavItemWrapperProps {
+  as?: React.ElementType<any>;
+  children: React.ReactNode;
+  active?: boolean;
+  to?: string;
+  className?: string;
+}
+
+const NavItemWrapper = (props: NavItemWrapperProps) => {
+  const { as: Component = "div", active, children, className } = props;
+
+  const cls = ({ isActive }: { isActive: boolean }) =>
+    clsx(
+      active || isActive
+        ? "bg-gray-800 text-gray-100"
+        : "text-gray-200 hover:bg-gray-800 hover:text-gray-100",
+      "group rounded-md py-3 px-2 flex items-center text-sm font-medium",
+      className
+    );
+  return Component === "div" ? (
+    <div className={cls({ isActive: false })}>{children} </div>
+  ) : (
+    <Component to={props.to} className={cls}>
+      {children}
+    </Component>
+  );
+};
+function SideNavItem({
+  name,
+  current = false,
+  href,
+  collapseSidebar,
+  icon
+}: $ArrElemType<NavigationItems> & {
+  collapseSidebar: boolean;
+  current?: boolean;
+}) {
+  return (
+    <NavItemWrapper
+      className={clsx(collapseSidebar && "justify-center")}
+      as={NavLink}
+      to={href}
+    >
+      {({ isActive }) => (
+        <NavLabel
+          icon={icon}
+          active={current || isActive}
+          iconOnly={collapseSidebar}
+          name={name}
+        />
+      )}
+    </NavItemWrapper>
+  );
+}
+
+function SideNavGroup({
+  submenu,
+  name,
+  icon,
+  collapseSidebar,
+  current = false
+}: SettingsNavigationItems & {
+  current?: boolean;
+  collapseSidebar: boolean;
+}) {
+  if (collapseSidebar) {
+    return (
+      <Menu as="div" className="relative">
+        <Menu.Button className="w-full">
+          <NavItemWrapper className="justify-center">
+            <NavLabel icon={icon} active={current} iconOnly name={name} />
+          </NavItemWrapper>
+        </Menu.Button>
+        <Menu.Items className="absolute border left-0 ml-12 w-48 shadow-md top-0 z-10 bg-gray-700">
+          {submenu.map(({ name, icon, href }) => (
+            <Menu.Item key={name}>
+              {({ active }) => (
+                <NavLink className="w-full" to={href}>
+                  <NavItemWrapper active={active}>
+                    <NavLabel icon={icon} active={active} name={name} />
+                  </NavItemWrapper>
+                </NavLink>
+              )}
+            </Menu.Item>
+          ))}
+        </Menu.Items>
+      </Menu>
+    );
+  }
+
+  return (
+    <Disclosure as="div">
+      {({ open }) => (
+        <>
+          <Disclosure.Button className="w-full">
+            <NavItemWrapper>
+              <div className="flex w-full justify-between">
+                <NavLabel
+                  icon={icon}
+                  active={current}
+                  iconOnly={collapseSidebar}
+                  name={name}
+                />
+                <ChevronUpIcon
+                  className={`${
+                    submenu && open ? "rotate-180 transform" : ""
+                  } h-5 w-5`}
+                />
+              </div>
+            </NavItemWrapper>
+          </Disclosure.Button>
+          <Disclosure.Panel className="pl-4">
+            {submenu.map((item) => (
+              <SideNavItem key={item.name} {...item} collapseSidebar={false} />
+            ))}
+          </Disclosure.Panel>
+        </>
+      )}
+    </Disclosure>
+  );
+}
+
+function SideNav({
+  navs,
+  settings,
+  collapseSidebar = false
+}: SideNavGroupProps) {
+  return (
+    <nav className="flex-col space-y-2">
+      {navs.map((item) => (
+        <SideNavItem
+          key={item.name}
+          {...item}
+          collapseSidebar={collapseSidebar}
+        />
+      ))}
+      <SideNavGroup {...settings} collapseSidebar={collapseSidebar} />
+    </nav>
+  );
+}
+
+export function SidebarLayout({ navigation, settingsNav }: Props) {
+  const [user, setUser] = useState<User | null>(null);
   const [collapseSidebar, setCollapseSidebar] = useState(false);
 
   useEffect(() => {
@@ -52,101 +232,22 @@ export function SidebarLayout({ navigation }) {
   return (
     <>
       <Toaster position="top-right" reverseOrder={false} />
-      <div className="flex h-screen overflow-hidden">
-        <Transition.Root show={sidebarOpen} as={Fragment}>
-          <Dialog
-            as="div"
-            className="fixed inset-0 z-40 flex md:hidden"
-            onClose={setSidebarOpen}
-          >
-            <Transition.Child
-              as={Fragment}
-              enter="transition-opacity ease-linear duration-300"
-              enterFrom="opacity-0"
-              enterTo="opacity-100"
-              leave="transition-opacity ease-linear duration-300"
-              leaveFrom="opacity-100"
-              leaveTo="opacity-0"
-            >
-              <Dialog.Overlay className="fixed inset-0 bg-gray-600 bg-opacity-75" />
-            </Transition.Child>
-            <Transition.Child
-              as={Fragment}
-              enter="transition ease-in-out duration-300 transform"
-              enterFrom="-translate-x-full"
-              enterTo="translate-x-0"
-              leave="transition ease-in-out duration-300 transform"
-              leaveFrom="translate-x-0"
-              leaveTo="-translate-x-full"
-            >
-              <div className="relative max-w-xs w-full bg-white pt-5 pb-4 flex-1 flex flex-col">
-                <Transition.Child
-                  as={Fragment}
-                  enter="ease-in-out duration-300"
-                  enterFrom="opacity-0"
-                  enterTo="opacity-100"
-                  leave="ease-in-out duration-300"
-                  leaveFrom="opacity-100"
-                  leaveTo="opacity-0"
-                >
-                  <div className="absolute top-0 right-0 -mr-12 pt-2">
-                    <button
-                      type="button"
-                      className="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
-                      onClick={() => setSidebarOpen(false)}
-                    >
-                      <span className="sr-only">Close sidebar</span>
-                      <XIcon
-                        className="h-6 w-6 text-white"
-                        aria-hidden="true"
-                      />
-                    </button>
-                  </div>
-                </Transition.Child>
-                <div className="flex-shrink-0 px-4 flex items-center">
-                  <Icon name="flanksource" className="h-8 w-auto" />
-                </div>
-                <div className="mt-5 flex-1 h-0 overflow-y-auto">
-                  <nav className="px-2 space-y-1">
-                    {navigation.map((item) => (
-                      <NavLink
-                        key={item.name}
-                        to={item.href}
-                        className="text-gray-600 hover:bg-gray-50 hover:text-gray-900 group rounded-md py-2 px-2 flex items-center text-base font-medium"
-                      >
-                        <item.icon
-                          className="text-gray-400 group-hover:text-gray-500 mr-4 flex-shrink-0 h-6 w-6"
-                          aria-hidden="true"
-                        />
-                        {item.name}
-                      </NavLink>
-                    ))}
-                  </nav>
-                </div>
-              </div>
-            </Transition.Child>
-            <div className="flex-shrink-0 w-14">
-              {/* Dummy element to force sidebar to shrink to fit close icon */}
-            </div>
-          </Dialog>
-        </Transition.Root>
-
-        {/* Static sidebar for desktop */}
+      <div className="flex h-screen">
         <div
-          className={clsx("transform duration-500 w-14", {
-            "lg:w-64": !collapseSidebar
+          className={clsx("transform duration-500 w-14 z-10 bg-gray-700", {
+            "lg:w-56": !collapseSidebar
           })}
           ref={innerRef}
         >
           <div
             className={clsx("h-full transform duration-500 w-14", {
-              "lg:w-64": !collapseSidebar
+              "lg:w-56": !collapseSidebar
             })}
           >
             <button
               type="button"
               className={clsx(
-                "absolute bg-white -right-2 top-20 border border-gray-300 rounded-full transform duration-500",
+                "absolute bg-white -right-6 top-20 border border-gray-300 rounded-full transform duration-500 m-2 p-1 hover:bg-gray-200",
                 { "rotate-180": !collapseSidebar }
               )}
               onClick={() => setCollapseSidebar((value) => !value)}
@@ -154,52 +255,31 @@ export function SidebarLayout({ navigation }) {
               <IoChevronForwardOutline />
             </button>
 
-            {/* Sidebar component, swap this element with another sidebar if you like */}
-            <div className="h-full border-r border-gray-200 pt-5 flex flex-col flex-grow bg-white overflow-hidden">
-              {collapseSidebar ? (
-                <div className="w-14">
-                  <Icon
-                    name="flanksource-icon"
-                    className="px-3 w-auto h-auto"
-                  />
-                </div>
-              ) : (
-                <Icon name="flanksource" className="w-auto h-auto px-4" />
+            {collapseSidebar ? (
+              <div className="flex border-b border-b-gray-500 h-16 shadow">
+                <Icon
+                  name="flanksource-icon"
+                  iconClassName="w-10 h-auto m-auto"
+                />
+              </div>
+            ) : (
+              <div className="p-3 pl-5 border-b border-b-gray-500 shadow">
+                <Icon name="flanksource" iconClassName="h-10" />
+              </div>
+            )}
+
+            <div
+              className={clsx(
+                "h-full flex flex-col flex-grow",
+                collapseSidebar ? "px-1" : "px-3"
               )}
+            >
               <div className="flex-grow mt-5 flex flex-col">
-                <nav className="flex-1 px-2 pb-4 space-y-1">
-                  {navigation.map((item) => (
-                    <div key={item.name} data-tip={item.name}>
-                      <NavLink
-                        key={item.name}
-                        to={item.href}
-                        className={classNames(
-                          item.current
-                            ? "bg-gray-100 text-gray-900"
-                            : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
-                          "group rounded-md py-2 px-2 flex items-center text-sm font-medium"
-                        )}
-                      >
-                        <item.icon
-                          className={classNames(
-                            item.current
-                              ? "text-gray-500"
-                              : "text-gray-400 group-hover:text-gray-500",
-                            "mr-3 flex-shrink-0 h-6 w-6"
-                          )}
-                          aria-hidden="true"
-                        />
-                        <p
-                          className={clsx("duration-300 transition-opacity", {
-                            "opacity-0": collapseSidebar
-                          })}
-                        >
-                          {item.name}
-                        </p>
-                      </NavLink>
-                    </div>
-                  ))}
-                </nav>
+                <SideNav
+                  navs={navigation}
+                  settings={settingsNav}
+                  collapseSidebar={collapseSidebar}
+                />
               </div>
             </div>
           </div>

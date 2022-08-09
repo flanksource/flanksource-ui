@@ -4,9 +4,15 @@ import { HiOutlineRefresh } from "react-icons/hi";
 interface IProps extends React.ComponentPropsWithoutRef<"button"> {
   onClick: () => void;
   className?: string;
+  animate?: boolean | undefined;
 }
 
-export function RefreshButton({ onClick, className, ...rest }: IProps) {
+export function RefreshButton({
+  onClick,
+  className,
+  animate,
+  ...rest
+}: IProps) {
   return (
     <button
       onClick={onClick}
@@ -18,7 +24,10 @@ export function RefreshButton({ onClick, className, ...rest }: IProps) {
       {...rest}
     >
       <span className="sr-only">Refresh</span>
-      <HiOutlineRefresh className="h-6 w-6" aria-hidden="true" />
+      <HiOutlineRefresh
+        className={clsx("h-6 w-6", animate ? "animate-spin" : "")}
+        aria-hidden="true"
+      />
     </button>
   );
 }

@@ -8,13 +8,17 @@ import { toastError } from "../components/Toast/toast";
 import { CardSize, CardWidth, TopologyCard } from "../components/TopologyCard";
 import { TopologyBreadcrumbs } from "../components/Topology/topology-breadcrumbs";
 import { useLoader } from "../hooks";
+import { useTopologyPageContext } from "../context/TopologyPageContext";
 
 export function TopologyPage() {
   const { loading, setLoading } = useLoader();
-  const [topology, setTopology] = useState(null);
+  const { topologyState, setTopologyState } = useTopologyPageContext();
   const [size, setSize] = useState(() => getCardWidth());
+  const topology = topologyState.topology;
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams(
+    topologyState?.searchParams
+  );
   const { id } = useParams();
   const load = async () => {
     const params = qs.parse(searchParams.toString());
@@ -51,15 +55,18 @@ export function TopologyPage() {
         data = res.data;
       }
 
-      let topology = data.filter(
+      let result = data.filter(
         (item) => (item.name || item.title) && item.id !== id
       );
 
-      if (!topology.length) {
-        topology = [data.find((x) => x.id === id)];
+      if (!result.length) {
+        result = [data.find((x) => x.id === id)];
       }
 
-      setTopology(topology);
+      setTopologyState({
+        topology: result,
+        searchParams
+      });
     } catch (ex) {
       if (typeof ex === "string") {
         toastError(ex);
@@ -90,7 +97,7 @@ export function TopologyPage() {
     }
   }
 
-  if (loading || topology == null) {
+  if ((loading && !topology) || !topology) {
     return <Loading text="Loading topology..." />;
   }
 
@@ -102,6 +109,7 @@ export function TopologyPage() {
         </div>
       }
       onRefresh={load}
+      loading={loading}
     >
       <>
         {Boolean(topology?.length) && (

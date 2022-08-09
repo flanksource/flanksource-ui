@@ -13,6 +13,10 @@ import { Dropdown } from "../../components/Dropdown";
 import { MultiSelectDropdown } from "../../components/MultiSelectDropdown";
 import { severityItems, statusItems } from "../../components/Incidents/data";
 import { getPersons } from "../../api/services/users";
+import {
+  IncidentState,
+  useIncidentPageContext
+} from "../../context/IncidentPageContext";
 
 const defaultSelections = {
   all: {
@@ -84,9 +88,13 @@ export function IncidentListPage() {
 
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
-  const [incidents, setIncidents] = useState([]);
+  const {
+    incidentState: { incidents, ownerSelections },
+    setIncidentState
+  } = useIncidentPageContext();
+  // const [incidents, setIncidents] = useState([]);
   const [incidentModalIsOpen, setIncidentModalIsOpen] = useState(false);
-  const [ownerSelections, setOwnerSelections] = useState([]);
+  // const [ownerSelections, setOwnerSelections] = useState([]);
 
   const watchSeverity = watch("severity");
   const watchStatus = watch("status");
@@ -98,7 +106,12 @@ export function IncidentListPage() {
         id,
         { name, value: id, description: name }
       ]);
-      setOwnerSelections(Object.fromEntries(owners));
+      setIncidentState((state: IncidentState) => {
+        return {
+          ...state,
+          ownerSelections: Object.fromEntries(owners)
+        };
+      });
     });
   }, []);
 
@@ -121,11 +134,22 @@ export function IncidentListPage() {
           involved: responders.concat(Array.from(commentsSet.values()))
         };
       });
-
-      setIncidents(data);
+      setIncidentState((state: any) => {
+        return {
+          ...state,
+          incidents: data
+        };
+      });
+      // setIncidents(data);
       setIsLoading(false);
     } catch (ex) {
-      setIncidents([]);
+      // setIncidents([]);
+      setIncidentState((state: any) => {
+        return {
+          ...state,
+          incidents: []
+        };
+      });
       setIsLoading(false);
     }
   }
@@ -164,6 +188,7 @@ export function IncidentListPage() {
   return (
     <>
       <SearchLayout
+        loading={isLoading}
         title={
           <div className="flex items-center flex-shrink-0">
             <span className="text-xl font-semibold mr-4 whitespace-nowrap">
@@ -226,7 +251,7 @@ export function IncidentListPage() {
         <div className="leading-1.21rel">
           <div className="flex-none flex-wrap space-x-2 space-y-2">
             <div className="max-w-screen-xl mx-auto flex flex-col justify-center">
-              {!isLoading ? (
+              {!isLoading || Boolean(incidents?.length) ? (
                 <IncidentList list={incidents || []} />
               ) : (
                 <Loading text="fetching incidents" />
