@@ -1,4 +1,3 @@
-import { flattenDepth, isEmpty } from "lodash";
 import { stringify } from "qs";
 import { CanaryChecker } from "../axios";
 
@@ -33,4 +32,8 @@ export const getCanaryGraph = async (params) => {
 export const getCanaries = async (params) => {
   const query = stringify(params);
   return CanaryChecker.get(`/api?${query}`);
+};
+
+export const getTopologyComponents = () => {
+  return CanaryChecker.get(`/db/components`);
 };

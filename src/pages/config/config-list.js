@@ -16,6 +16,9 @@ import ConfigList from "../../components/ConfigList";
 import { SearchSelectTag } from "../../components/SearchSelectTag";
 import { QueryBuilder } from "../../components/QueryBuilder";
 import { Switch } from "../../components/Switch";
+import { RefreshButton } from "../../components/RefreshButton";
+import { useLoader } from "../../hooks";
+import { useConfigPageContext } from "../../context/ConfigPageContext";
 
 const ConfigFilterViewTypes = {
   basic: "Basic",
@@ -25,9 +28,11 @@ const ConfigFilterViewTypes = {
 export function ConfigListPage() {
   const [params, setParams] = useSearchParams();
   const navigate = useNavigate();
-  const [data, setData] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const {
+    configState: { data, filteredData },
+    setConfigState
+  } = useConfigPageContext();
+  const { loading, setLoading } = useLoader();
   const { setTitle, setTitleExtras } = useOutletContext();
   const [configFilterView, setConfigFilterView] = useState(
     params.get("query")
@@ -54,14 +59,26 @@ export function ConfigListPage() {
     if (params.get("query")) {
       return;
     }
+    fetchAllConfigs();
+  }, [configFilterView, params]);
+
+  function fetchAllConfigs() {
+    setLoading(true);
     getAllConfigs()
       .then((res) => {
-        setData(res.data);
+        setConfigState((state) => {
+          return {
+            ...state,
+            data: res.data
+          };
+        });
+        setLoading(false);
       })
-      .finally(() => {
-        setIsLoading(false);
+      .catch((err) => {
+        console.error(err);
+        setLoading(false);
       });
-  }, [configFilterView, params]);
+  }
 
   const handleRowClick = (row) => {
     const id = row?.original?.id;
@@ -73,11 +90,21 @@ export function ConfigListPage() {
   const extra = (
     <div className="flex space-x-2 mr-4">
       {configFilterView === ConfigFilterViewTypes.advanced && (
-        <QueryBuilder refreshConfigs={setData} />
+        <QueryBuilder
+          refreshConfigs={(e) => {
+            setConfigState((state) => {
+              return {
+                ...state,
+                data: e
+              };
+            });
+          }}
+        />
       )}
 
       {configFilterView === ConfigFilterViewTypes.basic && (
         <>
+          <RefreshButton onClick={() => fetchAllConfigs()} animate={loading} />
           <TypeDropdown
             value={configType}
             onChange={(ct) => {
@@ -131,7 +158,8 @@ export function ConfigListPage() {
     search,
     configTagItems,
     options,
-    configFilterView
+    configFilterView,
+    loading
   ]);
 
   useEffect(() => {
@@ -157,14 +185,20 @@ export function ConfigListPage() {
         });
       }
     }
-    setFilteredData(filteredData);
+    setConfigState((state) => {
+      return {
+        ...state,
+        filteredData
+      };
+    });
+    // setFilteredData(filteredData);
   }, [data, search, configType, tag]);
 
   return (
     <ConfigList
       data={filteredData}
       handleRowClick={handleRowClick}
-      isLoading={isLoading}
+      isLoading={loading}
     />
   );
 }

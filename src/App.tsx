@@ -29,6 +29,10 @@ import {
   TopologyPage
 } from "./pages";
 import { HealthPage } from "./pages/health";
+import { TopologyPageContextProvider } from "./context/TopologyPageContext";
+import { HealthPageContextProvider } from "./context/HealthPageContext";
+import { ConfigPageContextProvider } from "./context/ConfigPageContext";
+import { IncidentPageContextProvider } from "./context/IncidentPageContext";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -191,11 +195,19 @@ export function App() {
   return (
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>
-        <AuthContext.Provider value={{ user, setUser }}>
-          <ReactTooltip />
-          <IncidentManagerRoutes sidebar={sidebar} />
-        </AuthContext.Provider>
-        <ReactQueryDevtools initialIsOpen={false} />
+        <TopologyPageContextProvider>
+          <HealthPageContextProvider>
+            <ConfigPageContextProvider>
+              <IncidentPageContextProvider>
+                <AuthContext.Provider value={{ user, setUser }}>
+                  <ReactTooltip />
+                  <IncidentManagerRoutes sidebar={sidebar} />
+                </AuthContext.Provider>
+                <ReactQueryDevtools initialIsOpen={false} />
+              </IncidentPageContextProvider>
+            </ConfigPageContextProvider>
+          </HealthPageContextProvider>
+        </TopologyPageContextProvider>
       </QueryClientProvider>
     </BrowserRouter>
   );
