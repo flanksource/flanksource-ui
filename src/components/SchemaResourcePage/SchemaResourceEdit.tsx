@@ -1,10 +1,11 @@
-import { Controller, useForm } from "react-hook-form";
-import { CodeEditor } from "../CodeEditor";
-import { useEffect, useState, useRef } from "react";
-import { TextInput } from "../TextInput";
-import { SchemaResourceI } from "src/api/schemaResources";
 import { identity, pickBy } from "lodash";
+import { useEffect, useRef, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { v4 } from "uuid";
+
+import { SchemaResourceI } from "../../api/schemaResources";
+import { CodeEditor } from "../CodeEditor";
+import { TextInput } from "../TextInput";
 
 type FormFields = Partial<
   Pick<SchemaResourceI, "id" | "spec" | "name" | "source">
@@ -13,7 +14,8 @@ type FormFields = Partial<
 type Props = FormFields & {
   onSubmit: (val: Partial<SchemaResourceI>) => Promise<void>;
   onDelete?: (id: string) => void;
-  edit: boolean;
+  onCancel?: () => void;
+  edit?: boolean;
 };
 
 export function SchemaResourceEdit({
@@ -23,9 +25,10 @@ export function SchemaResourceEdit({
   source,
   onSubmit,
   onDelete,
-  edit: startInEdit
+  onCancel,
+  edit: startInEdit = false
 }: Props) {
-  const [edit, setEdit] = useState(startInEdit || false);
+  const [edit, setEdit] = useState(startInEdit);
   const [disabled, setDisabled] = useState(false);
   const keyRef = useRef(v4());
 
@@ -42,7 +45,8 @@ export function SchemaResourceEdit({
   }, [register]);
 
   const onEdit = () => setEdit(true);
-  const onCancel = () => {
+  const doCancel = () => {
+    onCancel && onCancel();
     resetField("name");
     resetField("spec");
     setEdit(false);
@@ -96,7 +100,7 @@ export function SchemaResourceEdit({
           </div>
         )}
       </div>
-      <div className="h-[calc(100vh-300px)]">
+      <div className="h-[min(850px,calc(100vh-300px))]">
         <CodeEditor
           key={keyRef.current}
           readOnly={!!source || disabled || !edit}
@@ -121,7 +125,7 @@ export function SchemaResourceEdit({
               <button
                 className="btn-secondary-base btn-secondary"
                 disabled={disabled}
-                onClick={onCancel}
+                onClick={doCancel}
               >
                 Cancel
               </button>

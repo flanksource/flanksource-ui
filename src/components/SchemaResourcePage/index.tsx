@@ -39,6 +39,8 @@ export function SchemaResourcePage({
     setModalIsOpen(false);
   };
 
+  const onClose = () => setModalIsOpen(false);
+
   return (
     <SearchLayout
       title={
@@ -62,12 +64,12 @@ export function SchemaResourcePage({
 
       <Modal
         open={modalIsOpen}
-        onClose={() => setModalIsOpen(false)}
+        onClose={onClose}
         size="full"
         title={`Create New ${capitalize(table)}`}
       >
         <div className="mx-4 my-8">
-          <SchemaResourceEdit edit onSubmit={onSubmit} />
+          <SchemaResourceEdit edit onSubmit={onSubmit} onCancel={onClose} />
         </div>
       </Modal>
     </SearchLayout>

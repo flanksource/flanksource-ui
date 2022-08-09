@@ -31,10 +31,10 @@ export function SchemaResource({
     });
   }, [resourceInfo, id]);
 
-  const onSubmit = (props: any) =>
-    updateResource(resourceInfo, { ...resource, ...props })?.then((res) =>
-      console.log("res", res)
-    );
+  const onSubmit = async (props: any) => {
+    await updateResource(resourceInfo, { ...resource, ...props });
+  };
+
   const onDelete = async (id: string) => {
     await deleteResource(resourceInfo, id);
     navigate(`../${resourceInfo.table}`);
