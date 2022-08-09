@@ -1,8 +1,10 @@
 import { useRef, useEffect } from "react";
 
-export function useOuterClick(callback) {
-  const callbackRef = useRef(); // initialize mutable ref, which stores callback
-  const innerRef = useRef(); // returned to client, who marks "border" element
+export function useOuterClick<T extends HTMLElement = HTMLDivElement>(
+  callback: (e: MouseEvent) => void
+) {
+  const callbackRef = useRef<typeof callback>(); // initialize mutable ref, which stores callback
+  const innerRef = useRef<T>(null); // returned to client, who marks "border" element
 
   // update cb on each render, so second useEffect has access to current value
   useEffect(() => {
@@ -12,11 +14,12 @@ export function useOuterClick(callback) {
   useEffect(() => {
     document.addEventListener("click", handleClick);
     return () => document.removeEventListener("click", handleClick);
-    function handleClick(e) {
+    function handleClick(e: MouseEvent) {
       if (
         innerRef.current &&
         callbackRef.current &&
-        !innerRef.current.contains(e.target)
+        e?.target &&
+        !innerRef.current.contains(e.target as Node) // https://stackoverflow.com/a/55808408
       )
         callbackRef.current(e);
     }

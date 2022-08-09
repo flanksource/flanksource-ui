@@ -1,17 +1,22 @@
 import { FolderIcon, HomeIcon } from "@heroicons/react/outline";
+import { AdjustmentsIcon, UserGroupIcon } from "@heroicons/react/solid";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useEffect, useState } from "react";
 import { AiFillHeart } from "react-icons/ai";
 import { ImLifebuoy } from "react-icons/im";
 import { VscJson } from "react-icons/vsc";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import ReactTooltip from "react-tooltip";
+
 import { getUser } from "./api/auth";
 import { Canary } from "./components";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { ConfigLayout, SidebarLayout } from "./components/Layout";
 import { Loading } from "./components/Loading";
+import { SchemaResourcePage } from "./components/SchemaResourcePage";
+import { schemaResourceTypes } from "./components/SchemaResourcePage/resourceTypes";
+import { SchemaResource } from "./components/SchemaResourcePage/SchemaResource";
 import { AuthContext } from "./context";
 import {
   ConfigChangesPage,
@@ -36,34 +41,25 @@ const queryClient = new QueryClient({
 });
 
 const navigation = [
-  {
-    name: "Topology",
-    href: "/topology",
-    icon: HomeIcon,
-    current: false
-  },
-  {
-    name: "Health",
-    href: "/health",
-    icon: AiFillHeart,
-    current: false
-  },
-  { name: "Logs", href: "/logs", icon: FolderIcon, current: false },
-  // { name: "Metrics", href: "/metrics", icon: VscGraph, current: false },
-  // { name: "Traces", href: "/traces", icon: FaProjectDiagram, current: false },
-  { name: "Config", href: "/config", icon: VscJson, current: false },
-  // {
-  //   name: "Timeline",
-  //   href: "/timeline",
-  //   icon: MdTimeline,
-  //   current: false
-  // },
-  {
-    name: "Incidents",
-    href: "/incidents",
-    icon: ImLifebuoy
-  }
+  { name: "Topology", href: "/topology", icon: HomeIcon },
+  { name: "Health", href: "/health", icon: AiFillHeart },
+  { name: "Logs", href: "/logs", icon: FolderIcon },
+  { name: "Config", href: "/config", icon: VscJson },
+  { name: "Incidents", href: "/incidents", icon: ImLifebuoy }
 ];
+
+export type NavigationItems = typeof navigation;
+
+const settingsNav = {
+  name: "Settings",
+  icon: AdjustmentsIcon,
+  submenu: schemaResourceTypes.map((x) => ({
+    ...x,
+    href: `/settings/${x.table}`
+  }))
+};
+
+export type SettingsNavigationItems = typeof settingsNav;
 
 export function HealthRoutes({ sidebar }) {
   return (
@@ -90,6 +86,25 @@ export function IncidentManagerRoutes({ sidebar }) {
 
       <Route path="health" element={sidebar}>
         <Route index element={<HealthPage url="/canary/api" />} />
+      </Route>
+
+      <Route path="settings" element={sidebar}>
+        {settingsNav.submenu.map((x) => {
+          return (
+            <>
+              <Route
+                key={x.name}
+                path={x.table}
+                element={<SchemaResourcePage resourceInfo={x} />}
+              />
+              <Route
+                key={x.name}
+                path={`${x.table}/:id`}
+                element={<SchemaResource resourceInfo={x} />}
+              />
+            </>
+          );
+        })}
       </Route>
 
       <Route path="logs" element={sidebar}>
@@ -170,7 +185,9 @@ export function App() {
     return <Loading text="Logging in" />;
   }
 
-  const sidebar = <SidebarLayout navigation={navigation} />;
+  const sidebar = (
+    <SidebarLayout navigation={navigation} settingsNav={settingsNav} />
+  );
   return (
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>

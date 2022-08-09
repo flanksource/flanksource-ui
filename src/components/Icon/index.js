@@ -51,7 +51,7 @@ export function Icon({
       <img
         alt={alt}
         src={props.icon}
-        className={`${iconClassName} ${className}`}
+        className={`${props.iconClassName || iconClassName} ${className}`}
       />
     );
   }
