@@ -126,7 +126,7 @@ export function SchemaResourceEdit({
         >
           {!!id && (
             <button
-              className="btn-secondary-base btn-secondary"
+              className="inline-flex items-center justify-center border-none shadow-sm font-medium rounded-md text-red-500 bg-red-100 hover:bg-red-200 focus:ring-offset-white focus:ring-red-500 focus:outline-none focus:ring-2 focus:ring-offset-2 px-4 py-2 text-sm leading-5"
               disabled={disabled}
               onClick={doDelete}
             >
