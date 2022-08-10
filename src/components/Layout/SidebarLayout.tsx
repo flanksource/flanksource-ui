@@ -127,7 +127,7 @@ function SideNavGroup({
             <NavLabel icon={icon} active={current} iconOnly name={name} />
           </NavItemWrapper>
         </Menu.Button>
-        <Menu.Items className="absolute border left-0 ml-12 w-48 shadow-md top-0 z-10 bg-gray-700">
+        <Menu.Items className="absolute border left-0 ml-12 w-48 shadow-md top-0 z-10 bg-gray-700 space-y-1">
           {submenu.map(({ name, icon, href }) => (
             <Menu.Item key={name}>
               {({ active }) => (
@@ -165,7 +165,7 @@ function SideNavGroup({
               </div>
             </NavItemWrapper>
           </Disclosure.Button>
-          <Disclosure.Panel className="pl-4">
+          <Disclosure.Panel className="pl-4 space-y-1">
             {submenu.map((item) => (
               <SideNavItem key={item.name} {...item} collapseSidebar={false} />
             ))}

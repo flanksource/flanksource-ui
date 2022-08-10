@@ -1,4 +1,8 @@
 import { UserGroupIcon } from "@heroicons/react/solid";
+import { HealthIcon } from "../Icons/HealthIcon";
+import { AlarmIcon } from "../Icons/AlarmIcon";
+import { SearchInListIcon } from "../Icons/SearchInListIcon";
+import { TopologyIcon } from "../Icons/TopologyIcon";
 
 type ArrayElem<T> = T extends readonly (infer E)[] ? E : never;
 
@@ -31,24 +35,24 @@ export const schemaResourceTypes = [
     name: "Rules",
     table: "incident_rules",
     api: "incident-commander",
-    icon: UserGroupIcon
+    icon: AlarmIcon
   },
   {
     name: "Config Scraper",
     table: "config_scraper",
     api: "config-db",
-    icon: UserGroupIcon
+    icon: SearchInListIcon
   },
   {
-    name: "System Templates",
+    name: "Topology",
     table: "templates",
     api: "canary-checker",
-    icon: UserGroupIcon
+    icon: TopologyIcon
   },
   {
-    name: "Canary Checks",
+    name: "Health",
     table: "canaries",
     api: "canary-checker",
-    icon: UserGroupIcon
+    icon: HealthIcon
   }
 ] as const;
