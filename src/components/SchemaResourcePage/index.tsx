@@ -65,12 +65,16 @@ export function SchemaResourcePage({
       <Modal
         open={modalIsOpen}
         onClose={onClose}
+        bodyClass=""
         size="full"
         title={`Create New ${capitalize(table)}`}
       >
-        <div className="mx-4 my-8">
-          <SchemaResourceEdit edit onSubmit={onSubmit} onCancel={onClose} />
-        </div>
+        <SchemaResourceEdit
+          isModal
+          edit
+          onSubmit={onSubmit}
+          onCancel={onClose}
+        />
       </Modal>
     </SearchLayout>
   );

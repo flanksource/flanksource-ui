@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import { identity, pickBy } from "lodash";
 import { useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -5,6 +6,7 @@ import { v4 } from "uuid";
 
 import { SchemaResourceI } from "../../api/schemaResources";
 import { CodeEditor } from "../CodeEditor";
+import { IconPicker } from "../IconPicker";
 import { TextInput } from "../TextInput";
 
 type FormFields = Partial<
@@ -16,6 +18,7 @@ type Props = FormFields & {
   onDelete?: (id: string) => void;
   onCancel?: () => void;
   edit?: boolean;
+  isModal?: boolean;
 };
 
 export function SchemaResourceEdit({
@@ -26,7 +29,8 @@ export function SchemaResourceEdit({
   onSubmit,
   onDelete,
   onCancel,
-  edit: startInEdit = false
+  edit: startInEdit = false,
+  isModal = false
 }: Props) {
   const [edit, setEdit] = useState(startInEdit);
   const [disabled, setDisabled] = useState(false);
@@ -71,25 +75,28 @@ export function SchemaResourceEdit({
 
   return (
     <form className="space-y-4" onSubmit={handleSubmit(doSubmit)}>
-      <div className="flex justify-between space-x-8">
+      <div className="flex justify-between space-x-8 px-8 py-4">
         {!source && edit ? (
-          <Controller
-            control={control}
-            name="name"
-            render={({ field: { onChange, value } }) => {
-              return (
-                <TextInput
-                  label=""
-                  placeholder="Team name"
-                  id="name"
-                  disabled={disabled}
-                  className="w-full"
-                  value={value || ""}
-                  onChange={onChange}
-                />
-              );
-            }}
-          />
+          <div className="flex w-full space-x-2">
+            <Controller
+              control={control}
+              name="name"
+              render={({ field: { onChange, value } }) => {
+                return (
+                  <TextInput
+                    label=""
+                    placeholder="Team name"
+                    id="name"
+                    disabled={disabled}
+                    className="w-full"
+                    value={value || ""}
+                    onChange={onChange}
+                  />
+                );
+              }}
+            />
+            <IconPicker />
+          </div>
         ) : (
           <h2 className="text-dark-gray font-bold mr-3 text-xl">{name}</h2>
         )}
@@ -100,7 +107,7 @@ export function SchemaResourceEdit({
           </div>
         )}
       </div>
-      <div className="h-[min(850px,calc(100vh-300px))]">
+      <div className="px-8 h-[min(850px,calc(100vh-300px))]">
         <CodeEditor
           key={keyRef.current}
           readOnly={!!source || disabled || !edit}
@@ -109,7 +116,14 @@ export function SchemaResourceEdit({
         />
       </div>
       {!source && (
-        <div className="flex justify-between">
+        <div
+          className={clsx(
+            "flex justify-between px-10 rounded-b py-4 space-x-2",
+            {
+              "bg-gray-100": isModal
+            }
+          )}
+        >
           {!!id && (
             <button
               className="btn-secondary-base btn-secondary"
@@ -121,7 +135,7 @@ export function SchemaResourceEdit({
           )}
 
           {edit ? (
-            <div className="space-x-2">
+            <div className="w-full flex justify-between">
               <button
                 className="btn-secondary-base btn-secondary"
                 disabled={disabled}
@@ -129,6 +143,7 @@ export function SchemaResourceEdit({
               >
                 Cancel
               </button>
+
               <input
                 disabled={disabled}
                 className="btn-primary"
