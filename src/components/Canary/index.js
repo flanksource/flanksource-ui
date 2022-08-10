@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { debounce, isEmpty, throttle } from "lodash";
+import { debounce, isEmpty } from "lodash";
 import history from "history/browser";
 import {
   encodeObjectToUrlSearchParams,
@@ -61,23 +61,18 @@ export function Canary({
     updateParams({ layout: "table" });
   }, []);
 
-  // const [checks, setChecks] = useState([]);
-  // const [filteredChecks, setFilteredChecks] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [_, setLastUpdated] = useState("");
-  // const [filteredLabels, setFilteredLabels] = useState();
-  // const [passing, setPassing] = useState({
-  //   checks: 0,
-  //   filtered: 0
-  // });
   const {
     healthState: { checks, filteredChecks, filteredLabels, passing },
     setHealthState
   } = useHealthPageContext();
-  const [componentUnMounted, setComponentUnMounted] = useState(false);
+  const [timerRef, setTimerRef] = useState();
+  const [abortController] = useState(() => {
+    return new AbortController();
+  });
 
   const labelUpdateCallback = useCallback((newLabels) => {
-    // setFilteredLabels(newLabels);
     setHealthState((state) => {
       return {
         ...state,
@@ -87,7 +82,6 @@ export function Canary({
   }, []);
 
   useEffect(() => {
-    // setPassing({ ...passing, checks: getPassingCount(checks) });
     setHealthState((state) => {
       return {
         ...state,
@@ -97,11 +91,9 @@ export function Canary({
         }
       };
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [checks]);
 
   useEffect(() => {
-    // setPassing({ ...passing, filtered: getPassingCount(filteredChecks) });
     setHealthState((state) => {
       return {
         ...state,
@@ -111,11 +103,9 @@ export function Canary({
         }
       };
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filteredChecks]);
 
   const updateFilteredChecks = useCallback((newFilteredChecks) => {
-    // setFilteredChecks(newFilteredChecks || []);
     setHealthState((state) => {
       return {
         ...state,
@@ -124,13 +114,11 @@ export function Canary({
     });
   }, []);
 
-  const timerRef = useRef();
-
-  const handleFetch = throttle(async () => {
+  const handleFetch = debounce(async () => {
     if (url == null) {
       return;
     }
-    clearTimeout(timerRef.current);
+    clearTimeout(timerRef);
     const timeRange = getParamsFromURL(window.location.search)?.timeRange;
     const params = encodeObjectToUrlSearchParams({
       start: isEmpty(timeRange) || timeRange === "undefined" ? "1h" : timeRange
@@ -138,12 +126,10 @@ export function Canary({
     setIsLoading(true);
     onLoading(true);
     try {
-      const result = await fetch(`${url}?${params}`);
+      const result = await fetch(`${url}?${params}`, {
+        signal: abortController.signal
+      });
       const data = await result.json();
-      if (componentUnMounted) {
-        return;
-      }
-      // setChecks(data?.checks || []);
       setHealthState((state) => {
         return {
           ...state,
@@ -153,20 +139,27 @@ export function Canary({
       if (data?.checks?.length) {
         setLastUpdated(new Date());
       }
-    } catch (ex) {}
+    } catch (ex) {
+      if (ex instanceof DOMException && ex.name === "AbortError") {
+        return;
+      }
+    }
     setIsLoading(false);
     onLoading(false);
-    timerRef.current = setTimeout(handleFetch, refreshInterval);
+    const ref = setTimeout(handleFetch, refreshInterval);
+    setTimerRef(ref);
   }, 1000);
 
   useEffect(() => {
     handleFetch();
-    return () => {
-      clearTimeout(timerRef.current);
-      setComponentUnMounted(true);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshInterval]);
+
+  useEffect(() => {
+    return () => {
+      clearTimeout(timerRef);
+      abortController.abort();
+    };
+  }, []);
 
   // listen to URL params change
   const [searchParams, setSearchParams] = useState(window.location.search);
@@ -178,7 +171,6 @@ export function Canary({
     return () => {
       unlisten();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSearch = debounce((value) => {
