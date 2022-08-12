@@ -8,7 +8,7 @@ import { IoChevronForwardOutline } from "react-icons/io5";
 import { NavLink, Outlet } from "react-router-dom";
 import { User } from "src/api/services/users";
 import { NavigationItems, SettingsNavigationItems } from "src/App";
-import { $ArrElemType } from "src/types/utility";
+import { $ArrayElemType } from "src/types/utility";
 
 import { getUser } from "../../api/auth";
 import { useOuterClick } from "../../lib/useOuterClick";
@@ -87,7 +87,7 @@ function SideNavItem({
   href,
   collapseSidebar,
   icon
-}: $ArrElemType<NavigationItems> & {
+}: $ArrayElemType<NavigationItems> & {
   collapseSidebar: boolean;
   current?: boolean;
 }) {

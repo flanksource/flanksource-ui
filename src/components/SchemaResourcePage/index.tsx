@@ -67,9 +67,11 @@ export function SchemaResourcePage({
         onClose={onClose}
         bodyClass=""
         size="full"
-        title={`Create New ${capitalize(table)}`}
+        title={`Create New ${resourceInfo.name}`}
       >
         <SchemaResourceEdit
+          resourceName={resourceInfo.name}
+          supportsIcon={resourceInfo.supportsIcon}
           isModal
           edit
           onSubmit={onSubmit}

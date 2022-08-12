@@ -3,56 +3,50 @@ import { HealthIcon } from "../Icons/HealthIcon";
 import { AlarmIcon } from "../Icons/AlarmIcon";
 import { SearchInListIcon } from "../Icons/SearchInListIcon";
 import { TopologyIcon } from "../Icons/TopologyIcon";
-
-type ArrayElem<T> = T extends readonly (infer E)[] ? E : never;
-
-type ArrayPick<
-  T extends readonly any[],
-  idx extends [any],
-  Acc = never
-> = T extends readonly [infer head, ...infer tail]
-  ? idx[0] extends keyof head
-    ? ArrayPick<tail, idx, Acc | Pick<head, idx[0]>>
-    : `Err: Is not key of head?: ${idx & string}`
-  : Acc;
+import { $ArrayElemType, $ArrayPick } from "src/types/utility";
 
 export type SchemaResourceTypes = typeof schemaResourceTypes;
 
-export type SchemaResourceType = ArrayElem<SchemaResourceTypes>;
+export type SchemaResourceType = $ArrayElemType<SchemaResourceTypes>;
 
 export type SchemaBackends = SchemaResourceType["api"];
 
-export type SchemaApi = ArrayPick<SchemaResourceTypes, ["table" | "api"]>;
+export type SchemaApi = $ArrayPick<SchemaResourceTypes, ["table" | "api"]>;
 
 export const schemaResourceTypes = [
   {
     name: "Teams",
     table: "teams",
     api: "incident-commander",
-    icon: UserGroupIcon
+    icon: UserGroupIcon,
+    supportsIcon: true
   },
   {
     name: "Rules",
     table: "incident_rules",
     api: "incident-commander",
-    icon: AlarmIcon
+    icon: AlarmIcon,
+    supportsIcon: false
   },
   {
     name: "Config Scraper",
     table: "config_scraper",
     api: "config-db",
-    icon: SearchInListIcon
+    icon: SearchInListIcon,
+    supportsIcon: false
   },
   {
     name: "Topology",
     table: "templates",
     api: "canary-checker",
-    icon: TopologyIcon
+    icon: TopologyIcon,
+    supportsIcon: false
   },
   {
     name: "Health",
     table: "canaries",
     api: "canary-checker",
-    icon: HealthIcon
+    icon: HealthIcon,
+    supportsIcon: false
   }
 ] as const;

@@ -25,7 +25,6 @@ export function SchemaResource({
     if (!id) return;
     setLoadingState("loading");
     getResource(resourceInfo, id)?.then((res) => {
-      console.log(res);
       setResource(res.data[0]);
       setLoadingState("success");
     });
@@ -52,7 +51,9 @@ export function SchemaResource({
         {loadingState === "success" && id && (
           <SchemaResourceEdit
             id={id}
+            resourceName={resourceInfo.name}
             {...resource}
+            supportsIcon={resourceInfo?.supportsIcon}
             onSubmit={onSubmit}
             onDelete={onDelete}
           />

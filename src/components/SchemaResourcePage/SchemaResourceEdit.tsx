@@ -8,6 +8,7 @@ import { SchemaResourceI } from "../../api/schemaResources";
 import { CodeEditor } from "../CodeEditor";
 import { IconPicker } from "../IconPicker";
 import { TextInput } from "../TextInput";
+import { Icon } from "../Icon";
 
 type FormFields = Partial<
   Pick<SchemaResourceI, "id" | "spec" | "name" | "source" | "icon">
@@ -17,11 +18,14 @@ type Props = FormFields & {
   onSubmit: (val: Partial<SchemaResourceI>) => Promise<void>;
   onDelete?: (id: string) => void;
   onCancel?: () => void;
+  resourceName: string;
   edit?: boolean;
   isModal?: boolean;
+  supportsIcon?: boolean;
 };
 
 export function SchemaResourceEdit({
+  resourceName,
   id,
   spec,
   name,
@@ -31,11 +35,17 @@ export function SchemaResourceEdit({
   onDelete,
   onCancel,
   edit: startInEdit = false,
-  isModal = false
+  isModal = false,
+  supportsIcon = false
 }: Props) {
   const [edit, setEdit] = useState(startInEdit);
   const [disabled, setDisabled] = useState(false);
   const keyRef = useRef(v4());
+
+  const defaultValues = pickBy({ id, spec, name }, identity);
+  if (supportsIcon) {
+    defaultValues.icon = icon;
+  }
 
   const {
     control,
@@ -46,17 +56,18 @@ export function SchemaResourceEdit({
     resetField,
     watch
   } = useForm<FormFields>({
-    defaultValues: pickBy({ id, spec, name, icon }, identity)
+    defaultValues
   });
 
   const values = getValues();
-  watch("icon");
+  if (supportsIcon) {
+    watch("icon");
+  }
   watch("spec");
 
   useEffect(() => {
     register("spec");
     register("name");
-    register("icon");
   }, [register]);
 
   const onEdit = () => setEdit(true);
@@ -64,7 +75,9 @@ export function SchemaResourceEdit({
     onCancel && onCancel();
     resetField("name");
     resetField("spec");
-    resetField("icon");
+    if (supportsIcon) {
+      resetField("icon");
+    }
     setEdit(false);
     keyRef.current = v4();
   };
@@ -96,8 +109,8 @@ export function SchemaResourceEdit({
               render={({ field: { onChange, value } }) => {
                 return (
                   <TextInput
-                    label="Team Name"
-                    placeholder="Team name"
+                    label={`${resourceName} name`}
+                    placeholder={`${resourceName} name`}
                     id="name"
                     disabled={disabled}
                     className="w-full"
@@ -108,27 +121,33 @@ export function SchemaResourceEdit({
               }}
             />
 
-            <div className="space-y-2">
-              <label
-                htmlFor="icon-picker"
-                className="block text-sm font-bold text-gray-700 pt-4"
-              >
-                Icon
-              </label>
+            {supportsIcon && (
+              <div className="space-y-2">
+                <label
+                  htmlFor="icon-picker"
+                  className="block text-sm font-bold text-gray-700 pt-4"
+                >
+                  Icon
+                </label>
 
-              <IconPicker
-                icon={values.icon}
-                onChange={(v) => setValue("icon", v.value)}
-              />
-            </div>
+                <IconPicker
+                  icon={values.icon}
+                  onChange={(v) => setValue("icon", v.value)}
+                />
+              </div>
+            )}
           </>
         ) : (
-          <h2 className="text-dark-gray font-bold mr-3 text-xl">{name}</h2>
-        )}
-
-        {!!source && (
-          <div className="px-2">
-            <a href={`${source}`}>Config source</a>
+          <div className="flex justify-between">
+            <h2 className="text-dark-gray font-bold mr-3 text-xl flex items-center space-x-2">
+              {supportsIcon && <Icon size="md" name={icon} />}
+              <span>{name}</span>
+            </h2>
+            {!!source && (
+              <div className="px-2">
+                <a href={`${source}`}>Config source</a>
+              </div>
+            )}
           </div>
         )}
       </div>
