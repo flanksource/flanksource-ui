@@ -64,7 +64,12 @@ export function HypothesisBar({
   onDisprove,
   onCreateHypothesis
 }: HypothesisBarProps) {
-  const { title = "", created_by: createdBy, evidence, comment } = hypothesis;
+  const {
+    title = "",
+    created_by: createdBy,
+    evidences: evidence,
+    comment
+  } = hypothesis;
 
   const [deleting, setDeleting] = useState<boolean>(false);
 

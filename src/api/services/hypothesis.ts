@@ -24,7 +24,7 @@ export interface Hypothesis {
   status: HypothesisStatus;
   created_by?: User;
   parent_id?: string;
-  evidence?: Evidence[];
+  evidences?: Evidence[];
   comment?: any[];
   id: string;
   incident_id: string;

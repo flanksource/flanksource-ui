@@ -170,29 +170,6 @@ export const IncidentDetails = ({
           Share
         </button>
       </div>
-      {/* <IncidentDetailsRow
-        title="Chart Room"
-        value={
-          <a
-            href={getValues("chartRoom")}
-            className="underline text-dark-blue text-sm font-normal"
-          >
-            {getValues("chartRoomTitle")}
-          </a>
-        }
-      />
-      <IncidentDetailsRow
-        title="Status Page"
-        className="mt-2.5"
-        value={
-          <a
-            href={getValues("statusPage")}
-            className="underline text-dark-blue text-sm font-normal"
-          >
-            {getValues("statusPageTitle")}
-          </a>
-        }
-      /> */}
       <div className="grid grid-cols-1-to-2 gap-6 mt-4">
         <h2 className="text-dark-gray text-sm font-medium">Responders</h2>
         {!responders.length && (

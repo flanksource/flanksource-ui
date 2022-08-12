@@ -2,6 +2,7 @@ import clsx from "clsx";
 import { filter } from "lodash";
 import { useEffect, useState, useMemo, MouseEventHandler } from "react";
 import { Link } from "react-router-dom";
+import { getTopology } from "../../api/services/topology";
 import { CustomScroll } from "../CustomScroll";
 import { HealthSummary } from "../HealthSummary";
 import { Icon } from "../Icon";
@@ -55,7 +56,7 @@ export function TopologyCard({
 
   useEffect(() => {
     if (topologyId != null && topologyData == null) {
-      getTopology(topologyId).then(({ data }) => setTopology(data[0]));
+      getTopology({ id: topologyId }).then(({ data }) => setTopology(data[0]));
     }
   }, [topologyId, topologyData]);
 

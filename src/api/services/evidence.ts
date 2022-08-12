@@ -59,7 +59,7 @@ export type Evidence = TopologyEvidence | ConfigEvidence | LogEvidence;
 export const getAllEvidenceByHypothesis = async (hypothesisId: string) => {
   const { data, error } = await resolve<Evidence[]>(
     IncidentCommander.get(
-      `/evidence?hypothesis_id=eq.${hypothesisId}&select=*,created_by(id,name,avatar)`
+      `/evidences?hypothesis_id=eq.${hypothesisId}&select=*,created_by(id,name,avatar)`
     )
   );
   if (error) {
@@ -70,14 +70,14 @@ export const getAllEvidenceByHypothesis = async (hypothesisId: string) => {
 };
 
 export const getEvidence = async (id: string) =>
-  resolve(IncidentCommander.get(`/evidence?id=eq.${id}`));
+  resolve(IncidentCommander.get(`/evidences?id=eq.${id}`));
 
 export const createEvidence = async (args: Evidence) => {
   const { user, id, hypothesisId, evidence, type, description, properties } =
     args;
 
   return resolve(
-    IncidentCommander.post(`/evidence`, {
+    IncidentCommander.post(`/evidences`, {
       id,
       created_by: user.id,
       hypothesis_id: hypothesisId,
@@ -90,10 +90,10 @@ export const createEvidence = async (args: Evidence) => {
 };
 
 export const updateEvidence = async (id: string, params: {}) =>
-  resolve(IncidentCommander.patch(`/evidence?id=eq.${id}`, { ...params }));
+  resolve(IncidentCommander.patch(`/evidences?id=eq.${id}`, { ...params }));
 
 export const deleteEvidence = async (id: string) =>
-  resolve(IncidentCommander.delete(`/evidence?id=eq.${id}`));
+  resolve(IncidentCommander.delete(`/evidences?id=eq.${id}`));
 
 export const deleteEvidenceBulk = async (idList: string[]) => {
   let ids = "";
@@ -103,5 +103,5 @@ export const deleteEvidenceBulk = async (idList: string[]) => {
       ids += ",";
     }
   });
-  return resolve(IncidentCommander.delete(`/evidence?id=in.(${ids})`));
+  return resolve(IncidentCommander.delete(`/evidences?id=in.(${ids})`));
 };
