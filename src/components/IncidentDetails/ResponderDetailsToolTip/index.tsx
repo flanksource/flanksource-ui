@@ -1,7 +1,11 @@
 import clsx from "clsx";
 import React, { useEffect, useRef, useState } from "react";
 import { FiExternalLink } from "react-icons/fi";
-import { formPropKey, ResponderPropsKeyToLabelMap } from "../AddResponder";
+import {
+  formPropKey,
+  getOrderedKeys,
+  ResponderPropsKeyToLabelMap
+} from "../AddResponder";
 
 type ResponderDetailsToolTipProps = {
   element: React.ReactElement;
@@ -32,37 +36,8 @@ export const ResponderDetailsToolTip = ({
     }, 1000);
   };
 
-  const getOrderedKeys = (): formPropKey[] => {
-    switch (responder.type) {
-      case "Email":
-        return ["to", "subject", "body"];
-      case "Jira":
-        return ["project", "issueType", "summary", "description"];
-      case "ServiceNow":
-        return ["category", "description", "body"];
-      case "CA":
-        return ["category", "description", "body"];
-      case "AWS Support":
-        return ["category", "description", "body"];
-      case "AWS AMS Service Request":
-        return ["category", "description", "body"];
-      case "Redhat":
-        return ["product", "category", "description", "body"];
-      case "Oracle":
-        return ["product", "category", "description", "body"];
-      case "Microsoft":
-        return ["product", "category", "description", "body"];
-      case "VMWare":
-        return ["product", "category", "description", "body"];
-      case "Person":
-        return ["person"];
-      default:
-        return [];
-    }
-  };
-
   const getOptionsList = () => {
-    const keys = getOrderedKeys();
+    const keys = getOrderedKeys(responder);
     const options: { label: string; value: string | undefined }[] = [];
     keys.forEach((key) => {
       options.push({

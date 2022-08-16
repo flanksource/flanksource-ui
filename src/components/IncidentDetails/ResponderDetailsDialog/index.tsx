@@ -7,7 +7,7 @@ import { MdTimer } from "react-icons/md";
 import { relativeDateTime } from "../../../utils/relativeDateTime";
 import {
   AddResponderFormValues,
-  formPropKey,
+  getOrderedKeys,
   ResponderPropsKeyToLabelMap
 } from "../AddResponder";
 
@@ -26,37 +26,8 @@ export function ResponderDetailsDialog({
   className,
   ...rest
 }: ResponderDetailsDialogProps) {
-  const getOrderedKeys = (): formPropKey[] => {
-    switch (responder?.type) {
-      case "Email":
-        return ["to", "subject", "body"];
-      case "Jira":
-        return ["project", "issueType", "summary", "description"];
-      case "ServiceNow":
-        return ["category", "description", "body"];
-      case "CA":
-        return ["category", "description", "body"];
-      case "AWS Support":
-        return ["category", "description", "body"];
-      case "AWS AMS Service Request":
-        return ["category", "description", "body"];
-      case "Redhat":
-        return ["product", "category", "description", "body"];
-      case "Oracle":
-        return ["product", "category", "description", "body"];
-      case "Microsoft":
-        return ["product", "category", "description", "body"];
-      case "VMWare":
-        return ["product", "category", "description", "body"];
-      case "Person":
-        return ["person"];
-      default:
-        return [];
-    }
-  };
-
   const getOptionsList = () => {
-    const keys = getOrderedKeys();
+    const keys = getOrderedKeys(responder);
     const options: { label: string; value: string | undefined }[] = [];
     keys.forEach((key) => {
       options.push({

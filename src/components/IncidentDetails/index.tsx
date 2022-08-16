@@ -111,6 +111,7 @@ export const IncidentDetails = ({
     try {
       const result = await getRespondersForTheIncident(incident.id);
       const data = (result?.data || []).map((item) => {
+        item.properties.external_id = item.team_id?.spec?.external_id;
         return {
           name: item.team_id?.name,
           type: item.properties.responderType,

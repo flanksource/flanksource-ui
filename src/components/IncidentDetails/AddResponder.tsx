@@ -60,7 +60,8 @@ export const ResponderPropsKeyToLabelMap = {
   issueType: "Issue Type",
   summary: "Summary",
   product: "Product",
-  person: "Person"
+  person: "Person",
+  external_id: "External ID"
 };
 
 export const ResponderTypeOptions = [
@@ -161,6 +162,7 @@ export type AddResponderFormValues = {
   summary?: string;
   product?: string;
   person?: string;
+  external_id?: string;
 };
 
 export type formPropKey = keyof AddResponderFormValues;
@@ -169,6 +171,35 @@ type AddResponderProps = {
   onSuccess?: () => void;
   onError?: () => void;
 } & React.HTMLProps<HTMLDivElement>;
+
+export const getOrderedKeys = (responder: any): formPropKey[] => {
+  switch (responder?.type) {
+    case "Email":
+      return ["to", "subject", "body", "external_id"];
+    case "Jira":
+      return ["project", "issueType", "summary", "description", "external_id"];
+    case "ServiceNow":
+      return ["category", "description", "body", "external_id"];
+    case "CA":
+      return ["category", "description", "body", "external_id"];
+    case "AWS Support":
+      return ["category", "description", "body", "external_id"];
+    case "AWS AMS Service Request":
+      return ["category", "description", "body", "external_id"];
+    case "Redhat":
+      return ["product", "category", "description", "body", "external_id"];
+    case "Oracle":
+      return ["product", "category", "description", "body", "external_id"];
+    case "Microsoft":
+      return ["product", "category", "description", "body", "external_id"];
+    case "VMWare":
+      return ["product", "category", "description", "body", "external_id"];
+    case "Person":
+      return ["person"];
+    default:
+      return [];
+  }
+};
 
 export const AddResponder = ({
   onSuccess = () => {},
