@@ -172,12 +172,21 @@ export const IncidentDetails = ({
         <h2 className="mt-0.5 text-2xl font-medium leading-7 text-dark-gray">
           Details
         </h2>
-        <button
-          type="button"
-          className="btn-secondary btn-secondary-sm text-dark-blue"
-        >
-          Share
-        </button>
+        <span className="relative z-0 inline-flex shadow-sm rounded-md">
+          <button
+            type="button"
+            className="relative inline-flex items-center px-4 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+            onClick={updateStatusHandler}
+          >
+            {textButton}
+          </button>
+          <button
+            type="button"
+            className="-ml-px relative inline-flex items-center px-4 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+          >
+            Share
+          </button>
+        </span>
       </div>
       {/* <IncidentDetailsRow
         title="Chart Room"
@@ -202,73 +211,6 @@ export const IncidentDetails = ({
           </a>
         }
       /> */}
-      <div className="grid grid-cols-1-to-2 gap-6 mt-4">
-        <h2 className="text-dark-gray text-sm font-medium">Responders</h2>
-        {!responders.length && (
-          <AddResponder onSuccess={() => fetchResponders()} />
-        )}
-        {Boolean(responders.length) && (
-          <div>
-            {responders.map((responder) => {
-              return (
-                <div
-                  className="cursor-pointer"
-                  key={responder.json.id}
-                  onClick={(e) => {
-                    setOpenResponderDetailsDialog(true);
-                    setSelectedResponder(responder);
-                  }}
-                >
-                  <div className="relative flex hover:bg-gray-100 p-1 items-center rounded">
-                    {responder.icon && <responder.icon className="w-6 h-6" />}
-                    <div className="flex-1 min-w-0 w-full">
-                      <ResponderDetailsToolTip
-                        className="w-full"
-                        responder={responder}
-                        data={responder?.json?.properties}
-                        element={
-                          <div className="text-dark-gray group text-sm font-medium relative w-full overflow-hidden truncate pr-4 pl-2">
-                            {responder?.name}
-                            <div className="ml-10 cursor-pointer absolute right-0 top-1">
-                              <IconButton
-                                className="bg-transparent hidden group-hover:inline-block z-5"
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  e.stopPropagation();
-                                  setOpenDeleteConfirmDialog(true);
-                                  setDeletedResponder(responder);
-                                }}
-                                ovalProps={{
-                                  stroke: "blue",
-                                  height: "18px",
-                                  width: "18px",
-                                  fill: "transparent"
-                                }}
-                                icon={
-                                  <BsTrash
-                                    className="text-gray-600 border-0 border-l-1 border-gray-200"
-                                    size={18}
-                                  />
-                                }
-                              />
-                            </div>
-                          </div>
-                        }
-                      />
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
-      {Boolean(responders.length) && (
-        <div className="grid grid-cols-1-to-2 gap-6 items-center">
-          <div></div>
-          <AddResponder onSuccess={() => fetchResponders()} />
-        </div>
-      )}
       <IncidentDetailsRow
         title="Commanders"
         className="mt-4"
@@ -322,6 +264,82 @@ export const IncidentDetails = ({
           />
         }
       />
+      <div className="mt-4">
+        <h2 className="text-dark-gray text-sm font-medium">Responders</h2>
+        {!responders.length && (
+          <AddResponder onSuccess={() => fetchResponders()} />
+        )}
+        {Boolean(responders.length) && (
+          <div>
+            {responders.map((responder) => {
+              return (
+                <div
+                  className="cursor-pointer"
+                  key={responder.json.id}
+                  onClick={(e) => {
+                    setOpenResponderDetailsDialog(true);
+                    setSelectedResponder(responder);
+                  }}
+                >
+                  <div className="relative flex hover:bg-gray-100 p-1 items-center rounded mt-2">
+                    <div className="flex-1 min-w-0 w-full">
+                      <ResponderDetailsToolTip
+                        className="w-full"
+                        responder={responder}
+                        data={responder?.json?.properties}
+                        element={
+                          <div className="text-dark-gray group text-sm font-medium relative w-full overflow-hidden truncate pr-4 pl-2">
+                            <div className="w-full overflow-hidden truncate">
+                              {responder.icon && (
+                                <responder.icon className="w-6 h-6" />
+                              )}
+                              <div className="pl-1 inline-block">
+                                {responder?.name}
+                              </div>
+                            </div>
+                            <div className="text-xs w-full overflow-hidden truncate mt-1">
+                              <b>External ID: </b>
+                              {responder?.external_id}
+                            </div>
+                            <div className="ml-10 cursor-pointer absolute right-0 top-4">
+                              <IconButton
+                                className="bg-transparent hidden group-hover:inline-block z-5"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  setOpenDeleteConfirmDialog(true);
+                                  setDeletedResponder(responder);
+                                }}
+                                ovalProps={{
+                                  stroke: "blue",
+                                  height: "18px",
+                                  width: "18px",
+                                  fill: "transparent"
+                                }}
+                                icon={
+                                  <BsTrash
+                                    className="text-gray-600 border-0 border-l-1 border-gray-200"
+                                    size={18}
+                                  />
+                                }
+                              />
+                            </div>
+                          </div>
+                        }
+                      />
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+      {Boolean(responders.length) && (
+        <div className="items-center">
+          <AddResponder onSuccess={() => fetchResponders()} />
+        </div>
+      )}
       <DeleteConfirmDialog
         isOpen={openDeleteConfirmDialog}
         title="Delete Responder ?"
@@ -340,13 +358,6 @@ export const IncidentDetails = ({
           setOpenResponderDetailsDialog(false);
         }}
       />
-      <button
-        type="button"
-        className="btn-primary mt-6 w-full mb-10"
-        onClick={updateStatusHandler}
-      >
-        {textButton}
-      </button>
     </div>
   );
 };

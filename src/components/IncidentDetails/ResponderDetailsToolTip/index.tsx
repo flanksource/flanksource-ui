@@ -85,8 +85,8 @@ export const ResponderDetailsToolTip = ({
         onMouseLeave={onMouseLeave}
         onMouseOut={onMouseLeave}
         style={{
-          left: "calc(-200% - 35px)",
-          top: "-5px"
+          left: "calc(-100% - 100px)",
+          top: "-10px"
         }}
       >
         <div className="py-1" role="none">
@@ -114,7 +114,13 @@ export const ResponderDetailsToolTip = ({
               </div>
             </div>
             <div className="border-gray-200 sm:p-0 mt-2">
-              <dl className="sm:divide-y sm:divide-gray-200">
+              <dl
+                className="sm:divide-y sm:divide-gray-200"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                }}
+              >
                 {getOptionsList().map((option) => {
                   return (
                     <div
