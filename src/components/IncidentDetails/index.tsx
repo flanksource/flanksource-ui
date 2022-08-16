@@ -281,7 +281,7 @@ export const IncidentDetails = ({
                         responder={responder}
                         data={responder?.json?.properties}
                         element={
-                          <div className="text-dark-gray group text-sm font-medium relative w-full overflow-hidden truncate pr-4 pl-2">
+                          <div className="text-dark-gray group text-sm font-medium relative w-full overflow-hidden truncate">
                             <div className="w-full overflow-hidden truncate">
                               {responder.icon && (
                                 <responder.icon className="w-6 h-6" />
