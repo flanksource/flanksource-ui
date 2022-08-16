@@ -273,14 +273,7 @@ export const IncidentDetails = ({
           <div>
             {responders.map((responder) => {
               return (
-                <div
-                  className="cursor-pointer"
-                  key={responder.json.id}
-                  onClick={(e) => {
-                    setOpenResponderDetailsDialog(true);
-                    setSelectedResponder(responder);
-                  }}
-                >
+                <div className="cursor-pointer" key={responder.json.id}>
                   <div className="relative flex hover:bg-gray-100 p-1 items-center rounded mt-2">
                     <div className="flex-1 min-w-0 w-full">
                       <ResponderDetailsToolTip
@@ -293,7 +286,13 @@ export const IncidentDetails = ({
                               {responder.icon && (
                                 <responder.icon className="w-6 h-6" />
                               )}
-                              <div className="pl-1 inline-block">
+                              <div
+                                className="pl-1 inline-block hover:underline cursor-pointer"
+                                onClick={(e) => {
+                                  setOpenResponderDetailsDialog(true);
+                                  setSelectedResponder(responder);
+                                }}
+                              >
                                 {responder?.name}
                               </div>
                             </div>

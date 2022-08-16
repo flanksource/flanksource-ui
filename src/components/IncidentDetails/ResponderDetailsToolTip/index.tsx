@@ -85,7 +85,7 @@ export const ResponderDetailsToolTip = ({
         onMouseLeave={onMouseLeave}
         onMouseOut={onMouseLeave}
         style={{
-          left: "calc(-100% - 100px)",
+          left: "calc(-100% - 60px)",
           top: "-10px"
         }}
       >
