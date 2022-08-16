@@ -1,9 +1,13 @@
 import { Switch } from "@headlessui/react";
 import clsx from "clsx";
 import { useEffect, useState } from "react";
-import { BsPlusLg } from "react-icons/bs";
+import { BiZoomIn } from "react-icons/bi";
 import { useSearchParams } from "react-router-dom";
-import { Hypothesis, HypothesisStatus } from "../../../api/services/hypothesis";
+import {
+  getHypothesisChildType,
+  Hypothesis,
+  HypothesisStatus
+} from "../../../api/services/hypothesis";
 import { HypothesisAPIs } from "../../../pages/incident/IncidentDetails";
 import { HypothesisBar } from "../HypothesisBar";
 import { HypothesisDetails } from "../HypothesisDetails";
@@ -12,7 +16,6 @@ interface IHypothesisNodeProps {
   hasParent?: boolean;
   node: Hypothesis;
   showComments: boolean;
-  setModalIsOpen: (v: boolean) => void;
   setSelectedNode: (v: Hypothesis) => void;
   setCreateHypothesisModalIsOpen: (v: boolean) => void;
   api: HypothesisAPIs;
@@ -22,7 +25,6 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
   const {
     hasParent,
     node,
-    setModalIsOpen,
     showComments: parentShowComments,
     setSelectedNode,
     setCreateHypothesisModalIsOpen,
@@ -33,10 +35,6 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
 
   const isRoot = node?.type === "root" || node?.parent_id == null;
 
-  const handleOpenModal = () => {
-    setSelectedNode(node);
-    setModalIsOpen(true);
-  };
   const handlerOpenCreateHypothesisModal = () => {
     setSelectedNode(node);
     setCreateHypothesisModalIsOpen(true);
@@ -71,13 +69,6 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
         <div className="flex items-center text-base font-semibold mb-5 justify-between">
           <div className="flex items-center">
             <h2 className="text-dark-gray mr-3 text-2xl">Action plan</h2>
-            <button
-              type="button"
-              onClick={handlerOpenCreateHypothesisModal}
-              className="btn-round btn-round-primary btn-round-sm"
-            >
-              <BsPlusLg />
-            </button>
           </div>
           <div className="flex items-center">
             <div className="pr-4">
@@ -116,7 +107,6 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
         >
           <HypothesisBar
             hypothesis={node}
-            onTitleClick={handleOpenModal}
             api={api}
             showExpand={!isRoot}
             expanded={showComments}
@@ -142,6 +132,16 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
                 "relative before:content-[''] before:absolute before:border-l-2 before:border-gray-200 before:left-2 before:h-full before:z-[-1]"
             )}
           >
+            <div
+              className="text-gray underline flex justify-center items-end cursor-pointer"
+              onClick={handlerOpenCreateHypothesisModal}
+            >
+              <BiZoomIn />
+              <span className="pl-2 text-sm block">
+                Add {getHypothesisChildType(node?.type)}
+              </span>
+            </div>
+
             <div className="px-5">
               <HypothesisDetails node={node} api={api} />
             </div>
@@ -160,6 +160,7 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
               </div>
             )}
           </div>
+
           {!!chldLast && (
             <div className="pl-5">
               <HypothesisNode

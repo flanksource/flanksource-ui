@@ -4,11 +4,7 @@ import { Comment } from "./comments";
 import { Evidence } from "./evidence";
 import { User } from "./users";
 
-export enum HypothesisNodeType {
-  Root = "root",
-  Factor = "factor",
-  Solution = "solution"
-}
+export type HypothesisNodeType = "root" | "factor" | "solution";
 
 export enum HypothesisStatus {
   Proven = "proven",
@@ -30,6 +26,16 @@ export interface Hypothesis {
   incident_id: string;
   type: HypothesisNodeType;
 }
+
+const hypothesisChildType = {
+  default: "root",
+  root: "factor",
+  factor: "solution"
+} as const;
+
+export const getHypothesisChildType = (
+  nodeType?: keyof typeof hypothesisChildType
+) => hypothesisChildType[nodeType || "default"];
 
 export const getAllHypothesisByIncident = (incidentId: string) =>
   resolve<Hypothesis[]>(
@@ -92,11 +98,11 @@ interface NewBaseHypothesis {
 }
 
 type NewRootNode = {
-  type: HypothesisNodeType.Root;
+  type: "root";
 } & NewBaseHypothesis;
 
 type NewChildNode = {
-  type: HypothesisNodeType.Factor | HypothesisNodeType.Solution;
+  type: "factor" | "solution";
   parent_id?: string;
 } & NewBaseHypothesis;
 
@@ -121,7 +127,7 @@ export const createHypothesisOld = async (
   id: string,
   incidentId: string,
   params: HypothesisInfo = {
-    type: HypothesisNodeType.Root,
+    type: "root",
     title: "",
     status: HypothesisStatus.Possible
   }

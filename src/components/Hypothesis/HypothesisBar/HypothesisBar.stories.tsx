@@ -1,9 +1,6 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import {
-  HypothesisNodeType,
-  HypothesisStatus
-} from "../../../api/services/hypothesis";
+import { HypothesisStatus } from "../../../api/services/hypothesis";
 import { HypothesisBar } from "./index";
 
 const defaultQueryClient = new QueryClient();
@@ -27,7 +24,7 @@ Basic.args = {
     incident_id: "i-1232",
     title: "Test Hypothesis",
     status: HypothesisStatus.Proven,
-    type: HypothesisNodeType.Root,
+    type: "root",
     created_by: {
       id: "124",
       name: "Galileo Galilei",

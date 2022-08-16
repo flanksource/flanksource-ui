@@ -1,4 +1,3 @@
-import { capitalize } from "lodash";
 import { useEffect, useState } from "react";
 import { AiFillPlusCircle } from "react-icons/ai";
 
@@ -21,9 +20,9 @@ export function SchemaResourcePage({
   resourceInfo: SchemaResourceType;
 }) {
   const { user } = useUser();
-  const [list, setList] = useState([]);
+  const [list, setList] = useState<SchemaResourceI[]>([]);
   const [reload, setReload] = useState(1);
-  const { table, name, href } = resourceInfo;
+  const { name, href } = resourceInfo;
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
