@@ -27,6 +27,7 @@ import { BsTrash } from "react-icons/bs";
 import { DeleteConfirmDialog } from "../DeleteConfirmDialog";
 import { ResponderDetailsToolTip } from "./ResponderDetailsToolTip";
 import { ResponderDetailsDialog } from "./ResponderDetailsDialog";
+import { Icon } from "../Icon";
 
 export const IncidentDetails = ({
   incident,
@@ -111,11 +112,18 @@ export const IncidentDetails = ({
       const result = await getRespondersForTheIncident(incident.id);
       const data = (result?.data || []).map((item) => {
         return {
-          name: getResponderTitle(item.properties),
+          name: item.team_id?.name,
           type: item.properties.responderType,
-          icon: ResponderTypeOptions.find(
-            (option) => option.label === item.properties.responderType
-          )?.icon,
+          external_id: item.team_id?.spec?.external_id,
+          icon:
+            item.team_id?.icon &&
+            (() => (
+              <Icon
+                size="md"
+                className="inline-block align-sub"
+                name={item.team_id.icon}
+              />
+            )),
           properties: Object.keys(item.properties)
             .map((key) => {
               if (key !== "responderType") {
@@ -219,7 +227,7 @@ export const IncidentDetails = ({
                         data={responder?.json?.properties}
                         element={
                           <div className="text-dark-gray group text-sm font-medium relative w-full overflow-hidden truncate pr-4 pl-2">
-                            {responder.name}
+                            {responder?.name}
                             <div className="ml-10 cursor-pointer absolute right-0 top-1">
                               <IconButton
                                 className="bg-transparent hidden group-hover:inline-block z-5"

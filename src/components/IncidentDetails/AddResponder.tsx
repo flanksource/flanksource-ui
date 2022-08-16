@@ -1,4 +1,10 @@
-import { useState, useCallback, MouseEventHandler, useMemo } from "react";
+import {
+  useState,
+  useCallback,
+  MouseEventHandler,
+  useMemo,
+  useEffect
+} from "react";
 import clsx from "clsx";
 import { SiJira } from "react-icons/si";
 import { MdEmail } from "react-icons/md";
@@ -28,6 +34,9 @@ import { useUser } from "../../context";
 import { saveResponder } from "../../api/services/responder";
 import { useLoader } from "../../hooks";
 import { toastError, toastSuccess } from "../Toast/toast";
+import { getAll } from "../../api/schemaResources";
+import { schemaResourceTypes } from "../SchemaResourcePage/resourceTypes";
+import _ from "lodash";
 
 type Action = {
   label: string;
@@ -122,14 +131,20 @@ export const ResponderTypeOptions = [
 
 const ResponderSteps = [
   {
-    label: "Responder Type",
+    label: "Team",
     position: 1,
     inProgress: true,
     finished: false
   },
   {
-    label: "Details",
+    label: "Responder Type",
     position: 2,
+    inProgress: false,
+    finished: false
+  },
+  {
+    label: "Details",
+    position: 3,
     inProgress: false,
     finished: false
   }
@@ -167,6 +182,8 @@ export const AddResponder = ({
   const [steps, setSteps] = useState(deepCloneSteps());
   const [isOpen, setIsOpen] = useState(false);
   const [selectedType, setSelectedType] = useState<any>(null);
+  const [selectedTeam, setSelectedTeam] = useState<any>(null);
+  const [teams, setTeams] = useState<any>();
   const {
     control,
     formState: { errors },
@@ -188,6 +205,35 @@ export const AddResponder = ({
       person: ""
     }
   });
+
+  useEffect(() => {
+    const teamsApiConfig = schemaResourceTypes.find(
+      (item) => item.table === "teams"
+    );
+    getAll(teamsApiConfig)
+      .then((res) => {
+        const data = res.data.map((item) => {
+          return {
+            icon: null,
+            label: item.name,
+            value: item.id,
+            ...item
+          };
+        });
+        setTeams(data);
+      })
+      .catch((err) => {
+        setTeams([]);
+      });
+  }, []);
+
+  const responderTypes =
+    useMemo(() => {
+      const types = selectedTeam?.spec?.responders || [];
+      return ResponderTypeOptions.filter((item) => {
+        return types.includes(item.value);
+      });
+    }, [selectedTeam]) || [];
 
   function deepCloneSteps() {
     return ResponderSteps.map((v) => ({ ...v }));
@@ -276,6 +322,7 @@ export const AddResponder = ({
       type: selectedType.type === "Person" ? "person" : "system",
       incident_id: id,
       created_by: user?.id,
+      team_id: selectedTeam.id,
       properties: {
         responderType: selectedType.label,
         ...data
@@ -301,6 +348,9 @@ export const AddResponder = ({
 
   const getModalTitle = () => {
     if (steps[0].inProgress) {
+      return `Select Team`;
+    }
+    if (steps[1].inProgress) {
       return `Add Responder`;
     }
     return (
@@ -337,22 +387,58 @@ export const AddResponder = ({
                 htmlFor="responder-types"
                 className="block text-base font-medium text-gray-500 my-2 font-bold"
               >
-                Responder Types
+                Teams
               </label>
               <OptionsList
                 name="responder-types"
-                options={ResponderTypeOptions}
+                options={teams}
                 onSelect={(e: any) => {
-                  setSelectedType(e);
+                  setSelectedTeam(e);
                   reset();
                   goToStep(steps[1], steps[0]);
                 }}
-                value={selectedType}
-                className="h-5/6 overflow-y-scroll m-1"
+                value={selectedTeam}
+                className="m-1"
               />
             </div>
           )}
           {steps[1].inProgress && (
+            <div className="px-8 py-4 h-modal-body-md">
+              <label
+                htmlFor="responder-types"
+                className="block text-base font-medium text-gray-500 my-2 font-bold"
+              >
+                Responder Types
+              </label>
+              {Boolean(responderTypes.length) && (
+                <OptionsList
+                  name="responder-types"
+                  options={responderTypes}
+                  onSelect={(e: any) => {
+                    setSelectedType(e);
+                    // reset();
+                    goToStep(steps[2], steps[1]);
+                  }}
+                  value={selectedType}
+                  className="m-1"
+                />
+              )}
+              {Boolean(!responderTypes.length) && (
+                <div className="text-sm text-center pt-10">
+                  There were no responders configured for this team
+                </div>
+              )}
+              <ActionButtonGroup
+                className="absolute w-full bottom-0 left-0"
+                previousAction={{
+                  label: "Back",
+                  disabled: false,
+                  handler: () => goToStep(steps[0], steps[1])
+                }}
+              />
+            </div>
+          )}
+          {steps[2].inProgress && (
             <div>
               <div className="px-8 py-3 h-modal-body-md mb-20">
                 {getResponderTypeForm()}
@@ -367,7 +453,7 @@ export const AddResponder = ({
                   previousAction={{
                     label: "Back",
                     disabled: !selectedType || loading,
-                    handler: () => goToStep(steps[0], steps[1])
+                    handler: () => goToStep(steps[1], steps[2])
                   }}
                 />
               </div>

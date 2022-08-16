@@ -2,6 +2,7 @@ import clsx from "clsx";
 import { filter } from "lodash";
 import { useEffect, useState, useMemo, MouseEventHandler } from "react";
 import { Link } from "react-router-dom";
+import { getTopology } from "../../api/services/topology";
 import { CustomScroll } from "../CustomScroll";
 import { HealthSummary } from "../HealthSummary";
 import { Icon } from "../Icon";
