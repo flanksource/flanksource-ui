@@ -25,7 +25,7 @@ export const CreateHypothesis = ({
   isOpen
 }: IProps) => {
   const { user } = useUser();
-  const { control, getValues, handleSubmit } = useForm({
+  const { control, getValues, handleSubmit, reset } = useForm({
     defaultValues: {
       hypothesis: {
         status: HypothesisStatus.Possible,
@@ -48,6 +48,7 @@ export const CreateHypothesis = ({
           status: getValues("hypothesis.status")
         }
       });
+      reset();
     }
     onHypothesisCreated();
   };
@@ -76,7 +77,7 @@ export const CreateHypothesis = ({
               render={({ field }) => (
                 <input
                   id="hypothesis.title"
-                  className="w-72 cursor-pointer bg-white border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-gray-500 text-base leading-6 font-normal"
+                  className="w-full cursor-pointer bg-white border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-gray-500 text-base leading-6 font-normal"
                   type="text"
                   placeholder="Type name"
                   {...field}

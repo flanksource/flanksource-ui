@@ -1,7 +1,7 @@
 import { Switch } from "@headlessui/react";
 import clsx from "clsx";
 import { useEffect, useState } from "react";
-import { BiZoomIn } from "react-icons/bi";
+import { AiOutlinePlusCircle } from "react-icons/ai";
 import { useSearchParams } from "react-router-dom";
 import {
   getHypothesisChildType,
@@ -131,21 +131,21 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
                 "relative before:content-[''] before:absolute before:border-l-2 before:border-gray-200 before:left-2 before:h-full before:z-[-1]"
             )}
           >
+            <div className="px-5">
+              <HypothesisDetails node={node} api={api} />
+            </div>
             {node?.type !== "solution" && (
               <div
-                className="text-gray underline flex justify-center items-end cursor-pointer"
+                className="text-gray underline flex justify-center items-end cursor-pointer pb-4"
                 onClick={handlerOpenCreateHypothesisModal}
               >
-                <BiZoomIn />
+                <AiOutlinePlusCircle />
                 <span className="pl-2 text-sm block">
                   Add {getHypothesisChildType(node?.type)}
                 </span>
               </div>
             )}
 
-            <div className="px-5">
-              <HypothesisDetails node={node} api={api} />
-            </div>
             {!!chldButLast.length && (
               <div className="pt-5 pl-5">
                 {chldButLast.map((item) => (
