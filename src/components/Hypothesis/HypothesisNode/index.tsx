@@ -111,7 +111,6 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
             showExpand={!isRoot}
             expanded={showComments}
             onToggleExpand={(show) => setShowComments(show)}
-            onCreateHypothesis={handlerOpenCreateHypothesisModal}
             onDisprove={() => {
               api.updateMutation.mutate({
                 id: node.id,
@@ -132,15 +131,17 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
                 "relative before:content-[''] before:absolute before:border-l-2 before:border-gray-200 before:left-2 before:h-full before:z-[-1]"
             )}
           >
-            <div
-              className="text-gray underline flex justify-center items-end cursor-pointer"
-              onClick={handlerOpenCreateHypothesisModal}
-            >
-              <BiZoomIn />
-              <span className="pl-2 text-sm block">
-                Add {getHypothesisChildType(node?.type)}
-              </span>
-            </div>
+            {node?.type !== "solution" && (
+              <div
+                className="text-gray underline flex justify-center items-end cursor-pointer"
+                onClick={handlerOpenCreateHypothesisModal}
+              >
+                <BiZoomIn />
+                <span className="pl-2 text-sm block">
+                  Add {getHypothesisChildType(node?.type)}
+                </span>
+              </div>
+            )}
 
             <div className="px-5">
               <HypothesisDetails node={node} api={api} />

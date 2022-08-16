@@ -1,7 +1,7 @@
 import { ChevronRightIcon } from "@heroicons/react/outline";
 import clsx from "clsx";
 import { debounce } from "lodash";
-import { MouseEventHandler, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import {
   BsBraces,
@@ -50,7 +50,6 @@ interface HypothesisBarProps {
   editTitle?: boolean;
   onToggleExpand: (expand: boolean) => void;
   onDisprove: () => void;
-  onCreateHypothesis: () => void;
 }
 
 type Entries<T> = { [K in keyof T]: [K, T[K]] }[keyof T];
@@ -62,8 +61,7 @@ export function HypothesisBar({
   expanded,
   editTitle: initEditTitle = false,
   onToggleExpand,
-  onDisprove,
-  onCreateHypothesis
+  onDisprove
 }: HypothesisBarProps) {
   const {
     title = "",
@@ -186,7 +184,6 @@ export function HypothesisBar({
             hypothesis={hypothesis}
             onDisprove={onDisprove}
             setDeleting={setDeleting}
-            onCreateHypothesis={onCreateHypothesis}
             onEditTitle={() => setEditTitle(true)}
           />
         </div>

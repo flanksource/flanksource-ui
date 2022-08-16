@@ -1,5 +1,4 @@
 import { Controller, useForm } from "react-hook-form";
-import { capitalizeFirstLetter } from "src/utils/common";
 import { v4 as uuidv4 } from "uuid";
 
 import {
@@ -8,6 +7,7 @@ import {
 } from "../../../api/services/hypothesis";
 import { hypothesisStatusDropdownOptions } from "../../../constants/hypothesisStatusOptions";
 import { useUser } from "../../../context";
+import { capitalizeFirstLetter } from "../../../utils/common";
 import { Dropdown } from "../../Dropdown";
 import { Modal } from "../../Modal";
 
