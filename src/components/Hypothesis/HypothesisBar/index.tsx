@@ -44,10 +44,10 @@ function InfoIcon({ icon, ...props }: InfoIconProps) {
 
 interface HypothesisBarProps {
   hypothesis: Hypothesis;
-  onTitleClick: MouseEventHandler<HTMLSpanElement>;
   api: HypothesisAPIs;
   showExpand: boolean;
   expanded: boolean;
+  editTitle?: boolean;
   onToggleExpand: (expand: boolean) => void;
   onDisprove: () => void;
   onCreateHypothesis: () => void;
@@ -60,6 +60,7 @@ export function HypothesisBar({
   api,
   showExpand,
   expanded,
+  editTitle: initEditTitle = false,
   onToggleExpand,
   onDisprove,
   onCreateHypothesis
@@ -84,7 +85,7 @@ export function HypothesisBar({
 
   watch();
 
-  const [editTitle, setEditTitle] = useState(false);
+  const [editTitle, setEditTitle] = useState(initEditTitle);
 
   useEffect(() => {
     const subscription = watch((value) => {

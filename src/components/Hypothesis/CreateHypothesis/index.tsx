@@ -1,13 +1,11 @@
 import { Controller, useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
-import { createComment } from "../../../api/services/comments";
+
 import { HypothesisStatus } from "../../../api/services/hypothesis";
 import { hypothesisStatusDropdownOptions } from "../../../constants/hypothesisStatusOptions";
 import { useUser } from "../../../context";
 import { Dropdown } from "../../Dropdown";
 import { Modal } from "../../Modal";
-import { toastError } from "../../Toast/toast";
-import { EvidenceSection } from "../EvidenceSection";
 
 const nextNodePath = {
   default: "root",
@@ -34,30 +32,14 @@ export const CreateHypothesis = ({
       hypothesis: {
         status: HypothesisStatus.Possible,
         title: ""
-      },
-      evidence: {},
-      comment: {
-        text: ""
       }
     }
   });
-  const evidenceValue = watch("evidence");
-  const handleComment = (nodeId: string, value: string) =>
-    createComment({
-      user,
-      incidentId: node.incident_id,
-      hypothesisId: nodeId,
-      comment: value
-    })
-      .then((response) => console.log(response))
-      .catch(toastError);
 
   const onSubmit = async () => {
     const newNodeID = uuidv4();
     if (api?.createMutation) {
-      // try {
-      // eslint-disable-next-line no-unused-vars
-      const newNodeResponse = await api.createMutation.mutateAsync({
+      await api.createMutation.mutateAsync({
         user,
         id: newNodeID,
         incidentId: api.incidentId,
@@ -68,10 +50,6 @@ export const CreateHypothesis = ({
           status: getValues("hypothesis.status")
         }
       });
-      const newNode = newNodeResponse.data[0];
-      if (getValues("comment.text")) {
-        await handleComment(newNode.id, getValues("comment.text"));
-      }
     }
     onHypothesisCreated();
   };
@@ -105,35 +83,6 @@ export const CreateHypothesis = ({
               className="mb-4 w-72"
               items={hypothesisStatusDropdownOptions}
               label="State"
-            />
-          </div>
-          <EvidenceSection
-            hypothesis={node}
-            evidence={evidenceValue}
-            titlePrepend={
-              <div className="mr-2 text-sm font-medium text-gray-700 mt-1.5">
-                Evidence
-              </div>
-            }
-            onButtonClick={(data) => {
-              setValue("evidence", data);
-            }}
-          />
-          <div>
-            <h3 className="mt-4 text-sm font-medium text-gray-700 mb-1.5">
-              Comment
-            </h3>
-            <Controller
-              name="comment.text"
-              control={control}
-              render={({ field }) => (
-                <textarea
-                  className="w-full border-gray-200 resize-none rounded-6px text-base leading-6 font-normal font-inter outline-none placeholder-gray-400"
-                  placeholder="Type something"
-                  style={{ minHeight: "138px" }}
-                  {...field}
-                />
-              )}
             />
           </div>
         </div>

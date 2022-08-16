@@ -12,7 +12,6 @@ interface IHypothesisNodeProps {
   hasParent?: boolean;
   node: Hypothesis;
   showComments: boolean;
-  setModalIsOpen: (v: boolean) => void;
   setSelectedNode: (v: Hypothesis) => void;
   setCreateHypothesisModalIsOpen: (v: boolean) => void;
   api: HypothesisAPIs;
@@ -22,7 +21,6 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
   const {
     hasParent,
     node,
-    setModalIsOpen,
     showComments: parentShowComments,
     setSelectedNode,
     setCreateHypothesisModalIsOpen,
@@ -33,10 +31,6 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
 
   const isRoot = node?.type === "root" || node?.parent_id == null;
 
-  const handleOpenModal = () => {
-    setSelectedNode(node);
-    setModalIsOpen(true);
-  };
   const handlerOpenCreateHypothesisModal = () => {
     setSelectedNode(node);
     setCreateHypothesisModalIsOpen(true);
@@ -116,7 +110,6 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
         >
           <HypothesisBar
             hypothesis={node}
-            onTitleClick={handleOpenModal}
             api={api}
             showExpand={!isRoot}
             expanded={showComments}
