@@ -56,7 +56,7 @@ export function TopologyCard({
 
   useEffect(() => {
     if (topologyId != null && topologyData == null) {
-      getTopology(topologyId).then(({ data }) => setTopology(data[0]));
+      getTopology({ id: topologyId }).then(({ data }) => setTopology(data[0]));
     }
   }, [topologyId, topologyData]);
 

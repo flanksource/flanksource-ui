@@ -8,6 +8,7 @@ export interface SchemaResourceI {
   id: string;
   name: string;
   spec: string | object;
+  icon?: string;
   source: string;
   created_at: string;
   updated_at: string;

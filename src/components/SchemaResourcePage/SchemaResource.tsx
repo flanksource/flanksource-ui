@@ -25,16 +25,15 @@ export function SchemaResource({
     if (!id) return;
     setLoadingState("loading");
     getResource(resourceInfo, id)?.then((res) => {
-      console.log(res);
       setResource(res.data[0]);
       setLoadingState("success");
     });
   }, [resourceInfo, id]);
 
-  const onSubmit = (props: any) =>
-    updateResource(resourceInfo, { ...resource, ...props })?.then((res) =>
-      console.log("res", res)
-    );
+  const onSubmit = async (props: any) => {
+    await updateResource(resourceInfo, { ...resource, ...props });
+  };
+
   const onDelete = async (id: string) => {
     await deleteResource(resourceInfo, id);
     navigate(`../${resourceInfo.table}`);
@@ -52,7 +51,9 @@ export function SchemaResource({
         {loadingState === "success" && id && (
           <SchemaResourceEdit
             id={id}
+            resourceName={resourceInfo.name}
             {...resource}
+            supportsIcon={resourceInfo?.supportsIcon}
             onSubmit={onSubmit}
             onDelete={onDelete}
           />

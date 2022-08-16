@@ -8,7 +8,7 @@ import { IoChevronForwardOutline } from "react-icons/io5";
 import { NavLink, Outlet } from "react-router-dom";
 import { User } from "src/api/services/users";
 import { NavigationItems, SettingsNavigationItems } from "src/App";
-import { $ArrElemType } from "src/types/utility";
+import { $ArrayElemType } from "src/types/utility";
 
 import { getUser } from "../../api/auth";
 import { useOuterClick } from "../../lib/useOuterClick";
@@ -87,7 +87,7 @@ function SideNavItem({
   href,
   collapseSidebar,
   icon
-}: $ArrElemType<NavigationItems> & {
+}: $ArrayElemType<NavigationItems> & {
   collapseSidebar: boolean;
   current?: boolean;
 }) {
@@ -127,7 +127,7 @@ function SideNavGroup({
             <NavLabel icon={icon} active={current} iconOnly name={name} />
           </NavItemWrapper>
         </Menu.Button>
-        <Menu.Items className="absolute border left-0 ml-12 w-48 shadow-md top-0 z-10 bg-gray-700">
+        <Menu.Items className="absolute border left-0 ml-12 w-48 shadow-md top-0 z-10 bg-gray-700 space-y-1">
           {submenu.map(({ name, icon, href }) => (
             <Menu.Item key={name}>
               {({ active }) => (
@@ -165,7 +165,7 @@ function SideNavGroup({
               </div>
             </NavItemWrapper>
           </Disclosure.Button>
-          <Disclosure.Panel className="pl-4">
+          <Disclosure.Panel className="pl-4 space-y-1">
             {submenu.map((item) => (
               <SideNavItem key={item.name} {...item} collapseSidebar={false} />
             ))}
@@ -270,7 +270,7 @@ export function SidebarLayout({ navigation, settingsNav }: Props) {
 
             <div
               className={clsx(
-                "h-full flex flex-col flex-grow",
+                "flex flex-col flex-grow",
                 collapseSidebar ? "px-1" : "px-3"
               )}
             >

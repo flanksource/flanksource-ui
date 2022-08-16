@@ -1,8 +1,7 @@
-import { FolderIcon, HomeIcon } from "@heroicons/react/outline";
-import { AdjustmentsIcon, UserGroupIcon } from "@heroicons/react/solid";
+import { AdjustmentsIcon } from "@heroicons/react/solid";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { AiFillHeart } from "react-icons/ai";
 import { ImLifebuoy } from "react-icons/im";
 import { VscJson } from "react-icons/vsc";
@@ -12,6 +11,8 @@ import ReactTooltip from "react-tooltip";
 import { getUser } from "./api/auth";
 import { Canary } from "./components";
 import { ErrorBoundary } from "./components/ErrorBoundary";
+import { LogsIcon } from "./components/Icons/LogsIcon";
+import { TopologyIcon } from "./components/Icons/TopologyIcon";
 import { ConfigLayout, SidebarLayout } from "./components/Layout";
 import { Loading } from "./components/Loading";
 import { SchemaResourcePage } from "./components/SchemaResourcePage";
@@ -45,9 +46,9 @@ const queryClient = new QueryClient({
 });
 
 const navigation = [
-  { name: "Topology", href: "/topology", icon: HomeIcon },
+  { name: "Topology", href: "/topology", icon: TopologyIcon },
   { name: "Health", href: "/health", icon: AiFillHeart },
-  { name: "Logs", href: "/logs", icon: FolderIcon },
+  { name: "Logs", href: "/logs", icon: LogsIcon },
   { name: "Config", href: "/configs", icon: VscJson },
   { name: "Incidents", href: "/incidents", icon: ImLifebuoy }
 ];
@@ -95,18 +96,18 @@ export function IncidentManagerRoutes({ sidebar }) {
       <Route path="settings" element={sidebar}>
         {settingsNav.submenu.map((x) => {
           return (
-            <>
+            <Fragment key={x.name}>
               <Route
-                key={x.name}
+                key={`${x.name}-list`}
                 path={x.table}
                 element={<SchemaResourcePage resourceInfo={x} />}
               />
               <Route
-                key={x.name}
+                key={`${x.name}-detail`}
                 path={`${x.table}/:id`}
                 element={<SchemaResource resourceInfo={x} />}
               />
-            </>
+            </Fragment>
           );
         })}
       </Route>

@@ -92,7 +92,7 @@ export function IncidentDetailsPage() {
 
   const topologyIds = (incident?.hypotheses || [])
     .flatMap((h) =>
-      h.evidence?.map((e) =>
+      h.evidences?.map((e) =>
         e.type === EvidenceType.Topology ? e.evidence.id : null
       )
     )

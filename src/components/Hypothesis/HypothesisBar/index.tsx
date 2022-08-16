@@ -1,7 +1,7 @@
 import { ChevronRightIcon } from "@heroicons/react/outline";
 import clsx from "clsx";
 import { debounce } from "lodash";
-import { MouseEventHandler, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import {
   BsBraces,
@@ -44,13 +44,12 @@ function InfoIcon({ icon, ...props }: InfoIconProps) {
 
 interface HypothesisBarProps {
   hypothesis: Hypothesis;
-  onTitleClick: MouseEventHandler<HTMLSpanElement>;
   api: HypothesisAPIs;
   showExpand: boolean;
   expanded: boolean;
+  editTitle?: boolean;
   onToggleExpand: (expand: boolean) => void;
   onDisprove: () => void;
-  onCreateHypothesis: () => void;
 }
 
 type Entries<T> = { [K in keyof T]: [K, T[K]] }[keyof T];
@@ -60,11 +59,16 @@ export function HypothesisBar({
   api,
   showExpand,
   expanded,
+  editTitle: initEditTitle = false,
   onToggleExpand,
-  onDisprove,
-  onCreateHypothesis
+  onDisprove
 }: HypothesisBarProps) {
-  const { title = "", created_by: createdBy, evidence, comment } = hypothesis;
+  const {
+    title = "",
+    created_by: createdBy,
+    evidences: evidence,
+    comment
+  } = hypothesis;
 
   const [deleting, setDeleting] = useState<boolean>(false);
 
@@ -84,7 +88,7 @@ export function HypothesisBar({
 
   watch();
 
-  const [editTitle, setEditTitle] = useState(false);
+  const [editTitle, setEditTitle] = useState(initEditTitle);
 
   useEffect(() => {
     const subscription = watch((value) => {
@@ -180,7 +184,6 @@ export function HypothesisBar({
             hypothesis={hypothesis}
             onDisprove={onDisprove}
             setDeleting={setDeleting}
-            onCreateHypothesis={onCreateHypothesis}
             onEditTitle={() => setEditTitle(true)}
           />
         </div>
