@@ -7,7 +7,6 @@ import { createEvidence } from "../../api/services/evidence";
 import {
   createHypothesis,
   Hypothesis,
-  HypothesisNodeType,
   HypothesisStatus,
   searchHypothesis
 } from "../../api/services/hypothesis";
@@ -177,9 +176,7 @@ export function AttachEvidenceDialog({
       }
       return toOpts(data, (x) => ({
         details: {
-          rootId: x.hypothesis?.find(
-            (h: Hypothesis) => h.type === HypothesisNodeType.Root
-          )?.id,
+          rootId: x.hypothesis?.find((h: Hypothesis) => h.type === "root")?.id,
           status: x.status,
           severity: x.severity
         }
@@ -231,9 +228,9 @@ export function AttachEvidenceDialog({
     if (!hypothesisData?.value) {
       /* type should be root, if it's the first for an incident? */
       const nodeDetails = isNewIncident
-        ? { type: HypothesisNodeType.Root }
+        ? { type: "root" }
         : {
-            type: HypothesisNodeType.Factor,
+            type: "factor",
             parent_id: incidentData?.details?.rootId
           };
 

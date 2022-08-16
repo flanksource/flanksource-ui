@@ -1,9 +1,6 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import {
-  HypothesisNodeType,
-  HypothesisStatus
-} from "../../../api/services/hypothesis";
+import { HypothesisStatus } from "../../../api/services/hypothesis";
 import { HypothesisBarMenu } from "./index";
 
 const defaultQueryClient = new QueryClient();
@@ -28,7 +25,7 @@ Base.args = {
   hypothesis: {
     title: "hypothesis",
     status: HypothesisStatus.Likely,
-    type: HypothesisNodeType.Factor,
+    type: "factor",
     id: "123",
     incident_id: "1234"
   },

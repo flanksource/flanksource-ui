@@ -1,4 +1,3 @@
-import { capitalize } from "lodash";
 import { useEffect, useState } from "react";
 import { AiFillPlusCircle } from "react-icons/ai";
 
@@ -21,9 +20,9 @@ export function SchemaResourcePage({
   resourceInfo: SchemaResourceType;
 }) {
   const { user } = useUser();
-  const [list, setList] = useState([]);
+  const [list, setList] = useState<SchemaResourceI[]>([]);
   const [reload, setReload] = useState(1);
-  const { table, name, href } = resourceInfo;
+  const { name, href } = resourceInfo;
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
@@ -38,6 +37,8 @@ export function SchemaResourcePage({
     setReload((x) => x + 1);
     setModalIsOpen(false);
   };
+
+  const onClose = () => setModalIsOpen(false);
 
   return (
     <SearchLayout
@@ -62,13 +63,19 @@ export function SchemaResourcePage({
 
       <Modal
         open={modalIsOpen}
-        onClose={() => setModalIsOpen(false)}
+        onClose={onClose}
+        bodyClass=""
         size="full"
-        title={`Create New ${capitalize(table)}`}
+        title={`Create New ${resourceInfo.name}`}
       >
-        <div className="mx-4 my-8">
-          <SchemaResourceEdit edit onSubmit={onSubmit} />
-        </div>
+        <SchemaResourceEdit
+          resourceName={resourceInfo.name}
+          supportsIcon={resourceInfo.supportsIcon}
+          isModal
+          edit
+          onSubmit={onSubmit}
+          onCancel={onClose}
+        />
       </Modal>
     </SearchLayout>
   );

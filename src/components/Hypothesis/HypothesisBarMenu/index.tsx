@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { BiHide, BiZoomIn } from "react-icons/bi";
+import { BiHide } from "react-icons/bi";
 import { BsTrash } from "react-icons/bs";
 import { useQueryClient } from "@tanstack/react-query";
 import { deleteHypothesis, Hypothesis } from "../../../api/services/hypothesis";
@@ -10,7 +10,6 @@ import { HypothesisDeleteDialog } from "../HypothesisDeleteDialog";
 
 interface IProps {
   hypothesis: Hypothesis;
-  onCreateHypothesis: () => void;
   onDisprove: () => void;
   onEditTitle: () => void;
   setDeleting: (state: boolean) => void;
@@ -18,7 +17,6 @@ interface IProps {
 
 export const HypothesisBarMenu = ({
   hypothesis,
-  onCreateHypothesis,
   onDisprove: onDisproveCB,
   onEditTitle,
   setDeleting
@@ -77,11 +75,6 @@ export const HypothesisBarMenu = ({
               }
             />
             <span className="pl-2 text-sm block">Delete hypothesis</span>
-          </Menu.Item>
-
-          <Menu.Item onClick={onCreateHypothesis}>
-            <BiZoomIn />
-            <span className="pl-2 text-sm block">Add solution</span>
           </Menu.Item>
 
           <Menu.Item onClick={onEditTitle}>
