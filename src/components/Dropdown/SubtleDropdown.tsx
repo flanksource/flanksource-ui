@@ -13,7 +13,6 @@ interface Props {
   onChange: (value: string) => void;
   name: string;
   items: { [k: string]: IItem };
-  placeholder: string;
 }
 
 export function SubtleDropdown({
@@ -23,8 +22,7 @@ export function SubtleDropdown({
   items = {},
   name,
   onChange = () => {},
-  value,
-  placeholder
+  value
 }: Props) {
   items = Object.fromEntries(
     (Object.values(items) || []).map((item) => [

@@ -124,10 +124,7 @@ export function HypothesisBar({
         deleting && "pointer-events-none cursor-not-allowed blur-[2px]"
       )}
     >
-      <div
-        onClick={() => onToggleExpand && onToggleExpand(!expanded)}
-        className="flex flex-grow-0 items-center space-x-2 my-1 w-full"
-      >
+      <div className="flex flex-grow-0 items-center space-x-2 my-1 w-full">
         {showExpand && (
           <button
             className="ml-2 py-2 flex flex-row items-center"
@@ -145,7 +142,10 @@ export function HypothesisBar({
           updateMutation={api?.updateMutation}
         />
         {!editTitle ? (
-          <div className="font-semibold text-gray-900 w-full">
+          <div
+            onClick={() => onToggleExpand && onToggleExpand(!expanded)}
+            className="font-semibold text-gray-900 w-full"
+          >
             {getValues("title")}
           </div>
         ) : (
