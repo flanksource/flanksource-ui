@@ -287,59 +287,60 @@ export const IncidentDetails = ({
           <div>
             {responders.map((responder) => {
               return (
-                <div className="cursor-pointer" key={responder.json.id}>
-                  <div className="relative flex hover:bg-gray-100 p-1 items-center rounded mt-2">
-                    <div className="flex-1 min-w-0 w-full">
-                      <ResponderDetailsToolTip
-                        className="w-full"
-                        responder={responder}
-                        data={responder?.json?.properties}
-                        element={
-                          <div className="text-dark-gray group text-sm font-medium relative w-full overflow-hidden truncate">
-                            <div className="w-full overflow-hidden truncate">
-                              {responder.icon && (
-                                <responder.icon className="w-6 h-6" />
-                              )}
-                              <div
-                                className="pl-1 inline-block hover:underline cursor-pointer"
-                                onClick={(e) => {
-                                  setOpenResponderDetailsDialog(true);
-                                  setSelectedResponder(responder);
-                                }}
-                              >
-                                {responder?.name}
-                              </div>
-                            </div>
-                            <div className="text-xs w-full overflow-hidden truncate mt-1">
-                              External ID: {responder?.external_id}
-                            </div>
-                            <div className="ml-10 cursor-pointer absolute right-0 top-4">
-                              <IconButton
-                                className="bg-transparent hidden group-hover:inline-block z-5"
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  e.stopPropagation();
-                                  setOpenDeleteConfirmDialog(true);
-                                  setDeletedResponder(responder);
-                                }}
-                                ovalProps={{
-                                  stroke: "blue",
-                                  height: "18px",
-                                  width: "18px",
-                                  fill: "transparent"
-                                }}
-                                icon={
-                                  <BsTrash
-                                    className="text-gray-600 border-0 border-l-1 border-gray-200"
-                                    size={18}
-                                  />
-                                }
-                              />
+                <div
+                  key={responder.json.id}
+                  className="relative flex hover:bg-gray-100 p-1 items-center rounded mt-2"
+                >
+                  <div className="flex-1 min-w-0 w-full">
+                    <ResponderDetailsToolTip
+                      className="w-full"
+                      responder={responder}
+                      data={responder?.json?.properties}
+                      element={
+                        <div className="text-dark-gray group text-sm font-medium relative w-full overflow-hidden truncate">
+                          <div className="w-full overflow-hidden truncate">
+                            {responder.icon && (
+                              <responder.icon className="w-6 h-6" />
+                            )}
+                            <div
+                              className="pl-1 inline-block hover:underline cursor-pointer"
+                              onClick={(e) => {
+                                setOpenResponderDetailsDialog(true);
+                                setSelectedResponder(responder);
+                              }}
+                            >
+                              {responder?.name}
                             </div>
                           </div>
-                        }
-                      />
-                    </div>
+                          <div className="text-xs w-full overflow-hidden truncate mt-1">
+                            External ID: {responder?.external_id}
+                          </div>
+                          <div className="ml-10 cursor-pointer absolute right-0 top-4">
+                            <IconButton
+                              className="bg-transparent hidden group-hover:inline-block z-5"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setOpenDeleteConfirmDialog(true);
+                                setDeletedResponder(responder);
+                              }}
+                              ovalProps={{
+                                stroke: "blue",
+                                height: "18px",
+                                width: "18px",
+                                fill: "transparent"
+                              }}
+                              icon={
+                                <BsTrash
+                                  className="text-gray-600 border-0 border-l-1 border-gray-200"
+                                  size={18}
+                                />
+                              }
+                            />
+                          </div>
+                        </div>
+                      }
+                    />
                   </div>
                 </div>
               );

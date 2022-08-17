@@ -2,7 +2,7 @@ import clsx from "clsx";
 import React, { useEffect, useRef, useState } from "react";
 import { FiExternalLink } from "react-icons/fi";
 import {
-  formPropKey,
+  getResponderTitleByValue,
   getOrderedKeys,
   ResponderPropsKeyToLabelMap
 } from "../AddResponder";
@@ -99,7 +99,7 @@ export const ResponderDetailsToolTip = ({
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium text-gray-900">
-                  <span>{responder?.type}</span>
+                  <span>{getResponderTitleByValue(responder?.type)}</span>
                   {responder?.json?.properties?.url && (
                     <FiExternalLink
                       className="float-right w-5 h-5"

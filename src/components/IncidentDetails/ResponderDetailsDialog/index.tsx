@@ -8,6 +8,7 @@ import { relativeDateTime } from "../../../utils/relativeDateTime";
 import {
   AddResponderFormValues,
   getOrderedKeys,
+  getResponderTitleByValue,
   ResponderPropsKeyToLabelMap
 } from "../AddResponder";
 
@@ -119,7 +120,7 @@ export function ResponderDetailsDialog({
                 </div>
                 <div className="min-w-0 flex-1 ml-2">
                   <p className="text-sm font-medium text-gray-900">
-                    {responder?.type}
+                    {getResponderTitleByValue(responder?.type)}
                   </p>
                 </div>
                 <button

@@ -19,7 +19,7 @@ import {
   CA,
   Email,
   Jira,
-  Microsoft,
+  MicrosoftPlanner,
   Oracle,
   Person,
   Redhat,
@@ -80,6 +80,10 @@ export const ResponderTypes = {
   msPlanner: "ms_planner",
   vmware: "vmware",
   person: "person"
+};
+
+export const getResponderTitleByValue = (val: string): string | undefined => {
+  return ResponderTypeOptions.find((item) => item.value === val)?.label;
 };
 
 export const ResponderTypeOptions = [
@@ -205,7 +209,14 @@ export const getOrderedKeys = (responder: any): formPropKey[] => {
     case ResponderTypes.oracle:
       return ["product", "category", "description", "body", "external_id"];
     case ResponderTypes.msPlanner:
-      return ["product", "category", "description", "body", "external_id"];
+      return [
+        "plan_id",
+        "bucket_id",
+        "priority",
+        "title",
+        "description",
+        "external_id"
+      ];
     case ResponderTypes.vmware:
       return ["product", "category", "description", "body", "external_id"];
     case ResponderTypes.person:
@@ -286,8 +297,7 @@ export const AddResponder = ({
   }
 
   const onCloseModal = useCallback(() => {
-    setIsOpen(false);
-    setSelectedType(null);
+    cleanupState();
   }, []);
 
   const goToStep = (nextStep: Step, currentStep: Step) => {
@@ -334,7 +344,11 @@ export const AddResponder = ({
         return <Oracle control={control} errors={errors} setValue={setValue} />;
       case ResponderTypes.msPlanner:
         return (
-          <Microsoft control={control} errors={errors} setValue={setValue} />
+          <MicrosoftPlanner
+            control={control}
+            errors={errors}
+            setValue={setValue}
+          />
         );
       case ResponderTypes.vmware:
         return <VMWare control={control} errors={errors} setValue={setValue} />;
@@ -379,8 +393,8 @@ export const AddResponder = ({
       const result = await saveResponder(payload);
       if (!result?.error) {
         toastSuccess("Added responder successfully");
+        cleanupState();
         onSuccess();
-        setIsOpen(false);
       } else {
         onError();
         toastError("Adding responder failed");
@@ -390,6 +404,12 @@ export const AddResponder = ({
       onError();
     }
     setLoading(false);
+  };
+
+  const cleanupState = () => {
+    setIsOpen(false);
+    setSelectedTeam(null);
+    setSelectedType(null);
   };
 
   const getModalTitle = () => {
