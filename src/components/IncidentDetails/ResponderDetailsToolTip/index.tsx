@@ -36,7 +36,7 @@ export const ResponderDetailsToolTip = ({
     }, 1000);
   };
 
-  const getOptionsList = () => {
+  const getOptionsList = (responder: any) => {
     const keys = getOrderedKeys(responder);
     const options: { label: string; value: string | undefined }[] = [];
     keys.forEach((key) => {
@@ -121,7 +121,7 @@ export const ResponderDetailsToolTip = ({
                   e.preventDefault();
                 }}
               >
-                {getOptionsList().map((option) => {
+                {getOptionsList(responder).map((option) => {
                   return (
                     <div
                       className="sm:grid sm:grid-cols-3 sm:gap-4 py-1"

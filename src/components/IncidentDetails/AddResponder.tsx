@@ -61,72 +61,82 @@ export const ResponderPropsKeyToLabelMap = {
   summary: "Summary",
   product: "Product",
   person: "Person",
+  priority: "Priority",
+  plan_id: "Plan ID",
+  bucket_id: "Bucket ID",
+  title: "Title",
   external_id: "External ID"
+};
+
+export const ResponderTypes = {
+  email: "email",
+  jira: "jira",
+  serviceNow: "service_now",
+  ca: "ca",
+  awsSupport: "aws_support",
+  awsAmsServicesRequest: "aws_ams_services_request",
+  redhat: "redhat",
+  oracle: "oracle",
+  msPlanner: "ms_planner",
+  vmware: "vmware",
+  person: "person"
 };
 
 export const ResponderTypeOptions = [
   {
     label: "Email",
-    value: "Email",
-    icon: () => <MdEmail className="w-5 h-5 inline-block align-sub" />
+    value: ResponderTypes.email,
+    icon: () => <MdEmail className="w-5 h-5 inline-block" />
   },
   {
     label: "Jira",
-    value: "Jira",
-    icon: () => <SiJira className="w-5 h-5 inline-block align-sub" />
+    value: ResponderTypes.jira,
+    icon: () => <SiJira className="w-5 h-5 inline-block" />
   },
   {
     label: "ServiceNow",
-    value: "ServiceNow",
-    icon: () => (
-      <Icon size="md" className="inline-block align-sub" name="servicenow" />
-    )
+    value: ResponderTypes.serviceNow,
+    icon: () => <Icon size="md" className="inline-block" name="servicenow" />
   },
   {
     label: "CA",
-    value: "CA",
-    icon: () => <Icon size="md" className="inline-block align-sub" name="ca" />
+    value: ResponderTypes.ca,
+    icon: () => <Icon size="md" className="inline-block" name="ca" />
   },
   {
     label: "AWS Support",
-    value: "AWS Support",
-    icon: () => <Icon size="md" className="inline-block align-sub" name="aws" />
+    value: ResponderTypes.awsSupport,
+    icon: () => <Icon size="md" className="inline-block" name="aws" />
   },
   {
     label: "AWS AMS Service Request",
-    value: "AWS AMS Service Request",
-    icon: () => <Icon size="md" className="inline-block align-sub" name="aws" />
+    value: ResponderTypes.awsAmsServicesRequest,
+    icon: () => <Icon size="md" className="inline-block" name="aws" />
   },
   {
     label: "Redhat",
-    value: "Redhat",
-    icon: () => (
-      <Icon size="md" className="inline-block align-sub" name="redhat" />
-    )
+    value: ResponderTypes.redhat,
+    icon: () => <Icon size="md" className="inline-block" name="redhat" />
   },
   {
     label: "Oracle",
-    value: "Oracle",
-    icon: () => (
-      <Icon size="md" className="inline-block align-sub" name="oracle_icon" />
-    )
+    value: ResponderTypes.oracle,
+    icon: () => <Icon size="md" className="inline-block" name="oracle_icon" />
   },
   {
-    label: "Microsoft",
-    value: "Microsoft",
-    icon: () => (
-      <Icon size="md" className="inline-block align-sub" name="microsoft" />
-    )
+    label: "Microsoft Planner",
+    value: ResponderTypes.msPlanner,
+    icon: () => <Icon size="md" className="inline-block" name="microsoft" />
   },
   {
     label: "VMWare",
-    value: "VMWare",
-    icon: () => <GrVmware className="w-5 h-5 inline-block align-sub" />
+    value: ResponderTypes.vmware,
+    icon: () => <GrVmware className="w-5 h-5 inline-block" />
   },
   {
     label: "Person",
-    value: "Person",
-    icon: () => <FiUser className="w-5 h-5 inline-block align-sub" />
+    value: ResponderTypes.person,
+    icon: () => <FiUser className="w-5 h-5 inline-block" />
   }
 ];
 
@@ -159,6 +169,10 @@ export type AddResponderFormValues = {
   description?: string;
   project?: string;
   issueType?: string;
+  priority?: string;
+  plan_id?: string;
+  bucket_id?: string;
+  title?: string;
   summary?: string;
   product?: string;
   person?: string;
@@ -174,27 +188,27 @@ type AddResponderProps = {
 
 export const getOrderedKeys = (responder: any): formPropKey[] => {
   switch (responder?.type) {
-    case "Email":
+    case ResponderTypes.email:
       return ["to", "subject", "body", "external_id"];
-    case "Jira":
+    case ResponderTypes.jira:
       return ["project", "issueType", "summary", "description", "external_id"];
-    case "ServiceNow":
+    case ResponderTypes.serviceNow:
       return ["category", "description", "body", "external_id"];
-    case "CA":
+    case ResponderTypes.ca:
       return ["category", "description", "body", "external_id"];
-    case "AWS Support":
+    case ResponderTypes.awsSupport:
       return ["category", "description", "body", "external_id"];
-    case "AWS AMS Service Request":
+    case ResponderTypes.awsAmsServicesRequest:
       return ["category", "description", "body", "external_id"];
-    case "Redhat":
+    case ResponderTypes.redhat:
       return ["product", "category", "description", "body", "external_id"];
-    case "Oracle":
+    case ResponderTypes.oracle:
       return ["product", "category", "description", "body", "external_id"];
-    case "Microsoft":
+    case ResponderTypes.msPlanner:
       return ["product", "category", "description", "body", "external_id"];
-    case "VMWare":
+    case ResponderTypes.vmware:
       return ["product", "category", "description", "body", "external_id"];
-    case "Person":
+    case ResponderTypes.person:
       return ["person"];
     default:
       return [];
@@ -214,7 +228,7 @@ export const AddResponder = ({
   const [isOpen, setIsOpen] = useState(false);
   const [selectedType, setSelectedType] = useState<any>(null);
   const [selectedTeam, setSelectedTeam] = useState<any>(null);
-  const [teams, setTeams] = useState<any>();
+  const [teams, setTeams] = useState<any>([]);
   const {
     control,
     formState: { errors },
@@ -231,6 +245,7 @@ export const AddResponder = ({
       description: "",
       project: "",
       issueType: "",
+      priority: "",
       summary: "",
       product: "",
       person: ""
@@ -260,7 +275,7 @@ export const AddResponder = ({
 
   const responderTypes =
     useMemo(() => {
-      const types = selectedTeam?.spec?.responders || [];
+      const types = Object.keys(selectedTeam?.spec?.responder_clients || {});
       return ResponderTypeOptions.filter((item) => {
         return types.includes(item.value);
       });
@@ -291,21 +306,21 @@ export const AddResponder = ({
 
   const getResponderTypeForm = () => {
     switch (selectedType?.value) {
-      case "Email":
+      case ResponderTypes.email:
         return <Email control={control} errors={errors} setValue={setValue} />;
-      case "Jira":
+      case ResponderTypes.jira:
         return <Jira control={control} errors={errors} setValue={setValue} />;
-      case "ServiceNow":
+      case ResponderTypes.serviceNow:
         return (
           <ServiceNow control={control} errors={errors} setValue={setValue} />
         );
-      case "CA":
+      case ResponderTypes.ca:
         return <CA control={control} errors={errors} setValue={setValue} />;
-      case "AWS Support":
+      case ResponderTypes.awsSupport:
         return (
           <AwsSupport control={control} errors={errors} setValue={setValue} />
         );
-      case "AWS AMS Service Request":
+      case ResponderTypes.awsAmsServicesRequest:
         return (
           <AwsServiceRequest
             control={control}
@@ -313,17 +328,17 @@ export const AddResponder = ({
             setValue={setValue}
           />
         );
-      case "Redhat":
+      case ResponderTypes.redhat:
         return <Redhat control={control} errors={errors} setValue={setValue} />;
-      case "Oracle":
+      case ResponderTypes.oracle:
         return <Oracle control={control} errors={errors} setValue={setValue} />;
-      case "Microsoft":
+      case ResponderTypes.msPlanner:
         return (
           <Microsoft control={control} errors={errors} setValue={setValue} />
         );
-      case "VMWare":
+      case ResponderTypes.vmware:
         return <VMWare control={control} errors={errors} setValue={setValue} />;
-      case "Person":
+      case ResponderTypes.person:
         return <Person control={control} errors={errors} setValue={setValue} />;
       default:
         return null;
@@ -350,12 +365,12 @@ export const AddResponder = ({
       }
     });
     const payload = {
-      type: selectedType.type === "Person" ? "person" : "system",
+      type: selectedType.type === ResponderTypes.person ? "person" : "system",
       incident_id: id,
       created_by: user?.id,
       team_id: selectedTeam.id,
       properties: {
-        responderType: selectedType.label,
+        responderType: selectedType.value,
         ...data
       }
     };
@@ -429,12 +444,15 @@ export const AddResponder = ({
                   goToStep(steps[1], steps[0]);
                 }}
                 value={selectedTeam}
-                className="m-1"
+                className={clsx(
+                  "overflow-y-auto m-1",
+                  teams?.length > 6 ? "h-5/6" : ""
+                )}
               />
             </div>
           )}
           {steps[1].inProgress && (
-            <div className="px-8 py-4 h-modal-body-md">
+            <div className="px-8 pt-4 pb-12 h-modal-body-md">
               <label
                 htmlFor="responder-types"
                 className="block text-base font-medium text-gray-500 my-2 font-bold"
@@ -451,7 +469,10 @@ export const AddResponder = ({
                     goToStep(steps[2], steps[1]);
                   }}
                   value={selectedType}
-                  className="m-1"
+                  className={clsx(
+                    "overflow-y-auto m-1",
+                    responderTypes?.length > 6 ? "h-5/6" : ""
+                  )}
                 />
               )}
               {Boolean(!responderTypes.length) && (

@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import dayjs from "dayjs";
+import { RiCloseCircleLine } from "react-icons/ri";
+import clsx from "clsx";
+
 import { IncidentDetailsRow } from "./IncidentDetailsRow";
 import { Select } from "../Select";
 import { IncidentPriority } from "../../constants/incident-priority";
@@ -14,8 +17,7 @@ import { priorities } from "./data";
 import {
   AddResponder,
   AddResponderFormValues,
-  ResponderPropsKeyToLabelMap,
-  ResponderTypeOptions
+  ResponderPropsKeyToLabelMap
 } from "./AddResponder";
 import {
   deleteResponder,
@@ -23,7 +25,7 @@ import {
 } from "../../api/services/responder";
 import { toastError, toastSuccess } from "../Toast/toast";
 import { IconButton } from "../IconButton";
-import { BsTrash } from "react-icons/bs";
+import { BsShareFill, BsTrash } from "react-icons/bs";
 import { DeleteConfirmDialog } from "../DeleteConfirmDialog";
 import { ResponderDetailsToolTip } from "./ResponderDetailsToolTip";
 import { ResponderDetailsDialog } from "./ResponderDetailsDialog";
@@ -31,6 +33,7 @@ import { Icon } from "../Icon";
 
 export const IncidentDetails = ({
   incident,
+  className,
   updateStatusHandler,
   updateIncidentHandler,
   textButton
@@ -111,27 +114,29 @@ export const IncidentDetails = ({
     try {
       const result = await getRespondersForTheIncident(incident.id);
       const data = (result?.data || []).map((item) => {
-        item.properties.external_id = item.team_id?.spec?.external_id;
+        item.properties.external_id = item.external_id || "NA";
         return {
           name: item.team_id?.name,
           type: item.properties.responderType,
-          external_id: item.team_id?.spec?.external_id,
+          external_id: item.properties.external_id,
           icon:
             item.team_id?.icon &&
             (() => (
               <Icon
                 size="md"
-                className="inline-block align-sub"
+                className="inline-block mr-1"
                 name={item.team_id.icon}
               />
             )),
           properties: Object.keys(item.properties)
             .map((key) => {
-              if (key !== "responderType") {
-                return {
-                  label: ResponderPropsKeyToLabelMap[key],
-                  value: item.properties[key]
-                };
+              if (!["responderType"].includes(key)) {
+                return ResponderPropsKeyToLabelMap[key]
+                  ? {
+                      label: ResponderPropsKeyToLabelMap[key],
+                      value: item.properties[key]
+                    }
+                  : undefined;
               }
             })
             .filter((v) => v),
@@ -140,7 +145,9 @@ export const IncidentDetails = ({
         };
       });
       setResponders(data);
-    } catch (ex) {}
+    } catch (ex) {
+      console.error(ex);
+    }
   }
 
   async function initiateDeleteResponder() {
@@ -167,28 +174,29 @@ export const IncidentDetails = ({
   }, [incident]);
 
   return (
-    <div className="px-6 pt-3.5">
-      <div className="flex justify-between mb-7">
-        <h2 className="mt-0.5 text-2xl font-medium leading-7 text-dark-gray">
-          Details
-        </h2>
-        <span className="relative z-0 inline-flex shadow-sm rounded-md">
-          <button
-            type="button"
-            className="relative inline-flex items-center px-4 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
-            onClick={updateStatusHandler}
-          >
-            {textButton}
-          </button>
-          <button
-            type="button"
-            className="-ml-px relative inline-flex items-center px-4 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
-          >
-            Share
-          </button>
-        </span>
-      </div>
-      {/* <IncidentDetailsRow
+    <div className={clsx("px-6 pt-3.5 divide-y", className)}>
+      <div className="mb-4">
+        <div className="flex justify-between mb-7">
+          <h2 className="mt-0.5 text-2xl font-medium leading-7 text-dark-gray">
+            Details
+          </h2>
+          <span className="relative z-0 inline-flex shadow-sm rounded-md">
+            <button
+              type="button"
+              className="relative inline-flex items-center px-4 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+              onClick={updateStatusHandler}
+            >
+              <RiCloseCircleLine className="mr-1 w-4 h-4" /> {textButton}
+            </button>
+            <button
+              type="button"
+              className="-ml-px relative inline-flex items-center px-4 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+            >
+              <BsShareFill className="mr-1 w-3 h-3" /> Share
+            </button>
+          </span>
+        </div>
+        {/* <IncidentDetailsRow
         title="Chart Room"
         value={
           <a
@@ -211,64 +219,70 @@ export const IncidentDetails = ({
           </a>
         }
       /> */}
-      <IncidentDetailsRow
-        title="Commanders"
-        className="mt-4"
-        value={
-          <Select
-            name="commanders"
-            isClearable
-            control={control}
-            hideSelectedOptions={false}
-            components={{
-              SingleValue: IncidentCommandersSingleValue,
-              Option: IncidentCommandersOption,
-              IndicatorSeparator: () => null
-            }}
-            options={commandersArray}
+        <IncidentDetailsRow
+          title="Commanders"
+          className="mt-4"
+          value={
+            <Select
+              name="commanders"
+              isClearable
+              control={control}
+              hideSelectedOptions={false}
+              components={{
+                SingleValue: IncidentCommandersSingleValue,
+                Option: IncidentCommandersOption,
+                IndicatorSeparator: () => null
+              }}
+              options={commandersArray}
+            />
+          }
+        />
+        <IncidentDetailsRow
+          title="Started"
+          className="mt-2.5"
+          value={
+            <span className="text-dark-gray text-sm font-normal">
+              {formattedCreatedAt}
+            </span>
+          }
+        />
+        <IncidentDetailsRow
+          title="Duration"
+          className="mt-2.5"
+          value={
+            <span className="text-dark-gray text-sm font-normal">
+              {formattedDuration}
+            </span>
+          }
+        />
+        <IncidentDetailsRow
+          title="Priority"
+          className="mt-3"
+          value={
+            <Select
+              name="priority"
+              control={control}
+              components={{
+                SingleValue: IncidentPrioritySingleValue,
+                Option: IncidentPriorityOption,
+                IndicatorSeparator: () => null
+              }}
+              options={priorities}
+              isSearchable={false}
+            />
+          }
+        />
+      </div>
+      <div className="pt-3">
+        <div className="flex">
+          <h2 className="text-dark-gray text-sm font-medium inline-block flex-1">
+            Responders
+          </h2>
+          <AddResponder
+            className="inline-block flex-1 w-full justify-end flex"
+            onSuccess={() => fetchResponders()}
           />
-        }
-      />
-      <IncidentDetailsRow
-        title="Started"
-        className="mt-2.5"
-        value={
-          <span className="text-dark-gray text-sm font-normal">
-            {formattedCreatedAt}
-          </span>
-        }
-      />
-      <IncidentDetailsRow
-        title="Duration"
-        className="mt-2.5"
-        value={
-          <span className="text-dark-gray text-sm font-normal">
-            {formattedDuration}
-          </span>
-        }
-      />
-      <IncidentDetailsRow
-        title="Priority"
-        className="mt-3"
-        value={
-          <Select
-            name="priority"
-            control={control}
-            components={{
-              SingleValue: IncidentPrioritySingleValue,
-              Option: IncidentPriorityOption,
-              IndicatorSeparator: () => null
-            }}
-            options={priorities}
-            isSearchable={false}
-          />
-        }
-      />
-      <div className="mt-4">
-        <h2 className="text-dark-gray text-sm font-medium">Responders</h2>
-        {!responders.length && (
-          <AddResponder onSuccess={() => fetchResponders()} />
-        )}
+        </div>
         {Boolean(responders.length) && (
           <div>
             {responders.map((responder) => {
@@ -297,8 +311,7 @@ export const IncidentDetails = ({
                               </div>
                             </div>
                             <div className="text-xs w-full overflow-hidden truncate mt-1">
-                              <b>External ID: </b>
-                              {responder?.external_id}
+                              External ID: {responder?.external_id}
                             </div>
                             <div className="ml-10 cursor-pointer absolute right-0 top-4">
                               <IconButton
@@ -334,11 +347,11 @@ export const IncidentDetails = ({
           </div>
         )}
       </div>
-      {Boolean(responders.length) && (
+      {/* {Boolean(responders.length) && (
         <div className="items-center">
           <AddResponder onSuccess={() => fetchResponders()} />
         </div>
-      )}
+      )} */}
       <DeleteConfirmDialog
         isOpen={openDeleteConfirmDialog}
         title="Delete Responder ?"

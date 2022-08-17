@@ -27,6 +27,7 @@ export const Jira = ({
   const [jiraProjectType, setJiraProjectType] = useState();
   const [jiraProject, setJiraProject] = useState();
   const [issueType, setIssueType] = useState();
+  const [priority, setPriority] = useState();
 
   return (
     <div className={clsx(className)} {...rest}>
@@ -108,6 +109,33 @@ export const Jira = ({
               }}
             />
             <p className="text-red-600 text-sm">{errors.issueType?.message}</p>
+            <ConfigItem
+              type="Jira"
+              control={control}
+              name="priority"
+              value={priority}
+              autoFetch={false}
+              onSelect={(selected) => {
+                setPriority(selected);
+              }}
+              itemsPath="$..priorities[*]"
+              namePath="$"
+              valuePath="$"
+              label={
+                <label
+                  htmlFor="priority"
+                  className="block text-sm font-bold text-gray-700 mb-2 mt-4"
+                >
+                  Priority
+                </label>
+              }
+              isDisabled={!jiraProject}
+              id="priority"
+              rules={{
+                required: "Please provide valid value"
+              }}
+            />
+            <p className="text-red-600 text-sm">{errors.priority?.message}</p>
           </ConfigItem>
         </ConfigItem>
       </div>

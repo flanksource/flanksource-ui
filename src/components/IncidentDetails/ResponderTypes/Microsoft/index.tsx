@@ -25,7 +25,7 @@ export const Microsoft = ({
       <div className="mb-4">
         <Controller
           control={control}
-          name="product"
+          name="plan_id"
           rules={{
             required: "Please provide valid value"
           }}
@@ -33,8 +33,8 @@ export const Microsoft = ({
             const { onChange, value } = field;
             return (
               <TextInput
-                label="Product"
-                id="product"
+                label="Plan ID"
+                id="plan_id"
                 className="w-full"
                 onChange={onChange}
                 value={value}
@@ -42,12 +42,12 @@ export const Microsoft = ({
             );
           }}
         />
-        <p className="text-red-600 text-sm">{errors.product?.message}</p>
+        <p className="text-red-600 text-sm">{errors.plan_id?.message}</p>
       </div>
       <div className="mb-4">
         <Controller
           control={control}
-          name="category"
+          name="bucket_id"
           rules={{
             required: "Please provide valid value"
           }}
@@ -55,8 +55,8 @@ export const Microsoft = ({
             const { onChange, value } = field;
             return (
               <TextInput
-                label="Category"
-                id="category"
+                label="Bucket ID"
+                id="bucket_id"
                 className="w-full"
                 onChange={onChange}
                 value={value}
@@ -64,7 +64,29 @@ export const Microsoft = ({
             );
           }}
         />
-        <p className="text-red-600 text-sm">{errors.category?.message}</p>
+        <p className="text-red-600 text-sm">{errors.bucket_id?.message}</p>
+      </div>
+      <div className="mb-4">
+        <Controller
+          control={control}
+          name="title"
+          rules={{
+            required: "Please provide valid value"
+          }}
+          render={({ field }) => {
+            const { onChange, value } = field;
+            return (
+              <TextInput
+                label="Title"
+                id="title"
+                className="w-full"
+                onChange={onChange}
+                value={value}
+              />
+            );
+          }}
+        />
+        <p className="text-red-600 text-sm">{errors.title?.message}</p>
       </div>
       <div className="mb-4">
         <Controller
@@ -91,7 +113,7 @@ export const Microsoft = ({
       <div className="mb-4">
         <Controller
           control={control}
-          name="body"
+          name="priority"
           rules={{
             required: "Please provide valid value"
           }}
@@ -99,8 +121,8 @@ export const Microsoft = ({
             const { onChange, value } = field;
             return (
               <TextInput
-                label="Body"
-                id="body"
+                label="Priority"
+                id="priority"
                 className="w-full"
                 onChange={onChange}
                 value={value}
@@ -108,7 +130,7 @@ export const Microsoft = ({
             );
           }}
         />
-        <p className="text-red-600 text-sm">{errors.body?.message}</p>
+        <p className="text-red-600 text-sm">{errors.priority?.message}</p>
       </div>
     </div>
   );
