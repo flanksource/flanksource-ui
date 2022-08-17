@@ -1,7 +1,11 @@
 import clsx from "clsx";
 import React, { useEffect, useRef, useState } from "react";
 import { FiExternalLink } from "react-icons/fi";
-import { formPropKey, ResponderPropsKeyToLabelMap } from "../AddResponder";
+import {
+  getResponderTitleByValue,
+  getOrderedKeys,
+  ResponderPropsKeyToLabelMap
+} from "../AddResponder";
 
 type ResponderDetailsToolTipProps = {
   element: React.ReactElement;
@@ -32,37 +36,8 @@ export const ResponderDetailsToolTip = ({
     }, 1000);
   };
 
-  const getOrderedKeys = (): formPropKey[] => {
-    switch (responder.type) {
-      case "Email":
-        return ["to", "subject", "body"];
-      case "Jira":
-        return ["project", "issueType", "summary", "description"];
-      case "ServiceNow":
-        return ["category", "description", "body"];
-      case "CA":
-        return ["category", "description", "body"];
-      case "AWS Support":
-        return ["category", "description", "body"];
-      case "AWS AMS Service Request":
-        return ["category", "description", "body"];
-      case "Redhat":
-        return ["product", "category", "description", "body"];
-      case "Oracle":
-        return ["product", "category", "description", "body"];
-      case "Microsoft":
-        return ["product", "category", "description", "body"];
-      case "VMWare":
-        return ["product", "category", "description", "body"];
-      case "Person":
-        return ["person"];
-      default:
-        return [];
-    }
-  };
-
-  const getOptionsList = () => {
-    const keys = getOrderedKeys();
+  const getOptionsList = (responder: any) => {
+    const keys = getOrderedKeys(responder);
     const options: { label: string; value: string | undefined }[] = [];
     keys.forEach((key) => {
       options.push({
@@ -110,8 +85,8 @@ export const ResponderDetailsToolTip = ({
         onMouseLeave={onMouseLeave}
         onMouseOut={onMouseLeave}
         style={{
-          left: "calc(-200% - 35px)",
-          top: "-5px"
+          left: "calc(-100% - 60px)",
+          top: "-10px"
         }}
       >
         <div className="py-1" role="none">
@@ -124,7 +99,7 @@ export const ResponderDetailsToolTip = ({
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium text-gray-900">
-                  <span>{responder?.type}</span>
+                  <span>{getResponderTitleByValue(responder?.type)}</span>
                   {responder?.json?.properties?.url && (
                     <FiExternalLink
                       className="float-right w-5 h-5"
@@ -139,8 +114,14 @@ export const ResponderDetailsToolTip = ({
               </div>
             </div>
             <div className="border-gray-200 sm:p-0 mt-2">
-              <dl className="sm:divide-y sm:divide-gray-200">
-                {getOptionsList().map((option) => {
+              <dl
+                className="sm:divide-y sm:divide-gray-200"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                }}
+              >
+                {getOptionsList(responder).map((option) => {
                   return (
                     <div
                       className="sm:grid sm:grid-cols-3 sm:gap-4 py-1"

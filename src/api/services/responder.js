@@ -8,7 +8,11 @@ export const saveResponder = (params) =>
   resolve(IncidentCommander.post(`/responders?select=*`, params));
 
 export const getRespondersForTheIncident = (id) =>
-  resolve(IncidentCommander.get(`/responders?incident_id=eq.${id}&select=*`));
+  resolve(
+    IncidentCommander.get(
+      `/responders?incident_id=eq.${id}&select=*,team_id(id,name,icon,spec)`
+    )
+  );
 
 export const deleteResponder = (id) =>
   resolve(IncidentCommander.delete(`/responders?id=eq.${id}`));

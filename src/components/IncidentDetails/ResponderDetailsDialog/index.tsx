@@ -7,7 +7,8 @@ import { MdTimer } from "react-icons/md";
 import { relativeDateTime } from "../../../utils/relativeDateTime";
 import {
   AddResponderFormValues,
-  formPropKey,
+  getOrderedKeys,
+  getResponderTitleByValue,
   ResponderPropsKeyToLabelMap
 } from "../AddResponder";
 
@@ -26,37 +27,8 @@ export function ResponderDetailsDialog({
   className,
   ...rest
 }: ResponderDetailsDialogProps) {
-  const getOrderedKeys = (): formPropKey[] => {
-    switch (responder?.type) {
-      case "Email":
-        return ["to", "subject", "body"];
-      case "Jira":
-        return ["project", "issueType", "summary", "description"];
-      case "ServiceNow":
-        return ["category", "description", "body"];
-      case "CA":
-        return ["category", "description", "body"];
-      case "AWS Support":
-        return ["category", "description", "body"];
-      case "AWS AMS Service Request":
-        return ["category", "description", "body"];
-      case "Redhat":
-        return ["product", "category", "description", "body"];
-      case "Oracle":
-        return ["product", "category", "description", "body"];
-      case "Microsoft":
-        return ["product", "category", "description", "body"];
-      case "VMWare":
-        return ["product", "category", "description", "body"];
-      case "Person":
-        return ["person"];
-      default:
-        return [];
-    }
-  };
-
   const getOptionsList = () => {
-    const keys = getOrderedKeys();
+    const keys = getOrderedKeys(responder);
     const options: { label: string; value: string | undefined }[] = [];
     keys.forEach((key) => {
       options.push({
@@ -148,7 +120,7 @@ export function ResponderDetailsDialog({
                 </div>
                 <div className="min-w-0 flex-1 ml-2">
                   <p className="text-sm font-medium text-gray-900">
-                    {responder?.type}
+                    {getResponderTitleByValue(responder?.type)}
                   </p>
                 </div>
                 <button

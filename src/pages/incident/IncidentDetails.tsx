@@ -185,6 +185,7 @@ export function IncidentDetailsPage() {
         </div>
         <section className="border-l lg:col-start-3 lg:col-span-1">
           <IncidentDetails
+            className="bg-white px-2 py-3 shadow sm:rounded-lg sm:px-4 ml-4"
             incident={incident}
             updateStatusHandler={() =>
               updateStatus(
@@ -196,7 +197,7 @@ export function IncidentDetailsPage() {
             updateIncidentHandler={updateIncidentHandler}
             textButton={status === IncidentStatus.Open ? "Close" : "Reopen"}
           />
-          <div className="bg-white px-4 py-5 mt-4  shadow sm:rounded-lg sm:px-6">
+          <div className="bg-white px-2 py-3 mt-4 shadow sm:rounded-lg sm:px-4 ml-4">
             <section aria-labelledby="applicant-information-title">
               <Changelog />
             </section>

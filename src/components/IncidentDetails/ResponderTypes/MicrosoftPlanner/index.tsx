@@ -4,50 +4,49 @@ import {
   Control,
   Controller,
   FieldErrors,
-  SetFieldValue,
   UseFormSetValue
 } from "react-hook-form";
 import { ConfigItem } from "../../../ConfigItem";
 import { TextInput } from "../../../TextInput";
 import { AddResponderFormValues } from "../../AddResponder";
 
-type JiraProps = {
+type MicrosoftProps = {
   control: Control;
   errors: FieldErrors;
   setValue: UseFormSetValue<AddResponderFormValues>;
 } & React.HTMLProps<HTMLDivElement>;
 
-export const Jira = ({
+export const MicrosoftPlanner = ({
   control,
   errors,
   setValue,
   className,
   ...rest
-}: JiraProps) => {
-  const [jiraProjectType, setJiraProjectType] = useState();
-  const [jiraProject, setJiraProject] = useState();
-  const [issueType, setIssueType] = useState();
+}: MicrosoftProps) => {
+  const [msProjectType, setMsProjectType] = useState();
+  const [planId, setPlanId] = useState();
+  const [bucketId, setBucketId] = useState();
   const [priority, setPriority] = useState();
 
   return (
     <div className={clsx(className)} {...rest}>
       <div className="mb-4">
         <ConfigItem
-          type="Jira"
+          type="MSPlanner"
           control={control}
           name="configType"
           autoFetch={true}
           onSelect={(e: any) => {
-            setJiraProjectType(e);
+            setMsProjectType(e);
             setValue("project", "");
             setValue("issueType", "");
           }}
           label={
             <label className="block text-sm font-bold text-gray-700 mb-2">
-              Jira Config Type
+              MSPlanner Config Type
             </label>
           }
-          value={jiraProjectType}
+          value={msProjectType}
           id="config-type"
           rules={{
             required: "Please provide valid value"
@@ -55,62 +54,62 @@ export const Jira = ({
         >
           <p className="text-red-600 text-sm">{errors?.configType?.message}</p>
           <ConfigItem
-            type="Jira"
+            type="MSPlanner"
             control={control}
-            name="project"
-            value={jiraProject}
+            name="plan_id"
+            value={planId}
             autoFetch={false}
             onSelect={(selected) => {
-              setJiraProject(selected);
-              setValue("issueType", "");
+              setPlanId(selected);
+              setValue("plan_id", "");
             }}
-            itemsPath="$..projects[*]"
+            itemsPath="$..plans[*]"
             namePath="$.name"
             valuePath="$.name"
             label={
               <label
-                htmlFor="project"
+                htmlFor="plan_id"
                 className="block text-sm font-bold text-gray-700 mb-2 mt-4"
               >
-                Project
+                Plan ID
               </label>
             }
-            isDisabled={!jiraProjectType}
-            id="project"
+            isDisabled={!msProjectType}
+            id="plan_id"
             rules={{
               required: "Please provide valid value"
             }}
           >
-            <p className="text-red-600 text-sm">{errors?.project?.message}</p>
+            <p className="text-red-600 text-sm">{errors?.plan_id?.message}</p>
             <ConfigItem
-              type="Jira"
+              type="MSPlanner"
               control={control}
-              name="issueType"
-              value={issueType}
+              name="bucket_id"
+              value={bucketId}
               autoFetch={false}
               onSelect={(selected) => {
-                setIssueType(selected);
+                setBucketId(selected);
               }}
-              itemsPath="$..issueTypes.*~"
-              namePath="$"
-              valuePath="$"
+              itemsPath="$..buckets"
+              namePath="$.name"
+              valuePath="$.name"
               label={
                 <label
-                  htmlFor="issueType"
+                  htmlFor="bucket_id"
                   className="block text-sm font-bold text-gray-700 mb-2 mt-4"
                 >
-                  Issue Type
+                  Bucket ID
                 </label>
               }
-              isDisabled={!jiraProject}
-              id="issueType"
+              isDisabled={!msProjectType}
+              id="bucket_id"
               rules={{
                 required: "Please provide valid value"
               }}
             />
-            <p className="text-red-600 text-sm">{errors.issueType?.message}</p>
+            <p className="text-red-600 text-sm">{errors.bucket_id?.message}</p>
             <ConfigItem
-              type="Jira"
+              type="MSPlanner"
               control={control}
               name="priority"
               value={priority}
@@ -129,7 +128,7 @@ export const Jira = ({
                   Priority
                 </label>
               }
-              isDisabled={!jiraProject}
+              isDisabled={!msProjectType}
               id="priority"
               rules={{
                 required: "Please provide valid value"
@@ -142,7 +141,7 @@ export const Jira = ({
       <div className="mb-4">
         <Controller
           control={control}
-          name="summary"
+          name="title"
           rules={{
             required: "Please provide valid value"
           }}
@@ -150,8 +149,8 @@ export const Jira = ({
             const { onChange, value } = field;
             return (
               <TextInput
-                label="Summary"
-                id="summary"
+                label="Title"
+                id="title"
                 className="w-full"
                 onChange={onChange}
                 value={value}
@@ -159,7 +158,7 @@ export const Jira = ({
             );
           }}
         />
-        <p className="text-red-600 text-sm">{errors.summary?.message}</p>
+        <p className="text-red-600 text-sm">{errors.title?.message}</p>
       </div>
       <div className="mb-4">
         <Controller

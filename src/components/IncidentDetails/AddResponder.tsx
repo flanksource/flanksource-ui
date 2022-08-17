@@ -1,4 +1,10 @@
-import { useState, useCallback, MouseEventHandler, useMemo } from "react";
+import {
+  useState,
+  useCallback,
+  MouseEventHandler,
+  useMemo,
+  useEffect
+} from "react";
 import clsx from "clsx";
 import { SiJira } from "react-icons/si";
 import { MdEmail } from "react-icons/md";
@@ -13,7 +19,7 @@ import {
   CA,
   Email,
   Jira,
-  Microsoft,
+  MicrosoftPlanner,
   Oracle,
   Person,
   Redhat,
@@ -28,6 +34,9 @@ import { useUser } from "../../context";
 import { saveResponder } from "../../api/services/responder";
 import { useLoader } from "../../hooks";
 import { toastError, toastSuccess } from "../Toast/toast";
+import { getAll } from "../../api/schemaResources";
+import { schemaResourceTypes } from "../SchemaResourcePage/resourceTypes";
+import _ from "lodash";
 
 type Action = {
   label: string;
@@ -51,85 +60,106 @@ export const ResponderPropsKeyToLabelMap = {
   issueType: "Issue Type",
   summary: "Summary",
   product: "Product",
-  person: "Person"
+  person: "Person",
+  priority: "Priority",
+  plan_id: "Plan ID",
+  bucket_id: "Bucket ID",
+  title: "Title",
+  external_id: "External ID"
+};
+
+export const ResponderTypes = {
+  email: "email",
+  jira: "jira",
+  serviceNow: "service_now",
+  ca: "ca",
+  awsSupport: "aws_support",
+  awsAmsServicesRequest: "aws_ams_services_request",
+  redhat: "redhat",
+  oracle: "oracle",
+  msPlanner: "ms_planner",
+  vmware: "vmware",
+  person: "person"
+};
+
+export const getResponderTitleByValue = (val: string): string | undefined => {
+  return ResponderTypeOptions.find((item) => item.value === val)?.label;
 };
 
 export const ResponderTypeOptions = [
   {
     label: "Email",
-    value: "Email",
-    icon: () => <MdEmail className="w-5 h-5 inline-block align-sub" />
+    value: ResponderTypes.email,
+    icon: () => <MdEmail className="w-5 h-5 inline-block" />
   },
   {
     label: "Jira",
-    value: "Jira",
-    icon: () => <SiJira className="w-5 h-5 inline-block align-sub" />
+    value: ResponderTypes.jira,
+    icon: () => <SiJira className="w-5 h-5 inline-block" />
   },
   {
     label: "ServiceNow",
-    value: "ServiceNow",
-    icon: () => (
-      <Icon size="md" className="inline-block align-sub" name="servicenow" />
-    )
+    value: ResponderTypes.serviceNow,
+    icon: () => <Icon size="md" className="inline-block" name="servicenow" />
   },
   {
     label: "CA",
-    value: "CA",
-    icon: () => <Icon size="md" className="inline-block align-sub" name="ca" />
+    value: ResponderTypes.ca,
+    icon: () => <Icon size="md" className="inline-block" name="ca" />
   },
   {
     label: "AWS Support",
-    value: "AWS Support",
-    icon: () => <Icon size="md" className="inline-block align-sub" name="aws" />
+    value: ResponderTypes.awsSupport,
+    icon: () => <Icon size="md" className="inline-block" name="aws" />
   },
   {
     label: "AWS AMS Service Request",
-    value: "AWS AMS Service Request",
-    icon: () => <Icon size="md" className="inline-block align-sub" name="aws" />
+    value: ResponderTypes.awsAmsServicesRequest,
+    icon: () => <Icon size="md" className="inline-block" name="aws" />
   },
   {
     label: "Redhat",
-    value: "Redhat",
-    icon: () => (
-      <Icon size="md" className="inline-block align-sub" name="redhat" />
-    )
+    value: ResponderTypes.redhat,
+    icon: () => <Icon size="md" className="inline-block" name="redhat" />
   },
   {
     label: "Oracle",
-    value: "Oracle",
-    icon: () => (
-      <Icon size="md" className="inline-block align-sub" name="oracle_icon" />
-    )
+    value: ResponderTypes.oracle,
+    icon: () => <Icon size="md" className="inline-block" name="oracle_icon" />
   },
   {
-    label: "Microsoft",
-    value: "Microsoft",
-    icon: () => (
-      <Icon size="md" className="inline-block align-sub" name="microsoft" />
-    )
+    label: "Microsoft Planner",
+    value: ResponderTypes.msPlanner,
+    icon: () => <Icon size="md" className="inline-block" name="microsoft" />
   },
   {
     label: "VMWare",
-    value: "VMWare",
-    icon: () => <GrVmware className="w-5 h-5 inline-block align-sub" />
+    value: ResponderTypes.vmware,
+    icon: () => <GrVmware className="w-5 h-5 inline-block" />
   },
   {
     label: "Person",
-    value: "Person",
-    icon: () => <FiUser className="w-5 h-5 inline-block align-sub" />
+    value: ResponderTypes.person,
+    icon: () => <FiUser className="w-5 h-5 inline-block" />
   }
 ];
 
 const ResponderSteps = [
   {
-    label: "Responder Type",
+    label: "Team",
     position: 1,
     inProgress: true,
     finished: false
   },
   {
-    label: "Details",
+    label: "Responder Type",
     position: 2,
+    inProgress: false,
+    finished: false
+  },
+  {
+    label: "Details",
+    position: 3,
     inProgress: false,
     finished: false
   }
@@ -143,9 +173,14 @@ export type AddResponderFormValues = {
   description?: string;
   project?: string;
   issueType?: string;
+  priority?: string;
+  plan_id?: string;
+  bucket_id?: string;
+  title?: string;
   summary?: string;
   product?: string;
   person?: string;
+  external_id?: string;
 };
 
 export type formPropKey = keyof AddResponderFormValues;
@@ -154,6 +189,42 @@ type AddResponderProps = {
   onSuccess?: () => void;
   onError?: () => void;
 } & React.HTMLProps<HTMLDivElement>;
+
+export const getOrderedKeys = (responder: any): formPropKey[] => {
+  switch (responder?.type) {
+    case ResponderTypes.email:
+      return ["to", "subject", "body", "external_id"];
+    case ResponderTypes.jira:
+      return ["project", "issueType", "summary", "description", "external_id"];
+    case ResponderTypes.serviceNow:
+      return ["category", "description", "body", "external_id"];
+    case ResponderTypes.ca:
+      return ["category", "description", "body", "external_id"];
+    case ResponderTypes.awsSupport:
+      return ["category", "description", "body", "external_id"];
+    case ResponderTypes.awsAmsServicesRequest:
+      return ["category", "description", "body", "external_id"];
+    case ResponderTypes.redhat:
+      return ["product", "category", "description", "body", "external_id"];
+    case ResponderTypes.oracle:
+      return ["product", "category", "description", "body", "external_id"];
+    case ResponderTypes.msPlanner:
+      return [
+        "plan_id",
+        "bucket_id",
+        "priority",
+        "title",
+        "description",
+        "external_id"
+      ];
+    case ResponderTypes.vmware:
+      return ["product", "category", "description", "body", "external_id"];
+    case ResponderTypes.person:
+      return ["person"];
+    default:
+      return [];
+  }
+};
 
 export const AddResponder = ({
   onSuccess = () => {},
@@ -167,6 +238,8 @@ export const AddResponder = ({
   const [steps, setSteps] = useState(deepCloneSteps());
   const [isOpen, setIsOpen] = useState(false);
   const [selectedType, setSelectedType] = useState<any>(null);
+  const [selectedTeam, setSelectedTeam] = useState<any>(null);
+  const [teams, setTeams] = useState<any>([]);
   const {
     control,
     formState: { errors },
@@ -183,19 +256,51 @@ export const AddResponder = ({
       description: "",
       project: "",
       issueType: "",
+      priority: "",
       summary: "",
       product: "",
       person: ""
     }
   });
 
+  useEffect(() => {
+    const teamsApiConfig = schemaResourceTypes.find(
+      (item) => item.table === "teams"
+    );
+    getAll(teamsApiConfig)
+      .then((res) => {
+        const data = res.data.map((item) => {
+          return {
+            icon: null,
+            label: item.name,
+            value: item.id,
+            ...item
+          };
+        });
+        setTeams(data);
+      })
+      .catch((err) => {
+        setTeams([]);
+      });
+  }, []);
+
+  function extractResponders(team: any) {
+    const types = Object.keys(team?.spec?.responder_clients || {});
+    return ResponderTypeOptions.filter((item) => {
+      return types.includes(item.value);
+    });
+  }
+
+  const responderTypes = useMemo(() => {
+    return extractResponders(selectedTeam);
+  }, [selectedTeam]);
+
   function deepCloneSteps() {
     return ResponderSteps.map((v) => ({ ...v }));
   }
 
   const onCloseModal = useCallback(() => {
-    setIsOpen(false);
-    setSelectedType(null);
+    cleanupState();
   }, []);
 
   const goToStep = (nextStep: Step, currentStep: Step) => {
@@ -214,21 +319,21 @@ export const AddResponder = ({
 
   const getResponderTypeForm = () => {
     switch (selectedType?.value) {
-      case "Email":
+      case ResponderTypes.email:
         return <Email control={control} errors={errors} setValue={setValue} />;
-      case "Jira":
+      case ResponderTypes.jira:
         return <Jira control={control} errors={errors} setValue={setValue} />;
-      case "ServiceNow":
+      case ResponderTypes.serviceNow:
         return (
           <ServiceNow control={control} errors={errors} setValue={setValue} />
         );
-      case "CA":
+      case ResponderTypes.ca:
         return <CA control={control} errors={errors} setValue={setValue} />;
-      case "AWS Support":
+      case ResponderTypes.awsSupport:
         return (
           <AwsSupport control={control} errors={errors} setValue={setValue} />
         );
-      case "AWS AMS Service Request":
+      case ResponderTypes.awsAmsServicesRequest:
         return (
           <AwsServiceRequest
             control={control}
@@ -236,17 +341,21 @@ export const AddResponder = ({
             setValue={setValue}
           />
         );
-      case "Redhat":
+      case ResponderTypes.redhat:
         return <Redhat control={control} errors={errors} setValue={setValue} />;
-      case "Oracle":
+      case ResponderTypes.oracle:
         return <Oracle control={control} errors={errors} setValue={setValue} />;
-      case "Microsoft":
+      case ResponderTypes.msPlanner:
         return (
-          <Microsoft control={control} errors={errors} setValue={setValue} />
+          <MicrosoftPlanner
+            control={control}
+            errors={errors}
+            setValue={setValue}
+          />
         );
-      case "VMWare":
+      case ResponderTypes.vmware:
         return <VMWare control={control} errors={errors} setValue={setValue} />;
-      case "Person":
+      case ResponderTypes.person:
         return <Person control={control} errors={errors} setValue={setValue} />;
       default:
         return null;
@@ -273,11 +382,12 @@ export const AddResponder = ({
       }
     });
     const payload = {
-      type: selectedType.type === "Person" ? "person" : "system",
+      type: selectedType.type === ResponderTypes.person ? "person" : "system",
       incident_id: id,
       created_by: user?.id,
+      team_id: selectedTeam.id,
       properties: {
-        responderType: selectedType.label,
+        responderType: selectedType.value,
         ...data
       }
     };
@@ -286,8 +396,8 @@ export const AddResponder = ({
       const result = await saveResponder(payload);
       if (!result?.error) {
         toastSuccess("Added responder successfully");
+        cleanupState();
         onSuccess();
-        setIsOpen(false);
       } else {
         onError();
         toastError("Adding responder failed");
@@ -299,8 +409,17 @@ export const AddResponder = ({
     setLoading(false);
   };
 
+  const cleanupState = () => {
+    setIsOpen(false);
+    setSelectedTeam(null);
+    setSelectedType(null);
+  };
+
   const getModalTitle = () => {
     if (steps[0].inProgress) {
+      return `Select Team`;
+    }
+    if (steps[1].inProgress) {
       return `Add Responder`;
     }
     return (
@@ -337,22 +456,70 @@ export const AddResponder = ({
                 htmlFor="responder-types"
                 className="block text-base font-medium text-gray-500 my-2 font-bold"
               >
-                Responder Types
+                Teams
               </label>
               <OptionsList
                 name="responder-types"
-                options={ResponderTypeOptions}
+                options={teams}
                 onSelect={(e: any) => {
-                  setSelectedType(e);
+                  setSelectedTeam(e);
                   reset();
-                  goToStep(steps[1], steps[0]);
+                  const responders = extractResponders(e);
+                  if (responders.length === 1) {
+                    setSelectedType(responders[0]);
+                    goToStep(steps[1], steps[0]);
+                    goToStep(steps[2], steps[1]);
+                  } else {
+                    goToStep(steps[1], steps[0]);
+                  }
                 }}
-                value={selectedType}
-                className="h-5/6 overflow-y-scroll m-1"
+                value={selectedTeam}
+                className={clsx(
+                  "overflow-y-auto m-1",
+                  teams?.length > 6 ? "h-5/6" : ""
+                )}
               />
             </div>
           )}
           {steps[1].inProgress && (
+            <div className="px-8 pt-4 pb-12 h-modal-body-md">
+              <label
+                htmlFor="responder-types"
+                className="block text-base font-medium text-gray-500 my-2 font-bold"
+              >
+                Responder Types
+              </label>
+              {Boolean(responderTypes.length) && (
+                <OptionsList
+                  name="responder-types"
+                  options={responderTypes}
+                  onSelect={(e: any) => {
+                    setSelectedType(e);
+                    goToStep(steps[2], steps[1]);
+                  }}
+                  value={selectedType}
+                  className={clsx(
+                    "overflow-y-auto m-1",
+                    responderTypes?.length > 6 ? "h-5/6" : ""
+                  )}
+                />
+              )}
+              {Boolean(!responderTypes.length) && (
+                <div className="text-sm text-center pt-10">
+                  There were no responders configured for this team
+                </div>
+              )}
+              <ActionButtonGroup
+                className="absolute w-full bottom-0 left-0"
+                previousAction={{
+                  label: "Back",
+                  disabled: false,
+                  handler: () => goToStep(steps[0], steps[1])
+                }}
+              />
+            </div>
+          )}
+          {steps[2].inProgress && (
             <div>
               <div className="px-8 py-3 h-modal-body-md mb-20">
                 {getResponderTypeForm()}
@@ -367,7 +534,14 @@ export const AddResponder = ({
                   previousAction={{
                     label: "Back",
                     disabled: !selectedType || loading,
-                    handler: () => goToStep(steps[0], steps[1])
+                    handler: () => {
+                      if (responderTypes.length === 1) {
+                        goToStep(steps[1], steps[2]);
+                        goToStep(steps[0], steps[1]);
+                      } else {
+                        goToStep(steps[1], steps[2]);
+                      }
+                    }
                   }}
                 />
               </div>
