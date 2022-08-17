@@ -268,7 +268,17 @@ export function IncidentListPage() {
         title="Create New Incident"
       >
         <IncidentCreate
-          callback={(response) => {
+          callback={(response: any) => {
+            if (!response) {
+              loadIncidents({
+                severity: watchSeverity,
+                status: watchStatus,
+                owner: watchOwner,
+                labels: selectedLabels
+              });
+              setIncidentModalIsOpen(false);
+              return;
+            }
             navigate(`/incidents/${response.id}`, { replace: true });
           }}
         />

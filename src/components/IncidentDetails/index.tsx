@@ -30,6 +30,8 @@ import { DeleteConfirmDialog } from "../DeleteConfirmDialog";
 import { ResponderDetailsToolTip } from "./ResponderDetailsToolTip";
 import { ResponderDetailsDialog } from "./ResponderDetailsDialog";
 import { Icon } from "../Icon";
+import { typeItems } from "../Incidents/data";
+import { Dropdown } from "../Dropdown";
 
 export const IncidentDetails = ({
   incident,
@@ -70,6 +72,7 @@ export const IncidentDetails = ({
       statusPageTitle: "StatusPage.io",
       statusPage: "https://www.atlassian.com/software/statuspage",
       priority: incident.severity ?? IncidentPriority.High,
+      type: incident.type ?? typeItems.cost,
       commanders: incident.commander_id.id
     }
   });
@@ -253,6 +256,19 @@ export const IncidentDetails = ({
             <span className="text-dark-gray text-sm font-normal">
               {formattedDuration}
             </span>
+          }
+        />
+        <IncidentDetailsRow
+          title="Type"
+          className="mt-3"
+          value={
+            <Dropdown
+              control={control}
+              label=""
+              name="type"
+              className="w-full"
+              items={typeItems}
+            />
           }
         />
         <IncidentDetailsRow

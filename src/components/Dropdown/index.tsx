@@ -73,6 +73,7 @@ export function Dropdown({
             const { onChange: onChangeControlled, value: valueControlled } =
               field;
             if (items[valueControlled] == null) {
+              console.warn(`control value doesn't exists in the items`);
               return null;
             }
             return (

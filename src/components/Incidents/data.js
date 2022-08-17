@@ -1,10 +1,15 @@
 import { AiOutlineClose } from "react-icons/ai";
-import { BsExclamation } from "react-icons/bs";
+import { BiDollarCircle } from "react-icons/bi";
+import { FaTasks } from "react-icons/fa";
+import { GrIntegration, GrWorkshop } from "react-icons/gr";
 import {
   HiOutlineChevronDoubleUp,
   HiOutlineChevronDown,
   HiOutlineChevronUp
 } from "react-icons/hi";
+import { ImHeartBroken } from "react-icons/im";
+import { IoMdSpeedometer } from "react-icons/io";
+import { MdSecurity } from "react-icons/md";
 import { RiLightbulbFill } from "react-icons/ri";
 
 export const severityItems = {
@@ -49,11 +54,53 @@ export const statusItems = {
 };
 
 export const typeItems = {
-  issue: {
-    id: "dropdown-type-issue",
-    name: "issue",
-    icon: <BsExclamation />,
-    description: "Issue",
-    value: "issue"
+  cost: {
+    id: "dropdown-type-cost",
+    name: "cost",
+    icon: <BiDollarCircle />,
+    description: "Cost",
+    value: "cost"
+  },
+  availability: {
+    id: "dropdown-type-availability",
+    name: "availability",
+    icon: <ImHeartBroken />,
+    description: "Availability",
+    value: "availability"
+  },
+  performance: {
+    id: "dropdown-type-performance",
+    name: "performance",
+    icon: <IoMdSpeedometer />,
+    description: "Performance",
+    value: "performance"
+  },
+  security: {
+    id: "dropdown-type-security",
+    name: "security",
+    icon: <MdSecurity />,
+    description: "Security",
+    value: "security"
+  },
+  integration: {
+    id: "dropdown-type-integration",
+    name: "integration",
+    icon: <GrIntegration />,
+    description: "Integration",
+    value: "integration"
+  },
+  compliance: {
+    id: "dropdown-type-compliance",
+    name: "compliance",
+    icon: <FaTasks />,
+    description: "Compliance",
+    value: "compliance"
+  },
+  technicalDebt: {
+    id: "dropdown-type-technical-debt",
+    name: "technicalDebt",
+    icon: <GrWorkshop />,
+    description: "Technical Debt",
+    value: "technicalDebt"
   }
 };
