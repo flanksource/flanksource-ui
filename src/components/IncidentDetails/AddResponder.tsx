@@ -284,13 +284,16 @@ export const AddResponder = ({
       });
   }, []);
 
-  const responderTypes =
-    useMemo(() => {
-      const types = Object.keys(selectedTeam?.spec?.responder_clients || {});
-      return ResponderTypeOptions.filter((item) => {
-        return types.includes(item.value);
-      });
-    }, [selectedTeam]) || [];
+  function extractResponders(team: any) {
+    const types = Object.keys(team?.spec?.responder_clients || {});
+    return ResponderTypeOptions.filter((item) => {
+      return types.includes(item.value);
+    });
+  }
+
+  const responderTypes = useMemo(() => {
+    return extractResponders(selectedTeam);
+  }, [selectedTeam]);
 
   function deepCloneSteps() {
     return ResponderSteps.map((v) => ({ ...v }));
@@ -461,7 +464,14 @@ export const AddResponder = ({
                 onSelect={(e: any) => {
                   setSelectedTeam(e);
                   reset();
-                  goToStep(steps[1], steps[0]);
+                  const responders = extractResponders(e);
+                  if (responders.length === 1) {
+                    setSelectedType(responders[0]);
+                    goToStep(steps[1], steps[0]);
+                    goToStep(steps[2], steps[1]);
+                  } else {
+                    goToStep(steps[1], steps[0]);
+                  }
                 }}
                 value={selectedTeam}
                 className={clsx(
@@ -485,7 +495,6 @@ export const AddResponder = ({
                   options={responderTypes}
                   onSelect={(e: any) => {
                     setSelectedType(e);
-                    // reset();
                     goToStep(steps[2], steps[1]);
                   }}
                   value={selectedType}
@@ -525,7 +534,14 @@ export const AddResponder = ({
                   previousAction={{
                     label: "Back",
                     disabled: !selectedType || loading,
-                    handler: () => goToStep(steps[1], steps[2])
+                    handler: () => {
+                      if (responderTypes.length === 1) {
+                        goToStep(steps[1], steps[2]);
+                        goToStep(steps[0], steps[1]);
+                      } else {
+                        goToStep(steps[1], steps[2]);
+                      }
+                    }
                   }}
                 />
               </div>

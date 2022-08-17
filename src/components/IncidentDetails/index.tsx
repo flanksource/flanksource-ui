@@ -289,7 +289,7 @@ export const IncidentDetails = ({
               return (
                 <div
                   key={responder.json.id}
-                  className="relative flex hover:bg-gray-100 p-1 items-center rounded mt-2"
+                  className="relative flex hover:bg-gray-100 items-center rounded mt-1 p-2"
                 >
                   <div className="flex-1 min-w-0 w-full">
                     <ResponderDetailsToolTip
@@ -309,13 +309,13 @@ export const IncidentDetails = ({
                                 setSelectedResponder(responder);
                               }}
                             >
-                              {responder?.name}
+                              {responder?.name}{" "}
+                              <span className="text-xs">
+                                ({responder?.external_id})
+                              </span>
                             </div>
                           </div>
-                          <div className="text-xs w-full overflow-hidden truncate mt-1">
-                            External ID: {responder?.external_id}
-                          </div>
-                          <div className="ml-10 cursor-pointer absolute right-0 top-4">
+                          <div className="ml-10 cursor-pointer absolute right-0 top-1">
                             <IconButton
                               className="bg-transparent hidden group-hover:inline-block z-5"
                               onClick={(e) => {
