@@ -165,6 +165,9 @@ export function Canary({
   const [searchParams, setSearchParams] = useState(window.location.search);
   useEffect(() => {
     const unlisten = history.listen(({ location }) => {
+      if (searchParams === location.search) {
+        return;
+      }
       setSearchParams(location.search);
       handleFetch();
     });
