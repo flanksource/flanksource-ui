@@ -82,7 +82,9 @@
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "check:browserslist": "npx browserslist",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "launch:dev:canary-checker": "NODE_ENV=development APP_DEPLOYMENT=CANARY_CHECKER node scripts/serve-build.js",
+    "launch:dev:incident-manager": "NODE_ENV=development APP_DEPLOYMENT=INCIDENT_MANAGER node scripts/serve-build.js"
   },
   "husky": {
     "hooks": {

@@ -5,13 +5,16 @@ import "./index.css";
 import { App, CanaryCheckerApp } from "./App";
 import reportWebVitals from "./reportWebVitals";
 import localizedFormat from "dayjs/plugin/localizedFormat";
+import { HealthPageContextProvider } from "./context/HealthPageContext";
 
 dayjs.extend(localizedFormat);
 
 ReactDOM.render(
   <React.StrictMode>
     {window.APP_DEPLOYMENT === "CANARY_CHECKER" ? (
-      <CanaryCheckerApp />
+      <HealthPageContextProvider>
+        <CanaryCheckerApp />
+      </HealthPageContextProvider>
     ) : (
       <App />
     )}
