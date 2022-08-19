@@ -4,6 +4,7 @@ import { v4 as uuid } from "uuid";
 import { AvatarGroup } from "../../AvatarGroup";
 import { IncidentStatusTag } from "../../IncidentStatusTag";
 import { IncidentSeverityTag } from "../../IncidentSeverityTag";
+import { IncidentTypeTag } from "../../incidentTypeTag";
 
 export function IncidentList({ list, ...rest }) {
   return (
@@ -11,14 +12,17 @@ export function IncidentList({ list, ...rest }) {
       <table className="table-auto w-full" aria-label="table" {...rest}>
         <thead className="rounded-md">
           <tr className="border-b border-gray-200 uppercase bg-column-background rounded-t-md items-center">
+            <th className="px-3 py-3 text-gray-500 font-medium text-xs text-left">
+              Type
+            </th>
+            <th className="px-3 py-3 text-gray-500 font-medium text-xs text-left">
+              Severity
+            </th>
             <th
               className="px-6 py-3 text-gray-500 font-medium text-xs col-span-2 text-left"
               colSpan={2}
             >
               Name
-            </th>
-            <th className="px-3 py-3 text-gray-500 font-medium text-xs text-left">
-              Severity
             </th>
             <th className="px-3 py-3 text-gray-500 font-medium text-xs text-left">
               Status
@@ -62,16 +66,21 @@ function IncidentItem({ incident }) {
       className="last:border-b-0 border-b cursor-pointer"
       onClick={() => navigateToIncidentDetails(id)}
     >
-      <td
-        colSpan={2}
-        className="px-6 py-4 text-gray-900 col-span-2 text-sm leading-5 font-medium"
-      >
-        {title}
+      <td className="py-4 px-3">
+        <div className="flex flex-row items-center">
+          <IncidentTypeTag type={incident.type} />
+        </div>
       </td>
       <td className="py-4 px-3">
         <div className="flex flex-row items-center">
           <IncidentSeverityTag severity={incident.severity} />
         </div>
+      </td>
+      <td
+        colSpan={2}
+        className="px-6 py-4 text-gray-900 col-span-2 text-sm leading-5 font-medium"
+      >
+        {title}
       </td>
       <td className="px-3 py-4 shrink-0">
         <IncidentStatusTag status={incident.status} />
