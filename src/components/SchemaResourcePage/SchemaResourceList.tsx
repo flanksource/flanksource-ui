@@ -11,10 +11,10 @@ interface Props {
 
 export function SchemaResourceList({ items, baseUrl }: Props) {
   return (
-    <div className="border border-b-0 border-gray-300 w-full">
+    <div className="w-full">
       <table className="table-auto w-full" aria-label="table">
-        <thead className="rounded-md">
-          <tr className="border-b border-gray-200 uppercase bg-column-background rounded-t-md items-center">
+        <thead>
+          <tr>
             <HCell colSpan={2}>Name</HCell>
             <HCell>Source Config</HCell>
             <HCell>Created At</HCell>
@@ -40,13 +40,7 @@ interface CellProps {
 
 function HCell({ children, className, colSpan }: CellProps) {
   return (
-    <th
-      colSpan={colSpan ?? 1}
-      className={clsx(
-        "px-3 py-3 text-gray-500 font-medium text-xs text-left",
-        className
-      )}
-    >
+    <th colSpan={colSpan ?? 1} className={className}>
       {children}
     </th>
   );
@@ -56,7 +50,7 @@ function Cell({ children, className, colSpan }: CellProps) {
   return (
     <td
       colSpan={colSpan ?? 1}
-      className={clsx("px-3 py-4 text-sm border-b", className)}
+      className={clsx("px-3 py-3 text-sm border-b", className)}
     >
       {children}
     </td>

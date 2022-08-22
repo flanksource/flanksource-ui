@@ -17,13 +17,7 @@ export function ConfigLayout({
   const mt = useMatch({ path: basePath, end: false });
 
   const nav = (
-    <nav
-      className="flex justify-between"
-      style={{
-        borderBottom: "solid 1px lightgray",
-        marginBottom: "1rem"
-      }}
-    >
+    <nav className="flex justify-between">
       <span className="flex self-center">
         {navLinks.map((nav) => (
           <NavLink
@@ -31,7 +25,7 @@ export function ConfigLayout({
               clsx(
                 "rounded-t-md py-2.5 px-4 text-sm leading-5",
                 "ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400",
-                isActive ? "border border-b-0 border-gray-300" : ""
+                isActive ? "border border-b-0 bg-white" : ""
               )
             }
             key={nav.title}

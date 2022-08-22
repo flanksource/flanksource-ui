@@ -3,15 +3,10 @@ import { useSortBy, useTable } from "react-table";
 import clsx from "clsx";
 
 const tableStyles = {
-  outerDivClass: "border border-b-0 border-gray-300 w-full",
-  tableClass: "table-auto w-full",
-  theadRowClass:
-    "border-b border-gray-200 rounded-t-md uppercase bg-column-background",
-  theadHeaderClass:
-    "px-5 py-4 text-left text-xs font-medium text-gray-500 tracking-wider",
-  tbodyClass: "rounded-md",
+  tableClass: "table-auto w-full border-l border-r border-b",
+  theadHeaderClass: " tracking-wider",
   tbodyRowClass: "cursor-pointer text-sm",
-  tbodyDataClass: "whitespace-nowrap border-gray-300 border-b p-2"
+  tbodyDataClass: "whitespace-nowrap p-2"
 };
 
 export const DataTable = ({
@@ -29,19 +24,16 @@ export const DataTable = ({
     tableInstance;
 
   return (
-    <div className={tableStyles.outerDivClass} {...rest}>
+    <div {...rest}>
       <table
         className={clsx(tableStyles.tableClass, stickyHead && "relative")}
         style={tableStyle}
         {...getTableProps()}
       >
-        <thead
-          className={clsx(tableStyles.theadClass, stickyHead && "sticky top-0")}
-        >
+        <thead>
           {headerGroups.map((headerGroup) => (
             <tr
               key={headerGroup.getHeaderGroupProps().key}
-              className={tableStyles.theadRowClass}
               {...headerGroup.getHeaderGroupProps()}
             >
               {headerGroup.headers.map((column) => (
@@ -69,7 +61,7 @@ export const DataTable = ({
             </tr>
           ))}
         </thead>
-        <tbody className={tableStyles.tbodyClass} {...getTableBodyProps()}>
+        <tbody {...getTableBodyProps()}>
           {rows.map((row) => {
             prepareRow(row);
             return (
