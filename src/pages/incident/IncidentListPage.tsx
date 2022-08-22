@@ -10,8 +10,11 @@ import { Modal } from "../../components/Modal";
 import { SearchLayout } from "../../components/Layout";
 import { Loading } from "../../components/Loading";
 import { Dropdown } from "../../components/Dropdown";
-import { MultiSelectDropdown } from "../../components/MultiSelectDropdown";
-import { severityItems, statusItems } from "../../components/Incidents/data";
+import {
+  severityItems,
+  statusItems,
+  typeItems
+} from "../../components/Incidents/data";
 import { getPersons } from "../../api/services/users";
 import {
   IncidentState,
@@ -59,10 +62,11 @@ const removeNullValues = (obj) =>
     Object.entries(obj).filter(([_k, v]) => v !== null && v !== undefined)
   );
 
-const toPostgresqlSearchParam = ({ severity, status, owner }) => {
+const toPostgresqlSearchParam = ({ severity, status, owner, type }) => {
   const params = Object.entries({
     severity,
     status,
+    type,
     created_by: owner
   })
     .filter(([_k, v]) => v && v !== "all")
@@ -81,7 +85,9 @@ export function IncidentListPage() {
       status:
         searchParams.get("status") || Object.values(defaultSelections)[0].value,
       owner:
-        searchParams.get("owner") || Object.values(defaultSelections)[0].value
+        searchParams.get("owner") || Object.values(defaultSelections)[0].value,
+      type:
+        searchParams.get("type") || Object.values(defaultSelections)[0].value
     }
   });
   const [selectedLabels, setSelectedLabels] = useState([]);
@@ -99,6 +105,7 @@ export function IncidentListPage() {
   const watchSeverity = watch("severity");
   const watchStatus = watch("status");
   const watchOwner = watch("owner");
+  const watchType = watch("type");
 
   useEffect(() => {
     getPersons().then((res) => {
@@ -181,9 +188,10 @@ export function IncidentListPage() {
       severity: watchSeverity,
       status: watchStatus,
       owner: watchOwner,
+      type: watchType,
       labels: selectedLabels
     });
-  }, [watchSeverity, watchStatus, watchOwner, selectedLabels]);
+  }, [watchSeverity, watchStatus, watchOwner, watchType, selectedLabels]);
 
   return (
     <>
@@ -236,14 +244,21 @@ export function IncidentListPage() {
               />
             </div>
             <div className="flex items-center">
-              <div className="mr-3 text-gray-500 text-sm">Labels</div>
-              <MultiSelectDropdown
+              <div className="mr-3 text-gray-500 text-sm">Type</div>
+              <Dropdown
+                control={control}
+                label=""
+                name="type"
+                className="w-56"
+                items={{ ...defaultSelections, ...typeItems }}
+              />
+              {/* <MultiSelectDropdown
                 styles={labelDropdownStyles}
                 className="w-full"
                 options={mockLabels} // TODO: change this to actual labels fetched from API
                 onChange={(labels: string[]) => setSelectedLabels(labels)}
                 value={selectedLabels}
-              />
+              /> */}
             </div>
           </div>
         }
@@ -252,7 +267,14 @@ export function IncidentListPage() {
           <div className="flex-none flex-wrap space-x-2 space-y-2">
             <div className="max-w-screen-xl mx-auto flex flex-col justify-center">
               {!isLoading || Boolean(incidents?.length) ? (
-                <IncidentList list={incidents || []} />
+                <>
+                  <IncidentList list={incidents || []} />
+                  {!Boolean(incidents?.length) && (
+                    <div className="text-center text-base text-gray-500 w-full mt-2">
+                      There are no incidents matching this criteria
+                    </div>
+                  )}
+                </>
               ) : (
                 <Loading text="fetching incidents" />
               )}
@@ -268,7 +290,18 @@ export function IncidentListPage() {
         title="Create New Incident"
       >
         <IncidentCreate
-          callback={(response) => {
+          callback={(response: any) => {
+            if (!response) {
+              loadIncidents({
+                severity: watchSeverity,
+                status: watchStatus,
+                owner: watchOwner,
+                type: watchType,
+                labels: selectedLabels
+              });
+              setIncidentModalIsOpen(false);
+              return;
+            }
             navigate(`/incidents/${response.id}`, { replace: true });
           }}
         />

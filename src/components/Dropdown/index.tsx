@@ -72,9 +72,6 @@ export function Dropdown({
           render={({ field }) => {
             const { onChange: onChangeControlled, value: valueControlled } =
               field;
-            if (items[valueControlled] == null) {
-              return null;
-            }
             return (
               <DropdownListbox
                 onChange={onChangeControlled}
