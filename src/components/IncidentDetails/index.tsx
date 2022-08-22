@@ -72,7 +72,9 @@ export const IncidentDetails = ({
       statusPageTitle: "StatusPage.io",
       statusPage: "https://www.atlassian.com/software/statuspage",
       priority: incident.severity ?? IncidentPriority.High,
-      type: incident.type ?? typeItems.cost,
+      type: typeItems[incident.type]
+        ? incident.type
+        : typeItems.availability.value,
       commanders: incident.commander_id.id
     }
   });
@@ -95,8 +97,8 @@ export const IncidentDetails = ({
   );
 
   useEffect(() => {
-    const subscription = watch(({ priority }) => {
-      updateIncidentHandler({ severity: priority });
+    const subscription = watch(({ priority, type }) => {
+      updateIncidentHandler({ severity: priority, type });
     });
     return () => subscription.unsubscribe();
   }, [watch, updateIncidentHandler]);

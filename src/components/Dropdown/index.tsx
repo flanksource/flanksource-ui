@@ -72,10 +72,6 @@ export function Dropdown({
           render={({ field }) => {
             const { onChange: onChangeControlled, value: valueControlled } =
               field;
-            if (items[valueControlled] == null) {
-              console.warn(`control value doesn't exists in the items`);
-              return null;
-            }
             return (
               <DropdownListbox
                 onChange={onChangeControlled}
