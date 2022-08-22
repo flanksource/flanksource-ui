@@ -23,7 +23,7 @@ function AccordionBoxFC({ content, hiddenContent, ...rest }) {
           <button
             type="button"
             onClick={() => setShow(!show)}
-            className="flex items-center bg-white py-1 px-2 border border-gray-300 rounded-full shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            className="flex items-center bg-white py-1 px-2 border border-gray-300 rounded-full shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
             <span className="mx-1">{show ? "Show less" : "Show more"}</span>
             <ChevronDownIcon

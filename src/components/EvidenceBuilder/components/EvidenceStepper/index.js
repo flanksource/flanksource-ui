@@ -21,9 +21,9 @@ export function EvidenceStepper({ currentStep, steps, ...rest }) {
           >
             <div className="flex items-center">
               <div
-                className={`flex items-center justify-center border-2 w-10 h-10 rounded-full mr-4 overflow-hidden 
-                  ${isOver && "border-indigo-700 bg-indigo-700"}  
-                  ${isActive && "border-indigo-700"}  
+                className={`flex items-center justify-center border-2 w-10 h-10 rounded-full mr-4 overflow-hidden
+                  ${isOver && "border-blue-700 bg-blue-700"}
+                  ${isActive && "border-blue-700"}
                   ${isUpcoming && "border-gray-400"}
                 `}
               >
@@ -33,8 +33,8 @@ export function EvidenceStepper({ currentStep, steps, ...rest }) {
                   </div>
                 ) : (
                   <span
-                    className={`  
-                    ${isActive && "text-indigo-700"}  
+                    className={`
+                    ${isActive && "text-blue-700"}
                     ${isUpcoming && "text-gray-400"}
                   `}
                   >
@@ -44,9 +44,9 @@ export function EvidenceStepper({ currentStep, steps, ...rest }) {
               </div>
               <div className="flex flex-col">
                 <div
-                  className={`text-sm font-semibold uppercase 
-                    ${isOver && "text-gray-700"}  
-                    ${isActive && "text-indigo-700"}  
+                  className={`text-sm font-semibold uppercase
+                    ${isOver && "text-gray-700"}
+                    ${isActive && "text-blue-700"}
                     ${isUpcoming && "text-gray-400"}
                   `}
                 >

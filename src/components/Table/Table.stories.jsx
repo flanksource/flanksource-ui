@@ -12,7 +12,7 @@ const dataExample = [
     person: { name: "Hilary Mahy", href: "#" },
     tags: [
       { name: "Bug", href: "#", color: "bg-red-500" },
-      { name: "Accessibility", href: "#", color: "bg-indigo-500" }
+      { name: "Accessibility", href: "#", color: "bg-blue-500" }
     ],
     date: "6h ago"
   },
@@ -23,7 +23,7 @@ const dataExample = [
     assigned: { name: "Kristin Watson", href: "#" },
     tags: [
       { name: "Bug", href: "#", color: "bg-red-500" },
-      { name: "Accessibility", href: "#", color: "bg-indigo-500" }
+      { name: "Accessibility", href: "#", color: "bg-blue-500" }
     ],
     date: "2d ago"
   },
@@ -62,7 +62,7 @@ const dataExample = [
     person: { name: "Hilary Mahy", href: "#" },
     tags: [
       { name: "Bug", href: "#", color: "bg-red-500" },
-      { name: "Accessibility", href: "#", color: "bg-indigo-500" }
+      { name: "Accessibility", href: "#", color: "bg-blue-500" }
     ],
     date: "6h ago"
   }

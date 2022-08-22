@@ -7,7 +7,7 @@ const BadgeFC = ({
   dot,
   title,
   className,
-  colorClass = "bg-indigo-100 text-indigo-800",
+  colorClass = "bg-blue-100 text-blue-800",
   roundedClass = "rounded"
 }) => {
   let spanClassname = "text-xs px-1.5";
@@ -24,7 +24,7 @@ const BadgeFC = ({
       >
         {dot != null && (
           <svg
-            className={`${svgClassName} text-indigo-400" fill="${dot}" viewBox="0 0 8 8"`}
+            className={`${svgClassName} text-blue-400" fill="${dot}" viewBox="0 0 8 8"`}
           >
             <circle cx={4} cy={4} r={3} />
           </svg>

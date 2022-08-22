@@ -30,7 +30,7 @@ export const TimePickerInputFC = ({
 
   return (
     <div>
-      <div className="flex sm:text-sm border border-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500">
+      <div className="flex sm:text-sm border border-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-blue-500">
         <input
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}

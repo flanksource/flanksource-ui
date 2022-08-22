@@ -16,7 +16,7 @@ export const StepProgressBar = ({ steps, ...rest }: StepProgressBarProps) => {
         <li className="relative md:flex-1 md:flex" key={step.label}>
           <a href="#" className="group flex items-center w-full">
             <span className="px-6 py-1.5 flex items-center text-sm font-medium">
-              <span className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-indigo-600 rounded-full group-hover:bg-indigo-800">
+              <span className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-blue-600 rounded-full group-hover:bg-blue-800">
                 <svg
                   className="w-6 h-6 text-white"
                   xmlns="http://www.w3.org/2000/svg"
@@ -65,10 +65,10 @@ export const StepProgressBar = ({ steps, ...rest }: StepProgressBarProps) => {
             className="px-6 py-1.5 flex items-center text-sm font-medium"
             aria-current="step"
           >
-            <span className="flex-shrink-0 w-8 h-8 flex items-center justify-center border-2 border-indigo-600 rounded-full">
-              <span className="text-indigo-600">{step.position}</span>
+            <span className="flex-shrink-0 w-8 h-8 flex items-center justify-center border-2 border-blue-600 rounded-full">
+              <span className="text-blue-600">{step.position}</span>
             </span>
-            <span className="ml-4 text-sm font-medium text-indigo-600">
+            <span className="ml-4 text-sm font-medium text-blue-600">
               {step.label}
             </span>
           </a>

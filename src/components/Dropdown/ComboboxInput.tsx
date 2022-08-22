@@ -22,7 +22,7 @@ export function ComboboxInput<T>({
   return (
     <div className="bg-white cursor-default relative w-full">
       <Combobox.Input
-        className="border border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 leading-5 pl-3 pr-10 py-2 rounded-md shadow-sm text-gray-900 text-sm w-full"
+        className="border border-gray-300 focus:border-blue-500 focus:ring-blue-500 leading-5 pl-3 pr-10 py-2 rounded-md shadow-sm text-gray-900 text-sm w-full"
         displayValue={(value: T) => displayValue(value)}
         onChange={debouncedChangeFn}
       />

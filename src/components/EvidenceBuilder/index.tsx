@@ -44,7 +44,7 @@ export function EvidenceBuilder({ className, ...rest }: Props) {
           <button
             type="button"
             onClick={() => setCurrentStep(Math.max(currentStep - 1, 0))}
-            className="inline-flex items-center px-3 py-1 mb-1 border border-gray-300 text-sm font-medium rounded text-gray-500  hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            className="inline-flex items-center px-3 py-1 mb-1 border border-gray-300 text-sm font-medium rounded text-gray-500  hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
             Back
           </button>
@@ -52,7 +52,7 @@ export function EvidenceBuilder({ className, ...rest }: Props) {
         <button
           type="button"
           onClick={() => setCurrentStep(Math.min(currentStep + 1, 2))}
-          className="inline-flex items-center px-3 py-1 mb-1 border border-transparent text-sm font-medium rounded text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          className="inline-flex items-center px-3 py-1 mb-1 border border-transparent text-sm font-medium rounded text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
         >
           Next
         </button>

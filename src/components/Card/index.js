@@ -57,7 +57,7 @@ export function HorizontalCard({
       {cards.map((card) => (
         <div
           key={card.id}
-          className="relative mb-5 rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500"
+          className="relative mb-5 rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500"
         >
           {card.icon != null && (
             <div className="flex-shrink-0">
