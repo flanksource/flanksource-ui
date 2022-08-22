@@ -30,7 +30,7 @@ export function UserProfile() {
           <Menu.Button className="max-w-xs flex items-center text-sm rounded-full">
             <span className="sr-only">Open user menu</span>
 
-            {user.avatar ? (
+            {user?.avatar ? (
               <img
                 className="h-8 w-8 rounded-full"
                 src={user.avatar}
@@ -53,7 +53,7 @@ export function UserProfile() {
           <Menu.Items className="absolute bg-white focus:outline-none mt-2 opacity-100 origin-top-right right-0 ring-1 ring-black ring-opacity-5 rounded-md scale-100 shadow-lg shadow-md transform w-48">
             <Menu.Item>
               <span className="bg-slate-300 block bold border-0 border-b border-gray-400 broder-black px-4 py-2 rounded-t-md text-gray-600 text-lg">
-                Hi <b>{user.name}</b>
+                Hi <b>{user?.name}</b>
               </span>
             </Menu.Item>
             <Menu.Item>

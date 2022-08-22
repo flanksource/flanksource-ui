@@ -1,10 +1,10 @@
 import { useForm } from "react-hook-form";
 import { AddResponderFormValues } from "../../AddResponder";
-import { Microsoft } from "./index";
+import { MicrosoftPlanner } from "./index";
 
 export default {
-  title: "Microsoft",
-  component: Microsoft
+  title: "MicrosoftPlanner",
+  component: MicrosoftPlanner
 };
 
 const FormContainer = () => {
@@ -39,7 +39,7 @@ const FormContainer = () => {
   };
   return (
     <div className="flex flex-col">
-      <Microsoft control={control} errors={errors} setValue={setValue} />
+      <MicrosoftPlanner control={control} errors={errors} setValue={setValue} />
       <div className="flex flex-row">
         <button className="btn-secondary p-2 m-2" onClick={(e) => reset()}>
           reset

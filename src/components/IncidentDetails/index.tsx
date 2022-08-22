@@ -72,9 +72,7 @@ export const IncidentDetails = ({
       statusPageTitle: "StatusPage.io",
       statusPage: "https://www.atlassian.com/software/statuspage",
       priority: incident.severity ?? IncidentPriority.High,
-      type: typeItems[incident.type]
-        ? incident.type
-        : typeItems.availability.value,
+      type: typeItems[incident.type] ? incident.type : "",
       commanders: incident.commander_id.id
     }
   });
