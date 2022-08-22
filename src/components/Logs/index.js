@@ -10,7 +10,7 @@ export const LogsViewer = React.memo(function LogsViewer({ logs }) {
 
   return (
     <>
-      <div
+      {/* <div
         className="inline-flex shadow-md hover:shadow-lg focus:shadow-lg mb-4"
         role="group"
       >
@@ -28,7 +28,7 @@ export const LogsViewer = React.memo(function LogsViewer({ logs }) {
         >
           Compact
         </button>
-      </div>
+      </div> */}
       <LogsTable logs={logs} variant={variant} />
     </>
   );

@@ -88,13 +88,9 @@ const validationSchema = yup
         value: yup.string().nullable(),
         description: yup.string()
       })
-      .test(
-        "is-incident",
-        "Please search and select an incident or fill title to create one.",
-        (incident) => {
-          return Boolean(incident?.value || incident?.description);
-        }
-      ),
+      .test("is-incident", "Must select or create an incident", (incident) => {
+        return Boolean(incident?.value || incident?.description);
+      }),
     hypothesis: yup
       .object()
       .shape({
@@ -104,18 +100,14 @@ const validationSchema = yup
       .when("incident", (incident) => {
         if (!incident?.value) {
           return yup.object().shape({
-            description: yup
-              .string()
-              .required("Please fill a title for the hypothesis.")
+            description: yup.string().required("Must specify a hypothesis")
           });
         }
         return yup.object().shape({
           value: yup.string().nullable(),
           description: yup
             .string()
-            .required(
-              "Please select a hypothesis or fill title to create a new one."
-            )
+            .required("Must select or create a hypothesis")
         });
       }),
     severity: yup.number().when("incident.value", (value) => {
@@ -272,16 +264,17 @@ export function AttachEvidenceDialog({
       .then(() => {
         toastSuccess(
           <div>
-            Evidence was attached successfully.{" "}
+            Attached to{" "}
             <Link
-              className="underline text-blue-600 hover:text-blue-800 visited:text-purple-600"
+              className="underline text-blue-600 hover:text-blue-800 visited:text-blue-600"
               to={`/incidents/${incidentId}`}
             >
-              Click to open incident
-            </Link>
-            .
+              {" "}
+              incident
+            </Link>{" "}
+            successfully
           </div>,
-          { position: "top-center", duration: 10000 }
+          { position: "top-right", duration: 5000 }
         );
         callback(true);
       })

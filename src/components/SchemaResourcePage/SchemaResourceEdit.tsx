@@ -109,8 +109,7 @@ export function SchemaResourceEdit({
               render={({ field: { onChange, value } }) => {
                 return (
                   <TextInput
-                    label={`${resourceName} name`}
-                    placeholder={`${resourceName} name`}
+                    label="Name"
                     id="name"
                     disabled={disabled}
                     className="w-full"
@@ -198,12 +197,9 @@ export function SchemaResourceEdit({
                 Cancel
               </button>
 
-              <input
-                disabled={disabled}
-                className="btn-primary"
-                type="submit"
-                value="Save"
-              />
+              <button disabled={disabled} className="btn-primary" type="submit">
+                Save
+              </button>
             </div>
           ) : (
             !!id && (
