@@ -13,13 +13,13 @@ interface ConfigItem {
 // Config Items
 
 export const getAllConfigs = () =>
-  resolve<ConfigItem[]>(ConfigDB.get(`/config_item`));
+  resolve<ConfigItem[]>(ConfigDB.get(`/configs`));
 
 export const getAllChanges = () =>
   resolve(ConfigDB.get(`/config_change?order=created_at.desc`));
 
 export const getConfig = (id: string) =>
-  resolve<ConfigItem[]>(ConfigDB.get(`/config_item?id=eq.${id}`));
+  resolve<ConfigItem[]>(ConfigDB.get(`/configs?id=eq.${id}`));
 
 export const getConfigChange = (id: string) =>
   resolve(
@@ -29,7 +29,7 @@ export const getConfigChange = (id: string) =>
 export const searchConfigs = (type: string, input: string) =>
   resolve<ConfigItem[]>(
     ConfigDB.get(
-      `/config_item?select=id,external_id,name,config_type&config_type=ilike.${type}&or=(name.ilike.*${input}*,external_id.ilike.*${input}*)`
+      `/configs?select=id,external_id,name,config_type&config_type=ilike.${type}&or=(name.ilike.*${input}*,external_id.ilike.*${input}*)`
     )
   );
 
