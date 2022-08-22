@@ -120,7 +120,7 @@ export function HypothesisBar({
   return (
     <div
       className={clsx(
-        "relative w-full flex justify-between shadow-lg rounded-8px border focus:outline-none bg-zinc-100 cursor-pointer space-x-2",
+        "relative w-full flex justify-between shadow-md bg-white rounded-8px border focus:outline-non cursor-pointer space-x-2",
         deleting && "pointer-events-none cursor-not-allowed blur-[2px]"
       )}
     >
