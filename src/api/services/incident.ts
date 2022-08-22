@@ -16,16 +16,12 @@ export enum IncidentStatus {
   Closed = "closed"
 }
 
-export enum IncidentType {
-  Issue = "issue"
-}
-
 export interface NewIncident {
   title: string;
   description: string;
 
   severity: IncidentSeverity;
-  type?: IncidentType;
+  type?: string;
   status?: IncidentStatus;
 
   created_by: string;
@@ -101,7 +97,7 @@ export const createIncident = async (
 ) => {
   const params = {
     ...incidents,
-    type: incidents.type ?? IncidentType.Issue,
+    type: incidents.type,
     status: incidents.status ?? IncidentStatus.Open,
     created_by: user.id,
     commander_id: user.id,

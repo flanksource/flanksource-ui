@@ -28,6 +28,8 @@ import { IncidentSeverityTag } from "../IncidentSeverityTag";
 import { IItem } from "../../types/IItem";
 import { toastSuccess } from "../Toast/toast";
 import { Link } from "react-router-dom";
+import { typeItems } from "../Incidents/data";
+import { Dropdown } from "../Dropdown";
 
 interface Props {
   title: string;
@@ -59,12 +61,14 @@ interface IExtendedItem extends IItem {
     rootId: string;
     severity: IncidentSeverity;
     status: IncidentStatus;
+    type: string;
   };
 }
 
 interface IFormValues {
   title: string;
   severity: IncidentSeverity;
+  type: string;
   incident?: IExtendedItem;
   hypothesis?: IItem;
   description?: string;
@@ -124,7 +128,8 @@ const validationSchema = yup
             IncidentSeverity.High
           ]);
       return yup.number().nullable();
-    })
+    }),
+    type: yup.string().required("Please select an incident type")
   })
   .required();
 
@@ -153,6 +158,7 @@ export function AttachEvidenceDialog({
         value: null,
         description: ""
       },
+      type: typeItems.availability.value,
       severity: IncidentSeverity.Low
     },
     resolver: yupResolver(validationSchema)
@@ -178,6 +184,7 @@ export function AttachEvidenceDialog({
         details: {
           rootId: x.hypothesis?.find((h: Hypothesis) => h.type === "root")?.id,
           status: x.status,
+          type: x.type,
           severity: x.severity
         }
       }));
@@ -214,6 +221,7 @@ export function AttachEvidenceDialog({
       const { data: incidentResp, error } = await createIncident(user, {
         title: incidentData?.description || "",
         severity: data.severity,
+        type: data.type,
         description: ""
       });
 
@@ -342,6 +350,25 @@ export function AttachEvidenceDialog({
                 )}
               />
               <p className="text-red-600 text-sm">{errors.incident?.message}</p>
+              {!selectedIncident?.value && (
+                <div className="space-y-2 pt-4">
+                  <div className="flex flex-col">
+                    <span className="text-sm font-bold text-gray-700 mb-1 mr-4 w-16">
+                      Type
+                    </span>
+                    <Dropdown
+                      name="type"
+                      label=""
+                      className="w-full"
+                      control={control}
+                      items={typeItems}
+                    />
+                    <p className="text-red-600 text-sm">
+                      {errors.type?.message}
+                    </p>
+                  </div>
+                </div>
+              )}
               {!selectedIncident?.value && (
                 <div className="space-y-2 pt-4 pl-2">
                   <div className="flex flex-col">
