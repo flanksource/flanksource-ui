@@ -44,7 +44,7 @@ export function IncidentCreate({ callback, evidence, ...rest }) {
       // tracking: "",
       severity: 0,
       status: "open",
-      type: "cost"
+      type: "availability"
     },
     resolver: yupResolver(validationSchema)
   });
@@ -120,6 +120,16 @@ export function IncidentCreate({ callback, evidence, ...rest }) {
   return (
     <div className={`max-w-prose py-7 ${rest.className || ""}`} {...rest}>
       <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="mb-4">
+          <Dropdown
+            control={control}
+            label="Type"
+            name="type"
+            className="w-full"
+            items={typeItems}
+          />
+          <p className="text-red-600 text-sm">{errors.type?.message}</p>
+        </div>
         <div className="mb-4">
           <Controller
             control={control}
@@ -219,16 +229,7 @@ export function IncidentCreate({ callback, evidence, ...rest }) {
           />
           <p className="text-red-600 text-sm">{errors.tracking?.message}</p>
         </div> */}
-        <div className="mb-4">
-          <Dropdown
-            control={control}
-            label="Type"
-            name="type"
-            className="w-full"
-            items={typeItems}
-          />
-          <p className="text-red-600 text-sm">{errors.type?.message}</p>
-        </div>
+
         <div className="mb-4">
           <Dropdown
             control={control}
