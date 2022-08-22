@@ -16,20 +16,20 @@ export const getAllConfigs = () =>
   resolve<ConfigItem[]>(ConfigDB.get(`/configs`));
 
 export const getAllChanges = () =>
-  resolve(ConfigDB.get(`/config_change?order=created_at.desc`));
+  resolve(ConfigDB.get(`/config_changes?order=created_at.desc`));
 
 export const getConfig = (id: string) =>
   resolve<ConfigItem[]>(ConfigDB.get(`/configs?id=eq.${id}`));
 
 export const getConfigChange = (id: string) =>
   resolve(
-    ConfigDB.get(`/config_change?config_id=eq.${id}&order=created_at.desc`)
+    ConfigDB.get(`/config_changes?config_id=eq.${id}&order=created_at.desc`)
   );
 
 export const searchConfigs = (type: string, input: string) =>
   resolve<ConfigItem[]>(
     ConfigDB.get(
-      `/configs?select=id,external_id,name,config_type&config_type=ilike.${type}&or=(name.ilike.*${input}*,external_id.ilike.*${input}*)`
+      `/configs?select=id,external_id,name,config_type,analysis,changes&config_type=ilike.${type}&or=(name.ilike.*${input}*,external_id.ilike.*${input}*)`
     )
   );
 
