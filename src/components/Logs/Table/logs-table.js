@@ -43,19 +43,15 @@ export const LogsTable = ({ logs: logsParam, actions, variant, viewOnly }) => {
         accessor: "timestamp",
         Cell: function timestampCell({ cell: { row } }) {
           return (
-            <div className="min-w-max flex flex-row items-center">
-              {variant === "comfortable" && !viewOnly ? (
+            <div className="min-w-max flex flex-row text-left">
+              {variant === "comfortable" && !viewOnly && (
                 <div className="mr-1.5">
                   <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
-                </div>
-              ) : (
-                <div className="mr-2.5">
-                  <BsFillBarChartFill className="text-dark-blue text-base" />
                 </div>
               )}
               <p>
                 {dayjs(row.original.timestamp).format(
-                  "MMM DD, YYYY HH:mm.ss.SSS"
+                  "YYYY-MM-DD HH:mm.ss.SSS"
                 )}
               </p>
             </div>
@@ -81,7 +77,7 @@ export const LogsTable = ({ logs: logsParam, actions, variant, viewOnly }) => {
                         setAttachAsAsset(true);
                       }}
                       className={clsx(
-                        hasSelectedRows ? "btn-primary" : "btn-disabled"
+                        hasSelectedRows ? "btn-primary" : "hidden"
                       )}
                     >
                       Attach as Evidence
@@ -189,7 +185,7 @@ export const LogsTable = ({ logs: logsParam, actions, variant, viewOnly }) => {
 LogsTable.propTypes = {
   logs: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
   actions: PropTypes.arrayOf(PropTypes.shape({})),
-  variant: PropTypes.oneOf(["comfortable", "compact"])
+  variant: PropTypes.oneOf(["comfortable", "compact", ""])
 };
 LogsTable.defaultProps = {
   actions: [],

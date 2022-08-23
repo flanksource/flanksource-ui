@@ -559,7 +559,7 @@ export const TristateLabels = ({ labels = [] }) => {
 
 const SectionTitle = ({ className, children, ...props }) => (
   <div
-    className={`uppercase font-semibold text-sm mb-3 text-indigo-700 ${className}`}
+    className={`uppercase font-semibold text-sm mb-3 text-blue-700 ${className}`}
     {...props}
   >
     {children}

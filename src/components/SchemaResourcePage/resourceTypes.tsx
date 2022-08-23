@@ -30,7 +30,7 @@ export const schemaResourceTypes = [
   },
   {
     name: "Config Scraper",
-    table: "config_scraper",
+    table: "config_scrapers",
     api: "config-db",
     icon: SearchInListIcon,
     supportsIcon: false

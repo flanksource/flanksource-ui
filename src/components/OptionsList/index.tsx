@@ -46,9 +46,7 @@ export const OptionsList = ({
           <label
             className={clsx(
               "rounded-tl-md rounded-tr-md relative border-0 border-b p-4 flex cursor-pointer focus:outline-none",
-              selectedOption === option
-                ? "bg-indigo-50 z-10"
-                : "border-gray-200"
+              selectedOption === option ? "bg-blue-50 z-10" : "border-gray-200"
             )}
             key={index}
             onClick={(e) => optionSelect(option)}
@@ -57,7 +55,7 @@ export const OptionsList = ({
               type="radio"
               name={name}
               value={option.value}
-              className="h-4 w-4 mt-0.5 cursor-pointer shrink-0 text-indigo-600 border-gray-300 focus:ring-indigo-500 hidden"
+              className="h-4 w-4 mt-0.5 cursor-pointer shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500 hidden"
               aria-labelledby={`name-${index}-label`}
               aria-describedby={`name-${index}-description`}
             />
@@ -72,7 +70,7 @@ export const OptionsList = ({
                 id={`name-${index}-label`}
                 className={clsx(
                   "block text-sm font-medium",
-                  selectedOption === value ? "text-indigo-900" : "text-gray-900"
+                  selectedOption === value ? "text-blue-900" : "text-gray-900"
                 )}
               >
                 {option.label}
@@ -81,7 +79,7 @@ export const OptionsList = ({
                 id={`name-${index}-description`}
                 className={clsx(
                   "block text-sm",
-                  selectedOption === value ? "text-indigo-700" : "text-gray-500"
+                  selectedOption === value ? "text-blue-700" : "text-gray-500"
                 )}
               >
                 {option.description}

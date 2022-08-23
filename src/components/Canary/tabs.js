@@ -141,7 +141,7 @@ export function Tabs({ tabs, value, onClick, className, ...rest }) {
             borderBottomColor: tab.value === value ? "white" : ""
           }}
           className={classNames(
-            tab.value === value ? "text-gray-900" : "text-gray-500",
+            tab.value === value ? "text-gray-900 bg-white" : "text-gray-500",
             "px-4 py-2 font-medium text-sm rounded-t-md border border-gray-300 hover:text-gray-900"
           )}
         >

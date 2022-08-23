@@ -139,8 +139,8 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
                 className="text-gray underline flex justify-center items-end cursor-pointer pb-4"
                 onClick={handlerOpenCreateHypothesisModal}
               >
-                <AiOutlinePlusCircle />
-                <span className="pl-2 text-sm block">
+                <AiOutlinePlusCircle color="text-gray-600" />
+                <span className="pl-1 text-sm block text-gray-600 ">
                   Add {getHypothesisChildType(node?.type)}
                 </span>
               </div>

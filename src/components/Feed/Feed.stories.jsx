@@ -13,7 +13,7 @@ const activity = [
     person: { name: "Hilary Mahy", href: "#" },
     tags: [
       { name: "Bug", href: "#", color: "bg-red-500" },
-      { name: "Accessibility", href: "#", color: "bg-indigo-500" }
+      { name: "Accessibility", href: "#", color: "bg-blue-500" }
     ],
     date: "6h ago"
   },
@@ -24,7 +24,7 @@ const activity = [
     assigned: { name: "Kristin Watson", href: "#" },
     tags: [
       { name: "Bug", href: "#", color: "bg-red-500" },
-      { name: "Accessibility", href: "#", color: "bg-indigo-500" }
+      { name: "Accessibility", href: "#", color: "bg-blue-500" }
     ],
     date: "2d ago"
   },
@@ -63,7 +63,7 @@ const activity = [
     person: { name: "Hilary Mahy", href: "#" },
     tags: [
       { name: "Bug", href: "#", color: "bg-red-500" },
-      { name: "Accessibility", href: "#", color: "bg-indigo-500" }
+      { name: "Accessibility", href: "#", color: "bg-blue-500" }
     ],
     date: "6h ago"
   },
@@ -78,7 +78,7 @@ const activity = [
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Tincidunt nunc ipsum tempor purus vitae id. Morbi in vestibulum nec varius. Et diam cursus quis sed purus nam. Scelerisque amet elit non sit ut tincidunt condimentum. Nisl ultrices eu venenatis diam.",
     tags: [
       { name: "Bug", href: "#", color: "bg-red-500" },
-      { name: "Accessibility", href: "#", color: "bg-indigo-500" }
+      { name: "Accessibility", href: "#", color: "bg-blue-500" }
     ],
     date: "2h ago"
   }

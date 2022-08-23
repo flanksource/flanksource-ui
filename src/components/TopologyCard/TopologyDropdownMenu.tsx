@@ -26,13 +26,13 @@ export const TopologyDropdownMenu = ({ topology }: IProps) => {
           {topology.external_id && (
             <Menu.Item as="button" onClick={viewLogs}>
               <MdTableRows />
-              <span className="pl-2 text-sm block">View Logs</span>
+              <span className="pl-1 text-sm block">View Logs</span>
             </Menu.Item>
           )}
 
           <Menu.Item as="button" onClick={() => setAttachAsAsset(true)}>
             <MdAlarmAdd />
-            <span className="pl-2 text-sm block">Attach as evidence</span>
+            <span className="pl-1 text-sm block">Attach as evidence</span>
           </Menu.Item>
 
           <Menu.Item>
@@ -41,7 +41,7 @@ export const TopologyDropdownMenu = ({ topology }: IProps) => {
               className="flex items-center w-full"
             >
               <BiZoomIn />
-              <span className="pl-2 text-sm block">Zoom In</span>
+              <span className="pl-1 text-sm block">Zoom In</span>
             </Link>
           </Menu.Item>
 
@@ -51,7 +51,7 @@ export const TopologyDropdownMenu = ({ topology }: IProps) => {
               className="flex items-center w-full"
             >
               <BiHide />
-              <span className="pl-2 text-sm block">Hide</span>
+              <span className="pl-1 text-sm block">Hide</span>
             </Link>
           </Menu.Item>
         </Menu.Items>

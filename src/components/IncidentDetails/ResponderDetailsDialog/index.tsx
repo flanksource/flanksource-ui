@@ -73,7 +73,7 @@ export function ResponderDetailsDialog({
     }
     if (responder?.json?.[key]) {
       return (
-        <span className="w-7 h-7 flex items-center justify-center bg-indigo-600 rounded-full">
+        <span className="w-7 h-7 flex items-center justify-center bg-blue-600 rounded-full">
           <svg
             className="w-6 h-6 text-white"
             xmlns="http://www.w3.org/2000/svg"
@@ -91,8 +91,8 @@ export function ResponderDetailsDialog({
       );
     }
     return (
-      <span className="w-7 h-7 flex items-center justify-center border-2 border-indigo-600 rounded-full">
-        <span className="text-indigo-600">{step}</span>
+      <span className="w-7 h-7 flex items-center justify-center border-2 border-blue-600 rounded-full">
+        <span className="text-blue-600">{step}</span>
       </span>
     );
   };
@@ -145,7 +145,7 @@ export function ResponderDetailsDialog({
                         <a href="#" className="group">
                           <span className="px-2 py-2 flex items-start text-sm font-medium">
                             <span className="flex-shrink-0">
-                              <span className="w-7 h-7 flex items-center justify-center bg-indigo-600 rounded-full">
+                              <span className="w-7 h-7 flex items-center justify-center bg-blue-600 rounded-full">
                                 <svg
                                   className="w-6 h-6 text-white"
                                   xmlns="http://www.w3.org/2000/svg"
@@ -180,7 +180,7 @@ export function ResponderDetailsDialog({
                         <a href="#" aria-current="step">
                           {currentStageKey() === "acknowledge_time" && (
                             <span
-                              className="absolute top-0 left-0 w-1 h-full bg-indigo-600 lg:w-full lg:h-1 lg:bottom-0 lg:top-auto"
+                              className="absolute top-0 left-0 w-1 h-full bg-blue-600 lg:w-full lg:h-1 lg:bottom-0 lg:top-auto"
                               aria-hidden="true"
                             ></span>
                           )}
@@ -189,7 +189,7 @@ export function ResponderDetailsDialog({
                               {getStepElement("acknowledge_time", "02")}
                             </span>
                             <span className="mt-0.5 ml-2 min-w-0 flex flex-col">
-                              <span className="text-xs font-semibold text-indigo-600 tracking-wide">
+                              <span className="text-xs font-semibold text-blue-600 tracking-wide">
                                 Acknowledged
                               </span>
                               <span className="text-xs font-medium text-gray-500">
@@ -225,7 +225,7 @@ export function ResponderDetailsDialog({
                         <a href="#" className="group">
                           {currentStageKey() === "signoff_time" && (
                             <span
-                              className="absolute top-0 left-0 w-1 h-full bg-indigo-600 group-hover:bg-gray-200 lg:w-full lg:h-1 lg:bottom-0 lg:top-auto"
+                              className="absolute top-0 left-0 w-1 h-full bg-blue-600 group-hover:bg-gray-200 lg:w-full lg:h-1 lg:bottom-0 lg:top-auto"
                               aria-hidden="true"
                             ></span>
                           )}
@@ -270,7 +270,7 @@ export function ResponderDetailsDialog({
                         <a href="#" className="group">
                           {currentStageKey() === "close_time" && (
                             <span
-                              className="absolute top-0 left-0 w-1 h-full bg-indigo-600 group-hover:bg-gray-200 lg:w-full lg:h-1 lg:bottom-0 lg:top-auto"
+                              className="absolute top-0 left-0 w-1 h-full bg-blue-600 group-hover:bg-gray-200 lg:w-full lg:h-1 lg:bottom-0 lg:top-auto"
                               aria-hidden="true"
                             ></span>
                           )}

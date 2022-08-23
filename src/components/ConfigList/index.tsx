@@ -14,31 +14,27 @@ interface TableCols {
 const columns: TableCols[] = [
   {
     Header: "Type",
-    accessor: "config_type",
-    cellClass: "px-5 py-2"
+    accessor: "config_type"
   },
   {
     Header: "Name",
-    accessor: "name",
-    cellClass: "px-5 py-2"
+    accessor: "name"
   },
   {
     Header: "Tags",
     accessor: "tags",
     Cell: TagsCell,
-    cellClass: "px-5 py-2 overflow-auto"
+    cellClass: "overflow-auto"
   },
   {
     Header: "Created",
     accessor: "created_at",
-    Cell: DateCell,
-    cellClass: "px-5 py-2"
+    Cell: DateCell
   },
   {
     Header: "Last Updated",
     accessor: "updated_at",
-    Cell: DateCell,
-    cellClass: "px-5 py-2"
+    Cell: DateCell
   }
 ];
 

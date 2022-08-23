@@ -137,7 +137,7 @@ export function ConfigDetailsPage() {
 
   return (
     <div className="flex flex-col items-start">
-      <div className="flex flex-col w-full border rounded-md rounded-tl-none">
+      <div className="flex flex-col w-full border-l border-r rounded-md shadow-lg">
         {!isLoading ? (
           <JSONViewer
             code={code}

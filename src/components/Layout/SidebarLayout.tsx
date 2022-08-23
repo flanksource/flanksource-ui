@@ -70,7 +70,7 @@ const NavItemWrapper = (props: NavItemWrapperProps) => {
       active || isActive
         ? "bg-gray-800 text-gray-100"
         : "text-gray-200 hover:bg-gray-800 hover:text-gray-100",
-      "group rounded-md py-3 px-2 flex items-center text-sm font-medium",
+      "group rounded-md py-3 px-2 flex items-center text-md font-medium",
       className
     );
   return Component === "div" ? (
@@ -127,7 +127,7 @@ function SideNavGroup({
             <NavLabel icon={icon} active={current} iconOnly name={name} />
           </NavItemWrapper>
         </Menu.Button>
-        <Menu.Items className="absolute border left-0 ml-12 w-48 shadow-md top-0 z-10 bg-gray-700 space-y-1">
+        <Menu.Items className="absolute border left-0 ml-12 w-48 shadow-md top-0 z-10 bg-gray-800 space-y-1">
           {submenu.map(({ name, icon, href }) => (
             <Menu.Item key={name}>
               {({ active }) => (
