@@ -12,7 +12,15 @@ export const getTopology = async (params: IParam) => {
   return { data: data || [] };
 };
 
-export const getTopologyWithoutUnroll = async (params) => {
+export const getTopologyWithoutUnroll = async (params: {
+  [key: string]: string;
+}) => {
+  if (params.type === "All") {
+    delete params.type;
+  }
+  if (params.owner === "All") {
+    delete params.owner;
+  }
   const query = stringify(params);
   return await CanaryChecker.get(`/api/topology?${query}`).then((results) => {
     let { data } = results;
