@@ -38,6 +38,12 @@ export function TopologyBreadcrumbs({
     }
   }, [_topology, topologyId]);
 
+  useEffect(() => {
+    if (!topologyId) {
+      setTopology(null);
+    }
+  }, [topologyId]);
+
   if (loading) {
     return <Loading text=".." />;
   }

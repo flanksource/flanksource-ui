@@ -1,5 +1,5 @@
 import qs from "qs";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import { getTopology, getTopologyComponents } from "../api/services/topology";
 import { SearchLayout } from "../components/Layout";
@@ -11,6 +11,9 @@ import { useLoader } from "../hooks";
 import { useTopologyPageContext } from "../context/TopologyPageContext";
 import { Dropdown } from "../components";
 import { SearchSelectTag } from "../components/SearchSelectTag";
+import { BiCog } from "react-icons/bi";
+import clsx from "clsx";
+import { searchParamsToObj } from "../utils/common";
 
 const allOption = {
   All: {
@@ -21,22 +24,53 @@ const allOption = {
   }
 };
 
-export function TopologyPage() {
-  const { loading, setLoading } = useLoader();
-  const { topologyState, setTopologyState } = useTopologyPageContext();
-  const [size, setSize] = useState(() => getCardWidth());
-  const [topologyType, setTopologyType] = useState("All");
-  const [topologyLabels, setTopologyLabels] = useState([]);
-  const [selectedLabel, setSelectedLabel] = useState("");
-  const [owner, setOwner] = useState("All");
-  const [owners, setOwners] = useState<any>({});
-  const [topologyTypes, setTopologyTypes] = useState<any>({});
-  const topology = topologyState.topology;
+const healthTypes = {
+  ...allOption,
+  healthy: {
+    id: "healthy",
+    name: "Healthy",
+    description: "Healthy",
+    value: "healthy"
+  },
+  unhealthy: {
+    id: "unhealthy",
+    name: "Unhealthy",
+    description: "Unhealthy",
+    value: "unhealthy"
+  },
+  warning: {
+    id: "warning",
+    name: "Warning",
+    description: "Warning",
+    value: "warning"
+  }
+};
 
+export function TopologyPage() {
+  const { topologyState, setTopologyState } = useTopologyPageContext();
   const [searchParams, setSearchParams] = useSearchParams(
     topologyState?.searchParams
   );
+  const { loading, setLoading } = useLoader();
+  const [size, setSize] = useState(() => getCardWidth());
+  const [topologyType, setTopologyType] = useState(
+    searchParams.get("type") ? searchParams.get("type") : "All"
+  );
+  const [topologyLabels, setTopologyLabels] = useState([]);
+  const [selectedLabel, setSelectedLabel] = useState("");
+  const [healthStatus, setHealthStatus] = useState(
+    searchParams.get("status") ? searchParams.get("status") : "All"
+  );
+  const [owner, setOwner] = useState(
+    searchParams.get("owner") ? searchParams.get("owner") : "All"
+  );
+  const [owners, setOwners] = useState<any>({});
+  const [topologyTypes, setTopologyTypes] = useState<any>({});
+  const [showPreferences, setShowPreferences] = useState(false);
+  const preferencesRef = useRef();
   const { id } = useParams();
+
+  const topology = topologyState.topology;
 
   const load = async () => {
     const params = qs.parse(searchParams.toString());
@@ -132,7 +166,41 @@ export function TopologyPage() {
   useEffect(() => {
     load();
     fetchComponents();
+    setHealthStatus(searchParams.get("status") ?? "All");
+    setTopologyType(searchParams.get("type") ?? "All");
+    setOwner(searchParams.get("owner") ?? "All");
   }, [searchParams, id]);
+
+  useEffect(() => {
+    preselectSelectedLabels();
+  }, [searchParams, topologyLabels]);
+
+  useEffect(() => {
+    const listener = (event: MouseEvent) => {
+      if (preferencesRef.current?.contains(event.target)) {
+        return;
+      }
+      setShowPreferences(false);
+    };
+    document.addEventListener("click", listener);
+    return () => {
+      document.removeEventListener("click", listener);
+    };
+  }, []);
+
+  const preselectSelectedLabels = () => {
+    let value = searchParams.get("labels") ?? "All";
+    if (value === "All") {
+      setSelectedLabel(value);
+      return;
+    }
+    const values: string[] = decodeURIComponent(value).split("=");
+    const selectedOption = topologyLabels.find((item: any) => {
+      return item.toString() === values.toString();
+    });
+    value = selectedOption?.[0] + "__:__" + selectedOption?.[1];
+    setSelectedLabel(value);
+  };
 
   const setCardWidth = (width) => {
     setSize(`${width}px`);
@@ -168,27 +236,27 @@ export function TopologyPage() {
     >
       <>
         <div className="flex">
-          <div className="flex flex-1 pt-8">
-            <label
-              htmlFor="topology-card-width-slider"
-              className="inline-block mr-3 text-gray-500 text-sm"
-            >
-              Card Width:
-            </label>
-            <input
-              id="topology-card-width-slider"
-              type="range"
-              min="250"
-              max="768"
-              step={2}
-              value={parseInt(size, 10)}
-              onChange={(e) => setCardWidth(e.target.value)}
-              className="w-64 rounded-lg cursor-pointer mb-10 inline-block"
-            />
-          </div>
-          <div className="flex flex-1 justify-end">
-            <div className="flex-1">
-              <label className="inline-block mr-3 text-gray-500 text-sm">
+          <div className="flex flex-1">
+            <div className="flex">
+              <label className="inline-block mr-3 text-gray-500 text-sm pt-1">
+                Health:
+              </label>
+              <Dropdown
+                items={healthTypes}
+                onChange={(val: any) => {
+                  setHealthStatus(val);
+                  setSearchParams({
+                    ...searchParamsToObj(searchParams),
+                    status: val
+                  });
+                }}
+                label=""
+                className="w-36 inline-block"
+                value={healthStatus}
+              />
+            </div>
+            <div className="flex ml-3">
+              <label className="inline-block mr-3 text-gray-500 text-sm pt-1">
                 Type:
               </label>
               <Dropdown
@@ -196,17 +264,17 @@ export function TopologyPage() {
                 onChange={(val: any) => {
                   setTopologyType(val);
                   setSearchParams({
-                    ...searchParams,
+                    ...searchParamsToObj(searchParams),
                     type: val
                   });
                 }}
                 label=""
-                className="w-64 inline-block"
+                className="w-36 inline-block"
                 value={topologyType}
               />
             </div>
-            <div className="flex-1 ml-3">
-              <label className="inline-block mr-3 text-gray-500 text-sm">
+            <div className="flex ml-3">
+              <label className="inline-block mr-3 text-gray-500 text-sm pt-1">
                 Owner:
               </label>
               <Dropdown
@@ -214,28 +282,30 @@ export function TopologyPage() {
                 onChange={(val: any) => {
                   setOwner(val);
                   setSearchParams({
-                    ...searchParams,
+                    ...searchParamsToObj(searchParams),
                     owner: val
                   });
                 }}
                 label=""
-                className="w-64 inline-block"
+                className="w-36 inline-block"
                 value={owner}
               />
             </div>
-            <div className="flex-1 ml-3">
-              {id && (
+            <div className="flex ml-3">
+              {Boolean(topologyLabels.length) && (
                 <>
-                  <label className="inline-block mr-3 text-gray-500 text-sm">
+                  <label className="inline-block mr-3 text-gray-500 text-sm pt-1">
                     Labels:
                   </label>
                   <SearchSelectTag
+                    className="w-80 inline-block"
                     tags={topologyLabels}
                     value={selectedLabel}
                     onChange={(tag: any) => {
                       setSelectedLabel(tag);
+                      console.log(tag);
                       setSearchParams({
-                        ...searchParams,
+                        ...searchParamsToObj(searchParams),
                         labels:
                           tag.data.length > 0
                             ? `${encodeURIComponent(
@@ -247,6 +317,56 @@ export function TopologyPage() {
                   />
                 </>
               )}
+            </div>
+          </div>
+          <div className="flex flex-1 justify-end">
+            <div
+              className="relative inline-block text-left"
+              ref={preferencesRef}
+            >
+              <div>
+                <BiCog
+                  className="content-center cursor-pointer"
+                  onClick={(e) => {
+                    setShowPreferences((val) => !val);
+                  }}
+                />
+              </div>
+              <div
+                className={clsx(
+                  "origin-top-right absolute right-0 mt-2 w-96 z-50 divide-y divide-gray-100 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none",
+                  showPreferences ? "display-block" : "hidden"
+                )}
+                role="menu"
+                aria-orientation="vertical"
+                aria-labelledby="menu-button"
+              >
+                <div className="py-1">
+                  <div className="text-gray-700 group flex items-center px-4 py-2 text-base font-bold">
+                    Preferences
+                  </div>
+                </div>
+                <div className="py-1" role="none">
+                  <div className="px-4 py-4">
+                    <label
+                      htmlFor="topology-card-width-slider"
+                      className="inline-block mr-3 text-gray-700 text-xs"
+                    >
+                      Card Width:
+                    </label>
+                    <input
+                      id="topology-card-width-slider"
+                      type="range"
+                      min="250"
+                      max="768"
+                      step={2}
+                      value={parseInt(size, 10)}
+                      onChange={(e) => setCardWidth(e.target.value)}
+                      className="w-64 rounded-lg cursor-pointer mb-4 inline-block"
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

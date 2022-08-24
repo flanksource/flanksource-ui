@@ -6,34 +6,25 @@ interface IParam {
   [key: string]: string;
 }
 
+const arrangeTopologyParams = (params: IParam) => {
+  ["type", "owner", "labels", "status"].forEach((param) => {
+    if (params[param] === "All") {
+      delete params[param];
+    }
+  });
+  return params;
+};
+
 export const getTopology = async (params: IParam) => {
-  if (params.type === "All") {
-    delete params.type;
-  }
-  if (params.owner === "All") {
-    delete params.owner;
-  }
-  if (params.labels === "All") {
-    delete params.labels;
-  }
+  params = arrangeTopologyParams(params);
   const query = stringify(params);
   let { data } = await CanaryChecker.get(`/api/topology?${query}`);
 
   return { data: data || [] };
 };
 
-export const getTopologyWithoutUnroll = async (params: {
-  [key: string]: string;
-}) => {
-  if (params.type === "All") {
-    delete params.type;
-  }
-  if (params.owner === "All") {
-    delete params.owner;
-  }
-  if (params.labels === "All") {
-    delete params.labels;
-  }
+export const getTopologyWithoutUnroll = async (params: IParam) => {
+  params = arrangeTopologyParams(params);
   const query = stringify(params);
   return await CanaryChecker.get(`/api/topology?${query}`).then((results) => {
     let { data } = results;

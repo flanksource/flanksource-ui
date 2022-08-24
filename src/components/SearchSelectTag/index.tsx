@@ -69,12 +69,14 @@ interface SearchSelectTagProps {
   tags: Tag[];
   value: string;
   onChange: (OptionItem) => void;
+  className?: string;
 }
 
 export function SearchSelectTag({
   tags,
   onChange,
-  value = "All"
+  value = "All",
+  className
 }: SearchSelectTagProps) {
   const tagList = useMemo(() => {
     const seen = new Set();
@@ -109,6 +111,7 @@ export function SearchSelectTag({
 
   return (
     <SearchSelect
+      className={className}
       name="Tag:"
       selected={selected}
       options={tagList}

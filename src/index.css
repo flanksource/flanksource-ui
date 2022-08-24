@@ -18,6 +18,9 @@
     box-shadow: 0px 0px 0px 5px #c5d2fe;
     border-radius: 50%;
   }
+  input[role="combobox"]:focus {
+    box-shadow: none;
+  }
 }
 
 @layer components {
