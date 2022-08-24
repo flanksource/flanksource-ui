@@ -1,5 +1,5 @@
 import qs from "qs";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import { getTopology, getTopologyComponents } from "../api/services/topology";
 import { SearchLayout } from "../components/Layout";
@@ -10,6 +10,7 @@ import { TopologyBreadcrumbs } from "../components/Topology/topology-breadcrumbs
 import { useLoader } from "../hooks";
 import { useTopologyPageContext } from "../context/TopologyPageContext";
 import { Dropdown } from "../components";
+import { SearchSelectTag } from "../components/SearchSelectTag";
 
 const allOption = {
   All: {
@@ -25,6 +26,8 @@ export function TopologyPage() {
   const { topologyState, setTopologyState } = useTopologyPageContext();
   const [size, setSize] = useState(() => getCardWidth());
   const [topologyType, setTopologyType] = useState("All");
+  const [topologyLabels, setTopologyLabels] = useState([]);
+  const [selectedLabel, setSelectedLabel] = useState("");
   const [owner, setOwner] = useState("All");
   const [owners, setOwners] = useState<any>({});
   const [topologyTypes, setTopologyTypes] = useState<any>({});
@@ -34,6 +37,7 @@ export function TopologyPage() {
     topologyState?.searchParams
   );
   const { id } = useParams();
+
   const load = async () => {
     const params = qs.parse(searchParams.toString());
     if (id != null) {
@@ -45,7 +49,8 @@ export function TopologyPage() {
         id,
         status: params.status,
         type: params.type,
-        owner: params.owner
+        owner: params.owner,
+        labels: params.labels
       };
 
       const res = await getTopology(apiParams);
@@ -116,6 +121,10 @@ export function TopologyPage() {
         };
       }
     });
+    const allLabels = data.flatMap((d: any) => {
+      return Object.entries(d?.labels || {});
+    });
+    setTopologyLabels(allLabels);
     setTopologyTypes({ ...allOption, ...allTypes });
     setOwners({ ...allOption, ...allOwners });
   }
@@ -159,7 +168,7 @@ export function TopologyPage() {
     >
       <>
         <div className="flex">
-          <div className="flex flex-1">
+          <div className="flex flex-1 pt-8">
             <label
               htmlFor="topology-card-width-slider"
               className="inline-block mr-3 text-gray-500 text-sm"
@@ -194,6 +203,27 @@ export function TopologyPage() {
                 label=""
                 className="w-64 inline-block"
                 value={topologyType}
+              />
+            </div>
+            <div className="flex-1 mr-3 ml-3">
+              <label className="inline-block mr-3 text-gray-500 text-sm">
+                Labels:
+              </label>
+              <SearchSelectTag
+                tags={topologyLabels}
+                value={selectedLabel}
+                onChange={(tag: any) => {
+                  setSelectedLabel(tag);
+                  setSearchParams({
+                    ...searchParams,
+                    labels:
+                      tag.data.length > 0
+                        ? `${encodeURIComponent(
+                            tag.data[0]
+                          )}=${encodeURIComponent(tag.data[1])}`
+                        : "All"
+                  });
+                }}
               />
             </div>
             <div className="flex-1">

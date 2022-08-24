@@ -3,9 +3,19 @@ import { CanaryChecker } from "../axios";
 
 interface IParam {
   id: string;
+  [key: string]: string;
 }
 
 export const getTopology = async (params: IParam) => {
+  if (params.type === "All") {
+    delete params.type;
+  }
+  if (params.owner === "All") {
+    delete params.owner;
+  }
+  if (params.labels === "All") {
+    delete params.labels;
+  }
   const query = stringify(params);
   let { data } = await CanaryChecker.get(`/api/topology?${query}`);
 
@@ -20,6 +30,9 @@ export const getTopologyWithoutUnroll = async (params: {
   }
   if (params.owner === "All") {
     delete params.owner;
+  }
+  if (params.labels === "All") {
+    delete params.labels;
   }
   const query = stringify(params);
   return await CanaryChecker.get(`/api/topology?${query}`).then((results) => {

@@ -35,7 +35,7 @@ function TagOption({ tagKey, value, compressedTo }: TagOptionProps) {
   return (
     <div
       className={clsx(
-        "bg-gray-200 border border-gray-300 py-0.75 rounded px-1 text-gray-600 font-semibold text-xs",
+        "bg-gray-200 border border-gray-300 rounded px-1 text-gray-600 font-semibold text-xs",
         compressedTo && "whitespace-nowrap font-mono"
       )}
       data-title={`${tagKey}: ${value}`}
