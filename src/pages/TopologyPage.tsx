@@ -205,28 +205,7 @@ export function TopologyPage() {
                 value={topologyType}
               />
             </div>
-            <div className="flex-1 mr-3 ml-3">
-              <label className="inline-block mr-3 text-gray-500 text-sm">
-                Labels:
-              </label>
-              <SearchSelectTag
-                tags={topologyLabels}
-                value={selectedLabel}
-                onChange={(tag: any) => {
-                  setSelectedLabel(tag);
-                  setSearchParams({
-                    ...searchParams,
-                    labels:
-                      tag.data.length > 0
-                        ? `${encodeURIComponent(
-                            tag.data[0]
-                          )}=${encodeURIComponent(tag.data[1])}`
-                        : "All"
-                  });
-                }}
-              />
-            </div>
-            <div className="flex-1">
+            <div className="flex-1 ml-3">
               <label className="inline-block mr-3 text-gray-500 text-sm">
                 Owner:
               </label>
@@ -243,6 +222,31 @@ export function TopologyPage() {
                 className="w-64 inline-block"
                 value={owner}
               />
+            </div>
+            <div className="flex-1 ml-3">
+              {id && (
+                <>
+                  <label className="inline-block mr-3 text-gray-500 text-sm">
+                    Labels:
+                  </label>
+                  <SearchSelectTag
+                    tags={topologyLabels}
+                    value={selectedLabel}
+                    onChange={(tag: any) => {
+                      setSelectedLabel(tag);
+                      setSearchParams({
+                        ...searchParams,
+                        labels:
+                          tag.data.length > 0
+                            ? `${encodeURIComponent(
+                                tag.data[0]
+                              )}=${encodeURIComponent(tag.data[1])}`
+                            : "All"
+                      });
+                    }}
+                  />
+                </>
+              )}
             </div>
           </div>
         </div>
