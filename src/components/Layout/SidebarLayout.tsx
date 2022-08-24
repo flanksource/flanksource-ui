@@ -182,15 +182,19 @@ function SideNav({
   collapseSidebar = false
 }: SideNavGroupProps) {
   return (
-    <nav className="flex-col space-y-2">
-      {navs.map((item) => (
-        <SideNavItem
-          key={item.name}
-          {...item}
-          collapseSidebar={collapseSidebar}
-        />
-      ))}
-      <SideNavGroup {...settings} collapseSidebar={collapseSidebar} />
+    <nav className="flex-col space-y-2 divide-y divide-gray-500">
+      <div>
+        {navs.map((item) => (
+          <SideNavItem
+            key={item.name}
+            {...item}
+            collapseSidebar={collapseSidebar}
+          />
+        ))}
+      </div>
+      <div>
+        <SideNavGroup {...settings} collapseSidebar={collapseSidebar} />
+      </div>
     </nav>
   );
 }
