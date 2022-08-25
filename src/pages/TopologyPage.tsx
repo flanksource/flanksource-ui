@@ -305,7 +305,7 @@ export function TopologyPage() {
                   });
                 }}
                 label=""
-                className="w-48 inline-block"
+                className="w-48 h-full inline-block"
                 value={team}
               />
             </div>
