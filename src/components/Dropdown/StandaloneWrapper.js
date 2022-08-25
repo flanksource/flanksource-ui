@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { decodeUrlSearchParams, updateParams } from "../Canary/url";
-
-const getSearchParams = () => decodeUrlSearchParams(window.location.search);
+import { useSearchParams } from "react-router-dom";
+import { useUpdateParams } from "../Canary/url";
 
 export const DropdownStandaloneWrapper = ({
   dropdownElem,
@@ -9,26 +8,25 @@ export const DropdownStandaloneWrapper = ({
   paramKey,
   ...rest
 }) => {
-  const searchParams = getSearchParams();
+  const searchParams = useSearchParams();
+  const updateParams = useUpdateParams();
   const paramsValue =
     typeof searchParams[paramKey] !== "undefined"
       ? searchParams[paramKey]
-      : null;
-  const [value, setValue] = useState(paramsValue || defaultValue);
+      : defaultValue;
+  const [value, setValue] = useState(paramsValue);
+
   useEffect(() => {
     const obj = {};
-    obj[paramKey] = value;
+    obj[paramKey] = value || defaultValue;
+    console.log("update", obj);
     updateParams(obj);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [value]);
+
   return React.createElement(dropdownElem.type, {
     value,
-    onChange: (val) => {
-      setValue(val);
-      const obj = {};
-      obj[paramKey] = val;
-      updateParams(obj);
-    },
+    onChange: (val) => setValue(val),
     ...rest
   });
 };

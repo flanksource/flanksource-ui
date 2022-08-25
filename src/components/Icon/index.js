@@ -1,5 +1,4 @@
 import { isEmpty } from "lodash";
-import React from "react";
 import { Icons } from "../../icons";
 
 const aliases = {
@@ -92,11 +91,13 @@ export function Icon({
     }
   }
 
-  if (typeof props.icon === "string") {
+  const src = typeof props.icon?.src === "string" ? props.icon.src : props.icon;
+
+  if (src) {
     return (
       <img
         alt={alt}
-        src={props.icon}
+        src={src}
         className={`${props.iconClassName || iconClassName} ${className}`}
       />
     );
