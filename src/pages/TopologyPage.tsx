@@ -11,11 +11,11 @@ import { useLoader } from "../hooks";
 import { useTopologyPageContext } from "../context/TopologyPageContext";
 import { Dropdown } from "../components";
 import { SearchSelectTag } from "../components/SearchSelectTag";
-import { BiCog } from "react-icons/bi";
 import clsx from "clsx";
 import { searchParamsToObj } from "../utils/common";
 import { getAll } from "../api/schemaResources";
 import { schemaResourceTypes } from "../components/SchemaResourcePage/resourceTypes";
+import { FaCog } from "react-icons/fa";
 
 const allOption = {
   All: {
@@ -338,7 +338,7 @@ export function TopologyPage() {
             </div>
             <div className="relative inline-block flex" ref={preferencesRef}>
               <div>
-                <BiCog
+                <FaCog
                   className="content-center cursor-pointer ml-4 mt-1 h-6 w-6"
                   onClick={(e) => {
                     setShowPreferences((val) => !val);
