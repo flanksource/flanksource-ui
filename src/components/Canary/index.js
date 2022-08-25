@@ -1,9 +1,8 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { debounce, isEmpty } from "lodash";
-import history from "history/browser";
 import {
   encodeObjectToUrlSearchParams,
-  updateParams,
+  useUpdateParams,
   decodeUrlSearchParams
 } from "./url";
 import { CanarySearchBar } from "./CanarySearchBar";
@@ -27,8 +26,7 @@ import { isHealthy } from "./filter";
 import mixins from "../../utils/mixins.module.css";
 import { Loading } from "../Loading";
 import { useHealthPageContext } from "../../context/HealthPageContext";
-
-const getSearchParams = () => getParamsFromURL(window.location.search);
+import { useSearchParams } from "react-router-dom";
 
 const FilterKeyToLabelMap = {
   environment: "Environment",
@@ -49,13 +47,14 @@ const getPassingCount = (checks) => {
 };
 
 export function Canary({
-  url = "/canary/api",
+  url = "/api/canary/api",
   refreshInterval = 15 * 1000,
   topLayoutOffset = 0,
   hideSearch,
   hideTimeRange,
-  onLoading = (loading) => {}
+  onLoading = (_loading) => {}
 }) {
+  const updateParams = useUpdateParams();
   // force-set layout to table
   useEffect(() => {
     updateParams({ layout: "table" });
@@ -114,12 +113,14 @@ export function Canary({
     });
   }, []);
 
+  const [searchParams] = useSearchParams();
+
   const handleFetch = debounce(async () => {
     if (url == null) {
       return;
     }
     clearTimeout(timerRef);
-    const timeRange = getParamsFromURL(window.location.search)?.timeRange;
+    const timeRange = searchParams?.timeRange;
     const params = encodeObjectToUrlSearchParams({
       start: isEmpty(timeRange) || timeRange === "undefined" ? "1h" : timeRange
     });
@@ -158,21 +159,6 @@ export function Canary({
     return () => {
       clearTimeout(timerRef);
       abortController.abort();
-    };
-  }, []);
-
-  // listen to URL params change
-  const [searchParams, setSearchParams] = useState(window.location.search);
-  useEffect(() => {
-    const unlisten = history.listen(({ location }) => {
-      if (searchParams === location.search) {
-        return;
-      }
-      setSearchParams(location.search);
-      handleFetch();
-    });
-    return () => {
-      unlisten();
     };
   }, []);
 
@@ -263,7 +249,7 @@ export function Canary({
               inputClassName="w-full py-2 mr-2 mb-px"
               inputOuterClassName="w-full"
               placeholder="Search by name, description, or endpoint"
-              defaultValue={getSearchParams()?.query}
+              defaultValue={searchParams?.query}
             />
           </div>
         )}
@@ -381,6 +367,7 @@ export const HidePassingToggle = ({ defaultValue = true }) => {
     : null;
 
   const [value, setValue] = useState(paramsValue ?? defaultValue);
+  const updateParams = useUpdateParams();
 
   useEffect(() => {
     updateParams({ hidePassing: value });
@@ -400,6 +387,7 @@ export const HidePassingToggle = ({ defaultValue = true }) => {
 export const MultiSelectLabelsDropdownStandalone = ({ labels = [] }) => {
   const [isFirstLoad, setIsFirstLoad] = useState(true);
   const [dropdownValue, setDropdownValue] = useState([]);
+  const updateParams = useUpdateParams();
   const handleChange = useCallback(
     (selected, all) => {
       const { labels: urlLabelState } = decodeUrlSearchParams(
@@ -457,6 +445,7 @@ export const TristateLabelStandalone = ({
   );
   const [isFirstLoad, setIsFirstLoad] = useState(true);
   const [toggleState, setToggleState] = useState(0);
+  const updateParams = useUpdateParams();
 
   const handleToggleChange = (v) => {
     if (!isFirstLoad) {
@@ -501,6 +490,7 @@ export const TristateLabelStandalone = ({
 
 export const TristateLabels = ({ labels = [] }) => {
   const [labelStates, setLabelStates] = useState({});
+  const updateParams = useUpdateParams();
 
   // first load or label change: set label states
   useEffect(() => {

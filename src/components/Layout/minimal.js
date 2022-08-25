@@ -1,4 +1,4 @@
-import { UserProfile } from "../UserProfile/user-profile";
+import { UserProfile } from "../UserProfile/UserProfile";
 
 export function MinimalLayout({ children, title }) {
   return (

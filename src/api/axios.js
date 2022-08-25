@@ -2,8 +2,10 @@ import axios from "axios";
 
 import { toastError } from "../components/Toast/toast";
 
+const API_BASE = "/api";
+
 export const IncidentCommander = axios.create({
-  baseURL: "/db",
+  baseURL: `${API_BASE}/incidents_db`,
   headers: {
     Accept: "application/json",
     Prefer: "return=representation",
@@ -12,7 +14,7 @@ export const IncidentCommander = axios.create({
 });
 
 export const ConfigDB = axios.create({
-  baseURL: "/config/db",
+  baseURL: `${API_BASE}/configs_db`,
   headers: {
     Accept: "application/json",
     Prefer: "return=representation",
@@ -21,7 +23,7 @@ export const ConfigDB = axios.create({
 });
 
 export const Logs = axios.create({
-  baseURL: "/apm/search",
+  baseURL: `${API_BASE}/apm/search`,
   headers: {
     Accept: "application/json",
     Prefer: "return=representation",
@@ -29,8 +31,14 @@ export const Logs = axios.create({
   }
 });
 
+let canaryBaseUrl = "canary";
+if (typeof window !== "undefined") {
+  canaryBaseUrl = window.CANARY_BASE_URL;
+  canaryBaseUrl = "canary";
+}
+
 export const CanaryCheckerDB = axios.create({
-  baseURL: `${window.CANARY_BASE_URL}/db`,
+  baseURL: `${API_BASE}/${canaryBaseUrl}/db`,
   headers: {
     Accept: "application/json",
     Prefer: "return=representation",
@@ -39,7 +47,7 @@ export const CanaryCheckerDB = axios.create({
 });
 
 export const CanaryChecker = axios.create({
-  baseURL: window.CANARY_BASE_URL,
+  baseURL: `${API_BASE}/${canaryBaseUrl}`,
   headers: {
     Accept: "application/json",
     Prefer: "return=representation",
@@ -48,7 +56,7 @@ export const CanaryChecker = axios.create({
 });
 
 export const Config = axios.create({
-  baseURL: "/config",
+  baseURL: `${API_BASE}/configs_db`,
   headers: {
     Accept: "application/json",
     Prefer: "return=representation",

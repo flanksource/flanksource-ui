@@ -1,5 +1,5 @@
 import { RefreshButton } from "../RefreshButton";
-import { UserProfile } from "../UserProfile/user-profile";
+import { UserProfile } from "../UserProfile/UserProfile";
 
 interface IProps {
   children: React.ReactNode;

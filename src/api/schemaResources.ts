@@ -1,7 +1,7 @@
 import {
   SchemaApi,
   SchemaBackends
-} from "src/components/SchemaResourcePage/resourceTypes";
+} from "../components/SchemaResourcePage/resourceTypes";
 import { CanaryCheckerDB, ConfigDB, IncidentCommander } from "./axios";
 
 export interface SchemaResourceI {
@@ -19,7 +19,7 @@ export interface SchemaResourceI {
   };
 }
 
-const invalidEndpoint = (api: never) => {
+const invalidEndpoint = (api: string): never => {
   throw Error(`Invalid api endpoint: ${api}`);
 };
 

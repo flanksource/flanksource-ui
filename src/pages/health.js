@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { debounce } from "lodash";
 import { SearchLayout } from "../components/Layout";
 import { TimeRange, timeRanges } from "../components/Dropdown/TimeRange";
 import { DropdownStandaloneWrapper } from "../components/Dropdown/StandaloneWrapper";
 import { CanarySearchBar } from "../components/Canary/CanarySearchBar";
 import { Canary } from "../components/Canary";
-import { updateParams } from "../components/Canary/url";
+import { useUpdateParams } from "../components/Canary/url";
 import { getParamsFromURL } from "../components/Canary/utils";
 import { RefreshButton } from "../components/RefreshButton";
 
@@ -13,9 +13,9 @@ const getSearchParams = () => getParamsFromURL(window.location.search);
 
 export function HealthPage({ url }) {
   const [loading, setLoading] = useState(true);
-
-  const handleSearch = debounce((value) => {
-    updateParams({ query: value });
+  const updateParams = useUpdateParams();
+  const handleSearch = debounce((query) => {
+    updateParams({ query });
   }, 400);
 
   return (

@@ -15,18 +15,22 @@ import { TimeRange } from "../../Dropdown/TimeRange";
 import { Toggle } from "../../Toggle";
 import { initialiseFormState, updateFormState, getDefaultForm } from "../state";
 
-import { decodeUrlSearchParams, encodeObjectToUrlSearchParams } from "../url";
+import {
+  decodeUrlSearchParams,
+  encodeObjectToUrlSearchParams,
+  useUpdateParams
+} from "../url";
 
 import { TristateToggle } from "../../TristateToggle";
 import { DropdownMenu } from "../../DropdownMenu";
 import { separateLabelsByBooleanType } from "../labels";
 import { setDeepWithString } from "../CanaryPopup/utils";
+import { useSearchParams } from "react-router-dom";
 
 export function FilterForm({
   labels,
   checks,
   filterLabels,
-  history,
   hideLabelFilters,
   hideTimeRange,
   className,
@@ -37,7 +41,8 @@ export function FilterForm({
   labelFilterClassName,
   onServerSideFilterChange = null
 }) {
-  const searchParams = window.location.search;
+  const [searchParams] = useSearchParams();
+  const updateParams = useUpdateParams();
   const { formState, fullState } = initialiseFormState(
     getDefaultForm(labels),
     searchParams
@@ -48,12 +53,9 @@ export function FilterForm({
   });
 
   useEffect(() => {
-    const encoded = encodeObjectToUrlSearchParams(fullState);
-    if (window.location.search !== `?${encoded}`) {
-      history.push(`${window.location.pathname}?${encoded}`);
-      reset(formState);
-    }
-  }, [formState, fullState, labels, history, reset]);
+    updateParams(fullState);
+    reset(formState);
+  }, [updateParams, formState, fullState, labels, reset]);
 
   // only trigger filter change on 2nd render and onwards
   const firstUpdate = useRef(true);
@@ -72,11 +74,7 @@ export function FilterForm({
     const watchAll = watch((data) => {
       const searchParams = window.location.search;
       const { formState } = updateFormState(data, searchParams, labels);
-      const encoded = encodeObjectToUrlSearchParams(formState);
-      if (window.location.search !== `?${encoded}`) {
-        // See https://github.com/remix-run/history/blob/main/docs/getting-started.md
-        history.push(`${window.location.pathname}?${encoded}`);
-      }
+      updateParams(formState);
     });
     return () => {
       watchAll.unsubscribe();
@@ -348,7 +346,7 @@ export const LabelFilterDropdown = ({
       const { labels: urlLabelState } = decodeUrlSearchParams(
         window.location.search
       );
-      const initialSelected = Object.entries(urlLabelState).reduce(
+      const initialSelected = Object.entries(urlLabelState || {}).reduce(
         (acc, [labelKey, v]) => {
           if (v === 1 && labels.findIndex((o) => o.id === labelKey) > -1) {
             acc.push({
