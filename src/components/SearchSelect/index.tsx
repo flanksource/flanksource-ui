@@ -66,7 +66,7 @@ export function SearchSelect({
   return (
     <div className={clsx("relative", className)}>
       <button
-        className="relative cursor-pointer w-full bg-white border border-gray-300 rounded-md shadow-sm px-2 py-2 text-left focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm flex"
+        className="relative cursor-pointer w-full bg-white border border-gray-300 rounded-md shadow-sm px-2 py-1 text-left focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm flex"
         onClick={() => setOpen(!isOpen)}
       >
         {name && (

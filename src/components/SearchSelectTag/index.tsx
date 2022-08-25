@@ -35,7 +35,7 @@ function TagOption({ tagKey, value, compressedTo }: TagOptionProps) {
   return (
     <div
       className={clsx(
-        "bg-gray-200 border border-gray-300 rounded px-1 text-gray-600 font-semibold text-xs",
+        "bg-gray-200 rounded px-1 text-gray-600",
         compressedTo && "whitespace-nowrap font-mono"
       )}
       data-title={`${tagKey}: ${value}`}
@@ -112,7 +112,7 @@ export function SearchSelectTag({
   return (
     <SearchSelect
       className={className}
-      name="Tag:"
+      name=""
       selected={selected}
       options={tagList}
       onChange={onChange}

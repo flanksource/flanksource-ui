@@ -14,6 +14,8 @@ import { SearchSelectTag } from "../components/SearchSelectTag";
 import { BiCog } from "react-icons/bi";
 import clsx from "clsx";
 import { searchParamsToObj } from "../utils/common";
+import { getAll } from "../api/schemaResources";
+import { schemaResourceTypes } from "../components/SchemaResourcePage/resourceTypes";
 
 const allOption = {
   All: {
@@ -61,10 +63,10 @@ export function TopologyPage() {
   const [healthStatus, setHealthStatus] = useState(
     searchParams.get("status") ? searchParams.get("status") : "All"
   );
-  const [owner, setOwner] = useState(
-    searchParams.get("owner") ? searchParams.get("owner") : "All"
+  const [team, setTeam] = useState(
+    searchParams.get("team") ? searchParams.get("team") : "All"
   );
-  const [owners, setOwners] = useState<any>({});
+  const [teams, setTeams] = useState<any>({});
   const [topologyTypes, setTopologyTypes] = useState<any>({});
   const [showPreferences, setShowPreferences] = useState(false);
   const preferencesRef = useRef();
@@ -83,7 +85,7 @@ export function TopologyPage() {
         id,
         status: params.status,
         type: params.type,
-        owner: params.owner,
+        team: params.team,
         labels: params.labels
       };
 
@@ -136,7 +138,6 @@ export function TopologyPage() {
       return;
     }
     const allTypes: { [key: string]: any } = {};
-    const allOwners: { [key: string]: any } = {};
     data.forEach((component: any) => {
       if (component.type) {
         allTypes[component.type] = {
@@ -146,21 +147,12 @@ export function TopologyPage() {
           value: component.type
         };
       }
-      if (component.owner) {
-        allTypes[component.owner] = {
-          id: component.owner,
-          name: component.owner,
-          description: component.owner,
-          value: component.owner
-        };
-      }
     });
     const allLabels = data.flatMap((d: any) => {
       return Object.entries(d?.labels || {});
     });
     setTopologyLabels(allLabels);
     setTopologyTypes({ ...allOption, ...allTypes });
-    setOwners({ ...allOption, ...allOwners });
   }
 
   useEffect(() => {
@@ -168,12 +160,38 @@ export function TopologyPage() {
     fetchComponents();
     setHealthStatus(searchParams.get("status") ?? "All");
     setTopologyType(searchParams.get("type") ?? "All");
-    setOwner(searchParams.get("owner") ?? "All");
+    setTeam(searchParams.get("team") ?? "All");
   }, [searchParams, id]);
 
   useEffect(() => {
     preselectSelectedLabels();
   }, [searchParams, topologyLabels]);
+
+  useEffect(() => {
+    const teamsApiConfig = schemaResourceTypes.find(
+      (item) => item.table === "teams"
+    );
+    getAll(teamsApiConfig)
+      .then((res) => {
+        const data: any = {
+          ...allOption
+        };
+        res.data.forEach((item: any) => {
+          data[item.name] = {
+            id: item.name,
+            name: item.name,
+            description: item.name,
+            value: item.name
+          };
+        });
+        setTeams(data);
+      })
+      .catch((err) => {
+        setTeams({
+          ...allOption
+        });
+      });
+  }, []);
 
   useEffect(() => {
     const listener = (event: MouseEvent) => {
@@ -238,7 +256,7 @@ export function TopologyPage() {
         <div className="flex">
           <div className="flex flex-1">
             <div className="flex">
-              <label className="inline-block mr-3 text-gray-500 text-sm pt-1">
+              <label className="inline-block mr-3 text-gray-500 text-sm pt-2">
                 Health:
               </label>
               <Dropdown
@@ -256,7 +274,7 @@ export function TopologyPage() {
               />
             </div>
             <div className="flex ml-3">
-              <label className="inline-block mr-3 text-gray-500 text-sm pt-1">
+              <label className="inline-block mr-3 text-gray-500 text-sm pt-2">
                 Type:
               </label>
               <Dropdown
@@ -269,32 +287,32 @@ export function TopologyPage() {
                   });
                 }}
                 label=""
-                className="w-36 inline-block"
+                className="w-48 inline-block"
                 value={topologyType}
               />
             </div>
             <div className="flex ml-3">
-              <label className="inline-block mr-3 text-gray-500 text-sm pt-1">
-                Owner:
+              <label className="inline-block mr-3 text-gray-500 text-sm pt-2">
+                Team:
               </label>
               <Dropdown
-                items={owners}
+                items={teams}
                 onChange={(val: any) => {
-                  setOwner(val);
+                  setTeam(val);
                   setSearchParams({
                     ...searchParamsToObj(searchParams),
-                    owner: val
+                    team: val
                   });
                 }}
                 label=""
-                className="w-36 inline-block"
-                value={owner}
+                className="w-48 inline-block"
+                value={team}
               />
             </div>
             <div className="flex ml-3">
               {Boolean(topologyLabels.length) && (
                 <>
-                  <label className="inline-block mr-3 text-gray-500 text-sm pt-1">
+                  <label className="inline-block mr-3 text-gray-500 text-sm pt-2">
                     Labels:
                   </label>
                   <SearchSelectTag
@@ -318,15 +336,10 @@ export function TopologyPage() {
                 </>
               )}
             </div>
-          </div>
-          <div className="flex flex-1 justify-end">
-            <div
-              className="relative inline-block text-left"
-              ref={preferencesRef}
-            >
+            <div className="relative inline-block flex" ref={preferencesRef}>
               <div>
                 <BiCog
-                  className="content-center cursor-pointer"
+                  className="content-center cursor-pointer ml-4 mt-1 h-6 w-6"
                   onClick={(e) => {
                     setShowPreferences((val) => !val);
                   }}
@@ -334,7 +347,7 @@ export function TopologyPage() {
               </div>
               <div
                 className={clsx(
-                  "origin-top-right absolute right-0 mt-2 w-96 z-50 divide-y divide-gray-100 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none",
+                  "origin-top-right absolute right-0 mt-10 w-96 z-50 divide-y divide-gray-100 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none",
                   showPreferences ? "display-block" : "hidden"
                 )}
                 role="menu"

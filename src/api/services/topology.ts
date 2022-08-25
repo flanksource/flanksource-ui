@@ -7,7 +7,7 @@ interface IParam {
 }
 
 const arrangeTopologyParams = (params: IParam) => {
-  ["type", "owner", "labels", "status"].forEach((param) => {
+  ["type", "team", "labels", "status"].forEach((param) => {
     if (params[param] === "All") {
       delete params[param];
     }
