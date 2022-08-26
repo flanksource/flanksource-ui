@@ -292,7 +292,7 @@ export const IncidentDetails = ({
       <div className="mb-4 bg-white px-4 py-3 shadow sm:rounded-lg ml-4">
         <div className="divide-y divide-gray-200">
           <div className="flex mb-3">
-            <h2 className="text-dark-gray text-sm font-medium inline-block flex-1">
+            <h2 className="text-dark-gray text-sm inline-block flex-1 font-bold">
               Responders
             </h2>
           </div>
@@ -328,7 +328,7 @@ export const IncidentDetails = ({
                             <div className="ml-10 cursor-pointer absolute right-0 top-0">
                               <button
                                 type="button"
-                                className="ml-6 rounded-md text-sm font-medium text-indigo-600 hover:text-indigo-500"
+                                className="ml-6 rounded-md text-sm font-medium text-blue-600 hover:text-blue-500"
                                 onClick={(e) => {
                                   e.preventDefault();
                                   e.stopPropagation();
@@ -368,7 +368,7 @@ export const IncidentDetails = ({
                   ></path>
                 </svg>
               </span>
-              <span className="ml-2 text-sm font-medium text-indigo-600 group-hover:text-indigo-500">
+              <span className="ml-2 text-sm font-medium text-blue-600 group-hover:text-blue-500">
                 <AddResponder
                   className="inline-block flex-1 w-full justify-end flex"
                   onSuccess={() => fetchResponders()}
