@@ -185,7 +185,6 @@ export function IncidentDetailsPage() {
         </div>
         <section className="border-l lg:col-start-3 lg:col-span-1">
           <IncidentDetails
-            className="bg-white px-2 py-3 shadow sm:rounded-lg sm:px-4 ml-4"
             incident={incident}
             updateStatusHandler={() =>
               updateStatus(

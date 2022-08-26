@@ -177,8 +177,8 @@ export const IncidentDetails = ({
   }, [incident]);
 
   return (
-    <div className={clsx("px-6 pt-3.5 divide-y", className)}>
-      <div className="mb-4">
+    <div className={clsx("divide-y", className)}>
+      <div className="mb-4 bg-white px-4 py-3 shadow sm:rounded-lg ml-4">
         <div className="flex justify-between mb-7">
           <h2 className="mt-0.5 text-2xl font-medium leading-7 text-dark-gray">
             Details
@@ -289,104 +289,114 @@ export const IncidentDetails = ({
           }
         />
       </div>
-      <div className="pt-3">
-        <div className="flex">
-          <h2 className="text-dark-gray text-sm font-medium inline-block flex-1">
-            Responders
-          </h2>
-          <AddResponder
-            className="inline-block flex-1 w-full justify-end flex"
-            onSuccess={() => fetchResponders()}
-          />
-        </div>
-        {Boolean(responders.length) && (
-          <div>
-            {responders.map((responder) => {
-              return (
-                <div
-                  key={responder.json.id}
-                  className="relative flex hover:bg-gray-100 items-center rounded mt-1 p-2"
-                >
-                  <div className="flex-1 min-w-0 w-full">
-                    <ResponderDetailsToolTip
-                      className="w-full"
-                      responder={responder}
-                      data={responder?.json?.properties}
-                      element={
-                        <div className="text-dark-gray group text-sm font-medium relative w-full overflow-hidden truncate">
-                          <div className="w-full overflow-hidden truncate">
-                            {responder.icon && (
-                              <responder.icon className="w-6 h-6" />
-                            )}
-                            <div
-                              className="pl-1 inline-block hover:underline cursor-pointer"
-                              onClick={(e) => {
-                                setOpenResponderDetailsDialog(true);
-                                setSelectedResponder(responder);
-                              }}
-                            >
-                              {responder?.name}{" "}
-                              <span className="text-xs">
-                                ({responder?.external_id})
-                              </span>
+      <div className="mb-4 bg-white px-4 py-3 shadow sm:rounded-lg ml-4">
+        <div className="divide-y divide-gray-200">
+          <div className="flex mb-3">
+            <h2 className="text-dark-gray text-sm font-medium inline-block flex-1">
+              Responders
+            </h2>
+          </div>
+          {Boolean(responders.length) && (
+            <div>
+              {responders.map((responder) => {
+                return (
+                  <div
+                    key={responder.json.id}
+                    className="relative flex items-center rounded mt-1 p-2"
+                  >
+                    <div className="flex-1 min-w-0 w-full">
+                      <ResponderDetailsToolTip
+                        className="w-full"
+                        responder={responder}
+                        data={responder?.json?.properties}
+                        element={
+                          <div className="text-dark-gray group text-sm font-medium relative w-full overflow-hidden truncate">
+                            <div className="w-full overflow-hidden truncate">
+                              {responder.icon && (
+                                <responder.icon className="w-6 h-6" />
+                              )}
+                              <div
+                                className="pl-1 inline-block hover:underline cursor-pointer"
+                                onClick={(e) => {
+                                  setOpenResponderDetailsDialog(true);
+                                  setSelectedResponder(responder);
+                                }}
+                              >
+                                {responder?.name}
+                              </div>
+                            </div>
+                            <div className="ml-10 cursor-pointer absolute right-0 top-0">
+                              <button
+                                type="button"
+                                className="ml-6 rounded-md text-sm font-medium text-indigo-600 hover:text-indigo-500"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  setOpenDeleteConfirmDialog(true);
+                                  setDeletedResponder(responder);
+                                }}
+                              >
+                                Remove
+                              </button>
                             </div>
                           </div>
-                          <div className="ml-10 cursor-pointer absolute right-0 top-1">
-                            <IconButton
-                              className="bg-transparent hidden group-hover:inline-block z-5"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                setOpenDeleteConfirmDialog(true);
-                                setDeletedResponder(responder);
-                              }}
-                              ovalProps={{
-                                stroke: "blue",
-                                height: "18px",
-                                width: "18px",
-                                fill: "transparent"
-                              }}
-                              icon={
-                                <BsTrash
-                                  className="text-gray-600 border-0 border-l-1 border-gray-200"
-                                  size={18}
-                                />
-                              }
-                            />
-                          </div>
-                        </div>
-                      }
-                    />
+                        }
+                      />
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
+          )}
+          <div className="p-2 flex justify-between items-center">
+            <button
+              type="button"
+              className="group bg-white rounded-md flex items-center"
+            >
+              <span className="w-5 h-5 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400">
+                <svg
+                  className="h-5 w-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+                    clipRule="evenodd"
+                  ></path>
+                </svg>
+              </span>
+              <span className="ml-2 text-sm font-medium text-indigo-600 group-hover:text-indigo-500">
+                <AddResponder
+                  className="inline-block flex-1 w-full justify-end flex"
+                  onSuccess={() => fetchResponders()}
+                />
+              </span>
+            </button>
           </div>
-        )}
-      </div>
-      {/* {Boolean(responders.length) && (
-        <div className="items-center">
-          <AddResponder onSuccess={() => fetchResponders()} />
+          <div></div>
         </div>
-      )} */}
-      <DeleteConfirmDialog
-        isOpen={openDeleteConfirmDialog}
-        title="Delete Responder ?"
-        description="Are you sure you want to delete the responder ?"
-        onClose={() => setOpenDeleteConfirmDialog(false)}
-        onDelete={() => {
-          initiateDeleteResponder();
-        }}
-      />
-      <ResponderDetailsDialog
-        size="medium"
-        open={openResponderDetailsDialog}
-        responder={selectedResponder}
-        data={selectedResponder?.json?.properties}
-        onClose={() => {
-          setOpenResponderDetailsDialog(false);
-        }}
-      />
+        <DeleteConfirmDialog
+          isOpen={openDeleteConfirmDialog}
+          title="Delete Responder ?"
+          description="Are you sure you want to delete the responder ?"
+          onClose={() => setOpenDeleteConfirmDialog(false)}
+          onDelete={() => {
+            initiateDeleteResponder();
+          }}
+        />
+        <ResponderDetailsDialog
+          size="medium"
+          open={openResponderDetailsDialog}
+          responder={selectedResponder}
+          data={selectedResponder?.json?.properties}
+          onClose={() => {
+            setOpenResponderDetailsDialog(false);
+          }}
+        />
+      </div>
     </div>
   );
 };
