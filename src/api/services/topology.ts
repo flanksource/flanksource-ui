@@ -3,16 +3,28 @@ import { CanaryChecker } from "../axios";
 
 interface IParam {
   id: string;
+  [key: string]: string;
 }
 
+const arrangeTopologyParams = (params: IParam) => {
+  ["type", "team", "labels", "status"].forEach((param) => {
+    if (params[param] === "All") {
+      delete params[param];
+    }
+  });
+  return params;
+};
+
 export const getTopology = async (params: IParam) => {
+  params = arrangeTopologyParams(params);
   const query = stringify(params);
   let { data } = await CanaryChecker.get(`/api/topology?${query}`);
 
   return { data: data || [] };
 };
 
-export const getTopologyWithoutUnroll = async (params) => {
+export const getTopologyWithoutUnroll = async (params: IParam) => {
+  params = arrangeTopologyParams(params);
   const query = stringify(params);
   return await CanaryChecker.get(`/api/topology?${query}`).then((results) => {
     let { data } = results;

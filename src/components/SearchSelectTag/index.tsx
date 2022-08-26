@@ -35,7 +35,7 @@ function TagOption({ tagKey, value, compressedTo }: TagOptionProps) {
   return (
     <div
       className={clsx(
-        "bg-gray-200 border border-gray-300 py-0.75 rounded px-1 text-gray-600 font-semibold text-xs",
+        "bg-gray-200 rounded px-1 text-gray-600",
         compressedTo && "whitespace-nowrap font-mono"
       )}
       data-title={`${tagKey}: ${value}`}
@@ -69,12 +69,14 @@ interface SearchSelectTagProps {
   tags: Tag[];
   value: string;
   onChange: (OptionItem) => void;
+  className?: string;
 }
 
 export function SearchSelectTag({
   tags,
   onChange,
-  value = "All"
+  value = "All",
+  className
 }: SearchSelectTagProps) {
   const tagList = useMemo(() => {
     const seen = new Set();
@@ -109,7 +111,8 @@ export function SearchSelectTag({
 
   return (
     <SearchSelect
-      name="Tag:"
+      className={className}
+      name=""
       selected={selected}
       options={tagList}
       onChange={onChange}

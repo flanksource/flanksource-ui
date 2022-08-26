@@ -26,12 +26,16 @@ export const getConfigChange = (id: string) =>
     ConfigDB.get(`/config_changes?config_id=eq.${id}&order=created_at.desc`)
   );
 
-export const searchConfigs = (type: string, input: string) =>
-  resolve<ConfigItem[]>(
+export const searchConfigs = (type: string, input: string) => {
+  const orCondition = input
+    ? `&or=(name.ilike.*${input}*,external_id.ilike.*${input}*)`
+    : "";
+  return resolve<ConfigItem[]>(
     ConfigDB.get(
-      `/configs?select=id,external_id,name,config_type,analysis,changes&config_type=ilike.${type}&or=(name.ilike.*${input}*,external_id.ilike.*${input}*)`
+      `/configs?select=id,external_id,name,config_type,analysis,changes&config_type=ilike.${type}${orCondition}`
     )
   );
+};
 
 export const createConfigItem = (type: string, params: {}) =>
   resolve<ConfigItem>(
