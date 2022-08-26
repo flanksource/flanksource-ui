@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import updateLocale from "dayjs/plugin/updateLocale";
+import { parse } from "qs";
 
 dayjs.extend(relativeTime);
 dayjs.extend(updateLocale);
@@ -41,4 +42,8 @@ export function formatBytes(bytes, decimals = 2) {
   const i = Math.floor(Math.log(bytes) / Math.log(k));
 
   return `${parseFloat((bytes / k ** i).toFixed(dm))} ${sizes[i]}`;
+}
+
+export function searchParamsToObj(searchParams) {
+  return parse(searchParams.toString());
 }
