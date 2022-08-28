@@ -18,7 +18,6 @@ import aws_config from "./aws-config.svg";
 import aws_detective from "./aws-detective.svg";
 import aws_directory_service from "./aws-directory-service.svg";
 import aws_dnszone from "./aws-dnszone.svg";
-import aws_ebs from "./aws-ebs.svg";
 import aws_ebs_volume from "./aws-ebs-volume.svg";
 import aws_ec2_instance from "./aws-ec2-instance.svg";
 import aws_ec2_route_table from "./aws-ec2-route-table.svg";
@@ -181,7 +180,6 @@ import metrics from "./metrics.svg";
 import microsoft from "./microsoft.svg";
 import mongodb from "./mongodb.svg";
 import mongo from "./mongo.svg";
-import ms_planner from "./ms-planner.svg";
 import msplanner from "./msplanner.svg";
 import mssql from "./mssql.svg";
 import multiple from "./multiple.svg";
@@ -255,7 +253,6 @@ import talk from "./talk.svg";
 import target from "./target.svg";
 import teams from "./teams.svg";
 import terraform from "./terraform.svg";
-import thousandeyes_icon from "./thousandeyes_icon.svg";
 import thousandeyes_logo from "./thousandeyes-logo.svg";
 import thousandeyes from "./thousandeyes.svg";
 import timezone from "./timezone.svg";
@@ -289,7 +286,6 @@ export const Icons = {
   "aws-detective": aws_detective,
   "aws-directory-service": aws_directory_service,
   "aws-dnszone": aws_dnszone,
-  "aws-ebs": aws_ebs,
   "aws-ebs-volume": aws_ebs_volume,
   "aws-ec2-instance": aws_ec2_instance,
   "aws-ec2-route-table": aws_ec2_route_table,
@@ -452,7 +448,6 @@ export const Icons = {
   microsoft: microsoft,
   mongodb: mongodb,
   mongo: mongo,
-  "ms-planner": ms_planner,
   msplanner: msplanner,
   mssql: mssql,
   multiple: multiple,
@@ -526,7 +521,6 @@ export const Icons = {
   target: target,
   teams: teams,
   terraform: terraform,
-  thousandeyes_icon: thousandeyes_icon,
   "thousandeyes-logo": thousandeyes_logo,
   thousandeyes: thousandeyes,
   timezone: timezone,
