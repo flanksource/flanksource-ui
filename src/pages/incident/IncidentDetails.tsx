@@ -90,13 +90,15 @@ export function IncidentDetailsPage() {
     [incidentData]
   );
 
-  const topologyIds = (incident?.hypotheses || [])
+  let topologyIds = (incident?.hypotheses || [])
     .flatMap((h) =>
       h.evidences?.map((e) =>
         e.type === EvidenceType.Topology ? e.evidence.id : null
       )
     )
     .filter((x) => x) as string[];
+
+  topologyIds = [...topologyIds, ...topologyIds];
 
   const status = useMemo(() => incident?.status ?? null, [incident]);
 
@@ -149,7 +151,7 @@ export function IncidentDetailsPage() {
           {Boolean(topologyIds?.length) && (
             <section>
               <div className="border-b">
-                <div className="px-2 py-2 flex flex-nowrap">
+                <div className="px-2 py-2 flex flex-nowrap overflow-x-auto">
                   {topologyIds?.map((id) => (
                     <TopologyCard
                       key={id}
