@@ -33,13 +33,26 @@ export function DropdownWithActions<T extends IItem>({
   const [options, setOptions] = useState<T[]>([]);
   const [query, setQuery] = useState("");
   const [isFetching, setIsFetching] = useState(false);
+  const [lastNoResultsQuery, setLastNoResultsQuery] = useState("");
 
   useEffect(() => {
+    if (
+      lastNoResultsQuery &&
+      query &&
+      query.indexOf(lastNoResultsQuery) === 0
+    ) {
+      return;
+    }
     const getOptions = async (query: string) => {
       setIsFetching(true);
-      const res = await onQuery(query);
+      const res = (await onQuery(query)) || [];
       setIsFetching(false);
-      setOptions(res || []);
+      setOptions(res.slice(0, 20));
+      if (!res.length) {
+        setLastNoResultsQuery(query);
+      } else {
+        setLastNoResultsQuery("");
+      }
     };
     getOptions(query);
   }, [query, onQuery]);
@@ -61,6 +74,7 @@ export function DropdownWithActions<T extends IItem>({
     >
       <ComboboxInput
         isFetching={isFetching}
+        debounceTime={1000}
         onChange={(e) => {
           setValue(name, { value: null, description: e });
           setQuery(e);
