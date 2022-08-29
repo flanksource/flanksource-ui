@@ -1,4 +1,5 @@
-import { ReactNode, useCallback, useMemo, useState } from "react";
+import clsx from "clsx";
+import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { HiOutlineSelector, HiSearch } from "react-icons/hi";
 import Select from "react-select";
 
@@ -13,6 +14,7 @@ export interface SearchSelectProps {
   components?: { [index: string]: ReactNode };
   onChange: (OptionItem) => void;
   selected: OptionItem;
+  className?: string;
 }
 
 function RenderLabel(option: SelectOption) {
@@ -36,7 +38,8 @@ export function SearchSelect({
   name,
   onChange,
   components,
-  selected
+  selected,
+  className
 }: SearchSelectProps) {
   const [isOpen, setOpen] = useState(false);
   const [value, setValue] = useState(selected);
@@ -51,15 +54,19 @@ export function SearchSelect({
     [onChange, setValue, isOpen]
   );
 
+  useEffect(() => {
+    setValue(selected);
+  }, [selected]);
+
   const { RenderSelection } = useMemo(
     () => ({ ...defaultComponents, ...components }),
     [components]
   );
 
   return (
-    <div className="relative">
+    <div className={clsx("relative h-full", className)}>
       <button
-        className="relative cursor-pointer w-full bg-white border border-gray-300 rounded-md shadow-sm px-2 py-2 text-left focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm flex"
+        className="relative cursor-pointer w-full h-full items-center bg-white border border-gray-300 rounded-md shadow-sm px-2 py-1 text-left focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm flex"
         onClick={() => setOpen(!isOpen)}
       >
         {name && (

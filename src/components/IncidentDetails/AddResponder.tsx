@@ -433,7 +433,7 @@ export const AddResponder = ({
   return (
     <div className={clsx("flex flex-1", className)} {...rest}>
       <button
-        className="underline text-blue-600 hover:text-blue-800 text-sm font-medium mt-1"
+        className="text-sm font-medium text-indigo-600 group-hover:text-indigo-500"
         onClick={() => {
           setSelectedType(null);
           reset();
