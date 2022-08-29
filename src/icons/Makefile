@@ -18,6 +18,6 @@ endef
 index.js:
 	echo "// this file is generated using make index.js" > index.js
 	$(call IMPORTS) >> index.js
-	@echo "export const Icons = {" >> index.js
+	echo "export const Icons = {" >> index.js
 	$(call VARS) >> index.js
-	@echo "}" >> index.js
+	echo "}" >> index.js
