@@ -8,6 +8,7 @@ import { CanaryTable } from "./table";
 import mixins from "../../utils/mixins.module.css";
 import { getParamsFromURL } from "./utils";
 import { getCanaries } from "../../api/services/topology";
+import { updateParams } from "./url";
 
 const MinimalCanaryFC = ({
   checks,
@@ -20,23 +21,39 @@ const MinimalCanaryFC = ({
   );
 
   useEffect(() => {
-    history.listen(({ location }) => {
+    const unlisten = history.listen(({ location }) => {
       setSearchParams(getParamsFromURL(location.search));
     });
+    return () => {
+      unlisten();
+    };
   }, []);
   const { tabBy, layout } = searchParams;
 
   const [selectedCheck, setSelectedCheck] = useState(null);
 
   const handleCheckSelect = (check) => {
-    getCanaries({ check: check.id, includeMessages: true }).then((results) => {
-      if (results == null || results.data.checks.length === 0) {
-        return;
-      }
-      setSelectedCheck(results.data.checks[0]);
-    });
+    updateParams({ check_id: check.id });
   };
 
+  useEffect(() => {
+    const { check_id } = searchParams;
+    if (check_id) {
+      getCanaries({ check: check_id, includeMessages: true }).then(
+        (results) => {
+          if (results == null || results.data.checks.length === 0) {
+            return;
+          }
+          setSelectedCheck(results.data.checks[0]);
+        }
+      );
+    }
+  }, [searchParams]);
+
+  const closeModal = () => {
+    setSelectedCheck(null);
+    updateParams({ check_id: "" });
+  };
   return (
     <>
       {layout === "card" && (
@@ -58,7 +75,7 @@ const MinimalCanaryFC = ({
       )}
       <Modal
         open={selectedCheck != null}
-        onClose={() => setSelectedCheck(null)}
+        onClose={() => closeModal()}
         title={<CheckTitle check={selectedCheck} />}
         size="medium"
         hideActions
