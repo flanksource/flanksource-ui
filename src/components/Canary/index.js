@@ -27,6 +27,7 @@ import { isHealthy } from "./filter";
 import mixins from "../../utils/mixins.module.css";
 import { Loading } from "../Loading";
 import { useHealthPageContext } from "../../context/HealthPageContext";
+import TristateLabelStandalone from "./TristateLabelStandalone";
 
 const getSearchParams = () => getParamsFromURL(window.location.search);
 
@@ -165,9 +166,6 @@ export function Canary({
   const [searchParams, setSearchParams] = useState(window.location.search);
   useEffect(() => {
     const unlisten = history.listen(({ location }) => {
-      if (searchParams === location.search) {
-        return;
-      }
       setSearchParams(location.search);
       handleFetch();
     });
@@ -442,59 +440,6 @@ export const MultiSelectLabelsDropdownStandalone = ({ labels = [] }) => {
       onChange={handleChange}
       loadFromURL
       value={dropdownValue}
-    />
-  );
-};
-
-export const TristateLabelStandalone = ({
-  label,
-  className,
-  labelClass,
-  ...rest
-}) => {
-  const { labels: urlLabelState = {} } = decodeUrlSearchParams(
-    window.location.search
-  );
-  const [isFirstLoad, setIsFirstLoad] = useState(true);
-  const [toggleState, setToggleState] = useState(0);
-
-  const handleToggleChange = (v) => {
-    if (!isFirstLoad) {
-      const { labels: urlLabelState } = decodeUrlSearchParams(
-        window.location.search
-      );
-      const newState = { ...urlLabelState };
-      newState[label.id] = v;
-      const conciseLabelState = getConciseLabelState(newState);
-      updateParams({ labels: conciseLabelState });
-      setToggleState(v);
-    }
-  };
-
-  // get initial state from URL
-  useEffect(() => {
-    const { labels: urlLabelState = {} } = decodeUrlSearchParams(
-      window.location.search
-    );
-    if (Object.prototype.hasOwnProperty.call(urlLabelState, label.id)) {
-      setToggleState(urlLabelState[label.id]);
-    } else {
-      setToggleState(0);
-    }
-  }, [label, urlLabelState]);
-
-  useEffect(() => {
-    setIsFirstLoad(false);
-  }, []);
-
-  return (
-    <TristateToggle
-      value={toggleState}
-      onChange={(v) => handleToggleChange(v)}
-      className={className}
-      labelClass={labelClass}
-      label={label}
-      {...rest}
     />
   );
 };
