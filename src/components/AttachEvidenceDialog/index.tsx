@@ -74,6 +74,26 @@ interface IFormValues {
   description?: string;
 }
 
+const IncidentOption = ({ option }: any) => {
+  if (!option.details) {
+    return (
+      <div className="text-gray-900">
+        <b>{option.value}</b>
+        <div className="text-gray-400 text-xs">Create new {option.value}</div>
+      </div>
+    );
+  }
+  return (
+    <div className="flex space-x-4 justify-between w-full">
+      <div className="flex space-x-4">
+        <IncidentSeverityTag iconOnly severity={option.details.severity} />
+        <div>{option?.description}</div>
+      </div>
+      <IncidentStatusTag status={option.details.status} />
+    </div>
+  );
+};
+
 /* Can't mention nested sybling properpty in when condition, in yup. See
 https://github.com/jquense/yup/issues/935. So, we check reference sybling
 (`incident`) in hypothesis, instead of `incident.id` in hypothesis.id.
@@ -135,9 +155,9 @@ export function AttachEvidenceDialog({
 }: Props & Partial<EvidenceAttachment>) {
   const {
     control,
-    watch,
     handleSubmit,
     setValue,
+    watch,
     formState: { errors }
   } = useForm<IFormValues>({
     defaultValues: {
@@ -184,13 +204,16 @@ export function AttachEvidenceDialog({
     return fn(query);
   }, []);
 
-  const fetchHypothesisOptions = async (query: string): Promise<IItem[]> => {
-    if (!selectedIncident?.value) {
-      return [];
+  const fetchHypothesisOptions = async (
+    query: string,
+    incident: any
+  ): Promise<IItem[]> => {
+    if (!incident.details) {
+      return Promise.resolve([]);
     }
 
     const { data, error } = await searchHypothesis(
-      selectedIncident?.value as string,
+      incident?.value as string,
       query || ""
     );
     if (error || !Array.isArray(data)) {
@@ -328,19 +351,8 @@ export function AttachEvidenceDialog({
                 name="incident"
                 value={selectedIncident}
                 setValue={setValue}
-                displayValue={(value) => value?.description || ""}
-                displayOption={({ option }) => (
-                  <div className="flex space-x-4 justify-between w-full">
-                    <div className="flex space-x-4">
-                      <IncidentSeverityTag
-                        iconOnly
-                        severity={option.details.severity}
-                      />
-                      <div>{option?.description}</div>
-                    </div>
-                    <IncidentStatusTag status={option.details.status} />
-                  </div>
-                )}
+                creatable={true}
+                displayOption={IncidentOption}
               />
               <p className="text-red-600 text-sm">{errors.incident?.message}</p>
               {!selectedIncident?.value && (
@@ -394,13 +406,17 @@ export function AttachEvidenceDialog({
                 Hypothesis
               </div>
               <DropdownWithActions
-                onQuery={fetchHypothesisOptions}
+                onQuery={(e) => {
+                  return fetchHypothesisOptions(e, watch("incident"));
+                }}
                 label="Hypothesis"
                 name="hypothesis"
                 value={selectedHypothesis}
                 setValue={setValue}
-                displayValue={({ description }) => description || ""}
-                displayOption={({ option }) => option?.description}
+                creatable={true}
+                displayOption={({ option }) =>
+                  option?.description || option?.value
+                }
               />
               <p className="text-red-600 text-sm">
                 {/* @ts-ignore:next-line */}

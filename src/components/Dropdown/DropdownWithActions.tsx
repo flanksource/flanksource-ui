@@ -1,22 +1,20 @@
-import { useEffect, useState } from "react";
-import { Combobox } from "@headlessui/react";
-import clsx from "clsx";
-
-import { ComboboxInput } from "./ComboboxInput";
-import { CheckIcon } from "@heroicons/react/outline";
+import { useCallback, useState } from "react";
+import AsyncCreatableSelect from "react-select/async-creatable";
+import AsyncSelect from "react-select/async";
 import { IItem } from "../../types/IItem";
+import { components } from "react-select";
+import { debounce } from "lodash";
 
 interface IDropdownWithActionsProps<T> {
   label: string;
   name: string;
   onQuery: (s: string) => Promise<T[]>;
-
+  creatable?: boolean;
   displayOption: (props: {
     selected: boolean;
     option: T;
     active: boolean;
   }) => React.ReactNode;
-  displayValue: (v: T) => string;
   value?: T;
   setValue: any;
 }
@@ -24,103 +22,98 @@ interface IDropdownWithActionsProps<T> {
 export function DropdownWithActions<T extends IItem>({
   label,
   name,
+  creatable,
   onQuery,
   value = { value: null, description: "" } as T,
-  displayValue,
   displayOption,
   setValue
 }: IDropdownWithActionsProps<T>) {
-  const [options, setOptions] = useState<T[]>([]);
-  const [query, setQuery] = useState("");
-  const [isFetching, setIsFetching] = useState(false);
   const [lastNoResultsQuery, setLastNoResultsQuery] = useState("");
 
-  useEffect(() => {
-    if (
-      lastNoResultsQuery &&
-      query &&
-      query.indexOf(lastNoResultsQuery) === 0
-    ) {
-      return;
-    }
-    const getOptions = async (query: string) => {
-      setIsFetching(true);
-      const res = (await onQuery(query)) || [];
-      setIsFetching(false);
-      setOptions(res.slice(0, 20));
-      if (!res.length) {
-        setLastNoResultsQuery(query);
-      } else {
-        setLastNoResultsQuery("");
-      }
-    };
-    getOptions(query);
-  }, [query, onQuery]);
+  const checkIfItIsANoResultsQuery = (
+    query: string,
+    lastNoResultsQuery: string
+  ) => {
+    return (
+      lastNoResultsQuery && query && query.indexOf(lastNoResultsQuery) === 0
+    );
+  };
 
-  return (
-    <Combobox
-      className="relative mt-1"
-      as="div"
-      key={value?.value}
-      by="value"
+  const getOptions = useCallback(
+    debounce((query: string, callback, lastNoResultsQuery: string): any => {
+      if (checkIfItIsANoResultsQuery(query, lastNoResultsQuery)) {
+        return callback([]);
+      }
+      async function fetch() {
+        let res = (await onQuery(query)) || [];
+        if (!res.length) {
+          setLastNoResultsQuery(query);
+        } else {
+          setLastNoResultsQuery("");
+        }
+        callback(res);
+      }
+      fetch();
+    }, 1000),
+    []
+  );
+
+  return creatable ? (
+    <AsyncCreatableSelect
       name={name}
+      className="relative mt-1"
+      cacheOptions
+      defaultOptions
+      loadOptions={(query, callback) => {
+        getOptions(query, callback, lastNoResultsQuery);
+      }}
       value={value}
-      onChange={(val: T) => setValue(name, val)}
-      onBlur={() => {
-        if (query && options.length === 0) {
-          setValue(name, { value: null, description: query });
+      getOptionValue={(option: any) => option.value}
+      getOptionLabel={(option: any) => option.description || option.value}
+      createOptionPosition="first"
+      onChange={(e) => {
+        setLastNoResultsQuery("");
+        setValue(name, {
+          ...e,
+          description: e?.description || e?.value
+        });
+      }}
+      components={{
+        Option: (props: any) => {
+          return (
+            <components.Option {...props}>
+              {displayOption({ option: props.data } as any)}
+            </components.Option>
+          );
         }
       }}
-    >
-      <ComboboxInput
-        isFetching={isFetching}
-        debounceTime={1000}
-        onChange={(e) => {
-          setValue(name, { value: null, description: e });
-          setQuery(e);
-        }}
-        displayValue={displayValue}
-      />
-
-      <Combobox.Options
-        className={clsx(
-          "absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:out line-none   sm:text-sm z-20",
-          options.length === 0 && "invisible"
-        )}
-      >
-        {!!query && (
-          <Combobox.Option
-            className={({ active }) =>
-              clsx(
-                "relative cursor-default select-none py-2 px-4 text-gray-900 border-b border-dotted ",
-                active && "bg-blue-200"
-              )
-            }
-            value={{ value: null, description: query }}
-          >
-            <b>{query}</b>
-            <div className="text-gray-400 text-xs">Create new {label}</div>
-          </Combobox.Option>
-        )}
-
-        {options.map((value) => (
-          <Combobox.Option
-            key={value?.value}
-            className={({ active, selected }) =>
-              clsx(
-                "relative cursor-default select-none py-2 px-4 text-gray-900 border-b border-gray-200 flex",
-                active && "bg-blue-200",
-                selected && "bg-blue-100 font-bold"
-              )
-            }
-            value={value}
-          >
-            {({ selected, active }) =>
-              displayOption({ selected, active, option: value })
-            }
-          </Combobox.Option>
-        ))}
-      </Combobox.Options>
-    </Combobox>
+    />
+  ) : (
+    <AsyncSelect
+      name={name}
+      className="relative mt-1"
+      cacheOptions
+      defaultOptions
+      loadOptions={getOptions}
+      value={value}
+      getOptionValue={(option: any) => option.value}
+      getOptionLabel={(option: any) => option.description || option.value}
+      onChange={(e) => {
+        setLastNoResultsQuery("");
+        setValue(name, {
+          ...e,
+          description: e?.description || e?.value
+        });
+      }}
+      components={{
+        Option: (props: any) => {
+          return (
+            <components.Option {...props}>
+              {displayOption({ option: props.data } as any)}
+            </components.Option>
+          );
+        }
+      }}
+    />
   );
 }
