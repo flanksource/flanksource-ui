@@ -229,7 +229,8 @@ export function AttachEvidenceDialog({
     let incidentId = incidentData?.value as string;
     let hypothesisId = hypothesisData?.value as string;
 
-    const isNewIncident = !incidentId;
+    const isNewIncident = (incidentData as any).__isNew__;
+    const isNewHypothesis = (hypothesisData as any).__isNew__;
     setIsSubmitting(true);
 
     if (isNewIncident) {
@@ -248,7 +249,7 @@ export function AttachEvidenceDialog({
       incidentId = incidentResp.id;
     }
 
-    if (!hypothesisData?.value) {
+    if (isNewHypothesis) {
       /* type should be root, if it's the first for an incident? */
       const nodeDetails = isNewIncident
         ? { type: "root" }
