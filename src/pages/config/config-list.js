@@ -19,6 +19,7 @@ import { Switch } from "../../components/Switch";
 import { RefreshButton } from "../../components/RefreshButton";
 import { useLoader } from "../../hooks";
 import { useConfigPageContext } from "../../context/ConfigPageContext";
+import { ReactSelectDropdown } from "../../components/SelectDropdown";
 
 const ConfigFilterViewTypes = {
   basic: "Basic",
@@ -228,10 +229,11 @@ const TypeDropdown = ({ ...rest }) => {
   const [selected, setSelected] = useState(Object.values(items)[0].value);
 
   return (
-    <Dropdown
+    <ReactSelectDropdown
       items={items}
       onChange={(value) => setSelected(value)}
       value={selected}
+      className="w-64"
       prefix={
         <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
           Type:

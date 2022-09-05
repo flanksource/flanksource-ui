@@ -14,6 +14,7 @@ import { timeRanges } from "../components/Dropdown/TimeRange";
 import { RefreshButton } from "../components/RefreshButton";
 import { Icon } from "../components";
 import { SearchableDropdown } from "../components/SearchableDropdown";
+import { ReactSelectDropdown } from "../components/SelectDropdown";
 
 export const logTypes = [
   {
@@ -210,7 +211,7 @@ export function LogsPage() {
               value={query}
             />
           </div>
-          <Dropdown
+          <ReactSelectDropdown
             name="start"
             className="w-40 mr-2 flex-shrink-0"
             items={timeRanges}

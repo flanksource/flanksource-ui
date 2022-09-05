@@ -6,6 +6,7 @@ import { getLogs } from "../../api/services/logs";
 import { Dropdown } from "../../components/Dropdown";
 import { timeRanges } from "../../components/Dropdown/TimeRange";
 import { LogsViewer } from "../../components/Logs";
+import { ReactSelectDropdown } from "../../components/SelectDropdown";
 import { TextInput } from "../../components/TextInput";
 
 export function LogsPage() {
@@ -72,7 +73,7 @@ export function LogsPage() {
         <div className="flex flex-row items-center justify-between mb-4">
           <h1 className="text-xl font-semibold">Logs</h1>
           <div className="flex items-center">
-            <Dropdown
+            <ReactSelectDropdown
               control={control}
               name="timeRange"
               className="w-44"
