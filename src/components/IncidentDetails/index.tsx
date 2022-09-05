@@ -32,6 +32,7 @@ import { ResponderDetailsDialog } from "./ResponderDetailsDialog";
 import { Icon } from "../Icon";
 import { typeItems } from "../Incidents/data";
 import { Dropdown } from "../Dropdown";
+import { ReactSelectDropdown } from "../SelectDropdown";
 
 export const IncidentDetails = ({
   incident,
@@ -262,7 +263,7 @@ export const IncidentDetails = ({
           title="Type"
           className="mt-3"
           value={
-            <Dropdown
+            <ReactSelectDropdown
               control={control}
               label=""
               name="type"

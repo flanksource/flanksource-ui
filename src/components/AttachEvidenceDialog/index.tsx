@@ -30,6 +30,7 @@ import { toastSuccess } from "../Toast/toast";
 import { Link } from "react-router-dom";
 import { typeItems } from "../Incidents/data";
 import { Dropdown } from "../Dropdown";
+import { ReactSelectDropdown } from "../SelectDropdown";
 
 interface Props {
   title: string;
@@ -349,7 +350,7 @@ export function AttachEvidenceDialog({
                     <span className="text-sm font-bold text-gray-700 mb-1 mr-4 w-16">
                       Type
                     </span>
-                    <Dropdown
+                    <ReactSelectDropdown
                       name="type"
                       label=""
                       className="w-full"

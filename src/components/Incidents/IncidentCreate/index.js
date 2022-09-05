@@ -10,6 +10,7 @@ import { createHypothesisOld } from "../../../api/services/hypothesis";
 import { createIncident } from "../../../api/services/incident";
 import { useUser } from "../../../context";
 import { Dropdown } from "../../Dropdown";
+import { ReactSelectDropdown } from "../../SelectDropdown";
 import { TextInput } from "../../TextInput";
 import { toastError } from "../../Toast/toast";
 import { severityItems, statusItems, typeItems } from "../data";
@@ -121,7 +122,7 @@ export function IncidentCreate({ callback, evidence, ...rest }) {
     <div className={`max-w-prose py-7 ${rest.className || ""}`} {...rest}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="mb-4">
-          <Dropdown
+          <ReactSelectDropdown
             control={control}
             label="Type"
             name="type"
@@ -231,7 +232,7 @@ export function IncidentCreate({ callback, evidence, ...rest }) {
         </div> */}
 
         <div className="mb-4">
-          <Dropdown
+          <ReactSelectDropdown
             control={control}
             label="Severity"
             name="severity"
@@ -241,7 +242,7 @@ export function IncidentCreate({ callback, evidence, ...rest }) {
           <p className="text-red-600 text-sm">{errors.severity?.message}</p>
         </div>
         <div className="mb-4">
-          <Dropdown
+          <ReactSelectDropdown
             control={control}
             label="Status"
             name="status"

@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useUser } from "../../context";
 import { getPersons, User } from "../../api/services/users";
 import { Dropdown } from "../Dropdown";
+import { ReactSelectDropdown } from "../SelectDropdown";
 
 interface Props {
   isOpen: boolean;
@@ -50,7 +51,7 @@ export function SelectUserDialog({ isOpen, onClose }: Props) {
         <div className="flex min-h-full items-center justify-center p-4 text-center">
           <Dialog.Panel className="bg-white p-4 rounded-md">
             <Dialog.Title className="text-left">Switch to user </Dialog.Title>
-            <Dropdown
+            <ReactSelectDropdown
               value={user?.id}
               onChange={onSelect}
               items={userOptions}

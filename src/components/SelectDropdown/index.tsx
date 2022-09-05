@@ -2,8 +2,10 @@ import clsx from "clsx";
 import {
   FunctionComponent,
   ReactNode,
+  Ref,
   useEffect,
   useMemo,
+  useRef,
   useState
 } from "react";
 import { Controller } from "react-hook-form";
@@ -56,6 +58,7 @@ export const ReactSelectDropdown = ({
 }: ReactSelectDropdownProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [options, setOptions] = useState<StateOption[]>([]);
+  const ref = useRef<HTMLDivElement>();
 
   useEffect(() => {
     if (!items) {
@@ -69,6 +72,19 @@ export const ReactSelectDropdown = ({
     });
     setOptions(data);
   }, [items]);
+
+  useEffect(() => {
+    const listener = (event: MouseEvent) => {
+      if (!ref?.current?.contains(event.target as Node)) {
+        setIsOpen(false);
+        return;
+      }
+    };
+    document.addEventListener("click", listener);
+    return () => {
+      document.removeEventListener("click", listener);
+    };
+  }, []);
 
   const OptionIcon = useMemo(() => {
     return options.find((option) => option.value === value)?.icon;
@@ -87,6 +103,7 @@ export const ReactSelectDropdown = ({
     <Dropdown
       isOpen={isOpen}
       onClose={toggleOpen}
+      inputRef={ref}
       target={
         <div
           onClick={toggleOpen}
@@ -102,6 +119,7 @@ export const ReactSelectDropdown = ({
             )}
             <span className="inline-block">{value}</span>
           </div>
+          <ChevronDown />
         </div>
       }
     >
@@ -192,16 +210,20 @@ interface DropdownProps {
   readonly isOpen: boolean;
   readonly target: ReactNode;
   readonly onClose: () => void;
+  readonly inputRef: Ref<HTMLDivElement>;
 }
 const Dropdown: FunctionComponent<DropdownProps> = ({
   children,
   isOpen,
   target,
+  inputRef,
   onClose
 }) => (
-  <div css={{ position: "relative" }}>
+  <div ref={inputRef} css={{ position: "relative" }}>
     {target}
-    {isOpen ? <Menu className="absolute bg-white">{children}</Menu> : null}
+    {isOpen ? (
+      <Menu className="absolute bg-white z-50 drop-shadow-md">{children}</Menu>
+    ) : null}
     {isOpen ? <Blanket onClick={onClose} /> : null}
   </div>
 );
@@ -227,7 +249,7 @@ const DropdownIndicator = () => (
   </div>
 );
 const ChevronDown = () => (
-  <Svg style={{ marginRight: -6 }}>
+  <Svg className="inline-block float-right" style={{ marginRight: -6 }}>
     <path
       d="M8.292 10.293a1.009 1.009 0 0 0 0 1.419l2.939 2.965c.218.215.5.322.779.322s.556-.107.769-.322l2.93-2.955a1.01 1.01 0 0 0 0-1.419.987.987 0 0 0-1.406 0l-2.298 2.317-2.307-2.327a.99.99 0 0 0-1.406 0z"
       fill="currentColor"

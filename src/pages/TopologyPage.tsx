@@ -16,6 +16,7 @@ import { searchParamsToObj } from "../utils/common";
 import { getAll } from "../api/schemaResources";
 import { schemaResourceTypes } from "../components/SchemaResourcePage/resourceTypes";
 import { FaCog } from "react-icons/fa";
+import { ReactSelectDropdown } from "../components/SelectDropdown";
 
 const allOption = {
   All: {
@@ -259,7 +260,7 @@ export function TopologyPage() {
               <label className="inline-block mr-3 text-gray-500 text-sm pt-2">
                 Health:
               </label>
-              <Dropdown
+              <ReactSelectDropdown
                 items={healthTypes}
                 onChange={(val: any) => {
                   setHealthStatus(val);
@@ -277,7 +278,7 @@ export function TopologyPage() {
               <label className="inline-block mr-3 text-gray-500 text-sm pt-2">
                 Type:
               </label>
-              <Dropdown
+              <ReactSelectDropdown
                 items={topologyTypes}
                 onChange={(val: any) => {
                   setTopologyType(val);
@@ -295,7 +296,7 @@ export function TopologyPage() {
               <label className="inline-block mr-3 text-gray-500 text-sm pt-2">
                 Team:
               </label>
-              <Dropdown
+              <ReactSelectDropdown
                 items={teams}
                 onChange={(val: any) => {
                   setTeam(val);

@@ -10,6 +10,7 @@ import { useUser } from "../../../context";
 import { capitalizeFirstLetter } from "../../../utils/common";
 import { Dropdown } from "../../Dropdown";
 import { Modal } from "../../Modal";
+import { ReactSelectDropdown } from "../../SelectDropdown";
 
 interface IProps {
   node: any;
@@ -85,7 +86,7 @@ export const CreateHypothesis = ({
               )}
             />
           </div>
-          <Dropdown
+          <ReactSelectDropdown
             control={control}
             name="hypothesis.status"
             className="mb-4 w-72"

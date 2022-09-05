@@ -20,6 +20,7 @@ import {
   IncidentState,
   useIncidentPageContext
 } from "../../context/IncidentPageContext";
+import { ReactSelectDropdown } from "../../components/SelectDropdown";
 
 const defaultSelections = {
   all: {
@@ -218,7 +219,7 @@ export function IncidentListPage() {
           <div className="flex">
             <div className="flex items-center mr-4">
               <div className="mr-3 text-gray-500 text-sm">Severity</div>
-              <Dropdown
+              <ReactSelectDropdown
                 control={control}
                 name="severity"
                 className="w-36 mr-2 flex-shrink-0"
@@ -227,7 +228,7 @@ export function IncidentListPage() {
             </div>
             <div className="flex items-center mr-4">
               <div className="mr-3 text-gray-500 text-sm">Status</div>
-              <Dropdown
+              <ReactSelectDropdown
                 control={control}
                 name="status"
                 className="w-36 mr-2 flex-shrink-0"
@@ -236,7 +237,7 @@ export function IncidentListPage() {
             </div>
             <div className="flex items-center mr-4">
               <div className="mr-3 text-gray-500 text-sm">Owner</div>
-              <Dropdown
+              <ReactSelectDropdown
                 control={control}
                 name="owner"
                 className="w-36 mr-2 flex-shrink-0"
@@ -245,7 +246,7 @@ export function IncidentListPage() {
             </div>
             <div className="flex items-center">
               <div className="mr-3 text-gray-500 text-sm">Type</div>
-              <Dropdown
+              <ReactSelectDropdown
                 control={control}
                 label=""
                 name="type"
