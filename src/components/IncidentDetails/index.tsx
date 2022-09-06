@@ -32,7 +32,7 @@ import { ResponderDetailsDialog } from "./ResponderDetailsDialog";
 import { Icon } from "../Icon";
 import { typeItems } from "../Incidents/data";
 import { Dropdown } from "../Dropdown";
-import { ReactSelectDropdown } from "../SelectDropdown";
+import { ReactSelectDropdown } from "../ReactSelectDropdown";
 
 export const IncidentDetails = ({
   incident,

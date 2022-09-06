@@ -3,7 +3,7 @@ import React from "react";
 import { Controller } from "react-hook-form";
 import { Dropdown } from "../Dropdown";
 import { timeRanges } from "../Dropdown/TimeRange";
-import { ReactSelectDropdown } from "../SelectDropdown";
+import { ReactSelectDropdown } from "../ReactSelectDropdown";
 import { TextInput } from "../TextInput";
 
 export function LogSearchBar({ control }) {

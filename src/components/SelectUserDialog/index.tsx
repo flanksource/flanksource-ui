@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useUser } from "../../context";
 import { getPersons, User } from "../../api/services/users";
 import { Dropdown } from "../Dropdown";
-import { ReactSelectDropdown } from "../SelectDropdown";
+import { ReactSelectDropdown } from "../ReactSelectDropdown";
 
 interface Props {
   isOpen: boolean;

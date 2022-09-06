@@ -30,7 +30,7 @@ import { toastSuccess } from "../Toast/toast";
 import { Link } from "react-router-dom";
 import { typeItems } from "../Incidents/data";
 import { Dropdown } from "../Dropdown";
-import { ReactSelectDropdown } from "../SelectDropdown";
+import { ReactSelectDropdown } from "../ReactSelectDropdown";
 
 interface Props {
   title: string;

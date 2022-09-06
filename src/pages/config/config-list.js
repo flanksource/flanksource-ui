@@ -19,7 +19,7 @@ import { Switch } from "../../components/Switch";
 import { RefreshButton } from "../../components/RefreshButton";
 import { useLoader } from "../../hooks";
 import { useConfigPageContext } from "../../context/ConfigPageContext";
-import { ReactSelectDropdown } from "../../components/SelectDropdown";
+import { ReactSelectDropdown } from "../../components/ReactSelectDropdown";
 
 const ConfigFilterViewTypes = {
   basic: "Basic",

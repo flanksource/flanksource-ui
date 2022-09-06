@@ -8,7 +8,7 @@ import {
   useRef,
   useState
 } from "react";
-import { Controller } from "react-hook-form";
+import { Control, Controller } from "react-hook-form";
 
 import Select, { SingleValue, StylesConfig } from "react-select";
 import { defaultTheme } from "react-select";
@@ -34,7 +34,7 @@ const selectStyles: StylesConfig<StateOption, false> = {
 type ReactSelectDropdownProps = {
   className?: string;
   label?: string;
-  control?: any;
+  control?: Control<any>;
   items?: {
     [key: string]: StateOption;
   };
@@ -42,7 +42,7 @@ type ReactSelectDropdownProps = {
   onChange?: () => void;
   value?: StateOption;
   placeholder?: string;
-  prefix: ReactNode;
+  prefix?: ReactNode;
 };
 
 export const ReactSelectDropdown = ({
@@ -86,8 +86,8 @@ export const ReactSelectDropdown = ({
     };
   }, []);
 
-  const OptionIcon = useMemo(() => {
-    return options.find((option) => option.value === value)?.icon;
+  const SelectedOption = useMemo(() => {
+    return options.find((option) => option.value === value);
   }, [options, value]);
 
   const toggleOpen = () => {
@@ -114,10 +114,10 @@ export const ReactSelectDropdown = ({
         >
           <div className="inline-block">{prefix}</div>
           <div className="inline-block">
-            {OptionIcon && (
-              <span className="inline-block mr-2">{OptionIcon}</span>
+            {SelectedOption?.icon && (
+              <span className="inline-block mr-2">{SelectedOption.icon}</span>
             )}
-            <span className="inline-block">{value}</span>
+            <span className="inline-block">{SelectedOption?.label}</span>
           </div>
           <ChevronDown />
         </div>
@@ -140,6 +140,7 @@ export const ReactSelectDropdown = ({
                 isClearable={false}
                 menuIsOpen
                 onChange={(e) => {
+                  console.log(e);
                   onChangeControlled(e.value);
                   onSelectChange(e.value);
                 }}

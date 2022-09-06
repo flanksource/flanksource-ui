@@ -6,7 +6,7 @@ import { getLogs } from "../../api/services/logs";
 import { Dropdown } from "../../components/Dropdown";
 import { timeRanges } from "../../components/Dropdown/TimeRange";
 import { LogsViewer } from "../../components/Logs";
-import { ReactSelectDropdown } from "../../components/SelectDropdown";
+import { ReactSelectDropdown } from "../../components/ReactSelectDropdown";
 import { TextInput } from "../../components/TextInput";
 
 export function LogsPage() {

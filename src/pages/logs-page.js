@@ -14,7 +14,7 @@ import { timeRanges } from "../components/Dropdown/TimeRange";
 import { RefreshButton } from "../components/RefreshButton";
 import { Icon } from "../components";
 import { SearchableDropdown } from "../components/SearchableDropdown";
-import { ReactSelectDropdown } from "../components/SelectDropdown";
+import { ReactSelectDropdown } from "../components/ReactSelectDropdown";
 
 export const logTypes = [
   {

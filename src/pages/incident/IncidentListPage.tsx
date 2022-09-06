@@ -20,7 +20,7 @@ import {
   IncidentState,
   useIncidentPageContext
 } from "../../context/IncidentPageContext";
-import { ReactSelectDropdown } from "../../components/SelectDropdown";
+import { ReactSelectDropdown } from "../../components/ReactSelectDropdown";
 
 const defaultSelections = {
   all: {
@@ -223,6 +223,7 @@ export function IncidentListPage() {
                 control={control}
                 name="severity"
                 className="w-36 mr-2 flex-shrink-0"
+                value={watchSeverity}
                 items={{ ...defaultSelections, ...severityItems }}
               />
             </div>
@@ -232,6 +233,7 @@ export function IncidentListPage() {
                 control={control}
                 name="status"
                 className="w-36 mr-2 flex-shrink-0"
+                value={watchStatus}
                 items={{ ...defaultSelections, ...statusItems }}
               />
             </div>
@@ -241,6 +243,7 @@ export function IncidentListPage() {
                 control={control}
                 name="owner"
                 className="w-36 mr-2 flex-shrink-0"
+                value={watchOwner}
                 items={{ ...defaultSelections, ...ownerSelections }}
               />
             </div>
@@ -251,6 +254,7 @@ export function IncidentListPage() {
                 label=""
                 name="type"
                 className="w-56"
+                value={watchType}
                 items={{ ...defaultSelections, ...typeItems }}
               />
               {/* <MultiSelectDropdown

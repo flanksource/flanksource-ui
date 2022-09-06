@@ -10,7 +10,7 @@ import { useUser } from "../../../context";
 import { capitalizeFirstLetter } from "../../../utils/common";
 import { Dropdown } from "../../Dropdown";
 import { Modal } from "../../Modal";
-import { ReactSelectDropdown } from "../../SelectDropdown";
+import { ReactSelectDropdown } from "../../ReactSelectDropdown";
 
 interface IProps {
   node: any;

@@ -114,14 +114,14 @@ function ChangeCell({ row, column }: CellProp) {
     _.forEach(item, (v, k) => {
       if (k == "diff") {
         cell.push(
-          <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-blue-100 text-blue-800">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-blue-100 text-blue-800">
             {v}
           </span>
         );
       } else {
         cell.push(
           <>
-            <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-blue-100 text-blue-800">
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-blue-100 text-blue-800">
               {k} (v)
             </span>
             <br />

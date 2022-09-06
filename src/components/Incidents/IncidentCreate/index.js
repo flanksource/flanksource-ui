@@ -10,7 +10,7 @@ import { createHypothesisOld } from "../../../api/services/hypothesis";
 import { createIncident } from "../../../api/services/incident";
 import { useUser } from "../../../context";
 import { Dropdown } from "../../Dropdown";
-import { ReactSelectDropdown } from "../../SelectDropdown";
+import { ReactSelectDropdown } from "../../ReactSelectDropdown";
 import { TextInput } from "../../TextInput";
 import { toastError } from "../../Toast/toast";
 import { severityItems, statusItems, typeItems } from "../data";

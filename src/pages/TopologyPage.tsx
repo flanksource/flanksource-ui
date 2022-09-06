@@ -16,7 +16,7 @@ import { searchParamsToObj } from "../utils/common";
 import { getAll } from "../api/schemaResources";
 import { schemaResourceTypes } from "../components/SchemaResourcePage/resourceTypes";
 import { FaCog } from "react-icons/fa";
-import { ReactSelectDropdown } from "../components/SelectDropdown";
+import { ReactSelectDropdown } from "../components/ReactSelectDropdown";
 
 const allOption = {
   All: {
