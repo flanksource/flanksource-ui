@@ -31,7 +31,7 @@ const Home: NextPage = () => {
             return router.push("/login?aal=aal2");
           case 401:
             // do nothing, the user is not logged in
-            return;
+            return router.push("/login");
         }
 
         // Something else happened!
