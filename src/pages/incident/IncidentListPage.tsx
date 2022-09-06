@@ -26,7 +26,7 @@ const defaultSelections = {
   all: {
     description: "All",
     value: "all",
-    order: 0
+    order: -1
   }
 };
 

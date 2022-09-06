@@ -11,7 +11,7 @@ import {
 import { Control, Controller } from "react-hook-form";
 
 import Select, { SingleValue, StylesConfig } from "react-select";
-import { defaultTheme } from "react-select";
+import { defaultTheme, components } from "react-select";
 
 const { colors } = defaultTheme;
 
@@ -69,7 +69,9 @@ export const ReactSelectDropdown = ({
       const item = items[key];
       item.label = items[key].description;
       data.push(items[key]);
+      item.order = item.order || 0;
     });
+    data.sort((v1, v2) => v1.order - v2.order);
     setOptions(data);
   }, [items]);
 
@@ -106,20 +108,24 @@ export const ReactSelectDropdown = ({
       inputRef={ref}
       target={
         <div
-          onClick={toggleOpen}
           className={clsx(
-            "rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2",
+            `relative cursor-pointer h-full bg-white border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left  focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm
+            ${SelectedOption?.id === "_empty" && "text-gray-400"}
+          `,
             className
           )}
+          onClick={toggleOpen}
         >
-          <div className="inline-block">{prefix}</div>
-          <div className="inline-block">
-            {SelectedOption?.icon && (
-              <span className="inline-block mr-2">{SelectedOption.icon}</span>
-            )}
-            <span className="inline-block">{SelectedOption?.label}</span>
+          <div className="flex items-center">
+            {prefix}
+            {SelectedOption?.icon && <div>{SelectedOption.icon}</div>}
+            <span className="ml-2 block truncate">
+              {SelectedOption?.description}
+            </span>
           </div>
-          <ChevronDown />
+          <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+            <ChevronDown className="h-5 w-5 text-gray-400" />
+          </span>
         </div>
       }
     >
@@ -134,13 +140,34 @@ export const ReactSelectDropdown = ({
               <Select
                 autoFocus
                 backspaceRemovesValue={false}
-                components={{ DropdownIndicator, IndicatorSeparator: null }}
+                components={{
+                  DropdownIndicator,
+                  IndicatorSeparator: null,
+                  Option: (props: any) => {
+                    return (
+                      <components.Option {...props}>
+                        <div className="flex items-center">
+                          <div>{props.data.icon}</div>
+                          <span
+                            className={clsx(
+                              props.data.value === value
+                                ? "font-semibold"
+                                : "font-normal",
+                              "ml-2 block truncate"
+                            )}
+                          >
+                            {props.data.description}
+                          </span>
+                        </div>
+                      </components.Option>
+                    );
+                  }
+                }}
                 controlShouldRenderValue={false}
                 hideSelectedOptions={false}
                 isClearable={false}
                 menuIsOpen
                 onChange={(e) => {
-                  console.log(e);
                   onChangeControlled(e.value);
                   onSelectChange(e.value);
                 }}
@@ -158,7 +185,29 @@ export const ReactSelectDropdown = ({
         <Select
           autoFocus
           backspaceRemovesValue={false}
-          components={{ DropdownIndicator, IndicatorSeparator: null }}
+          components={{
+            DropdownIndicator,
+            IndicatorSeparator: null,
+            Option: (props: any) => {
+              return (
+                <components.Option {...props}>
+                  <div className="flex items-center">
+                    <div>{props.data.icon}</div>
+                    <span
+                      className={clsx(
+                        props.data.value === value
+                          ? "font-semibold"
+                          : "font-normal",
+                        "ml-2 block truncate"
+                      )}
+                    >
+                      {props.data.description}
+                    </span>
+                  </div>
+                </components.Option>
+              );
+            }
+          }}
           controlShouldRenderValue={false}
           hideSelectedOptions={false}
           isClearable={false}
@@ -220,7 +269,7 @@ const Dropdown: FunctionComponent<DropdownProps> = ({
   inputRef,
   onClose
 }) => (
-  <div ref={inputRef} css={{ position: "relative" }}>
+  <div ref={inputRef} className="relative">
     {target}
     {isOpen ? (
       <Menu className="absolute bg-white z-50 drop-shadow-md">{children}</Menu>
@@ -249,8 +298,11 @@ const DropdownIndicator = () => (
     </Svg>
   </div>
 );
-const ChevronDown = () => (
-  <Svg className="inline-block float-right" style={{ marginRight: -6 }}>
+const ChevronDown = ({ className }: { className: string }) => (
+  <Svg
+    className={clsx("inline-block float-right", className)}
+    style={{ marginRight: -6 }}
+  >
     <path
       d="M8.292 10.293a1.009 1.009 0 0 0 0 1.419l2.939 2.965c.218.215.5.322.779.322s.556-.107.769-.322l2.93-2.955a1.01 1.01 0 0 0 0-1.419.987.987 0 0 0-1.406 0l-2.298 2.317-2.307-2.327a.99.99 0 0 0-1.406 0z"
       fill="currentColor"

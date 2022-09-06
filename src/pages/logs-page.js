@@ -213,7 +213,7 @@ export function LogsPage() {
           </div>
           <ReactSelectDropdown
             name="start"
-            className="w-40 mr-2 flex-shrink-0"
+            className="w-44 mr-2"
             items={timeRanges}
             onChange={(e) => setStart(e)}
             value={start}
