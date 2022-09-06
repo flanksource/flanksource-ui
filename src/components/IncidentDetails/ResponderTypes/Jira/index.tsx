@@ -91,7 +91,7 @@ export const Jira = ({
               onSelect={(selected) => {
                 setIssueType(selected);
               }}
-              itemsPath="$..issueTypes.*~"
+              itemsPath="$..issueTypes[*]"
               namePath="$"
               valuePath="$"
               label={
