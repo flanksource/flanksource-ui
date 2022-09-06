@@ -66,7 +66,7 @@ export const Jira = ({
             }}
             itemsPath="$..projects[*]"
             namePath="$.name"
-            valuePath="$.name"
+            valuePath="$.key"
             label={
               <label
                 htmlFor="project"
