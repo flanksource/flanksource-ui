@@ -65,7 +65,7 @@ export const MicrosoftPlanner = ({
             }}
             itemsPath="$..plans[*]"
             namePath="$.name"
-            valuePath="$.name"
+            valuePath="$.id"
             label={
               <label
                 htmlFor="plan_id"
@@ -90,9 +90,9 @@ export const MicrosoftPlanner = ({
               onSelect={(selected) => {
                 setBucketId(selected);
               }}
-              itemsPath="$..buckets"
+              itemsPath="$..buckets[*]"
               namePath="$.name"
-              valuePath="$.name"
+              valuePath="$.id"
               label={
                 <label
                   htmlFor="bucket_id"
