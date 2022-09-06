@@ -54,7 +54,7 @@ export function DropdownWithActions<T extends IItem>({
         callback(res);
       }
       fetch();
-    }, 1000),
+    }, 100),
     []
   );
 
