@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -183,6 +183,10 @@ export function AttachEvidenceDialog({
 
   const { user } = useUser();
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    setValue("hypothesis", null);
+  }, [selectedIncident]);
 
   const fetchIncidentOptions = useCallback((query: string) => {
     const fn = async (query: string): Promise<IExtendedItem[]> => {
