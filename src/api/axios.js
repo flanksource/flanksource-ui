@@ -31,14 +31,13 @@ export const Logs = axios.create({
   }
 });
 
-let canaryBaseUrl = "canary";
-if (typeof window !== "undefined") {
-  canaryBaseUrl = window.CANARY_BASE_URL;
-  canaryBaseUrl = "canary";
+let canaryBaseUrl = "/canary";
+if (process.env.NEXT_PUBLIC_APP_DEPLOYMENT === "CANARY_CHECKER") {
+  canaryBaseUrl = "";
 }
 
 export const CanaryCheckerDB = axios.create({
-  baseURL: `${API_BASE}/${canaryBaseUrl}/db`,
+  baseURL: `${API_BASE}${canaryBaseUrl}/db`,
   headers: {
     Accept: "application/json",
     Prefer: "return=representation",
@@ -47,7 +46,7 @@ export const CanaryCheckerDB = axios.create({
 });
 
 export const CanaryChecker = axios.create({
-  baseURL: `${API_BASE}/${canaryBaseUrl}`,
+  baseURL: `${API_BASE}${canaryBaseUrl}`,
   headers: {
     Accept: "application/json",
     Prefer: "return=representation",
