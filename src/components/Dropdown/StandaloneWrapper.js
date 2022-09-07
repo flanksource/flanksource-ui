@@ -19,7 +19,6 @@ export const DropdownStandaloneWrapper = ({
   useEffect(() => {
     const obj = {};
     obj[paramKey] = value || defaultValue;
-    console.log("update", obj);
     updateParams(obj);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);

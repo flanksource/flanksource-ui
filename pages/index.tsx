@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 import ory from "../src/components/ory/sdk";
-import { App } from "../src/App";
+import { App, CanaryCheckerApp } from "../src/App";
 import { Head } from "../src/components/Head/Head";
 import { Session } from "@ory/client";
 
@@ -39,6 +39,9 @@ const Home: NextPage = () => {
       });
   }, [router]);
 
+  const isCanaryUI =
+    process.env.NEXT_PUBLIC_APP_DEPLOYMENT === "CANARY_CHECKER";
+
   if (!session) {
     return null;
   }
@@ -46,7 +49,7 @@ const Home: NextPage = () => {
   return (
     <div className="container-fluid">
       <Head prefix="Home" />
-      <App />
+      {isCanaryUI ? <CanaryCheckerApp /> : <App />}
     </div>
   );
 };
