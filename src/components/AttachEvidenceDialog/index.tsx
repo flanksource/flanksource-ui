@@ -422,6 +422,7 @@ export function AttachEvidenceDialog({
                 displayOption={({ option }) =>
                   option?.description || option?.value
                 }
+                dependentValue={selectedIncident?.value}
               />
               <p className="text-red-600 text-sm">
                 {/* @ts-ignore:next-line */}

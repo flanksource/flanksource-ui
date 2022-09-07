@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import AsyncCreatableSelect from "react-select/async-creatable";
 import AsyncSelect from "react-select/async";
 import { IItem } from "../../types/IItem";
@@ -17,6 +17,7 @@ interface IDropdownWithActionsProps<T> {
   }) => React.ReactNode;
   value?: T;
   setValue: any;
+  dependentValue?: any;
 }
 
 export function DropdownWithActions<T extends IItem>({
@@ -26,9 +27,12 @@ export function DropdownWithActions<T extends IItem>({
   onQuery,
   value = { value: null, description: "" } as T,
   displayOption,
-  setValue
+  setValue,
+  dependentValue
 }: IDropdownWithActionsProps<T>) {
   const [lastNoResultsQuery, setLastNoResultsQuery] = useState("");
+  const [defaultOptions, setDefaultOptions] = useState<any>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const checkIfItIsANoResultsQuery = (
     query: string,
@@ -40,30 +44,61 @@ export function DropdownWithActions<T extends IItem>({
   };
 
   const getOptions = useCallback(
-    debounce((query: string, callback, lastNoResultsQuery: string): any => {
-      if (checkIfItIsANoResultsQuery(query, lastNoResultsQuery)) {
-        return callback([]);
-      }
-      async function fetch() {
-        let res = (await onQuery(query)) || [];
-        if (!res.length) {
-          setLastNoResultsQuery(query);
-        } else {
-          setLastNoResultsQuery("");
+    debounce(
+      (
+        query: string,
+        callback,
+        lastNoResultsQuery: string,
+        hideLoader?: boolean
+      ): any => {
+        if (checkIfItIsANoResultsQuery(query, lastNoResultsQuery)) {
+          return callback([]);
         }
-        callback(res);
-      }
-      fetch();
-    }, 100),
+        async function fetch() {
+          setIsLoading(true && !hideLoader);
+          let res = (await onQuery(query)) || [];
+          if (!res.length) {
+            setLastNoResultsQuery(query);
+          } else {
+            setLastNoResultsQuery("");
+          }
+          callback(res);
+          setIsLoading(false);
+        }
+        fetch();
+      },
+      100
+    ),
     []
   );
+
+  const loadDefaultOptions = (hideLoader?: boolean) => {
+    getOptions(
+      "",
+      (data: any[]) => {
+        setDefaultOptions(data);
+      },
+      "",
+      hideLoader
+    );
+  };
+
+  const onChangeInputFn = (inputValue: string, { action }: any) => {
+    if (action === "menu-close") {
+      loadDefaultOptions(true);
+    }
+  };
+
+  useEffect(() => {
+    loadDefaultOptions();
+  }, [dependentValue]);
 
   return creatable ? (
     <AsyncCreatableSelect
       name={name}
       className="relative mt-1"
       cacheOptions
-      defaultOptions
+      defaultOptions={defaultOptions}
       loadOptions={(query, callback) => {
         getOptions(query, callback, lastNoResultsQuery);
       }}
@@ -71,6 +106,8 @@ export function DropdownWithActions<T extends IItem>({
       getOptionValue={(option: any) => option.value}
       getOptionLabel={(option: any) => option.description || option.value}
       createOptionPosition="first"
+      onInputChange={onChangeInputFn}
+      isLoading={isLoading}
       onChange={(e) => {
         setLastNoResultsQuery("");
         setValue(name, {
@@ -93,9 +130,10 @@ export function DropdownWithActions<T extends IItem>({
       name={name}
       className="relative mt-1"
       cacheOptions
-      defaultOptions
+      defaultOptions={defaultOptions}
       loadOptions={getOptions}
       value={value}
+      isLoading={isLoading}
       getOptionValue={(option: any) => option.value}
       getOptionLabel={(option: any) => option.description || option.value}
       onChange={(e) => {
@@ -105,6 +143,7 @@ export function DropdownWithActions<T extends IItem>({
           description: e?.description || e?.value
         });
       }}
+      onInputChange={onChangeInputFn}
       components={{
         Option: (props: any) => {
           return (
