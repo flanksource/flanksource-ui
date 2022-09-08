@@ -1,4 +1,4 @@
-module.exports = {
+let config = {
   typescript: {
     // !! WARN !!
     // Dangerously allow production builds to successfully complete even if
@@ -35,3 +35,10 @@ module.exports = {
     ];
   }
 };
+
+if (process.env.NEXT_STANDALONE_DEPLOYMENT === "true") {
+  // https://github.com/vercel/next.js/tree/canary/examples/with-docker#in-existing-projects
+  config = { ...config, output: "standalone" };
+}
+
+module.exports = config;
