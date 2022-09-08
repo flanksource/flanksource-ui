@@ -90,15 +90,13 @@ export function IncidentDetailsPage() {
     [incidentData]
   );
 
-  let topologyIds = (incident?.hypotheses || [])
+  const topologyIds = (incident?.hypotheses || [])
     .flatMap((h) =>
       h.evidences?.map((e) =>
         e.type === EvidenceType.Topology ? e.evidence.id : null
       )
     )
     .filter((x) => x) as string[];
-
-  topologyIds = [...topologyIds, ...topologyIds];
 
   const status = useMemo(() => incident?.status ?? null, [incident]);
 
