@@ -37,7 +37,8 @@ export function IncidentCreate({ callback, evidence, ...rest }) {
   const {
     control,
     formState: { errors },
-    handleSubmit
+    handleSubmit,
+    watch
   } = useForm({
     defaultValues: {
       title: "",
@@ -49,6 +50,10 @@ export function IncidentCreate({ callback, evidence, ...rest }) {
     },
     resolver: yupResolver(validationSchema)
   });
+
+  const type = watch("type");
+  const severity = watch("severity");
+  const status = watch("status");
 
   const additionalFields = {
     id: "",
@@ -127,7 +132,9 @@ export function IncidentCreate({ callback, evidence, ...rest }) {
             label="Type"
             name="type"
             className="w-full"
+            labelClass="block text-sm font-bold text-gray-700 mb-2"
             items={typeItems}
+            value={type}
           />
           <p className="text-red-600 text-sm">{errors.type?.message}</p>
         </div>
@@ -238,6 +245,8 @@ export function IncidentCreate({ callback, evidence, ...rest }) {
             name="severity"
             className="w-full"
             items={severityItems}
+            labelClass="block text-sm font-bold text-gray-700 mb-2"
+            value={severity}
           />
           <p className="text-red-600 text-sm">{errors.severity?.message}</p>
         </div>
@@ -248,6 +257,8 @@ export function IncidentCreate({ callback, evidence, ...rest }) {
             name="status"
             className="w-full"
             items={statusItems}
+            labelClass="block text-sm font-bold text-gray-700 mb-2"
+            value={status}
           />
           <p className="text-red-600 text-sm">{errors.status?.message}</p>
         </div>

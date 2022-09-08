@@ -324,7 +324,6 @@ export function TopologyPage() {
                     value={selectedLabel}
                     onChange={(tag: any) => {
                       setSelectedLabel(tag);
-                      console.log(tag);
                       setSearchParams({
                         ...searchParamsToObj(searchParams),
                         labels:

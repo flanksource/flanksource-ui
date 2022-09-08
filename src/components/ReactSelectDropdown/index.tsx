@@ -48,6 +48,7 @@ type ReactSelectDropdownProps = {
   value?: StateOption;
   placeholder?: string;
   prefix?: ReactNode;
+  labelClass?: string;
 };
 
 export const ReactSelectDropdown = ({
@@ -59,6 +60,7 @@ export const ReactSelectDropdown = ({
   onChange = () => {},
   value,
   prefix,
+  labelClass,
   placeholder
 }: ReactSelectDropdownProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -113,25 +115,36 @@ export const ReactSelectDropdown = ({
       onClose={toggleOpen}
       inputRef={ref}
       target={
-        <div
-          className={clsx(
-            `relative cursor-pointer h-full bg-white border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left  focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm
-            ${SelectedOption?.id === "_empty" && "text-gray-400"}
-          `,
-            className
-          )}
-          onClick={toggleOpen}
-        >
-          <div className="flex items-center">
-            {prefix}
-            {SelectedOption?.icon && <div>{SelectedOption.icon}</div>}
-            <span className="ml-2 block truncate">
-              {SelectedOption?.description}
+        <div className="space-y-2">
+          <label
+            className={
+              labelClass
+                ? labelClass
+                : "text-sm font-medium text-gray-700 block"
+            }
+          >
+            {label}
+          </label>
+          <div
+            className={clsx(
+              `relative cursor-pointer h-full bg-white border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left  focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm
+                ${SelectedOption?.id === "_empty" && "text-gray-400"}
+              `,
+              className
+            )}
+            onClick={toggleOpen}
+          >
+            <div className="flex items-center">
+              {prefix}
+              {SelectedOption?.icon && <div>{SelectedOption.icon}</div>}
+              <span className="ml-2 block truncate">
+                {SelectedOption?.description}
+              </span>
+            </div>
+            <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+              <ChevronDown className="h-5 w-5 text-gray-400" />
             </span>
           </div>
-          <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-            <ChevronDown className="h-5 w-5 text-gray-400" />
-          </span>
         </div>
       }
     >
