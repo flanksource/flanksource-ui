@@ -111,11 +111,13 @@ export function LogsPage() {
     async function fetchTopologies() {
       try {
         let { data } = await getTopologyComponents();
-        data = data.filter((item) => {
-          item.label = item.name;
-          item.value = item.id;
-          return item.external_id;
-        });
+        data = data
+          .filter((item) => {
+            item.label = item.name;
+            item.value = item.id;
+            return item.external_id;
+          })
+          .sort((a, b) => a.label.localeCompare(b.label));
         setTopologies(data);
       } catch (ex) {}
     }
