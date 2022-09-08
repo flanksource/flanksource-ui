@@ -250,7 +250,9 @@ export function TopologyPage() {
           <TopologyBreadcrumbs topologyId={id} />
         </div>
       }
-      onRefresh={load}
+      onRefresh={() => {
+        load();
+      }}
       loading={loading}
     >
       <>
