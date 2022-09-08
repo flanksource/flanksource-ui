@@ -26,7 +26,7 @@ export const CreateHypothesis = ({
   isOpen
 }: IProps) => {
   const { user } = useUser();
-  const { control, getValues, handleSubmit, reset } = useForm({
+  const { control, getValues, handleSubmit, reset, watch } = useForm({
     defaultValues: {
       hypothesis: {
         status: HypothesisStatus.Possible,
@@ -34,6 +34,8 @@ export const CreateHypothesis = ({
       }
     }
   });
+
+  const status = watch("hypothesis.status");
 
   const onSubmit = async () => {
     const newNodeID = uuidv4();
@@ -92,6 +94,7 @@ export const CreateHypothesis = ({
             className="mb-4 w-72"
             items={hypothesisStatusDropdownOptions}
             label="State"
+            value={status}
           />
         </div>
         <div className="flex justify-end mt-4 py-4 px-8 rounded-b-lg bg-gray-100">

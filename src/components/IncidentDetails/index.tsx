@@ -5,14 +5,7 @@ import { RiCloseCircleLine } from "react-icons/ri";
 import clsx from "clsx";
 
 import { IncidentDetailsRow } from "./IncidentDetailsRow";
-import { Select } from "../Select";
 import { IncidentPriority } from "../../constants/incident-priority";
-import {
-  IncidentCommandersOption,
-  IncidentCommandersSingleValue,
-  IncidentPriorityOption,
-  IncidentPrioritySingleValue
-} from "./select-components";
 import { priorities } from "./data";
 import {
   AddResponder,
@@ -85,6 +78,9 @@ export const IncidentDetails = ({
     date ? dayjs(date).fromNow(withoutSuffix) : fallback;
 
   const watchCreatedAt = watch("created_at");
+  const watchType = watch("type");
+  const watchPriority = watch("priority");
+  const watchCommanders = watch("commanders");
 
   const formattedCreatedAt = useMemo(
     () => formatDate({ date: watchCreatedAt }),
@@ -227,17 +223,13 @@ export const IncidentDetails = ({
           title="Commanders"
           className="mt-4"
           value={
-            <Select
-              name="commanders"
-              isClearable
+            <ReactSelectDropdown
               control={control}
-              hideSelectedOptions={false}
-              components={{
-                SingleValue: IncidentCommandersSingleValue,
-                Option: IncidentCommandersOption,
-                IndicatorSeparator: () => null
-              }}
-              options={commandersArray}
+              label=""
+              name="commanders"
+              className="w-full"
+              items={commandersArray}
+              value={watchCommanders}
             />
           }
         />
@@ -269,6 +261,7 @@ export const IncidentDetails = ({
               name="type"
               className="w-full"
               items={typeItems}
+              value={watchType}
             />
           }
         />
@@ -276,16 +269,13 @@ export const IncidentDetails = ({
           title="Priority"
           className="mt-3"
           value={
-            <Select
-              name="priority"
+            <ReactSelectDropdown
               control={control}
-              components={{
-                SingleValue: IncidentPrioritySingleValue,
-                Option: IncidentPriorityOption,
-                IndicatorSeparator: () => null
-              }}
-              options={priorities}
-              isSearchable={false}
+              label=""
+              name="priority"
+              className="w-full"
+              items={priorities}
+              value={watchPriority}
             />
           }
         />

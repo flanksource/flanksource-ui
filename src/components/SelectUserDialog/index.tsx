@@ -55,6 +55,7 @@ export function SelectUserDialog({ isOpen, onClose }: Props) {
               value={user?.id}
               onChange={onSelect}
               items={userOptions}
+              value={user}
             />
           </Dialog.Panel>
         </div>

@@ -162,6 +162,8 @@ export function AttachEvidenceDialog({
   /* @ts-ignore:next-line */
   const selectedIncident = watch("incident");
 
+  const watchType = watch("type");
+
   const { user } = useUser();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -356,6 +358,7 @@ export function AttachEvidenceDialog({
                       className="w-full"
                       control={control}
                       items={typeItems}
+                      value={watchType}
                     />
                     <p className="text-red-600 text-sm">
                       {errors.type?.message}

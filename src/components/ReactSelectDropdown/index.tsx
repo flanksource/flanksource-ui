@@ -12,6 +12,7 @@ import { Control, Controller } from "react-hook-form";
 
 import Select, { SingleValue, StylesConfig } from "react-select";
 import { defaultTheme, components } from "react-select";
+import { Avatar } from "../Avatar";
 
 const { colors } = defaultTheme;
 
@@ -20,6 +21,8 @@ interface StateOption {
   value?: string;
   icon?: any;
   description?: string;
+  order?: number;
+  avatar?: any;
 }
 
 const selectStyles: StylesConfig<StateOption, false> = {
@@ -35,9 +38,11 @@ type ReactSelectDropdownProps = {
   className?: string;
   label?: string;
   control?: Control<any>;
-  items?: {
-    [key: string]: StateOption;
-  };
+  items?:
+    | {
+        [key: string]: StateOption;
+      }
+    | StateOption[];
   name: string;
   onChange?: () => void;
   value?: StateOption;
@@ -66,10 +71,11 @@ export const ReactSelectDropdown = ({
     }
     const data: any[] = [];
     Object.keys(items).forEach((key: string) => {
-      const item = items[key];
-      item.label = items[key].description;
-      data.push(items[key]);
+      const item: any = items[key];
+      item.label = item.label || item.description;
+      item.description = item.description || item.label;
       item.order = item.order || 0;
+      data.push(item);
     });
     data.sort((v1, v2) => v1.order - v2.order);
     setOptions(data);
@@ -147,7 +153,10 @@ export const ReactSelectDropdown = ({
                     return (
                       <components.Option {...props}>
                         <div className="flex items-center">
-                          <div>{props.data.icon}</div>
+                          {props.data.avatar && (
+                            <Avatar user={props.data} size="sm" />
+                          )}
+                          {props.data.icon && <div>{props.data.icon}</div>}
                           <span
                             className={clsx(
                               props.data.value === value
@@ -192,7 +201,10 @@ export const ReactSelectDropdown = ({
               return (
                 <components.Option {...props}>
                   <div className="flex items-center">
-                    <div>{props.data.icon}</div>
+                    {props.data.avatar && (
+                      <Avatar user={props.data} size="sm" />
+                    )}
+                    {props.data.icon && <div>{props.data.icon}</div>}
                     <span
                       className={clsx(
                         props.data.value === value
