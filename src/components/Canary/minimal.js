@@ -24,12 +24,16 @@ const MinimalCanaryFC = ({
       setSearchParams(getParamsFromURL(location.search));
     });
   }, []);
-  const { tabBy, layout } = searchParams;
+  const { tabBy, layout, timeRange } = searchParams;
 
   const [selectedCheck, setSelectedCheck] = useState(null);
 
   const handleCheckSelect = (check) => {
-    getCanaries({ check: check.id, includeMessages: true }).then((results) => {
+    getCanaries({
+      check: check.id,
+      includeMessages: true,
+      start: timeRange
+    }).then((results) => {
       if (results == null || results.data.checks.length === 0) {
         return;
       }
