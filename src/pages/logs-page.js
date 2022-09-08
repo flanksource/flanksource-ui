@@ -14,6 +14,7 @@ import { timeRanges } from "../components/Dropdown/TimeRange";
 import { RefreshButton } from "../components/RefreshButton";
 import { Icon } from "../components";
 import { SearchableDropdown } from "../components/SearchableDropdown";
+import { InformationCircleIcon } from "@heroicons/react/outline";
 
 export const logTypes = [
   {
@@ -221,9 +222,14 @@ export function LogsPage() {
       }
     >
       <div className="h-screen">
-        {loading && !logs.length && (
-          <Loading className="mt-40" text="Loading logs..." />
-        )}
+        {loading
+          ? !logs.length && <Loading className="mt-40" text="Loading logs..." />
+          : !loaded && (
+              <div className="flex justify-center items-center">
+                <InformationCircleIcon className="h-8 w-8 inline" />
+                <p>Please select a component to view the logs.</p>
+              </div>
+            )}
         {(loaded || Boolean(logs.length)) && (
           <LogsViewer className="pt-4" logs={logs} />
         )}
