@@ -213,7 +213,15 @@ export function IncidentListPage() {
             </div>
           </div>
         }
-        onRefresh={loadIncidents}
+        onRefresh={() => {
+          loadIncidents({
+            severity: watchSeverity,
+            status: watchStatus,
+            owner: watchOwner,
+            type: watchType,
+            labels: selectedLabels
+          });
+        }}
         extra={
           <div className="flex">
             <div className="flex items-center mr-4">
