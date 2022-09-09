@@ -173,21 +173,24 @@ export function LogsPage() {
 
   return (
     <SearchLayout
+      onRefresh={() => loadLogs()}
       title={
-        <SearchableDropdown
-          className="w-96"
-          options={topologies}
-          onChange={onComponentSelect}
-          formatOptionLabel={formatOptionLabel}
-          isLoading={loading}
-          isDisabled={loading}
-          value={topology}
-        />
+        <h1 className="text-xl font-semibold">
+          Logs{topology ? `/${topology.name}` : ""}
+        </h1>
       }
       extra={
         <>
-          <RefreshButton onClick={() => loadLogs()} animate={loading} />
-          <div className="mr-2 w-full relative rounded-md shadow-sm">
+          <SearchableDropdown
+            className="w-96"
+            options={topologies}
+            onChange={onComponentSelect}
+            formatOptionLabel={formatOptionLabel}
+            isLoading={loading}
+            isDisabled={loading}
+            value={topology}
+          />
+          <div className="mx-2 w-80 relative rounded-md shadow-sm">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
               <button
                 type="button"
