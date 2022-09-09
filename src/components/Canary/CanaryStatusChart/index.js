@@ -10,9 +10,11 @@ import {
   YAxis
 } from "recharts";
 import { useEffect, useState } from "react";
+import history from "history/browser";
 import { getCanaryGraph } from "../../../api/services/topology";
 import { Loading } from "../../Loading";
 import { useSearchParams } from "react-router-dom";
+import { getParamsFromURL } from "../utils";
 
 // @TODO: duration should be formatted properly, not just by ms
 const formatDuration = (duration) => `${duration}ms`;
@@ -21,20 +23,26 @@ const getFill = (entry) => (entry.status ? "#2cbd27" : "#df1a1a");
 
 export function CanaryStatusChart({ check, ...rest }) {
   const [data, setData] = useState([]);
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
-    getCanaryGraph({
+    history.listen(({ location }) => {
+      setSearchParams(getParamsFromURL(location.search));
+    });
+  }, []);
+
+  useEffect(() => {
+    const payload = {
       check: check.id,
-      start: "1d",
       count: 300,
       start: searchParams.get("timeRange")
-    }).then((results) => {
+    };
+    getCanaryGraph(payload).then((results) => {
       setData(results.data.status);
     });
   }, [check, searchParams]);
 
-  if (data.length === 0) {
+  if (!data?.length) {
     return <Loading />;
   }
 
