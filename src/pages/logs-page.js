@@ -13,7 +13,7 @@ import { TextInput } from "../components/TextInput";
 import { timeRanges } from "../components/Dropdown/TimeRange";
 import { Icon } from "../components";
 import { SearchableDropdown } from "../components/SearchableDropdown";
-import { InformationCircleIcon } from "@heroicons/react/outline";
+import { ReactComponent as SelectionIllustrationSvg } from "./selectionIllustration.svg";
 
 export const logTypes = [
   {
@@ -159,6 +159,7 @@ export function LogsPage() {
           Logs{topology ? `/${topology.name}` : ""}
         </h1>
       }
+      contentClass={`h-full ${loaded || (Boolean(logs.length) ? "p-6" : "")}`}
       extra={
         <>
           <SearchableDropdown
@@ -206,19 +207,19 @@ export function LogsPage() {
         </>
       }
     >
-      <div className="h-screen">
-        {loading
-          ? !logs.length && <Loading className="mt-40" text="Loading logs..." />
-          : !loaded && (
-              <div className="flex justify-center items-center">
-                <InformationCircleIcon className="h-8 w-8 inline" />
-                <p>Please select a component to view the logs.</p>
-              </div>
-            )}
-        {(loaded || Boolean(logs.length)) && (
-          <LogsViewer className="pt-4" logs={logs} />
-        )}
-      </div>
+      {loading
+        ? !logs.length && <Loading className="mt-40" text="Loading logs..." />
+        : !loaded && (
+            <div className="flex flex-col justify-center items-center h-5/6">
+              <SelectionIllustrationSvg className="h-96 w-96" />
+              <h3 className="text-center font-semibold text-lg">
+                Please select a component to view the logs.
+              </h3>
+            </div>
+          )}
+      {(loaded || Boolean(logs.length)) && (
+        <LogsViewer className="pt-4" logs={logs} />
+      )}
     </SearchLayout>
   );
 }
