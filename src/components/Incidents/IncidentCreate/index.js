@@ -10,6 +10,7 @@ import { createHypothesisOld } from "../../../api/services/hypothesis";
 import { createIncident } from "../../../api/services/incident";
 import { useUser } from "../../../context";
 import { Dropdown } from "../../Dropdown";
+import { ReactSelectDropdown } from "../../ReactSelectDropdown";
 import { TextInput } from "../../TextInput";
 import { toastError } from "../../Toast/toast";
 import { severityItems, statusItems, typeItems } from "../data";
@@ -36,7 +37,8 @@ export function IncidentCreate({ callback, evidence, ...rest }) {
   const {
     control,
     formState: { errors },
-    handleSubmit
+    handleSubmit,
+    watch
   } = useForm({
     defaultValues: {
       title: "",
@@ -48,6 +50,10 @@ export function IncidentCreate({ callback, evidence, ...rest }) {
     },
     resolver: yupResolver(validationSchema)
   });
+
+  const type = watch("type");
+  const severity = watch("severity");
+  const status = watch("status");
 
   const additionalFields = {
     id: "",
@@ -121,12 +127,14 @@ export function IncidentCreate({ callback, evidence, ...rest }) {
     <div className={`max-w-prose py-7 ${rest.className || ""}`} {...rest}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="mb-4">
-          <Dropdown
+          <ReactSelectDropdown
             control={control}
             label="Type"
             name="type"
             className="w-full"
+            labelClass="block text-sm font-bold text-gray-700 mb-2"
             items={typeItems}
+            value={type}
           />
           <p className="text-red-600 text-sm">{errors.type?.message}</p>
         </div>
@@ -231,22 +239,26 @@ export function IncidentCreate({ callback, evidence, ...rest }) {
         </div> */}
 
         <div className="mb-4">
-          <Dropdown
+          <ReactSelectDropdown
             control={control}
             label="Severity"
             name="severity"
             className="w-full"
             items={severityItems}
+            labelClass="block text-sm font-bold text-gray-700 mb-2"
+            value={severity}
           />
           <p className="text-red-600 text-sm">{errors.severity?.message}</p>
         </div>
         <div className="mb-4">
-          <Dropdown
+          <ReactSelectDropdown
             control={control}
             label="Status"
             name="status"
             className="w-full"
             items={statusItems}
+            labelClass="block text-sm font-bold text-gray-700 mb-2"
+            value={status}
           />
           <p className="text-red-600 text-sm">{errors.status?.message}</p>
         </div>

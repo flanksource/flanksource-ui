@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { BsClock } from "react-icons/bs";
 import { Dropdown } from ".";
+import { ReactSelectDropdown } from "../ReactSelectDropdown";
 
 const refreshIntervalSelections = {
   10: {
@@ -60,7 +61,7 @@ export function RefreshIntervalDropdown({
   }, [watchRefreshInterval, onChange]);
 
   return (
-    <Dropdown
+    <ReactSelectDropdown
       name="refreshInterval"
       className={className}
       label="Refresh Interval"

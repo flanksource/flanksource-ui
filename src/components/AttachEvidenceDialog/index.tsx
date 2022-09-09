@@ -30,6 +30,7 @@ import { toastSuccess } from "../Toast/toast";
 import { Link } from "react-router-dom";
 import { typeItems } from "../Incidents/data";
 import { Dropdown } from "../Dropdown";
+import { ReactSelectDropdown } from "../ReactSelectDropdown";
 
 interface Props {
   title: string;
@@ -180,6 +181,8 @@ export function AttachEvidenceDialog({
   const selectedHypothesis = watch("hypothesis");
   /* @ts-ignore:next-line */
   const selectedIncident = watch("incident");
+
+  const watchType = watch("type");
 
   const { user } = useUser();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -366,12 +369,13 @@ export function AttachEvidenceDialog({
                     <span className="text-sm font-bold text-gray-700 mb-1 mr-4 w-16">
                       Type
                     </span>
-                    <Dropdown
+                    <ReactSelectDropdown
                       name="type"
                       label=""
                       className="w-full"
                       control={control}
                       items={typeItems}
+                      value={watchType}
                     />
                     <p className="text-red-600 text-sm">
                       {errors.type?.message}

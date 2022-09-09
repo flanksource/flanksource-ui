@@ -20,12 +20,13 @@ import {
   IncidentState,
   useIncidentPageContext
 } from "../../context/IncidentPageContext";
+import { ReactSelectDropdown } from "../../components/ReactSelectDropdown";
 
 const defaultSelections = {
   all: {
     description: "All",
     value: "all",
-    order: 0
+    order: -1
   }
 };
 
@@ -226,38 +227,42 @@ export function IncidentListPage() {
           <div className="flex">
             <div className="flex items-center mr-4">
               <div className="mr-3 text-gray-500 text-sm">Severity</div>
-              <Dropdown
+              <ReactSelectDropdown
                 control={control}
                 name="severity"
                 className="w-36 mr-2 flex-shrink-0"
+                value={watchSeverity}
                 items={{ ...defaultSelections, ...severityItems }}
               />
             </div>
             <div className="flex items-center mr-4">
               <div className="mr-3 text-gray-500 text-sm">Status</div>
-              <Dropdown
+              <ReactSelectDropdown
                 control={control}
                 name="status"
                 className="w-36 mr-2 flex-shrink-0"
+                value={watchStatus}
                 items={{ ...defaultSelections, ...statusItems }}
               />
             </div>
             <div className="flex items-center mr-4">
               <div className="mr-3 text-gray-500 text-sm">Owner</div>
-              <Dropdown
+              <ReactSelectDropdown
                 control={control}
                 name="owner"
                 className="w-36 mr-2 flex-shrink-0"
+                value={watchOwner}
                 items={{ ...defaultSelections, ...ownerSelections }}
               />
             </div>
             <div className="flex items-center">
               <div className="mr-3 text-gray-500 text-sm">Type</div>
-              <Dropdown
+              <ReactSelectDropdown
                 control={control}
                 label=""
                 name="type"
                 className="w-56"
+                value={watchType}
                 items={{ ...defaultSelections, ...typeItems }}
               />
               {/* <MultiSelectDropdown
