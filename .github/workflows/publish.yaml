@@ -5,17 +5,91 @@ on:
       - main
 
 jobs:
-  publish:
+  semantic-release:
     runs-on: ubuntu-latest
+    outputs:
+      release-version: ${{ steps.semantic.outputs.release-version }}
+      new-release-published: ${{ steps.semantic.outputs.new-release-published }}
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16
-      - run: npm ci
-      - run: npm run build
-      - uses: codfish/semantic-release-action@v1
+      - uses: codfish/semantic-release-action@v2
         id: semantic
+        with:
+          branches: |
+            [
+              '+([0-9])?(.{+([0-9]),x}).x',
+              'master',
+              'main',
+              'feat/next-up',
+            ]
+          # Explicit plugins, to remove "@semantic-release/npm"
+          plugins: |
+            ['@semantic-release/commit-analyzer', '@semantic-release/release-notes-generator', '@semantic-release/github']
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Output
+        run: echo "$OUTPUTS"
+        env:
+          OUTPUTS: ${{ toJson(steps.semantic.outputs) }}
+
+  docker:
+    needs: semantic-release
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        deployment: [incident-commander-ui, canary-checker-ui]
+    if: ${{ needs.semantic-release.outputs.new-release-published == 'true' }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Publish to Registry
+        uses: elgohr/Publish-Docker-Github-Action@v4
+        env:
+          APP_DEPLOYMENT: ${{ matrix.deployment == 'canary-checker-ui' && 'CANARY_CHECKER' || 'INCIDENT_MANAGER' }}
+        with:
+          name: flanksource/${{ matrix.deployment }}
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          buildargs: APP_DEPLOYMENT
+          snapshot: true
+          tags: "latest,v${{ needs.semantic-release.outputs.release-version }}"
+
+  helm:
+    runs-on: ubuntu-latest
+    needs: semantic-release
+    if: ${{ needs.semantic-release.outputs.new-release-published == 'true' }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Download yq
+        run: |
+          wget -nv -nc -O yq https://github.com/mikefarah/yq/releases/download/v4.20.2/yq_linux_amd64
+          chmod +x yq
+      - name: Update chart version
+        run: ./yq -i e '.version = "${{ needs.semantic-release.outputs.release-version }}"' chart/Chart.yaml
+      - name: Update app version
+        run: ./yq -i e '.appVersion = "${{ needs.semantic-release.outputs.release-version }}"' chart/Chart.yaml
+      - name: Update image tags
+        run: ./yq -i e '.image.tag = "v${{ needs.semantic-release.outputs.release-version }}"' chart/values.yaml
+      - name: Set up Helm
+        uses: azure/setup-helm@v1
+        with:
+          version: v3.8.0
+      - name: Package Helm chart
+        run: |
+          helm package ./chart
+      - name: Clone charts repo
+        uses: actions/checkout@v3
+        with:
+          repository: "${{ github.repository_owner }}/charts"
+          path: charts
+          token: "${{ secrets.FLANKBOT }}"
+      - name: Update chart repo
+        run: |
+          cd charts
+          cp ../flanksource-ui-*.tgz ./
+          helm repo index --merge index.yaml .
+      - name: Push changes to chart repo
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "Release ${{ needs.semantic-release.outputs.release-version }} of ${{ github.repository }}"
+          branch: gh-pages
+          repository: ./charts
