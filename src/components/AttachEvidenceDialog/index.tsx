@@ -159,6 +159,7 @@ export function AttachEvidenceDialog({
     handleSubmit,
     setValue,
     watch,
+    reset,
     formState: { errors }
   } = useForm<IFormValues>({
     defaultValues: {
@@ -191,6 +192,12 @@ export function AttachEvidenceDialog({
     setValue("hypothesis", null);
   }, [selectedIncident]);
 
+  useEffect(() => {
+    return () => {
+      reset();
+    };
+  }, []);
+
   const fetchIncidentOptions = useCallback((query: string) => {
     const fn = async (query: string): Promise<IExtendedItem[]> => {
       const { data, error } = await searchIncident(query || "");
@@ -201,7 +208,7 @@ export function AttachEvidenceDialog({
       }
       return toOpts(data, (x) => ({
         details: {
-          rootId: x.hypothesis?.find((h: Hypothesis) => h.type === "root")?.id,
+          rootId: x.hypotheses?.find((h: Hypothesis) => h.type === "root")?.id,
           status: x.status,
           type: x.type,
           severity: x.severity
@@ -257,13 +264,7 @@ export function AttachEvidenceDialog({
     }
 
     if (isNewHypothesis) {
-      /* type should be root, if it's the first for an incident? */
-      const nodeDetails = isNewIncident
-        ? { type: "root" }
-        : {
-            type: "factor",
-            parent_id: incidentData?.details?.rootId
-          };
+      const nodeDetails = { type: "root" };
 
       const params = {
         user,

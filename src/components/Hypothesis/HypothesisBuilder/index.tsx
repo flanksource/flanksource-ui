@@ -10,9 +10,10 @@ interface IProps {
   loadedTree: unknown;
   initialEditMode: boolean;
   api: HypothesisAPIs;
+  showHeader: boolean;
 }
 
-export function HypothesisBuilder({ loadedTree, api }: IProps) {
+export function HypothesisBuilder({ loadedTree, api, showHeader }: IProps) {
   const [searchParams] = useSearchParams();
   const [selectedNode, setSelectedNode] = useState<Hypothesis | null>(null);
   const [createHypothesisModalIsOpen, setCreateHypothesisModalIsOpen] =
@@ -38,6 +39,7 @@ export function HypothesisBuilder({ loadedTree, api }: IProps) {
           setSelectedNode={setSelectedNode}
           setCreateHypothesisModalIsOpen={setCreateHypothesisModalIsOpen}
           api={api}
+          showHeader={showHeader}
         />
       </div>
       <CreateHypothesis
