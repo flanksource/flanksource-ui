@@ -3,7 +3,7 @@ on:
     branches:
       - master
       - main
-
+      - feat/next-up
 jobs:
   semantic-release:
     runs-on: ubuntu-latest
