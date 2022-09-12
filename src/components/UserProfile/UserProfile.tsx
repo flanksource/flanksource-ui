@@ -10,7 +10,7 @@ import { useCreateLogoutHandler } from "../ory";
 export function UserProfile() {
   const [isOpen, setIsOpen] = useState(false);
   const [selectIsOpen, setSelectIsOpen] = useState(false);
-  const onLogout = useCreateLogoutHandler();
+  const onLogout = useCreateLogoutHandler([]);
 
   const { user } = useUser();
 
