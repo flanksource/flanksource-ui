@@ -15,7 +15,7 @@ jobs:
       image: node:16-alpine
     steps:
       - uses: actions/checkout@v3
-      - run: npm ci
+      - run: npm i
       - run: npm run test
 
   storybook:
@@ -25,7 +25,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Install dependencies
-        run: npm ci
+        run: npm i
       - uses: chromaui/action@v1
         with:
           projectToken: ${{ secrets.CHROMATIC_TOKEN }}
@@ -36,5 +36,5 @@ jobs:
       image: node:16-alpine
     steps:
       - uses: actions/checkout@v3
-      - run: npm ci
+      - run: npm i
       - run: npm run build
