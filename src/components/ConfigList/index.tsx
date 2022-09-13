@@ -204,8 +204,6 @@ function ConfigList({ data, handleRowClick, isLoading }: Props) {
   const sortField = queryParams.get("sortBy");
   const isSortOrderDesc = queryParams.get("sortOrder") === "asc" ? false : true;
 
-  console.log(queryParams.get("sortOrder"), isSortOrderDesc);
-
   const setSortBy = (field: string, order: "asc" | "desc") => {
     setQueryParams({
       sortBy: field,
