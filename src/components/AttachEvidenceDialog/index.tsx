@@ -187,9 +187,14 @@ export function AttachEvidenceDialog({
 
   const { user } = useUser();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [newIncidentCreated, setNewIncidentCreated] = useState<boolean>(true);
 
   useEffect(() => {
     setValue("hypothesis", null);
+    if (!selectedIncident?.value) {
+      return;
+    }
+    setNewIncidentCreated(!!(selectedIncident as any).__isNew__);
   }, [selectedIncident]);
 
   useEffect(() => {
@@ -364,7 +369,7 @@ export function AttachEvidenceDialog({
                 displayOption={IncidentOption}
               />
               <p className="text-red-600 text-sm">{errors.incident?.message}</p>
-              {!selectedIncident?.value && (
+              {newIncidentCreated && (
                 <div className="space-y-2 pt-4">
                   <div className="flex flex-col">
                     <span className="text-sm font-bold text-gray-700 mb-1 mr-4 w-16">
@@ -384,7 +389,7 @@ export function AttachEvidenceDialog({
                   </div>
                 </div>
               )}
-              {!selectedIncident?.value && (
+              {newIncidentCreated && (
                 <div className="space-y-2 pt-4 pl-2">
                   <div className="flex flex-col">
                     <span className="text-sm font-bold text-gray-700 mb-1 mr-4 w-16">
