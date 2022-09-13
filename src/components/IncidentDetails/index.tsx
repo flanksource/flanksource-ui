@@ -114,11 +114,24 @@ export const IncidentDetails = ({
     try {
       const result = await getRespondersForTheIncident(incident.id);
       const data = (result?.data || []).map((item) => {
-        item.properties.external_id = item.external_id || "NA";
+        if (item.external_id) {
+          item.externalLink =
+            item?.team_id?.spec?.responder_clients?.[
+              item?.properties?.responderType
+            ]?.linkUrl;
+          if (item.externalLink) {
+            item.externalLink = item.externalLink.replace(
+              "_ID_",
+              item.external_id
+            );
+          }
+        }
+        item.properties.external_id = item.externalLink || "NA";
         return {
           name: item.team_id?.name,
           type: item.properties.responderType,
-          external_id: item.properties.external_id,
+          external_id: item.external_id,
+          externalLink: item.externalLink,
           icon:
             item.team_id?.icon &&
             (() => (
@@ -307,13 +320,25 @@ export const IncidentDetails = ({
                                 <responder.icon className="w-6 h-6" />
                               )}
                               <div
-                                className="pl-1 inline-block hover:underline cursor-pointer"
+                                className="pl-1 inline-block"
                                 onClick={(e) => {
                                   setOpenResponderDetailsDialog(true);
                                   setSelectedResponder(responder);
                                 }}
                               >
-                                {responder?.name}
+                                <span className="hover:underline cursor-pointer">
+                                  {responder?.name}
+                                </span>
+                                {responder.external_id && (
+                                  <a
+                                    href={responder.externalLink}
+                                    target="_blank"
+                                    className="pl-1 hover:underline cursor-pointer"
+                                    onClick={(e) => e.stopPropagation()} rel="noreferrer"
+                                  >
+                                    ({responder.external_id})
+                                  </a>
+                                )}
                               </div>
                             </div>
                             <div className="ml-10 cursor-pointer absolute right-0 top-0">
