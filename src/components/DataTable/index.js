@@ -34,7 +34,12 @@ export const DataTable = ({
       useControlledState: (state) => {
         return useMemo(() => {
           // if the sort column changes, update the url
-          setSortBy(state.sortBy[0].id, state.sortBy[0].desc ? "desc" : "asc");
+          if (setSortBy && state.sortBy.length > 0) {
+            setSortBy(
+              state.sortBy[0].id,
+              state.sortBy[0].desc ? "desc" : "asc"
+            );
+          }
           return {
             ...state
           };
