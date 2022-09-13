@@ -1,6 +1,7 @@
+import clsx from "clsx";
+import { useMemo } from "react";
 import { TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti";
 import { useSortBy, useTable } from "react-table";
-import clsx from "clsx";
 
 const tableStyles = {
   tableClass: "table-auto w-full border-l border-r border-b",
@@ -16,9 +17,32 @@ export const DataTable = ({
   tableStyle,
   stickyHead,
   isLoading,
+  setSortBy,
+  sortBy,
   ...rest
 }) => {
-  const tableInstance = useTable({ columns, data }, useSortBy);
+  const tableInstance = useTable(
+    {
+      columns,
+      data,
+      autoResetSortBy: false,
+      initialState: {
+        ...(sortBy && {
+          sortBy: sortBy
+        })
+      },
+      useControlledState: (state) => {
+        return useMemo(() => {
+          // if the sort column changes, update the url
+          setSortBy(state.sortBy[0].id, state.sortBy[0].desc ? "desc" : "asc");
+          return {
+            ...state
+          };
+        }, [state]);
+      }
+    },
+    useSortBy
+  );
 
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     tableInstance;
