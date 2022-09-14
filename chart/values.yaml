@@ -13,11 +13,7 @@ image:
 imagePullSecrets: []
 nameOverride: "flanksource-ui"
 fullnameOverride: "flanksource-ui"
-
-# Environment for deployment
-env:
-  - name: ORY_KRATOS_URL
-    value: "http://kratos.canary.lab.flanksource.com/"
+oryKratosURI: ""
 
 serviceAccount:
   # Specifies whether a service account should be created
@@ -51,15 +47,8 @@ ingress:
   annotations: {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
-  hosts:
-    - host: incident-commander-ui.local
-      paths:
-        - path: /
-          pathType: ImplementationSpecific
-  tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
+  host: incident-commander-ui.local
+  tls: true
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
