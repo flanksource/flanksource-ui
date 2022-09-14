@@ -19,12 +19,14 @@ interface IHypothesisNodeProps {
   setSelectedNode: (v: Hypothesis) => void;
   setCreateHypothesisModalIsOpen: (v: boolean) => void;
   api: HypothesisAPIs;
+  showHeader: boolean;
 }
 
 export const HypothesisNode = (props: IHypothesisNodeProps) => {
   const {
     hasParent,
     node,
+    showHeader,
     showComments: parentShowComments,
     setSelectedNode,
     setCreateHypothesisModalIsOpen,
@@ -65,7 +67,7 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
 
   return (
     <div>
-      {isRoot && (
+      {isRoot && showHeader && (
         <div className="flex items-center text-base font-semibold mb-5 justify-between">
           <div className="flex items-center">
             <h2 className="text-dark-gray mr-3 text-2xl">Action plan</h2>

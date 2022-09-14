@@ -145,8 +145,8 @@ export const updateHypothesis = async (id: string, params: HypothesisInfo) => {
 
 // NOTE: Needs to be a database transaction. Possibility of partial deletes.
 export const deleteHypothesis = async (id: string) => {
-  await resolve(IncidentCommander.delete(`/comments?hypotheses_id=eq.${id}`));
-  await resolve(IncidentCommander.delete(`/evidences?hypotheses_id=eq.${id}`));
+  await resolve(IncidentCommander.delete(`/comments?hypothesis_id=eq.${id}`));
+  await resolve(IncidentCommander.delete(`/evidences?hypothesis_id=eq.${id}`));
   return resolve(IncidentCommander.delete(`/hypotheses?id=eq.${id}`));
 };
 
