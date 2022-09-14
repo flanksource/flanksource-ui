@@ -66,10 +66,12 @@ const settingsNav = {
 
 export type SettingsNavigationItems = typeof settingsNav;
 
+const CANARY_API = "/api/canary/api";
+
 export function HealthRoutes({ sidebar }) {
   return (
     <Routes path="/" element={sidebar}>
-      <Route index element={<HealthPage url="/canary/api" />} />
+      <Route index element={<HealthPage url={CANARY_API} />} />
     </Routes>
   );
 }
@@ -80,8 +82,8 @@ export function IncidentManagerRoutes({ sidebar }) {
       <Route path="" element={<Navigate to="/topology" />} />
 
       <Route path="topology" element={sidebar}>
-        <Route path=":id" element={<TopologyPage url="/canary/api" />} />
-        <Route index element={<TopologyPage url="/canary/api" />} />
+        <Route path=":id" element={<TopologyPage url={CANARY_API} />} />
+        <Route index element={<TopologyPage url={CANARY_API} />} />
       </Route>
 
       <Route path="incidents" element={sidebar}>
@@ -90,7 +92,7 @@ export function IncidentManagerRoutes({ sidebar }) {
       </Route>
 
       <Route path="health" element={sidebar}>
-        <Route index element={<HealthPage url="/canary/api" />} />
+        <Route index element={<HealthPage url={CANARY_API} />} />
       </Route>
 
       <Route path="settings" element={sidebar}>
@@ -175,7 +177,13 @@ export function IncidentManagerRoutes({ sidebar }) {
 export function CanaryCheckerApp() {
   // TODO(ciju): the url is set at two places. axios.js#CanaryChecker and here.
   // Consolidate logic to one place.
-  return <Canary url="/api" />;
+  return (
+    <BrowserRouter>
+      <HealthPageContextProvider>
+        <Canary url="/api/canary/api" />
+      </HealthPageContextProvider>
+    </BrowserRouter>
+  );
 }
 
 export function App() {

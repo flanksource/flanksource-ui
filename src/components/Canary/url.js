@@ -1,5 +1,5 @@
-import history from "history/browser";
 import { isPlainObject } from "../../lib/isPlainObject";
+import { useNavigate } from "react-router-dom";
 
 const cleaner = (key, value) =>
   // See re prototype pollution: https://book.hacktricks.xyz/pentesting-web/deserialization/nodejs-proto-prototype-pollution
@@ -28,9 +28,12 @@ export function decodeUrlSearchParams(url) {
   return decoded;
 }
 
-// updates provided params, while retaining existing params.
-export const updateParams = (params) => {
-  const decoded = decodeUrlSearchParams(window.location.search);
-  const encoded = encodeObjectToUrlSearchParams({ ...decoded, ...params });
-  history.push(`${window.location.pathname}?${encoded}`);
+export const useUpdateParams = () => {
+  const navigate = useNavigate();
+
+  return (params) => {
+    const decoded = decodeUrlSearchParams(window.location.search);
+    const encoded = encodeObjectToUrlSearchParams({ ...decoded, ...params });
+    navigate(`${window.location.pathname}?${encoded}`);
+  };
 };

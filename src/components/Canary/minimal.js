@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from "react";
-import history from "history/browser";
+import React, { useState } from "react";
+// import history from "history/browser";
 import { Modal } from "../Modal";
 import { CheckDetails } from "./CanaryPopup/CheckDetails";
 import { CheckTitle } from "./CanaryPopup/CheckTitle";
 import { CanaryCards } from "./card";
 import { CanaryTable } from "./table";
 import mixins from "../../utils/mixins.module.css";
-import { getParamsFromURL } from "./utils";
 import { getCanaries } from "../../api/services/topology";
+import { useSearchParams } from "react-router-dom";
 
 const MinimalCanaryFC = ({
   checks,
@@ -15,21 +15,18 @@ const MinimalCanaryFC = ({
   selectedTab,
   tableHeadStyle = {}
 }) => {
-  const [searchParams, setSearchParams] = useState(
-    getParamsFromURL(window.location.search)
-  );
-
-  useEffect(() => {
-    history.listen(({ location }) => {
-      setSearchParams(getParamsFromURL(location.search));
-    });
-  }, []);
-  const { tabBy, layout } = searchParams;
+  const [searchParams] = useSearchParams();
+  const { tabBy, layout, timeRange } = searchParams;
 
   const [selectedCheck, setSelectedCheck] = useState(null);
 
   const handleCheckSelect = (check) => {
-    getCanaries({ check: check.id, includeMessages: true }).then((results) => {
+    const payload = {
+      check: check.id,
+      includeMessages: true,
+      start: timeRange
+    };
+    getCanaries(payload).then((results) => {
       if (results == null || results.data.checks.length === 0) {
         return;
       }
@@ -46,7 +43,6 @@ const MinimalCanaryFC = ({
         <CanaryTable
           checks={checks}
           labels={labels}
-          history={history}
           onCheckClick={handleCheckSelect}
           showNamespaceTags={
             tabBy !== "namespace" ? true : selectedTab === "all"

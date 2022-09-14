@@ -27,3 +27,5 @@ src/data/*.real.json
 .idea/
 .log/
 .rgignore
+
+.next
