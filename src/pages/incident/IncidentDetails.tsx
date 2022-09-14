@@ -71,7 +71,7 @@ function buildTreeFromHypothesisList(list: Hypothesis[]) {
     }
   });
 
-  return Object.values(tree)[0];
+  return Object.values(tree);
 }
 
 export function IncidentDetailsPage() {
@@ -100,7 +100,7 @@ export function IncidentDetailsPage() {
 
   const status = useMemo(() => incident?.status ?? null, [incident]);
 
-  const loadedTree = useMemo(
+  const loadedTrees = useMemo(
     () => (incident ? buildTreeFromHypothesisList(incident.hypotheses) : null),
     [incident]
   );
@@ -164,20 +164,26 @@ export function IncidentDetailsPage() {
 
           <section>
             {!isLoading ? (
-              <HypothesisBuilder
-                loadedTree={loadedTree}
-                // showGeneratedOutput
-                initialEditMode={isNewlyCreated}
-                api={{
-                  incidentId,
-                  create: createHypothesis,
-                  delete: deleteHypothesis,
-                  deleteBulk: deleteHypothesisBulk,
-                  update: updateHypothesis,
-                  updateMutation,
-                  createMutation
-                }}
-              />
+              loadedTrees?.map((loadedTree, index) => {
+                return (
+                  <HypothesisBuilder
+                    loadedTree={loadedTree}
+                    // showGeneratedOutput
+                    initialEditMode={isNewlyCreated}
+                    api={{
+                      incidentId,
+                      create: createHypothesis,
+                      delete: deleteHypothesis,
+                      deleteBulk: deleteHypothesisBulk,
+                      update: updateHypothesis,
+                      updateMutation,
+                      createMutation
+                    }}
+                    key={loadedTree.id}
+                    showHeader={index === 0}
+                  />
+                );
+              })
             ) : (
               <div>{!error && "fetching tree..."}</div>
             )}
