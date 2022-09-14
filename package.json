@@ -12,6 +12,7 @@
     "@heroicons/react": "^1.0.3",
     "@hookform/resolvers": "^2.8.8",
     "@monaco-editor/react": "^4.4.5",
+    "@netlify/plugin-nextjs": "^4.23.1",
     "@ory/client": "^0.2.0-alpha.22",
     "@ory/integrations": "^0.2.7",
     "@storybook/client-api": "^6.5.7",
