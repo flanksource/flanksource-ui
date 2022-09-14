@@ -10,5 +10,4 @@ plugins:
         noteKeywords:
           - MAJOR RELEASE
   - "@semantic-release/release-notes-generator"
-  - "@semantic-release/npm"
   - "@semantic-release/github"
