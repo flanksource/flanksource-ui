@@ -9,6 +9,10 @@
 5. visit [http://localhost:3004](http://localhost:3004) to see front end changes.
 
 
+## env
+
+Add `NEXT_PUBLIC_WITHOUT_SESSION=true` in `.env.local` to skip auth for local development.
+
 ## Svg files
 
 Run them through https://github.com/svg/svgo to make them compatible with react. See: https://stackoverflow.com/questions/59820954/syntaxerror-unknown-namespace-tags-are-not-supported-by-default
