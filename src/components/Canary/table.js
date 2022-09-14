@@ -4,7 +4,11 @@ import { useTable, useSortBy, useExpanded } from "react-table";
 import { getAggregatedGroupedChecks } from "./aggregate";
 import { getGroupedChecks } from "./grouping";
 import { getColumns, makeColumnsForPivot } from "./Columns";
-import { decodeUrlSearchParams, encodeObjectToUrlSearchParams } from "./url";
+import {
+  decodeUrlSearchParams,
+  encodeObjectToUrlSearchParams,
+  useUpdateParams
+} from "./url";
 import { columnObject, firstColumns } from "./Columns/columns";
 import { prepareRows } from "./Rows/lib";
 import { useCheckSetEqualityForPreviousVsCurrent } from "../Hooks/useCheckSetEqualityForPreviousVsCurrent";
@@ -34,7 +38,6 @@ const sortByValidValues = new Map([
 export function CanaryTable({
   checks,
   labels,
-  history,
   onCheckClick,
   showNamespaceTags,
   hideNamespacePrefix,
@@ -102,7 +105,6 @@ export function CanaryTable({
       data={rows}
       columns={columns}
       labels={labels}
-      history={history}
       pivotCellType={shouldPivot ? pivotCellType : null}
       onUnexpandableRowClick={onCheckClick}
       hasGrouping={groupBy !== "no-group"}
@@ -118,7 +120,6 @@ export function Table({
   data,
   columns,
   labels,
-  history,
   pivotCellType,
   hasGrouping = false,
   onUnexpandableRowClick,
@@ -185,6 +186,8 @@ export function Table({
     setSortBy([{ id: sortByChecked, desc: sortDescChecked }]);
   }, [setSortBy]);
 
+  const updateParams = useUpdateParams();
+
   // Table-state changes will trigger url changes
   useEffect(() => {
     const updateURLBySortState = (sortBy, sortDesc) => {
@@ -202,14 +205,14 @@ export function Table({
       };
       const encoded = encodeObjectToUrlSearchParams(newFormState);
       if (window.location.search !== `?${encoded}`) {
-        history.push(`${window.location.pathname}?${encoded}`);
+        updateParams(newFormState);
       }
     };
 
     if (tableSortState.length > 0) {
       updateURLBySortState(tableSortState[0].id, tableSortState[0].desc);
     }
-  }, [tableSortState, history]);
+  }, [tableSortState, updateParams]);
 
   return (
     <div className={styles.outerDivClass} {...rest}>

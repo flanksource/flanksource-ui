@@ -5,17 +5,18 @@ import { FaUserAlt } from "react-icons/fa";
 
 import { CreateUserDialog } from "../CreateUserDialog";
 import { SelectUserDialog } from "../SelectUserDialog";
+import { useCreateLogoutHandler } from "../ory";
 
 export function UserProfile() {
   const [isOpen, setIsOpen] = useState(false);
   const [selectIsOpen, setSelectIsOpen] = useState(false);
+  const onLogout = useCreateLogoutHandler([]);
 
   const { user } = useUser();
 
   const userNavigation = [
     { name: "Your Profile", href: "#" },
-    { name: "Settings", href: "#" },
-    { name: "Sign out", href: "#" }
+    { name: "Settings", href: "#" }
   ];
 
   return (
@@ -84,6 +85,15 @@ export function UserProfile() {
                 </a>
               </Menu.Item>
             ))}
+            <Menu.Item>
+              <button
+                type="button"
+                onClick={onLogout}
+                className="block w-full py-2 px-4 text-left text-sm text-gray-700  hover:bg-gray-50 hover:text-gray-900 border-0 border-b border-gray-200"
+              >
+                Sign Out
+              </button>
+            </Menu.Item>
           </Menu.Items>
         </Transition>
       </Menu>
