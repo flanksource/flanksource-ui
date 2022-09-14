@@ -8,6 +8,7 @@ import { CanaryTable } from "./table";
 import mixins from "../../utils/mixins.module.css";
 import { getParamsFromURL } from "./utils";
 import { getCanaries } from "../../api/services/topology";
+import { useSearchParams } from "react-router-dom";
 
 const MinimalCanaryFC = ({
   checks,
@@ -15,21 +16,26 @@ const MinimalCanaryFC = ({
   selectedTab,
   tableHeadStyle = {}
 }) => {
-  const [searchParams, setSearchParams] = useState(
-    getParamsFromURL(window.location.search)
-  );
+  const [selectedCheck, setSelectedCheck] = useState(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const tabBy = searchParams.get("tabBy");
+  const layout = searchParams.get("layout");
+  const timeRange = searchParams.get("timeRange");
 
   useEffect(() => {
     history.listen(({ location }) => {
       setSearchParams(getParamsFromURL(location.search));
     });
   }, []);
-  const { tabBy, layout } = searchParams;
-
-  const [selectedCheck, setSelectedCheck] = useState(null);
 
   const handleCheckSelect = (check) => {
-    getCanaries({ check: check.id, includeMessages: true }).then((results) => {
+    const payload = {
+      check: check.id,
+      includeMessages: true,
+      start: timeRange
+    };
+    getCanaries(payload).then((results) => {
       if (results == null || results.data.checks.length === 0) {
         return;
       }
