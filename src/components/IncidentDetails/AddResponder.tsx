@@ -50,6 +50,15 @@ type ActionButtonGroupProps = {
   nextAction?: Action;
 } & React.HTMLProps<HTMLDivElement>;
 
+export type ResponderOption = {
+  label: string;
+  value: string | undefined;
+  link?: {
+    label: string;
+    value: string | undefined;
+  };
+};
+
 export const ResponderPropsKeyToLabelMap = {
   to: "To",
   subject: "Subject",
@@ -433,7 +442,7 @@ export const AddResponder = ({
   return (
     <div className={clsx("flex flex-1", className)} {...rest}>
       <button
-        className="text-sm font-medium text-indigo-600 group-hover:text-indigo-500"
+        className="text-sm font-medium text-blue-600 group-hover:text-blue-500"
         onClick={() => {
           setSelectedType(null);
           reset();
