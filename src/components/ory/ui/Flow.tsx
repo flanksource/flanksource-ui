@@ -157,8 +157,6 @@ export class Flow<T extends Values> extends Component<Props<T>, State<T>> {
       return null;
     }
 
-    console.log(flow);
-
     return (
       <form
         className="space-y-8"

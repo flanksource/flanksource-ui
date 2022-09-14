@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import { NodeInputProps } from "./helpers";
 
 export function NodeInputDefault(props: NodeInputProps) {
@@ -13,6 +14,10 @@ export function NodeInputDefault(props: NodeInputProps) {
       run();
     }
   };
+
+  const hasError = node.messages.find(({ type }) => type === "error")
+    ? "error"
+    : undefined;
 
   // Render a generic text input field.
   return (
@@ -37,6 +42,15 @@ export function NodeInputDefault(props: NodeInputProps) {
           value={value}
           disabled={attributes.disabled || disabled}
         />
+        <div
+          className={clsx("p-2 mt-2 border", { "border-red-300": hasError })}
+        >
+          {node.messages.map(({ text, id }, k) => (
+            <span key={`${id}-${k}`} data-testid={`ui/message/${id}`}>
+              {text}
+            </span>
+          ))}
+        </div>
       </div>
     </div>
   );
