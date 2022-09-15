@@ -1,38 +1,47 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { ChevronRightIcon, DotsVerticalIcon } from "@heroicons/react/outline";
 import { LogsTable } from "../../Logs/Table/logs-table";
-import { TopologyCard } from "../../TopologyCard";
+import { CardSize, TopologyCard } from "../../TopologyCard";
 import { Icon } from "../../Icon";
 import { Button } from "../../Button";
 import { BsTrash } from "react-icons/bs";
 import { Evidence, EvidenceType } from "../../../api/services/evidence";
 
 export function EvidenceItem({ evidence }: { evidence: Evidence }) {
-  if (evidence.type === EvidenceType.Log) {
-    return <LogsTable viewOnly logs={evidence?.evidence?.lines} title="" />;
+  switch (evidence.type) {
+    case EvidenceType.Log:
+      return <LogsTable viewOnly logs={evidence?.evidence?.lines} />;
+    case EvidenceType.Topology:
+      return (
+        <div className="pt-2">
+          <TopologyCard
+            topologyId={evidence.evidence.id}
+            size={CardSize.large}
+          />
+        </div>
+      );
+    case EvidenceType.Config:
+      return (
+        <EvidenceAccordion
+          date={evidence.created_at}
+          title={evidence.description}
+          configName={evidence.evidence.configName}
+        >
+          <ConfigEvidenceView evidenceItem={evidence} />
+        </EvidenceAccordion>
+      );
+    default:
+      return null;
   }
-  if (evidence.type === EvidenceType.Topology) {
-    return (
-      <div className="pt-2">
-        <TopologyCard topologyId={evidence.evidence.id} size="large" />
-      </div>
-    );
-  }
-  if (evidence.type === EvidenceType.Config) {
-    return (
-      <EvidenceAccordion
-        date={evidence.created_at}
-        title={evidence.description}
-      >
-        <ConfigEvidenceView evidenceItem={evidence} />
-      </EvidenceAccordion>
-    );
-  }
-  return null;
 }
 
-function EvidenceAccordion({ title, date, children, ...rest }) {
+const EvidenceAccordion: React.FC<{
+  date: string;
+  title: string;
+  configName: string;
+  children: React.ReactNode;
+}> = ({ title, date, configName, children, ...rest }) => {
   const [expanded, setExpanded] = useState(true);
   return (
     <div className="border-b last:border-b-0 flex flex-col" {...rest}>
@@ -55,13 +64,17 @@ function EvidenceAccordion({ title, date, children, ...rest }) {
           )}
         </div>
       </button>
-
+      <h5>{configName && configName}</h5>
       {expanded && children}
     </div>
   );
-}
+};
 
-function ConfigEvidenceView({ evidenceItem }) {
+function ConfigEvidenceView({
+  evidenceItem
+}: {
+  evidenceItem: Extract<Evidence, { evidence: { configName: string } }>;
+}) {
   const hunkLineGap = 3;
   const fullConfig = evidenceItem?.evidence?.lines || {};
   const selectedLines =

@@ -34,6 +34,7 @@ type ConfigEvidenceAttachment = {
   evidence: {
     id: string;
     lines: string[];
+    configName: string;
     selected_lines: { [index: string]: string };
   };
 };
