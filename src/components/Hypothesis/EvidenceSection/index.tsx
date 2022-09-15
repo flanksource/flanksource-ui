@@ -7,6 +7,7 @@ import { Icon } from "../../Icon";
 import { Button } from "../../Button";
 import { BsTrash } from "react-icons/bs";
 import { Evidence, EvidenceType } from "../../../api/services/evidence";
+import { Link } from "react-router-dom";
 
 export function EvidenceItem({ evidence }: { evidence: Evidence }) {
   switch (evidence.type) {
@@ -26,6 +27,7 @@ export function EvidenceItem({ evidence }: { evidence: Evidence }) {
         <EvidenceAccordion
           date={evidence.created_at}
           title={evidence.description}
+          configId={evidence.evidence.id}
           configName={evidence.evidence.configName}
         >
           <ConfigEvidenceView evidenceItem={evidence} />
@@ -39,32 +41,40 @@ export function EvidenceItem({ evidence }: { evidence: Evidence }) {
 const EvidenceAccordion: React.FC<{
   date: string;
   title: string;
+  configId: string;
   configName: string;
   children: React.ReactNode;
-}> = ({ title, date, configName, children, ...rest }) => {
+}> = ({ title, date, configId, configName, children, ...rest }) => {
   const [expanded, setExpanded] = useState(true);
   return (
     <div className="border-b last:border-b-0 flex flex-col" {...rest}>
-      <button
-        className="py-2 flex flex-row items-center"
-        onClick={() => setExpanded(!expanded)}
-        type="button"
-      >
-        <div className="mr-2">
-          <ChevronRightIcon
-            className={`h-5 w-5 transform ${expanded && "rotate-90"}`}
-          />
-        </div>
-        <div className="flex justify-between w-full items-center">
-          {title || <span className="text-gray-400">(no title)</span>}
-          {date && (
-            <div className="text-gray-400 text-sm">
-              {dayjs(date).format("HH:mm A, MMM DD, YYYY")}
-            </div>
-          )}
-        </div>
-      </button>
-      <h5>{configName && configName}</h5>
+      <div className="flex items-center justify-between">
+        <button
+          className="py-2 flex items-center"
+          onClick={() => setExpanded(!expanded)}
+          type="button"
+        >
+          <div className="mr-2">
+            <ChevronRightIcon
+              className={`h-5 w-5 transform ${expanded && "rotate-90"}`}
+            />
+          </div>
+          <div className="flex justify-between w-full items-center">
+            {title || <span className="text-gray-400">(no title)</span>}
+            {date && (
+              <div className="text-gray-400 text-sm">
+                {dayjs(date).format("HH:mm A, MMM DD, YYYY")}
+              </div>
+            )}
+          </div>
+        </button>
+        <Link
+          to={`/configs/${configId}`}
+          className="underline text-blue-600 hover:text-blue-800"
+        >
+          {configName && configName}
+        </Link>
+      </div>
       {expanded && children}
     </div>
   );
