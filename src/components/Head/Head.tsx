@@ -7,10 +7,10 @@ interface Props {
 export function Head({ prefix }: Props) {
   return (
     <NextHead>
-      <title>{prefix} - Incident Manager - Flanksource</title>
+      <title>{prefix} | Incident Commander</title>
       <meta
         name="description"
-        content={`${prefix} - Incident Manager - Flanksource`}
+        content={`${prefix} | Incident Commander`}
       />
     </NextHead>
   );
