@@ -21,6 +21,10 @@
   input[role="combobox"]:focus {
     box-shadow: none;
   }
+  body {
+    overflow-x: hidden;
+    overflow-y: hidden;
+  }
 }
 
 @layer components {

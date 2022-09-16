@@ -3,6 +3,7 @@ import React from "react";
 import { Controller } from "react-hook-form";
 import { Dropdown } from "../Dropdown";
 import { timeRanges } from "../Dropdown/TimeRange";
+import { ReactSelectDropdown } from "../ReactSelectDropdown";
 import { TextInput } from "../TextInput";
 
 export function LogSearchBar({ control }) {
@@ -10,7 +11,7 @@ export function LogSearchBar({ control }) {
     <div className="flex flex-row items-center justify-between mb-4">
       <h1 className="text-xl font-semibold">Logs</h1>
       <div className="flex items-center">
-        <Dropdown
+        <ReactSelectDropdown
           control={control}
           name="timeRange"
           className="w-44"

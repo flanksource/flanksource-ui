@@ -5,7 +5,6 @@ import { useSearchParams } from "react-router-dom";
 import { useLoader } from "../hooks";
 import { getLogs } from "../api/services/logs";
 import { getTopology, getTopologyComponents } from "../api/services/topology";
-import { Dropdown } from "../components/Dropdown";
 import { SearchLayout } from "../components/Layout";
 import { Loading } from "../components/Loading";
 import { LogsViewer } from "../components/Logs";
@@ -14,6 +13,7 @@ import { timeRanges } from "../components/Dropdown/TimeRange";
 import { Icon } from "../components";
 import { SearchableDropdown } from "../components/SearchableDropdown";
 import { ReactComponent as SelectionIllustrationSvg } from "./selectionIllustration.svg";
+import { ReactSelectDropdown } from "../components/ReactSelectDropdown";
 
 export const logTypes = [
   {
@@ -197,9 +197,9 @@ export function LogsPage() {
               value={query}
             />
           </div>
-          <Dropdown
+          <ReactSelectDropdown
             name="start"
-            className="w-40 mr-2 flex-shrink-0"
+            className="w-44 mr-2"
             items={timeRanges}
             onChange={(e) => setStart(e)}
             value={start}

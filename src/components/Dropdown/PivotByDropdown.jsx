@@ -1,7 +1,7 @@
-import { Dropdown } from ".";
+import { ReactSelectDropdown } from "../ReactSelectDropdown";
 import { defaultPivotSelections } from "./lib/lists";
 
 export function PivotByDropdown({ checks, ...rest }) {
   const items = defaultPivotSelections;
-  return <Dropdown {...rest} items={items} />;
+  return <ReactSelectDropdown {...rest} items={items} />;
 }

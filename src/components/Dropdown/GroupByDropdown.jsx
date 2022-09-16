@@ -2,7 +2,7 @@ import { ImUngroup } from "react-icons/im";
 import { TiSortAlphabeticallyOutline } from "react-icons/ti";
 import { AiOutlineAlignLeft } from "react-icons/ai";
 import { getLabelSelections } from "./lib/lists";
-import { Dropdown } from ".";
+import { ReactSelectDropdown } from "../ReactSelectDropdown";
 
 const defaultGroupSelections = {
   "no-group": {
@@ -45,5 +45,5 @@ const defaultGroupSelections = {
 
 export function GroupByDropdown({ checks, ...rest }) {
   const items = getLabelSelections(checks, defaultGroupSelections);
-  return <Dropdown {...rest} items={items} />;
+  return <ReactSelectDropdown {...rest} items={items} />;
 }

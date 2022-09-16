@@ -1,5 +1,5 @@
 import { RefreshButton } from "../RefreshButton";
-import { UserProfile } from "../UserProfile/user-profile";
+import { UserProfile } from "../UserProfile/UserProfile";
 
 interface IProps {
   children: React.ReactNode;
@@ -19,7 +19,7 @@ export function SearchLayout({
   onRefresh
 }: IProps) {
   return (
-    <div className="flex flex-col flex-1">
+    <div className="flex flex-col flex-1 overflow-x-auto">
       <div className="sticky top-0 z-10 flex-shrink-0 flex py-3 bg-white shadow h-16">
         <div className="px-4 flex flex-1 justify-between">
           <div className="flex items-center">

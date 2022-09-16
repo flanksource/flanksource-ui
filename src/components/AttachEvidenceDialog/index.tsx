@@ -30,6 +30,7 @@ import { toastSuccess } from "../Toast/toast";
 import { Link } from "react-router-dom";
 import { typeItems } from "../Incidents/data";
 import { Dropdown } from "../Dropdown";
+import { ReactSelectDropdown } from "../ReactSelectDropdown";
 
 interface Props {
   title: string;
@@ -158,6 +159,7 @@ export function AttachEvidenceDialog({
     handleSubmit,
     setValue,
     watch,
+    reset,
     formState: { errors }
   } = useForm<IFormValues>({
     defaultValues: {
@@ -181,12 +183,25 @@ export function AttachEvidenceDialog({
   /* @ts-ignore:next-line */
   const selectedIncident = watch("incident");
 
+  const watchType = watch("type");
+
   const { user } = useUser();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [newIncidentCreated, setNewIncidentCreated] = useState<boolean>(true);
 
   useEffect(() => {
     setValue("hypothesis", null);
+    if (!selectedIncident?.value) {
+      return;
+    }
+    setNewIncidentCreated(!!(selectedIncident as any).__isNew__);
   }, [selectedIncident]);
+
+  useEffect(() => {
+    return () => {
+      reset();
+    };
+  }, []);
 
   const fetchIncidentOptions = useCallback((query: string) => {
     const fn = async (query: string): Promise<IExtendedItem[]> => {
@@ -198,7 +213,7 @@ export function AttachEvidenceDialog({
       }
       return toOpts(data, (x) => ({
         details: {
-          rootId: x.hypothesis?.find((h: Hypothesis) => h.type === "root")?.id,
+          rootId: x.hypotheses?.find((h: Hypothesis) => h.type === "root")?.id,
           status: x.status,
           type: x.type,
           severity: x.severity
@@ -254,13 +269,7 @@ export function AttachEvidenceDialog({
     }
 
     if (isNewHypothesis) {
-      /* type should be root, if it's the first for an incident? */
-      const nodeDetails = isNewIncident
-        ? { type: "root" }
-        : {
-            type: "factor",
-            parent_id: incidentData?.details?.rootId
-          };
+      const nodeDetails = { type: "root" };
 
       const params = {
         user,
@@ -360,18 +369,19 @@ export function AttachEvidenceDialog({
                 displayOption={IncidentOption}
               />
               <p className="text-red-600 text-sm">{errors.incident?.message}</p>
-              {!selectedIncident?.value && (
+              {newIncidentCreated && (
                 <div className="space-y-2 pt-4">
                   <div className="flex flex-col">
                     <span className="text-sm font-bold text-gray-700 mb-1 mr-4 w-16">
                       Type
                     </span>
-                    <Dropdown
+                    <ReactSelectDropdown
                       name="type"
                       label=""
                       className="w-full"
                       control={control}
                       items={typeItems}
+                      value={watchType}
                     />
                     <p className="text-red-600 text-sm">
                       {errors.type?.message}
@@ -379,7 +389,7 @@ export function AttachEvidenceDialog({
                   </div>
                 </div>
               )}
-              {!selectedIncident?.value && (
+              {newIncidentCreated && (
                 <div className="space-y-2 pt-4 pl-2">
                   <div className="flex flex-col">
                     <span className="text-sm font-bold text-gray-700 mb-1 mr-4 w-16">
