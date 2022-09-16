@@ -1,22 +1,25 @@
-import qs from "qs";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
-import { getTopology, getTopologyComponents } from "../api/services/topology";
-import { SearchLayout } from "../components/Layout";
+
+import qs from "qs";
+import clsx from "clsx";
+import { FaCog } from "react-icons/fa";
+
+import { Dropdown } from "../components";
 import { Loading } from "../components/Loading";
+import { SearchLayout } from "../components/Layout";
 import { toastError } from "../components/Toast/toast";
+import { SearchSelectTag } from "../components/SearchSelectTag";
+import { ReactSelectDropdown } from "../components/ReactSelectDropdown";
 import { CardSize, CardWidth, TopologyCard } from "../components/TopologyCard";
 import { TopologyBreadcrumbs } from "../components/Topology/topology-breadcrumbs";
-import { useLoader } from "../hooks";
-import { useTopologyPageContext } from "../context/TopologyPageContext";
-import { Dropdown } from "../components";
-import { SearchSelectTag } from "../components/SearchSelectTag";
-import clsx from "clsx";
-import { searchParamsToObj } from "../utils/common";
-import { getAll } from "../api/schemaResources";
 import { schemaResourceTypes } from "../components/SchemaResourcePage/resourceTypes";
-import { FaCog } from "react-icons/fa";
-import { ReactSelectDropdown } from "../components/ReactSelectDropdown";
+
+import { useLoader } from "../hooks";
+import { getAll } from "../api/schemaResources";
+import { searchParamsToObj } from "../utils/common";
+import { useTopologyPageContext } from "../context/TopologyPageContext";
+import { getTopology, getTopologyComponents } from "../api/services/topology";
 
 const allOption = {
   All: {
@@ -246,7 +249,7 @@ export function TopologyPage() {
   return (
     <SearchLayout
       title={
-        <div className="flex text-xl text-gray-400  ">
+        <div className="flex text-xl text-gray-400">
           <TopologyBreadcrumbs topologyId={id} />
         </div>
       }
@@ -257,129 +260,134 @@ export function TopologyPage() {
     >
       <>
         <div className="flex">
-          <div className="flex flex-1">
-            <div className="flex">
-              <label className="inline-block mr-3 text-gray-500 text-sm pt-2">
-                Health:
-              </label>
-              <ReactSelectDropdown
-                items={healthTypes}
-                onChange={(val: any) => {
-                  setHealthStatus(val);
-                  setSearchParams({
-                    ...searchParamsToObj(searchParams),
-                    status: val
-                  });
-                }}
-                label=""
-                className="w-36 inline-block"
-                value={healthStatus}
-              />
-            </div>
-            <div className="flex ml-3">
-              <label className="inline-block mr-3 text-gray-500 text-sm pt-2">
-                Type:
-              </label>
-              <ReactSelectDropdown
-                items={topologyTypes}
-                onChange={(val: any) => {
-                  setTopologyType(val);
-                  setSearchParams({
-                    ...searchParamsToObj(searchParams),
-                    type: val
-                  });
-                }}
-                label=""
-                className="w-48 inline-block"
-                value={topologyType}
-              />
-            </div>
-            <div className="flex ml-3">
-              <label className="inline-block mr-3 text-gray-500 text-sm pt-2">
-                Team:
-              </label>
-              <ReactSelectDropdown
-                items={teams}
-                onChange={(val: any) => {
-                  setTeam(val);
-                  setSearchParams({
-                    ...searchParamsToObj(searchParams),
-                    team: val
-                  });
-                }}
-                label=""
-                className="w-48 h-full inline-block"
-                value={team}
-              />
-            </div>
-            <div className="flex ml-3">
-              {Boolean(topologyLabels.length) && (
-                <>
-                  <label className="inline-block mr-3 text-gray-500 text-sm pt-2">
-                    Labels:
-                  </label>
-                  <SearchSelectTag
-                    className="w-80 inline-block"
-                    tags={topologyLabels}
-                    value={selectedLabel}
-                    onChange={(tag: any) => {
-                      setSelectedLabel(tag);
-                      setSearchParams({
-                        ...searchParamsToObj(searchParams),
-                        labels:
-                          tag.data.length > 0
-                            ? `${encodeURIComponent(
-                                tag.data[0]
-                              )}=${encodeURIComponent(tag.data[1])}`
-                            : "All"
-                      });
-                    }}
-                  />
-                </>
-              )}
-            </div>
-            <div className="relative inline-block flex" ref={preferencesRef}>
-              <div>
-                <FaCog
-                  className="content-center cursor-pointer ml-4 mt-1 h-6 w-6"
-                  onClick={(e) => {
-                    setShowPreferences((val) => !val);
+          <div className="flex flex-wrap">
+            {[
+              {
+                id: 1,
+                name: "Health",
+                parentClassName: "flex p-3",
+                dropdownClassName: "inline-block w-36",
+                items: healthTypes,
+                value: healthStatus,
+                onChange: (val: any) => setHealthStatus(val)
+              },
+              {
+                id: 2,
+                name: "Type",
+                parentClassName: "flex p-3",
+                dropdownClassName: "inline-block w-48",
+                items: topologyTypes,
+                value: topologyType,
+                onChange: (val: any) => setTopologyType(val)
+              },
+              {
+                id: 3,
+                name: "Team",
+                parentClassName: "flex p-3",
+                dropdownClassName: "inline-block w-48 h-full",
+                items: teams,
+                value: team,
+                onChange: (val: any) => setTeam(val)
+              }
+            ].map((v) => (
+              <div id={v.id.toString()} className={v.parentClassName}>
+                <label className="self-center inline-block pt-2 mr-3 text-sm text-gray-500">
+                  {`${v.name}:`}
+                </label>
+                <ReactSelectDropdown
+                  label=""
+                  value={v.value}
+                  items={v.items}
+                  className={v.dropdownClassName}
+                  onChange={(val: any) => {
+                    v.onChange(val);
+                    setSearchParams({
+                      ...searchParamsToObj(searchParams),
+                      status: val
+                    });
                   }}
                 />
               </div>
-              <div
-                className={clsx(
-                  "origin-top-right absolute right-0 mt-10 w-96 z-50 divide-y divide-gray-100 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none",
-                  showPreferences ? "display-block" : "hidden"
-                )}
-                role="menu"
-                aria-orientation="vertical"
-                aria-labelledby="menu-button"
-              >
-                <div className="py-1">
-                  <div className="text-gray-700 group flex items-center px-4 py-2 text-base font-bold">
-                    Preferences
-                  </div>
+            ))}
+            {[
+              {
+                id: 4,
+                name: "Labels",
+                parentClassName: "flex ml-3",
+                searchSelectClassName: "inline-block p-3 w-80",
+                tags: topologyLabels,
+                value: selectedLabel,
+                onChange: (tag: any) => setSelectedLabel(tag)
+              }
+            ].map((v) => (
+              <div id={v.id.toString()} className={v.parentClassName}>
+                <label className="self-center inline-block pt-2 mr-3 text-sm text-gray-500">
+                  {`${v.name}:`}
+                </label>
+                <SearchSelectTag
+                  value={v.value}
+                  tags={v.tags}
+                  className={v.searchSelectClassName}
+                  onChange={(tag: any) => {
+                    v.onChange(tag);
+                    setSearchParams({
+                      ...searchParamsToObj(searchParams),
+                      labels:
+                        tag.data.length > 0
+                          ? `${encodeURIComponent(
+                              tag.data[0]
+                            )}=${encodeURIComponent(tag.data[1])}`
+                          : "All"
+                    });
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+          <div
+            className="relative flex self-center inline-block"
+            ref={preferencesRef}
+          >
+            <div>
+              <FaCog
+                className="content-center w-6 h-6 mt-1 ml-4 cursor-pointer"
+                onClick={(e) => {
+                  setShowPreferences((val) => !val);
+                }}
+              />
+            </div>
+            <div
+              className={clsx(
+                "origin-top-right absolute right-0 mt-10 w-96 z-50 divide-y divide-gray-100 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none",
+                showPreferences ? "display-block" : "hidden"
+              )}
+              role="menu"
+              aria-orientation="vertical"
+              aria-labelledby="menu-button"
+            >
+              <div className="py-1">
+                <div className="flex items-center px-4 py-2 text-base font-bold text-gray-700 group">
+                  Preferences
                 </div>
-                <div className="py-1" role="none">
-                  <div className="px-4 py-4">
-                    <label
-                      htmlFor="topology-card-width-slider"
-                      className="inline-block mr-3 text-gray-700 text-xs"
-                    >
-                      Card Width:
-                    </label>
-                    <input
-                      id="topology-card-width-slider"
-                      type="range"
-                      min="250"
-                      max="768"
-                      step={2}
-                      value={parseInt(size, 10)}
-                      onChange={(e) => setCardWidth(e.target.value)}
-                      className="w-64 rounded-lg cursor-pointer mb-4 inline-block"
-                    />
-                  </div>
+              </div>
+              <div className="py-1" role="none">
+                <div className="px-4 py-4">
+                  <label
+                    htmlFor="topology-card-width-slider"
+                    className="inline-block mr-3 text-xs text-gray-700"
+                  >
+                    Card Width:
+                  </label>
+                  <input
+                    id="topology-card-width-slider"
+                    type="range"
+                    min="250"
+                    max="768"
+                    step={2}
+                    value={parseInt(size, 10)}
+                    onChange={(e) => setCardWidth(e.target.value)}
+                    className="inline-block w-64 mb-4 rounded-lg cursor-pointer"
+                  />
                 </div>
               </div>
             </div>
