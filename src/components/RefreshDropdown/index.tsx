@@ -1,10 +1,6 @@
 import { Menu } from "@headlessui/react";
 import { useState } from "react";
-import {
-  HiOutlineArrowDown,
-  HiOutlineChevronDown,
-  HiOutlineRefresh
-} from "react-icons/hi";
+import { HiOutlineChevronDown, HiOutlineRefresh } from "react-icons/hi";
 
 const RefreshOptions = [
   "None",
