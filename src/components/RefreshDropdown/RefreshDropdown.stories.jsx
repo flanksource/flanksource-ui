@@ -12,7 +12,7 @@ export default {
 
 const Template = (arg) => <RefreshDropdown {...arg} />;
 
-export const Variant1 = Template.bind({});
+export const Default = Template.bind({});
 export const WithTimeRangeSetTo2Hr = Template.bind();
 
 WithTimeRangeSetTo2Hr.story = {
