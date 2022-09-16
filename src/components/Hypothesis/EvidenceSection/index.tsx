@@ -29,6 +29,7 @@ export function EvidenceItem({ evidence }: { evidence: Evidence }) {
           title={evidence.description}
           configId={evidence.evidence.id}
           configName={evidence.evidence.configName}
+          configType={evidence.evidence.configType}
         >
           <ConfigEvidenceView evidenceItem={evidence} />
         </EvidenceAccordion>
@@ -43,8 +44,9 @@ const EvidenceAccordion: React.FC<{
   title: string;
   configId: string;
   configName: string;
+  configType: string;
   children: React.ReactNode;
-}> = ({ title, date, configId, configName, children, ...rest }) => {
+}> = ({ title, date, configId, configName, configType, children, ...rest }) => {
   const [expanded, setExpanded] = useState(true);
   return (
     <div className="border-b last:border-b-0 flex flex-col" {...rest}>
@@ -68,12 +70,15 @@ const EvidenceAccordion: React.FC<{
             )}
           </div>
         </button>
-        <Link
-          to={`/configs/${configId}`}
-          className="underline text-blue-600 hover:text-blue-800"
-        >
-          {configName && configName}
-        </Link>
+        <div>
+          <Icon className="inline-block mr-2" name={configType} size="lg" />
+          <Link
+            to={`/configs/${configId}`}
+            className="underline text-blue-600 hover:text-blue-800"
+          >
+            {configName && configName}
+          </Link>
+        </div>
       </div>
       {expanded && children}
     </div>

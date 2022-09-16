@@ -158,8 +158,9 @@ export function ConfigDetailsPage() {
         onClose={() => setAttachAsAsset(false)}
         evidence={{
           id,
-          configName: configDetails?.name,
           lines: configLines,
+          configName: configDetails?.name,
+          configType: configDetails?.config_type,
           selected_lines: Object.fromEntries(
             Object.keys(checked).map((n) => [n, configLines[n]])
           )
