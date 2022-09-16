@@ -67,7 +67,7 @@ export default function RefreshDropdown({
   }, [localStorageKey, refreshRate]);
 
   return (
-    <div className="mx-2 mt-2 relative flex flex-row align-baseline">
+    <div className="mx-2 mt-2 relative">
       <button
         onClick={() => onClick()}
         className={` border border-r-0 border-gray-300 p-1 px-2 rounded-md rounded-r-none`}
