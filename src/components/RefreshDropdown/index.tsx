@@ -1,6 +1,7 @@
 import { Menu } from "@headlessui/react";
 import { useEffect, useState } from "react";
 import { HiOutlineChevronDown, HiOutlineRefresh } from "react-icons/hi";
+import useTimeRangeToDisableRefreshDropdownOptions from "../Hooks/useTimeRangeToDisableRefreshDropdownOptions";
 
 const HEALTH_PAGE_REFRESH_RATE_KEY = "healthPageRefreshRate";
 
@@ -30,13 +31,18 @@ type Props = {
    * The local storage key to use for storing the refresh rate
    **/
   localStorageKey?: string;
+  onClick: (...args: any[]) => void;
 };
 
 export default function RefreshButton({
-  localStorageKey = HEALTH_PAGE_REFRESH_RATE_KEY
+  localStorageKey = HEALTH_PAGE_REFRESH_RATE_KEY,
+  onClick
 }: Props) {
   const [refreshRate, setRefreshRate] =
     useState<ReadonlyTupleToUnionType<typeof RefreshOptions>>("None");
+
+  const refreshDropdownDisabledOptions =
+    useTimeRangeToDisableRefreshDropdownOptions();
 
   /* Whenever refresh rate changes update local storage */
   useEffect(() => {
@@ -49,7 +55,10 @@ export default function RefreshButton({
 
   return (
     <div>
-      <button className="bg-gray-100 border border-r-0 border-gray-300 p-1 px-2">
+      <button
+        onClick={onClick}
+        className="bg-gray-100 border border-r-0 border-gray-300 p-1 px-2"
+      >
         <HiOutlineRefresh size={18} className="inline-block" />
       </button>
       <Menu>
@@ -66,9 +75,21 @@ export default function RefreshButton({
               <Menu.Item
                 onClick={() => setRefreshRate(option)}
                 as="li"
-                className={`ui-active:bg-blue-500 cursor-pointer`}
+                disabled={
+                  !!refreshDropdownDisabledOptions.find(
+                    (opts) => opts === option
+                  )
+                }
               >
-                {option}
+                {({ active, disabled }) => (
+                  <li
+                    className={`${
+                      disabled ? "text-gray-500" : "cursor-pointer"
+                    }`}
+                  >
+                    {option}
+                  </li>
+                )}
               </Menu.Item>
             </>
           ))}
