@@ -1,13 +1,18 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
+/**
+ * useTimeRangeToDisableRefreshDropdownOptions
+ *
+ * This hook returns an array of refresh options that should be disabled based
+ * on the set TimeRange
+ *
+ */
 export default function useTimeRangeToDisableRefreshDropdownOptions() {
   const [refreshDropdownDisabledOptions, setRefreshDropdownDisabledOptions] =
     useState<("15s" | "30s" | "2m" | "3m")[]>([]);
 
   const { query } = useRouter();
-
-  console.log("query", query);
 
   const timeRange = query.timeRange;
 
