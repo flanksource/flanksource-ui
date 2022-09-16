@@ -1,6 +1,17 @@
 import { Menu } from "@headlessui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { HiOutlineChevronDown, HiOutlineRefresh } from "react-icons/hi";
+
+const HEALTH_PAGE_REFRESH_RATE_KEY = "healthPageRefreshRate";
+
+/**
+ *
+ * This takes a readonly tuple and returns a union type
+ *
+ * An example of readonly tuple is the RefreshOptions below
+ *
+ */
+export type ReadonlyTupleToUnionType<T extends Readonly<any[]>> = T[number];
 
 const RefreshOptions = [
   "None",
@@ -14,20 +25,37 @@ const RefreshOptions = [
   "15m"
 ] as const;
 
-type Props = {};
+type Props = {
+  /**
+   * The local storage key to use for storing the refresh rate
+   **/
+  localStorageKey?: string;
+};
 
-export default function RefreshButton({}: Props) {
-  const [refreshRate, setRefreshRate] = useState("None");
+export default function RefreshButton({
+  localStorageKey = HEALTH_PAGE_REFRESH_RATE_KEY
+}: Props) {
+  const [refreshRate, setRefreshRate] =
+    useState<ReadonlyTupleToUnionType<typeof RefreshOptions>>("None");
+
+  /* Whenever refresh rate changes update local storage */
+  useEffect(() => {
+    if (refreshRate === "None") {
+      localStorage.removeItem(localStorageKey);
+      return;
+    }
+    localStorage.setItem(localStorageKey, refreshRate);
+  }, [localStorageKey, refreshRate]);
 
   return (
     <div>
-      <button className="bg-gray-100 border border-r-0 border-gray-300 p-1 ">
+      <button className="bg-gray-100 border border-r-0 border-gray-300 p-1 px-2">
         <HiOutlineRefresh size={18} className="inline-block" />
       </button>
       <Menu>
         {/* @ts-expect-error */}
         <Menu.Button className="bg-gray-100 border border-gray-300 p-1  ">
-          <span className="inline p-1"> {refreshRate}</span>
+          <span className="inline p-1 pr-2"> {refreshRate}</span>
           <HiOutlineChevronDown className="inline" />
         </Menu.Button>
         {/* @ts-expect-error */}
@@ -38,7 +66,7 @@ export default function RefreshButton({}: Props) {
               <Menu.Item
                 onClick={() => setRefreshRate(option)}
                 as="li"
-                className={`ui-active:bg-blue-500`}
+                className={`ui-active:bg-blue-500 cursor-pointer`}
               >
                 {option}
               </Menu.Item>
