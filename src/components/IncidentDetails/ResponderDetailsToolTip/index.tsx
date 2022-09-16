@@ -4,7 +4,8 @@ import { FiExternalLink } from "react-icons/fi";
 import {
   getResponderTitleByValue,
   getOrderedKeys,
-  ResponderPropsKeyToLabelMap
+  ResponderPropsKeyToLabelMap,
+  ResponderOption
 } from "../AddResponder";
 
 type ResponderDetailsToolTipProps = {
@@ -38,18 +39,28 @@ export const ResponderDetailsToolTip = ({
 
   const getOptionsList = (responder: any) => {
     const keys = getOrderedKeys(responder);
-    const options: { label: string; value: string | undefined }[] = [];
+    const options: ResponderOption[] = [];
     keys.forEach((key) => {
       options.push({
         label: ResponderPropsKeyToLabelMap[key],
-        value: data?.[key]
+        value: data?.[key],
+        link: responder.properties.find(
+          (v: ResponderOption) => v.label === ResponderPropsKeyToLabelMap[key]
+        )?.link
       });
     });
     return options;
   };
 
-  const openLinkInNewTab = (link: string) => {
-    window.open(link);
+  const openLinkInNewTab = (responder: any) => {
+    const link = responder.properties.find(
+      (v: ResponderOption) =>
+        v.label === ResponderPropsKeyToLabelMap.external_id
+    )?.link;
+    if (!link) {
+      return;
+    }
+    window.open(link.value);
   };
 
   useEffect(() => {
@@ -100,13 +111,13 @@ export const ResponderDetailsToolTip = ({
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium text-gray-900">
                   <span>{getResponderTitleByValue(responder?.type)}</span>
-                  {responder?.json?.properties?.url && (
+                  {responder?.json?.properties?.external_id && (
                     <FiExternalLink
-                      className="float-right w-5 h-5"
+                      className="float-right w-5 h-5 cursor-pointer"
                       onClick={(e) => {
                         e.stopPropagation();
                         e.preventDefault();
-                        openLinkInNewTab(responder?.json?.properties?.url);
+                        openLinkInNewTab(responder);
                       }}
                     />
                   )}
@@ -130,9 +141,22 @@ export const ResponderDetailsToolTip = ({
                       <dt className="text-sm font-medium text-gray-500">
                         {option.label}
                       </dt>
-                      <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                        {option.value}
-                      </dd>
+                      {option?.link?.value ? (
+                        <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                          <a
+                            className="underline text-blue-600 hover:text-blue-800 visited:text-blue-600"
+                            href={option.link.value}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {option.link.label}
+                          </a>
+                        </dd>
+                      ) : (
+                        <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                          {option.value}
+                        </dd>
+                      )}
                     </div>
                   );
                 })}

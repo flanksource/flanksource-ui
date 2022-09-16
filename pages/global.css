@@ -25,6 +25,12 @@
     overflow-x: hidden;
     overflow-y: hidden;
   }
+  .wrap-with-brakets:before {
+    content: "(";
+  }
+  .wrap-with-brakets:after {
+    content: ")";
+  }
 }
 
 @layer components {

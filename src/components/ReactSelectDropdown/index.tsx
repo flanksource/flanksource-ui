@@ -115,7 +115,7 @@ export const ReactSelectDropdown = ({
       onClose={toggleOpen}
       inputRef={ref}
       target={
-        <div className="space-y-2">
+        <div className={label ? "space-y-2" : ""}>
           <label
             className={
               labelClass
