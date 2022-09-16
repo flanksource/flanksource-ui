@@ -1384,5 +1384,12 @@ ConfigTable.args = {
   columns: defaultTableColumns,
   isLoading: false,
   tableStyle: { borderSpacing: "0" },
-  stickyHead: false
+  stickyHead: false,
+  setSortBy: () => {},
+  sortBy: [
+    {
+      id: "config_type",
+      desc: false
+    }
+  ]
 };

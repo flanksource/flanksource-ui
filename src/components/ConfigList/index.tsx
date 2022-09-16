@@ -1,6 +1,7 @@
 import { useState } from "react";
 import * as timeago from "timeago.js";
 import { IoMdArrowDropright, IoMdArrowDropdown } from "react-icons/io";
+import { useSearchParams } from "react-router-dom";
 
 import { DataTable, Icon } from "../";
 import _ from "lodash";
@@ -195,6 +196,21 @@ export interface Props {
 }
 
 function ConfigList({ data, handleRowClick, isLoading }: Props) {
+  const [queryParams, setQueryParams] = useSearchParams({
+    sortBy: "config_type",
+    sortOrder: "asc"
+  });
+
+  const sortField = queryParams.get("sortBy");
+  const isSortOrderDesc = queryParams.get("sortOrder") === "asc" ? false : true;
+
+  const setSortBy = (field: string, order: "asc" | "desc") => {
+    setQueryParams({
+      sortBy: field,
+      sortOrder: order
+    });
+  };
+
   return (
     <DataTable
       stickyHead
@@ -203,6 +219,13 @@ function ConfigList({ data, handleRowClick, isLoading }: Props) {
       handleRowClick={handleRowClick}
       tableStyle={{ borderSpacing: "0" }}
       isLoading={isLoading}
+      sortBy={[
+        {
+          id: sortField,
+          desc: isSortOrderDesc
+        }
+      ]}
+      setSortBy={setSortBy}
     />
   );
 }
