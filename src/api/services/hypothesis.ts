@@ -53,7 +53,8 @@ export const getHypothesis = async (id: string) => {
 };
 
 export const getHypothesisResponse = async (id: string) => {
-  const comments = "comments(id,*,created_by(id,name,avatar))";
+  const comments =
+    "comments(id,*,created_by(id,name,avatar),responder_id(*,team_id(*)))";
   const evidence = "evidences(id,*,created_by(id,name,avatar))";
 
   const { data, error } = await resolve<

@@ -44,6 +44,18 @@ export function HypothesisDetails({ node, api, ...rest }: IProps) {
           return -1;
         });
 
+      responses.forEach((response) => {
+        response.created_by = response.external_created_by
+          ? {
+              name: response.external_created_by,
+              avatar: null,
+              team: {
+                icon: response.responder_id?.team_id?.icon,
+                name: response.responder_id?.team_id?.name
+              }
+            }
+          : response.created_by;
+      });
       setResponses(responses);
     } finally {
       setIsLoading(false);
