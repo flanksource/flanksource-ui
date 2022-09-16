@@ -32,10 +32,12 @@ type Props = {
    **/
   localStorageKey?: string;
   onClick: (...args: any[]) => void;
+  isLoading?: boolean;
 };
 
 export default function RefreshButton({
   localStorageKey = HEALTH_PAGE_REFRESH_RATE_KEY,
+  isLoading = false,
   onClick
 }: Props) {
   const [refreshRate, setRefreshRate] =
@@ -57,9 +59,12 @@ export default function RefreshButton({
     <div>
       <button
         onClick={onClick}
-        className="bg-gray-100 border border-r-0 border-gray-300 p-1 px-2"
+        className={`bg-gray-100 border border-r-0 border-gray-300 p-1 px-2`}
       >
-        <HiOutlineRefresh size={18} className="inline-block" />
+        <HiOutlineRefresh
+          size={18}
+          className={`inline-block ${isLoading && "animate-spin"}`}
+        />
       </button>
       <Menu>
         {/* @ts-expect-error */}

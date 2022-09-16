@@ -13,6 +13,15 @@ export default {
 const Template = (arg) => <RefreshDropdown {...arg} />;
 
 export const Default = Template.bind({});
+
+export const LoadingAnimation = Template.bind({});
+
+LoadingAnimation.story = {
+  args: {
+    isLoading: true
+  }
+};
+
 export const WithTimeRangeSetTo2Hr = Template.bind();
 
 WithTimeRangeSetTo2Hr.story = {
