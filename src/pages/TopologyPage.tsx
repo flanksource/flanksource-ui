@@ -1,11 +1,10 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 
 import qs from "qs";
 import clsx from "clsx";
-import { FaCog } from "react-icons/fa";
+import { FaCog, FaFilter } from "react-icons/fa";
 
-import { Dropdown } from "../components";
 import { Loading } from "../components/Loading";
 import { SearchLayout } from "../components/Layout";
 import { toastError } from "../components/Toast/toast";
@@ -18,6 +17,7 @@ import { schemaResourceTypes } from "../components/SchemaResourcePage/resourceTy
 import { useLoader } from "../hooks";
 import { getAll } from "../api/schemaResources";
 import { searchParamsToObj } from "../utils/common";
+import { getSortedTopology } from "../utils/sortTopology";
 import { useTopologyPageContext } from "../context/TopologyPageContext";
 import { getTopology, getTopologyComponents } from "../api/services/topology";
 
@@ -52,38 +52,53 @@ const healthTypes = {
   }
 };
 
+const defaultSortTypes = [
+  { id: 1, value: "name", label: "Name" },
+  { id: 2, value: "type", label: "Type" },
+  { id: 3, value: "last-updated", label: "Last Updated" }
+];
+
 export function TopologyPage() {
+  const { id } = useParams();
+
+  const { loading, setLoading } = useLoader();
   const { topologyState, setTopologyState } = useTopologyPageContext();
   const [searchParams, setSearchParams] = useSearchParams(
     topologyState?.searchParams
   );
-  const { loading, setLoading } = useLoader();
+
+  const currentIconRef = useRef();
+
+  const [teams, setTeams] = useState<any>({});
+  const [sortBy, setSortBy] = useState("name");
+  const [currentIcon, setCurrentIcon] = useState("");
+  const [sortByType, setSortByType] = useState("ASC");
+  const [selectedLabel, setSelectedLabel] = useState("");
   const [size, setSize] = useState(() => getCardWidth());
+  const [topologyLabels, setTopologyLabels] = useState([]);
+  const [topologyTypes, setTopologyTypes] = useState<any>({});
+  const [sortTypes, setSortTypes] = useState<typeof defaultSortTypes>([]);
   const [topologyType, setTopologyType] = useState(
     searchParams.get("type") ? searchParams.get("type") : "All"
-  );
-  const [topologyLabels, setTopologyLabels] = useState([]);
-  const [selectedLabel, setSelectedLabel] = useState("");
-  const [healthStatus, setHealthStatus] = useState(
-    searchParams.get("status") ? searchParams.get("status") : "All"
   );
   const [team, setTeam] = useState(
     searchParams.get("team") ? searchParams.get("team") : "All"
   );
-  const [teams, setTeams] = useState<any>({});
-  const [topologyTypes, setTopologyTypes] = useState<any>({});
-  const [showPreferences, setShowPreferences] = useState(false);
-  const preferencesRef = useRef();
-  const { id } = useParams();
+  const [healthStatus, setHealthStatus] = useState(
+    searchParams.get("status") ? searchParams.get("status") : "All"
+  );
 
   const topology = topologyState.topology;
 
   const load = async () => {
     const params = qs.parse(searchParams.toString());
+
     if (id != null) {
       params.id = id;
     }
+
     setLoading(true);
+
     try {
       const apiParams = {
         id,
@@ -133,14 +148,17 @@ export function TopologyPage() {
         toastError(ex);
       }
     }
+
     setLoading(false);
   };
 
   async function fetchComponents() {
     const { data } = await getTopologyComponents();
+
     if (!data) {
       return;
     }
+
     const allTypes: { [key: string]: any } = {};
     data.forEach((component: any) => {
       if (component.type) {
@@ -155,6 +173,7 @@ export function TopologyPage() {
     const allLabels = data.flatMap((d: any) => {
       return Object.entries(d?.labels || {});
     });
+
     setTopologyLabels(allLabels);
     setTopologyTypes({ ...allOption, ...allTypes });
   }
@@ -162,6 +181,7 @@ export function TopologyPage() {
   useEffect(() => {
     load();
     fetchComponents();
+
     setHealthStatus(searchParams.get("status") ?? "All");
     setTopologyType(searchParams.get("type") ?? "All");
     setTeam(searchParams.get("team") ?? "All");
@@ -175,6 +195,7 @@ export function TopologyPage() {
     const teamsApiConfig = schemaResourceTypes.find(
       (item) => item.table === "teams"
     );
+
     getAll(teamsApiConfig)
       .then((res) => {
         const data: any = {
@@ -188,6 +209,7 @@ export function TopologyPage() {
             value: item.name
           };
         });
+
         setTeams(data);
       })
       .catch((err) => {
@@ -199,12 +221,13 @@ export function TopologyPage() {
 
   useEffect(() => {
     const listener = (event: MouseEvent) => {
-      if (preferencesRef.current?.contains(event.target)) {
+      if (currentIconRef.current?.contains(event.target)) {
         return;
       }
-      setShowPreferences(false);
+      setCurrentIcon("");
     };
     document.addEventListener("click", listener);
+
     return () => {
       document.removeEventListener("click", listener);
     };
@@ -212,15 +235,18 @@ export function TopologyPage() {
 
   const preselectSelectedLabels = () => {
     let value = searchParams.get("labels") ?? "All";
+
     if (value === "All") {
       setSelectedLabel(value);
       return;
     }
+
     const values: string[] = decodeURIComponent(value).split("=");
     const selectedOption = topologyLabels.find((item: any) => {
       return item.toString() === values.toString();
     });
     value = selectedOption?.[0] + "__:__" + selectedOption?.[1];
+
     setSelectedLabel(value);
   };
 
@@ -231,15 +257,40 @@ export function TopologyPage() {
 
   function getCardWidth() {
     let value = localStorage.getItem("topology_card_width");
+
     if (!value?.trim()) {
       return CardWidth[CardSize.extra_large];
     }
+
     value = parseInt(value, 10);
     if (isNaN(value)) {
       return CardWidth[CardSize.extra_large];
     } else {
       return `${value}px`;
     }
+  }
+
+  // NOTE: The value is set on every mount to handle the updating sort options when other query filters like health, type are selected
+  function setSortValues() {
+    const currentSortTypes: typeof defaultSortTypes = [];
+
+    topology?.forEach((t) => {
+      const headlineProperties = t?.properties?.filter(
+        ({ headline }: { headline: boolean }) => headline
+      );
+
+      headlineProperties?.forEach((h, index) => {
+        if (!currentSortTypes.find((t) => t.value === h.name)) {
+          currentSortTypes.push({
+            id: defaultSortTypes.length + index,
+            value: h.name,
+            label: h.name
+          });
+        }
+      });
+    });
+
+    setSortTypes([...defaultSortTypes, ...currentSortTypes]);
   }
 
   if ((loading && !topology) || !topology) {
@@ -345,57 +396,103 @@ export function TopologyPage() {
             ))}
           </div>
           <div
+            ref={currentIconRef}
             className="relative flex self-center inline-block"
-            ref={preferencesRef}
           >
-            <div>
-              <FaCog
-                className="content-center w-6 h-6 mt-1 ml-4 cursor-pointer"
-                onClick={(e) => {
-                  setShowPreferences((val) => !val);
-                }}
-              />
-            </div>
+            <FaFilter
+              className="content-center w-6 h-6 mt-1 ml-4 cursor-pointer"
+              onClick={(e) => {
+                setCurrentIcon((val) => (val === "" ? "sort by" : ""));
+                setSortValues();
+              }}
+            />
+            <FaCog
+              className="content-center w-6 h-6 mt-1 ml-4 cursor-pointer"
+              onClick={(e) => {
+                setCurrentIcon((val) => (val === "" ? "preferences" : ""));
+              }}
+            />
             <div
-              className={clsx(
-                "origin-top-right absolute right-0 mt-10 w-96 z-50 divide-y divide-gray-100 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none",
-                showPreferences ? "display-block" : "hidden"
-              )}
               role="menu"
               aria-orientation="vertical"
               aria-labelledby="menu-button"
+              className={clsx(
+                "origin-top-right absolute right-0 mt-10 w-96 z-50 divide-y divide-gray-100 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none capitalize",
+                currentIcon === "" ? "hidden" : "display-block",
+                currentIcon === "sort by" ? "w-52" : "w-96"
+              )}
             >
               <div className="py-1">
-                <div className="flex items-center px-4 py-2 text-base font-bold text-gray-700 group">
-                  Preferences
+                <div className="flex items-center justify-between px-4 py-2 text-base text-gray-700">
+                  <span className="font-bold">{currentIcon}</span>
+                  <div
+                    className={clsx(
+                      currentIcon !== "sort by" ? "hidden" : "display-block"
+                    )}
+                  >
+                    {["ASC", "DESC"].map((s) => (
+                      <span
+                        onClick={() => {
+                          setSortByType(s);
+                          setCurrentIcon("");
+                        }}
+                        className={clsx(
+                          "mx-1 cursor-pointer",
+                          sortByType === s ? "font-bold" : "font-medium"
+                        )}
+                      >
+                        {s}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               </div>
               <div className="py-1" role="none">
-                <div className="px-4 py-4">
-                  <label
-                    htmlFor="topology-card-width-slider"
-                    className="inline-block mr-3 text-xs text-gray-700"
-                  >
-                    Card Width:
-                  </label>
-                  <input
-                    id="topology-card-width-slider"
-                    type="range"
-                    min="250"
-                    max="768"
-                    step={2}
-                    value={parseInt(size, 10)}
-                    onChange={(e) => setCardWidth(e.target.value)}
-                    className="inline-block w-64 mb-4 rounded-lg cursor-pointer"
-                  />
-                </div>
+                {currentIcon === "preferences" && (
+                  <div className="px-4 py-4">
+                    <label
+                      htmlFor="topology-card-width-slider"
+                      className="inline-block mr-3 text-xs text-gray-700"
+                    >
+                      Card Width:
+                    </label>
+                    <input
+                      step={2}
+                      min="250"
+                      max="768"
+                      type="range"
+                      value={parseInt(size, 10)}
+                      id="topology-card-width-slider"
+                      onChange={(e) => setCardWidth(e.target.value)}
+                      className="inline-block w-64 mb-4 rounded-lg cursor-pointer"
+                    />
+                  </div>
+                )}
+                {currentIcon === "sort by" && (
+                  <div className="flex flex-col">
+                    {sortTypes.map((s) => (
+                      <span
+                        onClick={() => {
+                          setSortBy(s.value);
+                          setCurrentIcon("");
+                        }}
+                        className="flex px-4 py-1 text-base cursor-pointer"
+                        style={{
+                          fontWeight: sortBy === s.value ? "bold" : "inherit"
+                        }}
+                      >
+                        {s.label}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           </div>
         </div>
         <div className="flex leading-1.21rel w-full mt-4">
           <div className="flex flex-wrap w-full">
-            {topology.map((item) => (
+            {getSortedTopology(topology, sortBy, sortByType).map((item) => (
               <TopologyCard key={item.id} topology={item} size={size} />
             ))}
           </div>
