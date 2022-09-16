@@ -1,5 +1,5 @@
-import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 /**
  * useTimeRangeToDisableRefreshDropdownOptions
@@ -12,9 +12,9 @@ export default function useTimeRangeToDisableRefreshDropdownOptions() {
   const [refreshDropdownDisabledOptions, setRefreshDropdownDisabledOptions] =
     useState<("15s" | "30s" | "2m" | "3m")[]>([]);
 
-  const { query } = useRouter();
+  const [queryParams] = useSearchParams();
 
-  const timeRange = query.timeRange;
+  const timeRange = queryParams.get("timeRange");
 
   const calculateTimeRangeRealValue = (timeRange: string) => {
     if (timeRange.includes("m")) {
@@ -35,6 +35,7 @@ export default function useTimeRangeToDisableRefreshDropdownOptions() {
 
   useEffect(() => {
     // ensure we are only working with a string, not array or undefined
+    console.log({ timeRange });
     if (typeof timeRange === "string") {
       // timeRange is a string, in the format of 1h, 2h, 3h, 1d etc
       const timeRangeRealValue = calculateTimeRangeRealValue(timeRange);
