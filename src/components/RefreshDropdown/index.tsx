@@ -31,7 +31,13 @@ type Props = {
    * The local storage key to use for storing the refresh rate
    **/
   localStorageKey?: string;
+  /**
+   * The event handler to call when the refresh button is clicked
+   */
   onClick: (...args: any[]) => void;
+  /**
+   * Whether or not to animate the refresh icon
+   */
   isLoading?: boolean;
 };
 
