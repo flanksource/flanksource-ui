@@ -14,7 +14,10 @@ export type TopologyPageState = {
 const initialState: TopologyPageState = {
   topologyState: {
     topology: null,
-    searchParams: {}
+    searchParams: {
+      sortBy: "name",
+      sortOrder: "ASC"
+    }
   },
   setTopologyState: ({ ...props }) => {}
 };

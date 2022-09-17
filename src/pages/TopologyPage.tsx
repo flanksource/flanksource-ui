@@ -71,9 +71,13 @@ export function TopologyPage() {
 
   const [teams, setTeams] = useState<any>({});
 
-  const [sortBy, setSortBy] = useState("name");
-  const [sortByType, setSortByType] = useState("ASC");
   const [sortTypes, setSortTypes] = useState<typeof defaultSortTypes>([]);
+  const [sortBy, setSortBy] = useState(
+    searchParams.get("sortBy") ? searchParams.get("sortBy") : "name"
+  );
+  const [sortByType, setSortByType] = useState(
+    searchParams.get("sortOrder") ? searchParams.get("sortOrder") : "ASC"
+  );
 
   const [topologyLabels, setTopologyLabels] = useState([]);
   const [topologyTypes, setTopologyTypes] = useState<any>({});
@@ -185,6 +189,8 @@ export function TopologyPage() {
     load();
     fetchComponents();
 
+    setSortBy(searchParams.get("sortBy") ?? "name");
+    setSortByType(searchParams.get("sortOrder") ?? "ASC");
     setHealthStatus(searchParams.get("status") ?? "All");
     setTopologyType(searchParams.get("type") ?? "All");
     setTeam(searchParams.get("team") ?? "All");
@@ -433,6 +439,10 @@ export function TopologyPage() {
                       <span
                         onClick={() => {
                           setSortByType(s);
+                          setSearchParams({
+                            ...searchParamsToObj(searchParams),
+                            sortOrder: s
+                          });
                           setCurrentIcon("");
                         }}
                         className={clsx(
@@ -473,6 +483,10 @@ export function TopologyPage() {
                       <span
                         onClick={() => {
                           setSortBy(s.value);
+                          setSearchParams({
+                            ...searchParamsToObj(searchParams),
+                            sortBy: s.value
+                          });
                           setCurrentIcon("");
                         }}
                         className="flex px-4 py-1 text-base cursor-pointer"
@@ -491,7 +505,7 @@ export function TopologyPage() {
         </div>
         <div className="flex leading-1.21rel w-full mt-4">
           <div className="flex flex-wrap w-full">
-            {getSortedTopology(topology, sortBy, sortByType).map(
+            {getSortedTopology(topology, sortBy ?? "", sortByType ?? "").map(
               (item) => (
                 <TopologyCard key={item.id} topology={item} size={size} />
               )
