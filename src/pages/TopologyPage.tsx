@@ -325,7 +325,13 @@ export function TopologyPage() {
                 dropdownClassName: "inline-block w-36",
                 items: healthTypes,
                 value: healthStatus,
-                onChange: (val: any) => setHealthStatus(val)
+                onChange: (val: any) => {
+                  setHealthStatus(val);
+                  setSearchParams({
+                    ...searchParamsToObj(searchParams),
+                    status: val
+                  });
+                }
               },
               {
                 id: 2,
@@ -334,7 +340,13 @@ export function TopologyPage() {
                 dropdownClassName: "inline-block w-48",
                 items: topologyTypes,
                 value: topologyType,
-                onChange: (val: any) => setTopologyType(val)
+                onChange: (val: any) => {
+                  setTopologyType(val);
+                  setSearchParams({
+                    ...searchParamsToObj(searchParams),
+                    type: val
+                  });
+                }
               },
               {
                 id: 3,
@@ -343,7 +355,13 @@ export function TopologyPage() {
                 dropdownClassName: "inline-block w-48 h-full",
                 items: teams,
                 value: team,
-                onChange: (val: any) => setTeam(val)
+                onChange: (val: any) => {
+                  setTeam(val);
+                  setSearchParams({
+                    ...searchParamsToObj(searchParams),
+                    team: val
+                  });
+                }
               }
             ].map((v) => (
               <div id={v.id.toString()} className={v.parentClassName}>
@@ -357,10 +375,6 @@ export function TopologyPage() {
                   className={v.dropdownClassName}
                   onChange={(val: any) => {
                     v.onChange(val);
-                    setSearchParams({
-                      ...searchParamsToObj(searchParams),
-                      status: val
-                    });
                   }}
                 />
               </div>
@@ -373,7 +387,18 @@ export function TopologyPage() {
                 searchSelectClassName: "inline-block p-3 w-80",
                 tags: topologyLabels,
                 value: selectedLabel,
-                onChange: (tag: any) => setSelectedLabel(tag)
+                onChange: (tag: any) => {
+                  setSelectedLabel(tag);
+                  setSearchParams({
+                    ...searchParamsToObj(searchParams),
+                    labels:
+                      tag.data.length > 0
+                        ? `${encodeURIComponent(
+                            tag.data[0]
+                          )}=${encodeURIComponent(tag.data[1])}`
+                        : "All"
+                  });
+                }
               }
             ].map((v) => (
               <div id={v.id.toString()} className={v.parentClassName}>
@@ -386,15 +411,6 @@ export function TopologyPage() {
                   className={v.searchSelectClassName}
                   onChange={(tag: any) => {
                     v.onChange(tag);
-                    setSearchParams({
-                      ...searchParamsToObj(searchParams),
-                      labels:
-                        tag.data.length > 0
-                          ? `${encodeURIComponent(
-                              tag.data[0]
-                            )}=${encodeURIComponent(tag.data[1])}`
-                          : "All"
-                    });
                   }}
                 />
               </div>
