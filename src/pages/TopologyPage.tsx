@@ -321,8 +321,7 @@ export function TopologyPage() {
               {
                 id: 1,
                 name: "Health",
-                parentClassName: "flex p-3",
-                dropdownClassName: "inline-block w-36",
+                dropdownClassName: "inline-block p-3 w-80 md:w-36",
                 items: healthTypes,
                 value: healthStatus,
                 onChange: (val: any) => {
@@ -336,8 +335,7 @@ export function TopologyPage() {
               {
                 id: 2,
                 name: "Type",
-                parentClassName: "flex p-3",
-                dropdownClassName: "inline-block w-48",
+                dropdownClassName: "inline-block p-3 w-80 md:w-48",
                 items: topologyTypes,
                 value: topologyType,
                 onChange: (val: any) => {
@@ -351,8 +349,7 @@ export function TopologyPage() {
               {
                 id: 3,
                 name: "Team",
-                parentClassName: "flex p-3",
-                dropdownClassName: "inline-block w-48 h-full",
+                dropdownClassName: "inline-block p-3 w-80 md:w-48",
                 items: teams,
                 value: team,
                 onChange: (val: any) => {
@@ -364,7 +361,7 @@ export function TopologyPage() {
                 }
               }
             ].map((v) => (
-              <div id={v.id.toString()} className={v.parentClassName}>
+              <div id={v.id.toString()} className="flex p-3">
                 <label className="self-center inline-block pt-2 mr-3 text-sm text-gray-500">
                   {`${v.name}:`}
                 </label>
@@ -383,8 +380,7 @@ export function TopologyPage() {
               {
                 id: 4,
                 name: "Labels",
-                parentClassName: "flex ml-3",
-                searchSelectClassName: "inline-block p-3 w-80",
+                searchTagClassName: "inline-block p-3 w-80",
                 tags: topologyLabels,
                 value: selectedLabel,
                 onChange: (tag: any) => {
@@ -401,14 +397,14 @@ export function TopologyPage() {
                 }
               }
             ].map((v) => (
-              <div id={v.id.toString()} className={v.parentClassName}>
+              <div id={v.id.toString()} className="flex ml-3">
                 <label className="self-center inline-block pt-2 mr-3 text-sm text-gray-500">
                   {`${v.name}:`}
                 </label>
                 <SearchSelectTag
                   value={v.value}
                   tags={v.tags}
-                  className={v.searchSelectClassName}
+                  className={v.searchTagClassName}
                   onChange={(tag: any) => {
                     v.onChange(tag);
                   }}
@@ -418,7 +414,7 @@ export function TopologyPage() {
           </div>
           <div
             ref={currentIconRef}
-            className="relative flex self-center inline-block"
+            className="relative flex pt-5 md:self-center md:pt-0"
           >
             <FaFilter
               className="content-center w-6 h-6 mt-1 ml-4 cursor-pointer"
