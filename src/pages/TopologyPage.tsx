@@ -440,8 +440,8 @@ export function TopologyPage() {
               )}
             >
               <div className="py-1">
-                <div className="flex items-center justify-between px-4 py-2 text-base text-gray-700">
-                  <span className="font-bold">{currentIcon}</span>
+                <div className="flex items-center justify-between px-4 py-2 text-base">
+                  <span className="font-bold text-gray-700">{currentIcon}</span>
                   <div
                     className={clsx(
                       currentIcon !== "sort by" ? "hidden" : "display-block"
@@ -458,8 +458,10 @@ export function TopologyPage() {
                           setCurrentIcon("");
                         }}
                         className={clsx(
-                          "mx-1 cursor-pointer",
-                          sortByType === s ? "font-bold" : "font-medium"
+                          "mx-1 cursor-pointer text-gray-600 hover:text-gray-800",
+                          sortByType === s
+                            ? "font-bold text-gray-700"
+                            : "font-medium"
                         )}
                       >
                         {s}
@@ -501,7 +503,7 @@ export function TopologyPage() {
                           });
                           setCurrentIcon("");
                         }}
-                        className="flex px-4 py-1 text-base cursor-pointer"
+                        className="flex px-4 py-1 text-base cursor-pointer hover:bg-blue-100"
                         style={{
                           fontWeight: sortBy === s.value ? "bold" : "inherit"
                         }}
