@@ -55,7 +55,7 @@ const healthTypes = {
 const defaultSortTypes = [
   { id: 1, value: "name", label: "Name" },
   { id: 2, value: "type", label: "Type" },
-  { id: 3, value: "last-updated", label: "Last Updated" }
+  { id: 3, value: "updated_at", label: "Last Updated" }
 ];
 
 export function TopologyPage() {
@@ -70,17 +70,20 @@ export function TopologyPage() {
   const currentIconRef = useRef();
 
   const [teams, setTeams] = useState<any>({});
+
   const [sortBy, setSortBy] = useState("name");
-  const [currentIcon, setCurrentIcon] = useState("");
   const [sortByType, setSortByType] = useState("ASC");
-  const [selectedLabel, setSelectedLabel] = useState("");
-  const [size, setSize] = useState(() => getCardWidth());
+  const [sortTypes, setSortTypes] = useState<typeof defaultSortTypes>([]);
+
   const [topologyLabels, setTopologyLabels] = useState([]);
   const [topologyTypes, setTopologyTypes] = useState<any>({});
-  const [sortTypes, setSortTypes] = useState<typeof defaultSortTypes>([]);
   const [topologyType, setTopologyType] = useState(
     searchParams.get("type") ? searchParams.get("type") : "All"
   );
+
+  const [currentIcon, setCurrentIcon] = useState("");
+  const [selectedLabel, setSelectedLabel] = useState("");
+  const [size, setSize] = useState(() => getCardWidth());
   const [team, setTeam] = useState(
     searchParams.get("team") ? searchParams.get("team") : "All"
   );
@@ -250,13 +253,13 @@ export function TopologyPage() {
     setSelectedLabel(value);
   };
 
-  const setCardWidth = (width) => {
+  const setCardWidth = (width: string) => {
     setSize(`${width}px`);
     localStorage.setItem("topology_card_width", `${width}px`);
   };
 
   function getCardWidth() {
-    let value = localStorage.getItem("topology_card_width");
+    let value: any = localStorage.getItem("topology_card_width");
 
     if (!value?.trim()) {
       return CardWidth[CardSize.extra_large];
@@ -275,12 +278,8 @@ export function TopologyPage() {
     const currentSortTypes: typeof defaultSortTypes = [];
 
     topology?.forEach((t) => {
-      const headlineProperties = t?.properties?.filter(
-        ({ headline }: { headline: boolean }) => headline
-      );
-
-      headlineProperties?.forEach((h, index) => {
-        if (!currentSortTypes.find((t) => t.value === h.name)) {
+      t?.properties?.forEach((h, index) => {
+        if (h.headline && !currentSortTypes.find((t) => t.value === h.name)) {
           currentSortTypes.push({
             id: defaultSortTypes.length + index,
             value: h.name,
@@ -492,9 +491,11 @@ export function TopologyPage() {
         </div>
         <div className="flex leading-1.21rel w-full mt-4">
           <div className="flex flex-wrap w-full">
-            {getSortedTopology(topology, sortBy, sortByType).map((item) => (
-              <TopologyCard key={item.id} topology={item} size={size} />
-            ))}
+            {getSortedTopology(topology, sortBy, sortByType).map(
+              (item) => (
+                <TopologyCard key={item.id} topology={item} size={size} />
+              )
+            )}
           </div>
         </div>
       </>
