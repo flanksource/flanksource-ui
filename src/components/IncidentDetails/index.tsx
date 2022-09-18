@@ -115,10 +115,24 @@ export const IncidentDetails = ({
       const result = await getRespondersForTheIncident(incident.id);
       const data = (result?.data || []).map((item) => {
         item.properties.external_id = item.external_id || "NA";
+        item.links = {};
+        if (item.external_id) {
+          item.links.external_id_link =
+            item?.team_id?.spec?.responder_clients?.[
+              item?.properties?.responderType
+            ]?.linkUrl;
+          if (item.links.external_id_link) {
+            item.links.external_id_link = item.links.external_id_link.replace(
+              "_ID_",
+              item.external_id
+            );
+          }
+        }
         return {
           name: item.team_id?.name,
           type: item.properties.responderType,
-          external_id: item.properties.external_id,
+          external_id: item.external_id,
+          links: item.links,
           icon:
             item.team_id?.icon &&
             (() => (
@@ -134,7 +148,13 @@ export const IncidentDetails = ({
                 return ResponderPropsKeyToLabelMap[key]
                   ? {
                       label: ResponderPropsKeyToLabelMap[key],
-                      value: item.properties[key]
+                      value: item.properties[key],
+                      link: item.links[`${key}_link`]
+                        ? {
+                            label: item.properties[key],
+                            value: item.links[`${key}_link`]
+                          }
+                        : null
                     }
                   : undefined;
               }
@@ -302,33 +322,67 @@ export const IncidentDetails = ({
                         data={responder?.json?.properties}
                         element={
                           <div className="text-dark-gray group text-sm font-medium relative w-full overflow-hidden truncate">
-                            <div className="w-full overflow-hidden truncate">
+                            <div className="w-full overflow-hidden">
                               {responder.icon && (
                                 <responder.icon className="w-6 h-6" />
                               )}
                               <div
-                                className="pl-1 inline-block hover:underline cursor-pointer"
+                                className="pl-1 inline-block align-middle"
                                 onClick={(e) => {
                                   setOpenResponderDetailsDialog(true);
                                   setSelectedResponder(responder);
                                 }}
                               >
-                                {responder?.name}
+                                <div className="flex-1 max-w-32 inline-block  align-middle">
+                                  <div
+                                    className="hover:underline cursor-pointer truncate"
+                                    title={responder?.name}
+                                  >
+                                    {responder?.name}
+                                  </div>
+                                </div>
+                                <div className="flex-1 inline-block align-middle">
+                                  {responder.external_id && (
+                                    <a
+                                      href={responder?.links?.external_id_link}
+                                      target="_blank"
+                                      className="underline text-blue-600 hover:text-blue-800 visited:text-blue-600 pl-1 inline-block align-middle"
+                                      onClick={(e) => e.stopPropagation()}
+                                      rel="noreferrer"
+                                      title={responder.external_id}
+                                    >
+                                      (
+                                      <span className="truncate inline-block align-middle max-w-32">
+                                        {responder.external_id}
+                                      </span>
+                                      )
+                                    </a>
+                                  )}
+                                </div>
                               </div>
                             </div>
-                            <div className="ml-10 cursor-pointer absolute right-0 top-0">
-                              <button
-                                type="button"
-                                className="ml-6 rounded-md text-sm font-medium text-blue-600 hover:text-blue-500"
+                            <div className="ml-10 cursor-pointer absolute right-0 top-1">
+                              <IconButton
+                                className="bg-transparent hidden group-hover:inline-block z-5"
                                 onClick={(e) => {
                                   e.preventDefault();
                                   e.stopPropagation();
                                   setOpenDeleteConfirmDialog(true);
                                   setDeletedResponder(responder);
                                 }}
-                              >
-                                Remove
-                              </button>
+                                ovalProps={{
+                                  stroke: "blue",
+                                  height: "18px",
+                                  width: "18px",
+                                  fill: "transparent"
+                                }}
+                                icon={
+                                  <BsTrash
+                                    className="text-gray-600 border-0 border-l-1 border-gray-200"
+                                    size={18}
+                                  />
+                                }
+                              />
                             </div>
                           </div>
                         }
