@@ -42,13 +42,13 @@ function findByName(name) {
 export function Icon({
   size = "sm",
   name,
-  secondary, // If icon by name is not found, try the secondary (fallthrough) name
+  secondary = "", // If icon by name is not found, try the secondary (fallthrough) name
   className = "",
   alt = "",
   ...props
 }) {
   if (isEmpty(name) && isEmpty(secondary)) {
-    return "";
+    return null;
   }
   let iconClassName;
   switch (size) {
