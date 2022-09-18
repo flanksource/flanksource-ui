@@ -54,9 +54,10 @@ const healthTypes = {
 };
 
 const defaultSortTypes = [
-  { id: 1, value: "name", label: "Name" },
-  { id: 2, value: "type", label: "Type" },
-  { id: 3, value: "updated_at", label: "Last Updated" }
+  { id: 1, value: "status", label: "Health" },
+  { id: 2, value: "name", label: "Name" },
+  { id: 3, value: "type", label: "Type" },
+  { id: 4, value: "updated_at", label: "Last Updated" }
 ];
 
 export function TopologyPage() {
@@ -74,26 +75,28 @@ export function TopologyPage() {
 
   const [sortTypes, setSortTypes] = useState<typeof defaultSortTypes>([]);
   const [sortBy, setSortBy] = useState(
-    searchParams.get("sortBy") ? searchParams.get("sortBy") : "name"
+    Boolean(searchParams.get("sortBy")) ? searchParams.get("sortBy") : "status"
   );
   const [sortByType, setSortByType] = useState(
-    searchParams.get("sortOrder") ? searchParams.get("sortOrder") : "ASC"
+    Boolean(searchParams.get("sortOrder"))
+      ? searchParams.get("sortOrder")
+      : "asc"
   );
 
   const [topologyLabels, setTopologyLabels] = useState([]);
   const [topologyTypes, setTopologyTypes] = useState<any>({});
   const [topologyType, setTopologyType] = useState(
-    searchParams.get("type") ? searchParams.get("type") : "All"
+    Boolean(searchParams.get("type")) ? searchParams.get("type") : "All"
   );
 
   const [currentIcon, setCurrentIcon] = useState("");
   const [selectedLabel, setSelectedLabel] = useState("");
   const [size, setSize] = useState(() => getCardWidth());
   const [team, setTeam] = useState(
-    searchParams.get("team") ? searchParams.get("team") : "All"
+    Boolean(searchParams.get("team")) ? searchParams.get("team") : "All"
   );
   const [healthStatus, setHealthStatus] = useState(
-    searchParams.get("status") ? searchParams.get("status") : "All"
+    Boolean(searchParams.get("status")) ? searchParams.get("status") : "All"
   );
 
   const topology = topologyState.topology;
@@ -190,14 +193,29 @@ export function TopologyPage() {
     load();
     fetchComponents();
 
-    setSortBy(searchParams.get("sortBy") ?? "name");
-    setSortByType(searchParams.get("sortOrder") ?? "ASC");
-    setHealthStatus(searchParams.get("status") ?? "All");
-    setTopologyType(searchParams.get("type") ?? "All");
-    setTeam(searchParams.get("team") ?? "All");
+    setSortBy(
+      Boolean(searchParams.get("sortBy"))
+        ? searchParams.get("sortBy")
+        : "status"
+    );
+    setSortByType(
+      Boolean(searchParams.get("sortOrder"))
+        ? searchParams.get("sortOrder")
+        : "asc"
+    );
+    setHealthStatus(
+      Boolean(searchParams.get("status")) ? searchParams.get("status") : "All"
+    );
+    setTopologyType(
+      Boolean(searchParams.get("type")) ? searchParams.get("type") : "All"
+    );
+    setTeam(
+      Boolean(searchParams.get("team")) ? searchParams.get("team") : "All"
+    );
   }, [searchParams, id]);
 
   useEffect(() => {
+    setSortValues();
     preselectSelectedLabels();
   }, [searchParams, topologyLabels]);
 
@@ -280,19 +298,25 @@ export function TopologyPage() {
     }
   }
 
-  function onSelectSortOption(currentSortBy: string) {
-    const newSortByType = sortByType === "ASC" ? "DESC" : "ASC";
-    setSortBy(currentSortBy);
-    setSortByType(newSortByType);
-    setSearchParams({
+  function onSelectSortOption(currentSortBy: string, newSortByType: string) {
+    const newSearchParams = {
       ...searchParamsToObj(searchParams),
       sortBy: currentSortBy,
       sortOrder: newSortByType
-    });
+    };
+
+    setSortBy(currentSortBy);
+    setSortByType(newSortByType);
+
+    if (currentSortBy === "status") {
+      const { sortBy, sortOrder, ...removedSearchParams } = newSearchParams;
+      setSearchParams(removedSearchParams);
+    } else {
+      setSearchParams(newSearchParams);
+    }
     setCurrentIcon("");
   }
 
-  // NOTE: The value is set on every mount to handle updating the sort options when other query filters like health, type are selected
   function setSortValues() {
     const currentSortTypes: typeof defaultSortTypes = [];
 
@@ -308,7 +332,13 @@ export function TopologyPage() {
       });
     });
 
-    setSortTypes([...defaultSortTypes, ...currentSortTypes]);
+    const newSortTypes = [...defaultSortTypes, ...currentSortTypes];
+
+    if (!newSortTypes.find((t) => sortBy === t.value)?.value) {
+      setSortBy("status");
+    }
+
+    setSortTypes(newSortTypes);
   }
 
   if ((loading && !topology) || !topology) {
@@ -431,22 +461,21 @@ export function TopologyPage() {
           >
             <div
               className="mt-1 ml-2 text-gray-700 cursor-pointer md:mt-0 md:items-center md:flex hover:text-gray-900"
-              onClick={() => {
-                setCurrentIcon((val) => (val === "" ? "sort by" : ""));
-                setSortValues();
-              }}
+              onClick={() =>
+                setCurrentIcon((val) => (val === "" ? "sort by" : ""))
+              }
             >
-              {sortByType === "ASC" && <BsSortDown className="w-6 h-6" />}
-              {sortByType === "DESC" && <BsSortUp className="w-6 h-6" />}
+              {sortByType === "asc" && <BsSortDown className="w-6 h-6" />}
+              {sortByType === "desc" && <BsSortUp className="w-6 h-6" />}
               <span className="hidden ml-2 text-base capitalize bold md:flex">
                 {sortTypes.find((s) => s.value === sortBy)?.label}
               </span>
             </div>
             <FaCog
-              className="content-center w-6 h-6 mt-1 ml-4 cursor-pointer"
-              onClick={(e) => {
-                setCurrentIcon((val) => (val === "" ? "preferences" : ""));
-              }}
+              className="content-center w-6 h-6 ml-4 cursor-pointer"
+              onClick={() =>
+                setCurrentIcon((val) => (val === "" ? "preferences" : ""))
+              }
             />
             <div
               role="menu"
@@ -462,14 +491,19 @@ export function TopologyPage() {
                 <div className="flex items-center justify-between px-4 py-2 text-base">
                   <span className="font-bold text-gray-700">{currentIcon}</span>
                   <div
-                    onClick={() => onSelectSortOption(sortBy)}
+                    onClick={() =>
+                      onSelectSortOption(
+                        sortBy ?? "status",
+                        sortByType === "asc" ? "desc" : "asc"
+                      )
+                    }
                     className={clsx(
                       "mx-1 cursor-pointer text-gray-600 hover:text-gray-900",
                       currentIcon !== "sort by" ? "hidden" : "flex"
                     )}
                   >
-                    {sortByType === "ASC" && <BsSortDown className="w-5 h-5" />}
-                    {sortByType === "DESC" && <BsSortUp className="w-5 h-5" />}
+                    {sortByType === "asc" && <BsSortDown className="w-5 h-5" />}
+                    {sortByType === "desc" && <BsSortUp className="w-5 h-5" />}
                   </div>
                 </div>
               </div>
@@ -498,7 +532,9 @@ export function TopologyPage() {
                   <div className="flex flex-col">
                     {sortTypes.map((s) => (
                       <span
-                        onClick={() => onSelectSortOption(s.value)}
+                        onClick={() =>
+                          onSelectSortOption(s.value, sortByType ?? "asc")
+                        }
                         className="flex px-4 py-1 text-base cursor-pointer hover:bg-blue-100"
                         style={{
                           fontWeight: sortBy === s.value ? "bold" : "inherit"
@@ -515,11 +551,13 @@ export function TopologyPage() {
         </div>
         <div className="flex leading-1.21rel w-full mt-4">
           <div className="flex flex-wrap w-full">
-            {getSortedTopology(topology, sortBy ?? "", sortByType ?? "").map(
-              (item) => (
-                <TopologyCard key={item.id} topology={item} size={size} />
-              )
-            )}
+            {getSortedTopology(
+              topology,
+              sortBy ?? "status",
+              sortByType ?? "asc"
+            ).map((item) => (
+              <TopologyCard key={item.id} topology={item} size={size} />
+            ))}
           </div>
         </div>
       </>
