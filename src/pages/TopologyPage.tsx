@@ -80,7 +80,7 @@ export function TopologyPage() {
   const [sortByType, setSortByType] = useState(
     Boolean(searchParams.get("sortOrder"))
       ? searchParams.get("sortOrder")
-      : "asc"
+      : "desc"
   );
 
   const [topologyLabels, setTopologyLabels] = useState([]);
@@ -201,7 +201,7 @@ export function TopologyPage() {
     setSortByType(
       Boolean(searchParams.get("sortOrder"))
         ? searchParams.get("sortOrder")
-        : "asc"
+        : "desc"
     );
     setHealthStatus(
       Boolean(searchParams.get("status")) ? searchParams.get("status") : "All"
@@ -325,7 +325,7 @@ export function TopologyPage() {
         if (h.headline && !currentSortTypes.find((t) => t.value === h.name)) {
           currentSortTypes.push({
             id: defaultSortTypes.length + index,
-            value: h.name,
+            value: h.name.toLowerCase(),
             label: h.name
           });
         }
@@ -533,7 +533,14 @@ export function TopologyPage() {
                     {sortTypes.map((s) => (
                       <span
                         onClick={() =>
-                          onSelectSortOption(s.value, sortByType ?? "asc")
+                          onSelectSortOption(
+                            s.value,
+                            sortBy === s.value
+                              ? sortByType === "asc"
+                                ? "desc"
+                                : "asc"
+                              : sortByType ?? "desc"
+                          )
                         }
                         className="flex px-4 py-1 text-base cursor-pointer hover:bg-blue-100"
                         style={{
@@ -554,7 +561,7 @@ export function TopologyPage() {
             {getSortedTopology(
               topology,
               sortBy ?? "status",
-              sortByType ?? "asc"
+              sortByType ?? "desc"
             ).map((item) => (
               <TopologyCard key={item.id} topology={item} size={size} />
             ))}
