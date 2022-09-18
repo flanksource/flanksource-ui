@@ -484,7 +484,7 @@ export function TopologyPage() {
               className={clsx(
                 "origin-top-right absolute right-0 mt-10 w-96 z-50 divide-y divide-gray-100 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none capitalize",
                 currentIcon === "" ? "hidden" : "display-block",
-                currentIcon === "sort by" ? "w-52" : "w-96"
+                currentIcon === "sort by" ? "w-48" : "w-96"
               )}
             >
               <div className="py-1">

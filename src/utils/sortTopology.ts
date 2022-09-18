@@ -56,7 +56,7 @@ export function getSortedTopology(
     return +(t1Value > t2Value) || -(t1Value < t2Value);
   });
 
-  if (sortByType === "DESC") {
+  if (sortByType === "desc") {
     return updatedTopology.reverse();
   }
 
