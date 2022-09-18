@@ -3,7 +3,8 @@ import { useParams, useSearchParams } from "react-router-dom";
 
 import qs from "qs";
 import clsx from "clsx";
-import { FaCog, FaFilter } from "react-icons/fa";
+import { FaCog } from "react-icons/fa";
+import { BsSortDown, BsSortUp } from "react-icons/bs";
 
 import { Loading } from "../components/Loading";
 import { SearchLayout } from "../components/Layout";
@@ -279,7 +280,19 @@ export function TopologyPage() {
     }
   }
 
-  // NOTE: The value is set on every mount to handle the updating sort options when other query filters like health, type are selected
+  function onSelectSortOption(currentSortBy: string) {
+    const newSortByType = sortByType === "ASC" ? "DESC" : "ASC";
+    setSortBy(currentSortBy);
+    setSortByType(newSortByType);
+    setSearchParams({
+      ...searchParamsToObj(searchParams),
+      sortBy: currentSortBy,
+      sortOrder: newSortByType
+    });
+    setCurrentIcon("");
+  }
+
+  // NOTE: The value is set on every mount to handle updating the sort options when other query filters like health, type are selected
   function setSortValues() {
     const currentSortTypes: typeof defaultSortTypes = [];
 
@@ -380,7 +393,7 @@ export function TopologyPage() {
               {
                 id: 4,
                 name: "Labels",
-                searchTagClassName: "inline-block p-3 w-80",
+                searchTagClassName: "inline-block p-3 w-80 md:w-60",
                 tags: topologyLabels,
                 value: selectedLabel,
                 onChange: (tag: any) => {
@@ -416,13 +429,19 @@ export function TopologyPage() {
             ref={currentIconRef}
             className="relative flex pt-5 md:self-center md:pt-0"
           >
-            <FaFilter
-              className="content-center w-6 h-6 mt-1 ml-4 cursor-pointer"
-              onClick={(e) => {
+            <div
+              className="mt-1 ml-2 text-gray-700 cursor-pointer md:mt-0 md:items-center md:flex hover:text-gray-900"
+              onClick={() => {
                 setCurrentIcon((val) => (val === "" ? "sort by" : ""));
                 setSortValues();
               }}
-            />
+            >
+              {sortByType === "ASC" && <BsSortDown className="w-6 h-6" />}
+              {sortByType === "DESC" && <BsSortUp className="w-6 h-6" />}
+              <span className="hidden ml-2 text-base capitalize bold md:flex">
+                {sortTypes.find((s) => s.value === sortBy)?.label}
+              </span>
+            </div>
             <FaCog
               className="content-center w-6 h-6 mt-1 ml-4 cursor-pointer"
               onClick={(e) => {
@@ -443,30 +462,14 @@ export function TopologyPage() {
                 <div className="flex items-center justify-between px-4 py-2 text-base">
                   <span className="font-bold text-gray-700">{currentIcon}</span>
                   <div
+                    onClick={() => onSelectSortOption(sortBy)}
                     className={clsx(
-                      currentIcon !== "sort by" ? "hidden" : "display-block"
+                      "mx-1 cursor-pointer text-gray-600 hover:text-gray-900",
+                      currentIcon !== "sort by" ? "hidden" : "flex"
                     )}
                   >
-                    {["ASC", "DESC"].map((s) => (
-                      <span
-                        onClick={() => {
-                          setSortByType(s);
-                          setSearchParams({
-                            ...searchParamsToObj(searchParams),
-                            sortOrder: s
-                          });
-                          setCurrentIcon("");
-                        }}
-                        className={clsx(
-                          "mx-1 cursor-pointer text-gray-600 hover:text-gray-800",
-                          sortByType === s
-                            ? "font-bold text-gray-700"
-                            : "font-medium"
-                        )}
-                      >
-                        {s}
-                      </span>
-                    ))}
+                    {sortByType === "ASC" && <BsSortDown className="w-5 h-5" />}
+                    {sortByType === "DESC" && <BsSortUp className="w-5 h-5" />}
                   </div>
                 </div>
               </div>
@@ -495,14 +498,7 @@ export function TopologyPage() {
                   <div className="flex flex-col">
                     {sortTypes.map((s) => (
                       <span
-                        onClick={() => {
-                          setSortBy(s.value);
-                          setSearchParams({
-                            ...searchParamsToObj(searchParams),
-                            sortBy: s.value
-                          });
-                          setCurrentIcon("");
-                        }}
+                        onClick={() => onSelectSortOption(s.value)}
                         className="flex px-4 py-1 text-base cursor-pointer hover:bg-blue-100"
                         style={{
                           fontWeight: sortBy === s.value ? "bold" : "inherit"
