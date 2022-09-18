@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        deployment: [incident-commander-ui, canary-checker-ui]
+        deployment: [incident-manager-ui, canary-checker-ui]
     if: ${{ needs.semantic-release.outputs.new-release-published == 'true' }}
     steps:
       - uses: actions/checkout@v3
