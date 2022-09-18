@@ -16,18 +16,37 @@ export type Topology = {
 };
 
 function getValue(t: Topology, sortBy: string) {
-  return Boolean(t[sortBy])
-    ? t[sortBy]
-    : t?.properties?.find((p) => Boolean(p[sortBy]))
-    ? t?.properties?.find((p) => p[sortBy])?.[sortBy]
-    : undefined;
+  if (Boolean(t[sortBy])) {
+    return t[sortBy] as ValueType;
+  }
+
+  const property = t?.properties?.find((p) => p.name === sortBy);
+  if (property) {
+    return property.value as ValueType;
+  }
+
+  return undefined;
 }
 
-function isDate(dateString: ValueType) {
+function isDate(dateString?: ValueType) {
+  if (
+    !dateString ||
+    dateString === null ||
+    !["string", "object"].includes(typeof dateString)
+  ) {
+    return false;
+  }
+
   return !isNaN(new Date(dateString).getDate());
 }
 
-// NOTE: We implement sort within client instead of requesting th API cause the topology is not paged
+const STATUS = {
+  info: 0,
+  healthy: 1,
+  warning: 2,
+  unhealthy: 3
+};
+
 export function getSortedTopology(
   topology: Topology[] = [],
   sortBy: string,
@@ -36,24 +55,33 @@ export function getSortedTopology(
   const topologyMap = new Map(topology.map((p) => [p.id, p]));
 
   let updatedTopology = [...topologyMap.values()].sort((t1, t2) => {
-    let t1Value: ValueType = getValue(t1, sortBy);
-    let t2Value: ValueType = getValue(t2, sortBy);
+    let t1Value = getValue(t1, sortBy);
+    let t2Value = getValue(t2, sortBy);
 
-    if (!t1Value && !t2Value) {
-      return 0;
-    }
-    if (t1Value && !t2Value) {
+    if (t1Value && (!t2Value || t2Value === null)) {
       return 1;
     }
-    if (t2Value && !t1Value) {
+    if (t2Value && (!t1Value || t1Value === null)) {
       return -1;
     }
 
     if (isDate(t1Value) && isDate(t2Value)) {
-      return new Date(t1Value).getDate() - new Date(t2Value).getDate();
+      return (
+        new Date(t1Value as string).getDate() -
+        new Date(t2Value as string).getDate()
+      );
     }
 
-    return +(t1Value > t2Value) || -(t1Value < t2Value);
+    if (sortBy === "status") {
+      t1Value = STATUS[t1Value];
+      t2Value = STATUS[t2Value];
+    }
+
+    if (t1Value && t2Value) {
+      return +(t1Value > t2Value) || -(t1Value < t2Value);
+    }
+
+    return 0;
   });
 
   if (sortByType === "desc") {
