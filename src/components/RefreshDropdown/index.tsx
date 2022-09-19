@@ -47,17 +47,28 @@ type Props = {
   isLoading?: boolean;
 };
 
+type RefreshRateState = {
+  rate: RefreshOptions;
+  /**
+   * Whether rate should be persisted to local storage
+   */
+  saveToLocalStorage: boolean;
+};
+
 export default function RefreshDropdown({
   localStorageKey = HEALTH_PAGE_REFRESH_RATE_KEY,
   isLoading = false,
   onClick = () => {}
 }: Props) {
-  const [refreshRate, setRefreshRate] = useState<RefreshOptions>(() => {
+  const [refreshRate, setRefreshRate] = useState<RefreshRateState>(() => {
     const storedRefreshRate = localStorage.getItem(localStorageKey);
     if (storedRefreshRate) {
-      return storedRefreshRate as RefreshOptions;
+      return {
+        rate: storedRefreshRate as RefreshOptions,
+        saveToLocalStorage: false
+      };
     }
-    return "None";
+    return { rate: "None", saveToLocalStorage: false };
   });
 
   const refreshDropdownDisabledOptions =
@@ -65,11 +76,13 @@ export default function RefreshDropdown({
 
   /* Whenever refresh rate changes update local storage */
   useEffect(() => {
-    if (refreshRate === "None") {
+    if (refreshRate.rate === "None") {
       localStorage.removeItem(localStorageKey);
       return;
     }
-    localStorage.setItem(localStorageKey, refreshRate);
+    if (refreshRate.saveToLocalStorage) {
+      localStorage.setItem(localStorageKey, refreshRate.rate);
+    }
   }, [localStorageKey, refreshRate]);
 
   /**
@@ -80,7 +93,7 @@ export default function RefreshDropdown({
    *
    * */
   useEffect(() => {
-    if (refreshRate === "None") {
+    if (refreshRate.rate === "None") {
       return;
     }
     if (refreshDropdownDisabledOptions.has(refreshRate as any)) {
@@ -96,7 +109,10 @@ export default function RefreshDropdown({
         }
         return true;
       });
-      setRefreshRate(nextRefreshRate ? nextRefreshRate[0] : "None");
+      setRefreshRate({
+        rate: nextRefreshRate ? (nextRefreshRate[0] as RefreshOptions) : "None",
+        saveToLocalStorage: false
+      });
     }
   }, [refreshDropdownDisabledOptions, refreshRate]);
 
@@ -115,7 +131,7 @@ export default function RefreshDropdown({
         <Menu>
           {/* @ts-expect-error */}
           <Menu.Button className="border border-gray-300 p-2 text-sm rounded-md rounded-l-none">
-            <span className="inline p-1 pr-2">{refreshRate}</span>
+            <span className="inline p-1 pr-2">{refreshRate.rate}</span>
             <HiOutlineChevronDown className="inline" />
           </Menu.Button>
           {/* @ts-expect-error */}
@@ -145,14 +161,19 @@ export default function RefreshDropdown({
                   >
                     {({ active, disabled }) => (
                       <button
-                        onClick={() => setRefreshRate(optionsKeys)}
+                        onClick={() =>
+                          setRefreshRate({
+                            rate: optionsKeys as RefreshOptions,
+                            saveToLocalStorage: true
+                          })
+                        }
                         disabled={refreshDropdownDisabledOptions.has(
                           optionsKeys as any
                         )}
                         className={`flex group w-full items-center rounded-md px-2 py-2  ${
                           disabled ? "text-gray-500" : "cursor-pointer"
                         } ${active ? "bg-blue-200" : "text-gray-900"} ${
-                          refreshRate === optionsKeys ? "font-bold" : ""
+                          refreshRate.rate === optionsKeys ? "font-bold" : ""
                         }`}
                       >
                         <HiOutlineClock
