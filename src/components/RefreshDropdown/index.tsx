@@ -72,6 +72,13 @@ export default function RefreshDropdown({
     localStorage.setItem(localStorageKey, refreshRate);
   }, [localStorageKey, refreshRate]);
 
+  useEffect(() => {
+    console.log(
+      "refreshDropdownDisabledOptions",
+      refreshDropdownDisabledOptions
+    );
+  }, [refreshDropdownDisabledOptions]);
+
   return (
     <div className="relative px-2">
       <div>
@@ -111,20 +118,16 @@ export default function RefreshDropdown({
                   <Menu.Item
                     as="li"
                     className="block"
-                    disabled={
-                      !!refreshDropdownDisabledOptions.find(
-                        (opts) => opts === optionsKeys
-                      )
-                    }
+                    disabled={refreshDropdownDisabledOptions.has(
+                      optionsKeys as any
+                    )}
                   >
                     {({ active, disabled }) => (
                       <button
                         onClick={() => setRefreshRate(optionsKeys)}
-                        disabled={
-                          !!refreshDropdownDisabledOptions.find(
-                            (opts) => opts === optionsKeys
-                          )
-                        }
+                        disabled={refreshDropdownDisabledOptions.has(
+                          optionsKeys as any
+                        )}
                         className={`flex group w-full items-center rounded-md px-2 py-2  ${
                           disabled ? "text-gray-500" : "cursor-pointer"
                         } ${active ? "bg-blue-200" : "text-gray-900"} ${

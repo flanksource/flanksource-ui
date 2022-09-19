@@ -10,7 +10,7 @@ import { useSearchParams } from "react-router-dom";
  */
 export default function useTimeRangeToDisableRefreshDropdownOptions() {
   const [refreshDropdownDisabledOptions, setRefreshDropdownDisabledOptions] =
-    useState<("15s" | "30s" | "2m" | "3m")[]>([]);
+    useState<Set<"15s" | "30s" | "2m" | "3m">>(new Set());
 
   const [queryParams] = useSearchParams();
 
@@ -40,10 +40,17 @@ export default function useTimeRangeToDisableRefreshDropdownOptions() {
       // timeRange is a string, in the format of 1h, 2h, 3h, 1d etc
       const timeRangeRealValue = calculateTimeRangeRealValue(timeRange);
       if (timeRangeRealValue >= 60) {
-        setRefreshDropdownDisabledOptions((prev) => [...prev, "15s", "30s"]);
+        setRefreshDropdownDisabledOptions(
+          (prev) => new Set([...prev, "15s", "30s"])
+        );
       }
       if (timeRangeRealValue >= 180) {
-        setRefreshDropdownDisabledOptions((prev) => [...prev, "2m", "3m"]);
+        setRefreshDropdownDisabledOptions(
+          (prev) => new Set([...prev, "2m", "3m"])
+        );
+      }
+      if (timeRangeRealValue < 60) {
+        setRefreshDropdownDisabledOptions(new Set());
       }
     }
   }, [timeRange]);
