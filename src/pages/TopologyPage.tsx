@@ -511,8 +511,10 @@ export function TopologyPage() {
                       currentIcon !== "sort by" ? "hidden" : "flex"
                     )}
                   >
-                    {sortByType === "asc" && <BsSortDown className="w-5 h-5" />}
-                    {sortByType === "desc" && <BsSortUp className="w-5 h-5" />}
+                    {sortByType === "asc" && <BsSortUp className="w-5 h-5" />}
+                    {sortByType === "desc" && (
+                      <BsSortDown className="w-5 h-5" />
+                    )}
                   </div>
                 </div>
               </div>
