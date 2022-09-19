@@ -8,7 +8,6 @@ import {
 import { hypothesisStatusDropdownOptions } from "../../../constants/hypothesisStatusOptions";
 import { useUser } from "../../../context";
 import { capitalizeFirstLetter } from "../../../utils/common";
-import { Dropdown } from "../../Dropdown";
 import { Modal } from "../../Modal";
 import { ReactSelectDropdown } from "../../ReactSelectDropdown";
 

@@ -10,7 +10,7 @@ interface IProps {
 
 export function HypothesisDeleteDialog({
   isOpen,
-  onClose,
+  onClose = () => {},
   onDisprove,
   onDelete
 }: IProps) {
