@@ -17,14 +17,14 @@ import {
   getRespondersForTheIncident
 } from "../../api/services/responder";
 import { toastError, toastSuccess } from "../Toast/toast";
-import { BsShareFill } from "react-icons/bs";
+import { BsShareFill, BsTrash } from "react-icons/bs";
 import { DeleteConfirmDialog } from "../DeleteConfirmDialog";
 import { ResponderDetailsToolTip } from "./ResponderDetailsToolTip";
 import { ResponderDetailsDialog } from "./ResponderDetailsDialog";
 import { Icon } from "../Icon";
 import { typeItems } from "../Incidents/data";
-import { Dropdown } from "../Dropdown";
 import { ReactSelectDropdown } from "../ReactSelectDropdown";
+import { IconButton } from "../IconButton";
 
 export const IncidentDetails = ({
   incident,
