@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 
 import qs from "qs";
-import clsx from "clsx";
 import { FaCog } from "react-icons/fa";
 import { BsSortDown, BsSortUp } from "react-icons/bs";
 
@@ -21,6 +20,7 @@ import { searchParamsToObj } from "../utils/common";
 import { getSortedTopology } from "../utils/sortTopology";
 import { useTopologyPageContext } from "../context/TopologyPageContext";
 import { getTopology, getTopologyComponents } from "../api/services/topology";
+import PopOver, { POPOVERS } from "../components/Popover";
 
 const allOption = {
   All: {
@@ -299,13 +299,16 @@ export function TopologyPage() {
   }
 
   function onSelectSortOption(
-    currentSortBy: string | null,
-    newSortByType: string | null
+    currentSortBy?: string | null,
+    newSortByType?: string | null
   ) {
+    currentSortBy = currentSortBy ?? "status";
+    newSortByType = newSortByType ?? "desc";
+
     const newSearchParams = {
       ...searchParamsToObj(searchParams),
-      sortBy: currentSortBy ?? "status",
-      sortOrder: newSortByType ?? "desc"
+      sortBy: currentSortBy,
+      sortOrder: newSortByType
     };
 
     setSortBy(currentSortBy);
@@ -474,7 +477,7 @@ export function TopologyPage() {
               <span
                 className="hidden ml-2 text-base text-gray-700 capitalize bold md:flex hover:text-gray-900"
                 onClick={() =>
-                  setCurrentIcon((val) => (val === "" ? "sort by" : ""))
+                  setCurrentIcon((val) => (val === "" ? "sort" : ""))
                 }
               >
                 {sortTypes.find((s) => s.value === sortBy)?.label}
@@ -483,88 +486,24 @@ export function TopologyPage() {
             <FaCog
               className="content-center w-6 h-6 ml-4 cursor-pointer"
               onClick={() =>
-                setCurrentIcon((val) => (val === "" ? "preferences" : ""))
+                setCurrentIcon((val) => (val === "" ? "preference" : ""))
               }
             />
-            <div
-              role="menu"
-              aria-orientation="vertical"
-              aria-labelledby="menu-button"
-              className={clsx(
-                "origin-top-right absolute right-0 mt-10 w-96 z-50 divide-y divide-gray-100 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none capitalize",
-                currentIcon === "" ? "hidden" : "display-block",
-                currentIcon === "sort by" ? "w-48" : "w-96"
-              )}
-            >
-              <div className="py-1">
-                <div className="flex items-center justify-between px-4 py-2 text-base">
-                  <span className="font-bold text-gray-700">{currentIcon}</span>
-                  <div
-                    onClick={() =>
-                      onSelectSortOption(
-                        sortBy,
-                        sortByType === "asc" ? "desc" : "asc"
-                      )
-                    }
-                    className={clsx(
-                      "mx-1 cursor-pointer text-gray-600 hover:text-gray-900",
-                      currentIcon !== "sort by" ? "hidden" : "flex"
-                    )}
-                  >
-                    {sortByType === "asc" && <BsSortUp className="w-5 h-5" />}
-                    {sortByType === "desc" && (
-                      <BsSortDown className="w-5 h-5" />
-                    )}
-                  </div>
-                </div>
-              </div>
-              <div className="py-1" role="none">
-                {currentIcon === "preferences" && (
-                  <div className="px-4 py-4">
-                    <label
-                      htmlFor="topology-card-width-slider"
-                      className="inline-block mr-3 text-xs text-gray-700"
-                    >
-                      Card Width:
-                    </label>
-                    <input
-                      step={2}
-                      min="250"
-                      max="768"
-                      type="range"
-                      value={parseInt(size, 10)}
-                      id="topology-card-width-slider"
-                      onChange={(e) => setCardWidth(e.target.value)}
-                      className="inline-block w-64 mb-4 rounded-lg cursor-pointer"
-                    />
-                  </div>
-                )}
-                {currentIcon === "sort by" && (
-                  <div className="flex flex-col">
-                    {sortTypes.map((s) => (
-                      <span
-                        onClick={() =>
-                          onSelectSortOption(
-                            s.value,
-                            sortBy !== s.value
-                              ? sortByType
-                              : sortByType === "asc"
-                              ? "desc"
-                              : "asc"
-                          )
-                        }
-                        className="flex px-4 py-1 text-base cursor-pointer hover:bg-blue-100"
-                        style={{
-                          fontWeight: sortBy === s.value ? "bold" : "inherit"
-                        }}
-                      >
-                        {s.label}
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
+            <PopOver
+              width={48}
+              sortBy={sortBy}
+              sortTypes={sortTypes}
+              sortByType={sortByType}
+              type={POPOVERS.topologySort}
+              isOpen={currentIcon === "sort"}
+              onSelectSortOption={onSelectSortOption}
+            />
+            <PopOver
+              cardSize={size}
+              setCardWidth={setCardWidth}
+              type={POPOVERS.topologyPreference}
+              isOpen={currentIcon === "preference"}
+            />
           </div>
         </div>
         <div className="flex leading-1.21rel w-full mt-4">
