@@ -72,19 +72,40 @@ export default function RefreshDropdown({
     localStorage.setItem(localStorageKey, refreshRate);
   }, [localStorageKey, refreshRate]);
 
+  /**
+   *
+   * If a change in timeRange is detected, we need to check if the current
+   * refresh rate is disabled. And if it is, we need to set the refresh rate to
+   * the next available option that is not disabled.
+   *
+   * */
   useEffect(() => {
-    console.log(
-      "refreshDropdownDisabledOptions",
-      refreshDropdownDisabledOptions
-    );
-  }, [refreshDropdownDisabledOptions]);
+    if (refreshRate === "None") {
+      return;
+    }
+    if (refreshDropdownDisabledOptions.has(refreshRate as any)) {
+      // find the next refresh rate that is not disabled
+      const nextRefreshRate = RefreshOptionsList.find(([option]) => {
+        // we don't want the item to be selected to be disabled
+        if (refreshDropdownDisabledOptions.has(option as any)) {
+          return false;
+        }
+        // we don't want to revert to None
+        if (option === "None") {
+          return false;
+        }
+        return true;
+      });
+      setRefreshRate(nextRefreshRate ? nextRefreshRate[0] : "None");
+    }
+  }, [refreshDropdownDisabledOptions, refreshRate]);
 
   return (
     <div className="relative px-2">
       <div>
         <button
           onClick={() => onClick()}
-          className={` border border-r-0 border-gray-300 p-[0.35rem] px-2  rounded-md rounded-r-none`}
+          className={` border border-r-0 border-gray-300 p-[0.35rem] px-2 rounded-md rounded-r-none`}
         >
           <HiOutlineRefresh
             size={18}
