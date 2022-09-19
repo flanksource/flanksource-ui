@@ -1,3 +1,4 @@
+let base = process.env.BASE_URL;
 let config = {
   typescript: {
     // !! WARN !!
@@ -10,27 +11,23 @@ let config = {
     return [
       {
         source: "/api/configs_db/:path*",
-        destination:
-          "https://incident-commander.canary.lab.flanksource.com/config/db/:path*"
+        destination: base + "/config/db/:path*"
       },
       {
         source: "/api/canary/:path*",
-        destination:
-          "https://incident-commander.canary.lab.flanksource.com/canary/:path*"
+        destination: base + "/canary/:path*"
       },
       {
         source: "/api/incidents_db/:path*",
-        destination:
-          "https://incident-commander.canary.lab.flanksource.com/db/:path*"
+        destination: base + "/db/:path*"
       },
       {
         source: "/api/apm/search/:path*",
-        destination:
-          "https://incident-commander.canary.lab.flanksource.com/apm/search/:path*"
+        destination: base + "/apm/search/:path*"
       },
       {
         source: "/api/api/:path*",
-        destination: "https://canaries.canary.lab.flanksource.com/api/:path*"
+        destination: base + "/canary/api/:path*"
       }
     ];
   }

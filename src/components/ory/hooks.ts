@@ -1,6 +1,7 @@
 import { AxiosError } from "axios";
 import { useRouter } from "next/router";
 import { useState, useEffect, DependencyList } from "react";
+import { IsAuthEnabled } from "../../context/Environment";
 
 import ory from "./sdk";
 
@@ -9,6 +10,11 @@ export function useCreateLogoutHandler(deps?: DependencyList) {
   const [logoutToken, setLogoutToken] = useState<string>("");
   const router = useRouter();
 
+  if (!IsAuthEnabled()) {
+    return () => {};
+  }
+
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
     ory
       .createSelfServiceLogoutFlowUrlForBrowsers()
