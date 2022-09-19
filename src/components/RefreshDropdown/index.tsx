@@ -52,7 +52,13 @@ export default function RefreshDropdown({
   isLoading = false,
   onClick = () => {}
 }: Props) {
-  const [refreshRate, setRefreshRate] = useState<RefreshOptions>("None");
+  const [refreshRate, setRefreshRate] = useState<RefreshOptions>(() => {
+    const storedRefreshRate = localStorage.getItem(localStorageKey);
+    if (storedRefreshRate) {
+      return storedRefreshRate as RefreshOptions;
+    }
+    return "None";
+  });
 
   const refreshDropdownDisabledOptions =
     useTimeRangeToDisableRefreshDropdownOptions();
