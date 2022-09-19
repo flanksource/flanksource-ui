@@ -12,7 +12,7 @@ echo "export const Icons = {" >> index.js
 for img in $( ls *.svg); do
   name=${img%.*};
   name=${name//-/_};
-  echo  '"'${img%.*}'"': $name,  >> index.js ;
+  echo  '  "'${img%.*}'"': $name,  >> index.js ;
 done
 
 echo "}" >> index.js
