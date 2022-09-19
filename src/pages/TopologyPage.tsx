@@ -298,17 +298,20 @@ export function TopologyPage() {
     }
   }
 
-  function onSelectSortOption(currentSortBy: string, newSortByType: string) {
+  function onSelectSortOption(
+    currentSortBy: string | null,
+    newSortByType: string | null
+  ) {
     const newSearchParams = {
       ...searchParamsToObj(searchParams),
-      sortBy: currentSortBy,
-      sortOrder: newSortByType
+      sortBy: currentSortBy ?? "status",
+      sortOrder: newSortByType ?? "desc"
     };
 
     setSortBy(currentSortBy);
     setSortByType(newSortByType);
 
-    if (currentSortBy === "status") {
+    if (currentSortBy === "status" && newSortByType === "desc") {
       const { sortBy, sortOrder, ...removedSearchParams } = newSearchParams;
       setSearchParams(removedSearchParams);
     } else {
@@ -333,10 +336,6 @@ export function TopologyPage() {
     });
 
     const newSortTypes = [...defaultSortTypes, ...currentSortTypes];
-
-    if (!newSortTypes.find((t) => sortBy === t.value)?.value) {
-      setSortBy("status");
-    }
 
     setSortTypes(newSortTypes);
   }
@@ -493,7 +492,7 @@ export function TopologyPage() {
                   <div
                     onClick={() =>
                       onSelectSortOption(
-                        sortBy ?? "status",
+                        sortBy,
                         sortByType === "asc" ? "desc" : "asc"
                       )
                     }
@@ -535,11 +534,11 @@ export function TopologyPage() {
                         onClick={() =>
                           onSelectSortOption(
                             s.value,
-                            sortBy === s.value
-                              ? sortByType === "asc"
-                                ? "desc"
-                                : "asc"
-                              : sortByType ?? "desc"
+                            sortBy !== s.value
+                              ? sortByType
+                              : sortByType === "asc"
+                              ? "desc"
+                              : "asc"
                           )
                         }
                         className="flex px-4 py-1 text-base cursor-pointer hover:bg-blue-100"
