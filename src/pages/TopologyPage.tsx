@@ -458,15 +458,25 @@ export function TopologyPage() {
             ref={currentIconRef}
             className="relative flex pt-5 md:self-center md:pt-0"
           >
-            <div
-              className="mt-1 ml-2 text-gray-700 cursor-pointer md:mt-0 md:items-center md:flex hover:text-gray-900"
-              onClick={() =>
-                setCurrentIcon((val) => (val === "" ? "sort by" : ""))
-              }
-            >
-              {sortByType === "asc" && <BsSortDown className="w-6 h-6" />}
-              {sortByType === "desc" && <BsSortUp className="w-6 h-6" />}
-              <span className="hidden ml-2 text-base capitalize bold md:flex">
+            <div className="mt-1 ml-2 cursor-pointer md:mt-0 md:items-center md:flex ">
+              {sortByType === "asc" && (
+                <BsSortDown
+                  className="w-6 h-6 text-gray-700 hover:text-gray-900"
+                  onClick={() => onSelectSortOption(sortBy, "desc")}
+                />
+              )}
+              {sortByType === "desc" && (
+                <BsSortUp
+                  className="w-6 h-6 text-gray-700 hover:text-gray-900"
+                  onClick={() => onSelectSortOption(sortBy, "asc")}
+                />
+              )}
+              <span
+                className="hidden ml-2 text-base text-gray-700 capitalize bold md:flex hover:text-gray-900"
+                onClick={() =>
+                  setCurrentIcon((val) => (val === "" ? "sort by" : ""))
+                }
+              >
                 {sortTypes.find((s) => s.value === sortBy)?.label}
               </span>
             </div>
