@@ -460,13 +460,13 @@ export function TopologyPage() {
           >
             <div className="mt-1 ml-2 cursor-pointer md:mt-0 md:items-center md:flex ">
               {sortByType === "asc" && (
-                <BsSortDown
+                <BsSortUp
                   className="w-6 h-6 text-gray-700 hover:text-gray-900"
                   onClick={() => onSelectSortOption(sortBy, "desc")}
                 />
               )}
               {sortByType === "desc" && (
-                <BsSortUp
+                <BsSortDown
                   className="w-6 h-6 text-gray-700 hover:text-gray-900"
                   onClick={() => onSelectSortOption(sortBy, "asc")}
                 />
