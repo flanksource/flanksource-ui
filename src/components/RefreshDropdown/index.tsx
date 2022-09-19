@@ -96,11 +96,19 @@ export default function RefreshDropdown({
     if (refreshRate.rate === "None") {
       return;
     }
-    if (refreshDropdownDisabledOptions.has(refreshRate as any)) {
+    if (refreshDropdownDisabledOptions.has(refreshRate.rate as any)) {
       // find the next refresh rate that is not disabled
       const nextRefreshRate = RefreshOptionsList.find(([option]) => {
         // we don't want the item to be selected to be disabled
         if (refreshDropdownDisabledOptions.has(option as any)) {
+          return false;
+        }
+        // avoid selecting a lower refresh rate than the current one
+        if (
+          refreshRate.rate !== "15s" &&
+          refreshRate.rate !== "30s" &&
+          option === "60s"
+        ) {
           return false;
         }
         // we don't want to revert to None
