@@ -74,29 +74,23 @@ export function TopologyPage() {
   const [teams, setTeams] = useState<any>({});
 
   const [sortTypes, setSortTypes] = useState<typeof defaultSortTypes>([]);
-  const [sortBy, setSortBy] = useState(
-    Boolean(searchParams.get("sortBy")) ? searchParams.get("sortBy") : "status"
-  );
+  const [sortBy, setSortBy] = useState(searchParams.get("sortBy") ?? "status");
   const [sortByType, setSortByType] = useState(
-    Boolean(searchParams.get("sortOrder"))
-      ? searchParams.get("sortOrder")
-      : "desc"
+    searchParams.get("sortOrder") ?? "desc"
   );
 
   const [topologyLabels, setTopologyLabels] = useState([]);
   const [topologyTypes, setTopologyTypes] = useState<any>({});
   const [topologyType, setTopologyType] = useState(
-    Boolean(searchParams.get("type")) ? searchParams.get("type") : "All"
+    searchParams.get("type") ?? "All"
   );
 
   const [currentIcon, setCurrentIcon] = useState("");
   const [selectedLabel, setSelectedLabel] = useState("");
   const [size, setSize] = useState(() => getCardWidth());
-  const [team, setTeam] = useState(
-    Boolean(searchParams.get("team")) ? searchParams.get("team") : "All"
-  );
+  const [team, setTeam] = useState(searchParams.get("team") ?? "All");
   const [healthStatus, setHealthStatus] = useState(
-    Boolean(searchParams.get("status")) ? searchParams.get("status") : "All"
+    searchParams.get("status") ?? "All"
   );
 
   const topology = topologyState.topology;
@@ -193,25 +187,11 @@ export function TopologyPage() {
     load();
     fetchComponents();
 
-    setSortBy(
-      Boolean(searchParams.get("sortBy"))
-        ? searchParams.get("sortBy")
-        : "status"
-    );
-    setSortByType(
-      Boolean(searchParams.get("sortOrder"))
-        ? searchParams.get("sortOrder")
-        : "desc"
-    );
-    setHealthStatus(
-      Boolean(searchParams.get("status")) ? searchParams.get("status") : "All"
-    );
-    setTopologyType(
-      Boolean(searchParams.get("type")) ? searchParams.get("type") : "All"
-    );
-    setTeam(
-      Boolean(searchParams.get("team")) ? searchParams.get("team") : "All"
-    );
+    setSortBy(searchParams.get("sortBy") ?? "status");
+    setSortByType(searchParams.get("sortOrder") ?? "desc");
+    setHealthStatus(searchParams.get("status") ?? "All");
+    setTopologyType(searchParams.get("type") ?? "All");
+    setTeam(searchParams.get("team") ?? "All");
   }, [searchParams, id]);
 
   useEffect(() => {
@@ -299,8 +279,8 @@ export function TopologyPage() {
   }
 
   function onSelectSortOption(
-    currentSortBy?: string | null,
-    newSortByType?: string | null
+    currentSortBy?: string,
+    newSortByType?: string
   ) {
     currentSortBy = currentSortBy ?? "status";
     newSortByType = newSortByType ?? "desc";
@@ -484,7 +464,7 @@ export function TopologyPage() {
               </span>
             </div>
             <FaCog
-              className="content-center w-6 h-6 ml-4 cursor-pointer"
+              className="content-center w-6 h-6 mt-1 ml-4 cursor-pointer md:mt-0"
               onClick={() =>
                 setCurrentIcon((val) => (val === "" ? "preference" : ""))
               }
@@ -510,8 +490,8 @@ export function TopologyPage() {
           <div className="flex flex-wrap w-full">
             {getSortedTopology(
               topology,
-              sortBy ?? "status",
-              sortByType ?? "desc"
+              sortBy,
+              sortByType
             ).map((item) => (
               <TopologyCard key={item.id} topology={item} size={size} />
             ))}

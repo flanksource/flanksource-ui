@@ -8,12 +8,9 @@ export const TopologySort = ({
   onSelectSortOption
 }: {
   title?: string;
-  sortBy?: string | null;
-  sortByType?: string | null;
-  onSelectSortOption?: (
-    currentSortBy?: string | null,
-    newSortByType?: string | null
-  ) => void;
+  sortBy?: string;
+  sortByType?: string;
+  onSelectSortOption?: (currentSortBy?: string, newSortByType?: string) => void;
   sortTypes?: {
     id: number;
     value: string;
@@ -27,7 +24,10 @@ export const TopologySort = ({
           <span className="font-bold text-gray-700">{title}</span>
           <div
             onClick={() =>
-              onSelectSortOption?.(sortBy, sortByType === "asc" ? "desc" : "asc")
+              onSelectSortOption?.(
+                sortBy,
+                sortByType === "asc" ? "desc" : "asc"
+              )
             }
             className="flex mx-1 text-gray-600 cursor-pointer hover:text-gray-900"
           >
