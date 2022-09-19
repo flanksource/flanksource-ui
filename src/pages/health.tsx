@@ -5,7 +5,6 @@ import { TimeRange, timeRanges } from "../components/Dropdown/TimeRange";
 import { DropdownStandaloneWrapper } from "../components/Dropdown/StandaloneWrapper";
 import { CanarySearchBar } from "../components/Canary/CanarySearchBar";
 import { Canary } from "../components/Canary";
-import { useUpdateParams } from "../components/Canary/url";
 import RefreshDropdown from "../components/RefreshDropdown";
 import { useSearchParams } from "react-router-dom";
 
@@ -15,11 +14,12 @@ type Props = {
 
 export function HealthPage({ url }: Props) {
   const [loading, setLoading] = useState(true);
-  const updateParams = useUpdateParams();
+  const [queryParams, setQueryParams] = useSearchParams();
+
   const handleSearch = debounce((query) => {
-    updateParams({ query });
+    setQueryParams({ query });
   }, 400);
-  const [queryParams] = useSearchParams();
+
   const query = queryParams.get("query");
 
   return (
