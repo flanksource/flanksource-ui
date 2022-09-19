@@ -1,13 +1,13 @@
 import { CardSize } from "../TopologyCard";
 
 export const TopologyPreference = ({
-  title,
+  title = "Preferences",
   cardSize,
   setCardWidth
 }: {
   title?: string;
-  cardSize?: CardSize;
-  setCardWidth?: (width: string) => void;
+  cardSize: CardSize;
+  setCardWidth: (width: string) => void;
 }) => {
   return (
     <>
@@ -29,9 +29,9 @@ export const TopologyPreference = ({
             min="250"
             max="768"
             type="range"
-            value={parseInt(cardSize ?? 'medium', 10)}
+            value={parseInt(cardSize, 10)}
             id="topology-card-width-slider"
-            onChange={(e) => setCardWidth?.(e.target.value)}
+            onChange={(e) => setCardWidth(e.target.value)}
             className="inline-block w-64 mb-4 rounded-lg cursor-pointer"
           />
         </div>

@@ -1,3 +1,5 @@
+import { CardSize, CardWidth } from "../TopologyCard";
+
 type ValueType = number | string | Date;
 
 type TopologyProperty = {
@@ -89,4 +91,19 @@ export function getSortedTopology(
   }
 
   return updatedTopology;
+}
+
+export function getCardWidth() {
+  let value: any = localStorage.getItem("topology_card_width");
+
+  if (!value?.trim()) {
+    return CardWidth[CardSize.extra_large];
+  }
+
+  value = parseInt(value, 10);
+  if (isNaN(value)) {
+    return CardWidth[CardSize.extra_large];
+  } else {
+    return `${value}px`;
+  }
 }

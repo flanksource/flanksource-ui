@@ -1,17 +1,17 @@
 import { BsSortDown, BsSortUp } from "react-icons/bs";
 
 export const TopologySort = ({
-  title,
+  title = "Sort By",
   sortBy,
   sortTypes,
   sortByType,
   onSelectSortOption
 }: {
   title?: string;
-  sortBy?: string;
-  sortByType?: string;
-  onSelectSortOption?: (currentSortBy?: string, newSortByType?: string) => void;
-  sortTypes?: {
+  sortBy: string;
+  sortByType: string;
+  onSelectSortOption: (currentSortBy?: string, newSortByType?: string) => void;
+  sortTypes: {
     id: number;
     value: string;
     label: string;
@@ -24,10 +24,7 @@ export const TopologySort = ({
           <span className="font-bold text-gray-700">{title}</span>
           <div
             onClick={() =>
-              onSelectSortOption?.(
-                sortBy,
-                sortByType === "asc" ? "desc" : "asc"
-              )
+              onSelectSortOption(sortBy, sortByType === "asc" ? "desc" : "asc")
             }
             className="flex mx-1 text-gray-600 cursor-pointer hover:text-gray-900"
           >
@@ -38,10 +35,10 @@ export const TopologySort = ({
       </div>
       <div className="py-1" role="none">
         <div className="flex flex-col">
-          {sortTypes?.map((s) => (
+          {sortTypes.map((s) => (
             <span
               onClick={() =>
-                onSelectSortOption?.(
+                onSelectSortOption(
                   s.value,
                   sortBy !== s.value
                     ? sortByType
