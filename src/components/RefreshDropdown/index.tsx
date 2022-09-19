@@ -101,17 +101,17 @@ export default function RefreshDropdown({
   }, [refreshDropdownDisabledOptions, refreshRate]);
 
   return (
-    <div className="relative px-2">
-      <div>
-        <button
-          onClick={() => onClick()}
-          className={` border border-r-0 border-gray-300 p-[0.35rem] px-2 rounded-md rounded-r-none`}
-        >
-          <HiOutlineRefresh
-            size={18}
-            className={`inline-block ${isLoading && "animate-spin"}`}
-          />
-        </button>
+    <div className="flex flex-row px-2">
+      <button
+        onClick={() => onClick()}
+        className={` border border-r-0 border-gray-300 p-[0.35rem] px-2 rounded-md rounded-r-none`}
+      >
+        <HiOutlineRefresh
+          size={18}
+          className={`inline-block ${isLoading && "animate-spin"}`}
+        />
+      </button>
+      <div className="relative">
         <Menu>
           {/* @ts-expect-error */}
           <Menu.Button className="border border-gray-300 p-2 text-sm rounded-md rounded-l-none">
