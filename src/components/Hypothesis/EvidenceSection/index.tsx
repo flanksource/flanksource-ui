@@ -1,67 +1,95 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { ChevronRightIcon, DotsVerticalIcon } from "@heroicons/react/outline";
 import { LogsTable } from "../../Logs/Table/logs-table";
-import { TopologyCard } from "../../TopologyCard";
+import { CardSize, TopologyCard } from "../../TopologyCard";
 import { Icon } from "../../Icon";
 import { Button } from "../../Button";
 import { BsTrash } from "react-icons/bs";
 import { Evidence, EvidenceType } from "../../../api/services/evidence";
+import { Link } from "react-router-dom";
 
 export function EvidenceItem({ evidence }: { evidence: Evidence }) {
-  if (evidence.type === EvidenceType.Log) {
-    return <LogsTable viewOnly logs={evidence?.evidence?.lines} title="" />;
+  switch (evidence.type) {
+    case EvidenceType.Log:
+      return <LogsTable viewOnly logs={evidence?.evidence?.lines} />;
+    case EvidenceType.Topology:
+      return (
+        <div className="pt-2">
+          <TopologyCard
+            topologyId={evidence.evidence.id}
+            size={CardSize.large}
+          />
+        </div>
+      );
+    case EvidenceType.Config:
+      return (
+        <EvidenceAccordion
+          date={evidence.created_at}
+          title={evidence.description}
+          configId={evidence.evidence.id}
+          configName={evidence.evidence.configName}
+          configType={evidence.evidence.configType}
+        >
+          <ConfigEvidenceView evidenceItem={evidence} />
+        </EvidenceAccordion>
+      );
+    default:
+      return null;
   }
-  if (evidence.type === EvidenceType.Topology) {
-    return (
-      <div className="pt-2">
-        <TopologyCard topologyId={evidence.evidence.id} size="large" />
-      </div>
-    );
-  }
-  if (evidence.type === EvidenceType.Config) {
-    return (
-      <EvidenceAccordion
-        date={evidence.created_at}
-        title={evidence.description}
-      >
-        <ConfigEvidenceView evidenceItem={evidence} />
-      </EvidenceAccordion>
-    );
-  }
-  return null;
 }
 
-function EvidenceAccordion({ title, date, children, ...rest }) {
+const EvidenceAccordion: React.FC<{
+  date: string;
+  title: string;
+  configId: string;
+  configName: string;
+  configType: string;
+  children: React.ReactNode;
+}> = ({ title, date, configId, configName, configType, children, ...rest }) => {
   const [expanded, setExpanded] = useState(true);
   return (
     <div className="border-b last:border-b-0 flex flex-col" {...rest}>
-      <button
-        className="py-2 flex flex-row items-center"
-        onClick={() => setExpanded(!expanded)}
-        type="button"
-      >
-        <div className="mr-2">
-          <ChevronRightIcon
-            className={`h-5 w-5 transform ${expanded && "rotate-90"}`}
-          />
+      <div className="flex items-center justify-between">
+        <button
+          className="py-2 flex items-center"
+          onClick={() => setExpanded(!expanded)}
+          type="button"
+        >
+          <div className="mr-2">
+            <ChevronRightIcon
+              className={`h-5 w-5 transform ${expanded && "rotate-90"}`}
+            />
+          </div>
+          <div className="flex justify-between w-full items-center">
+            {title || <span className="text-gray-400">(no title)</span>}
+            {date && (
+              <div className="text-gray-400 text-sm">
+                {dayjs(date).format("HH:mm A, MMM DD, YYYY")}
+              </div>
+            )}
+          </div>
+        </button>
+        <div>
+          <Icon className="inline-block mr-2" name={configType} size="lg" />
+          <Link
+            to={`/configs/${configId}`}
+            className="underline text-blue-600 hover:text-blue-800"
+          >
+            {configName && configName}
+          </Link>
         </div>
-        <div className="flex justify-between w-full items-center">
-          {title || <span className="text-gray-400">(no title)</span>}
-          {date && (
-            <div className="text-gray-400 text-sm">
-              {dayjs(date).format("HH:mm A, MMM DD, YYYY")}
-            </div>
-          )}
-        </div>
-      </button>
-
+      </div>
       {expanded && children}
     </div>
   );
-}
+};
 
-function ConfigEvidenceView({ evidenceItem }) {
+function ConfigEvidenceView({
+  evidenceItem
+}: {
+  evidenceItem: Extract<Evidence, { evidence: { configName: string } }>;
+}) {
   const hunkLineGap = 3;
   const fullConfig = evidenceItem?.evidence?.lines || {};
   const selectedLines =
