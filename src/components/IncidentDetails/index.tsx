@@ -17,8 +17,7 @@ import {
   getRespondersForTheIncident
 } from "../../api/services/responder";
 import { toastError, toastSuccess } from "../Toast/toast";
-import { IconButton } from "../IconButton";
-import { BsShareFill, BsTrash } from "react-icons/bs";
+import { BsShareFill } from "react-icons/bs";
 import { DeleteConfirmDialog } from "../DeleteConfirmDialog";
 import { ResponderDetailsToolTip } from "./ResponderDetailsToolTip";
 import { ResponderDetailsDialog } from "./ResponderDetailsDialog";
