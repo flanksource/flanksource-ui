@@ -5,6 +5,7 @@ import dayjs from "dayjs";
 import { useForm } from "react-hook-form";
 import { RiCloseCircleLine } from "react-icons/ri";
 import { BsShareFill, BsTrash } from "react-icons/bs";
+import { template } from "lodash";
 
 import { Icon } from "../Icon";
 import { IconButton } from "../IconButton";
@@ -123,10 +124,13 @@ export const IncidentDetails = ({
               item?.properties?.responderType
             ]?.linkUrl;
           if (item.links.external_id_link) {
-            item.links.external_id_link = item.links.external_id_link.replace(
-              "_ID_",
-              item.external_id
-            );
+            try {
+              item.links.external_id_link = template(
+                item.links.external_id_link
+              )({
+                ID: item.external_id
+              });
+            } catch (ex) {}
           }
         }
         return {
