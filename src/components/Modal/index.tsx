@@ -35,7 +35,7 @@ export function Modal({
   footerClassName,
   actions,
   open,
-  onClose,
+  onClose = () => {},
   allowBackgroundClose,
   hideCloseButton,
   size,
