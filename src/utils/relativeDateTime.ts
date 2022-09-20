@@ -5,7 +5,7 @@ export const relativeDateTime = (ts: string | Date) => {
   const n = dayjs();
 
   if (n.isSame(t, "day")) {
-    return dayjs(ts).fromNow();
+    return t.fromNow();
   }
 
   if (n.diff(t, "days") === 1) {
