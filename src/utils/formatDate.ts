@@ -1,9 +1,4 @@
 import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
-
-// this is required to parse the date into UTC
-// and adding local conversion to the dayjs object
-dayjs.extend(utc);
 
 /**
  * Format date into local time and apply the string formatting if given
