@@ -17,6 +17,31 @@ export type Topology = {
   properties?: TopologyProperty[];
 };
 
+export const defaultSortLabels = [
+  { id: 1, value: "status", label: "Health" },
+  { id: 2, value: "name", label: "Name" },
+  { id: 3, value: "type", label: "Type" },
+  { id: 4, value: "updated_at", label: "Last Updated" }
+];
+
+export function getSortLabels(topology: any[]) {
+  const currentSortLabels: typeof defaultSortLabels = [];
+
+  topology?.forEach((t) => {
+    t?.properties?.forEach((h, index) => {
+      if (h.headline && !currentSortLabels.find((t) => t.value === h.name)) {
+        currentSortLabels.push({
+          id: defaultSortLabels.length + index,
+          value: h.name.toLowerCase(),
+          label: h.name
+        });
+      }
+    });
+  });
+
+  return [...defaultSortLabels, ...currentSortLabels];
+}
+
 function getValue(t: Topology, sortBy: string) {
   if (Boolean(t[sortBy])) {
     return t[sortBy] as ValueType;
