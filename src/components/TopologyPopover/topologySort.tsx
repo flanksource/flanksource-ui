@@ -1,7 +1,11 @@
 import clsx from "clsx";
 import { BsSortDown, BsSortUp } from "react-icons/bs";
 
+import { SetURLSearchParams } from "../TopologyPopover";
+
 import { isDate } from "../../utils/date";
+import { searchParamsToObj } from "../../utils/common";
+import { useOnMouseActivity } from "../../hooks/useMouseActivity";
 
 import type { Topology, ValueType } from "../../context/TopologyPageContext";
 
@@ -27,8 +31,8 @@ export function getSortLabels(topology: Topology[]) {
       if (h.headline && !currentSortLabels.find((t) => t.value === h.name)) {
         currentSortLabels.push({
           id: defaultSortLabels.length + index,
-          value: (h.name ?? '').toLowerCase(),
-          label: h.name ?? ''
+          value: (h.name ?? "").toLowerCase(),
+          label: h.name ?? ""
         });
       }
     });
@@ -98,23 +102,47 @@ export const TopologySort = ({
   title = "Sort By",
   sortLabels,
   searchParams,
-  currentPopover,
-  setCurrentPopover,
-  onSelectSortOption
+  setSearchParams
 }: {
   title?: string;
-  currentPopover: string;
   searchParams: URLSearchParams;
+  setSearchParams: SetURLSearchParams;
   sortLabels: typeof defaultSortLabels;
-  setCurrentPopover: (val: any) => void;
-  onSelectSortOption: (currentSortBy?: string, newSortByType?: string) => void;
 }) => {
+  const {
+    ref: popoverRef,
+    isActive: isPopoverActive,
+    setIsActive: setIsPopoverActive
+  } = useOnMouseActivity();
+
+  function onSelectSortOption(currentSortBy?: string, newSortByType?: string) {
+    currentSortBy = currentSortBy ?? "status";
+    newSortByType = newSortByType ?? "desc";
+
+    const newSearchParams = {
+      ...searchParamsToObj(searchParams),
+      sortBy: currentSortBy,
+      sortOrder: newSortByType
+    };
+
+    if (currentSortBy === "status" && newSortByType === "desc") {
+      const { sortBy, sortOrder, ...removedSearchParams } = newSearchParams;
+      setSearchParams(removedSearchParams);
+    } else {
+      setSearchParams(newSearchParams);
+    }
+    setIsPopoverActive(false);
+  }
+
   const sortBy = searchParams.get("sortBy") ?? "status";
   const sortByDirection = searchParams.get("sortOrder") ?? "desc";
 
   return (
     <>
-      <div className="mt-1 ml-2 cursor-pointer md:mt-0 md:items-center md:flex ">
+      <div
+        ref={popoverRef}
+        className="flex mt-1 ml-2 cursor-pointer md:mt-0 md:items-center"
+      >
         {sortByDirection === "asc" && (
           <BsSortUp
             className="w-6 h-6 text-gray-700 hover:text-gray-900"
@@ -128,10 +156,8 @@ export const TopologySort = ({
           />
         )}
         <span
-          className="hidden ml-2 text-base text-gray-700 capitalize bold md:flex hover:text-gray-900"
-          onClick={() =>
-            setCurrentPopover((val: string) => (val === "" ? "sort" : ""))
-          }
+          className="flex ml-2 text-base text-gray-700 capitalize bold hover:text-gray-900"
+          onClick={() => setIsPopoverActive((val) => !val)}
         >
           {sortLabels.find((s) => s.value === sortBy)?.label}
         </span>
@@ -142,7 +168,7 @@ export const TopologySort = ({
         aria-labelledby="menu-button"
         className={clsx(
           "origin-top-right absolute right-0 mt-10 z-50 divide-y divide-gray-100 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none capitalize w-48",
-          currentPopover === "sort" ? "display-block" : "hidden"
+          isPopoverActive ? "display-block" : "hidden"
         )}
       >
         <div className="py-1">

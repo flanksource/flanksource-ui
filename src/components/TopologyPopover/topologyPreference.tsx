@@ -3,6 +3,8 @@ import { FaCog } from "react-icons/fa";
 
 import { CardSize, CardWidth } from "../TopologyCard";
 
+import { useOnMouseActivity } from "../../hooks/useMouseActivity";
+
 export function getCardWidth() {
   let value: any = localStorage.getItem("topology_card_width");
 
@@ -21,31 +23,31 @@ export function getCardWidth() {
 export const TopologyPreference = ({
   title = "Preferences",
   cardSize,
-  setCardWidth,
-  currentPopover,
-  setCurrentPopover
+  setCardWidth
 }: {
   title?: string;
   cardSize: CardSize;
-  currentPopover: string;
   setCardWidth: (width: string) => void;
-  setCurrentPopover: (val: any) => void;
 }) => {
+  const {
+    ref: popoverRef,
+    isActive: isPopoverActive,
+    setIsActive: setIsPopoverActive
+  } = useOnMouseActivity();
+
   return (
-    <>
+    <div ref={popoverRef}>
       <FaCog
         className="content-center w-6 h-6 mt-1 ml-4 cursor-pointer md:mt-0"
-        onClick={() =>
-          setCurrentPopover((val: string) => (val === "" ? "preference" : ""))
-        }
+        onClick={() => setIsPopoverActive((val) => !val)}
       />
       <div
         role="menu"
         aria-orientation="vertical"
         aria-labelledby="menu-button"
         className={clsx(
-          "origin-top-right absolute right-0 mt-10 w-96 z-50 divide-y divide-gray-100 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none capitalize",
-          currentPopover === "preference" ? "display-block" : "hidden"
+          "origin-top-right absolute right-0 mt-5 w-96 z-50 divide-y divide-gray-100 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none capitalize",
+          isPopoverActive ? "display-block" : "hidden"
         )}
       >
         <div className="py-1">
@@ -74,6 +76,6 @@ export const TopologyPreference = ({
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
