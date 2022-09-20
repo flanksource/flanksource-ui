@@ -7,6 +7,7 @@ import { Loading } from "../components/Loading";
 import { SearchLayout } from "../components/Layout";
 import { toastError } from "../components/Toast/toast";
 import { TopologyCard } from "../components/TopologyCard";
+import { TopologyPopOver } from "../components/TopologyPopover";
 import { SearchSelectTag } from "../components/SearchSelectTag";
 import { ReactSelectDropdown } from "../components/ReactSelectDropdown";
 import { TopologyBreadcrumbs } from "../components/Topology/topology-breadcrumbs";
@@ -15,13 +16,10 @@ import { schemaResourceTypes } from "../components/SchemaResourcePage/resourceTy
 import { useLoader } from "../hooks";
 import { getAll } from "../api/schemaResources";
 import { searchParamsToObj } from "../utils/common";
-import TopologyPopOver from "../components/TopologyPopover";
-import {
-  getCardWidth,
-  getSortedTopology
-} from "../components/TopologyPopover/utils";
 import { useTopologyPageContext } from "../context/TopologyPageContext";
 import { getTopology, getTopologyComponents } from "../api/services/topology";
+import { getSortedTopology } from "../components/TopologyPopover/topologySort";
+import { getCardWidth } from "../components/TopologyPopover/topologyPreference";
 
 const allOption = {
   All: {

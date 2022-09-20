@@ -1,11 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { NavigateOptions, URLSearchParamsInit } from "react-router-dom";
 
-import { TopologySort } from "./topologySort";
 import { TopologyPreference } from "./topologyPreference";
+import { defaultSortLabels, getSortLabels, TopologySort } from "./topologySort";
 
 import { searchParamsToObj } from "../../utils/common";
-import { defaultSortLabels, getSortLabels } from "./utils";
 
 type SetURLSearchParams = (
   nextInit?:
