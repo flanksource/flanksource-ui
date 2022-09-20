@@ -12,7 +12,6 @@ import { TextInput } from "../components/TextInput";
 import { timeRanges } from "../components/Dropdown/TimeRange";
 import { Icon } from "../components";
 import { SearchableDropdown } from "../components/SearchableDropdown";
-import { ReactComponent as SelectionIllustrationSvg } from "./selectionIllustration.svg";
 import { ReactSelectDropdown } from "../components/ReactSelectDropdown";
 
 export const logTypes = [
@@ -164,12 +163,13 @@ export function LogsPage() {
         <>
           <SearchableDropdown
             className="w-96"
+            value={topology}
+            isLoading={loading}
             options={topologies}
+            isDisabled={loading}
+            placeholder="Select component"
             onChange={onComponentSelect}
             formatOptionLabel={formatOptionLabel}
-            isLoading={loading}
-            isDisabled={loading}
-            value={topology}
           />
           <div className="mx-2 w-80 relative rounded-md shadow-sm">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
@@ -211,7 +211,6 @@ export function LogsPage() {
         ? !logs.length && <Loading className="mt-40" text="Loading logs..." />
         : !loaded && (
             <div className="flex flex-col justify-center items-center h-5/6">
-              <SelectionIllustrationSvg className="h-96 w-96" />
               <h3 className="text-center font-semibold text-lg">
                 Please select a component to view the logs.
               </h3>
