@@ -1,4 +1,3 @@
-import dayjs from "dayjs";
 import {
   ScatterChart,
   Scatter,
@@ -15,6 +14,7 @@ import { getCanaryGraph } from "../../../api/services/topology";
 import { Loading } from "../../Loading";
 import { useSearchParams } from "react-router-dom";
 import { getParamsFromURL } from "../utils";
+import { formatDate } from "../../../utils/formatDate";
 
 // @TODO: duration should be formatted properly, not just by ms
 const formatDuration = (duration) => `${duration}ms`;
@@ -55,11 +55,11 @@ export function CanaryStatusChart({ check, ...rest }) {
   }
 
   // @TODO: date should be formatted properly depending on selection, not just by DD/MM
-  let formatDate = (date) => dayjs(date).format("HH:mm");
+  let customFormatDate = (date) => formatDate(date, "HH:mm");
   if (timeRange > 60 * 24 * 30) {
-    formatDate = (date) => dayjs(date).format("MMM DD");
+    customFormatDate = (date) => formatDate(date, "MMM DD");
   } else if (timeRange > 60 * 24) {
-    formatDate = (date) => dayjs(date).format("MMM DD HH:mm");
+    customFormatDate = (date) => formatDate(date, "MMM DD HH:mm");
   }
 
   return (
@@ -81,10 +81,10 @@ export function CanaryStatusChart({ check, ...rest }) {
         />
         <XAxis
           tickSize={0}
-          tick={<CustomXTick tickFormatter={formatDate} />}
+          tick={<CustomXTick tickFormatter={customFormatDate} />}
           stroke="rgba(200, 200, 200, 1)"
           tickMargin={4}
-          tickFormatter={formatDate}
+          tickFormatter={customFormatDate}
           fontSize={12}
           reversed
           // type="number"

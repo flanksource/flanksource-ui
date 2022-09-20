@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import dayjs from "dayjs";
 import { ChevronRightIcon, DotsVerticalIcon } from "@heroicons/react/outline";
 import { LogsTable } from "../../Logs/Table/logs-table";
 import { CardSize, TopologyCard } from "../../TopologyCard";
@@ -8,6 +7,7 @@ import { Button } from "../../Button";
 import { BsTrash } from "react-icons/bs";
 import { Evidence, EvidenceType } from "../../../api/services/evidence";
 import { Link } from "react-router-dom";
+import { formatDate } from "../../../utils/formatDate";
 
 export function EvidenceItem({ evidence }: { evidence: Evidence }) {
   switch (evidence.type) {
@@ -65,7 +65,7 @@ const EvidenceAccordion: React.FC<{
             {title || <span className="text-gray-400">(no title)</span>}
             {date && (
               <div className="text-gray-400 text-sm">
-                {dayjs(date).format("HH:mm A, MMM DD, YYYY")}
+                {formatDate(date, "HH:mm A, MMM DD, YYYY")}
               </div>
             )}
           </div>
@@ -124,7 +124,7 @@ function ConfigEvidenceView({
                       <div
                         key={lineIndex}
                         className="flex"
-                        style={{ background: selected && "#cfe3ff" }}
+                        style={selected ? { backgroundColor: "#cfe3ff" } : {}}
                       >
                         <div className="text-xs flex items-center justify-end px-1 text-gray-600 border-r w-8 select-none">
                           {lineIndex}
@@ -206,7 +206,7 @@ export function EvidenceSection({
         {!isLoading ? (
           evidenceList && evidenceList.length > 0 ? (
             <div className="border rounded-md flex flex-col space-y-2">
-              {evidenceList.map((evidence) => (
+              {evidenceList.map((evidence: Evidence) => (
                 <div key={evidence.id} className="relative">
                   {onDeleteEvidence && (
                     <span className="absolute right-0 top-0">
