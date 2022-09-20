@@ -12,12 +12,16 @@ type PersonProps = {
   control: Control;
   errors: FieldErrors;
   setValue: UseFormSetValue<AddResponderFormValues>;
+  defaultValues: { [key: string]: any };
+  values: { [key: string]: any };
 } & React.HTMLProps<HTMLDivElement>;
 
 export const Person = ({
   control,
   errors,
   className,
+  defaultValues,
+  values,
   ...rest
 }: PersonProps) => {
   return (
@@ -28,7 +32,7 @@ export const Person = ({
         rules={{
           required: "Please provide valid value"
         }}
-        render={({ field }) => {
+        render={({ field, fieldState: { isDirty } }) => {
           const { onChange, value } = field;
           return (
             <TextInput
@@ -36,7 +40,8 @@ export const Person = ({
               id="person"
               className="w-full"
               onChange={onChange}
-              value={value}
+              value={isDirty ? value : defaultValues?.person}
+              disabled={values?.person}
             />
           );
         }}

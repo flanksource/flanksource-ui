@@ -12,9 +12,18 @@ type CAProps = {
   control: Control;
   errors: FieldErrors;
   setValue: UseFormSetValue<AddResponderFormValues>;
+  defaultValues: { [key: string]: any };
+  values: { [key: string]: any };
 } & React.HTMLProps<HTMLDivElement>;
 
-export const CA = ({ control, errors, className, ...rest }: CAProps) => {
+export const CA = ({
+  control,
+  errors,
+  className,
+  defaultValues,
+  values,
+  ...rest
+}: CAProps) => {
   return (
     <div className={clsx(className)} {...rest}>
       <div className="mb-4">
@@ -24,7 +33,7 @@ export const CA = ({ control, errors, className, ...rest }: CAProps) => {
           rules={{
             required: "Please provide valid value"
           }}
-          render={({ field }) => {
+          render={({ field, fieldState: { isDirty } }) => {
             const { onChange, value } = field;
             return (
               <TextInput
@@ -32,7 +41,8 @@ export const CA = ({ control, errors, className, ...rest }: CAProps) => {
                 id="category"
                 className="w-full"
                 onChange={onChange}
-                value={value}
+                value={isDirty ? value : defaultValues?.category}
+                disabled={values?.category}
               />
             );
           }}
@@ -46,7 +56,7 @@ export const CA = ({ control, errors, className, ...rest }: CAProps) => {
           rules={{
             required: "Please provide valid value"
           }}
-          render={({ field }) => {
+          render={({ field, fieldState: { isDirty } }) => {
             const { onChange, value } = field;
             return (
               <TextInput
@@ -54,7 +64,8 @@ export const CA = ({ control, errors, className, ...rest }: CAProps) => {
                 id="description"
                 className="w-full"
                 onChange={onChange}
-                value={value}
+                value={isDirty ? value : defaultValues?.description}
+                disabled={values?.description}
               />
             );
           }}
@@ -68,7 +79,7 @@ export const CA = ({ control, errors, className, ...rest }: CAProps) => {
           rules={{
             required: "Please provide valid value"
           }}
-          render={({ field }) => {
+          render={({ field, fieldState: { isDirty } }) => {
             const { onChange, value } = field;
             return (
               <TextInput
@@ -76,7 +87,8 @@ export const CA = ({ control, errors, className, ...rest }: CAProps) => {
                 id="body"
                 className="w-full"
                 onChange={onChange}
-                value={value}
+                value={isDirty ? value : defaultValues?.body}
+                disabled={values?.body}
               />
             );
           }}

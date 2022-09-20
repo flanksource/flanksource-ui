@@ -12,12 +12,16 @@ type AwsSupportProps = {
   control: Control;
   errors: FieldErrors;
   setValue: UseFormSetValue<AddResponderFormValues>;
+  defaultValues: { [key: string]: any };
+  values: { [key: string]: any };
 } & React.HTMLProps<HTMLDivElement>;
 
 export const AwsSupport = ({
   control,
   errors,
   className,
+  defaultValues,
+  values,
   ...rest
 }: AwsSupportProps) => {
   return (
@@ -29,7 +33,7 @@ export const AwsSupport = ({
           rules={{
             required: "Please provide valid value"
           }}
-          render={({ field }) => {
+          render={({ field, fieldState: { isDirty } }) => {
             const { onChange, value } = field;
             return (
               <TextInput
@@ -37,7 +41,8 @@ export const AwsSupport = ({
                 id="category"
                 className="w-full"
                 onChange={onChange}
-                value={value}
+                value={isDirty ? value : defaultValues?.category}
+                disabled={values?.category}
               />
             );
           }}
@@ -51,7 +56,7 @@ export const AwsSupport = ({
           rules={{
             required: "Please provide valid value"
           }}
-          render={({ field }) => {
+          render={({ field, fieldState: { isDirty } }) => {
             const { onChange, value } = field;
             return (
               <TextInput
@@ -59,7 +64,8 @@ export const AwsSupport = ({
                 id="description"
                 className="w-full"
                 onChange={onChange}
-                value={value}
+                value={isDirty ? value : defaultValues?.description}
+                disabled={values?.description}
               />
             );
           }}
@@ -73,7 +79,7 @@ export const AwsSupport = ({
           rules={{
             required: "Please provide valid value"
           }}
-          render={({ field }) => {
+          render={({ field, fieldState: { isDirty } }) => {
             const { onChange, value } = field;
             return (
               <TextInput
@@ -81,7 +87,8 @@ export const AwsSupport = ({
                 id="body"
                 className="w-full"
                 onChange={onChange}
-                value={value}
+                value={isDirty ? value : defaultValues?.body}
+                disabled={values?.body}
               />
             );
           }}
