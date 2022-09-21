@@ -1,30 +1,32 @@
 import { useEffect, useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
-import dayjs from "dayjs";
-import { RiCloseCircleLine } from "react-icons/ri";
-import clsx from "clsx";
 
+import clsx from "clsx";
+import dayjs from "dayjs";
+import { useForm } from "react-hook-form";
+import { RiCloseCircleLine } from "react-icons/ri";
+import { BsShareFill, BsTrash } from "react-icons/bs";
+
+import { Icon } from "../Icon";
+import { IconButton } from "../IconButton";
+import { toastError, toastSuccess } from "../Toast/toast";
 import { IncidentDetailsRow } from "./IncidentDetailsRow";
-import { IncidentPriority } from "../../constants/incident-priority";
-import { priorities } from "./data";
+import { ReactSelectDropdown } from "../ReactSelectDropdown";
+import { DeleteConfirmDialog } from "../DeleteConfirmDialog";
+import { ResponderDetailsDialog } from "./ResponderDetailsDialog";
+import { ResponderDetailsToolTip } from "./ResponderDetailsToolTip";
 import {
   AddResponder,
   AddResponderFormValues,
   ResponderPropsKeyToLabelMap
 } from "./AddResponder";
+
+import { priorities } from "./data";
+import { typeItems } from "../Incidents/data";
+import { IncidentPriority } from "../../constants/incident-priority";
 import {
   deleteResponder,
   getRespondersForTheIncident
 } from "../../api/services/responder";
-import { toastError, toastSuccess } from "../Toast/toast";
-import { BsShareFill, BsTrash } from "react-icons/bs";
-import { DeleteConfirmDialog } from "../DeleteConfirmDialog";
-import { ResponderDetailsToolTip } from "./ResponderDetailsToolTip";
-import { ResponderDetailsDialog } from "./ResponderDetailsDialog";
-import { Icon } from "../Icon";
-import { typeItems } from "../Incidents/data";
-import { ReactSelectDropdown } from "../ReactSelectDropdown";
-import { IconButton } from "../IconButton";
 
 export const IncidentDetails = ({
   incident,
@@ -194,24 +196,24 @@ export const IncidentDetails = ({
 
   return (
     <div className={clsx("divide-y", className)}>
-      <div className="mb-4 bg-white px-4 py-3 shadow sm:rounded-lg ml-4">
+      <div className="px-4 py-3 mb-4 ml-4 bg-white shadow sm:rounded-lg">
         <div className="flex justify-between mb-7">
           <h2 className="mt-0.5 text-2xl font-medium leading-7 text-dark-gray">
             Details
           </h2>
-          <span className="relative z-0 inline-flex shadow-sm rounded-md">
+          <span className="relative z-0 inline-flex rounded-md shadow-sm">
             <button
               type="button"
-              className="relative inline-flex items-center px-4 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              className="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
               onClick={updateStatusHandler}
             >
-              <RiCloseCircleLine className="mr-1 w-4 h-4" /> {textButton}
+              <RiCloseCircleLine className="w-4 h-4 mr-1" /> {textButton}
             </button>
             <button
               type="button"
-              className="-ml-px relative inline-flex items-center px-4 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              className="relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
             >
-              <BsShareFill className="mr-1 w-3 h-3" /> Share
+              <BsShareFill className="w-3 h-3 mr-1" /> Share
             </button>
           </span>
         </div>
@@ -220,7 +222,7 @@ export const IncidentDetails = ({
         value={
           <a
             href={getValues("chartRoom")}
-            className="underline text-dark-blue text-sm font-normal"
+            className="text-sm font-normal underline text-dark-blue"
           >
             {getValues("chartRoomTitle")}
           </a>
@@ -232,7 +234,7 @@ export const IncidentDetails = ({
         value={
           <a
             href={getValues("statusPage")}
-            className="underline text-dark-blue text-sm font-normal"
+            className="text-sm font-normal underline text-dark-blue"
           >
             {getValues("statusPageTitle")}
           </a>
@@ -256,7 +258,7 @@ export const IncidentDetails = ({
           title="Started"
           className="mt-2.5"
           value={
-            <span className="text-dark-gray text-sm font-normal">
+            <span className="text-sm font-normal text-dark-gray">
               {formattedCreatedAt}
             </span>
           }
@@ -265,7 +267,7 @@ export const IncidentDetails = ({
           title="Duration"
           className="mt-2.5"
           value={
-            <span className="text-dark-gray text-sm font-normal">
+            <span className="text-sm font-normal text-dark-gray">
               {formattedDuration}
             </span>
           }
@@ -299,10 +301,10 @@ export const IncidentDetails = ({
           }
         />
       </div>
-      <div className="mb-4 bg-white px-4 py-3 shadow sm:rounded-lg ml-4">
+      <div className="px-4 py-3 mb-4 ml-4 bg-white shadow sm:rounded-lg">
         <div className="divide-y divide-gray-200">
           <div className="flex mb-3">
-            <h2 className="text-dark-gray text-sm inline-block flex-1 font-bold">
+            <h2 className="flex-1 inline-block text-sm font-bold text-dark-gray">
               Responders
             </h2>
           </div>
@@ -312,29 +314,29 @@ export const IncidentDetails = ({
                 return (
                   <div
                     key={responder.json.id}
-                    className="relative flex items-center rounded mt-1 p-2"
+                    className="relative flex items-center p-2 mt-1 rounded"
                   >
-                    <div className="flex-1 min-w-0 w-full">
+                    <div className="flex-1 w-full min-w-0">
                       <ResponderDetailsToolTip
                         className="w-full"
                         responder={responder}
                         data={responder?.json?.properties}
                         element={
-                          <div className="text-dark-gray group text-sm font-medium relative w-full overflow-hidden truncate">
+                          <div className="relative w-full overflow-hidden text-sm font-medium truncate text-dark-gray group">
                             <div className="w-full overflow-hidden">
                               {responder.icon && (
                                 <responder.icon className="w-6 h-6" />
                               )}
                               <div
-                                className="pl-1 inline-block align-middle"
+                                className="inline-block pl-1 align-middle"
                                 onClick={(e) => {
                                   setOpenResponderDetailsDialog(true);
                                   setSelectedResponder(responder);
                                 }}
                               >
-                                <div className="flex-1 max-w-32 inline-block  align-middle">
+                                <div className="flex-1 inline-block align-middle max-w-32">
                                   <div
-                                    className="hover:underline cursor-pointer truncate"
+                                    className="truncate cursor-pointer hover:underline"
                                     title={responder?.name}
                                   >
                                     {responder?.name}
@@ -345,13 +347,13 @@ export const IncidentDetails = ({
                                     <a
                                       href={responder?.links?.external_id_link}
                                       target="_blank"
-                                      className="underline text-blue-600 hover:text-blue-800 visited:text-blue-600 pl-1 inline-block align-middle"
+                                      className="inline-block pl-1 text-blue-600 underline align-middle hover:text-blue-800 visited:text-blue-600"
                                       onClick={(e) => e.stopPropagation()}
                                       rel="noreferrer"
                                       title={responder.external_id}
                                     >
                                       (
-                                      <span className="truncate inline-block align-middle max-w-32">
+                                      <span className="inline-block truncate align-middle max-w-32">
                                         {responder.external_id}
                                       </span>
                                       )
@@ -360,9 +362,9 @@ export const IncidentDetails = ({
                                 </div>
                               </div>
                             </div>
-                            <div className="ml-10 cursor-pointer absolute right-0 top-1">
+                            <div className="absolute right-0 ml-10 cursor-pointer top-1">
                               <IconButton
-                                className="bg-transparent hidden group-hover:inline-block z-5"
+                                className="hidden bg-transparent group-hover:inline-block z-5"
                                 onClick={(e) => {
                                   e.preventDefault();
                                   e.stopPropagation();
@@ -377,7 +379,7 @@ export const IncidentDetails = ({
                                 }}
                                 icon={
                                   <BsTrash
-                                    className="text-gray-600 border-0 border-l-1 border-gray-200"
+                                    className="text-gray-600 border-0 border-gray-200 border-l-1"
                                     size={18}
                                   />
                                 }
@@ -392,14 +394,14 @@ export const IncidentDetails = ({
               })}
             </div>
           )}
-          <div className="p-2 flex justify-between items-center">
+          <div className="flex items-center justify-between p-2">
             <button
               type="button"
-              className="group bg-white rounded-md flex items-center"
+              className="flex items-center bg-white rounded-md group"
             >
-              <span className="w-5 h-5 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400">
+              <span className="flex items-center justify-center w-5 h-5 text-gray-400 border-2 border-gray-300 border-dashed rounded-full">
                 <svg
-                  className="h-5 w-5"
+                  className="w-5 h-5"
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 20 20"
                   fill="currentColor"
@@ -414,7 +416,7 @@ export const IncidentDetails = ({
               </span>
               <span className="ml-2 text-sm font-medium text-blue-600 group-hover:text-blue-500">
                 <AddResponder
-                  className="inline-block flex-1 w-full justify-end flex"
+                  className="flex justify-end flex-1 inline-block w-full"
                   onSuccess={() => fetchResponders()}
                 />
               </span>

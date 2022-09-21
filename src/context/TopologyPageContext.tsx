@@ -1,8 +1,25 @@
 import React, { useState, createContext, useContext } from "react";
 import { URLSearchParamsInit } from "react-router-dom";
 
+export type ValueType = number | string | Date;
+
+export type TopologyProperty = {
+  name?: string;
+  headline?: boolean;
+  value?: ValueType;
+  unit?: string;
+};
+
+export type Topology = {
+  id: string;
+  name: string;
+  type?: string;
+  updated_at?: string;
+  properties?: TopologyProperty[];
+};
+
 export type TopologyState = {
-  topology: any[] | null;
+  topology: Topology[] | null;
   searchParams: URLSearchParamsInit;
 };
 
