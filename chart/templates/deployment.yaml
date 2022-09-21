@@ -35,6 +35,8 @@ spec:
           env:
           - name: ORY_KRATOS_URL
             value: {{ .Values.oryKratosURI }}
+          - name: NEXT_PUBLIC_WITHOUT_SESSION
+            value: {{ ternary true false .Values.withoutOrySession | quote}}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http

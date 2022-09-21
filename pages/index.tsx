@@ -15,6 +15,10 @@ const Home: NextPage = () => {
   const withoutSession = process.env.NEXT_PUBLIC_WITHOUT_SESSION === "true";
 
   useEffect(() => {
+    if (withoutSession) {
+      return;
+    }
+
     ory
       .toSession()
       .then(({ data }) => {
@@ -32,9 +36,6 @@ const Home: NextPage = () => {
             // it's second factor
             return router.push("/login?aal=aal2");
           case 401:
-            if (withoutSession) {
-              return;
-            }
             // do nothing, the user is not logged in
             return router.push("/login");
         }
@@ -42,7 +43,7 @@ const Home: NextPage = () => {
         // Something else happened!
         return Promise.reject(err);
       });
-  }, [router]);
+  }, [router, withoutSession]);
 
   const isCanaryUI =
     process.env.NEXT_PUBLIC_APP_DEPLOYMENT === "CANARY_CHECKER";
