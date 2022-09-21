@@ -8,10 +8,7 @@ export function Head({ prefix }: Props) {
   return (
     <NextHead>
       <title>{prefix} | Incident Commander</title>
-      <meta
-        name="description"
-        content={`${prefix} | Incident Commander`}
-      />
+      <meta name="description" content={`${prefix} | Incident Commander`} />
     </NextHead>
   );
 }

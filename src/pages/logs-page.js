@@ -5,13 +5,11 @@ import { useSearchParams } from "react-router-dom";
 import { useLoader } from "../hooks";
 import { getLogs } from "../api/services/logs";
 import { getTopology, getTopologyComponents } from "../api/services/topology";
-import { Dropdown } from "../components/Dropdown";
 import { SearchLayout } from "../components/Layout";
 import { Loading } from "../components/Loading";
 import { LogsViewer } from "../components/Logs";
 import { TextInput } from "../components/TextInput";
 import { timeRanges } from "../components/Dropdown/TimeRange";
-import { RefreshButton } from "../components/RefreshButton";
 import { Icon } from "../components";
 import { SearchableDropdown } from "../components/SearchableDropdown";
 import { ReactSelectDropdown } from "../components/ReactSelectDropdown";
@@ -39,12 +37,6 @@ export const logTypes = [
   }
 ];
 
-const groupStyles = {
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between"
-};
-
 const optionStyles = {
   display: "flex",
   alignItems: "center",
@@ -53,19 +45,6 @@ const optionStyles = {
   overflow: "hidden",
   whiteSpace: "nowrap",
   textOverflow: "ellipsis"
-};
-
-const groupBadgeStyles = {
-  backgroundColor: "#EBECF0",
-  borderRadius: "2em",
-  color: "#172B4D",
-  display: "inline-block",
-  fontSize: 12,
-  fontWeight: "normal",
-  lineHeight: "1",
-  minWidth: 1,
-  padding: "0.16666666666667em 0.5em",
-  textAlign: "center"
 };
 
 const formatOptionLabel = (data) => (
@@ -111,11 +90,13 @@ export function LogsPage() {
     async function fetchTopologies() {
       try {
         let { data } = await getTopologyComponents();
-        data = data.filter((item) => {
-          item.label = item.name;
-          item.value = item.id;
-          return item.external_id;
-        });
+        data = data
+          .filter((item) => {
+            item.label = item.name;
+            item.value = item.id;
+            return item.external_id;
+          })
+          .sort((a, b) => a.label.localeCompare(b.label));
         setTopologies(data);
       } catch (ex) {}
     }
@@ -171,21 +152,26 @@ export function LogsPage() {
 
   return (
     <SearchLayout
+      onRefresh={() => loadLogs()}
       title={
-        <SearchableDropdown
-          className="w-96"
-          options={topologies}
-          onChange={onComponentSelect}
-          formatOptionLabel={formatOptionLabel}
-          isLoading={loading}
-          isDisabled={loading}
-          value={topology}
-        />
+        <h1 className="text-xl font-semibold">
+          Logs{topology ? `/${topology.name}` : ""}
+        </h1>
       }
+      contentClass={`h-full ${loaded || (Boolean(logs.length) ? "p-6" : "")}`}
       extra={
         <>
-          <RefreshButton onClick={() => loadLogs()} animate={loading} />
-          <div className="mr-2 w-full relative rounded-md shadow-sm">
+          <SearchableDropdown
+            className="w-96"
+            value={topology}
+            isLoading={loading}
+            options={topologies}
+            isDisabled={loading}
+            placeholder="Select component"
+            onChange={onComponentSelect}
+            formatOptionLabel={formatOptionLabel}
+          />
+          <div className="mx-2 w-80 relative rounded-md shadow-sm">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
               <button
                 type="button"
@@ -221,14 +207,18 @@ export function LogsPage() {
         </>
       }
     >
-      <div className="h-screen">
-        {loading && !logs.length && (
-          <Loading className="mt-40" text="Loading logs..." />
-        )}
-        {(loaded || Boolean(logs.length)) && (
-          <LogsViewer className="pt-4" logs={logs} />
-        )}
-      </div>
+      {loading
+        ? !logs.length && <Loading className="mt-40" text="Loading logs..." />
+        : !loaded && (
+            <div className="flex flex-col justify-center items-center h-5/6">
+              <h3 className="text-center font-semibold text-lg">
+                Please select a component to view the logs.
+              </h3>
+            </div>
+          )}
+      {(loaded || Boolean(logs.length)) && (
+        <LogsViewer className="pt-4" logs={logs} />
+      )}
     </SearchLayout>
   );
 }
