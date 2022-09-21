@@ -113,7 +113,7 @@ export function ResponderDetailsDialog({
       <div className="fixed inset-0 bg-black bg-opacity-25" />
       <div className="fixed inset-0 overflow-y-auto">
         <div className="flex min-h-full items-center justify-center p-4 text-center">
-          <Dialog.Panel className="w-dialog-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+          <Dialog.Panel className="w-dialog-md transform rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
             <Dialog.Title
               as="h3"
               className="text-lg font-medium leading-6 text-gray-900"
@@ -137,7 +137,7 @@ export function ResponderDetailsDialog({
                 </button>
               </div>
             </Dialog.Title>
-            <div className="mt-4 h-64 min-h-full mb-4">
+            <div className="mt-4 min-h-full mb-4">
               <div className="lg:border-t lg:border-b lg:border-gray-200 mt-5">
                 <nav className="mx-auto max-w-7xl" aria-label="Progress">
                   <ol

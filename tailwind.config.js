@@ -96,11 +96,13 @@ module.exports = {
         large: "250px",
         medium: "200px",
         small: "125px",
-        "50vh": "50vh"
+        "50vh": "50vh",
+        "modal-body-md": "500px"
       },
       minHeight: {
         12: "3rem",
-        "50vh": "50vh"
+        "50vh": "50vh",
+        "modal-body-md": "500px"
       },
       maxWidth: {
         full: "100%",
@@ -116,7 +118,7 @@ module.exports = {
         "7/10": "70%",
         "8/10": "80%",
         "9/10": "90%",
-        "32": "8rem"
+        32: "8rem"
       },
       width: {
         "med-card": "550px",
