@@ -96,7 +96,7 @@ export function TopologyCard({
       )}
       {...selectionModeRootProps}
     >
-      <div className="flex flex-row flex-nowrap bg-white -mt-1 rounded-t-md border-b">
+      <div className="flex flex-row -mt-1 bg-white border-b flex-nowrap rounded-t-md">
         <div className="flex pr-1 pt-2.5 pb-3.5 pl-2 overflow-hidden">
           <div className="text-gray-color m-auto mr-2.5 flex-initial max-w-1/4 leading-1.21rel">
             <h3 className="text-gray-color text-2xsi leading-1.21rel">
@@ -132,7 +132,7 @@ export function TopologyCard({
             <div className="pr-1.5 pt-1 flex min-w-7 justify-end items-start">
               <input
                 type="checkbox"
-                className="h-4 w-4 text-dark-blue outline-none rounded-4px focus:outline-none"
+                className="w-4 h-4 outline-none text-dark-blue rounded-4px focus:outline-none"
                 checked={selected}
                 readOnly
               />
@@ -144,14 +144,14 @@ export function TopologyCard({
       </div>
       <div className="flex flex-nowrap bg-lightest-gray rounded-b-8px">
         {metricsInFooter ? (
-          <div className="flex py-4 flex-1">
+          <div className="flex flex-1 py-4">
             <CardMetrics items={heading} />
           </div>
         ) : (
           <>
             {Boolean(properties.length) && (
               <CustomScroll
-                className="py-4 pl-2 flex-1"
+                className="flex-1 py-4 pl-2"
                 showMoreClass="text-xs linear-1.21rel mr-1 cursor-pointer"
                 maxHeight="200px"
                 minChildCount={6}
@@ -170,18 +170,14 @@ export function TopologyCard({
               </CustomScroll>
             )}
             <CustomScroll
-              className="pl-2 py-4 pr-2 flex-1"
+              className="flex-1 py-4 pl-2 pr-2"
               showMoreClass="text-xs linear-1.21rel mr-1 cursor-pointer"
               maxHeight="200px"
               minChildCount={6}
             >
-              {topology.components ? (
-                topology.components.map((component: any) => (
-                  <HealthSummary key={component.id} component={component} />
-                ))
-              ) : (
-                <HealthSummary component={topology} />
-              )}
+              {topology?.components?.map((component: any) => (
+                <HealthSummary key={component.id} component={component} />
+              ))}
             </CustomScroll>
           </>
         )}
