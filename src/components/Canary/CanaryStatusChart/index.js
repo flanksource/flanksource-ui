@@ -12,6 +12,7 @@ import {
 import { useEffect, useState } from "react";
 import { getCanaryGraph } from "../../../api/services/topology";
 import { Loading } from "../../Loading";
+import { getParamsFromURL } from "../utils";
 
 // @TODO: duration should be formatted properly, not just by ms
 const formatDuration = (duration) => `${duration}ms`;
@@ -22,13 +23,14 @@ export function CanaryStatusChart({ check, timeRange, ...rest }) {
   const [data, setData] = useState([]);
 
   useEffect(() => {
+    // eslint-disable-next-line no-restricted-globals
+    const searchParams = getParamsFromURL(location.search);
     const payload = {
       check: check.id,
       count: 300,
-      start: timeRange
+      start: searchParams.timeRange
     };
     getCanaryGraph(payload).then((results) => {
-      console.log(results.data.status, timeRange);
       setData(results.data.status);
     });
   }, [check]);
