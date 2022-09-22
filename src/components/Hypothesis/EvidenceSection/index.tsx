@@ -65,7 +65,11 @@ const EvidenceAccordion: React.FC<{
             {title || <span className="text-gray-400">(no title)</span>}
             {date && (
               <div className="text-gray-400 text-sm">
-                {formatDate(date, DATE_FORMATS.LONG) as string}
+                {
+                  formatDate(date, {
+                    stringFormat: DATE_FORMATS.LONG
+                  }) as string
+                }
               </div>
             )}
           </div>

@@ -16,8 +16,7 @@ import { useSearchParams } from "react-router-dom";
 import { getParamsFromURL } from "../utils";
 import { DATE_FORMATS, formatDate } from "../../../utils/date";
 
-// @TODO: duration should be formatted properly, not just by ms
-const formatDuration = (duration) => `${duration}ms`;
+const formatDuration = (duration) => formatDate(duration, { suffix: "ms" });
 
 const getFill = (entry) => (entry.status ? "#2cbd27" : "#df1a1a");
 
@@ -55,11 +54,14 @@ export function CanaryStatusChart({ check, ...rest }) {
   }
 
   // @TODO: date should be formatted properly depending on selection, not just by DD/MM
-  let customFormatDate = (date) => formatDate(date, DATE_FORMATS.TIME);
+  let customFormatDate = (date) =>
+    formatDate(date, { stringFormat: DATE_FORMATS.TIME });
   if (timeRange > 60 * 24 * 30) {
-    customFormatDate = (date) => formatDate(date, DATE_FORMATS.SHORT);
+    customFormatDate = (date) =>
+      formatDate(date, { stringFormat: DATE_FORMATS.SHORT });
   } else if (timeRange > 60 * 24) {
-    customFormatDate = (date) => formatDate(date, DATE_FORMATS.LONG);
+    customFormatDate = (date) =>
+      formatDate(date, { stringFormat: DATE_FORMATS.LONG });
   }
 
   return (

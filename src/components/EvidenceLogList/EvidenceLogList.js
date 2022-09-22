@@ -9,7 +9,7 @@ export const EvidenceLogList = ({ evidence }) => (
         <BsFillBarChartFill />
       </div>
       <p className="ml-2.5 text-sm leading-5 font-medium text-gray-900">
-        {formatDate(evidence.created_at, DATE_FORMATS.LONG)}
+        {formatDate(evidence.created_at, { stringFormat: DATE_FORMATS.LONG })}
       </p>
     </div>
     <p className="text-sm leading-5 font-medium truncate">

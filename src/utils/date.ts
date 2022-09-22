@@ -7,6 +7,12 @@ export enum DATE_FORMATS {
   TIME_RANGE = "YYYY-MM-DD HH:mm"
 }
 
+type formatDateOptions = {
+  suffix?: string;
+  asTimestamp?: boolean;
+  stringFormat?: DATE_FORMATS;
+};
+
 /**
  * Format date into local time and apply the string formatting if given
  * else the date object is parsed into local time
@@ -17,12 +23,14 @@ export enum DATE_FORMATS {
  */
 export const formatDate = (
   date: string | Date,
-  stringFormat?: DATE_FORMATS,
-  asTimestamp?: boolean
+  { asTimestamp, stringFormat, suffix }: formatDateOptions = {}
 ) => {
   const localDate = dayjs(date).local();
   if (asTimestamp) return localDate.valueOf().toString();
-  return stringFormat ? localDate.format(stringFormat) : localDate;
+  const formattedDate = stringFormat
+    ? localDate.format(stringFormat)
+    : localDate;
+  return suffix ? `${formattedDate}${suffix}` : formattedDate;
 };
 
 /**

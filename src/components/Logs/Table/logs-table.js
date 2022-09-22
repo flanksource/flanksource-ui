@@ -48,7 +48,11 @@ export const LogsTable = ({ logs: logsParam, actions, variant, viewOnly }) => {
                   <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
                 </div>
               )}
-              <p>{formatDate(row.original.timestamp, DATE_FORMATS.LONG)}</p>
+              <p>
+                {formatDate(row.original.timestamp, {
+                  stringFormat: DATE_FORMATS.LONG
+                })}
+              </p>
             </div>
           );
         }

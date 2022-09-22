@@ -22,16 +22,16 @@ const RecentlyRangesFC = ({
         <button
           type="button"
           onClick={() => applyTimeRange(range)}
-          key={`${formatDate(range.from, DATE_FORMATS.LONG)}${formatDate(
-            range.to,
-            DATE_FORMATS.LONG
-          )}`}
+          key={`${formatDate(range.from, {
+            stringFormat: DATE_FORMATS.LONG
+          })}${formatDate(range.to, { stringFormat: DATE_FORMATS.LONG })}`}
           className="hover:bg-gray-100 flex justify-between w-full cursor-pointer py-1.5 px-3 text-sm"
         >
-          {`${formatDate(range.from, DATE_FORMATS.TIME_RANGE)} to ${formatDate(
-            range.to,
-            DATE_FORMATS.TIME_RANGE
-          )}`}
+          {`${formatDate(range.from, {
+            stringFormat: DATE_FORMATS.TIME_RANGE
+          })} to ${formatDate(range.to, {
+            stringFormat: DATE_FORMATS.TIME_RANGE
+          })}`}
         </button>
       ))}
     </div>
