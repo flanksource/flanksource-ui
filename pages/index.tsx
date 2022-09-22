@@ -7,6 +7,7 @@ import ory from "../src/components/ory/sdk";
 import { App, CanaryCheckerApp } from "../src/App";
 import { Head } from "../src/components/Head/Head";
 import { Session } from "@ory/client";
+import { isCanaryUI } from "../src/constants";
 
 const Home: NextPage = () => {
   const [session, setSession] = useState<Session | undefined>();
@@ -44,9 +45,6 @@ const Home: NextPage = () => {
         return Promise.reject(err);
       });
   }, [router, isAuthEnabled]);
-
-  const isCanaryUI =
-    process.env.NEXT_PUBLIC_APP_DEPLOYMENT === "CANARY_CHECKER";
 
   if (!isAuthEnabled && !session) {
     return null;

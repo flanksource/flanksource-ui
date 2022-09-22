@@ -11,3 +11,6 @@ export const NodePodPropToLabelMap = {
   kubeProxy: "Kubernetes proxy",
   kubelet: "Kubelet "
 };
+
+export const isCanaryUI =
+  process.env.NEXT_PUBLIC_APP_DEPLOYMENT === "CANARY_CHECKER";
