@@ -1,7 +1,6 @@
 import { useForm, Controller } from "react-hook-form";
-// import history from "history/browser";
 
-import React, { Fragment, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { HiCheck } from "react-icons/hi";
 import { ChevronDownIcon } from "@heroicons/react/solid";
 import { LayoutDropdown } from "../../Dropdown/LayoutDropdown";
@@ -15,11 +14,7 @@ import { TimeRange } from "../../Dropdown/TimeRange";
 import { Toggle } from "../../Toggle";
 import { initialiseFormState, updateFormState, getDefaultForm } from "../state";
 
-import {
-  decodeUrlSearchParams,
-  encodeObjectToUrlSearchParams,
-  useUpdateParams
-} from "../url";
+import { decodeUrlSearchParams, useUpdateParams } from "../url";
 
 import { TristateToggle } from "../../TristateToggle";
 import { DropdownMenu } from "../../DropdownMenu";

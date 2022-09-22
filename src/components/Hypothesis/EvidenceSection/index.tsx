@@ -258,7 +258,7 @@ function HealthEvidenceViewer({ evidence }: { evidence: Evidence }) {
     const healthEvidence: any = evidence.evidence;
     const id = healthEvidence.check_id;
     const includeMessages = healthEvidence.includeMessages;
-    const start = healthEvidence.timeRange;
+    const start = healthEvidence.start;
     fetchCheckDetails(id, start, includeMessages);
   }, [evidence]);
 
@@ -281,12 +281,15 @@ function HealthEvidenceViewer({ evidence }: { evidence: Evidence }) {
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full h-64 mb-10">
       <Suspense fallback={<div>Loading..</div>}>
         {check && (
           <>
             <CheckTitle check={check} />
-            <CanaryStatusChart check={check} />
+            <CanaryStatusChart
+              timeRange={evidence?.evidence?.start}
+              check={check}
+            />
           </>
         )}
       </Suspense>

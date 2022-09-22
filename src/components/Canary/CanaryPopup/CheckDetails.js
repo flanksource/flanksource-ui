@@ -20,7 +20,7 @@ const CanaryStatusChart = React.lazy(() =>
   }))
 );
 
-export function CheckDetails({ check, attachAsEvidence, ...rest }) {
+export function CheckDetails({ check, timeRange, attachAsEvidence, ...rest }) {
   const prevCheck = usePrevious(check);
   const validCheck = check || prevCheck;
 
@@ -120,7 +120,7 @@ export function CheckDetails({ check, attachAsEvidence, ...rest }) {
         </div>
         <div className="w-full h-52 overflow-visible">
           <Suspense fallback={<div>Loading..</div>}>
-            <CanaryStatusChart check={validCheck} />
+            <CanaryStatusChart timeRange={timeRange} check={validCheck} />
           </Suspense>
         </div>
       </div>

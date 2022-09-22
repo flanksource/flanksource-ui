@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-// import history from "history/browser";
 import { Modal } from "../Modal";
 import { CheckDetails } from "./CanaryPopup/CheckDetails";
 import { CheckTitle } from "./CanaryPopup/CheckTitle";
@@ -84,6 +83,7 @@ const MinimalCanaryFC = ({
           <CheckDetails
             check={selectedCheck}
             attachAsEvidence={() => setAttachAsAsset(true)}
+            timeRange={timeRange}
             className={`flex flex-col overflow-y-hidden ${mixins.appleScrollbar}`}
           />
         </div>
