@@ -8,6 +8,8 @@ import { CanaryTable } from "./table";
 import mixins from "../../utils/mixins.module.css";
 import { getCanaries } from "../../api/services/topology";
 import { useSearchParams } from "react-router-dom";
+import { EvidenceType } from "../../api/services/evidence";
+import { AttachEvidenceDialog } from "../AttachEvidenceDialog";
 
 const MinimalCanaryFC = ({
   checks,
@@ -16,9 +18,12 @@ const MinimalCanaryFC = ({
   tableHeadStyle = {}
 }) => {
   const [searchParams] = useSearchParams();
-  const { tabBy, layout, timeRange } = searchParams;
+  const { tabBy, layout, timeRange } = Object.fromEntries(
+    searchParams.entries()
+  );
 
   const [selectedCheck, setSelectedCheck] = useState(null);
+  const [attachAsAsset, setAttachAsAsset] = useState(false);
 
   const handleCheckSelect = (check) => {
     const payload = {
@@ -52,6 +57,19 @@ const MinimalCanaryFC = ({
           theadStyle={tableHeadStyle}
         />
       )}
+      <AttachEvidenceDialog
+        isOpen={attachAsAsset}
+        onClose={() => setAttachAsAsset(false)}
+        evidence={{
+          check_id: selectedCheck?.id,
+          includeMessages: true,
+          start: timeRange
+        }}
+        type={EvidenceType.Health}
+        callback={(success) => {
+          console.log(success);
+        }}
+      />
       <Modal
         open={selectedCheck != null}
         onClose={() => setSelectedCheck(null)}
@@ -65,6 +83,7 @@ const MinimalCanaryFC = ({
         >
           <CheckDetails
             check={selectedCheck}
+            attachAsEvidence={() => setAttachAsAsset(true)}
             className={`flex flex-col overflow-y-hidden ${mixins.appleScrollbar}`}
           />
         </div>

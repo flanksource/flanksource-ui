@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { ChevronRightIcon, DotsVerticalIcon } from "@heroicons/react/outline";
 import { LogsTable } from "../../Logs/Table/logs-table";
@@ -8,6 +8,9 @@ import { Button } from "../../Button";
 import { BsTrash } from "react-icons/bs";
 import { Evidence, EvidenceType } from "../../../api/services/evidence";
 import { Link } from "react-router-dom";
+import { CanaryStatusChart } from "../../Canary/CanaryStatusChart";
+import { getCanaries } from "../../../api/services/topology";
+import { CheckTitle } from "../../Canary/CanaryPopup/CheckTitle";
 
 export function EvidenceItem({ evidence }: { evidence: Evidence }) {
   switch (evidence.type) {
@@ -33,6 +36,12 @@ export function EvidenceItem({ evidence }: { evidence: Evidence }) {
         >
           <ConfigEvidenceView evidenceItem={evidence} />
         </EvidenceAccordion>
+      );
+    case EvidenceType.Health:
+      return (
+        <div className="pt-2">
+          <HealthEvidenceViewer evidence={evidence} />
+        </div>
       );
     default:
       return null;
@@ -238,6 +247,49 @@ export function EvidenceSection({
           <div className="text-sm text-gray-400">Loading...</div>
         )}
       </div>
+    </div>
+  );
+}
+
+function HealthEvidenceViewer({ evidence }: { evidence: Evidence }) {
+  const [check, setCheck] = useState();
+
+  useEffect(() => {
+    const healthEvidence: any = evidence.evidence;
+    const id = healthEvidence.check_id;
+    const includeMessages = healthEvidence.includeMessages;
+    const start = healthEvidence.timeRange;
+    fetchCheckDetails(id, start, includeMessages);
+  }, [evidence]);
+
+  const fetchCheckDetails = (
+    id: string,
+    start: string,
+    includeMessages: boolean
+  ) => {
+    const payload = {
+      check: id,
+      includeMessages,
+      start
+    };
+    getCanaries(payload).then((results: any) => {
+      if (results == null || results.data.checks.length === 0) {
+        return;
+      }
+      setCheck(results.data.checks[0]);
+    });
+  };
+
+  return (
+    <div className="w-full">
+      <Suspense fallback={<div>Loading..</div>}>
+        {check && (
+          <>
+            <CheckTitle check={check} />
+            <CanaryStatusChart check={check} />
+          </>
+        )}
+      </Suspense>
     </div>
   );
 }

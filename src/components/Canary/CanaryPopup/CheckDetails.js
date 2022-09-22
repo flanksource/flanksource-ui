@@ -20,7 +20,7 @@ const CanaryStatusChart = React.lazy(() =>
   }))
 );
 
-export function CheckDetails({ check, ...rest }) {
+export function CheckDetails({ check, attachAsEvidence, ...rest }) {
   const prevCheck = usePrevious(check);
   const validCheck = check || prevCheck;
 
@@ -108,6 +108,12 @@ export function CheckDetails({ check, ...rest }) {
       </div>
       {/* chart section */}
       <div className="mb-3">
+        <button
+          className="btn-primary float-right"
+          onClick={(e) => attachAsEvidence()}
+        >
+          Attach as Evidence
+        </button>
         <div className="flex justify-between items-center mb-2">
           <span className="text-lg font-medium">Health overview</span>
           {/* <span className="text-sm font-medium">(time dropdown)</span> */}
