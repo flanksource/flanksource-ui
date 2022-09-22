@@ -75,7 +75,7 @@ export const IncidentDetails = ({
     type: "DATE_TO_DURATION" | "DATE",
     fallback = "-"
   ): string => {
-    if (!!date) return fallback;
+    if (!date) return fallback;
     switch (type) {
       case "DATE":
         return relativeDateTime(date);
