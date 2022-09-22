@@ -1,6 +1,6 @@
 import React from "react";
 import { BsFillBarChartFill } from "react-icons/bs";
-import { formatDate } from "../../utils/formatDate";
+import { formatDate } from "../../utils/date";
 
 export const EvidenceLogList = ({ evidence }) => (
   <div className="flex flex-row gap-x-10 py-1.5 border-b" key={evidence.id}>

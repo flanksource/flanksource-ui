@@ -2,7 +2,7 @@ import { memo } from "react";
 import { Dayjs } from "dayjs";
 
 import { displayTimeFormat, RangeOption } from "./rangeOptions";
-import { formatDate } from "../../utils/formatDate";
+import { formatDate } from "../../utils/date";
 
 type RecentlyRangesProps = {
   recentRanges: RangeOption[];

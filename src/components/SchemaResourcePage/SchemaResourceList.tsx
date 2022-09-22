@@ -2,7 +2,7 @@ import clsx from "clsx";
 import { Dayjs } from "dayjs";
 import { useNavigate } from "react-router-dom";
 import { SchemaResourceI } from "src/api/schemaResources";
-import { formatDate } from "../../utils/formatDate";
+import { formatDate } from "../../utils/date";
 import { Avatar } from "../Avatar";
 
 interface Props {

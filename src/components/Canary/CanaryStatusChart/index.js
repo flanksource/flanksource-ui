@@ -14,7 +14,7 @@ import { getCanaryGraph } from "../../../api/services/topology";
 import { Loading } from "../../Loading";
 import { useSearchParams } from "react-router-dom";
 import { getParamsFromURL } from "../utils";
-import { formatDate } from "../../../utils/formatDate";
+import { formatDate } from "../../../utils/date";
 
 // @TODO: duration should be formatted properly, not just by ms
 const formatDuration = (duration) => `${duration}ms`;

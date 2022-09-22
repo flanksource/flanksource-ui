@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import Convert from "ansi-to-html";
 import DOMPurify from "dompurify";
 import { useTable, useRowSelect } from "react-table";
@@ -7,7 +7,7 @@ import PropTypes from "prop-types";
 import { IndeterminateCheckbox } from "../../IndeterminateCheckbox/IndeterminateCheckbox";
 import { EvidenceType } from "../../../api/services/evidence";
 import { AttachEvidenceDialog } from "../../AttachEvidenceDialog";
-import { formatDate } from "../../../utils/formatDate";
+import { formatDate } from "../../../utils/date";
 
 const convert = new Convert();
 

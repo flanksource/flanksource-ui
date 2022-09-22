@@ -7,7 +7,7 @@ import { Button } from "../../Button";
 import { BsTrash } from "react-icons/bs";
 import { Evidence, EvidenceType } from "../../../api/services/evidence";
 import { Link } from "react-router-dom";
-import { formatDate } from "../../../utils/formatDate";
+import { formatDate } from "../../../utils/date";
 
 export function EvidenceItem({ evidence }: { evidence: Evidence }) {
   switch (evidence.type) {

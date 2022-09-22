@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form";
 import { Dayjs } from "dayjs";
 import { RiCloseCircleLine } from "react-icons/ri";
 import clsx from "clsx";
-
 import { IncidentDetailsRow } from "./IncidentDetailsRow";
 import { IncidentPriority } from "../../constants/incident-priority";
 import { priorities } from "./data";
@@ -25,7 +24,7 @@ import { Icon } from "../Icon";
 import { typeItems } from "../Incidents/data";
 import { ReactSelectDropdown } from "../ReactSelectDropdown";
 import { IconButton } from "../IconButton";
-import { formatDate } from "../../utils/formatDate";
+import { formatDate } from "../../utils/date";
 
 export const IncidentDetails = ({
   incident,

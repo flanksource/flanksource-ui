@@ -3,9 +3,7 @@ import { XIcon } from "@heroicons/react/outline";
 import clsx from "clsx";
 import { Dayjs } from "dayjs";
 import { MdTimer } from "react-icons/md";
-import { formatDate } from "../../../utils/formatDate";
-
-import { relativeDateTime } from "../../../utils/relativeDateTime";
+import { formatDate, relativeDateTime } from "../../../utils/date";
 import {
   AddResponderFormValues,
   getOrderedKeys,

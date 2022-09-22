@@ -5,7 +5,7 @@ import { AvatarGroup } from "../../AvatarGroup";
 import { IncidentStatusTag } from "../../IncidentStatusTag";
 import { IncidentSeverityTag } from "../../IncidentSeverityTag";
 import { IncidentTypeTag } from "../../incidentTypeTag";
-import { formatDate } from "../../../utils/formatDate";
+import { formatDate } from "../../../utils/date";
 
 export function IncidentList({ list, ...rest }) {
   return (
