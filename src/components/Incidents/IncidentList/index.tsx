@@ -1,11 +1,10 @@
 import { useNavigate } from "react-router-dom";
-import { Dayjs } from "dayjs";
 import { v4 as uuid } from "uuid";
 import { AvatarGroup } from "../../AvatarGroup";
 import { IncidentStatusTag } from "../../IncidentStatusTag";
 import { IncidentSeverityTag } from "../../IncidentSeverityTag";
 import { IncidentTypeTag } from "../../incidentTypeTag";
-import { formatDate, relativeDateTime } from "../../../utils/date";
+import { relativeDateTime } from "../../../utils/date";
 
 export function IncidentList({ list, ...rest }) {
   return (

@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Dayjs } from "dayjs";
 import { RiCloseCircleLine } from "react-icons/ri";
 import clsx from "clsx";
 import { IncidentDetailsRow } from "./IncidentDetailsRow";
@@ -24,7 +23,7 @@ import { Icon } from "../Icon";
 import { typeItems } from "../Incidents/data";
 import { ReactSelectDropdown } from "../ReactSelectDropdown";
 import { IconButton } from "../IconButton";
-import { DATE_FORMATS, formatDate, relativeDateTime } from "../../utils/date";
+import { relativeDateTime } from "../../utils/date";
 
 export const IncidentDetails = ({
   incident,
@@ -79,7 +78,7 @@ export const IncidentDetails = ({
     if (!!date) return fallback;
     switch (type) {
       case "DATE":
-        return formatDate(date, DATE_FORMATS.LONG) as string;
+        return relativeDateTime(date);
       case "DATE_TO_DURATION":
         return relativeDateTime(date, true);
       default:
