@@ -7,7 +7,7 @@ import { Button } from "../../Button";
 import { BsTrash } from "react-icons/bs";
 import { Evidence, EvidenceType } from "../../../api/services/evidence";
 import { Link } from "react-router-dom";
-import { formatDate } from "../../../utils/date";
+import { DATE_FORMATS, formatDate } from "../../../utils/date";
 
 export function EvidenceItem({ evidence }: { evidence: Evidence }) {
   switch (evidence.type) {
@@ -65,7 +65,7 @@ const EvidenceAccordion: React.FC<{
             {title || <span className="text-gray-400">(no title)</span>}
             {date && (
               <div className="text-gray-400 text-sm">
-                {formatDate(date, "HH:mm A, MMM DD, YYYY")}
+                {formatDate(date, DATE_FORMATS.LONG) as string}
               </div>
             )}
           </div>

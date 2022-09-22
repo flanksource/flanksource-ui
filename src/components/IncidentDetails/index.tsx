@@ -24,7 +24,7 @@ import { Icon } from "../Icon";
 import { typeItems } from "../Incidents/data";
 import { ReactSelectDropdown } from "../ReactSelectDropdown";
 import { IconButton } from "../IconButton";
-import { formatDate } from "../../utils/date";
+import { DATE_FORMATS, formatDate, relativeDateTime } from "../../utils/date";
 
 export const IncidentDetails = ({
   incident,
@@ -79,9 +79,9 @@ export const IncidentDetails = ({
     if (!!date) return fallback;
     switch (type) {
       case "DATE":
-        return formatDate(date, "YYYY-MM-DD HH:mm:ss") as string;
+        return formatDate(date, DATE_FORMATS.LONG) as string;
       case "DATE_TO_DURATION":
-        return (formatDate(date) as Dayjs).local().fromNow(true);
+        return relativeDateTime(date, true);
       default:
         return "";
     }

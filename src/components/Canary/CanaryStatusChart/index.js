@@ -14,7 +14,7 @@ import { getCanaryGraph } from "../../../api/services/topology";
 import { Loading } from "../../Loading";
 import { useSearchParams } from "react-router-dom";
 import { getParamsFromURL } from "../utils";
-import { formatDate } from "../../../utils/date";
+import { DATE_FORMATS, formatDate } from "../../../utils/date";
 
 // @TODO: duration should be formatted properly, not just by ms
 const formatDuration = (duration) => `${duration}ms`;
@@ -55,11 +55,11 @@ export function CanaryStatusChart({ check, ...rest }) {
   }
 
   // @TODO: date should be formatted properly depending on selection, not just by DD/MM
-  let customFormatDate = (date) => formatDate(date, "HH:mm");
+  let customFormatDate = (date) => formatDate(date, DATE_FORMATS.TIME);
   if (timeRange > 60 * 24 * 30) {
-    customFormatDate = (date) => formatDate(date, "MMM DD");
+    customFormatDate = (date) => formatDate(date, DATE_FORMATS.SHORT);
   } else if (timeRange > 60 * 24) {
-    customFormatDate = (date) => formatDate(date, "MMM DD HH:mm");
+    customFormatDate = (date) => formatDate(date, DATE_FORMATS.LONG);
   }
 
   return (

@@ -1,8 +1,6 @@
 import { memo } from "react";
-import { Dayjs } from "dayjs";
-
-import { displayTimeFormat, RangeOption } from "./rangeOptions";
-import { formatDate } from "../../utils/date";
+import { RangeOption } from "./rangeOptions";
+import { DATE_FORMATS, formatDate } from "../../utils/date";
 
 type RecentlyRangesProps = {
   recentRanges: RangeOption[];
@@ -24,14 +22,16 @@ const RecentlyRangesFC = ({
         <button
           type="button"
           onClick={() => applyTimeRange(range)}
-          key={`${(formatDate(range.from) as Dayjs).format()}${(
-            formatDate(range.to) as Dayjs
-          ).format()}`}
+          key={`${formatDate(range.from, DATE_FORMATS.LONG)}${formatDate(
+            range.to,
+            DATE_FORMATS.LONG
+          )}`}
           className="hover:bg-gray-100 flex justify-between w-full cursor-pointer py-1.5 px-3 text-sm"
         >
-          {`${(formatDate(range.from) as Dayjs).format(
-            displayTimeFormat
-          )} to ${(formatDate(range.to) as Dayjs).format(displayTimeFormat)}`}
+          {`${formatDate(range.from, DATE_FORMATS.TIME_RANGE)} to ${formatDate(
+            range.to,
+            DATE_FORMATS.TIME_RANGE
+          )}`}
         </button>
       ))}
     </div>

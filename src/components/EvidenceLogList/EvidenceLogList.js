@@ -1,6 +1,6 @@
 import React from "react";
 import { BsFillBarChartFill } from "react-icons/bs";
-import { formatDate } from "../../utils/date";
+import { DATE_FORMATS, formatDate } from "../../utils/date";
 
 export const EvidenceLogList = ({ evidence }) => (
   <div className="flex flex-row gap-x-10 py-1.5 border-b" key={evidence.id}>
@@ -9,7 +9,7 @@ export const EvidenceLogList = ({ evidence }) => (
         <BsFillBarChartFill />
       </div>
       <p className="ml-2.5 text-sm leading-5 font-medium text-gray-900">
-        {formatDate(evidence.created_at, "MMM DD, YYYY HH:mm.ss.SSS")}
+        {formatDate(evidence.created_at, DATE_FORMATS.LONG)}
       </p>
     </div>
     <p className="text-sm leading-5 font-medium truncate">

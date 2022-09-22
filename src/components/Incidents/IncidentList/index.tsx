@@ -5,7 +5,7 @@ import { AvatarGroup } from "../../AvatarGroup";
 import { IncidentStatusTag } from "../../IncidentStatusTag";
 import { IncidentSeverityTag } from "../../IncidentSeverityTag";
 import { IncidentTypeTag } from "../../incidentTypeTag";
-import { formatDate } from "../../../utils/date";
+import { formatDate, relativeDateTime } from "../../../utils/date";
 
 export function IncidentList({ list, ...rest }) {
   return (
@@ -56,7 +56,7 @@ function IncidentItem({ incident }) {
     created_at: createdAt
     // status
   } = incident;
-  const age = (formatDate(createdAt) as Dayjs).fromNow();
+  const age = relativeDateTime(createdAt, true);
   const navigate = useNavigate();
   const navigateToIncidentDetails = (id) => {
     navigate(`/incidents/${id}`);

@@ -2,7 +2,7 @@ import clsx from "clsx";
 import { Dayjs } from "dayjs";
 import { useNavigate } from "react-router-dom";
 import { SchemaResourceI } from "src/api/schemaResources";
-import { formatDate } from "../../utils/date";
+import { formatDate, relativeDateTime } from "../../utils/date";
 import { Avatar } from "../Avatar";
 
 interface Props {
@@ -84,10 +84,10 @@ function SchemaResourceListItem({
         {!!source && <a href={`${source}`}>Link</a>}
       </Cell>
       <Cell className="text-gray-500">
-        {(formatDate(created_at) as Dayjs).fromNow()}
+        {relativeDateTime(created_at, true)}
       </Cell>
       <Cell className="text-gray-500">
-        {(formatDate(updated_at) as Dayjs).fromNow()}
+        {relativeDateTime(updated_at, true)}
       </Cell>
       {created_by && (
         <Cell className="text-gray-500">{<Avatar user={created_by} />}</Cell>

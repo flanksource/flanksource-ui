@@ -7,7 +7,7 @@ import PropTypes from "prop-types";
 import { IndeterminateCheckbox } from "../../IndeterminateCheckbox/IndeterminateCheckbox";
 import { EvidenceType } from "../../../api/services/evidence";
 import { AttachEvidenceDialog } from "../../AttachEvidenceDialog";
-import { formatDate } from "../../../utils/date";
+import { DATE_FORMATS, formatDate } from "../../../utils/date";
 
 const convert = new Convert();
 
@@ -48,9 +48,7 @@ export const LogsTable = ({ logs: logsParam, actions, variant, viewOnly }) => {
                   <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
                 </div>
               )}
-              <p>
-                {formatDate(row.original.timestamp, "YYYY-MM-DD HH:mm.ss.SSS")}
-              </p>
+              <p>{formatDate(row.original.timestamp, DATE_FORMATS.LONG)}</p>
             </div>
           );
         }
