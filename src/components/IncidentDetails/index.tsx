@@ -422,6 +422,7 @@ export const IncidentDetails = ({
                 <AddResponder
                   className="flex justify-end flex-1 inline-block w-full"
                   onSuccess={() => fetchResponders()}
+                  incident={incident}
                 />
               </span>
             </button>

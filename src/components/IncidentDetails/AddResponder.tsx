@@ -37,6 +37,7 @@ import { toastError, toastSuccess } from "../Toast/toast";
 import { getAll } from "../../api/schemaResources";
 import { schemaResourceTypes } from "../SchemaResourcePage/resourceTypes";
 import _, { template, isEqual } from "lodash";
+import { severityItems, statusItems, typeItems } from "../Incidents/data";
 
 type Action = {
   label: string;
@@ -197,6 +198,7 @@ export type formPropKey = keyof AddResponderFormValues;
 type AddResponderProps = {
   onSuccess?: () => void;
   onError?: () => void;
+  incident: any;
 } & React.HTMLProps<HTMLDivElement>;
 
 export const getOrderedKeys = (responder: any): formPropKey[] => {
@@ -239,6 +241,7 @@ export const AddResponder = ({
   onSuccess = () => {},
   onError = () => {},
   className,
+  incident,
   ...rest
 }: AddResponderProps) => {
   const { loading, setLoading } = useLoader();
@@ -275,6 +278,17 @@ export const AddResponder = ({
     }
   });
   const watchAllFields = watch();
+  const incidentDetails = useMemo(() => {
+    return {
+      ...incident,
+      status:
+        incident.status === statusItems.open.value
+          ? statusItems.open.description
+          : statusItems.closed.description,
+      severity: severityItems[incident.severity]?.description,
+      type: typeItems[incident.type]?.description
+    };
+  }, [incident]);
 
   function replacePlaceholders(
     templateString: string,
@@ -298,6 +312,9 @@ export const AddResponder = ({
       const value = watchAllFields[prop];
       data[prop] = typeof value === "object" ? value?.name : value;
     });
+    data.incident = {
+      ...incidentDetails
+    };
     if (defaults) {
       const newDefaultValues: { [key: string]: any } = {};
       Object.keys(defaults || {}).forEach((key) => {
@@ -310,7 +327,7 @@ export const AddResponder = ({
     if (!isEqual(values, fixedValues)) {
       setFixedValues(values);
     }
-  }, [watchAllFields]);
+  }, [watchAllFields, selectedTeam, selectedType]);
 
   useEffect(() => {
     const teamsApiConfig = schemaResourceTypes.find(
