@@ -19,6 +19,11 @@ ENV BACKEND_URL="/__BACKEND_URL__"
 ENV NEXT_TELEMETRY_DISABLED 1
 ENV NEXT_PUBLIC_APP_DEPLOYMENT=${APP_DEPLOYMENT}
 RUN NEXT_STANDALONE_DEPLOYMENT=true npm run build
+
+# NextJS compiles routes-manifest.json at build time. Which means, it won't
+# pickup runtime environemnt variables. To support runtime environment, we
+# insert a unique template variable "/__BACKEND_URL__" and replace it at
+# runtime. See: https://github.com/vercel/next.js/issues/21888
 RUN cp .next/routes-manifest.json .next/routes-manifest.orig.json
 
 # Production image, copy all the files and run next
