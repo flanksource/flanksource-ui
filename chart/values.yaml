@@ -13,10 +13,11 @@ image:
 imagePullSecrets: []
 nameOverride: "flanksource-ui"
 fullnameOverride: "flanksource-ui"
-oryKratosURI: ""
+oryKratosURL: ""
+backendURL: ""
 
 # Option to disable auth on frontend.
-withoutOrySession: true
+withoutAuth: false
 
 serviceAccount:
   # Specifies whether a service account should be created

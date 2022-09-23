@@ -13,15 +13,19 @@ ARG APP_DEPLOYMENT=INCIDENT_MANAGER
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-ENV NEXT_TELEMETRY_DISABLED 1
+# A unique string to be replace at runtime, with the api host name, within the generated routes manifest.
+ENV BACKEND_URL="/__BACKEND_URL__"
 
+ENV NEXT_TELEMETRY_DISABLED 1
 ENV NEXT_PUBLIC_APP_DEPLOYMENT=${APP_DEPLOYMENT}
 RUN NEXT_STANDALONE_DEPLOYMENT=true npm run build
+RUN cp .next/routes-manifest.json .next/routes-manifest.orig.json
 
 # Production image, copy all the files and run next
 FROM node:16 AS runner
 WORKDIR /app
 
+ENV NEXT_PUBLIC_APP_DEPLOYMENT=${APP_DEPLOYMENT}
 ENV ORY_KRATOS_URL=${ORY_KRATOS_URL}
 ENV NODE_ENV production
 ENV NEXT_TELEMETRY_DISABLED 1
@@ -35,6 +39,9 @@ COPY --from=builder /app/public ./public
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/.next/routes-manifest.orig.json ./.next/routes-manifest.orig.json
+
+COPY ./scripts/nextjs-standalone-startup.sh startup.sh
 
 USER nextjs
 
@@ -42,4 +49,4 @@ EXPOSE 3000
 
 ENV PORT 3000
 
-CMD ["node", "server.js"]
+CMD ["bash", "startup.sh"]
