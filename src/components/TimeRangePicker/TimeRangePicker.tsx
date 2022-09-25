@@ -1,11 +1,13 @@
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+
+import clsx from "clsx";
 import { FiClock } from "react-icons/fi";
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
-import clsx from "clsx";
+
 import { TimeRangePickerBody } from "./TimeRangePickerBody";
-import "./index.css";
-import { createDisplayValue } from "./helpers";
+
 import { RangeOption } from "./rangeOptions";
+import { createDisplayValue } from "./helpers";
 
 type DateOrString = Date | string;
 
