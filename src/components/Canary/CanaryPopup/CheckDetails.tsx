@@ -8,7 +8,7 @@ import { CheckStat } from "./CheckStat";
 import { DetailField } from "./DetailField";
 import { StatusHistory } from "./StatusHistory";
 import { AccordionBox } from "../../AccordionBox";
-// import { TimeRangePicker } from "../../TimeRangePicker";
+import { TimeRangePicker } from "../../TimeRangePicker";
 
 import { Duration } from "../renderers";
 import { getUptimePercentage } from "./utils";
@@ -19,61 +19,92 @@ import {
 } from "../../../utils/common";
 
 import mixins from "../../../utils/mixins.module.css";
+import { isDate } from "lodash";
 
 export function fixedZero(val: number) {
   return val * 1 < 10 ? `0${val}` : val;
 }
 
-export function getTimeDistance(type: string) {
+export function getTimeDistance(
+  type: string,
+  start?: Date | string,
+  end?: Date | string
+) {
   const now = new Date();
+  const year = now.getFullYear();
   const oneDay = 1000 * 60 * 60 * 24;
 
-  if (type === "today") {
-    now.setHours(0);
-    now.setMinutes(0);
-    now.setSeconds(0);
-    return [now, new Date(now.getTime() + (oneDay - 1000))];
-  }
-
-  if (type === "week") {
-    let day = now.getDay();
-    now.setHours(0);
-    now.setMinutes(0);
-    now.setSeconds(0);
-
-    if (day === 0) {
-      day = 6;
-    } else {
-      day -= 1;
+  switch (type) {
+    case "today": {
+      now.setHours(0);
+      now.setMinutes(0);
+      now.setSeconds(0);
+      return {
+        start: now,
+        end: new Date(now.getTime() + (oneDay - 1000)),
+        value: "today"
+      };
     }
+    case "week": {
+      let day = now.getDay();
+      now.setHours(0);
+      now.setMinutes(0);
+      now.setSeconds(0);
 
-    const beginTime = now.getTime() - day * oneDay;
+      if (day === 0) {
+        day = 6;
+      } else {
+        day -= 1;
+      }
 
-    return [beginTime, new Date(beginTime + (7 * oneDay - 1000))];
+      const beginTime = now.getTime() - day * oneDay;
+
+      return {
+        start: new Date(beginTime),
+        end: new Date(beginTime + (7 * oneDay - 1000)),
+        value: "week"
+      };
+    }
+    case "month": {
+      const month = now.getMonth();
+      const nextDate = new Date(now.setMonth(now.getMonth() + 1));
+      const nextYear = nextDate.getFullYear();
+      const nextMonth = nextDate.getMonth();
+
+      return {
+        start: new Date(`${year}-${fixedZero(month + 1)}-01 00:00:00`),
+        end: new Date(
+          new Date(
+            `${nextYear}-${fixedZero(nextMonth + 1)}-01 00:00:00`
+          ).valueOf() - 1000
+        ),
+        value: "month"
+      };
+    }
+    case "year": {
+      return {
+        start: new Date(`${year}-01-01 00:00:00`),
+        end: new Date(`${year}-12-31 23:59:59`),
+        value: "year"
+      };
+    }
+    case "custom": {
+      if (isDate(start) && isDate(end)) {
+        return {
+          start: new Date(start),
+          end: new Date(end),
+          value: "custom"
+        };
+      }
+      break;
+    }
   }
 
-  const year = now.getFullYear();
-
-  if (type === "month") {
-    const month = now.getMonth();
-    const nextDate = new Date(now.setMonth(now.getMonth() + 1));
-    const nextYear = nextDate.getFullYear();
-    const nextMonth = nextDate.getMonth();
-
-    return [
-      new Date(`${year}-${fixedZero(month + 1)}-01 00:00:00`),
-      new Date(
-        new Date(
-          `${nextYear}-${fixedZero(nextMonth + 1)}-01 00:00:00`
-        ).valueOf() - 1000
-      )
-    ];
-  }
-
-  return [
-    new Date(`${year}-01-01 00:00:00`),
-    new Date(`${year}-12-31 23:59:59`)
-  ];
+  return {
+    start: new Date(`${year}-01-01 00:00:00`),
+    end: new Date(`${year}-12-31 23:59:59`),
+    value: "year"
+  };
 }
 
 const CanaryStatusChart = React.lazy(() =>
@@ -86,10 +117,7 @@ export function CheckDetails({ check, ...rest }) {
   const prevCheck = usePrevious(check);
   const validCheck = check || prevCheck;
 
-  const [rangeType, setRangeType] = useState<string>("month");
-  const [rangePickerValue, setRangePickerValue] = useState(
-    getTimeDistance("month")
-  );
+  const [dateRange, setDateRange] = useState(getTimeDistance("month"));
 
   if (validCheck == null) {
     return null;
@@ -125,21 +153,6 @@ export function CheckDetails({ check, ...rest }) {
     Location: validCheck?.location || "-",
     Schedule: validCheck?.schedule || "-"
   };
-
-  function handleRangePickerChange(
-    newRangePickerValue: ReturnType<typeof getTimeDistance>,
-    type?: string
-  ) {
-    if (!rangePickerValue) {
-      setRangePickerValue(getTimeDistance(type ?? "month"));
-      return;
-    }
-    if (type && rangePickerValue) {
-      setRangeType(type);
-      return;
-    }
-    setRangePickerValue(newRangePickerValue);
-  }
 
   return (
     <div {...rest}>
@@ -192,7 +205,7 @@ export function CheckDetails({ check, ...rest }) {
       <div className="mb-3">
         <div className="flex justify-between items-center mb-2">
           <span className="text-lg font-medium">Health overview</span>
-          <div className="flex flex-col">
+          <div className="flex flex-row">
             {[
               { id: 1, value: "today", label: "Today" },
               { id: 2, value: "week", label: "Week" },
@@ -201,22 +214,22 @@ export function CheckDetails({ check, ...rest }) {
             ].map((v) => (
               <span
                 className={clsx(
-                  "text-sm font-medium hover:bg-blue-100 cursor-pointer flex",
-                  v.value === rangeType ? "bold" : "inherit"
+                  "text-sm font-medium text-gray-600  hover:text-gray-900 cursor-pointer flex px-4 py-2",
+                  dateRange.value === v.value ? "font-bold" : "inherit"
                 )}
-                onClick={() =>
-                  handleRangePickerChange(getTimeDistance(v.value), v.value)
-                }
+                onClick={() => setDateRange(getTimeDistance(v.value))}
               >
                 {v.label}
               </span>
             ))}
-            {/* <TimeRangePicker
-              style={{ width: 256 }}
-              from={rangePickerValue[0].toString()}
-              to={rangePickerValue[2].toString()}
-              onChange={(v) => handleRangePickerChange(v)}
-            /> */}
+            <TimeRangePicker
+              style={{ width: 308 }}
+              from={dateRange?.start?.toString()}
+              to={dateRange?.end?.toString()}
+              onChange={(start, end) =>
+                setDateRange(getTimeDistance("custom", start, end))
+              }
+            />
           </div>
         </div>
         <div className="w-full h-52 overflow-visible">
