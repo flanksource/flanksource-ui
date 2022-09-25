@@ -1,18 +1,80 @@
-import React, { Suspense } from "react";
-import { usePrevious } from "../../../utils/hooks";
-import { Badge } from "../../Badge";
-import { AccordionBox } from "../../AccordionBox";
-import {
-  capitalizeFirstLetter,
-  toFixedIfNecessary
-} from "../../../utils/common";
-import mixins from "../../../utils/mixins.module.css";
+import React, { Suspense, useState } from "react";
+
+import clsx from "clsx";
+
 import { PopupTabs } from "./tabs";
+import { Badge } from "../../Badge";
 import { CheckStat } from "./CheckStat";
-import { getUptimePercentage } from "./utils";
-import { StatusHistory } from "./StatusHistory";
 import { DetailField } from "./DetailField";
+import { StatusHistory } from "./StatusHistory";
+import { AccordionBox } from "../../AccordionBox";
+// import { TimeRangePicker } from "../../TimeRangePicker";
+
 import { Duration } from "../renderers";
+import { getUptimePercentage } from "./utils";
+import { usePrevious } from "../../../utils/hooks";
+import {
+  toFixedIfNecessary,
+  capitalizeFirstLetter
+} from "../../../utils/common";
+
+import mixins from "../../../utils/mixins.module.css";
+
+export function fixedZero(val: number) {
+  return val * 1 < 10 ? `0${val}` : val;
+}
+
+export function getTimeDistance(type: string) {
+  const now = new Date();
+  const oneDay = 1000 * 60 * 60 * 24;
+
+  if (type === "today") {
+    now.setHours(0);
+    now.setMinutes(0);
+    now.setSeconds(0);
+    return [now, new Date(now.getTime() + (oneDay - 1000))];
+  }
+
+  if (type === "week") {
+    let day = now.getDay();
+    now.setHours(0);
+    now.setMinutes(0);
+    now.setSeconds(0);
+
+    if (day === 0) {
+      day = 6;
+    } else {
+      day -= 1;
+    }
+
+    const beginTime = now.getTime() - day * oneDay;
+
+    return [beginTime, new Date(beginTime + (7 * oneDay - 1000))];
+  }
+
+  const year = now.getFullYear();
+
+  if (type === "month") {
+    const month = now.getMonth();
+    const nextDate = new Date(now.setMonth(now.getMonth() + 1));
+    const nextYear = nextDate.getFullYear();
+    const nextMonth = nextDate.getMonth();
+
+    return [
+      new Date(`${year}-${fixedZero(month + 1)}-01 00:00:00`),
+      new Date(
+        new Date(
+          `${nextYear}-${fixedZero(nextMonth + 1)}-01 00:00:00`
+        ).valueOf() - 1000
+      )
+    ];
+  }
+
+  return [
+    new Date(`${year}-01-01 00:00:00`),
+    new Date(`${year}-12-31 23:59:59`)
+  ];
+}
 
 const CanaryStatusChart = React.lazy(() =>
   import("../CanaryStatusChart").then(({ CanaryStatusChart }) => ({
@@ -23,6 +85,11 @@ const CanaryStatusChart = React.lazy(() =>
 export function CheckDetails({ check, ...rest }) {
   const prevCheck = usePrevious(check);
   const validCheck = check || prevCheck;
+
+  const [rangeType, setRangeType] = useState<string>("month");
+  const [rangePickerValue, setRangePickerValue] = useState(
+    getTimeDistance("month")
+  );
 
   if (validCheck == null) {
     return null;
@@ -58,6 +125,21 @@ export function CheckDetails({ check, ...rest }) {
     Location: validCheck?.location || "-",
     Schedule: validCheck?.schedule || "-"
   };
+
+  function handleRangePickerChange(
+    newRangePickerValue: ReturnType<typeof getTimeDistance>,
+    type?: string
+  ) {
+    if (!rangePickerValue) {
+      setRangePickerValue(getTimeDistance(type ?? "month"));
+      return;
+    }
+    if (type && rangePickerValue) {
+      setRangeType(type);
+      return;
+    }
+    setRangePickerValue(newRangePickerValue);
+  }
 
   return (
     <div {...rest}>
@@ -110,7 +192,32 @@ export function CheckDetails({ check, ...rest }) {
       <div className="mb-3">
         <div className="flex justify-between items-center mb-2">
           <span className="text-lg font-medium">Health overview</span>
-          {/* <span className="text-sm font-medium">(time dropdown)</span> */}
+          <div className="flex flex-col">
+            {[
+              { id: 1, value: "today", label: "Today" },
+              { id: 2, value: "week", label: "Week" },
+              { id: 3, value: "month", label: "Month" },
+              { id: 4, value: "year", label: "Year" }
+            ].map((v) => (
+              <span
+                className={clsx(
+                  "text-sm font-medium hover:bg-blue-100 cursor-pointer flex",
+                  v.value === rangeType ? "bold" : "inherit"
+                )}
+                onClick={() =>
+                  handleRangePickerChange(getTimeDistance(v.value), v.value)
+                }
+              >
+                {v.label}
+              </span>
+            ))}
+            {/* <TimeRangePicker
+              style={{ width: 256 }}
+              from={rangePickerValue[0].toString()}
+              to={rangePickerValue[2].toString()}
+              onChange={(v) => handleRangePickerChange(v)}
+            /> */}
+          </div>
         </div>
         <div className="w-full h-52 overflow-visible">
           <Suspense fallback={<div>Loading..</div>}>
