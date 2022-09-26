@@ -1,6 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
-import { debounce } from "lodash";
+import React, { useCallback, useEffect, useState } from "react";
+import { debounce, isEmpty } from "lodash";
 import {
   encodeObjectToUrlSearchParams,
   useUpdateParams,
@@ -29,6 +28,8 @@ import { isCanaryUI } from "../../context/Environment";
 import clsx from "clsx";
 import dayjs from "dayjs";
 import HealthPageSkeletonLoader from "../SkeletonLoader/HealthPageSkeletonLoader";
+import { HealthChecksResponse } from "../../types/healthChecks";
+import { useSearchParams } from "react-router-dom";
 
 const FilterKeyToLabelMap = {
   environment: "Environment",
@@ -48,35 +49,45 @@ const getPassingCount = (checks) => {
   return count;
 };
 
-const getStartValue = (start: string) => {
-  if (!start.includes("mo")) {
-    return start;
-  }
-
-  return dayjs()
-    .subtract(+(start.match(/\d/g)?.[0] ?? "1"), "month")
-    .toISOString();
+type CanaryProps = {
+  url?: string;
+  refreshInterval?: number;
+  topLayoutOffset?: number;
+  hideSearch?: boolean;
+  hideTimeRange: boolean;
+  onLoading?: (loading: boolean) => void;
+  /**
+   * When this changes, refresh button has been clicked will be triggered immediately
+   */
+  triggerRefresh?: number;
 };
 
 export function Canary({
   url = "/api/canary/api",
   refreshInterval = 15 * 1000,
   topLayoutOffset = 0,
+  hideSearch,
+  hideTimeRange,
+  triggerRefresh,
   onLoading = (_loading) => {}
-}) {
+}: CanaryProps) {
   const updateParams = useUpdateParams();
+  const [searchParams] = useSearchParams();
+  const timeRange = searchParams.get("timeRange");
+
   // force-set layout to table
   useEffect(() => {
     updateParams({ layout: "table" });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const [isLoading, setIsLoading] = useState(true);
-  const [_, setLastUpdated] = useState("");
+
   const {
     healthState: { checks, filteredChecks, filteredLabels, passing },
     setHealthState
   } = useHealthPageContext();
-  const [timerRef, setTimerRef] = useState();
+  const [timerRef, setTimerRef] = useState<NodeJS.Timer>();
   const [abortController] = useState(() => {
     return new AbortController();
   });
@@ -100,7 +111,7 @@ export function Canary({
         }
       };
     });
-  }, [checks]);
+  }, [checks, setHealthState]);
 
   useEffect(() => {
     setHealthState((state) => {
@@ -112,7 +123,7 @@ export function Canary({
         }
       };
     });
-  }, [filteredChecks]);
+  }, [filteredChecks, setHealthState]);
 
   const updateFilteredChecks = useCallback((newFilteredChecks) => {
     setHealthState((state) => {
@@ -123,13 +134,12 @@ export function Canary({
     });
   }, []);
 
-  const [searchParams] = useSearchParams();
-
   const handleFetch = debounce(async () => {
     if (url == null) {
       return;
     }
     clearTimeout(timerRef);
+
     const params = encodeObjectToUrlSearchParams({
       start: getStartValue(searchParams.get("timeRange") ?? timeRanges[0].value)
     });
@@ -139,16 +149,13 @@ export function Canary({
       const result = await fetch(`${url}?${params}`, {
         signal: abortController.signal
       });
-      const data = await result.json();
+      const data = (await result.json()) as HealthChecksResponse;
       setHealthState((state) => {
         return {
           ...state,
           checks: data?.checks || []
         };
       });
-      if (data?.checks?.length) {
-        setLastUpdated(new Date());
-      }
     } catch (ex) {
       if (ex instanceof DOMException && ex.name === "AbortError") {
         return;
@@ -162,7 +169,8 @@ export function Canary({
 
   useEffect(() => {
     handleFetch();
-  }, [refreshInterval]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refreshInterval, timeRange, triggerRefresh]);
 
   useEffect(() => {
     return () => {
@@ -186,67 +194,68 @@ export function Canary({
         isCanaryUI ? " h-screen overflow-y-auto" : ""
       )}
     >
-      <SidebarSticky topHeight={topLayoutOffset}>
-        <div className="mb-4">
-          <StatCard
-            title="All Checks"
-            className="mb-4"
-            customValue={
-              <>
-                {checks.length || 0}
-                <span className="text-xl font-light">
-                  {" "}
-                  (<span className="text-green-500">{passing.checks}</span>/
-                  <span className="text-red-500">
-                    {" "}
-                    {checks.length - passing.checks}
-                  </span>
-                  )
-                </span>
-              </>
-            }
-          />
-
-          {filteredChecks.length !== checks.length && (
+      <div className="flex flex-row place-content-center">
+        {/* @ts-expect-error */}
+        <SidebarSticky topHeight={topLayoutOffset}>
+          <div className="mb-4">
+            {/* @ts-expect-error */}
             <StatCard
-              title="Filtered Checks"
+              title="All Checks"
               className="mb-4"
               customValue={
                 <>
-                  {filteredChecks.length}
-                  <span className="text-xl  font-light">
+                  {checks?.length || 0}
+                  <span className="text-xl font-light">
                     {" "}
-                    (<span className="text-green-500">{passing.filtered}</span>/
+                    (<span className="text-green-500">{passing.checks}</span>/
                     <span className="text-red-500">
-                      {filteredChecks.length - passing.filtered}
+                      {" "}
+                      {checks!.length - passing.checks}
                     </span>
                     )
                   </span>
                 </>
               }
             />
-          )}
-        </div>
 
-        <SectionTitle className="mb-4">Filter by Time Range</SectionTitle>
-        <div className="mb-4 mr-2 w-full">
-          <DropdownStandaloneWrapper
-            dropdownElem={<TimeRange />}
-            defaultValue={searchParams.get("timeRange") ?? timeRanges[0].value}
-            paramKey="timeRange"
-            className="w-full mr-2"
-          />
-        </div>
-        <SectionTitle className="mb-4">Filter by Health</SectionTitle>
-        <div className="mb-6 flex items-center">
-          <div className="h-9 flex items-center">
-            <HidePassingToggle />
+            {filteredChecks.length !== checks?.length && (
+              <>
+                {/* @ts-expect-error */}
+                <StatCard
+                  title="Filtered Checks"
+                  className="mb-4"
+                  customValue={
+                    <>
+                      {filteredChecks.length}
+                      <span className="text-xl  font-light">
+                        {" "}
+                        (
+                        <span className="text-green-500">
+                          {passing.filtered}
+                        </span>
+                        /
+                        <span className="text-red-500">
+                          {filteredChecks.length - passing.filtered}
+                        </span>
+                        )
+                      </span>
+                    </>
+                  }
+                />
+              </>
+            )}
           </div>
-          <div className="text-sm text-gray-800 mb-0">Hide Passing</div>
-        </div>
-        <SectionTitle className="mb-5 flex justify-between items-center">
-          Filter by Label{" "}
-          {/* <button
+
+          <SectionTitle className="mb-4">Filter by Health</SectionTitle>
+          <div className="mb-6 flex items-center">
+            <div className="h-9 flex items-center">
+              <HidePassingToggle />
+            </div>
+            <div className="text-sm text-gray-800 mb-0">Hide Passing</div>
+          </div>
+          <SectionTitle className="mb-5 flex justify-between items-center">
+            Filter by Label{" "}
+            {/* <button
               type="button"
               onClick={() => {
                 updateParams({ labels: {} });
@@ -255,27 +264,31 @@ export function Canary({
             >
               Clear All
             </button> */}
-        </SectionTitle>
-        <div className="mb-4 mr-2 w-full">
-          <LabelFilterList labels={filteredLabels} />
-        </div>
-      </SidebarSticky>
-
-      <div className="flex-grow p-6 max-w-7xl">
-        <div className="flex flex-wrap mb-2">
-          <div className="flex-1">
-            <CanarySearchBar
-              onChange={(e) => handleSearch(e.target.value)}
-              onSubmit={(value) => handleSearch(value)}
-              onClear={() => handleSearch("")}
-              style={{ maxWidth: "480px", width: "100%" }}
-              inputClassName="w-full py-2 mr-2 mb-px"
-              inputOuterClassName="w-full"
-              placeholder="Search by name, description, or endpoint"
-              defaultValue={searchParams?.query}
-            />
+          </SectionTitle>
+          <div className="mb-4 mr-2 w-full">
+            <LabelFilterList labels={filteredLabels} />
           </div>
-          <div className="flex-1 flex justify-end">
+        </SidebarSticky>
+
+        <div className="flex-grow p-6 max-w-7xl">
+          {!hideSearch && (
+            <div className="flex flex-wrap mb-2">
+              <CanarySearchBar
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  handleSearch(e.target.value)
+                }
+                onSubmit={(value: any) => handleSearch(value)}
+                onClear={() => handleSearch("")}
+                style={{ maxWidth: "480px", width: "100%" }}
+                inputClassName="w-full py-2 mr-2 mb-px"
+                inputOuterClassName="w-full"
+                placeholder="Search by name, description, or endpoint"
+                defaultValue={searchParams.get("query")}
+              />
+            </div>
+          )}
+
+          <div className="flex flex-wrap mb-2">
             <div className="mb-2 mr-2">
               <DropdownStandaloneWrapper
                 dropdownElem={<GroupByDropdown />}
@@ -305,27 +318,36 @@ export function Canary({
                 }
               />
             </div>
+            {!hideTimeRange && (
+              <DropdownStandaloneWrapper
+                dropdownElem={<TimeRange />}
+                defaultValue={timeRanges[0].value}
+                paramKey="timeRange"
+                className="w-56 mb-2 mr-2"
+                prefix={
+                  <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
+                    Time Range:
+                  </div>
+                }
+              />
+            )}
           </div>
-        </div>
-        <div className="pb-4">
-          <CanaryInterfaceMinimal
-            checks={checks}
-            searchParams={searchParams}
-            onLabelFiltersCallback={labelUpdateCallback}
-            onFilterCallback={updateFilteredChecks}
-          />
+          <div className="pb-4">
+            <CanaryInterfaceMinimal
+              checks={checks}
+              searchParams={searchParams}
+              onLabelFiltersCallback={labelUpdateCallback}
+              onFilterCallback={updateFilteredChecks}
+            />
+          </div>
         </div>
       </div>
     </div>
   );
 }
 
-type LabelFilterListProps = {
-  labels: Record<string, string[]>;
-};
-
-export const LabelFilterList = ({ labels }: LabelFilterListProps) => {
-  const [list, setList] = useState<Record<string, string[]>>({});
+export const LabelFilterList = ({ labels }: { labels: any }) => {
+  const [list, setList] = useState({});
   useEffect(() => {
     if (labels) {
       const [bl, nbl] = separateLabelsByBooleanType(Object.values(labels));

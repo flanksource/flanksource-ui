@@ -14,6 +14,10 @@ type Props = {
 
 export function HealthPage({ url }: Props) {
   const [loading, setLoading] = useState(true);
+  /**
+   * Refresh page whenever clicked, increment state to trigger useEffect
+   */
+  const [triggerRefresh, setTriggerRefresh] = useState(0);
   const [queryParams, setQueryParams] = useSearchParams();
 
   const handleSearch = debounce((query) => {
@@ -28,7 +32,7 @@ export function HealthPage({ url }: Props) {
       extra={
         <>
           <RefreshDropdown
-            onClick={() => handleSearch(query || "")}
+            onClick={() => setTriggerRefresh(triggerRefresh + 1)}
             isLoading={loading}
           />
           <DropdownStandaloneWrapper
@@ -53,7 +57,13 @@ export function HealthPage({ url }: Props) {
       }
       contentClass="p-0"
     >
-      <Canary url={url} hideSearch hideTimeRange onLoading={setLoading} />
+      <Canary
+        url={url}
+        hideSearch
+        hideTimeRange
+        onLoading={(loading) => setLoading(loading)}
+        triggerRefresh={triggerRefresh}
+      />
     </SearchLayout>
   );
 }
