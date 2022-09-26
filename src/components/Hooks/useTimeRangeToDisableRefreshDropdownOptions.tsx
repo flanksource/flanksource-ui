@@ -35,7 +35,6 @@ export default function useTimeRangeToDisableRefreshDropdownOptions() {
 
   useEffect(() => {
     // ensure we are only working with a string, not array or undefined
-    console.log({ timeRange });
     if (typeof timeRange === "string") {
       // timeRange is a string, in the format of 1h, 2h, 3h, 1d etc
       const timeRangeRealValue = calculateTimeRangeRealValue(timeRange);
