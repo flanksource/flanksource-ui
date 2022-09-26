@@ -1,20 +1,23 @@
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+
 import dayjs from "dayjs";
+import history from "history/browser";
 import {
-  ScatterChart,
+  Cell,
+  XAxis,
+  YAxis,
   Scatter,
   Tooltip,
-  Cell,
-  ResponsiveContainer,
+  ScatterChart,
   CartesianGrid,
-  XAxis,
-  YAxis
+  ResponsiveContainer,
 } from "recharts";
-import { useEffect, useState } from "react";
-import history from "history/browser";
-import { getCanaryGraph } from "../../../api/services/topology";
+
 import { Loading } from "../../Loading";
-import { useSearchParams } from "react-router-dom";
+
 import { getParamsFromURL } from "../utils";
+import { getCanaryGraph } from "../../../api/services/topology";
 
 // @TODO: duration should be formatted properly, not just by ms
 const formatDuration = (duration) => `${duration}ms`;
