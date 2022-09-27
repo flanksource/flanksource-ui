@@ -79,6 +79,14 @@ export function SearchSelectTag({
   className
 }: SearchSelectTagProps) {
   const tagList = useMemo(() => {
+    if (!tags)
+      return [
+        {
+          label: "All",
+          data: [],
+          value: "All"
+        }
+      ];
     const seen = new Set();
     const tagList = tags
       .map(([key, val]) => {

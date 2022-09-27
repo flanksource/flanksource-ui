@@ -37,7 +37,7 @@ const selectStyles: StylesConfig<StateOption, false> = {
 type ReactSelectDropdownProps = {
   className?: string;
   label?: string;
-  control?: Control<any>;
+  control?: any;
   items?:
     | {
         [key: string]: StateOption;

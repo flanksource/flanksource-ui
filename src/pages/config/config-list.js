@@ -44,13 +44,12 @@ export function ConfigListPage() {
     return [ConfigFilterViewTypes.basic, ConfigFilterViewTypes.advanced];
   }, []);
 
-  const configTagItems = useMemo(
-    () =>
-      data.flatMap((d) => {
-        return Object.entries(d?.tags || {});
-      }),
-    [data]
-  );
+  const configTagItems = useMemo(() => {
+    if (!data) return [];
+    data.flatMap((d) => {
+      return Object.entries(d?.tags || {});
+    });
+  }, [data]);
 
   const search = params.get("search");
   const tag = decodeURIComponent(params.get("tag") || "All");
