@@ -5,58 +5,28 @@ import { User } from "./users";
 export enum EvidenceType {
   Log = "log",
   Config = "config",
-  Topology = "topology"
+  Topology = "topology",
+  Check = "check",
+  ConfigAnalysis = "config_analysis",
+  ConfigChange = "config_change"
 }
 
-interface EvidenceBase {
+export type Evidence = {
   user: User;
   id: string;
   hypothesisId: string;
+  component_id: string;
+  config_id: string;
+  config_analysis_id: string;
+  config_change_id: string;
+  check_id: string;
+  evidence: object;
   description: string;
   properties: string;
   created_at: string;
   created_by: User;
-}
-
-type LogEvidenceAttachment = {
-  type: EvidenceType.Log;
-  evidence: {
-    lines: {
-      timestamp: string;
-      message: string;
-      labels: { [index: string]: string };
-    }[];
-  };
+  type: EvidenceType;
 };
-
-type ConfigEvidenceAttachment = {
-  type: EvidenceType.Config;
-  evidence: {
-    id: string;
-    lines: string[];
-    configName: string;
-    configType: string;
-    selected_lines: { [index: string]: string };
-  };
-};
-
-type TopologyEvidenceAttachment = {
-  type: EvidenceType.Topology;
-  evidence: {
-    id: string;
-  };
-};
-
-export type EvidenceAttachment =
-  | TopologyEvidenceAttachment
-  | ConfigEvidenceAttachment
-  | LogEvidenceAttachment;
-
-type LogEvidence = LogEvidenceAttachment & EvidenceBase;
-type ConfigEvidence = ConfigEvidenceAttachment & EvidenceBase;
-type TopologyEvidence = TopologyEvidenceAttachment & EvidenceBase;
-
-export type Evidence = TopologyEvidence | ConfigEvidence | LogEvidence;
 
 export const getAllEvidenceByHypothesis = async (hypothesisId: string) => {
   const { data, error } = await resolve<Evidence[]>(
@@ -75,12 +45,29 @@ export const getEvidence = async (id: string) =>
   resolve(IncidentCommander.get(`/evidences?id=eq.${id}`));
 
 export const createEvidence = async (args: Evidence) => {
-  const { user, id, hypothesisId, evidence, type, description, properties } =
-    args;
+  const {
+    user,
+    id,
+    hypothesisId,
+    evidence,
+    config_id,
+    config_change_id,
+    config_analysis_id,
+    component_id,
+    check_id,
+    type,
+    description,
+    properties
+  } = args;
 
   return resolve(
     IncidentCommander.post(`/evidences`, {
       id,
+      config_id,
+      config_analysis_id,
+      config_change_id,
+      component_id,
+      check_id,
       created_by: user.id,
       hypothesis_id: hypothesisId,
       evidence,

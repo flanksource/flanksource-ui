@@ -29,11 +29,15 @@ import { IItem } from "../../types/IItem";
 import { toastSuccess } from "../Toast/toast";
 import { Link } from "react-router-dom";
 import { typeItems } from "../Incidents/data";
-import { Dropdown } from "../Dropdown";
 import { ReactSelectDropdown } from "../ReactSelectDropdown";
 
 interface Props {
   title: string;
+  config_id: string;
+  config_change_id: string;
+  config_analysis_d: string;
+  component_id: string;
+  check_id: string;
   disabled?: boolean;
   selectedLogs?: any;
   callback?: (success: boolean) => void;
@@ -148,6 +152,11 @@ const validationSchema = yup
 
 export function AttachEvidenceDialog({
   title,
+  config_id,
+  check_id,
+  config_change_id,
+  config_analysis_id,
+  component_id,
   evidence: evidenceAttachment,
   type,
   callback = () => {},
@@ -269,7 +278,13 @@ export function AttachEvidenceDialog({
     }
 
     if (isNewHypothesis) {
-      const nodeDetails = { type: "root" };
+      /* type should be root, if it's the first for an incident? */
+      const nodeDetails = isNewIncident
+        ? { type: "root" }
+        : {
+            type: "factor",
+            parent_id: incidentData?.details?.rootId
+          };
 
       const params = {
         user,
@@ -291,11 +306,18 @@ export function AttachEvidenceDialog({
 
     const evidence = {
       user,
+      check_id,
+      config_id,
+      config_change_id,
+      config_analysis_id,
+      component_id,
       hypothesisId: hypothesisId,
       evidence: evidenceAttachment,
       type,
       description: data.description
     };
+
+    console.log(evidence);
 
     createEvidence(evidence)
       .then(() => {
