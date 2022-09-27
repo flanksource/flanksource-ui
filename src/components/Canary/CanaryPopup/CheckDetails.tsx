@@ -55,7 +55,7 @@ export function CheckDetails({ check, ...rest }) {
           value = "";
         }
         return (
-          <Badge className="mr-1 mb-1" key={key} text={key} value={value} />
+          <Badge className="mb-1 mr-1" key={key} text={key} value={value} />
         );
       }),
     Owner: validCheck?.owner || "-",
@@ -113,16 +113,16 @@ export function CheckDetails({ check, ...rest }) {
       </div>
       {/* chart section */}
       <div className="mb-3">
-        <div className="flex justify-between items-center mb-2">
+        <div className="flex items-center justify-between mb-2">
           <span className="text-lg font-medium">Health overview</span>
-            <DropdownStandaloneWrapper
-              dropdownElem={<TimeRange />}
-              defaultValue={timeRanges[0].value}
-              paramKey="timeRange"
-              className="w-40 mr-2"
-            />
+          <DropdownStandaloneWrapper
+            dropdownElem={<TimeRange />}
+            defaultValue={timeRanges[0].value}
+            paramKey="timeRange"
+            className="w-40 mr-2"
+          />
         </div>
-        <div className="w-full h-52 overflow-visible">
+        <div className="w-full overflow-visible h-52">
           <Suspense fallback={<div>Loading..</div>}>
             <CanaryStatusChart check={validCheck} />
           </Suspense>
@@ -153,7 +153,7 @@ export function CheckDetails({ check, ...rest }) {
                 {statusHistoryList && statusHistoryList.length > 0 ? (
                   <StatusHistory check={validCheck} sticky />
                 ) : (
-                  <div className="h-64 flex items-center justify-center text-gray-400 text-md">
+                  <div className="flex items-center justify-center h-64 text-gray-400 text-md">
                     No status history available
                   </div>
                 )}

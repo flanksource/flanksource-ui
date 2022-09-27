@@ -137,12 +137,12 @@ export const ReactSelectDropdown = ({
             <div className="flex items-center">
               {prefix}
               {SelectedOption?.icon && <div>{SelectedOption.icon}</div>}
-              <span className="ml-2 block truncate">
+              <span className="block ml-2 truncate">
                 {SelectedOption?.description}
               </span>
             </div>
             <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-              <ChevronDown className="h-5 w-5 text-gray-400" />
+              <ChevronDown className="w-5 h-5 text-gray-400" />
             </span>
           </div>
         </div>
@@ -297,7 +297,7 @@ const Dropdown: FunctionComponent<DropdownProps> = ({
   <div ref={inputRef} className="relative">
     {target}
     {isOpen ? (
-      <Menu className="absolute bg-white z-50 drop-shadow-md">{children}</Menu>
+      <Menu className="absolute z-50 bg-white drop-shadow-md">{children}</Menu>
     ) : null}
     {isOpen ? <Blanket onClick={onClose} /> : null}
   </div>
