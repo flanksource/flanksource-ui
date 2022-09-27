@@ -1,5 +1,4 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import React from "react";
 import { Controller, useForm } from "react-hook-form";
 
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -9,7 +8,6 @@ import { createEvidence, EvidenceType } from "../../../api/services/evidence";
 import { createHypothesisOld } from "../../../api/services/hypothesis";
 import { createIncident } from "../../../api/services/incident";
 import { useUser } from "../../../context";
-import { Dropdown } from "../../Dropdown";
 import { ReactSelectDropdown } from "../../ReactSelectDropdown";
 import { TextInput } from "../../TextInput";
 import { toastError } from "../../Toast/toast";
