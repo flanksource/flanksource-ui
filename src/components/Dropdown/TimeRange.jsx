@@ -1,6 +1,4 @@
-import React from "react";
 import { BsClock } from "react-icons/bs";
-import { Dropdown } from ".";
 import { ReactSelectDropdown } from "../ReactSelectDropdown";
 
 export const timeRanges = [
