@@ -29,6 +29,14 @@ const formatDuration = (duration: number) => `${duration}ms`;
 
 const getFill = (entry: StatusType) => (entry ? "#df1a1a" : "#2cbd27");
 
+function updateDataKeyValue(key: number, a: {}, b: StatusType) {
+  a[key] = {
+    time: b.time,
+    duration: a[key] ? a[key].duration + b.duration : b.duration
+  };
+  return a;
+}
+
 function getUpdatedDataAndFormat(start: string, currentData: StatusType[]) {
   let format = "HH:mm";
   let newData = {};
@@ -39,43 +47,31 @@ function getUpdatedDataAndFormat(start: string, currentData: StatusType[]) {
     case "6h":
     case "12h":
     case "1d": {
-      newData = currentData.reduce((a, b) => {
-        format = "HH:00";
-        const key = dayjs(b.time).hour();
-        a[key] = {
-          time: b.time,
-          duration: a[key] ? a[key].duration + b.duration : b.duration
-        };
-        return a;
-      }, {});
+      format = "HH:00";
+      newData = currentData.reduce(
+        (a, b) => updateDataKeyValue(dayjs(b.time).hour(), a, b),
+        {}
+      );
       break;
     }
     case "2d":
     case "3d":
     case "1w": {
       format = "dddd";
-      newData = currentData.reduce((a, b) => {
-        const key = dayjs(b.time).day();
-        a[key] = {
-          time: b.time,
-          duration: a[key] ? a[key].duration + b.duration : b.duration
-        };
-        return a;
-      }, {});
+      newData = currentData.reduce(
+        (a, b) => updateDataKeyValue(dayjs(b.time).day(), a, b),
+        {}
+      );
       break;
     }
     case "2w":
     case "3w":
     case "1M": {
       format = "MMMM D";
-      newData = currentData.reduce((a, b) => {
-        const key = dayjs(b.time).date();
-        a[key] = {
-          time: b.time,
-          duration: a[key] ? a[key].duration + b.duration : b.duration
-        };
-        return a;
-      }, {});
+      newData = currentData.reduce(
+        (a, b) => updateDataKeyValue(dayjs(b.time).date(), a, b),
+        {}
+      );
       break;
     }
     case "2M":
@@ -83,39 +79,27 @@ function getUpdatedDataAndFormat(start: string, currentData: StatusType[]) {
     case "6M":
     case "1y": {
       format = "MMMM";
-      newData = currentData.reduce((a, b) => {
-        const key = dayjs(b.time).month();
-        a[key] = {
-          time: b.time,
-          duration: a[key] ? a[key].duration + b.duration : b.duration
-        };
-        return a;
-      }, {});
+      newData = currentData.reduce(
+        (a, b) => updateDataKeyValue(dayjs(b.time).month(), a, b),
+        {}
+      );
       break;
     }
     case "2y":
     case "3y":
     case "5y": {
       format = "YYYY";
-      newData = currentData.reduce((a, b) => {
-        const key = dayjs(b.time).year();
-        a[key] = {
-          time: b.time,
-          duration: a[key] ? a[key].duration + b.duration : b.duration
-        };
-        return a;
-      }, {});
+      newData = currentData.reduce(
+        (a, b) => updateDataKeyValue(dayjs(b.time).year(), a, b),
+        {}
+      );
       break;
     }
     default: {
-      newData = currentData.reduce((a, b) => {
-        const key = dayjs(b.time).minute();
-        a[key] = {
-          time: b.time,
-          duration: a[key] ? a[key].duration + b.duration : b.duration
-        };
-        return a;
-      }, {});
+      newData = currentData.reduce(
+        (a, b) => updateDataKeyValue(dayjs(b.time).minute(), a, b),
+        {}
+      );
     }
   }
 
