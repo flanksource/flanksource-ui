@@ -82,36 +82,28 @@ export function IncidentCreate({ callback, evidence, ...rest }) {
         return;
       }
 
-      let details = {};
-      let description;
-      let type;
+      let _evidence = {
+        user,
+        id: uuidv4(),
+        hypothesisId: hypothesis.data[0].id
+      };
 
       if (evidence) {
-        details = {
-          id: evidence?.configId,
+        _evidence.evidence = {
           lines: evidence?.lines,
           selected_lines: evidence?.selected_lines
         };
-        type = EvidenceType.Config;
-        description = evidence?.configName;
+        _evidence.config_id = evidence?.configId;
+        _evidence.type = EvidenceType.Config;
+        _evidence.description = evidence?.configName;
       }
       if (topologyId) {
-        details = {
-          id: topologyId
-        };
-
-        type = EvidenceType.Topology;
-        description = "Topology";
+        _evidence.component_id = topologyId;
+        _evidence.type = EvidenceType.Topology;
+        _evidence.description = "Topology";
       }
 
-      await createEvidence({
-        user,
-        id: uuidv4(),
-        hypothesisId: hypothesis.data[0].id,
-        evidence: details,
-        description,
-        type
-      });
+      await createEvidence(_evidence);
 
       if (callback != null) {
         callback(incident);

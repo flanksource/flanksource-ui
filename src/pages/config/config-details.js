@@ -69,20 +69,6 @@ export function ConfigDetailsPage() {
     });
   }, []);
 
-  const handleShare = () => {
-    const { href } = window.location;
-    const copyString = `${href}`;
-    if (window.isSecureContext) {
-      navigator.clipboard.writeText(copyString).then(() => {
-        toast("Copied to clipboard");
-      });
-    } else {
-      toastError(
-        "Unable to copy to clipboard due to lack of HTTPS. Please contact the system administrator about this issue."
-      );
-    }
-  };
-
   const code = useMemo(
     () =>
       configDetails?.config && JSON.stringify(configDetails.config, null, 2),
@@ -94,41 +80,35 @@ export function ConfigDetailsPage() {
 
   const selectedCount = Object.keys(checked).length;
 
-  const selectionControls =
-    selectedCount > 0 ? (
-      <div className="flex flex-row space-x-2">
-        <div className="flex items-center mx-4">
-          {selectedCount} lines selected
-        </div>
-        <Button
-          className="btn-secondary"
-          text="Clear"
-          onClick={() => {
-            setChecked({});
-            return Promise.resolve();
-          }}
-        />
-        <Button
-          text="Share"
-          onClick={() => {
-            handleShare();
-            return Promise.resolve();
-          }}
-        />
-        <button
-          type="button"
-          onClick={() => {
-            setAttachAsAsset(true);
-            setDialogKey(Math.floor(Math.random() * 1000));
-          }}
-          className={clsx(
-            Object.keys(checked).length === 0 ? "btn-disabled" : "btn-primary"
-          )}
-        >
-          Attach as Evidence
-        </button>
-      </div>
-    ) : null;
+  let selectionControls = (
+    <div className="flex flex-row space-x-2">
+      {selectedCount > 0 && (
+        <>
+          <div className="flex items-center mx-4">
+            {selectedCount} lines selected
+          </div>
+          <Button
+            className="btn-secondary"
+            text="Clear"
+            onClick={() => {
+              setChecked({});
+              return Promise.resolve();
+            }}
+          />
+        </>
+      )}
+      <button
+        type="button"
+        onClick={() => {
+          setAttachAsAsset(true);
+          setDialogKey(Math.floor(Math.random() * 1000));
+        }}
+        className="btn-primary"
+      >
+        Attach to Incident
+      </button>
+    </div>
+  );
 
   useEffect(() => {
     setTabRight(selectionControls);
@@ -156,8 +136,8 @@ export function ConfigDetailsPage() {
         key={`link-${dialogKey}`}
         isOpen={attachAsAsset}
         onClose={() => setAttachAsAsset(false)}
+        config_id={id}
         evidence={{
-          id,
           lines: configLines,
           configName: configDetails?.name,
           configType: configDetails?.config_type,
