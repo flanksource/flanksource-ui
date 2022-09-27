@@ -9,7 +9,13 @@ export function useCreateLogoutHandler(deps?: DependencyList) {
   const [logoutToken, setLogoutToken] = useState<string>("");
   const router = useRouter();
 
+  const isAuthEnabled = process.env.NEXT_PUBLIC_WITHOUT_SESSION === "true";
+
   useEffect(() => {
+    if (isAuthEnabled) {
+      return;
+    }
+
     ory
       .createSelfServiceLogoutFlowUrlForBrowsers()
       .then(({ data }) => {

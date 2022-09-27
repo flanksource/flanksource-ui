@@ -7,30 +7,29 @@ let config = {
     ignoreBuildErrors: true
   },
   async rewrites() {
+    // Read at build time. See Dockerfile for deployment related steps.
+    const backendURL = process.env.BACKEND_URL || "/";
+
+    const isCanary =
+      process.env.NEXT_PUBLIC_APP_DEPLOYMENT === "CANARY_CHECKER";
+    const canaryPrefix = isCanary ? "" : "/canary";
+
     return [
       {
         source: "/api/configs_db/:path*",
-        destination:
-          "https://incident-commander.canary.lab.flanksource.com/config/db/:path*"
+        destination: `${backendURL}/config/db/:path*`
       },
       {
         source: "/api/canary/:path*",
-        destination:
-          "https://incident-commander.canary.lab.flanksource.com/canary/:path*"
+        destination: `${backendURL}${canaryPrefix}/:path*`
       },
       {
         source: "/api/incidents_db/:path*",
-        destination:
-          "https://incident-commander.canary.lab.flanksource.com/db/:path*"
+        destination: `${backendURL}/db/:path*`
       },
       {
         source: "/api/apm/search/:path*",
-        destination:
-          "https://incident-commander.canary.lab.flanksource.com/apm/search/:path*"
-      },
-      {
-        source: "/api/api/:path*",
-        destination: "https://canaries.canary.lab.flanksource.com/api/:path*"
+        destination: `${backendURL}/apm/search/:path*`
       }
     ];
   }
