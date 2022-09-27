@@ -65,22 +65,22 @@ export const timeRanges = [
   {
     icon: <BsClock />,
     description: "1 month",
-    value: "1M"
+    value: "1mo"
   },
   {
     icon: <BsClock />,
     description: "2 months",
-    value: "2M"
+    value: "2mo"
   },
   {
     icon: <BsClock />,
     description: "3 months",
-    value: "3M"
+    value: "3mo"
   },
   {
     icon: <BsClock />,
     description: "6 months",
-    value: "6M"
+    value: "6mo"
   },
   {
     icon: <BsClock />,

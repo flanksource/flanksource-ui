@@ -66,7 +66,7 @@ function getUpdatedDataAndFormat(start: string, currentData: StatusType[]) {
     }
     case "2w":
     case "3w":
-    case "1M": {
+    case "1mo": {
       format = "MMMM D";
       newData = currentData.reduce(
         (a, b) => updateDataKeyValue(dayjs(b.time).date(), a, b),
@@ -74,9 +74,9 @@ function getUpdatedDataAndFormat(start: string, currentData: StatusType[]) {
       );
       break;
     }
-    case "2M":
-    case "3M":
-    case "6M":
+    case "2mo":
+    case "3mo":
+    case "6mo":
     case "1y": {
       format = "MMMM";
       newData = currentData.reduce(
@@ -109,6 +109,16 @@ function getUpdatedDataAndFormat(start: string, currentData: StatusType[]) {
   };
 }
 
+const getStartValue = (start: string) => {
+  if (!start.includes("mo")) {
+    return start;
+  }
+
+  return dayjs()
+    .subtract(+(start.match(/\d/g)?.[0] ?? "1"), "month")
+    .toISOString();
+};
+
 export function CanaryStatusChart({ check, ...rest }) {
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -122,16 +132,18 @@ export function CanaryStatusChart({ check, ...rest }) {
   }, []);
 
   useEffect(() => {
-    const start = searchParams.get("timeRange");
     const payload = {
-      start,
       count: 300,
-      check: check.id
+      check: check.id,
+      start: getStartValue(searchParams.get("timeRange") ?? "")
     };
 
     getCanaryGraph(payload).then((results) => {
       const { format: updatedFormat, data: updatedData } =
-        getUpdatedDataAndFormat(start ?? "", results.data.status);
+        getUpdatedDataAndFormat(
+          searchParams.get("timeRange") ?? "",
+          results.data.status
+        );
 
       setData(updatedData);
       setCurrentFormat(updatedFormat);
