@@ -8,9 +8,18 @@ import { Button } from "../../Button";
 import { BsTrash } from "react-icons/bs";
 import { Evidence, EvidenceType } from "../../../api/services/evidence";
 import { Link } from "react-router-dom";
-import { CanaryStatusChart } from "../../Canary/CanaryStatusChart";
+import mixins from "../../../utils/mixins.module.css";
 import { getCanaries } from "../../../api/services/topology";
 import { CheckTitle } from "../../Canary/CanaryPopup/CheckTitle";
+import { StatusHistory } from "../../Canary/CanaryPopup/StatusHistory";
+import {
+  capitalizeFirstLetter,
+  toFixedIfNecessary
+} from "../../../utils/common";
+import { getUptimePercentage } from "../../Canary/CanaryPopup/utils";
+import { Duration, StatusList } from "../../Canary/renderers";
+import { Modal } from "../../Modal";
+import { CheckDetails } from "../../Canary/CanaryPopup/CheckDetails";
 
 export function EvidenceItem({ evidence }: { evidence: Evidence }) {
   switch (evidence.type) {
@@ -251,8 +260,17 @@ export function EvidenceSection({
   );
 }
 
-function HealthEvidenceViewer({ evidence }: { evidence: Evidence }) {
-  const [check, setCheck] = useState();
+function HealthEvidenceViewer({
+  evidence,
+  size
+}: {
+  evidence: Evidence;
+  size: "large" | "small";
+}) {
+  const [check, setCheck] = useState<any>();
+  const [validCheck, setValidCheck] = useState<any>();
+  const [uptimeValue, setUptimeValue] = useState<number>();
+  const [showModal, setShowModal] = useState<boolean>(false);
 
   useEffect(() => {
     const healthEvidence: any = evidence.evidence;
@@ -261,6 +279,18 @@ function HealthEvidenceViewer({ evidence }: { evidence: Evidence }) {
     const start = healthEvidence.start;
     fetchCheckDetails(id, start, includeMessages);
   }, [evidence]);
+
+  useEffect(() => {
+    if (!check) {
+      return;
+    }
+    const uValue = toFixedIfNecessary(getUptimePercentage(check), 0);
+    setUptimeValue(uValue);
+    setValidCheck({
+      ...check,
+      checkStatuses: check.checkStatuses.slice(0, 1)
+    });
+  }, [check]);
 
   const fetchCheckDetails = (
     id: string,
@@ -280,19 +310,86 @@ function HealthEvidenceViewer({ evidence }: { evidence: Evidence }) {
     });
   };
 
+  const evidenceDetailsView = () => {
+    return (
+      <div className="inline-block min-w-full align-middle">
+        <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+          <div className="min-w-full divide-y divide-gray-300">
+            <div
+              className="flex cursor-pointer whitespace-nowrap text-sm font-medium text-gray-900"
+              onClick={(e) => setShowModal(true)}
+            >
+              <div className="px-2 py-2 inline-block">
+                <CheckTitle
+                  className="inline-block"
+                  check={check}
+                  size="small"
+                />
+              </div>
+              <div className="px-2 py-2 inline-block">
+                <div className="flex flex-row">
+                  <label className="text-sm font-medium text-gray-700">
+                    Health:
+                    <span className="pl-2 inline-block">
+                      <StatusList checkStatuses={check.checkStatuses} />
+                    </span>
+                  </label>
+                </div>
+              </div>
+              <div className="px-2 py-2 inline-block">
+                <div className="flex flex-row">
+                  <label className="text-sm font-medium text-gray-700">
+                    Uptime:
+                    <span className="pl-2 inline-block">
+                      {!Number.isNaN(uptimeValue)
+                        ? `${toFixedIfNecessary(uptimeValue, 2)}%`
+                        : "-"}
+                    </span>
+                  </label>
+                </div>
+              </div>
+              <div className="px-2 py-2 inline-block">
+                <div className="flex flex-row">
+                  <label className="block text-sm font-medium text-gray-700 inline-block">
+                    Latency:
+                    <span className="pl-2 inline-block">
+                      <Duration ms={check.latency.p99} />
+                    </span>
+                  </label>
+                </div>
+              </div>
+            </div>
+            {validCheck?.checkStatuses?.[0]?.error && (
+              <div className="flex whitespace-wrap px-2 py-2 text-sm font-medium text-gray-900">
+                {validCheck.checkStatuses[0].error}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
-    <div className="w-full h-64 mb-10">
-      <Suspense fallback={<div>Loading..</div>}>
-        {check && (
-          <>
-            <CheckTitle check={check} />
-            <CanaryStatusChart
-              timeRange={evidence?.evidence?.start}
-              check={check}
-            />
-          </>
-        )}
-      </Suspense>
+    <div className="w-full h-84">
+      {check && evidenceDetailsView()}
+      <Modal
+        open={showModal}
+        onClose={() => setShowModal(false)}
+        title={<CheckTitle check={check} />}
+        size="medium"
+      >
+        <div
+          className="flex flex-col h-full py-4 mb-16"
+          style={{ maxHeight: "calc(100vh - 8rem)" }}
+        >
+          <CheckDetails
+            check={check}
+            timeRange={evidence.evidence.start}
+            className={`flex flex-col overflow-y-hidden ${mixins.appleScrollbar}`}
+          />
+        </div>
+      </Modal>
     </div>
   );
 }

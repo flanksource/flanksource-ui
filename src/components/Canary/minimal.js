@@ -9,6 +9,7 @@ import { getCanaries } from "../../api/services/topology";
 import { useSearchParams } from "react-router-dom";
 import { EvidenceType } from "../../api/services/evidence";
 import { AttachEvidenceDialog } from "../AttachEvidenceDialog";
+import { isCanaryUI } from "../../constants";
 
 const MinimalCanaryFC = ({
   checks,
@@ -77,15 +78,24 @@ const MinimalCanaryFC = ({
         hideActions
       >
         <div
-          className="flex flex-col h-full py-8"
-          style={{ maxHeight: "calc(100vh - 4rem)" }}
+          className="flex flex-col h-full py-4 mb-16"
+          style={{ maxHeight: "calc(100vh - 8rem)" }}
         >
           <CheckDetails
             check={selectedCheck}
-            attachAsEvidence={() => setAttachAsAsset(true)}
             timeRange={timeRange}
             className={`flex flex-col overflow-y-hidden ${mixins.appleScrollbar}`}
           />
+          <div className="rounded-t-lg justify-between bg-gray-100 px-8 py-4 items-end absolute w-full bottom-0 left-0">
+            {!isCanaryUI && (
+              <button
+                className="btn-primary float-right"
+                onClick={(e) => setAttachAsAsset(true)}
+              >
+                Attach as Evidence
+              </button>
+            )}
+          </div>
         </div>
       </Modal>
     </>

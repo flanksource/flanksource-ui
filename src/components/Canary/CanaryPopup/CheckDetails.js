@@ -13,7 +13,6 @@ import { getUptimePercentage } from "./utils";
 import { StatusHistory } from "./StatusHistory";
 import { DetailField } from "./DetailField";
 import { Duration } from "../renderers";
-import { isCanaryUI } from "../../../constants";
 
 const CanaryStatusChart = React.lazy(() =>
   import("../CanaryStatusChart").then(({ CanaryStatusChart }) => ({
@@ -21,7 +20,7 @@ const CanaryStatusChart = React.lazy(() =>
   }))
 );
 
-export function CheckDetails({ check, timeRange, attachAsEvidence, ...rest }) {
+export function CheckDetails({ check, timeRange, ...rest }) {
   const prevCheck = usePrevious(check);
   const validCheck = check || prevCheck;
 
@@ -109,14 +108,6 @@ export function CheckDetails({ check, timeRange, attachAsEvidence, ...rest }) {
       </div>
       {/* chart section */}
       <div className="mb-3">
-        {!isCanaryUI && (
-          <button
-            className="btn-primary float-right"
-            onClick={(e) => attachAsEvidence()}
-          >
-            Attach as Evidence
-          </button>
-        )}
         <div className="flex justify-between items-center mb-2">
           <span className="text-lg font-medium">Health overview</span>
           {/* <span className="text-sm font-medium">(time dropdown)</span> */}
