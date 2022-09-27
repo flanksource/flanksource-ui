@@ -1,6 +1,4 @@
-import React from "react";
 import { BsClock } from "react-icons/bs";
-import { Dropdown } from ".";
 import { ReactSelectDropdown } from "../ReactSelectDropdown";
 
 export const timeRanges = [
@@ -63,6 +61,46 @@ export const timeRanges = [
     icon: <BsClock />,
     description: "3 weeks",
     value: "3w"
+  },
+  {
+    icon: <BsClock />,
+    description: "1 month",
+    value: "1M"
+  },
+  {
+    icon: <BsClock />,
+    description: "2 months",
+    value: "2M"
+  },
+  {
+    icon: <BsClock />,
+    description: "3 months",
+    value: "3M"
+  },
+  {
+    icon: <BsClock />,
+    description: "6 months",
+    value: "6M"
+  },
+  {
+    icon: <BsClock />,
+    description: "1 year",
+    value: "1y"
+  },
+  {
+    icon: <BsClock />,
+    description: "2 years",
+    value: "2y"
+  },
+  {
+    icon: <BsClock />,
+    description: "3 years",
+    value: "3y"
+  },
+  {
+    icon: <BsClock />,
+    description: "5 years",
+    value: "5y"
   }
 ];
 
