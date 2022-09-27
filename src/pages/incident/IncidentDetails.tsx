@@ -93,7 +93,7 @@ export function IncidentDetailsPage() {
   const topologyIds = (incident?.hypotheses || [])
     .flatMap((h) =>
       h.evidences?.map((e) =>
-        e.type === EvidenceType.Topology ? e.evidence.id : null
+        e.type === EvidenceType.Topology ? e.component_id : null
       )
     )
     .filter((x) => x) as string[];

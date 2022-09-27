@@ -8,6 +8,19 @@ interface ConfigItem {
   external_id: string;
   config_type: string;
   id: string;
+  changes: Change[];
+  analysis: Analysis[];
+}
+
+interface Change {
+  type: string;
+  count: number;
+}
+
+interface Analysis {
+  category: string;
+  severity: string;
+  description: string;
 }
 
 // Config Items
@@ -19,7 +32,10 @@ export const getAllChanges = () =>
   resolve(ConfigDB.get(`/config_changes?order=created_at.desc`));
 
 export const getConfig = (id: string) =>
-  resolve<ConfigItem[]>(ConfigDB.get(`/configs?id=eq.${id}`));
+  resolve<ConfigItem[]>(
+    ConfigDB.get(`/config_items
+  ?id=eq.${id}`)
+  );
 
 export const getConfigChange = (id: string) =>
   resolve(
