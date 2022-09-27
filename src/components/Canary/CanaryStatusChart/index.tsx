@@ -109,7 +109,7 @@ function getUpdatedDataAndFormat(start: string, currentData: StatusType[]) {
   };
 }
 
-const getStartValue = (start: string) => {
+export const getStartValue = (start: string) => {
   if (!start.includes("mo")) {
     return start;
   }
@@ -135,7 +135,7 @@ export function CanaryStatusChart({ check, ...rest }) {
     const payload = {
       count: 300,
       check: check.id,
-      start: getStartValue(searchParams.get("timeRange") ?? "")
+      start: getStartValue(searchParams.get("timeRange") ?? "1h")
     };
 
     getCanaryGraph(payload).then((results) => {

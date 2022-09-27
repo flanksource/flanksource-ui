@@ -1,32 +1,37 @@
 import { useCallback, useEffect, useState } from "react";
-import { debounce, isEmpty } from "lodash";
-import {
-  encodeObjectToUrlSearchParams,
-  useUpdateParams,
-  decodeUrlSearchParams
-} from "./url";
-import { CanarySearchBar } from "./CanarySearchBar";
-import { getParamsFromURL } from "./utils";
-import { CanaryInterfaceMinimal } from "../CanaryInterface/minimal";
-import { GroupByDropdown } from "../Dropdown/GroupByDropdown";
-import { DropdownStandaloneWrapper } from "../Dropdown/StandaloneWrapper";
-import { TimeRange, timeRanges } from "../Dropdown/TimeRange";
-import { defaultTabSelections } from "../Dropdown/lib/lists";
-import { TabByDropdown } from "../Dropdown/TabByDropdown";
+import { useSearchParams } from "react-router-dom";
+
+import { debounce } from "lodash";
+
 import { Toggle } from "../Toggle";
+import { Loading } from "../Loading";
+import { StatCard } from "../StatCard";
+import { TristateToggle } from "../TristateToggle";
 import { LabelFilterDropdown } from "./FilterForm";
+import { CanarySearchBar } from "./CanarySearchBar";
+import { getStartValue } from "./CanaryStatusChart";
+import { TabByDropdown } from "../Dropdown/TabByDropdown";
+import { GroupByDropdown } from "../Dropdown/GroupByDropdown";
+import { TimeRange, timeRanges } from "../Dropdown/TimeRange";
+import { CanaryInterfaceMinimal } from "../CanaryInterface/minimal";
+import { DropdownStandaloneWrapper } from "../Dropdown/StandaloneWrapper";
+
+import { isHealthy } from "./filter";
+import { getParamsFromURL } from "./utils";
+import { defaultTabSelections } from "../Dropdown/lib/lists";
+import { useHealthPageContext } from "../../context/HealthPageContext";
 import {
-  getConciseLabelState,
   groupLabelsByKey,
+  getConciseLabelState,
   separateLabelsByBooleanType
 } from "./labels";
-import { TristateToggle } from "../TristateToggle";
-import { StatCard } from "../StatCard";
-import { isHealthy } from "./filter";
+import {
+  useUpdateParams,
+  decodeUrlSearchParams,
+  encodeObjectToUrlSearchParams,
+} from "./url";
+
 import mixins from "../../utils/mixins.module.css";
-import { Loading } from "../Loading";
-import { useHealthPageContext } from "../../context/HealthPageContext";
-import { useSearchParams } from "react-router-dom";
 
 const FilterKeyToLabelMap = {
   environment: "Environment",
@@ -120,9 +125,8 @@ export function Canary({
       return;
     }
     clearTimeout(timerRef);
-    const timeRange = searchParams?.timeRange;
     const params = encodeObjectToUrlSearchParams({
-      start: isEmpty(timeRange) || timeRange === "undefined" ? "1h" : timeRange
+      start: getStartValue(searchParams.get("timeRange") ?? "1h")
     });
     setIsLoading(true);
     onLoading(true);
@@ -200,7 +204,7 @@ export function Canary({
               customValue={
                 <>
                   {filteredChecks.length}
-                  <span className="text-xl  font-light">
+                  <span className="text-xl font-light">
                     {" "}
                     (<span className="text-green-500">{passing.filtered}</span>/
                     <span className="text-red-500">
@@ -215,25 +219,25 @@ export function Canary({
         </div>
 
         <SectionTitle className="mb-4">Filter by Health</SectionTitle>
-        <div className="mb-6 flex items-center">
-          <div className="h-9 flex items-center">
+        <div className="flex items-center mb-6">
+          <div className="flex items-center h-9">
             <HidePassingToggle />
           </div>
-          <div className="text-sm text-gray-800 mb-0">Hide Passing</div>
+          <div className="mb-0 text-sm text-gray-800">Hide Passing</div>
         </div>
-        <SectionTitle className="mb-5 flex justify-between items-center">
+        <SectionTitle className="flex items-center justify-between mb-5">
           Filter by Label{" "}
           {/* <button
               type="button"
               onClick={() => {
                 updateParams({ labels: {} });
               }}
-              className="bg-gray-200 text-gray-500 font-semibold text-xs px-2 py-1 rounded-md"
+              className="px-2 py-1 text-xs font-semibold text-gray-500 bg-gray-200 rounded-md"
             >
               Clear All
             </button> */}
         </SectionTitle>
-        <div className="mb-4 mr-2 w-full">
+        <div className="w-full mb-4 mr-2">
           <LabelFilterList labels={filteredLabels} />
         </div>
       </SidebarSticky>
@@ -263,7 +267,7 @@ export function Canary({
               paramKey="groupBy"
               className="w-64"
               prefix={
-                <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
+                <div className="mr-2 text-xs text-gray-500 whitespace-nowrap">
                   Group By:
                 </div>
               }
@@ -278,7 +282,7 @@ export function Canary({
               emptyable
               className="w-64"
               prefix={
-                <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
+                <div className="mr-2 text-xs text-gray-500 whitespace-nowrap">
                   Tab By:
                 </div>
               }
@@ -291,7 +295,7 @@ export function Canary({
               paramKey="timeRange"
               className="w-56 mb-2 mr-2"
               prefix={
-                <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
+                <div className="mr-2 text-xs text-gray-500 whitespace-nowrap">
                   Time Range:
                 </div>
               }
@@ -333,7 +337,7 @@ export const LabelFilterList = ({ labels }) => {
           <div key={labelKey} className="mb-2">
             {labels.length > 1 ? (
               <>
-                <div className="text-xs whitespace-nowrap overflow-ellipsis w-full overflow-hidden mb-1">
+                <div className="w-full mb-1 overflow-hidden text-xs whitespace-nowrap overflow-ellipsis">
                   {FilterKeyToLabelMap[labelKey] || labelKey}
                 </div>
                 <MultiSelectLabelsDropdownStandalone
@@ -343,7 +347,7 @@ export const LabelFilterList = ({ labels }) => {
               </>
             ) : labels.length === 1 ? (
               <div className="flex w-full mb-3">
-                <div className="mr-3 w-full text-xs text-left text-gray-700 break-all overflow-ellipsis overflow-x-hidden flex items-center">
+                <div className="flex items-center w-full mr-3 overflow-x-hidden text-xs text-left text-gray-700 break-all overflow-ellipsis">
                   {FilterKeyToLabelMap[labels[0].key] || labels[0].key}
                 </div>
                 <TristateLabelStandalone
@@ -537,7 +541,7 @@ export const TristateLabels = ({ labels = [] }) => {
                   : 0
               }
               onChange={(v) => handleToggleChange(label.id, v)}
-              className="mb-2 flex items-center"
+              className="flex items-center mb-2"
               labelClass="ml-3 text-xs text-left text-gray-700 break-all overflow-ellipsis overflow-x-hidden"
               label={label}
             />
