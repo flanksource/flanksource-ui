@@ -4,7 +4,12 @@ import { URLSearchParamsInit } from "react-router-dom";
 export type ValueType = number | string | Date;
 
 export type TopologyProperty = {
-  name?: string;
+  name: string;
+  icon?: string;
+  type?: string;
+  text?: string;
+  max?: number;
+  min?: number;
   headline?: boolean;
   value?: ValueType;
   unit?: string;
