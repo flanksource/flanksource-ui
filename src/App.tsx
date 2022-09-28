@@ -175,6 +175,16 @@ export function IncidentManagerRoutes({ sidebar }) {
 }
 
 export function CanaryCheckerApp() {
+  const [isBrowserEnv, setIsBrowserEnv] = useState(false);
+
+  useEffect(() => {
+    setIsBrowserEnv(true);
+  }, []);
+
+  if (!isBrowserEnv) {
+    return null;
+  }
+
   // TODO(ciju): the url is set at two places. axios.js#CanaryChecker and here.
   // Consolidate logic to one place.
   if (typeof window === "undefined") return <Loading text="Loading" />;
