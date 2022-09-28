@@ -1,32 +1,48 @@
+import clsx from "clsx";
 import React from "react";
 import { usePrevious } from "../../../utils/hooks";
 import { Badge } from "../../Badge";
 import { Icon } from "../../Icon";
 
-export function CheckTitle({ check, className, ...rest }) {
+export function CheckTitle({ check, className, size = "large", ...rest }) {
   const prevCheck = usePrevious(check);
   const validCheck = check || prevCheck;
 
   return (
     <div className={`flex flex-row ${className}`} {...rest}>
-      <div className="w-14 flex-shrink-0 pr-1">
-        <Icon name={validCheck?.icon || validCheck?.type} size="2xl" />
+      <div
+        className={clsx(
+          "flex-shrink-0",
+          size === "large" ? "w-14 pr-1" : "pr-2"
+        )}
+      >
+        <Icon
+          name={validCheck?.icon || validCheck?.type}
+          size={size === "large" ? "2xl" : "sm"}
+        />
       </div>
-      <div className="overflow-hidden mr-10">
+      <div
+        className={clsx("overflow-hidden", size === "large" ? " mr-10" : "")}
+      >
         <div className="flex flex-row items-center">
           <span
             title={validCheck?.name}
-            className="text-gray-800 text-2xl font-semibold whitespace-nowrap overflow-ellipsis overflow-hidden pr-4"
+            className={clsx(
+              "text-gray-800 font-semibold whitespace-nowrap overflow-ellipsis overflow-hidden pr-4",
+              size === "large" ? "text-2xl" : ""
+            )}
           >
             {validCheck?.name}
-          </span>
-          <span
-            className="hidden sm:block "
-            title={`Namespace for ${validCheck?.name}`}
-            style={{ paddingTop: "1px" }}
-          >
-            <Badge text={validCheck?.namespace} />
-          </span>
+          </span>{" "}
+          {size === "large" && (
+            <span
+              className="hidden sm:block "
+              title={`Namespace for ${validCheck?.name}`}
+              style={{ paddingTop: "1px" }}
+            >
+              <Badge text={validCheck?.namespace} />
+            </span>
+          )}
         </div>
         {true && (
           <div
