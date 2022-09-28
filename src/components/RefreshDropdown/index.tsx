@@ -135,7 +135,7 @@ export default function RefreshDropdown({
     <div className="flex flex-row px-2">
       <button
         onClick={() => onClick()}
-        className={` border border-r-0 border-gray-300 p-[0.35rem] px-2 rounded-md rounded-r-none`}
+        className={`border border-r-0 border-gray-300 p-[0.35rem] px-2 rounded-md rounded-r-none hover:bg-blue-200`}
       >
         <HiOutlineRefresh
           size={18}
