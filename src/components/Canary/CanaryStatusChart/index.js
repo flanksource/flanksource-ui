@@ -10,45 +10,36 @@ import {
   YAxis
 } from "recharts";
 import { useEffect, useState } from "react";
-import history from "history/browser";
 import { getCanaryGraph } from "../../../api/services/topology";
 import { Loading } from "../../Loading";
-import { useSearchParams } from "react-router-dom";
-import { getParamsFromURL } from "../utils";
 
 // @TODO: duration should be formatted properly, not just by ms
 const formatDuration = (duration) => `${duration}ms`;
 
 const getFill = (entry) => (entry.status ? "#2cbd27" : "#df1a1a");
 
-export function CanaryStatusChart({ check, ...rest }) {
+export function CanaryStatusChart({ check, timeRange, ...rest }) {
   const [data, setData] = useState([]);
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  useEffect(() => {
-    history.listen(({ location }) => {
-      setSearchParams(getParamsFromURL(location.search));
-    });
-  }, []);
 
   useEffect(() => {
     const payload = {
       check: check.id,
       count: 300,
-      start: searchParams.get("timeRange")
+      start: timeRange
     };
     getCanaryGraph(payload).then((results) => {
+      console.log(results.data.status, timeRange);
       setData(results.data.status);
     });
-  }, [check, searchParams]);
+  }, [check]);
 
   if (!data?.length) {
     return <Loading />;
   }
 
-  let timeRange = 0;
+  let time = 0;
   if (data.length > 0) {
-    timeRange =
+    time =
       (new Date(data[0].time) - new Date(data[data.length - 1].time)) /
       1000 /
       60;
@@ -56,9 +47,9 @@ export function CanaryStatusChart({ check, ...rest }) {
 
   // @TODO: date should be formatted properly depending on selection, not just by DD/MM
   let formatDate = (date) => dayjs(date).format("HH:mm");
-  if (timeRange > 60 * 24 * 30) {
+  if (time > 60 * 24 * 30) {
     formatDate = (date) => dayjs(date).format("MMM DD");
-  } else if (timeRange > 60 * 24) {
+  } else if (time > 60 * 24) {
     formatDate = (date) => dayjs(date).format("MMM DD HH:mm");
   }
 

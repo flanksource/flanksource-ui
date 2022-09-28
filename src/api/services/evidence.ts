@@ -9,6 +9,7 @@ export enum EvidenceType {
   Check = "check",
   ConfigAnalysis = "config_analysis",
   ConfigChange = "config_change"
+  Health = "health"
 }
 
 export type Evidence = {
@@ -27,6 +28,7 @@ export type Evidence = {
   created_by: User;
   type: EvidenceType;
 };
+
 
 export const getAllEvidenceByHypothesis = async (hypothesisId: string) => {
   const { data, error } = await resolve<Evidence[]>(

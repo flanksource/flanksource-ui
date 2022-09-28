@@ -98,7 +98,9 @@ export function Icon({
       <img
         alt={alt}
         src={src}
-        className={`${props.iconClassName || iconClassName} ${className}`}
+        className={`inline-block ${
+          props.iconClassName || iconClassName
+        } ${className}`}
       />
     );
   }
