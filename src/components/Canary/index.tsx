@@ -179,7 +179,8 @@ export function Canary({
 
   useEffect(() => {
     handleFetch();
-  }, [timeRange, triggerRefresh, url, handleFetch]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timeRange, triggerRefresh, url]);
 
   useEffect(() => {
     return () => {
