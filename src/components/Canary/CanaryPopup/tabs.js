@@ -39,11 +39,11 @@ export function PopupTabs({
   useLayoutEffect(() => {
     if (
       sharedHeightRef.current &&
-      sharedHeightRef.current.children.length > 0
+      sharedHeightRef.current.children?.length > 0
     ) {
       requestAnimationFrame(() => {
         let maxHeight = 0;
-        Array.from(sharedHeightRef.current.children).forEach((o) => {
+        Array.from(sharedHeightRef.current?.children || []).forEach((o) => {
           maxHeight = Math.max(o.clientHeight, maxHeight);
         });
         setSharedHeight(maxHeight);

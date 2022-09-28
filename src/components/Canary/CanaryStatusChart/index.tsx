@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
-import { URLSearchParamsInit, useSearchParams } from "react-router-dom";
 
 import dayjs from "dayjs";
-import history from "history/browser";
 import {
   Cell,
   XAxis,
@@ -16,7 +14,6 @@ import {
 
 import { Loading } from "../../Loading";
 
-import { getParamsFromURL } from "../utils";
 import { getCanaryGraph } from "../../../api/services/topology";
 
 type StatusType = {
@@ -119,36 +116,25 @@ const getStartValue = (start: string) => {
     .toISOString();
 };
 
-export function CanaryStatusChart({ check, ...rest }) {
-  const [searchParams, setSearchParams] = useSearchParams();
-
+export function CanaryStatusChart({ check, timeRange, ...rest }) {
   const [data, setData] = useState<StatusType[]>([]);
   const [currentFormat, setCurrentFormat] = useState("HH:mm");
-
-  useEffect(() => {
-    history.listen(({ location }) => {
-      setSearchParams(getParamsFromURL(location.search) as URLSearchParamsInit);
-    });
-  }, []);
 
   useEffect(() => {
     const payload = {
       count: 300,
       check: check.id,
-      start: getStartValue(searchParams.get("timeRange") ?? "1h")
+      start: getStartValue(timeRange)
     };
 
     getCanaryGraph(payload).then((results) => {
       const { format: updatedFormat, data: updatedData } =
-        getUpdatedDataAndFormat(
-          searchParams.get("timeRange") ?? "",
-          results.data.status
-        );
+        getUpdatedDataAndFormat(timeRange, results.data.status);
 
       setData(updatedData);
       setCurrentFormat(updatedFormat);
     });
-  }, [check, searchParams]);
+  }, [check, timeRange]);
 
   if (!data?.length) {
     return <Loading />;
@@ -226,7 +212,7 @@ function CustomXTick({ tickFormatter = (value: string) => value, ...rest }) {
   );
 }
 
-function CustomYTick({ tickFormatter = (value: string) => value, ...rest }) {
+function CustomYTick({ tickFormatter = (value: number) => value, ...rest }) {
   const { x, y, payload, fontSize = 12 } = rest;
 
   return (

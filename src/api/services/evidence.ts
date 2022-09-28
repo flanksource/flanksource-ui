@@ -5,7 +5,8 @@ import { User } from "./users";
 export enum EvidenceType {
   Log = "log",
   Config = "config",
-  Topology = "topology"
+  Topology = "topology",
+  Health = "health"
 }
 
 interface EvidenceBase {
@@ -47,16 +48,31 @@ type TopologyEvidenceAttachment = {
   };
 };
 
+type HealthCheckEvidenceAttachment = {
+  type: EvidenceType.Health;
+  evidence: {
+    check: string;
+    includeMessages: boolean;
+    start: string;
+  };
+};
+
 export type EvidenceAttachment =
   | TopologyEvidenceAttachment
   | ConfigEvidenceAttachment
-  | LogEvidenceAttachment;
+  | LogEvidenceAttachment
+  | HealthCheckEvidenceAttachment;
 
 type LogEvidence = LogEvidenceAttachment & EvidenceBase;
 type ConfigEvidence = ConfigEvidenceAttachment & EvidenceBase;
 type TopologyEvidence = TopologyEvidenceAttachment & EvidenceBase;
+type HealthEvidence = HealthCheckEvidenceAttachment & EvidenceBase;
 
-export type Evidence = TopologyEvidence | ConfigEvidence | LogEvidence;
+export type Evidence =
+  | TopologyEvidence
+  | ConfigEvidence
+  | LogEvidence
+  | HealthEvidence;
 
 export const getAllEvidenceByHypothesis = async (hypothesisId: string) => {
   const { data, error } = await resolve<Evidence[]>(
