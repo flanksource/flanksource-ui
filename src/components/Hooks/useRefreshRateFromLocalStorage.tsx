@@ -6,7 +6,6 @@ import {
 
 export default function useRefreshRateFromLocalStorage() {
   const calculateRefreshRateInMilliseconds = (refreshRate: string) => {
-    console.log("refresh rate", refreshRate);
     if (refreshRate.includes("s")) {
       return parseInt(refreshRate.replace("s", "")) * 1000;
     }

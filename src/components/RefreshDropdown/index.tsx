@@ -78,7 +78,6 @@ export default function RefreshDropdown({
 
   /* Whenever refresh rate changes update local storage */
   useEffect(() => {
-    console.log("refresh rate changed", refreshRate);
     if (refreshRate.rate === "None") {
       localStorage.removeItem(localStorageKey);
       window.dispatchEvent(new Event("storage"));
