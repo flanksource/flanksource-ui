@@ -35,8 +35,6 @@ spec:
           env:
           - name: ORY_KRATOS_URL
             value: {{ .Values.oryKratosURL }}
-          - name: NEXT_PUBLIC_WITHOUT_SESSION
-            value: {{ ternary true false .Values.withoutAuth | quote}}
           - name: BACKEND_URL
             value: {{ .Values.backendURL | quote}}
           imagePullPolicy: {{ .Values.image.pullPolicy }}

@@ -9,6 +9,7 @@ RUN npm i
 FROM node:16 AS builder
 WORKDIR /app
 ARG APP_DEPLOYMENT=INCIDENT_MANAGER
+ARG WITHOUT_AUTH=false
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
@@ -18,8 +19,8 @@ ENV BACKEND_URL="/__BACKEND_URL__"
 
 ENV NEXT_TELEMETRY_DISABLED 1
 ENV NEXT_PUBLIC_APP_DEPLOYMENT=${APP_DEPLOYMENT}
+ENV NEXT_PUBLIC_WITHOUT_SESSION=${WITHOUT_AUTH}
 RUN NEXT_STANDALONE_DEPLOYMENT=true npm run build
-
 # NextJS compiles routes-manifest.json at build time. Which means, it won't
 # pickup runtime environemnt variables. To support runtime environment, we
 # insert a unique template variable "/__BACKEND_URL__" and replace it at
