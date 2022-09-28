@@ -13,10 +13,10 @@ const Home: NextPage = () => {
   const [session, setSession] = useState<Session | undefined>();
   const router = useRouter();
 
-  const isAuthEnabled = process.env.NEXT_PUBLIC_WITHOUT_SESSION === "true";
+  const isAuthDisabled = process.env.NEXT_PUBLIC_WITHOUT_SESSION === "true";
 
   useEffect(() => {
-    if (isAuthEnabled) {
+    if (isAuthDisabled) {
       return;
     }
 
@@ -44,9 +44,9 @@ const Home: NextPage = () => {
         // Something else happened!
         return Promise.reject(err);
       });
-  }, [router, isAuthEnabled]);
+  }, [router, isAuthDisabled]);
 
-  if (!isAuthEnabled && !session) {
+  if (!isAuthDisabled && !session) {
     return null;
   }
 
