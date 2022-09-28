@@ -1,10 +1,10 @@
-import React from "react";
 import PropTypes from "prop-types";
 import clsx from "clsx";
 import { Icon } from "../Icon";
 import { formatBytes } from "../../utils/common";
 import { isEmpty } from "../Canary/utils";
 import { NodePodPropToLabelMap } from "../../constants";
+import { BsCurrencyDollar } from "react-icons/bs";
 
 export const FormatProperty = ({ property, short = false }) => {
   if (property == null) {
@@ -22,6 +22,39 @@ export const FormatProperty = ({ property, short = false }) => {
       >
         {property.text.replace("https://", "")}
       </a>
+    );
+  }
+
+  if (property.type === "currency") {
+    var amount = property.value;
+    if (amount > 1000) {
+      amount = (amount / 1000).toFixed(1) + "k";
+    } else if (amount > 100) {
+      amount = amount.toFixed(0);
+    } else if (amount > 10) {
+      amount = amount.toFixed(1);
+    } else if (amount > 0.01) {
+      amount = amount.toFixed(2);
+    } else if (amount > 0.001) {
+      amount = amount.toFixed(3);
+    }
+
+    if (property.unit.toUpperCase() === "USD") {
+      return (
+        <span className="flex flex-center">
+          <span className="align-middle">
+            <BsCurrencyDollar color="gray" size={16} />
+          </span>
+
+          <span className="align-bottom">{amount}</span>
+        </span>
+      );
+    }
+    return (
+      <span>
+        {property.unit}
+        {amount}
+      </span>
     );
   }
 
@@ -74,10 +107,11 @@ export const Property = ({ property, className, ...rest }) => {
       <Icon name={icon} className="mr-1" size="2xsi" />
       {!isEmpty(label) && (
         <span className="text-xs overflow-hidden truncate text-gray-400 pb-1">
-          {label}:
+          {label}:&nbsp;
         </span>
       )}
       <span
+        title={property.text}
         className={clsx(
           "text-xs overflow-hidden truncate",
           `text-${color}-500`
