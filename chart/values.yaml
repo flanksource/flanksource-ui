@@ -16,9 +16,6 @@ fullnameOverride: "flanksource-ui"
 oryKratosURL: ""
 backendURL: ""
 
-# Option to disable auth on frontend.
-withoutAuth: false
-
 serviceAccount:
   # Specifies whether a service account should be created
   create: true
