@@ -1,15 +1,19 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+
 import { Modal } from "../Modal";
-import { CheckDetails } from "./CanaryPopup/CheckDetails";
-import { CheckTitle } from "./CanaryPopup/CheckTitle";
 import { CanaryCards } from "./card";
 import { CanaryTable } from "./table";
-import mixins from "../../utils/mixins.module.css";
-import { getCanaries } from "../../api/services/topology";
-import { useSearchParams } from "react-router-dom";
-import { EvidenceType } from "../../api/services/evidence";
+import { CheckTitle } from "./CanaryPopup/CheckTitle";
+import { CheckDetails } from "./CanaryPopup/CheckDetails";
 import { AttachEvidenceDialog } from "../AttachEvidenceDialog";
+
 import { isCanaryUI } from "../../constants";
+import { searchParamsToObj } from "../../utils/common";
+import { getCanaries } from "../../api/services/topology";
+
+import mixins from "../../utils/mixins.module.css";
+import { EvidenceType } from "../../api/services/evidence";
 
 const MinimalCanaryFC = ({
   checks,
@@ -17,27 +21,52 @@ const MinimalCanaryFC = ({
   selectedTab,
   tableHeadStyle = {}
 }) => {
-  const [searchParams] = useSearchParams();
-  const { tabBy, layout, timeRange } = Object.fromEntries(
-    searchParams.entries()
-  );
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const { tabBy, layout, timeRange, checkId, checkTimeRange } =
+    Object.fromEntries(searchParams.entries());
+  const currentTimeRange = checkTimeRange ?? timeRange;
 
   const [selectedCheck, setSelectedCheck] = useState(null);
   const [attachAsAsset, setAttachAsAsset] = useState(false);
+
+  useEffect(() => {
+    if (checkId && !selectedCheck) {
+      handleCheckSelect({ id: checkId });
+    }
+  }, [checkId]);
 
   const handleCheckSelect = (check) => {
     const payload = {
       check: check.id,
       includeMessages: true,
-      start: timeRange
+      start: currentTimeRange
     };
     getCanaries(payload).then((results) => {
       if (results == null || results.data.checks.length === 0) {
         return;
       }
-      setSelectedCheck(results.data.checks[0]);
+
+      if (results?.data?.checks?.[0]?.id) {
+        setSearchParams({
+          ...searchParamsToObj(searchParams),
+          checkId: results.data.checks[0].id,
+          checkTimeRange: currentTimeRange
+        });
+        setSelectedCheck(results.data.checks[0]);
+      }
     });
   };
+
+  function clearCheck() {
+    setSelectedCheck(null);
+
+    const newSearchParams = {
+      ...searchParamsToObj(searchParams)
+    };
+    const { checkId, checkTimeRange, ...removedSearchParams } = newSearchParams;
+    setSearchParams(removedSearchParams);
+  }
 
   return (
     <>
@@ -48,34 +77,34 @@ const MinimalCanaryFC = ({
         <CanaryTable
           checks={checks}
           labels={labels}
+          hideNamespacePrefix
+          groupSingleItems={false}
+          theadStyle={tableHeadStyle}
           onCheckClick={handleCheckSelect}
           showNamespaceTags={
             tabBy !== "namespace" ? true : selectedTab === "all"
           }
-          hideNamespacePrefix
-          groupSingleItems={false}
-          theadStyle={tableHeadStyle}
         />
       )}
       <AttachEvidenceDialog
         isOpen={attachAsAsset}
-        onClose={() => setAttachAsAsset(false)}
-        evidence={{
-          check_id: selectedCheck?.id,
-          includeMessages: true,
-          start: timeRange
-        }}
         type={EvidenceType.Health}
+        onClose={() => setAttachAsAsset(false)}
         callback={(success) => {
           console.log(success);
         }}
+        evidence={{
+          check_id: selectedCheck?.id,
+          includeMessages: true,
+          start: currentTimeRange
+        }}
       />
       <Modal
-        open={selectedCheck != null}
-        onClose={() => setSelectedCheck(null)}
-        title={<CheckTitle check={selectedCheck} />}
         size="medium"
         hideActions
+        open={selectedCheck != null}
+        onClose={() => clearCheck()}
+        title={<CheckTitle check={selectedCheck} />}
       >
         <div
           className="flex flex-col h-full py-4 mb-16"
@@ -83,13 +112,13 @@ const MinimalCanaryFC = ({
         >
           <CheckDetails
             check={selectedCheck}
-            timeRange={timeRange}
+            timeRange={currentTimeRange}
             className={`flex flex-col overflow-y-hidden ${mixins.appleScrollbar}`}
           />
-          <div className="rounded-t-lg justify-between bg-gray-100 px-8 py-4 items-end absolute w-full bottom-0 left-0">
+          <div className="absolute bottom-0 left-0 items-end justify-between w-full px-8 py-4 bg-gray-100 rounded-t-lg">
             {!isCanaryUI && (
               <button
-                className="btn-primary float-right"
+                className="float-right btn-primary"
                 onClick={(e) => setAttachAsAsset(true)}
               >
                 Attach as Evidence

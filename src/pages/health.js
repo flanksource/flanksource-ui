@@ -1,19 +1,25 @@
 import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
+
 import { debounce } from "lodash";
+
+import { Canary } from "../components/Canary";
 import { SearchLayout } from "../components/Layout";
+import { RefreshButton } from "../components/RefreshButton";
+import { CanarySearchBar } from "../components/Canary/CanarySearchBar";
 import { TimeRange, timeRanges } from "../components/Dropdown/TimeRange";
 import { DropdownStandaloneWrapper } from "../components/Dropdown/StandaloneWrapper";
-import { CanarySearchBar } from "../components/Canary/CanarySearchBar";
-import { Canary } from "../components/Canary";
+
 import { useUpdateParams } from "../components/Canary/url";
 import { getParamsFromURL } from "../components/Canary/utils";
-import { RefreshButton } from "../components/RefreshButton";
 
 const getSearchParams = () => getParamsFromURL(window.location.search);
 
 export function HealthPage({ url }) {
-  const [loading, setLoading] = useState(true);
   const updateParams = useUpdateParams();
+  const [searchParams] = useSearchParams();
+
+  const [loading, setLoading] = useState(true);
   const handleSearch = debounce((query) => {
     updateParams({ query });
   }, 400);
@@ -28,10 +34,10 @@ export function HealthPage({ url }) {
             animate={loading}
           />
           <DropdownStandaloneWrapper
-            dropdownElem={<TimeRange />}
-            defaultValue={timeRanges[0].value}
             paramKey="timeRange"
             className="w-40 mr-2"
+            dropdownElem={<TimeRange />}
+            defaultValue={searchParams.get("timeRange") ?? timeRanges[0].value}
           />
           <CanarySearchBar
             onChange={(e) => handleSearch(e.target.value)}

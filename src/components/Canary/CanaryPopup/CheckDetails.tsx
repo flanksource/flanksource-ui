@@ -116,15 +116,15 @@ export function CheckDetails({ check, timeRange, ...rest }) {
         <div className="flex items-center justify-between mb-2">
           <span className="text-lg font-medium">Health overview</span>
           <DropdownStandaloneWrapper
-            dropdownElem={<TimeRange />}
-            defaultValue={timeRanges[0].value}
-            paramKey="timeRange"
             className="w-40 mr-2"
+            paramKey="checkTimeRange"
+            dropdownElem={<TimeRange />}
+            defaultValue={timeRange ?? timeRanges[0].value}
           />
         </div>
         <div className="w-full overflow-visible h-52">
           <Suspense fallback={<div>Loading..</div>}>
-            <CanaryStatusChart timeRange={timeRange} check={validCheck} />
+            <CanaryStatusChart checkTimeRange={timeRange} check={validCheck} />
           </Suspense>
         </div>
       </div>

@@ -116,7 +116,7 @@ const getStartValue = (start: string) => {
     .toISOString();
 };
 
-export function CanaryStatusChart({ check, timeRange, ...rest }) {
+export function CanaryStatusChart({ check, checkTimeRange, ...rest }) {
   const [data, setData] = useState<StatusType[]>([]);
   const [currentFormat, setCurrentFormat] = useState("HH:mm");
 
@@ -124,17 +124,17 @@ export function CanaryStatusChart({ check, timeRange, ...rest }) {
     const payload = {
       count: 300,
       check: check.id,
-      start: getStartValue(timeRange)
+      start: getStartValue(checkTimeRange)
     };
 
     getCanaryGraph(payload).then((results) => {
       const { format: updatedFormat, data: updatedData } =
-        getUpdatedDataAndFormat(timeRange, results.data.status);
+        getUpdatedDataAndFormat(checkTimeRange, results.data.status);
 
       setData(updatedData);
       setCurrentFormat(updatedFormat);
     });
-  }, [check, timeRange]);
+  }, [check, checkTimeRange]);
 
   if (!data?.length) {
     return <Loading />;

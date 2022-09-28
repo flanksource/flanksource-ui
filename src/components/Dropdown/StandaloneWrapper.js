@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
+
 import { useUpdateParams } from "../Canary/url";
 
 export const DropdownStandaloneWrapper = ({
@@ -8,13 +9,12 @@ export const DropdownStandaloneWrapper = ({
   paramKey,
   ...rest
 }) => {
-  const searchParams = useSearchParams();
+  const [searchParams] = useSearchParams();
   const updateParams = useUpdateParams();
-  const paramsValue =
-    typeof searchParams[paramKey] !== "undefined"
-      ? searchParams[paramKey]
-      : defaultValue;
-  const [value, setValue] = useState(paramsValue);
+
+  const [value, setValue] = useState(
+    searchParams.get(paramKey) ?? defaultValue
+  );
 
   useEffect(() => {
     const obj = {};
@@ -22,6 +22,12 @@ export const DropdownStandaloneWrapper = ({
     updateParams(obj);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
+
+  useEffect(() => {
+    if (searchParams.get(paramKey) && value !== searchParams.get(paramKey)) {
+      setValue(searchParams.get(paramKey));
+    }
+  }, [searchParams]);
 
   return React.createElement(dropdownElem.type, {
     value,

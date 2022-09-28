@@ -28,7 +28,7 @@ import {
 import {
   useUpdateParams,
   decodeUrlSearchParams,
-  encodeObjectToUrlSearchParams,
+  encodeObjectToUrlSearchParams
 } from "./url";
 
 import mixins from "../../utils/mixins.module.css";
@@ -51,7 +51,7 @@ const getPassingCount = (checks) => {
   return count;
 };
 
- const getStartValue = (start: string) => {
+const getStartValue = (start: string) => {
   if (!start.includes("mo")) {
     return start;
   }
@@ -136,7 +136,7 @@ export function Canary({
     }
     clearTimeout(timerRef);
     const params = encodeObjectToUrlSearchParams({
-      start: getStartValue(searchParams.get("timeRange") ?? "1h")
+      start: getStartValue(searchParams.get("timeRange") ?? timeRanges[0].value)
     });
     setIsLoading(true);
     onLoading(true);
@@ -300,10 +300,12 @@ export function Canary({
           </div>
           {!hideTimeRange && (
             <DropdownStandaloneWrapper
-              dropdownElem={<TimeRange />}
-              defaultValue={timeRanges[0].value}
               paramKey="timeRange"
               className="w-56 mb-2 mr-2"
+              dropdownElem={<TimeRange />}
+              defaultValue={
+                searchParams.get("timeRange") ?? timeRanges[0].value
+              }
               prefix={
                 <div className="mr-2 text-xs text-gray-500 whitespace-nowrap">
                   Time Range:
