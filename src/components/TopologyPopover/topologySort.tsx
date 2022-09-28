@@ -8,6 +8,7 @@ import { searchParamsToObj } from "../../utils/common";
 import { useOnMouseActivity } from "../../hooks/useMouseActivity";
 
 import type { Topology, ValueType } from "../../context/TopologyPageContext";
+import { uniq } from "lodash";
 
 const STATUS = {
   info: 0,
@@ -25,10 +26,14 @@ export const defaultSortLabels = [
 
 export function getSortLabels(topology: Topology[]) {
   const currentSortLabels: typeof defaultSortLabels = [];
-
+  let labels: { string: boolean } = {};
   topology?.forEach((t) => {
     t?.properties?.forEach((h, index) => {
-      if (h.headline && !currentSortLabels.find((t) => t.value === h.name)) {
+      if (!h.name) {
+        return;
+      }
+      if (h.headline && h.name && !labels[h.name]) {
+        labels[h.name] = true;
         currentSortLabels.push({
           id: defaultSortLabels.length + index,
           value: (h.name ?? "").toLowerCase(),
@@ -37,8 +42,7 @@ export function getSortLabels(topology: Topology[]) {
       }
     });
   });
-
-  return [...defaultSortLabels, ...currentSortLabels];
+  return [...defaultSortLabels, ...uniq(currentSortLabels)];
 }
 
 function getTopologyValue(t: Topology, sortBy: string) {
