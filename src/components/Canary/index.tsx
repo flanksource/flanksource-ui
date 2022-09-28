@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
+import dayjs from "dayjs";
 import { debounce } from "lodash";
 
 import { Toggle } from "../Toggle";
@@ -9,7 +10,6 @@ import { StatCard } from "../StatCard";
 import { TristateToggle } from "../TristateToggle";
 import { LabelFilterDropdown } from "./FilterForm";
 import { CanarySearchBar } from "./CanarySearchBar";
-import { getStartValue } from "./CanaryStatusChart";
 import { TabByDropdown } from "../Dropdown/TabByDropdown";
 import { GroupByDropdown } from "../Dropdown/GroupByDropdown";
 import { TimeRange, timeRanges } from "../Dropdown/TimeRange";
@@ -49,6 +49,16 @@ const getPassingCount = (checks) => {
     }
   });
   return count;
+};
+
+ const getStartValue = (start: string) => {
+  if (!start.includes("mo")) {
+    return start;
+  }
+
+  return dayjs()
+    .subtract(+(start.match(/\d/g)?.[0] ?? "1"), "month")
+    .toISOString();
 };
 
 export function Canary({

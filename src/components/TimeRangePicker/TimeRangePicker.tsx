@@ -9,6 +9,8 @@ import { TimeRangePickerBody } from "./TimeRangePickerBody";
 import { RangeOption } from "./rangeOptions";
 import { createDisplayValue } from "./helpers";
 
+import "./index.css";
+
 type DateOrString = Date | string;
 
 type TimeRangePickerType = React.HTMLProps<HTMLDivElement> & {
@@ -65,17 +67,17 @@ export const TimeRangePickerFC = ({
       {/* justify-center w-full  */}
       <button
         type="button"
-        className="inline-flex rounded-md border border-gray-300 shadow-sm px-2 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
+        className="inline-flex px-2 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50"
         onClick={() => setIsPickerOpen((prevState) => !prevState)}
       >
         <FiClock className="mt-1" />
         {updateDisplayValue && (
-          <div className="ml-2 font-medium items-center">
+          <div className="items-center ml-2 font-medium">
             <span>{updateDisplayValue}</span>
           </div>
         )}
         {!updateDisplayValue && (
-          <div className="ml-2 font-medium items-center">
+          <div className="items-center ml-2 font-medium">
             Please select time range
           </div>
         )}

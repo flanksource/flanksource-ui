@@ -109,7 +109,7 @@ function getUpdatedDataAndFormat(start: string, currentData: StatusType[]) {
   };
 }
 
-export const getStartValue = (start: string) => {
+const getStartValue = (start: string) => {
   if (!start.includes("mo")) {
     return start;
   }
