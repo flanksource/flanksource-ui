@@ -42,15 +42,17 @@ export function NodeInputDefault(props: NodeInputProps) {
           value={value}
           disabled={attributes.disabled || disabled}
         />
-        <div
-          className={clsx("p-2 mt-2 border", { "border-red-300": hasError })}
-        >
-          {node.messages.map(({ text, id }, k) => (
-            <span key={`${id}-${k}`} data-testid={`ui/message/${id}`}>
-              {text}
-            </span>
-          ))}
-        </div>
+        {!!node.messages.length && (
+          <div
+            className={clsx("p-2 mt-2 border", { "border-red-300": hasError })}
+          >
+            {node.messages.map(({ text, id }, k) => (
+              <span key={`${id}-${k}`} data-testid={`ui/message/${id}`}>
+                {text}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

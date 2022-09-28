@@ -32,9 +32,6 @@ export const Logs = axios.create({
 });
 
 let canaryBaseUrl = "/canary";
-if (process.env.NEXT_PUBLIC_APP_DEPLOYMENT === "CANARY_CHECKER") {
-  canaryBaseUrl = "";
-}
 
 export const CanaryCheckerDB = axios.create({
   baseURL: `${API_BASE}${canaryBaseUrl}/db`,

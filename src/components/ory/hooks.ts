@@ -10,12 +10,13 @@ export function useCreateLogoutHandler(deps?: DependencyList) {
   const [logoutToken, setLogoutToken] = useState<string>("");
   const router = useRouter();
 
-  if (!IsAuthEnabled()) {
-    return () => {};
-  }
+  const isAuthEnabled = process.env.NEXT_PUBLIC_WITHOUT_SESSION === "true";
 
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
+    if (isAuthEnabled) {
+      return;
+    }
+
     ory
       .createSelfServiceLogoutFlowUrlForBrowsers()
       .then(({ data }) => {
