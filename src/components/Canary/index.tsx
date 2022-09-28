@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { debounce, isEmpty } from "lodash";
 import {
   encodeObjectToUrlSearchParams,
@@ -87,10 +87,9 @@ export function Canary({
     healthState: { checks, filteredChecks, filteredLabels, passing },
     setHealthState
   } = useHealthPageContext();
-  const [timerRef, setTimerRef] = useState<NodeJS.Timer>();
-  const [abortController] = useState(() => {
-    return new AbortController();
-  });
+
+  const timerRef = useRef<NodeJS.Timer>();
+  const abortController = useRef<AbortController>();
 
   const labelUpdateCallback = useCallback((newLabels) => {
     setHealthState((state) => {
@@ -134,7 +133,7 @@ export function Canary({
     });
   }, []);
 
-  const handleFetch = debounce(async () => {
+  const handleFetch = useCallback(async () => {
     if (url == null) {
       return;
     }
@@ -143,9 +142,14 @@ export function Canary({
     });
     setIsLoading(true);
     onLoading(true);
+    if (abortController.current) {
+      abortController.current.abort();
+    }
+    const controller = new AbortController();
+    abortController.current = controller;
     try {
       const result = await fetch(`${url}?${params}`, {
-        signal: abortController.signal
+        signal: abortController.current?.signal
       });
       const data = (await result.json()) as HealthChecksResponse;
       setHealthState((state) => {
@@ -161,28 +165,26 @@ export function Canary({
     }
     setIsLoading(false);
     onLoading(false);
-  }, 1000);
+  }, [onLoading, setHealthState, timeRange, url]);
 
   // Set refresh interval for re-fetching data
   useEffect(() => {
-    clearTimeout(timerRef);
+    clearTimeout(timerRef.current);
     // only refresh with refreshInterval if it is not 0
     if (refreshInterval > 0) {
-      const ref = setTimeout(handleFetch, refreshInterval);
-      setTimerRef(ref);
+      timerRef.current = setTimeout(handleFetch, refreshInterval);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshInterval]);
 
   useEffect(() => {
     handleFetch();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [timeRange, triggerRefresh]);
+  }, [timeRange, triggerRefresh, url, handleFetch]);
 
   useEffect(() => {
     return () => {
-      clearTimeout(timerRef);
-      abortController.abort();
+      clearTimeout(timerRef.current);
+      abortController.current?.abort();
     };
   }, []);
 
