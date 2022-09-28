@@ -7,7 +7,9 @@ import {
 } from "react-icons/hi";
 import useTimeRangeToDisableRefreshDropdownOptions from "../Hooks/useTimeRangeToDisableRefreshDropdownOptions";
 
-const HEALTH_PAGE_REFRESH_RATE_KEY = "healthPageRefreshRate";
+export const HEALTH_PAGE_REFRESH_RATE_KEY = "healthPageRefreshRate";
+export const HEALTH_PAGE_REFRESH_RATE_STORAGE_CHANGE_EVENT =
+  "healthPageRefreshRateChanged";
 
 export type RefreshOptions =
   | "None"
@@ -76,12 +78,17 @@ export default function RefreshDropdown({
 
   /* Whenever refresh rate changes update local storage */
   useEffect(() => {
+    console.log("refresh rate changed", refreshRate);
     if (refreshRate.rate === "None") {
       localStorage.removeItem(localStorageKey);
+      window.dispatchEvent(new Event("storage"));
       return;
     }
     if (refreshRate.saveToLocalStorage) {
       localStorage.setItem(localStorageKey, refreshRate.rate);
+      window.dispatchEvent(
+        new Event(HEALTH_PAGE_REFRESH_RATE_STORAGE_CHANGE_EVENT)
+      );
     }
   }, [localStorageKey, refreshRate]);
 

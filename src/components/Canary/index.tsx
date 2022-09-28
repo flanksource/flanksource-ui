@@ -30,6 +30,7 @@ import dayjs from "dayjs";
 import HealthPageSkeletonLoader from "../SkeletonLoader/HealthPageSkeletonLoader";
 import { HealthChecksResponse } from "../../types/healthChecks";
 import { useSearchParams } from "react-router-dom";
+import useRefreshRateFromLocalStorage from "../Hooks/useRefreshRateFromLocalStorage";
 
 const FilterKeyToLabelMap = {
   environment: "Environment",
@@ -51,7 +52,6 @@ const getPassingCount = (checks) => {
 
 type CanaryProps = {
   url?: string;
-  refreshInterval?: number;
   topLayoutOffset?: number;
   hideSearch?: boolean;
   hideTimeRange: boolean;
@@ -64,7 +64,6 @@ type CanaryProps = {
 
 export function Canary({
   url = "/api/canary/api",
-  refreshInterval = 15 * 1000,
   topLayoutOffset = 0,
   hideSearch,
   hideTimeRange,
@@ -74,6 +73,7 @@ export function Canary({
   const updateParams = useUpdateParams();
   const [searchParams] = useSearchParams();
   const timeRange = searchParams.get("timeRange");
+  const refreshInterval = useRefreshRateFromLocalStorage();
 
   // force-set layout to table
   useEffect(() => {
@@ -138,8 +138,6 @@ export function Canary({
     if (url == null) {
       return;
     }
-    clearTimeout(timerRef);
-
     const params = encodeObjectToUrlSearchParams({
       start: getStartValue(searchParams.get("timeRange") ?? timeRanges[0].value)
     });
@@ -163,14 +161,23 @@ export function Canary({
     }
     setIsLoading(false);
     onLoading(false);
-    const ref = setTimeout(handleFetch, refreshInterval);
-    setTimerRef(ref);
   }, 1000);
+
+  // Set refresh interval for re-fetching data
+  useEffect(() => {
+    clearTimeout(timerRef);
+    // only refresh with refreshInterval if it is not 0
+    if (refreshInterval > 0) {
+      const ref = setTimeout(handleFetch, refreshInterval);
+      setTimerRef(ref);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refreshInterval]);
 
   useEffect(() => {
     handleFetch();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refreshInterval, timeRange, triggerRefresh]);
+  }, [timeRange, triggerRefresh]);
 
   useEffect(() => {
     return () => {
