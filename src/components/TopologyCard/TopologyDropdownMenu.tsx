@@ -32,7 +32,7 @@ export const TopologyDropdownMenu = ({ topology }: IProps) => {
 
           <Menu.Item as="button" onClick={() => setAttachAsAsset(true)}>
             <MdAlarmAdd />
-            <span className="pl-1 text-sm block">Attach as evidence</span>
+            <span className="pl-1 text-sm block">Link to Incident</span>
           </Menu.Item>
 
           <Menu.Item>
@@ -61,7 +61,6 @@ export const TopologyDropdownMenu = ({ topology }: IProps) => {
         isOpen={attachAsAsset}
         onClose={() => setAttachAsAsset(false)}
         type={EvidenceType.Topology}
-        title="Topology incident"
         evidence={{ id: topology.id }}
       />
     </>
