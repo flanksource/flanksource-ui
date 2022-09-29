@@ -171,7 +171,7 @@ export function Canary({
   }
 
   return (
-    <div className="flex flex-row place-content-center">
+    <div className="flex flex-row place-content-center h-screen overflow-y-auto">
       <SidebarSticky topHeight={topLayoutOffset}>
         <div className="mb-4">
           <StatCard
