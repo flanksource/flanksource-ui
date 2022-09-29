@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
+import clsx from "clsx";
 import dayjs from "dayjs";
 import { debounce } from "lodash";
 
@@ -18,6 +19,7 @@ import { DropdownStandaloneWrapper } from "../Dropdown/StandaloneWrapper";
 
 import { isHealthy } from "./filter";
 import { getParamsFromURL } from "./utils";
+import { isCanaryUI } from "../../constants";
 import { defaultTabSelections } from "../Dropdown/lib/lists";
 import { useHealthPageContext } from "../../context/HealthPageContext";
 import {
@@ -185,7 +187,12 @@ export function Canary({
   }
 
   return (
-    <div className="flex flex-row place-content-center">
+    <div
+      className={clsx(
+        "flex flex-row place-content-center",
+        isCanaryUI ? " h-screen overflow-y-auto" : ""
+      )}
+    >
       <SidebarSticky topHeight={topLayoutOffset}>
         <div className="mb-4">
           <StatCard
@@ -314,12 +321,14 @@ export function Canary({
             />
           )}
         </div>
-        <CanaryInterfaceMinimal
-          checks={checks}
-          searchParams={searchParams}
-          onLabelFiltersCallback={labelUpdateCallback}
-          onFilterCallback={updateFilteredChecks}
-        />
+        <div className="pb-4">
+          <CanaryInterfaceMinimal
+            checks={checks}
+            searchParams={searchParams}
+            onLabelFiltersCallback={labelUpdateCallback}
+            onFilterCallback={updateFilteredChecks}
+          />
+        </div>
       </div>
     </div>
   );

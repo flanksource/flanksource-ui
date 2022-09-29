@@ -2,3 +2,4 @@ node_modules
 .next
 .github
 .husky
+.env.local
