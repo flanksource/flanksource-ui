@@ -27,6 +27,8 @@ import mixins from "../../utils/mixins.module.css";
 import { Loading } from "../Loading";
 import { useHealthPageContext } from "../../context/HealthPageContext";
 import { useSearchParams } from "react-router-dom";
+import { isCanaryUI } from "../../constants";
+import clsx from "clsx";
 
 const FilterKeyToLabelMap = {
   environment: "Environment",
@@ -171,7 +173,12 @@ export function Canary({
   }
 
   return (
-    <div className="flex flex-row place-content-center">
+    <div
+      className={clsx(
+        "flex flex-row place-content-center",
+        isCanaryUI ? " h-screen overflow-y-auto" : ""
+      )}
+    >
       <SidebarSticky topHeight={topLayoutOffset}>
         <div className="mb-4">
           <StatCard
@@ -298,12 +305,14 @@ export function Canary({
             />
           )}
         </div>
-        <CanaryInterfaceMinimal
-          checks={checks}
-          searchParams={searchParams}
-          onLabelFiltersCallback={labelUpdateCallback}
-          onFilterCallback={updateFilteredChecks}
-        />
+        <div className="pb-4">
+          <CanaryInterfaceMinimal
+            checks={checks}
+            searchParams={searchParams}
+            onLabelFiltersCallback={labelUpdateCallback}
+            onFilterCallback={updateFilteredChecks}
+          />
+        </div>
       </div>
     </div>
   );
