@@ -65,7 +65,7 @@ const MinimalCanaryFC = ({
           includeMessages: true,
           start: timeRange
         }}
-        type={EvidenceType.Health}
+        type={EvidenceType.Check}
         callback={(success) => {
           console.log(success);
         }}
