@@ -1,17 +1,15 @@
-import clsx from "clsx";
 import { useEffect, useState, useMemo, useCallback } from "react";
-import toast from "react-hot-toast";
 import { useParams, useSearchParams, useOutletContext } from "react-router-dom";
-import { toastError } from "../../components/Toast/toast";
-import { getConfig } from "../../api/services/configs";
-import { Loading } from "../../components/Loading";
-import { JSONViewer } from "../../components/JSONViewer";
-import { BreadcrumbNav } from "../../components/BreadcrumbNav";
-import { Button } from "../../components/Button";
+import { toastError } from "../Toast/toast";
+import { ConfigItem, getConfig } from "../../api/services/configs";
+import { Loading } from "../Loading";
+import { JSONViewer } from "../JSONViewer";
+import { BreadcrumbNav } from "../BreadcrumbNav";
+import { Button } from "../Button";
 import { EvidenceType } from "../../api/services/evidence";
-import { AttachEvidenceDialog } from "../../components/AttachEvidenceDialog";
+import { AttachEvidenceDialog } from "../AttachEvidenceDialog";
 
-export function ConfigDetailsPage() {
+export function ConfigDetails() {
   const { id } = useParams();
   const [params, setParams] = useSearchParams();
   const [isLoading, setIsLoading] = useState(true);
@@ -19,13 +17,15 @@ export function ConfigDetailsPage() {
   const [attachAsAsset, setAttachAsAsset] = useState(false);
   const [dialogKey, setDialogKey] = useState(0);
   const [checked, setChecked] = useState({});
-  const [configDetails, setConfigDetails] = useState();
+  const [configDetails, setConfigDetails] = useState<ConfigItem | undefined>();
+  // @ts-ignore
   const { setTitle, setTabRight } = useOutletContext();
 
   useEffect(() => {
-    getConfig(id)
+    getConfig(id!)
       .then((res) => {
-        const data = res?.data[0];
+        const data = res?.data?.[0];
+        console.log(data);
         setConfigDetails(data);
         setTitle(
           <BreadcrumbNav
@@ -44,7 +44,7 @@ export function ConfigDetailsPage() {
   }, [id]);
 
   useEffect(() => {
-    if (!configDetails?.config) {
+    if (!(configDetails as any)?.config) {
       return;
     }
 
@@ -57,12 +57,15 @@ export function ConfigDetailsPage() {
     setParams({ selected });
   }, [checked]);
 
-  const handleClick = useCallback((idx) => {
+  const handleClick = useCallback((idx: any) => {
     setChecked((checked) => {
       const obj = { ...checked };
+      // @ts-ignore
       if (obj[idx]) {
+        // @ts-ignore
         delete obj[idx];
       } else {
+        // @ts-ignore
         obj[idx] = true;
       }
       return obj;
@@ -71,6 +74,7 @@ export function ConfigDetailsPage() {
 
   const code = useMemo(
     () =>
+      // @ts-ignore
       configDetails?.config && JSON.stringify(configDetails.config, null, 2),
     [configDetails]
   );
@@ -116,7 +120,7 @@ export function ConfigDetailsPage() {
   }, [checked, showIncidentModal]);
 
   return (
-    <div className="flex flex-col items-start">
+    <div className="flex flex-row items-start space-x-2 ">
       <div className="flex flex-col w-full border-l border-r rounded-md shadow-lg">
         {!isLoading ? (
           <JSONViewer
@@ -146,7 +150,7 @@ export function ConfigDetailsPage() {
           )
         }}
         type={EvidenceType.Config}
-        callback={(success) => {
+        callback={(_: any) => {
           setChecked({});
         }}
       />
