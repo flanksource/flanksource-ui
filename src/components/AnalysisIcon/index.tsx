@@ -33,12 +33,16 @@ export default function AnalysisIcon({ analysis }: Props) {
   switch (analysis.analysis_type) {
     case "cost":
       return (
-        <BiDollarCircle className={`${colorClass}`} size="20" title="Cost" />
+        <BiDollarCircle
+          className={`${colorClass} inline-block`}
+          size="20"
+          title="Cost"
+        />
       );
     case "availability":
       return (
         <ImHeartBroken
-          className={`${colorClass}`}
+          className={`${colorClass} inline-block`}
           size="20"
           title="Availability"
         />
@@ -46,26 +50,34 @@ export default function AnalysisIcon({ analysis }: Props) {
     case "performance":
       return (
         <IoMdSpeedometer
-          className={`${colorClass}`}
+          className={`${colorClass} inline-block`}
           size="20"
           title="Performance"
         />
       );
     case "security":
       return (
-        <MdSecurity className={`${colorClass}`} size="20" title="Security" />
+        <MdSecurity
+          className={`${colorClass} inline-block`}
+          size="20"
+          title="Security"
+        />
       );
     case "integration":
       return (
         <GrIntegration
-          className={`${colorClass}`}
+          className={`${colorClass} inline-block`}
           size="20"
           title="Integration"
         />
       );
     case "compliance":
       return (
-        <FaTasks className={`${colorClass}`} size="20" title="Compliance" />
+        <FaTasks
+          className={`${colorClass} inline-block`}
+          size="20"
+          title="Compliance"
+        />
       );
     case "technicalDebt":
       return (
@@ -76,5 +88,5 @@ export default function AnalysisIcon({ analysis }: Props) {
         />
       );
   }
-  return <AiFillWarning className={`${colorClass}`} size="20" />;
+  return <AiFillWarning className={`${colorClass} inline-block`} size="20" />;
 }

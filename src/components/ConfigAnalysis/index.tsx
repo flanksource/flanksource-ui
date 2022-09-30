@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import AnalysisIcon from "../AnalysisIcon";
 
@@ -32,7 +33,6 @@ export default function ConfigAnalysis({ configID }: Props) {
         `/api/configs_db/config_analysis?config_id=eq.${configID}`
       );
       const data = (await res.json()) as ConfigTypeAnalysis[];
-      console.log(data, "data");
       setConfigAnalysis(data);
       setIsLoading(false);
     }
@@ -50,18 +50,35 @@ export default function ConfigAnalysis({ configID }: Props) {
 
   return (
     <div className="flex flex-col space-y-2 w-full px-2 py-4">
-      <h3 className="font-semibold text-2xl py-4 border-b">Config Analysis</h3>
-      <ul className="flex flex-col space-y-1 w-full py-2">
-        {configAnalysis.map((analysis) => (
-          <li
-            key={analysis.id}
-            className="flex flex-row items-center space-x-2"
-          >
-            <AnalysisIcon analysis={analysis} />
-            <span>{analysis.analyzer}</span>
-          </li>
-        ))}
-      </ul>
+      <h3 className="font-semibold text-2xl py-4 border-b">Analysis</h3>
+      <table className="w-full text-sm text-left">
+        <thead className="text-sm uppercase text-gray-600">
+          <tr>
+            <th scope="col" className="p-2">
+              Name
+            </th>
+            <th scope="col" className="p-2">
+              Age
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {configAnalysis.map((analysis) => (
+            <tr key={analysis.id}>
+              <td className="p-2 font-medium text-black whitespace-nowrap">
+                <p>
+                  <AnalysisIcon analysis={analysis} />
+                  {analysis.analyzer} <br />
+                </p>
+                {analysis.summary ? analysis.summary : ""}
+              </td>
+              <td className="p-2 ">
+                {dayjs(analysis.first_observed).fromNow()}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
