@@ -3,7 +3,7 @@ import AsyncSelect from "react-select/async";
 import { components, GroupBase, OptionProps } from "react-select";
 import clsx from "clsx";
 import { JSONPath } from "jsonpath-plus";
-import { Control, Controller } from "react-hook-form";
+import { Control, Controller, useWatch } from "react-hook-form";
 import { debounce } from "lodash";
 import Select, { Props } from "react-select";
 
@@ -133,6 +133,27 @@ export const ConfigItem = ({
   );
 
   useEffect(() => {
+    if (autoFetch) {
+      getConfigDetails(value?.value);
+    } else {
+      if (typeof value === "string" && options.length) {
+        const selectedOption = options.find((option: any) => {
+          return (
+            option.value === value ||
+            option.label === value ||
+            option.name === value
+          );
+        });
+        if (!selectedOption) {
+          return;
+        }
+        onSelect(selectedOption);
+        sentDependentOptions(selectedOption);
+      }
+    }
+  }, [value, options]);
+
+  useEffect(() => {
     if (!data) {
       setOptions([]);
       return;
@@ -235,6 +256,7 @@ export const ConfigItem = ({
             }}
             isLoading={loading}
             value={controlValue}
+            getOptionValue={(item: any) => item.value}
           />
           {getDescription()}
           {getEnhancedChildren()}

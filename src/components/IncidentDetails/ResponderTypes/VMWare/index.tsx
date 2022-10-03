@@ -12,12 +12,16 @@ type VMWareProps = {
   control: Control;
   errors: FieldErrors;
   setValue: UseFormSetValue<AddResponderFormValues>;
+  defaultValues: { [key: string]: any };
+  values: { [key: string]: any };
 } & React.HTMLProps<HTMLDivElement>;
 
 export const VMWare = ({
   control,
   errors,
   className,
+  defaultValues,
+  values,
   ...rest
 }: VMWareProps) => {
   return (
@@ -29,7 +33,7 @@ export const VMWare = ({
           rules={{
             required: "Please provide valid value"
           }}
-          render={({ field }) => {
+          render={({ field, fieldState: { isDirty } }) => {
             const { onChange, value } = field;
             return (
               <TextInput
@@ -37,7 +41,8 @@ export const VMWare = ({
                 id="product"
                 className="w-full"
                 onChange={onChange}
-                value={value}
+                value={isDirty ? value : defaultValues?.product}
+                disabled={values?.product}
               />
             );
           }}
@@ -51,7 +56,7 @@ export const VMWare = ({
           rules={{
             required: "Please provide valid value"
           }}
-          render={({ field }) => {
+          render={({ field, fieldState: { isDirty } }) => {
             const { onChange, value } = field;
             return (
               <TextInput
@@ -59,7 +64,8 @@ export const VMWare = ({
                 id="category"
                 className="w-full"
                 onChange={onChange}
-                value={value}
+                value={isDirty ? value : defaultValues?.category}
+                disabled={values?.category}
               />
             );
           }}
@@ -73,7 +79,7 @@ export const VMWare = ({
           rules={{
             required: "Please provide valid value"
           }}
-          render={({ field }) => {
+          render={({ field, fieldState: { isDirty } }) => {
             const { onChange, value } = field;
             return (
               <TextInput
@@ -81,7 +87,8 @@ export const VMWare = ({
                 id="description"
                 className="w-full"
                 onChange={onChange}
-                value={value}
+                value={isDirty ? value : defaultValues?.description}
+                disabled={values?.description}
               />
             );
           }}
@@ -95,7 +102,7 @@ export const VMWare = ({
           rules={{
             required: "Please provide valid value"
           }}
-          render={({ field }) => {
+          render={({ field, fieldState: { isDirty } }) => {
             const { onChange, value } = field;
             return (
               <TextInput
@@ -103,7 +110,8 @@ export const VMWare = ({
                 id="body"
                 className="w-full"
                 onChange={onChange}
-                value={value}
+                value={isDirty ? value : defaultValues?.body}
+                disabled={values?.body}
               />
             );
           }}
