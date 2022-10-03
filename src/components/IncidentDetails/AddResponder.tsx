@@ -37,6 +37,10 @@ import { toastError, toastSuccess } from "../Toast/toast";
 import { getAll } from "../../api/schemaResources";
 import { schemaResourceTypes } from "../SchemaResourcePage/resourceTypes";
 
+import _, { template, isEqual } from "lodash";
+import { severityItems, statusItems, typeItems } from "../Incidents/data";
+
+
 type Action = {
   label: string;
   disabled: boolean;
@@ -174,21 +178,21 @@ const ResponderSteps = [
 ];
 
 export type AddResponderFormValues = {
-  to?: string;
-  subject?: string;
-  body?: string;
-  category?: string;
-  description?: string;
-  project?: string;
-  issueType?: string;
-  priority?: string;
-  plan_id?: string;
-  bucket_id?: string;
-  title?: string;
-  summary?: string;
-  product?: string;
-  person?: string;
-  external_id?: string;
+  to?: string | null;
+  subject?: string | null;
+  body?: string | null;
+  category?: string | null;
+  description?: string | null;
+  project?: string | null;
+  issueType?: string | null;
+  priority?: string | null;
+  plan_id?: string | null;
+  bucket_id?: string | null;
+  title?: string | null;
+  summary?: string | null;
+  product?: string | null;
+  person?: string | null;
+  external_id?: string | null;
 };
 
 export type formPropKey = keyof AddResponderFormValues;
@@ -196,6 +200,7 @@ export type formPropKey = keyof AddResponderFormValues;
 type AddResponderProps = {
   onSuccess?: () => void;
   onError?: () => void;
+  incident: any;
 } & React.HTMLProps<HTMLDivElement>;
 
 export const getOrderedKeys = (responder: any): formPropKey[] => {
@@ -238,6 +243,7 @@ export const AddResponder = ({
   onSuccess = () => {},
   onError = () => {},
   className,
+  incident,
   ...rest
 }: AddResponderProps) => {
   const { loading, setLoading } = useLoader();
@@ -248,28 +254,82 @@ export const AddResponder = ({
   const [selectedType, setSelectedType] = useState<any>(null);
   const [selectedTeam, setSelectedTeam] = useState<any>(null);
   const [teams, setTeams] = useState<any>([]);
+  const [fixedValues, setFixedValues] = useState<{ [key: string]: any }>();
+  const [defaultValues, setDefaultValues] = useState<{ [key: string]: any }>();
   const {
     control,
     formState: { errors },
     getValues,
     reset,
     handleSubmit,
+    watch,
     setValue
   } = useForm<AddResponderFormValues>({
     defaultValues: {
-      to: "",
-      subject: "",
-      body: "",
-      category: "",
-      description: "",
-      project: "",
-      issueType: "",
-      priority: "",
-      summary: "",
-      product: "",
-      person: ""
+      to: null,
+      subject: null,
+      body: null,
+      category: null,
+      description: null,
+      project: null,
+      issueType: null,
+      priority: null,
+      summary: null,
+      product: null,
+      person: null
     }
   });
+  const watchAllFields = watch();
+  const incidentDetails = useMemo(() => {
+    return {
+      ...incident,
+      status:
+        incident.status === statusItems.open.value
+          ? statusItems.open.description
+          : statusItems.closed.description,
+      severity: severityItems[incident.severity]?.description,
+      type: typeItems[incident.type]?.description
+    };
+  }, [incident]);
+
+  function replacePlaceholders(
+    templateString: string,
+    context: object
+  ): string {
+    try {
+      return template(templateString)(context);
+    } catch (ex) {
+      return templateString;
+    }
+  }
+
+  useEffect(() => {
+    const responderType = selectedType?.value;
+    const responderConfig =
+      selectedTeam?.spec?.responder_clients?.[responderType];
+    const values = { ...(responderConfig?.values || {}) };
+    const defaults = { ...(responderConfig?.defaults || {}) };
+    const data: { [key: string]: any } = {};
+    Object.keys(watchAllFields).forEach((prop: string) => {
+      const value = watchAllFields[prop];
+      data[prop] = typeof value === "object" ? value?.name : value;
+    });
+    data.incident = {
+      ...incidentDetails
+    };
+    if (defaults) {
+      const newDefaultValues: { [key: string]: any } = {};
+      Object.keys(defaults || {}).forEach((key) => {
+        newDefaultValues[key] = replacePlaceholders(defaults[key], data);
+      });
+      if (!isEqual(defaultValues, newDefaultValues)) {
+        setDefaultValues(newDefaultValues);
+      }
+    }
+    if (!isEqual(values, fixedValues)) {
+      setFixedValues(values);
+    }
+  }, [watchAllFields, selectedTeam, selectedType]);
 
   useEffect(() => {
     const teamsApiConfig = schemaResourceTypes.find(
@@ -328,18 +388,55 @@ export const AddResponder = ({
   const getResponderTypeForm = () => {
     switch (selectedType?.value) {
       case ResponderTypes.email:
-        return <Email control={control} errors={errors} setValue={setValue} />;
+        return (
+          <Email
+            control={control}
+            errors={errors}
+            setValue={setValue}
+            defaultValues={defaultValues}
+            values={fixedValues}
+          />
+        );
       case ResponderTypes.jira:
-        return <Jira control={control} errors={errors} setValue={setValue} />;
+        return (
+          <Jira
+            control={control}
+            errors={errors}
+            setValue={setValue}
+            defaultValues={defaultValues}
+            values={fixedValues}
+            teamId={selectedTeam?.id}
+          />
+        );
       case ResponderTypes.serviceNow:
         return (
-          <ServiceNow control={control} errors={errors} setValue={setValue} />
+          <ServiceNow
+            control={control}
+            errors={errors}
+            setValue={setValue}
+            defaultValues={defaultValues}
+            values={fixedValues}
+          />
         );
       case ResponderTypes.ca:
-        return <CA control={control} errors={errors} setValue={setValue} />;
+        return (
+          <CA
+            control={control}
+            errors={errors}
+            setValue={setValue}
+            defaultValues={defaultValues}
+            values={fixedValues}
+          />
+        );
       case ResponderTypes.awsSupport:
         return (
-          <AwsSupport control={control} errors={errors} setValue={setValue} />
+          <AwsSupport
+            control={control}
+            errors={errors}
+            setValue={setValue}
+            defaultValues={defaultValues}
+            values={fixedValues}
+          />
         );
       case ResponderTypes.awsAmsServicesRequest:
         return (
@@ -350,21 +447,56 @@ export const AddResponder = ({
           />
         );
       case ResponderTypes.redhat:
-        return <Redhat control={control} errors={errors} setValue={setValue} />;
+        return (
+          <Redhat
+            control={control}
+            errors={errors}
+            setValue={setValue}
+            defaultValues={defaultValues}
+            values={fixedValues}
+          />
+        );
       case ResponderTypes.oracle:
-        return <Oracle control={control} errors={errors} setValue={setValue} />;
+        return (
+          <Oracle
+            control={control}
+            errors={errors}
+            setValue={setValue}
+            defaultValues={defaultValues}
+            values={fixedValues}
+          />
+        );
       case ResponderTypes.msPlanner:
         return (
           <MicrosoftPlanner
             control={control}
             errors={errors}
             setValue={setValue}
+            defaultValues={defaultValues}
+            values={fixedValues}
+            teamId={selectedTeam?.id}
           />
         );
       case ResponderTypes.vmware:
-        return <VMWare control={control} errors={errors} setValue={setValue} />;
+        return (
+          <VMWare
+            control={control}
+            errors={errors}
+            setValue={setValue}
+            defaultValues={defaultValues}
+            values={fixedValues}
+          />
+        );
       case ResponderTypes.person:
-        return <Person control={control} errors={errors} setValue={setValue} />;
+        return (
+          <Person
+            control={control}
+            errors={errors}
+            setValue={setValue}
+            defaultValues={defaultValues}
+            values={fixedValues}
+          />
+        );
       default:
         return null;
     }

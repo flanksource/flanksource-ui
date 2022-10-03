@@ -1,32 +1,80 @@
 import clsx from "clsx";
-import { useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import {
   Control,
   Controller,
   FieldErrors,
   UseFormSetValue
 } from "react-hook-form";
+import { searchConfigs } from "../../../../api/services/configs";
 import { ConfigItem } from "../../../ConfigItem";
 import { TextInput } from "../../../TextInput";
 import { AddResponderFormValues } from "../../AddResponder";
 
 type MicrosoftProps = {
+  teamId: string;
   control: Control;
   errors: FieldErrors;
   setValue: UseFormSetValue<AddResponderFormValues>;
+  defaultValues: { [key: string]: any };
+  values: { [key: string]: any };
 } & React.HTMLProps<HTMLDivElement>;
 
 export const MicrosoftPlanner = ({
+  teamId,
   control,
   errors,
   setValue,
   className,
+  defaultValues,
+  values,
   ...rest
 }: MicrosoftProps) => {
   const [msProjectType, setMsProjectType] = useState();
   const [planId, setPlanId] = useState();
   const [bucketId, setBucketId] = useState();
   const [priority, setPriority] = useState();
+  const timerRef = useRef<any>();
+  const [allValues, setAllValues] = useState<any>({});
+
+  useEffect(() => {
+    searchConfigs("MsPlanner", "")
+      .then(({ data }: any) => {
+        const item = (data || [])
+          .map((item: any) => ({
+            ...item,
+            value: item.id,
+            label: item.name || item.external_id
+          }))
+          .find((v: any) => {
+            return v.external_id.includes(teamId);
+          });
+        setValue("configType", item);
+        setMsProjectType(item);
+      })
+      .catch((err) => {});
+  }, []);
+
+  useEffect(() => {
+    const obj = {
+      ...(values || {}),
+      ...(defaultValues || {})
+    };
+    const previous = allValues;
+    setAllValues(obj);
+    clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => {
+      Object.keys(obj).forEach((key: any) => {
+        if (
+          !control.getFieldState(key).isDirty &&
+          obj[key] &&
+          previous[key] !== obj[key]
+        ) {
+          setValue(key, obj[key]);
+        }
+      });
+    });
+  }, [defaultValues, values]);
 
   return (
     <div className={clsx(className)} {...rest}>
@@ -47,6 +95,7 @@ export const MicrosoftPlanner = ({
             </label>
           }
           value={msProjectType}
+          isDisabled={msProjectType}
           id="config-type"
           rules={{
             required: "Please provide valid value"
@@ -57,11 +106,16 @@ export const MicrosoftPlanner = ({
             type="MSPlanner"
             control={control}
             name="plan_id"
-            value={planId}
+            value={
+              control.getFieldState("plan_id")?.isDirty
+                ? planId
+                : values?.plan_id || defaultValues?.plan_id
+            }
             autoFetch={false}
             onSelect={(selected) => {
               setPlanId(selected);
-              setValue("plan_id", "");
+              setValue("plan_id", selected);
+              setValue("bucket_id", "");
             }}
             itemsPath="$..plans[*]"
             namePath="$.name"
@@ -85,10 +139,15 @@ export const MicrosoftPlanner = ({
               type="MSPlanner"
               control={control}
               name="bucket_id"
-              value={bucketId}
+              value={
+                control.getFieldState("bucket_id")?.isDirty
+                  ? bucketId
+                  : values?.bucket_id || defaultValues?.bucket_id
+              }
               autoFetch={false}
               onSelect={(selected) => {
                 setBucketId(selected);
+                setValue("bucket_id", selected);
               }}
               itemsPath="$..buckets[*]"
               namePath="$.name"
@@ -112,10 +171,15 @@ export const MicrosoftPlanner = ({
               type="MSPlanner"
               control={control}
               name="priority"
-              value={priority}
+              value={
+                control.getFieldState("priority")?.isDirty
+                  ? priority
+                  : values?.priority || defaultValues?.priority
+              }
               autoFetch={false}
               onSelect={(selected) => {
                 setPriority(selected);
+                setValue("priority", selected);
               }}
               itemsPath="$..priorities[*]"
               namePath="$"
@@ -145,7 +209,7 @@ export const MicrosoftPlanner = ({
           rules={{
             required: "Please provide valid value"
           }}
-          render={({ field }) => {
+          render={({ field, fieldState: { isDirty } }) => {
             const { onChange, value } = field;
             return (
               <TextInput
@@ -153,7 +217,8 @@ export const MicrosoftPlanner = ({
                 id="title"
                 className="w-full"
                 onChange={onChange}
-                value={value}
+                value={isDirty ? value : defaultValues?.title}
+                disabled={values?.title}
               />
             );
           }}
@@ -167,7 +232,7 @@ export const MicrosoftPlanner = ({
           rules={{
             required: "Please provide valid value"
           }}
-          render={({ field }) => {
+          render={({ field, fieldState: { isDirty } }) => {
             const { onChange, value } = field;
             return (
               <TextInput
@@ -175,7 +240,8 @@ export const MicrosoftPlanner = ({
                 id="description"
                 className="w-full"
                 onChange={onChange}
-                value={value}
+                value={isDirty ? value : defaultValues?.description}
+                disabled={values?.description}
               />
             );
           }}
