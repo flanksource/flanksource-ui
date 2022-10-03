@@ -10,6 +10,7 @@ export interface ConfigItem {
   id: string;
   changes: Change[];
   analysis: Analysis[];
+  tags: Record<string, unknown>;
 }
 
 interface Change {

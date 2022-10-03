@@ -2,38 +2,34 @@ import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import AnalysisIcon from "../AnalysisIcon";
 
-export type ConfigTypeAnalysis = {
-  id: string;
+export type ConfigTypeRelationships = {
   config_id: string;
-  analyzer: string;
-  analysis_type: string;
-  severity: string;
-  summary: string;
-  status: string;
-  message: string;
-  analysis: string;
-  first_observed: string;
-  last_observed: string;
+  related_id: string;
+  property: string;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string;
+  selector_id: string;
 };
 
 type Props = {
   configID: string;
 };
 
-export default function ConfigAnalysis({ configID }: Props) {
-  const [configAnalysis, setConfigAnalysis] = useState<ConfigTypeAnalysis[]>(
-    []
-  );
+export default function ConfigRelatedComponents({ configID }: Props) {
+  const [configRelationships, setConfigRelationships] = useState<
+    ConfigTypeRelationships[]
+  >([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     async function fetchConfigAnalysis(configID: string) {
       setIsLoading(true);
       const res = await fetch(
-        `/api/configs_db/config_analysis?config_id=eq.${configID}`
+        `/api/configs_db/config_component_relationships?config_id=eq.${configID}`
       );
-      const data = (await res.json()) as ConfigTypeAnalysis[];
-      setConfigAnalysis(data);
+      const data = (await res.json()) as ConfigTypeRelationships[];
+      setConfigRelationships(data);
       setIsLoading(false);
     }
 
@@ -44,12 +40,12 @@ export default function ConfigAnalysis({ configID }: Props) {
     return null;
   }
 
-  if (configAnalysis.length === 0) {
+  if (configRelationships.length === 0) {
     return null;
   }
 
   return (
-    <div className="flex flex-col space-y-2 w-full px-2 py-4 shadow-lg rounded-md bg-white">
+    <div className="flex flex-col space-y-2 w-full px-2 py-4 shadow-lg rounded-md  bg-white">
       <h3 className="font-semibold text-xl py-4 border-b">Analysis</h3>
       <table className="w-full text-sm text-left">
         <thead className="text-sm uppercase text-gray-600">
@@ -63,18 +59,14 @@ export default function ConfigAnalysis({ configID }: Props) {
           </tr>
         </thead>
         <tbody>
-          {configAnalysis.map((analysis) => (
-            <tr key={analysis.id}>
-              <td className="p-2 font-medium text-black whitespace-nowrap">
-                <p>
-                  <AnalysisIcon analysis={analysis} />
-                  {analysis.analyzer} <br />
-                </p>
-                {analysis.summary ? analysis.summary : ""}
+          {configRelationships.map((analysis) => (
+            <tr key={analysis.related_id}>
+              {/* <td className="p-2 font-medium text-black whitespace-nowrap">
+                {analysis.property ? analysis.summary : ""}
               </td>
               <td className="p-2 ">
                 {dayjs(analysis.first_observed).fromNow()}
-              </td>
+              </td> */}
             </tr>
           ))}
         </tbody>

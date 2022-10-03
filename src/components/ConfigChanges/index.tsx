@@ -30,7 +30,6 @@ export default function ConfigChanges({ configID }: Props) {
         `/api/configs_db/config_changes?config_id=eq.${configID}`
       );
       const data = (await res.json()) as ConfigTypeChanges[];
-      console.log(data, "data");
       setConfigChanges(data);
       setIsLoading(false);
     }
@@ -39,7 +38,7 @@ export default function ConfigChanges({ configID }: Props) {
   }, [configID]);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return null;
   }
 
   if (configChanges.length === 0) {
@@ -47,7 +46,7 @@ export default function ConfigChanges({ configID }: Props) {
   }
 
   return (
-    <div className="flex flex-col space-y-2 w-full px-2 py-4">
+    <div className="flex flex-col space-y-2 w-full px-2 py-4 shadow-lg rounded-md  bg-white">
       <h3 className="font-semibold text-xl py-4 border-b">Changes</h3>
       <ul className="flex flex-col space-y-1 w-full py-2">
         {configChanges.map((analysis) => (
