@@ -1,5 +1,6 @@
 import { useParams } from "react-router-dom";
 import ConfigAnalysis from "../../components/ConfigAnalysis";
+import ConfigChanges from "../../components/ConfigChanges";
 import { ConfigDetails } from "../../components/ConfigDetails";
 
 export function ConfigDetailsPage() {
@@ -12,6 +13,7 @@ export function ConfigDetailsPage() {
       </div>
       <div className="flex flex-col w-[25rem] shadow-md border-gray-300 border-l p-1">
         <ConfigAnalysis configID={id!} />
+        <ConfigChanges configID={id!} />
       </div>
     </div>
   );
