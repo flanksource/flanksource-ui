@@ -278,13 +278,7 @@ export function AttachEvidenceDialog({
     }
 
     if (isNewHypothesis) {
-      /* type should be root, if it's the first for an incident? */
-      const nodeDetails = isNewIncident
-        ? { type: "root" }
-        : {
-            type: "factor",
-            parent_id: incidentData?.details?.rootId
-          };
+      const nodeDetails = { type: "root" };
 
       const params = {
         user,
