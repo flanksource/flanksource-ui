@@ -1,15 +1,17 @@
-import clsx from "clsx";
 import { useEffect, useState, useMemo, useCallback } from "react";
-import toast from "react-hot-toast";
 import { useParams, useSearchParams, useOutletContext } from "react-router-dom";
-import { toastError } from "../../components/Toast/toast";
-import { getConfig } from "../../api/services/configs";
-import { Loading } from "../../components/Loading";
-import { JSONViewer } from "../../components/JSONViewer";
-import { BreadcrumbNav } from "../../components/BreadcrumbNav";
-import { Button } from "../../components/Button";
+import { ConfigItem, getConfig } from "../../api/services/configs";
 import { EvidenceType } from "../../api/services/evidence";
 import { AttachEvidenceDialog } from "../../components/AttachEvidenceDialog";
+import { BreadcrumbNav } from "../../components/BreadcrumbNav";
+import { Button } from "../../components/Button";
+import ConfigAnalysis from "../../components/ConfigAnalysis";
+import ConfigChanges from "../../components/ConfigChanges";
+import ConfigRelated from "../../components/ConfigRelated";
+import ConfigRelatedComponents from "../../components/ConfigRelatedComponents";
+import { JSONViewer } from "../../components/JSONViewer";
+import { Loading } from "../../components/Loading";
+import { toastError } from "../../components/Toast/toast";
 
 export function ConfigDetailsPage() {
   const { id } = useParams();
@@ -19,13 +21,15 @@ export function ConfigDetailsPage() {
   const [attachAsAsset, setAttachAsAsset] = useState(false);
   const [dialogKey, setDialogKey] = useState(0);
   const [checked, setChecked] = useState({});
-  const [configDetails, setConfigDetails] = useState();
+  const [configDetails, setConfigDetails] = useState<ConfigItem | undefined>();
+  // @ts-ignore
   const { setTitle, setTabRight } = useOutletContext();
 
   useEffect(() => {
-    getConfig(id)
+    getConfig(id!)
       .then((res) => {
-        const data = res?.data[0];
+        const data = res?.data?.[0];
+        console.log(configDetails, "Config Data");
         setConfigDetails(data);
         setTitle(
           <BreadcrumbNav
@@ -44,7 +48,7 @@ export function ConfigDetailsPage() {
   }, [id]);
 
   useEffect(() => {
-    if (!configDetails?.config) {
+    if (!(configDetails as any)?.config) {
       return;
     }
 
@@ -57,12 +61,15 @@ export function ConfigDetailsPage() {
     setParams({ selected });
   }, [checked]);
 
-  const handleClick = useCallback((idx) => {
+  const handleClick = useCallback((idx: any) => {
     setChecked((checked) => {
       const obj = { ...checked };
+      // @ts-ignore
       if (obj[idx]) {
+        // @ts-ignore
         delete obj[idx];
       } else {
+        // @ts-ignore
         obj[idx] = true;
       }
       return obj;
@@ -71,6 +78,7 @@ export function ConfigDetailsPage() {
 
   const code = useMemo(
     () =>
+      // @ts-ignore
       configDetails?.config && JSON.stringify(configDetails.config, null, 2),
     [configDetails]
   );
@@ -116,15 +124,50 @@ export function ConfigDetailsPage() {
   }, [checked, showIncidentModal]);
 
   return (
-    <div className="flex flex-col items-start">
+    <div className="flex flex-row items-start space-x-2 ">
       <div className="flex flex-col w-full border-l border-r rounded-md shadow-lg">
         {!isLoading ? (
-          <JSONViewer
-            code={code}
-            showLineNo
-            onClick={handleClick}
-            selections={checked}
-          />
+          <div className="flex flex-row space-x-2 p-2">
+            <div className="flex flex-col flex-1">
+              <div className="flex flex-col">
+                {configDetails && (
+                  <div className="flex flex-col py-2 px-4">
+                    <div className="block py-6 px-4 border-gray-300 bg-white rounded shadow-md">
+                      <div className="block text-lg tracking-wide">
+                        <span className="font-semibold">Name:</span>{" "}
+                        {configDetails.name}
+                      </div>
+                      {configDetails.tags &&
+                        Object.entries(configDetails.tags)
+                          .filter(([key]) => key !== "Name")
+                          .map(([key, value]) => (
+                            <div className="block text-lg tracking-wide">
+                              <span className="font-semibold">{key}:</span>{" "}
+                              {value}
+                            </div>
+                          ))}
+                    </div>
+                  </div>
+                )}
+                <div className="flex flex-col py-2 px-4 mb-6">
+                  <div className="block py-6 px-4 border-gray-300 bg-white rounded shadow-md">
+                    <JSONViewer
+                      code={code}
+                      showLineNo
+                      onClick={handleClick}
+                      selections={checked}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-col w-full max-w-[25rem] space-y-4 py-2 px-2 h-full sticky top-0">
+              <ConfigAnalysis configID={id!} />
+              <ConfigChanges configID={id!} />
+              <ConfigRelated configID={id!} />
+              <ConfigRelatedComponents configID={id!} />
+            </div>
+          </div>
         ) : (
           <div className="h-32 flex items-center justify-center">
             <Loading />
@@ -146,7 +189,7 @@ export function ConfigDetailsPage() {
           )
         }}
         type={EvidenceType.Config}
-        callback={(success) => {
+        callback={(_: any) => {
           setChecked({});
         }}
       />
