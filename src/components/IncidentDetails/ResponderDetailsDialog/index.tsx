@@ -15,12 +15,14 @@ import {
 
 type ResponderDetailsDialogProps = {
   open: boolean;
+  size: string;
   onClose: () => void;
   responder: any;
   data: AddResponderFormValues;
 } & React.HTMLProps<HTMLDivElement>;
 
 export function ResponderDetailsDialog({
+  size,
   responder,
   data,
   onClose,
@@ -140,10 +142,7 @@ export function ResponderDetailsDialog({
             <div className="mt-4 min-h-full mb-4">
               <div className="lg:border-t lg:border-b lg:border-gray-200 mt-5">
                 <nav className="mx-auto max-w-7xl" aria-label="Progress">
-                  <ol
-                    role="list"
-                    className="rounded-md overflow-hidden lg:flex lg:border-l lg:border-r lg:border-gray-200 lg:rounded-none"
-                  >
+                  <ol className="rounded-md overflow-hidden lg:flex lg:border-l lg:border-r lg:border-gray-200 lg:rounded-none">
                     <li className="relative overflow-hidden lg:flex-1">
                       <div className="border border-gray-200 overflow-hidden border-b-0 rounded-t-md lg:border-0">
                         <a href="#" className="group">

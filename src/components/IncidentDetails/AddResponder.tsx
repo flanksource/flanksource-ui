@@ -36,8 +36,10 @@ import { useLoader } from "../../hooks";
 import { toastError, toastSuccess } from "../Toast/toast";
 import { getAll } from "../../api/schemaResources";
 import { schemaResourceTypes } from "../SchemaResourcePage/resourceTypes";
+
 import _, { template, isEqual } from "lodash";
 import { severityItems, statusItems, typeItems } from "../Incidents/data";
+
 
 type Action = {
   label: string;
@@ -592,7 +594,7 @@ export const AddResponder = ({
             <div className="px-8 py-4 h-modal-body-md">
               <label
                 htmlFor="responder-types"
-                className="block text-base font-medium text-gray-500 my-2 font-bold"
+                className="block text-base font-medium text-gray-500 my-2"
               >
                 Teams
               </label>
@@ -623,7 +625,7 @@ export const AddResponder = ({
             <div className="px-8 pt-4 pb-12 h-modal-body-md">
               <label
                 htmlFor="responder-types"
-                className="block text-base font-medium text-gray-500 my-2 font-bold"
+                className="block text-base font-medium text-gray-500 my-2"
               >
                 Responder Types
               </label>

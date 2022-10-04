@@ -8,6 +8,19 @@ interface ConfigItem {
   external_id: string;
   config_type: string;
   id: string;
+  changes: Change[];
+  analysis: Analysis[];
+}
+
+interface Change {
+  type: string;
+  count: number;
+}
+
+interface Analysis {
+  category: string;
+  severity: string;
+  description: string;
 }
 
 // Config Items

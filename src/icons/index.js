@@ -67,6 +67,8 @@ import azure from "./azure.svg";
 import azure_vnet from "./azure-vnet.svg";
 import badge from "./badge.svg";
 import bash from "./bash.svg";
+import bizagi_icon from "./bizagi_icon.svg";
+import bizagi from "./bizagi.svg";
 import brain from "./brain.svg";
 import canary_checker from "./canary-checker.svg";
 import cassandra from "./cassandra.svg";
@@ -76,8 +78,11 @@ import check from "./check.svg";
 import cisco from "./cisco.svg";
 import clock from "./clock.svg";
 import cloud_build from "./cloud-build.svg";
+import cloud_done from "./cloud-done.svg";
+import cloud_download from "./cloud-download.svg";
 import cloudformation from "./cloudformation.svg";
 import cloudsql from "./cloudsql.svg";
+import cloud_upload from "./cloud-upload.svg";
 import cloudwatch_alarm from "./cloudwatch-alarm.svg";
 import cloudwatch_config from "./cloudwatch-config.svg";
 import cloudwatch from "./cloudwatch.svg";
@@ -106,6 +111,7 @@ import django from "./django.svg";
 import dns from "./dns.svg";
 import dockerPull from "./dockerPull.svg";
 import dockerPush from "./dockerPush.svg";
+import dollar from "./dollar.svg";
 import dotnet from "./dotnet.svg";
 import dots_triple from "./dots-triple.svg";
 import download from "./download.svg";
@@ -335,6 +341,8 @@ export const Icons = {
   "azure-vnet": azure_vnet,
   badge: badge,
   bash: bash,
+  bizagi_icon: bizagi_icon,
+  bizagi: bizagi,
   brain: brain,
   "canary-checker": canary_checker,
   cassandra: cassandra,
@@ -344,8 +352,11 @@ export const Icons = {
   cisco: cisco,
   clock: clock,
   "cloud-build": cloud_build,
+  "cloud-done": cloud_done,
+  "cloud-download": cloud_download,
   cloudformation: cloudformation,
   cloudsql: cloudsql,
+  "cloud-upload": cloud_upload,
   "cloudwatch-alarm": cloudwatch_alarm,
   "cloudwatch-config": cloudwatch_config,
   cloudwatch: cloudwatch,
@@ -374,6 +385,7 @@ export const Icons = {
   dns: dns,
   dockerPull: dockerPull,
   dockerPush: dockerPush,
+  dollar: dollar,
   dotnet: dotnet,
   "dots-triple": dots_triple,
   download: download,

@@ -29,11 +29,15 @@ import { IItem } from "../../types/IItem";
 import { toastSuccess } from "../Toast/toast";
 import { Link } from "react-router-dom";
 import { typeItems } from "../Incidents/data";
-import { Dropdown } from "../Dropdown";
 import { ReactSelectDropdown } from "../ReactSelectDropdown";
 
 interface Props {
   title: string;
+  config_id: string;
+  config_change_id: string;
+  config_analysis_d: string;
+  component_id: string;
+  check_id: string;
   disabled?: boolean;
   selectedLogs?: any;
   callback?: (success: boolean) => void;
@@ -147,7 +151,12 @@ const validationSchema = yup
   .required();
 
 export function AttachEvidenceDialog({
-  title,
+  title = "Link to Incident",
+  config_id,
+  check_id,
+  config_change_id,
+  config_analysis_id,
+  component_id,
   evidence: evidenceAttachment,
   type,
   callback = () => {},
@@ -291,17 +300,24 @@ export function AttachEvidenceDialog({
 
     const evidence = {
       user,
+      check_id,
+      config_id,
+      config_change_id,
+      config_analysis_id,
+      component_id,
       hypothesisId: hypothesisId,
       evidence: evidenceAttachment,
       type,
       description: data.description
     };
 
+    console.log(evidence);
+
     createEvidence(evidence)
       .then(() => {
         toastSuccess(
           <div>
-            Attached to{" "}
+            Linked to{" "}
             <Link
               className="underline text-blue-600 hover:text-blue-800 visited:text-blue-600"
               to={`/incidents/${incidentId}`}
@@ -326,7 +342,7 @@ export function AttachEvidenceDialog({
     <Modal
       title={
         <div className="text-xl font-medium text-gray-800">
-          {title || "Attach Evidence"}
+          {title || "Link to Incident"}
         </div>
       }
       open={isOpen}
@@ -343,7 +359,7 @@ export function AttachEvidenceDialog({
                 name="description"
                 render={({ field: { onChange, value } }) => (
                   <TextInput
-                    label="Evidence description"
+                    label="Description"
                     id="description"
                     className="w-full"
                     onChange={onChange}
@@ -436,7 +452,7 @@ export function AttachEvidenceDialog({
               />
               <p className="text-red-600 text-sm">
                 {/* @ts-ignore:next-line */}
-                {errors.hypothesis?.description.message}
+                {errors.hypothesis?.description?.message}
               </p>
             </div>
           </div>
@@ -450,7 +466,7 @@ export function AttachEvidenceDialog({
                   : "text-gray-400 bg-gray-200"
               } rounded font-medium p-2 px-4 shadow-sm transition`}
             >
-              {isSubmitting ? "Adding.." : "Add Evidence"}
+              {isSubmitting ? "Linking.." : "Link"}
             </button>
           </div>
         </form>

@@ -1,7 +1,6 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { BsClock } from "react-icons/bs";
-import { Dropdown } from ".";
 import { ReactSelectDropdown } from "../ReactSelectDropdown";
 
 const refreshIntervalSelections = {

@@ -1,7 +1,5 @@
-import React from "react";
 import { BsTable } from "react-icons/bs";
 import { RiLayoutGridLine } from "react-icons/ri";
-import { Dropdown } from ".";
 import { ReactSelectDropdown } from "../ReactSelectDropdown";
 
 export const layoutItems = {

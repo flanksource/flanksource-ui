@@ -1,4 +1,3 @@
-import { Dropdown } from ".";
 import { ReactSelectDropdown } from "../ReactSelectDropdown";
 import { defaultTabSelections, getTabSelections } from "./lib/lists";
 
