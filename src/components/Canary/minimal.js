@@ -9,7 +9,7 @@ import { getCanaries } from "../../api/services/topology";
 import { useSearchParams } from "react-router-dom";
 import { EvidenceType } from "../../api/services/evidence";
 import { AttachEvidenceDialog } from "../AttachEvidenceDialog";
-import { isCanaryUI } from "../../constants";
+import { isCanaryUI } from "../../context/Environment";
 
 const MinimalCanaryFC = ({
   checks,
