@@ -200,72 +200,69 @@ export function Canary({
   return (
     <div
       className={clsx(
-        "flex flex-row place-content-center",
+        "flex flex-row place-content-center w-full",
         isCanaryUI ? " h-screen overflow-y-auto" : ""
       )}
     >
-      <div className="flex flex-row place-content-center">
-        {/* @ts-expect-error */}
-        <SidebarSticky topHeight={topLayoutOffset}>
-          <div className="mb-4">
-            {/* @ts-expect-error */}
-            <StatCard
-              title="All Checks"
-              className="mb-4"
-              customValue={
-                <>
-                  {checks?.length || 0}
-                  <span className="text-xl font-light">
-                    {" "}
-                    (<span className="text-green-500">{passing.checks}</span>/
-                    <span className="text-red-500">
-                      {" "}
-                      {checks!.length - passing.checks}
-                    </span>
-                    )
-                  </span>
-                </>
-              }
-            />
-
-            {filteredChecks.length !== checks?.length && (
+      {/* @ts-expect-error */}
+      <SidebarSticky topHeight={topLayoutOffset}>
+        <div className="mb-4">
+          {/* @ts-expect-error */}
+          <StatCard
+            title="All Checks"
+            className="mb-4"
+            customValue={
               <>
-                {/* @ts-expect-error */}
-                <StatCard
-                  title="Filtered Checks"
-                  className="mb-4"
-                  customValue={
-                    <>
-                      {filteredChecks.length}
-                      <span className="text-xl  font-light">
-                        {" "}
-                        (
-                        <span className="text-green-500">
-                          {passing.filtered}
-                        </span>
-                        /
-                        <span className="text-red-500">
-                          {filteredChecks.length - passing.filtered}
-                        </span>
-                        )
-                      </span>
-                    </>
-                  }
-                />
+                {checks?.length || 0}
+                <span className="text-xl font-light">
+                  {" "}
+                  (<span className="text-green-500">{passing.checks}</span>/
+                  <span className="text-red-500">
+                    {" "}
+                    {checks!.length - passing.checks}
+                  </span>
+                  )
+                </span>
               </>
-            )}
-          </div>
+            }
+          />
 
-          <SectionTitle className="mb-4">Filter by Health</SectionTitle>
-          <div className="mb-6 flex items-center">
-            <div className="h-9 flex items-center">
-              <HidePassingToggle />
-            </div>
-            <div className="text-sm text-gray-800 mb-0">Hide Passing</div>
+          {filteredChecks.length !== checks?.length && (
+            <>
+              {/* @ts-expect-error */}
+              <StatCard
+                title="Filtered Checks"
+                className="mb-4"
+                customValue={
+                  <>
+                    {filteredChecks.length}
+                    <span className="text-xl  font-light">
+                      {" "}
+                      (
+                      <span className="text-green-500">{passing.filtered}</span>
+                      /
+                      <span className="text-red-500">
+                        {filteredChecks.length - passing.filtered}
+                      </span>
+                      )
+                    </span>
+                  </>
+                }
+              />
+            </>
+          )}
+        </div>
+
+        <SectionTitle className="mb-4">Filter by Health</SectionTitle>
+        <div className="mb-6 flex items-center">
+          <div className="h-9 flex items-center">
+            <HidePassingToggle />
           </div>
-          <SectionTitle className="mb-5 flex justify-between items-center">
-            Filter by Label{" "}
-            {/* <button
+          <div className="text-sm text-gray-800 mb-0">Hide Passing</div>
+        </div>
+        <SectionTitle className="mb-5 flex justify-between items-center">
+          Filter by Label{" "}
+          {/* <button
               type="button"
               onClick={() => {
                 updateParams({ labels: {} });
@@ -274,82 +271,81 @@ export function Canary({
             >
               Clear All
             </button> */}
-          </SectionTitle>
-          <div className="mb-4 mr-2 w-full">
-            <LabelFilterList labels={filteredLabels} />
-          </div>
-        </SidebarSticky>
+        </SectionTitle>
+        <div className="mb-4 mr-2 w-full">
+          <LabelFilterList labels={filteredLabels} />
+        </div>
+      </SidebarSticky>
 
-        <div className="flex-grow p-6 max-w-7xl">
-          {!hideSearch && (
-            <div className="flex flex-wrap mb-2">
-              <CanarySearchBar
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  handleSearch(e.target.value)
-                }
-                onSubmit={(value: any) => handleSearch(value)}
-                onClear={() => handleSearch("")}
-                style={{ maxWidth: "480px", width: "100%" }}
-                inputClassName="w-full py-2 mr-2 mb-px"
-                inputOuterClassName="w-full"
-                placeholder="Search by name, description, or endpoint"
-                defaultValue={searchParams.get("query")}
-              />
-            </div>
-          )}
-
+      <div className="flex-grow p-6 max-w-7xl">
+        {!hideSearch && (
           <div className="flex flex-wrap mb-2">
-            <div className="mb-2 mr-2">
-              <DropdownStandaloneWrapper
-                dropdownElem={<GroupByDropdown />}
-                checks={checks}
-                defaultValue="canary_name"
-                paramKey="groupBy"
-                className="w-64"
-                prefix={
-                  <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
-                    Group By:
-                  </div>
-                }
-              />
-            </div>
-            <div className="mb-2 mr-2">
-              <DropdownStandaloneWrapper
-                dropdownElem={<TabByDropdown />}
-                defaultValue={defaultTabSelections.namespace.value}
-                paramKey="tabBy"
-                checks={checks}
-                emptyable
-                className="w-64"
-                prefix={
-                  <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
-                    Tab By:
-                  </div>
-                }
-              />
-            </div>
-            {!hideTimeRange && (
-              <DropdownStandaloneWrapper
-                dropdownElem={<TimeRange />}
-                defaultValue={timeRanges[0].value}
-                paramKey="timeRange"
-                className="w-56 mb-2 mr-2"
-                prefix={
-                  <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
-                    Time Range:
-                  </div>
-                }
-              />
-            )}
-          </div>
-          <div className="pb-4">
-            <CanaryInterfaceMinimal
-              checks={checks}
-              searchParams={searchParams}
-              onLabelFiltersCallback={labelUpdateCallback}
-              onFilterCallback={updateFilteredChecks}
+            <CanarySearchBar
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                handleSearch(e.target.value)
+              }
+              onSubmit={(value: any) => handleSearch(value)}
+              onClear={() => handleSearch("")}
+              style={{ maxWidth: "480px", width: "100%" }}
+              inputClassName="w-full py-2 mr-2 mb-px"
+              inputOuterClassName="w-full"
+              placeholder="Search by name, description, or endpoint"
+              defaultValue={searchParams.get("query")}
             />
           </div>
+        )}
+
+        <div className="flex flex-wrap mb-2">
+          <div className="mb-2 mr-2">
+            <DropdownStandaloneWrapper
+              dropdownElem={<GroupByDropdown />}
+              checks={checks}
+              defaultValue="canary_name"
+              paramKey="groupBy"
+              className="w-64"
+              prefix={
+                <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
+                  Group By:
+                </div>
+              }
+            />
+          </div>
+          <div className="mb-2 mr-2">
+            <DropdownStandaloneWrapper
+              dropdownElem={<TabByDropdown />}
+              defaultValue={defaultTabSelections.namespace.value}
+              paramKey="tabBy"
+              checks={checks}
+              emptyable
+              className="w-64"
+              prefix={
+                <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
+                  Tab By:
+                </div>
+              }
+            />
+          </div>
+          {!hideTimeRange && (
+            <DropdownStandaloneWrapper
+              dropdownElem={<TimeRange />}
+              defaultValue={timeRanges[0].value}
+              paramKey="timeRange"
+              className="w-56 mb-2 mr-2"
+              prefix={
+                <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
+                  Time Range:
+                </div>
+              }
+            />
+          )}
+        </div>
+        <div className="pb-4">
+          <CanaryInterfaceMinimal
+            checks={checks}
+            searchParams={searchParams}
+            onLabelFiltersCallback={labelUpdateCallback}
+            onFilterCallback={updateFilteredChecks}
+          />
         </div>
       </div>
     </div>
