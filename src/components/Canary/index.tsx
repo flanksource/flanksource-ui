@@ -169,10 +169,11 @@ export function Canary({
 
   // Set refresh interval for re-fetching data
   useEffect(() => {
-    clearTimeout(timerRef.current);
-    // only refresh with refreshInterval if it is not 0
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+    }
     if (refreshInterval > 0) {
-      timerRef.current = setTimeout(handleFetch, refreshInterval);
+      timerRef.current = setInterval(() => handleFetch(), refreshInterval);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshInterval]);
