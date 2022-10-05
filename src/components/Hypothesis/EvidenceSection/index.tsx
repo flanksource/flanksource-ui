@@ -46,7 +46,7 @@ export function EvidenceItem({ evidence }: { evidence: Evidence }) {
           <ConfigEvidenceView evidenceItem={evidence} />
         </EvidenceAccordion>
       );
-    case EvidenceType.Health:
+    case EvidenceType.Check:
       return (
         <div className="pt-2">
           <HealthEvidenceViewer evidence={evidence} />

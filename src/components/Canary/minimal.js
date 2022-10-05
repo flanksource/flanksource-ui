@@ -88,7 +88,7 @@ const MinimalCanaryFC = ({
       )}
       <AttachEvidenceDialog
         isOpen={attachAsAsset}
-        type={EvidenceType.Health}
+        type={EvidenceType.Check}
         onClose={() => setAttachAsAsset(false)}
         callback={(success) => {
           console.log(success);
@@ -96,7 +96,7 @@ const MinimalCanaryFC = ({
         evidence={{
           check_id: selectedCheck?.id,
           includeMessages: true,
-          start: currentTimeRange
+          start: currentTimeRange,
         }}
       />
       <Modal

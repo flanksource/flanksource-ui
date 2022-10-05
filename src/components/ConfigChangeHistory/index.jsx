@@ -1,4 +1,3 @@
-import React from "react";
 import { Link } from "react-router-dom";
 
 import { DateCell } from "../ConfigViewer/columns";
@@ -54,7 +53,6 @@ export function ConfigChangeHistory({ data, isLoading, linkConfig }) {
     <DataTable
       columns={linkConfig ? columns.concat(configLinkCol) : columns}
       data={data}
-      tableStyle={{ borderSpacing: "0" }}
       isLoading={isLoading}
     />
   );

@@ -1,14 +1,13 @@
-import React, { useMemo, useState } from "react";
 import Convert from "ansi-to-html";
-import DOMPurify from "dompurify";
-import dayjs from "dayjs";
-import { useTable, useRowSelect } from "react-table";
 import clsx from "clsx";
+import dayjs from "dayjs";
+import DOMPurify from "dompurify";
 import PropTypes from "prop-types";
-import { BsFillBarChartFill } from "react-icons/bs";
-import { IndeterminateCheckbox } from "../../IndeterminateCheckbox/IndeterminateCheckbox";
+import { useMemo, useState } from "react";
+import { useRowSelect, useTable } from "react-table";
 import { EvidenceType } from "../../../api/services/evidence";
 import { AttachEvidenceDialog } from "../../AttachEvidenceDialog";
+import { IndeterminateCheckbox } from "../../IndeterminateCheckbox/IndeterminateCheckbox";
 
 const convert = new Convert();
 

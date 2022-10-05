@@ -12,9 +12,18 @@ type EmailProps = {
   control: Control;
   errors: FieldErrors;
   setValue: UseFormSetValue<AddResponderFormValues>;
+  defaultValues: { [key: string]: any };
+  values: { [key: string]: any };
 } & React.HTMLProps<HTMLDivElement>;
 
-export const Email = ({ control, errors, className, ...rest }: EmailProps) => {
+export const Email = ({
+  control,
+  errors,
+  className,
+  defaultValues,
+  values,
+  ...rest
+}: EmailProps) => {
   return (
     <div className={clsx(className)} {...rest}>
       <div className="mb-4">
@@ -24,7 +33,7 @@ export const Email = ({ control, errors, className, ...rest }: EmailProps) => {
           rules={{
             required: "Please provide valid value"
           }}
-          render={({ field }) => {
+          render={({ field, fieldState: { isDirty } }) => {
             const { onChange, value } = field;
             return (
               <TextInput
@@ -32,7 +41,8 @@ export const Email = ({ control, errors, className, ...rest }: EmailProps) => {
                 id="to"
                 className="w-full"
                 onChange={onChange}
-                value={value}
+                value={isDirty ? value : defaultValues?.to}
+                disabled={values?.to}
               />
             );
           }}
@@ -46,7 +56,7 @@ export const Email = ({ control, errors, className, ...rest }: EmailProps) => {
           rules={{
             required: "Please provide valid value"
           }}
-          render={({ field }) => {
+          render={({ field, fieldState: { isDirty } }) => {
             const { onChange, value } = field;
             return (
               <TextInput
@@ -54,7 +64,8 @@ export const Email = ({ control, errors, className, ...rest }: EmailProps) => {
                 id="subject"
                 className="w-full"
                 onChange={onChange}
-                value={value}
+                value={isDirty ? value : defaultValues?.subject}
+                disabled={values?.subject}
               />
             );
           }}
@@ -68,7 +79,7 @@ export const Email = ({ control, errors, className, ...rest }: EmailProps) => {
           rules={{
             required: "Please provide valid value"
           }}
-          render={({ field }) => {
+          render={({ field, fieldState: { isDirty } }) => {
             const { onChange, value } = field;
             return (
               <TextInput
@@ -76,7 +87,8 @@ export const Email = ({ control, errors, className, ...rest }: EmailProps) => {
                 id="body"
                 className="w-full"
                 onChange={onChange}
-                value={value}
+                value={isDirty ? value : defaultValues?.body}
+                disabled={values?.body}
               />
             );
           }}

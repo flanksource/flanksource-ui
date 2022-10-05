@@ -1,7 +1,9 @@
 .PHONY: index.js
 
 define IMPORTS
-	@for img in $(shell ls *.svg); do \
+	@for img in $(shell
+
+		for img in $(ls *.svg); do \
 		name=$${img%.*}; \
 		name=$${name//-/_}; \
 		echo  import  $$name from '"'./$$img'";'  ;\

@@ -1,26 +1,25 @@
-import { useEffect, useRef, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { AiFillPlusCircle } from "react-icons/ai/";
-import { useForm } from "react-hook-form";
 import { debounce } from "lodash";
+import { useEffect, useRef, useState } from "react";
+import { useForm } from "react-hook-form";
+import { AiFillPlusCircle } from "react-icons/ai/";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { getIncidentsWithParams } from "../../api/services/incident";
-import { IncidentCreate } from "../../components/Incidents/IncidentCreate";
-import { IncidentList } from "../../components/Incidents/IncidentList";
-import { Modal } from "../../components/Modal";
-import { SearchLayout } from "../../components/Layout";
-import { Loading } from "../../components/Loading";
-import { Dropdown } from "../../components/Dropdown";
+import { getPersons } from "../../api/services/users";
 import {
   severityItems,
   statusItems,
   typeItems
 } from "../../components/Incidents/data";
-import { getPersons } from "../../api/services/users";
+import { IncidentCreate } from "../../components/Incidents/IncidentCreate";
+import { IncidentList } from "../../components/Incidents/IncidentList";
+import { SearchLayout } from "../../components/Layout";
+import { Loading } from "../../components/Loading";
+import { Modal } from "../../components/Modal";
+import { ReactSelectDropdown } from "../../components/ReactSelectDropdown";
 import {
   IncidentState,
   useIncidentPageContext
 } from "../../context/IncidentPageContext";
-import { ReactSelectDropdown } from "../../components/ReactSelectDropdown";
 
 const defaultSelections = {
   all: {
@@ -28,34 +27,6 @@ const defaultSelections = {
     value: "all",
     order: -1
   }
-};
-
-// to be removed after integrating with API
-const mockLabels = [
-  { value: "chocolate", label: "Chocolate" },
-  { value: "strawberry", label: "Strawberry" },
-  { value: "vanilla", label: "Vanilla" },
-  { value: "banana", label: "Banana" },
-  { value: "grape", label: "Grape" },
-  { value: "pear", label: "Pear" }
-];
-
-const labelDropdownStyles = {
-  valueContainer: (provided) => ({
-    ...provided
-  }),
-  option: (provided) => ({
-    ...provided,
-    fontSize: "14px"
-  }),
-  multiValueLabel: (provided) => ({
-    ...provided,
-    fontSize: "12px"
-  }),
-  container: (provided) => ({
-    ...provided,
-    minWidth: "300px"
-  })
 };
 
 const removeNullValues = (obj) =>
@@ -127,10 +98,7 @@ export function IncidentListPage() {
     try {
       const res = await getIncidentsWithParams(params);
       const data = res.data.map((x) => {
-        const responders =
-          x.commander_id.id === x.communicator_id.id
-            ? [x.commander_id]
-            : [x.communicator_id, x.commander_id];
+        const responders = [];
 
         const commentsSet = new Map(
           x?.comments.map((x) => [x?.created_by?.id, x?.created_by])
@@ -151,6 +119,7 @@ export function IncidentListPage() {
       // setIncidents(data);
       setIsLoading(false);
     } catch (ex) {
+      console.error(ex);
       // setIncidents([]);
       setIncidentState((state: any) => {
         return {

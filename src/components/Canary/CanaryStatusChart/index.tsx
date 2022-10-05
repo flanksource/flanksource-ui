@@ -24,7 +24,7 @@ type StatusType = {
 // @TODO: duration should be formatted properly, not just by ms
 const formatDuration = (duration: number) => `${duration}ms`;
 
-const getFill = (entry: StatusType) => (entry ? "#df1a1a" : "#2cbd27");
+const getFill = (entry) => (entry.status ? "#2cbd27" : "#df1a1a");
 
 function getUpdatedFormat(start: string) {
   let format = "";
