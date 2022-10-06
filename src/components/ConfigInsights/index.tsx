@@ -1,8 +1,8 @@
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
-import AnalysisIcon from "../AnalysisIcon";
+import ConfigInsightsIcon from "../ConfigInsightsIcon";
 
-export type ConfigTypeAnalysis = {
+export type ConfigTypeInsights = {
   id: string;
   config_id: string;
   analyzer: string;
@@ -20,8 +20,8 @@ type Props = {
   configID: string;
 };
 
-export default function ConfigAnalysis({ configID }: Props) {
-  const [configAnalysis, setConfigAnalysis] = useState<ConfigTypeAnalysis[]>(
+export default function ConfigInsights({ configID }: Props) {
+  const [configInsights, setConfigInsights] = useState<ConfigTypeInsights[]>(
     []
   );
   const [isLoading, setIsLoading] = useState(true);
@@ -32,8 +32,8 @@ export default function ConfigAnalysis({ configID }: Props) {
       const res = await fetch(
         `/api/configs_db/config_analysis?config_id=eq.${configID}`
       );
-      const data = (await res.json()) as ConfigTypeAnalysis[];
-      setConfigAnalysis(data);
+      const data = (await res.json()) as ConfigTypeInsights[];
+      setConfigInsights(data);
       setIsLoading(false);
     }
 
@@ -44,13 +44,13 @@ export default function ConfigAnalysis({ configID }: Props) {
     return null;
   }
 
-  if (configAnalysis.length === 0) {
+  if (configInsights.length === 0) {
     return null;
   }
 
   return (
     <div className="flex flex-col space-y-2 w-full px-2 py-4 shadow-lg rounded-md bg-white">
-      <h3 className="font-semibold text-xl py-4 border-b">Analysis</h3>
+      <h3 className="font-semibold text-xl py-4 border-b">Insights</h3>
       <table className="w-full text-sm text-left">
         <thead className="text-sm uppercase text-gray-600">
           <tr>
@@ -63,14 +63,14 @@ export default function ConfigAnalysis({ configID }: Props) {
           </tr>
         </thead>
         <tbody>
-          {configAnalysis.map((analysis) => (
+          {configInsights.map((analysis) => (
             <tr key={analysis.id}>
-              <td className="p-2 font-medium text-black whitespace-nowrap">
-                <p>
-                  <AnalysisIcon analysis={analysis} />
-                  {analysis.analyzer} <br />
-                </p>
-                {analysis.summary ? analysis.summary : ""}
+              <td
+                title={analysis.summary ? analysis.summary : ""}
+                className="p-2 font-medium text-black whitespace-nowrap"
+              >
+                <ConfigInsightsIcon analysis={analysis} />
+                {analysis.analyzer}
               </td>
               <td className="p-2 ">
                 {dayjs(analysis.first_observed).fromNow()}

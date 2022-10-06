@@ -5,7 +5,7 @@ import { EvidenceType } from "../../api/services/evidence";
 import { AttachEvidenceDialog } from "../../components/AttachEvidenceDialog";
 import { BreadcrumbNav } from "../../components/BreadcrumbNav";
 import { Button } from "../../components/Button";
-import ConfigAnalysis from "../../components/ConfigAnalysis";
+import ConfigInsights from "../../components/ConfigInsights";
 import ConfigChanges from "../../components/ConfigChanges";
 import ConfigRelated from "../../components/ConfigRelated";
 import ConfigRelatedComponents from "../../components/ConfigRelatedComponents";
@@ -141,8 +141,11 @@ export function ConfigDetailsPage() {
                         Object.entries(configDetails.tags)
                           .filter(([key]) => key !== "Name")
                           .map(([key, value]) => (
-                            <div className="block text-lg tracking-wide">
-                              <span className="font-semibold">{key}:</span>{" "}
+                            <div
+                              key={key}
+                              className="block text-lg tracking-wide"
+                            >
+                              <span className="font-semibold">{key}:</span>
                               {value}
                             </div>
                           ))}
@@ -162,7 +165,7 @@ export function ConfigDetailsPage() {
               </div>
             </div>
             <div className="flex flex-col w-full max-w-[25rem] space-y-4 py-2 px-2 h-full sticky top-0">
-              <ConfigAnalysis configID={id!} />
+              <ConfigInsights configID={id!} />
               <ConfigChanges configID={id!} />
               <ConfigRelated configID={id!} />
               <ConfigRelatedComponents configID={id!} />

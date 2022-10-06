@@ -1,8 +1,8 @@
-import AnalysisIcon from "./index";
+import ConfigInsightsIcon from "./index";
 
 export default {
   title: "AnalysisIcon",
-  component: AnalysisIcon,
+  component: ConfigInsightsIcon,
   args: {
     analysis: {
       severity: "critical",
@@ -11,7 +11,7 @@ export default {
   }
 };
 
-const Template = (arg) => <AnalysisIcon {...arg} />;
+const Template = (arg) => <ConfigInsightsIcon {...arg} />;
 
 export const Default = Template.bind({});
 

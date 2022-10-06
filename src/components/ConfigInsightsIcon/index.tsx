@@ -6,10 +6,10 @@ import { GrIntegration, GrWorkshop } from "react-icons/gr";
 import { ImHeartBroken } from "react-icons/im";
 import { IoMdSpeedometer } from "react-icons/io";
 import { MdSecurity } from "react-icons/md";
-import { ConfigTypeAnalysis } from "../ConfigAnalysis";
+import { ConfigTypeInsights } from "../ConfigInsights";
 
 type Props = {
-  analysis: Pick<ConfigTypeAnalysis, "severity" | "analysis_type">;
+  analysis: Pick<ConfigTypeInsights, "severity" | "analysis_type">;
 };
 
 /**
@@ -19,7 +19,7 @@ type Props = {
  * color.
  *
  */
-export default function AnalysisIcon({ analysis }: Props) {
+export default function ConfigInsightsIcon({ analysis }: Props) {
   const colorClass = useMemo(() => {
     if (analysis.severity === "critical") {
       return "text-red-500";

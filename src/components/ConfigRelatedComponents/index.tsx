@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
-import AnalysisIcon from "../AnalysisIcon";
+import ConfigInsightsIcon from "../ConfigInsightsIcon";
 
 export type ConfigTypeRelationships = {
   config_id: string;
