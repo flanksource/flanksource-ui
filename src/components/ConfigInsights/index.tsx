@@ -49,8 +49,8 @@ export default function ConfigInsights({ configID }: Props) {
   }
 
   return (
-    <div className="flex flex-col space-y-2 w-full px-2 py-4 shadow-lg rounded-md bg-white">
-      <h3 className="font-semibold text-xl py-4 border-b">Insights</h3>
+    <div className="flex flex-col space-y-2 w-full px-2 py-4">
+      <h3 className="font-semibold text-xl py-4">Insights</h3>
       <table className="w-full text-sm text-left">
         <thead className="text-sm uppercase text-gray-600">
           <tr>

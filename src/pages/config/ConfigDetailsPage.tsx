@@ -5,10 +5,6 @@ import { EvidenceType } from "../../api/services/evidence";
 import { AttachEvidenceDialog } from "../../components/AttachEvidenceDialog";
 import { BreadcrumbNav } from "../../components/BreadcrumbNav";
 import { Button } from "../../components/Button";
-import ConfigInsights from "../../components/ConfigInsights";
-import ConfigChanges from "../../components/ConfigChanges";
-import ConfigRelated from "../../components/ConfigRelated";
-import ConfigRelatedComponents from "../../components/ConfigRelatedComponents";
 import { JSONViewer } from "../../components/JSONViewer";
 import { Loading } from "../../components/Loading";
 import { toastError } from "../../components/Toast/toast";
@@ -125,22 +121,23 @@ export function ConfigDetailsPage() {
 
   return (
     <div className="flex flex-row items-start space-x-2 ">
-      <div className="flex flex-col w-full border-l border-r rounded-md shadow-lg">
+      <div className="flex flex-col w-full max-w-full border-l border-r rounded-md shadow-lg">
         {!isLoading ? (
           <div className="flex flex-row space-x-2 p-2">
-            <div className="flex flex-col flex-1">
-              <div className="flex flex-col">
-                {configDetails && (
-                  <div className="flex flex-col py-2 px-4">
-                    <div className="block py-6 px-4 border-gray-300 bg-white rounded shadow-md">
-                      <div className="block text-lg tracking-wide">
-                        <span className="font-semibold">Name:</span>{" "}
-                        {configDetails.name}
-                      </div>
-                      {configDetails.tags &&
-                        Object.entries(configDetails.tags)
-                          .filter(([key]) => key !== "Name")
-                          .map(([key, value]) => (
+            <div className="flex flex-col w-full object-contain">
+              {configDetails && (
+                <div className="flex flex-col p-2">
+                  <div className="block py-6 px-4 border-gray-300 bg-white rounded shadow-md">
+                    <div className="block text-lg tracking-wide">
+                      <span className="font-semibold">Name:</span>{" "}
+                      {configDetails.name}
+                    </div>
+                    {configDetails.tags &&
+                      Object.entries(configDetails.tags)
+                        .filter(([key]) => key !== "Name")
+                        .map(([key, value]) => (
+                          <>
+                            {/* @ts-ignore */}
                             <div
                               key={key}
                               className="block text-lg tracking-wide"
@@ -148,27 +145,21 @@ export function ConfigDetailsPage() {
                               <span className="font-semibold">{key}:</span>
                               {value}
                             </div>
-                          ))}
-                    </div>
-                  </div>
-                )}
-                <div className="flex flex-col py-2 px-4 mb-6">
-                  <div className="block py-6 px-4 border-gray-300 bg-white rounded shadow-md">
-                    <JSONViewer
-                      code={code}
-                      showLineNo
-                      onClick={handleClick}
-                      selections={checked}
-                    />
+                          </>
+                        ))}
                   </div>
                 </div>
+              )}
+              <div className="flex flex-col p-2 mb-6">
+                <div className="block py-6 px-4 border-gray-300 bg-white rounded shadow-md overflow-auto">
+                  <JSONViewer
+                    code={code}
+                    showLineNo
+                    onClick={handleClick}
+                    selections={checked}
+                  />
+                </div>
               </div>
-            </div>
-            <div className="flex flex-col w-full max-w-[25rem] space-y-4 py-2 px-2 h-full sticky top-0">
-              <ConfigInsights configID={id!} />
-              <ConfigChanges configID={id!} />
-              <ConfigRelated configID={id!} />
-              <ConfigRelatedComponents configID={id!} />
             </div>
           </div>
         ) : (
