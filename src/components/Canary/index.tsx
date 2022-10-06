@@ -566,7 +566,7 @@ const SidebarSticky = ({
   ...props
 }) => (
   <div
-    className={className || "flex flex-col w-100 border-r"}
+    className={className || "flex flex-col w-80 border-r"}
     style={style || { minHeight: `calc(100vh - ${topHeight}px)` }}
     {...props}
   >
