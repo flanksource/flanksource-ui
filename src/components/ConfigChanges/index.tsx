@@ -1,4 +1,7 @@
+import dayjs from "dayjs";
 import { useEffect, useState } from "react";
+import AnalysisIcon from "../AnalysisIcon";
+import ConfigChangeIcon from "../ConfigChangeIcon";
 
 export type ConfigTypeChanges = {
   id: string;
@@ -48,17 +51,31 @@ export default function ConfigChanges({ configID }: Props) {
   return (
     <div className="flex flex-col space-y-2 w-full px-2 py-4 shadow-lg rounded-md  bg-white">
       <h3 className="font-semibold text-xl py-4 border-b">Changes</h3>
-      <ul className="flex flex-col space-y-1 w-full py-2">
-        {configChanges.map((analysis) => (
-          <li
-            key={analysis.id}
-            className="flex flex-row items-center space-x-2"
-          >
-            {/* <AnalysisIcon analysis={analysis} /> */}
-            <span>{analysis.change_type}</span>
-          </li>
-        ))}
-      </ul>
+      <table className="w-full text-sm text-left">
+        <thead className="text-sm uppercase text-gray-600">
+          <tr>
+            <th scope="col" className="p-2">
+              Name
+            </th>
+            <th scope="col" className="p-2">
+              Age
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {configChanges.map((configChange) => (
+            <tr key={configChange.id}>
+              <td className="p-2 font-medium text-black whitespace-nowrap">
+                <ConfigChangeIcon changeType={configChange.change_type} />
+                {configChange.summary ?? configChange.change_type}
+              </td>
+              <td className="p-2 ">
+                {dayjs(configChange.created_at).fromNow()}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
