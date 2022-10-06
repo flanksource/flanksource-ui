@@ -1,6 +1,6 @@
-import dayjs from "dayjs";
 import { useEffect, useState } from "react";
-import ConfigInsightsIcon from "../ConfigInsightsIcon";
+import { ConfigItem } from "../../api/services/configs";
+import { Icon } from "../Icon";
 
 export type ConfigTypeRelationships = {
   config_id: string;
@@ -17,9 +17,7 @@ type Props = {
 };
 
 export default function ConfigRelated({ configID }: Props) {
-  const [configRelationships, setConfigRelationships] = useState<
-    ConfigTypeRelationships[]
-  >([]);
+  const [relatedConfigs, setRelatedConfigs] = useState<ConfigItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -29,16 +27,16 @@ export default function ConfigRelated({ configID }: Props) {
         `/api/configs_db/config_relationships?config_id=eq.${configID}`
       );
       const data = (await res.json()) as ConfigTypeRelationships[];
-      await Promise.all(
+      const relatedConfig = await Promise.all(
         data.map(async (relationship) => {
           const res = await fetch(
             `/api/configs_db/configs?id=eq.${relationship.related_id}`
           );
-          const data = await res.json();
-          return console.log(data);
+          const data = (await res.json()) as ConfigItem[];
+          return data[0];
         })
       );
-      setConfigRelationships(data);
+      setRelatedConfigs(relatedConfig);
       setIsLoading(false);
     }
 
@@ -49,37 +47,26 @@ export default function ConfigRelated({ configID }: Props) {
     return null;
   }
 
-  if (configRelationships.length === 0) {
+  if (relatedConfigs?.length === 0) {
     return null;
   }
 
   return (
     <div className="flex flex-col space-y-2 w-full px-2 py-4">
-      <h3 className="font-semibold text-xl py-4">Analysis</h3>
-      <table className="w-full text-sm text-left">
-        <thead className="text-sm uppercase text-gray-600">
-          <tr>
-            <th scope="col" className="p-2">
-              Name
-            </th>
-            <th scope="col" className="p-2">
-              Age
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {configRelationships.map((analysis) => (
-            <tr key={analysis.related_id}>
-              {/* <td className="p-2 font-medium text-black whitespace-nowrap">
-                {analysis.property ? analysis.summary : ""}
-              </td>
-              <td className="p-2 ">
-                {dayjs(analysis.first_observed).fromNow()}
-              </td> */}
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <h3 className="font-semibold text-xl py-4">Related Configs</h3>
+      <ol>
+        {relatedConfigs.map((config) => (
+          <li className="p-1" key={config.id}>
+            <Icon
+              name={config.external_type}
+              secondary={config.config_type}
+              size="lg"
+              className="mr-2"
+            />
+            {config.name}
+          </li>
+        ))}
+      </ol>
     </div>
   );
 }
