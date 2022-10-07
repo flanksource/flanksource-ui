@@ -10,7 +10,7 @@ import { TopologyCard } from "../components/TopologyCard";
 import { TopologyPopOver } from "../components/TopologyPopover";
 import { SearchSelectTag } from "../components/SearchSelectTag";
 import { ReactSelectDropdown } from "../components/ReactSelectDropdown";
-import { TopologyBreadcrumbs } from "../components/Topology/topology-breadcrumbs";
+import { TopologyBreadcrumbs } from "../components/Topology/topologyBreadcrumbs";
 import { schemaResourceTypes } from "../components/SchemaResourcePage/resourceTypes";
 
 import { useLoader } from "../hooks";
@@ -118,7 +118,8 @@ export function TopologyPage() {
       }
 
       let result = data.filter(
-        (item) => (item.name || item.title) && item.id !== id
+        (item: { name: string; title: string; id: string }) =>
+          (item.name || item.title) && item.id !== id
       );
 
       if (!result.length) {

@@ -6,36 +6,37 @@ import { Icon } from "../Icon";
 import { Loading } from "../Loading";
 import { useLoader } from "../../hooks";
 
-function isTopologyEmpty(topology) {
+function isTopologyEmpty(topology: { id?: string; components: any[] }) {
   return (
     topology == null ||
     (isEmpty(topology.id) && topology.components.length === 0)
   );
 }
 
-export function TopologyBreadcrumbs({
-  topology,
-  topologyId
-  // depth
-}) {
+type Props = {
+  topologyId?: string;
+  topology?: any;
+};
+
+export function TopologyBreadcrumbs({ topology, topologyId }: Props) {
   const [_topology, setTopology] = useState(topology);
-  const { loading, setLoading } = useLoader(false);
+  const { loading, setLoading } = useLoader();
 
   useEffect(() => {
-    if (isEmpty(topologyId) && isTopologyEmpty(_topology)) {
-      return;
+    async function fetchTopology() {
+      if (isEmpty(topologyId) && isTopologyEmpty(_topology)) {
+        return;
+      }
+      if (topologyId != null && _topology == null) {
+        setLoading(true);
+        const results = await getTopology({ id: topologyId });
+        setLoading(false);
+        setTopology(
+          results.data.find((item: { id: string }) => item.id === topologyId)
+        );
+      }
     }
-    if (topologyId != null && _topology == null) {
-      setLoading(true);
-      getTopology({ id: topologyId })
-        .then((results) => {
-          setLoading(false);
-          setTopology(results.data.find((item) => item.id === topologyId));
-        })
-        .catch((err) => {
-          setLoading(false);
-        });
-    }
+    fetchTopology();
   }, [_topology, topologyId]);
 
   useEffect(() => {
