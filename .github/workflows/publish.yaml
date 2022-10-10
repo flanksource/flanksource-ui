@@ -1,3 +1,4 @@
+name: Release
 on:
   push:
     branches:
@@ -78,30 +79,30 @@ jobs:
           commit_message: "Release ${{ needs.semantic-release.outputs.release-version }} of ${{ github.repository }}"
           branch: gh-pages
           repository: ./charts
+          
   update-incident-commander:
-    needs: [docker, helm, semantic-release]
     runs-on: ubuntu-latest
+    needs: [docker, helm, semantic-release]
     if: ${{ needs.semantic-release.outputs.new-release-published == 'true' }}
     steps:
-      steps:
-      - uses: actions/checkout@v3
-        with:
-          repository: "${{ github.repository_owner }}/incident-commander"
-          token: ${{ secrets.FLANKBOT }}
-          path: ./incident-commander
-      - name: Install yq
-        run: |
-          wget https://github.com/mikefarah/yq/releases/download/${VERSION}/${BINARY}.tar.gz -O - |\
-          tar xz && sudo mv ${BINARY} /usr/bin/yq
-        env:
-          VERSION: v4.25.1
-          BINARY: yq_linux_amd64
-      - name: Update canary-checker version in Incident-commander
-        run: |
-          cd incident-commander
-          yq eval-all -i  '(.dependencies[] | select(.name == "flanksource-ui")) ref $d | $d.version = "${{ needs.semantic-release.outputs.release-version }}"' chart/Chart.yaml
-      - name: Push changes to chart repo
-        uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: "chore: update flanksource-ui chart dependency to ${{ needs.semantic-release.outputs.release-version }}"
-          repository: ./incident-commander
+    - uses: actions/checkout@v3
+      with:
+        repository: "${{ github.repository_owner }}/incident-commander"
+        token: ${{ secrets.FLANKBOT }}
+        path: ./incident-commander
+    - name: Install yq
+      run: |
+        wget https://github.com/mikefarah/yq/releases/download/${VERSION}/${BINARY}.tar.gz -O - |\
+        tar xz && sudo mv ${BINARY} /usr/bin/yq
+      env:
+        VERSION: v4.25.1
+        BINARY: yq_linux_amd64
+    - name: Update flanksource-ui version in Incident-commander
+      run: |
+        cd incident-commander
+        yq eval-all -i  '(.dependencies[] | select(.name == "flanksource-ui")) ref $d | $d.version = "${{ needs.semantic-release.outputs.release-version }}"' chart/Chart.yaml
+    - name: Push changes to chart repo
+      uses: stefanzweifel/git-auto-commit-action@v4
+      with:
+        commit_message: "chore: update flanksource-ui chart dependency to ${{ needs.semantic-release.outputs.release-version }}"
+        repository: ./incident-commander
