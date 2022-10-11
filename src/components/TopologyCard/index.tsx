@@ -7,6 +7,7 @@ import { CustomScroll } from "../CustomScroll";
 import { HealthSummary } from "../HealthSummary";
 import { Icon } from "../Icon";
 import { Loading } from "../Loading";
+import { HealthChecksSummary } from "../HealthChecksSummary";
 import { CardMetrics } from "./CardMetrics";
 import { Property } from "./Property";
 import { TopologyDropdownMenu } from "./TopologyDropdownMenu";
@@ -173,8 +174,9 @@ export function TopologyCard({
               className="flex-1 py-4 pl-2 pr-2"
               showMoreClass="text-xs linear-1.21rel mr-1 cursor-pointer"
               maxHeight="200px"
-              minChildCount={6}
+              minChildCount={5}
             >
+              <HealthChecksSummary checks={topology?.checks} />
               {topology?.components?.map((component: any) => (
                 <HealthSummary key={component.id} component={component} />
               ))}
