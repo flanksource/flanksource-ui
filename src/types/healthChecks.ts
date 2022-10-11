@@ -41,12 +41,4 @@ export interface HealthCheckUptime {
   failed: number;
 }
 
-export interface HealthCheckLabels {
-  "kustomize.toolkit.fluxcd.io/name": string;
-  "kustomize.toolkit.fluxcd.io/namespace": string;
-  "Expected-Fail"?: string;
-  app?: string;
-  environment?: string;
-  severity?: string;
-  technology?: string;
-}
+export type HealthCheckLabels = Record<string, any>;
