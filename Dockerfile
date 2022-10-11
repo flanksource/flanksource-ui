@@ -9,7 +9,7 @@ RUN npm i
 FROM node:16 AS builder
 WORKDIR /app
 ARG APP_DEPLOYMENT=INCIDENT_MANAGER
-ARG WITHOUT_AUTH=false
+ARG WITHOUT_AUTH=true
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
