@@ -16,10 +16,14 @@ import { schemaResourceTypes } from "../components/SchemaResourcePage/resourceTy
 import { useLoader } from "../hooks";
 import { getAll } from "../api/schemaResources";
 import { searchParamsToObj } from "../utils/common";
-import { useTopologyPageContext } from "../context/TopologyPageContext";
+import {
+  Topology,
+  useTopologyPageContext
+} from "../context/TopologyPageContext";
 import { getTopology, getTopologyComponents } from "../api/services/topology";
 import { getSortedTopology } from "../components/TopologyPopover/topologySort";
 import { getCardWidth } from "../components/TopologyPopover/topologyPreference";
+import TopologySidebar from "../components/TopologySidebar";
 
 const allOption = {
   All: {
@@ -61,6 +65,8 @@ export function TopologyPage() {
     topologyState?.searchParams
   );
 
+  const [currentTopology, setCurrentTopology] = useState<Topology>();
+
   const [teams, setTeams] = useState<any>({});
   const [selectedLabel, setSelectedLabel] = useState("");
   const [size, setSize] = useState(() => getCardWidth());
@@ -99,6 +105,9 @@ export function TopologyPage() {
         toastError(res.error);
         return;
       }
+
+      const currentTopology = res.data[0];
+      setCurrentTopology(currentTopology);
 
       let data;
 
@@ -237,127 +246,131 @@ export function TopologyPage() {
       onRefresh={() => {
         load();
       }}
+      contentClass="p-0 h-full"
       loading={loading}
     >
-      <>
-        <div className="flex">
-          <div className="flex flex-wrap">
-            {[
-              {
-                id: 1,
-                name: "Health",
-                dropdownClassName: "inline-block p-3 w-80 md:w-36",
-                items: healthTypes,
-                value: healthStatus,
-                onChange: (val: any) => {
-                  setHealthStatus(val);
-                  setSearchParams({
-                    ...searchParamsToObj(searchParams),
-                    status: val
-                  });
+      <div className="flex flex-row h-full">
+        <div className="flex flex-col flex-1 p-6 h-full">
+          <div className="flex">
+            <div className="flex flex-wrap">
+              {[
+                {
+                  id: 1,
+                  name: "Health",
+                  dropdownClassName: "inline-block p-3 w-80 md:w-36",
+                  items: healthTypes,
+                  value: healthStatus,
+                  onChange: (val: any) => {
+                    setHealthStatus(val);
+                    setSearchParams({
+                      ...searchParamsToObj(searchParams),
+                      status: val
+                    });
+                  }
+                },
+                {
+                  id: 2,
+                  name: "Type",
+                  dropdownClassName: "inline-block p-3 w-80 md:w-48",
+                  items: topologyTypes,
+                  value: topologyType,
+                  onChange: (val: any) => {
+                    setTopologyType(val);
+                    setSearchParams({
+                      ...searchParamsToObj(searchParams),
+                      type: val
+                    });
+                  }
+                },
+                {
+                  id: 3,
+                  name: "Team",
+                  dropdownClassName: "inline-block p-3 w-80 md:w-48",
+                  items: teams,
+                  value: team,
+                  onChange: (val: any) => {
+                    setTeam(val);
+                    setSearchParams({
+                      ...searchParamsToObj(searchParams),
+                      team: val
+                    });
+                  }
                 }
-              },
-              {
-                id: 2,
-                name: "Type",
-                dropdownClassName: "inline-block p-3 w-80 md:w-48",
-                items: topologyTypes,
-                value: topologyType,
-                onChange: (val: any) => {
-                  setTopologyType(val);
-                  setSearchParams({
-                    ...searchParamsToObj(searchParams),
-                    type: val
-                  });
+              ].map((v) => (
+                <div id={v.id.toString()} className="flex p-3">
+                  <label className="self-center inline-block pt-2 mr-3 text-sm text-gray-500">
+                    {`${v.name}:`}
+                  </label>
+                  <ReactSelectDropdown
+                    label=""
+                    value={v.value}
+                    items={v.items}
+                    className={v.dropdownClassName}
+                    onChange={(val: any) => {
+                      v.onChange(val);
+                    }}
+                  />
+                </div>
+              ))}
+              {[
+                {
+                  id: 4,
+                  name: "Labels",
+                  searchTagClassName: "inline-block p-3 w-80 md:w-60",
+                  tags: topologyLabels,
+                  value: selectedLabel,
+                  onChange: (tag: any) => {
+                    setSelectedLabel(tag);
+                    setSearchParams({
+                      ...searchParamsToObj(searchParams),
+                      labels:
+                        tag.data.length > 0
+                          ? `${encodeURIComponent(
+                              tag.data[0]
+                            )}=${encodeURIComponent(tag.data[1])}`
+                          : "All"
+                    });
+                  }
                 }
-              },
-              {
-                id: 3,
-                name: "Team",
-                dropdownClassName: "inline-block p-3 w-80 md:w-48",
-                items: teams,
-                value: team,
-                onChange: (val: any) => {
-                  setTeam(val);
-                  setSearchParams({
-                    ...searchParamsToObj(searchParams),
-                    team: val
-                  });
-                }
-              }
-            ].map((v) => (
-              <div id={v.id.toString()} className="flex p-3">
-                <label className="self-center inline-block pt-2 mr-3 text-sm text-gray-500">
-                  {`${v.name}:`}
-                </label>
-                <ReactSelectDropdown
-                  label=""
-                  value={v.value}
-                  items={v.items}
-                  className={v.dropdownClassName}
-                  onChange={(val: any) => {
-                    v.onChange(val);
-                  }}
-                />
-              </div>
-            ))}
-            {[
-              {
-                id: 4,
-                name: "Labels",
-                searchTagClassName: "inline-block p-3 w-80 md:w-60",
-                tags: topologyLabels,
-                value: selectedLabel,
-                onChange: (tag: any) => {
-                  setSelectedLabel(tag);
-                  setSearchParams({
-                    ...searchParamsToObj(searchParams),
-                    labels:
-                      tag.data.length > 0
-                        ? `${encodeURIComponent(
-                            tag.data[0]
-                          )}=${encodeURIComponent(tag.data[1])}`
-                        : "All"
-                  });
-                }
-              }
-            ].map((v) => (
-              <div id={v.id.toString()} className="flex ml-3">
-                <label className="self-center inline-block pt-2 mr-3 text-sm text-gray-500">
-                  {`${v.name}:`}
-                </label>
-                <SearchSelectTag
-                  value={v.value}
-                  tags={v.tags}
-                  className={v.searchTagClassName}
-                  onChange={(tag: any) => {
-                    v.onChange(tag);
-                  }}
-                />
-              </div>
-            ))}
+              ].map((v) => (
+                <div id={v.id.toString()} className="flex ml-3">
+                  <label className="self-center inline-block pt-2 mr-3 text-sm text-gray-500">
+                    {`${v.name}:`}
+                  </label>
+                  <SearchSelectTag
+                    value={v.value}
+                    tags={v.tags}
+                    className={v.searchTagClassName}
+                    onChange={(tag: any) => {
+                      v.onChange(tag);
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
+            <TopologyPopOver
+              size={size}
+              setSize={setSize}
+              topology={topology}
+              searchParams={searchParams}
+              topologyLabels={topologyLabels}
+              setSearchParams={setSearchParams}
+            />
           </div>
-          <TopologyPopOver
-            size={size}
-            setSize={setSize}
-            topology={topology}
-            searchParams={searchParams}
-            topologyLabels={topologyLabels}
-            setSearchParams={setSearchParams}
-          />
-        </div>
-        <div className="flex leading-1.21rel w-full mt-4">
-          <div className="flex flex-wrap w-full">
-            {getSortedTopology(
-              topology,
-              searchParams.get("sortBy") ?? "status",
-              searchParams.get("sortOrder") ?? "desc"
-            ).map((item) => (
-              <TopologyCard key={item.id} topology={item} size={size} />
-            ))}
+          <div className="flex leading-1.21rel w-full mt-4">
+            <div className="flex flex-wrap w-full">
+              {getSortedTopology(
+                topology,
+                searchParams.get("sortBy") ?? "status",
+                searchParams.get("sortOrder") ?? "desc"
+              ).map((item) => (
+                <TopologyCard key={item.id} topology={item} size={size} />
+              ))}
+            </div>
           </div>
         </div>
-      </>
+        {id && <TopologySidebar topology={currentTopology} />}
+      </div>
     </SearchLayout>
   );
 }
