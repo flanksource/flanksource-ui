@@ -36,7 +36,7 @@ let config = {
         destination: `${backendURL}/apm/search/:path*`
       }
     ];
-    return process.env.ENV === "localhost" ? LOCALHOST_ENV_URL_REWRITES : URL_REWRITES ;
+    return ["localhost", "netlify"].includes(process.env.ENV) ? LOCALHOST_ENV_URL_REWRITES : URL_REWRITES ;
   }
 };
 
