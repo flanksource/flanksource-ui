@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
+import { FaExclamationTriangle } from "react-icons/fa";
 import CollapsiblePanel from "../CollapsiblePanel";
 import { Loading } from "../Loading";
 
@@ -42,7 +43,7 @@ export function TopologyConfigChanges({ topologyID }: Props) {
     <div className="flex flex-col space-y-4">
       {isLoading ? (
         <Loading />
-      ) : (
+      ) : componentConfigChanges.length > 0 ? (
         <table className="w-full text-left">
           <thead>
             <tr className="text-gray-500 font-normal">
@@ -59,6 +60,11 @@ export function TopologyConfigChanges({ topologyID }: Props) {
             ))}
           </tbody>
         </table>
+      ) : (
+        <div className="flex flex-row justify-center items-center py-4 space-x-2 text-gray-500">
+          <FaExclamationTriangle className="text-xl" />
+          <span>No changes found for this component</span>
+        </div>
       )}
     </div>
   );

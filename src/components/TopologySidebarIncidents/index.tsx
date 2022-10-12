@@ -107,7 +107,7 @@ export function TopologySidebarIncidents({ topologyID }: Props) {
       ) : (
         <div className="flex flex-row justify-center items-center py-4 space-x-4 text-gray-500">
           <FaExclamationTriangle className="text-xl" />
-          <span>We don't have any open incidents for this component</span>
+          <span>No incidents found for this component</span>
         </div>
       )}
     </div>

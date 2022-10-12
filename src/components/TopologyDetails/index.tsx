@@ -3,7 +3,6 @@ import { ImStatsDots } from "react-icons/im";
 import { NodePodPropToLabelMap } from "../../constants";
 import { Topology } from "../../context/TopologyPageContext";
 import CollapsiblePanel from "../CollapsiblePanel";
-import { Icon } from "../Icon";
 import { FormatProperty } from "../TopologyCard/Property";
 
 type Props = {
