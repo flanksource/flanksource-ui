@@ -38,7 +38,7 @@ export default function TopologyOpenIncidentsFilterBar({
   defaultValues,
   onChangeFilterValues
 }: Props) {
-  const [filterValues, setFilterValues] = useState(defaultValues);
+  const [filterValues, setFilterValues] = useState(() => defaultValues);
 
   useEffect(() => {
     onChangeFilterValues(filterValues);
@@ -79,9 +79,10 @@ export default function TopologyOpenIncidentsFilterBar({
                   <button
                     className="flex flex-row w-full"
                     onClick={() => {
+                      console.log("clicked all");
                       setFilterValues((state) => ({
                         ...state,
-                        status: "All"
+                        type: "all"
                       }));
                     }}
                   >
@@ -100,10 +101,10 @@ export default function TopologyOpenIncidentsFilterBar({
                         className="flex flex-row w-full items-center space-x-3"
                         onClick={() => {
                           console.log("click", key);
-                          setFilterValues({
-                            ...filterValues,
+                          setFilterValues((state) => ({
+                            ...state,
                             type: content.value as IncidentFilter["type"]
-                          });
+                          }));
                         }}
                       >
                         {content.icon} <span>{content.description}</span>
@@ -152,7 +153,6 @@ export default function TopologyOpenIncidentsFilterBar({
                         <button
                           className="flex flex-row w-full  items-center space-x-3"
                           onClick={() => {
-                            console.log(key);
                             setFilterValues((state) => ({
                               ...state,
                               status: key as IncidentFilter["status"]
