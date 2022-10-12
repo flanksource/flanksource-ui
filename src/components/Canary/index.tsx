@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { debounce, isEmpty } from "lodash";
 import {
   encodeObjectToUrlSearchParams,
@@ -26,8 +27,7 @@ import { isHealthy } from "./filter";
 import mixins from "../../utils/mixins.module.css";
 import { Loading } from "../Loading";
 import { useHealthPageContext } from "../../context/HealthPageContext";
-import { useSearchParams } from "react-router-dom";
-import { isCanaryUI } from "../../constants";
+import { isCanaryUI } from "../../context/Environment";
 import clsx from "clsx";
 
 const FilterKeyToLabelMap = {
@@ -52,8 +52,6 @@ export function Canary({
   url = "/api/canary/api",
   refreshInterval = 15 * 1000,
   topLayoutOffset = 0,
-  hideSearch,
-  hideTimeRange,
   onLoading = (_loading) => {}
 }) {
   const updateParams = useUpdateParams();
@@ -221,6 +219,15 @@ export function Canary({
           )}
         </div>
 
+        <SectionTitle className="mb-4">Filter by Time Range</SectionTitle>
+        <div className="mb-4 mr-2 w-full">
+          <DropdownStandaloneWrapper
+            dropdownElem={<TimeRange />}
+            defaultValue={timeRanges[0].value}
+            paramKey="timeRange"
+            className="w-full mr-2"
+          />
+        </div>
         <SectionTitle className="mb-4">Filter by Health</SectionTitle>
         <div className="mb-6 flex items-center">
           <div className="h-9 flex items-center">
@@ -246,8 +253,8 @@ export function Canary({
       </SidebarSticky>
 
       <div className="flex-grow p-6 max-w-7xl">
-        {!hideSearch && (
-          <div className="flex flex-wrap mb-2">
+        <div className="flex flex-wrap mb-2">
+          <div className="flex-1">
             <CanarySearchBar
               onChange={(e) => handleSearch(e.target.value)}
               onSubmit={(value) => handleSearch(value)}
@@ -259,51 +266,37 @@ export function Canary({
               defaultValue={searchParams?.query}
             />
           </div>
-        )}
-
-        <div className="flex flex-wrap mb-2">
-          <div className="mb-2 mr-2">
-            <DropdownStandaloneWrapper
-              dropdownElem={<GroupByDropdown />}
-              checks={checks}
-              defaultValue="canary_name"
-              paramKey="groupBy"
-              className="w-64"
-              prefix={
-                <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
-                  Group By:
-                </div>
-              }
-            />
+          <div className="flex-1 flex justify-end">
+            <div className="mb-2 mr-2">
+              <DropdownStandaloneWrapper
+                dropdownElem={<GroupByDropdown />}
+                checks={checks}
+                defaultValue="canary_name"
+                paramKey="groupBy"
+                className="w-64"
+                prefix={
+                  <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
+                    Group By:
+                  </div>
+                }
+              />
+            </div>
+            <div className="mb-2 mr-2">
+              <DropdownStandaloneWrapper
+                dropdownElem={<TabByDropdown />}
+                defaultValue={defaultTabSelections.namespace.value}
+                paramKey="tabBy"
+                checks={checks}
+                emptyable
+                className="w-64"
+                prefix={
+                  <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
+                    Tab By:
+                  </div>
+                }
+              />
+            </div>
           </div>
-          <div className="mb-2 mr-2">
-            <DropdownStandaloneWrapper
-              dropdownElem={<TabByDropdown />}
-              defaultValue={defaultTabSelections.namespace.value}
-              paramKey="tabBy"
-              checks={checks}
-              emptyable
-              className="w-64"
-              prefix={
-                <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
-                  Tab By:
-                </div>
-              }
-            />
-          </div>
-          {!hideTimeRange && (
-            <DropdownStandaloneWrapper
-              dropdownElem={<TimeRange />}
-              defaultValue={timeRanges[0].value}
-              paramKey="timeRange"
-              className="w-56 mb-2 mr-2"
-              prefix={
-                <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
-                  Time Range:
-                </div>
-              }
-            />
-          )}
         </div>
         <div className="pb-4">
           <CanaryInterfaceMinimal
@@ -573,7 +566,7 @@ const SidebarSticky = ({
   ...props
 }) => (
   <div
-    className={className || "flex flex-col w-100 border-r"}
+    className={className || "flex flex-col w-80 border-r"}
     style={style || { minHeight: `calc(100vh - ${topHeight}px)` }}
     {...props}
   >

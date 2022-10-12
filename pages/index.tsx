@@ -7,7 +7,7 @@ import ory from "../src/components/ory/sdk";
 import { App, CanaryCheckerApp } from "../src/App";
 import { Head } from "../src/components/Head/Head";
 import { Session } from "@ory/client";
-import { isCanaryUI } from "../src/constants";
+import { isCanaryUI } from "../src/context/Environment";
 
 const Home: NextPage = () => {
   const [session, setSession] = useState<Session | undefined>();
