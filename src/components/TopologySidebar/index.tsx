@@ -2,6 +2,7 @@ import { useState } from "react";
 import { IoChevronBackOutline, IoChevronForwardOutline } from "react-icons/io5";
 import { useParams } from "react-router-dom";
 import { Topology } from "../../context/TopologyPageContext";
+import TopologyConfigChanges from "../TopologyConfigChanges";
 import TopologyDetails from "../TopologyDetails";
 import TopologySidebarIncidents from "../TopologySidebarIncidents";
 
@@ -30,6 +31,7 @@ export default function TopologySidebar({ topology }: Props) {
       >
         <TopologyDetails topology={topology} />
         <TopologySidebarIncidents topologyID={id} />
+        <TopologyConfigChanges topologyID={id} />
       </div>
 
       <button
