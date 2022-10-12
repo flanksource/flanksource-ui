@@ -20,7 +20,7 @@ export type Evidence = {
   config_analysis_id: string;
   config_change_id: string;
   check_id: string;
-  evidence: object;
+  evidence: Record<string, any>;
   description: string;
   properties: string;
   created_at: string;

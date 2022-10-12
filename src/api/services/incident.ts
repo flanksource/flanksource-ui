@@ -33,6 +33,7 @@ export interface Incident extends NewIncident {
   id: string;
   parent_id: string;
   hypotheses: Hypothesis[];
+  created_at: string;
 }
 
 export const searchIncident = (query: string) => {
