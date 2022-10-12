@@ -10,7 +10,7 @@ export function CodeEditor({ value, onChange, readOnly = false }: Props) {
   return (
     <Editor
       className="border shadow py-2"
-      defaultLanguage="json"
+      defaultLanguage="yaml"
       value={value || ""}
       onChange={onChange}
       width="100%"
