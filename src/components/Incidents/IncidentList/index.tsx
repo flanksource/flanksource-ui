@@ -1,11 +1,11 @@
 import { useNavigate } from "react-router-dom";
-import dayjs from "dayjs";
 import { v4 as uuid } from "uuid";
 import { AvatarGroup } from "../../AvatarGroup";
 import { IncidentStatusTag } from "../../IncidentStatusTag";
 import { IncidentSeverityTag } from "../../IncidentSeverityTag";
 import { IncidentTypeTag } from "../../incidentTypeTag";
 import { Incident } from "../../../api/services/incident";
+import { relativeDateTime } from "../../../utils/date";
 
 type Props = {
   list: Incident[];
@@ -64,7 +64,7 @@ function IncidentItem({ incident }: { incident: Incident }) {
     created_at: createdAt
     // status
   } = incident;
-  const age = dayjs(createdAt).fromNow();
+  const age = relativeDateTime(createdAt, true);
   const navigate = useNavigate();
   const navigateToIncidentDetails = (id: string) => {
     navigate(`/incidents/${id}`);
