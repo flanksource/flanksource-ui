@@ -118,7 +118,7 @@ export function TopologySidebarIncidents({ topologyID }: Props) {
 // eslint-disable-next-line import/no-anonymous-default-export
 export default function (props: Props) {
   return (
-    <div className="flex flex-col py-6">
+    <div className="flex flex-col">
       <CollapsiblePanel
         Header={<h3 className="text-xl font-semibold">Open Incidents</h3>}
       >

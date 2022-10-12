@@ -15,7 +15,7 @@ export default function CollapsiblePanel({
   const [isOpen, setIsOpen] = useState(!isClosed);
 
   return (
-    <div className="flex flex-col space-y-4">
+    <div className="flex flex-col">
       <div
         className="flex flex-row px-4 p-2 cursor-pointer items-center justify-center"
         onClick={() => setIsOpen(!isOpen)}

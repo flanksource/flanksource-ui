@@ -21,7 +21,7 @@ export default function TopologyDetails({ topology }: Props) {
   console.log(headline);
 
   return (
-    <div className="flex flex-col space-y-4">
+    <div className="flex flex-col space-y-2">
       {headline && headline?.length > 0 && (
         <div className="flex flex-col p-4">
           <div className="flex flex-row divide-x divide-solid space-x-4 px-4 py-6 border border-gray-300 rounded-lg">
