@@ -9,6 +9,7 @@
   NEXT_PUBLIC_WITHOUT_SESSION = "true"
   BACKEND_URL = "https://incident-commander.canary.lab.flanksource.com/"
   NODE_ENV = "development"
+  ENV = "netlify"
 
 [context.production.environment]
   NEXT_PUBLIC_WITHOUT_SESSION = "true"
