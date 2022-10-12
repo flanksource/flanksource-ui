@@ -8,7 +8,7 @@ import {
   useRef,
   useState
 } from "react";
-import { Control, Controller } from "react-hook-form";
+import { Controller } from "react-hook-form";
 
 import Select, { SingleValue, StylesConfig } from "react-select";
 import { defaultTheme, components } from "react-select";
@@ -213,7 +213,10 @@ export const ReactSelectDropdown = ({
             Option: (props: any) => {
               return (
                 <components.Option {...props}>
-                  <div className="flex items-center">
+                  <div
+                    className="flex items-center"
+                    title={props.data.description}
+                  >
                     {props.data.avatar && (
                       <Avatar user={props.data} size="sm" />
                     )}
@@ -297,7 +300,9 @@ const Dropdown: FunctionComponent<DropdownProps> = ({
   <div ref={inputRef} className="relative">
     {target}
     {isOpen ? (
-      <Menu className="absolute bg-white z-50 drop-shadow-md">{children}</Menu>
+      <Menu className="absolute bg-white z-50 drop-shadow-md w-64">
+        {children}
+      </Menu>
     ) : null}
     {isOpen ? <Blanket onClick={onClose} /> : null}
   </div>

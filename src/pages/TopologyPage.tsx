@@ -8,7 +8,6 @@ import { SearchLayout } from "../components/Layout";
 import { toastError } from "../components/Toast/toast";
 import { TopologyCard } from "../components/TopologyCard";
 import { TopologyPopOver } from "../components/TopologyPopover";
-import { SearchSelectTag } from "../components/SearchSelectTag";
 import { ReactSelectDropdown } from "../components/ReactSelectDropdown";
 import { TopologyBreadcrumbs } from "../components/Topology/topology-breadcrumbs";
 import { schemaResourceTypes } from "../components/SchemaResourcePage/resourceTypes";
@@ -20,6 +19,7 @@ import { useTopologyPageContext } from "../context/TopologyPageContext";
 import { getTopology, getTopologyComponents } from "../api/services/topology";
 import { getSortedTopology } from "../components/TopologyPopover/topologySort";
 import { getCardWidth } from "../components/TopologyPopover/topologyPreference";
+import { BsFillInfoCircleFill } from "react-icons/bs";
 
 const allOption = {
   All: {
@@ -64,7 +64,7 @@ export function TopologyPage() {
   const [teams, setTeams] = useState<any>({});
   const [selectedLabel, setSelectedLabel] = useState("");
   const [size, setSize] = useState(() => getCardWidth());
-  const [topologyLabels, setTopologyLabels] = useState([]);
+  const [topologyLabels, setTopologyLabels] = useState<any>({});
   const [team, setTeam] = useState(searchParams.get("team") ?? "All");
   const [topologyTypes, setTopologyTypes] = useState<any>({});
   const [topologyType, setTopologyType] = useState(
@@ -103,6 +103,7 @@ export function TopologyPage() {
       let data;
 
       if (id) {
+        res.data = Array.isArray(res.data) ? res.data : [];
         if (res.data.length > 1) {
           console.warn("Multiple nodes for same id?");
           toastError("Response has multiple components for the id.");
@@ -114,14 +115,14 @@ export function TopologyPage() {
           data = res.data;
         }
       } else {
-        data = res.data;
+        data = Array.isArray(res.data) ? res.data : [];
       }
 
       let result = data.filter(
         (item) => (item.name || item.title) && item.id !== id
       );
 
-      if (!result.length) {
+      if (!result.length && data.length) {
         result = [data.find((x) => x.id === id)];
       }
 
@@ -146,6 +147,9 @@ export function TopologyPage() {
     }
 
     const allTypes: { [key: string]: any } = {};
+    const allLabels: { [key: string]: any } = {
+      ...allOption
+    };
     data.forEach((component: any) => {
       if (component.type) {
         allTypes[component.type] = {
@@ -155,11 +159,23 @@ export function TopologyPage() {
           value: component.type
         };
       }
+      const entries = Object.entries(component?.labels || {});
+      if (entries.length) {
+        entries.forEach((entry) => {
+          if (!entry.length) {
+            return;
+          }
+          const value = `${entry[0]}=${entry[1]}`;
+          const label = `${entry[0]}:${entry[1]}`;
+          allLabels[value] = {
+            id: value,
+            name: label,
+            description: label,
+            value: value
+          };
+        });
+      }
     });
-    const allLabels = data.flatMap((d: any) => {
-      return Object.entries(d?.labels || {});
-    });
-
     setTopologyLabels(allLabels);
     setTopologyTypes({ ...allOption, ...allTypes });
   }
@@ -171,11 +187,8 @@ export function TopologyPage() {
     setHealthStatus(searchParams.get("status") ?? "All");
     setTopologyType(searchParams.get("type") ?? "All");
     setTeam(searchParams.get("team") ?? "All");
+    setSelectedLabel(searchParams.get("labels") ?? "All");
   }, [searchParams, id]);
-
-  useEffect(() => {
-    preselectSelectedLabels();
-  }, [searchParams, topologyLabels]);
 
   useEffect(() => {
     const teamsApiConfig = schemaResourceTypes.find(
@@ -204,23 +217,6 @@ export function TopologyPage() {
         });
       });
   }, []);
-
-  const preselectSelectedLabels = () => {
-    let value = searchParams.get("labels") ?? "All";
-
-    if (value === "All") {
-      setSelectedLabel(value);
-      return;
-    }
-
-    const values: string[] = decodeURIComponent(value).split("=");
-    const selectedOption = topologyLabels.find((item: any) => {
-      return item.toString() === values.toString();
-    });
-    value = selectedOption?.[0] + "__:__" + selectedOption?.[1];
-
-    setSelectedLabel(value);
-  };
 
   if ((loading && !topology) || !topology) {
     return <Loading text="Loading topology..." />;
@@ -283,6 +279,20 @@ export function TopologyPage() {
                     team: val
                   });
                 }
+              },
+              {
+                id: 4,
+                name: "Labels",
+                dropdownClassName: "inline-block p-3 w-80 md:w-60",
+                items: topologyLabels,
+                value: selectedLabel,
+                onChange: (tag: any) => {
+                  setSelectedLabel(tag);
+                  setSearchParams({
+                    ...searchParamsToObj(searchParams),
+                    labels: tag
+                  });
+                }
               }
             ].map((v) => (
               <div id={v.id.toString()} className="flex p-3">
@@ -300,7 +310,7 @@ export function TopologyPage() {
                 />
               </div>
             ))}
-            {[
+            {/* {[
               {
                 id: 4,
                 name: "Labels",
@@ -334,7 +344,7 @@ export function TopologyPage() {
                   }}
                 />
               </div>
-            ))}
+            ))} */}
           </div>
           <TopologyPopOver
             size={size}
@@ -354,6 +364,24 @@ export function TopologyPage() {
             ).map((item) => (
               <TopologyCard key={item.id} topology={item} size={size} />
             ))}
+            {!topology?.length && (
+              <div className="w-full flex justify-center">
+                <div className="w-96 mt-16">
+                  <div className="rounded-md bg-gray-100 p-4">
+                    <div className="flex">
+                      <div className="flex-shrink-0">
+                        <BsFillInfoCircleFill />
+                      </div>
+                      <div className="ml-3 flex-1 md:flex md:justify-between">
+                        <p className="text-sm">
+                          There are no components matching this criteria
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </>
