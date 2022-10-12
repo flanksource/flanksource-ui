@@ -10,12 +10,15 @@ let config = {
   async rewrites() {
     // Read at build time. See Dockerfile for deployment related steps.
     const backendURL = process.env.BACKEND_URL || "/";
-
-    const isCanary =
-      process.env.NEXT_PUBLIC_APP_DEPLOYMENT === "CANARY_CHECKER";
+    const isCanary = process.env.NEXT_PUBLIC_APP_DEPLOYMENT === "CANARY_CHECKER";
     const canaryPrefix = isCanary ? "" : "/canary";
-
-    return [
+    const LOCALHOST_ENV_URL_REWRITES = [
+      {
+        source: "/api/:path*",
+        destination: `${backendURL}/api/:path*`
+      }
+    ];
+    const URL_REWRITES = [
       {
         source: "/api/configs_db/:path*",
         destination: `${backendURL}/config/db/:path*`
@@ -33,6 +36,7 @@ let config = {
         destination: `${backendURL}/apm/search/:path*`
       }
     ];
+    return process.env.ENV === "localhost" ? LOCALHOST_ENV_URL_REWRITES : URL_REWRITES ;
   }
 };
 
