@@ -1,6 +1,5 @@
 import Convert from "ansi-to-html";
 import clsx from "clsx";
-import dayjs from "dayjs";
 import DOMPurify from "dompurify";
 import PropTypes from "prop-types";
 import { useMemo, useState } from "react";
@@ -8,6 +7,7 @@ import { useRowSelect, useTable } from "react-table";
 import { EvidenceType } from "../../../api/services/evidence";
 import { AttachEvidenceDialog } from "../../AttachEvidenceDialog";
 import { IndeterminateCheckbox } from "../../IndeterminateCheckbox/IndeterminateCheckbox";
+import { DATE_FORMATS, formatDate } from "../../../utils/date";
 
 const convert = new Convert();
 
@@ -49,9 +49,9 @@ export const LogsTable = ({ logs: logsParam, actions, variant, viewOnly }) => {
                 </div>
               )}
               <p>
-                {dayjs(row.original.timestamp).format(
-                  "YYYY-MM-DD HH:mm.ss.SSS"
-                )}
+                {formatDate(row.original.timestamp, {
+                  stringFormat: DATE_FORMATS.LONG
+                })}
               </p>
             </div>
           );

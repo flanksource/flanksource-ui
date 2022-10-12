@@ -1,5 +1,4 @@
 import React, { Suspense, useEffect, useState } from "react";
-import dayjs from "dayjs";
 import { ChevronRightIcon, DotsVerticalIcon } from "@heroicons/react/outline";
 import { LogsTable } from "../../Logs/Table/logs-table";
 import { CardSize, TopologyCard } from "../../TopologyCard";
@@ -20,6 +19,7 @@ import { getUptimePercentage } from "../../Canary/CanaryPopup/utils";
 import { Duration, StatusList } from "../../Canary/renderers";
 import { Modal } from "../../Modal";
 import { CheckDetails } from "../../Canary/CanaryPopup/CheckDetails";
+import { DATE_FORMATS, formatDate } from "../../../utils/date";
 
 export function EvidenceItem({ evidence }: { evidence: Evidence }) {
   switch (evidence.type) {
@@ -83,7 +83,11 @@ const EvidenceAccordion: React.FC<{
             {title || <span className="text-gray-400">(no title)</span>}
             {date && (
               <div className="text-gray-400 text-sm">
-                {dayjs(date).format("HH:mm A, MMM DD, YYYY")}
+                {
+                  formatDate(date, {
+                    stringFormat: DATE_FORMATS.LONG
+                  }) as string
+                }
               </div>
             )}
           </div>
@@ -142,7 +146,7 @@ function ConfigEvidenceView({
                       <div
                         key={lineIndex}
                         className="flex"
-                        style={{ background: selected && "#cfe3ff" }}
+                        style={selected ? { backgroundColor: "#cfe3ff" } : {}}
                       >
                         <div className="text-xs flex items-center justify-end px-1 text-gray-600 border-r w-8 select-none">
                           {lineIndex}

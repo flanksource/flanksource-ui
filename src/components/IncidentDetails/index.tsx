@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 
 import clsx from "clsx";
-import dayjs from "dayjs";
 import { useForm } from "react-hook-form";
 import { RiCloseCircleLine } from "react-icons/ri";
 import { BsShareFill, BsTrash } from "react-icons/bs";
@@ -28,6 +27,7 @@ import {
   deleteResponder,
   getRespondersForTheIncident
 } from "../../api/services/responder";
+import { relativeDateTime } from "../../utils/date";
 
 export const IncidentDetails = ({
   incident,
@@ -73,11 +73,22 @@ export const IncidentDetails = ({
     }
   });
   watch();
-  const DATE_FORMAT = "YYYY-MM-DD HH:mm:ss";
-  const formatDate = ({ date, format = DATE_FORMAT, fallback = "-" }) =>
-    date ? dayjs(date).format(format) : fallback;
-  const dateToDuration = ({ date, withoutSuffix = true, fallback = "-" }) =>
-    date ? dayjs(date).fromNow(withoutSuffix) : fallback;
+
+  const formatCreatedAt = (
+    date: string | Date,
+    type: "DATE_TO_DURATION" | "DATE",
+    fallback = "-"
+  ): string => {
+    if (!date) return fallback;
+    switch (type) {
+      case "DATE":
+        return relativeDateTime(date);
+      case "DATE_TO_DURATION":
+        return relativeDateTime(date, true);
+      default:
+        return "";
+    }
+  };
 
   const watchCreatedAt = watch("created_at");
   const watchType = watch("type");
@@ -85,11 +96,11 @@ export const IncidentDetails = ({
   const watchCommanders = watch("commanders");
 
   const formattedCreatedAt = useMemo(
-    () => formatDate({ date: watchCreatedAt }),
+    () => formatCreatedAt(watchCreatedAt, "DATE"),
     [watchCreatedAt]
   );
   const formattedDuration = useMemo(
-    () => dateToDuration({ date: watchCreatedAt }),
+    () => formatCreatedAt(watchCreatedAt, "DATE_TO_DURATION"),
     [watchCreatedAt]
   );
 

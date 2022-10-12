@@ -1,4 +1,3 @@
-import dayjs from "dayjs";
 import {
   ScatterChart,
   Scatter,
@@ -12,6 +11,7 @@ import {
 import { useEffect, useState } from "react";
 import { getCanaryGraph } from "../../../api/services/topology";
 import { Loading } from "../../Loading";
+import { customDateFormattor, dateToISOString, subtractDateFromNow } from "../../../utils/date";
 
 type StatusType = {
   time: string;
@@ -62,14 +62,14 @@ const getStartValue = (start: string) => {
     return start;
   }
 
-  return dayjs()
-    .subtract(+(start.match(/\d/g)?.[0] ?? "1"), "month")
-    .toISOString();
+  return dateToISOString(subtractDateFromNow(+(start.match(/\d/g)?.[0] ?? "1"), 'month'));
 };
 
 export function CanaryStatusChart({ check, checkTimeRange, ...rest }) {
   const [data, setData] = useState<StatusType[]>([]);
   const [currentFormat, setCurrentFormat] = useState("HH:mm");
+
+  const customFormatDate = (date: string) => customDateFormattor(date, currentFormat)
 
   useEffect(() => {
     const payload = {
@@ -88,8 +88,6 @@ export function CanaryStatusChart({ check, checkTimeRange, ...rest }) {
   if (!data?.length) {
     return <Loading />;
   }
-
-  const formatDate = (date: string) => dayjs(date).format(currentFormat);
 
   return (
     <ResponsiveContainer width="100%" height="100%" {...rest}>
@@ -110,10 +108,10 @@ export function CanaryStatusChart({ check, checkTimeRange, ...rest }) {
         />
         <XAxis
           tickSize={0}
-          tick={<CustomXTick tickFormatter={formatDate} />}
+          tick={<CustomXTick tickFormatter={customFormatDate} />}
           stroke="rgba(200, 200, 200, 1)"
           tickMargin={4}
-          tickFormatter={formatDate}
+          tickFormatter={customFormatDate}
           fontSize={12}
           reversed
           // type="number"
@@ -197,7 +195,7 @@ const CustomTooltip = ({
         <p className="">
           <span className="text-gray-500">{payload[1].name}: </span>
           <span className="ml-1 text-gray-700">
-            {formatDuration(payload?.[1]?.value ?? 0)}
+             {formatDuration(payload?.[1]?.value ?? 0)}
           </span>
         </p>
       </div>

@@ -3,7 +3,7 @@ import { BsTrash } from "react-icons/bs";
 import { Evidence } from "../../../api/services/evidence";
 import { Comment } from "../../../api/services/comments";
 import { User } from "../../../api/services/users";
-import { relativeDateTime } from "../../../utils/relativeDateTime";
+import { relativeDateTime } from "../../../utils/date";
 import { Avatar } from "../../Avatar";
 import { CommentText } from "../../Comment";
 import { IconButton } from "../../IconButton";
