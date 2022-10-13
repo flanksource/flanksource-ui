@@ -8,7 +8,6 @@ import { SearchLayout } from "../components/Layout";
 import { toastError } from "../components/Toast/toast";
 import { TopologyCard } from "../components/TopologyCard";
 import { TopologyPopOver } from "../components/TopologyPopover";
-import { SearchSelectTag } from "../components/SearchSelectTag";
 import { ReactSelectDropdown } from "../components/ReactSelectDropdown";
 import { TopologyBreadcrumbs } from "../components/Topology/topologyBreadcrumbs";
 import { schemaResourceTypes } from "../components/SchemaResourcePage/resourceTypes";
@@ -24,6 +23,7 @@ import { getTopology, getTopologyComponents } from "../api/services/topology";
 import { getSortedTopology } from "../components/TopologyPopover/topologySort";
 import { getCardWidth } from "../components/TopologyPopover/topologyPreference";
 import TopologySidebar from "../components/TopologySidebar";
+import { BsFillInfoCircleFill } from "react-icons/bs";
 
 const allOption = {
   All: {
@@ -70,7 +70,7 @@ export function TopologyPage() {
   const [teams, setTeams] = useState<any>({});
   const [selectedLabel, setSelectedLabel] = useState("");
   const [size, setSize] = useState(() => getCardWidth());
-  const [topologyLabels, setTopologyLabels] = useState([]);
+  const [topologyLabels, setTopologyLabels] = useState<any>({});
   const [team, setTeam] = useState(searchParams.get("team") ?? "All");
   const [topologyTypes, setTopologyTypes] = useState<any>({});
   const [topologyType, setTopologyType] = useState(
@@ -99,7 +99,7 @@ export function TopologyPage() {
         team: params.team,
         labels: params.labels
       };
-
+      // @ts-ignore
       const res = await getTopology(apiParams);
       if (res.error) {
         toastError(res.error);
@@ -112,6 +112,7 @@ export function TopologyPage() {
       let data;
 
       if (id) {
+        res.data = Array.isArray(res.data) ? res.data : [];
         if (res.data.length > 1) {
           console.warn("Multiple nodes for same id?");
           toastError("Response has multiple components for the id.");
@@ -123,7 +124,7 @@ export function TopologyPage() {
           data = res.data;
         }
       } else {
-        data = res.data;
+        data = Array.isArray(res.data) ? res.data : [];
       }
 
       let result = data.filter(
@@ -131,8 +132,8 @@ export function TopologyPage() {
           (item.name || item.title) && item.id !== id
       );
 
-      if (!result.length) {
-        result = [data.find((x) => x.id === id)];
+      if (!result.length && data.length) {
+        result = [data.find((x: Record<string, any>) => x.id === id)];
       }
 
       setTopologyState({
@@ -156,6 +157,9 @@ export function TopologyPage() {
     }
 
     const allTypes: { [key: string]: any } = {};
+    const allLabels: { [key: string]: any } = {
+      ...allOption
+    };
     data.forEach((component: any) => {
       if (component.type) {
         allTypes[component.type] = {
@@ -165,11 +169,23 @@ export function TopologyPage() {
           value: component.type
         };
       }
+      const entries = Object.entries(component?.labels || {});
+      if (entries.length) {
+        entries.forEach((entry) => {
+          if (!entry.length) {
+            return;
+          }
+          const value = `${entry[0]}=${entry[1]}`;
+          const label = `${entry[0]}:${entry[1]}`;
+          allLabels[value] = {
+            id: value,
+            name: label,
+            description: label,
+            value: value
+          };
+        });
+      }
     });
-    const allLabels = data.flatMap((d: any) => {
-      return Object.entries(d?.labels || {});
-    });
-
     setTopologyLabels(allLabels);
     setTopologyTypes({ ...allOption, ...allTypes });
   }
@@ -181,11 +197,8 @@ export function TopologyPage() {
     setHealthStatus(searchParams.get("status") ?? "All");
     setTopologyType(searchParams.get("type") ?? "All");
     setTeam(searchParams.get("team") ?? "All");
+    setSelectedLabel(searchParams.get("labels") ?? "All");
   }, [searchParams, id]);
-
-  useEffect(() => {
-    preselectSelectedLabels();
-  }, [searchParams, topologyLabels]);
 
   useEffect(() => {
     const teamsApiConfig = schemaResourceTypes.find(
@@ -214,23 +227,6 @@ export function TopologyPage() {
         });
       });
   }, []);
-
-  const preselectSelectedLabels = () => {
-    let value = searchParams.get("labels") ?? "All";
-
-    if (value === "All") {
-      setSelectedLabel(value);
-      return;
-    }
-
-    const values: string[] = decodeURIComponent(value).split("=");
-    const selectedOption = topologyLabels.find((item: any) => {
-      return item.toString() === values.toString();
-    });
-    value = selectedOption?.[0] + "__:__" + selectedOption?.[1];
-
-    setSelectedLabel(value);
-  };
 
   if ((loading && !topology) || !topology) {
     return <Loading text="Loading topology..." />;
@@ -295,6 +291,34 @@ export function TopologyPage() {
                       team: val
                     });
                   }
+                },
+                {
+                  id: 3,
+                  name: "Team",
+                  dropdownClassName: "inline-block p-3 w-80 md:w-48",
+                  items: teams,
+                  value: team,
+                  onChange: (val: any) => {
+                    setTeam(val);
+                    setSearchParams({
+                      ...searchParamsToObj(searchParams),
+                      team: val
+                    });
+                  }
+                },
+                {
+                  id: 4,
+                  name: "Labels",
+                  dropdownClassName: "inline-block p-3 w-80 md:w-60",
+                  items: topologyLabels,
+                  value: selectedLabel,
+                  onChange: (tag: any) => {
+                    setSelectedLabel(tag);
+                    setSearchParams({
+                      ...searchParamsToObj(searchParams),
+                      labels: tag
+                    });
+                  }
                 }
               ].map((v) => (
                 <div id={v.id.toString()} className="flex p-3">
@@ -303,51 +327,54 @@ export function TopologyPage() {
                   </label>
                   <ReactSelectDropdown
                     label=""
+                    // @ts-expect-error
                     value={v.value}
                     items={v.items}
                     className={v.dropdownClassName}
+                    // @ts-expect-error
                     onChange={(val: any) => {
                       v.onChange(val);
                     }}
                   />
                 </div>
               ))}
-              {[
-                {
-                  id: 4,
-                  name: "Labels",
-                  searchTagClassName: "inline-block p-3 w-80 md:w-60",
-                  tags: topologyLabels,
-                  value: selectedLabel,
-                  onChange: (tag: any) => {
-                    setSelectedLabel(tag);
-                    setSearchParams({
-                      ...searchParamsToObj(searchParams),
-                      labels:
-                        tag.data.length > 0
-                          ? `${encodeURIComponent(
-                              tag.data[0]
-                            )}=${encodeURIComponent(tag.data[1])}`
-                          : "All"
-                    });
-                  }
+              {/* {[
+              {
+                id: 4,
+                name: "Labels",
+                searchTagClassName: "inline-block p-3 w-80 md:w-60",
+                tags: topologyLabels,
+                value: selectedLabel,
+                onChange: (tag: any) => {
+                  setSelectedLabel(tag);
+                  setSearchParams({
+                    ...searchParamsToObj(searchParams),
+                    labels:
+                      tag.data.length > 0
+                        ? `${encodeURIComponent(
+                            tag.data[0]
+                          )}=${encodeURIComponent(tag.data[1])}`
+                        : "All"
+                  });
                 }
-              ].map((v) => (
-                <div id={v.id.toString()} className="flex ml-3">
-                  <label className="self-center inline-block pt-2 mr-3 text-sm text-gray-500">
-                    {`${v.name}:`}
-                  </label>
-                  <SearchSelectTag
-                    value={v.value}
-                    tags={v.tags}
-                    className={v.searchTagClassName}
-                    onChange={(tag: any) => {
-                      v.onChange(tag);
-                    }}
-                  />
-                </div>
-              ))}
+              }
+            ].map((v) => (
+              <div id={v.id.toString()} className="flex ml-3">
+                <label className="self-center inline-block pt-2 mr-3 text-sm text-gray-500">
+                  {`${v.name}:`}
+                </label>
+                <SearchSelectTag
+                  value={v.value}
+                  tags={v.tags}
+                  className={v.searchTagClassName}
+                  onChange={(tag: any) => {
+                    v.onChange(tag);
+                  }}
+                />
+              </div>
+            ))} */}
             </div>
+
             <TopologyPopOver
               size={size}
               setSize={setSize}
@@ -366,6 +393,24 @@ export function TopologyPage() {
               ).map((item) => (
                 <TopologyCard key={item.id} topology={item} size={size} />
               ))}
+              {!topology?.length && (
+                <div className="w-full flex justify-center">
+                  <div className="w-96 mt-16">
+                    <div className="rounded-md bg-gray-100 p-4">
+                      <div className="flex">
+                        <div className="flex-shrink-0">
+                          <BsFillInfoCircleFill />
+                        </div>
+                        <div className="ml-3 flex-1 md:flex md:justify-between">
+                          <p className="text-sm">
+                            There are no components matching this criteria
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
