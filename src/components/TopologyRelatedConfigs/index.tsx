@@ -20,18 +20,10 @@ export function TopologyRelatedConfigs({ topologyID }: Props) {
     async function fetchComponentRelatedConfig() {
       setIsLoading(true);
       const res = await fetch(
-        `/api/configs_db/config_component_relationships?component_id=eq.${topologyID}&select=*`
+        `/api/configs_db/config_component_relationships?component_id=eq.${topologyID}&select=*,configs!config_component_relationships_config_id_fkey(*)`
       );
       const data = (await res.json()) as Record<string, any>[];
-      const resRelatedConfig = await Promise.all(
-        data.map(async (item) => {
-          const res = await fetch(
-            `/api/configs_db/configs?id=eq.${item.config_id}`
-          );
-          return res.json();
-        })
-      );
-      setComponentRelatedConfig(resRelatedConfig.flat());
+      setComponentRelatedConfig(data.map((config) => config.configs));
       setIsLoading(false);
     }
 
