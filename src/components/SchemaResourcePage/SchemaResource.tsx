@@ -30,7 +30,10 @@ export function SchemaResource({
       const specData = res.data[0]?.spec;
       setResource({
         ...res.data[0],
-        spec: specData && !isEmpty(specData) ? dump(specData) : ""
+        spec:
+          specData && !isEmpty(specData)
+            ? dump(specData, { sortKeys: true })
+            : ""
       });
       setLoadingState("success");
     });
