@@ -13,7 +13,7 @@ export default function ConfigDetailsSidePanel() {
   return (
     <div
       className={`flex flex-col bg-white border-l transform origin-right duration-500 border-gray-200 w-full py-2 px-4 h-full sticky top-0 ${
-        isPanelHidden ? "w-3" : "w-[28rem]"
+        isPanelHidden ? "w-3" : "w-[35rem]"
       }`}
     >
       <div

@@ -1,6 +1,8 @@
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
+import { FaExclamationTriangle } from "react-icons/fa";
 import ConfigInsightsIcon from "../ConfigInsightsIcon";
+import { Loading } from "../Loading";
 
 export type ConfigTypeInsights = {
   id: string;
@@ -40,45 +42,46 @@ export default function ConfigInsights({ configID }: Props) {
     fetchConfigAnalysis(configID);
   }, [configID]);
 
-  if (isLoading) {
-    return null;
-  }
-
-  if (configInsights.length === 0) {
-    return null;
-  }
-
   return (
     <div className="flex flex-col space-y-2 w-full px-2 py-4">
       <h3 className="font-semibold text-xl py-4">Insights</h3>
-      <table className="w-full text-sm text-left">
-        <thead className="text-sm uppercase text-gray-600">
-          <tr>
-            <th scope="col" className="p-2">
-              Name
-            </th>
-            <th scope="col" className="p-2">
-              Age
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {configInsights.map((analysis) => (
-            <tr key={analysis.id}>
-              <td
-                title={analysis.summary ? analysis.summary : ""}
-                className="p-2 font-medium text-black whitespace-nowrap"
-              >
-                <ConfigInsightsIcon analysis={analysis} />
-                {analysis.analyzer}
-              </td>
-              <td className="p-2 ">
-                {dayjs(analysis.first_observed).fromNow()}
-              </td>
+      {isLoading ? (
+        <Loading />
+      ) : configInsights.length > 0 ? (
+        <table className="w-full text-sm text-left">
+          <thead className="text-sm uppercase text-gray-600">
+            <tr>
+              <th scope="col" className="p-2">
+                Name
+              </th>
+              <th scope="col" className="p-2">
+                Age
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {configInsights.map((analysis) => (
+              <tr key={analysis.id}>
+                <td
+                  title={analysis.summary ? analysis.summary : ""}
+                  className="p-2 font-medium text-black whitespace-nowrap"
+                >
+                  <ConfigInsightsIcon analysis={analysis} />
+                  {analysis.analyzer}
+                </td>
+                <td className="p-2 ">
+                  {dayjs(analysis.first_observed).fromNow()}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        <div className="flex flex-row justify-center items-center space-x-2 text-gray-500 text-center">
+          <FaExclamationTriangle />{" "}
+          <span>No insights found for this config</span>
+        </div>
+      )}
     </div>
   );
 }

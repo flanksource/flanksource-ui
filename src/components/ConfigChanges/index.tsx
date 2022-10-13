@@ -1,7 +1,8 @@
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
-import ConfigInsightsIcon from "../ConfigInsightsIcon";
 import ConfigChangeIcon from "../ConfigChangeIcon";
+import { FaExclamationTriangle } from "react-icons/fa";
+import { Loading } from "../Loading";
 
 export type ConfigTypeChanges = {
   id: string;
@@ -40,42 +41,42 @@ export default function ConfigChanges({ configID }: Props) {
     fetchConfigAnalysis(configID);
   }, [configID]);
 
-  if (isLoading) {
-    return null;
-  }
-
-  if (configChanges.length === 0) {
-    return null;
-  }
-
   return (
     <div className="flex flex-col space-y-2 w-full px-2 py-4">
-      <h3 className="font-semibold text-xl py-4">Changes</h3>
-      <table className="w-full text-sm text-left">
-        <thead className="text-sm uppercase text-gray-600">
-          <tr>
-            <th scope="col" className="p-2">
-              Name
-            </th>
-            <th scope="col" className="p-2">
-              Age
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {configChanges.map((configChange) => (
-            <tr key={configChange.id}>
-              <td className="p-2 font-medium text-black whitespace-nowrap">
-                <ConfigChangeIcon changeType={configChange.change_type} />
-                {configChange.summary ?? configChange.change_type}
-              </td>
-              <td className="p-2 ">
-                {dayjs(configChange.created_at).fromNow()}
-              </td>
+      <h3 className="font-semibold text-xl py-4">Related changes</h3>
+      {isLoading ? (
+        <Loading />
+      ) : configChanges.length > 0 ? (
+        <table className="w-full text-sm text-left">
+          <thead className="text-sm uppercase text-gray-600">
+            <tr>
+              <th scope="col" className="p-2">
+                Name
+              </th>
+              <th scope="col" className="p-2">
+                Age
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {configChanges.map((configChange) => (
+              <tr key={configChange.id}>
+                <td className="p-2 font-medium text-black whitespace-nowrap">
+                  <ConfigChangeIcon changeType={configChange.change_type} />
+                  {configChange.summary ?? configChange.change_type}
+                </td>
+                <td className="p-2 ">
+                  {dayjs(configChange.created_at).fromNow()}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        <div className="flex flex-row space-x-2 text-gray-500 justify-center items-center">
+          <FaExclamationTriangle /> <span>No config changes found</span>
+        </div>
+      )}
     </div>
   );
 }
