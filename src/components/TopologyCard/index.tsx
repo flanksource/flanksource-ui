@@ -74,6 +74,22 @@ export function TopologyCard({
     [size]
   );
 
+  const canShowChildHealth = () => {
+    let totalCount = 0;
+    if (topology?.summary) {
+      topology.summary.healthy = topology.summary.healthy || 0;
+      topology.summary.unhealthy = topology.summary.unhealthy || 0;
+      topology.summary.warning = topology.summary.warning || 0;
+      Object.keys(topology.summary).forEach((key) => {
+        totalCount += topology.summary[key];
+      });
+    }
+    return (
+      !topology?.components?.length &&
+      (!topology?.is_leaf || (topology.is_leaf && totalCount !== 1))
+    );
+  };
+
   const prepareTopologyLink = (topologyItem: { id: string }) => {
     return `/topology/${topologyItem.id}`;
   };
@@ -175,6 +191,9 @@ export function TopologyCard({
               maxHeight="200px"
               minChildCount={6}
             >
+              {canShowChildHealth() && (
+                <HealthSummary key={topology.id} component={topology} />
+              )}
               {topology?.components?.map((component: any) => (
                 <HealthSummary key={component.id} component={component} />
               ))}
