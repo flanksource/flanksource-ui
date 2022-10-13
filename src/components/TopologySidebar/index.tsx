@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import { Topology } from "../../context/TopologyPageContext";
 import TopologyConfigChanges from "../TopologyConfigChanges";
 import TopologyDetails from "../TopologyDetails";
+import TopologyRelatedConfigs from "../TopologyRelatedConfigs";
 import TopologySidebarIncidents from "../TopologySidebarIncidents";
 
 type Props = {
@@ -32,6 +33,7 @@ export default function TopologySidebar({ topology }: Props) {
         <TopologyDetails topology={topology} />
         <TopologySidebarIncidents topologyID={id} />
         <TopologyConfigChanges topologyID={id} />
+        <TopologyRelatedConfigs topologyID={id} />
       </div>
 
       <button
