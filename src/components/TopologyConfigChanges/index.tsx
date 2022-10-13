@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { FaExclamationTriangle } from "react-icons/fa";
+import { Link } from "react-router-dom";
 import CollapsiblePanel from "../CollapsiblePanel";
 import { Loading } from "../Loading";
 
@@ -54,8 +55,26 @@ export function TopologyConfigChanges({ topologyID }: Props) {
           <tbody>
             {componentConfigChanges.map((item) => (
               <tr>
-                <td>{dayjs(item.created_at).fromNow()}</td>
-                <td>{item.summary ?? item.change_type}</td>
+                <td>
+                  <Link
+                    className="block"
+                    to={{
+                      pathname: `/configs/${item.config_id}`
+                    }}
+                  >
+                    {dayjs(item.created_at).fromNow()}
+                  </Link>
+                </td>
+                <td>
+                  <Link
+                    className="block"
+                    to={{
+                      pathname: `/configs/${item.config_id}`
+                    }}
+                  >
+                    {item.summary ?? item.change_type}
+                  </Link>
+                </td>
               </tr>
             ))}
           </tbody>

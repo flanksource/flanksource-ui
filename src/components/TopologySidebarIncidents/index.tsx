@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { FaExclamationTriangle } from "react-icons/fa";
+import { Link } from "react-router-dom";
 import { EvidenceType } from "../../api/services/evidence";
 import { Incident } from "../../api/services/incident";
 import CollapsiblePanel from "../CollapsiblePanel";
@@ -87,7 +88,16 @@ export function TopologySidebarIncidents({ topologyID }: Props) {
       ) : incidents.length > 0 ? (
         incidents.map((incident) => (
           <div className="flex flex-col space-y-2">
-            <div className="block font-semibold text-lg">{incident.title}</div>
+            <div className="block font-semibold text-lg">
+              <Link
+                className="block"
+                to={{
+                  pathname: `/incidents/${incident.id}`
+                }}
+              >
+                {incident.title}
+              </Link>
+            </div>
             <div className="flex flex-row space-x-2 text-gray-500 items-center">
               <div className="flex flex-row space-x-1">
                 <IncidentTypeTag textClassName="" type={incident.type!} />
