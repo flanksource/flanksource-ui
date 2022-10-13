@@ -3,6 +3,7 @@ import { ImStatsDots } from "react-icons/im";
 import { NodePodPropToLabelMap } from "../../constants";
 import { Topology } from "../../context/TopologyPageContext";
 import CollapsiblePanel from "../CollapsiblePanel";
+import { Icon } from "../Icon";
 import { FormatProperty } from "../TopologyCard/Property";
 
 type Props = {
@@ -18,8 +19,6 @@ export default function TopologyDetails({ topology }: Props) {
     (property) => property.headline
   );
 
-  console.log(headline);
-
   return (
     <div className="flex flex-col space-y-2">
       {headline && headline?.length > 0 && (
@@ -27,7 +26,7 @@ export default function TopologyDetails({ topology }: Props) {
           <div className="flex flex-row divide-x divide-solid space-x-4 px-4 py-6 border border-gray-300 rounded-lg">
             {headline?.map(({ icon, name }) => (
               <div className="flex flex-col w-1/4 space-y-4 items-center justify-center">
-                <ImStatsDots className="text-blue-500" size={20} />
+                <Icon name={icon} size="2xsi" />
                 <label className="font-semibold text-gray-500">{name}</label>
               </div>
             ))}
@@ -41,17 +40,19 @@ export default function TopologyDetails({ topology }: Props) {
           {filteredTopologyProperties &&
           filteredTopologyProperties?.length > 0 ? (
             <table className="table-auto shadow-none">
-              {filteredTopologyProperties.map((property) => (
-                <tr>
-                  <th className="text-gray-400 font-medium text-left overflow-auto">
-                    {/* @ts-ignore */}
-                    {NodePodPropToLabelMap[property.name] || property.name}:
-                  </th>
-                  <td className="text-base border-none">
-                    <FormatProperty property={property} />
-                  </td>
-                </tr>
-              ))}
+              {filteredTopologyProperties
+                .filter((property) => !property.headline)
+                .map((property) => (
+                  <tr>
+                    <th className="text-gray-400 font-medium text-left overflow-auto">
+                      {/* @ts-ignore */}
+                      {NodePodPropToLabelMap[property.name] || property.name}:
+                    </th>
+                    <td className="text-base border-none">
+                      <FormatProperty property={property} />
+                    </td>
+                  </tr>
+                ))}
             </table>
           ) : (
             <div className="flex flex-col items-center text-center space-x-2 text-gray-400">

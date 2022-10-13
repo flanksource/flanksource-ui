@@ -26,7 +26,7 @@ export function TopologyRelatedConfigs({ topologyID }: Props) {
       const resRelatedConfig = await Promise.all(
         data.map(async (item) => {
           const res = await fetch(
-            `/api/configs_db/configs?config_id=eq.${item.config_id}`
+            `/api/configs_db/configs?id=eq.${item.config_id}`
           );
           return res.json();
         })
