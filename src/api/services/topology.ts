@@ -15,7 +15,9 @@ const arrangeTopologyParams = (params: IParam) => {
   return params;
 };
 
-export const getTopology = async (params: IParam) => {
+export const getTopology = async (
+  params: IParam
+): Promise<Record<string, any>> => {
   params = arrangeTopologyParams(params);
   const query = stringify(params);
   let { data } = await CanaryChecker.get(`/api/topology?${query}`);

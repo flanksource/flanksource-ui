@@ -37,7 +37,7 @@ const StatusStyles: { [k: keyof typeof ComponentStatus]: string } = {
 
 interface IProps {
   size: CardSize;
-  topologyId: string;
+  topologyId?: string;
   topology?: any;
   selectionMode?: boolean;
   selected?: boolean;
