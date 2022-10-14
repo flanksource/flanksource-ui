@@ -1,6 +1,8 @@
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { FaExclamationTriangle } from "react-icons/fa";
+import { MdOutlineInsights } from "react-icons/md";
+import CollapsiblePanel from "../CollapsiblePanel";
 import ConfigInsightsIcon from "../ConfigInsightsIcon";
 import { Loading } from "../Loading";
 
@@ -22,7 +24,7 @@ type Props = {
   configID: string;
 };
 
-export default function ConfigInsights({ configID }: Props) {
+function ConfigInsightsDetails({ configID }: Props) {
   const [configInsights, setConfigInsights] = useState<ConfigTypeInsights[]>(
     []
   );
@@ -43,8 +45,7 @@ export default function ConfigInsights({ configID }: Props) {
   }, [configID]);
 
   return (
-    <div className="flex flex-col space-y-2 w-full px-2 py-4">
-      <h3 className="font-semibold text-xl py-4">Insights</h3>
+    <div className="flex flex-col space-y-2">
       {isLoading ? (
         <Loading />
       ) : configInsights.length > 0 ? (
@@ -78,10 +79,24 @@ export default function ConfigInsights({ configID }: Props) {
         </table>
       ) : (
         <div className="flex flex-row justify-center items-center space-x-2 text-gray-500 text-center">
-          <FaExclamationTriangle />{" "}
-          <span>No insights found for this config</span>
+          <FaExclamationTriangle /> <span>No details found</span>
         </div>
       )}
     </div>
+  );
+}
+
+export default function ConfigInsights(props: Props) {
+  return (
+    <CollapsiblePanel
+      Header={
+        <h3 className="flex flex-row space-x-2 items-center text-xl font-semibold">
+          <MdOutlineInsights className="text-gray-400" />
+          <span>Insights</span>
+        </h3>
+      }
+    >
+      <ConfigInsightsDetails {...props} />
+    </CollapsiblePanel>
   );
 }

@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { FaExclamationTriangle } from "react-icons/fa";
+import { VscJson } from "react-icons/vsc";
 import { Link } from "react-router-dom";
 import { ConfigItem } from "../../api/services/configs";
+import CollapsiblePanel from "../CollapsiblePanel";
 import { Icon } from "../Icon";
 import { Loading } from "../Loading";
 
@@ -20,7 +22,7 @@ type Props = {
   configID: string;
 };
 
-export default function ConfigRelated({ configID }: Props) {
+function ConfigRelatedDetails({ configID }: Props) {
   const [relatedConfigs, setRelatedConfigs] = useState<ConfigItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -39,8 +41,7 @@ export default function ConfigRelated({ configID }: Props) {
   }, [configID]);
 
   return (
-    <div className="flex flex-col space-y-2 w-full px-2 py-4">
-      <h3 className="font-semibold text-xl py-4">Related configs</h3>
+    <div className="flex flex-col space-y-2">
       {isLoading ? (
         <Loading />
       ) : relatedConfigs.length > 0 ? (
@@ -66,9 +67,24 @@ export default function ConfigRelated({ configID }: Props) {
       ) : (
         <div className="flex flex-row justify-center items-center space-x-2 text-gray-500 text-center">
           <FaExclamationTriangle />
-          <span>No related configs found</span>
+          <span>No details found</span>
         </div>
       )}
     </div>
+  );
+}
+
+export default function ConfigChanges(props: Props) {
+  return (
+    <CollapsiblePanel
+      Header={
+        <h3 className="flex flex-row space-x-2 items-center text-xl font-semibold">
+          <VscJson className="text-gray-400" />
+          <span>Changes</span>
+        </h3>
+      }
+    >
+      <ConfigRelatedDetails {...props} />
+    </CollapsiblePanel>
   );
 }

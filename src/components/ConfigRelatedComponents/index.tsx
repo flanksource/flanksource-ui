@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { FaExclamationTriangle } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { ConfigItem } from "../../api/services/configs";
+import CollapsiblePanel from "../CollapsiblePanel";
 import { Icon } from "../Icon";
+import { TopologyIcon } from "../Icons/TopologyIcon";
 import { Loading } from "../Loading";
 
 export type ConfigTypeRelationships = {
@@ -20,7 +21,7 @@ type Props = {
   configID: string;
 };
 
-export default function ConfigRelatedComponents({ configID }: Props) {
+function ConfigRelatedComponentsDetails({ configID }: Props) {
   const [components, setConfigRelationships] = useState<
     ConfigTypeRelationships[]
   >([]);
@@ -41,8 +42,7 @@ export default function ConfigRelatedComponents({ configID }: Props) {
   }, [configID]);
 
   return (
-    <div className="flex flex-col space-y-2 w-full px-2 py-4">
-      <h3 className="font-semibold text-xl py-4">Components</h3>
+    <div className="flex flex-col space-y-2">
       {isLoading ? (
         <Loading />
       ) : components.length > 0 ? (
@@ -68,9 +68,24 @@ export default function ConfigRelatedComponents({ configID }: Props) {
       ) : (
         <div className="flex flex-row justify-center items-center space-x-2 text-gray-500 text-center">
           <FaExclamationTriangle />
-          <span>No components found</span>
+          <span>No details found</span>
         </div>
       )}
     </div>
+  );
+}
+
+export default function ConfigRelatedComponents(props: Props) {
+  return (
+    <CollapsiblePanel
+      Header={
+        <h3 className="flex flex-row space-x-2 items-center text-xl font-semibold">
+          <TopologyIcon className="text-gray-400" />
+          <span>Components</span>
+        </h3>
+      }
+    >
+      <ConfigRelatedComponentsDetails {...props} />
+    </CollapsiblePanel>
   );
 }

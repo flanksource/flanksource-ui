@@ -40,9 +40,9 @@ export function ConfigLayout({
         </div>
       }
       extra={titleExtras}
-      contentClass="flex flex-row flex-1 overflow-x-auto h-full"
+      contentClass="flex flex-row flex-1 overflow-x-auto min-h-full h-auto"
     >
-      <div className="flex flex-col flex-1 p-6 h-full">
+      <div className="flex flex-col flex-1 p-6 min-h-full h-auto">
         <nav className="flex justify-between">
           <span className="flex self-center">
             {navLinks.map((nav) => (

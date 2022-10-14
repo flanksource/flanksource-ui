@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import ConfigChangeIcon from "../ConfigChangeIcon";
 import { FaExclamationTriangle } from "react-icons/fa";
 import { Loading } from "../Loading";
+import CollapsiblePanel from "../CollapsiblePanel";
+import { GoDiff } from "react-icons/go";
 
 export type ConfigTypeChanges = {
   id: string;
@@ -23,7 +25,7 @@ type Props = {
   configID: string;
 };
 
-export default function ConfigChanges({ configID }: Props) {
+function ConfigChangesDetails({ configID }: Props) {
   const [configChanges, setConfigChanges] = useState<ConfigTypeChanges[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -42,8 +44,7 @@ export default function ConfigChanges({ configID }: Props) {
   }, [configID]);
 
   return (
-    <div className="flex flex-col space-y-2 w-full px-2 py-4">
-      <h3 className="font-semibold text-xl py-4">Related changes</h3>
+    <div className="flex flex-col space-y-2">
       {isLoading ? (
         <Loading />
       ) : configChanges.length > 0 ? (
@@ -74,9 +75,24 @@ export default function ConfigChanges({ configID }: Props) {
         </table>
       ) : (
         <div className="flex flex-row space-x-2 text-gray-500 justify-center items-center">
-          <FaExclamationTriangle /> <span>No config changes found</span>
+          <FaExclamationTriangle /> <span>No details found</span>
         </div>
       )}
     </div>
+  );
+}
+
+export default function ConfigChanges(props: Props) {
+  return (
+    <CollapsiblePanel
+      Header={
+        <h3 className="flex flex-row space-x-2 items-center text-xl font-semibold">
+          <GoDiff className="text-gray-400" />
+          <span>Changes</span>
+        </h3>
+      }
+    >
+      <ConfigChangesDetails {...props} />
+    </CollapsiblePanel>
   );
 }

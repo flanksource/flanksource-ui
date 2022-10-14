@@ -12,12 +12,12 @@ export default function ConfigDetailsSidePanel() {
 
   return (
     <div
-      className={`flex flex-col bg-white border-l transform origin-right duration-500 border-gray-200 w-full py-2 px-4 h-full sticky top-0 ${
+      className={`flex flex-col bg-white border-l transform origin-right duration-500 border-gray-200 w-full py-2 px-4 min-h-full h-auto sticky top-0 ${
         isPanelHidden ? "w-3" : "w-[35rem]"
       }`}
     >
       <div
-        className={`flex flex-col flex-1 overflow-y-auto divide-y divide-gray-200 divide-dashed space-y-6 ${
+        className={`flex flex-col flex-1 space-y-6  sticky top-0 ${
           isPanelHidden && "hidden"
         }`}
       >
