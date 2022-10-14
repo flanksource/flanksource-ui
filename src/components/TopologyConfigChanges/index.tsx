@@ -48,8 +48,8 @@ export function TopologyConfigChanges({ topologyID }: Props) {
         <table className="w-full text-left">
           <thead>
             <tr className="text-gray-500 font-normal">
-              <th className="font-normal">Age:</th>
               <th className="font-normal">Description:</th>
+              <th className="font-normal">Age:</th>
             </tr>
           </thead>
           <tbody>
@@ -62,7 +62,7 @@ export function TopologyConfigChanges({ topologyID }: Props) {
                       pathname: `/configs/${item.config_id}/changes`
                     }}
                   >
-                    {dayjs(item.created_at).fromNow()}
+                    {item.summary ?? item.change_type}
                   </Link>
                 </td>
                 <td>
@@ -72,7 +72,7 @@ export function TopologyConfigChanges({ topologyID }: Props) {
                       pathname: `/configs/${item.config_id}/changes`
                     }}
                   >
-                    {item.summary ?? item.change_type}
+                    {dayjs(item.created_at).fromNow()}
                   </Link>
                 </td>
               </tr>
