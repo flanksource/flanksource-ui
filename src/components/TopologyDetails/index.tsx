@@ -1,5 +1,5 @@
 import { FaExclamationTriangle } from "react-icons/fa";
-import { ImStatsDots } from "react-icons/im";
+import { TbListDetails } from "react-icons/tb";
 import { NodePodPropToLabelMap } from "../../constants";
 import { Topology } from "../../context/TopologyPageContext";
 import CollapsiblePanel from "../CollapsiblePanel";
@@ -34,7 +34,12 @@ export default function TopologyDetails({ topology }: Props) {
         </div>
       )}
       <CollapsiblePanel
-        Header={<h3 className="text-xl font-semibold">Details</h3>}
+        Header={
+          <h3 className="flex flex-row space-x-2 items-center text-xl font-semibold">
+            <TbListDetails className="text-gray-400" />
+            <span>Details</span>
+          </h3>
+        }
       >
         <div className="flex flex-col px-4">
           {topologyProperties?.length > 0 ? (
@@ -70,7 +75,7 @@ export default function TopologyDetails({ topology }: Props) {
               <div className="block text-center p-4">
                 <FaExclamationTriangle className="inline-block align-middle" />{" "}
                 <label className="inline-block align-middle">
-                  No details found for this topology
+                  No details found
                 </label>
               </div>
             </div>

@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { FaExclamationTriangle } from "react-icons/fa";
+import { ImLifebuoy } from "react-icons/im";
 import { Link } from "react-router-dom";
 import { EvidenceType } from "../../api/services/evidence";
 import { Incident } from "../../api/services/incident";
@@ -115,9 +116,9 @@ export function TopologySidebarIncidents({ topologyID }: Props) {
           </div>
         ))
       ) : (
-        <div className="flex flex-row justify-center items-center py-4 space-x-4 text-gray-500">
+        <div className="flex flex-row justify-center items-center py-4 space-x-4 text-gray-400">
           <FaExclamationTriangle className="text-xl" />
-          <span>No incidents found for this component</span>
+          <span>No details found</span>
         </div>
       )}
     </div>
@@ -130,7 +131,12 @@ export default function (props: Props) {
   return (
     <div className="flex flex-col">
       <CollapsiblePanel
-        Header={<h3 className="text-xl font-semibold">Open Incidents</h3>}
+        Header={
+          <h3 className="flex flex-row space-x-2 items-center text-xl font-semibold">
+            <ImLifebuoy className="text-gray-400" />
+            <span> Incidents</span>
+          </h3>
+        }
       >
         <div className="flex flex-col px-4">
           <TopologySidebarIncidents {...props} />

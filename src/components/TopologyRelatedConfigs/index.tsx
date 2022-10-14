@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { FaExclamationTriangle } from "react-icons/fa";
+import { VscJson } from "react-icons/vsc";
 import { Link } from "react-router-dom";
 import CollapsiblePanel from "../CollapsiblePanel";
 import { Icon } from "../Icon";
@@ -55,9 +56,9 @@ export function TopologyRelatedConfigs({ topologyID }: Props) {
           ))}
         </ol>
       ) : (
-        <div className="flex flex-row justify-center items-center py-4 space-x-2 text-gray-500">
+        <div className="flex flex-row justify-center items-center py-4 space-x-2 text-gray-400">
           <FaExclamationTriangle className="text-xl" />
-          <span>No related configs found for this component</span>
+          <span>No details found</span>
         </div>
       )}
     </div>
@@ -68,7 +69,12 @@ export function TopologyRelatedConfigs({ topologyID }: Props) {
 export default function (props: Props) {
   return (
     <CollapsiblePanel
-      Header={<h3 className="text-xl font-semibold">Related configs</h3>}
+      Header={
+        <h3 className="flex flex-row space-x-2 items-center text-xl font-semibold">
+          <VscJson className="text-gray-400" />
+          <span>Configs</span>
+        </h3>
+      }
     >
       <div className="flex flex-col px-4">
         <TopologyRelatedConfigs {...props} />

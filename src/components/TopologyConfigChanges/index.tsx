@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { FaExclamationTriangle } from "react-icons/fa";
+import { GoDiff } from "react-icons/go";
 import { Link } from "react-router-dom";
 import CollapsiblePanel from "../CollapsiblePanel";
 import { Loading } from "../Loading";
@@ -80,9 +81,9 @@ export function TopologyConfigChanges({ topologyID }: Props) {
           </tbody>
         </table>
       ) : (
-        <div className="flex flex-row justify-center items-center py-4 space-x-2 text-gray-500">
+        <div className="flex flex-row justify-center items-center py-4 space-x-2 text-gray-400">
           <FaExclamationTriangle className="text-xl" />
-          <span>No changes found for this component</span>
+          <span>No details found</span>
         </div>
       )}
     </div>
@@ -93,7 +94,12 @@ export function TopologyConfigChanges({ topologyID }: Props) {
 export default function (props: Props) {
   return (
     <CollapsiblePanel
-      Header={<h3 className="text-xl font-semibold">Recent changes</h3>}
+      Header={
+        <h3 className="flex flex-row space-x-2 items-center text-xl font-semibold">
+          <GoDiff className="text-gray-400" />
+          <span>Changes</span>
+        </h3>
+      }
     >
       <div className="flex flex-col px-4">
         <TopologyConfigChanges {...props} />
