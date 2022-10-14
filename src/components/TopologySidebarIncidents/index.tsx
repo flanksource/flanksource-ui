@@ -88,7 +88,7 @@ export function TopologySidebarIncidents({ topologyID }: Props) {
       ) : incidents.length > 0 ? (
         incidents.map((incident) => (
           <div className="flex flex-col space-y-2">
-            <div className="block font-semibold text-lg">
+            <div className="block font-semibold">
               <Link
                 className="block"
                 to={{
