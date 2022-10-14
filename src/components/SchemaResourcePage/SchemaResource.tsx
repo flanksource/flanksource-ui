@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { dump } from "js-yaml";
+import { isEmpty } from "lodash";
 import {
   deleteResource,
   getResource,
@@ -25,7 +27,14 @@ export function SchemaResource({
     if (!id) return;
     setLoadingState("loading");
     getResource(resourceInfo, id)?.then((res) => {
-      setResource(res.data[0]);
+      const specData = res.data[0]?.spec;
+      setResource({
+        ...res.data[0],
+        spec:
+          specData && !isEmpty(specData)
+            ? dump(specData, { sortKeys: true })
+            : ""
+      });
       setLoadingState("success");
     });
   }, [resourceInfo, id]);

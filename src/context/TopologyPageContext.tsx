@@ -13,6 +13,7 @@ export type TopologyProperty = {
   headline?: boolean;
   value?: ValueType;
   unit?: string;
+  color?: string;
 };
 
 export type Topology = {
