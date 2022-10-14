@@ -4,6 +4,7 @@ import { NodePodPropToLabelMap } from "../../constants";
 import { Topology } from "../../context/TopologyPageContext";
 import CollapsiblePanel from "../CollapsiblePanel";
 import { Icon } from "../Icon";
+import { CardMetrics } from "../TopologyCard/CardMetrics";
 import { FormatProperty } from "../TopologyCard/Property";
 
 type Props = {
@@ -22,25 +23,13 @@ export default function TopologyDetails({ topology }: Props) {
       {headline && headline?.length > 0 && (
         <div className="flex flex-col p-4">
           <div className="flex flex-row divide-x divide-solid space-x-4 px-4 py-6 border border-gray-300 rounded-lg">
-            {headline?.map((property) => (
-              <div className="flex flex-col w-1/4 space-y-2 items-center justify-center">
-                <div className="flex flex-row space-x-2 items-center justify-center font-semibold text-gray-400">
-                  <Icon
-                    name={property.icon}
-                    size="xxl"
-                    secondary={property.name}
-                  />
-                  <span>{property.name}</span>
-                </div>
-                <div
-                  className={`font-semibold ${
-                    property.color ? `text-${property.color}-500` : "text-black"
-                  } `}
-                >
-                  <FormatProperty property={property} />
-                </div>
-              </div>
-            ))}
+            <CardMetrics
+              items={headline}
+              showLabelIcons
+              containerClasses="flex flex-col flex-1 space-y-3 items-center justify-center"
+              labelClasses="text-gray-color"
+              metricsClasses="font-semibold"
+            />
           </div>
         </div>
       )}
