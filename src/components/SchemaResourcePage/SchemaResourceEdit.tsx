@@ -3,6 +3,7 @@ import { identity, pickBy } from "lodash";
 import { useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { v4 } from "uuid";
+import { load } from "js-yaml";
 
 import { SchemaResourceI } from "../../api/schemaResources";
 import { CodeEditor } from "../CodeEditor";
@@ -98,6 +99,21 @@ export function SchemaResourceEdit({
     onDelete(id);
   };
 
+  const setValueOnChange = (value?: string) => {
+    if (!value) {
+      setValue("spec", {});
+      return;
+    }
+    try {
+      const jSonObj = load(value);
+      if (typeof jSonObj === "object" && jSonObj !== null) {
+        setValue("spec", jSonObj);
+      }
+    } catch (error) {
+      console.error("Error parsing YAML to JSON");
+    }
+  };
+
   return (
     <form className="space-y-4" onSubmit={handleSubmit(doSubmit)}>
       <div className="px-8 pt-4">
@@ -163,8 +179,8 @@ export function SchemaResourceEdit({
           <CodeEditor
             key={keyRef.current}
             readOnly={!!source || disabled || !edit}
-            value={values.spec ? JSON.stringify(values.spec, null, 2) : null}
-            onChange={(v) => setValue("spec", v ? JSON.parse(v) : null)}
+            value={typeof values.spec === "string" ? values.spec : null}
+            onChange={setValueOnChange}
           />
         </div>
       </div>
