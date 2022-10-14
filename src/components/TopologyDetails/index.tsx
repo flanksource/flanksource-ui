@@ -22,10 +22,19 @@ export default function TopologyDetails({ topology }: Props) {
       {headline && headline?.length > 0 && (
         <div className="flex flex-col p-4">
           <div className="flex flex-row divide-x divide-solid space-x-4 px-4 py-6 border border-gray-300 rounded-lg">
-            {headline?.map(({ icon, name }) => (
-              <div className="flex flex-col w-1/4 space-y-4 items-center justify-center">
-                <Icon name={icon} size="2xl" secondary={name} />
-                <label className="font-semibold text-gray-500">{name}</label>
+            {headline?.map((property) => (
+              <div className="flex flex-col w-1/4 space-y-2 items-center justify-center">
+                <div className="flex flex-row space-x-2 items-center justify-center font-semibold text-gray-400">
+                  <Icon
+                    name={property.icon}
+                    size="xxl"
+                    secondary={property.name}
+                  />
+                  <span>{property.name}</span>
+                </div>
+                <div className="font-semibold text-black">
+                  <FormatProperty property={property} short />
+                </div>
               </div>
             ))}
           </div>
