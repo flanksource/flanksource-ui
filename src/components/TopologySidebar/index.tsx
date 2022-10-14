@@ -26,7 +26,7 @@ export default function TopologySidebar({ topology }: Props) {
       }`}
     >
       <div
-        className={`flex flex-col overflow-y-auto divide-y divide-gray-200 divide-dashed space-y-8 sticky top-0 ${
+        className={`flex flex-col overflow-y-auto space-y-8 sticky top-0 ${
           isPanelHidden && "hidden"
         }`}
       >

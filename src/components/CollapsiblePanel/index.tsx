@@ -15,9 +15,11 @@ export default function CollapsiblePanel({
   const [isOpen, setIsOpen] = useState(!isClosed);
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col space-y-4">
       <div
-        className="flex flex-row px-4 p-2 cursor-pointer items-center justify-center"
+        className={`flex flex-row px-4 py-4 cursor-pointer items-center justify-center ${
+          isOpen && "border-b border-dashed border-gray-200"
+        }`}
         onClick={() => setIsOpen(!isOpen)}
       >
         <div className="flex flex-1">{Header}</div>
