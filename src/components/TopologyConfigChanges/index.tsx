@@ -59,7 +59,7 @@ export function TopologyConfigChanges({ topologyID }: Props) {
                   <Link
                     className="block"
                     to={{
-                      pathname: `/configs/${item.config_id}`
+                      pathname: `/configs/${item.config_id}/changes`
                     }}
                   >
                     {dayjs(item.created_at).fromNow()}
@@ -69,7 +69,7 @@ export function TopologyConfigChanges({ topologyID }: Props) {
                   <Link
                     className="block"
                     to={{
-                      pathname: `/configs/${item.config_id}`
+                      pathname: `/configs/${item.config_id}/changes`
                     }}
                   >
                     {item.summary ?? item.change_type}
