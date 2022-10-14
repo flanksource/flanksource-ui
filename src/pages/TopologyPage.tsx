@@ -245,8 +245,8 @@ export function TopologyPage() {
       contentClass="p-0 h-full"
       loading={loading}
     >
-      <div className="flex flex-row h-full">
-        <div className="flex flex-col flex-1 p-6 h-full">
+      <div className="flex flex-row min-h-full h-auto">
+        <div className="flex flex-col flex-1 p-6 min-h-full h-auto">
           <div className="flex">
             <div className="flex flex-wrap">
               {[
