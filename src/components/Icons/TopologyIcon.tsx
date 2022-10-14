@@ -1,4 +1,4 @@
-export function TopologyIcon({ className }: { classname: string }) {
+export function TopologyIcon({ className }: { className: string }) {
   return (
     <svg
       className={className}
