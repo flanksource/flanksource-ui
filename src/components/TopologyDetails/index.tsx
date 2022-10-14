@@ -32,8 +32,12 @@ export default function TopologyDetails({ topology }: Props) {
                   />
                   <span>{property.name}</span>
                 </div>
-                <div className="font-semibold text-black">
-                  <FormatProperty property={property} short />
+                <div
+                  className={`font-semibold ${
+                    property.color ? `text-${property.color}-500` : "text-black"
+                  } `}
+                >
+                  <FormatProperty property={property} />
                 </div>
               </div>
             ))}
