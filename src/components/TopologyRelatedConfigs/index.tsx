@@ -76,7 +76,7 @@ export default function (props: Props) {
         </h3>
       }
     >
-      <div className="flex flex-col px-4">
+      <div className="flex flex-col">
         <TopologyRelatedConfigs {...props} />
       </div>
     </CollapsiblePanel>

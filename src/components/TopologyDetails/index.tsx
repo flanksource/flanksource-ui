@@ -41,7 +41,7 @@ export default function TopologyDetails({ topology }: Props) {
           </h3>
         }
       >
-        <div className="flex flex-col px-4">
+        <div className="flex flex-col">
           {topologyProperties?.length > 0 ? (
             <table className="table-auto shadow-none">
               {topologyProperties
