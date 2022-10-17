@@ -16,13 +16,14 @@ const getBackgroundColorClass = (color) => {
   }
 };
 
-export function Chip({ text, color }) {
+export function Chip({ text, color, ...rest }) {
   return (
     <div
       className={clsx(
         "text-center align-baseline min-w-8 min-h-8 text-2xs rounded-4px font-bold break-all",
         getBackgroundColorClass(color)
       )}
+      {...rest}
     >
       {text}
     </div>
