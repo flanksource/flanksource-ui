@@ -21,7 +21,12 @@ export type Topology = {
   name: string;
   type?: string;
   updated_at?: string;
+  title?: string;
   properties?: TopologyProperty[];
+  components?: Record<string, any>[];
+  path?: string;
+  icon?: string;
+  text?: string;
 };
 
 export type TopologyState = {
