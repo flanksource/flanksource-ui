@@ -80,7 +80,7 @@ export default function ConfigChanges(props: Props) {
       Header={
         <h3 className="flex flex-row space-x-2 items-center text-xl font-semibold">
           <VscJson className="text-gray-400" />
-          <span>Changes</span>
+          <span>Related Configs</span>
         </h3>
       }
     >

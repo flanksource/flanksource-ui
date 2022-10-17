@@ -16,7 +16,7 @@ type Props = {
   configID: string;
 };
 
-function ConfigRelatedComponentsDetails({ configID }: Props) {
+function ConfigComponentsDetails({ configID }: Props) {
   const [components, setConfigComponents] = useState<ConfigsComponents[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -68,7 +68,7 @@ function ConfigRelatedComponentsDetails({ configID }: Props) {
   );
 }
 
-export default function ConfigRelatedComponents(props: Props) {
+export default function ConfigComponents(props: Props) {
   return (
     <CollapsiblePanel
       Header={
@@ -78,7 +78,7 @@ export default function ConfigRelatedComponents(props: Props) {
         </h3>
       }
     >
-      <ConfigRelatedComponentsDetails {...props} />
+      <ConfigComponentsDetails {...props} />
     </CollapsiblePanel>
   );
 }

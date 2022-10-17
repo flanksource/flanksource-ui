@@ -68,7 +68,7 @@ type Props = {
   configID: string;
 };
 
-function ConfigRelatedIncidentsContent({ configID }: Props) {
+function ConfigIncidentsContent({ configID }: Props) {
   const {
     incidents,
     isLoading,
@@ -126,7 +126,7 @@ function ConfigRelatedIncidentsContent({ configID }: Props) {
   );
 }
 
-export default function ConfigRelatedIncidents(props: Props) {
+export default function ConfigIncidents(props: Props) {
   return (
     <CollapsiblePanel
       Header={
@@ -136,7 +136,7 @@ export default function ConfigRelatedIncidents(props: Props) {
         </h3>
       }
     >
-      <ConfigRelatedIncidentsContent {...props} />
+      <ConfigIncidentsContent {...props} />
     </CollapsiblePanel>
   );
 }

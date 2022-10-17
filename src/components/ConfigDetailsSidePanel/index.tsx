@@ -4,8 +4,8 @@ import { useParams } from "react-router-dom";
 import ConfigChanges from "../ConfigChanges";
 import ConfigInsights from "../ConfigInsights";
 import ConfigRelated from "../ConfigRelated";
-import ConfigRelatedComponents from "../ConfigRelatedComponents";
-import ConfigRelatedIncidents from "../ConfigRelatedIncidents";
+import ConfigComponents from "../ConfigComponents";
+import ConfigIncidents from "../ConfigIncidents";
 
 export default function ConfigDetailsSidePanel() {
   const [isPanelHidden, setIsPanelHidden] = useState<boolean>(false);
@@ -25,8 +25,8 @@ export default function ConfigDetailsSidePanel() {
         <ConfigInsights configID={id!} />
         <ConfigChanges configID={id!} />
         <ConfigRelated configID={id!} />
-        <ConfigRelatedComponents configID={id!} />
-        <ConfigRelatedIncidents configID={id!} />
+        <ConfigComponents configID={id!} />
+        <ConfigIncidents configID={id!} />
       </div>
 
       <button
