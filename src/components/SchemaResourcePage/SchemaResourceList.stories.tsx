@@ -1,6 +1,6 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 import { MemoryRouter } from "react-router-dom";
-import { SchemaResourceI } from "./SchemaResource";
+import { SchemaResourceI } from "../../api/schemaResources";
 import { SchemaResourceList } from "./SchemaResourceList";
 
 export default {
@@ -25,6 +25,9 @@ const genItem = (suffix: string): SchemaResourceI => ({
   spec: JSON.stringify({ a: suffix, b: 2 }),
   created_at: "asd",
   updated_at: "ass",
+  namespace: "default",
+  labels: {},
+  source: "",
   id: "asdas"
 });
 

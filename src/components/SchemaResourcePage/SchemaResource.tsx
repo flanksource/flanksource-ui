@@ -11,6 +11,7 @@ import { BreadcrumbNav } from "../BreadcrumbNav";
 import { SearchLayout } from "../Layout";
 import { SchemaResourceType } from "./resourceTypes";
 import { SchemaResourceEdit } from "./SchemaResourceEdit";
+import { toastError } from "../Toast/toast";
 
 export function SchemaResource({
   resourceInfo
@@ -40,12 +41,24 @@ export function SchemaResource({
   }, [resourceInfo, id]);
 
   const onSubmit = async (props: any) => {
-    await updateResource(resourceInfo, { ...resource, ...props });
+    try {
+      await updateResource(resourceInfo, {
+        ...resource,
+        ...props,
+        updated_at: new Date().toISOString()
+      });
+    } catch (ex) {
+      toastError(ex);
+    }
   };
 
   const onDelete = async (id: string) => {
-    await deleteResource(resourceInfo, id);
-    navigate(`../${resourceInfo.table}`);
+    try {
+      await deleteResource(resourceInfo, id);
+      navigate(`../${resourceInfo.table}`);
+    } catch (ex) {
+      toastError(ex);
+    }
   };
 
   return (
@@ -62,7 +75,6 @@ export function SchemaResource({
             id={id}
             resourceName={resourceInfo.name}
             {...resource}
-            supportsIcon={resourceInfo?.supportsIcon}
             onSubmit={onSubmit}
             onDelete={onDelete}
           />
