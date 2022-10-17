@@ -5,6 +5,7 @@ import { FaExclamationTriangle } from "react-icons/fa";
 import { Loading } from "../Loading";
 import CollapsiblePanel from "../CollapsiblePanel";
 import { GoDiff } from "react-icons/go";
+import { Link } from "react-router-dom";
 
 export type ConfigTypeChanges = {
   id: string;
@@ -63,11 +64,25 @@ function ConfigChangesDetails({ configID }: Props) {
             {configChanges.map((configChange) => (
               <tr key={configChange.id}>
                 <td className="p-2 font-medium text-black whitespace-nowrap">
-                  <ConfigChangeIcon changeType={configChange.change_type} />
-                  {configChange.summary ?? configChange.change_type}
+                  <Link
+                    className="block"
+                    to={{
+                      pathname: `/configs/${configChange.config_id}/changes`
+                    }}
+                  >
+                    <ConfigChangeIcon changeType={configChange.change_type} />
+                    {configChange.summary ?? configChange.change_type}
+                  </Link>
                 </td>
                 <td className="p-2 ">
-                  {dayjs(configChange.created_at).fromNow()}
+                  <Link
+                    className="block"
+                    to={{
+                      pathname: `/configs/${configChange.config_id}/changes`
+                    }}
+                  >
+                    {dayjs(configChange.created_at).fromNow()}
+                  </Link>
                 </td>
               </tr>
             ))}
