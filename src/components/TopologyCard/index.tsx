@@ -106,7 +106,7 @@ export function TopologyCard({
     <div
       style={{ width: CardWidth[size] || size }}
       className={clsx(
-        "rounded-8px mb-3 mr-3 shadow-card card bg-lightest-gray border-0 border-t-8",
+        "rounded-8px mb-3 mr-3 shadow-card card bg-lightest-gray border-0 border-t-8 relative",
         StatusStyles[topology.status] || "border-white",
         selectionMode ? "cursor-pointer" : ""
       )}
@@ -192,10 +192,18 @@ export function TopologyCard({
               minChildCount={6}
             >
               {canShowChildHealth() && (
-                <HealthSummary key={topology.id} component={topology} />
+                <HealthSummary
+                  className="mb-2"
+                  key={topology.id}
+                  component={topology}
+                />
               )}
               {topology?.components?.map((component: any) => (
-                <HealthSummary key={component.id} component={component} />
+                <HealthSummary
+                  className="mb-2"
+                  key={component.id}
+                  component={component}
+                />
               ))}
             </CustomScroll>
           </>
