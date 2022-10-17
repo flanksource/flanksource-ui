@@ -6,15 +6,10 @@ import { Icon } from "../Icon";
 import { TopologyIcon } from "../Icons/TopologyIcon";
 import { Loading } from "../Loading";
 
-export type ConfigTypeRelationships = {
-  config_id: string;
-  related_id: string;
-  property: string;
-  created_at: string;
-  updated_at: string;
-  deleted_at: string;
-  selector_id: string;
-  components: Record<string, any>;
+export type ConfigsComponents = {
+  id: string;
+  icon?: string;
+  name: string;
 };
 
 type Props = {
@@ -22,19 +17,17 @@ type Props = {
 };
 
 function ConfigRelatedComponentsDetails({ configID }: Props) {
-  const [components, setConfigRelationships] = useState<
-    ConfigTypeRelationships[]
-  >([]);
+  const [components, setConfigComponents] = useState<ConfigsComponents[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     async function fetchConfigAnalysis(configID: string) {
       setIsLoading(true);
       const res = await fetch(
-        `/api/configs_db/config_component_relationships?config_id=eq.${configID}&select=*,components!config_component_relationships_component_id_fkey(*)`
+        `/api/configs_db/config_component_relationships?config_id=eq.${configID}&select=components!config_component_relationships_component_id_fkey(id, icon, name)`
       );
-      const data = (await res.json()) as ConfigTypeRelationships[];
-      setConfigRelationships(data);
+      const data = (await res.json()) as Record<string, any>[];
+      setConfigComponents(data.map((item) => item.components));
       setIsLoading(false);
     }
 
@@ -48,19 +41,19 @@ function ConfigRelatedComponentsDetails({ configID }: Props) {
       ) : components.length > 0 ? (
         <ol className="w-full text-sm text-left">
           {components.map((analysis) => (
-            <li className="" key={analysis.related_id}>
+            <li className="" key={analysis.id}>
               <Link
                 className="space-x-2"
                 to={{
-                  pathname: `/topology/${analysis.components.topology_id}`
+                  pathname: `/topology/${analysis.id}`
                 }}
               >
                 <Icon
-                  name={analysis.components.icon}
+                  name={analysis.icon}
                   size="2xl"
-                  secondary={analysis.components.name}
+                  secondary={analysis.name}
                 />
-                <span className="capitalize">{analysis.components.name}</span>
+                <span className="capitalize">{analysis.name}</span>
               </Link>
             </li>
           ))}
@@ -80,7 +73,7 @@ export default function ConfigRelatedComponents(props: Props) {
     <CollapsiblePanel
       Header={
         <h3 className="flex flex-row space-x-2 items-center text-xl font-semibold">
-          <TopologyIcon className="text-gray-400" />
+          <TopologyIcon className="text-gray-400 h-5 w-5" />
           <span>Components</span>
         </h3>
       }
