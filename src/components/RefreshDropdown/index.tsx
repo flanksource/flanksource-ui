@@ -1,11 +1,12 @@
 import { Menu, Transition } from "@headlessui/react";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useContext, useEffect, useState } from "react";
 import {
   HiOutlineChevronDown,
   HiOutlineClock,
   HiOutlineRefresh
 } from "react-icons/hi";
 import useTimeRangeToDisableRefreshDropdownOptions from "../Hooks/useTimeRangeToDisableRefreshDropdownOptions";
+import { HealthRefreshDropdownRateContext } from "./RefreshRateContext";
 
 export const HEALTH_PAGE_REFRESH_RATE_KEY = "healthPageRefreshRate";
 export const HEALTH_PAGE_REFRESH_RATE_STORAGE_CHANGE_EVENT =
@@ -67,29 +68,31 @@ export default function RefreshDropdown({
     if (storedRefreshRate) {
       return {
         rate: storedRefreshRate as RefreshOptions,
-        saveToLocalStorage: false
+        saveToLocalStorage: true
       };
     }
     return { rate: "None", saveToLocalStorage: false };
   });
 
+  const { setRefreshRate: setRefreshRateContext } = useContext(
+    HealthRefreshDropdownRateContext
+  );
+
   const refreshDropdownDisabledOptions =
     useTimeRangeToDisableRefreshDropdownOptions();
 
-  /* Whenever refresh rate changes update local storage */
+  /* Whenever refresh rate changes update local storage and update refresh rate */
   useEffect(() => {
-    if (refreshRate.rate === "None") {
+    // remove value from local storage if rate is None, or if saveToLocalStorage is false
+    if (refreshRate.rate === "None" || !refreshRate.saveToLocalStorage) {
       localStorage.removeItem(localStorageKey);
-      window.dispatchEvent(new Event("storage"));
-      return;
     }
     if (refreshRate.saveToLocalStorage) {
       localStorage.setItem(localStorageKey, refreshRate.rate);
-      window.dispatchEvent(
-        new Event(HEALTH_PAGE_REFRESH_RATE_STORAGE_CHANGE_EVENT)
-      );
     }
-  }, [localStorageKey, refreshRate]);
+    // dispatch event to notify others that the refresh rate has changed
+    setRefreshRateContext(refreshRate.rate);
+  }, [localStorageKey, refreshRate, setRefreshRateContext]);
 
   /**
    *

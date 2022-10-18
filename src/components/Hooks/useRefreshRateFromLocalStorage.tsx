@@ -1,10 +1,9 @@
-import { useEffect, useState } from "react";
-import {
-  HEALTH_PAGE_REFRESH_RATE_KEY,
-  HEALTH_PAGE_REFRESH_RATE_STORAGE_CHANGE_EVENT
-} from "../RefreshDropdown";
+import { useContext, useEffect, useState } from "react";
+import { HealthRefreshDropdownRateContext } from "../RefreshDropdown/RefreshRateContext";
 
 export default function useRefreshRateFromLocalStorage() {
+  const { refreshRate } = useContext(HealthRefreshDropdownRateContext);
+
   const calculateRefreshRateInMilliseconds = (refreshRate: string) => {
     if (refreshRate.includes("s")) {
       return parseInt(refreshRate.replace("s", "")) * 1000;
@@ -26,23 +25,15 @@ export default function useRefreshRateFromLocalStorage() {
   };
 
   const [refreshInterval, setRefreshInterval] = useState(() => {
-    const refreshRate = localStorage.getItem(HEALTH_PAGE_REFRESH_RATE_KEY);
     return calculateRefreshRateInMilliseconds(refreshRate ?? "None");
   });
 
   useEffect(() => {
-    window.addEventListener(
-      HEALTH_PAGE_REFRESH_RATE_STORAGE_CHANGE_EVENT,
-      (e) => {
-        const refreshRate = localStorage.getItem(HEALTH_PAGE_REFRESH_RATE_KEY);
-        const refreshRateInMS = calculateRefreshRateInMilliseconds(
-          refreshRate ?? "None"
-        );
-        setRefreshInterval(refreshRateInMS);
-      }
+    const refreshRateInMS = calculateRefreshRateInMilliseconds(
+      refreshRate.toString() ?? "None"
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    setRefreshInterval(refreshRateInMS);
+  }, [refreshRate]);
 
   return refreshInterval;
 }

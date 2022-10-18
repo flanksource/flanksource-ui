@@ -1,12 +1,13 @@
 import { useState } from "react";
-import { debounce } from "lodash";
 import { SearchLayout } from "../components/Layout";
 import { TimeRange, timeRanges } from "../components/Dropdown/TimeRange";
 import { DropdownStandaloneWrapper } from "../components/Dropdown/StandaloneWrapper";
 import { CanarySearchBar } from "../components/Canary/CanarySearchBar";
 import { Canary } from "../components/Canary";
-import RefreshDropdown from "../components/RefreshDropdown";
-import { useSearchParams } from "react-router-dom";
+import RefreshDropdown, {
+  HEALTH_PAGE_REFRESH_RATE_KEY
+} from "../components/RefreshDropdown";
+import { HealthRefreshDropdownRateContext } from "../components/RefreshDropdown/RefreshRateContext";
 
 type Props = {
   url: string;
@@ -18,52 +19,30 @@ export function HealthPage({ url }: Props) {
    * Refresh page whenever clicked, increment state to trigger useEffect
    */
   const [triggerRefresh, setTriggerRefresh] = useState(0);
-  const [queryParams, setQueryParams] = useSearchParams();
-
-  const handleSearch = debounce((query) => {
-    setQueryParams({ query });
-  }, 400);
-
-  const query = queryParams.get("query");
+  const [refreshRate, setRefreshRate] = useState(() => {
+    const refreshRate = localStorage.getItem(HEALTH_PAGE_REFRESH_RATE_KEY);
+    return refreshRate ?? "";
+  });
 
   return (
-    <SearchLayout
-      title={<h1 className="text-xl font-semibold">Health</h1>}
-      extra={
-        <>
+    <HealthRefreshDropdownRateContext.Provider
+      value={{
+        refreshRate,
+        setRefreshRate
+      }}
+    >
+      <SearchLayout
+        title={<h1 className="text-xl font-semibold">Health</h1>}
+        extra={
           <RefreshDropdown
             onClick={() => setTriggerRefresh(triggerRefresh + 1)}
             isLoading={loading}
           />
-          <DropdownStandaloneWrapper
-            dropdownElem={<TimeRange />}
-            defaultValue={timeRanges[0].value}
-            paramKey="timeRange"
-            className="w-40 mr-2"
-          />
-          <CanarySearchBar
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              handleSearch(e.target.value)
-            }
-            onSubmit={(value: string) => handleSearch(value)}
-            onClear={() => handleSearch("")}
-            className=""
-            inputClassName="w-full py-2 mb-px"
-            inputOuterClassName="w-80"
-            placeholder="Search by name, description, or endpoint"
-            defaultValue={query}
-          />
-        </>
-      }
-      contentClass="p-0"
-    >
-      <Canary
-        url={url}
-        hideSearch
-        hideTimeRange
-        onLoading={(loading) => setLoading(loading)}
-        triggerRefresh={triggerRefresh}
-      />
-    </SearchLayout>
+        }
+        contentClass="p-0"
+      >
+        <Canary url={url} onLoading={setLoading} />
+      </SearchLayout>
+    </HealthRefreshDropdownRateContext.Provider>
   );
 }
