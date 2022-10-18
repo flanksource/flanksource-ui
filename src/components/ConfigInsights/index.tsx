@@ -2,6 +2,7 @@ import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { FaExclamationTriangle } from "react-icons/fa";
 import { MdOutlineInsights } from "react-icons/md";
+import ReactTooltip from "react-tooltip";
 import CollapsiblePanel from "../CollapsiblePanel";
 import ConfigInsightsIcon from "../ConfigInsightsIcon";
 import { Loading } from "../Loading";
@@ -44,6 +45,10 @@ function ConfigInsightsDetails({ configID }: Props) {
     fetchConfigAnalysis(configID);
   }, [configID]);
 
+  useEffect(() => {
+    ReactTooltip.rebuild();
+  });
+
   return (
     <div className="flex flex-col space-y-2">
       {isLoading ? (
@@ -61,17 +66,19 @@ function ConfigInsightsDetails({ configID }: Props) {
             </tr>
           </thead>
           <tbody>
-            {configInsights.map((analysis) => (
-              <tr key={analysis.id}>
+            {configInsights.map((insight) => (
+              <tr key={insight.id}>
                 <td
-                  title={analysis.summary ? analysis.summary : ""}
+                  data-tip={
+                    insight.summary ? insight.summary : insight.analyzer
+                  }
                   className="p-2 font-medium text-black whitespace-nowrap"
                 >
-                  <ConfigInsightsIcon analysis={analysis} />
-                  {analysis.analyzer}
+                  <ConfigInsightsIcon analysis={insight} />
+                  {insight.analyzer}
                 </td>
                 <td className="p-2 ">
-                  {dayjs(analysis.first_observed).fromNow()}
+                  {dayjs(insight.first_observed).fromNow()}
                 </td>
               </tr>
             ))}
