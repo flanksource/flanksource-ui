@@ -13,13 +13,13 @@ export default function ConfigDetailsSidePanel() {
 
   return (
     <div
-      className={`flex flex-col bg-white border-l transform origin-right duration-500 border-gray-200 w-full py-2 px-4 min-h-full h-auto sticky top-0 ${
+      className={`flex flex-col bg-white border-l transform origin-right duration-500 border-gray-200 w-full py-6 px-4 ${
         isPanelHidden ? "w-3" : "w-[35rem]"
       }`}
     >
       <div
-        className={`flex flex-col flex-1 space-y-6  sticky top-0 ${
-          isPanelHidden && "hidden"
+        className={`flex flex-col overflow-y-auto space-y-8 sticky top-0 ${
+          isPanelHidden ? "hidden" : ""
         }`}
       >
         <ConfigInsights configID={id!} />
