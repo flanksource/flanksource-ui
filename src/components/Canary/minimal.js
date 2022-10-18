@@ -10,6 +10,7 @@ import { useSearchParams } from "react-router-dom";
 import { EvidenceType } from "../../api/services/evidence";
 import { AttachEvidenceDialog } from "../AttachEvidenceDialog";
 import { isCanaryUI } from "../../context/Environment";
+import { toastError } from "../Toast/toast";
 
 const MinimalCanaryFC = ({
   checks,
@@ -31,8 +32,11 @@ const MinimalCanaryFC = ({
       includeMessages: true,
       start: timeRange
     };
+    setSelectedCheck(check);
     getCanaries(payload).then((results) => {
       if (results == null || results.data.checks.length === 0) {
+        toastError("There is no recent checks data");
+        setSelectedCheck(null);
         return;
       }
       setSelectedCheck(results.data.checks[0]);
