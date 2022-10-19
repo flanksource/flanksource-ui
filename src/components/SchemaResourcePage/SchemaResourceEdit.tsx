@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { identity, pickBy } from "lodash";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { v4 } from "uuid";
 import { load } from "js-yaml";
@@ -10,9 +10,13 @@ import { CodeEditor } from "../CodeEditor";
 import { IconPicker } from "../IconPicker";
 import { TextInput } from "../TextInput";
 import { Icon } from "../Icon";
+import { schemaResourceTypes } from "./resourceTypes";
 
 type FormFields = Partial<
-  Pick<SchemaResourceI, "id" | "spec" | "name" | "source" | "icon">
+  Pick<
+    SchemaResourceI,
+    "id" | "spec" | "name" | "source" | "icon" | "namespace" | "labels"
+  >
 >;
 
 type Props = FormFields & {
@@ -22,7 +26,6 @@ type Props = FormFields & {
   resourceName: string;
   edit?: boolean;
   isModal?: boolean;
-  supportsIcon?: boolean;
 };
 
 export function SchemaResourceEdit({
@@ -30,23 +33,39 @@ export function SchemaResourceEdit({
   id,
   spec,
   name,
-  icon = "group",
+  labels,
+  namespace,
+  icon,
   source,
   onSubmit,
   onDelete,
   onCancel,
   edit: startInEdit = false,
-  isModal = false,
-  supportsIcon = false
+  isModal = false
 }: Props) {
   const [edit, setEdit] = useState(startInEdit);
   const [disabled, setDisabled] = useState(false);
   const keyRef = useRef(v4());
+  const labelsKeyRef = useRef(v4());
+  const defaultValues = pickBy(
+    { id, spec, name, labels, namespace, icon },
+    identity
+  );
 
-  const defaultValues = pickBy({ id, spec, name }, identity);
-  if (supportsIcon) {
-    defaultValues.icon = icon;
-  }
+  const formFields = useMemo(() => {
+    const resourceType = schemaResourceTypes.find(
+      (item) => item.name === resourceName
+    );
+    if (!resourceType) {
+      return [];
+    }
+    return resourceType.fields;
+  }, [resourceName]);
+
+  formFields.forEach((formField) => {
+    defaultValues[formField.name] =
+      defaultValues[formField.name] || formField.default;
+  });
 
   const {
     control,
@@ -61,24 +80,28 @@ export function SchemaResourceEdit({
   });
 
   const values = getValues();
-  if (supportsIcon) {
-    watch("icon");
-  }
-  watch("spec");
+
+  const supportsField = (fieldName: string): boolean => {
+    return (
+      formFields.findIndex((field) => {
+        return field.name === fieldName;
+      }) !== -1
+    );
+  };
 
   useEffect(() => {
-    register("spec");
-    register("name");
-  }, [register]);
+    formFields.forEach((formField) => {
+      register(formField.name);
+      watch(formField.name);
+    });
+  }, [register, formFields, watch]);
 
   const onEdit = () => setEdit(true);
   const doCancel = () => {
     onCancel && onCancel();
-    resetField("name");
-    resetField("spec");
-    if (supportsIcon) {
-      resetField("icon");
-    }
+    formFields.forEach((formField) => {
+      resetField(formField.name);
+    });
     setEdit(false);
     keyRef.current = v4();
   };
@@ -99,15 +122,15 @@ export function SchemaResourceEdit({
     onDelete(id);
   };
 
-  const setValueOnChange = (value?: string) => {
+  const setValueOnChange = (key: "spec" | "labels", value?: string) => {
     if (!value) {
-      setValue("spec", {});
+      setValue(key, {});
       return;
     }
     try {
       const jSonObj = load(value);
       if (typeof jSonObj === "object" && jSonObj !== null) {
-        setValue("spec", jSonObj);
+        setValue(key, jSonObj);
       }
     } catch (error) {
       console.error("Error parsing YAML to JSON");
@@ -127,7 +150,7 @@ export function SchemaResourceEdit({
                   <TextInput
                     label="Name"
                     id="name"
-                    disabled={disabled}
+                    disabled={disabled || !!id}
                     className="w-full"
                     value={value || ""}
                     onChange={onChange}
@@ -136,7 +159,7 @@ export function SchemaResourceEdit({
               }}
             />
 
-            {supportsIcon && (
+            {supportsField("icon") && (
               <div className="space-y-2">
                 <label
                   htmlFor="icon-picker"
@@ -155,7 +178,7 @@ export function SchemaResourceEdit({
         ) : (
           <div className="flex justify-between">
             <h2 className="text-dark-gray font-bold mr-3 text-xl flex items-center space-x-2">
-              {supportsIcon && <Icon size="md" name={icon} />}
+              {supportsField("icon") && <Icon size="md" name={icon} />}
               <span>{name}</span>
             </h2>
             {!!source && (
@@ -165,8 +188,56 @@ export function SchemaResourceEdit({
             )}
           </div>
         )}
+        {supportsField("namespace") && (
+          <div className="mt-4">
+            <Controller
+              control={control}
+              name="namespace"
+              render={({ field: { onChange, value } }) => {
+                return (
+                  <TextInput
+                    label="Namespace"
+                    id="namespace"
+                    disabled={disabled || !!id}
+                    className="w-full"
+                    value={value || ""}
+                    onChange={onChange}
+                  />
+                );
+              }}
+            />
+          </div>
+        )}
+        {supportsField("labels") && (
+          <div className="py-4">
+            <Controller
+              control={control}
+              name="labels"
+              render={({ field: { onChange, value } }) => {
+                return (
+                  <div className="h-[100px]">
+                    <label className="block text-sm font-bold text-gray-700">
+                      Labels
+                    </label>
+                    <CodeEditor
+                      key={labelsKeyRef.current}
+                      readOnly={!!source || disabled || !edit}
+                      value={
+                        typeof values.labels === "object"
+                          ? JSON.stringify(values.labels, null, 2)
+                          : null
+                      }
+                      onChange={(val) => {
+                        setValueOnChange("labels", val);
+                      }}
+                    />
+                  </div>
+                );
+              }}
+            />
+          </div>
+        )}
       </div>
-
       <div className="px-8 space-y-2">
         <label
           htmlFor="icon-picker"
@@ -175,12 +246,14 @@ export function SchemaResourceEdit({
           Spec
         </label>
 
-        <div className="h-[min(850px,calc(100vh-400px))]">
+        <div className="h-[min(850px,calc(100vh-500px))]">
           <CodeEditor
             key={keyRef.current}
             readOnly={!!source || disabled || !edit}
             value={typeof values.spec === "string" ? values.spec : null}
-            onChange={setValueOnChange}
+            onChange={(val) => {
+              setValueOnChange("spec", val);
+            }}
           />
         </div>
       </div>
