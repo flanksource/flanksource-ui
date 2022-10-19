@@ -229,7 +229,7 @@ interface CellData {
 
 export interface Props {
   data: CellData[];
-  handleRowClick: () => {};
+  handleRowClick: (row?: any) => void;
   isLoading: boolean;
 }
 
