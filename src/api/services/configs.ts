@@ -3,13 +3,15 @@
 import { Config, ConfigDB } from "../axios";
 import { resolve } from "../resolve";
 
-interface ConfigItem {
+export interface ConfigItem {
   name: string;
   external_id: string;
   config_type: string;
+  external_type?: string;
   id: string;
   changes: Change[];
   analysis: Analysis[];
+  tags: Record<string, unknown>;
 }
 
 interface Change {

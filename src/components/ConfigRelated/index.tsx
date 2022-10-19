@@ -2,42 +2,51 @@ import { useEffect, useState } from "react";
 import { FaExclamationTriangle } from "react-icons/fa";
 import { VscJson } from "react-icons/vsc";
 import { Link } from "react-router-dom";
+import { ConfigItem } from "../../api/services/configs";
 import CollapsiblePanel from "../CollapsiblePanel";
 import { Icon } from "../Icon";
 import { Loading } from "../Loading";
 
-type Props = {
-  topologyID: string;
+export type ConfigTypeRelationships = {
+  config_id: string;
+  related_id: string;
+  property: string;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string;
+  selector_id: string;
+  configs: ConfigItem;
 };
 
-export function TopologyRelatedConfigs({ topologyID }: Props) {
-  const [componentRelatedConfigs, setComponentRelatedConfig] = useState<
-    Record<string, any>[]
-  >([]);
+type Props = {
+  configID: string;
+};
 
-  const [isLoading, setIsLoading] = useState(false);
+function ConfigRelatedDetails({ configID }: Props) {
+  const [relatedConfigs, setRelatedConfigs] = useState<ConfigItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchComponentRelatedConfig() {
+    async function fetchConfigAnalysis(configID: string) {
       setIsLoading(true);
       const res = await fetch(
-        `/api/configs_db/config_component_relationships?component_id=eq.${topologyID}&select=*,configs!config_component_relationships_config_id_fkey(*)`
+        `/api/configs_db/config_relationships?config_id=eq.${configID}&select=*,configs!config_relationships_related_id_fkey(*)`
       );
-      const data = (await res.json()) as Record<string, any>[];
-      setComponentRelatedConfig(data.map((config) => config.configs));
+      const data = (await res.json()) as ConfigTypeRelationships[];
+      setRelatedConfigs(data.map((item) => item.configs));
       setIsLoading(false);
     }
 
-    fetchComponentRelatedConfig();
-  }, [topologyID]);
+    fetchConfigAnalysis(configID);
+  }, [configID]);
 
   return (
-    <div className="flex flex-col space-y-4">
+    <div className="flex flex-col space-y-2">
       {isLoading ? (
         <Loading />
-      ) : componentRelatedConfigs.length > 0 ? (
+      ) : relatedConfigs.length > 0 ? (
         <ol>
-          {componentRelatedConfigs.map((config) => (
+          {relatedConfigs.map((config) => (
             <li className="p-1" key={config.id}>
               <Link
                 to={{
@@ -56,8 +65,8 @@ export function TopologyRelatedConfigs({ topologyID }: Props) {
           ))}
         </ol>
       ) : (
-        <div className="flex flex-row justify-center items-center py-4 space-x-2 text-gray-400">
-          <FaExclamationTriangle className="text-xl" />
+        <div className="flex flex-row justify-center items-center space-x-2 text-gray-500 text-center">
+          <FaExclamationTriangle />
           <span>No details found</span>
         </div>
       )}
@@ -65,20 +74,17 @@ export function TopologyRelatedConfigs({ topologyID }: Props) {
   );
 }
 
-// eslint-disable-next-line import/no-anonymous-default-export
-export default function (props: Props) {
+export default function ConfigChanges(props: Props) {
   return (
     <CollapsiblePanel
       Header={
         <h3 className="flex flex-row space-x-2 items-center text-xl font-semibold">
           <VscJson className="text-gray-400" />
-          <span>Configs</span>
+          <span>Related Configs</span>
         </h3>
       }
     >
-      <div className="flex flex-col">
-        <TopologyRelatedConfigs {...props} />
-      </div>
+      <ConfigRelatedDetails {...props} />
     </CollapsiblePanel>
   );
 }

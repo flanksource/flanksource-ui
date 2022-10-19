@@ -3,7 +3,7 @@ import { IncidentListPage } from "./incident/IncidentListPage";
 import { LogsPage } from "./logs-page";
 import { CanaryPage } from "./canary";
 import { ConfigListPage } from "./config/config-list";
-import { ConfigDetailsPage } from "./config/config-details";
+import { ConfigDetailsPage } from "./config/ConfigDetailsPage";
 import { ConfigChangesPage } from "./config/config-changes";
 import { ConfigDetailsChangesPage } from "./config/config-details-changes";
 import { TopologyPage } from "./TopologyPage";
