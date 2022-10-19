@@ -97,7 +97,10 @@ export function TopologyPage() {
         status: params.status,
         type: params.type,
         team: params.team,
-        labels: params.labels
+        labels: params.labels,
+        // only flatten, if topology type is set
+        ...(params.type &&
+          params.type.toString().toLowerCase() !== "all" && { flatten: true })
       };
       // @ts-ignore
       const res = await getTopology(apiParams);
