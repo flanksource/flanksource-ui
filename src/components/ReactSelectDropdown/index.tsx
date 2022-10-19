@@ -28,7 +28,7 @@ interface StateOption {
 const selectStyles: StylesConfig<StateOption, false> = {
   control: (provided) => ({
     ...provided,
-    minWidth: 240,
+    minWidth: 144,
     margin: 8
   }),
   menu: () => ({ boxShadow: "inset 0 1px 0 rgba(0, 0, 0, 0.1)" })

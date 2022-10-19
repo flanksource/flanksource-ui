@@ -44,14 +44,12 @@ export function CheckTitle({ check, className, size = "large", ...rest }) {
             </span>
           )}
         </div>
-        {true && (
-          <div
-            title={`Endpoint for ${validCheck?.name}`}
-            className="text-sm text-gray-400 mt-0.5 overflow-x-hidden overflow-ellipsis break-all"
-          >
-            {validCheck?.endpoint}
-          </div>
-        )}
+        <div
+          title={`Endpoint for ${validCheck?.name}`}
+          className="text-sm text-gray-400 mt-0.5 overflow-x-hidden overflow-ellipsis break-all"
+        >
+          {validCheck?.endpoint}
+        </div>
         <span
           className="block sm:hidden mt-2"
           title={`Namespace for ${validCheck?.name}`}
