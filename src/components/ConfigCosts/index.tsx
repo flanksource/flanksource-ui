@@ -1,22 +1,51 @@
 import { useEffect, useMemo, useState } from "react";
-import { FaExclamationTriangle, FaMoneyBill } from "react-icons/fa";
-import ReactTooltip from "react-tooltip";
+import { FaDollarSign } from "react-icons/fa";
 import CollapsiblePanel from "../CollapsiblePanel";
 import { Loading } from "../Loading";
 
+export function FormatCurrency({ value }: { value: number | string }) {
+  const amount = useMemo(() => {
+    const parsedValue = typeof value === "string" ? parseFloat(value) : value;
+    if (value > 1000) {
+      return (parsedValue / 1000).toFixed(1) + "k";
+    }
+    if (parsedValue > 100) {
+      return parsedValue.toFixed(0);
+    }
+    if (parsedValue > 10) {
+      return parsedValue.toFixed(1);
+    }
+    if (parsedValue > 0.01) {
+      return parsedValue.toFixed(2);
+    }
+    if (parsedValue > 0.001) {
+      return parsedValue.toFixed(3);
+    }
+    return parsedValue.toString();
+  }, [value]);
+
+  return <span>${amount}</span>;
+}
+
 export type ConfigCostsData = {
-  id: string;
   cost_per_minute?: number;
   cost_total_1d?: number;
   cost_total_7d?: number;
   cost_total_30d?: number;
 };
 
+const configCostsKeysToDisplayValue = new Map([
+  ["cost_per_minute", "Cost (per min)"],
+  ["cost_total_1d", "Cost (1d)"],
+  ["cost_total_7d", "Cost (7d)"],
+  ["cost_total_30d", "Cost (30d)"]
+]);
+
 type Props = {
   configID: string;
 };
 
-function ConfigCostsDetails({ configID }: Props) {
+export default function ConfigCosts({ configID }: Props) {
   const [configCosts, setConfigCosts] = useState<ConfigCostsData>();
   const [isLoading, setIsLoading] = useState(true);
 
@@ -33,7 +62,7 @@ function ConfigCostsDetails({ configID }: Props) {
     async function fetchConfigAnalysis(configID: string) {
       setIsLoading(true);
       const res = await fetch(
-        `/api/configs_db/configs?id=eq.${configID}&select=id,cost_per_minute,cost_total_1d,cost_total_7d,cost_total_30d`
+        `/api/configs_db/configs?id=eq.${configID}&select=cost_per_minute,cost_total_1d,cost_total_7d,cost_total_30d`
       );
       const data = (await res.json()) as ConfigCostsData[];
       setConfigCosts(data[0]);
@@ -43,64 +72,37 @@ function ConfigCostsDetails({ configID }: Props) {
     fetchConfigAnalysis(configID);
   }, [configID]);
 
-  useEffect(() => {
-    ReactTooltip.rebuild();
-  });
+  if (!isLoading && isConfigCostsEmpty) {
+    return null;
+  }
 
-  return (
-    <div className="flex flex-col space-y-2">
-      {isLoading ? (
-        <Loading />
-      ) : !isConfigCostsEmpty ? (
-        <table className="w-full text-sm text-left">
-          <tbody>
-            <tr>
-              <td className="p-2 font-semibold text-black whitespace-nowrap">
-                Per Minute
-              </td>
-              <td className="p-2 ">${configCosts?.cost_per_minute}</td>
-            </tr>
-            <tr>
-              <td className="p-2 font-semibold text-black whitespace-nowrap">
-                Per Day
-              </td>
-              <td className="p-2 ">${configCosts?.cost_total_1d}</td>
-            </tr>
-            <tr>
-              <td className="p-2 font-semibold text-black whitespace-nowrap">
-                Per Week
-              </td>
-              <td className="p-2 ">${configCosts?.cost_total_7d}</td>
-            </tr>
-            <tr>
-              <td className="p-2 font-semibold text-black whitespace-nowrap">
-                Per Month
-              </td>
-              <td className="p-2 ">${configCosts?.cost_total_30d}</td>
-            </tr>
-          </tbody>
-        </table>
-      ) : (
-        <div className="flex flex-row justify-center items-center space-x-2 text-gray-500 text-center">
-          <FaExclamationTriangle />
-          <span>No details found</span>
-        </div>
-      )}
-    </div>
-  );
-}
-
-export default function ConfigCosts(props: Props) {
   return (
     <CollapsiblePanel
       Header={
         <h3 className="flex flex-row space-x-2 items-center text-xl font-semibold">
-          <FaMoneyBill className="text-gray-400" />
+          <FaDollarSign className="text-gray-400" />
           <span>Costs</span>
         </h3>
       }
     >
-      <ConfigCostsDetails {...props} />
+      <div className="flex flex-col space-y-2">
+        {isLoading ? (
+          <Loading />
+        ) : (
+          <div className="flex flex-row justify-between space-x-3 w-full rounded-lg text-center border border-gray-300 px-4 py-6">
+            {Object.entries(configCosts!).map(([key, value]) => (
+              <div className="flex flex-col flex-1 space-y-4 items-center justify-center">
+                <div className="text-black text-base font-semibold">
+                  <FormatCurrency value={value} />
+                </div>
+                <div className="text-gray text-sm whitespace-nowrap">
+                  {configCostsKeysToDisplayValue.get(key)}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </CollapsiblePanel>
   );
 }

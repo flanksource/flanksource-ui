@@ -13,6 +13,7 @@ import { MdSecurity } from "react-icons/md";
 import { useSearchParams } from "react-router-dom";
 import * as timeago from "timeago.js";
 import { DataTable, Icon } from "../";
+import { FormatCurrency } from "../ConfigCosts";
 
 interface TableCols {
   Header: string;
@@ -48,22 +49,22 @@ const columns: TableCols[] = [
     Cell: AnalysisCell
   },
   {
-    Header: "Cost per minute",
+    Header: "Cost (per min)",
     accessor: "cost_per_minute",
     Cell: CostCell
   },
   {
-    Header: "Cost per day",
+    Header: "Cost (24hr)",
     accessor: "cost_total_1d",
     Cell: CostCell
   },
   {
-    Header: "Cost per week",
+    Header: "Cost (7d)",
     accessor: "cost_total_7d",
     Cell: CostCell
   },
   {
-    Header: "Cost per month",
+    Header: "Cost (30d)",
     accessor: "cost_total_30d",
     Cell: CostCell
   },
@@ -227,7 +228,11 @@ function CostCell({ row, column }: CellProp): JSX.Element {
   if (!cost) {
     return <span></span>;
   }
-  return <span>${cost}</span>;
+  return (
+    <span>
+      <FormatCurrency value={cost} />
+    </span>
+  );
 }
 
 function DateCell({ row, column }: CellProp): JSX.Element {
