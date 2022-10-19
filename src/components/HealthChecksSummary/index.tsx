@@ -13,6 +13,7 @@ export function HealthChecksSummary({ checks }: HealthChecksSummaryProps) {
     unhealthy: 0,
     warning: 0
   });
+  const [hideUI, setHideUI] = useState(false);
 
   useEffect(() => {
     if (!checks) {
@@ -29,6 +30,11 @@ export function HealthChecksSummary({ checks }: HealthChecksSummaryProps) {
       data.warning += status === "warning" ? 1 : 0;
       data.unhealthy += status === "unhealthy" ? 1 : 0;
     });
+    let hide = true;
+    Object.keys(data).forEach((key) => {
+      hide = hide && data[key] === 0;
+    });
+    setHideUI(hide);
     setSummary(data);
   }, [checks]);
 
@@ -36,7 +42,7 @@ export function HealthChecksSummary({ checks }: HealthChecksSummaryProps) {
     ReactTooltip.rebuild();
   }, [summary]);
 
-  if (!checks?.length) {
+  if (!checks?.length || hideUI) {
     return null;
   }
 
@@ -44,33 +50,39 @@ export function HealthChecksSummary({ checks }: HealthChecksSummaryProps) {
     <div className="flex pb-2">
       <Link className="flex cursor-pointer" to="/health">
         <p className="flex items-center text-xs">Health Checks:</p>
-        <p className="flex items-center text-xs ml-1">
-          <Chip
-            text={summary.healthy}
-            key="healthy"
-            title="Healthy"
-            color="green"
-            data-tip="Healthy"
-          />
-        </p>
-        <p className="flex items-center text-xs ml-1">
-          <Chip
-            text={summary.unhealthy}
-            key="unhealthy"
-            title="Unhealthy"
-            color="red"
-            data-tip="Unhealthy"
-          />
-        </p>
-        <p className="flex items-center text-xs ml-1">
-          <Chip
-            text={summary.warning}
-            key="warning"
-            title="Warning"
-            color="orange"
-            data-tip="Warning"
-          />
-        </p>
+        {summary.healthy > 0 && (
+          <p className="flex items-center text-xs ml-1">
+            <Chip
+              text={summary.healthy}
+              key="healthy"
+              title="Healthy"
+              color="green"
+              data-tip="Healthy"
+            />
+          </p>
+        )}
+        {summary.unhealthy > 0 && (
+          <p className="flex items-center text-xs ml-1">
+            <Chip
+              text={summary.unhealthy}
+              key="unhealthy"
+              title="Unhealthy"
+              color="red"
+              data-tip="Unhealthy"
+            />
+          </p>
+        )}
+        {summary.warning > 0 && (
+          <p className="flex items-center text-xs ml-1">
+            <Chip
+              text={summary.warning}
+              key="warning"
+              title="Warning"
+              color="orange"
+              data-tip="Warning"
+            />
+          </p>
+        )}
       </Link>
     </div>
   );
