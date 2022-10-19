@@ -41,7 +41,11 @@ export function HealthPage({ url }: Props) {
         }
         contentClass="p-0"
       >
-        <Canary url={url} onLoading={setLoading} />
+        <Canary
+          url={url}
+          onLoading={setLoading}
+          triggerRefresh={triggerRefresh}
+        />
       </SearchLayout>
     </HealthRefreshDropdownRateContext.Provider>
   );
