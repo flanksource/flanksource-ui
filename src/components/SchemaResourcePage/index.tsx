@@ -33,7 +33,12 @@ export function SchemaResourcePage({
   }, [resourceInfo, reload]);
 
   const onSubmit = async (data: Partial<SchemaResourceI>) => {
-    await createResource(resourceInfo, { ...data, created_by: user?.id });
+    await createResource(resourceInfo, {
+      ...data,
+      created_by: user?.id,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    });
     setReload((x) => x + 1);
     setModalIsOpen(false);
   };
@@ -70,7 +75,6 @@ export function SchemaResourcePage({
       >
         <SchemaResourceEdit
           resourceName={resourceInfo.name}
-          supportsIcon={resourceInfo.supportsIcon}
           isModal
           edit
           onSubmit={onSubmit}

@@ -19,34 +19,99 @@ export const schemaResourceTypes = [
     table: "teams",
     api: "incident-commander",
     icon: UserGroupIcon,
-    supportsIcon: true
+    fields: [
+      {
+        name: "name",
+        default: undefined
+      },
+      {
+        name: "spec",
+        default: {}
+      },
+      {
+        name: "icon",
+        default: "group"
+      }
+    ]
   },
   {
     name: "Rules",
     table: "incident_rules",
     api: "incident-commander",
     icon: AlarmIcon,
-    supportsIcon: false
+    fields: [
+      {
+        name: "name",
+        default: undefined
+      },
+      {
+        name: "spec",
+        default: {}
+      }
+    ]
   },
   {
     name: "Config Scraper",
     table: "config_scrapers",
     api: "config-db",
     icon: SearchInListIcon,
-    supportsIcon: false
+    fields: [
+      {
+        name: "name",
+        default: undefined
+      },
+      {
+        name: "spec",
+        default: {}
+      }
+    ]
   },
   {
     name: "Topology",
     table: "templates",
     api: "canary-checker",
     icon: TopologyIcon,
-    supportsIcon: false
+    fields: [
+      {
+        name: "name",
+        default: undefined
+      },
+      {
+        name: "namespace",
+        default: "default"
+      },
+      {
+        name: "labels",
+        default: {}
+      },
+      {
+        name: "spec",
+        default: {}
+      }
+    ]
   },
   {
     name: "Health",
     table: "canaries",
     api: "canary-checker",
     icon: HealthIcon,
-    supportsIcon: false
+    fields: [
+      {
+        name: "name",
+        default: undefined
+      },
+      {
+        name: "namespace",
+        default: "default"
+      },
+      {
+        name: "labels",
+        default: {}
+      },
+      {
+        name: "spec",
+        default: {}
+      }
+    ]
   }
 ] as const;
