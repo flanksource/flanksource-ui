@@ -70,6 +70,7 @@ function ConfigInsightsDetails({ configID }: Props) {
               <tr key={insight.id}>
                 <td
                   data-tip={insight.message}
+                  data-class="max-w-[20rem]"
                   className="p-2 font-medium text-black whitespace-nowrap"
                 >
                   <ConfigInsightsIcon analysis={insight} />
