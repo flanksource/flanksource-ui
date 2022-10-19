@@ -300,7 +300,7 @@ const Dropdown: FunctionComponent<DropdownProps> = ({
   <div ref={inputRef} className="relative">
     {target}
     {isOpen ? (
-      <Menu className="absolute bg-white z-50 drop-shadow-md w-64">
+      <Menu className="absolute bg-white z-50 drop-shadow-md w-full">
         {children}
       </Menu>
     ) : null}

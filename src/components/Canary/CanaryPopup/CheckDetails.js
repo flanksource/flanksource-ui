@@ -125,10 +125,10 @@ export function CheckDetails({ check, timeRange, ...rest }) {
       </div>
       {/* chart section */}
       <div className="mb-3">
-        <div className="flex justify-between items-center mb-2">
+        <div className="flex justify-between items-center mb-2 pr-2">
           <span className="text-lg font-medium">Health overview</span>
           <DropdownStandaloneWrapper
-            className="w-40 mr-2"
+            className="w-48"
             paramKey="checkTimeRange"
             dropdownElem={<TimeRange />}
             defaultValue={timeRange ?? timeRanges[0].value}
