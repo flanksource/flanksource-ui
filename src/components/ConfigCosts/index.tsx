@@ -4,29 +4,6 @@ import ReactTooltip from "react-tooltip";
 import CollapsiblePanel from "../CollapsiblePanel";
 import { Loading } from "../Loading";
 
-export function FormatCurrency({ value }: { value: number }) {
-  const amount = useMemo(() => {
-    if (value > 1000) {
-      return (value / 1000).toFixed(1) + "k";
-    }
-    if (value > 100) {
-      return value.toFixed(0);
-    }
-    if (value > 10) {
-      return value.toFixed(1);
-    }
-    if (value > 0.01) {
-      return value.toFixed(2);
-    }
-    if (value > 0.001) {
-      return value.toFixed(3);
-    }
-    return value.toString();
-  }, [value]);
-
-  return <span>{amount}</span>;
-}
-
 export type ConfigCostsData = {
   id: string;
   cost_per_minute?: number;
@@ -78,36 +55,28 @@ function ConfigCostsDetails({ configID }: Props) {
         <table className="w-full text-sm text-left">
           <tbody>
             <tr>
-              <td className="p-2 font-medium text-black whitespace-nowrap">
+              <td className="p-2 font-semibold text-black whitespace-nowrap">
                 Per Minute
               </td>
-              <td className="p-2 ">
-                <FormatCurrency value={configCosts?.cost_per_minute!} />
-              </td>
+              <td className="p-2 ">${configCosts?.cost_per_minute}</td>
             </tr>
             <tr>
-              <td className="p-2 font-medium text-black whitespace-nowrap">
+              <td className="p-2 font-semibold text-black whitespace-nowrap">
                 Per Day
               </td>
-              <td className="p-2 ">
-                <FormatCurrency value={configCosts?.cost_total_1d!} />
-              </td>
+              <td className="p-2 ">${configCosts?.cost_total_1d}</td>
             </tr>
             <tr>
-              <td className="p-2 font-medium text-black whitespace-nowrap">
+              <td className="p-2 font-semibold text-black whitespace-nowrap">
                 Per Week
               </td>
-              <td className="p-2 ">
-                <FormatCurrency value={configCosts?.cost_total_7d!} />
-              </td>
+              <td className="p-2 ">${configCosts?.cost_total_7d}</td>
             </tr>
             <tr>
-              <td className="p-2 font-medium text-black whitespace-nowrap">
+              <td className="p-2 font-semibold text-black whitespace-nowrap">
                 Per Month
               </td>
-              <td className="p-2 ">
-                <FormatCurrency value={configCosts?.cost_total_30d!} />
-              </td>
+              <td className="p-2 ">${configCosts?.cost_total_30d}</td>
             </tr>
           </tbody>
         </table>

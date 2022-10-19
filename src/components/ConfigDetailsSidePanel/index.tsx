@@ -27,8 +27,8 @@ export default function ConfigDetailsSidePanel() {
           isPanelHidden ? "hidden" : ""
         }`}
       >
-        <ConfigCosts configID={id} />
         <ConfigInsights configID={id} />
+        <ConfigCosts configID={id} />
         <ConfigChanges configID={id} />
         <ConfigRelated configID={id} />
         <ConfigComponents configID={id} />
