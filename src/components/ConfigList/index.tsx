@@ -1,4 +1,3 @@
-import _ from "lodash";
 import React, { useState } from "react";
 import { AiFillWarning } from "react-icons/ai";
 import { BiDollarCircle } from "react-icons/bi";
@@ -27,6 +26,7 @@ interface Analysis {
   analyzer: string;
   severity: string;
 }
+
 const columns: TableCols[] = [
   {
     Header: "Type",
@@ -47,7 +47,26 @@ const columns: TableCols[] = [
     accessor: "analysis",
     Cell: AnalysisCell
   },
-
+  {
+    Header: "Cost per minute",
+    accessor: "cost_per_minute",
+    Cell: CostCell
+  },
+  {
+    Header: "Cost per day",
+    accessor: "cost_total_1d",
+    Cell: CostCell
+  },
+  {
+    Header: "Cost per week",
+    accessor: "cost_total_7d",
+    Cell: CostCell
+  },
+  {
+    Header: "Cost per month",
+    accessor: "cost_total_30d",
+    Cell: CostCell
+  },
   {
     Header: "Tags",
     accessor: "tags",
@@ -203,6 +222,14 @@ function AnalysisCell({ row, column }: CellProp): JSX.Element {
   return <span>{cell}</span>;
 }
 
+function CostCell({ row, column }: CellProp): JSX.Element {
+  const cost = row?.values[column.id];
+  if (!cost) {
+    return <span></span>;
+  }
+  return <span>${cost}</span>;
+}
+
 function DateCell({ row, column }: CellProp): JSX.Element {
   const dateString = row?.values[column.id];
   if (dateString === "0001-01-01T00:00:00") {
@@ -225,6 +252,10 @@ interface CellData {
   tags?: { Key: string; Value: string }[] | { [index: string]: any };
   created_at: string;
   updated_at: string;
+  cost_per_minute?: number;
+  cost_total_1d?: number;
+  cost_total_7d?: number;
+  cost_total_30d?: number;
 }
 
 export interface Props {
