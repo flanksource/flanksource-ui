@@ -6,10 +6,15 @@ import ConfigInsights from "../ConfigInsights";
 import ConfigRelated from "../ConfigRelated";
 import ConfigComponents from "../ConfigComponents";
 import ConfigIncidents from "../ConfigIncidents";
+import ConfigCosts from "../ConfigCosts";
 
 export default function ConfigDetailsSidePanel() {
   const [isPanelHidden, setIsPanelHidden] = useState<boolean>(false);
   const { id } = useParams();
+
+  if (!id) {
+    return null;
+  }
 
   return (
     <div
@@ -22,11 +27,12 @@ export default function ConfigDetailsSidePanel() {
           isPanelHidden ? "hidden" : ""
         }`}
       >
-        <ConfigInsights configID={id!} />
-        <ConfigChanges configID={id!} />
-        <ConfigRelated configID={id!} />
-        <ConfigComponents configID={id!} />
-        <ConfigIncidents configID={id!} />
+        <ConfigCosts configID={id} />
+        <ConfigInsights configID={id} />
+        <ConfigChanges configID={id} />
+        <ConfigRelated configID={id} />
+        <ConfigComponents configID={id} />
+        <ConfigIncidents configID={id} />
       </div>
 
       <button
