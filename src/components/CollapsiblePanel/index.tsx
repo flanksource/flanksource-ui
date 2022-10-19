@@ -32,7 +32,7 @@ export default function CollapsiblePanel({
         </div>
       </div>
       <div
-        className={`flex flex-col transform origin-bottom duration-500 ${
+        className={`flex flex-col transform origin-bottom duration-500 px-4 ${
           isOpen ? "" : "hidden"
         }`}
       >
