@@ -69,9 +69,7 @@ function ConfigInsightsDetails({ configID }: Props) {
             {configInsights.map((insight) => (
               <tr key={insight.id}>
                 <td
-                  data-tip={
-                    insight.summary ? insight.summary : insight.analyzer
-                  }
+                  data-tip={insight.message}
                   className="p-2 font-medium text-black whitespace-nowrap"
                 >
                   <ConfigInsightsIcon analysis={insight} />
