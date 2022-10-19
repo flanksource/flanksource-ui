@@ -8,13 +8,17 @@ export const DropdownStandaloneWrapper = ({
   paramKey,
   ...rest
 }) => {
-  const searchParams = useSearchParams();
+  const [searchParams] = useSearchParams();
   const updateParams = useUpdateParams();
-  const paramsValue =
-    typeof searchParams[paramKey] !== "undefined"
-      ? searchParams[paramKey]
-      : defaultValue;
-  const [value, setValue] = useState(paramsValue);
+  const [value, setValue] = useState(
+    searchParams.get(paramKey) ?? defaultValue
+  );
+
+  useEffect(() => {
+    if (searchParams.get(paramKey) && value !== searchParams.get(paramKey)) {
+      setValue(searchParams.get(paramKey));
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     const obj = {};

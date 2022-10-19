@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { debounce, isEmpty } from "lodash";
+import { debounce } from "lodash";
 import {
   encodeObjectToUrlSearchParams,
   useUpdateParams,
@@ -29,6 +29,7 @@ import { Loading } from "../Loading";
 import { useHealthPageContext } from "../../context/HealthPageContext";
 import { isCanaryUI } from "../../context/Environment";
 import clsx from "clsx";
+import dayjs from "dayjs";
 
 const FilterKeyToLabelMap = {
   environment: "Environment",
@@ -46,6 +47,16 @@ const getPassingCount = (checks) => {
     }
   });
   return count;
+};
+
+const getStartValue = (start: string) => {
+  if (!start.includes("mo")) {
+    return start;
+  }
+
+  return dayjs()
+    .subtract(+(start.match(/\d/g)?.[0] ?? "1"), "month")
+    .toISOString();
 };
 
 export function Canary({
@@ -120,9 +131,8 @@ export function Canary({
       return;
     }
     clearTimeout(timerRef);
-    const timeRange = searchParams?.timeRange;
     const params = encodeObjectToUrlSearchParams({
-      start: isEmpty(timeRange) || timeRange === "undefined" ? "1h" : timeRange
+      start: getStartValue(searchParams.get("timeRange") ?? timeRanges[0].value)
     });
     setIsLoading(true);
     onLoading(true);
@@ -223,7 +233,7 @@ export function Canary({
         <div className="mb-4 mr-2 w-full">
           <DropdownStandaloneWrapper
             dropdownElem={<TimeRange />}
-            defaultValue={timeRanges[0].value}
+            defaultValue={searchParams.get("timeRange") ?? timeRanges[0].value}
             paramKey="timeRange"
             className="w-full mr-2"
           />

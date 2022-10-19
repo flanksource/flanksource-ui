@@ -14,7 +14,7 @@ export function PopupTabs({
 
   const buttonStyles = {
     line: {
-      container: "flex space-x-4 border-b border-gray-300 z-10",
+      container: "flex space-x-4 border-b border-gray-300",
       button: "border-b-2 font-medium text-sm py-2 px-1",
       active: "border-blue-500 text-blue-600",
       inactive:

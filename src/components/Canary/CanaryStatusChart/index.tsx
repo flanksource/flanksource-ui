@@ -12,48 +12,84 @@ import {
 import { useEffect, useState } from "react";
 import { getCanaryGraph } from "../../../api/services/topology";
 import { Loading } from "../../Loading";
-import { getParamsFromURL } from "../utils";
+
+type StatusType = {
+  time: string;
+  duration: number;
+};
 
 // @TODO: duration should be formatted properly, not just by ms
-const formatDuration = (duration) => `${duration}ms`;
+const formatDuration = (duration: number) => `${duration}ms`;
 
 const getFill = (entry) => (entry.status ? "#2cbd27" : "#df1a1a");
 
-export function CanaryStatusChart({ check, timeRange, ...rest }) {
-  const [data, setData] = useState([]);
+function getUpdatedFormat(start: string) {
+  let format = "";
+
+  switch (start) {
+    case "2d":
+    case "3d":
+    case "1w":
+    case "2w":
+    case "3w":
+    case "1mo": {
+      format = "MMM DD(HH:mm)";
+      break;
+    }
+    case "2mo":
+    case "3mo":
+    case "6mo":
+    case "1y": {
+      format = "MMMM DD";
+      break;
+    }
+    case "2y":
+    case "3y":
+    case "5y": {
+      format = "YYYY";
+      break;
+    }
+    default: {
+      format = "HH:mm";
+    }
+  }
+
+  return format;
+}
+
+const getStartValue = (start: string) => {
+  if (!start.includes("mo")) {
+    return start;
+  }
+
+  return dayjs()
+    .subtract(+(start.match(/\d/g)?.[0] ?? "1"), "month")
+    .toISOString();
+};
+
+export function CanaryStatusChart({ check, checkTimeRange, ...rest }) {
+  const [data, setData] = useState<StatusType[]>([]);
+  const [currentFormat, setCurrentFormat] = useState("HH:mm");
 
   useEffect(() => {
-    // eslint-disable-next-line no-restricted-globals
-    const searchParams = getParamsFromURL(location.search);
     const payload = {
       check: check.id,
       count: 300,
-      start: searchParams.timeRange
+      start: getStartValue(checkTimeRange)
     };
     getCanaryGraph(payload).then((results) => {
+      const updatedFormat = getUpdatedFormat(checkTimeRange);
+
       setData(results.data.status);
+      setCurrentFormat(updatedFormat);
     });
-  }, [check]);
+  }, [check, checkTimeRange]);
 
   if (!data?.length) {
     return <Loading />;
   }
 
-  let time = 0;
-  if (data.length > 0) {
-    time =
-      (new Date(data[0].time) - new Date(data[data.length - 1].time)) /
-      1000 /
-      60;
-  }
-
-  // @TODO: date should be formatted properly depending on selection, not just by DD/MM
-  let formatDate = (date) => dayjs(date).format("HH:mm");
-  if (time > 60 * 24 * 30) {
-    formatDate = (date) => dayjs(date).format("MMM DD");
-  } else if (time > 60 * 24) {
-    formatDate = (date) => dayjs(date).format("MMM DD HH:mm");
-  }
+  const formatDate = (date: string) => dayjs(date).format(currentFormat);
 
   return (
     <ResponsiveContainer width="100%" height="100%" {...rest}>
@@ -106,7 +142,7 @@ export function CanaryStatusChart({ check, timeRange, ...rest }) {
   );
 }
 
-function CustomXTick({ tickFormatter = (value) => value, ...rest }) {
+function CustomXTick({ tickFormatter = (value: string) => value, ...rest }) {
   const { x, y, payload, fontSize = 12 } = rest;
 
   return (
@@ -125,7 +161,7 @@ function CustomXTick({ tickFormatter = (value) => value, ...rest }) {
   );
 }
 
-function CustomYTick({ tickFormatter = (value) => value, ...rest }) {
+function CustomYTick({ tickFormatter = (value: number) => value, ...rest }) {
   const { x, y, payload, fontSize = 12 } = rest;
 
   return (
@@ -144,7 +180,13 @@ function CustomYTick({ tickFormatter = (value) => value, ...rest }) {
   );
 }
 
-const CustomTooltip = ({ active, payload }) => {
+const CustomTooltip = ({
+  active,
+  payload
+}: {
+  active?: boolean;
+  payload?: { name?: string; value?: number }[];
+}) => {
   if (active && payload && payload.length) {
     return (
       <div className="flex flex-col bg-white p-3 border rounded-sm text-xs">
@@ -155,7 +197,7 @@ const CustomTooltip = ({ active, payload }) => {
         <p className="">
           <span className="text-gray-500">{payload[1].name}: </span>
           <span className="ml-1 text-gray-700">
-            {formatDuration(payload[1].value)}
+            {formatDuration(payload?.[1]?.value ?? 0)}
           </span>
         </p>
       </div>

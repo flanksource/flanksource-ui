@@ -13,6 +13,8 @@ import { getUptimePercentage } from "./utils";
 import { StatusHistory } from "./StatusHistory";
 import { DetailField } from "./DetailField";
 import { Duration } from "../renderers";
+import { DropdownStandaloneWrapper } from "../../Dropdown/StandaloneWrapper";
+import { TimeRange, timeRanges } from "../../Dropdown/TimeRange";
 
 const CanaryStatusChart = React.lazy(() =>
   import("../CanaryStatusChart").then(({ CanaryStatusChart }) => ({
@@ -59,6 +61,21 @@ export function CheckDetails({ check, timeRange, ...rest }) {
     Schedule: validCheck?.schedule || "-"
   };
 
+  const getHistoryListView = (loading) => {
+    if (loading) {
+      return (
+        <div className="h-64 flex items-center justify-center text-gray-400 text-md">
+          Loading please wait...
+        </div>
+      );
+    }
+    return (
+      <div className="h-64 flex items-center justify-center text-gray-400 text-md">
+        No status history available
+      </div>
+    );
+  };
+
   return (
     <div {...rest}>
       {/* stats section */}
@@ -88,17 +105,17 @@ export function CheckDetails({ check, timeRange, ...rest }) {
         <CheckStat
           containerClass="w-40 mb-4"
           title="Latency (95%)"
-          value={<Duration ms={validCheck.latency.p95} />}
+          value={<Duration ms={validCheck?.latency?.p95} />}
         />
         <CheckStat
           containerClass="w-40 mb-4"
           title="Latency  (97%)"
-          value={<Duration ms={validCheck.latency.p97} />}
+          value={<Duration ms={validCheck?.latency?.p97} />}
         />
         <CheckStat
           containerClass="w-40 mb-4"
           title="Latency  (99%)"
-          value={<Duration ms={validCheck.latency.p99} />}
+          value={<Duration ms={validCheck?.latency?.p99} />}
         />
         <CheckStat
           containerClass="w-40 mb-4"
@@ -108,13 +125,18 @@ export function CheckDetails({ check, timeRange, ...rest }) {
       </div>
       {/* chart section */}
       <div className="mb-3">
-        <div className="flex justify-between items-center mb-2">
+        <div className="flex justify-between items-center mb-2 pr-2">
           <span className="text-lg font-medium">Health overview</span>
-          {/* <span className="text-sm font-medium">(time dropdown)</span> */}
+          <DropdownStandaloneWrapper
+            className="w-48"
+            paramKey="checkTimeRange"
+            dropdownElem={<TimeRange />}
+            defaultValue={timeRange ?? timeRanges[0].value}
+          />
         </div>
         <div className="w-full h-52 overflow-visible">
           <Suspense fallback={<div>Loading..</div>}>
-            <CanaryStatusChart timeRange={timeRange} check={validCheck} />
+            <CanaryStatusChart checkTimeRange={timeRange} check={validCheck} />
           </Suspense>
         </div>
       </div>
@@ -143,9 +165,7 @@ export function CheckDetails({ check, timeRange, ...rest }) {
                 {statusHistoryList && statusHistoryList.length > 0 ? (
                   <StatusHistory check={validCheck} sticky />
                 ) : (
-                  <div className="h-64 flex items-center justify-center text-gray-400 text-md">
-                    No status history available
-                  </div>
+                  getHistoryListView(check.loading)
                 )}
               </div>
             ),
