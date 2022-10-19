@@ -16,6 +16,7 @@ type Props = {
   }[];
   title: string;
   showSidePanel?: boolean;
+  isConfigDetails?: boolean;
 };
 
 export function ConfigLayout({
@@ -24,6 +25,7 @@ export function ConfigLayout({
   backPath,
   navLinks,
   showSidePanel = false,
+  isConfigDetails = false,
   ...props
 }: Props) {
   const [title, setTitle] = useState(props.title || "");
@@ -42,8 +44,16 @@ export function ConfigLayout({
       extra={titleExtras}
       contentClass="p-0 h-full"
     >
-      <div className="flex flex-row min-h-full h-auto">
-        <div className="flex flex-col flex-1 p-6 min-h-full h-auto overflow-hidden">
+      <div
+        className={`flex flex-row ${
+          isConfigDetails ? "min-h-full h-auto" : "h-full"
+        } `}
+      >
+        <div
+          className={`flex flex-col flex-1 p-6 h-full overflow-hidden ${
+            isConfigDetails ? "min-h-full h-auto overflow-auto" : "h-full"
+          }`}
+        >
           <nav className="flex justify-between">
             <span className="flex self-center">
               {navLinks.map((nav) => (
