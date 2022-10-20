@@ -14,7 +14,6 @@ import { ErrorBoundary } from "./components/ErrorBoundary";
 import { LogsIcon } from "./components/Icons/LogsIcon";
 import { TopologyIcon } from "./components/Icons/TopologyIcon";
 import { ConfigLayout, SidebarLayout } from "./components/Layout";
-import { Loading } from "./components/Loading";
 import { SchemaResourcePage } from "./components/SchemaResourcePage";
 import { schemaResourceTypes } from "./components/SchemaResourcePage/resourceTypes";
 import { SchemaResource } from "./components/SchemaResourcePage/SchemaResource";
@@ -190,7 +189,9 @@ export function CanaryCheckerApp() {
 
   // TODO(ciju): the url is set at two places. axios.js#CanaryChecker and here.
   // Consolidate logic to one place.
-  if (typeof window === "undefined") return <Loading text="Loading" />;
+  if (typeof window === "undefined") {
+    return <FullPageSkeltonLoader />;
+  }
 
   return (
     <BrowserRouter>
@@ -199,6 +200,10 @@ export function CanaryCheckerApp() {
       </HealthPageContextProvider>
     </BrowserRouter>
   );
+}
+
+function SidebarWrapper() {
+  return <SidebarLayout navigation={navigation} settingsNav={settingsNav} />;
 }
 
 export function App() {
@@ -214,9 +219,6 @@ export function App() {
     return <FullPageSkeltonLoader />;
   }
 
-  const sidebar = (
-    <SidebarLayout navigation={navigation} settingsNav={settingsNav} />
-  );
   return (
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>
@@ -226,7 +228,7 @@ export function App() {
               <IncidentPageContextProvider>
                 <AuthContext.Provider value={{ user, setUser }}>
                   <ReactTooltip />
-                  <IncidentManagerRoutes sidebar={sidebar} />
+                  <IncidentManagerRoutes sidebar={<SidebarWrapper />} />
                 </AuthContext.Provider>
                 <ReactQueryDevtools initialIsOpen={false} />
               </IncidentPageContextProvider>
