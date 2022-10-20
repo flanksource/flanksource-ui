@@ -4,27 +4,7 @@ import CollapsiblePanel from "../CollapsiblePanel";
 import { Loading } from "../Loading";
 
 export function FormatCurrency({ value }: { value: number | string }) {
-  const amount = useMemo(() => {
-    const parsedValue = typeof value === "string" ? parseFloat(value) : value;
-    if (value > 1000) {
-      return (parsedValue / 1000).toFixed(1) + "k";
-    }
-    if (parsedValue > 100) {
-      return parsedValue.toFixed(0);
-    }
-    if (parsedValue > 10) {
-      return parsedValue.toFixed(1);
-    }
-    if (parsedValue > 0.01) {
-      return parsedValue.toFixed(2);
-    }
-    if (parsedValue > 0.001) {
-      return parsedValue.toFixed(3);
-    }
-    return parsedValue.toString();
-  }, [value]);
-
-  return <span>${amount}</span>;
+  return <span>${parseFloat(value.toString()).toFixed(2)}</span>;
 }
 
 export type ConfigCostsData = {
