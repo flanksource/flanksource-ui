@@ -6,7 +6,7 @@ import { IoCloseCircle } from "react-icons/io5";
 export function TextInputClearable({
   className,
   defaultValue,
-  onChange = () => {},
+  onChange = (val) => {},
   onSubmit = () => {},
   inputClassName,
   inputOuterClassName,

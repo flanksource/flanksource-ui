@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IoChevronDownOutline, IoChevronUpOutline } from "react-icons/io5";
+import ReactTooltip from "react-tooltip";
 
 type Props = {
   Header: React.ReactNode;
@@ -14,6 +15,10 @@ export default function CollapsiblePanel({
 }: Props) {
   const [isOpen, setIsOpen] = useState(!isClosed);
 
+  useEffect(() => {
+    ReactTooltip.rebuild();
+  });
+
   return (
     <div className="flex flex-col space-y-4">
       <div
@@ -25,9 +30,9 @@ export default function CollapsiblePanel({
         <div className="flex flex-1">{Header}</div>
         <div className="flex flex-col items-center justify-center space-y-0">
           {isOpen ? (
-            <IoChevronUpOutline size={20} />
+            <IoChevronUpOutline data-tip="Close" size={20} />
           ) : (
-            <IoChevronDownOutline size={20} />
+            <IoChevronDownOutline data-tip="Open" size={20} />
           )}
         </div>
       </div>

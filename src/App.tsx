@@ -151,6 +151,7 @@ export function IncidentManagerRoutes({ sidebar }) {
             <ConfigLayout
               backPath="/configs"
               showSidePanel
+              isConfigDetails
               title="Config"
               basePath="/configs/:id"
               navLinks={[

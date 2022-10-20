@@ -1,4 +1,3 @@
-import _ from "lodash";
 import React, { useState } from "react";
 import { AiFillWarning } from "react-icons/ai";
 import { BiDollarCircle } from "react-icons/bi";
@@ -14,6 +13,7 @@ import { MdSecurity } from "react-icons/md";
 import { useSearchParams } from "react-router-dom";
 import * as timeago from "timeago.js";
 import { DataTable, Icon } from "../";
+import { FormatCurrency } from "../ConfigCosts";
 
 interface TableCols {
   Header: string;
@@ -27,6 +27,7 @@ interface Analysis {
   analyzer: string;
   severity: string;
 }
+
 const columns: TableCols[] = [
   {
     Header: "Type",
@@ -47,7 +48,26 @@ const columns: TableCols[] = [
     accessor: "analysis",
     Cell: AnalysisCell
   },
-
+  {
+    Header: "Cost (per min)",
+    accessor: "cost_per_minute",
+    Cell: CostCell
+  },
+  {
+    Header: "Cost (24hr)",
+    accessor: "cost_total_1d",
+    Cell: CostCell
+  },
+  {
+    Header: "Cost (7d)",
+    accessor: "cost_total_7d",
+    Cell: CostCell
+  },
+  {
+    Header: "Cost (30d)",
+    accessor: "cost_total_30d",
+    Cell: CostCell
+  },
   {
     Header: "Tags",
     accessor: "tags",
@@ -203,6 +223,18 @@ function AnalysisCell({ row, column }: CellProp): JSX.Element {
   return <span>{cell}</span>;
 }
 
+function CostCell({ row, column }: CellProp): JSX.Element {
+  const cost = row?.values[column.id];
+  if (!cost) {
+    return <span></span>;
+  }
+  return (
+    <span>
+      <FormatCurrency value={cost} />
+    </span>
+  );
+}
+
 function DateCell({ row, column }: CellProp): JSX.Element {
   const dateString = row?.values[column.id];
   if (dateString === "0001-01-01T00:00:00") {
@@ -225,11 +257,15 @@ interface CellData {
   tags?: { Key: string; Value: string }[] | { [index: string]: any };
   created_at: string;
   updated_at: string;
+  cost_per_minute?: number;
+  cost_total_1d?: number;
+  cost_total_7d?: number;
+  cost_total_30d?: number;
 }
 
 export interface Props {
   data: CellData[];
-  handleRowClick: () => {};
+  handleRowClick: (row?: any) => void;
   isLoading: boolean;
 }
 

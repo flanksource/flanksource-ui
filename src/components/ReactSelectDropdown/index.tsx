@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import {
   FunctionComponent,
+  LegacyRef,
   ReactNode,
   Ref,
   useEffect,
@@ -17,6 +18,7 @@ import { Avatar } from "../Avatar";
 const { colors } = defaultTheme;
 
 interface StateOption {
+  id?: string;
   label?: string;
   value?: string;
   icon?: any;
@@ -44,7 +46,7 @@ type ReactSelectDropdownProps = {
       }
     | StateOption[];
   name: string;
-  onChange?: () => void;
+  onChange?: (value?: string) => void;
   value?: StateOption;
   placeholder?: string;
   prefix?: ReactNode;
@@ -71,15 +73,16 @@ export const ReactSelectDropdown = ({
     if (!items) {
       return;
     }
-    const data: any[] = [];
-    Object.keys(items).forEach((key: string) => {
-      const item: any = items[key];
-      item.label = item.label || item.description;
-      item.description = item.description || item.label;
-      item.order = item.order || 0;
-      data.push(item);
-    });
-    data.sort((v1, v2) => v1.order - v2.order);
+    const data = Object.entries(items)
+      .map(([_, item]) => {
+        return {
+          ...item,
+          label: item.label || item.description,
+          description: item.description || item.label,
+          order: item.order || 0
+        };
+      })
+      .sort((v1, v2) => v1.order - v2.order);
     setOptions(data);
   }, [items]);
 
@@ -288,7 +291,8 @@ interface DropdownProps {
   readonly isOpen: boolean;
   readonly target: ReactNode;
   readonly onClose: () => void;
-  readonly inputRef: Ref<HTMLDivElement>;
+  readonly inputRef: Ref<HTMLDivElement | undefined>;
+  children: ReactNode;
 }
 const Dropdown: FunctionComponent<DropdownProps> = ({
   children,
@@ -297,7 +301,7 @@ const Dropdown: FunctionComponent<DropdownProps> = ({
   inputRef,
   onClose
 }) => (
-  <div ref={inputRef} className="relative">
+  <div ref={inputRef as LegacyRef<HTMLDivElement>} className="relative">
     {target}
     {isOpen ? (
       <Menu className="absolute bg-white z-50 drop-shadow-md w-full">
