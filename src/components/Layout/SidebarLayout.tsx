@@ -1,18 +1,18 @@
 import { Disclosure, Menu } from "@headlessui/react";
 import { ChevronUpIcon } from "@heroicons/react/outline";
 import clsx from "clsx";
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { Toaster } from "react-hot-toast";
 import { IconType } from "react-icons";
 import { IoChevronForwardOutline } from "react-icons/io5";
 import { NavLink, Outlet } from "react-router-dom";
-import { User } from "src/api/services/users";
-import { NavigationItems, SettingsNavigationItems } from "src/App";
-import { $ArrayElemType } from "src/types/utility";
+import { $ArrayElemType } from "../../types/utility";
+import { NavigationItems, SettingsNavigationItems } from "../../App";
 
-import { getUser } from "../../api/auth";
+import { AuthContext } from "../../context";
 import { useOuterClick } from "../../lib/useOuterClick";
 import { getLocalItem, setLocalItem } from "../../utils/storage";
+import FullPageSkeltonLoader from "../FullPageSkeltonLoader";
 import { Icon } from "../Icon";
 
 interface Props {
@@ -26,33 +26,37 @@ interface SideNavGroupProps {
   collapseSidebar?: boolean;
 }
 
-const NavLabel = ({
-  icon: Icon,
-  active,
-  iconOnly = false,
-  name
-}: {
+type NavLabelProps = {
   icon: IconType;
   active: boolean;
   iconOnly?: boolean;
   name: string;
-}) => (
-  <span className="flex items-center">
-    <Icon
-      className={clsx(
-        active
-          ? "text-gray-100 font-bold"
-          : "text-gray-200 group-hover:text-gray-100",
-        "flex-shrink-0",
-        iconOnly ? "h-7 w-7" : "mr-3 h-6 w-6"
+};
+
+function NavLabel({
+  icon: Icon,
+  active,
+  iconOnly = false,
+  name
+}: NavLabelProps) {
+  return (
+    <span className="flex items-center">
+      <Icon
+        className={clsx(
+          active
+            ? "text-gray-100 font-bold"
+            : "text-gray-200 group-hover:text-gray-100",
+          "flex-shrink-0",
+          iconOnly ? "h-7 w-7" : "mr-3 h-6 w-6"
+        )}
+        aria-hidden="true"
+      />
+      {!iconOnly && (
+        <p className={clsx("duration-300 transition-opacity")}>{name}</p>
       )}
-      aria-hidden="true"
-    />
-    {!iconOnly && (
-      <p className={clsx("duration-300 transition-opacity")}>{name}</p>
-    )}
-  </span>
-);
+    </span>
+  );
+}
 
 interface NavItemWrapperProps {
   as?: React.ElementType<any>;
@@ -97,9 +101,10 @@ function SideNavItem({
       as={NavLink}
       to={href}
     >
+      {/* @ts-expect-error */}
       {({ isActive }) => (
         <NavLabel
-          icon={icon}
+          icon={icon as IconType}
           active={current || isActive}
           iconOnly={collapseSidebar}
           name={name}
@@ -122,18 +127,25 @@ function SideNavGroup({
   if (collapseSidebar) {
     return (
       <Menu as="div" className="relative">
+        {/* @ts-expect-error */}
         <Menu.Button className="w-full">
           <NavItemWrapper className="justify-center">
             <NavLabel icon={icon} active={current} iconOnly name={name} />
           </NavItemWrapper>
         </Menu.Button>
+        {/* @ts-expect-error */}
         <Menu.Items className="absolute border left-0 ml-12 w-48 shadow-md top-0 z-10 bg-gray-800 space-y-1">
           {submenu.map(({ name, icon, href }) => (
+            // @ts-expect-error
             <Menu.Item key={name}>
               {({ active }) => (
                 <NavLink className="w-full" to={href}>
                   <NavItemWrapper active={active}>
-                    <NavLabel icon={icon} active={active} name={name} />
+                    <NavLabel
+                      icon={icon as IconType}
+                      active={active}
+                      name={name}
+                    />
                   </NavItemWrapper>
                 </NavLink>
               )}
@@ -200,14 +212,8 @@ function SideNav({
 }
 
 export function SidebarLayout({ navigation, settingsNav }: Props) {
-  const [user, setUser] = useState<User | null>(null);
+  const { user } = useContext(AuthContext);
   const [collapseSidebar, setCollapseSidebar] = useState(false);
-
-  useEffect(() => {
-    getUser().then((user) => {
-      setUser(user);
-    });
-  }, []);
 
   useEffect(() => {
     const localCollapsed = getLocalItem("sidebarCollapsed") ?? false;
@@ -230,9 +236,12 @@ export function SidebarLayout({ navigation, settingsNav }: Props) {
 
   const innerRef = useOuterClick(closeOnOuterClick);
 
+  // [TODO] user comes context, probably show an error here instead of a loading
+  // animation
   if (user == null) {
-    return <div>Loading...</div>;
+    return <FullPageSkeltonLoader />;
   }
+
   return (
     <>
       <Toaster position="top-right" reverseOrder={false} />
