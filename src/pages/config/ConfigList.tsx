@@ -31,7 +31,7 @@ export function ConfigListPage() {
     setConfigState
   } = useConfigPageContext();
   const { loading, setLoading } = useLoader();
-  const { setTitle, setTitleExtras } = useOutletContext<any>();
+  const { setTitle, setTitleExtras, setTableOptions } = useOutletContext<any>();
   const [configFilterView, setConfigFilterView] = useState(
     params.get("query")
       ? ConfigFilterViewTypes.advanced
@@ -51,6 +51,7 @@ export function ConfigListPage() {
   const search = params.get("search");
   const tag = decodeURIComponent(params.get("tag") || "All");
   const configType = decodeURIComponent(params.get("type") || "All");
+  const groupType = decodeURIComponent(params.get("groupBy") || "config_type");
 
   useEffect(() => {
     if (params.get("query")) {
@@ -86,23 +87,25 @@ export function ConfigListPage() {
 
   const extra = (
     <div className="flex space-x-2 mr-4">
-      {configFilterView === ConfigFilterViewTypes.advanced && (
-        /* @ts-expect-error */
-        <QueryBuilder
-          refreshConfigs={(e: any) => {
-            setConfigState((state) => {
-              return {
-                ...state,
-                data: e
-              };
-            });
-          }}
-        />
+      {configFilterView === ConfigFilterViewTypes.basic && (
+        <RefreshButton onClick={() => fetchAllConfigs()} animate={loading} />
       )}
 
-      {configFilterView === ConfigFilterViewTypes.basic && (
+      <Switch
+        onChange={(e) => {
+          setConfigFilterView(e);
+          setParams({});
+        }}
+        options={options}
+        value={configFilterView}
+      />
+    </div>
+  );
+
+  const tableOptions = (
+    <div className="flex space-x-2 mr-4 mb-2">
+      {configFilterView === ConfigFilterViewTypes.basic ? (
         <>
-          <RefreshButton onClick={() => fetchAllConfigs()} animate={loading} />
           <TypeDropdown
             value={configType}
             onChange={(ct: any) => {
@@ -122,7 +125,14 @@ export function ConfigListPage() {
             />
           </span>
 
-          {/* @ts-expect-error */}
+          <GroupDropdown
+            value={groupType}
+            onChange={(gt) => {
+              params.set("groupBy", encodeURIComponent(gt || ""));
+              setParams(params);
+            }}
+          />
+
           <TextInputClearable
             onChange={debounce((e) => {
               const query = e.target.value || "";
@@ -134,23 +144,28 @@ export function ConfigListPage() {
             defaultValue={params.get("search")}
           />
         </>
+      ) : (
+        <QueryBuilder
+          refreshConfigs={(e) => {
+            setConfigState((state) => {
+              return {
+                ...state,
+                data: e
+              };
+            });
+          }}
+        />
       )}
-
-      {/* @ts-expect-error */}
-      <Switch
-        onChange={(e: string) => {
-          setConfigFilterView(e);
-          setParams({});
-        }}
-        options={options}
-        value={configFilterView}
-      />
     </div>
   );
 
   useEffect(() => {
     setTitleExtras(extra);
-    return () => setTitleExtras(null);
+    setTableOptions(tableOptions);
+    return () => {
+      setTitleExtras(null);
+      setTableOptions(null);
+    };
   }, [
     data,
     configType,
@@ -233,6 +248,58 @@ const TypeDropdown = ({ ...rest }) => {
     <ReactSelectDropdown
       items={items}
       name="type"
+      onChange={(value) => setSelected(value)}
+      value={selected}
+      className="w-64"
+      prefix={
+        <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
+          Type:
+        </div>
+      }
+      {...rest}
+    />
+  );
+};
+
+const GroupDropdown = ({ ...rest }) => {
+  const items = {
+    NoGrouping: {
+      id: "No Grouping",
+      name: "No Grouping",
+      description: "No Grouping",
+      value: "no_grouping"
+    },
+    Type: {
+      id: "Type",
+      name: "Type",
+      description: "Type",
+      value: "config_type"
+    },
+    Name: {
+      id: "Name",
+      name: "Name",
+      description: "Name",
+      value: "name"
+    },
+    Analysis: {
+      id: "Analysis",
+      name: "Analysis",
+      description: "Analysis",
+      value: "analysis"
+    },
+    Changed: {
+      id: "Changed",
+      name: "Changed",
+      description: "Changed",
+      value: "changed"
+    }
+  };
+
+  const [selected, setSelected] = useState(Object.values(items)[0].value);
+
+  return (
+    <ReactSelectDropdown
+      items={items}
       onChange={(value) => setSelected(value)}
       value={selected}
       className="w-64"

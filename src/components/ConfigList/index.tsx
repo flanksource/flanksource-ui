@@ -15,14 +15,20 @@ import ReactTooltip from "react-tooltip";
 import * as timeago from "timeago.js";
 import { DataTable, Icon } from "../";
 import { FormatCurrency } from "../ConfigCosts";
+import { getTimeBucket, TIME_BUCKETS } from "../../utils/date";
 
 interface TableCols {
   Header: string;
-  accessor: string;
+  accessor: string | ((row: any, rowIndex: number) => any);
   cellClass?: string;
   Cell?: React.ComponentType<CellProp>;
+  aggregate?: string | ((leafValues: any[], aggregatedValues?: any[]) => any);
+  Aggregated?: string | ((values: any) => string | JSX.Element);
+  id?: string;
+  sortType?:
+    | string
+    | ((rowA: any, rowB: any, columnID: string, desc: boolean) => any);
 }
-
 interface Analysis {
   analysis_type: string;
   analyzer: string;
@@ -33,21 +39,30 @@ const columns: TableCols[] = [
   {
     Header: "Type",
     accessor: "config_type",
-    Cell: TypeCell
+    Cell: TypeCell,
+    Aggregated: "-"
   },
   {
     Header: "Name",
-    accessor: "name"
+    accessor: "name",
+    Aggregated: "-"
   },
   {
     Header: "Changes",
     accessor: "changes",
-    Cell: React.memo(ChangeCell)
+    Cell: React.memo(ChangeCell),
+    aggregate: ChangeAggregate,
+    Aggregated: ({ value }) => (
+      <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-blue-100 text-blue-800">
+        {value}
+      </span>
+    )
   },
   {
     Header: "Analysis",
     accessor: "analysis",
-    Cell: AnalysisCell
+    Cell: AnalysisCell,
+    Aggregated: "-"
   },
   {
     Header: "Cost (per min)",
@@ -72,22 +87,37 @@ const columns: TableCols[] = [
   {
     Header: "Tags",
     accessor: "tags",
-    Cell: React.memo(TagsCell)
+    Cell: React.memo(TagsCell),
+    cellClass: "overflow-auto",
+    Aggregated: "-"
   },
   {
     Header: "Created",
     accessor: "created_at",
-    Cell: DateCell
+    Cell: DateCell,
+    Aggregated: "-"
   },
   {
     Header: "Last Updated",
     accessor: "updated_at",
-    Cell: DateCell
+    Cell: DateCell,
+    aggregate: "max"
+  },
+  {
+    Header: "Changed",
+    accessor: ChangedAccessor,
+    id: "changed",
+    sortType: ChangedSorted
   }
 ];
 
 interface CellProp {
-  row: { values: { [index: string]: any }; original: { [index: string]: any } };
+  row: {
+    values: { [index: string]: any };
+    original: { [index: string]: any };
+    isGrouped: boolean;
+    subRows: any[];
+  };
   column: { id: string };
 }
 
@@ -205,14 +235,17 @@ function ChangeCell({ row, column }: CellProp): JSX.Element {
 }
 
 function TypeCell({ row, column }: CellProp): JSX.Element {
+  const name = row.isGrouped
+    ? row.subRows[0]?.original.external_type
+    : row.original.external_type;
+  const secondary = row.isGrouped
+    ? row.subRows[0]?.original.config_type
+    : row.original.config_type;
+
   return (
     <span className="flex flex-nowrap">
-      <Icon
-        name={row.original.external_type}
-        secondary={row.original.config_type}
-        size="lg"
-      />{" "}
-      <span className="pl-1"> {row.values[column.id]} </span>{" "}
+      <Icon name={name} secondary={secondary} size="lg" />
+      <span className="pl-1"> {row.values[column.id]}</span>
     </span>
   );
 }
@@ -254,9 +287,9 @@ function AnalysisCell({ row, column }: CellProp): JSX.Element {
   }
 
   var cell: JSX.Element[] = [];
-  analysis.forEach((item: Analysis) => {
+  analysis.forEach((item: Analysis, index: number) => {
     cell.push(
-      <span className="flex flex-nowrap pb-0.5 ">
+      <span className="flex flex-nowrap pb-0.5 " key={index}>
         {analysisIcon(item)} <span className="pl-1">{item.analyzer}</span>
       </span>
     );
@@ -283,9 +316,41 @@ function DateCell({ row, column }: CellProp): JSX.Element {
   }
   return (
     <div className="text-xs">
-      {dateString ? timeago.format(dateString) : "None"}
+      {dateString ? timeago.format(dateString) : "-"}
     </div>
   );
+}
+
+function ChangeAggregate(leafValues: any[]) {
+  let sum = 0;
+  leafValues.forEach((leafVal) => {
+    if (leafVal) {
+      leafVal.forEach((item: any) => {
+        if (item.change_type === "diff") {
+          sum += item.total;
+        }
+      });
+    }
+  });
+  return sum;
+}
+
+function ChangedAccessor(row: any) {
+  return getTimeBucket(row.updated_at);
+}
+
+function ChangedSorted(rowA: any, rowB: any, columnId: string) {
+  const rowAOrder =
+    Object.values(TIME_BUCKETS).find((tb) => tb.name === rowA.values[columnId])
+      ?.sortOrder || 0;
+  const rowBOrder =
+    Object.values(TIME_BUCKETS).find((tb) => tb.name === rowB.values[columnId])
+      ?.sortOrder || 0;
+  if (rowAOrder >= rowBOrder) {
+    return 1;
+  } else {
+    return -1;
+  }
 }
 
 interface CellData {
@@ -312,18 +377,31 @@ export interface Props {
 
 function ConfigList({ data, handleRowClick, isLoading }: Props) {
   const [queryParams, setQueryParams] = useSearchParams({
-    sortBy: "config_type",
-    sortOrder: "asc"
+    sortBy: "",
+    sortOrder: "",
+    groupBy: "config_type"
   });
 
   const sortField = queryParams.get("sortBy");
   const isSortOrderDesc = queryParams.get("sortOrder") === "asc" ? false : true;
+  const groupByField = queryParams.get("groupBy");
 
   const setSortBy = (field: string, order: "asc" | "desc") => {
-    setQueryParams({
-      sortBy: field,
-      sortOrder: order
-    });
+    if (field === undefined && order === undefined) {
+      queryParams.delete("sortBy");
+      queryParams.delete("sortOrder");
+    } else {
+      queryParams.set("sortBy", field);
+      queryParams.set("sortOrder", order);
+    }
+    setQueryParams(queryParams);
+  };
+
+  const setHiddenColumns = () => {
+    if (groupByField !== "changed") {
+      return ["changed"];
+    }
+    return [];
   };
 
   return (
@@ -334,13 +412,21 @@ function ConfigList({ data, handleRowClick, isLoading }: Props) {
       handleRowClick={handleRowClick}
       tableStyle={{ borderSpacing: "0" }}
       isLoading={isLoading}
-      sortBy={[
-        {
-          id: sortField,
-          desc: isSortOrderDesc
-        }
-      ]}
-      setSortBy={setSortBy}
+      sortBy={
+        sortField
+          ? [
+              {
+                id: sortField,
+                desc: isSortOrderDesc
+              }
+            ]
+          : []
+      }
+      setSortOptions={setSortBy}
+      groupBy={
+        !groupByField || groupByField === "no_grouping" ? null : [groupByField]
+      }
+      hiddenColumns={setHiddenColumns()}
     />
   );
 }

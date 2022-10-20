@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 import { DateCell } from "../ConfigViewer/columns";
 import { DataTable } from "../index";
@@ -49,11 +49,41 @@ const configLinkCol = [
 ];
 
 export function ConfigChangeHistory({ data, isLoading, linkConfig }) {
+  const [queryParams, setQueryParams] = useSearchParams({
+    sortBy: "",
+    sortOrder: ""
+  });
+
+  const sortField = queryParams.get("sortBy");
+  const isSortOrderDesc = queryParams.get("sortOrder") === "asc" ? false : true;
+
+  const setSortBy = (field, order) => {
+    if (field === undefined && order === undefined) {
+      queryParams.delete("sortBy");
+      queryParams.delete("sortOrder");
+    } else {
+      queryParams.set("sortBy", field);
+      queryParams.set("sortOrder", order);
+    }
+    setQueryParams(queryParams);
+  };
+
   return (
     <DataTable
       columns={linkConfig ? columns.concat(configLinkCol) : columns}
       data={data}
       isLoading={isLoading}
+      sortBy={
+        sortField
+          ? [
+              {
+                id: sortField,
+                desc: isSortOrderDesc
+              }
+            ]
+          : []
+      }
+      setSortOptions={setSortBy}
     />
   );
 }
