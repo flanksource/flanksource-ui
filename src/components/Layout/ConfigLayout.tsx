@@ -29,6 +29,7 @@ export function ConfigLayout({
   const [title, setTitle] = useState(props.title || "");
   const [titleExtras, setTitleExtras] = useState();
   const [tabRight, setTabRight] = useState();
+  const [tableOptions, setTableOptions] = useState();
   const mt = useMatch({ path: basePath, end: false });
 
   return (
@@ -48,10 +49,11 @@ export function ConfigLayout({
         } `}
       >
         <div
-          className={`flex flex-col flex-1 p-6 h-full overflow-hidden ${
+          className={`flex flex-col flex-1 p-6 h-full ${
             isConfigDetails ? "min-h-full h-auto overflow-auto" : "h-full"
           }`}
         >
+          {tableOptions}
           <nav className="flex justify-between">
             <span className="flex self-center">
               {navLinks.map((nav) => (
@@ -79,6 +81,7 @@ export function ConfigLayout({
               setTitle,
               titleExtras,
               setTitleExtras,
+              setTableOptions,
               tabRight,
               setTabRight
             }}

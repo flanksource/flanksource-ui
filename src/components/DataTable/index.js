@@ -1,7 +1,8 @@
 import clsx from "clsx";
 import { useMemo } from "react";
+import { IoChevronForwardOutline } from "react-icons/io5";
 import { TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti";
-import { useSortBy, useTable } from "react-table";
+import { useSortBy, useTable, useGroupBy, useExpanded } from "react-table";
 
 const tableStyles = {
   tableClass: "table-auto w-full border-l border-r border-b",
@@ -17,8 +18,10 @@ export const DataTable = ({
   tableStyle,
   stickyHead,
   isLoading,
-  setSortBy,
+  setSortOptions,
   sortBy,
+  groupBy,
+  hiddenColumns,
   ...rest
 }) => {
   const tableInstance = useTable(
@@ -29,28 +32,50 @@ export const DataTable = ({
       initialState: {
         ...(sortBy && {
           sortBy: sortBy
+        }),
+        ...(groupBy && {
+          groupBy: groupBy
+        }),
+        ...(hiddenColumns && {
+          hiddenColumns: hiddenColumns
         })
       },
       useControlledState: (state) => {
         return useMemo(() => {
-          // if the sort column changes, update the url
-          if (setSortBy && state.sortBy.length > 0) {
-            setSortBy(
-              state.sortBy[0].id,
-              state.sortBy[0].desc ? "desc" : "asc"
-            );
-          }
           return {
-            ...state
+            ...state,
+            ...(sortBy && {
+              sortBy: sortBy
+            }),
+            ...(groupBy && {
+              groupBy: groupBy
+            }),
+            ...(hiddenColumns && {
+              hiddenColumns: hiddenColumns
+            })
           };
         }, [state]);
       }
     },
-    useSortBy
+    useGroupBy,
+    useSortBy,
+    useExpanded
   );
 
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     tableInstance;
+
+  const setHeaderClickHandler = (column) => {
+    if (!column.canSort) return;
+    const { isSorted, isSortedDesc, id } = column;
+    if (isSorted && isSortedDesc) {
+      setSortOptions();
+    } else if (!isSorted) {
+      setSortOptions(id, "asc");
+    } else {
+      setSortOptions(id, "desc");
+    }
+  };
 
   return (
     <div className="flex flex-col flex-1 overflow-y-auto" {...rest}>
@@ -69,7 +94,8 @@ export const DataTable = ({
                 <th
                   key={column.Header}
                   className={tableStyles.theadHeaderClass}
-                  {...column.getHeaderProps(column.getSortByToggleProps())}
+                  onClick={() => setHeaderClickHandler(column)}
+                  {...column.getHeaderProps()}
                 >
                   <div className="flex select-none">
                     {column.render("Header")}
@@ -98,7 +124,13 @@ export const DataTable = ({
                 key={row.id}
                 className={tableStyles.tbodyRowClass}
                 {...row.getRowProps()}
-                onClick={handleRowClick ? () => handleRowClick(row) : () => {}}
+                onClick={
+                  row.isGrouped
+                    ? () => row.toggleRowExpanded(!row.isExpanded)
+                    : handleRowClick
+                    ? () => handleRowClick(row)
+                    : () => {}
+                }
               >
                 {row.cells.map((cell) => (
                   <td
@@ -108,7 +140,22 @@ export const DataTable = ({
                     }`}
                     {...cell.getCellProps()}
                   >
-                    {cell.render("Cell")}
+                    {cell.isGrouped ? (
+                      <div className="flex items-center">
+                        <div
+                          className={`transform duration-200 ${
+                            row.isExpanded ? "rotate-90" : ""
+                          }`}
+                        >
+                          <IoChevronForwardOutline />
+                        </div>
+                        {cell.render("Cell")}
+                      </div>
+                    ) : cell.isAggregated ? (
+                      cell.render("Aggregated")
+                    ) : cell.isPlaceholder ? null : (
+                      cell.render("Cell")
+                    )}
                   </td>
                 ))}
               </tr>
