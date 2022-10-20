@@ -8,7 +8,6 @@ import ConfigDetailsSidePanel from "../ConfigDetailsSidePanel";
 type Props = {
   showSearchInput?: boolean;
   basePath: string;
-  backPath?: string;
   navLinks: {
     title: string;
     path?: string;
@@ -21,7 +20,6 @@ type Props = {
 export function ConfigLayout({
   showSearchInput,
   basePath,
-  backPath,
   navLinks,
   showSidePanel = false,
   ...props

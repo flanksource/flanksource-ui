@@ -150,7 +150,6 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           path=":id"
           element={
             <ConfigLayout
-              backPath="/configs"
               showSidePanel
               title="Config"
               basePath="/configs/:id"
