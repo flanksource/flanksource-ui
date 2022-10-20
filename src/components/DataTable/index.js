@@ -53,13 +53,13 @@ export const DataTable = ({
     tableInstance;
 
   return (
-    <div {...rest}>
+    <div className="flex flex-col flex-1 overflow-y-auto" {...rest}>
       <table
         className={clsx(tableStyles.tableClass, stickyHead && "relative")}
         style={tableStyle}
         {...getTableProps()}
       >
-        <thead>
+        <thead className={`bg-white ${stickyHead ? "sticky top-0" : ""}`}>
           {headerGroups.map((headerGroup) => (
             <tr
               key={headerGroup.getHeaderGroupProps().key}
@@ -76,9 +76,9 @@ export const DataTable = ({
                     {column.isSorted ? (
                       <span className="ml-2">
                         {column.isSortedDesc ? (
-                          <TiArrowSortedUp />
-                        ) : (
                           <TiArrowSortedDown />
+                        ) : (
+                          <TiArrowSortedUp />
                         )}
                       </span>
                     ) : (

@@ -1,5 +1,4 @@
 import React, { useState, createContext, useContext } from "react";
-import { URLSearchParamsInit } from "react-router-dom";
 
 export type ConfigState = {
   data: any[] | null;
@@ -8,7 +7,7 @@ export type ConfigState = {
 
 export type ConfigPageState = {
   configState: ConfigState;
-  setConfigState: ({ ...props }: ConfigState) => any;
+  setConfigState: React.Dispatch<React.SetStateAction<ConfigState>>;
 };
 
 const initialState: ConfigPageState = {

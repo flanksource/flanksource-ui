@@ -151,6 +151,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           element={
             <ConfigLayout
               showSidePanel
+              isConfigDetails
               title="Config"
               basePath="/configs/:id"
               navLinks={[

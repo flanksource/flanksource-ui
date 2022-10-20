@@ -5,10 +5,7 @@ import {
   useSearchParams,
   useOutletContext
 } from "react-router-dom";
-
 import { getAllConfigs } from "../../api/services/configs";
-import { Dropdown } from "../../components/Dropdown";
-
 import { filterConfigsByText } from "../../components/ConfigViewer/utils";
 import { BreadcrumbNav } from "../../components/BreadcrumbNav";
 import { TextInputClearable } from "../../components/TextInputClearable";
@@ -34,7 +31,7 @@ export function ConfigListPage() {
     setConfigState
   } = useConfigPageContext();
   const { loading, setLoading } = useLoader();
-  const { setTitle, setTitleExtras } = useOutletContext();
+  const { setTitle, setTitleExtras } = useOutletContext<any>();
   const [configFilterView, setConfigFilterView] = useState(
     params.get("query")
       ? ConfigFilterViewTypes.advanced
@@ -44,7 +41,7 @@ export function ConfigListPage() {
     return [ConfigFilterViewTypes.basic, ConfigFilterViewTypes.advanced];
   }, []);
 
-  const configTagItems = useMemo(() => {
+  const configTagItems: any = useMemo(() => {
     if (!data) return [];
     data.flatMap((d) => {
       return Object.entries(d?.tags || {});
@@ -80,7 +77,7 @@ export function ConfigListPage() {
       });
   }
 
-  const handleRowClick = (row) => {
+  const handleRowClick = (row?: { original?: { id: string } }) => {
     const id = row?.original?.id;
     if (id) {
       navigate(`/configs/${id}`);
@@ -90,8 +87,9 @@ export function ConfigListPage() {
   const extra = (
     <div className="flex space-x-2 mr-4">
       {configFilterView === ConfigFilterViewTypes.advanced && (
+        /* @ts-expect-error */
         <QueryBuilder
-          refreshConfigs={(e) => {
+          refreshConfigs={(e: any) => {
             setConfigState((state) => {
               return {
                 ...state,
@@ -107,7 +105,7 @@ export function ConfigListPage() {
           <RefreshButton onClick={() => fetchAllConfigs()} animate={loading} />
           <TypeDropdown
             value={configType}
-            onChange={(ct) => {
+            onChange={(ct: any) => {
               params.set("type", encodeURIComponent(ct || ""));
               setParams(params);
             }}
@@ -124,6 +122,7 @@ export function ConfigListPage() {
             />
           </span>
 
+          {/* @ts-expect-error */}
           <TextInputClearable
             onChange={debounce((e) => {
               const query = e.target.value || "";
@@ -137,8 +136,9 @@ export function ConfigListPage() {
         </>
       )}
 
+      {/* @ts-expect-error */}
       <Switch
-        onChange={(e) => {
+        onChange={(e: string) => {
           setConfigFilterView(e);
           setParams({});
         }}
@@ -165,16 +165,18 @@ export function ConfigListPage() {
   useEffect(() => {
     let filteredData = data;
     setTitle(<BreadcrumbNav list={["Config"]} />);
-    if (data?.length > 0) {
+    if (data?.length! > 0) {
       // do filtering here
       filteredData = filterConfigsByText(filteredData, search);
 
       if (configType && configType !== "All") {
-        filteredData = filteredData.filter((d) => configType === d.config_type);
+        filteredData = filteredData!.filter(
+          (d) => configType === d.config_type
+        );
       }
 
       if (tag && tag !== "All") {
-        filteredData = filteredData.filter((d) => {
+        filteredData = filteredData!.filter((d) => {
           if (Array.isArray(tag)) {
             const kvs = tag.map((x) => x.split("__:__"));
             return kvs.some(([key, val]) => d.tags[key] === val);
@@ -196,7 +198,7 @@ export function ConfigListPage() {
 
   return (
     <ConfigList
-      data={filteredData}
+      data={filteredData!}
       handleRowClick={handleRowClick}
       isLoading={loading}
     />
@@ -225,11 +227,12 @@ const TypeDropdown = ({ ...rest }) => {
     }
   };
 
-  const [selected, setSelected] = useState(Object.values(items)[0].value);
+  const [selected, setSelected] = useState<any>(Object.values(items)[0].value);
 
   return (
     <ReactSelectDropdown
       items={items}
+      name="type"
       onChange={(value) => setSelected(value)}
       value={selected}
       className="w-64"
