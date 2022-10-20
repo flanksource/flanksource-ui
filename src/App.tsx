@@ -34,6 +34,7 @@ import { TopologyPageContextProvider } from "./context/TopologyPageContext";
 import { HealthPageContextProvider } from "./context/HealthPageContext";
 import { ConfigPageContextProvider } from "./context/ConfigPageContext";
 import { IncidentPageContextProvider } from "./context/IncidentPageContext";
+import { User } from "./api/services/users";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -200,7 +201,7 @@ export function CanaryCheckerApp() {
 }
 
 export function App() {
-  const [user, setUser] = useState();
+  const [user, setUser] = useState<User>();
 
   useEffect(() => {
     getUser().then((u) => {
