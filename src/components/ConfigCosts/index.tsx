@@ -5,23 +5,11 @@ import { Loading } from "../Loading";
 
 export function FormatCurrency({ value }: { value: number | string }) {
   const amount = useMemo(() => {
-    const parsedValue = typeof value === "string" ? parseFloat(value) : value;
-    if (value > 1000) {
-      return (parsedValue / 1000).toFixed(1) + "k";
-    }
-    if (parsedValue > 100) {
-      return parsedValue.toFixed(0);
-    }
-    if (parsedValue > 10) {
-      return parsedValue.toFixed(1);
-    }
-    if (parsedValue > 0.01) {
+    const parsedValue = typeof value === "string" ? parseInt(value) : value;
+    if (value <= 10) {
       return parsedValue.toFixed(2);
     }
-    if (parsedValue > 0.001) {
-      return parsedValue.toFixed(3);
-    }
-    return parsedValue.toString();
+    return parsedValue.toFixed(0);
   }, [value]);
 
   return <span>${amount}</span>;
@@ -34,12 +22,22 @@ export type ConfigCostsData = {
   cost_total_30d?: number;
 };
 
-const configCostsKeysToDisplayValue = new Map([
-  ["cost_per_minute", "Cost (per min)"],
-  ["cost_total_1d", "Cost (1d)"],
-  ["cost_total_7d", "Cost (7d)"],
-  ["cost_total_30d", "Cost (30d)"]
-]);
+function DisplayCostItem({ label, value }: { value?: number; label: string }) {
+  if (!value) {
+    return null;
+  }
+
+  return (
+    <div className="overflow-hidden flex flex-col flex-1 space-y-2 px-2">
+      <div className="text-gray-500 text-sm font-medium  whitespace-nowrap">
+        {label}
+      </div>
+      <div className="text-black text-xl font-semibold">
+        <FormatCurrency value={value} />
+      </div>
+    </div>
+  );
+}
 
 type Props = {
   configID: string;
@@ -89,17 +87,14 @@ export default function ConfigCosts({ configID }: Props) {
         {isLoading ? (
           <Loading />
         ) : (
-          <div className="flex flex-row justify-between space-x-3 w-full rounded-lg text-center border border-gray-300 px-4 py-6">
-            {Object.entries(configCosts!).map(([key, value]) => (
-              <div className="flex flex-col flex-1 space-y-4 items-center justify-center">
-                <div className="text-black text-base font-semibold">
-                  <FormatCurrency value={value} />
-                </div>
-                <div className="text-gray text-sm whitespace-nowrap">
-                  {configCostsKeysToDisplayValue.get(key)}
-                </div>
-              </div>
-            ))}
+          <div className="flex flex-row justify-between space-x-3 w-full px-2">
+            <DisplayCostItem
+              value={configCosts?.cost_per_minute}
+              label="Per min"
+            />
+            <DisplayCostItem value={configCosts?.cost_total_1d} label="1d" />
+            <DisplayCostItem value={configCosts?.cost_total_7d} label="7d" />
+            <DisplayCostItem value={configCosts?.cost_total_30d} label="30d" />
           </div>
         )}
       </div>
