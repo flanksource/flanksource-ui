@@ -22,7 +22,8 @@ import { Loading } from "../../components/Loading";
 import { useCreateHypothesisMutation } from "../../components/mutations/useCreateHypothesisMutation";
 import { useUpdateHypothesisMutation } from "../../components/mutations/useUpdateHypothesisMutation";
 import { useIncidentQuery } from "../../api/query-hooks";
-import { CardSize, TopologyCard } from "../../components/TopologyCard";
+import { TopologyCard } from "../../components/TopologyCard";
+import { Size } from "../../types";
 
 export type TreeNode<T> = T & {
   children?: T[];
@@ -151,11 +152,7 @@ export function IncidentDetailsPage() {
               <div className="border-b">
                 <div className="px-2 py-2 flex flex-nowrap overflow-x-auto">
                   {topologyIds?.map((id) => (
-                    <TopologyCard
-                      key={id}
-                      size={CardSize.large}
-                      topologyId={id}
-                    />
+                    <TopologyCard key={id} size={Size.large} topologyId={id} />
                   ))}
                 </div>
               </div>

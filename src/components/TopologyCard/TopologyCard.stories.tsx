@@ -1,6 +1,7 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 import { MemoryRouter } from "react-router-dom";
-import { CardSize, TopologyCard } from "./index";
+import { Size } from "../../types";
+import { TopologyCard } from "./index";
 
 export default {
   title: "TopologyCard",
@@ -266,9 +267,7 @@ const topology = {
 };
 
 const Template: ComponentStory<typeof TopologyCard> = (arg: any) => {
-  return Object.keys(CardSize).map((size) => (
-    <TopologyCard {...arg} size={size} />
-  ));
+  return Object.keys(Size).map((size) => <TopologyCard {...arg} size={size} />);
 };
 
 export const Base = Template.bind({});

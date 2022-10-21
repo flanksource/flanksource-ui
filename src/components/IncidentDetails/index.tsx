@@ -24,6 +24,7 @@ import {
   getRespondersForTheIncident
 } from "../../api/services/responder";
 import { relativeDateTime } from "../../utils/date";
+import { DefinitionOfDone } from "./DefinitionOfDone";
 
 export const IncidentDetails = ({
   incident,
@@ -427,6 +428,9 @@ export const IncidentDetails = ({
             setOpenResponderDetailsDialog(false);
           }}
         />
+      </div>
+      <div className="px-4 py-3 mb-4 ml-4 bg-white shadow sm:rounded-lg">
+        <DefinitionOfDone incidentId={incident.id} />
       </div>
     </div>
   );

@@ -9,6 +9,9 @@ import { CommentText } from "../../Comment";
 import { IconButton } from "../../IconButton";
 import { EvidenceItem } from "../EvidenceSection";
 import { Icon } from "../../Icon";
+import { Menu } from "../../Menu";
+import { BiCheck } from "react-icons/bi";
+import { IoMdRemoveCircle } from "react-icons/io";
 
 type CreatedBy = User & {
   team: {
@@ -20,8 +23,9 @@ type CreatedBy = User & {
 interface IProps {
   created_by: CreatedBy;
   created_at: string;
-  response: Comment | Evidence;
+  response: Comment & Evidence;
   onDelete?: () => void;
+  markAsDefinitionOfDone?: () => void;
 }
 
 function isEvidence(x: Comment | Evidence): x is Evidence {
@@ -32,7 +36,8 @@ export function ResponseLine({
   created_by,
   created_at,
   response,
-  onDelete
+  onDelete,
+  markAsDefinitionOfDone
 }: IProps) {
   return (
     <div className="pb-4 flex items-start space-x-3 group">
@@ -74,17 +79,69 @@ export function ResponseLine({
           <EvidenceItem evidence={response} />
         )}
       </div>
-      {onDelete && (
-        <IconButton
-          className="mr-1 items-end invisible group-hover:visible"
-          icon={
-            <BsTrash
-              className="text-gray-600 border-0 border-l-1 border-gray-200"
-              size={18}
-            />
-          }
-          onClick={() => Promise.resolve(onDelete())}
-        />
+
+      {(markAsDefinitionOfDone || onDelete) && (
+        <Menu>
+          <Menu.VerticalIconButton />
+          <Menu.Items widthClass="w-72">
+            {onDelete && (
+              <Menu.Item onClick={() => Promise.resolve(onDelete())}>
+                <div className="cursor-pointer flex w-full">
+                  <IconButton
+                    className="bg-transparent flex items-center"
+                    ovalProps={{
+                      stroke: "blue",
+                      height: "18px",
+                      width: "18px",
+                      fill: "transparent"
+                    }}
+                    icon={
+                      <BsTrash
+                        className="text-gray-600 border-0 border-l-1 border-gray-200"
+                        size={18}
+                      />
+                    }
+                  />
+                  <span className="pl-2 text-sm block cursor-pionter">
+                    Delete Evidence
+                  </span>
+                </div>
+              </Menu.Item>
+            )}
+            {markAsDefinitionOfDone && (
+              <Menu.Item onClick={markAsDefinitionOfDone}>
+                <div className="cursor-pointer flex w-full">
+                  <IconButton
+                    className="bg-transparent flex items-center"
+                    ovalProps={{
+                      stroke: "blue",
+                      height: "18px",
+                      width: "18px",
+                      fill: "transparent"
+                    }}
+                    icon={
+                      response.definition_of_done ? (
+                        <IoMdRemoveCircle size={18} />
+                      ) : (
+                        <BiCheck size={18} />
+                      )
+                    }
+                  />
+                  {!response.definition_of_done && (
+                    <span className="pl-2 text-sm block">
+                      Add to definition of done
+                    </span>
+                  )}
+                  {response.definition_of_done && (
+                    <span className="pl-2 text-sm block">
+                      Remove from definition of done
+                    </span>
+                  )}
+                </div>
+              </Menu.Item>
+            )}
+          </Menu.Items>
+        </Menu>
       )}
     </div>
   );

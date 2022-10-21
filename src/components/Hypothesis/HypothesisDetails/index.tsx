@@ -3,7 +3,11 @@ import clsx from "clsx";
 
 import { Modal } from "../../Modal";
 import { Comment, createComment } from "../../../api/services/comments";
-import { deleteEvidence, Evidence } from "../../../api/services/evidence";
+import {
+  deleteEvidence,
+  Evidence,
+  updateEvidence
+} from "../../../api/services/evidence";
 import { useUser } from "../../../context";
 import { toastError } from "../../Toast/toast";
 import { EvidenceBuilder } from "../../EvidenceBuilder";
@@ -14,19 +18,25 @@ import {
   Hypothesis
 } from "../../../api/services/hypothesis";
 import { TreeNode } from "../../../pages/incident/IncidentDetails";
+import { useSearchParams } from "react-router-dom";
+import { searchParamsToObj } from "../../../utils/common";
 
 interface IProps {
   node: TreeNode<Hypothesis>;
   api: any;
 }
 
-type Response = Evidence | Comment;
+type Response = Evidence & Comment;
 
 export function HypothesisDetails({ node, api, ...rest }: IProps) {
   const [evidenceBuilderOpen, setEvidenceBuilderOpen] = useState(false);
   const { user } = useUser();
   const [isLoading, setIsLoading] = useState(true);
   const [responses, setResponses] = useState<Response[]>([]);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [refreshEvidencesToken, setRefreshEvidencesToken] = useState<
+    string | null
+  >(null);
 
   const fetchResponses = async (id: string) => {
     setIsLoading(true);
@@ -79,28 +89,76 @@ export function HypothesisDetails({ node, api, ...rest }: IProps) {
 
     if (error) {
       console.error("delete failed", error);
+      toastError("Evidence delete failed");
       return;
     }
 
     setResponses((ls) => ls.filter((e) => e.id !== id));
+    assignNewEvidencesRefreshToken();
+  };
+
+  const updateEvidenceCb = async (evidence: Evidence) => {
+    const { error } = await updateEvidence(evidence.id, {
+      definition_of_done: !evidence.definition_of_done
+    });
+
+    if (error) {
+      const message = evidence.definition_of_done
+        ? "Removing evidence from definition of done failed"
+        : "Marking evidence as part of definition of done failed";
+      console.error("update failed", error);
+      toastError(message);
+      return;
+    }
+    responses.forEach((response: any) => {
+      if (response.id === evidence.id) {
+        response.definition_of_done = !response.definition_of_done;
+      }
+    });
+    setResponses([...responses]);
+    assignNewEvidencesRefreshToken();
+  };
+
+  const assignNewEvidencesRefreshToken = () => {
+    const token = (+new Date()).toString();
+    setRefreshEvidencesToken(token);
+    setSearchParams({
+      ...searchParamsToObj(searchParams),
+      refresh_evidences: token
+    });
   };
 
   useEffect(() => {
+    if (
+      searchParams.get("refresh_evidences") === refreshEvidencesToken &&
+      refreshEvidencesToken
+    ) {
+      return;
+    }
     node?.id && fetchResponses(node.id);
-  }, [node?.id]);
+  }, [node?.id, searchParams]);
 
   return (
     <>
       <div className={clsx("pb-7", rest.className || "")} {...rest}>
         <ul className="pt-4">
           {responses.length > 0 &&
-            responses.map(({ id, created_by, created_at, ...evidence }) => (
+            responses.map((evidence) => (
               <ResponseLine
-                key={id}
-                created_at={created_at}
-                created_by={created_by}
+                key={evidence.id}
+                created_at={evidence.created_at}
+                created_by={evidence.created_by}
                 response={evidence}
-                onDelete={evidence.type ? () => deleteEvidenceCb(id) : null}
+                onDelete={
+                  evidence.type ? () => deleteEvidenceCb(evidence.id) : null
+                }
+                markAsDefinitionOfDone={
+                  evidence.type
+                    ? () => {
+                        updateEvidenceCb(evidence);
+                      }
+                    : undefined
+                }
               />
             ))}
         </ul>

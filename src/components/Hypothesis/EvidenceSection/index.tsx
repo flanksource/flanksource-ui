@@ -1,21 +1,22 @@
-import { ChevronRightIcon, DotsVerticalIcon } from "@heroicons/react/outline";
 import React, { useEffect, useState } from "react";
+import { ChevronRightIcon, DotsVerticalIcon } from "@heroicons/react/outline";
+import { TopologyCard } from "../../TopologyCard";
 import { BsTrash } from "react-icons/bs";
 import { Link } from "react-router-dom";
 import { Evidence, EvidenceType } from "../../../api/services/evidence";
 import { getCanaries } from "../../../api/services/topology";
-import { toFixedIfNecessary } from "../../../utils/common";
 import mixins from "../../../utils/mixins.module.css";
 import { Button } from "../../Button";
 import { CheckDetails } from "../../Canary/CanaryPopup/CheckDetails";
 import { CheckTitle } from "../../Canary/CanaryPopup/CheckTitle";
+import { toFixedIfNecessary } from "../../../utils/common";
 import { getUptimePercentage } from "../../Canary/CanaryPopup/utils";
 import { Duration, StatusList } from "../../Canary/renderers";
 import { Icon } from "../../Icon";
 import { LogsTable } from "../../Logs/Table/logs-table";
 import { Modal } from "../../Modal";
-import { CardSize, TopologyCard } from "../../TopologyCard";
 import { relativeDateTime } from "../../../utils/date";
+import { Size } from "../../../types";
 
 export function EvidenceItem({ evidence }: { evidence: Evidence }) {
   switch (evidence.type) {
@@ -24,10 +25,7 @@ export function EvidenceItem({ evidence }: { evidence: Evidence }) {
     case EvidenceType.Topology:
       return (
         <div className="pt-2">
-          <TopologyCard
-            topologyId={evidence.evidence.id}
-            size={CardSize.large}
-          />
+          <TopologyCard topologyId={evidence.evidence.id} size={Size.large} />
         </div>
       );
     case EvidenceType.Config:
@@ -99,7 +97,7 @@ const EvidenceAccordion: React.FC<{
   );
 };
 
-function ConfigEvidenceView({
+export function ConfigEvidenceView({
   evidenceItem
 }: {
   evidenceItem: Extract<Evidence, { evidence: { configName: string } }>;
@@ -256,9 +254,9 @@ export function EvidenceSection({
   );
 }
 
-function HealthEvidenceViewer({
+export function HealthEvidenceViewer({
   evidence,
-  size
+  size = "large"
 }: {
   evidence: Evidence;
   size: "large" | "small";
