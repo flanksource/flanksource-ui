@@ -43,7 +43,7 @@ export default function FilterIncidentsByComponents({ control, value }: Props) {
 
   return (
     <div className="flex items-center">
-      <div className="mr-3 text-gray-500 text-sm">Type</div>
+      <div className="mr-3 text-gray-500 text-sm">Component</div>
       <ReactSelectDropdown
         control={control}
         label=""
