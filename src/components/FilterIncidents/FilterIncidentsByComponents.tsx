@@ -2,7 +2,6 @@ import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import { Control } from "react-hook-form";
 import { MdOutlineError } from "react-icons/md";
-import { getTopologyComponents } from "../../api/services/topology";
 import { Icon } from "../Icon";
 import { ReactSelectDropdown } from "../ReactSelectDropdown";
 
@@ -14,6 +13,17 @@ const defaultSelections = {
   }
 };
 
+type TopologyComponentItem = {
+  created_at?: string;
+  external_id?: string;
+  icon?: string;
+  id?: string;
+  name?: string;
+  parent_id?: string;
+  type?: string;
+  updated_at?: string;
+};
+
 type Props = {
   control: Control<any, any>;
   value?: string;
@@ -21,10 +31,11 @@ type Props = {
 
 function FilterIncidentsByComponents({ control, value }: Props) {
   const { isLoading, data, error } = useQuery(
-    ["components", "list"],
+    ["components", "names", "list"],
     async () => {
-      const { data } = await getTopologyComponents();
-      const components = (data as Record<string, string>[]).map((component) => {
+      const res = await fetch(`/api/canary/db/component_names`);
+      const data = (await res.json()) as TopologyComponentItem[];
+      const components = data.map((component) => {
         return {
           value: component.id,
           name: component.name,
@@ -32,7 +43,7 @@ function FilterIncidentsByComponents({ control, value }: Props) {
             <Icon name={component.icon} secondary={component.name} size="xl" />
           ),
           label: component.name,
-          description: component.description ?? component.name
+          description: component.name
         };
       });
       return components;
