@@ -1,9 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
-
 import qs from "qs";
-
-import { Loading } from "../components/Loading";
 import { SearchLayout } from "../components/Layout";
 import { toastError } from "../components/Toast/toast";
 import { TopologyCard } from "../components/TopologyCard";
@@ -24,6 +21,7 @@ import { getSortedTopology } from "../components/TopologyPopover/topologySort";
 import { getCardWidth } from "../components/TopologyPopover/topologyPreference";
 import TopologySidebar from "../components/TopologySidebar";
 import { BsFillInfoCircleFill } from "react-icons/bs";
+import CardsSkeltonLoader from "../components/CardsSkeltonLoader";
 
 const allOption = {
   All: {
@@ -232,7 +230,7 @@ export function TopologyPage() {
   }, []);
 
   if ((loading && !topology) || !topology) {
-    return <Loading text="Loading topology..." />;
+    return <CardsSkeltonLoader showBreadcrumb />;
   }
 
   return (
@@ -334,7 +332,6 @@ export function TopologyPage() {
                     value={v.value}
                     items={v.items}
                     className={v.dropdownClassName}
-                    // @ts-expect-error
                     onChange={(val: any) => {
                       v.onChange(val);
                     }}
