@@ -55,7 +55,7 @@ function toPostgresqlSearchParam({
     status,
     type,
     created_by: owner,
-    "evidence.evidence->>id": component
+    "hypotheses.evidences.evidence->>id": component
   })
     .filter(([_k, v]) => v && v !== "all")
     .map(([k, v]) => [k, `eq.${v}`]);
@@ -233,9 +233,9 @@ export function IncidentListPage() {
           });
         }}
         extra={
-          <div className="flex">
-            <div className="flex items-center mr-4">
-              <div className="mr-3 text-gray-500 text-sm">Severity</div>
+          <div className="flex flex-row space-x-4">
+            <div className="flex items-center space-x-3">
+              <div className="text-gray-500 text-sm">Severity</div>
               <ReactSelectDropdown
                 control={control}
                 name="severity"
@@ -245,8 +245,8 @@ export function IncidentListPage() {
                 items={{ ...defaultSelections, ...severityItems }}
               />
             </div>
-            <div className="flex items-center mr-4">
-              <div className="mr-3 text-gray-500 text-sm">Status</div>
+            <div className="flex items-center space-x-3">
+              <div className="text-gray-500 text-sm">Status</div>
               <ReactSelectDropdown
                 control={control}
                 name="status"
@@ -255,8 +255,8 @@ export function IncidentListPage() {
                 items={{ ...defaultSelections, ...statusItems }}
               />
             </div>
-            <div className="flex items-center mr-4">
-              <div className="mr-3 text-gray-500 text-sm">Owner</div>
+            <div className="flex items-center space-x-3">
+              <div className=" text-gray-500 text-sm">Owner</div>
               <ReactSelectDropdown
                 control={control}
                 name="owner"
@@ -266,8 +266,8 @@ export function IncidentListPage() {
                 items={{ ...defaultSelections, ...ownerSelections }}
               />
             </div>
-            <div className="flex items-center">
-              <div className="mr-3 text-gray-500 text-sm">Type</div>
+            <div className="space-x-3 flex items-center">
+              <div className="text-gray-500 text-sm">Type</div>
               <ReactSelectDropdown
                 control={control}
                 label=""

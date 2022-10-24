@@ -67,7 +67,10 @@ export const getIncidentsWithParams = async (
   params: Record<string, string | undefined>
 ) => {
   const comments = `comments!comments_incident_id_fkey(id,created_by(${AVATAR_INFO}))`;
-  const hypotheses = `hypotheses!hypotheses_incident_id_fkey!inner(*,created_by(${AVATAR_INFO}), evidences!inner(id, evidence))`;
+  const hypotheses = params["hypotheses.evidences.evidence->>id"]
+    ? `hypotheses!hypotheses_incident_id_fkey!inner(*,created_by(${AVATAR_INFO}),evidences!evidences_hypothesis_id_fkey!inner(id, evidence))`
+    : `hypotheses!hypotheses_incident_id_fkey(*,created_by(${AVATAR_INFO}),evidences(id,evidence,type))`;
+
   const responder = `responders!responders_incident_id_fkey(created_by(${AVATAR_INFO}))`;
 
   return resolve(
