@@ -1,5 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
+import React from "react";
 import { Control } from "react-hook-form";
+import { MdOutlineError } from "react-icons/md";
 import { getTopologyComponents } from "../../api/services/topology";
 import { Icon } from "../Icon";
 import { ReactSelectDropdown } from "../ReactSelectDropdown";
@@ -17,28 +19,42 @@ type Props = {
   value?: string;
 };
 
-export default function FilterIncidentsByComponents({ control, value }: Props) {
-  const { isLoading, data } = useQuery(["components", "list"], async () => {
-    const { data } = await getTopologyComponents();
-    const components = (data as Record<string, string>[]).map((component) => {
-      return {
-        value: component.id,
-        name: component.name,
-        icon: (
-          <Icon name={component.icon} secondary={component.name} size="xl" />
-        ),
-        label: component.name,
-        description: component.description ?? component.name
-      };
-    });
-    return components;
-  });
+function FilterIncidentsByComponents({ control, value }: Props) {
+  const { isLoading, data, error } = useQuery(
+    ["components", "list"],
+    async () => {
+      const { data } = await getTopologyComponents();
+      const components = (data as Record<string, string>[]).map((component) => {
+        return {
+          value: component.id,
+          name: component.name,
+          icon: (
+            <Icon name={component.icon} secondary={component.name} size="xl" />
+          ),
+          label: component.name,
+          description: component.description ?? component.name
+        };
+      });
+      return components;
+    }
+  );
 
   if (isLoading && !data) {
     return (
       <div className="flex space-x-3 items-center animate-pulse">
         <div className="text-gray-500 text-sm">Component</div>
         <div className="animate-pulse flex-1 w-56 h-8 bg-gray-200 rounded-sm"></div>
+      </div>
+    );
+  }
+
+  if (error && !data) {
+    return (
+      <div className="flex space-x-3 items-center">
+        <div className="flex items-center space-x-2 text-red-600">
+          <MdOutlineError />
+          <span>Unable to load components!</span>
+        </div>
       </div>
     );
   }
@@ -58,3 +74,5 @@ export default function FilterIncidentsByComponents({ control, value }: Props) {
     </div>
   );
 }
+
+export default React.memo(FilterIncidentsByComponents);
