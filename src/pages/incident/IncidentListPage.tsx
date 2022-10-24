@@ -1,10 +1,11 @@
 import { debounce } from "lodash";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { AiFillPlusCircle } from "react-icons/ai/";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { getIncidentsWithParams } from "../../api/services/incident";
 import { getPersons } from "../../api/services/users";
+import FilterIncidentsByComponents from "../../components/FilterIncidents/FilterIncidentsByComponents";
 import {
   severityItems,
   statusItems,
@@ -29,23 +30,38 @@ const defaultSelections = {
   }
 };
 
-const removeNullValues = (obj) =>
+const removeNullValues = (obj: Record<string, string>) =>
   Object.fromEntries(
     Object.entries(obj).filter(([_k, v]) => v !== null && v !== undefined)
   );
 
-const toPostgresqlSearchParam = ({ severity, status, owner, type }) => {
+type IncidentFilters = {
+  severity?: string;
+  status?: string;
+  owner?: string;
+  type?: string;
+  component?: string;
+};
+
+function toPostgresqlSearchParam({
+  severity,
+  status,
+  owner,
+  type,
+  component
+}: IncidentFilters): Record<string, string | undefined> {
   const params = Object.entries({
     severity,
     status,
     type,
-    created_by: owner
+    created_by: owner,
+    "evidence.evidence->>id": component
   })
     .filter(([_k, v]) => v && v !== "all")
     .map(([k, v]) => [k, `eq.${v}`]);
 
   return Object.fromEntries(params);
-};
+}
 
 export function IncidentListPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -59,7 +75,10 @@ export function IncidentListPage() {
       owner:
         searchParams.get("owner") || Object.values(defaultSelections)[0].value,
       type:
-        searchParams.get("type") || Object.values(defaultSelections)[0].value
+        searchParams.get("type") || Object.values(defaultSelections)[0].value,
+      component:
+        searchParams.get("component") ||
+        Object.values(defaultSelections)[0].value
     }
   });
   const [selectedLabels, setSelectedLabels] = useState([]);
@@ -78,30 +97,36 @@ export function IncidentListPage() {
   const watchStatus = watch("status");
   const watchOwner = watch("owner");
   const watchType = watch("type");
+  const watchComponent = watch("component");
 
   useEffect(() => {
     getPersons().then((res) => {
-      const owners = res.data.map(({ name, id }) => [
-        id,
-        { name, value: id, description: name }
-      ]);
-      setIncidentState((state: IncidentState) => {
-        return {
-          ...state,
-          ownerSelections: Object.fromEntries(owners)
-        };
-      });
+      if (res.data) {
+        const owners = res.data.map(({ name, id }) => [
+          id,
+          { name, value: id, description: name }
+        ]);
+        // @ts-expect-error
+        setIncidentState((state: IncidentState) => {
+          return {
+            ...state,
+            ownerSelections: Object.fromEntries(owners)
+          } as any;
+        });
+      }
     });
   }, []);
 
-  async function fetchIncidents(params): void {
+  async function fetchIncidents(
+    params: Record<string, string | undefined>
+  ): Promise<void> {
     try {
       const res = await getIncidentsWithParams(params);
-      const data = res.data.map((x) => {
-        const responders = [];
+      const data = res.data.map((x: any) => {
+        const responders: any[] = [];
 
         const commentsSet = new Map(
-          x?.comments.map((x) => [x?.created_by?.id, x?.created_by])
+          x?.comments.map((x: any) => [x?.created_by?.id, x?.created_by])
         );
         responders.forEach((x) => commentsSet.delete(x.id));
         return {
@@ -110,6 +135,7 @@ export function IncidentListPage() {
           involved: responders.concat(Array.from(commentsSet.values()))
         };
       });
+      // @ts-expect-error
       setIncidentState((state: any) => {
         return {
           ...state,
@@ -121,6 +147,7 @@ export function IncidentListPage() {
     } catch (ex) {
       console.error(ex);
       // setIncidents([]);
+      // @ts-expect-error
       setIncidentState((state: any) => {
         return {
           ...state,
@@ -132,25 +159,26 @@ export function IncidentListPage() {
   }
 
   const loadIncidents = useRef(
-    debounce((params) => {
+    debounce((params: Record<string, string | undefined>) => {
       // TODO: integrate labels
       setIsLoading(true);
-
       fetchIncidents(toPostgresqlSearchParam(params));
     }, 100)
   ).current;
 
   useEffect(() => {
-    loadIncidents();
+    loadIncidents({});
   }, [loadIncidents]);
 
-  const saveQueryParams = () => {
-    const labelsArray = selectedLabels.map((o) => o.value);
+  const saveQueryParams = useCallback(() => {
+    // NOTE: I have no idea what this does, discuss with the team, the array is
+    // a state variable, whose setter is never called, so it's always empty
+    const labelsArray = selectedLabels.map((o: any) => o.value);
     const encodedLabels = encodeURIComponent(JSON.stringify(labelsArray));
     const paramsList = { ...getValues(), labels: encodedLabels };
 
     setSearchParams(removeNullValues(paramsList));
-  };
+  }, [getValues, selectedLabels, setSearchParams]);
 
   useEffect(() => {
     saveQueryParams();
@@ -159,9 +187,20 @@ export function IncidentListPage() {
       status: watchStatus,
       owner: watchOwner,
       type: watchType,
+      component: watchComponent,
+      // @ts-expect-error
       labels: selectedLabels
     });
-  }, [watchSeverity, watchStatus, watchOwner, watchType, selectedLabels]);
+  }, [
+    watchSeverity,
+    watchStatus,
+    watchOwner,
+    watchType,
+    selectedLabels,
+    watchComponent,
+    saveQueryParams,
+    loadIncidents
+  ]);
 
   return (
     <>
@@ -189,6 +228,7 @@ export function IncidentListPage() {
             status: watchStatus,
             owner: watchOwner,
             type: watchType,
+            // @ts-expect-error
             labels: selectedLabels
           });
         }}
@@ -201,6 +241,7 @@ export function IncidentListPage() {
                 name="severity"
                 className="w-36 mr-2 flex-shrink-0"
                 value={watchSeverity}
+                // @ts-expect-error
                 items={{ ...defaultSelections, ...severityItems }}
               />
             </div>
@@ -221,6 +262,7 @@ export function IncidentListPage() {
                 name="owner"
                 className="w-36 mr-2 flex-shrink-0"
                 value={watchOwner}
+                // @ts-expect-error
                 items={{ ...defaultSelections, ...ownerSelections }}
               />
             </div>
@@ -242,6 +284,10 @@ export function IncidentListPage() {
                 value={selectedLabels}
               /> */}
             </div>
+            <FilterIncidentsByComponents
+              control={control}
+              value={watchComponent}
+            />
           </div>
         }
       >
@@ -271,6 +317,7 @@ export function IncidentListPage() {
         size="small"
         title="Create New Incident"
       >
+        {/* @ts-expect-error */}
         <IncidentCreate
           callback={(response: any) => {
             if (!response) {
@@ -279,6 +326,7 @@ export function IncidentListPage() {
                 status: watchStatus,
                 owner: watchOwner,
                 type: watchType,
+                // @ts-expect-error
                 labels: selectedLabels
               });
               setIncidentModalIsOpen(false);

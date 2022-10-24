@@ -63,9 +63,11 @@ export const getIncident = async (id: string) => {
   );
 };
 
-export const getIncidentsWithParams = async (params) => {
+export const getIncidentsWithParams = async (
+  params: Record<string, string | undefined>
+) => {
   const comments = `comments!comments_incident_id_fkey(id,created_by(${AVATAR_INFO}))`;
-  const hypotheses = `hypotheses!hypotheses_incident_id_fkey(*,created_by(${AVATAR_INFO}))`;
+  const hypotheses = `hypotheses!hypotheses_incident_id_fkey!inner(*,created_by(${AVATAR_INFO}), evidences!inner(id, evidence))`;
   const responder = `responders!responders_incident_id_fkey(created_by(${AVATAR_INFO}))`;
 
   return resolve(

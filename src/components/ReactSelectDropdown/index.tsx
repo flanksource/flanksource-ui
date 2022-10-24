@@ -17,7 +17,7 @@ import { Avatar } from "../Avatar";
 
 const { colors } = defaultTheme;
 
-interface StateOption {
+export interface StateOption {
   id?: string;
   label?: string;
   value?: string;
@@ -27,7 +27,7 @@ interface StateOption {
   avatar?: any;
 }
 
-const selectStyles: StylesConfig<StateOption, false> = {
+const selectStyles: StylesConfig<StateOption | string, false> = {
   control: (provided) => ({
     ...provided,
     minWidth: 144,
@@ -37,6 +37,7 @@ const selectStyles: StylesConfig<StateOption, false> = {
 };
 
 type ReactSelectDropdownProps = {
+  id?: string;
   className?: string;
   label?: string;
   control?: any;
@@ -47,7 +48,7 @@ type ReactSelectDropdownProps = {
     | StateOption[];
   name: string;
   onChange?: (value?: string) => void;
-  value?: StateOption;
+  value?: StateOption | string;
   placeholder?: string;
   prefix?: ReactNode;
   labelClass?: string;
@@ -63,7 +64,7 @@ export const ReactSelectDropdown = ({
   value,
   prefix,
   labelClass,
-  placeholder
+  placeholder = "Search..."
 }: ReactSelectDropdownProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [options, setOptions] = useState<StateOption[]>([]);
@@ -107,9 +108,11 @@ export const ReactSelectDropdown = ({
     setIsOpen((val) => !val);
   };
 
-  const onSelectChange = (value: SingleValue<StateOption | undefined>) => {
+  const onSelectChange = (
+    value: SingleValue<StateOption | string | undefined>
+  ) => {
     toggleOpen();
-    onChange(value?.value);
+    onChange(typeof value === "string" ? value : value?.value);
   };
 
   return (
@@ -197,7 +200,7 @@ export const ReactSelectDropdown = ({
                   onSelectChange(e.value);
                 }}
                 options={options}
-                placeholder="Search..."
+                placeholder={placeholder}
                 styles={selectStyles}
                 tabSelectsValue={false}
                 value={valueControlled}
@@ -245,7 +248,7 @@ export const ReactSelectDropdown = ({
           menuIsOpen
           onChange={onSelectChange}
           options={options}
-          placeholder="Search..."
+          placeholder={placeholder}
           styles={selectStyles}
           tabSelectsValue={false}
           value={value}
