@@ -24,7 +24,9 @@ export default function FilterIncidentsByComponents({ control, value }: Props) {
       return {
         value: component.id,
         name: component.name,
-        icon: <Icon name={component.name} icon={component.icon} />,
+        icon: (
+          <Icon name={component.icon} secondary={component.name} size="xl" />
+        ),
         label: component.name,
         description: component.description ?? component.name
       };
@@ -32,11 +34,11 @@ export default function FilterIncidentsByComponents({ control, value }: Props) {
     return components;
   });
 
-  if (isLoading) {
+  if (isLoading && !data) {
     return (
-      <div className="flex items-center">
-        <div className="mr-3 text-gray-500 text-sm">Type</div>
-        <div className="animate-pulse flex-1 h-6 bg-gray-200"> </div>
+      <div className="flex space-x-3 items-center animate-pulse">
+        <div className="text-gray-500 text-sm">Component</div>
+        <div className="animate-pulse flex-1 w-56 h-8 bg-gray-200 rounded-sm"></div>
       </div>
     );
   }
@@ -48,7 +50,7 @@ export default function FilterIncidentsByComponents({ control, value }: Props) {
         control={control}
         label=""
         name="component"
-        className="w-56"
+        className="w-56 capitalize"
         value={value}
         // @ts-expect-error
         items={{ ...defaultSelections, ...data }}
