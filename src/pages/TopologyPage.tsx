@@ -24,6 +24,7 @@ import { getSortedTopology } from "../components/TopologyPopover/topologySort";
 import { getCardWidth } from "../components/TopologyPopover/topologyPreference";
 import TopologySidebar from "../components/TopologySidebar";
 import { BsFillInfoCircleFill } from "react-icons/bs";
+import toast from "react-hot-toast";
 
 const allOption = {
   All: {
@@ -230,6 +231,31 @@ export function TopologyPage() {
         });
       });
   }, []);
+
+  const [toastLoadingID, setToastLoadingID] = useState<string>();
+
+  useEffect(() => {
+    if (loading && !toastLoadingID) {
+      const toastID = toast.loading("Loading...", {
+        position: "bottom-center"
+      });
+      setToastLoadingID(toastID);
+    }
+    if (!loading && toastLoadingID) {
+      toast.dismiss(toastLoadingID);
+      toast.success("Loaded", {
+        position: "bottom-center",
+        className: "bg-gray-800 text-white"
+      });
+      setToastLoadingID(undefined);
+    }
+
+    return () => {
+      if (toastLoadingID) {
+        toast.dismiss(toastLoadingID);
+      }
+    };
+  }, [loading, toastLoadingID]);
 
   if ((loading && !topology) || !topology) {
     return <Loading text="Loading topology..." />;
