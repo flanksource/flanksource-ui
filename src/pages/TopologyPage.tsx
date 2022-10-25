@@ -294,20 +294,6 @@ export function TopologyPage() {
                   }
                 },
                 {
-                  id: 3,
-                  name: "Team",
-                  dropdownClassName: "inline-block p-3 w-80 md:w-48",
-                  items: teams,
-                  value: team,
-                  onChange: (val: any) => {
-                    setTeam(val);
-                    setSearchParams({
-                      ...searchParamsToObj(searchParams),
-                      team: val
-                    });
-                  }
-                },
-                {
                   id: 4,
                   name: "Labels",
                   dropdownClassName: "inline-block p-3 w-80 md:w-60",
