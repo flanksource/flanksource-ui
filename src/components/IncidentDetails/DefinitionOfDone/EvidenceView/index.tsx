@@ -7,8 +7,7 @@ import { Evidence, EvidenceType } from "../../../../api/services/evidence";
 import {
   getCanaries,
   getTopology,
-  getTopologyComponent,
-  getTopologyComponents
+  getTopologyComponent
 } from "../../../../api/services/topology";
 import { useLoader } from "../../../../hooks";
 import { Size } from "../../../../types";
@@ -56,14 +55,14 @@ function TopologyEvidence({
   return (
     <div
       className={clsx(
-        "rounded-8px mb-3 mr-3 shadow-card card bg-lightest-gray border-t-8",
+        "bg-lightest-gray border-t-8",
         StatusStyles[topology.status] || "border-white",
         className
       )}
       {...rest}
     >
-      <div className="flex flex-col -mt-1 bg-white border-b rounded-t-md divide-y divide-gray-200 w-full">
-        <div className="flex pr-1 pt-2.5 pb-3.5 pl-2 overflow-hidden">
+      <div className="flex flex-col -mt-1 bg-white divide-y divide-gray-200 w-full">
+        <div className="flex pr-1 pt-2.5 pb-2.5 pl-2 overflow-hidden">
           <div className="text-gray-color m-auto mr-2.5 flex-initial max-w-1/4 leading-1.21rel">
             <h3 className="text-gray-color text-2xsi leading-1.21rel">
               <Icon name={topology.icon} size="2xl" />
@@ -86,7 +85,7 @@ function TopologyEvidence({
               ))}
           </div>
         </div>
-        {Boolean(heading?.length) && (
+        {Boolean(heading?.length) && false && (
           <div className="flex pl-1 pr-1.5 pb-3.5 pt-3">
             <CardMetrics items={heading} row={false} />
           </div>
@@ -132,13 +131,7 @@ function LogEvidence({
   }
 
   return (
-    <div
-      className={clsx(
-        "overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg p-2",
-        className
-      )}
-      {...rest}
-    >
+    <div className={clsx("overflow-hidden p-2", className)} {...rest}>
       <span>
         <Icon className="inline" name={comp.icon} size="xl" /> {comp.name}
       </span>
@@ -180,13 +173,7 @@ function ConfigEvidence({
   }
 
   return (
-    <div
-      className={clsx(
-        "overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg p-2",
-        className
-      )}
-      {...rest}
-    >
+    <div className={clsx("overflow-hidden p-2", className)} {...rest}>
       <Icon
         name={config.external_type}
         secondary={config.config_type}
@@ -232,10 +219,7 @@ function HealthEvidence({
   };
 
   return (
-    <div
-      className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg p-2"
-      {...rest}
-    >
+    <div className="overflow-hidden p-2" {...rest}>
       <div className={`flex flex-row`} {...rest}>
         <div className={clsx("flex-shrink-0", "pr-2")}>
           <Icon name={check?.icon || check?.type} size={"sm"} />

@@ -1,6 +1,8 @@
+import clsx from "clsx";
+import { rest } from "lodash";
 import { useEffect, useMemo, useState } from "react";
 import { AiFillCheckCircle } from "react-icons/ai";
-import { BsHourglassSplit } from "react-icons/bs";
+import { BsHourglassSplit, BsTrash } from "react-icons/bs";
 import { MdRefresh } from "react-icons/md";
 import { RiFullscreenLine } from "react-icons/ri";
 import { useSearchParams } from "react-router-dom";
@@ -10,8 +12,10 @@ import { Size } from "../../../types";
 import { searchParamsToObj } from "../../../utils/common";
 import { DeleteConfirmDialog } from "../../DeleteConfirmDialog";
 import { EvidenceItem } from "../../Hypothesis/EvidenceSection";
+import { IconButton } from "../../IconButton";
+import { Menu } from "../../Menu";
 import { Modal } from "../../Modal";
-import { useIncidentQuery } from "../../query-hooks/useIncidentQuery";
+import { useIncidentQuery } from "../../../api/query-hooks";
 import { EvidenceView } from "./EvidenceView";
 
 type DefinitionOfDoneProps = {
@@ -24,8 +28,10 @@ export function DefinitionOfDone({ incidentId }: DefinitionOfDoneProps) {
   const [evidenceBeingRemoved, setEvidenceBeingRemoved] = useState<Evidence>();
   const [dodEvidences, setDODEvidences] = useState<Evidence[]>([]);
   const [dodModalOpen, setDODModalOpen] = useState(false);
-  const [allEvidences, setAllEvidences] = useState<Evidence[]>([]);
+  const [addToDODModalOpen, setAddToDODModalOpen] = useState(false);
+  const [nonDODEvidences, setNonDODEvidences] = useState<Evidence[]>([]);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [selectedEvidences, setSelectedEvidences] = useState<Evidence[]>([]);
   const [refreshEvidencesToken, setRefreshEvidencesToken] = useState<
     string | null
   >(null);
@@ -50,6 +56,7 @@ export function DefinitionOfDone({ incidentId }: DefinitionOfDoneProps) {
         data.push(evidence);
       });
     });
+    setNonDODEvidences(data.filter((evidence) => !evidence.definition_of_done));
     setDODEvidences(data.filter((evidence) => evidence.definition_of_done));
   }, [incident]);
 
@@ -75,12 +82,15 @@ export function DefinitionOfDone({ incidentId }: DefinitionOfDoneProps) {
     return updateEvidence(evidence.id, {
       definition_of_done: false
     }).then(() => {
-      allEvidences.forEach((item) => {
+      dodEvidences.forEach((item) => {
         if (evidence.id === item.id) {
           evidence.definition_of_done = false;
+          setNonDODEvidences([...nonDODEvidences, evidence]);
         }
       });
-      setAllEvidences([...allEvidences]);
+      setDODEvidences([
+        ...dodEvidences.filter((item) => item.definition_of_done)
+      ]);
       assignNewEvidencesRefreshToken();
     });
   };
@@ -94,11 +104,29 @@ export function DefinitionOfDone({ incidentId }: DefinitionOfDoneProps) {
     });
   };
 
+  const blukAddEvidencesToDOD = async () => {
+    for (const element of selectedEvidences) {
+      try {
+        await updateEvidence(element.id, {
+          definition_of_done: true
+        });
+        element.definition_of_done = true;
+        setNonDODEvidences(nonDODEvidences.filter((v) => v.id !== element.id));
+      } catch (ex) {}
+    }
+    setDODEvidences([...dodEvidences, ...selectedEvidences]);
+    assignNewEvidencesRefreshToken();
+  };
+
+  const isSelected = (id: string) => {
+    return !!selectedEvidences.find((item) => item.id === id);
+  };
+
   return (
-    <div className="w-full">
+    <div className="w-full divide-y divide-gray-200">
       <div className="flex mb-3 w-full">
         <h2 className="flex-1 inline-block text-sm font-bold text-dark-gray">
-          Definition of Done
+          Definition of done
         </h2>
         <MdRefresh
           className="cursor-pointer mr-3 w-6 h-6"
@@ -109,52 +137,95 @@ export function DefinitionOfDone({ incidentId }: DefinitionOfDoneProps) {
           onClick={() => setDODModalOpen(true)}
         />
       </div>
-      <div className="flex max-h-96 overflow-y-auto py-2 overflow-x-hidden w-full">
-        {isLoading || isRefetching ? (
-          <div className="flex items-start py-2 pl-2 pr-2">
-            <div className="text-sm text-gray-500">
-              Loading evidences please wait...
+      <div className="flex max-h-96 overflow-y-auto overflow-x-hidden w-full">
+        <div className="w-full divide-y divide-gray-200">
+          {(isLoading || isRefetching) && (
+            <div className="flex items-start py-2 pl-2 pr-2">
+              <div className="text-sm text-gray-500">
+                Loading evidences please wait...
+              </div>
             </div>
-          </div>
-        ) : (
-          <div className="w-full">
-            {dodEvidences.map((evidence, index) => {
+          )}
+          {!(isLoading || isRefetching) &&
+            dodEvidences.map((evidence, index) => {
               return (
-                <div key={index} className="relative flex items-start py-2">
-                  <div className="mr-2 flex h-5 items-center">
-                    <input
-                      defaultChecked
-                      type="checkbox"
-                      className="h-4 w-4 cursor-pointer rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                      readOnly
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setOpenDeleteConfirmDialog(true);
-                        setEvidenceBeingRemoved(evidence);
-                      }}
-                    />
-                  </div>
-                  <div className="min-w-0 flex-1 pr-2 text-sm">
+                <div key={index} className="relative flex items-center py-2">
+                  {evidence.done ? (
+                    <AiFillCheckCircle className="mr-1" />
+                  ) : (
+                    <BsHourglassSplit className="mr-1" />
+                  )}
+                  <div className="min-w-0 flex-1 text-sm">
                     <EvidenceView evidence={evidence} size={size} />
                   </div>
-                  {evidence.done ? (
-                    <AiFillCheckCircle className="mr-1 mt-1" />
-                  ) : (
-                    <BsHourglassSplit className="mr-1 mt-1" />
-                  )}
+                  <div className="flex items-center">
+                    <Menu>
+                      <Menu.VerticalIconButton />
+                      <Menu.Items widthClass="w-72">
+                        <Menu.Item
+                          onClick={(e: any) => {
+                            setOpenDeleteConfirmDialog(true);
+                            setEvidenceBeingRemoved(evidence);
+                          }}
+                        >
+                          <div className="cursor-pointer flex w-full">
+                            <IconButton
+                              className="bg-transparent flex items-center"
+                              ovalProps={{
+                                stroke: "blue",
+                                height: "18px",
+                                width: "18px",
+                                fill: "transparent"
+                              }}
+                              icon={
+                                <BsTrash
+                                  className="text-gray-600 border-0 border-l-1 border-gray-200"
+                                  size={18}
+                                />
+                              }
+                            />
+                            <span className="pl-2 text-sm block cursor-pionter">
+                              Remove from Definition of done
+                            </span>
+                          </div>
+                        </Menu.Item>
+                      </Menu.Items>
+                    </Menu>
+                  </div>
                 </div>
               );
             })}
-            {!Boolean(dodEvidences.length) && (
-              <div className="flex items-start py-2 pl-2 pr-2">
-                <div className="text-sm text-gray-500">
-                  There are no evidences marked to be part of defintion of done
-                </div>
-              </div>
-            )}
+          <div className="flex items-center justify-between p-2 pl-1">
+            <button
+              type="button"
+              className="flex items-center bg-white rounded-md group"
+              onClick={() => {
+                setAddToDODModalOpen(true);
+                setSelectedEvidences([]);
+              }}
+            >
+              <span className="flex items-center justify-center w-5 h-5 text-gray-400 border-2 border-gray-300 border-dashed rounded-full">
+                <svg
+                  className="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+                    clipRule="evenodd"
+                  ></path>
+                </svg>
+              </span>
+              <span className="ml-2 text-sm font-medium text-blue-600 group-hover:text-blue-500">
+                Add definition of done
+              </span>
+            </button>
           </div>
-        )}
+          <div className={dodEvidences.length >= 3 ? "mb-4" : ""}></div>
+        </div>
       </div>
       <DeleteConfirmDialog
         isOpen={openDeleteConfirmDialog}
@@ -185,6 +256,90 @@ export function DefinitionOfDone({ incidentId }: DefinitionOfDoneProps) {
               </div>
             );
           })}
+        </div>
+      </Modal>
+      <Modal
+        title="Add to Definition of done"
+        onClose={() => {
+          setAddToDODModalOpen(false);
+          setSelectedEvidences([]);
+        }}
+        open={addToDODModalOpen}
+        bodyClass=""
+      >
+        <div
+          style={{ maxHeight: "calc(100vh - 6rem)" }}
+          className="overflow-y-auto overflow-x-hidden divide-y divide-gray-200 mb-20"
+        >
+          {nonDODEvidences.map((evidence, index) => {
+            return (
+              <div key={index} className="relative flex items-center p-6">
+                <div className="min-w-0 flex-1 text-sm mr-4">
+                  <EvidenceView evidence={evidence} size={size} />
+                </div>
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    className="h-4 w-4 cursor-pointer rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                    checked={isSelected(evidence.id)}
+                    onChange={(e) => {
+                      setSelectedEvidences((val) => {
+                        if (val.includes(evidence)) {
+                          return val.filter((v) => v.id !== evidence.id);
+                        } else {
+                          return [...val, evidence];
+                        }
+                      });
+                    }}
+                  />
+                </div>
+              </div>
+            );
+          })}
+          {!Boolean(nonDODEvidences.length) && (
+            <div className="flex items-center justify-center py-5 px-5 h-56">
+              <div className="text-sm text-gray-500">
+                There are no evidences which are not part of defintion of done
+              </div>
+            </div>
+          )}
+        </div>
+        <div
+          className={clsx(
+            "flex rounded-t-lg justify-between bg-gray-100 px-8 pb-4 items-end",
+            "absolute w-full bottom-0 left-0"
+          )}
+        >
+          <div className="flex flex-1">
+            <button
+              type="submit"
+              className={clsx(
+                "inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:text-sm",
+                "mt-4"
+              )}
+              onClick={() => {
+                setAddToDODModalOpen(false);
+                setSelectedEvidences([]);
+              }}
+            >
+              Cancel
+            </button>
+          </div>
+          {Boolean(nonDODEvidences.length) && (
+            <div className="flex flex-1 justify-end">
+              <button
+                disabled={selectedEvidences.length === 0}
+                type="submit"
+                className={clsx("btn-primary", "mt-4")}
+                onClick={() => {
+                  setAddToDODModalOpen(false);
+                  blukAddEvidencesToDOD();
+                }}
+              >
+                Add
+              </button>
+            </div>
+          )}
         </div>
       </Modal>
     </div>
