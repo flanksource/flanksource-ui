@@ -1,28 +1,55 @@
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import ReactTooltip from "react-tooltip";
-import { Incident } from "../../api/services/incident";
+import { Link } from "react-router-dom";
+import { Incident, IncidentSeverity } from "../../api/services/incident";
+import { Chip } from "../Chip";
 import { typeItems } from "../Incidents/data";
 
 type TopologyIncidentSummary = {
   hypotheses: {
-    incidents: Pick<Incident, "type" | "id" | "status">[];
+    incidents: Pick<Incident, "type" | "id" | "status" | "severity">[];
   };
+};
+
+type IncidentSummary = {
+  type: string;
+  id: string;
+  status: string;
+  count: number;
+  severity: IncidentSeverity;
 };
 
 type Props = {
   topologyID: string;
 };
 
+const chipColorFromIndex = (index: number) => {
+  switch (index) {
+    case 0:
+      return "green";
+    case 1:
+      return "orange";
+    case 2:
+      return "red";
+    default:
+      return "green";
+  }
+};
+
 export default function TopologyCardIncidentSummary({ topologyID }: Props) {
   const [incidentSummary, setIncidentSummary] =
-    useState<Map<keyof typeof typeItems, number>>();
+    useState<
+      Map<
+        keyof typeof typeItems,
+        [IncidentSummary, IncidentSummary, IncidentSummary]
+      >
+    >();
 
   const { isLoading, data } = useQuery(
     ["topology", "incidents", "summary", topologyID],
     async () => {
       const res = await fetch(
-        `/api/incidents_db/evidences?select=hypotheses!evidences_hypothesis_id_fkey!inner(incidents!hypotheses_incident_id_fkey!inner(id,type,status))&evidence->>id=eq.${topologyID}&hypotheses.incidents.status=eq.open`
+        `/api/incidents_db/evidences?select=hypotheses!evidences_hypothesis_id_fkey!inner(incidents!hypotheses_incident_id_fkey!inner(id,type,status,severity))&evidence->>id=eq.${topologyID}&hypotheses.incidents.status=eq.open`
       );
       const data = (await res.json()) as TopologyIncidentSummary[];
       const incidents = data.map((d) => d.hypotheses.incidents).flat();
@@ -35,41 +62,82 @@ export default function TopologyCardIncidentSummary({ topologyID }: Props) {
       // do a summary of the incidents by type i.e. count the number of incidents of each type
       const incidentsByTypeSummaries = new Map<
         keyof typeof typeItems,
-        number
+        [IncidentSummary, IncidentSummary, IncidentSummary]
       >();
-      data.forEach((incident) => {
-        if (incident?.type) {
-          const type = incident.type as keyof typeof typeItems;
-          const count = incidentsByTypeSummaries.get(type) || 0;
-          incidentsByTypeSummaries.set(type, count + 1);
+      data.forEach(({ type: incidentType, status, severity, id }) => {
+        if (incidentType) {
+          const type = incidentType as keyof typeof typeItems;
+          const count = incidentsByTypeSummaries.get(type);
+          const low: IncidentSummary = {
+            type: type,
+            count:
+              severity === IncidentSeverity.Low
+                ? (count?.[0].count || 0) + 1
+                : count?.[0].count || 0,
+            id: id,
+            status: status!,
+            severity: IncidentSeverity.Low
+          };
+          const medium: IncidentSummary = {
+            type: type,
+            count:
+              severity === IncidentSeverity.Medium
+                ? (count?.[1].count || 0) + 1
+                : count?.[1].count || 0,
+            id: id,
+            status: status!,
+            severity: IncidentSeverity.Medium
+          };
+          const high: IncidentSummary = {
+            type: type,
+            count:
+              severity === IncidentSeverity.High
+                ? (count?.[2].count || 0) + 1
+                : count?.[2].count || 0,
+            id: id,
+            status: status!,
+            severity: IncidentSeverity.High
+          };
+          incidentsByTypeSummaries.set(type, [low, medium, high]);
         }
       });
       setIncidentSummary(incidentsByTypeSummaries);
     }
   }, [data]);
 
-  useEffect(() => {
-    ReactTooltip.rebuild();
-  });
-
   if (isLoading || !incidentSummary || incidentSummary.size === 0) {
     return null;
   }
 
   return (
-    <div className="flex flex-row space-x-2 px-2 py-1 text-xs items-center">
-      <div className="w-auto">Incident Summary:</div>
-      <div className="flex-1 flex flex-row items-center">
+    <div className="flex flex-row space-x-2 py-1 text-sm items-center">
+      <div className="flex-1 flex flex-col">
         {incidentSummary &&
           Array.from(incidentSummary.entries()).map(([type, count]) => (
             <div
-              data-tip={typeItems[type].description}
-              data-class="max-w-[20rem]"
               key={type}
-              className="flex flex-row space-x-2 font-semibold items-center rounded text-black shadow-sm bg-gray-100 px-2 py-1"
+              className="flex flex-row space-x-2 items-center rounded text-black"
             >
-              <div>{typeItems[type].icon}</div>
-              <div className="flex flex-row">{count}</div>
+              <div className="flex flex-row space-x-2 items-center">
+                {typeItems[type].icon}
+                <span>{typeItems[type].description}</span>
+              </div>
+              <div className="flex flex-row space-x-2">
+                {count.map(
+                  (severity, i) =>
+                    severity.count > 0 && (
+                      <Link
+                        to={`/incidents?severity=${severity.severity}&component=${topologyID}`}
+                      >
+                        <Chip
+                          key={severity.type + i}
+                          color={chipColorFromIndex(i)}
+                          text={severity.count}
+                        />
+                      </Link>
+                    )
+                )}
+              </div>
             </div>
           ))}
       </div>
