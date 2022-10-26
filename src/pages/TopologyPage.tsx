@@ -21,7 +21,7 @@ import { getSortedTopology } from "../components/TopologyPopover/topologySort";
 import { getCardWidth } from "../components/TopologyPopover/topologyPreference";
 import TopologySidebar from "../components/TopologySidebar";
 import { BsFillInfoCircleFill } from "react-icons/bs";
-import CardsSkeltonLoader from "../components/CardsSkeltonLoader";
+import CardsSkeltonLoader from "../components/SkeltonLoader/CardSkeltonLoader";
 
 const allOption = {
   All: {

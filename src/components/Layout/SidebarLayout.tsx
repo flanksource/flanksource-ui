@@ -12,7 +12,7 @@ import { NavigationItems, SettingsNavigationItems } from "../../App";
 import { AuthContext } from "../../context";
 import { useOuterClick } from "../../lib/useOuterClick";
 import { getLocalItem, setLocalItem } from "../../utils/storage";
-import FullPageSkeltonLoader from "../FullPageSkeltonLoader";
+import FullPageSkeltonLoader from "../SkeltonLoader/FullPageSkeltonLoader";
 import { Icon } from "../Icon";
 
 interface Props {

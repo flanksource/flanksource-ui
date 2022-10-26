@@ -34,7 +34,7 @@ import { HealthPageContextProvider } from "./context/HealthPageContext";
 import { ConfigPageContextProvider } from "./context/ConfigPageContext";
 import { IncidentPageContextProvider } from "./context/IncidentPageContext";
 import { User } from "./api/services/users";
-import FullPageSkeltonLoader from "./components/FullPageSkeltonLoader";
+import FullPageSkeltonLoader from "./components/SkeltonLoader/FullPageSkeltonLoader";
 
 const queryClient = new QueryClient({
   defaultOptions: {
