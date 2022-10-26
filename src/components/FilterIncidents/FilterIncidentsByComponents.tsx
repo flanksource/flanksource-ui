@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import React from "react";
+import React, { useCallback } from "react";
 import { Control } from "react-hook-form";
 import { MdOutlineError } from "react-icons/md";
 import { Icon } from "../Icon";
@@ -35,18 +35,30 @@ function FilterIncidentsByComponents({ control, value }: Props) {
     async () => {
       const res = await fetch(`/api/canary/db/component_names`);
       const data = (await res.json()) as TopologyComponentItem[];
-      const components = data.map((component) => {
-        return {
-          value: component.id,
-          name: component.name,
-          icon: (
-            <Icon name={component.icon} secondary={component.name} size="xl" />
-          ),
-          label: component.name,
-          description: component.name
-        };
-      });
-      return components;
+      return data;
+    },
+    {
+      // use select to transform data, so we can cache the request data as is
+      // allowing it to be used in other places
+      select: useCallback(
+        (data: TopologyComponentItem[]) =>
+          data.map((component) => {
+            return {
+              value: component.id,
+              name: component.name,
+              icon: (
+                <Icon
+                  name={component.icon}
+                  secondary={component.name}
+                  size="xl"
+                />
+              ),
+              label: component.name,
+              description: component.name
+            };
+          }),
+        []
+      )
     }
   );
 
