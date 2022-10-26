@@ -6,9 +6,6 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { getIncidentsWithParams } from "../../api/services/incident";
 import { getPersons } from "../../api/services/users";
 import FilterIncidentsByComponents from "../../components/FilterIncidents/FilterIncidentsByComponents";
-import FilterIncidentsByOwner from "../../components/FilterIncidents/FilterIncidentsByOwner";
-import FilterIncidentsBySeverity from "../../components/FilterIncidents/FilterIncidentsBySeverity";
-import FilterIncidentsByStatus from "../../components/FilterIncidents/FilterIncidentsByStatus";
 import FilterIncidentsByType from "../../components/FilterIncidents/FilterIncidentsByType";
 import {
   severityItems,
@@ -236,37 +233,59 @@ export function IncidentListPage() {
             labels: selectedLabels
           });
         }}
+        extra={
+          <div className="flex flex-row space-x-4">
+            <div className="flex items-center space-x-3">
+              <div className="text-gray-500 text-sm">Severity</div>
+              <ReactSelectDropdown
+                control={control}
+                name="severity"
+                className="w-auto max-w-[400px] mr-2 flex-shrink-0"
+                dropDownClassNames="w-auto max-w-[400px] right-0"
+                value={watchSeverity}
+                // @ts-expect-error
+                items={{ ...defaultSelections, ...severityItems }}
+                hideControlBorder
+              />
+            </div>
+            <div className="flex items-center space-x-3">
+              <div className="text-gray-500 text-sm">Status</div>
+              <ReactSelectDropdown
+                control={control}
+                name="status"
+                className="w-auto max-w-[400px] mr-2 flex-shrink-0"
+                dropDownClassNames="w-auto max-w-[400px] right-0"
+                value={watchStatus}
+                items={{ ...defaultSelections, ...statusItems }}
+                hideControlBorder
+              />
+            </div>
+            <div className="flex items-center space-x-3">
+              <div className=" text-gray-500 text-sm">Owner</div>
+              <ReactSelectDropdown
+                control={control}
+                name="owner"
+                className="w-auto max-w-[400px] mr-2 flex-shrink-0"
+                dropDownClassNames="w-auto max-w-[400px] right-0"
+                value={watchOwner}
+                // @ts-expect-error
+                items={{ ...defaultSelections, ...ownerSelections }}
+                hideControlBorder
+              />
+            </div>
+
+            <FilterIncidentsByType control={control} value={watchType} />
+
+            <FilterIncidentsByComponents
+              control={control}
+              value={watchComponent}
+            />
+          </div>
+        }
       >
         <div className="leading-1.21rel">
           <div className="flex-none flex-wrap space-x-2 space-y-2">
-            <div className="max-w-screen-xl mx-auto space-y-6 flex flex-col justify-center">
-              <div className="flex flex-col w-full">
-                <div className="flex flex-row space-x-4 border-b py-4 border-gray-200">
-                  <FilterIncidentsByType control={control} value={watchType} />
-
-                  <FilterIncidentsBySeverity
-                    control={control}
-                    value={watchSeverity}
-                  />
-
-                  <FilterIncidentsByStatus
-                    control={control}
-                    value={watchStatus}
-                  />
-
-                  <FilterIncidentsByOwner
-                    control={control}
-                    value={watchOwner}
-                    ownerSelections={ownerSelections}
-                  />
-
-                  <FilterIncidentsByComponents
-                    control={control}
-                    value={watchComponent}
-                  />
-                </div>
-              </div>
-
+            <div className="max-w-screen-xl mx-auto flex flex-col justify-center">
               {!isLoading || Boolean(incidents?.length) ? (
                 <>
                   <IncidentList list={incidents || []} />

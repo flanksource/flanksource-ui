@@ -5,7 +5,7 @@ import { MdOutlineError } from "react-icons/md";
 import { Icon } from "../Icon";
 import { ReactSelectDropdown } from "../ReactSelectDropdown";
 
-const defaultSelections = {
+export const defaultSelections = {
   all: {
     description: "All",
     value: "all",
