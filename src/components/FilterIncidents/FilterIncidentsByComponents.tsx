@@ -89,10 +89,12 @@ function FilterIncidentsByComponents({ control, value }: Props) {
         control={control}
         label=""
         name="component"
-        className="w-56 capitalize"
+        className="w-auto max-w-[400px] capitalize"
         value={value}
         // @ts-expect-error
         items={{ ...defaultSelections, ...data }}
+        dropDownClassNames="w-auto max-w-[400px] right-0"
+        hideControlBorder
       />
     </div>
   );

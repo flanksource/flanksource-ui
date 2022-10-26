@@ -52,10 +52,13 @@ type ReactSelectDropdownProps = {
   placeholder?: string;
   prefix?: ReactNode;
   labelClass?: string;
+  dropDownClassNames?: string;
+  hideControlBorder?: boolean;
 };
 
 export const ReactSelectDropdown = ({
   className,
+  dropDownClassNames,
   label,
   control,
   items,
@@ -64,6 +67,7 @@ export const ReactSelectDropdown = ({
   value,
   prefix,
   labelClass,
+  hideControlBorder = false,
   placeholder = "Search..."
 }: ReactSelectDropdownProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -120,8 +124,9 @@ export const ReactSelectDropdown = ({
       isOpen={isOpen}
       onClose={toggleOpen}
       inputRef={ref}
+      className={dropDownClassNames}
       target={
-        <div className={label ? "space-y-2" : ""}>
+        <div className={`${label ? "space-y-2" : ""}`}>
           <label
             className={
               labelClass
@@ -133,10 +138,12 @@ export const ReactSelectDropdown = ({
           </label>
           <div
             className={clsx(
-              `relative cursor-pointer h-full bg-white border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left  focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm
+              `relative cursor-pointer h-full rounded-md shadow-sm pl-3 pr-10 py-2 text-left  focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm
                 ${SelectedOption?.id === "_empty" && "text-gray-400"}
               `,
-              className
+              className,
+              !hideControlBorder && "bg-white border border-gray-300",
+              hideControlBorder ? (isOpen ? "bg-blue-100" : "bg-gray-100") : ""
             )}
             onClick={toggleOpen}
           >
@@ -296,18 +303,21 @@ interface DropdownProps {
   readonly onClose: () => void;
   readonly inputRef: Ref<HTMLDivElement | undefined>;
   children: ReactNode;
+  className?: string;
 }
+
 const Dropdown: FunctionComponent<DropdownProps> = ({
   children,
   isOpen,
   target,
   inputRef,
+  className = "w-full right-0",
   onClose
 }) => (
   <div ref={inputRef as LegacyRef<HTMLDivElement>} className="relative">
     {target}
     {isOpen ? (
-      <Menu className="absolute bg-white z-50 drop-shadow-md w-full">
+      <Menu className={`absolute bg-white z-50 drop-shadow-md ${className}`}>
         {children}
       </Menu>
     ) : null}

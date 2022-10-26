@@ -239,10 +239,12 @@ export function IncidentListPage() {
               <ReactSelectDropdown
                 control={control}
                 name="severity"
-                className="w-36 mr-2 flex-shrink-0"
+                className="w-auto max-w-[400px] mr-2 flex-shrink-0"
+                dropDownClassNames="w-auto max-w-[400px] right-0"
                 value={watchSeverity}
                 // @ts-expect-error
                 items={{ ...defaultSelections, ...severityItems }}
+                hideControlBorder
               />
             </div>
             <div className="flex items-center space-x-3">
@@ -250,9 +252,11 @@ export function IncidentListPage() {
               <ReactSelectDropdown
                 control={control}
                 name="status"
-                className="w-36 mr-2 flex-shrink-0"
+                className="w-auto max-w-[400px] mr-2 flex-shrink-0"
+                dropDownClassNames="w-auto max-w-[400px] right-0"
                 value={watchStatus}
                 items={{ ...defaultSelections, ...statusItems }}
+                hideControlBorder
               />
             </div>
             <div className="flex items-center space-x-3">
@@ -260,10 +264,12 @@ export function IncidentListPage() {
               <ReactSelectDropdown
                 control={control}
                 name="owner"
-                className="w-36 mr-2 flex-shrink-0"
+                className="w-auto max-w-[400px] mr-2 flex-shrink-0"
+                dropDownClassNames="w-auto max-w-[400px] right-0"
                 value={watchOwner}
                 // @ts-expect-error
                 items={{ ...defaultSelections, ...ownerSelections }}
+                hideControlBorder
               />
             </div>
             <div className="space-x-3 flex items-center">
@@ -272,9 +278,11 @@ export function IncidentListPage() {
                 control={control}
                 label=""
                 name="type"
-                className="w-56"
+                className="w-auto max-w-[400px]"
+                dropDownClassNames="w-auto max-w-[400px] right-0"
                 value={watchType}
                 items={{ ...defaultSelections, ...typeItems }}
+                hideControlBorder
               />
               {/* <MultiSelectDropdown
                 styles={labelDropdownStyles}
