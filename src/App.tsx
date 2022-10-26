@@ -1,7 +1,7 @@
 import { AdjustmentsIcon } from "@heroicons/react/solid";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, ReactNode, useEffect, useState } from "react";
 import { AiFillHeart } from "react-icons/ai";
 import { ImLifebuoy } from "react-icons/im";
 import { VscJson } from "react-icons/vsc";
@@ -14,7 +14,6 @@ import { ErrorBoundary } from "./components/ErrorBoundary";
 import { LogsIcon } from "./components/Icons/LogsIcon";
 import { TopologyIcon } from "./components/Icons/TopologyIcon";
 import { ConfigLayout, SidebarLayout } from "./components/Layout";
-import { Loading } from "./components/Loading";
 import { SchemaResourcePage } from "./components/SchemaResourcePage";
 import { schemaResourceTypes } from "./components/SchemaResourcePage/resourceTypes";
 import { SchemaResource } from "./components/SchemaResourcePage/SchemaResource";
@@ -34,6 +33,8 @@ import { TopologyPageContextProvider } from "./context/TopologyPageContext";
 import { HealthPageContextProvider } from "./context/HealthPageContext";
 import { ConfigPageContextProvider } from "./context/ConfigPageContext";
 import { IncidentPageContextProvider } from "./context/IncidentPageContext";
+import { User } from "./api/services/users";
+import FullPageSkeltonLoader from "./components/SkeltonLoader/FullPageSkeltonLoader";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -68,22 +69,22 @@ export type SettingsNavigationItems = typeof settingsNav;
 
 const CANARY_API = "/api/canary/api";
 
-export function HealthRoutes({ sidebar }) {
+export function HealthRoutes({ sidebar }: { sidebar: ReactNode }) {
   return (
-    <Routes path="/" element={sidebar}>
+    <Routes>
       <Route index element={<HealthPage url={CANARY_API} />} />
     </Routes>
   );
 }
 
-export function IncidentManagerRoutes({ sidebar }) {
+export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
   return (
-    <Routes path="/" element={sidebar}>
+    <Routes>
       <Route path="" element={<Navigate to="/topology" />} />
 
       <Route path="topology" element={sidebar}>
-        <Route path=":id" element={<TopologyPage url={CANARY_API} />} />
-        <Route index element={<TopologyPage url={CANARY_API} />} />
+        <Route path=":id" element={<TopologyPage />} />
+        <Route index element={<TopologyPage />} />
       </Route>
 
       <Route path="incidents" element={sidebar}>
@@ -149,7 +150,6 @@ export function IncidentManagerRoutes({ sidebar }) {
           path=":id"
           element={
             <ConfigLayout
-              backPath="/configs"
               showSidePanel
               isConfigDetails
               title="Config"
@@ -189,7 +189,9 @@ export function CanaryCheckerApp() {
 
   // TODO(ciju): the url is set at two places. axios.js#CanaryChecker and here.
   // Consolidate logic to one place.
-  if (typeof window === "undefined") return <Loading text="Loading" />;
+  if (typeof window === "undefined") {
+    return <FullPageSkeltonLoader />;
+  }
 
   return (
     <BrowserRouter>
@@ -200,21 +202,23 @@ export function CanaryCheckerApp() {
   );
 }
 
+function SidebarWrapper() {
+  return <SidebarLayout navigation={navigation} settingsNav={settingsNav} />;
+}
+
 export function App() {
-  const [user, setUser] = useState();
+  const [user, setUser] = useState<User>();
 
   useEffect(() => {
     getUser().then((u) => {
       setUser(u);
     });
   }, []);
-  if (user == null) {
-    return <Loading text="Logging in" />;
+
+  if (!user) {
+    return <FullPageSkeltonLoader />;
   }
 
-  const sidebar = (
-    <SidebarLayout navigation={navigation} settingsNav={settingsNav} />
-  );
   return (
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>
@@ -224,7 +228,7 @@ export function App() {
               <IncidentPageContextProvider>
                 <AuthContext.Provider value={{ user, setUser }}>
                   <ReactTooltip />
-                  <IncidentManagerRoutes sidebar={sidebar} />
+                  <IncidentManagerRoutes sidebar={<SidebarWrapper />} />
                 </AuthContext.Provider>
                 <ReactQueryDevtools initialIsOpen={false} />
               </IncidentPageContextProvider>

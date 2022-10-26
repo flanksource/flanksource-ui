@@ -7,7 +7,6 @@ import {
   decodeUrlSearchParams
 } from "./url";
 import { CanarySearchBar } from "./CanarySearchBar";
-import { getParamsFromURL } from "./utils";
 import { CanaryInterfaceMinimal } from "../CanaryInterface/minimal";
 import { GroupByDropdown } from "../Dropdown/GroupByDropdown";
 import { DropdownStandaloneWrapper } from "../Dropdown/StandaloneWrapper";
@@ -25,11 +24,11 @@ import { TristateToggle } from "../TristateToggle";
 import { StatCard } from "../StatCard";
 import { isHealthy } from "./filter";
 import mixins from "../../utils/mixins.module.css";
-import { Loading } from "../Loading";
 import { useHealthPageContext } from "../../context/HealthPageContext";
 import { isCanaryUI } from "../../context/Environment";
 import clsx from "clsx";
 import dayjs from "dayjs";
+import HealthPageSkeltonLoader from "../SkeltonLoader/HealthPageSkeltonLoader";
 
 const FilterKeyToLabelMap = {
   environment: "Environment",
@@ -177,7 +176,7 @@ export function Canary({
   }, 400);
 
   if (isLoading && !checks.length) {
-    return <Loading className="mt-16" text="Please wait, Loading ..." />;
+    return <HealthPageSkeltonLoader showSidebar />;
   }
 
   return (
@@ -321,8 +320,12 @@ export function Canary({
   );
 }
 
-export const LabelFilterList = ({ labels }) => {
-  const [list, setList] = useState({});
+type LabelFilterListProps = {
+  labels: Record<string, string[]>;
+};
+
+export const LabelFilterList = ({ labels }: LabelFilterListProps) => {
+  const [list, setList] = useState<Record<string, string[]>>({});
   useEffect(() => {
     if (labels) {
       const [bl, nbl] = separateLabelsByBooleanType(Object.values(labels));
@@ -373,9 +376,9 @@ export const LabelFilterList = ({ labels }) => {
 };
 
 export const HidePassingToggle = ({ defaultValue = true }) => {
-  const searchParams = getParamsFromURL(window.location.search);
-  const paramsValue = searchParams.hidePassing
-    ? searchParams.hidePassing === "true"
+  const [searchParams] = useSearchParams();
+  const paramsValue = searchParams.get("hidePassing")
+    ? searchParams.get("hidePassing") === "true"
     : null;
 
   const [value, setValue] = useState(paramsValue ?? defaultValue);
@@ -386,9 +389,10 @@ export const HidePassingToggle = ({ defaultValue = true }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
+    /* @ts-expect-error */
     <Toggle
       value={value}
-      onChange={(val) => {
+      onChange={(val: boolean) => {
         setValue(val);
         updateParams({ hidePassing: val });
       }}
@@ -401,20 +405,20 @@ export const MultiSelectLabelsDropdownStandalone = ({ labels = [] }) => {
   const [dropdownValue, setDropdownValue] = useState([]);
   const updateParams = useUpdateParams();
   const handleChange = useCallback(
-    (selected, all) => {
+    (selected: any, all: any) => {
       const { labels: urlLabelState } = decodeUrlSearchParams(
         window.location.search
       );
       const labelState = { ...urlLabelState };
 
       if (!isFirstLoad) {
-        all.forEach((selection) => {
+        all.forEach((selection: any) => {
           // set unselected labels to 0
           labelState[selection.value] = 0;
         });
       }
 
-      selected.forEach((selection) => {
+      selected.forEach((selection: any) => {
         // set selected labels to 1
         labelState[selection.value] = 1;
       });
@@ -446,12 +450,19 @@ export const MultiSelectLabelsDropdownStandalone = ({ labels = [] }) => {
   );
 };
 
+type TristateLabelStandaloneProps = {
+  label: any;
+  className?: string;
+  labelClass?: string;
+  hideLabel?: boolean;
+};
+
 export const TristateLabelStandalone = ({
   label,
   className,
   labelClass,
-  ...rest
-}) => {
+  ...props
+}: TristateLabelStandaloneProps) => {
   const { labels: urlLabelState = {} } = decodeUrlSearchParams(
     window.location.search
   );
@@ -459,7 +470,7 @@ export const TristateLabelStandalone = ({
   const [toggleState, setToggleState] = useState(0);
   const updateParams = useUpdateParams();
 
-  const handleToggleChange = (v) => {
+  const handleToggleChange = (v: any) => {
     if (!isFirstLoad) {
       const { labels: urlLabelState } = decodeUrlSearchParams(
         window.location.search
@@ -489,18 +500,19 @@ export const TristateLabelStandalone = ({
   }, []);
 
   return (
+    /* @ts-expect-error */
     <TristateToggle
       value={toggleState}
-      onChange={(v) => handleToggleChange(v)}
+      onChange={(v: string) => handleToggleChange(v)}
       className={className}
       labelClass={labelClass}
       label={label}
-      {...rest}
+      {...props}
     />
   );
 };
 
-export const TristateLabels = ({ labels = [] }) => {
+export const TristateLabels = ({ labels = [] }: { labels: any[] }) => {
   const [labelStates, setLabelStates] = useState({});
   const updateParams = useUpdateParams();
 
@@ -516,6 +528,7 @@ export const TristateLabels = ({ labels = [] }) => {
     const newLabelStates = Object.entries(urlLabelState).reduce(
       (acc, [k, v]) => {
         if (Object.prototype.hasOwnProperty.call(labelMap, k)) {
+          // @ts-expect-error
           acc[k] = v;
         }
         return acc;
@@ -525,7 +538,7 @@ export const TristateLabels = ({ labels = [] }) => {
     setLabelStates(newLabelStates);
   }, [labels]);
 
-  const handleToggleChange = (labelKey, value) => {
+  const handleToggleChange = (labelKey: string, value: string) => {
     const { labels: urlLabelState } = decodeUrlSearchParams(
       window.location.search
     );
@@ -541,14 +554,16 @@ export const TristateLabels = ({ labels = [] }) => {
         .filter((o) => o && o !== undefined)
         .map((label) => (
           <div key={label.id}>
+            {/* @ts-expect-error */}
             <TristateToggle
               key={label.key}
               value={
                 Object.prototype.hasOwnProperty.call(labelStates, label.id)
-                  ? labelStates[label.id]
+                  ? // @ts-expect-error
+                    labelStates[label.id]
                   : 0
               }
-              onChange={(v) => handleToggleChange(label.id, v)}
+              onChange={(v: string) => handleToggleChange(label.id, v)}
               className="mb-2 flex items-center"
               labelClass="ml-3 text-xs text-left text-gray-700 break-all overflow-ellipsis overflow-x-hidden"
               label={label}
@@ -559,36 +574,51 @@ export const TristateLabels = ({ labels = [] }) => {
   );
 };
 
-const SectionTitle = ({ className, children, ...props }) => (
-  <div
-    className={`uppercase font-semibold text-sm mb-3 text-blue-700 ${className}`}
-    {...props}
-  >
-    {children}
-  </div>
-);
+function SectionTitle({
+  className,
+  children,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div
+      className={`uppercase font-semibold text-sm mb-3 text-blue-700 ${className}`}
+      {...props}
+    >
+      {children}
+    </div>
+  );
+}
 
-const SidebarSticky = ({
+type SidebarStickyProps = {
+  className?: string;
+  style?: React.CSSProperties;
+  topHeight?: number;
+  children?: React.ReactNode;
+};
+
+function SidebarSticky({
   className,
   style,
   children,
   topHeight = 0,
   ...props
-}) => (
-  <div
-    className={className || "flex flex-col w-80 border-r"}
-    style={style || { minHeight: `calc(100vh - ${topHeight}px)` }}
-    {...props}
-  >
+}: SidebarStickyProps) {
+  return (
     <div
-      className={`h-full overflow-y-auto overflow-x-hidden p-4 ${mixins.appleScrollbar}`}
-      style={{
-        position: "sticky",
-        top: `${topHeight}px`,
-        maxHeight: `calc(100vh - ${topHeight}px)`
-      }}
+      className={className || "flex flex-col w-80 border-r"}
+      style={style || { minHeight: `calc(100vh - ${topHeight}px)` }}
+      {...props}
     >
-      {children}
+      <div
+        className={`h-full overflow-y-auto overflow-x-hidden p-4 ${mixins.appleScrollbar}`}
+        style={{
+          position: "sticky",
+          top: `${topHeight}px`,
+          maxHeight: `calc(100vh - ${topHeight}px)`
+        }}
+      >
+        {children}
+      </div>
     </div>
-  </div>
-);
+  );
+}
