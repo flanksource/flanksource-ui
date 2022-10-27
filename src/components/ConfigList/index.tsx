@@ -42,8 +42,7 @@ const columns: TableCols[] = [
   {
     Header: "Changes",
     accessor: "changes",
-    Cell: ChangeCell,
-    cellClass: "overflow-auto"
+    Cell: ChangeCell
   },
   {
     Header: "Analysis",
@@ -158,8 +157,8 @@ function ChangeCell({ row, column }: CellProp): JSX.Element {
 
   var cell: JSX.Element[] = renderKeys.map((item: any) => {
     return (
-      <div className="flex flex-row ">
-        <div className="flex space-x-1 items-center px-2.5 py-0.5 m-0.5 rounded-md text-sm font-medium bg-blue-100 text-blue-800">
+      <div className="flex flex-row max-w-full">
+        <div className="flex max-w-full space-x-1 items-center px-2.5 py-0.5 m-0.5 rounded-md text-sm font-medium bg-blue-100 text-blue-800">
           {item.change_type === "diff" ? (
             item.total
           ) : (
@@ -196,7 +195,7 @@ function ChangeCell({ row, column }: CellProp): JSX.Element {
           )}
         </button>
       )}
-      <div className="flex flex-col flex-1 max-w-96">{cell}</div>
+      <div className="flex flex-col flex-1 max-w-[24rem]">{cell}</div>
     </div>
   );
 }
