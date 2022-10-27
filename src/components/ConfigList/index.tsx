@@ -144,23 +144,20 @@ function ChangeCell({ row, column }: CellProp): JSX.Element {
   if (changes == null) {
     return <span></span>;
   }
-  var cell: JSX.Element[] = [];
-  changes.forEach((item: any) => {
-    if (item.change_type === "diff") {
-      cell.push(
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-blue-100 text-blue-800">
-          {item.total}
-        </span>
-      );
-    } else {
-      cell.push(
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-blue-100 text-blue-800">
-          {item.change_type}: {item.total}
-        </span>
-      );
-    }
+  var cell: JSX.Element[] = changes.map((item: any) => {
+    return (
+      <span className="inline-flex items-center px-2.5 py-0.5 m-0.5 rounded-md text-sm font-medium bg-blue-100 text-blue-800">
+        {item.change_type === "diff" ? (
+          item.total
+        ) : (
+          <>
+            {item.change_type}: {item.total}
+          </>
+        )}
+      </span>
+    );
   });
-  return <span>{cell}</span>;
+  return <div className="flex flex-wrap">{cell}</div>;
 }
 
 function TypeCell({ row, column }: CellProp): JSX.Element {
