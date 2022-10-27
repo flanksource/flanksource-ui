@@ -42,7 +42,7 @@ const columns: TableCols[] = [
   {
     Header: "Changes",
     accessor: "changes",
-    Cell: ChangeCell
+    Cell: React.memo(ChangeCell)
   },
   {
     Header: "Analysis",
@@ -72,8 +72,7 @@ const columns: TableCols[] = [
   {
     Header: "Tags",
     accessor: "tags",
-    Cell: TagsCell,
-    cellClass: "overflow-auto"
+    Cell: React.memo(TagsCell)
   },
   {
     Header: "Created",
@@ -99,6 +98,10 @@ function TagsCell({ row, column }: CellProp): JSX.Element {
 
   const tagMap = row?.values[column.id] || {};
   const tagKeys = Object.keys(tagMap).sort();
+
+  useEffect(() => {
+    ReactTooltip.rebuild();
+  });
 
   if (tagKeys.length === 0) {
     return <div className="flex"></div>;
@@ -126,10 +129,11 @@ function TagsCell({ row, column }: CellProp): JSX.Element {
         </button>
       )}
 
-      <div className="font-mono flex flex-wrap w-96 pl-1 space-y-1">
+      <div className="font-mono flex flex-wrap w-96 max-w-[24rem] pl-1 space-y-1">
         {renderKeys.map((key) => (
           <div
-            className="bg-gray-200 border border-gray-300 px-1 py-0.75 mr-1 rounded-md text-gray-600 font-semibold text-xs"
+            data-tip={`${key}: ${tagMap[key]}`}
+            className="max-w-full overflow-hidden text-ellipsis bg-gray-200 border border-gray-300 px-1 py-0.75 mr-1 rounded-md text-gray-600 font-semibold text-xs"
             key={key}
           >
             {key}: <span className="font-light">{tagMap[key]}</span>
