@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AiFillWarning } from "react-icons/ai";
 import { BiDollarCircle } from "react-icons/bi";
 import { FaTasks } from "react-icons/fa";
@@ -11,6 +11,7 @@ import {
 } from "react-icons/io";
 import { MdSecurity } from "react-icons/md";
 import { useSearchParams } from "react-router-dom";
+import ReactTooltip from "react-tooltip";
 import * as timeago from "timeago.js";
 import { DataTable, Icon } from "../";
 import { FormatCurrency } from "../ConfigCosts";
@@ -41,7 +42,8 @@ const columns: TableCols[] = [
   {
     Header: "Changes",
     accessor: "changes",
-    Cell: ChangeCell
+    Cell: ChangeCell,
+    cellClass: "overflow-auto"
   },
   {
     Header: "Analysis",
@@ -140,24 +142,61 @@ function TagsCell({ row, column }: CellProp): JSX.Element {
 }
 
 function ChangeCell({ row, column }: CellProp): JSX.Element {
+  const [showMore, setShowMore] = useState(false);
+
   const changes = row?.values[column.id];
+
+  useEffect(() => {
+    ReactTooltip.rebuild();
+  });
+
   if (changes == null) {
     return <span></span>;
   }
-  var cell: JSX.Element[] = changes.map((item: any) => {
+
+  const renderKeys = showMore ? changes : changes.slice(0, MIN_ITEMS);
+
+  var cell: JSX.Element[] = renderKeys.map((item: any) => {
     return (
-      <span className="inline-flex items-center px-2.5 py-0.5 m-0.5 rounded-md text-sm font-medium bg-blue-100 text-blue-800">
-        {item.change_type === "diff" ? (
-          item.total
-        ) : (
-          <>
-            {item.change_type}: {item.total}
-          </>
-        )}
-      </span>
+      <div className="flex flex-row ">
+        <div className="flex space-x-1 items-center px-2.5 py-0.5 m-0.5 rounded-md text-sm font-medium bg-blue-100 text-blue-800">
+          {item.change_type === "diff" ? (
+            item.total
+          ) : (
+            <>
+              <div
+                data-tip={item.change_type}
+                className="text-ellipsis overflow-hidden"
+              >
+                {item.change_type}
+              </div>
+              :<div className=""> {item.total}</div>
+            </>
+          )}
+        </div>
+      </div>
     );
   });
-  return <div className="flex flex-wrap">{cell}</div>;
+  return (
+    <div
+      className="flex flex-row items-start"
+      onClick={(e) => {
+        e.stopPropagation();
+        setShowMore((showMore) => !showMore);
+      }}
+    >
+      {changes.length > MIN_ITEMS && (
+        <button className="text-sm focus:outline-none">
+          {showMore ? (
+            <IoMdArrowDropdown size={24} />
+          ) : (
+            <IoMdArrowDropright size={24} />
+          )}
+        </button>
+      )}
+      <div className="flex flex-col flex-1 max-w-96">{cell}</div>
+    </div>
+  );
 }
 
 function TypeCell({ row, column }: CellProp): JSX.Element {
