@@ -68,22 +68,30 @@ const columns: TableCols[] = [
   {
     Header: "Cost (per min)",
     accessor: "cost_per_minute",
-    Cell: CostCell
+    Cell: CostCell,
+    aggregate: "sum",
+    Aggregated: CostAggregate
   },
   {
     Header: "Cost (24hr)",
     accessor: "cost_total_1d",
-    Cell: CostCell
+    Cell: CostCell,
+    aggregate: "sum",
+    Aggregated: CostAggregate
   },
   {
     Header: "Cost (7d)",
     accessor: "cost_total_7d",
-    Cell: CostCell
+    Cell: CostCell,
+    aggregate: "sum",
+    Aggregated: CostAggregate
   },
   {
     Header: "Cost (30d)",
     accessor: "cost_total_30d",
-    Cell: CostCell
+    Cell: CostCell,
+    aggregate: "sum",
+    Aggregated: CostAggregate
   },
   {
     Header: "Tags",
@@ -303,11 +311,7 @@ function CostCell({ row, column }: CellProp): JSX.Element {
   if (!cost) {
     return <span></span>;
   }
-  return (
-    <span>
-      <FormatCurrency value={cost} />
-    </span>
-  );
+  return <FormatCurrency value={cost} />;
 }
 
 function DateCell({ row, column }: CellProp): JSX.Element {
@@ -327,13 +331,15 @@ function ChangeAggregate(leafValues: any[]) {
   leafValues.forEach((leafVal) => {
     if (leafVal) {
       leafVal.forEach((item: any) => {
-        if (item.change_type === "diff") {
-          sum += item.total;
-        }
+        sum += item.total;
       });
     }
   });
   return sum;
+}
+
+function CostAggregate({ value }: { value: number | string }) {
+  return <FormatCurrency value={value} />;
 }
 
 function ChangedAccessor(row: any) {

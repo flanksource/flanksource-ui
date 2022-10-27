@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import { IoChevronForwardOutline } from "react-icons/io5";
 import { TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti";
 import { useSortBy, useTable, useGroupBy, useExpanded } from "react-table";
+import { Badge } from "../Badge";
 
 const tableStyles = {
   tableClass: "table-auto w-full border-l border-r border-b",
@@ -84,7 +85,7 @@ export const DataTable = ({
         style={tableStyle}
         {...getTableProps()}
       >
-        <thead className={`bg-white ${stickyHead ? "sticky top-0" : ""}`}>
+        <thead className={`bg-white ${stickyHead ? "sticky top-0 z-10" : ""}`}>
           {headerGroups.map((headerGroup) => (
             <tr
               key={headerGroup.getHeaderGroupProps().key}
@@ -93,7 +94,9 @@ export const DataTable = ({
               {headerGroup.headers.map((column) => (
                 <th
                   key={column.Header}
-                  className={tableStyles.theadHeaderClass}
+                  className={`${tableStyles.theadHeaderClass}${
+                    column.canSort ? " cursor-pointer" : ""
+                  }`}
                   onClick={() => setHeaderClickHandler(column)}
                   {...column.getHeaderProps()}
                 >
@@ -132,7 +135,7 @@ export const DataTable = ({
                     : () => {}
                 }
               >
-                {row.cells.map((cell) => (
+                {row.cells.map((cell, cellIndex) => (
                   <td
                     key={cell.column.Header}
                     className={`${tableStyles.tbodyDataClass} ${
@@ -143,13 +146,22 @@ export const DataTable = ({
                     {cell.isGrouped ? (
                       <div className="flex items-center">
                         <div
-                          className={`transform duration-200 ${
+                          className={`duration-200 mr-2 ${
                             row.isExpanded ? "rotate-90" : ""
                           }`}
                         >
                           <IoChevronForwardOutline />
                         </div>
-                        {cell.render("Cell")}
+                        <div className="shrink-0">{cell.render("Cell")}</div>
+                        <div className="ml-1 flex items-center">
+                          <Badge
+                            className="ml-1"
+                            colorClass="bg-gray-200 text-gray-800"
+                            roundedClass="rounded-xl"
+                            text={row?.subRows.length}
+                            size="xs"
+                          />
+                        </div>
                       </div>
                     ) : cell.isAggregated ? (
                       cell.render("Aggregated")
