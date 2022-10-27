@@ -162,19 +162,19 @@ function ChangeCell({ row, column }: CellProp): JSX.Element {
   var cell: JSX.Element[] = renderKeys.map((item: any) => {
     return (
       <div className="flex flex-row max-w-full">
-        <div className="flex max-w-full space-x-1 items-center px-2.5 py-0.5 m-0.5 rounded-md text-sm font-medium bg-blue-100 text-blue-800">
+        <div className="flex max-w-full items-center px-2.5 py-0.5 m-0.5 rounded-md text-sm font-medium bg-blue-100 text-blue-800">
           {item.change_type === "diff" ? (
             item.total
           ) : (
-            <>
-              <div
-                data-tip={item.change_type}
-                className="text-ellipsis overflow-hidden"
-              >
-                {item.change_type}
+            <div
+              data-tip={`${item.change_type}: ${item.total}`}
+              className="flex flex-row max-w-full space-x-1 "
+            >
+              <div className="text-ellipsis overflow-hidden">
+                {item.change_type}:
               </div>
-              :<div className=""> {item.total}</div>
-            </>
+              <div className=""> {item.total}</div>
+            </div>
           )}
         </div>
       </div>
