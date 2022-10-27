@@ -85,37 +85,45 @@ export const DataTable = ({
         style={tableStyle}
         {...getTableProps()}
       >
-        <thead className={`bg-white ${stickyHead ? "sticky top-0 z-10" : ""}`}>
+        <thead className={`bg-white ${stickyHead ? "sticky top-0 z-01" : ""}`}>
           {headerGroups.map((headerGroup) => (
             <tr
               key={headerGroup.getHeaderGroupProps().key}
               {...headerGroup.getHeaderGroupProps()}
             >
-              {headerGroup.headers.map((column) => (
-                <th
-                  key={column.Header}
-                  className={`${tableStyles.theadHeaderClass}${
-                    column.canSort ? " cursor-pointer" : ""
-                  }`}
-                  onClick={() => setHeaderClickHandler(column)}
-                  {...column.getHeaderProps()}
-                >
-                  <div className="flex select-none">
-                    {column.render("Header")}
-                    {column.isSorted ? (
-                      <span className="ml-2">
-                        {column.isSortedDesc ? (
-                          <TiArrowSortedDown />
-                        ) : (
-                          <TiArrowSortedUp />
-                        )}
-                      </span>
-                    ) : (
-                      ""
-                    )}
-                  </div>
-                </th>
-              ))}
+              {headerGroup.headers.map((column, colIndex) =>
+                column.isGrouped ? null : (
+                  <th
+                    key={column.Header}
+                    className={`${tableStyles.theadHeaderClass}${
+                      column.canSort ? " cursor-pointer" : ""
+                    }`}
+                    onClick={() => setHeaderClickHandler(column)}
+                    {...column.getHeaderProps()}
+                  >
+                    <div
+                      className={`flex select-none${
+                        groupBy && groupBy.length && colIndex === 1
+                          ? " pl-12"
+                          : ""
+                      }`}
+                    >
+                      {column.render("Header")}
+                      {column.isSorted ? (
+                        <span className="ml-2">
+                          {column.isSortedDesc ? (
+                            <TiArrowSortedDown />
+                          ) : (
+                            <TiArrowSortedUp />
+                          )}
+                        </span>
+                      ) : (
+                        ""
+                      )}
+                    </div>
+                  </th>
+                )
+              )}
             </tr>
           ))}
         </thead>
@@ -135,41 +143,55 @@ export const DataTable = ({
                     : () => {}
                 }
               >
-                {row.cells.map((cell, cellIndex) => (
-                  <td
-                    key={cell.column.Header}
-                    className={`${tableStyles.tbodyDataClass} ${
-                      cell.column.cellClass || ""
-                    }`}
-                    {...cell.getCellProps()}
-                  >
-                    {cell.isGrouped ? (
-                      <div className="flex items-center">
+                {row.cells.map((cell, cellIndex) =>
+                  cell.isPlaceholder ? null : cell.isAggregated &&
+                    cellIndex === 1 ? null : (
+                    <td
+                      key={cell.column.Header}
+                      className={`${tableStyles.tbodyDataClass} ${
+                        cell.column.cellClass || ""
+                      }`}
+                      {...cell.getCellProps()}
+                    >
+                      {cell.isGrouped ? (
+                        <div className="flex items-center">
+                          <div
+                            className={`duration-200 mr-2 ${
+                              row.isExpanded ? "rotate-90" : ""
+                            }`}
+                          >
+                            <IoChevronForwardOutline />
+                          </div>
+                          <div className="shrink-0">{cell.render("Cell")}</div>
+                          <div className="ml-1 flex items-center">
+                            <Badge
+                              className="ml-1"
+                              colorClass="bg-gray-200 text-gray-800"
+                              roundedClass="rounded-xl"
+                              text={row?.subRows.length}
+                              size="xs"
+                            />
+                          </div>
+                        </div>
+                      ) : cell.isAggregated ? (
+                        cell.render("Aggregated")
+                      ) : (
                         <div
-                          className={`duration-200 mr-2 ${
-                            row.isExpanded ? "rotate-90" : ""
+                          className={`${
+                            groupBy &&
+                            groupBy.length &&
+                            !row?.subRows.length &&
+                            cellIndex === 1
+                              ? "pl-12"
+                              : ""
                           }`}
                         >
-                          <IoChevronForwardOutline />
+                          {cell.render("Cell")}
                         </div>
-                        <div className="shrink-0">{cell.render("Cell")}</div>
-                        <div className="ml-1 flex items-center">
-                          <Badge
-                            className="ml-1"
-                            colorClass="bg-gray-200 text-gray-800"
-                            roundedClass="rounded-xl"
-                            text={row?.subRows.length}
-                            size="xs"
-                          />
-                        </div>
-                      </div>
-                    ) : cell.isAggregated ? (
-                      cell.render("Aggregated")
-                    ) : cell.isPlaceholder ? null : (
-                      cell.render("Cell")
-                    )}
-                  </td>
-                ))}
+                      )}
+                    </td>
+                  )
+                )}
               </tr>
             );
           })}
