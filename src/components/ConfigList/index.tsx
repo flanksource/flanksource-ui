@@ -181,8 +181,10 @@ function ChangeCell({ row, column }: CellProp): JSX.Element {
     <div
       className="flex flex-row items-start"
       onClick={(e) => {
-        e.stopPropagation();
-        setShowMore((showMore) => !showMore);
+        if (changes.length > MIN_ITEMS) {
+          e.stopPropagation();
+          setShowMore((showMore) => !showMore);
+        }
       }}
     >
       {changes.length > MIN_ITEMS && (
