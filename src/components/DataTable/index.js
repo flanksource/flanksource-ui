@@ -78,6 +78,8 @@ export const DataTable = ({
     }
   };
 
+  const isGrouped = useMemo(() => !!groupBy && !!groupBy.length, [groupBy]);
+
   return (
     <div className="flex flex-col flex-1 overflow-y-auto" {...rest}>
       <table
@@ -92,7 +94,9 @@ export const DataTable = ({
               {...headerGroup.getHeaderGroupProps()}
             >
               {headerGroup.headers.map((column, colIndex) =>
-                column.isGrouped ? null : (
+                // First column goes inside the grouping column
+                // Hence the label for that is not needed
+                isGrouped && !column.isGrouped && colIndex === 1 ? null : (
                   <th
                     key={column.Header}
                     className={`${tableStyles.theadHeaderClass}${
@@ -101,13 +105,7 @@ export const DataTable = ({
                     onClick={() => setHeaderClickHandler(column)}
                     {...column.getHeaderProps()}
                   >
-                    <div
-                      className={`flex select-none${
-                        groupBy && groupBy.length && colIndex === 1
-                          ? " pl-12"
-                          : ""
-                      }`}
-                    >
+                    <div className={"flex select-none"}>
                       {column.render("Header")}
                       {column.isSorted ? (
                         <span className="ml-2">
@@ -177,11 +175,10 @@ export const DataTable = ({
                         cell.render("Aggregated")
                       ) : (
                         <div
+                          // First column should be displaced if the table
+                          // is grouped
                           className={`${
-                            groupBy &&
-                            groupBy.length &&
-                            !row?.subRows.length &&
-                            cellIndex === 1
+                            isGrouped && !row?.subRows.length && cellIndex === 1
                               ? "pl-12"
                               : ""
                           }`}
