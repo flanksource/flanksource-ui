@@ -1,4 +1,4 @@
-export default function FullPageSkeltonLoader() {
+export default function FullPageSkeletonLoader() {
   return (
     <div className="h-screen w-screen flex flex-row animate-pulse">
       <div className="flex flex-col w-56 pt-4 px-4 space-y-6 h-full bg-gray-50 border-r border-gray-300">

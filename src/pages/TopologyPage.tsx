@@ -1,27 +1,26 @@
-import { useEffect, useState } from "react";
-import { useParams, useSearchParams } from "react-router-dom";
 import qs from "qs";
+import { useEffect, useState } from "react";
+import { BsFillInfoCircleFill } from "react-icons/bs";
+import { useParams, useSearchParams } from "react-router-dom";
+import { getAll } from "../api/schemaResources";
+import { getTopology, getTopologyComponents } from "../api/services/topology";
 import { SearchLayout } from "../components/Layout";
+import { ReactSelectDropdown } from "../components/ReactSelectDropdown";
+import { schemaResourceTypes } from "../components/SchemaResourcePage/resourceTypes";
+import CardsSkeletonLoader from "../components/SkeletonLoader/CardsSkeletonLoader";
 import { toastError } from "../components/Toast/toast";
+import { TopologyBreadcrumbs } from "../components/Topology/topologyBreadcrumbs";
 import { TopologyCard } from "../components/TopologyCard";
 import { TopologyPopOver } from "../components/TopologyPopover";
-import { ReactSelectDropdown } from "../components/ReactSelectDropdown";
-import { TopologyBreadcrumbs } from "../components/Topology/topologyBreadcrumbs";
-import { schemaResourceTypes } from "../components/SchemaResourcePage/resourceTypes";
-
-import { useLoader } from "../hooks";
-import { getAll } from "../api/schemaResources";
-import { searchParamsToObj } from "../utils/common";
+import { getCardWidth } from "../components/TopologyPopover/topologyPreference";
+import { getSortedTopology } from "../components/TopologyPopover/topologySort";
+import TopologySidebar from "../components/TopologySidebar";
 import {
   Topology,
   useTopologyPageContext
 } from "../context/TopologyPageContext";
-import { getTopology, getTopologyComponents } from "../api/services/topology";
-import { getSortedTopology } from "../components/TopologyPopover/topologySort";
-import { getCardWidth } from "../components/TopologyPopover/topologyPreference";
-import TopologySidebar from "../components/TopologySidebar";
-import { BsFillInfoCircleFill } from "react-icons/bs";
-import CardsSkeltonLoader from "../components/SkeltonLoader/CardSkeltonLoader";
+import { useLoader } from "../hooks";
+import { searchParamsToObj } from "../utils/common";
 
 const allOption = {
   All: {
@@ -230,7 +229,7 @@ export function TopologyPage() {
   }, []);
 
   if ((loading && !topology) || !topology) {
-    return <CardsSkeltonLoader showBreadcrumb />;
+    return <CardsSkeletonLoader showBreadcrumb />;
   }
 
   return (
