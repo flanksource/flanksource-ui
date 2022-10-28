@@ -1,4 +1,3 @@
-import qs from "qs";
 import { useEffect, useState } from "react";
 import { BsFillInfoCircleFill } from "react-icons/bs";
 import { useParams, useSearchParams } from "react-router-dom";
@@ -80,7 +79,7 @@ export function TopologyPage() {
   const topology = topologyState.topology;
 
   const load = async () => {
-    const params = qs.parse(searchParams.toString());
+    const params = Object.fromEntries(searchParams);
 
     if (id != null) {
       params.id = id;
