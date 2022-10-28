@@ -14,8 +14,6 @@ type Props = {
 export default function TopologyDetails({ topology }: Props) {
   const topologyProperties = topology?.properties ?? [];
 
-  console.log(topologyProperties);
-
   const headline = topologyProperties?.filter((property) => property.headline);
 
   return (
