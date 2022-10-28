@@ -158,9 +158,25 @@ export function LogsPage() {
           Logs{topology ? `/${topology.name}` : ""}
         </h1>
       }
-      contentClass={`h-full ${loaded || (Boolean(logs.length) ? "p-6" : "")}`}
+      contentClass={`h-full py-4 px-6 ${
+        loaded || (Boolean(logs.length) ? "p-6" : "")
+      }`}
       extra={
-        <>
+        <ReactSelectDropdown
+          name="start"
+          className="w-44 mr-2"
+          items={timeRanges}
+          onChange={(e) => {
+            if (e) {
+              setStart(e);
+            }
+          }}
+          value={start}
+        />
+      }
+    >
+      <div className="flex flex-col space-y-6 h-full">
+        <div className="flex flex-row w-full">
           {/* @ts-expect-error */}
           <SearchableDropdown
             className="w-96"
@@ -172,6 +188,7 @@ export function LogsPage() {
             onChange={onComponentSelect}
             formatOptionLabel={formatOptionLabel}
           />
+
           <div className="mx-2 w-80 relative rounded-md shadow-sm">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
               <button
@@ -198,33 +215,21 @@ export function LogsPage() {
               value={query ?? undefined}
             />
           </div>
-          <ReactSelectDropdown
-            name="start"
-            className="w-44 mr-2"
-            items={timeRanges}
-            onChange={(e) => {
-              if (e) {
-                setStart(e);
-              }
-            }}
-            value={start}
-          />
-        </>
-      }
-    >
-      {loading
-        ? !logs.length && <Loading className="mt-40" text="Loading logs..." />
-        : !loaded && (
-            <div className="flex flex-col justify-center items-center h-5/6">
-              <h3 className="text-center font-semibold text-lg">
-                Please select a component to view the logs.
-              </h3>
-            </div>
-          )}
-      {(loaded || Boolean(logs.length)) && (
-        // @ts-expect-error
-        <LogsViewer className="pt-4" logs={logs} />
-      )}
+        </div>
+        {loading
+          ? !logs.length && <Loading className="mt-40" text="Loading logs..." />
+          : !loaded && (
+              <div className="flex flex-col justify-center items-center h-5/6">
+                <h3 className="text-center font-semibold text-lg">
+                  Please select a component to view the logs.
+                </h3>
+              </div>
+            )}
+        {(loaded || Boolean(logs.length)) && (
+          // @ts-expect-error
+          <LogsViewer className="pt-4" logs={logs} />
+        )}
+      </div>
     </SearchLayout>
   );
 }
