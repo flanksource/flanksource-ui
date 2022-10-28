@@ -1,43 +1,19 @@
 import { debounce } from "lodash";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useForm } from "react-hook-form";
 import { AiFillPlusCircle } from "react-icons/ai/";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { getIncidentsWithParams } from "../../api/services/incident";
 import { getPersons } from "../../api/services/users";
-import FilterIncidentsByComponents from "../../components/FilterIncidents/FilterIncidentsByComponents";
-import FilterIncidentsByOwner from "../../components/FilterIncidents/FilterIncidentsByOwner";
-import FilterIncidentsBySeverity from "../../components/FilterIncidents/FilterIncidentsBySeverity";
-import FilterIncidentsByStatus from "../../components/FilterIncidents/FilterIncidentsByStatus";
-import FilterIncidentsByType from "../../components/FilterIncidents/FilterIncidentsByType";
-import {
-  severityItems,
-  statusItems,
-  typeItems
-} from "../../components/Incidents/data";
+import FilterIncidents from "../../components/FilterIncidents/FilterIncidents";
 import { IncidentCreate } from "../../components/Incidents/IncidentCreate";
 import { IncidentList } from "../../components/Incidents/IncidentList";
 import { SearchLayout } from "../../components/Layout";
 import { Loading } from "../../components/Loading";
 import { Modal } from "../../components/Modal";
-import { ReactSelectDropdown } from "../../components/ReactSelectDropdown";
 import {
   IncidentState,
   useIncidentPageContext
 } from "../../context/IncidentPageContext";
-
-const defaultSelections = {
-  all: {
-    description: "All",
-    value: "all",
-    order: -1
-  }
-};
-
-const removeNullValues = (obj: Record<string, string>) =>
-  Object.fromEntries(
-    Object.entries(obj).filter(([_k, v]) => v !== null && v !== undefined)
-  );
 
 type IncidentFilters = {
   severity?: string;
@@ -68,40 +44,22 @@ function toPostgresqlSearchParam({
 }
 
 export function IncidentListPage() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const { control, getValues, watch } = useForm({
-    defaultValues: {
-      severity:
-        searchParams.get("severity") ||
-        Object.values(defaultSelections)[0].value,
-      status:
-        searchParams.get("status") || Object.values(defaultSelections)[0].value,
-      owner:
-        searchParams.get("owner") || Object.values(defaultSelections)[0].value,
-      type:
-        searchParams.get("type") || Object.values(defaultSelections)[0].value,
-      component:
-        searchParams.get("component") ||
-        Object.values(defaultSelections)[0].value
-    }
-  });
-  const [selectedLabels, setSelectedLabels] = useState([]);
+  const [searchParams] = useSearchParams();
+
+  const severity = searchParams.get("severity");
+  const status = searchParams.get("status");
+  const owner = searchParams.get("owner");
+  const type = searchParams.get("type");
+  const component = searchParams.get("component");
 
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const {
-    incidentState: { incidents, ownerSelections },
+    incidentState: { incidents },
     setIncidentState
   } = useIncidentPageContext();
-  // const [incidents, setIncidents] = useState([]);
-  const [incidentModalIsOpen, setIncidentModalIsOpen] = useState(false);
-  // const [ownerSelections, setOwnerSelections] = useState([]);
 
-  const watchSeverity = watch("severity");
-  const watchStatus = watch("status");
-  const watchOwner = watch("owner");
-  const watchType = watch("type");
-  const watchComponent = watch("component");
+  const [incidentModalIsOpen, setIncidentModalIsOpen] = useState(false);
 
   useEffect(() => {
     getPersons().then((res) => {
@@ -119,6 +77,7 @@ export function IncidentListPage() {
         });
       }
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function fetchIncidents(
@@ -174,37 +133,25 @@ export function IncidentListPage() {
     loadIncidents({});
   }, [loadIncidents]);
 
-  const saveQueryParams = useCallback(() => {
-    // NOTE: I have no idea what this does, discuss with the team, the array is
-    // a state variable, whose setter is never called, so it's always empty
-    const labelsArray = selectedLabels.map((o: any) => o.value);
-    const encodedLabels = encodeURIComponent(JSON.stringify(labelsArray));
-    const paramsList = { ...getValues(), labels: encodedLabels };
-
-    setSearchParams(removeNullValues(paramsList));
-  }, [getValues, selectedLabels, setSearchParams]);
+  const refreshIncidents = useCallback(() => {
+    loadIncidents({
+      severity: severity || undefined,
+      status: status || undefined,
+      owner: owner || undefined,
+      type: type || undefined,
+      component: component || undefined
+    });
+  }, [component, loadIncidents, owner, severity, status, type]);
 
   useEffect(() => {
-    saveQueryParams();
     loadIncidents({
-      severity: watchSeverity,
-      status: watchStatus,
-      owner: watchOwner,
-      type: watchType,
-      component: watchComponent,
-      // @ts-expect-error
-      labels: selectedLabels
+      severity: severity || undefined,
+      status: status || undefined,
+      owner: owner || undefined,
+      type: type || undefined,
+      component: component || undefined
     });
-  }, [
-    watchSeverity,
-    watchStatus,
-    watchOwner,
-    watchType,
-    selectedLabels,
-    watchComponent,
-    saveQueryParams,
-    loadIncidents
-  ]);
+  }, [severity, status, owner, type, component, loadIncidents]);
 
   return (
     <>
@@ -226,46 +173,12 @@ export function IncidentListPage() {
             </div>
           </div>
         }
-        onRefresh={() => {
-          loadIncidents({
-            severity: watchSeverity,
-            status: watchStatus,
-            owner: watchOwner,
-            type: watchType,
-            // @ts-expect-error
-            labels: selectedLabels
-          });
-        }}
+        onRefresh={() => refreshIncidents()}
       >
         <div className="leading-1.21rel">
           <div className="flex-none flex-wrap space-x-2 space-y-2">
             <div className="max-w-screen-xl mx-auto space-y-6 flex flex-col justify-center">
-              <div className="flex flex-col w-full">
-                <div className="flex flex-row space-x-4 border-b py-4 border-gray-200">
-                  <FilterIncidentsByType control={control} value={watchType} />
-
-                  <FilterIncidentsBySeverity
-                    control={control}
-                    value={watchSeverity}
-                  />
-
-                  <FilterIncidentsByStatus
-                    control={control}
-                    value={watchStatus}
-                  />
-
-                  <FilterIncidentsByOwner
-                    control={control}
-                    value={watchOwner}
-                    ownerSelections={ownerSelections}
-                  />
-
-                  <FilterIncidentsByComponents
-                    control={control}
-                    value={watchComponent}
-                  />
-                </div>
-              </div>
+              <FilterIncidents />
 
               {!isLoading || Boolean(incidents?.length) ? (
                 <>
@@ -294,14 +207,7 @@ export function IncidentListPage() {
         <IncidentCreate
           callback={(response: any) => {
             if (!response) {
-              loadIncidents({
-                severity: watchSeverity,
-                status: watchStatus,
-                owner: watchOwner,
-                type: watchType,
-                // @ts-expect-error
-                labels: selectedLabels
-              });
+              refreshIncidents();
               setIncidentModalIsOpen(false);
               return;
             }
