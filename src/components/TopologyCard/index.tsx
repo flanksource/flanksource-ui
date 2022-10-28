@@ -106,7 +106,7 @@ export function TopologyCard({
     <div
       style={{ width: CardWidth[size] || size }}
       className={clsx(
-        "rounded-8px mb-3 mr-3 shadow-card card bg-lightest-gray border-0 border-t-8 relative pb-12",
+        "rounded-8px mb-3 mr-3 shadow-card card bg-lightest-gray border-0 border-t-8 relative",
         StatusStyles[topology.status] || "border-white",
         selectionMode ? "cursor-pointer" : ""
       )}
@@ -209,13 +209,6 @@ export function TopologyCard({
           </>
         )}
       </div>
-      {topology?.components?.length && (
-        <HealthSummary
-          className="absolute bottom-0 border-0 border-t-2 p-2 w-full float-right"
-          component={topology}
-          viewType="children_level"
-        />
-      )}
     </div>
   );
 }
