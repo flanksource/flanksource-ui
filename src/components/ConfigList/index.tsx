@@ -29,6 +29,7 @@ interface TableCols {
   sortType?:
     | string
     | ((rowA: any, rowB: any, columnID: string, desc: boolean) => any);
+  maxWidth?: number;
 }
 interface Analysis {
   analysis_type: string;
@@ -57,13 +58,15 @@ const columns: TableCols[] = [
       <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-blue-100 text-blue-800">
         {value}
       </span>
-    )
+    ),
+    maxWidth: 400
   },
   {
     Header: "Analysis",
     accessor: "analysis",
     Cell: AnalysisCell,
-    Aggregated: "-"
+    Aggregated: "-",
+    maxWidth: 400
   },
   {
     Header: "Cost (per min)",
@@ -98,7 +101,8 @@ const columns: TableCols[] = [
     accessor: "tags",
     Cell: React.memo(TagsCell),
     cellClass: "overflow-auto",
-    Aggregated: "-"
+    Aggregated: "-",
+    maxWidth: 400
   },
   {
     Header: "Created",
@@ -110,7 +114,7 @@ const columns: TableCols[] = [
     Header: "Last Updated",
     accessor: "updated_at",
     Cell: DateCell,
-    aggregate: "max"
+    Aggregated: "-"
   },
   {
     Header: "Changed",
@@ -198,9 +202,9 @@ function ChangeCell({ row, column }: CellProp): JSX.Element {
 
   const renderKeys = showMore ? changes : changes.slice(0, MIN_ITEMS);
 
-  var cell: JSX.Element[] = renderKeys.map((item: any) => {
+  var cell: JSX.Element[] = renderKeys.map((item: any, index: number) => {
     return (
-      <div className="flex flex-row max-w-full">
+      <div className="flex flex-row max-w-full" key={index}>
         <div className="flex max-w-full items-center px-2.5 py-0.5 m-0.5 rounded-md text-sm font-medium bg-blue-100 text-blue-800">
           {item.change_type === "diff" ? (
             item.total
@@ -308,7 +312,7 @@ function AnalysisCell({ row, column }: CellProp): JSX.Element {
 
 function CostCell({ row, column }: CellProp): JSX.Element {
   const cost = row?.values[column.id];
-  if (!cost) {
+  if (!cost || parseFloat(cost.toFixed(2)) === 0) {
     return <span></span>;
   }
   return <FormatCurrency value={cost} />;
@@ -338,8 +342,12 @@ function ChangeAggregate(leafValues: any[]) {
   return sum;
 }
 
-function CostAggregate({ value }: { value: number | string }) {
-  return <FormatCurrency value={value} />;
+function CostAggregate({ value }: { value: number }) {
+  return !value || parseFloat(value.toFixed(2)) === 0 ? (
+    ""
+  ) : (
+    <FormatCurrency value={value} />
+  );
 }
 
 function ChangedAccessor(row: any) {
@@ -389,9 +397,10 @@ function ConfigList({ data, handleRowClick, isLoading }: Props) {
     groupBy: "config_type"
   });
 
-  const sortField = queryParams.get("sortBy");
-  const isSortOrderDesc = queryParams.get("sortOrder") === "asc" ? false : true;
   const groupByField = queryParams.get("groupBy");
+  const sortField = queryParams.get("sortBy") || groupByField;
+  const isSortOrderDesc =
+    queryParams.get("sortOrder") === "desc" ? true : false;
 
   const setSortBy = (field: string, order: "asc" | "desc") => {
     if (field === undefined && order === undefined) {
