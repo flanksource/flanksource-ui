@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AiFillWarning } from "react-icons/ai";
 import { BiDollarCircle } from "react-icons/bi";
 import { FaTasks } from "react-icons/fa";
@@ -11,6 +11,7 @@ import {
 } from "react-icons/io";
 import { MdSecurity } from "react-icons/md";
 import { useSearchParams } from "react-router-dom";
+import ReactTooltip from "react-tooltip";
 import * as timeago from "timeago.js";
 import { DataTable, Icon } from "../";
 import { FormatCurrency } from "../ConfigCosts";
@@ -41,7 +42,7 @@ const columns: TableCols[] = [
   {
     Header: "Changes",
     accessor: "changes",
-    Cell: ChangeCell
+    Cell: React.memo(ChangeCell)
   },
   {
     Header: "Analysis",
@@ -71,8 +72,7 @@ const columns: TableCols[] = [
   {
     Header: "Tags",
     accessor: "tags",
-    Cell: TagsCell,
-    cellClass: "overflow-auto"
+    Cell: React.memo(TagsCell)
   },
   {
     Header: "Created",
@@ -98,6 +98,10 @@ function TagsCell({ row, column }: CellProp): JSX.Element {
 
   const tagMap = row?.values[column.id] || {};
   const tagKeys = Object.keys(tagMap).sort();
+
+  useEffect(() => {
+    ReactTooltip.rebuild();
+  });
 
   if (tagKeys.length === 0) {
     return <div className="flex"></div>;
@@ -125,10 +129,11 @@ function TagsCell({ row, column }: CellProp): JSX.Element {
         </button>
       )}
 
-      <div className="font-mono flex flex-wrap w-96 pl-1 space-y-1">
+      <div className="font-mono flex flex-wrap w-96 max-w-[24rem] pl-1 space-y-1">
         {renderKeys.map((key) => (
           <div
-            className="bg-gray-200 border border-gray-300 px-1 py-0.75 mr-1 rounded-md text-gray-600 font-semibold text-xs"
+            data-tip={`${key}: ${tagMap[key]}`}
+            className="max-w-full overflow-hidden text-ellipsis bg-gray-200 border border-gray-300 px-1 py-0.75 mr-1 rounded-md text-gray-600 font-semibold text-xs"
             key={key}
           >
             {key}: <span className="font-light">{tagMap[key]}</span>
@@ -140,27 +145,63 @@ function TagsCell({ row, column }: CellProp): JSX.Element {
 }
 
 function ChangeCell({ row, column }: CellProp): JSX.Element {
+  const [showMore, setShowMore] = useState(false);
+
   const changes = row?.values[column.id];
+
+  useEffect(() => {
+    ReactTooltip.rebuild();
+  });
+
   if (changes == null) {
     return <span></span>;
   }
-  var cell: JSX.Element[] = [];
-  changes.forEach((item: any) => {
-    if (item.change_type === "diff") {
-      cell.push(
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-blue-100 text-blue-800">
-          {item.total}
-        </span>
-      );
-    } else {
-      cell.push(
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-blue-100 text-blue-800">
-          {item.change_type}: {item.total}
-        </span>
-      );
-    }
+
+  const renderKeys = showMore ? changes : changes.slice(0, MIN_ITEMS);
+
+  var cell: JSX.Element[] = renderKeys.map((item: any) => {
+    return (
+      <div className="flex flex-row max-w-full">
+        <div className="flex max-w-full items-center px-2.5 py-0.5 m-0.5 rounded-md text-sm font-medium bg-blue-100 text-blue-800">
+          {item.change_type === "diff" ? (
+            item.total
+          ) : (
+            <div
+              data-tip={`${item.change_type}: ${item.total}`}
+              className="flex flex-row max-w-full space-x-1 "
+            >
+              <div className="text-ellipsis overflow-hidden">
+                {item.change_type}:
+              </div>
+              <div className=""> {item.total}</div>
+            </div>
+          )}
+        </div>
+      </div>
+    );
   });
-  return <span>{cell}</span>;
+  return (
+    <div
+      className="flex flex-row items-start"
+      onClick={(e) => {
+        if (changes.length > MIN_ITEMS) {
+          e.stopPropagation();
+          setShowMore((showMore) => !showMore);
+        }
+      }}
+    >
+      {changes.length > MIN_ITEMS && (
+        <button className="text-sm focus:outline-none">
+          {showMore ? (
+            <IoMdArrowDropdown size={24} />
+          ) : (
+            <IoMdArrowDropright size={24} />
+          )}
+        </button>
+      )}
+      <div className="flex flex-col flex-1 max-w-[24rem]">{cell}</div>
+    </div>
+  );
 }
 
 function TypeCell({ row, column }: CellProp): JSX.Element {
