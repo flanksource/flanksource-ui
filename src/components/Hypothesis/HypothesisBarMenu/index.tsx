@@ -5,7 +5,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { deleteHypothesis, Hypothesis } from "../../../api/services/hypothesis";
 import { IconButton } from "../../IconButton";
 import { Menu } from "../../Menu";
-import { createIncidentQueryKey } from "../../query-hooks/useIncidentQuery";
+import { createIncidentQueryKey } from "../../../api/query-hooks";
 import { HypothesisDeleteDialog } from "../HypothesisDeleteDialog";
 
 interface IProps {

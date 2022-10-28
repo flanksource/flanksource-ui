@@ -1,25 +1,27 @@
 import { useEffect, useState } from "react";
 import { BsFillInfoCircleFill } from "react-icons/bs";
 import { useParams, useSearchParams } from "react-router-dom";
-import { getAll } from "../api/schemaResources";
-import { getTopology, getTopologyComponents } from "../api/services/topology";
+import { getTopology } from "../api/services/topology";
 import { SearchLayout } from "../components/Layout";
 import { ReactSelectDropdown } from "../components/ReactSelectDropdown";
 import { schemaResourceTypes } from "../components/SchemaResourcePage/resourceTypes";
 import CardsSkeletonLoader from "../components/SkeletonLoader/CardsSkeletonLoader";
 import { toastError } from "../components/Toast/toast";
-import { TopologyBreadcrumbs } from "../components/Topology/topologyBreadcrumbs";
 import { TopologyCard } from "../components/TopologyCard";
 import { TopologyPopOver } from "../components/TopologyPopover";
 import { getCardWidth } from "../components/TopologyPopover/topologyPreference";
 import { getSortedTopology } from "../components/TopologyPopover/topologySort";
 import TopologySidebar from "../components/TopologySidebar";
+
+import { useLoader } from "../hooks";
+import { getAll } from "../api/schemaResources";
+import { searchParamsToObj } from "../utils/common";
 import {
   Topology,
   useTopologyPageContext
 } from "../context/TopologyPageContext";
-import { useLoader } from "../hooks";
-import { searchParamsToObj } from "../utils/common";
+import { useComponentsQuery } from "../api/query-hooks";
+import { TopologyBreadcrumbs } from "../components/TopologyBreadcrumbs";
 
 const allOption = {
   All: {
@@ -75,6 +77,7 @@ export function TopologyPage() {
   const [healthStatus, setHealthStatus] = useState(
     searchParams.get("status") ?? "All"
   );
+  const { data: components } = useComponentsQuery();
 
   const topology = topologyState.topology;
 
@@ -148,13 +151,7 @@ export function TopologyPage() {
     setLoading(false);
   };
 
-  async function fetchComponents() {
-    const { data } = await getTopologyComponents();
-
-    if (!data) {
-      return;
-    }
-
+  function setupLabelsAndTypesDropdowns(data: any[]) {
     const allTypes: { [key: string]: any } = {};
     const allLabels: { [key: string]: any } = {
       ...allOption
@@ -191,13 +188,14 @@ export function TopologyPage() {
 
   useEffect(() => {
     load();
-    fetchComponents();
-
+    if (components?.data) {
+      setupLabelsAndTypesDropdowns(components.data);
+    }
     setHealthStatus(searchParams.get("status") ?? "All");
     setTopologyType(searchParams.get("type") ?? "All");
     setTeam(searchParams.get("team") ?? "All");
     setSelectedLabel(searchParams.get("labels") ?? "All");
-  }, [searchParams, id]);
+  }, [searchParams, id, components]);
 
   useEffect(() => {
     const teamsApiConfig = schemaResourceTypes.find(

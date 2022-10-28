@@ -21,7 +21,7 @@ import { SearchLayout } from "../../components/Layout";
 import { Loading } from "../../components/Loading";
 import { useCreateHypothesisMutation } from "../../components/mutations/useCreateHypothesisMutation";
 import { useUpdateHypothesisMutation } from "../../components/mutations/useUpdateHypothesisMutation";
-import { useIncidentQuery } from "../../components/query-hooks/useIncidentQuery";
+import { useIncidentQuery } from "../../api/query-hooks";
 import { CardSize, TopologyCard } from "../../components/TopologyCard";
 
 export type TreeNode<T> = T & {

@@ -79,7 +79,6 @@ export default function TopologyOpenIncidentsFilterBar({
                   <button
                     className="flex flex-row w-full"
                     onClick={() => {
-                      console.log("clicked all");
                       setFilterValues((state) => ({
                         ...state,
                         type: "all"
@@ -100,7 +99,6 @@ export default function TopologyOpenIncidentsFilterBar({
                       <button
                         className="flex flex-row w-full items-center space-x-3"
                         onClick={() => {
-                          console.log("click", key);
                           setFilterValues((state) => ({
                             ...state,
                             type: content.value as IncidentFilter["type"]

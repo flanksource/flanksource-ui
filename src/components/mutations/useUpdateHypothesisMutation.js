@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateHypothesis } from "../../api/services/hypothesis";
-import { createIncidentQueryKey } from "../query-hooks/useIncidentQuery";
+import { createIncidentQueryKey } from "../../api/query-hooks";
 
 const updateHypothesisInIncident = (incident, id, values) =>
   incident.map((i) => ({

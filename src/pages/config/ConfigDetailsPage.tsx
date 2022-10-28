@@ -25,7 +25,6 @@ export function ConfigDetailsPage() {
     getConfig(id!)
       .then((res) => {
         const data = res?.data?.[0];
-        console.log(configDetails, "Config Data");
         setConfigDetails(data);
         setTitle(
           <BreadcrumbNav

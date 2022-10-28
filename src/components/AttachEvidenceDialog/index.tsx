@@ -311,8 +311,6 @@ export function AttachEvidenceDialog({
       description: data.description
     };
 
-    console.log(evidence);
-
     createEvidence(evidence)
       .then(() => {
         toastSuccess(
