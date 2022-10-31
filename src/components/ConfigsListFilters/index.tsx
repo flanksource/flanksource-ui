@@ -4,9 +4,9 @@ import { useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useConfigPageContext } from "../../context/ConfigPageContext";
 import { QueryBuilder } from "../QueryBuilder";
-import { SearchSelectTag } from "../SearchSelectTag";
 import { Switch } from "../Switch";
 import { TextInputClearable } from "../TextInputClearable";
+import { ConfigTagFilterDropdown } from "./ConfigTagsFilterDropdown";
 import { ConfigTypeFilterDropdown } from "./ConfigTypeFilterDropdown";
 
 const ConfigFilterViewTypes = {
@@ -20,10 +20,7 @@ function ConfigsListFilters() {
     tag: "All"
   });
 
-  const {
-    setConfigState,
-    configState: { data }
-  } = useConfigPageContext();
+  const { setConfigState } = useConfigPageContext();
 
   const [configFilterView, setConfigFilterView] = useState(() =>
     params.get("query")
@@ -32,18 +29,10 @@ function ConfigsListFilters() {
   );
 
   const configType = params.get("type");
-  const tag = params.get("tag");
 
   const options = useMemo(() => {
     return [ConfigFilterViewTypes.basic, ConfigFilterViewTypes.advanced];
   }, []);
-
-  const configTagItems = useMemo(() => {
-    if (!data) return [];
-    return data.flatMap((d) => {
-      return Object.entries(d?.tags || {});
-    });
-  }, [data]);
 
   return (
     <div className="flex space-x-2 mr-4">
@@ -72,16 +61,7 @@ function ConfigsListFilters() {
             }}
           />
 
-          <span className="w-80">
-            <SearchSelectTag
-              tags={configTagItems}
-              value={tag ?? ""}
-              onChange={(ct) => {
-                params.set("tag", encodeURIComponent(ct.value || ""));
-                setParams(params);
-              }}
-            />
-          </span>
+          <ConfigTagFilterDropdown />
 
           {/* @ts-expect-error */}
           <TextInputClearable

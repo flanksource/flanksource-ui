@@ -1,4 +1,5 @@
-import { ComponentProps, useState } from "react";
+import { ComponentProps } from "react";
+import { useSearchParams } from "react-router-dom";
 import { ReactSelectDropdown } from "../ReactSelectDropdown";
 
 export function ConfigTypeFilterDropdown({
@@ -25,17 +26,17 @@ export function ConfigTypeFilterDropdown({
     }
   };
 
-  const [selected, setSelected] = useState<string | undefined>(
-    Object.values(items)[0].value
-  );
+  const [params, setParams] = useSearchParams();
 
   return (
     <ReactSelectDropdown
       {...props}
       items={items}
       name="type"
-      onChange={(value) => setSelected(value)}
-      value={selected}
+      onChange={(value) =>
+        setParams({ ...Object.fromEntries(params), type: value ?? "" })
+      }
+      value={params.get("type") ?? "All"}
       className="w-auto max-w-[400px]"
       dropDownClassNames="w-auto max-w-[400px] left-0"
       hideControlBorder
