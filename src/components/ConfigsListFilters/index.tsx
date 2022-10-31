@@ -1,13 +1,13 @@
 import { debounce } from "lodash";
-import React, { ComponentProps } from "react";
+import React from "react";
 import { useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useConfigPageContext } from "../../context/ConfigPageContext";
 import { QueryBuilder } from "../QueryBuilder";
-import { ReactSelectDropdown } from "../ReactSelectDropdown";
 import { SearchSelectTag } from "../SearchSelectTag";
 import { Switch } from "../Switch";
 import { TextInputClearable } from "../TextInputClearable";
+import { ConfigTypeFilterDropdown } from "./ConfigTypeFilterDropdown";
 
 const ConfigFilterViewTypes = {
   basic: "Basic",
@@ -106,51 +106,6 @@ function ConfigsListFilters() {
         value={configFilterView}
       />
     </div>
-  );
-}
-
-function ConfigTypeFilterDropdown({
-  ...props
-}: ComponentProps<typeof ReactSelectDropdown>) {
-  const items = {
-    All: {
-      id: "All",
-      name: "All",
-      description: "All",
-      value: "All"
-    },
-    EC2Instance: {
-      id: "EC2Instance",
-      name: "EC2 Instance",
-      description: "EC2 Instance",
-      value: "EC2Instance"
-    },
-    Subnet: {
-      id: "Subnet",
-      name: "Subnet",
-      description: "Subnet",
-      value: "Subnet"
-    }
-  };
-
-  const [selected, setSelected] = useState<any>(Object.values(items)[0].value);
-
-  return (
-    <ReactSelectDropdown
-      {...props}
-      items={items}
-      name="type"
-      onChange={(value) => setSelected(value)}
-      value={selected}
-      className="w-auto max-w-[400px]"
-      dropDownClassNames="w-auto max-w-[400px] left-0"
-      hideControlBorder
-      prefix={
-        <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
-          Type:
-        </div>
-      }
-    />
   );
 }
 
