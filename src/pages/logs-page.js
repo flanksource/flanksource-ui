@@ -13,6 +13,7 @@ import { timeRanges } from "../components/Dropdown/TimeRange";
 import { Icon } from "../components";
 import { SearchableDropdown } from "../components/SearchableDropdown";
 import { ReactSelectDropdown } from "../components/ReactSelectDropdown";
+import { useComponentsQuery } from "../api/query-hooks";
 
 export const logTypes = [
   {
@@ -65,6 +66,7 @@ export function LogsPage() {
   const [start, setStart] = useState(
     searchParams.get("start") || timeRanges[0].value
   );
+  const { data: components } = useComponentsQuery({});
 
   const [topologies, setTopologies] = useState([]);
   const [logs, setLogs] = useState([]);
@@ -87,21 +89,18 @@ export function LogsPage() {
   }, [topologyId]);
 
   useEffect(() => {
-    async function fetchTopologies() {
-      try {
-        let { data } = await getTopologyComponents();
-        data = data
-          .filter((item) => {
-            item.label = item.name;
-            item.value = item.id;
-            return item.external_id;
-          })
-          .sort((a, b) => a.label.localeCompare(b.label));
-        setTopologies(data);
-      } catch (ex) {}
+    if (!components?.data) {
+      return;
     }
-    fetchTopologies();
-  }, []);
+    const data = components.data
+      .filter((item) => {
+        item.label = item.name;
+        item.value = item.id;
+        return item.external_id;
+      })
+      .sort((a, b) => a.label.localeCompare(b.label));
+    setTopologies(data);
+  }, [components]);
 
   const saveQueryParams = () => {
     const paramsList = { query, topologyId, externalId, start, type };

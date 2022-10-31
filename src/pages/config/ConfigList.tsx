@@ -5,7 +5,6 @@ import {
   useSearchParams,
   useOutletContext
 } from "react-router-dom";
-import { getAllConfigs } from "../../api/services/configs";
 import { filterConfigsByText } from "../../components/ConfigViewer/utils";
 import { BreadcrumbNav } from "../../components/BreadcrumbNav";
 import { TextInputClearable } from "../../components/TextInputClearable";
@@ -14,9 +13,9 @@ import { SearchSelectTag } from "../../components/SearchSelectTag";
 import { QueryBuilder } from "../../components/QueryBuilder";
 import { Switch } from "../../components/Switch";
 import { RefreshButton } from "../../components/RefreshButton";
-import { useLoader } from "../../hooks";
 import { useConfigPageContext } from "../../context/ConfigPageContext";
 import { ReactSelectDropdown } from "../../components/ReactSelectDropdown";
+import { useAllConfigsQuery } from "../../api/query-hooks";
 
 const ConfigFilterViewTypes = {
   basic: "Basic",
@@ -30,7 +29,6 @@ export function ConfigListPage() {
     configState: { data, filteredData },
     setConfigState
   } = useConfigPageContext();
-  const { loading, setLoading } = useLoader();
   const { setTitle, setTitleExtras } = useOutletContext<any>();
   const [configFilterView, setConfigFilterView] = useState(
     params.get("query")
@@ -48,6 +46,13 @@ export function ConfigListPage() {
     });
   }, [data]);
 
+  const {
+    data: allConfigs,
+    isLoading,
+    isRefetching,
+    refetch: refetchLogs
+  } = useAllConfigsQuery({});
+
   const search = params.get("search");
   const tag = decodeURIComponent(params.get("tag") || "All");
   const configType = decodeURIComponent(params.get("type") || "All");
@@ -56,26 +61,20 @@ export function ConfigListPage() {
     if (params.get("query")) {
       return;
     }
-    fetchAllConfigs();
-  }, [configFilterView, params]);
+    if (!allConfigs?.data) {
+      return;
+    }
+    setConfigState((state) => {
+      return {
+        ...state,
+        data: allConfigs.data
+      };
+    });
+  }, [configFilterView, params, allConfigs]);
 
-  function fetchAllConfigs() {
-    setLoading(true);
-    getAllConfigs()
-      .then((res) => {
-        setConfigState((state) => {
-          return {
-            ...state,
-            data: res.data
-          };
-        });
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error(err);
-        setLoading(false);
-      });
-  }
+  const loading = useMemo(() => {
+    return isLoading || isRefetching;
+  }, [isLoading, isRefetching]);
 
   const handleRowClick = (row?: { original?: { id: string } }) => {
     const id = row?.original?.id;
@@ -102,7 +101,7 @@ export function ConfigListPage() {
 
       {configFilterView === ConfigFilterViewTypes.basic && (
         <>
-          <RefreshButton onClick={() => fetchAllConfigs()} animate={loading} />
+          <RefreshButton onClick={() => refetchLogs()} animate={loading} />
           <TypeDropdown
             value={configType}
             onChange={(ct: any) => {
