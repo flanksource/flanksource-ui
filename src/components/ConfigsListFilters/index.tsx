@@ -102,7 +102,6 @@ function ConfigsListFilters({ loading }: Props) {
         </>
       )}
 
-      {/* @ts-expect-error */}
       <Switch
         onChange={(e: string) => {
           setConfigFilterView(e);
