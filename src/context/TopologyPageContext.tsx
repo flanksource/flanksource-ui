@@ -27,6 +27,7 @@ export type Topology = {
   path?: string;
   icon?: string;
   text?: string;
+  status?: string;
 };
 
 export type TopologyState = {

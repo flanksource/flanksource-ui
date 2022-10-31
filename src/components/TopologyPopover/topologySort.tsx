@@ -9,6 +9,7 @@ import { useOnMouseActivity } from "../../hooks/useMouseActivity";
 
 import type { Topology, ValueType } from "../../context/TopologyPageContext";
 import { uniq } from "lodash";
+import { saveSortBy, saveSortOrder } from "../../pages/TopologyPage";
 
 const STATUS = {
   info: 0,
@@ -18,15 +19,15 @@ const STATUS = {
 };
 
 export const defaultSortLabels = [
-  { id: 1, value: "status", label: "Health" },
-  { id: 2, value: "name", label: "Name" },
-  { id: 3, value: "type", label: "Type" },
-  { id: 4, value: "updated_at", label: "Last Updated" }
+  { id: 1, value: "status", label: "Health", standard: true },
+  { id: 2, value: "name", label: "Name", standard: true },
+  { id: 3, value: "type", label: "Type", standard: true },
+  { id: 4, value: "updated_at", label: "Last Updated", standard: true }
 ];
 
 export function getSortLabels(topology: Topology[]) {
   const currentSortLabels: typeof defaultSortLabels = [];
-  let labels: { string: boolean } = {};
+  let labels: Record<string, boolean> = {};
   topology?.forEach((t) => {
     t?.properties?.forEach((h, index) => {
       if (!h.name) {
@@ -37,7 +38,8 @@ export function getSortLabels(topology: Topology[]) {
         currentSortLabels.push({
           id: defaultSortLabels.length + index,
           value: (h.name ?? "").toLowerCase(),
-          label: h.name ?? ""
+          label: h.name ?? "",
+          standard: false
         });
       }
     });
@@ -102,6 +104,8 @@ export function getSortedTopology(
   return updatedTopology;
 }
 
+type SortLabel = typeof defaultSortLabels;
+
 export const TopologySort = ({
   title = "Sort By",
   sortLabels,
@@ -111,7 +115,7 @@ export const TopologySort = ({
   title?: string;
   searchParams: URLSearchParams;
   setSearchParams: SetURLSearchParams;
-  sortLabels: typeof defaultSortLabels;
+  sortLabels: SortLabel;
 }) => {
   const {
     ref: popoverRef,
@@ -135,6 +139,8 @@ export const TopologySort = ({
     } else {
       setSearchParams(newSearchParams);
     }
+    saveSortBy(newSearchParams.sortBy, sortLabels);
+    saveSortOrder(newSearchParams.sortOrder);
     setIsPopoverActive(false);
   }
 
@@ -196,7 +202,7 @@ export const TopologySort = ({
           <div className="flex flex-col">
             {sortLabels.map((s) => (
               <span
-                key={s.id}
+                key={s.value}
                 onClick={() =>
                   onSelectSortOption(
                     s.value,

@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react";
 import { NavigateOptions, URLSearchParamsInit } from "react-router-dom";
 
 import { TopologyPreference } from "./topologyPreference";
-import { defaultSortLabels, getSortLabels, TopologySort } from "./topologySort";
+import { defaultSortLabels, TopologySort } from "./topologySort";
 
 export type SetURLSearchParams = (
   nextInit?:
@@ -14,22 +13,16 @@ export type SetURLSearchParams = (
 export const TopologyPopOver = ({
   size,
   setSize,
-  topology,
+  sortLabels,
   searchParams,
   setSearchParams
 }: {
   size: string;
-  topology: any[];
+  sortLabels: typeof defaultSortLabels;
   setSize: (v: string) => void;
   searchParams: URLSearchParams;
   setSearchParams: SetURLSearchParams;
 }) => {
-  const [sortLabels, setSortLabels] = useState<typeof defaultSortLabels>([]);
-
-  useEffect(() => {
-    setSortLabels(getSortLabels(topology));
-  }, [searchParams, topology]);
-
   const setCardWidth = (width: string) => {
     setSize(`${width}px`);
     localStorage.setItem("topology_card_width", `${width}px`);
