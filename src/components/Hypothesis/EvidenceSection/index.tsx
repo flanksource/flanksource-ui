@@ -371,7 +371,7 @@ function HealthEvidenceViewer({
   };
 
   return (
-    <div className="w-full h-84">
+    <div className="w-full h-84 bg-white">
       {check && evidenceDetailsView()}
       <Modal
         open={showModal}
