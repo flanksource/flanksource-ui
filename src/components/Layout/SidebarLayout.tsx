@@ -12,7 +12,7 @@ import { NavigationItems, SettingsNavigationItems } from "../../App";
 import { AuthContext } from "../../context";
 import { useOuterClick } from "../../lib/useOuterClick";
 import { getLocalItem, setLocalItem } from "../../utils/storage";
-import FullPageSkeltonLoader from "../SkeltonLoader/FullPageSkeltonLoader";
+import FullPageSkeletonLoader from "../SkeletonLoader/FullPageSkeletonLoader";
 import { Icon } from "../Icon";
 
 interface Props {
@@ -239,7 +239,7 @@ export function SidebarLayout({ navigation, settingsNav }: Props) {
   // [TODO] user comes context, probably show an error here instead of a loading
   // animation
   if (user == null) {
-    return <FullPageSkeltonLoader />;
+    return <FullPageSkeletonLoader />;
   }
 
   return (
