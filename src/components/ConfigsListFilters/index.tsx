@@ -19,7 +19,10 @@ type Props = {
 };
 
 function ConfigsListFilters({ loading }: Props) {
-  const [params, setParams] = useSearchParams();
+  const [params, setParams] = useSearchParams({
+    type: "All",
+    tag: "All"
+  });
 
   const {
     setConfigState,
@@ -32,8 +35,8 @@ function ConfigsListFilters({ loading }: Props) {
       : ConfigFilterViewTypes.basic
   );
 
-  const configType = params.get("type") || "All";
-  const tag = params.get("tag") || "All";
+  const configType = params.get("type");
+  const tag = params.get("tag");
 
   const options = useMemo(() => {
     return [ConfigFilterViewTypes.basic, ConfigFilterViewTypes.advanced];
@@ -41,28 +44,30 @@ function ConfigsListFilters({ loading }: Props) {
 
   const configTagItems: any = useMemo(() => {
     if (!data) return [];
-    data.flatMap((d) => {
+    return data.flatMap((d) => {
       return Object.entries(d?.tags || {});
     });
   }, [data]);
 
+  console.log("configTagItems", configTagItems);
+
   return (
     <div className="flex space-x-2 mr-4">
-      {configFilterView === ConfigFilterViewTypes.advanced && (
-        /* @ts-expect-error */
-        <QueryBuilder
-          refreshConfigs={(e: any) => {
-            setConfigState((state) => {
-              return {
-                ...state,
-                data: e
-              };
-            });
-          }}
-        />
-      )}
-
-      {configFilterView === ConfigFilterViewTypes.basic && (
+      {configFilterView === ConfigFilterViewTypes.advanced ? (
+        <>
+          {/* @ts-expect-error */}
+          <QueryBuilder
+            refreshConfigs={(e: any) => {
+              setConfigState((state) => {
+                return {
+                  ...state,
+                  data: e
+                };
+              });
+            }}
+          />
+        </>
+      ) : (
         <>
           <TypeDropdown
             value={configType}
@@ -75,7 +80,7 @@ function ConfigsListFilters({ loading }: Props) {
           <span className="w-80">
             <SearchSelectTag
               tags={configTagItems}
-              value={tag}
+              value={tag ?? ""}
               onChange={(ct) => {
                 params.set("tag", encodeURIComponent(ct.value || ""));
                 setParams(params);
