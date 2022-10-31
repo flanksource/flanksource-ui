@@ -14,11 +14,7 @@ const ConfigFilterViewTypes = {
   advanced: "Advanced"
 };
 
-type Props = {
-  loading: boolean;
-};
-
-function ConfigsListFilters({ loading }: Props) {
+function ConfigsListFilters() {
   const [params, setParams] = useSearchParams({
     type: "All",
     tag: "All"
@@ -48,8 +44,6 @@ function ConfigsListFilters({ loading }: Props) {
       return Object.entries(d?.tags || {});
     });
   }, [data]);
-
-  console.log("configTagItems", configTagItems);
 
   return (
     <div className="flex space-x-2 mr-4">

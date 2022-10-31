@@ -40,7 +40,7 @@ export function ConfigListPage() {
         setConfigState((state) => {
           return {
             ...state,
-            data: res.data
+            data: res.data ?? undefined
           };
         });
         setLoading(false);
@@ -79,30 +79,38 @@ export function ConfigListPage() {
       }
 
       if (tag && tag !== "All") {
-        filteredData = filteredData!.filter((d) => {
-          if (Array.isArray(tag)) {
-            const kvs = tag.map((x) => x.split("__:__"));
-            return kvs.some(([key, val]) => d.tags[key] === val);
-          } else {
-            const [k, v] = tag.split("__:__");
-            return d.tags[k] === v;
-          }
-        });
+        filteredData = filteredData
+          ?.filter((d) => d.tags)!
+          .filter((d) => {
+            if (!d.tags) {
+              return false;
+            }
+            if (Array.isArray(decodeURI(tag))) {
+              const kvs = (decodeURI(tag) as unknown as string[]).map((x) =>
+                x.split("__:__")
+              );
+              return kvs.some(([key, val]) => d.tags?.[key] === val);
+            } else {
+              const [k, v] = decodeURI(tag).split("__:__");
+              return !!Object.entries(d.tags).find(
+                ([key, value]) => value === v && key === k
+              );
+            }
+          });
       }
     }
     setConfigState((state) => {
       return {
         ...state,
-        filteredData
+        filteredData: filteredData
       };
     });
-    // setFilteredData(filteredData);
   }, [data, search, configType, tag]);
 
   return (
     <div className="flex flex-col h-full space-y-6 px-4 py-4">
       <div className="flex flex-row items-center">
-        <ConfigsListFilters loading={loading} />
+        <ConfigsListFilters />
       </div>
       <ConfigList
         data={filteredData!}

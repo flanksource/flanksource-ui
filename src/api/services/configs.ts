@@ -11,7 +11,14 @@ export interface ConfigItem {
   id: string;
   changes: Change[];
   analysis: Analysis[];
-  tags: Record<string, unknown>;
+  type: string;
+  tags?: Record<string, any>;
+  created_at: string;
+  updated_at: string;
+  cost_per_minute?: number;
+  cost_total_1d?: number;
+  cost_total_7d?: number;
+  cost_total_30d?: number;
 }
 
 interface Change {
@@ -23,6 +30,8 @@ interface Analysis {
   category: string;
   severity: string;
   description: string;
+  analysis_type: string;
+  analyzer: string;
 }
 
 // Config Items
