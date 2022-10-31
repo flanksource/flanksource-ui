@@ -4,11 +4,12 @@ import { BsSortDown, BsSortUp } from "react-icons/bs";
 import { SetURLSearchParams } from "../TopologyPopover";
 
 import { isDate } from "../../utils/date";
-import { searchParamsToObj } from "../../utils/common";
+import { delay, searchParamsToObj } from "../../utils/common";
 import { useOnMouseActivity } from "../../hooks/useMouseActivity";
 
 import type { Topology, ValueType } from "../../context/TopologyPageContext";
 import { uniq } from "lodash";
+import { useEffect } from "react";
 
 const STATUS = {
   info: 0,
@@ -135,8 +136,25 @@ export const TopologySort = ({
     } else {
       setSearchParams(newSearchParams);
     }
+    localStorage.setItem(`topologyCardsSortBy`, newSearchParams.sortBy);
+    localStorage.setItem(`topologyCardsSortOrder`, newSearchParams.sortOrder);
     setIsPopoverActive(false);
   }
+
+  useEffect(() => {
+    const setupQueryParams = async () => {
+      const sortBy = localStorage.getItem("topologyCardsSortBy") || "status";
+      const sortOrder =
+        localStorage.getItem("topologyCardsSortOrder") || "desc";
+      await delay(2000);
+      setSearchParams({
+        ...searchParamsToObj(searchParams),
+        sortBy,
+        sortOrder
+      });
+    };
+    setupQueryParams();
+  }, [searchParams, setSearchParams]);
 
   const sortBy = searchParams.get("sortBy") ?? "status";
   const sortByDirection = searchParams.get("sortOrder") ?? "desc";
