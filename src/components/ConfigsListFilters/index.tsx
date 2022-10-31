@@ -1,5 +1,5 @@
 import { debounce } from "lodash";
-import React from "react";
+import React, { ComponentProps } from "react";
 import { useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useConfigPageContext } from "../../context/ConfigPageContext";
@@ -38,7 +38,7 @@ function ConfigsListFilters() {
     return [ConfigFilterViewTypes.basic, ConfigFilterViewTypes.advanced];
   }, []);
 
-  const configTagItems: any = useMemo(() => {
+  const configTagItems = useMemo(() => {
     if (!data) return [];
     return data.flatMap((d) => {
       return Object.entries(d?.tags || {});
@@ -63,7 +63,8 @@ function ConfigsListFilters() {
         </>
       ) : (
         <>
-          <TypeDropdown
+          <ConfigTypeFilterDropdown
+            // @ts-expect-error
             value={configType}
             onChange={(ct: any) => {
               params.set("type", encodeURIComponent(ct || ""));
@@ -108,7 +109,9 @@ function ConfigsListFilters() {
   );
 }
 
-const TypeDropdown = ({ ...rest }) => {
+function ConfigTypeFilterDropdown({
+  ...props
+}: ComponentProps<typeof ReactSelectDropdown>) {
   const items = {
     All: {
       id: "All",
@@ -134,19 +137,21 @@ const TypeDropdown = ({ ...rest }) => {
 
   return (
     <ReactSelectDropdown
+      {...props}
       items={items}
       name="type"
       onChange={(value) => setSelected(value)}
       value={selected}
-      className="w-64"
+      className="w-auto max-w-[400px]"
+      dropDownClassNames="w-auto max-w-[400px] left-0"
+      hideControlBorder
       prefix={
         <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
           Type:
         </div>
       }
-      {...rest}
     />
   );
-};
+}
 
 export default React.memo(ConfigsListFilters);
