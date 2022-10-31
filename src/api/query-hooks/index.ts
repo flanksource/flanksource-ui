@@ -12,8 +12,14 @@ export const useIncidentQuery = (id = "") => {
   );
 };
 
-export const useComponentsQuery = () => {
+export const useComponentsQuery = ({
+  enabled = true,
+  staleTime = defaultStaleTime,
+  ...rest
+}) => {
   return useQuery(["allcomponents"], getTopologyComponents, {
-    staleTime: defaultStaleTime
+    staleTime,
+    enabled,
+    ...rest
   });
 };

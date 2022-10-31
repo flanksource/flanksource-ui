@@ -77,7 +77,7 @@ export function TopologyPage() {
   const [healthStatus, setHealthStatus] = useState(
     searchParams.get("status") ?? "All"
   );
-  const { data: components } = useComponentsQuery();
+  const { data: components } = useComponentsQuery({});
 
   const topology = topologyState.topology;
 
