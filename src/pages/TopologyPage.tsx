@@ -76,7 +76,7 @@ export function TopologyPage() {
   const [healthStatus, setHealthStatus] = useState(
     searchParams.get("status") ?? "All"
   );
-
+  const refererId = searchParams.get("refererId");
   const topology = topologyState.topology;
 
   const load = async () => {
@@ -193,7 +193,7 @@ export function TopologyPage() {
     <SearchLayout
       title={
         <div className="flex text-xl text-gray-400">
-          <TopologyBreadcrumbs topologyId={id} />
+          <TopologyBreadcrumbs topologyId={id} refererId={refererId} />
         </div>
       }
       onRefresh={() => {
