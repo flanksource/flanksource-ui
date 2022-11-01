@@ -47,11 +47,3 @@ export function formatBytes(bytes, decimals = 2) {
 export function searchParamsToObj(searchParams) {
   return parse(searchParams.toString());
 }
-
-export function delay(time = 1000) {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve();
-    }, time);
-  });
-}
