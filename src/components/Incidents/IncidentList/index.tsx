@@ -5,12 +5,17 @@ import { AvatarGroup } from "../../AvatarGroup";
 import { IncidentStatusTag } from "../../IncidentStatusTag";
 import { IncidentSeverityTag } from "../../IncidentSeverityTag";
 import { IncidentTypeTag } from "../../incidentTypeTag";
+import { Incident } from "../../../api/services/incident";
 
-export function IncidentList({ list, ...rest }) {
+type Props = {
+  list: Incident[];
+} & React.HTMLAttributes<HTMLTableElement>;
+
+export function IncidentList({ list, ...rest }: Props) {
   return (
-    <div className="border border-gray-200 rounded-md w-full">
+    <div className="flex flex-col overflow-y-auto flex-1 border border-gray-200 rounded-md w-full">
       <table className="table-auto w-full" aria-label="table" {...rest}>
-        <thead className="rounded-md">
+        <thead className="rounded-md sticky top-0">
           <tr className="border-b border-gray-200 uppercase bg-column-background rounded-t-md items-center">
             <th className="px-3 py-3 text-gray-500 font-medium text-xs text-left w-40">
               Type
@@ -48,7 +53,7 @@ export function IncidentList({ list, ...rest }) {
   );
 }
 
-function IncidentItem({ incident }) {
+function IncidentItem({ incident }: { incident: Incident }) {
   const {
     title,
     id,
@@ -57,7 +62,7 @@ function IncidentItem({ incident }) {
   } = incident;
   const age = dayjs(createdAt).fromNow();
   const navigate = useNavigate();
-  const navigateToIncidentDetails = (id) => {
+  const navigateToIncidentDetails = (id: string) => {
     navigate(`/incidents/${id}`);
   };
 
@@ -68,7 +73,7 @@ function IncidentItem({ incident }) {
     >
       <td className="py-4 px-3">
         <div className="flex flex-row items-center">
-          <IncidentTypeTag type={incident.type} />
+          <IncidentTypeTag type={incident.type!} />
         </div>
       </td>
       <td className="py-4 px-3">
@@ -77,7 +82,7 @@ function IncidentItem({ incident }) {
         </div>
       </td>
       <td className="px-3 py-4 shrink-0">
-        <IncidentStatusTag status={incident.status} />
+        <IncidentStatusTag status={incident.status!} />
       </td>
       <td
         colSpan={2}

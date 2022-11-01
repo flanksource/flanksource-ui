@@ -174,12 +174,12 @@ export function IncidentListPage() {
           </div>
         }
         onRefresh={() => refreshIncidents()}
+        contentClass="flex flex-col h-full"
       >
-        <div className="leading-1.21rel">
-          <div className="flex-none flex-wrap space-x-2 space-y-2">
-            <div className="max-w-screen-xl mx-auto space-y-6 flex flex-col justify-center">
+        <div className="flex flex-col h-full leading-1.21rel">
+          <div className="flex-col flex-1 h-full space-x-2 space-y-2">
+            <div className="max-w-screen-xl mx-auto h-full space-y-6 flex flex-col justify-center">
               <FilterIncidents />
-
               {!isLoading || Boolean(incidents?.length) ? (
                 <>
                   <IncidentList list={incidents || []} />
