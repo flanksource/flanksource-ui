@@ -28,7 +28,7 @@ import { useHealthPageContext } from "../../context/HealthPageContext";
 import { isCanaryUI } from "../../context/Environment";
 import clsx from "clsx";
 import dayjs from "dayjs";
-import HealthPageSkeltonLoader from "../SkeltonLoader/HealthPageSkeltonLoader";
+import HealthPageSkeletonLoader from "../SkeletonLoader/HealthPageSkeletonLoader";
 
 const FilterKeyToLabelMap = {
   environment: "Environment",
@@ -176,7 +176,7 @@ export function Canary({
   }, 400);
 
   if (isLoading && !checks.length) {
-    return <HealthPageSkeltonLoader showSidebar />;
+    return <HealthPageSkeletonLoader showSidebar />;
   }
 
   return (

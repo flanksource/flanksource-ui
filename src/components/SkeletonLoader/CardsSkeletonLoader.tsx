@@ -2,7 +2,7 @@ type Props = {
   showBreadcrumb?: boolean;
 };
 
-export default function CardsSkeltonLoader({ showBreadcrumb = false }: Props) {
+export default function CardsSkeletonLoader({ showBreadcrumb = false }: Props) {
   return (
     <div className="flex flex-col w-full h-full animate-pulse">
       <div className="flex flex-col w-full">

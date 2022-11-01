@@ -1,7 +1,7 @@
 type Props = {
   showSidebar?: boolean;
 };
-export default function HealthPageSkeltonLoader({
+export default function HealthPageSkeletonLoader({
   showSidebar = false
 }: Props) {
   return (

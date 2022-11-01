@@ -34,7 +34,7 @@ import { HealthPageContextProvider } from "./context/HealthPageContext";
 import { ConfigPageContextProvider } from "./context/ConfigPageContext";
 import { IncidentPageContextProvider } from "./context/IncidentPageContext";
 import { User } from "./api/services/users";
-import FullPageSkeltonLoader from "./components/SkeltonLoader/FullPageSkeltonLoader";
+import FullPageSkeletonLoader from "./components/SkeletonLoader/FullPageSkeletonLoader";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -190,7 +190,7 @@ export function CanaryCheckerApp() {
   // TODO(ciju): the url is set at two places. axios.js#CanaryChecker and here.
   // Consolidate logic to one place.
   if (typeof window === "undefined") {
-    return <FullPageSkeltonLoader />;
+    return <FullPageSkeletonLoader />;
   }
 
   return (
@@ -216,7 +216,7 @@ export function App() {
   }, []);
 
   if (!user) {
-    return <FullPageSkeltonLoader />;
+    return <FullPageSkeletonLoader />;
   }
 
   return (
