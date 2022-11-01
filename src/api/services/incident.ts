@@ -34,6 +34,7 @@ export interface Incident extends NewIncident {
   parent_id: string;
   hypotheses: Hypothesis[];
   created_at: string;
+  involved: User[];
 }
 
 export const searchIncident = (query: string) => {
