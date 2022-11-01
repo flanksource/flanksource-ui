@@ -116,11 +116,11 @@ export default function TopologyCardIncidentSummary({ topologyID }: Props) {
           Array.from(incidentSummary.entries()).map(([type, count]) => (
             <div
               key={type}
-              className="flex flex-row space-x-2 items-center rounded text-black"
+              className="flex flex-row space-x-1 items-center rounded text-black"
             >
-              <div className="flex flex-row space-x-2 items-center">
-                {typeItems[type].icon}
-                <span>{typeItems[type].description}</span>
+              <div className="flex flex-row space-x-1 items-center">
+                <div>{typeItems[type].icon}</div>
+                <div className="text-xs">{typeItems[type].description}</div>
               </div>
               <div className="flex flex-row space-x-2">
                 {count.map(
