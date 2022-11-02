@@ -138,17 +138,20 @@ export const ReactSelectDropdown = ({
           </label>
           <div
             className={clsx(
-              `relative cursor-pointer h-full rounded-md shadow-sm pl-3 pr-10 py-2 text-left  focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm
+              `relative cursor-pointer h-full pl-3 rounded-md pr-10 py-2 text-left  focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm
                 ${SelectedOption?.id === "_empty" && "text-gray-400"}
               `,
               className,
-              !hideControlBorder && "bg-white border border-gray-300",
-              hideControlBorder ? (isOpen ? "bg-blue-100" : "bg-gray-100") : ""
+              !hideControlBorder &&
+                "bg-white border border-white-300 shadow-sm",
+              hideControlBorder ? (isOpen ? "bg-gray-100" : "bg-white") : ""
             )}
             onClick={toggleOpen}
           >
             <div className="flex space-x-2 items-center">
-              {prefix && <div className="flex flex-col"> {prefix} </div>}
+              {prefix && (
+                <div className="flex flex-col text-gray-600"> {prefix} </div>
+              )}
               <div className="flex space-x-1 items-center">
                 {SelectedOption?.icon && <div>{SelectedOption.icon}</div>}
                 <span className="block truncate">
