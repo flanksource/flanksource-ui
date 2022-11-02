@@ -24,7 +24,7 @@ export function useTopologyBreadcrumb({
     const rootTopology = components.data.find(
       (item: Record<string, string>) => item.id === topologyId
     );
-    const items: any[] = [];
+    const items: Pick<Topology, "text" | "name" | "id" | "icon">[] = [];
     let ids =
       rootTopology?.path?.split(".").filter((v: string) => v.trim()) || [];
     ids = [...ids, topologyId];
@@ -33,7 +33,12 @@ export function useTopologyBreadcrumb({
         (v: Record<string, string>) => v.id === id
       );
       if (item) {
-        items.push(item);
+        items.push({
+          id: item.id,
+          icon: item.icon,
+          name: item.name,
+          text: item.text
+        });
       }
     });
     setPathTopology(items);
