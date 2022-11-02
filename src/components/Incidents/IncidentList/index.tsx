@@ -11,10 +11,14 @@ type Props = {
   list: Incident[];
 } & React.HTMLAttributes<HTMLTableElement>;
 
-export function IncidentList({ list, ...rest }: Props) {
+export function IncidentList({ list, ...props }: Props) {
   return (
-    <div className="flex flex-col overflow-y-auto flex-1 border border-gray-200 rounded-md w-full">
-      <table className="table-auto w-full" aria-label="table" {...rest}>
+    <div className="flex flex-col overflow-y-auto flex-1  w-full">
+      <table
+        className="table-auto w-full border border-gray-200 rounded-md"
+        aria-label="table"
+        {...props}
+      >
         <thead className="rounded-md sticky top-0">
           <tr className="border-b border-gray-200 uppercase bg-column-background rounded-t-md items-center">
             <th className="px-3 py-3 text-gray-500 font-medium text-xs text-left w-40">
