@@ -63,7 +63,7 @@ export default function FilterIncidents() {
   ]);
 
   return (
-    <div className="flex flex-col w-full">
+    <div className="flex flex-col flex-none w-full">
       <div className="flex flex-row space-x-4 border-b py-4 border-gray-200">
         <FilterIncidentsByType control={control} value={watchType} />
 

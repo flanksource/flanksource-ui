@@ -190,7 +190,9 @@ export function IncidentListPage() {
                   )}
                 </>
               ) : (
-                <Loading text="fetching incidents" />
+                <div className="flex-1">
+                  <Loading text="fetching incidents" />
+                </div>
               )}
             </div>
           </div>
