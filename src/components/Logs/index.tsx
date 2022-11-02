@@ -1,11 +1,9 @@
-import React, { useState } from "react";
-import { LogsTable } from "./Table/logs-table";
+import { useState } from "react";
+import { LogsTable } from "./Table/LogsTable";
 
-export const LogsViewer = React.memo(function LogsViewer({
-  logs,
-  componentId
-}) {
-  const [variant] = useState("comfortable");
+export function LogsViewer() {
+  console.log("Hello from LogsViewer");
+  const [variant, setVariant] = useState("comfortable");
 
   return (
     <>
@@ -31,6 +29,4 @@ export const LogsViewer = React.memo(function LogsViewer({
       <LogsTable logs={logs} variant={variant} componentId={componentId} />
     </>
   );
-});
-
-LogsViewer.displayName = "LogsViewer";
+}

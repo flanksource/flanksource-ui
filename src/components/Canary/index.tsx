@@ -262,7 +262,7 @@ export function Canary({
         <SectionTitle className="mb-4">Filter by Time Range</SectionTitle>
         <div className="mb-4 mr-2 w-full">
           <DropdownStandaloneWrapper
-            dropdownElem={<TimeRange />}
+            dropdownElem={<TimeRange name="time-range" />}
             defaultValue={searchParams.get("timeRange") ?? timeRanges[0].value}
             paramKey="timeRange"
             className="w-full mr-2"

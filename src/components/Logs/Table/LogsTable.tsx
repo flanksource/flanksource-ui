@@ -1,7 +1,6 @@
 import Convert from "ansi-to-html";
 import clsx from "clsx";
 import DOMPurify from "dompurify";
-import PropTypes from "prop-types";
 import { useMemo, useState } from "react";
 import { useRowSelect, useTable } from "react-table";
 import { EvidenceType } from "../../../api/services/evidence";
@@ -11,13 +10,19 @@ import { relativeDateTime } from "../../../utils/date";
 
 const convert = new Convert();
 
-export const LogsTable = ({
+type LogsTableProps = {
+  logs: Record<string, any>[];
+  actions: Record<string, any>;
+  variant: "comfortable" | "compact" | string;
+  viewOnly?: boolean;
+};
+
+export function LogsTable({
   logs: logsParam,
-  componentId,
   actions,
   variant,
   viewOnly
-}) => {
+}: LogsTableProps) {
   const [attachAsAsset, setAttachAsAsset] = useState(false);
   const [lines, setLines] = useState([]);
   const logs = useMemo(() => {
@@ -74,7 +79,11 @@ export const LogsTable = ({
                       type="button"
                       disabled={!hasSelectedRows}
                       onClick={() => {
-                        setLines(selectedFlatRows.map((d) => d.original));
+                        setLines(
+                          selectedFlatRows.map(
+                            (d: { original: boolean }) => d.original
+                          )
+                        );
                         setAttachAsAsset(true);
                       }}
                       className={clsx(
@@ -127,7 +136,7 @@ export const LogsTable = ({
         evidence={{ lines }}
         component_id={componentId}
         type={EvidenceType.Log}
-        callback={(success) => {
+        callback={(success: boolean) => {
           if (success) {
             setLines([]);
           }
@@ -183,13 +192,4 @@ export const LogsTable = ({
       </table>
     </div>
   );
-};
-LogsTable.propTypes = {
-  logs: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
-  actions: PropTypes.arrayOf(PropTypes.shape({})),
-  variant: PropTypes.oneOf(["comfortable", "compact", ""])
-};
-LogsTable.defaultProps = {
-  actions: [],
-  variant: "comfortable"
-};
+}

@@ -1,9 +1,8 @@
 import { SearchIcon } from "@heroicons/react/solid";
 import { debounce } from "lodash";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { getLogs } from "../../api/services/logs";
-import { Dropdown } from "../../components/Dropdown";
 import { timeRanges } from "../../components/Dropdown/TimeRange";
 import { LogsViewer } from "../../components/Logs";
 import { ReactSelectDropdown } from "../../components/ReactSelectDropdown";
@@ -11,7 +10,7 @@ import { TextInput } from "../../components/TextInput";
 
 export function LogsPage() {
   const [logsIsLoading, setLogsIsLoading] = useState(true);
-  const [logs, setLogs] = useState([]);
+  const [logs, setLogs] = useState<any>([]);
   const loadLogs = () => {
     setLogsIsLoading(true);
     getLogs().then((res) => {
@@ -38,7 +37,7 @@ export function LogsPage() {
     }
   });
 
-  const handleSearch = (searchQuery, timeRange) => {
+  const handleSearch = (searchQuery: string, timeRange: string) => {
     // eslint-disable-next-line no-console
     console.log("search", searchQuery, timeRange);
     // Call search API & update logs list here
@@ -106,6 +105,7 @@ export function LogsPage() {
             </div>
           </div>
         </div>
+        {/* @ts-expect-error */}
         <LogsViewer logs={logs} logsIsLoading={logsIsLoading} />
       </div>
     </div>
