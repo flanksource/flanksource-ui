@@ -84,7 +84,6 @@ function FilterIncidentsByComponents({ control, value }: Props) {
 
   return (
     <div className="flex flex-row items-center space-x-3">
-      <div className="text-gray-500 text-sm">Component</div>
       <ReactSelectDropdown
         control={control}
         prefix="Component:"
