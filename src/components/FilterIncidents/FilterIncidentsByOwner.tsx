@@ -15,10 +15,10 @@ export default function FilterIncidentsByOwner({
 }: Props) {
   return (
     <div className="flex items-center space-x-3">
-      <div className=" text-gray-500 text-sm">Owner</div>
       <ReactSelectDropdown
         control={control}
         name="owner"
+        prefix="Owner:"
         className="w-auto max-w-[400px] mr-2 flex-shrink-0"
         dropDownClassNames="w-auto max-w-[400px] right-0"
         value={value}

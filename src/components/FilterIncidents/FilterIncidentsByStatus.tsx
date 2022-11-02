@@ -11,10 +11,10 @@ type Props = {
 export default function FilterIncidentsByStatus({ control, value }: Props) {
   return (
     <div className="flex items-center space-x-3">
-      <div className="text-gray-500 text-sm">Status</div>
       <ReactSelectDropdown
         control={control}
         name="status"
+        prefix="Status:"
         className="w-auto max-w-[400px] mr-2 flex-shrink-0"
         dropDownClassNames="w-auto max-w-[400px] right-0"
         value={value}

@@ -87,7 +87,7 @@ function FilterIncidentsByComponents({ control, value }: Props) {
       <div className="text-gray-500 text-sm">Component</div>
       <ReactSelectDropdown
         control={control}
-        label=""
+        prefix="Component:"
         name="component"
         className="w-auto max-w-[400px] capitalize"
         value={value}

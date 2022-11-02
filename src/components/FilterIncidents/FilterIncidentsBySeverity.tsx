@@ -11,9 +11,9 @@ type Props = {
 export default function FilterIncidentsBySeverity({ control, value }: Props) {
   return (
     <div className="flex items-center space-x-3">
-      <div className="text-gray-500 text-sm">Severity</div>
       <ReactSelectDropdown
         control={control}
+        prefix="Severity:"
         name="severity"
         className="w-auto max-w-[400px] mr-2 flex-shrink-0"
         dropDownClassNames="w-auto max-w-[400px] right-0"

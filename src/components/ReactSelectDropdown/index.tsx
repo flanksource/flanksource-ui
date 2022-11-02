@@ -126,7 +126,7 @@ export const ReactSelectDropdown = ({
       inputRef={ref}
       className={dropDownClassNames}
       target={
-        <div className={`${label ? "space-y-2" : ""}`}>
+        <div className={`${label ? "space-x-2" : ""}`}>
           <label
             className={
               labelClass
@@ -147,12 +147,14 @@ export const ReactSelectDropdown = ({
             )}
             onClick={toggleOpen}
           >
-            <div className="flex items-center">
-              {prefix}
-              {SelectedOption?.icon && <div>{SelectedOption.icon}</div>}
-              <span className="ml-2 block truncate">
-                {SelectedOption?.description}
-              </span>
+            <div className="flex space-x-2 items-center">
+              {prefix && <div className="flex flex-col"> {prefix} </div>}
+              <div className="flex space-x-1 items-center">
+                {SelectedOption?.icon && <div>{SelectedOption.icon}</div>}
+                <span className="block truncate">
+                  {SelectedOption?.description}
+                </span>
+              </div>
             </div>
             <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
               <ChevronDown className="h-5 w-5 text-gray-400" />
