@@ -51,7 +51,9 @@ export function ConfigListPage() {
     isLoading,
     isRefetching,
     refetch: refetchLogs
-  } = useAllConfigsQuery({});
+  } = useAllConfigsQuery({
+    cacheTime: 0
+  });
 
   const search = params.get("search");
   const tag = decodeURIComponent(params.get("tag") || "All");
