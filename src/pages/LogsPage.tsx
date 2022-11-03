@@ -1,17 +1,17 @@
 import { SearchIcon } from "@heroicons/react/solid";
 import { BsGearFill, BsFlower2, BsGridFill, BsStack } from "react-icons/bs";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { useLoader } from "../hooks";
 import { getLogs } from "../api/services/logs";
-import { getTopology } from "../api/services/topology";
 import { SearchLayout } from "../components/Layout";
 import { Loading } from "../components/Loading";
 import { LogsViewer } from "../components/Logs";
 import { TextInput } from "../components/TextInput";
 import { timeRanges } from "../components/Dropdown/TimeRange";
 import { ReactSelectDropdown } from "../components/ReactSelectDropdown";
-import { ComponentNamesDropdown } from "../components/Dropdown/ComponentNamesDropdown";
+import FilterLogsByComponent from "../components/FilterLogs/FilterLogsByComponent";
+import { useQuery } from "@tanstack/react-query";
+import { TopologyComponentItem } from "../components/FilterIncidents/FilterIncidentsByComponents";
 
 export const logTypes = [
   {
@@ -37,92 +37,65 @@ export const logTypes = [
 ];
 
 export function LogsPage() {
-  const { loading, loaded, setLoading } = useLoader();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [query, setQuery] = useState(searchParams.get("query"));
-  const [topologyId, setTopologyId] = useState(searchParams.get("topologyId"));
-  const [externalId, setExternalId] = useState();
-  const [topology, setTopology] = useState<Record<string, any>>();
-  const [type, setType] = useState();
+  const topologyId = searchParams.get("topologyId");
+  const type = searchParams.get("type");
+  const externalId = searchParams.get("topologyExternalId");
+  const query = searchParams.get("query");
+
+  console.log(topologyId, type, externalId);
+
   const [start, setStart] = useState(
     searchParams.get("start") || timeRanges[0].value
   );
 
-  const [logs, setLogs] = useState([]);
-
-  useEffect(() => {
-    if (!topologyId) {
-      return;
+  const { data: topology } = useQuery(
+    ["components", "names", topologyId],
+    async () => {
+      const res = await fetch(
+        `/api/canary/db/component_names?id=eq.${topologyId}`
+      );
+      const data = (await res.json()) as TopologyComponentItem[];
+      return data[0];
+    },
+    {
+      enabled: !!topologyId
     }
-    getTopology({
-      id: topologyId
-    }).then(({ data }) => {
-      const result = data[0];
-      if ((topology as any)?.id === topologyId) {
-        return;
+  );
+
+  const {
+    isLoading,
+    data: logs,
+    refetch
+  } = useQuery(
+    ["topology", "logs", topologyId],
+    async () => {
+      const queryBody = {
+        query,
+        id: topologyId,
+        type,
+        start
+      };
+      const res = await getLogs(queryBody);
+      if (res.error) {
+        throw res.error;
       }
-      setTopology(result);
-      setType(result.type);
-      setExternalId(result.external_id);
-    });
-  }, [topologyId]);
-
-  const saveQueryParams = () => {
-    const paramsList = { query, topologyId, externalId, start, type };
-    const params: Record<string, any> = {};
-    Object.entries(paramsList).forEach(([key, value]) => {
-      if (value) {
-        params[key] = value;
-      }
-    });
-    setSearchParams(params);
-  };
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const loadLogs = () => {
-    saveQueryParams();
-    setLoading(true);
-
-    const queryBody = {
-      query,
-      id: externalId,
-      type,
-      start
-    };
-    getLogs(queryBody)
-      .then((res) => {
-        setLogs(res?.data?.results || []);
-        setLoading(false);
-      })
-      .catch((err) => {
-        setLoading(false);
-        console.error(err);
-      });
-  };
-
-  const onComponentSelect = (component: any) => {
-    setTopology(component);
-    setTopologyId(component?.id);
-    setExternalId(component?.external_id);
-    setType(component?.type);
-  };
-
-  useEffect(() => {
-    if (!externalId) {
-      return;
+      return res.data;
+    },
+    {
+      enabled: !!topologyId
     }
-    loadLogs();
-  }, [start, externalId, type]);
+  );
 
   return (
     <SearchLayout
-      onRefresh={() => loadLogs()}
+      onRefresh={() => refetch()}
       title={
         <h1 className="text-xl font-semibold">
-          Logs{topology ? `/${topology.name}` : ""}
+          Logs{topology?.name ? `/${topology.name}` : ""}
         </h1>
       }
-      contentClass={`h-full ${loaded || Boolean(logs.length) ? "p-6" : ""}`}
+      contentClass={`h-full py-4 px-6 ${logs ? "p-6" : ""}`}
       extra={
         <ReactSelectDropdown
           name="start"
@@ -139,18 +112,13 @@ export function LogsPage() {
     >
       <div className="flex flex-col space-y-6 h-full">
         <div className="flex flex-row w-full">
-          <ComponentNamesDropdown
-            value={topology}
-            loading={loading}
-            disabled={loading}
-            placeholder="Select component"
-            onChange={onComponentSelect}
-          />
+          <FilterLogsByComponent />
+
           <div className="mx-2 w-80 relative rounded-md shadow-sm">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
               <button
                 type="button"
-                onClick={() => loadLogs()}
+                // onClick={() => loadLogs()}
                 className="hover"
               >
                 <SearchIcon
@@ -164,28 +132,32 @@ export function LogsPage() {
               className="pl-10 pb-2.5 w-full flex-shrink-0"
               style={{ height: "38px" }}
               id="searchQuery"
-              onEnter={() => loadLogs()}
               onChange={(e) => {
                 e.preventDefault();
-                setQuery(e.target.value);
+                setSearchParams({
+                  ...Object.entries(searchParams),
+                  query: e.target.value
+                });
               }}
               value={query ?? undefined}
             />
           </div>
         </div>
+        {isLoading && topologyId && (
+          <Loading className="mt-40" text="Loading logs..." />
+        )}
+        {topologyId && logs && (
+          // @ts-expect-error
+          <LogsViewer className="pt-4" logs={logs} />
+        )}
+        {!topologyId && (
+          <div className="flex flex-col justify-center items-center h-5/6">
+            <h3 className="text-center font-semibold text-lg">
+              Please select a component to view the logs.
+            </h3>
+          </div>
+        )}
       </div>
-      {loading
-        ? !logs.length && <Loading className="mt-40" text="Loading logs..." />
-        : !loaded && (
-            <div className="flex flex-col justify-center items-center h-5/6">
-              <h3 className="text-center font-semibold text-lg">
-                Please select a component to view the logs.
-              </h3>
-            </div>
-          )}
-      {(loaded || Boolean(logs.length)) && (
-        <LogsViewer className="pt-4" logs={logs} componentId={topologyId} />
-      )}
     </SearchLayout>
   );
 }
