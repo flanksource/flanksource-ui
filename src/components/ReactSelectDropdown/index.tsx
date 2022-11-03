@@ -17,7 +17,7 @@ import { Avatar } from "../Avatar";
 
 const { colors } = defaultTheme;
 
-interface StateOption {
+export interface StateOption {
   id?: string;
   label?: string;
   value?: string;
@@ -27,7 +27,7 @@ interface StateOption {
   avatar?: any;
 }
 
-const selectStyles: StylesConfig<StateOption, false> = {
+const selectStyles: StylesConfig<StateOption | string, false> = {
   control: (provided) => ({
     ...provided,
     minWidth: 144,
@@ -37,6 +37,7 @@ const selectStyles: StylesConfig<StateOption, false> = {
 };
 
 type ReactSelectDropdownProps = {
+  id?: string;
   className?: string;
   label?: string;
   control?: any;
@@ -47,14 +48,17 @@ type ReactSelectDropdownProps = {
     | StateOption[];
   name: string;
   onChange?: (value?: string) => void;
-  value?: StateOption;
+  value?: StateOption | string;
   placeholder?: string;
   prefix?: ReactNode;
   labelClass?: string;
+  dropDownClassNames?: string;
+  hideControlBorder?: boolean;
 };
 
 export const ReactSelectDropdown = ({
   className,
+  dropDownClassNames,
   label,
   control,
   items,
@@ -63,7 +67,8 @@ export const ReactSelectDropdown = ({
   value,
   prefix,
   labelClass,
-  placeholder
+  hideControlBorder = false,
+  placeholder = "Search..."
 }: ReactSelectDropdownProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [options, setOptions] = useState<StateOption[]>([]);
@@ -107,9 +112,11 @@ export const ReactSelectDropdown = ({
     setIsOpen((val) => !val);
   };
 
-  const onSelectChange = (value: SingleValue<StateOption | undefined>) => {
+  const onSelectChange = (
+    value: SingleValue<StateOption | string | undefined>
+  ) => {
     toggleOpen();
-    onChange(value?.value);
+    onChange(typeof value === "string" ? value : value?.value);
   };
 
   return (
@@ -117,8 +124,9 @@ export const ReactSelectDropdown = ({
       isOpen={isOpen}
       onClose={toggleOpen}
       inputRef={ref}
+      className={dropDownClassNames}
       target={
-        <div className={label ? "space-y-2" : ""}>
+        <div className={`${label ? "space-x-2" : ""}`}>
           <label
             className={
               labelClass
@@ -130,19 +138,26 @@ export const ReactSelectDropdown = ({
           </label>
           <div
             className={clsx(
-              `relative cursor-pointer h-full bg-white border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left  focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm
+              `relative cursor-pointer h-full pl-3 rounded-md pr-10 py-2 text-left  focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm
                 ${SelectedOption?.id === "_empty" && "text-gray-400"}
               `,
-              className
+              className,
+              !hideControlBorder &&
+                "bg-white border border-white-300 shadow-sm",
+              hideControlBorder ? (isOpen ? "bg-gray-100" : "bg-white") : ""
             )}
             onClick={toggleOpen}
           >
-            <div className="flex items-center">
-              {prefix}
-              {SelectedOption?.icon && <div>{SelectedOption.icon}</div>}
-              <span className="ml-2 block truncate">
-                {SelectedOption?.description}
-              </span>
+            <div className="flex space-x-2 items-center">
+              {prefix && (
+                <div className="flex flex-col text-gray-600"> {prefix} </div>
+              )}
+              <div className="flex space-x-1 items-center">
+                {SelectedOption?.icon && <div>{SelectedOption.icon}</div>}
+                <span className="block truncate">
+                  {SelectedOption?.description}
+                </span>
+              </div>
             </div>
             <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
               <ChevronDown className="h-5 w-5 text-gray-400" />
@@ -197,7 +212,7 @@ export const ReactSelectDropdown = ({
                   onSelectChange(e.value);
                 }}
                 options={options}
-                placeholder="Search..."
+                placeholder={placeholder}
                 styles={selectStyles}
                 tabSelectsValue={false}
                 value={valueControlled}
@@ -245,7 +260,7 @@ export const ReactSelectDropdown = ({
           menuIsOpen
           onChange={onSelectChange}
           options={options}
-          placeholder="Search..."
+          placeholder={placeholder}
           styles={selectStyles}
           tabSelectsValue={false}
           value={value}
@@ -293,18 +308,21 @@ interface DropdownProps {
   readonly onClose: () => void;
   readonly inputRef: Ref<HTMLDivElement | undefined>;
   children: ReactNode;
+  className?: string;
 }
+
 const Dropdown: FunctionComponent<DropdownProps> = ({
   children,
   isOpen,
   target,
   inputRef,
+  className = "w-full right-0",
   onClose
 }) => (
   <div ref={inputRef as LegacyRef<HTMLDivElement>} className="relative">
     {target}
     {isOpen ? (
-      <Menu className="absolute bg-white z-50 drop-shadow-md w-full">
+      <Menu className={`absolute bg-white z-50 drop-shadow-md ${className}`}>
         {children}
       </Menu>
     ) : null}

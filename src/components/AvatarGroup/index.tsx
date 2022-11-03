@@ -2,7 +2,21 @@ import { useMemo } from "react";
 import PropTypes from "prop-types";
 import { Avatar } from "../Avatar";
 
-export const AvatarGroup = ({ users, size, maxCount, ...props }) => {
+type Props = {
+  users: {
+    avatar?: string;
+    name: string;
+  }[];
+  size: "sm" | "lg" | "md";
+  maxCount: number;
+};
+
+export const AvatarGroup = ({
+  users,
+  size = "md",
+  maxCount = 5,
+  ...props
+}: Props) => {
   const sliceUsers = useMemo(
     () => users?.slice(0, maxCount) || [],
     [users, maxCount]

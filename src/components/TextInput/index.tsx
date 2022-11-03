@@ -2,7 +2,7 @@ import React from "react";
 import { HTMLInputTypeAttribute } from "react";
 
 interface IProps {
-  label: string;
+  label?: string;
   id: string;
   className?: string;
   labelClassName?: string;

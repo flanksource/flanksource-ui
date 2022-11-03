@@ -196,6 +196,7 @@ export const TopologySort = ({
           <div className="flex flex-col">
             {sortLabels.map((s) => (
               <span
+                key={s.id}
                 onClick={() =>
                   onSelectSortOption(
                     s.value,

@@ -1,8 +1,9 @@
 import React, { useState, createContext, useContext } from "react";
+import { ConfigItem } from "../api/services/configs";
 
 export type ConfigState = {
-  data: any[] | null;
-  filteredData: any[] | null;
+  data?: ConfigItem[];
+  filteredData?: ConfigItem[];
 };
 
 export type ConfigPageState = {

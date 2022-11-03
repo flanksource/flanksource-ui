@@ -1,107 +1,95 @@
 import { debounce } from "lodash";
-import { useEffect, useRef, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AiFillPlusCircle } from "react-icons/ai/";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { getIncidentsWithParams } from "../../api/services/incident";
 import { getPersons } from "../../api/services/users";
-import {
-  severityItems,
-  statusItems,
-  typeItems
-} from "../../components/Incidents/data";
+import FilterIncidents from "../../components/FilterIncidents/FilterIncidents";
 import { IncidentCreate } from "../../components/Incidents/IncidentCreate";
 import { IncidentList } from "../../components/Incidents/IncidentList";
 import { SearchLayout } from "../../components/Layout";
 import { Loading } from "../../components/Loading";
 import { Modal } from "../../components/Modal";
-import { ReactSelectDropdown } from "../../components/ReactSelectDropdown";
 import {
   IncidentState,
   useIncidentPageContext
 } from "../../context/IncidentPageContext";
 
-const defaultSelections = {
-  all: {
-    description: "All",
-    value: "all",
-    order: -1
-  }
+type IncidentFilters = {
+  severity?: string;
+  status?: string;
+  owner?: string;
+  type?: string;
+  component?: string;
 };
 
-const removeNullValues = (obj) =>
-  Object.fromEntries(
-    Object.entries(obj).filter(([_k, v]) => v !== null && v !== undefined)
-  );
-
-const toPostgresqlSearchParam = ({ severity, status, owner, type }) => {
+function toPostgresqlSearchParam({
+  severity,
+  status,
+  owner,
+  type,
+  component
+}: IncidentFilters): Record<string, string | undefined> {
   const params = Object.entries({
     severity,
     status,
     type,
-    created_by: owner
+    created_by: owner,
+    "hypotheses.evidences.evidence->>id": component
   })
     .filter(([_k, v]) => v && v !== "all")
     .map(([k, v]) => [k, `eq.${v}`]);
 
   return Object.fromEntries(params);
-};
+}
 
 export function IncidentListPage() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const { control, getValues, watch } = useForm({
-    defaultValues: {
-      severity:
-        searchParams.get("severity") ||
-        Object.values(defaultSelections)[0].value,
-      status:
-        searchParams.get("status") || Object.values(defaultSelections)[0].value,
-      owner:
-        searchParams.get("owner") || Object.values(defaultSelections)[0].value,
-      type:
-        searchParams.get("type") || Object.values(defaultSelections)[0].value
-    }
-  });
-  const [selectedLabels, setSelectedLabels] = useState([]);
+  const [searchParams] = useSearchParams();
+
+  const severity = searchParams.get("severity");
+  const status = searchParams.get("status");
+  const owner = searchParams.get("owner");
+  const type = searchParams.get("type");
+  const component = searchParams.get("component");
 
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const {
-    incidentState: { incidents, ownerSelections },
+    incidentState: { incidents },
     setIncidentState
   } = useIncidentPageContext();
-  // const [incidents, setIncidents] = useState([]);
-  const [incidentModalIsOpen, setIncidentModalIsOpen] = useState(false);
-  // const [ownerSelections, setOwnerSelections] = useState([]);
 
-  const watchSeverity = watch("severity");
-  const watchStatus = watch("status");
-  const watchOwner = watch("owner");
-  const watchType = watch("type");
+  const [incidentModalIsOpen, setIncidentModalIsOpen] = useState(false);
 
   useEffect(() => {
     getPersons().then((res) => {
-      const owners = res.data.map(({ name, id }) => [
-        id,
-        { name, value: id, description: name }
-      ]);
-      setIncidentState((state: IncidentState) => {
-        return {
-          ...state,
-          ownerSelections: Object.fromEntries(owners)
-        };
-      });
+      if (res.data) {
+        const owners = res.data.map(({ name, id }) => [
+          id,
+          { name, value: id, description: name }
+        ]);
+        // @ts-expect-error
+        setIncidentState((state: IncidentState) => {
+          return {
+            ...state,
+            ownerSelections: Object.fromEntries(owners)
+          } as any;
+        });
+      }
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  async function fetchIncidents(params): void {
+  async function fetchIncidents(
+    params: Record<string, string | undefined>
+  ): Promise<void> {
     try {
       const res = await getIncidentsWithParams(params);
-      const data = res.data.map((x) => {
-        const responders = [];
+      const data = res.data.map((x: any) => {
+        const responders: any[] = [];
 
         const commentsSet = new Map(
-          x?.comments.map((x) => [x?.created_by?.id, x?.created_by])
+          x?.comments.map((x: any) => [x?.created_by?.id, x?.created_by])
         );
         responders.forEach((x) => commentsSet.delete(x.id));
         return {
@@ -110,6 +98,7 @@ export function IncidentListPage() {
           involved: responders.concat(Array.from(commentsSet.values()))
         };
       });
+      // @ts-expect-error
       setIncidentState((state: any) => {
         return {
           ...state,
@@ -121,6 +110,7 @@ export function IncidentListPage() {
     } catch (ex) {
       console.error(ex);
       // setIncidents([]);
+      // @ts-expect-error
       setIncidentState((state: any) => {
         return {
           ...state,
@@ -132,36 +122,36 @@ export function IncidentListPage() {
   }
 
   const loadIncidents = useRef(
-    debounce((params) => {
+    debounce((params: Record<string, string | undefined>) => {
       // TODO: integrate labels
       setIsLoading(true);
-
       fetchIncidents(toPostgresqlSearchParam(params));
     }, 100)
   ).current;
 
   useEffect(() => {
-    loadIncidents();
+    loadIncidents({});
   }, [loadIncidents]);
 
-  const saveQueryParams = () => {
-    const labelsArray = selectedLabels.map((o) => o.value);
-    const encodedLabels = encodeURIComponent(JSON.stringify(labelsArray));
-    const paramsList = { ...getValues(), labels: encodedLabels };
-
-    setSearchParams(removeNullValues(paramsList));
-  };
+  const refreshIncidents = useCallback(() => {
+    loadIncidents({
+      severity: severity || undefined,
+      status: status || undefined,
+      owner: owner || undefined,
+      type: type || undefined,
+      component: component || undefined
+    });
+  }, [component, loadIncidents, owner, severity, status, type]);
 
   useEffect(() => {
-    saveQueryParams();
     loadIncidents({
-      severity: watchSeverity,
-      status: watchStatus,
-      owner: watchOwner,
-      type: watchType,
-      labels: selectedLabels
+      severity: severity || undefined,
+      status: status || undefined,
+      owner: owner || undefined,
+      type: type || undefined,
+      component: component || undefined
     });
-  }, [watchSeverity, watchStatus, watchOwner, watchType, selectedLabels]);
+  }, [severity, status, owner, type, component, loadIncidents]);
 
   return (
     <>
@@ -183,71 +173,13 @@ export function IncidentListPage() {
             </div>
           </div>
         }
-        onRefresh={() => {
-          loadIncidents({
-            severity: watchSeverity,
-            status: watchStatus,
-            owner: watchOwner,
-            type: watchType,
-            labels: selectedLabels
-          });
-        }}
-        extra={
-          <div className="flex">
-            <div className="flex items-center mr-4">
-              <div className="mr-3 text-gray-500 text-sm">Severity</div>
-              <ReactSelectDropdown
-                control={control}
-                name="severity"
-                className="w-36 mr-2 flex-shrink-0"
-                value={watchSeverity}
-                items={{ ...defaultSelections, ...severityItems }}
-              />
-            </div>
-            <div className="flex items-center mr-4">
-              <div className="mr-3 text-gray-500 text-sm">Status</div>
-              <ReactSelectDropdown
-                control={control}
-                name="status"
-                className="w-36 mr-2 flex-shrink-0"
-                value={watchStatus}
-                items={{ ...defaultSelections, ...statusItems }}
-              />
-            </div>
-            <div className="flex items-center mr-4">
-              <div className="mr-3 text-gray-500 text-sm">Owner</div>
-              <ReactSelectDropdown
-                control={control}
-                name="owner"
-                className="w-36 mr-2 flex-shrink-0"
-                value={watchOwner}
-                items={{ ...defaultSelections, ...ownerSelections }}
-              />
-            </div>
-            <div className="flex items-center">
-              <div className="mr-3 text-gray-500 text-sm">Type</div>
-              <ReactSelectDropdown
-                control={control}
-                label=""
-                name="type"
-                className="w-56"
-                value={watchType}
-                items={{ ...defaultSelections, ...typeItems }}
-              />
-              {/* <MultiSelectDropdown
-                styles={labelDropdownStyles}
-                className="w-full"
-                options={mockLabels} // TODO: change this to actual labels fetched from API
-                onChange={(labels: string[]) => setSelectedLabels(labels)}
-                value={selectedLabels}
-              /> */}
-            </div>
-          </div>
-        }
+        onRefresh={() => refreshIncidents()}
+        contentClass="flex flex-col h-full"
       >
-        <div className="leading-1.21rel">
-          <div className="flex-none flex-wrap space-x-2 space-y-2">
-            <div className="max-w-screen-xl mx-auto flex flex-col justify-center">
+        <div className="flex flex-col h-full leading-1.21rel">
+          <div className="flex-col flex-1 h-full space-x-2 space-y-2">
+            <div className="max-w-screen-xl mx-auto h-full space-y-6 flex flex-col justify-center">
+              <FilterIncidents />
               {!isLoading || Boolean(incidents?.length) ? (
                 <>
                   <IncidentList list={incidents || []} />
@@ -258,7 +190,9 @@ export function IncidentListPage() {
                   )}
                 </>
               ) : (
-                <Loading text="fetching incidents" />
+                <div className="flex-1">
+                  <Loading text="fetching incidents" />
+                </div>
               )}
             </div>
           </div>
@@ -271,16 +205,11 @@ export function IncidentListPage() {
         size="small"
         title="Create New Incident"
       >
+        {/* @ts-expect-error */}
         <IncidentCreate
           callback={(response: any) => {
             if (!response) {
-              loadIncidents({
-                severity: watchSeverity,
-                status: watchStatus,
-                owner: watchOwner,
-                type: watchType,
-                labels: selectedLabels
-              });
+              refreshIncidents();
               setIncidentModalIsOpen(false);
               return;
             }

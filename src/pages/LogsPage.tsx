@@ -1,6 +1,6 @@
 import { SearchIcon } from "@heroicons/react/solid";
 import { BsGearFill, BsFlower2, BsGridFill, BsStack } from "react-icons/bs";
-import { useEffect, useState } from "react";
+import { CSSProperties, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useLoader } from "../hooks";
 import { getLogs } from "../api/services/logs";
@@ -37,7 +37,7 @@ export const logTypes = [
   }
 ];
 
-const optionStyles = {
+const optionStyles: CSSProperties = {
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
@@ -47,7 +47,7 @@ const optionStyles = {
   textOverflow: "ellipsis"
 };
 
-const formatOptionLabel = (data) => (
+const formatOptionLabel = (data: { label: string; icon: any }) => (
   <div style={optionStyles} title={data.label}>
     <span>
       <Icon className="inline" name={data.icon} size="xl" /> {data.label}
@@ -60,7 +60,7 @@ export function LogsPage() {
   const [query, setQuery] = useState(searchParams.get("query"));
   const [topologyId, setTopologyId] = useState(searchParams.get("topologyId"));
   const [externalId, setExternalId] = useState();
-  const [topology, setTopology] = useState();
+  const [topology, setTopology] = useState<Record<string, any>>();
   const [type, setType] = useState();
   const [start, setStart] = useState(
     searchParams.get("start") || timeRanges[0].value
@@ -77,7 +77,7 @@ export function LogsPage() {
       id: topologyId
     }).then(({ data }) => {
       const result = data[0];
-      if (topology?.id === topologyId) {
+      if ((topology as any)?.id === topologyId) {
         return;
       }
       setTopology(result);
@@ -91,12 +91,12 @@ export function LogsPage() {
       try {
         let { data } = await getTopologyComponents();
         data = data
-          .filter((item) => {
+          .filter((item: any) => {
             item.label = item.name;
             item.value = item.id;
             return item.external_id;
           })
-          .sort((a, b) => a.label.localeCompare(b.label));
+          .sort((a: any, b: any) => a.label.localeCompare(b.label));
         setTopologies(data);
       } catch (ex) {}
     }
@@ -105,7 +105,7 @@ export function LogsPage() {
 
   const saveQueryParams = () => {
     const paramsList = { query, topologyId, externalId, start, type };
-    const params = {};
+    const params: Record<string, any> = {};
     Object.entries(paramsList).forEach(([key, value]) => {
       if (value) {
         params[key] = value;
@@ -136,7 +136,7 @@ export function LogsPage() {
       });
   };
 
-  const onComponentSelect = (component) => {
+  const onComponentSelect = (component: any) => {
     setTopology(component);
     setTopologyId(component?.id);
     setExternalId(component?.external_id);
@@ -158,9 +158,26 @@ export function LogsPage() {
           Logs{topology ? `/${topology.name}` : ""}
         </h1>
       }
-      contentClass={`h-full ${loaded || (Boolean(logs.length) ? "p-6" : "")}`}
+      contentClass={`h-full py-4 px-6 ${
+        loaded || (Boolean(logs.length) ? "p-6" : "")
+      }`}
       extra={
-        <>
+        <ReactSelectDropdown
+          name="start"
+          className="w-44 mr-2"
+          items={timeRanges}
+          onChange={(e) => {
+            if (e) {
+              setStart(e);
+            }
+          }}
+          value={start}
+        />
+      }
+    >
+      <div className="flex flex-col space-y-6 h-full">
+        <div className="flex flex-row w-full">
+          {/* @ts-expect-error */}
           <SearchableDropdown
             className="w-96"
             value={topology}
@@ -171,6 +188,7 @@ export function LogsPage() {
             onChange={onComponentSelect}
             formatOptionLabel={formatOptionLabel}
           />
+
           <div className="mx-2 w-80 relative rounded-md shadow-sm">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
               <button
@@ -194,31 +212,24 @@ export function LogsPage() {
                 e.preventDefault();
                 setQuery(e.target.value);
               }}
-              value={query}
+              value={query ?? undefined}
             />
           </div>
-          <ReactSelectDropdown
-            name="start"
-            className="w-44 mr-2"
-            items={timeRanges}
-            onChange={(e) => setStart(e)}
-            value={start}
-          />
-        </>
-      }
-    >
-      {loading
-        ? !logs.length && <Loading className="mt-40" text="Loading logs..." />
-        : !loaded && (
-            <div className="flex flex-col justify-center items-center h-5/6">
-              <h3 className="text-center font-semibold text-lg">
-                Please select a component to view the logs.
-              </h3>
-            </div>
-          )}
-      {(loaded || Boolean(logs.length)) && (
-        <LogsViewer className="pt-4" logs={logs} />
-      )}
+        </div>
+        {loading
+          ? !logs.length && <Loading className="mt-40" text="Loading logs..." />
+          : !loaded && (
+              <div className="flex flex-col justify-center items-center h-5/6">
+                <h3 className="text-center font-semibold text-lg">
+                  Please select a component to view the logs.
+                </h3>
+              </div>
+            )}
+        {(loaded || Boolean(logs.length)) && (
+          // @ts-expect-error
+          <LogsViewer className="pt-4" logs={logs} />
+        )}
+      </div>
     </SearchLayout>
   );
 }

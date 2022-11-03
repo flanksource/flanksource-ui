@@ -14,6 +14,7 @@ import { useSearchParams } from "react-router-dom";
 import ReactTooltip from "react-tooltip";
 import * as timeago from "timeago.js";
 import { DataTable, Icon } from "../";
+import { ConfigItem } from "../../api/services/configs";
 import { FormatCurrency } from "../ConfigCosts";
 
 interface TableCols {
@@ -288,24 +289,8 @@ function DateCell({ row, column }: CellProp): JSX.Element {
   );
 }
 
-interface CellData {
-  config_type: string;
-  analysis: Analysis[];
-  changes: object[];
-  type: string;
-  external_type: string;
-  name: string;
-  tags?: { Key: string; Value: string }[] | { [index: string]: any };
-  created_at: string;
-  updated_at: string;
-  cost_per_minute?: number;
-  cost_total_1d?: number;
-  cost_total_7d?: number;
-  cost_total_30d?: number;
-}
-
 export interface Props {
-  data: CellData[];
+  data: ConfigItem[];
   handleRowClick: (row?: any) => void;
   isLoading: boolean;
 }

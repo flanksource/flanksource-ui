@@ -34,6 +34,7 @@ export interface Incident extends NewIncident {
   parent_id: string;
   hypotheses: Hypothesis[];
   created_at: string;
+  involved: User[];
 }
 
 export const searchIncident = (query: string) => {
@@ -63,9 +64,14 @@ export const getIncident = async (id: string) => {
   );
 };
 
-export const getIncidentsWithParams = async (params) => {
+export const getIncidentsWithParams = async (
+  params?: Record<string, string | undefined>
+) => {
   const comments = `comments!comments_incident_id_fkey(id,created_by(${AVATAR_INFO}))`;
-  const hypotheses = `hypotheses!hypotheses_incident_id_fkey(*,created_by(${AVATAR_INFO}))`;
+  const hypotheses = params?.["hypotheses.evidences.evidence->>id"]
+    ? `hypotheses!hypotheses_incident_id_fkey!inner(*,created_by(${AVATAR_INFO}),evidences!evidences_hypothesis_id_fkey!inner(id, evidence))`
+    : `hypotheses!hypotheses_incident_id_fkey(*,created_by(${AVATAR_INFO}),evidences(id,evidence,type))`;
+
   const responder = `responders!responders_incident_id_fkey(created_by(${AVATAR_INFO}))`;
 
   return resolve(
