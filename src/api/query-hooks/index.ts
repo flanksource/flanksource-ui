@@ -1,7 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { getAllConfigs } from "../services/configs";
 import { getIncident } from "../services/incident";
-import { getTopology, getTopologyComponents } from "../services/topology";
+import {
+  getTopology,
+  getTopologyComponentLabels,
+  getTopologyComponents
+} from "../services/topology";
 
 const cache: Record<string, any> = {};
 
@@ -21,6 +25,18 @@ export const useComponentsQuery = ({
   ...rest
 }) => {
   return useQuery(["allcomponents"], getTopologyComponents, {
+    staleTime,
+    enabled,
+    ...rest
+  });
+};
+
+export const useComponentLabelsQuery = ({
+  enabled = true,
+  staleTime = defaultStaleTime,
+  ...rest
+}) => {
+  return useQuery(["alllabels"], getTopologyComponentLabels, {
     staleTime,
     enabled,
     ...rest

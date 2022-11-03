@@ -49,5 +49,9 @@ export const getCanaries = async (params) => {
 };
 
 export const getTopologyComponents = () => {
-  return CanaryChecker.get(`/db/components`);
+  return CanaryChecker.get(`/db/component_names`);
+};
+
+export const getTopologyComponentLabels = () => {
+  return CanaryChecker.get(`/db/component_labels`);
 };

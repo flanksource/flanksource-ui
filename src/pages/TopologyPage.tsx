@@ -20,7 +20,10 @@ import {
   Topology,
   useTopologyPageContext
 } from "../context/TopologyPageContext";
-import { useComponentsQuery } from "../api/query-hooks";
+import {
+  useComponentLabelsQuery,
+  useComponentsQuery
+} from "../api/query-hooks";
 import { TopologyBreadcrumbs } from "../components/TopologyBreadcrumbs";
 
 const allOption = {
@@ -78,6 +81,7 @@ export function TopologyPage() {
     searchParams.get("status") ?? "All"
   );
   const { data: components } = useComponentsQuery({});
+  const { data: labels } = useComponentLabelsQuery({});
 
   const topology = topologyState.topology;
 
@@ -151,11 +155,14 @@ export function TopologyPage() {
     setLoading(false);
   };
 
-  function setupLabelsAndTypesDropdowns(data: any[]) {
-    const allTypes: { [key: string]: any } = {};
-    const allLabels: { [key: string]: any } = {
+  function setupTypesDropdown(data: any[]) {
+    const allTypes: { [key: string]: any } = {
       ...allOption
     };
+    if (!data) {
+      setTopologyTypes({ ...allTypes });
+      return;
+    }
     data.forEach((component: any) => {
       if (component.type) {
         allTypes[component.type] = {
@@ -165,6 +172,19 @@ export function TopologyPage() {
           value: component.type
         };
       }
+    });
+    setTopologyTypes({ ...allTypes });
+  }
+
+  function setupLabelsDropdown(data: any[]) {
+    const allLabels: { [key: string]: any } = {
+      ...allOption
+    };
+    if (!data) {
+      setTopologyLabels(allLabels);
+      return;
+    }
+    data.forEach((component: any) => {
       const entries = Object.entries(component?.labels || {});
       if (entries.length) {
         entries.forEach((entry) => {
@@ -183,19 +203,20 @@ export function TopologyPage() {
       }
     });
     setTopologyLabels(allLabels);
-    setTopologyTypes({ ...allOption, ...allTypes });
   }
 
   useEffect(() => {
     load();
-    if (components?.data) {
-      setupLabelsAndTypesDropdowns(components.data);
-    }
     setHealthStatus(searchParams.get("status") ?? "All");
     setTopologyType(searchParams.get("type") ?? "All");
     setTeam(searchParams.get("team") ?? "All");
     setSelectedLabel(searchParams.get("labels") ?? "All");
-  }, [searchParams, id, components]);
+  }, [searchParams, id]);
+
+  useEffect(() => {
+    setupTypesDropdown(components?.data);
+    setupLabelsDropdown(labels?.data);
+  }, [components, labels]);
 
   useEffect(() => {
     const teamsApiConfig = schemaResourceTypes.find(
