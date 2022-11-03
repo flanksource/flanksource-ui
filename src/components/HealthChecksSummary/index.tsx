@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { AiFillHeart } from "react-icons/ai";
+import { BsHeartFill } from "react-icons/bs";
 import { Link } from "react-router-dom";
 import ReactTooltip from "react-tooltip";
 import { Chip } from "../Chip";
@@ -48,8 +50,9 @@ export function HealthChecksSummary({ checks }: HealthChecksSummaryProps) {
 
   return (
     <div className="flex pb-2">
-      <Link className="flex cursor-pointer" to="/health">
-        <p className="flex items-center text-xs">Health Checks:</p>
+      <Link className="flex cursor-pointer items-center" to="/health">
+        <AiFillHeart className="inline-block h-3.5 w-3.5 mr-1" />
+        <p className="flex items-center text-xs pr-1">Health Checks</p>
         {summary.healthy > 0 && (
           <p className="flex items-center text-xs ml-1">
             <Chip
