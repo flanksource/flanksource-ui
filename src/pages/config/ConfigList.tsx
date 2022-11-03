@@ -33,7 +33,6 @@ export function ConfigListPage() {
   const search = params.get("search");
   const tag = decodeURIComponent(params.get("tag") || "All");
   const configType = decodeURIComponent(params.get("type") || "All");
-  const groupType = decodeURIComponent(params.get("groupBy") || "config_type");
 
   useEffect(() => {
     if (params.get("query")) {
@@ -122,96 +121,3 @@ export function ConfigListPage() {
     </div>
   );
 }
-
-const TypeDropdown = ({ ...rest }) => {
-  const items = {
-    All: {
-      id: "All",
-      name: "All",
-      description: "All",
-      value: "All"
-    },
-    EC2Instance: {
-      id: "EC2Instance",
-      name: "EC2 Instance",
-      description: "EC2 Instance",
-      value: "EC2Instance"
-    },
-    Subnet: {
-      id: "Subnet",
-      name: "Subnet",
-      description: "Subnet",
-      value: "Subnet"
-    }
-  };
-
-  const [selected, setSelected] = useState<any>(Object.values(items)[0].value);
-
-  return (
-    <ReactSelectDropdown
-      items={items}
-      name="type"
-      onChange={(value) => setSelected(value)}
-      value={selected}
-      className="w-64"
-      prefix={
-        <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
-          Type:
-        </div>
-      }
-      {...rest}
-    />
-  );
-};
-
-const GroupDropdown = ({ ...rest }) => {
-  const items = {
-    NoGrouping: {
-      id: "No Grouping",
-      name: "No Grouping",
-      description: "No Grouping",
-      value: "no_grouping"
-    },
-    Type: {
-      id: "Type",
-      name: "Type",
-      description: "Type",
-      value: "config_type"
-    },
-    Name: {
-      id: "Name",
-      name: "Name",
-      description: "Name",
-      value: "name"
-    },
-    Analysis: {
-      id: "Analysis",
-      name: "Analysis",
-      description: "Analysis",
-      value: "analysis"
-    },
-    Changed: {
-      id: "Changed",
-      name: "Changed",
-      description: "Changed",
-      value: "changed"
-    }
-  };
-
-  const [selected, setSelected] = useState(Object.values(items)[0].value);
-
-  return (
-    <ReactSelectDropdown
-      items={items}
-      onChange={(value) => setSelected(value)}
-      value={selected}
-      className="w-64"
-      prefix={
-        <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
-          Type:
-        </div>
-      }
-      {...rest}
-    />
-  );
-};
