@@ -16,12 +16,10 @@ export const TopologyPopOver = ({
   setSize,
   topology,
   searchParams,
-  topologyLabels,
   setSearchParams
 }: {
   size: string;
   topology: any[];
-  topologyLabels: any[];
   setSize: (v: string) => void;
   searchParams: URLSearchParams;
   setSearchParams: SetURLSearchParams;
@@ -30,7 +28,7 @@ export const TopologyPopOver = ({
 
   useEffect(() => {
     setSortLabels(getSortLabels(topology));
-  }, [searchParams, topologyLabels]);
+  }, [searchParams, topology]);
 
   const setCardWidth = (width: string) => {
     setSize(`${width}px`);
