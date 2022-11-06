@@ -40,7 +40,7 @@ export function useConfigIncidents(configID: string) {
           : [])
       ];
       const res = await fetch(
-        `/api/incidents_db/evidences?type=eq.config&evidence->>id=eq.${configID}&select=hypotheses(incidents!hypotheses_incident_id_fkey!inner(id, title, status, type, created_at))&${params.join(
+        `/api/incidents_db/evidences?type=eq.config&config_id=eq.${configID}&select=hypotheses(incidents!hypotheses_incident_id_fkey!inner(id, title, status, type, created_at))&${params.join(
           "&"
         )}`
       );
