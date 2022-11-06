@@ -13,7 +13,7 @@ export const defaultSelections = {
   }
 };
 
-type TopologyComponentItem = {
+export type TopologyComponentItem = {
   created_at?: string;
   external_id?: string;
   icon?: string;

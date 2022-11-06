@@ -1,27 +1,30 @@
 import { useEffect, useState } from "react";
 import { BsFillInfoCircleFill } from "react-icons/bs";
 import { useParams, useSearchParams } from "react-router-dom";
-import { getAll } from "../api/schemaResources";
-import { getTopology, getTopologyComponents } from "../api/services/topology";
+import { getTopology } from "../api/services/topology";
 import { SearchLayout } from "../components/Layout";
 import { ReactSelectDropdown } from "../components/ReactSelectDropdown";
 import { schemaResourceTypes } from "../components/SchemaResourcePage/resourceTypes";
 import CardsSkeletonLoader from "../components/SkeletonLoader/CardsSkeletonLoader";
 import { toastError } from "../components/Toast/toast";
-import { TopologyBreadcrumbs } from "../components/Topology/topologyBreadcrumbs";
 import { TopologyCard } from "../components/TopologyCard";
 import { TopologyPopOver } from "../components/TopologyPopover";
 import { getCardWidth } from "../components/TopologyPopover/topologyPreference";
 import { getSortedTopology } from "../components/TopologyPopover/topologySort";
 import TopologySidebar from "../components/TopologySidebar";
+
+import { useLoader } from "../hooks";
+import { getAll } from "../api/schemaResources";
+import { searchParamsToObj } from "../utils/common";
 import {
   Topology,
   useTopologyPageContext
 } from "../context/TopologyPageContext";
-import { useLoader } from "../hooks";
-import { searchParamsToObj } from "../utils/common";
+import { TopologyBreadcrumbs } from "../components/TopologyBreadcrumbs";
+import { ComponentTypesDropdown } from "../components/Dropdown/ComponentTypesDropdown";
+import { ComponentLabelsDropdown } from "../components/Dropdown/ComponentLabelsDropdown";
 
-const allOption = {
+export const allOption = {
   All: {
     id: "All",
     name: "All",
@@ -30,7 +33,7 @@ const allOption = {
   }
 };
 
-const healthTypes = {
+export const healthTypes = {
   ...allOption,
   healthy: {
     id: "healthy",
@@ -66,9 +69,7 @@ export function TopologyPage() {
   const [teams, setTeams] = useState<any>({});
   const [selectedLabel, setSelectedLabel] = useState("");
   const [size, setSize] = useState(() => getCardWidth());
-  const [topologyLabels, setTopologyLabels] = useState<any>({});
   const [team, setTeam] = useState(searchParams.get("team") ?? "All");
-  const [topologyTypes, setTopologyTypes] = useState<any>({});
   const [topologyType, setTopologyType] = useState(
     searchParams.get("type") ?? "All"
   );
@@ -148,51 +149,8 @@ export function TopologyPage() {
     setLoading(false);
   };
 
-  async function fetchComponents() {
-    const { data } = await getTopologyComponents();
-
-    if (!data) {
-      return;
-    }
-
-    const allTypes: { [key: string]: any } = {};
-    const allLabels: { [key: string]: any } = {
-      ...allOption
-    };
-    data.forEach((component: any) => {
-      if (component.type) {
-        allTypes[component.type] = {
-          id: component.type,
-          name: component.type,
-          description: component.type,
-          value: component.type
-        };
-      }
-      const entries = Object.entries(component?.labels || {});
-      if (entries.length) {
-        entries.forEach((entry) => {
-          if (!entry.length) {
-            return;
-          }
-          const value = `${entry[0]}=${entry[1]}`;
-          const label = `${entry[0]}:${entry[1]}`;
-          allLabels[value] = {
-            id: value,
-            name: label,
-            description: label,
-            value: value
-          };
-        });
-      }
-    });
-    setTopologyLabels(allLabels);
-    setTopologyTypes({ ...allOption, ...allTypes });
-  }
-
   useEffect(() => {
     load();
-    fetchComponents();
-
     setHealthStatus(searchParams.get("status") ?? "All");
     setTopologyType(searchParams.get("type") ?? "All");
     setTeam(searchParams.get("team") ?? "All");
@@ -248,123 +206,76 @@ export function TopologyPage() {
         <div className="flex flex-col flex-1 p-6 min-h-full h-auto">
           <div className="flex">
             <div className="flex flex-wrap">
-              {[
-                {
-                  id: 1,
-                  name: "Health",
-                  dropdownClassName: "inline-block p-3 w-80 md:w-36",
-                  items: healthTypes,
-                  value: healthStatus,
-                  onChange: (val: any) => {
+              <div className="flex p-3">
+                <label className="self-center inline-block pt-2 mr-3 text-sm text-gray-500">
+                  Health
+                </label>
+                <ReactSelectDropdown
+                  name="helath"
+                  label=""
+                  value={healthStatus}
+                  items={healthTypes}
+                  className="inline-block p-3 w-80 md:w-60"
+                  onChange={(val: any) => {
                     setHealthStatus(val);
                     setSearchParams({
                       ...searchParamsToObj(searchParams),
                       status: val
                     });
-                  }
-                },
-                {
-                  id: 2,
-                  name: "Type",
-                  dropdownClassName: "inline-block p-3 w-80 md:w-48",
-                  items: topologyTypes,
-                  value: topologyType,
-                  onChange: (val: any) => {
-                    setTopologyType(val);
-                    setSearchParams({
-                      ...searchParamsToObj(searchParams),
-                      type: val
-                    });
-                  }
-                },
-                {
-                  id: 3,
-                  name: "Team",
-                  dropdownClassName: "inline-block p-3 w-80 md:w-48",
-                  items: teams,
-                  value: team,
-                  onChange: (val: any) => {
+                  }}
+                />
+              </div>
+              <ComponentTypesDropdown
+                className="flex p-3"
+                name="Types"
+                label=""
+                value={topologyType}
+                onChange={(val: any) => {
+                  setTopologyType(val);
+                  setSearchParams({
+                    ...searchParamsToObj(searchParams),
+                    type: val
+                  });
+                }}
+              />
+              <div className="flex p-3">
+                <label className="self-center inline-block pt-2 mr-3 text-sm text-gray-500">
+                  Team
+                </label>
+                <ReactSelectDropdown
+                  name="team"
+                  label=""
+                  value={team}
+                  items={teams}
+                  className="inline-block p-3 w-80 md:w-60"
+                  onChange={(val: any) => {
                     setTeam(val);
                     setSearchParams({
                       ...searchParamsToObj(searchParams),
                       team: val
                     });
-                  }
-                },
-                {
-                  id: 4,
-                  name: "Labels",
-                  dropdownClassName: "inline-block p-3 w-80 md:w-60",
-                  items: topologyLabels,
-                  value: selectedLabel,
-                  onChange: (tag: any) => {
-                    setSelectedLabel(tag);
-                    setSearchParams({
-                      ...searchParamsToObj(searchParams),
-                      labels: tag
-                    });
-                  }
-                }
-              ].map((v) => (
-                <div id={v.id.toString()} className="flex p-3">
-                  <label className="self-center inline-block pt-2 mr-3 text-sm text-gray-500">
-                    {`${v.name}:`}
-                  </label>
-                  <ReactSelectDropdown
-                    label=""
-                    // @ts-expect-error
-                    value={v.value}
-                    items={v.items}
-                    className={v.dropdownClassName}
-                    onChange={(val: any) => {
-                      v.onChange(val);
-                    }}
-                  />
-                </div>
-              ))}
-              {/* {[
-              {
-                id: 4,
-                name: "Labels",
-                searchTagClassName: "inline-block p-3 w-80 md:w-60",
-                tags: topologyLabels,
-                value: selectedLabel,
-                onChange: (tag: any) => {
-                  setSelectedLabel(tag);
-                  setSearchParams({
-                    ...searchParamsToObj(searchParams),
-                    labels:
-                      tag.data.length > 0
-                        ? `${encodeURIComponent(
-                            tag.data[0]
-                          )}=${encodeURIComponent(tag.data[1])}`
-                        : "All"
-                  });
-                }
-              }
-            ].map((v) => (
-              <div id={v.id.toString()} className="flex ml-3">
-                <label className="self-center inline-block pt-2 mr-3 text-sm text-gray-500">
-                  {`${v.name}:`}
-                </label>
-                <SearchSelectTag
-                  value={v.value}
-                  tags={v.tags}
-                  className={v.searchTagClassName}
-                  onChange={(tag: any) => {
-                    v.onChange(tag);
                   }}
                 />
               </div>
-            ))} */}
+              <ComponentLabelsDropdown
+                name="Labels"
+                label=""
+                className="flex p-3"
+                value={selectedLabel}
+                onChange={(val: any) => {
+                  setSelectedLabel(val);
+                  setSearchParams({
+                    ...searchParamsToObj(searchParams),
+                    labels: val
+                  });
+                }}
+              />
             </div>
-
             <TopologyPopOver
               size={size}
               setSize={setSize}
               topology={topology}
               searchParams={searchParams}
-              topologyLabels={topologyLabels}
               setSearchParams={setSearchParams}
             />
           </div>

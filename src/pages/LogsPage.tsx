@@ -1,18 +1,17 @@
 import { SearchIcon } from "@heroicons/react/solid";
 import { BsGearFill, BsFlower2, BsGridFill, BsStack } from "react-icons/bs";
-import { CSSProperties, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useLoader } from "../hooks";
 import { getLogs } from "../api/services/logs";
-import { getTopology, getTopologyComponents } from "../api/services/topology";
+import { getTopology } from "../api/services/topology";
 import { SearchLayout } from "../components/Layout";
 import { Loading } from "../components/Loading";
 import { LogsViewer } from "../components/Logs";
 import { TextInput } from "../components/TextInput";
 import { timeRanges } from "../components/Dropdown/TimeRange";
-import { Icon } from "../components";
-import { SearchableDropdown } from "../components/SearchableDropdown";
 import { ReactSelectDropdown } from "../components/ReactSelectDropdown";
+import { ComponentNamesDropdown } from "../components/Dropdown/ComponentNamesDropdown";
 
 export const logTypes = [
   {
@@ -37,23 +36,6 @@ export const logTypes = [
   }
 ];
 
-const optionStyles: CSSProperties = {
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
-  paddingLeft: "10px",
-  overflow: "hidden",
-  whiteSpace: "nowrap",
-  textOverflow: "ellipsis"
-};
-
-const formatOptionLabel = (data: { label: string; icon: any }) => (
-  <div style={optionStyles} title={data.label}>
-    <span>
-      <Icon className="inline" name={data.icon} size="xl" /> {data.label}
-    </span>
-  </div>
-);
 export function LogsPage() {
   const { loading, loaded, setLoading } = useLoader();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -66,7 +48,6 @@ export function LogsPage() {
     searchParams.get("start") || timeRanges[0].value
   );
 
-  const [topologies, setTopologies] = useState([]);
   const [logs, setLogs] = useState([]);
 
   useEffect(() => {
@@ -85,23 +66,6 @@ export function LogsPage() {
       setExternalId(result.external_id);
     });
   }, [topologyId]);
-
-  useEffect(() => {
-    async function fetchTopologies() {
-      try {
-        let { data } = await getTopologyComponents();
-        data = data
-          .filter((item: any) => {
-            item.label = item.name;
-            item.value = item.id;
-            return item.external_id;
-          })
-          .sort((a: any, b: any) => a.label.localeCompare(b.label));
-        setTopologies(data);
-      } catch (ex) {}
-    }
-    fetchTopologies();
-  }, []);
 
   const saveQueryParams = () => {
     const paramsList = { query, topologyId, externalId, start, type };
@@ -177,18 +141,13 @@ export function LogsPage() {
     >
       <div className="flex flex-col space-y-6 h-full">
         <div className="flex flex-row w-full">
-          {/* @ts-expect-error */}
-          <SearchableDropdown
-            className="w-96"
+          <ComponentNamesDropdown
             value={topology}
-            isLoading={loading}
-            options={topologies}
-            isDisabled={loading}
+            loading={loading}
+            disabled={loading}
             placeholder="Select component"
             onChange={onComponentSelect}
-            formatOptionLabel={formatOptionLabel}
           />
-
           <div className="mx-2 w-80 relative rounded-md shadow-sm">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
               <button

@@ -1,17 +1,17 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import {
   useNavigate,
   useSearchParams,
   useOutletContext
 } from "react-router-dom";
-import { getAllConfigs } from "../../api/services/configs";
 import { filterConfigsByText } from "../../components/ConfigViewer/utils";
 import { BreadcrumbNav } from "../../components/BreadcrumbNav";
 import ConfigList from "../../components/ConfigList";
-import { useLoader } from "../../hooks";
-import { useConfigPageContext } from "../../context/ConfigPageContext";
-import ConfigsListFilters from "../../components/ConfigsListFilters";
 import { RefreshButton } from "../../components/RefreshButton";
+import { useConfigPageContext } from "../../context/ConfigPageContext";
+import { useAllConfigsQuery } from "../../api/query-hooks";
+import { getAllConfigs } from "../../api/services/configs";
+import ConfigsListFilters from "../../components/ConfigsListFilters";
 
 export function ConfigListPage() {
   const [params] = useSearchParams();
@@ -20,43 +20,38 @@ export function ConfigListPage() {
     configState: { data, filteredData },
     setConfigState
   } = useConfigPageContext();
-  const { loading, setLoading } = useLoader();
   const { setTitle, setTitleExtras } = useOutletContext<any>();
 
-  useEffect(() => {
-    setTitleExtras(
-      <RefreshButton onClick={() => getAllConfigs()} animate={loading} />
-    );
-  }, [loading, setTitleExtras]);
+  const {
+    data: allConfigs,
+    isLoading,
+    isRefetching
+  } = useAllConfigsQuery({
+    cacheTime: 0
+  });
 
   const search = params.get("search");
   const tag = decodeURIComponent(params.get("tag") || "All");
   const configType = decodeURIComponent(params.get("type") || "All");
 
-  const fetchAllConfigs = useCallback(() => {
-    setLoading(true);
-    getAllConfigs()
-      .then((res) => {
-        setConfigState((state) => {
-          return {
-            ...state,
-            data: res.data ?? undefined
-          };
-        });
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error(err);
-        setLoading(false);
-      });
-  }, []);
-
   useEffect(() => {
     if (params.get("query")) {
       return;
     }
-    fetchAllConfigs();
-  }, [params]);
+    if (!allConfigs?.data) {
+      return;
+    }
+    setConfigState((state) => {
+      return {
+        ...state,
+        data: allConfigs.data
+      };
+    });
+  }, [params, allConfigs]);
+
+  const loading = useMemo(() => {
+    return isLoading || isRefetching;
+  }, [isLoading, isRefetching]);
 
   const handleRowClick = (row?: { original?: { id: string } }) => {
     const id = row?.original?.id;
@@ -64,6 +59,12 @@ export function ConfigListPage() {
       navigate(`/configs/${id}`);
     }
   };
+
+  useEffect(() => {
+    setTitleExtras(
+      <RefreshButton onClick={() => getAllConfigs()} animate={isLoading} />
+    );
+  }, [loading, setTitleExtras]);
 
   useEffect(() => {
     let filteredData = data;

@@ -33,7 +33,6 @@ export function TopologyConfigChanges({ topologyID }: Props) {
           return res.json();
         })
       );
-      console.log(resConfigChanges);
       setComponentConfigChanges(resConfigChanges.flat());
       setIsLoading(false);
     }
