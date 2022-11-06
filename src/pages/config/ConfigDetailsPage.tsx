@@ -71,10 +71,32 @@ export function ConfigDetailsPage() {
     });
   }, []);
 
-  const code = useMemo(
+  const code = useMemo(() => {
+    // @ts-ignore
+
+    if (!configDetails?.config) {
+      return "";
+    }
+    if (configDetails?.config?.content != null) {
+      return configDetails?.config.content;
+    }
+
+    const ordered = Object.keys(configDetails.config)
+      .sort()
+      .reduce((obj, key) => {
+        obj[key] = configDetails.config[key];
+        return obj;
+      }, {});
+
+    return configDetails?.config && JSON.stringify(ordered, null, 2);
+  }, [configDetails]);
+
+  const format = useMemo(
     () =>
       // @ts-ignore
-      configDetails?.config && JSON.stringify(configDetails.config, null, 2),
+      configDetails?.config.format != null
+        ? configDetails?.config.format
+        : "json",
     [configDetails]
   );
 
@@ -153,6 +175,7 @@ export function ConfigDetailsPage() {
                 <div className="flex relative py-6 px-4 border-gray-300 bg-white rounded shadow-md flex-1 overflow-x-auto">
                   <JSONViewer
                     code={code}
+                    format={format}
                     showLineNo
                     onClick={handleClick}
                     selections={checked}

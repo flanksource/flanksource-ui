@@ -1,25 +1,21 @@
-import React, { Suspense, useEffect, useState } from "react";
-import dayjs from "dayjs";
 import { ChevronRightIcon, DotsVerticalIcon } from "@heroicons/react/outline";
-import { LogsTable } from "../../Logs/Table/logs-table";
-import { CardSize, TopologyCard } from "../../TopologyCard";
-import { Icon } from "../../Icon";
-import { Button } from "../../Button";
+import dayjs from "dayjs";
+import React, { useEffect, useState } from "react";
 import { BsTrash } from "react-icons/bs";
-import { Evidence, EvidenceType } from "../../../api/services/evidence";
 import { Link } from "react-router-dom";
-import mixins from "../../../utils/mixins.module.css";
+import { Evidence, EvidenceType } from "../../../api/services/evidence";
 import { getCanaries } from "../../../api/services/topology";
+import { toFixedIfNecessary } from "../../../utils/common";
+import mixins from "../../../utils/mixins.module.css";
+import { Button } from "../../Button";
+import { CheckDetails } from "../../Canary/CanaryPopup/CheckDetails";
 import { CheckTitle } from "../../Canary/CanaryPopup/CheckTitle";
-import { StatusHistory } from "../../Canary/CanaryPopup/StatusHistory";
-import {
-  capitalizeFirstLetter,
-  toFixedIfNecessary
-} from "../../../utils/common";
 import { getUptimePercentage } from "../../Canary/CanaryPopup/utils";
 import { Duration, StatusList } from "../../Canary/renderers";
+import { Icon } from "../../Icon";
+import { LogsTable } from "../../Logs/Table/logs-table";
 import { Modal } from "../../Modal";
-import { CheckDetails } from "../../Canary/CanaryPopup/CheckDetails";
+import { CardSize, TopologyCard } from "../../TopologyCard";
 
 export function EvidenceItem({ evidence }: { evidence: Evidence }) {
   switch (evidence.type) {
@@ -39,7 +35,7 @@ export function EvidenceItem({ evidence }: { evidence: Evidence }) {
         <EvidenceAccordion
           date={evidence.created_at}
           title={evidence.description}
-          configId={evidence.evidence.id}
+          configId={evidence.config_id}
           configName={evidence.evidence.configName}
           configType={evidence.evidence.configType}
         >

@@ -1,3 +1,4 @@
+import { map } from "lodash";
 import { FaExclamationTriangle } from "react-icons/fa";
 import { TbListDetails } from "react-icons/tb";
 import { NodePodPropToLabelMap } from "../../constants";
@@ -18,19 +19,6 @@ export default function TopologyDetails({ topology }: Props) {
 
   return (
     <div className="flex flex-col space-y-2">
-      {headline && headline?.length > 0 && (
-        <div className="flex flex-col p-4">
-          <div className="flex flex-row divide-x divide-solid space-x-4 px-4 py-6 border border-gray-300 rounded-lg">
-            <CardMetrics
-              items={headline}
-              showLabelIcons
-              containerClasses="flex flex-col flex-1 space-y-3 items-center justify-center"
-              labelClasses="text-gray-color"
-              metricsClasses="font-semibold"
-            />
-          </div>
-        </div>
-      )}
       <CollapsiblePanel
         Header={
           <h3 className="flex flex-row space-x-2 items-center text-xl font-semibold">
@@ -40,13 +28,31 @@ export default function TopologyDetails({ topology }: Props) {
         }
       >
         <div className="flex flex-col">
+          {headline && headline?.length > 0 && (
+            <div className="flex flex-col p-4">
+              <div className="flex flex-row divide-x divide-solid space-x-2  py-2">
+                <CardMetrics
+                  items={headline}
+                  showLabelIcons
+                  containerClasses="flex flex-col flex-1 space-y-3 items-center justify-center"
+                  labelClasses="text-gray-color"
+                  metricsClasses="font-semibold"
+                />
+              </div>
+            </div>
+          )}
+
           {topologyProperties?.length > 0 ? (
             <table className="table-auto shadow-none">
               {topologyProperties
-                .filter((property) => !property.headline)
+                .filter(
+                  (property) =>
+                    !property.headline &&
+                    (property.text != null || property.value != null)
+                )
                 .map((property) => (
                   <tr>
-                    <th className="text-gray-400 font-medium text-left overflow-auto">
+                    <th className="text-gray-500 font-light text-left overflow-auto">
                       {property.name ? (
                         <>
                           {/* @ts-ignore */}
@@ -57,9 +63,12 @@ export default function TopologyDetails({ topology }: Props) {
                       ) : (
                         <Icon
                           name={property.icon}
-                          secondary={property.name}
-                          size="xs"
-                        />
+                          // secondary={property.name}
+                          size="sm"
+                        >
+                          {" "}
+                          {property.name}
+                        </Icon>
                       )}
                     </th>
                     <td className="text-base border-none">
@@ -78,6 +87,21 @@ export default function TopologyDetails({ topology }: Props) {
               </div>
             </div>
           )}
+
+          <span className="text-gray-500 font-light text-left overflow-auto">
+            Labels
+          </span>
+
+          {topology.labels &&
+            map(topology.labels, (v, k) => (
+              <div
+                data-tip={`${k}: ${v}`}
+                className="max-w-full overflow-hidden text-ellipsi px-1 py-0.75 mr-1 mb-1 rounded-md text-gray-600 font-semibold text-xs"
+                key={k}
+              >
+                {k}: <span className="font-light">{v}</span>
+              </div>
+            ))}
         </div>
       </CollapsiblePanel>
     </div>

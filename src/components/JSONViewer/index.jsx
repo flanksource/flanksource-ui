@@ -33,9 +33,9 @@ const Line = ({ getTokenProps, onClick, showLineNo, idx, line, ...props }) => {
   );
 };
 
-export function JSONViewer({ code, showLineNo, selections, onClick }) {
+export function JSONViewer({ code, format, showLineNo, selections, onClick }) {
   return (
-    <Highlight {...defaultProps} code={code} theme={vsLight} language="json">
+    <Highlight {...defaultProps} code={code} theme={vsLight} language={format}>
       {({ className, style, tokens, getLineProps, getTokenProps }) => (
         <pre className={`${className} text-sm`} style={style}>
           {tokens.map((line, i) => {
