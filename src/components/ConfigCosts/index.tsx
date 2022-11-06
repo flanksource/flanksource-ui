@@ -12,7 +12,7 @@ export function FormatCurrency({ value }: { value: number | string }) {
     return parsedValue.toFixed(0);
   }, [value]);
 
-  return <span>{amount}</span>;
+  return <span>${amount}</span>;
 }
 
 export type ConfigCostsData = {
