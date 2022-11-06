@@ -12,6 +12,10 @@ const aliases = {
   "AWS::ElasticLoadBalancingV2::LoadBalancer": "aws-alb",
   "AWS::Region": "aws",
   "AWS::EC2::SecurityGroup": "firewall",
+  oipa: "oracle_icon",
+  cost: "dollar",
+  File: "cfg",
+  memory: "mem",
   MSPlanner: "msplanner"
 };
 
