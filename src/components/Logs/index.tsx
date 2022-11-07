@@ -1,9 +1,14 @@
-import { useState } from "react";
+import { ComponentProps, useState } from "react";
+import LogItem from "../../types/Logs";
 import { LogsTable } from "./Table/LogsTable";
 
-export function LogsViewer() {
-  console.log("Hello from LogsViewer");
-  const [variant, setVariant] = useState("comfortable");
+type LogsProps = {
+  logs: LogItem[];
+};
+
+export function LogsViewer({ logs }: LogsProps) {
+  const [variant, setVariant] =
+    useState<ComponentProps<typeof LogsTable>["variant"]>("comfortable");
 
   return (
     <>

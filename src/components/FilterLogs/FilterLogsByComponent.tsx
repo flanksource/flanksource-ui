@@ -34,7 +34,7 @@ function FilterLogsByComponent() {
         return {
           value: component.id,
           icon: (
-            <Icon name={component.icon} secondary={component.name} size="xl" />
+            <Icon name={component.icon} secondary={component.name} size="md" />
           ),
           label: component.name,
           description: component.name
@@ -42,15 +42,6 @@ function FilterLogsByComponent() {
       });
     }
   }, [data]);
-
-  if (isLoading && !data) {
-    return (
-      <div className="flex space-x-3 items-center animate-pulse">
-        <div className="text-gray-500 text-sm">Component</div>
-        <div className="animate-pulse flex-1 w-56 h-8 bg-gray-200 rounded-sm"></div>
-      </div>
-    );
-  }
 
   if (error && !data) {
     return (
@@ -64,7 +55,14 @@ function FilterLogsByComponent() {
   }
 
   function onComponentSelect(value?: string) {
-    console.log(value);
+    console.log("value", value);
+    if (value?.toLowerCase() === "all") {
+      searchParams.delete("topologyId");
+      searchParams.delete("topologyExternalId");
+      searchParams.delete("type");
+      setSearchParams(searchParams);
+      return;
+    }
     const selectedComponent = data?.find((c) => c.id === value);
     if (selectedComponent) {
       setSearchParams({
@@ -92,6 +90,8 @@ function FilterLogsByComponent() {
         items={{ ...defaultSelections, ...dropDownOptions }}
         dropDownClassNames="w-auto max-w-[400px] left-0"
         hideControlBorder
+        isLoading={isLoading}
+        isDisabled={isLoading}
       />
     </div>
   );

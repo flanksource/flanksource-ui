@@ -3,14 +3,15 @@ import { BsGearFill, BsFlower2, BsGridFill, BsStack } from "react-icons/bs";
 import { useSearchParams } from "react-router-dom";
 import { getLogs } from "../api/services/logs";
 import { SearchLayout } from "../components/Layout";
-import { Loading } from "../components/Loading";
-import { LogsViewer } from "../components/Logs";
 import { TextInput } from "../components/TextInput";
 import { TimeRange, timeRanges } from "../components/Dropdown/TimeRange";
 import FilterLogsByComponent from "../components/FilterLogs/FilterLogsByComponent";
 import { useQuery } from "@tanstack/react-query";
 import { TopologyComponentItem } from "../components/FilterIncidents/FilterIncidentsByComponents";
 import { DropdownStandaloneWrapper } from "../components/Dropdown/StandaloneWrapper";
+import { LogsTable } from "../components/Logs/Table/LogsTable";
+import useDebouncedValue from "../hooks/useDebounce";
+import LogItem from "../types/Logs";
 
 export const logTypes = [
   {
@@ -43,31 +44,35 @@ export function LogsPage() {
   const query = searchParams.get("query");
   const start = searchParams.get("start") ?? timeRanges[0].value;
 
+  const debouncedQueryValue = useDebouncedValue(query, 500);
+
   const { data: topology } = useQuery(
     ["components", "names", topologyId],
     async () => {
       const res = await fetch(
         `/api/canary/db/component_names?id=eq.${topologyId}`
       );
-      const data = (await res.json()) as TopologyComponentItem[];
+      const data = (await res.json()) as Pick<TopologyComponentItem, "name">[];
       return data[0];
     },
     {
-      enabled: !!topologyId
+      enabled: !!topologyId && !!query
     }
   );
 
   const {
     isLoading,
+    isFetching,
+    isRefetching,
     data: logs,
     refetch
   } = useQuery(
     // use the different filters as a key for the cache
-    ["topology", "logs", externalId, type, query, start],
+    ["topology", "logs", externalId, type, debouncedQueryValue, start],
     async () => {
       const queryBody = {
-        query,
-        id: topologyId,
+        query: debouncedQueryValue,
+        id: externalId,
         type,
         start
       };
@@ -75,16 +80,17 @@ export function LogsPage() {
       if (res.error) {
         throw res.error;
       }
-      return res.data;
+      return res.data.results as LogItem[];
     },
     {
-      enabled: !!topologyId
+      enabled: !!topologyId || !!query
     }
   );
 
   return (
     <SearchLayout
       onRefresh={() => refetch()}
+      loading={isLoading || isFetching || isRefetching}
       title={
         <h1 className="text-xl font-semibold">
           Logs{topology?.name ? `/${topology.name}` : ""}
@@ -101,16 +107,12 @@ export function LogsPage() {
       }
     >
       <div className="flex flex-col space-y-6 h-full">
-        <div className="flex flex-row w-full">
+        <div className="flex flex-row items-center w-full">
           <FilterLogsByComponent />
 
           <div className="mx-2 w-80 relative rounded-md shadow-sm">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
-              <button
-                type="button"
-                // onClick={() => loadLogs()}
-                className="hover"
-              >
+              <button type="button" onClick={() => refetch()} className="hover">
                 <SearchIcon
                   className="h-5 w-5 text-gray-400 hover:text-gray-600"
                   aria-hidden="true"
@@ -123,30 +125,26 @@ export function LogsPage() {
               style={{ height: "38px" }}
               id="searchQuery"
               onChange={(e) => {
-                e.preventDefault();
-                setSearchParams({
-                  ...Object.entries(searchParams),
-                  query: e.target.value
-                });
+                if (e.target.value !== "") {
+                  setSearchParams({
+                    ...Object.fromEntries(searchParams),
+                    query: e.target.value
+                  });
+                } else {
+                  searchParams.delete("query");
+                  setSearchParams(searchParams);
+                }
               }}
-              value={query ?? undefined}
+              defaultValue={query ?? undefined}
             />
           </div>
         </div>
-        {isLoading && topologyId && (
-          <Loading className="mt-40" text="Loading logs..." />
-        )}
-        {topologyId && logs && (
-          // @ts-expect-error
-          <LogsViewer className="pt-4" logs={logs} />
-        )}
-        {!topologyId && (
-          <div className="flex flex-col justify-center items-center h-5/6">
-            <h3 className="text-center font-semibold text-lg">
-              Please select a component to view the logs.
-            </h3>
-          </div>
-        )}
+        <LogsTable
+          variant="comfortable"
+          isLoading={isLoading}
+          logs={logs ?? []}
+          areQueryParamsEmpty={!topologyId && !query}
+        />
       </div>
     </SearchLayout>
   );
