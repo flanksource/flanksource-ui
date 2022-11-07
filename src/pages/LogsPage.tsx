@@ -1,17 +1,16 @@
 import { SearchIcon } from "@heroicons/react/solid";
 import { BsGearFill, BsFlower2, BsGridFill, BsStack } from "react-icons/bs";
-import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { getLogs } from "../api/services/logs";
 import { SearchLayout } from "../components/Layout";
 import { Loading } from "../components/Loading";
 import { LogsViewer } from "../components/Logs";
 import { TextInput } from "../components/TextInput";
-import { timeRanges } from "../components/Dropdown/TimeRange";
-import { ReactSelectDropdown } from "../components/ReactSelectDropdown";
+import { TimeRange, timeRanges } from "../components/Dropdown/TimeRange";
 import FilterLogsByComponent from "../components/FilterLogs/FilterLogsByComponent";
 import { useQuery } from "@tanstack/react-query";
 import { TopologyComponentItem } from "../components/FilterIncidents/FilterIncidentsByComponents";
+import { DropdownStandaloneWrapper } from "../components/Dropdown/StandaloneWrapper";
 
 export const logTypes = [
   {
@@ -42,12 +41,7 @@ export function LogsPage() {
   const type = searchParams.get("type");
   const externalId = searchParams.get("topologyExternalId");
   const query = searchParams.get("query");
-
-  console.log(topologyId, type, externalId);
-
-  const [start, setStart] = useState(
-    searchParams.get("start") || timeRanges[0].value
-  );
+  const start = searchParams.get("start") ?? timeRanges[0].value;
 
   const { data: topology } = useQuery(
     ["components", "names", topologyId],
@@ -68,7 +62,8 @@ export function LogsPage() {
     data: logs,
     refetch
   } = useQuery(
-    ["topology", "logs", topologyId],
+    // use the different filters as a key for the cache
+    ["topology", "logs", externalId, type, query, start],
     async () => {
       const queryBody = {
         query,
@@ -97,16 +92,11 @@ export function LogsPage() {
       }
       contentClass={`h-full py-4 px-6 ${logs ? "p-6" : ""}`}
       extra={
-        <ReactSelectDropdown
-          name="start"
+        <DropdownStandaloneWrapper
+          dropdownElem={<TimeRange name="time-range" />}
+          defaultValue={searchParams.get("start") ?? timeRanges[0].value}
+          paramKey="start"
           className="w-44 mr-2"
-          items={timeRanges}
-          onChange={(e) => {
-            if (e) {
-              setStart(e);
-            }
-          }}
-          value={start}
         />
       }
     >
