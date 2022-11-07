@@ -9,6 +9,32 @@ dayjs.extend(isBetween);
 dayjs.extend(isToday);
 dayjs.extend(isSameOrAfter);
 
+import relativeTime from "dayjs/plugin/relativeTime";
+import updateLocale from "dayjs/plugin/updateLocale";
+import utc from "dayjs/plugin/utc";
+
+dayjs.extend(relativeTime);
+dayjs.extend(updateLocale);
+dayjs.extend(utc);
+
+dayjs.updateLocale("en", {
+  relativeTime: {
+    future: "in %s",
+    past: "%s ago",
+    s: "seconds",
+    m: "1m",
+    mm: "%dm",
+    h: "1h",
+    hh: "%dh",
+    d: "1d",
+    dd: "%dd",
+    M: "1mo",
+    MM: "%dmo",
+    y: "1y",
+    yy: "%dy"
+  }
+});
+
 export function isDate(dateString?: ValueType) {
   if (
     !dateString ||
@@ -83,22 +109,33 @@ export const formatDate = (
  * Parse the given date relative to the user locale
  *
  * @param date
- * @param fromNow give relative date from now
+ * @param date
  * @returns relative date as string
  */
-export const relativeDateTime = (date: string | Date, fromNow = false) => {
-  const t = dayjs.utc(date).local();
-  const n = dayjs();
+export const relativeDateTime = (
+  from: string | Date,
+  to = dayjs().toISOString()
+) => {
+  const fromDate = dayjs.utc(from).local();
+  const toDate = dayjs.utc(to).local();
 
-  if (n.isSame(t, "day") || fromNow) {
-    return t.fromNow();
+  if (
+    toDate.isSame(from, "day") &&
+    toDate.isSame(from, "month") &&
+    toDate.isSame(from, "year")
+  ) {
+    return fromDate.fromNow();
   }
 
-  if (n.diff(t, "days") === 1) {
-    return `${t.format(DATE_FORMATS.TIME)} yesterday`;
+  if (
+    toDate.diff(fromDate, "days") === 1 &&
+    toDate.isSame(from, "month") &&
+    toDate.isSame(from, "year")
+  ) {
+    return `${fromDate.format(DATE_FORMATS.TIME)} yesterday`;
   }
 
-  return t.format(DATE_FORMATS.LONG);
+  return fromDate.format(DATE_FORMATS.LONG);
 };
 
 /**
@@ -155,16 +192,3 @@ export const dateDiff = (
   diffUnit?: string,
   isDiffInFloat?: boolean
 ) => dayjs(date1).diff(dayjs(date2), diffUnit as ManipulateType, isDiffInFloat);
-
-/**
- *
- * @param date1 First date
- * @param date2 Second Date
- * @param withoutSuffix If suffix needed at the end of time passed.
- * @returns a string mentioning the time passed from date2 relative to date1
- */
-export const timePassedInWords = (
-  date1: DateConfig,
-  date2: DateConfig,
-  withoutSuffix = false
-) => dayjs(date1).from(dayjs(date2), withoutSuffix);

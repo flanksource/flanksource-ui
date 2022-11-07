@@ -2,11 +2,7 @@ import { Dialog } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
 import clsx from "clsx";
 import { MdTimer } from "react-icons/md";
-import {
-  formatDate,
-  relativeDateTime,
-  timePassedInWords
-} from "../../../utils/date";
+import { relativeDateTime } from "../../../utils/date";
 
 import {
   AddResponderFormValues,
@@ -48,10 +44,9 @@ export function ResponderDetailsDialog({
     if (responder?.json?.acknowledge_time) {
       options.push({
         label: "Time taken to acknowledge",
-        value: timePassedInWords(
-          formatDate(responder?.json?.created_at),
-          formatDate(responder?.json?.acknowledge_time),
-          true
+        value: relativeDateTime(
+          responder?.json?.created_at,
+          responder?.json?.acknowledge_time
         )
       });
     }

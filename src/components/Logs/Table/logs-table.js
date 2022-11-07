@@ -7,7 +7,7 @@ import { useRowSelect, useTable } from "react-table";
 import { EvidenceType } from "../../../api/services/evidence";
 import { AttachEvidenceDialog } from "../../AttachEvidenceDialog";
 import { IndeterminateCheckbox } from "../../IndeterminateCheckbox/IndeterminateCheckbox";
-import { DATE_FORMATS, formatDate } from "../../../utils/date";
+import { relativeDateTime } from "../../../utils/date";
 
 const convert = new Convert();
 
@@ -48,11 +48,7 @@ export const LogsTable = ({ logs: logsParam, actions, variant, viewOnly }) => {
                   <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
                 </div>
               )}
-              <p>
-                {formatDate(row.original.timestamp, {
-                  stringFormat: DATE_FORMATS.LONG
-                })}
-              </p>
+              <p>{relativeDateTime(row.original.timestamp)}</p>
             </div>
           );
         }

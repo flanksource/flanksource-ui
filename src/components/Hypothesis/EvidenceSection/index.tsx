@@ -15,7 +15,7 @@ import { Icon } from "../../Icon";
 import { LogsTable } from "../../Logs/Table/logs-table";
 import { Modal } from "../../Modal";
 import { CardSize, TopologyCard } from "../../TopologyCard";
-import { DATE_FORMATS, formatDate } from "../../../utils/date";
+import { relativeDateTime } from "../../../utils/date";
 
 export function EvidenceItem({ evidence }: { evidence: Evidence }) {
   switch (evidence.type) {
@@ -79,11 +79,7 @@ const EvidenceAccordion: React.FC<{
             {title || <span className="text-gray-400">(no title)</span>}
             {date && (
               <div className="text-gray-400 text-sm">
-                {
-                  formatDate(date, {
-                    stringFormat: DATE_FORMATS.LONG
-                  }) as string
-                }
+                {relativeDateTime(date)}
               </div>
             )}
           </div>
