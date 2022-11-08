@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { IoChevronForwardOutline } from "react-icons/io5";
 import { TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti";
 import { useSortBy, useTable, useGroupBy, useExpanded } from "react-table";
@@ -78,7 +78,15 @@ export const DataTable = ({
     }
   };
 
-  const isGrouped = useMemo(() => !!groupBy && !!groupBy.length, [groupBy]);
+  const isGrouped = !!groupBy?.length;
+
+  useEffect(() => {
+    tableInstance.setGroupBy(Array.isArray(groupBy) ? groupBy : []);
+  }, [groupBy, tableInstance]);
+
+  useEffect(() => {
+    tableInstance.setSortBy(Array.isArray(sortBy) ? sortBy : []);
+  }, [sortBy, tableInstance]);
 
   return (
     <div className="flex flex-col flex-1 overflow-y-auto" {...rest}>

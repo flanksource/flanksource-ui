@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { AiFillWarning } from "react-icons/ai";
 import { BiDollarCircle } from "react-icons/bi";
 import { FaTasks } from "react-icons/fa";
@@ -42,30 +42,35 @@ const columns: TableCols[] = [
     Header: "Type",
     accessor: "config_type",
     Cell: TypeCell,
-    Aggregated: "-"
+    Aggregated: ""
   },
   {
     Header: "Name",
     accessor: "name",
-    Aggregated: "-"
+    Aggregated: ""
   },
   {
     Header: "Changes",
     accessor: "changes",
     Cell: React.memo(ChangeCell),
     aggregate: ChangeAggregate,
-    Aggregated: ({ value }) => (
-      <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-blue-100 text-blue-800">
-        {value}
-      </span>
-    ),
+    Aggregated: ({ value }) => {
+      if (!value) {
+        return "";
+      }
+      return (
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-blue-100 text-blue-800">
+          {value}
+        </span>
+      );
+    },
     maxWidth: 400
   },
   {
     Header: "Analysis",
     accessor: "analysis",
     Cell: AnalysisCell,
-    Aggregated: "-",
+    Aggregated: "",
     maxWidth: 400
   },
   {
@@ -101,20 +106,20 @@ const columns: TableCols[] = [
     accessor: "tags",
     Cell: React.memo(TagsCell),
     cellClass: "overflow-auto",
-    Aggregated: "-",
+    Aggregated: "",
     maxWidth: 400
   },
   {
     Header: "Created",
     accessor: "created_at",
     Cell: DateCell,
-    Aggregated: "-"
+    Aggregated: ""
   },
   {
     Header: "Last Updated",
     accessor: "updated_at",
     Cell: DateCell,
-    Aggregated: "-"
+    Aggregated: ""
   },
   {
     Header: "Changed",
@@ -325,7 +330,7 @@ function DateCell({ row, column }: CellProp): JSX.Element {
   }
   return (
     <div className="text-xs">
-      {dateString ? timeago.format(dateString) : "-"}
+      {dateString ? timeago.format(dateString) : ""}
     </div>
   );
 }
@@ -420,6 +425,24 @@ function ConfigList({ data, handleRowClick, isLoading }: Props) {
     return [];
   };
 
+  const sortBy = useMemo(() => {
+    const data = sortField
+      ? [
+          {
+            id: sortField,
+            desc: isSortOrderDesc
+          }
+        ]
+      : [];
+    if (sortField === "config_type") {
+      data.push({
+        id: "name",
+        desc: isSortOrderDesc
+      });
+    }
+    return data;
+  }, [sortField, isSortOrderDesc]);
+
   return (
     <DataTable
       stickyHead
@@ -428,16 +451,7 @@ function ConfigList({ data, handleRowClick, isLoading }: Props) {
       handleRowClick={handleRowClick}
       tableStyle={{ borderSpacing: "0" }}
       isLoading={isLoading}
-      sortBy={
-        sortField
-          ? [
-              {
-                id: sortField,
-                desc: isSortOrderDesc
-              }
-            ]
-          : []
-      }
+      sortBy={sortBy}
       setSortOptions={setSortBy}
       groupBy={
         !groupByField || groupByField === "no_grouping" ? null : [groupByField]
