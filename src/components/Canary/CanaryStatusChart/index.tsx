@@ -13,7 +13,7 @@ import { getCanaryGraph } from "../../../api/services/topology";
 import { Loading } from "../../Loading";
 import {
   customDateFormattor,
-  dateToISOString,
+  formatISODate,
   subtractDateFromNow
 } from "../../../utils/date";
 
@@ -66,7 +66,7 @@ const getStartValue = (start: string) => {
     return start;
   }
 
-  return dateToISOString(
+  return formatISODate(
     subtractDateFromNow(+(start.match(/\d/g)?.[0] ?? "1"), "month")
   );
 };

@@ -1,12 +1,11 @@
 import {
   customDateFormattor,
   dateDiff,
-  dateToISOString,
+  formatISODate,
   dateToJSDate,
-  DATE_FORMATS,
-  formatDate,
   isValidDate,
-  subtractDateFromNow
+  subtractDateFromNow,
+  formatTimeRange
 } from "../../utils/date";
 import { getLocalItem, setLocalItem } from "../../utils/storage";
 import { RangeOption, rangeOptionsCategories } from "./rangeOptions";
@@ -61,14 +60,14 @@ export const convertRangeValue = (
     return format === "jsDate"
       ? dateToJSDate(value)
       : format === "iso"
-      ? dateToISOString(value)
+      ? formatISODate(value)
       : customDateFormattor(value, format);
   }
   if (format === "jsDate") {
     return dateToJSDate(subtractDateFromNow(...getIntervalData(value)));
   }
   if (format === "iso") {
-    return dateToISOString(subtractDateFromNow(...getIntervalData(value)));
+    return formatISODate(subtractDateFromNow(...getIntervalData(value)));
   }
   if (format === "default") {
     return dateToJSDate(subtractDateFromNow(...getIntervalData(value)));
@@ -78,9 +77,6 @@ export const convertRangeValue = (
     format
   );
 };
-
-export const createValueForInput = (value: Date | string): string =>
-  formatDate(value, { stringFormat: DATE_FORMATS.TIME_RANGE }) as string;
 
 export const createDisplayValue = (range: RangeOption) => {
   let label;
@@ -95,9 +91,7 @@ export const createDisplayValue = (range: RangeOption) => {
     return label;
   }
   if (range.from && range.to) {
-    return `${createValueForInput(range.from)} to ${createValueForInput(
-      range.to
-    )}`;
+    return `${formatTimeRange(range.from)} to ${formatTimeRange(range.to)}`;
   }
   return "";
 };

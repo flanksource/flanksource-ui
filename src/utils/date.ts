@@ -107,7 +107,7 @@ export const formatDate = (
 
 export const formatLongDate = (date: string | Date) => {
   return formatDate(date, {
-    stringFormat: DATE_FORMATS.TIME_RANGE
+    stringFormat: DATE_FORMATS.LONG
   });
 };
 
@@ -154,8 +154,7 @@ export const isValidDate = (value: DateConfig) => dayjs(value).isValid();
  * @param value date to convert
  * @returns string of ISO date
  */
-export const dateToISOString = (value: DateConfig) =>
-  dayjs(value).toISOString();
+export const formatISODate = (value: DateConfig) => dayjs(value).toISOString();
 
 /**
  *
