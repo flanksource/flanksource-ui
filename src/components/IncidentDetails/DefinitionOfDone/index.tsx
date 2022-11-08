@@ -22,6 +22,37 @@ type DefinitionOfDoneProps = {
   incidentId: string;
 };
 
+function AddDefinitionOfDone({ onClick }: { onClick: () => void }) {
+  return (
+    <div className="flex items-center justify-between p-2 pl-1">
+      <button
+        type="button"
+        className="flex items-center bg-white rounded-md group"
+        onClick={onClick}
+      >
+        <span className="flex items-center justify-center w-5 h-5 text-gray-400 border-2 border-gray-300 border-dashed rounded-full">
+          <svg
+            className="w-5 h-5"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              fillRule="evenodd"
+              d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+              clipRule="evenodd"
+            ></path>
+          </svg>
+        </span>
+        <span className="ml-2 text-sm font-medium text-blue-600 group-hover:text-blue-500">
+          Add definition of done
+        </span>
+      </button>
+    </div>
+  );
+}
+
 export function DefinitionOfDone({ incidentId }: DefinitionOfDoneProps) {
   const [size] = useState<Size>(Size.small);
   const [openDeleteConfirmDialog, setOpenDeleteConfirmDialog] = useState(false);
@@ -195,35 +226,12 @@ export function DefinitionOfDone({ incidentId }: DefinitionOfDoneProps) {
                 </div>
               );
             })}
-          <div className="flex items-center justify-between p-2 pl-1">
-            <button
-              type="button"
-              className="flex items-center bg-white rounded-md group"
-              onClick={() => {
-                setAddToDODModalOpen(true);
-                setSelectedEvidences([]);
-              }}
-            >
-              <span className="flex items-center justify-center w-5 h-5 text-gray-400 border-2 border-gray-300 border-dashed rounded-full">
-                <svg
-                  className="w-5 h-5"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                  aria-hidden="true"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
-                    clipRule="evenodd"
-                  ></path>
-                </svg>
-              </span>
-              <span className="ml-2 text-sm font-medium text-blue-600 group-hover:text-blue-500">
-                Add definition of done
-              </span>
-            </button>
-          </div>
+          <AddDefinitionOfDone
+            onClick={() => {
+              setAddToDODModalOpen(true);
+              setSelectedEvidences([]);
+            }}
+          />
           <div className={dodEvidences.length >= 3 ? "mb-4" : ""}></div>
         </div>
       </div>
@@ -313,10 +321,7 @@ export function DefinitionOfDone({ incidentId }: DefinitionOfDoneProps) {
           <div className="flex flex-1">
             <button
               type="submit"
-              className={clsx(
-                "inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:text-sm",
-                "mt-4"
-              )}
+              className={clsx("btn-secondary-base btn-secondary", "mt-4")}
               onClick={() => {
                 setAddToDODModalOpen(false);
                 setSelectedEvidences([]);

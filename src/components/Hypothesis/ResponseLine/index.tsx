@@ -12,6 +12,7 @@ import { Icon } from "../../Icon";
 import { Menu } from "../../Menu";
 import { BiCheck } from "react-icons/bi";
 import { IoMdRemoveCircle } from "react-icons/io";
+import { useCallback, useMemo } from "react";
 
 type CreatedBy = User & {
   team: {
@@ -28,7 +29,7 @@ interface IProps {
   markAsDefinitionOfDone?: () => void;
 }
 
-function isEvidence(x: Comment | Evidence): x is Evidence {
+function isEvidence(x: Comment | Evidence) {
   return (x as Evidence).type !== undefined;
 }
 
@@ -39,6 +40,30 @@ export function ResponseLine({
   onDelete,
   markAsDefinitionOfDone
 }: IProps) {
+  const actions = useMemo(() => {
+    return {
+      delete: true,
+      markAsDefinitionOfDone: true
+    };
+  }, []);
+
+  const menuData = useMemo(() => {
+    return {
+      definition_of_done: response.definition_of_done
+    };
+  }, [response]);
+
+  const onClickCb = useCallback(
+    (action: ActionType) => {
+      if (action === "delete") {
+        onDelete?.();
+      } else if (action === "markAsDefinitionOfDone") {
+        markAsDefinitionOfDone?.();
+      }
+    },
+    [onDelete, markAsDefinitionOfDone]
+  );
+
   return (
     <div className="pb-4 flex items-start space-x-3 group">
       {created_by.team ? (
@@ -80,69 +105,104 @@ export function ResponseLine({
         )}
       </div>
 
-      {(markAsDefinitionOfDone || onDelete) && (
-        <Menu>
-          <Menu.VerticalIconButton />
-          <Menu.Items widthClass="w-72">
-            {onDelete && (
-              <Menu.Item onClick={() => Promise.resolve(onDelete())}>
-                <div className="cursor-pointer flex w-full">
-                  <IconButton
-                    className="bg-transparent flex items-center"
-                    ovalProps={{
-                      stroke: "blue",
-                      height: "18px",
-                      width: "18px",
-                      fill: "transparent"
-                    }}
-                    icon={
-                      <BsTrash
-                        className="text-gray-600 border-0 border-l-1 border-gray-200"
-                        size={18}
-                      />
-                    }
-                  />
-                  <span className="pl-2 text-sm block cursor-pionter">
-                    Delete Evidence
-                  </span>
-                </div>
-              </Menu.Item>
-            )}
-            {markAsDefinitionOfDone && (
-              <Menu.Item onClick={markAsDefinitionOfDone}>
-                <div className="cursor-pointer flex w-full">
-                  <IconButton
-                    className="bg-transparent flex items-center"
-                    ovalProps={{
-                      stroke: "blue",
-                      height: "18px",
-                      width: "18px",
-                      fill: "transparent"
-                    }}
-                    icon={
-                      response.definition_of_done ? (
-                        <IoMdRemoveCircle size={18} />
-                      ) : (
-                        <BiCheck size={18} />
-                      )
-                    }
-                  />
-                  {!response.definition_of_done && (
-                    <span className="pl-2 text-sm block">
-                      Add to definition of done
-                    </span>
-                  )}
-                  {response.definition_of_done && (
-                    <span className="pl-2 text-sm block">
-                      Remove from definition of done
-                    </span>
-                  )}
-                </div>
-              </Menu.Item>
-            )}
-          </Menu.Items>
-        </Menu>
-      )}
+      <ResponseLineMenuActions
+        actions={actions}
+        data={menuData}
+        onClick={onClickCb}
+      />
     </div>
+  );
+}
+
+type ActionType = "delete" | "markAsDefinitionOfDone";
+
+type ResponseLineMenuActionsProps = {
+  actions: {
+    delete: boolean;
+    markAsDefinitionOfDone: boolean;
+  };
+  data: {
+    definition_of_done: boolean;
+  };
+  onClick: (action: ActionType) => void;
+};
+
+function ResponseLineMenuActions({
+  actions,
+  data,
+  onClick
+}: ResponseLineMenuActionsProps) {
+  return (
+    <Menu>
+      {actions.delete && actions.markAsDefinitionOfDone && (
+        <Menu.VerticalIconButton />
+      )}
+      <Menu.Items widthClass="w-72">
+        {actions.delete && (
+          <Menu.Item
+            onClick={() => {
+              onClick("delete");
+            }}
+          >
+            <div className="cursor-pointer flex w-full">
+              <IconButton
+                className="bg-transparent flex items-center"
+                ovalProps={{
+                  stroke: "blue",
+                  height: "18px",
+                  width: "18px",
+                  fill: "transparent"
+                }}
+                icon={
+                  <BsTrash
+                    className="text-gray-600 border-0 border-l-1 border-gray-200"
+                    size={18}
+                  />
+                }
+              />
+              <span className="pl-2 text-sm block cursor-pionter">
+                Delete Evidence
+              </span>
+            </div>
+          </Menu.Item>
+        )}
+        {actions.markAsDefinitionOfDone && (
+          <Menu.Item
+            onClick={() => {
+              onClick("markAsDefinitionOfDone");
+            }}
+          >
+            <div className="cursor-pointer flex w-full">
+              <IconButton
+                className="bg-transparent flex items-center"
+                ovalProps={{
+                  stroke: "blue",
+                  height: "18px",
+                  width: "18px",
+                  fill: "transparent"
+                }}
+                icon={
+                  data.definition_of_done ? (
+                    <IoMdRemoveCircle size={18} />
+                  ) : (
+                    <BiCheck size={18} />
+                  )
+                }
+              />
+              {!data.definition_of_done && (
+                <span className="pl-2 text-sm block">
+                  Add to definition of done
+                </span>
+              )}
+              {data.definition_of_done && (
+                <span className="pl-2 text-sm block">
+                  Remove from definition of done
+                </span>
+              )}
+            </div>
+          </Menu.Item>
+        )}
+      </Menu.Items>
+    </Menu>
   );
 }
