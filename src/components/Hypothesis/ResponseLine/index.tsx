@@ -104,12 +104,13 @@ export function ResponseLine({
           <EvidenceItem evidence={response} />
         )}
       </div>
-
-      <ResponseLineMenuActions
-        actions={actions}
-        data={menuData}
-        onClick={onClickCb}
-      />
+      {isEvidence(response) && (
+        <ResponseLineMenuActions
+          actions={actions}
+          data={menuData}
+          onClick={onClickCb}
+        />
+      )}
     </div>
   );
 }
