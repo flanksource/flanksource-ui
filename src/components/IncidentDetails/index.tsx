@@ -14,11 +14,7 @@ import { ReactSelectDropdown } from "../ReactSelectDropdown";
 import { DeleteConfirmDialog } from "../DeleteConfirmDialog";
 import { ResponderDetailsDialog } from "./ResponderDetailsDialog";
 import { ResponderDetailsToolTip } from "./ResponderDetailsToolTip";
-import {
-  AddResponder,
-  AddResponderFormValues,
-  ResponderPropsKeyToLabelMap
-} from "./AddResponder";
+import { AddResponder, ResponderPropsKeyToLabelMap } from "./AddResponder";
 
 import { priorities } from "./data";
 import { typeItems } from "../Incidents/data";
@@ -72,23 +68,8 @@ export const IncidentDetails = ({
       commanders: incident.commander_id.id
     }
   });
-  watch();
 
-  const formatCreatedAt = (
-    date: string | Date,
-    type: "DATE_TO_DURATION" | "DATE",
-    fallback = "-"
-  ): string => {
-    if (!date) return fallback;
-    switch (type) {
-      case "DATE":
-        return relativeDateTime(date);
-      case "DATE_TO_DURATION":
-        return relativeDateTime(date, true);
-      default:
-        return "";
-    }
-  };
+  watch();
 
   const watchCreatedAt = watch("created_at");
   const watchType = watch("type");
@@ -96,11 +77,11 @@ export const IncidentDetails = ({
   const watchCommanders = watch("commanders");
 
   const formattedCreatedAt = useMemo(
-    () => formatCreatedAt(watchCreatedAt, "DATE"),
+    () => relativeDateTime(watchCreatedAt),
     [watchCreatedAt]
   );
   const formattedDuration = useMemo(
-    () => formatCreatedAt(watchCreatedAt, "DATE_TO_DURATION"),
+    () => relativeDateTime(watchCreatedAt),
     [watchCreatedAt]
   );
 
@@ -110,18 +91,6 @@ export const IncidentDetails = ({
     });
     return () => subscription.unsubscribe();
   }, [watch, updateIncidentHandler]);
-
-  const getResponderTitle = (
-    properties: AddResponderFormValues & { id: string; title: string }
-  ) => {
-    return (
-      properties.id ||
-      properties.title ||
-      properties.to ||
-      properties.description ||
-      properties.person
-    );
-  };
 
   async function fetchResponders() {
     try {

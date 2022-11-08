@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { DATE_FORMATS, formatDate } from "../../utils/date";
+import { formatTimeRange } from "../../utils/date";
 import { RangeOption } from "./rangeOptions";
 
 type RecentlyRangesProps = {
@@ -22,16 +22,10 @@ const RecentlyRangesFC = ({
         <button
           type="button"
           onClick={() => applyTimeRange(range)}
-          key={`${formatDate(range.from, {
-            stringFormat: DATE_FORMATS.LONG
-          })}${formatDate(range.to, { stringFormat: DATE_FORMATS.LONG })}`}
+          key={`${formatTimeRange(range.from)} to ${formatTimeRange(range.to)}`}
           className="hover:bg-gray-100 flex justify-between w-full cursor-pointer py-1.5 px-3 text-sm"
         >
-          {`${formatDate(range.from, {
-            stringFormat: DATE_FORMATS.TIME_RANGE
-          })} to ${formatDate(range.to, {
-            stringFormat: DATE_FORMATS.TIME_RANGE
-          })}`}
+          {`${formatTimeRange(range.from)} to ${formatTimeRange(range.to)}`}
         </button>
       ))}
     </div>

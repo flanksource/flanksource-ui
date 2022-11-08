@@ -82,12 +82,8 @@ function SchemaResourceListItem({
       <Cell className="shrink-0">
         {!!source && <a href={`${source}`}>Link</a>}
       </Cell>
-      <Cell className="text-gray-500">
-        {relativeDateTime(created_at, true)}
-      </Cell>
-      <Cell className="text-gray-500">
-        {relativeDateTime(updated_at, true)}
-      </Cell>
+      <Cell className="text-gray-500">{relativeDateTime(created_at)}</Cell>
+      <Cell className="text-gray-500">{relativeDateTime(updated_at)}</Cell>
       {created_by && (
         <Cell className="text-gray-500">{<Avatar user={created_by} />}</Cell>
       )}

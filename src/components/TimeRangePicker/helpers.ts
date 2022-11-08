@@ -9,11 +9,7 @@ import {
   subtractDateFromNow
 } from "../../utils/date";
 import { getLocalItem, setLocalItem } from "../../utils/storage";
-import {
-  displayTimeFormat,
-  RangeOption,
-  rangeOptionsCategories
-} from "./rangeOptions";
+import { RangeOption, rangeOptionsCategories } from "./rangeOptions";
 
 export const isSupportedRelativeRange = (from: string, to: string): boolean => {
   for (let i = 0; i < rangeOptionsCategories.length; i++) {

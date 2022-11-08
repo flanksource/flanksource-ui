@@ -105,6 +105,18 @@ export const formatDate = (
   return suffix ? `${formattedDate}${suffix}` : formattedDate;
 };
 
+export const formatLongDate = (date: string | Date) => {
+  return formatDate(date, {
+    stringFormat: DATE_FORMATS.TIME_RANGE
+  });
+};
+
+export const formatTimeRange = (date: string | Date) => {
+  return formatDate(date, {
+    stringFormat: DATE_FORMATS.TIME_RANGE
+  });
+};
+
 /**
  * Parse the given date relative to the user locale
  *
@@ -120,14 +132,6 @@ export const relativeDateTime = (
   const toDate = dayjs.utc(to).local();
 
   if (
-    toDate.isSame(from, "day") &&
-    toDate.isSame(from, "month") &&
-    toDate.isSame(from, "year")
-  ) {
-    return fromDate.fromNow();
-  }
-
-  if (
     toDate.diff(fromDate, "days") === 1 &&
     toDate.isSame(from, "month") &&
     toDate.isSame(from, "year")
@@ -135,7 +139,7 @@ export const relativeDateTime = (
     return `${fromDate.format(DATE_FORMATS.TIME)} yesterday`;
   }
 
-  return fromDate.format(DATE_FORMATS.LONG);
+  return fromDate.fromNow();
 };
 
 /**
