@@ -73,6 +73,7 @@ export function ConfigChangeHistory({ data, isLoading, linkConfig }) {
       columns={linkConfig ? columns.concat(configLinkCol) : columns}
       data={data}
       isLoading={isLoading}
+      stickyHead
       sortBy={
         sortField
           ? [

@@ -51,7 +51,7 @@ export function ConfigLayout({
         } `}
       >
         <div
-          className={`flex flex-col flex-1 p-6 h-full ${
+          className={`flex flex-col flex-1 p-6 pb-0 h-full ${
             isConfigDetails ? "min-h-full h-auto overflow-auto" : "h-full"
           }`}
         >
