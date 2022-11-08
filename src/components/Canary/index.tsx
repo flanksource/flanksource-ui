@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { debounce, isEmpty } from "lodash";
+import { debounce } from "lodash";
 import {
   encodeObjectToUrlSearchParams,
   useUpdateParams,
@@ -26,11 +26,11 @@ import mixins from "../../utils/mixins.module.css";
 import { useHealthPageContext } from "../../context/HealthPageContext";
 import { isCanaryUI } from "../../context/Environment";
 import clsx from "clsx";
-import dayjs from "dayjs";
 import HealthPageSkeletonLoader from "../SkeletonLoader/HealthPageSkeletonLoader";
 import { HealthChecksResponse } from "../../types/healthChecks";
 import { useSearchParams } from "react-router-dom";
 import useRefreshRateFromLocalStorage from "../Hooks/useRefreshRateFromLocalStorage";
+import dayjs from "dayjs";
 
 const FilterKeyToLabelMap = {
   environment: "Environment",
@@ -38,6 +38,16 @@ const FilterKeyToLabelMap = {
   technology: "Technology",
   app: "App",
   "Expected-Fail": "Expected Fail"
+};
+
+const getStartValue = (start: string) => {
+  if (!start.includes("mo")) {
+    return start;
+  }
+
+  return dayjs()
+    .subtract(+(start.match(/\d/g)?.[0] ?? "1"), "month")
+    .toISOString();
 };
 
 const getPassingCount = (checks) => {
@@ -53,8 +63,6 @@ const getPassingCount = (checks) => {
 type CanaryProps = {
   url?: string;
   topLayoutOffset?: number;
-  hideSearch?: boolean;
-  hideTimeRange: boolean;
   onLoading?: (loading: boolean) => void;
   /**
    * When this changes, refresh button has been clicked will be triggered immediately
@@ -65,8 +73,6 @@ type CanaryProps = {
 export function Canary({
   url = "/api/canary/api",
   topLayoutOffset = 0,
-  hideSearch,
-  hideTimeRange,
   triggerRefresh,
   onLoading = (_loading) => {}
 }: CanaryProps) {
@@ -253,7 +259,15 @@ export function Canary({
             </>
           )}
         </div>
-
+        <SectionTitle className="mb-4">Filter by Time Range</SectionTitle>
+        <div className="mb-4 mr-2 w-full">
+          <DropdownStandaloneWrapper
+            dropdownElem={<TimeRange />}
+            defaultValue={searchParams.get("timeRange") ?? timeRanges[0].value}
+            paramKey="timeRange"
+            className="w-full mr-2"
+          />
+        </div>
         <SectionTitle className="mb-4">Filter by Health</SectionTitle>
         <div className="mb-6 flex items-center">
           <div className="h-9 flex items-center">
@@ -279,66 +293,50 @@ export function Canary({
       </SidebarSticky>
 
       <div className="flex-grow p-6 max-w-7xl">
-        {!hideSearch && (
-          <div className="flex flex-wrap mb-2">
+        <div className="flex flex-wrap mb-2">
+          <div className="flex-1">
             <CanarySearchBar
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                handleSearch(e.target.value)
-              }
-              onSubmit={(value: any) => handleSearch(value)}
+              onChange={(e) => handleSearch(e.target.value)}
+              onSubmit={(value) => handleSearch(value)}
               onClear={() => handleSearch("")}
               style={{ maxWidth: "480px", width: "100%" }}
               inputClassName="w-full py-2 mr-2 mb-px"
               inputOuterClassName="w-full"
               placeholder="Search by name, description, or endpoint"
-              defaultValue={searchParams.get("query")}
+              defaultValue={searchParams?.query}
             />
           </div>
-        )}
-
-        <div className="flex flex-wrap mb-2">
-          <div className="mb-2 mr-2">
-            <DropdownStandaloneWrapper
-              dropdownElem={<GroupByDropdown />}
-              checks={checks}
-              defaultValue="canary_name"
-              paramKey="groupBy"
-              className="w-64"
-              prefix={
-                <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
-                  Group By:
-                </div>
-              }
-            />
+          <div className="flex-1 flex justify-end">
+            <div className="mb-2 mr-2">
+              <DropdownStandaloneWrapper
+                dropdownElem={<GroupByDropdown />}
+                checks={checks}
+                defaultValue="canary_name"
+                paramKey="groupBy"
+                className="w-64"
+                prefix={
+                  <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
+                    Group By:
+                  </div>
+                }
+              />
+            </div>
+            <div className="mb-2 mr-2">
+              <DropdownStandaloneWrapper
+                dropdownElem={<TabByDropdown />}
+                defaultValue={defaultTabSelections.namespace.value}
+                paramKey="tabBy"
+                checks={checks}
+                emptyable
+                className="w-64"
+                prefix={
+                  <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
+                    Tab By:
+                  </div>
+                }
+              />
+            </div>
           </div>
-          <div className="mb-2 mr-2">
-            <DropdownStandaloneWrapper
-              dropdownElem={<TabByDropdown />}
-              defaultValue={defaultTabSelections.namespace.value}
-              paramKey="tabBy"
-              checks={checks}
-              emptyable
-              className="w-64"
-              prefix={
-                <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
-                  Tab By:
-                </div>
-              }
-            />
-          </div>
-          {!hideTimeRange && (
-            <DropdownStandaloneWrapper
-              dropdownElem={<TimeRange />}
-              defaultValue={timeRanges[0].value}
-              paramKey="timeRange"
-              className="w-56 mb-2 mr-2"
-              prefix={
-                <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
-                  Time Range:
-                </div>
-              }
-            />
-          )}
         </div>
         <div className="pb-4">
           <CanaryInterfaceMinimal

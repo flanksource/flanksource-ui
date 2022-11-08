@@ -1,8 +1,5 @@
 import { useState } from "react";
 import { SearchLayout } from "../components/Layout";
-import { TimeRange, timeRanges } from "../components/Dropdown/TimeRange";
-import { DropdownStandaloneWrapper } from "../components/Dropdown/StandaloneWrapper";
-import { CanarySearchBar } from "../components/Canary/CanarySearchBar";
 import { Canary } from "../components/Canary";
 import RefreshDropdown, {
   HEALTH_PAGE_REFRESH_RATE_KEY
