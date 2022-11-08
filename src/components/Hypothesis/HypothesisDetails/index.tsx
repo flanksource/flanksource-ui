@@ -46,30 +46,33 @@ export function HypothesisDetails({ node, api, ...rest }: IProps) {
       if (error) {
         toastError(`Error fetching hypothesis responses: ${error?.message}`);
       }
-
-      const responses = (data.comments || [])
-        .concat(data.evidences || [])
-        .sort((a: Response, b: Response) => {
-          if (a.created_at > b.created_at) return 1;
-          return -1;
-        });
-
-      responses.forEach((response) => {
-        response.created_by = response.external_created_by
-          ? {
-              name: response.external_created_by,
-              avatar: null,
-              team: {
-                icon: response.responder_id?.team_id?.icon,
-                name: response.responder_id?.team_id?.name
-              }
-            }
-          : response.created_by;
-      });
-      setResponses(responses);
+      arrangeData(data);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const arrangeData = (data: any) => {
+    const responses = (data?.comments || [])
+      .concat(data?.evidences || [])
+      .sort((a: Response, b: Response) => {
+        if (a.created_at > b.created_at) return 1;
+        return -1;
+      });
+
+    responses.forEach((response: any) => {
+      response.created_by = response.external_created_by
+        ? {
+            name: response.external_created_by,
+            avatar: null,
+            team: {
+              icon: response.responder_id?.team_id?.icon,
+              name: response.responder_id?.team_id?.name
+            }
+          }
+        : response.created_by;
+    });
+    setResponses(responses);
   };
 
   const handleComment = (value: string) =>
@@ -135,6 +138,7 @@ export function HypothesisDetails({ node, api, ...rest }: IProps) {
     ) {
       return;
     }
+    arrangeData(node);
     node?.id && fetchResponses(node.id);
   }, [node?.id, searchParams]);
 

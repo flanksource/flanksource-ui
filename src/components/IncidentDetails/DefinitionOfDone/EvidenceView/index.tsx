@@ -2,11 +2,14 @@ import clsx from "clsx";
 import { filter } from "lodash";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import {
+  useComponentNameQuery,
+  useConfigNameQuery
+} from "../../../../api/query-hooks";
 import { getConfig } from "../../../../api/services/configs";
 import { Evidence, EvidenceType } from "../../../../api/services/evidence";
 import {
   getCanaries,
-  getTopology,
   getTopologyComponent
 } from "../../../../api/services/topology";
 import { useLoader } from "../../../../hooks";
@@ -28,16 +31,9 @@ function TopologyEvidence({
   className,
   ...rest
 }: EvidenceViewProps) {
-  const [topology, setTopology] = useState<any>({
-    properties: []
+  const { data: topology } = useComponentNameQuery(evidence?.evidence?.id, {
+    enabled: !!evidence?.evidence?.id
   });
-
-  useEffect(() => {
-    const topologyId = evidence?.evidence?.id;
-    if (topologyId != null) {
-      getTopology({ id: topologyId }).then(({ data }) => setTopology(data[0]));
-    }
-  }, [evidence]);
 
   const prepareTopologyLink = (topologyItem: { id: string }) => {
     return `/topology/${topologyItem.id}`;
@@ -48,7 +44,7 @@ function TopologyEvidence({
   }
 
   const heading = filter(
-    topology.properties || [],
+    topology?.properties || [],
     (i: Record<string & "headline", string>) => i.headline
   );
 
@@ -101,28 +97,15 @@ function LogEvidence({
   className,
   ...rest
 }: EvidenceViewProps) {
-  const [comp, setComp] = useState<Record<string, string>>();
+  const {
+    data: comp,
+    isFetching,
+    isRefetching
+  } = useComponentNameQuery(evidence?.component_id, {
+    enabled: !!evidence?.component_id
+  });
 
-  const { loading, setLoading } = useLoader();
-
-  useEffect(() => {
-    if (!evidence?.component_id) {
-      return;
-    }
-    setLoading(true);
-    getTopologyComponent(evidence.component_id)
-      .then(({ data }) => {
-        const component = data[0];
-        setComp(component);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        setLoading(false);
-      });
-  }, [evidence]);
-
-  if (loading) {
+  if (isFetching || isRefetching) {
     return <Loading text={`Loading component please wait...`} />;
   }
 
@@ -145,26 +128,15 @@ function ConfigEvidence({
   className,
   ...rest
 }: EvidenceViewProps) {
-  const [config, setConfig] = useState<any>();
-  const { loading, setLoading } = useLoader();
+  const {
+    data: config,
+    isFetching,
+    isRefetching
+  } = useConfigNameQuery(evidence?.config_id, {
+    enabeld: !!evidence?.config_id
+  });
 
-  useEffect(() => {
-    if (!evidence?.config_id) {
-      return;
-    }
-    setLoading(true);
-    getConfig(evidence.config_id)
-      .then(({ data }) => {
-        setConfig(data[0]);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        setLoading(false);
-      });
-  }, [evidence]);
-
-  if (loading) {
+  if (isFetching || isRefetching) {
     return <Loading text={`Loading config please wait...`} />;
   }
 
@@ -232,8 +204,6 @@ function HealthEvidence({
                 "text-gray-800 font-semibold whitespace-nowrap overflow-ellipsis overflow-hidden pr-4"
               )}
             >
-              {check?.name}
-              {check?.name}
               {check?.name}
             </span>{" "}
             <span

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getAllConfigs } from "../services/configs";
+import { getAllConfigs, getConfig } from "../services/configs";
 import { getIncident } from "../services/incident";
 import {
   getTopology,
@@ -51,13 +51,14 @@ export const useComponentNameQuery = (
   topologyId = "",
   { enabled = true, staleTime = defaultStaleTime, ...rest }
 ) => {
+  const cacheKey = `topology${topologyId}`;
   return useQuery(
     ["topology", topologyId],
     () => {
       return getTopology({
         id: topologyId
       }).then((data) => {
-        cache[topologyId] = data.data[0];
+        cache[cacheKey] = data.data[0];
         return data.data[0];
       });
     },
@@ -65,7 +66,7 @@ export const useComponentNameQuery = (
       staleTime,
       enabled,
       placeholderData: () => {
-        return cache[topologyId];
+        return cache[cacheKey];
       },
       ...rest
     }
@@ -82,4 +83,28 @@ export const useAllConfigsQuery = ({
     enabled,
     ...rest
   });
+};
+
+export const useConfigNameQuery = (
+  configId = "",
+  { enabled = true, staleTime = defaultStaleTime, ...rest }
+) => {
+  const cacheKey = `config${configId}`;
+  return useQuery(
+    ["config", configId],
+    () => {
+      return getConfig(configId).then((data) => {
+        cache[cacheKey] = data?.data?.[0];
+        return data?.data?.[0];
+      });
+    },
+    {
+      staleTime,
+      enabled,
+      placeholderData: () => {
+        return cache[cacheKey];
+      },
+      ...rest
+    }
+  );
 };

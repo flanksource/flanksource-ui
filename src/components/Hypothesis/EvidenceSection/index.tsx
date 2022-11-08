@@ -76,7 +76,7 @@ const EvidenceAccordion: React.FC<{
           <div className="flex justify-between w-full items-center">
             {title || <span className="text-gray-400">(no title)</span>}
             {date && (
-              <div className="text-gray-400 text-sm">
+              <div className="text-gray-400 text-sm pl-2">
                 {relativeDateTime(date)}
               </div>
             )}
