@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import CollapsiblePanel from "../CollapsiblePanel";
 import { Icon } from "../Icon";
 import { Loading } from "../Loading";
+import { toastError } from "../Toast/toast";
 
 type Props = {
   topologyID: string;
@@ -24,6 +25,14 @@ export function TopologyRelatedConfigs({ topologyID }: Props) {
         `/api/configs_db/config_component_relationships?component_id=eq.${topologyID}&select=*,configs!config_component_relationships_config_id_fkey(*)`
       );
       const data = (await res.json()) as Record<string, any>[];
+      if (!data || !Array.isArray(data)) {
+        toastError(
+          data?.message ||
+            "Something went wrong in fetching component relationships"
+        );
+        setIsLoading(false);
+        return;
+      }
       setComponentRelatedConfig(data.map((config) => config.configs));
       setIsLoading(false);
     }

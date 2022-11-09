@@ -5,6 +5,7 @@ import { GoDiff } from "react-icons/go";
 import { Link } from "react-router-dom";
 import CollapsiblePanel from "../CollapsiblePanel";
 import { Loading } from "../Loading";
+import { toastError } from "../Toast/toast";
 
 type Props = {
   topologyID: string;
@@ -24,6 +25,15 @@ export function TopologyConfigChanges({ topologyID }: Props) {
         `/api/configs_db/config_component_relationships?component_id=eq.${topologyID}&select=*`
       );
       const data = (await res.json()) as Record<string, any>[];
+
+      if (!data || !Array.isArray(data)) {
+        setIsLoading(false);
+        toastError(
+          data?.message ||
+            "Something went wrong in fetching component relationships"
+        );
+        return;
+      }
 
       const resConfigChanges = await Promise.all(
         data.map(async (item) => {

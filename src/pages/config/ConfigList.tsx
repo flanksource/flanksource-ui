@@ -108,7 +108,7 @@ export function ConfigListPage() {
   }, [data, search, configType, tag]);
 
   return (
-    <div className="flex flex-col h-full overflow-y-hidden bg-white">
+    <div className="flex flex-col h-full overflow-y-hidden">
       <ConfigList
         data={filteredData!}
         handleRowClick={handleRowClick}
