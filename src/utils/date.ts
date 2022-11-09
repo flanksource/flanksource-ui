@@ -2,17 +2,15 @@ import dayjs, { ConfigType as DateConfig, ManipulateType } from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import isToday from "dayjs/plugin/isToday";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
+import relativeTime from "dayjs/plugin/relativeTime";
+import updateLocale from "dayjs/plugin/updateLocale";
+import utc from "dayjs/plugin/utc";
 
 import { ValueType } from "../context/TopologyPageContext";
 
 dayjs.extend(isBetween);
 dayjs.extend(isToday);
 dayjs.extend(isSameOrAfter);
-
-import relativeTime from "dayjs/plugin/relativeTime";
-import updateLocale from "dayjs/plugin/updateLocale";
-import utc from "dayjs/plugin/utc";
-
 dayjs.extend(relativeTime);
 dayjs.extend(updateLocale);
 dayjs.extend(utc);
@@ -165,15 +163,6 @@ export const dateToJSDate = (value: DateConfig) => dayjs(value).toDate();
 
 /**
  *
- * @param value date to format
- * @param format custom string format for the date
- * @returns formatted string of the date
- */
-export const customDateFormattor = (value: DateConfig, format: string) =>
-  dayjs(value).format(format);
-
-/**
- *
  * @param decValue Time in number needed to be decreased from now
  * @param decUnit Unit of time to be decreased. Must be of type ManipulateType from dayjs
  * @returns Day.js object with reduced time
@@ -195,3 +184,19 @@ export const dateDiff = (
   diffUnit?: string,
   isDiffInFloat?: boolean
 ) => dayjs(date1).diff(dayjs(date2), diffUnit as ManipulateType, isDiffInFloat);
+
+export const formatDateToMonthDayTime = (date: string | Date) => {
+  return dayjs(date).format("MMM DD(HH:mm)");
+};
+
+export const formatDateToMonthDay = (date: string | Date) => {
+  return dayjs(date).format("MMMM DD");
+};
+
+export const formatDateToYear = (date: string | Date) => {
+  return dayjs(date).format("YYYY");
+};
+
+export const formatDateToTime = (date: string | Date) => {
+  return dayjs(date).format("HH:mm");
+};

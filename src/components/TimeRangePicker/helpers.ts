@@ -1,5 +1,4 @@
 import {
-  customDateFormattor,
   dateDiff,
   formatISODate,
   dateToJSDate,
@@ -61,7 +60,7 @@ export const convertRangeValue = (
       ? dateToJSDate(value)
       : format === "iso"
       ? formatISODate(value)
-      : customDateFormattor(value, format);
+      : dateToJSDate(value);
   }
   if (format === "jsDate") {
     return dateToJSDate(subtractDateFromNow(...getIntervalData(value)));
@@ -69,13 +68,7 @@ export const convertRangeValue = (
   if (format === "iso") {
     return formatISODate(subtractDateFromNow(...getIntervalData(value)));
   }
-  if (format === "default") {
-    return dateToJSDate(subtractDateFromNow(...getIntervalData(value)));
-  }
-  return customDateFormattor(
-    subtractDateFromNow(...getIntervalData(value)),
-    format
-  );
+  return dateToJSDate(subtractDateFromNow(...getIntervalData(value)));
 };
 
 export const createDisplayValue = (range: RangeOption) => {
