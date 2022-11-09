@@ -87,9 +87,9 @@ jobs:
     steps:
     - uses: actions/checkout@v3
       with:
-        repository: "${{ github.repository_owner }}/incident-commander"
+        repository: "${{ github.repository_owner }}/incident-commander-chart"
         token: ${{ secrets.FLANKBOT }}
-        path: ./incident-commander
+        path: ./incident-commander-chart
     - name: Install yq
       run: |
         wget https://github.com/mikefarah/yq/releases/download/${VERSION}/${BINARY}.tar.gz -O - |\
@@ -99,10 +99,10 @@ jobs:
         BINARY: yq_linux_amd64
     - name: Update flanksource-ui version in Incident-commander
       run: |
-        cd incident-commander
+        cd incident-commander-chart
         yq eval-all -i  '(.dependencies[] | select(.name == "flanksource-ui")) ref $d | $d.version = "${{ needs.semantic-release.outputs.release-version }}"' chart/Chart.yaml
     - name: Push changes to chart repo
       uses: stefanzweifel/git-auto-commit-action@v4
       with:
         commit_message: "chore: update flanksource-ui chart dependency to ${{ needs.semantic-release.outputs.release-version }}"
-        repository: ./incident-commander
+        repository: ./incident-commander-chart
