@@ -93,7 +93,7 @@ type formatDateOptions = {
  * @param stringFormat string of tokens to format the date, check https://day.js.org/docs/en/display/format#docsNav
  * @returns string if stringFormat is passed else a date object
  */
-export const formatDate = (
+const formatDate = (
   date: string | Date,
   { asTimestamp, stringFormat, suffix }: formatDateOptions = {}
 ) => {
