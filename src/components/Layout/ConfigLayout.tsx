@@ -4,6 +4,7 @@ import clsx from "clsx";
 
 import { SearchLayout } from "./search";
 import ConfigDetailsSidePanel from "../ConfigDetailsSidePanel";
+import ConfigsListFilters from "../ConfigsListFilters";
 
 type Props = {
   showSearchInput?: boolean;
@@ -29,7 +30,9 @@ export function ConfigLayout({
   const [title, setTitle] = useState(props.title || "");
   const [titleExtras, setTitleExtras] = useState();
   const [tabRight, setTabRight] = useState();
+  const [tableOptions, setTableOptions] = useState();
   const mt = useMatch({ path: basePath, end: false });
+  const isConfigListRoute = !!useMatch("/configs");
 
   return (
     <SearchLayout
@@ -48,10 +51,16 @@ export function ConfigLayout({
         } `}
       >
         <div
-          className={`flex flex-col flex-1 p-6 h-full overflow-hidden ${
+          className={`flex flex-col flex-1 p-6 pb-0 h-full ${
             isConfigDetails ? "min-h-full h-auto overflow-auto" : "h-full"
           }`}
         >
+          {isConfigListRoute && (
+            <div className="flex flex-row items-center pb-6">
+              <ConfigsListFilters />
+            </div>
+          )}
+          {tableOptions}
           <nav className="flex justify-between">
             <span className="flex self-center">
               {navLinks.map((nav) => (
@@ -79,6 +88,7 @@ export function ConfigLayout({
               setTitle,
               titleExtras,
               setTitleExtras,
+              setTableOptions,
               tabRight,
               setTabRight
             }}

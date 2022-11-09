@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { AiFillWarning } from "react-icons/ai";
 import { BiDollarCircle } from "react-icons/bi";
 import { FaTasks } from "react-icons/fa";
@@ -16,14 +16,21 @@ import * as timeago from "timeago.js";
 import { DataTable, Icon } from "../";
 import { ConfigItem } from "../../api/services/configs";
 import { FormatCurrency } from "../ConfigCosts";
+import { getTimeBucket, TIME_BUCKETS } from "../../utils/date";
 
 interface TableCols {
   Header: string;
-  accessor: string;
+  accessor: string | ((row: any, rowIndex: number) => any);
   cellClass?: string;
   Cell?: React.ComponentType<CellProp>;
+  aggregate?: string | ((leafValues: any[], aggregatedValues?: any[]) => any);
+  Aggregated?: string | ((values: any) => string | JSX.Element);
+  id?: string;
+  sortType?:
+    | string
+    | ((rowA: any, rowB: any, columnID: string, desc: boolean) => any);
+  maxWidth?: number;
 }
-
 interface Analysis {
   analysis_type: string;
   analyzer: string;
@@ -34,61 +41,101 @@ const columns: TableCols[] = [
   {
     Header: "Type",
     accessor: "config_type",
-    Cell: TypeCell
+    Cell: TypeCell,
+    Aggregated: ""
   },
   {
     Header: "Name",
-    accessor: "name"
+    accessor: "name",
+    Aggregated: ""
   },
   {
     Header: "Changes",
     accessor: "changes",
-    Cell: React.memo(ChangeCell)
+    Cell: React.memo(ChangeCell),
+    aggregate: ChangeAggregate,
+    Aggregated: ({ value }) => {
+      if (!value) {
+        return "";
+      }
+      return (
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-blue-100 text-blue-800">
+          {value}
+        </span>
+      );
+    },
+    maxWidth: 400
   },
   {
     Header: "Analysis",
     accessor: "analysis",
-    Cell: AnalysisCell
+    Cell: AnalysisCell,
+    Aggregated: "",
+    maxWidth: 400
   },
   {
     Header: "Cost (per min)",
     accessor: "cost_per_minute",
-    Cell: CostCell
+    Cell: CostCell,
+    aggregate: "sum",
+    Aggregated: CostAggregate
   },
   {
     Header: "Cost (24hr)",
     accessor: "cost_total_1d",
-    Cell: CostCell
+    Cell: CostCell,
+    aggregate: "sum",
+    Aggregated: CostAggregate
   },
   {
     Header: "Cost (7d)",
     accessor: "cost_total_7d",
-    Cell: CostCell
+    Cell: CostCell,
+    aggregate: "sum",
+    Aggregated: CostAggregate
   },
   {
     Header: "Cost (30d)",
     accessor: "cost_total_30d",
-    Cell: CostCell
+    Cell: CostCell,
+    aggregate: "sum",
+    Aggregated: CostAggregate
   },
   {
     Header: "Tags",
     accessor: "tags",
-    Cell: React.memo(TagsCell)
+    Cell: React.memo(TagsCell),
+    cellClass: "overflow-auto",
+    Aggregated: "",
+    maxWidth: 400
   },
   {
     Header: "Created",
     accessor: "created_at",
-    Cell: DateCell
+    Cell: DateCell,
+    Aggregated: ""
   },
   {
     Header: "Last Updated",
     accessor: "updated_at",
-    Cell: DateCell
+    Cell: DateCell,
+    Aggregated: ""
+  },
+  {
+    Header: "Changed",
+    accessor: ChangedAccessor,
+    id: "changed",
+    sortType: ChangedSorted
   }
 ];
 
 interface CellProp {
-  row: { values: { [index: string]: any }; original: { [index: string]: any } };
+  row: {
+    values: { [index: string]: any };
+    original: { [index: string]: any };
+    isGrouped: boolean;
+    subRows: any[];
+  };
   column: { id: string };
 }
 
@@ -160,9 +207,9 @@ function ChangeCell({ row, column }: CellProp): JSX.Element {
 
   const renderKeys = showMore ? changes : changes.slice(0, MIN_ITEMS);
 
-  var cell: JSX.Element[] = renderKeys.map((item: any) => {
+  var cell: JSX.Element[] = renderKeys.map((item: any, index: number) => {
     return (
-      <div className="flex flex-row max-w-full">
+      <div className="flex flex-row max-w-full" key={index}>
         <div className="flex max-w-full items-center px-2.5 py-0.5 m-0.5 rounded-md text-sm font-medium bg-blue-100 text-blue-800">
           {item.change_type === "diff" ? (
             item.total
@@ -206,14 +253,17 @@ function ChangeCell({ row, column }: CellProp): JSX.Element {
 }
 
 function TypeCell({ row, column }: CellProp): JSX.Element {
+  const name = row.isGrouped
+    ? row.subRows[0]?.original.external_type
+    : row.original.external_type;
+  const secondary = row.isGrouped
+    ? row.subRows[0]?.original.config_type
+    : row.original.config_type;
+
   return (
     <span className="flex flex-nowrap">
-      <Icon
-        name={row.original.external_type}
-        secondary={row.original.config_type}
-        size="lg"
-      />{" "}
-      <span className="pl-1"> {row.values[column.id]} </span>{" "}
+      <Icon name={name} secondary={secondary} size="lg" />
+      <span className="pl-1"> {row.values[column.id]}</span>
     </span>
   );
 }
@@ -255,9 +305,9 @@ function AnalysisCell({ row, column }: CellProp): JSX.Element {
   }
 
   var cell: JSX.Element[] = [];
-  analysis.forEach((item: Analysis) => {
+  analysis.forEach((item: Analysis, index: number) => {
     cell.push(
-      <span className="flex flex-nowrap pb-0.5 ">
+      <span className="flex flex-nowrap pb-0.5 " key={index}>
         {analysisIcon(item)} <span className="pl-1">{item.analyzer}</span>
       </span>
     );
@@ -267,14 +317,10 @@ function AnalysisCell({ row, column }: CellProp): JSX.Element {
 
 function CostCell({ row, column }: CellProp): JSX.Element {
   const cost = row?.values[column.id];
-  if (!cost) {
+  if (!cost || parseFloat(cost.toFixed(2)) === 0) {
     return <span></span>;
   }
-  return (
-    <span>
-      <FormatCurrency value={cost} />
-    </span>
-  );
+  return <FormatCurrency value={cost} />;
 }
 
 function DateCell({ row, column }: CellProp): JSX.Element {
@@ -284,9 +330,63 @@ function DateCell({ row, column }: CellProp): JSX.Element {
   }
   return (
     <div className="text-xs">
-      {dateString ? timeago.format(dateString) : "None"}
+      {dateString ? timeago.format(dateString) : ""}
     </div>
   );
+}
+
+function ChangeAggregate(leafValues: any[]) {
+  let sum = 0;
+  leafValues.forEach((leafVal) => {
+    if (leafVal) {
+      leafVal.forEach((item: any) => {
+        sum += item.total;
+      });
+    }
+  });
+  return sum;
+}
+
+function CostAggregate({ value }: { value: number }) {
+  return !value || parseFloat(value.toFixed(2)) === 0 ? (
+    ""
+  ) : (
+    <FormatCurrency value={value} />
+  );
+}
+
+function ChangedAccessor(row: any) {
+  return getTimeBucket(row.updated_at);
+}
+
+function ChangedSorted(rowA: any, rowB: any, columnId: string) {
+  const rowAOrder =
+    Object.values(TIME_BUCKETS).find((tb) => tb.name === rowA.values[columnId])
+      ?.sortOrder || 0;
+  const rowBOrder =
+    Object.values(TIME_BUCKETS).find((tb) => tb.name === rowB.values[columnId])
+      ?.sortOrder || 0;
+  if (rowAOrder >= rowBOrder) {
+    return 1;
+  } else {
+    return -1;
+  }
+}
+
+interface CellData {
+  config_type: string;
+  analysis: Analysis[];
+  changes: object[];
+  type: string;
+  external_type: string;
+  name: string;
+  tags?: { Key: string; Value: string }[] | { [index: string]: any };
+  created_at: string;
+  updated_at: string;
+  cost_per_minute?: number;
+  cost_total_1d?: number;
+  cost_total_7d?: number;
+  cost_total_30d?: number;
 }
 
 export interface Props {
@@ -297,19 +397,51 @@ export interface Props {
 
 function ConfigList({ data, handleRowClick, isLoading }: Props) {
   const [queryParams, setQueryParams] = useSearchParams({
-    sortBy: "config_type",
-    sortOrder: "asc"
+    sortBy: "",
+    sortOrder: "",
+    groupBy: "config_type"
   });
 
-  const sortField = queryParams.get("sortBy");
-  const isSortOrderDesc = queryParams.get("sortOrder") === "asc" ? false : true;
+  const groupByField = queryParams.get("groupBy");
+  const sortField = queryParams.get("sortBy") || groupByField;
+  const isSortOrderDesc =
+    queryParams.get("sortOrder") === "desc" ? true : false;
 
   const setSortBy = (field: string, order: "asc" | "desc") => {
-    setQueryParams({
-      sortBy: field,
-      sortOrder: order
-    });
+    if (field === undefined && order === undefined) {
+      queryParams.delete("sortBy");
+      queryParams.delete("sortOrder");
+    } else {
+      queryParams.set("sortBy", field);
+      queryParams.set("sortOrder", order);
+    }
+    setQueryParams(queryParams);
   };
+
+  const setHiddenColumns = () => {
+    if (groupByField !== "changed") {
+      return ["changed"];
+    }
+    return [];
+  };
+
+  const sortBy = useMemo(() => {
+    const data = sortField
+      ? [
+          {
+            id: sortField,
+            desc: isSortOrderDesc
+          }
+        ]
+      : [];
+    if (sortField === "config_type") {
+      data.push({
+        id: "name",
+        desc: isSortOrderDesc
+      });
+    }
+    return data;
+  }, [sortField, isSortOrderDesc]);
 
   return (
     <DataTable
@@ -319,13 +451,12 @@ function ConfigList({ data, handleRowClick, isLoading }: Props) {
       handleRowClick={handleRowClick}
       tableStyle={{ borderSpacing: "0" }}
       isLoading={isLoading}
-      sortBy={[
-        {
-          id: sortField,
-          desc: isSortOrderDesc
-        }
-      ]}
-      setSortBy={setSortBy}
+      sortBy={sortBy}
+      setSortOptions={setSortBy}
+      groupBy={
+        !groupByField || groupByField === "no_grouping" ? null : [groupByField]
+      }
+      hiddenColumns={setHiddenColumns()}
     />
   );
 }
