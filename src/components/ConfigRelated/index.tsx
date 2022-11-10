@@ -1,3 +1,4 @@
+import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { FaExclamationTriangle } from "react-icons/fa";
 import { VscJson } from "react-icons/vsc";
@@ -23,28 +24,22 @@ type Props = {
 };
 
 function ConfigRelatedDetails({ configID }: Props) {
-  const [relatedConfigs, setRelatedConfigs] = useState<ConfigItem[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchConfigAnalysis(configID: string) {
-      setIsLoading(true);
+  const { data: relatedConfigs, isLoading } = useQuery(
+    ["config_relationships", configID],
+    async () => {
       const res = await fetch(
-        `/api/configs_db/config_relationships?config_id=eq.${configID}&select=*,configs!config_relationships_related_id_fkey(*)`
+        `/api/configs_db/config_relationships?&or=(related_id.eq.${configID},config_id.eq.${configID})&select=*,configs!config_relationships_related_id_fkey(*)`
       );
       const data = (await res.json()) as ConfigTypeRelationships[];
-      setRelatedConfigs(data.map((item) => item.configs));
-      setIsLoading(false);
+      return data.map((item) => item.configs);
     }
-
-    fetchConfigAnalysis(configID);
-  }, [configID]);
+  );
 
   return (
     <div className="flex flex-col space-y-2">
       {isLoading ? (
         <Loading />
-      ) : relatedConfigs.length > 0 ? (
+      ) : relatedConfigs && relatedConfigs.length > 0 ? (
         <ol>
           {relatedConfigs.map((config) => (
             <li className="p-1" key={config.id}>
