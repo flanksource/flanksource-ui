@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 
 import clsx from "clsx";
-import dayjs from "dayjs";
 import { useForm } from "react-hook-form";
 import { RiCloseCircleLine } from "react-icons/ri";
 import { BsShareFill, BsTrash } from "react-icons/bs";
@@ -15,11 +14,7 @@ import { ReactSelectDropdown } from "../ReactSelectDropdown";
 import { DeleteConfirmDialog } from "../DeleteConfirmDialog";
 import { ResponderDetailsDialog } from "./ResponderDetailsDialog";
 import { ResponderDetailsToolTip } from "./ResponderDetailsToolTip";
-import {
-  AddResponder,
-  AddResponderFormValues,
-  ResponderPropsKeyToLabelMap
-} from "./AddResponder";
+import { AddResponder, ResponderPropsKeyToLabelMap } from "./AddResponder";
 
 import { priorities } from "./data";
 import { typeItems } from "../Incidents/data";
@@ -28,6 +23,7 @@ import {
   deleteResponder,
   getRespondersForTheIncident
 } from "../../api/services/responder";
+import { relativeDateTime } from "../../utils/date";
 
 export const IncidentDetails = ({
   incident,
@@ -72,12 +68,8 @@ export const IncidentDetails = ({
       commanders: incident.commander_id.id
     }
   });
+
   watch();
-  const DATE_FORMAT = "YYYY-MM-DD HH:mm:ss";
-  const formatDate = ({ date, format = DATE_FORMAT, fallback = "-" }) =>
-    date ? dayjs(date).format(format) : fallback;
-  const dateToDuration = ({ date, withoutSuffix = true, fallback = "-" }) =>
-    date ? dayjs(date).fromNow(withoutSuffix) : fallback;
 
   const watchCreatedAt = watch("created_at");
   const watchType = watch("type");
@@ -85,11 +77,11 @@ export const IncidentDetails = ({
   const watchCommanders = watch("commanders");
 
   const formattedCreatedAt = useMemo(
-    () => formatDate({ date: watchCreatedAt }),
+    () => relativeDateTime(watchCreatedAt),
     [watchCreatedAt]
   );
   const formattedDuration = useMemo(
-    () => dateToDuration({ date: watchCreatedAt }),
+    () => relativeDateTime(watchCreatedAt),
     [watchCreatedAt]
   );
 
@@ -99,18 +91,6 @@ export const IncidentDetails = ({
     });
     return () => subscription.unsubscribe();
   }, [watch, updateIncidentHandler]);
-
-  const getResponderTitle = (
-    properties: AddResponderFormValues & { id: string; title: string }
-  ) => {
-    return (
-      properties.id ||
-      properties.title ||
-      properties.to ||
-      properties.description ||
-      properties.person
-    );
-  };
 
   async function fetchResponders() {
     try {

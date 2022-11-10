@@ -5,12 +5,17 @@ import { formatBytes } from "../../utils/common";
 import { isEmpty } from "../Canary/utils";
 import { NodePodPropToLabelMap } from "../../constants";
 import { BsCurrencyDollar } from "react-icons/bs";
+import { relativeDateTime } from "../../utils/date";
 
 export const FormatProperty = ({ property, short = false }) => {
   if (property == null) {
     return "undefined";
   }
   let { text } = property;
+
+  if (property.name === "created") {
+    return relativeDateTime(text);
+  }
 
   if (property.type === "url") {
     return (

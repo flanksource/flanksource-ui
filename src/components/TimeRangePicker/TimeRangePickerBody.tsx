@@ -1,6 +1,5 @@
 import clsx from "clsx";
 import { memo, useCallback, useEffect, useState } from "react";
-import dayjs from "dayjs";
 import { TimeRangeList } from "./TimeRangeList";
 import {
   storage,
@@ -8,10 +7,11 @@ import {
   isSupportedRelativeRange
 } from "./helpers";
 import { RecentlyRanges } from "./RecentlyRanges";
-import { displayTimeFormat, RangeOption } from "./rangeOptions";
+import { RangeOption } from "./rangeOptions";
 import { TimePickerCalendar } from "./TimePickerCalendar";
 import { TimePickerInput } from "./TimePickerInput";
 import { FiAlertTriangle } from "react-icons/fi";
+import { formatISODate, isValidDate, formatTimeRange } from "../../utils/date";
 
 type TimeRangePickerBodyProps = {
   isOpen: any;
@@ -44,8 +44,8 @@ const TimeRangePickerBodyFC = ({
   const [focusToInput, setFocusToInput] = useState<boolean>();
 
   function formatDateValue(val: string) {
-    if (dayjs(val).isValid()) {
-      return dayjs(val).format(displayTimeFormat);
+    if (isValidDate(val)) {
+      return formatTimeRange(val);
     }
     return val;
   }
@@ -55,8 +55,8 @@ const TimeRangePickerBodyFC = ({
       if (
         !recentRanges.find(
           (el: RangeOption) =>
-            dayjs(el.from).toISOString() === dayjs(range.from).toISOString() &&
-            dayjs(el.to).toISOString() === dayjs(range.to).toISOString()
+            formatISODate(el.from) === formatISODate(range.from) &&
+            formatISODate(el.to) === formatISODate(range.to)
         )
       ) {
         let newRanges;
@@ -74,14 +74,14 @@ const TimeRangePickerBodyFC = ({
 
   const onChangeCalendarValue = (value: Date) => {
     if (valueType === "from") {
-      const from = dayjs(value).format(displayTimeFormat);
+      const from = formatTimeRange(value);
       setInputValueFrom(from);
-      setInputValueTo(dayjs(inputValueTo).isValid() ? inputValueTo : "");
+      setInputValueTo(isValidDate(inputValueTo) ? inputValueTo : "");
       setFocusToInput(true);
     } else if (valueType === "to") {
-      const to = dayjs(value).format(displayTimeFormat);
+      const to = formatTimeRange(value);
       setInputValueTo(to);
-      setInputValueFrom(dayjs(inputValueFrom).isValid() ? inputValueFrom : "");
+      setInputValueFrom(isValidDate(inputValueFrom) ? inputValueFrom : "");
       setFocusToInput(false);
     }
     setCalendarValue(value);
@@ -91,17 +91,17 @@ const TimeRangePickerBodyFC = ({
   const applyTimeRange = useCallback(
     (range: RangeOption) => {
       setInputValueError("");
-      if (dayjs(range.from).isValid() && dayjs(range.to).isValid()) {
+      if (isValidDate(range.from) && isValidDate(range.to)) {
         changeRecentRangesList({
-          from: dayjs(range.from).toISOString(),
-          to: dayjs(range.to).toISOString()
+          from: formatISODate(range.from),
+          to: formatISODate(range.to)
         });
         setShowCalendar(false);
         closePicker();
         setFocusToInput(false);
         changeRangeValue({
-          from: dayjs(range.from).toISOString(),
-          to: dayjs(range.to).toISOString()
+          from: formatISODate(range.from),
+          to: formatISODate(range.to)
         });
       } else if (isSupportedRelativeRange(range.from, range.to)) {
         setShowCalendar(false);
@@ -125,9 +125,9 @@ const TimeRangePickerBodyFC = ({
   const onShowCalendar = (calendarFor: "from" | "to") => {
     setValueType(calendarFor);
     setShowCalendar((val) => !val);
-    if (calendarFor === "from" && dayjs(inputValueFrom).isValid()) {
+    if (calendarFor === "from" && isValidDate(inputValueFrom)) {
       setCalendarValue(convertRangeValue(inputValueFrom, "jsDate") as Date);
-    } else if (calendarFor === "to" && dayjs(inputValueTo).isValid()) {
+    } else if (calendarFor === "to" && isValidDate(inputValueTo)) {
       setCalendarValue(convertRangeValue(inputValueTo, "jsDate") as Date);
     }
   };

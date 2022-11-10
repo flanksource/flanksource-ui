@@ -1,4 +1,3 @@
-import dayjs from "dayjs";
 import {
   ScatterChart,
   Scatter,
@@ -9,9 +8,17 @@ import {
   XAxis,
   YAxis
 } from "recharts";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { getCanaryGraph } from "../../../api/services/topology";
 import { Loading } from "../../Loading";
+import {
+  formatDateToMonthDay,
+  formatDateToMonthDayTime,
+  formatDateToTime,
+  formatDateToYear,
+  formatISODate,
+  subtractDateFromNow
+} from "../../../utils/date";
 
 type StatusType = {
   time: string;
@@ -24,8 +31,6 @@ const formatDuration = (duration: number) => `${duration}ms`;
 const getFill = (entry) => (entry.status ? "#2cbd27" : "#df1a1a");
 
 function getUpdatedFormat(start: string) {
-  let format = "";
-
   switch (start) {
     case "2d":
     case "3d":
@@ -33,28 +38,22 @@ function getUpdatedFormat(start: string) {
     case "2w":
     case "3w":
     case "1mo": {
-      format = "MMM DD(HH:mm)";
-      break;
+      return formatDateToMonthDayTime;
     }
     case "2mo":
     case "3mo":
     case "6mo":
     case "1y": {
-      format = "MMMM DD";
-      break;
+      return formatDateToMonthDay;
     }
     case "2y":
     case "3y":
     case "5y": {
-      format = "YYYY";
-      break;
+      return formatDateToYear;
     }
-    default: {
-      format = "HH:mm";
-    }
+    default:
   }
-
-  return format;
+  return formatDateToTime;
 }
 
 const getStartValue = (start: string) => {
@@ -62,14 +61,21 @@ const getStartValue = (start: string) => {
     return start;
   }
 
-  return dayjs()
-    .subtract(+(start.match(/\d/g)?.[0] ?? "1"), "month")
-    .toISOString();
+  return formatISODate(
+    subtractDateFromNow(+(start.match(/\d/g)?.[0] ?? "1"), "month")
+  );
 };
 
 export function CanaryStatusChart({ check, checkTimeRange, ...rest }) {
   const [data, setData] = useState<StatusType[]>([]);
-  const [currentFormat, setCurrentFormat] = useState("HH:mm");
+  const [dateFormatFn, setDateFormatFn] = useState<any>(formatDateToTime);
+
+  const tickFormatter = useCallback(
+    (date: Date | string) => {
+      return dateFormatFn(date);
+    },
+    [dateFormatFn]
+  );
 
   useEffect(() => {
     const payload = {
@@ -79,17 +85,14 @@ export function CanaryStatusChart({ check, checkTimeRange, ...rest }) {
     };
     getCanaryGraph(payload).then((results) => {
       const updatedFormat = getUpdatedFormat(checkTimeRange);
-
       setData(results.data.status);
-      setCurrentFormat(updatedFormat);
+      setDateFormatFn(updatedFormat);
     });
   }, [check, checkTimeRange]);
 
   if (!data?.length) {
     return <Loading />;
   }
-
-  const formatDate = (date: string) => dayjs(date).format(currentFormat);
 
   return (
     <ResponsiveContainer width="100%" height="100%" {...rest}>
@@ -110,10 +113,10 @@ export function CanaryStatusChart({ check, checkTimeRange, ...rest }) {
         />
         <XAxis
           tickSize={0}
-          tick={<CustomXTick tickFormatter={formatDate} />}
+          tick={<CustomXTick tickFormatter={tickFormatter} />}
           stroke="rgba(200, 200, 200, 1)"
           tickMargin={4}
-          tickFormatter={formatDate}
+          tickFormatter={tickFormatter}
           fontSize={12}
           reversed
           // type="number"
