@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getAllConfigs } from "../services/configs";
+import { getAllConfigsMatchingQuery } from "../services/configs";
 import { getIncident } from "../services/incident";
 import {
   getTopology,
@@ -68,14 +68,19 @@ export const useComponentNameQuery = (
   );
 };
 
-export const useAllConfigsQuery = ({
-  enabled = true,
-  staleTime = defaultStaleTime,
-  ...rest
-}) => {
-  return useQuery(["allConfigs"], getAllConfigs, {
-    staleTime,
-    enabled,
-    ...rest
-  });
+export const useAllConfigsQuery = (
+  query: string,
+  { enabled = true, staleTime = defaultStaleTime, ...rest }
+) => {
+  return useQuery(
+    ["allConfigs"],
+    () => {
+      return getAllConfigsMatchingQuery(query);
+    },
+    {
+      staleTime,
+      enabled,
+      ...rest
+    }
+  );
 };

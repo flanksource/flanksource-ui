@@ -39,6 +39,14 @@ interface Analysis {
 export const getAllConfigs = () =>
   resolve<ConfigItem[]>(ConfigDB.get(`/configs`));
 
+export const getAllConfigsMatchingQuery = (query: string) => {
+  let url = `/configs`;
+  if (query) {
+    url = `${url}?${query}`;
+  }
+  return resolve<ConfigItem[]>(ConfigDB.get(url));
+};
+
 export const getAllChanges = () =>
   resolve(ConfigDB.get(`/config_changes?order=created_at.desc`));
 
