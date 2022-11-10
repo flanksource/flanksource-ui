@@ -28,6 +28,7 @@ export function ConfigListPage() {
   const {
     data: allConfigs,
     isLoading,
+    refetch,
     isRefetching
   } = useAllConfigsQuery(
     {
@@ -76,7 +77,8 @@ export function ConfigListPage() {
 
   useEffect(() => {
     setTitle(<BreadcrumbNav list={["Config"]} />);
-  }, [data]);
+    refetch();
+  }, [data, configType, tag, sortOrder, search, sortBy]);
 
   return (
     <div className="flex flex-col h-full overflow-y-hidden">

@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import { useMemo } from "react";
 import { getAllConfigsMatchingQuery } from "../services/configs";
 import { getIncident } from "../services/incident";
 import {
@@ -82,7 +81,7 @@ function prepareConfigListQuery({
   } else {
     const filterQueries = [];
     if (configType && configType !== "All") {
-      filterQueries.push(`config_type.eq.${configType}`);
+      filterQueries.push(`config_type=eq.${configType}`);
     }
     if (tag && tag !== "All") {
       const [k, v] = decodeURI(tag).split("__:__");
@@ -109,16 +108,13 @@ export const useAllConfigsQuery = (
   }: Record<string, string | null | undefined>,
   { enabled = true, staleTime = defaultStaleTime, ...rest }
 ) => {
-  const query = useMemo(() => {
-    return prepareConfigListQuery({
-      search,
-      tag,
-      configType,
-      sortBy,
-      sortOrder
-    });
-  }, [search, tag, configType, sortBy, sortOrder]);
-
+  const query = prepareConfigListQuery({
+    search,
+    tag,
+    configType,
+    sortBy,
+    sortOrder
+  });
   return useQuery(
     ["allConfigs"],
     () => {
