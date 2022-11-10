@@ -25,17 +25,22 @@ export function ConfigListPage() {
   const sortBy = params.get("sortBy");
   const sortOrder = params.get("sortOrder");
 
-  const query = useMemo(() => {
-    return prepareConfigListQuery();
-  }, [search, tag, configType, sortBy, sortOrder]);
-
   const {
     data: allConfigs,
     isLoading,
     isRefetching
-  } = useAllConfigsQuery(query, {
-    cacheTime: 0
-  });
+  } = useAllConfigsQuery(
+    {
+      search,
+      tag,
+      configType,
+      sortBy,
+      sortOrder
+    },
+    {
+      cacheTime: 0
+    }
+  );
 
   useEffect(() => {
     if (params.get("query")) {
@@ -63,30 +68,6 @@ export function ConfigListPage() {
     }
   };
 
-  function prepareConfigListQuery() {
-    let query = "select=*";
-    if (search) {
-      query = `&${query}or=(name.ilike.*${search}*,config_type.ilike.*${search}*,description.ilike.*${search}*,namespace.ilike.*${search}*)`;
-    } else {
-      const filterQueries = [];
-      if (configType && configType !== "All") {
-        filterQueries.push(`config_type.eq.${configType}`);
-      }
-      if (tag && tag !== "All") {
-        const [k, v] = decodeURI(tag).split("__:__");
-        filterQueries.push(`tags->>${k}=eq.${encodeURIComponent(v)}`);
-      }
-      if (filterQueries.length) {
-        query = `${query}&${filterQueries.join("&")}`;
-      }
-    }
-    if (sortBy && sortOrder) {
-      const sortField = sortBy === "config_type" ? `${sortBy},name` : sortBy;
-      query = `${query}&order=${sortField}.${sortOrder}`;
-    }
-    return query;
-  }
-
   useEffect(() => {
     setTitleExtras(
       <RefreshButton onClick={() => getAllConfigs()} animate={isLoading} />
@@ -95,7 +76,7 @@ export function ConfigListPage() {
 
   useEffect(() => {
     setTitle(<BreadcrumbNav list={["Config"]} />);
-  }, [data, search, configType, tag]);
+  }, [data]);
 
   return (
     <div className="flex flex-col h-full overflow-y-hidden">
