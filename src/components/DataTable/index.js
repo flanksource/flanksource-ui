@@ -92,10 +92,6 @@ export const DataTable = ({
     tableInstance.setGroupBy(Array.isArray(groupBy) ? groupBy : []);
   }, [groupBy, tableInstance]);
 
-  useEffect(() => {
-    tableInstance.setSortBy(Array.isArray(sortBy) ? sortBy : []);
-  }, [sortBy, tableInstance]);
-
   return (
     <>
       <div className="flex flex-col flex-1 overflow-y-auto" {...rest}>
