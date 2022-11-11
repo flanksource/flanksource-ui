@@ -85,7 +85,7 @@ function classNames(...classes) {
 
 export function Changelog() {
   return (
-    <div className="bg-white px-4">
+    <div className="bg-white">
       <div className="flex justify-between py-4 border-b border-gray-200 mb-4">
         <h2 className="mt-0.5 text-2xl font-medium leading-7 text-dark-gray">
           Changelog
