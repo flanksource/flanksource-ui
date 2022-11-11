@@ -154,22 +154,24 @@ export function DefinitionOfDone({ incidentId }: DefinitionOfDoneProps) {
   };
 
   return (
-    <div className="w-full divide-y divide-gray-200">
-      <div className="flex mb-3 w-full">
-        <h2 className="flex-1 inline-block text-sm font-bold text-dark-gray">
-          Definition of done
+    <div className="w-full">
+      <div className="flex justify-between py-4 border-b border-dashed border-gray-200 mb-4">
+        <h2 className="mt-0.5 text-2xl font-medium leading-7 text-dark-gray">
+          Details
         </h2>
-        <MdRefresh
-          className="cursor-pointer mr-3 w-6 h-6"
-          onClick={() => refetch()}
-        />
-        <RiFullscreenLine
-          className="cursor-pointer w-5 h-5"
-          onClick={() => setDODModalOpen(true)}
-        />
+        <span className="relative z-0 inline-flex">
+          <MdRefresh
+            className="cursor-pointer mr-3 w-6 h-6"
+            onClick={() => refetch()}
+          />
+          <RiFullscreenLine
+            className="cursor-pointer w-5 h-5"
+            onClick={() => setDODModalOpen(true)}
+          />
+        </span>
       </div>
       <div className="flex max-h-96 overflow-y-auto overflow-x-hidden w-full">
-        <div className="w-full divide-y divide-gray-200">
+        <div className="w-full">
           {(isLoading || isRefetching) && (
             <div className="flex items-start py-2 pl-2 pr-2">
               <div className="text-sm text-gray-500">

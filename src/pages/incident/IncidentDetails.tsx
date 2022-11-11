@@ -148,7 +148,7 @@ export function IncidentDetailsPage() {
     >
       <div className="flex flex-row min-h-full h-auto mt-2">
         <div className="flex flex-col flex-1 p-6 min-h-full h-auto">
-          <div className="max-w-3xl lg:max-w-6xl">
+          <div className="max-w-3xl lg:max-w-6xl mx-auto">
             {Boolean(topologyIds?.length) && (
               <section>
                 <div className="border-b">
@@ -192,7 +192,7 @@ export function IncidentDetailsPage() {
             </section>
           </div>
         </div>
-        <SlidingSideBar>
+        <SlidingSideBar hideToggle={true}>
           <div className="pr-4">
             <IncidentDetails
               incident={incident}
@@ -206,11 +206,7 @@ export function IncidentDetailsPage() {
               updateIncidentHandler={updateIncidentHandler}
               textButton={status === IncidentStatus.Open ? "Close" : "Reopen"}
             />
-            <div className="bg-white px-2 py-3 my-4 shadow sm:rounded-lg sm:px-4 ml-4">
-              <section aria-labelledby="applicant-information-title">
-                <Changelog />
-              </section>
-            </div>
+            <Changelog />
           </div>
         </SlidingSideBar>
       </div>

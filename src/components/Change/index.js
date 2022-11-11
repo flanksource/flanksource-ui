@@ -85,8 +85,13 @@ function classNames(...classes) {
 
 export function Changelog() {
   return (
-    <div className="flow-root">
-      <ul className="-mb-4">
+    <div className="bg-white px-4">
+      <div className="flex justify-between py-4 border-b border-dashed border-gray-200 mb-4">
+        <h2 className="mt-0.5 text-2xl font-medium leading-7 text-dark-gray">
+          Changelog
+        </h2>
+      </div>
+      <ul>
         {timeline.map((event, eventIdx) => (
           // eslint-disable-next-line react/no-array-index-key
           <li key={eventIdx}>
