@@ -86,7 +86,7 @@ function classNames(...classes) {
 export function Changelog() {
   return (
     <div className="bg-white px-4">
-      <div className="flex justify-between py-4 border-b border-dashed border-gray-200 mb-4">
+      <div className="flex justify-between py-4 border-b border-gray-200 mb-4">
         <h2 className="mt-0.5 text-2xl font-medium leading-7 text-dark-gray">
           Changelog
         </h2>
@@ -115,7 +115,7 @@ export function Changelog() {
                 </div>
                 <div className="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
                   <div>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-gray-500">
                       {event.content}{" "}
                       <a
                         href={event.href}
@@ -125,7 +125,7 @@ export function Changelog() {
                       </a>
                     </p>
                   </div>
-                  <div className="text-right text-sm whitespace-nowrap text-gray-500">
+                  <div className="text-right whitespace-nowrap text-gray-500">
                     <time dateTime={event.datetime}>{event.date}</time>
                   </div>
                 </div>

@@ -12,7 +12,6 @@ import {
   getCanaries,
   getTopologyComponent
 } from "../../../../api/services/topology";
-import { useLoader } from "../../../../hooks";
 import { Size } from "../../../../types";
 import { Badge } from "../../../Badge";
 import { Icon } from "../../../Icon";
@@ -59,14 +58,14 @@ function TopologyEvidence({
     >
       <div className="flex flex-col -mt-1 bg-white divide-y divide-gray-200 w-full">
         <div className="flex pr-1 pt-2.5 pb-2.5 pl-2 overflow-hidden">
-          <div className="text-gray-color m-auto mr-2.5 flex-initial max-w-1/4 leading-1.21rel">
-            <h3 className="text-gray-color text-2xsi leading-1.21rel">
+          <div className="text-gray-500 m-auto mr-2.5 flex-initial max-w-1/4 leading-1.21rel">
+            <h3 className="text-gray-500 leading-1.21rel">
               <Icon name={topology.icon} size="2xl" />
             </h3>
           </div>
           <div className="flex-1 m-auto overflow-hidden">
             <p
-              className="font-bold overflow-hidden truncate align-middle text-15pxinrem leading-1.21rel"
+              className="text-gray-500 font-bold overflow-hidden truncate align-middle leading-1.21rel"
               title={topology.name}
             >
               <Link to={prepareTopologyLink(topology)}>
@@ -75,7 +74,7 @@ function TopologyEvidence({
             </p>
             {topology.description != null ||
               (topology.id != null && (
-                <h3 className="text-gray-color overflow-hidden truncate text-2xsi leading-1.21rel font-medium">
+                <h3 className="text-gray-500 overflow-hidden truncate leading-1.21rel font-medium">
                   {topology.description || topology.id}
                 </h3>
               ))}
@@ -114,7 +113,13 @@ function LogEvidence({
   }
 
   return (
-    <div className={clsx("overflow-hidden p-2", className)} {...rest}>
+    <div
+      className={clsx(
+        "overflow-hidden p-2 font-medium text-gray-500",
+        className
+      )}
+      {...rest}
+    >
       <span>
         <Icon className="inline" name={comp.icon} size="xl" /> {comp.name}
       </span>
@@ -151,7 +156,7 @@ function ConfigEvidence({
         secondary={config.config_type}
         size="lg"
       />{" "}
-      <span className="pl-1"> {config.name} </span>{" "}
+      <span className="pl-1 text-gray-500 font-medium"> {config.name} </span>{" "}
     </div>
   );
 }
@@ -201,7 +206,7 @@ function HealthEvidence({
             <span
               title={check?.name}
               className={clsx(
-                "text-gray-800 font-semibold whitespace-nowrap overflow-ellipsis overflow-hidden pr-4"
+                "text-gray-500 font-semibold whitespace-nowrap overflow-ellipsis overflow-hidden pr-4"
               )}
             >
               {check?.name}

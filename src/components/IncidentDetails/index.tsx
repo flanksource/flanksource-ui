@@ -181,7 +181,7 @@ export const IncidentDetails = ({
 
   return (
     <div className={clsx(className)}>
-      <div className="bg-white px-4">
+      <div className="bg-white">
         <div className="flex justify-between py-4 border-b border-gray-200">
           <h2 className="mt-0.5 text-2xl font-medium leading-7 text-dark-gray">
             Details
@@ -220,7 +220,7 @@ export const IncidentDetails = ({
           title="Started"
           className="mt-2.5"
           value={
-            <span className="text-sm font-normal text-dark-gray">
+            <span className="text-gray-500 font-medium">
               {formattedCreatedAt}
             </span>
           }
@@ -229,7 +229,7 @@ export const IncidentDetails = ({
           title="Duration"
           className="mt-2.5"
           value={
-            <span className="text-sm font-normal text-dark-gray">
+            <span className="text-gray-500 font-medium">
               {formattedDuration}
             </span>
           }
@@ -263,7 +263,7 @@ export const IncidentDetails = ({
           }
         />
       </div>
-      <div className="px-4 bg-white">
+      <div className="bg-white">
         <div className="flex justify-between py-4 border-b border-gray-200 mb-4">
           <h2 className="mt-0.5 text-2xl font-medium leading-7 text-dark-gray">
             Responders
@@ -403,7 +403,7 @@ export const IncidentDetails = ({
           }}
         />
       </div>
-      <div className="px-4 bg-white">
+      <div className="bg-white">
         <DefinitionOfDone incidentId={incident.id} />
       </div>
     </div>
