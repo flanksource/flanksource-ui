@@ -28,7 +28,7 @@ function ConfigRelatedDetails({ configID }: Props) {
     ["config_relationships", configID],
     async () => {
       const res = await fetch(
-        `/api/configs_db/config_relationships?&or=(related_id.eq.${configID},config_id.eq.${configID})&select=*,configs!config_relationships_related_id_fkey(*)`
+        `/api/configs_db/config_relationships?configs.id=not.eq.${configID}&or=(related_id.eq.${configID},config_id.eq.${configID})&select=*,configs!config_relationships_related_id_fkey!inner(*)`
       );
       const data = (await res.json()) as ConfigTypeRelationships[];
       return data.map((item) => item.configs);
