@@ -6,6 +6,7 @@ import {
   getTopologyComponentLabels,
   getTopologyComponents
 } from "../services/topology";
+import { getPersons } from "../services/users";
 
 const cache: Record<string, any> = {};
 
@@ -104,6 +105,30 @@ export const useConfigNameQuery = (
       placeholderData: () => {
         return cache[cacheKey];
       },
+      ...rest
+    }
+  );
+};
+
+export const useGetPeopleQuery = ({
+  enabled = true,
+  staleTime = defaultStaleTime,
+  ...rest
+}) => {
+  return useQuery(
+    ["people"],
+    () => {
+      return getPersons().then(({ data }) => {
+        const users = data?.map((user) => ({
+          ...user,
+          display: user.name
+        }));
+        return users || [];
+      });
+    },
+    {
+      staleTime,
+      enabled,
       ...rest
     }
   );
