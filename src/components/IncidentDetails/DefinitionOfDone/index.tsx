@@ -155,9 +155,9 @@ export function DefinitionOfDone({ incidentId }: DefinitionOfDoneProps) {
 
   return (
     <div className="w-full">
-      <div className="flex justify-between py-4 border-b border-dashed border-gray-200 mb-4">
+      <div className="flex justify-between py-4 border-b border-gray-200 mb-4">
         <h2 className="mt-0.5 text-2xl font-medium leading-7 text-dark-gray">
-          Details
+          Definition of Done
         </h2>
         <span className="relative z-0 inline-flex">
           <MdRefresh

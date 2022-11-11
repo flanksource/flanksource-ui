@@ -193,7 +193,7 @@ export function IncidentDetailsPage() {
           </div>
         </div>
         <SlidingSideBar hideToggle={true}>
-          <div className="pr-4">
+          <div>
             <IncidentDetails
               incident={incident}
               updateStatusHandler={() =>

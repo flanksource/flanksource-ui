@@ -182,7 +182,7 @@ export const IncidentDetails = ({
   return (
     <div className={clsx(className)}>
       <div className="bg-white px-4">
-        <div className="flex justify-between py-4 border-b border-dashed border-gray-200">
+        <div className="flex justify-between py-4 border-b border-gray-200">
           <h2 className="mt-0.5 text-2xl font-medium leading-7 text-dark-gray">
             Details
           </h2>
@@ -264,7 +264,7 @@ export const IncidentDetails = ({
         />
       </div>
       <div className="px-4 bg-white">
-        <div className="flex justify-between py-4 border-b border-dashed border-gray-200 mb-4">
+        <div className="flex justify-between py-4 border-b border-gray-200 mb-4">
           <h2 className="mt-0.5 text-2xl font-medium leading-7 text-dark-gray">
             Responders
           </h2>
@@ -360,7 +360,7 @@ export const IncidentDetails = ({
             type="button"
             className="flex items-center bg-white rounded-md group"
           >
-            <span className="flex items-center justify-center w-5 h-5 text-gray-400 border-2 border-gray-300 border-dashed rounded-full">
+            <span className="flex items-center justify-center w-5 h-5 text-gray-400 border-2 border-gray-300 rounded-full">
               <svg
                 className="w-5 h-5"
                 xmlns="http://www.w3.org/2000/svg"
