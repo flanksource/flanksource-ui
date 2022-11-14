@@ -360,7 +360,7 @@ export const IncidentDetails = ({
             type="button"
             className="flex items-center bg-white rounded-md group"
           >
-            <span className="flex items-center justify-center w-5 h-5 text-gray-400 border-2 border-gray-300 rounded-full">
+            <span className="flex items-center justify-center w-5 h-5 text-gray-400 border-2 border-gray-300 border-dashed rounded-full">
               <svg
                 className="w-5 h-5"
                 xmlns="http://www.w3.org/2000/svg"
