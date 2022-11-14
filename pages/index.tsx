@@ -1,6 +1,6 @@
+/* eslint-disable no-restricted-globals */
 import { AxiosError } from "axios";
 import type { NextPage } from "next";
-import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 import ory from "../src/components/ory/sdk";
@@ -11,7 +11,6 @@ import { isCanaryUI } from "../src/context/Environment";
 
 const Home: NextPage = () => {
   const [session, setSession] = useState<Session | undefined>();
-  const router = useRouter();
 
   const isAuthDisabled = process.env.NEXT_PUBLIC_WITHOUT_SESSION === "true";
 
@@ -26,25 +25,28 @@ const Home: NextPage = () => {
         setSession(data);
       })
       .catch((err: AxiosError) => {
+        const url = `${location.pathname}${location.search}`;
         switch (err.response?.status) {
           case 403:
             // This is a legacy error code thrown. See code 422 for
             // more details.
-            return router.push("/login?aal=aal2");
+            location.href = `/login?aal=aal2&return_to=${url}`;
+            return;
           case 422:
             // This status code is returned when we are trying to
             // validate a session which has not yet completed
             // it's second factor
-            return router.push("/login?aal=aal2");
+            location.href = `/login?aal=aal2&return_to=${url}`;
+            return;
           case 401:
-            // do nothing, the user is not logged in
-            return router.push("/login");
+            location.href = `/login?return_to=${url}`;
+            return;
         }
 
         // Something else happened!
         return Promise.reject(err);
       });
-  }, [router, isAuthDisabled]);
+  }, [isAuthDisabled]);
 
   if (!isAuthDisabled && !session) {
     return null;
