@@ -25,6 +25,7 @@ type LogsTableProps = {
   viewOnly?: boolean;
   isLoading?: boolean;
   areQueryParamsEmpty?: boolean;
+  componentId?: string;
 };
 
 export function LogsTable({
@@ -33,7 +34,8 @@ export function LogsTable({
   variant,
   viewOnly,
   isLoading = false,
-  areQueryParamsEmpty = false
+  areQueryParamsEmpty = false,
+  componentId
 }: LogsTableProps) {
   const [attachAsAsset, setAttachAsAsset] = useState(false);
   const [lines, setLines] = useState<LogItem[]>([]);
@@ -179,6 +181,7 @@ export function LogsTable({
           onClose={() => setAttachAsAsset(false)}
           evidence={{ lines }}
           type={EvidenceType.Log}
+          component_id={componentId}
           callback={(success: boolean) => {
             if (success) {
               setLines([]);

@@ -1,8 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
 import React, { useMemo } from "react";
 import { MdOutlineError } from "react-icons/md";
 import { useSearchParams } from "react-router-dom";
-import { TopologyComponentItem } from "../FilterIncidents/FilterIncidentsByComponents";
+import { useComponentsQuery } from "../../api/query-hooks";
 import { Icon } from "../Icon";
 import { ReactSelectDropdown, StateOption } from "../ReactSelectDropdown";
 
@@ -19,14 +18,7 @@ function FilterLogsByComponent() {
 
   const topologyId = searchParams.get("topologyId");
 
-  const { isLoading, data, error } = useQuery(
-    ["components", "names", "list"],
-    async () => {
-      const res = await fetch(`/api/canary/db/component_names`);
-      const data = (await res.json()) as TopologyComponentItem[];
-      return data;
-    }
-  );
+  const { isLoading, data, error } = useComponentsQuery({});
 
   const dropDownOptions = useMemo(() => {
     if (data) {
@@ -55,7 +47,6 @@ function FilterLogsByComponent() {
   }
 
   function onComponentSelect(value?: string) {
-    console.log("value", value);
     if (value?.toLowerCase() === "all") {
       searchParams.delete("topologyId");
       searchParams.delete("topologyExternalId");

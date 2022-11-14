@@ -7,11 +7,11 @@ import { TextInput } from "../components/TextInput";
 import { TimeRange, timeRanges } from "../components/Dropdown/TimeRange";
 import FilterLogsByComponent from "../components/FilterLogs/FilterLogsByComponent";
 import { useQuery } from "@tanstack/react-query";
-import { TopologyComponentItem } from "../components/FilterIncidents/FilterIncidentsByComponents";
 import { DropdownStandaloneWrapper } from "../components/Dropdown/StandaloneWrapper";
 import { LogsTable } from "../components/Logs/Table/LogsTable";
 import useDebouncedValue from "../hooks/useDebounce";
 import LogItem from "../types/Logs";
+import { getTopologyComponentByID } from "../api/services/topology";
 
 export const logTypes = [
   {
@@ -49,14 +49,13 @@ export function LogsPage() {
   const { data: topology } = useQuery(
     ["components", "names", topologyId],
     async () => {
-      const res = await fetch(
-        `/api/canary/db/component_names?id=eq.${topologyId}`
-      );
-      const data = (await res.json()) as Pick<TopologyComponentItem, "name">[];
-      return data[0];
+      if (topologyId) {
+        const data = await getTopologyComponentByID(topologyId);
+        return data;
+      }
     },
     {
-      enabled: !!topologyId && !!query
+      enabled: !!topologyId
     }
   );
 
@@ -144,6 +143,7 @@ export function LogsPage() {
           isLoading={isLoading}
           logs={logs ?? []}
           areQueryParamsEmpty={!topologyId && !query}
+          componentId={topology?.id}
         />
       </div>
     </SearchLayout>

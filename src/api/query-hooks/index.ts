@@ -29,11 +29,18 @@ export const useComponentsQuery = ({
   staleTime = defaultStaleTime,
   ...rest
 }) => {
-  return useQuery(["allcomponents"], getTopologyComponents, {
-    staleTime,
-    enabled,
-    ...rest
-  });
+  return useQuery(
+    ["allcomponents"],
+    async () => {
+      const res = await getTopologyComponents();
+      return res.data;
+    },
+    {
+      staleTime,
+      enabled,
+      ...rest
+    }
+  );
 };
 
 export const useComponentLabelsQuery = ({

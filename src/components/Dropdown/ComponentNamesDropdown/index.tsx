@@ -49,10 +49,10 @@ export function ComponentNamesDropdown({
   const { data: components } = useComponentsQuery({});
 
   useEffect(() => {
-    if (!components?.data) {
+    if (!components) {
       return;
     }
-    const data = (components.data as ComponentItem[])
+    const data = components
       .filter((item: TopologyComponentItem) => {
         return item.external_id;
       })
