@@ -18,7 +18,7 @@ export default function SlidingSideBar({
   return (
     <div
       className={clsx(
-        ` flex flex-col bg-white border-l transform origin-right duration-500 border-gray-200 w-full py-6 px-4
+        ` flex flex-col bg-white border-l transform origin-right duration-500 border-gray-200 w-full pb-6
             ${open ? "w-3" : "w-[35rem]"}
           `,
         className

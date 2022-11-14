@@ -182,29 +182,31 @@ export const IncidentDetails = ({
   return (
     <div className={clsx(className)}>
       <div className="bg-white">
-        <div className="flex justify-between py-4 border-b border-gray-200">
-          <h2 className="mt-0.5 text-2xl font-medium leading-7 text-dark-gray">
-            Details
-          </h2>
-          <span className="relative z-0 inline-flex rounded-md shadow-sm">
-            <button
-              type="button"
-              className="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-              onClick={updateStatusHandler}
-            >
-              <RiCloseCircleLine className="w-4 h-4 mr-1" /> {textButton}
-            </button>
-            <button
-              type="button"
-              className="relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-            >
-              <BsShareFill className="w-3 h-3 mr-1" /> Share
-            </button>
-          </span>
+        <div className="py-4 border-b border-gray-200">
+          <div className="flex justify-between px-4">
+            <h2 className="mt-0.5 text-2xl font-medium leading-7 text-dark-gray">
+              Details
+            </h2>
+            <span className="relative z-0 inline-flex rounded-md shadow-sm">
+              <button
+                type="button"
+                className="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                onClick={updateStatusHandler}
+              >
+                <RiCloseCircleLine className="w-4 h-4 mr-1" /> {textButton}
+              </button>
+              <button
+                type="button"
+                className="relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              >
+                <BsShareFill className="w-3 h-3 mr-1" /> Share
+              </button>
+            </span>
+          </div>
         </div>
         <IncidentDetailsRow
           title="Commanders"
-          className="mt-4"
+          className="mt-4 px-4"
           value={
             <ReactSelectDropdown
               control={control}
@@ -218,7 +220,7 @@ export const IncidentDetails = ({
         />
         <IncidentDetailsRow
           title="Started"
-          className="mt-2.5"
+          className="mt-2.5 px-4"
           value={
             <span className="text-gray-500 font-medium">
               {formattedCreatedAt}
@@ -227,7 +229,7 @@ export const IncidentDetails = ({
         />
         <IncidentDetailsRow
           title="Duration"
-          className="mt-2.5"
+          className="mt-2.5 px-4"
           value={
             <span className="text-gray-500 font-medium">
               {formattedDuration}
@@ -236,7 +238,7 @@ export const IncidentDetails = ({
         />
         <IncidentDetailsRow
           title="Type"
-          className="mt-3"
+          className="mt-3 px-4"
           value={
             <ReactSelectDropdown
               control={control}
@@ -250,7 +252,7 @@ export const IncidentDetails = ({
         />
         <IncidentDetailsRow
           title="Priority"
-          className="mt-3"
+          className="mt-3 px-4"
           value={
             <ReactSelectDropdown
               control={control}
@@ -265,17 +267,17 @@ export const IncidentDetails = ({
       </div>
       <div className="bg-white">
         <div className="flex justify-between py-4 border-b border-gray-200 mb-4">
-          <h2 className="mt-0.5 text-2xl font-medium leading-7 text-dark-gray">
+          <h2 className="mt-0.5 text-2xl font-medium leading-7 text-dark-gray px-4">
             Responders
           </h2>
         </div>
         {Boolean(responders.length) && (
-          <div>
+          <div className="px-4">
             {responders.map((responder) => {
               return (
                 <div
                   key={responder.json.id}
-                  className="relative flex items-center p-2 mt-1 rounded"
+                  className="relative flex items-center py-2 mt-1 rounded"
                 >
                   <div className="flex-1 w-full min-w-0">
                     <ResponderDetailsToolTip
@@ -355,7 +357,7 @@ export const IncidentDetails = ({
             })}
           </div>
         )}
-        <div className="relative flex items-center py-2">
+        <div className="relative flex items-center py-2 px-4">
           <button
             type="button"
             className="flex items-center bg-white rounded-md group"

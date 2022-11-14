@@ -24,7 +24,7 @@ type DefinitionOfDoneProps = {
 
 function AddDefinitionOfDone({ onClick }: { onClick: () => void }) {
   return (
-    <div className="flex items-center justify-between p-2 pl-1">
+    <div className="flex items-center justify-between py-2">
       <button
         type="button"
         className="flex items-center bg-white rounded-md group"
@@ -155,22 +155,24 @@ export function DefinitionOfDone({ incidentId }: DefinitionOfDoneProps) {
 
   return (
     <div className="w-full">
-      <div className="flex justify-between py-4 border-b border-gray-200 mb-4">
-        <h2 className="mt-0.5 text-2xl font-medium leading-7 text-dark-gray">
-          Definition of Done
-        </h2>
-        <span className="relative z-0 inline-flex">
-          <MdRefresh
-            className="cursor-pointer mr-3 w-6 h-6"
-            onClick={() => refetch()}
-          />
-          <RiFullscreenLine
-            className="cursor-pointer w-5 h-5"
-            onClick={() => setDODModalOpen(true)}
-          />
-        </span>
+      <div className="py-4 border-b border-gray-200 mb-4">
+        <div className="px-4 flex justify-between">
+          <h2 className="mt-0.5 text-2xl font-medium leading-7 text-dark-gray">
+            Definition of Done
+          </h2>
+          <span className="relative z-0 inline-flex">
+            <MdRefresh
+              className="cursor-pointer mr-3 w-6 h-6"
+              onClick={() => refetch()}
+            />
+            <RiFullscreenLine
+              className="cursor-pointer w-5 h-5"
+              onClick={() => setDODModalOpen(true)}
+            />
+          </span>
+        </div>
       </div>
-      <div className="flex max-h-96 overflow-y-auto overflow-x-hidden w-full">
+      <div className="flex max-h-96 overflow-y-auto overflow-x-hidden w-full px-4">
         <div className="w-full">
           {(isLoading || isRefetching) && (
             <div className="flex items-start py-2 pl-2 pr-2">
@@ -234,7 +236,6 @@ export function DefinitionOfDone({ incidentId }: DefinitionOfDoneProps) {
               setSelectedEvidences([]);
             }}
           />
-          <div className={dodEvidences.length >= 3 ? "mb-4" : ""}></div>
         </div>
       </div>
       <DeleteConfirmDialog
