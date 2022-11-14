@@ -1,8 +1,11 @@
 import { useState } from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 import withMock from "storybook-addon-mock";
 
 import { CommentInput } from "./index";
+
+const defaultQueryClient = new QueryClient();
 
 export default {
   title: "CommentInput",
@@ -15,11 +18,13 @@ const Template: ComponentStory<typeof CommentInput> = (arg: any) => {
   const [comment, setComment] = useState(arg.value);
 
   return (
-    <CommentInput
-      {...arg}
-      value={comment}
-      onChange={(value) => setComment(value)}
-    />
+    <QueryClientProvider client={defaultQueryClient}>
+      <CommentInput
+        {...arg}
+        value={comment}
+        onChange={(value) => setComment(value)}
+      />
+    </QueryClientProvider>
   );
 };
 
