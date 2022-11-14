@@ -6,7 +6,7 @@
   package = "@netlify/plugin-nextjs"
 
 [context.deploy-preview.environment]
-  NEXT_PUBLIC_WITHOUT_SESSION = "true"
+  NEXT_PUBLIC_WITHOUT_SESSION = "false"
   BACKEND_URL = "https://incident-commander.canary.lab.flanksource.com/"
   NODE_ENV = "development"
   ENV = "netlify"
