@@ -87,7 +87,9 @@ export function CanaryStatusChart({ check, checkTimeRange, ...rest }) {
     };
     getCanaryGraph(payload).then((results) => {
       const updatedFormat = getUpdatedFormat(checkTimeRange);
-      setData(results.data.status);
+      setData(() => {
+        return (results.data.status as StatusType[]).reverse();
+      });
       setDateFormatFn(() => (date: string | Date) => updatedFormat(date));
     });
   }, [check, checkTimeRange]);
