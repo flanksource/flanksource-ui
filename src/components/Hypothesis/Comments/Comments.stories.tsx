@@ -1,6 +1,9 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import { CommentsSection } from "./index";
+
+const defaultQueryClient = new QueryClient();
 
 export default {
   title: "CommentsSection",
@@ -9,7 +12,9 @@ export default {
 } as ComponentMeta<typeof CommentsSection>;
 
 const Template: ComponentStory<typeof CommentsSection> = (arg: any) => (
-  <CommentsSection {...arg} />
+  <QueryClientProvider client={defaultQueryClient}>
+    <CommentsSection {...arg} />
+  </QueryClientProvider>
 );
 
 export const Base = Template.bind({});

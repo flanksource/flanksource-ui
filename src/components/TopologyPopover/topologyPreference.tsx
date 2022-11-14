@@ -1,20 +1,21 @@
 import clsx from "clsx";
 import { FaCog } from "react-icons/fa";
 
-import { CardSize, CardWidth } from "../TopologyCard";
+import { CardWidth } from "../TopologyCard";
 
 import { useOnMouseActivity } from "../../hooks/useMouseActivity";
+import { Size } from "../../types";
 
 export function getCardWidth() {
   let value: any = localStorage.getItem("topology_card_width");
 
   if (!value?.trim()) {
-    return CardWidth[CardSize.extra_large];
+    return CardWidth[Size.extra_large];
   }
 
   value = parseInt(value, 10);
   if (isNaN(value)) {
-    return CardWidth[CardSize.extra_large];
+    return CardWidth[Size.extra_large];
   } else {
     return `${value}px`;
   }
@@ -26,7 +27,7 @@ export const TopologyPreference = ({
   setCardWidth
 }: {
   title?: string;
-  cardSize: CardSize;
+  cardSize: Size;
   setCardWidth: (width: string) => void;
 }) => {
   const {

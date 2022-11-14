@@ -223,6 +223,7 @@ import package_upgrade from "./package-upgrade.svg";
 import pagerduty from "./pagerduty.svg";
 import php from "./php.svg";
 import ping from "./ping.svg";
+import plus from "./plus.svg";
 import pod from "./pod.svg";
 import pods from "./pods.svg";
 import pom from "./pom.svg";
@@ -512,6 +513,7 @@ export const Icons = {
   pagerduty: pagerduty,
   php: php,
   ping: ping,
+  plus: plus,
   pod: pod,
   pods: pods,
   pom: pom,

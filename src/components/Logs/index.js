@@ -1,12 +1,11 @@
-import React, { useState, useMemo } from "react";
-import { EvidenceType } from "../../api/services/evidence";
-import { Modal } from "../Modal";
+import React, { useState } from "react";
 import { LogsTable } from "./Table/logs-table";
 
-export const LogsViewer = React.memo(function LogsViewer({ logs }) {
-  const [selectedList, setSelectedList] = useState([]);
-  const [incidentModalIsOpen, setIncidentModalIsOpen] = useState(false);
-  const [variant, setVariant] = useState("comfortable");
+export const LogsViewer = React.memo(function LogsViewer({
+  logs,
+  componentId
+}) {
+  const [variant] = useState("comfortable");
 
   return (
     <>
@@ -29,7 +28,7 @@ export const LogsViewer = React.memo(function LogsViewer({ logs }) {
           Compact
         </button>
       </div> */}
-      <LogsTable logs={logs} variant={variant} />
+      <LogsTable logs={logs} variant={variant} componentId={componentId} />
     </>
   );
 });

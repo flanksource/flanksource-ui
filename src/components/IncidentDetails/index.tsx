@@ -24,6 +24,7 @@ import {
   getRespondersForTheIncident
 } from "../../api/services/responder";
 import { relativeDateTime } from "../../utils/date";
+import { DefinitionOfDone } from "./DefinitionOfDone";
 
 export const IncidentDetails = ({
   incident,
@@ -179,54 +180,33 @@ export const IncidentDetails = ({
   }, [incident]);
 
   return (
-    <div className={clsx("divide-y", className)}>
-      <div className="px-4 py-3 mb-4 ml-4 bg-white shadow sm:rounded-lg">
-        <div className="flex justify-between mb-7">
-          <h2 className="mt-0.5 text-2xl font-medium leading-7 text-dark-gray">
-            Details
-          </h2>
-          <span className="relative z-0 inline-flex rounded-md shadow-sm">
-            <button
-              type="button"
-              className="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-              onClick={updateStatusHandler}
-            >
-              <RiCloseCircleLine className="w-4 h-4 mr-1" /> {textButton}
-            </button>
-            <button
-              type="button"
-              className="relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-            >
-              <BsShareFill className="w-3 h-3 mr-1" /> Share
-            </button>
-          </span>
+    <div className={clsx(className)}>
+      <div className="bg-white">
+        <div className="py-4 border-b border-gray-200">
+          <div className="flex justify-between px-4">
+            <h2 className="mt-0.5 text-2xl font-medium leading-7 text-dark-gray">
+              Details
+            </h2>
+            <span className="relative z-0 inline-flex rounded-md shadow-sm">
+              <button
+                type="button"
+                className="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                onClick={updateStatusHandler}
+              >
+                <RiCloseCircleLine className="w-4 h-4 mr-1" /> {textButton}
+              </button>
+              <button
+                type="button"
+                className="relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              >
+                <BsShareFill className="w-3 h-3 mr-1" /> Share
+              </button>
+            </span>
+          </div>
         </div>
-        {/* <IncidentDetailsRow
-        title="Chart Room"
-        value={
-          <a
-            href={getValues("chartRoom")}
-            className="text-sm font-normal underline text-dark-blue"
-          >
-            {getValues("chartRoomTitle")}
-          </a>
-        }
-      />
-      <IncidentDetailsRow
-        title="Status Page"
-        className="mt-2.5"
-        value={
-          <a
-            href={getValues("statusPage")}
-            className="text-sm font-normal underline text-dark-blue"
-          >
-            {getValues("statusPageTitle")}
-          </a>
-        }
-      /> */}
         <IncidentDetailsRow
           title="Commanders"
-          className="mt-4"
+          className="mt-4 px-4"
           value={
             <ReactSelectDropdown
               control={control}
@@ -240,25 +220,25 @@ export const IncidentDetails = ({
         />
         <IncidentDetailsRow
           title="Started"
-          className="mt-2.5"
+          className="mt-2.5 px-4"
           value={
-            <span className="text-sm font-normal text-dark-gray">
+            <span className="text-gray-500 font-medium">
               {formattedCreatedAt}
             </span>
           }
         />
         <IncidentDetailsRow
           title="Duration"
-          className="mt-2.5"
+          className="mt-2.5 px-4"
           value={
-            <span className="text-sm font-normal text-dark-gray">
+            <span className="text-gray-500 font-medium">
               {formattedDuration}
             </span>
           }
         />
         <IncidentDetailsRow
           title="Type"
-          className="mt-3"
+          className="mt-3 px-4"
           value={
             <ReactSelectDropdown
               control={control}
@@ -272,7 +252,7 @@ export const IncidentDetails = ({
         />
         <IncidentDetailsRow
           title="Priority"
-          className="mt-3"
+          className="mt-3 px-4"
           value={
             <ReactSelectDropdown
               control={control}
@@ -285,129 +265,126 @@ export const IncidentDetails = ({
           }
         />
       </div>
-      <div className="px-4 py-3 mb-4 ml-4 bg-white shadow sm:rounded-lg">
-        <div className="divide-y divide-gray-200">
-          <div className="flex mb-3">
-            <h2 className="flex-1 inline-block text-sm font-bold text-dark-gray">
-              Responders
-            </h2>
-          </div>
-          {Boolean(responders.length) && (
-            <div>
-              {responders.map((responder) => {
-                return (
-                  <div
-                    key={responder.json.id}
-                    className="relative flex items-center p-2 mt-1 rounded"
-                  >
-                    <div className="flex-1 w-full min-w-0">
-                      <ResponderDetailsToolTip
-                        className="w-full"
-                        responder={responder}
-                        data={responder?.json?.properties}
-                        element={
-                          <div className="relative w-full overflow-hidden text-sm font-medium truncate text-dark-gray group">
-                            <div className="w-full overflow-hidden">
-                              {responder.icon && (
-                                <responder.icon className="w-6 h-6" />
-                              )}
-                              <div
-                                className="inline-block pl-1 align-middle"
-                                onClick={(e) => {
-                                  setOpenResponderDetailsDialog(true);
-                                  setSelectedResponder(responder);
-                                }}
-                              >
-                                <div className="flex-1 inline-block align-middle max-w-32">
-                                  <div
-                                    className="truncate cursor-pointer hover:underline"
-                                    title={responder?.name}
-                                  >
-                                    {responder?.name}
-                                  </div>
-                                </div>
-                                <div className="flex-1 inline-block align-middle">
-                                  {responder.external_id && (
-                                    <a
-                                      href={responder?.links?.external_id_link}
-                                      target="_blank"
-                                      className="inline-block pl-1 text-blue-600 underline align-middle hover:text-blue-800 visited:text-blue-600"
-                                      onClick={(e) => e.stopPropagation()}
-                                      rel="noreferrer"
-                                      title={responder.external_id}
-                                    >
-                                      (
-                                      <span className="inline-block truncate align-middle max-w-32">
-                                        {responder.external_id}
-                                      </span>
-                                      )
-                                    </a>
-                                  )}
+      <div className="bg-white">
+        <div className="flex justify-between py-4 border-b border-gray-200 mb-4">
+          <h2 className="mt-0.5 text-2xl font-medium leading-7 text-dark-gray px-4">
+            Responders
+          </h2>
+        </div>
+        {Boolean(responders.length) && (
+          <div className="px-4">
+            {responders.map((responder) => {
+              return (
+                <div
+                  key={responder.json.id}
+                  className="relative flex items-center py-2 mt-1 rounded"
+                >
+                  <div className="flex-1 w-full min-w-0">
+                    <ResponderDetailsToolTip
+                      className="w-full"
+                      responder={responder}
+                      data={responder?.json?.properties}
+                      element={
+                        <div className="relative w-full overflow-hidden text-sm font-medium truncate text-dark-gray group">
+                          <div className="w-full overflow-hidden">
+                            {responder.icon && (
+                              <responder.icon className="w-6 h-6" />
+                            )}
+                            <div
+                              className="inline-block pl-1 align-middle"
+                              onClick={(e) => {
+                                setOpenResponderDetailsDialog(true);
+                                setSelectedResponder(responder);
+                              }}
+                            >
+                              <div className="flex-1 inline-block align-middle max-w-32">
+                                <div
+                                  className="truncate cursor-pointer hover:underline"
+                                  title={responder?.name}
+                                >
+                                  {responder?.name}
                                 </div>
                               </div>
-                            </div>
-                            <div className="absolute right-0 ml-10 cursor-pointer top-1">
-                              <IconButton
-                                className="hidden bg-transparent group-hover:inline-block z-5"
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  e.stopPropagation();
-                                  setOpenDeleteConfirmDialog(true);
-                                  setDeletedResponder(responder);
-                                }}
-                                ovalProps={{
-                                  stroke: "blue",
-                                  height: "18px",
-                                  width: "18px",
-                                  fill: "transparent"
-                                }}
-                                icon={
-                                  <BsTrash
-                                    className="text-gray-600 border-0 border-gray-200 border-l-1"
-                                    size={18}
-                                  />
-                                }
-                              />
+                              <div className="flex-1 inline-block align-middle">
+                                {responder.external_id && (
+                                  <a
+                                    href={responder?.links?.external_id_link}
+                                    target="_blank"
+                                    className="inline-block pl-1 text-blue-600 underline align-middle hover:text-blue-800 visited:text-blue-600"
+                                    onClick={(e) => e.stopPropagation()}
+                                    rel="noreferrer"
+                                    title={responder.external_id}
+                                  >
+                                    (
+                                    <span className="inline-block truncate align-middle max-w-32">
+                                      {responder.external_id}
+                                    </span>
+                                    )
+                                  </a>
+                                )}
+                              </div>
                             </div>
                           </div>
-                        }
-                      />
-                    </div>
+                          <div className="absolute right-0 ml-10 cursor-pointer top-1">
+                            <IconButton
+                              className="hidden bg-transparent group-hover:inline-block z-5"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setOpenDeleteConfirmDialog(true);
+                                setDeletedResponder(responder);
+                              }}
+                              ovalProps={{
+                                stroke: "blue",
+                                height: "18px",
+                                width: "18px",
+                                fill: "transparent"
+                              }}
+                              icon={
+                                <BsTrash
+                                  className="text-gray-600 border-0 border-gray-200 border-l-1"
+                                  size={18}
+                                />
+                              }
+                            />
+                          </div>
+                        </div>
+                      }
+                    />
                   </div>
-                );
-              })}
-            </div>
-          )}
-          <div className="flex items-center justify-between p-2">
-            <button
-              type="button"
-              className="flex items-center bg-white rounded-md group"
-            >
-              <span className="flex items-center justify-center w-5 h-5 text-gray-400 border-2 border-gray-300 border-dashed rounded-full">
-                <svg
-                  className="w-5 h-5"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                  aria-hidden="true"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
-                    clipRule="evenodd"
-                  ></path>
-                </svg>
-              </span>
-              <span className="ml-2 text-sm font-medium text-blue-600 group-hover:text-blue-500">
-                <AddResponder
-                  className="flex justify-end flex-1 inline-block w-full"
-                  onSuccess={() => fetchResponders()}
-                  incident={incident}
-                />
-              </span>
-            </button>
+                </div>
+              );
+            })}
           </div>
-          <div></div>
+        )}
+        <div className="relative flex items-center py-2 px-4">
+          <button
+            type="button"
+            className="flex items-center bg-white rounded-md group"
+          >
+            <span className="flex items-center justify-center w-5 h-5 text-gray-400 border-2 border-gray-300 border-dashed rounded-full">
+              <svg
+                className="w-5 h-5"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+                  clipRule="evenodd"
+                ></path>
+              </svg>
+            </span>
+            <span className="ml-2 text-sm font-medium text-blue-600 group-hover:text-blue-500">
+              <AddResponder
+                className="flex justify-end flex-1 inline-block w-full"
+                onSuccess={() => fetchResponders()}
+                incident={incident}
+              />
+            </span>
+          </button>
         </div>
         <DeleteConfirmDialog
           isOpen={openDeleteConfirmDialog}
@@ -427,6 +404,9 @@ export const IncidentDetails = ({
             setOpenResponderDetailsDialog(false);
           }}
         />
+      </div>
+      <div className="bg-white">
+        <DefinitionOfDone incidentId={incident.id} />
       </div>
     </div>
   );

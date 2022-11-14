@@ -8,6 +8,8 @@ type DeleteConfirmDialogProps = {
   description: string;
   onClose: () => void;
   onDelete: () => void;
+  deleteLabel?: string;
+  closeLabel?: string;
 } & React.HTMLProps<HTMLDivElement>;
 
 export function DeleteConfirmDialog({
@@ -16,6 +18,8 @@ export function DeleteConfirmDialog({
   isOpen,
   onClose,
   onDelete,
+  deleteLabel = "Delete",
+  closeLabel = "Close",
   className,
   ...rest
 }: DeleteConfirmDialogProps) {
@@ -53,13 +57,13 @@ export function DeleteConfirmDialog({
             </div>
             <div className="mt-4 space-x-4">
               <button className="btn-primary" onClick={onClose}>
-                Close
+                {closeLabel}
               </button>
               <button
                 className="btn-secondary btn-secondary-base"
                 onClick={onDelete}
               >
-                Delete
+                {deleteLabel}
               </button>
             </div>
           </Dialog.Panel>
