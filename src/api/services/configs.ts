@@ -21,6 +21,17 @@ export interface ConfigItem {
   cost_total_30d?: number;
 }
 
+export type ConfigTypeRelationships = {
+  config_id: string;
+  related_id: string;
+  property: string;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string;
+  selector_id: string;
+  configs: ConfigItem;
+};
+
 interface Change {
   type: string;
   count: number;
@@ -111,4 +122,11 @@ export const getConfigsByQuery = async (query: string) => {
     ...d,
     tags: JSON.parse(d.tags)
   }));
+};
+
+export const getRelatedConfigs = async (configID: string) => {
+  const res = await ConfigDB.get<ConfigTypeRelationships[]>(
+    `/api/configs_db/config_relationships?configs.id=not.eq.${configID}&or=(related_id.eq.${configID},config_id.eq.${configID})&select=*,configs!config_relationships_related_id_fkey!inner(*)`
+  );
+  return res.data;
 };

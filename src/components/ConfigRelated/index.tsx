@@ -1,23 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
 import { FaExclamationTriangle } from "react-icons/fa";
 import { VscJson } from "react-icons/vsc";
 import { Link } from "react-router-dom";
-import { ConfigItem } from "../../api/services/configs";
+import { getRelatedConfigs } from "../../api/services/configs";
 import CollapsiblePanel from "../CollapsiblePanel";
 import { Icon } from "../Icon";
 import { Loading } from "../Loading";
-
-export type ConfigTypeRelationships = {
-  config_id: string;
-  related_id: string;
-  property: string;
-  created_at: string;
-  updated_at: string;
-  deleted_at: string;
-  selector_id: string;
-  configs: ConfigItem;
-};
 
 type Props = {
   configID: string;
@@ -27,10 +15,7 @@ function ConfigRelatedDetails({ configID }: Props) {
   const { data: relatedConfigs, isLoading } = useQuery(
     ["config_relationships", configID],
     async () => {
-      const res = await fetch(
-        `/api/configs_db/config_relationships?configs.id=not.eq.${configID}&or=(related_id.eq.${configID},config_id.eq.${configID})&select=*,configs!config_relationships_related_id_fkey!inner(*)`
-      );
-      const data = (await res.json()) as ConfigTypeRelationships[];
+      const data = await getRelatedConfigs(configID);
       return data.map((item) => item.configs);
     }
   );
