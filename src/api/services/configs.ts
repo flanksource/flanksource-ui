@@ -57,6 +57,9 @@ export const getAllChanges = () =>
 export const getConfig = (id: string) =>
   resolve<ConfigItem[]>(ConfigDB.get(`/config_items?id=eq.${id}`));
 
+export const getConfigName = (id: string) =>
+  resolve<ConfigItem[]>(ConfigDB.get(`/config_names?id=eq.${id}`));
+
 export const getConfigChange = (id: string) =>
   resolve(
     ConfigDB.get(`/config_changes?config_id=eq.${id}&order=created_at.desc`)

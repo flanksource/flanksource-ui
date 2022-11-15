@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useOutletContext } from "react-router-dom";
 
-import { getConfigChange, getConfig } from "../../api/services/configs";
+import { getConfigChange, getConfigName } from "../../api/services/configs";
 import { toastError } from "../../components/Toast/toast";
 import { ConfigChangeHistory } from "../../components/ConfigChangeHistory";
 import { BreadcrumbNav } from "../../components/BreadcrumbNav";
@@ -28,7 +28,7 @@ export function ConfigDetailsChangesPage() {
         setIsLoading(false);
       });
 
-    getConfig(id)
+    getConfigName(id)
       .then((res) => {
         const data = res?.data[0];
         setTitle(
