@@ -30,6 +30,7 @@ export type ConfigTypeRelationships = {
   deleted_at: string;
   selector_id: string;
   configs: ConfigItem;
+  related: ConfigItem;
 };
 
 interface Change {
@@ -126,7 +127,7 @@ export const getConfigsByQuery = async (query: string) => {
 
 export const getRelatedConfigs = async (configID: string) => {
   const res = await CanaryChecker.get<ConfigTypeRelationships[]>(
-    `/db/config_relationships?configs.id=not.eq.${configID}&or=(related_id.eq.${configID},config_id.eq.${configID})&select=*,configs!config_relationships_related_id_fkey!inner(*)`
+    `/db/config_relationships?or=(related_id.eq.${configID},config_id.eq.${configID})&select=*,configs:configs!config_relationships_config_id_fkey(*),related:configs!config_relationships_related_id_fkey(*)`
   );
   return res.data;
 };

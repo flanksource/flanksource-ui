@@ -1,11 +1,46 @@
 import { useQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
 import { FaExclamationTriangle } from "react-icons/fa";
 import { VscJson } from "react-icons/vsc";
 import { Link } from "react-router-dom";
-import { getRelatedConfigs } from "../../api/services/configs";
+import {
+  ConfigTypeRelationships,
+  getRelatedConfigs
+} from "../../api/services/configs";
 import CollapsiblePanel from "../CollapsiblePanel";
 import { Icon } from "../Icon";
 import { Loading } from "../Loading";
+
+function ConfigRelatedItem({
+  item,
+  configID
+}: {
+  item: ConfigTypeRelationships;
+  configID: string;
+}) {
+  const config = useMemo(
+    () => (configID === item.config_id ? item.related : item.configs),
+    [configID, item]
+  );
+
+  return (
+    <li className="p-1" key={config.id}>
+      <Link
+        to={{
+          pathname: `/configs/${config.id}`
+        }}
+      >
+        <Icon
+          name={config.external_type}
+          secondary={config.config_type}
+          size="lg"
+          className="mr-2"
+        />
+        {config.name}
+      </Link>
+    </li>
+  );
+}
 
 type Props = {
   configID: string;
@@ -14,10 +49,7 @@ type Props = {
 function ConfigRelatedDetails({ configID }: Props) {
   const { data: relatedConfigs, isLoading } = useQuery(
     ["config_relationships", configID],
-    async () => {
-      const data = await getRelatedConfigs(configID);
-      return data.map((item) => item.configs);
-    }
+    async () => getRelatedConfigs(configID)
   );
 
   return (
@@ -27,21 +59,7 @@ function ConfigRelatedDetails({ configID }: Props) {
       ) : relatedConfigs && relatedConfigs.length > 0 ? (
         <ol>
           {relatedConfigs.map((config) => (
-            <li className="p-1" key={config.id}>
-              <Link
-                to={{
-                  pathname: `/configs/${config.id}`
-                }}
-              >
-                <Icon
-                  name={config.external_type}
-                  secondary={config.config_type}
-                  size="lg"
-                  className="mr-2"
-                />
-                {config.name}
-              </Link>
-            </li>
+            <ConfigRelatedItem item={config} configID={configID} />
           ))}
         </ol>
       ) : (
