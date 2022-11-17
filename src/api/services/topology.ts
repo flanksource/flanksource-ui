@@ -55,3 +55,7 @@ export const getTopologyComponents = () => {
 export const getTopologyComponentLabels = () => {
   return CanaryChecker.get(`/db/component_labels`);
 };
+
+export const getTopologyComponent = (id: string) => {
+  return CanaryChecker.get(`/db/component_names?id=eq.${id}`);
+};

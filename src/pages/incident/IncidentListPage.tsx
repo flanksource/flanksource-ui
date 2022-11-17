@@ -2,6 +2,7 @@ import { debounce } from "lodash";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AiFillPlusCircle } from "react-icons/ai/";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { useGetPeopleQuery } from "../../api/query-hooks";
 import { getIncidentsWithParams } from "../../api/services/incident";
 import { getPersons } from "../../api/services/users";
 import FilterIncidents from "../../components/FilterIncidents/FilterIncidents";
@@ -60,25 +61,25 @@ export function IncidentListPage() {
   } = useIncidentPageContext();
 
   const [incidentModalIsOpen, setIncidentModalIsOpen] = useState(false);
+  const { data: users } = useGetPeopleQuery({});
 
   useEffect(() => {
-    getPersons().then((res) => {
-      if (res.data) {
-        const owners = res.data.map(({ name, id }) => [
-          id,
-          { name, value: id, description: name }
-        ]);
-        // @ts-expect-error
-        setIncidentState((state: IncidentState) => {
-          return {
-            ...state,
-            ownerSelections: Object.fromEntries(owners)
-          } as any;
-        });
-      }
+    if (!users?.length) {
+      return;
+    }
+    const owners = users.map(({ name, id }) => [
+      id,
+      { name, value: id, description: name }
+    ]);
+    // @ts-expect-error
+    setIncidentState((state: IncidentState) => {
+      return {
+        ...state,
+        ownerSelections: Object.fromEntries(owners)
+      } as any;
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [users]);
 
   async function fetchIncidents(
     params: Record<string, string | undefined>

@@ -3,6 +3,7 @@ import { filter } from "lodash";
 import { useEffect, useState, useMemo, MouseEventHandler } from "react";
 import { Link } from "react-router-dom";
 import { getTopology } from "../../api/services/topology";
+import { Size } from "../../types";
 import { CustomScroll } from "../CustomScroll";
 import { HealthSummary } from "../HealthSummary";
 import { Icon } from "../Icon";
@@ -12,32 +13,25 @@ import { CardMetrics } from "./CardMetrics";
 import { Property } from "./Property";
 import { TopologyDropdownMenu } from "./TopologyDropdownMenu";
 
-export enum CardSize {
-  small = "small",
-  medium = "medium",
-  large = "large",
-  extra_large = "extra_large"
-}
-
-enum ComponentStatus {
+export enum ComponentStatus {
   unhealthy = "unhealthy",
   warning = "warning"
 }
 
-export const CardWidth: { [k: keyof typeof CardSize]: string } = {
-  [CardSize.small]: "198px",
-  [CardSize.medium]: "258px",
-  [CardSize.large]: "356px",
-  [CardSize.extra_large]: "554px"
+export const CardWidth: Record<keyof typeof Size, string> = {
+  [Size.small]: "198px",
+  [Size.medium]: "258px",
+  [Size.large]: "356px",
+  [Size.extra_large]: "554px"
 };
 
-const StatusStyles: { [k: keyof typeof ComponentStatus]: string } = {
+export const StatusStyles: Record<keyof typeof ComponentStatus, string> = {
   [ComponentStatus.unhealthy]: "border-red-300",
   [ComponentStatus.warning]: "border-orange-300"
 };
 
 interface IProps {
-  size: CardSize;
+  size: Size;
   topologyId?: string;
   topology?: any;
   selectionMode?: boolean;
@@ -71,7 +65,7 @@ export function TopologyCard({
   }
 
   const metricsInFooter = useMemo(
-    () => size === CardSize.small || size === CardSize.medium,
+    () => size === Size.small || size === Size.medium,
     [size]
   );
 
@@ -140,7 +134,7 @@ export function TopologyCard({
 
         {!metricsInFooter && (
           <div className="flex ml-auto pl-1 pr-1.5 pb-3.5 pt-3">
-            <CardMetrics items={heading} row={size === CardSize.extra_large} />
+            <CardMetrics items={heading} row={size === Size.extra_large} />
           </div>
         )}
 

@@ -11,7 +11,13 @@ import { relativeDateTime } from "../../../utils/date";
 
 const convert = new Convert();
 
-export const LogsTable = ({ logs: logsParam, actions, variant, viewOnly }) => {
+export const LogsTable = ({
+  logs: logsParam,
+  componentId,
+  actions,
+  variant,
+  viewOnly
+}) => {
   const [attachAsAsset, setAttachAsAsset] = useState(false);
   const [lines, setLines] = useState([]);
   const logs = useMemo(() => {
@@ -119,6 +125,7 @@ export const LogsTable = ({ logs: logsParam, actions, variant, viewOnly }) => {
         isOpen={attachAsAsset}
         onClose={() => setAttachAsAsset(false)}
         evidence={{ lines }}
+        component_id={componentId}
         type={EvidenceType.Log}
         callback={(success) => {
           if (success) {

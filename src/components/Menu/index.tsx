@@ -1,5 +1,6 @@
 import { Menu as HLMenu, Transition } from "@headlessui/react";
 import { DotsVerticalIcon } from "@heroicons/react/outline";
+import clsx from "clsx";
 import { Fragment } from "react";
 import { $ElementProps } from "../../types/utility";
 
@@ -16,7 +17,7 @@ const Item = ({ children, ...props }: ItemProps) => (
 );
 
 type ItemsProps = Partial<$ElementProps<typeof HLMenu.Items>>;
-const Items = ({ children }: ItemsProps) => (
+const Items = ({ children, className, widthClass = "w-56" }: ItemsProps) => (
   <Transition
     as={Fragment}
     enter="transition ease-out duration-100"
@@ -26,7 +27,13 @@ const Items = ({ children }: ItemsProps) => (
     leaveFrom="transform opacity-100 scale-100"
     leaveTo="transform opacity-0 scale-95"
   >
-    <HLMenu.Items className="absolute right-0 top-full w-56 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-card  focus:outline-none z-10 ">
+    <HLMenu.Items
+      className={clsx(
+        className,
+        widthClass,
+        "absolute right-0 top-full mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-card  focus:outline-none z-10 "
+      )}
+    >
       {children}
     </HLMenu.Items>
   </Transition>

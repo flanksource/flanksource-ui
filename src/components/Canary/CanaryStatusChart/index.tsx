@@ -68,7 +68,9 @@ const getStartValue = (start: string) => {
 
 export function CanaryStatusChart({ check, checkTimeRange, ...rest }) {
   const [data, setData] = useState<StatusType[]>([]);
-  const [dateFormatFn, setDateFormatFn] = useState<any>(formatDateToTime);
+  const [dateFormatFn, setDateFormatFn] = useState(
+    () => (date: string | Date) => formatDateToTime(date)
+  );
 
   const tickFormatter = useCallback(
     (date: Date | string) => {
@@ -85,8 +87,10 @@ export function CanaryStatusChart({ check, checkTimeRange, ...rest }) {
     };
     getCanaryGraph(payload).then((results) => {
       const updatedFormat = getUpdatedFormat(checkTimeRange);
-      setData(results.data.status);
-      setDateFormatFn(updatedFormat);
+      setData(() => {
+        return (results.data.status as StatusType[]).reverse();
+      });
+      setDateFormatFn(() => (date: string | Date) => updatedFormat(date));
     });
   }, [check, checkTimeRange]);
 
