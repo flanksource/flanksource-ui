@@ -15,6 +15,7 @@ import { AttachEvidenceDialog } from "../../AttachEvidenceDialog";
 import { Loading } from "../../Loading";
 import { LogsTableLabelsCell, LogsTableTimestampCell } from "./LogsTableCells";
 import useDebouncedValue from "../../../hooks/useDebounce";
+import { InfoMessage } from "../../InfoMessage";
 
 const convert = new Convert();
 
@@ -253,11 +254,17 @@ export function LogsTable({
               <tr>
                 <td className="text-center" colSpan={columns.length}>
                   {areQueryParamsEmpty ? (
-                    <span>Please select a component to view the logs</span>
+                    <InfoMessage
+                      className="my-8"
+                      message="Please select a component to view the logs"
+                    />
                   ) : isLoading ? (
                     <Loading text="Loading logs ..." />
                   ) : (
-                    <span>There are no logs matching the search query</span>
+                    <InfoMessage
+                      className="my-8"
+                      message="There are no logs matching the search query"
+                    />
                   )}
                 </td>
               </tr>
