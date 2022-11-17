@@ -23,6 +23,7 @@ export const DataTable = ({
   sortBy,
   groupBy,
   hiddenColumns,
+  className,
   ...rest
 }) => {
   const tableInstance = useTable(
@@ -89,7 +90,10 @@ export const DataTable = ({
   }, [sortBy, tableInstance]);
 
   return (
-    <div className="flex flex-col flex-1 overflow-y-auto" {...rest}>
+    <div
+      className={clsx("flex flex-col flex-1 overflow-y-auto", className)}
+      {...rest}
+    >
       <table
         className={clsx(tableStyles.tableClass, stickyHead && "relative")}
         style={tableStyle}
