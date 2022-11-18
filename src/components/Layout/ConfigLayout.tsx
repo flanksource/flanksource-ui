@@ -5,6 +5,7 @@ import clsx from "clsx";
 import { SearchLayout } from "./search";
 import ConfigDetailsSidePanel from "../ConfigDetailsSidePanel";
 import ConfigsListFilters from "../ConfigsListFilters";
+import { ConfigBreadcrumb } from "../ConfigBreadcrumb";
 
 type Props = {
   showSearchInput?: boolean;
@@ -27,7 +28,9 @@ export function ConfigLayout({
   isConfigDetails = false,
   ...props
 }: Props) {
-  const [title, setTitle] = useState(props.title || "");
+  const [title, setTitle] = useState<React.ReactNode | string>(
+    props.title || ""
+  );
   const [titleExtras, setTitleExtras] = useState();
   const [tabRight, setTabRight] = useState();
   const [tableOptions, setTableOptions] = useState();
@@ -82,6 +85,7 @@ export function ConfigLayout({
             </span>
             <span>{tabRight}</span>
           </nav>
+          <ConfigBreadcrumb setTitle={setTitle} />
           <Outlet
             context={{
               title,

@@ -5,7 +5,6 @@ import {
   useOutletContext
 } from "react-router-dom";
 import { filterConfigsByText } from "../../components/ConfigViewer/utils";
-import { BreadcrumbNav } from "../../components/BreadcrumbNav";
 import ConfigList from "../../components/ConfigList";
 import { RefreshButton } from "../../components/RefreshButton";
 import { useConfigPageContext } from "../../context/ConfigPageContext";
@@ -19,7 +18,7 @@ export function ConfigListPage() {
     configState: { data, filteredData },
     setConfigState
   } = useConfigPageContext();
-  const { setTitle, setTitleExtras } = useOutletContext<any>();
+  const { setTitleExtras } = useOutletContext<any>();
 
   const {
     data: allConfigs,
@@ -67,7 +66,6 @@ export function ConfigListPage() {
 
   useEffect(() => {
     let filteredData = data;
-    setTitle(<BreadcrumbNav list={["Config"]} />);
     if (data?.length! > 0) {
       // do filtering here
       filteredData = filterConfigsByText(filteredData, search);

@@ -3,7 +3,6 @@ import { useParams, useSearchParams, useOutletContext } from "react-router-dom";
 import { ConfigItem, getConfig } from "../../api/services/configs";
 import { EvidenceType } from "../../api/services/evidence";
 import { AttachEvidenceDialog } from "../../components/AttachEvidenceDialog";
-import { BreadcrumbNav } from "../../components/BreadcrumbNav";
 import { Button } from "../../components/Button";
 import { JSONViewer } from "../../components/JSONViewer";
 import { Loading } from "../../components/Loading";
@@ -19,21 +18,13 @@ export function ConfigDetailsPage() {
   const [checked, setChecked] = useState({});
   const [configDetails, setConfigDetails] = useState<ConfigItem | undefined>();
   // @ts-ignore
-  const { setTitle, setTabRight } = useOutletContext();
+  const { setTabRight } = useOutletContext();
 
   useEffect(() => {
     getConfig(id!)
       .then((res) => {
         const data = res?.data?.[0];
         setConfigDetails(data);
-        setTitle(
-          <BreadcrumbNav
-            list={[
-              { to: "/configs", title: "Config" },
-              <b key="title">{data?.name}</b>
-            ]}
-          />
-        );
       })
       .catch((err) => toastError(err))
       .finally(() => {
@@ -141,7 +132,7 @@ export function ConfigDetailsPage() {
   }, [checked, showIncidentModal]);
 
   return (
-    <div className="flex flex-row items-start space-x-2 ">
+    <div className="flex flex-row items-start space-x-2 bg-white">
       <div className="flex flex-col w-full max-w-full">
         {!isLoading ? (
           <div className="flex flex-row space-x-2 p-2">
