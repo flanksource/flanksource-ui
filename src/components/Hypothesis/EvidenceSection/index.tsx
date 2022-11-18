@@ -25,7 +25,10 @@ export function EvidenceItem({ evidence }: { evidence: Evidence }) {
     case EvidenceType.Topology:
       return (
         <div className="pt-2">
-          <TopologyCard topologyId={evidence.evidence.id} size={Size.large} />
+          <TopologyCard
+            topologyId={evidence.component_id || evidence.evidence.id}
+            size={Size.large}
+          />
         </div>
       );
     case EvidenceType.Config:
@@ -268,7 +271,7 @@ export function HealthEvidenceViewer({
 
   useEffect(() => {
     const healthEvidence: any = evidence.evidence;
-    const id = healthEvidence.check_id;
+    const id = evidence.check_id || healthEvidence.check_id;
     const includeMessages = healthEvidence.includeMessages;
     const start = healthEvidence.start;
     fetchCheckDetails(id, start, includeMessages);

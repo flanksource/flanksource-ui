@@ -6,12 +6,8 @@ import {
   useComponentNameQuery,
   useConfigNameQuery
 } from "../../../../api/query-hooks";
-import { getConfig } from "../../../../api/services/configs";
 import { Evidence, EvidenceType } from "../../../../api/services/evidence";
-import {
-  getCanaries,
-  getTopologyComponent
-} from "../../../../api/services/topology";
+import { getCanaries } from "../../../../api/services/topology";
 import { Size } from "../../../../types";
 import { Badge } from "../../../Badge";
 import { Icon } from "../../../Icon";
@@ -30,8 +26,9 @@ function TopologyEvidence({
   className,
   ...rest
 }: EvidenceViewProps) {
-  const { data: topology } = useComponentNameQuery(evidence?.evidence?.id, {
-    enabled: !!evidence?.evidence?.id
+  const componentId = evidence?.component_id || evidence?.evidence?.id;
+  const { data: topology } = useComponentNameQuery(componentId, {
+    enabled: !!componentId
   });
 
   const prepareTopologyLink = (topologyItem: { id: string }) => {
@@ -171,7 +168,7 @@ function HealthEvidence({
 
   useEffect(() => {
     const healthEvidence: any = evidence.evidence;
-    const id = healthEvidence.check_id;
+    const id = evidence.check_id || healthEvidence.check_id;
     const includeMessages = healthEvidence.includeMessages;
     const start = healthEvidence.start;
     fetchCheckDetails(id, start, includeMessages);
