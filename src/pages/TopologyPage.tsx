@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { BsFillInfoCircleFill } from "react-icons/bs";
 import { useParams, useSearchParams } from "react-router-dom";
-import { getTopology } from "../api/services/topology";
+import { getTopology, getTopologyComponent } from "../api/services/topology";
 import { SearchLayout } from "../components/Layout";
 import { ReactSelectDropdown } from "../components/ReactSelectDropdown";
 import { schemaResourceTypes } from "../components/SchemaResourcePage/resourceTypes";
@@ -65,6 +65,7 @@ export function TopologyPage() {
   );
 
   const [currentTopology, setCurrentTopology] = useState<Topology>();
+  const [parentTopology, setParentTopology] = useState<Topology | null>();
 
   const [teams, setTeams] = useState<any>({});
   const [selectedLabel, setSelectedLabel] = useState("");
@@ -104,6 +105,13 @@ export function TopologyPage() {
       if (res.error) {
         toastError(res.error);
         return;
+      }
+
+      if (refererId) {
+        const data = await getTopologyComponent(refererId);
+        setParentTopology(data?.data?.[0]);
+      } else {
+        setParentTopology(null);
       }
 
       const currentTopology = res.data[0];
@@ -309,7 +317,9 @@ export function TopologyPage() {
             </div>
           </div>
         </div>
-        {id && <TopologySidebar topology={currentTopology} />}
+        {id && (
+          <TopologySidebar topology={currentTopology} parent={parentTopology} />
+        )}
       </div>
     </SearchLayout>
   );

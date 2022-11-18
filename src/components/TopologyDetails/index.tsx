@@ -9,10 +9,11 @@ import { CardMetrics } from "../TopologyCard/CardMetrics";
 import { FormatProperty } from "../TopologyCard/Property";
 
 type Props = {
-  topology?: Pick<Topology, "properties">;
+  topology?: Topology;
+  parent?: Topology;
 };
 
-export default function TopologyDetails({ topology }: Props) {
+export default function TopologyDetails({ topology, parent }: Props) {
   const topologyProperties = topology?.properties ?? [];
 
   const headline = topologyProperties?.filter((property) => property.headline);
@@ -92,7 +93,7 @@ export default function TopologyDetails({ topology }: Props) {
             Labels
           </span>
 
-          {topology.labels &&
+          {topology?.labels &&
             map(topology.labels, (v, k) => (
               <div
                 data-tip={`${k}: ${v}`}
@@ -102,6 +103,13 @@ export default function TopologyDetails({ topology }: Props) {
                 {k}: <span className="font-light">{v}</span>
               </div>
             ))}
+
+          {parent && (
+            <span className="text-gray-500 font-light text-left overflow-auto">
+              Parent: <Icon name={parent.icon} size="xl" className="mr-1" />{" "}
+              {parent.name}
+            </span>
+          )}
         </div>
       </CollapsiblePanel>
     </div>

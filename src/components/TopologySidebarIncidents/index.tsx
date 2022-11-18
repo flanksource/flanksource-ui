@@ -50,7 +50,8 @@ export function useTopologyIncidents(topologyID: string) {
         incident.hypotheses.some((hypothesis) =>
           hypothesis.evidences?.some(
             (evidence) =>
-              evidence.evidence.id === topologyID &&
+              (evidence.component_id === topologyID ||
+                evidence?.evidence?.id === topologyID) &&
               evidence.type === EvidenceType.Topology
           )
         )
