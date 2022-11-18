@@ -106,6 +106,7 @@ const MinimalCanaryFC = ({
       <AttachEvidenceDialog
         isOpen={attachAsAsset}
         onClose={() => setAttachAsAsset(false)}
+        check_id={selectedCheck?.id}
         evidence={{
           check_id: selectedCheck?.id,
           includeMessages: true,

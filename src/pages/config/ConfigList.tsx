@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import {
   useNavigate,
   useSearchParams,
@@ -11,7 +11,6 @@ import { RefreshButton } from "../../components/RefreshButton";
 import { useConfigPageContext } from "../../context/ConfigPageContext";
 import { useAllConfigsQuery } from "../../api/query-hooks";
 import { getAllConfigs } from "../../api/services/configs";
-import ConfigsListFilters from "../../components/ConfigsListFilters";
 
 export function ConfigListPage() {
   const [params] = useSearchParams();
@@ -109,10 +108,7 @@ export function ConfigListPage() {
   }, [data, search, configType, tag]);
 
   return (
-    <div className="flex flex-col h-full space-y-6 px-4 py-4">
-      <div className="flex flex-row items-center">
-        <ConfigsListFilters />
-      </div>
+    <div className="flex flex-col h-full overflow-y-hidden bg-white">
       <ConfigList
         data={filteredData!}
         handleRowClick={handleRowClick}

@@ -1,21 +1,22 @@
-import { ChevronRightIcon, DotsVerticalIcon } from "@heroicons/react/outline";
-import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
+import { ChevronRightIcon, DotsVerticalIcon } from "@heroicons/react/outline";
+import { TopologyCard } from "../../TopologyCard";
 import { BsTrash } from "react-icons/bs";
 import { Link } from "react-router-dom";
 import { Evidence, EvidenceType } from "../../../api/services/evidence";
 import { getCanaries } from "../../../api/services/topology";
-import { toFixedIfNecessary } from "../../../utils/common";
 import mixins from "../../../utils/mixins.module.css";
 import { Button } from "../../Button";
 import { CheckDetails } from "../../Canary/CanaryPopup/CheckDetails";
 import { CheckTitle } from "../../Canary/CanaryPopup/CheckTitle";
+import { toFixedIfNecessary } from "../../../utils/common";
 import { getUptimePercentage } from "../../Canary/CanaryPopup/utils";
 import { Duration, StatusList } from "../../Canary/renderers";
 import { Icon } from "../../Icon";
 import { LogsTable } from "../../Logs/Table/logs-table";
 import { Modal } from "../../Modal";
-import { CardSize, TopologyCard } from "../../TopologyCard";
+import { relativeDateTime } from "../../../utils/date";
+import { Size } from "../../../types";
 
 export function EvidenceItem({ evidence }: { evidence: Evidence }) {
   switch (evidence.type) {
@@ -25,8 +26,8 @@ export function EvidenceItem({ evidence }: { evidence: Evidence }) {
       return (
         <div className="pt-2">
           <TopologyCard
-            topologyId={evidence.evidence.id}
-            size={CardSize.large}
+            topologyId={evidence.component_id || evidence.evidence.id}
+            size={Size.large}
           />
         </div>
       );
@@ -78,8 +79,8 @@ const EvidenceAccordion: React.FC<{
           <div className="flex justify-between w-full items-center">
             {title || <span className="text-gray-400">(no title)</span>}
             {date && (
-              <div className="text-gray-400 text-sm">
-                {dayjs(date).format("HH:mm A, MMM DD, YYYY")}
+              <div className="text-gray-400 text-sm pl-2">
+                {relativeDateTime(date)}
               </div>
             )}
           </div>
@@ -99,7 +100,7 @@ const EvidenceAccordion: React.FC<{
   );
 };
 
-function ConfigEvidenceView({
+export function ConfigEvidenceView({
   evidenceItem
 }: {
   evidenceItem: Extract<Evidence, { evidence: { configName: string } }>;
@@ -138,7 +139,7 @@ function ConfigEvidenceView({
                       <div
                         key={lineIndex}
                         className="flex"
-                        style={{ background: selected && "#cfe3ff" }}
+                        style={selected ? { backgroundColor: "#cfe3ff" } : {}}
                       >
                         <div className="text-xs flex items-center justify-end px-1 text-gray-600 border-r w-8 select-none">
                           {lineIndex}
@@ -256,9 +257,9 @@ export function EvidenceSection({
   );
 }
 
-function HealthEvidenceViewer({
+export function HealthEvidenceViewer({
   evidence,
-  size
+  size = "large"
 }: {
   evidence: Evidence;
   size: "large" | "small";
@@ -270,7 +271,7 @@ function HealthEvidenceViewer({
 
   useEffect(() => {
     const healthEvidence: any = evidence.evidence;
-    const id = healthEvidence.check_id;
+    const id = evidence.check_id || healthEvidence.check_id;
     const includeMessages = healthEvidence.includeMessages;
     const start = healthEvidence.start;
     fetchCheckDetails(id, start, includeMessages);

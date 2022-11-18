@@ -1,67 +1,65 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
 import { FaExclamationTriangle } from "react-icons/fa";
 import { VscJson } from "react-icons/vsc";
 import { Link } from "react-router-dom";
-import { ConfigItem } from "../../api/services/configs";
+import {
+  ConfigTypeRelationships,
+  getRelatedConfigs
+} from "../../api/services/configs";
 import CollapsiblePanel from "../CollapsiblePanel";
 import { Icon } from "../Icon";
 import { Loading } from "../Loading";
 
-export type ConfigTypeRelationships = {
-  config_id: string;
-  related_id: string;
-  property: string;
-  created_at: string;
-  updated_at: string;
-  deleted_at: string;
-  selector_id: string;
-  configs: ConfigItem;
-};
+function ConfigRelatedItem({
+  item,
+  configID
+}: {
+  item: ConfigTypeRelationships;
+  configID: string;
+}) {
+  const config = useMemo(
+    () => (configID === item.config_id ? item.related : item.configs),
+    [configID, item]
+  );
+
+  return (
+    <li className="p-1" key={config.id}>
+      <Link
+        to={{
+          pathname: `/configs/${config.id}`
+        }}
+      >
+        <Icon
+          name={config.external_type}
+          secondary={config.config_type}
+          size="lg"
+          className="mr-2"
+        />
+        {config.name}
+      </Link>
+    </li>
+  );
+}
 
 type Props = {
   configID: string;
 };
 
 function ConfigRelatedDetails({ configID }: Props) {
-  const [relatedConfigs, setRelatedConfigs] = useState<ConfigItem[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchConfigAnalysis(configID: string) {
-      setIsLoading(true);
-      const res = await fetch(
-        `/api/configs_db/config_relationships?config_id=eq.${configID}&select=*,configs!config_relationships_related_id_fkey(*)`
-      );
-      const data = (await res.json()) as ConfigTypeRelationships[];
-      setRelatedConfigs(data.map((item) => item.configs));
-      setIsLoading(false);
-    }
-
-    fetchConfigAnalysis(configID);
-  }, [configID]);
+  const { data: relatedConfigs, isLoading } = useQuery(
+    ["config_relationships", configID],
+    async () => getRelatedConfigs(configID)
+  );
 
   return (
     <div className="flex flex-col space-y-2">
       {isLoading ? (
         <Loading />
-      ) : relatedConfigs.length > 0 ? (
+      ) : relatedConfigs && relatedConfigs.length > 0 ? (
         <ol>
           {relatedConfigs.map((config) => (
-            <li className="p-1" key={config.id}>
-              <Link
-                to={{
-                  pathname: `/configs/${config.id}`
-                }}
-              >
-                <Icon
-                  name={config.external_type}
-                  secondary={config.config_type}
-                  size="lg"
-                  className="mr-2"
-                />
-                {config.name}
-              </Link>
-            </li>
+            <ConfigRelatedItem item={config} configID={configID} />
           ))}
         </ol>
       ) : (

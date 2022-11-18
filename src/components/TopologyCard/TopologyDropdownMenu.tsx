@@ -61,7 +61,7 @@ export const TopologyDropdownMenu = ({ topology }: IProps) => {
         isOpen={attachAsAsset}
         onClose={() => setAttachAsAsset(false)}
         type={EvidenceType.Topology}
-        evidence={{ id: topology.id }}
+        component_id={topology.id}
       />
     </>
   );

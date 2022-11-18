@@ -266,7 +266,7 @@ const QueryBuilderFC = ({ refreshConfigs, className, ...props }) => {
 function QueryBuilderActionMenu({ onOptionClick, optionCategories }) {
   return (
     <Menu as="div" className="relative inline-block text-left">
-      <Menu.Button className="inline-flex justify-center w-full p-3 bg-white text-sm font-medium text-gray-700">
+      <Menu.Button className="inline-flex justify-center w-full p-3 bg-warm-gray-50 text-sm font-medium text-gray-700">
         <BiCog className="content-center" />
       </Menu.Button>
       <Transition

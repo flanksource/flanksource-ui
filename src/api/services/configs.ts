@@ -1,6 +1,6 @@
 // http://incident-commander.canary.lab.flanksource.com/config/db
 
-import { Config, ConfigDB } from "../axios";
+import { CanaryChecker, Config, ConfigDB } from "../axios";
 import { resolve } from "../resolve";
 
 export interface ConfigItem {
@@ -20,6 +20,18 @@ export interface ConfigItem {
   cost_total_7d?: number;
   cost_total_30d?: number;
 }
+
+export type ConfigTypeRelationships = {
+  config_id: string;
+  related_id: string;
+  property: string;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string;
+  selector_id: string;
+  configs: ConfigItem;
+  related: ConfigItem;
+};
 
 interface Change {
   type: string;
@@ -111,4 +123,11 @@ export const getConfigsByQuery = async (query: string) => {
     ...d,
     tags: JSON.parse(d.tags)
   }));
+};
+
+export const getRelatedConfigs = async (configID: string) => {
+  const res = await CanaryChecker.get<ConfigTypeRelationships[]>(
+    `/db/config_relationships?or=(related_id.eq.${configID},config_id.eq.${configID})&select=*,configs:configs!config_relationships_config_id_fkey(*),related:configs!config_relationships_related_id_fkey(*)`
+  );
+  return res.data;
 };

@@ -1,10 +1,9 @@
 import { Dialog } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
 import clsx from "clsx";
-import dayjs from "dayjs";
 import { MdTimer } from "react-icons/md";
+import { relativeDateTime } from "../../../utils/date";
 
-import { relativeDateTime } from "../../../utils/relativeDateTime";
 import {
   AddResponderFormValues,
   getOrderedKeys,
@@ -45,9 +44,9 @@ export function ResponderDetailsDialog({
     if (responder?.json?.acknowledge_time) {
       options.push({
         label: "Time taken to acknowledge",
-        value: dayjs(responder?.json?.created_at).from(
-          new Date(responder?.json?.acknowledge_time),
-          true
+        value: relativeDateTime(
+          responder?.json?.created_at,
+          responder?.json?.acknowledge_time
         )
       });
     }

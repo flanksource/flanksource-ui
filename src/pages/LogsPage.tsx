@@ -122,9 +122,7 @@ export function LogsPage() {
           Logs{topology ? `/${topology.name}` : ""}
         </h1>
       }
-      contentClass={`h-full py-4 px-6 ${
-        loaded || (Boolean(logs.length) ? "p-6" : "")
-      }`}
+      contentClass={`h-full ${loaded || Boolean(logs.length) ? "p-6" : ""}`}
       extra={
         <ReactSelectDropdown
           name="start"
@@ -175,20 +173,19 @@ export function LogsPage() {
             />
           </div>
         </div>
-        {loading
-          ? !logs.length && <Loading className="mt-40" text="Loading logs..." />
-          : !loaded && (
-              <div className="flex flex-col justify-center items-center h-5/6">
-                <h3 className="text-center font-semibold text-lg">
-                  Please select a component to view the logs.
-                </h3>
-              </div>
-            )}
-        {(loaded || Boolean(logs.length)) && (
-          // @ts-expect-error
-          <LogsViewer className="pt-4" logs={logs} />
-        )}
       </div>
+      {loading
+        ? !logs.length && <Loading className="mt-40" text="Loading logs..." />
+        : !loaded && (
+          <div className="flex flex-col justify-center items-center h-5/6">
+            <h3 className="text-center font-semibold text-lg">
+              Please select a component to view the logs.
+            </h3>
+          </div>
+        )}
+      {(loaded || Boolean(logs.length)) && (
+        <LogsViewer className="pt-4" logs={logs} componentId={topologyId} />
+      )}
     </SearchLayout>
   );
 }

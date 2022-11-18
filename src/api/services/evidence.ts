@@ -22,10 +22,12 @@ export type Evidence = {
   check_id: string;
   evidence: Record<string, any>;
   description: string;
+  definition_of_done: boolean;
   properties: string;
   created_at: string;
   created_by: User;
   type: EvidenceType;
+  done: boolean;
 };
 
 export const getAllEvidenceByHypothesis = async (hypothesisId: string) => {

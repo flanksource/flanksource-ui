@@ -162,6 +162,9 @@ module.exports = {
       },
       lineHeight: {
         "1.21rel": "1.21"
+      },
+      zIndex: {
+        "01": "1"
       }
     }
   },

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Mention, MentionsInput, SuggestionDataItem } from "react-mentions";
+import { useGetPeopleQuery } from "../../api/query-hooks";
 
 import { getPersons, User } from "../../api/services/users";
 import { Icon } from "../Icon";
@@ -90,20 +91,7 @@ export const CommentInput = ({
   markup = MENTION_MARKUP,
   trigger = MENTION_TRIGGER
 }: Props) => {
-  const [users, setUsers] = useState<Array<User & SuggestionDataItem>>([]);
-
-  /* TODO: lazy load user list, based on typing */
-  useEffect(() => {
-    getPersons().then(({ data = [] }) => {
-      if (!data) return;
-
-      const users = data.map((user) => ({
-        ...user,
-        display: user.name
-      }));
-      setUsers(users);
-    });
-  }, []);
+  const { data: users } = useGetPeopleQuery({});
 
   return (
     <MentionsInput

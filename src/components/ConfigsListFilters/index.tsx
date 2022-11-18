@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useConfigPageContext } from "../../context/ConfigPageContext";
 import { QueryBuilder } from "../QueryBuilder";
+import { ReactSelectDropdown } from "../ReactSelectDropdown";
 import { Switch } from "../Switch";
 import { TextInputClearable } from "../TextInputClearable";
 import { ConfigTagFilterDropdown } from "./ConfigTagsFilterDropdown";
@@ -29,6 +30,7 @@ function ConfigsListFilters() {
   );
 
   const configType = params.get("type");
+  const groupType = decodeURIComponent(params.get("groupBy") || "config_type");
 
   const options = useMemo(() => {
     return [ConfigFilterViewTypes.basic, ConfigFilterViewTypes.advanced];
@@ -61,6 +63,14 @@ function ConfigsListFilters() {
             }}
           />
 
+          <GroupDropdown
+            value={groupType}
+            onChange={(gt) => {
+              params.set("groupBy", encodeURIComponent(gt || ""));
+              setParams(params);
+            }}
+          />
+
           <ConfigTagFilterDropdown />
 
           {/* @ts-expect-error */}
@@ -88,5 +98,60 @@ function ConfigsListFilters() {
     </div>
   );
 }
+
+const GroupDropdown = ({ ...rest }) => {
+  const items = {
+    NoGrouping: {
+      id: "No Grouping",
+      name: "No Grouping",
+      description: "No Grouping",
+      value: "no_grouping"
+    },
+    Type: {
+      id: "Type",
+      name: "Type",
+      description: "Type",
+      value: "config_type"
+    },
+    Name: {
+      id: "Name",
+      name: "Name",
+      description: "Name",
+      value: "name"
+    },
+    Analysis: {
+      id: "Analysis",
+      name: "Analysis",
+      description: "Analysis",
+      value: "analysis"
+    },
+    Changed: {
+      id: "Changed",
+      name: "Changed",
+      description: "Changed",
+      value: "changed"
+    }
+  };
+
+  const [selected, setSelected] = useState(Object.values(items)[0].value);
+
+  return (
+    <ReactSelectDropdown
+      name="group"
+      items={items}
+      onChange={(value) => setSelected(value)}
+      value={selected}
+      className="w-auto max-w-[400px]"
+      dropDownClassNames="w-auto max-w-[400px] left-0"
+      hideControlBorder
+      prefix={
+        <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
+          Group By:
+        </div>
+      }
+      {...rest}
+    />
+  );
+};
 
 export default React.memo(ConfigsListFilters);

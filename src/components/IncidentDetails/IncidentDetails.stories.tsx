@@ -1,9 +1,23 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { MemoryRouter } from "react-router-dom";
 import { IncidentDetails } from "./index";
 
 export default {
   title: "IncidentDetails",
   component: IncidentDetails,
+  decorators: [
+    (Story) => {
+      const queryClient = new QueryClient();
+      return (
+        <MemoryRouter>
+          <QueryClientProvider client={queryClient}>
+            <Story />
+          </QueryClientProvider>
+        </MemoryRouter>
+      );
+    }
+  ],
   parameters: { actions: { argTypesRegex: "^on.*" } }
 } as ComponentMeta<typeof IncidentDetails>;
 

@@ -1,10 +1,13 @@
-import dayjs, { ManipulateType } from "dayjs";
-import { getLocalItem, setLocalItem } from "../../utils/storage";
 import {
-  displayTimeFormat,
-  RangeOption,
-  rangeOptionsCategories
-} from "./rangeOptions";
+  dateDiff,
+  formatISODate,
+  dateToJSDate,
+  isValidDate,
+  subtractDateFromNow,
+  formatTimeRange
+} from "../../utils/date";
+import { getLocalItem, setLocalItem } from "../../utils/storage";
+import { RangeOption, rangeOptionsCategories } from "./rangeOptions";
 
 export const isSupportedRelativeRange = (from: string, to: string): boolean => {
   for (let i = 0; i < rangeOptionsCategories.length; i++) {
@@ -18,12 +21,12 @@ export const isSupportedRelativeRange = (from: string, to: string): boolean => {
   return false;
 };
 
-export const getIntervalData = (interval: string): [number, ManipulateType] => {
+export const getIntervalData = (interval: string): [number, string] => {
   if (interval === "now") {
     return [0, "h"];
   }
   const data = interval.replace("now-", "");
-  const intervalName = <ManipulateType>data.slice(-1);
+  const intervalName = data.slice(-1);
   const intervalTime = Number(data.slice(0, -1));
   return [intervalTime, intervalName];
 };
@@ -49,38 +52,24 @@ export const convertRangeValue = (
 ): string | Date => {
   if (
     (typeof value === "string" &&
-      dayjs(value).isValid() &&
+      isValidDate(value) &&
       !value.includes("now-")) ||
-    (typeof value !== "string" && dayjs(value).isValid())
+    (typeof value !== "string" && isValidDate(value))
   ) {
     return format === "jsDate"
-      ? dayjs(value).toDate()
+      ? dateToJSDate(value)
       : format === "iso"
-      ? dayjs(value).toISOString()
-      : dayjs(value).format(format);
+      ? formatISODate(value)
+      : dateToJSDate(value);
   }
   if (format === "jsDate") {
-    return dayjs()
-      .subtract(...getIntervalData(value))
-      .toDate();
+    return dateToJSDate(subtractDateFromNow(...getIntervalData(value)));
   }
   if (format === "iso") {
-    return dayjs()
-      .subtract(...getIntervalData(value))
-      .toISOString();
+    return formatISODate(subtractDateFromNow(...getIntervalData(value)));
   }
-  if (format === "default") {
-    return dayjs()
-      .subtract(...getIntervalData(value))
-      .toDate();
-  }
-  return dayjs()
-    .subtract(...getIntervalData(value))
-    .format(format);
+  return dateToJSDate(subtractDateFromNow(...getIntervalData(value)));
 };
-
-export const createValueForInput = (value: Date | string): string =>
-  dayjs(value).format(displayTimeFormat);
 
 export const createDisplayValue = (range: RangeOption) => {
   let label;
@@ -95,20 +84,15 @@ export const createDisplayValue = (range: RangeOption) => {
     return label;
   }
   if (range.from && range.to) {
-    return `${createValueForInput(range.from)} to ${createValueForInput(
-      range.to
-    )}`;
+    return `${formatTimeRange(range.from)} to ${formatTimeRange(range.to)}`;
   }
   return "";
 };
 
 type DateOrString = Date | string;
 
-export const areDatesSame = (...dates: DateOrString[]) => {
-  const date1 = dayjs(dates[0]);
-  const date2 = dayjs(dates[1]);
-  return date1.diff(date2) < 1500;
-};
+export const areDatesSame = (...dates: DateOrString[]) =>
+  dateDiff(dates[0], dates[1]) < 1500;
 
 export const storage = {
   setItem: (name: string, item: any) => {
