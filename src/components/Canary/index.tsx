@@ -1,5 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { debounce } from "lodash";
 import {
   encodeObjectToUrlSearchParams,
@@ -27,8 +26,11 @@ import mixins from "../../utils/mixins.module.css";
 import { useHealthPageContext } from "../../context/HealthPageContext";
 import { isCanaryUI } from "../../context/Environment";
 import clsx from "clsx";
-import dayjs from "dayjs";
 import HealthPageSkeletonLoader from "../SkeletonLoader/HealthPageSkeletonLoader";
+import { HealthChecksResponse } from "../../types/healthChecks";
+import { useSearchParams } from "react-router-dom";
+import useRefreshRateFromLocalStorage from "../Hooks/useRefreshRateFromLocalStorage";
+import dayjs from "dayjs";
 
 const FilterKeyToLabelMap = {
   environment: "Environment",
@@ -36,16 +38,6 @@ const FilterKeyToLabelMap = {
   technology: "Technology",
   app: "App",
   "Expected-Fail": "Expected Fail"
-};
-
-const getPassingCount = (checks) => {
-  let count = 0;
-  checks.forEach((check) => {
-    if (isHealthy(check)) {
-      count += 1;
-    }
-  });
-  return count;
 };
 
 const getStartValue = (start: string) => {
@@ -58,28 +50,52 @@ const getStartValue = (start: string) => {
     .toISOString();
 };
 
+const getPassingCount = (checks) => {
+  let count = 0;
+  checks.forEach((check) => {
+    if (isHealthy(check)) {
+      count += 1;
+    }
+  });
+  return count;
+};
+
+type CanaryProps = {
+  url?: string;
+  topLayoutOffset?: number;
+  onLoading?: (loading: boolean) => void;
+  /**
+   * When this changes, refresh button has been clicked will be triggered immediately
+   */
+  triggerRefresh?: number;
+};
+
 export function Canary({
   url = "/api/canary/api",
-  refreshInterval = 15 * 1000,
   topLayoutOffset = 0,
+  triggerRefresh,
   onLoading = (_loading) => {}
-}) {
+}: CanaryProps) {
   const updateParams = useUpdateParams();
+  const [searchParams] = useSearchParams();
+  const timeRange = searchParams.get("timeRange");
+  const refreshInterval = useRefreshRateFromLocalStorage();
+
   // force-set layout to table
   useEffect(() => {
     updateParams({ layout: "table" });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const [isLoading, setIsLoading] = useState(true);
-  const [_, setLastUpdated] = useState("");
+
   const {
     healthState: { checks, filteredChecks, filteredLabels, passing },
     setHealthState
   } = useHealthPageContext();
-  const [timerRef, setTimerRef] = useState();
-  const [abortController] = useState(() => {
-    return new AbortController();
-  });
+
+  const timerRef = useRef<NodeJS.Timer>();
+  const abortController = useRef<AbortController>();
 
   const labelUpdateCallback = useCallback((newLabels) => {
     setHealthState((state) => {
@@ -100,7 +116,7 @@ export function Canary({
         }
       };
     });
-  }, [checks]);
+  }, [checks, setHealthState]);
 
   useEffect(() => {
     setHealthState((state) => {
@@ -112,7 +128,7 @@ export function Canary({
         }
       };
     });
-  }, [filteredChecks]);
+  }, [filteredChecks, setHealthState]);
 
   const updateFilteredChecks = useCallback((newFilteredChecks) => {
     setHealthState((state) => {
@@ -123,32 +139,31 @@ export function Canary({
     });
   }, []);
 
-  const [searchParams] = useSearchParams();
-
-  const handleFetch = debounce(async () => {
+  const handleFetch = useCallback(async () => {
     if (url == null) {
       return;
     }
-    clearTimeout(timerRef);
     const params = encodeObjectToUrlSearchParams({
       start: getStartValue(searchParams.get("timeRange") ?? timeRanges[0].value)
     });
     setIsLoading(true);
     onLoading(true);
+    if (abortController.current) {
+      abortController.current.abort();
+    }
+    const controller = new AbortController();
+    abortController.current = controller;
     try {
       const result = await fetch(`${url}?${params}`, {
-        signal: abortController.signal
+        signal: abortController.current?.signal
       });
-      const data = await result.json();
+      const data = (await result.json()) as HealthChecksResponse;
       setHealthState((state) => {
         return {
           ...state,
           checks: data?.checks || []
         };
       });
-      if (data?.checks?.length) {
-        setLastUpdated(new Date());
-      }
     } catch (ex) {
       if (ex instanceof DOMException && ex.name === "AbortError") {
         return;
@@ -156,18 +171,28 @@ export function Canary({
     }
     setIsLoading(false);
     onLoading(false);
-    const ref = setTimeout(handleFetch, refreshInterval);
-    setTimerRef(ref);
-  }, 1000);
+  }, [onLoading, setHealthState, timeRange, url]);
 
+  // Set refresh interval for re-fetching data
   useEffect(() => {
-    handleFetch();
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+    }
+    if (refreshInterval > 0) {
+      timerRef.current = setInterval(() => handleFetch(), refreshInterval);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshInterval]);
 
   useEffect(() => {
+    handleFetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timeRange, triggerRefresh, url]);
+
+  useEffect(() => {
     return () => {
-      clearTimeout(timerRef);
-      abortController.abort();
+      clearTimeout(timerRef.current);
+      abortController.current?.abort();
     };
   }, []);
 
@@ -182,24 +207,26 @@ export function Canary({
   return (
     <div
       className={clsx(
-        "flex flex-row place-content-center",
+        "flex flex-row place-content-center w-full",
         isCanaryUI ? " h-screen overflow-y-auto" : ""
       )}
     >
+      {/* @ts-expect-error */}
       <SidebarSticky topHeight={topLayoutOffset}>
         <div className="mb-4">
+          {/* @ts-expect-error */}
           <StatCard
             title="All Checks"
             className="mb-4"
             customValue={
               <>
-                {checks.length || 0}
+                {checks?.length || 0}
                 <span className="text-xl font-light">
                   {" "}
                   (<span className="text-green-500">{passing.checks}</span>/
                   <span className="text-red-500">
                     {" "}
-                    {checks.length - passing.checks}
+                    {checks!.length - passing.checks}
                   </span>
                   )
                 </span>
@@ -207,27 +234,31 @@ export function Canary({
             }
           />
 
-          {filteredChecks.length !== checks.length && (
-            <StatCard
-              title="Filtered Checks"
-              className="mb-4"
-              customValue={
-                <>
-                  {filteredChecks.length}
-                  <span className="text-xl  font-light">
-                    {" "}
-                    (<span className="text-green-500">{passing.filtered}</span>/
-                    <span className="text-red-500">
-                      {filteredChecks.length - passing.filtered}
+          {filteredChecks.length !== checks?.length && (
+            <>
+              {/* @ts-expect-error */}
+              <StatCard
+                title="Filtered Checks"
+                className="mb-4"
+                customValue={
+                  <>
+                    {filteredChecks.length}
+                    <span className="text-xl  font-light">
+                      {" "}
+                      (
+                      <span className="text-green-500">{passing.filtered}</span>
+                      /
+                      <span className="text-red-500">
+                        {filteredChecks.length - passing.filtered}
+                      </span>
+                      )
                     </span>
-                    )
-                  </span>
-                </>
-              }
-            />
+                  </>
+                }
+              />
+            </>
           )}
         </div>
-
         <SectionTitle className="mb-4">Filter by Time Range</SectionTitle>
         <div className="mb-4 mr-2 w-full">
           <DropdownStandaloneWrapper
@@ -320,12 +351,8 @@ export function Canary({
   );
 }
 
-type LabelFilterListProps = {
-  labels: Record<string, string[]>;
-};
-
-export const LabelFilterList = ({ labels }: LabelFilterListProps) => {
-  const [list, setList] = useState<Record<string, string[]>>({});
+export const LabelFilterList = ({ labels }: { labels: any }) => {
+  const [list, setList] = useState({});
   useEffect(() => {
     if (labels) {
       const [bl, nbl] = separateLabelsByBooleanType(Object.values(labels));
