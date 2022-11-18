@@ -101,6 +101,7 @@ const MinimalCanaryFC = ({
           hideNamespacePrefix
           groupSingleItems={false}
           theadStyle={tableHeadStyle}
+          style={{ maxHeight: "calc(100vh - 14rem)" }}
         />
       )}
       <AttachEvidenceDialog

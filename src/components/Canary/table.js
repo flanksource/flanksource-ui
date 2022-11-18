@@ -14,10 +14,10 @@ import { prepareRows } from "./Rows/lib";
 import { useCheckSetEqualityForPreviousVsCurrent } from "../Hooks/useCheckSetEqualityForPreviousVsCurrent";
 
 const styles = {
-  outerDivClass: "border-l border-r border-gray-300",
+  outerDivClass: "border-l border-r border-gray-300 overflow-y-auto",
   topBgClass: "bg-red-500",
   tableClass: "min-w-full border-separate shadow-lg bg-white rounded-lg",
-  theadClass: "bg-white z-10",
+  theadClass: "bg-white z-10 sticky top-0",
   theadRowClass: "z-10",
   theadHeaderClass:
     "px-5 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-300",
