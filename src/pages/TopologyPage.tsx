@@ -100,7 +100,6 @@ export function TopologyPage() {
   );
 
   const [currentTopology, setCurrentTopology] = useState<Topology>();
-  const [parentTopology, setParentTopology] = useState<Topology | null>();
 
   const [teams, setTeams] = useState<any>({});
   const [selectedLabel, setSelectedLabel] = useState("");
@@ -161,13 +160,6 @@ export function TopologyPage() {
         return;
       }
 
-      if (refererId) {
-        const data = await getTopologyComponent(refererId);
-        setParentTopology(data?.data?.[0]);
-      } else {
-        setParentTopology(null);
-      }
-
       const currentTopology = res.data[0];
       setCurrentTopology(currentTopology);
 
@@ -195,7 +187,12 @@ export function TopologyPage() {
       );
 
       if (!result.length && data.length) {
-        result = [data.find((x: Record<string, any>) => x.id === id)];
+        let filtered = data.find((x: Record<string, any>) => x.id === id);
+        if (filtered) {
+          result = [filtered];
+        } else {
+          result = [];
+        }
       }
 
       setTopologyState({
@@ -203,9 +200,7 @@ export function TopologyPage() {
         searchParams
       });
     } catch (ex) {
-      if (typeof ex === "string") {
-        toastError(ex);
-      }
+      toastError(ex);
     }
 
     setLoading(false);
@@ -372,7 +367,7 @@ export function TopologyPage() {
           </div>
         </div>
         {id && (
-          <TopologySidebar topology={currentTopology} parent={parentTopology} />
+          <TopologySidebar topology={currentTopology} refererId={refererId} />
         )}
       </div>
     </SearchLayout>
