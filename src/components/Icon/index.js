@@ -57,34 +57,8 @@ export function Icon({
   if (isEmpty(name) && isEmpty(secondary)) {
     return null;
   }
-  let iconClassName;
-  switch (size) {
-    case "2xs":
-      iconClassName = "h-3 w-3";
-      break;
-    case "2xsi":
-      iconClassName = "h-3.5 w-3.5";
-      break;
-    case "xs":
-      iconClassName = "h-3 w-3";
-      break;
-    case "sm":
-      iconClassName = "h-4 w-4";
-      break;
-    case "md":
-      iconClassName = "h-5 w-5";
-      break;
-    case "lg":
-      iconClassName = "h-5 w-5";
-      break;
-    case "xl":
-      iconClassName = "h-6 w-6";
-      break;
-    case "2xl":
-      iconClassName = "h-8 w-8";
-      break;
-    default:
-      iconClassName = "h-4 w-4";
+  if (isEmpty(className)) {
+    className = "max-w-5 max-h-5";
   }
   if (
     name != null &&
@@ -105,14 +79,12 @@ export function Icon({
       <img
         alt={alt}
         src={src}
-        className={`inline-block ${
-          props.iconClassName || iconClassName
-        } ${className}`}
+        className={`inline-block object-center ${className}`}
       />
     );
   }
 
-  return props.icon ? <props.icon className={iconClassName} /> : null;
+  return props.icon ? <props.icon className={className} /> : null;
 }
 export function Avatar({ url, alt = "" }) {
   return (

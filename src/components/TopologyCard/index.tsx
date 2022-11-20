@@ -127,9 +127,9 @@ export function TopologyCard({
     >
       <div className="flex flex-row -mt-1 bg-white border-b flex-nowrap rounded-t-md">
         <div className="flex pr-1 pt-2.5 pb-3.5 pl-2 overflow-hidden">
-          <div className="text-gray-color m-auto mr-2.5 flex-initial max-w-1/4 leading-1.21rel">
+          <div className="text-gray-color m-auto mr-1.5 flex-initial max-w-1/4 leading-1.21rel">
             <h3 className="text-gray-color text-2xsi leading-1.21rel">
-              <Icon name={topology.icon} size="2xl" />
+              <Icon name={topology.icon} className="h-6" />
             </h3>
           </div>
           <div className="flex-1 m-auto overflow-hidden">
