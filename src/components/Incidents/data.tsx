@@ -34,7 +34,7 @@ export const severityItems = {
     description: "High",
     value: 2
   }
-};
+} as const;
 
 export const statusItems = {
   open: {
@@ -51,7 +51,7 @@ export const statusItems = {
     description: "Closed",
     value: "closed"
   }
-};
+} as const;
 
 export const typeItems = {
   cost: {
@@ -103,4 +103,4 @@ export const typeItems = {
     description: "Technical Debt",
     value: "technicalDebt"
   }
-};
+} as const;

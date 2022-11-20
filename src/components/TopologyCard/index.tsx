@@ -32,7 +32,7 @@ export const StatusStyles: Record<keyof typeof ComponentStatus, string> = {
 };
 
 interface IProps {
-  size: Size;
+  size: Size | string;
   topologyId?: string;
   topology?: any;
   selectionMode?: boolean;
@@ -118,7 +118,7 @@ export function TopologyCard({
 
   return (
     <div
-      style={{ width: CardWidth[size] || size }}
+      style={{ width: CardWidth[size as Size] || size }}
       className={clsx(
         "rounded-8px mb-3 mr-3 shadow-card card bg-lightest-gray border-0 border-t-8 relative",
         StatusStyles[topology.status as ComponentStatus] || "border-white",
@@ -218,7 +218,7 @@ export function TopologyCard({
               )}
               <HealthChecksSummary checks={topology?.checks} />
               {topology?.id && (
-                <TopologyCardIncidentSummary topologyID={topology.id} />
+                <TopologyCardIncidentSummary topology={topology} />
               )}
               {topology?.components?.map((component: any) => (
                 <HealthSummary

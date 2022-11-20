@@ -1,5 +1,6 @@
 import React, { useState, createContext, useContext } from "react";
 import { URLSearchParamsInit } from "react-router-dom";
+import { severityItems, typeItems } from "../components/Incidents/data";
 
 export type ValueType = number | string | Date;
 
@@ -29,6 +30,14 @@ export type Topology = {
   icon?: string;
   text?: string;
   status?: string;
+  summary?: {
+    incidents?: Record<
+      keyof typeof typeItems,
+      Record<keyof typeof severityItems, number>
+    >;
+    insights?: Record<string, any>;
+    [key: string]: any;
+  };
 };
 
 export type TopologyState = {

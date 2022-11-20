@@ -1,26 +1,10 @@
-import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Incident, IncidentSeverity } from "../../api/services/incident";
+import { Topology } from "../../context/TopologyPageContext";
 import { Chip } from "../Chip";
-import { typeItems } from "../Incidents/data";
-
-type TopologyIncidentSummary = {
-  hypotheses: {
-    incidents: Pick<Incident, "type" | "id" | "status" | "severity">[];
-  };
-};
-
-type IncidentSummary = {
-  type: string;
-  id: string;
-  status: string;
-  count: number;
-  severity: IncidentSeverity;
-};
+import { typeItems, severityItems } from "../Incidents/data";
 
 type Props = {
-  topologyID: string;
+  topology: Pick<Topology, "summary" | "id">;
 };
 
 const chipColorFromIndex = (index: number) => {
@@ -36,110 +20,49 @@ const chipColorFromIndex = (index: number) => {
   }
 };
 
-export default function TopologyCardIncidentSummary({ topologyID }: Props) {
-  const [incidentSummary, setIncidentSummary] =
-    useState<
-      Map<
-        keyof typeof typeItems,
-        [IncidentSummary, IncidentSummary, IncidentSummary]
-      >
-    >();
+type IncidentSummaryTypes = keyof typeof typeItems;
 
-  const { isLoading, data } = useQuery(
-    ["topology", "incidents", "summary", topologyID],
-    async () => {
-      const res = await fetch(
-        `/api/incidents_db/evidences?select=hypotheses!evidences_hypothesis_id_fkey!inner(incidents!hypotheses_incident_id_fkey!inner(id,type,status,severity))&evidence->>id=eq.${topologyID}&hypotheses.incidents.status=eq.open`
-      );
-      const data = (await res.json()) as TopologyIncidentSummary[];
-      const incidents = data.map((d) => d.hypotheses.incidents).flat();
-      return incidents;
-    }
-  );
+type IncidentSummarySeverity = keyof typeof severityItems;
 
-  useEffect(() => {
-    if (data) {
-      // do a summary of the incidents by type i.e. count the number of incidents of each type
-      const incidentsByTypeSummaries = new Map<
-        keyof typeof typeItems,
-        [IncidentSummary, IncidentSummary, IncidentSummary]
-      >();
-      data.forEach(({ type: incidentType, status, severity, id }) => {
-        if (incidentType) {
-          const type = incidentType as keyof typeof typeItems;
-          const count = incidentsByTypeSummaries.get(type);
-          const low: IncidentSummary = {
-            type: type,
-            count:
-              severity === IncidentSeverity.Low
-                ? (count?.[0].count || 0) + 1
-                : count?.[0].count || 0,
-            id: id,
-            status: status!,
-            severity: IncidentSeverity.Low
-          };
-          const medium: IncidentSummary = {
-            type: type,
-            count:
-              severity === IncidentSeverity.Medium
-                ? (count?.[1].count || 0) + 1
-                : count?.[1].count || 0,
-            id: id,
-            status: status!,
-            severity: IncidentSeverity.Medium
-          };
-          const high: IncidentSummary = {
-            type: type,
-            count:
-              severity === IncidentSeverity.High
-                ? (count?.[2].count || 0) + 1
-                : count?.[2].count || 0,
-            id: id,
-            status: status!,
-            severity: IncidentSeverity.High
-          };
-          incidentsByTypeSummaries.set(type, [low, medium, high]);
-        }
-      });
-      setIncidentSummary(incidentsByTypeSummaries);
-    }
-  }, [data]);
-
-  if (isLoading || !incidentSummary || incidentSummary.size === 0) {
+export default function TopologyCardIncidentSummary({ topology }: Props) {
+  if (!topology.summary?.incidents) {
     return null;
   }
+
+  const incidentSummary = Object.entries(topology.summary.incidents);
 
   return (
     <div className="flex flex-row space-x-2 py-1 text-sm items-center">
       <div className="flex-1 flex flex-col">
-        {incidentSummary &&
-          Array.from(incidentSummary.entries()).map(([type, count]) => (
-            <div
-              key={type}
-              className="flex flex-row space-x-1 items-center rounded text-black"
-            >
-              <div className="flex flex-row space-x-1 items-center">
-                <div>{typeItems[type].icon}</div>
-                <div className="text-xs">{typeItems[type].description}</div>
-              </div>
-              <div className="flex flex-row space-x-2">
-                {count.map(
-                  (severity, i) =>
-                    severity.count > 0 && (
-                      <Link
-                        to={`/incidents?severity=${severity.severity}&component=${topologyID}`}
-                      >
-                        <Chip
-                          key={severity.type + i}
-                          color={chipColorFromIndex(i)}
-                          text={severity.count}
-                        />
-                      </Link>
-                    )
-                )}
+        {incidentSummary.map(([key, summary]) => (
+          <div
+            key={key}
+            className="flex flex-row space-x-1 items-center rounded text-black"
+          >
+            <div className="flex flex-row space-x-1 items-center">
+              <div>{typeItems[key as IncidentSummaryTypes].icon}</div>
+              <div className="text-xs">
+                {typeItems[key as IncidentSummaryTypes].description}
               </div>
             </div>
-          ))}
+            <div className="flex flex-row space-x-2">
+              {Object.entries(summary).map(
+                ([key, value], i) =>
+                  value > 0 && (
+                    <Link
+                      key={key + topology.id}
+                      to={`/incidents?severity=${
+                        severityItems[key as unknown as IncidentSummarySeverity]
+                          .value
+                      }&component=${topology.id}`}
+                    >
+                      <Chip color={chipColorFromIndex(i)} text={value} />
+                    </Link>
+                  )
+              )}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
