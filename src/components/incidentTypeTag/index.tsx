@@ -4,7 +4,6 @@ interface IProps {
   type: string;
   textClassName?: string;
 }
-
 export function IncidentTypeIcon({ type }: IProps) {
   const { icon, text } = {
     icon: typeItems[type]?.icon,

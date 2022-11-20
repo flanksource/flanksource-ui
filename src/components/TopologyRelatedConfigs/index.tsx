@@ -3,6 +3,7 @@ import { FaExclamationTriangle } from "react-icons/fa";
 import { VscJson } from "react-icons/vsc";
 import { Link } from "react-router-dom";
 import CollapsiblePanel from "../CollapsiblePanel";
+import ConfigLink from "../ConfigLink/ConfigLink";
 import { Icon } from "../Icon";
 import { Loading } from "../Loading";
 
@@ -32,26 +33,19 @@ export function TopologyRelatedConfigs({ topologyID }: Props) {
   }, [topologyID]);
 
   return (
-    <div className="flex flex-col space-y-4">
+    <div className="flex flex-col space-y-4 text-xs">
       {isLoading ? (
         <Loading />
       ) : componentRelatedConfigs.length > 0 ? (
         <ol>
           {componentRelatedConfigs.map((config) => (
             <li className="p-1" key={config.id}>
-              <Link
-                to={{
-                  pathname: `/configs/${config.id}`
-                }}
-              >
-                <Icon
-                  name={config.external_type}
-                  secondary={config.config_type}
-                  size="lg"
-                  className="mr-2"
-                />
-                {config.name}
-              </Link>
+              <ConfigLink
+                configId={config.id}
+                configName={config.name}
+                configType={config.external_type}
+                configTypeSecondary={config.config_type}
+              />
             </li>
           ))}
         </ol>
@@ -70,10 +64,10 @@ export default function (props: Props) {
   return (
     <CollapsiblePanel
       Header={
-        <h3 className="flex flex-row space-x-2 items-center text-xl font-semibold">
+        <h4 className="flex flex-row space-x-2 items-center">
           <VscJson className="text-gray-400" />
           <span>Configs</span>
-        </h3>
+        </h4>
       }
     >
       <div className="flex flex-col">

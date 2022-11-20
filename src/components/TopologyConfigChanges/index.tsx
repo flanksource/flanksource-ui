@@ -28,7 +28,7 @@ export function TopologyConfigChanges({ topologyID }: Props) {
       const resConfigChanges = await Promise.all(
         data.map(async (item) => {
           const res = await fetch(
-            `/api/configs_db/config_changes?config_id=eq.${item.config_id}`
+            `/api/db/config_changes?config_id=eq.${item.config_id}`
           );
           return res.json();
         })
@@ -41,50 +41,27 @@ export function TopologyConfigChanges({ topologyID }: Props) {
   }, [topologyID]);
 
   return (
-    <div className="flex flex-col space-y-4">
-      {isLoading ? (
-        <Loading />
-      ) : componentConfigChanges.length > 0 ? (
-        <table className="w-full text-left">
-          <thead>
-            <tr className="text-gray-500 font-normal">
-              <th className="font-normal">Description:</th>
-              <th className="font-normal">Age:</th>
-            </tr>
-          </thead>
-          <tbody>
-            {componentConfigChanges.map((item) => (
-              <tr>
-                <td>
-                  <Link
-                    className="block"
-                    to={{
-                      pathname: `/configs/${item.config_id}/changes`
-                    }}
-                  >
-                    {item.summary ?? item.change_type}
-                  </Link>
-                </td>
-                <td>
-                  <Link
-                    className="block"
-                    to={{
-                      pathname: `/configs/${item.config_id}/changes`
-                    }}
-                  >
-                    {dayjs(item.created_at).fromNow()}
-                  </Link>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      ) : (
-        <div className="flex flex-row justify-center items-center py-4 space-x-2 text-gray-400">
-          <FaExclamationTriangle className="text-xl" />
-          <span>No details found</span>
+    <div className="flex flex-col ">
+      <div className="flex flex-col mt-2">
+        <div className="flex flex-col pl-2">
+          {componentConfigChanges.map((item) => (
+            <div className="flex flex-row text-xs">
+              <Link
+                className="block"
+                to={{
+                  pathname: `/configs/${item.config_id}/changes`
+                }}
+              >
+                {item.summary ?? item.change_type}
+              </Link>
+
+              <span className="text-right grow">
+                {dayjs(item.created_at).fromNow()}
+              </span>
+            </div>
+          ))}
         </div>
-      )}
+      </div>
     </div>
   );
 }
@@ -94,10 +71,10 @@ export default function (props: Props) {
   return (
     <CollapsiblePanel
       Header={
-        <h3 className="flex flex-row space-x-2 items-center text-xl font-semibold">
+        <h4 className="flex flex-row">
           <GoDiff className="text-gray-400" />
-          <span>Changes</span>
-        </h3>
+          <span className="pl-1">Changes</span>
+        </h4>
       }
     >
       <div className="flex flex-col">
