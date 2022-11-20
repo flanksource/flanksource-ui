@@ -67,7 +67,6 @@ export function ComponentNamesDropdown({
       .sort((value1, value2) => {
         return value1.label.localeCompare(value2.label);
       });
-    console.log(data);
     setTopologies(data);
   }, [components]);
 

@@ -1,16 +1,14 @@
 import { useEffect, useState } from "react";
-import { useParams, useOutletContext } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
-import { getConfigChange, getConfig } from "../../api/services/configs";
+import { getConfigChange } from "../../api/services/configs";
 import { toastError } from "../../components/Toast/toast";
 import { ConfigChangeHistory } from "../../components/ConfigChangeHistory";
-import { BreadcrumbNav } from "../../components/BreadcrumbNav";
 
 export function ConfigDetailsChangesPage() {
   const { id } = useParams();
   const [isLoading, setIsLoading] = useState(true);
   const [historyData, setHistoryData] = useState([]);
-  const { setTitle } = useOutletContext();
 
   useEffect(() => {
     setIsLoading(true);
@@ -27,20 +25,6 @@ export function ConfigDetailsChangesPage() {
       .finally(() => {
         setIsLoading(false);
       });
-
-    getConfig(id)
-      .then((res) => {
-        const data = res?.data[0];
-        setTitle(
-          <BreadcrumbNav
-            list={[
-              { to: "/configs", title: "Config" },
-              <b key="title">{data?.name}</b>
-            ]}
-          />
-        );
-      })
-      .catch((err) => toastError(err));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getAllConfigs, getConfig } from "../services/configs";
+import { getAllConfigs, getConfigName } from "../services/configs";
 import { getIncident } from "../services/incident";
 import {
   getTopology,
@@ -94,7 +94,7 @@ export const useConfigNameQuery = (
   return useQuery(
     ["config", configId],
     () => {
-      return getConfig(configId).then((data) => {
+      return getConfigName(configId).then((data) => {
         cache[cacheKey] = data?.data?.[0];
         return data?.data?.[0];
       });

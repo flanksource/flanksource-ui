@@ -27,7 +27,7 @@ export const BreadcrumbNav = ({ list }) => {
       } else {
         /* eslint-disable react/no-array-index-key */
         comp = (
-          <span key={`bc-${i}`} className="mr-1 flex">
+          <span key={`bc-${i}`} className="mr-1 flex items-center">
             {nav}
           </span>
         );
