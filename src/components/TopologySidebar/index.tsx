@@ -9,9 +9,10 @@ import TopologySidebarIncidents from "../TopologySidebarIncidents";
 
 type Props = {
   topology?: Pick<Topology, "properties">;
+  parent?: Topology;
 };
 
-export default function TopologySidebar({ topology }: Props) {
+export default function TopologySidebar({ topology, parent }: Props) {
   const [isPanelHidden, setIsPanelHidden] = useState<boolean>(false);
   const { id } = useParams();
 
@@ -30,7 +31,7 @@ export default function TopologySidebar({ topology }: Props) {
           isPanelHidden && "hidden"
         }`}
       >
-        <TopologyDetails topology={topology} />
+        <TopologyDetails topology={topology} parent={parent} />
         <TopologySidebarIncidents topologyID={id} />
         <TopologyConfigChanges topologyID={id} />
         <TopologyRelatedConfigs topologyID={id} />

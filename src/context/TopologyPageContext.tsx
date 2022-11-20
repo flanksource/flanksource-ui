@@ -24,6 +24,7 @@ export type Topology = {
   title?: string;
   properties?: TopologyProperty[];
   components?: Record<string, any>[];
+  labels?: Record<string, string>;
   path?: string;
   icon?: string;
   text?: string;

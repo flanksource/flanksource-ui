@@ -23,3 +23,12 @@ export function formatBytes(bytes, decimals = 2) {
 export function searchParamsToObj(searchParams) {
   return parse(searchParams.toString());
 }
+
+export function toQueryString(paramsObject) {
+  return Object.keys(paramsObject)
+    .map(
+      (key) =>
+        `${encodeURIComponent(key)}=${encodeURIComponent(paramsObject[key])}`
+    )
+    .join("&");
+}

@@ -3,8 +3,9 @@ import { Icon } from "../Icon";
 import { useComponentNameQuery } from "../../api/query-hooks";
 import { useMemo } from "react";
 
-type Props = {
+type TopologyBreadcrumbsProps = {
   topologyId?: string;
+  refererId?: string | null | undefined;
 };
 
 function TopologyBreadcrumbItem({
@@ -34,15 +35,20 @@ function TopologyBreadcrumbItem({
   );
 }
 
-export function TopologyBreadcrumbs({ topologyId }: Props) {
-  const { data: component } = useComponentNameQuery(topologyId, {});
+export function TopologyBreadcrumbs({
+  topologyId,
+  refererId
+}: TopologyBreadcrumbsProps) {
+  const componentId = refererId || topologyId;
+  const { data: component } = useComponentNameQuery(componentId, {});
   const ids = useMemo(() => {
     const topologyIds = [
       ...(component?.path || "").split("."),
+      refererId,
       topologyId
     ].filter((v) => v?.trim());
     return topologyIds;
-  }, [component, topologyId]);
+  }, [component, topologyId, refererId]);
 
   return (
     <>

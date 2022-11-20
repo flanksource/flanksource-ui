@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { filter } from "lodash";
 import { useEffect, useState, useMemo, MouseEventHandler } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import { getTopology } from "../../api/services/topology";
 import { Size } from "../../types";
 import { CustomScroll } from "../CustomScroll";
@@ -48,6 +48,8 @@ export function TopologyCard({
   onSelectionChange
 }: IProps) {
   const [topology, setTopology] = useState(topologyData);
+  const [searchParams] = useSearchParams();
+  const { id: parentId } = useParams();
 
   useEffect(() => {
     if (topologyId != null && topologyData == null) {
@@ -85,8 +87,24 @@ export function TopologyCard({
     );
   };
 
-  const prepareTopologyLink = (topologyItem: { id: string }) => {
-    return `/topology/${topologyItem.id}`;
+  const prepareTopologyLink = (topologyItem: {
+    id: string;
+    parent_id: string;
+    path: string;
+  }) => {
+    if (topologyItem.id === parentId && parentId) {
+      return null;
+    }
+
+    if (searchParams.get("refererId")) {
+      searchParams.delete("refererId");
+    }
+    const parentIdAsPerPath = (topologyItem.path || "").split(".").pop();
+    return `/topology/${topologyItem.id}?${searchParams.toString()}${
+      parentId && parentIdAsPerPath !== parentId && parentId !== topologyItem.id
+        ? `&refererId=${parentId}`
+        : ""
+    }`;
   };
 
   if (topology == null) {
@@ -119,9 +137,13 @@ export function TopologyCard({
               className="font-bold overflow-hidden truncate align-middle text-15pxinrem leading-1.21rel"
               title={topology.name}
             >
-              <Link to={prepareTopologyLink(topology)}>
-                {topology.text || topology.name}
-              </Link>
+              {prepareTopologyLink(topology) && (
+                <Link to={prepareTopologyLink(topology)}>
+                  {topology.text || topology.name}
+                </Link>
+              )}
+              {!prepareTopologyLink(topology) &&
+                (topology.text || topology.name)}
             </p>
             {topology.description != null ||
               (topology.id != null && (
