@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { BsFillInfoCircleFill } from "react-icons/bs";
 import { useParams, useSearchParams } from "react-router-dom";
 import { getTopology, getTopologyComponent } from "../api/services/topology";
@@ -10,7 +10,10 @@ import { toastError } from "../components/Toast/toast";
 import { TopologyCard } from "../components/TopologyCard";
 import { TopologyPopOver } from "../components/TopologyPopover";
 import { getCardWidth } from "../components/TopologyPopover/topologyPreference";
-import { getSortedTopology } from "../components/TopologyPopover/topologySort";
+import {
+  getSortedTopology,
+  getSortLabels
+} from "../components/TopologyPopover/topologySort";
 import TopologySidebar from "../components/TopologySidebar";
 
 import { useLoader } from "../hooks";
@@ -55,6 +58,38 @@ export const healthTypes = {
   }
 };
 
+export const saveSortBy = (val: string, sortLabels: any[]) => {
+  const sortItem = sortLabels.find((s) => s.value === val);
+  if (sortItem?.standard) {
+    localStorage.setItem(`topologyCardsSortByStandard`, val);
+    localStorage.removeItem(`topologyCardsSortByCustom`);
+  } else {
+    localStorage.setItem(`topologyCardsSortByCustom`, val);
+  }
+};
+
+export const saveSortOrder = (val: string) => {
+  localStorage.setItem(`topologyCardsSortOrder`, val);
+};
+
+export const getSortBy = (sortLabels: any[]) => {
+  const val = localStorage.getItem("topologyCardsSortByCustom");
+  const sortItem = sortLabels.find((s) => s.value === val);
+  if (!sortItem) {
+    localStorage.removeItem(`topologyCardsSortByCustom`);
+    return localStorage.getItem(`topologyCardsSortByStandard`) || "status";
+  }
+  return (
+    localStorage.getItem("topologyCardsSortByCustom") ||
+    localStorage.getItem("topologyCardsSortByStandard") ||
+    "status"
+  );
+};
+
+export const getSortOrder = () => {
+  return localStorage.getItem(`topologyCardsSortOrder`) || "asc";
+};
+
 export function TopologyPage() {
   const { id } = useParams();
 
@@ -79,6 +114,25 @@ export function TopologyPage() {
   );
   const refererId = searchParams.get("refererId");
   const topology = topologyState.topology;
+  const sortLabels = useMemo(() => {
+    if (!topology) {
+      return null;
+    }
+    return getSortLabels(topology);
+  }, [topology]);
+
+  useEffect(() => {
+    if (!sortLabels) {
+      return;
+    }
+    const sortBy = getSortBy(sortLabels) || "status";
+    const sortOrder = localStorage.getItem("topologyCardsSortOrder") || "desc";
+    setSearchParams({
+      ...searchParamsToObj(searchParams),
+      sortBy,
+      sortOrder
+    });
+  }, [sortLabels]);
 
   const load = async () => {
     const params = Object.fromEntries(searchParams);
@@ -282,7 +336,7 @@ export function TopologyPage() {
             <TopologyPopOver
               size={size}
               setSize={setSize}
-              topology={topology}
+              sortLabels={sortLabels || []}
               searchParams={searchParams}
               setSearchParams={setSearchParams}
             />
@@ -291,8 +345,8 @@ export function TopologyPage() {
             <div className="flex flex-wrap w-full">
               {getSortedTopology(
                 topology,
-                searchParams.get("sortBy") ?? "status",
-                searchParams.get("sortOrder") ?? "desc"
+                getSortBy(sortLabels || []),
+                getSortOrder()
               ).map((item) => (
                 <TopologyCard key={item.id} topology={item} size={size} />
               ))}

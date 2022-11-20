@@ -191,7 +191,7 @@ export function TopologyCard({
               >
                 {properties.map((property, index) => (
                   <Property
-                    key={property.name}
+                    key={index}
                     property={property}
                     className={
                       index === topology.properties.length - 1
