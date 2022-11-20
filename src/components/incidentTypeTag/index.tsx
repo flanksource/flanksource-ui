@@ -5,6 +5,21 @@ interface IProps {
   textClassName?: string;
 }
 
+export function IncidentTypeIcon({ type }: IProps) {
+  const { icon, text } = {
+    icon: typeItems[type]?.icon,
+    text: typeItems[type]?.description
+  };
+  if (!icon && !text) {
+    return null;
+  }
+  return (
+    <div data-tip={text} className="my-auto w-4">
+      {icon}
+    </div>
+  );
+}
+
 export function IncidentTypeTag({
   type,
   textClassName = "text-sm text-gray-900"
