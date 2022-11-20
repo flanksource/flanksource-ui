@@ -36,6 +36,10 @@ let config = {
         destination: `${backendURL}/db/:path*`
       },
       {
+        source: "/api/.ory/:path*",
+        destination: `${backendURL}/kratos/:path*`
+      },
+      {
         source: "/api/apm/search/:path*",
         destination: `${backendURL}/apm/search/:path*`
       }
