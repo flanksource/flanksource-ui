@@ -38,6 +38,9 @@ function findByName(name) {
     icon = Icons["azure-" + name];
   }
   if (icon == null) {
+    icon = Icons["k8s-" + name];
+  }
+  if (icon == null) {
     console.warn("Icon not found: " + name);
   }
   return icon;
