@@ -5,7 +5,7 @@ import { toastError } from "../components/Toast/toast";
 const API_BASE = "/api";
 
 export const IncidentCommander = axios.create({
-  baseURL: `${API_BASE}/incidents_db`,
+  baseURL: `${API_BASE}/db`,
   headers: {
     Accept: "application/json",
     Prefer: "return=representation",
@@ -14,7 +14,7 @@ export const IncidentCommander = axios.create({
 });
 
 export const ConfigDB = axios.create({
-  baseURL: `${API_BASE}/configs_db`,
+  baseURL: `${API_BASE}/db`,
   headers: {
     Accept: "application/json",
     Prefer: "return=representation",
@@ -34,7 +34,7 @@ export const Logs = axios.create({
 let canaryBaseUrl = "/canary";
 
 export const CanaryCheckerDB = axios.create({
-  baseURL: `${API_BASE}${canaryBaseUrl}/db`,
+  baseURL: `${API_BASE}/db`,
   headers: {
     Accept: "application/json",
     Prefer: "return=representation",
@@ -52,7 +52,7 @@ export const CanaryChecker = axios.create({
 });
 
 export const Config = axios.create({
-  baseURL: `${API_BASE}/configs_db`,
+  baseURL: `${API_BASE}/api/config`,
   headers: {
     Accept: "application/json",
     Prefer: "return=representation",

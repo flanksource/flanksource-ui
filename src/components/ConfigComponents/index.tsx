@@ -24,7 +24,7 @@ function ConfigComponentsDetails({ configID }: Props) {
     async function fetchConfigAnalysis(configID: string) {
       setIsLoading(true);
       const res = await fetch(
-        `/api/configs_db/config_component_relationships?config_id=eq.${configID}&select=components!config_component_relationships_component_id_fkey(id, icon, name)`
+        `/api/db/config_component_relationships?config_id=eq.${configID}&select=components!config_component_relationships_component_id_fkey(id, icon, name)`
       );
       const data = (await res.json()) as Record<string, any>[];
       setConfigComponents(data.map((item) => item.components));

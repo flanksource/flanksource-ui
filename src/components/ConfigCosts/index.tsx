@@ -60,7 +60,7 @@ export default function ConfigCosts({ configID }: Props) {
     async function fetchConfigAnalysis(configID: string) {
       setIsLoading(true);
       const res = await fetch(
-        `/api/configs_db/configs?id=eq.${configID}&select=cost_per_minute,cost_total_1d,cost_total_7d,cost_total_30d`
+        `/api/db/configs?id=eq.${configID}&select=cost_per_minute,cost_total_1d,cost_total_7d,cost_total_30d`
       );
       const data = (await res.json()) as ConfigCostsData[];
       setConfigCosts(data[0]);

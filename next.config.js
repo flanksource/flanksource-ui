@@ -15,7 +15,7 @@ let config = {
     const LOCALHOST_ENV_URL_REWRITES = [
       {
         source: "/api/:path*",
-        destination: `${backendURL}/api/:path*`
+        destination: `${backendURL}/:path*`
       }
     ];
     const URL_REWRITES = [
@@ -32,11 +32,15 @@ let config = {
         destination: `${backendURL}/db/:path*`
       },
       {
+        source: "/api/db/:path*",
+        destination: `${backendURL}/db/:path*`
+      },
+      {
         source: "/api/apm/search/:path*",
         destination: `${backendURL}/apm/search/:path*`
       }
     ];
-    return ["localhost", "netlify"].includes(process.env.ENV) ? LOCALHOST_ENV_URL_REWRITES : URL_REWRITES ;
+    return ["localhost", "netlify"].includes(process.env.ENV) ? LOCALHOST_ENV_URL_REWRITES : URL_REWRITES;
   }
 };
 

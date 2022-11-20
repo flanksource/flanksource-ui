@@ -21,7 +21,7 @@ export function TopologyConfigChanges({ topologyID }: Props) {
     async function fetchComponentConfigChanges() {
       setIsLoading(true);
       const res = await fetch(
-        `/api/configs_db/config_component_relationships?component_id=eq.${topologyID}&select=*`
+        `/api/db/config_component_relationships?component_id=eq.${topologyID}&select=*`
       );
       const data = (await res.json()) as Record<string, any>[];
 

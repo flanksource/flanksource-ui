@@ -41,7 +41,7 @@ export function useTopologyIncidents(topologyID: string) {
           : [])
       ];
       const res = await fetch(
-        `/api/incidents_db/incidents?&select=*,hypotheses!hypotheses_incident_id_fkey(*,created_by(id,name,avatar),evidences(id,evidence,type),comments(comment,external_created_by,responder_id(team_id(*)),created_by(id,id,name,avatar),id)),commander_id(id,name,avatar),communicator_id(id,name,avatar),responders!responders_incident_id_fkey(created_by(id,name,avatar))&order=created_at.desc&${params.join(
+        `/api/db/incidents?&select=*,hypotheses!hypotheses_incident_id_fkey(*,created_by(id,name,avatar),evidences(id,evidence,type),comments(comment,external_created_by,responder_id(team_id(*)),created_by(id,id,name,avatar),id)),commander_id(id,name,avatar),communicator_id(id,name,avatar),responders!responders_incident_id_fkey(created_by(id,name,avatar))&order=created_at.desc&${params.join(
           "&"
         )}`
       );

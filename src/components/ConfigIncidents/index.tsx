@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import { isEmpty } from "lodash";
 import { useEffect, useState } from "react";
 import { FaExclamationTriangle } from "react-icons/fa";
 import { ImLifebuoy } from "react-icons/im";
@@ -40,7 +41,7 @@ export function useConfigIncidents(configID: string) {
           : [])
       ];
       const res = await fetch(
-        `/api/incidents_db/evidences?type=eq.config&config_id=eq.${configID}&select=hypotheses(incidents!hypotheses_incident_id_fkey!inner(id, title, status, type, created_at))&${params.join(
+        `/api/db/evidences?type=eq.config&config_id=eq.${configID}&select=hypotheses(incidents!hypotheses_incident_id_fkey!inner(id, title, status, type, created_at))&${params.join(
           "&"
         )}`
       );
@@ -50,7 +51,10 @@ export function useConfigIncidents(configID: string) {
         setIncidents([]);
         return;
       }
-      setIncidents(data.map((item) => item.hypotheses.incidents));
+      let incidents = data
+        .map((item) => item.hypotheses?.incidents)
+        .filter((item) => !isEmpty(item));
+      setIncidents(incidents);
     }
 
     fetchIncidents();

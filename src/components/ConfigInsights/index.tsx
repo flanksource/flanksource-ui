@@ -35,7 +35,7 @@ function ConfigInsightsDetails({ configID }: Props) {
     async function fetchConfigAnalysis(configID: string) {
       setIsLoading(true);
       const res = await fetch(
-        `/api/configs_db/config_analysis?config_id=eq.${configID}`
+        `/api/db/config_analysis?config_id=eq.${configID}`
       );
       const data = (await res.json()) as ConfigTypeInsights[];
       setConfigInsights(data);
