@@ -1,6 +1,7 @@
 import { Menu, Transition } from "@headlessui/react";
 import { Fragment, ReactNode, useEffect, useState } from "react";
 import { AiOutlineClose } from "react-icons/ai";
+import { FaFilter } from "react-icons/fa";
 import { HiOutlineChevronDown } from "react-icons/hi";
 import { RiLightbulbFill } from "react-icons/ri";
 import { typeItems } from "../Incidents/data";
@@ -45,7 +46,11 @@ export default function TopologyOpenIncidentsFilterBar({
   }, [filterValues, onChangeFilterValues]);
 
   return (
-    <div className="flex flex-row space-x-6">
+    <div className="flex flex-row text-xs">
+      <div>
+        <FaFilter className="text-gray-500 w-4 inline-block object-center" />
+      </div>
+
       <div className="flex flex-row space-x-2 w-auto">
         <label className="text-gray-500">Type: </label>
         <div className="relative">
@@ -68,7 +73,7 @@ export default function TopologyOpenIncidentsFilterBar({
               {/* @ts-expect-error */}
               <Menu.Items
                 as="ul"
-                className="absolute left-0 mt-2 p-1 w-40 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                className="absolute left-0 mt-2 p-1 w-40 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none text-xs"
               >
                 {/* @ts-expect-error */}
                 <Menu.Item
@@ -92,12 +97,12 @@ export default function TopologyOpenIncidentsFilterBar({
                   <>
                     {/* @ts-expect-error */}
                     <Menu.Item
-                      key={key}
+                      key={"filter-" + key}
                       as="li"
                       className="flex flex-row p-1 items-center cursor-pointer hover:bg-blue-200 text-black rounded-sm"
                     >
                       <button
-                        className="flex flex-row w-full items-center space-x-3"
+                        className="flex flex-row w-full items-center space-x-1"
                         onClick={() => {
                           setFilterValues((state) => ({
                             ...state,
@@ -137,7 +142,7 @@ export default function TopologyOpenIncidentsFilterBar({
               {/* @ts-expect-error */}
               <Menu.Items
                 as="ul"
-                className="absolute left-0 mt-2 p-1 w-auto origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                className="absolute left-0 mt-2 p-1 w-auto origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none text-xs"
               >
                 {Object.entries(filterIncidentsStatusOptions).map(
                   ([key, content]) => (
@@ -149,7 +154,7 @@ export default function TopologyOpenIncidentsFilterBar({
                         className="flex flex-row p-1 items-center cursor-pointer hover:bg-blue-200 text-black rounded-sm"
                       >
                         <button
-                          className="flex flex-row w-full  items-center space-x-3"
+                          className="flex flex-row w-full  items-center space-x-1"
                           onClick={() => {
                             setFilterValues((state) => ({
                               ...state,

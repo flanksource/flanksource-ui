@@ -36,7 +36,7 @@ export const CardMetrics = ({
         >
           <h6 className={`space-x-2 ${labelClasses}`}>
             {showLabelIcons && (
-              <Icon name={item.icon} size="xxl" secondary={item.name} />
+              <Icon name={item.icon} className="w-5" secondary={item.name} />
             )}
             <span>
               {item.label ?? item.name}

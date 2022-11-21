@@ -14,6 +14,10 @@ let config = {
     const canaryPrefix = isCanary ? "" : "/canary";
     const LOCALHOST_ENV_URL_REWRITES = [
       {
+        source: "/api/db/:path*",
+        destination: `${backendURL}/api/incidents_db/:path*`
+      },
+      {
         source: "/api/:path*",
         destination: `${backendURL}/api/:path*`
       }
@@ -32,11 +36,19 @@ let config = {
         destination: `${backendURL}/db/:path*`
       },
       {
+        source: "/api/db/:path*",
+        destination: `${backendURL}/db/:path*`
+      },
+      {
+        source: "/api/.ory/:path*",
+        destination: `${backendURL}/kratos/:path*`
+      },
+      {
         source: "/api/apm/search/:path*",
         destination: `${backendURL}/apm/search/:path*`
       }
     ];
-    return ["localhost", "netlify"].includes(process.env.ENV) ? LOCALHOST_ENV_URL_REWRITES : URL_REWRITES ;
+    return ["localhost", "netlify"].includes(process.env.ENV) ? LOCALHOST_ENV_URL_REWRITES : URL_REWRITES;
   }
 };
 

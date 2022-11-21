@@ -7,6 +7,7 @@ export type ValueType = number | string | Date;
 export type TopologyProperty = {
   name: string;
   icon?: string;
+  label?: string;
   type?: string;
   text?: string;
   max?: number;
@@ -19,8 +20,10 @@ export type TopologyProperty = {
 
 export type Topology = {
   id: string;
+  parent_id?: string;
   name: string;
   type?: string;
+  created_at?: string;
   updated_at?: string;
   title?: string;
   properties?: TopologyProperty[];

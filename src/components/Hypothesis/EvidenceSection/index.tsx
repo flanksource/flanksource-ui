@@ -17,6 +17,7 @@ import { LogsTable } from "../../Logs/Table/logs-table";
 import { Modal } from "../../Modal";
 import { relativeDateTime } from "../../../utils/date";
 import { Size } from "../../../types";
+import ConfigLink from "../../ConfigLink/ConfigLink";
 
 export function EvidenceItem({ evidence }: { evidence: Evidence }) {
   switch (evidence.type) {
@@ -86,13 +87,11 @@ const EvidenceAccordion: React.FC<{
           </div>
         </button>
         <div>
-          <Icon className="inline-block mr-2" name={configType} size="lg" />
-          <Link
-            to={`/configs/${configId}`}
-            className="underline text-blue-600 hover:text-blue-800"
-          >
-            {configName && configName}
-          </Link>
+          <ConfigLink
+            configId={configId}
+            configName={configName}
+            configType={configType}
+          />
         </div>
       </div>
       {expanded && children}

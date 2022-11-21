@@ -33,7 +33,7 @@ function FilterIncidentsByComponents({ control, value }: Props) {
   const { isLoading, data, error } = useQuery(
     ["components", "names", "list"],
     async () => {
-      const res = await fetch(`/api/canary/db/component_names`);
+      const res = await fetch(`/api/db/component_names`);
       const data = (await res.json()) as TopologyComponentItem[];
       return data;
     },

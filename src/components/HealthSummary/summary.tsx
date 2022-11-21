@@ -116,7 +116,7 @@ export const HealthSummary = ({
   if (viewType === "individual_level") {
     return (
       <div className={clsx("flex", className)} {...rest}>
-        <Icon name={icon} className="mr-1" size={iconSize} />
+        <Icon name={icon} className="mr-1 w-4" size={iconSize} />
         <Link
           className="text-xs linear-1.21rel mr-1 cursor-pointer"
           to={`/topology/${component.id}`}

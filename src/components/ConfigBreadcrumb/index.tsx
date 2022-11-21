@@ -24,12 +24,13 @@ export function ConfigBreadcrumb({ setTitle }: ConfigBreadcrumbProps) {
           <BreadcrumbNav
             list={[
               { to: "/configs", title: "Config" },
-              <>
-                <Icon name={data?.name} size="lg" />
-                <b className="pl-1" key="title">
-                  {data?.name}
-                </b>
-              </>
+              <span>
+                <Icon
+                  name={data?.external_type || data?.config_type}
+                  className="h-5 mr-1"
+                />
+                {data?.name}
+              </span>
             ]}
           />
         );

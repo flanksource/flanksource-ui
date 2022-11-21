@@ -1,11 +1,11 @@
-import PropTypes from "prop-types";
 import clsx from "clsx";
-import { Icon } from "../Icon";
-import { formatBytes } from "../../utils/common";
-import { isEmpty } from "../Canary/utils";
+import PropTypes from "prop-types";
+import { FiExternalLink } from "react-icons/fi";
 import { NodePodPropToLabelMap } from "../../constants";
-import { BsCurrencyDollar } from "react-icons/bs";
+import { formatBytes } from "../../utils/common";
 import { relativeDateTime } from "../../utils/date";
+import { isEmpty } from "../Canary/utils";
+import { Icon } from "../Icon";
 
 export const FormatProperty = ({ property, short = false }) => {
   if (property == null) {
@@ -25,7 +25,8 @@ export const FormatProperty = ({ property, short = false }) => {
         rel="noreferrer"
         className="underline"
       >
-        {property.text.replace("https://", "")}
+        <span>{property.text.replace("https://", "")}</span>
+        <FiExternalLink className="inline-block ml-1" />
       </a>
     );
   }
@@ -44,20 +45,20 @@ export const FormatProperty = ({ property, short = false }) => {
       amount = amount.toFixed(3);
     }
 
-    if (property.unit.toUpperCase() === "USD") {
-      return (
-        <span className="flex flex-center">
-          <span className="align-middle">
-            <BsCurrencyDollar color="gray" size={16} />
-          </span>
+    // if (property.unit.toUpperCase() === "USD") {
+    //   return (
+    //     <span className="flex flex-center">
+    //       <span className="align-middle">
+    //         <BsCurrencyDollar color="gray" size={16} />
+    //       </span>
 
-          <span className="align-bottom">{amount}</span>
-        </span>
-      );
-    }
+    //       <span className="align-bottom">{amount}</span>
+    //     </span>
+    //   );
+    // }
     return (
       <span>
-        {property.unit}
+        {/* {property.unit} */}
         {amount}
       </span>
     );
@@ -87,7 +88,11 @@ export const FormatProperty = ({ property, short = false }) => {
   if (isEmpty(text)) {
     return "";
   }
-  return text;
+  return (
+    <span data-tip={text} className="overflow-ellipsis">
+      {text}
+    </span>
+  );
 };
 
 export const Property = ({ property, className, ...rest }) => {
@@ -109,7 +114,7 @@ export const Property = ({ property, className, ...rest }) => {
       )}
       {...rest}
     >
-      <Icon name={icon} className="mr-1" size="2xsi" />
+      <Icon name={icon} className="mr-1 w-4" />
       {!isEmpty(label) && (
         <span className="text-xs overflow-hidden truncate text-gray-400 pb-1">
           {label}:&nbsp;

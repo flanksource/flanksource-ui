@@ -1,5 +1,5 @@
 import { stringify } from "qs";
-import { CanaryChecker } from "../axios";
+import { CanaryChecker, IncidentCommander } from "../axios";
 
 interface IParam {
   id: string;
@@ -49,13 +49,13 @@ export const getCanaries = async (params) => {
 };
 
 export const getTopologyComponents = () => {
-  return CanaryChecker.get(`/db/component_names`);
+  return IncidentCommander.get(`/component_names`);
 };
 
 export const getTopologyComponentLabels = () => {
-  return CanaryChecker.get(`/db/component_labels`);
+  return IncidentCommander.get(`/component_labels`);
 };
 
 export const getTopologyComponent = (id: string) => {
-  return CanaryChecker.get(`/db/component_names?id=eq.${id}`);
+  return IncidentCommander.get(`/component_names?id=eq.${id}`);
 };
