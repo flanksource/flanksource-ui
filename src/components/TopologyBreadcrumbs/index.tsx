@@ -26,10 +26,12 @@ function TopologyBreadcrumbItem({
         to={{
           pathname: `/topology/${component.id}`
         }}
-        className="flex flex-nowrap hover:text-gray-500 my-auto "
+        className=" hover:text-gray-500 my-auto "
       >
-        <Icon name={component.icon} size="xl" className="mr-1" />
-        {component.name}
+        <span>
+          <Icon name={component.icon} className="h-5 mr-1" />
+          {component.name}
+        </span>
       </Link>
     </>
   );

@@ -83,7 +83,7 @@ const Login: NextPage = () => {
             }
             router.push("/");
           })
-          .then(() => {})
+          .then(() => { })
           .catch(handleFlowError(router, "login", setFlow))
           .catch((err: AxiosError) => {
             // If the previous handler did not catch the error it's most likely a form validation error
@@ -106,8 +106,7 @@ const Login: NextPage = () => {
             <div>
               <Icon
                 name="flanksource-icon"
-                size="2xl"
-                iconClassName="bg-gray-700 p-2 w-16 h-auto m-auto rounded-8px"
+                className="bg-gray-700 p-2 w-16 h-auto m-auto rounded-8px"
               />
               <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
                 {(() => {

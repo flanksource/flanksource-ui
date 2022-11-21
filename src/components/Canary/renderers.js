@@ -99,7 +99,7 @@ export function Title({ icon, title }) {
     <>
       {icon && (
         <span className="w-6 flex-shrink-0 mr-2">
-          <Icon name={icon} className="inline" size="xl" />
+          <Icon name={icon} className="inline h-6" />
         </span>
       )}
       <span className="text-sm">{title}</span>

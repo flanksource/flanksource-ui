@@ -72,7 +72,7 @@ const Registration: NextPage = () => {
             console.log("This is the user session: ", data, data.identity);
 
             // For now however we just want to redirect home!
-            return router.push(flow?.return_to || "/").then(() => {});
+            return router.push(flow?.return_to || "/").then(() => { });
           })
           .catch(handleFlowError(router, "registration", setFlow))
           .catch((err: AxiosError) => {
@@ -96,9 +96,8 @@ const Registration: NextPage = () => {
             <div className="mt-6">
               <div>
                 <Icon
-                  name="flanksource-icon"
-                  size="2xl"
-                  iconClassName="bg-gray-700 p-2 w-16 h-auto m-auto rounded-8px"
+                  name="flanksource"
+                  className="bg-gray-700 p-2 h-10 m-auto rounded-8px"
                 />
                 <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
                   Create account

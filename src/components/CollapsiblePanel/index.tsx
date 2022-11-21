@@ -20,9 +20,9 @@ export default function CollapsiblePanel({
   });
 
   return (
-    <div className="flex flex-col space-y-4">
+    <div className="flex flex-col ">
       <div
-        className={`flex flex-row px-4 py-4 cursor-pointer items-center justify-center ${
+        className={`flex flex-row py-1 cursor-pointer items-center justify-center ${
           isOpen && "border-b border-dashed border-gray-200"
         }`}
         onClick={() => setIsOpen(!isOpen)}
@@ -37,7 +37,7 @@ export default function CollapsiblePanel({
         </div>
       </div>
       <div
-        className={`flex flex-col transform origin-bottom duration-500 px-4 ${
+        className={`flex flex-col transform origin-bottom duration-500 ${
           isOpen ? "" : "hidden"
         }`}
       >

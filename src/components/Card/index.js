@@ -63,8 +63,7 @@ export function HorizontalCard({
             <div className="flex-shrink-0">
               <Icon
                 icon={card.icon}
-                className={`${card.bgColor} h-10 w-10 rounded-full`}
-                size=""
+                className={`${card.bgColor} w-5 rounded-full`}
               />
             </div>
           )}

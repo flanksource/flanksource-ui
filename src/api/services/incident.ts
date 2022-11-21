@@ -1,3 +1,4 @@
+import { stringify } from "qs";
 import { IncidentCommander } from "../axios";
 import { resolve } from "../resolve";
 import { Hypothesis } from "./hypothesis";
@@ -6,13 +7,17 @@ import { User } from "./users";
 const AVATAR_INFO = `id,name,avatar`;
 
 export enum IncidentSeverity {
-  Low = 0,
-  Medium,
-  High
+  Low = "low",
+  Medium = "medium",
+  High = "high"
 }
 
 export enum IncidentStatus {
+  "New" = "new",
   Open = "open",
+  Investigating = "investigating",
+  Mitigated = "mitigated",
+  Resolved = "resolved",
   Closed = "closed"
 }
 
@@ -61,6 +66,30 @@ export const getIncident = async (id: string) => {
     IncidentCommander.get(
       `/incidents?id=eq.${id}&select=*,${hypotheses},commander_id(${AVATAR_INFO}),communicator_id(${AVATAR_INFO}),responders!responders_incident_id_fkey(created_by(${AVATAR_INFO}))`
     )
+  );
+};
+
+export const getIncidentsByComponent = async (
+  topologyId: string,
+  type?: string,
+  status?: string
+) => {
+  let params: Record<string, string> = {
+    order: "created_at.desc"
+  };
+
+  if (topologyId) {
+    params["component_id"] = `eq.${topologyId}`;
+  }
+  if (type != null && type.toLowerCase() !== "all") {
+    params["type"] = `eq.${type.toLowerCase()}`;
+  }
+  if (status != null && status?.toLowerCase() !== "all") {
+    params["status"] = `eq.${status.toLowerCase()}`;
+  }
+
+  return resolve(
+    IncidentCommander.get(`incidents_by_component?${stringify(params)}`)
   );
 };
 

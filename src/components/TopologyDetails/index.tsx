@@ -1,117 +1,78 @@
-import { map } from "lodash";
+import { isEmpty, map } from "lodash";
+import { BsCardList } from "react-icons/bs";
 import { FaExclamationTriangle } from "react-icons/fa";
 import { TbListDetails } from "react-icons/tb";
 import { NodePodPropToLabelMap } from "../../constants";
 import { Topology } from "../../context/TopologyPageContext";
 import CollapsiblePanel from "../CollapsiblePanel";
+import { DescriptionCard } from "../DescriptionCard";
 import { Icon } from "../Icon";
 import { CardMetrics } from "../TopologyCard/CardMetrics";
 import { FormatProperty } from "../TopologyCard/Property";
+import { TopologyLink } from "../TopologyLink";
 
 type Props = {
   topology?: Topology;
-  parent?: Topology;
+  refererId?: string;
 };
 
-export default function TopologyDetails({ topology, parent }: Props) {
+export default function TopologyDetails({ topology, refererId }: Props) {
+  if (topology == null) {
+    return null;
+  }
+
   const topologyProperties = topology?.properties ?? [];
 
-  const headline = topologyProperties?.filter((property) => property.headline);
+  var items = [];
+
+  if (
+    refererId != null &&
+    topology.parent_id != null &&
+    topology.parent_id !== refererId
+  ) {
+    items.push({
+      label: "Parent",
+      value: <TopologyLink size="sm" topologyId={topology.parent_id} />
+    });
+  }
+
+  for (var property of topologyProperties) {
+    items.push({
+      label: isEmpty(property.label) ? property.name : property.label,
+      value: (
+        <>
+          <Icon
+            className="pr-1 w-5"
+            name={property.icon}
+            secondary={property.name}
+          />
+          <FormatProperty property={property} />
+        </>
+      )
+    });
+  }
+
+  if (topology.labels != null && topology.labels.length > 0) {
+    items.push({
+      label: "Labels",
+      value: map(topology.labels, (v, k) => (
+        <div
+          data-tip={`${k}: ${v}`}
+          className="max-w-full overflow-hidden text-ellipsis  mb-1 rounded-md text-gray-600 font-semibold text-xs"
+          key={k}
+        >
+          {k}: <span className="font-light">{v}</span>
+        </div>
+      ))
+    });
+  }
 
   return (
     <div className="flex flex-col space-y-2">
-      <CollapsiblePanel
-        Header={
-          <h3 className="flex flex-row space-x-2 items-center text-xl font-semibold">
-            <TbListDetails className="text-gray-400" />
-            <span>Details</span>
-          </h3>
-        }
-      >
-        <div className="flex flex-col">
-          {headline && headline?.length > 0 && (
-            <div className="flex flex-col p-4">
-              <div className="flex flex-row divide-x divide-solid space-x-2  py-2">
-                <CardMetrics
-                  items={headline}
-                  showLabelIcons
-                  containerClasses="flex flex-col flex-1 space-y-3 items-center justify-center"
-                  labelClasses="text-gray-color"
-                  metricsClasses="font-semibold"
-                />
-              </div>
-            </div>
-          )}
-
-          {topologyProperties?.length > 0 ? (
-            <table className="table-auto shadow-none">
-              {topologyProperties
-                .filter(
-                  (property) =>
-                    !property.headline &&
-                    (property.text != null || property.value != null)
-                )
-                .map((property) => (
-                  <tr>
-                    <th className="text-gray-500 font-light text-left overflow-auto">
-                      {property.name ? (
-                        <>
-                          {/* @ts-ignore */}
-                          {NodePodPropToLabelMap[property.name] ||
-                            property.name}
-                          :
-                        </>
-                      ) : (
-                        <Icon
-                          name={property.icon}
-                          // secondary={property.name}
-                          size="sm"
-                        >
-                          {" "}
-                          {property.name}
-                        </Icon>
-                      )}
-                    </th>
-                    <td className="text-base border-none">
-                      <FormatProperty property={property} />
-                    </td>
-                  </tr>
-                ))}
-            </table>
-          ) : (
-            <div className="flex flex-col items-center text-center space-x-2 text-gray-400">
-              <div className="block text-center p-4">
-                <FaExclamationTriangle className="inline-block align-middle" />{" "}
-                <label className="inline-block align-middle">
-                  No details found
-                </label>
-              </div>
-            </div>
-          )}
-
-          <span className="text-gray-500 font-light text-left overflow-auto">
-            Labels
-          </span>
-
-          {topology?.labels &&
-            map(topology.labels, (v, k) => (
-              <div
-                data-tip={`${k}: ${v}`}
-                className="max-w-full overflow-hidden text-ellipsi px-1 py-0.75 mr-1 mb-1 rounded-md text-gray-600 font-semibold text-xs"
-                key={k}
-              >
-                {k}: <span className="font-light">{v}</span>
-              </div>
-            ))}
-
-          {parent && (
-            <span className="text-gray-500 font-light text-left overflow-auto">
-              Parent: <Icon name={parent.icon} size="xl" className="mr-1" />{" "}
-              {parent.name}
-            </span>
-          )}
-        </div>
-      </CollapsiblePanel>
+      <h4>
+        <BsCardList className="inline-block text-gray-400" /> Details
+      </h4>
+      <DescriptionCard items={items} />
     </div>
   );
 }

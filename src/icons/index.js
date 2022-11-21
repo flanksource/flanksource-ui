@@ -180,6 +180,36 @@ import js from "./js.svg";
 import json from "./json.svg";
 import junit from "./junit.svg";
 import jwt from "./jwt.svg";
+import k8s_clusterrole from "./k8s-clusterrole.svg";
+import k8s_clusterrolebinding from "./k8s-clusterrolebinding.svg";
+import k8s_configmap from "./k8s-configmap.svg";
+import k8s_cronjob from "./k8s-cronjob.svg";
+import k8s_customresourcedefinition from "./k8s-customresourcedefinition.svg";
+import k8s_daemonset from "./k8s-daemonset.svg";
+import k8s_deployment from "./k8s-deployment.svg";
+import k8s_endpoint from "./k8s-endpoint.svg";
+import k8s_group from "./k8s-group.svg";
+import k8s_hpa from "./k8s-hpa.svg";
+import k8s_ingress from "./k8s-ingress.svg";
+import k8s_job from "./k8s-job.svg";
+import k8s_limits from "./k8s-limits.svg";
+import k8s_namespace from "./k8s-namespace.svg";
+import k8s_networkpolicy from "./k8s-networkpolicy.svg";
+import k8s_persistentvolume from "./k8s-persistentvolume.svg";
+import k8s_persistentvolumelaim from "./k8s-persistentvolumelaim.svg";
+import k8s_pod from "./k8s-pod.svg";
+import k8s_podsecuritypolicy from "./k8s-podsecuritypolicy.svg";
+import k8s_quota from "./k8s-quota.svg";
+import k8s_replicaset from "./k8s-replicaset.svg";
+import k8s_role from "./k8s-role.svg";
+import k8s_rolebinding from "./k8s-rolebinding.svg";
+import k8s_secret from "./k8s-secret.svg";
+import k8s_service from "./k8s-service.svg";
+import k8s_serviceaccount from "./k8s-serviceaccount.svg";
+import k8s_statefulset from "./k8s-statefulset.svg";
+import k8s_storageclass from "./k8s-storageclass.svg";
+import k8s_user from "./k8s-user.svg";
+import k8s_vol from "./k8s-vol.svg";
 import k8s from "./k8s.svg";
 import kubernetes from "./kubernetes.svg";
 import ldap from "./ldap.svg";
@@ -470,6 +500,36 @@ export const Icons = {
   json: json,
   junit: junit,
   jwt: jwt,
+  "k8s-clusterrole": k8s_clusterrole,
+  "k8s-clusterrolebinding": k8s_clusterrolebinding,
+  "k8s-configmap": k8s_configmap,
+  "k8s-cronjob": k8s_cronjob,
+  "k8s-customresourcedefinition": k8s_customresourcedefinition,
+  "k8s-daemonset": k8s_daemonset,
+  "k8s-deployment": k8s_deployment,
+  "k8s-endpoint": k8s_endpoint,
+  "k8s-group": k8s_group,
+  "k8s-hpa": k8s_hpa,
+  "k8s-ingress": k8s_ingress,
+  "k8s-job": k8s_job,
+  "k8s-limits": k8s_limits,
+  "k8s-namespace": k8s_namespace,
+  "k8s-networkpolicy": k8s_networkpolicy,
+  "k8s-persistentvolume": k8s_persistentvolume,
+  "k8s-persistentvolumelaim": k8s_persistentvolumelaim,
+  "k8s-pod": k8s_pod,
+  "k8s-podsecuritypolicy": k8s_podsecuritypolicy,
+  "k8s-quota": k8s_quota,
+  "k8s-replicaset": k8s_replicaset,
+  "k8s-role": k8s_role,
+  "k8s-rolebinding": k8s_rolebinding,
+  "k8s-secret": k8s_secret,
+  "k8s-service": k8s_service,
+  "k8s-serviceaccount": k8s_serviceaccount,
+  "k8s-statefulset": k8s_statefulset,
+  "k8s-storageclass": k8s_storageclass,
+  "k8s-user": k8s_user,
+  "k8s-vol": k8s_vol,
   k8s: k8s,
   kubernetes: kubernetes,
   ldap: ldap,
