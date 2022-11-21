@@ -15,7 +15,7 @@ let config = {
     const LOCALHOST_ENV_URL_REWRITES = [
       {
         source: "/api/:path*",
-        destination: `${backendURL}/:path*`
+        destination: `${backendURL}/api/:path*`
       }
     ];
     const URL_REWRITES = [
