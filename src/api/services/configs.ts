@@ -143,3 +143,14 @@ export const getConfigsTypes = async () => {
   const res = await IncidentCommander.get<ConfigTypeItem[]>(`/config_types`);
   return res.data;
 };
+
+export type ConfigAnalysisTypeItem = {
+  analysis_type: string;
+};
+
+export const getConfigsAnalysisTypesFilter = async () => {
+  const res = await IncidentCommander.get<ConfigAnalysisTypeItem[]>(
+    `/analysis_types`
+  );
+  return res.data;
+};
