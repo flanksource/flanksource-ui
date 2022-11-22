@@ -4,11 +4,12 @@ import {
 } from "@ory/client";
 import { AxiosError } from "axios";
 import type { NextPage } from "next";
-import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { Icon } from "../src/components";
 
+import { Head } from "../src/components/Head/Head";
 import { Flow } from "../src/components/ory";
 import { handleFlowError } from "../src/components/ory/errors";
 import ory from "../src/components/ory/sdk";
@@ -63,7 +64,7 @@ const Recovery: NextPage = () => {
       .push(`/recovery?flow=${flow?.id}`, undefined, { shallow: true })
       .then(() =>
         ory
-          .submitSelfServiceRecoveryFlow(String(flow?.id), undefined, values)
+          .submitSelfServiceRecoveryFlow(String(flow?.id), values)
           .then(({ data }) => {
             // Form submission was successful, show the message to the user!
             setFlow(data);
@@ -83,18 +84,34 @@ const Recovery: NextPage = () => {
 
   return (
     <>
-      <Head>
-        <title>Recover your account - Ory NextJS Integration Example</title>
-        <meta name="description" content="NextJS + React + Vercel + Ory" />
-      </Head>
-      <div>
-        <div>Recover your account</div>
-        <Flow onSubmit={onSubmit} flow={flow} />
-      </div>
-      <div>
-        <Link href="/" passHref>
-          <div>Go back</div>
-        </Link>
+      <Head prefix="Recovery" />
+      <div className="flex min-h-screen bg-gray-50 justify-center">
+        <div className="flex min-h-full flex-col justify-center pt-12 pb-28 sm:px-6 lg:px-8">
+          <div className="w-96">
+            <div>
+              <Icon
+                name="flanksource-icon"
+                className="bg-gray-700 p-2 w-16 h-auto m-auto rounded-8px"
+                style={{
+                  'display': 'inherit'
+                }}
+              />
+              <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
+                Recover Account
+              </h2>
+              <div className="mt-8 bg-white pt-4 pb-8 px-4 shadow sm:rounded-lg sm:px-10">
+                <Flow onSubmit={onSubmit} flow={flow} />
+              </div>
+              <div className="mt-2">
+                <Link href="/" passHref>
+                  <a className="cursor-pointer font-medium text-blue-600 hover:text-blue-500">
+                    Go back
+                  </a>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </>
   );

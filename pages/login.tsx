@@ -107,6 +107,9 @@ const Login: NextPage = () => {
               <Icon
                 name="flanksource-icon"
                 className="bg-gray-700 p-2 w-16 h-auto m-auto rounded-8px"
+                style={{
+                  'display': 'inherit'
+                }}
               />
               <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
                 {(() => {
