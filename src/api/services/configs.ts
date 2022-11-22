@@ -1,6 +1,6 @@
 // http://incident-commander.canary.lab.flanksource.com/config/db
 
-import { Config, ConfigDB } from "../axios";
+import { Config, ConfigDB, IncidentCommander } from "../axios";
 import { resolve } from "../resolve";
 
 export interface ConfigItem {
@@ -132,5 +132,14 @@ export const getRelatedConfigs = async (configID: string) => {
   const res = await ConfigDB.get<ConfigTypeRelationships[]>(
     `/config_relationships?or=(related_id.eq.${configID},config_id.eq.${configID})&select=*,configs:configs!config_relationships_config_id_fkey(*),related:configs!config_relationships_related_id_fkey(*)`
   );
+  return res.data;
+};
+
+export type ConfigTypeItem = {
+  config_type: string;
+};
+
+export const getConfigsTypes = async () => {
+  const res = await IncidentCommander.get<ConfigTypeItem[]>(`/config_types`);
   return res.data;
 };
