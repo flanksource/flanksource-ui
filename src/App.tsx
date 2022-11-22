@@ -35,6 +35,8 @@ import { ConfigPageContextProvider } from "./context/ConfigPageContext";
 import { IncidentPageContextProvider } from "./context/IncidentPageContext";
 import { User } from "./api/services/users";
 import FullPageSkeletonLoader from "./components/SkeletonLoader/FullPageSkeletonLoader";
+import { UsersPage } from "./pages/UsersPage";
+import { HiUsers } from "react-icons/hi";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -51,7 +53,8 @@ const navigation = [
   { name: "Health", href: "/health", icon: AiFillHeart },
   { name: "Logs", href: "/logs", icon: LogsIcon },
   { name: "Config", href: "/configs", icon: VscJson },
-  { name: "Incidents", href: "/incidents", icon: ImLifebuoy }
+  { name: "Incidents", href: "/incidents", icon: ImLifebuoy },
+  { name: "Users", href: "/users", icon: HiUsers }
 ];
 
 export type NavigationItems = typeof navigation;
@@ -94,6 +97,10 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
 
       <Route path="health" element={sidebar}>
         <Route index element={<HealthPage url={CANARY_API} />} />
+      </Route>
+
+      <Route path="users" element={sidebar}>
+        <Route index element={<UsersPage />} />
       </Route>
 
       <Route path="settings" element={sidebar}>

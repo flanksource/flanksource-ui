@@ -7,6 +7,22 @@ interface NewUser {
   avatar?: string;
 }
 
+type RegisteredUser = {
+  created_at: string;
+  id: string;
+  nid: string;
+  state: string;
+  state_changed_at: string;
+  traits: {
+    name: {
+      last: string;
+      first: string;
+    };
+    email: string;
+  };
+  updated_at: string;
+};
+
 export interface User extends NewUser {
   id: string;
 }
@@ -22,3 +38,6 @@ export const getPersonWithEmail = (email: string) =>
 
 export const createPerson = ({ name, email, avatar }: NewUser) =>
   resolve<User>(IncidentCommander.post("/people", { name, email, avatar }));
+
+export const getRegisteredUsers = () =>
+  resolve<RegisteredUser[]>(IncidentCommander.get(`/identities`));
