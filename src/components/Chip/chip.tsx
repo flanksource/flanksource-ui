@@ -1,7 +1,7 @@
 import React from "react";
 import clsx from "clsx";
 
-const getBackgroundColorClass = (color) => {
+const getBackgroundColorClass = (color?: string) => {
   switch (color) {
     case "red":
       return "bg-light-red";
@@ -16,16 +16,24 @@ const getBackgroundColorClass = (color) => {
   }
 };
 
-export function Chip({ text, color, ...rest }) {
+type Props = {
+  text?: React.ReactNode;
+  color?: "red" | "orange" | "green" | "gray";
+} & React.DetailedHTMLProps<
+  React.HTMLAttributes<HTMLDivElement>,
+  HTMLDivElement
+>;
+
+export function Chip({ text, color, children, ...props }: Props) {
   return (
     <div
       className={clsx(
         "text-center align-baseline min-w-8 min-h-8 text-2xs rounded-4px font-bold break-all",
         getBackgroundColorClass(color)
       )}
-      {...rest}
+      {...props}
     >
-      {text}
+      {text || children}
     </div>
   );
 }

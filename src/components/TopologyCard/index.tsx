@@ -9,6 +9,7 @@ import { HealthSummary } from "../HealthSummary";
 import { Icon } from "../Icon";
 import { Loading } from "../Loading";
 import { HealthChecksSummary } from "../HealthChecksSummary";
+import TopologyCardIncidentSummary from "../TopologyCardIncidentSummary";
 import { CardMetrics } from "./CardMetrics";
 import { Property } from "./Property";
 import { TopologyDropdownMenu } from "./TopologyDropdownMenu";
@@ -31,7 +32,7 @@ export const StatusStyles: Record<keyof typeof ComponentStatus, string> = {
 };
 
 interface IProps {
-  size: Size;
+  size: Size | string;
   topologyId?: string;
   topology?: any;
   selectionMode?: boolean;
@@ -117,10 +118,10 @@ export function TopologyCard({
 
   return (
     <div
-      style={{ width: CardWidth[size] || size }}
+      style={{ width: CardWidth[size as Size] || size }}
       className={clsx(
         "rounded-8px mb-3 mr-3 shadow-card card bg-lightest-gray border-0 border-t-8 relative",
-        StatusStyles[topology.status] || "border-white",
+        StatusStyles[topology.status as ComponentStatus] || "border-white",
         selectionMode ? "cursor-pointer" : ""
       )}
       {...selectionModeRootProps}
@@ -216,6 +217,9 @@ export function TopologyCard({
                 />
               )}
               <HealthChecksSummary checks={topology?.checks} />
+              {topology?.id && (
+                <TopologyCardIncidentSummary topology={topology} />
+              )}
               {topology?.components?.map((component: any) => (
                 <HealthSummary
                   className="mb-2"
