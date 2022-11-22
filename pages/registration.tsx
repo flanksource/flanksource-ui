@@ -95,13 +95,7 @@ const Registration: NextPage = () => {
           <div className="w-96">
             <div className="mt-6">
               <div>
-                <Icon
-                  name="flanksource-icon"
-                  className="bg-gray-700 p-2 h-10 m-auto rounded-8px"
-                  style={{
-                    'display': 'inherit'
-                  }}
-                />
+                <img alt="Flanksource" src="/images/logo.svg" className="p-2 h-auto m-auto rounded-8px w-48" />
                 <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
                   Create account
                 </h2>

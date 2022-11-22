@@ -104,13 +104,7 @@ const Login: NextPage = () => {
         <div className="flex min-h-full flex-col justify-center pt-12 pb-28 sm:px-6 lg:px-8">
           <div className="w-96">
             <div>
-              <Icon
-                name="flanksource-icon"
-                className="bg-gray-700 p-2 w-16 h-auto m-auto rounded-8px"
-                style={{
-                  'display': 'inherit'
-                }}
-              />
+              <img alt="Flanksource" src="/images/logo.svg" className="p-2 h-auto m-auto rounded-8px w-48" />
               <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
                 {(() => {
                   if (flow?.refresh) {
