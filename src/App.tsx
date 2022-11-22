@@ -53,8 +53,7 @@ const navigation = [
   { name: "Health", href: "/health", icon: AiFillHeart },
   { name: "Logs", href: "/logs", icon: LogsIcon },
   { name: "Config", href: "/configs", icon: VscJson },
-  { name: "Incidents", href: "/incidents", icon: ImLifebuoy },
-  { name: "Users", href: "/users", icon: HiUsers }
+  { name: "Incidents", href: "/incidents", icon: ImLifebuoy }
 ];
 
 export type NavigationItems = typeof navigation;
@@ -62,10 +61,17 @@ export type NavigationItems = typeof navigation;
 const settingsNav = {
   name: "Settings",
   icon: AdjustmentsIcon,
-  submenu: schemaResourceTypes.map((x) => ({
-    ...x,
-    href: `/settings/${x.table}`
-  }))
+  submenu: [
+    {
+      name: "Users",
+      href: "/settings/users",
+      icon: HiUsers
+    },
+    ...schemaResourceTypes.map((x) => ({
+      ...x,
+      href: `/settings/${x.table}`
+    }))
+  ]
 };
 
 export type SettingsNavigationItems = typeof settingsNav;
@@ -99,11 +105,8 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
         <Route index element={<HealthPage url={CANARY_API} />} />
       </Route>
 
-      <Route path="users" element={sidebar}>
-        <Route index element={<UsersPage />} />
-      </Route>
-
       <Route path="settings" element={sidebar}>
+        <Route path="users" element={<UsersPage />} />
         {settingsNav.submenu.map((x) => {
           return (
             <Fragment key={x.name}>
