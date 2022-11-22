@@ -154,3 +154,14 @@ export const getConfigsAnalysisTypesFilter = async () => {
   );
   return res.data;
 };
+
+export type ConfigChangesTypeItem = {
+  change_type: string;
+};
+
+export const getConfigsChangesTypesFilter = async () => {
+  const res = await IncidentCommander.get<ConfigChangesTypeItem[]>(
+    `/change_types`
+  );
+  return res.data;
+};
