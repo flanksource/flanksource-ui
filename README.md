@@ -11,13 +11,14 @@
     PORT=3004
     # ORY_KRATOS_URL=http://kratos.canary.lab.flanksource.com/
     # NEXT_PUBLIC_APP_DEPLOYMENT=CANARY_CHECKER
-    NEXT_PUBLIC_WITHOUT_SESSION=true
+    NEXT_PUBLIC_WITHOUT_SESSION=false
     BACKEND_URL=https://incident-commander.canary.lab.flanksource.com/
     ENV=localhost
 
     ```
 2. then run `npm run dev` to launch the front end application (note: api calls will be proxied to dev environment here).
-3. visit [http://localhost:3000](http://localhost:3000) to see front end changes.
+3. If you don't have any account to login please create an account by going to the page [http://localhost:3000/registration](http://localhost:3000/registration).
+4. If you have account login using that account by going to the page [http://localhost:3000/login](http://localhost:3000/login).
 
 
 ## Svg files
