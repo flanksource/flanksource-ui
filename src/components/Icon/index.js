@@ -52,6 +52,7 @@ export function Icon({
   secondary = "", // If icon by name is not found, try the secondary (fallthrough) name
   className = "",
   alt = "",
+  icon = "",
   ...props
 }) {
   if (isEmpty(name) && isEmpty(secondary)) {
@@ -64,15 +65,15 @@ export function Icon({
     name != null &&
     (name.startsWith("http:") || name.startsWith("https://"))
   ) {
-    props.icon = name;
+    icon = name;
   } else if (!isEmpty(name) || !isEmpty(secondary)) {
-    props.icon = findByName(name);
-    if (props.icon == null) {
-      props.icon = findByName(secondary);
+    icon = findByName(name);
+    if (icon == null) {
+      icon = findByName(secondary);
     }
   }
 
-  const src = typeof props.icon?.src === "string" ? props.icon.src : props.icon;
+  const src = typeof icon?.src === "string" ? icon.src : icon;
 
   if (src) {
     return (
@@ -80,11 +81,12 @@ export function Icon({
         alt={alt}
         src={src}
         className={`inline-block object-center ${className}`}
+        {...props}
       />
     );
   }
 
-  return props.icon ? <props.icon className={className} /> : null;
+  return icon ? <icon className={className} {...props} /> : null;
 }
 export function Avatar({ url, alt = "" }) {
   return (
