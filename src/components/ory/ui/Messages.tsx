@@ -27,7 +27,7 @@ export const Messages = ({ messages }: MessagesProps) => {
   }
 
   return (
-    <div className="py-4">
+    <div className={messages?.length > 0 ? "py-4" : ""}>
       {messages.map((message) => (
         <Message key={message.id} message={message} />
       ))}
