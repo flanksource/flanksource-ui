@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useComponentsQuery } from "../../../api/query-hooks";
 import { allOption } from "../../../pages/TopologyPage";
+import { TopologyComponentItem } from "../../FilterIncidents/FilterIncidentsByComponents";
 import { ReactSelectDropdown, StateOption } from "../../ReactSelectDropdown";
 
 type ComponentTypesDropdownProps = React.HTMLProps<HTMLDivElement> & {
@@ -21,10 +22,10 @@ export function ComponentTypesDropdown({
   const { data: components } = useComponentsQuery({});
 
   useEffect(() => {
-    setupTypesDropdown(components?.data);
+    setupTypesDropdown(components);
   }, [components]);
 
-  function setupTypesDropdown(data: any[]) {
+  function setupTypesDropdown(data?: TopologyComponentItem[]) {
     const allTypes: { [key: string]: any } = {
       ...allOption
     };

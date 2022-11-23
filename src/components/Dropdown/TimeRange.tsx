@@ -1,3 +1,4 @@
+import { ComponentProps } from "react";
 import { BsClock } from "react-icons/bs";
 import { ReactSelectDropdown } from "../ReactSelectDropdown";
 
@@ -104,6 +105,8 @@ export const timeRanges = [
   }
 ];
 
-export function TimeRange({ ...rest }) {
+type Props = ComponentProps<typeof ReactSelectDropdown>;
+
+export function TimeRange({ ...rest }: Props) {
   return <ReactSelectDropdown {...rest} items={timeRanges} />;
 }

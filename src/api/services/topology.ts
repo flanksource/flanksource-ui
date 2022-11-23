@@ -1,5 +1,6 @@
 import { stringify } from "qs";
 import { CanaryChecker, IncidentCommander } from "../axios";
+import { TopologyComponentItem } from "../../components/FilterIncidents/FilterIncidentsByComponents";
 
 interface IParam {
   id: string;
@@ -49,7 +50,14 @@ export const getCanaries = async (params) => {
 };
 
 export const getTopologyComponents = () => {
-  return IncidentCommander.get(`/component_names`);
+  return IncidentCommander.get<TopologyComponentItem[]>(`/component_names`);
+};
+
+export const getTopologyComponentByID = async (topologyID: string) => {
+  const res = await IncidentCommander.get<TopologyComponentItem[]>(
+    `/component_names?id=eq.${topologyID}`
+  );
+  return res.data[0];
 };
 
 export const getTopologyComponentLabels = () => {

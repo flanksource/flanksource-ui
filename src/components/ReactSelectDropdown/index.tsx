@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import {
+  ComponentProps,
   FunctionComponent,
   LegacyRef,
   ReactNode,
@@ -54,6 +55,8 @@ type ReactSelectDropdownProps = {
   labelClass?: string;
   dropDownClassNames?: string;
   hideControlBorder?: boolean;
+  isLoading?: boolean;
+  isDisabled?: boolean;
 };
 
 export const ReactSelectDropdown = ({
@@ -68,7 +71,9 @@ export const ReactSelectDropdown = ({
   prefix,
   labelClass,
   hideControlBorder = false,
-  placeholder = "Search..."
+  placeholder = "Search...",
+  isLoading = false,
+  isDisabled = false
 }: ReactSelectDropdownProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [options, setOptions] = useState<StateOption[]>([]);
@@ -138,7 +143,7 @@ export const ReactSelectDropdown = ({
           </label>
           <div
             className={clsx(
-              `relative cursor-pointer h-full pl-3 rounded-md pr-8 py-2 text-left  focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm
+              `relative cursor-pointer h-full pl-3 rounded-md shadow-sm pr-8 py-2 text-left border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm
                 ${SelectedOption?.id === "_empty" && "text-gray-400"}
               `,
               className,
@@ -175,6 +180,8 @@ export const ReactSelectDropdown = ({
               <Select
                 autoFocus
                 backspaceRemovesValue={false}
+                isLoading={isLoading}
+                isDisabled={isDisabled}
                 components={{
                   DropdownIndicator,
                   IndicatorSeparator: null,
@@ -263,6 +270,8 @@ export const ReactSelectDropdown = ({
           tabSelectsValue={false}
           value={value}
           getOptionValue={(option: any) => option.value}
+          isLoading={isLoading}
+          isDisabled={isDisabled}
         />
       )}
     </Dropdown>

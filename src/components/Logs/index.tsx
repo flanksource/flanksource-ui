@@ -1,11 +1,14 @@
-import React, { useState } from "react";
-import { LogsTable } from "./Table/logs-table";
+import { ComponentProps, useState } from "react";
+import LogItem from "../../types/Logs";
+import { LogsTable } from "./Table/LogsTable";
 
-export const LogsViewer = React.memo(function LogsViewer({
-  logs,
-  componentId
-}) {
-  const [variant] = useState("comfortable");
+type LogsProps = {
+  logs: LogItem[];
+};
+
+export function LogsViewer({ logs }: LogsProps) {
+  const [variant, setVariant] =
+    useState<ComponentProps<typeof LogsTable>["variant"]>("comfortable");
 
   return (
     <>
@@ -31,6 +34,4 @@ export const LogsViewer = React.memo(function LogsViewer({
       <LogsTable logs={logs} variant={variant} componentId={componentId} />
     </>
   );
-});
-
-LogsViewer.displayName = "LogsViewer";
+}

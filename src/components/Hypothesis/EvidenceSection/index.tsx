@@ -6,18 +6,18 @@ import { Link } from "react-router-dom";
 import { Evidence, EvidenceType } from "../../../api/services/evidence";
 import { getCanaries } from "../../../api/services/topology";
 import mixins from "../../../utils/mixins.module.css";
-import { Button } from "../../Button";
 import { CheckDetails } from "../../Canary/CanaryPopup/CheckDetails";
 import { CheckTitle } from "../../Canary/CanaryPopup/CheckTitle";
 import { toFixedIfNecessary } from "../../../utils/common";
 import { getUptimePercentage } from "../../Canary/CanaryPopup/utils";
 import { Duration, StatusList } from "../../Canary/renderers";
-import { Icon } from "../../Icon";
-import { LogsTable } from "../../Logs/Table/logs-table";
 import { Modal } from "../../Modal";
 import { relativeDateTime } from "../../../utils/date";
 import { Size } from "../../../types";
 import ConfigLink from "../../ConfigLink/ConfigLink";
+import { LogsTable } from "../../Logs/Table/LogsTable";
+import { Icon } from "../../Icon";
+import { Button } from "../../Button";
 
 export function EvidenceItem({ evidence }: { evidence: Evidence }) {
   switch (evidence.type) {
@@ -168,7 +168,7 @@ export function ConfigEvidenceView({
 }
 
 function createHunks(fullConfig, selectedLines, hunkLineGap) {
-  const hunks = [];
+  const hunks: any[] = [];
   const lineNumbers = Object.keys(selectedLines);
   let hunkStart = Math.max(0, parseInt(lineNumbers[0], 10) - hunkLineGap);
   let prevNum = parseInt(lineNumbers[0], 10);
@@ -261,7 +261,7 @@ export function HealthEvidenceViewer({
   size = "large"
 }: {
   evidence: Evidence;
-  size: "large" | "small";
+  size?: "large" | "small";
 }) {
   const [check, setCheck] = useState<any>();
   const [validCheck, setValidCheck] = useState<any>();

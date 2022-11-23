@@ -9,9 +9,13 @@ import { useEffect, useState } from "react";
  * called for the specified time period.
  *
  **/
-export default function useDebounce<T>(value: T, delay: number) {
+export default function useDebouncedValue<T>(
+  value: T,
+  delay: number
+): T | undefined {
   // State and setters for debounced value
-  const [debouncedValue, setDebouncedValue] = useState(value);
+  const [debouncedValue, setDebouncedValue] = useState<T>();
+
   useEffect(
     () => {
       // Update debounced value after delay
@@ -27,5 +31,6 @@ export default function useDebounce<T>(value: T, delay: number) {
     },
     [value, delay] // Only re-call effect if value or delay changes
   );
+
   return debouncedValue;
 }
