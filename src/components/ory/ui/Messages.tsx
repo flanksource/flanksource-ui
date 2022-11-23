@@ -6,8 +6,12 @@ interface MessageProps {
 
 export const Message = ({ message }: MessageProps) => {
   return (
-    <div>
-      <div data-testid={`ui/message/${message.id}`}>{message.text}</div>
+    <div className="rounded-md bg-blue-50 p-4">
+      <div className="flex">
+        <div className="ml-3 flex-1 md:flex md:justify-between">
+          <p className="text-sm text-blue-700">{message.text}</p>
+        </div>
+      </div>
     </div>
   );
 };
@@ -23,7 +27,7 @@ export const Messages = ({ messages }: MessagesProps) => {
   }
 
   return (
-    <div>
+    <div className="py-4">
       {messages.map((message) => (
         <Message key={message.id} message={message} />
       ))}
