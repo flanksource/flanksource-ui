@@ -7,12 +7,13 @@ interface NewUser {
   avatar?: string;
 }
 
-type RegisteredUser = {
-  created_at: string;
+export type RegisteredUser = {
   id: string;
   nid: string;
   state: string;
-  state_changed_at: string;
+  state_changed_at: string | Date;
+  name: string;
+  email: string;
   traits: {
     name: {
       last: string;
@@ -20,7 +21,8 @@ type RegisteredUser = {
     };
     email: string;
   };
-  updated_at: string;
+  created_at: string | Date;
+  updated_at: string | Date;
 };
 
 export interface User extends NewUser {
@@ -40,4 +42,23 @@ export const createPerson = ({ name, email, avatar }: NewUser) =>
   resolve<User>(IncidentCommander.post("/people", { name, email, avatar }));
 
 export const getRegisteredUsers = () =>
-  resolve<RegisteredUser[]>(IncidentCommander.get(`/identities`));
+  resolve<RegisteredUser[]>(
+    IncidentCommander.get(`/identities`).then((res) => {
+      const data = res.data.map((item: RegisteredUser) => {
+        return {
+          ...item,
+          created_at: new Date(item.created_at),
+          state_changed_at: new Date(item.state_changed_at),
+          updated_at: new Date(item.updated_at),
+          name: `${item.traits?.name?.first ?? ""} ${
+            item.traits?.name?.last ?? ""
+          }`,
+          email: item.traits.email
+        };
+      });
+      return {
+        ...res,
+        data
+      };
+    })
+  );

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AiFillWarning } from "react-icons/ai";
 import { BiDollarCircle } from "react-icons/bi";
 import { FaTasks } from "react-icons/fa";
@@ -396,27 +396,13 @@ export interface Props {
 }
 
 function ConfigList({ data, handleRowClick, isLoading }: Props) {
-  const [queryParams, setQueryParams] = useSearchParams({
+  const [queryParams] = useSearchParams({
     sortBy: "",
     sortOrder: "",
     groupBy: "config_type"
   });
 
   const groupByField = queryParams.get("groupBy");
-  const sortField = queryParams.get("sortBy") || groupByField;
-  const isSortOrderDesc =
-    queryParams.get("sortOrder") === "desc" ? true : false;
-
-  const setSortBy = (field: string, order: "asc" | "desc") => {
-    if (field === undefined && order === undefined) {
-      queryParams.delete("sortBy");
-      queryParams.delete("sortOrder");
-    } else {
-      queryParams.set("sortBy", field);
-      queryParams.set("sortOrder", order);
-    }
-    setQueryParams(queryParams);
-  };
 
   const setHiddenColumns = () => {
     if (groupByField !== "changed") {
@@ -424,24 +410,6 @@ function ConfigList({ data, handleRowClick, isLoading }: Props) {
     }
     return [];
   };
-
-  const sortBy = useMemo(() => {
-    const data = sortField
-      ? [
-          {
-            id: sortField,
-            desc: isSortOrderDesc
-          }
-        ]
-      : [];
-    if (sortField === "config_type") {
-      data.push({
-        id: "name",
-        desc: isSortOrderDesc
-      });
-    }
-    return data;
-  }, [sortField, isSortOrderDesc]);
 
   return (
     <DataTable
@@ -451,12 +419,11 @@ function ConfigList({ data, handleRowClick, isLoading }: Props) {
       handleRowClick={handleRowClick}
       tableStyle={{ borderSpacing: "0" }}
       isLoading={isLoading}
-      sortBy={sortBy}
-      setSortOptions={setSortBy}
       groupBy={
         !groupByField || groupByField === "no_grouping" ? null : [groupByField]
       }
       hiddenColumns={setHiddenColumns()}
+      usageSection="config-list"
     />
   );
 }
