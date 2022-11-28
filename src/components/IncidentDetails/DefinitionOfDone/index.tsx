@@ -54,7 +54,7 @@ function AddDefinitionOfDone({ onClick, ...rest }: AddDefinitionOfDoneProps) {
 }
 
 export function DefinitionOfDone({ incidentId }: DefinitionOfDoneProps) {
-  const [size] = useState<Size>(Size.small);
+  const size = Size.small;
   const [openDeleteConfirmDialog, setOpenDeleteConfirmDialog] = useState(false);
   const [evidenceBeingRemoved, setEvidenceBeingRemoved] = useState<Evidence>();
   const [dodEvidences, setDODEvidences] = useState<Evidence[]>([]);
