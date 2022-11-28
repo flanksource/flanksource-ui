@@ -1,4 +1,4 @@
-import { IncidentCommander } from "../axios";
+import { Auth, IncidentCommander } from "../axios";
 import { resolve } from "../resolve";
 
 interface NewUser {
@@ -28,6 +28,12 @@ export type RegisteredUser = {
 export interface User extends NewUser {
   id: string;
 }
+
+export type InviteUserPayload = {
+  firstName: string;
+  lastName: string;
+  email: string;
+};
 
 export const getPerson = (id: string) =>
   resolve<User>(IncidentCommander.get(`/people?id=eq.${id}`));
@@ -62,3 +68,6 @@ export const getRegisteredUsers = () =>
       };
     })
   );
+
+export const inviteUser = ({ firstName, lastName, email }: InviteUserPayload) =>
+  resolve<{}>(Auth.post("/invite_user", { firstName, lastName, email }));

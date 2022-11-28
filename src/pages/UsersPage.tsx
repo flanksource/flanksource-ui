@@ -1,13 +1,36 @@
 import { useEffect, useState } from "react";
-import { getRegisteredUsers, RegisteredUser } from "../api/services/users";
+import { ImUserPlus } from "react-icons/im";
+import {
+  getRegisteredUsers,
+  inviteUser,
+  RegisteredUser
+} from "../api/services/users";
+import { Modal } from "../components";
+import {
+  InviteUserForm,
+  InviteUserFormValue
+} from "../components/InviteUserForm";
 import { SearchLayout } from "../components/Layout";
-import { toastError } from "../components/Toast/toast";
+import { toastError, toastSuccess } from "../components/Toast/toast";
 import { UserList } from "../components/UserList";
 import { useLoader } from "../hooks";
 
 export function UsersPage() {
   const [users, setUsers] = useState<RegisteredUser[]>([]);
+  const [isOpen, setIsOpen] = useState(false);
   const { loading, setLoading } = useLoader();
+
+  const onSubmit = async (val: InviteUserFormValue) => {
+    try {
+      await inviteUser(val);
+      const userName = `${val.firstName} ${val.lastName}`;
+      toastSuccess(`${userName} invited successfully`);
+      setIsOpen(false);
+      fetchUsersList();
+    } catch (ex) {
+      toastError(ex as any);
+    }
+  };
 
   async function fetchUsersList() {
     setLoading(true);
@@ -35,7 +58,30 @@ export function UsersPage() {
       loading={loading}
     >
       <div className="flex flex-col flex-1 p-6 pb-0 h-full w-full">
-        <UserList data={users} isLoading={loading} />
+        <div className="flex justify-end">
+          <button className="btn-primary w-36" onClick={(e) => setIsOpen(true)}>
+            <ImUserPlus className="mr-2" />
+            Invite User
+          </button>
+        </div>
+        <UserList
+          className="mt-6 overflow-y-hidden"
+          data={users}
+          isLoading={loading}
+        />
+        <Modal
+          title="Invite User"
+          onClose={() => {
+            setIsOpen(false);
+          }}
+          open={isOpen}
+          bodyClass=""
+        >
+          <InviteUserForm
+            className="flex flex-col bg-white p-4"
+            onSubmit={onSubmit}
+          />
+        </Modal>
       </div>
     </SearchLayout>
   );

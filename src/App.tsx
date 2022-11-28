@@ -15,7 +15,10 @@ import { LogsIcon } from "./components/Icons/LogsIcon";
 import { TopologyIcon } from "./components/Icons/TopologyIcon";
 import { ConfigLayout, SidebarLayout } from "./components/Layout";
 import { SchemaResourcePage } from "./components/SchemaResourcePage";
-import { schemaResourceTypes } from "./components/SchemaResourcePage/resourceTypes";
+import {
+  SchemaResourceType,
+  schemaResourceTypes
+} from "./components/SchemaResourcePage/resourceTypes";
 import { SchemaResource } from "./components/SchemaResourcePage/SchemaResource";
 import { AuthContext } from "./context";
 import {
@@ -107,22 +110,24 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
 
       <Route path="settings" element={sidebar}>
         <Route path="users" element={<UsersPage />} />
-        {settingsNav.submenu.map((x) => {
-          return (
-            <Fragment key={x.name}>
-              <Route
-                key={`${x.name}-list`}
-                path={x.table}
-                element={<SchemaResourcePage resourceInfo={x} />}
-              />
-              <Route
-                key={`${x.name}-detail`}
-                path={`${x.table}/:id`}
-                element={<SchemaResource resourceInfo={x} />}
-              />
-            </Fragment>
-          );
-        })}
+        {settingsNav.submenu
+          .filter((v: SchemaResourceType) => v.table)
+          .map((x) => {
+            return (
+              <Fragment key={x.name}>
+                <Route
+                  key={`${x.name}-list`}
+                  path={x.table}
+                  element={<SchemaResourcePage resourceInfo={x} />}
+                />
+                <Route
+                  key={`${x.name}-detail`}
+                  path={`${x.table}/:id`}
+                  element={<SchemaResource resourceInfo={x} />}
+                />
+              </Fragment>
+            );
+          })}
       </Route>
 
       <Route path="logs" element={sidebar}>

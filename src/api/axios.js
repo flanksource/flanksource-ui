@@ -60,7 +60,17 @@ export const Config = axios.create({
   }
 });
 
+export const Auth = axios.create({
+  baseURL: `${API_BASE}/auth`,
+  headers: {
+    Accept: "application/json",
+    Prefer: "return=representation",
+    "Content-Type": "application/json"
+  }
+});
+
 for (const client of [
+  Auth,
   IncidentCommander,
   Logs,
   CanaryChecker,

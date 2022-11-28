@@ -1,10 +1,11 @@
+import clsx from "clsx";
 import { relativeDateTime } from "../../utils/date";
 import { DataTable } from "../DataTable";
 
 type UserListProps = {
   data: any[];
   isLoading?: boolean;
-};
+} & Omit<React.HTMLProps<HTMLDivElement>, "data">;
 
 const DateCell = ({ cell: { value } }: { cell: { value: Date } }) =>
   relativeDateTime(value);
@@ -33,15 +34,23 @@ const columns = [
   }
 ];
 
-export function UserList({ data, isLoading }: UserListProps) {
+export function UserList({
+  data,
+  isLoading,
+  className,
+  ...rest
+}: UserListProps) {
   return (
-    <DataTable
-      stickyHead
-      columns={columns}
-      data={data}
-      tableStyle={{ borderSpacing: "0" }}
-      isLoading={isLoading}
-      usageSection="user-list"
-    />
+    <div className={clsx(className)} {...rest}>
+      <DataTable
+        stickyHead
+        columns={columns}
+        data={data}
+        tableStyle={{ borderSpacing: "0" }}
+        isLoading={isLoading}
+        usageSection="user-list"
+        style={{ maxHeight: "calc(100vh - 12rem)" }}
+      />
+    </div>
   );
 }
