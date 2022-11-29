@@ -1,18 +1,13 @@
 import clsx from "clsx";
 import { useEffect, useState } from "react";
-import { AiFillCheckCircle } from "react-icons/ai";
-import { BsHourglassSplit, BsTrash } from "react-icons/bs";
 import { MdRefresh } from "react-icons/md";
 import { RiFullscreenLine } from "react-icons/ri";
 import { Evidence, updateEvidence } from "../../../api/services/evidence";
-import { Size } from "../../../types";
 import { DeleteConfirmDialog } from "../../DeleteConfirmDialog";
-import { IconButton } from "../../IconButton";
-import { Menu } from "../../Menu";
 import { useIncidentQuery } from "../../../api/query-hooks";
-import { EvidenceView } from "./EvidenceView";
 import EvidenceSelectionModal from "./EvidenceSelectionModal";
-import { toastError } from "../../Toast/toast";
+import IncidentsDefinitionOfDoneItem from "./IncidentsDefinitionOfDoneItem";
+import AddDefinitionOfDoneModal from "../AddDefinitionOfDone/AddDefinitionOfDoneStepper";
 
 type DefinitionOfDoneProps = {
   incidentId: string;
@@ -53,8 +48,9 @@ function AddDefinitionOfDone({ onClick, ...rest }: AddDefinitionOfDoneProps) {
   );
 }
 
-export function DefinitionOfDone({ incidentId }: DefinitionOfDoneProps) {
-  const size = Size.small;
+export function IncidentsDefinitionOfDone({
+  incidentId
+}: DefinitionOfDoneProps) {
   const [openDeleteConfirmDialog, setOpenDeleteConfirmDialog] = useState(false);
   const [evidenceBeingRemoved, setEvidenceBeingRemoved] = useState<Evidence>();
   const [dodEvidences, setDODEvidences] = useState<Evidence[]>([]);
@@ -95,17 +91,6 @@ export function DefinitionOfDone({ incidentId }: DefinitionOfDoneProps) {
     });
   };
 
-  const blukAddEvidencesToDOD = async (selectedEvidences: Evidence[]) => {
-    for (const element of selectedEvidences) {
-      try {
-        await updateEvidence(element.id, {
-          definition_of_done: true
-        });
-      } catch (ex) {}
-    }
-    refetch();
-  };
-
   return (
     <div className="w-full">
       <div className="py-4 border-b border-gray-200">
@@ -127,7 +112,10 @@ export function DefinitionOfDone({ incidentId }: DefinitionOfDoneProps) {
           </span>
         </div>
       </div>
-      <div className="flex max-h-96 overflow-y-auto overflow-x-hidden w-full px-4">
+      {/* add pb-6 to prevent scrollbars from showing when opening menu bar for last item, 
+        the overflow settings are the once preventing z-index on menu from working 
+      */}
+      <div className="flex max-h-96 overflow-y-auto overflow-x-hidden w-full px-4 pb-6">
         <div className="w-full">
           {isLoading && !incident ? (
             <div className="flex items-start py-2 pl-2 pr-2">
@@ -136,54 +124,15 @@ export function DefinitionOfDone({ incidentId }: DefinitionOfDoneProps) {
               </div>
             </div>
           ) : (
-            dodEvidences.map((evidence, index) => {
-              return (
-                <div key={index} className="relative flex items-center py-2">
-                  {evidence.done ? (
-                    <AiFillCheckCircle className="mr-1" />
-                  ) : (
-                    <BsHourglassSplit className="mr-1" />
-                  )}
-                  <div className="min-w-0 flex-1 text-sm ml-2">
-                    <EvidenceView evidence={evidence} size={size} />
-                  </div>
-                  <div className="flex items-center">
-                    <Menu>
-                      <Menu.VerticalIconButton />
-                      <Menu.Items widthClass="w-72">
-                        <Menu.Item
-                          onClick={(e: any) => {
-                            setOpenDeleteConfirmDialog(true);
-                            setEvidenceBeingRemoved(evidence);
-                          }}
-                        >
-                          <div className="cursor-pointer flex w-full">
-                            <IconButton
-                              className="bg-transparent flex items-center"
-                              ovalProps={{
-                                stroke: "blue",
-                                height: "18px",
-                                width: "18px",
-                                fill: "transparent"
-                              }}
-                              icon={
-                                <BsTrash
-                                  className="text-gray-600 border-0 border-l-1 border-gray-200"
-                                  size={18}
-                                />
-                              }
-                            />
-                            <span className="pl-2 text-sm block cursor-pionter">
-                              Remove from Definition of done
-                            </span>
-                          </div>
-                        </Menu.Item>
-                      </Menu.Items>
-                    </Menu>
-                  </div>
-                </div>
-              );
-            })
+            dodEvidences.map((evidence) => (
+              <IncidentsDefinitionOfDoneItem
+                key={evidence.id}
+                evidence={evidence}
+                setEvidenceBeingRemoved={setEvidenceBeingRemoved}
+                setOpenDeleteConfirmDialog={setOpenDeleteConfirmDialog}
+                refetch={refetch}
+              />
+            ))
           )}
           <AddDefinitionOfDone
             className={clsx(
@@ -218,32 +167,16 @@ export function DefinitionOfDone({ incidentId }: DefinitionOfDoneProps) {
             setDODModalOpen(false);
           }
         }}
-        noEvidencesMsg="There are no evidences which are not part of defintion of done"
+        noEvidencesMsg="There are no evidences which are not part of definition of done"
       />
-      <EvidenceSelectionModal
-        title="Add to Definition of done"
-        evidences={nonDODEvidences}
-        open={addToDODModalOpen}
-        actionHandler={(actionType, data) => {
-          if (actionType === "close") {
-            setAddToDODModalOpen(false);
-          } else if (actionType === "cancel") {
-            setAddToDODModalOpen(false);
-          } else if (actionType === "submit") {
-            if (data.length) {
-              blukAddEvidencesToDOD(data);
-              setAddToDODModalOpen(false);
-            } else {
-              toastError("Please select at least one evidence");
-            }
-          }
+      <AddDefinitionOfDoneModal
+        onCloseModal={() => setAddToDODModalOpen(false)}
+        noneDODEvidence={nonDODEvidences}
+        isOpen={addToDODModalOpen}
+        onAddDefinitionOfDone={() => {
+          refetch();
+          setAddToDODModalOpen(false);
         }}
-        enableButtons={{
-          cancel: true,
-          submit: true
-        }}
-        helpHint="Select an item to be included in the definition of done"
-        noEvidencesMsg="There are no evidences which are not part of defintion of done"
       />
     </div>
   );

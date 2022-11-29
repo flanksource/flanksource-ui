@@ -23,6 +23,7 @@ export type Evidence = {
   evidence: Record<string, any>;
   description: string;
   definition_of_done: boolean;
+  script?: string;
   properties: string;
   created_at: string;
   created_by: User;
@@ -80,8 +81,12 @@ export const createEvidence = async (args: Evidence) => {
   );
 };
 
-export const updateEvidence = async (id: string, params: {}) =>
-  resolve(IncidentCommander.patch(`/evidences?id=eq.${id}`, { ...params }));
+export const updateEvidence = async (id: string, params: Partial<Evidence>) =>
+  resolve(
+    IncidentCommander.patch<Evidence[] | null>(`/evidences?id=eq.${id}`, {
+      ...params
+    })
+  );
 
 export const deleteEvidence = async (id: string) =>
   resolve(IncidentCommander.delete(`/evidences?id=eq.${id}`));
