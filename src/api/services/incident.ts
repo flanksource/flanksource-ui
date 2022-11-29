@@ -9,7 +9,9 @@ const AVATAR_INFO = `id,name,avatar`;
 export enum IncidentSeverity {
   Low = "Low",
   Medium = "Medium",
-  High = "High"
+  High = "High",
+  Blocker = "Blocker",
+  Critical = "Critical"
 }
 
 export enum IncidentStatus {

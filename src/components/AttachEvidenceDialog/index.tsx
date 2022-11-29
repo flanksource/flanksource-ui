@@ -142,7 +142,9 @@ const validationSchema = yup
           .oneOf([
             IncidentSeverity.Low,
             IncidentSeverity.Medium,
-            IncidentSeverity.High
+            IncidentSeverity.High,
+            IncidentSeverity.Blocker,
+            IncidentSeverity.Critical
           ]);
       return yup.number().nullable();
     }),

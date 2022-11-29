@@ -1,28 +1,40 @@
 import { AiOutlineClose } from "react-icons/ai";
 import { BsExclamation } from "react-icons/bs";
 import {
+  HiOutlineChevronDoubleDown,
   HiOutlineChevronDoubleUp,
   HiOutlineChevronDown,
-  HiOutlineChevronUp
+  HiOutlineChevronUp,
+  HiOutlineMinus
 } from "react-icons/hi";
 import { RiLightbulbFill } from "react-icons/ri";
 import { IncidentSeverity } from "../api/services/incident";
 
 export const INCIDENT_SEVERITY_OPTIONS = [
   {
-    icon: <HiOutlineChevronDown color="green" />,
+    icon: <HiOutlineChevronDoubleDown color="green" />,
     description: "Low",
     value: IncidentSeverity.Low
   },
   {
-    icon: <HiOutlineChevronUp color="red" />,
+    icon: <HiOutlineChevronDown color="green" />,
     description: "Medium",
     value: IncidentSeverity.Medium
   },
   {
-    icon: <HiOutlineChevronDoubleUp color="red" />,
+    icon: <HiOutlineMinus color="yellow" />,
     description: "High",
     value: IncidentSeverity.High
+  },
+  {
+    icon: <HiOutlineChevronUp color="red" />,
+    description: "Blocker",
+    value: IncidentSeverity.Blocker
+  },
+  {
+    icon: <HiOutlineChevronDoubleUp color="red" />,
+    description: "Critical",
+    value: IncidentSeverity.Critical
   }
 ];
 
