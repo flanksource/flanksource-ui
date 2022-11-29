@@ -1,11 +1,8 @@
+import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { Topology } from "../../context/TopologyPageContext";
 import { Chip } from "../Chip";
 import { typeItems, severityItems } from "../Incidents/data";
-
-type Props = {
-  topology: Pick<Topology, "summary" | "id">;
-};
 
 const chipColorFromIndex = (index: number) => {
   switch (index) {
@@ -22,9 +19,43 @@ const chipColorFromIndex = (index: number) => {
 
 type IncidentSummaryTypes = keyof typeof typeItems;
 
-type IncidentSummarySeverity = keyof typeof severityItems;
+type IncidentSummarySeverity = "Medium" | "Low" | "High";
 
-export default function TopologyCardIncidentSummary({ topology }: Props) {
+type TopologyCardIncidentSummaryItemProps = {
+  severity: IncidentSummarySeverity;
+  value: number;
+  topology: Pick<Topology, "id">;
+  index: number;
+};
+
+function TopologyCardIncidentSummaryItem({
+  severity,
+  value,
+  topology,
+  index
+}: TopologyCardIncidentSummaryItemProps) {
+  const severityObject = useMemo(() => {
+    const severityIndex =
+      severity === "High" ? 2 : severity === "Medium" ? 1 : 0;
+    return severityItems[severityIndex];
+  }, [severity]);
+
+  return (
+    <Link
+      to={`/incidents?severity=${severityObject.value}&component=${topology.id}`}
+    >
+      <Chip color={chipColorFromIndex(index)} text={value} />
+    </Link>
+  );
+}
+
+type TopologyCardIncidentSummaryProps = {
+  topology: Pick<Topology, "summary" | "id">;
+};
+
+export default function TopologyCardIncidentSummary({
+  topology
+}: TopologyCardIncidentSummaryProps) {
   if (!topology.summary?.incidents) {
     return null;
   }
@@ -49,15 +80,12 @@ export default function TopologyCardIncidentSummary({ topology }: Props) {
               {Object.entries(summary).map(
                 ([key, value], i) =>
                   value > 0 && (
-                    <Link
-                      key={key + topology.id}
-                      to={`/incidents?severity=${
-                        severityItems[key as unknown as IncidentSummarySeverity]
-                          .value
-                      }&component=${topology.id}`}
-                    >
-                      <Chip color={chipColorFromIndex(i)} text={value} />
-                    </Link>
+                    <TopologyCardIncidentSummaryItem
+                      index={i}
+                      severity={key as IncidentSummarySeverity}
+                      topology={topology}
+                      value={value}
+                    />
                   )
               )}
             </div>
