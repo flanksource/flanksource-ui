@@ -1,6 +1,6 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 import { IncidentSeverity } from "../../api/services/incident";
-import { INCIDENT_SEVERITY_OPTIONS } from "../../constants/incidentOptions";
+import { severityItems } from "../Incidents/data";
 import { RadioOptionsGroup } from "./index";
 
 export default {
@@ -15,6 +15,6 @@ const Template: ComponentStory<typeof RadioOptionsGroup> = (arg: any) => (
 
 export const Base = Template.bind({});
 Base.args = {
-  options: INCIDENT_SEVERITY_OPTIONS,
+  options: Object.values(severityItems),
   value: IncidentSeverity.High
 };

@@ -27,7 +27,7 @@ export interface NewIncident {
   title: string;
   description: string;
 
-  severity: IncidentSeverity;
+  severity: IncidentSeverity | string;
   type?: string;
   status?: IncidentStatus;
 

@@ -1,18 +1,22 @@
-import {
-  HiOutlineChevronDoubleUp,
-  HiOutlineChevronUp,
-  HiOutlineChevronDown
-} from "react-icons/hi";
 import { IncidentSeverity } from "../../api/services/incident";
+import { severityItems } from "../Incidents/data";
 
-const getSeverity = (severity: IncidentSeverity) => {
+const getSeverity = (severity: IncidentSeverity | string) => {
   switch (severity) {
+    case "Critical":
+    case "4":
+      return severityItems.Critical;
+    case "Blocker":
+    case "3":
+      return severityItems.Blocker;
     case "High":
-      return { icon: <HiOutlineChevronDoubleUp color="red" />, text: "High" };
+    case "2":
+      return severityItems.High;
     case "Medium":
-      return { icon: <HiOutlineChevronUp color="red" />, text: "Medium" };
+    case "1":
+      return severityItems.Medium;
     default:
-      return { icon: <HiOutlineChevronDown color="green" />, text: "Low" };
+      return severityItems.Low;
   }
 };
 
@@ -22,11 +26,11 @@ interface IProps {
 }
 
 export function IncidentSeverityTag({ severity, iconOnly }: IProps) {
-  const { icon, text } = getSeverity(severity);
+  const { icon, value } = getSeverity(severity);
   return (
     <>
       <div className="my-auto">{icon}</div>
-      {!iconOnly && <p className="leading-5  ml-1.5">{text}</p>}
+      {!iconOnly && <p className="leading-5  ml-1.5">{value}</p>}
     </>
   );
 }

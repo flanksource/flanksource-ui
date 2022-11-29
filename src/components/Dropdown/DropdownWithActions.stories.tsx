@@ -1,9 +1,7 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react";
-import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { IncidentSeverity } from "../../api/services/incident";
-import { INCIDENT_SEVERITY_OPTIONS } from "../../constants/incidentOptions";
-import { IItem } from "../../types/IItem";
+import { severityItems } from "../Incidents/data";
 import { TextInput } from "../TextInput";
 import { DropdownWithActions } from "./DropdownWithActions";
 
@@ -19,10 +17,10 @@ const Template: ComponentStory<typeof DropdownWithActions> = (args: any) => {
     formState: { errors },
     getValues,
     watch
-  } = useForm<{ severity: IItem; something: IncidentSeverity }>({
+  } = useForm<{ severity: string; something: IncidentSeverity | string }>({
     defaultValues: {
-      severity: INCIDENT_SEVERITY_OPTIONS[0],
-      something: INCIDENT_SEVERITY_OPTIONS[0].value
+      severity: severityItems.Low.value,
+      something: severityItems.Low.value
     }
   });
 
@@ -55,18 +53,25 @@ const Template: ComponentStory<typeof DropdownWithActions> = (args: any) => {
                 label="Input"
                 value={value}
                 displayValue={(x) => x.description}
-                onChange={(args) => console.log(args) || onChange(args)}
+                displayOption={({ option }) => {
+                  return (
+                    <div className="text-gray-900">
+                      <b>{option.description}</b>
+                    </div>
+                  );
+                }}
+                onChange={(...args) => onChange(...args)}
                 errors={errors}
               />
             );
           }}
         />
       </div>
-      {getValues("severity").value === null && (
+      {getValues("severity") === null && (
         <div className="flex flex-col space-y-4">
           <Controller
             control={control}
-            name="description"
+            name="severity"
             render={({ field }) => {
               const { onChange, value } = field;
               return (
@@ -90,7 +95,7 @@ export const Base = Template.bind({});
 
 Base.args = {
   className: "w-32",
-  items: INCIDENT_SEVERITY_OPTIONS,
+  items: Object.values(severityItems),
   label: "Severity",
   name: "severity",
   displayValue: ({ value }) => value?.description
