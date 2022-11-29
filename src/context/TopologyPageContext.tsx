@@ -36,7 +36,7 @@ export type Topology = {
   summary?: {
     incidents?: Record<
       keyof typeof typeItems,
-      Record<keyof typeof severityItems, number>
+      Record<"High" | "Medium" | "Low", number>
     >;
     insights?: Record<string, any>;
     [key: string]: any;
