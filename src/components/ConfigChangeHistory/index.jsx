@@ -70,6 +70,7 @@ export function ConfigChangeHistory({ data, isLoading, linkConfig }) {
 
   return (
     <DataTable
+      className="w-full"
       columns={linkConfig ? columns.concat(configLinkCol) : columns}
       data={data}
       isLoading={isLoading}
