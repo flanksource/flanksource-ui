@@ -26,6 +26,7 @@ import {
 import { TopologyBreadcrumbs } from "../components/TopologyBreadcrumbs";
 import { ComponentTypesDropdown } from "../components/Dropdown/ComponentTypesDropdown";
 import { ComponentLabelsDropdown } from "../components/Dropdown/ComponentLabelsDropdown";
+import { InfoMessage } from "../components/InfoMessage";
 
 export const allOption = {
   All: {
@@ -346,22 +347,10 @@ export function TopologyPage() {
                 <TopologyCard key={item.id} topology={item} size={size} />
               ))}
               {!topology?.length && (
-                <div className="w-full flex justify-center">
-                  <div className="w-96 mt-16">
-                    <div className="rounded-md bg-gray-100 p-4">
-                      <div className="flex">
-                        <div className="flex-shrink-0">
-                          <BsFillInfoCircleFill />
-                        </div>
-                        <div className="ml-3 flex-1 md:flex md:justify-between">
-                          <p className="text-sm">
-                            There are no components matching this criteria
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <InfoMessage
+                  className="my-8"
+                  message="There are no components matching this criteria"
+                />
               )}
             </div>
           </div>

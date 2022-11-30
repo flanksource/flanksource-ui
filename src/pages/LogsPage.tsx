@@ -95,7 +95,7 @@ export function LogsPage() {
           Logs{topology?.name ? `/${topology.name}` : ""}
         </h1>
       }
-      contentClass={`h-full py-4 px-6 ${logs ? "p-6" : ""}`}
+      contentClass={`h-full p-6`}
       extra={
         <DropdownStandaloneWrapper
           dropdownElem={<TimeRange name="time-range" />}
