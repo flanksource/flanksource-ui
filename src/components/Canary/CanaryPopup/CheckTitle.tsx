@@ -1,20 +1,21 @@
 import clsx from "clsx";
 import React from "react";
+import { HealthCheck } from "../../../types/healthChecks";
 import { usePrevious } from "../../../utils/hooks";
 import { Badge } from "../../Badge";
 import { Icon } from "../../Icon";
 
-type Props = {
-  check: any;
-  size?: "small" | "medium" | "large";
-} & React.HTMLAttributes<HTMLDivElement>;
+type CheckTitleProps = Omit<React.HTMLProps<HTMLDivElement>, "size"> & {
+  check: HealthCheck;
+  size: string;
+};
 
 export function CheckTitle({
   check,
   className,
   size = "large",
   ...rest
-}: Props) {
+}: CheckTitleProps) {
   const prevCheck = usePrevious(check);
   const validCheck = check || prevCheck;
 

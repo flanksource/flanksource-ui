@@ -1,4 +1,4 @@
-import React, { Suspense } from "react";
+import React, { Suspense, useMemo } from "react";
 import { usePrevious } from "../../../utils/hooks";
 import { Badge } from "../../Badge";
 import { AccordionBox } from "../../AccordionBox";
@@ -15,6 +15,7 @@ import { DetailField } from "./DetailField";
 import { Duration } from "../renderers";
 import { DropdownStandaloneWrapper } from "../../Dropdown/StandaloneWrapper";
 import { TimeRange, timeRanges } from "../../Dropdown/TimeRange";
+import { HealthCheck } from "../../../types/healthChecks";
 
 const CanaryStatusChart = React.lazy(() =>
   import("../CanaryStatusChart").then(({ CanaryStatusChart }) => ({
@@ -22,13 +23,15 @@ const CanaryStatusChart = React.lazy(() =>
   }))
 );
 
-export function CheckDetails({ check, timeRange, ...rest }) {
+type CheckDetailsProps = React.HTMLProps<HTMLDivElement> & {
+  check: HealthCheck;
+  timeRange: string;
+};
+
+export function CheckDetails({ check, timeRange, ...rest }: CheckDetailsProps) {
   const prevCheck = usePrevious(check);
   const validCheck = check || prevCheck;
 
-  if (validCheck == null) {
-    return null;
-  }
   const uptimeValue = toFixedIfNecessary(getUptimePercentage(validCheck), 0);
   const validUptime =
     !Number.isNaN(validCheck?.uptime?.passed) &&
@@ -36,32 +39,39 @@ export function CheckDetails({ check, timeRange, ...rest }) {
   const severityValue = validCheck?.severity || "-";
   const statusHistoryList = validCheck?.checkStatuses;
 
-  const details = {
-    Name:
-      validCheck?.name ||
-      validCheck?.canary_name ||
-      validCheck?.endpoint ||
-      "-",
-    Type: validCheck?.type || "-",
-    Labels:
-      validCheck?.labels &&
-      Object.entries(validCheck?.labels).map((entry) => {
-        const key = entry[0];
-        let value = entry[1];
-        if (value === "true" || value === true) {
-          value = "";
-        }
-        return (
-          <Badge className="mr-1 mb-1" key={key} text={key} value={value} />
-        );
-      }),
-    Owner: validCheck?.owner || "-",
-    Interval: validCheck?.interval || "-",
-    Location: validCheck?.location || "-",
-    Schedule: validCheck?.schedule || "-"
-  };
+  const details = useMemo(
+    () => ({
+      Name:
+        validCheck?.name ||
+        validCheck?.canary_name ||
+        validCheck?.endpoint ||
+        "-",
+      Type: validCheck?.type || "-",
+      Labels:
+        validCheck?.labels &&
+        Object.entries(validCheck?.labels).map((entry) => {
+          const key = entry[0];
+          let value = entry[1];
+          if (value === "true" || value === true) {
+            value = "";
+          }
+          return (
+            <Badge className="mr-1 mb-1" key={key} text={key} value={value} />
+          );
+        }),
+      Owner: validCheck?.owner || "-",
+      Interval: validCheck?.interval || "-",
+      Location: validCheck?.location || "-",
+      Schedule: validCheck?.schedule || "-"
+    }),
+    [validCheck]
+  );
 
-  const getHistoryListView = (loading) => {
+  if (validCheck == null) {
+    return null;
+  }
+
+  const getHistoryListView = (loading: boolean) => {
     if (loading) {
       return (
         <div className="h-64 flex items-center justify-center text-gray-400 text-md">
@@ -81,7 +91,7 @@ export function CheckDetails({ check, timeRange, ...rest }) {
       {/* stats section */}
       <div className="flex flex-row flex-wrap mb-2">
         <CheckStat
-          containerClass="w-52 mb-4"
+          containerClassName="w-52 mb-4"
           title="Uptime"
           value={
             !Number.isNaN(uptimeValue)
@@ -103,22 +113,22 @@ export function CheckDetails({ check, timeRange, ...rest }) {
           }
         />
         <CheckStat
-          containerClass="w-40 mb-4"
+          containerClassName="w-40 mb-4"
           title="Latency (95%)"
           value={<Duration ms={validCheck?.latency?.p95} />}
         />
         <CheckStat
-          containerClass="w-40 mb-4"
+          containerClassName="w-40 mb-4"
           title="Latency  (97%)"
           value={<Duration ms={validCheck?.latency?.p97} />}
         />
         <CheckStat
-          containerClass="w-40 mb-4"
+          containerClassName="w-40 mb-4"
           title="Latency  (99%)"
           value={<Duration ms={validCheck?.latency?.p99} />}
         />
         <CheckStat
-          containerClass="w-40 mb-4"
+          containerClassName="w-40 mb-4"
           title="Severity"
           value={capitalizeFirstLetter(severityValue)}
         />
@@ -130,7 +140,7 @@ export function CheckDetails({ check, timeRange, ...rest }) {
           <DropdownStandaloneWrapper
             className="w-48"
             paramKey="checkTimeRange"
-            dropdownElem={<TimeRange />}
+            dropdownElem={<TimeRange name="time-range" />}
             defaultValue={timeRange ?? timeRanges[0].value}
           />
         </div>

@@ -28,6 +28,7 @@ export interface HealthCheckStatus {
   status: boolean;
   time: string;
   duration: number;
+  error?: string;
 }
 
 export interface HealthCheckLatency {

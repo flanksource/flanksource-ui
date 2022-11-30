@@ -1,5 +1,5 @@
 import React from "react";
-import Highlight, { defaultProps } from "prism-react-renderer";
+import Highlight, { defaultProps, Language } from "prism-react-renderer";
 import vsLight from "prism-react-renderer/themes/vsLight";
 
 const Line = ({ getTokenProps, onClick, showLineNo, idx, line, ...props }) => {
@@ -8,7 +8,7 @@ const Line = ({ getTokenProps, onClick, showLineNo, idx, line, ...props }) => {
     <div
       {...props}
       role="button"
-      tabIndex="0"
+      tabIndex={0}
       onClick={onSelect}
       onKeyUp={onSelect}
     >
@@ -33,7 +33,21 @@ const Line = ({ getTokenProps, onClick, showLineNo, idx, line, ...props }) => {
   );
 };
 
-export function JSONViewer({ code, format, showLineNo, selections, onClick }) {
+type JSONViewerProps = {
+  code: string;
+  format: Language;
+  showLineNo?: boolean;
+  onClick?: (idx: any) => void;
+  selections?: Record<string, boolean>;
+};
+
+export function JSONViewer({
+  code,
+  format,
+  showLineNo,
+  selections,
+  onClick = () => {}
+}: JSONViewerProps) {
   return (
     <Highlight {...defaultProps} code={code} theme={vsLight} language={format}>
       {({ className, style, tokens, getLineProps, getTokenProps }) => (
@@ -56,7 +70,6 @@ export function JSONViewer({ code, format, showLineNo, selections, onClick }) {
                 line={line}
               />
             );
-            /* eslint-enable react/jsx-key */
           })}
         </pre>
       )}

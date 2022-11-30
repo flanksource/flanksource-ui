@@ -1,14 +1,29 @@
 import React, { useLayoutEffect, useRef, useState } from "react";
 import { classNames } from "../utils";
 
+type PopupTabsProps = React.HTMLProps<HTMLDivElement> & {
+  tabs: Record<
+    string,
+    {
+      label: string;
+      content: React.ReactNode;
+      class?: string;
+    }
+  >;
+  contentStyle?: React.CSSProperties;
+  shareHeight?: boolean;
+  contentClassName?: string;
+  variant?: string;
+};
+
 export function PopupTabs({
   tabs,
   contentStyle,
   shareHeight = false, // all tab content height would be determined by the tab with the tallest content
-  contentClass,
+  contentClassName,
   variant = "line",
   ...rest
-}) {
+}: PopupTabsProps) {
   const [sharedHeight, setSharedHeight] = useState(0);
   const [selected, setSelected] = useState(Object.keys(tabs)[0]);
 
@@ -78,7 +93,7 @@ export function PopupTabs({
       <div
         style={contentStyle}
         className={classNames(
-          contentClass,
+          contentClassName,
           shareHeight && `relative ${sharedHeight}`
         )}
       >
