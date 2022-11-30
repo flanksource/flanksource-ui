@@ -3,8 +3,20 @@ import { useSearchParams } from "react-router-dom";
 import { useConfigPageContext } from "../../context/ConfigPageContext";
 import { ReactSelectDropdown, StateOption } from "../ReactSelectDropdown";
 
-export function ConfigTagFilterDropdown() {
-  const [params, setParams] = useSearchParams();
+type Props = {
+  onChange?: (value: string | undefined) => void;
+  searchParamKey?: string;
+  value?: string;
+};
+
+export function ConfigTagsDropdown({
+  onChange = () => {},
+  searchParamKey = "tag",
+  value
+}: Props) {
+  const [params, setParams] = useSearchParams({
+    ...(value && { [searchParamKey]: value })
+  });
 
   const {
     configState: { data }
@@ -25,10 +37,14 @@ export function ConfigTagFilterDropdown() {
     <ReactSelectDropdown
       items={configTagItems}
       name="type"
-      onChange={(value) =>
-        setParams({ ...Object.fromEntries(params), tag: value ?? "All" })
-      }
-      value={params.get("tag") ?? "All"}
+      onChange={(value) => {
+        setParams({
+          ...Object.fromEntries(params),
+          [searchParamKey]: value ?? "All"
+        });
+        onChange(value);
+      }}
+      value={params.get(searchParamKey) ?? "All"}
       className="w-auto max-w-[400px]"
       dropDownClassNames="w-auto max-w-[400px] left-0"
       hideControlBorder

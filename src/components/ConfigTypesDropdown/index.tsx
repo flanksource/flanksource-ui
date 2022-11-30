@@ -1,19 +1,27 @@
 import { useQuery } from "@tanstack/react-query";
-import { ComponentProps, useCallback, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { getConfigsTypes, ConfigTypeItem } from "../../api/services/configs";
 import { Icon } from "../Icon";
 import { ReactSelectDropdown } from "../ReactSelectDropdown";
 
-export function ConfigTypeFilterDropdown({
-  ...props
-}: ComponentProps<typeof ReactSelectDropdown>) {
+type Props = {
+  onChange?: (value: string | undefined) => void;
+  searchParamKey?: string;
+  value?: string;
+};
+
+export function ConfigTypesDropdown({
+  onChange = () => {},
+  searchParamKey = "type",
+  value
+}: Props) {
   const { isLoading, data: configTypeOptions } = useQuery(
     ["db", "config_types"],
     getConfigsTypes,
     {
-      select: useCallback((data: ConfigTypeItem[]) => {
-        return data.map((d) => ({
+      select: useCallback((data: ConfigTypeItem[] | null) => {
+        return data?.map((d) => ({
           id: d.config_type,
           value: d.config_type,
           description: d.config_type,
@@ -39,18 +47,23 @@ export function ConfigTypeFilterDropdown({
     [configTypeOptions]
   );
 
-  const [params, setParams] = useSearchParams();
+  const [params, setParams] = useSearchParams({
+    ...(value && { [searchParamKey]: value })
+  });
 
   return (
     <ReactSelectDropdown
-      {...props}
       isLoading={isLoading}
       items={configItemsOptionsItems}
       name="type"
-      onChange={(value) =>
-        setParams({ ...Object.fromEntries(params), type: value ?? "" })
-      }
-      value={params.get("type") ?? "All"}
+      onChange={(value) => {
+        setParams({
+          ...Object.fromEntries(params),
+          [searchParamKey]: value ?? ""
+        });
+        onChange(value);
+      }}
+      value={params.get(searchParamKey) ?? "All"}
       className="w-auto max-w-[400px]"
       dropDownClassNames="w-auto max-w-[400px] left-0"
       hideControlBorder

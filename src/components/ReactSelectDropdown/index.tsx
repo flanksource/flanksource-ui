@@ -1,6 +1,5 @@
 import clsx from "clsx";
 import {
-  ComponentProps,
   FunctionComponent,
   LegacyRef,
   ReactNode,
@@ -180,8 +179,6 @@ export const ReactSelectDropdown = ({
               <Select
                 autoFocus
                 backspaceRemovesValue={false}
-                isLoading={isLoading}
-                isDisabled={isDisabled}
                 components={{
                   DropdownIndicator,
                   IndicatorSeparator: null,
@@ -222,6 +219,8 @@ export const ReactSelectDropdown = ({
                 tabSelectsValue={false}
                 value={valueControlled}
                 getOptionValue={(option: any) => option.value}
+                isLoading={isLoading}
+                isDisabled={isLoading}
               />
             );
           }}

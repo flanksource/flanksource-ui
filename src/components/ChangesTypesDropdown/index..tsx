@@ -8,13 +8,23 @@ import {
 import { Icon } from "../Icon";
 import { ReactSelectDropdown } from "../ReactSelectDropdown";
 
-export function ConfigListFilterByChangesTypesDropdown() {
+type Props = {
+  onChange?: (value: string | undefined) => void;
+  searchParamKey?: string;
+  value?: string;
+};
+
+export function ChangesTypesDropdown({
+  onChange = () => {},
+  searchParamKey = "changesType",
+  value
+}: Props) {
   const { isLoading, data: configTypeOptions } = useQuery(
     ["db", "changes_types"],
     getConfigsChangesTypesFilter,
     {
-      select: useCallback((data: ConfigChangesTypeItem[]) => {
-        return data.map(({ change_type }) => ({
+      select: useCallback((data: ConfigChangesTypeItem[] | null) => {
+        return data?.map(({ change_type }) => ({
           id: change_type,
           value: change_type,
           description: change_type,
@@ -38,17 +48,23 @@ export function ConfigListFilterByChangesTypesDropdown() {
     [configTypeOptions]
   );
 
-  const [params, setParams] = useSearchParams();
+  const [params, setParams] = useSearchParams({
+    ...(value && { [searchParamKey]: value })
+  });
 
   return (
     <ReactSelectDropdown
       isLoading={isLoading}
       items={configItemsOptionsItems}
       name="type"
-      onChange={(value) =>
-        setParams({ ...Object.fromEntries(params), changesType: value ?? "" })
-      }
-      value={params.get("changesType") ?? "All"}
+      onChange={(value) => {
+        setParams({
+          ...Object.fromEntries(params),
+          [searchParamKey]: value ?? ""
+        });
+        onChange(value);
+      }}
+      value={params.get(searchParamKey) ?? "All"}
       className="w-auto max-w-[400px]"
       dropDownClassNames="w-auto max-w-[400px] left-0"
       hideControlBorder

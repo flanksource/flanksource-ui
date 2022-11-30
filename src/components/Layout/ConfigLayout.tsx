@@ -4,8 +4,8 @@ import clsx from "clsx";
 
 import { SearchLayout } from "./search";
 import ConfigDetailsSidePanel from "../ConfigDetailsSidePanel";
-import ConfigsListFilters from "../ConfigsListFilters";
 import { ConfigBreadcrumb } from "../ConfigBreadcrumb";
+import ConfigsListFilterControls from "../ConfigsListFilters";
 
 type Props = {
   showSearchInput?: boolean;
@@ -60,7 +60,7 @@ export function ConfigLayout({
         >
           {isConfigListRoute && (
             <div className="flex flex-row items-center pb-6">
-              <ConfigsListFilters />
+              <ConfigsListFilterControls />
             </div>
           )}
           {tableOptions}

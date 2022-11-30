@@ -140,7 +140,9 @@ export type ConfigTypeItem = {
 };
 
 export const getConfigsTypes = async () => {
-  const res = await IncidentCommander.get<ConfigTypeItem[]>(`/config_types`);
+  const res = await IncidentCommander.get<ConfigTypeItem[] | null>(
+    `/config_types`
+  );
   return res.data;
 };
 
@@ -149,7 +151,7 @@ export type ConfigAnalysisTypeItem = {
 };
 
 export const getConfigsAnalysisTypesFilter = async () => {
-  const res = await IncidentCommander.get<ConfigAnalysisTypeItem[]>(
+  const res = await IncidentCommander.get<ConfigAnalysisTypeItem[] | null>(
     `/analysis_types`
   );
   return res.data;
@@ -160,7 +162,7 @@ export type ConfigChangesTypeItem = {
 };
 
 export const getConfigsChangesTypesFilter = async () => {
-  const res = await IncidentCommander.get<ConfigChangesTypeItem[]>(
+  const res = await IncidentCommander.get<ConfigChangesTypeItem[] | null>(
     `/change_types`
   );
   return res.data;
