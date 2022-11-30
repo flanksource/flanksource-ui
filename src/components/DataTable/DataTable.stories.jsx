@@ -1,9 +1,17 @@
+import { MemoryRouter } from "react-router-dom";
 import { defaultTableColumns } from "../ConfigViewer/columns";
 import { DataTable } from "./index";
 
 export default {
   title: "DataTable",
-  component: DataTable
+  component: DataTable,
+  decorators: [
+    (Story) => (
+      <MemoryRouter>
+        <Story />
+      </MemoryRouter>
+    )
+  ]
 };
 
 const configData = [

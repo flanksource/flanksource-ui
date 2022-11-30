@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { BsFillInfoCircleFill } from "react-icons/bs";
 import { useParams, useSearchParams } from "react-router-dom";
-import { getTopology, getTopologyComponent } from "../api/services/topology";
+import { getTopology } from "../api/services/topology";
 import { SearchLayout } from "../components/Layout";
 import { ReactSelectDropdown } from "../components/ReactSelectDropdown";
 import { schemaResourceTypes } from "../components/SchemaResourcePage/resourceTypes";

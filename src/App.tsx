@@ -35,6 +35,8 @@ import { ConfigPageContextProvider } from "./context/ConfigPageContext";
 import { IncidentPageContextProvider } from "./context/IncidentPageContext";
 import { User } from "./api/services/users";
 import FullPageSkeletonLoader from "./components/SkeletonLoader/FullPageSkeletonLoader";
+import { UsersPage } from "./pages/UsersPage";
+import { HiUsers } from "react-icons/hi";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -59,10 +61,17 @@ export type NavigationItems = typeof navigation;
 const settingsNav = {
   name: "Settings",
   icon: AdjustmentsIcon,
-  submenu: schemaResourceTypes.map((x) => ({
-    ...x,
-    href: `/settings/${x.table}`
-  }))
+  submenu: [
+    {
+      name: "Users",
+      href: "/settings/users",
+      icon: HiUsers
+    },
+    ...schemaResourceTypes.map((x) => ({
+      ...x,
+      href: `/settings/${x.table}`
+    }))
+  ]
 };
 
 export type SettingsNavigationItems = typeof settingsNav;
@@ -97,6 +106,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
       </Route>
 
       <Route path="settings" element={sidebar}>
+        <Route path="users" element={<UsersPage />} />
         {settingsNav.submenu.map((x) => {
           return (
             <Fragment key={x.name}>

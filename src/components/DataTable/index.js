@@ -2,11 +2,12 @@ import clsx from "clsx";
 import { useEffect, useMemo } from "react";
 import { IoChevronForwardOutline } from "react-icons/io5";
 import { TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti";
+import { useSearchParams } from "react-router-dom";
 import { useSortBy, useTable, useGroupBy, useExpanded } from "react-table";
 import { Badge } from "../Badge";
 
 const tableStyles = {
-  tableClass: "table-auto w-full border-l border-r border-b",
+  tableClass: "table-auto w-full",
   theadHeaderClass: " tracking-wider",
   tbodyRowClass: "cursor-pointer text-sm",
   tbodyDataClass: "whitespace-nowrap p-2"
@@ -19,13 +20,50 @@ export const DataTable = ({
   tableStyle,
   stickyHead,
   isLoading,
-  setSortOptions,
-  sortBy,
   groupBy,
   hiddenColumns,
   className,
+  usageSection,
   ...rest
 }) => {
+  const [queryParams, setQueryParams] = useSearchParams({
+    sortBy: "",
+    sortOrder: ""
+  });
+
+  const sortField = queryParams.get("sortBy");
+  const isSortOrderDesc =
+    queryParams.get("sortOrder") === "desc" ? true : false;
+
+  const setSortBy = (field, order) => {
+    if (field === undefined && order === undefined) {
+      queryParams.delete("sortBy");
+      queryParams.delete("sortOrder");
+    } else {
+      queryParams.set("sortBy", field);
+      queryParams.set("sortOrder", order);
+    }
+    setQueryParams(queryParams);
+  };
+
+  const sortBy = useMemo(() => {
+    const data = sortField
+      ? [
+          {
+            id: sortField,
+            desc: isSortOrderDesc
+          }
+        ]
+      : [];
+    if (sortField === "config_type" && usageSection === "config-list") {
+      data.push({
+        id: "name",
+        desc: isSortOrderDesc
+      });
+    }
+    return data;
+  }, [sortField, isSortOrderDesc, usageSection]);
+
   const tableInstance = useTable(
     {
       columns,
@@ -71,11 +109,11 @@ export const DataTable = ({
     if (!column.canSort) return;
     const { isSorted, isSortedDesc, id } = column;
     if (isSorted && isSortedDesc) {
-      setSortOptions();
+      setSortBy();
     } else if (!isSorted) {
-      setSortOptions(id, "asc");
+      setSortBy(id, "asc");
     } else {
-      setSortOptions(id, "desc");
+      setSortBy(id, "desc");
     }
   };
 
