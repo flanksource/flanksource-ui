@@ -153,5 +153,6 @@ const Template = (arg) => <LogsViewer {...arg} />;
 export const Variant1 = Template.bind({});
 Variant1.args = {
   logs: logsExample,
+  componentId: "123456",
   loadingState: "idle"
 };

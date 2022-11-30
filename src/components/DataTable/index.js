@@ -7,7 +7,7 @@ import { useSortBy, useTable, useGroupBy, useExpanded } from "react-table";
 import { Badge } from "../Badge";
 
 const tableStyles = {
-  tableClass: "table-auto w-full border-l border-r border-b",
+  tableClass: "table-auto w-full",
   theadHeaderClass: " tracking-wider",
   tbodyRowClass: "cursor-pointer text-sm",
   tbodyDataClass: "whitespace-nowrap p-2"
