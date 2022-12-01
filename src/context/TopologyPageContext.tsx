@@ -1,6 +1,6 @@
 import React, { useState, createContext, useContext } from "react";
 import { URLSearchParamsInit } from "react-router-dom";
-import { severityItems, typeItems } from "../components/Incidents/data";
+import { typeItems } from "../components/Incidents/data";
 
 export type ValueType = number | string | Date;
 

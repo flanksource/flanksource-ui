@@ -7,9 +7,9 @@ import { User } from "./users";
 const AVATAR_INFO = `id,name,avatar`;
 
 export enum IncidentSeverity {
-  Low = "low",
-  Medium = "medium",
-  High = "high"
+  Low = "Low",
+  Medium = "Medium",
+  High = "High"
 }
 
 export enum IncidentStatus {
