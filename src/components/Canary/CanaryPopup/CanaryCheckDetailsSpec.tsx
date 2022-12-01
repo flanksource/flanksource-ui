@@ -33,6 +33,7 @@ export function CanaryCheckDetailsSpecTab({ check }: CanaryCheckDetailsProps) {
         code={code ?? ""}
         format={"json"}
         showLineNo
+        convertToYaml
         // onClick={handleClick}
         // selections={checked}
       />

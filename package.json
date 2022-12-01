@@ -61,6 +61,7 @@
     "typescript": "^4.7.2",
     "uuid": "^8.3.2",
     "web-vitals": "^2.1.4",
+    "yaml": "^2.1.3",
     "yup": "^0.32.11"
   },
   "dependecyComments": {
