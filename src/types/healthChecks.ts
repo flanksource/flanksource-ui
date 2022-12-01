@@ -21,6 +21,7 @@ export interface HealthCheck {
   createdAt: string;
   description?: string;
   deletedAt?: string;
+  source?: string;
 }
 
 export interface HealthCheckStatus {

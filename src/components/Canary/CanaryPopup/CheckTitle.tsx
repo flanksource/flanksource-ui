@@ -6,7 +6,6 @@ import { Icon } from "../../Icon";
 
 type Props = {
   check: any;
-  className?: string;
   size?: "small" | "medium" | "large";
 } & React.HTMLAttributes<HTMLDivElement>;
 

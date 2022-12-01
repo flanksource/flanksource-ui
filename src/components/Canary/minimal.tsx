@@ -12,6 +12,7 @@ import { AttachEvidenceDialog } from "../AttachEvidenceDialog";
 import { isCanaryUI } from "../../context/Environment";
 import { toastError } from "../Toast/toast";
 import dayjs from "dayjs";
+import { HealthCheckEdit } from "./HealthCheckEdit";
 import { HealthCheck } from "../../types/healthChecks";
 
 const getStartValue = (start: string) => {
@@ -138,6 +139,9 @@ const MinimalCanaryFC = ({
             className={`flex flex-col overflow-y-hidden ${mixins.appleScrollbar}`}
           />
           <div className="rounded-t-lg flex space-x-2 bg-gray-100 px-8 py-4 justify-end absolute w-full bottom-0 left-0">
+            {selectedCheck?.canary_id && (
+              <HealthCheckEdit check={selectedCheck as HealthCheck} />
+            )}
             {!isCanaryUI && (
               <button
                 className="btn-primary float-right"
