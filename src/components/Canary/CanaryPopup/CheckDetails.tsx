@@ -1,6 +1,5 @@
 import React, { Suspense, useMemo } from "react";
 import { usePrevious } from "../../../utils/hooks";
-import { Badge } from "../../Badge";
 import { AccordionBox } from "../../AccordionBox";
 import {
   capitalizeFirstLetter,
@@ -16,6 +15,10 @@ import { Duration } from "../renderers";
 import { DropdownStandaloneWrapper } from "../../Dropdown/StandaloneWrapper";
 import { TimeRange, timeRanges } from "../../Dropdown/TimeRange";
 import { HealthCheck } from "../../../types/healthChecks";
+import { CanaryCheckDetailsLabel } from "./CanaryCheckDetailsLabel";
+import { relativeDateTime } from "../../../utils/date";
+import CanaryCheckDetailsUptime from "./CanaryCheckDetailsUptime";
+import { CanaryCheckDetailsSpecTab } from "./CanaryCheckDetailsSpec";
 
 const CanaryStatusChart = React.lazy(() =>
   import("../CanaryStatusChart").then(({ CanaryStatusChart }) => ({
@@ -39,7 +42,7 @@ export function CheckDetails({ check, timeRange, ...rest }: CheckDetailsProps) {
   const severityValue = validCheck?.severity || "-";
   const statusHistoryList = validCheck?.checkStatuses;
 
-  const details = useMemo(
+  const details: Record<string, React.ReactNode> = useMemo(
     () => ({
       Name:
         validCheck?.name ||
@@ -47,22 +50,22 @@ export function CheckDetails({ check, timeRange, ...rest }: CheckDetailsProps) {
         validCheck?.endpoint ||
         "-",
       Type: validCheck?.type || "-",
-      Labels:
-        validCheck?.labels &&
-        Object.entries(validCheck?.labels).map((entry) => {
-          const key = entry[0];
-          let value = entry[1];
-          if (value === "true" || value === true) {
-            value = "";
-          }
-          return (
-            <Badge className="mr-1 mb-1" key={key} text={key} value={value} />
-          );
-        }),
+      Labels: <CanaryCheckDetailsLabel check={validCheck} />,
       Owner: validCheck?.owner || "-",
       Interval: validCheck?.interval || "-",
       Location: validCheck?.location || "-",
-      Schedule: validCheck?.schedule || "-"
+      Schedule: validCheck?.schedule || "-",
+      Status: validCheck?.status || "-",
+      "Last Runtime": validCheck?.lastRuntime
+        ? relativeDateTime(validCheck.lastRuntime)
+        : "-",
+      Uptime: <CanaryCheckDetailsUptime uptime={validCheck?.uptime} />,
+      "Created At": validCheck?.createdAt
+        ? relativeDateTime(validCheck.createdAt)
+        : "-",
+      "Updated At": validCheck?.updatedAt
+        ? relativeDateTime(validCheck.updatedAt)
+        : "-"
     }),
     [validCheck]
   );
@@ -175,7 +178,7 @@ export function CheckDetails({ check, timeRange, ...rest }: CheckDetailsProps) {
                 {statusHistoryList && statusHistoryList.length > 0 ? (
                   <StatusHistory check={validCheck} sticky />
                 ) : (
-                  getHistoryListView(check.loading)
+                  getHistoryListView(check.loading ?? false)
                 )}
               </div>
             ),
@@ -202,6 +205,11 @@ export function CheckDetails({ check, timeRange, ...rest }: CheckDetailsProps) {
                 />
               </div>
             ),
+            class: `flex flex-col overflow-y-auto  border border-gray-300 ${mixins.appleScrollbar}`
+          },
+          specs: {
+            label: "Spec",
+            content: <CanaryCheckDetailsSpecTab check={validCheck} />,
             class: `flex flex-col overflow-y-auto  border border-gray-300 ${mixins.appleScrollbar}`
           }
         }}
