@@ -3,6 +3,7 @@ import { TiSortAlphabeticallyOutline } from "react-icons/ti";
 import { AiOutlineAlignLeft } from "react-icons/ai";
 import { getLabelSelections } from "./lib/lists";
 import { ReactSelectDropdown } from "../ReactSelectDropdown";
+import { ComponentProps } from "react";
 
 const defaultGroupSelections = {
   "no-group": {
@@ -43,7 +44,11 @@ const defaultGroupSelections = {
   }
 };
 
-export function GroupByDropdown({ checks, ...rest }) {
+type Props = {
+  checks?: Array<any>;
+} & ComponentProps<typeof ReactSelectDropdown>;
+
+export function GroupByDropdown({ checks, ...rest }: Props) {
   const items = getLabelSelections(checks, defaultGroupSelections);
   return <ReactSelectDropdown {...rest} items={items} />;
 }

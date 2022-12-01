@@ -1,8 +1,15 @@
-import React, { useState, createContext, useContext } from "react";
+import React, {
+  useState,
+  createContext,
+  useContext,
+  Dispatch,
+  SetStateAction
+} from "react";
 import { URLSearchParamsInit } from "react-router-dom";
+import { HealthCheck } from "../types/healthChecks";
 
 export type HealthState = {
-  checks: any[] | null;
+  checks: HealthCheck[] | null;
   filteredChecks: any[];
   filteredLabels: any;
   passing: {
@@ -14,7 +21,7 @@ export type HealthState = {
 
 export type HealthPageState = {
   healthState: HealthState;
-  setHealthState: ({ ...props }: HealthState) => any;
+  setHealthState: Dispatch<SetStateAction<HealthState>>;
 };
 
 const initialState: HealthPageState = {

@@ -11,10 +11,10 @@ import { EvidenceType } from "../../api/services/evidence";
 import { AttachEvidenceDialog } from "../AttachEvidenceDialog";
 import { isCanaryUI } from "../../context/Environment";
 import { toastError } from "../Toast/toast";
-import { searchParamsToObj } from "../../utils/common";
 import dayjs from "dayjs";
+import { HealthCheck } from "../../types/healthChecks";
 
-const getStartValue = (start) => {
+const getStartValue = (start: string) => {
   if (!start.includes("mo")) {
     return start;
   }
@@ -24,18 +24,25 @@ const getStartValue = (start) => {
     .toISOString();
 };
 
+type MinimalCanaryFCProps = {
+  checks?: HealthCheck[];
+  labels?: any[];
+  selectedTab?: string;
+  tableHeadStyle?: any;
+};
+
 const MinimalCanaryFC = ({
   checks,
   labels,
   selectedTab,
   tableHeadStyle = {}
-}) => {
+}: MinimalCanaryFCProps) => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const { tabBy, layout, timeRange, checkId, checkTimeRange } =
     Object.fromEntries(searchParams.entries());
   const currentTimeRange = checkTimeRange ?? timeRange;
-  const [selectedCheck, setSelectedCheck] = useState(null);
+  const [selectedCheck, setSelectedCheck] = useState<Partial<HealthCheck>>();
   const [attachAsAsset, setAttachAsAsset] = useState(false);
 
   useEffect(() => {
@@ -44,7 +51,7 @@ const MinimalCanaryFC = ({
     }
   }, [checkId]);
 
-  const handleCheckSelect = (check) => {
+  const handleCheckSelect = (check: Pick<HealthCheck, "id">) => {
     const payload = {
       check: check.id,
       includeMessages: true,
@@ -52,21 +59,21 @@ const MinimalCanaryFC = ({
     };
     const data = {
       ...check,
-      checkStatuses: null,
-      latency: null,
-      uptime: null,
+      checkStatuses: undefined,
+      latency: undefined,
+      uptime: undefined,
       loading: true
     };
     setSelectedCheck(data);
     getCanaries(payload).then((results) => {
       if (results == null || results.data.checks.length === 0) {
         toastError("There is no recent checks data");
-        setSelectedCheck(null);
+        setSelectedCheck(undefined);
         return;
       }
       if (results?.data?.checks?.[0]?.id) {
         setSearchParams({
-          ...searchParamsToObj(searchParams),
+          ...Object.fromEntries(searchParams.entries()),
           checkId: results.data.checks[0].id,
           checkTimeRange: currentTimeRange
         });
@@ -76,13 +83,10 @@ const MinimalCanaryFC = ({
   };
 
   function clearCheck() {
-    setSelectedCheck(null);
-
-    const newSearchParams = {
-      ...searchParamsToObj(searchParams)
-    };
-    const { checkId, checkTimeRange, ...removedSearchParams } = newSearchParams;
-    setSearchParams(removedSearchParams);
+    setSelectedCheck(undefined);
+    searchParams.delete("checkId");
+    searchParams.delete("checkTimeRange");
+    setSearchParams(searchParams);
   }
 
   return (
@@ -114,7 +118,7 @@ const MinimalCanaryFC = ({
           start: timeRange
         }}
         type={EvidenceType.Check}
-        callback={(success) => {
+        callback={(success: boolean) => {
           console.log(success);
         }}
       />
@@ -123,7 +127,6 @@ const MinimalCanaryFC = ({
         onClose={() => clearCheck()}
         title={<CheckTitle check={selectedCheck} />}
         size="medium"
-        hideActions
       >
         <div
           className="flex flex-col h-full py-4 mb-16"
@@ -134,7 +137,7 @@ const MinimalCanaryFC = ({
             timeRange={currentTimeRange}
             className={`flex flex-col overflow-y-hidden ${mixins.appleScrollbar}`}
           />
-          <div className="rounded-t-lg justify-between bg-gray-100 px-8 py-4 items-end absolute w-full bottom-0 left-0">
+          <div className="rounded-t-lg flex space-x-2 bg-gray-100 px-8 py-4 justify-end absolute w-full bottom-0 left-0">
             {!isCanaryUI && (
               <button
                 className="btn-primary float-right"

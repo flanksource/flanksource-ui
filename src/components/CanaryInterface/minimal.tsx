@@ -9,17 +9,25 @@ import {
   getLabels
 } from "../Canary/labels";
 import { CanarySorter } from "../Canary/data";
-import { decodeUrlSearchParams } from "../Canary/url";
+import { useSearchParams } from "react-router-dom";
+import { HealthCheck } from "../../types/healthChecks";
+
+type Props = {
+  checks?: HealthCheck[];
+  onFilterCallback?: (checks: HealthCheck[]) => void;
+  onLabelFiltersCallback?: (labels: Record<string, any>) => void;
+};
 
 const CanaryInterfaceMinimalFC = ({
   checks = [],
-  searchParams,
   onFilterCallback,
   onLabelFiltersCallback
-}) => {
+}: Props) => {
+  const [searchParams] = useSearchParams();
+
   const [filteredChecks, setFilteredChecks] = useState(checks);
   const [checksForTabGeneration, setChecksForTabGeneration] = useState(checks);
-  const [selectedTab, setSelectedTab] = useState(null);
+  const [selectedTab, setSelectedTab] = useState<string>();
 
   // check filtering on checks/tab/params change.
   useEffect(() => {
@@ -28,7 +36,7 @@ const CanaryInterfaceMinimalFC = ({
       tabBy,
       query,
       hidePassing
-    } = decodeUrlSearchParams(searchParams);
+    } = Object.fromEntries(searchParams.entries());
 
     if (checks?.length > 0) {
       let filtered = filterChecks(checks, hidePassing, []); // first filter for pass/fail
@@ -36,6 +44,7 @@ const CanaryInterfaceMinimalFC = ({
       if (onLabelFiltersCallback) {
         onLabelFiltersCallback(getLabels(filtered));
       }
+      /* @ts-expect-error */
       const labelFilters = getLabelFilters(urlLabels, getLabels(checks)); // get include/exclude filters from url state
       filtered = Object.values(filterChecksByLabels(filtered, labelFilters)); // filters checks by its 'include/exclude' filters
       setChecksForTabGeneration(filtered);
@@ -60,7 +69,7 @@ const CanaryInterfaceMinimalFC = ({
         className=""
         // style={tabsStyle}
         checks={checksForTabGeneration}
-        tabBy={decodeUrlSearchParams(searchParams)?.tabBy}
+        tabBy={searchParams.get("tabBy")}
         setTabSelection={setSelectedTab}
       />
       <MinimalCanary
