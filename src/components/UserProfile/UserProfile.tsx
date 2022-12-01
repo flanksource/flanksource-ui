@@ -14,10 +14,7 @@ export function UserProfile() {
 
   const { user } = useUser();
 
-  const userNavigation = [
-    { name: "Your Profile", href: "#" },
-    { name: "Settings", href: "#" }
-  ];
+  const userNavigation = [{ name: "Your Profile", href: "/profile-settings" }];
 
   return (
     <>
