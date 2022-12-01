@@ -1,5 +1,16 @@
 import React from "react";
 
+type BadgeProps = {
+  text: string;
+  value?: string;
+  size?: "sm" | "md";
+  dot?: string;
+  title?: string;
+  className?: string;
+  colorClass?: string;
+  roundedClass?: string;
+};
+
 const BadgeFC = ({
   text,
   value,
@@ -9,7 +20,7 @@ const BadgeFC = ({
   className,
   colorClass = "bg-blue-100 text-blue-800",
   roundedClass = "rounded"
-}) => {
+}: BadgeProps) => {
   let spanClassname = "text-xs px-1.5";
   let svgClassName = "-ml-0.5 mr-1.5 h-2 w-2";
   if (size === "sm") {

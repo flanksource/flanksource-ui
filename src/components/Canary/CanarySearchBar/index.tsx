@@ -2,6 +2,17 @@ import { SearchIcon } from "@heroicons/react/solid";
 import { Controller, useForm } from "react-hook-form";
 import { IoCloseCircle } from "react-icons/io5";
 
+type Props = {
+  className?: string;
+  onSubmit: (data: any) => void;
+  inputClassName?: string;
+  inputOuterClassName?: string;
+  onClear?: () => void;
+  placeholder?: string;
+  hideClearButton?: boolean;
+  defaultValue?: string;
+} & React.InputHTMLAttributes<HTMLFormElement>;
+
 export function CanarySearchBar({
   className,
   onSubmit,
@@ -12,7 +23,7 @@ export function CanarySearchBar({
   hideClearButton = false,
   defaultValue,
   ...rest
-}) {
+}: Props) {
   const { handleSubmit, control, setValue, watch } = useForm();
   const textValue = watch("CanarySearchTextbox");
 

@@ -50,9 +50,9 @@ const getStartValue = (start: string) => {
     .toISOString();
 };
 
-const getPassingCount = (checks) => {
+const getPassingCount = (checks: any) => {
   let count = 0;
-  checks.forEach((check) => {
+  checks.forEach((check: any) => {
     if (isHealthy(check)) {
       count += 1;
     }
@@ -97,7 +97,7 @@ export function Canary({
   const timerRef = useRef<NodeJS.Timer>();
   const abortController = useRef<AbortController>();
 
-  const labelUpdateCallback = useCallback((newLabels) => {
+  const labelUpdateCallback = useCallback((newLabels: any) => {
     setHealthState((state) => {
       return {
         ...state,
@@ -130,7 +130,7 @@ export function Canary({
     });
   }, [filteredChecks, setHealthState]);
 
-  const updateFilteredChecks = useCallback((newFilteredChecks) => {
+  const updateFilteredChecks = useCallback((newFilteredChecks: any[]) => {
     setHealthState((state) => {
       return {
         ...state,
@@ -200,7 +200,7 @@ export function Canary({
     updateParams({ query: value });
   }, 400);
 
-  if (isLoading && !checks.length) {
+  if (isLoading && !checks?.length) {
     return <HealthPageSkeletonLoader showSidebar />;
   }
 
@@ -211,7 +211,6 @@ export function Canary({
         isCanaryUI ? " h-screen overflow-y-auto" : ""
       )}
     >
-      {/* @ts-expect-error */}
       <SidebarSticky topHeight={topLayoutOffset}>
         <div className="mb-4">
           {/* @ts-expect-error */}
@@ -303,13 +302,13 @@ export function Canary({
               inputClassName="w-full py-2 mr-2 mb-px"
               inputOuterClassName="w-full"
               placeholder="Search by name, description, or endpoint"
-              defaultValue={searchParams?.query}
+              defaultValue={searchParams.get("query") ?? ""}
             />
           </div>
           <div className="flex-1 flex justify-end">
             <div className="mb-2 mr-2">
               <DropdownStandaloneWrapper
-                dropdownElem={<GroupByDropdown />}
+                dropdownElem={<GroupByDropdown name="groupBy" />}
                 checks={checks}
                 defaultValue="canary_name"
                 paramKey="groupBy"
@@ -323,7 +322,7 @@ export function Canary({
             </div>
             <div className="mb-2 mr-2">
               <DropdownStandaloneWrapper
-                dropdownElem={<TabByDropdown />}
+                dropdownElem={<TabByDropdown name="tabBy" />}
                 defaultValue={defaultTabSelections.namespace.value}
                 paramKey="tabBy"
                 checks={checks}
@@ -340,8 +339,7 @@ export function Canary({
         </div>
         <div className="pb-4">
           <CanaryInterfaceMinimal
-            checks={checks}
-            searchParams={searchParams}
+            checks={checks ?? undefined}
             onLabelFiltersCallback={labelUpdateCallback}
             onFilterCallback={updateFilteredChecks}
           />
@@ -352,7 +350,8 @@ export function Canary({
 }
 
 export const LabelFilterList = ({ labels }: { labels: any }) => {
-  const [list, setList] = useState({});
+  const [list, setList] = useState<Record<any, any>>({});
+
   useEffect(() => {
     if (labels) {
       const [bl, nbl] = separateLabelsByBooleanType(Object.values(labels));
@@ -367,6 +366,7 @@ export const LabelFilterList = ({ labels }: { labels: any }) => {
       setList(mergedLabels);
     }
   }, [labels]);
+
   return (
     <div>
       {Object.entries(list)
@@ -376,16 +376,15 @@ export const LabelFilterList = ({ labels }: { labels: any }) => {
             {labels.length > 1 ? (
               <>
                 <div className="text-xs whitespace-nowrap overflow-ellipsis w-full overflow-hidden mb-1">
+                  {/* @ts-expect-error */}
                   {FilterKeyToLabelMap[labelKey] || labelKey}
                 </div>
-                <MultiSelectLabelsDropdownStandalone
-                  labels={labels}
-                  selectAllByDefault
-                />
+                <MultiSelectLabelsDropdownStandalone labels={labels} />
               </>
             ) : labels.length === 1 ? (
               <div className="flex w-full mb-3">
                 <div className="mr-3 w-full text-xs text-left text-gray-700 break-all overflow-ellipsis overflow-x-hidden flex items-center">
+                  {/* @ts-expect-error */}
                   {FilterKeyToLabelMap[labels[0].key] || labels[0].key}
                 </div>
                 <TristateLabelStandalone
@@ -415,8 +414,8 @@ export const HidePassingToggle = ({ defaultValue = true }) => {
     updateParams({ hidePassing: value });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
   return (
-    /* @ts-expect-error */
     <Toggle
       value={value}
       onChange={(val: boolean) => {
@@ -527,10 +526,9 @@ export const TristateLabelStandalone = ({
   }, []);
 
   return (
-    /* @ts-expect-error */
     <TristateToggle
       value={toggleState}
-      onChange={(v: string) => handleToggleChange(v)}
+      onChange={(v: string | number) => handleToggleChange(v)}
       className={className}
       labelClass={labelClass}
       label={label}
@@ -581,7 +579,6 @@ export const TristateLabels = ({ labels = [] }: { labels: any[] }) => {
         .filter((o) => o && o !== undefined)
         .map((label) => (
           <div key={label.id}>
-            {/* @ts-expect-error */}
             <TristateToggle
               key={label.key}
               value={

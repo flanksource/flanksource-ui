@@ -4,7 +4,17 @@ import { usePrevious } from "../../../utils/hooks";
 import { Badge } from "../../Badge";
 import { Icon } from "../../Icon";
 
-export function CheckTitle({ check, className, size = "large", ...rest }) {
+type Props = {
+  check: any;
+  size?: "small" | "medium" | "large";
+} & React.HTMLAttributes<HTMLDivElement>;
+
+export function CheckTitle({
+  check,
+  className,
+  size = "large",
+  ...rest
+}: Props) {
   const prevCheck = usePrevious(check);
   const validCheck = check || prevCheck;
 

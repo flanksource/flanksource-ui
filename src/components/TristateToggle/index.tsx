@@ -3,20 +3,29 @@ import { BiCheck, BiX } from "react-icons/bi";
 import { BsDot } from "react-icons/bs";
 import style from "./index.module.css";
 
+type Props = {
+  onChange: (value: string) => void;
+  value: string | number;
+  label: Record<string, string>;
+  labelClass?: string;
+  hideLabel?: boolean;
+  className?: string;
+};
+
 export function TristateToggle({
-  onChange,
+  onChange = (value: any) => {},
   value,
   label,
   labelClass,
   hideLabel,
   className
-}) {
+}: Props) {
   const states = [0, 1, -1];
   const colors = ["#e5e7eb", "#e05858", "#58b358"];
   const fgColors = ["#909090", "#fafafa", "#fafafa"];
 
   const [stateValue, setValue] = useState(value || states[0]);
-  const [position, setPosition] = useState(undefined);
+  const [position, setPosition] = useState<string>();
   const [bgColor, setBgColor] = useState(colors[0]);
   const [fgColor, setFgColor] = useState(fgColors[0]);
 
@@ -30,12 +39,14 @@ export function TristateToggle({
 
   useEffect(() => {
     // trigger onChange callback on stateValue change
-    onChange(stateValue);
+    onChange(
+      typeof stateValue === "number" ? stateValue.toString() : stateValue
+    );
     updateButton(stateValue);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stateValue]);
 
-  function updateButton(stateValue) {
+  function updateButton(stateValue: string | number) {
     // map and update position, bgColor, and tooltip text
     let pos;
     let colorIndex;
@@ -102,7 +113,7 @@ export function TristateToggle({
       {states.map((state) => (
         <input
           name={label.id}
-          onChange={onChange}
+          onChange={(target) => onChange(target.target.value)}
           className="hidden"
           key={state}
           type="radio"

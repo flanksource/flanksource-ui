@@ -1,16 +1,31 @@
 /* This example requires Tailwind CSS v2.0+ */
 import { Switch } from "@headlessui/react";
 
-function classNames(...classes) {
+function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-export function Toggle({ value = false, className, label, help, onChange }) {
+type Props = {
+  className?: string;
+  value?: boolean;
+  onChange?: (value: boolean) => void;
+  help?: string;
+  label?: string;
+};
+
+export function Toggle({
+  value = false,
+  className,
+  label,
+  help,
+  onChange = () => {}
+}: Props) {
   return (
     <Switch.Group
       as="div"
       className={`flex items-center break-all ${className}`}
     >
+      {/* @ts-expect-error */}
       <Switch
         checked={value}
         onChange={onChange}

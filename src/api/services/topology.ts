@@ -1,6 +1,7 @@
 import { stringify } from "qs";
 import { CanaryChecker, IncidentCommander } from "../axios";
 import { TopologyComponentItem } from "../../components/FilterIncidents/FilterIncidentsByComponents";
+import { HealthCheck } from "../../types/healthChecks";
 
 interface IParam {
   id: string;
@@ -39,12 +40,16 @@ export const getTopologyWithoutUnroll = async (params: IParam) => {
   });
 };
 
-export const getCanaryGraph = async (params) => {
+export const getCanaryGraph = async (
+  params: Record<string, string | number | boolean>
+) => {
   const query = stringify(params);
   return CanaryChecker.get(`/api/graph?${query}`);
 };
 
-export const getCanaries = async (params) => {
+export const getCanaries = async (
+  params: Record<string, string | number | boolean>
+) => {
   const query = stringify(params);
   return CanaryChecker.get(`/api?${query}`);
 };
@@ -65,5 +70,33 @@ export const getTopologyComponentLabels = () => {
 };
 
 export const getTopologyComponent = (id: string) => {
-  return IncidentCommander.get(`/component_names?id=eq.${id}`);
+  return IncidentCommander.get<TopologyComponentItem[]>(
+    `/component_names?id=eq.${id}`
+  );
+};
+
+export type ComponentTemplateItem = {
+  id: string;
+  name: string;
+  namespace: string;
+  labels: Record<string, string>;
+  spec: any;
+  created_at: string;
+  updated_at: string;
+  schedule: string;
+  deleted_at: string;
+};
+
+export const getComponentTemplate = async (id: string) => {
+  const res = await IncidentCommander.get<ComponentTemplateItem[] | null>(
+    `/templates?id=eq.${id}`
+  );
+  return res.data?.[0];
+};
+
+export const getHealthCheckItem = async (id: string) => {
+  const res = await IncidentCommander.get<HealthCheck[] | null>(
+    `/canaries?id=eq.${id}`
+  );
+  return res.data?.[0];
 };
