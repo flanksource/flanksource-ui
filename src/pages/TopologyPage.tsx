@@ -1,12 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
 import { BsFillInfoCircleFill } from "react-icons/bs";
 import { useParams, useSearchParams } from "react-router-dom";
-import { getTopology } from "../api/services/topology";
+import {
+  getTopology,
+  updateComponentVisibility
+} from "../api/services/topology";
 import { SearchLayout } from "../components/Layout";
 import { ReactSelectDropdown } from "../components/ReactSelectDropdown";
 import { schemaResourceTypes } from "../components/SchemaResourcePage/resourceTypes";
 import CardsSkeletonLoader from "../components/SkeletonLoader/CardsSkeletonLoader";
-import { toastError } from "../components/Toast/toast";
+import { toastError, toastSuccess } from "../components/Toast/toast";
 import { TopologyCard } from "../components/TopologyCard";
 import { TopologyPopOver } from "../components/TopologyPopover";
 import { getCardWidth } from "../components/TopologyPopover/topologyPreference";
@@ -27,6 +30,7 @@ import { TopologyBreadcrumbs } from "../components/TopologyBreadcrumbs";
 import { ComponentTypesDropdown } from "../components/Dropdown/ComponentTypesDropdown";
 import { ComponentLabelsDropdown } from "../components/Dropdown/ComponentLabelsDropdown";
 import { InfoMessage } from "../components/InfoMessage";
+import { Toggle } from "../components";
 
 export const allOption = {
   All: {
@@ -112,6 +116,8 @@ export function TopologyPage() {
   const [healthStatus, setHealthStatus] = useState(
     searchParams.get("status") ?? "All"
   );
+  const showHiddenComponents =
+    searchParams.get("showHiddenComponents") !== "no";
   const refererId = searchParams.get("refererId");
   const topology = topologyState.topology;
   const sortLabels = useMemo(() => {
@@ -152,7 +158,8 @@ export function TopologyPage() {
         labels: params.labels,
         // only flatten, if topology type is set
         ...(params.type &&
-          params.type.toString().toLowerCase() !== "all" && { flatten: true })
+          params.type.toString().toLowerCase() !== "all" && { flatten: true }),
+        hidden: params.showHiddenComponents === "no" ? false : undefined
       };
       // @ts-ignore
       const res = await getTopology(apiParams);
@@ -243,6 +250,24 @@ export function TopologyPage() {
       });
   }, []);
 
+  const updateVisibility = async (
+    topologyId: string,
+    updatedVisibility: boolean
+  ) => {
+    try {
+      const { data } = await updateComponentVisibility(
+        topologyId,
+        updatedVisibility
+      );
+      if (data) {
+        toastSuccess(`Component visibility updated successfully`);
+      }
+    } catch (ex) {
+      toastError(ex);
+    }
+    load();
+  };
+
   if ((loading && !topology) || !topology) {
     return <CardsSkeletonLoader showBreadcrumb />;
   }
@@ -328,6 +353,18 @@ export function TopologyPage() {
                   });
                 }}
               />
+              <Toggle
+                className="p-3 flex"
+                label="Show hidden components"
+                value={showHiddenComponents}
+                onChange={(val) => {
+                  const newValue = val ? "yes" : "no";
+                  setSearchParams({
+                    ...searchParamsToObj(searchParams),
+                    showHiddenComponents: newValue
+                  });
+                }}
+              />
             </div>
             <TopologyPopOver
               size={size}
@@ -344,7 +381,12 @@ export function TopologyPage() {
                 getSortBy(sortLabels || []),
                 getSortOrder()
               ).map((item) => (
-                <TopologyCard key={item.id} topology={item} size={size} />
+                <TopologyCard
+                  key={item.id}
+                  topology={item}
+                  size={size}
+                  updateVisibility={updateVisibility}
+                />
               ))}
               {!topology?.length && (
                 <InfoMessage

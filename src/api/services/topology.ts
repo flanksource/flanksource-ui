@@ -17,6 +17,15 @@ const arrangeTopologyParams = (params: IParam) => {
   return params;
 };
 
+export const updateComponentVisibility = async (
+  topologyId: string,
+  hide: boolean
+) => {
+  return await IncidentCommander.patch(`/components?id=eq.${topologyId}`, {
+    hidden: hide
+  });
+};
+
 export const getTopology = async (
   params: IParam
 ): Promise<Record<string, any>> => {
