@@ -168,7 +168,6 @@ export function LogsTable({
       if (column === "selection") {
         return columnSize;
       }
-      console.log(columnSize, column, table.getTotalSize());
       return (columnSize / (table.getTotalSize() - 6)) * 400;
     },
     [table]
