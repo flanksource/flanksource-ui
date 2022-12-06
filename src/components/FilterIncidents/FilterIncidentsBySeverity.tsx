@@ -18,7 +18,6 @@ export default function FilterIncidentsBySeverity({ control, value }: Props) {
         className="w-auto max-w-[400px] mr-2 flex-shrink-0"
         dropDownClassNames="w-auto max-w-[400px] right-0"
         value={value}
-        /* @ts-expect-error */
         items={{ ...defaultSelections, ...severityItems }}
         hideControlBorder
       />

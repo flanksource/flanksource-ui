@@ -13,26 +13,26 @@ import { MdSecurity } from "react-icons/md";
 import { RiLightbulbFill } from "react-icons/ri";
 
 export const severityItems = {
-  0: {
+  Low: {
     id: "dropdown-severity-low",
     name: "low",
     icon: <HiOutlineChevronDown color="green" />,
     description: "Low",
-    value: 0
+    value: "Low"
   },
-  1: {
+  Medium: {
     id: "dropdown-severity-medium",
     name: "medium",
     icon: <HiOutlineChevronUp color="red" />,
     description: "Medium",
-    value: 1
+    value: "Medium"
   },
-  2: {
+  High: {
     id: "dropdown-severity-high",
     name: "high",
     icon: <HiOutlineChevronDoubleUp color="red" />,
     description: "High",
-    value: 2
+    value: "High"
   }
 } as const;
 

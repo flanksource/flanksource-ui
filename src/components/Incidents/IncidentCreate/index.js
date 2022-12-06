@@ -42,7 +42,7 @@ export function IncidentCreate({ callback, evidence, ...rest }) {
       title: "",
       description: "",
       // tracking: "",
-      severity: 0,
+      severity: "Low",
       status: "open",
       type: "availability"
     },
@@ -229,6 +229,7 @@ export function IncidentCreate({ callback, evidence, ...rest }) {
         </div> */}
 
         <div className="mb-4">
+          {/* have a look at this */}
           <ReactSelectDropdown
             control={control}
             label="Severity"

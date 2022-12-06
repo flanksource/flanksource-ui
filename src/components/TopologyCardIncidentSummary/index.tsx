@@ -35,9 +35,7 @@ function TopologyCardIncidentSummaryItem({
   index
 }: TopologyCardIncidentSummaryItemProps) {
   const severityObject = useMemo(() => {
-    const severityIndex =
-      severity === "High" ? 2 : severity === "Medium" ? 1 : 0;
-    return severityItems[severityIndex];
+    return severityItems[severity];
   }, [severity]);
 
   return (

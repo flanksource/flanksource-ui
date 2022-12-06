@@ -38,8 +38,7 @@ import { getAll } from "../../api/schemaResources";
 import { schemaResourceTypes } from "../SchemaResourcePage/resourceTypes";
 
 import _, { template, isEqual } from "lodash";
-import { severityItems, statusItems, typeItems } from "../Incidents/data";
-
+import { statusItems, typeItems } from "../Incidents/data";
 
 type Action = {
   label: string;
@@ -287,8 +286,7 @@ export const AddResponder = ({
         incident.status === statusItems.open.value
           ? statusItems.open.description
           : statusItems.closed.description,
-      severity: severityItems[incident.severity]?.description,
-      type: typeItems[incident.type]?.description
+      type: typeItems[incident.type as keyof typeof typeItems]?.description
     };
   }, [incident]);
 
