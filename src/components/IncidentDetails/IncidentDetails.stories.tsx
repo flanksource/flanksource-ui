@@ -1,6 +1,7 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MemoryRouter } from "react-router-dom";
+import { IncidentSeverity } from "../../api/services/incident";
 import { IncidentDetails } from "./index";
 
 export default {
@@ -33,7 +34,7 @@ const incident = {
     name: "System",
     avatar: null
   },
-  severity: 0,
+  severity: IncidentSeverity.Low,
   description: "test",
   type: "issue",
   status: "open",

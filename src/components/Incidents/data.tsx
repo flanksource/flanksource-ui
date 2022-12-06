@@ -2,37 +2,53 @@ import { AiOutlineClose } from "react-icons/ai";
 import { BiDollarCircle } from "react-icons/bi";
 import { FaTasks } from "react-icons/fa";
 import { GrIntegration, GrWorkshop } from "react-icons/gr";
-import {
-  HiOutlineChevronDoubleUp,
-  HiOutlineChevronDown,
-  HiOutlineChevronUp
-} from "react-icons/hi";
 import { ImHeartBroken } from "react-icons/im";
 import { IoMdSpeedometer } from "react-icons/io";
 import { MdSecurity } from "react-icons/md";
 import { RiLightbulbFill } from "react-icons/ri";
+import {
+  HiOutlineChevronDoubleDown,
+  HiOutlineChevronDoubleUp,
+  HiOutlineChevronDown,
+  HiOutlineChevronUp,
+  HiOutlineMinus
+} from "react-icons/hi";
 
 export const severityItems = {
   Low: {
     id: "dropdown-severity-low",
-    name: "low",
-    icon: <HiOutlineChevronDown color="green" />,
+    icon: <HiOutlineChevronDoubleDown color="green" />,
+    name: "Low",
     description: "Low",
     value: "Low"
   },
   Medium: {
     id: "dropdown-severity-medium",
-    name: "medium",
-    icon: <HiOutlineChevronUp color="red" />,
+    icon: <HiOutlineChevronDown color="green" />,
+    name: "Medium",
     description: "Medium",
     value: "Medium"
   },
   High: {
     id: "dropdown-severity-high",
-    name: "high",
-    icon: <HiOutlineChevronDoubleUp color="red" />,
+    icon: <HiOutlineMinus color="orange" />,
+    name: "High",
     description: "High",
     value: "High"
+  },
+  Blocker: {
+    id: "dropdown-severity-blocker",
+    icon: <HiOutlineChevronUp color="red" />,
+    name: "Blocker",
+    description: "Blocker",
+    value: "Blocker"
+  },
+  Critical: {
+    id: "dropdown-severity-critical",
+    icon: <HiOutlineChevronDoubleUp color="red" />,
+    name: "Critical",
+    description: "Critical",
+    value: "Critical"
   }
 } as const;
 

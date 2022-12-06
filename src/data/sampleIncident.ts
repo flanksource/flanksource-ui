@@ -1,3 +1,5 @@
+import { IncidentSeverity } from "../api/services/incident";
+
 const sampleIncident = [
   {
     id: "9421a91b-cd6c-4456-b5fa-91f54c53485e",
@@ -13,7 +15,7 @@ const sampleIncident = [
       name: "new user",
       avatar: null
     },
-    severity: 0,
+    severity: IncidentSeverity.Low,
     description: "",
     type: "issue",
     status: "open",

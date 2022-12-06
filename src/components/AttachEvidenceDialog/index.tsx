@@ -17,18 +17,15 @@ import {
   IncidentStatus
 } from "../../api/services/incident";
 import { useUser } from "../../context";
-import { EvidenceAttachment } from "../../api/services/evidence";
 import { TextInput } from "../TextInput";
 import { Modal } from "../Modal";
 import { DropdownWithActions } from "../Dropdown/DropdownWithActions";
-import { INCIDENT_SEVERITY_OPTIONS } from "../../constants/incidentOptions";
-import { RadioOptionsGroup } from "../RadioOptionsGroup";
 import { IncidentStatusTag } from "../IncidentStatusTag";
 import { IncidentSeverityTag } from "../IncidentSeverityTag";
 import { IItem } from "../../types/IItem";
 import { toastSuccess } from "../Toast/toast";
 import { Link } from "react-router-dom";
-import { typeItems } from "../Incidents/data";
+import { severityItems, typeItems } from "../Incidents/data";
 import { ReactSelectDropdown } from "../ReactSelectDropdown";
 
 interface Props {
@@ -72,7 +69,7 @@ interface IExtendedItem extends IItem {
 
 interface IFormValues {
   title: string;
-  severity: IncidentSeverity;
+  severity: IncidentSeverity | string;
   type: string;
   incident?: IExtendedItem;
   hypothesis?: IItem;
@@ -135,17 +132,7 @@ const validationSchema = yup
             .required("Must select or create a hypothesis")
         });
       }),
-    severity: yup.number().when("incident.value", (value) => {
-      if (!value)
-        return yup
-          .mixed()
-          .oneOf([
-            IncidentSeverity.Low,
-            IncidentSeverity.Medium,
-            IncidentSeverity.High
-          ]);
-      return yup.number().nullable();
-    }),
+    severity: yup.string().required("Please select incident severity"),
     type: yup.string().required("Please select an incident type")
   })
   .required();
@@ -162,7 +149,7 @@ export function AttachEvidenceDialog({
   callback = () => {},
   isOpen,
   onClose
-}: Props & Partial<EvidenceAttachment>) {
+}: Props & Partial<Record<string, any>>) {
   const {
     control,
     handleSubmit,
@@ -193,6 +180,7 @@ export function AttachEvidenceDialog({
   const selectedIncident = watch("incident");
 
   const watchType = watch("type");
+  const watchSeverity = watch("severity");
 
   const { user } = useUser();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -404,24 +392,19 @@ export function AttachEvidenceDialog({
                 </div>
               )}
               {newIncidentCreated && (
-                <div className="space-y-2 pt-4 pl-2">
+                <div className="space-y-2 pt-4">
                   <div className="flex flex-col">
                     <span className="text-sm font-bold text-gray-700 mb-1 mr-4 w-16">
                       Severity
                     </span>
-                    <Controller
+                    <ReactSelectDropdown
                       control={control}
+                      label=""
                       name="severity"
-                      render={({ field: { onChange, value } }) => (
-                        <div className="w-full max-w-md pl-2">
-                          <RadioOptionsGroup
-                            name="severity"
-                            options={INCIDENT_SEVERITY_OPTIONS}
-                            value={value}
-                            onChange={onChange}
-                          />
-                        </div>
-                      )}
+                      className="w-full"
+                      items={severityItems}
+                      labelClass=""
+                      value={watchSeverity}
                     />
                     <p className="text-red-600 text-sm">
                       {errors.severity?.message}

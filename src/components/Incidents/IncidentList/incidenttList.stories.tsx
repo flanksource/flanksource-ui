@@ -1,5 +1,6 @@
 import React from "react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { IncidentSeverity } from "../../../api/services/incident";
 import { IncidentList } from "./index";
 
 export default {
@@ -32,7 +33,7 @@ const incidents = [
     created_by: "017fb74a-9c90-2074-6b29-61d71507c231",
     commander_id: "017fb74a-9c90-2074-6b29-61d71507c231",
     communicator_id: "017fb74a-9c90-2074-6b29-61d71507c231",
-    severity: 0,
+    severity: IncidentSeverity.Low,
     description: "test",
     type: "issue",
     status: "open",
@@ -50,7 +51,7 @@ const incidents = [
     created_by: "017fb74a-9c90-2074-6b29-61d71507c231",
     commander_id: "017fb74a-9c90-2074-6b29-61d71507c231",
     communicator_id: "017fb74a-9c90-2074-6b29-61d71507c231",
-    severity: 0,
+    severity: IncidentSeverity.Low,
     description: "test",
     type: "issue",
     status: "open",
@@ -68,7 +69,7 @@ const incidents = [
     created_by: "017fb74a-9c90-2074-6b29-61d71507c231",
     commander_id: "017fb74a-9c90-2074-6b29-61d71507c231",
     communicator_id: "017fb74a-9c90-2074-6b29-61d71507c231",
-    severity: 0,
+    severity: IncidentSeverity.Low,
     description: "test",
     type: "issue",
     status: "open",
