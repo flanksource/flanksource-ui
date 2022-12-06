@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { BiHide, BiZoomIn } from "react-icons/bi";
+import { BiHide, BiShow, BiZoomIn } from "react-icons/bi";
 import { MdAlarmAdd, MdTableRows } from "react-icons/md";
 import { EvidenceType } from "../../api/services/evidence";
 import { AttachEvidenceDialog } from "../AttachEvidenceDialog";
@@ -8,9 +8,13 @@ import { Menu } from "../Menu";
 
 interface IProps {
   topology: any;
+  updateVisibility: (topologyId: string, updatedVisibility: boolean) => void;
 }
 
-export const TopologyDropdownMenu = ({ topology }: IProps) => {
+export const TopologyDropdownMenu = ({
+  topology,
+  updateVisibility
+}: IProps) => {
   const [attachAsAsset, setAttachAsAsset] = useState(false);
 
   const navigate = useNavigate();
@@ -45,15 +49,24 @@ export const TopologyDropdownMenu = ({ topology }: IProps) => {
             </Link>
           </Menu.Item>
 
-          <Menu.Item>
-            <Link
-              to={`/topology/${topology.id}`}
-              className="flex items-center w-full"
+          {updateVisibility && (
+            <Menu.Item
+              as="button"
+              onClick={() => updateVisibility(topology.id, !topology.hidden)}
             >
-              <BiHide />
-              <span className="pl-1 text-sm block">Hide</span>
-            </Link>
-          </Menu.Item>
+              {topology.hidden ? (
+                <>
+                  <BiShow />
+                  <span className="pl-1 text-sm block">Unhide</span>
+                </>
+              ) : (
+                <>
+                  <BiHide />
+                  <span className="pl-1 text-sm block">Hide</span>
+                </>
+              )}
+            </Menu.Item>
+          )}
         </Menu.Items>
       </Menu>
 
