@@ -67,7 +67,7 @@ const Suggestion = ({
   avatar
 }: SuggestionDataItem & { avatar?: string }) => (
   <div className="flex items-center">
-    {avatar && <Icon name={avatar} size="xl" />}
+    {avatar && <Icon name={avatar} />}
     <p className="pl-2">{display}</p>
   </div>
 );

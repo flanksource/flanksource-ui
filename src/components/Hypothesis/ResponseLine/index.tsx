@@ -67,7 +67,7 @@ export function ResponseLine({
   return (
     <div className="pb-4 flex items-start space-x-3 group">
       {created_by.team ? (
-        <Icon size="2xl" name={created_by.team.icon} />
+        <Icon name={created_by.team.icon} />
       ) : (
         <Avatar
           containerProps={{

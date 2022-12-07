@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import clsx from "clsx";
 
 import { Modal } from "../../Modal";
@@ -13,13 +13,12 @@ import { toastError } from "../../Toast/toast";
 import { EvidenceBuilder } from "../../EvidenceBuilder";
 import { CommentsSection } from "../Comments";
 import { ResponseLine } from "../ResponseLine";
-import {
-  getHypothesisResponse,
-  Hypothesis
-} from "../../../api/services/hypothesis";
+import { Hypothesis } from "../../../api/services/hypothesis";
 import { TreeNode } from "../../../pages/incident/IncidentDetails";
-import { useSearchParams } from "react-router-dom";
-import { searchParamsToObj } from "../../../utils/common";
+import {
+  useGetHypothesisQuery,
+  useIncidentQuery
+} from "../../../api/query-hooks";
 
 interface IProps {
   node: TreeNode<Hypothesis>;
@@ -29,28 +28,19 @@ interface IProps {
 type Response = Evidence & Comment;
 
 export function HypothesisDetails({ node, api, ...rest }: IProps) {
+  const incidentQuery = useIncidentQuery(node.incident_id);
+  const { data: hypothesis, refetch: refetchHypothesis } =
+    useGetHypothesisQuery(node.id, {});
   const [evidenceBuilderOpen, setEvidenceBuilderOpen] = useState(false);
   const { user } = useUser();
-  const [isLoading, setIsLoading] = useState(true);
   const [responses, setResponses] = useState<Response[]>([]);
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [refreshEvidencesToken, setRefreshEvidencesToken] = useState<
-    string | null
-  >(null);
 
-  const fetchResponses = async (id: string) => {
-    setIsLoading(true);
-
-    try {
-      const { data, error } = await getHypothesisResponse(id);
-      if (error) {
-        toastError(`Error fetching hypothesis responses: ${error?.message}`);
-      }
-      arrangeData(data);
-    } finally {
-      setIsLoading(false);
+  useEffect(() => {
+    if (!hypothesis?.data) {
+      return;
     }
-  };
+    arrangeData(hypothesis.data);
+  }, [hypothesis]);
 
   const arrangeData = (data: any) => {
     const responses = (data?.comments || [])
@@ -84,7 +74,7 @@ export function HypothesisDetails({ node, api, ...rest }: IProps) {
     })
       .catch(toastError)
       .then(() => {
-        fetchResponses(node.id);
+        refetchHypothesis();
       });
 
   const deleteEvidenceCb = async (id: string) => {
@@ -97,7 +87,6 @@ export function HypothesisDetails({ node, api, ...rest }: IProps) {
     }
 
     setResponses((ls) => ls.filter((e) => e.id !== id));
-    assignNewEvidencesRefreshToken();
   };
 
   const updateEvidenceCb = async (evidence: Evidence) => {
@@ -109,38 +98,17 @@ export function HypothesisDetails({ node, api, ...rest }: IProps) {
       const message = evidence.definition_of_done
         ? "Removing evidence from definition of done failed"
         : "Marking evidence as part of definition of done failed";
-      console.error("update failed", error);
       toastError(message);
       return;
     }
-    responses.forEach((response: any) => {
-      if (response.id === evidence.id) {
-        response.definition_of_done = !response.definition_of_done;
-      }
-    });
-    setResponses([...responses]);
-    assignNewEvidencesRefreshToken();
-  };
-
-  const assignNewEvidencesRefreshToken = () => {
-    const token = (+new Date()).toString();
-    setRefreshEvidencesToken(token);
-    setSearchParams({
-      ...searchParamsToObj(searchParams),
-      refresh_evidences: token
-    });
+    incidentQuery.refetch();
+    refetchHypothesis();
   };
 
   useEffect(() => {
-    if (
-      searchParams.get("refresh_evidences") === refreshEvidencesToken &&
-      refreshEvidencesToken
-    ) {
-      return;
-    }
     arrangeData(node);
-    node?.id && fetchResponses(node.id);
-  }, [node?.id, searchParams]);
+    refetchHypothesis();
+  }, []);
 
   return (
     <>

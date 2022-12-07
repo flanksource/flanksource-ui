@@ -71,6 +71,11 @@ export function HypothesisBar({
   } = hypothesis;
 
   const [deleting, setDeleting] = useState<boolean>(false);
+  const isPartOfDOD = useMemo(() => {
+    return (
+      hypothesis.evidences?.filter((item) => item.definition_of_done).length > 0
+    );
+  }, [hypothesis]);
 
   const handleApiUpdate = useMemo(
     () =>
@@ -121,7 +126,8 @@ export function HypothesisBar({
     <div
       className={clsx(
         "relative w-full flex justify-between shadow-md bg-white rounded-8px border focus:outline-non cursor-pointer space-x-2",
-        deleting && "pointer-events-none cursor-not-allowed blur-[2px]"
+        deleting && "pointer-events-none cursor-not-allowed blur-[2px]",
+        isPartOfDOD ? "border-t-blue-600 border-t-2" : ""
       )}
     >
       <div className="flex flex-grow-0 items-center space-x-2 my-1 w-full">

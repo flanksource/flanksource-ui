@@ -29,7 +29,7 @@ export function ChangesTypesDropdown({
           value: change_type,
           description: change_type,
           name: change_type,
-          icon: <Icon name={change_type} secondary={change_type} size="lg" />
+          icon: <Icon name={change_type} secondary={change_type} />
         }));
       }, [])
     }

@@ -95,7 +95,7 @@ export function LogsTableLabelsCell({
         } `}
       >
         {labelsToDisplay.map(([key, value]) => (
-          <div className="flex flex-row p-[0.15rem] max-w-full">
+          <div className="flex flex-row p-[0.15rem] max-w-full" key={key}>
             <div className="flex flex-row max-w-full space-x-1 font-semibold p-[0.2rem] bg-gray-200 text-gray-600 rounded-md text-xs">
               <span className="inline text-ellipsis overflow-hidden">
                 {key}:

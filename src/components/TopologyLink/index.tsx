@@ -22,7 +22,7 @@ export function TopologyLink({
       }}
       className="flex flex-nowrap hover:text-gray-500 my-auto "
     >
-      <Icon name={component.icon} size={size} className="mr-1 object-center" />
+      <Icon name={component.icon} className="mr-1 object-center" />
       <span className={`text-${size}`}> {component.name}</span>
     </Link>
   );

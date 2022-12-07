@@ -178,7 +178,7 @@ export function SchemaResourceEdit({
         ) : (
           <div className="flex justify-between">
             <h2 className="text-dark-gray font-bold mr-3 text-xl flex items-center space-x-2">
-              {supportsField("icon") && <Icon size="md" name={icon} />}
+              {supportsField("icon") && <Icon name={icon} />}
               <span>{name}</span>
             </h2>
             {!!source && (

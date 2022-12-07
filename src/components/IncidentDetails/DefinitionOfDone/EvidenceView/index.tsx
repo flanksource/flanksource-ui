@@ -58,7 +58,7 @@ function TopologyEvidence({
         <div className="flex pr-1 pt-2.5 pb-2.5 pl-2 overflow-hidden">
           <div className="text-gray-500 m-auto mr-2.5 flex-initial max-w-1/4 leading-1.21rel">
             <h3 className="text-gray-500 leading-1.21rel">
-              <Icon name={topology.icon} size="2xl" />
+              <Icon name={topology.icon} />
             </h3>
           </div>
           <div className="flex-1 m-auto overflow-hidden">
@@ -119,7 +119,7 @@ function LogEvidence({
       {...rest}
     >
       <span>
-        <Icon className="inline" name={comp.icon} size="xl" /> {comp.name}
+        <Icon name={comp.icon} /> {comp.name}
       </span>
     </div>
   );
@@ -197,7 +197,7 @@ function HealthEvidence({
     <div className="overflow-hidden p-2" {...rest}>
       <div className={`flex flex-row`} {...rest}>
         <div className={clsx("flex-shrink-0", "pr-2")}>
-          <Icon name={check?.icon || check?.type} size={"sm"} />
+          <Icon name={check?.icon || check?.type} />
         </div>
         <div className={clsx("overflow-hidden")}>
           <div className="flex flex-row">
