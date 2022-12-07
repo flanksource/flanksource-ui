@@ -4,9 +4,16 @@ import { Controller, useForm } from "react-hook-form";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import * as yup from "yup";
-import { createEvidence, EvidenceType } from "../../../api/services/evidence";
-import { createHypothesisOld } from "../../../api/services/hypothesis";
-import { createIncident } from "../../../api/services/incident";
+import {
+  createEvidence,
+  Evidence,
+  EvidenceType
+} from "../../../api/services/evidence";
+import {
+  createHypothesisOld,
+  HypothesisStatus
+} from "../../../api/services/hypothesis";
+import { createIncident, Incident } from "../../../api/services/incident";
 import { useUser } from "../../../context";
 import { ReactSelectDropdown } from "../../ReactSelectDropdown";
 import { TextInput } from "../../TextInput";
@@ -20,13 +27,21 @@ const validationSchema = yup
     // communicator_id: yup.string().required(),
     // commander_id: yup.string().required(),
     // tracking: yup.string().email().required(),
-    severity: yup.number().required(),
     status: yup.string().required(),
     type: yup.string().required()
   })
   .required();
 
-export function IncidentCreate({ callback, evidence, ...rest }) {
+type IncidentCreateProps = {
+  callback: (incident?: Incident) => void;
+  evidence: Record<string, any>;
+} & React.HTMLAttributes<HTMLDivElement>;
+
+export function IncidentCreate({
+  callback,
+  evidence,
+  ...rest
+}: IncidentCreateProps) {
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const topologyId = params.get("topology");
@@ -62,25 +77,32 @@ export function IncidentCreate({ callback, evidence, ...rest }) {
     updated_at: "now()"
   };
 
-  const onSubmit = async (data) => {
-    const payload = { ...data, ...additionalFields };
+  const onSubmit = async (data: Record<string, any>) => {
+    const payload: Record<string, any> = { ...data, ...additionalFields };
     payload.id = uuidv4();
     // TODO(ciju): Handle failure cases
     try {
-      const { data: incident, error } = await createIncident(user, payload);
+      // @ts-expect-error
+      const { data: incident, error } = await createIncident(user!, payload);
 
-      const hypothesis = await createHypothesisOld(user, uuidv4(), payload.id, {
-        title: payload.title,
-        type: "root",
-        status: "possible"
-      });
+      const hypothesis = await createHypothesisOld(
+        user!,
+        uuidv4(),
+        payload.id,
+        {
+          title: payload.title,
+          type: "root",
+          status: HypothesisStatus.Possible
+        }
+      );
 
       if (!hypothesis?.data[0]?.id || (!evidence && !topologyId)) {
         callback();
         return;
       }
 
-      let _evidence = {
+      let _evidence: Evidence = {
+        // @ts-expect-error
         user,
         id: uuidv4(),
         hypothesisId: hypothesis.data[0].id
@@ -106,9 +128,9 @@ export function IncidentCreate({ callback, evidence, ...rest }) {
       if (callback != null) {
         callback(incident);
       } else {
-        navigate(`/incidents/${incident.id}`, { replace: true });
+        navigate(`/incidents/${incident?.id}`, { replace: true });
       }
-    } catch (e) {
+    } catch (e: any) {
       toastError(e);
     }
   };
