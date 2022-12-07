@@ -13,6 +13,7 @@ export interface ConfigItem {
   analysis: Analysis[];
   type: string;
   tags?: Record<string, any>;
+  allTags?: Record<string, any>;
   created_at: string;
   updated_at: string;
   cost_per_minute?: number;

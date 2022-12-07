@@ -4,6 +4,7 @@ import {
   useSearchParams,
   useOutletContext
 } from "react-router-dom";
+import objectHash from "object-hash";
 import { filterConfigsByText } from "../../components/ConfigViewer/utils";
 import ConfigList from "../../components/ConfigList";
 import { RefreshButton } from "../../components/RefreshButton";
@@ -31,6 +32,7 @@ export function ConfigListPage() {
   const search = params.get("search");
   const tag = decodeURIComponent(params.get("tag") || "All");
   const configType = decodeURIComponent(params.get("type") || "All");
+  const groupByProp = decodeURIComponent(params.get("groupByProp") ?? "");
 
   useEffect(() => {
     if (params.get("query")) {
@@ -39,6 +41,13 @@ export function ConfigListPage() {
     if (!allConfigs?.data) {
       return;
     }
+    allConfigs.data.forEach((item) => {
+      item.tags = item.tags || {};
+      item.allTags = { ...item.tags };
+      item.tags.toString = () => {
+        return objectHash(item.tags?.[groupByProp] || {});
+      };
+    });
     setConfigState((state) => {
       return {
         ...state,

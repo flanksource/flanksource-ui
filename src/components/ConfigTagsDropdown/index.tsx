@@ -25,10 +25,14 @@ export function ConfigTagsDropdown({
   const configTagItems: StateOption[] = useMemo(() => {
     if (!data) return [];
     const options = data.flatMap((d) => {
-      return Object.entries(d?.tags || {}).map(([key, value]) => ({
-        label: `${key}: ${value}`,
-        value: `${key}__:__${value}`
-      }));
+      return Object.entries(d?.tags || {})
+        .filter(([key]) => {
+          return key !== "toString";
+        })
+        .map(([key, value]) => ({
+          label: `${key}: ${value}`,
+          value: `${key}__:__${value}`
+        }));
     });
     return [{ label: "All", value: "All" }, ...options];
   }, [data]);

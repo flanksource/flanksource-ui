@@ -110,6 +110,16 @@ const columns: TableCols[] = [
     maxWidth: 400
   },
   {
+    Header: "All Tags",
+    accessor: "allTags",
+    Cell: ({ row, column }) => (
+      <TagsCell row={row} column={column} hideGroupByView={true} />
+    ),
+    cellClass: "overflow-auto",
+    Aggregated: "",
+    maxWidth: 400
+  },
+  {
     Header: "Created",
     accessor: "created_at",
     Cell: DateCell,
@@ -141,11 +151,19 @@ interface CellProp {
 
 const MIN_ITEMS = 2;
 
-function TagsCell({ row, column }: CellProp): JSX.Element {
+function TagsCell({
+  row,
+  column,
+  hideGroupByView
+}: CellProp & { hideGroupByView?: boolean }): JSX.Element | null {
   const [showMore, setShowMore] = useState(false);
+  const [params] = useSearchParams();
 
   const tagMap = row?.values[column.id] || {};
-  const tagKeys = Object.keys(tagMap).sort();
+  const tagKeys = Object.keys(tagMap)
+    .sort()
+    .filter((key) => key !== "toString");
+  const groupByProp = decodeURIComponent(params.get("groupByProp") ?? "");
 
   useEffect(() => {
     ReactTooltip.rebuild();
@@ -153,6 +171,25 @@ function TagsCell({ row, column }: CellProp): JSX.Element {
 
   if (tagKeys.length === 0) {
     return <div className="flex"></div>;
+  }
+
+  if (!hideGroupByView && groupByProp) {
+    if (!tagMap[groupByProp]) {
+      return null;
+    }
+
+    return (
+      <div className="font-mono flex flex-wrap w-96 max-w-[24rem] pl-1 space-y-1">
+        <div
+          data-tip={`${groupByProp}: ${tagMap[groupByProp]}`}
+          className="max-w-full overflow-hidden text-ellipsis bg-gray-200 border border-gray-300 px-1 py-0.75 mr-1 rounded-md text-gray-600 font-semibold text-xs"
+          key={groupByProp}
+        >
+          {groupByProp}:{" "}
+          <span className="font-light">{tagMap[groupByProp]}</span>
+        </div>
+      </div>
+    );
   }
 
   const renderKeys = showMore ? tagKeys : tagKeys.slice(0, MIN_ITEMS);
@@ -405,7 +442,9 @@ function ConfigList({ data, handleRowClick, isLoading }: Props) {
   const groupByField = queryParams.get("groupBy");
 
   const setHiddenColumns = () => {
-    if (groupByField !== "changed") {
+    if (groupByField !== "changed" && groupByField !== "tags") {
+      return ["changed", "allTags"];
+    } else if (groupByField === "tags") {
       return ["changed"];
     }
     return [];
