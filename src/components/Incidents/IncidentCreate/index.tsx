@@ -27,6 +27,10 @@ const validationSchema = yup
     // communicator_id: yup.string().required(),
     // commander_id: yup.string().required(),
     // tracking: yup.string().email().required(),
+    severity: yup
+      .string()
+      .oneOf(Object.entries(severityItems).map(([_, value]) => value.value))
+      .required(),
     status: yup.string().required(),
     type: yup.string().required()
   })
