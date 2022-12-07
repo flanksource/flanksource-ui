@@ -1,6 +1,7 @@
-import React from "react";
-import Highlight, { defaultProps } from "prism-react-renderer";
+import { useMemo } from "react";
+import Highlight, { defaultProps, Language } from "prism-react-renderer";
 import vsLight from "prism-react-renderer/themes/vsLight";
+import { parse, stringify } from "yaml";
 
 const Line = ({ getTokenProps, onClick, showLineNo, idx, line, ...props }) => {
   const onSelect = () => onClick && onClick(idx);
@@ -8,7 +9,7 @@ const Line = ({ getTokenProps, onClick, showLineNo, idx, line, ...props }) => {
     <div
       {...props}
       role="button"
-      tabIndex="0"
+      tabIndex={0}
       onClick={onSelect}
       onKeyUp={onSelect}
     >
@@ -24,8 +25,6 @@ const Line = ({ getTokenProps, onClick, showLineNo, idx, line, ...props }) => {
         {line.map((token, key) => (
           // key is in the getTokenProps responses. Disabling eslint to skip
           // check for explicit keys.
-
-          // eslint-disable-next-line react/jsx-key
           <span {...getTokenProps({ token, key })} />
         ))}
       </span>
@@ -33,14 +32,50 @@ const Line = ({ getTokenProps, onClick, showLineNo, idx, line, ...props }) => {
   );
 };
 
-export function JSONViewer({ code, format, showLineNo, selections, onClick }) {
+type JSONViewerProps = {
+  code: string;
+  format: Language;
+  showLineNo?: boolean;
+  onClick?: (idx: any) => void;
+  selections?: Record<string, boolean>;
+  /**
+   *
+   * Convert the content to yaml format
+   *
+   **/
+  convertToYaml?: boolean;
+};
+
+export function JSONViewer({
+  code,
+  format,
+  showLineNo,
+  selections,
+  onClick = () => {},
+  convertToYaml = false
+}: JSONViewerProps) {
+  // convert JSON object to YAML string
+  const codeForHighlight = useMemo(() => {
+    if (!code) {
+      return "";
+    }
+    if (convertToYaml) {
+      return stringify(parse(code));
+    }
+    return code;
+  }, [code, convertToYaml]);
+
   return (
-    <Highlight {...defaultProps} code={code} theme={vsLight} language={format}>
+    <Highlight
+      {...defaultProps}
+      code={codeForHighlight}
+      theme={vsLight}
+      language={convertToYaml ? "yaml" : format}
+    >
       {({ className, style, tokens, getLineProps, getTokenProps }) => (
         <pre className={`${className} text-sm`} style={style}>
           {tokens.map((line, i) => {
             const { style, ...props } = getLineProps({ line, key: i });
-            /* eslint-disable react/jsx-key */
             return (
               <Line
                 {...props}
@@ -56,7 +91,6 @@ export function JSONViewer({ code, format, showLineNo, selections, onClick }) {
                 line={line}
               />
             );
-            /* eslint-enable react/jsx-key */
           })}
         </pre>
       )}

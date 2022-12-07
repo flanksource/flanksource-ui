@@ -1,5 +1,21 @@
-export function Table({ columns, data, id, sticky = "false" }) {
-  columns = columns.map((c) => {
+import React from "react";
+
+export type TableData = {
+  key: string;
+  age: string;
+  message: React.ReactNode;
+  duration: React.ReactNode;
+};
+
+type Props = {
+  id: string;
+  columns: string[];
+  sticky?: boolean;
+  data: TableData[];
+};
+
+export function Table({ columns, data, id, sticky = false }: Props) {
+  const columnsMapped = columns.map((c) => {
     if (typeof c === "string") {
       return { name: c };
     }
@@ -14,11 +30,11 @@ export function Table({ columns, data, id, sticky = "false" }) {
         >
           <thead className={sticky ? "sticky top-0 bg-white" : ""}>
             <tr>
-              {columns.map((column) => (
+              {columnsMapped.map((column) => (
                 <th
                   key={column.name}
                   scope="col"
-                  className={`px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-300 ${column.className}`}
+                  className={`px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-300`}
                 >
                   {column.name}
                 </th>
@@ -29,7 +45,7 @@ export function Table({ columns, data, id, sticky = "false" }) {
             {data.map((row, idx) => (
               // eslint-disable-next-line react/no-array-index-key
               <tr key={`${id}.${idx}`}>
-                {columns.map((column) => (
+                {columnsMapped.map((column) => (
                   <td
                     key={column.name}
                     className="px-4 py-3 border-b border-gray-300"

@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getAllConfigs, getConfigName } from "../services/configs";
 import { getIncident } from "../services/incident";
 import {
+  getHealthCheckItem,
   getTopology,
   getTopologyComponentLabels,
   getTopologyComponents
@@ -135,6 +136,21 @@ export const useGetPeopleQuery = ({
     },
     {
       staleTime,
+      enabled,
+      ...rest
+    }
+  );
+};
+
+export const useCanaryCheckItemQuery = (
+  canaryID: string,
+  /* todo: think of a better way to formulate types for the query options */
+  { enabled = true, ...rest }
+) => {
+  return useQuery(
+    ["db", "canaries", canaryID],
+    () => getHealthCheckItem(canaryID),
+    {
       enabled,
       ...rest
     }

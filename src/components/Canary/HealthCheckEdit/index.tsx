@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { FaEdit } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { useCanaryCheckItemQuery } from "../../../api/query-hooks";
 import {
   getComponentTemplate,
-  getHealthCheckItem,
   getTopology
 } from "../../../api/services/topology";
 import { HealthCheck } from "../../../types/healthChecks";
@@ -63,9 +63,8 @@ type HealthCheckEditProps = {
 };
 
 export function HealthCheckEdit({ check }: HealthCheckEditProps) {
-  const { isLoading, data: canaryCheck } = useQuery(
-    ["db", "canaries", check.canary_id],
-    () => getHealthCheckItem(check.canary_id),
+  const { isLoading, data: canaryCheck } = useCanaryCheckItemQuery(
+    check.canary_id!,
     {
       enabled: check.canary_id !== undefined
     }

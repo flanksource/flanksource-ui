@@ -22,12 +22,23 @@ export interface HealthCheck {
   description?: string;
   deletedAt?: string;
   source?: string;
+  spec?: any;
+  icon?: string;
+  endpoint?: string;
+  interval?: any;
+  location?: any;
+  status?: string;
+  schedule?: any;
+  owner?: any;
+  loading?: boolean;
+  severity?: string;
 }
 
 export interface HealthCheckStatus {
   status: boolean;
   time: string;
   duration: number;
+  error?: string;
 }
 
 export interface HealthCheckLatency {
