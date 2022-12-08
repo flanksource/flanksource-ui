@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { getAllChanges } from "../../api/services/configs";
 
 import { ConfigChangeHistory } from "../../components/ConfigChangeHistory";
@@ -8,7 +8,7 @@ export function ConfigChangesPage() {
   const [data, setData] = useState([]);
   const [isLoading, setLoading] = useState(true);
 
-  useState(() => {
+  useEffect(() => {
     setLoading(true);
     getAllChanges()
       .then((res) => {

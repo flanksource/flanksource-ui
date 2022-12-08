@@ -1,4 +1,6 @@
+import { CellContext, ColumnDef } from "@tanstack/table-core";
 import clsx from "clsx";
+import { User } from "../../api/services/users";
 import { relativeDateTime } from "../../utils/date";
 import { DataTable } from "../DataTable";
 
@@ -7,30 +9,30 @@ type UserListProps = {
   isLoading?: boolean;
 } & Omit<React.HTMLProps<HTMLDivElement>, "data">;
 
-const DateCell = ({ cell: { value } }: { cell: { value: Date } }) =>
-  relativeDateTime(value);
+const DateCell = ({ getValue }: CellContext<User, any>) =>
+  relativeDateTime(getValue<string>());
 
-const columns = [
+const columns: ColumnDef<User>[] = [
   {
-    Header: "Name",
-    accessor: "name"
+    header: "Name",
+    accessorKey: "name"
   },
   {
-    Header: "Email",
-    accessor: "email",
-    Aggregated: ""
+    header: "Email",
+    accessorKey: "email",
+    aggregatedCell: ""
   },
   {
-    Header: "Created At",
-    accessor: "created_at",
-    Cell: DateCell,
-    sortType: "datetime",
-    Aggregated: ""
+    header: "Created At",
+    accessorKey: "created_at",
+    cell: DateCell,
+    sortingFn: "datetime",
+    aggregatedCell: ""
   },
   {
-    Header: "State",
-    accessor: "state",
-    Aggregated: ""
+    header: "State",
+    accessorKey: "state",
+    aggregatedCell: ""
   }
 ];
 

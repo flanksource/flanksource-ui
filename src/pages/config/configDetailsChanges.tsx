@@ -13,7 +13,7 @@ export function ConfigDetailsChangesPage() {
   useEffect(() => {
     setIsLoading(true);
 
-    getConfigChange(id)
+    getConfigChange(id!)
       .then((res) => {
         if (res.data.length === 0) {
           setHistoryData([]);
