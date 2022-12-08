@@ -1,9 +1,16 @@
 import clsx from "clsx";
-import { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { IoChevronForwardOutline } from "react-icons/io5";
 import { TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti";
 import { useSearchParams } from "react-router-dom";
-import { useSortBy, useTable, useGroupBy, useExpanded } from "react-table";
+import {
+  ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  GroupingState,
+  SortingState,
+  useReactTable
+} from "@tanstack/react-table";
 import { Badge } from "../Badge";
 
 const tableStyles = {
@@ -13,7 +20,20 @@ const tableStyles = {
   tbodyDataClass: "whitespace-nowrap p-2"
 };
 
-export const DataTable = ({
+type DataTableProps<TableColumns, Data extends TableColumns> = {
+  columns: ColumnDef<TableColumns>[];
+  data: Data[];
+  handleRowClick?: (row: any) => void;
+  tableStyle?: React.StyleHTMLAttributes<HTMLTableElement>;
+  stickyHead?: boolean;
+  isLoading?: boolean;
+  groupBy?: string[];
+  hiddenColumns?: string[];
+  className?: string;
+  usageSection?: string;
+} & React.HTMLAttributes<HTMLTableElement>;
+
+export function DataTable<TableColumns, Data extends TableColumns>({
   columns,
   data,
   handleRowClick,
@@ -25,7 +45,7 @@ export const DataTable = ({
   className,
   usageSection,
   ...rest
-}) => {
+}: DataTableProps<TableColumns, Data>) {
   const [queryParams, setQueryParams] = useSearchParams({
     sortBy: "",
     sortOrder: ""
@@ -34,19 +54,6 @@ export const DataTable = ({
   const sortField = queryParams.get("sortBy");
   const isSortOrderDesc =
     queryParams.get("sortOrder") === "desc" ? true : false;
-
-  const setSortBy = (field, order) => {
-    if (field === undefined && order === undefined) {
-      queryParams.delete("sortBy");
-      queryParams.delete("sortOrder");
-    } else {
-      queryParams.set("sortBy", field);
-      queryParams.set("sortOrder", order);
-    }
-    setQueryParams({
-      ...Object.fromEntries(queryParams)
-    });
-  };
 
   const sortBy = useMemo(() => {
     const data = sortField
@@ -66,68 +73,53 @@ export const DataTable = ({
     return data;
   }, [sortField, isSortOrderDesc, usageSection]);
 
-  const tableInstance = useTable(
+  const [tableSortBy, setTableSortBy] = useState<SortingState>(sortBy);
+  const [tableGroupBy, setTableGroupBy] = useState<GroupingState>(
+    groupBy ?? []
+  );
+
+  const table = useReactTable<TableColumns>(
     {
       columns,
       data,
-      autoResetSortBy: false,
-      initialState: {
-        ...(sortBy && {
-          sortBy: sortBy
-        }),
-        ...(groupBy && {
-          groupBy: groupBy
-        }),
-        ...(hiddenColumns && {
-          hiddenColumns: hiddenColumns
-        })
+      // autoResetSortBy: false,
+      state: {
+        sorting: tableSortBy,
+        grouping: tableGroupBy
+        // columnFilters: hiddenColumns,
       },
-      useControlledState: (state) => {
-        return useMemo(() => {
-          return {
-            ...state,
-            ...(sortBy && {
-              sortBy: sortBy
-            }),
-            ...(groupBy && {
-              groupBy: groupBy
-            }),
-            ...(hiddenColumns && {
-              hiddenColumns: hiddenColumns
-            })
-          };
-        }, [state]);
-      }
-    },
-    useGroupBy,
-    useSortBy,
-    useExpanded
-  );
-
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
-    tableInstance;
-
-  const setHeaderClickHandler = (column) => {
-    if (!column.canSort) return;
-    const { isSorted, isSortedDesc, id } = column;
-    if (isSorted && isSortedDesc) {
-      setSortBy();
-    } else if (!isSorted) {
-      setSortBy(id, "asc");
-    } else {
-      setSortBy(id, "desc");
+      // onRowSelectionChange: setRowSelection,
+      getCoreRowModel: getCoreRowModel(),
+      enableColumnResizing: true,
+      debugTable: true,
+      debugHeaders: true,
+      debugColumns: true,
+      onSortingChange: setTableSortBy,
+      onGroupingChange: setTableGroupBy
     }
-  };
+
+    // useGroupBy,
+    // useSortBy,
+    // useExpanded
+  );
 
   const isGrouped = !!groupBy?.length;
 
   useEffect(() => {
-    tableInstance.setGroupBy(Array.isArray(groupBy) ? groupBy : []);
-  }, [groupBy, tableInstance]);
+    setTableGroupBy(Array.isArray(groupBy) ? groupBy : []);
+  }, [groupBy, table]);
 
   useEffect(() => {
-    tableInstance.setSortBy(Array.isArray(sortBy) ? sortBy : []);
-  }, [sortBy, tableInstance]);
+    console.log("tableSortBy", tableSortBy);
+    // if (field === undefined && order === undefined) {
+    //   queryParams.delete("sortBy");
+    //   queryParams.delete("sortOrder");
+    // } else {
+    //   queryParams.set("sortBy", field);
+    //   queryParams.set("sortOrder", order);
+    // }
+    // setQueryParams(queryParams);
+  }, [tableSortBy]);
 
   return (
     <div
@@ -137,31 +129,31 @@ export const DataTable = ({
       <table
         className={clsx(tableStyles.tableClass, stickyHead && "relative")}
         style={tableStyle}
-        {...getTableProps()}
       >
         <thead className={`bg-white ${stickyHead ? "sticky top-0 z-01" : ""}`}>
-          {headerGroups.map((headerGroup) => (
-            <tr
-              key={headerGroup.getHeaderGroupProps().key}
-              {...headerGroup.getHeaderGroupProps()}
-            >
-              {headerGroup.headers.map((column, colIndex) =>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <tr key={headerGroup.id}>
+              {headerGroup.headers.map((header, colIndex) =>
                 // First column goes inside the grouping column
                 // Hence the label for that is not needed
-                isGrouped && !column.isGrouped && colIndex === 1 ? null : (
+                isGrouped &&
+                !header.column.getIsGrouped() &&
+                colIndex === 1 ? null : (
                   <th
-                    key={column.Header}
+                    key={header.id}
                     className={`${tableStyles.theadHeaderClass}${
-                      column.canSort ? " cursor-pointer" : ""
+                      header.column.getCanSort() ? " cursor-pointer" : ""
                     }`}
-                    onClick={() => setHeaderClickHandler(column)}
-                    {...column.getHeaderProps()}
+                    onClick={header.column.getToggleSortingHandler()}
                   >
                     <div className={"flex select-none"}>
-                      {column.render("Header")}
-                      {column.isSorted ? (
+                      {flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                      {header.column.getIsSorted() ? (
                         <span className="ml-2">
-                          {column.isSortedDesc ? (
+                          {header.column.getIsSorted() === "desc" ? (
                             <TiArrowSortedDown />
                           ) : (
                             <TiArrowSortedUp />
@@ -177,42 +169,42 @@ export const DataTable = ({
             </tr>
           ))}
         </thead>
-        <tbody {...getTableBodyProps()}>
-          {rows.map((row) => {
-            prepareRow(row);
+        <tbody>
+          {table.getRowModel().rows.map((row) => {
             return (
               <tr
                 key={row.id}
                 className={tableStyles.tbodyRowClass}
-                {...row.getRowProps()}
                 onClick={
-                  row.isGrouped
-                    ? () => row.toggleRowExpanded(!row.isExpanded)
+                  row.getIsGrouped()
+                    ? () => row.getToggleExpandedHandler()
                     : handleRowClick
                     ? () => handleRowClick(row)
                     : () => {}
                 }
               >
-                {row.cells.map((cell, cellIndex) =>
-                  cell.isPlaceholder ? null : cell.isAggregated &&
+                {row.getVisibleCells().map((cell, cellIndex) =>
+                  cell.getIsPlaceholder() ? null : cell.getIsAggregated() &&
                     cellIndex === 1 ? null : (
                     <td
-                      key={cell.column.Header}
-                      className={`${tableStyles.tbodyDataClass} ${
-                        cell.column.cellClass || ""
-                      }`}
-                      {...cell.getCellProps()}
+                      key={cell.id}
+                      className={`${tableStyles.tbodyDataClass}`}
                     >
-                      {cell.isGrouped ? (
+                      {cell.getIsGrouped() ? (
                         <div className="flex items-center">
                           <div
                             className={`duration-200 mr-2 ${
-                              row.isExpanded ? "rotate-90" : ""
+                              row.getIsExpanded() ? "rotate-90" : ""
                             }`}
                           >
                             <IoChevronForwardOutline />
                           </div>
-                          <div className="shrink-0">{cell.render("Cell")}</div>
+                          <div className="shrink-0">
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext()
+                            )}
+                          </div>
                           <div className="ml-1 flex items-center">
                             <Badge
                               className="ml-1"
@@ -223,8 +215,11 @@ export const DataTable = ({
                             />
                           </div>
                         </div>
-                      ) : cell.isAggregated ? (
-                        cell.render("Aggregated")
+                      ) : cell.getIsAggregated() ? (
+                        flexRender(
+                          cell.column.columnDef.aggregatedCell,
+                          cell.getContext()
+                        )
                       ) : (
                         <div
                           // First column should be displaced if the table
@@ -235,7 +230,10 @@ export const DataTable = ({
                               : ""
                           }`}
                         >
-                          {cell.render("Cell")}
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
                         </div>
                       )}
                     </td>
@@ -246,11 +244,11 @@ export const DataTable = ({
           })}
         </tbody>
       </table>
-      {rows.length <= 0 && (
+      {table.getRowModel().rows.length === 0 && (
         <div className="flex items-center justify-center py-20 px-2  border-b border-gray-300 text-center text-gray-400">
           {isLoading ? "Loading data.." : "No data available"}
         </div>
       )}
     </div>
   );
-};
+}
