@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import {
   getTopology,
@@ -106,19 +106,18 @@ export function TopologyPage() {
   const [currentTopology, setCurrentTopology] = useState<Topology>();
 
   const [teams, setTeams] = useState<any>({});
-  const [selectedLabel, setSelectedLabel] = useState("");
   const [size, setSize] = useState(() => getCardWidth());
-  const [team, setTeam] = useState(searchParams.get("team") ?? "All");
-  const [topologyType, setTopologyType] = useState(
-    searchParams.get("type") ?? "All"
-  );
-  const [healthStatus, setHealthStatus] = useState(
-    searchParams.get("status") ?? "All"
-  );
+
+  const selectedLabel = searchParams.get("labels") ?? "All";
+  const team = searchParams.get("team") ?? "All";
+  const topologyType = searchParams.get("type") ?? "All";
+  const healthStatus = searchParams.get("status") ?? "All";
+  const refererId = searchParams.get("refererId") ?? undefined;
   const showHiddenComponents =
     searchParams.get("showHiddenComponents") !== "no";
-  const refererId = searchParams.get("refererId") ?? undefined;
+
   const topology = topologyState.topology;
+
   const sortLabels = useMemo(() => {
     if (!topology) {
       return null;
@@ -137,9 +136,9 @@ export function TopologyPage() {
       sortBy,
       sortOrder
     });
-  }, [sortLabels]);
+  }, [searchParams, setSearchParams, sortLabels]);
 
-  const load = async () => {
+  const load = useCallback(async () => {
     const params = Object.fromEntries(searchParams);
 
     if (id != null) {
@@ -157,7 +156,9 @@ export function TopologyPage() {
         labels: params.labels,
         // only flatten, if topology type is set
         ...(params.type &&
-          params.type.toString().toLowerCase() !== "all" && { flatten: true }),
+          params.type.toString().toLowerCase() !== "all" && {
+            flatten: true
+          }),
         hidden: params.showHiddenComponents === "no" ? false : undefined
       };
       // @ts-ignore
@@ -211,15 +212,12 @@ export function TopologyPage() {
     }
 
     setLoading(false);
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, searchParams, setTopologyState]);
 
   useEffect(() => {
     load();
-    setHealthStatus(searchParams.get("status") ?? "All");
-    setTopologyType(searchParams.get("type") ?? "All");
-    setTeam(searchParams.get("team") ?? "All");
-    setSelectedLabel(searchParams.get("labels") ?? "All");
-  }, [searchParams, id]);
+  }, [searchParams, id, load]);
 
   useEffect(() => {
     const teamsApiConfig = schemaResourceTypes.find(
@@ -242,7 +240,7 @@ export function TopologyPage() {
 
         setTeams(data);
       })
-      .catch((err) => {
+      .catch((_) => {
         setTeams({
           ...allOption
         });
@@ -298,7 +296,7 @@ export function TopologyPage() {
                   dropDownClassNames="w-auto max-w-[400px] left-0"
                   onChange={(val: any) => {
                     setSearchParams({
-                      ...searchParamsToObj(searchParams),
+                      ...Object.fromEntries(searchParams),
                       status: val
                     });
                   }}
@@ -315,9 +313,8 @@ export function TopologyPage() {
                 label=""
                 value={topologyType}
                 onChange={(val: any) => {
-                  setTopologyType(val);
                   setSearchParams({
-                    ...searchParamsToObj(searchParams),
+                    ...Object.fromEntries(searchParams),
                     type: val
                   });
                 }}
@@ -331,9 +328,8 @@ export function TopologyPage() {
                   className="inline-block p-3 w-auto max-w-[500px]"
                   dropDownClassNames="w-auto max-w-[400px] left-0"
                   onChange={(val: any) => {
-                    setTeam(val);
                     setSearchParams({
-                      ...searchParamsToObj(searchParams),
+                      ...Object.fromEntries(searchParams),
                       team: val
                     });
                   }}
@@ -350,9 +346,8 @@ export function TopologyPage() {
                 className="flex p-3 w-auto max-w-[500px]"
                 value={selectedLabel}
                 onChange={(val: any) => {
-                  setSelectedLabel(val);
                   setSearchParams({
-                    ...searchParamsToObj(searchParams),
+                    ...Object.fromEntries(searchParams),
                     labels: val
                   });
                 }}
@@ -364,7 +359,7 @@ export function TopologyPage() {
                 onChange={(val) => {
                   const newValue = val ? "yes" : "no";
                   setSearchParams({
-                    ...searchParamsToObj(searchParams),
+                    ...Object.fromEntries(searchParams),
                     showHiddenComponents: newValue
                   });
                 }}
