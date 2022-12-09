@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import { BsFillInfoCircleFill } from "react-icons/bs";
 import { useParams, useSearchParams } from "react-router-dom";
 import {
   getTopology,
@@ -19,18 +18,18 @@ import {
 } from "../components/TopologyPopover/topologySort";
 import TopologySidebar from "../components/TopologySidebar";
 
-import { useLoader } from "../hooks";
 import { getAll } from "../api/schemaResources";
-import { searchParamsToObj } from "../utils/common";
+import { Toggle } from "../components";
+import { ComponentLabelsDropdown } from "../components/Dropdown/ComponentLabelsDropdown";
+import { ComponentTypesDropdown } from "../components/Dropdown/ComponentTypesDropdown";
+import { InfoMessage } from "../components/InfoMessage";
+import { TopologyBreadcrumbs } from "../components/TopologyBreadcrumbs";
 import {
   Topology,
   useTopologyPageContext
 } from "../context/TopologyPageContext";
-import { TopologyBreadcrumbs } from "../components/TopologyBreadcrumbs";
-import { ComponentTypesDropdown } from "../components/Dropdown/ComponentTypesDropdown";
-import { ComponentLabelsDropdown } from "../components/Dropdown/ComponentLabelsDropdown";
-import { InfoMessage } from "../components/InfoMessage";
-import { Toggle } from "../components";
+import { useLoader } from "../hooks";
+import { searchParamsToObj } from "../utils/common";
 
 export const allOption = {
   All: {
@@ -118,7 +117,7 @@ export function TopologyPage() {
   );
   const showHiddenComponents =
     searchParams.get("showHiddenComponents") !== "no";
-  const refererId = searchParams.get("refererId");
+  const refererId = searchParams.get("refererId") ?? undefined;
   const topology = topologyState.topology;
   const sortLabels = useMemo(() => {
     if (!topology) {
@@ -207,7 +206,7 @@ export function TopologyPage() {
         topology: result,
         searchParams
       });
-    } catch (ex) {
+    } catch (ex: any) {
       toastError(ex);
     }
 
@@ -262,7 +261,7 @@ export function TopologyPage() {
       if (data) {
         toastSuccess(`Component visibility updated successfully`);
       }
-    } catch (ex) {
+    } catch (ex: any) {
       toastError(ex);
     }
     load();
@@ -290,22 +289,24 @@ export function TopologyPage() {
           <div className="flex">
             <div className="flex flex-wrap">
               <div className="flex p-3">
-                <label className="self-center inline-block pt-2 mr-3 text-sm text-gray-500">
-                  Health
-                </label>
                 <ReactSelectDropdown
-                  name="helath"
+                  name="health"
                   label=""
                   value={healthStatus}
                   items={healthTypes}
-                  className="inline-block p-3 w-80 md:w-60"
+                  className="inline-block p-3 w-auto max-w-[500px]"
+                  dropDownClassNames="w-auto max-w-[400px] left-0"
                   onChange={(val: any) => {
-                    setHealthStatus(val);
                     setSearchParams({
                       ...searchParamsToObj(searchParams),
                       status: val
                     });
                   }}
+                  prefix={
+                    <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
+                      Health:
+                    </div>
+                  }
                 />
               </div>
               <ComponentTypesDropdown
@@ -322,15 +323,13 @@ export function TopologyPage() {
                 }}
               />
               <div className="flex p-3">
-                <label className="self-center inline-block pt-2 mr-3 text-sm text-gray-500">
-                  Team
-                </label>
                 <ReactSelectDropdown
                   name="team"
                   label=""
                   value={team}
                   items={teams}
-                  className="inline-block p-3 w-80 md:w-60"
+                  className="inline-block p-3 w-auto max-w-[500px]"
+                  dropDownClassNames="w-auto max-w-[400px] left-0"
                   onChange={(val: any) => {
                     setTeam(val);
                     setSearchParams({
@@ -338,12 +337,17 @@ export function TopologyPage() {
                       team: val
                     });
                   }}
+                  prefix={
+                    <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
+                      Team:
+                    </div>
+                  }
                 />
               </div>
               <ComponentLabelsDropdown
                 name="Labels"
                 label=""
-                className="flex p-3"
+                className="flex p-3 w-auto max-w-[500px]"
                 value={selectedLabel}
                 onChange={(val: any) => {
                   setSelectedLabel(val);

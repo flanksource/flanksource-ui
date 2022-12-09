@@ -48,18 +48,21 @@ export function ComponentTypesDropdown({
 
   return (
     <div className={className} {...rest}>
-      <label className="self-center inline-block pt-2 mr-3 text-sm text-gray-500">
-        {`${name}:`}
-      </label>
       <ReactSelectDropdown
         label={label}
         name={name}
         value={value}
         items={topologyTypes}
-        className="inline-block p-3 w-80 md:w-60"
+        className="inline-block p-3 w-auto max-w-[500px]"
+        dropDownClassNames="w-auto max-w-[400px] left-0"
         onChange={(val: any) => {
           onChange(val);
         }}
+        prefix={
+          <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
+            {`${name}:`}
+          </div>
+        }
       />
     </div>
   );

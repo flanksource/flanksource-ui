@@ -60,7 +60,7 @@ type ReactSelectDropdownProps = {
 
 export const ReactSelectDropdown = ({
   className,
-  dropDownClassNames,
+  dropDownClassNames = "w-auto max-w-[300px]",
   label,
   control,
   items,
