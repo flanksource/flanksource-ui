@@ -1,4 +1,4 @@
-export { IncidentPriority } from "./incident-priority";
+export { IncidentPriority } from "./incidentPriority";
 
 export const NodePodPropToLabelMap = {
   node: "Node",

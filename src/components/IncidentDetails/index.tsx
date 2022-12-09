@@ -16,9 +16,8 @@ import { ResponderDetailsDialog } from "./ResponderDetailsDialog";
 import { ResponderDetailsToolTip } from "./ResponderDetailsToolTip";
 import { AddResponder, ResponderPropsKeyToLabelMap } from "./AddResponder";
 
-import { priorities } from "./data";
-import { typeItems } from "../Incidents/data";
-import { IncidentPriority } from "../../constants/incident-priority";
+import { severityItems, typeItems } from "../Incidents/data";
+import { IncidentPriority } from "../../constants/incidentPriority";
 import {
   deleteResponder,
   getRespondersForTheIncident
@@ -26,6 +25,12 @@ import {
 import { relativeDateTime } from "../../utils/date";
 import { DefinitionOfDone } from "./DefinitionOfDone";
 import { Incident, IncidentStatus } from "../../api/services/incident";
+
+export const priorities = Object.entries(severityItems).map(([key, value]) => ({
+  label: value.name,
+  value: key as keyof typeof IncidentPriority,
+  icon: value.icon
+}));
 
 type IncidentDetailsProps = {
   incident: Incident & {
