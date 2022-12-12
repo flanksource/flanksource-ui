@@ -19,6 +19,11 @@ import { InfoMessage } from "../../InfoMessage";
 
 const convert = new Convert();
 
+type SizeTypes = {
+  size?: number;
+  maxSize?: number;
+};
+
 type LogsTableProps = {
   logs: LogItem[];
   actions?: Record<string, any>;
@@ -27,6 +32,11 @@ type LogsTableProps = {
   isLoading?: boolean;
   areQueryParamsEmpty?: boolean;
   componentId?: string;
+  columnSizes?: {
+    Time?: SizeTypes;
+    Message?: SizeTypes;
+    Labels?: SizeTypes;
+  };
 };
 
 export function LogsTable({
@@ -36,7 +46,8 @@ export function LogsTable({
   viewOnly,
   isLoading = false,
   areQueryParamsEmpty = false,
-  componentId
+  componentId,
+  columnSizes
 }: LogsTableProps) {
   const [attachAsAsset, setAttachAsAsset] = useState(false);
   const [lines, setLines] = useState<LogItem[]>([]);
@@ -72,13 +83,14 @@ export function LogsTable({
           header: "Time",
           accessor: "timestamp",
           enableResizing: false,
-          size: 5,
-          maxSize: 6,
+          size: columnSizes?.Time?.size ?? 5,
+          maxSize: columnSizes?.Time?.maxSize ?? 6,
           cell: ({ cell }) => (
             <LogsTableTimestampCell
               cell={cell}
               variant={variant}
               viewOnly={viewOnly}
+              className="flex flex-row text-left break-word"
             />
           )
         },
@@ -115,7 +127,7 @@ export function LogsTable({
           },
           accessor: "message",
           id: "message",
-          size: 300,
+          size: columnSizes?.Message?.size || 300,
           cell: ({ cell, row }) => {
             return (
               <div
@@ -131,13 +143,13 @@ export function LogsTable({
           }
         },
         {
-          size: 100,
+          size: columnSizes?.Labels?.size || 100,
           id: "labels",
           header: "Labels",
           cell: ({ cell }) => <LogsTableLabelsCell cell={cell} />
         }
       ] as Array<ColumnDef<LogItem>>,
-    [variant, viewOnly]
+    [variant, viewOnly, columnSizes]
   );
 
   const table = useReactTable({

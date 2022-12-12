@@ -5,17 +5,20 @@ import { IoMdArrowDropdown, IoMdArrowDropright } from "react-icons/io";
 import LogItem from "../../../types/Logs";
 import { IndeterminateCheckbox } from "../../IndeterminateCheckbox/IndeterminateCheckbox";
 
-export function LogsTableTimestampCell({
-  cell: { row },
-  variant,
-  viewOnly
-}: {
+export type LogsTableTimestampCellProps = React.HTMLProps<HTMLDivElement> & {
   cell: Cell<LogItem, unknown>;
   variant?: "comfortable" | "compact";
   viewOnly?: boolean;
-}) {
+};
+
+export function LogsTableTimestampCell({
+  cell: { row },
+  variant,
+  viewOnly,
+  className = "min-w-max flex flex-row text-left"
+}: LogsTableTimestampCellProps) {
   return (
-    <div className="min-w-max flex flex-row text-left">
+    <div className={className}>
       {variant === "comfortable" && !viewOnly && (
         <div className="mr-1.5">
           <IndeterminateCheckbox
