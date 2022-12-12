@@ -48,7 +48,7 @@ export function toFormattedDuration(ms) {
 export function Duration({ ms }) {
   const [val, unit] = toFormattedDuration(ms);
   if (!val && !unit) {
-    return <>"-"</>;
+    return null;
   }
   return (
     <>
