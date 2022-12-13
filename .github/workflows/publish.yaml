@@ -30,7 +30,7 @@ jobs:
         uses: elgohr/Publish-Docker-Github-Action@v4
         env:
           APP_DEPLOYMENT: ${{ matrix.deployment == 'canary-checker-ui' && 'CANARY_CHECKER' || 'INCIDENT_MANAGER' }}
-          # WITHOUT_AUTH: ${{ matrix.deployment == 'canary-checker-ui' && 'true' || 'false' }}
+          WITHOUT_AUTH: ${{ matrix.deployment == 'canary-checker-ui' && 'true' || 'false' }}
         with:
           name: flanksource/${{ matrix.deployment }}
           username: ${{ secrets.DOCKER_USERNAME }}
@@ -79,7 +79,7 @@ jobs:
           commit_message: "Release ${{ needs.semantic-release.outputs.release-version }} of ${{ github.repository }}"
           branch: gh-pages
           repository: ./charts
-          
+
   update-incident-commander:
     runs-on: ubuntu-latest
     needs: [docker, helm, semantic-release]
