@@ -39,7 +39,7 @@ import { IncidentPageContextProvider } from "./context/IncidentPageContext";
 import { User } from "./api/services/users";
 import FullPageSkeletonLoader from "./components/SkeletonLoader/FullPageSkeletonLoader";
 import { UsersPage } from "./pages/UsersPage";
-import { HiUsers } from "react-icons/hi";
+import { HiUser } from "react-icons/hi";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -68,7 +68,7 @@ const settingsNav = {
     {
       name: "Users",
       href: "/settings/users",
-      icon: HiUsers
+      icon: HiUser
     },
     ...schemaResourceTypes.map((x) => ({
       ...x,

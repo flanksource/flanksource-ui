@@ -1,11 +1,10 @@
-import { useState } from "react";
-import { Outlet, NavLink, useMatch } from "react-router-dom";
 import clsx from "clsx";
-
-import { SearchLayout } from "./search";
-import ConfigDetailsSidePanel from "../ConfigDetailsSidePanel";
+import { useState } from "react";
+import { NavLink, Outlet, useMatch } from "react-router-dom";
 import { ConfigBreadcrumb } from "../ConfigBreadcrumb";
+import ConfigSidebar from "../ConfigSidebar";
 import ConfigsListFilterControls from "../ConfigsListFilters";
+import { SearchLayout } from "./search";
 
 type Props = {
   showSearchInput?: boolean;
@@ -98,7 +97,7 @@ export function ConfigLayout({
             }}
           />
         </div>
-        {showSidePanel && <ConfigDetailsSidePanel />}
+        {showSidePanel && <ConfigSidebar />}
       </div>
     </SearchLayout>
   );

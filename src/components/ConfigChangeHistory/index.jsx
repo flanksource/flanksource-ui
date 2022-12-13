@@ -1,5 +1,8 @@
 import { Link } from "react-router-dom";
 
+import { FiExternalLink } from "react-icons/fi";
+import { FaExclamationTriangle } from "react-icons/fa";
+
 import { DateCell } from "../ConfigViewer/columns";
 import { DataTable } from "../index";
 import { JSONViewer } from "../JSONViewer";
@@ -8,6 +11,17 @@ const columns = [
   {
     Header: "Type",
     accessor: "change_type",
+    Cell: function ({ row }) {
+      if (row.original.severity === "failed") {
+        return (
+          <div className="flex flex-row">
+            <FaExclamationTriangle className="text-red-500 w-5" />
+            {row.original.change_type}
+          </div>
+        );
+      }
+      return row.original.change_type;
+    },
     cellClass: `px-5 py-2`
   },
   {
@@ -20,11 +34,30 @@ const columns = [
     Header: "Changes",
     accessor: "patches",
     Cell: function JSONViewCell({ row, column }) {
-      return (
-        <JSONViewer code={JSON.stringify(row?.values[column.id], null, 2)} />
-      );
+      var patches = row.original.details || row.original.patches;
+      return <JSONViewer code={JSON.stringify(patches, null, 2)} />;
     },
     cellClass: "px-5 py-2"
+  },
+  {
+    Header: "Link",
+    accessor: "source",
+    Cell: function LinkCell({ row }) {
+      if (!row.original.source?.startsWith("http")) {
+        return null;
+      }
+      return (
+        <a
+          href={row.original.source}
+          target="_blank"
+          rel="noreferrer"
+          className="underline"
+        >
+          <span>{row.original.source}</span>
+          <FiExternalLink className="inline-block ml-1" />
+        </a>
+      );
+    }
   }
 ];
 

@@ -9,10 +9,10 @@ import { HealthSummary } from "../HealthSummary";
 import { Icon } from "../Icon";
 import { Loading } from "../Loading";
 import { HealthChecksSummary } from "../HealthChecksSummary";
-import TopologyCardIncidentSummary from "../TopologyCardIncidentSummary";
 import { CardMetrics } from "./CardMetrics";
 import { Property } from "./Property";
 import { TopologyDropdownMenu } from "./TopologyDropdownMenu";
+import IncidentCardSummary from "../IncidentCardSummary";
 
 export enum ComponentStatus {
   unhealthy = "unhealthy",
@@ -222,9 +222,7 @@ export function TopologyCard({
                 />
               )}
               <HealthChecksSummary checks={topology?.checks} />
-              {topology?.id && (
-                <TopologyCardIncidentSummary topology={topology} />
-              )}
+              {topology?.id && <IncidentCardSummary topology={topology} />}
               {topology?.components?.map((component: any) => (
                 <HealthSummary
                   className="mb-2"

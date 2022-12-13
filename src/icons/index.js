@@ -55,6 +55,7 @@ import aws_waf from "./aws-waf.svg";
 import aws from "./aws.svg";
 import azure_acl from "./azure-acl.svg";
 import azure_app_service from "./azure-app-service.svg";
+import azure_devops_pipeline from "./azure-devops-pipeline.svg";
 import azure_devops from "./azure-devops.svg";
 import azure_lb from "./azure-lb.svg";
 import azure_log_analytics from "./azure-log-analytics.svg";
@@ -375,6 +376,7 @@ export const Icons = {
   aws: aws,
   "azure-acl": azure_acl,
   "azure-app-service": azure_app_service,
+  "azure-devops-pipeline": azure_devops_pipeline,
   "azure-devops": azure_devops,
   "azure-lb": azure_lb,
   "azure-log-analytics": azure_log_analytics,

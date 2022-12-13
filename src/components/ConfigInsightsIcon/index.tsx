@@ -20,14 +20,15 @@ type Props = {
  *
  */
 export default function ConfigInsightsIcon({ analysis }: Props) {
+  const size = 22;
   const colorClass = useMemo(() => {
     if (analysis.severity === "critical") {
-      return "text-red-500";
+      return "text-red-500 mr-1";
     }
     if (analysis.severity === "warning") {
-      return "text-yellow-500";
+      return "text-yellow-500 mr-1";
     }
-    return "text-gray-500";
+    return "text-gray-500 mr-1";
   }, [analysis.severity]);
 
   switch (analysis.analysis_type) {
@@ -35,7 +36,7 @@ export default function ConfigInsightsIcon({ analysis }: Props) {
       return (
         <BiDollarCircle
           className={`${colorClass} inline-block`}
-          size="20"
+          size={size}
           title="Cost"
         />
       );
@@ -43,7 +44,7 @@ export default function ConfigInsightsIcon({ analysis }: Props) {
       return (
         <ImHeartBroken
           className={`${colorClass} inline-block`}
-          size="20"
+          size={size}
           title="Availability"
         />
       );
@@ -51,7 +52,7 @@ export default function ConfigInsightsIcon({ analysis }: Props) {
       return (
         <IoMdSpeedometer
           className={`${colorClass} inline-block`}
-          size="20"
+          size={size}
           title="Performance"
         />
       );
@@ -59,7 +60,7 @@ export default function ConfigInsightsIcon({ analysis }: Props) {
       return (
         <MdSecurity
           className={`${colorClass} inline-block`}
-          size="20"
+          size={size}
           title="Security"
         />
       );
@@ -67,7 +68,7 @@ export default function ConfigInsightsIcon({ analysis }: Props) {
       return (
         <GrIntegration
           className={`${colorClass} inline-block`}
-          size="20"
+          size={size}
           title="Integration"
         />
       );
@@ -75,7 +76,7 @@ export default function ConfigInsightsIcon({ analysis }: Props) {
       return (
         <FaTasks
           className={`${colorClass} inline-block`}
-          size="20"
+          size={size}
           title="Compliance"
         />
       );
@@ -83,7 +84,7 @@ export default function ConfigInsightsIcon({ analysis }: Props) {
       return (
         <GrWorkshop
           className={`${colorClass}`}
-          size="20"
+          size={size}
           title="Technical Debt"
         />
       );

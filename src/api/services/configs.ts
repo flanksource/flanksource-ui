@@ -66,6 +66,27 @@ export const getConfigChange = (id: string) =>
     ConfigDB.get(`/config_changes?config_id=eq.${id}&order=created_at.desc`)
   );
 
+type ConfigParams = {
+  topologyId?: string;
+  configId?: string;
+};
+
+export const getConfigsBy = ({ topologyId, configId }: ConfigParams) => {
+  if (topologyId) {
+    return resolve<ConfigItem[]>(
+      ConfigDB.get(
+        `/config_component_relationships?component_id=eq.${topologyId}&select=*,configs!config_component_relationships_config_id_fkey(*)`
+      )
+    );
+  } else if (configId) {
+    return resolve(
+      ConfigDB.get<ConfigTypeRelationships[]>(
+        `/config_relationships?or=(related_id.eq.${configId},config_id.eq.${configId})&select=*,configs:configs!config_relationships_config_id_fkey(*),related:configs!config_relationships_related_id_fkey(*)`
+      )
+    );
+  }
+};
+
 export const searchConfigs = (type: string, input: string) => {
   const orCondition = input
     ? `&or=(name.ilike.*${input}*,external_id.ilike.*${input}*)`

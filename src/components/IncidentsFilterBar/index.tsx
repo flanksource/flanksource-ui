@@ -46,13 +46,13 @@ export default function TopologyOpenIncidentsFilterBar({
   }, [filterValues, onChangeFilterValues]);
 
   return (
-    <div className="flex flex-row text-xs">
+    <div className="flex flex-row ">
       <div>
         <FaFilter className="text-gray-500 w-4 inline-block object-center" />
       </div>
 
-      <div className="flex flex-row space-x-2 w-auto">
-        <label className="text-gray-500">Type: </label>
+      <div className="flex flex-row w-auto pl-1 mr-2">
+        <label className="text-gray-500 pr-2">Type:</label>
         <div className="relative">
           <Menu>
             {/* @ts-expect-error */}
@@ -73,7 +73,7 @@ export default function TopologyOpenIncidentsFilterBar({
               {/* @ts-expect-error */}
               <Menu.Items
                 as="ul"
-                className="absolute left-0 mt-2 p-1 w-40 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none text-xs"
+                className="absolute left-0 mt-2 p-1 w-40 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none text-sm"
               >
                 {/* @ts-expect-error */}
                 <Menu.Item
@@ -120,8 +120,8 @@ export default function TopologyOpenIncidentsFilterBar({
           </Menu>
         </div>
       </div>
-      <div className="flex flex-row space-x-2 flex-1">
-        <label className="text-gray-500">Status: </label>
+      <div className="flex flex-row  flex-1">
+        <label className="text-gray-500 pr-2">Status: </label>
         <div className="relative">
           <Menu>
             {/* @ts-expect-error */}
@@ -142,7 +142,7 @@ export default function TopologyOpenIncidentsFilterBar({
               {/* @ts-expect-error */}
               <Menu.Items
                 as="ul"
-                className="absolute left-0 mt-2 p-1 w-auto origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none text-xs"
+                className="absolute left-0 mt-2 p-1 w-auto origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none text-base"
               >
                 {Object.entries(filterIncidentsStatusOptions).map(
                   ([key, content]) => (

@@ -71,18 +71,23 @@ export const getIncident = async (id: string) => {
   );
 };
 
-export const getIncidentsByComponent = async (
-  topologyId: string,
-  type?: string,
-  status?: string
-) => {
+interface IncidentParams {
+  topologyId?: string;
+  configId?: string;
+  type?: string;
+  status?: string;
+}
+
+export const getIncidentsBy = async ({
+  topologyId,
+  configId,
+  type,
+  status
+}: IncidentParams) => {
   let params: Record<string, string> = {
     order: "created_at.desc"
   };
 
-  if (topologyId) {
-    params["component_id"] = `eq.${topologyId}`;
-  }
   if (type != null && type.toLowerCase() !== "all") {
     params["type"] = `eq.${type.toLowerCase()}`;
   }
@@ -90,9 +95,17 @@ export const getIncidentsByComponent = async (
     params["status"] = `eq.${status.toLowerCase()}`;
   }
 
-  return resolve(
-    IncidentCommander.get(`incidents_by_component?${stringify(params)}`)
-  );
+  if (topologyId) {
+    params["component_id"] = `eq.${topologyId}`;
+    return resolve(
+      IncidentCommander.get(`incidents_by_component?${stringify(params)}`)
+    );
+  } else {
+    params["config_id"] = `eq.${configId}`;
+    return resolve(
+      IncidentCommander.get(`incidents_by_config?${stringify(params)}`)
+    );
+  }
 };
 
 export const getIncidentsWithParams = async (

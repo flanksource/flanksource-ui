@@ -1,11 +1,13 @@
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
-import ConfigChangeIcon from "../ConfigChangeIcon";
-import { FaExclamationTriangle } from "react-icons/fa";
-import { Loading } from "../Loading";
-import CollapsiblePanel from "../CollapsiblePanel";
 import { GoDiff } from "react-icons/go";
 import { Link } from "react-router-dom";
+import CollapsiblePanel from "../CollapsiblePanel";
+import ConfigChangeIcon from "../ConfigChangeIcon";
+import EmptyState from "../EmptyState";
+import { Icon } from "../Icon";
+import { Loading } from "../Loading";
+import Title from "../Title/title";
 
 export type ConfigTypeChanges = {
   id: string;
@@ -70,7 +72,11 @@ function ConfigChangesDetails({ configID }: Props) {
                       pathname: `/configs/${configChange.config_id}/changes`
                     }}
                   >
-                    <ConfigChangeIcon changeType={configChange.change_type} />
+                    <Icon
+                      name={configChange.change_type}
+                      secondary="diff"
+                      className="w-5 h-auto pr-1"
+                    />
                     {configChange.summary ?? configChange.change_type}
                   </Link>
                 </td>
@@ -89,9 +95,7 @@ function ConfigChangesDetails({ configID }: Props) {
           </tbody>
         </table>
       ) : (
-        <div className="flex flex-row space-x-2 text-gray-500 justify-center items-center">
-          <FaExclamationTriangle /> <span>No details found</span>
-        </div>
+        <EmptyState />
       )}
     </div>
   );
@@ -101,10 +105,7 @@ export default function ConfigChanges(props: Props) {
   return (
     <CollapsiblePanel
       Header={
-        <h3 className="flex flex-row space-x-2 items-center text-xl font-semibold">
-          <GoDiff className="text-gray-400" />
-          <span>Changes</span>
-        </h3>
+        <Title title="Changes" icon={<GoDiff className="w-6 h-auto" />} />
       }
     >
       <ConfigChangesDetails {...props} />

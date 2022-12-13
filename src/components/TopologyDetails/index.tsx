@@ -1,13 +1,9 @@
 import { isEmpty, map } from "lodash";
 import { BsCardList } from "react-icons/bs";
-import { FaExclamationTriangle } from "react-icons/fa";
-import { TbListDetails } from "react-icons/tb";
-import { NodePodPropToLabelMap } from "../../constants";
 import { Topology } from "../../context/TopologyPageContext";
-import CollapsiblePanel from "../CollapsiblePanel";
 import { DescriptionCard } from "../DescriptionCard";
 import { Icon } from "../Icon";
-import { CardMetrics } from "../TopologyCard/CardMetrics";
+import Title from "../Title/title";
 import { FormatProperty } from "../TopologyCard/Property";
 import { TopologyLink } from "../TopologyLink";
 
@@ -58,7 +54,7 @@ export default function TopologyDetails({ topology, refererId }: Props) {
       value: map(topology.labels, (v, k) => (
         <div
           data-tip={`${k}: ${v}`}
-          className="max-w-full overflow-hidden text-ellipsis  mb-1 rounded-md text-gray-600 font-semibold text-xs"
+          className="max-w-full overflow-hidden text-ellipsis  mb-1 rounded-md text-gray-600 font-semibold text-sm"
           key={k}
         >
           {k}: <span className="font-light">{v}</span>
@@ -69,9 +65,7 @@ export default function TopologyDetails({ topology, refererId }: Props) {
 
   return (
     <div className="flex flex-col space-y-2">
-      <h4>
-        <BsCardList className="inline-block text-gray-400" /> Details
-      </h4>
+      <Title title="Details" icon={<BsCardList className="w-6 h-auto" />} />
       <DescriptionCard items={items} />
     </div>
   );
