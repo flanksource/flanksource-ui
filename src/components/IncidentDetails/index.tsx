@@ -16,15 +16,31 @@ import { ResponderDetailsDialog } from "./ResponderDetailsDialog";
 import { ResponderDetailsToolTip } from "./ResponderDetailsToolTip";
 import { AddResponder, ResponderPropsKeyToLabelMap } from "./AddResponder";
 
-import { priorities } from "./data";
-import { typeItems } from "../Incidents/data";
-import { IncidentPriority } from "../../constants/incident-priority";
+import { severityItems, typeItems } from "../Incidents/data";
+import { IncidentPriority } from "../../constants/incidentPriority";
 import {
   deleteResponder,
   getRespondersForTheIncident
 } from "../../api/services/responder";
 import { relativeDateTime } from "../../utils/date";
 import { DefinitionOfDone } from "./DefinitionOfDone";
+import { Incident, IncidentStatus } from "../../api/services/incident";
+
+export const priorities = Object.entries(severityItems).map(([key, value]) => ({
+  label: value.name,
+  value: key as keyof typeof IncidentPriority,
+  icon: value.icon
+}));
+
+type IncidentDetailsProps = {
+  incident: Incident & {
+    commander_id: { name: string; id: string; avatar: string };
+  };
+  className?: string;
+  updateStatusHandler: (status: IncidentStatus) => void;
+  updateIncidentHandler: (newDataIncident: Partial<Incident>) => void;
+  textButton: string;
+};
 
 export const IncidentDetails = ({
   incident,
@@ -32,7 +48,7 @@ export const IncidentDetails = ({
   updateStatusHandler,
   updateIncidentHandler,
   textButton
-}) => {
+}: IncidentDetailsProps) => {
   const [responders, setResponders] = useState([]);
   const [openDeleteConfirmDialog, setOpenDeleteConfirmDialog] = useState(false);
   const [deletedResponder, setDeletedResponder] = useState();
@@ -65,12 +81,12 @@ export const IncidentDetails = ({
       statusPageTitle: "StatusPage.io",
       statusPage: "https://www.atlassian.com/software/statuspage",
       priority: incident.severity ?? IncidentPriority.High,
-      type: typeItems[incident.type] ? incident.type : "",
+      type: typeItems[incident.type as keyof typeof typeItems]
+        ? incident.type
+        : "",
       commanders: incident.commander_id.id
     }
   });
-
-  watch();
 
   const watchCreatedAt = watch("created_at");
   const watchType = watch("type");
