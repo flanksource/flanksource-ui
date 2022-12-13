@@ -38,7 +38,10 @@ interface IProps {
   selectionMode?: boolean;
   selected?: boolean;
   onSelectionChange?: MouseEventHandler<HTMLDivElement>;
-  updateVisibility?: (topologyId: string, updatedVisibility: boolean) => void;
+  updateVisibility?: (
+    topologyId: string | undefined,
+    updatedVisibility: boolean
+  ) => void;
 }
 
 export function TopologyCard({

@@ -29,12 +29,12 @@ import { severityItems, typeItems } from "../Incidents/data";
 import { ReactSelectDropdown } from "../ReactSelectDropdown";
 
 interface Props {
-  title: string;
-  config_id: string;
-  config_change_id: string;
-  config_analysis_d: string;
-  component_id: string;
-  check_id: string;
+  title?: string;
+  config_id?: string;
+  config_change_id?: string;
+  config_analysis_d?: string;
+  component_id?: string;
+  check_id?: string;
   disabled?: boolean;
   selectedLogs?: any;
   callback?: (success: boolean) => void;
@@ -187,7 +187,7 @@ export function AttachEvidenceDialog({
   const [newIncidentCreated, setNewIncidentCreated] = useState<boolean>(true);
 
   useEffect(() => {
-    setValue("hypothesis", null);
+    setValue("hypothesis", undefined);
     if (!selectedIncident?.value) {
       return;
     }
