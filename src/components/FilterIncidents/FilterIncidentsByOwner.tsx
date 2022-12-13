@@ -1,6 +1,6 @@
 import { Control } from "react-hook-form";
 import { ReactSelectDropdown } from "../ReactSelectDropdown";
-import { defaultSelections } from "./FilterIncidentsByComponents";
+import { defaultSelections } from "../Incidents/data";
 
 type Props = {
   control: Control<any, any>;

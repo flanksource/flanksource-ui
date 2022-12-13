@@ -14,6 +14,14 @@ import {
   HiOutlineMinus
 } from "react-icons/hi";
 
+export const defaultSelections = {
+  all: {
+    description: "All",
+    value: "all",
+    order: -1
+  }
+};
+
 export const severityItems = {
   Low: {
     id: "dropdown-severity-low",

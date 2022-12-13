@@ -4,14 +4,7 @@ import { Control } from "react-hook-form";
 import { MdOutlineError } from "react-icons/md";
 import { Icon } from "../Icon";
 import { ReactSelectDropdown } from "../ReactSelectDropdown";
-
-export const defaultSelections = {
-  all: {
-    description: "All",
-    value: "all",
-    order: -1
-  }
-};
+import { defaultSelections } from "../Incidents/data";
 
 export type TopologyComponentItem = {
   created_at?: string;

@@ -25,6 +25,7 @@ import {
 import { relativeDateTime } from "../../utils/date";
 import { DefinitionOfDone } from "./DefinitionOfDone";
 import { Incident, IncidentStatus } from "../../api/services/incident";
+import IncidentTypeDropdown from "../Incidents/IncidentTypeDropdown";
 
 export const priorities = Object.entries(severityItems).map(([key, value]) => ({
   label: value.name,
@@ -261,12 +262,13 @@ export const IncidentDetails = ({
           title="Type"
           className="mt-3 px-4"
           value={
-            <ReactSelectDropdown
+            <IncidentTypeDropdown
               control={control}
               label=""
+              prefix=""
               name="type"
               className="w-full"
-              items={typeItems}
+              dropDownClassNames="w-full"
               value={watchType}
             />
           }
