@@ -21,21 +21,24 @@ type IncidentSummaryTypes = keyof typeof typeItems;
 
 type IncidentSummarySeverity = "Medium" | "Low" | "High";
 
-type TopologyCardIncidentSummaryItemProps = {
+type IncidentCardSummaryItemProps = {
   severity: IncidentSummarySeverity;
   value: number;
   topology: Pick<Topology, "id">;
   index: number;
 };
 
-function TopologyCardIncidentSummaryItem({
+function IncidentCardSummaryItem({
   severity,
   value,
   topology,
   index
-}: TopologyCardIncidentSummaryItemProps) {
+}: IncidentCardSummaryItemProps) {
   const severityObject = useMemo(() => {
-    return severityItems[severity];
+    if (severityItems[severity]) {
+      return severityItems[severity];
+    }
+    return severityItems.Low;
   }, [severity]);
 
   return (
@@ -47,13 +50,13 @@ function TopologyCardIncidentSummaryItem({
   );
 }
 
-type TopologyCardIncidentSummaryProps = {
+type IncidentCardSummaryProps = {
   topology: Pick<Topology, "summary" | "id">;
 };
 
-export default function TopologyCardIncidentSummary({
+export default function IncidentCardSummary({
   topology
-}: TopologyCardIncidentSummaryProps) {
+}: IncidentCardSummaryProps) {
   if (!topology.summary?.incidents) {
     return null;
   }
@@ -78,7 +81,8 @@ export default function TopologyCardIncidentSummary({
               {Object.entries(summary).map(
                 ([key, value], i) =>
                   value > 0 && (
-                    <TopologyCardIncidentSummaryItem
+                    <IncidentCardSummaryItem
+                      key={i}
                       index={i}
                       severity={key as IncidentSummarySeverity}
                       topology={topology}

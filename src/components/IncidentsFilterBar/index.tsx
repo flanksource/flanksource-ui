@@ -35,7 +35,7 @@ type Props = {
   defaultValues: IncidentFilter;
 };
 
-export default function IncidentsFilterBar({
+export default function TopologyOpenIncidentsFilterBar({
   defaultValues,
   onChangeFilterValues
 }: Props) {
