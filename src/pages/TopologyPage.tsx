@@ -1,5 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
-import { BsFillInfoCircleFill } from "react-icons/bs";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import {
   getTopology,
@@ -19,18 +18,18 @@ import {
 } from "../components/TopologyPopover/topologySort";
 import TopologySidebar from "../components/TopologySidebar";
 
-import { useLoader } from "../hooks";
 import { getAll } from "../api/schemaResources";
-import { searchParamsToObj } from "../utils/common";
+import { Toggle } from "../components";
+import { ComponentLabelsDropdown } from "../components/Dropdown/ComponentLabelsDropdown";
+import { ComponentTypesDropdown } from "../components/Dropdown/ComponentTypesDropdown";
+import { InfoMessage } from "../components/InfoMessage";
+import { TopologyBreadcrumbs } from "../components/TopologyBreadcrumbs";
 import {
   Topology,
   useTopologyPageContext
 } from "../context/TopologyPageContext";
-import { TopologyBreadcrumbs } from "../components/TopologyBreadcrumbs";
-import { ComponentTypesDropdown } from "../components/Dropdown/ComponentTypesDropdown";
-import { ComponentLabelsDropdown } from "../components/Dropdown/ComponentLabelsDropdown";
-import { InfoMessage } from "../components/InfoMessage";
-import { Toggle } from "../components";
+import { useLoader } from "../hooks";
+import { searchParamsToObj } from "../utils/common";
 
 export const allOption = {
   All: {
@@ -107,19 +106,18 @@ export function TopologyPage() {
   const [currentTopology, setCurrentTopology] = useState<Topology>();
 
   const [teams, setTeams] = useState<any>({});
-  const [selectedLabel, setSelectedLabel] = useState("");
   const [size, setSize] = useState(() => getCardWidth());
-  const [team, setTeam] = useState(searchParams.get("team") ?? "All");
-  const [topologyType, setTopologyType] = useState(
-    searchParams.get("type") ?? "All"
-  );
-  const [healthStatus, setHealthStatus] = useState(
-    searchParams.get("status") ?? "All"
-  );
+
+  const selectedLabel = searchParams.get("labels") ?? "All";
+  const team = searchParams.get("team") ?? "All";
+  const topologyType = searchParams.get("type") ?? "All";
+  const healthStatus = searchParams.get("status") ?? "All";
+  const refererId = searchParams.get("refererId") ?? undefined;
   const showHiddenComponents =
     searchParams.get("showHiddenComponents") !== "no";
-  const refererId = searchParams.get("refererId");
+
   const topology = topologyState.topology;
+
   const sortLabels = useMemo(() => {
     if (!topology) {
       return null;
@@ -138,9 +136,9 @@ export function TopologyPage() {
       sortBy,
       sortOrder
     });
-  }, [sortLabels]);
+  }, [searchParams, setSearchParams, sortLabels]);
 
-  const load = async () => {
+  const load = useCallback(async () => {
     const params = Object.fromEntries(searchParams);
 
     if (id != null) {
@@ -158,7 +156,9 @@ export function TopologyPage() {
         labels: params.labels,
         // only flatten, if topology type is set
         ...(params.type &&
-          params.type.toString().toLowerCase() !== "all" && { flatten: true }),
+          params.type.toString().toLowerCase() !== "all" && {
+            flatten: true
+          }),
         hidden: params.showHiddenComponents === "no" ? false : undefined
       };
       // @ts-ignore
@@ -207,20 +207,17 @@ export function TopologyPage() {
         topology: result,
         searchParams
       });
-    } catch (ex) {
+    } catch (ex: any) {
       toastError(ex);
     }
 
     setLoading(false);
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, searchParams, setTopologyState]);
 
   useEffect(() => {
     load();
-    setHealthStatus(searchParams.get("status") ?? "All");
-    setTopologyType(searchParams.get("type") ?? "All");
-    setTeam(searchParams.get("team") ?? "All");
-    setSelectedLabel(searchParams.get("labels") ?? "All");
-  }, [searchParams, id]);
+  }, [searchParams, id, load]);
 
   useEffect(() => {
     const teamsApiConfig = schemaResourceTypes.find(
@@ -243,7 +240,7 @@ export function TopologyPage() {
 
         setTeams(data);
       })
-      .catch((err) => {
+      .catch((_) => {
         setTeams({
           ...allOption
         });
@@ -262,7 +259,7 @@ export function TopologyPage() {
       if (data) {
         toastSuccess(`Component visibility updated successfully`);
       }
-    } catch (ex) {
+    } catch (ex: any) {
       toastError(ex);
     }
     load();
@@ -290,22 +287,24 @@ export function TopologyPage() {
           <div className="flex">
             <div className="flex flex-wrap">
               <div className="flex p-3">
-                <label className="self-center inline-block pt-2 mr-3 text-sm text-gray-500">
-                  Health
-                </label>
                 <ReactSelectDropdown
-                  name="helath"
+                  name="health"
                   label=""
                   value={healthStatus}
                   items={healthTypes}
-                  className="inline-block p-3 w-80 md:w-60"
+                  className="inline-block p-3 w-auto max-w-[500px]"
+                  dropDownClassNames="w-auto max-w-[400px] left-0"
                   onChange={(val: any) => {
-                    setHealthStatus(val);
                     setSearchParams({
-                      ...searchParamsToObj(searchParams),
+                      ...Object.fromEntries(searchParams),
                       status: val
                     });
                   }}
+                  prefix={
+                    <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
+                      Health:
+                    </div>
+                  }
                 />
               </div>
               <ComponentTypesDropdown
@@ -314,41 +313,41 @@ export function TopologyPage() {
                 label=""
                 value={topologyType}
                 onChange={(val: any) => {
-                  setTopologyType(val);
                   setSearchParams({
-                    ...searchParamsToObj(searchParams),
+                    ...Object.fromEntries(searchParams),
                     type: val
                   });
                 }}
               />
               <div className="flex p-3">
-                <label className="self-center inline-block pt-2 mr-3 text-sm text-gray-500">
-                  Team
-                </label>
                 <ReactSelectDropdown
                   name="team"
                   label=""
                   value={team}
                   items={teams}
-                  className="inline-block p-3 w-80 md:w-60"
+                  className="inline-block p-3 w-auto max-w-[500px]"
+                  dropDownClassNames="w-auto max-w-[400px] left-0"
                   onChange={(val: any) => {
-                    setTeam(val);
                     setSearchParams({
-                      ...searchParamsToObj(searchParams),
+                      ...Object.fromEntries(searchParams),
                       team: val
                     });
                   }}
+                  prefix={
+                    <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
+                      Team:
+                    </div>
+                  }
                 />
               </div>
               <ComponentLabelsDropdown
                 name="Labels"
                 label=""
-                className="flex p-3"
+                className="flex p-3 w-auto max-w-[500px]"
                 value={selectedLabel}
                 onChange={(val: any) => {
-                  setSelectedLabel(val);
                   setSearchParams({
-                    ...searchParamsToObj(searchParams),
+                    ...Object.fromEntries(searchParams),
                     labels: val
                   });
                 }}
@@ -360,7 +359,7 @@ export function TopologyPage() {
                 onChange={(val) => {
                   const newValue = val ? "yes" : "no";
                   setSearchParams({
-                    ...searchParamsToObj(searchParams),
+                    ...Object.fromEntries(searchParams),
                     showHiddenComponents: newValue
                   });
                 }}
