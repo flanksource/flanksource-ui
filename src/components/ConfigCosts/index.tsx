@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { FaDollarSign } from "react-icons/fa";
 import CollapsiblePanel from "../CollapsiblePanel";
 import { Loading } from "../Loading";
+import Title from "../Title/title";
 
 export function FormatCurrency({ value }: { value: number | string }) {
   const amount = useMemo(() => {
@@ -77,10 +78,7 @@ export default function ConfigCosts({ configID }: Props) {
   return (
     <CollapsiblePanel
       Header={
-        <h3 className="flex flex-row space-x-2 items-center text-xl font-semibold">
-          <FaDollarSign className="text-gray-400" />
-          <span>Costs</span>
-        </h3>
+        <Title title="Costs" icon={<FaDollarSign className="w-6 h-auto" />} />
       }
     >
       <div className="flex flex-col space-y-2">

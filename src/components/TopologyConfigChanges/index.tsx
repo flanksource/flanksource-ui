@@ -1,10 +1,11 @@
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
-import { FaExclamationTriangle } from "react-icons/fa";
 import { GoDiff } from "react-icons/go";
 import { Link } from "react-router-dom";
 import CollapsiblePanel from "../CollapsiblePanel";
-import { Loading } from "../Loading";
+import ConfigLink from "../ConfigLink/ConfigLink";
+import { Icon } from "../Icon";
+import Title from "../Title/title";
 
 type Props = {
   topologyID: string;
@@ -21,19 +22,10 @@ export function TopologyConfigChanges({ topologyID }: Props) {
     async function fetchComponentConfigChanges() {
       setIsLoading(true);
       const res = await fetch(
-        `/api/db/config_component_relationships?component_id=eq.${topologyID}&select=*`
+        `/api/db/changes_by_component?component_id=eq.${topologyID}`
       );
-      const data = (await res.json()) as Record<string, any>[];
-
-      const resConfigChanges = await Promise.all(
-        data.map(async (item) => {
-          const res = await fetch(
-            `/api/db/config_changes?config_id=eq.${item.config_id}`
-          );
-          return res.json();
-        })
-      );
-      setComponentConfigChanges(resConfigChanges.flat());
+      const data = await res.json();
+      setComponentConfigChanges(data);
       setIsLoading(false);
     }
 
@@ -45,17 +37,25 @@ export function TopologyConfigChanges({ topologyID }: Props) {
       <div className="flex flex-col mt-2">
         <div className="flex flex-col pl-2">
           {componentConfigChanges.map((item) => (
-            <div className="flex flex-row text-xs">
+            <div className="flex flex-row text-sm mb-2">
+              <ConfigLink
+                className="text-zinc-600"
+                configId={item.config_id}
+                configName={item.name}
+                configType={item.external_type}
+                configTypeSecondary={item.config_type}
+              />
+              &nbsp;/&nbsp;
               <Link
                 className="block"
                 to={{
                   pathname: `/configs/${item.config_id}/changes`
                 }}
               >
+                <Icon name={item.change_type} />
                 {item.summary ?? item.change_type}
               </Link>
-
-              <span className="text-right grow">
+              <span className="text-right grow" data-tip={item.created_at}>
                 {dayjs(item.created_at).fromNow()}
               </span>
             </div>
@@ -71,10 +71,7 @@ export default function (props: Props) {
   return (
     <CollapsiblePanel
       Header={
-        <h4 className="flex flex-row">
-          <GoDiff className="text-gray-400" />
-          <span className="pl-1">Changes</span>
-        </h4>
+        <Title title="Changes" icon={<GoDiff className="w-6 h-auto" />} />
       }
     >
       <div className="flex flex-col">

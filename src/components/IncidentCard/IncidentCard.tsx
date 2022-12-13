@@ -12,7 +12,7 @@ type IncidentCardProps = {
 export default function IncidentCard({ incident }: IncidentCardProps) {
   return (
     <div className=" border-b border-dashed">
-      <div className="flex flex-row  text-xs pl-2 pb-1">
+      <div className="flex flex-row  text-sm pl-2 pb-1">
         <IncidentTypeIcon type={incident.type} />
 
         <Link
