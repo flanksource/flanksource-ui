@@ -1,4 +1,5 @@
 import { isEmpty } from "lodash";
+import { GoDiff } from "react-icons/go";
 import { Icons } from "../../icons";
 
 const aliases = {
@@ -12,11 +13,16 @@ const aliases = {
   "AWS::ElasticLoadBalancingV2::LoadBalancer": "aws-alb",
   "AWS::Region": "aws",
   "AWS::EC2::SecurityGroup": "firewall",
+  "AzureDevops::PipelineRun": "Azure::DevOps::Pipeline",
   oipa: "oracle_icon",
   cost: "dollar",
   File: "cfg",
   memory: "mem",
   MSPlanner: "msplanner"
+};
+
+const reactIcons = {
+  diff: GoDiff
 };
 
 function findByName(name) {
@@ -59,7 +65,15 @@ export function Icon({
     return null;
   }
   if (isEmpty(className)) {
-    className = "max-w-5 max-h-5";
+    className = "w-5 h-auto";
+  }
+  if (reactIcons[name]) {
+    let Icon = reactIcons[name];
+    return <Icon className={`inline-block object-center ${className}`} />;
+  }
+  if (reactIcons[secondary]) {
+    let Icon = reactIcons[secondary];
+    return <Icon className={`inline-block object-center ${className}`} />;
   }
   if (
     name != null &&

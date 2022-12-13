@@ -123,8 +123,7 @@ export const IncidentDetails = ({
             item.team_id?.icon &&
             (() => (
               <Icon
-                size="md"
-                className="inline-block mr-1"
+                className="inline-block mr-1 h-5"
                 name={item.team_id.icon}
               />
             )),
@@ -286,9 +285,9 @@ export const IncidentDetails = ({
                       data={responder?.json?.properties}
                       element={
                         <div className="relative w-full overflow-hidden text-sm font-medium truncate text-dark-gray group">
-                          <div className="w-full overflow-hidden">
+                          <div className=" overflow-hidden">
                             {responder.icon && (
-                              <responder.icon className="w-6 h-6" />
+                              <responder.icon className="h-6" />
                             )}
                             <div
                               className="inline-block pl-1 align-middle"
