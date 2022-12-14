@@ -167,7 +167,7 @@ export default function RefreshDropdown({
               className="absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
             >
               {RefreshOptionsList.map(([optionsKeys, optionsValue]) => (
-                <>
+                <Fragment key={optionsValue}>
                   {/* @ts-expect-error */}
                   <Menu.Item
                     as="li"
@@ -201,7 +201,7 @@ export default function RefreshDropdown({
                       </button>
                     )}
                   </Menu.Item>
-                </>
+                </Fragment>
               ))}
             </Menu.Items>
           </Transition>

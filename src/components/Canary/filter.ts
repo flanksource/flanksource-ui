@@ -1,6 +1,10 @@
 import { orderBy, findIndex, forEach, isEmpty } from "lodash";
+import { HealthCheck, HealthCheckLabels } from "../../types/healthChecks";
 
-export function matchesLabel(check, labels) {
+export function matchesLabel(
+  check: HealthCheck,
+  labels: HealthCheckLabels[]
+): boolean {
   if (labels.length === 0) {
     return true;
   }
@@ -19,7 +23,7 @@ export function matchesLabel(check, labels) {
   return false;
 }
 
-export function isHealthy(check) {
+export function isHealthy(check: HealthCheck): boolean {
   if (check.checkStatuses == null) {
     return false;
   }
@@ -31,39 +35,45 @@ export function isHealthy(check) {
   return passed;
 }
 
-export function filterChecks(checks, hidePassing, labels) {
-  const filtered = [];
+export function filterChecks(
+  checks: HealthCheck[],
+  hidePassing: boolean,
+  labels: HealthCheckLabels[]
+): HealthCheck[] {
   if (checks == null) {
-    return filtered;
+    return [];
   }
-  checks = orderBy(checks, (a) => a.description);
-  for (const check of checks) {
-    if (hidePassing && isHealthy(check)) {
-      // eslint-disable-next-line no-continue
-      continue;
-    }
+  const orderedChecks = orderBy(checks, (a) => a.description);
 
-    if (!matchesLabel(check, labels)) {
-      // eslint-disable-next-line no-continue
-      continue;
+  return orderedChecks.filter((check) => {
+    if (hidePassing && isHealthy(check)) {
+      return false;
     }
-    filtered.push(check);
-  }
-  return filtered;
+    if (!matchesLabel(check, labels)) {
+      return false;
+    }
+    return true;
+  });
 }
 
-export function labelIndex(selectedLabels, label) {
+export function labelIndex(
+  selectedLabels: HealthCheckLabels[],
+  label: HealthCheckLabels
+): number {
   return findIndex(selectedLabels, (l) => l.id === label.id);
 }
 
-export function hasStringMatch(pattern, text) {
-  if (text == null) {
+export function hasStringMatch(pattern: string, text?: string) {
+  if (!text) {
     return false;
   }
   return text.indexOf(pattern) >= 0;
 }
 
-export function filterChecksByText(checks, textQuery) {
+export function filterChecksByText(
+  checks: HealthCheck[] | undefined,
+  textQuery: string
+): HealthCheck[] {
   if (checks == null) {
     return [];
   }

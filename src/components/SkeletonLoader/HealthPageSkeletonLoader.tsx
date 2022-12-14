@@ -16,8 +16,8 @@ export default function HealthPageSkeletonLoader({
       )}
       <div className="flex flex-col flex-1 w-full max-w-7xl px-4 py-8">
         <div className="flex flex-col space-y-2 flex-1 p-4">
-          {Array.of(1, 2, 3, 4, 5, 6).map(() => (
-            <div className="w-full p-2 h-8 bg-gray-200 rounded"></div>
+          {Array.of(1, 2, 3, 4, 5, 6).map((v) => (
+            <div className="w-full p-2 h-8 bg-gray-200 rounded" key={v}></div>
           ))}
         </div>
       </div>
