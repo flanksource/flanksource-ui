@@ -210,9 +210,13 @@ export function CanaryCheckerApp() {
 
   return (
     <BrowserRouter>
-      <HealthPageContextProvider>
-        <Canary url="/api/canary/api" />
-      </HealthPageContextProvider>
+      <QueryClientProvider client={queryClient}>
+        <HealthPageContextProvider>
+          <ReactTooltip />
+          <Canary url="/api/canary/api" />
+          <ReactQueryDevtools initialIsOpen={false} />
+        </HealthPageContextProvider>
+      </QueryClientProvider>
     </BrowserRouter>
   );
 }

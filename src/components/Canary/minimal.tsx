@@ -106,7 +106,9 @@ const MinimalCanaryFC = ({
           hideNamespacePrefix
           groupSingleItems={false}
           theadStyle={tableHeadStyle}
-          style={{ maxHeight: "calc(100vh - 14rem)" }}
+          style={{
+            maxHeight: `calc(100vh - ${isCanaryUI ? "10rem" : "14rem"})`
+          }}
         />
       )}
       <AttachEvidenceDialog
