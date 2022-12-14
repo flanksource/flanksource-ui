@@ -8,7 +8,10 @@ import { Menu } from "../Menu";
 
 interface IProps {
   topology: any;
-  updateVisibility: (topologyId: string, updatedVisibility: boolean) => void;
+  updateVisibility: (
+    topologyId: string | undefined,
+    updatedVisibility: boolean
+  ) => void;
 }
 
 export const TopologyDropdownMenu = ({

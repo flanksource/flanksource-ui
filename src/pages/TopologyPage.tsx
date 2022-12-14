@@ -248,9 +248,13 @@ export function TopologyPage() {
   }, []);
 
   const updateVisibility = async (
-    topologyId: string,
+    topologyId: string | undefined,
     updatedVisibility: boolean
   ) => {
+    // don't update if topologyId is not present
+    if (!topologyId) {
+      return;
+    }
     try {
       const { data } = await updateComponentVisibility(
         topologyId,

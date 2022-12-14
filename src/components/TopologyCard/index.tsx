@@ -38,7 +38,10 @@ interface IProps {
   selectionMode?: boolean;
   selected?: boolean;
   onSelectionChange?: MouseEventHandler<HTMLDivElement>;
-  updateVisibility?: (topologyId: string, updatedVisibility: boolean) => void;
+  updateVisibility?: (
+    topologyId: string | undefined,
+    updatedVisibility: boolean
+  ) => void;
 }
 
 export function TopologyCard({
@@ -181,7 +184,7 @@ export function TopologyCard({
           )}
         </div>
       </div>
-      <div className="flex flex-nowrap bg-lightest-gray rounded-b-8px">
+      <div className="flex flex-nowrap bg-lightest-gray rounded-b-8px space-x-4">
         {metricsInFooter ? (
           <div className="flex flex-1 py-4">
             <CardMetrics items={heading} />
