@@ -29,13 +29,14 @@ const CanaryInterfaceMinimalFC = ({
   const [checksForTabGeneration, setChecksForTabGeneration] = useState(checks);
   const [selectedTab, setSelectedTab] = useState<string>();
 
+  const hidePassing = searchParams.get("hidePassing") === "true";
+
   // check filtering on checks/tab/params change.
   useEffect(() => {
     const {
       labels: urlLabels,
       tabBy,
-      query,
-      hidePassing
+      query
     } = Object.fromEntries(searchParams.entries());
 
     if (checks?.length > 0) {
@@ -60,7 +61,8 @@ const CanaryInterfaceMinimalFC = ({
     selectedTab,
     onFilterCallback,
     onLabelFiltersCallback,
-    searchParams
+    searchParams,
+    hidePassing
   ]);
 
   return (
