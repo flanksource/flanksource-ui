@@ -72,7 +72,7 @@ type CanaryProps = {
 
 export function Canary({
   url = "/api/canary/api",
-  topLayoutOffset = 75,
+  topLayoutOffset = 65,
   triggerRefresh,
   onLoading = (_loading) => {}
 }: CanaryProps) {
@@ -627,18 +627,19 @@ function SidebarSticky({
   topHeight = 0,
   ...props
 }: SidebarStickyProps) {
+  const topHeightPx = `${isCanaryUI ? 0 : topHeight}px`;
   return (
     <div
       className={className || "flex flex-col w-80 border-r"}
-      style={style || { minHeight: `calc(100vh - ${topHeight}px)` }}
+      style={style || { minHeight: `calc(100vh -  ${topHeightPx})` }}
       {...props}
     >
       <div
         className={`h-full overflow-y-auto w-80 overflow-x-hidden p-4 ${mixins.appleScrollbar}`}
         style={{
           position: "fixed",
-          top: `${topHeight}px`,
-          maxHeight: `calc(100vh - ${topHeight}px)`
+          top: `${topHeightPx}`,
+          maxHeight: `calc(100vh - ${topHeightPx})`
         }}
       >
         {children}
