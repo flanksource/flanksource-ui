@@ -19,10 +19,23 @@ import { LogsTable } from "../../Logs/Table/LogsTable";
 import { Icon } from "../../Icon";
 import { Button } from "../../Button";
 
+const ColumnSizes = {
+  Time: {
+    size: 64,
+    maxSize: 64
+  }
+};
+
 export function EvidenceItem({ evidence }: { evidence: Evidence }) {
   switch (evidence.type) {
     case EvidenceType.Log:
-      return <LogsTable viewOnly logs={evidence?.evidence?.lines} />;
+      return (
+        <LogsTable
+          viewOnly
+          logs={evidence?.evidence?.lines}
+          columnSizes={ColumnSizes}
+        />
+      );
     case EvidenceType.Topology:
       return (
         <div className="pt-2">
