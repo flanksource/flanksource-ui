@@ -6,8 +6,8 @@ import { Badge } from "../../Badge";
 import { Icon } from "../../Icon";
 
 type CheckTitleProps = Omit<React.HTMLProps<HTMLDivElement>, "size"> & {
-  check: HealthCheck;
-  size: string;
+  check?: Partial<HealthCheck>;
+  size?: string;
 };
 
 export function CheckTitle({
@@ -51,7 +51,7 @@ export function CheckTitle({
               title={`Namespace for ${validCheck?.name}`}
               style={{ paddingTop: "1px" }}
             >
-              <Badge text={validCheck?.namespace} />
+              <Badge text={validCheck?.namespace ?? ""} />
             </span>
           )}
         </div>
@@ -65,7 +65,7 @@ export function CheckTitle({
           className="block sm:hidden mt-2"
           title={`Namespace for ${validCheck?.name}`}
         >
-          <Badge text={validCheck?.namespace} />
+          <Badge text={validCheck?.namespace ?? ""} />
         </span>
       </div>
     </div>

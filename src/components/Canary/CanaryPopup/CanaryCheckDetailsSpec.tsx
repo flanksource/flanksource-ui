@@ -5,7 +5,7 @@ import { JSONViewer } from "../../JSONViewer";
 import { Loading } from "../../Loading";
 
 type CanaryCheckDetailsProps = {
-  check: Pick<HealthCheck, "canary_id">;
+  check: Pick<Partial<HealthCheck>, "canary_id">;
 };
 
 export function CanaryCheckDetailsSpecTab({ check }: CanaryCheckDetailsProps) {

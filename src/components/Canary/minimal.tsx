@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Modal } from "../Modal";
 import { CheckDetails } from "./CanaryPopup/CheckDetails";
 import { CheckTitle } from "./CanaryPopup/CheckTitle";
@@ -46,42 +46,45 @@ const MinimalCanaryFC = ({
   const [selectedCheck, setSelectedCheck] = useState<Partial<HealthCheck>>();
   const [attachAsAsset, setAttachAsAsset] = useState(false);
 
+  const handleCheckSelect = useCallback(
+    (check: Pick<HealthCheck, "id">) => {
+      const payload = {
+        check: check.id,
+        includeMessages: true,
+        start: getStartValue(currentTimeRange)
+      };
+      const data = {
+        ...check,
+        checkStatuses: undefined,
+        latency: undefined,
+        uptime: undefined,
+        loading: true
+      };
+      setSelectedCheck(data);
+      getCanaries(payload).then((results) => {
+        if (results == null || results.data.checks.length === 0) {
+          toastError("There is no recent checks data");
+          setSelectedCheck(undefined);
+          return;
+        }
+        if (results?.data?.checks?.[0]?.id) {
+          setSearchParams({
+            ...Object.fromEntries(searchParams.entries()),
+            checkId: results.data.checks[0].id,
+            checkTimeRange: currentTimeRange
+          });
+          setSelectedCheck(results.data.checks[0]);
+        }
+      });
+    },
+    [currentTimeRange, searchParams, setSearchParams]
+  );
+
   useEffect(() => {
     if (checkId && !selectedCheck) {
       handleCheckSelect({ id: checkId });
     }
-  }, [checkId]);
-
-  const handleCheckSelect = (check: Pick<HealthCheck, "id">) => {
-    const payload = {
-      check: check.id,
-      includeMessages: true,
-      start: getStartValue(currentTimeRange)
-    };
-    const data = {
-      ...check,
-      checkStatuses: undefined,
-      latency: undefined,
-      uptime: undefined,
-      loading: true
-    };
-    setSelectedCheck(data);
-    getCanaries(payload).then((results) => {
-      if (results == null || results.data.checks.length === 0) {
-        toastError("There is no recent checks data");
-        setSelectedCheck(undefined);
-        return;
-      }
-      if (results?.data?.checks?.[0]?.id) {
-        setSearchParams({
-          ...Object.fromEntries(searchParams.entries()),
-          checkId: results.data.checks[0].id,
-          checkTimeRange: currentTimeRange
-        });
-        setSelectedCheck(results.data.checks[0]);
-      }
-    });
-  };
+  }, [checkId, handleCheckSelect, selectedCheck]);
 
   function clearCheck() {
     setSelectedCheck(undefined);

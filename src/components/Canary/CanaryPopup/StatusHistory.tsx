@@ -5,7 +5,7 @@ import { Table } from "../../Table";
 import { HealthCheck } from "../../../types/healthChecks";
 
 type StatusHistoryProps = {
-  check: Pick<HealthCheck, "id" | "checkStatuses" | "description">;
+  check: Pick<Partial<HealthCheck>, "id" | "checkStatuses" | "description">;
   sticky?: boolean;
 };
 

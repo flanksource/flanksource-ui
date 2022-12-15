@@ -27,7 +27,7 @@ const CanaryStatusChart = React.lazy(() =>
 );
 
 type CheckDetailsProps = React.HTMLProps<HTMLDivElement> & {
-  check: HealthCheck;
+  check?: Partial<HealthCheck>;
   timeRange: string;
 };
 
@@ -178,7 +178,7 @@ export function CheckDetails({ check, timeRange, ...rest }: CheckDetailsProps) {
                 {statusHistoryList && statusHistoryList.length > 0 ? (
                   <StatusHistory check={validCheck} sticky />
                 ) : (
-                  getHistoryListView(check.loading ?? false)
+                  getHistoryListView(check?.loading ?? false)
                 )}
               </div>
             ),
@@ -197,7 +197,7 @@ export function CheckDetails({ check, timeRange, ...rest }: CheckDetailsProps) {
                           key={label}
                           className="w-1/2 mb-3 whitespace-nowrap"
                           label={label}
-                          value={value}
+                          value={value as any}
                         />
                       ))}
                     </div>
