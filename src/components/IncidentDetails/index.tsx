@@ -33,9 +33,7 @@ export const priorities = Object.entries(severityItems).map(([key, value]) => ({
 }));
 
 type IncidentDetailsProps = {
-  incident: Incident & {
-    commander_id: { name: string; id: string; avatar: string };
-  };
+  incident: Incident;
   className?: string;
   updateStatusHandler: (status: IncidentStatus) => void;
   updateIncidentHandler: (newDataIncident: Partial<Incident>) => void;
@@ -49,20 +47,22 @@ export const IncidentDetails = ({
   updateIncidentHandler,
   textButton
 }: IncidentDetailsProps) => {
-  const [responders, setResponders] = useState([]);
+  const [responders, setResponders] = useState<Record<string, any>[]>([]);
   const [openDeleteConfirmDialog, setOpenDeleteConfirmDialog] = useState(false);
-  const [deletedResponder, setDeletedResponder] = useState();
+  const [deletedResponder, setDeletedResponder] =
+    useState<Record<string, any>>();
   const [openResponderDetailsDialog, setOpenResponderDetailsDialog] =
     useState(false);
-  const [selectedResponder, setSelectedResponder] = useState();
+  const [selectedResponder, setSelectedResponder] =
+    useState<Record<string, any>>();
 
   // Temporary mock, in the future you need to replace it with an array of real users received from the api
   const commandersArray = useMemo(
     () => [
       {
-        label: incident.commander_id.name,
-        value: incident.commander_id.id,
-        avatar: incident.commander_id.avatar
+        label: incident.commander.name,
+        value: incident.commander.id,
+        avatar: incident.commander.avatar
       }
     ],
     [incident]
@@ -84,7 +84,7 @@ export const IncidentDetails = ({
       type: typeItems[incident.type as keyof typeof typeItems]
         ? incident.type
         : "",
-      commanders: incident.commander_id.id
+      commanders: incident.commander.id
     }
   });
 
@@ -112,7 +112,7 @@ export const IncidentDetails = ({
   async function fetchResponders() {
     try {
       const result = await getRespondersForTheIncident(incident.id);
-      const data = (result?.data || []).map((item) => {
+      const data = (result?.data || []).map((item: any) => {
         item.properties.external_id = item.external_id || "NA";
         item.links = {};
         if (item.external_id) {
@@ -146,9 +146,14 @@ export const IncidentDetails = ({
           properties: Object.keys(item.properties)
             .map((key) => {
               if (!["responderType"].includes(key)) {
-                return ResponderPropsKeyToLabelMap[key]
+                return ResponderPropsKeyToLabelMap[
+                  key as keyof typeof ResponderPropsKeyToLabelMap
+                ]
                   ? {
-                      label: ResponderPropsKeyToLabelMap[key],
+                      label:
+                        ResponderPropsKeyToLabelMap[
+                          key as keyof typeof ResponderPropsKeyToLabelMap
+                        ],
                       value: item.properties[key],
                       link: item.links[`${key}_link`]
                         ? {
@@ -172,7 +177,7 @@ export const IncidentDetails = ({
   }
 
   async function initiateDeleteResponder() {
-    const id = deletedResponder.id;
+    const id = deletedResponder?.id;
     try {
       const result = await deleteResponder(id);
       if (!result?.error) {
@@ -181,7 +186,7 @@ export const IncidentDetails = ({
       } else {
         toastError("Responder delete failed");
       }
-    } catch (ex) {
+    } catch (ex: any) {
       toastError(ex.message);
     }
     setOpenDeleteConfirmDialog(false);
@@ -206,9 +211,10 @@ export const IncidentDetails = ({
               <button
                 type="button"
                 className="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                /* @ts-expect-error */
                 onClick={updateStatusHandler}
               >
-                <RiCloseCircleLine className="w-4 h-4 mr-1" /> {textButton}
+                <RiCloseCircleLine className="w-4 h-4 mr-1" /> {textButton} 11
               </button>
               <button
                 type="button"
@@ -394,7 +400,7 @@ export const IncidentDetails = ({
             </span>
             <span className="ml-2 text-sm font-medium text-blue-600 group-hover:text-blue-500">
               <AddResponder
-                className="flex justify-end flex-1 inline-block w-full"
+                className="flex justify-end flex-1 w-full"
                 onSuccess={() => fetchResponders()}
                 incident={incident}
               />

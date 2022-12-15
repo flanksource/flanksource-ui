@@ -15,7 +15,7 @@ import { Loading } from "../../../Loading";
 import { StatusStyles } from "../../../TopologyCard";
 import { CardMetrics } from "../../../TopologyCard/CardMetrics";
 
-type EvidenceViewProps = React.HTMLProps<HTMLDivElement> & {
+type EvidenceViewProps = Omit<React.HTMLProps<HTMLDivElement>, "size"> & {
   evidence: Evidence;
   size?: Size;
 };
@@ -48,7 +48,8 @@ function TopologyEvidence({
     <div
       className={clsx(
         "bg-lightest-gray border-t-8",
-        StatusStyles[topology.status] || "border-white",
+        StatusStyles[topology.status as keyof typeof StatusStyles] ||
+          "border-white",
         className
       )}
       {...rest}

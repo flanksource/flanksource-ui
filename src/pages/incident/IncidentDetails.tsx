@@ -36,8 +36,9 @@ export interface HypothesisAPIs {
   delete: Function;
   deleteBulk: Function;
   update: Function;
-  updateMutation: UseMutationResult;
-  createMutation: UseMutationResult;
+  // todo: Type this correctly
+  updateMutation: UseMutationResult<any, any, any>;
+  createMutation: UseMutationResult<any, any, any>;
 }
 
 interface Tree {
@@ -79,18 +80,9 @@ function buildTreeFromHypothesisList(list: Hypothesis[]) {
 export function IncidentDetailsPage() {
   const { id: incidentId } = useParams();
   const isNewlyCreated = false; // TODO: set this to true if its a newly created incident
-  const incidentQuery = useIncidentQuery(incidentId);
+  const { isLoading, data: incident, refetch } = useIncidentQuery(incidentId!);
 
-  const { isLoading } = incidentQuery;
-
-  const incidentData = useMemo(() => incidentQuery.data, [incidentQuery.data]);
-
-  const error = incidentData == null || !incidentData?.length;
-
-  const incident = useMemo(
-    () => (incidentData?.length ? incidentData[0] : null),
-    [incidentData]
-  );
+  const error = !!incident;
 
   const topologyIds = (incident?.hypotheses || [])
     .flatMap((h) =>
@@ -111,17 +103,15 @@ export function IncidentDetailsPage() {
   const createMutation = useCreateHypothesisMutation({ incidentId });
 
   const updateStatus = (status: IncidentStatus) =>
-    updateIncident(incident?.id || null, { status }).then(() =>
-      incidentQuery.refetch()
-    );
+    updateIncident(incident?.id || null, { status }).then(() => refetch());
 
   const updateIncidentHandler = useCallback(
     (newDataIncident: Partial<Incident>) => {
       updateIncident(incident?.id || null, newDataIncident).then(() =>
-        incidentQuery.refetch()
+        refetch()
       );
     },
-    [incidentQuery, incident]
+    [incident?.id, refetch]
   );
 
   if (incident == null) {
@@ -130,7 +120,7 @@ export function IncidentDetailsPage() {
   return (
     <SearchLayout
       contentClass="pl-6"
-      onRefresh={() => incidentQuery.refetch()}
+      onRefresh={() => refetch()}
       title={
         <div className="flex my-auto">
           <span className="text-xl flex">
@@ -148,7 +138,7 @@ export function IncidentDetailsPage() {
     >
       <div className="flex flex-row min-h-full h-auto mt-2">
         <div className="flex flex-col flex-1 p-6 min-h-full h-auto">
-          <div className="max-w-3xl lg:max-w-6xl mx-auto">
+          <div className="max-w-3xl lg:max-w-6xl w-full mx-auto">
             {Boolean(topologyIds?.length) && (
               <section>
                 <div className="border-b">

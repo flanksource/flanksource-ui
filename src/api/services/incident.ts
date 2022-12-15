@@ -42,6 +42,7 @@ export interface Incident extends NewIncident {
   hypotheses: Hypothesis[];
   created_at: string;
   involved: User[];
+  commander: User;
 }
 
 export const searchIncident = (query: string) => {
@@ -61,14 +62,16 @@ export const getAllIncident = ({ limit = 10 }) => {
     )
   );
 };
+
 export const getIncident = async (id: string) => {
   const hypotheses = `hypotheses!hypotheses_incident_id_fkey(*,created_by(${AVATAR_INFO}),evidences(*),comments(comment,external_created_by,responder_id(team_id(*)),created_by(id,${AVATAR_INFO}),id))`;
 
-  return resolve<Incident[]>(
+  const res = await resolve<Incident[] | null>(
     IncidentCommander.get(
-      `/incidents?id=eq.${id}&select=*,${hypotheses},commander_id(${AVATAR_INFO}),communicator_id(${AVATAR_INFO}),responders!responders_incident_id_fkey(created_by(${AVATAR_INFO}))`
+      `/incidents?id=eq.${id}&select=*,${hypotheses},commander:commander_id(${AVATAR_INFO}),communicator_id(${AVATAR_INFO}),responders!responders_incident_id_fkey(created_by(${AVATAR_INFO}))`
     )
   );
+  return res.data?.[0];
 };
 
 interface IncidentParams {

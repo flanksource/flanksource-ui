@@ -15,14 +15,10 @@ const defaultStaleTime = 1000 * 60 * 5;
 
 export const createIncidentQueryKey = (id: string) => ["getIncident", id];
 
-export const useIncidentQuery = (id = "") => {
-  return useQuery(
-    createIncidentQueryKey(id),
-    () => getIncident(id).then((response) => response.data),
-    {
-      staleTime: defaultStaleTime
-    }
-  );
+export const useIncidentQuery = (id: string) => {
+  return useQuery(createIncidentQueryKey(id), () => getIncident(id), {
+    staleTime: defaultStaleTime
+  });
 };
 
 export const useComponentsQuery = ({
