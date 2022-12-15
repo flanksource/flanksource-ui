@@ -1,13 +1,11 @@
 import clsx from "clsx";
-import { rest } from "lodash";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { AiFillCheckCircle } from "react-icons/ai";
 import { BsHourglassSplit, BsTrash } from "react-icons/bs";
 import { MdRefresh } from "react-icons/md";
 import { RiFullscreenLine } from "react-icons/ri";
 import { useSearchParams } from "react-router-dom";
 import { Evidence, updateEvidence } from "../../../api/services/evidence";
-import { Hypothesis } from "../../../api/services/hypothesis";
 import { Size } from "../../../types";
 import { searchParamsToObj } from "../../../utils/common";
 import { DeleteConfirmDialog } from "../../DeleteConfirmDialog";
@@ -67,14 +65,7 @@ export function DefinitionOfDone({ incidentId }: DefinitionOfDoneProps) {
     string | null
   >(null);
   const incidentQuery = useIncidentQuery(incidentId);
-  const { refetch, isRefetching, isLoading } = incidentQuery;
-
-  const incidentData = useMemo(() => incidentQuery.data, [incidentQuery.data]);
-
-  const incident = useMemo(
-    () => (incidentData?.length ? incidentData[0] : null),
-    [incidentData]
-  );
+  const { refetch, isRefetching, isLoading, data: incident } = incidentQuery;
 
   useEffect(() => {
     if (!incident) {
@@ -82,7 +73,7 @@ export function DefinitionOfDone({ incidentId }: DefinitionOfDoneProps) {
       return;
     }
     const data: Evidence[] = [];
-    incident.hypotheses.forEach((hypothesis: Hypothesis) => {
+    incident.hypotheses.forEach((hypothesis) => {
       hypothesis?.evidences?.forEach((evidence: Evidence) => {
         data.push(evidence);
       });
@@ -310,7 +301,7 @@ export function DefinitionOfDone({ incidentId }: DefinitionOfDoneProps) {
           {!Boolean(nonDODEvidences.length) && (
             <div className="flex items-center justify-center py-5 px-5 h-56">
               <div className="text-sm text-gray-500">
-                There are no evidences which are not part of defintion of done
+                There are no evidences which are not part of definition of done
               </div>
             </div>
           )}

@@ -18,7 +18,7 @@ export function HypothesisBuilder({ loadedTree, api, showHeader }: IProps) {
   const [selectedNode, setSelectedNode] = useState<Hypothesis | null>(null);
   const [createHypothesisModalIsOpen, setCreateHypothesisModalIsOpen] =
     useState(false);
-  const [tree, setTree] = useState(null);
+  const [tree, setTree] = useState<any>(null);
 
   const showAllComments = searchParams.get("comments") === "true";
 

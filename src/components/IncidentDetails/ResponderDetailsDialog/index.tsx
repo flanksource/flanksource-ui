@@ -18,7 +18,7 @@ type ResponderDetailsDialogProps = {
   onClose: () => void;
   responder: any;
   data: AddResponderFormValues;
-} & React.HTMLProps<HTMLDivElement>;
+} & Omit<React.HTMLProps<HTMLDivElement>, "size">;
 
 export function ResponderDetailsDialog({
   size,
@@ -35,7 +35,7 @@ export function ResponderDetailsDialog({
     keys.forEach((key) => {
       options.push({
         label: ResponderPropsKeyToLabelMap[key],
-        value: data?.[key],
+        value: data?.[key] ?? undefined,
         link: responder.properties.find(
           (v: ResponderOption) => v.label === ResponderPropsKeyToLabelMap[key]
         )?.link
@@ -103,9 +103,10 @@ export function ResponderDetailsDialog({
   };
 
   return (
-    // @ts-ignore:next-line
+    // @ts-expect-error
     <Dialog
       open={open}
+      /* @ts-expect-error */
       as="div"
       className={clsx("relative z-10", className)}
       onClose={onClose}
