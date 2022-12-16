@@ -1,7 +1,7 @@
 import Convert from "ansi-to-html";
 import clsx from "clsx";
 import DOMPurify from "dompurify";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ColumnDef,
   useReactTable,
@@ -16,6 +16,7 @@ import { Loading } from "../../Loading";
 import { LogsTableLabelsCell, LogsTableTimestampCell } from "./LogsTableCells";
 import useDebouncedValue from "../../../hooks/useDebounce";
 import { InfoMessage } from "../../InfoMessage";
+import { useVirtualizer } from "@tanstack/react-virtual";
 
 const convert = new Convert();
 
@@ -185,8 +186,31 @@ export function LogsTable({
     [table]
   );
 
+  const { rows } = table.getRowModel();
+
+  const tableContainerRef = useRef<HTMLDivElement>(null);
+
+  const { getVirtualItems, getTotalSize } = useVirtualizer({
+    count: rows.length,
+    getScrollElement: () => tableContainerRef.current,
+    estimateSize: () => 35,
+    overscan: 10
+  });
+
+  const virtualRows = getVirtualItems();
+  const totalSize = getTotalSize();
+
+  const paddingTop = virtualRows.length > 0 ? virtualRows?.[0]?.start || 0 : 0;
+  const paddingBottom =
+    virtualRows.length > 0
+      ? totalSize - (virtualRows?.[virtualRows.length - 1]?.end || 0)
+      : 0;
+
   return (
-    <div className="flex flex-col flex-1 overflow-y-auto">
+    <div
+      ref={tableContainerRef}
+      className="flex flex-col flex-1 overflow-y-auto"
+    >
       <div className="block pb-6 w-full">
         <AttachEvidenceDialog
           isOpen={attachAsAsset}
@@ -241,7 +265,13 @@ export function LogsTable({
             })}
           </thead>
           <tbody>
-            {table.getRowModel().rows.map((row) => {
+            {paddingTop > 0 && (
+              <tr>
+                <td style={{ height: `${paddingTop}px` }} />
+              </tr>
+            )}
+            {virtualRows.map((item) => {
+              const row = rows[item.index];
               return (
                 <tr key={row.id}>
                   {row.getVisibleCells().map((cell) => (
@@ -278,6 +308,11 @@ export function LogsTable({
                     />
                   )}
                 </td>
+              </tr>
+            )}
+            {paddingBottom > 0 && (
+              <tr>
+                <td style={{ height: `${paddingBottom}px` }} />
               </tr>
             )}
           </tbody>
