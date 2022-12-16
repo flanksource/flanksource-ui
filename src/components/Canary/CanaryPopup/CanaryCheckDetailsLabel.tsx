@@ -3,7 +3,7 @@ import ReactTooltip from "react-tooltip";
 import { HealthCheck } from "../../../types/healthChecks";
 
 type CanaryCheckDetailsLabelProps = {
-  check: HealthCheck;
+  check?: Partial<HealthCheck>;
 };
 
 export function CanaryCheckDetailsLabel({
