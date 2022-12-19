@@ -15,16 +15,13 @@ type Props = {
 
 export function Toggle({
   value = false,
-  className,
+  className = "flex items-center break-all",
   label,
   help,
   onChange = () => {}
 }: Props) {
   return (
-    <Switch.Group
-      as="div"
-      className={`flex items-center break-all ${className}`}
-    >
+    <Switch.Group as="div" className={className}>
       {/* @ts-expect-error */}
       <Switch
         checked={value}

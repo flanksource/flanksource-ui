@@ -5,6 +5,8 @@ import { CardWidth } from "../TopologyCard";
 
 import { useOnMouseActivity } from "../../hooks/useMouseActivity";
 import { Size } from "../../types";
+import { Toggle } from "../Toggle";
+import { useSearchParams } from "react-router-dom";
 
 export function getCardWidth() {
   let value: any = localStorage.getItem("topology_card_width");
@@ -30,11 +32,16 @@ export const TopologyPreference = ({
   cardSize: Size;
   setCardWidth: (width: string) => void;
 }) => {
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const {
     ref: popoverRef,
     isActive: isPopoverActive,
     setIsActive: setIsPopoverActive
   } = useOnMouseActivity();
+
+  const showHiddenComponents =
+    searchParams.get("showHiddenComponents") !== "no";
 
   return (
     <div ref={popoverRef}>
@@ -57,10 +64,32 @@ export const TopologyPreference = ({
           </div>
         </div>
         <div className="py-1" role="none">
-          <div className="px-4 py-4">
+          <div className="flex px-4 py-3 items-center">
             <label
               htmlFor="topology-card-width-slider"
               className="inline-block mr-3 text-xs text-gray-700"
+            >
+              Show hidden components:
+            </label>
+            <Toggle
+              className="inline-flex items-center"
+              label=""
+              value={showHiddenComponents}
+              onChange={(val) => {
+                const newValue = val ? "yes" : "no";
+                setSearchParams({
+                  ...Object.fromEntries(searchParams),
+                  showHiddenComponents: newValue
+                });
+              }}
+            />
+          </div>
+        </div>
+        <div className="py-1" role="none">
+          <div className="flex px-4 py-4 items-center">
+            <label
+              htmlFor="topology-card-width-slider"
+              className="mr-3 text-xs text-gray-700"
             >
               Card Width:
             </label>
@@ -72,7 +101,7 @@ export const TopologyPreference = ({
               value={parseInt(cardSize, 10)}
               id="topology-card-width-slider"
               onChange={(e) => setCardWidth(e.target.value)}
-              className="inline-block w-64 mb-4 rounded-lg cursor-pointer"
+              className="w-64 rounded-lg cursor-pointer"
             />
           </div>
         </div>
