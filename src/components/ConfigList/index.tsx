@@ -16,45 +16,45 @@ import * as timeago from "timeago.js";
 import { DataTable, Icon } from "../";
 import { ConfigItem } from "../../api/services/configs";
 import { FormatCurrency } from "../ConfigCosts";
-import { getTimeBucket, TIME_BUCKETS } from "../../utils/date";
+import {
+  getTimeBucket,
+  relativeDateTime,
+  TIME_BUCKETS
+} from "../../utils/date";
+import { CellContext, ColumnDef, Row } from "@tanstack/react-table";
 
-interface TableCols {
-  Header: string;
-  accessor: string | ((row: any, rowIndex: number) => any);
-  cellClass?: string;
-  Cell?: React.ComponentType<CellProp>;
-  aggregate?: string | ((leafValues: any[], aggregatedValues?: any[]) => any);
-  Aggregated?: string | ((values: any) => string | JSX.Element);
-  id?: string;
-  sortType?:
-    | string
-    | ((rowA: any, rowB: any, columnID: string, desc: boolean) => any);
-  maxWidth?: number;
-}
 interface Analysis {
   analysis_type: string;
   analyzer: string;
   severity: string;
 }
 
-const columns: TableCols[] = [
+const columns: ColumnDef<ConfigItem, any>[] = [
   {
-    Header: "Type",
-    accessor: "config_type",
-    Cell: TypeCell,
-    Aggregated: ""
+    header: "Type",
+    id: "config_type",
+    cell: TypeCell,
+    aggregatedCell: "",
+    accessorKey: "config_type",
+    size: 250,
+    enableGrouping: true
   },
   {
-    Header: "Name",
-    accessor: "name",
-    Aggregated: ""
+    header: "Name",
+    accessorKey: "name",
+    aggregatedCell: "",
+    size: 350,
+    enableGrouping: true
   },
   {
-    Header: "Changes",
-    accessor: "changes",
-    Cell: React.memo(ChangeCell),
-    aggregate: ChangeAggregate,
-    Aggregated: ({ value }) => {
+    header: "Changes",
+    accessorKey: "changes",
+    id: "changes",
+    cell: React.memo(ChangeCell),
+    enableGrouping: true,
+    aggregationFn: changeAggregationFN,
+    aggregatedCell: ({ getValue }: CellContext<ConfigItem, any>) => {
+      const value = getValue();
       if (!value) {
         return "";
       }
@@ -64,102 +64,105 @@ const columns: TableCols[] = [
         </span>
       );
     },
-    maxWidth: 400
+    size: 150,
+    meta: {
+      cellClassName: "overflow-hidden"
+    }
   },
   {
-    Header: "Analysis",
-    accessor: "analysis",
-    Cell: AnalysisCell,
-    Aggregated: "",
-    maxWidth: 400
+    header: "Analysis",
+    accessorKey: "analysis",
+    cell: AnalysisCell,
+    aggregatedCell: "",
+    size: 120
   },
   {
-    Header: "Cost (per min)",
-    accessor: "cost_per_minute",
-    Cell: CostCell,
-    aggregate: "sum",
-    Aggregated: CostAggregate
+    header: "Cost (per min)",
+    accessorKey: "cost_per_minute",
+    cell: CostCell,
+    aggregationFn: "sum",
+    aggregatedCell: CostAggregate,
+    size: 50
   },
   {
-    Header: "Cost (24hr)",
-    accessor: "cost_total_1d",
-    Cell: CostCell,
-    aggregate: "sum",
-    Aggregated: CostAggregate
+    header: "Cost (24hr)",
+    accessorKey: "cost_total_1d",
+    cell: CostCell,
+    aggregationFn: "sum",
+    aggregatedCell: CostAggregate,
+    size: 50
   },
   {
-    Header: "Cost (7d)",
-    accessor: "cost_total_7d",
-    Cell: CostCell,
-    aggregate: "sum",
-    Aggregated: CostAggregate
+    header: "Cost (7d)",
+    accessorKey: "cost_total_7d",
+    cell: CostCell,
+    aggregationFn: "sum",
+    aggregatedCell: CostAggregate,
+    size: 50
   },
   {
-    Header: "Cost (30d)",
-    accessor: "cost_total_30d",
-    Cell: CostCell,
-    aggregate: "sum",
-    Aggregated: CostAggregate
+    header: "Cost (30d)",
+    accessorKey: "cost_total_30d",
+    cell: CostCell,
+    aggregationFn: "sum",
+    aggregatedCell: CostAggregate,
+    size: 50
   },
   {
-    Header: "Tags",
-    accessor: "tags",
-    Cell: React.memo(TagsCell),
-    cellClass: "overflow-auto",
-    Aggregated: "",
-    maxWidth: 400
+    header: "Tags",
+    accessorKey: "tags",
+    cell: React.memo(TagsCell),
+    aggregatedCell: "",
+    size: 250,
+    meta: {
+      cellClassName: "overflow-hidden"
+    }
   },
   {
-    Header: "All Tags",
-    accessor: "allTags",
-    Cell: ({ row, column }) => (
-      <TagsCell row={row} column={column} hideGroupByView={true} />
-    ),
-    cellClass: "overflow-auto",
-    Aggregated: "",
-    maxWidth: 400
+    header: "All Tags",
+    accessorKey: "allTags",
+    cell: React.memo((props) => <TagsCell {...props} hideGroupByView />),
+    aggregatedCell: "",
+    size: 250,
+    meta: {
+      cellClassName: "overflow-hidden"
+    }
   },
   {
-    Header: "Created",
-    accessor: "created_at",
-    Cell: DateCell,
-    Aggregated: ""
+    header: "Created",
+    accessorKey: "created_at",
+    cell: DateCell,
+    aggregatedCell: "",
+    size: 80
   },
   {
-    Header: "Last Updated",
-    accessor: "updated_at",
-    Cell: DateCell,
-    Aggregated: ""
+    header: "Last Updated",
+    accessorKey: "updated_at",
+    cell: DateCell,
+    aggregatedCell: "",
+    size: 90
   },
   {
-    Header: "Changed",
-    accessor: ChangedAccessor,
+    header: "Changed",
+    accessorFn: changeColumnAccessorFN,
     id: "changed",
-    sortType: ChangedSorted
+    sortingFn: changeColumnSortingFN,
+    size: 180
   }
 ];
-
-interface CellProp {
-  row: {
-    values: { [index: string]: any };
-    original: { [index: string]: any };
-    isGrouped: boolean;
-    subRows: any[];
-  };
-  column: { id: string };
-}
 
 const MIN_ITEMS = 2;
 
 function TagsCell({
-  row,
-  column,
-  hideGroupByView
-}: CellProp & { hideGroupByView?: boolean }): JSX.Element | null {
+  getValue,
+  hideGroupByView = false
+}: CellContext<ConfigItem, any> & {
+  hideGroupByView?: boolean;
+}): JSX.Element | null {
   const [showMore, setShowMore] = useState(false);
   const [params] = useSearchParams();
 
-  const tagMap = row?.values[column.id] || {};
+  const tagMap = getValue<ConfigItem["tags"]>() || {};
   const tagKeys = Object.keys(tagMap)
     .sort()
     .filter((key) => key !== "toString");
@@ -170,7 +173,7 @@ function TagsCell({
   });
 
   if (tagKeys.length === 0) {
-    return <div className="flex"></div>;
+    return null;
   }
 
   if (!hideGroupByView && groupByProp) {
@@ -179,7 +182,7 @@ function TagsCell({
     }
 
     return (
-      <div className="font-mono flex flex-wrap w-96 max-w-[24rem] pl-1 space-y-1">
+      <div className="font-mono flex flex-wrap w-full max-w-full pl-1 space-y-1">
         <div
           data-tip={`${groupByProp}: ${tagMap[groupByProp]}`}
           className="max-w-full overflow-hidden text-ellipsis bg-gray-200 border border-gray-300 px-1 py-0.75 mr-1 rounded-md text-gray-600 font-semibold text-xs"
@@ -214,7 +217,7 @@ function TagsCell({
         </button>
       )}
 
-      <div className="font-mono flex flex-wrap w-96 max-w-[24rem] pl-1 space-y-1">
+      <div className="font-mono flex flex-wrap flex-1 max-w-full pl-1 space-y-1">
         {renderKeys.map((key) => (
           <div
             data-tip={`${key}: ${tagMap[key]}`}
@@ -229,36 +232,36 @@ function TagsCell({
   );
 }
 
-function ChangeCell({ row, column }: CellProp): JSX.Element {
+function ChangeCell({ row, column }: CellContext<ConfigItem, any>) {
   const [showMore, setShowMore] = useState(false);
 
-  const changes = row?.values[column.id];
+  const changes = row?.getValue<ConfigItem["changes"]>(column.id);
 
   useEffect(() => {
     ReactTooltip.rebuild();
   });
 
   if (changes == null) {
-    return <span></span>;
+    return null;
   }
 
   const renderKeys = showMore ? changes : changes.slice(0, MIN_ITEMS);
 
-  var cell: JSX.Element[] = renderKeys.map((item: any, index: number) => {
+  const cell = renderKeys.map((item: any, index: number) => {
     return (
-      <div className="flex flex-row max-w-full" key={index}>
-        <div className="flex max-w-full items-center px-2.5 py-0.5 m-0.5 rounded-md text-sm font-medium bg-blue-100 text-blue-800">
+      <div className="flex flex-row max-w-full overflow-hidden" key={index}>
+        <div className="flex max-w-full items-center px-2.5 py-0.5 m-0.5 rounded-md text-sm font-medium bg-blue-100 text-blue-800 overflow-hidden">
           {item.change_type === "diff" ? (
             item.total
           ) : (
             <div
               data-tip={`${item.change_type}: ${item.total}`}
-              className="flex flex-row max-w-full space-x-1 "
+              className="flex flex-row max-w-full space-x-1"
             >
               <div className="text-ellipsis overflow-hidden">
-                {item.change_type}:
+                {item.change_type}
               </div>
-              <div className=""> {item.total}</div>
+              :<div className="flex-1"> {item.total}</div>
             </div>
           )}
         </div>
@@ -284,28 +287,28 @@ function ChangeCell({ row, column }: CellProp): JSX.Element {
           )}
         </button>
       )}
-      <div className="flex flex-col flex-1 max-w-[24rem]">{cell}</div>
+      <div className="flex flex-col flex-1 w-full max-w-full">{cell}</div>
     </div>
   );
 }
 
-function TypeCell({ row, column }: CellProp): JSX.Element {
-  const name = row.isGrouped
+function TypeCell({ row, column, getValue }: CellContext<ConfigItem, unknown>) {
+  const name = row.getIsGrouped()
     ? row.subRows[0]?.original.external_type
     : row.original.external_type;
-  const secondary = row.isGrouped
+  const secondary = row.getIsGrouped()
     ? row.subRows[0]?.original.config_type
     : row.original.config_type;
 
   return (
     <span className="flex flex-nowrap">
       <Icon name={name} secondary={secondary} />
-      <span className="pl-1"> {row.values[column.id]}</span>
+      <span className="pl-1"> {getValue<ConfigItem["config_type"]>()}</span>
     </span>
   );
 }
 
-function analysisIcon(analysis: Analysis) {
+function AnalysisIcon({ analysis }: { analysis: Analysis }) {
   let color = "44403c";
 
   if (analysis.severity === "critical") {
@@ -335,56 +338,76 @@ function analysisIcon(analysis: Analysis) {
   return <AiFillWarning color={color} size="20" />;
 }
 
-function AnalysisCell({ row, column }: CellProp): JSX.Element {
-  const analysis = row?.values[column.id] || [];
-  if (analysis.length === 0) {
-    return <span></span>;
-  }
+function AnalysisCell({ row, column }: CellContext<ConfigItem, unknown>) {
+  const analysis = row?.getValue<ConfigItem["analysis"]>(column.id) || [];
 
-  var cell: JSX.Element[] = [];
-  analysis.forEach((item: Analysis, index: number) => {
-    cell.push(
-      <span className="flex flex-nowrap pb-0.5 " key={index}>
-        {analysisIcon(item)} <span className="pl-1">{item.analyzer}</span>
-      </span>
-    );
+  useEffect(() => {
+    if (analysis.length > 0) {
+      ReactTooltip.rebuild();
+    }
   });
-  return <span>{cell}</span>;
-}
 
-function CostCell({ row, column }: CellProp): JSX.Element {
-  const cost = row?.values[column.id];
-  if (!cost || parseFloat(cost.toFixed(2)) === 0) {
-    return <span></span>;
+  if (analysis.length === 0) {
+    return null;
   }
-  return <FormatCurrency value={cost} />;
-}
 
-function DateCell({ row, column }: CellProp): JSX.Element {
-  const dateString = row?.values[column.id];
-  if (dateString === "0001-01-01T00:00:00") {
-    return <span></span>;
-  }
   return (
-    <div className="text-xs">
-      {dateString ? timeago.format(dateString) : ""}
+    <div className="flex flex-col w-full max-w-full">
+      {analysis.map((item, index) => (
+        <div
+          data-tip={`${item.analyzer}`}
+          className="flex flex-row space-x-2 pb-0.5 max-w-full"
+          key={index}
+        >
+          <span className="w-auto">
+            <AnalysisIcon analysis={item} />
+          </span>
+          <span className="flex-1 overflow-hidden overflow-ellipsis">
+            {item.analyzer}
+          </span>
+        </div>
+      ))}
     </div>
   );
 }
 
-function ChangeAggregate(leafValues: any[]) {
+function CostCell({ getValue }: CellContext<ConfigItem, any>) {
+  const cost = getValue<string | number>();
+  if (!cost || parseFloat((cost as number).toFixed(2)) === 0) {
+    return null;
+  }
+  return <FormatCurrency value={cost} />;
+}
+
+function DateCell({ getValue }: CellContext<ConfigItem, any>) {
+  const dateString = getValue();
+  if (dateString === "0001-01-01T00:00:00") {
+    return null;
+  }
+  return (
+    <div className="text-xs">
+      {dateString ? relativeDateTime(dateString) : ""}
+    </div>
+  );
+}
+
+function changeAggregationFN(
+  columnId: string,
+  leafRows: Row<ConfigItem>[],
+  childRows: Row<ConfigItem>[]
+) {
   let sum = 0;
-  leafValues.forEach((leafVal) => {
-    if (leafVal) {
-      leafVal.forEach((item: any) => {
-        sum += item.total;
-      });
+  leafRows?.forEach((row) => {
+    const values = row.getValue<{ total: number }[]>(columnId);
+    if (values) {
+      sum += values.reduce((acc, val) => acc + val.total, 0);
     }
   });
   return sum;
 }
 
-function CostAggregate({ value }: { value: number }) {
+function CostAggregate({ getValue }: CellContext<ConfigItem, any>) {
+  const value = getValue<ConfigItem["cost_per_minute"]>();
   return !value || parseFloat(value.toFixed(2)) === 0 ? (
     ""
   ) : (
@@ -392,11 +415,11 @@ function CostAggregate({ value }: { value: number }) {
   );
 }
 
-function ChangedAccessor(row: any) {
+function changeColumnAccessorFN(row: any) {
   return getTimeBucket(row.updated_at);
 }
 
-function ChangedSorted(rowA: any, rowB: any, columnId: string) {
+function changeColumnSortingFN(rowA: any, rowB: any, columnId: string) {
   const rowAOrder =
     Object.values(TIME_BUCKETS).find((tb) => tb.name === rowA.values[columnId])
       ?.sortOrder || 0;
@@ -408,22 +431,6 @@ function ChangedSorted(rowA: any, rowB: any, columnId: string) {
   } else {
     return -1;
   }
-}
-
-interface CellData {
-  config_type: string;
-  analysis: Analysis[];
-  changes: object[];
-  type: string;
-  external_type: string;
-  name: string;
-  tags?: { Key: string; Value: string }[] | { [index: string]: any };
-  created_at: string;
-  updated_at: string;
-  cost_per_minute?: number;
-  cost_total_1d?: number;
-  cost_total_7d?: number;
-  cost_total_30d?: number;
 }
 
 export interface Props {
@@ -462,16 +469,20 @@ function ConfigList({ data, handleRowClick, isLoading }: Props) {
   return (
     <DataTable
       stickyHead
+      isVirtualized
       columns={columns}
       data={data}
       handleRowClick={handleRowClick}
       tableStyle={{ borderSpacing: "0" }}
       isLoading={isLoading}
       groupBy={
-        !groupByField || groupByField === "no_grouping" ? null : [groupByField]
+        !groupByField || groupByField === "no_grouping"
+          ? undefined
+          : [groupByField]
       }
       hiddenColumns={setHiddenColumns()}
       usageSection="config-list"
+      className="max-w-full overflow-x-auto"
     />
   );
 }

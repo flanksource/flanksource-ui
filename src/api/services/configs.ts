@@ -1,5 +1,6 @@
 // http://incident-commander.canary.lab.flanksource.com/config/db
 
+import { ConfigTypeChanges } from "../../components/ConfigChanges";
 import { Config, ConfigDB, IncidentCommander } from "../axios";
 import { resolve } from "../resolve";
 
@@ -53,7 +54,9 @@ export const getAllConfigs = () =>
   resolve<ConfigItem[]>(ConfigDB.get(`/configs`));
 
 export const getAllChanges = () =>
-  resolve(ConfigDB.get(`/config_changes?order=created_at.desc`));
+  resolve(
+    ConfigDB.get<ConfigTypeChanges[]>(`/config_changes?order=created_at.desc`)
+  );
 
 export const getConfig = (id: string) =>
   resolve<ConfigItem[]>(ConfigDB.get(`/config_items?id=eq.${id}`));
@@ -63,7 +66,9 @@ export const getConfigName = (id: string) =>
 
 export const getConfigChange = (id: string) =>
   resolve(
-    ConfigDB.get(`/config_changes?config_id=eq.${id}&order=created_at.desc`)
+    ConfigDB.get<ConfigTypeChanges[]>(
+      `/config_changes?config_id=eq.${id}&order=created_at.desc`
+    )
   );
 
 type ConfigParams = {

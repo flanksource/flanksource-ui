@@ -1,9 +1,9 @@
 import React from "react";
 
 type BadgeProps = {
-  text: string;
+  text: React.ReactNode;
   value?: string;
-  size?: "sm" | "md";
+  size?: "xs" | "sm" | "md";
   dot?: string;
   title?: string;
   className?: string;
