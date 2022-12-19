@@ -43,7 +43,9 @@ export const DataTable = ({
       queryParams.set("sortBy", field);
       queryParams.set("sortOrder", order);
     }
-    setQueryParams(queryParams);
+    setQueryParams({
+      ...Object.fromEntries(queryParams)
+    });
   };
 
   const sortBy = useMemo(() => {

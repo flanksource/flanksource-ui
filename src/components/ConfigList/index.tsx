@@ -433,13 +433,22 @@ export interface Props {
 }
 
 function ConfigList({ data, handleRowClick, isLoading }: Props) {
-  const [queryParams] = useSearchParams({
+  const [queryParams, setQueryParams] = useSearchParams({
     sortBy: "",
     sortOrder: "",
     groupBy: "config_type"
   });
 
-  const groupByField = queryParams.get("groupBy");
+  const groupByField = queryParams.get("groupBy") || "config_type";
+
+  useEffect(() => {
+    setQueryParams({
+      ...Object.fromEntries(queryParams),
+      groupBy: "config_type",
+      sortBy: "config_type",
+      sortOrder: "asc"
+    });
+  }, []);
 
   const setHiddenColumns = () => {
     if (groupByField !== "changed" && groupByField !== "tags") {
