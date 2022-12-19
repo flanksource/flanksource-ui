@@ -19,7 +19,6 @@ import {
 import TopologySidebar from "../components/TopologySidebar";
 
 import { getAll } from "../api/schemaResources";
-import { Toggle } from "../components";
 import { ComponentLabelsDropdown } from "../components/Dropdown/ComponentLabelsDropdown";
 import { ComponentTypesDropdown } from "../components/Dropdown/ComponentTypesDropdown";
 import { InfoMessage } from "../components/InfoMessage";
@@ -113,8 +112,6 @@ export function TopologyPage() {
   const topologyType = searchParams.get("type") ?? "All";
   const healthStatus = searchParams.get("status") ?? "All";
   const refererId = searchParams.get("refererId") ?? undefined;
-  const showHiddenComponents =
-    searchParams.get("showHiddenComponents") !== "no";
 
   const topology = topologyState.topology;
 
@@ -353,18 +350,6 @@ export function TopologyPage() {
                   setSearchParams({
                     ...Object.fromEntries(searchParams),
                     labels: val
-                  });
-                }}
-              />
-              <Toggle
-                className="p-3 flex"
-                label="Show hidden components"
-                value={showHiddenComponents}
-                onChange={(val) => {
-                  const newValue = val ? "yes" : "no";
-                  setSearchParams({
-                    ...Object.fromEntries(searchParams),
-                    showHiddenComponents: newValue
                   });
                 }}
               />

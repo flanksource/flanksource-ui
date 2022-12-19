@@ -29,7 +29,7 @@ export const TopologyPopOver = ({
   };
 
   return (
-    <div className="relative pt-5 sm:flex md:self-center md:pt-0">
+    <div className="relative pt-5 sm:flex md:self-center md:pt-0 pl-3 flex items-center">
       <TopologySort
         sortLabels={sortLabels}
         searchParams={searchParams}
