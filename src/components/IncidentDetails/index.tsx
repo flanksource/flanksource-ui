@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 
 import clsx from "clsx";
 import { useForm } from "react-hook-form";
-import { RiCloseCircleLine } from "react-icons/ri";
 import { BsShareFill, BsTrash } from "react-icons/bs";
 import { template } from "lodash";
 
@@ -16,7 +15,7 @@ import { ResponderDetailsDialog } from "./ResponderDetailsDialog";
 import { ResponderDetailsToolTip } from "./ResponderDetailsToolTip";
 import { AddResponder, ResponderPropsKeyToLabelMap } from "./AddResponder";
 
-import { severityItems, typeItems } from "../Incidents/data";
+import { severityItems, statusItems, typeItems } from "../Incidents/data";
 import { IncidentPriority } from "../../constants/incidentPriority";
 import {
   deleteResponder,
@@ -26,6 +25,7 @@ import { relativeDateTime } from "../../utils/date";
 import { DefinitionOfDone } from "./DefinitionOfDone";
 import { Incident, IncidentStatus } from "../../api/services/incident";
 import IncidentTypeDropdown from "../Incidents/IncidentTypeDropdown";
+import { IncidentWorkflow } from "./IncidentWorkflow";;
 
 export const priorities = Object.entries(severityItems).map(([key, value]) => ({
   label: value.name,
@@ -44,9 +44,7 @@ type IncidentDetailsProps = {
 export const IncidentDetails = ({
   incident,
   className,
-  updateStatusHandler,
-  updateIncidentHandler,
-  textButton
+  updateIncidentHandler
 }: IncidentDetailsProps) => {
   const [responders, setResponders] = useState<Record<string, any>[]>([]);
   const [openDeleteConfirmDialog, setOpenDeleteConfirmDialog] = useState(false);
@@ -85,7 +83,8 @@ export const IncidentDetails = ({
       type: typeItems[incident.type as keyof typeof typeItems]
         ? incident.type
         : "",
-      commanders: incident.commander.id
+      commanders: incident.commander.id,
+      status: statusItems[incident.status as keyof typeof statusItems] ? incident.status : ""
     }
   });
 
@@ -93,6 +92,7 @@ export const IncidentDetails = ({
   const watchType = watch("type");
   const watchPriority = watch("priority");
   const watchCommanders = watch("commanders");
+  const watchStatus = watch("status");
 
   const formattedCreatedAt = useMemo(
     () => relativeDateTime(watchCreatedAt),
@@ -128,7 +128,7 @@ export const IncidentDetails = ({
               )({
                 ID: item.external_id
               });
-            } catch (ex) {}
+            } catch (ex) { }
           }
         }
         return {
@@ -208,22 +208,12 @@ export const IncidentDetails = ({
             <h2 className="mt-0.5 text-2xl font-medium leading-7 text-dark-gray">
               Details
             </h2>
-            <span className="relative z-0 inline-flex rounded-md shadow-sm">
-              <button
-                type="button"
-                className="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                /* @ts-expect-error */
-                onClick={updateStatusHandler}
-              >
-                <RiCloseCircleLine className="w-4 h-4 mr-1" /> {textButton} 11
-              </button>
-              <button
-                type="button"
-                className="relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-              >
-                <BsShareFill className="w-3 h-3 mr-1" /> Share
-              </button>
-            </span>
+            <button
+              type="button"
+              className="relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+            >
+              <BsShareFill className="w-3 h-3 mr-1" /> Share
+            </button>
           </div>
         </div>
         <IncidentDetailsRow
@@ -270,6 +260,20 @@ export const IncidentDetails = ({
               className="w-full"
               dropDownClassNames="w-full"
               value={watchType}
+            />
+          }
+        />
+        <IncidentDetailsRow
+          title="Status"
+          className="mt-3 px-4"
+          value={
+            <IncidentWorkflow
+              control={control}
+              label=""
+              name="status"
+              className="w-full"
+              value={watchStatus}
+              incidentId={incident.id}
             />
           }
         />

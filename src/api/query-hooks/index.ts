@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { getAllConfigs, getConfigName } from "../services/configs";
+import { getHypothesisResponse } from "../services/hypothesis";
 import { getIncident } from "../services/incident";
 import {
   getHealthCheckItem,
@@ -146,6 +147,20 @@ export const useCanaryCheckItemQuery = (
   return useQuery(
     ["db", "canaries", canaryID],
     () => getHealthCheckItem(canaryID),
+    {
+      enabled,
+      ...rest
+    }
+  );
+};
+
+export const useGetHypothesisQuery = (
+  hypothesisId = "",
+  { enabled = true, staleTime = defaultStaleTime, ...rest }
+) => {
+  return useQuery(
+    ["hypothesis", hypothesisId],
+    () => getHypothesisResponse(hypothesisId),
     {
       enabled,
       ...rest

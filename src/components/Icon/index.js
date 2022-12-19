@@ -53,7 +53,6 @@ function findByName(name) {
 }
 
 export function Icon({
-  size = "sm",
   name,
   secondary = "", // If icon by name is not found, try the secondary (fallthrough) name
   className = "",

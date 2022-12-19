@@ -42,7 +42,7 @@ const ButtonFC = ({
 
   const [_icon, setIcon] = useState<React.ReactElement>(
     // @ts-ignore:next-line
-    React.isValidElement(icon) ? icon : <Icon icon={icon} size={size} />
+    React.isValidElement(icon) ? icon : <Icon icon={icon} />
   );
   const [_className, setClassName] = useState(className);
 

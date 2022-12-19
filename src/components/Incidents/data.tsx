@@ -1,11 +1,15 @@
-import { AiOutlineClose } from "react-icons/ai";
+import { AiFillCloseCircle } from "react-icons/ai";
 import { BiDollarCircle } from "react-icons/bi";
 import { FaTasks } from "react-icons/fa";
 import { GrIntegration, GrWorkshop } from "react-icons/gr";
 import { ImHeartBroken } from "react-icons/im";
 import { IoMdSpeedometer } from "react-icons/io";
-import { MdSecurity } from "react-icons/md";
-import { RiLightbulbFill } from "react-icons/ri";
+import {
+  MdFindInPage,
+  MdNewReleases,
+  MdOutlineAltRoute,
+  MdSecurity
+} from "react-icons/md";
 import {
   HiOutlineChevronDoubleDown,
   HiOutlineChevronDoubleUp,
@@ -13,6 +17,9 @@ import {
   HiOutlineChevronUp,
   HiOutlineMinus
 } from "react-icons/hi";
+import { IncidentStatus } from "../../api/services/incident";
+import { capitalizeFirstLetter } from "../../utils/common";
+import { GoIssueClosed, GoIssueOpened } from "react-icons/go";
 
 export const defaultSelections = {
   all: {
@@ -61,19 +68,47 @@ export const severityItems = {
 } as const;
 
 export const statusItems = {
-  open: {
-    id: "dropdown-status-open",
-    icon: <RiLightbulbFill color="green" />,
-    name: "open",
-    description: "Open",
-    value: "open"
+  [IncidentStatus.Open]: {
+    id: `dropdown-status-${IncidentStatus.Open}`,
+    icon: <GoIssueOpened color="gray" />,
+    name: IncidentStatus.Open,
+    description: capitalizeFirstLetter(IncidentStatus.Open),
+    value: IncidentStatus.Open
   },
-  closed: {
-    id: "dropdown-status-closed",
-    icon: <AiOutlineClose color="gray" />,
-    name: "closed",
-    description: "Closed",
-    value: "closed"
+  [IncidentStatus.Closed]: {
+    id: `dropdown-status-${IncidentStatus.Closed}`,
+    icon: <AiFillCloseCircle color="gray" />,
+    name: IncidentStatus.Closed,
+    description: capitalizeFirstLetter(IncidentStatus.Closed),
+    value: IncidentStatus.Closed
+  },
+  [IncidentStatus.New]: {
+    id: `dropdown-status-${IncidentStatus.New}`,
+    icon: <MdNewReleases color="gray" />,
+    name: IncidentStatus.New,
+    description: capitalizeFirstLetter(IncidentStatus.New),
+    value: IncidentStatus.New
+  },
+  [IncidentStatus.Mitigated]: {
+    id: `dropdown-status-${IncidentStatus.Mitigated}`,
+    icon: <MdOutlineAltRoute color="gray" />,
+    name: IncidentStatus.Mitigated,
+    description: capitalizeFirstLetter(IncidentStatus.Mitigated),
+    value: IncidentStatus.Mitigated
+  },
+  [IncidentStatus.Investigating]: {
+    id: `dropdown-status-${IncidentStatus.Investigating}`,
+    icon: <MdFindInPage color="gray" />,
+    name: IncidentStatus.Investigating,
+    description: capitalizeFirstLetter(IncidentStatus.Investigating),
+    value: IncidentStatus.Investigating
+  },
+  [IncidentStatus.Resolved]: {
+    id: `dropdown-status-${IncidentStatus.Resolved}`,
+    icon: <GoIssueClosed color="gray" />,
+    name: IncidentStatus.Resolved,
+    description: capitalizeFirstLetter(IncidentStatus.Resolved),
+    value: IncidentStatus.Resolved
   }
 } as const;
 

@@ -299,7 +299,7 @@ function TypeCell({ row, column }: CellProp): JSX.Element {
 
   return (
     <span className="flex flex-nowrap">
-      <Icon name={name} secondary={secondary} size="lg" />
+      <Icon name={name} secondary={secondary} />
       <span className="pl-1"> {row.values[column.id]}</span>
     </span>
   );

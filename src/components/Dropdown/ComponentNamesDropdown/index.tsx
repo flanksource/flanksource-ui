@@ -30,7 +30,7 @@ const optionStyles: CSSProperties = {
 const formatOptionLabel = (data: { label: string; icon: any }) => (
   <div style={optionStyles} title={data.label}>
     <span>
-      <Icon className="inline" name={data.icon} size="xl" /> {data.label}
+      <Icon name={data.icon} /> {data.label}
     </span>
   </div>
 );

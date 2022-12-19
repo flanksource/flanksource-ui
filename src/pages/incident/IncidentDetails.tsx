@@ -154,7 +154,7 @@ export function IncidentDetailsPage() {
                 </div>
               </section>
             )}
-            <section>
+            <section className="mt-4">
               {!isLoading ? (
                 loadedTrees?.map((loadedTree, index) => {
                   return (

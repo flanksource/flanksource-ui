@@ -6,7 +6,7 @@ const iconList = Object.entries(Icons).map(([name, _icon]) => ({
   value: name,
   label: (
     <div className="flex pl-2 space-x-4 items-center">
-      <Icon size="md" name={name} /> <span>{name}</span>
+      <Icon name={name} /> <span>{name}</span>
     </div>
   )
 }));

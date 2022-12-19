@@ -111,37 +111,37 @@ export const ResponderTypeOptions = [
   {
     label: "ServiceNow",
     value: ResponderTypes.serviceNow,
-    icon: () => <Icon size="md" className="inline-block" name="servicenow" />
+    icon: () => <Icon className="w-5 h-5 inline-block" name="servicenow" />
   },
   {
     label: "CA",
     value: ResponderTypes.ca,
-    icon: () => <Icon size="md" className="inline-block" name="ca" />
+    icon: () => <Icon className="w-5 h-5 inline-block" name="ca" />
   },
   {
     label: "AWS Support",
     value: ResponderTypes.awsSupport,
-    icon: () => <Icon size="md" className="inline-block" name="aws" />
+    icon: () => <Icon className="w-5 h-5 inline-block" name="aws" />
   },
   {
     label: "AWS AMS Service Request",
     value: ResponderTypes.awsAmsServicesRequest,
-    icon: () => <Icon size="md" className="inline-block" name="aws" />
+    icon: () => <Icon className="w-5 h-5 inline-block" name="aws" />
   },
   {
     label: "Redhat",
     value: ResponderTypes.redhat,
-    icon: () => <Icon size="md" className="inline-block" name="redhat" />
+    icon: () => <Icon className="w-5 h-5 inline-block" name="redhat" />
   },
   {
     label: "Oracle",
     value: ResponderTypes.oracle,
-    icon: () => <Icon size="md" className="inline-block" name="oracle_icon" />
+    icon: () => <Icon className="w-5 h-5 inline-block" name="oracle_icon" />
   },
   {
     label: "Microsoft Planner",
     value: ResponderTypes.msPlanner,
-    icon: () => <Icon size="md" className="inline-block" name="microsoft" />
+    icon: () => <Icon className="inline-block" name="microsoft" />
   },
   {
     label: "VMWare",

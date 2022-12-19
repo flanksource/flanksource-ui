@@ -26,9 +26,7 @@ export function ConfigTypesDropdown({
           value: d.config_type,
           description: d.config_type,
           name: d.config_type,
-          icon: (
-            <Icon name={d.config_type} secondary={d.config_type} size="lg" />
-          )
+          icon: <Icon name={d.config_type} secondary={d.config_type} />
         }));
       }, [])
     }

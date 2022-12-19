@@ -25,9 +25,7 @@ function FilterLogsByComponent() {
       return data.map((component) => {
         return {
           value: component.id,
-          icon: (
-            <Icon name={component.icon} secondary={component.name} size="md" />
-          ),
+          icon: <Icon name={component.icon} secondary={component.name} />,
           label: component.name,
           description: component.name
         } as StateOption;
