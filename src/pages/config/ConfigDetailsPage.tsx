@@ -1,6 +1,14 @@
-import { useEffect, useState, useMemo, useCallback } from "react";
+import { useQuery } from "@tanstack/react-query";
+import {
+  useEffect,
+  useState,
+  useMemo,
+  useCallback,
+  Dispatch,
+  ReactNode
+} from "react";
 import { useParams, useSearchParams, useOutletContext } from "react-router-dom";
-import { ConfigItem, getConfig } from "../../api/services/configs";
+import { getConfig } from "../../api/services/configs";
 import { EvidenceType } from "../../api/services/evidence";
 import { AttachEvidenceDialog } from "../../components/AttachEvidenceDialog";
 import { Button } from "../../components/Button";
@@ -11,30 +19,30 @@ import { toastError } from "../../components/Toast/toast";
 export function ConfigDetailsPage() {
   const { id } = useParams();
   const [params, setParams] = useSearchParams();
-  const [isLoading, setIsLoading] = useState(true);
-  const [showIncidentModal] = useState(false);
   const [attachAsAsset, setAttachAsAsset] = useState(false);
   const [dialogKey, setDialogKey] = useState(0);
-  const [checked, setChecked] = useState({});
-  const [configDetails, setConfigDetails] = useState<ConfigItem | undefined>();
-  // @ts-ignore
-  const { setTabRight } = useOutletContext();
+  const [checked, setChecked] = useState<Record<string, any>>({});
+
+  const { setTabRight } = useOutletContext<{
+    setTabRight: Dispatch<ReactNode>;
+  }>();
+
+  const { isLoading, data: configDetails } = useQuery(
+    ["configs", "id"],
+    async () => {
+      const { error, data } = await getConfig(id!);
+      if (error) {
+        throw error;
+      }
+      return data?.[0];
+    },
+    {
+      onError: (err: any) => toastError(err)
+    }
+  );
 
   useEffect(() => {
-    getConfig(id!)
-      .then((res) => {
-        const data = res?.data?.[0];
-        setConfigDetails(data);
-      })
-      .catch((err) => toastError(err))
-      .finally(() => {
-        setIsLoading(false);
-      });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
-
-  useEffect(() => {
-    if (!(configDetails as any)?.config) {
+    if (!configDetails?.config) {
       return;
     }
 
@@ -45,17 +53,14 @@ export function ConfigDetailsPage() {
   useEffect(() => {
     const selected = Object.keys(checked);
     setParams({ selected });
-  }, [checked]);
+  }, [checked, setParams]);
 
   const handleClick = useCallback((idx: any) => {
     setChecked((checked) => {
       const obj = { ...checked };
-      // @ts-ignore
       if (obj[idx]) {
-        // @ts-ignore
         delete obj[idx];
       } else {
-        // @ts-ignore
         obj[idx] = true;
       }
       return obj;
@@ -63,8 +68,6 @@ export function ConfigDetailsPage() {
   }, []);
 
   const code = useMemo(() => {
-    // @ts-ignore
-
     if (!configDetails?.config) {
       return "";
     }
@@ -74,7 +77,7 @@ export function ConfigDetailsPage() {
 
     const ordered = Object.keys(configDetails.config)
       .sort()
-      .reduce((obj, key) => {
+      .reduce((obj: Record<string, any>, key) => {
         obj[key] = configDetails.config[key];
         return obj;
       }, {});
@@ -84,7 +87,6 @@ export function ConfigDetailsPage() {
 
   const format = useMemo(
     () =>
-      // @ts-ignore
       configDetails?.config.format != null
         ? configDetails?.config.format
         : "json",
@@ -96,40 +98,40 @@ export function ConfigDetailsPage() {
 
   const selectedCount = Object.keys(checked).length;
 
-  let selectionControls = (
-    <div className="flex flex-row space-x-2">
-      {selectedCount > 0 && (
-        <>
-          <div className="flex items-center mx-4">
-            {selectedCount} lines selected
-          </div>
-          <Button
-            className="btn-secondary"
-            text="Clear"
-            onClick={() => {
-              setChecked({});
-              return Promise.resolve();
-            }}
-          />
-        </>
-      )}
-      <button
-        type="button"
-        onClick={() => {
-          setAttachAsAsset(true);
-          setDialogKey(Math.floor(Math.random() * 1000));
-        }}
-        className="btn-primary"
-      >
-        Attach to Incident
-      </button>
-    </div>
-  );
-
   useEffect(() => {
+    const selectionControls = (
+      <div className="flex flex-row space-x-2">
+        {selectedCount > 0 && (
+          <>
+            <div className="flex items-center mx-4">
+              {selectedCount} lines selected
+            </div>
+            <Button
+              className="btn-secondary"
+              text="Clear"
+              onClick={() => {
+                setChecked({});
+                return Promise.resolve();
+              }}
+            />
+          </>
+        )}
+        <button
+          type="button"
+          onClick={() => {
+            setAttachAsAsset(true);
+            setDialogKey(Math.floor(Math.random() * 1000));
+          }}
+          className="btn-primary"
+        >
+          Attach to Incident
+        </button>
+      </div>
+    );
+
     setTabRight(selectionControls);
     return () => setTabRight(null);
-  }, [checked, showIncidentModal]);
+  }, [selectedCount, setTabRight]);
 
   return (
     <div className="flex flex-row items-start space-x-2 bg-white">
@@ -148,16 +150,13 @@ export function ConfigDetailsPage() {
                       Object.entries(configDetails.tags)
                         .filter(([key]) => key !== "Name")
                         .map(([key, value]) => (
-                          <>
-                            {/* @ts-ignore */}
-                            <div
-                              key={key}
-                              className="block text-lg tracking-wide"
-                            >
-                              <span className="font-semibold">{key}:</span>
-                              {value}
-                            </div>
-                          </>
+                          <div
+                            key={key}
+                            className="block text-lg tracking-wide"
+                          >
+                            <span className="font-semibold">{key}:</span>
+                            {value}
+                          </div>
                         ))}
                   </div>
                 </div>

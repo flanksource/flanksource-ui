@@ -34,9 +34,9 @@ type DataTableProps<TableColumns, Data extends TableColumns> = {
   groupBy?: string[];
   hiddenColumns?: string[];
   className?: string;
-  usageSection?: string;
   isVirtualized?: boolean;
   virtualizedRowEstimatedHeight?: number;
+  sortBy?: SortingState;
 } & React.HTMLAttributes<HTMLTableElement>;
 
 export function DataTable<TableColumns, Data extends TableColumns>({
@@ -49,40 +49,14 @@ export function DataTable<TableColumns, Data extends TableColumns>({
   groupBy,
   hiddenColumns,
   className,
-  usageSection,
   isVirtualized = false,
   virtualizedRowEstimatedHeight = 35,
+  sortBy = [],
   ...rest
 }: DataTableProps<TableColumns, Data>) {
-  const [queryParams, setQueryParams] = useSearchParams({
-    sortBy: "",
-    sortOrder: ""
-  });
-
-  const sortField = queryParams.get("sortBy");
-
-  const isSortOrderDesc =
-    queryParams.get("sortOrder") === "desc" ? true : false;
+  const [queryParams, setQueryParams] = useSearchParams();
 
   const tableContainerRef = useRef<HTMLDivElement>(null);
-
-  const sortBy = useMemo(() => {
-    const data = sortField
-      ? [
-          {
-            id: sortField,
-            desc: isSortOrderDesc
-          }
-        ]
-      : [];
-    if (sortField === "config_type" && usageSection === "config-list") {
-      data.push({
-        id: "name",
-        desc: isSortOrderDesc
-      });
-    }
-    return data;
-  }, [sortField, isSortOrderDesc, usageSection]);
 
   const [tableSortBy, setTableSortBy] = useState<SortingState>(sortBy);
 

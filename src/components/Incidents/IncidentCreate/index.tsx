@@ -38,7 +38,7 @@ const validationSchema = yup
 
 type IncidentCreateProps = {
   callback: (incident?: Incident) => void;
-  evidence: Record<string, any>;
+  evidence?: Record<string, any>;
 } & React.HTMLAttributes<HTMLDivElement>;
 
 export function IncidentCreate({
