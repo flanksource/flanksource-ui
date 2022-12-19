@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti";
 import { useSearchParams } from "react-router-dom";
 import {
@@ -10,6 +10,7 @@ import {
   getGroupedRowModel,
   getSortedRowModel,
   SortingState,
+  Updater,
   useReactTable,
   VisibilityState
 } from "@tanstack/react-table";
@@ -36,7 +37,38 @@ type DataTableProps<TableColumns, Data extends TableColumns> = {
   className?: string;
   isVirtualized?: boolean;
   virtualizedRowEstimatedHeight?: number;
-  sortBy?: SortingState;
+  /**
+   * Columns used for sorting the table
+   *
+   * @example
+   *
+   * const [tableSortByState, setTableSortByState] = useState<SortingState>([]);
+   *
+   *  <DataTable
+   *   ...
+   *   tableSortByState={tableSortByState}
+   *   onTableSortByChanged={setTableSortByState}
+   *   />
+   */
+  tableSortByState?: SortingState;
+
+  /**
+   *
+   * Allows you to customize the table sorting behaviour
+   *
+   * @example
+   *
+   * const [tableSortByState, setTableSortByState] = useState<SortingState>([]);
+   *
+   *  <DataTable
+   *   ...
+   *   tableSortByState={tableSortByState}
+   *   onTableSortByChanged={setTableSortByState}
+   *   />
+   *
+   *
+   */
+  onTableSortByChanged?: (sortBy: Updater<SortingState>) => void;
 } & React.HTMLAttributes<HTMLTableElement>;
 
 export function DataTable<TableColumns, Data extends TableColumns>({
@@ -51,14 +83,13 @@ export function DataTable<TableColumns, Data extends TableColumns>({
   className,
   isVirtualized = false,
   virtualizedRowEstimatedHeight = 35,
-  sortBy = [],
+  tableSortByState,
+  onTableSortByChanged,
   ...rest
 }: DataTableProps<TableColumns, Data>) {
   const [queryParams, setQueryParams] = useSearchParams();
 
   const tableContainerRef = useRef<HTMLDivElement>(null);
-
-  const [tableSortBy, setTableSortBy] = useState<SortingState>(sortBy);
 
   const tableHiddenColumnsRecord = useMemo(
     () =>
@@ -69,13 +100,21 @@ export function DataTable<TableColumns, Data extends TableColumns>({
     [hiddenColumns]
   );
 
+  // ensure sorting works when state isn't managed by caller
+  const [sortBy, setSortBy] = useState<SortingState>(tableSortByState ?? []);
+
+  // ensure sorting works when state isn't managed by caller
+  useEffect(() => {
+    setSortBy(tableSortByState ?? []);
+  }, [tableSortByState]);
+
   const isGrouped = !!(groupBy?.length && groupBy.length > 0);
 
   const table = useReactTable<TableColumns>({
     columns,
     data,
     state: {
-      sorting: tableSortBy,
+      sorting: sortBy,
       ...(isGrouped ? { grouping: groupBy } : {}),
       columnVisibility: tableHiddenColumnsRecord
     },
@@ -88,7 +127,7 @@ export function DataTable<TableColumns, Data extends TableColumns>({
     debugHeaders: true,
     debugColumns: true,
     onSortingChange: (sorting) => {
-      const { id: field, desc } = tableSortBy[0] ?? {};
+      const { id: field, desc } = sortBy[0] ?? {};
       const order = desc ? "desc" : "asc";
       if (field && order) {
         queryParams.set("sortBy", field);
@@ -98,7 +137,11 @@ export function DataTable<TableColumns, Data extends TableColumns>({
         queryParams.delete("sortOrder");
       }
       setQueryParams(queryParams);
-      setTableSortBy(sorting);
+      if (onTableSortByChanged) {
+        onTableSortByChanged(sorting);
+      } else {
+        setSortBy(sorting);
+      }
     }
   });
 

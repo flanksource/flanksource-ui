@@ -1,38 +1,32 @@
-import { useQuery } from "@tanstack/react-query";
-import React from "react";
-import { getAllChanges } from "../../api/services/configs";
-
+import { useGetAllConfigsChangesQuery } from "../../api/query-hooks";
 import { ConfigChangeHistory } from "../../components/ConfigChangeHistory";
 import { InfoMessage } from "../../components/InfoMessage";
-import { toastError } from "../../components/Toast/toast";
+import { ConfigLayout } from "../../components/Layout";
 
 export function ConfigChangesPage() {
-  const { data, isLoading, error } = useQuery(
-    ["configs", "changes", "all"],
-    getAllChanges,
-    {
-      select: (res) => {
-        if (res.error) {
-          throw new Error(res.error.message);
-        }
-        return res?.data?.length === 0 ? [] : res?.data;
-      },
-      onError: (err: any) => {
-        toastError(err);
-      }
-    }
-  );
+  const { data, isLoading, error } = useGetAllConfigsChangesQuery();
 
-  if (error) {
-    const errorMessage =
-      typeof error === "symbol"
-        ? error
-        : error?.message ?? "Something went wrong";
-
-    return <InfoMessage message={errorMessage} />;
-  }
+  const errorMessage =
+    typeof error === "string"
+      ? error
+      : error?.message ?? "Something went wrong";
 
   return (
-    <ConfigChangeHistory data={data ?? []} isLoading={isLoading} linkConfig />
+    <ConfigLayout
+      basePath={`configs`}
+      isConfigDetails
+      title={"Configs"}
+      isLoading={isLoading}
+    >
+      {error ? (
+        <InfoMessage message={errorMessage} />
+      ) : (
+        <ConfigChangeHistory
+          data={data ?? []}
+          isLoading={isLoading}
+          linkConfig
+        />
+      )}
+    </ConfigLayout>
   );
 }

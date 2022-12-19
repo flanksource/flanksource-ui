@@ -456,16 +456,20 @@ function ConfigList({ data, handleRowClick, isLoading }: Props) {
   const isSortOrderDesc =
     queryParams.get("sortOrder") === "desc" ? true : false;
 
-  const sortBy: SortingState = useMemo(() => {
+  const [sortBy, setSortBy] = useState<SortingState>(() => {
     return sortField
       ? [
           {
             id: sortField,
             desc: isSortOrderDesc
+          },
+          {
+            id: "name",
+            desc: isSortOrderDesc
           }
         ]
       : [];
-  }, [sortField, isSortOrderDesc]);
+  });
 
   const setHiddenColumns = useCallback(() => {
     if (groupByField !== "changed" && groupByField !== "tags") {
@@ -492,7 +496,28 @@ function ConfigList({ data, handleRowClick, isLoading }: Props) {
       }
       hiddenColumns={setHiddenColumns()}
       className="max-w-full overflow-x-auto"
-      sortBy={sortBy}
+      tableSortByState={sortBy}
+      onTableSortByChanged={(newSortBy) => {
+        const sortByValue =
+          typeof newSortBy === "function" ? newSortBy(sortBy) : newSortBy;
+        if (sortByValue.length > 0) {
+          const { id, desc } = sortByValue[0];
+          if (id === "config_type") {
+            setSortBy([
+              {
+                id: "config_type",
+                desc: desc
+              },
+              {
+                id: "name",
+                desc: desc
+              }
+            ]);
+          } else {
+            setSortBy(sortByValue);
+          }
+        }
+      }}
     />
   );
 }

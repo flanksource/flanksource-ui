@@ -1,10 +1,9 @@
 import { useParams } from "react-router-dom";
-
-import { getConfigChange } from "../../api/services/configs";
-import { toastError } from "../../components/Toast/toast";
 import { ConfigChangeHistory } from "../../components/ConfigChangeHistory";
-import { useQuery } from "@tanstack/react-query";
 import { InfoMessage } from "../../components/InfoMessage";
+import { ConfigLayout } from "../../components/Layout";
+import { ConfigsDetailsBreadcrumbNav } from "../../components/BreadcrumbNav/ConfigsDetailsBreadCrumb";
+import { useGetConfigChangesQueryById } from "../../api/query-hooks";
 
 export function ConfigDetailsChangesPage() {
   const { id } = useParams();
@@ -13,18 +12,7 @@ export function ConfigDetailsChangesPage() {
     data: historyData,
     isLoading,
     error
-  } = useQuery(["configs", "changes", id], () => getConfigChange(id!), {
-    select: (res) => {
-      if (res.error) {
-        throw res.error;
-      }
-      return res?.data?.length === 0 ? [] : res?.data;
-    },
-    onError: (err: any) => {
-      toastError(err);
-    },
-    enabled: !!id
-  });
+  } = useGetConfigChangesQueryById(id!);
 
   if (error) {
     const errorMessage =
@@ -36,8 +24,15 @@ export function ConfigDetailsChangesPage() {
   }
 
   return (
-    <div className="flex flex-col items-start">
-      <ConfigChangeHistory data={historyData ?? []} isLoading={isLoading} />
-    </div>
+    <ConfigLayout
+      basePath={`configs/${id}`}
+      isConfigDetails
+      title={<ConfigsDetailsBreadcrumbNav configId={id} />}
+      isLoading={isLoading}
+    >
+      <div className="flex flex-col items-start">
+        <ConfigChangeHistory data={historyData ?? []} isLoading={isLoading} />
+      </div>
+    </ConfigLayout>
   );
 }
