@@ -4,7 +4,9 @@ import { GoDiff } from "react-icons/go";
 import { Link } from "react-router-dom";
 import CollapsiblePanel from "../CollapsiblePanel";
 import ConfigLink from "../ConfigLink/ConfigLink";
+import EmptyState from "../EmptyState";
 import { Icon } from "../Icon";
+import { Loading } from "../Loading";
 import Title from "../Title/title";
 
 type Props = {
@@ -36,30 +38,36 @@ export function TopologyConfigChanges({ topologyID }: Props) {
     <div className="flex flex-col ">
       <div className="flex flex-col mt-2">
         <div className="flex flex-col pl-2">
-          {componentConfigChanges.map((item) => (
-            <div className="flex flex-row text-sm mb-2">
-              <ConfigLink
-                className="text-zinc-600"
-                configId={item.config_id}
-                configName={item.name}
-                configType={item.external_type}
-                configTypeSecondary={item.config_type}
-              />
-              &nbsp;/&nbsp;
-              <Link
-                className="block"
-                to={{
-                  pathname: `/configs/${item.config_id}/changes`
-                }}
-              >
-                <Icon name={item.change_type} />
-                {item.summary ?? item.change_type}
-              </Link>
-              <span className="text-right grow" data-tip={item.created_at}>
-                {dayjs(item.created_at).fromNow()}
-              </span>
-            </div>
-          ))}
+          {isLoading ? (
+            <Loading />
+          ) : componentConfigChanges.length > 0 ? (
+            componentConfigChanges.map((item) => (
+              <div className="flex flex-row text-sm mb-2">
+                <ConfigLink
+                  className="text-zinc-600"
+                  configId={item.config_id}
+                  configName={item.name}
+                  configType={item.external_type}
+                  configTypeSecondary={item.config_type}
+                />
+                &nbsp;/&nbsp;
+                <Link
+                  className="block"
+                  to={{
+                    pathname: `/configs/${item.config_id}/changes`
+                  }}
+                >
+                  <Icon name={item.change_type} />
+                  {item.summary ?? item.change_type}
+                </Link>
+                <span className="text-right grow" data-tip={item.created_at}>
+                  {dayjs(item.created_at).fromNow()}
+                </span>
+              </div>
+            ))
+          ) : (
+            <EmptyState />
+          )}
         </div>
       </div>
     </div>

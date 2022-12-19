@@ -101,12 +101,16 @@ export const getIncidentsBy = async ({
   if (topologyId) {
     params["component_id"] = `eq.${topologyId}`;
     return resolve(
-      IncidentCommander.get(`incidents_by_component?${stringify(params)}`)
+      IncidentCommander.get<Incident[] | null>(
+        `incidents_by_component?${stringify(params)}`
+      )
     );
   } else {
     params["config_id"] = `eq.${configId}`;
     return resolve(
-      IncidentCommander.get(`incidents_by_config?${stringify(params)}`)
+      IncidentCommander.get<Incident[] | null>(
+        `incidents_by_config?${stringify(params)}`
+      )
     );
   }
 };

@@ -6,7 +6,7 @@ import TopologyConfigChanges from "../TopologyConfigChanges";
 import TopologyDetails from "../TopologyDetails";
 
 type Props = {
-  topology?: Pick<Topology, "properties">;
+  topology?: Topology;
   refererId?: string;
 };
 
@@ -19,9 +19,9 @@ export default function TopologySidebar({ topology, refererId }: Props) {
 
   return (
     <div
-      className={`flex flex-col bg-white border-l transform origin-right duration-500 border-gray-200 w-full py-6 px-4  ${"w-[35rem]"}`}
+      className={`flex flex-col bg-white border-l transform origin-right duration-500 border-gray-200  w-full py-6 px-4  ${"w-[35rem]"}`}
     >
-      <div className={`flex flex-col overflow-y-auto space-y-8 sticky top-0`}>
+      <div className={`flex flex-col h-auto space-y-8 sticky top-0`}>
         <TopologyDetails topology={topology} refererId={refererId} />
         <Configs topologyId={id} />
         <Incidents topologyId={id} />

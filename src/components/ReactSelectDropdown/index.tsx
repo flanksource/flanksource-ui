@@ -69,7 +69,6 @@ export const ReactSelectDropdown = ({
   value,
   prefix,
   labelClass,
-  hideControlBorder = false,
   placeholder = "Search...",
   isLoading = false,
   isDisabled = false
@@ -130,7 +129,7 @@ export const ReactSelectDropdown = ({
       inputRef={ref}
       className={dropDownClassNames}
       target={
-        <div className={`${label ? "space-x-2" : ""}`}>
+        <div className={`flex flex-row ${label ? "space-x-2" : ""}`}>
           <label
             className={
               labelClass
@@ -145,10 +144,7 @@ export const ReactSelectDropdown = ({
               `relative cursor-pointer h-full pl-3 rounded-md shadow-sm pr-8 py-2 text-left border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm
                 ${SelectedOption?.id === "_empty" && "text-gray-400"}
               `,
-              className,
-              !hideControlBorder &&
-                "bg-white border border-white-300 shadow-sm",
-              hideControlBorder ? (isOpen ? "bg-gray-100" : "bg-white") : ""
+              className
             )}
             onClick={toggleOpen}
           >
