@@ -52,6 +52,7 @@ type ReactSelectDropdownProps = {
   placeholder?: string;
   prefix?: ReactNode;
   labelClass?: string;
+  containerClassName?: string;
   dropDownClassNames?: string;
   hideControlBorder?: boolean;
   isLoading?: boolean;
@@ -61,6 +62,7 @@ type ReactSelectDropdownProps = {
 export const ReactSelectDropdown = ({
   className,
   dropDownClassNames = "w-auto max-w-[300px]",
+  containerClassName = "flex flex-row space-x-2 items-center",
   label,
   control,
   items,
@@ -129,16 +131,18 @@ export const ReactSelectDropdown = ({
       inputRef={ref}
       className={dropDownClassNames}
       target={
-        <div className={`flex flex-row ${label ? "space-x-2" : ""}`}>
-          <label
-            className={
-              labelClass
-                ? labelClass
-                : "text-sm font-medium text-gray-700 block"
-            }
-          >
-            {label}
-          </label>
+        <div className={containerClassName}>
+          {label && (
+            <label
+              className={
+                labelClass
+                  ? labelClass
+                  : "text-sm font-medium text-gray-700 block"
+              }
+            >
+              {label}
+            </label>
+          )}
           <div
             className={clsx(
               `relative cursor-pointer h-full pl-3 rounded-md shadow-sm pr-8 py-2 text-left border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm

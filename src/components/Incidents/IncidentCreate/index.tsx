@@ -149,6 +149,7 @@ export function IncidentCreate({
             name="type"
             className="w-full"
             labelClass="block text-sm font-bold text-gray-700 mb-2"
+            containerClassName="flex flex-col space-y-1"
             items={typeItems}
             value={type}
           />
@@ -262,6 +263,7 @@ export function IncidentCreate({
             name="severity"
             className="w-full"
             items={severityItems}
+            containerClassName="flex flex-col space-y-1"
             labelClass="block text-sm font-bold text-gray-700 mb-2"
             value={severity}
           />
@@ -275,6 +277,7 @@ export function IncidentCreate({
             className="w-full"
             items={statusItems}
             labelClass="block text-sm font-bold text-gray-700 mb-2"
+            containerClassName="flex flex-col space-y-1"
             value={status}
           />
           <p className="text-red-600 text-sm">{errors.status?.message}</p>
