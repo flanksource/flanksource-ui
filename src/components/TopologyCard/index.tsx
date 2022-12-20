@@ -99,14 +99,20 @@ export function TopologyCard({
     path: string;
   }) => {
     if (topologyItem.id === parentId && parentId) {
-      return null;
+      return "";
     }
 
-    if (searchParams.get("refererId")) {
-      searchParams.delete("refererId");
-    }
+    const params = Object.fromEntries(searchParams.entries());
+    delete params.refererId;
+    delete params.status;
+    const queryString = Object.entries(params)
+      .map(([key, value]) => {
+        return `${key}=${value}`;
+      })
+      .join("&");
+
     const parentIdAsPerPath = (topologyItem.path || "").split(".").pop();
-    return `/topology/${topologyItem.id}?${searchParams.toString()}${
+    return `/topology/${topologyItem.id}?${queryString}${
       parentId && parentIdAsPerPath !== parentId && parentId !== topologyItem.id
         ? `&refererId=${parentId}`
         : ""
