@@ -132,15 +132,17 @@ export const ReactSelectDropdown = ({
       className={dropDownClassNames}
       target={
         <div className={containerClassName}>
-          <label
-            className={
-              labelClass
-                ? labelClass
-                : "text-sm font-medium text-gray-700 block"
-            }
-          >
-            {label}
-          </label>
+          {label && (
+            <label
+              className={
+                labelClass
+                  ? labelClass
+                  : "text-sm font-medium text-gray-700 block"
+              }
+            >
+              {label}
+            </label>
+          )}
           <div
             className={clsx(
               `relative cursor-pointer h-full pl-3 rounded-md shadow-sm pr-8 py-2 text-left border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm

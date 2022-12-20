@@ -87,14 +87,25 @@ export const CreateHypothesis = ({
               )}
             />
           </div>
-          <ReactSelectDropdown
-            control={control}
-            name="hypothesis.status"
-            className="mb-4 w-72"
-            items={hypothesisStatusDropdownOptions}
-            label="State"
-            value={status}
-          />
+        </div>
+        <div className="px-8 space-y-4 pb-8">
+          <div className="space-y-2">
+            <label
+              className="text-sm font-medium text-gray-700 block"
+              htmlFor="hypothesis.status"
+            >
+              State
+            </label>
+            <ReactSelectDropdown
+              id="hypothesis.status"
+              control={control}
+              name="hypothesis.status"
+              className="w-72"
+              items={hypothesisStatusDropdownOptions}
+              label=""
+              value={status}
+            />
+          </div>
         </div>
         <div className="flex justify-end mt-4 py-4 px-8 rounded-b-lg bg-gray-100">
           <input
