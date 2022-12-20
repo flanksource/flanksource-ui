@@ -11,7 +11,9 @@ import IncidentStatusDropdown from "../Incidents/IncidentStatusDropdown";
 
 const removeNullValues = (obj: Record<string, string>) =>
   Object.fromEntries(
-    Object.entries(obj).filter(([_k, v]) => v !== null && v !== undefined)
+    Object.entries(obj).filter(
+      ([_k, v]) => v !== null && v !== undefined && v !== "" && v !== "all"
+    )
   );
 
 export default function FilterIncidents() {
@@ -44,22 +46,13 @@ export default function FilterIncidents() {
   const watchComponent = watch("component");
 
   useEffect(() => {
-    const paramsList = {
-      severity: watchSeverity,
-      status: watchStatus,
-      owner: watchOwner,
-      type: watchType,
-      component: watchComponent
-    };
-    setSearchParams(removeNullValues(paramsList));
-  }, [
-    watchSeverity,
-    watchStatus,
-    watchOwner,
-    watchType,
-    watchComponent,
-    setSearchParams
-  ]);
+    const formChanges = watch((values) => {
+      const params = removeNullValues(values);
+      setSearchParams(params);
+    });
+
+    return () => formChanges.unsubscribe();
+  }, [setSearchParams, watch]);
 
   return (
     <div className="flex flex-col flex-none w-full">

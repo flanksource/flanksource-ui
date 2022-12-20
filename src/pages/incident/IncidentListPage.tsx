@@ -4,7 +4,6 @@ import { AiFillPlusCircle } from "react-icons/ai/";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useGetPeopleQuery } from "../../api/query-hooks";
 import { getIncidentsWithParams } from "../../api/services/incident";
-import { getPersons } from "../../api/services/users";
 import FilterIncidents from "../../components/FilterIncidents/FilterIncidents";
 import { IncidentCreate } from "../../components/Incidents/IncidentCreate";
 import { IncidentList } from "../../components/Incidents/IncidentList";
@@ -206,9 +205,8 @@ export function IncidentListPage() {
         size="small"
         title="Create New Incident"
       >
-        {/* @ts-expect-error */}
         <IncidentCreate
-          callback={(response: any) => {
+          callback={(response) => {
             if (!response) {
               refreshIncidents();
               setIncidentModalIsOpen(false);

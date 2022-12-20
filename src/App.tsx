@@ -13,7 +13,7 @@ import { Canary } from "./components";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { LogsIcon } from "./components/Icons/LogsIcon";
 import { TopologyIcon } from "./components/Icons/TopologyIcon";
-import { ConfigLayout, SidebarLayout } from "./components/Layout";
+import { SidebarLayout } from "./components/Layout";
 import { SchemaResourcePage } from "./components/SchemaResourcePage";
 import {
   SchemaResourceType,
@@ -117,12 +117,12 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
               <Fragment key={x.name}>
                 <Route
                   key={`${x.name}-list`}
-                  path={x.table}
+                  path={(x as any).table}
                   element={<SchemaResourcePage resourceInfo={x} />}
                 />
                 <Route
                   key={`${x.name}-detail`}
-                  path={`${x.table}/:id`}
+                  path={`${(x as any).table}/:id`}
                   element={<SchemaResource resourceInfo={x} />}
                 />
               </Fragment>
@@ -143,39 +143,12 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
 
       <Route path="configs" element={sidebar}>
         {/* https://github.com/remix-run/react-router/issues/7239#issuecomment-898747642 */}
-        <Route
-          path=""
-          element={
-            <ConfigLayout
-              title="Config"
-              showSearchInput
-              basePath="/configs"
-              navLinks={[
-                { title: "Items", index: true },
-                { title: "Changes", path: "changes" }
-              ]}
-            />
-          }
-        >
+        <Route path="">
           <Route index element={<ConfigListPage />} />
           <Route path="changes" element={<ConfigChangesPage />} />
         </Route>
 
-        <Route
-          path=":id"
-          element={
-            <ConfigLayout
-              showSidePanel
-              isConfigDetails
-              title="Config"
-              basePath="/configs/:id"
-              navLinks={[
-                { title: "Config", index: true },
-                { title: "Changes", path: "changes" }
-              ]}
-            />
-          }
-        >
+        <Route path=":id">
           <Route
             index
             element={

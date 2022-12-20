@@ -1,7 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-export const BreadcrumbNav = ({ list }) => {
+type BreadcrumbNavProps = {
+  list: Array<string | React.ReactNode | { to: string; title: string }>;
+};
+
+export function BreadcrumbNav({ list }: BreadcrumbNavProps) {
   const navs = list
     .map((nav, i) => {
       let comp = null;
@@ -14,7 +18,12 @@ export const BreadcrumbNav = ({ list }) => {
             {nav}
           </span>
         );
-      } else if (typeof nav === "object" && nav.to && nav.title) {
+      } else if (
+        nav &&
+        typeof nav === "object" &&
+        "to" in nav &&
+        "title" in nav
+      ) {
         comp = (
           <Link
             key={nav.to}
@@ -45,4 +54,4 @@ export const BreadcrumbNav = ({ list }) => {
     .slice(0, -1);
 
   return <div className="flex items-center flex-shrink-0">{navs}</div>;
-};
+}

@@ -1,5 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import { getAllConfigs, getConfigName } from "../services/configs";
+import { toastError } from "../../components/Toast/toast";
+import {
+  getAllChanges,
+  getAllConfigs,
+  getConfig,
+  getConfigChange,
+  getConfigName
+} from "../services/configs";
 import { getHypothesisResponse } from "../services/hypothesis";
 import { getIncident } from "../services/incident";
 import {
@@ -167,3 +174,48 @@ export const useGetHypothesisQuery = (
     }
   );
 };
+
+export function useGetAllConfigsChangesQuery() {
+  return useQuery(["configs", "changes", "all"], getAllChanges, {
+    select: (res) => {
+      if (res.error) {
+        throw new Error(res.error.message);
+      }
+      return res?.data?.length === 0 ? [] : res?.data;
+    },
+    onError: (err: any) => {
+      toastError(err);
+    }
+  });
+}
+
+export function useGetConfigChangesQueryById(id: string) {
+  return useQuery(["configs", "changes", id], () => getConfigChange(id), {
+    select: (res) => {
+      if (res.error) {
+        throw res.error;
+      }
+      return res?.data?.length === 0 ? [] : res?.data;
+    },
+    onError: (err: any) => {
+      toastError(err);
+    },
+    enabled: !!id
+  });
+}
+
+export function useGetConfigByIdQuery(id: string) {
+  return useQuery(
+    ["configs", id],
+    async () => {
+      const { error, data } = await getConfig(id!);
+      if (error) {
+        throw error;
+      }
+      return data?.[0];
+    },
+    {
+      onError: (err: any) => toastError(err)
+    }
+  );
+}

@@ -1,16 +1,11 @@
-import { useEffect, useMemo } from "react";
-import {
-  useNavigate,
-  useSearchParams,
-  useOutletContext
-} from "react-router-dom";
+import { useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import objectHash from "object-hash";
 import { filterConfigsByText } from "../../components/ConfigViewer/utils";
 import ConfigList from "../../components/ConfigList";
-import { RefreshButton } from "../../components/RefreshButton";
 import { useConfigPageContext } from "../../context/ConfigPageContext";
 import { useAllConfigsQuery } from "../../api/query-hooks";
-import { getAllConfigs } from "../../api/services/configs";
+import { ConfigLayout } from "../../components/Layout";
 
 export function ConfigListPage() {
   const [params] = useSearchParams();
@@ -19,7 +14,6 @@ export function ConfigListPage() {
     configState: { data, filteredData },
     setConfigState
   } = useConfigPageContext();
-  const { setTitleExtras } = useOutletContext<any>();
 
   const {
     data: allConfigs,
@@ -54,11 +48,9 @@ export function ConfigListPage() {
         data: allConfigs.data
       };
     });
-  }, [params, allConfigs]);
+  }, [params, allConfigs, setConfigState, groupByProp]);
 
-  const loading = useMemo(() => {
-    return isLoading || isRefetching;
-  }, [isLoading, isRefetching]);
+  const loading = isLoading || isRefetching;
 
   const handleRowClick = (row?: { original?: { id: string } }) => {
     const id = row?.original?.id;
@@ -66,12 +58,6 @@ export function ConfigListPage() {
       navigate(`/configs/${id}`);
     }
   };
-
-  useEffect(() => {
-    setTitleExtras(
-      <RefreshButton onClick={() => getAllConfigs()} animate={isLoading} />
-    );
-  }, [loading, setTitleExtras]);
 
   useEffect(() => {
     let filteredData = data;
@@ -112,15 +98,17 @@ export function ConfigListPage() {
         filteredData: filteredData
       };
     });
-  }, [data, search, configType, tag]);
+  }, [data, search, configType, tag, setConfigState]);
 
   return (
-    <div className="flex flex-col h-full overflow-y-hidden bg-white">
-      <ConfigList
-        data={filteredData!}
-        handleRowClick={handleRowClick}
-        isLoading={loading}
-      />
-    </div>
+    <ConfigLayout basePath="configs" title="Configs" isLoading={loading}>
+      <div className="flex flex-col h-full overflow-y-hidden bg-white">
+        <ConfigList
+          data={filteredData!}
+          handleRowClick={handleRowClick}
+          isLoading={loading}
+        />
+      </div>
+    </ConfigLayout>
   );
 }

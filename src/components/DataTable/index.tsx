@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti";
 import { useSearchParams } from "react-router-dom";
 import {
@@ -10,6 +10,7 @@ import {
   getGroupedRowModel,
   getSortedRowModel,
   SortingState,
+  Updater,
   useReactTable,
   VisibilityState
 } from "@tanstack/react-table";
@@ -34,9 +35,40 @@ type DataTableProps<TableColumns, Data extends TableColumns> = {
   groupBy?: string[];
   hiddenColumns?: string[];
   className?: string;
-  usageSection?: string;
   isVirtualized?: boolean;
   virtualizedRowEstimatedHeight?: number;
+  /**
+   * Columns used for sorting the table
+   *
+   * @example
+   *
+   * const [tableSortByState, setTableSortByState] = useState<SortingState>([]);
+   *
+   *  <DataTable
+   *   ...
+   *   tableSortByState={tableSortByState}
+   *   onTableSortByChanged={setTableSortByState}
+   *   />
+   */
+  tableSortByState?: SortingState;
+
+  /**
+   *
+   * Allows you to customize the table sorting behaviour
+   *
+   * @example
+   *
+   * const [tableSortByState, setTableSortByState] = useState<SortingState>([]);
+   *
+   *  <DataTable
+   *   ...
+   *   tableSortByState={tableSortByState}
+   *   onTableSortByChanged={setTableSortByState}
+   *   />
+   *
+   *
+   */
+  onTableSortByChanged?: (sortBy: Updater<SortingState>) => void;
 } & React.HTMLAttributes<HTMLTableElement>;
 
 export function DataTable<TableColumns, Data extends TableColumns>({
@@ -49,42 +81,15 @@ export function DataTable<TableColumns, Data extends TableColumns>({
   groupBy,
   hiddenColumns,
   className,
-  usageSection,
   isVirtualized = false,
   virtualizedRowEstimatedHeight = 35,
+  tableSortByState,
+  onTableSortByChanged,
   ...rest
 }: DataTableProps<TableColumns, Data>) {
-  const [queryParams, setQueryParams] = useSearchParams({
-    sortBy: "",
-    sortOrder: ""
-  });
-
-  const sortField = queryParams.get("sortBy");
-
-  const isSortOrderDesc =
-    queryParams.get("sortOrder") === "desc" ? true : false;
+  const [queryParams, setQueryParams] = useSearchParams();
 
   const tableContainerRef = useRef<HTMLDivElement>(null);
-
-  const sortBy = useMemo(() => {
-    const data = sortField
-      ? [
-          {
-            id: sortField,
-            desc: isSortOrderDesc
-          }
-        ]
-      : [];
-    if (sortField === "config_type" && usageSection === "config-list") {
-      data.push({
-        id: "name",
-        desc: isSortOrderDesc
-      });
-    }
-    return data;
-  }, [sortField, isSortOrderDesc, usageSection]);
-
-  const [tableSortBy, setTableSortBy] = useState<SortingState>(sortBy);
 
   const tableHiddenColumnsRecord = useMemo(
     () =>
@@ -95,13 +100,21 @@ export function DataTable<TableColumns, Data extends TableColumns>({
     [hiddenColumns]
   );
 
+  // ensure sorting works when state isn't managed by caller
+  const [sortBy, setSortBy] = useState<SortingState>(tableSortByState ?? []);
+
+  // ensure sorting works when state isn't managed by caller
+  useEffect(() => {
+    setSortBy(tableSortByState ?? []);
+  }, [tableSortByState]);
+
   const isGrouped = !!(groupBy?.length && groupBy.length > 0);
 
   const table = useReactTable<TableColumns>({
     columns,
     data,
     state: {
-      sorting: tableSortBy,
+      sorting: sortBy,
       ...(isGrouped ? { grouping: groupBy } : {}),
       columnVisibility: tableHiddenColumnsRecord
     },
@@ -114,7 +127,7 @@ export function DataTable<TableColumns, Data extends TableColumns>({
     debugHeaders: true,
     debugColumns: true,
     onSortingChange: (sorting) => {
-      const { id: field, desc } = tableSortBy[0] ?? {};
+      const { id: field, desc } = sortBy[0] ?? {};
       const order = desc ? "desc" : "asc";
       if (field && order) {
         queryParams.set("sortBy", field);
@@ -124,7 +137,11 @@ export function DataTable<TableColumns, Data extends TableColumns>({
         queryParams.delete("sortOrder");
       }
       setQueryParams(queryParams);
-      setTableSortBy(sorting);
+      if (onTableSortByChanged) {
+        onTableSortByChanged(sorting);
+      } else {
+        setSortBy(sorting);
+      }
     }
   });
 

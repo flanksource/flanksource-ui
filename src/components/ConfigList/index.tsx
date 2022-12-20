@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { AiFillWarning } from "react-icons/ai";
 import { BiDollarCircle } from "react-icons/bi";
 import { FaTasks } from "react-icons/fa";
@@ -12,7 +12,6 @@ import {
 import { MdSecurity } from "react-icons/md";
 import { useSearchParams } from "react-router-dom";
 import ReactTooltip from "react-tooltip";
-import * as timeago from "timeago.js";
 import { DataTable, Icon } from "../";
 import { ConfigItem } from "../../api/services/configs";
 import { FormatCurrency } from "../ConfigCosts";
@@ -21,7 +20,12 @@ import {
   relativeDateTime,
   TIME_BUCKETS
 } from "../../utils/date";
-import { CellContext, ColumnDef, Row } from "@tanstack/react-table";
+import {
+  CellContext,
+  ColumnDef,
+  Row,
+  SortingState
+} from "@tanstack/react-table";
 
 interface Analysis {
   analysis_type: string;
@@ -440,31 +444,41 @@ export interface Props {
 }
 
 function ConfigList({ data, handleRowClick, isLoading }: Props) {
-  const [queryParams, setQueryParams] = useSearchParams({
-    sortBy: "",
-    sortOrder: "",
+  const [queryParams] = useSearchParams({
+    sortBy: "config_type",
+    sortOrder: "asc",
     groupBy: "config_type"
   });
 
   const groupByField = queryParams.get("groupBy") || "config_type";
+  const sortField = queryParams.get("sortBy");
 
-  useEffect(() => {
-    setQueryParams({
-      ...Object.fromEntries(queryParams),
-      groupBy: "config_type",
-      sortBy: "config_type",
-      sortOrder: "asc"
-    });
-  }, []);
+  const isSortOrderDesc =
+    queryParams.get("sortOrder") === "desc" ? true : false;
 
-  const setHiddenColumns = () => {
+  const [sortBy, setSortBy] = useState<SortingState>(() => {
+    return sortField
+      ? [
+          {
+            id: sortField,
+            desc: isSortOrderDesc
+          },
+          {
+            id: "name",
+            desc: isSortOrderDesc
+          }
+        ]
+      : [];
+  });
+
+  const setHiddenColumns = useCallback(() => {
     if (groupByField !== "changed" && groupByField !== "tags") {
       return ["changed", "allTags"];
     } else if (groupByField === "tags") {
       return ["changed"];
     }
     return [];
-  };
+  }, [groupByField]);
 
   return (
     <DataTable
@@ -481,8 +495,29 @@ function ConfigList({ data, handleRowClick, isLoading }: Props) {
           : [groupByField]
       }
       hiddenColumns={setHiddenColumns()}
-      usageSection="config-list"
       className="max-w-full overflow-x-auto"
+      tableSortByState={sortBy}
+      onTableSortByChanged={(newSortBy) => {
+        const sortByValue =
+          typeof newSortBy === "function" ? newSortBy(sortBy) : newSortBy;
+        if (sortByValue.length > 0) {
+          const { id, desc } = sortByValue[0];
+          if (id === "config_type") {
+            setSortBy([
+              {
+                id: "config_type",
+                desc: desc
+              },
+              {
+                id: "name",
+                desc: desc
+              }
+            ]);
+          } else {
+            setSortBy(sortByValue);
+          }
+        }
+      }}
     />
   );
 }
