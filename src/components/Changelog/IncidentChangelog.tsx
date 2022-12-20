@@ -1,66 +1,51 @@
-/* This example requires Tailwind CSS v2.0+ */
-import { useQuery } from "@tanstack/react-query";
-import {
-  getIncidentHistory,
-  IncidentHistoryType
-} from "../../api/services/IncidentsHistory";
+import { useEffect } from "react";
+import { MdRefresh } from "react-icons/md";
+import { useIncidentsHistoryQuery } from "../../api/query-hooks";
 import { Loading } from "../Loading";
-import { relativeDateTime } from "../../utils/date";
-import { Avatar } from "../Avatar";
-
-const IncidentHistoryTypes: Record<IncidentHistoryType, Record<string, any>> = {
-  "evidence.created": { text: "Evidence Created" },
-  "incident.created": { text: "Incident Created" },
-  "responder.created": { text: "Responder Created" },
-  "incident_status.updated": { text: "Incident Status Updated" }
-};
+import IncidentChangelogItem from "./IncidentChangelogItems";
 
 type ChangelogProps = {
   incidentId: string;
+  refreshChangelog: number;
 };
 
-export function IncidentChangelog({ incidentId }: ChangelogProps) {
-  const { data: incidentHistory, isLoading } = useQuery(
-    ["incident_histories", incidentId],
-    () => getIncidentHistory(incidentId)
-  );
+export function IncidentChangelog({
+  incidentId,
+  refreshChangelog
+}: ChangelogProps) {
+  const {
+    data: incidentHistory,
+    isLoading,
+    isRefetching,
+    refetch
+  } = useIncidentsHistoryQuery(incidentId);
+
+  useEffect(() => {
+    refetch();
+  }, [refreshChangelog, refetch]);
 
   return (
-    <div className="bg-white">
-      <div className="flex justify-between py-4 border-b border-gray-200 mb-4">
+    <div className="bg-white flex flex-col space-y-4">
+      <div className="flex flex-row space-x-3 items-center justify-between py-4 border-b border-gray-200 pr-3">
         <h2 className="mt-0.5 text-2xl font-medium leading-7 text-dark-gray px-4">
           Changelog
         </h2>
+        <button className="" onClick={() => refetch()}>
+          <MdRefresh className="cursor-pointer w-6 h-6" />
+        </button>
       </div>
-      {isLoading ? (
-        <Loading text="Loading ..." />
-      ) : incidentHistory && incidentHistory.length > 0 ? (
-        <ul className="px-4">
-          {incidentHistory.map((history) => (
-            <li key={history.id}>
-              <div className="pb-4">
-                <div className="flex space-x-3">
-                  <Avatar user={history.created_by} size="md" />
-                  <div className="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
-                    <div>
-                      <p className="text-gray-500">
-                        {IncidentHistoryTypes[history.type].text}
-                      </p>
-                    </div>
-                    <div className="text-right whitespace-nowrap text-gray-500">
-                      <time dateTime={history.created_at}>
-                        {relativeDateTime(history.created_at)}
-                      </time>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </li>
-          ))}
-        </ul>
+      {(isLoading || isRefetching) && <Loading text="Loading ..." />}
+      {incidentHistory && incidentHistory.length > 0 ? (
+        <div className="px-8 py-4">
+          <ul className="border-l border-gray-200 dark:border-gray-900 relative flex-col px-4">
+            {incidentHistory.map((history) => (
+              <IncidentChangelogItem key={history.id} history={history} />
+            ))}
+          </ul>
+        </div>
       ) : (
         <div className="px-4 py-4">
-          <p className="text-gray-500">No changelog found</p>
+          <p className="text-gray-800">No changelog found</p>
         </div>
       )}
     </div>

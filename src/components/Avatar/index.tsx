@@ -7,6 +7,7 @@ import { User } from "../../api/services/users";
 
 interface IProps {
   size?: "sm" | "lg" | "md";
+  circular?: boolean;
   alt?: string;
   user?: Partial<User>;
   imageProps?: React.ComponentPropsWithoutRef<"img">;
@@ -20,7 +21,8 @@ export function Avatar({
   unload,
   alt,
   containerProps,
-  imageProps
+  imageProps,
+  circular = false
 }: IProps) {
   const srcList = user?.avatar;
   const fallbackInitials = user?.name || "?";
@@ -59,10 +61,11 @@ export function Avatar({
     <div
       {...containerProps}
       className={clsx(
-        "overflow-hidden rounded-md flex justify-center items-center leading-none",
+        "overflow-hidden flex justify-center items-center leading-none",
         sizeClass,
         containerProps?.className,
-        !src && initials ? "bg-dark-blue text-white" : "bg-lighter-gray"
+        !src && initials ? "bg-dark-blue text-white" : "bg-lighter-gray",
+        circular ? "rounded-full" : "rounded-md"
       )}
       data-tip={user?.name}
     >
@@ -72,8 +75,9 @@ export function Avatar({
           alt={alt}
           {...imageProps}
           className={clsx(
-            "w-full h-full rounded-md overflow-hidden",
-            imageProps?.className
+            "w-full h-full overflow-hidden",
+            imageProps?.className,
+            circular ? "rounded-full" : "rounded-md"
           )}
         />
       ) : (

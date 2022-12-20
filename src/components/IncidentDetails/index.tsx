@@ -86,7 +86,7 @@ export const IncidentDetails = ({
       priority: incident.severity ?? IncidentPriority.High,
       type: typeItems[incident.type as keyof typeof typeItems]
         ? incident.type
-        : "",
+        : undefined,
       commanders: incident.commander.id,
       status: incidentStatusItems[
         incident.status as keyof typeof incidentStatusItems

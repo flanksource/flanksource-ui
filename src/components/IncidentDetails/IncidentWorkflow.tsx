@@ -15,7 +15,7 @@ type IncidentWorkflowProps = {
   control: any;
   className: string;
   incidentId: string;
-  value: IncidentStatus;
+  value?: IncidentStatus;
 };
 
 const statusesForWhichFactorsNeeedToBeCaptured = [
