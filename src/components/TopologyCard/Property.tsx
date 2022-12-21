@@ -76,13 +76,24 @@ export const FormatProperty = ({ property, short = false }) => {
     } else if (property.unit === "bytes") {
       text = formatBytes(property.value, 0);
     }
-
+    let suffix = "";
     if (!short && property.max != null) {
       if (property.unit.startsWith("milli")) {
-        text += ` of ${(property.max / 1000).toFixed(2)}`;
+        suffix = ` of ${(property.max / 1000).toFixed(2)}`;
       } else if (property.unit === "bytes") {
-        text += ` of ${formatBytes(property.max, 0)}`;
+        suffix = ` of ${formatBytes(property.max, 0)}`;
       }
+    }
+    if (suffix && text) {
+      text =
+        typeof text === "object" ? (
+          <>
+            {text}
+            {suffix}
+          </>
+        ) : (
+          text + suffix
+        );
     }
   }
   if (isEmpty(text)) {
