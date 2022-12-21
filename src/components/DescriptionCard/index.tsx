@@ -1,12 +1,19 @@
-export function DescriptionCard({ items }) {
+type DescriptionCardProps = {
+  items: {
+    label?: string;
+    value: React.ReactNode;
+  }[];
+};
+
+export function DescriptionCard({ items }: DescriptionCardProps) {
   return (
     <div className="flex flex-col">
       <table className="table text-sm">
         <tbody>
-          {items.map((item) => (
+          {items.map((item, index) => (
             <tr
               className="border-slate-100 border-solid border-b border-t p-1"
-              key={item.name}
+              key={item.label ?? "" + index}
             >
               <th className="text-gray-700 font-light  uppercase text-left overflow-auto bg-zinc-50 pl-2">
                 {item.label}{" "}

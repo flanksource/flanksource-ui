@@ -49,7 +49,7 @@ export default function TopologyDetails({ topology, refererId }: Props) {
     });
   }
 
-  if (topology.labels != null && topology.labels.length > 0) {
+  if (topology.labels != null && Object.entries(topology.labels).length > 0) {
     items.push({
       label: "Labels",
       value: map(topology.labels, (v, k) => (
