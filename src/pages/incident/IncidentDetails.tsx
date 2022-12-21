@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { UseMutationResult } from "@tanstack/react-query";
 import { Link, useParams } from "react-router-dom";
 import { EvidenceType } from "../../api/services/evidence";
@@ -81,6 +81,7 @@ export function IncidentDetailsPage() {
   const { id: incidentId } = useParams();
   const isNewlyCreated = false; // TODO: set this to true if its a newly created incident
   const { isLoading, data: incident, refetch } = useIncidentQuery(incidentId!);
+  const [refetchChangelog, setRefetchChangelog] = useState(0);
 
   const error = !!incident;
 
@@ -107,11 +108,12 @@ export function IncidentDetailsPage() {
 
   const updateIncidentHandler = useCallback(
     (newDataIncident: Partial<Incident>) => {
-      updateIncident(incident?.id || null, newDataIncident).then(() =>
-        refetch()
-      );
+      updateIncident(incident?.id || null, newDataIncident).then(() => {
+        refetch();
+        setRefetchChangelog(refetchChangelog + 1);
+      });
     },
-    [incident?.id, refetch]
+    [incident?.id, refetch, refetchChangelog]
   );
 
   if (incident == null) {
@@ -120,7 +122,7 @@ export function IncidentDetailsPage() {
 
   return (
     <SearchLayout
-      contentClass="pl-6"
+      contentClass="pl-6 h-full overflow-y-auto"
       onRefresh={() => refetch()}
       title={
         <div className="flex my-auto">
