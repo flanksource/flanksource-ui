@@ -57,22 +57,26 @@ type ConfigChangeHistoryProps = {
   data: ConfigTypeChanges[];
   isLoading?: boolean;
   linkConfig?: boolean;
+  className?: string;
+  tableStyle?: React.CSSProperties;
 };
 
 export function ConfigChangeHistory({
   data,
   isLoading,
-  linkConfig
+  linkConfig,
+  className = "w-full",
+  tableStyle
 }: ConfigChangeHistoryProps) {
   return (
     <DataTable
-      className="w-full"
+      className={className}
       columns={linkConfig ? columns.concat(configLinkCol) : columns}
       data={data}
       isLoading={isLoading}
       stickyHead
-      usageSection="config-change-history"
       isVirtualized
+      tableStyle={tableStyle}
       virtualizedRowEstimatedHeight={500}
     />
   );
