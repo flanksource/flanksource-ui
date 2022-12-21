@@ -1,6 +1,5 @@
 import Convert from "ansi-to-html";
 import clsx from "clsx";
-import DOMPurify from "dompurify";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ColumnDef,
@@ -17,6 +16,7 @@ import { LogsTableLabelsCell, LogsTableTimestampCell } from "./LogsTableCells";
 import useDebouncedValue from "../../../hooks/useDebounce";
 import { InfoMessage } from "../../InfoMessage";
 import { useVirtualizer } from "@tanstack/react-virtual";
+import { sanitizeHTMLContent } from "../../../utils/common";
 
 const convert = new Convert();
 
@@ -135,7 +135,7 @@ export function LogsTable({
                 className="break-all"
                 // eslint-disable-next-line react/no-danger
                 dangerouslySetInnerHTML={{
-                  __html: DOMPurify.sanitize(
+                  __html: sanitizeHTMLContent(
                     convert.toHtml(row.original.message)
                   )
                 }}

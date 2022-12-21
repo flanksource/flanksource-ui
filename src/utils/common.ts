@@ -1,5 +1,5 @@
-import { parse } from "qs";
-import sanitizeHtml from "sanitize-html";
+import { parse, stringify } from "qs";
+import DOMPurify from "dompurify";
 
 export function toFixedIfNecessary(value: string, dp: number) {
   return +parseFloat(value).toFixed(dp);
@@ -26,21 +26,11 @@ export function searchParamsToObj(searchParams: Record<string, string>) {
 }
 
 export function toQueryString(paramsObject: Record<string, string>) {
-  return Object.keys(paramsObject)
-    .map(
-      (key) =>
-        `${encodeURIComponent(key)}=${encodeURIComponent(paramsObject[key])}`
-    )
-    .join("&");
+  return stringify(paramsObject);
 }
 
 export const sanitizeHTMLContent = (htmlString: string) => {
-  return sanitizeHtml(htmlString, {
-    allowedTags: sanitizeHtml.defaults.allowedTags.concat(["img"]),
-    allowedAttributes: {
-      "*": ["style", "class"]
-    }
-  });
+  return DOMPurify.sanitize(htmlString);
 };
 
 export const sanitizeHTMLContentToText = (htmlString: string) => {
