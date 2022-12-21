@@ -24,15 +24,16 @@ export function usePartialUpdateSearchParams(
       let paramsChanged = false;
       Object.entries(newParams).forEach(([key, value]) => {
         // remove the key if the value is falsy
-        if (!value) {
+        if (!value || value.length === 0) {
           params.delete(key);
           paramsChanged = true;
           return;
         }
         // if the value hasn't changed, don't update the URL
         if (Array.isArray(value)) {
+          params.delete(key);
           // loop through the new values and see if any of them are different
-          if (params.getAll(key).filter((x) => !value.includes(x)).length > 0) {
+          if (value.filter((x) => !params.getAll(key).includes(x)).length > 0) {
             value.forEach((v) => {
               paramsChanged = true;
               params.append(key, v);
