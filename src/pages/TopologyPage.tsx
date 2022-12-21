@@ -128,11 +128,17 @@ export function TopologyPage() {
     }
     const sortBy = getSortBy(sortLabels) || "status";
     const sortOrder = localStorage.getItem("topologyCardsSortOrder") || "desc";
-    setSearchParams({
-      ...searchParamsToObj(searchParams),
-      sortBy,
-      sortOrder
-    });
+    setSearchParams(
+      {
+        ...searchParamsToObj(searchParams),
+        sortBy,
+        sortOrder
+      },
+      {
+        // this will replace the history, so that the back button will work as expected
+        replace: true
+      }
+    );
   }, [searchParams, setSearchParams, sortLabels]);
 
   const load = useCallback(async () => {
