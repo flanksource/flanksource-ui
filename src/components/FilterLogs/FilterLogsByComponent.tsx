@@ -6,9 +6,9 @@ import { Icon } from "../Icon";
 import { ReactSelectDropdown, StateOption } from "../ReactSelectDropdown";
 
 export const defaultSelections = {
-  all: {
-    description: "All",
-    value: "all",
+  none: {
+    description: "None",
+    value: "none",
     order: -1
   }
 };
@@ -45,7 +45,7 @@ function FilterLogsByComponent() {
   }
 
   function onComponentSelect(value?: string) {
-    if (value?.toLowerCase() === "all") {
+    if (value?.toLowerCase() === "none") {
       searchParams.delete("topologyId");
       searchParams.delete("topologyExternalId");
       searchParams.delete("type");
@@ -74,7 +74,7 @@ function FilterLogsByComponent() {
         prefix="Component:"
         name="component"
         className="w-auto max-w-[400px] capitalize"
-        value={topologyId ?? undefined}
+        value={topologyId ?? "none"}
         // @ts-expect-error
         items={{ ...defaultSelections, ...dropDownOptions }}
         dropDownClassNames="w-auto max-w-[400px] left-0"
