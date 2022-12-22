@@ -50,7 +50,6 @@ export function UserList({
         data={data}
         tableStyle={{ borderSpacing: "0" }}
         isLoading={isLoading}
-        usageSection="user-list"
         style={{ maxHeight: "calc(100vh - 12rem)" }}
       />
     </div>

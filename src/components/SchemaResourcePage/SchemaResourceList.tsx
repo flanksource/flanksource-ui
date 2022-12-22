@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { useNavigate } from "react-router-dom";
-import { SchemaResourceI } from "src/api/schemaResources";
+import { SchemaResourceI } from "../../api/schemaResources";
 import { relativeDateTime } from "../../utils/date";
 import { Avatar } from "../Avatar";
 
@@ -11,23 +11,35 @@ interface Props {
 
 export function SchemaResourceList({ items, baseUrl }: Props) {
   return (
-    <div className="w-full">
-      <table className="table-auto w-full" aria-label="table">
-        <thead>
-          <tr>
-            <HCell colSpan={2}>Name</HCell>
-            <HCell>Source Config</HCell>
-            <HCell>Created At</HCell>
-            <HCell>Updated At</HCell>
-            <HCell>Created By</HCell>
-          </tr>
-        </thead>
-        <tbody className="flex-1 overflow-y-auto">
-          {items.map((item) => (
-            <SchemaResourceListItem key={item.id} {...item} baseUrl={baseUrl} />
-          ))}
-        </tbody>
-      </table>
+    <div className="max-w-screen-xl mx-auto space-y-6 flex flex-col justify-center">
+      <div
+        className="overflow-y-auto"
+        style={{ maxHeight: "calc(100vh - 8rem)" }}
+      >
+        <table
+          className="table-auto table-fixed w-full relative"
+          aria-label="table"
+        >
+          <thead className={`bg-white sticky top-0 z-01`}>
+            <tr>
+              <HCell colSpan={2}>Name</HCell>
+              <HCell>Source Config</HCell>
+              <HCell>Created At</HCell>
+              <HCell>Updated At</HCell>
+              <HCell>Created By</HCell>
+            </tr>
+          </thead>
+          <tbody>
+            {items.map((item) => (
+              <SchemaResourceListItem
+                key={item.id}
+                {...item}
+                baseUrl={baseUrl}
+              />
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
