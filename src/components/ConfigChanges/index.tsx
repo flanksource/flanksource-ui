@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { GoDiff } from "react-icons/go";
+import { useGetConfigChangesQueryById } from "../../api/query-hooks";
+import { EvidenceType } from "../../api/services/evidence";
 import { relativeDateTime } from "../../utils/date";
+import { AttachEvidenceDialog } from "../AttachEvidenceDialog";
 import CollapsiblePanel from "../CollapsiblePanel";
 import { ConfigDetailsChanges } from "../ConfigDetailsChanges/ConfigDetailsChanges";
 import EmptyState from "../EmptyState";
@@ -28,38 +31,41 @@ type Props = {
   configID: string;
 };
 
-function ConfigChangesDetails({ configID }: Props) {
+export function ConfigChangesDetails({ configID }: Props) {
   const [configChanges, setConfigChanges] = useState<ConfigTypeChanges[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [open, setOpen] = useState(false);
+  const [attachEvidence, setAttachEvidence] = useState(false);
   const [selectedConfigChange, setSelectedConfigChange] =
     useState<ConfigTypeChanges>();
+  const { data, isLoading } = useGetConfigChangesQueryById(configID);
 
   useEffect(() => {
-    async function fetchConfigAnalysis(configID: string) {
-      setIsLoading(true);
-      const res = await fetch(
-        `/api/db/config_changes?order=created_at.desc&config_id=eq.${configID}`
-      );
-      const data = (await res.json()) as ConfigTypeChanges[];
-      setConfigChanges(data);
-      setIsLoading(false);
+    if (!data) {
+      return;
     }
-
-    fetchConfigAnalysis(configID);
-  }, [configID]);
+    setConfigChanges(data);
+  }, [data, configID]);
 
   return (
     <div className="flex flex-col space-y-2">
       <Modal
-        title={"Config Change"}
+        title={
+          <>
+            <Icon
+              name={selectedConfigChange?.change_type}
+              secondary="diff"
+              className="w-5 h-auto pr-1"
+            />
+            {selectedConfigChange?.change_type}
+          </>
+        }
         open={open}
         onClose={() => setOpen(false)}
         size="large"
         bodyClass=""
       >
         <div
-          className="flex flex-col h-full py-4"
+          className="flex flex-col h-full"
           style={{ maxHeight: "calc(100vh - 8rem)" }}
         >
           {selectedConfigChange?.config_id && (
@@ -69,6 +75,31 @@ function ConfigChangesDetails({ configID }: Props) {
             />
           )}
         </div>
+        <div className="flex items-center justify-end py-4 px-5 rounded-lg bg-gray-100">
+          <button
+            type="button"
+            onClick={() => {
+              setAttachEvidence(true);
+            }}
+            className="btn-primary"
+          >
+            Attach as Evidence
+          </button>
+        </div>
+        <AttachEvidenceDialog
+          key={`attach-evidence-dialog`}
+          isOpen={attachEvidence}
+          onClose={() => setAttachEvidence(false)}
+          config_change_id={selectedConfigChange?.id}
+          config_id={selectedConfigChange?.config_id}
+          evidence={{}}
+          type={EvidenceType.ConfigChange}
+          callback={(success: boolean) => {
+            if (success) {
+              setAttachEvidence(false);
+            }
+          }}
+        />
       </Modal>
       {isLoading ? (
         <Loading />

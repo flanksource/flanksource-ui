@@ -4,7 +4,7 @@ import { resolve } from "../resolve";
 import { Hypothesis } from "./hypothesis";
 import { User } from "./users";
 
-const AVATAR_INFO = `id,name,avatar`;
+export const AVATAR_INFO = `id,name,avatar`;
 
 export enum IncidentSeverity {
   Low = "Low",

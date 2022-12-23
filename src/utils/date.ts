@@ -106,7 +106,7 @@ const formatDate = (
 export const formatLongDate = (date: string | Date) => {
   return formatDate(date, {
     stringFormat: DATE_FORMATS.LONG
-  });
+  }).toString();
 };
 
 export const formatTimeRange = (date: string | Date) => {

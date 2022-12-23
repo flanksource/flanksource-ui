@@ -10,6 +10,7 @@ import { Evidence, EvidenceType } from "../../../../api/services/evidence";
 import { getCanaries } from "../../../../api/services/topology";
 import { Size } from "../../../../types";
 import { Badge } from "../../../Badge";
+import { ConfigChangeEvidence } from "../../../Hypothesis/EvidenceSection";
 import { Icon } from "../../../Icon";
 import { Loading } from "../../../Loading";
 import { StatusStyles } from "../../../TopologyCard";
@@ -243,6 +244,15 @@ export function EvidenceView({
     case EvidenceType.Check:
       return (
         <HealthEvidence className={className} evidence={evidence} {...rest} />
+      );
+    case EvidenceType.ConfigChange:
+      return (
+        <ConfigChangeEvidence
+          className="w-full bg-white rounded"
+          evidence={evidence}
+          viewType={size === Size.small ? "summary" : "detailed"}
+          {...rest}
+        />
       );
     default:
       return null;

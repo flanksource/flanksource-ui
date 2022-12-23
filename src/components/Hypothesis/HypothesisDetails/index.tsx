@@ -42,15 +42,22 @@ export function HypothesisDetails({ node, api, ...rest }: IProps) {
     arrangeData(hypothesis.data);
   }, [hypothesis]);
 
+  useEffect(() => {
+    if (!node) {
+      return;
+    }
+    refetchHypothesis();
+  }, [node, refetchHypothesis]);
+
   const arrangeData = (data: any) => {
-    const responses = (data?.comments || [])
+    let responses = (data?.comments || [])
       .concat(data?.evidences || [])
       .sort((a: Response, b: Response) => {
         if (a.created_at > b.created_at) return 1;
         return -1;
       });
 
-    responses.forEach((response: any) => {
+    responses = responses.map((response: any) => {
       response.created_by = response.external_created_by
         ? {
             name: response.external_created_by,
@@ -61,6 +68,7 @@ export function HypothesisDetails({ node, api, ...rest }: IProps) {
             }
           }
         : response.created_by;
+      return response;
     });
     setResponses(responses);
   };

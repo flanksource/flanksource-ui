@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { AiFillCheckCircle } from "react-icons/ai";
 import { BsHourglassSplit, BsTrash } from "react-icons/bs";
 import { MdRefresh } from "react-icons/md";
@@ -210,6 +210,7 @@ export function DefinitionOfDone({ incidentId }: DefinitionOfDoneProps) {
         open={dodModalOpen}
         viewOnly
         enableButtons={{}}
+        className="overflow-y-auto overflow-x-hidden"
         actionHandler={(actionType, data) => {
           if (actionType === "close") {
             setDODModalOpen(false);

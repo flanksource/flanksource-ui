@@ -10,6 +10,7 @@ type EvidenceSelectionModalProps = {
   title: string;
   open: boolean;
   evidences: Evidence[];
+  className?: string;
   enableButtons: {
     cancel?: boolean;
     skip?: boolean;
@@ -27,6 +28,7 @@ export default function EvidenceSelectionModal({
   title = "Add contributing factors to definition of done",
   open,
   evidences,
+  className = "overflow-y-auto overflow-x-hidden mb-20",
   enableButtons = {
     cancel: true,
     submit: true
@@ -47,10 +49,7 @@ export default function EvidenceSelectionModal({
       open={open}
       bodyClass=""
     >
-      <div
-        style={{ maxHeight: "calc(100vh - 6rem)" }}
-        className="overflow-y-auto overflow-x-hidden mb-20"
-      >
+      <div style={{ maxHeight: "calc(100vh - 6rem)" }} className={className}>
         <div className="p-4">
           <MultiSelectList
             viewOnly={viewOnly}
