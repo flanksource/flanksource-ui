@@ -1,7 +1,7 @@
-import { isBooleanValue } from "../isBooleanValue";
+import { isBooleanValue } from "../../lib/isBooleanValue";
 
 describe("isBooleanValue", () => {
-  test("isBooleanValue(val) => true || isBooleanValue(!val) => false", () => {
+  it("isBooleanValue(val) => true || isBooleanValue(!val) => false", () => {
     [
       null,
       undefined,

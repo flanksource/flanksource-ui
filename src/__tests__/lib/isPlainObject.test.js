@@ -1,7 +1,7 @@
-import { isPlainObject } from "../isPlainObject";
+import { isPlainObject } from "../../lib/isPlainObject";
 
 describe("isPlainObject", () => {
-  test("isPlainObject(plainObj) => true || isPlainObject(!plainObj) => false", () => {
+  it("isPlainObject(plainObj) => true || isPlainObject(!plainObj) => false", () => {
     [
       null,
       undefined,

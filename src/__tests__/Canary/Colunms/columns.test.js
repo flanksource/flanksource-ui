@@ -1,7 +1,7 @@
-import { getColumns } from "..";
+import { getColumns } from "../../../components/Canary/Columns/index";
 
 describe("getColumns", () => {
-  test("getColumns({ standardColumnsObject }) => output", () => {
+  it("getColumns({ standardColumnsObject }) => output", () => {
     const columnObject = {
       expander: {
         id: "expander",
@@ -42,7 +42,8 @@ describe("getColumns", () => {
     ];
     expect(getColumns({ columnObject })).toStrictEqual(expectedOutput);
   });
-  test("getColumns({ columnsObjectWithOverridesAndMissingValues }) => output", () => {
+
+  it("getColumns({ columnsObjectWithOverridesAndMissingValues }) => output", () => {
     const columnObject = {
       health: {
         Cell: "foo",
