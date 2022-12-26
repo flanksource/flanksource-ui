@@ -7,7 +7,7 @@ import { getCanaries } from "../../../api/services/topology";
 import mixins from "../../../utils/mixins.module.css";
 import { CheckDetails } from "../../Canary/CanaryPopup/CheckDetails";
 import { CheckTitle } from "../../Canary/CanaryPopup/CheckTitle";
-import { toFixedIfNecessary } from "../../../utils/common";
+import { sanitizeHTMLContent, toFixedIfNecessary } from "../../../utils/common";
 import { getUptimePercentage } from "../../Canary/CanaryPopup/utils";
 import { Duration, StatusList } from "../../Canary/renderers";
 import { Modal } from "../../Modal";
@@ -18,6 +18,9 @@ import { LogsTable } from "../../Logs/Table/LogsTable";
 import { Icon } from "../../Icon";
 import { Button } from "../../Button";
 import { ConfigDetailsChanges } from "../../ConfigDetailsChanges/ConfigDetailsChanges";
+import ConfigInsightsIcon from "../../ConfigInsightsIcon";
+import { useGetConfigInsight } from "../../../api/query-hooks";
+import { ConfigTypeInsights } from "../../ConfigInsights";
 
 const ColumnSizes = {
   Time: {
@@ -67,6 +70,15 @@ export function EvidenceItem({ evidence }: { evidence: Evidence }) {
       return (
         <div className="pt-2">
           <ConfigChangeEvidence evidence={evidence} viewType="detailed" />
+        </div>
+      );
+    case EvidenceType.ConfigAnalysis:
+      return (
+        <div className="pt-2">
+          <ConfigAnalysisEvidence
+            className="flex flex-col text-gray-500 w-full bg-white p-3 shadow-card shadow rounded"
+            evidence={evidence}
+          />
         </div>
       );
     default:
@@ -425,6 +437,50 @@ export function ConfigChangeEvidence({
         id={evidence.config_change_id!}
         viewType={viewType}
       />
+    </div>
+  );
+}
+
+export function ConfigAnalysisEvidence({
+  evidence,
+  className = "flex flex-col text-gray-500 w-full bg-white p-2"
+}: {
+  evidence: Evidence;
+  className?: string;
+}) {
+  const { data: response } = useGetConfigInsight<ConfigTypeInsights[]>(
+    evidence.config_id,
+    evidence.config_analysis_id
+  );
+  const [configAnalysis, setConfigAnalysis] = useState<ConfigTypeInsights>();
+
+  useEffect(() => {
+    const analysis = response?.[0];
+    if (!analysis) {
+      return;
+    }
+    analysis.sanitizedMessageHTML = sanitizeHTMLContent(analysis.message);
+    setConfigAnalysis(analysis);
+  }, [response]);
+
+  if (!configAnalysis) {
+    return null;
+  }
+
+  return (
+    <div className={className}>
+      <div className="flex flex-col">
+        <div className="text-base">
+          <ConfigInsightsIcon analysis={configAnalysis!} />
+          {configAnalysis?.analyzer}
+        </div>
+        <div
+          className="text-sm pl-2"
+          dangerouslySetInnerHTML={{
+            __html: configAnalysis?.sanitizedMessageHTML!
+          }}
+        ></div>
+      </div>
     </div>
   );
 }

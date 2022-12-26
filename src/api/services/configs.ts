@@ -203,3 +203,20 @@ export const getConfigsChangesTypesFilter = async () => {
   );
   return res.data;
 };
+
+export const getConfigInsights = async <T>(configId: string) => {
+  const res = await ConfigDB.get<T>(
+    `/config_analysis?config_id=eq.${configId}`
+  );
+  return res.data;
+};
+
+export const getConfigInsight = async <T>(
+  configId: string,
+  configInsightId: string
+) => {
+  const res = await ConfigDB.get<T>(
+    `/config_analysis?config_id=eq.${configId}&id=eq.${configInsightId}`
+  );
+  return res.data;
+};

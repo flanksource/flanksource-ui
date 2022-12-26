@@ -13,6 +13,9 @@ import {
   sanitizeHTMLContentToText,
   truncateText
 } from "../../utils/common";
+import { AttachEvidenceDialog } from "../AttachEvidenceDialog";
+import { EvidenceType } from "../../api/services/evidence";
+import { useGetConfigInsights } from "../../api/query-hooks";
 
 export type ConfigTypeInsights = {
   id: string;
@@ -38,31 +41,25 @@ function ConfigInsightsDetails({ configID }: Props) {
   const [configInsights, setConfigInsights] = useState<ConfigTypeInsights[]>(
     []
   );
-  const [isLoading, setIsLoading] = useState(true);
+  const [attachEvidence, setAttachEvidence] = useState(false);
   const [open, setOpen] = useState(false);
   const [configAnalysis, setConfigAnalysis] = useState<ConfigTypeInsights>();
+  const { data: response = [], isLoading } =
+    useGetConfigInsights<ConfigTypeInsights[]>(configID);
 
   useEffect(() => {
-    async function fetchConfigAnalysis(configID: string) {
-      setIsLoading(true);
-      const res = await fetch(
-        `/api/db/config_analysis?config_id=eq.${configID}`
-      );
-      let data = (await res.json()) as ConfigTypeInsights[];
-      data = data.map((item) => {
-        item.sanitizedMessageHTML = sanitizeHTMLContent(item.message);
-        item.sanitizedMessageTxt = truncateText(
+    const data = response?.map((item) => {
+      return {
+        ...item,
+        sanitizedMessageHTML: sanitizeHTMLContent(item.message),
+        sanitizedMessageTxt: truncateText(
           sanitizeHTMLContentToText(item.message)!,
           500
-        );
-        return item;
-      });
-      setConfigInsights(data);
-      setIsLoading(false);
-    }
-
-    fetchConfigAnalysis(configID);
-  }, [configID]);
+        )
+      };
+    });
+    setConfigInsights(data);
+  }, [response]);
 
   useEffect(() => {
     ReactTooltip.rebuild();
@@ -73,16 +70,56 @@ function ConfigInsightsDetails({ configID }: Props) {
       <Modal
         title={"Config Analysis description"}
         open={open}
-        onClose={() => setOpen(false)}
+        onClose={() => {
+          setOpen(false);
+          setConfigAnalysis(undefined);
+        }}
         size="slightly-small"
         bodyClass=""
       >
-        <div
-          className="p-8 text-sm text-gray-500"
-          dangerouslySetInnerHTML={{
-            __html: configAnalysis?.sanitizedMessageHTML!
-          }}
-        ></div>
+        {configAnalysis?.id && (
+          <>
+            <div className="flex flex-col px-8 py-6 text-gray-500 space-y-2">
+              <div className="flex flex-col">
+                <div className="text-base">
+                  <ConfigInsightsIcon analysis={configAnalysis} />
+                  {configAnalysis.analyzer}
+                </div>
+                <div
+                  className="text-sm pl-2"
+                  dangerouslySetInnerHTML={{
+                    __html: configAnalysis?.sanitizedMessageHTML!
+                  }}
+                ></div>
+              </div>
+              <div className="flex justify-end flex-wrap">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAttachEvidence(true);
+                  }}
+                  className="btn-primary"
+                >
+                  Attach as Evidence
+                </button>
+              </div>
+            </div>
+            <AttachEvidenceDialog
+              key={`attach-evidence-dialog`}
+              isOpen={attachEvidence}
+              onClose={() => setAttachEvidence(false)}
+              config_analysis_id={configAnalysis.id}
+              config_id={configAnalysis.config_id}
+              evidence={{}}
+              type={EvidenceType.ConfigAnalysis}
+              callback={(success: boolean) => {
+                if (success) {
+                  setAttachEvidence(false);
+                }
+              }}
+            />
+          </>
+        )}
       </Modal>
       {isLoading ? (
         <Loading />
