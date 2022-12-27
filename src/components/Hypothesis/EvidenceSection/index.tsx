@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { ChevronRightIcon, DotsVerticalIcon } from "@heroicons/react/outline";
 import { TopologyCard } from "../../TopologyCard";
 import { BsTrash } from "react-icons/bs";
-import { Link } from "react-router-dom";
 import { Evidence, EvidenceType } from "../../../api/services/evidence";
 import { getCanaries } from "../../../api/services/topology";
 import mixins from "../../../utils/mixins.module.css";
@@ -18,6 +17,7 @@ import ConfigLink from "../../ConfigLink/ConfigLink";
 import { LogsTable } from "../../Logs/Table/LogsTable";
 import { Icon } from "../../Icon";
 import { Button } from "../../Button";
+import { ConfigDetailsChanges } from "../../ConfigDetailsChanges/ConfigDetailsChanges";
 
 const ColumnSizes = {
   Time: {
@@ -61,6 +61,12 @@ export function EvidenceItem({ evidence }: { evidence: Evidence }) {
       return (
         <div className="pt-2">
           <HealthEvidenceViewer evidence={evidence} />
+        </div>
+      );
+    case EvidenceType.ConfigChange:
+      return (
+        <div className="pt-2">
+          <ConfigChangeEvidence evidence={evidence} viewType="detailed" />
         </div>
       );
     default:
@@ -399,6 +405,26 @@ export function HealthEvidenceViewer({
           />
         </div>
       </Modal>
+    </div>
+  );
+}
+
+export function ConfigChangeEvidence({
+  evidence,
+  className = "w-full bg-white rounded shadow-card card p-1",
+  viewType
+}: {
+  evidence: Evidence;
+  className?: string;
+  viewType?: "summary" | "detailed";
+}) {
+  return (
+    <div className={className}>
+      <ConfigDetailsChanges
+        configId={evidence.config_id!}
+        id={evidence.config_change_id!}
+        viewType={viewType}
+      />
     </div>
   );
 }
