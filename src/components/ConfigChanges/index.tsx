@@ -39,7 +39,7 @@ function ConfigChangesDetails({ configID }: Props) {
     async function fetchConfigAnalysis(configID: string) {
       setIsLoading(true);
       const res = await fetch(
-        `/api/db/config_changes?config_id=eq.${configID}`
+        `/api/db/config_changes?order=created_at.desc&config_id=eq.${configID}`
       );
       const data = (await res.json()) as ConfigTypeChanges[];
       setConfigChanges(data);
