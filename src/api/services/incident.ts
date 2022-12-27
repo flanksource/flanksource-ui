@@ -64,7 +64,7 @@ export const getAllIncident = ({ limit = 10 }) => {
 };
 
 export const getIncident = async (id: string) => {
-  const hypotheses = `hypotheses!hypotheses_incident_id_fkey(*,created_by(${AVATAR_INFO}),evidences(*),comments(comment,external_created_by,responder_id(team_id(*)),created_by(id,${AVATAR_INFO}),id))`;
+  const hypotheses = `hypotheses!hypotheses_incident_id_fkey(*,created_by(${AVATAR_INFO}),evidences(*,created_by(${AVATAR_INFO})),comments(comment,external_created_by,responder_id(team_id(*)),created_by(id,${AVATAR_INFO}),id))`;
 
   const res = await resolve<Incident[] | null>(
     IncidentCommander.get(
