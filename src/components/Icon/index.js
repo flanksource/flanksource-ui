@@ -1,6 +1,7 @@
 import { isEmpty } from "lodash";
 import { GoDiff } from "react-icons/go";
 import { Icons } from "../../icons";
+import { memo } from "react";
 
 const aliases = {
   "AWS::EC2::Subnet": "network",
@@ -14,15 +15,42 @@ const aliases = {
   "AWS::Region": "aws",
   "AWS::EC2::SecurityGroup": "firewall",
   "AzureDevops::PipelineRun": "Azure::DevOps::Pipeline",
+  "MSSQL::Database": "mssql",
   oipa: "oracle_icon",
   cost: "dollar",
   File: "cfg",
   memory: "mem",
-  MSPlanner: "msplanner"
+  MSPlanner: "msplanner",
+  deployment: "rocket",
+  mutatingwebhookconfiguration: "webhook",
+  validatingwebhookconfiguration: "webhook",
+  installplan: "helm",
+  csinode: "csi",
+  csidriver: "csi",
+  endpoints: "endpoint",
+  alertmanager: "prometheus",
+  servicemonitor: "prometheus",
+  podmonitor: "prometheus",
+  kibana: "elasticsearch",
+  kustomization: "kustomize",
+  catalogsource: "operatorframework",
+  certificate: "cert-manager",
+  clusterissuer: "cert-manager",
+  issuer: "cert-manager",
+  controllerrevision: "kubernetes",
+  clusterservicerevision: "kubernetes"
 };
 
 const reactIcons = {
   diff: GoDiff
+};
+
+const prefixes = {
+  helm: "helm",
+  git: "git",
+  grafana: "grafana",
+  prometheus: "prometheus",
+  operator: "operatorframework"
 };
 
 function findByName(name) {
@@ -46,13 +74,19 @@ function findByName(name) {
   if (icon == null) {
     icon = Icons["k8s-" + name];
   }
+
+  for (let prefix in prefixes) {
+    if (name.toLowerCase().startsWith(prefix)) {
+      icon = Icons[prefixes[prefix]];
+    }
+  }
   if (icon == null) {
     console.warn("Icon not found: " + name);
   }
   return icon;
 }
 
-export function Icon({
+function icon({
   name,
   secondary = "", // If icon by name is not found, try the secondary (fallthrough) name
   className = "",
@@ -70,10 +104,7 @@ export function Icon({
     let Icon = reactIcons[name];
     return <Icon className={`inline-block object-center ${className}`} />;
   }
-  if (reactIcons[secondary]) {
-    let Icon = reactIcons[secondary];
-    return <Icon className={`inline-block object-center ${className}`} />;
-  }
+
   if (
     name != null &&
     (name.startsWith("http:") || name.startsWith("https://"))
@@ -83,6 +114,10 @@ export function Icon({
     icon = findByName(name);
     if (icon == null) {
       icon = findByName(secondary);
+    }
+    if (icon == null && reactIcons[secondary]) {
+      let Icon = reactIcons[secondary];
+      return <Icon className={`inline-block object-center ${className}`} />;
     }
   }
 
@@ -101,6 +136,9 @@ export function Icon({
 
   return icon ? <icon className={className} {...props} /> : null;
 }
+
+export const Icon = memo(icon);
+
 export function Avatar({ url, alt = "" }) {
   return (
     <img
