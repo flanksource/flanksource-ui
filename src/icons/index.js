@@ -7,6 +7,7 @@ import aks from "./aks.svg";
 import alert from "./alert.svg";
 import ansible from "./ansible.svg";
 import apiconnect from "./apiconnect.svg";
+import argo from "./argo.svg";
 import artifact_registry from "./artifact-registry.svg";
 import aws_acm from "./aws-acm.svg";
 import aws_alb from "./aws-alb.svg";
@@ -75,6 +76,7 @@ import ca from "./ca.svg";
 import cal from "./cal.svg";
 import canary_checker from "./canary-checker.svg";
 import cassandra from "./cassandra.svg";
+import cert_manager from "./cert-manager.svg";
 import cfg from "./cfg.svg";
 import changes from "./changes.svg";
 import check from "./check.svg";
@@ -91,14 +93,17 @@ import cloudwatch_config from "./cloudwatch-config.svg";
 import cloudwatch from "./cloudwatch.svg";
 import cluster from "./cluster.svg";
 import cmd from "./cmd.svg";
+import cni from "./cni.svg";
 import compute_engine from "./compute-engine.svg";
 import config from "./config.svg";
 import connected from "./connected.svg";
 import console from "./console.svg";
 import consul from "./consul.svg";
+import containerd from "./containerd.svg";
 import containerdPull from "./containerdPull.svg";
 import containerdPush from "./containerdPush.svg";
 import cpu from "./cpu.svg";
+import csi from "./csi.svg";
 import csv from "./csv.svg";
 import database_plus from "./database-plus.svg";
 import database2 from "./database2.svg";
@@ -134,6 +139,7 @@ import etcd from "./etcd.svg";
 import fire from "./fire.svg";
 import flanksource_icon from "./flanksource-icon.svg";
 import flanksource from "./flanksource.svg";
+import fluentbit from "./fluentbit.svg";
 import fluentd from "./fluentd.svg";
 import flux from "./flux.svg";
 import folder_git from "./folder-git.svg";
@@ -172,6 +178,7 @@ import ini from "./ini.svg";
 import ip from "./ip.svg";
 import istio from "./istio.svg";
 import jaegar from "./jaegar.svg";
+import jaeger from "./jaeger.svg";
 import java from "./java.svg";
 import jira_color from "./jira-color.svg";
 import jira_logo from "./jira-logo.svg";
@@ -196,8 +203,9 @@ import k8s_job from "./k8s-job.svg";
 import k8s_limits from "./k8s-limits.svg";
 import k8s_namespace from "./k8s-namespace.svg";
 import k8s_networkpolicy from "./k8s-networkpolicy.svg";
+import k8s_node from "./k8s-node.svg";
 import k8s_persistentvolume from "./k8s-persistentvolume.svg";
-import k8s_persistentvolumelaim from "./k8s-persistentvolumelaim.svg";
+import k8s_persistentvolumeclaim from "./k8s-persistentvolumeclaim.svg";
 import k8s_pod from "./k8s-pod.svg";
 import k8s_podsecuritypolicy from "./k8s-podsecuritypolicy.svg";
 import k8s_quota from "./k8s-quota.svg";
@@ -213,6 +221,8 @@ import k8s_user from "./k8s-user.svg";
 import k8s_vol from "./k8s-vol.svg";
 import k8s from "./k8s.svg";
 import kubernetes from "./kubernetes.svg";
+import kubescape from "./kubescape.svg";
+import kustomize from "./kustomize.svg";
 import ldap from "./ldap.svg";
 import letsencrypt from "./letsencrypt.svg";
 import lifebuoy from "./lifebuoy.svg";
@@ -245,6 +255,8 @@ import o365 from "./o365.svg";
 import opa from "./opa.svg";
 import openid from "./openid.svg";
 import openshift from "./openshift.svg";
+import opentelemetry from "./opentelemetry.svg";
+import operatorframework from "./operatorframework.svg";
 import oracle from "./oracle.svg";
 import oracle_icon from "./oracle_icon.svg";
 import package_install from "./package-install.svg";
@@ -315,6 +327,7 @@ import ubuntu from "./ubuntu.svg";
 import user from "./user.svg";
 import vault from "./vault.svg";
 import vsphere from "./vsphere.svg";
+import webhook from "./webhook.svg";
 import world from "./world.svg";
 import www from "./www.svg";
 import xml from "./xml.svg";
@@ -328,6 +341,7 @@ export const Icons = {
   alert: alert,
   ansible: ansible,
   apiconnect: apiconnect,
+  argo: argo,
   "artifact-registry": artifact_registry,
   "aws-acm": aws_acm,
   "aws-alb": aws_alb,
@@ -396,6 +410,7 @@ export const Icons = {
   cal: cal,
   "canary-checker": canary_checker,
   cassandra: cassandra,
+  "cert-manager": cert_manager,
   cfg: cfg,
   changes: changes,
   check: check,
@@ -412,14 +427,17 @@ export const Icons = {
   cloudwatch: cloudwatch,
   cluster: cluster,
   cmd: cmd,
+  cni: cni,
   "compute-engine": compute_engine,
   config: config,
   connected: connected,
   console: console,
   consul: consul,
+  containerd: containerd,
   containerdPull: containerdPull,
   containerdPush: containerdPush,
   cpu: cpu,
+  csi: csi,
   csv: csv,
   "database-plus": database_plus,
   database2: database2,
@@ -455,6 +473,7 @@ export const Icons = {
   fire: fire,
   "flanksource-icon": flanksource_icon,
   flanksource: flanksource,
+  fluentbit: fluentbit,
   fluentd: fluentd,
   flux: flux,
   "folder-git": folder_git,
@@ -493,6 +512,7 @@ export const Icons = {
   ip: ip,
   istio: istio,
   jaegar: jaegar,
+  jaeger: jaeger,
   java: java,
   "jira-color": jira_color,
   "jira-logo": jira_logo,
@@ -517,8 +537,9 @@ export const Icons = {
   "k8s-limits": k8s_limits,
   "k8s-namespace": k8s_namespace,
   "k8s-networkpolicy": k8s_networkpolicy,
+  "k8s-node": k8s_node,
   "k8s-persistentvolume": k8s_persistentvolume,
-  "k8s-persistentvolumelaim": k8s_persistentvolumelaim,
+  "k8s-persistentvolumeclaim": k8s_persistentvolumeclaim,
   "k8s-pod": k8s_pod,
   "k8s-podsecuritypolicy": k8s_podsecuritypolicy,
   "k8s-quota": k8s_quota,
@@ -534,6 +555,8 @@ export const Icons = {
   "k8s-vol": k8s_vol,
   k8s: k8s,
   kubernetes: kubernetes,
+  kubescape: kubescape,
+  kustomize: kustomize,
   ldap: ldap,
   letsencrypt: letsencrypt,
   lifebuoy: lifebuoy,
@@ -566,6 +589,8 @@ export const Icons = {
   opa: opa,
   openid: openid,
   openshift: openshift,
+  opentelemetry: opentelemetry,
+  operatorframework: operatorframework,
   oracle: oracle,
   oracle_icon: oracle_icon,
   "package-install": package_install,
@@ -636,6 +661,7 @@ export const Icons = {
   user: user,
   vault: vault,
   vsphere: vsphere,
+  webhook: webhook,
   world: world,
   www: www,
   xml: xml,
