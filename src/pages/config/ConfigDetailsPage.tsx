@@ -89,34 +89,12 @@ export function ConfigDetailsPage() {
         />
       }
     >
-      <div className="flex flex-row items-start space-x-2 bg-white">
+      <div className="flex flex-row items-start bg-white">
         <div className="flex flex-col w-full max-w-full">
           {!isLoading ? (
-            <div className="flex flex-row space-x-2 p-2">
+            <div className="flex flex-row space-x-2">
               <div className="flex flex-col w-full object-contain">
-                {configDetails && (
-                  <div className="flex flex-col p-2">
-                    <div className="block py-6 px-4 border-gray-300 bg-white rounded shadow">
-                      <div className="block text-lg tracking-wide">
-                        <span className="font-semibold">Name:</span>{" "}
-                        {configDetails.name}
-                      </div>
-                      {configDetails.tags &&
-                        Object.entries(configDetails.tags)
-                          .filter(([key]) => key !== "Name")
-                          .map(([key, value]) => (
-                            <div
-                              key={key}
-                              className="block text-lg tracking-wide"
-                            >
-                              <span className="font-semibold">{key}:</span>
-                              {value}
-                            </div>
-                          ))}
-                    </div>
-                  </div>
-                )}
-                <div className="flex flex-col p-2 mb-6 w-full">
+                <div className="flex flex-col mb-6 w-full">
                   <div className="flex relative py-6 px-4 border-gray-300 bg-white rounded shadow-md flex-1 overflow-x-auto">
                     <JSONViewer
                       code={code}

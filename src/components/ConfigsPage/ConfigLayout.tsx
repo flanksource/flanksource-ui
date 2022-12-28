@@ -3,7 +3,6 @@ import { useMatch } from "react-router-dom";
 import ConfigSidebar from "../ConfigSidebar";
 import ConfigsListFilterControls from "../ConfigsListFilters";
 import { SearchLayout } from "../Layout/search";
-import { RefreshButton } from "../RefreshButton";
 import { ConfigsPageTabs } from "./ConfigsPageTabs";
 
 type Props = {

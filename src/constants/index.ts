@@ -10,4 +10,4 @@ export const NodePodPropToLabelMap = {
   kernel: "Kernel",
   kubeProxy: "Kubernetes proxy",
   kubelet: "Kubelet "
-};
+} as const;
