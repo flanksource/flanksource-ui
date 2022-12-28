@@ -3,6 +3,7 @@ import {
   SchemaBackends
 } from "../components/SchemaResourcePage/resourceTypes";
 import { CanaryCheckerDB, ConfigDB, IncidentCommander } from "./axios";
+import { AVATAR_INFO } from "../constants";
 
 export interface SchemaResourceI {
   id: string;
@@ -42,7 +43,7 @@ export const getAll = ({ table, api }: SchemaApi) => {
   const endpoint = getBackend(api);
   if (endpoint) {
     return endpoint.get<SchemaResourceI[]>(
-      `/${table}?order=created_at.desc&select=*&limit=100`
+      `/${table}?order=created_at.desc&select=*,created_by(${AVATAR_INFO})&limit=100`
     );
   }
 

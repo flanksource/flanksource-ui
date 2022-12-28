@@ -3,8 +3,7 @@ import { IncidentCommander } from "../axios";
 import { resolve } from "../resolve";
 import { Hypothesis } from "./hypothesis";
 import { User } from "./users";
-
-export const AVATAR_INFO = `id,name,avatar`;
+import { AVATAR_INFO } from "../../constants";
 
 export enum IncidentSeverity {
   Low = "Low",
@@ -64,7 +63,7 @@ export const getAllIncident = ({ limit = 10 }) => {
 };
 
 export const getIncident = async (id: string) => {
-  const hypotheses = `hypotheses!hypotheses_incident_id_fkey(*,created_by(${AVATAR_INFO}),evidences(*),comments(comment,external_created_by,responder_id(team_id(*)),created_by(id,${AVATAR_INFO}),id))`;
+  const hypotheses = `hypotheses!hypotheses_incident_id_fkey(*,created_by(${AVATAR_INFO}),evidences(*,created_by(${AVATAR_INFO})),comments(comment,external_created_by,responder_id(team_id(*)),created_by(id,${AVATAR_INFO}),id))`;
 
   const res = await resolve<Incident[] | null>(
     IncidentCommander.get(
