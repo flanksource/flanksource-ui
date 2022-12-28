@@ -21,6 +21,7 @@ import { ConfigDetailsChanges } from "../../ConfigDetailsChanges/ConfigDetailsCh
 import ConfigInsightsIcon from "../../ConfigInsightsIcon";
 import { useGetConfigInsight } from "../../../api/query-hooks";
 import { ConfigTypeInsights } from "../../ConfigInsights";
+import { ConfigAnalysisLink } from "../../ConfigAnalysisLink/ConfigAnalysisLink";
 
 const ColumnSizes = {
   Time: {
@@ -443,10 +444,12 @@ export function ConfigChangeEvidence({
 
 export function ConfigAnalysisEvidence({
   evidence,
+  viewType,
   className = "flex flex-col text-gray-500 w-full bg-white p-2"
 }: {
   evidence: Evidence;
   className?: string;
+  viewType?: "detailed" | "summary";
 }) {
   const { data: response } = useGetConfigInsight<ConfigTypeInsights[]>(
     evidence.config_id,
@@ -469,18 +472,7 @@ export function ConfigAnalysisEvidence({
 
   return (
     <div className={className}>
-      <div className="flex flex-col">
-        <div className="text-base">
-          <ConfigInsightsIcon analysis={configAnalysis!} />
-          {configAnalysis?.analyzer}
-        </div>
-        <div
-          className="text-sm pl-2"
-          dangerouslySetInnerHTML={{
-            __html: configAnalysis?.sanitizedMessageHTML!
-          }}
-        ></div>
-      </div>
+      <ConfigAnalysisLink configAnalysis={configAnalysis} viewType={viewType} />
     </div>
   );
 }

@@ -21,7 +21,7 @@ interface IModalProps {
   footerClassName: string;
   actions?: React.ReactNode[];
   open: boolean;
-  onClose: () => void;
+  onClose: (e?: MouseEvent) => void;
   allowBackgroundClose: boolean;
   hideCloseButton: boolean;
   size: ModalSize;
@@ -84,7 +84,7 @@ export function Modal({
                 modalClassMap[size]
               )}
             >
-              <div className="py-4 px-8 flex item-center rounded-t-lg justify-between bg-gray-100">
+              <div className="py-4 px-4 flex item-center rounded-t-lg justify-between bg-gray-100">
                 <h1 className={clsx("font-semibold text-lg", titleClass)}>
                   {title}
                 </h1>
