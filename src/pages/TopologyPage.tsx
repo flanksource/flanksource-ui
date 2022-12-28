@@ -16,7 +16,7 @@ import {
   getSortedTopology,
   getSortLabels
 } from "../components/TopologyPopover/topologySort";
-import TopologySidebar from "../components/TopologySidebar";
+import TopologySidebar from "../components/TopologySidebar/TopologySidebar";
 
 import { getAll } from "../api/schemaResources";
 import { ComponentLabelsDropdown } from "../components/Dropdown/ComponentLabelsDropdown";

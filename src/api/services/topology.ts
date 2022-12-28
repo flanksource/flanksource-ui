@@ -2,6 +2,8 @@ import { stringify } from "qs";
 import { CanaryChecker, IncidentCommander } from "../axios";
 import { TopologyComponentItem } from "../../components/FilterIncidents/FilterIncidentsByComponents";
 import { HealthCheck } from "../../types/healthChecks";
+import { AVATAR_INFO } from "../../constants";
+import { User } from "./users";
 
 interface IParam {
   id?: string;
@@ -108,4 +110,28 @@ export const getHealthCheckItem = async (id: string) => {
     `/canaries?id=eq.${id}`
   );
   return res.data?.[0];
+};
+
+export type ComponentTeamItem = {
+  component_id: string;
+  team_id: string;
+  role: string;
+  selector_id: string;
+  team: {
+    id: string;
+    name: string;
+    icon: string;
+    spec: any;
+    source: string;
+    created_by: Pick<User, "avatar" | "id" | "name">;
+    created_at: string;
+    updated_at: string;
+  };
+};
+
+export const getComponentTeams = async (id: string) => {
+  const res = await IncidentCommander.get<ComponentTeamItem[] | null>(
+    `/team_components?component_id=eq.${id}&select=*,team:teams(*, created_by(${AVATAR_INFO}))`
+  );
+  return res.data || [];
 };
