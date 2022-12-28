@@ -3,8 +3,7 @@ import { IncidentCommander } from "../axios";
 import { resolve } from "../resolve";
 import { Hypothesis } from "./hypothesis";
 import { User } from "./users";
-
-export const AVATAR_INFO = `id,name,avatar`;
+import { AVATAR_INFO } from "../../constants";
 
 export enum IncidentSeverity {
   Low = "Low",

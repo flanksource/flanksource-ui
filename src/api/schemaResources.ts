@@ -3,7 +3,7 @@ import {
   SchemaBackends
 } from "../components/SchemaResourcePage/resourceTypes";
 import { CanaryCheckerDB, ConfigDB, IncidentCommander } from "./axios";
-import { AVATAR_INFO } from "./services/incident";
+import { AVATAR_INFO } from "../constants";
 
 export interface SchemaResourceI {
   id: string;

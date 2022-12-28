@@ -11,3 +11,5 @@ export const NodePodPropToLabelMap = {
   kubeProxy: "Kubernetes proxy",
   kubelet: "Kubelet "
 } as const;
+
+export const AVATAR_INFO = `id,name,avatar`;
