@@ -21,7 +21,7 @@ export function formatBytes(bytes: number, decimals = 2) {
   return `${parseFloat((bytes / k ** i).toFixed(dm))} ${sizes[i]}`;
 }
 
-export function searchParamsToObj(searchParams: Record<string, string>) {
+export function searchParamsToObj(searchParams: URLSearchParams) {
   return parse(searchParams.toString());
 }
 

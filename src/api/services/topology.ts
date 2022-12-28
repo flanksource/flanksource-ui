@@ -4,8 +4,8 @@ import { TopologyComponentItem } from "../../components/FilterIncidents/FilterIn
 import { HealthCheck } from "../../types/healthChecks";
 
 interface IParam {
-  id: string;
-  [key: string]: string;
+  id?: string;
+  [key: string]: string | boolean | number | undefined;
 }
 
 const arrangeTopologyParams = (params: IParam) => {
