@@ -145,8 +145,8 @@ export const ReactSelectDropdown = ({
           )}
           <div
             className={clsx(
-              `relative cursor-pointer h-full pl-3 rounded-md shadow-sm pr-8 py-2 text-left border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm
-                ${SelectedOption?.id === "_empty" && "text-gray-400"}
+              `relative cursor-pointer h-full pl-3 rounded-md shadow-sm pr-8 py-2 text-left border border-gray-300 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm
+                ${SelectedOption?.id === "_empty" ? "text-gray-400" : ""}
               `,
               className
             )}
