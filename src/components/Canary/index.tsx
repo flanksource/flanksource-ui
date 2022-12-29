@@ -76,16 +76,9 @@ export function Canary({
   triggerRefresh,
   onLoading = (_loading) => {}
 }: CanaryProps) {
-  const updateParams = useUpdateParams();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const timeRange = searchParams.get("timeRange");
   const refreshInterval = useRefreshRateFromLocalStorage();
-
-  // force-set layout to table
-  useEffect(() => {
-    updateParams({ layout: "table" });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -197,7 +190,8 @@ export function Canary({
   }, []);
 
   const handleSearch = debounce((value) => {
-    updateParams({ query: value });
+    searchParams.set("query", value);
+    setSearchParams(searchParams);
   }, 400);
 
   if (isLoading && !checks?.length) {
@@ -260,11 +254,19 @@ export function Canary({
         </div>
         <SectionTitle className="mb-4">Filter by Time Range</SectionTitle>
         <div className="mb-4 mr-2 w-full">
-          <DropdownStandaloneWrapper
-            dropdownElem={<TimeRange name="time-range" />}
-            defaultValue={searchParams.get("timeRange") ?? timeRanges[0].value}
-            paramKey="timeRange"
-            className="w-full mr-2"
+          <TimeRange
+            name="time-range"
+            value={timeRange ?? timeRanges[0].value}
+            className="w-full"
+            dropDownClassNames="w-full"
+            onChange={(value) => {
+              if (value) {
+                searchParams.set("timeRange", value);
+                setSearchParams(searchParams, {
+                  replace: true
+                });
+              }
+            }}
           />
         </div>
         <SectionTitle className="mb-4">Filter by Health</SectionTitle>
