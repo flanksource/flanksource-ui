@@ -46,3 +46,10 @@ export const truncateText = (txt = "", limit: number) => {
   }
   return txt;
 };
+
+export function hasStringMatch(pattern: string, text?: string) {
+  if (!text) {
+    return false;
+  }
+  return text.indexOf(pattern) >= 0;
+}

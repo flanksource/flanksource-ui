@@ -71,7 +71,8 @@ const columns: ColumnDef<ConfigItem, any>[] = [
     size: 150,
     meta: {
       cellClassName: "overflow-hidden"
-    }
+    },
+    enableSorting: false
   },
   {
     header: "Analysis",

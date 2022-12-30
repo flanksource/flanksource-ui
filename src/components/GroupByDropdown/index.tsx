@@ -58,7 +58,7 @@ export default function GroupByDropdown({
   );
 
   const [groupByOptions, setGroupByOptions] = useState<GroupOptionsType>();
-  const { data: allConfigs, isLoading } = useAllConfigsQuery({});
+  const { data: allConfigs, isLoading } = useAllConfigsQuery({}, {});
 
   useEffect(() => {
     if (!allConfigs?.data) {

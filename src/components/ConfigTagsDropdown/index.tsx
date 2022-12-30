@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
+import { useAllConfigsQuery } from "../../api/query-hooks";
 import { useConfigPageContext } from "../../context/ConfigPageContext";
 import { ReactSelectDropdown, StateOption } from "../ReactSelectDropdown";
 
@@ -18,13 +19,11 @@ export function ConfigTagsDropdown({
     ...(value && { [searchParamKey]: value })
   });
 
-  const {
-    configState: { data }
-  } = useConfigPageContext();
+  const { data: response } = useAllConfigsQuery({}, {});
 
   const configTagItems: StateOption[] = useMemo(() => {
-    if (!data) return [];
-    const options = data.flatMap((d) => {
+    if (!response) return [];
+    const options = response.data?.flatMap((d) => {
       return Object.entries(d?.tags || {})
         .filter(([key]) => {
           return key !== "toString";
@@ -35,7 +34,7 @@ export function ConfigTagsDropdown({
         }));
     });
     return [{ label: "All", value: "All" }, ...options];
-  }, [data]);
+  }, [response]);
 
   return (
     <ReactSelectDropdown

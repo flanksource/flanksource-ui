@@ -1,4 +1,4 @@
-import { hasStringMatch } from "../filter";
+import { hasStringMatch } from "../../../utils/common";
 
 describe("hasStringMatch", () => {
   const strings = ["banana", "ana", "grAna", "popeye", "fantano", "gAnA"];
