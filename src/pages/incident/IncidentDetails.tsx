@@ -24,7 +24,7 @@ import { useIncidentQuery } from "../../api/query-hooks";
 import { TopologyCard } from "../../components/TopologyCard";
 import { Size } from "../../types";
 import SlidingSideBar from "../../components/SlidingSideBar";
-import CardsSkeletonLoader from "../../components/SkeletonLoader/CardsSkeletonLoader";
+import IncidentDetailsPageSkeletonLoader from "../../components/SkeletonLoader/IncidentDetailsPageSkeletonLoader";
 
 export type TreeNode<T> = T & {
   children?: T[];
@@ -115,7 +115,7 @@ export function IncidentDetailsPage() {
   );
 
   if (incident == null) {
-    return <CardsSkeletonLoader cardsNum={2} showBreadcrumb />;
+    return <IncidentDetailsPageSkeletonLoader />;
   }
 
   return (
