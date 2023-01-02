@@ -52,10 +52,6 @@ export function ConfigDetailsChanges({
         value: formatISODate(changeDetails.created_at!)
       },
       {
-        label: "Source",
-        value: changeDetails.source! || "NA"
-      },
-      {
         label: "Created By",
         value: <Avatar user={changeDetails.created_by!} />
       }
@@ -108,7 +104,7 @@ export function ConfigDetailsChanges({
           e?.stopPropagation();
           setOpen(false);
         }}
-        size="large"
+        size="full"
         bodyClass=""
       >
         <div
