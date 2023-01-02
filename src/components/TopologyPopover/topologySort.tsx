@@ -151,7 +151,7 @@ export const TopologySort = ({
     <>
       <div
         ref={popoverRef}
-        className="flex mt-1 cursor-pointer md:mt-0 md:items-center border border-gray-300 rounded-md shadow-sm px-3 py-2"
+        className="flex mt-1 cursor-pointer md:mt-0 md:items-center border border-gray-300 bg-white rounded-md shadow-sm px-3 py-2"
       >
         {sortByDirection === "asc" && (
           <BsSortUp
