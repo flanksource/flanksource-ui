@@ -1,5 +1,6 @@
 import { orderBy, findIndex, forEach, isEmpty } from "lodash";
 import { HealthCheck, HealthCheckLabels } from "../../types/healthChecks";
+import { hasStringMatch } from "../../utils/common";
 
 export function matchesLabel(
   check: HealthCheck,
@@ -61,13 +62,6 @@ export function labelIndex(
   label: HealthCheckLabels
 ): number {
   return findIndex(selectedLabels, (l) => l.id === label.id);
-}
-
-export function hasStringMatch(pattern: string, text?: string) {
-  if (!text) {
-    return false;
-  }
-  return text.indexOf(pattern) >= 0;
 }
 
 export function filterChecksByText(
