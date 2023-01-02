@@ -1,12 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import ReactTooltip from "react-tooltip";
 import { EvidenceType } from "../../api/services/evidence";
 import { formatISODate, formatLongDate } from "../../utils/date";
 import { AttachEvidenceDialog } from "../AttachEvidenceDialog";
 import { ConfigTypeInsights } from "../ConfigInsights";
 import ConfigInsightsIcon from "../ConfigInsightsIcon";
-import { Description } from "../Description/description";
-import { Icon, Avatar } from "../Icon";
+import { DescriptionCard } from "../DescriptionCard";
+import { Icon } from "../Icon";
 import { Modal } from "../Modal";
 
 type Props = {
@@ -21,6 +21,35 @@ export function ConfigAnalysisLink({
 }: Props) {
   const [attachEvidence, setAttachEvidence] = useState(false);
   const [open, setOpen] = useState(false);
+  const properties = useMemo(() => {
+    return [
+      {
+        label: "Type",
+        value: (
+          <>
+            <Icon
+              name={configAnalysis?.analysis_type}
+              secondary="diff"
+              className="w-5 h-auto pr-1"
+            />
+            {configAnalysis?.analysis_type}
+          </>
+        )
+      },
+      {
+        label: "Date",
+        value: formatISODate(configAnalysis?.created_at!)
+      },
+      {
+        label: "Severity",
+        value: configAnalysis?.severity! || "NA"
+      },
+      {
+        label: "Source",
+        value: configAnalysis?.source! || "NA"
+      }
+    ];
+  }, [configAnalysis]);
 
   useEffect(() => {
     ReactTooltip.rebuild();
@@ -51,50 +80,27 @@ export function ConfigAnalysisLink({
       >
         {configAnalysis?.id && (
           <>
-            <div className="flex flex-col px-4 py-4 text-gray-500 space-y-2">
-              <div className="flex flex-col space-y-6">
-                <div className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-4">
-                  <div className="sm:col-span-1">
-                    <Description
-                      label="Type"
-                      value={
-                        <>
-                          <Icon
-                            name={configAnalysis?.analysis_type}
-                            secondary="diff"
-                            className="w-5 h-auto pr-1"
-                          />
-                          {configAnalysis?.analysis_type}
-                        </>
-                      }
-                    />
-                  </div>
-                  <div className="sm:col-span-1">
-                    <Description
-                      label="Date"
-                      value={formatISODate(configAnalysis?.created_at!)}
-                    />
-                  </div>
-                  <div className="sm:col-span-1">
-                    <Description
-                      label="Severity"
-                      value={configAnalysis?.severity! || "NA"}
-                    />
-                  </div>
-                  <div className="sm:col-span-1">
-                    <Description
-                      label="Source"
-                      value={configAnalysis?.source! || "NA"}
-                    />
-                  </div>
-                </div>
-                <div
-                  className="text-sm"
-                  dangerouslySetInnerHTML={{
-                    __html: configAnalysis?.sanitizedMessageHTML!
-                  }}
-                ></div>
-              </div>
+            <div className="flex flex-col px-4 py-4 space-y-6">
+              <DescriptionCard
+                items={properties}
+                labelStyle="top"
+                noOfCols={properties.length}
+              />
+              <DescriptionCard
+                items={[
+                  {
+                    label: "",
+                    value: (
+                      <div
+                        dangerouslySetInnerHTML={{
+                          __html: configAnalysis?.sanitizedMessageHTML!
+                        }}
+                      ></div>
+                    )
+                  }
+                ]}
+                labelStyle="top"
+              />
             </div>
             <div className="flex items-center justify-end mt-4 py-2 px-4 rounded bg-gray-100">
               <button
@@ -125,43 +131,55 @@ export function ConfigAnalysisLink({
         )}
       </Modal>
       {viewType === "summary" && (
-        <>
-          <div className="flex-1 text-sm">
-            <div
-              className="overflow-hidden truncate cursor-pointer"
-              data-html={true}
-              data-tip={configAnalysis.sanitizedMessageTxt}
-              data-class="max-w-[20rem]"
-            >
-              <ConfigInsightsIcon analysis={configAnalysis} />
-              {configAnalysis.analyzer}
-            </div>
-          </div>
-          <div className="flex-1">
-            <div className="text-sm text-gray-700 font-light text-left break-all">
-              identified at {formatLongDate(configAnalysis.first_observed)}
-            </div>
-          </div>
-        </>
+        <DescriptionCard
+          items={[
+            {
+              label: (
+                <div
+                  className="overflow-hidden truncate cursor-pointer"
+                  data-html={true}
+                  data-tip={configAnalysis.sanitizedMessageTxt}
+                  data-class="max-w-[20rem]"
+                >
+                  <ConfigInsightsIcon analysis={configAnalysis} />
+                  {configAnalysis.analyzer}
+                </div>
+              ),
+              value: (
+                <div className="break-all">
+                  identified at {formatLongDate(configAnalysis.first_observed)}
+                </div>
+              )
+            }
+          ]}
+          labelStyle="top"
+        />
       )}
       {viewType === "detailed" && (
-        <div
-          className="flex flex-col"
+        <DescriptionCard
           onClick={() => {
             setOpen(true);
           }}
-        >
-          <div className="text-base">
-            <ConfigInsightsIcon analysis={configAnalysis!} />
-            {configAnalysis?.analyzer}
-          </div>
-          <div
-            className="text-sm pl-2"
-            dangerouslySetInnerHTML={{
-              __html: configAnalysis?.sanitizedMessageHTML!
-            }}
-          ></div>
-        </div>
+          items={[
+            {
+              label: (
+                <div className="text-base">
+                  <ConfigInsightsIcon analysis={configAnalysis!} />
+                  {configAnalysis?.analyzer}
+                </div>
+              ),
+              value: (
+                <div
+                  className="pl-2"
+                  dangerouslySetInnerHTML={{
+                    __html: configAnalysis?.sanitizedMessageHTML!
+                  }}
+                ></div>
+              )
+            }
+          ]}
+          labelStyle="top"
+        />
       )}
     </div>
   );

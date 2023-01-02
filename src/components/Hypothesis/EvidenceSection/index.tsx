@@ -18,7 +18,6 @@ import { LogsTable } from "../../Logs/Table/LogsTable";
 import { Icon } from "../../Icon";
 import { Button } from "../../Button";
 import { ConfigDetailsChanges } from "../../ConfigDetailsChanges/ConfigDetailsChanges";
-import ConfigInsightsIcon from "../../ConfigInsightsIcon";
 import { useGetConfigInsight } from "../../../api/query-hooks";
 import { ConfigTypeInsights } from "../../ConfigInsights";
 import { ConfigAnalysisLink } from "../../ConfigAnalysisLink/ConfigAnalysisLink";
@@ -77,7 +76,7 @@ export function EvidenceItem({ evidence }: { evidence: Evidence }) {
       return (
         <div className="pt-2">
           <ConfigAnalysisEvidence
-            className="flex flex-col text-gray-500 w-full bg-white p-3 shadow-card shadow rounded"
+            className="flex flex-col w-full bg-white p-3 shadow-card shadow rounded"
             evidence={evidence}
           />
         </div>
@@ -445,7 +444,7 @@ export function ConfigChangeEvidence({
 export function ConfigAnalysisEvidence({
   evidence,
   viewType,
-  className = "flex flex-col text-gray-500 w-full bg-white p-2"
+  className = "flex flex-col w-full bg-white p-2"
 }: {
   evidence: Evidence;
   className?: string;
