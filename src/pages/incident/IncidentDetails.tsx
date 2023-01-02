@@ -18,13 +18,13 @@ import { Changelog } from "../../components/Change";
 import { HypothesisBuilder } from "../../components/Hypothesis/HypothesisBuilder";
 import { IncidentDetails } from "../../components/IncidentDetails";
 import { SearchLayout } from "../../components/Layout";
-import { Loading } from "../../components/Loading";
 import { useCreateHypothesisMutation } from "../../components/mutations/useCreateHypothesisMutation";
 import { useUpdateHypothesisMutation } from "../../components/mutations/useUpdateHypothesisMutation";
 import { useIncidentQuery } from "../../api/query-hooks";
 import { TopologyCard } from "../../components/TopologyCard";
 import { Size } from "../../types";
 import SlidingSideBar from "../../components/SlidingSideBar";
+import IncidentDetailsPageSkeletonLoader from "../../components/SkeletonLoader/IncidentDetailsPageSkeletonLoader";
 
 export type TreeNode<T> = T & {
   children?: T[];
@@ -115,8 +115,9 @@ export function IncidentDetailsPage() {
   );
 
   if (incident == null) {
-    return <Loading />;
+    return <IncidentDetailsPageSkeletonLoader />;
   }
+
   return (
     <SearchLayout
       contentClass="pl-6"
