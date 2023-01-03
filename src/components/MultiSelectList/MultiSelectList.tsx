@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import { AiFillCheckCircle } from "react-icons/ai";
+import { BsCircle } from "react-icons/bs";
 
 type MultiSelectListProps<T> = {
   options: T[];
@@ -40,12 +41,23 @@ export default function MultiSelectList<T extends unknown>({
             onClick={(e) => onOptionSelect(option)}
           >
             {!viewOnly && (
-              <AiFillCheckCircle
-                className={clsx(
-                  "w-5 h-5 absolute m-auto top-0 bottom-0",
-                  isSelected(option) ? "text-blue-500" : "text-gray-500"
+              <>
+                {isSelected(option) && (
+                  <AiFillCheckCircle
+                    className={clsx(
+                      "w-5 h-5 absolute m-auto top-0 bottom-0",
+                      isSelected(option) ? "text-blue-500" : "text-gray-500"
+                    )}
+                  />
                 )}
-              />
+                {!isSelected(option) && (
+                  <BsCircle
+                    className={clsx(
+                      "w-5 h-5 absolute m-auto top-0 bottom-0 text-gray-500"
+                    )}
+                  />
+                )}
+              </>
             )}
             <div className={clsx("flex", viewOnly ? "" : "ml-8")}>
               {renderOption(option, index)}

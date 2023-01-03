@@ -20,7 +20,8 @@ type EvidenceSelectionModalProps = {
     actionType: "close" | "cancel" | "skip" | "submit",
     data?: any
   ) => void;
-  noEvidencesMsg: string;
+  helpHint?: string;
+  noEvidencesMsg?: string;
   viewOnly?: boolean;
 };
 
@@ -34,6 +35,7 @@ export default function EvidenceSelectionModal({
     submit: true
   },
   actionHandler = () => {},
+  helpHint,
   noEvidencesMsg = "There are no evidences provided for this incident",
   viewOnly
 }: EvidenceSelectionModalProps) {
@@ -49,8 +51,16 @@ export default function EvidenceSelectionModal({
       open={open}
       bodyClass=""
     >
-      <div style={{ maxHeight: "calc(100vh - 6rem)" }} className={className}>
-        <div className="p-4">
+      <div className={className}>
+        {helpHint && (
+          <div className="flex py-4 px-4">
+            <div className="text-sm text-gray-500">{helpHint}</div>
+          </div>
+        )}
+        <div
+          className="p-4 pt-0 overflow-y-auto"
+          style={{ maxHeight: "calc(100vh - 16rem)" }}
+        >
           <MultiSelectList
             viewOnly={viewOnly}
             options={evidences}
@@ -91,7 +101,7 @@ export default function EvidenceSelectionModal({
       {!viewOnly && (
         <div
           className={clsx(
-            "flex rounded-t-lg justify-between bg-gray-100 px-8 pb-4 items-end",
+            "flex rounded justify-between bg-gray-100 px-8 pb-4 items-end",
             "absolute w-full bottom-0 left-0"
           )}
         >

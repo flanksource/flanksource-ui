@@ -240,6 +240,7 @@ export function DefinitionOfDone({ incidentId }: DefinitionOfDoneProps) {
           cancel: true,
           submit: true
         }}
+        helpHint="Select an item to be included in the definition of done"
         noEvidencesMsg="There are no evidences which are not part of defintion of done"
       />
     </div>
