@@ -2,6 +2,7 @@ import clsx from "clsx";
 import { FiExternalLink } from "react-icons/fi";
 import { NodePodPropToLabelMap } from "../../constants";
 import { formatBytes } from "../../utils/common";
+import { relativeDateTime } from "../../utils/date";
 import { isEmpty } from "../Canary/utils";
 import { Icon } from "../Icon";
 
@@ -20,7 +21,7 @@ export function FormatProperty({
   let { text } = property;
 
   if (property.name === "created") {
-    return <>relativeDateTime(text)</>;
+    return <>{relativeDateTime(text)}</>;
   }
 
   if (property.type === "url") {
