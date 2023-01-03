@@ -140,16 +140,6 @@ export function DataTable<TableColumns, Data extends TableColumns>({
     debugHeaders: true,
     debugColumns: true,
     onSortingChange: (sorting) => {
-      const { id: field, desc } = sortBy[0] ?? {};
-      const order = desc ? "desc" : "asc";
-      if (field && order) {
-        queryParams.set("sortBy", field);
-        queryParams.set("sortOrder", order);
-      } else {
-        queryParams.delete("sortBy");
-        queryParams.delete("sortOrder");
-      }
-      setQueryParams(queryParams);
       if (onTableSortByChanged) {
         onTableSortByChanged(sorting);
       } else {
