@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { AiFillWarning } from "react-icons/ai";
 import { BiDollarCircle } from "react-icons/bi";
 import { FaTasks } from "react-icons/fa";
@@ -26,6 +26,7 @@ import {
   Row,
   SortingState
 } from "@tanstack/react-table";
+import ConfigListNameCell from "./Cells/ConfigListNameCell";
 
 interface Analysis {
   analysis_type: string;
@@ -46,7 +47,7 @@ const columns: ColumnDef<ConfigItem, any>[] = [
   {
     header: "Name",
     accessorKey: "name",
-    aggregatedCell: "",
+    cell: ConfigListNameCell,
     size: 350,
     enableGrouping: true
   },
@@ -481,6 +482,27 @@ function ConfigList({ data, handleRowClick, isLoading }: Props) {
     return [];
   }, [groupByField]);
 
+  const determineRowClassNames = useCallback((row: Row<ConfigItem>) => {
+    if (row.getIsGrouped()) {
+      // check if the whole group is deleted
+      const allDeleted = row.getLeafRows().every((row) => {
+        if (row.original.deleted_at) {
+          return true;
+        }
+        return false;
+      });
+
+      if (allDeleted) {
+        return "text-gray-500";
+      }
+    } else {
+      if (row.original.deleted_at) {
+        return "text-gray-500";
+      }
+    }
+    return "";
+  }, []);
+
   return (
     <DataTable
       stickyHead
@@ -519,6 +541,7 @@ function ConfigList({ data, handleRowClick, isLoading }: Props) {
           }
         }
       }}
+      determineRowClassNamesCallback={determineRowClassNames}
     />
   );
 }

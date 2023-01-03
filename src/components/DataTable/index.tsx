@@ -9,6 +9,7 @@ import {
   getExpandedRowModel,
   getGroupedRowModel,
   getSortedRowModel,
+  Row,
   SortingState,
   Updater,
   useReactTable,
@@ -69,6 +70,17 @@ type DataTableProps<TableColumns, Data extends TableColumns> = {
    *
    */
   onTableSortByChanged?: (sortBy: Updater<SortingState>) => void;
+
+  /**
+   *
+   * determineRowClassNames
+   *
+   * Allows you to customize the row class names, based on the row data
+   *
+   * For example, you can use this to gray out a row if it's deleted
+   *
+   */
+  determineRowClassNamesCallback?: (row: Row<TableColumns>) => string;
 } & React.HTMLAttributes<HTMLTableElement>;
 
 export function DataTable<TableColumns, Data extends TableColumns>({
@@ -85,6 +97,7 @@ export function DataTable<TableColumns, Data extends TableColumns>({
   virtualizedRowEstimatedHeight = 35,
   tableSortByState,
   onTableSortByChanged,
+  determineRowClassNamesCallback = () => "",
   ...rest
 }: DataTableProps<TableColumns, Data>) {
   const [queryParams, setQueryParams] = useSearchParams();
@@ -235,7 +248,9 @@ export function DataTable<TableColumns, Data extends TableColumns>({
                     cellClassNames={tableStyles.tbodyDataClass}
                     onRowClick={handleRowClick}
                     isGrouped={isGrouped}
-                    rowClassNames={tableStyles.tbodyRowClass}
+                    rowClassNames={`${
+                      tableStyles.tbodyRowClass
+                    } ${determineRowClassNamesCallback(row)}`}
                     key={row.id}
                   />
                 );
@@ -246,7 +261,9 @@ export function DataTable<TableColumns, Data extends TableColumns>({
                   cellClassNames={tableStyles.tbodyDataClass}
                   onRowClick={handleRowClick}
                   isGrouped={isGrouped}
-                  rowClassNames={tableStyles.tbodyRowClass}
+                  rowClassNames={`${
+                    tableStyles.tbodyRowClass
+                  } ${determineRowClassNamesCallback(row)}`}
                   key={row.id}
                 />
               ))}

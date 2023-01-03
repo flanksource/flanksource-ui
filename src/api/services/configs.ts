@@ -17,6 +17,7 @@ export interface ConfigItem {
   allTags?: Record<string, any>;
   created_at: string;
   updated_at: string;
+  deleted_at?: string;
   cost_per_minute?: number;
   cost_total_1d?: number;
   cost_total_7d?: number;
