@@ -332,6 +332,7 @@ import world from "./world.svg";
 import www from "./www.svg";
 import xml from "./xml.svg";
 import yaml from "./yaml.svg";
+
 export const Icons = {
   acr: acr,
   "activemq-icon": activemq_icon,
