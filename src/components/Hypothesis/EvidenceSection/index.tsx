@@ -12,7 +12,7 @@ import { getUptimePercentage } from "../../Canary/CanaryPopup/utils";
 import { Duration, StatusList } from "../../Canary/renderers";
 import { Modal } from "../../Modal";
 import { relativeDateTime } from "../../../utils/date";
-import { Size } from "../../../types";
+import { Size, ViewType } from "../../../types";
 import ConfigLink from "../../ConfigLink/ConfigLink";
 import { LogsTable } from "../../Logs/Table/LogsTable";
 import { Icon } from "../../Icon";
@@ -29,7 +29,13 @@ const ColumnSizes = {
   }
 };
 
-export function EvidenceItem({ evidence }: { evidence: Evidence }) {
+export function EvidenceItem({
+  evidence,
+  viewType = ViewType.summary
+}: {
+  evidence: Evidence;
+  viewType?: ViewType;
+}) {
   switch (evidence.type) {
     case EvidenceType.Log:
       return (
@@ -69,7 +75,7 @@ export function EvidenceItem({ evidence }: { evidence: Evidence }) {
     case EvidenceType.ConfigChange:
       return (
         <div className="pt-2">
-          <ConfigChangeEvidence evidence={evidence} viewType="detailed" />
+          <ConfigChangeEvidence evidence={evidence} viewType={viewType} />
         </div>
       );
     case EvidenceType.ConfigAnalysis:
@@ -78,6 +84,7 @@ export function EvidenceItem({ evidence }: { evidence: Evidence }) {
           <ConfigAnalysisEvidence
             className="flex flex-col w-full bg-white p-3 shadow-card shadow rounded"
             evidence={evidence}
+            viewType={viewType}
           />
         </div>
       );
@@ -423,12 +430,12 @@ export function HealthEvidenceViewer({
 
 export function ConfigChangeEvidence({
   evidence,
-  className = "w-full bg-white rounded shadow-card card p-1",
+  className = "w-full bg-white rounded shadow-card card p-3",
   viewType
 }: {
   evidence: Evidence;
   className?: string;
-  viewType?: "summary" | "detailed";
+  viewType?: ViewType;
 }) {
   return (
     <div className={className}>
@@ -436,6 +443,7 @@ export function ConfigChangeEvidence({
         configId={evidence.config_id!}
         id={evidence.config_change_id!}
         viewType={viewType}
+        showConfigLogo={true}
       />
     </div>
   );
@@ -444,11 +452,11 @@ export function ConfigChangeEvidence({
 export function ConfigAnalysisEvidence({
   evidence,
   viewType,
-  className = "flex flex-col w-full bg-white p-2"
+  className = "flex flex-col w-full bg-white"
 }: {
   evidence: Evidence;
   className?: string;
-  viewType?: "detailed" | "summary";
+  viewType?: ViewType;
 }) {
   const { data: response } = useGetConfigInsight<ConfigTypeInsights[]>(
     evidence.config_id,
@@ -471,7 +479,11 @@ export function ConfigAnalysisEvidence({
 
   return (
     <div className={className}>
-      <ConfigAnalysisLink configAnalysis={configAnalysis} viewType={viewType} />
+      <ConfigAnalysisLink
+        configAnalysis={configAnalysis}
+        viewType={viewType}
+        showConfigLogo={true}
+      />
     </div>
   );
 }

@@ -5,14 +5,14 @@ type DescriptionCardProps = React.HTMLProps<HTMLDivElement> & {
     label?: string | React.ReactNode;
     value: React.ReactNode;
   }[];
-  noOfCols?: number;
+  columns?: number;
   labelStyle?: "left" | "top";
 };
 
 export function DescriptionCard({
   items,
   labelStyle = "left",
-  noOfCols = 1,
+  columns = 1,
   className,
   ...rest
 }: DescriptionCardProps) {
@@ -36,7 +36,12 @@ export function DescriptionCard({
         </table>
       )}
       {labelStyle === "top" && (
-        <div className={clsx("grid gap-4", `sm:grid-cols-${noOfCols}`)}>
+        <div
+          className={clsx("grid gap-4")}
+          style={{
+            gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`
+          }}
+        >
           {items.map((item, index) => {
             return (
               <div className="col-span-1" key={index}>

@@ -22,12 +22,7 @@ export default function ConfigLink({
         pathname: `/configs/${configId}`
       }}
     >
-      <Icon
-        name={configType}
-        secondary={configTypeSecondary}
-        size="lg"
-        className="w-5 mr-1"
-      />
+      <Icon name={configType || configTypeSecondary} className="w-5 mr-1" />
       <span className={className}>{configName}</span>
     </Link>
   );

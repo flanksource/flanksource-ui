@@ -12,6 +12,7 @@ import {
 } from "../../utils/common";
 import { useGetConfigInsights } from "../../api/query-hooks";
 import { ConfigAnalysisLink } from "../ConfigAnalysisLink/ConfigAnalysisLink";
+import { relativeDateTime } from "../../utils/date";
 
 export type ConfigTypeInsights = {
   id: string;
@@ -66,15 +67,38 @@ function ConfigInsightsDetails({ configID }: Props) {
       {isLoading ? (
         <Loading />
       ) : configInsights.length > 0 ? (
-        <div className="w-full">
-          {configInsights.map((insight) => {
-            return (
-              <div className="py-2 border-b border-dashed">
-                <ConfigAnalysisLink key={insight.id} configAnalysis={insight} />
-              </div>
-            );
-          })}
-        </div>
+        <table className="w-full text-sm text-left">
+          <thead className="text-sm uppercase text-gray-600">
+            <tr>
+              <th scope="col" className="p-2">
+                Name
+              </th>
+              <th scope="col" className="p-2">
+                Age
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {configInsights.map((insight) => (
+              <tr key={insight.id}>
+                <td
+                  data-html={true}
+                  data-tip={insight.sanitizedMessageTxt}
+                  data-class="max-w-[20rem]"
+                  className="p-2 font-medium text-black whitespace-nowrap cursor-pointer"
+                >
+                  <ConfigAnalysisLink
+                    key={insight.id}
+                    configAnalysis={insight}
+                  />
+                </td>
+                <td className="p-2 ">
+                  {relativeDateTime(insight.first_observed)}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       ) : (
         <EmptyState />
       )}

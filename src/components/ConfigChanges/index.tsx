@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { GoDiff } from "react-icons/go";
 import { useGetConfigChangesQueryById } from "../../api/query-hooks";
+import { ViewType } from "../../types";
+import { relativeDateTime } from "../../utils/date";
 import CollapsiblePanel from "../CollapsiblePanel";
 import { ConfigDetailsChanges } from "../ConfigDetailsChanges/ConfigDetailsChanges";
 import EmptyState from "../EmptyState";
@@ -42,18 +44,37 @@ export function ConfigChangesDetails({ configID }: Props) {
       {isLoading ? (
         <Loading />
       ) : configChanges.length > 0 ? (
-        <div className="w-full text-sm">
-          {configChanges.map((configChange) => (
-            <div className="py-2 border-b border-dashed">
-              <ConfigDetailsChanges
-                key={configChange.id}
-                id={configChange.id}
-                configId={configChange.config_id}
-                viewType="summary"
-              />
-            </div>
-          ))}
-        </div>
+        <table className="w-full text-sm text-left">
+          <thead className="text-sm uppercase text-gray-600">
+            <tr>
+              <th scope="col" className="p-2">
+                Name
+              </th>
+              <th scope="col" className="p-2">
+                Age
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {configChanges.map((configChange) => (
+              <tr key={configChange.id}>
+                <td className="p-2 font-medium text-black whitespace-nowrap">
+                  <ConfigDetailsChanges
+                    key={configChange.id}
+                    id={configChange.id}
+                    configId={configChange.config_id}
+                    viewType={ViewType.summary}
+                  />
+                </td>
+                <td className="p-2 ">
+                  <div className="block">
+                    {relativeDateTime(configChange.created_at)}
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       ) : (
         <EmptyState />
       )}

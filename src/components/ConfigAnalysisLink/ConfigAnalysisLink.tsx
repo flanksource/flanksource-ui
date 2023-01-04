@@ -1,52 +1,59 @@
 import { useState, useEffect, useMemo } from "react";
 import ReactTooltip from "react-tooltip";
+import { useGetConfigByIdQuery } from "../../api/query-hooks";
 import { EvidenceType } from "../../api/services/evidence";
-import { formatISODate, formatLongDate } from "../../utils/date";
+import { ViewType } from "../../types";
+import { formatISODate } from "../../utils/date";
 import { AttachEvidenceDialog } from "../AttachEvidenceDialog";
 import { ConfigTypeInsights } from "../ConfigInsights";
 import ConfigInsightsIcon from "../ConfigInsightsIcon";
+import ConfigLink from "../ConfigLink/ConfigLink";
 import { DescriptionCard } from "../DescriptionCard";
 import { Icon } from "../Icon";
 import { Modal } from "../Modal";
 
 type Props = {
   configAnalysis: ConfigTypeInsights;
-  viewType?: "summary" | "detailed";
+  viewType?: ViewType;
+  showConfigLogo?: boolean;
 } & React.HTMLProps<HTMLDivElement>;
 
 export function ConfigAnalysisLink({
   configAnalysis,
-  viewType = "summary",
+  viewType = ViewType.summary,
+  showConfigLogo,
   ...rest
 }: Props) {
   const [attachEvidence, setAttachEvidence] = useState(false);
   const [open, setOpen] = useState(false);
+  const { data: config } = useGetConfigByIdQuery(configAnalysis?.config_id);
+  console.log(config);
   const properties = useMemo(() => {
     return [
       {
         label: "Type",
         value: (
           <>
-            <Icon
-              name={configAnalysis?.analysis_type}
-              secondary="diff"
-              className="w-5 h-auto pr-1"
-            />
+            <ConfigInsightsIcon analysis={configAnalysis!} />
             {configAnalysis?.analysis_type}
           </>
         )
       },
       {
-        label: "Date",
-        value: formatISODate(configAnalysis?.created_at!)
+        label: "First Observed",
+        value: formatISODate(configAnalysis?.first_observed!)
+      },
+      {
+        label: "Last Observed",
+        value: formatISODate(configAnalysis?.last_observed!)
       },
       {
         label: "Severity",
-        value: configAnalysis?.severity! || "NA"
+        value: configAnalysis?.severity! || ""
       },
       {
         label: "Source",
-        value: configAnalysis?.source! || "NA"
+        value: configAnalysis?.source! || ""
       }
     ];
   }, [configAnalysis]);
@@ -56,26 +63,31 @@ export function ConfigAnalysisLink({
   });
 
   return (
-    <div
-      className="flex flex-col cursor-pointer  space-y-1"
-      {...rest}
-      onClick={() => {
-        setOpen(true);
-      }}
-    >
+    <div className="flex flex-col cursor-pointer  space-y-1" {...rest}>
       <Modal
         title={
-          <>
-            <ConfigInsightsIcon analysis={configAnalysis} />
-            {configAnalysis.analyzer}
-          </>
+          config && (
+            <>
+              <ConfigLink
+                className="text-blue-600 text-xl font-semibold whitespace-nowrap mr-1"
+                configId={config.id}
+                configName={config.name}
+                configType={config.external_type}
+                configTypeSecondary={config.config_type}
+              />
+              &nbsp;/&nbsp;
+              <ConfigInsightsIcon analysis={configAnalysis} />
+              {configAnalysis.analyzer}
+            </>
+          )
         }
         open={open}
         onClose={(e) => {
+          // this is added to fix modal not being closed issue when we open a modal on top of another modal
           e?.stopPropagation();
           setOpen(false);
         }}
-        size="large"
+        size="full"
         bodyClass=""
       >
         {configAnalysis?.id && (
@@ -84,7 +96,7 @@ export function ConfigAnalysisLink({
               <DescriptionCard
                 items={properties}
                 labelStyle="top"
-                noOfCols={properties.length}
+                columns={3}
               />
               <DescriptionCard
                 items={[
@@ -130,36 +142,36 @@ export function ConfigAnalysisLink({
           </>
         )}
       </Modal>
-      {viewType === "summary" && (
-        <DescriptionCard
-          items={[
-            {
-              label: (
-                <div
-                  className="overflow-hidden truncate cursor-pointer"
-                  data-html={true}
-                  data-tip={configAnalysis.sanitizedMessageTxt}
-                  data-class="max-w-[20rem]"
-                >
-                  <ConfigInsightsIcon analysis={configAnalysis} />
-                  {configAnalysis.analyzer}
-                </div>
-              ),
-              value: (
-                <div className="break-all">
-                  identified at {formatLongDate(configAnalysis.first_observed)}
-                </div>
-              )
-            }
-          ]}
-          labelStyle="top"
-        />
-      )}
-      {viewType === "detailed" && (
-        <DescriptionCard
+      {viewType === ViewType.summary && (
+        <div
+          className="inline-block"
           onClick={() => {
             setOpen(true);
           }}
+        >
+          {showConfigLogo && (
+            <>
+              <Icon
+                name={config?.external_type || config?.config_type}
+                className="w-5 mr-1"
+              />
+              <span>{config?.name}</span>
+              &nbsp;/&nbsp;
+            </>
+          )}
+          <span
+            className="overflow-hidden truncate cursor-pointer"
+            data-html={true}
+            data-tip={configAnalysis.sanitizedMessageTxt}
+            data-class="max-w-[20rem]"
+          >
+            <ConfigInsightsIcon analysis={configAnalysis} />
+            {configAnalysis.analyzer}
+          </span>
+        </div>
+      )}
+      {viewType === ViewType.detailed && (
+        <DescriptionCard
           items={[
             {
               label: (

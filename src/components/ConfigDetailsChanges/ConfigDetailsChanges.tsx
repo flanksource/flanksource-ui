@@ -1,8 +1,11 @@
 import { InfoMessage } from "../../components/InfoMessage";
-import { useGetConfigChangesQueryById } from "../../api/query-hooks";
+import {
+  useGetConfigByIdQuery,
+  useGetConfigChangesQueryById
+} from "../../api/query-hooks";
 import { useEffect, useMemo, useState } from "react";
 import { ConfigTypeChanges } from "../ConfigChanges";
-import { formatISODate, formatLongDate } from "../../utils/date";
+import { formatISODate } from "../../utils/date";
 import { JSONViewer } from "../JSONViewer";
 import { Icon } from "../Icon";
 import { Avatar } from "../Avatar";
@@ -11,21 +14,27 @@ import { AttachEvidenceDialog } from "../AttachEvidenceDialog";
 import { Modal } from "../Modal";
 import { EvidenceType } from "../../api/services/evidence";
 import { DescriptionCard } from "../DescriptionCard";
+import ConfigLink from "../ConfigLink/ConfigLink";
+import ReactTooltip from "react-tooltip";
+import { ViewType } from "../../types";
 
 export function ConfigDetailsChanges({
   configId,
   id,
-  viewType = "detailed"
+  viewType = ViewType.summary,
+  showConfigLogo
 }: {
   id: string;
   configId: string;
-  viewType?: "detailed" | "summary";
+  viewType?: ViewType;
+  showConfigLogo?: boolean;
 }) {
   const {
     data: historyData,
     isLoading,
     error
   } = useGetConfigChangesQueryById(configId!);
+  const { data: config } = useGetConfigByIdQuery(configId, {});
   const [open, setOpen] = useState(false);
   const [attachEvidence, setAttachEvidence] = useState(false);
   const [changeDetails, setChangeDetails] = useState<ConfigTypeChanges>();
@@ -35,17 +44,8 @@ export function ConfigDetailsChanges({
     }
     return [
       {
-        label: "Name",
-        value: (
-          <>
-            <Icon
-              name={changeDetails.change_type}
-              secondary="diff"
-              className="w-5 h-auto pr-1"
-            />
-            {changeDetails.change_type}
-          </>
-        )
+        label: "Source",
+        value: changeDetails.source! || ""
       },
       {
         label: "Date",
@@ -66,6 +66,10 @@ export function ConfigDetailsChanges({
     setChangeDetails(historyData?.find((item) => item.id === id));
   }, [historyData, id]);
 
+  useEffect(() => {
+    ReactTooltip.rebuild();
+  });
+
   if (error || (!changeDetails && !isLoading)) {
     const errorMessage =
       typeof error === "symbol"
@@ -76,25 +80,31 @@ export function ConfigDetailsChanges({
   }
 
   return (
-    <div
-      className="overflow-hidden bg-white cursor-pointer"
-      onClick={(e) => {
-        setOpen(true);
-      }}
-    >
+    <div className="overflow-hidden bg-white cursor-pointer">
       <Modal
         title={
-          <>
-            <Icon
-              name={changeDetails?.change_type}
-              secondary="diff"
-              className="w-5 h-auto pr-1"
-            />
-            {changeDetails?.change_type}
-          </>
+          config && (
+            <>
+              <ConfigLink
+                className="text-blue-600 text-xl font-semibold whitespace-nowrap mr-1"
+                configId={config.id}
+                configName={config.name}
+                configType={config.external_type}
+                configTypeSecondary={config.config_type}
+              />
+              &nbsp;/&nbsp;
+              <Icon
+                name={changeDetails?.change_type}
+                secondary="diff"
+                className="w-5 h-auto pr-1"
+              />
+              {changeDetails?.change_type}
+            </>
+          )
         }
         open={open}
         onClose={(e) => {
+          // this is added to fix modal not being closed issue when we open a modal on top of another modal
           e?.stopPropagation();
           setOpen(false);
         }}
@@ -109,6 +119,7 @@ export function ConfigDetailsChanges({
             <ConfigDetailsChanges
               configId={changeDetails.config_id}
               id={changeDetails.id}
+              viewType={ViewType.detailed}
             />
           )}
         </div>
@@ -138,74 +149,78 @@ export function ConfigDetailsChanges({
           }}
         />
       </Modal>
-      {viewType === "detailed" && (
+      {viewType === ViewType.detailed && (
         <div className="px-4 py-5">
-          <DescriptionCard items={properties} labelStyle="top" noOfCols={2} />
-          <DescriptionCard
-            className="mt-2"
-            items={[
-              {
-                label: "Details",
-                value: (
-                  <div
-                    className={clsx(
-                      "w-full max-h-56 overflow-y-auto overflow-x-auto border border-gray-200 rounded",
-                      changeDetails?.details ? "" : "h-16"
-                    )}
-                  >
-                    <JSONViewer
-                      code={JSON.stringify(changeDetails?.details, null, 2)}
-                      format="json"
-                    />
-                  </div>
-                )
-              }
-            ]}
-            labelStyle="top"
-          />
-          <DescriptionCard
-            className="mt-4"
-            items={[
-              {
-                label: "Change",
-                value: (
-                  <div className="w-full max-h-56 overflow-y-auto overflow-x-auto border border-gray-200 rounded">
-                    <JSONViewer
-                      code={JSON.stringify(changeDetails?.patches, null, 2)}
-                      format="json"
-                    />
-                  </div>
-                )
-              }
-            ]}
-            labelStyle="top"
-          />
+          <DescriptionCard items={properties} labelStyle="top" columns={3} />
+          {changeDetails?.details && (
+            <DescriptionCard
+              className="mt-2"
+              items={[
+                {
+                  label: "Details",
+                  value: (
+                    <div
+                      className={clsx(
+                        "w-full max-h-56 overflow-y-auto overflow-x-auto border border-gray-200 rounded",
+                        changeDetails?.details ? "" : "h-16"
+                      )}
+                    >
+                      <JSONViewer
+                        code={JSON.stringify(changeDetails?.details, null, 2)}
+                        format="json"
+                      />
+                    </div>
+                  )
+                }
+              ]}
+              labelStyle="top"
+            />
+          )}
+          {changeDetails?.patches && (
+            <DescriptionCard
+              className="mt-4"
+              items={[
+                {
+                  label: "Change",
+                  value: (
+                    <div className="w-full max-h-56 overflow-y-auto overflow-x-auto border border-gray-200 rounded">
+                      <JSONViewer
+                        code={JSON.stringify(changeDetails?.patches, null, 2)}
+                        format="json"
+                      />
+                    </div>
+                  )
+                }
+              ]}
+              labelStyle="top"
+            />
+          )}
         </div>
       )}
-      {viewType === "summary" && (
-        <DescriptionCard
-          className="px-2"
-          items={[
-            {
-              label: (
-                <div className="overflow-hidden truncate">
-                  <Icon
-                    name={changeDetails?.change_type}
-                    secondary="diff"
-                    className="w-5 h-auto pr-1"
-                  />
-                  {changeDetails?.change_type}
-                </div>
-              ),
-              value: (
-                <div className="break-all overflow-hidden truncate">
-                  changes made at {formatLongDate(changeDetails?.created_at!)}
-                </div>
-              )
-            }
-          ]}
-          labelStyle="top"
-        />
+      {viewType === ViewType.summary && (
+        <div
+          className="overflow-hidden truncate"
+          onClick={(e) => {
+            setOpen(true);
+          }}
+        >
+          {showConfigLogo && (
+            <>
+              <Icon
+                name={config?.external_type || config?.config_type}
+                className="w-5 mr-1"
+              />
+              <span>{config?.name}</span>
+              &nbsp;/&nbsp;
+            </>
+          )}
+          <Icon
+            name={changeDetails?.change_type}
+            secondary="diff"
+            className="w-5 h-auto pr-1"
+          />
+          {changeDetails?.change_type}
+        </div>
       )}
     </div>
   );
