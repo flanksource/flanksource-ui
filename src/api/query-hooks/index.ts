@@ -90,13 +90,23 @@ export const useComponentNameQuery = (
   );
 };
 
+type ConfigListFilterQueryOptions = {
+  search?: string | null;
+  configType?: string | null;
+  tag?: string | null;
+  hideDeletedConfigs?: boolean;
+  sortBy?: string | null;
+  sortOrder?: string | null;
+};
+
 function prepareConfigListQuery({
   search,
   configType,
   tag,
   sortBy,
-  sortOrder
-}: Record<string, string | null | undefined>) {
+  sortOrder,
+  hideDeletedConfigs
+}: ConfigListFilterQueryOptions) {
   let query = "select=*";
   if (search) {
     query = `${query}&or=(name.ilike.*${search}*,config_type.ilike.*${search}*,description.ilike.*${search}*,namespace.ilike.*${search}*)`;
@@ -117,6 +127,9 @@ function prepareConfigListQuery({
     const sortField = sortBy === "config_type" ? `${sortBy},name` : sortBy;
     query = `${query}&order=${sortField}.${sortOrder}`;
   }
+  if (hideDeletedConfigs) {
+    query = `${query}&deleted_at=is.null`;
+  }
   return query;
 }
 
@@ -126,8 +139,9 @@ export const useAllConfigsQuery = (
     tag,
     configType,
     sortBy,
-    sortOrder
-  }: Record<string, string | null | undefined>,
+    sortOrder,
+    hideDeletedConfigs
+  }: ConfigListFilterQueryOptions,
   { enabled = true, staleTime = defaultStaleTime, ...rest }
 ) => {
   const query = prepareConfigListQuery({
@@ -135,10 +149,19 @@ export const useAllConfigsQuery = (
     tag,
     configType,
     sortBy,
-    sortOrder
+    sortOrder,
+    hideDeletedConfigs
   });
   return useQuery(
-    ["allConfigs", search, tag, configType, sortBy, sortOrder],
+    [
+      "allConfigs",
+      search,
+      tag,
+      configType,
+      sortBy,
+      sortOrder,
+      hideDeletedConfigs
+    ],
     () => {
       return getAllConfigsMatchingQuery(query);
     },
