@@ -43,7 +43,6 @@ function FilterLogsByComponent() {
       </div>
     );
   }
-
   function onComponentSelect(value?: string) {
     if (value?.toLowerCase() === "none") {
       searchParams.delete("topologyId");
@@ -63,7 +62,8 @@ function FilterLogsByComponent() {
           topologyExternalId: selectedComponent.external_id
         }),
         ...(selectedComponent.type && { type: selectedComponent.type }),
-        ...{ start: to, end: from }
+        start: to ? "15m" : Date.parse(to ?? to).toString(),
+        end: from ? "15m" : Date.parse(from ?? from).toString()
       });
     }
   }
@@ -86,6 +86,7 @@ function FilterLogsByComponent() {
         from={from}
         setFrom={setFrom}
         setTo={setTo}
+        isComponentDropdown={true}
       />
     </div>
   );

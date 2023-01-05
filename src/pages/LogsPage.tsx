@@ -12,6 +12,7 @@ import { LogsTable } from "../components/Logs/Table/LogsTable";
 import useDebouncedValue from "../hooks/useDebounce";
 import LogItem from "../types/Logs";
 import { getTopologyComponentByID } from "../api/services/topology";
+import { TimeRangePicker } from "../components/TimeRangePicker";
 
 export const logTypes = [
   {
@@ -45,7 +46,7 @@ export function LogsPage() {
   const start = searchParams.get("start") ?? timeRanges[0].value;
   const end = searchParams.get("end") ?? timeRanges[0].value;
   const debouncedQueryValue = useDebouncedValue(query, 500);
-
+  console.log(start, end, "noor");
   const { data: topology } = useQuery(
     ["components", "names", topologyId],
     async () => {
@@ -109,7 +110,6 @@ export function LogsPage() {
       <div className="flex flex-col space-y-6 h-full">
         <div className="flex flex-row items-center w-full">
           <FilterLogsByComponent />
-
           <div className="mx-2 w-80 relative rounded-md shadow-sm">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
               <button type="button" onClick={() => refetch()} className="hover">

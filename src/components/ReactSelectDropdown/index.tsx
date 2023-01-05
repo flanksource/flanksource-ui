@@ -61,6 +61,7 @@ type ReactSelectDropdownProps = {
   from: string;
   setTo: (value: string) => void;
   setFrom: (value: string) => void;
+  isComponentDropdown: boolean;
 };
 
 export const ReactSelectDropdown = ({
@@ -81,7 +82,8 @@ export const ReactSelectDropdown = ({
   to,
   from,
   setTo,
-  setFrom
+  setFrom,
+  isComponentDropdown = false
 }: ReactSelectDropdownProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [options, setOptions] = useState<StateOption[]>([]);
@@ -242,12 +244,14 @@ export const ReactSelectDropdown = ({
           />
         ) : (
           <div>
-            <TimeRangePicker
-              style={{ width: "35em", margin: "8px" }}
-              onChange={(...[t1, t2]) => setRange(t1, t2)}
-              from={from}
-              to={to}
-            />
+            {isComponentDropdown ? (
+              <TimeRangePicker
+                style={{ width: "35em", margin: "8px" }}
+                onChange={(...[t1, t2]) => setRange(t1, t2)}
+                from={from}
+                to={to}
+              />
+            ) : null}
             <Select
               autoFocus
               backspaceRemovesValue={false}
@@ -287,7 +291,7 @@ export const ReactSelectDropdown = ({
               menuIsOpen
               onChange={onSelectChange}
               options={options}
-              placeholder={placeholder}
+              // placeholder={placeholder}
               styles={selectStyles}
               tabSelectsValue={false}
               value={value}
