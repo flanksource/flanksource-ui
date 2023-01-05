@@ -62,7 +62,8 @@ function FilterLogsByComponent() {
         ...(selectedComponent.external_id && {
           topologyExternalId: selectedComponent.external_id
         }),
-        ...(selectedComponent.type && { type: selectedComponent.type })
+        ...(selectedComponent.type && { type: selectedComponent.type }),
+        ...{ start: to, end: from }
       });
     }
   }
