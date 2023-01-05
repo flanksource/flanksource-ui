@@ -98,14 +98,14 @@ export function LogsPage() {
         </h1>
       }
       contentClass={`h-full p-6`}
-      extra={
-        <DropdownStandaloneWrapper
-          dropdownElem={<TimeRange name="time-range" />}
-          defaultValue={searchParams.get("start") ?? timeRanges[0].value}
-          paramKey="start"
-          className="w-44 mr-2"
-        />
-      }
+      // extra={
+      //   <DropdownStandaloneWrapper
+      //     dropdownElem={<TimeRange name="time-range" />}
+      //     defaultValue={searchParams.get("start") ?? timeRanges[0].value}
+      //     paramKey="start"
+      //     className="w-44 mr-2"
+      //   />
+      // }
     >
       <div className="flex flex-col space-y-6 h-full">
         <div className="flex flex-row items-center w-full">
