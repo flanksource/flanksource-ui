@@ -62,8 +62,8 @@ function FilterLogsByComponent() {
           topologyExternalId: selectedComponent.external_id
         }),
         ...(selectedComponent.type && { type: selectedComponent.type }),
-        start: to ? "15m" : Date.parse(to ?? to).toString(),
-        end: from ? "15m" : Date.parse(from ?? from).toString()
+        start: to ? Date.parse(to ?? to).toString() : "15m",
+        end: from ? Date.parse(from ?? from).toString() : "15m"
       });
     }
   }
