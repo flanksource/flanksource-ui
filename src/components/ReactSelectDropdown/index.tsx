@@ -243,7 +243,7 @@ export const ReactSelectDropdown = ({
         ) : (
           <div>
             <TimeRangePicker
-              style={{ width: "30em" }}
+              style={{ width: "35em", margin: "8px" }}
               onChange={(...[t1, t2]) => setRange(t1, t2)}
               from={from}
               to={to}
