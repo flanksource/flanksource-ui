@@ -19,6 +19,16 @@ export const schemaResourceTypes = [
     table: "teams",
     api: "incident-commander",
     icon: UserGroupIcon,
+    subNav: [
+      {
+        label: "Spec",
+        value: "spec"
+      },
+      {
+        label: "Members",
+        value: "manageTeam"
+      }
+    ],
     fields: [
       {
         name: "name",
@@ -39,6 +49,12 @@ export const schemaResourceTypes = [
     table: "incident_rules",
     api: "incident-commander",
     icon: AlarmIcon,
+    subNav: [
+      {
+        label: "Spec",
+        value: "spec"
+      }
+    ],
     fields: [
       {
         name: "name",
@@ -55,6 +71,12 @@ export const schemaResourceTypes = [
     table: "config_scrapers",
     api: "config-db",
     icon: SearchInListIcon,
+    subNav: [
+      {
+        label: "Spec",
+        value: "spec"
+      }
+    ],
     fields: [
       {
         name: "name",
@@ -71,6 +93,12 @@ export const schemaResourceTypes = [
     table: "templates",
     api: "canary-checker",
     icon: TopologyIcon,
+    subNav: [
+      {
+        label: "Spec",
+        value: "spec"
+      }
+    ],
     fields: [
       {
         name: "name",
@@ -95,6 +123,12 @@ export const schemaResourceTypes = [
     table: "canaries",
     api: "canary-checker",
     icon: HealthIcon,
+    subNav: [
+      {
+        label: "Spec",
+        value: "spec"
+      }
+    ],
     fields: [
       {
         name: "name",
