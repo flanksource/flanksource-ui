@@ -14,7 +14,8 @@ import { TimeRangePicker } from "../TimeRangePicker";
 import Select, { SingleValue, StylesConfig } from "react-select";
 import { defaultTheme, components } from "react-select";
 import { Avatar } from "../Avatar";
-
+import { Icons } from "../../icons";
+import { Icon } from "../Icon";
 const { colors } = defaultTheme;
 
 export interface StateOption {
@@ -87,6 +88,7 @@ export const ReactSelectDropdown = ({
 }: ReactSelectDropdownProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [options, setOptions] = useState<StateOption[]>([]);
+  const [showDeleted, setShowDeleted] = useState(false);
   const ref = useRef<HTMLDivElement>();
 
   const setRange = (t1: any, t2: any) => {
@@ -140,6 +142,9 @@ export const ReactSelectDropdown = ({
     onChange(typeof value === "string" ? value : value?.value);
   };
 
+  const handleShowDeleted = () => {
+    setShowDeleted(!showDeleted);
+  };
   return (
     <div>
       <Dropdown
@@ -245,12 +250,32 @@ export const ReactSelectDropdown = ({
         ) : (
           <div>
             {isComponentDropdown ? (
-              <TimeRangePicker
-                style={{ width: "35em", margin: "8px" }}
-                onChange={(...[t1, t2]) => setRange(t1, t2)}
-                from={from}
-                to={to}
-              />
+              <div style={{ display: "flex" }}>
+                <div onClick={handleShowDeleted} style={{ cursor: "pointer" }}>
+                  <Svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 40 40"
+                    width="20px"
+                    height="20px"
+                    style={{ margin: "20px" }}
+                  >
+                    <path
+                      fill={showDeleted ? "#FF7F50" : "#D3D3D3"}
+                      stroke="#c74343"
+                      stroke-miterlimit="10"
+                      d="M20,1C9.507,1,1,9.507,1,20s8.507,19,19,19s19-8.507,19-19	S30.493,1,20,1z M6,20c0-7.732,6.268-14,14-14c2.963,0,5.706,0.926,7.968,2.496L8.496,27.968C6.926,25.706,6,22.963,6,20z M20,34	c-2.963,0-5.706-0.926-7.968-2.496l19.472-19.472C33.074,14.294,34,17.037,34,20C34,27.732,27.732,34,20,34z"
+                    />
+                  </Svg>
+                </div>
+                <div>
+                  <TimeRangePicker
+                    style={{ width: "35em", margin: "10px" }}
+                    onChange={(...[t1, t2]) => setRange(t1, t2)}
+                    from={from}
+                    to={to}
+                  />
+                </div>
+              </div>
             ) : null}
             <Select
               autoFocus
