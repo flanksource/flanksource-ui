@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { MdOutlineError } from "react-icons/md";
 import { useSearchParams } from "react-router-dom";
 import { useComponentsQuery } from "../../api/query-hooks";
@@ -15,10 +15,10 @@ export const defaultSelections = {
 
 function FilterLogsByComponent() {
   const [searchParams, setSearchParams] = useSearchParams();
-
   const topologyId = searchParams.get("topologyId");
-
   const { isLoading, data, error } = useComponentsQuery({});
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
 
   const dropDownOptions = useMemo(() => {
     if (data) {
@@ -81,6 +81,10 @@ function FilterLogsByComponent() {
         hideControlBorder
         isLoading={isLoading}
         isDisabled={isLoading}
+        to={to}
+        from={from}
+        setFrom={setFrom}
+        setTo={setTo}
       />
     </div>
   );

@@ -57,6 +57,10 @@ type ReactSelectDropdownProps = {
   hideControlBorder?: boolean;
   isLoading?: boolean;
   isDisabled?: boolean;
+  to: string;
+  from: string;
+  setTo: (value: string) => void;
+  setFrom: (value: string) => void;
 };
 
 export const ReactSelectDropdown = ({
@@ -73,12 +77,14 @@ export const ReactSelectDropdown = ({
   labelClass,
   placeholder = "Search...",
   isLoading = false,
-  isDisabled = false
+  isDisabled = false,
+  to,
+  from,
+  setTo,
+  setFrom
 }: ReactSelectDropdownProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [options, setOptions] = useState<StateOption[]>([]);
-  const [from, setFrom] = useState("");
-  const [to, setTo] = useState("");
   const ref = useRef<HTMLDivElement>();
 
   const setRange = (t1: any, t2: any) => {
