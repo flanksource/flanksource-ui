@@ -138,7 +138,7 @@ export function LogsPage() {
     >
       <div className="flex flex-col space-y-6 h-full">
         <div className="flex flex-row items-center w-full">
-          <FilterLogsByComponent />
+          <FilterLogsByComponent showDeleted={showDeleted} />
           <div className="mx-2 w-80 relative rounded-md shadow-sm">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
               <button type="button" onClick={() => refetch()} className="hover">

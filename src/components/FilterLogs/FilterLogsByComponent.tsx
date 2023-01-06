@@ -13,7 +13,11 @@ export const defaultSelections = {
   }
 };
 
-function FilterLogsByComponent() {
+type FilterLogsByComponentProps = {
+  showDeleted: boolean;
+};
+
+function FilterLogsByComponent({ showDeleted }: FilterLogsByComponentProps) {
   const [searchParams, setSearchParams] = useSearchParams();
   const topologyId = searchParams.get("topologyId");
   const { isLoading, data, error } = useComponentsQuery({});
@@ -28,16 +32,19 @@ function FilterLogsByComponent() {
             icon: <Icon name={component.icon} secondary={component.name} />,
             label: component.name,
             description: component.name,
-            created_at: component.created_at
+            created_at: component.created_at,
+            deleted_at: component.deleted_at || false
           } as StateOption;
         })
         .filter(
           (c) =>
             Date.parse(c.created_at) <= Date.parse(new Date().toISOString())
         )
-        .sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at));
+        .sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at))
+        .filter((c) => showDeleted === !!c.deleted_at);
     }
   }, [data]);
+
   if (error && !data) {
     return (
       <div className="flex space-x-3 items-center">

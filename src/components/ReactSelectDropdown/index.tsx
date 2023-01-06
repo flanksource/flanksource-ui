@@ -24,6 +24,7 @@ export interface StateOption {
   order?: number;
   avatar?: any;
   created_at: string;
+  deleted_at: string;
 }
 
 const selectStyles: StylesConfig<StateOption | string, false> = {
