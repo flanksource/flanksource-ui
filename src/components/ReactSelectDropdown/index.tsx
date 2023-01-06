@@ -10,7 +10,6 @@ import {
   useState
 } from "react";
 import { Controller } from "react-hook-form";
-import { TimeRangePicker } from "../TimeRangePicker";
 import Select, { SingleValue, StylesConfig } from "react-select";
 import { defaultTheme, components } from "react-select";
 import { Avatar } from "../Avatar";
