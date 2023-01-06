@@ -43,8 +43,8 @@ export function LogsPage() {
   const type = searchParams.get("type");
   const externalId = searchParams.get("topologyExternalId");
   const query = searchParams.get("query");
-  const start = searchParams.get("start") ?? timeRanges[0].value;
-  const end = searchParams.get("end") ?? timeRanges[0].value;
+  const start = searchParams.get("Start") ?? timeRanges[0].value;
+  const end = searchParams.get("End") ?? timeRanges[0].value;
   const debouncedQueryValue = useDebouncedValue(query, 500);
   console.log(start, end, "noor");
   const { data: topology } = useQuery(
@@ -74,8 +74,8 @@ export function LogsPage() {
         query: debouncedQueryValue,
         id: externalId,
         type,
-        start,
-        end
+        Start: start,
+        End: end
       };
       const res = await getLogs(queryBody);
       if (res.error) {

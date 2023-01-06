@@ -4,6 +4,7 @@ import { useSearchParams } from "react-router-dom";
 import { useComponentsQuery } from "../../api/query-hooks";
 import { Icon } from "../Icon";
 import { ReactSelectDropdown, StateOption } from "../ReactSelectDropdown";
+import moment from "moment";
 
 export const defaultSelections = {
   none: {
@@ -62,15 +63,15 @@ function FilterLogsByComponent() {
           topologyExternalId: selectedComponent.external_id
         }),
         ...(selectedComponent.type && { type: selectedComponent.type }),
-        start: to
-          ? to.includes("now")
-            ? to
-            : Date.parse(to ?? to).toString()
-          : "15m",
-        end: from
+        Start: from
           ? from.includes("now")
-            ? from
-            : Date.parse(from ?? from).toString()
+            ? from.split("-")[1]
+            : moment(from).format()
+          : "15m",
+        End: to
+          ? to.includes("now")
+            ? moment().format()
+            : moment(to).format()
           : "15m"
       });
     }
