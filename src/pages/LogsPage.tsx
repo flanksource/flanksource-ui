@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { SearchIcon } from "@heroicons/react/solid";
 import { BsGearFill, BsFlower2, BsGridFill, BsStack } from "react-icons/bs";
 import { useSearchParams } from "react-router-dom";
@@ -12,7 +13,6 @@ import { LogsTable } from "../components/Logs/Table/LogsTable";
 import useDebouncedValue from "../hooks/useDebounce";
 import LogItem from "../types/Logs";
 import { getTopologyComponentByID } from "../api/services/topology";
-import { TimeRangePicker } from "../components/TimeRangePicker";
 
 export const logTypes = [
   {
@@ -44,9 +44,12 @@ export function LogsPage() {
   const externalId = searchParams.get("topologyExternalId");
   const query = searchParams.get("query");
   const start = searchParams.get("start") ?? timeRanges[0].value;
-  const end = searchParams.get("end") ?? timeRanges[0].value;
+  const [showDeleted, setShowDeleted] = useState(false);
+  const [showAll, setShowAll] = useState(true);
+  const [showExisting, setShowExisting] = useState(false);
+
   const debouncedQueryValue = useDebouncedValue(query, 500);
-  console.log(start, end, "noor");
+
   const { data: topology } = useQuery(
     ["components", "names", topologyId],
     async () => {
@@ -74,8 +77,7 @@ export function LogsPage() {
         query: debouncedQueryValue,
         id: externalId,
         type,
-        start,
-        end
+        start
       };
       const res = await getLogs(queryBody);
       if (res.error) {
@@ -88,6 +90,31 @@ export function LogsPage() {
     }
   );
 
+  const handleComponentsView = (option: string) => {
+    switch (option) {
+      case "all":
+        setShowAll(true);
+        setShowDeleted(false);
+        setShowExisting(false);
+        return;
+      case "deleted":
+        setShowDeleted(true);
+        setShowAll(false);
+        setShowExisting(false);
+        return;
+      case "existing":
+        setShowExisting(true);
+        setShowDeleted(false);
+        setShowAll(false);
+        return;
+      default:
+        setShowAll(true);
+        setShowDeleted(false);
+        setShowExisting(false);
+        return;
+    }
+  };
+
   return (
     <SearchLayout
       onRefresh={() => refetch()}
@@ -98,18 +125,68 @@ export function LogsPage() {
         </h1>
       }
       contentClass={`h-full p-6`}
-      // extra={
-      //   <DropdownStandaloneWrapper
-      //     dropdownElem={<TimeRange name="time-range" />}
-      //     defaultValue={searchParams.get("start") ?? timeRanges[0].value}
-      //     paramKey="start"
-      //     className="w-44 mr-2"
-      //   />
-      // }
+      extra={
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            columnGap: "1em"
+          }}
+        >
+          <div>
+            <button
+              onClick={() => handleComponentsView("all")}
+              style={{
+                color: showAll ? "#63666A" : "lightgrey",
+                fontWeight: showAll ? "bolder" : "lighter"
+              }}
+              title={"show all components"}
+            >
+              All
+            </button>
+          </div>
+          <div>
+            <button
+              onClick={() => handleComponentsView("deleted")}
+              style={{
+                color: showDeleted ? "#63666A" : "lightgrey",
+                fontWeight: showDeleted ? "bolder" : "lighter"
+              }}
+              title={"show deleted components"}
+            >
+              Deleted
+            </button>
+          </div>
+          <div>
+            <button
+              onClick={() => handleComponentsView("existing")}
+              style={{
+                color: showExisting ? "#63666A" : "lightgrey",
+                fontWeight: showExisting ? "bolder" : "lighter"
+              }}
+              title={"show components not deleted"}
+            >
+              Existing
+            </button>
+          </div>
+
+          <DropdownStandaloneWrapper
+            dropdownElem={<TimeRange name="time-range" />}
+            defaultValue={start ?? "15m"}
+            paramKey="start"
+            className="w-44 mr-2"
+          />
+        </div>
+      }
     >
       <div className="flex flex-col space-y-6 h-full">
         <div className="flex flex-row items-center w-full">
-          <FilterLogsByComponent />
+          <FilterLogsByComponent
+            showDeleted={showDeleted}
+            showAll={showAll}
+            showExisting={showExisting}
+          />
           <div className="mx-2 w-80 relative rounded-md shadow-sm">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
               <button type="button" onClick={() => refetch()} className="hover">

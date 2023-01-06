@@ -64,7 +64,7 @@ export const getCanaries = async (
 };
 
 export const getTopologyComponents = () => {
-  return IncidentCommander.get<TopologyComponentItem[]>(`/component_names`);
+  return IncidentCommander.get<TopologyComponentItem[]>(`/component_names_all`);
 };
 
 export const getTopologyComponentByID = async (topologyID: string) => {

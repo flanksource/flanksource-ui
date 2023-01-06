@@ -332,10 +332,7 @@ import world from "./world.svg";
 import www from "./www.svg";
 import xml from "./xml.svg";
 import yaml from "./yaml.svg";
-import stopIcon from "./stop-icon.svg";
-
 export const Icons = {
-  stopIcon,
   acr: acr,
   "activemq-icon": activemq_icon,
   activemq: activemq,

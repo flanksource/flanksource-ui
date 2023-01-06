@@ -7,6 +7,7 @@ import { ImLifebuoy } from "react-icons/im";
 import { VscJson } from "react-icons/vsc";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import ReactTooltip from "react-tooltip";
+
 import { getUser } from "./api/auth";
 import { Canary } from "./components";
 import { ErrorBoundary } from "./components/ErrorBoundary";
