@@ -4,7 +4,6 @@ import { useSearchParams } from "react-router-dom";
 import { useComponentsQuery } from "../../api/query-hooks";
 import { Icon } from "../Icon";
 import { ReactSelectDropdown, StateOption } from "../ReactSelectDropdown";
-import moment from "moment";
 
 export const defaultSelections = {
   none: {
@@ -18,22 +17,27 @@ function FilterLogsByComponent() {
   const [searchParams, setSearchParams] = useSearchParams();
   const topologyId = searchParams.get("topologyId");
   const { isLoading, data, error } = useComponentsQuery({});
-  const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
 
   const dropDownOptions = useMemo(() => {
     if (data) {
-      return data.map((component) => {
-        return {
-          value: component.id,
-          icon: <Icon name={component.icon} secondary={component.name} />,
-          label: component.name,
-          description: component.name
-        } as StateOption;
-      });
+      return data
+        .map((component) => {
+          return {
+            value: component.id,
+            icon: <Icon name={component.icon} secondary={component.name} />,
+            label: component.name,
+            description: component.name,
+            created_at: component.created_at
+          } as StateOption;
+        })
+        .filter(
+          (c) =>
+            Date.parse(c.created_at) <= Date.parse(new Date().toISOString())
+        )
+        .sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at));
     }
   }, [data]);
-
   if (error && !data) {
     return (
       <div className="flex space-x-3 items-center">
@@ -62,21 +66,11 @@ function FilterLogsByComponent() {
         ...(selectedComponent.external_id && {
           topologyExternalId: selectedComponent.external_id
         }),
-        ...(selectedComponent.type && { type: selectedComponent.type }),
-        Start: from
-          ? from.includes("now")
-            ? from.split("-")[1]
-            : moment(from).format()
-          : "15m",
-        End: to
-          ? to.includes("now")
-            ? moment().format()
-            : moment(to).format()
-          : "15m"
+        ...(selectedComponent.type && { type: selectedComponent.type })
       });
     }
   }
-
+  console.log("data", dropDownOptions);
   return (
     <div className="flex flex-row items-center space-x-3">
       <ReactSelectDropdown
@@ -92,10 +86,7 @@ function FilterLogsByComponent() {
         isLoading={isLoading}
         isDisabled={isLoading}
         to={to}
-        from={from}
-        setFrom={setFrom}
         setTo={setTo}
-        isComponentDropdown={true}
       />
     </div>
   );

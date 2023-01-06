@@ -26,6 +26,7 @@ export interface StateOption {
   description?: string;
   order?: number;
   avatar?: any;
+  created_at: string;
 }
 
 const selectStyles: StylesConfig<StateOption | string, false> = {
@@ -83,17 +84,15 @@ export const ReactSelectDropdown = ({
   to,
   from,
   setTo,
-  setFrom,
-  isComponentDropdown = false
+  setFrom
 }: ReactSelectDropdownProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [options, setOptions] = useState<StateOption[]>([]);
   const [showDeleted, setShowDeleted] = useState(false);
   const ref = useRef<HTMLDivElement>();
 
-  const setRange = (t1: any, t2: any) => {
-    setFrom(t1);
-    setTo(t2);
+  const setRange = (t1: any) => {
+    setTo(t1);
     return;
   };
 
@@ -234,6 +233,7 @@ export const ReactSelectDropdown = ({
                   onChange={(e) => {
                     onChangeControlled(e.value);
                     onSelectChange(e.value);
+                    setRange(e.value);
                   }}
                   options={options}
                   placeholder={placeholder}
@@ -248,83 +248,53 @@ export const ReactSelectDropdown = ({
             }}
           />
         ) : (
-          <div>
-            {isComponentDropdown ? (
-              <div style={{ display: "flex" }}>
-                <div onClick={handleShowDeleted} style={{ cursor: "pointer" }}>
-                  <Svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 40 40"
-                    width="20px"
-                    height="20px"
-                    style={{ margin: "20px" }}
-                  >
-                    <path
-                      fill={showDeleted ? "#FF7F50" : "#D3D3D3"}
-                      stroke="#c74343"
-                      stroke-miterlimit="10"
-                      d="M20,1C9.507,1,1,9.507,1,20s8.507,19,19,19s19-8.507,19-19	S30.493,1,20,1z M6,20c0-7.732,6.268-14,14-14c2.963,0,5.706,0.926,7.968,2.496L8.496,27.968C6.926,25.706,6,22.963,6,20z M20,34	c-2.963,0-5.706-0.926-7.968-2.496l19.472-19.472C33.074,14.294,34,17.037,34,20C34,27.732,27.732,34,20,34z"
-                    />
-                  </Svg>
-                </div>
-                <div>
-                  <TimeRangePicker
-                    style={{ width: "35em", margin: "10px" }}
-                    onChange={(...[t1, t2]) => setRange(t1, t2)}
-                    from={from}
-                    to={to}
-                  />
-                </div>
-              </div>
-            ) : null}
-            <Select
-              autoFocus
-              backspaceRemovesValue={false}
-              components={{
-                DropdownIndicator,
-                IndicatorSeparator: null,
-                Option: (props: any) => {
-                  return (
-                    <components.Option {...props}>
-                      <div
-                        className="flex items-center"
-                        title={props.data.description}
-                      >
-                        {props.data.avatar && (
-                          <Avatar user={props.data} size="sm" />
-                        )}
-                        {props.data.icon && <div>{props.data.icon}</div>}
+          <Select
+            autoFocus
+            backspaceRemovesValue={false}
+            components={{
+              DropdownIndicator,
+              IndicatorSeparator: null,
+              Option: (props: any) => {
+                return (
+                  <components.Option {...props}>
+                    <div
+                      className="flex items-center"
+                      title={props.data.description}
+                    >
+                      {props.data.avatar && (
+                        <Avatar user={props.data} size="sm" />
+                      )}
+                      {props.data.icon && <div>{props.data.icon}</div>}
 
-                        <div
-                          className={clsx(
-                            props.data.value === value
-                              ? "font-semibold"
-                              : "font-normal",
-                            "ml-2 block truncate"
-                          )}
-                        >
-                          {props.data.description}
-                        </div>
+                      <div
+                        className={clsx(
+                          props.data.value === value
+                            ? "font-semibold"
+                            : "font-normal",
+                          "ml-2 block truncate"
+                        )}
+                      >
+                        {props.data.description}
                       </div>
-                    </components.Option>
-                  );
-                }
-              }}
-              controlShouldRenderValue={false}
-              hideSelectedOptions={false}
-              isClearable={false}
-              menuIsOpen
-              onChange={onSelectChange}
-              options={options}
-              // placeholder={placeholder}
-              styles={selectStyles}
-              tabSelectsValue={false}
-              value={value}
-              getOptionValue={(option: any) => option.value}
-              isLoading={isLoading}
-              isDisabled={isDisabled}
-            />
-          </div>
+                    </div>
+                  </components.Option>
+                );
+              }
+            }}
+            controlShouldRenderValue={false}
+            hideSelectedOptions={false}
+            isClearable={false}
+            menuIsOpen
+            onChange={onSelectChange}
+            options={options}
+            placeholder={placeholder}
+            styles={selectStyles}
+            tabSelectsValue={false}
+            value={value}
+            getOptionValue={(option: any) => option.value}
+            isLoading={isLoading}
+            isDisabled={isDisabled}
+          />
         )}
       </Dropdown>
     </div>

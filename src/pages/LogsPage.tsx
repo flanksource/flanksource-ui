@@ -43,10 +43,8 @@ export function LogsPage() {
   const type = searchParams.get("type");
   const externalId = searchParams.get("topologyExternalId");
   const query = searchParams.get("query");
-  const start = searchParams.get("Start") ?? timeRanges[0].value;
-  const end = searchParams.get("End") ?? timeRanges[0].value;
+  const start = searchParams.get("start") ?? timeRanges[0].value;
   const debouncedQueryValue = useDebouncedValue(query, 500);
-  console.log(start, end, "noor");
   const { data: topology } = useQuery(
     ["components", "names", topologyId],
     async () => {
@@ -74,8 +72,7 @@ export function LogsPage() {
         query: debouncedQueryValue,
         id: externalId,
         type,
-        Start: start,
-        End: end
+        start
       };
       const res = await getLogs(queryBody);
       if (res.error) {
@@ -98,14 +95,14 @@ export function LogsPage() {
         </h1>
       }
       contentClass={`h-full p-6`}
-      // extra={
-      //   <DropdownStandaloneWrapper
-      //     dropdownElem={<TimeRange name="time-range" />}
-      //     defaultValue={searchParams.get("start") ?? timeRanges[0].value}
-      //     paramKey="start"
-      //     className="w-44 mr-2"
-      //   />
-      // }
+      extra={
+        <DropdownStandaloneWrapper
+          dropdownElem={<TimeRange name="time-range" />}
+          defaultValue={start ?? "15m"}
+          paramKey="start"
+          className="w-44 mr-2"
+        />
+      }
     >
       <div className="flex flex-col space-y-6 h-full">
         <div className="flex flex-row items-center w-full">
