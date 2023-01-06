@@ -5,6 +5,8 @@ import {
   getAllConfigsMatchingQuery,
   getConfig,
   getConfigChange,
+  getConfigInsight,
+  getConfigInsights,
   getConfigName
 } from "../services/configs";
 import { getHypothesisResponse } from "../services/hypothesis";
@@ -282,6 +284,29 @@ export function useGetComponentsTeamQuery(
     },
     {
       ...options
+    }
+  );
+}
+
+export function useGetConfigInsights<T>(configId: string) {
+  return useQuery(
+    ["configs", "insights", configId],
+    () => getConfigInsights<T>(configId),
+    {
+      enabled: !!configId
+    }
+  );
+}
+
+export function useGetConfigInsight<T>(
+  configId: string,
+  configInsightId: string
+) {
+  return useQuery(
+    ["configs", "insights", configId, configInsightId],
+    () => getConfigInsight<T>(configId, configInsightId),
+    {
+      enabled: !!configId && !!configInsightId
     }
   );
 }

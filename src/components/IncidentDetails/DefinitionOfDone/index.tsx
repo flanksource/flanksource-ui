@@ -45,7 +45,7 @@ function AddDefinitionOfDone({ onClick, ...rest }: AddDefinitionOfDoneProps) {
             ></path>
           </svg>
         </span>
-        <span className="ml-3 text-sm font-medium text-blue-600 group-hover:text-blue-500">
+        <span className="ml-2 text-sm font-medium text-blue-600 group-hover:text-blue-500">
           Add definition of done
         </span>
       </button>
@@ -143,7 +143,7 @@ export function DefinitionOfDone({ incidentId }: DefinitionOfDoneProps) {
                   ) : (
                     <BsHourglassSplit className="mr-1" />
                   )}
-                  <div className="min-w-0 flex-1 text-sm">
+                  <div className="min-w-0 flex-1 text-sm ml-2">
                     <EvidenceView evidence={evidence} size={size} />
                   </div>
                   <div className="flex items-center">

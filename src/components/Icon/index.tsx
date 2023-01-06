@@ -104,8 +104,6 @@ export const Icon: React.FC<IconProps> = memo(
     icon,
     ...props
   }) => {
-    console.log("Icon 1", name);
-
     if (isEmpty(name) && isEmpty(secondary)) {
       return null;
     }
@@ -114,8 +112,6 @@ export const Icon: React.FC<IconProps> = memo(
       const Icon = reactIcons[name as keyof typeof reactIcons];
       return <Icon className={`inline-block object-center ${className}`} />;
     }
-
-    console.log("Icon", name);
 
     if (name && (name.startsWith("http:") || name.startsWith("https://"))) {
       icon = name;

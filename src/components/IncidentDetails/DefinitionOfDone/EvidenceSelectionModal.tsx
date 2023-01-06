@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import { useState } from "react";
 import { Evidence } from "../../../api/services/evidence";
+import { ViewType } from "../../../types";
 import { EvidenceItem } from "../../Hypothesis/EvidenceSection";
 import { InfoMessage } from "../../InfoMessage";
 import { Modal } from "../../Modal";
@@ -83,7 +84,10 @@ export default function EvidenceSelectionModal({
                         {evidence.description}
                       </div>
                     )}
-                    <EvidenceItem evidence={evidence} />
+                    <EvidenceItem
+                      evidence={evidence}
+                      viewType={ViewType.detailed}
+                    />
                   </div>
                 </div>
               );

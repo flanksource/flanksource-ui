@@ -32,7 +32,7 @@ interface Props {
   title?: string;
   config_id?: string;
   config_change_id?: string;
-  config_analysis_d?: string;
+  config_analysis_id?: string;
   component_id?: string;
   check_id?: string;
   disabled?: boolean;
@@ -321,6 +321,7 @@ export function AttachEvidenceDialog({
       .finally(() => {
         setIsSubmitting(false);
         onClose();
+        reset();
       });
   };
 
