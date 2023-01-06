@@ -14,8 +14,6 @@ import { TimeRangePicker } from "../TimeRangePicker";
 import Select, { SingleValue, StylesConfig } from "react-select";
 import { defaultTheme, components } from "react-select";
 import { Avatar } from "../Avatar";
-import { Icons } from "../../icons";
-import { Icon } from "../Icon";
 const { colors } = defaultTheme;
 
 export interface StateOption {
@@ -88,7 +86,6 @@ export const ReactSelectDropdown = ({
 }: ReactSelectDropdownProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [options, setOptions] = useState<StateOption[]>([]);
-  const [showDeleted, setShowDeleted] = useState(false);
   const ref = useRef<HTMLDivElement>();
 
   const setRange = (t1: any) => {
@@ -141,9 +138,6 @@ export const ReactSelectDropdown = ({
     onChange(typeof value === "string" ? value : value?.value);
   };
 
-  const handleShowDeleted = () => {
-    setShowDeleted(!showDeleted);
-  };
   return (
     <div>
       <Dropdown

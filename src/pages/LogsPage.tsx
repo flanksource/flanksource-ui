@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { SearchIcon } from "@heroicons/react/solid";
 import { BsGearFill, BsFlower2, BsGridFill, BsStack } from "react-icons/bs";
 import { useSearchParams } from "react-router-dom";
@@ -13,7 +14,8 @@ import useDebouncedValue from "../hooks/useDebounce";
 import LogItem from "../types/Logs";
 import { getTopologyComponentByID } from "../api/services/topology";
 import { TimeRangePicker } from "../components/TimeRangePicker";
-
+import { Icons } from "../../icons";
+import { Icon } from "../Icon";
 export const logTypes = [
   {
     icon: <BsGridFill />,
@@ -44,6 +46,8 @@ export function LogsPage() {
   const externalId = searchParams.get("topologyExternalId");
   const query = searchParams.get("query");
   const start = searchParams.get("start") ?? timeRanges[0].value;
+  const [showDeleted, setShowDeleted] = useState(false);
+
   const debouncedQueryValue = useDebouncedValue(query, 500);
   const { data: topology } = useQuery(
     ["components", "names", topologyId],
@@ -85,6 +89,10 @@ export function LogsPage() {
     }
   );
 
+  const handleShowDeleted = () => {
+    setShowDeleted(!showDeleted);
+  };
+
   return (
     <SearchLayout
       onRefresh={() => refetch()}
@@ -96,12 +104,35 @@ export function LogsPage() {
       }
       contentClass={`h-full p-6`}
       extra={
-        <DropdownStandaloneWrapper
-          dropdownElem={<TimeRange name="time-range" />}
-          defaultValue={start ?? "15m"}
-          paramKey="start"
-          className="w-44 mr-2"
-        />
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            columnGap: "1em"
+          }}
+        >
+          <div onClick={handleShowDeleted} style={{ cursor: "pointer" }}>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 40 40"
+              width="20px"
+              height="20px"
+            >
+              <path
+                fill={showDeleted ? "#f78f8f" : "#D3D3D3"}
+                stroke="#c74343"
+                stroke-miterlimit="10"
+                d="M20,1C9.507,1,1,9.507,1,20s8.507,19,19,19s19-8.507,19-19	S30.493,1,20,1z M6,20c0-7.732,6.268-14,14-14c2.963,0,5.706,0.926,7.968,2.496L8.496,27.968C6.926,25.706,6,22.963,6,20z M20,34	c-2.963,0-5.706-0.926-7.968-2.496l19.472-19.472C33.074,14.294,34,17.037,34,20C34,27.732,27.732,34,20,34z"
+              />
+            </svg>
+          </div>
+          <DropdownStandaloneWrapper
+            dropdownElem={<TimeRange name="time-range" />}
+            defaultValue={start ?? "15m"}
+            paramKey="start"
+            className="w-44 mr-2"
+          />
+        </div>
       }
     >
       <div className="flex flex-col space-y-6 h-full">
