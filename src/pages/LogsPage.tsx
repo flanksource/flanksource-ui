@@ -47,6 +47,8 @@ export function LogsPage() {
   const query = searchParams.get("query");
   const start = searchParams.get("start") ?? timeRanges[0].value;
   const [showDeleted, setShowDeleted] = useState(false);
+  const [showAll, setShowAll] = useState(true);
+  const [showExisting, setShowExisting] = useState(false);
 
   const debouncedQueryValue = useDebouncedValue(query, 500);
   const { data: topology } = useQuery(
@@ -89,8 +91,29 @@ export function LogsPage() {
     }
   );
 
-  const handleShowDeleted = () => {
-    setShowDeleted(!showDeleted);
+  const handleComponentsView = (option: string) => {
+    switch (option) {
+      case "all":
+        setShowAll(true);
+        setShowDeleted(false);
+        setShowExisting(false);
+        return;
+      case "deleted":
+        setShowDeleted(true);
+        setShowAll(false);
+        setShowExisting(false);
+        return;
+      case "existing":
+        setShowExisting(true);
+        setShowDeleted(false);
+        setShowAll(false);
+        return;
+      default:
+        setShowAll(true);
+        setShowDeleted(false);
+        setShowExisting(false);
+        return;
+    }
   };
 
   return (
@@ -112,21 +135,43 @@ export function LogsPage() {
             columnGap: "1em"
           }}
         >
-          <div onClick={handleShowDeleted} style={{ cursor: "pointer" }}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 40 40"
-              width="20px"
-              height="20px"
+          <div>
+            <button
+              onClick={() => handleComponentsView("all")}
+              style={{
+                color: showAll ? "#63666A" : "lightgrey",
+                fontWeight: showAll ? "bolder" : "lighter"
+              }}
+              title={"show all components"}
             >
-              <path
-                fill={showDeleted ? "#f78f8f" : "#D3D3D3"}
-                stroke={showDeleted ? "#f78f8f" : "#D3D3D3"}
-                strokeMiterlimit="10"
-                d="M20,1C9.507,1,1,9.507,1,20s8.507,19,19,19s19-8.507,19-19	S30.493,1,20,1z M6,20c0-7.732,6.268-14,14-14c2.963,0,5.706,0.926,7.968,2.496L8.496,27.968C6.926,25.706,6,22.963,6,20z M20,34	c-2.963,0-5.706-0.926-7.968-2.496l19.472-19.472C33.074,14.294,34,17.037,34,20C34,27.732,27.732,34,20,34z"
-              />
-            </svg>
+              All
+            </button>
           </div>
+          <div>
+            <button
+              onClick={() => handleComponentsView("deleted")}
+              style={{
+                color: showDeleted ? "#63666A" : "lightgrey",
+                fontWeight: showDeleted ? "bolder" : "lighter"
+              }}
+              title={"show deleted components"}
+            >
+              Deleted
+            </button>
+          </div>
+          <div>
+            <button
+              onClick={() => handleComponentsView("existing")}
+              style={{
+                color: showExisting ? "#63666A" : "lightgrey",
+                fontWeight: showExisting ? "bolder" : "lighter"
+              }}
+              title={"show components not deleted"}
+            >
+              Existing
+            </button>
+          </div>
+
           <DropdownStandaloneWrapper
             dropdownElem={<TimeRange name="time-range" />}
             defaultValue={start ?? "15m"}
@@ -138,7 +183,11 @@ export function LogsPage() {
     >
       <div className="flex flex-col space-y-6 h-full">
         <div className="flex flex-row items-center w-full">
-          <FilterLogsByComponent showDeleted={showDeleted} />
+          <FilterLogsByComponent
+            showDeleted={showDeleted}
+            showAll={showAll}
+            showExisting={showExisting}
+          />
           <div className="mx-2 w-80 relative rounded-md shadow-sm">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
               <button type="button" onClick={() => refetch()} className="hover">

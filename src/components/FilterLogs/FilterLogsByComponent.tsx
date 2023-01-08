@@ -15,9 +15,15 @@ export const defaultSelections = {
 
 type FilterLogsByComponentProps = {
   showDeleted: boolean;
+  showAll: boolean;
+  showExisting: boolean;
 };
 
-function FilterLogsByComponent({ showDeleted }: FilterLogsByComponentProps) {
+function FilterLogsByComponent({
+  showDeleted,
+  showAll,
+  showExisting
+}: FilterLogsByComponentProps) {
   const [searchParams, setSearchParams] = useSearchParams();
   const topologyId = searchParams.get("topologyId");
   const { isLoading, data, error } = useComponentsQuery({});
@@ -41,9 +47,17 @@ function FilterLogsByComponent({ showDeleted }: FilterLogsByComponentProps) {
             Date.parse(c.created_at) <= Date.parse(new Date().toISOString())
         )
         .sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at))
-        .filter((c) => showDeleted === !!c.deleted_at);
+        .filter((c) =>
+          showAll
+            ? true
+            : showDeleted
+            ? !!c.deleted_at === true
+            : showExisting
+            ? !!c.deleted_at === false
+            : true
+        );
     }
-  }, [data]);
+  }, [data, showDeleted, showExisting, showAll]);
 
   if (error && !data) {
     return (
