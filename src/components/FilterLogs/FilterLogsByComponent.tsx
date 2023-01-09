@@ -13,50 +13,25 @@ export const defaultSelections = {
   }
 };
 
-type FilterLogsByComponentProps = {
-  showDeleted: boolean;
-  showAll: boolean;
-  showExisting: boolean;
-};
-
-function FilterLogsByComponent({
-  showDeleted,
-  showAll,
-  showExisting
-}: FilterLogsByComponentProps) {
+function FilterLogsByComponent() {
   const [searchParams, setSearchParams] = useSearchParams();
   const topologyId = searchParams.get("topologyId");
   const { isLoading, data, error } = useComponentsQuery({});
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
 
   const dropDownOptions = useMemo(() => {
     if (data) {
-      return data
-        .map((component) => {
-          return {
-            value: component.id,
-            icon: <Icon name={component.icon} secondary={component.name} />,
-            label: component.name,
-            description: component.name,
-            created_at: component.created_at,
-            deleted_at: component.deleted_at || false
-          } as StateOption;
-        })
-        .filter(
-          (c) =>
-            Date.parse(c.created_at) <= Date.parse(new Date().toISOString())
-        )
-        .sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at))
-        .filter((c) =>
-          showAll
-            ? true
-            : showDeleted
-            ? !!c.deleted_at === true
-            : showExisting
-            ? !!c.deleted_at === false
-            : true
-        );
+      return data.map((component) => {
+        return {
+          value: component.id,
+          icon: <Icon name={component.icon} secondary={component.name} />,
+          label: component.name,
+          description: component.name
+        } as StateOption;
+      });
     }
-  }, [data, showDeleted, showExisting, showAll]);
+  }, [data]);
 
   if (error && !data) {
     return (
@@ -86,10 +61,21 @@ function FilterLogsByComponent({
         ...(selectedComponent.external_id && {
           topologyExternalId: selectedComponent.external_id
         }),
-        ...(selectedComponent.type && { type: selectedComponent.type })
+        ...(selectedComponent.type && { type: selectedComponent.type }),
+        start: to
+          ? to.includes("now")
+            ? to
+            : Date.parse(to ?? to).toString()
+          : "15m",
+        end: from
+          ? from.includes("now")
+            ? from
+            : Date.parse(from ?? from).toString()
+          : "15m"
       });
     }
   }
+
   return (
     <div className="flex flex-row items-center space-x-3">
       <ReactSelectDropdown
@@ -104,6 +90,11 @@ function FilterLogsByComponent({
         hideControlBorder
         isLoading={isLoading}
         isDisabled={isLoading}
+        to={to}
+        from={from}
+        setFrom={setFrom}
+        setTo={setTo}
+        isComponentDropdown={true}
       />
     </div>
   );

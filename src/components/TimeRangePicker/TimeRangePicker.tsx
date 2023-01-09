@@ -3,7 +3,7 @@ import { FiClock } from "react-icons/fi";
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
 import clsx from "clsx";
 import { TimeRangePickerBody } from "./TimeRangePickerBody";
-import "./index.css";
+import styles from "./index.module.css";
 import { createDisplayValue } from "./helpers";
 import { RangeOption } from "./rangeOptions";
 
