@@ -247,7 +247,7 @@ export const ReactSelectDropdown = ({
                     )}
                     {props.data.icon && <div>{props.data.icon}</div>}
 
-                    <div
+                    <span
                       className={clsx(
                         props.data.value === value
                           ? "font-semibold"
@@ -256,7 +256,7 @@ export const ReactSelectDropdown = ({
                       )}
                     >
                       {props.data.description}
-                    </div>
+                    </span>
                   </div>
                 </components.Option>
               );
