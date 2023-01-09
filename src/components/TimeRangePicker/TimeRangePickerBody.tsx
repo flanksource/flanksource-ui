@@ -143,11 +143,7 @@ const TimeRangePickerBodyFC = ({
     <div
       className={clsx(
         "absolute right-0 mt-2 flex cursor-auto w-full max-h-96 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50 shadow-lg shadow-gray-200",
-        {
-          "invisible opacity-0": !isOpen,
-          "right-0": pickerLeft > 600,
-          "z-index": 10
-        }
+        { "invisible opacity-0": !isOpen, "right-0": pickerLeft > 600 }
       )}
     >
       <div
