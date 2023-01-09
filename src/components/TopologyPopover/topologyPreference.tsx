@@ -7,6 +7,7 @@ import { useOnMouseActivity } from "../../hooks/useMouseActivity";
 import { Size } from "../../types";
 import { Toggle } from "../Toggle";
 import { useSearchParams } from "react-router-dom";
+import { LegacyRef } from "react";
 
 export function getCardWidth() {
   let value: any = localStorage.getItem("topology_card_width");
@@ -29,7 +30,7 @@ export const TopologyPreference = ({
   setCardWidth
 }: {
   title?: string;
-  cardSize: Size;
+  cardSize: Size | string;
   setCardWidth: (width: string) => void;
 }) => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -44,7 +45,7 @@ export const TopologyPreference = ({
     searchParams.get("showHiddenComponents") !== "no";
 
   return (
-    <div ref={popoverRef}>
+    <div ref={popoverRef as LegacyRef<HTMLDivElement>}>
       <FaCog
         className="content-center w-6 h-6 mt-1 ml-4 cursor-pointer md:mt-0"
         onClick={() => setIsPopoverActive((val) => !val)}
