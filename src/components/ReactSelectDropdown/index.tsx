@@ -10,9 +10,11 @@ import {
   useState
 } from "react";
 import { Controller } from "react-hook-form";
+
 import Select, { SingleValue, StylesConfig } from "react-select";
 import { defaultTheme, components } from "react-select";
 import { Avatar } from "../Avatar";
+
 const { colors } = defaultTheme;
 
 export interface StateOption {
@@ -125,159 +127,157 @@ export const ReactSelectDropdown = ({
   };
 
   return (
-    <div>
-      <Dropdown
-        isOpen={isOpen}
-        onClose={toggleOpen}
-        inputRef={ref}
-        className={dropDownClassNames}
-        target={
-          <div className={containerClassName}>
-            {label && (
-              <label
-                className={
-                  labelClass
-                    ? labelClass
-                    : "text-sm font-medium text-gray-700 block"
-                }
-              >
-                {label}
-              </label>
-            )}
-            <div
-              className={clsx(
-                `relative cursor-pointer h-full pl-3 rounded-md shadow-sm pr-8 py-2 text-left border border-gray-300 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm
+    <Dropdown
+      isOpen={isOpen}
+      onClose={toggleOpen}
+      inputRef={ref}
+      className={dropDownClassNames}
+      target={
+        <div className={containerClassName}>
+          {label && (
+            <label
+              className={
+                labelClass
+                  ? labelClass
+                  : "text-sm font-medium text-gray-700 block"
+              }
+            >
+              {label}
+            </label>
+          )}
+          <div
+            className={clsx(
+              `relative cursor-pointer h-full pl-3 rounded-md shadow-sm pr-8 py-2 text-left border border-gray-300 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm
                 ${SelectedOption?.id === "_empty" ? "text-gray-400" : ""}
               `,
-                className
+              className
+            )}
+            onClick={toggleOpen}
+          >
+            <div className="flex space-x-2 items-center truncate w-full">
+              {prefix && (
+                <div className="flex flex-col text-gray-600"> {prefix} </div>
               )}
-              onClick={toggleOpen}
-            >
-              <div className="flex space-x-2 items-center truncate w-full">
-                {prefix && (
-                  <div className="flex flex-col text-gray-600"> {prefix} </div>
-                )}
-                <div className="flex space-x-1 items-center">
-                  {SelectedOption?.icon && <div>{SelectedOption.icon}</div>}
-                  <span className="block">{SelectedOption?.description}</span>
-                </div>
+              <div className="flex space-x-1 items-center">
+                {SelectedOption?.icon && <div>{SelectedOption.icon}</div>}
+                <span className="block">{SelectedOption?.description}</span>
               </div>
-              <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                <ChevronDown className="h-5 w-5 text-gray-400" />
-              </span>
             </div>
+            <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+              <ChevronDown className="h-5 w-5 text-gray-400" />
+            </span>
           </div>
-        }
-      >
-        {control ? (
-          <Controller
-            control={control}
-            name={name}
-            render={({ field }) => {
-              const { onChange: onChangeControlled, value: valueControlled } =
-                field;
-              return (
-                <Select
-                  autoFocus
-                  backspaceRemovesValue={false}
-                  components={{
-                    DropdownIndicator,
-                    IndicatorSeparator: null,
-                    Option: (props: any) => {
-                      return (
-                        <components.Option {...props}>
-                          <div className="flex items-center">
-                            {props.data.avatar && (
-                              <Avatar user={props.data} size="sm" />
+        </div>
+      }
+    >
+      {control ? (
+        <Controller
+          control={control}
+          name={name}
+          render={({ field }) => {
+            const { onChange: onChangeControlled, value: valueControlled } =
+              field;
+            return (
+              <Select
+                autoFocus
+                backspaceRemovesValue={false}
+                components={{
+                  DropdownIndicator,
+                  IndicatorSeparator: null,
+                  Option: (props: any) => {
+                    return (
+                      <components.Option {...props}>
+                        <div className="flex items-center">
+                          {props.data.avatar && (
+                            <Avatar user={props.data} size="sm" />
+                          )}
+                          {props.data.icon && <div>{props.data.icon}</div>}
+                          <span
+                            className={clsx(
+                              props.data.value === value
+                                ? "font-semibold"
+                                : "font-normal",
+                              "ml-2 block truncate"
                             )}
-                            {props.data.icon && <div>{props.data.icon}</div>}
-                            <span
-                              className={clsx(
-                                props.data.value === value
-                                  ? "font-semibold"
-                                  : "font-normal",
-                                "ml-2 block truncate"
-                              )}
-                            >
-                              {props.data.description}
-                            </span>
-                          </div>
-                        </components.Option>
-                      );
-                    }
-                  }}
-                  controlShouldRenderValue={false}
-                  hideSelectedOptions={false}
-                  isClearable={false}
-                  menuIsOpen
-                  onChange={(e) => {
-                    onChangeControlled(e.value);
-                    onSelectChange(e.value);
-                    setRange(e.value);
-                  }}
-                  options={options}
-                  placeholder={placeholder}
-                  styles={selectStyles}
-                  tabSelectsValue={false}
-                  value={valueControlled}
-                  getOptionValue={(option: any) => option.value}
-                  isLoading={isLoading}
-                  isDisabled={isLoading}
-                />
-              );
-            }}
-          />
-        ) : (
-          <Select
-            autoFocus
-            backspaceRemovesValue={false}
-            components={{
-              DropdownIndicator,
-              IndicatorSeparator: null,
-              Option: (props: any) => {
-                return (
-                  <components.Option {...props}>
-                    <div
-                      className="flex items-center"
-                      title={props.data.description}
-                    >
-                      {props.data.avatar && (
-                        <Avatar user={props.data} size="sm" />
-                      )}
-                      {props.data.icon && <div>{props.data.icon}</div>}
+                          >
+                            {props.data.description}
+                          </span>
+                        </div>
+                      </components.Option>
+                    );
+                  }
+                }}
+                controlShouldRenderValue={false}
+                hideSelectedOptions={false}
+                isClearable={false}
+                menuIsOpen
+                onChange={(e) => {
+                  onChangeControlled(e.value);
+                  onSelectChange(e.value);
+                  setRange(e.value);
+                }}
+                options={options}
+                placeholder={placeholder}
+                styles={selectStyles}
+                tabSelectsValue={false}
+                value={valueControlled}
+                getOptionValue={(option: any) => option.value}
+                isLoading={isLoading}
+                isDisabled={isLoading}
+              />
+            );
+          }}
+        />
+      ) : (
+        <Select
+          autoFocus
+          backspaceRemovesValue={false}
+          components={{
+            DropdownIndicator,
+            IndicatorSeparator: null,
+            Option: (props: any) => {
+              return (
+                <components.Option {...props}>
+                  <div
+                    className="flex items-center"
+                    title={props.data.description}
+                  >
+                    {props.data.avatar && (
+                      <Avatar user={props.data} size="sm" />
+                    )}
+                    {props.data.icon && <div>{props.data.icon}</div>}
 
-                      <div
-                        className={clsx(
-                          props.data.value === value
-                            ? "font-semibold"
-                            : "font-normal",
-                          "ml-2 block truncate"
-                        )}
-                      >
-                        {props.data.description}
-                      </div>
+                    <div
+                      className={clsx(
+                        props.data.value === value
+                          ? "font-semibold"
+                          : "font-normal",
+                        "ml-2 block truncate"
+                      )}
+                    >
+                      {props.data.description}
                     </div>
-                  </components.Option>
-                );
-              }
-            }}
-            controlShouldRenderValue={false}
-            hideSelectedOptions={false}
-            isClearable={false}
-            menuIsOpen
-            onChange={onSelectChange}
-            options={options}
-            placeholder={placeholder}
-            styles={selectStyles}
-            tabSelectsValue={false}
-            value={value}
-            getOptionValue={(option: any) => option.value}
-            isLoading={isLoading}
-            isDisabled={isDisabled}
-          />
-        )}
-      </Dropdown>
-    </div>
+                  </div>
+                </components.Option>
+              );
+            }
+          }}
+          controlShouldRenderValue={false}
+          hideSelectedOptions={false}
+          isClearable={false}
+          menuIsOpen
+          onChange={onSelectChange}
+          options={options}
+          placeholder={placeholder}
+          styles={selectStyles}
+          tabSelectsValue={false}
+          value={value}
+          getOptionValue={(option: any) => option.value}
+          isLoading={isLoading}
+          isDisabled={isDisabled}
+        />
+      )}
+    </Dropdown>
   );
 };
 
@@ -286,18 +286,16 @@ export const ReactSelectDropdown = ({
 const Menu = (props: JSX.IntrinsicElements["div"]) => {
   const shadow = "hsla(218, 50%, 10%, 0.1)";
   return (
-    <div>
-      <div
-        css={{
-          backgroundColor: "white",
-          borderRadius: 4,
-          boxShadow: `0 0 0 1px ${shadow}, 0 4px 11px ${shadow}`,
-          marginTop: 8,
-          position: "absolute"
-        }}
-        {...props}
-      />
-    </div>
+    <div
+      css={{
+        backgroundColor: "white",
+        borderRadius: 4,
+        boxShadow: `0 0 0 1px ${shadow}, 0 4px 11px ${shadow}`,
+        marginTop: 8,
+        position: "absolute"
+      }}
+      {...props}
+    />
   );
 };
 const Blanket = (props: JSX.IntrinsicElements["div"]) => (
@@ -333,13 +331,9 @@ const Dropdown: FunctionComponent<DropdownProps> = ({
   <div ref={inputRef as LegacyRef<HTMLDivElement>} className="relative">
     {target}
     {isOpen ? (
-      <div>
-        <Menu
-          className={`absolute bg-white z-[99] drop-shadow-md ${className}`}
-        >
-          {children}
-        </Menu>
-      </div>
+      <Menu className={`absolute bg-white z-[99] drop-shadow-md ${className}`}>
+        {children}
+      </Menu>
     ) : null}
     {isOpen ? <Blanket onClick={onClose} /> : null}
   </div>
