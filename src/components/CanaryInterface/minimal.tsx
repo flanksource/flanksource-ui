@@ -11,6 +11,7 @@ import {
 import { CanarySorter } from "../Canary/data";
 import { useSearchParams } from "react-router-dom";
 import { HealthCheck } from "../../types/healthChecks";
+import { decodeUrlSearchParams } from "../Canary/url";
 
 type Props = {
   checks?: HealthCheck[];
@@ -37,7 +38,7 @@ const CanaryInterfaceMinimalFC = ({
       labels: urlLabels,
       tabBy,
       query
-    } = Object.fromEntries(searchParams.entries());
+    } = decodeUrlSearchParams(window.location.search);
 
     if (checks?.length > 0) {
       let filtered = filterChecks(checks, hidePassing, []); // first filter for pass/fail

@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from "react";
 import { debounce } from "lodash";
 import {
   encodeObjectToUrlSearchParams,
@@ -491,45 +497,22 @@ export const TristateLabelStandalone = ({
   labelClass,
   ...props
 }: TristateLabelStandaloneProps) => {
-  const { labels: urlLabelState = {} } = decodeUrlSearchParams(
-    window.location.search
-  );
-  const [isFirstLoad, setIsFirstLoad] = useState(true);
-  const [toggleState, setToggleState] = useState(0);
+  const { labels: urlLabelState = {} } = useMemo(() => {
+    return decodeUrlSearchParams(window.location.search);
+  }, [window.location.search]);
+
   const updateParams = useUpdateParams();
 
   const handleToggleChange = (v: any) => {
-    if (!isFirstLoad) {
-      const { labels: urlLabelState } = decodeUrlSearchParams(
-        window.location.search
-      );
-      const newState = { ...urlLabelState };
-      newState[label.id] = v;
-      const conciseLabelState = getConciseLabelState(newState);
-      updateParams({ labels: conciseLabelState });
-      setToggleState(v);
-    }
+    const newState = { ...urlLabelState };
+    newState[label.id] = v;
+    const conciseLabelState = getConciseLabelState(newState);
+    updateParams({ labels: conciseLabelState });
   };
-
-  // get initial state from URL
-  useEffect(() => {
-    const { labels: urlLabelState = {} } = decodeUrlSearchParams(
-      window.location.search
-    );
-    if (Object.prototype.hasOwnProperty.call(urlLabelState, label.id)) {
-      setToggleState(urlLabelState[label.id]);
-    } else {
-      setToggleState(0);
-    }
-  }, [label, urlLabelState]);
-
-  useEffect(() => {
-    setIsFirstLoad(false);
-  }, []);
 
   return (
     <TristateToggle
-      value={toggleState}
+      value={urlLabelState[label.id]}
       onChange={(v: string | number) => handleToggleChange(v)}
       className={className}
       labelClass={labelClass}
