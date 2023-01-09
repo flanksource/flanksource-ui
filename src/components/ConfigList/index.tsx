@@ -1,5 +1,5 @@
-import { Row, SortingState } from "@tanstack/react-table";
-import { useCallback, useState } from "react";
+import { Row, SortingState, Updater } from "@tanstack/react-table";
+import { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { DataTable } from "../";
 import { ConfigItem } from "../../api/services/configs";
@@ -12,7 +12,7 @@ export interface Props {
 }
 
 export default function ConfigList({ data, handleRowClick, isLoading }: Props) {
-  const [queryParams] = useSearchParams({
+  const [queryParams, setSearchParams] = useSearchParams({
     sortBy: "config_type",
     sortOrder: "asc",
     groupBy: "config_type"
@@ -24,26 +24,88 @@ export default function ConfigList({ data, handleRowClick, isLoading }: Props) {
   const isSortOrderDesc =
     queryParams.get("sortOrder") === "desc" ? true : false;
 
+  const determineSortColumnOrder = useCallback(
+    (sortState: SortingState): SortingState => {
+      const sortStateWithoutDeletedAt = sortState.filter(
+        (sort) => sort.id !== "deleted_at" && sort.id !== "name"
+      );
+      return [{ id: "deleted_at", desc: false }, ...sortStateWithoutDeletedAt];
+    },
+    []
+  );
+
   const [sortBy, setSortBy] = useState<SortingState>(() => {
     return sortField
-      ? [
+      ? determineSortColumnOrder([
           {
             id: sortField,
             desc: isSortOrderDesc
           },
           {
             id: "name",
-            desc: isSortOrderDesc
+            desc: false
           }
-        ]
-      : [];
+        ])
+      : determineSortColumnOrder([]);
   });
 
+  const updateSortBy = useCallback(
+    (newSortBy: Updater<SortingState>) => {
+      const getSortBy = Array.isArray(newSortBy)
+        ? newSortBy
+        : newSortBy(sortBy);
+      // remove deleted_at from sort state, we don't want it to be save to the
+      // URL for the purpose of sorting
+      const sortStateWithoutDeleteAt = getSortBy.filter(
+        (state) => state.id !== "deleted_at"
+      );
+      const { id: field, desc } = sortStateWithoutDeleteAt[0] ?? {};
+      const order = desc ? "desc" : "asc";
+      if (field && order) {
+        queryParams.set("sortBy", field);
+        queryParams.set("sortOrder", order);
+      } else {
+        queryParams.delete("sortBy");
+        queryParams.delete("sortOrder");
+      }
+      setSearchParams(queryParams, { replace: true });
+      const sortByValue =
+        typeof newSortBy === "function" ? newSortBy(sortBy) : newSortBy;
+      if (sortByValue.length > 0) {
+        const { id, desc } = sortByValue[0];
+        if (id === "config_type") {
+          setSortBy(
+            determineSortColumnOrder([
+              {
+                id: "config_type",
+                desc: desc
+              },
+              {
+                id: "name",
+                desc: desc
+              }
+            ])
+          );
+        } else {
+          setSortBy(determineSortColumnOrder(sortByValue));
+        }
+      }
+    },
+    [determineSortColumnOrder, queryParams, setSearchParams, sortBy]
+  );
+
+  // we want to update sort settings when groupBy changes
+  useEffect(() => {
+    updateSortBy(sortBy);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [groupByField]);
+
   const setHiddenColumns = useCallback(() => {
+    const alwaysHiddenColumns = ["deleted_at"];
     if (groupByField !== "changed" && groupByField !== "tags") {
-      return ["changed", "allTags"];
+      return [...alwaysHiddenColumns, "changed", "allTags"];
     } else if (groupByField === "tags") {
-      return ["changed"];
+      return [...alwaysHiddenColumns, "changed"];
     }
     return [];
   }, [groupByField]);
@@ -86,27 +148,7 @@ export default function ConfigList({ data, handleRowClick, isLoading }: Props) {
       hiddenColumns={setHiddenColumns()}
       className="max-w-full overflow-x-auto"
       tableSortByState={sortBy}
-      onTableSortByChanged={(newSortBy) => {
-        const sortByValue =
-          typeof newSortBy === "function" ? newSortBy(sortBy) : newSortBy;
-        if (sortByValue.length > 0) {
-          const { id, desc } = sortByValue[0];
-          if (id === "config_type") {
-            setSortBy([
-              {
-                id: "config_type",
-                desc: desc
-              },
-              {
-                id: "name",
-                desc: desc
-              }
-            ]);
-          } else {
-            setSortBy(sortByValue);
-          }
-        }
-      }}
+      onTableSortByChanged={updateSortBy}
       determineRowClassNamesCallback={determineRowClassNames}
     />
   );

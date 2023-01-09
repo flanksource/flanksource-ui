@@ -1,7 +1,6 @@
 import clsx from "clsx";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti";
-import { useSearchParams } from "react-router-dom";
 import {
   ColumnDef,
   flexRender,
@@ -38,6 +37,7 @@ type DataTableProps<TableColumns, Data extends TableColumns> = {
   className?: string;
   isVirtualized?: boolean;
   virtualizedRowEstimatedHeight?: number;
+
   /**
    * Columns used for sorting the table
    *
@@ -100,8 +100,6 @@ export function DataTable<TableColumns, Data extends TableColumns>({
   determineRowClassNamesCallback = () => "",
   ...rest
 }: DataTableProps<TableColumns, Data>) {
-  const [queryParams, setQueryParams] = useSearchParams();
-
   const tableContainerRef = useRef<HTMLDivElement>(null);
 
   const tableHiddenColumnsRecord = useMemo(
