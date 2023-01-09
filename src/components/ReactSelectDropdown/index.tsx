@@ -25,8 +25,6 @@ export interface StateOption {
   description?: string;
   order?: number;
   avatar?: any;
-  created_at: string;
-  deleted_at: string;
 }
 
 const selectStyles: StylesConfig<StateOption | string, false> = {
@@ -214,7 +212,6 @@ export const ReactSelectDropdown = ({
                 onChange={(e) => {
                   onChangeControlled(e.value);
                   onSelectChange(e.value);
-                  setRange(e.value);
                 }}
                 options={options}
                 placeholder={placeholder}

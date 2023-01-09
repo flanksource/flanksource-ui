@@ -7,5 +7,6 @@ export const getLogs = async (query) => {
     console.warning("Skipping empty search");
     return resolve([]);
   }
+
   return resolve(Logs.post("", query));
 };

@@ -13,6 +13,7 @@ import { LogsTable } from "../components/Logs/Table/LogsTable";
 import useDebouncedValue from "../hooks/useDebounce";
 import LogItem from "../types/Logs";
 import { getTopologyComponentByID } from "../api/services/topology";
+
 export const logTypes = [
   {
     icon: <BsGridFill />,
@@ -48,6 +49,7 @@ export function LogsPage() {
   const [showExisting, setShowExisting] = useState(false);
 
   const debouncedQueryValue = useDebouncedValue(query, 500);
+
   const { data: topology } = useQuery(
     ["components", "names", topologyId],
     async () => {
