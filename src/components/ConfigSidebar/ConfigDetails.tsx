@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { FaTags } from "react-icons/fa";
 import { useGetConfigByIdQuery } from "../../api/query-hooks";
+import { relativeDateTime } from "../../utils/date";
 import CollapsiblePanel from "../CollapsiblePanel";
 import { DescriptionCard } from "../DescriptionCard";
 import { InfoMessage } from "../InfoMessage";
@@ -32,6 +33,30 @@ export function ConfigDetails({ configId }: Props) {
                 label: key,
                 value
               }))
+          : []),
+        ...(configDetails.created_at
+          ? [
+              {
+                label: "Created At",
+                value: relativeDateTime(configDetails.created_at)
+              }
+            ]
+          : []),
+        ...(configDetails.updated_at
+          ? [
+              {
+                label: "Updated At",
+                value: relativeDateTime(configDetails.updated_at)
+              }
+            ]
+          : []),
+        ...(configDetails.deleted_at
+          ? [
+              {
+                label: "Deleted At",
+                value: relativeDateTime(configDetails.deleted_at)
+              }
+            ]
           : [])
       ];
     }
