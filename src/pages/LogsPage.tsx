@@ -13,9 +13,6 @@ import { LogsTable } from "../components/Logs/Table/LogsTable";
 import useDebouncedValue from "../hooks/useDebounce";
 import LogItem from "../types/Logs";
 import { getTopologyComponentByID } from "../api/services/topology";
-import { TimeRangePicker } from "../components/TimeRangePicker";
-import { Icons } from "../../icons";
-import { Icon } from "../Icon";
 export const logTypes = [
   {
     icon: <BsGridFill />,
