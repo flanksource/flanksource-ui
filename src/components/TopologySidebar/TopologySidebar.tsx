@@ -4,6 +4,7 @@ import Configs from "../Sidebars/configs";
 import Incidents from "../Sidebars/incidents";
 import TopologyConfigChanges from "../TopologyConfigChanges";
 import TopologyDetails from "../TopologyDetails";
+import { ComponentTeams } from "./ComponentTeams";
 
 type Props = {
   topology?: Topology;
@@ -26,6 +27,7 @@ export default function TopologySidebar({ topology, refererId }: Props) {
         <Configs topologyId={id} />
         <Incidents topologyId={id} />
         <TopologyConfigChanges topologyID={id} />
+        <ComponentTeams componentId={id} />
       </div>
     </div>
   );

@@ -16,7 +16,7 @@ import {
   getSortedTopology,
   getSortLabels
 } from "../components/TopologyPopover/topologySort";
-import TopologySidebar from "../components/TopologySidebar";
+import TopologySidebar from "../components/TopologySidebar/TopologySidebar";
 
 import { getAll } from "../api/schemaResources";
 import { ComponentLabelsDropdown } from "../components/Dropdown/ComponentLabelsDropdown";
@@ -130,7 +130,7 @@ export function TopologyPage() {
     const sortOrder = localStorage.getItem("topologyCardsSortOrder") || "desc";
     setSearchParams(
       {
-        ...searchParamsToObj(searchParams),
+        ...Object.fromEntries(searchParams),
         sortBy,
         sortOrder
       },
@@ -164,7 +164,6 @@ export function TopologyPage() {
           }),
         hidden: params.showHiddenComponents === "no" ? false : undefined
       };
-      // @ts-ignore
       const res = await getTopology(apiParams);
       if (res.error) {
         toastError(res.error);

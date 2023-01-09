@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
 import { MdOutlineInsights } from "react-icons/md";
 import ReactTooltip from "react-tooltip";
-import { relativeDateTime } from "../../utils/date";
 import CollapsiblePanel from "../CollapsiblePanel";
-import ConfigInsightsIcon from "../ConfigInsightsIcon";
 import EmptyState from "../EmptyState";
 import { Loading } from "../Loading";
 import Title from "../Title/title";
-import { Modal } from "../Modal";
 import {
   sanitizeHTMLContent,
   sanitizeHTMLContentToText,
   truncateText
 } from "../../utils/common";
+import { useGetConfigInsights } from "../../api/query-hooks";
+import { ConfigAnalysisLink } from "../ConfigAnalysisLink/ConfigAnalysisLink";
+import { relativeDateTime } from "../../utils/date";
 
 export type ConfigTypeInsights = {
   id: string;
@@ -28,6 +28,9 @@ export type ConfigTypeInsights = {
   analysis: string;
   first_observed: string;
   last_observed: string;
+  created_at: string | number | Date | null | undefined;
+  source: any;
+  created_by: any;
 };
 
 type Props = {
@@ -38,52 +41,29 @@ function ConfigInsightsDetails({ configID }: Props) {
   const [configInsights, setConfigInsights] = useState<ConfigTypeInsights[]>(
     []
   );
-  const [isLoading, setIsLoading] = useState(true);
-  const [open, setOpen] = useState(false);
-  const [configAnalysis, setConfigAnalysis] = useState<ConfigTypeInsights>();
+  const { data: response = [], isLoading } =
+    useGetConfigInsights<ConfigTypeInsights[]>(configID);
 
   useEffect(() => {
-    async function fetchConfigAnalysis(configID: string) {
-      setIsLoading(true);
-      const res = await fetch(
-        `/api/db/config_analysis?config_id=eq.${configID}`
-      );
-      let data = (await res.json()) as ConfigTypeInsights[];
-      data = data.map((item) => {
-        item.sanitizedMessageHTML = sanitizeHTMLContent(item.message);
-        item.sanitizedMessageTxt = truncateText(
+    const data = response?.map((item) => {
+      return {
+        ...item,
+        sanitizedMessageHTML: sanitizeHTMLContent(item.message),
+        sanitizedMessageTxt: truncateText(
           sanitizeHTMLContentToText(item.message)!,
           500
-        );
-        return item;
-      });
-      setConfigInsights(data);
-      setIsLoading(false);
-    }
-
-    fetchConfigAnalysis(configID);
-  }, [configID]);
+        )
+      };
+    });
+    setConfigInsights(data);
+  }, [response]);
 
   useEffect(() => {
     ReactTooltip.rebuild();
   });
 
   return (
-    <div className="flex flex-col space-y-2">
-      <Modal
-        title={"Config Analysis description"}
-        open={open}
-        onClose={() => setOpen(false)}
-        size="slightly-small"
-        bodyClass=""
-      >
-        <div
-          className="p-8 text-sm text-gray-500"
-          dangerouslySetInnerHTML={{
-            __html: configAnalysis?.sanitizedMessageHTML!
-          }}
-        ></div>
-      </Modal>
+    <div className="flex flex-row space-y-2">
       {isLoading ? (
         <Loading />
       ) : configInsights.length > 0 ? (
@@ -106,13 +86,11 @@ function ConfigInsightsDetails({ configID }: Props) {
                   data-tip={insight.sanitizedMessageTxt}
                   data-class="max-w-[20rem]"
                   className="p-2 font-medium text-black whitespace-nowrap cursor-pointer"
-                  onClick={() => {
-                    setConfigAnalysis(insight);
-                    setOpen(true);
-                  }}
                 >
-                  <ConfigInsightsIcon analysis={insight} />
-                  {insight.analyzer}
+                  <ConfigAnalysisLink
+                    key={insight.id}
+                    configAnalysis={insight}
+                  />
                 </td>
                 <td className="p-2 ">
                   {relativeDateTime(insight.first_observed)}

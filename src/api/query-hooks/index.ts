@@ -1,15 +1,19 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, UseQueryOptions } from "@tanstack/react-query";
 import { toastError } from "../../components/Toast/toast";
 import {
   getAllChanges,
   getAllConfigsMatchingQuery,
   getConfig,
   getConfigChange,
+  getConfigInsight,
+  getConfigInsights,
   getConfigName
 } from "../services/configs";
 import { getHypothesisResponse } from "../services/hypothesis";
 import { getIncident } from "../services/incident";
 import {
+  ComponentTeamItem,
+  getComponentTeams,
   getHealthCheckItem,
   getTopology,
   getTopologyComponentLabels,
@@ -264,6 +268,45 @@ export function useGetConfigByIdQuery(id: string) {
     },
     {
       onError: (err: any) => toastError(err)
+    }
+  );
+}
+
+export function useGetComponentsTeamQuery(
+  componentId: string,
+  options?: UseQueryOptions<ComponentTeamItem[]>
+) {
+  return useQuery<ComponentTeamItem[]>(
+    ["components", "teams", componentId],
+    async () => {
+      const data = await getComponentTeams(componentId);
+      return data;
+    },
+    {
+      ...options
+    }
+  );
+}
+
+export function useGetConfigInsights<T>(configId: string) {
+  return useQuery(
+    ["configs", "insights", configId],
+    () => getConfigInsights<T>(configId),
+    {
+      enabled: !!configId
+    }
+  );
+}
+
+export function useGetConfigInsight<T>(
+  configId: string,
+  configInsightId: string
+) {
+  return useQuery(
+    ["configs", "insights", configId, configInsightId],
+    () => getConfigInsight<T>(configId, configInsightId),
+    {
+      enabled: !!configId && !!configInsightId
     }
   );
 }
