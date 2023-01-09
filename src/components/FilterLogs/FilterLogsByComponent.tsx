@@ -90,7 +90,6 @@ function FilterLogsByComponent({
       });
     }
   }
-  console.log("data", dropDownOptions);
   return (
     <div className="flex flex-row items-center space-x-3">
       <ReactSelectDropdown
