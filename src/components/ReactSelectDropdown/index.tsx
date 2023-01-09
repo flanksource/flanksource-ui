@@ -243,7 +243,6 @@ export const ReactSelectDropdown = ({
                       <Avatar user={props.data} size="sm" />
                     )}
                     {props.data.icon && <div>{props.data.icon}</div>}
-
                     <span
                       className={clsx(
                         props.data.value === value
