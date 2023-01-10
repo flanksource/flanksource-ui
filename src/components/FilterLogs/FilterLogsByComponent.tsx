@@ -19,7 +19,7 @@ function FilterLogsByComponent() {
   const topologyId = searchParams.get("topologyId");
 
   const { isLoading, data, error } = useComponentsQuery({});
-
+  console.log("logs components", data);
   const dropDownOptions = useMemo(() => {
     if (data) {
       return data.map((component) => {

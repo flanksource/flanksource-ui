@@ -28,6 +28,7 @@ const tableStyles = {
 type DataTableProps<TableColumns, Data extends TableColumns> = {
   columns: ColumnDef<TableColumns>[];
   data: Data[];
+  tags: any;
   handleRowClick?: (row: any) => void;
   tableStyle?: React.CSSProperties;
   stickyHead?: boolean;
@@ -74,6 +75,7 @@ type DataTableProps<TableColumns, Data extends TableColumns> = {
 export function DataTable<TableColumns, Data extends TableColumns>({
   columns,
   data,
+  tags,
   handleRowClick,
   tableStyle,
   stickyHead,
@@ -229,6 +231,7 @@ export function DataTable<TableColumns, Data extends TableColumns>({
           {isVirtualized
             ? getVirtualItems().map(({ index }) => {
                 const row = rows[index];
+                console.log("rowww", row);
                 return (
                   <DataTableRow
                     row={row}
@@ -240,16 +243,19 @@ export function DataTable<TableColumns, Data extends TableColumns>({
                   />
                 );
               })
-            : rows.map((row) => (
-                <DataTableRow
-                  row={row}
-                  cellClassNames={tableStyles.tbodyDataClass}
-                  onRowClick={handleRowClick}
-                  isGrouped={isGrouped}
-                  rowClassNames={tableStyles.tbodyRowClass}
-                  key={row.id}
-                />
-              ))}
+            : rows.map((row) => {
+                console.log("row", row);
+                return (
+                  <DataTableRow
+                    row={row}
+                    cellClassNames={tableStyles.tbodyDataClass}
+                    onRowClick={handleRowClick}
+                    isGrouped={isGrouped}
+                    rowClassNames={tableStyles.tbodyRowClass}
+                    key={row.id}
+                  />
+                );
+              })}
           {paddingBottom > 0 && (
             <tr>
               <td style={{ height: `${paddingBottom}px` }} />

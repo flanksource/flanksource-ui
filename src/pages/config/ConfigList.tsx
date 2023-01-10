@@ -5,6 +5,7 @@ import ConfigList from "../../components/ConfigList";
 import { useConfigPageContext } from "../../context/ConfigPageContext";
 import { useAllConfigsQuery } from "../../api/query-hooks";
 import { ConfigLayout } from "../../components/Layout";
+import { Tags } from "../../components/Tags";
 
 export function ConfigListPage() {
   const [params] = useSearchParams();
@@ -46,6 +47,13 @@ export function ConfigListPage() {
     if (!allConfigs?.data) {
       return;
     }
+    console.log(
+      "allConfigs",
+      allConfigs,
+      new Set(
+        allConfigs.data?.filter((c) => c.name.includes("alertmanager-main-0"))
+      )
+    );
     allConfigs.data.forEach((item) => {
       item.tags = item.tags || {};
       item.allTags = { ...item.tags };
@@ -80,6 +88,7 @@ export function ConfigListPage() {
       <div className="flex flex-col h-full overflow-y-hidden">
         <ConfigList
           data={data!}
+          tags={Tags}
           handleRowClick={handleRowClick}
           isLoading={loading}
         />

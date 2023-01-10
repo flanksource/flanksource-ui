@@ -26,6 +26,7 @@ import {
   Row,
   SortingState
 } from "@tanstack/react-table";
+import { Tags } from "../Tags";
 
 interface Analysis {
   analysis_type: string;
@@ -116,7 +117,7 @@ const columns: ColumnDef<ConfigItem, any>[] = [
   {
     header: "Tags",
     accessorKey: "tags",
-    cell: React.memo(TagsCell),
+    cell: React.memo(Tags),
     aggregatedCell: "",
     size: 250,
     meta: {
@@ -126,7 +127,7 @@ const columns: ColumnDef<ConfigItem, any>[] = [
   {
     header: "All Tags",
     accessorKey: "allTags",
-    cell: React.memo((props) => <TagsCell {...props} hideGroupByView />),
+    cell: React.memo((props) => <Tags {...props} hideGroupByView />),
     aggregatedCell: "",
     size: 250,
     meta: {
@@ -158,84 +159,84 @@ const columns: ColumnDef<ConfigItem, any>[] = [
 
 const MIN_ITEMS = 2;
 
-function TagsCell({
-  getValue,
-  hideGroupByView = false
-}: CellContext<ConfigItem, any> & {
-  hideGroupByView?: boolean;
-}): JSX.Element | null {
-  const [showMore, setShowMore] = useState(false);
-  const [params] = useSearchParams();
+// function TagsCell({
+//   getValue,
+//   hideGroupByView = false
+// }: CellContext<ConfigItem, any> & {
+//   hideGroupByView?: boolean;
+// }): JSX.Element | null {
+//   const [showMore, setShowMore] = useState(false);
+//   const [params] = useSearchParams();
 
-  const tagMap = getValue<ConfigItem["tags"]>() || {};
-  const tagKeys = Object.keys(tagMap)
-    .sort()
-    .filter((key) => key !== "toString");
-  const groupByProp = decodeURIComponent(params.get("groupByProp") ?? "");
+//   const tagMap = getValue<ConfigItem["tags"]>() || {};
+//   const tagKeys = Object.keys(tagMap)
+//     .sort()
+//     .filter((key) => key !== "toString");
+//   const groupByProp = decodeURIComponent(params.get("groupByProp") ?? "");
 
-  useEffect(() => {
-    ReactTooltip.rebuild();
-  });
+//   useEffect(() => {
+//     ReactTooltip.rebuild();
+//   });
 
-  if (tagKeys.length === 0) {
-    return null;
-  }
+//   if (tagKeys.length === 0) {
+//     return null;
+//   }
 
-  if (!hideGroupByView && groupByProp) {
-    if (!tagMap[groupByProp]) {
-      return null;
-    }
+//   if (!hideGroupByView && groupByProp) {
+//     if (!tagMap[groupByProp]) {
+//       return null;
+//     }
 
-    return (
-      <div className="font-mono flex flex-wrap w-full max-w-full pl-1 space-y-1">
-        <div
-          data-tip={`${groupByProp}: ${tagMap[groupByProp]}`}
-          className="max-w-full overflow-hidden text-ellipsis bg-gray-200 border border-gray-300 px-1 py-0.75 mr-1 rounded-md text-gray-600 font-semibold text-xs"
-          key={groupByProp}
-        >
-          {groupByProp}:{" "}
-          <span className="font-light">{tagMap[groupByProp]}</span>
-        </div>
-      </div>
-    );
-  }
+//     return (
+//       <div className="font-mono flex flex-wrap w-full max-w-full pl-1 space-y-1">
+//         <div
+//           data-tip={`${groupByProp}: ${tagMap[groupByProp]}`}
+//           className="max-w-full overflow-hidden text-ellipsis bg-gray-200 border border-gray-300 px-1 py-0.75 mr-1 rounded-md text-gray-600 font-semibold text-xs"
+//           key={groupByProp}
+//         >
+//           {groupByProp}:{" "}
+//           <span className="font-light">{tagMap[groupByProp]}</span>
+//         </div>
+//       </div>
+//     );
+//   }
 
-  const renderKeys = showMore ? tagKeys : tagKeys.slice(0, MIN_ITEMS);
+//   const renderKeys = showMore ? tagKeys : tagKeys.slice(0, MIN_ITEMS);
 
-  return (
-    <div
-      onClick={(e) => {
-        /* Don't trigger click for parent. E.g without stopPropagation,
-           handleRowClick would be called. */
-        e.stopPropagation();
-        setShowMore((showMore) => !showMore);
-      }}
-      className="flex items-start"
-    >
-      {tagKeys.length > MIN_ITEMS && (
-        <button className="text-sm focus:outline-none">
-          {showMore ? (
-            <IoMdArrowDropdown size={24} />
-          ) : (
-            <IoMdArrowDropright size={24} />
-          )}
-        </button>
-      )}
+//   return (
+//     <div
+//       onClick={(e) => {
+//         /* Don't trigger click for parent. E.g without stopPropagation,
+//            handleRowClick would be called. */
+//         e.stopPropagation();
+//         setShowMore((showMore) => !showMore);
+//       }}
+//       className="flex items-start"
+//     >
+//       {tagKeys.length > MIN_ITEMS && (
+//         <button className="text-sm focus:outline-none">
+//           {showMore ? (
+//             <IoMdArrowDropdown size={24} />
+//           ) : (
+//             <IoMdArrowDropright size={24} />
+//           )}
+//         </button>
+//       )}
 
-      <div className="font-mono flex flex-wrap flex-1 max-w-full pl-1 space-y-1">
-        {renderKeys.map((key) => (
-          <div
-            data-tip={`${key}: ${tagMap[key]}`}
-            className="max-w-full overflow-hidden text-ellipsis bg-gray-200 border border-gray-300 px-1 py-0.75 mr-1 rounded-md text-gray-600 font-semibold text-xs"
-            key={key}
-          >
-            {key}: <span className="font-light">{tagMap[key]}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
+//       <div className="font-mono flex flex-wrap flex-1 max-w-full pl-1 space-y-1">
+//         {renderKeys.map((key) => (
+//           <div
+//             data-tip={`${key}: ${tagMap[key]}`}
+//             className="max-w-full overflow-hidden text-ellipsis bg-gray-200 border border-gray-300 px-1 py-0.75 mr-1 rounded-md text-gray-600 font-semibold text-xs"
+//             key={key}
+//           >
+//             {key}: <span className="font-light">{tagMap[key]}</span>
+//           </div>
+//         ))}
+//       </div>
+//     </div>
+//   );
+// }
 
 function ChangeCell({ row, column }: CellContext<ConfigItem, any>) {
   const [showMore, setShowMore] = useState(false);
@@ -442,9 +443,10 @@ export interface Props {
   data: ConfigItem[];
   handleRowClick: (row?: any) => void;
   isLoading: boolean;
+  Tags: any;
 }
 
-function ConfigList({ data, handleRowClick, isLoading }: Props) {
+function ConfigList({ data, Tags, handleRowClick, isLoading }: Props) {
   const [queryParams] = useSearchParams({
     sortBy: "config_type",
     sortOrder: "asc",
@@ -487,6 +489,7 @@ function ConfigList({ data, handleRowClick, isLoading }: Props) {
       isVirtualized
       columns={columns}
       data={data}
+      tags={Tags}
       handleRowClick={handleRowClick}
       tableStyle={{ borderSpacing: "0" }}
       isLoading={isLoading}
