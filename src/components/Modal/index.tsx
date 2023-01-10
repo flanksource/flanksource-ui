@@ -82,7 +82,7 @@ export function Modal({
           >
             <div
               className={clsx(
-                "bg-white rounded-lg text-left shadow-xl transform transition-all w-full flex flex-col",
+                "bg-white rounded-lg text-left shadow-xl transform transition-all w-full max-h-full overflow-auto flex flex-col",
                 modalClassMap[size]
               )}
             >
