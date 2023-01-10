@@ -446,7 +446,7 @@ export interface Props {
   Tags: any;
 }
 
-function ConfigList({ data, Tags, handleRowClick, isLoading }: Props) {
+function ConfigList({ data, handleRowClick, isLoading }: Props) {
   const [queryParams] = useSearchParams({
     sortBy: "config_type",
     sortOrder: "asc",

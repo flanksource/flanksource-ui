@@ -88,7 +88,6 @@ export function ConfigListPage() {
       <div className="flex flex-col h-full overflow-y-hidden">
         <ConfigList
           data={data!}
-          tags={Tags}
           handleRowClick={handleRowClick}
           isLoading={loading}
         />
