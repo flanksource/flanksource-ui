@@ -1,32 +1,64 @@
 import { ColumnDef } from "@tanstack/table-core";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ConfigTypeChanges } from "../ConfigChanges";
 
 import { DateCell } from "../ConfigViewer/columns";
-import { DataTable } from "../index";
+import { PaginationOptions } from "../DataTable";
+import EmptyState from "../EmptyState";
+import { DataTable, Modal } from "../index";
 import { JSONViewer } from "../JSONViewer";
 
 const columns: ColumnDef<ConfigTypeChanges>[] = [
   {
     header: "Type",
     accessorKey: "change_type"
-    // cellClass: `px-5 py-2`
   },
   {
     header: "Created",
     accessorKey: "created_at",
     cell: DateCell
-    // cellClass: `px-5 py-2`
   },
   {
     header: "Changes",
     accessorKey: "patches",
     cell: function JSONViewCell({ row, column }) {
+      const [modalIsOpen, setModalIsOpen] = useState(false);
       return (
-        <JSONViewer
-          code={JSON.stringify(row?.getValue(column.id), null, 2)}
-          format="json"
-        />
+        <>
+          <Modal
+            open={modalIsOpen}
+            onClose={() => setModalIsOpen(false)}
+            bodyClass=""
+            title="Change"
+          >
+            <div
+              className="flex flex-col h-full overflow-x-auto p-4"
+              style={{
+                maxHeight: "calc(100vh - 8rem)",
+                zoom: !!row?.getValue(column.id) ? "0.7" : "1"
+              }}
+            >
+              {!!row?.getValue(column.id) && (
+                <JSONViewer
+                  code={JSON.stringify(row?.getValue(column.id), null, 2)}
+                  format="json"
+                />
+              )}
+              {!row?.getValue(column.id) && (
+                <EmptyState title="There are no changes" />
+              )}
+            </div>
+          </Modal>
+          <div
+            className="underline text-blue-600 hover:text-blue-800 visited:text-purple-600"
+            onClick={(e) => {
+              setModalIsOpen(true);
+            }}
+          >
+            Show Change
+          </div>
+        </>
       );
     }
     // cellClass: "px-5 py-2"
@@ -59,6 +91,7 @@ type ConfigChangeHistoryProps = {
   linkConfig?: boolean;
   className?: string;
   tableStyle?: React.CSSProperties;
+  pagination?: PaginationOptions;
 };
 
 export function ConfigChangeHistory({
@@ -66,6 +99,7 @@ export function ConfigChangeHistory({
   isLoading,
   linkConfig,
   className = "w-full",
+  pagination,
   tableStyle
 }: ConfigChangeHistoryProps) {
   return (
@@ -75,8 +109,9 @@ export function ConfigChangeHistory({
       data={data}
       isLoading={isLoading}
       stickyHead
-      isVirtualized
+      isVirtualized={false}
       tableStyle={tableStyle}
+      pagination={pagination}
       virtualizedRowEstimatedHeight={500}
     />
   );

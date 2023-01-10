@@ -1,8 +1,12 @@
 import clsx from "clsx";
 import { UsePaginationInstanceProps, UsePaginationState } from "react-table";
+import { Loading } from "../../Loading";
 
 type PaginationProps = React.HTMLProps<HTMLDivElement> &
-  UsePaginationInstanceProps<{}> & { state: UsePaginationState<{}> };
+  Omit<UsePaginationInstanceProps<{}>, "page"> & {
+    state: UsePaginationState<{}>;
+    loading?: boolean;
+  };
 
 export const Pagination = ({
   canPreviousPage,
@@ -14,6 +18,7 @@ export const Pagination = ({
   previousPage,
   setPageSize,
   state: { pageIndex, pageSize },
+  loading,
   className
 }: PaginationProps) => {
   return (
@@ -29,11 +34,13 @@ export const Pagination = ({
             </span>
             <input
               type="number"
-              className="rounded-none rounded-r-md border-gray-300 px-4 py-2 w-16"
-              defaultValue={pageIndex + 1}
+              className="rounded-none rounded-r-md border-gray-300 px-4 py-2 w-24"
+              value={pageIndex + 1}
+              min={1}
+              max={pageCount}
               onChange={(e) => {
                 const page = e.target.value ? Number(e.target.value) - 1 : 0;
-                gotoPage(page);
+                gotoPage(+page);
               }}
             />
           </div>
@@ -54,33 +61,50 @@ export const Pagination = ({
       </div>
       <div className="inline-block -space-x-px">
         <button
-          className="relative inline-block rounded-l-md border border-gray-300 bg-white px-2 py-2 text-gray-500 hover:bg-gray-50 focus:z-20"
+          className={clsx(
+            "disabled:opacity-50 inline-block rounded-l-md border border-gray-300 bg-white px-2 py-2 text-gray-500",
+            canPreviousPage && "hover:bg-gray-100"
+          )}
           onClick={() => gotoPage(0)}
           disabled={!canPreviousPage}
         >
           {"<<"}
         </button>
         <button
-          className="relative inline-block border border-gray-300 bg-white px-2 py-2 text-gray-500 hover:bg-gray-50 focus:z-20"
+          className={clsx(
+            "disabled:opacity-50 inline-block border border-gray-300 bg-white px-2 py-2 text-gray-500",
+            canPreviousPage && "hover:bg-gray-100"
+          )}
           onClick={() => previousPage()}
           disabled={!canPreviousPage}
         >
           Previous
         </button>
         <button
-          className="relative inline-block border border-gray-300 bg-white px-2 py-2 text-gray-500 hover:bg-gray-50 focus:z-20"
+          className={clsx(
+            "disabled:opacity-50 inline-block border border-gray-300 bg-white px-2 py-2 text-gray-500",
+            canNextPage && "hover:bg-gray-100"
+          )}
           onClick={() => nextPage()}
           disabled={!canNextPage}
         >
           Next
         </button>
         <button
-          className="relative inline-block rounded-r-md border border-gray-300 bg-white px-4 py-2 text-gray-500 hover:bg-gray-50 focus:z-20"
+          className={clsx(
+            "disabled:opacity-50 inline-block rounded-r-md border border-gray-300 bg-white px-4 py-2 text-gray-500",
+            canNextPage && "hover:bg-gray-100"
+          )}
           onClick={() => gotoPage(pageCount - 1)}
           disabled={!canNextPage}
         >
           {">>"}
         </button>
+        {loading && (
+          <div className="inline-block">
+            <Loading text="loading data..." />
+          </div>
+        )}
       </div>
     </nav>
   );
