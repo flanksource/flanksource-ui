@@ -1,7 +1,6 @@
 import clsx from "clsx";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti";
-import { useSearchParams } from "react-router-dom";
 import {
   ColumnDef,
   flexRender,
@@ -9,6 +8,7 @@ import {
   getExpandedRowModel,
   getGroupedRowModel,
   getSortedRowModel,
+  Row,
   SortingState,
   Updater,
   useReactTable,
@@ -37,6 +37,7 @@ type DataTableProps<TableColumns, Data extends TableColumns> = {
   className?: string;
   isVirtualized?: boolean;
   virtualizedRowEstimatedHeight?: number;
+
   /**
    * Columns used for sorting the table
    *
@@ -69,6 +70,17 @@ type DataTableProps<TableColumns, Data extends TableColumns> = {
    *
    */
   onTableSortByChanged?: (sortBy: Updater<SortingState>) => void;
+
+  /**
+   *
+   * determineRowClassNames
+   *
+   * Allows you to customize the row class names, based on the row data
+   *
+   * For example, you can use this to gray out a row if it's deleted
+   *
+   */
+  determineRowClassNamesCallback?: (row: Row<TableColumns>) => string;
 } & React.HTMLAttributes<HTMLTableElement>;
 
 export function DataTable<TableColumns, Data extends TableColumns>({
@@ -85,10 +97,9 @@ export function DataTable<TableColumns, Data extends TableColumns>({
   virtualizedRowEstimatedHeight = 35,
   tableSortByState,
   onTableSortByChanged,
+  determineRowClassNamesCallback = () => "",
   ...rest
 }: DataTableProps<TableColumns, Data>) {
-  const [queryParams, setQueryParams] = useSearchParams();
-
   const tableContainerRef = useRef<HTMLDivElement>(null);
 
   const tableHiddenColumnsRecord = useMemo(
@@ -127,16 +138,6 @@ export function DataTable<TableColumns, Data extends TableColumns>({
     debugHeaders: true,
     debugColumns: true,
     onSortingChange: (sorting) => {
-      const { id: field, desc } = sortBy[0] ?? {};
-      const order = desc ? "desc" : "asc";
-      if (field && order) {
-        queryParams.set("sortBy", field);
-        queryParams.set("sortOrder", order);
-      } else {
-        queryParams.delete("sortBy");
-        queryParams.delete("sortOrder");
-      }
-      setQueryParams(queryParams);
       if (onTableSortByChanged) {
         onTableSortByChanged(sorting);
       } else {
@@ -235,7 +236,9 @@ export function DataTable<TableColumns, Data extends TableColumns>({
                     cellClassNames={tableStyles.tbodyDataClass}
                     onRowClick={handleRowClick}
                     isGrouped={isGrouped}
-                    rowClassNames={tableStyles.tbodyRowClass}
+                    rowClassNames={`${
+                      tableStyles.tbodyRowClass
+                    } ${determineRowClassNamesCallback(row)}`}
                     key={row.id}
                   />
                 );
@@ -246,7 +249,9 @@ export function DataTable<TableColumns, Data extends TableColumns>({
                   cellClassNames={tableStyles.tbodyDataClass}
                   onRowClick={handleRowClick}
                   isGrouped={isGrouped}
-                  rowClassNames={tableStyles.tbodyRowClass}
+                  rowClassNames={`${
+                    tableStyles.tbodyRowClass
+                  } ${determineRowClassNamesCallback(row)}`}
                   key={row.id}
                 />
               ))}
