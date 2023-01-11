@@ -1,9 +1,10 @@
-import { Cell } from "@tanstack/react-table";
+import { Cell, NoInfer } from "@tanstack/react-table";
 import dayjs from "dayjs";
 import { useEffect, useRef, useState } from "react";
 import { IoMdArrowDropdown, IoMdArrowDropright } from "react-icons/io";
 import LogItem from "../../../types/Logs";
 import { IndeterminateCheckbox } from "../../IndeterminateCheckbox/IndeterminateCheckbox";
+import { Tags } from "../../Tags";
 
 export type LogsTableTimestampCellProps = React.HTMLProps<HTMLDivElement> & {
   cell: Cell<LogItem, unknown>;
@@ -94,18 +95,7 @@ export function LogsTableLabelsCell({
           !showAll ? "h-7 overflow-y-hidden" : ""
         } `}
       >
-        {labelsToDisplay.map(([key, value]) => (
-          <div className="flex flex-row p-[0.15rem] max-w-full" key={key}>
-            <div className="flex flex-row max-w-full space-x-1 font-semibold p-[0.2rem] bg-gray-200 text-gray-600 rounded-md text-xs">
-              <span className="inline text-ellipsis overflow-hidden">
-                {key}:
-              </span>
-              <span className="inline text-ellipsis overflow-hidden font-light">
-                {value}
-              </span>
-            </div>
-          </div>
-        ))}
+        <Tags type={"logs"} labels={labelsToDisplay} />
       </div>
     </div>
   );

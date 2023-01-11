@@ -7,18 +7,36 @@ import { IoMdArrowDropdown, IoMdArrowDropright } from "react-icons/io";
 const MIN_ITEMS = 2;
 
 export function Tags({
+  type,
+  labels,
   getValue,
   hideGroupByView = false
 }: CellContext<ConfigItem, any> & {
   hideGroupByView?: boolean;
+  type?: string;
+  labels?: any;
 }): JSX.Element | null {
   const [showMore, setShowMore] = useState(false);
   const [params] = useSearchParams();
+  console.log("labels", labels);
+  const tagMap =
+    labels.reduce(
+      (obj: any, label: any) => ({
+        ...obj,
+        [label[0]]: label[1]
+      }),
+      {}
+    ) ||
+    getValue<ConfigItem["tags"]>() ||
+    {};
 
-  const tagMap = getValue<ConfigItem["tags"]>() || {};
-  const tagKeys = Object.keys(tagMap)
-    .sort()
-    .filter((key) => key !== "toString");
+  const tagKeys =
+    type === "logs"
+      ? labels.map((label: any) => label[0])
+      : Object.keys(tagMap)
+          .sort()
+          .filter((key) => key !== "toString");
+
   const groupByProp = decodeURIComponent(params.get("groupByProp") ?? "");
 
   useEffect(() => {
@@ -37,7 +55,9 @@ export function Tags({
     return (
       <div className="font-mono flex flex-wrap w-full max-w-full pl-1 space-y-1">
         <div
-          data-tip={`${groupByProp}: ${tagMap[groupByProp]}`}
+          data-tip={
+            groupByProp ? `${groupByProp}: ${tagMap[groupByProp]}` : null
+          }
           className="max-w-full overflow-hidden text-ellipsis bg-gray-200 border border-gray-300 px-1 py-0.75 mr-1 rounded-md text-gray-600 font-semibold text-xs"
           key={groupByProp}
         >
@@ -71,7 +91,7 @@ export function Tags({
       )}
 
       <div className="font-mono flex flex-wrap flex-1 max-w-full pl-1 space-y-1">
-        {renderKeys.map((key) => (
+        {renderKeys?.map((key) => (
           <div
             data-tip={`${key}: ${tagMap[key]}`}
             className="max-w-full overflow-hidden text-ellipsis bg-gray-200 border border-gray-300 px-1 py-0.75 mr-1 rounded-md text-gray-600 font-semibold text-xs"
