@@ -8,7 +8,7 @@ import { User } from "../../api/services/users";
 interface IProps {
   size?: "sm" | "lg" | "md";
   alt?: string;
-  user: Partial<User>;
+  user?: Partial<User>;
   imageProps?: React.ComponentPropsWithoutRef<"img">;
   containerProps?: React.ComponentPropsWithoutRef<"div">;
   unload?: boolean;
