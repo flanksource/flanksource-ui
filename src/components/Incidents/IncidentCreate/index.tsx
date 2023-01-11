@@ -18,7 +18,7 @@ import { useUser } from "../../../context";
 import { ReactSelectDropdown } from "../../ReactSelectDropdown";
 import { TextInput } from "../../TextInput";
 import { toastError } from "../../Toast/toast";
-import { severityItems, statusItems, typeItems } from "../data";
+import { severityItems, incidentStatusItems, typeItems } from "../data";
 
 const validationSchema = yup
   .object({
@@ -275,7 +275,7 @@ export function IncidentCreate({
             label="Status"
             name="status"
             className="w-full"
-            items={statusItems}
+            items={incidentStatusItems}
             labelClass="block text-sm font-bold text-gray-700 mb-2"
             containerClassName="flex flex-col space-y-1"
             value={status}

@@ -15,7 +15,11 @@ import { ResponderDetailsDialog } from "./ResponderDetailsDialog";
 import { ResponderDetailsToolTip } from "./ResponderDetailsToolTip";
 import { AddResponder, ResponderPropsKeyToLabelMap } from "./AddResponder";
 
-import { severityItems, statusItems, typeItems } from "../Incidents/data";
+import {
+  severityItems,
+  incidentStatusItems,
+  typeItems
+} from "../Incidents/data";
 import { IncidentPriority } from "../../constants/incidentPriority";
 import {
   deleteResponder,
@@ -25,7 +29,7 @@ import { relativeDateTime } from "../../utils/date";
 import { DefinitionOfDone } from "./DefinitionOfDone";
 import { Incident, IncidentStatus } from "../../api/services/incident";
 import IncidentTypeDropdown from "../Incidents/IncidentTypeDropdown";
-import { IncidentWorkflow } from "./IncidentWorkflow";;
+import { IncidentWorkflow } from "./IncidentWorkflow";
 
 export const priorities = Object.entries(severityItems).map(([key, value]) => ({
   label: value.name,
@@ -84,7 +88,11 @@ export const IncidentDetails = ({
         ? incident.type
         : "",
       commanders: incident.commander.id,
-      status: statusItems[incident.status as keyof typeof statusItems] ? incident.status : ""
+      status: incidentStatusItems[
+        incident.status as keyof typeof incidentStatusItems
+      ]
+        ? incident.status
+        : undefined
     }
   });
 
@@ -128,7 +136,7 @@ export const IncidentDetails = ({
               )({
                 ID: item.external_id
               });
-            } catch (ex) { }
+            } catch (ex) {}
           }
         }
         return {

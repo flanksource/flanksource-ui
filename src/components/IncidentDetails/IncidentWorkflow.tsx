@@ -4,7 +4,7 @@ import { useIncidentQuery } from "../../api/query-hooks";
 import { Evidence, updateEvidence } from "../../api/services/evidence";
 import { Hypothesis } from "../../api/services/hypothesis";
 import { IncidentStatus, updateIncident } from "../../api/services/incident";
-import { statusItems } from "../Incidents/data";
+import { incidentStatusItems } from "../Incidents/data";
 import { ReactSelectDropdown } from "../ReactSelectDropdown";
 import { toastError, toastSuccess } from "../Toast/toast";
 import EvidenceSelectionModal from "./DefinitionOfDone/EvidenceSelectionModal";
@@ -75,10 +75,10 @@ export function IncidentWorkflow({
     const keys: IncidentStatus[] =
       IncidentStatusWorkflowMap[value ?? IncidentStatus.New];
     keys.forEach((key: IncidentStatus) => {
-      data[key] = statusItems[key];
+      data[key] = incidentStatusItems[key];
     });
     return data;
-  }, [value, statusItems]);
+  }, [value, incidentStatusItems]);
 
   useEffect(() => {
     if (!incident) {
