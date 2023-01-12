@@ -80,14 +80,14 @@ for (const client of [
   client.interceptors.response.use(
     (response) => response,
     (error) => {
-      redirecToLoginPageOnSessionExpiry(error);
+      redirectToLoginPageOnSessionExpiry(error);
       toastError(error.response.data.message);
       return Promise.reject(error);
     }
   );
 }
 
-function redirecToLoginPageOnSessionExpiry(error) {
+function redirectToLoginPageOnSessionExpiry(error) {
   if (error?.response?.status === 401) {
     const url = `/login?return_to=${window.location.pathname}${window.location.search}`;
     window.location.href = url;

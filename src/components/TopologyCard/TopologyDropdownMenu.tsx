@@ -5,9 +5,10 @@ import { MdAlarmAdd, MdTableRows } from "react-icons/md";
 import { EvidenceType } from "../../api/services/evidence";
 import { AttachEvidenceDialog } from "../AttachEvidenceDialog";
 import { Menu } from "../Menu";
+import { Topology } from "../../context/TopologyPageContext";
 
 interface IProps {
-  topology: any;
+  topology: Topology;
   updateVisibility: (
     topologyId: string | undefined,
     updatedVisibility: boolean
