@@ -60,6 +60,16 @@ export const Config = axios.create({
   }
 });
 
+export const Snapshot = axios.create({
+  baseURL: `${API_BASE}/snapshot`,
+  headers: {
+    Accept: "application/json",
+    Prefer: "return=representation",
+    "Content-Type": "application/json",
+    responseType: "blob"
+  }
+});
+
 export const Auth = axios.create({
   baseURL: `${API_BASE}/auth`,
   headers: {
@@ -75,7 +85,8 @@ for (const client of [
   Logs,
   CanaryChecker,
   Config,
-  ConfigDB
+  ConfigDB,
+  Snapshot
 ]) {
   client.interceptors.response.use(
     (response) => response,

@@ -324,7 +324,7 @@ const Dropdown: FunctionComponent<DropdownProps> = ({
   className = "w-full right-0",
   onClose
 }) => (
-  <div ref={inputRef as LegacyRef<HTMLDivElement>} className="relative">
+  <div ref={inputRef as LegacyRef<HTMLDivElement>} className="relative w-full">
     {target}
     {isOpen ? (
       <Menu className={`absolute bg-white z-[99] drop-shadow-md ${className}`}>
