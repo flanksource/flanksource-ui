@@ -250,18 +250,18 @@ export const useGetHypothesisQuery = (
   );
 };
 
-export function useGetAllConfigsChangesQuery() {
-  return useQuery(["configs", "changes", "all"], getAllChanges, {
-    select: (res) => {
-      if (res.error) {
-        throw new Error(res.error.message);
-      }
-      return res?.data?.length === 0 ? [] : res?.data;
-    },
-    onError: (err: any) => {
-      toastError(err);
+export function useGetAllConfigsChangesQuery(
+  pageIndex?: number,
+  pageSize?: number,
+  keepPreviousData?: boolean
+) {
+  return useQuery(
+    ["configs", "changes", "all", pageIndex, pageSize],
+    () => getAllChanges(pageIndex, pageSize),
+    {
+      keepPreviousData
     }
-  });
+  );
 }
 
 export function useGetConfigChangesQueryById(id: string) {

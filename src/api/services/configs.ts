@@ -63,10 +63,22 @@ export const getAllConfigsMatchingQuery = (query: string) => {
   return resolve<ConfigItem[]>(ConfigDB.get(url));
 };
 
-export const getAllChanges = () =>
-  resolve(
-    ConfigDB.get<ConfigTypeChanges[]>(`/config_changes?order=created_at.desc`)
+export const getAllChanges = (pageIndex?: number, pageSize?: number) => {
+  const pagingParams =
+    pageIndex || pageSize
+      ? `&limit=${pageSize}&offset=${pageIndex! * pageSize!}`
+      : "";
+  return resolve(
+    ConfigDB.get<ConfigTypeChanges[]>(
+      `/config_changes?order=created_at.desc${pagingParams}`,
+      {
+        headers: {
+          Prefer: "count=exact"
+        }
+      }
+    )
   );
+};
 
 export const getConfig = (id: string) =>
   resolve<ConfigItem[]>(ConfigDB.get(`/config_items?id=eq.${id}`));

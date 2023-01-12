@@ -7,6 +7,7 @@ import {
   getCoreRowModel,
   getExpandedRowModel,
   getGroupedRowModel,
+  getPaginationRowModel,
   getSortedRowModel,
   Row,
   SortingState,
@@ -18,11 +19,22 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 import { DataTableRow } from "./DataTableRow";
 import { Loading } from "../Loading";
 import { InfoMessage } from "../InfoMessage";
+import { Pagination } from "./Pagination/Pagination";
 
 const tableStyles = {
   theadHeaderClass: " tracking-wider",
   tbodyRowClass: "cursor-pointer text-sm",
   tbodyDataClass: "whitespace-nowrap p-2"
+};
+
+export type PaginationOptions = {
+  setPagination: any;
+  pageIndex: number;
+  pageSize: number;
+  pageCount: number;
+  remote?: boolean;
+  enable: boolean;
+  loading?: boolean;
 };
 
 type DataTableProps<TableColumns, Data extends TableColumns> = {
@@ -81,6 +93,7 @@ type DataTableProps<TableColumns, Data extends TableColumns> = {
    *
    */
   determineRowClassNamesCallback?: (row: Row<TableColumns>) => string;
+  pagination?: PaginationOptions;
 } & React.HTMLAttributes<HTMLTableElement>;
 
 export function DataTable<TableColumns, Data extends TableColumns>({
@@ -98,6 +111,7 @@ export function DataTable<TableColumns, Data extends TableColumns>({
   tableSortByState,
   onTableSortByChanged,
   determineRowClassNamesCallback = () => "",
+  pagination,
   ...rest
 }: DataTableProps<TableColumns, Data>) {
   const tableContainerRef = useRef<HTMLDivElement>(null);
@@ -127,16 +141,28 @@ export function DataTable<TableColumns, Data extends TableColumns>({
     state: {
       sorting: sortBy,
       ...(isGrouped ? { grouping: groupBy } : {}),
-      columnVisibility: tableHiddenColumnsRecord
+      columnVisibility: tableHiddenColumnsRecord,
+      pagination: pagination?.remote
+        ? {
+            pageIndex: pagination.pageIndex,
+            pageSize: pagination.pageSize
+          }
+        : undefined
     },
+    onPaginationChange: pagination?.remote
+      ? pagination.setPagination
+      : undefined,
+    pageCount: pagination?.remote ? pagination.pageCount : undefined,
     getCoreRowModel: getCoreRowModel(),
     getExpandedRowModel: isGrouped ? getExpandedRowModel() : undefined,
     getGroupedRowModel: isGrouped ? getGroupedRowModel() : undefined,
     getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel:
+      pagination?.enable && !pagination.remote
+        ? getPaginationRowModel()
+        : undefined,
+    manualPagination: !!pagination?.enable && pagination.remote,
     enableHiding: true,
-    debugTable: true,
-    debugHeaders: true,
-    debugColumns: true,
     onSortingChange: (sorting) => {
       if (onTableSortByChanged) {
         onTableSortByChanged(sorting);
@@ -146,7 +172,10 @@ export function DataTable<TableColumns, Data extends TableColumns>({
     }
   });
 
-  const { rows } = table.getRowModel();
+  const { rows } =
+    pagination?.enable && !pagination.remote
+      ? table.getPaginationRowModel()
+      : table.getRowModel();
 
   const { getVirtualItems, getTotalSize } = useVirtualizer({
     count: isVirtualized ? rows.length : 0,
@@ -155,8 +184,8 @@ export function DataTable<TableColumns, Data extends TableColumns>({
     overscan: 10
   });
 
-  const virtualRows = getVirtualItems();
-  const totalSize = getTotalSize();
+  const virtualRows = isVirtualized ? getVirtualItems() : [];
+  const totalSize = isVirtualized ? getTotalSize() : 0;
 
   const paddingTop = virtualRows.length > 0 ? virtualRows?.[0]?.start || 0 : 0;
   const paddingBottom =
@@ -165,72 +194,87 @@ export function DataTable<TableColumns, Data extends TableColumns>({
       : 0;
 
   return (
-    <div
-      ref={tableContainerRef}
-      className={clsx("flex flex-col flex-1 overflow-y-auto", className)}
-      {...rest}
-    >
-      <table
-        className={clsx(
-          // for some reason, it seems to need both auto and fixed, there may be
-          // some other css class tied to auto
-          `table-auto table-fixed w-full`,
-          stickyHead && "relative"
-        )}
-        style={tableStyle}
+    <div className="flex flex-col flex-1">
+      <div
+        ref={tableContainerRef}
+        className={clsx("flex flex-col flex-1 overflow-y-auto", className)}
+        {...rest}
+        style={{ maxHeight: "calc(100vh - 12rem)" }}
       >
-        <thead className={`bg-white ${stickyHead ? "sticky top-0 z-01" : ""}`}>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id}>
-              {headerGroup.headers.map((header, colIndex) =>
-                // First column goes inside the grouping column
-                // Hence the label for that is not needed
-                isGrouped &&
-                !header.column.getIsGrouped() &&
-                colIndex === 1 ? null : (
-                  <th
-                    key={header.id}
-                    className={`${tableStyles.theadHeaderClass}${
-                      header.column.getCanSort() ? " cursor-pointer" : ""
-                    }`}
-                    onClick={header.column.getToggleSortingHandler()}
-                    style={{
-                      width: header.column.getSize()
-                    }}
-                  >
-                    <div className={"flex select-none"}>
-                      {flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
-                      {header.column.getIsSorted() ? (
-                        <span className="ml-2">
-                          {header.column.getIsSorted() === "asc" ? (
-                            <TiArrowSortedDown />
-                          ) : (
-                            <TiArrowSortedUp />
-                          )}
-                        </span>
-                      ) : (
-                        ""
-                      )}
-                    </div>
-                  </th>
-                )
-              )}
-            </tr>
-          ))}
-        </thead>
-        <tbody>
-          {paddingTop > 0 && (
-            <tr>
-              <td style={{ height: `${paddingTop}px` }} />
-            </tr>
+        <table
+          className={clsx(
+            // for some reason, it seems to need both auto and fixed, there may be
+            // some other css class tied to auto
+            `table-auto table-fixed w-full`,
+            stickyHead && "relative"
           )}
-          {isVirtualized
-            ? getVirtualItems().map(({ index }) => {
-                const row = rows[index];
-                return (
+          style={tableStyle}
+        >
+          <thead
+            className={`bg-white ${stickyHead ? "sticky top-0 z-01" : ""}`}
+          >
+            {table.getHeaderGroups().map((headerGroup) => (
+              <tr key={headerGroup.id}>
+                {headerGroup.headers.map((header, colIndex) =>
+                  // First column goes inside the grouping column
+                  // Hence the label for that is not needed
+                  isGrouped &&
+                  !header.column.getIsGrouped() &&
+                  colIndex === 1 ? null : (
+                    <th
+                      key={header.id}
+                      className={`${tableStyles.theadHeaderClass}${
+                        header.column.getCanSort() ? " cursor-pointer" : ""
+                      }`}
+                      onClick={header.column.getToggleSortingHandler()}
+                      style={{
+                        width: header.column.getSize()
+                      }}
+                    >
+                      <div className={"flex select-none"}>
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                        {header.column.getIsSorted() ? (
+                          <span className="ml-2">
+                            {header.column.getIsSorted() === "asc" ? (
+                              <TiArrowSortedDown />
+                            ) : (
+                              <TiArrowSortedUp />
+                            )}
+                          </span>
+                        ) : (
+                          ""
+                        )}
+                      </div>
+                    </th>
+                  )
+                )}
+              </tr>
+            ))}
+          </thead>
+          <tbody>
+            {isVirtualized && paddingTop > 0 && (
+              <tr>
+                <td style={{ height: `${paddingTop}px` }} />
+              </tr>
+            )}
+            {isVirtualized
+              ? getVirtualItems().map(({ index }) => {
+                  const row = rows[index];
+                  return (
+                    <DataTableRow
+                      row={row}
+                      cellClassNames={tableStyles.tbodyDataClass}
+                      onRowClick={handleRowClick}
+                      isGrouped={isGrouped}
+                      rowClassNames={tableStyles.tbodyRowClass}
+                      key={row.id}
+                    />
+                  );
+                })
+              : rows.map((row) => (
                   <DataTableRow
                     row={row}
                     cellClassNames={tableStyles.tbodyDataClass}
@@ -241,27 +285,15 @@ export function DataTable<TableColumns, Data extends TableColumns>({
                     } ${determineRowClassNamesCallback(row)}`}
                     key={row.id}
                   />
-                );
-              })
-            : rows.map((row) => (
-                <DataTableRow
-                  row={row}
-                  cellClassNames={tableStyles.tbodyDataClass}
-                  onRowClick={handleRowClick}
-                  isGrouped={isGrouped}
-                  rowClassNames={`${
-                    tableStyles.tbodyRowClass
-                  } ${determineRowClassNamesCallback(row)}`}
-                  key={row.id}
-                />
-              ))}
-          {paddingBottom > 0 && (
-            <tr>
-              <td style={{ height: `${paddingBottom}px` }} />
-            </tr>
-          )}
-        </tbody>
-      </table>
+                ))}
+            {isVirtualized && paddingBottom > 0 && (
+              <tr>
+                <td style={{ height: `${paddingBottom}px` }} />
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
       {table.getRowModel().rows.length === 0 && (
         <div className="flex items-center justify-center py-20 px-2  border-b border-gray-300 text-center text-gray-400">
           {isLoading ? (
@@ -270,6 +302,23 @@ export function DataTable<TableColumns, Data extends TableColumns>({
             <InfoMessage className="my-8" message="No data available" />
           )}
         </div>
+      )}
+      {pagination?.enable && Boolean(table.getRowModel().rows.length) && (
+        <Pagination
+          className="pt-2"
+          canPreviousPage={table.getCanPreviousPage()}
+          canNextPage={table.getCanNextPage()}
+          pageOptions={table.getPageOptions()}
+          pageCount={table.getPageCount()}
+          gotoPage={table.setPageIndex}
+          nextPage={table.nextPage}
+          previousPage={table.previousPage}
+          setPageSize={table.setPageSize}
+          state={{
+            ...table.getState().pagination
+          }}
+          loading={pagination.loading}
+        />
       )}
     </div>
   );
