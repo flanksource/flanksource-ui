@@ -5,7 +5,6 @@ import ConfigList from "../../components/ConfigList";
 import { useConfigPageContext } from "../../context/ConfigPageContext";
 import { useAllConfigsQuery } from "../../api/query-hooks";
 import { ConfigLayout } from "../../components/Layout";
-import { Tags } from "../../components/Tags";
 
 export function ConfigListPage() {
   const [params] = useSearchParams();
