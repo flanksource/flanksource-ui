@@ -41,12 +41,15 @@ import FullPageSkeletonLoader from "./components/SkeletonLoader/FullPageSkeleton
 import { UsersPage } from "./pages/UsersPage";
 import { HiUser } from "react-icons/hi";
 
+const defaultStaleTime = 1000 * 60 * 5;
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: true,
       refetchOnMount: true,
-      refetchOnReconnect: true
+      refetchOnReconnect: true,
+      staleTime: defaultStaleTime
     }
   }
 });

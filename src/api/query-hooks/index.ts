@@ -1,15 +1,23 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, UseQueryOptions } from "@tanstack/react-query";
 import { toastError } from "../../components/Toast/toast";
 import {
   getAllChanges,
   getAllConfigsMatchingQuery,
   getConfig,
   getConfigChange,
+  getConfigInsight,
+  getConfigInsights,
   getConfigName
 } from "../services/configs";
 import { getHypothesisResponse } from "../services/hypothesis";
 import { getIncident } from "../services/incident";
 import {
+  getIncidentHistory,
+  IncidentHistory
+} from "../services/IncidentsHistory";
+import {
+  ComponentTeamItem,
+  getComponentTeams,
   getHealthCheckItem,
   getTopology,
   getTopologyComponentLabels,
@@ -86,13 +94,23 @@ export const useComponentNameQuery = (
   );
 };
 
+type ConfigListFilterQueryOptions = {
+  search?: string | null;
+  configType?: string | null;
+  tag?: string | null;
+  hideDeletedConfigs?: boolean;
+  sortBy?: string | null;
+  sortOrder?: string | null;
+};
+
 function prepareConfigListQuery({
   search,
   configType,
   tag,
   sortBy,
-  sortOrder
-}: Record<string, string | null | undefined>) {
+  sortOrder,
+  hideDeletedConfigs
+}: ConfigListFilterQueryOptions) {
   let query = "select=*";
   if (search) {
     query = `${query}&or=(name.ilike.*${search}*,config_type.ilike.*${search}*,description.ilike.*${search}*,namespace.ilike.*${search}*)`;
@@ -113,6 +131,9 @@ function prepareConfigListQuery({
     const sortField = sortBy === "config_type" ? `${sortBy},name` : sortBy;
     query = `${query}&order=${sortField}.${sortOrder}`;
   }
+  if (hideDeletedConfigs) {
+    query = `${query}&deleted_at=is.null`;
+  }
   return query;
 }
 
@@ -122,8 +143,9 @@ export const useAllConfigsQuery = (
     tag,
     configType,
     sortBy,
-    sortOrder
-  }: Record<string, string | null | undefined>,
+    sortOrder,
+    hideDeletedConfigs
+  }: ConfigListFilterQueryOptions,
   { enabled = true, staleTime = defaultStaleTime, ...rest }
 ) => {
   const query = prepareConfigListQuery({
@@ -131,10 +153,19 @@ export const useAllConfigsQuery = (
     tag,
     configType,
     sortBy,
-    sortOrder
+    sortOrder,
+    hideDeletedConfigs
   });
   return useQuery(
-    ["allConfigs", search, tag, configType, sortBy, sortOrder],
+    [
+      "allConfigs",
+      search,
+      tag,
+      configType,
+      sortBy,
+      sortOrder,
+      hideDeletedConfigs
+    ],
     () => {
       return getAllConfigsMatchingQuery(query);
     },
@@ -223,18 +254,18 @@ export const useGetHypothesisQuery = (
   );
 };
 
-export function useGetAllConfigsChangesQuery() {
-  return useQuery(["configs", "changes", "all"], getAllChanges, {
-    select: (res) => {
-      if (res.error) {
-        throw new Error(res.error.message);
-      }
-      return res?.data?.length === 0 ? [] : res?.data;
-    },
-    onError: (err: any) => {
-      toastError(err);
+export function useGetAllConfigsChangesQuery(
+  pageIndex?: number,
+  pageSize?: number,
+  keepPreviousData?: boolean
+) {
+  return useQuery(
+    ["configs", "changes", "all", pageIndex, pageSize],
+    () => getAllChanges(pageIndex, pageSize),
+    {
+      keepPreviousData
     }
-  });
+  );
 }
 
 export function useGetConfigChangesQueryById(id: string) {
@@ -265,5 +296,55 @@ export function useGetConfigByIdQuery(id: string) {
     {
       onError: (err: any) => toastError(err)
     }
+  );
+}
+
+export function useGetComponentsTeamQuery(
+  componentId: string,
+  options?: UseQueryOptions<ComponentTeamItem[]>
+) {
+  return useQuery<ComponentTeamItem[]>(
+    ["components", "teams", componentId],
+    async () => {
+      const data = await getComponentTeams(componentId);
+      return data;
+    },
+    {
+      ...options
+    }
+  );
+}
+
+export function useGetConfigInsights<T>(configId: string) {
+  return useQuery(
+    ["configs", "insights", configId],
+    () => getConfigInsights<T>(configId),
+    {
+      enabled: !!configId
+    }
+  );
+}
+
+export function useGetConfigInsight<T>(
+  configId: string,
+  configInsightId: string
+) {
+  return useQuery(
+    ["configs", "insights", configId, configInsightId],
+    () => getConfigInsight<T>(configId, configInsightId),
+    {
+      enabled: !!configId && !!configInsightId
+    }
+  );
+}
+
+export function useIncidentsHistoryQuery(
+  incidentId: string,
+  options?: UseQueryOptions<IncidentHistory[], Error>
+) {
+  return useQuery<IncidentHistory[], Error>(
+    ["incident_histories", incidentId],
+    () => getIncidentHistory(incidentId),
+    options
   );
 }

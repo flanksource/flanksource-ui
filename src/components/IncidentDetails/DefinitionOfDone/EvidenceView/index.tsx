@@ -8,9 +8,10 @@ import {
 } from "../../../../api/query-hooks";
 import { Evidence, EvidenceType } from "../../../../api/services/evidence";
 import { getCanaries } from "../../../../api/services/topology";
-import { Size } from "../../../../types";
+import { Size, ViewType } from "../../../../types";
 import { Badge } from "../../../Badge";
 import { ConfigChangeEvidence } from "../../../Hypothesis/EvidenceSection";
+import { ConfigAnalysisEvidence } from "../../../Hypothesis/EvidenceSection";
 import { Icon } from "../../../Icon";
 import { Loading } from "../../../Loading";
 import { StatusStyles } from "../../../TopologyCard";
@@ -250,7 +251,14 @@ export function EvidenceView({
         <ConfigChangeEvidence
           className="w-full bg-white rounded"
           evidence={evidence}
-          viewType={size === Size.small ? "summary" : "detailed"}
+          viewType={size === Size.small ? ViewType.summary : ViewType.detailed}
+        />
+      );
+    case EvidenceType.ConfigAnalysis:
+      return (
+        <ConfigAnalysisEvidence
+          className={className}
+          evidence={evidence}
           {...rest}
         />
       );

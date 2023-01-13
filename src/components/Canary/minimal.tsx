@@ -38,10 +38,13 @@ const MinimalCanaryFC = ({
   selectedTab,
   tableHeadStyle = {}
 }: MinimalCanaryFCProps) => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams({
+    layout: "table"
+  });
 
   const { tabBy, layout, timeRange, checkId, checkTimeRange } =
     Object.fromEntries(searchParams.entries());
+
   const currentTimeRange = checkTimeRange ?? timeRange;
   const [selectedCheck, setSelectedCheck] = useState<Partial<HealthCheck>>();
   const [attachAsAsset, setAttachAsAsset] = useState(false);
@@ -95,10 +98,9 @@ const MinimalCanaryFC = ({
 
   return (
     <>
-      {layout === "card" && (
+      {layout === "card" ? (
         <CanaryCards checks={checks} onClick={handleCheckSelect} />
-      )}
-      {(layout === "table" || !layout) && (
+      ) : (
         <CanaryTable
           checks={checks}
           labels={labels}

@@ -1,13 +1,13 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { FaFilter } from "react-icons/fa";
-import { statusItems, typeItems } from "../Incidents/data";
+import { incidentStatusItems, typeItems } from "../Incidents/data";
 import IncidentStatusDropdown from "../Incidents/IncidentStatusDropdown";
 import IncidentTypeDropdown from "../Incidents/IncidentTypeDropdown";
 
 export type IncidentFilter = {
   type: "all" | keyof typeof typeItems;
-  status: "all" | `${keyof typeof statusItems}`;
+  status: "all" | `${keyof typeof incidentStatusItems}`;
   age: number;
 };
 

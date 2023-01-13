@@ -31,7 +31,11 @@ export interface NewIncident {
   status?: IncidentStatus;
 
   created_by: string;
-  commander_id: string;
+  commander_id: {
+    id?: string;
+    name?: string;
+    avatar?: string;
+  };
   communicator_id: string;
 }
 

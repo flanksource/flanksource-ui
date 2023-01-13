@@ -17,6 +17,7 @@ export interface ConfigItem {
   allTags?: Record<string, any>;
   created_at: string;
   updated_at: string;
+  deleted_at?: string;
   cost_per_minute?: number;
   cost_total_1d?: number;
   cost_total_7d?: number;
@@ -62,10 +63,22 @@ export const getAllConfigsMatchingQuery = (query: string) => {
   return resolve<ConfigItem[]>(ConfigDB.get(url));
 };
 
-export const getAllChanges = () =>
-  resolve(
-    ConfigDB.get<ConfigTypeChanges[]>(`/config_changes?order=created_at.desc`)
+export const getAllChanges = (pageIndex?: number, pageSize?: number) => {
+  const pagingParams =
+    pageIndex || pageSize
+      ? `&limit=${pageSize}&offset=${pageIndex! * pageSize!}`
+      : "";
+  return resolve(
+    ConfigDB.get<ConfigTypeChanges[]>(
+      `/config_changes?order=created_at.desc${pagingParams}`,
+      {
+        headers: {
+          Prefer: "count=exact"
+        }
+      }
+    )
   );
+};
 
 export const getConfig = (id: string) =>
   resolve<ConfigItem[]>(ConfigDB.get(`/config_items?id=eq.${id}`));
@@ -200,6 +213,23 @@ export type ConfigChangesTypeItem = {
 export const getConfigsChangesTypesFilter = async () => {
   const res = await IncidentCommander.get<ConfigChangesTypeItem[] | null>(
     `/change_types`
+  );
+  return res.data;
+};
+
+export const getConfigInsights = async <T>(configId: string) => {
+  const res = await ConfigDB.get<T>(
+    `/config_analysis?config_id=eq.${configId}`
+  );
+  return res.data;
+};
+
+export const getConfigInsight = async <T>(
+  configId: string,
+  configInsightId: string
+) => {
+  const res = await ConfigDB.get<T>(
+    `/config_analysis?config_id=eq.${configId}&id=eq.${configInsightId}`
   );
   return res.data;
 };

@@ -50,6 +50,10 @@ let config = {
       {
         source: "/api/auth/:path*",
         destination: `${backendURL}/auth/:path*`
+      },
+      {
+        source: "/api/snapshot/:path*",
+        destination: `${backendURL}/snapshot/:path*`
       }
     ];
     return ["localhost", "netlify"].includes(process.env.ENV) ? LOCALHOST_ENV_URL_REWRITES : URL_REWRITES;

@@ -21,6 +21,7 @@ export function ConfigListPage() {
   const groupByProp = decodeURIComponent(params.get("groupByProp") ?? "");
   const sortBy = params.get("sortBy");
   const sortOrder = params.get("sortOrder");
+  const hideDeletedConfigs = params.get("hideDeleted") === "yes";
 
   const {
     data: allConfigs,
@@ -33,7 +34,8 @@ export function ConfigListPage() {
       tag,
       configType,
       sortBy,
-      sortOrder
+      sortOrder,
+      hideDeletedConfigs
     },
     {
       cacheTime: 0

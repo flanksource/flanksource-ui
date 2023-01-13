@@ -1,7 +1,6 @@
 import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useAllConfigsQuery } from "../../api/query-hooks";
-import { useConfigPageContext } from "../../context/ConfigPageContext";
 import { ReactSelectDropdown, StateOption } from "../ReactSelectDropdown";
 
 type Props = {
@@ -34,8 +33,7 @@ export function ConfigTagsDropdown({
           value: `${key}__:__${value}`
         }));
     });
-    console.log("options", options);
-    return [{ label: "All", value: "All" }, ...options];
+    return [{ label: "All", value: "All" }, ...(options ? options : [])];
   }, [response]);
 
   return (

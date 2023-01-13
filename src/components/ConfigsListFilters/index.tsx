@@ -9,6 +9,7 @@ import { TextInputClearable } from "../TextInputClearable";
 import GroupByDropdown from "../GroupByDropdown";
 import { ConfigTagsDropdown } from "../ConfigTagsDropdown";
 import { ConfigTypesDropdown } from "../ConfigTypesDropdown";
+import { ConfigListToggledDeletedItems } from "../ConfigListToggledDeletedItems/ConfigListToggledDeletedItems";
 
 const ConfigFilterViewTypes = {
   basic: "Basic",
@@ -68,6 +69,8 @@ function ConfigsListFilterControls() {
             placeholder="Search for configs"
             defaultValue={params.get("search")}
           />
+
+          <ConfigListToggledDeletedItems />
         </>
       )}
 

@@ -16,7 +16,7 @@ import {
   getSortedTopology,
   getSortLabels
 } from "../components/TopologyPopover/topologySort";
-import TopologySidebar from "../components/TopologySidebar";
+import TopologySidebar from "../components/TopologySidebar/TopologySidebar";
 
 import { getAll } from "../api/schemaResources";
 import { ComponentLabelsDropdown } from "../components/Dropdown/ComponentLabelsDropdown";
@@ -28,7 +28,6 @@ import {
   useTopologyPageContext
 } from "../context/TopologyPageContext";
 import { useLoader } from "../hooks";
-import { searchParamsToObj } from "../utils/common";
 
 export const allOption = {
   All: {
@@ -122,25 +121,6 @@ export function TopologyPage() {
     return getSortLabels(topology);
   }, [topology]);
 
-  useEffect(() => {
-    if (!sortLabels) {
-      return;
-    }
-    const sortBy = getSortBy(sortLabels) || "status";
-    const sortOrder = localStorage.getItem("topologyCardsSortOrder") || "desc";
-    setSearchParams(
-      {
-        ...searchParamsToObj(searchParams),
-        sortBy,
-        sortOrder
-      },
-      {
-        // this will replace the history, so that the back button will work as expected
-        replace: true
-      }
-    );
-  }, [searchParams, setSearchParams, sortLabels]);
-
   const load = useCallback(async () => {
     const params = Object.fromEntries(searchParams);
 
@@ -164,7 +144,6 @@ export function TopologyPage() {
           }),
         hidden: params.showHiddenComponents === "no" ? false : undefined
       };
-      // @ts-ignore
       const res = await getTopology(apiParams);
       if (res.error) {
         toastError(res.error);
@@ -221,6 +200,27 @@ export function TopologyPage() {
   useEffect(() => {
     load();
   }, [searchParams, id, load]);
+
+  useEffect(() => {
+    if (!sortLabels) {
+      return;
+    }
+
+    const sortByFromURL = searchParams.get("sortBy");
+    const sortOrderFromURL = searchParams.get("sortOrder");
+
+    const sortByFromLocalStorage = getSortBy(sortLabels) || "status";
+    const sortOrderFromLocalStorage =
+      localStorage.getItem("topologyCardsSortOrder") || "desc";
+
+    if (!sortByFromURL && !sortOrderFromURL) {
+      searchParams.set("sortBy", sortByFromLocalStorage);
+      searchParams.set("sortOrder", sortOrderFromLocalStorage);
+    }
+
+    // this will replace the history, so that the back button will work as expected
+    setSearchParams(searchParams, { replace: true });
+  }, [searchParams, setSearchParams, sortLabels]);
 
   useEffect(() => {
     const teamsApiConfig = schemaResourceTypes.find(

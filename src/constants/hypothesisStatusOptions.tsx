@@ -10,7 +10,7 @@ const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
 interface Props extends ComponentProps<"svg"> {}
 
-const hypothesisStatusIconMap = {
+export const hypothesisStatusIconMap = {
   [Proven]: {
     Icon: (props: Props) => <ThumbUpIcon {...props} />,
     className: "text-bright-green"

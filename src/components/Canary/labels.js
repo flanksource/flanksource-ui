@@ -33,10 +33,10 @@ export function getLabelFilters(stateful = {}, labels = null) {
         return acc;
       }
 
-      if (v === -1) {
+      if (+v === -1) {
         acc.exclude[exInsert] = k;
       }
-      if (v === 1) {
+      if (+v === 1) {
         acc.include[inInsert] = k;
       }
 
