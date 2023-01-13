@@ -49,13 +49,6 @@ export function ConfigListPage() {
     if (!allConfigs?.data) {
       return;
     }
-    console.log(
-      "allConfigs",
-      allConfigs,
-      new Set(
-        allConfigs.data?.filter((c) => c.name.includes("alertmanager-main-0"))
-      )
-    );
     allConfigs.data.forEach((item) => {
       item.tags = item.tags || {};
       item.allTags = { ...item.tags };
