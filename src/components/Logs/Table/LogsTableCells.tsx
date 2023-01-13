@@ -68,33 +68,8 @@ export function LogsTableLabelsCell({
   const labelsToDisplay = Object.entries(labels);
 
   return (
-    <div
-      ref={outerContainerRef}
-      className={`flex flex-row text-left items-start`}
-    >
-      {isOverflowing && (
-        <button
-          onClick={(e) => {
-            /* Don't trigger click for parent. E.g without stopPropagation,
-           handleRowClick would be called. */
-            e.stopPropagation();
-            setShowAll((showMore) => !showMore);
-          }}
-          className="text-sm focus:outline-none"
-        >
-          {showAll ? (
-            <IoMdArrowDropdown size={24} />
-          ) : (
-            <IoMdArrowDropright size={24} />
-          )}
-        </button>
-      )}
-      <div
-        ref={innerContainerRef}
-        className={`flex flex-wrap flex-1 h-auto ${
-          !showAll ? "h-7 overflow-y-hidden" : ""
-        } `}
-      >
+    <div className={`flex flex-row text-left items-start`}>
+      <div ref={innerContainerRef} className={`flex flex-wrap flex-1 h-auto `}>
         <Tags type={"logs"} labels={labelsToDisplay} />
       </div>
     </div>

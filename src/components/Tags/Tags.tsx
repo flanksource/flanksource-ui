@@ -19,16 +19,15 @@ export function Tags({
   const [showMore, setShowMore] = useState(false);
   const [params] = useSearchParams();
   console.log("labels", labels);
-  const tagMap =
-    labels.reduce(
-      (obj: any, label: any) => ({
-        ...obj,
-        [label[0]]: label[1]
-      }),
-      {}
-    ) ||
-    getValue<ConfigItem["tags"]>() ||
-    {};
+  const tagMap = labels?.length
+    ? labels.reduce(
+        (obj: any, label: any) => ({
+          ...obj,
+          [label[0]]: label[1]
+        }),
+        {}
+      )
+    : getValue<ConfigItem["tags"]>();
 
   const tagKeys =
     type === "logs"
@@ -67,7 +66,6 @@ export function Tags({
       </div>
     );
   }
-
   const renderKeys = showMore ? tagKeys : tagKeys.slice(0, MIN_ITEMS);
 
   return (
