@@ -10,7 +10,8 @@ let config = {
   async rewrites() {
     // Read at build time. See Dockerfile for deployment related steps.
     const backendURL = process.env.BACKEND_URL || "/";
-    const isCanary = process.env.NEXT_PUBLIC_APP_DEPLOYMENT === "CANARY_CHECKER";
+    const isCanary =
+      process.env.NEXT_PUBLIC_APP_DEPLOYMENT === "CANARY_CHECKER";
     const canaryPrefix = isCanary ? "" : "/canary";
     const LOCALHOST_ENV_URL_REWRITES = [
       {
@@ -50,9 +51,15 @@ let config = {
       {
         source: "/api/auth/:path*",
         destination: `${backendURL}/auth/:path*`
+      },
+      {
+        source: "/api/snapshot/:path*",
+        destination: `${backendURL}/snapshot/:path*`
       }
     ];
-    return ["localhost", "netlify"].includes(process.env.ENV) ? LOCALHOST_ENV_URL_REWRITES : URL_REWRITES;
+    return ["localhost", "netlify"].includes(process.env.ENV)
+      ? LOCALHOST_ENV_URL_REWRITES
+      : URL_REWRITES;
   }
 };
 
