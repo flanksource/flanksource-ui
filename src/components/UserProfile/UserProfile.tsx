@@ -6,6 +6,7 @@ import { FaUserAlt } from "react-icons/fa";
 import { CreateUserDialog } from "../CreateUserDialog";
 import { SelectUserDialog } from "../SelectUserDialog";
 import { useCreateLogoutHandler } from "../ory";
+import { VersionInfo } from "../VersionInfo/VersionInfo";
 
 export function UserProfile() {
   const [isOpen, setIsOpen] = useState(false);
@@ -64,6 +65,9 @@ export function UserProfile() {
                 </a>
               </Menu.Item>
             ))}
+            <Menu.Item>
+              <VersionInfo />
+            </Menu.Item>
             <Menu.Item>
               <button
                 type="button"

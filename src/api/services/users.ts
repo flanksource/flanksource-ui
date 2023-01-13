@@ -1,4 +1,5 @@
-import { Auth, IncidentCommander } from "../axios";
+import { Canary } from "../../components";
+import { Auth, CanaryChecker, IncidentCommander } from "../axios";
 import { resolve } from "../resolve";
 
 interface NewUser {
@@ -71,3 +72,5 @@ export const getRegisteredUsers = () =>
 
 export const inviteUser = ({ firstName, lastName, email }: InviteUserPayload) =>
   resolve<{}>(Auth.post("/invite_user", { firstName, lastName, email }));
+
+export const getVersionInfo = () => resolve<{}>(CanaryChecker.get("/about"));

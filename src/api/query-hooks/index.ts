@@ -23,13 +23,20 @@ import {
   getTopologyComponentLabels,
   getTopologyComponents
 } from "../services/topology";
-import { getPersons } from "../services/users";
+import { getPersons, getVersionInfo } from "../services/users";
 
 const cache: Record<string, any> = {};
 
 const defaultStaleTime = 1000 * 60 * 5;
 
 export const createIncidentQueryKey = (id: string) => ["getIncident", id];
+
+export const useVersionInfo = () => {
+  return useQuery(["version-info"], getVersionInfo, {
+    staleTime: defaultStaleTime,
+    enabled: true
+  });
+};
 
 export const useIncidentQuery = (id: string) => {
   return useQuery(createIncidentQueryKey(id), () => getIncident(id), {
