@@ -265,7 +265,6 @@ export function DataTable<TableColumns, Data extends TableColumns>({
             {isVirtualized
               ? getVirtualItems().map(({ index }) => {
                   const row = rows[index];
-                  console.log("row", row);
                   return (
                     <DataTableRow
                       row={row}
