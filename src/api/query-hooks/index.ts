@@ -12,6 +12,10 @@ import {
 import { getHypothesisResponse } from "../services/hypothesis";
 import { getIncident } from "../services/incident";
 import {
+  getIncidentHistory,
+  IncidentHistory
+} from "../services/IncidentsHistory";
+import {
   ComponentTeamItem,
   getComponentTeams,
   getHealthCheckItem,
@@ -331,5 +335,16 @@ export function useGetConfigInsight<T>(
     {
       enabled: !!configId && !!configInsightId
     }
+  );
+}
+
+export function useIncidentsHistoryQuery(
+  incidentId: string,
+  options?: UseQueryOptions<IncidentHistory[], Error>
+) {
+  return useQuery<IncidentHistory[], Error>(
+    ["incident_histories", incidentId],
+    () => getIncidentHistory(incidentId),
+    options
   );
 }

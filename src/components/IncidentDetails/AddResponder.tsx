@@ -38,7 +38,7 @@ import { getAll } from "../../api/schemaResources";
 import { schemaResourceTypes } from "../SchemaResourcePage/resourceTypes";
 
 import _, { template, isEqual } from "lodash";
-import { statusItems, typeItems } from "../Incidents/data";
+import { incidentStatusItems, typeItems } from "../Incidents/data";
 
 type Action = {
   label: string;
@@ -283,9 +283,9 @@ export const AddResponder = ({
     return {
       ...incident,
       status:
-        incident.status === statusItems.open.value
-          ? statusItems.open.description
-          : statusItems.closed.description,
+        incident.status === incidentStatusItems.open.value
+          ? incidentStatusItems.open.description
+          : incidentStatusItems.closed.description,
       type: typeItems[incident.type as keyof typeof typeItems]?.description
     };
   }, [incident]);

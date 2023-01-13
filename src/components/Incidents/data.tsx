@@ -67,45 +67,45 @@ export const severityItems = {
   }
 } as const;
 
-export const statusItems = {
+export const incidentStatusItems = {
   [IncidentStatus.Open]: {
     id: `dropdown-status-${IncidentStatus.Open}`,
-    icon: <GoIssueOpened color="gray" />,
+    icon: <GoIssueOpened className="inline" color="gray" />,
     name: IncidentStatus.Open,
     description: capitalizeFirstLetter(IncidentStatus.Open),
     value: IncidentStatus.Open
   },
   [IncidentStatus.Closed]: {
     id: `dropdown-status-${IncidentStatus.Closed}`,
-    icon: <AiFillCloseCircle color="gray" />,
+    icon: <AiFillCloseCircle className="inline" color="gray" />,
     name: IncidentStatus.Closed,
     description: capitalizeFirstLetter(IncidentStatus.Closed),
     value: IncidentStatus.Closed
   },
   [IncidentStatus.New]: {
     id: `dropdown-status-${IncidentStatus.New}`,
-    icon: <MdNewReleases color="gray" />,
+    icon: <MdNewReleases className="inline" color="gray" />,
     name: IncidentStatus.New,
     description: capitalizeFirstLetter(IncidentStatus.New),
     value: IncidentStatus.New
   },
   [IncidentStatus.Mitigated]: {
     id: `dropdown-status-${IncidentStatus.Mitigated}`,
-    icon: <MdOutlineAltRoute color="gray" />,
+    icon: <MdOutlineAltRoute className="inline" color="gray" />,
     name: IncidentStatus.Mitigated,
     description: capitalizeFirstLetter(IncidentStatus.Mitigated),
     value: IncidentStatus.Mitigated
   },
   [IncidentStatus.Investigating]: {
     id: `dropdown-status-${IncidentStatus.Investigating}`,
-    icon: <MdFindInPage color="gray" />,
+    icon: <MdFindInPage className="inline" color="gray" />,
     name: IncidentStatus.Investigating,
     description: capitalizeFirstLetter(IncidentStatus.Investigating),
     value: IncidentStatus.Investigating
   },
   [IncidentStatus.Resolved]: {
     id: `dropdown-status-${IncidentStatus.Resolved}`,
-    icon: <GoIssueClosed color="gray" />,
+    icon: <GoIssueClosed className="inline" color="gray" />,
     name: IncidentStatus.Resolved,
     description: capitalizeFirstLetter(IncidentStatus.Resolved),
     value: IncidentStatus.Resolved
