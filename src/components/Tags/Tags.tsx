@@ -88,7 +88,7 @@ export function Tags({
         </button>
       )}
 
-      <div className="font-mono flex flex-wrap flex-1 max-w-full pl-1 space-y-1">
+      <div className="font-mono max-w-full pl-1 space-y-1">
         {renderKeys?.map((key) => (
           <div
             data-tip={`${key}: ${tagMap[key]}`}
