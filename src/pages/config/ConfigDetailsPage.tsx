@@ -12,7 +12,7 @@ import { usePartialUpdateSearchParams } from "../../hooks/usePartialUpdateSearch
 
 export function ConfigDetailsPage() {
   const { id } = useParams();
-  const [params, setParams] = usePartialUpdateSearchParams();
+  const [searchParams, setSearchParams] = usePartialUpdateSearchParams();
   const [attachAsAsset, setAttachAsAsset] = useState(false);
   const [checked, setChecked] = useState<Record<string, any>>({});
 
@@ -23,14 +23,14 @@ export function ConfigDetailsPage() {
       return;
     }
 
-    const selected = params.getAll("selected");
+    const selected = searchParams.getAll("selected");
     setChecked(Object.fromEntries(selected.map((x) => [x, true])));
-  }, [params, configDetails]);
+  }, [searchParams, configDetails]);
 
   useEffect(() => {
     const selected = Object.keys(checked);
-    setParams({ selected });
-  }, [checked, setParams]);
+    setSearchParams({ selected });
+  }, [checked, setSearchParams]);
 
   const handleClick = useCallback((idx: any) => {
     setChecked((checked) => {
