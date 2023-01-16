@@ -1,8 +1,12 @@
 import { useVersionInfo } from "../../api/query-hooks";
 
 export function VersionInfo() {
-  const { data } = useVersionInfo();
+  const { data, isLoading, isRefetching } = useVersionInfo();
   const versionInfo = data?.data as any;
+
+  if (isLoading || isRefetching) {
+    return null;
+  }
 
   return (
     <div className="block py-2 px-4 text-sm text-gray-700  hover:bg-gray-50 hover:text-gray-900 border-0 border-b border-gray-200">

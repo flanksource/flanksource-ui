@@ -32,10 +32,7 @@ const defaultStaleTime = 1000 * 60 * 5;
 export const createIncidentQueryKey = (id: string) => ["getIncident", id];
 
 export const useVersionInfo = () => {
-  return useQuery(["version-info"], getVersionInfo, {
-    staleTime: defaultStaleTime,
-    enabled: true
-  });
+  return useQuery(["version-info"], getVersionInfo, {});
 };
 
 export const useIncidentQuery = (id: string) => {

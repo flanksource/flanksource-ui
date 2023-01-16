@@ -1,12 +1,20 @@
 import { Canary } from "../../components";
 import { Auth, CanaryChecker, IncidentCommander } from "../axios";
 import { resolve } from "../resolve";
+import packageJson from "../../../package.json";
 
 interface NewUser {
   name: string;
   email: string;
   avatar?: string;
 }
+
+export type VersionInfo = {
+  frontend: string;
+  backend: string;
+  Version: string;
+  Timestamp: string;
+};
 
 export type RegisteredUser = {
   id: string;
@@ -73,4 +81,15 @@ export const getRegisteredUsers = () =>
 export const inviteUser = ({ firstName, lastName, email }: InviteUserPayload) =>
   resolve<{}>(Auth.post("/invite_user", { firstName, lastName, email }));
 
-export const getVersionInfo = () => resolve<{}>(CanaryChecker.get("/about"));
+export const getVersionInfo = () =>
+  resolve<VersionInfo>(
+    CanaryChecker.get("/about").then((data) => {
+      const versionInfo: any = data.data || {};
+      data.data = {
+        ...versionInfo,
+        frontend: packageJson.version,
+        backend: versionInfo.Version
+      };
+      return data;
+    })
+  );
