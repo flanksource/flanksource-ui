@@ -145,11 +145,8 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
       </Route>
 
       <Route path="configs" element={sidebar}>
-        {/* https://github.com/remix-run/react-router/issues/7239#issuecomment-898747642 */}
-        <Route path="">
-          <Route index element={<ConfigListPage />} />
-          <Route path="changes" element={<ConfigChangesPage />} />
-        </Route>
+        <Route index element={<ConfigListPage />} />
+        <Route path="changes" element={<ConfigChangesPage />} />
 
         <Route path=":id">
           <Route

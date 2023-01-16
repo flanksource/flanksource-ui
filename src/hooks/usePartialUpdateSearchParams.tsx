@@ -1,5 +1,9 @@
 import { useCallback } from "react";
-import { useSearchParams, URLSearchParamsInit } from "react-router-dom";
+import {
+  useSearchParams,
+  URLSearchParamsInit,
+  NavigateOptions
+} from "react-router-dom";
 
 /**
  *
@@ -16,17 +20,31 @@ import { useSearchParams, URLSearchParamsInit } from "react-router-dom";
  */
 export function usePartialUpdateSearchParams(
   init?: URLSearchParamsInit
-): [URLSearchParams, (newParams: Record<string, string | string[]>) => void] {
+): [
+  URLSearchParams,
+  (
+    newParams: Record<string, string | string[]>,
+    navigationOptions?: NavigateOptions
+  ) => void
+] {
   const [params, setParams] = useSearchParams(init);
 
   const setPartialParams = useCallback(
-    (newParams: Record<string, string | string[]>) => {
+    (
+      newParams: Record<string, string | string[]>,
+      navigationOptions: NavigateOptions = {
+        replace: true
+      }
+    ) => {
       let paramsChanged = false;
       Object.entries(newParams).forEach(([key, value]) => {
         // remove the key if the value is falsy
         if (!value || value.length === 0) {
-          params.delete(key);
-          paramsChanged = true;
+          // if the key doesn't exist, don't update the URL
+          if (params.has(key)) {
+            params.delete(key);
+            paramsChanged = true;
+          }
           return;
         }
         // if the value hasn't changed, don't update the URL
@@ -47,7 +65,7 @@ export function usePartialUpdateSearchParams(
         }
       });
       if (paramsChanged) {
-        setParams(params);
+        setParams(params, navigationOptions);
       }
     },
     [params, setParams]

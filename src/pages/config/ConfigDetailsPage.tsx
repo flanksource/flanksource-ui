@@ -4,33 +4,39 @@ import { useGetConfigByIdQuery } from "../../api/query-hooks";
 import { EvidenceType } from "../../api/services/evidence";
 import { AttachEvidenceDialog } from "../../components/AttachEvidenceDialog";
 import { ConfigsDetailsBreadcrumbNav } from "../../components/BreadcrumbNav/ConfigsDetailsBreadCrumb";
+import ConfigSidebar from "../../components/ConfigSidebar";
 import { ConfigDetailsSelectedLinesControls } from "../../components/ConfigsPage/ConfigDetailsSelectedLinesControls";
+import { ConfigsPageTabs } from "../../components/ConfigsPage/ConfigsPageTabs";
 import { JSONViewer } from "../../components/JSONViewer";
-import { ConfigLayout } from "../../components/Layout";
+import { SearchLayout } from "../../components/Layout";
 import { Loading } from "../../components/Loading";
 import { usePartialUpdateSearchParams } from "../../hooks/usePartialUpdateSearchParams";
 
 export function ConfigDetailsPage() {
   const { id } = useParams();
-  const [params, setParams] = usePartialUpdateSearchParams();
+  const [searchParams, setSearchParams] = usePartialUpdateSearchParams();
   const [attachAsAsset, setAttachAsAsset] = useState(false);
   const [checked, setChecked] = useState<Record<string, any>>({});
 
-  const { isLoading, data: configDetails } = useGetConfigByIdQuery(id!);
+  const {
+    isLoading,
+    data: configDetails,
+    refetch
+  } = useGetConfigByIdQuery(id!);
 
   useEffect(() => {
     if (!configDetails?.config) {
       return;
     }
 
-    const selected = params.getAll("selected");
+    const selected = searchParams.getAll("selected");
     setChecked(Object.fromEntries(selected.map((x) => [x, true])));
-  }, [params, configDetails]);
+  }, [searchParams, configDetails]);
 
   useEffect(() => {
     const selected = Object.keys(checked);
-    setParams({ selected });
-  }, [checked, setParams]);
+    setSearchParams({ selected });
+  }, [checked, setSearchParams]);
 
   const handleClick = useCallback((idx: any) => {
     setChecked((checked) => {
@@ -76,63 +82,79 @@ export function ConfigDetailsPage() {
   const selectedCount = Object.keys(checked).length;
 
   return (
-    <ConfigLayout
-      basePath={`configs/${id}`}
-      isConfigDetails
-      title={<ConfigsDetailsBreadcrumbNav config={configDetails} />}
-      isLoading={isLoading}
-      tabRight={
-        <ConfigDetailsSelectedLinesControls
-          selectedCount={selectedCount}
-          setAttachAsAsset={setAttachAsAsset}
-          setChecked={setChecked}
-        />
+    <SearchLayout
+      title={
+        <div className="flex space-x-2">
+          <span className="text-lg">
+            <ConfigsDetailsBreadcrumbNav config={configDetails} />
+          </span>
+        </div>
       }
+      onRefresh={() => refetch()}
+      loading={isLoading}
+      contentClass="p-0 h-full"
     >
-      <div className="flex flex-row items-start bg-white">
-        <div className="flex flex-col w-full max-w-full">
-          {!isLoading ? (
-            <div className="flex flex-row space-x-2">
-              <div className="flex flex-col w-full object-contain">
-                <div className="flex flex-col mb-6 w-full">
-                  <div className="flex relative py-6 px-4 border-gray-300 bg-white rounded shadow-md flex-1 overflow-x-auto">
-                    <JSONViewer
-                      code={code}
-                      format={format}
-                      showLineNo
-                      onClick={handleClick}
-                      selections={checked}
-                    />
+      <div className={`flex flex-row min-h-full h-auto`}>
+        <div
+          className={`flex flex-col flex-1 p-6 pb-0 min-h-full h-auto overflow-auto`}
+        >
+          <ConfigsPageTabs
+            basePath={`configs/${id}`}
+            tabRight={
+              <ConfigDetailsSelectedLinesControls
+                selectedCount={selectedCount}
+                setAttachAsAsset={setAttachAsAsset}
+                setChecked={setChecked}
+              />
+            }
+          />
+          <div className="flex flex-row items-start bg-white">
+            <div className="flex flex-col w-full max-w-full">
+              {!isLoading ? (
+                <div className="flex flex-row space-x-2">
+                  <div className="flex flex-col w-full object-contain">
+                    <div className="flex flex-col mb-6 w-full">
+                      <div className="flex relative py-6 px-4 border-gray-300 bg-white rounded shadow-md flex-1 overflow-x-auto">
+                        <JSONViewer
+                          code={code}
+                          format={format}
+                          showLineNo
+                          onClick={handleClick}
+                          selections={checked}
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
+              ) : (
+                <div className="h-32 flex items-center justify-center">
+                  <Loading />
+                </div>
+              )}
             </div>
-          ) : (
-            <div className="h-32 flex items-center justify-center">
-              <Loading />
-            </div>
-          )}
-        </div>
 
-        <AttachEvidenceDialog
-          key={`attach-evidence-dialog`}
-          isOpen={attachAsAsset}
-          onClose={() => setAttachAsAsset(false)}
-          config_id={id}
-          evidence={{
-            lines: configLines,
-            configName: configDetails?.name,
-            configType: configDetails?.config_type,
-            selected_lines: Object.fromEntries(
-              Object.keys(checked).map((n) => [n, configLines[n]])
-            )
-          }}
-          type={EvidenceType.Config}
-          callback={(_: any) => {
-            setChecked({});
-          }}
-        />
+            <AttachEvidenceDialog
+              key={`attach-evidence-dialog`}
+              isOpen={attachAsAsset}
+              onClose={() => setAttachAsAsset(false)}
+              config_id={id}
+              evidence={{
+                lines: configLines,
+                configName: configDetails?.name,
+                configType: configDetails?.config_type,
+                selected_lines: Object.fromEntries(
+                  Object.keys(checked).map((n) => [n, configLines[n]])
+                )
+              }}
+              type={EvidenceType.Config}
+              callback={(_: any) => {
+                setChecked({});
+              }}
+            />
+          </div>
+        </div>
+        <ConfigSidebar />
       </div>
-    </ConfigLayout>
+    </SearchLayout>
   );
 }

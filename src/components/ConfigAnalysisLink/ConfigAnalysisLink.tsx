@@ -27,7 +27,7 @@ export function ConfigAnalysisLink({
   const [attachEvidence, setAttachEvidence] = useState(false);
   const [open, setOpen] = useState(false);
   const { data: config } = useGetConfigByIdQuery(configAnalysis?.config_id);
-  console.log(config);
+
   const properties = useMemo(() => {
     return [
       {
