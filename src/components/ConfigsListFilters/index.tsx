@@ -86,4 +86,5 @@ function ConfigsListFilterControls() {
   );
 }
 
-export default React.memo(ConfigsListFilterControls);
+const ConfigsListFilters = React.memo(ConfigsListFilterControls);
+export default ConfigsListFilters;

@@ -4,7 +4,9 @@ import objectHash from "object-hash";
 import ConfigList from "../../components/ConfigList";
 import { useConfigPageContext } from "../../context/ConfigPageContext";
 import { useAllConfigsQuery } from "../../api/query-hooks";
-import { ConfigLayout } from "../../components/Layout";
+import { SearchLayout } from "../../components/Layout";
+import { ConfigsPageTabs } from "../../components/ConfigsPage/ConfigsPageTabs";
+import ConfigsListFilters from "../../components/ConfigsListFilters";
 
 export function ConfigListPage() {
   const [params] = useSearchParams();
@@ -78,14 +80,32 @@ export function ConfigListPage() {
   }, [configType, tag, sortOrder, search, sortBy]);
 
   return (
-    <ConfigLayout basePath="configs" title="Configs" isLoading={loading}>
-      <div className="flex flex-col h-full overflow-y-hidden">
-        <ConfigList
-          data={data!}
-          handleRowClick={handleRowClick}
-          isLoading={loading}
-        />
+    <SearchLayout
+      title={
+        <div className="flex space-x-2">
+          <span className="text-lg">Configs</span>
+        </div>
+      }
+      onRefresh={() => refetch()}
+      loading={isLoading}
+      contentClass="p-0 h-full"
+    >
+      <div className={`flex flex-row h-full`}>
+        <div className={`flex flex-col flex-1 p-6 pb-0 h-full `}>
+          <div className="flex flex-row items-center pb-6">
+            <ConfigsListFilters />
+          </div>
+
+          <ConfigsPageTabs basePath={"configs"} />
+          <div className="flex flex-col h-full overflow-y-hidden">
+            <ConfigList
+              data={data!}
+              handleRowClick={handleRowClick}
+              isLoading={loading}
+            />
+          </div>
+        </div>
       </div>
-    </ConfigLayout>
+    </SearchLayout>
   );
 }
