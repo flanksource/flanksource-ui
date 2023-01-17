@@ -239,6 +239,14 @@ export const getConfigInsights = async <T>(configId: string) => {
   return res.data;
 };
 
+export const getTopologyRelatedInsights = async (id: string) => {
+  const res = await ConfigDB.get<ConfigTypeInsights[]>(
+    `/analysis_by_component?component_id=eq.${id}&select=*,config:configs(id,name,config_type,external_type,analysis:config_analysis(*))`
+  );
+  console.log(res.data);
+  return res.data;
+};
+
 export const getConfigInsight = async <T>(
   configId: string,
   configInsightId: string
