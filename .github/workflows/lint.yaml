@@ -3,9 +3,7 @@ name: Lint
 on:
   push:
     branches:
-      - master
       - main
-      - production
   pull_request:
     paths:
       - 'Makefile'
