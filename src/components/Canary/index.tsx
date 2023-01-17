@@ -378,12 +378,12 @@ export const LabelFilterList = ({ labels }: { labels: any }) => {
   return (
     <div>
       {Object.entries(list)
-        .sort((a, b) => (a[0] > b[0] ? 1 : -1))
+        .sort((a, b) => (a[0].toLowerCase() > b[0].toLowerCase() ? 1 : -1))
         .map(([labelKey, labels]) => (
           <div key={labelKey} className="mb-2">
             {labels.length > 1 ? (
               <>
-                <div className="text-xs whitespace-nowrap overflow-ellipsis w-full overflow-hidden mb-1">
+                <div className="text-xs whitespace-nowrap overflow-ellipsis w-full overflow-hidden mb-1 capitalize">
                   {/* @ts-expect-error */}
                   {FilterKeyToLabelMap[labelKey] || labelKey}
                 </div>
@@ -391,7 +391,7 @@ export const LabelFilterList = ({ labels }: { labels: any }) => {
               </>
             ) : labels.length === 1 ? (
               <div className="flex w-full mb-3">
-                <div className="mr-3 w-full text-xs text-left text-gray-700 break-all overflow-ellipsis overflow-x-hidden flex items-center">
+                <div className="mr-3 w-full text-xs text-left text-gray-700 break-all overflow-ellipsis overflow-x-hidden flex items-center capitalize">
                   {/* @ts-expect-error */}
                   {FilterKeyToLabelMap[labels[0].key] || labels[0].key}
                 </div>
