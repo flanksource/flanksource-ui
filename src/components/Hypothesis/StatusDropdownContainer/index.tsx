@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { MutationFunction } from "@tanstack/react-query";
 import { Hypothesis, HypothesisStatus } from "../../../api/services/hypothesis";
 import useHypothesisStatusForm from "../../../hooks/useHypothesisStatusForm";
@@ -16,11 +16,18 @@ export function StatusDropdownContainer({
   status,
   updateMutation
 }: Props) {
-  const { control } = useHypothesisStatusForm({
+  const { control, setValue } = useHypothesisStatusForm({
     status: status || HypothesisStatus.Likely,
     updateMutation,
     id: nodeId
   });
+
+  useEffect(() => {
+    if (!status) {
+      return;
+    }
+    setValue("status", status);
+  }, [status, setValue]);
 
   return (
     <SubtleDropdown

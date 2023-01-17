@@ -20,7 +20,7 @@ export default function useHypothesisStatusForm({
   updateMutation,
   id
 }: Props) {
-  const { control, watch, getValues } = useForm({
+  const { control, watch, getValues, setValue } = useForm({
     defaultValues: { status }
   });
 
@@ -41,5 +41,5 @@ export default function useHypothesisStatusForm({
     return () => subscription.unsubscribe();
   }, [watch, handleApiUpdate]);
 
-  return { control, watch, getValues };
+  return { control, watch, getValues, setValue };
 }
