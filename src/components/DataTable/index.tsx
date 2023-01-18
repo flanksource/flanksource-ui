@@ -302,16 +302,16 @@ export function DataTable<TableColumns, Data extends TableColumns>({
             )}
           </tbody>
         </table>
+        {table.getRowModel().rows.length === 0 && (
+          <div className="flex items-center justify-center py-20 px-2  border-b border-gray-300 text-center text-gray-400">
+            {isLoading ? (
+              <Loading text="Loading data.." />
+            ) : (
+              <InfoMessage className="my-8" message="No data available" />
+            )}
+          </div>
+        )}
       </div>
-      {table.getRowModel().rows.length === 0 && (
-        <div className="flex items-center justify-center py-20 px-2  border-b border-gray-300 text-center text-gray-400">
-          {isLoading ? (
-            <Loading text="Loading data.." />
-          ) : (
-            <InfoMessage className="my-8" message="No data available" />
-          )}
-        </div>
-      )}
       {pagination?.enable && Boolean(table.getRowModel().rows.length) && (
         <Pagination
           className="pt-2"
