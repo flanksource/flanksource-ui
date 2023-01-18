@@ -89,7 +89,7 @@ export function LogsPage() {
   return (
     <SearchLayout
       onRefresh={() => refetch()}
-      loading={isLoading || isFetching || isRefetching}
+      loading={topologyId ? isLoading || isFetching || isRefetching : false}
       title={
         <h1 className="text-xl font-semibold">
           Logs{topology?.name ? `/${topology.name}` : ""}
