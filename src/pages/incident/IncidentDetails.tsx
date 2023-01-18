@@ -18,8 +18,8 @@ import { IncidentChangelog } from "../../components/Changelog/IncidentChangelog"
 import { HypothesisBuilder } from "../../components/Hypothesis/HypothesisBuilder";
 import { IncidentDetails } from "../../components/IncidentDetails";
 import { SearchLayout } from "../../components/Layout";
-import { useCreateHypothesisMutation } from "../../components/mutations/useCreateHypothesisMutation";
-import { useUpdateHypothesisMutation } from "../../components/mutations/useUpdateHypothesisMutation";
+import { useCreateHypothesisMutation } from "../../api/mutations/useCreateHypothesisMutation";
+import { useUpdateHypothesisMutation } from "../../api/mutations/useUpdateHypothesisMutation";
 import { useIncidentQuery } from "../../api/query-hooks";
 import { TopologyCard } from "../../components/TopologyCard";
 import { Size } from "../../types";

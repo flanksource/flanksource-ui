@@ -140,8 +140,8 @@ export const createHypothesisOld = async (
     ...params
   });
 
-export const updateHypothesis = async (id: string, params: HypothesisInfo) => {
-  IncidentCommander.patch(`/hypotheses?id=eq.${id}`, { ...params });
+export const updateHypothesis = (id: string, params: HypothesisInfo) => {
+  return IncidentCommander.patch(`/hypotheses?id=eq.${id}`, { ...params });
 };
 
 // NOTE: Needs to be a database transaction. Possibility of partial deletes.
