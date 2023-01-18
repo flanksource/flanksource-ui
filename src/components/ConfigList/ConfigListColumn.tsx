@@ -61,36 +61,45 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
     size: 120
   },
   {
-    header: "Cost (per min)",
-    accessorKey: "cost_per_minute",
+    header: "Cost",
+    accessorKey: "",
     cell: ConfigListCostCell,
-    aggregationFn: "sum",
-    aggregatedCell: CostAggregate,
-    size: 50
-  },
-  {
-    header: "Cost (24hr)",
-    accessorKey: "cost_total_1d",
-    cell: ConfigListCostCell,
-    aggregationFn: "sum",
-    aggregatedCell: CostAggregate,
-    size: 50
-  },
-  {
-    header: "Cost (7d)",
-    accessorKey: "cost_total_7d",
-    cell: ConfigListCostCell,
-    aggregationFn: "sum",
-    aggregatedCell: CostAggregate,
-    size: 50
-  },
-  {
-    header: "Cost (30d)",
-    accessorKey: "cost_total_30d",
-    cell: ConfigListCostCell,
-    aggregationFn: "sum",
-    aggregatedCell: CostAggregate,
-    size: 50
+    size: 120,
+    enableSorting: false,
+    columns: [
+      {
+        header: "min",
+        accessorKey: "cost_per_minute",
+        aggregationFn: "sum",
+        aggregatedCell: CostAggregate,
+        cell: ConfigListCostCell,
+        size: 30
+      },
+      {
+        header: "24hr",
+        accessorKey: "cost_total_1d",
+        aggregationFn: "sum",
+        aggregatedCell: CostAggregate,
+        cell: ConfigListCostCell,
+        size: 30
+      },
+      {
+        header: "7d",
+        accessorKey: "cost_total_7d",
+        aggregationFn: "sum",
+        aggregatedCell: CostAggregate,
+        cell: ConfigListCostCell,
+        size: 30
+      },
+      {
+        header: "30d",
+        accessorKey: "cost_total_30d",
+        aggregationFn: "sum",
+        aggregatedCell: CostAggregate,
+        cell: ConfigListCostCell,
+        size: 30
+      }
+    ]
   },
   {
     header: "Tags",

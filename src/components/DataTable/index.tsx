@@ -230,24 +230,33 @@ export function DataTable<TableColumns, Data extends TableColumns>({
                       style={{
                         width: header.column.getSize()
                       }}
+                      colSpan={header.column?.columns?.length ?? 1}
                     >
-                      <div className={"flex select-none"}>
-                        {flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                        {header.column.getIsSorted() ? (
-                          <span className="ml-2">
-                            {header.column.getIsSorted() === "asc" ? (
-                              <TiArrowSortedDown />
-                            ) : (
-                              <TiArrowSortedUp />
-                            )}
-                          </span>
-                        ) : (
-                          ""
-                        )}
-                      </div>
+                      {(header.headerGroup.depth === 0 ||
+                        (header.column.parent?.columns?.length ?? 0) > 0) && (
+                        <div
+                          className={clsx(
+                            "flex select-none",
+                            header.headerGroup.depth > 0 && "text-xs"
+                          )}
+                        >
+                          {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                          {header.column.getIsSorted() ? (
+                            <span className="ml-2">
+                              {header.column.getIsSorted() === "asc" ? (
+                                <TiArrowSortedDown />
+                              ) : (
+                                <TiArrowSortedUp />
+                              )}
+                            </span>
+                          ) : (
+                            ""
+                          )}
+                        </div>
+                      )}
                     </th>
                   )
                 )}
