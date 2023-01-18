@@ -28,36 +28,18 @@ const config = {
     ];
     const URL_REWRITES = [
       {
-        source: "/api/configs_db/:path*",
-        destination: `${backendURL}/config/db/:path*`
-      },
-      {
         source: "/api/canary/:path*",
         destination: `${backendURL}${canaryPrefix}/:path*`
-      },
-      {
-        source: "/api/incidents_db/:path*",
-        destination: `${backendURL}/db/:path*`
-      },
-      {
-        source: "/api/db/:path*",
-        destination: `${backendURL}/db/:path*`
       },
       {
         source: "/api/.ory/:path*",
         destination: `${backendURL}/kratos/:path*`
       },
+      // All other API requests are proxied to the backend on the same path
+      // as the request.
       {
-        source: "/api/apm/search/:path*",
-        destination: `${backendURL}/apm/search/:path*`
-      },
-      {
-        source: "/api/auth/:path*",
-        destination: `${backendURL}/auth/:path*`
-      },
-      {
-        source: "/api/snapshot/:path*",
-        destination: `${backendURL}/snapshot/:path*`
+        source: "/api/:path*",
+        destination: `${backendURL}/:path*`
       }
     ];
     return ["localhost", "netlify"].includes(process.env.ENV)
