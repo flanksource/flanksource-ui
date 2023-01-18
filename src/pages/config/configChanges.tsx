@@ -9,7 +9,7 @@ import { SearchLayout } from "../../components/Layout";
 export function ConfigChangesPage() {
   const [{ pageIndex, pageSize }, setPageState] = useState({
     pageIndex: 0,
-    pageSize: 20
+    pageSize: 50
   });
 
   const { data, isLoading, error, isRefetching, refetch } =

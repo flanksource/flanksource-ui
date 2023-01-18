@@ -45,13 +45,13 @@ export const Pagination = ({
             />
           </div>
           <select
-            className="rounded-md w-20 border-gray-300 py-2 pl-3 pr-10 shadow-sm inline-block"
+            className="rounded-md w-35 border-gray-300 py-2 pl-3 pr-10 shadow-sm inline-block"
             value={pageSize}
             onChange={(e) => {
               setPageSize(Number(e.target.value));
             }}
           >
-            {[10, 20, 30, 40, 50].map((pageSize) => (
+            {[50, 100, 150, 200, 250].map((pageSize) => (
               <option key={pageSize} value={pageSize}>
                 {pageSize}
               </option>
