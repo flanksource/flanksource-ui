@@ -52,6 +52,10 @@ export function TopologyBreadcrumbs({
     return topologyIds;
   }, [component, topologyId, refererId]);
 
+  if (!topologyId) {
+    return <span> Topology </span>;
+  }
+
   return (
     <>
       <Link to="/topology" className="hover:text-gray-500 ">
