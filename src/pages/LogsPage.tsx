@@ -12,6 +12,7 @@ import { LogsTable } from "../components/Logs/Table/LogsTable";
 import useDebouncedValue from "../hooks/useDebounce";
 import LogItem from "../types/Logs";
 import { getTopologyComponentByID } from "../api/services/topology";
+import { Head } from "../components/Head/Head";
 
 export const logTypes = [
   {
@@ -87,65 +88,72 @@ export function LogsPage() {
   );
 
   return (
-    <SearchLayout
-      onRefresh={() => refetch()}
-      loading={topologyId ? isLoading || isFetching || isRefetching : false}
-      title={
-        <h1 className="text-xl font-semibold">
-          Logs{topology?.name ? `/${topology.name}` : ""}
-        </h1>
-      }
-      contentClass={`h-full p-6`}
-      extra={
-        <DropdownStandaloneWrapper
-          dropdownElem={<TimeRange name="time-range" />}
-          defaultValue={searchParams.get("start") ?? timeRanges[0].value}
-          paramKey="start"
-          className="w-44 mr-2"
-        />
-      }
-    >
-      <div className="flex flex-col space-y-6 h-full">
-        <div className="flex flex-row items-center w-full">
-          <FilterLogsByComponent />
+    <>
+      <Head prefix={topology?.name ? `Logs - ${topology.name}` : "Logs"} />
+      <SearchLayout
+        onRefresh={() => refetch()}
+        loading={topologyId ? isLoading || isFetching || isRefetching : false}
+        title={
+          <h1 className="text-xl font-semibold">
+            Logs{topology?.name ? `/${topology.name}` : ""}
+          </h1>
+        }
+        contentClass={`h-full p-6`}
+        extra={
+          <DropdownStandaloneWrapper
+            dropdownElem={<TimeRange name="time-range" />}
+            defaultValue={searchParams.get("start") ?? timeRanges[0].value}
+            paramKey="start"
+            className="w-44 mr-2"
+          />
+        }
+      >
+        <div className="flex flex-col space-y-6 h-full">
+          <div className="flex flex-row items-center w-full">
+            <FilterLogsByComponent />
 
-          <div className="mx-2 w-80 relative rounded-md shadow-sm">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
-              <button type="button" onClick={() => refetch()} className="hover">
-                <SearchIcon
-                  className="h-5 w-5 text-gray-400 hover:text-gray-600"
-                  aria-hidden="true"
-                />
-              </button>
+            <div className="mx-2 w-80 relative rounded-md shadow-sm">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
+                <button
+                  type="button"
+                  onClick={() => refetch()}
+                  className="hover"
+                >
+                  <SearchIcon
+                    className="h-5 w-5 text-gray-400 hover:text-gray-600"
+                    aria-hidden="true"
+                  />
+                </button>
+              </div>
+              <TextInput
+                placeholder="Search"
+                className="pl-10 pb-2.5 w-full flex-shrink-0"
+                style={{ height: "38px" }}
+                id="searchQuery"
+                onChange={(e) => {
+                  if (e.target.value !== "") {
+                    setSearchParams({
+                      ...Object.fromEntries(searchParams),
+                      query: e.target.value
+                    });
+                  } else {
+                    searchParams.delete("query");
+                    setSearchParams(searchParams);
+                  }
+                }}
+                defaultValue={query ?? undefined}
+              />
             </div>
-            <TextInput
-              placeholder="Search"
-              className="pl-10 pb-2.5 w-full flex-shrink-0"
-              style={{ height: "38px" }}
-              id="searchQuery"
-              onChange={(e) => {
-                if (e.target.value !== "") {
-                  setSearchParams({
-                    ...Object.fromEntries(searchParams),
-                    query: e.target.value
-                  });
-                } else {
-                  searchParams.delete("query");
-                  setSearchParams(searchParams);
-                }
-              }}
-              defaultValue={query ?? undefined}
-            />
           </div>
+          <LogsTable
+            variant="comfortable"
+            isLoading={isLoading}
+            logs={logs ?? []}
+            areQueryParamsEmpty={!topologyId && !query}
+            componentId={topology?.id}
+          />
         </div>
-        <LogsTable
-          variant="comfortable"
-          isLoading={isLoading}
-          logs={logs ?? []}
-          areQueryParamsEmpty={!topologyId && !query}
-          componentId={topology?.id}
-        />
-      </div>
-    </SearchLayout>
+      </SearchLayout>
+    </>
   );
 }

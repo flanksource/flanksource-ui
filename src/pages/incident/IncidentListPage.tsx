@@ -14,6 +14,7 @@ import {
   IncidentState,
   useIncidentPageContext
 } from "../../context/IncidentPageContext";
+import { Head } from "../../components/Head/Head";
 
 type IncidentFilters = {
   severity?: string;
@@ -155,6 +156,7 @@ export function IncidentListPage() {
 
   return (
     <>
+      <Head prefix="Incidents" />
       <SearchLayout
         loading={isLoading}
         title={
