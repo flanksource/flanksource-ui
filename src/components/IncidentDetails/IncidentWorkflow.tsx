@@ -48,9 +48,14 @@ const IncidentStatusWorkflowMap = {
   [IncidentStatus.Mitigated]: [
     IncidentStatus.Mitigated,
     IncidentStatus.Resolved,
-    IncidentStatus.Closed
+    IncidentStatus.Closed,
+    IncidentStatus.Open
   ],
-  [IncidentStatus.Resolved]: [IncidentStatus.Resolved, IncidentStatus.Closed],
+  [IncidentStatus.Resolved]: [
+    IncidentStatus.Resolved,
+    IncidentStatus.Closed,
+    IncidentStatus.Open
+  ],
   [IncidentStatus.Closed]: [IncidentStatus.Closed, IncidentStatus.Open]
 };
 
