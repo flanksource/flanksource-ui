@@ -103,7 +103,7 @@ Rudamentary hacky checks like if it's a new incident, show differnt error
 message than if an incident is selected. */
 const validationSchema = yup
   .object({
-    description: yup.string().required(),
+    description: yup.string(),
     incident: yup
       .object()
       .shape({
@@ -120,9 +120,9 @@ const validationSchema = yup
         description: yup.string()
       })
       .when("incident", (incident) => {
-        if (!incident?.value) {
+        if (incident?.__isNew__ || !incident?.value) {
           return yup.object().shape({
-            description: yup.string().required("Must specify a hypothesis")
+            description: yup.string()
           });
         }
         return yup.object().shape({
@@ -198,7 +198,7 @@ export function AttachEvidenceDialog({
     return () => {
       reset();
     };
-  }, []);
+  }, [isOpen]);
 
   const fetchIncidentOptions = useCallback((query: string) => {
     const fn = async (query: string): Promise<IExtendedItem[]> => {
@@ -236,7 +236,11 @@ export function AttachEvidenceDialog({
       console.error(error || "No data?");
       return [];
     }
-    return toOpts(data);
+    const hypotheses = toOpts(data);
+    if (hypotheses.length === 1) {
+      setValue("hypothesis", hypotheses[0]);
+    }
+    return hypotheses;
   };
 
   const onSubmit = async (data: IFormValues) => {
@@ -265,13 +269,16 @@ export function AttachEvidenceDialog({
       incidentId = incidentResp.id;
     }
 
-    if (isNewHypothesis) {
+    if (
+      isNewHypothesis ||
+      (!hypothesisData?.value && !hypothesisData?.description)
+    ) {
       const nodeDetails = { type: "root" };
 
       const params = {
         user,
         incident_id: incidentId,
-        title: hypothesisData?.description,
+        title: hypothesisData?.description || incidentData?.description,
         status: HypothesisStatus.Possible,
         ...nodeDetails
       };
@@ -296,7 +303,7 @@ export function AttachEvidenceDialog({
       hypothesisId: hypothesisId,
       evidence: evidenceAttachment,
       type,
-      description: data.description
+      description: data.description ?? ""
     };
 
     createEvidence(evidence)
@@ -341,24 +348,6 @@ export function AttachEvidenceDialog({
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="px-8">
             <div className="mb-4">
-              <Controller
-                control={control}
-                name="description"
-                render={({ field: { onChange, value } }) => (
-                  <TextInput
-                    label="Description"
-                    id="description"
-                    className="w-full"
-                    onChange={onChange}
-                    value={value}
-                  />
-                )}
-              />
-              <p className="text-red-600 text-sm">
-                {errors.description?.message}
-              </p>
-            </div>
-            <div className="mb-4">
               <div className="block text-sm font-bold text-gray-700 mb-2">
                 Incident
               </div>
@@ -372,6 +361,24 @@ export function AttachEvidenceDialog({
                 displayOption={IncidentOption}
               />
               <p className="text-red-600 text-sm">{errors.incident?.message}</p>
+              <div className="pt-4">
+                <Controller
+                  control={control}
+                  name="description"
+                  render={({ field: { onChange, value } }) => (
+                    <TextInput
+                      label="Description"
+                      id="description"
+                      className="w-full"
+                      onChange={onChange}
+                      value={value}
+                    />
+                  )}
+                />
+                <p className="text-red-600 text-sm">
+                  {errors.description?.message}
+                </p>
+              </div>
               {newIncidentCreated && (
                 <div className="space-y-2 pt-4">
                   <div className="flex flex-col">
