@@ -18,10 +18,6 @@ const config = {
     const canaryPrefix = isCanary ? "" : "/canary";
     const LOCALHOST_ENV_URL_REWRITES = [
       {
-        source: "/api/db/:path*",
-        destination: `${backendURL}/api/incidents_db/:path*`
-      },
-      {
         source: "/api/:path*",
         destination: `${backendURL}/api/:path*`
       }
