@@ -99,7 +99,7 @@ export function ConfigsList({
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default function Configs(props: Props) {
-  const [hideDeletedConfigs, setHideDeletedConfigs] = useState(false);
+  const [hideDeletedConfigs, setHideDeletedConfigs] = useState(true);
 
   const TrashIconType = hideDeletedConfigs ? TbTrashOff : TbTrash;
   const handleTrashIconClick = (e: { stopPropagation: () => void }) => {
