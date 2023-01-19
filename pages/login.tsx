@@ -125,22 +125,13 @@ const Login: NextPage = () => {
                   </div>
                 </div>
               ) : (
-                <>
-                  <div className="mt-2">
-                    <Link href="/registration" passHref>
-                      <a className="cursor-pointer font-medium text-blue-600 hover:text-blue-500">
-                        Create account
-                      </a>
-                    </Link>
-                  </div>
-                  <div className="mt-2">
-                    <Link href="/recovery" passHref>
-                      <a className="cursor-pointer font-medium text-blue-600 hover:text-blue-500">
-                        Recover your account
-                      </a>
-                    </Link>
-                  </div>
-                </>
+                <div className="mt-2">
+                  <Link href="/recovery" passHref>
+                    <div className="cursor-pointer font-medium text-blue-600 hover:text-blue-500">
+                      Reset password
+                    </div>
+                  </Link>
+                </div>
               )}
             </div>
           </div>
