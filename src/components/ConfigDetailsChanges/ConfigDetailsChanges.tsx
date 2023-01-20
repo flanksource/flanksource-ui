@@ -167,7 +167,8 @@ export function ConfigDetailsChanges({
                     >
                       <JSONViewer
                         code={JSON.stringify(changeDetails?.details, null, 2)}
-                        format="json"
+                        format="yaml"
+                        convertToYaml
                       />
                     </div>
                   )
@@ -186,7 +187,8 @@ export function ConfigDetailsChanges({
                     <div className="w-full max-h-56 overflow-y-auto overflow-x-auto border border-gray-200 rounded">
                       <JSONViewer
                         code={JSON.stringify(changeDetails?.patches, null, 2)}
-                        format="json"
+                        format="yaml"
+                        convertToYaml
                       />
                     </div>
                   )
