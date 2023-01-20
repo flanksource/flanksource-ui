@@ -1,4 +1,9 @@
+import { ConfigTypeChanges } from "../../components/ConfigChanges";
+import { ConfigTypeInsights } from "../../components/ConfigInsights";
+import { Topology } from "../../context/TopologyPageContext";
+import { HealthCheck } from "../../types/healthChecks";
 import { IncidentCommander } from "../axios";
+import { ConfigItem } from "./configs";
 import { Evidence } from "./evidence";
 import { Hypothesis } from "./hypothesis";
 import { Incident } from "./incident";
@@ -27,6 +32,14 @@ export interface Comment {
   read?: string;
   updated_at?: string;
   external_created_by?: string;
+}
+
+export interface EvidenceWithEvidenceItems extends Evidence {
+  components?: Topology;
+  configs?: ConfigItem;
+  config_changes?: ConfigTypeChanges;
+  config_analysis?: ConfigTypeInsights;
+  checks?: HealthCheck;
 }
 
 export interface Responder {
@@ -58,7 +71,7 @@ export interface IncidentHistory {
   updated_at: string;
   hypotheses?: Hypothesis[];
   incident?: Incident;
-  evidence?: Evidence;
+  evidence?: EvidenceWithEvidenceItems;
   hypothesis?: Hypothesis;
   responder?: Responder;
   comment?: Comment;
@@ -66,7 +79,7 @@ export interface IncidentHistory {
 
 export const getIncidentHistory = async (incidentID: string) => {
   const res = await IncidentCommander.get<IncidentHistory[]>(
-    `/incident_histories?incident_id=eq.${incidentID}&select=*,evidence:evidences(id,description),hypothesis:hypotheses(id,title),responder:responders(id,person:person_id(id,name,avatar)),comment:comments(id,comment),created_by(id,name,avatar))&order=created_at.desc`
+    `/incident_histories?incident_id=eq.${incidentID}&select=*,evidence:evidences(id,description,type,components(id,name,icon),configs(id,name),config_changes(id,change_type),config_analysis(id,analyzer,message,analysis),checks(id,icon,name)),hypothesis:hypotheses(id,title),responder:responders(id,person:person_id(id,name,avatar)),comment:comments(id,comment),created_by(id,name,avatar))&order=created_at.desc`
   );
   return res.data;
 };

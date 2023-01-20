@@ -8,6 +8,7 @@ import { hypothesisStatusIconMap } from "../../constants/hypothesisStatusOptions
 import { Avatar } from "../Avatar";
 import { Badge } from "../Badge";
 import { incidentStatusItems } from "../Incidents/data";
+import EvidenceChangelogContent from "./EvidenceChangelogContent";
 
 type IncidentHistoryItemTypeContentProps = {
   incidentHistory: IncidentHistory;
@@ -60,9 +61,11 @@ const IncidentHistoryTypeToComponentMap = new Map<
     "evidence.created",
     ({ incidentHistory }) => {
       const evidence = incidentHistory.evidence;
+
       return (
         <>
-          added <Badge text={evidence?.description} />{" "}
+          added{" "}
+          <Badge text={<EvidenceChangelogContent evidence={evidence} />} />
         </>
       );
     }
