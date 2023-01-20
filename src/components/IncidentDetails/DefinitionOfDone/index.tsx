@@ -62,7 +62,7 @@ export function DefinitionOfDone({ incidentId }: DefinitionOfDoneProps) {
   const [addToDODModalOpen, setAddToDODModalOpen] = useState(false);
   const [nonDODEvidences, setNonDODEvidences] = useState<Evidence[]>([]);
   const incidentQuery = useIncidentQuery(incidentId);
-  const { refetch, isRefetching, isLoading, data: incident } = incidentQuery;
+  const { refetch, isLoading, isRefetching, data: incident } = incidentQuery;
 
   useEffect(() => {
     if (!incident) {
@@ -115,7 +115,9 @@ export function DefinitionOfDone({ incidentId }: DefinitionOfDoneProps) {
           </h2>
           <span className="relative z-0 inline-flex">
             <MdRefresh
-              className="cursor-pointer mr-3 w-6 h-6"
+              className={`cursor-pointer mr-3 w-6 h-6 ${
+                isRefetching ? "animate-spin" : ""
+              }`}
               onClick={() => refetch()}
             />
             <RiFullscreenLine
@@ -127,14 +129,13 @@ export function DefinitionOfDone({ incidentId }: DefinitionOfDoneProps) {
       </div>
       <div className="flex max-h-96 overflow-y-auto overflow-x-hidden w-full px-4">
         <div className="w-full">
-          {(isLoading || isRefetching) && (
+          {isLoading && !incident ? (
             <div className="flex items-start py-2 pl-2 pr-2">
               <div className="text-sm text-gray-500">
                 Loading evidences please wait...
               </div>
             </div>
-          )}
-          {!(isLoading || isRefetching) &&
+          ) : (
             dodEvidences.map((evidence, index) => {
               return (
                 <div key={index} className="relative flex items-center py-2">
@@ -182,7 +183,8 @@ export function DefinitionOfDone({ incidentId }: DefinitionOfDoneProps) {
                   </div>
                 </div>
               );
-            })}
+            })
+          )}
           <AddDefinitionOfDone
             className={clsx(
               "flex items-center justify-between",
