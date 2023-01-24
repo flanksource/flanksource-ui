@@ -100,7 +100,9 @@ function ConfigInsightsDetails({ configID }: Props) {
           </tbody>
         </table>
       ) : (
-        <EmptyState />
+        <div className="w-full">
+          <EmptyState />
+        </div>
       )}
     </div>
   );

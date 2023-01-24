@@ -1,15 +1,18 @@
 import { useState } from "react";
 import { IoChevronDownOutline, IoChevronUpOutline } from "react-icons/io5";
+import { VerticalSCrollView } from "../VerticalScrollView/VerticalScrollView";
 
 type Props = {
   Header: React.ReactNode;
   children: React.ReactNode;
   isClosed?: boolean;
+  maxContentHeight?: string;
 };
 
 export default function CollapsiblePanel({
   Header,
   children,
+  maxContentHeight = "150px",
   isClosed = false
 }: Props) {
   const [isOpen, setIsOpen] = useState(!isClosed);
@@ -39,7 +42,9 @@ export default function CollapsiblePanel({
           isOpen ? "" : "hidden"
         }`}
       >
-        {children}
+        <VerticalSCrollView className="w-full" maxHeight={maxContentHeight}>
+          {children}
+        </VerticalSCrollView>
       </div>
     </div>
   );
