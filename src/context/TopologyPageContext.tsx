@@ -1,5 +1,6 @@
 import React, { useState, createContext, useContext } from "react";
 import { URLSearchParamsInit } from "react-router-dom";
+import { CostsData } from "../components/CostDetails/CostDetails";
 import { typeItems } from "../components/Incidents/data";
 
 export type ValueType = number | string | Date;
@@ -43,7 +44,7 @@ export type Topology = {
     insights?: Record<string, any>;
     [key: string]: any;
   };
-};
+} & CostsData;
 
 export type TopologyState = {
   topology: Topology[] | null;

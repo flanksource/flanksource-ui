@@ -60,7 +60,7 @@ function ConfigInsightsDetails({ configID }: Props) {
 
   useEffect(() => {
     ReactTooltip.rebuild();
-  });
+  }, [response]);
 
   return (
     <div className="flex flex-row space-y-2">

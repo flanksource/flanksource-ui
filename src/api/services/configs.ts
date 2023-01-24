@@ -233,3 +233,10 @@ export const getConfigInsight = async <T>(
   );
   return res.data;
 };
+
+export const getConfigAnalysis = async <T>(configId: string) => {
+  const res = await ConfigDB.get<T>(
+    `/configs?id=eq.${configId}&select=cost_per_minute,cost_total_1d,cost_total_7d,cost_total_30d`
+  );
+  return res.data;
+};
