@@ -40,7 +40,7 @@ export type PaginationOptions = {
 type DataTableProps<TableColumns, Data extends TableColumns> = {
   columns: ColumnDef<TableColumns>[];
   data: Data[];
-  handleRowClick?: (row: any) => void;
+  handleRowClick?: (row: Row<TableColumns>) => void;
   tableStyle?: React.CSSProperties;
   stickyHead?: boolean;
   isLoading?: boolean;
@@ -194,12 +194,11 @@ export function DataTable<TableColumns, Data extends TableColumns>({
       : 0;
 
   return (
-    <div className="flex flex-col flex-1">
+    <div className="flex flex-col flex-1 overflow-y-auto space-y-2">
       <div
         ref={tableContainerRef}
         className={clsx("flex flex-col flex-1 overflow-y-auto", className)}
         {...rest}
-        style={{ maxHeight: "calc(100vh - 12rem)" }}
       >
         <table
           className={clsx(
@@ -314,7 +313,7 @@ export function DataTable<TableColumns, Data extends TableColumns>({
       </div>
       {pagination?.enable && Boolean(table.getRowModel().rows.length) && (
         <Pagination
-          className="pt-2"
+          className="py-4"
           canPreviousPage={table.getCanPreviousPage()}
           canNextPage={table.getCanNextPage()}
           pageOptions={table.getPageOptions()}

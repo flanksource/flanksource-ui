@@ -15,7 +15,7 @@ export function ConfigsPageTabs({ basePath, tabRight }: Props) {
   const mt = useMatch({ path: basePath, end: false });
 
   return (
-    <nav className="flex justify-between">
+    <nav className="flex justify-start">
       <div className="flex self-center">
         {navLinks.map((navLink) => (
           <NavLink

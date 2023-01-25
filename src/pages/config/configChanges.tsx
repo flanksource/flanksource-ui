@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react";
 import { useGetAllConfigsChangesQuery } from "../../api/query-hooks";
 import { ConfigChangeHistory } from "../../components/ConfigChangeHistory";
-import ConfigSidebar from "../../components/ConfigSidebar";
 import { ConfigsPageTabs } from "../../components/ConfigsPage/ConfigsPageTabs";
 import { Head } from "../../components/Head/Head";
 import { InfoMessage } from "../../components/InfoMessage";
@@ -48,23 +47,18 @@ export function ConfigChangesPage() {
         loading={isLoading}
         contentClass="p-0 h-full"
       >
-        <div className={`flex flex-row min-h-full h-auto`}>
-          <div
-            className={`flex flex-col flex-1 p-6 pb-0 min-h-full h-auto overflow-auto`}
-          >
-            <ConfigsPageTabs basePath={"configs"} />
-            {error ? (
-              <InfoMessage message={errorMessage} />
-            ) : (
-              <ConfigChangeHistory
-                data={data?.data ?? []}
-                isLoading={isLoading}
-                linkConfig
-                pagination={pagination}
-              />
-            )}
-          </div>
-          <ConfigSidebar />
+        <div className={`flex flex-col p-6 pb-0 h-full flex-1 overflow-auto`}>
+          <ConfigsPageTabs basePath={"configs"} />
+          {error ? (
+            <InfoMessage message={errorMessage} />
+          ) : (
+            <ConfigChangeHistory
+              data={data?.data ?? []}
+              isLoading={isLoading}
+              linkConfig
+              pagination={pagination}
+            />
+          )}
         </div>
       </SearchLayout>
     </>
