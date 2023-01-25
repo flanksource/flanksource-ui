@@ -86,7 +86,9 @@ function IncidentItem({ incident }: { incident: Incident }) {
         </div>
       </td>
       <td className="px-3 py-4 shrink-0">
-        <IncidentStatusTag status={incident.status!} />
+        <div className="flex">
+          <IncidentStatusTag className="px-2" status={incident.status!} />
+        </div>
       </td>
       <td
         colSpan={2}

@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import { capitalize } from "lodash";
 import { IncidentStatus } from "../../api/services/incident";
+import { Tag } from "../Tag/Tag";
 
 interface IProps {
   status: IncidentStatus;
@@ -8,26 +9,19 @@ interface IProps {
   className?: string;
 }
 
-const statusClsMap = {
+const statusClsMap: Record<IncidentStatus, string> = {
   [IncidentStatus.Open]: "bg-light-green",
-  [IncidentStatus.Closed]: "bg-gray-100"
+  [IncidentStatus.Closed]: "bg-gray-100",
+  [IncidentStatus.Investigating]: "bg-blue-100",
+  [IncidentStatus.Mitigated]: "bg-blue-100",
+  [IncidentStatus.New]: "bg-blue-100",
+  [IncidentStatus.Resolved]: "bg-blue-100"
 };
 
-export function IncidentStatusTag({ status, size = "md", className }: IProps) {
+export function IncidentStatusTag({ status, className }: IProps) {
   return (
-    <button
-      type="button"
-      className={clsx(
-        className,
-        "shrink cursor-default text-light-black font-light text-xs",
-        size === "sm" && "pl-1 pr-1 rounded-4px",
-        size === "md" && " leading-4 py-0.5 px-2.5 rounded-10px",
-        size === "lg" && " leading-4 py-0.5 px-2.5 rounded-10px",
-
-        statusClsMap[status] || "bg-blue-100"
-      )}
-    >
+    <Tag className={clsx(className, statusClsMap[status])}>
       {capitalize(status)}
-    </button>
+    </Tag>
   );
 }

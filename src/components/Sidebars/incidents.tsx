@@ -67,7 +67,11 @@ export default function Incidents({ topologyId, configId }: Props) {
             <Loading />
           ) : incidents && incidents.length > 0 ? (
             incidents.map((incident) => (
-              <IncidentCard incident={incident} key={incident.id} />
+              <IncidentCard
+                className="py-1"
+                incident={incident}
+                key={incident.id}
+              />
             ))
           ) : (
             <EmptyState />
