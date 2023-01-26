@@ -89,9 +89,7 @@ export default function ConfigChanges(props: Props) {
         <Title title="Changes" icon={<GoDiff className="w-6 h-auto" />} />
       }
     >
-      <div className="w-full max-h-64 overflow-y-auto">
-        <ConfigChangesDetails {...props} />
-      </div>
+      <ConfigChangesDetails {...props} />
     </CollapsiblePanel>
   );
 }

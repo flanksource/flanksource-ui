@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { MdRefresh } from "react-icons/md";
 import { useIncidentsHistoryQuery } from "../../api/query-hooks";
 import { Loading } from "../Loading";
+import { VerticalSCrollView } from "../VerticalScrollView/VerticalScrollView";
 import IncidentChangelogItem from "./IncidentChangelogItems";
 
 type ChangelogProps = {
@@ -36,13 +37,15 @@ export function IncidentChangelog({
       </div>
       {(isLoading || isRefetching) && <Loading text="Loading ..." />}
       {incidentHistory && incidentHistory.length > 0 ? (
-        <div className="px-8 py-4">
-          <ul className="border-l border-gray-200 dark:border-gray-900 relative flex-col px-4">
-            {incidentHistory.map((history) => (
-              <IncidentChangelogItem key={history.id} history={history} />
-            ))}
-          </ul>
-        </div>
+        <VerticalSCrollView maxHeight="150px">
+          <div className="px-8">
+            <ul className="border-l border-gray-200 dark:border-gray-900 relative flex-col px-4">
+              {incidentHistory.map((history) => (
+                <IncidentChangelogItem key={history.id} history={history} />
+              ))}
+            </ul>
+          </div>
+        </VerticalSCrollView>
       ) : (
         <div className="px-4 py-4">
           <p className="text-gray-800">No changelog found</p>

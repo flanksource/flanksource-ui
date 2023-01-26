@@ -36,7 +36,7 @@ export function TopologyConfigChanges({ topologyID }: Props) {
 
   return (
     <div className="flex flex-col ">
-      <div className="flex flex-col mt-2">
+      <div className="flex flex-col">
         <div className="flex flex-col pl-2">
           {isLoading ? (
             <Loading />
