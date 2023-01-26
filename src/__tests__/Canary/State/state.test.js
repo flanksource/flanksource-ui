@@ -1,8 +1,8 @@
-import { encodeObjectToUrlSearchParams } from "../../url";
-import { initialiseFormState } from "..";
+import { encodeObjectToUrlSearchParams } from "../../../components/Canary/url";
+import { initialiseFormState } from "../../../components/Canary/state/index";
 
 describe("initialiseFormState", () => {
-  test("initialiseFormState(defaultValues, encodedValues) => { formState, fullState }", () => {
+  it("initialiseFormState(defaultValues, encodedValues) => { formState, fullState }", () => {
     const defaultValues = {
       layout: "table",
       groupBy: "name",

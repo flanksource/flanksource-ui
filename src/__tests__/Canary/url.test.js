@@ -1,7 +1,10 @@
-import { encodeObjectToUrlSearchParams, decodeUrlSearchParams } from "../url";
+import {
+  encodeObjectToUrlSearchParams,
+  decodeUrlSearchParams
+} from "../../../src/components/Canary/url";
 
 describe("Object => URL => Object encoding", () => {
-  test("encodeObjectToUrlSearchParams(object) => decodeUrlSearchParams(result) => object", () => {
+  it("encodeObjectToUrlSearchParams(object) => decodeUrlSearchParams(result) => object", () => {
     const urlObject = {
       layout: "foo",
       groupBy: "bar",
@@ -15,13 +18,15 @@ describe("Object => URL => Object encoding", () => {
     const decodedObject = decodeUrlSearchParams(`${encodedString}&foo=bar`);
     expect(urlObject).toMatchObject(decodedObject);
   });
-  test("encodeObjectToUrlSearchParams({}) => decodeUrlSearchParams(result) => {}", () => {
+
+  it("encodeObjectToUrlSearchParams({}) => decodeUrlSearchParams(result) => {}", () => {
     const urlObject = {};
     const encodedString = encodeObjectToUrlSearchParams(urlObject);
     const decodedObject = decodeUrlSearchParams(encodedString);
     expect(urlObject).toMatchObject(decodedObject);
   });
-  test("decodeUrlSearchParams('?foo=bar') => { foo: 'bar' }", () => {
+
+  it("decodeUrlSearchParams('?foo=bar') => { foo: 'bar' }", () => {
     const urlObject = { foo: "bar" };
     const decodedObject = decodeUrlSearchParams("?foo=bar");
     expect(urlObject).toMatchObject(decodedObject);

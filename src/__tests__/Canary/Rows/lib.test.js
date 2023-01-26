@@ -1,11 +1,15 @@
-import { prepareRows, makeRow, filterRowsByPivotSet } from "../lib";
-import { subsetOne } from "../../../../data/testData";
-import { getAggregatedGroupedChecks } from "../../aggregate";
-import { getGroupedChecks } from "../../grouping";
-import { isPlainObject } from "../../../../lib/isPlainObject";
+import {
+  prepareRows,
+  makeRow,
+  filterRowsByPivotSet
+} from "../../../components/Canary/Rows/lib";
+import { subsetOne } from "../../../data/testData";
+import { getAggregatedGroupedChecks } from "../../../components/Canary/aggregate";
+import { getGroupedChecks } from "../../../components/Canary/grouping";
+import { isPlainObject } from "../../../lib/isPlainObject";
 
 describe("prepareRows", () => {
-  test("prepareRows({ tableData[noGrouping] }) => { meta[empty], rows: [ { ...check } ]}", () => {
+  it("prepareRows({ tableData[noGrouping] }) => { meta[empty], rows: [ { ...check } ]}", () => {
     const { rows, meta } = prepareRows({
       tableData: subsetOne
     });
@@ -16,7 +20,8 @@ describe("prepareRows", () => {
     expect(meta.pivotBy).toBe(null);
     expect(meta.pivoted).toBe(false);
   });
-  test("prepareRows({ tableData[noGrouping], pivotBy }) => { meta[filled], rows: [ { pivoted: true, [pivot]: { ...check } ]}", () => {
+
+  it("prepareRows({ tableData[noGrouping], pivotBy }) => { meta[filled], rows: [ { pivoted: true, [pivot]: { ...check } ]}", () => {
     const pivotBy = "namespace";
     const { rows, meta } = prepareRows({
       tableData: subsetOne,
@@ -45,7 +50,8 @@ describe("prepareRows", () => {
     expect(meta.pivotBy).toBe(pivotBy);
     expect(meta.pivoted).toBe(true);
   });
-  test("prepareRows({ tableData[noGrouping], pivotBy, hideNamespacePrefix: false }) => { meta[filled], rows: [ { pivoted: true, [pivot]: { ...check } ]}", () => {
+
+  it("prepareRows({ tableData[noGrouping], pivotBy, hideNamespacePrefix: false }) => { meta[filled], rows: [ { pivoted: true, [pivot]: { ...check } ]}", () => {
     const pivotBy = "namespace";
     const { rows, meta } = prepareRows({
       tableData: subsetOne,
@@ -75,7 +81,8 @@ describe("prepareRows", () => {
     expect(meta.pivotBy).toBe(pivotBy);
     expect(meta.pivoted).toBe(true);
   });
-  test("prepareRows({ tableData[groupBy='name'], pivotBy: 'namespace', hideNamespacePrefix: false }) => { meta[filled], rows: [ { ...check, subRows[transformed] } ]}", () => {
+
+  it("prepareRows({ tableData[groupBy='name'], pivotBy: 'namespace', hideNamespacePrefix: false }) => { meta[filled], rows: [ { ...check, subRows[transformed] } ]}", () => {
     const pivotBy = "namespace";
     const hideNamespacePrefix = false;
     const subsetMap = subsetOne.reduce((acc, curr) => {
@@ -153,7 +160,8 @@ describe("prepareRows", () => {
     expect(meta.pivotBy).toBe("namespace");
     expect(meta.pivoted).toBe(true);
   });
-  test("prepareRows({ tableData[groupBy='name'], pivotBy: 'labels', pivotLookup: 'test', hideNamespacePrefix: false }) => { meta[filled], rows: [ { ...check, subRows[transformed] } ]}", () => {
+
+  it("prepareRows({ tableData[groupBy='name'], pivotBy: 'labels', pivotLookup: 'test', hideNamespacePrefix: false }) => { meta[filled], rows: [ { ...check, subRows[transformed] } ]}", () => {
     const pivotBy = "labels";
     const hideNamespacePrefix = false;
     const pivotLookup = "test";

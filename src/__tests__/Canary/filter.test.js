@@ -1,10 +1,10 @@
-import { hasStringMatch } from "../../../utils/common";
+import { hasStringMatch } from "../../utils/common";
 
 describe("hasStringMatch", () => {
   const strings = ["banana", "ana", "grAna", "popeye", "fantano", "gAnA"];
   const pattern = "ana";
 
-  test("Simple matching without lowercase", () => {
+  it("Simple matching without lowercase", () => {
     const matches = strings.reduce((acc, currString) => {
       if (hasStringMatch(pattern, currString)) {
         return acc + 1;
@@ -14,7 +14,7 @@ describe("hasStringMatch", () => {
     expect(matches).toBe(2);
   });
 
-  test("Simple matching with lowercase", () => {
+  it("Simple matching with lowercase", () => {
     const matches = strings.reduce((acc, currString) => {
       if (hasStringMatch(pattern, currString.toLowerCase())) {
         return acc + 1;
