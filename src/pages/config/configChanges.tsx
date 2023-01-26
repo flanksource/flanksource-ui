@@ -3,6 +3,7 @@ import { useGetAllConfigsChangesQuery } from "../../api/query-hooks";
 import { ConfigChangeHistory } from "../../components/ConfigChangeHistory";
 import ConfigSidebar from "../../components/ConfigSidebar";
 import { ConfigsPageTabs } from "../../components/ConfigsPage/ConfigsPageTabs";
+import { Head } from "../../components/Head/Head";
 import { InfoMessage } from "../../components/InfoMessage";
 import { SearchLayout } from "../../components/Layout";
 
@@ -35,34 +36,37 @@ export function ConfigChangesPage() {
       : (error as Record<string, string>)?.message ?? "Something went wrong";
 
   return (
-    <SearchLayout
-      title={
-        <div className="flex space-x-2">
-          <span className="text-lg">Config Changes</span>
+    <>
+      <Head prefix="Config Changes" />
+      <SearchLayout
+        title={
+          <div className="flex space-x-2">
+            <span className="text-lg">Config Changes</span>
+          </div>
+        }
+        onRefresh={refetch}
+        loading={isLoading}
+        contentClass="p-0 h-full"
+      >
+        <div className={`flex flex-row min-h-full h-auto`}>
+          <div
+            className={`flex flex-col flex-1 p-6 pb-0 min-h-full h-auto overflow-auto`}
+          >
+            <ConfigsPageTabs basePath={"configs"} />
+            {error ? (
+              <InfoMessage message={errorMessage} />
+            ) : (
+              <ConfigChangeHistory
+                data={data?.data ?? []}
+                isLoading={isLoading}
+                linkConfig
+                pagination={pagination}
+              />
+            )}
+          </div>
+          <ConfigSidebar />
         </div>
-      }
-      onRefresh={refetch}
-      loading={isLoading}
-      contentClass="p-0 h-full"
-    >
-      <div className={`flex flex-row min-h-full h-auto`}>
-        <div
-          className={`flex flex-col flex-1 p-6 pb-0 min-h-full h-auto overflow-auto`}
-        >
-          <ConfigsPageTabs basePath={"configs"} />
-          {error ? (
-            <InfoMessage message={errorMessage} />
-          ) : (
-            <ConfigChangeHistory
-              data={data?.data ?? []}
-              isLoading={isLoading}
-              linkConfig
-              pagination={pagination}
-            />
-          )}
-        </div>
-        <ConfigSidebar />
-      </div>
-    </SearchLayout>
+      </SearchLayout>
+    </>
   );
 }

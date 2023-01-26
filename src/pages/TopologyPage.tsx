@@ -28,6 +28,7 @@ import {
   useTopologyPageContext
 } from "../context/TopologyPageContext";
 import { useLoader } from "../hooks";
+import { Head } from "../components/Head/Head";
 
 export const allOption = {
   All: {
@@ -277,124 +278,127 @@ export function TopologyPage() {
   }
 
   return (
-    <SearchLayout
-      title={
-        <div className="flex text-xl text-gray-400">
-          <TopologyBreadcrumbs topologyId={id} refererId={refererId} />
-        </div>
-      }
-      onRefresh={() => {
-        load();
-      }}
-      contentClass="p-0 h-full"
-      loading={loading}
-    >
-      <div className="flex flex-row min-h-full h-auto">
-        <div className="flex flex-col flex-1 p-6 min-h-full h-auto">
-          <div className="flex">
-            <div className="flex flex-wrap">
-              <div className="flex p-3">
-                <ReactSelectDropdown
-                  name="health"
+    <>
+      <Head prefix="Topology" />
+      <SearchLayout
+        title={
+          <div className="flex text-xl text-gray-400">
+            <TopologyBreadcrumbs topologyId={id} refererId={refererId} />
+          </div>
+        }
+        onRefresh={() => {
+          load();
+        }}
+        contentClass="p-0 h-full"
+        loading={loading}
+      >
+        <div className="flex flex-row min-h-full h-auto">
+          <div className="flex flex-col flex-1 p-6 min-h-full h-auto">
+            <div className="flex">
+              <div className="flex flex-wrap">
+                <div className="flex p-3">
+                  <ReactSelectDropdown
+                    name="health"
+                    label=""
+                    value={healthStatus}
+                    items={healthTypes}
+                    className="inline-block p-3 w-auto max-w-[500px]"
+                    dropDownClassNames="w-auto max-w-[400px] left-0"
+                    onChange={(val: any) => {
+                      setSearchParams({
+                        ...Object.fromEntries(searchParams),
+                        status: val
+                      });
+                    }}
+                    prefix={
+                      <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
+                        Health:
+                      </div>
+                    }
+                  />
+                </div>
+                <ComponentTypesDropdown
+                  className="flex p-3"
+                  name="Types"
                   label=""
-                  value={healthStatus}
-                  items={healthTypes}
-                  className="inline-block p-3 w-auto max-w-[500px]"
-                  dropDownClassNames="w-auto max-w-[400px] left-0"
+                  value={topologyType}
                   onChange={(val: any) => {
                     setSearchParams({
                       ...Object.fromEntries(searchParams),
-                      status: val
+                      type: val
                     });
                   }}
-                  prefix={
-                    <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
-                      Health:
-                    </div>
-                  }
                 />
-              </div>
-              <ComponentTypesDropdown
-                className="flex p-3"
-                name="Types"
-                label=""
-                value={topologyType}
-                onChange={(val: any) => {
-                  setSearchParams({
-                    ...Object.fromEntries(searchParams),
-                    type: val
-                  });
-                }}
-              />
-              <div className="flex p-3">
-                <ReactSelectDropdown
-                  name="team"
+                <div className="flex p-3">
+                  <ReactSelectDropdown
+                    name="team"
+                    label=""
+                    value={team}
+                    items={teams}
+                    className="inline-block p-3 w-auto max-w-[500px]"
+                    dropDownClassNames="w-auto max-w-[400px] left-0"
+                    onChange={(val: any) => {
+                      setSearchParams({
+                        ...Object.fromEntries(searchParams),
+                        team: val
+                      });
+                    }}
+                    prefix={
+                      <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
+                        Team:
+                      </div>
+                    }
+                  />
+                </div>
+                <ComponentLabelsDropdown
+                  name="Labels"
                   label=""
-                  value={team}
-                  items={teams}
-                  className="inline-block p-3 w-auto max-w-[500px]"
-                  dropDownClassNames="w-auto max-w-[400px] left-0"
+                  className="flex p-3 w-auto max-w-[500px]"
+                  value={selectedLabel}
                   onChange={(val: any) => {
                     setSearchParams({
                       ...Object.fromEntries(searchParams),
-                      team: val
+                      labels: val
                     });
                   }}
-                  prefix={
-                    <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
-                      Team:
-                    </div>
-                  }
                 />
               </div>
-              <ComponentLabelsDropdown
-                name="Labels"
-                label=""
-                className="flex p-3 w-auto max-w-[500px]"
-                value={selectedLabel}
-                onChange={(val: any) => {
-                  setSearchParams({
-                    ...Object.fromEntries(searchParams),
-                    labels: val
-                  });
-                }}
+              <TopologyPopOver
+                size={size}
+                setSize={setSize}
+                sortLabels={sortLabels || []}
+                searchParams={searchParams}
+                setSearchParams={setSearchParams}
               />
             </div>
-            <TopologyPopOver
-              size={size}
-              setSize={setSize}
-              sortLabels={sortLabels || []}
-              searchParams={searchParams}
-              setSearchParams={setSearchParams}
-            />
-          </div>
-          <div className="flex leading-1.21rel w-full mt-4">
-            <div className="flex flex-wrap w-full">
-              {getSortedTopology(
-                topology,
-                getSortBy(sortLabels || []),
-                getSortOrder()
-              ).map((item) => (
-                <TopologyCard
-                  key={item.id}
-                  topology={item}
-                  size={size}
-                  updateVisibility={updateVisibility}
-                />
-              ))}
-              {!topology?.length && (
-                <InfoMessage
-                  className="my-8"
-                  message="There are no components matching this criteria"
-                />
-              )}
+            <div className="flex leading-1.21rel w-full mt-4">
+              <div className="flex flex-wrap w-full">
+                {getSortedTopology(
+                  topology,
+                  getSortBy(sortLabels || []),
+                  getSortOrder()
+                ).map((item) => (
+                  <TopologyCard
+                    key={item.id}
+                    topology={item}
+                    size={size}
+                    updateVisibility={updateVisibility}
+                  />
+                ))}
+                {!topology?.length && (
+                  <InfoMessage
+                    className="my-8"
+                    message="There are no components matching this criteria"
+                  />
+                )}
+              </div>
             </div>
           </div>
+          {id && (
+            <TopologySidebar topology={currentTopology} refererId={refererId} />
+          )}
         </div>
-        {id && (
-          <TopologySidebar topology={currentTopology} refererId={refererId} />
-        )}
-      </div>
-    </SearchLayout>
+      </SearchLayout>
+    </>
   );
 }

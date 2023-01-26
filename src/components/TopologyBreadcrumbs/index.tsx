@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Icon } from "../Icon";
 import { useComponentNameQuery } from "../../api/query-hooks";
 import { useMemo } from "react";
+import { Head } from "../Head/Head";
 
 type TopologyBreadcrumbsProps = {
   topologyId?: string;
@@ -21,6 +22,9 @@ function TopologyBreadcrumbItem({
 
   return (
     <>
+      <Head
+        prefix={component ? `Topology - ${component.name}` : "Topology"}
+      />
       &nbsp;/&nbsp;
       <Link
         to={{

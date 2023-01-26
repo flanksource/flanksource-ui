@@ -8,6 +8,7 @@ import {
 } from "../../api/schemaResources";
 import { useUser } from "../../context";
 import { BreadcrumbNav } from "../BreadcrumbNav";
+import { Head } from "../Head/Head";
 import { SearchLayout } from "../Layout";
 import { Modal } from "../Modal";
 import { SchemaResourceType } from "./resourceTypes";
@@ -46,41 +47,44 @@ export function SchemaResourcePage({
   const onClose = () => setModalIsOpen(false);
 
   return (
-    <SearchLayout
-      title={
-        <BreadcrumbNav
-          list={[
-            name,
-            <button
-              type="button"
-              className=""
-              onClick={() => setModalIsOpen(true)}
-            >
-              <AiFillPlusCircle size={36} color="#326CE5" />
-            </button>
-          ]}
-        />
-      }
-    >
-      <div className="self-center m-auto">
-        <SchemaResourceList items={list} baseUrl={href} />
-      </div>
-
-      <Modal
-        open={modalIsOpen}
-        onClose={onClose}
-        bodyClass=""
-        size="full"
-        title={`Create New ${resourceInfo.name}`}
+    <>
+      <Head prefix={resourceInfo ? `Settings - ${resourceInfo.name}` : ""} />
+      <SearchLayout
+        title={
+          <BreadcrumbNav
+            list={[
+              name,
+              <button
+                type="button"
+                className=""
+                onClick={() => setModalIsOpen(true)}
+              >
+                <AiFillPlusCircle size={36} color="#326CE5" />
+              </button>
+            ]}
+          />
+        }
       >
-        <SchemaResourceEdit
-          resourceName={resourceInfo.name}
-          isModal
-          edit
-          onSubmit={onSubmit}
-          onCancel={onClose}
-        />
-      </Modal>
-    </SearchLayout>
+        <div className="self-center m-auto">
+          <SchemaResourceList items={list} baseUrl={href} />
+        </div>
+
+        <Modal
+          open={modalIsOpen}
+          onClose={onClose}
+          bodyClass=""
+          size="full"
+          title={`Create New ${resourceInfo.name}`}
+        >
+          <SchemaResourceEdit
+            resourceName={resourceInfo.name}
+            isModal
+            edit
+            onSubmit={onSubmit}
+            onCancel={onClose}
+          />
+        </Modal>
+      </SearchLayout>
+    </>
   );
 }

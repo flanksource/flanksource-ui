@@ -6,6 +6,7 @@ import {
   RegisteredUser
 } from "../api/services/users";
 import { Modal } from "../components";
+import { Head } from "../components/Head/Head";
 import {
   InviteUserForm,
   InviteUserFormValue
@@ -49,40 +50,46 @@ export function UsersPage() {
   }, []);
 
   return (
-    <SearchLayout
-      title={<div className="flex text-xl font-semibold">Users</div>}
-      onRefresh={() => {
-        fetchUsersList();
-      }}
-      contentClass="p-0 h-full"
-      loading={loading}
-    >
-      <div className="flex flex-col flex-1 p-6 pb-0 h-full w-full">
-        <div className="flex justify-end">
-          <button className="btn-primary w-36" onClick={(e) => setIsOpen(true)}>
-            <ImUserPlus className="mr-2" />
-            Invite User
-          </button>
-        </div>
-        <UserList
-          className="mt-6 overflow-y-hidden"
-          data={users}
-          isLoading={loading}
-        />
-        <Modal
-          title="Invite User"
-          onClose={() => {
-            setIsOpen(false);
-          }}
-          open={isOpen}
-          bodyClass=""
-        >
-          <InviteUserForm
-            className="flex flex-col bg-white p-4"
-            onSubmit={onSubmit}
+    <>
+      <Head prefix="Users" />
+      <SearchLayout
+        title={<div className="flex text-xl font-semibold">Users</div>}
+        onRefresh={() => {
+          fetchUsersList();
+        }}
+        contentClass="p-0 h-full"
+        loading={loading}
+      >
+        <div className="flex flex-col flex-1 p-6 pb-0 h-full w-full">
+          <div className="flex justify-end">
+            <button
+              className="btn-primary w-36"
+              onClick={(e) => setIsOpen(true)}
+            >
+              <ImUserPlus className="mr-2" />
+              Invite User
+            </button>
+          </div>
+          <UserList
+            className="mt-6 overflow-y-hidden"
+            data={users}
+            isLoading={loading}
           />
-        </Modal>
-      </div>
-    </SearchLayout>
+          <Modal
+            title="Invite User"
+            onClose={() => {
+              setIsOpen(false);
+            }}
+            open={isOpen}
+            bodyClass=""
+          >
+            <InviteUserForm
+              className="flex flex-col bg-white p-4"
+              onSubmit={onSubmit}
+            />
+          </Modal>
+        </div>
+      </SearchLayout>
+    </>
   );
 }
