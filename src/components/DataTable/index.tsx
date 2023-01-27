@@ -329,23 +329,6 @@ export function DataTable<TableColumns, Data extends TableColumns>({
           loading={pagination.loading}
         />
       )}
-      {pagination?.enable && Boolean(table.getRowModel().rows.length) && (
-        <Pagination
-          className="pt-2"
-          canPreviousPage={table.getCanPreviousPage()}
-          canNextPage={table.getCanNextPage()}
-          pageOptions={table.getPageOptions()}
-          pageCount={table.getPageCount()}
-          gotoPage={table.setPageIndex}
-          nextPage={table.nextPage}
-          previousPage={table.previousPage}
-          setPageSize={table.setPageSize}
-          state={{
-            ...table.getState().pagination
-          }}
-          loading={pagination.loading}
-        />
-      )}
     </div>
   );
 }
