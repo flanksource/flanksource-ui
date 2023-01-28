@@ -42,7 +42,8 @@ const columns: ColumnDef<ConfigTypeChanges>[] = [
               {!!row?.getValue(column.id) && (
                 <JSONViewer
                   code={JSON.stringify(row?.getValue(column.id), null, 2)}
-                  format="json"
+                  format="yaml"
+                  convertToYaml
                 />
               )}
               {!row?.getValue(column.id) && (
