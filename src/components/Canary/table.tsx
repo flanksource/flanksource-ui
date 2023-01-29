@@ -12,6 +12,8 @@ import {
 import { columnObject, firstColumns } from "./Columns/columns";
 import { prepareRows } from "./Rows/lib";
 import { useCheckSetEqualityForPreviousVsCurrent } from "../Hooks/useCheckSetEqualityForPreviousVsCurrent";
+import { useSearchParams } from "react-router-dom";
+import { HealthCheck } from "../../types/healthChecks";
 
 const styles = {
   outerDivClass: "border-l border-r border-gray-300 overflow-y-auto",
@@ -35,6 +37,16 @@ const sortByValidValues = new Map([
   ["latency", null]
 ]);
 
+type CanaryChecksProps = {
+  checks?: HealthCheck[];
+  labels?: string[];
+  onCheckClick: (check: HealthCheck) => void;
+  showNamespaceTags?: boolean;
+  hideNamespacePrefix?: boolean;
+  groupSingleItems?: boolean;
+  theadStyle?: React.CSSProperties;
+} & React.HTMLAttributes<HTMLDivElement>;
+
 export function CanaryTable({
   checks,
   labels,
@@ -44,14 +56,14 @@ export function CanaryTable({
   groupSingleItems = true,
   theadStyle = {},
   ...rest
-}) {
-  const searchParams = window.location.search;
-  const {
-    groupBy,
-    pivotBy,
-    pivotCellType,
-    pivotLabel: pivotLookup
-  } = decodeUrlSearchParams(searchParams);
+}: CanaryChecksProps) {
+  const [params] = useSearchParams();
+
+  const groupBy = params.get("groupBy") || "canary_name";
+  const pivotCellType = params.get("pivotCellType");
+  const pivotLookup = params.get("pivotLabel");
+  const pivotBy = params.get("pivotBy");
+
   const [tableData, setTableData] = useState(checks);
 
   // update table data if searchParam or check data changes
@@ -66,7 +78,7 @@ export function CanaryTable({
           )
         : checks
     );
-  }, [searchParams, checks, groupBy, groupSingleItems]);
+  }, [params, checks, groupBy, groupSingleItems]);
 
   const { rows, meta } = useMemo(
     () => prepareRows({ tableData, hideNamespacePrefix, pivotBy, pivotLookup }),
@@ -116,6 +128,18 @@ export function CanaryTable({
   );
 }
 
+type TableProps = {
+  data: any[];
+  columns: any[];
+  labels: string[];
+  pivotCellType: string | null;
+  hasGrouping: boolean;
+  onUnexpandableRowClick: (check: HealthCheck) => void;
+  showNamespaceTags?: boolean;
+  hideNamespacePrefix?: boolean;
+  theadStyle?: React.CSSProperties;
+};
+
 export function Table({
   data,
   columns,
@@ -127,7 +151,7 @@ export function Table({
   hideNamespacePrefix = false,
   theadStyle = {},
   ...rest
-}) {
+}: TableProps) {
   const rowFinder = (row) => {
     const rowValues =
       row?.pivoted === true ? row[row.valueLookup] ?? null : row;
@@ -225,13 +249,11 @@ export function Table({
         <thead className={styles.theadClass} style={theadStyle}>
           {headerGroups.map((headerGroup) => (
             <tr
-              key={headerGroup.getHeaderGroupProps().key}
               className={styles.theadRowClass}
               {...headerGroup.getHeaderGroupProps()}
             >
               {headerGroup.headers.map((column) => (
                 <th
-                  key={column.Header}
                   className={styles.theadHeaderClass}
                   {...column.getHeaderProps(column.getSortByToggleProps())}
                   // Table header onClick sorting override:
