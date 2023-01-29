@@ -18,12 +18,14 @@ import { Icon } from "../Icon";
 interface Props {
   navigation: NavigationItems;
   settingsNav: SettingsNavigationItems;
+  checkPath: boolean;
 }
 
 interface SideNavGroupProps {
   navs: NavigationItems;
   settings: SettingsNavigationItems;
   collapseSidebar?: boolean;
+  checkPath: boolean;
 }
 
 type NavLabelProps = {
@@ -119,11 +121,13 @@ function SideNavGroup({
   name,
   icon,
   collapseSidebar,
-  current = false
+  current = false,
+  checkPath
 }: SettingsNavigationItems & {
   current?: boolean;
   collapseSidebar: boolean;
 }) {
+  console.log(checkPath);
   if (collapseSidebar) {
     return (
       <Menu as="div" className="relative">
@@ -157,7 +161,7 @@ function SideNavGroup({
   }
 
   return (
-    <Disclosure as="div">
+    <Disclosure as="div" defaultOpen={checkPath ? true : false}>
       {({ open }) => (
         <>
           <Disclosure.Button className="w-full">
@@ -191,7 +195,8 @@ function SideNavGroup({
 function SideNav({
   navs,
   settings,
-  collapseSidebar = false
+  collapseSidebar = false,
+  checkPath
 }: SideNavGroupProps) {
   return (
     <nav className="flex-col space-y-2 divide-y divide-gray-500">
@@ -205,13 +210,17 @@ function SideNav({
         ))}
       </div>
       <div>
-        <SideNavGroup {...settings} collapseSidebar={collapseSidebar} />
+        <SideNavGroup
+          {...settings}
+          collapseSidebar={collapseSidebar}
+          checkPath={checkPath}
+        />
       </div>
     </nav>
   );
 }
 
-export function SidebarLayout({ navigation, settingsNav }: Props) {
+export function SidebarLayout({ navigation, settingsNav, checkPath }: Props) {
   const { user } = useContext(AuthContext);
   const [collapseSidebar, setCollapseSidebar] = useState(false);
 
@@ -289,6 +298,7 @@ export function SidebarLayout({ navigation, settingsNav }: Props) {
                   navs={navigation}
                   settings={settingsNav}
                   collapseSidebar={collapseSidebar}
+                  checkPath={checkPath}
                 />
               </div>
             </div>

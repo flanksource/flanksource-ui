@@ -5,7 +5,13 @@ import { Fragment, ReactNode, useEffect, useState } from "react";
 import { AiFillHeart } from "react-icons/ai";
 import { ImLifebuoy } from "react-icons/im";
 import { VscJson } from "react-icons/vsc";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter,
+  Navigate,
+  Route,
+  Routes,
+  useLocation
+} from "react-router-dom";
 import ReactTooltip from "react-tooltip";
 
 import { getUser } from "./api/auth";
@@ -67,6 +73,7 @@ export type NavigationItems = typeof navigation;
 const settingsNav = {
   name: "Settings",
   icon: AdjustmentsIcon,
+  checkPath: false,
   submenu: [
     {
       name: "Users",
@@ -195,7 +202,27 @@ export function CanaryCheckerApp() {
 }
 
 function SidebarWrapper() {
-  return <SidebarLayout navigation={navigation} settingsNav={settingsNav} />;
+  const location = useLocation();
+  const url = location.pathname.split("/");
+  const path = url[2];
+
+  const pathTrack = [
+    "users",
+    "teams",
+    "incident_rules",
+    "config_scrapers",
+    "templates",
+    "canaries"
+  ];
+  const checkPath = pathTrack.includes(path);
+
+  return (
+    <SidebarLayout
+      navigation={navigation}
+      settingsNav={settingsNav}
+      checkPath={checkPath}
+    />
+  );
 }
 
 export function App() {
