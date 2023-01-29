@@ -20,7 +20,7 @@ export default function CollapsiblePanel({
   return (
     <div className="flex flex-col">
       <div
-        onClick={() => setIsOpen(!isOpen)}
+        // onClick={() => setIsOpen(!isOpen)}   disabled to allow other icon perform onclick without opening/closing the panel
         className={`flex flex-row py-2 cursor-pointer items-center justify-center ${
           isOpen && "border-b border-dashed border-gray-200"
         }`}

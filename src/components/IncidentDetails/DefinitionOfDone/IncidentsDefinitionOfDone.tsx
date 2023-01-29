@@ -8,6 +8,7 @@ import { useIncidentQuery } from "../../../api/query-hooks";
 import EvidenceSelectionModal from "./EvidenceSelectionModal";
 import IncidentsDefinitionOfDoneItem from "./IncidentsDefinitionOfDoneItem";
 import AddDefinitionOfDoneModal from "../AddDefinitionOfDone/AddDefinitionOfDoneStepper";
+import CollapsiblePanel from "../../CollapsiblePanel";
 
 type DefinitionOfDoneProps = {
   incidentId: string;
@@ -92,26 +93,26 @@ export function IncidentsDefinitionOfDone({
   };
 
   return (
-    <div className="w-full">
-      <div className="py-4 border-b border-gray-200">
-        <div className="px-4 flex justify-between">
-          <h2 className="mt-0.5 text-2xl font-medium leading-7 text-dark-gray">
+    <CollapsiblePanel
+      Header={
+        <>
+          <h2 className="mb-0.5 px-4 text-2xl font-medium leading-7 text-dark-gray">
             Definition of done
           </h2>
-          <span className="relative z-0 inline-flex">
+          <div className=" px-4 relative z-0 inline-flex">
             <MdRefresh
-              className={`cursor-pointer mr-3 w-6 h-6 ${
-                isRefetching ? "animate-spin" : ""
-              }`}
+              className={`cursor-pointer mr-3 w-5 h-5 ${isRefetching ? "animate-spin" : ""
+                }`}
               onClick={() => refetch()}
             />
             <RiFullscreenLine
               className="cursor-pointer w-5 h-5"
               onClick={() => setDODModalOpen(true)}
             />
-          </span>
-        </div>
-      </div>
+          </div>
+        </>
+      }
+    >
       {/* add pb-6 to prevent scrollbars from showing when opening menu bar for last item, 
         the overflow settings are the once preventing z-index on menu from working 
       */}
@@ -178,6 +179,6 @@ export function IncidentsDefinitionOfDone({
           setAddToDODModalOpen(false);
         }}
       />
-    </div>
+    </CollapsiblePanel>
   );
 }

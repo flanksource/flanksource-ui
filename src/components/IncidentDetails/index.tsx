@@ -27,6 +27,7 @@ import { relativeDateTime } from "../../utils/date";
 import { IncidentsDefinitionOfDone } from "./DefinitionOfDone/IncidentsDefinitionOfDone";
 import IncidentTypeDropdown from "../Incidents/IncidentTypeDropdown";
 import { IncidentWorkflow } from "./IncidentWorkflow";
+import CollapsiblePanel from "../CollapsiblePanel";
 
 export const priorities = Object.entries(severityItems).map(([key, value]) => ({
   label: value.name,
@@ -297,145 +298,130 @@ export const IncidentDetails = ({
           }
         />
       </div>
-      <div className="bg-white">
-        <div className="flex justify-between py-4 border-b border-gray-200 mb-4">
-          <h2 className="mt-0.5 text-2xl font-medium leading-7 text-dark-gray px-4">
-            Responders
-          </h2>
-        </div>
-        {Boolean(responders.length) && (
-          <div className="px-4">
-            {responders.map((responder) => {
-              return (
-                <div
-                  key={responder.json.id}
-                  className="relative flex items-center py-2 mt-1 rounded"
-                >
-                  <div className="flex-1 w-full min-w-0">
-                    <ResponderDetailsToolTip
-                      className="w-full"
-                      responder={responder}
-                      data={responder?.json?.properties}
-                      element={
-                        <div className="relative w-full overflow-hidden text-sm font-medium truncate text-dark-gray group">
-                          <div className=" overflow-hidden">
-                            {responder.icon && (
-                              <responder.icon className="h-6" />
-                            )}
-                            <div
-                              className="inline-block pl-1 align-middle"
-                              onClick={() => {
-                                setOpenResponderDetailsDialog(true);
-                                setSelectedResponder(responder);
-                              }}
-                            >
-                              <div className="flex-1 inline-block align-middle max-w-32">
-                                <div
-                                  className="truncate cursor-pointer hover:underline"
-                                  title={responder?.name}
-                                >
-                                  {responder?.name}
+      <div className="bg-white mt-5 mb-5">
+        <CollapsiblePanel
+          Header={
+            <h2 className="mb-0.5 text-2xl font-medium leading-7 text-dark-gray px-4">
+              Responders
+            </h2>
+          }
+        >
+          {Boolean(responders.length) && (
+            <div className="px-4">
+              {responders.map((responder) => {
+                return (
+                  <div
+                    key={responder.json.id}
+                    className="relative flex items-center py-2 mt-1 rounded"
+                  >
+                    <div className="flex-1 w-full min-w-0">
+                      <ResponderDetailsToolTip
+                        className="w-full"
+                        responder={responder}
+                        data={responder?.json?.properties}
+                        element={
+                          <div className="relative w-full overflow-hidden text-sm font-medium truncate text-dark-gray group">
+                            <div className=" overflow-hidden">
+                              {responder.icon && (
+                                <responder.icon className="h-6" />
+                              )}
+                              <div
+                                className="inline-block pl-1 align-middle"
+                                onClick={(e) => {
+                                  setOpenResponderDetailsDialog(true);
+                                  setSelectedResponder(responder);
+                                }}
+                              >
+                                <div className="flex-1 inline-block align-middle max-w-32">
+                                  <div
+                                    className="truncate cursor-pointer hover:underline"
+                                    title={responder?.name}
+                                  >
+                                    {responder?.name}
+                                  </div>
                                 </div>
                               </div>
-                              <div className="flex-1 inline-block align-middle">
-                                {responder.external_id && (
-                                  <a
-                                    href={responder?.links?.external_id_link}
-                                    target="_blank"
-                                    className="inline-block pl-1 text-blue-600 underline align-middle hover:text-blue-800 visited:text-blue-600"
-                                    onClick={(e) => e.stopPropagation()}
-                                    rel="noreferrer"
-                                    title={responder.external_id}
-                                  >
-                                    (
-                                    <span className="inline-block truncate align-middle max-w-32">
-                                      {responder.external_id}
-                                    </span>
-                                    )
-                                  </a>
-                                )}
-                              </div>
+                            </div>
+                            <div className="absolute right-0 ml-10 cursor-pointer top-1">
+                              <IconButton
+                                className="hidden bg-transparent group-hover:inline-block z-5"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  setOpenDeleteConfirmDialog(true);
+                                  setDeletedResponder(responder);
+                                }}
+                                ovalProps={{
+                                  stroke: "blue",
+                                  height: "18px",
+                                  width: "18px",
+                                  fill: "transparent"
+                                }}
+                                icon={
+                                  <BsTrash
+                                    className="text-gray-600 border-0 border-gray-200 border-l-1"
+                                    size={18}
+                                  />
+                                }
+                              />
                             </div>
                           </div>
-                          <div className="absolute right-0 ml-10 cursor-pointer top-1">
-                            <IconButton
-                              className="hidden bg-transparent group-hover:inline-block z-5"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                setOpenDeleteConfirmDialog(true);
-                                setDeletedResponder(responder);
-                              }}
-                              ovalProps={{
-                                stroke: "blue",
-                                height: "18px",
-                                width: "18px",
-                                fill: "transparent"
-                              }}
-                              icon={
-                                <BsTrash
-                                  className="text-gray-600 border-0 border-gray-200 border-l-1"
-                                  size={18}
-                                />
-                              }
-                            />
-                          </div>
-                        </div>
-                      }
-                    />
+                        }
+                      />
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
+          )}
+          <div className="relative flex items-center py-2 px-4">
+            <button
+              type="button"
+              className="flex items-center bg-white rounded-md group"
+            >
+              <span className="flex items-center justify-center w-5 h-5 text-gray-400 border-2 border-gray-300 border-dashed rounded-full">
+                <svg
+                  className="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+                    clipRule="evenodd"
+                  ></path>
+                </svg>
+              </span>
+              <span className="ml-2 text-sm font-medium text-blue-600 group-hover:text-blue-500">
+                <AddResponder
+                  className="flex justify-end flex-1 w-full"
+                  onSuccess={() => fetchResponders()}
+                  incident={incident}
+                />
+              </span>
+            </button>
           </div>
-        )}
-        <div className="relative flex items-center py-2 px-4">
-          <button
-            type="button"
-            className="flex items-center bg-white rounded-md group"
-          >
-            <span className="flex items-center justify-center w-5 h-5 text-gray-400 border-2 border-gray-300 border-dashed rounded-full">
-              <svg
-                className="w-5 h-5"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                aria-hidden="true"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
-                  clipRule="evenodd"
-                ></path>
-              </svg>
-            </span>
-            <span className="ml-2 text-sm font-medium text-blue-600 group-hover:text-blue-500">
-              <AddResponder
-                className="flex justify-end flex-1 w-full"
-                onSuccess={() => fetchResponders()}
-                incident={incident}
-              />
-            </span>
-          </button>
-        </div>
-        <DeleteConfirmDialog
-          isOpen={openDeleteConfirmDialog}
-          title="Delete Responder ?"
-          description="Are you sure you want to delete the responder ?"
-          onClose={() => setOpenDeleteConfirmDialog(false)}
-          onDelete={() => {
-            initiateDeleteResponder();
-          }}
-        />
-        <ResponderDetailsDialog
-          size="medium"
-          open={openResponderDetailsDialog}
-          responder={selectedResponder}
-          data={selectedResponder?.json?.properties}
-          onClose={() => {
-            setOpenResponderDetailsDialog(false);
-          }}
-        />
+          <DeleteConfirmDialog
+            isOpen={openDeleteConfirmDialog}
+            title="Delete Responder ?"
+            description="Are you sure you want to delete the responder ?"
+            onClose={() => setOpenDeleteConfirmDialog(false)}
+            onDelete={() => {
+              initiateDeleteResponder();
+            }}
+          />
+          <ResponderDetailsDialog
+            size="medium"
+            open={openResponderDetailsDialog}
+            responder={selectedResponder}
+            data={selectedResponder?.json?.properties}
+            onClose={() => {
+              setOpenResponderDetailsDialog(false);
+            }}
+          />
+        </CollapsiblePanel>
       </div>
       <div className="bg-white">
         <IncidentsDefinitionOfDone incidentId={incident.id} />
