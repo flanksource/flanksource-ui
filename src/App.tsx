@@ -48,6 +48,9 @@ import { HiUser } from "react-icons/hi";
 import { FaTasks } from "react-icons/fa";
 import JobsHistorySettingsPage from "./components/JobsHistory/JobsHistorySettingsPage";
 import { ConfigInsightsPage } from "./pages/config/ConfigInsightsList";
+import ErrorPage from "./components/Errors/ErrorPage";
+import { useQuery } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 
 const navigation = [
   { name: "Topology", href: "/topology", icon: TopologyIcon },
@@ -228,13 +231,21 @@ function SidebarWrapper() {
 export function App() {
   const [user, setUser] = useState<User>();
 
-  useEffect(() => {
-    getUser().then((u) => {
-      setUser(u);
-    });
-  }, []);
+  const { isLoading, error } = useQuery<User | undefined, AxiosError>(
+    ["getUser", process.env.NEXT_PUBLIC_WITHOUT_SESSION === "true"],
+    () => getUser(),
+    {
+      onSuccess: (data) => {
+        setUser(data);
+      }
+    }
+  );
 
-  if (!user) {
+  if (error && !user) {
+    return <ErrorPage error={error} />;
+  }
+
+  if (!user || isLoading) {
     return <FullPageSkeletonLoader />;
   }
 
