@@ -6,8 +6,8 @@ import { useUser } from "../../context";
 import { BreadcrumbNav } from "../BreadcrumbNav";
 import { Head } from "../Head/Head";
 import { SearchLayout } from "../Layout";
-import { Loading } from "../Loading";
 import { Modal } from "../Modal";
+import TableSkeletonLoader from "../SkeletonLoader/TableSkeletonLoader";
 import { SchemaResourceType } from "./resourceTypes";
 import { SchemaResourceEdit } from "./SchemaResourceEdit";
 import { SchemaResourceList } from "./SchemaResourceList";
@@ -64,11 +64,8 @@ export function SchemaResourcePage({
       >
         <div className="m-auto">
           <div className="flex flex-col p-6 pb-0 flex-1 w-full overflow-y-auto">
-            {isLoading || !list ? (
-              <Loading />
-            ) : (
-              <SchemaResourceList items={list} baseUrl={href} />
-            )}
+            {isLoading && <TableSkeletonLoader className="max-w-screen-xl mx-auto" />}
+            {!isLoading && <SchemaResourceList items={list || []} baseUrl={href} />}
           </div>
         </div>
 

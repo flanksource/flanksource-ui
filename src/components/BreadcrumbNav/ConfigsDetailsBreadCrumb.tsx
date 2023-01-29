@@ -2,7 +2,7 @@ import { BreadcrumbNav } from ".";
 import { useConfigNameQuery } from "../../api/query-hooks";
 import { ConfigItem } from "../../api/services/configs";
 import { Icon } from "../Icon";
-import { Loading } from "../Loading";
+import TextSkeletonLoader from "../SkeletonLoader/TextSkeletonLoader";
 
 type Props = {
   configId?: string;
@@ -21,7 +21,7 @@ export function ConfigsDetailsBreadcrumbNav({ configId, config }: Props) {
       list={[
         { to: "/configs", title: "Config" },
         isLoading && !configItem ? (
-          <Loading />
+          <TextSkeletonLoader />
         ) : (
           <span>
             <Icon

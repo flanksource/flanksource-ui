@@ -13,7 +13,7 @@ import { Badge } from "../../../Badge";
 import { ConfigChangeEvidence } from "../../../Hypothesis/EvidenceSection";
 import { ConfigAnalysisEvidence } from "../../../Hypothesis/EvidenceSection";
 import { Icon } from "../../../Icon";
-import { Loading } from "../../../Loading";
+import TextSkeletonLoader from "../../../SkeletonLoader/TextSkeletonLoader";
 import { StatusStyles } from "../../../TopologyCard";
 import { CardMetrics } from "../../../TopologyCard/CardMetrics";
 
@@ -38,7 +38,7 @@ function TopologyEvidence({
   };
 
   if (topology == null) {
-    return <Loading text={`Loading topology please wait...`} />;
+    return <TextSkeletonLoader className="w-full" />;
   }
 
   const heading = filter(
@@ -105,7 +105,7 @@ function LogEvidence({
   });
 
   if (isFetching || isRefetching) {
-    return <Loading text={`Loading component please wait...`} />;
+    return <TextSkeletonLoader className="w-full" />;
   }
 
   if (!comp || !evidence.component_id) {
@@ -142,7 +142,7 @@ function ConfigEvidence({
   });
 
   if (isFetching || isRefetching) {
-    return <Loading text={`Loading config please wait...`} />;
+    return <TextSkeletonLoader className="w-full" />;
   }
 
   if (!config || !evidence.config_id) {

@@ -3,7 +3,6 @@ import { MdOutlineInsights } from "react-icons/md";
 import ReactTooltip from "react-tooltip";
 import CollapsiblePanel from "../CollapsiblePanel";
 import EmptyState from "../EmptyState";
-import { Loading } from "../Loading";
 import Title from "../Title/title";
 import {
   sanitizeHTMLContent,
@@ -13,6 +12,7 @@ import {
 import { useGetConfigInsights } from "../../api/query-hooks";
 import { ConfigAnalysisLink } from "../ConfigAnalysisLink/ConfigAnalysisLink";
 import { relativeDateTime } from "../../utils/date";
+import TableSkeletonLoader from "../SkeletonLoader/TableSkeletonLoader";
 
 export type ConfigTypeInsights = {
   id: string;
@@ -65,7 +65,7 @@ function ConfigInsightsDetails({ configID }: Props) {
   return (
     <div className="flex flex-row space-y-2">
       {isLoading ? (
-        <Loading />
+        <TableSkeletonLoader />
       ) : configInsights.length > 0 ? (
         <table className="w-full text-sm text-left">
           <thead className="text-sm uppercase text-gray-600">

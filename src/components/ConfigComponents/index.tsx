@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import CollapsiblePanel from "../CollapsiblePanel";
 import { Icon } from "../Icon";
 import { TopologyIcon } from "../Icons/TopologyIcon";
-import { Loading } from "../Loading";
+import TextSkeletonLoader from "../SkeletonLoader/TextSkeletonLoader";
 
 export type ConfigsComponents = {
   id: string;
@@ -37,7 +37,7 @@ function ConfigComponentsDetails({ configID }: Props) {
   return (
     <div className="flex flex-col space-y-2">
       {isLoading ? (
-        <Loading />
+        <TextSkeletonLoader />
       ) : components.length > 0 ? (
         <ol className="w-full text-sm text-left">
           {components.map((analysis) => (

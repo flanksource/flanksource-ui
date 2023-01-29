@@ -17,9 +17,9 @@ import {
 } from "@tanstack/react-table";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { DataTableRow } from "./DataTableRow";
-import { Loading } from "../Loading";
 import { InfoMessage } from "../InfoMessage";
 import { Pagination } from "./Pagination/Pagination";
+import TableSkeletonLoader from "../SkeletonLoader/TableSkeletonLoader";
 
 const tableStyles = {
   theadHeaderClass: " tracking-wider",
@@ -302,11 +302,14 @@ export function DataTable<TableColumns, Data extends TableColumns>({
           </tbody>
         </table>
         {table.getRowModel().rows.length === 0 && (
-          <div className="flex items-center justify-center py-20 px-2  border-b border-gray-300 text-center text-gray-400">
+          <div className="flex items-center justify-center px-2 border-b border-gray-300 text-center text-gray-400">
             {isLoading ? (
-              <Loading text="Loading data.." />
+              <TableSkeletonLoader
+                className="mt-2"
+                columnsCount={columns.length}
+              />
             ) : (
-              <InfoMessage className="my-8" message="No data available" />
+              <InfoMessage className="my-8 py-20" message="No data available" />
             )}
           </div>
         )}

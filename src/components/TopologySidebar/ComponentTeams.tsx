@@ -2,9 +2,9 @@ import { AiOutlineTeam } from "react-icons/ai";
 import { useGetComponentsTeamQuery } from "../../api/query-hooks";
 import Title from "../Title/title";
 import CollapsiblePanel from "../CollapsiblePanel";
-import { Loading } from "../Loading";
 import EmptyState from "../EmptyState";
 import { ComponentTeamLink } from "./ComponentTeamLink";
+import TextSkeletonLoader from "../SkeletonLoader/TextSkeletonLoader";
 
 type Props = {
   componentId: string;
@@ -22,7 +22,7 @@ export function ComponentTeams({ componentId }: Props) {
     >
       <div className="flex flex-col space-y-4 py-2 w-full">
         {isLoading ? (
-          <Loading />
+          <TextSkeletonLoader />
         ) : componentTeams && componentTeams.length > 0 ? (
           componentTeams.map((team) => (
             <ComponentTeamLink

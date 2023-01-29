@@ -12,6 +12,7 @@ import {
   InviteUserFormValue
 } from "../components/InviteUserForm";
 import { SearchLayout } from "../components/Layout";
+import TableSkeletonLoader from "../components/SkeletonLoader/TableSkeletonLoader";
 import { toastError, toastSuccess } from "../components/Toast/toast";
 import { UserList } from "../components/UserList";
 import { useLoader } from "../hooks";
@@ -70,11 +71,20 @@ export function UsersPage() {
               Invite User
             </button>
           </div>
-          <UserList
-            className="mt-6 overflow-y-hidden"
-            data={users}
-            isLoading={loading}
-          />
+          {
+            loading && (
+              <TableSkeletonLoader />
+            )
+          }
+          {
+            !loading && (
+              <UserList
+                className="mt-6 overflow-y-hidden"
+                data={users}
+                isLoading={loading}
+              />
+            )
+          }
           <Modal
             title="Invite User"
             onClose={() => {

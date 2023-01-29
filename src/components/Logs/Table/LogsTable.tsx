@@ -11,12 +11,12 @@ import {
 import { EvidenceType } from "../../../api/services/evidence";
 import LogItem from "../../../types/Logs";
 import { AttachEvidenceDialog } from "../../AttachEvidenceDialog";
-import { Loading } from "../../Loading";
 import { LogsTableLabelsCell, LogsTableTimestampCell } from "./LogsTableCells";
 import useDebouncedValue from "../../../hooks/useDebounce";
 import { InfoMessage } from "../../InfoMessage";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { sanitizeHTMLContent } from "../../../utils/common";
+import TableSkeletonLoader from "../../SkeletonLoader/TableSkeletonLoader";
 
 const convert = new Convert();
 
@@ -300,7 +300,7 @@ export function LogsTable({
                       message="Please select a component to view the logs"
                     />
                   ) : isLoading ? (
-                    <Loading text="Loading logs ..." />
+                    <TableSkeletonLoader />
                   ) : (
                     <InfoMessage
                       className="my-8"
