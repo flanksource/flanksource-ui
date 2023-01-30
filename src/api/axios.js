@@ -60,6 +60,16 @@ export const Config = axios.create({
   }
 });
 
+export const Snapshot = axios.create({
+  baseURL: `${API_BASE}/snapshot`,
+  headers: {
+    Accept: "application/json",
+    Prefer: "return=representation",
+    "Content-Type": "application/json",
+    responseType: "blob"
+  }
+});
+
 export const Auth = axios.create({
   baseURL: `${API_BASE}/auth`,
   headers: {
@@ -75,19 +85,20 @@ for (const client of [
   Logs,
   CanaryChecker,
   Config,
-  ConfigDB
+  ConfigDB,
+  Snapshot
 ]) {
   client.interceptors.response.use(
     (response) => response,
     (error) => {
-      redirecToLoginPageOnSessionExpiry(error);
+      redirectToLoginPageOnSessionExpiry(error);
       toastError(error.response.data.message);
       return Promise.reject(error);
     }
   );
 }
 
-function redirecToLoginPageOnSessionExpiry(error) {
+function redirectToLoginPageOnSessionExpiry(error) {
   if (error?.response?.status === 401) {
     const url = `/login?return_to=${window.location.pathname}${window.location.search}`;
     window.location.href = url;

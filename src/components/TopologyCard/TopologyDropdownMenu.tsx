@@ -5,9 +5,12 @@ import { MdAlarmAdd, MdTableRows } from "react-icons/md";
 import { EvidenceType } from "../../api/services/evidence";
 import { AttachEvidenceDialog } from "../AttachEvidenceDialog";
 import { Menu } from "../Menu";
+import { ImTree } from "react-icons/im";
+import TopologySnapshotModal from "./TopologySnapshotModal";
+import { Topology } from "../../context/TopologyPageContext";
 
 interface IProps {
-  topology: any;
+  topology: Topology;
   updateVisibility: (
     topologyId: string | undefined,
     updatedVisibility: boolean
@@ -19,6 +22,10 @@ export const TopologyDropdownMenu = ({
   updateVisibility
 }: IProps) => {
   const [attachAsAsset, setAttachAsAsset] = useState(false);
+  const [
+    isDownloadComponentSnapshotModalOpen,
+    setIsDownloadComponentSnapshotModalOpen
+  ] = useState(false);
 
   const navigate = useNavigate();
   const viewLogs = () => {
@@ -70,8 +77,24 @@ export const TopologyDropdownMenu = ({
               )}
             </Menu.Item>
           )}
+
+          <Menu.Item>
+            <button
+              onClick={() => setIsDownloadComponentSnapshotModalOpen(true)}
+              className="flex space-x-1 items-center w-full"
+            >
+              <ImTree />
+              <span className="text-sm block">Snapshot</span>
+            </button>
+          </Menu.Item>
         </Menu.Items>
       </Menu>
+
+      <TopologySnapshotModal
+        onCloseModal={() => setIsDownloadComponentSnapshotModalOpen(false)}
+        isModalOpen={isDownloadComponentSnapshotModalOpen}
+        topology={topology}
+      />
 
       <AttachEvidenceDialog
         isOpen={attachAsAsset}

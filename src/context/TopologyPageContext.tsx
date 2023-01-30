@@ -33,6 +33,8 @@ export type Topology = {
   icon?: string;
   text?: string;
   status?: string;
+  hidden?: boolean;
+  external_id?: string;
   summary?: {
     incidents?: Record<
       keyof typeof typeItems,

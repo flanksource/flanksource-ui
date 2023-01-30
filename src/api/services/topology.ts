@@ -1,5 +1,5 @@
 import { stringify } from "qs";
-import { CanaryChecker, IncidentCommander } from "../axios";
+import { CanaryChecker, IncidentCommander, Snapshot } from "../axios";
 import { TopologyComponentItem } from "../../components/FilterIncidents/FilterIncidentsByComponents";
 import { HealthCheck } from "../../types/healthChecks";
 import { AVATAR_INFO } from "../../constants";
@@ -134,4 +134,21 @@ export const getComponentTeams = async (id: string) => {
     `/team_components?component_id=eq.${id}&select=*,team:teams(*, created_by(${AVATAR_INFO}))`
   );
   return res.data || [];
+};
+
+export const getTopologySnapshot = async (
+  id: string,
+  {
+    start,
+    related
+  }: {
+    start?: string;
+    related?: boolean;
+  }
+) => {
+  const query = stringify({ start, related });
+  const res = await Snapshot.get<Blob>(`/topology/${id}?${query}`, {
+    responseType: "blob"
+  });
+  return res.data;
 };
