@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
+import nanobar from "nanobar";
 import {
   getTopology,
   updateComponentVisibility
@@ -96,6 +97,8 @@ export const getSortOrder = () => {
 export function TopologyPage() {
   const { id } = useParams();
 
+  const progressBar = new nanobar();
+
   const { loading, setLoading } = useLoader();
   const { topologyState, setTopologyState } = useTopologyPageContext();
   const [searchParams, setSearchParams] = useSearchParams(
@@ -129,6 +132,7 @@ export function TopologyPage() {
       params.id = id;
     }
 
+    progressBar.go(0);
     setLoading(true);
 
     try {
@@ -145,7 +149,13 @@ export function TopologyPage() {
           }),
         hidden: params.showHiddenComponents === "no" ? false : undefined
       };
+
+      progressBar.go(15);
+
       const res = await getTopology(apiParams);
+
+      progressBar.go(30);
+
       if (res.error) {
         toastError(res.error);
         return;
@@ -153,6 +163,8 @@ export function TopologyPage() {
 
       const currentTopology = res.data[0];
       setCurrentTopology(currentTopology);
+
+      progressBar.go(45);
 
       let data;
 
@@ -172,10 +184,14 @@ export function TopologyPage() {
         data = Array.isArray(res.data) ? res.data : [];
       }
 
+      progressBar.go(60);
+
       let result = data.filter(
         (item: { name: string; title: string; id: string }) =>
           (item.name || item.title) && item.id !== id
       );
+
+      progressBar.go(75);
 
       if (!result.length && data.length) {
         let filtered = data.find((x: Record<string, any>) => x.id === id);
@@ -186,6 +202,8 @@ export function TopologyPage() {
         }
       }
 
+      progressBar.go(90);
+
       setTopologyState({
         topology: result,
         searchParams
@@ -194,6 +212,7 @@ export function TopologyPage() {
       toastError(ex);
     }
 
+    progressBar.go(100);
     setLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, searchParams, setTopologyState]);
