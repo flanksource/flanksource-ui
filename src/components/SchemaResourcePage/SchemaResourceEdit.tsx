@@ -253,7 +253,7 @@ export function SchemaResourceEdit({
                             value={
                               typeof values.labels === "object"
                                 ? JSON.stringify(values.labels, null, 2)
-                                : null
+                                : undefined
                             }
                             onChange={(val) => {
                               setValueOnChange("labels", val);
@@ -278,7 +278,9 @@ export function SchemaResourceEdit({
                 <CodeEditor
                   key={keyRef.current}
                   readOnly={!!source || disabled || !edit}
-                  value={typeof values.spec === "string" ? values.spec : null}
+                  value={
+                    typeof values.spec === "string" ? values.spec : undefined
+                  }
                   onChange={(val) => {
                     setValueOnChange("spec", val);
                   }}

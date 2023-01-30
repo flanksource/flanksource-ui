@@ -39,12 +39,13 @@ export function Modal({
   allowBackgroundClose,
   hideCloseButton,
   size,
+  children,
   ...rest
 }: IModalProps) {
-  const { children } = { ...rest };
-
   return (
+    /* @ts-expect-error */
     <Transition.Root show={open} as={Fragment}>
+      {/* @ts-expect-error */}
       <Dialog
         as="div"
         auto-reopen="true"
@@ -57,6 +58,7 @@ export function Modal({
             "py-8": size === "full"
           })}
         >
+          {/* @ts-expect-error */}
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -80,7 +82,7 @@ export function Modal({
           >
             <div
               className={clsx(
-                "bg-white rounded-lg text-left shadow-xl transform transition-all w-full flex flex-col",
+                "bg-white rounded-lg text-left shadow-xl transform transition-all w-full max-h-full overflow-auto flex flex-col",
                 modalClassMap[size]
               )}
             >
