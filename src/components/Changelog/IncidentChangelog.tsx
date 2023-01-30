@@ -32,11 +32,16 @@ export function IncidentChangelog({
           Changelog
         </h2>
         <button className="" onClick={() => refetch()}>
-          <MdRefresh className="cursor-pointer w-6 h-6" />
+          <MdRefresh
+            className={`cursor-pointer w-6 h-6 ${
+              isRefetching ? "animate-spin" : ""
+            }`}
+          />
         </button>
       </div>
-      {(isLoading || isRefetching) && <Loading text="Loading ..." />}
-      {incidentHistory && incidentHistory.length > 0 ? (
+      {isLoading || !incidentHistory ? (
+        <Loading text="Loading ..." />
+      ) : incidentHistory.length > 0 ? (
         <VerticalSCrollView maxHeight="150px">
           <div className="px-8">
             <ul className="border-l border-gray-200 dark:border-gray-900 relative flex-col px-4">
