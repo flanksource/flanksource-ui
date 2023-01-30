@@ -106,7 +106,7 @@ export function AddDefinitionOfDoneStepper({
 
   return (
     <>
-      <div className="w-full flex flex-col space-y-4 p-4">
+      <div className="w-full flex flex-col space-y-4 p-4 overflow-x-hidden">
         {/* title */}
         <div className="w-full flex flex-row space-y-2">
           <div className="flex flex-col flex-1 space-y-2">

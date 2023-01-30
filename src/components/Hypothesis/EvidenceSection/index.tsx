@@ -18,7 +18,10 @@ import { LogsTable } from "../../Logs/Table/LogsTable";
 import { Icon } from "../../Icon";
 import { Button } from "../../Button";
 import { ConfigDetailsChanges } from "../../ConfigDetailsChanges/ConfigDetailsChanges";
-import { useGetConfigInsight } from "../../../api/query-hooks";
+import {
+  useGetConfigByIdQuery,
+  useGetConfigInsight
+} from "../../../api/query-hooks";
 import { ConfigTypeInsights } from "../../ConfigInsights";
 import { ConfigAnalysisLink } from "../../ConfigAnalysisLink/ConfigAnalysisLink";
 
@@ -61,7 +64,6 @@ export function EvidenceItem({
           title={evidence.description}
           configId={evidence.config_id}
           configName={evidence.evidence.configName}
-          configType={evidence.evidence.configType}
         >
           <ConfigEvidenceView evidenceItem={evidence} />
         </EvidenceAccordion>
@@ -98,10 +100,11 @@ const EvidenceAccordion: React.FC<{
   title: string;
   configId: string;
   configName: string;
-  configType: string;
   children: React.ReactNode;
-}> = ({ title, date, configId, configName, configType, children, ...rest }) => {
+}> = ({ title, date, configId, configName, children, ...rest }) => {
+  const { data: config } = useGetConfigByIdQuery(configId);
   const [expanded, setExpanded] = useState(true);
+
   return (
     <div className="border-b last:border-b-0 flex flex-col" {...rest}>
       <div className="flex items-center justify-between">
@@ -128,7 +131,8 @@ const EvidenceAccordion: React.FC<{
           <ConfigLink
             configId={configId}
             configName={configName}
-            configType={configType}
+            configType={config?.external_type}
+            configTypeSecondary={config?.config_type}
           />
         </div>
       </div>
@@ -159,7 +163,7 @@ export function ConfigEvidenceView({
   }, [evidenceItem]);
 
   return (
-    <div>
+    <div className="break-all	overflow-y-hidden">
       {evidenceItem ? (
         <div className="flex flex-col">
           {hunks.map(([hunkStart, hunkEnd], hunkIndex) => (

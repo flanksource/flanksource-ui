@@ -151,11 +151,7 @@ function ConfigEvidence({
 
   return (
     <div className={clsx("overflow-hidden p-2", className)} {...rest}>
-      <Icon
-        name={config.external_type}
-        secondary={config.config_type}
-        size="lg"
-      />{" "}
+      <Icon name={config.external_type} secondary={config.config_type} />{" "}
       <span className="pl-1 text-gray-500 font-medium"> {config.name} </span>{" "}
     </div>
   );
