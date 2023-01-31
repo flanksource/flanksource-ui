@@ -1,7 +1,7 @@
 import { AdjustmentsIcon } from "@heroicons/react/solid";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { Fragment, ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { AiFillHeart } from "react-icons/ai";
 import { ImLifebuoy } from "react-icons/im";
 import { VscJson } from "react-icons/vsc";
@@ -46,6 +46,8 @@ import { User } from "./api/services/users";
 import FullPageSkeletonLoader from "./components/SkeletonLoader/FullPageSkeletonLoader";
 import { UsersPage } from "./pages/UsersPage";
 import { HiUser } from "react-icons/hi";
+import { FaTasks } from "react-icons/fa";
+import JobsHistorySettingsPage from "./components/JobsHistory/JobsHistorySettingsPage";
 
 const defaultStaleTime = 1000 * 60 * 5;
 
@@ -83,7 +85,12 @@ const settingsNav = {
     ...schemaResourceTypes.map((x) => ({
       ...x,
       href: `/settings/${x.table}`
-    }))
+    })),
+    {
+      name: "Jobs History",
+      href: "/settings/jobs",
+      icon: FaTasks
+    }
   ]
 };
 
@@ -120,22 +127,29 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
 
       <Route path="settings" element={sidebar}>
         <Route path="users" element={<UsersPage />} />
+        <Route path="jobs" element={<JobsHistorySettingsPage />} />
         {settingsNav.submenu
-          .filter((v: SchemaResourceType) => v.table)
+          .filter((v) => (v as SchemaResourceType).table)
           .map((x) => {
             return (
-              <Fragment key={x.name}>
+              <Route key={x.name} path={(x as SchemaResourceType).table}>
                 <Route
+                  index
                   key={`${x.name}-list`}
-                  path={(x as any).table}
-                  element={<SchemaResourcePage resourceInfo={x} />}
+                  element={
+                    <SchemaResourcePage
+                      resourceInfo={x as SchemaResourceType & { href: string }}
+                    />
+                  }
                 />
                 <Route
                   key={`${x.name}-detail`}
-                  path={`${(x as any).table}/:id`}
-                  element={<SchemaResource resourceInfo={x} />}
+                  path={`:id`}
+                  element={
+                    <SchemaResource resourceInfo={x as SchemaResourceType} />
+                  }
                 />
-              </Fragment>
+              </Route>
             );
           })}
       </Route>

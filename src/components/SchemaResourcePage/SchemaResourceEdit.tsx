@@ -13,6 +13,10 @@ import { Icon } from "../Icon";
 import { schemaResourceTypes } from "./resourceTypes";
 import { TeamMembers } from "../TeamMembers/TeamMembers";
 import { Tabs } from "../Canary/tabs";
+import {
+  resourceTypeMap,
+  SchemaResourceJobsTab
+} from "./SchemaResourceEditJobsTab";
 
 type FormFields = Partial<
   Pick<
@@ -61,6 +65,16 @@ export function SchemaResourceEdit({
       return [];
     }
     return resourceType.subNav;
+  }, [resourceName]);
+
+  const table = useMemo(() => {
+    const resourceType = schemaResourceTypes.find(
+      (item) => item.name === resourceName
+    );
+    if (!resourceType) {
+      return "";
+    }
+    return resourceType.table;
   }, [resourceName]);
   const [activeTab, setActiveTab] = useState(subNav[0]?.value);
   const formFields = useMemo(() => {
@@ -157,14 +171,14 @@ export function SchemaResourceEdit({
   };
 
   return (
-    <div className="">
+    <div className="flex flex-col flex-1  overflow-y-auto">
       <Tabs
-        className=""
-        tabs={subNav}
+        className="flex flex-row justify-start"
+        tabs={subNav as any}
         value={activeTab}
         onClick={onSubNavClick}
       />
-      <div className="bg-white">
+      <div className="flex flex-col flex-1 bg-white overflow-y-auto">
         {hasSubNav("spec") && (
           <form className="space-y-4" onSubmit={handleSubmit(doSubmit)}>
             <div className="px-8 pt-4">
@@ -340,6 +354,12 @@ export function SchemaResourceEdit({
           </form>
         )}
         {hasSubNav("manageTeam") && <TeamMembers teamId={id!} />}
+        {hasSubNav("jobHistory") && (
+          <SchemaResourceJobsTab
+            resourceId={id!}
+            tableName={table as keyof typeof resourceTypeMap}
+          />
+        )}
       </div>
     </div>
   );
