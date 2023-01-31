@@ -1,13 +1,13 @@
-import { ConfigTypeChanges } from "../../components/ConfigChanges";
-import { ConfigTypeInsights } from "../../components/ConfigInsights";
-import { Topology } from "../../context/TopologyPageContext";
-import { HealthCheck } from "../../types/healthChecks";
 import { IncidentCommander } from "../axios";
 import { ConfigItem } from "./configs";
 import { Evidence } from "./evidence";
 import { Hypothesis } from "./hypothesis";
 import { Incident } from "./incident";
 import { User } from "./users";
+import { Topology } from "../../context/TopologyPageContext";
+import { ConfigTypeChanges } from "../../components/ConfigChanges";
+import { ConfigTypeInsights } from "../../components/ConfigInsights";
+import { HealthCheck } from "../../types/healthChecks";
 
 // expand this list to add more items
 export enum IncidentHistoryType {

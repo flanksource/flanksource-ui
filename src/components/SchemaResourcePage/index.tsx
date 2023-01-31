@@ -1,15 +1,12 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { AiFillPlusCircle } from "react-icons/ai";
-
-import {
-  createResource,
-  getAll,
-  SchemaResourceI
-} from "../../api/schemaResources";
+import { useGetSettingsAllQuery } from "../../api/query-hooks";
+import { createResource, SchemaResourceI } from "../../api/schemaResources";
 import { useUser } from "../../context";
 import { BreadcrumbNav } from "../BreadcrumbNav";
 import { Head } from "../Head/Head";
 import { SearchLayout } from "../Layout";
+import { Loading } from "../Loading";
 import { Modal } from "../Modal";
 import { SchemaResourceType } from "./resourceTypes";
 import { SchemaResourceEdit } from "./SchemaResourceEdit";
@@ -18,20 +15,18 @@ import { SchemaResourceList } from "./SchemaResourceList";
 export function SchemaResourcePage({
   resourceInfo
 }: {
-  resourceInfo: SchemaResourceType;
+  resourceInfo: SchemaResourceType & { href: string };
 }) {
   const { user } = useUser();
-  const [list, setList] = useState<SchemaResourceI[]>([]);
-  const [reload, setReload] = useState(1);
   const { name, href } = resourceInfo;
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
-  useEffect(() => {
-    getAll(resourceInfo).then((res) => {
-      setList(res.data);
-    });
-  }, [resourceInfo, reload]);
+  const {
+    data: list,
+    refetch,
+    isLoading
+  } = useGetSettingsAllQuery(resourceInfo);
 
   const onSubmit = async (data: Partial<SchemaResourceI>) => {
     await createResource(resourceInfo, {
@@ -40,7 +35,7 @@ export function SchemaResourcePage({
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
     });
-    setReload((x) => x + 1);
+    refetch();
     setModalIsOpen(false);
   };
 
@@ -50,6 +45,7 @@ export function SchemaResourcePage({
     <>
       <Head prefix={resourceInfo ? `Settings - ${resourceInfo.name}` : ""} />
       <SearchLayout
+        loading={isLoading}
         title={
           <BreadcrumbNav
             list={[
@@ -64,9 +60,16 @@ export function SchemaResourcePage({
             ]}
           />
         }
+        contentClass="p-6"
       >
-        <div className="self-center m-auto">
-          <SchemaResourceList items={list} baseUrl={href} />
+        <div className="m-auto">
+          <div className="flex flex-col p-6 pb-0 flex-1 w-full overflow-y-auto">
+            {isLoading || !list ? (
+              <Loading />
+            ) : (
+              <SchemaResourceList items={list} baseUrl={href} />
+            )}
+          </div>
         </div>
 
         <Modal

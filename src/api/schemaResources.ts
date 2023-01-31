@@ -4,6 +4,7 @@ import {
 } from "../components/SchemaResourcePage/resourceTypes";
 import { CanaryCheckerDB, ConfigDB, IncidentCommander } from "./axios";
 import { AVATAR_INFO } from "../constants";
+import { AxiosResponse } from "axios";
 
 export interface SchemaResourceI {
   id: string;
@@ -39,15 +40,17 @@ const getBackend = (api: SchemaBackends) => {
   }
 };
 
-export const getAll = ({ table, api }: SchemaApi) => {
+export const getAll = ({
+  table,
+  api
+}: SchemaApi): Promise<AxiosResponse<SchemaResourceI[]>> => {
   const endpoint = getBackend(api);
   if (endpoint) {
     return endpoint.get<SchemaResourceI[]>(
       `/${table}?order=created_at.desc&select=*,created_by(${AVATAR_INFO})&limit=100`
     );
   }
-
-  return Promise.resolve({ data: [] });
+  return Promise.resolve({ data: [] } as any);
 };
 
 export const createResource = ({ api, table }: SchemaApi, data: unknown) =>
