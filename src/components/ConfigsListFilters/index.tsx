@@ -58,7 +58,6 @@ function ConfigsListFilterControls() {
 
           <ConfigTagsDropdown />
 
-          {/* @ts-expect-error */}
           <TextInputClearable
             onChange={debounce((e) => {
               const query = e.target.value || "";
@@ -67,7 +66,7 @@ function ConfigsListFilterControls() {
             }, 200)}
             className="w-80"
             placeholder="Search for configs"
-            defaultValue={params.get("search")}
+            defaultValue={params.get("search") ?? undefined}
           />
 
           <ConfigListToggledDeletedItems />

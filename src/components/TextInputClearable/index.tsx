@@ -1,7 +1,21 @@
 import { SearchIcon } from "@heroicons/react/solid";
 import clsx from "clsx";
-import { useState } from "react";
 import { IoCloseCircle } from "react-icons/io5";
+
+type Props = {
+  className?: string;
+  defaultValue?: string;
+  onChange?: (value?: string) => void;
+  onSubmit?: (value?: string) => void;
+  inputClassName?: string;
+  inputOuterClassName?: string;
+  buttonIcon?: React.ReactNode;
+  hideButton?: boolean;
+  onClear?: () => void;
+  placeholder?: string;
+  hideClearButton?: boolean;
+  value?: string;
+} & React.InputHTMLAttributes<HTMLInputElement>;
 
 export function TextInputClearable({
   className,
@@ -17,10 +31,10 @@ export function TextInputClearable({
   hideClearButton = false,
   value,
   ...rest
-}) {
+}: Props) {
   return (
     <div className={`flex ${className}`}>
-      <div className={`relative flex-grow ${inputOuterClassName}`}>
+      <div className={`relative flex-1 ${inputOuterClassName}`}>
         <input
           defaultValue={defaultValue}
           onChange={onChange}
