@@ -5,6 +5,7 @@ import Incidents from "../Sidebars/incidents";
 import TopologyConfigChanges from "../TopologyConfigChanges";
 import TopologyDetails from "../TopologyDetails";
 import { ComponentTeams } from "./ComponentTeams";
+import TopologyCost from "./TopologyCost";
 
 type Props = {
   topology?: Topology;
@@ -26,6 +27,7 @@ export default function TopologySidebar({ topology, refererId }: Props) {
         <TopologyDetails topology={topology} refererId={refererId} />
         <Configs topologyId={id} />
         <Incidents topologyId={id} />
+        <TopologyCost topology={topology} />
         <TopologyConfigChanges topologyID={id} />
         <ComponentTeams componentId={id} />
       </div>

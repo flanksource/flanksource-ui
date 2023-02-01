@@ -1,11 +1,13 @@
 import { useQuery, UseQueryOptions } from "@tanstack/react-query";
 import { SchemaApi } from "../../components/SchemaResourcePage/resourceTypes";
+import { CostsData } from "../../components/CostDetails/CostDetails";
 import { toastError } from "../../components/Toast/toast";
 import { getAll } from "../schemaResources";
 import {
   getAllChanges,
   getAllConfigsMatchingQuery,
   getConfig,
+  getConfigAnalysis,
   getConfigChange,
   getConfigInsight,
   getConfigInsights,
@@ -361,4 +363,15 @@ export function useGetSettingsAllQuery(resourceInfo: SchemaApi) {
     console.log({ res });
     return res.data;
   });
+}
+
+export function useConfigAnalysisQuery(
+  configId: string,
+  options?: UseQueryOptions<CostsData[], Error>
+) {
+  return useQuery<CostsData[], Error>(
+    ["config_analysis", configId],
+    () => getConfigAnalysis(configId),
+    options
+  );
 }

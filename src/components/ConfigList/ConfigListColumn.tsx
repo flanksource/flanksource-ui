@@ -2,7 +2,7 @@ import { CellContext, ColumnDef, Row } from "@tanstack/react-table";
 import React from "react";
 import { ConfigItem } from "../../api/services/configs";
 import { getTimeBucket, TIME_BUCKETS } from "../../utils/date";
-import { FormatCurrency } from "../ConfigCosts";
+import { FormatCurrency } from "../CostDetails/CostDetails";
 import ConfigListAnalysisCell from "./Cells/ConfigListAnalysisCell";
 import ConfigListChangeCell from "./Cells/ConfigListChangeCell";
 import ConfigListCostCell from "./Cells/ConfigListCostCell";
@@ -171,11 +171,7 @@ function changeAggregationFN(
 
 function CostAggregate({ getValue }: CellContext<ConfigItem, any>) {
   const value = getValue<ConfigItem["cost_per_minute"]>();
-  return !value || parseFloat(value.toFixed(2)) === 0 ? (
-    ""
-  ) : (
-    <FormatCurrency value={value} />
-  );
+  return <FormatCurrency value={value} defaultValue="" hideMinimumValue />;
 }
 
 function changeColumnAccessorFN(row: any) {
