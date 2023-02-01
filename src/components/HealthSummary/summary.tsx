@@ -1,8 +1,9 @@
-import { Link } from "react-router-dom";
-import { Icon } from "../Icon";
-import { Chip } from "../Chip";
-import clsx from "clsx";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
+import {
+  StatusInfo,
+  StatusLine,
+  StatusLineProps
+} from "../StatusLine/StatusLine";
 
 type TopologyComponentProp = {
   id: string;
@@ -18,154 +19,84 @@ type HealthSummaryProps = {
   viewType?: "individual_level" | "children_level";
 } & React.HTMLProps<HTMLDivElement>;
 
-function getChipsFromSummary(
-  component: TopologyComponentProp,
-  summary: { [key: string]: number }
-) {
+function getStatuses(summary: { [key: string]: number }, url?: string) {
   if (!summary) {
     return [];
   }
-  const chips = [];
+  const statuses: StatusInfo[] = [];
   if (summary.healthy > 0) {
-    chips.push(
-      <Link
-        key={`${component.id}-healthy`}
-        to={`/topology/${component.id}?status=healthy`}
-      >
-        <Chip
-          text={summary.healthy}
-          key="healthy"
-          label="Healthy"
-          color="green"
-        />
-      </Link>
-    );
+    statuses.push({
+      url: url ? `${url}?status=healthy` : "",
+      label: summary.healthy.toString(),
+      color: "green"
+    });
   }
   if (summary.unhealthy > 0) {
-    chips.push(
-      <Link
-        key={`${component.id}-unhealthy`}
-        to={`/topology/${component.id}?status=unhealthy`}
-      >
-        <Chip
-          text={summary.unhealthy}
-          key="unhealthy"
-          label="Unhealthy"
-          color="red"
-        />
-      </Link>
-    );
+    statuses.push({
+      url: url ? `${url}?status=unhealthy` : "",
+      label: summary.unhealthy.toString(),
+      color: "red"
+    });
   }
   if (summary.warning > 0) {
-    chips.push(
-      <Link
-        key={`${component.id}-warning`}
-        to={`/topology/${component.id}?status=warning`}
-      >
-        <Chip
-          text={summary.warning}
-          key="warning"
-          label="Warning"
-          color="orange"
-        />
-      </Link>
-    );
+    statuses.push({
+      url: url ? `${url}?status=warning` : "",
+      label: summary.warning.toString(),
+      color: "orange"
+    });
   }
   if (summary.unknown > 0) {
-    chips.push(
-      <Link
-        key={`${component.id}-unknown`}
-        to={`/topology/${component.id}?status=unknown`}
-      >
-        <Chip
-          text={summary.unknown}
-          key="unknown"
-          label="Unknown"
-          color="gray"
-        />
-      </Link>
-    );
+    statuses.push({
+      url: url ? `${url}?status=unknown` : "",
+      label: summary.unknown.toString(),
+      color: "gray"
+    });
   }
-  return chips;
+  return statuses;
 }
 
 export const HealthSummary = ({
   component,
   iconSize = "sm",
   viewType = "individual_level",
-  className,
   ...rest
 }: HealthSummaryProps) => {
-  const { name, icon, summary } = component;
-  const [noSummary, setNoSummary] = useState(false);
-  const childrenSummary: { [key: string]: number } = useMemo(() => {
-    const value = {
+  const statusLineInfo = useMemo(() => {
+    const data: StatusLineProps = {
+      icon: "",
+      label: "",
+      url: "",
+      statuses: []
+    };
+    const childrenSummary = {
       healthy: 0,
       unhealthy: 0,
       warning: 0
     };
     component.components?.forEach((component) => {
-      value.healthy += component.summary?.healthy || 0;
-      value.unhealthy += component.summary?.unhealthy || 0;
-      value.warning += component.summary?.warning || 0;
+      childrenSummary.healthy += component.summary?.healthy || 0;
+      childrenSummary.unhealthy += component.summary?.unhealthy || 0;
+      childrenSummary.warning += component.summary?.warning || 0;
     });
-    setNoSummary(!(value.healthy || value.unhealthy || value.warning));
-    return value;
-  }, [component]);
+    const noSummary = !(
+      childrenSummary.healthy ||
+      childrenSummary.unhealthy ||
+      childrenSummary.warning
+    );
+    if (viewType === "individual_level") {
+      data.icon = component.icon;
+      data.label = component.name;
+      data.url = `/topology/${component.id}`;
+      data.statuses = getStatuses(
+        component.summary,
+        `/topology/${component.id}`
+      );
+    } else {
+      data.label = `Health Summary: ${noSummary ? "NA" : ""}`;
+      data.statuses = getStatuses(childrenSummary);
+    }
+    return data;
+  }, [viewType, component]);
 
-  if (viewType === "individual_level") {
-    return (
-      <div className={clsx("flex", className)} {...rest}>
-        <Icon name={icon} className="mr-1 w-4" />
-        <Link
-          className="text-xs linear-1.21rel mr-1 cursor-pointer"
-          to={`/topology/${component.id}`}
-        >
-          {name}
-        </Link>
-        <div className="flex gap-2 ">
-          {getChipsFromSummary(component, summary)}
-        </div>
-      </div>
-    );
-  } else if (viewType === "children_level") {
-    return (
-      <div className={clsx("flex", className)} {...rest}>
-        <span className="inline-block m-1">
-          Health Summary: {noSummary ? "NA" : ""}
-        </span>
-        {childrenSummary.healthy > 0 && (
-          <span className="inline-block m-1">
-            <Chip
-              text={childrenSummary.healthy}
-              key="healthy"
-              label="Healthy"
-              color="green"
-            />
-          </span>
-        )}
-        {childrenSummary.unhealthy > 0 && (
-          <span className="inline-block m-1">
-            <Chip
-              text={childrenSummary.unhealthy}
-              key="unhealthy"
-              label="Unhealthy"
-              color="red"
-            />
-          </span>
-        )}
-        {childrenSummary.warning > 0 && (
-          <span className="inline-block m-1">
-            <Chip
-              text={childrenSummary.warning}
-              key="warning"
-              label="Warning"
-              color="orange"
-            />
-          </span>
-        )}
-      </div>
-    );
-  }
-  return null;
+  return <StatusLine {...statusLineInfo} {...rest} />;
 };

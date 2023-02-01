@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { AiFillHeart } from "react-icons/ai";
-import { BsHeartFill } from "react-icons/bs";
 import { Link } from "react-router-dom";
 import ReactTooltip from "react-tooltip";
 import { Chip } from "../Chip";

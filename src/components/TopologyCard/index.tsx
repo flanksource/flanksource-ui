@@ -233,11 +233,7 @@ export function TopologyCard({
               <HealthChecksSummary checks={topology?.checks} />
               {topology?.id && <IncidentCardSummary topology={topology} />}
               {topology?.components?.map((component: any) => (
-                <HealthSummary
-                  className="mb-2"
-                  key={component.id}
-                  component={component}
-                />
+                <HealthSummary key={component.id} component={component} />
               ))}
             </CustomScroll>
           </>
