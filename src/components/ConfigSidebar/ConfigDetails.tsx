@@ -5,7 +5,7 @@ import { relativeDateTime } from "../../utils/date";
 import CollapsiblePanel from "../CollapsiblePanel";
 import { DescriptionCard } from "../DescriptionCard";
 import { InfoMessage } from "../InfoMessage";
-import { Loading } from "../Loading";
+import TextSkeletonLoader from "../SkeletonLoader/TextSkeletonLoader";
 import Title from "../Title/title";
 
 type Props = {
@@ -71,7 +71,7 @@ export function ConfigDetails({ configId }: Props) {
       }
     >
       <div className="flex flex-col space-y-2 py-2 max-w-full">
-        {isLoading && <Loading />}
+        {isLoading && <TextSkeletonLoader />}
         {displayDetails && !error ? (
           <DescriptionCard items={displayDetails} />
         ) : (

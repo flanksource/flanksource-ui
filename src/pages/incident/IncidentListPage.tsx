@@ -8,8 +8,8 @@ import FilterIncidents from "../../components/FilterIncidents/FilterIncidents";
 import { IncidentCreate } from "../../components/Incidents/IncidentCreate";
 import { IncidentList } from "../../components/Incidents/IncidentList";
 import { SearchLayout } from "../../components/Layout";
-import { Loading } from "../../components/Loading";
 import { Modal } from "../../components/Modal";
+import IncidentListSkeletonLoader from "../../components/SkeletonLoader/IncidentListSkeletonLoader";
 import {
   IncidentState,
   useIncidentPageContext
@@ -181,9 +181,9 @@ export function IncidentListPage() {
         <div className="flex flex-col h-full leading-1.21rel">
           <div className="flex-col flex-1 h-full space-x-2 space-y-2">
             <div className="max-w-screen-xl mx-auto h-full space-y-6 flex flex-col justify-center">
-              <FilterIncidents />
               {!isLoading || Boolean(incidents?.length) ? (
                 <>
+                  <FilterIncidents />
                   <IncidentList list={incidents || []} />
                   {!Boolean(incidents?.length) && (
                     <div className="text-center text-base text-gray-500 w-full mt-2">
@@ -193,7 +193,7 @@ export function IncidentListPage() {
                 </>
               ) : (
                 <div className="flex-1">
-                  <Loading text="fetching incidents" />
+                  <IncidentListSkeletonLoader />
                 </div>
               )}
             </div>

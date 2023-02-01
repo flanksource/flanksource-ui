@@ -8,7 +8,7 @@ import {
 } from "../../../api/services/topology";
 import { HealthCheck } from "../../../types/healthChecks";
 import { Icon } from "../../Icon";
-import { Loading } from "../../Loading";
+import TextSkeletonLoader from "../../SkeletonLoader/TextSkeletonLoader";
 
 type HealthCheckEditComponentProps = {
   check: Pick<HealthCheck, "source">;
@@ -36,7 +36,7 @@ function HealthCheckEditComponent({ check }: HealthCheckEditComponentProps) {
   );
 
   if (isLoading) {
-    return <Loading text="Loading ..." />;
+    return <TextSkeletonLoader />;
   }
 
   if (!template) {

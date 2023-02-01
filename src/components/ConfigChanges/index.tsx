@@ -6,7 +6,7 @@ import { relativeDateTime } from "../../utils/date";
 import CollapsiblePanel from "../CollapsiblePanel";
 import { ConfigDetailsChanges } from "../ConfigDetailsChanges/ConfigDetailsChanges";
 import EmptyState from "../EmptyState";
-import { Loading } from "../Loading";
+import TableSkeletonLoader from "../SkeletonLoader/TableSkeletonLoader";
 import Title from "../Title/title";
 
 export type ConfigTypeChanges = {
@@ -42,7 +42,7 @@ export function ConfigChangesDetails({ configID }: Props) {
   return (
     <div className="flex flex-col space-y-2">
       {isLoading ? (
-        <Loading />
+        <TableSkeletonLoader />
       ) : configChanges.length > 0 ? (
         <table className="w-full text-sm text-left">
           <thead className="text-sm uppercase text-gray-600">

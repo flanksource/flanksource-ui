@@ -6,7 +6,7 @@ import CollapsiblePanel from "../CollapsiblePanel";
 import ConfigLink from "../ConfigLink/ConfigLink";
 import EmptyState from "../EmptyState";
 import { Icon } from "../Icon";
-import { Loading } from "../Loading";
+import TextSkeletonLoader from "../SkeletonLoader/TextSkeletonLoader";
 import Title from "../Title/title";
 
 type Props = {
@@ -39,7 +39,7 @@ export function TopologyConfigChanges({ topologyID }: Props) {
       <div className="flex flex-col">
         <div className="flex flex-col pl-2">
           {isLoading ? (
-            <Loading />
+            <TextSkeletonLoader />
           ) : componentConfigChanges.length > 0 ? (
             componentConfigChanges.map((item) => (
               <div className="flex flex-row text-sm mb-2">

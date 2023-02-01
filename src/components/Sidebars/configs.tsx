@@ -8,10 +8,10 @@ import { ConfigItem, getConfigsBy } from "../../api/services/configs";
 import CollapsiblePanel from "../CollapsiblePanel";
 import ConfigLink from "../ConfigLink/ConfigLink";
 import EmptyState from "../EmptyState";
-import { Loading } from "../Loading";
 import Title from "../Title/title";
 import { Badge } from "../Badge";
 import { IconButton } from "../IconButton";
+import TextSkeletonLoader from "../SkeletonLoader/TextSkeletonLoader";
 
 type Props = {
   topologyId?: string;
@@ -64,7 +64,7 @@ export function ConfigsList({
   return (
     <div className="flex flex-col space-y-4 text-sm">
       {isLoading ? (
-        <Loading />
+        <TextSkeletonLoader />
       ) : configs.length > 0 ? (
         <ol>
           {configs.map((config) => (

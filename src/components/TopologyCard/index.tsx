@@ -7,12 +7,12 @@ import { Size } from "../../types";
 import { CustomScroll } from "../CustomScroll";
 import { HealthSummary } from "../HealthSummary";
 import { Icon } from "../Icon";
-import { Loading } from "../Loading";
 import { HealthChecksSummary } from "../HealthChecksSummary";
 import { CardMetrics } from "./CardMetrics";
 import { Property } from "./Property";
 import { TopologyDropdownMenu } from "./TopologyDropdownMenu";
 import IncidentCardSummary from "../IncidentCardSummary";
+import TopologyCardSkeletonLoader from "../SkeletonLoader/TopologyCardSkeletonLoader";
 
 export enum ComponentStatus {
   unhealthy = "unhealthy",
@@ -120,7 +120,7 @@ export function TopologyCard({
   };
 
   if (topology == null) {
-    return <Loading text={`Loading ${topologyId}`} />;
+    return <TopologyCardSkeletonLoader />;
   }
 
   topology.properties = topology.properties || [];
