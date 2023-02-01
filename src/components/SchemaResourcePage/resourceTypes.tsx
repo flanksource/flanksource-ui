@@ -3,7 +3,7 @@ import { HealthIcon } from "../Icons/HealthIcon";
 import { AlarmIcon } from "../Icons/AlarmIcon";
 import { SearchInListIcon } from "../Icons/SearchInListIcon";
 import { TopologyIcon } from "../Icons/TopologyIcon";
-import { $ArrayElemType, $ArrayPick } from "src/types/utility";
+import { $ArrayElemType, $ArrayPick } from "../../types/utility";
 
 export type SchemaResourceTypes = typeof schemaResourceTypes;
 
@@ -27,6 +27,10 @@ export const schemaResourceTypes = [
       {
         label: "Members",
         value: "manageTeam"
+      },
+      {
+        label: "Job History",
+        value: "jobHistory"
       }
     ],
     fields: [
@@ -53,6 +57,10 @@ export const schemaResourceTypes = [
       {
         label: "Spec",
         value: "spec"
+      },
+      {
+        label: "Job History",
+        value: "jobHistory"
       }
     ],
     fields: [
@@ -75,6 +83,10 @@ export const schemaResourceTypes = [
       {
         label: "Spec",
         value: "spec"
+      },
+      {
+        label: "Job History",
+        value: "jobHistory"
       }
     ],
     fields: [
@@ -97,6 +109,10 @@ export const schemaResourceTypes = [
       {
         label: "Spec",
         value: "spec"
+      },
+      {
+        label: "Job History",
+        value: "jobHistory"
       }
     ],
     fields: [
@@ -127,6 +143,10 @@ export const schemaResourceTypes = [
       {
         label: "Spec",
         value: "spec"
+      },
+      {
+        label: "Job History",
+        value: "jobHistory"
       }
     ],
     fields: [

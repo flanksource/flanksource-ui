@@ -47,7 +47,7 @@ export function SchemaResource({
         ...props,
         updated_at: new Date().toISOString()
       });
-    } catch (ex) {
+    } catch (ex: any) {
       toastError(ex);
     }
   };
@@ -56,7 +56,7 @@ export function SchemaResource({
     try {
       await deleteResource(resourceInfo, id);
       navigate(`../${resourceInfo.table}`);
-    } catch (ex) {
+    } catch (ex: any) {
       toastError(ex);
     }
   };
@@ -68,8 +68,9 @@ export function SchemaResource({
           list={[{ title: name, to: `../${resourceInfo.table}` }, id]}
         />
       }
+      contentClass="flex flex-col h-full"
     >
-      <div className="self-center m-auto max-w-screen-xl p-4">
+      <div className="flex flex-col flex-1 overflow-y-auto mx-auto w-screen max-w-screen-xl p-4">
         {loadingState === "success" && id && (
           <SchemaResourceEdit
             id={id}

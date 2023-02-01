@@ -1,4 +1,6 @@
+import clsx from "clsx";
 import React, { useEffect, useState } from "react";
+import { HealthCheck } from "../../types/healthChecks";
 
 const defaultTabs = {
   all: {
@@ -9,7 +11,11 @@ const defaultTabs = {
 };
 
 // filter checks according to the 'tabBy' and selected tab
-export function filterChecksByTabSelection(tabBy, selectedTab, checks) {
+export function filterChecksByTabSelection(
+  tabBy: string,
+  selectedTab: string,
+  checks: HealthCheck[]
+) {
   if (
     checks == null ||
     (checks &&
@@ -35,7 +41,7 @@ export function filterChecksByTabSelection(tabBy, selectedTab, checks) {
   return filteredChecks;
 }
 
-export function generateTabs(tabBy, checks) {
+export function generateTabs(tabBy: string, checks: HealthCheck[]) {
   if (checks == null) {
     return defaultTabs;
   }
@@ -87,7 +93,18 @@ export function generateTabs(tabBy, checks) {
   return tabs;
 }
 
-export function CanaryTabs({ checks, tabBy, setTabSelection, ...rest }) {
+type CanaryTabsProps = {
+  checks: HealthCheck[];
+  tabBy: string;
+  setTabSelection: (tab: string) => void;
+};
+
+export function CanaryTabs({
+  checks,
+  tabBy,
+  setTabSelection,
+  ...rest
+}: CanaryTabsProps) {
   const [tabs, setTabs] = useState(generateTabs(tabBy, checks));
   const [selectedTab, setSelectedTab] = useState(Object.values(tabs)[0].value);
 
@@ -119,11 +136,14 @@ export function CanaryTabs({ checks, tabBy, setTabSelection, ...rest }) {
   );
 }
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
+type TabsProps = {
+  tabs: { value: string; label: string }[];
+  value: string;
+  onClick: (tab: { value: string; label: string }) => void;
+  className?: string;
+} & Omit<React.HTMLAttributes<HTMLDivElement>, "onClick">;
 
-export function Tabs({ tabs, value, onClick, className, ...rest }) {
+export function Tabs({ tabs, value, onClick, className, ...rest }: TabsProps) {
   return (
     <div
       className={`flex flex-wrap border-b border-gray-300 ${className}`}
@@ -140,7 +160,7 @@ export function Tabs({ tabs, value, onClick, className, ...rest }) {
             borderColor: tab.value === value ? "" : "transparent",
             borderBottomColor: tab.value === value ? "white" : ""
           }}
-          className={classNames(
+          className={clsx(
             tab.value === value ? "text-gray-900 bg-white" : "text-gray-500",
             "px-4 py-2 font-medium text-sm rounded-t-md border border-gray-300 hover:text-gray-900"
           )}
