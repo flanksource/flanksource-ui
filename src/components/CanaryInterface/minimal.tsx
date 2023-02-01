@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { orderBy } from "lodash";
 import { CanaryTabs, filterChecksByTabSelection } from "../Canary/tabs";
 import { MinimalCanary } from "../Canary/minimal";
@@ -11,7 +11,6 @@ import {
 import { CanarySorter } from "../Canary/data";
 import { useSearchParams } from "react-router-dom";
 import { HealthCheck } from "../../types/healthChecks";
-import { decodeUrlSearchParams } from "../Canary/url";
 
 type Props = {
   checks?: HealthCheck[];
@@ -24,22 +23,34 @@ const CanaryInterfaceMinimalFC = ({
   onFilterCallback,
   onLabelFiltersCallback
 }: Props) => {
-  const [searchParams] = useSearchParams();
+  const [searchParams] = useSearchParams({
+    tabBy: "namespace",
+    groupBy: "canary_name",
+    hidePassing: "true"
+  });
 
   const [filteredChecks, setFilteredChecks] = useState(checks);
   const [checksForTabGeneration, setChecksForTabGeneration] = useState(checks);
   const [selectedTab, setSelectedTab] = useState<string>();
 
   const hidePassing = searchParams.get("hidePassing") === "true";
+  const tabBy = searchParams.get("tabBy");
+  const labels = searchParams.get("labels");
+  const query = searchParams.get("query");
+
+  const urlLabels = useMemo(() => {
+    if (labels) {
+      try {
+        return JSON.parse(decodeURIComponent(labels));
+      } catch (e) {
+        console.error("Error parsing labels", e);
+        return undefined;
+      }
+    }
+  }, [labels]);
 
   // check filtering on checks/tab/params change.
   useEffect(() => {
-    const {
-      labels: urlLabels,
-      tabBy,
-      query
-    } = decodeUrlSearchParams(window.location.search);
-
     if (checks?.length > 0) {
       let filtered = filterChecks(checks, hidePassing, []); // first filter for pass/fail
       filtered = filterChecksByText(filtered, query || ""); // filter by name, description, endpoint
@@ -63,7 +74,10 @@ const CanaryInterfaceMinimalFC = ({
     onFilterCallback,
     onLabelFiltersCallback,
     searchParams,
-    hidePassing
+    hidePassing,
+    query,
+    urlLabels,
+    tabBy
   ]);
 
   return (
