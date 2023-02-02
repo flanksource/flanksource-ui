@@ -69,9 +69,10 @@ export default function TopologySnapshotModal({
       title={`Download ${topology.name} snapshot`}
       open={isModalOpen}
       size="small"
+      containerClassName=""
     >
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex flex-col items-center justify-center w-full py-4 space-y-4">
+        <div className="flex flex-col py-4 space-y-4">
           <Controller
             control={control}
             name="timeRange"
