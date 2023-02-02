@@ -4,6 +4,7 @@ import { TopologyComponentItem } from "../../components/FilterIncidents/FilterIn
 import { HealthCheck } from "../../types/healthChecks";
 import { AVATAR_INFO } from "../../constants";
 import { User } from "./users";
+import { Topology } from "../../context/TopologyPageContext";
 
 interface IParam {
   id?: string;
@@ -23,8 +24,17 @@ export const updateComponentVisibility = async (
   topologyId: string,
   hide: boolean
 ) => {
-  return await IncidentCommander.patch(`/components?id=eq.${topologyId}`, {
+  return IncidentCommander.patch(`/components?id=eq.${topologyId}`, {
     hidden: hide
+  });
+};
+
+export const updateComponent = async (
+  topologyId: string,
+  component: Omit<Partial<Topology>, "id">
+) => {
+  return IncidentCommander.patch(`/components?id=eq.${topologyId}`, {
+    ...component
   });
 };
 

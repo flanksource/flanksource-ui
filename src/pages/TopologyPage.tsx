@@ -403,7 +403,11 @@ export function TopologyPage() {
             </div>
           </div>
           {id && (
-            <TopologySidebar topology={currentTopology} refererId={refererId} />
+            <TopologySidebar
+              topology={currentTopology}
+              refererId={refererId}
+              onRefresh={load}
+            />
           )}
         </div>
       </SearchLayout>
