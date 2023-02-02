@@ -53,7 +53,7 @@ export function StatusLine({
   };
 
   return (
-    <div className={clsx("flex", className)} {...rest}>
+    <div className={clsx("flex items-center", className)} {...rest}>
       {icon && <div className="mr-1 inline-block">{renderIcon(icon)}</div>}
       {url && (
         <Link className="text-xs linear-1.21rel mr-1 cursor-pointer" to={url}>
