@@ -224,20 +224,12 @@ export function TopologyCard({
               minChildCount={5}
             >
               {canShowChildHealth() && (
-                <HealthSummary
-                  className="mb-2"
-                  key={topology.id}
-                  component={topology}
-                />
+                <HealthSummary key={topology.id} component={topology} />
               )}
               <HealthChecksSummary checks={topology?.checks} />
               {topology?.id && <IncidentCardSummary topology={topology} />}
               {topology?.components?.map((component: any) => (
-                <HealthSummary
-                  className="mb-2"
-                  key={component.id}
-                  component={component}
-                />
+                <HealthSummary key={component.id} component={component} />
               ))}
             </CustomScroll>
           </>

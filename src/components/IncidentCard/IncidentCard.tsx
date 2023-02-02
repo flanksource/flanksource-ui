@@ -4,31 +4,31 @@ import { IncidentStatusTag } from "../IncidentStatusTag";
 import { IncidentTypeIcon } from "../incidentTypeTag";
 
 import dayjs from "dayjs";
+import clsx from "clsx";
 
 type IncidentCardProps = {
   incident: Incident;
-};
+} & React.HTMLProps<HTMLDivElement>;
 
-export default function IncidentCard({ incident }: IncidentCardProps) {
+export default function IncidentCard({
+  incident,
+  className,
+  ...props
+}: IncidentCardProps) {
   return (
-    <div className=" border-b border-dashed">
-      <div className="flex flex-row  text-sm pl-2 pb-1">
-        <IncidentTypeIcon type={incident.type} />
-
+    <div className={clsx("border-b border-dashed", className)} {...props}>
+      <div className="flex flex-row text-sm pl-2 pb-1">
+        <IncidentTypeIcon type={incident.type!} />
         <Link
-          className="block"
+          className="block text-xs mx-1 cursor-pointer"
           to={{
             pathname: `/incidents/${incident.id}`
           }}
         >
-          <span>{incident.title}</span>
+          {incident.title}
         </Link>
-        <IncidentStatusTag
-          status={incident.status!}
-          size="sm"
-          className="ml-1"
-        />
-        <div className="text-right grow">
+        <IncidentStatusTag status={incident.status!} className="ml-1" />
+        <div className="text-right grow text-xs">
           {dayjs(incident.created_at).fromNow()}
         </div>
       </div>
