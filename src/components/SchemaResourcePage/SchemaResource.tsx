@@ -65,7 +65,7 @@ export function SchemaResource({
     <SearchLayout
       title={
         <BreadcrumbNav
-          list={[{ title: name, to: `../${resourceInfo.table}` }, id]}
+          list={[{ title: name, to: `/settings/${resourceInfo.table}` }, id]}
         />
       }
       contentClass="flex flex-col h-full"
