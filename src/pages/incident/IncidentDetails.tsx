@@ -26,6 +26,11 @@ import { Size } from "../../types";
 import SlidingSideBar from "../../components/SlidingSideBar";
 import IncidentDetailsPageSkeletonLoader from "../../components/SkeletonLoader/IncidentDetailsPageSkeletonLoader";
 import { Head } from "../../components/Head/Head";
+import {
+  HypothesisContainer,
+  IncidentDetailsViewTypes
+} from "../../components/Hypothesis/HypothesisContainer/HypothesisContainer";
+import { HypothesisCommentsContainer } from "../../components/Hypothesis/HypothesisCommentsContainer/HypothesisCommentsContainer";
 
 export type TreeNode<T> = T & {
   children?: T[];
@@ -83,6 +88,9 @@ export function IncidentDetailsPage() {
   const isNewlyCreated = false; // TODO: set this to true if its a newly created incident
   const { isLoading, data: incident, refetch } = useIncidentQuery(incidentId!);
   const [refetchChangelog, setRefetchChangelog] = useState(0);
+  const [activeViewType, setActiveViewType] = useState(
+    IncidentDetailsViewTypes.actionPlan
+  );
 
   const error = !!incident;
 
@@ -116,6 +124,37 @@ export function IncidentDetailsPage() {
     },
     [incident?.id, refetch, refetchChangelog]
   );
+
+  const getHypothesisView = () => {
+    if (isLoading && !error) {
+      return <div>fetching tree...</div>;
+    }
+
+    if (activeViewType === IncidentDetailsViewTypes.actionPlan) {
+      return loadedTrees?.map((loadedTree, index) => {
+        return (
+          <HypothesisBuilder
+            loadedTree={loadedTree}
+            // showGeneratedOutput
+            initialEditMode={isNewlyCreated}
+            api={{
+              incidentId,
+              create: createHypothesis,
+              delete: deleteHypothesis,
+              deleteBulk: deleteHypothesisBulk,
+              update: updateHypothesis,
+              updateMutation,
+              createMutation
+            }}
+            key={loadedTree.id}
+            showHeader={index === 0}
+          />
+        );
+      });
+    } else if (activeViewType === IncidentDetailsViewTypes.comments) {
+      return <HypothesisCommentsContainer loadedTrees={loadedTrees} />;
+    }
+  };
 
   if (incident == null) {
     return <IncidentDetailsPageSkeletonLoader />;
@@ -161,30 +200,14 @@ export function IncidentDetailsPage() {
                 </section>
               )}
               <section className="mt-4">
-                {!isLoading ? (
-                  loadedTrees?.map((loadedTree, index) => {
-                    return (
-                      <HypothesisBuilder
-                        loadedTree={loadedTree}
-                        // showGeneratedOutput
-                        initialEditMode={isNewlyCreated}
-                        api={{
-                          incidentId,
-                          create: createHypothesis,
-                          delete: deleteHypothesis,
-                          deleteBulk: deleteHypothesisBulk,
-                          update: updateHypothesis,
-                          updateMutation,
-                          createMutation
-                        }}
-                        key={loadedTree.id}
-                        showHeader={index === 0}
-                      />
-                    );
-                  })
-                ) : (
-                  <div>{!error && "fetching tree..."}</div>
-                )}
+                <HypothesisContainer
+                  onViewChange={(viewType) => {
+                    setActiveViewType(viewType);
+                  }}
+                  viewType={activeViewType}
+                >
+                  {getHypothesisView()}
+                </HypothesisContainer>
               </section>
             </div>
           </div>

@@ -7,6 +7,7 @@ import updateLocale from "dayjs/plugin/updateLocale";
 import utc from "dayjs/plugin/utc";
 
 import { ValueType } from "../context/TopologyPageContext";
+import { SortOrders } from "../constants";
 
 dayjs.extend(isBetween);
 dayjs.extend(isToday);
@@ -199,4 +200,19 @@ export const formatDateToYear = (date: string | Date) => {
 
 export const formatDateToTime = (date: string | Date) => {
   return dayjs(date).format("HH:mm");
+};
+
+export const dateSortHelper = (
+  order: string,
+  dateOne: string,
+  dateTwo: string
+) => {
+  const value1 = +new Date(dateOne);
+  const value2 = +new Date(dateTwo);
+  if (value1 > value2) {
+    return SortOrders.asc === order ? 1 : -1;
+  } else if (value1 < value2) {
+    return SortOrders.asc === order ? -1 : 1;
+  }
+  return 0;
 };

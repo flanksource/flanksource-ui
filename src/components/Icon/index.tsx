@@ -148,10 +148,10 @@ export const Icon: React.FC<IconProps> = memo(
   }
 );
 
-type AvatarProps = {
+type AvatarProps = React.ImgHTMLAttributes<HTMLImageElement> & {
   url: string;
   alt?: string;
-} & React.ImgHTMLAttributes<HTMLImageElement>;
+};
 
 export function Avatar({ url, alt = "", ...props }: AvatarProps) {
   return (

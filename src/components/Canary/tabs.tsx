@@ -136,12 +136,12 @@ export function CanaryTabs({
   );
 }
 
-type TabsProps = {
+type TabsProps = Omit<React.HTMLProps<HTMLDivElement>, "onClick"> & {
   tabs: { value: string; label: string }[];
   value: string;
   onClick: (tab: { value: string; label: string }) => void;
   className?: string;
-} & Omit<React.HTMLAttributes<HTMLDivElement>, "onClick">;
+};
 
 export function Tabs({ tabs, value, onClick, className, ...rest }: TabsProps) {
   return (

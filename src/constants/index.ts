@@ -13,3 +13,8 @@ export const NodePodPropToLabelMap = {
 } as const;
 
 export const AVATAR_INFO = `id,name,avatar`;
+
+export const SortOrders = {
+  asc: "asc",
+  desc: "desc"
+};
