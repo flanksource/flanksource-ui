@@ -14,6 +14,7 @@ import { useOuterClick } from "../../lib/useOuterClick";
 import { getLocalItem, setLocalItem } from "../../utils/storage";
 import FullPageSkeletonLoader from "../SkeletonLoader/FullPageSkeletonLoader";
 import { Icon } from "../Icon";
+import useWindowDimensions from "../../hooks/useWindowDimensions";
 
 interface Props {
   navigation: NavigationItems;
@@ -236,6 +237,20 @@ export function SidebarLayout({ navigation, settingsNav, checkPath }: Props) {
   useEffect(() => {
     setLocalItem("sidebarCollapsed", collapseSidebar);
   }, [collapseSidebar]);
+
+  const { windowInnerHeight, windowInnerWidth } = useWindowDimensions();
+  /**
+   * On window.innerWidth change,
+   *  if window.innerWidth < 1024, set the toggle sidebar to be true
+   *  else show the full sidebar
+   */
+  useEffect(() => {
+    if (windowInnerWidth < 1024) {
+      setCollapseSidebar(true);
+    } else {
+      setCollapseSidebar(false);
+    }
+  }, [windowInnerWidth]);
 
   const closeOnOuterClick = useCallback(() => {
     if (!collapseSidebar && window.innerWidth < 1024) {
