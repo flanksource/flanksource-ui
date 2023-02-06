@@ -1,8 +1,6 @@
-import { Switch } from "@headlessui/react";
 import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { AiOutlinePlusCircle } from "react-icons/ai";
-import { useSearchParams } from "react-router-dom";
 import {
   getHypothesisChildType,
   Hypothesis,
@@ -19,21 +17,17 @@ interface IHypothesisNodeProps {
   setSelectedNode: (v: Hypothesis) => void;
   setCreateHypothesisModalIsOpen: (v: boolean) => void;
   api: HypothesisAPIs;
-  showHeader: boolean;
 }
 
 export const HypothesisNode = (props: IHypothesisNodeProps) => {
   const {
     hasParent,
     node,
-    showHeader,
     showComments: parentShowComments,
     setSelectedNode,
     setCreateHypothesisModalIsOpen,
     api
   } = props;
-
-  const [searchParams, setSearchParams] = useSearchParams();
 
   const isRoot = node?.type === "root" || node?.parent_id == null;
 
@@ -52,14 +46,6 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
     setShowComments(parentShowComments);
   }, [parentShowComments]);
 
-  const showAllComments = searchParams.get("comments") === "true";
-  const toggleComment = () => {
-    const newParams = new URLSearchParams(
-      showAllComments ? {} : { comments: "true" }
-    );
-    setSearchParams(newParams);
-  };
-
   const chldButLast = (node?.children || []).slice(0, -1);
   const chldLast = (node?.children || []).slice(-1)[0];
 
@@ -67,36 +53,6 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
 
   return (
     <div>
-      {isRoot && showHeader && (
-        <div className="flex items-center text-base font-semibold mb-5 justify-between">
-          <div className="flex items-center">
-            <h2 className="text-dark-gray mr-3 text-2xl">Action plan</h2>
-          </div>
-          <div className="flex items-center">
-            <div className="pr-4">
-              {showAllComments ? "Collapse" : "Expand"} All
-            </div>
-            <Switch
-              checked={true}
-              onChange={toggleComment}
-              className={clsx(
-                showAllComments ? "bg-blue-900" : "bg-gray-200",
-                "relative inline-flex shrink-0 h-[30px] w-[50px] cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
-              )}
-            >
-              <span className="sr-only">Show Comments</span>
-              <span
-                aria-hidden="true"
-                className={clsx(
-                  showAllComments ? "translate-x-5" : "translate-x-0",
-                  "h-[26px] w-[26px] pointer-events-none inline-block transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out"
-                )}
-              />
-            </Switch>
-          </div>
-        </div>
-      )}
-
       {Boolean(node) && (
         <div
           className={clsx(
@@ -124,7 +80,6 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
           />
         </div>
       )}
-
       {(isRoot || showComments) && (
         <>
           <div

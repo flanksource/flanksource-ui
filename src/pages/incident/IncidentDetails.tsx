@@ -26,11 +26,14 @@ import { Size } from "../../types";
 import SlidingSideBar from "../../components/SlidingSideBar";
 import IncidentDetailsPageSkeletonLoader from "../../components/SkeletonLoader/IncidentDetailsPageSkeletonLoader";
 import { Head } from "../../components/Head/Head";
-import {
-  HypothesisContainer,
-  IncidentDetailsViewTypes
-} from "../../components/Hypothesis/HypothesisContainer/HypothesisContainer";
-import { HypothesisCommentsContainer } from "../../components/Hypothesis/HypothesisCommentsContainer/HypothesisCommentsContainer";
+import { HypothesisCommentsViewContainer } from "../../components/Hypothesis/HypothesisCommentsViewContainer/HypothesisCommentsViewContainer";
+import { HypothesisActionPlanViewContainer } from "../../components/Hypothesis/HypothesisActionPlanViewContainer/HypothesisActionPlanViewContainer";
+import { Tab, Tabs } from "../../components/Tabs/Tabs";
+
+export enum IncidentDetailsViewTypes {
+  comments = "Comments",
+  actionPlan = "Action Plan"
+}
 
 export type TreeNode<T> = T & {
   children?: T[];
@@ -130,30 +133,52 @@ export function IncidentDetailsPage() {
       return <div>fetching tree...</div>;
     }
 
-    if (activeViewType === IncidentDetailsViewTypes.actionPlan) {
-      return loadedTrees?.map((loadedTree, index) => {
-        return (
-          <HypothesisBuilder
-            loadedTree={loadedTree}
-            // showGeneratedOutput
-            initialEditMode={isNewlyCreated}
-            api={{
-              incidentId,
-              create: createHypothesis,
-              delete: deleteHypothesis,
-              deleteBulk: deleteHypothesisBulk,
-              update: updateHypothesis,
-              updateMutation,
-              createMutation
-            }}
-            key={loadedTree.id}
-            showHeader={index === 0}
+    return (
+      <Tabs
+        activeTab={activeViewType}
+        onSelectTab={(tab) =>
+          setActiveViewType(tab as IncidentDetailsViewTypes)
+        }
+      >
+        <Tab
+          label={IncidentDetailsViewTypes.actionPlan}
+          value={IncidentDetailsViewTypes.actionPlan}
+        >
+          <HypothesisActionPlanViewContainer className="py-4">
+            <div className="flex flex-col p-4">
+              {loadedTrees?.map((loadedTree, index) => {
+                return (
+                  <HypothesisBuilder
+                    loadedTree={loadedTree}
+                    // showGeneratedOutput
+                    initialEditMode={isNewlyCreated}
+                    api={{
+                      incidentId,
+                      create: createHypothesis,
+                      delete: deleteHypothesis,
+                      deleteBulk: deleteHypothesisBulk,
+                      update: updateHypothesis,
+                      updateMutation,
+                      createMutation
+                    }}
+                    key={loadedTree.id}
+                  />
+                );
+              })}
+            </div>
+          </HypothesisActionPlanViewContainer>
+        </Tab>
+        <Tab
+          label={IncidentDetailsViewTypes.comments}
+          value={IncidentDetailsViewTypes.comments}
+        >
+          <HypothesisCommentsViewContainer
+            incidentId={incidentId!}
+            loadedTrees={loadedTrees}
           />
-        );
-      });
-    } else if (activeViewType === IncidentDetailsViewTypes.comments) {
-      return <HypothesisCommentsContainer loadedTrees={loadedTrees} />;
-    }
+        </Tab>
+      </Tabs>
+    );
   };
 
   if (incident == null) {
@@ -164,7 +189,7 @@ export function IncidentDetailsPage() {
     <>
       <Head prefix={incident ? `Incident - ${incident.title}` : ""} />
       <SearchLayout
-        contentClass="pl-6 h-full overflow-y-auto"
+        contentClass="pl-6 h-full"
         onRefresh={() => refetch()}
         title={
           <div className="flex my-auto">
@@ -183,11 +208,11 @@ export function IncidentDetailsPage() {
       >
         <div className="flex flex-row min-h-full h-auto mt-2">
           <div className="flex flex-col flex-1 p-6 min-h-full h-auto">
-            <div className="max-w-3xl lg:max-w-6xl w-full mx-auto">
+            <div className="w-full mx-auto">
               {Boolean(topologyIds?.length) && (
-                <section>
+                <section className="overflow-x-auto">
                   <div className="border-b">
-                    <div className="px-2 py-2 flex flex-nowrap overflow-x-auto">
+                    <div className="px-2 py-2 flex flex-row overflow-x-auto">
                       {topologyIds?.map((id) => (
                         <TopologyCard
                           key={id}
@@ -199,16 +224,7 @@ export function IncidentDetailsPage() {
                   </div>
                 </section>
               )}
-              <section className="mt-4">
-                <HypothesisContainer
-                  onViewChange={(viewType) => {
-                    setActiveViewType(viewType);
-                  }}
-                  viewType={activeViewType}
-                >
-                  {getHypothesisView()}
-                </HypothesisContainer>
-              </section>
+              <section className="mt-4">{getHypothesisView()}</section>
             </div>
           </div>
           <SlidingSideBar hideToggle={true}>

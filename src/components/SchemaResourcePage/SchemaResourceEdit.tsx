@@ -12,11 +12,11 @@ import { TextInput } from "../TextInput";
 import { Icon } from "../Icon";
 import { schemaResourceTypes } from "./resourceTypes";
 import { TeamMembers } from "../TeamMembers/TeamMembers";
-import { Tabs } from "../Canary/tabs";
 import {
   resourceTypeMap,
   SchemaResourceJobsTab
 } from "./SchemaResourceEditJobsTab";
+import { Tab, Tabs } from "../Tabs/Tabs";
 
 type FormFields = Partial<
   Pick<
@@ -76,7 +76,7 @@ export function SchemaResourceEdit({
     }
     return resourceType.table;
   }, [resourceName]);
-  const [activeTab, setActiveTab] = useState(subNav[0]?.value);
+  const [activeTab, setActiveTab] = useState<string>(subNav[0]?.value);
   const formFields = useMemo(() => {
     const resourceType = schemaResourceTypes.find(
       (item) => item.name === resourceName
@@ -162,8 +162,9 @@ export function SchemaResourceEdit({
     }
   };
 
-  const onSubNavClick = (tab: any) => {
-    setActiveTab(tab.value);
+  const onSubNavClick = (tab: string) => {
+    console.log(tab, subNav);
+    setActiveTab(tab);
   };
 
   const hasSubNav = (nav: string) => {
@@ -172,195 +173,198 @@ export function SchemaResourceEdit({
 
   return (
     <div className="flex flex-col flex-1  overflow-y-auto">
-      <Tabs
-        className="flex flex-row justify-start"
-        tabs={subNav as any}
-        value={activeTab}
-        onClick={onSubNavClick}
-      />
-      <div className="flex flex-col flex-1 bg-white overflow-y-auto">
-        {hasSubNav("spec") && (
-          <form className="space-y-4" onSubmit={handleSubmit(doSubmit)}>
-            <div className="px-8 pt-4">
-              {!source && edit ? (
-                <>
-                  <Controller
-                    control={control}
-                    name="name"
-                    render={({ field: { onChange, value } }) => {
-                      return (
-                        <TextInput
-                          label="Name"
-                          id="name"
-                          disabled={disabled || !!id}
-                          className="w-full"
-                          value={value || ""}
-                          onChange={onChange}
-                        />
-                      );
-                    }}
-                  />
+      <Tabs activeTab={activeTab} onSelectTab={(tab) => onSubNavClick(tab)}>
+        {subNav.map((nav) => {
+          return (
+            <Tab key={nav.label} label={nav.label} value={nav.value}>
+              <div className="flex flex-col flex-1 bg-white overflow-y-auto">
+                {hasSubNav("spec") && (
+                  <form className="space-y-4" onSubmit={handleSubmit(doSubmit)}>
+                    <div className="px-8 pt-4">
+                      {!source && edit ? (
+                        <>
+                          <Controller
+                            control={control}
+                            name="name"
+                            render={({ field: { onChange, value } }) => {
+                              return (
+                                <TextInput
+                                  label="Name"
+                                  id="name"
+                                  disabled={disabled || !!id}
+                                  className="w-full"
+                                  value={value || ""}
+                                  onChange={onChange}
+                                />
+                              );
+                            }}
+                          />
+                          {supportsField("icon") && (
+                            <div className="space-y-2">
+                              <label
+                                htmlFor="icon-picker"
+                                className="block text-sm font-bold text-gray-700 pt-4"
+                              >
+                                Icon
+                              </label>
 
-                  {supportsField("icon") && (
-                    <div className="space-y-2">
-                      <label
-                        htmlFor="icon-picker"
-                        className="block text-sm font-bold text-gray-700 pt-4"
-                      >
-                        Icon
-                      </label>
-
-                      <IconPicker
-                        icon={values.icon}
-                        onChange={(v) => setValue("icon", v.value)}
-                      />
-                    </div>
-                  )}
-                </>
-              ) : (
-                <div className="flex justify-between">
-                  <h2 className="text-dark-gray font-bold mr-3 text-xl flex items-center space-x-2">
-                    {supportsField("icon") && <Icon name={icon} />}
-                    <span>{name}</span>
-                  </h2>
-                  {!!source && (
-                    <div className="px-2">
-                      <a href={`${source}`}>Config source</a>
-                    </div>
-                  )}
-                </div>
-              )}
-              {supportsField("namespace") && (
-                <div className="mt-4">
-                  <Controller
-                    control={control}
-                    name="namespace"
-                    render={({ field: { onChange, value } }) => {
-                      return (
-                        <TextInput
-                          label="Namespace"
-                          id="namespace"
-                          disabled={disabled || !!id}
-                          className="w-full"
-                          value={value || ""}
-                          onChange={onChange}
-                        />
-                      );
-                    }}
-                  />
-                </div>
-              )}
-              {supportsField("labels") && (
-                <div className="py-4">
-                  <Controller
-                    control={control}
-                    name="labels"
-                    render={({ field: { onChange, value } }) => {
-                      return (
-                        <div className="h-[100px]">
-                          <label className="block text-sm font-bold text-gray-700">
-                            Labels
-                          </label>
-                          <CodeEditor
-                            key={labelsKeyRef.current}
-                            readOnly={!!source || disabled || !edit}
-                            value={
-                              typeof values.labels === "object"
-                                ? JSON.stringify(values.labels, null, 2)
-                                : undefined
-                            }
-                            onChange={(val) => {
-                              setValueOnChange("labels", val);
+                              <IconPicker
+                                icon={values.icon}
+                                onChange={(v) => setValue("icon", v.value)}
+                              />
+                            </div>
+                          )}
+                        </>
+                      ) : (
+                        <div className="flex justify-between">
+                          <h2 className="text-dark-gray font-bold mr-3 text-xl flex items-center space-x-2">
+                            {supportsField("icon") && <Icon name={icon} />}
+                            <span>{name}</span>
+                          </h2>
+                          {!!source && (
+                            <div className="px-2">
+                              <a href={`${source}`}>Config source</a>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                      {supportsField("namespace") && (
+                        <div className="mt-4">
+                          <Controller
+                            control={control}
+                            name="namespace"
+                            render={({ field: { onChange, value } }) => {
+                              return (
+                                <TextInput
+                                  label="Namespace"
+                                  id="namespace"
+                                  disabled={disabled || !!id}
+                                  className="w-full"
+                                  value={value || ""}
+                                  onChange={onChange}
+                                />
+                              );
                             }}
                           />
                         </div>
-                      );
-                    }}
+                      )}
+                      {supportsField("labels") && (
+                        <div className="py-4">
+                          <Controller
+                            control={control}
+                            name="labels"
+                            render={({ field: { onChange, value } }) => {
+                              return (
+                                <div className="h-[100px]">
+                                  <label className="block text-sm font-bold text-gray-700">
+                                    Labels
+                                  </label>
+                                  <CodeEditor
+                                    key={labelsKeyRef.current}
+                                    readOnly={!!source || disabled || !edit}
+                                    value={
+                                      typeof values.labels === "object"
+                                        ? JSON.stringify(values.labels, null, 2)
+                                        : undefined
+                                    }
+                                    onChange={(val) => {
+                                      setValueOnChange("labels", val);
+                                    }}
+                                  />
+                                </div>
+                              );
+                            }}
+                          />
+                        </div>
+                      )}
+                    </div>
+                    <div className="px-8 space-y-2">
+                      <label
+                        htmlFor="icon-picker"
+                        className="block text-sm font-bold text-gray-700"
+                      >
+                        Spec
+                      </label>
+
+                      <div className="h-[min(850px,calc(100vh-500px))]">
+                        <CodeEditor
+                          key={keyRef.current}
+                          readOnly={!!source || disabled || !edit}
+                          value={
+                            typeof values.spec === "string"
+                              ? values.spec
+                              : undefined
+                          }
+                          onChange={(val) => {
+                            setValueOnChange("spec", val);
+                          }}
+                        />
+                      </div>
+                    </div>
+                    {!source && (
+                      <div
+                        className={clsx(
+                          "flex justify-between px-10 rounded-b py-4 space-x-2",
+                          {
+                            "bg-gray-100": isModal
+                          }
+                        )}
+                      >
+                        {!!id && (
+                          <button
+                            className="inline-flex items-center justify-center border-none shadow-sm font-medium rounded-md text-red-500 bg-red-100 hover:bg-red-200 focus:ring-offset-white focus:ring-red-500 focus:outline-none focus:ring-2 focus:ring-offset-2 px-4 py-2 text-sm leading-5"
+                            disabled={disabled}
+                            onClick={doDelete}
+                          >
+                            Delete
+                          </button>
+                        )}
+
+                        {edit ? (
+                          <div className="w-full flex justify-between">
+                            <button
+                              className="btn-secondary-base btn-secondary"
+                              disabled={disabled}
+                              onClick={doCancel}
+                            >
+                              Cancel
+                            </button>
+
+                            <button
+                              disabled={disabled}
+                              className="btn-primary"
+                              type="submit"
+                            >
+                              Save
+                            </button>
+                          </div>
+                        ) : (
+                          !!id && (
+                            <button
+                              className="btn-primary"
+                              disabled={disabled}
+                              onClick={onEdit}
+                            >
+                              Edit
+                            </button>
+                          )
+                        )}
+                      </div>
+                    )}
+                  </form>
+                )}
+                {hasSubNav("manageTeam") && <TeamMembers teamId={id!} />}
+                {hasSubNav("jobHistory") && (
+                  <SchemaResourceJobsTab
+                    resourceId={id!}
+                    tableName={table as keyof typeof resourceTypeMap}
                   />
-                </div>
-              )}
-            </div>
-            <div className="px-8 space-y-2">
-              <label
-                htmlFor="icon-picker"
-                className="block text-sm font-bold text-gray-700"
-              >
-                Spec
-              </label>
-
-              <div className="h-[min(850px,calc(100vh-500px))]">
-                <CodeEditor
-                  key={keyRef.current}
-                  readOnly={!!source || disabled || !edit}
-                  value={
-                    typeof values.spec === "string" ? values.spec : undefined
-                  }
-                  onChange={(val) => {
-                    setValueOnChange("spec", val);
-                  }}
-                />
-              </div>
-            </div>
-            {!source && (
-              <div
-                className={clsx(
-                  "flex justify-between px-10 rounded-b py-4 space-x-2",
-                  {
-                    "bg-gray-100": isModal
-                  }
-                )}
-              >
-                {!!id && (
-                  <button
-                    className="inline-flex items-center justify-center border-none shadow-sm font-medium rounded-md text-red-500 bg-red-100 hover:bg-red-200 focus:ring-offset-white focus:ring-red-500 focus:outline-none focus:ring-2 focus:ring-offset-2 px-4 py-2 text-sm leading-5"
-                    disabled={disabled}
-                    onClick={doDelete}
-                  >
-                    Delete
-                  </button>
-                )}
-
-                {edit ? (
-                  <div className="w-full flex justify-between">
-                    <button
-                      className="btn-secondary-base btn-secondary"
-                      disabled={disabled}
-                      onClick={doCancel}
-                    >
-                      Cancel
-                    </button>
-
-                    <button
-                      disabled={disabled}
-                      className="btn-primary"
-                      type="submit"
-                    >
-                      Save
-                    </button>
-                  </div>
-                ) : (
-                  !!id && (
-                    <button
-                      className="btn-primary"
-                      disabled={disabled}
-                      onClick={onEdit}
-                    >
-                      Edit
-                    </button>
-                  )
                 )}
               </div>
-            )}
-          </form>
-        )}
-        {hasSubNav("manageTeam") && <TeamMembers teamId={id!} />}
-        {hasSubNav("jobHistory") && (
-          <SchemaResourceJobsTab
-            resourceId={id!}
-            tableName={table as keyof typeof resourceTypeMap}
-          />
-        )}
-      </div>
+            </Tab>
+          );
+        })}
+      </Tabs>
     </div>
   );
 }
