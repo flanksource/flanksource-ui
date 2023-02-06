@@ -35,7 +35,7 @@ export default function IncidentCardSummary({
       const statusLine: StatusLineProps = {
         icon: typeItems[key as IncidentSummaryTypes].icon,
         label: typeItems[key as IncidentSummaryTypes].description,
-        url: "",
+        url: `/incidents?type=${key}`,
         statuses: []
       };
       Object.entries(summary).forEach(([key, value], i) => {
