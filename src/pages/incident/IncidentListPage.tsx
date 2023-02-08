@@ -36,7 +36,7 @@ function toPostgresqlSearchParam({
     status,
     type,
     created_by: owner,
-    "hypotheses.evidences.evidence->>id": component
+    "hypotheses.evidences.component_id": component
   })
     .filter(([_k, v]) => v && v !== "all")
     .map(([k, v]) => [k, `eq.${v}`]);
@@ -180,13 +180,13 @@ export function IncidentListPage() {
       >
         <div className="flex flex-col h-full leading-1.21rel">
           <div className="flex-col flex-1 h-full space-x-2 space-y-2">
-            <div className="max-w-screen-xl mx-auto h-full space-y-6 flex flex-col justify-center">
+            <div className="relative max-w-screen-xl mx-auto h-full space-y-6 flex flex-col justify-center">
               {!isLoading || Boolean(incidents?.length) ? (
                 <>
                   <FilterIncidents />
                   <IncidentList list={incidents || []} />
                   {!Boolean(incidents?.length) && (
-                    <div className="text-center text-base text-gray-500 w-full mt-2">
+                    <div className="absolute text-center text-base text-gray-500 w-full mt-2">
                       There are no incidents matching this criteria
                     </div>
                   )}

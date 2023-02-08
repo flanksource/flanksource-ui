@@ -1,17 +1,20 @@
 import { useMemo } from "react";
+import { IncidentSeverity } from "../../api/services/incident";
 import { Topology } from "../../context/TopologyPageContext";
 import { typeItems, severityItems } from "../Incidents/data";
 import { StatusLine, StatusLineProps } from "../StatusLine/StatusLine";
 
-const chipColorFromIndex = (
-  index: number
+const chipColorFromSeverity = (
+  severity: IncidentSeverity
 ): "green" | "orange" | "red" | "gray" => {
-  switch (index) {
-    case 0:
+  switch (severity) {
+    case IncidentSeverity.Low:
+    case IncidentSeverity.Medium:
       return "green";
-    case 1:
+    case IncidentSeverity.High:
       return "orange";
-    case 2:
+    case IncidentSeverity.Critical:
+    case IncidentSeverity.Blocker:
       return "red";
     default:
       return "green";
@@ -19,8 +22,6 @@ const chipColorFromIndex = (
 };
 
 type IncidentSummaryTypes = keyof typeof typeItems;
-
-type IncidentSummarySeverity = "Medium" | "Low" | "High";
 
 type IncidentCardSummaryProps = {
   topology: Pick<Topology, "summary" | "id">;
@@ -35,7 +36,7 @@ export default function IncidentCardSummary({
       const statusLine: StatusLineProps = {
         icon: typeItems[key as IncidentSummaryTypes].icon,
         label: typeItems[key as IncidentSummaryTypes].description,
-        url: "",
+        url: `/incidents?type=${key}`,
         statuses: []
       };
       Object.entries(summary).forEach(([key, value], i) => {
@@ -43,10 +44,10 @@ export default function IncidentCardSummary({
           return;
         }
         const severityObject =
-          severityItems[key as IncidentSummarySeverity] || severityItems.Low;
+          severityItems[key as IncidentSeverity] || severityItems.Low;
         const item = {
           label: value.toString(),
-          color: chipColorFromIndex(i),
+          color: chipColorFromSeverity(key as IncidentSeverity),
           url: `/incidents?severity=${severityObject.value}&component=${topology.id}`
         };
         statusLine.statuses.push(item);
