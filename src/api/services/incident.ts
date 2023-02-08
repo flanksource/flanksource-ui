@@ -49,7 +49,7 @@ export interface Incident extends NewIncident {
 }
 
 export const searchIncident = (query: string) => {
-  const hypotheses = `hypotheses!hypotheses_incident_id_fkey(id, type)`;
+  const hypotheses = `hypotheses(id, type)`;
   return resolve<Incident[]>(
     IncidentCommander.get(
       `/incidents?order=created_at.desc&title=ilike.*${query}*&select=*,${hypotheses}`
@@ -58,7 +58,7 @@ export const searchIncident = (query: string) => {
 };
 export const getAllIncident = ({ limit = 10 }) => {
   const limitStr = limit ? `limit=${limit}` : "";
-  const hypotheses = `hypotheses!hypotheses_incident_id_fkey(id, type)`;
+  const hypotheses = `hypotheses(id, type)`;
   return resolve<Incident[]>(
     IncidentCommander.get(
       `/incidents?order=created_at.desc&${limitStr}&select=*,${hypotheses}`
@@ -67,11 +67,11 @@ export const getAllIncident = ({ limit = 10 }) => {
 };
 
 export const getIncident = async (id: string) => {
-  const hypotheses = `hypotheses!hypotheses_incident_id_fkey(*,created_by(${AVATAR_INFO}),evidences(*,created_by(${AVATAR_INFO})),comments(comment,external_created_by,responder_id(team_id(*)),created_by(id,${AVATAR_INFO}),id))`;
+  const hypotheses = `hypotheses(*,created_by(${AVATAR_INFO}),evidences(*,created_by(${AVATAR_INFO})),comments(comment,external_created_by,responder_id(team_id(*)),created_by(id,${AVATAR_INFO}),id))`;
 
   const res = await resolve<Incident[] | null>(
     IncidentCommander.get(
-      `/incidents?id=eq.${id}&select=*,${hypotheses},commander:commander_id(${AVATAR_INFO}),communicator_id(${AVATAR_INFO}),responders!responders_incident_id_fkey(created_by(${AVATAR_INFO}))`
+      `/incidents?id=eq.${id}&select=*,${hypotheses},commander:commander_id(${AVATAR_INFO}),communicator_id(${AVATAR_INFO}),responders(created_by(${AVATAR_INFO}))`
     )
   );
   return res.data?.[0];
@@ -121,12 +121,12 @@ export const getIncidentsBy = async ({
 export const getIncidentsWithParams = async (
   params?: Record<string, string | undefined>
 ) => {
-  const comments = `comments!comments_incident_id_fkey(id,created_by(${AVATAR_INFO}))`;
-  const hypotheses = params?.["hypotheses.evidences.evidence->>id"]
-    ? `hypotheses!hypotheses_incident_id_fkey!inner(*,created_by(${AVATAR_INFO}),evidences!evidences_hypothesis_id_fkey!inner(id, evidence))`
-    : `hypotheses!hypotheses_incident_id_fkey(*,created_by(${AVATAR_INFO}),evidences(id,evidence,type))`;
+  const comments = `comments(id,created_by(${AVATAR_INFO}))`;
+  const hypotheses = params?.["hypotheses.evidences.component_id"]
+    ? `hypotheses!inner(*,created_by(${AVATAR_INFO}),evidences!inner(id,evidence,type,component_id))`
+    : `hypotheses(*,created_by(${AVATAR_INFO}),evidences(id,evidence,type,component_id))`;
 
-  const responder = `responders!responders_incident_id_fkey(created_by(${AVATAR_INFO}))`;
+  const responder = `responders(created_by(${AVATAR_INFO}))`;
 
   return resolve(
     IncidentCommander.get(
