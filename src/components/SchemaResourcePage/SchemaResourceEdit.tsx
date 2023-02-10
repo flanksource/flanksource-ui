@@ -6,7 +6,6 @@ import { v4 } from "uuid";
 import { load } from "js-yaml";
 
 import { SchemaResourceI } from "../../api/schemaResources";
-import { CodeEditor } from "../CodeEditor";
 import { IconPicker } from "../IconPicker";
 import { TextInput } from "../TextInput";
 import { Icon } from "../Icon";
@@ -17,6 +16,12 @@ import {
   SchemaResourceJobsTab
 } from "./SchemaResourceEditJobsTab";
 import { Tab, Tabs } from "../Tabs/Tabs";
+import dynamic from "next/dynamic";
+
+const CodeEditor = dynamic(
+  () => import("../CodeEditor").then((m) => m.CodeEditor),
+  { ssr: false }
+);
 
 type FormFields = Partial<
   Pick<
@@ -176,6 +181,19 @@ export function SchemaResourceEdit({
     return !!subNav.find((item) => item.value === nav) && activeTab === nav;
   };
 
+  const jsonSchemaFilePrefix = useMemo(() => {
+    if (table === "config_scrapers") {
+      return "scrape_config";
+    }
+    if (table === "templates") {
+      return "component";
+    }
+    if (table === "canaries") {
+      return "canary";
+    }
+    return undefined;
+  }, [table]);
+
   return (
     <div className="flex flex-col flex-1  overflow-y-auto">
       <Tabs activeTab={activeTab} onSelectTab={(tab) => onSubNavClick(tab)}>
@@ -275,6 +293,7 @@ export function SchemaResourceEdit({
                                     onChange={(val) => {
                                       setValueOnChange("labels", val);
                                     }}
+                                    language="json"
                                   />
                                 </div>
                               );
@@ -303,6 +322,9 @@ export function SchemaResourceEdit({
                           onChange={(val) => {
                             setValueOnChange("spec", val);
                           }}
+                          language="yaml"
+                          schemaFilePrefix={jsonSchemaFilePrefix}
+                          extractYamlSpecFieldOnPaste
                         />
                       </div>
                     </div>
