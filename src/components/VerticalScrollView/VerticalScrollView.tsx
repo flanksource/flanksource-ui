@@ -2,7 +2,7 @@ import clsx from "clsx";
 import { useMemo } from "react";
 
 type VerticalSCrollViewProps = React.HTMLProps<HTMLDivElement> & {
-  maxHeight: string;
+  maxHeight?: string;
 };
 
 export function VerticalSCrollView({

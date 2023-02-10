@@ -293,10 +293,10 @@ export function TopologyPage() {
         loading={loading}
       >
         <div className="flex flex-row min-h-full h-auto">
-          <div className="flex flex-col flex-1 p-6 min-h-full h-auto">
-            <div className="flex">
+          <div className="flex flex-col flex-1 min-h-full h-auto">
+            <div className="flex px-6">
               <div className="flex flex-wrap">
-                <div className="flex p-3">
+                <div className="flex p-3 pl-0">
                   <ReactSelectDropdown
                     name="health"
                     label=""
@@ -371,8 +371,11 @@ export function TopologyPage() {
                 setSearchParams={setSearchParams}
               />
             </div>
-            <div className="flex leading-1.21rel w-full mt-4">
-              <div className="flex flex-wrap w-full">
+            <div
+              className="px-6 pt-4 flex leading-1.21rel w-fulll overflow-y-auto"
+              style={{ maxHeight: "calc(100vh - 9rem)" }}
+            >
+              <div className="flex flex-wrap w-ful">
                 {getSortedTopology(
                   topology,
                   getSortBy(sortLabels || []),

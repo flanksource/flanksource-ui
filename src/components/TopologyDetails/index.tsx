@@ -1,6 +1,7 @@
 import { isEmpty, map } from "lodash";
 import { BsCardList } from "react-icons/bs";
 import { Topology } from "../../context/TopologyPageContext";
+import CollapsiblePanel from "../CollapsiblePanel";
 import { DescriptionCard } from "../DescriptionCard";
 import EmptyState from "../EmptyState";
 import { Icon } from "../Icon";
@@ -65,15 +66,16 @@ export default function TopologyDetails({ topology, refererId }: Props) {
   }
 
   return (
-    <div className="flex flex-col space-y-2">
-      <div className="flex py-2 flex-row flex-1 items-center border-b border-dashed border-gray-200">
+    <CollapsiblePanel
+      Header={
         <Title title="Details" icon={<BsCardList className="w-6 h-auto" />} />
-      </div>
+      }
+    >
       {Boolean(items.length) ? (
         <DescriptionCard items={items} />
       ) : (
         <EmptyState />
       )}
-    </div>
+    </CollapsiblePanel>
   );
 }

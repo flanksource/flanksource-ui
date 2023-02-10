@@ -4,6 +4,7 @@ import ConfigCosts from "../ConfigCosts";
 import ConfigInsights from "../ConfigInsights";
 import Configs from "../Sidebars/configs";
 import Incidents from "../Sidebars/incidents";
+import SlidingSideBar from "../SlidingSideBar";
 import { ConfigDetails } from "./ConfigDetails";
 
 export default function ConfigSidebar() {
@@ -14,17 +15,13 @@ export default function ConfigSidebar() {
   }
 
   return (
-    <div
-      className={`flex flex-col bg-white border-l transform origin-right duration-500 border-gray-200 w-full py-6 px-4  ${"w-[35rem]"}`}
-    >
-      <div className={`flex flex-col overflow-y-auto space-y-8 sticky top-0`}>
-        <ConfigDetails configId={id} />
-        <Incidents configId={id} />
-        <ConfigInsights configID={id} />
-        <ConfigCosts configID={id} />
-        <ConfigChanges configID={id} />
-        <Configs configId={id} />
-      </div>
-    </div>
+    <SlidingSideBar hideToggle>
+      <ConfigDetails configId={id} />
+      <Incidents configId={id} />
+      <ConfigInsights configID={id} />
+      <ConfigCosts configID={id} />
+      <ConfigChanges configID={id} />
+      <Configs configId={id} />
+    </SlidingSideBar>
   );
 }
