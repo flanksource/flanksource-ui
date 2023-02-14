@@ -1,6 +1,6 @@
-import clsx from "clsx";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { HealthCheck } from "../../types/healthChecks";
+import { Tab, Tabs } from "../Tabs/Tabs";
 
 const defaultTabs = {
   all: {
@@ -97,11 +97,13 @@ type CanaryTabsProps = {
   checks: HealthCheck[];
   tabBy: string;
   setTabSelection: (tab: string) => void;
+  children: React.ReactNode;
 };
 
 export function CanaryTabs({
   checks,
   tabBy,
+  children,
   setTabSelection,
   ...rest
 }: CanaryTabsProps) {
@@ -128,46 +130,17 @@ export function CanaryTabs({
 
   return (
     <Tabs
-      {...rest}
-      tabs={Object.values(tabs)}
-      value={selectedTab}
-      onClick={(tab) => setSelectedTab(tab.value)}
-    />
-  );
-}
-
-type TabsProps = {
-  tabs: { value: string; label: string }[];
-  value: string;
-  onClick: (tab: { value: string; label: string }) => void;
-  className?: string;
-} & Omit<React.HTMLAttributes<HTMLDivElement>, "onClick">;
-
-export function Tabs({ tabs, value, onClick, className, ...rest }: TabsProps) {
-  return (
-    <div
-      className={`flex flex-wrap border-b border-gray-300 ${className}`}
-      aria-label="Tabs"
-      {...rest}
+      contentClassName=""
+      activeTab={selectedTab}
+      onSelectTab={(tab) => setSelectedTab(tab)}
     >
-      {tabs.map((tab) => (
-        <button
-          type="button"
-          key={tab.value}
-          onClick={() => onClick(tab)}
-          style={{
-            marginBottom: "-1px",
-            borderColor: tab.value === value ? "" : "transparent",
-            borderBottomColor: tab.value === value ? "white" : ""
-          }}
-          className={clsx(
-            tab.value === value ? "text-gray-900 bg-white" : "text-gray-500",
-            "px-4 py-2 font-medium text-sm rounded-t-md border border-gray-300 hover:text-gray-900"
-          )}
-        >
-          {tab.label}
-        </button>
-      ))}
-    </div>
+      {Object.values(tabs).map((item) => {
+        return (
+          <Tab key={item.label} label={item.label} value={item.value}>
+            {children}
+          </Tab>
+        );
+      })}
+    </Tabs>
   );
 }

@@ -1,8 +1,6 @@
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import { Mention, MentionsInput, SuggestionDataItem } from "react-mentions";
 import { useGetPeopleQuery } from "../../api/query-hooks";
-
-import { getPersons, User } from "../../api/services/users";
 import { Icon } from "../Icon";
 
 const mentionsStyle = {
@@ -79,6 +77,8 @@ interface Props {
   onChange: (text: string) => void;
   onEnter: () => void;
   singleLine: boolean;
+  placeholder?: string;
+  inputStyle?: Record<string, string | number>;
 }
 
 export const MENTION_MARKUP = "@[__display__](user:__id__)";
@@ -89,13 +89,27 @@ export const CommentInput = ({
   onChange,
   onEnter,
   markup = MENTION_MARKUP,
-  trigger = MENTION_TRIGGER
+  trigger = MENTION_TRIGGER,
+  inputStyle = {},
+  placeholder = "Comment"
 }: Props) => {
   const { data: users } = useGetPeopleQuery({});
+  const computedMentionsStyle = useMemo(() => {
+    const styles = { ...mentionsStyle };
+    styles["&multiLine"].input = {
+      ...styles["&multiLine"].input,
+      ...inputStyle
+    };
+    styles["&singleLine"].input = {
+      ...styles["&singleLine"].input,
+      ...inputStyle
+    };
+    return styles;
+  }, [inputStyle]);
 
   return (
     <MentionsInput
-      placeholder="Comment"
+      placeholder={placeholder}
       singleLine
       value={value}
       onChange={(e) => onChange(e.target.value)}
@@ -105,7 +119,7 @@ export const CommentInput = ({
         }
       }}
       a11ySuggestionsListLabel="Suggested mentions"
-      style={mentionsStyle}
+      style={computedMentionsStyle}
       allowSpaceInQuery
       allowSuggestionsAboveCursor
     >

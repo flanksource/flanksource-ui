@@ -36,7 +36,7 @@ export function SearchLayout({
       </div>
 
       <main
-        className="overflow-y-auto h-full bg-warm-gray-50 "
+        className="overflow-y-hidden h-full bg-warm-gray-50 "
         style={{ zIndex: 0 }}
       >
         <div className={contentClass || "p-6"}>{children}</div>

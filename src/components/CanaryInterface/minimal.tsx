@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { orderBy } from "lodash";
-import { CanaryTabs, filterChecksByTabSelection } from "../Canary/tabs";
+import { CanaryTabs, filterChecksByTabSelection } from "../Canary/CanaryTabs";
 import { MinimalCanary } from "../Canary/minimal";
 import { filterChecks, filterChecksByText } from "../Canary/filter";
 import {
@@ -61,7 +61,7 @@ const CanaryInterfaceMinimalFC = ({
       const labelFilters = getLabelFilters(urlLabels, getLabels(checks)); // get include/exclude filters from url state
       filtered = Object.values(filterChecksByLabels(filtered, labelFilters)); // filters checks by its 'include/exclude' filters
       setChecksForTabGeneration(filtered);
-      filtered = filterChecksByTabSelection(tabBy, selectedTab, filtered); // filter based on selected tab
+      filtered = filterChecksByTabSelection(tabBy!, selectedTab!, filtered); // filter based on selected tab
       filtered = orderBy(filtered, CanarySorter); // do sorting
       setFilteredChecks(filtered);
       if (onFilterCallback) {
@@ -81,20 +81,18 @@ const CanaryInterfaceMinimalFC = ({
   ]);
 
   return (
-    <>
-      <CanaryTabs
-        className=""
-        // style={tabsStyle}
-        checks={checksForTabGeneration}
-        tabBy={searchParams.get("tabBy")}
-        setTabSelection={setSelectedTab}
-      />
+    <CanaryTabs
+      // style={tabsStyle}
+      checks={checksForTabGeneration}
+      tabBy={searchParams.get("tabBy")!}
+      setTabSelection={setSelectedTab}
+    >
       <MinimalCanary
         // tableHeadStyle={tableHeadStyle}
         checks={filteredChecks}
         selectedTab={selectedTab}
       />
-    </>
+    </CanaryTabs>
   );
 };
 

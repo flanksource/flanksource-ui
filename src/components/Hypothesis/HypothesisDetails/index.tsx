@@ -82,6 +82,7 @@ export function HypothesisDetails({ node, api, ...rest }: IProps) {
     })
       .catch(toastError)
       .then(() => {
+        incidentQuery.refetch();
         refetchHypothesis();
       });
 
