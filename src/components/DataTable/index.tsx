@@ -188,6 +188,7 @@ export function DataTable<TableColumns, Data extends TableColumns>({
         : undefined,
     manualPagination: !!pagination?.enable && pagination.remote,
     manualSorting: enableServerSideSorting,
+    enableSortingRemoval: true,
     enableHiding: true,
     onSortingChange: (sorting) => {
       if (onTableSortByChanged) {
