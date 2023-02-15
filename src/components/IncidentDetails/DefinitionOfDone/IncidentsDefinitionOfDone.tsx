@@ -1,13 +1,16 @@
 import clsx from "clsx";
 import { useEffect, useState } from "react";
-import { MdRefresh } from "react-icons/md";
-import { RiFullscreenLine } from "react-icons/ri";
 import { Evidence, updateEvidence } from "../../../api/services/evidence";
 import { DeleteConfirmDialog } from "../../DeleteConfirmDialog";
 import { useIncidentQuery } from "../../../api/query-hooks";
 import EvidenceSelectionModal from "./EvidenceSelectionModal";
 import IncidentsDefinitionOfDoneItem from "./IncidentsDefinitionOfDoneItem";
 import AddDefinitionOfDoneModal from "../AddDefinitionOfDone/AddDefinitionOfDoneStepper";
+import CollapsiblePanel from "../../CollapsiblePanel";
+import Title from "../../Title/title";
+import { MdRefresh } from "react-icons/md";
+import { RiFullscreenLine } from "react-icons/ri";
+import { BsCardChecklist, BsCardList } from "react-icons/bs";
 
 type DefinitionOfDoneProps = {
   incidentId: string;
@@ -92,92 +95,98 @@ export function IncidentsDefinitionOfDone({
   };
 
   return (
-    <div className="w-full">
-      <div className="py-4 border-b border-gray-200">
-        <div className="px-4 flex justify-between">
-          <h2 className="mt-0.5 text-2xl font-medium leading-7 text-dark-gray">
-            Definition of done
-          </h2>
-          <span className="relative z-0 inline-flex">
+    <CollapsiblePanel
+      Header={
+        <div className="flex flex-row w-full items-center">
+          <Title
+            title="Definition of done"
+            icon={<BsCardChecklist className="w-6 h-6" />}
+          />
+          <div
+            className="relative z-0 inline-flex justify-end ml-5"
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
             <MdRefresh
-              className={`cursor-pointer mr-3 w-6 h-6 ${
+              className={`cursor-pointer mr-3 w-6 h-6 text-zinc-400 inline-block ${
                 isRefetching ? "animate-spin" : ""
               }`}
               onClick={() => refetch()}
             />
             <RiFullscreenLine
-              className="cursor-pointer w-5 h-5"
+              className="cursor-pointer w-6 h-6 text-zinc-400 inline-block "
               onClick={() => setDODModalOpen(true)}
             />
-          </span>
+          </div>
         </div>
-      </div>
-      {/* add pb-6 to prevent scrollbars from showing when opening menu bar for last item, 
-        the overflow settings are the once preventing z-index on menu from working 
-      */}
-      <div className="flex max-h-96 overflow-y-auto overflow-x-hidden w-full px-4 pb-6">
-        <div className="w-full">
-          {isLoading && !incident ? (
-            <div className="flex items-start py-2 pl-2 pr-2">
-              <div className="text-sm text-gray-500">
-                Loading evidences please wait...
+      }
+    >
+      <div className="flex flex-col">
+        <div className="flex overflow-x-hidden w-full px-4 pb-6">
+          <div className="w-full">
+            {isLoading && !incident ? (
+              <div className="flex items-start py-2 pl-2 pr-2">
+                <div className="text-sm text-gray-500">
+                  Loading evidences please wait...
+                </div>
               </div>
-            </div>
-          ) : (
-            dodEvidences.map((evidence) => (
-              <IncidentsDefinitionOfDoneItem
-                key={evidence.id}
-                evidence={evidence}
-                setEvidenceBeingRemoved={setEvidenceBeingRemoved}
-                setOpenDeleteConfirmDialog={setOpenDeleteConfirmDialog}
-                refetch={refetch}
-              />
-            ))
-          )}
-          <AddDefinitionOfDone
-            className={clsx(
-              "flex items-center justify-between",
-              dodEvidences.length ? "py-2 mb-4" : "py-4"
+            ) : (
+              dodEvidences.map((evidence) => (
+                <IncidentsDefinitionOfDoneItem
+                  key={evidence.id}
+                  evidence={evidence}
+                  setEvidenceBeingRemoved={setEvidenceBeingRemoved}
+                  setOpenDeleteConfirmDialog={setOpenDeleteConfirmDialog}
+                  refetch={refetch}
+                />
+              ))
             )}
-            onClick={() => {
-              setAddToDODModalOpen(true);
-            }}
-          />
+            <AddDefinitionOfDone
+              className={clsx(
+                "flex items-center justify-between",
+                dodEvidences.length ? "py-2 mb-4" : "py-4"
+              )}
+              onClick={() => {
+                setAddToDODModalOpen(true);
+              }}
+            />
+          </div>
         </div>
+        <DeleteConfirmDialog
+          isOpen={openDeleteConfirmDialog}
+          title="Remove from definition of done ?"
+          description="Are you sure you want to remove the evidence from definition of done ?"
+          deleteLabel="Remove"
+          onClose={() => setOpenDeleteConfirmDialog(false)}
+          onDelete={() => {
+            initiateDeleteEvidenceFromDOD();
+          }}
+        />
+        <EvidenceSelectionModal
+          title="Definition of done evidences"
+          evidences={dodEvidences}
+          open={dodModalOpen}
+          viewOnly
+          enableButtons={{}}
+          className="overflow-y-auto overflow-x-hidden"
+          actionHandler={(actionType, data) => {
+            if (actionType === "close") {
+              setDODModalOpen(false);
+            }
+          }}
+          noEvidencesMsg="There are no evidences which are not part of definition of done"
+        />
+        <AddDefinitionOfDoneModal
+          onCloseModal={() => setAddToDODModalOpen(false)}
+          noneDODEvidence={nonDODEvidences}
+          isOpen={addToDODModalOpen}
+          onAddDefinitionOfDone={() => {
+            refetch();
+            setAddToDODModalOpen(false);
+          }}
+        />
       </div>
-      <DeleteConfirmDialog
-        isOpen={openDeleteConfirmDialog}
-        title="Remove from definition of done ?"
-        description="Are you sure you want to remove the evidence from definition of done ?"
-        deleteLabel="Remove"
-        onClose={() => setOpenDeleteConfirmDialog(false)}
-        onDelete={() => {
-          initiateDeleteEvidenceFromDOD();
-        }}
-      />
-      <EvidenceSelectionModal
-        title="Definition of done evidences"
-        evidences={dodEvidences}
-        open={dodModalOpen}
-        viewOnly
-        enableButtons={{}}
-        className="overflow-y-auto overflow-x-hidden"
-        actionHandler={(actionType, data) => {
-          if (actionType === "close") {
-            setDODModalOpen(false);
-          }
-        }}
-        noEvidencesMsg="There are no evidences which are not part of definition of done"
-      />
-      <AddDefinitionOfDoneModal
-        onCloseModal={() => setAddToDODModalOpen(false)}
-        noneDODEvidence={nonDODEvidences}
-        isOpen={addToDODModalOpen}
-        onAddDefinitionOfDone={() => {
-          refetch();
-          setAddToDODModalOpen(false);
-        }}
-      />
-    </div>
+    </CollapsiblePanel>
   );
 }

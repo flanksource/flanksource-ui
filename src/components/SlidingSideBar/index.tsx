@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { IoChevronBackOutline, IoChevronForwardOutline } from "react-icons/io5";
 
 type Props = React.HTMLProps<HTMLDivElement> & {
@@ -14,21 +14,51 @@ export default function SlidingSideBar({
   ...rest
 }: Props) {
   const [open, setOpen] = useState<boolean>(false);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (contentRef.current?.children) {
+      const totalHeight = contentRef.current.clientHeight;
+      let fixedHeightsTotal = 0;
+      let fixedHeightChildCount = 0;
+      const children = [...contentRef.current?.children];
+      children.forEach((item) => {
+        const panelHeight = item.getAttribute("data-panel-height");
+        if (panelHeight && panelHeight !== "auto") {
+          fixedHeightsTotal += parseInt(panelHeight || "0px", 10);
+          ++fixedHeightChildCount;
+        }
+      });
+      const itemHeight =
+        (totalHeight - fixedHeightsTotal) /
+        (contentRef.current.children.length - fixedHeightChildCount);
+      children.forEach((item) => {
+        const child = item as HTMLDivElement;
+        const panelHeight = item.getAttribute("data-panel-height");
+        const height =
+          panelHeight === "auto" || !panelHeight
+            ? itemHeight
+            : `${parseInt(panelHeight, 10)}`;
+        child.style.setProperty("max-height", `${height}px`);
+      });
+    }
+  }, [children, contentRef]);
 
   return (
     <div
       className={clsx(
-        ` flex flex-col bg-white border-l transform origin-right duration-500 border-gray-200 w-full pb-6
-            ${open ? "w-3" : "w-[35rem]"}
-          `,
+        `flex flex-col bg-white border-l transform origin-right duration-500 border-gray-200 h-screen px-4`,
+        open ? "w-3" : "w-[35rem]",
         className
       )}
       {...rest}
+      style={{ paddingBottom: "64px" }}
     >
       <div
-        className={`flex flex-col overflow-y-hidden space-y-8 sticky top-0 ${
-          open && "hidden"
+        className={`flex-1 h-full flex flex-col space-y-2 overflow-y-hidden pb-4 ${
+          open ? "hidden" : ""
         }`}
+        ref={contentRef}
       >
         {children}
       </div>

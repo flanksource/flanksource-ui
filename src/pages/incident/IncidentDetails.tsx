@@ -14,9 +14,8 @@ import {
   IncidentStatus,
   updateIncident
 } from "../../api/services/incident";
-import { IncidentChangelog } from "../../components/Changelog/IncidentChangelog";
 import { HypothesisBuilder } from "../../components/Hypothesis/HypothesisBuilder";
-import { IncidentDetails } from "../../components/IncidentDetails";
+import { IncidentSidebar } from "../../components/IncidentDetails/IncidentSidebar";
 import { SearchLayout } from "../../components/Layout";
 import { useCreateHypothesisMutation } from "../../api/mutations/useCreateHypothesisMutation";
 import { useUpdateHypothesisMutation } from "../../api/mutations/useUpdateHypothesisMutation";
@@ -227,26 +226,18 @@ export function IncidentDetailsPage() {
               <section className="mt-4">{getHypothesisView()}</section>
             </div>
           </div>
-          <SlidingSideBar hideToggle={true}>
-            <div>
-              <IncidentDetails
-                incident={incident}
-                updateStatusHandler={() =>
-                  updateStatus(
-                    status === IncidentStatus.Open
-                      ? IncidentStatus.Closed
-                      : IncidentStatus.Open
-                  )
-                }
-                updateIncidentHandler={updateIncidentHandler}
-                textButton={status === IncidentStatus.Open ? "Close" : "Reopen"}
-              />
-              <IncidentChangelog
-                refreshChangelog={refetchChangelog}
-                incidentId={incident.id}
-              />
-            </div>
-          </SlidingSideBar>
+          <IncidentSidebar
+            incident={incident}
+            updateStatusHandler={() =>
+              updateStatus(
+                status === IncidentStatus.Open
+                  ? IncidentStatus.Closed
+                  : IncidentStatus.Open
+              )
+            }
+            updateIncidentHandler={updateIncidentHandler}
+            textButton={status === IncidentStatus.Open ? "Close" : "Reopen"}
+          />
         </div>
       </SearchLayout>
     </>

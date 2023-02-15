@@ -113,6 +113,7 @@ export function CostInfoPanel({
       Header={
         <Title title={title} icon={<FaDollarSign className="w-6 h-auto" />} />
       }
+      data-panel-height="150px"
     >
       <div className="flex flex-col space-y-2">
         {loading ? <Loading /> : <CostDetailsTable {...costDetails} />}

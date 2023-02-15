@@ -1,50 +1,51 @@
+import clsx from "clsx";
 import { useState } from "react";
 import { IoChevronDownOutline, IoChevronUpOutline } from "react-icons/io5";
-import { VerticalSCrollView } from "../VerticalScrollView/VerticalScrollView";
 
-type Props = {
+type Props = React.HTMLProps<HTMLDivElement> & {
   Header: React.ReactNode;
   children: React.ReactNode;
   isClosed?: boolean;
-  maxContentHeight?: string;
 };
 
 export default function CollapsiblePanel({
   Header,
   children,
-  maxContentHeight = "150px",
-  isClosed = false
+  isClosed = false,
+  className,
+  ...props
 }: Props) {
   const [isOpen, setIsOpen] = useState(!isClosed);
 
   return (
-    <div className="flex flex-col">
+    <div
+      className={clsx("flex flex-col", isOpen && "flex-1", className)}
+      {...props}
+    >
       <div
         onClick={() => setIsOpen(!isOpen)}
-        className={`flex flex-row py-2 cursor-pointer items-center justify-center ${
-          isOpen && "border-b border-dashed border-gray-200"
+        className={`flex flex-row py-2 cursor-pointer items-center justify-center h-12 ${
+          isOpen ? "border-b border-dashed border-gray-200" : ""
         }`}
       >
         <div className="flex flex-row flex-1 items-center">{Header}</div>
         <div
-          className="flex flex-col items-center justify-center space-y-0"
+          className="flex items-center justify-center space-y-0 text-zinc-400 inline-block"
           onClick={() => setIsOpen(!isOpen)}
         >
           {isOpen ? (
-            <IoChevronUpOutline size={20} />
+            <IoChevronUpOutline className="w-6 h-6" />
           ) : (
-            <IoChevronDownOutline size={20} />
+            <IoChevronDownOutline className="w-6 h-6" />
           )}
         </div>
       </div>
       <div
-        className={`flex flex-col transform origin-bottom duration-500 ${
+        className={`flex-1 flex-grow flex flex-col transform origin-bottom duration-500 overflow-y-auto ${
           isOpen ? "" : "hidden"
         }`}
       >
-        <VerticalSCrollView className="w-full" maxHeight={maxContentHeight}>
-          {children}
-        </VerticalSCrollView>
+        {children}
       </div>
     </div>
   );
