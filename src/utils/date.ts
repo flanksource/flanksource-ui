@@ -1,6 +1,7 @@
 import dayjs, { ConfigType as DateConfig, ManipulateType } from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import isToday from "dayjs/plugin/isToday";
+import duration from "dayjs/plugin/duration";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 import relativeTime from "dayjs/plugin/relativeTime";
 import updateLocale from "dayjs/plugin/updateLocale";
@@ -15,6 +16,7 @@ dayjs.extend(isSameOrAfter);
 dayjs.extend(relativeTime);
 dayjs.extend(updateLocale);
 dayjs.extend(utc);
+dayjs.extend(duration);
 
 dayjs.updateLocale("en", {
   relativeTime: {
@@ -114,6 +116,29 @@ export const formatTimeRange = (date: string | Date) => {
   return formatDate(date, {
     stringFormat: DATE_FORMATS.TIME_RANGE
   });
+};
+
+export const formatDateToSeconds = (date: string | Date) =>
+  dayjs(date).format("YYYY-MM-DD HH:mm.ss.SSS");
+
+export const formatMStoReadable = (value: number) => {
+  let ms = 0;
+  let sec = 0;
+  let min = 0;
+  if (value < 1000) {
+    ms = dayjs.duration(value).milliseconds();
+    return `${ms} ms`;
+  }
+  if (value >= 1000 && value < 60000) {
+    sec = dayjs.duration(value).seconds();
+    ms = dayjs.duration(value).milliseconds();
+    return `${sec} sec ${ms} ms`;
+  }
+  if (value >= 60000) {
+    sec = dayjs.duration(value).seconds();
+    min = dayjs.duration(value).minutes();
+    return `${min} m ${sec} sec`;
+  }
 };
 
 /**

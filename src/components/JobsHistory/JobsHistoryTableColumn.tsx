@@ -1,11 +1,12 @@
 import { CellContext, ColumnDef } from "@tanstack/react-table";
 import { FaDotCircle } from "react-icons/fa";
-import { relativeDateTime } from "../../utils/date";
 import { JobHistory, JobHistoryStatus } from "./JobsHistoryTable";
+import { formatDateToSeconds, formatMStoReadable } from "../../utils/date";
+import { formatJobName } from "../../utils/common";
 
 function JobsTableDateCell({ getValue }: CellContext<JobHistory, any>) {
   const value = getValue();
-  return <span>{relativeDateTime(value)}</span>;
+  return <span>{formatDateToSeconds(value)}</span>;
 }
 
 export const JobsHistoryTableColumn: ColumnDef<JobHistory, any>[] = [
@@ -13,14 +14,19 @@ export const JobsHistoryTableColumn: ColumnDef<JobHistory, any>[] = [
     header: "Timestamp",
     id: "time_start",
     accessorKey: "time_start",
-    size: 100,
+    size: 150,
     cell: JobsTableDateCell
   },
   {
     header: "Job Name",
     id: "name",
     accessorKey: "name",
-    size: 250
+    size: 200,
+    cell: ({ getValue }) => {
+      const value = getValue<JobHistory["name"]>();
+      const formattedName = formatJobName(value);
+      return <span>{formattedName}</span>;
+    }
   },
   {
     header: "Status",
@@ -42,10 +48,15 @@ export const JobsHistoryTableColumn: ColumnDef<JobHistory, any>[] = [
     }
   },
   {
-    header: "Duration (Millis)",
+    header: "Duration",
     id: "duration_millis",
     accessorKey: "duration_millis",
-    size: 100
+    size: 100,
+    cell: ({ getValue }) => {
+      const value = getValue<JobHistory["duration_millis"]>();
+      const readableTime = formatMStoReadable(value);
+      return <span>{readableTime}</span>;
+    }
   },
   // {
   //   header: "Host Name",

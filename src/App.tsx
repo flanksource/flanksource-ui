@@ -221,6 +221,7 @@ function SidebarWrapper() {
 
   const pathTrack = [
     "users",
+    "jobs",
     "teams",
     "incident_rules",
     "config_scrapers",

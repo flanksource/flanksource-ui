@@ -127,7 +127,6 @@ function SideNavGroup({
   current?: boolean;
   collapseSidebar: boolean;
 }) {
-  console.log(checkPath);
   if (collapseSidebar) {
     return (
       <Menu as="div" className="relative">

@@ -30,6 +30,8 @@ type JobsHistoryTableProps = {
   pageCount: number;
   pageIndex: number;
   pageSize: number;
+  sortBy: string;
+  sortOrder: string;
   setPageState?: (state: { pageIndex: number; pageSize: number }) => void;
   hiddenColumns?: string[];
 };
@@ -40,14 +42,16 @@ export default function JobsHistoryTable({
   pageCount,
   pageIndex,
   pageSize,
-  setPageState = () => {},
-  hiddenColumns = []
+  hiddenColumns = [],
+  sortBy,
+  sortOrder,
+  setPageState = () => {}
 }: JobsHistoryTableProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedJob, setSelectedJob] = useState<JobHistory>();
   const [tableSortByState, setTableSortByState] = useState<SortingState>([
     {
-      id: "time_start",
+      id: "created_at",
       desc: true
     }
   ]);
@@ -84,8 +88,6 @@ export default function JobsHistoryTable({
         data={jobs}
         columns={columns}
         isLoading={isLoading}
-        tableSortByState={tableSortByState}
-        onTableSortByChanged={setTableSortByState}
         handleRowClick={onSelectJob}
         pagination={pagination}
         stickyHead

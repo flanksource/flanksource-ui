@@ -64,3 +64,8 @@ export const getStartValue = (start: string) => {
     .subtract(+(start.match(/\d/g)?.[0] ?? "1"), "month")
     .toISOString();
 };
+
+export function formatJobName(word: string | null) {
+  const wordRe = /($[a-z])|[A-Z][^A-Z]+/g;
+  return word?.match(wordRe)?.join(" ");
+}
