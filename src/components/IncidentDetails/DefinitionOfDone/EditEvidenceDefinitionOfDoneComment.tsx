@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useUpdateEvidenceMutation } from "../../../api/query-hooks/mutations/evidence";
 import { Evidence } from "../../../api/services/evidence";
 import { Modal } from "../../Modal";
-import { ScriptStep } from "../AddDefinitionOfDone/steps/ScriptStep";
+import { ManualDoDInput } from "../AddDefinitionOfDone/AddManualDefinitionOfDone";
 
 type Props = {
   evidence: Evidence;
@@ -11,19 +11,20 @@ type Props = {
   onSuccess: () => void;
 };
 
-export default function EditEvidenceDefinitionOfDoneScript({
+export default function EditEvidenceDefinitionOfDoneComment({
   evidence,
   onCloseModal,
   isOpen,
   onSuccess
 }: Props) {
-  const [dodScript, setDodScript] = useState<string>();
+  console.log("evidence", evidence);
+  const [comment, setComment] = useState<string>();
 
   useEffect(() => {
-    setDodScript(evidence.script);
-  }, [evidence.script]);
+    setComment(evidence.evidence?.comment);
+  }, [evidence.evidence?.comment]);
 
-  const { isLoading, mutateAsync } = useUpdateEvidenceMutation();
+  const { isLoading, mutate } = useUpdateEvidenceMutation();
 
   return (
     <Modal
@@ -37,11 +38,14 @@ export default function EditEvidenceDefinitionOfDoneScript({
           className="px-4 py-2 btn-primary"
           type="button"
           onClick={async () => {
-            await mutateAsync([
+            mutate([
               {
                 id: evidence.id,
-                definition_of_done: true,
-                script: dodScript
+                description: comment,
+                evidence: {
+                  ...evidence.evidence,
+                  comment
+                }
               }
             ]);
             onSuccess();
@@ -52,10 +56,9 @@ export default function EditEvidenceDefinitionOfDoneScript({
       ]}
     >
       <div className="w-full flex flex-col space-y-4 p-4">
-        <ScriptStep
-          value={dodScript}
-          evidenceType={evidence.type}
-          onChange={(script) => setDodScript(script)}
+        <ManualDoDInput
+          value={comment}
+          onChange={(comment) => setComment(comment)}
         />
       </div>
     </Modal>

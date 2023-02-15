@@ -53,7 +53,7 @@ export function CommentsSection({
       )}
       <div className="relative">
         <CommentInput
-          singleLine
+          isSingleLine
           value={commentTextValue}
           onChange={setCommentTextValue}
           onEnter={() => handleComment()}

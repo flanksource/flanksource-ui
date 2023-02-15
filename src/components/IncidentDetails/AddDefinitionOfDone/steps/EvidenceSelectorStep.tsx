@@ -1,21 +1,25 @@
+import {
+  Action,
+  SelectDefinitionOfDoneState
+} from "../AddAutoDefinitionOfDone";
 import { ChangeEvent, useCallback, useMemo } from "react";
 import { Evidence, EvidenceType } from "../../../../api/services/evidence";
 import { EvidenceItem } from "../../../Hypothesis/EvidenceSection";
 import MultiSelectList from "../../../MultiSelectList/MultiSelectList";
 
-type Props = {
+type EvidenceGroupSelectorStepProps = {
   noneDODEvidences: Evidence[];
   onSelectEvidence: (evidence: Evidence[]) => void;
   evidenceType: EvidenceType;
   selectedEvidences: Evidence[];
 };
 
-export default function EvidenceSelectorStep({
+export function EvidenceGroupSelectorStep({
   onSelectEvidence,
   noneDODEvidences,
   selectedEvidences,
   evidenceType
-}: Props) {
+}: EvidenceGroupSelectorStepProps) {
   const noneDODEvidencesFilteredByType = useMemo(
     () => noneDODEvidences.filter((evidence) => evidence.type === evidenceType),
     [noneDODEvidences, evidenceType]
@@ -119,6 +123,39 @@ export default function EvidenceSelectorStep({
           }}
         />
       </div>
+    </div>
+  );
+}
+
+type EvidenceSelectorStepProps = {
+  noneDODEvidences: Evidence[];
+  dispatch: React.Dispatch<Action>;
+  state: SelectDefinitionOfDoneState;
+};
+export default function EvidenceSelectorStep({
+  noneDODEvidences,
+  dispatch,
+  state
+}: EvidenceSelectorStepProps) {
+  return (
+    <div className="w-full flex flex-col space-y-4">
+      {Object.entries(EvidenceType)
+        // remove comment evidence, as they are Manual DoD
+        .filter(([_, value]) => value !== EvidenceType.Comment)
+        .map(([_, value]) => (
+          <EvidenceGroupSelectorStep
+            noneDODEvidences={noneDODEvidences}
+            onSelectEvidence={(evidence) => {
+              dispatch({
+                type: "selectEvidence",
+                value: evidence,
+                evidenceType: value
+              });
+            }}
+            evidenceType={value as EvidenceType}
+            selectedEvidences={state.selectedEvidence}
+          />
+        ))}
     </div>
   );
 }
