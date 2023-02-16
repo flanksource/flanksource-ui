@@ -1,11 +1,9 @@
 import { CellContext } from "@tanstack/react-table";
-import { useState, useEffect } from "react";
-import { IoMdArrowDropdown, IoMdArrowDropright } from "react-icons/io";
+import { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import ReactTooltip from "react-tooltip";
 import { ConfigItem } from "../../../api/services/configs";
-
-const MIN_ITEMS = 2;
+import { TagList } from "../../TagList/TagList";
 
 export default function ConfigListTagsCell({
   getValue,
@@ -13,7 +11,6 @@ export default function ConfigListTagsCell({
 }: CellContext<ConfigItem, any> & {
   hideGroupByView?: boolean;
 }): JSX.Element | null {
-  const [showMore, setShowMore] = useState(false);
   const [params] = useSearchParams();
 
   const tagMap = getValue<ConfigItem["tags"]>() || {};
@@ -49,39 +46,12 @@ export default function ConfigListTagsCell({
     );
   }
 
-  const renderKeys = showMore ? tagKeys : tagKeys.slice(0, MIN_ITEMS);
+  const tags = tagKeys.map((key) => {
+    return {
+      key,
+      value: tagMap[key]
+    };
+  });
 
-  return (
-    <div
-      onClick={(e) => {
-        /* Don't trigger click for parent. E.g without stopPropagation,
-           handleRowClick would be called. */
-        e.stopPropagation();
-        setShowMore((showMore) => !showMore);
-      }}
-      className="flex items-start"
-    >
-      {tagKeys.length > MIN_ITEMS && (
-        <button className="text-sm focus:outline-none">
-          {showMore ? (
-            <IoMdArrowDropdown size={24} />
-          ) : (
-            <IoMdArrowDropright size={24} />
-          )}
-        </button>
-      )}
-
-      <div className="font-mono flex flex-wrap flex-1 max-w-full pl-1 space-y-1">
-        {renderKeys.map((key) => (
-          <div
-            data-tip={`${key}: ${tagMap[key]}`}
-            className="max-w-full overflow-hidden text-ellipsis bg-gray-200 border border-gray-300 px-1 py-0.75 mr-1 rounded-md text-gray-600 font-semibold text-xs"
-            key={key}
-          >
-            {key}: <span className="font-light">{tagMap[key]}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+  return <TagList tags={tags} minimumItemsToShow={2} />;
 }
