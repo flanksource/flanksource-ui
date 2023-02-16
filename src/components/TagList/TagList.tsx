@@ -62,9 +62,13 @@ export function TagList({ tags, minimumItemsToShow = 1 }: TagListProps) {
           `flex flex-wrap flex-1 h-auto`,
           !showAll ? `overflow-y-hidden` : ""
         )}
-        style={{
-          height: `${1.75 * minimumItemsToShow}rem`
-        }}
+        style={
+          !showAll
+            ? {
+                height: `${1.75 * minimumItemsToShow}rem`
+              }
+            : {}
+        }
       >
         {tags.map(({ key, value }) => (
           <div className="flex flex-row p-[0.15rem] max-w-full" key={key}>
