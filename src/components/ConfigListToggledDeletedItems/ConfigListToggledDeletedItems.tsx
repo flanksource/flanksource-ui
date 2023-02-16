@@ -8,7 +8,7 @@ export function ConfigListToggledDeletedItems() {
   });
 
   return (
-    <Popover title="Preferences">
+    <Popover className="flex items-center" title="Preferences">
       <Toggle
         onChange={(value) => {
           if (value) {

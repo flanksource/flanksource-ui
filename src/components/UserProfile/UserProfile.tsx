@@ -7,6 +7,7 @@ import { CreateUserDialog } from "../CreateUserDialog";
 import { SelectUserDialog } from "../SelectUserDialog";
 import { useCreateLogoutHandler } from "../ory";
 import { VersionInfo } from "../VersionInfo/VersionInfo";
+import { ClickableSvg } from "../ClickableSvg/ClickableSvg";
 
 export function UserProfile() {
   const [isOpen, setIsOpen] = useState(false);
@@ -27,8 +28,6 @@ export function UserProfile() {
       <Menu as="div" className="ml-3 relative flex-shrink-0">
         <div>
           <Menu.Button className="flex items-center text-sm rounded-full">
-            <span className="sr-only">Open user menu</span>
-
             {user?.avatar ? (
               <img
                 className="h-8 w-8 rounded-full"
@@ -36,7 +35,9 @@ export function UserProfile() {
                 alt={user.name}
               />
             ) : (
-              <FaUserAlt size={24} />
+              <ClickableSvg>
+                <FaUserAlt size={24} />
+              </ClickableSvg>
             )}
           </Menu.Button>
         </div>

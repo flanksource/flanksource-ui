@@ -6,6 +6,7 @@ import {
   useIncidentQuery,
   useIncidentsHistoryQuery
 } from "../../api/query-hooks";
+import { ClickableSvg } from "../ClickableSvg/ClickableSvg";
 import CollapsiblePanel from "../CollapsiblePanel";
 import { Loading } from "../Loading";
 import Title from "../Title/title";
@@ -48,11 +49,13 @@ export function IncidentChangelog({
             }}
           >
             <button className="" onClick={() => refetch()}>
-              <MdRefresh
-                className={`cursor-pointer w-6 h-6 text-zinc-400 inline-block ${
-                  isRefetching ? "animate-spin" : ""
-                }`}
-              />
+              <ClickableSvg>
+                <MdRefresh
+                  className={`cursor-pointer w-6 h-6 inline-block ${
+                    isRefetching ? "animate-spin" : ""
+                  }`}
+                />
+              </ClickableSvg>
             </button>
           </div>
         </div>

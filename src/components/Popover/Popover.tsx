@@ -2,19 +2,20 @@ import clsx from "clsx";
 import { LegacyRef } from "react";
 import { FaCog } from "react-icons/fa";
 import { useOnMouseActivity } from "../../hooks/useMouseActivity";
+import { ClickableSvg } from "../ClickableSvg/ClickableSvg";
 
 type PopoverProps = {
-  title?: string;
   popoverIcon?: React.ReactNode;
   children: React.ReactNode;
   placement?: "right" | "left";
-};
+} & React.HTMLProps<HTMLDivElement>;
 
 export default function Popover({
   title,
   popoverIcon,
   children,
   placement = "right",
+  className,
   ...props
 }: PopoverProps) {
   const {
@@ -26,14 +27,16 @@ export default function Popover({
   return (
     <div
       ref={popoverRef as LegacyRef<HTMLDivElement>}
-      className={`relative p-2`}
+      className={className}
       {...props}
     >
       <button
         className="content-center align-middle w-6 h-6 cursor-pointer md:mt-0"
         onClick={() => setIsPopoverOpen((isToggled) => !isToggled)}
       >
-        {popoverIcon ? popoverIcon : <FaCog className="" />}
+        <ClickableSvg>
+          {popoverIcon ? popoverIcon : <FaCog className="w-6 h-6" />}
+        </ClickableSvg>
       </button>
       <div
         role="menu"
