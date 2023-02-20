@@ -45,7 +45,7 @@ const MinimalCanaryFC = ({
   const { tabBy, layout, timeRange, checkId, checkTimeRange } =
     Object.fromEntries(searchParams.entries());
 
-  const currentTimeRange = checkTimeRange ?? timeRange;
+  const currentTimeRange = checkTimeRange || timeRange || "15m";
   const [selectedCheck, setSelectedCheck] = useState<Partial<HealthCheck>>();
   const [attachAsAsset, setAttachAsAsset] = useState(false);
 
