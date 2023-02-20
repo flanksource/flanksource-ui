@@ -16,7 +16,7 @@ See [javascript style guide](https://github.com/flanksource/style-guide/blob/mas
     # ORY_KRATOS_URL=http://kratos.canary.lab.flanksource.com/
     # NEXT_PUBLIC_APP_DEPLOYMENT=CANARY_CHECKER
     NEXT_PUBLIC_WITHOUT_SESSION=false
-    BACKEND_URL=https://incident-commander.canary.lab.flanksource.com/
+    BACKEND_URL=https://incident-commander.canary.lab.flanksource.com/api
     ENV=localhost
 
     ```

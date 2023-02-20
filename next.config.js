@@ -18,17 +18,7 @@ const config = withTM({
     const isCanary =
       process.env.NEXT_PUBLIC_APP_DEPLOYMENT === "CANARY_CHECKER";
     const canaryPrefix = isCanary ? "" : "/canary";
-    const LOCALHOST_ENV_URL_REWRITES = [
-      {
-        source: "/api/:path*",
-        destination: `${backendURL}/api/:path*`
-      }
-    ];
-    const URL_REWRITES = [
-      {
-        source: "/api/canary/:path*",
-        destination: `${backendURL}${canaryPrefix}/:path*`
-      },
+    const COMMON_URL_REWRITES = [
       {
         source: "/api/.ory/:path*",
         destination: `${backendURL}/kratos/:path*`
@@ -38,6 +28,15 @@ const config = withTM({
       {
         source: "/api/:path*",
         destination: `${backendURL}/:path*`
+      }
+    ];
+    
+    const LOCALHOST_ENV_URL_REWRITES = [...COMMON_URL_REWRITES];
+    const URL_REWRITES = [
+      ...COMMON_URL_REWRITES,
+      {
+        source: "/api/canary/:path*",
+        destination: `${backendURL}${canaryPrefix}/:path*`
       }
     ];
     return ["localhost", "netlify"].includes(process.env.ENV)
