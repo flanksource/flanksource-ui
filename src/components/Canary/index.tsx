@@ -143,7 +143,7 @@ export function Canary({
       return;
     }
     const params = encodeObjectToUrlSearchParams({
-      start: getStartValue(searchParams.get("timeRange") ?? timeRanges[0].value)
+      start: getStartValue(searchParams.get("timeRange") || timeRanges[0].value)
     });
     setIsLoading(true);
     onLoading(true);
@@ -262,7 +262,7 @@ export function Canary({
         <div className="mb-4 mr-2 w-full">
           <TimeRange
             name="time-range"
-            value={timeRange ?? timeRanges[0].value}
+            value={timeRange || timeRanges[0].value}
             className="w-full"
             dropDownClassNames="w-full"
             onChange={(value) => {
