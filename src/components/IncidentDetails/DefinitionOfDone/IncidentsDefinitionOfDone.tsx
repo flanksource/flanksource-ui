@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { Evidence, updateEvidence } from "../../../api/services/evidence";
-import { DeleteConfirmDialog } from "../../DeleteConfirmDialog";
+import { ConfirmationPromptDialog } from "../../Dialogs/ConfirmationPromptDialog";
 import { useIncidentQuery } from "../../../api/query-hooks";
 import EvidenceSelectionModal from "./EvidenceSelectionModal";
 import IncidentsDefinitionOfDoneItem from "./IncidentsDefinitionOfDoneItem";
@@ -158,13 +158,13 @@ export function IncidentsDefinitionOfDone({
             />
           </div>
         </div>
-        <DeleteConfirmDialog
+        <ConfirmationPromptDialog
           isOpen={openDeleteConfirmDialog}
           title="Remove from definition of done ?"
           description="Are you sure you want to remove the evidence from definition of done ?"
-          deleteLabel="Remove"
+          yesLabel="Remove"
           onClose={() => setOpenDeleteConfirmDialog(false)}
-          onDelete={() => {
+          onConfirm={() => {
             initiateDeleteEvidenceFromDOD();
           }}
         />

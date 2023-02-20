@@ -2,31 +2,32 @@ import { Dialog } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
 import clsx from "clsx";
 
-type DeleteConfirmDialogProps = {
+type ConfirmationPromptDialogProps = {
   isOpen: boolean;
   title: string;
   description: string;
   onClose: () => void;
-  onDelete: () => void;
-  deleteLabel?: string;
+  onConfirm: () => void;
+  yesLabel?: string;
   closeLabel?: string;
 } & React.HTMLProps<HTMLDivElement>;
 
-export function DeleteConfirmDialog({
+export function ConfirmationPromptDialog({
   title,
   description,
   isOpen,
   onClose,
-  onDelete,
-  deleteLabel = "Delete",
+  onConfirm,
+  yesLabel = "Delete",
   closeLabel = "Close",
   className,
   ...rest
-}: DeleteConfirmDialogProps) {
+}: ConfirmationPromptDialogProps) {
   return (
-    // @ts-ignore:next-line
+    // @ts-expect-error
     <Dialog
       open={isOpen}
+      // @ts-expect-error
       as="div"
       className={clsx("relative z-10", className)}
       onClose={onClose}
@@ -61,9 +62,9 @@ export function DeleteConfirmDialog({
               </button>
               <button
                 className="btn-secondary btn-secondary-base"
-                onClick={onDelete}
+                onClick={onConfirm}
               >
-                {deleteLabel}
+                {yesLabel}
               </button>
             </div>
           </Dialog.Panel>
