@@ -64,8 +64,13 @@ export function SchemaResourceEdit({
     if (!resourceType) {
       return [];
     }
-    return resourceType.subNav;
-  }, [resourceName]);
+    return resourceType.subNav.filter((nav) => {
+      if (edit) {
+        return nav.label === "Spec";
+      }
+      return true;
+    });
+  }, [resourceName, edit]);
 
   const table = useMemo(() => {
     const resourceType = schemaResourceTypes.find(
