@@ -3,7 +3,7 @@ import clsx from "clsx";
 import { template } from "lodash";
 import { useForm } from "react-hook-form";
 import { BsCardList, BsShareFill, BsTrash } from "react-icons/bs";
-import { DeleteConfirmDialog } from "../DeleteConfirmDialog";
+import { ConfirmationPromptDialog } from "../Dialogs/ConfirmationPromptDialog";
 import { Icon } from "../Icon";
 import { IconButton } from "../IconButton";
 import { ReactSelectDropdown } from "../ReactSelectDropdown";
@@ -433,12 +433,12 @@ export const IncidentSidebar = ({
               </span>
             </button>
           </div>
-          <DeleteConfirmDialog
+          <ConfirmationPromptDialog
             isOpen={openDeleteConfirmDialog}
             title="Delete Responder ?"
             description="Are you sure you want to delete the responder ?"
             onClose={() => setOpenDeleteConfirmDialog(false)}
-            onDelete={() => {
+            onConfirm={() => {
               initiateDeleteResponder();
             }}
           />

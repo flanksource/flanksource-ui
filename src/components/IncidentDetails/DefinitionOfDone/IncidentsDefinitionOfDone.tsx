@@ -1,16 +1,16 @@
 import clsx from "clsx";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Evidence, updateEvidence } from "../../../api/services/evidence";
-import { DeleteConfirmDialog } from "../../DeleteConfirmDialog";
+import { ConfirmationPromptDialog } from "../../Dialogs/ConfirmationPromptDialog";
 import { useIncidentQuery } from "../../../api/query-hooks";
 import EvidenceSelectionModal from "./EvidenceSelectionModal";
 import IncidentsDefinitionOfDoneItem from "./IncidentsDefinitionOfDoneItem";
-import AddDefinitionOfDoneModal from "../AddDefinitionOfDone/AddDefinitionOfDoneStepper";
+import AddDefinitionOfDoneModal from "../AddDefinitionOfDone/AddDefinitionOfDoneHome";
 import CollapsiblePanel from "../../CollapsiblePanel";
 import Title from "../../Title/title";
 import { MdRefresh } from "react-icons/md";
 import { RiFullscreenLine } from "react-icons/ri";
-import { BsCardChecklist, BsCardList } from "react-icons/bs";
+import { BsCardChecklist } from "react-icons/bs";
 import { ClickableSvg } from "../../ClickableSvg/ClickableSvg";
 
 type DefinitionOfDoneProps = {
@@ -78,6 +78,12 @@ export function IncidentsDefinitionOfDone({
     setNonDODEvidences(data.filter((evidence) => !evidence.definition_of_done));
     setDODEvidences(data.filter((evidence) => evidence.definition_of_done));
   }, [incident]);
+
+  const rootHypothesis = useMemo(() => {
+    return incident?.hypotheses.find(
+      (hypothesis) => hypothesis.type === "root"
+    );
+  }, [incident?.hypotheses]);
 
   const initiateDeleteEvidenceFromDOD = async () => {
     if (!evidenceBeingRemoved) {
@@ -158,13 +164,13 @@ export function IncidentsDefinitionOfDone({
             />
           </div>
         </div>
-        <DeleteConfirmDialog
+        <ConfirmationPromptDialog
           isOpen={openDeleteConfirmDialog}
           title="Remove from definition of done ?"
           description="Are you sure you want to remove the evidence from definition of done ?"
-          deleteLabel="Remove"
+          yesLabel="Remove"
           onClose={() => setOpenDeleteConfirmDialog(false)}
-          onDelete={() => {
+          onConfirm={() => {
             initiateDeleteEvidenceFromDOD();
           }}
         />
@@ -190,6 +196,7 @@ export function IncidentsDefinitionOfDone({
             refetch();
             setAddToDODModalOpen(false);
           }}
+          rootHypothesis={rootHypothesis!}
         />
       </div>
     </CollapsiblePanel>

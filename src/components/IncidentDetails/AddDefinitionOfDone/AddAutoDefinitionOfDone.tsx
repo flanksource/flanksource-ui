@@ -1,9 +1,8 @@
-import { useReducer } from "react";
-import useUpdateEvidenceMutation from "../../../api/query-hooks/mutations/useUpdateEvidenceMutation";
+import { useMemo, useReducer } from "react";
+import { useUpdateEvidenceMutation } from "../../../api/query-hooks/mutations/evidence";
 import { Evidence, EvidenceType } from "../../../api/services/evidence";
 import { ScriptStep } from "./steps/ScriptStep";
 import EvidenceSelectorStep from "./steps/EvidenceSelectorStep";
-import { Modal } from "../../Modal";
 
 export type DefinitionOfDoneType = `${EvidenceType}`;
 
@@ -22,7 +21,7 @@ type MoveToAddScriptAction = {
   type: "addScriptPage";
 };
 
-type SubmitAction = {
+type SubmitScriptAction = {
   type: "setScript";
   script?: string;
 };
@@ -31,7 +30,7 @@ export type Action =
   | SelectEvidenceAction
   | MoveToAddScriptAction
   | ActionsReset
-  | SubmitAction;
+  | SubmitScriptAction;
 
 // TODO: Type This More Accurately, i.e. when current step is addScript, then
 // evidenceType is required and selectedEvidence is required and script is not
@@ -41,6 +40,7 @@ export type SelectDefinitionOfDoneState = {
   evidenceType?: EvidenceType;
   selectedEvidence: Evidence[];
   script?: string;
+  comment?: string;
 };
 
 function addDefinitionOfDoneStepsReducer(
@@ -80,16 +80,16 @@ function addDefinitionOfDoneStepsReducer(
   }
 }
 
-type AddDefinitionOfDoneStepperProps = {
+type Props = {
   noneDODEvidences: Evidence[];
   onAddDefinitionOfDone: (evidence: Evidence[]) => void;
   onCancel: () => void;
 };
 
-export function AddDefinitionOfDoneStepper({
+export default function AddAutoDefinitionOfDoneStepper({
   noneDODEvidences,
   onAddDefinitionOfDone
-}: AddDefinitionOfDoneStepperProps) {
+}: Props) {
   const [selectDODState, dispatch] = useReducer(
     addDefinitionOfDoneStepsReducer,
     {
@@ -98,11 +98,18 @@ export function AddDefinitionOfDoneStepper({
     }
   );
 
-  const { isLoading, mutateAsync } = useUpdateEvidenceMutation({
+  const { isLoading, mutate: updateEvidence } = useUpdateEvidenceMutation({
     onSuccess: (evidence) => {
       onAddDefinitionOfDone(evidence);
     }
   });
+
+  const isAddButtonDisabled = useMemo(() => {
+    if (selectDODState.currentStep === "selectEvidence") {
+      return selectDODState.selectedEvidence.length === 0;
+    }
+    return false;
+  }, [selectDODState]);
 
   return (
     <>
@@ -120,22 +127,11 @@ export function AddDefinitionOfDoneStepper({
         <div className="w-full flex flex-col space-y-4">
           <div className="w-full flex flex-col space-y-4">
             {selectDODState.currentStep === "selectEvidence" ? (
-              <div className="w-full flex flex-col space-y-4">
-                {Object.entries(EvidenceType).map(([_, value]) => (
-                  <EvidenceSelectorStep
-                    noneDODEvidences={noneDODEvidences}
-                    onSelectEvidence={(evidence) => {
-                      dispatch({
-                        type: "selectEvidence",
-                        value: evidence,
-                        evidenceType: value
-                      });
-                    }}
-                    evidenceType={value as EvidenceType}
-                    selectedEvidences={selectDODState.selectedEvidence}
-                  />
-                ))}
-              </div>
+              <EvidenceSelectorStep
+                state={selectDODState}
+                dispatch={dispatch}
+                noneDODEvidences={noneDODEvidences}
+              />
             ) : (
               <ScriptStep
                 value={selectDODState.script}
@@ -150,14 +146,15 @@ export function AddDefinitionOfDoneStepper({
       </div>
       <div className={`flex p-4 justify-end w-full`}>
         <button
-          disabled={selectDODState.selectedEvidence.length === 0}
+          disabled={isAddButtonDisabled}
           className="px-4 py-2 btn-primary disabled:bg-gray-400 disabled:cursor-not-allowed"
           type="button"
           onClick={async () => {
             if (selectDODState.currentStep === "selectEvidence") {
               dispatch({ type: "addScriptPage" });
-            } else if (selectDODState.currentStep === "addScript") {
-              await mutateAsync(
+            }
+            if (selectDODState.currentStep === "addScript") {
+              updateEvidence(
                 selectDODState.selectedEvidence.map((evidence) => ({
                   id: evidence.id,
                   definition_of_done: true,
@@ -176,35 +173,5 @@ export function AddDefinitionOfDoneStepper({
         </button>
       </div>
     </>
-  );
-}
-
-type AddDefinitionOfDoneModalProps = {
-  isOpen: boolean;
-  noneDODEvidence: Evidence[];
-  onCloseModal: () => void;
-  onAddDefinitionOfDone: () => void;
-};
-
-export default function AddDefinitionOfDoneModal({
-  isOpen,
-  noneDODEvidence,
-  onCloseModal,
-  onAddDefinitionOfDone
-}: AddDefinitionOfDoneModalProps) {
-  return (
-    <Modal
-      title="Add Definition of Done"
-      onClose={onCloseModal}
-      open={isOpen}
-      bodyClass=""
-      size="full"
-    >
-      <AddDefinitionOfDoneStepper
-        noneDODEvidences={noneDODEvidence}
-        onAddDefinitionOfDone={onAddDefinitionOfDone}
-        onCancel={onCloseModal}
-      />
-    </Modal>
   );
 }

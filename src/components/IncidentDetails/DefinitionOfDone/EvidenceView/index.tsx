@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import { filter } from "lodash";
 import { useEffect, useState } from "react";
+import { BsPersonFill } from "react-icons/bs";
 import { Link } from "react-router-dom";
 import {
   useComponentNameQuery,
@@ -221,6 +222,28 @@ function HealthEvidence({
   );
 }
 
+function CommentEvidence({
+  evidence,
+  size,
+  className,
+  ...rest
+}: EvidenceViewProps) {
+  return (
+    <div className="overflow-hidden p-2" {...rest}>
+      <div className={`flex flex-row items-center`} {...rest}>
+        <div className="flex flex-row">
+          <div className={clsx("flex-shrink-0", "pr-2")}>
+            <BsPersonFill size={22} />
+          </div>
+          <div className={clsx("overflow-hidden")}>
+            {evidence.evidence.comment}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function EvidenceView({
   evidence,
   size,
@@ -257,6 +280,10 @@ export function EvidenceView({
           evidence={evidence}
           {...rest}
         />
+      );
+    case EvidenceType.Comment:
+      return (
+        <CommentEvidence className={className} evidence={evidence} {...rest} />
       );
     default:
       return null;

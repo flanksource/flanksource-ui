@@ -85,7 +85,7 @@ export const searchHypothesis = (incidentId: string, query: string) =>
     )
   );
 
-interface HypothesisInfo {
+export interface HypothesisInfo {
   type: HypothesisNodeType;
   title: string;
   status: HypothesisStatus;
@@ -98,16 +98,16 @@ interface NewBaseHypothesis {
   status: HypothesisStatus;
 }
 
-type NewRootNode = {
+export type NewRootNode = {
   type: "root";
 } & NewBaseHypothesis;
 
-type NewChildNode = {
+export type NewChildNode = {
   type: "factor" | "solution";
   parent_id?: string;
 } & NewBaseHypothesis;
 
-type NewHypothesis = NewRootNode | NewChildNode;
+export type NewHypothesis = NewRootNode | NewChildNode;
 
 export const createHypothesis = async ({ user, ...params }: NewHypothesis) => {
   const { data, error } = await resolve<[Hypothesis]>(
@@ -140,8 +140,13 @@ export const createHypothesisOld = async (
     ...params
   });
 
-export const updateHypothesis = (id: string, params: HypothesisInfo) => {
-  return IncidentCommander.patch(`/hypotheses?id=eq.${id}`, { ...params });
+export const updateHypothesis = (
+  id: string,
+  params: Partial<HypothesisInfo>
+) => {
+  return IncidentCommander.patch<Hypothesis[]>(`/hypotheses?id=eq.${id}`, {
+    ...params
+  });
 };
 
 // NOTE: Needs to be a database transaction. Possibility of partial deletes.

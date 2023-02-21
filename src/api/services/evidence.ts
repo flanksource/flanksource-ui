@@ -8,27 +8,30 @@ export enum EvidenceType {
   Topology = "topology",
   Check = "check",
   ConfigAnalysis = "config_analysis",
-  ConfigChange = "config_change"
+  ConfigChange = "config_change",
+  // inline comment
+  Comment = "comment"
 }
 
 export type Evidence = {
   user: User;
   id: string;
   hypothesisId: string;
-  component_id: string;
-  config_id: string;
-  config_analysis_id: string;
-  config_change_id: string;
-  check_id: string;
+  component_id?: string;
+  config_id?: string;
+  config_analysis_id?: string;
+  config_change_id?: string;
+  check_id?: string;
   evidence: Record<string, any>;
-  description: string;
-  definition_of_done: boolean;
+  description?: string;
+  definition_of_done?: boolean;
   script?: string;
-  properties: string;
+  properties?: string;
   created_at: string;
   created_by: User;
   type: EvidenceType;
-  done: boolean;
+  done?: boolean;
+  hypothesis_id: string;
 };
 
 export const getAllEvidenceByHypothesis = async (hypothesisId: string) => {
@@ -47,7 +50,9 @@ export const getAllEvidenceByHypothesis = async (hypothesisId: string) => {
 export const getEvidence = async (id: string) =>
   resolve(IncidentCommander.get(`/evidences?id=eq.${id}`));
 
-export const createEvidence = async (args: Evidence) => {
+export const createEvidence = async (
+  args: Omit<Evidence, "created_by" | "created_at" | "hypothesis_id">
+) => {
   const {
     user,
     id,
@@ -60,11 +65,14 @@ export const createEvidence = async (args: Evidence) => {
     check_id,
     type,
     description,
-    properties
+    properties,
+    definition_of_done,
+    done,
+    script
   } = args;
 
   return resolve(
-    IncidentCommander.post(`/evidences`, {
+    IncidentCommander.post<Evidence[]>(`/evidences`, {
       id,
       config_id,
       config_analysis_id,
@@ -76,7 +84,10 @@ export const createEvidence = async (args: Evidence) => {
       evidence,
       type,
       description,
-      properties
+      properties,
+      definition_of_done,
+      done,
+      script
     })
   );
 };

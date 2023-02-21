@@ -170,7 +170,7 @@ export function HypothesisCommentsViewContainer({
           <div id="comment-box" className="flex flex-col flex-1 space-y-4">
             <div className="relative">
               <CommentInput
-                singleLine
+                isSingleLine
                 value={commentTextValue}
                 onChange={setCommentTextValue}
                 onEnter={() => handleComment()}
