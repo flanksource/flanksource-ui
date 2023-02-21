@@ -43,10 +43,10 @@ export function ConfigsList({
             if (a == null) {
               a = [];
             }
-            if (i.configs.id !== configId) {
+            if (i.configs?.id !== configId) {
               a.push(i.configs);
             }
-            if (i.related.id !== configId) {
+            if (i.related?.id !== configId) {
               a.push(i.related);
             }
             return a;
