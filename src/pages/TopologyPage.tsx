@@ -131,6 +131,8 @@ export function TopologyPage() {
 
     setLoading(true);
 
+    let currentTopology, topology;
+
     try {
       const apiParams = {
         id,
@@ -151,8 +153,7 @@ export function TopologyPage() {
         return;
       }
 
-      const currentTopology = res.data[0];
-      setCurrentTopology(currentTopology);
+      currentTopology = res.data[0];
 
       let data;
 
@@ -172,29 +173,33 @@ export function TopologyPage() {
         data = Array.isArray(res.data) ? res.data : [];
       }
 
-      let result = data.filter(
+      topology = data.filter(
         (item: { name: string; title: string; id: string }) =>
           (item.name || item.title) && item.id !== id
       );
 
-      if (!result.length && data.length) {
+      if (!topology.length && data.length) {
         let filtered = data.find((x: Record<string, any>) => x.id === id);
         if (filtered) {
-          result = [filtered];
+          topology = [filtered];
         } else {
-          result = [];
+          topology = [];
         }
       }
-
-      setTopologyState({
-        topology: result,
-        searchParams
-      });
+      setLoading(false);
     } catch (ex: any) {
       toastError(ex);
+      setLoading(false);
+      return;
     }
 
-    setLoading(false);
+    setTopologyState({
+      topology,
+      searchParams
+    });
+
+    setCurrentTopology(currentTopology);
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, searchParams, setTopologyState]);
 
