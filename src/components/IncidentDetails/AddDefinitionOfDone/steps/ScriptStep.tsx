@@ -1,5 +1,10 @@
+import dynamic from "next/dynamic";
 import { EvidenceType } from "../../../../api/services/evidence";
-import { CodeEditor } from "../../../CodeEditor";
+
+const CodeEditor = dynamic(
+  () => import("../../../CodeEditor").then((m) => m.CodeEditor),
+  { ssr: false }
+);
 
 const doDEvidenceScriptShortcutsOptions = new Map<
   EvidenceType,
