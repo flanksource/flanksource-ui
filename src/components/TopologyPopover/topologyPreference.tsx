@@ -8,6 +8,7 @@ import { Size } from "../../types";
 import { Toggle } from "../Toggle";
 import { useSearchParams } from "react-router-dom";
 import { LegacyRef } from "react";
+import { ClickableSvg } from "../ClickableSvg/ClickableSvg";
 
 export function getCardWidth() {
   let value: any = localStorage.getItem("topology_card_width");
@@ -46,10 +47,12 @@ export const TopologyPreference = ({
 
   return (
     <div ref={popoverRef as LegacyRef<HTMLDivElement>}>
-      <FaCog
-        className="content-center w-6 h-6 mt-1 ml-4 cursor-pointer md:mt-0"
-        onClick={() => setIsPopoverActive((val) => !val)}
-      />
+      <ClickableSvg className="mt-1 ml-4 cursor-pointer md:mt-0">
+        <FaCog
+          className="content-center w-6 h-6"
+          onClick={() => setIsPopoverActive((val) => !val)}
+        />
+      </ClickableSvg>
       <div
         role="menu"
         aria-orientation="vertical"

@@ -32,6 +32,7 @@ import Title from "../Title/title";
 import { IncidentChangelog } from "../Changelog/IncidentChangelog";
 import SlidingSideBar from "../SlidingSideBar";
 import { MdOutlineQuickreply } from "react-icons/md";
+import { ClickableSvg } from "../ClickableSvg/ClickableSvg";
 
 export const priorities = Object.entries(severityItems).map(([key, value]) => ({
   label: value.name,
@@ -369,7 +370,7 @@ export const IncidentSidebar = ({
                                 </div>
                               </div>
                             </div>
-                            <div className="absolute right-0 ml-10 cursor-pointer top-1">
+                            <div className="absolute right-0 ml-10 top-1">
                               <IconButton
                                 className="hidden bg-transparent group-hover:inline-block z-5"
                                 onClick={(e) => {
@@ -385,10 +386,12 @@ export const IncidentSidebar = ({
                                   fill: "transparent"
                                 }}
                                 icon={
-                                  <BsTrash
-                                    className="text-gray-600 border-0 border-gray-200 border-l-1"
-                                    size={18}
-                                  />
+                                  <ClickableSvg styleFill={false}>
+                                    <BsTrash
+                                      className="text-gray-600 border-0 border-gray-200 border-l-1"
+                                      size={18}
+                                    />
+                                  </ClickableSvg>
                                 }
                               />
                             </div>

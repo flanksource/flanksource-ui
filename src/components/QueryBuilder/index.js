@@ -7,8 +7,6 @@ import {
   useState
 } from "react";
 import { Menu, Transition } from "@headlessui/react";
-import { MdDelete } from "react-icons/md";
-import { BiCog } from "react-icons/bi";
 import clsx from "clsx";
 import { useSearchParams } from "react-router-dom";
 import {
@@ -23,6 +21,8 @@ import { toastError, toastSuccess } from "../Toast/toast";
 import { useLoader } from "../../hooks";
 import { TextInputClearable } from "../TextInputClearable";
 import { TextWithDivider } from "../TextWithDivider";
+import { ClickableSvg } from "../ClickableSvg/ClickableSvg";
+import { FaCog } from "react-icons/fa";
 
 const QueryBuilderFC = ({ refreshConfigs, className, ...props }) => {
   const [params, setParams] = useSearchParams();
@@ -265,9 +265,14 @@ const QueryBuilderFC = ({ refreshConfigs, className, ...props }) => {
 
 function QueryBuilderActionMenu({ onOptionClick, optionCategories }) {
   return (
-    <Menu as="div" className="relative inline-block text-left">
-      <Menu.Button className="inline-flex justify-center w-full p-3 bg-warm-gray-50 text-sm font-medium text-gray-700">
-        <BiCog className="content-center" />
+    <Menu
+      as="div"
+      className="flex relative inline-block text-left items-center"
+    >
+      <Menu.Button className="inline-flex justify-center w-full pl-3 bg-warm-gray-50 text-sm font-medium text-gray-700">
+        <ClickableSvg>
+          <FaCog className="content-center w-6 h-6" />
+        </ClickableSvg>
       </Menu.Button>
       <Transition
         as={Fragment}

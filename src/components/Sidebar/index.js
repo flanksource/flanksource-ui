@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { IoChevronBackCircle } from "react-icons/io5";
+import { ClickableSvg } from "../ClickableSvg/ClickableSvg";
 
 export function Sidebar({ animated = false, settings, ...rest }) {
   const { children, className } = rest;
@@ -18,7 +19,9 @@ export function Sidebar({ animated = false, settings, ...rest }) {
         type="button"
         onClick={() => setCollapsed(!collapsed)}
       >
-        <IoChevronBackCircle className="h-6 w-6 text-gray-500" />
+        <ClickableSvg>
+          <IoChevronBackCircle className="h-6 w-6 text-gray-500" />
+        </ClickableSvg>
       </button>
       <div
         className={`flex-shrink-0 bg-gray-50 h-full overflow-x-hidden overflow-y-auto ${

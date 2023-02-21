@@ -11,6 +11,7 @@ import Title from "../../Title/title";
 import { MdRefresh } from "react-icons/md";
 import { RiFullscreenLine } from "react-icons/ri";
 import { BsCardChecklist, BsCardList } from "react-icons/bs";
+import { ClickableSvg } from "../../ClickableSvg/ClickableSvg";
 
 type DefinitionOfDoneProps = {
   incidentId: string;
@@ -108,16 +109,20 @@ export function IncidentsDefinitionOfDone({
               e.stopPropagation();
             }}
           >
-            <MdRefresh
-              className={`cursor-pointer mr-3 w-6 h-6 text-zinc-400 inline-block ${
-                isRefetching ? "animate-spin" : ""
-              }`}
-              onClick={() => refetch()}
-            />
-            <RiFullscreenLine
-              className="cursor-pointer w-6 h-6 text-zinc-400 inline-block "
-              onClick={() => setDODModalOpen(true)}
-            />
+            <ClickableSvg>
+              <MdRefresh
+                className={`cursor-pointer mr-3 w-6 h-6 inline-block ${
+                  isRefetching ? "animate-spin" : ""
+                }`}
+                onClick={() => refetch()}
+              />
+            </ClickableSvg>
+            <ClickableSvg>
+              <RiFullscreenLine
+                className="cursor-pointer w-6 h-6 inline-block "
+                onClick={() => setDODModalOpen(true)}
+              />
+            </ClickableSvg>
           </div>
         </div>
       }
