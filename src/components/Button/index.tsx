@@ -6,7 +6,7 @@ import { Icon } from "../Icon";
 interface Props {
   className?: string;
   text: React.ReactNode;
-  icon?: React.ReactElement | string | undefined;
+  icon?: React.ReactNode;
   disabled?: boolean;
   size?: "xs" | "sm" | "md" | "lg" | "xl";
   onClick: (e: React.MouseEvent<HTMLButtonElement>) => Promise<void> | void;

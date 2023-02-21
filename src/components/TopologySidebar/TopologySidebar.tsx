@@ -6,14 +6,20 @@ import SlidingSideBar from "../SlidingSideBar";
 import TopologyConfigChanges from "../TopologyConfigChanges";
 import TopologyDetails from "../TopologyDetails";
 import { ComponentTeams } from "./ComponentTeams";
+import TopologyActionBar from "./TopologyActionBar";
 import TopologyCost from "./TopologyCost";
 
 type Props = {
   topology?: Topology;
   refererId?: string;
+  onRefresh?: () => void;
 };
 
-export default function TopologySidebar({ topology, refererId }: Props) {
+export default function TopologySidebar({
+  topology,
+  refererId,
+  onRefresh
+}: Props) {
   const { id } = useParams();
 
   if (!id) {
@@ -22,6 +28,7 @@ export default function TopologySidebar({ topology, refererId }: Props) {
 
   return (
     <SlidingSideBar hideToggle>
+      <TopologyActionBar topology={topology} onRefresh={onRefresh} />
       <TopologyDetails topology={topology} refererId={refererId} />
       <Configs topologyId={id} />
       <Incidents topologyId={id} />
