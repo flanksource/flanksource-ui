@@ -3,6 +3,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti";
 import {
   ColumnDef,
+  ExpandedState,
   flexRender,
   getCoreRowModel,
   getExpandedRowModel,
@@ -20,6 +21,7 @@ import { DataTableRow } from "./DataTableRow";
 import { InfoMessage } from "../InfoMessage";
 import { Pagination } from "./Pagination/Pagination";
 import TableSkeletonLoader from "../SkeletonLoader/TableSkeletonLoader";
+import usePreferences from "../../hooks/userPreferences";
 
 const tableStyles = {
   theadHeaderClass: " tracking-wider",
@@ -50,7 +52,8 @@ type DataTableProps<TableColumns, Data extends TableColumns> = {
   isVirtualized?: boolean;
   virtualizedRowEstimatedHeight?: number;
   paginationClassName?: string;
-
+  preferencesKey: string;
+  savePreferences: boolean;
   /**
    * Columns used for sorting the table
    *
@@ -98,6 +101,11 @@ type DataTableProps<TableColumns, Data extends TableColumns> = {
   enableServerSideSorting?: boolean;
 } & React.HTMLAttributes<HTMLTableElement>;
 
+type TablePreferences = {
+  expandedRows: ExpandedState | undefined;
+  scrollTop: number;
+};
+
 export function DataTable<TableColumns, Data extends TableColumns>({
   columns,
   data,
@@ -116,9 +124,14 @@ export function DataTable<TableColumns, Data extends TableColumns>({
   pagination,
   paginationClassName = "py-4",
   enableServerSideSorting = false,
+  preferencesKey,
+  savePreferences,
   ...rest
 }: DataTableProps<TableColumns, Data>) {
   const tableContainerRef = useRef<HTMLDivElement>(null);
+  const [scrollTop, setScrollTop] = useState(0);
+  const { storePreferences, preferences } =
+    usePreferences<TablePreferences>(preferencesKey);
 
   const tableHiddenColumnsRecord = useMemo(
     () =>
@@ -142,6 +155,9 @@ export function DataTable<TableColumns, Data extends TableColumns>({
   const table = useReactTable<TableColumns>({
     columns,
     data,
+    initialState: {
+      expanded: savePreferences ? preferences.expandedRows : {}
+    },
     state: {
       sorting: sortBy,
       ...(isGrouped ? { grouping: groupBy } : {}),
@@ -177,20 +193,45 @@ export function DataTable<TableColumns, Data extends TableColumns>({
     }
   });
 
+  const state = table.getState();
+
+  const expandedRows = useMemo(() => {
+    return state.expanded;
+  }, [state]);
+
+  useEffect(() => {
+    if (!tableContainerRef.current || !savePreferences) {
+      return;
+    }
+    tableContainerRef.current.scrollTop = preferences.scrollTop;
+  }, [preferences.scrollTop, savePreferences]);
+
+  useEffect(() => {
+    if (!savePreferences) {
+      return;
+    }
+    storePreferences({
+      scrollTop,
+      expandedRows
+    });
+  }, [expandedRows, scrollTop, storePreferences, savePreferences]);
+
   const { rows } =
     pagination?.enable && !pagination.remote
       ? table.getPaginationRowModel()
       : table.getRowModel();
 
+  const enableVirtualization = isVirtualized && !isGrouped;
+
   const { getVirtualItems, getTotalSize } = useVirtualizer({
-    count: isVirtualized ? rows.length : 0,
+    count: enableVirtualization ? rows.length : 0,
     getScrollElement: () => tableContainerRef.current,
     estimateSize: () => virtualizedRowEstimatedHeight,
     overscan: 10
   });
 
-  const virtualRows = isVirtualized ? getVirtualItems() : [];
-  const totalSize = isVirtualized ? getTotalSize() : 0;
+  const virtualRows = enableVirtualization ? getVirtualItems() : [];
+  const totalSize = enableVirtualization ? getTotalSize() : 0;
 
   const paddingTop = virtualRows.length > 0 ? virtualRows?.[0]?.start || 0 : 0;
   const paddingBottom =
@@ -204,6 +245,9 @@ export function DataTable<TableColumns, Data extends TableColumns>({
         ref={tableContainerRef}
         className={clsx("flex flex-col flex-1 overflow-y-auto", className)}
         {...rest}
+        onScroll={(e) => {
+          setScrollTop((e.target as HTMLDivElement).scrollTop);
+        }}
       >
         <table
           className={clsx(
@@ -268,12 +312,12 @@ export function DataTable<TableColumns, Data extends TableColumns>({
             ))}
           </thead>
           <tbody>
-            {isVirtualized && paddingTop > 0 && (
+            {enableVirtualization && paddingTop > 0 && (
               <tr>
                 <td style={{ height: `${paddingTop}px` }} />
               </tr>
             )}
-            {isVirtualized
+            {enableVirtualization
               ? getVirtualItems().map(({ index }) => {
                   const row = rows[index];
                   return (
@@ -299,7 +343,7 @@ export function DataTable<TableColumns, Data extends TableColumns>({
                     key={row.id}
                   />
                 ))}
-            {isVirtualized && paddingBottom > 0 && (
+            {enableVirtualization && paddingBottom > 0 && (
               <tr>
                 <td style={{ height: `${paddingBottom}px` }} />
               </tr>

@@ -20,6 +20,7 @@ export default function ConfigList({ data, handleRowClick, isLoading }: Props) {
 
   const groupByField = queryParams.get("groupBy") || "config_type";
   const sortField = queryParams.get("sortBy");
+  const expandedRowId = queryParams.get("expandedRowId");
 
   const isSortOrderDesc =
     queryParams.get("sortOrder") === "desc" ? true : false;
@@ -154,6 +155,8 @@ export default function ConfigList({ data, handleRowClick, isLoading }: Props) {
       tableSortByState={sortBy}
       onTableSortByChanged={updateSortBy}
       determineRowClassNamesCallback={determineRowClassNames}
+      preferencesKey="config-list"
+      savePreferences
     />
   );
 }

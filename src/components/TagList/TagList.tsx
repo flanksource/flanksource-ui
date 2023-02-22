@@ -65,7 +65,7 @@ export function TagList({ tags, minimumItemsToShow = 1 }: TagListProps) {
         style={
           !showAll
             ? {
-                height: `${1.75 * minimumItemsToShow}rem`
+                maxHeight: `${1.75 * minimumItemsToShow}rem`
               }
             : {}
         }
