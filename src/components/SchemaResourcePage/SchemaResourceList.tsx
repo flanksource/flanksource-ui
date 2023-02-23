@@ -7,9 +7,10 @@ import { Avatar } from "../Avatar";
 interface Props {
   items: SchemaResourceI[];
   baseUrl: string;
+  table: string;
 }
 
-export function SchemaResourceList({ items, baseUrl }: Props) {
+export function SchemaResourceList({ items, baseUrl, table }: Props) {
   return (
     <div className="max-w-screen-xl mx-auto space-y-6 flex flex-col justify-center">
       <div
@@ -24,6 +25,7 @@ export function SchemaResourceList({ items, baseUrl }: Props) {
             <tr>
               <HCell colSpan={2}>Name</HCell>
               <HCell>Source Config</HCell>
+              {table === "canaries" && <HCell>Schedule</HCell>}
               <HCell>Created At</HCell>
               <HCell>Updated At</HCell>
               <HCell>Created By</HCell>
@@ -32,6 +34,7 @@ export function SchemaResourceList({ items, baseUrl }: Props) {
           <tbody>
             {items.map((item) => (
               <SchemaResourceListItem
+                table="canaries"
                 key={item.id}
                 {...item}
                 baseUrl={baseUrl}
@@ -76,9 +79,12 @@ function SchemaResourceListItem({
   id,
   source,
   baseUrl,
-  created_by
+  created_by,
+  table,
+  schedule
 }: SchemaResourceI & {
   baseUrl: string;
+  table: string;
 }) {
   const navigate = useNavigate();
   const navigateToDetails = (id: string) => navigate(`${baseUrl}/${id}`);
@@ -94,6 +100,7 @@ function SchemaResourceListItem({
       <Cell className="shrink-0">
         {!!source && <a href={`${source}`}>Link</a>}
       </Cell>
+      {table === "canaries" && <Cell>{schedule}</Cell>}
       <Cell className="text-gray-500">{relativeDateTime(created_at)}</Cell>
       <Cell className="text-gray-500">{relativeDateTime(updated_at)}</Cell>
       {created_by && (

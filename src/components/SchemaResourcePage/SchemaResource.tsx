@@ -5,6 +5,7 @@ import { isEmpty } from "lodash";
 import {
   deleteResource,
   getResource,
+  SchemaResourceI,
   updateResource
 } from "../../api/schemaResources";
 import { BreadcrumbNav } from "../BreadcrumbNav";
@@ -40,12 +41,11 @@ export function SchemaResource({
     });
   }, [resourceInfo, id]);
 
-  const onSubmit = async (props: any) => {
+  const onSubmit = async (props: Partial<SchemaResourceI>) => {
     try {
       await updateResource(resourceInfo, {
         ...resource,
-        ...props,
-        updated_at: new Date().toISOString()
+        ...props
       });
     } catch (ex: any) {
       toastError(ex);

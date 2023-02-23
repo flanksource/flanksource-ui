@@ -12,6 +12,7 @@ export interface SchemaResourceI {
   spec: string | object;
   namespace: string;
   labels: { [key: string]: any };
+  schedule?: string;
   icon?: string;
   source: string;
   created_at: string;

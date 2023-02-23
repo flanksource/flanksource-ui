@@ -17,6 +17,7 @@ import {
 } from "./SchemaResourceEditJobsTab";
 import { Tab, Tabs } from "../Tabs/Tabs";
 import dynamic from "next/dynamic";
+import AutoCompleteDropdown from "../AutoCompleteDropdown/AutoCompleteDropdown";
 
 const CodeEditor = dynamic(
   () => import("../CodeEditor").then((m) => m.CodeEditor),
@@ -26,7 +27,14 @@ const CodeEditor = dynamic(
 type FormFields = Partial<
   Pick<
     SchemaResourceI,
-    "id" | "spec" | "name" | "source" | "icon" | "namespace" | "labels"
+    | "id"
+    | "spec"
+    | "name"
+    | "source"
+    | "icon"
+    | "namespace"
+    | "labels"
+    | "schedule"
   >
 >;
 
@@ -52,16 +60,27 @@ export function SchemaResourceEdit({
   onDelete,
   onCancel,
   edit: startInEdit = false,
-  isModal = false
+  isModal = false,
+  schedule
 }: Props) {
   const [edit, setEdit] = useState(startInEdit);
   const [disabled, setDisabled] = useState(false);
   const keyRef = useRef(v4());
   const labelsKeyRef = useRef(v4());
+  console.log("spec 2", spec, typeof spec);
   const defaultValues = pickBy(
-    { id, spec, name, labels, namespace, icon },
+    {
+      id,
+      spec,
+      name,
+      labels,
+      namespace,
+      icon,
+      schedule
+    },
     identity
   );
+
   const subNav = useMemo(() => {
     const resourceType = schemaResourceTypes.find(
       (item) => item.name === resourceName
@@ -86,7 +105,9 @@ export function SchemaResourceEdit({
     }
     return resourceType.table;
   }, [resourceName]);
+
   const [activeTab, setActiveTab] = useState<string>(subNav[0]?.value);
+
   const formFields = useMemo(() => {
     const resourceType = schemaResourceTypes.find(
       (item) => item.name === resourceName
@@ -111,7 +132,9 @@ export function SchemaResourceEdit({
     resetField,
     watch
   } = useForm<FormFields>({
-    defaultValues
+    defaultValues: {
+      ...defaultValues
+    }
   });
 
   const values = getValues();
@@ -144,6 +167,7 @@ export function SchemaResourceEdit({
   const doSubmit = (props: any) => {
     onSubmit(props).then(() => setEdit(false));
   };
+
   const doDelete = () => {
     if (!id) {
       console.error("Called delete for resource without id");
@@ -294,6 +318,63 @@ export function SchemaResourceEdit({
                                       setValueOnChange("labels", val);
                                     }}
                                     language="json"
+                                  />
+                                </div>
+                              );
+                            }}
+                          />
+                        </div>
+                      )}
+
+                      {supportsField("schedule") && (
+                        <div className="py-4">
+                          <Controller
+                            control={control}
+                            name="schedule"
+                            render={({ field: { onChange, value } }) => {
+                              return (
+                                <div className="space-y-2">
+                                  <label className="block text-sm font-bold text-gray-700">
+                                    Schedule
+                                  </label>
+                                  <AutoCompleteDropdown
+                                    onChange={onChange}
+                                    value={value}
+                                    isDisabled={!!source || disabled || !edit}
+                                    options={[
+                                      {
+                                        label: "@every 30s",
+                                        value: "@every 30s"
+                                      },
+                                      {
+                                        label: "@every 1m",
+                                        value: "@every 1m"
+                                      },
+                                      {
+                                        label: "@every 5m",
+                                        value: "@every 5m"
+                                      },
+                                      {
+                                        label: "@every 30m",
+                                        value: "@every 30m"
+                                      },
+                                      {
+                                        label: "@hourly",
+                                        value: "@hourly"
+                                      },
+                                      {
+                                        label: "@every 6h",
+                                        value: "@every 6h"
+                                      },
+                                      {
+                                        label: "@daily",
+                                        value: "@daily"
+                                      },
+                                      {
+                                        label: "@weekly",
+                                        value: "@weekly"
+                                      }
+                                    ]}
                                   />
                                 </div>
                               );

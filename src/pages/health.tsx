@@ -39,9 +39,7 @@ export function HealthPage({ url }: Props) {
   const onSubmit = async (data: Partial<SchemaResourceI>) => {
     await createResource(resourceInfo, {
       ...data,
-      created_by: user?.id,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      created_by: user?.id
     });
     // todo: wire up to refresh
     // setReload((x) => x + 1);
