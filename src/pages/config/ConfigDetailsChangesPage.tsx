@@ -65,7 +65,10 @@ export function ConfigDetailsChangesPage() {
             className={`flex flex-col flex-1 p-6 pb-0 min-h-full h-auto overflow-auto`}
           >
             <ConfigsPageTabs basePath={`configs/${id}`} />
-            <div className="flex flex-col items-start">
+            <div
+              className="flex flex-col items-start overflow-y-auto"
+              style={{ maxHeight: "calc(100vh - 8.5rem)" }}
+            >
               <ConfigChangeHistory
                 data={historyData ?? []}
                 isLoading={isLoading}
