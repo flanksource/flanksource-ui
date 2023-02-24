@@ -4,6 +4,7 @@ import { setDiagnosticsOptions } from "monaco-yaml";
 import * as monaco from "monaco-editor";
 import { loader } from "@monaco-editor/react";
 import YAML from "yaml";
+import githubLight from "monaco-themes/themes/GitHub Light.json";
 
 loader.config({ monaco });
 
@@ -135,6 +136,14 @@ export function CodeEditor({
     });
   }, [language, schemaFilePrefix]);
 
+  useEffect(() => {
+    if (!monaco) {
+      return;
+    }
+
+    monaco.editor.defineTheme("githubLight", githubLight as any);
+  }, [monaco]);
+
   return (
     <Editor
       className="border shadow py-2"
@@ -152,6 +161,12 @@ export function CodeEditor({
       }}
       wrapperProps={{
         ref: editorWrapper
+      }}
+      {...{
+        // high contrast theme for yaml and json
+        ...((language === "yaml" || language === "json") && {
+          theme: "githubLight"
+        })
       }}
     />
   );
