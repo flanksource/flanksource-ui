@@ -117,7 +117,10 @@ export function ConfigDetailsPage() {
                   <div className="flex flex-row space-x-2">
                     <div className="flex flex-col w-full object-contain">
                       <div className="flex flex-col mb-6 w-full">
-                        <div className="flex relative py-6 px-4 border-gray-300 bg-white rounded shadow-md flex-1 overflow-x-auto">
+                        <div
+                          className="flex relative pt-2 px-4 border-gray-300 bg-white rounded shadow-md flex-1 overflow-x-auto overflow-y-atuo"
+                          style={{ maxHeight: "calc(100vh - 8.5rem)" }}
+                        >
                           <JSONViewer
                             code={code}
                             format={format}
