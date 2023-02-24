@@ -54,6 +54,7 @@ type DataTableProps<TableColumns, Data extends TableColumns> = {
   paginationClassName?: string;
   preferencesKey: string;
   savePreferences: boolean;
+  overScan?: number;
   /**
    * Columns used for sorting the table
    *
@@ -126,6 +127,7 @@ export function DataTable<TableColumns, Data extends TableColumns>({
   enableServerSideSorting = false,
   preferencesKey,
   savePreferences,
+  overScan = 10,
   ...rest
 }: DataTableProps<TableColumns, Data>) {
   const tableContainerRef = useRef<HTMLDivElement>(null);
@@ -221,13 +223,13 @@ export function DataTable<TableColumns, Data extends TableColumns>({
       ? table.getPaginationRowModel()
       : table.getRowModel();
 
-  const enableVirtualization = isVirtualized && !isGrouped;
+  const enableVirtualization = isVirtualized;
 
   const { getVirtualItems, getTotalSize } = useVirtualizer({
     count: enableVirtualization ? rows.length : 0,
     getScrollElement: () => tableContainerRef.current,
     estimateSize: () => virtualizedRowEstimatedHeight,
-    overscan: 10
+    overscan: overScan
   });
 
   const virtualRows = enableVirtualization ? getVirtualItems() : [];
