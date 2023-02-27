@@ -73,7 +73,7 @@ export function ConfigDetailsPage() {
     () =>
       configDetails?.config.format != null
         ? configDetails?.config.format
-        : "json",
+        : "yaml",
     [configDetails]
   );
 
@@ -125,6 +125,7 @@ export function ConfigDetailsPage() {
                             code={code}
                             format={format}
                             showLineNo
+                            convertToYaml
                             onClick={handleClick}
                             selections={checked}
                           />
@@ -150,7 +151,7 @@ export function ConfigDetailsPage() {
                   configType: configDetails?.config_type,
                   selected_lines: Object.fromEntries(
                     Object.keys(checked).map((n) => [n, configLines[n]])
-                  )
+                  ),
                 }}
                 type={EvidenceType.Config}
                 callback={(_: any) => {
