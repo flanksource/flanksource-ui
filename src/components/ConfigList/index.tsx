@@ -27,7 +27,7 @@ export default function ConfigList({ data, handleRowClick, isLoading }: Props) {
   const determineSortColumnOrder = useCallback(
     (sortState: SortingState): SortingState => {
       const sortStateWithoutDeletedAt = sortState.filter(
-        (sort) => sort.id !== "deleted_at" && sort.id !== "name"
+        (sort) => sort.id !== "deleted_at"
       );
       return [{ id: "deleted_at", desc: false }, ...sortStateWithoutDeletedAt];
     },
@@ -41,10 +41,14 @@ export default function ConfigList({ data, handleRowClick, isLoading }: Props) {
             id: sortField,
             desc: isSortOrderDesc
           },
-          {
-            id: "name",
-            desc: false
-          }
+          ...(sortField !== "name"
+            ? [
+                {
+                  id: "name",
+                  desc: isSortOrderDesc
+                }
+              ]
+            : [])
         ])
       : determineSortColumnOrder([]);
   });
