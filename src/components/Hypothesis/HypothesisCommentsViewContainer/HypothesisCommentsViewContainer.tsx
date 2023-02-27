@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Comment, createComment } from "../../../api/services/comments";
+import { Comment } from "../../../api/services/comments";
 import { dateSortHelper, relativeDateTime } from "../../../utils/date";
 import { CommentInput, CommentText } from "../../Comment";
 import { Icon } from "../../Icon";
@@ -8,7 +8,10 @@ import { CreatedBy } from "../ResponseLine";
 import { Tag } from "../../Tag/Tag";
 import { SortOrders } from "../../../constants";
 import { Hypothesis } from "../../../api/services/hypothesis";
-import { TreeNode } from "../../../pages/incident/IncidentDetails";
+import {
+  HypothesisAPIs,
+  TreeNode
+} from "../../../pages/incident/IncidentDetails";
 import { Evidence } from "../../../api/services/evidence";
 import { EvidenceItem } from "../EvidenceSection";
 import { useUser } from "../../../context";
@@ -21,6 +24,7 @@ import { OptionItem, SearchSelect } from "../../SearchSelect";
 interface IProps {
   incidentId: string;
   loadedTrees: TreeNode<Hypothesis>[] | null;
+  api: HypothesisAPIs;
 }
 
 enum CommentViewEntryTypes {
@@ -36,7 +40,8 @@ type CommentViewEntry = {
 
 export function HypothesisCommentsViewContainer({
   incidentId,
-  loadedTrees
+  loadedTrees,
+  api
 }: IProps) {
   const incidentQuery = useIncidentQuery(incidentId);
   const [commentTextValue, setCommentTextValue] = useState("");
@@ -114,7 +119,7 @@ export function HypothesisCommentsViewContainer({
         clearInterval(intervalRef);
       }
     });
-  }, [clientHeight]);
+  }, [clientHeight, comments]);
 
   const handleComment = () => {
     if (!selectedHypothesis) {
@@ -125,13 +130,17 @@ export function HypothesisCommentsViewContainer({
       toastError("Please add comment details");
       return;
     }
-    createComment({
-      user: user!,
-      incidentId: incidentId,
-      hypothesisId: selectedHypothesis.value!,
-      comment: commentTextValue
-    })
-      .catch(toastError)
+    api.createComment
+      .mutateAsync({
+        user: user!,
+        incidentId: incidentId,
+        hypothesisId: selectedHypothesis.value!,
+        comment: commentTextValue
+      })
+      .catch((err) => {
+        toastError(err);
+        return Promise.resolve();
+      })
       .then(() => {
         incidentQuery.refetch();
         setCommentTextValue("");
@@ -173,7 +182,10 @@ export function HypothesisCommentsViewContainer({
                 isSingleLine
                 value={commentTextValue}
                 onChange={setCommentTextValue}
-                onEnter={() => handleComment()}
+                onEnter={() => {
+                  handleComment();
+                  setCommentTextValue("");
+                }}
                 inputStyle={{
                   paddingRight: 180,
                   zIndex: 0,

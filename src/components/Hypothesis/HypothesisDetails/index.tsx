@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import clsx from "clsx";
 
 import { Modal } from "../../Modal";
-import { Comment, createComment } from "../../../api/services/comments";
+import { Comment } from "../../../api/services/comments";
 import {
   deleteEvidence,
   Evidence,
@@ -73,18 +73,23 @@ export function HypothesisDetails({ node, api, ...rest }: IProps) {
     setResponses(responses);
   };
 
-  const handleComment = (value: string) =>
-    createComment({
-      user,
-      incidentId: node.incident_id,
-      hypothesisId: node.id,
-      comment: value
-    })
-      .catch(toastError)
+  const handleComment = (value: string) => {
+    return api.createComment
+      .mutateAsync({
+        user: user!,
+        incidentId: node.incident_id,
+        hypothesisId: node.id,
+        comment: value
+      })
+      .catch((err) => {
+        toastError(err);
+        return Promise.resolve();
+      })
       .then(() => {
         incidentQuery.refetch();
         refetchHypothesis();
       });
+  };
 
   const deleteEvidenceCb = async (id: string) => {
     const { error } = await deleteEvidence(id);
@@ -143,7 +148,12 @@ export function HypothesisDetails({ node, api, ...rest }: IProps) {
               />
             ))}
         </ul>
-        <CommentsSection onComment={(value) => handleComment(value)} />
+        <CommentsSection
+          onComment={(value) => {
+            handleComment(value);
+            return Promise.resolve();
+          }}
+        />
       </div>
       <Modal
         open={evidenceBuilderOpen}

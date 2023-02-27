@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { UseMutationResult } from "@tanstack/react-query";
 import { Link, useParams } from "react-router-dom";
 import { EvidenceType } from "../../api/services/evidence";
@@ -28,6 +28,7 @@ import { HypothesisCommentsViewContainer } from "../../components/Hypothesis/Hyp
 import { HypothesisActionPlanViewContainer } from "../../components/Hypothesis/HypothesisActionPlanViewContainer/HypothesisActionPlanViewContainer";
 import { Tab, Tabs } from "../../components/Tabs/Tabs";
 import EmptyState from "../../components/EmptyState";
+import { useCreateCommentMutation } from "../../api/query-hooks/mutations/comment";
 
 export enum IncidentDetailsViewTypes {
   comments = "Comments",
@@ -47,6 +48,7 @@ export interface HypothesisAPIs {
   // todo: Type this correctly
   updateMutation: UseMutationResult<any, any, any>;
   createMutation: UseMutationResult<any, any, any>;
+  createComment: UseMutationResult<any, any, any>;
 }
 
 interface Tree {
@@ -81,7 +83,6 @@ function buildTreeFromHypothesisList(list: Hypothesis[]) {
       delete tree[node.id];
     }
   });
-
   return Object.values(tree);
 }
 
@@ -89,6 +90,7 @@ export function IncidentDetailsPage() {
   const { id: incidentId } = useParams();
   const isNewlyCreated = false; // TODO: set this to true if its a newly created incident
   const { isLoading, data: incident, refetch } = useIncidentQuery(incidentId!);
+  const createComment = useCreateCommentMutation();
   const [refetchChangelog, setRefetchChangelog] = useState(0);
   const [activeViewType, setActiveViewType] = useState(
     IncidentDetailsViewTypes.actionPlan
@@ -157,6 +159,7 @@ export function IncidentDetailsPage() {
                       delete: deleteHypothesis,
                       deleteBulk: deleteHypothesisBulk,
                       update: updateHypothesis,
+                      createComment,
                       updateMutation,
                       createMutation
                     }}
@@ -174,6 +177,16 @@ export function IncidentDetailsPage() {
           <HypothesisCommentsViewContainer
             incidentId={incidentId!}
             loadedTrees={loadedTrees}
+            api={{
+              incidentId,
+              create: createHypothesis,
+              delete: deleteHypothesis,
+              deleteBulk: deleteHypothesisBulk,
+              update: updateHypothesis,
+              createComment,
+              updateMutation,
+              createMutation
+            }}
           />
         </Tab>
       </Tabs>
