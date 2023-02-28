@@ -29,12 +29,17 @@ export function SchemaResourcePage({
   } = useGetSettingsAllQuery(resourceInfo);
 
   const onSubmit = async (data: Partial<SchemaResourceI>) => {
-    await createResource(resourceInfo, {
-      ...data,
-      created_by: user?.id,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    });
+    if (resourceInfo.table === "canaries") {
+      await createResource(resourceInfo, {
+        ...data,
+        created_by: user?.id
+      });
+    } else {
+      await createResource(resourceInfo, {
+        ...data,
+        created_by: user?.id
+      });
+    }
     refetch();
     setModalIsOpen(false);
   };
@@ -64,8 +69,16 @@ export function SchemaResourcePage({
       >
         <div className="m-auto">
           <div className="flex flex-col p-6 pb-0 flex-1 w-full overflow-y-auto">
-            {isLoading && <TableSkeletonLoader className="max-w-screen-xl mx-auto" />}
-            {!isLoading && <SchemaResourceList items={list || []} baseUrl={href} />}
+            {isLoading && (
+              <TableSkeletonLoader className="max-w-screen-xl mx-auto" />
+            )}
+            {!isLoading && (
+              <SchemaResourceList
+                items={list || []}
+                baseUrl={href}
+                table={resourceInfo.table}
+              />
+            )}
           </div>
         </div>
 
