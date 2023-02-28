@@ -197,7 +197,6 @@ export function SchemaResourceEdit({
   };
 
   const onSubNavClick = (tab: string) => {
-    console.log(tab, subNav);
     setActiveTab(tab);
   };
 
@@ -423,6 +422,7 @@ export function SchemaResourceEdit({
                             className="inline-flex items-center justify-center border-none shadow-sm font-medium rounded-md text-red-500 bg-red-100 hover:bg-red-200 focus:ring-offset-white focus:ring-red-500 focus:outline-none focus:ring-2 focus:ring-offset-2 px-4 py-2 text-sm leading-5"
                             disabled={disabled}
                             onClick={doDelete}
+                            type="button"
                           >
                             Delete
                           </button>
@@ -434,6 +434,7 @@ export function SchemaResourceEdit({
                               className="btn-secondary-base btn-secondary"
                               disabled={disabled}
                               onClick={doCancel}
+                              type="button"
                             >
                               Cancel
                             </button>
