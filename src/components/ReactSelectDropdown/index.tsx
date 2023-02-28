@@ -19,10 +19,10 @@ const { colors } = defaultTheme;
 
 export interface StateOption {
   id?: string;
-  label?: string;
+  label?: string | JSX.Element;
   value?: string;
   icon?: any;
-  description?: string;
+  description?: string | JSX.Element;
   order?: number;
   avatar?: any;
 }

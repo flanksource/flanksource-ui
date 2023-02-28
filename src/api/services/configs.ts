@@ -83,6 +83,14 @@ export const getAllChanges = (pageIndex?: number, pageSize?: number) => {
 export const getConfig = (id: string) =>
   resolve<ConfigItem[]>(ConfigDB.get(`/config_items?id=eq.${id}`));
 
+export type ConfigsTagList = {
+  key: string;
+  value: any;
+};
+
+export const getConfigTagsList = () =>
+  resolve<ConfigsTagList[] | null>(ConfigDB.get(`/config_tags`));
+
 export const getConfigName = (id: string) =>
   resolve<ConfigItem[]>(ConfigDB.get(`/config_names?id=eq.${id}`));
 

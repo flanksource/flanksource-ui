@@ -11,6 +11,7 @@ import {
   getConfigChange,
   getConfigInsight,
   getConfigInsights,
+  getConfigTagsList,
   getConfigName
 } from "../services/configs";
 import { getHypothesisResponse } from "../services/hypothesis";
@@ -305,6 +306,16 @@ export function useGetConfigByIdQuery(id: string) {
       onError: (err: any) => toastError(err)
     }
   );
+}
+
+export function useGetConfigTagsListQuery() {
+  return useQuery(["configs", "tags", "list"], async () => {
+    const { error, data } = await getConfigTagsList();
+    if (error) {
+      throw error;
+    }
+    return data ?? [];
+  });
 }
 
 export function useGetComponentsTeamQuery(
