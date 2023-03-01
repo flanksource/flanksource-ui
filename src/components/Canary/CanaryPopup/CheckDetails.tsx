@@ -40,7 +40,6 @@ export function CheckDetails({ check, timeRange, ...rest }: CheckDetailsProps) {
     !Number.isNaN(validCheck?.uptime?.passed) &&
     !Number.isNaN(validCheck?.uptime?.failed);
   const severityValue = validCheck?.severity || "-";
-  const statusHistoryList = validCheck?.checkStatuses;
 
   const details: Record<string, React.ReactNode> = useMemo(
     () => ({
@@ -73,21 +72,6 @@ export function CheckDetails({ check, timeRange, ...rest }: CheckDetailsProps) {
   if (validCheck == null) {
     return null;
   }
-
-  const getHistoryListView = (loading: boolean) => {
-    if (loading) {
-      return (
-        <div className="h-64 flex items-center justify-center text-gray-400 text-md">
-          Loading please wait...
-        </div>
-      );
-    }
-    return (
-      <div className="h-64 flex items-center justify-center text-gray-400 text-md">
-        No status history available
-      </div>
-    );
-  };
 
   return (
     <div {...rest}>
@@ -142,14 +126,14 @@ export function CheckDetails({ check, timeRange, ...rest }: CheckDetailsProps) {
           <span className="text-lg font-medium">Health overview</span>
           <DropdownStandaloneWrapper
             className="w-48"
-            paramKey="checkTimeRange"
+            paramKey="timeRange"
             dropdownElem={<TimeRange name="time-range" />}
             defaultValue={timeRange ?? timeRanges[0].value}
           />
         </div>
         <div className="w-full h-52 overflow-visible">
           <Suspense fallback={<div>Loading..</div>}>
-            <CanaryStatusChart checkTimeRange={timeRange} check={validCheck} />
+            <CanaryStatusChart timeRange={timeRange} check={validCheck} />
           </Suspense>
         </div>
       </div>
@@ -173,13 +157,13 @@ export function CheckDetails({ check, timeRange, ...rest }: CheckDetailsProps) {
             content: (
               <div
                 key="status-history"
-                className={`border border-b-0 border-gray-300 bg-gray-50 overflow-hidden overflow-y-auto h-full relative -mb-px ${mixins.appleScrollbar}`}
+                className={`border border-b-0 border-gray-300 bg-gray-50 overflow-hidden h-full relative -mb-px ${mixins.appleScrollbar}`}
               >
-                {statusHistoryList && statusHistoryList.length > 0 ? (
-                  <StatusHistory check={validCheck} sticky />
-                ) : (
-                  getHistoryListView(check?.loading ?? false)
-                )}
+                <StatusHistory
+                  timeRange={timeRange}
+                  check={validCheck}
+                  sticky
+                />
               </div>
             ),
             class:

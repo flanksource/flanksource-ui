@@ -5,25 +5,13 @@ import { CheckTitle } from "./CanaryPopup/CheckTitle";
 import { CanaryCards } from "./card";
 import { CanaryTable } from "./table";
 import mixins from "../../utils/mixins.module.css";
-import { getCanaries } from "../../api/services/topology";
 import { useSearchParams } from "react-router-dom";
 import { EvidenceType } from "../../api/services/evidence";
 import { AttachEvidenceDialog } from "../AttachEvidenceDialog";
 import { isCanaryUI } from "../../context/Environment";
-import { toastError } from "../Toast/toast";
-import dayjs from "dayjs";
 import { HealthCheckEdit } from "./HealthCheckEdit";
 import { HealthCheck } from "../../types/healthChecks";
-
-const getStartValue = (start: string) => {
-  if (!start.includes("mo")) {
-    return start;
-  }
-
-  return dayjs()
-    .subtract(+(start.match(/\d/g)?.[0] ?? "1"), "month")
-    .toISOString();
-};
+import { timeRanges } from "../Dropdown/TimeRange";
 
 type MinimalCanaryFCProps = {
   checks?: HealthCheck[];
@@ -42,57 +30,43 @@ const MinimalCanaryFC = ({
     layout: "table"
   });
 
-  const { tabBy, layout, timeRange, checkId, checkTimeRange } =
-    Object.fromEntries(searchParams.entries());
+  const {
+    tabBy,
+    layout,
+    timeRange = timeRanges[0].value,
+    checkId
+  } = Object.fromEntries(searchParams.entries());
 
-  const currentTimeRange = checkTimeRange || timeRange || "15m";
   const [selectedCheck, setSelectedCheck] = useState<Partial<HealthCheck>>();
   const [attachAsAsset, setAttachAsAsset] = useState(false);
+  const [openChecksModal, setOpenChecksModal] = useState(false);
 
   const handleCheckSelect = useCallback(
     (check: Pick<HealthCheck, "id">) => {
-      const payload = {
-        check: check.id,
-        includeMessages: true,
-        start: getStartValue(currentTimeRange)
-      };
       const data = {
         ...check,
-        checkStatuses: undefined,
-        latency: undefined,
-        uptime: undefined,
-        loading: true
+        checkStatuses: undefined
       };
+      setOpenChecksModal(true);
       setSelectedCheck(data);
-      getCanaries(payload).then((results) => {
-        if (results == null || results.data.checks.length === 0) {
-          toastError("There is no recent checks data");
-          setSelectedCheck(undefined);
-          return;
-        }
-        if (results?.data?.checks?.[0]?.id) {
-          setSearchParams({
-            ...Object.fromEntries(searchParams.entries()),
-            checkId: results.data.checks[0].id,
-            checkTimeRange: currentTimeRange
-          });
-          setSelectedCheck(results.data.checks[0]);
-        }
+      setSearchParams({
+        ...Object.fromEntries(searchParams.entries()),
+        checkId: check.id,
+        timeRange
       });
     },
-    [currentTimeRange, searchParams, setSearchParams]
+    [searchParams, setSearchParams, timeRange]
   );
 
   useEffect(() => {
     if (checkId && !selectedCheck) {
       handleCheckSelect({ id: checkId });
     }
-  }, [checkId, handleCheckSelect, selectedCheck]);
+  }, []);
 
   function clearCheck() {
-    setSelectedCheck(undefined);
+    setOpenChecksModal(false);
     searchParams.delete("checkId");
-    searchParams.delete("checkTimeRange");
     setSearchParams(searchParams);
   }
 
@@ -131,7 +105,7 @@ const MinimalCanaryFC = ({
         }}
       />
       <Modal
-        open={selectedCheck != null}
+        open={openChecksModal}
         onClose={() => clearCheck()}
         title={<CheckTitle check={selectedCheck} />}
         size="medium"
@@ -142,7 +116,7 @@ const MinimalCanaryFC = ({
         >
           <CheckDetails
             check={selectedCheck}
-            timeRange={currentTimeRange}
+            timeRange={timeRange}
             className={`flex flex-col overflow-y-hidden ${mixins.appleScrollbar}`}
           />
           <div className="rounded-t-lg flex space-x-2 bg-gray-100 px-8 py-4 justify-end absolute w-full bottom-0 left-0">

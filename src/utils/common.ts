@@ -1,5 +1,6 @@
 import { parse, stringify } from "qs";
 import DOMPurify from "dompurify";
+import dayjs from "dayjs";
 
 export function toFixedIfNecessary(value: string, dp: number) {
   return +parseFloat(value).toFixed(dp);
@@ -53,3 +54,13 @@ export function hasStringMatch(pattern: string, text?: string) {
   }
   return text.indexOf(pattern) >= 0;
 }
+
+export const getStartValue = (start: string) => {
+  if (!start.includes("mo")) {
+    return start;
+  }
+
+  return dayjs()
+    .subtract(+(start.match(/\d/g)?.[0] ?? "1"), "month")
+    .toISOString();
+};

@@ -66,7 +66,7 @@ const getStartValue = (start: string) => {
   );
 };
 
-export function CanaryStatusChart({ check, checkTimeRange, ...rest }) {
+export function CanaryStatusChart({ check, timeRange, ...rest }) {
   const [data, setData] = useState<StatusType[]>([]);
   const [dateFormatFn, setDateFormatFn] = useState(
     () => (date: string | Date) => formatDateToTime(date)
@@ -83,16 +83,16 @@ export function CanaryStatusChart({ check, checkTimeRange, ...rest }) {
     const payload = {
       check: check.id,
       count: 300,
-      start: getStartValue(checkTimeRange)
+      start: getStartValue(timeRange)
     };
     getCanaryGraph(payload).then((results) => {
-      const updatedFormat = getUpdatedFormat(checkTimeRange);
+      const updatedFormat = getUpdatedFormat(timeRange);
       setData(() => {
         return (results.data.status as StatusType[]).reverse();
       });
       setDateFormatFn(() => (date: string | Date) => updatedFormat(date));
     });
-  }, [check, checkTimeRange]);
+  }, [check, timeRange]);
 
   if (!data?.length) {
     return <Loading />;

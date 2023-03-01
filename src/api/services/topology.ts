@@ -1,8 +1,13 @@
 import { stringify } from "qs";
-import { CanaryChecker, IncidentCommander, Snapshot } from "../axios";
+import {
+  CanaryChecker,
+  CanaryCheckerDB,
+  IncidentCommander,
+  Snapshot
+} from "../axios";
 import { TopologyComponentItem } from "../../components/FilterIncidents/FilterIncidentsByComponents";
 import { HealthCheck } from "../../types/healthChecks";
-import { AVATAR_INFO } from "../../constants";
+import { AVATAR_INFO, TimeRangeToMinutes } from "../../constants";
 import { User } from "./users";
 import { Topology } from "../../context/TopologyPageContext";
 
@@ -73,6 +78,14 @@ export const getCanaries = async (
 ) => {
   const query = stringify(params);
   return CanaryChecker.get(`/api?${query}`);
+};
+
+export const getCheckStatuses = async (checkId: string, start: string) => {
+  const from = new Date();
+  from.setMinutes(-TimeRangeToMinutes[start]);
+  return CanaryCheckerDB.get(
+    `/check_statuses?check_id=eq.${checkId}&time=gt.${from.toISOString()}&order=time.desc`
+  );
 };
 
 export const getTopologyComponents = () => {
