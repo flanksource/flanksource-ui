@@ -49,6 +49,7 @@ type DataTableProps<TableColumns, Data extends TableColumns> = {
   className?: string;
   isVirtualized?: boolean;
   virtualizedRowEstimatedHeight?: number;
+  paginationClassName?: string;
 
   /**
    * Columns used for sorting the table
@@ -112,6 +113,7 @@ export function DataTable<TableColumns, Data extends TableColumns>({
   onTableSortByChanged,
   determineRowClassNamesCallback = () => "",
   pagination,
+  paginationClassName = "py-4",
   ...rest
 }: DataTableProps<TableColumns, Data>) {
   const tableContainerRef = useRef<HTMLDivElement>(null);
@@ -142,7 +144,7 @@ export function DataTable<TableColumns, Data extends TableColumns>({
       sorting: sortBy,
       ...(isGrouped ? { grouping: groupBy } : {}),
       columnVisibility: tableHiddenColumnsRecord,
-      pagination: pagination?.remote
+      pagination: pagination?.enable
         ? {
             pageIndex: pagination.pageIndex,
             pageSize: pagination.pageSize
@@ -304,10 +306,7 @@ export function DataTable<TableColumns, Data extends TableColumns>({
         {table.getRowModel().rows.length === 0 && (
           <div className="flex items-center justify-center px-2 border-b border-gray-300 text-center text-gray-400">
             {isLoading ? (
-              <TableSkeletonLoader
-                className="mt-2"
-                columnsCount={columns.length}
-              />
+              <TableSkeletonLoader className="mt-2" />
             ) : (
               <InfoMessage className="my-8 py-20" message="No data available" />
             )}
@@ -316,7 +315,7 @@ export function DataTable<TableColumns, Data extends TableColumns>({
       </div>
       {pagination?.enable && Boolean(table.getRowModel().rows.length) && (
         <Pagination
-          className="py-4"
+          className={paginationClassName}
           canPreviousPage={table.getCanPreviousPage()}
           canNextPage={table.getCanNextPage()}
           pageOptions={table.getPageOptions()}

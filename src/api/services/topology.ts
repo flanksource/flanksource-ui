@@ -84,7 +84,7 @@ export const getCheckStatuses = async (checkId: string, start: string) => {
   const from = new Date();
   from.setMinutes(-TimeRangeToMinutes[start]);
   return CanaryCheckerDB.get(
-    `/check_statuses?check_id=eq.${checkId}&time=gt.${from.toUTCString()}&order=time.desc`
+    `/check_statuses?check_id=eq.${checkId}&time=gt.${from.toISOString()}&order=time.desc`
   );
 };
 
