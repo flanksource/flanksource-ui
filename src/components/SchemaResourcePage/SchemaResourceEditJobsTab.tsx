@@ -24,7 +24,7 @@ export function SchemaResourceJobsTab({
     pageSize: 150
   });
 
-  const resourceType = useMemo(() => resourceTypeMap[tableName], []);
+  const resourceType = useMemo(() => resourceTypeMap[tableName], [tableName]);
 
   const { isLoading, data } = useJobsHistoryForSettingQuery(
     { pageIndex, pageSize, resourceId, resourceType },
