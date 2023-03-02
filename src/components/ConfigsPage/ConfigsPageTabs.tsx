@@ -3,7 +3,8 @@ import { NavLink, useMatch } from "react-router-dom";
 
 const navLinks: { title: string; index?: boolean; path?: string }[] = [
   { title: "Config", index: true },
-  { title: "Changes", path: "changes" }
+  { title: "Changes", path: "changes" },
+  { title: "Insights", path: "insights" }
 ];
 
 type Props = {
