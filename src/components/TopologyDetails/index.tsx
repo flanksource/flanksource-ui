@@ -23,11 +23,7 @@ export default function TopologyDetails({ topology, refererId }: Props) {
 
   var items = [];
 
-  if (
-    refererId != null &&
-    topology.parent_id != null &&
-    topology.parent_id !== refererId
-  ) {
+  if (topology.parent_id != null) {
     items.push({
       label: "Parent",
       value: <TopologyLink size="sm" topologyId={topology.parent_id} />
