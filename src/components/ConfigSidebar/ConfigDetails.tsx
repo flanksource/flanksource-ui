@@ -71,8 +71,9 @@ export function ConfigDetails({ configId }: Props) {
       }
     >
       <div className="flex flex-col space-y-2 py-2 max-w-full">
-        {isLoading && <TextSkeletonLoader />}
-        {displayDetails && !error ? (
+        {isLoading ? (
+          <TextSkeletonLoader />
+        ) : displayDetails && !error ? (
           <DescriptionCard items={displayDetails} />
         ) : (
           <InfoMessage message="Details not found" />
