@@ -13,6 +13,7 @@ import useDebouncedValue from "../hooks/useDebounce";
 import LogItem from "../types/Logs";
 import { getTopologyComponentByID } from "../api/services/topology";
 import { Head } from "../components/Head/Head";
+import { useComponentGetLogsQuery } from "../api/query-hooks";
 
 export const logTypes = [
   {
@@ -66,21 +67,12 @@ export function LogsPage() {
     isRefetching,
     data: logs,
     refetch
-  } = useQuery(
-    // use the different filters as a key for the cache
-    ["topology", "logs", externalId, type, debouncedQueryValue, start],
-    async () => {
-      const queryBody = {
-        query: debouncedQueryValue,
-        id: externalId,
-        type,
-        start
-      };
-      const res = await getLogs(queryBody);
-      if (res.error) {
-        throw res.error;
-      }
-      return res.data.results as LogItem[];
+  } = useComponentGetLogsQuery(
+    {
+      externalId: externalId!,
+      type: type!,
+      query: debouncedQueryValue!,
+      start
     },
     {
       enabled: !!topologyId || !!query
