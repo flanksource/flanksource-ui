@@ -5,14 +5,16 @@ import { CreateHypothesis } from "../CreateHypothesis";
 import { HypothesisAPIs } from "../../../pages/incident/IncidentDetails";
 import { Hypothesis } from "../../../api/services/hypothesis";
 import { useSearchParams } from "react-router-dom";
+import { IncidentStatus } from "../../../api/services/incident";
 
 interface IProps {
   loadedTree: unknown;
   initialEditMode: boolean;
   api: HypothesisAPIs;
+  checkStatus: IncidentStatus | undefined;
 }
 
-export function HypothesisBuilder({ loadedTree, api }: IProps) {
+export function HypothesisBuilder({ loadedTree, api, checkStatus }: IProps) {
   const [searchParams] = useSearchParams();
   const [selectedNode, setSelectedNode] = useState<Hypothesis | null>(null);
   const [createHypothesisModalIsOpen, setCreateHypothesisModalIsOpen] =
@@ -37,6 +39,7 @@ export function HypothesisBuilder({ loadedTree, api }: IProps) {
         setSelectedNode={setSelectedNode}
         setCreateHypothesisModalIsOpen={setCreateHypothesisModalIsOpen}
         api={api}
+        checkStatus={checkStatus}
       />
       <CreateHypothesis
         node={selectedNode}

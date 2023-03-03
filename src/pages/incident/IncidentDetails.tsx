@@ -94,6 +94,8 @@ export function IncidentDetailsPage() {
     IncidentDetailsViewTypes.actionPlan
   );
 
+  const [checkStatus, setCheckStatus] = useState(incident?.status ?? undefined);
+
   const error = !!incident;
 
   const topologyIds = (incident?.hypotheses || [])
@@ -114,8 +116,10 @@ export function IncidentDetailsPage() {
   const updateMutation = useUpdateHypothesisMutation({ incidentId });
   const createMutation = useCreateHypothesisMutation({ incidentId });
 
-  const updateStatus = (status: IncidentStatus) =>
-    updateIncident(incident?.id || null, { status }).then(() => refetch());
+  const updateStatus = (
+    incidentId: string | undefined,
+    status: IncidentStatus
+  ) => updateIncident(incidentId || null, { status }).then(() => refetch());
 
   const updateIncidentHandler = useCallback(
     (newDataIncident: Partial<Incident>) => {
@@ -161,6 +165,7 @@ export function IncidentDetailsPage() {
                       createMutation
                     }}
                     key={loadedTree.id}
+                    checkStatus={checkStatus}
                   />
                 );
               })}
@@ -230,6 +235,7 @@ export function IncidentDetailsPage() {
             incident={incident}
             updateStatusHandler={() =>
               updateStatus(
+                incidentId,
                 status === IncidentStatus.Open
                   ? IncidentStatus.Closed
                   : IncidentStatus.Open
@@ -237,6 +243,7 @@ export function IncidentDetailsPage() {
             }
             updateIncidentHandler={updateIncidentHandler}
             textButton={status === IncidentStatus.Open ? "Close" : "Reopen"}
+            setCheckStatus={setCheckStatus}
           />
         </div>
       </SearchLayout>

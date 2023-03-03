@@ -7,19 +7,22 @@ import { IconButton } from "../../IconButton";
 import { Menu } from "../../Menu";
 import { createIncidentQueryKey } from "../../../api/query-hooks";
 import { HypothesisDeleteDialog } from "../HypothesisDeleteDialog";
+import { IncidentStatus } from "../../../api/services/incident";
 
 interface IProps {
   hypothesis: Hypothesis;
   onDisprove: () => void;
   onEditTitle: () => void;
   setDeleting: (state: boolean) => void;
+  checkStatus?: IncidentStatus;
 }
 
 export const HypothesisBarMenu = ({
   hypothesis,
   onDisprove: onDisproveCB,
   onEditTitle,
-  setDeleting
+  setDeleting,
+  checkStatus
 }: IProps) => {
   const queryClient = useQueryClient();
   const [showConfirm, setShowConfirm] = useState<boolean>(false);
@@ -58,7 +61,10 @@ export const HypothesisBarMenu = ({
       <Menu>
         <Menu.VerticalIconButton />
         <Menu.Items>
-          <Menu.Item onClick={() => setShowConfirm(true)}>
+          <Menu.Item
+            onClick={() => setShowConfirm(true)}
+            disabled={checkStatus == "closed"}
+          >
             <IconButton
               className="bg-transparent flex items-center"
               ovalProps={{
@@ -77,7 +83,7 @@ export const HypothesisBarMenu = ({
             <span className="pl-2 text-sm block">Delete hypothesis</span>
           </Menu.Item>
 
-          <Menu.Item onClick={onEditTitle}>
+          <Menu.Item onClick={onEditTitle} disabled={checkStatus == "closed"}>
             <BiHide />
             <span className="pl-2 text-sm block">Edit title</span>
           </Menu.Item>

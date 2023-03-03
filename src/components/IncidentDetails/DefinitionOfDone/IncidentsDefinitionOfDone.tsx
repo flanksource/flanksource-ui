@@ -16,19 +16,26 @@ import { Badge } from "../../Badge";
 
 type DefinitionOfDoneProps = {
   incidentId: string;
+  watchStatus?: string;
 };
 
 type AddDefinitionOfDoneProps = {
   onClick: () => void;
+  watchStatus?: string;
 } & React.HTMLProps<HTMLDivElement>;
 
-function AddDefinitionOfDone({ onClick, ...rest }: AddDefinitionOfDoneProps) {
+function AddDefinitionOfDone({
+  onClick,
+  watchStatus,
+  ...rest
+}: AddDefinitionOfDoneProps) {
   return (
     <div {...rest}>
       <button
         type="button"
         className="flex items-center bg-white rounded-md group"
         onClick={onClick}
+        disabled={watchStatus == "closed"}
       >
         <span className="flex items-center justify-center w-5 h-5 text-gray-400 border-2 border-gray-300 border-dashed rounded-full">
           <svg
@@ -54,7 +61,8 @@ function AddDefinitionOfDone({ onClick, ...rest }: AddDefinitionOfDoneProps) {
 }
 
 export function IncidentsDefinitionOfDone({
-  incidentId
+  incidentId,
+  watchStatus
 }: DefinitionOfDoneProps) {
   const [openDeleteConfirmDialog, setOpenDeleteConfirmDialog] = useState(false);
   const [evidenceBeingRemoved, setEvidenceBeingRemoved] = useState<Evidence>();
@@ -156,6 +164,7 @@ export function IncidentsDefinitionOfDone({
                   setEvidenceBeingRemoved={setEvidenceBeingRemoved}
                   setOpenDeleteConfirmDialog={setOpenDeleteConfirmDialog}
                   refetch={refetch}
+                  watchStatus={watchStatus}
                 />
               ))
             )}
@@ -167,6 +176,7 @@ export function IncidentsDefinitionOfDone({
               onClick={() => {
                 setAddToDODModalOpen(true);
               }}
+              watchStatus={watchStatus}
             />
           </div>
         </div>

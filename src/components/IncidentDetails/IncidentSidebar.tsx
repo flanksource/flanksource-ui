@@ -46,11 +46,13 @@ type IncidentSidebarProps = React.HTMLProps<HTMLDivElement> & {
   updateStatusHandler: (status: IncidentStatus) => void;
   updateIncidentHandler: (newDataIncident: Partial<Incident>) => void;
   textButton: string;
+  setCheckStatus: (checkStatus: IncidentStatus | undefined) => void;
 };
 
 export const IncidentSidebar = ({
   incident,
-  updateIncidentHandler
+  updateIncidentHandler,
+  setCheckStatus
 }: IncidentSidebarProps) => {
   const [responders, setResponders] = useState<Record<string, any>[]>([]);
   const [openDeleteConfirmDialog, setOpenDeleteConfirmDialog] = useState(false);
@@ -209,6 +211,10 @@ export const IncidentSidebar = ({
     }
     fetchResponders();
   }, [incident]);
+
+  useEffect(() => {
+    setCheckStatus(watchStatus);
+  }, [watchStatus]);
 
   return (
     <SlidingSideBar hideToggle={true}>
@@ -437,6 +443,7 @@ export const IncidentSidebar = ({
                   className="flex justify-end flex-1 w-full"
                   onSuccess={() => fetchResponders()}
                   incident={incident}
+                  watchStatus={watchStatus}
                 />
               </span>
             </button>
@@ -461,7 +468,10 @@ export const IncidentSidebar = ({
           />
         </div>
       </CollapsiblePanel>
-      <IncidentsDefinitionOfDone incidentId={incident.id} />
+      <IncidentsDefinitionOfDone
+        incidentId={incident.id}
+        watchStatus={watchStatus}
+      />
       <IncidentChangelog
         incidentId={incident.id}
         className="flex flex-col bg-white"

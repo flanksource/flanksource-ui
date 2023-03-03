@@ -4,6 +4,7 @@ import { CheckIcon } from "@heroicons/react/solid";
 import { Controller } from "react-hook-form";
 import clsx from "clsx";
 import { IItem } from "../../types/IItem";
+import { IncidentStatus } from "../../api/services/incident";
 
 interface Props {
   className: string;
@@ -13,6 +14,7 @@ interface Props {
   onChange: (value: string) => void;
   name: string;
   items: { [k: string]: IItem };
+  checkStatus?: IncidentStatus;
 }
 
 export function SubtleDropdown({
@@ -22,7 +24,8 @@ export function SubtleDropdown({
   items = {},
   name,
   onChange = () => {},
-  value
+  value,
+  checkStatus
 }: Props) {
   items = Object.fromEntries(
     (Object.values(items) || []).map((item) => [
@@ -55,6 +58,7 @@ export function SubtleDropdown({
                 value={valueControlled}
                 label={label}
                 items={items}
+                checkStatus={checkStatus}
               />
             );
           }}
@@ -65,6 +69,7 @@ export function SubtleDropdown({
           items={items}
           onChange={onChange}
           value={value}
+          checkStatus={checkStatus}
         />
       )}
     </div>
@@ -76,15 +81,17 @@ interface IDropdownListbox {
   value: string;
   label: string;
   items: { [k: string]: IItem };
+  checkStatus?: IncidentStatus;
 }
 
 export const DropdownListbox = ({
   onChange,
   value,
   label,
-  items
+  items,
+  checkStatus
 }: IDropdownListbox) => (
-  <Listbox value={value} onChange={onChange}>
+  <Listbox value={value} onChange={onChange} disabled={checkStatus == "closed"}>
     {({ open }) => (
       <>
         {label && (

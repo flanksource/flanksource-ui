@@ -200,6 +200,7 @@ type AddResponderProps = {
   onSuccess?: () => void;
   onError?: () => void;
   incident: any;
+  watchStatus?: string;
 } & React.HTMLProps<HTMLDivElement>;
 
 export const getOrderedKeys = (responder: any): formPropKey[] => {
@@ -243,6 +244,7 @@ export const AddResponder = ({
   onError = () => {},
   className,
   incident,
+  watchStatus,
   ...rest
 }: AddResponderProps) => {
   const { loading, setLoading } = useLoader();
@@ -578,6 +580,7 @@ export const AddResponder = ({
           setIsOpen(true);
           setSteps(deepCloneSteps());
         }}
+        disabled={watchStatus == "closed"}
       >
         Add Responder
       </button>

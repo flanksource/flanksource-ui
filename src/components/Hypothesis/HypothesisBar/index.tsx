@@ -12,6 +12,7 @@ import { IconBaseProps, IconType } from "react-icons/lib";
 import { VscTypeHierarchy } from "react-icons/vsc";
 import { EvidenceType } from "../../../api/services/evidence";
 import { Hypothesis } from "../../../api/services/hypothesis";
+import { IncidentStatus } from "../../../api/services/incident";
 import { HypothesisAPIs } from "../../../pages/incident/IncidentDetails";
 import { AvatarGroup } from "../../AvatarGroup";
 import { EditableText } from "../../EditableText";
@@ -50,6 +51,7 @@ interface HypothesisBarProps {
   editTitle?: boolean;
   onToggleExpand: (expand: boolean) => void;
   onDisprove: () => void;
+  checkStatus?: IncidentStatus;
 }
 
 type Entries<T> = { [K in keyof T]: [K, T[K]] }[keyof T];
@@ -61,7 +63,8 @@ export function HypothesisBar({
   expanded,
   editTitle: initEditTitle = false,
   onToggleExpand,
-  onDisprove
+  onDisprove,
+  checkStatus
 }: HypothesisBarProps) {
   const {
     title = "",
@@ -145,6 +148,7 @@ export function HypothesisBar({
         <StatusDropdownContainer
           nodeId={hypothesis?.id}
           status={hypothesis?.status}
+          checkStatus={checkStatus}
           updateMutation={api?.updateMutation}
         />
         {!editTitle ? (
@@ -191,6 +195,7 @@ export function HypothesisBar({
             onDisprove={onDisprove}
             setDeleting={setDeleting}
             onEditTitle={() => setEditTitle(true)}
+            checkStatus={checkStatus}
           />
         </div>
       </div>

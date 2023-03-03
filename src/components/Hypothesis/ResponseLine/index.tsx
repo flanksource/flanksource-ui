@@ -13,6 +13,7 @@ import { Menu } from "../../Menu";
 import { BiCheck } from "react-icons/bi";
 import { IoMdRemoveCircle } from "react-icons/io";
 import { useCallback, useMemo } from "react";
+import { IncidentStatus } from "../../../api/services/incident";
 
 export type CreatedBy = User & {
   team: {
@@ -27,6 +28,7 @@ interface IProps {
   response: Comment & Evidence;
   onDelete?: () => void;
   markAsDefinitionOfDone?: () => void;
+  currentStatus?: IncidentStatus;
 }
 
 function isEvidence(x: Comment | Evidence) {
@@ -38,7 +40,8 @@ export function ResponseLine({
   created_at,
   response,
   onDelete,
-  markAsDefinitionOfDone
+  markAsDefinitionOfDone,
+  currentStatus
 }: IProps) {
   const actions = useMemo(() => {
     return {
@@ -104,6 +107,7 @@ export function ResponseLine({
           actions={actions}
           data={menuData}
           onClick={onClickCb}
+          currentStatus={currentStatus}
         />
       )}
     </div>
@@ -121,12 +125,14 @@ type ResponseLineMenuActionsProps = {
     definition_of_done: boolean;
   };
   onClick: (action: ActionType) => void;
+  currentStatus?: IncidentStatus;
 };
 
 function ResponseLineMenuActions({
   actions,
   data,
-  onClick
+  onClick,
+  currentStatus
 }: ResponseLineMenuActionsProps) {
   return (
     <Menu>
@@ -139,6 +145,7 @@ function ResponseLineMenuActions({
             onClick={() => {
               onClick("delete");
             }}
+            disabled={currentStatus == "closed"}
           >
             <div className="cursor-pointer flex w-full">
               <IconButton
@@ -167,6 +174,7 @@ function ResponseLineMenuActions({
             onClick={() => {
               onClick("markAsDefinitionOfDone");
             }}
+            disabled={currentStatus == "closed"}
           >
             <div className="cursor-pointer flex w-full">
               <IconButton

@@ -17,6 +17,7 @@ type Props = {
   evidence: Evidence;
   setOpenDeleteConfirmDialog: Dispatch<SetStateAction<boolean>>;
   setEvidenceBeingRemoved: Dispatch<SetStateAction<Evidence | undefined>>;
+  watchStatus?: string;
   refetch: () => void;
 };
 
@@ -24,6 +25,7 @@ export default function IncidentsDefinitionOfDoneItem({
   evidence,
   setEvidenceBeingRemoved,
   setOpenDeleteConfirmDialog,
+  watchStatus,
   refetch
 }: Props) {
   const [isEditingDoDScriptModalOpen, setIsEditingDoDScriptModalOpen] =
@@ -64,6 +66,7 @@ export default function IncidentsDefinitionOfDoneItem({
                     setIsEditingDoDScriptModalOpen(true);
                   }
                 }}
+                disabled={watchStatus == "closed"}
               >
                 <div className="cursor-pointer flex w-full">
                   <FaEdit />
@@ -73,7 +76,10 @@ export default function IncidentsDefinitionOfDoneItem({
                 </div>
               </Menu.Item>
               {evidence.type === EvidenceType.Comment && (
-                <Menu.Item onClick={() => setIsTogglingAsResolved(true)}>
+                <Menu.Item
+                  onClick={() => setIsTogglingAsResolved(true)}
+                  disabled={watchStatus == "closed"}
+                >
                   <div className="cursor-pointer flex w-full">
                     <IconButton
                       className="bg-transparent flex items-center"
@@ -103,6 +109,7 @@ export default function IncidentsDefinitionOfDoneItem({
                   setOpenDeleteConfirmDialog(true);
                   setEvidenceBeingRemoved(evidence);
                 }}
+                disabled={watchStatus == "closed"}
               >
                 <div className="cursor-pointer flex w-full">
                   <IconButton

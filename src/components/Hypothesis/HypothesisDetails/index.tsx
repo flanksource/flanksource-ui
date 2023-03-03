@@ -19,15 +19,22 @@ import {
   useGetHypothesisQuery,
   useIncidentQuery
 } from "../../../api/query-hooks";
+import { IncidentStatus } from "../../../api/services/incident";
 
 interface IProps {
   node: TreeNode<Hypothesis>;
   api: any;
+  currentStatus?: IncidentStatus;
 }
 
 type Response = Evidence & Comment;
 
-export function HypothesisDetails({ node, api, ...rest }: IProps) {
+export function HypothesisDetails({
+  node,
+  api,
+  currentStatus,
+  ...rest
+}: IProps) {
   const incidentQuery = useIncidentQuery(node.incident_id);
   const { data: hypothesis, refetch: refetchHypothesis } =
     useGetHypothesisQuery(node.id, {});
@@ -140,6 +147,7 @@ export function HypothesisDetails({ node, api, ...rest }: IProps) {
                       }
                     : undefined
                 }
+                currentStatus={currentStatus}
               />
             ))}
         </ul>

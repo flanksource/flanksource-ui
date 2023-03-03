@@ -6,6 +6,7 @@ import {
   Hypothesis,
   HypothesisStatus
 } from "../../../api/services/hypothesis";
+import { IncidentStatus } from "../../../api/services/incident";
 import { HypothesisAPIs } from "../../../pages/incident/IncidentDetails";
 import { HypothesisBar } from "../HypothesisBar";
 import { HypothesisDetails } from "../HypothesisDetails";
@@ -17,6 +18,7 @@ interface IHypothesisNodeProps {
   setSelectedNode: (v: Hypothesis) => void;
   setCreateHypothesisModalIsOpen: (v: boolean) => void;
   api: HypothesisAPIs;
+  checkStatus?: IncidentStatus | undefined;
 }
 
 export const HypothesisNode = (props: IHypothesisNodeProps) => {
@@ -26,10 +28,13 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
     showComments: parentShowComments,
     setSelectedNode,
     setCreateHypothesisModalIsOpen,
-    api
+    api,
+    checkStatus
   } = props;
 
   const isRoot = node?.type === "root" || node?.parent_id == null;
+
+  const currentStatus = checkStatus;
 
   const handlerOpenCreateHypothesisModal = () => {
     setSelectedNode(node);
@@ -77,6 +82,7 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
                 }
               });
             }}
+            checkStatus={checkStatus}
           />
         </div>
       )}
@@ -89,9 +95,13 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
             )}
           >
             <div className="px-5">
-              <HypothesisDetails node={node} api={api} />
+              <HypothesisDetails
+                node={node}
+                api={api}
+                currentStatus={currentStatus}
+              />
             </div>
-            {node?.type !== "solution" && (
+            {node?.type !== "solution" && currentStatus !== "closed" && (
               <div
                 className="text-gray underline flex justify-center items-end cursor-pointer pb-4"
                 onClick={handlerOpenCreateHypothesisModal}
