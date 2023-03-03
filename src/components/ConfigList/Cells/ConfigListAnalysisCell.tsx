@@ -10,7 +10,14 @@ import { MdSecurity } from "react-icons/md";
 import ReactTooltip from "react-tooltip";
 import { ConfigItem } from "../../../api/services/configs";
 
-function AnalysisIcon({ analysis }: { analysis: ConfigItem["analysis"][0] }) {
+export function AnalysisIcon({
+  analysis
+}: {
+  analysis: {
+    analysis_type: string;
+    severity: string;
+  };
+}) {
   let color = "44403c";
 
   if (analysis.severity === "critical") {

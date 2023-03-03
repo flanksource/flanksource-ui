@@ -51,7 +51,7 @@ export const Pagination = ({
               setPageSize(Number(e.target.value));
             }}
           >
-            {[50, 100, 150, 200, 250].map((pageSize) => (
+            {[50, 100, 150, 200, 250, 300, 500, 1000].map((pageSize) => (
               <option key={pageSize} value={pageSize}>
                 {pageSize}
               </option>
