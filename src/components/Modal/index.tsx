@@ -52,7 +52,7 @@ export function Modal({
         as="div"
         auto-reopen="true"
         className="fixed z-50 inset-0 overflow-y-auto"
-        onClose={allowBackgroundClose ? onClose : () => {}}
+        onClose={allowBackgroundClose ? () => onClose() : () => {}}
         {...rest}
       >
         <div
@@ -99,11 +99,11 @@ export function Modal({
                     <button
                       type="button"
                       className="text-gray-400 hover:text-gray-500 focus:outline-none"
-                      onClick={onClose}
+                      onClick={() => onClose()}
                     >
                       <span className="sr-only">Close</span>
                       <XIcon
-                        className="drop-shadow w-6 h-6"
+                        className="fill-gray-700 w-6 h-6"
                         aria-hidden="true"
                       />
                     </button>

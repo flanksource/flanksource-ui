@@ -48,6 +48,7 @@ import { UsersPage } from "./pages/UsersPage";
 import { HiUser } from "react-icons/hi";
 import { FaTasks } from "react-icons/fa";
 import JobsHistorySettingsPage from "./components/JobsHistory/JobsHistorySettingsPage";
+import { ConfigInsightsPage } from "./pages/config/ConfigInsightsList";
 
 const defaultStaleTime = 1000 * 60 * 5;
 
@@ -168,6 +169,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
       <Route path="configs" element={sidebar}>
         <Route index element={<ConfigListPage />} />
         <Route path="changes" element={<ConfigChangesPage />} />
+        <Route path="insights" element={<ConfigInsightsPage />} />
 
         <Route path=":id">
           <Route

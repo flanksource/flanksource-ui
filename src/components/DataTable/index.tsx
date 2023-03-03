@@ -95,6 +95,7 @@ type DataTableProps<TableColumns, Data extends TableColumns> = {
    */
   determineRowClassNamesCallback?: (row: Row<TableColumns>) => string;
   pagination?: PaginationOptions;
+  enableServerSideSorting?: boolean;
 } & React.HTMLAttributes<HTMLTableElement>;
 
 export function DataTable<TableColumns, Data extends TableColumns>({
@@ -114,6 +115,7 @@ export function DataTable<TableColumns, Data extends TableColumns>({
   determineRowClassNamesCallback = () => "",
   pagination,
   paginationClassName = "py-4",
+  enableServerSideSorting = false,
   ...rest
 }: DataTableProps<TableColumns, Data>) {
   const tableContainerRef = useRef<HTMLDivElement>(null);
@@ -164,6 +166,7 @@ export function DataTable<TableColumns, Data extends TableColumns>({
         ? getPaginationRowModel()
         : undefined,
     manualPagination: !!pagination?.enable && pagination.remote,
+    manualSorting: enableServerSideSorting,
     enableHiding: true,
     onSortingChange: (sorting) => {
       if (onTableSortByChanged) {

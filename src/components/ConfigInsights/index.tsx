@@ -13,6 +13,7 @@ import { useGetConfigInsights } from "../../api/query-hooks";
 import { ConfigAnalysisLink } from "../ConfigAnalysisLink/ConfigAnalysisLink";
 import { relativeDateTime } from "../../utils/date";
 import TableSkeletonLoader from "../SkeletonLoader/TableSkeletonLoader";
+import { ConfigItem } from "../../api/services/configs";
 
 export type ConfigTypeInsights = {
   id: string;
@@ -31,6 +32,7 @@ export type ConfigTypeInsights = {
   created_at: string | number | Date | null | undefined;
   source: any;
   created_by: any;
+  config?: ConfigItem;
 };
 
 type Props = {

@@ -1,6 +1,7 @@
 // http://incident-commander.canary.lab.flanksource.com/config/db
 
 import { ConfigTypeChanges } from "../../components/ConfigChanges";
+import { ConfigTypeInsights } from "../../components/ConfigInsights";
 import { Config, ConfigDB, IncidentCommander } from "../axios";
 import { resolve } from "../resolve";
 
@@ -49,6 +50,11 @@ interface Analysis {
   analysis_type: string;
   analyzer: string;
 }
+
+export type PaginationInfo = {
+  pageSize: number;
+  pageIndex: number;
+};
 
 // Config Items
 
@@ -227,7 +233,7 @@ export const getConfigsChangesTypesFilter = async () => {
 
 export const getConfigInsights = async <T>(configId: string) => {
   const res = await ConfigDB.get<T>(
-    `/config_analysis?config_id=eq.${configId}`
+    `/config_analysis?select=*,config:configs(id,name,config_type,external_type)&config_id=eq.${configId}`
   );
   return res.data;
 };
@@ -237,9 +243,45 @@ export const getConfigInsight = async <T>(
   configInsightId: string
 ) => {
   const res = await ConfigDB.get<T>(
-    `/config_analysis?config_id=eq.${configId}&id=eq.${configInsightId}`
+    `/config_analysis?select=*,config:configs(id,name,config_type,external_type)&config_id=eq.${configId}&id=eq.${configInsightId}`
   );
   return res.data;
+};
+
+export const getAllConfigInsights = async (
+  queryParams: { status?: string; type?: string; severity?: string },
+  sortBy: { sortBy?: string; sortOrder?: "asc" | "desc" },
+  { pageIndex, pageSize }: PaginationInfo
+) => {
+  const pagingParams = `&limit=${pageSize}&offset=${pageIndex * pageSize}`;
+
+  const { status, type, severity } = queryParams;
+
+  const params = {
+    status: status && `&status=eq.${status}`,
+    type: type && `&analysis_type=eq.${type}`,
+    severity: severity && `&severity=eq.${severity}`
+  };
+
+  const queryParamsString = Object.values(params)
+    .filter((value) => !!value)
+    .join("");
+
+  const sortString = sortBy.sortBy
+    ? `&order=${sortBy.sortBy}.${sortBy.sortOrder}`
+    : // default sort by first_observed
+      "&order=first_observed.desc";
+
+  return resolve(
+    ConfigDB.get<ConfigTypeInsights[] | null>(
+      `/config_analysis?select=*,config:configs(id,name,config_type,external_type)${pagingParams}${queryParamsString}${sortString}`,
+      {
+        headers: {
+          Prefer: "count=exact"
+        }
+      }
+    )
+  );
 };
 
 export const getConfigAnalysis = async <T>(configId: string) => {
