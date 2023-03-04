@@ -1,5 +1,8 @@
 .mixed {
-  border-radius: 2;
-  border: 3px solid rgba(52, 211, 153, 1);
+  --bg-opacity: 1;
+  border-radius: 50%;
   background: rgba(248, 113, 113, 1);
+  box-shadow: 0px 0px 0px 2px rgb(255, 255, 255),
+    0px 0px 0px 5px rgba(104, 211, 145, var(--bg-opacity));
+  margin: 0.37em;
 }
