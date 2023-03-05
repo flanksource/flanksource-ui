@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { MdOutlineInsights } from "react-icons/md";
 import ReactTooltip from "react-tooltip";
 import CollapsiblePanel from "../CollapsiblePanel";
-import EmptyState from "../EmptyState";
 import Title from "../Title/title";
 import {
   sanitizeHTMLContent,
@@ -12,8 +11,8 @@ import {
 import { useGetConfigInsights } from "../../api/query-hooks";
 import { ConfigAnalysisLink } from "../ConfigAnalysisLink/ConfigAnalysisLink";
 import { relativeDateTime } from "../../utils/date";
-import TableSkeletonLoader from "../SkeletonLoader/TableSkeletonLoader";
 import { ConfigItem } from "../../api/services/configs";
+import { DetailsTable } from "../DetailsTable/DetailsTable";
 
 export type ConfigTypeInsights = {
   id: string;
@@ -39,24 +38,54 @@ type Props = {
   configID: string;
 };
 
+const columns = [
+  {
+    key: "analysis",
+    label: "Name"
+  },
+  {
+    key: "age",
+    label: "Age"
+  }
+];
+
 function ConfigInsightsDetails({ configID }: Props) {
-  const [configInsights, setConfigInsights] = useState<ConfigTypeInsights[]>(
-    []
-  );
+  const [configInsights, setConfigInsights] = useState<
+    {
+      age: string;
+      analysis: React.ReactNode;
+    }[]
+  >([]);
   const { data: response = [], isLoading } =
     useGetConfigInsights<ConfigTypeInsights[]>(configID);
 
   useEffect(() => {
-    const data = response?.map((item) => {
-      return {
-        ...item,
-        sanitizedMessageHTML: sanitizeHTMLContent(item.message),
-        sanitizedMessageTxt: truncateText(
-          sanitizeHTMLContentToText(item.message)!,
-          500
-        )
-      };
-    });
+    const data = response
+      ?.map((item) => {
+        return {
+          ...item,
+          sanitizedMessageHTML: sanitizeHTMLContent(item.message),
+          sanitizedMessageTxt: truncateText(
+            sanitizeHTMLContentToText(item.message)!,
+            500
+          )
+        };
+      })
+      .map((item) => {
+        return {
+          age: relativeDateTime(item.first_observed),
+          analysis: (
+            <div
+              key={item.id}
+              data-html={true}
+              data-tip={item.sanitizedMessageTxt}
+              data-class="max-w-[20rem]"
+            >
+              <ConfigAnalysisLink configAnalysis={item} />
+            </div>
+          )
+        };
+      });
     setConfigInsights(data);
   }, [response]);
 
@@ -66,46 +95,11 @@ function ConfigInsightsDetails({ configID }: Props) {
 
   return (
     <div className="flex flex-row space-y-2">
-      {isLoading ? (
-        <TableSkeletonLoader />
-      ) : configInsights.length > 0 ? (
-        <table className="w-full text-sm text-left">
-          <thead className="text-sm uppercase text-gray-600">
-            <tr>
-              <th scope="col" className="p-2">
-                Name
-              </th>
-              <th scope="col" className="p-2">
-                Age
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {configInsights.map((insight) => (
-              <tr key={insight.id}>
-                <td
-                  data-html={true}
-                  data-tip={insight.sanitizedMessageTxt}
-                  data-class="max-w-[20rem]"
-                  className="p-2 font-medium text-black whitespace-nowrap cursor-pointer"
-                >
-                  <ConfigAnalysisLink
-                    key={insight.id}
-                    configAnalysis={insight}
-                  />
-                </td>
-                <td className="p-2 ">
-                  {relativeDateTime(insight.first_observed)}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      ) : (
-        <div className="w-full">
-          <EmptyState />
-        </div>
-      )}
+      <DetailsTable
+        loading={isLoading}
+        data={configInsights}
+        columns={columns}
+      />
     </div>
   );
 }

@@ -5,8 +5,7 @@ import { ViewType } from "../../types";
 import { relativeDateTime } from "../../utils/date";
 import CollapsiblePanel from "../CollapsiblePanel";
 import { ConfigDetailsChanges } from "../ConfigDetailsChanges/ConfigDetailsChanges";
-import EmptyState from "../EmptyState";
-import TableSkeletonLoader from "../SkeletonLoader/TableSkeletonLoader";
+import { DetailsTable } from "../DetailsTable/DetailsTable";
 import Title from "../Title/title";
 
 export type ConfigTypeChanges = {
@@ -28,56 +27,55 @@ type Props = {
   configID: string;
 };
 
+const columns = [
+  {
+    key: "change",
+    label: "Name"
+  },
+  {
+    key: "age",
+    label: "Age"
+  }
+];
+
 export function ConfigChangesDetails({ configID }: Props) {
-  const [configChanges, setConfigChanges] = useState<ConfigTypeChanges[]>([]);
+  const [configChanges, setConfigChanges] = useState<
+    {
+      age: string;
+      change: React.ReactNode;
+    }[]
+  >([]);
   const { data, isLoading } = useGetConfigChangesQueryById(configID);
 
   useEffect(() => {
     if (!data) {
       return;
     }
-    setConfigChanges(data);
+    const changes = data.map((item) => {
+      return {
+        age: relativeDateTime(item.created_at),
+        change: (
+          <div className="whitespace-nowrap">
+            <ConfigDetailsChanges
+              key={item.id}
+              id={item.id}
+              configId={item.config_id}
+              viewType={ViewType.summary}
+            />
+          </div>
+        )
+      };
+    });
+    setConfigChanges(changes);
   }, [data, configID]);
 
   return (
     <div className="flex flex-col space-y-2">
-      {isLoading ? (
-        <TableSkeletonLoader />
-      ) : configChanges.length > 0 ? (
-        <table className="w-full text-sm text-left">
-          <thead className="text-sm uppercase text-gray-600">
-            <tr>
-              <th scope="col" className="p-2">
-                Name
-              </th>
-              <th scope="col" className="p-2">
-                Age
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {configChanges.map((configChange) => (
-              <tr key={configChange.id}>
-                <td className="p-2 font-medium text-black whitespace-nowrap">
-                  <ConfigDetailsChanges
-                    key={configChange.id}
-                    id={configChange.id}
-                    configId={configChange.config_id}
-                    viewType={ViewType.summary}
-                  />
-                </td>
-                <td className="p-2 ">
-                  <div className="block">
-                    {relativeDateTime(configChange.created_at)}
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      ) : (
-        <EmptyState />
-      )}
+      <DetailsTable
+        loading={isLoading}
+        data={configChanges}
+        columns={columns}
+      />
     </div>
   );
 }
