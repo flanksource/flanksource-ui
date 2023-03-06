@@ -11,7 +11,7 @@ export const resourceTypeMap = {
   teams: "team",
   incident_rules: "incident_rule",
   config_scrapers: "config_scraper",
-  templates: "template",
+  templates: "system_template",
   canaries: "canary"
 } as const;
 
