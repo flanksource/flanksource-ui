@@ -32,16 +32,27 @@ export function ConfigTypesDropdown({
     }
   );
 
+  function sortOptions(a: { name: string }, b: { name: string }) {
+    if (a.name === "All") {
+      return -1;
+    }
+    if (b.name === "All") {
+      return 1;
+    }
+    return a.name.localeCompare(b.name);
+  }
+
   const configItemsOptionsItems = useMemo(
-    () => [
-      {
-        id: "All",
-        name: "All",
-        description: "All",
-        value: "All"
-      },
-      ...(configTypeOptions || [])
-    ],
+    () =>
+      [
+        {
+          id: "All",
+          name: "All",
+          description: "All",
+          value: "All"
+        },
+        ...(configTypeOptions || [])
+      ].sort(sortOptions),
     [configTypeOptions]
   );
 
