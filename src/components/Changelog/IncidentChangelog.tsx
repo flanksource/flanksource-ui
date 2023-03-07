@@ -6,6 +6,8 @@ import {
   useIncidentQuery,
   useIncidentsHistoryQuery
 } from "../../api/query-hooks";
+import { Badge } from "../Badge";
+import { Chip } from "../Chip";
 import { ClickableSvg } from "../ClickableSvg/ClickableSvg";
 import CollapsiblePanel from "../CollapsiblePanel";
 import { Loading } from "../Loading";
@@ -37,10 +39,15 @@ export function IncidentChangelog({
   return (
     <CollapsiblePanel
       Header={
-        <div className="flex flex-row w-full items-center">
+        <div className="flex flex-row w-full items-center space-x-2">
           <Title
             title="Changelog"
             icon={<RiPlayListAddFill className="w-6 h-6" />}
+          />
+          <Badge
+            className="w-5 h-5 flex items-center justify-center"
+            roundedClass="rounded-full"
+            text={incidentHistory?.length ?? 0}
           />
           <div
             className="relative z-0 inline-flex justify-end ml-5"

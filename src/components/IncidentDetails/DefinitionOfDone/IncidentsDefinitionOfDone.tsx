@@ -12,6 +12,7 @@ import { MdRefresh } from "react-icons/md";
 import { RiFullscreenLine } from "react-icons/ri";
 import { BsCardChecklist } from "react-icons/bs";
 import { ClickableSvg } from "../../ClickableSvg/ClickableSvg";
+import { Badge } from "../../Badge";
 
 type DefinitionOfDoneProps = {
   incidentId: string;
@@ -104,10 +105,15 @@ export function IncidentsDefinitionOfDone({
   return (
     <CollapsiblePanel
       Header={
-        <div className="flex flex-row w-full items-center">
+        <div className="flex flex-row w-full items-center space-x-2">
           <Title
             title="Definition of done"
             icon={<BsCardChecklist className="w-6 h-6" />}
+          />
+          <Badge
+            className="w-5 h-5 flex items-center justify-center"
+            roundedClass="rounded-full"
+            text={dodEvidences?.length ?? 0}
           />
           <div
             className="relative z-0 inline-flex justify-end ml-5"

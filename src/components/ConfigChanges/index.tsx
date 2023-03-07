@@ -3,6 +3,7 @@ import { GoDiff } from "react-icons/go";
 import { useGetConfigChangesQueryById } from "../../api/query-hooks";
 import { ViewType } from "../../types";
 import { relativeDateTime } from "../../utils/date";
+import { Badge } from "../Badge";
 import CollapsiblePanel from "../CollapsiblePanel";
 import { ConfigDetailsChanges } from "../ConfigDetailsChanges/ConfigDetailsChanges";
 import { DetailsTable } from "../DetailsTable/DetailsTable";
@@ -81,10 +82,19 @@ export function ConfigChangesDetails({ configID }: Props) {
 }
 
 export default function ConfigChanges(props: Props) {
+  const { data } = useGetConfigChangesQueryById(props.configID);
+
   return (
     <CollapsiblePanel
       Header={
-        <Title title="Changes" icon={<GoDiff className="w-6 h-auto" />} />
+        <div className="flex flex-row w-full items-center space-x-2">
+          <Title title="Changes" icon={<GoDiff className="w-6 h-auto" />} />
+          <Badge
+            className="w-5 h-5 flex items-center justify-center"
+            roundedClass="rounded-full"
+            text={data?.length ?? 0}
+          />
+        </div>
       }
     >
       <ConfigChangesDetails {...props} />

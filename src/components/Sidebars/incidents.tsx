@@ -10,6 +10,7 @@ import { Link } from "react-router-dom";
 import { IncidentStatusTag } from "../IncidentStatusTag";
 import { IncidentTypeIcon } from "../incidentTypeTag";
 import { DetailsTable } from "../DetailsTable/DetailsTable";
+import { Badge } from "../Badge";
 
 type Props = {
   topologyId?: string;
@@ -82,10 +83,15 @@ export default function Incidents({ topologyId, configId }: Props) {
   return (
     <CollapsiblePanel
       Header={
-        <div className="flex flex-row items-center justify-center">
+        <div className="flex flex-row items-center justify-center space-x-2">
           <Title
             title="Incidents"
             icon={<ImLifebuoy className="w-6 h-auto" />}
+          />
+          <Badge
+            className="w-5 h-5 flex items-center justify-center"
+            roundedClass="rounded-full"
+            text={incidents?.length ?? 0}
           />
           <div className="ml-5 text-right grow">
             <IncidentsFilterBar

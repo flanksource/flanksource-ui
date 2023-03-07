@@ -13,6 +13,7 @@ import { ConfigAnalysisLink } from "../ConfigAnalysisLink/ConfigAnalysisLink";
 import { relativeDateTime } from "../../utils/date";
 import { ConfigItem } from "../../api/services/configs";
 import { DetailsTable } from "../DetailsTable/DetailsTable";
+import { Badge } from "../Badge";
 
 export type ConfigTypeInsights = {
   id: string;
@@ -105,13 +106,24 @@ function ConfigInsightsDetails({ configID }: Props) {
 }
 
 export default function ConfigInsights(props: Props) {
+  const { data: response = [] } = useGetConfigInsights<ConfigTypeInsights[]>(
+    props.configID
+  );
+
   return (
     <CollapsiblePanel
       Header={
-        <Title
-          title="Insights"
-          icon={<MdOutlineInsights className="w-6 h-auto" />}
-        />
+        <div className="flex flex-row w-full items-center space-x-2">
+          <Title
+            title="Insights"
+            icon={<MdOutlineInsights className="w-6 h-auto" />}
+          />
+          <Badge
+            className="w-5 h-5 flex items-center justify-center"
+            roundedClass="rounded-full"
+            text={response.length ?? 0}
+          />
+        </div>
       }
     >
       <ConfigInsightsDetails {...props} />
