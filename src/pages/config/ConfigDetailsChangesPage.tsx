@@ -3,13 +3,14 @@ import { ConfigChangeHistory } from "../../components/ConfigChangeHistory";
 import { InfoMessage } from "../../components/InfoMessage";
 import { SearchLayout } from "../../components/Layout";
 import ConfigSidebar from "../../components/ConfigSidebar";
-import { ConfigsPageTabs } from "../../components/ConfigsPage/ConfigsPageTabs";
 import { ConfigsDetailsBreadcrumbNav } from "../../components/BreadcrumbNav/ConfigsDetailsBreadCrumb";
 import {
   useGetConfigChangesQueryById,
   useGetConfigByIdQuery
 } from "../../api/query-hooks";
 import { Head } from "../../components/Head/Head";
+import TabbedLinks from "../../components/Tabs/TabbedLinks";
+import { useConfigDetailsTabs } from "../../components/ConfigsPage/ConfigTabsLinks";
 
 export function ConfigDetailsChangesPage() {
   const { id } = useParams();
@@ -21,11 +22,9 @@ export function ConfigDetailsChangesPage() {
     refetch
   } = useGetConfigChangesQueryById(id!);
 
-  const {
-    data: configItem,
-    isLoading: itemLoading,
-    error: itemError
-  } = useGetConfigByIdQuery(id!);
+  const { data: configItem, error: itemError } = useGetConfigByIdQuery(id!);
+
+  const configTabList = useConfigDetailsTabs();
 
   if (error) {
     const errorMessage =
@@ -58,23 +57,24 @@ export function ConfigDetailsChangesPage() {
         }
         onRefresh={refetch}
         loading={isLoading}
-        contentClass="p-0 h-full"
+        contentClass="p-0 h-full overflow-y-auto"
       >
         <div className={`flex flex-row min-h-full h-auto`}>
-          <div
-            className={`flex flex-col flex-1 p-6 pb-0 min-h-full h-auto overflow-auto`}
-          >
-            <ConfigsPageTabs basePath={`configs/${id}`} />
+          <TabbedLinks tabLinks={configTabList}>
             <div
-              className="flex flex-col items-start overflow-y-auto"
-              style={{ maxHeight: "calc(100vh - 8.5rem)" }}
+              className={`flex flex-col flex-1 p-6 pb-0 min-h-full h-auto overflow-auto`}
             >
-              <ConfigChangeHistory
-                data={historyData ?? []}
-                isLoading={isLoading}
-              />
+              <div
+                className="flex flex-col items-start overflow-y-auto"
+                style={{ maxHeight: "calc(100vh - 8.5rem)" }}
+              >
+                <ConfigChangeHistory
+                  data={historyData ?? []}
+                  isLoading={isLoading}
+                />
+              </div>
             </div>
-          </div>
+          </TabbedLinks>
           <ConfigSidebar />
         </div>
       </SearchLayout>

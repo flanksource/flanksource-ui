@@ -5,9 +5,10 @@ import ConfigList from "../../components/ConfigList";
 import { useConfigPageContext } from "../../context/ConfigPageContext";
 import { useAllConfigsQuery } from "../../api/query-hooks";
 import { SearchLayout } from "../../components/Layout";
-import { ConfigsPageTabs } from "../../components/ConfigsPage/ConfigsPageTabs";
 import ConfigsListFilters from "../../components/ConfigsListFilters";
 import { Head } from "../../components/Head/Head";
+import TabbedLinks from "../../components/Tabs/TabbedLinks";
+import { configTabsLists } from "../../components/ConfigsPage/ConfigTabsLinks";
 
 export function ConfigListPage() {
   const [params] = useSearchParams();
@@ -94,20 +95,21 @@ export function ConfigListPage() {
         contentClass="p-0 h-full"
       >
         <div className={`flex flex-row h-full`}>
-          <div className={`flex flex-col flex-1 p-6 pb-0 h-full `}>
-            <div className="flex flex-row items-center pb-6">
-              <ConfigsListFilters />
-            </div>
+          <TabbedLinks tabLinks={configTabsLists}>
+            <div className={`flex flex-col flex-1 h-full space-y-4`}>
+              <div className="flex flex-row items-center">
+                <ConfigsListFilters />
+              </div>
 
-            <ConfigsPageTabs basePath={"configs"} />
-            <div className="flex flex-col h-full overflow-y-hidden">
-              <ConfigList
-                data={data!}
-                handleRowClick={handleRowClick}
-                isLoading={loading}
-              />
+              <div className="flex flex-col h-full overflow-y-hidden">
+                <ConfigList
+                  data={data!}
+                  handleRowClick={handleRowClick}
+                  isLoading={loading}
+                />
+              </div>
             </div>
-          </div>
+          </TabbedLinks>
         </div>
       </SearchLayout>
     </>
