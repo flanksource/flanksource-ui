@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { UseMutationResult } from "@tanstack/react-query";
-import { Link, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { EvidenceType } from "../../api/services/evidence";
 import {
   createHypothesis,
@@ -87,6 +87,7 @@ function buildTreeFromHypothesisList(list: Hypothesis[]) {
 
 export function IncidentDetailsPage() {
   const { id: incidentId } = useParams();
+  const navigate = useNavigate();
   const isNewlyCreated = false; // TODO: set this to true if its a newly created incident
   const { isLoading, data: incident, refetch } = useIncidentQuery(incidentId!);
   const [refetchChangelog, setRefetchChangelog] = useState(0);
@@ -194,7 +195,7 @@ export function IncidentDetailsPage() {
           <div className="flex my-auto">
             <span className="text-xl flex">
               {" "}
-              <Link to="/incidents">Incidents&nbsp;</Link>
+              <button onClick={() => navigate(-1)}>Incidents&nbsp;</button>
               {" / "}
               {!isLoading && (
                 <div className="font-semibold">

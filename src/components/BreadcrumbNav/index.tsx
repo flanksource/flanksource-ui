@@ -1,11 +1,13 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 type BreadcrumbNavProps = {
   list: Array<string | React.ReactNode | { to: string; title: string }>;
 };
 
 export function BreadcrumbNav({ list }: BreadcrumbNavProps) {
+  const navigate = useNavigate();
+
   const navs = list
     .map((nav, i) => {
       let comp = null;
@@ -25,13 +27,13 @@ export function BreadcrumbNav({ list }: BreadcrumbNavProps) {
         "title" in nav
       ) {
         comp = (
-          <Link
+          <button
             key={nav.to}
-            to={nav.to}
+            onClick={() => navigate(-1)}
             className="text-blue-600 text-xl font-semibold whitespace-nowrap mr-1"
           >
             {nav.title}
-          </Link>
+          </button>
         );
       } else {
         /* eslint-disable react/no-array-index-key */
