@@ -33,6 +33,7 @@ import { IncidentChangelog } from "../Changelog/IncidentChangelog";
 import SlidingSideBar from "../SlidingSideBar";
 import { MdOutlineQuickreply } from "react-icons/md";
 import { ClickableSvg } from "../ClickableSvg/ClickableSvg";
+import { Badge } from "../Badge";
 
 export const priorities = Object.entries(severityItems).map(([key, value]) => ({
   label: value.name,
@@ -309,10 +310,17 @@ export const IncidentSidebar = ({
       </CollapsiblePanel>
       <CollapsiblePanel
         Header={
-          <Title
-            title="Responders"
-            icon={<MdOutlineQuickreply className="w-6 h-6" />}
-          />
+          <div className="flex flex-row w-full items-center space-x-2">
+            <Title
+              title="Responders"
+              icon={<MdOutlineQuickreply className="w-6 h-6" />}
+            />
+            <Badge
+              className="w-5 h-5 flex items-center justify-center"
+              roundedClass="rounded-full"
+              text={responders?.length ?? 0}
+            />
+          </div>
         }
       >
         <div className="flex flex-col">

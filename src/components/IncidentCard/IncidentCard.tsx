@@ -3,8 +3,8 @@ import { Incident } from "../../api/services/incident";
 import { IncidentStatusTag } from "../IncidentStatusTag";
 import { IncidentTypeIcon } from "../incidentTypeTag";
 
-import dayjs from "dayjs";
 import clsx from "clsx";
+import { relativeDateTime } from "../../utils/date";
 
 type IncidentCardProps = {
   incident: Incident;
@@ -29,7 +29,7 @@ export default function IncidentCard({
         </Link>
         <IncidentStatusTag status={incident.status!} className="ml-1" />
         <div className="text-right grow text-xs">
-          {dayjs(incident.created_at).fromNow()}
+          {relativeDateTime(incident.created_at)}
         </div>
       </div>
     </div>
