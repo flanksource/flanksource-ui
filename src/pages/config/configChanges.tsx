@@ -1,10 +1,11 @@
 import { useMemo, useState } from "react";
 import { useGetAllConfigsChangesQuery } from "../../api/query-hooks";
 import { ConfigChangeHistory } from "../../components/ConfigChangeHistory";
-import { ConfigsPageTabs } from "../../components/ConfigsPage/ConfigsPageTabs";
+import { configTabsLists } from "../../components/ConfigsPage/ConfigTabsLinks";
 import { Head } from "../../components/Head/Head";
 import { InfoMessage } from "../../components/InfoMessage";
 import { SearchLayout } from "../../components/Layout";
+import TabbedLinks from "../../components/Tabs/TabbedLinks";
 
 export function ConfigChangesPage() {
   const [{ pageIndex, pageSize }, setPageState] = useState({
@@ -47,18 +48,21 @@ export function ConfigChangesPage() {
         loading={isLoading}
         contentClass="p-0 h-full"
       >
-        <div className={`flex flex-col p-6 pb-0 h-full flex-1 overflow-auto`}>
-          <ConfigsPageTabs basePath={"configs"} />
-          {error ? (
-            <InfoMessage message={errorMessage} />
-          ) : (
-            <ConfigChangeHistory
-              data={data?.data ?? []}
-              isLoading={isLoading}
-              linkConfig
-              pagination={pagination}
-            />
-          )}
+        <div className={`flex flex-col h-full`}>
+          <TabbedLinks tabLinks={configTabsLists}>
+            <div className="flex flex-col h-full overflow-y-hidden">
+              {error ? (
+                <InfoMessage message={errorMessage} />
+              ) : (
+                <ConfigChangeHistory
+                  data={data?.data ?? []}
+                  isLoading={isLoading}
+                  linkConfig
+                  pagination={pagination}
+                />
+              )}
+            </div>
+          </TabbedLinks>
         </div>
       </SearchLayout>
     </>
