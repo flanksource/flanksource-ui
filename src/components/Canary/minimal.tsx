@@ -119,7 +119,7 @@ const MinimalCanaryFC = ({
             timeRange={timeRange}
             className={`flex flex-col overflow-y-hidden ${mixins.appleScrollbar}`}
           />
-          <div className="rounded-t-lg flex space-x-2 bg-gray-100 px-8 py-4 justify-end absolute w-full bottom-0 left-0">
+          <div className="flex space-x-2 border-y border-y-gray-100 px-8 py-4 justify-end absolute w-full bottom-0 left-0">
             {selectedCheck?.canary_id && (
               <HealthCheckEdit check={selectedCheck as HealthCheck} />
             )}
