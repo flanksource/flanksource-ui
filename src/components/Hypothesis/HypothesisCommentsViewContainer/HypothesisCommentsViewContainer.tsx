@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Comment } from "../../../api/services/comments";
 import { dateSortHelper, relativeDateTime } from "../../../utils/date";
 import { CommentInput, CommentText } from "../../Comment";
@@ -20,6 +20,7 @@ import { useIncidentQuery } from "../../../api/query-hooks";
 import clsx from "clsx";
 import { IoMdSend } from "react-icons/io";
 import { OptionItem, SearchSelect } from "../../SearchSelect";
+import useRunTaskOnPropChange from "../../../hooks/useRunTaskOnPropChange";
 
 interface IProps {
   incidentId: string;
@@ -101,7 +102,15 @@ export function HypothesisCommentsViewContainer({
     return data;
   }, [loadedTrees]);
 
-  useEffect(() => {
+  const clientTopFn = useCallback(() => {
+    return commentRef?.current?.getBoundingClientRect()?.top || 0;
+  }, []);
+
+  const scrollHeightFn = useCallback(() => {
+    return commentRef.current?.firstElementChild?.scrollHeight || 0;
+  }, []);
+
+  useRunTaskOnPropChange<number>(clientTopFn, () => {
     if (!commentRef.current) {
       return;
     }
@@ -112,14 +121,12 @@ export function HypothesisCommentsViewContainer({
     commentRef.current.style.setProperty("height", height);
   });
 
-  useEffect(() => {
-    const intervalRef = setInterval(() => {
-      if (commentRef.current) {
-        commentRef.current.scrollTop = commentRef.current.scrollHeight;
-        clearInterval(intervalRef);
-      }
-    });
-  }, [clientHeight, comments]);
+  useRunTaskOnPropChange<number>(scrollHeightFn, () => {
+    if (commentRef.current?.firstElementChild) {
+      commentRef.current.firstElementChild.scrollTop =
+        2 * commentRef.current.firstElementChild.scrollHeight;
+    }
+  });
 
   const handleComment = () => {
     if (!selectedHypothesis) {
@@ -153,22 +160,25 @@ export function HypothesisCommentsViewContainer({
 
   return (
     <div className="flex flex-col w-full">
-      <div ref={commentRef} className="flex flex-col overflow-y-auto p-4">
-        {comments.map(({ data, hypothesis, type }, index) => (
-          <HypothesisCommentViewEntry
-            type={
-              data.type
-                ? CommentViewEntryTypes.evidence
-                : CommentViewEntryTypes.comment
-            }
-            key={data.id}
-            hypothesis={hypothesis}
-            created_by={data.created_by as CreatedBy}
-            created_at={data.created_at}
-            data={data}
-            lastComment={index === comments.length - 1}
-          />
-        ))}
+      <div ref={commentRef} className="flex flex-col justify-end">
+        <div className="flex flex-col overflow-y-auto p-4">
+          {comments.map(({ data, hypothesis, type }, index) => (
+            <HypothesisCommentViewEntry
+              type={
+                data.type
+                  ? CommentViewEntryTypes.evidence
+                  : CommentViewEntryTypes.comment
+              }
+              key={index}
+              hypothesis={hypothesis}
+              created_by={data.created_by as CreatedBy}
+              created_at={data.created_at}
+              data={data}
+              lastComment={index === comments.length - 1}
+              className="w-full"
+            />
+          ))}
+        </div>
       </div>
       <div className="border-b my-1 w-full"></div>
       <div className="relative flex items-start space-x-3 w-full p-4">
@@ -240,7 +250,8 @@ export function HypothesisCommentViewEntry({
   created_at,
   data,
   hypothesis,
-  lastComment
+  lastComment,
+  className
 }: {
   type: CommentViewEntryTypes;
   created_by: CreatedBy;
@@ -248,9 +259,10 @@ export function HypothesisCommentViewEntry({
   created_at: string;
   data: Comment & Evidence;
   lastComment: boolean;
+  className?: string;
 }) {
   return (
-    <div className={clsx("relative", !lastComment && "pb-8")}>
+    <div className={clsx("relative", !lastComment && "pb-8", className)}>
       {!lastComment && (
         <span
           className="absolute top-5 left-4 -ml-px h-full w-0.5 bg-gray-200"

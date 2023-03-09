@@ -93,7 +93,7 @@ export function IncidentDetailsPage() {
   const createComment = useCreateCommentMutation();
   const [refetchChangelog, setRefetchChangelog] = useState(0);
   const [activeViewType, setActiveViewType] = useState(
-    IncidentDetailsViewTypes.actionPlan
+    IncidentDetailsViewTypes.comments
   );
 
   const error = !!incident;
@@ -142,6 +142,25 @@ export function IncidentDetailsPage() {
         }
       >
         <Tab
+          label={IncidentDetailsViewTypes.comments}
+          value={IncidentDetailsViewTypes.comments}
+        >
+          <HypothesisCommentsViewContainer
+            incidentId={incidentId!}
+            loadedTrees={loadedTrees}
+            api={{
+              incidentId,
+              create: createHypothesis,
+              delete: deleteHypothesis,
+              deleteBulk: deleteHypothesisBulk,
+              update: updateHypothesis,
+              createComment,
+              updateMutation,
+              createMutation
+            }}
+          />
+        </Tab>
+        <Tab
           label={IncidentDetailsViewTypes.actionPlan}
           value={IncidentDetailsViewTypes.actionPlan}
         >
@@ -169,25 +188,6 @@ export function IncidentDetailsPage() {
               })}
             </div>
           </HypothesisActionPlanViewContainer>
-        </Tab>
-        <Tab
-          label={IncidentDetailsViewTypes.comments}
-          value={IncidentDetailsViewTypes.comments}
-        >
-          <HypothesisCommentsViewContainer
-            incidentId={incidentId!}
-            loadedTrees={loadedTrees}
-            api={{
-              incidentId,
-              create: createHypothesis,
-              delete: deleteHypothesis,
-              deleteBulk: deleteHypothesisBulk,
-              update: updateHypothesis,
-              createComment,
-              updateMutation,
-              createMutation
-            }}
-          />
         </Tab>
       </Tabs>
     );
@@ -239,32 +239,6 @@ export function IncidentDetailsPage() {
                     </section>
                   )}
                   <section className="mt-4">{getHypothesisView()}</section>
-                  <section className="mt-4">
-                    {!isLoading ? (
-                      loadedTrees?.map((loadedTree, index) => {
-                        return (
-                          <HypothesisBuilder
-                            loadedTree={loadedTree}
-                            // showGeneratedOutput
-                            initialEditMode={isNewlyCreated}
-                            api={{
-                              incidentId,
-                              create: createHypothesis,
-                              delete: deleteHypothesis,
-                              deleteBulk: deleteHypothesisBulk,
-                              update: updateHypothesis,
-                              updateMutation,
-                              createMutation
-                            }}
-                            key={loadedTree.id}
-                            showHeader={index === 0}
-                          />
-                        );
-                      })
-                    ) : (
-                      <div>{!error && "fetching tree..."}</div>
-                    )}
-                  </section>
                 </div>
               </div>
               <IncidentSidebar
