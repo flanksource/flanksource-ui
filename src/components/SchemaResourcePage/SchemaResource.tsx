@@ -8,7 +8,7 @@ import { BreadcrumbNav } from "../BreadcrumbNav";
 import { SearchLayout } from "../Layout";
 import { SchemaResourceType } from "./resourceTypes";
 import { SchemaResourceEdit } from "./SchemaResourceEdit";
-import { toastError } from "../Toast/toast";
+import { toastError, toastSuccess } from "../Toast/toast";
 import { useGetSettingsResourceDetails } from "../../api/query-hooks/settingsResourcesHooks";
 import { Head } from "../Head/Head";
 
@@ -32,6 +32,7 @@ export function SchemaResource({
         ...resource,
         ...props
       });
+      toastSuccess(`${name}  updated successfully`);
     } catch (ex: any) {
       toastError(ex);
     }

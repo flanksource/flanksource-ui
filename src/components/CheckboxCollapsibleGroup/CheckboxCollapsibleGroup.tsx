@@ -4,6 +4,7 @@ type Props = React.HTMLProps<HTMLDivElement> & {
   label: React.ReactNode;
   children: React.ReactNode;
   isChecked?: boolean;
+  onChange?: (v: boolean) => void;
 };
 
 export default function CheckboxCollapsibleGroup({
@@ -11,6 +12,7 @@ export default function CheckboxCollapsibleGroup({
   children,
   isChecked = false,
   className = "flex-1 flex flex-col  px-2 py-2 transform origin-top duration-1000 overflow-y-auto",
+  onChange = () => {},
   ...props
 }: Props) {
   const [isOpen, setIsOpen] = useState(isChecked);
@@ -27,6 +29,7 @@ export default function CheckboxCollapsibleGroup({
           checked={isOpen}
           onChange={(v) => {
             setIsOpen(v.target.checked);
+            onChange(v.target.checked);
           }}
         />
         <label

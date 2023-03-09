@@ -11,6 +11,7 @@ import TableSkeletonLoader from "../SkeletonLoader/TableSkeletonLoader";
 import { SchemaResourceType } from "./resourceTypes";
 import { SchemaResourceEdit } from "./SchemaResourceEdit";
 import { SchemaResourceList } from "./SchemaResourceList";
+import ConfigScrapperSpecEditor from "../SpecEditor/ConfigScrapperSpecEditor";
 
 export function SchemaResourcePage({
   resourceInfo
@@ -91,13 +92,20 @@ export function SchemaResourcePage({
           size="full"
           title={`Create New ${resourceInfo.name}`}
         >
-          <SchemaResourceEdit
-            resourceName={resourceInfo.name}
-            isModal
-            edit
-            onSubmit={onSubmit}
-            onCancel={onClose}
-          />
+          {resourceInfo.table === "config_scrapers" ? (
+            <ConfigScrapperSpecEditor
+              onSubmit={(val) => onSubmit(val)}
+              canEdit
+            />
+          ) : (
+            <SchemaResourceEdit
+              resourceName={resourceInfo.name}
+              isModal
+              edit
+              onSubmit={onSubmit}
+              onCancel={onClose}
+            />
+          )}
         </Modal>
       </SearchLayout>
     </>

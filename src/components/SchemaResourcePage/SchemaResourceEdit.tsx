@@ -17,7 +17,7 @@ import { Tab, Tabs } from "../Tabs/Tabs";
 import dynamic from "next/dynamic";
 import AutoCompleteDropdown from "../AutoCompleteDropdown/AutoCompleteDropdown";
 import YAML from "yaml";
-import { Head } from "../Head/Head";
+import ConfigScrapperSpecEditor from "../SpecEditor/ConfigScrapperSpecEditor";
 
 const CodeEditor = dynamic(
   () => import("../CodeEditor").then((m) => m.CodeEditor),
@@ -230,15 +230,22 @@ export function SchemaResourceEdit({
   }, [table]);
 
   return (
-    <>
-      <Head prefix={`Settings ${resourceName} - ${name}`} />
-      <div className="flex flex-col flex-1  overflow-y-auto">
-        <Tabs activeTab={activeTab} onSelectTab={(tab) => onSubNavClick(tab)}>
-          {subNav.map((nav) => {
-            return (
-              <Tab key={nav.label} label={nav.label} value={nav.value}>
-                <div className="flex flex-col flex-1 bg-white overflow-y-auto">
-                  {hasSubNav("spec") && (
+    <div className="flex flex-col flex-1  overflow-y-auto">
+      <Tabs activeTab={activeTab} onSelectTab={(tab) => onSubNavClick(tab)}>
+        {subNav.map((nav) => {
+          return (
+            <Tab key={nav.label} label={nav.label} value={nav.value}>
+              <div className="flex flex-col flex-1 bg-white overflow-y-auto">
+                {hasSubNav("spec") &&
+                  (table === "config_scrapers" ? (
+                    <div className="flex-col">
+                      <ConfigScrapperSpecEditor
+                        onSubmit={(val) => doSubmit(val)}
+                        canEdit={edit}
+                        spec={defaultValues}
+                      />
+                    </div>
+                  ) : (
                     <form
                       className="space-y-4"
                       onSubmit={handleSubmit(doSubmit)}
@@ -413,8 +420,7 @@ export function SchemaResourceEdit({
                         >
                           Spec
                         </label>
-
-                        <div className="h-[min(850px,calc(100vh-500px))]">
+                        <div className="flex flex-col h-[min(850px,calc(100vh-500px))]">
                           <CodeEditor
                             key={keyRef.current}
                             readOnly={!!source || disabled || !edit}
@@ -481,20 +487,19 @@ export function SchemaResourceEdit({
                         </div>
                       )}
                     </form>
-                  )}
-                  {hasSubNav("manageTeam") && <TeamMembers teamId={id!} />}
-                  {hasSubNav("jobHistory") && (
-                    <SchemaResourceJobsTab
-                      resourceId={id!}
-                      tableName={table as keyof typeof resourceTypeMap}
-                    />
-                  )}
-                </div>
-              </Tab>
-            );
-          })}
-        </Tabs>
-      </div>
-    </>
+                  ))}
+                {hasSubNav("manageTeam") && <TeamMembers teamId={id!} />}
+                {hasSubNav("jobHistory") && (
+                  <SchemaResourceJobsTab
+                    resourceId={id!}
+                    tableName={table as keyof typeof resourceTypeMap}
+                  />
+                )}
+              </div>
+            </Tab>
+          );
+        })}
+      </Tabs>
+    </div>
   );
 }
