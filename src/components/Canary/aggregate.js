@@ -122,7 +122,14 @@ export function aggregate(title, items) {
       rolling1h: avgLatency(items)
     },
     uptime: sumUptime(items),
-    checkStatuses: aggregateStatuses(items.map((item) => item.checkStatuses)),
+    status: {
+      good: aggregateStatuses(
+        items.map((item) => [{ status: item.status === "healthy" }])
+      )[0].status,
+      mixed: aggregateStatuses(
+        items.map((item) => [{ status: item.status === "healthy" }])
+      )[0].mixed
+    },
     type: aggregateType(items.map((item) => item.type)),
     namespaces: [...new Set(items.map((item) => item.namespace))]
   };

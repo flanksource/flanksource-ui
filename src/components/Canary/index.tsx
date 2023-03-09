@@ -77,7 +77,7 @@ type CanaryProps = {
 };
 
 export function Canary({
-  url = "/api/canary/api",
+  url = "/api/canary/api/summary",
   topLayoutOffset = 65,
   triggerRefresh,
   onLoading = (_loading) => {}
@@ -143,7 +143,7 @@ export function Canary({
       return;
     }
     const params = encodeObjectToUrlSearchParams({
-      start: getStartValue(searchParams.get("timeRange") || timeRanges[0].value)
+      start: getStartValue(searchParams.get("timeRange") || timeRanges[1].value)
     });
     setIsLoading(true);
     onLoading(true);
@@ -160,7 +160,7 @@ export function Canary({
       setHealthState((state) => {
         return {
           ...state,
-          checks: data?.checks || []
+          checks: data?.checks_summary || []
         };
       });
     } catch (ex) {
@@ -258,11 +258,13 @@ export function Canary({
             </>
           )}
         </div>
-        <SectionTitle className="mb-4">Filter by Time Range</SectionTitle>
-        <div className="mb-4 mr-2 w-full">
+        <SectionTitle className="mb-4 hidden">
+          Filter by Time Range
+        </SectionTitle>
+        <div className="mb-4 mr-2 w-full hidden">
           <TimeRange
             name="time-range"
-            value={timeRange || timeRanges[0].value}
+            value={timeRange || timeRanges[1].value}
             className="w-full"
             dropDownClassNames="w-full"
             onChange={(value) => {

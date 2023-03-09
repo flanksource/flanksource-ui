@@ -12,6 +12,8 @@ import { isCanaryUI } from "../../context/Environment";
 import { HealthCheckEdit } from "./HealthCheckEdit";
 import { HealthCheck } from "../../types/healthChecks";
 import { timeRanges } from "../Dropdown/TimeRange";
+import { getCanaries } from "../../api/services/topology";
+import { toastError } from "../Toast/toast";
 
 type MinimalCanaryFCProps = {
   checks?: HealthCheck[];
@@ -33,7 +35,7 @@ const MinimalCanaryFC = ({
   const {
     tabBy,
     layout,
-    timeRange = timeRanges[0].value,
+    timeRange = timeRanges[1].value,
     checkId
   } = Object.fromEntries(searchParams.entries());
 
@@ -43,17 +45,32 @@ const MinimalCanaryFC = ({
 
   const handleCheckSelect = useCallback(
     (check: Pick<HealthCheck, "id">) => {
-      const data = {
+      setSelectedCheck({
         ...check,
         checkStatuses: undefined
-      };
-      setOpenChecksModal(true);
-      setSelectedCheck(data);
-      setSearchParams({
-        ...Object.fromEntries(searchParams.entries()),
-        checkId: check.id,
-        timeRange
       });
+      setOpenChecksModal(true);
+      const payload = {
+        check: check.id,
+        includeMessages: false,
+        start: timeRange
+      };
+      getCanaries(payload)
+        .then((response) => {
+          if (!response.data?.checks?.[0]) {
+            toastError(`Failed to fetch checks data`);
+            return;
+          }
+          setSelectedCheck(response.data?.checks?.[0]);
+          setSearchParams({
+            ...Object.fromEntries(searchParams.entries()),
+            checkId: check.id,
+            timeRange
+          });
+        })
+        .catch((err) => {
+          toastError(err);
+        });
     },
     [searchParams, setSearchParams, timeRange]
   );
@@ -67,6 +84,7 @@ const MinimalCanaryFC = ({
   function clearCheck() {
     setOpenChecksModal(false);
     searchParams.delete("checkId");
+    searchParams.set("timeRange", "1h");
     setSearchParams(searchParams);
   }
 

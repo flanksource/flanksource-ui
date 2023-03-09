@@ -128,7 +128,7 @@ export function CheckDetails({ check, timeRange, ...rest }: CheckDetailsProps) {
             className="w-48"
             paramKey="timeRange"
             dropdownElem={<TimeRange name="time-range" />}
-            defaultValue={timeRange ?? timeRanges[0].value}
+            defaultValue={timeRange ?? timeRanges[1].value}
           />
         </div>
         <div className="w-full h-52 overflow-visible">

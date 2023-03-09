@@ -1,5 +1,4 @@
 import { IoChevronForwardOutline } from "react-icons/io5";
-import { decodeUrlSearchParams } from "../url";
 
 function ExpandArrow({ row }) {
   return row.canExpand ? (
@@ -32,7 +31,11 @@ export const columnObject = {
   ...firstColumns,
   health: {
     Header: "Health",
-    accessor: "checkStatuses"
+    accessor: "status"
+  },
+  last_transition_time: {
+    Header: "Last Transistion Time",
+    accessor: "last_transition_time"
   },
   uptime: {
     Header: "Uptime",

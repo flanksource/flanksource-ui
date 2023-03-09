@@ -141,7 +141,7 @@ export function StatusHistory({
   return (
     <div
       className="w-full flex flex-col"
-      style={{ maxHeight: "calc(40vh - 20px)" }}
+      style={{ maxHeight: "calc(40vh - 10px)" }}
     >
       {statii?.length && (
         <DataTable

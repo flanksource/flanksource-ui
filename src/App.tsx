@@ -86,7 +86,7 @@ const settingsNav = {
 
 export type SettingsNavigationItems = typeof settingsNav;
 
-const CANARY_API = "/api/canary/api";
+const CANARY_API = "/api/canary/api/summary";
 
 export function HealthRoutes({ sidebar }: { sidebar: ReactNode }) {
   return (
@@ -197,7 +197,7 @@ export function CanaryCheckerApp() {
     <BrowserRouter>
       <HealthPageContextProvider>
         <ReactTooltip />
-        <Canary url="/api/canary/api" />
+        <Canary url="/api/canary/api/summary" />
         <ReactQueryDevtools initialIsOpen={false} />
       </HealthPageContextProvider>
     </BrowserRouter>

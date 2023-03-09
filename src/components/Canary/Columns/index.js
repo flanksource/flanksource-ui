@@ -8,6 +8,8 @@ import { removeNamespacePrefix } from "../utils";
 import { GetName } from "../data";
 import { Badge } from "../../Badge";
 import style from "../index.module.css";
+import { Status } from "../../Status";
+import { relativeDateTime } from "../../../utils/date";
 
 export function Cell({ state, value, row, column }) {
   const { pivotCellType } = state;
@@ -23,12 +25,11 @@ export function Cell({ state, value, row, column }) {
     return UptimeCell({ value: newValue });
   }
 
-  if (pivotCellType === "checkStatuses" || column.id === "checkStatuses") {
-    if (value == null) {
+  if (pivotCellType === "status" || column.id === "status") {
+    if (!value) {
       return empty;
     }
-    const newValue = value?.checkStatuses ?? value;
-    return HealthCell({ value: newValue });
+    return <Status good={value.good} mixed={value.mixed} />;
   }
   if (pivotCellType === "latency" || column.id === "latency") {
     if (value == null) {
@@ -37,7 +38,22 @@ export function Cell({ state, value, row, column }) {
     const newValue = value?.latency ?? value;
     return LatencyCell({ value: newValue });
   }
+
+  if (
+    pivotCellType === "last_transition_time" ||
+    column.id === "last_transition_time"
+  ) {
+    if (value == null) {
+      return empty;
+    }
+    const newValue = value?.latency ?? value;
+    return LastTransistionCell({ value: newValue });
+  }
   return null;
+}
+
+export function LastTransistionCell({ value }) {
+  return <div className="w-40">{relativeDateTime(value)}</div>;
 }
 
 export function HealthCell({ value }) {
@@ -51,7 +67,7 @@ export function UptimeCell({ value }) {
 }
 
 export function LatencyCell({ value }) {
-  return <Duration ms={value.p95} />;
+  return <Duration ms={value.p95 || value.p97 || value.p99} />;
 }
 
 export function TitleCell({ row }) {
