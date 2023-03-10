@@ -125,12 +125,12 @@ const MinimalCanaryFC = ({
       <Modal
         open={openChecksModal}
         onClose={() => clearCheck()}
-        title={<CheckTitle check={selectedCheck} />}
+        title={<CheckTitle check={selectedCheck} size="" />}
         size="medium"
       >
         <div
           className="flex flex-col h-full py-4 mb-16"
-          style={{ maxHeight: "calc(100vh - 8rem)" }}
+          style={{ maxHeight: "calc(100vh - 12rem)" }}
         >
           <CheckDetails
             check={selectedCheck}

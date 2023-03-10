@@ -34,7 +34,7 @@ export const columnObject = {
     accessor: "status"
   },
   last_transition_time: {
-    Header: "Last Transistion Time",
+    Header: "Last Transition",
     accessor: "last_transition_time"
   },
   uptime: {

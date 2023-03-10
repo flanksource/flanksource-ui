@@ -9,7 +9,7 @@ import { GetName } from "../data";
 import { Badge } from "../../Badge";
 import style from "../index.module.css";
 import { Status } from "../../Status";
-import { relativeDateTime } from "../../../utils/date";
+import { dateDiff, relativeDateTime } from "../../../utils/date";
 
 export function Cell({ state, value, row, column }) {
   const { pivotCellType } = state;
@@ -29,7 +29,24 @@ export function Cell({ state, value, row, column }) {
     if (!value) {
       return empty;
     }
-    return <Status good={value.good} mixed={value.mixed} />;
+    if (typeof value === "object") {
+      return (
+        <div className="w-40">
+          <Status good={value.good} mixed={value.mixed} />
+        </div>
+      );
+    } else {
+      const date = new Date().toISOString().split(".")[0];
+      const lastRutime = row.original.last_runtime;
+      const showTime = dateDiff(date, lastRutime, "minute") > 15;
+      return (
+        <div className="w-40 truncate items-center flex space-x-1">
+          <Status good={value === "healthy"} />
+          {showTime &&
+            LastTransistionCell({ value: row.original.last_runtime })}
+        </div>
+      );
+    }
   }
   if (pivotCellType === "latency" || column.id === "latency") {
     if (value == null) {
@@ -53,7 +70,26 @@ export function Cell({ state, value, row, column }) {
 }
 
 export function LastTransistionCell({ value }) {
-  return <div className="w-40">{relativeDateTime(value)}</div>;
+  const hasAgoString = relativeDateTime(value).indexOf("ago") > -1;
+  const hasYesterdayString = relativeDateTime(value).indexOf("yesterday") > -1;
+  return (
+    <div className="w-40 truncate">
+      <span className="text-md">
+        {relativeDateTime(value)
+          .replace("ago", "")
+          .replace("yesterday", "")
+          .trim()}
+      </span>
+      {hasAgoString && (
+        <span className="text-gray-500 text-light text-xs ml-0.5">ago</span>
+      )}
+      {hasYesterdayString && (
+        <span className="text-gray-500 text-light text-xs ml-0.5">
+          yesterday
+        </span>
+      )}
+    </div>
+  );
 }
 
 export function HealthCell({ value }) {

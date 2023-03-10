@@ -6,11 +6,7 @@ import React, {
   useState
 } from "react";
 import { debounce } from "lodash";
-import {
-  encodeObjectToUrlSearchParams,
-  useUpdateParams,
-  decodeUrlSearchParams
-} from "./url";
+import { useUpdateParams, decodeUrlSearchParams } from "./url";
 import { CanarySearchBar } from "./CanarySearchBar";
 import { CanaryInterfaceMinimal } from "../CanaryInterface/minimal";
 import { GroupByDropdown } from "../Dropdown/GroupByDropdown";
@@ -36,7 +32,6 @@ import HealthPageSkeletonLoader from "../SkeletonLoader/HealthPageSkeletonLoader
 import { HealthChecksResponse } from "../../types/healthChecks";
 import { useSearchParams } from "react-router-dom";
 import useRefreshRateFromLocalStorage from "../Hooks/useRefreshRateFromLocalStorage";
-import dayjs from "dayjs";
 
 const FilterKeyToLabelMap = {
   environment: "Environment",
@@ -44,16 +39,6 @@ const FilterKeyToLabelMap = {
   technology: "Technology",
   app: "App",
   "Expected-Fail": "Expected Fail"
-};
-
-const getStartValue = (start: string) => {
-  if (!start.includes("mo")) {
-    return start;
-  }
-
-  return dayjs()
-    .subtract(+(start.match(/\d/g)?.[0] ?? "1"), "month")
-    .toISOString();
 };
 
 const getPassingCount = (checks: any) => {
@@ -142,9 +127,6 @@ export function Canary({
     if (url == null) {
       return;
     }
-    const params = encodeObjectToUrlSearchParams({
-      start: getStartValue(searchParams.get("timeRange") || timeRanges[1].value)
-    });
     setIsLoading(true);
     onLoading(true);
     if (abortController.current) {
@@ -153,7 +135,7 @@ export function Canary({
     const controller = new AbortController();
     abortController.current = controller;
     try {
-      const result = await fetch(`${url}?${params}`, {
+      const result = await fetch(url, {
         signal: abortController.current?.signal
       });
       const data = (await result.json()) as HealthChecksResponse;
@@ -170,7 +152,7 @@ export function Canary({
     }
     setIsLoading(false);
     onLoading(false);
-  }, [onLoading, setHealthState, timeRange, url]);
+  }, [onLoading, setHealthState, url]);
 
   // Set refresh interval for re-fetching data
   useEffect(() => {
