@@ -69,13 +69,16 @@ export function DataTableRow<TableColumns extends RowData>({
               <div
                 // First column should be displaced if the table
                 // is grouped
-                className={`${
+                className={`truncate ${
                   isGrouped && !row?.subRows.length && cellIndex === 1
                     ? "pl-12"
                     : ""
                 }`}
               >
-                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                <span className="w-fit ">
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  {/* {cell.column.columnDef.cell} */}
+                </span>
               </div>
             )}
           </td>
