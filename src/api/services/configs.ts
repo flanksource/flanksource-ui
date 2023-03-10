@@ -39,8 +39,9 @@ export type ConfigTypeRelationships = {
 };
 
 interface Change {
-  type: string;
-  count: number;
+  change_type: string;
+  total: number;
+  severity?: string;
 }
 
 interface Analysis {

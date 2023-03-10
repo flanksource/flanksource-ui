@@ -7,7 +7,7 @@ export function useOnMouseActivity() {
 
   useEffect(() => {
     const listener = (event: MouseEvent) => {
-      if (ref.current?.contains(event.target)) {
+      if (ref.current?.contains(event.target as HTMLElement)) {
         return;
       }
       setIsActive(false);

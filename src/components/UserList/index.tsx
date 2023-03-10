@@ -51,6 +51,8 @@ export function UserList({
         tableStyle={{ borderSpacing: "0" }}
         isLoading={isLoading}
         style={{ maxHeight: "calc(100vh - 12rem)" }}
+        preferencesKey="user-list"
+        savePreferences={false}
       />
     </div>
   );

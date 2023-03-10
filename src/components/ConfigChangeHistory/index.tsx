@@ -114,6 +114,8 @@ export function ConfigChangeHistory({
       tableStyle={tableStyle}
       pagination={pagination}
       virtualizedRowEstimatedHeight={500}
+      preferencesKey="config-change-history"
+      savePreferences={false}
     />
   );
 }

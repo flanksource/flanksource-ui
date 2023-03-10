@@ -1,9 +1,8 @@
 import { CellContext } from "@tanstack/react-table";
-import { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import ReactTooltip from "react-tooltip";
 import { ConfigItem } from "../../../api/services/configs";
-import { TagList } from "../../TagList/TagList";
+import Popover from "../../Popover/Popover";
+import { TagItem, TagList } from "../../TagList/TagList";
 
 export default function ConfigListTagsCell({
   getValue,
@@ -19,10 +18,6 @@ export default function ConfigListTagsCell({
     .filter((key) => key !== "toString");
   const groupByProp = decodeURIComponent(params.get("groupByProp") ?? "");
 
-  useEffect(() => {
-    ReactTooltip.rebuild();
-  });
-
   if (tagKeys.length === 0) {
     return null;
   }
@@ -35,7 +30,6 @@ export default function ConfigListTagsCell({
     return (
       <div className="font-mono flex flex-wrap w-full max-w-full pl-1 space-y-1">
         <div
-          data-tip={`${groupByProp}: ${tagMap[groupByProp]}`}
           className="max-w-full overflow-hidden text-ellipsis bg-gray-200 border border-gray-300 px-1 py-0.75 mr-1 rounded-md text-gray-600 font-semibold text-xs"
           key={groupByProp}
         >
@@ -53,5 +47,32 @@ export default function ConfigListTagsCell({
     };
   });
 
-  return <TagList tags={tags} minimumItemsToShow={2} />;
+  return (
+    <Popover
+      toggle={
+        <div className="flex flex-row items-center">
+          <div className="flex-shrink overflow-x-hidden cursor-pointer">
+            <TagItem tag={tags[0]!} />
+          </div>
+          {tags.length > 1 && (
+            <div className="flex-shrink space-x-2 underline decoration-solid justify-left text-xs cursor-pointer">
+              +{tags.length - 1} more
+            </div>
+          )}
+        </div>
+      }
+      placement="left"
+      menuClass="top-8"
+    >
+      <div className="flex flex-col p-1">
+        <div className="flex flex-col items-stretch max-h-64 overflow-y-auto">
+          <TagList
+            className="flex flex-col flex-1"
+            tags={tags}
+            minimumItemsToShow={tags.length}
+          />
+        </div>
+      </div>
+    </Popover>
+  );
 }
