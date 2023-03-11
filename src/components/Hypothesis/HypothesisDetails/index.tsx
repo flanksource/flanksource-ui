@@ -19,12 +19,11 @@ import {
   useGetHypothesisQuery,
   useIncidentQuery
 } from "../../../api/query-hooks";
-import { IncidentStatus } from "../../../api/services/incident";
 
 interface IProps {
   node: TreeNode<Hypothesis>;
   api: any;
-  currentStatus?: IncidentStatus;
+  currentStatus?: string;
 }
 
 type Response = Evidence & Comment;

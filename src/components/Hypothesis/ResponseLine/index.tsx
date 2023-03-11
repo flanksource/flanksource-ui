@@ -13,7 +13,6 @@ import { Menu } from "../../Menu";
 import { BiCheck } from "react-icons/bi";
 import { IoMdRemoveCircle } from "react-icons/io";
 import { useCallback, useMemo } from "react";
-import { IncidentStatus } from "../../../api/services/incident";
 
 export type CreatedBy = User & {
   team: {
@@ -28,7 +27,7 @@ interface IProps {
   response: Comment & Evidence;
   onDelete?: () => void;
   markAsDefinitionOfDone?: () => void;
-  currentStatus?: IncidentStatus;
+  currentStatus?: string;
 }
 
 function isEvidence(x: Comment | Evidence) {
@@ -125,7 +124,7 @@ type ResponseLineMenuActionsProps = {
     definition_of_done: boolean;
   };
   onClick: (action: ActionType) => void;
-  currentStatus?: IncidentStatus;
+  currentStatus?: string;
 };
 
 function ResponseLineMenuActions({

@@ -26,7 +26,7 @@ import usePreferences from "../../hooks/userPreferences";
 const tableStyles = {
   theadHeaderClass: " tracking-wider",
   tbodyRowClass: "cursor-pointer text-sm",
-  tbodyDataClass: "whitespace-nowrap p-2"
+  tbodyDataClass: "whitespace-wrap p-2"
 };
 
 export type PaginationOptions = {

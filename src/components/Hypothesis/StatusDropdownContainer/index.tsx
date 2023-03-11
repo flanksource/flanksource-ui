@@ -4,13 +4,12 @@ import { Hypothesis, HypothesisStatus } from "../../../api/services/hypothesis";
 import useHypothesisStatusForm from "../../../hooks/useHypothesisStatusForm";
 import { SubtleDropdown } from "../../Dropdown/SubtleDropdown";
 import { hypothesisStatusDropdownOptions } from "../../../constants/hypothesisStatusOptions";
-import { IncidentStatus } from "../../../api/services/incident";
 
 interface Props {
   nodeId: string;
   status: HypothesisStatus;
   updateMutation: MutationFunction<Hypothesis, { status: HypothesisStatus }>;
-  checkStatus?: IncidentStatus;
+  checkStatus?: string;
 }
 
 export function StatusDropdownContainer({
@@ -38,7 +37,7 @@ export function StatusDropdownContainer({
       control={control}
       name="status"
       items={hypothesisStatusDropdownOptions}
-      checkStatus={checkStatus}
+      disabled={checkStatus == "closed"}
     />
   );
 }

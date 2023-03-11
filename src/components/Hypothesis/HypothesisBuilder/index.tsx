@@ -5,13 +5,12 @@ import { CreateHypothesis } from "../CreateHypothesis";
 import { HypothesisAPIs } from "../../../pages/incident/IncidentDetails";
 import { Hypothesis } from "../../../api/services/hypothesis";
 import { useSearchParams } from "react-router-dom";
-import { IncidentStatus } from "../../../api/services/incident";
 
 interface IProps {
   loadedTree: unknown;
   initialEditMode: boolean;
   api: HypothesisAPIs;
-  checkStatus: IncidentStatus | undefined;
+  checkStatus?: string;
 }
 
 export function HypothesisBuilder({ loadedTree, api, checkStatus }: IProps) {

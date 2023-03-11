@@ -6,7 +6,6 @@ import {
   Hypothesis,
   HypothesisStatus
 } from "../../../api/services/hypothesis";
-import { IncidentStatus } from "../../../api/services/incident";
 import { HypothesisAPIs } from "../../../pages/incident/IncidentDetails";
 import { HypothesisBar } from "../HypothesisBar";
 import { HypothesisDetails } from "../HypothesisDetails";
@@ -18,7 +17,7 @@ interface IHypothesisNodeProps {
   setSelectedNode: (v: Hypothesis) => void;
   setCreateHypothesisModalIsOpen: (v: boolean) => void;
   api: HypothesisAPIs;
-  checkStatus?: IncidentStatus | undefined;
+  checkStatus?: string;
 }
 
 export const HypothesisNode = (props: IHypothesisNodeProps) => {

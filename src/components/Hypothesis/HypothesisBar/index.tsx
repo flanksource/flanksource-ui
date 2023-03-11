@@ -12,7 +12,6 @@ import { IconBaseProps, IconType } from "react-icons/lib";
 import { VscTypeHierarchy } from "react-icons/vsc";
 import { EvidenceType } from "../../../api/services/evidence";
 import { Hypothesis } from "../../../api/services/hypothesis";
-import { IncidentStatus } from "../../../api/services/incident";
 import { HypothesisAPIs } from "../../../pages/incident/IncidentDetails";
 import { AvatarGroup } from "../../AvatarGroup";
 import { EditableText } from "../../EditableText";
@@ -51,7 +50,7 @@ interface HypothesisBarProps {
   editTitle?: boolean;
   onToggleExpand: (expand: boolean) => void;
   onDisprove: () => void;
-  checkStatus?: IncidentStatus;
+  checkStatus?: string;
 }
 
 type Entries<T> = { [K in keyof T]: [K, T[K]] }[keyof T];

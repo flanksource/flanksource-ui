@@ -7,14 +7,13 @@ import { IconButton } from "../../IconButton";
 import { Menu } from "../../Menu";
 import { createIncidentQueryKey } from "../../../api/query-hooks";
 import { HypothesisDeleteDialog } from "../HypothesisDeleteDialog";
-import { IncidentStatus } from "../../../api/services/incident";
 
 interface IProps {
   hypothesis: Hypothesis;
   onDisprove: () => void;
   onEditTitle: () => void;
   setDeleting: (state: boolean) => void;
-  checkStatus?: IncidentStatus;
+  checkStatus?: string;
 }
 
 export const HypothesisBarMenu = ({

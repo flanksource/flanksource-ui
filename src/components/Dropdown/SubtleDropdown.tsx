@@ -4,28 +4,27 @@ import { CheckIcon } from "@heroicons/react/solid";
 import { Controller } from "react-hook-form";
 import clsx from "clsx";
 import { IItem } from "../../types/IItem";
-import { IncidentStatus } from "../../api/services/incident";
 
 interface Props {
   className: string;
+  disabled: boolean;
   value: string;
   label: string;
   control: any;
   onChange: (value: string) => void;
   name: string;
   items: { [k: string]: IItem };
-  checkStatus?: IncidentStatus;
 }
 
 export function SubtleDropdown({
   className,
+  disabled = false,
   label,
   control,
   items = {},
   name,
   onChange = () => {},
-  value,
-  checkStatus
+  value
 }: Props) {
   items = Object.fromEntries(
     (Object.values(items) || []).map((item) => [
@@ -58,7 +57,7 @@ export function SubtleDropdown({
                 value={valueControlled}
                 label={label}
                 items={items}
-                checkStatus={checkStatus}
+                disabled={disabled}
               />
             );
           }}
@@ -69,7 +68,7 @@ export function SubtleDropdown({
           items={items}
           onChange={onChange}
           value={value}
-          checkStatus={checkStatus}
+          disabled={disabled}
         />
       )}
     </div>
@@ -81,7 +80,7 @@ interface IDropdownListbox {
   value: string;
   label: string;
   items: { [k: string]: IItem };
-  checkStatus?: IncidentStatus;
+  disabled: boolean;
 }
 
 export const DropdownListbox = ({
@@ -89,9 +88,9 @@ export const DropdownListbox = ({
   value,
   label,
   items,
-  checkStatus
+  disabled
 }: IDropdownListbox) => (
-  <Listbox value={value} onChange={onChange} disabled={checkStatus == "closed"}>
+  <Listbox value={value} onChange={onChange} disabled={disabled}>
     {({ open }) => (
       <>
         {label && (
