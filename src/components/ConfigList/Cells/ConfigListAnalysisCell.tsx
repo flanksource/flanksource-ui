@@ -6,6 +6,7 @@ import { GrIntegration, GrWorkshop } from "react-icons/gr";
 import { ImHeartBroken } from "react-icons/im";
 import { IoMdSpeedometer } from "react-icons/io";
 import { MdSecurity } from "react-icons/md";
+import { FaRegClock } from "react-icons/fa";
 import { ConfigItem } from "../../../api/services/configs";
 import Popover from "../../Popover/Popover";
 
@@ -42,6 +43,8 @@ export function AnalysisIcon({
       return <FaTasks color={color} size="20" title="Compliance" />;
     case "technicalDebt":
       return <GrWorkshop color={color} size="20" title="Technical Debt" />;
+    case "reliability":
+      return <FaRegClock color={color} size="20" title="Reliability" />;
   }
   return <AiFillWarning color={color} size="20" />;
 }
