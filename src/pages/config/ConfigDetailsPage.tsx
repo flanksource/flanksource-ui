@@ -82,8 +82,6 @@ export function ConfigDetailsPage() {
   // TODO(ciju): make this lazy. Only needed for IncidentCreate.
   const configLines = useMemo(() => code && code.split("\n"), [code]);
 
-  const selectedCount = Object.keys(checked).length;
-
   return (
     <>
       <Head prefix={configDetails ? `Config - ${configDetails.name}` : ""} />

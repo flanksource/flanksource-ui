@@ -1,5 +1,4 @@
 import { AdjustmentsIcon } from "@heroicons/react/solid";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { ReactNode, useEffect, useState } from "react";
 import { AiFillHeart } from "react-icons/ai";
@@ -49,19 +48,9 @@ import { HiUser } from "react-icons/hi";
 import { FaTasks } from "react-icons/fa";
 import JobsHistorySettingsPage from "./components/JobsHistory/JobsHistorySettingsPage";
 import { ConfigInsightsPage } from "./pages/config/ConfigInsightsList";
-
-const defaultStaleTime = 1000 * 60 * 5;
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: true,
-      refetchOnMount: true,
-      refetchOnReconnect: true,
-      staleTime: defaultStaleTime
-    }
-  }
-});
+import ErrorPage from "./components/Errors/ErrorPage";
+import { useQuery } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 
 const navigation = [
   { name: "Topology", href: "/topology", icon: TopologyIcon },
@@ -206,13 +195,11 @@ export function CanaryCheckerApp() {
 
   return (
     <BrowserRouter>
-      <QueryClientProvider client={queryClient}>
-        <HealthPageContextProvider>
-          <ReactTooltip />
-          <Canary url="/api/canary/api" />
-          <ReactQueryDevtools initialIsOpen={false} />
-        </HealthPageContextProvider>
-      </QueryClientProvider>
+      <HealthPageContextProvider>
+        <ReactTooltip />
+        <Canary url="/api/canary/api" />
+        <ReactQueryDevtools initialIsOpen={false} />
+      </HealthPageContextProvider>
     </BrowserRouter>
   );
 }
@@ -244,33 +231,39 @@ function SidebarWrapper() {
 export function App() {
   const [user, setUser] = useState<User>();
 
-  useEffect(() => {
-    getUser().then((u) => {
-      setUser(u);
-    });
-  }, []);
+  const { isLoading, error } = useQuery<User | undefined, AxiosError>(
+    ["getUser", process.env.NEXT_PUBLIC_WITHOUT_SESSION === "true"],
+    () => getUser(),
+    {
+      onSuccess: (data) => {
+        setUser(data);
+      }
+    }
+  );
 
-  if (!user) {
+  if (error && !user) {
+    return <ErrorPage error={error} />;
+  }
+
+  if (!user || isLoading) {
     return <FullPageSkeletonLoader />;
   }
 
   return (
     <BrowserRouter>
-      <QueryClientProvider client={queryClient}>
-        <TopologyPageContextProvider>
-          <HealthPageContextProvider>
-            <ConfigPageContextProvider>
-              <IncidentPageContextProvider>
-                <AuthContext.Provider value={{ user, setUser }}>
-                  <ReactTooltip />
-                  <IncidentManagerRoutes sidebar={<SidebarWrapper />} />
-                </AuthContext.Provider>
-                <ReactQueryDevtools initialIsOpen={false} />
-              </IncidentPageContextProvider>
-            </ConfigPageContextProvider>
-          </HealthPageContextProvider>
-        </TopologyPageContextProvider>
-      </QueryClientProvider>
+      <TopologyPageContextProvider>
+        <HealthPageContextProvider>
+          <ConfigPageContextProvider>
+            <IncidentPageContextProvider>
+              <AuthContext.Provider value={{ user, setUser }}>
+                <ReactTooltip />
+                <IncidentManagerRoutes sidebar={<SidebarWrapper />} />
+              </AuthContext.Provider>
+              <ReactQueryDevtools initialIsOpen={false} />
+            </IncidentPageContextProvider>
+          </ConfigPageContextProvider>
+        </HealthPageContextProvider>
+      </TopologyPageContextProvider>
     </BrowserRouter>
   );
 }
