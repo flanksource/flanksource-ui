@@ -30,17 +30,13 @@ export function Cell({ state, value, row, column }) {
       return empty;
     }
     if (typeof value === "object") {
-      return (
-        <div className="w-40">
-          <Status good={value.good} mixed={value.mixed} />
-        </div>
-      );
+      return <Status good={value.good} mixed={value.mixed} />;
     } else {
       const date = new Date().toISOString().split(".")[0];
       const lastRutime = row.original.last_runtime;
       const showTime = dateDiff(date, lastRutime, "minute") > 15;
       return (
-        <div className="w-40 truncate items-center flex space-x-1">
+        <div className="items-center flex space-x-1">
           <Status good={value === "healthy"} />
           {showTime &&
             LastTransistionCell({ value: row.original.last_runtime })}
@@ -73,7 +69,7 @@ export function LastTransistionCell({ value }) {
   const hasAgoString = relativeDateTime(value).indexOf("ago") > -1;
   const hasYesterdayString = relativeDateTime(value).indexOf("yesterday") > -1;
   return (
-    <div className="w-40 truncate">
+    <>
       <span className="text-md">
         {relativeDateTime(value)
           .replace("ago", "")
@@ -88,7 +84,7 @@ export function LastTransistionCell({ value }) {
           yesterday
         </span>
       )}
-    </div>
+    </>
   );
 }
 
@@ -275,7 +271,7 @@ export function getColumns({ columnObject, pivotCellType = null }) {
       ...(id == null && typeof accessor === "function" && { id: k }),
       ...(accessor != null && { accessor }),
       Header: Header ?? (() => null),
-      cellClass: cellClass ?? `px-5 py-2`,
+      cellClass: cellClass ?? `py-2`,
       Cell: IncomingCell ?? Cell,
       sortType:
         pivotCellType != null

@@ -30,14 +30,14 @@ describe("getColumns", () => {
         accessor: "checkStatuses",
         Cell: expect.any(Function),
         sortType: expect.any(Function),
-        cellClass: "px-5 py-2"
+        cellClass: "py-2"
       },
       {
         Header: "Uptime",
         accessor: "uptime",
         Cell: expect.any(Function),
         sortType: expect.any(Function),
-        cellClass: "px-5 py-2"
+        cellClass: "py-2"
       }
     ];
     expect(getColumns({ columnObject })).toStrictEqual(expectedOutput);
@@ -68,7 +68,7 @@ describe("getColumns", () => {
         accessor: "uptime",
         Cell: expect.any(Function),
         sortType: expect.any(Function),
-        cellClass: "px-5 py-2"
+        cellClass: "py-2"
       }
     ];
     expect(getColumns({ columnObject })).toStrictEqual(expectedOutput);
