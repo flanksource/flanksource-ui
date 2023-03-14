@@ -31,6 +31,7 @@ type JobsHistoryTableProps = {
   pageIndex: number;
   pageSize: number;
   setPageState?: (state: { pageIndex: number; pageSize: number }) => void;
+  hiddenColumns?: string[];
 };
 
 export default function JobsHistoryTable({
@@ -39,7 +40,8 @@ export default function JobsHistoryTable({
   pageCount,
   pageIndex,
   pageSize,
-  setPageState = () => {}
+  setPageState = () => {},
+  hiddenColumns = []
 }: JobsHistoryTableProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedJob, setSelectedJob] = useState<JobHistory>();
@@ -49,8 +51,6 @@ export default function JobsHistoryTable({
       desc: true
     }
   ]);
-
-  // const pageCount = totalEntries ? Math.ceil(totalEntries / pageSize) : -1;
 
   const pagination = useMemo(() => {
     return {
@@ -91,6 +91,7 @@ export default function JobsHistoryTable({
         stickyHead
         preferencesKey="job-history"
         savePreferences={false}
+        hiddenColumns={hiddenColumns}
       />
       <JobsHistoryDetails
         job={selectedJob}

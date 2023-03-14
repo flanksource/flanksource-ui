@@ -1,7 +1,5 @@
 import { CellContext, ColumnDef } from "@tanstack/react-table";
-import { useEffect } from "react";
 import { FaDotCircle } from "react-icons/fa";
-import ReactTooltip from "react-tooltip";
 import { relativeDateTime } from "../../utils/date";
 import { JobHistory, JobHistoryStatus } from "./JobsHistoryTable";
 
@@ -102,14 +100,8 @@ export const JobsHistoryTableColumn: ColumnDef<JobHistory, any>[] = [
     cell: ({ getValue }) => {
       const value = getValue<JobHistory["resource_id"]>();
 
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      useEffect(() => {
-        ReactTooltip.rebuild();
-      });
-
       return (
         <div
-          data-tip={value}
           className={`w-full max-w-full overflow-x-hidden overflow-ellipsis`}
         >
           {value}

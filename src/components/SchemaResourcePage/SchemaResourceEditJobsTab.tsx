@@ -47,6 +47,7 @@ export function SchemaResourceJobsTab({
         pageIndex={pageIndex}
         pageSize={pageSize}
         setPageState={setPageState}
+        hiddenColumns={["resource_id", "resource_type"]}
       />
     </div>
   );
