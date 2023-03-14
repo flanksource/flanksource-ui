@@ -1,5 +1,5 @@
 import { SortingState } from "@tanstack/react-table";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useConfigInsightsQuery } from "../../api/query-hooks/useConfigAnalysisQuery";
 import { ConfigItem } from "../../api/services/configs";
@@ -8,6 +8,7 @@ import { ConfigTypeInsights } from "../ConfigInsights";
 import { DataTable } from "../DataTable";
 import { InfoMessage } from "../InfoMessage";
 import { ConfigInsightsColumns } from "./ConfigInsightsColumns";
+import ReactTooltip from "react-tooltip";
 
 type Props = {
   setIsLoading: (isLoading: boolean) => void;
@@ -75,6 +76,12 @@ export default function ConfigInsightsList({
     // not other dependencies, as this may cause race conditions
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [triggerRefresh]);
+
+  useEffect(() => {
+    if (configInsights?.length) {
+      ReactTooltip.rebuild();
+    }
+  }, []);
 
   const configInsights = data?.data || [];
 

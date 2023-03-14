@@ -19,9 +19,9 @@ export const ConfigInsightsColumns: ColumnDef<
       const config = cell.row.original.config;
 
       return (
-        <div className="flex max-w-full">
+        <div data-tip={`${config?.name}`} className="flex max-w-full">
           <Link
-            className="space-x-2  items-center"
+            className="space-x-2 text-ellipsis overflow-hidden w-full items-center"
             to={`/configs/${config?.id}`}
           >
             <Icon
@@ -45,11 +45,16 @@ export const ConfigInsightsColumns: ColumnDef<
       const data = cell.row.original;
 
       return (
-        <div className="flex items-center max-w-full space-x-2">
+        <div
+          data-tip={`${data.analysis_type}`}
+          className="flex items-center max-w-full space-x-2 "
+        >
           <span className="w-auto">
             <AnalysisIcon analysis={data} />
           </span>
-          <span>{data.analysis_type}</span>
+          <span className="overflow-hidden overflow-ellipsis inline-block w-full">
+            {data.analysis_type}
+          </span>
         </div>
       );
     },
@@ -66,7 +71,10 @@ export const ConfigInsightsColumns: ColumnDef<
       const data = cell.row.original;
 
       return (
-        <span className="flex-1 overflow-hidden overflow-ellipsis">
+        <span
+          data-tip={`${data.analyzer}`}
+          className="flex-1 overflow-hidden inline-block w-full overflow-ellipsis"
+        >
           {data.analyzer}
         </span>
       );
