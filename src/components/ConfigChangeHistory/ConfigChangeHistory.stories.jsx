@@ -1,4 +1,5 @@
 import { MemoryRouter } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { ConfigChangeHistory } from "./index";
 
@@ -6,11 +7,16 @@ export default {
   title: "ConfigChangeHistory",
   component: ConfigChangeHistory,
   decorators: [
-    (Story) => (
-      <MemoryRouter>
-        <Story />
-      </MemoryRouter>
-    )
+    (Story) => {
+      const queryClient = new QueryClient();
+      return (
+        <MemoryRouter>
+          <QueryClientProvider client={queryClient}>
+            <Story />
+          </QueryClientProvider>
+        </MemoryRouter>
+      );
+    }
   ]
 };
 
