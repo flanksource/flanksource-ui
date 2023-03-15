@@ -108,7 +108,7 @@ export default function ConfigInsightsDetailsModal({
               labelStyle="top"
             />
           </div>
-          <div className="flex items-center justify-end mt-4 py-2 px-4 border-y border-y-gray-100">
+          <div className="flex items-center justify-end mt-4 py-2 px-4 border-t border-t-gray-400">
             <button
               type="button"
               onClick={() => {

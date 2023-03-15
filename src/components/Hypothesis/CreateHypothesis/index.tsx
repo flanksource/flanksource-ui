@@ -107,7 +107,7 @@ export const CreateHypothesis = ({
             />
           </div>
         </div>
-        <div className="flex justify-end mt-4 py-4 px-8 rounded-b-lg bg-gray-100">
+        <div className="flex justify-end mt-4 py-4 px-8 border-t border-t-gray-400">
           <input
             type="submit"
             className="bg-dark-blue text-white rounded-6px py-2 px-6 disabled:bg-gray-200 disabled:text-gray-400 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"

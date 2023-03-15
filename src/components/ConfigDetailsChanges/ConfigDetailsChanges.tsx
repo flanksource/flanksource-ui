@@ -119,7 +119,7 @@ export function ConfigDetailsChanges({
             />
           )}
         </div>
-        <div className="flex items-center justify-end py-4 px-5 rounded-lg bg-gray-100">
+        <div className="flex items-center justify-end py-4 px-5 border-y border-y-gray-400">
           <button
             type="button"
             onClick={() => {

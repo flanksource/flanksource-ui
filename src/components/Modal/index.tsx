@@ -116,7 +116,7 @@ export function Modal({
               {Boolean(actions?.length) && (
                 <div
                   className={clsx(
-                    "flex my-2 px-8 justify-end",
+                    "flex my-2 px-8 justify-end pt-2 border-t border-y-gray-400",
                     footerClassName
                   )}
                 >

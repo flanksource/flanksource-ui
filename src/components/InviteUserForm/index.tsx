@@ -39,13 +39,13 @@ export function InviteUserForm({
   };
 
   return (
-    <div className={clsx(className)} {...rest}>
+    <div className={clsx(className, "p-0 py-4")} {...rest}>
       <form
         className="grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-8"
         onSubmit={handleSubmit(onSubmitFn)}
         noValidate
       >
-        <div>
+        <div className="px-4">
           <label
             className="block text-sm font-medium text-gray-700"
             htmlFor="firstName"
@@ -68,7 +68,7 @@ export function InviteUserForm({
             </span>
           )}
         </div>
-        <div>
+        <div className="px-4">
           <label
             className="block text-sm font-medium text-gray-700"
             htmlFor="lastName"
@@ -91,7 +91,7 @@ export function InviteUserForm({
             </span>
           )}
         </div>
-        <div className="sm:col-span-2">
+        <div className="sm:col-span-2 px-4">
           <label
             htmlFor="email"
             className="block text-sm font-medium text-gray-700"
@@ -116,19 +116,21 @@ export function InviteUserForm({
             <span className="text-red-600 text-sm">{errors.email.message}</span>
           )}
         </div>
-        <div className="sm:col-span-2">
-          <button type="submit" className="btn-primary float-right">
-            Invite user
-          </button>
-          <button
-            type="reset"
-            onClick={() => {
-              reset();
-            }}
-            className="px-3 py-2 btn-secondary float-right mr-4"
-          >
-            Cancel
-          </button>
+        <div className="sm:col-span-2 border-t border-y-gray-400">
+          <div className="pt-4 px-4">
+            <button type="submit" className="btn-primary float-right">
+              Invite user
+            </button>
+            <button
+              type="reset"
+              onClick={() => {
+                reset();
+              }}
+              className="px-3 py-2 btn-secondary float-right mr-4"
+            >
+              Cancel
+            </button>
+          </div>
         </div>
       </form>
     </div>
