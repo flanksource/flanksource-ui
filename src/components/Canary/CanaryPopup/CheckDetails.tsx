@@ -1,4 +1,4 @@
-import React, { Suspense, useMemo } from "react";
+import React, { Suspense, useMemo, useRef } from "react";
 import { usePrevious } from "../../../utils/hooks";
 import { AccordionBox } from "../../AccordionBox";
 import {
@@ -32,6 +32,21 @@ type CheckDetailsProps = React.HTMLProps<HTMLDivElement> & {
 };
 
 export function CheckDetails({ check, timeRange, ...rest }: CheckDetailsProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const statsRef = useRef<HTMLDivElement>(null);
+
+  const TabAndPaddingBottom = 40;
+  const maxHeight =
+    containerRef.current && statsRef.current
+      ? `${
+          containerRef.current.clientHeight -
+          statsRef.current.clientHeight -
+          TabAndPaddingBottom
+        }px`
+      : "0px";
+
+  console.log(maxHeight);
+
   const prevCheck = usePrevious(check);
   const validCheck = check || prevCheck;
 
@@ -74,67 +89,67 @@ export function CheckDetails({ check, timeRange, ...rest }: CheckDetailsProps) {
   }
 
   return (
-    <div {...rest}>
-      {/* stats section */}
-      <div className="flex flex-row flex-wrap mb-2">
-        <CheckStat
-          containerClassName="w-52 mb-4"
-          title="Uptime"
-          value={
-            !Number.isNaN(uptimeValue)
-              ? `${toFixedIfNecessary(uptimeValue, 2)}%`
-              : "-"
-          }
-          append={
-            validUptime &&
-            !Number.isNaN(uptimeValue) && (
-              <div className="flex flex-col justify-center mx-2 mt-0.5">
-                <span className="text-xs text-green-700 ">
-                  {validCheck?.uptime?.passed} passed
-                </span>
-                <span className="text-xs text-red-600">
-                  {validCheck?.uptime?.failed} failed
-                </span>
-              </div>
-            )
-          }
-        />
-        <CheckStat
-          containerClassName="w-40 mb-4"
-          title="Latency (95%)"
-          value={<Duration ms={validCheck?.latency?.p95} />}
-        />
-        <CheckStat
-          containerClassName="w-40 mb-4"
-          title="Latency  (97%)"
-          value={<Duration ms={validCheck?.latency?.p97} />}
-        />
-        <CheckStat
-          containerClassName="w-40 mb-4"
-          title="Latency  (99%)"
-          value={<Duration ms={validCheck?.latency?.p99} />}
-        />
-        <CheckStat
-          containerClassName="w-40 mb-4"
-          title="Severity"
-          value={capitalizeFirstLetter(severityValue)}
-        />
-      </div>
-      {/* chart section */}
-      <div className="mb-3">
-        <div className="flex justify-between items-center mb-2 pr-2">
-          <span className="text-lg font-medium">Health overview</span>
-          <DropdownStandaloneWrapper
-            className="w-48"
-            paramKey="timeRange"
-            dropdownElem={<TimeRange name="time-range" />}
-            defaultValue={timeRange ?? timeRanges[0].value}
+    <div {...rest} ref={containerRef}>
+      <div className="flex flex-col flex-wrap" ref={statsRef}>
+        <div className="flex flex-row flex-wrap mb-2">
+          <CheckStat
+            containerClassName="w-52 mb-4"
+            title="Uptime"
+            value={
+              !Number.isNaN(uptimeValue)
+                ? `${toFixedIfNecessary(uptimeValue, 2)}%`
+                : "-"
+            }
+            append={
+              validUptime &&
+              !Number.isNaN(uptimeValue) && (
+                <div className="flex flex-col justify-center mx-2 mt-0.5">
+                  <span className="text-xs text-green-700 ">
+                    {validCheck?.uptime?.passed} passed
+                  </span>
+                  <span className="text-xs text-red-600">
+                    {validCheck?.uptime?.failed} failed
+                  </span>
+                </div>
+              )
+            }
+          />
+          <CheckStat
+            containerClassName="w-40 mb-4"
+            title="Latency (95%)"
+            value={<Duration ms={validCheck?.latency?.p95} />}
+          />
+          <CheckStat
+            containerClassName="w-40 mb-4"
+            title="Latency  (97%)"
+            value={<Duration ms={validCheck?.latency?.p97} />}
+          />
+          <CheckStat
+            containerClassName="w-40 mb-4"
+            title="Latency  (99%)"
+            value={<Duration ms={validCheck?.latency?.p99} />}
+          />
+          <CheckStat
+            containerClassName="w-40 mb-4"
+            title="Severity"
+            value={capitalizeFirstLetter(severityValue)}
           />
         </div>
-        <div className="w-full h-52 overflow-visible">
-          <Suspense fallback={<div>Loading..</div>}>
-            <CanaryStatusChart timeRange={timeRange} check={validCheck} />
-          </Suspense>
+        <div className="mb-3">
+          <div className="flex justify-between items-center mb-2 pr-2">
+            <span className="text-lg font-medium">Health overview</span>
+            <DropdownStandaloneWrapper
+              className="w-48"
+              paramKey="timeRange"
+              dropdownElem={<TimeRange name="time-range" />}
+              defaultValue={timeRange ?? timeRanges[1].value}
+            />
+          </div>
+          <div className="w-full h-52 overflow-visible">
+            <Suspense fallback={<div>Loading..</div>}>
+              <CanaryStatusChart timeRange={timeRange} check={validCheck} />
+            </Suspense>
+          </div>
         </div>
       </div>
       <PopupTabs
@@ -162,7 +177,9 @@ export function CheckDetails({ check, timeRange, ...rest }: CheckDetailsProps) {
                 <StatusHistory
                   timeRange={timeRange}
                   check={validCheck}
-                  sticky
+                  style={{
+                    maxHeight
+                  }}
                 />
               </div>
             ),

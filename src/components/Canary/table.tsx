@@ -14,15 +14,16 @@ import { prepareRows } from "./Rows/lib";
 import { useCheckSetEqualityForPreviousVsCurrent } from "../Hooks/useCheckSetEqualityForPreviousVsCurrent";
 import { useSearchParams } from "react-router-dom";
 import { HealthCheck } from "../../types/healthChecks";
+import clsx from "clsx";
 
 const styles = {
-  outerDivClass: "border-l border-r border-gray-300 overflow-y-auto",
+  outerDivClass: "border-l border-r border-gray-300 overflow-y-scroll",
   topBgClass: "bg-red-500",
   tableClass: "min-w-full border-separate shadow-lg bg-white rounded-lg",
   theadClass: "bg-white z-10 sticky top-0",
   theadRowClass: "z-10",
   theadHeaderClass:
-    "px-5 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-300",
+    "py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-300",
   tbodyClass: "mt-4 rounded-md",
   tbodyRowClass: "border cursor-pointer",
   tbodyRowExpandableClass: "cursor-pointer",
@@ -254,7 +255,7 @@ export function Table({
             >
               {headerGroup.headers.map((column) => (
                 <th
-                  className={styles.theadHeaderClass}
+                  className={clsx(styles.theadHeaderClass)}
                   {...column.getHeaderProps(column.getSortByToggleProps())}
                   // Table header onClick sorting override:
                   // sortDesc cannot be null, only either true/false
@@ -264,7 +265,7 @@ export function Table({
                     )
                   }
                 >
-                  <div className="flex select-none">
+                  <div className={clsx("flex select-none", column.cellClass)}>
                     {column.render("Header")}
                     <span>
                       {column.isSorted ? (

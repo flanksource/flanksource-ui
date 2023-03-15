@@ -25,15 +25,7 @@ export function matchesLabel(
 }
 
 export function isHealthy(check: HealthCheck): boolean {
-  if (check.checkStatuses == null) {
-    return false;
-  }
-
-  let passed = true;
-  forEach(check.checkStatuses, (s) => {
-    passed = passed && s.status;
-  });
-  return passed;
+  return check.status === "healthy";
 }
 
 export function filterChecks(
