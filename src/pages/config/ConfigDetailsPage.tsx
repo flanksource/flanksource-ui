@@ -95,22 +95,23 @@ export function ConfigDetailsPage() {
         }
         onRefresh={() => refetch()}
         loading={isLoading}
-        contentClass="p-0 h-full overflow-y-auto"
+        contentClass="p-0 h-full"
       >
-        <div className={`flex flex-row min-h-full h-auto`}>
-          <TabbedLinks tabLinks={configTabList}>
-            <div
-              className={`flex flex-col flex-1 p-6 pb-0 min-h-full h-auto overflow-auto`}
-            >
-              <div className="flex flex-row items-start bg-white">
-                <div className="flex flex-col w-full max-w-full">
+        <div className={`flex flex-row h-full`}>
+          <TabbedLinks
+            tabLinks={configTabList}
+            containerClassName="px-4 pt-6 bg-gray-100"
+          >
+            <div className={`flex flex-col flex-1 p-6 pb-0 h-full`}>
+              <div className="flex flex-row items-start bg-white h-full">
+                <div className="flex flex-col w-full max-w-full h-full">
                   {!isLoading ? (
-                    <div className="flex flex-row space-x-2">
-                      <div className="flex flex-col w-full object-contain">
-                        <div className="flex flex-col mb-6 w-full">
+                    <div className="flex flex-row space-x-2 h-full">
+                      <div className="flex flex-col w-full object-contain h-full">
+                        <div className="flex flex-col mb-6 w-full h-full">
                           <div
                             className="flex relative pt-2 px-4 border-gray-300 bg-white rounded shadow-md flex-1 overflow-x-auto overflow-y-atuo"
-                            style={{ maxHeight: "calc(100vh - 8.5rem)" }}
+                            style={{ maxHeight: "calc(100vh - 8rem)" }}
                           >
                             <JSONViewer
                               code={code}

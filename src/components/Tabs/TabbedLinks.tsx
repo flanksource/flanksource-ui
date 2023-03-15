@@ -5,6 +5,7 @@ import { NavLink } from "react-router-dom";
 type RoutedTabsLinksProps = React.HTMLProps<HTMLDivElement> & {
   children?: React.ReactNode;
   contentClassName?: string;
+  containerClassName?: string;
   tabLinks: {
     label: React.ReactNode;
     path: string;
@@ -15,11 +16,17 @@ export default function TabbedLinks({
   children,
   className,
   contentClassName = "bg-white border border-t-0 border-gray-300 flex-1 overflow-y-auto p-2",
+  containerClassName = "px-4 py-6 bg-gray-100",
   tabLinks,
   ...rest
 }: RoutedTabsLinksProps) {
   return (
-    <div className="flex flex-col overflow-y-auto flex-1 px-4 py-6 bg-gray-100">
+    <div
+      className={clsx(
+        "flex flex-col overflow-y-auto flex-1",
+        containerClassName
+      )}
+    >
       <div
         className={`flex flex-wrap border-b border-gray-300 ${className}`}
         aria-label="Tabs"
