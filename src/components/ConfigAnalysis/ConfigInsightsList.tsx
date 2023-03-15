@@ -1,13 +1,8 @@
-import { SortingState } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useConfigInsightsQuery } from "../../api/query-hooks/useConfigAnalysisQuery";
-import { ConfigItem } from "../../api/services/configs";
-import ConfigInsightsDetailsModal from "../ConfigAnalysisLink/ConfigInsightsDetailsModal";
-import { ConfigTypeInsights } from "../ConfigInsights";
-import { DataTable } from "../DataTable";
 import { InfoMessage } from "../InfoMessage";
-import { ConfigInsightsColumns } from "./ConfigInsightsColumns";
+import InsightsDataTable from "../InsightsDataTable";
 
 type Props = {
   setIsLoading: (isLoading: boolean) => void;
@@ -19,28 +14,10 @@ export default function ConfigInsightsList({
   triggerRefresh
 }: Props) {
   const [params, setParams] = useSearchParams();
-  const [clickedInsightItem, setClickedInsightItem] = useState<
-    ConfigTypeInsights & { config?: ConfigItem }
-  >();
-  const [isInsightDetailsModalOpen, setIsInsightDetailsModalOpen] =
-    useState(false);
 
   const status = params.get("status") ?? undefined;
   const severity = params.get("severity") ?? undefined;
   const type = params.get("type") ?? undefined;
-
-  const sortState: SortingState = useMemo(() => {
-    return [
-      ...(params.get("sortBy")
-        ? [
-            {
-              id: params.get("sortBy")!,
-              desc: params.get("sortOrder") === "desc"
-            }
-          ]
-        : [])
-    ];
-  }, [params]);
 
   const [{ pageIndex, pageSize }, setPageState] = useState({
     pageIndex: 0,
@@ -93,45 +70,20 @@ export default function ConfigInsightsList({
     };
   }, [pageIndex, pageSize, pageCount, isLoading, isRefetching]);
 
-  const columns = useMemo(() => ConfigInsightsColumns, []);
-
   return (
     // eslint-disable-next-line react/jsx-no-useless-fragment
     <>
       {error ? (
         <InfoMessage message={error.message} />
       ) : (
-        <DataTable
-          columns={columns}
+        <InsightsDataTable
           data={configInsights}
           isLoading={isLoading}
-          stickyHead
           pagination={pagination}
-          tableSortByState={sortState}
-          handleRowClick={(row) => {
-            setClickedInsightItem(row.original);
-            setIsInsightDetailsModalOpen(true);
-          }}
-          enableServerSideSorting
-          onTableSortByChanged={(state) => {
-            const getSortBy = Array.isArray(state) ? state : state(sortState);
-            if (getSortBy.length > 0) {
-              params.set("sortBy", getSortBy[0].id);
-              params.set("sortOrder", getSortBy[0].desc ? "desc" : "asc");
-            } else {
-              params.delete("sortBy");
-              params.delete("sortOrder");
-            }
-            setParams(params);
-          }}
+          params={params}
+          setParams={setParams}
         />
       )}
-
-      <ConfigInsightsDetailsModal
-        configInsight={clickedInsightItem}
-        isOpen={isInsightDetailsModalOpen}
-        onClose={() => setIsInsightDetailsModalOpen(false)}
-      />
     </>
   );
 }

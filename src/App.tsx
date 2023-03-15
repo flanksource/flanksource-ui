@@ -34,7 +34,8 @@ import {
   IncidentDetailsPage,
   IncidentListPage,
   LogsPage,
-  TopologyPage
+  TopologyPage,
+  InsightsDetailsChangesPage
 } from "./pages";
 import { HealthPage } from "./pages/health";
 import { TopologyPageContextProvider } from "./context/TopologyPageContext";
@@ -178,6 +179,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             }
           />
           <Route path="changes" element={<ConfigDetailsChangesPage />} />
+          <Route path="insights" element={<InsightsDetailsChangesPage />} />
         </Route>
       </Route>
     </Routes>
