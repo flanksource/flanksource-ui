@@ -11,6 +11,17 @@ import ConfigListNameCell from "./Cells/ConfigListNameCell";
 import ConfigListTagsCell from "./Cells/ConfigListTagsCell";
 import ConfigListTypeCell from "./Cells/ConfigListTypeCell";
 
+function CountBadge({ value }: { value: number | undefined | null }) {
+  if (!value) {
+    return null;
+  }
+  return (
+    <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-blue-100 text-blue-800">
+      {value}
+    </span>
+  );
+}
+
 export const configListColumns: ColumnDef<ConfigItem, any>[] = [
   {
     header: "Type",
@@ -38,14 +49,7 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
     aggregationFn: changeAggregationFN,
     aggregatedCell: ({ getValue }: CellContext<ConfigItem, any>) => {
       const value = getValue();
-      if (!value) {
-        return "";
-      }
-      return (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-blue-100 text-blue-800">
-          {value}
-        </span>
-      );
+      return <CountBadge value={value} />;
     },
     size: 75,
     meta: {
@@ -57,7 +61,11 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
     header: "Analysis",
     accessorKey: "analysis",
     cell: ConfigListAnalysisCell,
-    aggregatedCell: "",
+    aggregationFn: analysisAggregationFN,
+    aggregatedCell: ({ getValue }: CellContext<ConfigItem, any>) => {
+      const value = getValue();
+      return <CountBadge value={value} />;
+    },
     size: 150
   },
   {
@@ -161,6 +169,19 @@ function changeAggregationFN(
     }
   });
   return sum;
+}
+
+function analysisAggregationFN(
+  columnId: string,
+  leafRows: Row<ConfigItem>[],
+  childRows: Row<ConfigItem>[]
+) {
+  let count = 0;
+  leafRows?.forEach((row) => {
+    const values = row.getValue<{ total: number }[]>(columnId);
+    count = values?.length || 0;
+  });
+  return count;
 }
 
 function CostAggregate({ getValue }: CellContext<ConfigItem, any>) {
