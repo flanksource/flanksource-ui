@@ -1,7 +1,8 @@
 import { CellContext, ColumnDef, Row } from "@tanstack/react-table";
 import React from "react";
-import { ConfigItem } from "../../api/services/configs";
+import { ConfigAnalysisTypeItem, ConfigItem } from "../../api/services/configs";
 import { getTimeBucket, TIME_BUCKETS } from "../../utils/date";
+import ConfigInsightsIcon from "../ConfigInsightsIcon";
 import { FormatCurrency } from "../CostDetails/CostDetails";
 import ConfigListAnalysisCell from "./Cells/ConfigListAnalysisCell";
 import ConfigListChangeCell from "./Cells/ConfigListChangeCell";
@@ -63,8 +64,24 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
     cell: ConfigListAnalysisCell,
     aggregationFn: analysisAggregationFN,
     aggregatedCell: ({ getValue }: CellContext<ConfigItem, any>) => {
-      const value = getValue();
-      return <CountBadge value={value} />;
+      const data = getValue();
+      return (
+        <div className="inline-flex space-x-2 overflow-hidden truncate">
+          {data.map(
+            (item: { count: number; analysis: ConfigAnalysisTypeItem }) => {
+              return (
+                <span
+                  className="inline-flex space-x-0.5"
+                  key={item.analysis.analysis_type}
+                >
+                  <ConfigInsightsIcon analysis={item.analysis} />{" "}
+                  <CountBadge value={item.count} />
+                </span>
+              );
+            }
+          )}
+        </div>
+      );
     },
     size: 150
   },
@@ -176,12 +193,31 @@ function analysisAggregationFN(
   leafRows: Row<ConfigItem>[],
   childRows: Row<ConfigItem>[]
 ) {
-  let count = 0;
+  const result: Record<
+    string,
+    {
+      count: number;
+      data: ConfigAnalysisTypeItem;
+    }
+  > = {};
   leafRows?.forEach((row) => {
-    const values = row.getValue<{ total: number }[]>(columnId);
-    count = values?.length || 0;
+    const values = row.getValue<ConfigAnalysisTypeItem[]>(columnId) || [];
+    values.forEach((value) => {
+      result[value.analysis_type] = result[value.analysis_type] ?? {
+        count: 0,
+        data: value
+      };
+      result[value.analysis_type].count += 1;
+    });
   });
-  return count;
+  const data = Object.keys(result).map((key) => {
+    return {
+      type: key,
+      count: result[key].count,
+      analysis: result[key].data
+    };
+  });
+  return data;
 }
 
 function CostAggregate({ getValue }: CellContext<ConfigItem, any>) {
