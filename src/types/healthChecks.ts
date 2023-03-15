@@ -2,6 +2,7 @@ export interface HealthChecksResponse {
   duration: number;
   runnerName: string;
   checks: HealthCheck[];
+  checks_summary: HealthCheck[];
 }
 
 export interface HealthCheck {

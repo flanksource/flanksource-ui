@@ -8,10 +8,10 @@ import { toastError } from "../../Toast/toast";
 import { useLoader } from "../../../hooks";
 import { CellContext, ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "../../DataTable";
+import clsx from "clsx";
 
-type StatusHistoryProps = {
+type StatusHistoryProps = React.HTMLProps<HTMLDivElement> & {
   check: Pick<Partial<HealthCheck>, "id" | "checkStatuses" | "description">;
-  sticky?: boolean;
   timeRange: string;
 };
 
@@ -72,7 +72,8 @@ const columns: ColumnDef<HealthCheckStatus, any>[] = [
 export function StatusHistory({
   check,
   timeRange,
-  sticky = false
+  className,
+  ...props
 }: StatusHistoryProps) {
   const [statii, setStatti] = useState<HealthCheckStatus[]>([]);
   const { loading, setLoading } = useLoader();
@@ -118,13 +119,25 @@ export function StatusHistory({
   const getHistoryListView = (loading: boolean) => {
     if (loading) {
       return (
-        <div className="h-64 flex items-center justify-center text-gray-400 text-md">
+        <div
+          className={clsx(
+            "h-64 flex items-center justify-center text-gray-400 text-md",
+            className
+          )}
+          {...props}
+        >
           Loading please wait...
         </div>
       );
     }
     return (
-      <div className="h-64 flex items-center justify-center text-gray-400 text-md">
+      <div
+        className={clsx(
+          "h-64 flex items-center justify-center text-gray-400 text-md",
+          className
+        )}
+        {...props}
+      >
         No status history available
       </div>
     );
@@ -139,10 +152,7 @@ export function StatusHistory({
   }
 
   return (
-    <div
-      className="w-full flex flex-col"
-      style={{ maxHeight: "calc(40vh - 20px)" }}
-    >
+    <div className={clsx("w-full flex flex-col", className)} {...props}>
       {statii?.length && (
         <DataTable
           stickyHead
@@ -151,7 +161,7 @@ export function StatusHistory({
           tableStyle={{ borderSpacing: "0" }}
           className="flex-1"
           pagination={pagination}
-          paginationClassName="p-2"
+          paginationClassName="px-2 pb-2"
         />
       )}
       {!statii?.length && getHistoryListView(false)}
