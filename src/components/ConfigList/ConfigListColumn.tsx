@@ -25,7 +25,7 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
     header: "Name",
     accessorKey: "name",
     cell: ConfigListNameCell,
-    size: 350,
+    size: 270,
     enableGrouping: true,
     enableSorting: true
   },
@@ -47,7 +47,7 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
         </span>
       );
     },
-    size: 150,
+    size: 75,
     meta: {
       cellClassName: "overflow-hidden"
     },
@@ -58,13 +58,13 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
     accessorKey: "analysis",
     cell: ConfigListAnalysisCell,
     aggregatedCell: "",
-    size: 120
+    size: 150
   },
   {
     header: "Cost",
     accessorKey: "",
     cell: ConfigListCostCell,
-    size: 120,
+    size: 180,
     enableSorting: false,
     columns: [
       {
@@ -106,10 +106,7 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
     accessorKey: "tags",
     cell: React.memo(ConfigListTagsCell),
     aggregatedCell: "",
-    size: 250,
-    meta: {
-      cellClassName: "overflow-hidden"
-    }
+    size: 210
   },
   {
     header: "All Tags",
@@ -118,24 +115,21 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
       <ConfigListTagsCell {...props} hideGroupByView />
     )),
     aggregatedCell: "",
-    size: 250,
-    meta: {
-      cellClassName: "overflow-hidden"
-    }
+    size: 210
   },
   {
     header: "Created",
     accessorKey: "created_at",
     cell: ConfigListDateCell,
     aggregatedCell: "",
-    size: 80
+    size: 100
   },
   {
     header: "Last Updated",
     accessorKey: "updated_at",
     cell: ConfigListDateCell,
     aggregatedCell: "",
-    size: 90
+    size: 130
   },
   {
     header: "Deleted At",

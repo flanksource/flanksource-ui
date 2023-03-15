@@ -1,6 +1,6 @@
 export default function TopologyCardSkeletonLoader() {
   return (
-    <div className="shadow rounded-md p-2 w-96 mr-3 mb-3">
+    <div className="shadow rounded-md px-2 w-96 mr-3 mb-3">
       <div className="animate-pulse flex flex-col space-y-2">
         <div className="flex-1 flex flex-row space-x-2 items-center">
           <div className="bg-gray-200 h-12 rounded w-full"></div>

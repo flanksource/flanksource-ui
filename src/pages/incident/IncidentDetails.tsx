@@ -22,12 +22,12 @@ import { useUpdateHypothesisMutation } from "../../api/mutations/useUpdateHypoth
 import { useIncidentQuery } from "../../api/query-hooks";
 import { TopologyCard } from "../../components/TopologyCard";
 import { Size } from "../../types";
-import SlidingSideBar from "../../components/SlidingSideBar";
 import IncidentDetailsPageSkeletonLoader from "../../components/SkeletonLoader/IncidentDetailsPageSkeletonLoader";
 import { Head } from "../../components/Head/Head";
 import { HypothesisCommentsViewContainer } from "../../components/Hypothesis/HypothesisCommentsViewContainer/HypothesisCommentsViewContainer";
 import { HypothesisActionPlanViewContainer } from "../../components/Hypothesis/HypothesisActionPlanViewContainer/HypothesisActionPlanViewContainer";
 import { Tab, Tabs } from "../../components/Tabs/Tabs";
+import EmptyState from "../../components/EmptyState";
 
 export enum IncidentDetailsViewTypes {
   comments = "Comments",
@@ -180,7 +180,7 @@ export function IncidentDetailsPage() {
     );
   };
 
-  if (incident == null) {
+  if (!incident && isLoading) {
     return <IncidentDetailsPageSkeletonLoader />;
   }
 
@@ -196,7 +196,7 @@ export function IncidentDetailsPage() {
               {" "}
               <Link to="/incidents">Incidents&nbsp;</Link>
               {" / "}
-              {!isLoading && (
+              {!isLoading && incident && (
                 <div className="font-semibold">
                   <div>&nbsp;{incident.title}</div>
                 </div>
@@ -206,38 +206,72 @@ export function IncidentDetailsPage() {
         }
       >
         <div className="flex flex-row min-h-full h-auto mt-2">
-          <div className="flex flex-col flex-1 p-6 min-h-full h-auto">
-            <div className="w-full mx-auto">
-              {Boolean(topologyIds?.length) && (
-                <section className="overflow-x-auto">
-                  <div className="border-b">
-                    <div className="px-2 py-2 flex flex-row overflow-x-auto">
-                      {topologyIds?.map((id) => (
-                        <TopologyCard
-                          key={id}
-                          size={Size.large}
-                          topologyId={id}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                </section>
-              )}
-              <section className="mt-4">{getHypothesisView()}</section>
+          {incident ? (
+            <>
+              <div className="flex flex-col flex-1 p-6 min-h-full h-auto">
+                <div className="max-w-3xl lg:max-w-6xl w-full mx-auto">
+                  {Boolean(topologyIds?.length) && (
+                    <section>
+                      <div className="border-b">
+                        <div className="px-2 py-2 flex flex-nowrap overflow-x-auto">
+                          {topologyIds?.map((id) => (
+                            <TopologyCard
+                              key={id}
+                              size={Size.large}
+                              topologyId={id}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    </section>
+                  )}
+                  <section className="mt-4">{getHypothesisView()}</section>
+                  <section className="mt-4">
+                    {!isLoading ? (
+                      loadedTrees?.map((loadedTree, index) => {
+                        return (
+                          <HypothesisBuilder
+                            loadedTree={loadedTree}
+                            // showGeneratedOutput
+                            initialEditMode={isNewlyCreated}
+                            api={{
+                              incidentId,
+                              create: createHypothesis,
+                              delete: deleteHypothesis,
+                              deleteBulk: deleteHypothesisBulk,
+                              update: updateHypothesis,
+                              updateMutation,
+                              createMutation
+                            }}
+                            key={loadedTree.id}
+                            showHeader={index === 0}
+                          />
+                        );
+                      })
+                    ) : (
+                      <div>{!error && "fetching tree..."}</div>
+                    )}
+                  </section>
+                </div>
+              </div>
+              <IncidentSidebar
+                incident={incident}
+                updateStatusHandler={() =>
+                  updateStatus(
+                    status === IncidentStatus.Open
+                      ? IncidentStatus.Closed
+                      : IncidentStatus.Open
+                  )
+                }
+                updateIncidentHandler={updateIncidentHandler}
+                textButton={status === IncidentStatus.Open ? "Close" : "Reopen"}
+              />
+            </>
+          ) : (
+            <div className="flex flex-col flex-1 p-6 justify-center font-semibold">
+              <EmptyState title="Incident not found" />
             </div>
-          </div>
-          <IncidentSidebar
-            incident={incident}
-            updateStatusHandler={() =>
-              updateStatus(
-                status === IncidentStatus.Open
-                  ? IncidentStatus.Closed
-                  : IncidentStatus.Open
-              )
-            }
-            updateIncidentHandler={updateIncidentHandler}
-            textButton={status === IncidentStatus.Open ? "Close" : "Reopen"}
-          />
+          )}
         </div>
       </SearchLayout>
     </>

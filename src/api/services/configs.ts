@@ -39,8 +39,9 @@ export type ConfigTypeRelationships = {
 };
 
 interface Change {
-  type: string;
-  count: number;
+  change_type: string;
+  total: number;
+  severity?: string;
 }
 
 interface Analysis {
@@ -287,6 +288,20 @@ export const getAllConfigInsights = async (
 export const getConfigAnalysis = async <T>(configId: string) => {
   const res = await ConfigDB.get<T>(
     `/configs?id=eq.${configId}&select=cost_per_minute,cost_total_1d,cost_total_7d,cost_total_30d`
+  );
+  return res.data;
+};
+
+export const getConfigComponentRelationships = async <T>(configID: string) => {
+  const res = await ConfigDB.get<T>(
+    `/config_component_relationships?config_id=eq.${configID}&select=components!config_component_relationships_component_id_fkey(id, icon, name)`
+  );
+  return res.data;
+};
+
+export const getComponentConfigChanges = async <T>(topologyID: string) => {
+  const res = await ConfigDB.get<T>(
+    `/changes_by_component?component_id=eq.${topologyID}`
   );
   return res.data;
 };

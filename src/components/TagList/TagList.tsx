@@ -7,18 +7,51 @@ type TagEntry = {
   value: string;
 };
 
-type TagListProps = {
+type TagListProps = React.HTMLProps<HTMLDivElement> & {
   tags: TagEntry[];
   minimumItemsToShow?: number;
 };
 
-export function TagList({ tags, minimumItemsToShow = 1 }: TagListProps) {
+type TagItemProps = {
+  containerWidth?: string;
+  tag: {
+    key: string;
+    value: string;
+  };
+};
+
+export function TagItem({ tag: { key, value }, containerWidth }: TagItemProps) {
+  return (
+    <div
+      className="flex flex-row p-[0.15rem] bg-gray-200 rounded-md mx-1"
+      data-tip={`${key}:${value}`}
+    >
+      <div
+        className="flex flex-row space-x-1 font-semibold p-[0.2rem] text-gray-600 text-xs truncate"
+        style={containerWidth ? { width: containerWidth } : {}}
+      >
+        <span className="inline">{key}:</span>
+        <span className="inline font-light">{value}</span>
+      </div>
+    </div>
+  );
+}
+
+export function TagList({
+  tags,
+  minimumItemsToShow = 1,
+  className = `flex flex-row text-left items-start flex-1`,
+  ...rest
+}: TagListProps) {
   const [showAll, setShowAll] = useState(false);
 
   const outerContainerRef = useRef<HTMLDivElement>(null);
   const innerContainerRef = useRef<HTMLDivElement>(null);
 
   const [isOverflowing, setIsOverflowing] = useState(false);
+  const containerWidth = `${
+    (innerContainerRef.current?.clientWidth || 0) - 10
+  }px`;
 
   useEffect(() => {
     const handleResize = () => {
@@ -35,16 +68,10 @@ export function TagList({ tags, minimumItemsToShow = 1 }: TagListProps) {
   }, []);
 
   return (
-    <div
-      ref={outerContainerRef}
-      className={`flex flex-row text-left items-start h-full`}
-    >
+    <div ref={outerContainerRef} className={className} {...rest}>
       {isOverflowing && (
         <button
           onClick={(e) => {
-            /* Don't trigger click for parent. E.g without stopPropagation,
-           handleRowClick would be called. */
-            e.stopPropagation();
             setShowAll((showMore) => !showMore);
           }}
           className="text-sm focus:outline-none"
@@ -56,31 +83,27 @@ export function TagList({ tags, minimumItemsToShow = 1 }: TagListProps) {
           )}
         </button>
       )}
+
       <div
         ref={innerContainerRef}
         className={clsx(
-          `flex flex-wrap flex-1 h-auto`,
+          `flex flex-col flex-1 h-auto space-y-2`,
           !showAll ? `overflow-y-hidden` : ""
         )}
         style={
           !showAll
             ? {
-                height: `${1.75 * minimumItemsToShow}rem`
+                maxHeight: `${2.25 * minimumItemsToShow}rem`
               }
             : {}
         }
       >
         {tags.map(({ key, value }) => (
-          <div className="flex flex-row p-[0.15rem] max-w-full" key={key}>
-            <div className="flex flex-row max-w-full space-x-1 font-semibold p-[0.2rem] bg-gray-200 text-gray-600 rounded-md text-xs">
-              <span className="inline text-ellipsis overflow-hidden">
-                {key}:
-              </span>
-              <span className="inline text-ellipsis overflow-hidden font-light">
-                {value}
-              </span>
-            </div>
-          </div>
+          <TagItem
+            key={key}
+            tag={{ key, value }}
+            containerWidth={containerWidth}
+          />
         ))}
       </div>
     </div>

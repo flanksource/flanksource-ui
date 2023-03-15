@@ -2,7 +2,8 @@ import { Cell } from "@tanstack/react-table";
 import dayjs from "dayjs";
 import LogItem from "../../../types/Logs";
 import { IndeterminateCheckbox } from "../../IndeterminateCheckbox/IndeterminateCheckbox";
-import { TagList } from "../../TagList/TagList";
+import Popover from "../../Popover/Popover";
+import { TagItem, TagList } from "../../TagList/TagList";
 
 export type LogsTableTimestampCellProps = React.HTMLProps<HTMLDivElement> & {
   cell: Cell<LogItem, unknown>;
@@ -47,5 +48,31 @@ export function LogsTableLabelsCell({
     };
   });
 
-  return <TagList tags={tags} />;
+  return (
+    <Popover
+      toggle={
+        <div className="flex flex-row items-center">
+          <div className="flex-shrink overflow-x-hidden cursor-pointer">
+            <TagItem tag={tags[0]!} />
+          </div>
+          {tags.length > 1 && (
+            <div className="flex-shrink space-x-2 underline decoration-solid justify-left text-xs  cursor-pointer">
+              +{tags.length - 1} more
+            </div>
+          )}
+        </div>
+      }
+      placement="left"
+    >
+      <div className="flex flex-col p-1">
+        <div className="flex flex-col items-stretch max-h-96 overflow-y-auto">
+          <TagList
+            className="flex flex-col flex-1"
+            tags={tags}
+            minimumItemsToShow={tags.length}
+          />
+        </div>
+      </div>
+    </Popover>
+  );
 }

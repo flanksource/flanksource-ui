@@ -45,7 +45,7 @@ export type InviteUserPayload = {
 };
 
 export const getPerson = (id: string) =>
-  resolve<User>(IncidentCommander.get(`/people?id=eq.${id}`));
+  resolve<User[]>(IncidentCommander.get(`/people?id=eq.${id}`));
 
 export const getPersons = () =>
   resolve<User[]>(IncidentCommander.get(`/people`));

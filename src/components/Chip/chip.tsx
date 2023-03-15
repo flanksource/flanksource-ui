@@ -25,9 +25,9 @@ type Props = {
   HTMLDivElement
 >;
 
-export function Chip({ text, color, children, ...props }: Props) {
+export function Chip({ text, color, children, className, ...props }: Props) {
   return (
-    <Tag className={clsx(getBackgroundColorClass(color))} {...props}>
+    <Tag className={clsx(getBackgroundColorClass(color), className)} {...props}>
       {text || children}
     </Tag>
   );

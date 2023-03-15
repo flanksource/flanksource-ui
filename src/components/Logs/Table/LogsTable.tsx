@@ -193,7 +193,7 @@ export function LogsTable({
   const { getVirtualItems, getTotalSize } = useVirtualizer({
     count: rows.length,
     getScrollElement: () => tableContainerRef.current,
-    estimateSize: () => 35,
+    estimateSize: () => 62,
     overscan: 10
   });
 
@@ -280,7 +280,6 @@ export function LogsTable({
                       style={{
                         width: cell.column.getSize()
                       }}
-                      className="overflow-hidden"
                     >
                       {flexRender(
                         cell.column.columnDef.cell,

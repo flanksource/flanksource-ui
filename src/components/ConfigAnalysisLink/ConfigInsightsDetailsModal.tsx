@@ -76,6 +76,7 @@ export default function ConfigInsightsDetailsModal({
             configType={configInsight.config!.external_type}
             configTypeSecondary={configInsight.config!.config_type}
           />
+          {" / "}
           <ConfigInsightsIcon analysis={configInsight} />
           {configInsight.analyzer}
         </>

@@ -20,7 +20,7 @@ export function CheckTitle({
   const validCheck = check || prevCheck;
 
   return (
-    <div className={`flex flex-row ${className}`} {...rest}>
+    <div className={`flex flex-row items-center ${className}`} {...rest}>
       <div
         className={clsx(
           "flex-shrink-0",
@@ -29,7 +29,7 @@ export function CheckTitle({
       >
         <Icon
           name={validCheck?.icon || validCheck?.type}
-          size={size === "large" ? "2xl" : "sm"}
+          className={size === "large" ? "w-14 h-auto" : "w-6 h-auto"}
         />
       </div>
       <div
