@@ -17,7 +17,7 @@ import { HealthCheck } from "../../types/healthChecks";
 import clsx from "clsx";
 
 const styles = {
-  outerDivClass: "border-l border-r border-gray-300 overflow-y-auto",
+  outerDivClass: "border-l border-r border-gray-300 overflow-y-scroll",
   topBgClass: "bg-red-500",
   tableClass: "min-w-full border-separate shadow-lg bg-white rounded-lg",
   theadClass: "bg-white z-10 sticky top-0",

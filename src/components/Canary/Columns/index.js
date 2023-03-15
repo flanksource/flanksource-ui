@@ -10,6 +10,7 @@ import { Badge } from "../../Badge";
 import style from "../index.module.css";
 import { Status } from "../../Status";
 import { dateDiff, relativeDateTime } from "../../../utils/date";
+import clsx from "clsx";
 
 export function Cell({ state, value, row, column }) {
   const { pivotCellType } = state;
@@ -113,7 +114,7 @@ export function TitleCell({ row }) {
   }
 
   return (
-    <div className={style.checkTitleRow}>
+    <div className={clsx(style.checkTitleRow, "w-96")}>
       <span
         className="flex flex-row items-center"
         style={{
@@ -121,17 +122,19 @@ export function TitleCell({ row }) {
         }}
       >
         <Title title={title} icon={rowValues.icon || rowValues.type} />
-        {row.canExpand && rowValues.subRows && rowValues?.subRows.length > 1 && (
-          <span className="ml-1 flex items-center">
-            <Badge
-              className="ml-1"
-              colorClass="bg-gray-200 text-gray-800"
-              roundedClass="rounded-xl"
-              text={rowValues?.subRows.length}
-              size="xs"
-            />
-          </span>
-        )}
+        {row.canExpand &&
+          rowValues.subRows &&
+          rowValues?.subRows.length > 1 && (
+            <span className="ml-1 flex items-center">
+              <Badge
+                className="ml-1"
+                colorClass="bg-gray-200 text-gray-800"
+                roundedClass="rounded-xl"
+                text={rowValues?.subRows.length}
+                size="xs"
+              />
+            </span>
+          )}
         {row.showNamespaceTags ? (
           rowValues.namespaces ? (
             <Badge
