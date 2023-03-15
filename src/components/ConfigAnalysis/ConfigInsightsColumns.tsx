@@ -19,7 +19,7 @@ export const ConfigInsightsColumns: ColumnDef<
       const config = cell.row.original.config;
 
       return (
-        <div className="flex max-w-full">
+        <div className="flex max-w-full truncate">
           <Link
             className="space-x-2  items-center"
             to={`/configs/${config?.id}`}
