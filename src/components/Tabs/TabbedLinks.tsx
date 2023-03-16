@@ -38,7 +38,7 @@ export default function TabbedLinks({
               clsx(
                 "cursor-pointer px-4 py-2 font-medium text-sm rounded-t-md border border-gray-300 hover:text-gray-900 mb-[-2px]",
                 isActive
-                  ? "text-gray-900 bg-white border-white"
+                  ? "text-gray-900 bg-white"
                   : "text-gray-500 border-transparent"
               )
             }

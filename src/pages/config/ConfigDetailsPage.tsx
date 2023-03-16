@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useCallback } from "react";
+import { useEffect, useState, useMemo, useCallback, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { useGetConfigByIdQuery } from "../../api/query-hooks";
 import { EvidenceType } from "../../api/services/evidence";
@@ -12,14 +12,37 @@ import { SearchLayout } from "../../components/Layout";
 import { Loading } from "../../components/Loading";
 import TabbedLinks from "../../components/Tabs/TabbedLinks";
 import { usePartialUpdateSearchParams } from "../../hooks/usePartialUpdateSearchParams";
+import useRunTaskOnPropChange from "../../hooks/useRunTaskOnPropChange";
 
 export function ConfigDetailsPage() {
   const { id } = useParams();
   const [searchParams, setSearchParams] = usePartialUpdateSearchParams();
   const [attachAsAsset, setAttachAsAsset] = useState(false);
   const [checked, setChecked] = useState<Record<string, any>>({});
-
+  const marginBottom = 24;
+  const contentRef = useRef<HTMLDivElement>(null);
+  const element = contentRef.current;
+  const contentDivHeight = contentRef.current?.parentElement
+    ? document.body.clientHeight -
+      contentRef.current.parentElement.getBoundingClientRect().top -
+      marginBottom
+    : 0;
   const configTabList = useConfigDetailsTabs();
+
+  useRunTaskOnPropChange(
+    () => {
+      return contentDivHeight;
+    },
+    () => {
+      if (!element) {
+        return;
+      }
+      element.parentElement?.style.setProperty(
+        "max-height",
+        `${contentDivHeight}px`
+      );
+    }
+  );
 
   const {
     isLoading,
@@ -95,24 +118,24 @@ export function ConfigDetailsPage() {
         }
         onRefresh={() => refetch()}
         loading={isLoading}
-        contentClass="p-0 h-full"
+        contentClass="p-0 h-full overflow-y-hidden"
       >
         <div className={`flex flex-row h-full`}>
           <TabbedLinks
             tabLinks={configTabList}
-            containerClassName="px-4 pt-6 bg-gray-100"
+            contentClassName={`bg-white border border-t-0 border-gray-300 flex-1 p-2`}
           >
-            <div className={`flex flex-col flex-1 p-6 pb-0 h-full`}>
+            <div
+              className={`flex flex-col flex-1 p-6 pb-0 h-full`}
+              ref={contentRef}
+            >
               <div className="flex flex-row items-start bg-white h-full">
                 <div className="flex flex-col w-full max-w-full h-full">
                   {!isLoading ? (
                     <div className="flex flex-row space-x-2 h-full">
                       <div className="flex flex-col w-full object-contain h-full">
                         <div className="flex flex-col mb-6 w-full h-full">
-                          <div
-                            className="flex relative pt-2 px-4 border-gray-300 bg-white rounded shadow-md flex-1 overflow-x-auto overflow-y-atuo"
-                            style={{ maxHeight: "calc(100vh - 8rem)" }}
-                          >
+                          <div className="flex relative pt-2 px-4 border-gray-300 bg-white rounded shadow-md flex-1 overflow-x-auto overflow-y-atuo">
                             <JSONViewer
                               code={code}
                               format={format}
