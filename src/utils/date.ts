@@ -182,9 +182,9 @@ export const subtractDateFromNow = (decValue: number, decUnit: string) =>
 export const dateDiff = (
   date1: DateConfig,
   date2: DateConfig,
-  diffUnit?: string,
+  diffUnit?: ManipulateType,
   isDiffInFloat?: boolean
-) => dayjs(date1).diff(dayjs(date2), diffUnit as ManipulateType, isDiffInFloat);
+) => dayjs(date1).diff(dayjs(date2), diffUnit, isDiffInFloat);
 
 export const formatDateToMonthDayTime = (date: string | Date) => {
   return dayjs(date).format("MMM DD(HH:mm)");

@@ -38,44 +38,23 @@ function aggregateType(typeList) {
 // calculate the average health of all checks with valid statuses
 // returns a simplified list of statuses that indicates the overall health.
 function aggregateStatuses(statusLists) {
-  const count = reduce(
-    statusLists,
-    (sum, i) => Math.max(sum, i == null ? 0 : i.length),
-    0
-  );
+  let allFail = true,
+    allPass = true,
+    mixed;
+  statusLists.forEach((item) => {
+    allFail = allFail && item.status === "unhealthy";
+  });
 
-  const aggregated = [];
-  for (let i = 0; i < count; i += 1) {
-    const allPass = reduce(
-      statusLists,
-      (sum, list) =>
-        sum && list != null && list.length >= i && list[i] && list[i].status,
-      true
-    );
-    const allFail = reduce(
-      statusLists,
-      (sum, list) =>
-        sum && list != null && list.length >= i && list[i] && !list[i].status,
-      true
-    );
-    if (allPass) {
-      aggregated.push({
-        id: aggregated.length,
-        status: true
-      });
-    } else if (allFail) {
-      aggregated.push({
-        id: aggregated.length,
-        status: false
-      });
-    } else {
-      aggregated.push({
-        id: aggregated.length,
-        mixed: true
-      });
-    }
-  }
-  return aggregated;
+  statusLists.forEach((item) => {
+    allPass = allPass && item.status === "healthy";
+  });
+
+  mixed = !allFail && !allPass;
+
+  return {
+    good: allPass,
+    mixed
+  };
 }
 
 // The uptime for a group, is defined as the minimum uptime with the group
@@ -122,7 +101,10 @@ export function aggregate(title, items) {
       rolling1h: avgLatency(items)
     },
     uptime: sumUptime(items),
-    checkStatuses: aggregateStatuses(items.map((item) => item.checkStatuses)),
+    status: {
+      good: aggregateStatuses(items).good,
+      mixed: aggregateStatuses(items).mixed
+    },
     type: aggregateType(items.map((item) => item.type)),
     namespaces: [...new Set(items.map((item) => item.namespace))]
   };

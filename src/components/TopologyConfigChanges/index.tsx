@@ -1,7 +1,8 @@
 import dayjs from "dayjs";
-import { useEffect, useState } from "react";
 import { GoDiff } from "react-icons/go";
 import { Link } from "react-router-dom";
+import { useComponentConfigChanges } from "../../api/query-hooks/useComponentConfigChanges";
+import { Badge } from "../Badge";
 import CollapsiblePanel from "../CollapsiblePanel";
 import ConfigLink from "../ConfigLink/ConfigLink";
 import EmptyState from "../EmptyState";
@@ -14,25 +15,8 @@ type Props = {
 };
 
 export function TopologyConfigChanges({ topologyID }: Props) {
-  const [componentConfigChanges, setComponentConfigChanges] = useState<
-    Record<string, any>[]
-  >([]);
-
-  const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    async function fetchComponentConfigChanges() {
-      setIsLoading(true);
-      const res = await fetch(
-        `/api/db/changes_by_component?component_id=eq.${topologyID}`
-      );
-      const data = await res.json();
-      setComponentConfigChanges(data);
-      setIsLoading(false);
-    }
-
-    fetchComponentConfigChanges();
-  }, [topologyID]);
+  const { data: componentConfigChanges = [], isLoading } =
+    useComponentConfigChanges<Record<string, any>[]>(topologyID);
 
   return (
     <div className="flex flex-col ">
@@ -76,10 +60,21 @@ export function TopologyConfigChanges({ topologyID }: Props) {
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default function (props: Props) {
+  const { data: componentConfigChanges = [] } = useComponentConfigChanges<
+    Record<string, any>[]
+  >(props.topologyID);
+
   return (
     <CollapsiblePanel
       Header={
-        <Title title="Changes" icon={<GoDiff className="w-6 h-auto" />} />
+        <div className="flex flex-row w-full items-center space-x-2">
+          <Title title="Changes" icon={<GoDiff className="w-6 h-auto" />} />
+          <Badge
+            className="w-5 h-5 flex items-center justify-center"
+            roundedClass="rounded-full"
+            text={componentConfigChanges.length}
+          />
+        </div>
       }
     >
       <div className="flex flex-col">

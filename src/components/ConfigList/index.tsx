@@ -154,6 +154,10 @@ export default function ConfigList({ data, handleRowClick, isLoading }: Props) {
       tableSortByState={sortBy}
       onTableSortByChanged={updateSortBy}
       determineRowClassNamesCallback={determineRowClassNames}
+      preferencesKey="config-list"
+      savePreferences
+      virtualizedRowEstimatedHeight={37}
+      overScan={20}
     />
   );
 }

@@ -89,6 +89,8 @@ export default function JobsHistoryTable({
         handleRowClick={onSelectJob}
         pagination={pagination}
         stickyHead
+        preferencesKey="job-history"
+        savePreferences={false}
       />
       <JobsHistoryDetails
         job={selectedJob}

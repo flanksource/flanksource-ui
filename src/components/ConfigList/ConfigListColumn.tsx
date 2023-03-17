@@ -1,7 +1,8 @@
 import { CellContext, ColumnDef, Row } from "@tanstack/react-table";
 import React from "react";
-import { ConfigItem } from "../../api/services/configs";
+import { ConfigAnalysisTypeItem, ConfigItem } from "../../api/services/configs";
 import { getTimeBucket, TIME_BUCKETS } from "../../utils/date";
+import ConfigInsightsIcon from "../ConfigInsightsIcon";
 import { FormatCurrency } from "../CostDetails/CostDetails";
 import ConfigListAnalysisCell from "./Cells/ConfigListAnalysisCell";
 import ConfigListChangeCell from "./Cells/ConfigListChangeCell";
@@ -10,6 +11,17 @@ import ConfigListDateCell from "./Cells/ConfigListDateCell";
 import ConfigListNameCell from "./Cells/ConfigListNameCell";
 import ConfigListTagsCell from "./Cells/ConfigListTagsCell";
 import ConfigListTypeCell from "./Cells/ConfigListTypeCell";
+
+function CountBadge({ value }: { value: number | undefined | null }) {
+  if (!value) {
+    return null;
+  }
+  return (
+    <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-blue-100 text-blue-800">
+      {value}
+    </span>
+  );
+}
 
 export const configListColumns: ColumnDef<ConfigItem, any>[] = [
   {
@@ -25,7 +37,7 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
     header: "Name",
     accessorKey: "name",
     cell: ConfigListNameCell,
-    size: 350,
+    size: 270,
     enableGrouping: true,
     enableSorting: true
   },
@@ -38,16 +50,9 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
     aggregationFn: changeAggregationFN,
     aggregatedCell: ({ getValue }: CellContext<ConfigItem, any>) => {
       const value = getValue();
-      if (!value) {
-        return "";
-      }
-      return (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-blue-100 text-blue-800">
-          {value}
-        </span>
-      );
+      return <CountBadge value={value} />;
     },
-    size: 150,
+    size: 75,
     meta: {
       cellClassName: "overflow-hidden"
     },
@@ -57,14 +62,34 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
     header: "Analysis",
     accessorKey: "analysis",
     cell: ConfigListAnalysisCell,
-    aggregatedCell: "",
-    size: 120
+    aggregationFn: analysisAggregationFN,
+    aggregatedCell: ({ getValue }: CellContext<ConfigItem, any>) => {
+      const data = getValue();
+      return (
+        <div className="inline-flex space-x-2 overflow-hidden truncate">
+          {data.map(
+            (item: { count: number; analysis: ConfigAnalysisTypeItem }) => {
+              return (
+                <span
+                  className="inline-flex space-x-0.5"
+                  key={item.analysis.analysis_type}
+                >
+                  <ConfigInsightsIcon analysis={item.analysis} />{" "}
+                  <CountBadge value={item.count} />
+                </span>
+              );
+            }
+          )}
+        </div>
+      );
+    },
+    size: 150
   },
   {
     header: "Cost",
     accessorKey: "",
     cell: ConfigListCostCell,
-    size: 120,
+    size: 180,
     enableSorting: false,
     columns: [
       {
@@ -106,10 +131,7 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
     accessorKey: "tags",
     cell: React.memo(ConfigListTagsCell),
     aggregatedCell: "",
-    size: 250,
-    meta: {
-      cellClassName: "overflow-hidden"
-    }
+    size: 210
   },
   {
     header: "All Tags",
@@ -118,24 +140,21 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
       <ConfigListTagsCell {...props} hideGroupByView />
     )),
     aggregatedCell: "",
-    size: 250,
-    meta: {
-      cellClassName: "overflow-hidden"
-    }
+    size: 210
   },
   {
     header: "Created",
     accessorKey: "created_at",
     cell: ConfigListDateCell,
     aggregatedCell: "",
-    size: 80
+    size: 100
   },
   {
     header: "Last Updated",
     accessorKey: "updated_at",
     cell: ConfigListDateCell,
     aggregatedCell: "",
-    size: 90
+    size: 130
   },
   {
     header: "Deleted At",
@@ -167,6 +186,38 @@ function changeAggregationFN(
     }
   });
   return sum;
+}
+
+function analysisAggregationFN(
+  columnId: string,
+  leafRows: Row<ConfigItem>[],
+  childRows: Row<ConfigItem>[]
+) {
+  const result: Record<
+    string,
+    {
+      count: number;
+      data: ConfigAnalysisTypeItem;
+    }
+  > = {};
+  leafRows?.forEach((row) => {
+    const values = row.getValue<ConfigAnalysisTypeItem[]>(columnId) || [];
+    values.forEach((value) => {
+      result[value.analysis_type] = result[value.analysis_type] ?? {
+        count: 0,
+        data: value
+      };
+      result[value.analysis_type].count += 1;
+    });
+  });
+  const data = Object.keys(result).map((key) => {
+    return {
+      type: key,
+      count: result[key].count,
+      analysis: result[key].data
+    };
+  });
+  return data;
 }
 
 function CostAggregate({ getValue }: CellContext<ConfigItem, any>) {

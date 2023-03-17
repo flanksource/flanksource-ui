@@ -1,5 +1,4 @@
 import { IoChevronForwardOutline } from "react-icons/io5";
-import { decodeUrlSearchParams } from "../url";
 
 function ExpandArrow({ row }) {
   return row.canExpand ? (
@@ -24,7 +23,7 @@ export const firstColumns = {
   name: {
     Header: "Checks",
     accessor: "name",
-    cellClass: `px-5 py-2 w-full max-w-0 overflow-hidden overflow-ellipsis relative`
+    cellClass: `py-2 overflow-hidden overflow-ellipsis relative`
   }
 };
 
@@ -32,14 +31,22 @@ export const columnObject = {
   ...firstColumns,
   health: {
     Header: "Health",
-    accessor: "checkStatuses"
+    accessor: "status",
+    cellClass: "w-36 overflow-hidden overflow-ellipsis relative"
+  },
+  last_transition_time: {
+    Header: "Last Transition",
+    accessor: "last_transition_time",
+    cellClass: "w-36 overflow-hidden overflow-ellipsis relative"
   },
   uptime: {
     Header: "Uptime",
-    accessor: "uptime"
+    accessor: "uptime",
+    cellClass: "w-28 overflow-hidden overflow-ellipsis relative"
   },
   latency: {
     Header: "Latency",
-    accessor: "latency"
+    accessor: "latency",
+    cellClass: "w-28 overflow-hidden overflow-ellipsis relative"
   }
 };
