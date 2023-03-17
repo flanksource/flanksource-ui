@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { UseMutationResult } from "@tanstack/react-query";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { EvidenceType } from "../../api/services/evidence";
 import {
   createHypothesis,
@@ -88,12 +88,15 @@ function buildTreeFromHypothesisList(list: Hypothesis[]) {
 export function IncidentDetailsPage() {
   const { id: incidentId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const isNewlyCreated = false; // TODO: set this to true if its a newly created incident
   const { isLoading, data: incident, refetch } = useIncidentQuery(incidentId!);
   const [refetchChangelog, setRefetchChangelog] = useState(0);
   const [activeViewType, setActiveViewType] = useState(
     IncidentDetailsViewTypes.actionPlan
   );
+
+  const fromTable = location.state?.navigationFromTable;
 
   const error = !!incident;
 
@@ -195,7 +198,11 @@ export function IncidentDetailsPage() {
           <div className="flex my-auto">
             <span className="text-xl flex">
               {" "}
-              <button onClick={() => navigate(-1)}>Incidents&nbsp;</button>
+              <button
+                onClick={() => navigate((fromTable ? -1 : "/incidents") as any)}
+              >
+                Incidents&nbsp;
+              </button>
               {" / "}
               {!isLoading && incident && (
                 <div className="font-semibold">

@@ -67,7 +67,7 @@ function IncidentItem({ incident }: { incident: Incident }) {
   const age = relativeDateTime(createdAt, true);
   const navigate = useNavigate();
   const navigateToIncidentDetails = (id: string) => {
-    navigate(`/incidents/${id}`);
+    navigate(`/incidents/${id}`, { state: { navigationFromTable: true } });
   };
 
   return (

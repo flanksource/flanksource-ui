@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 type BreadcrumbNavProps = {
   list: Array<string | React.ReactNode | { to: string; title: string }>;
@@ -7,6 +7,9 @@ type BreadcrumbNavProps = {
 
 export function BreadcrumbNav({ list }: BreadcrumbNavProps) {
   const navigate = useNavigate();
+  let location = useLocation();
+
+  const fromTable = location.state?.navigationFromTable;
 
   const navs = list
     .map((nav, i) => {
@@ -29,7 +32,7 @@ export function BreadcrumbNav({ list }: BreadcrumbNavProps) {
         comp = (
           <button
             key={nav.to}
-            onClick={() => navigate(-1)}
+            onClick={() => navigate((fromTable ? -1 : nav.to) as any)}
             className="text-blue-600 text-xl font-semibold whitespace-nowrap mr-1"
           >
             {nav.title}

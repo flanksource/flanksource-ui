@@ -72,7 +72,7 @@ export function ConfigListPage() {
   const handleRowClick = (row?: { original?: { id: string } }) => {
     const id = row?.original?.id;
     if (id) {
-      navigate(`/configs/${id}`);
+      navigate(`/configs/${id}`, { state: { navigationFromTable: true } });
     }
   };
 
