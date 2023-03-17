@@ -61,10 +61,11 @@ export default function ConfigListTagsCell({
           )}
         </div>
       }
+      title="Tags"
       placement="left"
       menuClass="top-8"
     >
-      <div className="flex flex-col p-1">
+      <div className="flex flex-col p-3">
         <div className="flex flex-col items-stretch max-h-64 overflow-y-auto">
           <TagList
             className="flex flex-col flex-1"
