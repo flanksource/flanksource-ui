@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import { BsCardList } from "react-icons/bs";
 import { MdRefresh } from "react-icons/md";
 import { RiPlayListAddFill } from "react-icons/ri";
 import {
@@ -7,7 +6,6 @@ import {
   useIncidentsHistoryQuery
 } from "../../api/query-hooks";
 import { Badge } from "../Badge";
-import { Chip } from "../Chip";
 import { ClickableSvg } from "../ClickableSvg/ClickableSvg";
 import CollapsiblePanel from "../CollapsiblePanel";
 import { Loading } from "../Loading";

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { UseMutationResult } from "@tanstack/react-query";
 import { Link, useParams } from "react-router-dom";
 import { EvidenceType } from "../../api/services/evidence";

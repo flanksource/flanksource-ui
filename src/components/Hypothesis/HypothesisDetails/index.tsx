@@ -15,10 +15,7 @@ import { CommentsSection } from "../Comments";
 import { ResponseLine } from "../ResponseLine";
 import { Hypothesis } from "../../../api/services/hypothesis";
 import { TreeNode } from "../../../pages/incident/IncidentDetails";
-import {
-  useGetHypothesisQuery,
-  useIncidentQuery
-} from "../../../api/query-hooks";
+import { useIncidentQuery } from "../../../api/query-hooks";
 
 interface IProps {
   node: TreeNode<Hypothesis>;
@@ -29,25 +26,13 @@ type Response = Evidence & Comment;
 
 export function HypothesisDetails({ node, api, ...rest }: IProps) {
   const incidentQuery = useIncidentQuery(node.incident_id);
-  const { data: hypothesis, refetch: refetchHypothesis } =
-    useGetHypothesisQuery(node.id, {});
   const [evidenceBuilderOpen, setEvidenceBuilderOpen] = useState(false);
   const { user } = useUser();
   const [responses, setResponses] = useState<Response[]>([]);
 
   useEffect(() => {
-    if (!hypothesis?.data) {
-      return;
-    }
-    arrangeData(hypothesis.data);
-  }, [hypothesis]);
-
-  useEffect(() => {
-    if (!node) {
-      return;
-    }
-    refetchHypothesis();
-  }, [node, refetchHypothesis]);
+    arrangeData(node);
+  }, [node]);
 
   const arrangeData = (data: any) => {
     let responses = (data?.comments || [])
@@ -87,7 +72,6 @@ export function HypothesisDetails({ node, api, ...rest }: IProps) {
       })
       .then(() => {
         incidentQuery.refetch();
-        refetchHypothesis();
       });
   };
 
@@ -116,13 +100,7 @@ export function HypothesisDetails({ node, api, ...rest }: IProps) {
       return;
     }
     incidentQuery.refetch();
-    refetchHypothesis();
   };
-
-  useEffect(() => {
-    arrangeData(node);
-    refetchHypothesis();
-  }, []);
 
   return (
     <>
