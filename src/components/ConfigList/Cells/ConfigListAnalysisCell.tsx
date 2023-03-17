@@ -74,8 +74,9 @@ export default function ConfigListAnalysisCell({
         </div>
       }
       placement="left"
+      title="Analysis"
     >
-      <div className="flex flex-col w-full max-w-full space-y-2 p-1">
+      <div className="flex flex-col w-full max-w-full space-y-2 p-3">
         {analysis.map((item, index) => (
           <div className="flex flex-row space-x-2 max-w-full" key={index}>
             <span className="w-auto">

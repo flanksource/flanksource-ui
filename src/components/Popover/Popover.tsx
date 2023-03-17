@@ -30,7 +30,7 @@ export default function Popover({
     ref: popoverRef
   } = useOnMouseActivity();
 
-  const listener = useCallback(
+  const clickListener = useCallback(
     (event: MouseEvent) => {
       if (isPopoverOpen) {
         if (!popoverRef.current?.contains(event.target! as Node)) {
@@ -39,6 +39,15 @@ export default function Popover({
       }
     },
     [isPopoverOpen, popoverRef, setIsPopoverOpen]
+  );
+
+  const keydownListener = useCallback(
+    (event: KeyboardEvent) => {
+      if (event.code === "Escape") {
+        setIsPopoverOpen(false);
+      }
+    },
+    [setIsPopoverOpen]
   );
 
   useEffect(() => {
@@ -51,18 +60,21 @@ export default function Popover({
   }, [isPopoverOpen, autoCloseTimeInMS, setIsPopoverOpen]);
 
   useEffect(() => {
-    document.removeEventListener("click", listener, {
+    document.removeEventListener("click", clickListener, {
       capture: true
     });
-    document.addEventListener("click", listener, {
+    document.addEventListener("click", clickListener, {
       capture: true
     });
+    document.removeEventListener("keydown", keydownListener);
+    document.addEventListener("keydown", keydownListener);
     return () => {
-      document.removeEventListener("click", listener, {
+      document.removeEventListener("click", clickListener, {
         capture: true
       });
+      document.removeEventListener("keydown", keydownListener);
     };
-  }, [listener]);
+  }, [clickListener, keydownListener]);
 
   return (
     <div
