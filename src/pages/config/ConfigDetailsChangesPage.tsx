@@ -11,6 +11,8 @@ import {
 import { Head } from "../../components/Head/Head";
 import TabbedLinks from "../../components/Tabs/TabbedLinks";
 import { useConfigDetailsTabs } from "../../components/ConfigsPage/ConfigTabsLinks";
+import { useRef } from "react";
+import useRunTaskOnPropChange from "../../hooks/useRunTaskOnPropChange";
 
 export function ConfigDetailsChangesPage() {
   const { id } = useParams();
@@ -23,8 +25,30 @@ export function ConfigDetailsChangesPage() {
   } = useGetConfigChangesQueryById(id!);
 
   const { data: configItem, error: itemError } = useGetConfigByIdQuery(id!);
-
+  const marginBottom = 24;
+  const contentRef = useRef<HTMLDivElement>(null);
+  const element = contentRef.current;
+  const contentDivHeight = contentRef.current?.parentElement
+    ? document.body.clientHeight -
+      contentRef.current.parentElement.getBoundingClientRect().top -
+      marginBottom
+    : 0;
   const configTabList = useConfigDetailsTabs();
+
+  useRunTaskOnPropChange(
+    () => {
+      return contentDivHeight;
+    },
+    () => {
+      if (!element) {
+        return;
+      }
+      element.parentElement?.style.setProperty(
+        "max-height",
+        `${contentDivHeight}px`
+      );
+    }
+  );
 
   if (error) {
     const errorMessage =
@@ -57,17 +81,18 @@ export function ConfigDetailsChangesPage() {
         }
         onRefresh={refetch}
         loading={isLoading}
-        contentClass="p-0 h-full overflow-y-auto"
+        contentClass="p-0 h-full overflow-y-hidden"
       >
-        <div className={`flex flex-row min-h-full h-auto`}>
-          <TabbedLinks tabLinks={configTabList}>
+        <div className={`flex flex-row h-full`}>
+          <TabbedLinks
+            tabLinks={configTabList}
+            contentClassName="bg-white border border-t-0 border-gray-300 flex-1 p-2"
+          >
             <div
-              className={`flex flex-col flex-1 p-6 pb-0 min-h-full h-auto overflow-auto`}
+              className={`flex flex-col flex-1 p-6 pb-0 h-full`}
+              ref={contentRef}
             >
-              <div
-                className="flex flex-col items-start overflow-y-auto"
-                style={{ maxHeight: "calc(100vh - 8.5rem)" }}
-              >
+              <div className="flex flex-col items-start overflow-y-auto">
                 <ConfigChangeHistory
                   data={historyData ?? []}
                   isLoading={isLoading}
