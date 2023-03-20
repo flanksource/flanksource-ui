@@ -19,8 +19,13 @@ import { toastError } from "../../Toast/toast";
 import { useIncidentQuery } from "../../../api/query-hooks";
 import clsx from "clsx";
 import { IoMdSend } from "react-icons/io";
-import { OptionItem, SearchSelect } from "../../SearchSelect";
+import {
+  GroupedOptionItem,
+  OptionItem,
+  SearchSelect
+} from "../../SearchSelect";
 import useRunTaskOnPropChange from "../../../hooks/useRunTaskOnPropChange";
+import { components, GroupHeadingProps, OptionProps } from "react-select";
 
 interface IProps {
   incidentId: string;
@@ -39,6 +44,22 @@ type CommentViewEntry = {
   data: Comment & Evidence;
 };
 
+const GroupHeading = (props: GroupHeadingProps<GroupedOptionItem>) => (
+  <div className="relative">
+    <div className="text-lg border-b mb-2">
+      <components.GroupHeading {...props} />
+    </div>
+  </div>
+);
+
+const Option = (props: OptionProps<OptionItem>) => {
+  return (
+    <div className="text-sm pl-4">
+      <components.Option {...props} />
+    </div>
+  );
+};
+
 export function HypothesisCommentsViewContainer({
   incidentId,
   loadedTrees,
@@ -52,6 +73,15 @@ export function HypothesisCommentsViewContainer({
   const { user } = useUser();
   const commentRef = useRef<HTMLDivElement>(null);
   const clientHeight = window.document.body.clientHeight;
+
+  const selectOptions = useMemo(() => {
+    return [
+      {
+        label: "Hypothesis",
+        options: allHypothesises
+      }
+    ];
+  }, [allHypothesises]);
 
   const comments = useMemo(() => {
     let data: CommentViewEntry[] = [];
@@ -93,14 +123,19 @@ export function HypothesisCommentsViewContainer({
       );
     });
     setAllHypothesises(hypothesis);
+    return data;
+  }, [loadedTrees]);
+
+  useEffect(() => {
     const rootHypothesisId = loadedTrees?.find(
       (item) => item.type === "root"
     )?.id;
-    setSelectedHypothesis(
-      hypothesis.find((item) => item.value === rootHypothesisId)!
-    );
-    return data;
-  }, [loadedTrees]);
+    if (!selectedHypothesis) {
+      setSelectedHypothesis(
+        allHypothesises.find((item) => item.value === rootHypothesisId)!
+      );
+    }
+  }, [allHypothesises, loadedTrees, selectedHypothesis]);
 
   const clientTopFn = useCallback(() => {
     return commentRef?.current?.getBoundingClientRect()?.top || 0;
@@ -204,11 +239,12 @@ export function HypothesisCommentsViewContainer({
               />
               <div className="right-[40px] top-0 absolute">
                 <SearchSelect
-                  options={allHypothesises}
+                  options={selectOptions}
                   name=""
                   onChange={(val) => {
                     setSelectedHypothesis(val);
                   }}
+                  components={{ GroupHeading, Option }}
                   selected={selectedHypothesis!}
                   selectContainerClassName="bg-white shadow-card rounded-md -mt-20 absolute z-20 w-72 -ml-36"
                   toggleBtn={
@@ -286,7 +322,6 @@ export function HypothesisCommentViewEntry({
                   : created_by?.name}
                 <span className="inline-block pl-1 text-xs text-gray-500">
                   {relativeDateTime(created_at)}{" "}
-                  {type === CommentViewEntryTypes.comment && "commented"}
                   {type === CommentViewEntryTypes.evidence && "added evidence"}
                 </span>
               </div>
