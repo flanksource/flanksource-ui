@@ -5,6 +5,7 @@ import {
   useIncidentQuery,
   useIncidentsHistoryQuery
 } from "../../api/query-hooks";
+import { useIncidentState } from "../../store/incident.state";
 import { Badge } from "../Badge";
 import { ClickableSvg } from "../ClickableSvg/ClickableSvg";
 import CollapsiblePanel from "../CollapsiblePanel";
@@ -28,7 +29,7 @@ export function IncidentChangelog({
     isRefetching,
     refetch
   } = useIncidentsHistoryQuery(incidentId);
-  const { data: incident } = useIncidentQuery(incidentId!);
+  const { incident } = useIncidentState(incidentId);
 
   useEffect(() => {
     refetch();

@@ -16,7 +16,6 @@ import { Evidence } from "../../../api/services/evidence";
 import { EvidenceItem } from "../EvidenceSection";
 import { useUser } from "../../../context";
 import { toastError } from "../../Toast/toast";
-import { useIncidentQuery } from "../../../api/query-hooks";
 import clsx from "clsx";
 import { IoMdSend } from "react-icons/io";
 import {
@@ -26,6 +25,7 @@ import {
 } from "../../SearchSelect";
 import useRunTaskOnPropChange from "../../../hooks/useRunTaskOnPropChange";
 import { components, GroupHeadingProps, OptionProps } from "react-select";
+import { useIncidentState } from "../../../store/incident.state";
 
 interface IProps {
   incidentId: string;
@@ -65,7 +65,7 @@ export function HypothesisCommentsViewContainer({
   loadedTrees,
   api
 }: IProps) {
-  const incidentQuery = useIncidentQuery(incidentId);
+  const { refetchIncident } = useIncidentState(incidentId);
   const [commentTextValue, setCommentTextValue] = useState("");
   const [selectedHypothesis, setSelectedHypothesis] =
     useState<OptionItem | null>(null);
@@ -184,7 +184,7 @@ export function HypothesisCommentsViewContainer({
         return Promise.resolve();
       })
       .then(() => {
-        incidentQuery.refetch();
+        refetchIncident();
         setCommentTextValue("");
       });
   };

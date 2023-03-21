@@ -14,8 +14,6 @@ const updatesHypothesisComments = (
 ) => {
   const queryKey = createIncidentQueryKey(comment.incident_id);
   const currentData: any = queryClient.getQueryData(queryKey);
-  let modifiedHypothesis;
-  const hypothesisQueryKey = ["hypothesis", comment.hypothesis_id];
   currentData.hypotheses.forEach((hypothesis: any) => {
     if (hypothesis.id === comment.hypothesis_id) {
       if (updateType === "add") {
@@ -26,14 +24,9 @@ const updatesHypothesisComments = (
         );
         hypothesis.comments.splice(index, 1);
       }
-      modifiedHypothesis = { ...hypothesis };
     }
   });
-  queryClient.removeQueries(hypothesisQueryKey);
   queryClient.removeQueries(queryKey);
-  queryClient.setQueryData(hypothesisQueryKey, {
-    data: modifiedHypothesis
-  });
   queryClient.setQueryData(queryKey, { ...currentData });
 };
 

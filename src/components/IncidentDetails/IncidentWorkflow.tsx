@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { Controller } from "react-hook-form";
-import { useIncidentQuery } from "../../api/query-hooks";
 import { Evidence, updateEvidence } from "../../api/services/evidence";
 import { Hypothesis } from "../../api/services/hypothesis";
 import { IncidentStatus, updateIncident } from "../../api/services/incident";
+import { useIncidentState } from "../../store/incident.state";
 import { incidentStatusItems } from "../Incidents/data";
 import { ReactSelectDropdown } from "../ReactSelectDropdown";
 import { toastError, toastSuccess } from "../Toast/toast";
@@ -73,8 +73,7 @@ export function IncidentWorkflow({
   }>();
   const [addToDODModalOpen, setAddToDODModalOpen] = useState(false);
   const [evidences, setEvidences] = useState<Evidence[]>([]);
-  const incidentQuery = useIncidentQuery(incidentId);
-  const incident = useMemo(() => incidentQuery.data, [incidentQuery.data]);
+  const { incident } = useIncidentState(incidentId);
   const nextStatusItems = useMemo(() => {
     const data: any = {};
     const keys: IncidentStatus[] =

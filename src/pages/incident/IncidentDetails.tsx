@@ -19,7 +19,6 @@ import { IncidentSidebar } from "../../components/IncidentDetails/IncidentSideba
 import { SearchLayout } from "../../components/Layout";
 import { useCreateHypothesisMutation } from "../../api/mutations/useCreateHypothesisMutation";
 import { useUpdateHypothesisMutation } from "../../api/mutations/useUpdateHypothesisMutation";
-import { useIncidentQuery } from "../../api/query-hooks";
 import { TopologyCard } from "../../components/TopologyCard";
 import { Size } from "../../types";
 import IncidentDetailsPageSkeletonLoader from "../../components/SkeletonLoader/IncidentDetailsPageSkeletonLoader";
@@ -29,6 +28,7 @@ import { HypothesisActionPlanViewContainer } from "../../components/Hypothesis/H
 import { Tab, Tabs } from "../../components/Tabs/Tabs";
 import EmptyState from "../../components/EmptyState";
 import { useCreateCommentMutation } from "../../api/query-hooks/mutations/comment";
+import { useIncidentState } from "../../store/incident.state";
 
 export enum IncidentDetailsViewTypes {
   comments = "Comments",
@@ -89,7 +89,9 @@ function buildTreeFromHypothesisList(list: Hypothesis[]) {
 export function IncidentDetailsPage() {
   const { id: incidentId } = useParams();
   const isNewlyCreated = false; // TODO: set this to true if its a newly created incident
-  const { isLoading, data: incident, refetch } = useIncidentQuery(incidentId!);
+  const { incident, refetchIncident, isLoading } = useIncidentState(
+    incidentId!
+  );
   const createComment = useCreateCommentMutation();
   const [refetchChangelog, setRefetchChangelog] = useState(0);
   const [activeViewType, setActiveViewType] = useState(
@@ -117,16 +119,18 @@ export function IncidentDetailsPage() {
   const createMutation = useCreateHypothesisMutation({ incidentId });
 
   const updateStatus = (status: IncidentStatus) =>
-    updateIncident(incident?.id || null, { status }).then(() => refetch());
+    updateIncident(incident?.id || null, { status }).then(() =>
+      refetchIncident()
+    );
 
   const updateIncidentHandler = useCallback(
     (newDataIncident: Partial<Incident>) => {
       updateIncident(incident?.id || null, newDataIncident).then(() => {
-        refetch();
+        refetchIncident();
         setRefetchChangelog(refetchChangelog + 1);
       });
     },
-    [incident?.id, refetch, refetchChangelog]
+    [incident?.id, refetchIncident, refetchChangelog]
   );
 
   const getHypothesisView = () => {
@@ -202,7 +206,7 @@ export function IncidentDetailsPage() {
       <Head prefix={incident ? `Incident - ${incident.title}` : ""} />
       <SearchLayout
         contentClass="pl-6 h-full"
-        onRefresh={() => refetch()}
+        onRefresh={() => refetchIncident()}
         title={
           <div className="flex my-auto">
             <span className="text-xl flex">

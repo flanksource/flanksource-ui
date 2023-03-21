@@ -15,7 +15,7 @@ import { CommentsSection } from "../Comments";
 import { ResponseLine } from "../ResponseLine";
 import { Hypothesis } from "../../../api/services/hypothesis";
 import { TreeNode } from "../../../pages/incident/IncidentDetails";
-import { useIncidentQuery } from "../../../api/query-hooks";
+import { useIncidentState } from "../../../store/incident.state";
 
 interface IProps {
   node: TreeNode<Hypothesis>;
@@ -25,7 +25,7 @@ interface IProps {
 type Response = Evidence & Comment;
 
 export function HypothesisDetails({ node, api, ...rest }: IProps) {
-  const incidentQuery = useIncidentQuery(node.incident_id);
+  const { refetchIncident } = useIncidentState(node.incident_id);
   const [evidenceBuilderOpen, setEvidenceBuilderOpen] = useState(false);
   const { user } = useUser();
   const [responses, setResponses] = useState<Response[]>([]);
@@ -71,7 +71,7 @@ export function HypothesisDetails({ node, api, ...rest }: IProps) {
         return Promise.resolve();
       })
       .then(() => {
-        incidentQuery.refetch();
+        refetchIncident();
       });
   };
 
@@ -99,7 +99,7 @@ export function HypothesisDetails({ node, api, ...rest }: IProps) {
       toastError(message);
       return;
     }
-    incidentQuery.refetch();
+    refetchIncident();
   };
 
   return (
