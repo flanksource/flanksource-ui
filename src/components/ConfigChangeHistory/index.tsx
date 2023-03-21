@@ -51,10 +51,7 @@ const configLinkCol: ColumnDef<ConfigTypeChanges>[] = [
     header: "Config",
     accessorKey: "config_id",
     cell: function ConfigLinkCell({ row, column }) {
-      const id = row?.getValue(column.id) as string;
-      const { data: config } = useConfigNameQuery(id, {
-        enabled: !!id
-      });
+      const config = row.original.config;
       if (!config) {
         return null;
       }
