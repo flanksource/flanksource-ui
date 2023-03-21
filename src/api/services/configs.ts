@@ -77,7 +77,7 @@ export const getAllChanges = (pageIndex?: number, pageSize?: number) => {
       : "";
   return resolve(
     ConfigDB.get<ConfigTypeChanges[]>(
-      `/config_changes?order=created_at.desc${pagingParams}`,
+      `/config_changes?order=created_at.desc${pagingParams}&select=*,config:config_names(id,name,config_type)`,
       {
         headers: {
           Prefer: "count=exact"

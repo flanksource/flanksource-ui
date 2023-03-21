@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { GoDiff } from "react-icons/go";
 import { useGetConfigChangesQueryById } from "../../api/query-hooks";
+import { ConfigItem } from "../../api/services/configs";
 import { ViewType } from "../../types";
 import { relativeDateTime } from "../../utils/date";
 import { Badge } from "../Badge";
@@ -22,6 +23,7 @@ export type ConfigTypeChanges = {
   created_at: string;
   created_by: string;
   external_created_by: string;
+  config?: ConfigItem;
 };
 
 type Props = {
