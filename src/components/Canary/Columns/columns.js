@@ -23,7 +23,7 @@ export const firstColumns = {
   name: {
     Header: "Checks",
     accessor: "name",
-    cellClass: `py-2 overflow-hidden overflow-ellipsis relative`
+    cellClass: `py-2 px-2 overflow-hidden overflow-ellipsis relative`
   }
 };
 
