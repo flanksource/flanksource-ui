@@ -171,7 +171,7 @@ export function DataTable<TableColumns, Data extends TableColumns>({
           }
         : undefined
     },
-    onPaginationChange: pagination?.remote
+    onPaginationChange: !!pagination?.enable
       ? pagination.setPagination
       : undefined,
     pageCount: pagination?.remote ? pagination.pageCount : undefined,

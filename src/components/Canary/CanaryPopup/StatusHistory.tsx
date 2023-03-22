@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { format } from "timeago.js";
 import { CanaryStatus, Duration } from "../renderers";
 import { HealthCheck, HealthCheckStatus } from "../../../types/healthChecks";
@@ -9,6 +9,7 @@ import { useLoader } from "../../../hooks";
 import { CellContext, ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "../../DataTable";
 import clsx from "clsx";
+import { debounce } from "lodash";
 
 type StatusHistoryProps = React.HTMLProps<HTMLDivElement> & {
   check: Pick<Partial<HealthCheck>, "id" | "checkStatuses" | "description">;
@@ -55,11 +56,11 @@ const columns: ColumnDef<HealthCheckStatus, any>[] = [
           {/* @ts-expect-error */}
           <CanaryStatus className="" status={status} /> {status.message}{" "}
           {status.error &&
-            status.error.split("\n").map((item) => (
-              <>
+            status.error.split("\n").map((item, index) => (
+              <React.Fragment key={index}>
                 {item}
                 <br />
-              </>
+              </React.Fragment>
             ))}
         </div>
       );
@@ -98,7 +99,10 @@ export function StatusHistory({
     };
   }, [pageIndex, pageSize, pageCount, loading]);
 
-  useEffect(() => {
+  const fetchCheckStatuses = () => {
+    if (!check.id || !timeRange || loading) {
+      return;
+    }
     const payload = {
       check: check.id,
       includeMessages: true,
@@ -114,7 +118,14 @@ export function StatusHistory({
         toastError(`Loading status history failed`);
         setLoading(false);
       });
-  }, [timeRange, check]);
+  };
+
+  const debouncedFetchCheckStatuses = useCallback(
+    debounce(fetchCheckStatuses, 1000),
+    []
+  );
+
+  useEffect(debouncedFetchCheckStatuses, [timeRange, check?.id]);
 
   const getHistoryListView = (loading: boolean) => {
     if (loading) {
