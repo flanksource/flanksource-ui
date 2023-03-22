@@ -9,10 +9,10 @@ import { saveSortBy, saveSortOrder } from "../../pages/TopologyPage";
 import { isDate } from "../../utils/date";
 
 const STATUS = {
-  info: 0,
-  healthy: 1,
+  info: 4,
+  healthy: 3,
   warning: 2,
-  unhealthy: 3
+  unhealthy: 1
 };
 
 export const defaultSortLabels = [
