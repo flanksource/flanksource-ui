@@ -19,7 +19,7 @@ import clsx from "clsx";
 const styles = {
   outerDivClass: "border-l border-r border-gray-300 overflow-y-scroll",
   topBgClass: "bg-red-500",
-  tableClass: "min-w-full border-separate shadow-lg bg-white rounded-lg",
+  tableClass: "min-w-full border-separate shadow-lg bg-white",
   theadClass: "bg-white z-10 sticky top-0",
   theadRowClass: "z-10",
   theadHeaderClass:
