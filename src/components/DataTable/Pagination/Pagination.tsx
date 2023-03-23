@@ -59,7 +59,7 @@ export const Pagination = ({
           </select>
         </div>
       </div>
-      <div className="inline-block -space-x-px">
+      <div className="inline-flex items-center -space-x-px">
         <button
           className={clsx(
             "disabled:opacity-50 inline-block rounded-l-md border border-gray-300 bg-white px-2 py-2 text-gray-500",

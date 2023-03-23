@@ -1,14 +1,14 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { format } from "timeago.js";
 import { CanaryStatus, Duration } from "../renderers";
 import { HealthCheck, HealthCheckStatus } from "../../../types/healthChecks";
-import { getStartValue } from "../../../utils/common";
 import { getCheckStatuses } from "../../../api/services/topology";
 import { toastError } from "../../Toast/toast";
 import { useLoader } from "../../../hooks";
 import { CellContext, ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "../../DataTable";
 import clsx from "clsx";
+import { useCheckStattiQuery } from "../../../api/query-hooks/useCheckStattiQuery";
 
 type StatusHistoryProps = React.HTMLProps<HTMLDivElement> & {
   check: Pick<Partial<HealthCheck>, "id" | "checkStatuses" | "description">;
@@ -55,11 +55,11 @@ const columns: ColumnDef<HealthCheckStatus, any>[] = [
           {/* @ts-expect-error */}
           <CanaryStatus className="" status={status} /> {status.message}{" "}
           {status.error &&
-            status.error.split("\n").map((item) => (
-              <>
+            status.error.split("\n").map((item, index) => (
+              <React.Fragment key={index}>
                 {item}
                 <br />
-              </>
+              </React.Fragment>
             ))}
         </div>
       );
@@ -75,15 +75,24 @@ export function StatusHistory({
   className,
   ...props
 }: StatusHistoryProps) {
-  const [statii, setStatti] = useState<HealthCheckStatus[]>([]);
-  const { loading, setLoading } = useLoader();
-
   const [{ pageIndex, pageSize }, setPageState] = useState({
     pageIndex: 0,
     pageSize: 50
   });
 
-  const totalEntries = statii.length;
+  const { data: response, isLoading } = useCheckStattiQuery(
+    {
+      start: timeRange,
+      checkId: check.id!
+    },
+    {
+      pageIndex,
+      pageSize
+    }
+  );
+
+  const statii = response?.data || [];
+  const totalEntries = response?.totalEntries ?? 0;
   const pageCount = totalEntries ? Math.ceil(totalEntries / pageSize) : -1;
 
   const pagination = useMemo(() => {
@@ -92,29 +101,17 @@ export function StatusHistory({
       pageIndex,
       pageSize,
       pageCount,
-      remote: false,
+      remote: true,
       enable: true,
-      loading
+      loading: isLoading
     };
-  }, [pageIndex, pageSize, pageCount, loading]);
+  }, [pageIndex, pageSize, pageCount, isLoading]);
 
   useEffect(() => {
-    const payload = {
-      check: check.id,
-      includeMessages: true,
-      start: getStartValue(timeRange)
-    };
-    setLoading(true);
-    getCheckStatuses(check.id!, payload.start)
-      .then((results) => {
-        setStatti(results.data || []);
-        setLoading(false);
-      })
-      .catch((err) => {
-        toastError(`Loading status history failed`);
-        setLoading(false);
-      });
-  }, [timeRange, check]);
+    if (response?.error) {
+      toastError(response?.error?.message);
+    }
+  }, [response?.error]);
 
   const getHistoryListView = (loading: boolean) => {
     if (loading) {
@@ -147,8 +144,8 @@ export function StatusHistory({
     return null;
   }
 
-  if (loading) {
-    return getHistoryListView(loading);
+  if (isLoading) {
+    return getHistoryListView(isLoading);
   }
 
   return (
@@ -162,6 +159,8 @@ export function StatusHistory({
           className="flex-1"
           pagination={pagination}
           paginationClassName="px-2 pb-2"
+          preferencesKey="health-check-status-list"
+          savePreferences={false}
         />
       )}
       {!statii?.length && getHistoryListView(false)}

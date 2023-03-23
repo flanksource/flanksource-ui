@@ -45,8 +45,6 @@ export function CheckDetails({ check, timeRange, ...rest }: CheckDetailsProps) {
         }px`
       : "0px";
 
-  console.log(maxHeight);
-
   const prevCheck = usePrevious(check);
   const validCheck = check || prevCheck;
 
@@ -178,7 +176,8 @@ export function CheckDetails({ check, timeRange, ...rest }: CheckDetailsProps) {
                   timeRange={timeRange}
                   check={validCheck}
                   style={{
-                    maxHeight
+                    maxHeight,
+                    height: maxHeight
                   }}
                 />
               </div>
