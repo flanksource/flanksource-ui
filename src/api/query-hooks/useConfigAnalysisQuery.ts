@@ -1,14 +1,7 @@
 import { useQuery, UseQueryOptions } from "@tanstack/react-query";
 import { ConfigTypeInsights } from "../../components/ConfigInsights";
+import { AxiosResponseWithTotalEntries } from "../../types";
 import { getAllConfigInsights, PaginationInfo } from "../services/configs";
-
-export type AxiosResponseWithTotalEntries<data = unknown> =
-  | { error: Error; data: null; totalEntries: undefined }
-  | {
-      data: data | null;
-      totalEntries?: number | undefined;
-      error: null;
-    };
 
 export function useConfigInsightsQuery(
   queryParams: {

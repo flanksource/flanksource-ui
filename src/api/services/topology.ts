@@ -6,10 +6,12 @@ import {
   Snapshot
 } from "../axios";
 import { TopologyComponentItem } from "../../components/FilterIncidents/FilterIncidentsByComponents";
-import { HealthCheck } from "../../types/healthChecks";
+import { HealthCheck, HealthCheckStatus } from "../../types/healthChecks";
 import { AVATAR_INFO, TimeRangeToMinutes } from "../../constants";
 import { User } from "./users";
 import { Topology } from "../../context/TopologyPageContext";
+import { PaginationInfo } from "./configs";
+import { resolve } from "../resolve";
 
 interface IParam {
   id?: string;
@@ -80,11 +82,26 @@ export const getCanaries = async (
   return CanaryChecker.get(`/api?${query}`);
 };
 
-export const getCheckStatuses = async (checkId: string, start: string) => {
+export const getCheckStatuses = (
+  checkId: string,
+  start: string,
+  { pageIndex, pageSize }: PaginationInfo
+) => {
   const from = new Date();
   from.setMinutes(-TimeRangeToMinutes[start]);
-  return CanaryCheckerDB.get(
-    `/check_statuses?check_id=eq.${checkId}&time=gt.${from.toISOString()}&order=time.desc`
+  let queryString = `check_id=eq.${checkId}&time=gt.${from.toISOString()}&order=time.desc`;
+  queryString = `${queryString}&limit=${pageSize}&offset=${
+    pageIndex * pageSize
+  }`;
+  return resolve(
+    CanaryCheckerDB.get<HealthCheckStatus[] | null>(
+      `/check_statuses?${queryString}`,
+      {
+        headers: {
+          Prefer: "count=exact"
+        }
+      }
+    )
   );
 };
 
