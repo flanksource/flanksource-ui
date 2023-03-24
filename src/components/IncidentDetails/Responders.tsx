@@ -49,7 +49,7 @@ export function Responders({ incident, className, ...props }: RespondersProps) {
     <div className={clsx(className)} {...props}>
       <IncidentDetailsRow
         title="Responders"
-        className="mt-4 px-4"
+        className=""
         value={
           <div className="relative flex items-center">
             <div className="flex items-center bg-white rounded-md group">

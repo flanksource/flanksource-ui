@@ -88,9 +88,9 @@ export function IncidentDetailsPanel({
       className={clsx(className)}
       {...props}
     >
-      <div className="flex flex-col">
+      <div className="flex flex-col space-y-2">
         <div className="py-4 border-b border-gray-200 hidden">
-          <div className="flex justify-between px-4">
+          <div className="flex justify-between">
             <h2 className="mt-0.5 text-2xl font-medium leading-7 text-dark-gray">
               Details
             </h2>
@@ -104,7 +104,7 @@ export function IncidentDetailsPanel({
         </div>
         <IncidentDetailsRow
           title="Type"
-          className="mt-3 px-4"
+          className=""
           value={
             <IncidentTypeDropdown
               control={control}
@@ -119,7 +119,7 @@ export function IncidentDetailsPanel({
         />
         <IncidentDetailsRow
           title="Status"
-          className="mt-3 px-4"
+          className=""
           value={
             <IncidentWorkflow
               control={control}
@@ -133,7 +133,7 @@ export function IncidentDetailsPanel({
         />
         <IncidentDetailsRow
           title="Priority"
-          className="mt-3 px-4"
+          className=""
           value={
             <ReactSelectDropdown
               control={control}
@@ -147,7 +147,7 @@ export function IncidentDetailsPanel({
         />
         <IncidentDetailsRow
           title="Commanders"
-          className="mt-4 px-4"
+          className=""
           value={
             <ReactSelectDropdown
               control={control}
@@ -159,10 +159,10 @@ export function IncidentDetailsPanel({
             />
           }
         />
-        <Responders incident={incident} />
+        <Responders className="py-3" incident={incident} />
         <IncidentDetailsRow
           title="Started"
-          className="mt-2.5 px-4"
+          className="h-8"
           value={
             <span className="text-gray-500 font-medium">
               {formattedCreatedAt}
@@ -171,7 +171,7 @@ export function IncidentDetailsPanel({
         />
         <IncidentDetailsRow
           title="Duration"
-          className="mt-2.5 px-4"
+          className="h-8"
           value={
             <span className="text-gray-500 font-medium">
               {formattedDuration}

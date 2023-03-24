@@ -28,7 +28,7 @@ export const IncidentSidebar = ({
       <IncidentDetailsPanel
         incident={incident}
         updateIncidentHandler={updateIncidentHandler}
-        data-panel-height-ratio="1.5"
+        data-panel-height-ratio="1.25"
       />
       <IncidentsDefinitionOfDone
         incidentId={incident.id}
@@ -37,7 +37,7 @@ export const IncidentSidebar = ({
       <IncidentChangelog
         incidentId={incident.id}
         className="flex flex-col bg-white"
-        data-panel-height-ratio="0.75"
+        data-panel-height-ratio="1.0"
       />
     </SlidingSideBar>
   );

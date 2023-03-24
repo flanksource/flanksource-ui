@@ -144,7 +144,7 @@ export function IncidentsDefinitionOfDone({
       {...props}
     >
       <div className="flex flex-col">
-        <div className="flex overflow-x-hidden w-full px-4 pb-6">
+        <div className="flex overflow-x-hidden w-full pb-6">
           <div className="w-full space-y-1">
             {isLoading && !incident ? (
               <div className="flex items-start pl-2 pr-2">

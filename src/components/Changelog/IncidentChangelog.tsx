@@ -70,7 +70,7 @@ export function IncidentChangelog({
         <Loading text="Loading ..." />
       ) : incidentHistory.length > 0 ? (
         <VerticalSCrollView>
-          <div className="px-8 py-2">
+          <div className="px-4 py-4">
             <ul className="border-l border-gray-200 dark:border-gray-900 relative flex-col px-4">
               {incidentHistory.map((history) => (
                 <IncidentChangelogItem key={history.id} history={history} />
