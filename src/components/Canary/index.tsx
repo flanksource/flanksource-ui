@@ -311,9 +311,9 @@ export function Canary({
         </div>
       </SidebarSticky>
 
-      <div className="flex-grow p-6 max-w-7xl">
+      <div className="flex-grow p-6 max-w-[calc(100%-20rem)]">
         <div className="flex flex-wrap mb-2">
-          <div className="flex-1">
+          <div className="xl:flex-1 mb-4">
             <CanarySearchBar
               onChange={(e) => handleSearch(e.target.value)}
               onSubmit={(value) => handleSearch(value)}
@@ -325,7 +325,7 @@ export function Canary({
               defaultValue={searchParams.get("query") ?? ""}
             />
           </div>
-          <div className="flex-1 flex justify-end">
+          <div className="xl:flex-1 flex flex-wrap lg:flex-nowrap lg:justify-end">
             <div className="mb-2 mr-2">
               <DropdownWrapper
                 dropdownElem={<GroupByDropdown name="groupBy" />}
