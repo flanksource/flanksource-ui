@@ -24,22 +24,32 @@ export default function SlidingSideBar({
       const children = [...contentRef.current?.children];
       children.forEach((item) => {
         const panelHeight = item.getAttribute("data-panel-height");
+        let panelHeightRatio = item.getAttribute("data-panel-height-ratio");
         if (panelHeight && panelHeight !== "auto") {
-          fixedHeightsTotal += parseInt(panelHeight || "0px", 10);
+          fixedHeightsTotal += parseFloat(panelHeight || "0px");
           ++fixedHeightChildCount;
+        } else {
+          item.setAttribute("data-panel-height", "auto");
+        }
+        if (!panelHeightRatio) {
+          item.setAttribute("data-panel-height-ratio", "1");
         }
       });
-      const itemHeight =
-        (totalHeight - fixedHeightsTotal) /
-        (contentRef.current.children.length - fixedHeightChildCount);
+      const childrenWithAutoHeight = children.length - fixedHeightChildCount;
+      const remainingHeight = totalHeight - fixedHeightsTotal;
+      const itemHeight = remainingHeight / childrenWithAutoHeight;
       children.forEach((item) => {
         const child = item as HTMLDivElement;
         const panelHeight = item.getAttribute("data-panel-height");
+        const panelHeightRatio = parseFloat(
+          item.getAttribute("data-panel-height-ratio")!
+        );
         const height =
-          panelHeight === "auto" || !panelHeight
-            ? itemHeight
-            : `${parseInt(panelHeight, 10)}`;
+          panelHeight === "auto"
+            ? itemHeight * panelHeightRatio
+            : `${parseFloat(panelHeight!)}`;
         child.style.setProperty("max-height", `${height}px`);
+        child.style.setProperty("height", `${height}px`);
       });
     }
   }, [children, contentRef]);

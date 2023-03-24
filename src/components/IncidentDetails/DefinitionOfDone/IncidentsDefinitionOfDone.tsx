@@ -14,7 +14,7 @@ import { ClickableSvg } from "../../ClickableSvg/ClickableSvg";
 import { Badge } from "../../Badge";
 import { useIncidentState } from "../../../store/incident.state";
 
-type DefinitionOfDoneProps = {
+type DefinitionOfDoneProps = React.HTMLProps<HTMLDivElement> & {
   incidentId: string;
 };
 
@@ -54,7 +54,9 @@ function AddDefinitionOfDone({ onClick, ...rest }: AddDefinitionOfDoneProps) {
 }
 
 export function IncidentsDefinitionOfDone({
-  incidentId
+  incidentId,
+  className,
+  ...props
 }: DefinitionOfDoneProps) {
   const [openDeleteConfirmDialog, setOpenDeleteConfirmDialog] = useState(false);
   const [evidenceBeingRemoved, setEvidenceBeingRemoved] = useState<Evidence>();
@@ -138,6 +140,8 @@ export function IncidentsDefinitionOfDone({
           </div>
         </div>
       }
+      className={clsx(className)}
+      {...props}
     >
       <div className="flex flex-col">
         <div className="flex overflow-x-hidden w-full px-4 pb-6">
