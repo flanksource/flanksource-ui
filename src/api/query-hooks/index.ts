@@ -6,7 +6,7 @@ import {
   getAllConfigsMatchingQuery,
   getConfig,
   getConfigAnalysis,
-  getConfigChange,
+  getConfigChanges,
   getConfigInsight,
   getConfigInsights,
   getConfigTagsList,
@@ -278,19 +278,20 @@ export function useGetAllConfigsChangesQuery(
   );
 }
 
-export function useGetConfigChangesQueryById(id: string) {
-  return useQuery(["configs", "changes", id], () => getConfigChange(id), {
-    select: (res) => {
-      if (res.error) {
-        throw res.error;
-      }
-      return res?.data?.length === 0 ? [] : res?.data;
-    },
-    onError: (err: any) => {
-      toastError(err);
-    },
-    enabled: !!id
-  });
+export function useGetConfigChangesByConfigIdQuery(
+  id: string,
+  pageIndex?: number,
+  pageSize?: number,
+  keepPreviousData?: boolean
+) {
+  return useQuery(
+    ["configs", "changes", id, pageIndex, pageSize],
+    () => getConfigChanges(id, pageIndex, pageSize),
+    {
+      enabled: !!id,
+      keepPreviousData
+    }
+  );
 }
 
 export function useGetConfigByIdQuery(id: string) {

@@ -5,24 +5,43 @@ import { SearchLayout } from "../../components/Layout";
 import ConfigSidebar from "../../components/ConfigSidebar";
 import { ConfigsDetailsBreadcrumbNav } from "../../components/BreadcrumbNav/ConfigsDetailsBreadCrumb";
 import {
-  useGetConfigChangesQueryById,
+  useGetConfigChangesByConfigIdQuery,
   useGetConfigByIdQuery
 } from "../../api/query-hooks";
 import { Head } from "../../components/Head/Head";
 import TabbedLinks from "../../components/Tabs/TabbedLinks";
 import { useConfigDetailsTabs } from "../../components/ConfigsPage/ConfigTabsLinks";
-import { useRef } from "react";
+import { useMemo, useRef, useState } from "react";
 import useRunTaskOnPropChange from "../../hooks/useRunTaskOnPropChange";
 
 export function ConfigDetailsChangesPage() {
   const { id } = useParams();
+  const [{ pageIndex, pageSize }, setPageState] = useState({
+    pageIndex: 0,
+    pageSize: 50
+  });
 
   const {
     data: historyData,
     isLoading,
+    isRefetching,
     error,
     refetch
-  } = useGetConfigChangesQueryById(id!);
+  } = useGetConfigChangesByConfigIdQuery(id!, pageIndex, pageSize);
+  const totalEntries = (historyData as any)?.totalEntries;
+  const pageCount = totalEntries ? Math.ceil(totalEntries / pageSize) : -1;
+
+  const pagination = useMemo(() => {
+    return {
+      setPagination: setPageState,
+      pageIndex,
+      pageSize,
+      pageCount,
+      remote: true,
+      enable: true,
+      loading: isLoading || isRefetching
+    };
+  }, [pageIndex, pageSize, pageCount, isLoading, isRefetching]);
 
   const { data: configItem, error: itemError } = useGetConfigByIdQuery(id!);
   const marginBottom = 24;
@@ -94,8 +113,9 @@ export function ConfigDetailsChangesPage() {
             >
               <div className="flex flex-col items-start overflow-y-auto">
                 <ConfigChangeHistory
-                  data={historyData ?? []}
+                  data={historyData?.data ?? []}
                   isLoading={isLoading}
+                  pagination={pagination}
                 />
               </div>
             </div>

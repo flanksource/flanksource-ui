@@ -101,12 +101,41 @@ export const getConfigTagsList = () =>
 export const getConfigName = (id: string) =>
   resolve<ConfigItem[]>(ConfigDB.get(`/config_names?id=eq.${id}`));
 
-export const getConfigChange = (id: string) =>
-  resolve(
+export const getConfigChanges = (
+  id: string,
+  pageIndex?: number,
+  pageSize?: number
+) => {
+  let paginationQueryParams = "";
+  if (pageIndex !== undefined && pageSize !== undefined) {
+    paginationQueryParams = `&limit=${pageSize}&offset=${
+      pageIndex! * pageSize
+    }`;
+  }
+  return resolve(
     ConfigDB.get<ConfigTypeChanges[]>(
-      `/config_changes?config_id=eq.${id}&order=created_at.desc`
+      `/config_changes?config_id=eq.${id}&order=created_at.desc${paginationQueryParams}`,
+      {
+        headers: {
+          Prefer: "count=exact"
+        }
+      }
     )
   );
+};
+
+export const getConfigChangeById = (id: string, configId: string) => {
+  return resolve(
+    ConfigDB.get<ConfigTypeChanges[]>(
+      `/config_changes?config_id=eq.${configId}&id=eq.${id}`,
+      {
+        headers: {
+          Prefer: "count=exact"
+        }
+      }
+    )
+  );
+};
 
 type ConfigParams = {
   topologyId?: string;

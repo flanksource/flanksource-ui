@@ -1,14 +1,18 @@
-import { useEffect, useState } from "react";
+import { ColumnDef } from "@tanstack/table-core";
+import { useEffect, useMemo, useState } from "react";
 import { GoDiff } from "react-icons/go";
-import { useGetConfigChangesQueryById } from "../../api/query-hooks";
+import { useGetConfigChangesByConfigIdQuery } from "../../api/query-hooks";
 import { ConfigItem } from "../../api/services/configs";
-import { ViewType } from "../../types";
-import { relativeDateTime } from "../../utils/date";
+import { User } from "../../api/services/users";
 import { Badge } from "../Badge";
 import CollapsiblePanel from "../CollapsiblePanel";
-import { ConfigDetailsChanges } from "../ConfigDetailsChanges/ConfigDetailsChanges";
-import { DetailsTable } from "../DetailsTable/DetailsTable";
+import EmptyState from "../EmptyState";
 import Title from "../Title/title";
+import { toastError } from "../Toast/toast";
+import ConfigChangeAgeCell from "./Cells/ConfigChangeAgeCell";
+import ConfigChangeNameCell from "./Cells/ConfigChangeNameCell";
+import { InfiniteTable } from "../InfiniteTable/InfiniteTable";
+import TextSkeletonLoader from "../SkeletonLoader/TextSkeletonLoader";
 
 export type ConfigTypeChanges = {
   id: string;
@@ -21,7 +25,7 @@ export type ConfigTypeChanges = {
   patches: string;
   details: string;
   created_at: string;
-  created_by: string;
+  created_by: string | User;
   external_created_by: string;
   config?: ConfigItem;
 };
@@ -30,72 +34,98 @@ type Props = {
   configID: string;
 };
 
-const columns = [
+export const columns: ColumnDef<ConfigTypeChanges, any>[] = [
   {
-    key: "change",
-    label: "Name"
+    header: "Name",
+    id: "change_type",
+    cell: ConfigChangeNameCell,
+    aggregatedCell: "",
+    accessorKey: "change_type",
+    size: 250,
+    enableGrouping: true
   },
   {
-    key: "age",
-    label: "Age"
+    header: "Age",
+    accessorKey: "created_at",
+    cell: ConfigChangeAgeCell,
+    size: 270,
+    enableGrouping: true,
+    enableSorting: true
   }
 ];
 
 export function ConfigChangesDetails({ configID }: Props) {
-  const [configChanges, setConfigChanges] = useState<
-    {
-      age: string;
-      change: React.ReactNode;
-    }[]
-  >([]);
-  const { data, isLoading } = useGetConfigChangesQueryById(configID);
+  const [{ pageIndex, pageSize }, setPageState] = useState({
+    pageIndex: 0,
+    pageSize: 50
+  });
+  const [changes, setChanges] = useState<ConfigTypeChanges[]>([]);
 
-  useEffect(() => {
-    if (!data) {
+  const {
+    data: response,
+    isLoading,
+    isFetching
+  } = useGetConfigChangesByConfigIdQuery(configID, pageIndex, pageSize);
+
+  let data = response?.data;
+  const totalEntries = response?.totalEntries ?? 0;
+
+  const canGoNext = () => {
+    const pageCount = Math.ceil(totalEntries / pageSize);
+    return pageCount >= pageIndex + 1;
+  };
+
+  useMemo(() => {
+    if (!data?.length) {
       return;
     }
-    const changes = data.map((item) => {
-      return {
-        age: relativeDateTime(item.created_at),
-        change: (
-          <div className="whitespace-nowrap">
-            <ConfigDetailsChanges
-              key={item.id}
-              id={item.id}
-              configId={item.config_id}
-              viewType={ViewType.summary}
-            />
-          </div>
-        )
-      };
-    });
-    setConfigChanges(changes);
-  }, [data, configID]);
+    setChanges([...changes, ...data]);
+  }, [data]);
+
+  useEffect(() => {
+    if (response?.error) {
+      toastError(response?.error?.message);
+    }
+  }, [response?.error]);
+
+  if (!data?.length && !isLoading) {
+    return <EmptyState />;
+  }
 
   return (
-    <div className="flex flex-col space-y-2">
-      <DetailsTable
-        loading={isLoading}
-        data={configChanges}
+    <div className="flex flex-col overflow-y-hidden">
+      <InfiniteTable<ConfigTypeChanges>
         columns={columns}
+        isLoading={isLoading && !isFetching}
+        isFetching={isFetching}
+        allRows={changes}
+        loaderView={<TextSkeletonLoader className="w-full my-2" />}
+        totalEntries={totalEntries}
+        fetchNextPage={() => {
+          if (canGoNext()) {
+            setPageState({
+              pageIndex: pageIndex + 1,
+              pageSize
+            });
+          }
+        }}
+        stickyHead
+        virtualizedRowEstimatedHeight={40}
       />
     </div>
   );
 }
 
 export default function ConfigChanges(props: Props) {
-  const { data } = useGetConfigChangesQueryById(props.configID);
+  const { data: response } = useGetConfigChangesByConfigIdQuery(props.configID);
+  const count = response?.data?.length ?? 0;
 
   return (
     <CollapsiblePanel
       Header={
         <div className="flex flex-row w-full items-center space-x-2">
           <Title title="Changes" icon={<GoDiff className="w-6 h-auto" />} />
-          <Badge
-            className="w-5 h-5 flex items-center justify-center"
-            roundedClass="rounded-full"
-            text={data?.length ?? 0}
-          />
+          <Badge roundedClass="rounded-full" text={count} />
         </div>
       }
       dataCount={data?.length}

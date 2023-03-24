@@ -64,7 +64,7 @@ export function ConfigsList({
   return (
     <div className="flex flex-col space-y-4 text-sm">
       {isLoading ? (
-        <TextSkeletonLoader />
+        <TextSkeletonLoader className="w-full my-2" />
       ) : configs.length > 0 ? (
         <ol>
           {configs.map((config) => (
