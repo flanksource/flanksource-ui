@@ -40,7 +40,7 @@ export default function IncidentsDefinitionOfDoneItem({
 
   return (
     <>
-      <div className="relative flex items-center py-2">
+      <div className="relative flex items-center">
         {isLoading ? (
           <MdRefresh className="animate-spin" />
         ) : evidence.done ? (
@@ -49,7 +49,7 @@ export default function IncidentsDefinitionOfDoneItem({
           <BsHourglassSplit className="mr-1" />
         )}
 
-        <div className="min-w-0 flex-1 text-sm ml-2">
+        <div className="min-w-0 flex-1 text-sm">
           <EvidenceView evidence={evidence} size={Size.small} />
         </div>
         <div className="flex items-center">

@@ -4,7 +4,6 @@ import { Incident, IncidentStatus } from "../../api/services/incident";
 import { IncidentsDefinitionOfDone } from "./DefinitionOfDone/IncidentsDefinitionOfDone";
 import { IncidentChangelog } from "../Changelog/IncidentChangelog";
 import SlidingSideBar from "../SlidingSideBar";
-import { RespondersPanel } from "./RespondersPanel";
 import { IncidentDetailsPanel } from "./IncidentDetailsPanel";
 
 export const priorities = Object.entries(severityItems).map(([key, value]) => ({
@@ -29,9 +28,8 @@ export const IncidentSidebar = ({
       <IncidentDetailsPanel
         incident={incident}
         updateIncidentHandler={updateIncidentHandler}
-        data-panel-height-ratio="1.25"
+        data-panel-height-ratio="1.5"
       />
-      <RespondersPanel incident={incident} data-panel-height-ratio="0.75" />
       <IncidentsDefinitionOfDone
         incidentId={incident.id}
         data-panel-height-ratio="0.75"
@@ -39,7 +37,7 @@ export const IncidentSidebar = ({
       <IncidentChangelog
         incidentId={incident.id}
         className="flex flex-col bg-white"
-        data-panel-height-ratio="1.25"
+        data-panel-height-ratio="0.75"
       />
     </SlidingSideBar>
   );
