@@ -18,6 +18,7 @@ import {
 import { Tab, Tabs } from "../Tabs/Tabs";
 import dynamic from "next/dynamic";
 import AutoCompleteDropdown from "../AutoCompleteDropdown/AutoCompleteDropdown";
+import { Head } from "../Head/Head";
 
 const CodeEditor = dynamic(
   () => import("../CodeEditor").then((m) => m.CodeEditor),
@@ -218,262 +219,276 @@ export function SchemaResourceEdit({
   }, [table]);
 
   return (
-    <div className="flex flex-col flex-1  overflow-y-auto">
-      <Tabs activeTab={activeTab} onSelectTab={(tab) => onSubNavClick(tab)}>
-        {subNav.map((nav) => {
-          return (
-            <Tab key={nav.label} label={nav.label} value={nav.value}>
-              <div className="flex flex-col flex-1 bg-white overflow-y-auto">
-                {hasSubNav("spec") && (
-                  <form className="space-y-4" onSubmit={handleSubmit(doSubmit)}>
-                    <div className="px-8 pt-4">
-                      {!source && edit ? (
-                        <>
-                          <Controller
-                            control={control}
-                            name="name"
-                            render={({ field: { onChange, value } }) => {
-                              return (
-                                <TextInput
-                                  label="Name"
-                                  id="name"
-                                  disabled={disabled || !!id}
-                                  className="w-full"
-                                  value={value || ""}
-                                  onChange={onChange}
-                                />
-                              );
-                            }}
-                          />
-                          {supportsField("icon") && (
-                            <div className="space-y-2">
-                              <label
-                                htmlFor="icon-picker"
-                                className="block text-sm font-bold text-gray-700 pt-4"
-                              >
-                                Icon
-                              </label>
-
-                              <IconPicker
-                                icon={values.icon}
-                                onChange={(v) => setValue("icon", v.value)}
-                              />
-                            </div>
-                          )}
-                        </>
-                      ) : (
-                        <div className="flex justify-between">
-                          <h2 className="text-dark-gray font-bold mr-3 text-xl flex items-center space-x-2">
-                            {supportsField("icon") && <Icon name={icon} />}
-                            <span>{name}</span>
-                          </h2>
-                          {!!source && (
-                            <div className="px-2">
-                              <a href={`${source}`}>Config source</a>
-                            </div>
-                          )}
-                        </div>
-                      )}
-                      {supportsField("namespace") && (
-                        <div className="mt-4">
-                          <Controller
-                            control={control}
-                            name="namespace"
-                            render={({ field: { onChange, value } }) => {
-                              return (
-                                <TextInput
-                                  label="Namespace"
-                                  id="namespace"
-                                  disabled={disabled || !!id}
-                                  className="w-full"
-                                  value={value || ""}
-                                  onChange={onChange}
-                                />
-                              );
-                            }}
-                          />
-                        </div>
-                      )}
-                      {supportsField("labels") && (
-                        <div className="py-4">
-                          <Controller
-                            control={control}
-                            name="labels"
-                            render={({ field: { onChange, value } }) => {
-                              return (
-                                <div className="h-[100px]">
-                                  <label className="block text-sm font-bold text-gray-700">
-                                    Labels
-                                  </label>
-                                  <CodeEditor
-                                    key={labelsKeyRef.current}
-                                    readOnly={!!source || disabled || !edit}
-                                    value={
-                                      typeof values.labels === "object"
-                                        ? JSON.stringify(values.labels, null, 2)
-                                        : undefined
-                                    }
-                                    onChange={(val) => {
-                                      setValueOnChange("labels", val);
-                                    }}
-                                    language="json"
-                                  />
-                                </div>
-                              );
-                            }}
-                          />
-                        </div>
-                      )}
-
-                      {supportsField("schedule") && (
-                        <div className="py-4">
-                          <Controller
-                            control={control}
-                            name="schedule"
-                            render={({ field: { onChange, value } }) => {
-                              return (
-                                <div className="space-y-2">
-                                  <label className="block text-sm font-bold text-gray-700">
-                                    Schedule
-                                  </label>
-                                  <AutoCompleteDropdown
+    <>
+      <Head
+        prefix={`Settings ${resourceName} - ${
+          subNav.find((nav) => nav.value === activeTab)?.label
+        }`}
+      />
+      <div className="flex flex-col flex-1  overflow-y-auto">
+        <Tabs activeTab={activeTab} onSelectTab={(tab) => onSubNavClick(tab)}>
+          {subNav.map((nav) => {
+            return (
+              <Tab key={nav.label} label={nav.label} value={nav.value}>
+                <div className="flex flex-col flex-1 bg-white overflow-y-auto">
+                  {hasSubNav("spec") && (
+                    <form
+                      className="space-y-4"
+                      onSubmit={handleSubmit(doSubmit)}
+                    >
+                      <div className="px-8 pt-4">
+                        {!source && edit ? (
+                          <>
+                            <Controller
+                              control={control}
+                              name="name"
+                              render={({ field: { onChange, value } }) => {
+                                return (
+                                  <TextInput
+                                    label="Name"
+                                    id="name"
+                                    disabled={disabled || !!id}
+                                    className="w-full"
+                                    value={value || ""}
                                     onChange={onChange}
-                                    value={value}
-                                    isDisabled={!!source || disabled || !edit}
-                                    options={[
-                                      {
-                                        label: "@every 30s",
-                                        value: "@every 30s"
-                                      },
-                                      {
-                                        label: "@every 1m",
-                                        value: "@every 1m"
-                                      },
-                                      {
-                                        label: "@every 5m",
-                                        value: "@every 5m"
-                                      },
-                                      {
-                                        label: "@every 30m",
-                                        value: "@every 30m"
-                                      },
-                                      {
-                                        label: "@hourly",
-                                        value: "@hourly"
-                                      },
-                                      {
-                                        label: "@every 6h",
-                                        value: "@every 6h"
-                                      },
-                                      {
-                                        label: "@daily",
-                                        value: "@daily"
-                                      },
-                                      {
-                                        label: "@weekly",
-                                        value: "@weekly"
-                                      }
-                                    ]}
                                   />
-                                </div>
-                              );
+                                );
+                              }}
+                            />
+                            {supportsField("icon") && (
+                              <div className="space-y-2">
+                                <label
+                                  htmlFor="icon-picker"
+                                  className="block text-sm font-bold text-gray-700 pt-4"
+                                >
+                                  Icon
+                                </label>
+
+                                <IconPicker
+                                  icon={values.icon}
+                                  onChange={(v) => setValue("icon", v.value)}
+                                />
+                              </div>
+                            )}
+                          </>
+                        ) : (
+                          <div className="flex justify-between">
+                            <h2 className="text-dark-gray font-bold mr-3 text-xl flex items-center space-x-2">
+                              {supportsField("icon") && <Icon name={icon} />}
+                              <span>{name}</span>
+                            </h2>
+                            {!!source && (
+                              <div className="px-2">
+                                <a href={`${source}`}>Config source</a>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                        {supportsField("namespace") && (
+                          <div className="mt-4">
+                            <Controller
+                              control={control}
+                              name="namespace"
+                              render={({ field: { onChange, value } }) => {
+                                return (
+                                  <TextInput
+                                    label="Namespace"
+                                    id="namespace"
+                                    disabled={disabled || !!id}
+                                    className="w-full"
+                                    value={value || ""}
+                                    onChange={onChange}
+                                  />
+                                );
+                              }}
+                            />
+                          </div>
+                        )}
+                        {supportsField("labels") && (
+                          <div className="py-4">
+                            <Controller
+                              control={control}
+                              name="labels"
+                              render={({ field: { onChange, value } }) => {
+                                return (
+                                  <div className="h-[100px]">
+                                    <label className="block text-sm font-bold text-gray-700">
+                                      Labels
+                                    </label>
+                                    <CodeEditor
+                                      key={labelsKeyRef.current}
+                                      readOnly={!!source || disabled || !edit}
+                                      value={
+                                        typeof values.labels === "object"
+                                          ? JSON.stringify(
+                                              values.labels,
+                                              null,
+                                              2
+                                            )
+                                          : undefined
+                                      }
+                                      onChange={(val) => {
+                                        setValueOnChange("labels", val);
+                                      }}
+                                      language="json"
+                                    />
+                                  </div>
+                                );
+                              }}
+                            />
+                          </div>
+                        )}
+
+                        {supportsField("schedule") && (
+                          <div className="py-4">
+                            <Controller
+                              control={control}
+                              name="schedule"
+                              render={({ field: { onChange, value } }) => {
+                                return (
+                                  <div className="space-y-2">
+                                    <label className="block text-sm font-bold text-gray-700">
+                                      Schedule
+                                    </label>
+                                    <AutoCompleteDropdown
+                                      onChange={onChange}
+                                      value={value}
+                                      isDisabled={!!source || disabled || !edit}
+                                      options={[
+                                        {
+                                          label: "@every 30s",
+                                          value: "@every 30s"
+                                        },
+                                        {
+                                          label: "@every 1m",
+                                          value: "@every 1m"
+                                        },
+                                        {
+                                          label: "@every 5m",
+                                          value: "@every 5m"
+                                        },
+                                        {
+                                          label: "@every 30m",
+                                          value: "@every 30m"
+                                        },
+                                        {
+                                          label: "@hourly",
+                                          value: "@hourly"
+                                        },
+                                        {
+                                          label: "@every 6h",
+                                          value: "@every 6h"
+                                        },
+                                        {
+                                          label: "@daily",
+                                          value: "@daily"
+                                        },
+                                        {
+                                          label: "@weekly",
+                                          value: "@weekly"
+                                        }
+                                      ]}
+                                    />
+                                  </div>
+                                );
+                              }}
+                            />
+                          </div>
+                        )}
+                      </div>
+                      <div className="px-8 space-y-2">
+                        <label
+                          htmlFor="icon-picker"
+                          className="block text-sm font-bold text-gray-700"
+                        >
+                          Spec
+                        </label>
+
+                        <div className="h-[min(850px,calc(100vh-500px))]">
+                          <CodeEditor
+                            key={keyRef.current}
+                            readOnly={!!source || disabled || !edit}
+                            value={
+                              typeof values.spec === "string"
+                                ? values.spec
+                                : undefined
+                            }
+                            onChange={(val) => {
+                              setValueOnChange("spec", val);
                             }}
+                            language="yaml"
+                            schemaFilePrefix={jsonSchemaFilePrefix}
+                            extractYamlSpecFieldOnPaste
                           />
                         </div>
-                      )}
-                    </div>
-                    <div className="px-8 space-y-2">
-                      <label
-                        htmlFor="icon-picker"
-                        className="block text-sm font-bold text-gray-700"
-                      >
-                        Spec
-                      </label>
-
-                      <div className="h-[min(850px,calc(100vh-500px))]">
-                        <CodeEditor
-                          key={keyRef.current}
-                          readOnly={!!source || disabled || !edit}
-                          value={
-                            typeof values.spec === "string"
-                              ? values.spec
-                              : undefined
-                          }
-                          onChange={(val) => {
-                            setValueOnChange("spec", val);
-                          }}
-                          language="yaml"
-                          schemaFilePrefix={jsonSchemaFilePrefix}
-                          extractYamlSpecFieldOnPaste
-                        />
                       </div>
-                    </div>
-                    {!source && (
-                      <div
-                        className={clsx(
-                          "flex justify-between px-10 rounded-b py-4 space-x-2",
-                          {
-                            "bg-gray-100": isModal
-                          }
-                        )}
-                      >
-                        {!!id && (
-                          <button
-                            className="inline-flex items-center justify-center border-none shadow-sm font-medium rounded-md text-red-500 bg-red-100 hover:bg-red-200 focus:ring-offset-white focus:ring-red-500 focus:outline-none focus:ring-2 focus:ring-offset-2 px-4 py-2 text-sm leading-5"
-                            disabled={disabled}
-                            onClick={doDelete}
-                            type="button"
-                          >
-                            Delete
-                          </button>
-                        )}
-
-                        {edit ? (
-                          <div className="w-full flex justify-between">
+                      {!source && (
+                        <div
+                          className={clsx(
+                            "flex justify-between px-10 rounded-b py-4 space-x-2",
+                            {
+                              "bg-gray-100": isModal
+                            }
+                          )}
+                        >
+                          {!!id && (
                             <button
-                              className="btn-secondary-base btn-secondary"
+                              className="inline-flex items-center justify-center border-none shadow-sm font-medium rounded-md text-red-500 bg-red-100 hover:bg-red-200 focus:ring-offset-white focus:ring-red-500 focus:outline-none focus:ring-2 focus:ring-offset-2 px-4 py-2 text-sm leading-5"
                               disabled={disabled}
-                              onClick={doCancel}
+                              onClick={doDelete}
                               type="button"
                             >
-                              Cancel
+                              Delete
                             </button>
+                          )}
 
-                            <button
-                              disabled={disabled}
-                              className="btn-primary"
-                              type="submit"
-                            >
-                              Save
-                            </button>
-                          </div>
-                        ) : (
-                          !!id && (
-                            <button
-                              className="btn-primary"
-                              disabled={disabled}
-                              onClick={onEdit}
-                            >
-                              Edit
-                            </button>
-                          )
-                        )}
-                      </div>
-                    )}
-                  </form>
-                )}
-                {hasSubNav("manageTeam") && <TeamMembers teamId={id!} />}
-                {hasSubNav("jobHistory") && (
-                  <SchemaResourceJobsTab
-                    resourceId={id!}
-                    tableName={table as keyof typeof resourceTypeMap}
-                  />
-                )}
-              </div>
-            </Tab>
-          );
-        })}
-      </Tabs>
-    </div>
+                          {edit ? (
+                            <div className="w-full flex justify-between">
+                              <button
+                                className="btn-secondary-base btn-secondary"
+                                disabled={disabled}
+                                onClick={doCancel}
+                                type="button"
+                              >
+                                Cancel
+                              </button>
+
+                              <button
+                                disabled={disabled}
+                                className="btn-primary"
+                                type="submit"
+                              >
+                                Save
+                              </button>
+                            </div>
+                          ) : (
+                            !!id && (
+                              <button
+                                className="btn-primary"
+                                disabled={disabled}
+                                onClick={onEdit}
+                              >
+                                Edit
+                              </button>
+                            )
+                          )}
+                        </div>
+                      )}
+                    </form>
+                  )}
+                  {hasSubNav("manageTeam") && <TeamMembers teamId={id!} />}
+                  {hasSubNav("jobHistory") && (
+                    <SchemaResourceJobsTab
+                      resourceId={id!}
+                      tableName={table as keyof typeof resourceTypeMap}
+                    />
+                  )}
+                </div>
+              </Tab>
+            );
+          })}
+        </Tabs>
+      </div>
+    </>
   );
 }
