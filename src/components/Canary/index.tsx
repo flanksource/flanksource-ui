@@ -397,23 +397,14 @@ export const HidePassingToggle = ({ defaultValue = true }) => {
   const [searchParams] = useSearchParams();
   const paramsValue = searchParams.get("hidePassing")
     ? searchParams.get("hidePassing") === "true"
-    : null;
+    : defaultValue;
 
-  const [value, setValue] = useState(paramsValue ?? defaultValue);
   const updateParams = useUpdateParams();
-
-  useEffect(() => {
-    updateParams({ hidePassing: value });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <Toggle
-      value={value}
-      onChange={(val: boolean) => {
-        setValue(val);
-        updateParams({ hidePassing: val });
-      }}
+      value={paramsValue}
+      onChange={(val: boolean) => updateParams({ hidePassing: val })}
     />
   );
 };

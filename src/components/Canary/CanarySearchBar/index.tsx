@@ -24,7 +24,9 @@ export function CanarySearchBar({
   defaultValue,
   ...rest
 }: Props) {
-  const { handleSubmit, control, setValue, watch } = useForm();
+  const { handleSubmit, control, setValue, watch } = useForm({
+    values: { CanarySearchTextbox: defaultValue }
+  });
   const textValue = watch("CanarySearchTextbox");
 
   return (

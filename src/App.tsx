@@ -51,6 +51,7 @@ import { ConfigInsightsPage } from "./pages/config/ConfigInsightsList";
 import ErrorPage from "./components/Errors/ErrorPage";
 import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
+import { RouteMemoization } from "./components/RouteMemoization";
 
 const navigation = [
   { name: "Topology", href: "/topology", icon: TopologyIcon },
@@ -251,19 +252,21 @@ export function App() {
 
   return (
     <BrowserRouter>
-      <TopologyPageContextProvider>
-        <HealthPageContextProvider>
-          <ConfigPageContextProvider>
-            <IncidentPageContextProvider>
-              <AuthContext.Provider value={{ user, setUser }}>
-                <ReactTooltip />
-                <IncidentManagerRoutes sidebar={<SidebarWrapper />} />
-              </AuthContext.Provider>
-              <ReactQueryDevtools initialIsOpen={false} />
-            </IncidentPageContextProvider>
-          </ConfigPageContextProvider>
-        </HealthPageContextProvider>
-      </TopologyPageContextProvider>
+      <RouteMemoization>
+        <TopologyPageContextProvider>
+          <HealthPageContextProvider>
+            <ConfigPageContextProvider>
+              <IncidentPageContextProvider>
+                <AuthContext.Provider value={{ user, setUser }}>
+                  <ReactTooltip />
+                  <IncidentManagerRoutes sidebar={<SidebarWrapper />} />
+                </AuthContext.Provider>
+                <ReactQueryDevtools initialIsOpen={false} />
+              </IncidentPageContextProvider>
+            </ConfigPageContextProvider>
+          </HealthPageContextProvider>
+        </TopologyPageContextProvider>
+      </RouteMemoization>
     </BrowserRouter>
   );
 }
