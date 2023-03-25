@@ -6,6 +6,7 @@ import { GrIntegration, GrWorkshop } from "react-icons/gr";
 import { ImHeartBroken } from "react-icons/im";
 import { IoMdSpeedometer } from "react-icons/io";
 import { MdSecurity } from "react-icons/md";
+import { FaRegClock } from "react-icons/fa";
 import { ConfigTypeInsights } from "../ConfigInsights";
 
 type Props = {
@@ -78,6 +79,14 @@ export default function ConfigInsightsIcon({ analysis }: Props) {
           className={`${colorClass} inline-block`}
           size={size}
           title="Compliance"
+        />
+      );
+    case "reliability":
+      return (
+        <FaRegClock
+          className={`${colorClass} inline-block`}
+          size={size}
+          title="Reliability"
         />
       );
     case "technicalDebt":

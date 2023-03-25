@@ -79,6 +79,17 @@ export const configAnalysisTypeItems = {
     name: "Technical Debt",
     description: "Technical Debt",
     value: "technical_debt"
+  },
+  Reliability: {
+    id: "dropdown-type-reliability",
+    icon: (
+      <ConfigInsightsIcon
+        analysis={{ analysis_type: "reliability", severity: "" }}
+      />
+    ),
+    name: "Reliability",
+    description: "Reliability",
+    value: "reliability"
   }
 } as const;
 
