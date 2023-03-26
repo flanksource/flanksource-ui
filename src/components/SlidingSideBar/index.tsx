@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import { useEffect, useRef, useState } from "react";
 import { IoChevronBackOutline, IoChevronForwardOutline } from "react-icons/io5";
+import useRunTaskOnPropChange from "../../hooks/useRunTaskOnPropChange";
 
 type Props = React.HTMLProps<HTMLDivElement> & {
   children?: React.ReactNode;
@@ -16,43 +17,71 @@ export default function SlidingSideBar({
   const [open, setOpen] = useState<boolean>(false);
   const contentRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (contentRef.current?.children) {
-      const totalHeight = contentRef.current.clientHeight;
-      let fixedHeightsTotal = 0;
-      let fixedHeightChildCount = 0;
-      const children = [...contentRef.current?.children];
-      children.forEach((item) => {
-        const panelHeight = item.getAttribute("data-panel-height");
-        let panelHeightRatio = item.getAttribute("data-panel-height-ratio");
-        if (panelHeight && panelHeight !== "auto") {
-          fixedHeightsTotal += parseFloat(panelHeight || "0px");
-          ++fixedHeightChildCount;
-        } else {
-          item.setAttribute("data-panel-height", "auto");
-        }
-        if (!panelHeightRatio) {
-          item.setAttribute("data-panel-height-ratio", "1");
-        }
-      });
-      const childrenWithAutoHeight = children.length - fixedHeightChildCount;
-      const remainingHeight = totalHeight - fixedHeightsTotal;
-      const itemHeight = remainingHeight / childrenWithAutoHeight;
-      children.forEach((item) => {
-        const child = item as HTMLDivElement;
-        const panelHeight = item.getAttribute("data-panel-height");
-        const panelHeightRatio = parseFloat(
-          item.getAttribute("data-panel-height-ratio")!
-        );
-        const height =
-          panelHeight === "auto"
-            ? itemHeight * panelHeightRatio
-            : `${parseFloat(panelHeight!)}`;
-        child.style.setProperty("max-height", `${height}px`);
-        child.style.setProperty("height", `${height}px`);
-      });
+  function configureChildrenHeights() {
+    if (!contentRef.current?.children) {
+      return;
     }
+    const totalHeight = contentRef.current.clientHeight;
+    let fixedHeightsTotal = 0;
+    let fixedHeightChildCount = 0;
+    const children = [...contentRef.current?.children];
+    children.forEach((item) => {
+      let panelHeight = item.getAttribute("data-panel-height");
+      if (item.getAttribute("data-minimized") === "true") {
+        panelHeight = `${item.clientHeight}px`;
+      }
+      let panelHeightRatio = item.getAttribute("data-panel-height-ratio");
+      if (panelHeight && panelHeight !== "auto") {
+        fixedHeightsTotal += parseFloat(panelHeight || "0px");
+        ++fixedHeightChildCount;
+      } else {
+        item.setAttribute("data-panel-height", "auto");
+      }
+      if (!panelHeightRatio) {
+        item.setAttribute("data-panel-height-ratio", "1");
+      }
+    });
+    const childrenWithAutoHeight = children.length - fixedHeightChildCount;
+    const remainingHeight = totalHeight - fixedHeightsTotal;
+    const itemHeight = remainingHeight / childrenWithAutoHeight;
+    children.forEach((item) => {
+      const child = item as HTMLDivElement;
+      let panelHeight = item.getAttribute("data-panel-height");
+      if (item.getAttribute("data-minimized") === "true") {
+        panelHeight = `${item.clientHeight}px`;
+      }
+      const panelHeightRatio = parseFloat(
+        item.getAttribute("data-panel-height-ratio")!
+      );
+      const height =
+        panelHeight === "auto"
+          ? itemHeight * panelHeightRatio
+          : `${parseFloat(panelHeight!)}`;
+      child.style.setProperty("max-height", `${height}px`);
+    });
+  }
+
+  useEffect(() => {
+    configureChildrenHeights();
   }, [children, contentRef]);
+
+  useRunTaskOnPropChange(
+    () => {
+      if (!contentRef.current?.children) {
+        return;
+      }
+      const children = [...contentRef.current?.children];
+      let minimizedChildCount = 0;
+      children.forEach((child) => {
+        minimizedChildCount +=
+          child.getAttribute("data-minimized") === "true" ? 1 : 0;
+      });
+      return minimizedChildCount;
+    },
+    () => {
+      configureChildrenHeights();
+    }
+  );
 
   return (
     <div

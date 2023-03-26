@@ -22,6 +22,7 @@ export default function CollapsiblePanel({
     <div
       className={clsx("flex flex-col", isOpen && "flex-1", className)}
       {...props}
+      data-minimized={!isOpen}
     >
       <div
         onClick={() => setIsOpen(!isOpen)}
