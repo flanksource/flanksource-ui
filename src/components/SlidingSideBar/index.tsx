@@ -17,6 +17,16 @@ export default function SlidingSideBar({
   const [open, setOpen] = useState<boolean>(false);
   const contentRef = useRef<HTMLDivElement>(null);
 
+  function calculateChildHeight(
+    panelHeight: string,
+    itemHeight: number,
+    panelHeightRatio: number
+  ) {
+    return panelHeight === "auto"
+      ? itemHeight * panelHeightRatio
+      : parseFloat(panelHeight!);
+  }
+
   function configureChildrenHeights() {
     if (!contentRef.current?.children) {
       return;
@@ -24,11 +34,14 @@ export default function SlidingSideBar({
     const totalHeight = contentRef.current.clientHeight;
     let fixedHeightsTotal = 0;
     let fixedHeightChildCount = 0;
+    let expandedChildCount = 0;
     const children = [...contentRef.current?.children];
     children.forEach((item) => {
       let panelHeight = item.getAttribute("data-panel-height");
       if (item.getAttribute("data-minimized") === "true") {
         panelHeight = `${item.clientHeight}px`;
+      } else {
+        ++expandedChildCount;
       }
       let panelHeightRatio = item.getAttribute("data-panel-height-ratio");
       if (panelHeight && panelHeight !== "auto") {
@@ -53,10 +66,11 @@ export default function SlidingSideBar({
       const panelHeightRatio = parseFloat(
         item.getAttribute("data-panel-height-ratio")!
       );
-      const height =
-        panelHeight === "auto"
-          ? itemHeight * panelHeightRatio
-          : `${parseFloat(panelHeight!)}`;
+      const height = calculateChildHeight(
+        panelHeight!,
+        itemHeight,
+        expandedChildCount === 1 ? 0.95 : panelHeightRatio
+      );
       child.style.setProperty("max-height", `${height}px`);
     });
   }

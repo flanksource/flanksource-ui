@@ -20,7 +20,7 @@ export default function CollapsiblePanel({
 
   return (
     <div
-      className={clsx("flex flex-col", isOpen && "flex-1", className)}
+      className={clsx("flex flex-col", className)}
       {...props}
       data-minimized={!isOpen}
     >

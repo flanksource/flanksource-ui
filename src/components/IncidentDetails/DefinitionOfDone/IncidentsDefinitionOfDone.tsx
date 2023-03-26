@@ -13,6 +13,7 @@ import { BsCardChecklist } from "react-icons/bs";
 import { ClickableSvg } from "../../ClickableSvg/ClickableSvg";
 import { Badge } from "../../Badge";
 import { useIncidentState } from "../../../store/incident.state";
+import EmptyState from "../../EmptyState";
 
 type DefinitionOfDoneProps = React.HTMLProps<HTMLDivElement> & {
   incidentId: string;
@@ -208,6 +209,7 @@ export function IncidentsDefinitionOfDone({
           }}
           rootHypothesis={rootHypothesis!}
         />
+        {dodEvidences.length === 0 && !isLoading && <EmptyState />}
       </div>
     </CollapsiblePanel>
   );
