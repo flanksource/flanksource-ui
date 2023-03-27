@@ -1,8 +1,6 @@
 import { useQuery, UseQueryOptions } from "@tanstack/react-query";
-import { SchemaApi } from "../../components/SchemaResourcePage/resourceTypes";
 import { CostsData } from "../../components/CostDetails/CostDetails";
 import { toastError } from "../../components/Toast/toast";
-import { getAll } from "../schemaResources";
 import {
   getAllChanges,
   getAllConfigsMatchingQuery,
@@ -368,13 +366,6 @@ export function useIncidentsHistoryQuery(
     () => getIncidentHistory(incidentId),
     options
   );
-}
-
-export function useGetSettingsAllQuery(resourceInfo: SchemaApi) {
-  return useQuery(["settings", "all", resourceInfo], async () => {
-    const res = await getAll(resourceInfo);
-    return res.data;
-  });
 }
 
 export function useConfigAnalysisQuery(
