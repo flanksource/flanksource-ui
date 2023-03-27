@@ -67,7 +67,7 @@ export function SchemaResourceEdit({
   const [disabled, setDisabled] = useState(false);
   const keyRef = useRef(v4());
   const labelsKeyRef = useRef(v4());
-  console.log("spec 2", spec, typeof spec);
+
   const defaultValues = pickBy(
     {
       id,
@@ -183,13 +183,17 @@ export function SchemaResourceEdit({
 
   const setValueOnChange = (key: "spec" | "labels", value?: string) => {
     if (!value) {
-      setValue(key, {});
+      setValue(key, key === "labels" ? {} : "");
       return;
     }
     try {
-      const jSonObj = load(value);
-      if (typeof jSonObj === "object" && jSonObj !== null) {
-        setValue(key, jSonObj);
+      if (key === "labels") {
+        const jSonObj = load(value);
+        if (typeof jSonObj === "object" && jSonObj !== null) {
+          setValue(key, jSonObj);
+        }
+      } else {
+        setValue(key, value);
       }
     } catch (error) {
       console.error("Error parsing YAML to JSON");
