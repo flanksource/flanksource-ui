@@ -57,11 +57,13 @@ export const getAll = ({
 export const createResource = ({ api, table }: SchemaApi, data: unknown) =>
   getBackend(api)?.post(`/${table}`, data);
 
-export const updateResource = ({ api, table }: SchemaApi, data: unknown) =>
-  getBackend(api)?.patch(`/${table}?id=eq.${data?.id}`, data);
+export const updateResource = (
+  { api, table }: SchemaApi,
+  data: Record<string, any>
+) => getBackend(api)?.patch(`/${table}?id=eq.${data?.id}`, data);
 
 export const getResource = ({ api, table }: SchemaApi, id: string) =>
-  getBackend(api)?.get(`/${table}?id=eq.${id}`);
+  getBackend(api)?.get<Record<string, any>[]>(`/${table}?id=eq.${id}`);
 
 export const deleteResource = ({ api, table }: SchemaApi, id: string) =>
   getBackend(api)?.delete(`/${table}?id=eq.${id}`);

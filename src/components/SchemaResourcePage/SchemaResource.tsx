@@ -10,6 +10,7 @@ import { SchemaResourceType } from "./resourceTypes";
 import { SchemaResourceEdit } from "./SchemaResourceEdit";
 import { toastError } from "../Toast/toast";
 import { useGetSettingsResourceDetails } from "../../api/query-hooks/settingsResourcesHooks";
+import { Head } from "../Head/Head";
 
 export function SchemaResource({
   resourceInfo
@@ -46,26 +47,35 @@ export function SchemaResource({
   };
 
   return (
-    <SearchLayout
-      loading={isLoading}
-      title={
-        <BreadcrumbNav
-          list={[{ title: name, to: `/settings/${resourceInfo.table}` }, id]}
-        />
-      }
-      contentClass="flex flex-col h-full"
-    >
-      <div className="flex flex-col flex-1 overflow-y-auto mx-auto w-screen max-w-screen-xl p-4">
-        {resource && !isLoading && (
-          <SchemaResourceEdit
-            id={id}
-            resourceName={resourceInfo.name}
-            {...resource}
-            onSubmit={onSubmit}
-            onDelete={onDelete}
+    <>
+      <Head
+        prefix={`Settings - ${name} ${
+          resource?.name ? ` - ${resource.name}` : ""
+        } `}
+      />
+      <SearchLayout
+        title={
+          <BreadcrumbNav
+            list={[
+              { title: name, to: `/settings/${resourceInfo.table}` },
+              resource?.name
+            ]}
           />
-        )}
-      </div>
-    </SearchLayout>
+        }
+        contentClass="flex flex-col h-full"
+      >
+        <div className="flex flex-col flex-1 overflow-y-auto mx-auto w-screen max-w-screen-xl p-4">
+          {resource && !isLoading && (
+            <SchemaResourceEdit
+              id={id}
+              resourceName={resourceInfo.name}
+              {...resource}
+              onSubmit={onSubmit}
+              onDelete={onDelete}
+            />
+          )}
+        </div>
+      </SearchLayout>
+    </>
   );
 }
