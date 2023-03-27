@@ -376,11 +376,8 @@ export function TopologyPage() {
                 setSearchParams={setSearchParams}
               />
             </div>
-            <div
-              className="px-6 pt-4 flex leading-1.21rel w-fulll overflow-y-auto"
-              style={{ maxHeight: "calc(100vh - 9rem)" }}
-            >
-              <div className="flex flex-wrap w-ful">
+            <div className="px-6 pt-4 flex leading-1.21rel w-fulll overflow-y-auto h-full">
+              <div className="flex flex-wrap w-ful h-fit">
                 {getSortedTopology(
                   topology,
                   getSortBy(sortLabels || []),
