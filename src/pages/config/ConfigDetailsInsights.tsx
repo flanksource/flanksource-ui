@@ -13,13 +13,15 @@ import { useConfigDetailsTabs } from "../../components/ConfigsPage/ConfigTabsLin
 import { ConfigTypeInsights } from "../../components/ConfigInsights";
 import InsightsDataTable from "../../components/InsightsDataTable";
 
-export function InsightsDetailsChangesPage() {
+export function ConfigDetailsInsights() {
   const { id } = useParams();
   const [params, setParams] = useSearchParams();
 
-  const { data: configInsights = [], isLoading } = useGetConfigInsights<
-    ConfigTypeInsights[]
-  >(id ?? "");
+  const {
+    data: configInsights = [],
+    isLoading,
+    refetch
+  } = useGetConfigInsights<ConfigTypeInsights[]>(id ?? "");
 
   const { data: configItem, error: itemError } = useGetConfigByIdQuery(id!);
 
@@ -36,22 +38,21 @@ export function InsightsDetailsChangesPage() {
 
   return (
     <>
-      <Head prefix={configItem ? `Config Changes - ${configItem.name}` : ""} />
+      <Head prefix={configItem ? `Config Insights - ${configItem.name}` : ""} />
       <SearchLayout
         title={
           <div className="flex space-x-2">
-            <span className="text-lg">
-              <ConfigsDetailsBreadcrumbNav configId={id} />
-            </span>
+            <span className="text-lg">Config Insights</span>
           </div>
         }
+        onRefresh={refetch}
         loading={isLoading}
         contentClass="p-0 h-full overflow-y-auto"
       >
         <div className={`flex flex-row min-h-full h-auto`}>
           <TabbedLinks tabLinks={configTabList}>
             <div
-              className={`flex flex-col flex-1 p-6 pb-0 min-h-full h-auto overflow-auto`}
+              className={`flex flex-col flex-1 pb-0 min-h-full h-auto overflow-auto`}
             >
               <div
                 className="flex flex-col items-start overflow-y-auto"
