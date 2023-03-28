@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { AiFillPlusCircle } from "react-icons/ai";
-import { useGetSettingsAllQuery } from "../../api/query-hooks";
+import { useGetSettingsAllQuery } from "../../api/query-hooks/settingsResourcesHooks";
 import { createResource, SchemaResourceI } from "../../api/schemaResources";
 import { useUser } from "../../context";
 import { BreadcrumbNav } from "../BreadcrumbNav";
