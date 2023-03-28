@@ -5,6 +5,7 @@ import {
 import { CanaryCheckerDB, ConfigDB, IncidentCommander } from "./axios";
 import { AVATAR_INFO } from "../constants";
 import { AxiosResponse } from "axios";
+import { JobHistoryStatus } from "../components/JobsHistory/JobsHistoryTable";
 
 export interface SchemaResourceI {
   id: string;
@@ -22,6 +23,20 @@ export interface SchemaResourceI {
     avatar: string;
     name: string;
   };
+}
+
+export interface SchemaResourceWithJobStatus extends SchemaResourceI {
+  job_created_at?: string;
+  job_details?: { errors: any[] };
+  job_duration_millis?: number;
+  job_error_count?: number;
+  job_hostname?: string;
+  job_name?: string;
+  job_resource_type?: string;
+  job_status?: JobHistoryStatus;
+  job_success_count?: number;
+  job_time_end?: string;
+  job_time_start?: string;
 }
 
 const invalidEndpoint = (api: string): never => {
@@ -44,11 +59,13 @@ const getBackend = (api: SchemaBackends) => {
 export const getAll = ({
   table,
   api
-}: SchemaApi): Promise<AxiosResponse<SchemaResourceI[]>> => {
+}: SchemaApi): Promise<AxiosResponse<SchemaResourceWithJobStatus[]>> => {
   const endpoint = getBackend(api);
   if (endpoint) {
-    return endpoint.get<SchemaResourceI[]>(
-      `/${table}?order=created_at.desc&select=*,created_by(${AVATAR_INFO})&limit=100`
+    const tableName =
+      table === "incident_rules" ? "incident_rules" : `${table}_with_status`;
+    return endpoint.get<SchemaResourceWithJobStatus[]>(
+      `/${tableName}?order=created_at.desc&select=*,created_by(${AVATAR_INFO})&limit=100`
     );
   }
   return Promise.resolve({ data: [] } as any);
