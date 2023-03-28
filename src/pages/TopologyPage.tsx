@@ -1,14 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
-import {
-  getTopology,
-  updateComponentVisibility
-} from "../api/services/topology";
+import { getTopology } from "../api/services/topology";
 import { SearchLayout } from "../components/Layout";
 import { ReactSelectDropdown } from "../components/ReactSelectDropdown";
 import { schemaResourceTypes } from "../components/SchemaResourcePage/resourceTypes";
 import CardsSkeletonLoader from "../components/SkeletonLoader/CardsSkeletonLoader";
-import { toastError, toastSuccess } from "../components/Toast/toast";
+import { toastError } from "../components/Toast/toast";
 import { TopologyCard } from "../components/TopologyCard";
 import { TopologyPopOver } from "../components/TopologyPopover";
 import { getCardWidth } from "../components/TopologyPopover/topologyPreference";
@@ -257,28 +254,6 @@ export function TopologyPage() {
       });
   }, []);
 
-  const updateVisibility = async (
-    topologyId: string | undefined,
-    updatedVisibility: boolean
-  ) => {
-    // don't update if topologyId is not present
-    if (!topologyId) {
-      return;
-    }
-    try {
-      const { data } = await updateComponentVisibility(
-        topologyId,
-        updatedVisibility
-      );
-      if (data) {
-        toastSuccess(`Component visibility updated successfully`);
-      }
-    } catch (ex: any) {
-      toastError(ex);
-    }
-    load();
-  };
-
   if ((loading && !topology) || !topology) {
     return <CardsSkeletonLoader showBreadcrumb />;
   }
@@ -294,7 +269,7 @@ export function TopologyPage() {
         contentClass="p-0 h-full"
         loading={loading}
       >
-        <div className="flex flex-row min-h-full h-auto">
+        <div className="flex flex-row min-h-full h-auto overflow-y-auto">
           <div className="flex flex-col flex-1 min-h-full h-auto">
             <div className="flex px-6">
               <div className="flex flex-wrap">
@@ -374,21 +349,16 @@ export function TopologyPage() {
               />
             </div>
             <div
-              className="px-6 pt-4 flex leading-1.21rel w-fulll overflow-y-auto"
+              className="px-6 pt-4 flex leading-1.21rel w-full"
               style={{ maxHeight: "calc(100vh - 9rem)" }}
             >
-              <div className="flex flex-wrap w-ful">
+              <div className="flex flex-wrap w-full">
                 {getSortedTopology(
                   topology,
                   getSortBy(sortLabels || []),
                   getSortOrder()
                 ).map((item) => (
-                  <TopologyCard
-                    key={item.id}
-                    topology={item}
-                    size={size}
-                    updateVisibility={updateVisibility}
-                  />
+                  <TopologyCard key={item.id} topology={item} size={size} />
                 ))}
                 {!topology?.length && (
                   <InfoMessage
