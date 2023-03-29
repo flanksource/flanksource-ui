@@ -96,6 +96,7 @@ export function UsersPage() {
             <InviteUserForm
               className="flex flex-col bg-white p-4"
               onSubmit={onSubmit}
+              closeModal={() => setIsOpen(false)}
             />
           </Modal>
         </div>
