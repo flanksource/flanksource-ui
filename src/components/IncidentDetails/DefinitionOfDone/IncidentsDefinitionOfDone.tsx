@@ -2,7 +2,6 @@ import clsx from "clsx";
 import { useEffect, useMemo, useState } from "react";
 import { Evidence, updateEvidence } from "../../../api/services/evidence";
 import { ConfirmationPromptDialog } from "../../Dialogs/ConfirmationPromptDialog";
-import { useIncidentQuery } from "../../../api/query-hooks";
 import EvidenceSelectionModal from "./EvidenceSelectionModal";
 import IncidentsDefinitionOfDoneItem from "./IncidentsDefinitionOfDoneItem";
 import AddDefinitionOfDoneModal from "../AddDefinitionOfDone/AddDefinitionOfDoneHome";
@@ -13,6 +12,7 @@ import { RiFullscreenLine } from "react-icons/ri";
 import { BsCardChecklist } from "react-icons/bs";
 import { ClickableSvg } from "../../ClickableSvg/ClickableSvg";
 import { Badge } from "../../Badge";
+import { useIncidentState } from "../../../store/incident.state";
 
 type DefinitionOfDoneProps = {
   incidentId: string;
@@ -62,8 +62,8 @@ export function IncidentsDefinitionOfDone({
   const [dodModalOpen, setDODModalOpen] = useState(false);
   const [addToDODModalOpen, setAddToDODModalOpen] = useState(false);
   const [nonDODEvidences, setNonDODEvidences] = useState<Evidence[]>([]);
-  const incidentQuery = useIncidentQuery(incidentId);
-  const { refetch, isLoading, isRefetching, data: incident } = incidentQuery;
+  const { refetchIncident, isLoading, isRefetching, incident } =
+    useIncidentState(incidentId);
 
   useEffect(() => {
     if (!incident) {
@@ -98,7 +98,7 @@ export function IncidentsDefinitionOfDone({
     return updateEvidence(evidence.id, {
       definition_of_done: false
     }).then(() => {
-      refetch();
+      refetchIncident();
     });
   };
 
@@ -126,7 +126,7 @@ export function IncidentsDefinitionOfDone({
                 className={`cursor-pointer mr-3 w-6 h-6 inline-block ${
                   isRefetching ? "animate-spin" : ""
                 }`}
-                onClick={() => refetch()}
+                onClick={() => refetchIncident()}
               />
             </ClickableSvg>
             <ClickableSvg>
@@ -155,7 +155,7 @@ export function IncidentsDefinitionOfDone({
                   evidence={evidence}
                   setEvidenceBeingRemoved={setEvidenceBeingRemoved}
                   setOpenDeleteConfirmDialog={setOpenDeleteConfirmDialog}
-                  refetch={refetch}
+                  refetch={refetchIncident}
                 />
               ))
             )}
@@ -199,7 +199,7 @@ export function IncidentsDefinitionOfDone({
           noneDODEvidence={nonDODEvidences}
           isOpen={addToDODModalOpen}
           onAddDefinitionOfDone={() => {
-            refetch();
+            refetchIncident();
             setAddToDODModalOpen(false);
           }}
           rootHypothesis={rootHypothesis!}

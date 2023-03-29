@@ -51,6 +51,7 @@ import { ConfigInsightsPage } from "./pages/config/ConfigInsightsList";
 import ErrorPage from "./components/Errors/ErrorPage";
 import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
+import { Provider } from "jotai";
 
 const navigation = [
   { name: "Topology", href: "/topology", icon: TopologyIcon },
@@ -107,7 +108,14 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
       </Route>
 
       <Route path="incidents" element={sidebar}>
-        <Route path=":id" element={<IncidentDetailsPage />} />
+        <Route
+          path=":id"
+          element={
+            <ErrorBoundary>
+              <IncidentDetailsPage />
+            </ErrorBoundary>
+          }
+        />
         <Route index element={<IncidentListPage />} />
       </Route>
 
@@ -195,11 +203,13 @@ export function CanaryCheckerApp() {
 
   return (
     <BrowserRouter>
-      <HealthPageContextProvider>
-        <ReactTooltip />
-        <Canary url="/api/canary/api/summary" />
-        <ReactQueryDevtools initialIsOpen={false} />
-      </HealthPageContextProvider>
+      <Provider>
+        <HealthPageContextProvider>
+          <ReactTooltip />
+          <Canary url="/api/canary/api/summary" />
+          <ReactQueryDevtools initialIsOpen={false} />
+        </HealthPageContextProvider>
+      </Provider>
     </BrowserRouter>
   );
 }
@@ -251,19 +261,21 @@ export function App() {
 
   return (
     <BrowserRouter>
-      <TopologyPageContextProvider>
-        <HealthPageContextProvider>
-          <ConfigPageContextProvider>
-            <IncidentPageContextProvider>
-              <AuthContext.Provider value={{ user, setUser }}>
-                <ReactTooltip />
-                <IncidentManagerRoutes sidebar={<SidebarWrapper />} />
-              </AuthContext.Provider>
-              <ReactQueryDevtools initialIsOpen={false} />
-            </IncidentPageContextProvider>
-          </ConfigPageContextProvider>
-        </HealthPageContextProvider>
-      </TopologyPageContextProvider>
+      <Provider>
+        <TopologyPageContextProvider>
+          <HealthPageContextProvider>
+            <ConfigPageContextProvider>
+              <IncidentPageContextProvider>
+                <AuthContext.Provider value={{ user, setUser }}>
+                  <ReactTooltip />
+                  <IncidentManagerRoutes sidebar={<SidebarWrapper />} />
+                </AuthContext.Provider>
+                <ReactQueryDevtools initialIsOpen={false} />
+              </IncidentPageContextProvider>
+            </ConfigPageContextProvider>
+          </HealthPageContextProvider>
+        </TopologyPageContextProvider>
+      </Provider>
     </BrowserRouter>
   );
 }

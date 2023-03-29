@@ -9,8 +9,13 @@ export interface OptionItem {
   readonly value: string;
 }
 
-export interface SearchSelectProps {
+export interface GroupedOptionItem {
+  label: string;
   options: OptionItem[];
+}
+
+export interface SearchSelectProps {
+  options: OptionItem[] | GroupedOptionItem[];
   name?: string;
   components?: { [index: string]: ReactNode };
   onChange: (val: SingleValue<OptionItem>) => void;
@@ -65,7 +70,7 @@ export function SearchSelect({
     setValue(selected);
   }, [selected]);
 
-  const { RenderSelection } = useMemo(
+  const { RenderSelection, ...remainingComponents } = useMemo(
     () => ({ ...defaultComponents, ...components }),
     [components]
   );
@@ -95,7 +100,11 @@ export function SearchSelect({
             <Select
               autoFocus
               backspaceRemovesValue={false}
-              components={{ DropdownIndicator, IndicatorSeparator: null }}
+              components={{
+                ...remainingComponents,
+                DropdownIndicator,
+                IndicatorSeparator: null
+              }}
               controlShouldRenderValue={false}
               hideSelectedOptions={false}
               isClearable={false}
@@ -110,7 +119,6 @@ export function SearchSelect({
               menuPlacement={menuPlacement}
             />
           </div>
-
           <Blanket onClick={() => setOpen(!isOpen)} />
         </>
       ) : null}

@@ -44,8 +44,8 @@ export function ScriptStep({ value, onChange, evidenceType }: Props) {
         <>
           <div className="font-semibold">Script Shortcuts</div>
           <div className="flex flex-wrap w-full">
-            {options.map((option) => (
-              <div className="flex flex-col p-1">
+            {options.map((option, index) => (
+              <div className="flex flex-col p-1" key={index}>
                 <button
                   onClick={() => {
                     onChange(option.script);

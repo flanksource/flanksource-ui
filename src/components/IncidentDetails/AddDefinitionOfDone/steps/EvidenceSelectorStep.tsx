@@ -142,7 +142,7 @@ export default function EvidenceSelectorStep({
       {Object.entries(EvidenceType)
         // remove comment evidence, as they are Manual DoD
         .filter(([_, value]) => value !== EvidenceType.Comment)
-        .map(([_, value]) => (
+        .map(([_, value], index) => (
           <EvidenceGroupSelectorStep
             noneDODEvidences={noneDODEvidences}
             onSelectEvidence={(evidence) => {
@@ -154,6 +154,7 @@ export default function EvidenceSelectorStep({
             }}
             evidenceType={value as EvidenceType}
             selectedEvidences={state.selectedEvidence}
+            key={index}
           />
         ))}
     </div>
