@@ -34,7 +34,7 @@ export function SchemaResourceList({ items, baseUrl, table }: Props) {
           <tbody>
             {items.map((item) => (
               <SchemaResourceListItem
-                table="canaries"
+                table={table}
                 key={item.id}
                 {...item}
                 baseUrl={baseUrl}
@@ -103,9 +103,9 @@ function SchemaResourceListItem({
       {table === "canaries" && <Cell>{schedule}</Cell>}
       <Cell className="text-gray-500">{relativeDateTime(created_at)}</Cell>
       <Cell className="text-gray-500">{relativeDateTime(updated_at)}</Cell>
-      {created_by && (
-        <Cell className="text-gray-500">{<Avatar user={created_by} />}</Cell>
-      )}
+      <Cell className="text-gray-500">
+        {created_by && <Avatar user={created_by} circular />}
+      </Cell>
     </tr>
   );
 }
