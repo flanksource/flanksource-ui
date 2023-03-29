@@ -157,12 +157,11 @@ export function TopologyCard({
               {!prepareTopologyLink(topology) &&
                 (topology.text || topology.name)}
             </p>
-            {topology.description != null ||
-              (topology.id != null && (
-                <h3 className="text-gray-color overflow-hidden truncate text-2xsi leading-1.21rel font-medium">
-                  {topology.description || topology.id}
-                </h3>
-              ))}
+            {topology.description && (
+              <h3 className="text-gray-color overflow-hidden truncate text-2xsi leading-1.21rel font-medium">
+                {topology.description}
+              </h3>
+            )}
           </div>
         </div>
 
