@@ -111,7 +111,7 @@ const ProfileSettings: NextPage = () => {
     <div className="overflow-y-auto max-h-screen">
       <Head prefix="Profile Management and Security Settings" />
       <div className="flex bg-gray-50 justify-center">
-        <div className="flex flex-col w-full pt-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col w-full pt-4 h-screen sm:px-6 lg:px-8">
           <div className="w-6/12 m-auto">
             <img alt="Flanksource" src="/images/logo.svg" className="p-2 h-auto m-auto rounded-8px w-48" />
             <div className="pb-2">
