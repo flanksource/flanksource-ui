@@ -343,6 +343,7 @@ export function AttachEvidenceDialog({
       onClose={onClose}
       size="slightly-small"
       bodyClass=""
+      containerClassName=""
     >
       <div className="pt-7">
         <form onSubmit={handleSubmit(onSubmit)}>
