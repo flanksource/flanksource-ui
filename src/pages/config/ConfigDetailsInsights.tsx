@@ -32,13 +32,18 @@ export function ConfigDetailsInsights() {
       typeof itemError === "symbol"
         ? itemError
         : itemError?.message ?? "Something went wrong";
-
     return <InfoMessage message={errorMessage} />;
   }
 
   return (
     <>
-      <Head prefix={configItem ? `Config Insights - ${configItem.name}` : ""} />
+      <Head
+        prefix={
+          configItem
+            ? `Config Insights - ${configItem.name}`
+            : "Config Insights"
+        }
+      />
       <SearchLayout
         title={
           <div className="flex space-x-2">
