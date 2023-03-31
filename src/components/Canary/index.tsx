@@ -186,6 +186,9 @@ export function Canary({
     return <HealthPageSkeletonLoader showSidebar />;
   }
 
+  const filteredChecksLength = filteredChecks.length;
+  const isFilterApplied = filteredChecksLength !== checks?.length;
+
   return (
     <div
       className={clsx(
@@ -215,30 +218,30 @@ export function Canary({
             }
           />
 
-          {filteredChecks.length !== checks?.length && (
-            <>
-              {/* @ts-expect-error */}
-              <StatCard
-                title="Filtered Checks"
-                className="mb-4"
-                customValue={
-                  <>
-                    {filteredChecks.length}
-                    <span className="text-xl  font-light">
-                      {" "}
-                      (
-                      <span className="text-green-500">{passing.filtered}</span>
-                      /
-                      <span className="text-red-500">
-                        {filteredChecks.length - passing.filtered}
-                      </span>
-                      )
-                    </span>
-                  </>
-                }
-              />
-            </>
-          )}
+          {/* @ts-expect-error */}
+          <StatCard
+            title="Filtered Checks"
+            className="mb-4"
+            customValue={
+              <>
+                {isFilterApplied ? filteredChecksLength : 0}
+                <span className="text-xl  font-light">
+                  {" "}
+                  (
+                  <span className="text-green-500">
+                    {isFilterApplied ? passing.filtered : 0}
+                  </span>
+                  /
+                  <span className="text-red-500">
+                    {isFilterApplied
+                      ? filteredChecksLength - passing.filtered
+                      : 0}
+                  </span>
+                  )
+                </span>
+              </>
+            }
+          />
         </div>
         <SectionTitle className="mb-4 hidden">
           Filter by Time Range

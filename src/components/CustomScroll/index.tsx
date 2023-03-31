@@ -42,8 +42,8 @@ export const CustomScroll = ({
       style={{ ...style, maxHeight, height: "min-content" }}
       {...rest}
     >
-      {items.slice(0, getCount()).map((child) => {
-        return child;
+      {items.slice(0, getCount()).map((child, index) => {
+        return <React.Fragment key={index}>{child}</React.Fragment>;
       })}
       {showMore && (
         <div
