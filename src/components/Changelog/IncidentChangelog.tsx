@@ -1,13 +1,12 @@
 import { useEffect } from "react";
-import { BsCardList } from "react-icons/bs";
 import { MdRefresh } from "react-icons/md";
 import { RiPlayListAddFill } from "react-icons/ri";
 import {
   useIncidentQuery,
   useIncidentsHistoryQuery
 } from "../../api/query-hooks";
+import { useIncidentState } from "../../store/incident.state";
 import { Badge } from "../Badge";
-import { Chip } from "../Chip";
 import { ClickableSvg } from "../ClickableSvg/ClickableSvg";
 import CollapsiblePanel from "../CollapsiblePanel";
 import { Loading } from "../Loading";
@@ -30,7 +29,7 @@ export function IncidentChangelog({
     isRefetching,
     refetch
   } = useIncidentsHistoryQuery(incidentId);
-  const { data: incident } = useIncidentQuery(incidentId!);
+  const { incident } = useIncidentState(incidentId);
 
   useEffect(() => {
     refetch();

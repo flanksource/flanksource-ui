@@ -1,10 +1,8 @@
 import clsx from "clsx";
 import { identity, pickBy } from "lodash";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { v4 } from "uuid";
-import { load } from "js-yaml";
-
 import { SchemaResourceI } from "../../api/schemaResources";
 import { IconPicker } from "../IconPicker";
 import { TextInput } from "../TextInput";
@@ -18,6 +16,7 @@ import {
 import { Tab, Tabs } from "../Tabs/Tabs";
 import dynamic from "next/dynamic";
 import AutoCompleteDropdown from "../AutoCompleteDropdown/AutoCompleteDropdown";
+import YAML from "yaml";
 
 const CodeEditor = dynamic(
   () => import("../CodeEditor").then((m) => m.CodeEditor),
@@ -67,7 +66,6 @@ export function SchemaResourceEdit({
   const [disabled, setDisabled] = useState(false);
   const keyRef = useRef(v4());
   const labelsKeyRef = useRef(v4());
-  console.log("spec 2", spec, typeof spec);
   const defaultValues = pickBy(
     {
       id,
@@ -181,20 +179,23 @@ export function SchemaResourceEdit({
     onDelete(id);
   };
 
-  const setValueOnChange = (key: "spec" | "labels", value?: string) => {
-    if (!value) {
-      setValue(key, {});
-      return;
-    }
-    try {
-      const jSonObj = load(value);
-      if (typeof jSonObj === "object" && jSonObj !== null) {
-        setValue(key, jSonObj);
+  const setCodeEditorValueOnChange = useCallback(
+    (key: "spec" | "labels", value?: string) => {
+      if (!value) {
+        setValue(key, {});
+        return;
       }
-    } catch (error) {
-      console.error("Error parsing YAML to JSON");
-    }
-  };
+      try {
+        const jSonObj = YAML.parse(value);
+        if (typeof jSonObj === "object" && jSonObj !== null) {
+          setValue(key, jSonObj);
+        }
+      } catch (error) {
+        console.error("Error parsing YAML to Object");
+      }
+    },
+    [setValue]
+  );
 
   const onSubNavClick = (tab: string) => {
     setActiveTab(tab);
@@ -203,6 +204,16 @@ export function SchemaResourceEdit({
   const hasSubNav = (nav: string) => {
     return !!subNav.find((item) => item.value === nav) && activeTab === nav;
   };
+
+  const specValueToString = useCallback((spec: unknown) => {
+    if (typeof spec === "string") {
+      return spec;
+    }
+    if (typeof spec === "object") {
+      return YAML.stringify(spec);
+    }
+    return undefined;
+  }, []);
 
   const jsonSchemaFilePrefix = useMemo(() => {
     if (table === "config_scrapers") {
@@ -314,7 +325,7 @@ export function SchemaResourceEdit({
                                         : undefined
                                     }
                                     onChange={(val) => {
-                                      setValueOnChange("labels", val);
+                                      setCodeEditorValueOnChange("labels", val);
                                     }}
                                     language="json"
                                   />
@@ -394,13 +405,9 @@ export function SchemaResourceEdit({
                         <CodeEditor
                           key={keyRef.current}
                           readOnly={!!source || disabled || !edit}
-                          value={
-                            typeof values.spec === "string"
-                              ? values.spec
-                              : undefined
-                          }
+                          value={specValueToString(values.spec)}
                           onChange={(val) => {
-                            setValueOnChange("spec", val);
+                            setCodeEditorValueOnChange("spec", val);
                           }}
                           language="yaml"
                           schemaFilePrefix={jsonSchemaFilePrefix}

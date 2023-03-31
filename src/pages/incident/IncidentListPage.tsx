@@ -206,6 +206,7 @@ export function IncidentListPage() {
         onClose={() => setIncidentModalIsOpen(false)}
         size="small"
         title="Create New Incident"
+        containerClassName=""
       >
         <IncidentCreate
           callback={(response) => {

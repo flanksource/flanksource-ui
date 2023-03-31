@@ -71,20 +71,14 @@ export function UsersPage() {
               Invite User
             </button>
           </div>
-          {
-            loading && (
-              <TableSkeletonLoader />
-            )
-          }
-          {
-            !loading && (
-              <UserList
-                className="mt-6 overflow-y-hidden"
-                data={users}
-                isLoading={loading}
-              />
-            )
-          }
+          {loading && <TableSkeletonLoader />}
+          {!loading && (
+            <UserList
+              className="mt-6 overflow-y-hidden"
+              data={users}
+              isLoading={loading}
+            />
+          )}
           <Modal
             title="Invite User"
             onClose={() => {
@@ -96,6 +90,7 @@ export function UsersPage() {
             <InviteUserForm
               className="flex flex-col bg-white p-4"
               onSubmit={onSubmit}
+              closeModal={() => setIsOpen(false)}
             />
           </Modal>
         </div>

@@ -27,7 +27,7 @@ export default function JobsHistorySettingsPage() {
     <>
       <Head prefix="Settings - Job History" />
       <SearchLayout
-        title={<div className="flex text-xl font-semibold">Users</div>}
+        title={<div className="flex text-xl font-semibold">Job History</div>}
         onRefresh={refetch}
         contentClass="p-0 h-full"
         loading={isLoading || isRefetching}

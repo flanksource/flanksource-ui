@@ -19,7 +19,6 @@ import { IncidentSidebar } from "../../components/IncidentDetails/IncidentSideba
 import { SearchLayout } from "../../components/Layout";
 import { useCreateHypothesisMutation } from "../../api/mutations/useCreateHypothesisMutation";
 import { useUpdateHypothesisMutation } from "../../api/mutations/useUpdateHypothesisMutation";
-import { useIncidentQuery } from "../../api/query-hooks";
 import { TopologyCard } from "../../components/TopologyCard";
 import { Size } from "../../types";
 import IncidentDetailsPageSkeletonLoader from "../../components/SkeletonLoader/IncidentDetailsPageSkeletonLoader";
@@ -28,6 +27,8 @@ import { HypothesisCommentsViewContainer } from "../../components/Hypothesis/Hyp
 import { HypothesisActionPlanViewContainer } from "../../components/Hypothesis/HypothesisActionPlanViewContainer/HypothesisActionPlanViewContainer";
 import { Tab, Tabs } from "../../components/Tabs/Tabs";
 import EmptyState from "../../components/EmptyState";
+import { useCreateCommentMutation } from "../../api/query-hooks/mutations/comment";
+import { useIncidentState } from "../../store/incident.state";
 
 export enum IncidentDetailsViewTypes {
   comments = "Comments",
@@ -47,6 +48,7 @@ export interface HypothesisAPIs {
   // todo: Type this correctly
   updateMutation: UseMutationResult<any, any, any>;
   createMutation: UseMutationResult<any, any, any>;
+  createComment: UseMutationResult<any, any, any>;
 }
 
 interface Tree {
@@ -81,17 +83,19 @@ function buildTreeFromHypothesisList(list: Hypothesis[]) {
       delete tree[node.id];
     }
   });
-
   return Object.values(tree);
 }
 
 export function IncidentDetailsPage() {
   const { id: incidentId } = useParams();
   const isNewlyCreated = false; // TODO: set this to true if its a newly created incident
-  const { isLoading, data: incident, refetch } = useIncidentQuery(incidentId!);
+  const { incident, refetchIncident, isLoading } = useIncidentState(
+    incidentId!
+  );
+  const createComment = useCreateCommentMutation();
   const [refetchChangelog, setRefetchChangelog] = useState(0);
   const [activeViewType, setActiveViewType] = useState(
-    IncidentDetailsViewTypes.actionPlan
+    IncidentDetailsViewTypes.comments
   );
 
   const error = !!incident;
@@ -115,16 +119,18 @@ export function IncidentDetailsPage() {
   const createMutation = useCreateHypothesisMutation({ incidentId });
 
   const updateStatus = (status: IncidentStatus) =>
-    updateIncident(incident?.id || null, { status }).then(() => refetch());
+    updateIncident(incident?.id || null, { status }).then(() =>
+      refetchIncident()
+    );
 
   const updateIncidentHandler = useCallback(
     (newDataIncident: Partial<Incident>) => {
       updateIncident(incident?.id || null, newDataIncident).then(() => {
-        refetch();
+        refetchIncident();
         setRefetchChangelog(refetchChangelog + 1);
       });
     },
-    [incident?.id, refetch, refetchChangelog]
+    [incident?.id, refetchIncident, refetchChangelog]
   );
 
   const getHypothesisView = () => {
@@ -139,6 +145,25 @@ export function IncidentDetailsPage() {
           setActiveViewType(tab as IncidentDetailsViewTypes)
         }
       >
+        <Tab
+          label={IncidentDetailsViewTypes.comments}
+          value={IncidentDetailsViewTypes.comments}
+        >
+          <HypothesisCommentsViewContainer
+            incidentId={incidentId!}
+            loadedTrees={loadedTrees}
+            api={{
+              incidentId,
+              create: createHypothesis,
+              delete: deleteHypothesis,
+              deleteBulk: deleteHypothesisBulk,
+              update: updateHypothesis,
+              createComment,
+              updateMutation,
+              createMutation
+            }}
+          />
+        </Tab>
         <Tab
           label={IncidentDetailsViewTypes.actionPlan}
           value={IncidentDetailsViewTypes.actionPlan}
@@ -157,6 +182,7 @@ export function IncidentDetailsPage() {
                       delete: deleteHypothesis,
                       deleteBulk: deleteHypothesisBulk,
                       update: updateHypothesis,
+                      createComment,
                       updateMutation,
                       createMutation
                     }}
@@ -166,15 +192,6 @@ export function IncidentDetailsPage() {
               })}
             </div>
           </HypothesisActionPlanViewContainer>
-        </Tab>
-        <Tab
-          label={IncidentDetailsViewTypes.comments}
-          value={IncidentDetailsViewTypes.comments}
-        >
-          <HypothesisCommentsViewContainer
-            incidentId={incidentId!}
-            loadedTrees={loadedTrees}
-          />
         </Tab>
       </Tabs>
     );
@@ -189,7 +206,7 @@ export function IncidentDetailsPage() {
       <Head prefix={incident ? `Incident - ${incident.title}` : ""} />
       <SearchLayout
         contentClass="pl-6 h-full"
-        onRefresh={() => refetch()}
+        onRefresh={() => refetchIncident()}
         title={
           <div className="flex my-auto">
             <span className="text-xl flex">
@@ -226,32 +243,6 @@ export function IncidentDetailsPage() {
                     </section>
                   )}
                   <section className="mt-4">{getHypothesisView()}</section>
-                  <section className="mt-4">
-                    {!isLoading ? (
-                      loadedTrees?.map((loadedTree, index) => {
-                        return (
-                          <HypothesisBuilder
-                            loadedTree={loadedTree}
-                            // showGeneratedOutput
-                            initialEditMode={isNewlyCreated}
-                            api={{
-                              incidentId,
-                              create: createHypothesis,
-                              delete: deleteHypothesis,
-                              deleteBulk: deleteHypothesisBulk,
-                              update: updateHypothesis,
-                              updateMutation,
-                              createMutation
-                            }}
-                            key={loadedTree.id}
-                            showHeader={index === 0}
-                          />
-                        );
-                      })
-                    ) : (
-                      <div>{!error && "fetching tree..."}</div>
-                    )}
-                  </section>
                 </div>
               </div>
               <IncidentSidebar
