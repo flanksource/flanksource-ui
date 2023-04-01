@@ -1,7 +1,7 @@
 import { FaExclamationTriangle } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useConfigComponentsRelationshipQuery } from "../../api/query-hooks/useConfigComponentsRelationshipQuery";
-import { Badge } from "../Badge";
+import { CountBadge } from "../Badge/CountBadge";
 import CollapsiblePanel from "../CollapsiblePanel";
 import { Icon } from "../Icon";
 import { TopologyIcon } from "../Icons/TopologyIcon";
@@ -66,11 +66,7 @@ export default function ConfigComponents(props: Props) {
         <div className="flex flex-row space-x-2 items-center text-xl font-semibold">
           <TopologyIcon className="text-gray-400 h-5 w-5" />
           <span>Components</span>
-          <Badge
-            className="w-5 h-5 flex items-center justify-center"
-            roundedClass="rounded-full"
-            text={components.length}
-          />
+          <CountBadge roundedClass="rounded-full" value={components.length} />
         </div>
       }
     >

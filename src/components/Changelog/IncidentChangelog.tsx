@@ -3,7 +3,7 @@ import { MdRefresh } from "react-icons/md";
 import { RiPlayListAddFill } from "react-icons/ri";
 import { useIncidentsHistoryQuery } from "../../api/query-hooks";
 import { useIncidentState } from "../../store/incident.state";
-import { Badge } from "../Badge";
+import { CountBadge } from "../Badge/CountBadge";
 import { ClickableSvg } from "../ClickableSvg/ClickableSvg";
 import CollapsiblePanel from "../CollapsiblePanel";
 import { Loading } from "../Loading";
@@ -40,10 +40,9 @@ export function IncidentChangelog({
             title="Changelog"
             icon={<RiPlayListAddFill className="w-6 h-6" />}
           />
-          <Badge
-            className="w-5 h-5 flex items-center justify-center"
+          <CountBadge
             roundedClass="rounded-full"
-            text={incidentHistory?.length ?? 0}
+            value={incidentHistory?.length ?? 0}
           />
           <div
             className="relative z-0 inline-flex justify-end ml-5"

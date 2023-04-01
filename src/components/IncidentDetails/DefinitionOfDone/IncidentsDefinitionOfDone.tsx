@@ -11,9 +11,9 @@ import { MdRefresh } from "react-icons/md";
 import { RiFullscreenLine } from "react-icons/ri";
 import { BsCardChecklist } from "react-icons/bs";
 import { ClickableSvg } from "../../ClickableSvg/ClickableSvg";
-import { Badge } from "../../Badge";
 import { useIncidentState } from "../../../store/incident.state";
 import EmptyState from "../../EmptyState";
+import { CountBadge } from "../../Badge/CountBadge";
 
 type DefinitionOfDoneProps = React.HTMLProps<HTMLDivElement> & {
   incidentId: string;
@@ -113,10 +113,9 @@ export function IncidentsDefinitionOfDone({
             title="Definition of done"
             icon={<BsCardChecklist className="w-6 h-6" />}
           />
-          <Badge
-            className="w-5 h-5 flex items-center justify-center"
+          <CountBadge
             roundedClass="rounded-full"
-            text={dodEvidences?.length ?? 0}
+            value={dodEvidences?.length ?? 0}
           />
           <div
             className="relative z-0 inline-flex justify-end ml-5"
