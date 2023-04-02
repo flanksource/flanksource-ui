@@ -260,7 +260,7 @@ import memchache from "./memchache.svg";
 import metrics from "./metrics.svg";
 import microsoft from "./microsoft.svg";
 import minus from "./minus.svg";
-import mission_control_log from "./mission-control-log.svg";
+import mission_control_logo from "./mission-control-logo.svg";
 import mission_control from "./mission-control.svg";
 import mongo from "./mongo.svg";
 import mongodb from "./mongodb.svg";
@@ -285,6 +285,10 @@ import opentelemetry from "./opentelemetry.svg";
 import operatorframework from "./operatorframework.svg";
 import oracle from "./oracle.svg";
 import oracle_icon from "./oracle_icon.svg";
+import ory_hydra from "./ory-hydra.svg";
+import ory_kratos from "./ory-kratos.svg";
+import ory_logo from "./ory-logo.svg";
+import ory from "./ory.svg";
 import package_install from "./package-install.svg";
 import package_rollback from "./package-rollback.svg";
 import package_uninstall from "./package-uninstall.svg";
@@ -644,7 +648,7 @@ export const Icons = {
   metrics: metrics,
   microsoft: microsoft,
   minus: minus,
-  "mission-control-log": mission_control_log,
+  "mission-control-logo": mission_control_logo,
   "mission-control": mission_control,
   mongo: mongo,
   mongodb: mongodb,
@@ -669,6 +673,10 @@ export const Icons = {
   operatorframework: operatorframework,
   oracle: oracle,
   oracle_icon: oracle_icon,
+  "ory-hydra": ory_hydra,
+  "ory-kratos": ory_kratos,
+  "ory-logo": ory_logo,
+  ory: ory,
   "package-install": package_install,
   "package-rollback": package_rollback,
   "package-uninstall": package_uninstall,
