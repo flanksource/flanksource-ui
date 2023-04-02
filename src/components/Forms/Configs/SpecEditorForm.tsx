@@ -3,14 +3,14 @@ import React, { useCallback, useMemo, useState } from "react";
 import { Button } from "../../Button";
 import { Tabs, Tab } from "../../Tabs/Tabs";
 import { FormikCodeEditor } from "../Formik/FormikCodeEditor";
-import { FaChevronCircleLeft, FaSave } from "react-icons/fa";
+import { FaChevronCircleLeft, FaSave, FaTrash } from "react-icons/fa";
 import { schemaResourceTypes } from "../../SchemaResourcePage/resourceTypes";
 import FormikTextInput from "../Formik/FormikTextInput";
 
 type SpecEditorFormProps = {
   resourceName: string;
-  specTypeName: string;
   canEdit: boolean;
+  deleteHandler?: (id: string) => void;
   loadSpec: () => Record<string, any>;
   updateSpec: (spec: Record<string, any>) => void;
   specFormat: "yaml" | "json";
@@ -23,7 +23,7 @@ type SpecEditorFormProps = {
 
 export default function SpecEditorForm({
   resourceName,
-  specTypeName,
+  deleteHandler,
   canEdit = true,
   loadSpec = () => ({}),
   updateSpec = () => {},
@@ -66,7 +66,7 @@ export default function SpecEditorForm({
         updateSpec(values);
       }}
     >
-      {({ handleSubmit, handleReset }) => (
+      {({ handleSubmit, handleReset, values }) => (
         <Form
           onSubmit={handleSubmit}
           onReset={handleReset}
@@ -106,6 +106,14 @@ export default function SpecEditorForm({
                 text="Back"
                 icon={<FaChevronCircleLeft />}
                 onClick={() => onBack()}
+                className="btn-danger"
+              />
+            )}
+            {deleteHandler && (
+              <Button
+                text="Delete"
+                icon={<FaTrash />}
+                onClick={() => deleteHandler(values.id)}
                 className="btn-danger"
               />
             )}

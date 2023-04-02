@@ -243,6 +243,7 @@ export function SchemaResourceEdit({
                         onSubmit={(val) => doSubmit(val)}
                         canEdit={edit}
                         spec={defaultValues}
+                        deleteHandler={onDelete}
                       />
                     </div>
                   ) : (

@@ -33,6 +33,7 @@ type SpecEditorProps = {
   resourceName: SchemaResourceTypes[number]["name"];
   canEdit?: boolean;
   selectedSpec?: string;
+  deleteHandler?: (id: string) => void;
 };
 
 export default function SpecEditor({
@@ -40,7 +41,8 @@ export default function SpecEditor({
   format = "yaml",
   resourceName,
   canEdit = true,
-  selectedSpec
+  selectedSpec,
+  deleteHandler
 }: SpecEditorProps) {
   const [selectedSpecItem, setSelectedSpecItem] = useState<
     SpecType | undefined
@@ -70,9 +72,9 @@ export default function SpecEditor({
             loadSpec={selectedSpecItem.loadSpec}
             specFormat={format}
             resourceName={resourceName}
-            specTypeName={selectedSpecItem.name}
             onBack={() => setSelectedSpecItem(undefined)}
             specFormFieldName={selectedSpecItem.formFieldName}
+            deleteHandler={deleteHandler}
           />
         </div>
       ) : (

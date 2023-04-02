@@ -7,13 +7,16 @@ type ConfigScrapperSpecEditorProps = {
   spec?: Record<string, any>;
   onSubmit?: (spec: Record<string, any>) => void;
   canEdit?: boolean;
+  deleteHandler?: (id: string) => void;
 };
 
 export default function ConfigScrapperSpecEditor({
   spec,
   onSubmit = () => {},
-  canEdit = true
+  canEdit = true,
+  deleteHandler
 }: ConfigScrapperSpecEditorProps) {
+  console.log("spec", spec);
   const configTypes: SpecType[] = useMemo(
     () => [
       {
@@ -60,6 +63,7 @@ export default function ConfigScrapperSpecEditor({
       resourceName="Config Scraper"
       canEdit={!!spec}
       selectedSpec={selectedSpec}
+      deleteHandler={deleteHandler}
     />
   );
 }
