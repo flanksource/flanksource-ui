@@ -1,8 +1,29 @@
-// this file is generated using make index.js
+// this file is generated using make index.ts
+import access_denied from "./access-denied.svg";
 import acr from "./acr.svg";
 import activemq_icon from "./activemq-icon.svg";
 import activemq from "./activemq.svg";
+import add_alarm from "./add-alarm.svg";
+import add_album from "./add-album.svg";
+import add_alert from "./add-alert.svg";
 import add_button from "./add-button.svg";
+import add_clock from "./add-clock.svg";
+import add_cloud from "./add-cloud.svg";
+import add_cost from "./add-cost.svg";
+import add_database from "./add-database.svg";
+import add_email from "./add-email.svg";
+import add_folder from "./add-folder.svg";
+import add_group from "./add-group.svg";
+import add_inbox from "./add-inbox.svg";
+import add_key from "./add-key.svg";
+import add_list from "./add-list.svg";
+import add_node from "./add-node.svg";
+import add_page from "./add-page.svg";
+import add_receipt from "./add-receipt.svg";
+import add_snapshot from "./add-snapshot.svg";
+import add_tag from "./add-tag.svg";
+import add_ticket from "./add-ticket.svg";
+import add_user from "./add-user.svg";
 import aks from "./aks.svg";
 import alert from "./alert.svg";
 import ansible from "./ansible.svg";
@@ -71,6 +92,7 @@ import badge from "./badge.svg";
 import bash from "./bash.svg";
 import bizagi from "./bizagi.svg";
 import bizagi_icon from "./bizagi_icon.svg";
+import block from "./block.svg";
 import brain from "./brain.svg";
 import ca from "./ca.svg";
 import cal from "./cal.svg";
@@ -162,6 +184,7 @@ import haproxy from "./haproxy.svg";
 import harbor from "./harbor.svg";
 import hazelcast from "./hazelcast.svg";
 import health from "./health.svg";
+import heart from "./heart.svg";
 import helm from "./helm.svg";
 import html from "./html.svg";
 import http from "./http.svg";
@@ -236,6 +259,7 @@ import mem from "./mem.svg";
 import memchache from "./memchache.svg";
 import metrics from "./metrics.svg";
 import microsoft from "./microsoft.svg";
+import minus from "./minus.svg";
 import mongo from "./mongo.svg";
 import mongodb from "./mongodb.svg";
 import msplanner from "./msplanner.svg";
@@ -277,6 +301,26 @@ import rabbitmq from "./rabbitmq.svg";
 import rancher from "./rancher.svg";
 import redhat from "./redhat.svg";
 import redis from "./redis.svg";
+import remove_clock from "./remove-clock.svg";
+import remove_cloud from "./remove-cloud.svg";
+import remove_comment from "./remove-comment.svg";
+import remove_cost from "./remove-cost.svg";
+import remove_database from "./remove-database.svg";
+import remove_email from "./remove-email.svg";
+import remove_filter from "./remove-filter.svg";
+import remove_folder from "./remove-folder.svg";
+import remove_group from "./remove-group.svg";
+import remove_key from "./remove-key.svg";
+import remove_link from "./remove-link.svg";
+import remove_list from "./remove-list.svg";
+import remove_node from "./remove-node.svg";
+import remove_page from "./remove-page.svg";
+import remove_shield from "./remove-shield.svg";
+import remove_silence from "./remove-silence.svg";
+import remove_tag from "./remove-tag.svg";
+import remove_ticket from "./remove-ticket.svg";
+import remove_trash from "./remove-trash.svg";
+import remove_user from "./remove-user.svg";
 import restic from "./restic.svg";
 import restrict from "./restrict.svg";
 import rocket from "./rocket.svg";
@@ -292,7 +336,11 @@ import server from "./server.svg";
 import servers from "./servers.svg";
 import servers2 from "./servers2.svg";
 import service_now from "./service-now.svg";
+import servicenow_logo from "./servicenow-logo.svg";
+import servicenow from "./servicenow.svg";
 import settings from "./settings.svg";
+import shield_user from "./shield-user.svg";
+import shield_warn from "./shield-warn.svg";
 import shield from "./shield.svg";
 import silence from "./silence.svg";
 import slack from "./slack.svg";
@@ -332,12 +380,32 @@ import world from "./world.svg";
 import www from "./www.svg";
 import xml from "./xml.svg";
 import yaml from "./yaml.svg";
-
 export const Icons = {
+  "access-denied": access_denied,
   acr: acr,
   "activemq-icon": activemq_icon,
   activemq: activemq,
+  "add-alarm": add_alarm,
+  "add-album": add_album,
+  "add-alert": add_alert,
   "add-button": add_button,
+  "add-clock": add_clock,
+  "add-cloud": add_cloud,
+  "add-cost": add_cost,
+  "add-database": add_database,
+  "add-email": add_email,
+  "add-folder": add_folder,
+  "add-group": add_group,
+  "add-inbox": add_inbox,
+  "add-key": add_key,
+  "add-list": add_list,
+  "add-node": add_node,
+  "add-page": add_page,
+  "add-receipt": add_receipt,
+  "add-snapshot": add_snapshot,
+  "add-tag": add_tag,
+  "add-ticket": add_ticket,
+  "add-user": add_user,
   aks: aks,
   alert: alert,
   ansible: ansible,
@@ -406,6 +474,7 @@ export const Icons = {
   bash: bash,
   bizagi: bizagi,
   bizagi_icon: bizagi_icon,
+  block: block,
   brain: brain,
   ca: ca,
   cal: cal,
@@ -497,6 +566,7 @@ export const Icons = {
   harbor: harbor,
   hazelcast: hazelcast,
   health: health,
+  heart: heart,
   helm: helm,
   html: html,
   http: http,
@@ -571,6 +641,7 @@ export const Icons = {
   memchache: memchache,
   metrics: metrics,
   microsoft: microsoft,
+  minus: minus,
   mongo: mongo,
   mongodb: mongodb,
   msplanner: msplanner,
@@ -612,6 +683,26 @@ export const Icons = {
   rancher: rancher,
   redhat: redhat,
   redis: redis,
+  "remove-clock": remove_clock,
+  "remove-cloud": remove_cloud,
+  "remove-comment": remove_comment,
+  "remove-cost": remove_cost,
+  "remove-database": remove_database,
+  "remove-email": remove_email,
+  "remove-filter": remove_filter,
+  "remove-folder": remove_folder,
+  "remove-group": remove_group,
+  "remove-key": remove_key,
+  "remove-link": remove_link,
+  "remove-list": remove_list,
+  "remove-node": remove_node,
+  "remove-page": remove_page,
+  "remove-shield": remove_shield,
+  "remove-silence": remove_silence,
+  "remove-tag": remove_tag,
+  "remove-ticket": remove_ticket,
+  "remove-trash": remove_trash,
+  "remove-user": remove_user,
   restic: restic,
   restrict: restrict,
   rocket: rocket,
@@ -627,7 +718,11 @@ export const Icons = {
   servers: servers,
   servers2: servers2,
   "service-now": service_now,
+  "servicenow-logo": servicenow_logo,
+  servicenow: servicenow,
   settings: settings,
+  "shield-user": shield_user,
+  "shield-warn": shield_warn,
   shield: shield,
   silence: silence,
   slack: slack,
