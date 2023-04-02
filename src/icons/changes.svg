@@ -1,12 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Generator: Adobe Illustrator 25.4.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 100 100" style="enable-background:new 0 0 100 100;" xml:space="preserve">
-<style type="text/css">
-	.st0{fill:#404041;}
-</style>
-<g>
-	<polygon class="st0" points="23.9,41 0,65 23.9,88.9 23.9,76.3 69.7,76.3 69.7,53.6 23.9,53.6 	"/>
-	<polygon class="st0" points="100,35 76.1,11.1 76.1,23.7 30.3,23.7 30.3,46.4 30.3,46.4 76.1,46.4 76.1,59 	"/>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32" height="32" viewBox="0 0 32 32" version="1.1">
+<g id="surface1">
+<path style=" stroke:none;fill-rule:nonzero;fill:rgb(25.098041%,25.098041%,25.490198%);fill-opacity:1;" d="M 7.648438 13.121094 L 0 20.800781 L 7.648438 28.449219 L 7.648438 24.414062 L 22.304688 24.414062 L 22.304688 17.152344 L 7.648438 17.152344 Z M 7.648438 13.121094 "/>
+<path style=" stroke:none;fill-rule:nonzero;fill:rgb(25.098041%,25.098041%,25.490198%);fill-opacity:1;" d="M 32 11.199219 L 24.351562 3.550781 L 24.351562 7.585938 L 9.695312 7.585938 L 9.695312 14.847656 L 24.351562 14.847656 L 24.351562 18.878906 Z M 32 11.199219 "/>
 </g>
 </svg>

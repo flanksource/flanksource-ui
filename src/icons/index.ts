@@ -260,6 +260,8 @@ import memchache from "./memchache.svg";
 import metrics from "./metrics.svg";
 import microsoft from "./microsoft.svg";
 import minus from "./minus.svg";
+import mission_control_log from "./mission-control-log.svg";
+import mission_control from "./mission-control.svg";
 import mongo from "./mongo.svg";
 import mongodb from "./mongodb.svg";
 import msplanner from "./msplanner.svg";
@@ -642,6 +644,8 @@ export const Icons = {
   metrics: metrics,
   microsoft: microsoft,
   minus: minus,
+  "mission-control-log": mission_control_log,
+  "mission-control": mission_control,
   mongo: mongo,
   mongodb: mongodb,
   msplanner: msplanner,
