@@ -1,25 +1,23 @@
+import clsx from "clsx";
 import { useState } from "react";
 import { BsTrash } from "react-icons/bs";
-import { MdOutlineQuickreply } from "react-icons/md";
 import { useIncidentRespondersQuery } from "../../api/query-hooks/useIncidentRespondersQuery";
 import { Incident } from "../../api/services/incident";
 import { deleteResponder } from "../../api/services/responder";
-import { Badge } from "../Badge";
 import { ClickableSvg } from "../ClickableSvg/ClickableSvg";
-import CollapsiblePanel from "../CollapsiblePanel";
 import { ConfirmationPromptDialog } from "../Dialogs/ConfirmationPromptDialog";
 import { IconButton } from "../IconButton";
-import Title from "../Title/title";
 import { toastSuccess, toastError } from "../Toast/toast";
 import { AddResponder } from "./AddResponder";
+import { IncidentDetailsRow } from "./IncidentDetailsRow";
 import { ResponderDetailsDialog } from "./ResponderDetailsDialog";
 import { ResponderDetailsToolTip } from "./ResponderDetailsToolTip";
 
-type RespondersPanelProps = React.HTMLProps<HTMLDivElement> & {
+type RespondersProps = React.HTMLProps<HTMLDivElement> & {
   incident: Incident;
 };
 
-export function RespondersPanel({ incident }: RespondersPanelProps) {
+export function Responders({ incident, className, ...props }: RespondersProps) {
   const { data: responders = [], refetch } = useIncidentRespondersQuery(
     incident.id
   );
@@ -48,29 +46,47 @@ export function RespondersPanel({ incident }: RespondersPanelProps) {
   }
 
   return (
-    <CollapsiblePanel
-      Header={
-        <div className="flex flex-row w-full items-center space-x-2">
-          <Title
-            title="Responders"
-            icon={<MdOutlineQuickreply className="w-6 h-6" />}
-          />
-          <Badge
-            className="w-5 h-5 flex items-center justify-center"
-            roundedClass="rounded-full"
-            text={responders?.length ?? 0}
-          />
-        </div>
-      }
-    >
+    <div className={clsx(className)} {...props}>
+      <IncidentDetailsRow
+        title="Responders"
+        className=""
+        value={
+          <div className="relative flex items-center">
+            <div className="flex items-center bg-white rounded-md group">
+              <span className="flex items-center justify-center w-5 h-5 text-gray-400 border-2 border-gray-300 border-dashed rounded-full">
+                <svg
+                  className="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+                    clipRule="evenodd"
+                  ></path>
+                </svg>
+              </span>
+              <span className="ml-2 text-sm font-medium text-blue-600 group-hover:text-blue-500">
+                <AddResponder
+                  className="flex justify-end flex-1 w-full"
+                  onSuccess={() => refetch()}
+                  incident={incident}
+                />
+              </span>
+            </div>
+          </div>
+        }
+      />
       <div className="flex flex-col">
         {Boolean(responders.length) && (
-          <div className="px-4">
+          <div className="px-4 space-y-2">
             {responders.map((responder) => {
               return (
                 <div
                   key={responder.json.id}
-                  className="relative flex items-center py-2 mt-1 rounded"
+                  className="relative flex items-center mt-1 rounded"
                 >
                   <div className="flex-1 w-full min-w-0">
                     <ResponderDetailsToolTip
@@ -152,32 +168,6 @@ export function RespondersPanel({ incident }: RespondersPanelProps) {
             })}
           </div>
         )}
-        <div className="relative flex items-center py-2 px-4">
-          <div className="flex items-center bg-white rounded-md group">
-            <span className="flex items-center justify-center w-5 h-5 text-gray-400 border-2 border-gray-300 border-dashed rounded-full">
-              <svg
-                className="w-5 h-5"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                aria-hidden="true"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
-                  clipRule="evenodd"
-                ></path>
-              </svg>
-            </span>
-            <span className="ml-2 text-sm font-medium text-blue-600 group-hover:text-blue-500">
-              <AddResponder
-                className="flex justify-end flex-1 w-full"
-                onSuccess={() => refetch()}
-                incident={incident}
-              />
-            </span>
-          </div>
-        </div>
         <ConfirmationPromptDialog
           isOpen={openDeleteConfirmDialog}
           title="Delete Responder ?"
@@ -197,6 +187,6 @@ export function RespondersPanel({ incident }: RespondersPanelProps) {
           }}
         />
       </div>
-    </CollapsiblePanel>
+    </div>
   );
 }

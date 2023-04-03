@@ -1,10 +1,7 @@
 import { useEffect } from "react";
 import { MdRefresh } from "react-icons/md";
 import { RiPlayListAddFill } from "react-icons/ri";
-import {
-  useIncidentQuery,
-  useIncidentsHistoryQuery
-} from "../../api/query-hooks";
+import { useIncidentsHistoryQuery } from "../../api/query-hooks";
 import { useIncidentState } from "../../store/incident.state";
 import { Badge } from "../Badge";
 import { ClickableSvg } from "../ClickableSvg/ClickableSvg";
@@ -66,26 +63,26 @@ export function IncidentChangelog({
           </div>
         </div>
       }
+      className={className}
+      {...props}
     >
-      <div className={className} {...props}>
-        {isLoading || !incidentHistory ? (
-          <Loading text="Loading ..." />
-        ) : incidentHistory.length > 0 ? (
-          <VerticalSCrollView>
-            <div className="px-8 py-2">
-              <ul className="border-l border-gray-200 dark:border-gray-900 relative flex-col px-4">
-                {incidentHistory.map((history) => (
-                  <IncidentChangelogItem key={history.id} history={history} />
-                ))}
-              </ul>
-            </div>
-          </VerticalSCrollView>
-        ) : (
+      {isLoading || !incidentHistory ? (
+        <Loading text="Loading ..." />
+      ) : incidentHistory.length > 0 ? (
+        <VerticalSCrollView>
           <div className="px-4 py-4">
-            <p className="text-gray-800">No changelog found</p>
+            <ul className="border-l border-gray-200 dark:border-gray-900 relative flex-col px-4">
+              {incidentHistory.map((history) => (
+                <IncidentChangelogItem key={history.id} history={history} />
+              ))}
+            </ul>
           </div>
-        )}
-      </div>
+        </VerticalSCrollView>
+      ) : (
+        <div className="px-4 py-4">
+          <p className="text-gray-800">No changelog found</p>
+        </div>
+      )}
     </CollapsiblePanel>
   );
 }

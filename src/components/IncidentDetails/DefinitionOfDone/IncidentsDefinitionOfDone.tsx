@@ -13,8 +13,9 @@ import { BsCardChecklist } from "react-icons/bs";
 import { ClickableSvg } from "../../ClickableSvg/ClickableSvg";
 import { Badge } from "../../Badge";
 import { useIncidentState } from "../../../store/incident.state";
+import EmptyState from "../../EmptyState";
 
-type DefinitionOfDoneProps = {
+type DefinitionOfDoneProps = React.HTMLProps<HTMLDivElement> & {
   incidentId: string;
 };
 
@@ -54,7 +55,9 @@ function AddDefinitionOfDone({ onClick, ...rest }: AddDefinitionOfDoneProps) {
 }
 
 export function IncidentsDefinitionOfDone({
-  incidentId
+  incidentId,
+  className,
+  ...props
 }: DefinitionOfDoneProps) {
   const [openDeleteConfirmDialog, setOpenDeleteConfirmDialog] = useState(false);
   const [evidenceBeingRemoved, setEvidenceBeingRemoved] = useState<Evidence>();
@@ -138,12 +141,14 @@ export function IncidentsDefinitionOfDone({
           </div>
         </div>
       }
+      className={clsx(className)}
+      {...props}
     >
       <div className="flex flex-col">
-        <div className="flex overflow-x-hidden w-full px-4 pb-6">
-          <div className="w-full">
+        <div className="flex overflow-x-hidden w-full pb-6">
+          <div className="w-full space-y-1">
             {isLoading && !incident ? (
-              <div className="flex items-start py-2 pl-2 pr-2">
+              <div className="flex items-start pl-2 pr-2">
                 <div className="text-sm text-gray-500">
                   Loading evidences please wait...
                 </div>
@@ -204,6 +209,7 @@ export function IncidentsDefinitionOfDone({
           }}
           rootHypothesis={rootHypothesis!}
         />
+        {dodEvidences.length === 0 && !isLoading && <EmptyState />}
       </div>
     </CollapsiblePanel>
   );

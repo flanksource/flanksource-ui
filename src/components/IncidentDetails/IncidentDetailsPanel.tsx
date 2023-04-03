@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import { useMemo, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { BsCardList, BsShareFill } from "react-icons/bs";
@@ -12,6 +13,7 @@ import Title from "../Title/title";
 import { IncidentDetailsRow } from "./IncidentDetailsRow";
 import { priorities } from "./IncidentSidebar";
 import { IncidentWorkflow } from "./IncidentWorkflow";
+import { Responders } from "./Responders";
 
 type IncidentDetailsPanelProps = React.HTMLProps<HTMLDivElement> & {
   incident: Incident;
@@ -20,7 +22,9 @@ type IncidentDetailsPanelProps = React.HTMLProps<HTMLDivElement> & {
 
 export function IncidentDetailsPanel({
   incident,
-  updateIncidentHandler
+  updateIncidentHandler,
+  className,
+  ...props
 }: IncidentDetailsPanelProps) {
   const commandersArray = useMemo(
     () => [
@@ -81,10 +85,12 @@ export function IncidentDetailsPanel({
       Header={
         <Title title="Details" icon={<BsCardList className="w-6 h-6" />} />
       }
+      className={clsx(className)}
+      {...props}
     >
-      <div className="flex flex-col">
+      <div className="flex flex-col space-y-2">
         <div className="py-4 border-b border-gray-200 hidden">
-          <div className="flex justify-between px-4">
+          <div className="flex justify-between">
             <h2 className="mt-0.5 text-2xl font-medium leading-7 text-dark-gray">
               Details
             </h2>
@@ -97,40 +103,8 @@ export function IncidentDetailsPanel({
           </div>
         </div>
         <IncidentDetailsRow
-          title="Commanders"
-          className="mt-4 px-4"
-          value={
-            <ReactSelectDropdown
-              control={control}
-              label=""
-              name="commanders"
-              className="w-full"
-              items={commandersArray}
-              value={watchCommanders}
-            />
-          }
-        />
-        <IncidentDetailsRow
-          title="Started"
-          className="mt-2.5 px-4"
-          value={
-            <span className="text-gray-500 font-medium">
-              {formattedCreatedAt}
-            </span>
-          }
-        />
-        <IncidentDetailsRow
-          title="Duration"
-          className="mt-2.5 px-4"
-          value={
-            <span className="text-gray-500 font-medium">
-              {formattedDuration}
-            </span>
-          }
-        />
-        <IncidentDetailsRow
           title="Type"
-          className="mt-3 px-4"
+          className=""
           value={
             <IncidentTypeDropdown
               control={control}
@@ -145,7 +119,7 @@ export function IncidentDetailsPanel({
         />
         <IncidentDetailsRow
           title="Status"
-          className="mt-3 px-4"
+          className=""
           value={
             <IncidentWorkflow
               control={control}
@@ -159,7 +133,7 @@ export function IncidentDetailsPanel({
         />
         <IncidentDetailsRow
           title="Priority"
-          className="mt-3 px-4"
+          className=""
           value={
             <ReactSelectDropdown
               control={control}
@@ -169,6 +143,39 @@ export function IncidentDetailsPanel({
               items={priorities}
               value={watchPriority}
             />
+          }
+        />
+        <IncidentDetailsRow
+          title="Commanders"
+          className=""
+          value={
+            <ReactSelectDropdown
+              control={control}
+              label=""
+              name="commanders"
+              className="w-full"
+              items={commandersArray}
+              value={watchCommanders}
+            />
+          }
+        />
+        <Responders className="py-3" incident={incident} />
+        <IncidentDetailsRow
+          title="Started"
+          className="h-8"
+          value={
+            <span className="text-gray-500 font-medium">
+              {formattedCreatedAt}
+            </span>
+          }
+        />
+        <IncidentDetailsRow
+          title="Duration"
+          className="h-8"
+          value={
+            <span className="text-gray-500 font-medium">
+              {formattedDuration}
+            </span>
           }
         />
       </div>
