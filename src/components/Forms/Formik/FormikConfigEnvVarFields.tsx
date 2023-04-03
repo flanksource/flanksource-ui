@@ -2,6 +2,8 @@ import { useField, useFormikContext } from "formik";
 import CheckboxCollapsibleGroup from "../../CheckboxCollapsibleGroup/CheckboxCollapsibleGroup";
 import FormikCheckbox from "./FormikiCheckbox";
 import FormikTextInput from "./FormikTextInput";
+import { useEffect } from "react";
+import { get, isEmpty } from "lodash";
 
 type FormikConfigEnvVarFieldsProps = {
   name: string;
@@ -12,11 +14,27 @@ export default function FormikEnvVarConfigsFields({
   name,
   label
 }: FormikConfigEnvVarFieldsProps) {
-  const { setFieldValue } = useFormikContext<Record<string, any>>();
+  const { setFieldValue, values } = useFormikContext<Record<string, any>>();
 
   const [field] = useField(name);
 
   const { value } = field;
+
+  // remove empty fields
+  useEffect(() => {
+    if (values) {
+      const fields = name.split(".");
+      let current = fields[0];
+      for (let i = 1; i < fields.length; i++) {
+        // if any of the current fields parent is empty, remove it
+        if (isEmpty(get(values, current))) {
+          setFieldValue(current, undefined);
+          break;
+        }
+        current = `${current}.${fields[i]}`;
+      }
+    }
+  }, [name, setFieldValue, values]);
 
   return (
     <CheckboxCollapsibleGroup

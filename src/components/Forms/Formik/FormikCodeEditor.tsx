@@ -31,7 +31,7 @@ export function FormikCodeEditor({
   // editor jumping around when the user is typing
   const [codeEditorValue, setCodeEditorValue] = useState<string | undefined>();
 
-  const debouncedValues = useDebounce(codeEditorValue, 500);
+  const debouncedValues = useDebounce(codeEditorValue, 300);
 
   useEffect(() => {
     if (debouncedValues) {

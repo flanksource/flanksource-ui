@@ -66,7 +66,7 @@ export default function SpecEditorForm({
         updateSpec(values);
       }}
     >
-      {({ handleSubmit, handleReset, values }) => (
+      {({ handleSubmit, handleReset, values, setFieldValue }) => (
         <Form
           onSubmit={handleSubmit}
           onReset={handleReset}
@@ -105,7 +105,11 @@ export default function SpecEditorForm({
               <Button
                 text="Back"
                 icon={<FaChevronCircleLeft />}
-                onClick={() => onBack()}
+                onClick={() => {
+                  // reset the config form to empty
+                  setFieldValue("spec", {});
+                  onBack();
+                }}
                 className="btn-danger"
               />
             )}
