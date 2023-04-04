@@ -11,7 +11,7 @@ import { SchemaResourceI, createResource } from "../api/schemaResources";
 import { AuthContext } from "../context";
 import { schemaResourceTypes } from "../components/SchemaResourcePage/resourceTypes";
 import { AiFillPlusCircle } from "react-icons/ai";
-import { BreadcrumbNav } from "../components/BreadcrumbNav";
+import { BreadcrumbNav, BreadcrumbRoot } from "../components/BreadcrumbNav";
 import { Head } from "../components/Head/Head";
 
 type Props = {
@@ -59,13 +59,13 @@ export function HealthPage({ url }: Props) {
           title={
             <BreadcrumbNav
               list={[
-                <h1 className="text-xl font-semibold">Health</h1>,
+                <BreadcrumbRoot link="/health">Health</BreadcrumbRoot>,
                 <button
                   type="button"
                   className=""
                   onClick={() => setModalIsOpen(true)}
                 >
-                  <AiFillPlusCircle size={36} color="#326CE5" />
+                  <AiFillPlusCircle size={32} className="text-blue-600" />
                 </button>
               ]}
             />

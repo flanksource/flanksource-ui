@@ -5,6 +5,7 @@ import { configTabsLists } from "../../components/ConfigsPage/ConfigTabsLinks";
 import { Head } from "../../components/Head/Head";
 import { SearchLayout } from "../../components/Layout";
 import TabbedLinks from "../../components/Tabs/TabbedLinks";
+import { BreadcrumbNav, BreadcrumbRoot } from "../../components/BreadcrumbNav";
 
 export function ConfigInsightsPage() {
   const [triggerRefresh, setTriggerRefresh] = useState(0);
@@ -15,9 +16,13 @@ export function ConfigInsightsPage() {
       <Head prefix="Config Insights" />
       <SearchLayout
         title={
-          <div className="flex space-x-2">
-            <span className="text-lg">Config Insights</span>
-          </div>
+          <BreadcrumbNav
+            list={[
+              <BreadcrumbRoot link="/configs/insights">
+                Config Insights
+              </BreadcrumbRoot>
+            ]}
+          />
         }
         onRefresh={() => setTriggerRefresh(triggerRefresh + 1)}
         loading={isLoading}

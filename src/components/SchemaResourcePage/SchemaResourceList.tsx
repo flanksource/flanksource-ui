@@ -92,7 +92,6 @@ function SchemaResourceListItem({
   baseUrl: string;
   table: string;
 }) {
-  console.log("table", table);
   const navigate = useNavigate();
   const navigateToDetails = (id: string) => navigate(`${baseUrl}/${id}`);
 

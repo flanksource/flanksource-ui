@@ -16,6 +16,7 @@ import TableSkeletonLoader from "../components/SkeletonLoader/TableSkeletonLoade
 import { toastError, toastSuccess } from "../components/Toast/toast";
 import { UserList } from "../components/UserList";
 import { useLoader } from "../hooks";
+import { BreadcrumbNav, BreadcrumbRoot } from "../components/BreadcrumbNav";
 
 export function UsersPage() {
   const [users, setUsers] = useState<RegisteredUser[]>([]);
@@ -54,7 +55,13 @@ export function UsersPage() {
     <>
       <Head prefix="Users" />
       <SearchLayout
-        title={<div className="flex text-xl font-semibold">Users</div>}
+        title={
+          <BreadcrumbNav
+            list={[
+              <BreadcrumbRoot link="/settings/users">Users</BreadcrumbRoot>
+            ]}
+          />
+        }
         onRefresh={() => {
           fetchUsersList();
         }}
@@ -71,20 +78,14 @@ export function UsersPage() {
               Invite User
             </button>
           </div>
-          {
-            loading && (
-              <TableSkeletonLoader />
-            )
-          }
-          {
-            !loading && (
-              <UserList
-                className="mt-6 overflow-y-hidden"
-                data={users}
-                isLoading={loading}
-              />
-            )
-          }
+          {loading && <TableSkeletonLoader />}
+          {!loading && (
+            <UserList
+              className="mt-6 overflow-y-hidden"
+              data={users}
+              isLoading={loading}
+            />
+          )}
           <Modal
             title="Invite User"
             onClose={() => {

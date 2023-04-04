@@ -29,6 +29,11 @@ import { Tab, Tabs } from "../../components/Tabs/Tabs";
 import EmptyState from "../../components/EmptyState";
 import { useCreateCommentMutation } from "../../api/query-hooks/mutations/comment";
 import { useIncidentState } from "../../store/incident.state";
+import {
+  BreadcrumbChild,
+  BreadcrumbNav,
+  BreadcrumbRoot
+} from "../../components/BreadcrumbNav";
 
 export enum IncidentDetailsViewTypes {
   comments = "Comments",
@@ -208,18 +213,14 @@ export function IncidentDetailsPage() {
         contentClass="pl-6 h-full"
         onRefresh={() => refetchIncident()}
         title={
-          <div className="flex my-auto">
-            <span className="text-xl flex">
-              {" "}
-              <Link to="/incidents">Incidents&nbsp;</Link>
-              {" / "}
-              {!isLoading && incident && (
-                <div className="font-semibold">
-                  <div>&nbsp;{incident.title}</div>
-                </div>
-              )}
-            </span>
-          </div>
+          <BreadcrumbNav
+            list={[
+              <BreadcrumbRoot link="/incidents">Incidents</BreadcrumbRoot>,
+              !isLoading && incident && (
+                <BreadcrumbChild>{incident.title}</BreadcrumbChild>
+              )
+            ]}
+          />
         }
       >
         <div className="flex flex-row min-h-full h-auto mt-2">

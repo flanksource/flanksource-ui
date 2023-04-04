@@ -54,11 +54,11 @@ import { AxiosError } from "axios";
 import { Provider } from "jotai";
 
 const navigation = [
-  { name: "Topology", href: "/topology", icon: TopologyIcon },
+  { name: "Dashboard", href: "/topology", icon: TopologyIcon },
   { name: "Health", href: "/health", icon: AiFillHeart },
-  { name: "Logs", href: "/logs", icon: LogsIcon },
+  { name: "Incidents", href: "/incidents", icon: ImLifebuoy },
   { name: "Config", href: "/configs", icon: VscJson },
-  { name: "Incidents", href: "/incidents", icon: ImLifebuoy }
+  { name: "Logs", href: "/logs", icon: LogsIcon }
 ];
 
 export type NavigationItems = typeof navigation;

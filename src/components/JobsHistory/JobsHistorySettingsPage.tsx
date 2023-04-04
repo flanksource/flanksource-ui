@@ -3,6 +3,7 @@ import { useJobsHistoryQuery } from "../../api/query-hooks/useJobsHistoryQuery";
 import { Head } from "../Head/Head";
 import { SearchLayout } from "../Layout";
 import JobsHistoryTable from "./JobsHistoryTable";
+import { BreadcrumbNav, BreadcrumbRoot } from "../BreadcrumbNav";
 
 export default function JobsHistorySettingsPage() {
   const [{ pageIndex, pageSize }, setPageState] = useState({
@@ -27,7 +28,13 @@ export default function JobsHistorySettingsPage() {
     <>
       <Head prefix="Settings - Job History" />
       <SearchLayout
-        title={<div className="flex text-xl font-semibold">Job History</div>}
+        title={
+          <BreadcrumbNav
+            list={[
+              <BreadcrumbRoot link="/settings/jobs">Job History</BreadcrumbRoot>
+            ]}
+          />
+        }
         onRefresh={refetch}
         contentClass="p-0 h-full"
         loading={isLoading || isRefetching}
