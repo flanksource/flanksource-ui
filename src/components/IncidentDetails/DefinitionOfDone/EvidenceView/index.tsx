@@ -58,7 +58,7 @@ function TopologyEvidence({
       {...rest}
     >
       <div className="flex flex-col -mt-1 bg-white divide-y divide-gray-200 w-full">
-        <div className="flex pr-1 pt-2.5 pb-2.5 pl-2 overflow-hidden">
+        <div className="flex pr-1 pt-2.5 pb-2.5 overflow-hidden">
           <div className="text-gray-500 m-auto mr-2.5 flex-initial max-w-1/4 leading-1.21rel">
             <h3 className="text-gray-500 leading-1.21rel">
               <Icon name={topology.icon} />
@@ -116,7 +116,7 @@ function LogEvidence({
   return (
     <div
       className={clsx(
-        "overflow-hidden p-2 font-medium text-gray-500",
+        "overflow-hidden py-2 font-medium text-gray-500",
         className
       )}
       {...rest}
@@ -151,7 +151,7 @@ function ConfigEvidence({
   }
 
   return (
-    <div className={clsx("overflow-hidden p-2", className)} {...rest}>
+    <div className={clsx("overflow-hidden py-2", className)} {...rest}>
       <Icon name={config.external_type} secondary={config.config_type} />{" "}
       <span className="pl-1 text-gray-500 font-medium"> {config.name} </span>{" "}
     </div>
@@ -193,7 +193,7 @@ function HealthEvidence({
   };
 
   return (
-    <div className="overflow-hidden p-2" {...rest}>
+    <div className="overflow-hidden py-2" {...rest}>
       <div className={`flex flex-row`} {...rest}>
         <div className={clsx("flex-shrink-0", "pr-2")}>
           <Icon name={check?.icon || check?.type} />
@@ -229,7 +229,7 @@ function CommentEvidence({
   ...rest
 }: EvidenceViewProps) {
   return (
-    <div className="overflow-hidden p-2" {...rest}>
+    <div className="overflow-hidden py-2" {...rest}>
       <div className={`flex flex-row items-center`} {...rest}>
         <div className="flex flex-row">
           <div className={clsx("flex-shrink-0", "pr-2")}>

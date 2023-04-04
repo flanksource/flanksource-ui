@@ -67,18 +67,17 @@ export default function IncidentsDefinitionOfDoneItem({
   return (
     <>
       <div className="relative flex items-center">
-        {isLoading ? (
-          <MdRefresh className="animate-spin" />
-        ) : evidence.done ? (
-          <AiFillCheckCircle className="mr-1 fill-green-500" />
-        ) : (
-          <BsHourglassSplit className="mr-1" />
-        )}
-
         <div className="min-w-0 flex-1 text-sm">
           <EvidenceView evidence={evidence} size={Size.small} />
         </div>
         <div className="flex items-center">
+          {isLoading ? (
+            <MdRefresh className="animate-spin" />
+          ) : evidence.done ? (
+            <AiFillCheckCircle className="mr-1 fill-green-500" />
+          ) : (
+            <BsHourglassSplit className="mr-1" />
+          )}
           <Menu>
             <div className="" ref={dropdownMenuStylesCalc}>
               <Menu.VerticalIconButton />
