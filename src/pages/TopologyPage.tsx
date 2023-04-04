@@ -29,6 +29,7 @@ import {
 } from "../context/TopologyPageContext";
 import { useLoader } from "../hooks";
 import { Head } from "../components/Head/Head";
+import { BreadcrumbNav } from "../components/BreadcrumbNav";
 
 export const allOption = {
   All: {
@@ -286,11 +287,7 @@ export function TopologyPage() {
     <>
       <Head prefix="Topology" />
       <SearchLayout
-        title={
-          <div className="flex text-xl text-gray-400">
-            <TopologyBreadcrumbs topologyId={id} refererId={refererId} />
-          </div>
-        }
+        title={<TopologyBreadcrumbs topologyId={id} refererId={refererId} />}
         onRefresh={() => {
           load();
         }}

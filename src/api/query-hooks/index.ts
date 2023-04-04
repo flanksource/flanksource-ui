@@ -303,7 +303,8 @@ export function useGetConfigByIdQuery(id: string) {
       return data?.[0];
     },
     {
-      onError: (err: any) => toastError(err)
+      onError: (err: any) => toastError(err),
+      enabled: !!id
     }
   );
 }

@@ -14,6 +14,12 @@ import LogItem from "../types/Logs";
 import { getTopologyComponentByID } from "../api/services/topology";
 import { Head } from "../components/Head/Head";
 import { useComponentGetLogsQuery } from "../api/query-hooks";
+import {
+  BreadcrumbChild,
+  BreadcrumbNav,
+  BreadcrumbRoot
+} from "../components/BreadcrumbNav";
+import { TopologyLink } from "../components/TopologyLink";
 
 export const logTypes = [
   {
@@ -86,9 +92,16 @@ export function LogsPage() {
         onRefresh={() => refetch()}
         loading={topologyId ? isLoading || isFetching || isRefetching : false}
         title={
-          <h1 className="text-xl font-semibold">
-            Logs{topology?.name ? `/${topology.name}` : ""}
-          </h1>
+          <BreadcrumbNav
+            list={[
+              <BreadcrumbRoot link="/logs">Logs</BreadcrumbRoot>,
+              topology?.name && (
+                <BreadcrumbChild>
+                  <TopologyLink viewType="label" topologyId={topology.id} />
+                </BreadcrumbChild>
+              )
+            ].filter((v) => v)}
+          />
         }
         contentClass={`h-full p-6`}
         extra={

@@ -15,6 +15,7 @@ import {
   useIncidentPageContext
 } from "../../context/IncidentPageContext";
 import { Head } from "../../components/Head/Head";
+import { BreadcrumbNav, BreadcrumbRoot } from "../../components/BreadcrumbNav";
 
 type IncidentFilters = {
   severity?: string;
@@ -160,20 +161,18 @@ export function IncidentListPage() {
       <SearchLayout
         loading={isLoading}
         title={
-          <div className="flex items-center flex-shrink-0">
-            <span className="text-xl font-semibold mr-4 whitespace-nowrap">
-              Incidents /{" "}
-            </span>
-            <div className="flex">
+          <BreadcrumbNav
+            list={[
+              <BreadcrumbRoot link="/incidents">Incidents</BreadcrumbRoot>,
               <button
                 type="button"
                 className=""
                 onClick={() => setIncidentModalIsOpen(true)}
               >
-                <AiFillPlusCircle size={36} color="#326CE5" />
+                <AiFillPlusCircle className="text-blue-600" size={32} />
               </button>
-            </div>
-          </div>
+            ]}
+          />
         }
         onRefresh={() => refreshIncidents()}
         contentClass="flex flex-col h-full"
