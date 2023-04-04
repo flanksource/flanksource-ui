@@ -222,7 +222,7 @@ function HealthEvidence({
   );
 }
 
-function CommentEvidence({
+export function CommentEvidence({
   evidence,
   size,
   className,
@@ -252,7 +252,7 @@ export function EvidenceView({
 }: EvidenceViewProps) {
   switch (evidence.type) {
     case EvidenceType.Log:
-      return <LogEvidence evidence={evidence} />;
+      return <LogEvidence evidence={evidence} {...rest} />;
     case EvidenceType.Topology:
       return (
         <TopologyEvidence className={className} evidence={evidence} {...rest} />

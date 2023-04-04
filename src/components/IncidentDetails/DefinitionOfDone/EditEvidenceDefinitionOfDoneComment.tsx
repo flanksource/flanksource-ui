@@ -9,23 +9,27 @@ type Props = {
   onCloseModal: () => void;
   isOpen: boolean;
   onSuccess: () => void;
+  incidentId: string;
 };
 
 export default function EditEvidenceDefinitionOfDoneComment({
   evidence,
   onCloseModal,
   isOpen,
+  incidentId,
   onSuccess
 }: Props) {
   const [comment, setComment] = useState<string>();
-
   useEffect(() => {
     setComment(evidence.evidence?.comment || "");
   }, [evidence.evidence?.comment]);
 
-  const { isLoading, mutate } = useUpdateEvidenceMutation({
-    onSuccess
-  });
+  const { isLoading, mutate } = useUpdateEvidenceMutation(
+    {
+      onSuccess
+    },
+    incidentId
+  );
 
   return (
     <Modal

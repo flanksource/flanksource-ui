@@ -23,14 +23,14 @@ type Props = {
   evidence: Evidence;
   setOpenDeleteConfirmDialog: Dispatch<SetStateAction<boolean>>;
   setEvidenceBeingRemoved: Dispatch<SetStateAction<Evidence | undefined>>;
-  refetch: () => void;
+  incidentId: string;
 };
 
 export default function IncidentsDefinitionOfDoneItem({
   evidence,
   setEvidenceBeingRemoved,
   setOpenDeleteConfirmDialog,
-  refetch
+  incidentId
 }: Props) {
   const [isEditingDoDScriptModalOpen, setIsEditingDoDScriptModalOpen] =
     useState(false);
@@ -40,9 +40,7 @@ export default function IncidentsDefinitionOfDoneItem({
 
   const [isTogglingAsResolved, setIsTogglingAsResolved] = useState(false);
 
-  const { isLoading, mutate } = useUpdateEvidenceMutation({
-    onSuccess: () => refetch()
-  });
+  const { isLoading, mutate } = useUpdateEvidenceMutation({}, incidentId);
 
   const [dropDownMenuStyles, setDropDownMenuStyles] = useState<CSSProperties>();
 
@@ -158,9 +156,9 @@ export default function IncidentsDefinitionOfDoneItem({
           onCloseModal={() => setIsEditingDoDScriptModalOpen(false)}
           onSuccess={() => {
             setIsEditingDoDScriptModalOpen(false);
-            refetch();
           }}
           key={`script_${evidence.id}`}
+          incidentId={incidentId}
         />
       ) : (
         <EditEvidenceDefinitionOfDoneComment
@@ -169,9 +167,9 @@ export default function IncidentsDefinitionOfDoneItem({
           onCloseModal={() => setIsEditingDoDCommentModalOpen(false)}
           onSuccess={() => {
             setIsEditingDoDCommentModalOpen(false);
-            refetch();
           }}
           key={`comment_${evidence.id}`}
+          incidentId={incidentId}
         />
       )}
 

@@ -24,6 +24,7 @@ import {
 } from "../../../api/query-hooks";
 import { ConfigTypeInsights } from "../../ConfigInsights";
 import { ConfigAnalysisLink } from "../../ConfigAnalysisLink/ConfigAnalysisLink";
+import { CommentEvidence } from "../../IncidentDetails/DefinitionOfDone/EvidenceView";
 
 const ColumnSizes = {
   Time: {
@@ -74,6 +75,8 @@ export function EvidenceItem({
           <HealthEvidenceViewer evidence={evidence} />
         </div>
       );
+    case EvidenceType.Comment:
+      return <CommentEvidence evidence={evidence} />;
     case EvidenceType.ConfigChange:
       return (
         <div className="pt-2">

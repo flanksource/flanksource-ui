@@ -9,13 +9,15 @@ type Props = {
   onCloseModal: () => void;
   isOpen: boolean;
   onSuccess: () => void;
+  incidentId: string;
 };
 
 export default function EditEvidenceDefinitionOfDoneScript({
   evidence,
   onCloseModal,
   isOpen,
-  onSuccess
+  onSuccess,
+  incidentId
 }: Props) {
   const [dodScript, setDodScript] = useState<string>();
 
@@ -23,9 +25,12 @@ export default function EditEvidenceDefinitionOfDoneScript({
     setDodScript(evidence.script);
   }, [evidence.script]);
 
-  const { isLoading, mutateAsync } = useUpdateEvidenceMutation({
-    onSuccess
-  });
+  const { isLoading, mutateAsync } = useUpdateEvidenceMutation(
+    {
+      onSuccess
+    },
+    incidentId
+  );
 
   return (
     <Modal

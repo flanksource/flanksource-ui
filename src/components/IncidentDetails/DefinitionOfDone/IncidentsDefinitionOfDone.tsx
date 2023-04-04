@@ -168,7 +168,7 @@ export function IncidentsDefinitionOfDone({
                   evidence={evidence}
                   setEvidenceBeingRemoved={setEvidenceBeingRemoved}
                   setOpenDeleteConfirmDialog={setOpenDeleteConfirmDialog}
-                  refetch={refetchIncident}
+                  incidentId={incidentId}
                 />
               ))
             )}
