@@ -4,7 +4,13 @@ import { BsHourglassSplit, BsTrash } from "react-icons/bs";
 import { Evidence, EvidenceType } from "../../../api/services/evidence";
 import { IconButton } from "../../IconButton";
 import { EvidenceView } from "./EvidenceView";
-import { Dispatch, SetStateAction, useState } from "react";
+import {
+  CSSProperties,
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useState
+} from "react";
 import { Size } from "../../../types";
 import { FaEdit } from "react-icons/fa";
 import EditEvidenceDefinitionOfDoneScript from "./EditEvidenceDefinitionOfDoneScript";
@@ -38,6 +44,26 @@ export default function IncidentsDefinitionOfDoneItem({
     onSuccess: () => refetch()
   });
 
+  const [dropDownMenuStyles, setDropDownMenuStyles] = useState<CSSProperties>();
+
+  const dropdownMenuStylesCalc = useCallback((node: HTMLDivElement) => {
+    if (!node) {
+      return;
+    }
+    const left = node.getBoundingClientRect().left;
+    const top = node.getBoundingClientRect().bottom;
+
+    if (left && top) {
+      setDropDownMenuStyles({
+        left: left - 200,
+        top: top,
+        position: "fixed",
+        transform: "unset"
+      });
+      node.style.removeProperty("transform");
+    }
+  }, []);
+
   return (
     <>
       <div className="relative flex items-center">
@@ -54,8 +80,10 @@ export default function IncidentsDefinitionOfDoneItem({
         </div>
         <div className="flex items-center">
           <Menu>
-            <Menu.VerticalIconButton />
-            <Menu.Items widthClass="w-72">
+            <div className="" ref={dropdownMenuStylesCalc}>
+              <Menu.VerticalIconButton />
+            </div>
+            <Menu.Items className={`fixed z-50`} style={dropDownMenuStyles}>
               <Menu.Item
                 onClick={(e: any) => {
                   if (evidence.type === EvidenceType.Comment) {

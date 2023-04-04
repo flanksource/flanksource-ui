@@ -100,9 +100,10 @@ export default function SlidingSideBar({
   return (
     <div
       className={clsx(
-        `flex flex-col bg-white border-l transform origin-right duration-500 border-gray-200 h-screen px-4`,
+        `flex flex-col bg-white border-l border-gray-200 h-screen px-4`,
         open ? "w-3" : "w-[35rem]",
-        className
+        className,
+        !hideToggle ? "transform origin-right duration-500" : ""
       )}
       {...rest}
       style={{ paddingBottom: "64px" }}

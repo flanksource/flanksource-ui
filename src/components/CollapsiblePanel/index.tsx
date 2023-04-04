@@ -7,6 +7,7 @@ type Props = React.HTMLProps<HTMLDivElement> & {
   Header: React.ReactNode;
   children: React.ReactNode;
   isClosed?: boolean;
+  childrenClassName?: string;
 };
 
 export default function CollapsiblePanel({
@@ -14,6 +15,7 @@ export default function CollapsiblePanel({
   children,
   isClosed = false,
   className,
+  childrenClassName = "transform origin-bottom duration-500",
   ...props
 }: Props) {
   const [isOpen, setIsOpen] = useState(!isClosed);
@@ -45,7 +47,7 @@ export default function CollapsiblePanel({
         </div>
       </div>
       <div
-        className={`flex-1 flex-grow flex flex-col transform origin-bottom duration-500 overflow-y-auto ${
+        className={`flex-1 flex-grow flex flex-col overflow-y-auto ${childrenClassName} ${
           isOpen ? "" : "hidden"
         }`}
       >

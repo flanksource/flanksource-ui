@@ -142,6 +142,7 @@ export function IncidentsDefinitionOfDone({
         </div>
       }
       className={clsx(className)}
+      childrenClassName=""
       {...props}
     >
       <div className="flex flex-col">
