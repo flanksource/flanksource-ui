@@ -153,7 +153,7 @@ export function IncidentsDefinitionOfDone({
       dataCount={dodEvidences?.length}
     >
       <div className="flex flex-col">
-        <div className="flex overflow-x-hidden w-full pb-6">
+        <div className="flex overflow-x-hidden w-full pb-6 pt-2">
           <div className="w-full space-y-1">
             {isLoading && !incident ? (
               <div className="flex items-start pl-2 pr-2">

@@ -22,13 +22,10 @@ function TabItem({
         onClick?.(event);
         onSelectTab?.();
       }}
-      style={{
-        marginBottom: "-1px",
-        borderColor: value === activeTab ? "" : "transparent",
-        borderBottomColor: value === activeTab ? "white" : ""
-      }}
       className={clsx(
-        value === activeTab ? "text-gray-900 bg-white" : "text-gray-500",
+        value === activeTab
+          ? "text-gray-900 bg-white border-b-0"
+          : "text-gray-500 border-0 border-b",
         "cursor-pointer px-4 py-2 font-medium text-sm rounded-t-md border border-gray-300 hover:text-gray-900"
       )}
     >
