@@ -23,7 +23,9 @@ export default function EditEvidenceDefinitionOfDoneScript({
     setDodScript(evidence.script);
   }, [evidence.script]);
 
-  const { isLoading, mutateAsync } = useUpdateEvidenceMutation();
+  const { isLoading, mutateAsync } = useUpdateEvidenceMutation({
+    onSuccess
+  });
 
   return (
     <Modal
@@ -45,7 +47,6 @@ export default function EditEvidenceDefinitionOfDoneScript({
                 script: dodScript
               }
             ]);
-            onSuccess();
           }}
         >
           {isLoading ? "Updating ..." : "Update"}

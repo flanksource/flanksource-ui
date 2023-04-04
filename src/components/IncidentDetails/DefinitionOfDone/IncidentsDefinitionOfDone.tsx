@@ -14,6 +14,7 @@ import { ClickableSvg } from "../../ClickableSvg/ClickableSvg";
 import { useIncidentState } from "../../../store/incident.state";
 import EmptyState from "../../EmptyState";
 import { CountBadge } from "../../Badge/CountBadge";
+import { dateSortHelper } from "../../../utils/date";
 
 type DefinitionOfDoneProps = React.HTMLProps<HTMLDivElement> & {
   incidentId: string;
@@ -80,7 +81,13 @@ export function IncidentsDefinitionOfDone({
       });
     });
     setNonDODEvidences(data.filter((evidence) => !evidence.definition_of_done));
-    setDODEvidences(data.filter((evidence) => evidence.definition_of_done));
+    setDODEvidences(
+      data
+        .filter((evidence) => evidence.definition_of_done)
+        .sort((a, b) => {
+          return dateSortHelper("asc", a.created_at, b.created_at);
+        })
+    );
   }, [incident]);
 
   const rootHypothesis = useMemo(() => {
