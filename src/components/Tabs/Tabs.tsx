@@ -85,7 +85,7 @@ export function Tabs({
   return (
     <>
       <div
-        className={`flex flex-wrap border-b border-gray-300 ${className}`}
+        className={clsx(`flex flex-wrap`, className)}
         aria-label="Tabs"
         {...rest}
       >
@@ -99,6 +99,7 @@ export function Tabs({
             onClick={tab.props?.onClick!}
           />
         ))}
+        <div className="flex-grow border-b border-gray-300"></div>
       </div>
       <div className={contentClassName}>{content}</div>
     </>
