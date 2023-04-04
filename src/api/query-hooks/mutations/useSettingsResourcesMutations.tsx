@@ -34,6 +34,8 @@ export const useSettingsUpdateResource = (
   resourceInfo: SchemaResourceType,
   resource?: Record<string, any>
 ) => {
+  const navigate = useNavigate();
+
   return useMutation(
     async (props: Partial<SchemaResourceI>) => {
       await updateResource(resourceInfo, {
@@ -44,6 +46,7 @@ export const useSettingsUpdateResource = (
     {
       onSuccess: () => {
         toastSuccess(`${resourceInfo.name} updated successfully`);
+        navigate(`/settings/${resourceInfo.table}`);
       },
       onError: (ex: any) => {
         toastError(ex);
