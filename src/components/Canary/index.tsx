@@ -396,7 +396,7 @@ export const LabelFilterList = ({ labels }: { labels: any }) => {
   );
 };
 
-export const HidePassingToggle = ({ defaultValue = true }) => {
+export const HidePassingToggle = ({ defaultValue = false }) => {
   const [searchParams] = useSearchParams();
   const paramsValue = searchParams.get("hidePassing")
     ? searchParams.get("hidePassing") === "true"
