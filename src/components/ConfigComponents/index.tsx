@@ -69,6 +69,7 @@ export default function ConfigComponents(props: Props) {
           <CountBadge roundedClass="rounded-full" value={components.length} />
         </div>
       }
+      dataCount={components.length}
     >
       <ConfigComponentsDetails {...props} />
     </CollapsiblePanel>

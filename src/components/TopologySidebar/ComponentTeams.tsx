@@ -29,6 +29,7 @@ export function ComponentTeams({ componentId }: Props) {
           />
         </div>
       }
+      dataCount={componentTeams?.length}
     >
       <div className="flex flex-col space-y-4 py-2 w-full">
         {isLoading ? (

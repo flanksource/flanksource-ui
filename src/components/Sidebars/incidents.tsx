@@ -100,6 +100,7 @@ export default function Incidents({ topologyId, configId }: Props) {
           </div>
         </div>
       }
+      dataCount={incidents?.length}
     >
       <div className="flex flex-col">
         <div className="flex flex-col space-y-1">

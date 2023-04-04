@@ -208,7 +208,7 @@ export default function TopologyActionBar({
     <>
       <div className="flex flex-wrap justify-between py-4 px-1">
         {topologyActionItems.map(
-          ({ icon: Icon, isShown, label, ContainerComponent }) => {
+          ({ icon: Icon, isShown, label, ContainerComponent }, index) => {
             if (isShown(topology, "TopologySidebar")) {
               return (
                 <ContainerComponent
@@ -218,6 +218,7 @@ export default function TopologyActionBar({
                   child={ActionLink}
                   icon={<Icon />}
                   text={label}
+                  key={index}
                   openModalAction={
                     label === "Snapshot"
                       ? () => setIsDownloadComponentSnapshotModalOpen(true)

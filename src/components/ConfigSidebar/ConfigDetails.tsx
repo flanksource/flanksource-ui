@@ -74,6 +74,7 @@ export function ConfigDetails({ configId }: Props) {
           />
         </div>
       }
+      dataCount={displayDetails?.length}
     >
       <div className="flex flex-col space-y-2 py-2 max-w-full">
         {isLoading ? (

@@ -48,6 +48,7 @@ export default function ConfigInsights({ configID }: Props) {
           />
         </div>
       }
+      dataCount={response.length}
     >
       <InsightsDetails isLoading={isLoading} insights={response ?? []} />
     </CollapsiblePanel>

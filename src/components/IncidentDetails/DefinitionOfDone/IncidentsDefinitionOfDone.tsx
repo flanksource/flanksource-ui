@@ -143,6 +143,7 @@ export function IncidentsDefinitionOfDone({
       className={clsx(className)}
       childrenClassName=""
       {...props}
+      dataCount={dodEvidences?.length}
     >
       <div className="flex flex-col">
         <div className="flex overflow-x-hidden w-full pb-6">

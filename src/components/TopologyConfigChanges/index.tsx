@@ -75,6 +75,7 @@ export default function (props: Props) {
           />
         </div>
       }
+      dataCount={componentConfigChanges.length}
     >
       <div className="flex flex-col">
         <TopologyConfigChanges {...props} />

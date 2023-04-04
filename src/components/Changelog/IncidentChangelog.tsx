@@ -64,6 +64,7 @@ export function IncidentChangelog({
       }
       className={className}
       {...props}
+      dataCount={incidentHistory?.length}
     >
       {isLoading || !incidentHistory ? (
         <Loading text="Loading ..." />
