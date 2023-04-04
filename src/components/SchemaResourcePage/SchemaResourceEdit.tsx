@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import { identity, pickBy } from "lodash";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ConfirmationPromptDialog } from "../Dialogs/ConfirmationPromptDialog";
 import { Controller, useForm } from "react-hook-form";
 import { v4 } from "uuid";
 import { SchemaResourceI } from "../../api/schemaResources";
@@ -63,6 +64,7 @@ export function SchemaResourceEdit({
   isModal = false,
   schedule
 }: Props) {
+  const [openDeleteConfirmDialog, setOpenDeleteConfirmDialog] = useState(false);
   const [edit, setEdit] = useState(startInEdit);
   const [disabled, setDisabled] = useState(false);
   const keyRef = useRef(v4());
@@ -233,6 +235,13 @@ export function SchemaResourceEdit({
     <>
       <Head prefix={`Settings ${resourceName} - ${name}`} />
       <div className="flex flex-col flex-1  overflow-y-auto">
+        <ConfirmationPromptDialog
+          isOpen={openDeleteConfirmDialog}
+          title="Delete Item"
+          description="Are you sure you want to delete this item?"
+          onClose={() => setOpenDeleteConfirmDialog(false)}
+          onConfirm={() => doDelete()}
+        />
         <Tabs activeTab={activeTab} onSelectTab={(tab) => onSubNavClick(tab)}>
           {subNav.map((nav) => {
             return (
@@ -441,7 +450,7 @@ export function SchemaResourceEdit({
                             <button
                               className="inline-flex items-center justify-center border-none shadow-sm font-medium rounded-md text-red-500 bg-red-100 hover:bg-red-200 focus:ring-offset-white focus:ring-red-500 focus:outline-none focus:ring-2 focus:ring-offset-2 px-4 py-2 text-sm leading-5"
                               disabled={disabled}
-                              onClick={doDelete}
+                              onClick={() => setOpenDeleteConfirmDialog(true)}
                               type="button"
                             >
                               Delete
