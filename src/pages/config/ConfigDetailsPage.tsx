@@ -126,9 +126,20 @@ export function ConfigDetailsPage() {
             contentClassName={`bg-white border border-t-0 border-gray-300 flex-1 p-2`}
           >
             <div
-              className={`flex flex-col flex-1 p-6 pb-0 h-full`}
+              className={`flex flex-col flex-1 p-6 pb-0 h-full relative`}
               ref={contentRef}
             >
+              {Boolean(Object.keys(checked || {}).length) && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAttachAsAsset(true);
+                  }}
+                  className="btn-primary absolute -right-2 z-10 -top-14 -mt-1"
+                >
+                  Attach as Evidence
+                </button>
+              )}
               <div className="flex flex-row items-start bg-white h-full">
                 <div className="flex flex-col w-full max-w-full h-full">
                   {!isLoading ? (
