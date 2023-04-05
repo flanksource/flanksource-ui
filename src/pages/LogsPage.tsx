@@ -1,7 +1,6 @@
 import { SearchIcon } from "@heroicons/react/solid";
 import { BsGearFill, BsFlower2, BsGridFill, BsStack } from "react-icons/bs";
 import { useSearchParams } from "react-router-dom";
-import { getLogs } from "../api/services/logs";
 import { SearchLayout } from "../components/Layout";
 import { TextInput } from "../components/TextInput";
 import { TimeRange, timeRanges } from "../components/Dropdown/TimeRange";
@@ -10,7 +9,6 @@ import { useQuery } from "@tanstack/react-query";
 import { DropdownStandaloneWrapper } from "../components/Dropdown/StandaloneWrapper";
 import { LogsTable } from "../components/Logs/Table/LogsTable";
 import useDebouncedValue from "../hooks/useDebounce";
-import LogItem from "../types/Logs";
 import { getTopologyComponentByID } from "../api/services/topology";
 import { Head } from "../components/Head/Head";
 import { useComponentGetLogsQuery } from "../api/query-hooks";
@@ -47,6 +45,7 @@ export const logTypes = [
 export function LogsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const topologyId = searchParams.get("topologyId");
+
   const type = searchParams.get("type");
   const externalId = searchParams.get("topologyExternalId");
   const query = searchParams.get("query");
@@ -57,13 +56,25 @@ export function LogsPage() {
   const { data: topology } = useQuery(
     ["components", "names", topologyId],
     async () => {
-      if (topologyId) {
-        const data = await getTopologyComponentByID(topologyId);
-        return data;
-      }
+      const data = await getTopologyComponentByID(topologyId!);
+      return data;
     },
     {
-      enabled: !!topologyId
+      enabled: !!topologyId,
+      onSuccess: (data) => {
+        if (data) {
+          if (data.id) {
+            searchParams.set("topologyId", data.id);
+          }
+          if (data.external_id) {
+            searchParams.set("topologyExternalId", data.external_id);
+          }
+          if (data.type) {
+            searchParams.set("type", data.type);
+          }
+          setSearchParams(searchParams, { replace: true });
+        }
+      }
     }
   );
 
