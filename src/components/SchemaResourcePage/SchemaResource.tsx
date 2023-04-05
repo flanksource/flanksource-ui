@@ -1,23 +1,20 @@
-import { useNavigate, useParams } from "react-router-dom";
-import {
-  deleteResource,
-  SchemaResourceI,
-  updateResource
-} from "../../api/schemaResources";
+import { useParams } from "react-router-dom";
 import { BreadcrumbNav } from "../BreadcrumbNav";
 import { SearchLayout } from "../Layout";
 import { SchemaResourceType } from "./resourceTypes";
 import { SchemaResourceEdit } from "./SchemaResourceEdit";
-import { toastError } from "../Toast/toast";
 import { useGetSettingsResourceDetails } from "../../api/query-hooks/settingsResourcesHooks";
 import { Head } from "../Head/Head";
+import {
+  useSettingsDeleteResource,
+  useSettingsUpdateResource
+} from "../../api/query-hooks/mutations/useSettingsResourcesMutations";
 
 export function SchemaResource({
   resourceInfo
 }: {
   resourceInfo: SchemaResourceType;
 }) {
-  const navigate = useNavigate();
   const { name } = resourceInfo;
   const { id } = useParams();
 
@@ -26,25 +23,13 @@ export function SchemaResource({
     id
   );
 
-  const onSubmit = async (props: Partial<SchemaResourceI>) => {
-    try {
-      await updateResource(resourceInfo, {
-        ...resource,
-        ...props
-      });
-    } catch (ex: any) {
-      toastError(ex);
-    }
-  };
+  const { mutateAsync: deleteResourceItem } =
+    useSettingsDeleteResource(resourceInfo);
 
-  const onDelete = async (id: string) => {
-    try {
-      await deleteResource(resourceInfo, id);
-      navigate(`../${resourceInfo.table}`);
-    } catch (ex: any) {
-      toastError(ex);
-    }
-  };
+  const { mutateAsync: updateResource } = useSettingsUpdateResource(
+    resourceInfo,
+    resource
+  );
 
   return (
     <>
@@ -70,8 +55,8 @@ export function SchemaResource({
               id={id}
               resourceName={resourceInfo.name}
               {...resource}
-              onSubmit={onSubmit}
-              onDelete={onDelete}
+              onSubmit={updateResource}
+              onDelete={deleteResourceItem}
             />
           )}
         </div>
