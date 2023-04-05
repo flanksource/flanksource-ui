@@ -15,8 +15,6 @@ import { Duration } from "../renderers";
 import { DropdownStandaloneWrapper } from "../../Dropdown/StandaloneWrapper";
 import { TimeRange, timeRanges } from "../../Dropdown/TimeRange";
 import { HealthCheck } from "../../../types/healthChecks";
-import { CanaryCheckDetailsLabel } from "./CanaryCheckDetailsLabel";
-import { relativeDateTime } from "../../../utils/date";
 import CanaryCheckDetailsUptime from "./CanaryCheckDetailsUptime";
 import { CanaryCheckDetailsSpecTab } from "./CanaryCheckDetailsSpec";
 
@@ -48,7 +46,10 @@ export function CheckDetails({ check, timeRange, ...rest }: CheckDetailsProps) {
   const prevCheck = usePrevious(check);
   const validCheck = check || prevCheck;
 
-  const uptimeValue = toFixedIfNecessary(getUptimePercentage(validCheck), 0);
+  const uptimeValue = toFixedIfNecessary(
+    getUptimePercentage(validCheck)?.toString()!,
+    0
+  );
   const validUptime =
     !Number.isNaN(validCheck?.uptime?.passed) &&
     !Number.isNaN(validCheck?.uptime?.failed);
@@ -62,22 +63,8 @@ export function CheckDetails({ check, timeRange, ...rest }: CheckDetailsProps) {
         validCheck?.endpoint ||
         "-",
       Type: validCheck?.type || "-",
-      Labels: <CanaryCheckDetailsLabel check={validCheck} />,
-      Owner: validCheck?.owner || "-",
-      Interval: validCheck?.interval || "-",
-      Location: validCheck?.location || "-",
-      Schedule: validCheck?.schedule || "-",
-      Status: validCheck?.status || "-",
-      "Last Runtime": validCheck?.lastRuntime
-        ? relativeDateTime(validCheck.lastRuntime)
-        : "-",
       Uptime: <CanaryCheckDetailsUptime uptime={validCheck?.uptime} />,
-      "Created At": validCheck?.createdAt
-        ? relativeDateTime(validCheck.createdAt)
-        : "-",
-      "Updated At": validCheck?.updatedAt
-        ? relativeDateTime(validCheck.updatedAt)
-        : "-"
+      Status: validCheck?.status || "-"
     }),
     [validCheck]
   );
@@ -95,7 +82,7 @@ export function CheckDetails({ check, timeRange, ...rest }: CheckDetailsProps) {
             title="Uptime"
             value={
               !Number.isNaN(uptimeValue)
-                ? `${toFixedIfNecessary(uptimeValue, 2)}%`
+                ? `${toFixedIfNecessary(uptimeValue.toString(), 2)}%`
                 : "-"
             }
             append={
@@ -162,7 +149,8 @@ export function CheckDetails({ check, timeRange, ...rest }: CheckDetailsProps) {
           display: "flex",
           flexDirection: "column",
           overflowY: "hidden",
-          overflowX: "hidden"
+          overflowX: "hidden",
+          minHeight: "300px"
         }}
         tabs={{
           statusHistory: {
@@ -195,7 +183,7 @@ export function CheckDetails({ check, timeRange, ...rest }: CheckDetailsProps) {
                       {Object.entries(details).map(([label, value]) => (
                         <DetailField
                           key={label}
-                          className="w-1/2 mb-3 whitespace-nowrap"
+                          className="w-1/3 mb-3 whitespace-nowrap"
                           label={label}
                           value={value as any}
                         />
