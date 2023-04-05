@@ -10,7 +10,8 @@ import {
   getConfigInsight,
   getConfigInsights,
   getConfigTagsList,
-  getConfigName
+  getConfigName,
+  getTopologyRelatedInsights
 } from "../services/configs";
 import { getHypothesisResponse } from "../services/hypothesis";
 import { getIncident } from "../services/incident";
@@ -413,5 +414,22 @@ export function useComponentGetLogsQuery(
       return res.data.results;
     },
     options
+  );
+}
+
+export function useGetTopologyRelatedInsightsQuery(id: string) {
+  return useQuery(
+    ["topology", "insights", id],
+    async () => {
+      const res = await getTopologyRelatedInsights(id);
+      // ensure analysis has all the fields
+      return res.map((item) => ({
+        ...((item.config?.analysis?.length ?? 0) > 0
+          ? item.config?.analysis?.[0]
+          : {}),
+        ...item
+      }));
+    },
+    {}
   );
 }

@@ -1,19 +1,10 @@
-import { useEffect, useState } from "react";
 import { MdOutlineInsights } from "react-icons/md";
-import ReactTooltip from "react-tooltip";
 import CollapsiblePanel from "../CollapsiblePanel";
 import Title from "../Title/title";
-import {
-  sanitizeHTMLContent,
-  sanitizeHTMLContentToText,
-  truncateText
-} from "../../utils/common";
 import { useGetConfigInsights } from "../../api/query-hooks";
-import { ConfigAnalysisLink } from "../ConfigAnalysisLink/ConfigAnalysisLink";
-import { relativeDateTime } from "../../utils/date";
 import { ConfigItem } from "../../api/services/configs";
-import { DetailsTable } from "../DetailsTable/DetailsTable";
 import { Badge } from "../Badge";
+import InsightsDetails from "../Insights/Insights";
 
 export type ConfigTypeInsights = {
   id: string;
@@ -39,76 +30,9 @@ type Props = {
   configID: string;
 };
 
-const columns = [
-  {
-    key: "analysis",
-    label: "Name"
-  },
-  {
-    key: "age",
-    label: "Age"
-  }
-];
-
-function ConfigInsightsDetails({ configID }: Props) {
-  const [configInsights, setConfigInsights] = useState<
-    {
-      age: string;
-      analysis: React.ReactNode;
-    }[]
-  >([]);
+export default function ConfigInsights({ configID }: Props) {
   const { data: response = [], isLoading } =
     useGetConfigInsights<ConfigTypeInsights[]>(configID);
-
-  useEffect(() => {
-    const data = response
-      ?.map((item) => {
-        return {
-          ...item,
-          sanitizedMessageHTML: sanitizeHTMLContent(item.message),
-          sanitizedMessageTxt: truncateText(
-            sanitizeHTMLContentToText(item.message)!,
-            500
-          )
-        };
-      })
-      .map((item) => {
-        return {
-          age: relativeDateTime(item.first_observed),
-          analysis: (
-            <div
-              key={item.id}
-              data-html={true}
-              data-tip={item.sanitizedMessageTxt}
-              data-class="max-w-[20rem]"
-            >
-              <ConfigAnalysisLink configAnalysis={item} />
-            </div>
-          )
-        };
-      });
-    setConfigInsights(data);
-  }, [response]);
-
-  useEffect(() => {
-    ReactTooltip.rebuild();
-  }, [response]);
-
-  return (
-    <div className="flex flex-row space-y-2">
-      <DetailsTable
-        loading={isLoading}
-        data={configInsights}
-        columns={columns}
-      />
-    </div>
-  );
-}
-
-export default function ConfigInsights(props: Props) {
-  const { data: response = [] } = useGetConfigInsights<ConfigTypeInsights[]>(
-    props.configID
-  );
 
   return (
     <CollapsiblePanel
@@ -126,7 +50,7 @@ export default function ConfigInsights(props: Props) {
         </div>
       }
     >
-      <ConfigInsightsDetails {...props} />
+      <InsightsDetails isLoading={isLoading} insights={response ?? []} />
     </CollapsiblePanel>
   );
 }

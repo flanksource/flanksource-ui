@@ -8,6 +8,7 @@ import TopologyDetails from "../TopologyDetails";
 import { ComponentTeams } from "./ComponentTeams";
 import TopologyActionBar from "./TopologyActionBar";
 import TopologyCost from "./TopologyCost";
+import TopologyInsights from "./TopologyInsights";
 
 type Props = {
   topology?: Topology;
@@ -35,6 +36,7 @@ export default function TopologySidebar({
       <TopologyCost topology={topology} />
       <TopologyConfigChanges topologyID={id} />
       <ComponentTeams componentId={id} />
+      <TopologyInsights topologyId={id} />
     </SlidingSideBar>
   );
 }
