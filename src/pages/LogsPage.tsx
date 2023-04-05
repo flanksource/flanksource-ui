@@ -106,6 +106,7 @@ export function LogsPage() {
         contentClass={`h-full p-6`}
         extra={
           <DropdownStandaloneWrapper
+            name="time-range"
             dropdownElem={<TimeRange name="time-range" />}
             defaultValue={searchParams.get("start") ?? timeRanges[0].value}
             paramKey="start"
