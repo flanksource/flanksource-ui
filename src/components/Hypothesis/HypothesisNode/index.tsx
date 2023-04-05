@@ -1,5 +1,7 @@
 import clsx from "clsx";
 import { useEffect, useState } from "react";
+import { useAtomValue, useSetAtom } from "jotai";
+
 import { AiOutlinePlusCircle } from "react-icons/ai";
 import {
   getHypothesisChildType,
@@ -9,6 +11,7 @@ import {
 import { HypothesisAPIs } from "../../../pages/incident/IncidentDetails";
 import { HypothesisBar } from "../HypothesisBar";
 import { HypothesisDetails } from "../HypothesisDetails";
+import { recentlyAddedHypothesisIdAtom } from "../../../store/hypothesis.state";
 
 interface IHypothesisNodeProps {
   hasParent?: boolean;
@@ -37,6 +40,10 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
   };
 
   const [showComments, doSetShowComments] = useState(parentShowComments);
+  const recentlyAddedHypothesisId = useAtomValue(recentlyAddedHypothesisIdAtom);
+  const setRecentlyAddedHypothesisId = useSetAtom(
+    recentlyAddedHypothesisIdAtom
+  );
 
   const setShowComments = (showComments: boolean) => {
     doSetShowComments(showComments);
@@ -45,6 +52,16 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
   useEffect(() => {
     setShowComments(parentShowComments);
   }, [parentShowComments]);
+
+  useEffect(() => {
+    if (!recentlyAddedHypothesisId) {
+      return;
+    }
+    if (node.id === recentlyAddedHypothesisId) {
+      setShowComments(node.id === recentlyAddedHypothesisId);
+      setRecentlyAddedHypothesisId(null);
+    }
+  }, [recentlyAddedHypothesisId, node.id]);
 
   const chldButLast = (node?.children || []).slice(0, -1);
   const chldLast = (node?.children || []).slice(-1)[0];
