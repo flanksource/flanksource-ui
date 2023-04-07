@@ -3,7 +3,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { AiFillPlusCircle } from "react-icons/ai/";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useGetPeopleQuery } from "../../api/query-hooks";
-import { getIncidentsWithParams } from "../../api/services/incident";
+import {
+  getIncidentsWithParams,
+  searchIncident
+} from "../../api/services/incident";
 import FilterIncidents from "../../components/FilterIncidents/FilterIncidents";
 import { IncidentCreate } from "../../components/Incidents/IncidentCreate";
 import { IncidentList } from "../../components/Incidents/IncidentList";
@@ -23,6 +26,7 @@ type IncidentFilters = {
   owner?: string;
   type?: string;
   component?: string;
+  search?: string;
 };
 
 function toPostgresqlSearchParam({
@@ -30,18 +34,19 @@ function toPostgresqlSearchParam({
   status,
   owner,
   type,
-  component
+  component,
+  search
 }: IncidentFilters): Record<string, string | undefined> {
   const params = Object.entries({
     severity,
     status,
     type,
     created_by: owner,
-    "hypotheses.evidences.component_id": component
+    "hypotheses.evidences.component_id": component,
+    search
   })
     .filter(([_k, v]) => v && v !== "all")
-    .map(([k, v]) => [k, `eq.${v}`]);
-
+    .map(([k, v]) => (k === "search" ? [k, v] : [k, `eq.${v}`]));
   return Object.fromEntries(params);
 }
 
@@ -53,6 +58,7 @@ export function IncidentListPage() {
   const owner = searchParams.get("owner");
   const type = searchParams.get("type");
   const component = searchParams.get("component");
+  const search = searchParams.get("search");
 
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
@@ -141,9 +147,10 @@ export function IncidentListPage() {
       status: status || undefined,
       owner: owner || undefined,
       type: type || undefined,
-      component: component || undefined
+      component: component || undefined,
+      search: search || undefined
     });
-  }, [component, loadIncidents, owner, severity, status, type]);
+  }, [component, loadIncidents, owner, severity, status, type, search]);
 
   useEffect(() => {
     loadIncidents({
@@ -151,9 +158,10 @@ export function IncidentListPage() {
       status: status || undefined,
       owner: owner || undefined,
       type: type || undefined,
-      component: component || undefined
+      component: component || undefined,
+      search: search || undefined
     });
-  }, [severity, status, owner, type, component, loadIncidents]);
+  }, [severity, status, owner, type, component, loadIncidents, search]);
 
   return (
     <>
