@@ -443,9 +443,9 @@ const DropdownWrapper = ({
   );
 };
 
-export const HidePassingToggle = ({ defaultValue = true }) => {
+export const HidePassingToggle = ({ defaultValue = false }) => {
   const settings: any = localStorage.getItem(HEALTH_SETTINGS);
-  const hidePassing = JSON.parse(settings ?? {})?.hidePassing ?? null;
+  const hidePassing = JSON.parse(settings ?? "{}")?.hidePassing ?? null;
   const paramsValue = hidePassing ? hidePassing === "true" : null;
 
   const [value, setValue] = useState(paramsValue ?? defaultValue);
