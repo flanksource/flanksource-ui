@@ -173,6 +173,30 @@ export const getConfigsBy = ({ topologyId, configId }: ConfigParams) => {
   }
 };
 
+export const addManuallyAddedComponentConfigRelationship = (
+  topologyId: string,
+  configId: string
+) => {
+  return resolve(
+    ConfigDB.post(`/config_component_relationships`, {
+      component_id: topologyId,
+      config_id: configId,
+      selector_id: "manual"
+    })
+  );
+};
+
+export const removeComponentConfigRelationship = (
+  topologyId: string,
+  configId: string
+) => {
+  return resolve(
+    ConfigDB.delete(
+      `/config_component_relationships?component_id=eq.${topologyId}&config_id=eq.${configId}&selector_id=eq.manual`
+    )
+  );
+};
+
 export const searchConfigs = (type: string, input: string) => {
   const orCondition = input
     ? `&or=(name.ilike.*${input}*,external_id.ilike.*${input}*)`
