@@ -17,6 +17,8 @@ import { DescriptionCard } from "../DescriptionCard";
 import ConfigLink from "../ConfigLink/ConfigLink";
 import ReactTooltip from "react-tooltip";
 import { ViewType } from "../../types";
+import { ConfigItem } from "../../api/services/configs";
+import { User } from "../../api/services/users";
 
 export function ConfigDetailsChanges({
   configId,
@@ -34,9 +36,8 @@ export function ConfigDetailsChanges({
     isLoading,
     error
   } = useGetConfigChangesQueryById(configId!);
-  const { data: config } = useGetConfigByIdQuery(configId, {});
+  const { data: config } = useGetConfigByIdQuery(configId);
   const [open, setOpen] = useState(false);
-  const [attachEvidence, setAttachEvidence] = useState(false);
   const [changeDetails, setChangeDetails] = useState<ConfigTypeChanges>();
   const properties = useMemo(() => {
     if (!changeDetails) {
@@ -53,7 +54,7 @@ export function ConfigDetailsChanges({
       },
       {
         label: "Created By",
-        value: <Avatar user={changeDetails.created_by!} />
+        value: <Avatar user={changeDetails.created_by! as unknown as User} />
       }
     ];
   }, [changeDetails]);
@@ -77,74 +78,12 @@ export function ConfigDetailsChanges({
 
   return (
     <div className="overflow-hidden bg-white cursor-pointer">
-      <Modal
-        title={
-          config && (
-            <>
-              <ConfigLink
-                className="text-blue-600 text-xl font-semibold whitespace-nowrap mr-1"
-                configId={config.id}
-                configName={config.name}
-                configType={config.external_type}
-                configTypeSecondary={config.config_type}
-              />
-              &nbsp;/&nbsp;
-              <Icon
-                name={changeDetails?.change_type}
-                secondary="diff"
-                className="w-5 h-auto pr-1"
-              />
-              {changeDetails?.change_type}
-            </>
-          )
-        }
+      <ConfigDetailChangeModal
         open={open}
-        onClose={(e) => {
-          // this is added to fix modal not being closed issue when we open a modal on top of another modal
-          e?.stopPropagation();
-          setOpen(false);
-        }}
-        size="large"
-        bodyClass=""
-      >
-        <div
-          className="flex flex-col h-full"
-          style={{ maxHeight: "calc(100vh - 8rem)" }}
-        >
-          {changeDetails?.config_id && (
-            <ConfigDetailsChanges
-              configId={changeDetails.config_id}
-              id={changeDetails.id}
-              viewType={ViewType.detailed}
-            />
-          )}
-        </div>
-        <div className="flex items-center justify-end py-4 px-5 rounded-lg bg-gray-100">
-          <button
-            type="button"
-            onClick={() => {
-              setAttachEvidence(true);
-            }}
-            className="btn-primary"
-          >
-            Attach as Evidence
-          </button>
-        </div>
-        <AttachEvidenceDialog
-          key={`attach-evidence-dialog`}
-          isOpen={attachEvidence}
-          onClose={() => setAttachEvidence(false)}
-          config_change_id={changeDetails?.id}
-          config_id={changeDetails?.config_id}
-          evidence={{}}
-          type={EvidenceType.ConfigChange}
-          callback={(success: boolean) => {
-            if (success) {
-              setAttachEvidence(false);
-            }
-          }}
-        />
-      </Modal>
+        setOpen={setOpen}
+        config={config}
+        changeDetails={changeDetails}
+      />
       {viewType === ViewType.detailed && (
         <div className="px-4 py-5">
           <DescriptionCard items={properties} labelStyle="top" columns={3} />
@@ -221,5 +160,91 @@ export function ConfigDetailsChanges({
         </div>
       )}
     </div>
+  );
+}
+
+type ConfigDetailChangeModalProps = {
+  open: boolean;
+  setOpen: (val: boolean) => void;
+  config?: ConfigItem;
+  changeDetails?: ConfigTypeChanges;
+};
+
+export function ConfigDetailChangeModal({
+  open,
+  setOpen,
+  config,
+  changeDetails
+}: ConfigDetailChangeModalProps) {
+  const [attachEvidence, setAttachEvidence] = useState(false);
+  return (
+    <Modal
+      title={
+        config && (
+          <>
+            <ConfigLink
+              className="text-blue-600 text-xl font-semibold whitespace-nowrap mr-1"
+              configId={config.id}
+              configName={config.name}
+              configType={config.external_type}
+              configTypeSecondary={config.config_type}
+            />
+            &nbsp;/&nbsp;
+            <Icon
+              name={changeDetails?.change_type}
+              secondary="diff"
+              className="w-5 h-auto pr-1"
+            />
+            {changeDetails?.change_type}
+          </>
+        )
+      }
+      open={open}
+      onClose={(e) => {
+        // this is added to fix modal not being closed issue when we open a modal on top of another modal
+        e?.stopPropagation();
+        setOpen(false);
+      }}
+      size="full"
+      bodyClass=""
+    >
+      <div
+        className="flex flex-col h-full"
+        style={{ maxHeight: "calc(100vh - 8rem)" }}
+      >
+        {changeDetails?.config_id && (
+          <ConfigDetailsChanges
+            configId={changeDetails.config_id}
+            id={changeDetails.id}
+            viewType={ViewType.detailed}
+          />
+        )}
+      </div>
+      <div className="flex items-center justify-end py-4 px-5 rounded-lg bg-gray-100">
+        <button
+          type="button"
+          onClick={() => {
+            setAttachEvidence(true);
+          }}
+          className="btn-primary"
+        >
+          Attach as Evidence
+        </button>
+      </div>
+      <AttachEvidenceDialog
+        key={`attach-evidence-dialog`}
+        isOpen={attachEvidence}
+        onClose={() => setAttachEvidence(false)}
+        config_change_id={changeDetails?.id}
+        config_id={changeDetails?.config_id}
+        evidence={{}}
+        type={EvidenceType.ConfigChange}
+        callback={(success: boolean) => {
+          if (success) {
+            setAttachEvidence(false);
+          }
+        }}
+      />
+    </Modal>
   );
 }
