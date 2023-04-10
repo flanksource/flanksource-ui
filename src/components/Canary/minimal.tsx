@@ -127,15 +127,16 @@ const MinimalCanaryFC = ({
         onClose={() => clearCheck()}
         title={<CheckTitle check={selectedCheck} size="" />}
         size="full"
+        bodyClass="h-full px-8"
       >
         <div
           className="flex flex-col h-full py-4 mb-16"
-          style={{ maxHeight: "calc(100vh - 12rem)" }}
+          style={{ height: "calc(100vh - 12rem)" }}
         >
           <CheckDetails
             check={selectedCheck}
             timeRange={timeRange}
-            className={`flex flex-col overflow-y-hidden ${mixins.appleScrollbar}`}
+            className={`flex flex-col overflow-y-hidden h-full ${mixins.appleScrollbar}`}
           />
           <div className="rounded-t-lg flex space-x-2 bg-gray-100 px-8 py-4 justify-end absolute w-full bottom-0 left-0">
             {selectedCheck?.canary_id && (

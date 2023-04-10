@@ -15,8 +15,9 @@ import { Duration } from "../renderers";
 import { DropdownStandaloneWrapper } from "../../Dropdown/StandaloneWrapper";
 import { TimeRange, timeRanges } from "../../Dropdown/TimeRange";
 import { HealthCheck } from "../../../types/healthChecks";
-import CanaryCheckDetailsUptime from "./CanaryCheckDetailsUptime";
 import { CanaryCheckDetailsSpecTab } from "./CanaryCheckDetailsSpec";
+import { CanaryCheckDetailsLabel } from "./CanaryCheckDetailsLabel";
+import { relativeDateTime } from "../../../utils/date";
 
 const CanaryStatusChart = React.lazy(() =>
   import("../CanaryStatusChart").then(({ CanaryStatusChart }) => ({
@@ -57,14 +58,14 @@ export function CheckDetails({ check, timeRange, ...rest }: CheckDetailsProps) {
 
   const details: Record<string, React.ReactNode> = useMemo(
     () => ({
-      Name:
-        validCheck?.name ||
-        validCheck?.canary_name ||
-        validCheck?.endpoint ||
-        "-",
-      Type: validCheck?.type || "-",
-      Uptime: <CanaryCheckDetailsUptime uptime={validCheck?.uptime} />,
-      Status: validCheck?.status || "-"
+      Labels: <CanaryCheckDetailsLabel check={validCheck} />,
+      Owner: validCheck?.owner || "-",
+      Interval: validCheck?.interval || "-",
+      Location: validCheck?.location || "-",
+      Schedule: validCheck?.schedule || "-",
+      "Last Runtime": validCheck?.lastRuntime
+        ? relativeDateTime(validCheck.lastRuntime)
+        : "-"
     }),
     [validCheck]
   );
@@ -75,8 +76,8 @@ export function CheckDetails({ check, timeRange, ...rest }: CheckDetailsProps) {
 
   return (
     <div {...rest} ref={containerRef}>
-      <div className="flex flex-col flex-wrap" ref={statsRef}>
-        <div className="flex flex-row flex-wrap mb-2">
+      <div className="flex flex-col" ref={statsRef}>
+        <div className="flex flex-row flex-wrap">
           <CheckStat
             containerClassName="w-52 mb-4"
             title="Uptime"
@@ -140,7 +141,7 @@ export function CheckDetails({ check, timeRange, ...rest }: CheckDetailsProps) {
       <PopupTabs
         shareHeight
         style={{
-          display: "flex",
+          display: "flex flex-1",
           flexDirection: "column",
           overflowY: "hidden"
         }}
@@ -149,8 +150,7 @@ export function CheckDetails({ check, timeRange, ...rest }: CheckDetailsProps) {
           display: "flex",
           flexDirection: "column",
           overflowY: "hidden",
-          overflowX: "hidden",
-          minHeight: "300px"
+          overflowX: "hidden"
         }}
         tabs={{
           statusHistory: {
@@ -176,7 +176,7 @@ export function CheckDetails({ check, timeRange, ...rest }: CheckDetailsProps) {
           checkDetails: {
             label: "Check details",
             content: (
-              <div key="check-details" className="px-6 py-6">
+              <div key="check-details" className="px-6 py-6 h-full">
                 <AccordionBox
                   content={
                     <div className="flex flex-row flex-wrap">
