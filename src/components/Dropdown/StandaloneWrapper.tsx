@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { Dropdown } from ".";
 import { useUpdateParams } from "../Canary/url";
 
-type DropdownStandaloneWrapperProps = {
+export type DropdownStandaloneWrapperProps = {
   dropdownElem: React.ReactElement;
   defaultValue: string;
   paramKey: string;
