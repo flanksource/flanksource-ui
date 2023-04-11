@@ -139,18 +139,19 @@ export function CheckDetails({ check, timeRange, ...rest }: CheckDetailsProps) {
         </div>
       </div>
       <PopupTabs
-        shareHeight
+        shareHeight={false}
         style={{
-          display: "flex flex-1",
           flexDirection: "column",
           overflowY: "hidden"
         }}
+        className="flex-1 flex"
         contentStyle={{
           marginTop: "-1px",
           display: "flex",
           flexDirection: "column",
           overflowY: "hidden",
-          overflowX: "hidden"
+          overflowX: "hidden",
+          height: "100%"
         }}
         tabs={{
           statusHistory: {
@@ -171,7 +172,7 @@ export function CheckDetails({ check, timeRange, ...rest }: CheckDetailsProps) {
               </div>
             ),
             class:
-              "flex flex-col overflow-y-hidden border-b h-full border-gray-300"
+              "flex-1 flex flex-col overflow-y-hidden border-b h-full border-gray-300"
           },
           checkDetails: {
             label: "Check details",
@@ -193,12 +194,12 @@ export function CheckDetails({ check, timeRange, ...rest }: CheckDetailsProps) {
                 />
               </div>
             ),
-            class: `flex flex-col overflow-y-auto  border border-gray-300 ${mixins.appleScrollbar}`
+            class: `flex-1 flex flex-col overflow-y-auto  border border-gray-300 ${mixins.appleScrollbar}`
           },
           specs: {
             label: "Spec",
             content: <CanaryCheckDetailsSpecTab check={validCheck} />,
-            class: `flex flex-col overflow-y-auto  border border-gray-300 ${mixins.appleScrollbar}`
+            class: `flex-1 flex flex-col overflow-y-auto  border border-gray-300 ${mixins.appleScrollbar}`
           }
         }}
       />
