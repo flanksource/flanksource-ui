@@ -18,6 +18,7 @@ interface IDropdownWithActionsProps<T> {
   value?: T;
   setValue: any;
   dependentValue?: any;
+  disabled?: boolean;
 }
 
 export function DropdownWithActions<T extends IItem>({
@@ -28,6 +29,7 @@ export function DropdownWithActions<T extends IItem>({
   value = { value: null, description: "" } as T,
   displayOption,
   setValue,
+  disabled,
   dependentValue
 }: IDropdownWithActionsProps<T>) {
   const [lastNoResultsQuery, setLastNoResultsQuery] = useState("");
@@ -122,8 +124,16 @@ export function DropdownWithActions<T extends IItem>({
               {displayOption({ option: props.data } as any)}
             </components.Option>
           );
+        },
+        SingleValue: (props: any) => {
+          return (
+            <components.SingleValue {...props}>
+              {displayOption({ option: props.data } as any)}
+            </components.SingleValue>
+          );
         }
       }}
+      isDisabled={disabled}
     />
   ) : (
     <AsyncSelect
@@ -151,8 +161,16 @@ export function DropdownWithActions<T extends IItem>({
               {displayOption({ option: props.data } as any)}
             </components.Option>
           );
+        },
+        SingleValue: (props: any) => {
+          return (
+            <components.SingleValue {...props}>
+              {displayOption({ option: props.data } as any)}
+            </components.SingleValue>
+          );
         }
       }}
+      isDisabled={disabled}
     />
   );
 }

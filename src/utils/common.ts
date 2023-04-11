@@ -72,3 +72,13 @@ export const delayedPromise = <T>(val: T, time: number): Promise<T> => {
     }, time);
   });
 };
+
+export const stringSortHelper = (val1: string, val2: string) => {
+  if (val1 > val2) {
+    return 1;
+  }
+  if (val1 < val2) {
+    return -1;
+  }
+  return 0;
+};
