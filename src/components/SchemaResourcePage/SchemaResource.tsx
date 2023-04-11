@@ -53,10 +53,9 @@ export function SchemaResource({
           {resource && !isLoading && (
             <SchemaResourceEdit
               id={id}
-              resourceName={resourceInfo.name}
               {...resource}
               onSubmit={updateResource}
-              onDelete={deleteResourceItem}
+              resourceInfo={resourceInfo}
             />
           )}
         </div>

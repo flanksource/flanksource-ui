@@ -22,7 +22,7 @@ const Template: ComponentStory<typeof SchemaResourceList> = (arg: any) => (
 
 const genItem = (suffix: string): SchemaResourceWithJobStatus => ({
   name: `item ${suffix}`,
-  spec: JSON.stringify({ a: suffix, b: 2 }),
+  spec: { a: suffix, b: 2 },
   created_at: "asd",
   updated_at: "ass",
   namespace: "default",

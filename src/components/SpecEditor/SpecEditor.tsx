@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Icon } from "../Icon";
 import SpecEditorForm from "../Forms/SpecEditorForm";
-import { SchemaResourceTypes } from "../SchemaResourcePage/resourceTypes";
+import { SchemaResourceType } from "../SchemaResourcePage/resourceTypes";
 
 export type SpecType = {
   name: string;
@@ -32,17 +32,15 @@ export type SpecType = {
 type SpecEditorProps = {
   types: SpecType[];
   format?: "json" | "yaml";
-  resourceName: SchemaResourceTypes[number]["name"];
+  resourceInfo: SchemaResourceType;
   selectedSpec?: string;
-  deleteHandler?: (id: string) => void;
 };
 
 export default function SpecEditor({
   types,
   format = "yaml",
-  resourceName,
-  selectedSpec,
-  deleteHandler
+  resourceInfo,
+  selectedSpec
 }: SpecEditorProps) {
   const [selectedSpecItem, setSelectedSpecItem] = useState<
     SpecType | undefined
@@ -80,10 +78,8 @@ export default function SpecEditor({
             loadSpec={selectedSpecItem.loadSpec}
             rawSpecInput={selectedSpecItem.rawSpecInput}
             specFormat={format}
-            resourceName={resourceName}
+            resourceInfo={resourceInfo}
             specFormFieldName={selectedSpecItem.formFieldName}
-            deleteHandler={deleteHandler}
-            schemaFilePrefix={selectedSpecItem.schemaFilePrefix}
           />
         </div>
       ) : (

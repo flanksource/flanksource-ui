@@ -6,11 +6,16 @@ import { CanaryCheckerDB, ConfigDB, IncidentCommander } from "./axios";
 import { AVATAR_INFO } from "../constants";
 import { AxiosResponse } from "axios";
 import { JobHistoryStatus } from "../components/JobsHistory/JobsHistoryTable";
+import { ConfigItem } from "./services/configs";
+import { TopologyComponentItem } from "../components/FilterIncidents/FilterIncidentsByComponents";
 
 export interface SchemaResourceI {
   id: string;
   name: string;
-  spec: { spec: string | undefined } & Record<string, any>;
+  spec: {
+    spec?: string;
+    [key: string]: any;
+  };
   namespace: string;
   labels: { [key: string]: any };
   schedule?: string;
@@ -92,4 +97,35 @@ export const getResource = ({ api, table }: SchemaApi, id: string) =>
   getBackend(api)?.get<Record<string, any>[]>(`/${table}?id=eq.${id}`);
 
 export const deleteResource = ({ api, table }: SchemaApi, id: string) =>
-  getBackend(api)?.delete(`/${table}?id=eq.${id}`);
+  getBackend(api)?.patch(`/${table}?id=eq.${id}`, {
+    deleted_at: "now()"
+  });
+
+export async function getConfigsScrapperConfigsToDelete(
+  configScrapperID: string
+): Promise<
+  Pick<ConfigItem, "id" | "type" | "config_class" | "name">[] | undefined
+> {
+  const res = await CanaryCheckerDB.get<
+    {
+      config_items: Pick<ConfigItem, "id" | "type" | "config_class" | "name">[];
+    }[]
+  >(
+    `config_scrapers?select=config_items(id,name,external_type,config_type)&id=eq.${configScrapperID}`
+  );
+  return res.data?.[0]?.config_items;
+}
+
+type TopologyComponent = TopologyComponentItem & {
+  components: TopologyComponentItem[];
+};
+
+export async function getTemplatesRelatedComponents(templateID: string) {
+  const res = await IncidentCommander.get<
+    | {
+        components: TopologyComponent[];
+      }[]
+    | undefined
+  >(`topologies?select=id,components(id,name,type,icon)&id=eq.${templateID}`);
+  return res.data?.[0]?.components;
+}

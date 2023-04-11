@@ -2,17 +2,18 @@ import { useMemo } from "react";
 import SpecEditor, { SpecType } from "./SpecEditor";
 import { HTTPHealthFormEditor } from "../Forms/Health/HTTPHealthFormEditor";
 import { FaCog } from "react-icons/fa";
+import { SchemaResourceType } from "../SchemaResourcePage/resourceTypes";
 
 type HealthSpecEditorProps = {
   spec?: Record<string, any>;
   onSubmit?: (spec: Record<string, any>) => void;
-  deleteHandler?: (id: string) => void;
+  resourceInfo: SchemaResourceType;
 };
 
 export default function HealthSpecEditor({
   spec,
   onSubmit = () => {},
-  deleteHandler
+  resourceInfo
 }: HealthSpecEditorProps) {
   const configTypes = useMemo(
     () =>
@@ -365,9 +366,8 @@ export default function HealthSpecEditor({
     <SpecEditor
       types={configTypes}
       format="yaml"
-      resourceName="Health Check"
       selectedSpec={selectedSpec}
-      deleteHandler={deleteHandler}
+      resourceInfo={resourceInfo}
     />
   );
 }

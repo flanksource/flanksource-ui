@@ -51,7 +51,7 @@ export function Modal({
       <Dialog
         as="div"
         auto-reopen="true"
-        className="fixed z-50 inset-0 overflow-y-auto"
+        className="fixed z-50 inset-0 overflow-y-auto my-20"
         onClose={allowBackgroundClose ? () => onClose() : () => {}}
         {...rest}
       >

@@ -20,7 +20,7 @@ export type SchemaResourceType = {
     | "incident_rules"
     | "config_scrapers"
     | "canaries"
-    | "templates";
+    | "topologies";
   api: "incident-commander" | "canary-checker" | "config-db";
   resourceName: string;
   icon: React.ComponentType<any> | IconType;

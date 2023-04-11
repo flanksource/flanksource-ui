@@ -3,15 +3,16 @@ import React, { useCallback, useMemo, useState } from "react";
 import { Button } from "../Button";
 import { Tabs, Tab } from "../Tabs/Tabs";
 import { FormikCodeEditor } from "./Formik/FormikCodeEditor";
-import { FaTrash } from "react-icons/fa";
-import { schemaResourceTypes } from "../SchemaResourcePage/resourceTypes";
+import {
+  SchemaResourceType,
+  schemaResourceTypes
+} from "../SchemaResourcePage/resourceTypes";
 import FormikTextInput from "./Formik/FormikTextInput";
 import FormikAutocompleteDropdown from "./Formik/FormikAutocompleteDropdown";
 import FormikIconPicker from "./Formik/FormikIconPicker";
+import DeleteResource from "../SchemaResourcePage/Delete/DeleteResource";
 
 type SpecEditorFormProps = {
-  resourceName: string;
-  deleteHandler?: (id: string) => void;
   loadSpec: () => Record<string, any>;
   updateSpec: (spec: Record<string, any>) => void;
   specFormat: "yaml" | "json";
@@ -21,11 +22,11 @@ type SpecEditorFormProps = {
   specFormFieldName: string;
   rawSpecInput?: boolean;
   schemaFilePrefix?: "component" | "canary" | "system" | "scrape_config";
+  resourceInfo: SchemaResourceType;
 };
 
 export default function SpecEditorForm({
-  resourceName,
-  deleteHandler,
+  resourceInfo,
   loadSpec = () => ({}),
   updateSpec = () => {},
   specFormat = "yaml",
@@ -45,13 +46,13 @@ export default function SpecEditorForm({
     }[]
   > = useMemo(() => {
     const resourceType = schemaResourceTypes.find(
-      (item) => item.name === resourceName
+      (item) => item.name === resourceInfo.name
     );
     if (!resourceType) {
       return [];
     }
     return resourceType.fields;
-  }, [resourceName]);
+  }, [resourceInfo.name]);
 
   const isFieldSupportedByResourceType = useCallback(
     (fieldName: string) =>
@@ -182,17 +183,15 @@ export default function SpecEditorForm({
             </div>
           </div>
           <div className="flex flex-row space-x-4 justify-end bg-gray-200 p-4">
-            {deleteHandler && (
-              <Button
-                text="Delete"
-                icon={<FaTrash />}
-                onClick={() => deleteHandler(values.id)}
-                className="btn-danger"
+            {!!initialValues.id && (
+              <DeleteResource
+                resourceId={initialValues.id}
+                resourceInfo={resourceInfo}
               />
             )}
             <Button
               type="submit"
-              text={deleteHandler ? "Update" : "Add"}
+              text={!!initialValues.id ? "Update" : "Add"}
               className="btn-primary"
             />
           </div>

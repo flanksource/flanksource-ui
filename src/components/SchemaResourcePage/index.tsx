@@ -84,16 +84,22 @@ export function SchemaResourcePage({
           title={`Add ${resourceInfo.name}`}
         >
           {resourceInfo.table === "config_scrapers" ? (
-            <ConfigScrapperSpecEditor onSubmit={(val) => createResource(val)} />
+            <ConfigScrapperSpecEditor
+              onSubmit={(val) => createResource(val)}
+              resourceInfo={resourceInfo}
+            />
           ) : resourceInfo.table === "canaries" ? (
-            <HealthSpecEditor onSubmit={(val) => createResource(val)} />
+            <HealthSpecEditor
+              onSubmit={(val) => createResource(val)}
+              resourceInfo={resourceInfo}
+            />
           ) : (
             <SchemaResourceEdit
-              resourceName={resourceInfo.name}
               isModal
               edit
               onSubmit={async (val) => createResource(val)}
               onCancel={onClose}
+              resourceInfo={resourceInfo}
             />
           )}
         </Modal>

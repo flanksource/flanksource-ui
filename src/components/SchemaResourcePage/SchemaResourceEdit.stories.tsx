@@ -1,5 +1,6 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 import { SchemaResourceEdit } from "./SchemaResourceEdit";
+import { schemaResourceTypes } from "./resourceTypes";
 
 export default {
   title: "SchemaResourceEdit",
@@ -12,4 +13,6 @@ const Template: ComponentStory<typeof SchemaResourceEdit> = (arg: any) => (
 );
 
 export const Base = Template.bind({});
-Base.args = {};
+Base.args = {
+  resourceInfo: schemaResourceTypes[0]
+};
