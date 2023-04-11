@@ -8,8 +8,8 @@ import useUpdateComponentMutation from "../../api/query-hooks/mutations/useUpdat
 import { EvidenceType } from "../../api/services/evidence";
 import { Topology } from "../../context/TopologyPageContext";
 import { AttachEvidenceDialog } from "../AttachEvidenceDialog";
-import { Button } from "../Button";
 import TopologySnapshotModal from "../TopologyCard/TopologySnapshotModal";
+import { ActionLink } from "../ActionLink/ActionLink";
 
 type TopologyActionItem = {
   label: string;
@@ -184,29 +184,6 @@ export const topologyActionItems: Readonly<TopologyActionItem>[] = [
   }
 ];
 
-type TopologyActionLinkProps = {
-  onClick?: () => void;
-  icon: React.ReactNode;
-  text: React.ReactNode;
-};
-
-function TopologyActionLink({
-  onClick = () => {},
-  icon,
-  text
-}: TopologyActionLinkProps) {
-  return (
-    <div className="flex flex-col items-center">
-      <Button
-        icon={icon}
-        text={text}
-        onClick={() => onClick()}
-        className="btn-white"
-      />
-    </div>
-  );
-}
-
 type TopologyActionBarProps = {
   topology?: Topology;
   onRefresh?: () => void;
@@ -229,15 +206,16 @@ export default function TopologyActionBar({
 
   return (
     <>
-      <div className="flex flex-wrap justify-between py-4">
+      <div className="flex flex-wrap justify-between py-4 px-1">
         {topologyActionItems.map(
           ({ icon: Icon, isShown, label, ContainerComponent }) => {
             if (isShown(topology, "TopologySidebar")) {
               return (
                 <ContainerComponent
+                  key={label}
                   onRefresh={onRefresh}
                   topology={topology}
-                  child={TopologyActionLink}
+                  child={ActionLink}
                   icon={<Icon />}
                   text={label}
                   openModalAction={
