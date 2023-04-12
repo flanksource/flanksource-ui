@@ -16,6 +16,7 @@ import MultiSelectList from "../MultiSelectList/MultiSelectList";
 import { toastError, toastSuccess } from "../Toast/toast";
 import { useLoader } from "../../hooks";
 import EmptyState from "../EmptyState";
+import TableSkeletonLoader from "../SkeletonLoader/TableSkeletonLoader";
 import clsx from "clsx";
 
 type TeamMembersProps = {
@@ -99,6 +100,7 @@ export function TeamMembers({ teamId }: TeamMembersProps) {
 
   return (
     <div className="p-4 pb-8 space-y-8 bg-white rounded shadow flex flex-col">
+      {loading && <TableSkeletonLoader className="mt-2" />}
       {!teamMembers.length && !loading && (
         <div className="flex flex-col">
           <div className="text-center">
