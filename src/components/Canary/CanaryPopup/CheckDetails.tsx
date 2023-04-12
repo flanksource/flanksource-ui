@@ -42,7 +42,7 @@ export function CheckDetails({ check, timeRange, ...rest }: CheckDetailsProps) {
           statsRef.current.clientHeight -
           TabAndPaddingBottom
         }px`
-      : "0px";
+      : undefined;
 
   const prevCheck = usePrevious(check);
   const validCheck = check || prevCheck;
@@ -166,7 +166,8 @@ export function CheckDetails({ check, timeRange, ...rest }: CheckDetailsProps) {
                   check={validCheck}
                   style={{
                     maxHeight,
-                    height: maxHeight
+                    height: maxHeight,
+                    display: !maxHeight ? "none" : undefined
                   }}
                 />
               </div>
