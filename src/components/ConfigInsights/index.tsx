@@ -28,14 +28,22 @@ export type ConfigTypeInsights = {
 
 type Props = {
   configID: string;
+  isCollapsed?: boolean;
+  onCollapsedStateChange?: (isClosed: boolean) => void;
 };
 
-export default function ConfigInsights({ configID }: Props) {
+export default function ConfigInsights({
+  configID,
+  isCollapsed = false,
+  onCollapsedStateChange = () => {}
+}: Props) {
   const { data: response = [], isLoading } =
     useGetConfigInsights<ConfigTypeInsights[]>(configID);
 
   return (
     <CollapsiblePanel
+      isCollapsed={isCollapsed}
+      onCollapsedStateChange={onCollapsedStateChange}
       Header={
         <div className="flex flex-row w-full items-center space-x-2">
           <Title

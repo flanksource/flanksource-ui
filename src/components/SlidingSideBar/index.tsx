@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { IoChevronBackOutline, IoChevronForwardOutline } from "react-icons/io5";
 import useRunTaskOnPropChange from "../../hooks/useRunTaskOnPropChange";
 import { atom } from "jotai";
@@ -22,63 +22,63 @@ export default function SlidingSideBar({
   const [open, setOpen] = useState<boolean>(false);
   const contentRef = useRef<HTMLDivElement>(null);
 
-  function calculateChildHeight(
-    panelHeight: string,
-    itemHeight: number,
-    panelHeightRatio: number
-  ) {
-    return panelHeight === "auto"
-      ? itemHeight * panelHeightRatio
-      : parseFloat(panelHeight!);
-  }
-
   function configureChildrenHeights() {
     if (!contentRef.current?.children) {
       return;
     }
-    const totalHeight = contentRef.current.clientHeight;
-    let fixedHeightsTotal = 0;
-    let fixedHeightChildCount = 0;
-    let expandedChildCount = 0;
-    const children = [...contentRef.current?.children];
-    children.forEach((item) => {
-      let panelHeight = item.getAttribute("data-panel-height");
-      if (item.getAttribute("data-minimized") === "true") {
-        panelHeight = `${item.clientHeight}px`;
-      } else {
-        ++expandedChildCount;
+    const totalHeight = contentRef.current.offsetHeight;
+    const collapsedChildren = [...contentRef.current?.children]
+      .filter(
+        (element) =>
+          element.getAttribute("data-minimized") === "true" ||
+          element.getAttribute("data-collapsible") === "false"
+      )
+      .map((element) => element.clientHeight);
+
+    const totalHeightOfMinimizedChildren = collapsedChildren.reduce(
+      (acc, height) => {
+        return acc + height;
       }
-      let panelHeightRatio = item.getAttribute("data-panel-height-ratio");
-      if (panelHeight && panelHeight !== "auto") {
-        fixedHeightsTotal += parseFloat(panelHeight || "0px");
-        ++fixedHeightChildCount;
-      } else {
-        item.setAttribute("data-panel-height", "auto");
-      }
-      if (!panelHeightRatio) {
-        item.setAttribute("data-panel-height-ratio", "1");
-      }
-    });
-    const childrenWithAutoHeight = children.length - fixedHeightChildCount;
-    const remainingHeight = totalHeight - fixedHeightsTotal;
-    const itemHeight = remainingHeight / childrenWithAutoHeight;
-    children.forEach((item) => {
-      const child = item as HTMLDivElement;
-      let panelHeight = item.getAttribute("data-panel-height");
-      if (item.getAttribute("data-minimized") === "true") {
-        panelHeight = `${item.clientHeight}px`;
-      }
-      const panelHeightRatio = parseFloat(
-        item.getAttribute("data-panel-height-ratio")!
-      );
-      const height = calculateChildHeight(
-        panelHeight!,
-        itemHeight,
-        expandedChildCount === 1 ? 0.95 : panelHeightRatio
-      );
-      child.style.setProperty("max-height", `${height}px`);
-    });
+    );
+
+    [...contentRef.current?.children]
+      .filter(
+        (element) =>
+          element.getAttribute("data-minimized") !== "true" &&
+          element.getAttribute("data-collapsible") !== "false"
+      )
+      .forEach((element) => {
+        (element as HTMLDivElement).style.setProperty(
+          "max-height",
+          `${totalHeight - totalHeightOfMinimizedChildren}px`
+        );
+      });
   }
+
+  useLayoutEffect(() => {
+    // Observe the contentRef for changes in children i.e. when a child is
+    // minimized or maximized, we need to update the max-height of the maximized
+    // children
+    const obs = new window.MutationObserver(() => configureChildrenHeights());
+    if (contentRef.current) {
+      obs.observe(contentRef.current, {
+        childList: true,
+        subtree: true
+      });
+    }
+    return () => obs.disconnect();
+  }, []);
+
+  useLayoutEffect(() => {
+    function updateSize() {
+      configureChildrenHeights();
+    }
+    window.addEventListener("resize", updateSize);
+
+    return () => {
+      window.removeEventListener("resize", updateSize);
+    };
+  }, []);
 
   useEffect(() => {
     configureChildrenHeights();
@@ -105,7 +105,7 @@ export default function SlidingSideBar({
   return (
     <div
       className={clsx(
-        `flex flex-col bg-white border-l border-gray-200 h-screen px-4`,
+        `flex flex-col bg-white border-l border-gray-200 h-screen overflow-y-auto px-4`,
         open ? "w-3" : "w-[35rem]",
         className,
         !hideToggle ? "transform origin-right duration-500" : ""
@@ -114,7 +114,7 @@ export default function SlidingSideBar({
       style={{ paddingBottom: "64px" }}
     >
       <div
-        className={`flex-1 h-full flex flex-col space-y-2 overflow-y-hidden pb-4 ${
+        className={`h-full flex flex-col space-y-2 pb-4 ${
           open ? "hidden" : ""
         }`}
         ref={contentRef}

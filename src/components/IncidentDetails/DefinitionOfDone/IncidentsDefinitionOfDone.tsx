@@ -18,6 +18,8 @@ import { dateSortHelper } from "../../../utils/date";
 
 type DefinitionOfDoneProps = React.HTMLProps<HTMLDivElement> & {
   incidentId: string;
+  isCollapsed?: boolean;
+  onCollapsedStateChange?: (isClosed: boolean) => void;
 };
 
 type AddDefinitionOfDoneProps = {
@@ -58,6 +60,8 @@ function AddDefinitionOfDone({ onClick, ...rest }: AddDefinitionOfDoneProps) {
 export function IncidentsDefinitionOfDone({
   incidentId,
   className,
+  isCollapsed,
+  onCollapsedStateChange,
   ...props
 }: DefinitionOfDoneProps) {
   const [openDeleteConfirmDialog, setOpenDeleteConfirmDialog] = useState(false);
@@ -114,6 +118,8 @@ export function IncidentsDefinitionOfDone({
 
   return (
     <CollapsiblePanel
+      isCollapsed={isCollapsed}
+      onCollapsedStateChange={onCollapsedStateChange}
       Header={
         <div className="flex flex-row w-full items-center space-x-2">
           <Title

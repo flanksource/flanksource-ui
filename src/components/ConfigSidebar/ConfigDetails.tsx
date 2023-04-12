@@ -11,9 +11,15 @@ import Title from "../Title/title";
 
 type Props = {
   configId: string;
+  isCollapsed?: boolean;
+  onCollapsedStateChange?: (isClosed: boolean) => void;
 };
 
-export function ConfigDetails({ configId }: Props) {
+export function ConfigDetails({
+  configId,
+  isCollapsed = true,
+  onCollapsedStateChange = () => {}
+}: Props) {
   const {
     data: configDetails,
     isLoading,
@@ -65,6 +71,8 @@ export function ConfigDetails({ configId }: Props) {
 
   return (
     <CollapsiblePanel
+      isCollapsed={isCollapsed}
+      onCollapsedStateChange={onCollapsedStateChange}
       Header={
         <div className="flex py-2 flex-row flex-1 items-center space-x-2">
           <Title title="Tags" icon={<FaTags className="w-6 h-auto" />} />

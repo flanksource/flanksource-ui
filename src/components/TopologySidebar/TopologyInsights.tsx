@@ -10,9 +10,15 @@ import { refreshButtonClickedTrigger } from "../SlidingSideBar";
 
 type Props = {
   topologyId: string;
+  isCollapsed?: boolean;
+  onCollapsedStateChange?: (isClosed: boolean) => void;
 };
 
-export default function TopologyInsights({ topologyId }: Props) {
+export default function TopologyInsights({
+  topologyId,
+  isCollapsed = false,
+  onCollapsedStateChange = () => {}
+}: Props) {
   const {
     data: topologyInsights = [],
     isLoading,
@@ -31,7 +37,8 @@ export default function TopologyInsights({ topologyId }: Props) {
 
   return (
     <CollapsiblePanel
-      isClosed={topologyInsights.length === 0}
+      isCollapsed={isCollapsed}
+      onCollapsedStateChange={onCollapsedStateChange}
       Header={
         <div className="flex flex-row w-full items-center space-x-2">
           <Title

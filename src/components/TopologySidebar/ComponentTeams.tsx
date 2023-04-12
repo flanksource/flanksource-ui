@@ -12,9 +12,15 @@ import PillBadge from "../Badge/PillBadge";
 
 type Props = {
   componentId: string;
+  isCollapsed?: boolean;
+  onCollapsedStateChange?: (isClosed: boolean) => void;
 };
 
-export function ComponentTeams({ componentId }: Props) {
+export function ComponentTeams({
+  componentId,
+  isCollapsed = false,
+  onCollapsedStateChange = () => {}
+}: Props) {
   const {
     data: componentTeams,
     isLoading,
@@ -33,6 +39,8 @@ export function ComponentTeams({ componentId }: Props) {
 
   return (
     <CollapsiblePanel
+      isCollapsed={isCollapsed}
+      onCollapsedStateChange={onCollapsedStateChange}
       Header={
         <div className="flex flex-row w-full items-center space-x-2">
           <Title

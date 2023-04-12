@@ -12,9 +12,16 @@ import { TopologyLink } from "../TopologyLink";
 type Props = {
   topology?: Topology;
   refererId?: string;
+  isCollapsed?: boolean;
+  onCollapsedStateChange?: (isClosed: boolean) => void;
 };
 
-export default function TopologyDetails({ topology, refererId }: Props) {
+export default function TopologyDetails({
+  topology,
+  refererId,
+  isCollapsed = true,
+  onCollapsedStateChange = () => {}
+}: Props) {
   if (topology == null) {
     return null;
   }
@@ -70,6 +77,8 @@ export default function TopologyDetails({ topology, refererId }: Props) {
       Header={
         <Title title="Details" icon={<BsCardList className="w-6 h-auto" />} />
       }
+      isCollapsed={isCollapsed}
+      onCollapsedStateChange={onCollapsedStateChange}
     >
       {Boolean(items.length) ? (
         <DescriptionCard items={items} />

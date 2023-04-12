@@ -32,6 +32,8 @@ export type ConfigTypeChanges = {
 
 type Props = {
   configID: string;
+  isCollapsed?: boolean;
+  onCollapsedStateChange?: (isClosed: boolean) => void;
 };
 
 export const columns: ColumnDef<ConfigTypeChanges, any>[] = [
@@ -116,7 +118,11 @@ export function ConfigChangesDetails({ configID }: Props) {
   );
 }
 
-export default function ConfigChanges(props: Props) {
+export default function ConfigChanges({
+  isCollapsed,
+  onCollapsedStateChange,
+  ...props
+}: Props) {
   const { data: response } = useGetConfigChangesByConfigIdQuery(
     props.configID,
     0,
@@ -126,6 +132,8 @@ export default function ConfigChanges(props: Props) {
 
   return (
     <CollapsiblePanel
+      isCollapsed={isCollapsed}
+      onCollapsedStateChange={onCollapsedStateChange}
       Header={
         <div className="flex flex-row w-full items-center space-x-2">
           <Title title="Changes" icon={<GoDiff className="w-6 h-auto" />} />

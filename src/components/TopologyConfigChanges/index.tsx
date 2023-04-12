@@ -15,6 +15,8 @@ import { refreshButtonClickedTrigger } from "../SlidingSideBar";
 
 type Props = {
   topologyID: string;
+  isCollapsed?: boolean;
+  onCollapsedStateChange?: (isClosed: boolean) => void;
 };
 
 export function TopologyConfigChanges({ topologyID }: Props) {
@@ -62,7 +64,11 @@ export function TopologyConfigChanges({ topologyID }: Props) {
 }
 
 // eslint-disable-next-line import/no-anonymous-default-export
-export default function (props: Props) {
+export default function ({
+  isCollapsed,
+  onCollapsedStateChange,
+  ...props
+}: Props) {
   const {
     data: componentConfigChanges = [],
     isRefetching,
@@ -81,6 +87,8 @@ export default function (props: Props) {
 
   return (
     <CollapsiblePanel
+      isCollapsed={isCollapsed}
+      onCollapsedStateChange={onCollapsedStateChange}
       Header={
         <div className="flex flex-row w-full items-center space-x-2">
           <Title title="Changes" icon={<GoDiff className="w-6 h-auto" />} />

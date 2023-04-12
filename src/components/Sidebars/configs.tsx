@@ -23,6 +23,8 @@ type Props = {
   topologyId?: string;
   configId?: string;
   hideDeletedConfigs?: boolean;
+  isCollapsed?: boolean;
+  onCollapsedStateChange?: (isClosed: boolean) => void;
 };
 
 export function ConfigsList({
@@ -120,7 +122,11 @@ export function ConfigsList({
 }
 
 // eslint-disable-next-line import/no-anonymous-default-export
-export default function Configs(props: Props) {
+export default function Configs({
+  isCollapsed,
+  onCollapsedStateChange,
+  ...props
+}: Props) {
   const [hideDeletedConfigs, setHideDeletedConfigs] = useState(true);
 
   const TrashIconType = hideDeletedConfigs ? TbTrashOff : TbTrash;
@@ -135,6 +141,8 @@ export default function Configs(props: Props) {
 
   return (
     <CollapsiblePanel
+      onCollapsedStateChange={onCollapsedStateChange}
+      isCollapsed={isCollapsed}
       Header={
         <div className="flex flex-row items-center">
           <Title title="Configs" icon={<VscJson className="w-6 h-auto" />} />

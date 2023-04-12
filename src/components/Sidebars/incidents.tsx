@@ -17,6 +17,8 @@ import { refreshButtonClickedTrigger } from "../SlidingSideBar";
 type Props = {
   topologyId?: string;
   configId?: string;
+  isCollapsed?: boolean;
+  onCollapsedStateChange?: (isClosed: boolean) => void;
 };
 
 const columns = [
@@ -30,7 +32,12 @@ const columns = [
   }
 ];
 
-export default function Incidents({ topologyId, configId }: Props) {
+export default function Incidents({
+  topologyId,
+  configId,
+  isCollapsed = true,
+  onCollapsedStateChange = () => {}
+}: Props) {
   const [filterIncidentOptions, setFilterIncidentOptions] =
     useState<IncidentFilter>({
       type: "all",
@@ -93,6 +100,8 @@ export default function Incidents({ topologyId, configId }: Props) {
 
   return (
     <CollapsiblePanel
+      isCollapsed={isCollapsed}
+      onCollapsedStateChange={onCollapsedStateChange}
       Header={
         <div className="flex flex-row items-center justify-center space-x-2">
           <Title

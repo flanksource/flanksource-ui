@@ -206,7 +206,10 @@ export default function TopologyActionBar({
 
   return (
     <>
-      <div className="flex flex-wrap justify-between py-4 px-1">
+      <div
+        data-collapsible="false"
+        className="flex flex-wrap justify-between py-4 px-1"
+      >
         {topologyActionItems.map(
           ({ icon: Icon, isShown, label, ContainerComponent }, index) => {
             if (isShown(topology, "TopologySidebar")) {
