@@ -19,6 +19,7 @@ import AutoCompleteDropdown from "../AutoCompleteDropdown/AutoCompleteDropdown";
 import YAML from "yaml";
 import ConfigScrapperSpecEditor from "../SpecEditor/ConfigScrapperSpecEditor";
 import { Head } from "../Head/Head";
+import HealthSpecEditor from "../SpecEditor/HealthSpecEditor";
 
 const CodeEditor = dynamic(
   () => import("../CodeEditor").then((m) => m.CodeEditor),
@@ -243,6 +244,15 @@ export function SchemaResourceEdit({
                     (table === "config_scrapers" ? (
                       <div className="flex-col">
                         <ConfigScrapperSpecEditor
+                          onSubmit={(val) => doSubmit(val)}
+                          canEdit={edit}
+                          spec={defaultValues}
+                          deleteHandler={onDelete}
+                        />
+                      </div>
+                    ) : table === "canaries" ? (
+                      <div className="flex-col">
+                        <HealthSpecEditor
                           onSubmit={(val) => doSubmit(val)}
                           canEdit={edit}
                           spec={defaultValues}

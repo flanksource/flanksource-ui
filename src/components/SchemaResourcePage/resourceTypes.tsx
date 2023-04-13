@@ -140,7 +140,7 @@ export const schemaResourceTypes = [
     ]
   },
   {
-    name: "Health",
+    name: "Health Check",
     table: "canaries",
     api: "canary-checker",
     icon: HealthIcon,

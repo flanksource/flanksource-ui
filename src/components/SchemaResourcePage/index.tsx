@@ -12,6 +12,7 @@ import { SchemaResourceType } from "./resourceTypes";
 import { SchemaResourceEdit } from "./SchemaResourceEdit";
 import { SchemaResourceList } from "./SchemaResourceList";
 import ConfigScrapperSpecEditor from "../SpecEditor/ConfigScrapperSpecEditor";
+import HealthSpecEditor from "../SpecEditor/HealthSpecEditor";
 
 export function SchemaResourcePage({
   resourceInfo
@@ -90,13 +91,15 @@ export function SchemaResourcePage({
           onClose={onClose}
           bodyClass=""
           size="full"
-          title={`Create New ${resourceInfo.name}`}
+          title={`Add ${resourceInfo.name}`}
         >
           {resourceInfo.table === "config_scrapers" ? (
             <ConfigScrapperSpecEditor
               onSubmit={(val) => onSubmit(val)}
               canEdit
             />
+          ) : resourceInfo.table === "canaries" ? (
+            <HealthSpecEditor onSubmit={(val) => onSubmit(val)} canEdit />
           ) : (
             <SchemaResourceEdit
               resourceName={resourceInfo.name}

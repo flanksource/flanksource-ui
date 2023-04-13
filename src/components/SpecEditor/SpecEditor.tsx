@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Icon } from "../Icon";
-import SpecEditorForm from "../Forms/Configs/SpecEditorForm";
+import SpecEditorForm from "../Forms/SpecEditorForm";
 import { SchemaResourceTypes } from "../SchemaResourcePage/resourceTypes";
 
 export type SpecType = {
   name: string;
   icon: string;
-  description: string;
   loadSpec: () => Record<string, any>;
   updateSpec: (spec: Record<string, any>) => void;
-  configForm: React.FC<{ fieldName: string }>;
+  configForm: React.FC<{ fieldName: string }> | null;
   /**
    *
    * the field name is the name of the field in the spec that this config editor
@@ -25,6 +24,7 @@ export type SpecType = {
    *
    */
   formFieldName: string;
+  rawSpecInput?: boolean;
 };
 
 type SpecEditorProps = {
@@ -64,32 +64,31 @@ export default function SpecEditor({
   return (
     <div className="flex flex-col w-full flex-1 h-full overflow-y-auto">
       {selectedSpecItem ? (
-        <div className="flex flex-col space-y-2 p-4">
+        <div className="flex flex-col space-y-2">
           <SpecEditorForm
             canEdit={canEdit}
             configForm={selectedSpecItem.configForm}
             updateSpec={selectedSpecItem.updateSpec}
             loadSpec={selectedSpecItem.loadSpec}
+            rawSpecInput={selectedSpecItem.rawSpecInput}
             specFormat={format}
             resourceName={resourceName}
-            onBack={() => setSelectedSpecItem(undefined)}
             specFormFieldName={selectedSpecItem.formFieldName}
             deleteHandler={deleteHandler}
           />
         </div>
       ) : (
-        <div className="flex flex-col space-y-4 p-2">
+        <div className="flex flex-wrap p-2">
           {types.map((type) => (
-            <div
-              onClick={() => setSelectedSpecItem(type)}
-              role={"button"}
-              className="flex flex-row px-4 py-2 border border-gray-700 hover:border-blue-200 hover:bg-gray-100 rounded-md space-x-4"
-              key={type.name}
-            >
-              <Icon name={type.icon} />
-              <div className="flex flex-col">
-                <div className="font-semibold">{type.name}</div>
-                <div className="text-gray-500">{type.description}</div>
+            <div className="flex flex-col w-1/5 p-2">
+              <div
+                onClick={() => setSelectedSpecItem(type)}
+                role={"button"}
+                className="flex flex-col items-center space-y-2 justify-center p-2 border border-gray-700 hover:border-blue-200 hover:bg-gray-100 rounded-md text-center h-20 font-semibold"
+                key={type.name}
+              >
+                <Icon name={type.icon} />
+                <span>{type.name}</span>
               </div>
             </div>
           ))}

@@ -1,30 +1,18 @@
-import { useField, useFormikContext } from "formik";
-import CheckboxCollapsibleGroup from "../../CheckboxCollapsibleGroup/CheckboxCollapsibleGroup";
+import { useFormikContext, useField } from "formik";
+import { isEmpty, get } from "lodash";
 import { useEffect } from "react";
-import { get, isEmpty } from "lodash";
+import CheckboxCollapsibleGroup from "../../CheckboxCollapsibleGroup/CheckboxCollapsibleGroup";
+import FormikTextInput from "./FormikTextInput";
 
-type FormikCheckboxFieldsGroupProps = {
+type FormikJSONCheckFieldsProps = {
   name: string;
   label: string;
-  children?: React.ReactNode;
-  className?: string;
-  labelClassName?: string;
 };
 
-/**
- *
- * FormikCheckboxFieldsGroup
- *
- * Renders a checkbox group that can be used to toggle the visibility of a set of fields.
- *
- */
-export default function FormikCheckboxFieldsGroup({
+export default function FormikJSONCheckFields({
   name,
-  label,
-  children,
-  labelClassName,
-  className = "flex flex-col p-4 space-y-2 border border-gray-200 rounded-md"
-}: FormikCheckboxFieldsGroupProps) {
+  label
+}: FormikJSONCheckFieldsProps) {
   const { setFieldValue, values } = useFormikContext<Record<string, any>>();
 
   const [field] = useField(name);
@@ -56,9 +44,11 @@ export default function FormikCheckboxFieldsGroup({
           setFieldValue(name, undefined);
         }
       }}
-      labelClassName={labelClassName}
     >
-      <div className={className}>{children}</div>
+      <div className="flex flex-col p-4 space-y-2 border border-gray-200 rounded-md">
+        <FormikTextInput name={`${name}.path`} label="Path" />
+        <FormikTextInput name={`${name}.value`} label="Value" />
+      </div>
     </CheckboxCollapsibleGroup>
   );
 }

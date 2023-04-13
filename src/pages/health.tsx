@@ -6,13 +6,13 @@ import RefreshDropdown, {
 } from "../components/RefreshDropdown";
 import { HealthRefreshDropdownRateContext } from "../components/RefreshDropdown/RefreshRateContext";
 import { Modal } from "../components";
-import { SchemaResourceEdit } from "../components/SchemaResourcePage/SchemaResourceEdit";
 import { SchemaResourceI, createResource } from "../api/schemaResources";
 import { AuthContext } from "../context";
 import { schemaResourceTypes } from "../components/SchemaResourcePage/resourceTypes";
 import { AiFillPlusCircle } from "react-icons/ai";
 import { BreadcrumbNav, BreadcrumbRoot } from "../components/BreadcrumbNav";
 import { Head } from "../components/Head/Head";
+import HealthSpecEditor from "../components/SpecEditor/HealthSpecEditor";
 
 type Props = {
   url: string;
@@ -24,7 +24,7 @@ export function HealthPage({ url }: Props) {
   const { user } = useContext(AuthContext);
 
   const resourceInfo = schemaResourceTypes.find(
-    (item) => item.name === "Health"
+    (item) => item.name === "Health Check"
   );
 
   /**
@@ -89,15 +89,9 @@ export function HealthPage({ url }: Props) {
           onClose={() => setModalIsOpen(false)}
           bodyClass=""
           size="full"
-          title={`Create New ${resourceInfo!.name}`}
+          title={`Add ${resourceInfo!.name}`}
         >
-          <SchemaResourceEdit
-            resourceName={resourceInfo!.name}
-            isModal
-            edit
-            onSubmit={onSubmit}
-            onCancel={() => setModalIsOpen(false)}
-          />
+          <HealthSpecEditor onSubmit={(val) => onSubmit(val)} canEdit />
         </Modal>
       </HealthRefreshDropdownRateContext.Provider>
     </>
