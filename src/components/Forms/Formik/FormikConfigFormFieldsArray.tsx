@@ -18,9 +18,11 @@ type ConfigFormFieldProps = {
   fields: {
     name: string;
     label?: string;
+    className?: string;
     fieldComponent: React.FC<{
       name: string;
       label?: string;
+      className?: string;
     }>;
   }[];
 };
@@ -52,7 +54,8 @@ export default function FormikConfigFormFieldsArray({
                       ({
                         name: fieldName,
                         label: fieldLabel,
-                        fieldComponent: Field
+                        fieldComponent: Field,
+                        className
                       }) => (
                         <Field
                           name={
@@ -61,6 +64,7 @@ export default function FormikConfigFormFieldsArray({
                               : `${name}.${index}`
                           }
                           label={fields.length > 1 ? fieldLabel : undefined}
+                          className={className}
                         />
                       )
                     )}

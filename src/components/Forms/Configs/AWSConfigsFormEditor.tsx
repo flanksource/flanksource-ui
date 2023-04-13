@@ -2,6 +2,7 @@ import FormikTextInput from "../Formik/FormikTextInput";
 import FormikCheckbox from "../Formik/FormikCheckbox";
 import FormikEnvVarConfigsFields from "../Formik/FormikConfigEnvVarFields";
 import FormikConfigFormFieldsArray from "../Formik/FormikConfigFormFieldsArray";
+import FormikCheckboxFieldsGroup from "../Formik/FormikCheckboxFieldsGroup";
 
 type AWSConfigsFormEditorProps = {
   fieldName: string;
@@ -22,14 +23,22 @@ export default function AWSConfigsFormEditor({
     <>
       <div className="flex flex-col space-y-2">
         <label className="font-semibold">awsConnection</label>
-        <FormikEnvVarConfigsFields
-          name={`${fieldName}.awsConnection.accessKey`}
+        <FormikCheckboxFieldsGroup
           label="Access Key"
-        />
-        <FormikEnvVarConfigsFields
-          name={`${fieldName}.awsConnection.secretKey`}
+          name={`${fieldName}.awsConnection.accessKey`}
+        >
+          <FormikEnvVarConfigsFields
+            name={`${fieldName}.awsConnection.accessKey`}
+          />
+        </FormikCheckboxFieldsGroup>
+        <FormikCheckboxFieldsGroup
           label="Secret Key"
-        />
+          name={`${fieldName}.awsConnection.secretKey`}
+        >
+          <FormikEnvVarConfigsFields
+            name={`${fieldName}.awsConnection.secretKey`}
+          />
+        </FormikCheckboxFieldsGroup>
         <FormikConfigFormFieldsArray
           name={`${fieldName}.awsConnection.region`}
           label="region"
