@@ -63,7 +63,7 @@ export default function IncidentCardSummary({
   return (
     <>
       {statusLines.map((statusLine, index) => {
-        return <StatusLine key={index} {...statusLine} />;
+        return <StatusLine key={index} {...statusLine} className="" />;
       })}
     </>
   );

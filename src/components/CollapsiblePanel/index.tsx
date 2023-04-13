@@ -29,6 +29,10 @@ export default function CollapsiblePanel({
     setIsOpen(dataCount > 0);
   }, [dataCount]);
 
+  useEffect(() => {
+    setIsOpen(!isClosed);
+  }, [isClosed]);
+
   return (
     <div
       className={clsx("flex flex-col", className)}
