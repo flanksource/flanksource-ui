@@ -1,5 +1,5 @@
 import FormikTextInput from "../Formik/FormikTextInput";
-import FormikCheckbox from "../Formik/FormikiCheckbox";
+import FormikCheckbox from "../Formik/FormikCheckbox";
 import FormikEnvVarConfigsFields from "../Formik/FormikConfigEnvVarFields";
 import FormikConfigFormFieldsArray from "../Formik/FormikConfigFormFieldsArray";
 

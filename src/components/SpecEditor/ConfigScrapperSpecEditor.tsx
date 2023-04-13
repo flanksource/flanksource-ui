@@ -16,7 +16,6 @@ export default function ConfigScrapperSpecEditor({
   canEdit = true,
   deleteHandler
 }: ConfigScrapperSpecEditorProps) {
-  console.log("spec", spec);
   const configTypes: SpecType[] = useMemo(
     () => [
       {
