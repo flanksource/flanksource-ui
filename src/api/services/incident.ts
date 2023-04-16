@@ -127,12 +127,15 @@ export const getIncidentsWithParams = async (
     : `hypotheses(*,created_by(${AVATAR_INFO}),evidences(id,evidence,type,component_id))`;
 
   const responder = `responders(created_by(${AVATAR_INFO}))`;
+  const { search = "" } = params!;
+  const searchStr = search ? `&title=ilike.*${search}*` : "";
+  const { search: _, ...filters } = params!;
 
   return resolve(
     IncidentCommander.get(
-      `/incidents?&select=*,${hypotheses},${comments},commander_id(${AVATAR_INFO}),communicator_id(${AVATAR_INFO}),${responder}&order=created_at.desc`,
+      `/incidents?${searchStr}&select=*,${hypotheses},${comments},commander_id(${AVATAR_INFO}),communicator_id(${AVATAR_INFO}),${responder}&order=created_at.desc`,
       {
-        params
+        params: filters
       }
     )
   );

@@ -76,7 +76,7 @@ function FilterIncidentsByComponents({ control, value }: Props) {
   }
 
   return (
-    <div className="flex flex-row items-center space-x-3">
+    <div className="flex flex-row items-center space-x-3 mr-2">
       <ReactSelectDropdown
         control={control}
         prefix="Component:"
@@ -85,7 +85,7 @@ function FilterIncidentsByComponents({ control, value }: Props) {
         value={value}
         // @ts-expect-error
         items={{ ...defaultSelections, ...data }}
-        dropDownClassNames="w-auto max-w-[400px] right-0"
+        dropDownClassNames="w-auto max-w-[400px]"
         hideControlBorder
       />
     </div>
