@@ -1,10 +1,8 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { format } from "timeago.js";
 import { CanaryStatus, Duration } from "../renderers";
 import { HealthCheck, HealthCheckStatus } from "../../../types/healthChecks";
-import { getCheckStatuses } from "../../../api/services/topology";
 import { toastError } from "../../Toast/toast";
-import { useLoader } from "../../../hooks";
 import { CellContext, ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "../../DataTable";
 import clsx from "clsx";
@@ -118,7 +116,7 @@ export function StatusHistory({
       return (
         <div
           className={clsx(
-            "h-64 flex items-center justify-center text-gray-400 text-md",
+            "h-64 flex items-center justify-center text-gray-400 text-md h-full",
             className
           )}
           {...props}
@@ -130,7 +128,7 @@ export function StatusHistory({
     return (
       <div
         className={clsx(
-          "h-64 flex items-center justify-center text-gray-400 text-md",
+          "h-64 flex items-center justify-center text-gray-400 text-md h-full",
           className
         )}
         {...props}
