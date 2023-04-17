@@ -3,8 +3,8 @@ import CollapsiblePanel from "../CollapsiblePanel";
 import Title from "../Title/title";
 import { useGetConfigInsights } from "../../api/query-hooks";
 import { ConfigItem } from "../../api/services/configs";
-import { Badge } from "../Badge";
 import InsightsDetails from "../Insights/Insights";
+import { CountBadge } from "../Badge/CountBadge";
 
 export type ConfigTypeInsights = {
   id: string;
@@ -42,13 +42,13 @@ export default function ConfigInsights({ configID }: Props) {
             title="Insights"
             icon={<MdOutlineInsights className="w-6 h-auto" />}
           />
-          <Badge
-            className="w-5 h-5 flex items-center justify-center"
+          <CountBadge
             roundedClass="rounded-full"
-            text={response.length ?? 0}
+            value={response.length ?? 0}
           />
         </div>
       }
+      dataCount={response.length}
     >
       <InsightsDetails isLoading={isLoading} insights={response ?? []} />
     </CollapsiblePanel>

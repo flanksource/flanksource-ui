@@ -84,11 +84,13 @@ type Props = {
   noneDODEvidences: Evidence[];
   onAddDefinitionOfDone: (evidence: Evidence[]) => void;
   onCancel: () => void;
+  incidentId: string;
 };
 
 export default function AddAutoDefinitionOfDoneStepper({
   noneDODEvidences,
-  onAddDefinitionOfDone
+  onAddDefinitionOfDone,
+  incidentId
 }: Props) {
   const [selectDODState, dispatch] = useReducer(
     addDefinitionOfDoneStepsReducer,
@@ -98,11 +100,14 @@ export default function AddAutoDefinitionOfDoneStepper({
     }
   );
 
-  const { isLoading, mutate: updateEvidence } = useUpdateEvidenceMutation({
-    onSuccess: (evidence) => {
-      onAddDefinitionOfDone(evidence);
-    }
-  });
+  const { isLoading, mutate: updateEvidence } = useUpdateEvidenceMutation(
+    {
+      onSuccess: (evidence) => {
+        onAddDefinitionOfDone(evidence);
+      }
+    },
+    incidentId
+  );
 
   const isAddButtonDisabled = useMemo(() => {
     if (selectDODState.currentStep === "selectEvidence") {

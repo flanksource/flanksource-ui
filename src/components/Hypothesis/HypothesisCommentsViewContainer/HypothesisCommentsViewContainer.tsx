@@ -189,10 +189,6 @@ export function HypothesisCommentsViewContainer({
       });
   };
 
-  if (!comments.length) {
-    return null;
-  }
-
   return (
     <div className="flex flex-col w-full">
       <div ref={commentRef} className="flex flex-col justify-end">

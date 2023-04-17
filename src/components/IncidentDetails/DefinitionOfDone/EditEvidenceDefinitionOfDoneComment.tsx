@@ -9,22 +9,27 @@ type Props = {
   onCloseModal: () => void;
   isOpen: boolean;
   onSuccess: () => void;
+  incidentId: string;
 };
 
 export default function EditEvidenceDefinitionOfDoneComment({
   evidence,
   onCloseModal,
   isOpen,
+  incidentId,
   onSuccess
 }: Props) {
-  console.log("evidence", evidence);
   const [comment, setComment] = useState<string>();
-
   useEffect(() => {
-    setComment(evidence.evidence?.comment);
+    setComment(evidence.evidence?.comment || "");
   }, [evidence.evidence?.comment]);
 
-  const { isLoading, mutate } = useUpdateEvidenceMutation();
+  const { isLoading, mutate } = useUpdateEvidenceMutation(
+    {
+      onSuccess
+    },
+    incidentId
+  );
 
   return (
     <Modal
@@ -37,6 +42,7 @@ export default function EditEvidenceDefinitionOfDoneComment({
         <button
           className="px-4 py-2 btn-primary"
           type="button"
+          key="update"
           onClick={async () => {
             mutate([
               {
@@ -48,7 +54,6 @@ export default function EditEvidenceDefinitionOfDoneComment({
                 }
               }
             ]);
-            onSuccess();
           }}
         >
           {isLoading ? "Updating ..." : "Update"}

@@ -4,6 +4,7 @@ import {
   Evidence,
   updateEvidence
 } from "../../services/evidence";
+import { useIncidentState } from "../../../store/incident.state";
 
 /**
  *
@@ -12,9 +13,13 @@ import {
  * Update evidence mutation hook used to update evidence in the database
  *
  */
-export function useUpdateEvidenceMutation(param?: {
-  onSuccess?: (evidence: Evidence[]) => void;
-}) {
+export function useUpdateEvidenceMutation(
+  param: {
+    onSuccess?: (evidence: Evidence[]) => void;
+  },
+  incidentId: string
+) {
+  const { refetchIncident } = useIncidentState(incidentId);
   return useMutation(
     // force id to be defined
     async (evidence: (Partial<Evidence> & { id: string })[]) => {
@@ -32,17 +37,20 @@ export function useUpdateEvidenceMutation(param?: {
         const definedEvidence = evidence.filter(
           (evidence) => evidence
         ) as Evidence[];
-        if (param?.onSuccess) {
-          param.onSuccess(definedEvidence);
-        }
+        param.onSuccess?.(definedEvidence);
+        refetchIncident();
       }
     }
   );
 }
 
-export function useCreateEvidenceMutation(param?: {
-  onSuccess?: (evidence?: Evidence) => void;
-}) {
+export function useCreateEvidenceMutation(
+  param: {
+    onSuccess?: (evidence?: Evidence) => void;
+  },
+  incidentId: string
+) {
+  const { refetchIncident } = useIncidentState(incidentId);
   return useMutation(
     async (
       evidence: Omit<Evidence, "created_by" | "created_at" | "hypothesis_id">
@@ -52,9 +60,8 @@ export function useCreateEvidenceMutation(param?: {
     },
     {
       onSuccess: (evidence) => {
-        if (param?.onSuccess) {
-          param.onSuccess(evidence);
-        }
+        param.onSuccess?.(evidence);
+        refetchIncident();
       }
     }
   );

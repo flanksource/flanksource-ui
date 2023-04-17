@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { FaTags } from "react-icons/fa";
 import { useGetConfigByIdQuery } from "../../api/query-hooks";
 import { relativeDateTime } from "../../utils/date";
-import { Badge } from "../Badge";
+import { CountBadge } from "../Badge/CountBadge";
 import CollapsiblePanel from "../CollapsiblePanel";
 import { DescriptionCard } from "../DescriptionCard";
 import { InfoMessage } from "../InfoMessage";
@@ -68,13 +68,13 @@ export function ConfigDetails({ configId }: Props) {
       Header={
         <div className="flex py-2 flex-row flex-1 items-center space-x-2">
           <Title title="Tags" icon={<FaTags className="w-6 h-auto" />} />
-          <Badge
-            className="w-5 h-5 flex items-center justify-center"
+          <CountBadge
             roundedClass="rounded-full"
-            text={displayDetails?.length ?? 0}
+            value={displayDetails?.length ?? 0}
           />
         </div>
       }
+      dataCount={displayDetails?.length}
     >
       <div className="flex flex-col space-y-2 py-2 max-w-full">
         {isLoading ? (

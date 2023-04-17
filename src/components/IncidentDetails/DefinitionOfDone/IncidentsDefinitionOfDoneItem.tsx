@@ -23,14 +23,14 @@ type Props = {
   evidence: Evidence;
   setOpenDeleteConfirmDialog: Dispatch<SetStateAction<boolean>>;
   setEvidenceBeingRemoved: Dispatch<SetStateAction<Evidence | undefined>>;
-  refetch: () => void;
+  incidentId: string;
 };
 
 export default function IncidentsDefinitionOfDoneItem({
   evidence,
   setEvidenceBeingRemoved,
   setOpenDeleteConfirmDialog,
-  refetch
+  incidentId
 }: Props) {
   const [isEditingDoDScriptModalOpen, setIsEditingDoDScriptModalOpen] =
     useState(false);
@@ -40,9 +40,7 @@ export default function IncidentsDefinitionOfDoneItem({
 
   const [isTogglingAsResolved, setIsTogglingAsResolved] = useState(false);
 
-  const { isLoading, mutate } = useUpdateEvidenceMutation({
-    onSuccess: () => refetch()
-  });
+  const { isLoading, mutate } = useUpdateEvidenceMutation({}, incidentId);
 
   const [dropDownMenuStyles, setDropDownMenuStyles] = useState<CSSProperties>();
 
@@ -67,18 +65,17 @@ export default function IncidentsDefinitionOfDoneItem({
   return (
     <>
       <div className="relative flex items-center">
-        {isLoading ? (
-          <MdRefresh className="animate-spin" />
-        ) : evidence.done ? (
-          <AiFillCheckCircle className="mr-1 fill-green-500" />
-        ) : (
-          <BsHourglassSplit className="mr-1" />
-        )}
-
         <div className="min-w-0 flex-1 text-sm">
           <EvidenceView evidence={evidence} size={Size.small} />
         </div>
         <div className="flex items-center">
+          {isLoading ? (
+            <MdRefresh className="animate-spin" />
+          ) : evidence.done ? (
+            <AiFillCheckCircle className="mr-1 fill-green-500" />
+          ) : (
+            <BsHourglassSplit className="mr-1" />
+          )}
           <Menu>
             <div className="" ref={dropdownMenuStylesCalc}>
               <Menu.VerticalIconButton />
@@ -159,9 +156,9 @@ export default function IncidentsDefinitionOfDoneItem({
           onCloseModal={() => setIsEditingDoDScriptModalOpen(false)}
           onSuccess={() => {
             setIsEditingDoDScriptModalOpen(false);
-            refetch();
           }}
           key={`script_${evidence.id}`}
+          incidentId={incidentId}
         />
       ) : (
         <EditEvidenceDefinitionOfDoneComment
@@ -170,9 +167,9 @@ export default function IncidentsDefinitionOfDoneItem({
           onCloseModal={() => setIsEditingDoDCommentModalOpen(false)}
           onSuccess={() => {
             setIsEditingDoDCommentModalOpen(false);
-            refetch();
           }}
           key={`comment_${evidence.id}`}
+          incidentId={incidentId}
         />
       )}
 

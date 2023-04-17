@@ -22,16 +22,22 @@ export function ManualDoDInput({ value, onChange }: ManualDoDInputProps) {
 
 type Props = {
   hypothesisId: string;
+  incidentId: string;
   onSuccess: (evidence: Evidence[]) => void;
 };
 
 export default function AddManualDefinitionOfDone({
   hypothesisId,
+  incidentId,
   onSuccess
 }: Props) {
   const [value, onChange] = useState<string>();
 
-  const { mutate, isLoading } = useAddCommentAsDoD(hypothesisId, onSuccess);
+  const { mutate, isLoading } = useAddCommentAsDoD(
+    hypothesisId,
+    incidentId,
+    onSuccess
+  );
 
   return (
     <div className="w-full flex flex-col space-y-4 py-4 px-6 overflow-x-hidden">
