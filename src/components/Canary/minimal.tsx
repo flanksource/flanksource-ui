@@ -110,7 +110,10 @@ const MinimalCanaryFC = ({
       )}
       <AttachEvidenceDialog
         isOpen={attachAsAsset}
-        onClose={() => setAttachAsAsset(false)}
+        onClose={() => {
+          setAttachAsAsset(false);
+          clearCheck();
+        }}
         check_id={selectedCheck?.id}
         evidence={{
           check_id: selectedCheck?.id,
