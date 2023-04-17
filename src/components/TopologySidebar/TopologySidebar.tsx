@@ -31,12 +31,12 @@ export default function TopologySidebar({
     <SlidingSideBar hideToggle>
       <TopologyActionBar topology={topology} onRefresh={onRefresh} />
       <TopologyDetails topology={topology} refererId={refererId} />
-      <Configs topologyId={id} />
-      <Incidents topologyId={id} />
       <TopologyCost topology={topology} />
-      <TopologyConfigChanges topologyID={id} />
       <ComponentTeams componentId={id} />
       <TopologyInsights topologyId={id} />
+      <Incidents topologyId={id} />
+      <Configs topologyId={id} />
+      <TopologyConfigChanges topologyID={id} />
     </SlidingSideBar>
   );
 }

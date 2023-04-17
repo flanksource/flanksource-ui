@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IoChevronDownOutline, IoChevronUpOutline } from "react-icons/io5";
 import { ClickableSvg } from "../ClickableSvg/ClickableSvg";
 
@@ -8,6 +8,7 @@ type Props = React.HTMLProps<HTMLDivElement> & {
   children: React.ReactNode;
   isClosed?: boolean;
   childrenClassName?: string;
+  dataCount?: number;
 };
 
 export default function CollapsiblePanel({
@@ -16,9 +17,21 @@ export default function CollapsiblePanel({
   isClosed = false,
   className,
   childrenClassName = "transform origin-bottom duration-500",
+  dataCount,
   ...props
 }: Props) {
   const [isOpen, setIsOpen] = useState(!isClosed);
+
+  useEffect(() => {
+    if (dataCount === undefined) {
+      return;
+    }
+    setIsOpen(dataCount > 0);
+  }, [dataCount]);
+
+  useEffect(() => {
+    setIsOpen(!isClosed);
+  }, [isClosed]);
 
   return (
     <div
