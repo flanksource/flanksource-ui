@@ -218,7 +218,6 @@ export default function TopologyActionBar({
                   child={ActionLink}
                   icon={<Icon />}
                   text={label}
-                  key={index}
                   openModalAction={
                     label === "Snapshot"
                       ? () => setIsDownloadComponentSnapshotModalOpen(true)
