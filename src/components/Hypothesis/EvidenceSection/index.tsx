@@ -24,6 +24,7 @@ import {
 } from "../../../api/query-hooks";
 import { ConfigTypeInsights } from "../../ConfigInsights";
 import { ConfigAnalysisLink } from "../../ConfigAnalysisLink/ConfigAnalysisLink";
+import { CommentEvidence } from "../../IncidentDetails/DefinitionOfDone/EvidenceView";
 
 const ColumnSizes = {
   Time: {
@@ -74,6 +75,8 @@ export function EvidenceItem({
           <HealthEvidenceViewer evidence={evidence} />
         </div>
       );
+    case EvidenceType.Comment:
+      return <CommentEvidence evidence={evidence} />;
     case EvidenceType.ConfigChange:
       return (
         <div className="pt-2">
@@ -416,10 +419,11 @@ export function HealthEvidenceViewer({
         onClose={() => setShowModal(false)}
         title={<CheckTitle check={check} />}
         size="medium"
+        bodyClass="px-8 h-full"
       >
         <div
           className="flex flex-col h-full py-4 mb-16"
-          style={{ maxHeight: "calc(100vh - 8rem)" }}
+          style={{ height: "calc(100vh - 12rem)" }}
         >
           <CheckDetails
             check={check}

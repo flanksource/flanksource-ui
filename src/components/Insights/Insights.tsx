@@ -9,7 +9,7 @@ import { relativeDateTime } from "../../utils/date";
 import { ConfigAnalysisLink } from "../ConfigAnalysisLink/ConfigAnalysisLink";
 import { ConfigTypeInsights } from "../ConfigInsights";
 import EmptyState from "../EmptyState";
-import { Loading } from "../Loading";
+import TableSkeletonLoader from "../SkeletonLoader/TableSkeletonLoader";
 
 type Props = {
   insights: ConfigTypeInsights[];
@@ -37,36 +37,39 @@ export default function InsightsDetails({ insights, isLoading }: Props) {
   });
 
   return (
-    <div className="flex flex-row justify-center space-y-2">
+    <div className="flex flex-row space-y-2 overflow-x-hidden">
       {isLoading ? (
-        <Loading />
+        <TableSkeletonLoader />
       ) : insightsWithSanitizedMessages.length > 0 ? (
-        <table className="w-full text-sm text-left">
-          <thead className="text-sm uppercase text-gray-600">
-            <tr>
-              <th scope="col" className="p-2">
+        <table className="flex flex-col w-full text-sm text-left">
+          <thead className="text-sm uppercase text-gray-600 w-full bg-white">
+            <tr className="flex flex-row">
+              <th scope="col" className="py-2 flex-1">
                 Name
               </th>
-              <th scope="col" className="p-2">
+              <th scope="col" className="py-2 w-24">
                 Age
               </th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="w-full">
             {insightsWithSanitizedMessages.map((insight) => (
-              <tr key={insight.id}>
+              <tr
+                className="flex flex-row items-center space-x-2"
+                key={insight.id}
+              >
                 <td
                   data-html={true}
                   data-tip={insight.sanitizedMessageTxt}
                   data-class="max-w-[20rem]"
-                  className="p-2 font-medium text-black whitespace-nowrap cursor-pointer"
+                  className="py-2 font-medium text-black overflow-hidden text-ellipsis cursor-pointer flex-1"
                 >
                   <ConfigAnalysisLink
                     key={insight.id}
                     configAnalysis={insight}
                   />
                 </td>
-                <td className="p-2 ">
+                <td className="py-2 w-24 truncate">
                   {relativeDateTime(insight.first_observed)}
                 </td>
               </tr>

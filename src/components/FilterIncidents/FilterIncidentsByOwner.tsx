@@ -14,13 +14,13 @@ export default function FilterIncidentsByOwner({
   ownerSelections
 }: Props) {
   return (
-    <div className="flex items-center space-x-3">
+    <div className="flex items-center space-x-3 mr-2">
       <ReactSelectDropdown
         control={control}
         name="owner"
         prefix="Owner:"
-        className="w-auto max-w-[400px] mr-2 flex-shrink-0"
-        dropDownClassNames="w-auto max-w-[400px] right-0"
+        className="w-auto max-w-[400px] flex-shrink-0"
+        dropDownClassNames="w-auto max-w-[400px]"
         value={value}
         // @ts-expect-error
         items={{ ...defaultSelections, ...ownerSelections }}

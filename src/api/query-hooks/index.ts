@@ -43,7 +43,7 @@ export const useVersionInfo = () => {
 
 export const useIncidentQuery = (id: string) => {
   return useQuery(createIncidentQueryKey(id), () => getIncident(id), {
-    staleTime: defaultStaleTime
+    enabled: !!id
   });
 };
 

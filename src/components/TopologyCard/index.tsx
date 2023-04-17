@@ -13,6 +13,7 @@ import { Property } from "./Property";
 import { TopologyDropdownMenu } from "./TopologyDropdownMenu";
 import IncidentCardSummary from "../IncidentCardSummary";
 import TopologyCardSkeletonLoader from "../SkeletonLoader/TopologyCardSkeletonLoader";
+import { TopologyConfigAnalysisLine } from "./TopologyConfigAnalysisLine";
 
 export enum ComponentStatus {
   unhealthy = "unhealthy",
@@ -209,18 +210,27 @@ export function TopologyCard({
               </CustomScroll>
             )}
             <CustomScroll
-              className="flex-1 py-4 pl-2 pr-2"
+              className="flex-1 py-4 pl-2 pr-2 space-y-1.5"
               showMoreClass="text-xs linear-1.21rel mr-1 cursor-pointer"
               maxHeight="200px"
               minChildCount={5}
             >
+              <TopologyConfigAnalysisLine topologyId={topology?.id} />
               {canShowChildHealth() && (
-                <HealthSummary key={topology.id} component={topology} />
+                <HealthSummary
+                  className=""
+                  key={topology.id}
+                  component={topology}
+                />
               )}
-              <HealthChecksSummary checks={topology?.checks} />
+              <HealthChecksSummary checks={topology?.checks} className="" />
               {topology?.id && <IncidentCardSummary topology={topology} />}
               {topology?.components?.map((component: any) => (
-                <HealthSummary key={component.id} component={component} />
+                <HealthSummary
+                  className=""
+                  key={component.id}
+                  component={component}
+                />
               ))}
             </CustomScroll>
           </>
