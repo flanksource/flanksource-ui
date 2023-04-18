@@ -1,1 +1,8 @@
-<svg id="Artwork" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><polygon points="238.67 242.07 335.94 74.9 144.03 74.9 48 242.07 238.67 242.07" style="fill:#aecbfa"/><polygon points="48 269.93 143.68 437.1 335.59 437.1 239.91 269.93 48 269.93" style="fill:#4285f4"/><path d="M464,256,368,88.21,271.88,256,368,423.8Z" style="fill:#669df6"/></svg>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32" height="32" viewBox="0 0 32 32" version="1.1">
+<g id="surface1">
+<path style=" stroke:none;fill-rule:nonzero;fill:rgb(68.235296%,79.607844%,98.039216%);fill-opacity:1;" d="M 14.917969 15.128906 L 20.996094 4.679688 L 9 4.679688 L 3 15.128906 Z M 14.917969 15.128906 "/>
+<path style=" stroke:none;fill-rule:nonzero;fill:rgb(25.882354%,52.156866%,95.686275%);fill-opacity:1;" d="M 3 16.871094 L 8.980469 27.320312 L 20.972656 27.320312 L 14.996094 16.871094 Z M 3 16.871094 "/>
+<path style=" stroke:none;fill-rule:nonzero;fill:rgb(40.000001%,61.56863%,96.470588%);fill-opacity:1;" d="M 29 16 L 23 5.511719 L 16.992188 16 L 23 26.488281 Z M 29 16 "/>
+</g>
+</svg>

@@ -13,7 +13,7 @@ type AddDefinitionOfDoneStepperProps = {
   noneDODEvidence: Evidence[];
   onAddDefinitionOfDone: (evidence: Evidence[]) => void;
   onCancel: () => void;
-  rootHypothesis: Pick<Hypothesis, "id">;
+  rootHypothesis: Hypothesis;
 };
 
 export function AddDefinitionOfDoneHome({
@@ -24,7 +24,6 @@ export function AddDefinitionOfDoneHome({
 }: AddDefinitionOfDoneStepperProps) {
   const [selectedDoDOption, setSelectedDoDOption] =
     useState<DefinitionOfDoneOptions>();
-
   return (
     <div className="flex flex-col">
       {selectedDoDOption === "Auto" ? (
@@ -32,11 +31,13 @@ export function AddDefinitionOfDoneHome({
           noneDODEvidences={noneDODEvidence}
           onAddDefinitionOfDone={onAddDefinitionOfDone}
           onCancel={onCancel}
+          incidentId={rootHypothesis.incident_id}
         />
       ) : selectedDoDOption === "Manual" ? (
         <AddManualDefinitionOfDone
           hypothesisId={rootHypothesis.id}
           onSuccess={onCancel}
+          incidentId={rootHypothesis.incident_id}
         />
       ) : (
         <div className="flex flex-col space-y-2 p-4">
@@ -68,7 +69,7 @@ type AddDefinitionOfDoneModalProps = {
   noneDODEvidence: Evidence[];
   onCloseModal: () => void;
   onAddDefinitionOfDone: () => void;
-  rootHypothesis: Pick<Hypothesis, "id">;
+  rootHypothesis: Hypothesis;
 };
 
 export default function AddDefinitionOfDoneModal({

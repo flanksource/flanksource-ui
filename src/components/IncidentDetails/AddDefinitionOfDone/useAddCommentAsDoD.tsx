@@ -6,15 +6,19 @@ import { useUser } from "../../../context";
 
 export default function useAddCommentAsDoD(
   hypothesisId: string,
+  incidentId: string,
   onSuccess: (evidence: Evidence[]) => void
 ) {
   const { user } = useUser();
 
-  const { isLoading, mutate } = useCreateEvidenceMutation({
-    onSuccess: (evidence) => {
-      onSuccess([evidence!]);
-    }
-  });
+  const { isLoading, mutate } = useCreateEvidenceMutation(
+    {
+      onSuccess: (evidence) => {
+        onSuccess([evidence!]);
+      }
+    },
+    incidentId
+  );
 
   const addCommentAsDoD = useCallback(
     async (comment: string) => {

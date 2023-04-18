@@ -6,6 +6,7 @@ import { Head } from "../../components/Head/Head";
 import { InfoMessage } from "../../components/InfoMessage";
 import { SearchLayout } from "../../components/Layout";
 import TabbedLinks from "../../components/Tabs/TabbedLinks";
+import { BreadcrumbNav, BreadcrumbRoot } from "../../components/BreadcrumbNav";
 
 export function ConfigChangesPage() {
   const [{ pageIndex, pageSize }, setPageState] = useState({
@@ -40,9 +41,13 @@ export function ConfigChangesPage() {
       <Head prefix="Config Changes" />
       <SearchLayout
         title={
-          <div className="flex space-x-2">
-            <span className="text-lg">Config Changes</span>
-          </div>
+          <BreadcrumbNav
+            list={[
+              <BreadcrumbRoot link="/configs/changes">
+                Config Changes
+              </BreadcrumbRoot>
+            ]}
+          />
         }
         onRefresh={refetch}
         loading={isLoading}

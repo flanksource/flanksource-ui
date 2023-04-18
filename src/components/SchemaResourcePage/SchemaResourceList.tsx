@@ -1,11 +1,13 @@
 import clsx from "clsx";
+import { FaDotCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { SchemaResourceI } from "../../api/schemaResources";
+import { SchemaResourceWithJobStatus } from "../../api/schemaResources";
 import { relativeDateTime } from "../../utils/date";
 import { Avatar } from "../Avatar";
+import { JobHistoryStatus } from "../JobsHistory/JobsHistoryTable";
 
 interface Props {
-  items: SchemaResourceI[];
+  items: SchemaResourceWithJobStatus[];
   baseUrl: string;
   table: string;
 }
@@ -28,13 +30,15 @@ export function SchemaResourceList({ items, baseUrl, table }: Props) {
               {table === "canaries" && <HCell>Schedule</HCell>}
               <HCell>Created At</HCell>
               <HCell>Updated At</HCell>
+              <HCell>Job Status</HCell>
+              <HCell>Last Run</HCell>
               <HCell>Created By</HCell>
             </tr>
           </thead>
           <tbody>
             {items.map((item) => (
               <SchemaResourceListItem
-                table="canaries"
+                table={table}
                 key={item.id}
                 {...item}
                 baseUrl={baseUrl}
@@ -81,13 +85,21 @@ function SchemaResourceListItem({
   baseUrl,
   created_by,
   table,
-  schedule
-}: SchemaResourceI & {
+  schedule,
+  job_status,
+  job_time_start
+}: SchemaResourceWithJobStatus & {
   baseUrl: string;
   table: string;
 }) {
   const navigate = useNavigate();
   const navigateToDetails = (id: string) => navigate(`${baseUrl}/${id}`);
+
+  const classNameMaps = new Map<JobHistoryStatus, string>([
+    ["FINISHED", "text-green-500"],
+    ["RUNNING", "text-yellow-500"]
+  ]);
+  const className = job_status ? classNameMaps.get(job_status) ?? "" : "";
 
   return (
     <tr
@@ -107,9 +119,20 @@ function SchemaResourceListItem({
       <Cell className="text-gray-500">
         {updated_at && relativeDateTime(updated_at)}
       </Cell>
-      {created_by && (
-        <Cell className="text-gray-500">{<Avatar user={created_by} />}</Cell>
-      )}
+      <Cell className="text-gray-500 lowercase space-x-2">
+        {job_status && (
+          <>
+            <FaDotCircle className={`inline ${className}`} />
+            <span>{job_status}</span>
+          </>
+        )}
+      </Cell>
+      <Cell className="text-gray-500">
+        {job_time_start ? relativeDateTime(job_time_start) : ""}
+      </Cell>
+      <Cell className="text-gray-500">
+        {created_by && <Avatar user={created_by} circular />}
+      </Cell>
     </tr>
   );
 }

@@ -9,6 +9,7 @@ import ConfigsListFilters from "../../components/ConfigsListFilters";
 import { Head } from "../../components/Head/Head";
 import TabbedLinks from "../../components/Tabs/TabbedLinks";
 import { configTabsLists } from "../../components/ConfigsPage/ConfigTabsLinks";
+import { BreadcrumbNav, BreadcrumbRoot } from "../../components/BreadcrumbNav";
 
 export function ConfigListPage() {
   const [params] = useSearchParams();
@@ -86,9 +87,9 @@ export function ConfigListPage() {
       <Head prefix="Configs" />
       <SearchLayout
         title={
-          <div className="flex space-x-2">
-            <span className="text-lg">Configs</span>
-          </div>
+          <BreadcrumbNav
+            list={[<BreadcrumbRoot link="/configs">Configs</BreadcrumbRoot>]}
+          />
         }
         onRefresh={() => refetch()}
         loading={isLoading}

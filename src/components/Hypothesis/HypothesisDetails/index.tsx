@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import clsx from "clsx";
 
 import { Modal } from "../../Modal";
-import { Comment, createComment } from "../../../api/services/comments";
+import { Comment } from "../../../api/services/comments";
 import {
   deleteEvidence,
   Evidence,
@@ -15,10 +15,7 @@ import { CommentsSection } from "../Comments";
 import { ResponseLine } from "../ResponseLine";
 import { Hypothesis } from "../../../api/services/hypothesis";
 import { TreeNode } from "../../../pages/incident/IncidentDetails";
-import {
-  useGetHypothesisQuery,
-  useIncidentQuery
-} from "../../../api/query-hooks";
+import { useIncidentState } from "../../../store/incident.state";
 
 interface IProps {
   node: TreeNode<Hypothesis>;
@@ -28,26 +25,14 @@ interface IProps {
 type Response = Evidence & Comment;
 
 export function HypothesisDetails({ node, api, ...rest }: IProps) {
-  const incidentQuery = useIncidentQuery(node.incident_id);
-  const { data: hypothesis, refetch: refetchHypothesis } =
-    useGetHypothesisQuery(node.id, {});
+  const { refetchIncident } = useIncidentState(node.incident_id);
   const [evidenceBuilderOpen, setEvidenceBuilderOpen] = useState(false);
   const { user } = useUser();
   const [responses, setResponses] = useState<Response[]>([]);
 
   useEffect(() => {
-    if (!hypothesis?.data) {
-      return;
-    }
-    arrangeData(hypothesis.data);
-  }, [hypothesis]);
-
-  useEffect(() => {
-    if (!node) {
-      return;
-    }
-    refetchHypothesis();
-  }, [node, refetchHypothesis]);
+    arrangeData(node);
+  }, [node]);
 
   const arrangeData = (data: any) => {
     let responses = (data?.comments || [])
@@ -73,18 +58,22 @@ export function HypothesisDetails({ node, api, ...rest }: IProps) {
     setResponses(responses);
   };
 
-  const handleComment = (value: string) =>
-    createComment({
-      user,
-      incidentId: node.incident_id,
-      hypothesisId: node.id,
-      comment: value
-    })
-      .catch(toastError)
+  const handleComment = (value: string) => {
+    return api.createComment
+      .mutateAsync({
+        user: user!,
+        incidentId: node.incident_id,
+        hypothesisId: node.id,
+        comment: value
+      })
+      .catch((err) => {
+        toastError(err);
+        return Promise.resolve();
+      })
       .then(() => {
-        incidentQuery.refetch();
-        refetchHypothesis();
+        refetchIncident();
       });
+  };
 
   const deleteEvidenceCb = async (id: string) => {
     const { error } = await deleteEvidence(id);
@@ -110,14 +99,8 @@ export function HypothesisDetails({ node, api, ...rest }: IProps) {
       toastError(message);
       return;
     }
-    incidentQuery.refetch();
-    refetchHypothesis();
+    refetchIncident();
   };
-
-  useEffect(() => {
-    arrangeData(node);
-    refetchHypothesis();
-  }, []);
 
   return (
     <>
@@ -143,7 +126,12 @@ export function HypothesisDetails({ node, api, ...rest }: IProps) {
               />
             ))}
         </ul>
-        <CommentsSection onComment={(value) => handleComment(value)} />
+        <CommentsSection
+          onComment={(value) => {
+            handleComment(value);
+            return Promise.resolve();
+          }}
+        />
       </div>
       <Modal
         open={evidenceBuilderOpen}

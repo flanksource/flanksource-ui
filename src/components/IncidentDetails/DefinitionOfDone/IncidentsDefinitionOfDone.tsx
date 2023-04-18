@@ -2,7 +2,6 @@ import clsx from "clsx";
 import { useEffect, useMemo, useState } from "react";
 import { Evidence, updateEvidence } from "../../../api/services/evidence";
 import { ConfirmationPromptDialog } from "../../Dialogs/ConfirmationPromptDialog";
-import { useIncidentQuery } from "../../../api/query-hooks";
 import EvidenceSelectionModal from "./EvidenceSelectionModal";
 import IncidentsDefinitionOfDoneItem from "./IncidentsDefinitionOfDoneItem";
 import AddDefinitionOfDoneModal from "../AddDefinitionOfDone/AddDefinitionOfDoneHome";
@@ -12,9 +11,12 @@ import { MdRefresh } from "react-icons/md";
 import { RiFullscreenLine } from "react-icons/ri";
 import { BsCardChecklist } from "react-icons/bs";
 import { ClickableSvg } from "../../ClickableSvg/ClickableSvg";
-import { Badge } from "../../Badge";
+import { useIncidentState } from "../../../store/incident.state";
+import EmptyState from "../../EmptyState";
+import { CountBadge } from "../../Badge/CountBadge";
+import { dateSortHelper } from "../../../utils/date";
 
-type DefinitionOfDoneProps = {
+type DefinitionOfDoneProps = React.HTMLProps<HTMLDivElement> & {
   incidentId: string;
 };
 
@@ -54,7 +56,9 @@ function AddDefinitionOfDone({ onClick, ...rest }: AddDefinitionOfDoneProps) {
 }
 
 export function IncidentsDefinitionOfDone({
-  incidentId
+  incidentId,
+  className,
+  ...props
 }: DefinitionOfDoneProps) {
   const [openDeleteConfirmDialog, setOpenDeleteConfirmDialog] = useState(false);
   const [evidenceBeingRemoved, setEvidenceBeingRemoved] = useState<Evidence>();
@@ -62,8 +66,8 @@ export function IncidentsDefinitionOfDone({
   const [dodModalOpen, setDODModalOpen] = useState(false);
   const [addToDODModalOpen, setAddToDODModalOpen] = useState(false);
   const [nonDODEvidences, setNonDODEvidences] = useState<Evidence[]>([]);
-  const incidentQuery = useIncidentQuery(incidentId);
-  const { refetch, isLoading, isRefetching, data: incident } = incidentQuery;
+  const { refetchIncident, isLoading, isRefetching, incident } =
+    useIncidentState(incidentId);
 
   useEffect(() => {
     if (!incident) {
@@ -77,7 +81,13 @@ export function IncidentsDefinitionOfDone({
       });
     });
     setNonDODEvidences(data.filter((evidence) => !evidence.definition_of_done));
-    setDODEvidences(data.filter((evidence) => evidence.definition_of_done));
+    setDODEvidences(
+      data
+        .filter((evidence) => evidence.definition_of_done)
+        .sort((a, b) => {
+          return dateSortHelper("asc", a.created_at, b.created_at);
+        })
+    );
   }, [incident]);
 
   const rootHypothesis = useMemo(() => {
@@ -98,7 +108,7 @@ export function IncidentsDefinitionOfDone({
     return updateEvidence(evidence.id, {
       definition_of_done: false
     }).then(() => {
-      refetch();
+      refetchIncident();
     });
   };
 
@@ -110,10 +120,9 @@ export function IncidentsDefinitionOfDone({
             title="Definition of done"
             icon={<BsCardChecklist className="w-6 h-6" />}
           />
-          <Badge
-            className="w-5 h-5 flex items-center justify-center"
+          <CountBadge
             roundedClass="rounded-full"
-            text={dodEvidences?.length ?? 0}
+            value={dodEvidences?.length ?? 0}
           />
           <div
             className="relative z-0 inline-flex justify-end ml-5"
@@ -126,7 +135,7 @@ export function IncidentsDefinitionOfDone({
                 className={`cursor-pointer mr-3 w-6 h-6 inline-block ${
                   isRefetching ? "animate-spin" : ""
                 }`}
-                onClick={() => refetch()}
+                onClick={() => refetchIncident()}
               />
             </ClickableSvg>
             <ClickableSvg>
@@ -138,12 +147,16 @@ export function IncidentsDefinitionOfDone({
           </div>
         </div>
       }
+      className={clsx(className)}
+      childrenClassName=""
+      {...props}
+      dataCount={dodEvidences?.length}
     >
       <div className="flex flex-col">
-        <div className="flex overflow-x-hidden w-full px-4 pb-6">
-          <div className="w-full">
+        <div className="flex overflow-x-hidden w-full pb-6 pt-2">
+          <div className="w-full space-y-1">
             {isLoading && !incident ? (
-              <div className="flex items-start py-2 pl-2 pr-2">
+              <div className="flex items-start pl-2 pr-2">
                 <div className="text-sm text-gray-500">
                   Loading evidences please wait...
                 </div>
@@ -155,7 +168,7 @@ export function IncidentsDefinitionOfDone({
                   evidence={evidence}
                   setEvidenceBeingRemoved={setEvidenceBeingRemoved}
                   setOpenDeleteConfirmDialog={setOpenDeleteConfirmDialog}
-                  refetch={refetch}
+                  incidentId={incidentId}
                 />
               ))
             )}
@@ -199,11 +212,12 @@ export function IncidentsDefinitionOfDone({
           noneDODEvidence={nonDODEvidences}
           isOpen={addToDODModalOpen}
           onAddDefinitionOfDone={() => {
-            refetch();
+            refetchIncident();
             setAddToDODModalOpen(false);
           }}
           rootHypothesis={rootHypothesis!}
         />
+        {dodEvidences.length === 0 && !isLoading && <EmptyState />}
       </div>
     </CollapsiblePanel>
   );

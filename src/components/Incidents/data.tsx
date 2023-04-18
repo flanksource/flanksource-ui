@@ -4,6 +4,7 @@ import { FaTasks } from "react-icons/fa";
 import { GrIntegration, GrWorkshop } from "react-icons/gr";
 import { ImHeartBroken } from "react-icons/im";
 import { IoMdSpeedometer } from "react-icons/io";
+import { FaRegClock } from "react-icons/fa";
 import {
   MdFindInPage,
   MdNewReleases,
@@ -161,5 +162,12 @@ export const typeItems = {
     icon: <GrWorkshop />,
     description: "Technical Debt",
     value: "technicalDebt"
+  },
+  reliability: {
+    id: "dropdown-type-reliability",
+    name: "reliability",
+    icon: <FaRegClock />,
+    description: "Reliability",
+    value: "reliability"
   }
 } as const;

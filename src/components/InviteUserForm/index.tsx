@@ -13,6 +13,7 @@ export type InviteUserFormProps = Omit<
   "onSubmit"
 > & {
   onSubmit: (val: InviteUserFormValue) => void;
+  closeModal: () => void;
 };
 
 const defaultFormValue = {
@@ -24,6 +25,7 @@ const defaultFormValue = {
 export function InviteUserForm({
   onSubmit,
   className,
+  closeModal,
   ...rest
 }: InviteUserFormProps) {
   const {
@@ -37,7 +39,11 @@ export function InviteUserForm({
   const onSubmitFn = async (data: InviteUserFormValue) => {
     onSubmit(data);
   };
-
+  const handleCancel = () => {
+    reset();
+    closeModal();
+  }
+  
   return (
     <div className={clsx(className)} {...rest}>
       <form
@@ -87,7 +93,7 @@ export function InviteUserForm({
           </div>
           {errors.lastName && (
             <span className="text-red-600 text-sm">
-              Please provide valid first last
+              Please provide valid last name
             </span>
           )}
         </div>
@@ -122,9 +128,7 @@ export function InviteUserForm({
           </button>
           <button
             type="reset"
-            onClick={() => {
-              reset();
-            }}
+            onClick={handleCancel}
             className="px-3 py-2 btn-secondary float-right mr-4"
           >
             Cancel

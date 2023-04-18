@@ -54,7 +54,7 @@ export function FormatCurrency({
       return 0;
     }
     const parsedValue = typeof value === "string" ? parseInt(value) : value;
-    if (value <= 10) {
+    if (+value <= 10) {
       return parsedValue.toFixed(2);
     }
     return parsedValue.toFixed(0);

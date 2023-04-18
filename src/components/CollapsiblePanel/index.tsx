@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IoChevronDownOutline, IoChevronUpOutline } from "react-icons/io5";
 import { ClickableSvg } from "../ClickableSvg/ClickableSvg";
 
@@ -7,6 +7,8 @@ type Props = React.HTMLProps<HTMLDivElement> & {
   Header: React.ReactNode;
   children: React.ReactNode;
   isClosed?: boolean;
+  childrenClassName?: string;
+  dataCount?: number;
 };
 
 export default function CollapsiblePanel({
@@ -14,14 +16,28 @@ export default function CollapsiblePanel({
   children,
   isClosed = false,
   className,
+  childrenClassName = "transform origin-bottom duration-500",
+  dataCount,
   ...props
 }: Props) {
   const [isOpen, setIsOpen] = useState(!isClosed);
 
+  useEffect(() => {
+    if (dataCount === undefined) {
+      return;
+    }
+    setIsOpen(dataCount > 0);
+  }, [dataCount]);
+
+  useEffect(() => {
+    setIsOpen(!isClosed);
+  }, [isClosed]);
+
   return (
     <div
-      className={clsx("flex flex-col", isOpen && "flex-1", className)}
+      className={clsx("flex flex-col", className)}
       {...props}
+      data-minimized={!isOpen}
     >
       <div
         onClick={() => setIsOpen(!isOpen)}
@@ -44,7 +60,7 @@ export default function CollapsiblePanel({
         </div>
       </div>
       <div
-        className={`flex-1 flex-grow flex flex-col transform origin-bottom duration-500 overflow-y-auto ${
+        className={`flex-1 flex-grow flex flex-col overflow-y-auto ${childrenClassName} ${
           isOpen ? "" : "hidden"
         }`}
       >

@@ -1,8 +1,6 @@
 import { useQuery, UseQueryOptions } from "@tanstack/react-query";
-import { SchemaApi } from "../../components/SchemaResourcePage/resourceTypes";
 import { CostsData } from "../../components/CostDetails/CostDetails";
 import { toastError } from "../../components/Toast/toast";
-import { getAll } from "../schemaResources";
 import {
   getAllChanges,
   getAllConfigsMatchingQuery,
@@ -12,7 +10,8 @@ import {
   getConfigInsight,
   getConfigInsights,
   getConfigTagsList,
-  getConfigName
+  getConfigName,
+  getTopologyRelatedInsights
 } from "../services/configs";
 import { getHypothesisResponse } from "../services/hypothesis";
 import { getIncident } from "../services/incident";
@@ -44,7 +43,7 @@ export const useVersionInfo = () => {
 
 export const useIncidentQuery = (id: string) => {
   return useQuery(createIncidentQueryKey(id), () => getIncident(id), {
-    staleTime: defaultStaleTime
+    enabled: !!id
   });
 };
 
@@ -305,7 +304,8 @@ export function useGetConfigByIdQuery(id: string) {
       return data?.[0];
     },
     {
-      onError: (err: any) => toastError(err)
+      onError: (err: any) => toastError(err),
+      enabled: !!id
     }
   );
 }
@@ -370,13 +370,6 @@ export function useIncidentsHistoryQuery(
   );
 }
 
-export function useGetSettingsAllQuery(resourceInfo: SchemaApi) {
-  return useQuery(["settings", "all", resourceInfo], async () => {
-    const res = await getAll(resourceInfo);
-    return res.data;
-  });
-}
-
 export function useConfigAnalysisQuery(
   configId: string,
   options?: UseQueryOptions<CostsData[], Error>
@@ -421,5 +414,22 @@ export function useComponentGetLogsQuery(
       return res.data.results;
     },
     options
+  );
+}
+
+export function useGetTopologyRelatedInsightsQuery(id: string) {
+  return useQuery(
+    ["topology", "insights", id],
+    async () => {
+      const res = await getTopologyRelatedInsights(id);
+      // ensure analysis has all the fields
+      return res.map((item) => ({
+        ...((item.config?.analysis?.length ?? 0) > 0
+          ? item.config?.analysis?.[0]
+          : {}),
+        ...item
+      }));
+    },
+    {}
   );
 }

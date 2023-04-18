@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { AiFillPlusCircle } from "react-icons/ai";
-import { useGetSettingsAllQuery } from "../../api/query-hooks";
+import { useGetSettingsAllQuery } from "../../api/query-hooks/settingsResourcesHooks";
 import { createResource, SchemaResourceI } from "../../api/schemaResources";
 import { useUser } from "../../context";
-import { BreadcrumbNav } from "../BreadcrumbNav";
+import { BreadcrumbNav, BreadcrumbRoot } from "../BreadcrumbNav";
 import { Head } from "../Head/Head";
 import { SearchLayout } from "../Layout";
 import { Modal } from "../Modal";
@@ -11,6 +11,7 @@ import TableSkeletonLoader from "../SkeletonLoader/TableSkeletonLoader";
 import { SchemaResourceType } from "./resourceTypes";
 import { SchemaResourceEdit } from "./SchemaResourceEdit";
 import { SchemaResourceList } from "./SchemaResourceList";
+import ConfigScrapperSpecEditor from "../SpecEditor/ConfigScrapperSpecEditor";
 
 export function SchemaResourcePage({
   resourceInfo
@@ -54,13 +55,15 @@ export function SchemaResourcePage({
         title={
           <BreadcrumbNav
             list={[
-              name,
+              <BreadcrumbRoot link={`/settings/${resourceInfo.table}`}>
+                {name}
+              </BreadcrumbRoot>,
               <button
                 type="button"
                 className=""
                 onClick={() => setModalIsOpen(true)}
               >
-                <AiFillPlusCircle size={36} color="#326CE5" />
+                <AiFillPlusCircle size={32} className="text-blue-600" />
               </button>
             ]}
           />
@@ -89,13 +92,20 @@ export function SchemaResourcePage({
           size="full"
           title={`Create New ${resourceInfo.name}`}
         >
-          <SchemaResourceEdit
-            resourceName={resourceInfo.name}
-            isModal
-            edit
-            onSubmit={onSubmit}
-            onCancel={onClose}
-          />
+          {resourceInfo.table === "config_scrapers" ? (
+            <ConfigScrapperSpecEditor
+              onSubmit={(val) => onSubmit(val)}
+              canEdit
+            />
+          ) : (
+            <SchemaResourceEdit
+              resourceName={resourceInfo.name}
+              isModal
+              edit
+              onSubmit={onSubmit}
+              onCancel={onClose}
+            />
+          )}
         </Modal>
       </SearchLayout>
     </>

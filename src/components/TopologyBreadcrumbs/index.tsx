@@ -1,8 +1,12 @@
-import { Link } from "react-router-dom";
 import { Icon } from "../Icon";
 import { useComponentNameQuery } from "../../api/query-hooks";
 import { useMemo } from "react";
 import { Head } from "../Head/Head";
+import {
+  BreadcrumbChild,
+  BreadcrumbNav,
+  BreadcrumbRoot
+} from "../BreadcrumbNav";
 
 type TopologyBreadcrumbsProps = {
   topologyId?: string;
@@ -22,21 +26,13 @@ function TopologyBreadcrumbItem({
 
   return (
     <>
-      <Head
-        prefix={component ? `Topology - ${component.name}` : "Topology"}
-      />
-      &nbsp;/&nbsp;
-      <Link
-        to={{
-          pathname: `/topology/${component.id}`
-        }}
-        className=" hover:text-gray-500 my-auto "
-      >
+      <Head prefix={component ? `Topology - ${component.name}` : "Topology"} />
+      <BreadcrumbChild link={`/topology/${component.id}`}>
         <span>
           <Icon name={component.icon} className="h-5 mr-1" />
           {component.name}
         </span>
-      </Link>
+      </BreadcrumbChild>
     </>
   );
 }
@@ -57,13 +53,13 @@ export function TopologyBreadcrumbs({
   }, [component, topologyId, refererId]);
 
   return (
-    <>
-      <Link to="/topology" className="hover:text-gray-500 ">
-        Topology
-      </Link>
-      {ids?.map((id) => {
-        return <TopologyBreadcrumbItem key={id} topologyId={id} />;
-      })}
-    </>
+    <BreadcrumbNav
+      list={[
+        <BreadcrumbRoot link="/topology">Dashboard</BreadcrumbRoot>,
+        ...ids.map((id) => {
+          return <TopologyBreadcrumbItem key={id} topologyId={id} />;
+        })
+      ]}
+    />
   );
 }
