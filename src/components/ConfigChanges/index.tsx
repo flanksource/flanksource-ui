@@ -4,7 +4,6 @@ import { GoDiff } from "react-icons/go";
 import { useGetConfigChangesByConfigIdQuery } from "../../api/query-hooks";
 import { ConfigItem } from "../../api/services/configs";
 import { User } from "../../api/services/users";
-import { Badge } from "../Badge";
 import CollapsiblePanel from "../CollapsiblePanel";
 import EmptyState from "../EmptyState";
 import Title from "../Title/title";
@@ -13,6 +12,7 @@ import ConfigChangeAgeCell from "./Cells/ConfigChangeAgeCell";
 import ConfigChangeNameCell from "./Cells/ConfigChangeNameCell";
 import { InfiniteTable } from "../InfiniteTable/InfiniteTable";
 import TextSkeletonLoader from "../SkeletonLoader/TextSkeletonLoader";
+import { CountBadge } from "../Badge/CountBadge";
 
 export type ConfigTypeChanges = {
   id: string;
@@ -117,18 +117,22 @@ export function ConfigChangesDetails({ configID }: Props) {
 }
 
 export default function ConfigChanges(props: Props) {
-  const { data: response } = useGetConfigChangesByConfigIdQuery(props.configID);
-  const count = response?.data?.length ?? 0;
+  const { data: response } = useGetConfigChangesByConfigIdQuery(
+    props.configID,
+    0,
+    50
+  );
+  const count = response?.totalEntries ?? 0;
 
   return (
     <CollapsiblePanel
       Header={
         <div className="flex flex-row w-full items-center space-x-2">
           <Title title="Changes" icon={<GoDiff className="w-6 h-auto" />} />
-          <Badge roundedClass="rounded-full" text={count} />
+          <CountBadge roundedClass="rounded-full" value={count} />
         </div>
       }
-      dataCount={data?.length}
+      dataCount={count}
     >
       <ConfigChangesDetails {...props} />
     </CollapsiblePanel>

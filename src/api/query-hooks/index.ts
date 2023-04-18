@@ -288,7 +288,7 @@ export function useGetConfigChangesByConfigIdQuery(
     ["configs", "changes", id, pageIndex, pageSize],
     () => getConfigChanges(id, pageIndex, pageSize),
     {
-      enabled: !!id,
+      enabled: !!id && !!pageSize,
       keepPreviousData
     }
   );
