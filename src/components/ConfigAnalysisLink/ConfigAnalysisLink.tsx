@@ -52,15 +52,15 @@ export function ConfigAnalysisLink({
               &nbsp;/&nbsp;
             </>
           )}
-          <span
-            className="overflow-hidden truncate cursor-pointer"
+          <div
+            className="overflow-hidden cursor-pointer"
             data-html={true}
             data-tip={configAnalysis.sanitizedMessageTxt}
             data-class="max-w-[20rem]"
           >
             <ConfigInsightsIcon analysis={configAnalysis} />
             {configAnalysis.analyzer}
-          </span>
+          </div>
         </div>
       )}
       {viewType === ViewType.detailed && (

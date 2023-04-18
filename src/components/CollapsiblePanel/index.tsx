@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { useEffect, useState } from "react";
-import { IoChevronDownOutline, IoChevronUpOutline } from "react-icons/io5";
+import { IoChevronUpOutline } from "react-icons/io5";
 import { ClickableSvg } from "../ClickableSvg/ClickableSvg";
 
 type Props = React.HTMLProps<HTMLDivElement> & {
@@ -50,12 +50,12 @@ export default function CollapsiblePanel({
           className="flex items-center justify-center space-y-0 inline-block"
           onClick={() => setIsOpen(!isOpen)}
         >
-          <ClickableSvg>
-            {isOpen ? (
-              <IoChevronUpOutline className="w-6 h-6" />
-            ) : (
-              <IoChevronDownOutline className="w-6 h-6" />
-            )}
+          <ClickableSvg
+            className={clsx("transform duration-1000", {
+              "rotate-180": !isOpen
+            })}
+          >
+            <IoChevronUpOutline className="w-6 h-6" />
           </ClickableSvg>
         </div>
       </div>

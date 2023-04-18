@@ -62,7 +62,7 @@ export default function InsightsDetails({ insights, isLoading }: Props) {
                   data-html={true}
                   data-tip={insight.sanitizedMessageTxt}
                   data-class="max-w-[20rem]"
-                  className="py-2 font-medium text-black overflow-hidden text-ellipsis cursor-pointer flex-1"
+                  className="py-2 font-medium text-black overflow-hidden cursor-pointer flex-1"
                 >
                   <ConfigAnalysisLink
                     key={insight.id}
@@ -77,7 +77,9 @@ export default function InsightsDetails({ insights, isLoading }: Props) {
           </tbody>
         </table>
       ) : (
-        <EmptyState />
+        <div className="flex flex-col items-center justify-center w-full">
+          <EmptyState />
+        </div>
       )}
     </div>
   );
