@@ -103,18 +103,19 @@ export default function Incidents({ topologyId, configId }: Props) {
             roundedClass="rounded-full"
             value={incidents?.length ?? 0}
           />
-          <div className="ml-5 text-right grow">
-            <IncidentsFilterBar
-              defaultValues={filterIncidentOptions}
-              onChangeFilterValues={(value) => setFilterIncidentOptions(value)}
-            />
-          </div>
         </div>
       }
       dataCount={incidents?.length}
+      childrenClassName=""
     >
       <div className="flex flex-col">
-        <div className="flex flex-col space-y-1">
+        <div className="flex flex-col items-start relative">
+          <IncidentsFilterBar
+            defaultValues={filterIncidentOptions}
+            onChangeFilterValues={(value) => setFilterIncidentOptions(value)}
+          />
+        </div>
+        <div className="flex max-h-full overflow-y-auto flex-col space-y-1">
           <DetailsTable
             loading={isLoading}
             data={incidents || []}
