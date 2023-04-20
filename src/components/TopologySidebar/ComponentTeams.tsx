@@ -6,14 +6,30 @@ import EmptyState from "../EmptyState";
 import { ComponentTeamLink } from "./ComponentTeamLink";
 import TextSkeletonLoader from "../SkeletonLoader/TextSkeletonLoader";
 import { CountBadge } from "../Badge/CountBadge";
+import { useAtom } from "jotai";
+import { refreshButtonClickedTrigger } from "../SlidingSideBar";
+import { useEffect } from "react";
 
 type Props = {
   componentId: string;
 };
 
 export function ComponentTeams({ componentId }: Props) {
-  const { data: componentTeams, isLoading } =
-    useGetComponentsTeamQuery(componentId);
+  const {
+    data: componentTeams,
+    isLoading,
+    refetch,
+    isRefetching
+  } = useGetComponentsTeamQuery(componentId);
+
+  const [triggerRefresh] = useAtom(refreshButtonClickedTrigger);
+
+  useEffect(() => {
+    if (!isLoading && !isRefetching) {
+      refetch();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [triggerRefresh]);
 
   return (
     <CollapsiblePanel

@@ -1,32 +1,32 @@
+import { atom, useAtom } from "jotai";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
+import { getAll } from "../api/schemaResources";
 import { getTopology } from "../api/services/topology";
+import { ComponentLabelsDropdown } from "../components/Dropdown/ComponentLabelsDropdown";
+import { ComponentTypesDropdown } from "../components/Dropdown/ComponentTypesDropdown";
+import { Head } from "../components/Head/Head";
+import { InfoMessage } from "../components/InfoMessage";
 import { SearchLayout } from "../components/Layout";
 import { ReactSelectDropdown } from "../components/ReactSelectDropdown";
 import { schemaResourceTypes } from "../components/SchemaResourcePage/resourceTypes";
 import CardsSkeletonLoader from "../components/SkeletonLoader/CardsSkeletonLoader";
 import { toastError } from "../components/Toast/toast";
+import { TopologyBreadcrumbs } from "../components/TopologyBreadcrumbs";
 import { TopologyCard } from "../components/TopologyCard";
 import { TopologyPopOver } from "../components/TopologyPopover";
 import { getCardWidth } from "../components/TopologyPopover/topologyPreference";
 import {
-  getSortedTopology,
-  getSortLabels
+  getSortLabels,
+  getSortedTopology
 } from "../components/TopologyPopover/topologySort";
 import TopologySidebar from "../components/TopologySidebar/TopologySidebar";
-
-import { getAll } from "../api/schemaResources";
-import { ComponentLabelsDropdown } from "../components/Dropdown/ComponentLabelsDropdown";
-import { ComponentTypesDropdown } from "../components/Dropdown/ComponentTypesDropdown";
-import { InfoMessage } from "../components/InfoMessage";
-import { TopologyBreadcrumbs } from "../components/TopologyBreadcrumbs";
 import {
   Topology,
   useTopologyPageContext
 } from "../context/TopologyPageContext";
 import { useLoader } from "../hooks";
-import { Head } from "../components/Head/Head";
-import { BreadcrumbNav } from "../components/BreadcrumbNav";
+import { refreshButtonClickedTrigger } from "../components/SlidingSideBar";
 
 export const allOption = {
   All: {
@@ -93,6 +93,8 @@ export const getSortOrder = () => {
 
 export function TopologyPage() {
   const { id } = useParams();
+
+  const [, setTriggerRefresh] = useAtom(refreshButtonClickedTrigger);
 
   const { loading, setLoading } = useLoader();
   const { topologyState, setTopologyState } = useTopologyPageContext();
@@ -201,6 +203,11 @@ export function TopologyPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, searchParams, setTopologyState]);
 
+  const onRefresh = useCallback(() => {
+    load();
+    setTriggerRefresh((prev) => prev + 1);
+  }, [load, setTriggerRefresh]);
+
   useEffect(() => {
     load();
   }, [searchParams, id, load]);
@@ -263,9 +270,7 @@ export function TopologyPage() {
       <Head prefix="Topology" />
       <SearchLayout
         title={<TopologyBreadcrumbs topologyId={id} refererId={refererId} />}
-        onRefresh={() => {
-          load();
-        }}
+        onRefresh={onRefresh}
         contentClass="p-0 h-full"
         loading={loading}
       >

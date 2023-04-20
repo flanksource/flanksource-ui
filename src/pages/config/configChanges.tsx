@@ -7,8 +7,14 @@ import { InfoMessage } from "../../components/InfoMessage";
 import { SearchLayout } from "../../components/Layout";
 import TabbedLinks from "../../components/Tabs/TabbedLinks";
 import { BreadcrumbNav, BreadcrumbRoot } from "../../components/BreadcrumbNav";
+import { useAtom } from "jotai";
+import { refreshButtonClickedTrigger } from "../../components/SlidingSideBar";
 
 export function ConfigChangesPage() {
+  const [, setRefreshButtonClickedTrigger] = useAtom(
+    refreshButtonClickedTrigger
+  );
+
   const [{ pageIndex, pageSize }, setPageState] = useState({
     pageIndex: 0,
     pageSize: 50
@@ -49,7 +55,10 @@ export function ConfigChangesPage() {
             ]}
           />
         }
-        onRefresh={refetch}
+        onRefresh={() => {
+          setRefreshButtonClickedTrigger((prev) => prev + 1);
+          refetch();
+        }}
         loading={isLoading}
         contentClass="p-0 h-full"
       >

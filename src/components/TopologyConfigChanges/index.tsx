@@ -9,6 +9,9 @@ import EmptyState from "../EmptyState";
 import { Icon } from "../Icon";
 import TextSkeletonLoader from "../SkeletonLoader/TextSkeletonLoader";
 import Title from "../Title/title";
+import { useAtom } from "jotai";
+import { useEffect } from "react";
+import { refreshButtonClickedTrigger } from "../SlidingSideBar";
 
 type Props = {
   topologyID: string;
@@ -60,9 +63,21 @@ export function TopologyConfigChanges({ topologyID }: Props) {
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default function (props: Props) {
-  const { data: componentConfigChanges = [] } = useComponentConfigChanges<
-    Record<string, any>[]
-  >(props.topologyID);
+  const {
+    data: componentConfigChanges = [],
+    isRefetching,
+    refetch,
+    isLoading
+  } = useComponentConfigChanges<Record<string, any>[]>(props.topologyID);
+
+  const [triggerRefresh] = useAtom(refreshButtonClickedTrigger);
+
+  useEffect(() => {
+    if (!isLoading && !isRefetching) {
+      refetch();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [triggerRefresh]);
 
   return (
     <CollapsiblePanel

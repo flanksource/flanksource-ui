@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ImLifebuoy } from "react-icons/im";
 import { getIncidentsBy } from "../../api/services/incident";
 import CollapsiblePanel from "../CollapsiblePanel";
@@ -11,6 +11,8 @@ import { IncidentStatusTag } from "../IncidentStatusTag";
 import { IncidentTypeIcon } from "../incidentTypeTag";
 import { DetailsTable } from "../DetailsTable/DetailsTable";
 import { CountBadge } from "../Badge/CountBadge";
+import { useAtom } from "jotai";
+import { refreshButtonClickedTrigger } from "../SlidingSideBar";
 
 type Props = {
   topologyId?: string;
@@ -36,7 +38,7 @@ export default function Incidents({ topologyId, configId }: Props) {
       age: 0
     });
 
-  const { isLoading, data } = useQuery(
+  const { isLoading, data, isRefetching, refetch } = useQuery(
     [
       "incidents",
       ...(topologyId ? ["topology-", topologyId] : []),
@@ -57,6 +59,15 @@ export default function Incidents({ topologyId, configId }: Props) {
       enabled: !!topologyId || !!configId
     }
   );
+
+  const [triggerRefresh] = useAtom(refreshButtonClickedTrigger);
+
+  useEffect(() => {
+    if (!isLoading && !isRefetching) {
+      refetch();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [triggerRefresh]);
 
   const incidents = useMemo(() => {
     return data?.map((item) => {

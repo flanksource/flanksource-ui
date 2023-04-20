@@ -13,6 +13,8 @@ import TabbedLinks from "../../components/Tabs/TabbedLinks";
 import { useConfigDetailsTabs } from "../../components/ConfigsPage/ConfigTabsLinks";
 import { useMemo, useRef, useState } from "react";
 import useRunTaskOnPropChange from "../../hooks/useRunTaskOnPropChange";
+import { refreshButtonClickedTrigger } from "../../components/SlidingSideBar";
+import { useAtom } from "jotai";
 
 export function ConfigDetailsChangesPage() {
   const { id } = useParams();
@@ -20,6 +22,10 @@ export function ConfigDetailsChangesPage() {
     pageIndex: 0,
     pageSize: 50
   });
+
+  const [, setRefreshButtonClickedTrigger] = useAtom(
+    refreshButtonClickedTrigger
+  );
 
   const {
     data: historyData,
@@ -98,7 +104,10 @@ export function ConfigDetailsChangesPage() {
             </span>
           </div>
         }
-        onRefresh={refetch}
+        onRefresh={() => {
+          setRefreshButtonClickedTrigger((prev) => prev + 1);
+          refetch();
+        }}
         loading={isLoading}
         contentClass="p-0 h-full overflow-y-hidden"
       >
