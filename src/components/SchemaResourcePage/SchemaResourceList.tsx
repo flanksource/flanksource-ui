@@ -41,6 +41,7 @@ export function SchemaResourceList({ items, baseUrl, table }: Props) {
                 table={table}
                 key={item.id}
                 {...item}
+                schedule={item.spec?.schedule}
                 baseUrl={baseUrl}
               />
             ))}
