@@ -144,15 +144,20 @@ type ConfigParams = {
 
 export const getConfigsBy = ({ topologyId, configId }: ConfigParams) => {
   if (topologyId) {
-    return resolve<ConfigItem[]>(
+    return resolve<
+      {
+        configs?: ConfigItem[];
+        related?: ConfigItem[];
+      }[]
+    >(
       ConfigDB.get(
-        `/config_component_relationships?component_id=eq.${topologyId}&select=*,configs!config_component_relationships_config_id_fkey(*)`
+        `/config_component_relationships?component_id=eq.${topologyId}&select=configs!config_component_relationships_config_id_fkey(*)`
       )
     );
   } else if (configId) {
     return resolve(
-      ConfigDB.get<ConfigTypeRelationships[]>(
-        `/config_relationships?or=(related_id.eq.${configId},config_id.eq.${configId})&select=*,configs:configs!config_relationships_config_id_fkey(*),related:configs!config_relationships_related_id_fkey(*)`
+      ConfigDB.get<Pick<ConfigTypeRelationships, "configs" | "related">[]>(
+        `/config_relationships?or=(related_id.eq.${configId},config_id.eq.${configId})&select=configs:configs!config_relationships_config_id_fkey(*),related:configs!config_relationships_related_id_fkey(*)`
       )
     );
   }
