@@ -7,10 +7,71 @@ import { CellContext, ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "../../DataTable";
 import clsx from "clsx";
 import { useCheckStattiQuery } from "../../../api/query-hooks/useCheckStattiQuery";
+import { ReactSelectDropdown } from "../../ReactSelectDropdown";
 
 type StatusHistoryProps = React.HTMLProps<HTMLDivElement> & {
   check: Pick<Partial<HealthCheck>, "id" | "checkStatuses" | "description">;
   timeRange: string;
+};
+
+const statuses = {
+  Healthy: {
+    id: "Healthy",
+    name: "Healthy",
+    description: "Healthy",
+    value: "Healthy"
+  },
+  Unhealthy: {
+    id: "Unhealthy",
+    name: "Unhealthy",
+    description: "Unhealthy",
+    value: "Unhealthy"
+  },
+  All: {
+    id: "All",
+    name: "All",
+    description: "All",
+    value: "All"
+  }
+};
+
+const durations = {
+  All: {
+    id: "All",
+    name: "All",
+    description: "All",
+    value: "All"
+  },
+  InASecond: {
+    id: "InASecond",
+    name: "in a second",
+    description: "in a second",
+    value: "in a second"
+  },
+  In5Seconds: {
+    id: "In5Seconds",
+    name: "in 5 seconds",
+    description: "in 5 seconds",
+    value: "in 5 seconds"
+  },
+  In10Seconds: {
+    id: "In10Seconds",
+    name: "in 10 seconds",
+    description: "in 10 seconds",
+    value: "in 10 seconds"
+  },
+  In30Seconds: {
+    id: "In30Seconds",
+    name: "in 30 seconds",
+    description: "in 30 seconds",
+    value: "in 30 seconds"
+  },
+  InAMinute: {
+    id: "InAMinute",
+    name: "in a minute",
+    description: "in a minute",
+    value: "in a minute"
+  }
 };
 
 const columns: ColumnDef<HealthCheckStatus, any>[] = [
@@ -77,11 +138,43 @@ export function StatusHistory({
     pageIndex: 0,
     pageSize: 50
   });
+  const [selectedStatus, setSelectedStatus] = useState<string | undefined>(
+    "All"
+  );
+  const [selectedDuration, setSelectedDuration] = useState<string | undefined>(
+    "All"
+  );
+  const status = useMemo(() => {
+    if (selectedStatus === statuses.All.value) {
+      return undefined;
+    } else if (selectedStatus === statuses.Healthy.value) {
+      return "true";
+    } else if (selectedStatus === statuses.Unhealthy.value) {
+      return "false";
+    }
+  }, [selectedStatus]);
+  const duration = useMemo(() => {
+    if (selectedDuration === durations.All.value) {
+      return undefined;
+    } else if (selectedDuration === durations.InASecond.value) {
+      return 1000;
+    } else if (selectedDuration === durations.In5Seconds.value) {
+      return 5000;
+    } else if (selectedDuration === durations.In10Seconds.value) {
+      return 10000;
+    } else if (selectedDuration === durations.In30Seconds.value) {
+      return 30000;
+    } else if (selectedDuration === durations.InAMinute.value) {
+      return 60000;
+    }
+  }, [selectedDuration]);
 
   const { data: response, isLoading } = useCheckStattiQuery(
     {
       start: timeRange,
-      checkId: check.id!
+      checkId: check.id!,
+      status,
+      duration
     },
     {
       pageIndex,
@@ -148,7 +241,41 @@ export function StatusHistory({
 
   return (
     <div className={clsx("w-full flex flex-col", className)} {...props}>
-      {statii?.length && (
+      <div className="flex flex-row space-x-4 p-2">
+        <ReactSelectDropdown
+          items={statuses}
+          name="status"
+          onChange={(value) => {
+            setSelectedStatus(value);
+          }}
+          value={selectedStatus}
+          className="w-auto max-w-[38rem]"
+          dropDownClassNames="w-auto max-w-[38rem] left-0"
+          hideControlBorder
+          prefix={
+            <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
+              Status:
+            </div>
+          }
+        />
+        <ReactSelectDropdown
+          items={durations}
+          name="duration"
+          onChange={(value) => {
+            setSelectedDuration(value);
+          }}
+          value={selectedDuration}
+          className="w-auto max-w-[38rem]"
+          dropDownClassNames="w-auto max-w-[38rem] left-0"
+          hideControlBorder
+          prefix={
+            <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
+              Duration:
+            </div>
+          }
+        />
+      </div>
+      {Boolean(statii?.length) && (
         <DataTable
           stickyHead
           columns={columns}

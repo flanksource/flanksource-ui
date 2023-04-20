@@ -85,11 +85,19 @@ export const getCanaries = async (
 export const getCheckStatuses = (
   checkId: string,
   start: string,
-  { pageIndex, pageSize }: PaginationInfo
+  { pageIndex, pageSize }: PaginationInfo,
+  status?: string,
+  duration?: number
 ) => {
   const from = new Date();
   from.setMinutes(-TimeRangeToMinutes[start]);
   let queryString = `check_id=eq.${checkId}&time=gt.${from.toISOString()}&order=time.desc`;
+  if (status) {
+    queryString = `${queryString}&status=eq.${status}`;
+  }
+  if (duration) {
+    queryString = `${queryString}&duration=lte.${duration}`;
+  }
   queryString = `${queryString}&limit=${pageSize}&offset=${
     pageIndex * pageSize
   }`;

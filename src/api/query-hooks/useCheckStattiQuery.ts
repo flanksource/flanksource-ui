@@ -7,6 +7,8 @@ export function useCheckStattiQuery(
     start: string;
     checkId: string;
     includeMessages?: boolean;
+    status?: string;
+    duration?: number;
   },
   pageInfo: PaginationInfo
 ) {
@@ -16,9 +18,18 @@ export function useCheckStattiQuery(
       "status-checks",
       queryParams.checkId,
       queryParams.start,
+      queryParams.status,
+      queryParams.duration,
       pageInfo.pageIndex,
       pageInfo.pageSize
     ],
-    () => getCheckStatuses(queryParams.checkId, queryParams.start, pageInfo)
+    () =>
+      getCheckStatuses(
+        queryParams.checkId,
+        queryParams.start,
+        pageInfo,
+        queryParams.status,
+        queryParams.duration
+      )
   );
 }
