@@ -10,7 +10,7 @@ import { JobHistoryStatus } from "../components/JobsHistory/JobsHistoryTable";
 export interface SchemaResourceI {
   id: string;
   name: string;
-  spec: string | object;
+  spec: { spec: string | undefined } & Record<string, any>;
   namespace: string;
   labels: { [key: string]: any };
   schedule?: string;

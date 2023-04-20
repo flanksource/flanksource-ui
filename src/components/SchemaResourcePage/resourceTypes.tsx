@@ -165,10 +165,6 @@ export const schemaResourceTypes = [
       {
         name: "spec",
         default: {}
-      },
-      {
-        name: "schedule",
-        default: undefined
       }
     ]
   }
