@@ -11,8 +11,14 @@ import { Loading } from "../../components/Loading";
 import TabbedLinks from "../../components/Tabs/TabbedLinks";
 import { usePartialUpdateSearchParams } from "../../hooks/usePartialUpdateSearchParams";
 import useRunTaskOnPropChange from "../../hooks/useRunTaskOnPropChange";
+import { useAtom } from "jotai";
+import { refreshButtonClickedTrigger } from "../../components/SlidingSideBar";
 
 export function ConfigDetailsPage() {
+  const [, setRefreshButtonClickedTrigger] = useAtom(
+    refreshButtonClickedTrigger
+  );
+
   const { id } = useParams();
   const [searchParams, setSearchParams] = usePartialUpdateSearchParams();
   const [checked, setChecked] = useState<Record<string, any>>({});
@@ -110,7 +116,10 @@ export function ConfigDetailsPage() {
             </span>
           </div>
         }
-        onRefresh={() => refetch()}
+        onRefresh={() => {
+          setRefreshButtonClickedTrigger((prev) => prev + 1);
+          refetch();
+        }}
         loading={isLoading}
         contentClass="p-0 h-full overflow-y-hidden"
       >

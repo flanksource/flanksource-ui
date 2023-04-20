@@ -4,14 +4,30 @@ import CollapsiblePanel from "../CollapsiblePanel";
 import InsightsDetails from "../Insights/Insights";
 import Title from "../Title/title";
 import { Badge } from "../Badge";
+import { useAtom } from "jotai";
+import { useEffect } from "react";
+import { refreshButtonClickedTrigger } from "../SlidingSideBar";
 
 type Props = {
   topologyId: string;
 };
 
 export default function TopologyInsights({ topologyId }: Props) {
-  const { data: topologyInsights = [], isLoading } =
-    useGetTopologyRelatedInsightsQuery(topologyId);
+  const {
+    data: topologyInsights = [],
+    isLoading,
+    isRefetching,
+    refetch
+  } = useGetTopologyRelatedInsightsQuery(topologyId);
+
+  const [triggerRefresh] = useAtom(refreshButtonClickedTrigger);
+
+  useEffect(() => {
+    if (!isLoading && !isRefetching) {
+      refetch();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [triggerRefresh]);
 
   return (
     <CollapsiblePanel

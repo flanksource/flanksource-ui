@@ -2,11 +2,16 @@ import clsx from "clsx";
 import { useEffect, useRef, useState } from "react";
 import { IoChevronBackOutline, IoChevronForwardOutline } from "react-icons/io5";
 import useRunTaskOnPropChange from "../../hooks/useRunTaskOnPropChange";
+import { atom } from "jotai";
 
 type Props = React.HTMLProps<HTMLDivElement> & {
   children?: React.ReactNode;
   hideToggle?: boolean;
 };
+
+// when refresh button is clicked, we increment this to trigger refreshes in any
+// children listening in on this atom
+export const refreshButtonClickedTrigger = atom(0);
 
 export default function SlidingSideBar({
   children,
