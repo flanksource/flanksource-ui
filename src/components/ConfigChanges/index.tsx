@@ -98,7 +98,7 @@ export default function ConfigChanges(props: Props) {
           />
         </div>
       }
-      dataCount={response?.data?.length}
+      dataCount={data?.length}
     >
       <ConfigChangesDetails {...props} />
     </CollapsiblePanel>
