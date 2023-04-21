@@ -14,6 +14,7 @@ import { Controller } from "react-hook-form";
 import Select, { SingleValue, StylesConfig } from "react-select";
 import { defaultTheme, components } from "react-select";
 import { Avatar } from "../Avatar";
+import CreatableSelect from "react-select/creatable";
 
 const { colors } = defaultTheme;
 
@@ -57,6 +58,7 @@ type ReactSelectDropdownProps = {
   hideControlBorder?: boolean;
   isLoading?: boolean;
   isDisabled?: boolean;
+  isCreatable?: boolean;
 };
 
 export const ReactSelectDropdown = ({
@@ -73,7 +75,8 @@ export const ReactSelectDropdown = ({
   labelClass,
   placeholder = "Search...",
   isLoading = false,
-  isDisabled = false
+  isDisabled = false,
+  isCreatable = false
 }: ReactSelectDropdownProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [options, setOptions] = useState<StateOption[]>([]);
@@ -124,6 +127,10 @@ export const ReactSelectDropdown = ({
     onChange(typeof value === "string" ? value : value?.value);
   };
 
+  const SelectComponent = useMemo(() => {
+    return isCreatable ? CreatableSelect : Select;
+  }, [isCreatable]);
+
   return (
     <Dropdown
       isOpen={isOpen}
@@ -159,6 +166,9 @@ export const ReactSelectDropdown = ({
               <div className="flex space-x-1 items-center">
                 {SelectedOption?.icon && <div>{SelectedOption.icon}</div>}
                 <span className="block">{SelectedOption?.description}</span>
+                {!SelectedOption && value && isCreatable && (
+                  <span className="block">{value?.toString()}</span>
+                )}
               </div>
             </div>
             <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
@@ -176,7 +186,7 @@ export const ReactSelectDropdown = ({
             const { onChange: onChangeControlled, value: valueControlled } =
               field;
             return (
-              <Select
+              <SelectComponent
                 autoFocus
                 backspaceRemovesValue={false}
                 components={{
@@ -198,7 +208,9 @@ export const ReactSelectDropdown = ({
                               "ml-2 block truncate"
                             )}
                           >
-                            {props.data.description}
+                            {isCreatable
+                              ? props.data.value
+                              : props.data.description}
                           </span>
                         </div>
                       </components.Option>
@@ -226,7 +238,7 @@ export const ReactSelectDropdown = ({
           }}
         />
       ) : (
-        <Select
+        <SelectComponent
           autoFocus
           backspaceRemovesValue={false}
           components={{
@@ -251,7 +263,7 @@ export const ReactSelectDropdown = ({
                         "ml-2 block truncate"
                       )}
                     >
-                      {props.data.description}
+                      {isCreatable ? props.data.value : props.data.description}
                     </span>
                   </div>
                 </components.Option>
