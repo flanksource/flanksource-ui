@@ -87,7 +87,7 @@ export const getCheckStatuses = (
   start: string,
   { pageIndex, pageSize }: PaginationInfo,
   status?: string,
-  duration?: number
+  duration?: string
 ) => {
   const from = new Date();
   from.setMinutes(-TimeRangeToMinutes[start]);

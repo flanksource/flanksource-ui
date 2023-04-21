@@ -9,7 +9,7 @@ import mixins from "../../../utils/mixins.module.css";
 import { PopupTabs } from "./tabs";
 import { CheckStat } from "./CheckStat";
 import { getUptimePercentage } from "./utils";
-import { StatusHistory } from "./StatusHistory";
+import { StatusHistory } from "./StatusHistory/StatusHistory";
 import { DetailField } from "./DetailField";
 import { Duration } from "../renderers";
 import { DropdownStandaloneWrapper } from "../../Dropdown/StandaloneWrapper";

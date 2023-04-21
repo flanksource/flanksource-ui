@@ -8,7 +8,7 @@ export function useCheckStattiQuery(
     checkId: string;
     includeMessages?: boolean;
     status?: string;
-    duration?: number;
+    duration?: string;
   },
   pageInfo: PaginationInfo
 ) {
@@ -30,6 +30,9 @@ export function useCheckStattiQuery(
         pageInfo,
         queryParams.status,
         queryParams.duration
-      )
+      ),
+    {
+      staleTime: 1000 * 10
+    }
   );
 }
