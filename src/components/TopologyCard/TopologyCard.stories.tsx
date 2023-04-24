@@ -272,7 +272,13 @@ const topology = {
 };
 
 const Template: ComponentStory<typeof TopologyCard> = (arg: any) => {
-  return Object.keys(Size).map((size) => <TopologyCard {...arg} size={size} />);
+  return (
+    <>
+      {Object.keys(Size).map((size) => (
+        <TopologyCard {...arg} size={size} />
+      ))}
+    </>
+  );
 };
 
 export const Base = Template.bind({});
