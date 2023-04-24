@@ -1,14 +1,14 @@
 import { AiOutlineTeam } from "react-icons/ai";
 import { useGetComponentsTeamQuery } from "../../api/query-hooks";
-import Title from "../Title/title";
 import CollapsiblePanel from "../CollapsiblePanel";
 import EmptyState from "../EmptyState";
-import { ComponentTeamLink } from "./ComponentTeamLink";
 import TextSkeletonLoader from "../SkeletonLoader/TextSkeletonLoader";
-import { CountBadge } from "../Badge/CountBadge";
 import { useAtom } from "jotai";
 import { refreshButtonClickedTrigger } from "../SlidingSideBar";
 import { useEffect } from "react";
+import Title from "../Title/title";
+import { ComponentTeamLink } from "./ComponentTeamLink";
+import PillBadge from "../Badge/PillBadge";
 
 type Props = {
   componentId: string;
@@ -39,10 +39,7 @@ export function ComponentTeams({ componentId }: Props) {
             title="Teams"
             icon={<AiOutlineTeam className="w-6 h-auto" />}
           />
-          <CountBadge
-            roundedClass="rounded-full"
-            value={componentTeams?.length ?? 0}
-          />
+          <PillBadge>{componentTeams?.length ?? 0}</PillBadge>
         </div>
       }
       dataCount={componentTeams?.length}

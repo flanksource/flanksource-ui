@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 import { GoDiff } from "react-icons/go";
 import { Link } from "react-router-dom";
 import { useComponentConfigChanges } from "../../api/query-hooks/useComponentConfigChanges";
-import { CountBadge } from "../Badge/CountBadge";
+import PillBadge from "../Badge/PillBadge";
 import CollapsiblePanel from "../CollapsiblePanel";
 import ConfigLink from "../ConfigLink/ConfigLink";
 import EmptyState from "../EmptyState";
@@ -84,10 +84,7 @@ export default function (props: Props) {
       Header={
         <div className="flex flex-row w-full items-center space-x-2">
           <Title title="Changes" icon={<GoDiff className="w-6 h-auto" />} />
-          <CountBadge
-            roundedClass="rounded-full"
-            value={componentConfigChanges.length}
-          />
+          <PillBadge>{componentConfigChanges?.length ?? 0}</PillBadge>
         </div>
       }
       dataCount={componentConfigChanges.length}

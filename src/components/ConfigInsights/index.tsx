@@ -1,10 +1,10 @@
 import { MdOutlineInsights } from "react-icons/md";
-import CollapsiblePanel from "../CollapsiblePanel";
-import Title from "../Title/title";
 import { useGetConfigInsights } from "../../api/query-hooks";
 import { ConfigItem } from "../../api/services/configs";
+import CollapsiblePanel from "../CollapsiblePanel";
 import InsightsDetails from "../Insights/Insights";
-import { CountBadge } from "../Badge/CountBadge";
+import Title from "../Title/title";
+import PillBadge from "../Badge/PillBadge";
 
 export type ConfigTypeInsights = {
   id: string;
@@ -42,10 +42,7 @@ export default function ConfigInsights({ configID }: Props) {
             title="Insights"
             icon={<MdOutlineInsights className="w-6 h-auto" />}
           />
-          <CountBadge
-            roundedClass="rounded-full"
-            value={response.length ?? 0}
-          />
+          <PillBadge>{response?.length ?? 0}</PillBadge>
         </div>
       }
       dataCount={response.length}

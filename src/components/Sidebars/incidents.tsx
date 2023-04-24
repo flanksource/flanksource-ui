@@ -1,16 +1,16 @@
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { ImLifebuoy } from "react-icons/im";
+import { Link } from "react-router-dom";
 import { getIncidentsBy } from "../../api/services/incident";
+import { relativeDateTime } from "../../utils/date";
+import PillBadge from "../Badge/PillBadge";
 import CollapsiblePanel from "../CollapsiblePanel";
+import { DetailsTable } from "../DetailsTable/DetailsTable";
+import { IncidentStatusTag } from "../IncidentStatusTag";
 import IncidentsFilterBar, { IncidentFilter } from "../IncidentsFilterBar";
 import Title from "../Title/title";
-import { relativeDateTime } from "../../utils/date";
-import { Link } from "react-router-dom";
-import { IncidentStatusTag } from "../IncidentStatusTag";
 import { IncidentTypeIcon } from "../incidentTypeTag";
-import { DetailsTable } from "../DetailsTable/DetailsTable";
-import { CountBadge } from "../Badge/CountBadge";
 import { useAtom } from "jotai";
 import { refreshButtonClickedTrigger } from "../SlidingSideBar";
 
@@ -99,10 +99,7 @@ export default function Incidents({ topologyId, configId }: Props) {
             title="Incidents"
             icon={<ImLifebuoy className="w-6 h-auto" />}
           />
-          <CountBadge
-            roundedClass="rounded-full"
-            value={incidents?.length ?? 0}
-          />
+          <PillBadge>{incidents?.length ?? 0}</PillBadge>
         </div>
       }
       dataCount={incidents?.length}
