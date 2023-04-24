@@ -9,6 +9,8 @@ import TabbedLinks from "../../components/Tabs/TabbedLinks";
 import { BreadcrumbNav, BreadcrumbRoot } from "../../components/BreadcrumbNav";
 import { useAtom } from "jotai";
 import { refreshButtonClickedTrigger } from "../../components/SlidingSideBar";
+import { ConfigChangeFilters } from "../../components/ConfigChangesFilters/ConfigChangesFilters";
+import { useSearchParams } from "react-router-dom";
 
 export function ConfigChangesPage() {
   const [, setRefreshButtonClickedTrigger] = useAtom(
@@ -19,9 +21,17 @@ export function ConfigChangesPage() {
     pageIndex: 0,
     pageSize: 50
   });
-
+  const [params] = useSearchParams();
+  const type = params.get("type") ?? undefined;
+  const change_type = params.get("change_type") ?? undefined;
+  const severity = params.get("severity") ?? undefined;
   const { data, isLoading, error, isRefetching, refetch } =
-    useGetAllConfigsChangesQuery(pageIndex, pageSize, true);
+    useGetAllConfigsChangesQuery(
+      { type, change_type, severity },
+      pageIndex,
+      pageSize,
+      true
+    );
   const totalEntries = (data as any)?.totalEntries;
   const pageCount = totalEntries ? Math.ceil(totalEntries / pageSize) : -1;
 
@@ -68,12 +78,15 @@ export function ConfigChangesPage() {
               {error ? (
                 <InfoMessage message={errorMessage} />
               ) : (
-                <ConfigChangeHistory
-                  data={data?.data ?? []}
-                  isLoading={isLoading}
-                  linkConfig
-                  pagination={pagination}
-                />
+                <>
+                  <ConfigChangeFilters />
+                  <ConfigChangeHistory
+                    data={data?.data ?? []}
+                    isLoading={isLoading}
+                    linkConfig
+                    pagination={pagination}
+                  />
+                </>
               )}
             </div>
           </TabbedLinks>

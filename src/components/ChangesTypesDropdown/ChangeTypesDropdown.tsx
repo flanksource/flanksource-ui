@@ -16,7 +16,7 @@ type Props = {
 
 export function ChangesTypesDropdown({
   onChange = () => {},
-  searchParamKey = "changesType",
+  searchParamKey = "change_type",
   value
 }: Props) {
   const { isLoading, data: configTypeOptions } = useQuery(
@@ -70,7 +70,7 @@ export function ChangesTypesDropdown({
       hideControlBorder
       prefix={
         <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
-          Changes Types:
+          Change Type:
         </div>
       }
     />
