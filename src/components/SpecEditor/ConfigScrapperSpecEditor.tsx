@@ -47,6 +47,76 @@ export default function ConfigScrapperSpecEditor({
         configForm: AWSConfigsFormEditor,
         icon: "aws",
         formFieldName: "spec.aws.0"
+      },
+      {
+        name: "File",
+        canEdit: canEdit,
+        updateSpec: (value: Record<string, any>) => {
+          onSubmit(value);
+        },
+        loadSpec: () => {
+          return spec ?? {};
+        },
+        icon: "file",
+        configForm: null,
+        formFieldName: "spec",
+        rawSpecInput: true
+      },
+      {
+        name: "Git",
+        canEdit: canEdit,
+        updateSpec: (value: Record<string, any>) => {
+          onSubmit(value);
+        },
+        loadSpec: () => {
+          return spec ?? {};
+        },
+        icon: "git",
+        configForm: null,
+        formFieldName: "spec",
+        rawSpecInput: true
+      },
+      {
+        name: "HTTP",
+        canEdit: canEdit,
+        updateSpec: (value: Record<string, any>) => {
+          onSubmit(value);
+        },
+        loadSpec: () => {
+          return spec ?? {};
+        },
+        icon: "http",
+        configForm: null,
+        formFieldName: "spec",
+        rawSpecInput: true
+      },
+      {
+        name: "Azure DevOps",
+        canEdit: canEdit,
+        updateSpec: (value: Record<string, any>) => {
+          onSubmit(value);
+        },
+        loadSpec: () => {
+          return spec ?? {};
+        },
+        icon: "azure",
+        configForm: null,
+        formFieldName: "spec",
+        rawSpecInput: true
+      },
+      {
+        name: "Custom Config Spec",
+        canEdit: canEdit,
+        updateSpec: (value: Record<string, any>) => {
+          onSubmit(value);
+        },
+        loadSpec: () => {
+          return spec ?? {};
+        },
+        icon: "code",
+        configForm: null,
+        formFieldName: "spec",
+        rawSpecInput: true
       }
     ],
     [canEdit, onSubmit, spec]
