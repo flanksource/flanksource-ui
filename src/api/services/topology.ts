@@ -96,7 +96,7 @@ export const getCheckStatuses = (
     queryString = `${queryString}&status=eq.${status}`;
   }
   if (duration) {
-    queryString = `${queryString}&duration=lte.${duration}`;
+    queryString = `${queryString}&duration=gte.${duration}`;
   }
   queryString = `${queryString}&limit=${pageSize}&offset=${
     pageIndex * pageSize
