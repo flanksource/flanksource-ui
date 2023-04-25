@@ -1,6 +1,12 @@
 import clsx from "clsx";
 import { filter } from "lodash";
-import { useEffect, useState, useMemo, MouseEventHandler } from "react";
+import {
+  useEffect,
+  useState,
+  useMemo,
+  MouseEventHandler,
+  useCallback
+} from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { getTopology } from "../../api/services/topology";
 import { Size } from "../../types";
@@ -73,7 +79,7 @@ export function TopologyCard({
     [size]
   );
 
-  const canShowChildHealth = () => {
+  const canShowChildHealth = useCallback(() => {
     let totalCount = 0;
     if (topology?.summary) {
       topology.summary.healthy = topology.summary.healthy || 0;
@@ -87,7 +93,7 @@ export function TopologyCard({
       !topology?.components?.length &&
       (!topology?.is_leaf || (topology.is_leaf && totalCount !== 1))
     );
-  };
+  }, [topology]);
 
   const prepareTopologyLink = (topologyItem: {
     id: string;
@@ -122,6 +128,7 @@ export function TopologyCard({
   topology.properties = topology.properties || [];
   const properties = filter(topology.properties, (i) => !i.headline);
   const heading = filter(topology.properties, (i) => i.headline);
+  const hidden = topology.hidden === true;
 
   return (
     <div
@@ -129,11 +136,17 @@ export function TopologyCard({
       className={clsx(
         "rounded-8px mb-3 mr-3 shadow-card card bg-lightest-gray border-0 border-t-8 relative",
         StatusStyles[topology.status as ComponentStatus] || "border-white",
-        selectionMode ? "cursor-pointer" : ""
+        selectionMode ? "cursor-pointer" : "",
+        hidden && "h-fit"
       )}
       {...selectionModeRootProps}
     >
-      <div className="flex flex-row -mt-1 bg-white border-b flex-nowrap rounded-t-md">
+      <div
+        className={clsx(
+          "flex flex-row -mt-1 bg-white flex-nowrap",
+          hidden ? "rounded-md" : "border-b rounded-t-md"
+        )}
+      >
         <div className="flex pr-1 pt-2.5 pb-3.5 pl-2 overflow-hidden">
           <div className="text-gray-color m-auto mr-1.5 flex-initial max-w-1/4 leading-1.21rel">
             <h3 className="text-gray-color text-2xsi leading-1.21rel">
@@ -178,64 +191,69 @@ export function TopologyCard({
               />
             </div>
           ) : (
-            <TopologyDropdownMenu topology={topology} />
+            <TopologyDropdownMenu
+              topology={topology}
+              updateVisibility={(topology) => setTopology(topology)}
+            />
           )}
         </div>
       </div>
-      <div className="flex flex-nowrap bg-lightest-gray rounded-b-8px space-x-4">
-        {metricsInFooter ? (
-          <div className="flex flex-1 py-4">
-            <CardMetrics items={heading} />
-          </div>
-        ) : (
-          <>
-            {Boolean(properties.length) && (
+      {!hidden && (
+        <div className="flex flex-nowrap bg-lightest-gray rounded-b-8px space-x-4">
+          {metricsInFooter ? (
+            <div className="flex flex-1 py-4">
+              <CardMetrics items={heading} />
+            </div>
+          ) : (
+            <>
+              {Boolean(properties.length) && (
+                <CustomScroll
+                  className="flex-1 py-4 pl-2"
+                  showMoreClass="text-xs linear-1.21rel mr-1 cursor-pointer"
+                  maxHeight="200px"
+                  minChildCount={6}
+                >
+                  {properties.map((property, index) => (
+                    <Property
+                      key={index}
+                      property={property}
+                      className={
+                        index === topology.properties.length - 1
+                          ? "mb-0"
+                          : "mb-2.5"
+                      }
+                    />
+                  ))}
+                </CustomScroll>
+              )}
               <CustomScroll
-                className="flex-1 py-4 pl-2"
+                className="flex-1 py-4 pl-2 pr-2 space-y-1.5"
                 showMoreClass="text-xs linear-1.21rel mr-1 cursor-pointer"
                 maxHeight="200px"
-                minChildCount={6}
+                minChildCount={5}
               >
-                {properties.map((property, index) => (
-                  <Property
-                    key={index}
-                    property={property}
-                    className={
-                      index === topology.properties.length - 1
-                        ? "mb-0"
-                        : "mb-2.5"
-                    }
+                <TopologyConfigAnalysisLine topologyId={topology?.id} />
+                {canShowChildHealth() && (
+                  <HealthSummary
+                    className=""
+                    key={topology.id}
+                    component={topology}
+                  />
+                )}
+                <HealthChecksSummary checks={topology?.checks} className="" />
+                {topology?.id && <IncidentCardSummary topology={topology} />}
+                {topology?.components?.map((component: any) => (
+                  <HealthSummary
+                    className=""
+                    key={component.id}
+                    component={component}
                   />
                 ))}
               </CustomScroll>
-            )}
-            <CustomScroll
-              className="flex-1 py-4 pl-2 pr-2 space-y-1.5"
-              showMoreClass="text-xs linear-1.21rel mr-1 cursor-pointer"
-              maxHeight="200px"
-              minChildCount={5}
-            >
-              <TopologyConfigAnalysisLine topologyId={topology?.id} />
-              {canShowChildHealth() && (
-                <HealthSummary
-                  className=""
-                  key={topology.id}
-                  component={topology}
-                />
-              )}
-              <HealthChecksSummary checks={topology?.checks} className="" />
-              {topology?.id && <IncidentCardSummary topology={topology} />}
-              {topology?.components?.map((component: any) => (
-                <HealthSummary
-                  className=""
-                  key={component.id}
-                  component={component}
-                />
-              ))}
-            </CustomScroll>
-          </>
-        )}
-      </div>
+            </>
+          )}
+        </div>
+      )}
     </div>
   );
 }

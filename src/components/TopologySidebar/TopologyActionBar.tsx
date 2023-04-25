@@ -36,6 +36,7 @@ type TopologyActionItem = {
     }>;
     topology: Topology;
     onRefresh?: () => void;
+    updateVisibility?: (topology: Topology) => void;
     icon: React.ReactNode;
     text: React.ReactNode;
     /**
@@ -113,21 +114,21 @@ export const topologyActionItems: Readonly<TopologyActionItem>[] = [
   {
     label: "Hide",
     icon: BiHide,
-    isShown: (topology) => topology.hidden !== false,
+    isShown: (topology) => !topology.hidden,
     ContainerComponent: function Container({
       child: ChildComponent,
       topology,
-      onRefresh,
+      updateVisibility,
       icon,
       text
     }) {
-      const { mutate: updateVisibility } =
-        useUpdateComponentMutation(onRefresh);
+      const { mutate: mutateVisibility } =
+        useUpdateComponentMutation(updateVisibility);
 
       return (
         <ChildComponent
           onClick={() =>
-            updateVisibility({
+            mutateVisibility({
               id: topology.id,
               hidden: true
             })
@@ -141,21 +142,21 @@ export const topologyActionItems: Readonly<TopologyActionItem>[] = [
   {
     label: "Show",
     icon: BiShow,
-    isShown: (topology) => topology.hidden === false,
+    isShown: (topology) => !!topology.hidden,
     ContainerComponent: function Container({
       child: ChildComponent,
       topology,
-      onRefresh,
+      updateVisibility,
       icon,
       text
     }) {
-      const { mutate: updateVisibility } =
-        useUpdateComponentMutation(onRefresh);
+      const { mutate: mutateVisibility } =
+        useUpdateComponentMutation(updateVisibility);
 
       return (
         <ChildComponent
           onClick={() =>
-            updateVisibility({
+            mutateVisibility({
               id: topology.id,
               hidden: false
             })

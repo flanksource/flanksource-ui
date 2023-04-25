@@ -28,9 +28,14 @@ function TopologyMenuItem({
 interface IProps {
   topology: Topology;
   onRefresh?: () => void;
+  updateVisibility?: (topology: Topology) => void;
 }
 
-export const TopologyDropdownMenu = ({ topology, onRefresh }: IProps) => {
+export const TopologyDropdownMenu = ({
+  topology,
+  onRefresh,
+  updateVisibility
+}: IProps) => {
   const [dropDownMenuStyles, setDropDownMenuStyles] = useState<CSSProperties>();
 
   const dropdownMenuStylesCalc = useCallback((node: HTMLDivElement) => {
@@ -76,6 +81,7 @@ export const TopologyDropdownMenu = ({ topology, onRefresh }: IProps) => {
                   topology={topology}
                   key={label}
                   onRefresh={onRefresh}
+                  updateVisibility={updateVisibility}
                   icon={<Icon />}
                   text={label}
                   openModalAction={
