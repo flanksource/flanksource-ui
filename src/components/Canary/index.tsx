@@ -311,7 +311,7 @@ export function Canary({
         </div>
       </SidebarSticky>
 
-      <div className="flex-grow p-6 xl:max-w-7xl max-w-[calc(100%-20rem)]">
+      <div className="flex-grow p-6 2xl:max-w-7xl max-w-[calc(100%-20rem)]">
         <div className="flex flex-wrap mb-2">
           <div className="xl:flex-1 xl:mb-0 mb-4">
             <CanarySearchBar
