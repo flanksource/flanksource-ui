@@ -149,6 +149,10 @@ export function StatusHistory({
       status: status || undefined,
       duration: duration || undefined
     });
+    setPageState({
+      pageIndex: 0,
+      pageSize: 50
+    });
   };
 
   const getHistoryListView = (
