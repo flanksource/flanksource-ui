@@ -83,7 +83,7 @@ export const getAllChanges = (
   Object.keys(queryParams).forEach((key) => {
     if (queryParams[key] && queryParams[key] !== "All") {
       const queryKey = key === "type" ? `config.config_type` : key;
-      queryString = `&${queryKey}=eq.${queryParams[key]}`;
+      queryString += `&${queryKey}=eq.${queryParams[key]}`;
     }
   });
   return resolve(

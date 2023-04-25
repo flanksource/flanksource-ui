@@ -11,6 +11,7 @@ import {
 type Props = {
   onChange?: (value: string | undefined) => void;
   searchParamKey?: string;
+  paramsToReset?: Record<string, string>;
   value?: string;
 };
 
@@ -61,6 +62,7 @@ export const configChangeSeverity = {
 export function ConfigChangeSeverity({
   onChange = () => {},
   searchParamKey = "severity",
+  paramsToReset = {},
   value
 }: Props) {
   const [params, setParams] = useSearchParams({
@@ -74,7 +76,8 @@ export function ConfigChangeSeverity({
       onChange={(value) => {
         setParams({
           ...Object.fromEntries(params),
-          [searchParamKey]: value ?? ""
+          [searchParamKey]: value ?? "",
+          ...paramsToReset
         });
         onChange(value);
       }}
