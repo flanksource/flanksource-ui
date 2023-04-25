@@ -2,16 +2,15 @@ import { IncidentCommander } from "../axios";
 import { resolve } from "../resolve";
 import { User } from "./users";
 
-export const getTeamMembers = (teamId: string) =>
-  resolve<User[]>(
-    IncidentCommander.get(
-      `/team_members?team_id=eq.${teamId}&select=*,person_id(*)`
-    ).then((response) => {
-      return {
-        data: response.data.map((item: any) => item.person_id)
-      } as any;
-    })
+export const getTeamMembers = async (
+  teamId: string
+): Promise<{ data: User[] }> => {
+  const response = await IncidentCommander.get<{ person_id: User }[]>(
+    `/team_members?team_id=eq.${teamId}&select=*,person_id(*)`
   );
+  const data: User[] = response.data.map(({ person_id }) => person_id);
+  return { data };
+};
 
 export const addUserToTeam = (teamId: string, userIds: string[]) => {
   const payload = userIds.map((userId) => {
