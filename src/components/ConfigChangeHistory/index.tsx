@@ -16,31 +16,40 @@ const columns: ColumnDef<ConfigTypeChanges>[] = [
     cell: function ConfigChangeTypeCell({ row, column }) {
       const changeType = row?.getValue(column.id) as string;
       return (
-        <>
+        <div className="text-ellipsis overflow-hidden">
           <Icon
             name={changeType}
             secondary="diff"
             className="w-5 h-auto pr-1"
           />
           {changeType}
-        </>
+        </div>
       );
     },
-    size: 16
+    size: 48
   },
   {
     header: "Summary",
-    accessorKey: "summary"
+    accessorKey: "summary",
+    meta: {
+      cellClassName: "text-ellipsis overflow-hidden"
+    }
   },
   {
     header: "Source",
     accessorKey: "source",
+    meta: {
+      cellClassName: "text-ellipsis overflow-hidden"
+    },
     size: 48
   },
   {
     header: "Created",
     accessorKey: "created_at",
-    size: 48,
+    meta: {
+      cellClassName: "text-ellipsis overflow-hidden"
+    },
+    size: 36,
     cell: DateCell
   }
 ];

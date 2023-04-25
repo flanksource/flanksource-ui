@@ -1,8 +1,4 @@
-import { InfoMessage } from "../../components/InfoMessage";
-import {
-  useGetConfigByIdQuery,
-  useGetConfigChangesQueryById
-} from "../../api/query-hooks";
+import { useGetConfigByIdQuery } from "../../api/query-hooks";
 import { useEffect, useMemo, useState } from "react";
 import { ConfigTypeChanges } from "../ConfigChanges";
 import { formatISODate } from "../../utils/date";
@@ -17,25 +13,30 @@ import { DescriptionCard } from "../DescriptionCard";
 import ConfigLink from "../ConfigLink/ConfigLink";
 import ReactTooltip from "react-tooltip";
 import { ViewType } from "../../types";
+import EmptyState from "../EmptyState";
+import { useGetConfigChangesByConfigChangeIdQuery } from "../../api/query-hooks/useGetConfigChangesByConfigChangeIdQuery";
 import { ConfigItem } from "../../api/services/configs";
 import { User } from "../../api/services/users";
+
+type ConfigDetailsChangesProps = {
+  id: string;
+  configId: string;
+  viewType?: ViewType;
+  data?: ConfigTypeChanges;
+  showConfigLogo?: boolean;
+};
 
 export function ConfigDetailsChanges({
   configId,
   id,
   viewType = ViewType.summary,
-  showConfigLogo
-}: {
-  id: string;
-  configId: string;
-  viewType?: ViewType;
-  showConfigLogo?: boolean;
-}) {
-  const {
-    data: historyData,
-    isLoading,
-    error
-  } = useGetConfigChangesQueryById(configId!);
+  showConfigLogo,
+  data
+}: ConfigDetailsChangesProps) {
+  const { data: historyData, isLoading } =
+    useGetConfigChangesByConfigChangeIdQuery(id, configId!, {
+      enabled: !data
+    });
   const { data: config } = useGetConfigByIdQuery(configId);
   const [open, setOpen] = useState(false);
   const [changeDetails, setChangeDetails] = useState<ConfigTypeChanges>();
@@ -60,20 +61,15 @@ export function ConfigDetailsChanges({
   }, [changeDetails]);
 
   useEffect(() => {
-    setChangeDetails(historyData?.find((item) => item.id === id));
-  }, [historyData, id]);
+    setChangeDetails(historyData?.data?.[0] || data);
+  }, [historyData, id, data]);
 
   useEffect(() => {
     ReactTooltip.rebuild();
   });
 
-  if (error || (!changeDetails && !isLoading)) {
-    const errorMessage =
-      typeof error === "symbol"
-        ? error
-        : error?.message ?? "Something went wrong";
-
-    return <InfoMessage message={errorMessage} />;
+  if (!changeDetails && !isLoading) {
+    return <EmptyState />;
   }
 
   return (

@@ -2,11 +2,16 @@ import clsx from "clsx";
 import { UsePaginationInstanceProps, UsePaginationState } from "react-table";
 import { Loading } from "../../Loading";
 
-type PaginationProps = React.HTMLProps<HTMLDivElement> &
+export type PaginationType = "lean" | "complete" | "virtual";
+
+export type PaginationProps = React.HTMLProps<HTMLDivElement> &
   Omit<UsePaginationInstanceProps<{}>, "page"> & {
     state: UsePaginationState<{}>;
     loading?: boolean;
+    paginationType: PaginationType;
   };
+
+const itemsPerPage = [5, 10, 25, 50, 100, 150, 200, 250, 300, 500, 1000];
 
 export const Pagination = ({
   canPreviousPage,
@@ -19,8 +24,13 @@ export const Pagination = ({
   setPageSize,
   state: { pageIndex, pageSize },
   loading,
+  paginationType,
   className
 }: PaginationProps) => {
+  if (pageOptions.length < 2) {
+    return null;
+  }
+
   return (
     <nav className={clsx("isolate rounded-md", className)}>
       <div className="inline-block pr-2">
@@ -28,7 +38,12 @@ export const Pagination = ({
           <div className="inline-block pr-2 font-bold">
             Page {pageIndex + 1} of {pageOptions.length}
           </div>
-          <div className="mt-1 inline-block rounded-md shadow-sm pr-2">
+          <div
+            className={clsx(
+              "mt-1 inline-block rounded-md shadow-sm pr-2",
+              paginationType === "complete" ? "" : "hidden"
+            )}
+          >
             <span className="px-4 py-2 inline-block items-center rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500">
               Go to page
             </span>
@@ -45,13 +60,16 @@ export const Pagination = ({
             />
           </div>
           <select
-            className="rounded-md w-35 border-gray-300 py-2 pl-3 pr-10 shadow-sm inline-block"
+            className={clsx(
+              "rounded-md w-35 border-gray-300 py-2 pl-3 pr-10 shadow-sm inline-block",
+              paginationType === "complete" ? "" : "hidden"
+            )}
             value={pageSize}
             onChange={(e) => {
               setPageSize(Number(e.target.value));
             }}
           >
-            {[50, 100, 150, 200, 250, 300, 500, 1000].map((pageSize) => (
+            {itemsPerPage.map((pageSize) => (
               <option key={pageSize} value={pageSize}>
                 {pageSize}
               </option>
