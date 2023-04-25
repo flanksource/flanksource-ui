@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { SearchLayout } from "../components/Layout";
 import { Canary } from "../components/Canary";
 import RefreshDropdown, {
@@ -6,13 +6,12 @@ import RefreshDropdown, {
 } from "../components/RefreshDropdown";
 import { HealthRefreshDropdownRateContext } from "../components/RefreshDropdown/RefreshRateContext";
 import { Modal } from "../components";
-import { SchemaResourceI, createResource } from "../api/schemaResources";
-import { AuthContext } from "../context";
 import { schemaResourceTypes } from "../components/SchemaResourcePage/resourceTypes";
 import { AiFillPlusCircle } from "react-icons/ai";
 import { BreadcrumbNav, BreadcrumbRoot } from "../components/BreadcrumbNav";
 import { Head } from "../components/Head/Head";
 import HealthSpecEditor from "../components/SpecEditor/HealthSpecEditor";
+import { useSettingsCreateResource } from "../api/query-hooks/mutations/useSettingsResourcesMutations";
 
 type Props = {
   url: string;
@@ -21,10 +20,16 @@ type Props = {
 export function HealthPage({ url }: Props) {
   const [loading, setLoading] = useState(true);
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const { user } = useContext(AuthContext);
 
   const resourceInfo = schemaResourceTypes.find(
     (item) => item.name === "Health Check"
+  );
+
+  const { mutate: createResource } = useSettingsCreateResource(
+    resourceInfo!,
+    () => {
+      setModalIsOpen(false);
+    }
   );
 
   /**
@@ -35,16 +40,6 @@ export function HealthPage({ url }: Props) {
     const refreshRate = localStorage.getItem(HEALTH_PAGE_REFRESH_RATE_KEY);
     return refreshRate ?? "";
   });
-
-  const onSubmit = async (data: Partial<SchemaResourceI>) => {
-    await createResource(resourceInfo, {
-      ...data,
-      created_by: user?.id
-    });
-    // todo: wire up to refresh
-    // setReload((x) => x + 1);
-    setModalIsOpen(false);
-  };
 
   return (
     <>
@@ -91,7 +86,7 @@ export function HealthPage({ url }: Props) {
           size="full"
           title={`Add ${resourceInfo!.name}`}
         >
-          <HealthSpecEditor onSubmit={(val) => onSubmit(val)} canEdit />
+          <HealthSpecEditor onSubmit={(val) => createResource(val)} />
         </Modal>
       </HealthRefreshDropdownRateContext.Provider>
     </>

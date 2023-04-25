@@ -6,14 +6,12 @@ import KubernetesConfigsFormEditor from "../Forms/Configs/KubernetesConfigsFormE
 type ConfigScrapperSpecEditorProps = {
   spec?: Record<string, any>;
   onSubmit?: (spec: Record<string, any>) => void;
-  canEdit?: boolean;
   deleteHandler?: (id: string) => void;
 };
 
 export default function ConfigScrapperSpecEditor({
   spec,
   onSubmit = () => {},
-  canEdit = true,
   deleteHandler
 }: ConfigScrapperSpecEditorProps) {
   const configTypes: SpecType[] = useMemo(
@@ -21,7 +19,6 @@ export default function ConfigScrapperSpecEditor({
       {
         name: "kubernetes",
         description: "Edit kubernetes configs",
-        canEdit: canEdit,
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -36,7 +33,6 @@ export default function ConfigScrapperSpecEditor({
       {
         name: "aws",
         description: "Edit aws configs",
-        canEdit: canEdit,
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -50,7 +46,7 @@ export default function ConfigScrapperSpecEditor({
       },
       {
         name: "File",
-        canEdit: canEdit,
+
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -64,7 +60,6 @@ export default function ConfigScrapperSpecEditor({
       },
       {
         name: "Git",
-        canEdit: canEdit,
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -78,7 +73,6 @@ export default function ConfigScrapperSpecEditor({
       },
       {
         name: "HTTP",
-        canEdit: canEdit,
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -92,7 +86,6 @@ export default function ConfigScrapperSpecEditor({
       },
       {
         name: "Azure DevOps",
-        canEdit: canEdit,
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -106,7 +99,6 @@ export default function ConfigScrapperSpecEditor({
       },
       {
         name: "Custom Config Spec",
-        canEdit: canEdit,
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -119,7 +111,7 @@ export default function ConfigScrapperSpecEditor({
         rawSpecInput: true
       }
     ],
-    [canEdit, onSubmit, spec]
+    [onSubmit, spec]
   );
 
   // there should only be one spec, so we can just grab the first key
@@ -130,7 +122,6 @@ export default function ConfigScrapperSpecEditor({
       types={configTypes}
       format="yaml"
       resourceName="Config Scraper"
-      canEdit={!!spec}
       selectedSpec={selectedSpec}
       deleteHandler={deleteHandler}
     />

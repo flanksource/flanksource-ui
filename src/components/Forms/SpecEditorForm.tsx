@@ -10,7 +10,6 @@ import FormikSelectDropdown from "./Formik/FormikAutomcompletDropdown";
 
 type SpecEditorFormProps = {
   resourceName: string;
-  canEdit: boolean;
   deleteHandler?: (id: string) => void;
   loadSpec: () => Record<string, any>;
   updateSpec: (spec: Record<string, any>) => void;
@@ -25,7 +24,6 @@ type SpecEditorFormProps = {
 export default function SpecEditorForm({
   resourceName,
   deleteHandler,
-  canEdit = true,
   loadSpec = () => ({}),
   updateSpec = () => {},
   specFormat = "yaml",

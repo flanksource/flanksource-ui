@@ -31,7 +31,6 @@ type SpecEditorProps = {
   types: SpecType[];
   format?: "json" | "yaml";
   resourceName: SchemaResourceTypes[number]["name"];
-  canEdit?: boolean;
   selectedSpec?: string;
   deleteHandler?: (id: string) => void;
 };
@@ -40,7 +39,6 @@ export default function SpecEditor({
   types,
   format = "yaml",
   resourceName,
-  canEdit = true,
   selectedSpec,
   deleteHandler
 }: SpecEditorProps) {
@@ -66,7 +64,6 @@ export default function SpecEditor({
       {selectedSpecItem ? (
         <div className="flex flex-col space-y-2">
           <SpecEditorForm
-            canEdit={canEdit}
             configForm={selectedSpecItem.configForm}
             updateSpec={selectedSpecItem.updateSpec}
             loadSpec={selectedSpecItem.loadSpec}

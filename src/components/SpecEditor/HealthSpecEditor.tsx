@@ -5,21 +5,18 @@ import { HTTPHealthFormEditor } from "../Forms/Health/HTTPHealthFormEditor";
 type HealthSpecEditorProps = {
   spec?: Record<string, any>;
   onSubmit?: (spec: Record<string, any>) => void;
-  canEdit?: boolean;
   deleteHandler?: (id: string) => void;
 };
 
 export default function HealthSpecEditor({
   spec,
   onSubmit = () => {},
-  canEdit = true,
   deleteHandler
 }: HealthSpecEditorProps) {
   const configTypes: SpecType[] = useMemo(
     () => [
       {
         name: "http",
-        canEdit: canEdit,
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -33,7 +30,6 @@ export default function HealthSpecEditor({
       },
       {
         name: "AWS Config Rule",
-        canEdit: canEdit,
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -47,7 +43,6 @@ export default function HealthSpecEditor({
       },
       {
         name: "AWS Config",
-        canEdit: canEdit,
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -61,8 +56,6 @@ export default function HealthSpecEditor({
       },
       {
         name: "Github",
-
-        canEdit: canEdit,
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -76,7 +69,6 @@ export default function HealthSpecEditor({
       },
       {
         name: "EC2",
-        canEdit: canEdit,
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -90,7 +82,6 @@ export default function HealthSpecEditor({
       },
       {
         name: "LDAP",
-        canEdit: canEdit,
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -104,7 +95,6 @@ export default function HealthSpecEditor({
       },
       {
         name: "Pod",
-        canEdit: canEdit,
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -118,7 +108,6 @@ export default function HealthSpecEditor({
       },
       {
         name: "Exec",
-        canEdit: canEdit,
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -132,7 +121,6 @@ export default function HealthSpecEditor({
       },
       {
         name: "Alertmanager",
-        canEdit: canEdit,
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -146,7 +134,6 @@ export default function HealthSpecEditor({
       },
       {
         name: "Cloudwatch",
-        canEdit: canEdit,
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -160,7 +147,6 @@ export default function HealthSpecEditor({
       },
       {
         name: "Elasticsearch",
-        canEdit: canEdit,
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -174,7 +160,6 @@ export default function HealthSpecEditor({
       },
       {
         name: "Redis",
-        canEdit: canEdit,
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -188,7 +173,6 @@ export default function HealthSpecEditor({
       },
       {
         name: "Mongo",
-        canEdit: canEdit,
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -202,7 +186,6 @@ export default function HealthSpecEditor({
       },
       {
         name: "DNS",
-        canEdit: canEdit,
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -216,7 +199,6 @@ export default function HealthSpecEditor({
       },
       {
         name: "Ping",
-        canEdit: canEdit,
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -230,7 +212,6 @@ export default function HealthSpecEditor({
       },
       {
         name: "GCS",
-        canEdit: canEdit,
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -244,7 +225,6 @@ export default function HealthSpecEditor({
       },
       {
         name: "S3",
-        canEdit: canEdit,
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -258,7 +238,6 @@ export default function HealthSpecEditor({
       },
       {
         name: "SMB",
-        canEdit: canEdit,
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -272,7 +251,6 @@ export default function HealthSpecEditor({
       },
       {
         name: "SFTP",
-        canEdit: canEdit,
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -286,7 +264,6 @@ export default function HealthSpecEditor({
       },
       {
         name: "Folder",
-        canEdit: canEdit,
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -300,7 +277,6 @@ export default function HealthSpecEditor({
       },
       {
         name: "Prometheus",
-        canEdit: canEdit,
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -314,7 +290,6 @@ export default function HealthSpecEditor({
       },
       {
         name: "Kubernetes",
-        canEdit: canEdit,
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -328,7 +303,6 @@ export default function HealthSpecEditor({
       },
       {
         name: "SQL",
-        canEdit: canEdit,
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -342,7 +316,6 @@ export default function HealthSpecEditor({
       },
       {
         name: "Custom Health Check Spec",
-        canEdit: canEdit,
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -355,7 +328,7 @@ export default function HealthSpecEditor({
         rawSpecInput: true
       }
     ],
-    [canEdit, onSubmit, spec]
+    [onSubmit, spec]
   );
 
   // there should only be one spec, so we can just grab the first key
@@ -366,7 +339,6 @@ export default function HealthSpecEditor({
       types={configTypes}
       format="yaml"
       resourceName="Health Check"
-      canEdit={!!spec}
       selectedSpec={selectedSpec}
       deleteHandler={deleteHandler}
     />
