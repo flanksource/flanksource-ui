@@ -6,12 +6,25 @@ import FormikMultiSelectListField from "../Formik/FormikMultiSelectListField";
 import FormikCheckboxFieldsGroup from "../Formik/FormikCheckboxFieldsGroup";
 import FormikConfigFormFieldsArray from "../Formik/FormikConfigFormFieldsArray";
 import FormikConfigEnvVarFieldsArray from "../Formik/FormikConfigEnvVarFieldsArray";
+import FormikIconPicker from "../Formik/FormikIconPicker";
+import { getIn, useFormikContext } from "formik";
+import { useEffect } from "react";
+import FormikSelectDropdown from "../Formik/FormikAutomcompletDropdown";
 
 type HTTPHealthFormEditorProps = {
   fieldName: string;
 };
 
 export function HTTPHealthFormEditor({ fieldName }: HTTPHealthFormEditorProps) {
+  const { values, setFieldValue } = useFormikContext();
+
+  const name = getIn(values, `${fieldName}.name`);
+
+  // when name changes, we want to update the name of the top level field
+  useEffect(() => {
+    setFieldValue("name", name);
+  }, [name, setFieldValue]);
+
   return (
     <>
       <div className="flex flex-row md:space-x-2">
@@ -21,12 +34,53 @@ export function HTTPHealthFormEditor({ fieldName }: HTTPHealthFormEditorProps) {
           label="Name"
           required
         />
-        <FormikTextInput
+        <FormikIconPicker
           className="flex flex-col w-1/2"
           name={`${fieldName}.icon`}
           label="Icon"
         />
       </div>
+
+      <FormikSelectDropdown
+        name={`${fieldName}.schedule`}
+        label="Schedule"
+        required
+        options={[
+          {
+            label: "@every 30s",
+            value: "@every 30s"
+          },
+          {
+            label: "@every 1m",
+            value: "@every 1m"
+          },
+          {
+            label: "@every 5m",
+            value: "@every 5m"
+          },
+          {
+            label: "@every 30m",
+            value: "@every 30m"
+          },
+          {
+            label: "@hourly",
+            value: "@hourly"
+          },
+          {
+            label: "@every 6h",
+            value: "@every 6h"
+          },
+          {
+            label: "@daily",
+            value: "@daily"
+          },
+          {
+            label: "@weekly",
+            value: "@weekly"
+          }
+        ]}
+      />
+
       <FormikTextInput name={`${fieldName}.description`} label="Description" />
       <FormikTextInput name={`${fieldName}.endpoint`} label="URL" required />
       <HTTPMethodFieldsGroup
@@ -51,6 +105,7 @@ export function HTTPHealthFormEditor({ fieldName }: HTTPHealthFormEditorProps) {
         name={`${fieldName}.thresholdMillis`}
         label="Max Response Time (in millis)"
         type="number"
+        min={0}
       />
       <FormikTextInput
         name={`${fieldName}.responseContent`}
@@ -62,6 +117,7 @@ export function HTTPHealthFormEditor({ fieldName }: HTTPHealthFormEditorProps) {
         label="Max SSL Expiry Age (days)"
         hint="Maximum number of days until the SSL Certificate expires."
         type="number"
+        min={0}
       />
 
       <FormikTemplateFields name={`${fieldName}.test`} label="Script" />

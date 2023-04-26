@@ -3,10 +3,11 @@ import React, { useCallback, useMemo, useState } from "react";
 import { Button } from "../Button";
 import { Tabs, Tab } from "../Tabs/Tabs";
 import { FormikCodeEditor } from "./Formik/FormikCodeEditor";
-import { FaSave, FaTrash } from "react-icons/fa";
+import { FaTrash } from "react-icons/fa";
 import { schemaResourceTypes } from "../SchemaResourcePage/resourceTypes";
 import FormikTextInput from "./Formik/FormikTextInput";
 import FormikSelectDropdown from "./Formik/FormikAutomcompletDropdown";
+import FormikIconPicker from "./Formik/FormikIconPicker";
 
 type SpecEditorFormProps = {
   resourceName: string;
@@ -35,23 +36,26 @@ export default function SpecEditorForm({
     showCodeEditorOnly ? "Code" : "Form"
   );
 
-  const currentResourceFormFields: Readonly<Record<"name", string>[]> =
-    useMemo(() => {
-      const resourceType = schemaResourceTypes.find(
-        (item) => item.name === resourceName
-      );
-      if (!resourceType) {
-        return [];
-      }
-      return resourceType.fields;
-    }, [resourceName]);
+  const currentResourceFormFields: Readonly<
+    {
+      name: string;
+      hidden?: boolean;
+    }[]
+  > = useMemo(() => {
+    const resourceType = schemaResourceTypes.find(
+      (item) => item.name === resourceName
+    );
+    if (!resourceType) {
+      return [];
+    }
+    return resourceType.fields;
+  }, [resourceName]);
 
   const isFieldSupportedByResourceType = useCallback(
-    (fieldName: string) => {
-      return !!currentResourceFormFields.find(
-        (item) => item.name === fieldName
-      );
-    },
+    (fieldName: string) =>
+      !!currentResourceFormFields.find(
+        (item) => item.name === fieldName && item.hidden !== true
+      ),
     [currentResourceFormFields]
   );
 
@@ -70,6 +74,8 @@ export default function SpecEditorForm({
       onSubmit={(values) => {
         updateSpec(values);
       }}
+      validateOnBlur
+      validateOnChange
     >
       {({ handleSubmit, handleReset, values, setFieldValue }) => (
         <Form
@@ -79,9 +85,11 @@ export default function SpecEditorForm({
         >
           <div className="flex flex-col space-y-4 p-4">
             <div className="flex flex-col space-y-2">
-              <FormikTextInput name="name" label="Name" required />
               {isFieldSupportedByResourceType("icon") && (
-                <FormikTextInput name="icon" label="Icon" />
+                <FormikTextInput name="name" label="Name" required />
+              )}
+              {isFieldSupportedByResourceType("icon") && (
+                <FormikIconPicker name="icon" label="Icon" />
               )}
               {isFieldSupportedByResourceType("labels") && (
                 <div className="flex flex-col space-y-2">

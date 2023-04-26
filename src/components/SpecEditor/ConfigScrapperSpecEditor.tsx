@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import SpecEditor, { SpecType } from "./SpecEditor";
 import AWSConfigsFormEditor from "../Forms/Configs/AWSConfigsFormEditor";
 import KubernetesConfigsFormEditor from "../Forms/Configs/KubernetesConfigsFormEditor";
+import { FaCog } from "react-icons/fa";
 
 type ConfigScrapperSpecEditorProps = {
   spec?: Record<string, any>;
@@ -15,102 +16,109 @@ export default function ConfigScrapperSpecEditor({
   deleteHandler
 }: ConfigScrapperSpecEditorProps) {
   const configTypes: SpecType[] = useMemo(
-    () => [
-      {
-        name: "kubernetes",
-        description: "Edit kubernetes configs",
-        updateSpec: (value: Record<string, any>) => {
-          onSubmit(value);
+    () =>
+      [
+        {
+          name: "kubernetes",
+          label: "Kubernetes",
+          description: "Edit kubernetes configs",
+          updateSpec: (value: Record<string, any>) => {
+            onSubmit(value);
+          },
+          loadSpec: () => {
+            // probably need to query the spec from the backend
+            return spec ?? {};
+          },
+          icon: "kubernetes",
+          configForm: KubernetesConfigsFormEditor,
+          formFieldName: "spec.kubernetes.0"
         },
-        loadSpec: () => {
-          // probably need to query the spec from the backend
-          return spec ?? {};
+        {
+          name: "aws",
+          label: "AWS",
+          description: "Edit aws configs",
+          updateSpec: (value: Record<string, any>) => {
+            onSubmit(value);
+          },
+          loadSpec: () => {
+            // probably need to query the spec from the backend
+            return spec ?? {};
+          },
+          configForm: AWSConfigsFormEditor,
+          icon: "aws",
+          formFieldName: "spec.aws.0"
         },
-        icon: "kubernetes",
-        configForm: KubernetesConfigsFormEditor,
-        formFieldName: "spec.kubernetes.0"
-      },
-      {
-        name: "aws",
-        description: "Edit aws configs",
-        updateSpec: (value: Record<string, any>) => {
-          onSubmit(value);
+        {
+          name: "file",
+          label: "File",
+          updateSpec: (value: Record<string, any>) => {
+            onSubmit(value);
+          },
+          loadSpec: () => {
+            return spec ?? {};
+          },
+          icon: "folder",
+          configForm: null,
+          formFieldName: "spec.file.0",
+          rawSpecInput: true
         },
-        loadSpec: () => {
-          // probably need to query the spec from the backend
-          return spec ?? {};
+        {
+          name: "git",
+          label: "Git",
+          updateSpec: (value: Record<string, any>) => {
+            onSubmit(value);
+          },
+          loadSpec: () => {
+            return spec ?? {};
+          },
+          icon: "git",
+          configForm: null,
+          formFieldName: "spec.git.0",
+          rawSpecInput: true
         },
-        configForm: AWSConfigsFormEditor,
-        icon: "aws",
-        formFieldName: "spec.aws.0"
-      },
-      {
-        name: "file",
-        updateSpec: (value: Record<string, any>) => {
-          onSubmit(value);
+        {
+          name: "http",
+          label: "HTTP",
+          updateSpec: (value: Record<string, any>) => {
+            onSubmit(value);
+          },
+          loadSpec: () => {
+            return spec ?? {};
+          },
+          icon: "http",
+          configForm: null,
+          formFieldName: "spec.http.0",
+          rawSpecInput: true
         },
-        loadSpec: () => {
-          return spec ?? {};
+        {
+          name: "azureDevOps",
+          label: "Azure DevOps",
+          updateSpec: (value: Record<string, any>) => {
+            onSubmit(value);
+          },
+          loadSpec: () => {
+            return spec ?? {};
+          },
+          icon: "azure",
+          configForm: null,
+          formFieldName: "spec.azureDevOps.0",
+          rawSpecInput: true
         },
-        icon: "file",
-        configForm: null,
-        formFieldName: "spec.file.0",
-        rawSpecInput: true
-      },
-      {
-        name: "git",
-        updateSpec: (value: Record<string, any>) => {
-          onSubmit(value);
-        },
-        loadSpec: () => {
-          return spec ?? {};
-        },
-        icon: "git",
-        configForm: null,
-        formFieldName: "spec.git.0",
-        rawSpecInput: true
-      },
-      {
-        name: "http",
-        updateSpec: (value: Record<string, any>) => {
-          onSubmit(value);
-        },
-        loadSpec: () => {
-          return spec ?? {};
-        },
-        icon: "http",
-        configForm: null,
-        formFieldName: "spec.http.0",
-        rawSpecInput: true
-      },
-      {
-        name: "azureDevOps",
-        updateSpec: (value: Record<string, any>) => {
-          onSubmit(value);
-        },
-        loadSpec: () => {
-          return spec ?? {};
-        },
-        icon: "azure",
-        configForm: null,
-        formFieldName: "spec.azureDevOps.0",
-        rawSpecInput: true
-      },
-      {
-        name: "custom",
-        label: "Custom Config Spec",
-        updateSpec: (value: Record<string, any>) => {
-          onSubmit(value);
-        },
-        loadSpec: () => {
-          return spec ?? {};
-        },
-        icon: "code",
-        configForm: null,
-        formFieldName: "spec",
-        rawSpecInput: true
-      }
-    ],
+        {
+          name: "custom",
+          label: "Custom Config Spec",
+          updateSpec: (value: Record<string, any>) => {
+            onSubmit(value);
+          },
+          loadSpec: () => {
+            return spec ?? {};
+          },
+          icon: FaCog,
+          configForm: null,
+          formFieldName: "spec",
+          rawSpecInput: true
+        }
+      ].sort((a, b) => a.label.localeCompare(b.label)),
     [onSubmit, spec]
   );
 

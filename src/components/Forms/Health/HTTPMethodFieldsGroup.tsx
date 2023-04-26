@@ -20,12 +20,13 @@ function HTTPBody({ method, name }: HTTPBodyProps) {
   return (
     <div className="flex flex-col space-y-2">
       <label className="text-sm font-semibold">Body</label>
-      <Switch
-        options={["Text", "Go Template"]}
-        defaultValue="Text"
-        onChange={(v) => setSelectedBodyType(v as any)}
-      />
-
+      <div className="flex flex-row w-full">
+        <Switch
+          options={["Text", "Go Template"]}
+          defaultValue="Text"
+          onChange={(v) => setSelectedBodyType(v as any)}
+        />
+      </div>
       {selectedBodyType && (
         <FormikCodeEditor
           fieldName={name}
@@ -57,15 +58,17 @@ export default function HTTPMethodFieldsGroup({
   return (
     <div className="flex flex-col space-y-2">
       <label className="font-semibold text-sm">HTTP Method</label>
-      <Switch
-        options={MethodOptions.map((value) => value)}
-        defaultValue="GET"
-        value={selectedMethod}
-        onChange={(v) => {
-          setSelectedMethod(v as any);
-          setFieldValue(methodFieldName, v);
-        }}
-      />
+      <div className="flex flex-row">
+        <Switch
+          options={MethodOptions.map((value) => value)}
+          defaultValue="GET"
+          value={selectedMethod}
+          onChange={(v) => {
+            setSelectedMethod(v as any);
+            setFieldValue(methodFieldName, v);
+          }}
+        />
+      </div>
       {selectedMethod && (
         <HTTPBody method={selectedMethod} name={bodyFieldName} />
       )}

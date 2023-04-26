@@ -14,21 +14,29 @@ export default function FormikTextInput({
   name,
   required = false,
   label,
-  className = "flex flex-col",
+  className = "flex flex-col space-y-2",
   hint,
   type = "text",
   ...props
 }: FormikTextInputProps) {
-  const [field] = useField({
+  const [field, meta] = useField({
     name,
     type: type,
-    required
+    required,
+    validate: (value) => {
+      if (required && !value) {
+        return "This field is required";
+      }
+    }
   });
 
   return (
     <div className={className}>
       <TextInput label={label} {...props} id={name} type={type} {...field} />
       {hint && <p className="text-sm text-gray-500">{hint}</p>}
+      {meta.touched && meta.error ? (
+        <p className="text-sm text-red-500 w-full py-1">{meta.error}</p>
+      ) : null}
     </div>
   );
 }

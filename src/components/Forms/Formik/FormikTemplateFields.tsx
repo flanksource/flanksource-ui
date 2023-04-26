@@ -69,19 +69,24 @@ export default function FormikTemplateFields({
   }, [selectedOption]);
 
   return (
-    <div className="flex flex-col p-2 space-y-2">
+    <div className="flex flex-col py-2 space-y-2">
       <label className="font-semibold text-sm">{label}</label>
-      <Switch
-        options={Object.keys(LanguageOptionsForTemplate).map((value) => value)}
-        defaultValue="Go Template"
-        value={selectedOption}
-        onChange={(v) => {
-          if (v !== selectedOption && fieldName) {
-            setFieldValue(fieldName, undefined);
-          }
-          setSelectedOptions(v as any);
-        }}
-      />
+      <div className="flex flex-row w-full">
+        <Switch
+          options={Object.keys(LanguageOptionsForTemplate).map(
+            (value) => value
+          )}
+          className="w-auto"
+          defaultValue="Go Template"
+          value={selectedOption}
+          onChange={(v) => {
+            if (v !== selectedOption && fieldName) {
+              setFieldValue(fieldName, undefined);
+            }
+            setSelectedOptions(v as any);
+          }}
+        />
+      </div>
       {fieldName && (
         <FormikCodeEditor
           fieldName={fieldName}

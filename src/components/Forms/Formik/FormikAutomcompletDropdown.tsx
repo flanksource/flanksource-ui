@@ -19,16 +19,21 @@ export default function FormikSelectDropdown({
   options,
   hint
 }: FormikSelectDropdownProps) {
-  const [field] = useField<string>({
+  const [field, meta] = useField<string>({
     name,
     type: "checkbox",
-    required
+    required,
+    validate: (value) => {
+      if (required && !value) {
+        return "This field is required";
+      }
+    }
   });
 
   return (
     <div className="flex flex-col space-y-2">
       {label && (
-        <label className={`block text-sm font-bold text-gray-700`}>
+        <label className={`block text-sm font-semibold text-gray-700`}>
           {label}
         </label>
       )}
@@ -47,8 +52,13 @@ export default function FormikSelectDropdown({
           value: field.value
         }}
         options={options}
+        onBlur={field.onBlur}
+        name={field.name}
       />
       {hint && <p className="text-sm text-gray-500">{hint}</p>}
+      {meta.touched && meta.error ? (
+        <p className="text-sm text-red-500 w-full py-1">{meta.error}</p>
+      ) : null}
     </div>
   );
 }

@@ -67,15 +67,17 @@ export default function FormikAuthFieldsGroup({
   return (
     <div className="flex flex-col space-y-2">
       <label className="font-semibold text-sm">Authentication</label>
-      <Switch
-        options={["None", "Basic", "NTLM", "NTLMv2"]}
-        defaultValue="None"
-        value={selectedMethod}
-        onChange={(v) => {
-          setSelectedMethod(v as any);
-          setAuthenticationMethodFormValue(v as any);
-        }}
-      />
+      <div className="flex flex-row w-full">
+        <Switch
+          options={["None", "Basic", "NTLM", "NTLMv2"]}
+          defaultValue="None"
+          value={selectedMethod}
+          onChange={(v) => {
+            setSelectedMethod(v as any);
+            setAuthenticationMethodFormValue(v as any);
+          }}
+        />
+      </div>
       {selectedMethod !== "None" && (
         <div className="flex flex-col p-2">
           <FormikCheckboxFieldsGroup
