@@ -4,17 +4,20 @@ type FormikCheckboxProps = {
   name: string;
   required?: boolean;
   label?: string;
+  disabled?: boolean;
 };
 
 export default function FormikCheckbox({
   name,
   required = false,
+  disabled,
   label
 }: FormikCheckboxProps) {
   const [field] = useField({
     name,
     type: "checkbox",
-    required
+    required,
+    disabled
   });
 
   return (
@@ -24,6 +27,7 @@ export default function FormikCheckbox({
         type="checkbox"
         className="text-blue-600 bg-gray-100 border-gray-900 rounded focus:ring-blue-500 focus:ring-2"
         {...field}
+        disabled={disabled}
       />
       <label htmlFor={name} className="text-sm font-semibold text-gray-700">
         {label}

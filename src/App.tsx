@@ -59,6 +59,8 @@ import {
   FeatureFlagsContextProvider,
   useFeatureFlagsContext
 } from "./context/FeatureFlagsContext";
+import { ConnectionsPage } from "./pages/ConnectionsPage";
+import { BsLink } from "react-icons/bs";
 
 const navigation = [
   {
@@ -95,6 +97,12 @@ const settingsNav = {
   icon: AdjustmentsIcon,
   checkPath: false,
   submenu: [
+    {
+      name: "Connections",
+      href: "/settings/connections",
+      icon: BsLink,
+      resouceName: resources["settings.connections"]
+    },
     {
       name: "Users",
       href: "/settings/users",
@@ -165,6 +173,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
       </Route>
 
       <Route path="settings" element={sidebar}>
+        <Route path="connections" element={<ConnectionsPage />} />
         <Route path="users" element={<UsersPage />} />
         <Route path="jobs" element={<JobsHistorySettingsPage />} />
         <Route path="feature-flags" element={<FeatureFlagsPage />} />

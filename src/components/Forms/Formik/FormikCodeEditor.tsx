@@ -17,13 +17,19 @@ type FormikCodeEditorProps = {
   fieldName: string;
   className?: string;
   schemaFilePrefix?: "component" | "canary" | "system" | "scrape_config";
+  labelClassName?: string;
+  label?: string;
+  disabled?: boolean;
 };
 
 export function FormikCodeEditor({
   format = "yaml",
   fieldName,
-  className = "h-[min(1000px,calc(90vh))]",
-  schemaFilePrefix
+  schemaFilePrefix,
+  label,
+  labelClassName,
+  disabled,
+  className = "flex fle-col h-[min(1000px,calc(90vh))]"
 }: FormikCodeEditorProps) {
   const { setFieldValue } = useFormikContext<Record<string, any>>();
 
@@ -77,6 +83,13 @@ export function FormikCodeEditor({
 
   return (
     <div className={className}>
+      {label && (
+        <label
+          className={`block text-sm font-bold text-gray-700 mb-2 ${labelClassName}`}
+        >
+          {label}
+        </label>
+      )}
       <CodeEditor
         onChange={(v) => {
           if (v) {
@@ -89,6 +102,7 @@ export function FormikCodeEditor({
         value={value}
         language={format}
         schemaFilePrefix={schemaFilePrefix}
+        readOnly={disabled}
       />
     </div>
   );
