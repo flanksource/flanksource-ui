@@ -19,7 +19,7 @@ function HTTPBody({ method, name }: HTTPBodyProps) {
 
   return (
     <div className="flex flex-col space-y-2">
-      <label className="font-semibold">Body</label>
+      <label className="text-sm font-semibold">Body</label>
       <Switch
         options={["Text", "Go Template"]}
         defaultValue="Text"

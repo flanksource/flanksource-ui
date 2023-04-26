@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Switch } from "../../Switch";
-import { useField, useFormikContext } from "formik";
+import { useFormikContext } from "formik";
 import FormikCheckboxFieldsGroup from "./FormikCheckboxFieldsGroup";
 import FormikEnvVarConfigsFields from "./FormikConfigEnvVarFields";
+import { get } from "lodash";
 
 type FormikAuthFieldsGroupProps = {
   name: string;
@@ -11,13 +12,57 @@ type FormikAuthFieldsGroupProps = {
 export default function FormikAuthFieldsGroup({
   name
 }: FormikAuthFieldsGroupProps) {
-  const [field] = useField(`${name}.method`);
+  const { setFieldValue, values } = useFormikContext<Record<string, any>>();
 
   const [selectedMethod, setSelectedMethod] = useState<
     "None" | "Basic" | "NTLM" | "NTLMv2"
-  >(field.value ?? "None");
+  >(() => {
+    if (get(values, `${name}.basic`)) {
+      return "Basic";
+    }
+    if (get(values, `${name}.ntlm`)) {
+      return "NTLM";
+    }
+    if (get(values, `${name}.ntlmv2`)) {
+      return "NTLMv2";
+    }
+    return "None";
+  });
 
-  const { setFieldValue } = useFormikContext<Record<string, any>>();
+  useEffect(() => {
+    if (get(values, `${name}.basic`)) {
+      setSelectedMethod("Basic");
+    } else if (get(values, `${name}.ntlm`)) {
+      setSelectedMethod("NTLM");
+    } else if (get(values, `${name}.ntlmv2`)) {
+      setSelectedMethod("NTLMv2");
+    } else {
+      setSelectedMethod("None");
+    }
+  }, [name, values]);
+
+  const setAuthenticationMethodFormValue = useCallback(
+    (method: "None" | "Basic" | "NTLM" | "NTLMv2") => {
+      // reset all fields
+      setFieldValue(`${name}.basic`, undefined);
+      setFieldValue(`${name}.ntlm`, undefined);
+      setFieldValue(`${name}.ntlmv2`, undefined);
+
+      // set the correct method
+      switch (method) {
+        case "Basic":
+          setFieldValue(`${name}.basic`, true);
+          break;
+        case "NTLM":
+          setFieldValue(`${name}.ntlm`, true);
+          break;
+        case "NTLMv2":
+          setFieldValue(`${name}.ntlmv2`, true);
+          break;
+      }
+    },
+    [name, setFieldValue]
+  );
 
   return (
     <div className="flex flex-col space-y-2">
@@ -28,16 +73,26 @@ export default function FormikAuthFieldsGroup({
         value={selectedMethod}
         onChange={(v) => {
           setSelectedMethod(v as any);
-          setFieldValue(`${name}.authenticationMethod`, v);
+          setAuthenticationMethodFormValue(v as any);
         }}
       />
       {selectedMethod !== "None" && (
-        <div className="flex flex-col p-4 space-y-2 border border-gray-200 rounded-md">
-          <FormikCheckboxFieldsGroup name={`${name}.username`} label="Username">
-            <FormikEnvVarConfigsFields name={`${name}.username`} />
+        <div className="flex flex-col p-2">
+          <FormikCheckboxFieldsGroup
+            name={`${name}.authentication.username`}
+            label="Username"
+          >
+            <FormikEnvVarConfigsFields
+              name={`${name}.authentication.username`}
+            />
           </FormikCheckboxFieldsGroup>
-          <FormikCheckboxFieldsGroup name={`${name}.password`} label="Password">
-            <FormikEnvVarConfigsFields name={`${name}.password`} />
+          <FormikCheckboxFieldsGroup
+            name={`${name}.authentication.password`}
+            label="Password"
+          >
+            <FormikEnvVarConfigsFields
+              name={`${name}.authentication.password`}
+            />
           </FormikCheckboxFieldsGroup>
         </div>
       )}

@@ -40,7 +40,7 @@ export default function FormikConfigFormFieldsArray({
 
   return (
     <div className={containerClassName}>
-      <label className="font-semibold">{label}</label>
+      <label className="text-sm font-semibold">{label}</label>
       <FieldArray
         name={name}
         render={(arrayHelpers) => (

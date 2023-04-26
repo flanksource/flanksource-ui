@@ -22,8 +22,8 @@ export default function FormikCheckboxFieldsGroup({
   name,
   label,
   children,
-  labelClassName,
-  className = "flex flex-col p-4 space-y-2 border border-gray-200 rounded-md"
+  labelClassName = "text-sm font-semibold text-gray-700",
+  className = "flex flex-col p-2 space-y-2 border border-gray-200 rounded-md"
 }: FormikCheckboxFieldsGroupProps) {
   const { setFieldValue, values } = useFormikContext<Record<string, any>>();
 

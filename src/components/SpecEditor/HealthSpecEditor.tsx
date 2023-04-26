@@ -25,11 +25,11 @@ export default function HealthSpecEditor({
         },
         icon: "http",
         configForm: HTTPHealthFormEditor,
-        formFieldName: "spec.http",
+        formFieldName: "spec.http.0",
         rawSpecInput: false
       },
       {
-        name: "AWS Config Rule",
+        name: "awsConfigRule",
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -38,11 +38,11 @@ export default function HealthSpecEditor({
         },
         icon: "aws",
         configForm: null,
-        formFieldName: "spec",
+        formFieldName: "spec.awsConfigRule.0",
         rawSpecInput: true
       },
       {
-        name: "AWS Config",
+        name: "awsConfig",
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -51,11 +51,11 @@ export default function HealthSpecEditor({
         },
         icon: "code",
         configForm: null,
-        formFieldName: "spec",
+        formFieldName: "spec.awsConfig.0",
         rawSpecInput: true
       },
       {
-        name: "Github",
+        name: "github",
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -64,11 +64,11 @@ export default function HealthSpecEditor({
         },
         icon: "github",
         configForm: null,
-        formFieldName: "spec",
+        formFieldName: "spec.github.0",
         rawSpecInput: true
       },
       {
-        name: "EC2",
+        name: "ec2",
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -77,24 +77,24 @@ export default function HealthSpecEditor({
         },
         icon: "ec2",
         configForm: null,
-        formFieldName: "spec",
+        formFieldName: "spec.ec2.0",
         rawSpecInput: true
       },
       {
-        name: "LDAP",
+        name: "ldap",
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
         loadSpec: () => {
           return spec ?? {};
         },
-        icon: "LDAP",
+        icon: "ldap",
         configForm: null,
-        formFieldName: "spec",
+        formFieldName: "spec.ldap.0",
         rawSpecInput: true
       },
       {
-        name: "Pod",
+        name: "pod",
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -103,11 +103,11 @@ export default function HealthSpecEditor({
         },
         icon: "pod",
         configForm: null,
-        formFieldName: "spec",
+        formFieldName: "spec.pod.0",
         rawSpecInput: true
       },
       {
-        name: "Exec",
+        name: "exec",
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -116,24 +116,24 @@ export default function HealthSpecEditor({
         },
         icon: "exec",
         configForm: null,
-        formFieldName: "spec",
+        formFieldName: "spec.exec.0",
         rawSpecInput: true
       },
       {
-        name: "Alertmanager",
+        name: "alertManager",
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
         loadSpec: () => {
           return spec ?? {};
         },
-        icon: "alertmanager",
+        icon: "alertManager",
         configForm: null,
-        formFieldName: "spec",
+        formFieldName: "spec.alertManager.0",
         rawSpecInput: true
       },
       {
-        name: "Cloudwatch",
+        name: "cloudwatch",
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -142,11 +142,11 @@ export default function HealthSpecEditor({
         },
         icon: "cloudwatch",
         configForm: null,
-        formFieldName: "spec",
+        formFieldName: "spec.cloudwatch.0",
         rawSpecInput: true
       },
       {
-        name: "Elasticsearch",
+        name: "elasticsearch",
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -155,11 +155,11 @@ export default function HealthSpecEditor({
         },
         icon: "elasticsearch",
         configForm: null,
-        formFieldName: "spec",
+        formFieldName: "spec.elasticsearch.0",
         rawSpecInput: true
       },
       {
-        name: "Redis",
+        name: "redis",
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -168,7 +168,7 @@ export default function HealthSpecEditor({
         },
         icon: "redis",
         configForm: null,
-        formFieldName: "spec",
+        formFieldName: "spec.redis.0",
         rawSpecInput: true
       },
       {
@@ -181,11 +181,11 @@ export default function HealthSpecEditor({
         },
         icon: "mongo",
         configForm: null,
-        formFieldName: "spec",
+        formFieldName: "spec.mongo.0",
         rawSpecInput: true
       },
       {
-        name: "DNS",
+        name: "dns",
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -194,11 +194,11 @@ export default function HealthSpecEditor({
         },
         icon: "dns",
         configForm: null,
-        formFieldName: "spec",
+        formFieldName: "spec.dns.0",
         rawSpecInput: true
       },
       {
-        name: "Ping",
+        name: "ping",
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -207,11 +207,11 @@ export default function HealthSpecEditor({
         },
         icon: "ping",
         configForm: null,
-        formFieldName: "spec",
+        formFieldName: "spec.ping.0",
         rawSpecInput: true
       },
       {
-        name: "GCS",
+        name: "gcs",
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -220,11 +220,11 @@ export default function HealthSpecEditor({
         },
         icon: "gcs",
         configForm: null,
-        formFieldName: "spec",
+        formFieldName: "spec.gcs.0",
         rawSpecInput: true
       },
       {
-        name: "S3",
+        name: "s3",
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -233,11 +233,11 @@ export default function HealthSpecEditor({
         },
         icon: "s3",
         configForm: null,
-        formFieldName: "spec",
+        formFieldName: "spec.s3.0",
         rawSpecInput: true
       },
       {
-        name: "SMB",
+        name: "smb",
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -246,11 +246,11 @@ export default function HealthSpecEditor({
         },
         icon: "smb",
         configForm: null,
-        formFieldName: "spec",
+        formFieldName: "spec.smb.0",
         rawSpecInput: true
       },
       {
-        name: "SFTP",
+        name: "sftp",
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -259,11 +259,11 @@ export default function HealthSpecEditor({
         },
         icon: "sftp",
         configForm: null,
-        formFieldName: "spec",
+        formFieldName: "spec.sftp.0",
         rawSpecInput: true
       },
       {
-        name: "Folder",
+        name: "folder",
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -272,11 +272,11 @@ export default function HealthSpecEditor({
         },
         icon: "folder",
         configForm: null,
-        formFieldName: "spec",
+        formFieldName: "spec.folder.0",
         rawSpecInput: true
       },
       {
-        name: "Prometheus",
+        name: "prometheus",
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -285,11 +285,11 @@ export default function HealthSpecEditor({
         },
         icon: "prometheus",
         configForm: null,
-        formFieldName: "spec",
+        formFieldName: "spec.prometheus.0",
         rawSpecInput: true
       },
       {
-        name: "Kubernetes",
+        name: "kubernetes",
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -298,11 +298,11 @@ export default function HealthSpecEditor({
         },
         icon: "kubernetes",
         configForm: null,
-        formFieldName: "spec",
+        formFieldName: "spec.kubernetes.0",
         rawSpecInput: true
       },
       {
-        name: "SQL",
+        name: "sql",
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -311,11 +311,12 @@ export default function HealthSpecEditor({
         },
         icon: "sql",
         configForm: null,
-        formFieldName: "spec",
+        formFieldName: "spec.sql.0",
         rawSpecInput: true
       },
       {
-        name: "Custom Health Check Spec",
+        name: "custom",
+        label: "Custom Health Check Spec",
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -333,6 +334,8 @@ export default function HealthSpecEditor({
 
   // there should only be one spec, so we can just grab the first key
   const selectedSpec = spec ? Object.keys(spec.spec)[0] : undefined;
+
+  console.log("selectedSpec", selectedSpec);
 
   return (
     <SpecEditor

@@ -245,16 +245,14 @@ export function SchemaResourceEdit({
                       <div className="flex-col">
                         <ConfigScrapperSpecEditor
                           onSubmit={(val) => doSubmit(val)}
-                          canEdit={edit}
                           spec={defaultValues}
                           deleteHandler={onDelete}
                         />
                       </div>
-                    ) : table === "canaries" ? (
+                    ) : table === "canaries" && !source ? (
                       <div className="flex-col">
                         <HealthSpecEditor
                           onSubmit={(val) => doSubmit(val)}
-                          canEdit={edit}
                           spec={defaultValues}
                           deleteHandler={onDelete}
                         />

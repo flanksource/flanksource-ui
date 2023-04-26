@@ -23,11 +23,11 @@ export default function FormikEnvVarConfigsFields({
     <div className={className}>
       <FormikTextInput name={`${name}.name`} label="Name" />
       <FormikTextInput name={`${name}.value`} label="Value" />
-      <div className="flex flex-col space-y-2">
-        <label className="font-semibold">Value From</label>
+      <div className="flex flex-col pt-2">
+        <label className="font-semibold text-sm">Value From</label>
         <div className="flex flex-col p-4 space-y-2">
-          <div className="flex flex-col space-y-2">
-            <label className="font-semibold">Config Map Key Ref</label>
+          <div className="flex flex-col pt-2">
+            <label className="font-semibold text-sm">Config Map Key Ref</label>
             <div className="flex flex-col p-4 space-y-2">
               <FormikTextInput
                 name={`${name}.valueFrom.configMapKeyRef.name`}
@@ -43,8 +43,8 @@ export default function FormikEnvVarConfigsFields({
               />
             </div>
           </div>
-          <div className="flex flex-col space-y-2">
-            <label className="font-semibold">Secret Key Ref</label>
+          <div className="flex flex-col pt-2">
+            <label className="font-semibold text-sm">Secret Key Ref</label>
             <div className="flex flex-col p-4 space-y-2">
               <FormikTextInput
                 name={`${name}.valueFrom.secretKeyRef.name`}

@@ -45,8 +45,7 @@ export default function ConfigScrapperSpecEditor({
         formFieldName: "spec.aws.0"
       },
       {
-        name: "File",
-
+        name: "file",
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -55,11 +54,11 @@ export default function ConfigScrapperSpecEditor({
         },
         icon: "file",
         configForm: null,
-        formFieldName: "spec",
+        formFieldName: "spec.file.0",
         rawSpecInput: true
       },
       {
-        name: "Git",
+        name: "git",
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -68,11 +67,11 @@ export default function ConfigScrapperSpecEditor({
         },
         icon: "git",
         configForm: null,
-        formFieldName: "spec",
+        formFieldName: "spec.git.0",
         rawSpecInput: true
       },
       {
-        name: "HTTP",
+        name: "http",
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -81,11 +80,11 @@ export default function ConfigScrapperSpecEditor({
         },
         icon: "http",
         configForm: null,
-        formFieldName: "spec",
+        formFieldName: "spec.http.0",
         rawSpecInput: true
       },
       {
-        name: "Azure DevOps",
+        name: "azureDevOps",
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },
@@ -94,11 +93,12 @@ export default function ConfigScrapperSpecEditor({
         },
         icon: "azure",
         configForm: null,
-        formFieldName: "spec",
+        formFieldName: "spec.azureDevOps.0",
         rawSpecInput: true
       },
       {
-        name: "Custom Config Spec",
+        name: "custom",
+        label: "Custom Config Spec",
         updateSpec: (value: Record<string, any>) => {
           onSubmit(value);
         },

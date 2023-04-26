@@ -25,7 +25,7 @@ export default function FormikCheckbox({
         className="text-blue-600 bg-gray-100 border-gray-900 rounded focus:ring-blue-500 focus:ring-2"
         {...field}
       />
-      <label htmlFor={name} className="text-sm font-bold text-gray-700">
+      <label htmlFor={name} className="text-sm font-semibold text-gray-700">
         {label}
       </label>
     </div>

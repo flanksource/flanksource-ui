@@ -5,6 +5,7 @@ import { SchemaResourceTypes } from "../SchemaResourcePage/resourceTypes";
 
 export type SpecType = {
   name: string;
+  label?: string;
   icon: string;
   loadSpec: () => Record<string, any>;
   updateSpec: (spec: Record<string, any>) => void;
@@ -44,7 +45,24 @@ export default function SpecEditor({
 }: SpecEditorProps) {
   const [selectedSpecItem, setSelectedSpecItem] = useState<
     SpecType | undefined
-  >(() => types.find(({ name }) => name === selectedSpec));
+  >(() => {
+    console.log("selectedSpec", selectedSpec);
+    if (selectedSpec) {
+      const selectedType = types.find(({ name }) => name === selectedSpec);
+      if (selectedType) {
+        return selectedType;
+      }
+      console.log(
+        "Finding custom type",
+        types,
+        types.find(({ name }) => name === "custom")
+      );
+      return types.find(({ name }) => name === "custom");
+    }
+    return undefined;
+  });
+
+  console.log("selectedSpecItem", selectedSpecItem, selectedSpec);
 
   // if the types change, we need to update the selectedSpecItem to the new
   // item, so that the form is updated, a good example is when we toggle canEdit
@@ -81,11 +99,11 @@ export default function SpecEditor({
               <div
                 onClick={() => setSelectedSpecItem(type)}
                 role={"button"}
-                className="flex flex-col items-center space-y-2 justify-center p-2 border border-gray-700 hover:border-blue-200 hover:bg-gray-100 rounded-md text-center h-20 font-semibold"
+                className="flex flex-col items-center space-y-2 justify-center p-2 border border-gray-300 hover:border-blue-200 hover:bg-gray-100 rounded-md text-center h-20 font-semibold"
                 key={type.name}
               >
                 <Icon name={type.icon} />
-                <span>{type.name}</span>
+                <span>{type.label ?? type.name}</span>
               </div>
             </div>
           ))}

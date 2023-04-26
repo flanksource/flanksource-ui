@@ -4,6 +4,8 @@ import HTTPMethodFieldsGroup from "./HTTPMethodFieldsGroup";
 import FormikAuthFieldsGroup from "../Formik/FormikAuthFieldsGroup";
 import FormikMultiSelectListField from "../Formik/FormikMultiSelectListField";
 import FormikCheckboxFieldsGroup from "../Formik/FormikCheckboxFieldsGroup";
+import FormikConfigFormFieldsArray from "../Formik/FormikConfigFormFieldsArray";
+import FormikConfigEnvVarFieldsArray from "../Formik/FormikConfigEnvVarFieldsArray";
 
 type HTTPHealthFormEditorProps = {
   fieldName: string;
@@ -26,25 +28,32 @@ export function HTTPHealthFormEditor({ fieldName }: HTTPHealthFormEditorProps) {
         />
       </div>
       <FormikTextInput name={`${fieldName}.description`} label="Description" />
-      <FormikTextInput name={`${fieldName}.url`} label="URL" required />
+      <FormikTextInput name={`${fieldName}.endpoint`} label="URL" required />
       <HTTPMethodFieldsGroup
         bodyFieldName={`${fieldName}.body`}
         methodFieldName={`${fieldName}.method`}
       />
+
+      <FormikConfigEnvVarFieldsArray
+        name={`${fieldName}.headers`}
+        label="Headers"
+      />
+
       <FormikAuthFieldsGroup name={`${fieldName}`} />
 
-      <h5 className="text-lg font-semibold py-2">Test</h5>
+      <h5 className="font-bold">Test</h5>
       <FormikMultiSelectListField
         options={[200, 201, 202, 204, 301, 302, 401, 404, 500, 502, 503]}
         label="Response Codes"
-        name={`${fieldName}.test.responseCodes`}
+        name={`${fieldName}.responseCodes`}
       />
       <FormikTextInput
-        name={`${fieldName}.maxResponseTime`}
+        name={`${fieldName}.thresholdMillis`}
         label="Max Response Time (in millis)"
+        type="number"
       />
       <FormikTextInput
-        name={`${fieldName}.test.responseText`}
+        name={`${fieldName}.responseContent`}
         label="Response Text (Exact Match)"
         hint="Exact response content expected to be returned by the endpoint"
       />
@@ -52,22 +61,23 @@ export function HTTPHealthFormEditor({ fieldName }: HTTPHealthFormEditorProps) {
         name={`${fieldName}.maxSSLExpiry`}
         label="Max SSL Expiry Age (days)"
         hint="Maximum number of days until the SSL Certificate expires."
+        type="number"
       />
 
-      <FormikTemplateFields name={`${fieldName}.test.script`} label="Script" />
+      <FormikTemplateFields name={`${fieldName}.test`} label="Script" />
 
       <FormikCheckboxFieldsGroup
         name={`${fieldName}.advanced`}
         label="Advanced"
-        labelClassName="text-lg font-semibold py-2"
+        labelClassName="font-bold"
       >
         <FormikTemplateFields
-          name={`${fieldName}.advanced.customizeResponse`}
+          name={`${fieldName}.display`}
           label="Customize Response"
         />
 
         <FormikTemplateFields
-          name={`${fieldName}.advanced.transformResponse`}
+          name={`${fieldName}.transform`}
           label="Transform Response"
         />
       </FormikCheckboxFieldsGroup>

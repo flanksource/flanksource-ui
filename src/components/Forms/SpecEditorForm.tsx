@@ -181,8 +181,7 @@ export default function SpecEditorForm({
             )}
             <Button
               type="submit"
-              icon={<FaSave />}
-              text="Save"
+              text={deleteHandler ? "Update" : "Add"}
               className="btn-primary"
             />
           </div>

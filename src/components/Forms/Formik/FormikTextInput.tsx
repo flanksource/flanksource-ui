@@ -16,23 +16,18 @@ export default function FormikTextInput({
   label,
   className = "flex flex-col",
   hint,
+  type = "text",
   ...props
 }: FormikTextInputProps) {
   const [field] = useField({
     name,
-    type: "text",
+    type: type,
     required
   });
 
   return (
     <div className={className}>
-      <TextInput
-        label={label}
-        {...props}
-        required={required}
-        id={name}
-        {...field}
-      />
+      <TextInput label={label} {...props} id={name} type={type} {...field} />
       {hint && <p className="text-sm text-gray-500">{hint}</p>}
     </div>
   );

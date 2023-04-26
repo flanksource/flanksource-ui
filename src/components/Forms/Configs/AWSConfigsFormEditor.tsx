@@ -22,7 +22,7 @@ export default function AWSConfigsFormEditor({
   return (
     <>
       <div className="flex flex-col space-y-2">
-        <label className="font-semibold">awsConnection</label>
+        <label className="font-semibold text-sm">AWS Connection</label>
         <FormikCheckboxFieldsGroup
           label="Access Key"
           name={`${fieldName}.awsConnection.accessKey`}
@@ -72,7 +72,7 @@ export default function AWSConfigsFormEditor({
       <FormikCheckbox name={`${fieldName}.compliance`} label="Compliance" />
 
       <div className="flex flex-col space-y-2">
-        <label className="font-semibold">Cloudtrail</label>
+        <label className="font-semibold text-sm">Cloudtrail</label>
         <div className="flex flex-col p-4 space-y-2 border border-gray-200 rounded-md">
           <FormikConfigFormFieldsArray
             name={`${fieldName}.cloudtrail.exclude`}
@@ -118,7 +118,7 @@ export default function AWSConfigsFormEditor({
       />
 
       <div className="flex flex-col space-y-2">
-        <label className="font-semibold">Cost Reporting</label>
+        <label className="font-semibold text-sm">Cost Reporting</label>
         <div className="flex flex-col p-4 space-y-2 border border-gray-200 rounded-md">
           <FormikTextInput
             name={`${fieldName}.cost_reporting.s3_bucket_path`}
