@@ -105,7 +105,7 @@ export default function SlidingSideBar({
   return (
     <div
       className={clsx(
-        `flex flex-col bg-white border-l border-gray-200 h-screen overflow-y-auto px-4`,
+        `flex flex-col bg-white border-l border-gray-200 h-full overflow-y-auto px-4`,
         open ? "w-3" : "w-[35rem]",
         className,
         !hideToggle ? "transform origin-right duration-500" : ""

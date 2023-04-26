@@ -1,4 +1,4 @@
-import { atom, useAtom } from "jotai";
+import { useAtom } from "jotai";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import { getAll } from "../api/schemaResources";
@@ -274,8 +274,8 @@ export function TopologyPage() {
         contentClass="p-0 h-full"
         loading={loading}
       >
-        <div className="flex flex-row min-h-full h-screen overflow-y-auto">
-          <div className="flex flex-col flex-1 min-h-full h-auto overflow-y-auto">
+        <div className="flex flex-row h-full py-2 overflow-y-auto">
+          <div className="flex flex-col flex-1 h-full overflow-y-auto">
             <div className="flex px-6">
               <div className="flex flex-wrap">
                 <div className="flex p-3 pl-0">
@@ -353,10 +353,7 @@ export function TopologyPage() {
                 setSearchParams={setSearchParams}
               />
             </div>
-            <div
-              className="px-6 pt-4 flex leading-1.21rel w-full"
-              style={{ maxHeight: "calc(100vh - 9rem)" }}
-            >
+            <div className="px-6 py-4 flex leading-1.21rel w-full">
               <div className="flex flex-wrap w-full">
                 {getSortedTopology(
                   topology,
