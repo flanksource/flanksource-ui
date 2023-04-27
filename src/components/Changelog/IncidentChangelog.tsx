@@ -13,11 +13,15 @@ import IncidentChangelogItem from "./IncidentChangelogItems";
 
 type ChangelogProps = React.HTMLProps<HTMLDivElement> & {
   incidentId: string;
+  isCollapsed?: boolean;
+  onCollapsedStateChange?: (isClosed: boolean) => void;
 };
 
 export function IncidentChangelog({
   incidentId,
   className = "flex-1 flex-grow bg-white flex flex-col space-y-4",
+  isCollapsed,
+  onCollapsedStateChange,
   ...props
 }: ChangelogProps) {
   const {
@@ -34,6 +38,8 @@ export function IncidentChangelog({
 
   return (
     <CollapsiblePanel
+      isCollapsed={isCollapsed}
+      onCollapsedStateChange={onCollapsedStateChange}
       Header={
         <div className="flex flex-row w-full items-center space-x-2">
           <Title

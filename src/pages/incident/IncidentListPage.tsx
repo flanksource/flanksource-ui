@@ -3,10 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { AiFillPlusCircle } from "react-icons/ai/";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useGetPeopleQuery } from "../../api/query-hooks";
-import {
-  getIncidentsWithParams,
-  searchIncident
-} from "../../api/services/incident";
+import { getIncidentsWithParams } from "../../api/services/incident";
 import FilterIncidents from "../../components/FilterIncidents/FilterIncidents";
 import { IncidentCreate } from "../../components/Incidents/IncidentCreate";
 import { IncidentList } from "../../components/Incidents/IncidentList";

@@ -18,11 +18,15 @@ import { Responders } from "./Responders";
 type IncidentDetailsPanelProps = React.HTMLProps<HTMLDivElement> & {
   incident: Incident;
   updateIncidentHandler: (newDataIncident: Partial<Incident>) => void;
+  isCollapsed?: boolean;
+  onCollapsedStateChange?: (isClosed: boolean) => void;
 };
 
 export function IncidentDetailsPanel({
   incident,
   updateIncidentHandler,
+  isCollapsed,
+  onCollapsedStateChange,
   className,
   ...props
 }: IncidentDetailsPanelProps) {
@@ -82,6 +86,8 @@ export function IncidentDetailsPanel({
 
   return (
     <CollapsiblePanel
+      isCollapsed={isCollapsed}
+      onCollapsedStateChange={onCollapsedStateChange}
       Header={
         <Title title="Details" icon={<BsCardList className="w-6 h-6" />} />
       }

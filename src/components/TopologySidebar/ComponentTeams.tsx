@@ -1,32 +1,53 @@
 import { AiOutlineTeam } from "react-icons/ai";
 import { useGetComponentsTeamQuery } from "../../api/query-hooks";
-import Title from "../Title/title";
 import CollapsiblePanel from "../CollapsiblePanel";
 import EmptyState from "../EmptyState";
-import { ComponentTeamLink } from "./ComponentTeamLink";
 import TextSkeletonLoader from "../SkeletonLoader/TextSkeletonLoader";
-import { CountBadge } from "../Badge/CountBadge";
+import { useAtom } from "jotai";
+import { refreshButtonClickedTrigger } from "../SlidingSideBar";
+import { useEffect } from "react";
+import Title from "../Title/title";
+import { ComponentTeamLink } from "./ComponentTeamLink";
+import PillBadge from "../Badge/PillBadge";
 
 type Props = {
   componentId: string;
+  isCollapsed?: boolean;
+  onCollapsedStateChange?: (isClosed: boolean) => void;
 };
 
-export function ComponentTeams({ componentId }: Props) {
-  const { data: componentTeams, isLoading } =
-    useGetComponentsTeamQuery(componentId);
+export function ComponentTeams({
+  componentId,
+  isCollapsed = false,
+  onCollapsedStateChange = () => {}
+}: Props) {
+  const {
+    data: componentTeams,
+    isLoading,
+    refetch,
+    isRefetching
+  } = useGetComponentsTeamQuery(componentId);
+
+  const [triggerRefresh] = useAtom(refreshButtonClickedTrigger);
+
+  useEffect(() => {
+    if (!isLoading && !isRefetching) {
+      refetch();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [triggerRefresh]);
 
   return (
     <CollapsiblePanel
+      isCollapsed={isCollapsed}
+      onCollapsedStateChange={onCollapsedStateChange}
       Header={
         <div className="flex flex-row w-full items-center space-x-2">
           <Title
             title="Teams"
             icon={<AiOutlineTeam className="w-6 h-auto" />}
           />
-          <CountBadge
-            roundedClass="rounded-full"
-            value={componentTeams?.length ?? 0}
-          />
+          <PillBadge>{componentTeams?.length ?? 0}</PillBadge>
         </div>
       }
       dataCount={componentTeams?.length}

@@ -1,20 +1,24 @@
 import { useQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ImLifebuoy } from "react-icons/im";
+import { Link } from "react-router-dom";
 import { getIncidentsBy } from "../../api/services/incident";
+import { relativeDateTime } from "../../utils/date";
+import PillBadge from "../Badge/PillBadge";
 import CollapsiblePanel from "../CollapsiblePanel";
+import { DetailsTable } from "../DetailsTable/DetailsTable";
+import { IncidentStatusTag } from "../IncidentStatusTag";
 import IncidentsFilterBar, { IncidentFilter } from "../IncidentsFilterBar";
 import Title from "../Title/title";
-import { relativeDateTime } from "../../utils/date";
-import { Link } from "react-router-dom";
-import { IncidentStatusTag } from "../IncidentStatusTag";
 import { IncidentTypeIcon } from "../incidentTypeTag";
-import { DetailsTable } from "../DetailsTable/DetailsTable";
-import { CountBadge } from "../Badge/CountBadge";
+import { useAtom } from "jotai";
+import { refreshButtonClickedTrigger } from "../SlidingSideBar";
 
 type Props = {
   topologyId?: string;
   configId?: string;
+  isCollapsed?: boolean;
+  onCollapsedStateChange?: (isClosed: boolean) => void;
 };
 
 const columns = [
@@ -28,7 +32,12 @@ const columns = [
   }
 ];
 
-export default function Incidents({ topologyId, configId }: Props) {
+export default function Incidents({
+  topologyId,
+  configId,
+  isCollapsed = true,
+  onCollapsedStateChange = () => {}
+}: Props) {
   const [filterIncidentOptions, setFilterIncidentOptions] =
     useState<IncidentFilter>({
       type: "all",
@@ -36,7 +45,7 @@ export default function Incidents({ topologyId, configId }: Props) {
       age: 0
     });
 
-  const { isLoading, data } = useQuery(
+  const { isLoading, data, isRefetching, refetch } = useQuery(
     [
       "incidents",
       ...(topologyId ? ["topology-", topologyId] : []),
@@ -57,6 +66,15 @@ export default function Incidents({ topologyId, configId }: Props) {
       enabled: !!topologyId || !!configId
     }
   );
+
+  const [triggerRefresh] = useAtom(refreshButtonClickedTrigger);
+
+  useEffect(() => {
+    if (!isLoading && !isRefetching) {
+      refetch();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [triggerRefresh]);
 
   const incidents = useMemo(() => {
     return data?.map((item) => {
@@ -82,28 +100,28 @@ export default function Incidents({ topologyId, configId }: Props) {
 
   return (
     <CollapsiblePanel
+      isCollapsed={isCollapsed}
+      onCollapsedStateChange={onCollapsedStateChange}
       Header={
         <div className="flex flex-row items-center justify-center space-x-2">
           <Title
             title="Incidents"
             icon={<ImLifebuoy className="w-6 h-auto" />}
           />
-          <CountBadge
-            roundedClass="rounded-full"
-            value={incidents?.length ?? 0}
-          />
-          <div className="ml-5 text-right grow">
-            <IncidentsFilterBar
-              defaultValues={filterIncidentOptions}
-              onChangeFilterValues={(value) => setFilterIncidentOptions(value)}
-            />
-          </div>
+          <PillBadge>{incidents?.length ?? 0}</PillBadge>
         </div>
       }
       dataCount={incidents?.length}
+      childrenClassName=""
     >
       <div className="flex flex-col">
-        <div className="flex flex-col space-y-1">
+        <div className="flex flex-col items-start relative">
+          <IncidentsFilterBar
+            defaultValues={filterIncidentOptions}
+            onChangeFilterValues={(value) => setFilterIncidentOptions(value)}
+          />
+        </div>
+        <div className="flex max-h-full overflow-y-auto flex-col space-y-1">
           <DetailsTable
             loading={isLoading}
             data={incidents || []}

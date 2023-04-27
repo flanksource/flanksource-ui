@@ -4,6 +4,7 @@ import { GoDiff } from "react-icons/go";
 import { useGetConfigChangesByConfigIdQuery } from "../../api/query-hooks";
 import { ConfigItem } from "../../api/services/configs";
 import { User } from "../../api/services/users";
+import PillBadge from "../Badge/PillBadge";
 import CollapsiblePanel from "../CollapsiblePanel";
 import EmptyState from "../EmptyState";
 import Title from "../Title/title";
@@ -12,7 +13,6 @@ import ConfigChangeAgeCell from "./Cells/ConfigChangeAgeCell";
 import ConfigChangeNameCell from "./Cells/ConfigChangeNameCell";
 import { InfiniteTable } from "../InfiniteTable/InfiniteTable";
 import TextSkeletonLoader from "../SkeletonLoader/TextSkeletonLoader";
-import { CountBadge } from "../Badge/CountBadge";
 
 export type ConfigTypeChanges = {
   id: string;
@@ -32,6 +32,8 @@ export type ConfigTypeChanges = {
 
 type Props = {
   configID: string;
+  isCollapsed?: boolean;
+  onCollapsedStateChange?: (isClosed: boolean) => void;
 };
 
 export const columns: ColumnDef<ConfigTypeChanges, any>[] = [
@@ -116,7 +118,11 @@ export function ConfigChangesDetails({ configID }: Props) {
   );
 }
 
-export default function ConfigChanges(props: Props) {
+export default function ConfigChanges({
+  isCollapsed,
+  onCollapsedStateChange,
+  ...props
+}: Props) {
   const { data: response } = useGetConfigChangesByConfigIdQuery(
     props.configID,
     0,
@@ -126,10 +132,12 @@ export default function ConfigChanges(props: Props) {
 
   return (
     <CollapsiblePanel
+      isCollapsed={isCollapsed}
+      onCollapsedStateChange={onCollapsedStateChange}
       Header={
         <div className="flex flex-row w-full items-center space-x-2">
           <Title title="Changes" icon={<GoDiff className="w-6 h-auto" />} />
-          <CountBadge roundedClass="rounded-full" value={count} />
+          <PillBadge>{response?.data?.length ?? 0}</PillBadge>
         </div>
       }
       dataCount={count}

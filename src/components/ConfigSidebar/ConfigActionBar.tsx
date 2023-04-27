@@ -51,6 +51,7 @@ export default function ConfigActionBar({
 
   return (
     <div
+      data-collapsible="false"
       className={clsx("flex flex-wrap justify-between py-4 px-1", className)}
       {...props}
     >
