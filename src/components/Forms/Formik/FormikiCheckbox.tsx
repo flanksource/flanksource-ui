@@ -1,6 +1,6 @@
 import { useField } from "formik";
 
-type FormikTextInputProps = {
+type FormikCheckboxProps = {
   name: string;
   required?: boolean;
   label?: string;
@@ -10,7 +10,7 @@ export default function FormikCheckbox({
   name,
   required = false,
   label
-}: FormikTextInputProps) {
+}: FormikCheckboxProps) {
   const [field] = useField({
     name,
     type: "checkbox",
