@@ -14,7 +14,7 @@ export default function FormikTextInput({
   name,
   required = false,
   label,
-  className = "flex flex-col space-y-2",
+  className = "flex flex-col",
   hint,
   type = "text",
   ...props
@@ -33,7 +33,7 @@ export default function FormikTextInput({
   return (
     <div className={className}>
       <TextInput label={label} {...props} id={name} type={type} {...field} />
-      {hint && <p className="text-sm text-gray-500">{hint}</p>}
+      {hint && <p className="text-sm text-gray-500 py-1">{hint}</p>}
       {meta.touched && meta.error ? (
         <p className="text-sm text-red-500 w-full py-1">{meta.error}</p>
       ) : null}

@@ -4,7 +4,6 @@ import HTTPMethodFieldsGroup from "./HTTPMethodFieldsGroup";
 import FormikAuthFieldsGroup from "../Formik/FormikAuthFieldsGroup";
 import FormikMultiSelectListField from "../Formik/FormikMultiSelectListField";
 import FormikCheckboxFieldsGroup from "../Formik/FormikCheckboxFieldsGroup";
-import FormikConfigFormFieldsArray from "../Formik/FormikConfigFormFieldsArray";
 import FormikConfigEnvVarFieldsArray from "../Formik/FormikConfigEnvVarFieldsArray";
 import FormikIconPicker from "../Formik/FormikIconPicker";
 import { getIn, useFormikContext } from "formik";

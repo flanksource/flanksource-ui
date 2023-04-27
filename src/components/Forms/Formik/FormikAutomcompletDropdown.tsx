@@ -31,14 +31,14 @@ export default function FormikSelectDropdown({
   });
 
   return (
-    <div className="flex flex-col space-y-2">
+    <div className="flex flex-col space-y-2 py-2">
       {label && (
         <label className={`block text-sm font-semibold text-gray-700`}>
           {label}
         </label>
       )}
       <CreatableSelect
-        className="h-full shadow-sm focus:ring-blue-500 focus:border-blue-500 py-2 sm:text-sm border-gray-300 rounded-md"
+        className="h-full shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm border-gray-300 rounded-md"
         onChange={(value) => {
           field.onChange({
             target: {

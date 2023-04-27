@@ -1,9 +1,8 @@
-import { TextInput } from "../TextInput";
-import AutoSuggest from "react-autosuggest";
-import { useState } from "react";
+import CreatableSelect from "react-select/creatable";
 
 type Props = {
   onChange: (value?: string) => void;
+  label?: string;
   value?: string;
   options: {
     value: string;
@@ -16,44 +15,27 @@ export default function AutoCompleteDropdown({
   onChange,
   value,
   options,
+  label,
   isDisabled = false
 }: Props) {
-  const [filteredOptions, setFilteredOptions] = useState(options);
-
-  if (isDisabled) {
-    return (
-      <TextInput id="autocomplete" value={value} disabled className="w-full" />
-    );
-  }
-
   return (
-    <div className="flex flex-col pb-6 relative w-full">
-      <AutoSuggest
-        suggestions={filteredOptions}
-        getSuggestionValue={(suggestion) => suggestion.value}
-        renderSuggestion={(suggestion) => (
-          <div className="px-2 py-1 w-full cursor-pointer hover:bg-gray-200 hover:font-semibold">
-            {suggestion.label}
-          </div>
-        )}
-        onSuggestionsFetchRequested={({ value }) => {
-          setFilteredOptions(
-            options.filter((option) =>
-              option.label.toLowerCase().includes(value.trim().toLowerCase())
-            )
-          );
+    <div className="flex flex-col relative w-full">
+      {label && (
+        <label className={`block text-sm font-bold text-gray-700 mb-0`}>
+          {label}
+        </label>
+      )}
+      <CreatableSelect
+        className="h-full shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm border-gray-300 rounded-md"
+        onChange={(value) => {
+          onChange(value?.value);
         }}
-        inputProps={{
-          onChange: (event, { newValue }) => {
-            onChange(newValue);
-          },
-          value: value ?? "",
-          className:
-            "w-full h-full shadow-sm focus:ring-blue-500 focus:border-blue-500 py-2 sm:text-sm border-gray-300 rounded-md"
+        value={{
+          label: value,
+          value: value
         }}
-        containerProps={{
-          className: "w-full absolute z-50 bg-white"
-        }}
+        options={options}
+        isDisabled={isDisabled}
       />
     </div>
   );
