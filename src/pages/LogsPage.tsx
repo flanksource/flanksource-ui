@@ -1,7 +1,6 @@
 import { SearchIcon } from "@heroicons/react/solid";
 import { BsGearFill, BsFlower2, BsGridFill, BsStack } from "react-icons/bs";
 import { useSearchParams } from "react-router-dom";
-import { getLogs } from "../api/services/logs";
 import { SearchLayout } from "../components/Layout";
 import { TextInput } from "../components/TextInput";
 import { TimeRange, timeRanges } from "../components/Dropdown/TimeRange";
@@ -10,7 +9,6 @@ import { useQuery } from "@tanstack/react-query";
 import { DropdownStandaloneWrapper } from "../components/Dropdown/StandaloneWrapper";
 import { LogsTable } from "../components/Logs/Table/LogsTable";
 import useDebouncedValue from "../hooks/useDebounce";
-import LogItem from "../types/Logs";
 import { getTopologyComponentByID } from "../api/services/topology";
 import { Head } from "../components/Head/Head";
 import { useComponentGetLogsQuery } from "../api/query-hooks";
@@ -110,6 +108,7 @@ export function LogsPage() {
             defaultValue={searchParams.get("start") ?? timeRanges[0].value}
             paramKey="start"
             className="w-44 mr-2"
+            name="time-range"
           />
         }
       >

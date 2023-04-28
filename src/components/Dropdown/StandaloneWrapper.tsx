@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useSearchParams } from "react-router-dom";
 import { Dropdown } from ".";
 import { useUpdateParams } from "../Canary/url";

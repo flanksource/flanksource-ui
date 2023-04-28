@@ -5,6 +5,22 @@ import { CheckIcon, SelectorIcon } from "@heroicons/react/solid";
 import { Controller } from "react-hook-form";
 import { isArray } from "lodash";
 
+type DropdownProps = {
+  className?: string;
+  label?: string;
+  control?: any;
+  items?: any;
+  name: string;
+  onChange?: (value: any) => void;
+  value?: any;
+  placeholder?: string;
+  emptyable?: boolean;
+  prefix?: string;
+  suffix?: string;
+  labelPrefix?: string;
+  labelSuffix?: string;
+};
+
 export function Dropdown({
   className,
   label,
@@ -20,7 +36,7 @@ export function Dropdown({
   labelPrefix = "",
   labelSuffix = "",
   ...rest
-}) {
+}: DropdownProps) {
   // eslint-disable-next-line no-underscore-dangle
   let _items = items;
   if (isArray(items)) {
@@ -78,7 +94,6 @@ export function Dropdown({
                 value={valueControlled}
                 label={label}
                 items={items}
-                rest={rest}
               />
             );
           }}
@@ -87,7 +102,6 @@ export function Dropdown({
         <DropdownListbox
           label={label}
           items={items}
-          rest={rest}
           onChange={onChange}
           value={value}
           prefix={prefix}
@@ -100,7 +114,18 @@ export function Dropdown({
   );
 }
 
-export const DropdownListbox = ({
+type DropdownListboxProps = {
+  onChange: (value: any) => void;
+  value: any;
+  label?: string;
+  items: Record<string, any>;
+  prefix?: string;
+  suffix?: string;
+  labelPrefix?: string;
+  labelSuffix?: string;
+};
+
+export function DropdownListbox({
   onChange,
   value,
   label,
@@ -110,115 +135,125 @@ export const DropdownListbox = ({
   labelPrefix = "",
   labelSuffix = "",
   ...rest
-}) => (
-  <Listbox
-    value={value}
-    onChange={(e) => {
-      onChange(e);
-    }}
-    {...rest}
-  >
-    {({ open }) => (
-      <>
-        {label && (
-          <Listbox.Label
-            as="span"
-            className="text-sm font-medium text-gray-700"
-          >
-            {label}
-          </Listbox.Label>
-        )}
-        <div className={`${label && "mt-1"} relative h-full`}>
-          <Listbox.Button
-            className={`relative cursor-pointer h-full w-full bg-white border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-1 text-left  focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm
+}: DropdownListboxProps) {
+  return (
+    // @ts-expect-error
+    <Listbox
+      value={value}
+      onChange={(e) => {
+        onChange(e);
+      }}
+      {...rest}
+    >
+      {({ open }) => (
+        <>
+          {label && (
+            <Listbox.Label
+              as="span"
+              className="text-sm font-medium text-gray-700"
+            >
+              {label}
+            </Listbox.Label>
+          )}
+          <div className={`${label && "mt-1"} relative h-full`}>
+            {/* @ts-expect-error */}
+            <Listbox.Button
+              className={`relative cursor-pointer h-full w-full bg-white border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-1 text-left  focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm
               ${items[value]?.id === "_empty" && "text-gray-400"}
             `}
-          >
-            <div className="flex items-center">
-              {prefix}
-              {items[value] && <div>{items[value].icon}</div>}
-              <span className="ml-2 block truncate">
-                {labelPrefix}
-                {items[value] && items[value].description}
-                {labelSuffix}
+            >
+              <div className="flex items-center">
+                {prefix}
+                {items[value] && <div>{items[value].icon}</div>}
+                <span className="ml-2 block truncate">
+                  {labelPrefix}
+                  {items[value] && items[value].description}
+                  {labelSuffix}
+                </span>
+                {suffix}
+              </div>
+              <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                <SelectorIcon
+                  className="h-5 w-5 text-gray-400"
+                  aria-hidden="true"
+                />
               </span>
-              {suffix}
-            </div>
-            <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-              <SelectorIcon
-                className="h-5 w-5 text-gray-400"
-                aria-hidden="true"
-              />
-            </span>
-          </Listbox.Button>
+            </Listbox.Button>
 
-          <Transition
-            show={open}
-            as={Fragment}
-            leave="transition ease-in duration-100"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <Listbox.Options className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
-              {Object.values(items)
-                .sort((a, b) => {
-                  if (
-                    Object.prototype.hasOwnProperty.call(a, "order") &&
-                    Object.prototype.hasOwnProperty.call(b, "order")
-                  ) {
-                    return a.order - b.order;
-                  }
-                  if (Object.prototype.hasOwnProperty.call(a, "order")) {
-                    return -1;
-                  }
-                  if (Object.prototype.hasOwnProperty.call(b, "order")) {
-                    return 1;
-                  }
-                  return 0;
-                })
-                .map((item) => (
-                  <Listbox.Option
-                    key={item.id || item.value}
-                    className={({ active }) =>
-                      clsx(
-                        active ? "text-white bg-blue-600" : "text-gray-900",
-                        "cursor-pointer select-none relative py-2 pl-3 pr-9"
-                      )
+            {/* @ts-expect-error */}
+            <Transition
+              show={open}
+              as={Fragment}
+              leave="transition ease-in duration-100"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0"
+            >
+              {/* @ts-expect-error */}
+              <Listbox.Options className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
+                {Object.values(items)
+                  .sort((a, b) => {
+                    if (
+                      Object.prototype.hasOwnProperty.call(a, "order") &&
+                      Object.prototype.hasOwnProperty.call(b, "order")
+                    ) {
+                      return a.order - b.order;
                     }
-                    value={item.value}
-                  >
-                    {({ selected, active }) => (
-                      <>
-                        <div className="flex items-center">
-                          <div>{item.icon}</div>
-                          <span
-                            className={clsx(
-                              selected ? "font-semibold" : "font-normal",
-                              "ml-2 block truncate"
-                            )}
-                          >
-                            {item.description}
-                          </span>
-                        </div>
+                    if (Object.prototype.hasOwnProperty.call(a, "order")) {
+                      return -1;
+                    }
+                    if (Object.prototype.hasOwnProperty.call(b, "order")) {
+                      return 1;
+                    }
+                    return 0;
+                  })
+                  .map((item) => (
+                    // @ts-expect-error
+                    <Listbox.Option
+                      key={item.id || item.value}
+                      className={({ active }) =>
+                        clsx(
+                          active ? "text-white bg-blue-600" : "text-gray-900",
+                          "cursor-pointer select-none relative py-2 pl-3 pr-9"
+                        )
+                      }
+                      value={item.value}
+                    >
+                      {({ selected, active }) => (
+                        <>
+                          <div className="flex items-center">
+                            <div>{item.icon}</div>
+                            <span
+                              className={clsx(
+                                selected ? "font-semibold" : "font-normal",
+                                "ml-2 block truncate"
+                              )}
+                            >
+                              {item.description}
+                            </span>
+                          </div>
 
-                        {!!selected && (
-                          <span
-                            className={clsx(
-                              active ? "text-white" : "text-blue-600",
-                              "absolute inset-y-0 right-0 flex items-center pr-4"
-                            )}
-                          >
-                            <CheckIcon className="h-5 w-5" aria-hidden="true" />
-                          </span>
-                        )}
-                      </>
-                    )}
-                  </Listbox.Option>
-                ))}
-            </Listbox.Options>
-          </Transition>
-        </div>
-      </>
-    )}
-  </Listbox>
-);
+                          {!!selected && (
+                            <span
+                              className={clsx(
+                                active ? "text-white" : "text-blue-600",
+                                "absolute inset-y-0 right-0 flex items-center pr-4"
+                              )}
+                            >
+                              <CheckIcon
+                                className="h-5 w-5"
+                                aria-hidden="true"
+                              />
+                            </span>
+                          )}
+                        </>
+                      )}
+                    </Listbox.Option>
+                  ))}
+              </Listbox.Options>
+            </Transition>
+          </div>
+        </>
+      )}
+    </Listbox>
+  );
+}
