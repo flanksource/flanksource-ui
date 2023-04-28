@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useGetAllConfigsChangesQuery } from "../../api/query-hooks";
 import { ConfigChangeHistory } from "../../components/ConfigChangeHistory";
 import { configTabsLists } from "../../components/ConfigsPage/ConfigTabsLinks";
@@ -9,33 +9,61 @@ import TabbedLinks from "../../components/Tabs/TabbedLinks";
 import { BreadcrumbNav, BreadcrumbRoot } from "../../components/BreadcrumbNav";
 import { useAtom } from "jotai";
 import { refreshButtonClickedTrigger } from "../../components/SlidingSideBar";
+import { ConfigChangeFilters } from "../../components/ConfigChangesFilters/ConfigChangesFilters";
+import { useSearchParams } from "react-router-dom";
 
 export function ConfigChangesPage() {
   const [, setRefreshButtonClickedTrigger] = useAtom(
     refreshButtonClickedTrigger
   );
-
-  const [{ pageIndex, pageSize }, setPageState] = useState({
+  const itemsPerPage = 50;
+  const [pageState, setPageState] = useState({
     pageIndex: 0,
-    pageSize: 50
+    pageSize: itemsPerPage
   });
-
+  const [params, setParams] = useSearchParams();
+  const type = params.get("type") ?? undefined;
+  const change_type = params.get("change_type") ?? undefined;
+  const severity = params.get("severity") ?? undefined;
+  const pageSize = +(params.get("pageSize") ?? itemsPerPage);
+  const pageIndex = +(params.get("pageIndex") ?? 0);
+  const page = pageIndex === 0 ? 0 : pageIndex - 1;
   const { data, isLoading, error, isRefetching, refetch } =
-    useGetAllConfigsChangesQuery(pageIndex, pageSize, true);
+    useGetAllConfigsChangesQuery(
+      { type, change_type, severity },
+      page,
+      pageSize,
+      true
+    );
   const totalEntries = (data as any)?.totalEntries;
   const pageCount = totalEntries ? Math.ceil(totalEntries / pageSize) : -1;
 
   const pagination = useMemo(() => {
     return {
       setPagination: setPageState,
-      pageIndex,
+      pageIndex: page,
       pageSize,
       pageCount,
       remote: true,
       enable: true,
       loading: isLoading || isRefetching
     };
-  }, [pageIndex, pageSize, pageCount, isLoading, isRefetching]);
+  }, [pageSize, pageCount, isLoading, isRefetching, page]);
+
+  useEffect(() => {
+    setParams({
+      ...Object.fromEntries(params),
+      pageIndex: ((pageState.pageIndex || 0) + 1).toString(),
+      pageSize: (pageState.pageSize || itemsPerPage).toString()
+    });
+  }, [pageState]);
+
+  useEffect(() => {
+    setPageState({
+      pageIndex: 0,
+      pageSize: itemsPerPage
+    });
+  }, [change_type, severity, type]);
 
   const errorMessage =
     typeof error === "string"
@@ -68,12 +96,20 @@ export function ConfigChangesPage() {
               {error ? (
                 <InfoMessage message={errorMessage} />
               ) : (
-                <ConfigChangeHistory
-                  data={data?.data ?? []}
-                  isLoading={isLoading}
-                  linkConfig
-                  pagination={pagination}
-                />
+                <>
+                  <ConfigChangeFilters
+                    paramsToReset={{
+                      pageIndex: "1",
+                      pageSize: itemsPerPage.toString()
+                    }}
+                  />
+                  <ConfigChangeHistory
+                    data={data?.data ?? []}
+                    isLoading={isLoading}
+                    linkConfig
+                    pagination={pagination}
+                  />
+                </>
               )}
             </div>
           </TabbedLinks>

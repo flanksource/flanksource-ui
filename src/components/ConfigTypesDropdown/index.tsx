@@ -9,11 +9,13 @@ type Props = {
   onChange?: (value: string | undefined) => void;
   searchParamKey?: string;
   value?: string;
+  paramsToReset?: Record<string, string>;
 };
 
 export function ConfigTypesDropdown({
   onChange = () => {},
   searchParamKey = "type",
+  paramsToReset = {},
   value
 }: Props) {
   const { isLoading, data: configTypeOptions } = useQuery(
@@ -68,7 +70,8 @@ export function ConfigTypesDropdown({
       onChange={(value) => {
         setParams({
           ...Object.fromEntries(params),
-          [searchParamKey]: value ?? ""
+          [searchParamKey]: value ?? "",
+          ...paramsToReset
         });
         onChange(value);
       }}

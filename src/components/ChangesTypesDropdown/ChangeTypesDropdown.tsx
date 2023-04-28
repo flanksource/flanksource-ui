@@ -11,12 +11,14 @@ import { ReactSelectDropdown } from "../ReactSelectDropdown";
 type Props = {
   onChange?: (value: string | undefined) => void;
   searchParamKey?: string;
+  paramsToReset?: Record<string, string>;
   value?: string;
 };
 
 export function ChangesTypesDropdown({
   onChange = () => {},
-  searchParamKey = "changesType",
+  searchParamKey = "change_type",
+  paramsToReset = {},
   value
 }: Props) {
   const { isLoading, data: configTypeOptions } = useQuery(
@@ -60,7 +62,8 @@ export function ChangesTypesDropdown({
       onChange={(value) => {
         setParams({
           ...Object.fromEntries(params),
-          [searchParamKey]: value ?? ""
+          [searchParamKey]: value ?? "",
+          ...paramsToReset
         });
         onChange(value);
       }}
@@ -70,7 +73,7 @@ export function ChangesTypesDropdown({
       hideControlBorder
       prefix={
         <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
-          Changes Types:
+          Change Type:
         </div>
       }
     />

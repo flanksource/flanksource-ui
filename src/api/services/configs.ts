@@ -70,14 +70,25 @@ export const getAllConfigsMatchingQuery = (query: string) => {
   return resolve<ConfigItem[]>(ConfigDB.get(url));
 };
 
-export const getAllChanges = (pageIndex?: number, pageSize?: number) => {
+export const getAllChanges = (
+  queryParams: Record<string, string | undefined>,
+  pageIndex?: number,
+  pageSize?: number
+) => {
   const pagingParams =
     pageIndex || pageSize
       ? `&limit=${pageSize}&offset=${pageIndex! * pageSize!}`
       : "";
+  let queryString = "";
+  Object.keys(queryParams).forEach((key) => {
+    if (queryParams[key] && queryParams[key] !== "All") {
+      const queryKey = key === "type" ? `config.config_type` : key;
+      queryString += `&${queryKey}=eq.${queryParams[key]}`;
+    }
+  });
   return resolve(
     ConfigDB.get<ConfigTypeChanges[]>(
-      `/config_changes?order=created_at.desc${pagingParams}&select=*,config:config_names(id,name,config_type)`,
+      `/config_changes?order=created_at.desc${pagingParams}&select=*,config:config_names!inner(id,name,config_type)${queryString}`,
       {
         headers: {
           Prefer: "count=exact"
