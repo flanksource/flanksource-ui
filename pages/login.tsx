@@ -83,7 +83,7 @@ const Login: NextPage = () => {
             }
             router.push("/");
           })
-          .then(() => { })
+          .then(() => {})
           .catch(handleFlowError(router, "login", setFlow))
           .catch((err: AxiosError) => {
             // If the previous handler did not catch the error it's most likely a form validation error
@@ -104,7 +104,11 @@ const Login: NextPage = () => {
         <div className="flex min-h-full flex-col justify-center pt-12 pb-28 sm:px-6 lg:px-8">
           <div className="w-96">
             <div>
-              <img alt="Flanksource" src="/images/logo.svg" className="p-2 h-auto m-auto rounded-8px w-48" />
+              <img
+                alt="Flanksource"
+                src="/images/logo.svg"
+                className="p-2 h-auto m-auto rounded-8px w-48"
+              />
               <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
                 {(() => {
                   if (flow?.refresh) {
@@ -125,12 +129,26 @@ const Login: NextPage = () => {
                   </div>
                 </div>
               ) : (
-                <div className="mt-2">
+                <div className="flex-col align-center justify-between">
                   <Link href="/recovery" passHref>
                     <div className="cursor-pointer font-medium text-blue-600 hover:text-blue-500">
                       Reset password
                     </div>
                   </Link>
+
+                  <div className="flex justify-center">
+                    <Link href="/registration" passHref>
+                      <div className="mt-5">
+                        <span className="text-gray-600 text-sm font-semibold">
+                          Don't have an account ?
+                        </span>
+                        <span className="cursor-pointer font-bold text-blue-600 hover:underline">
+                          {" "}
+                          Sign Up{" "}
+                        </span>
+                      </div>
+                    </Link>
+                  </div>
                 </div>
               )}
             </div>
