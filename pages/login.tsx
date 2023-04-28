@@ -137,17 +137,16 @@ const Login: NextPage = () => {
                   </Link>
 
                   <div className="flex justify-center">
-                    <Link href="/registration" passHref>
-                      <div className="mt-5">
-                        <span className="text-gray-600 text-sm font-semibold">
-                          Don't have an account ?
-                        </span>
+                    <div className="mt-5">
+                      <span className="text-gray-600 text-sm font-semibold">
+                        Don't have an account ?
+                      </span>
+                      <Link href="/registration" passHref>
                         <span className="cursor-pointer font-bold text-blue-600 hover:underline">
-                          {" "}
-                          Sign Up{" "}
+                          Sign Up
                         </span>
-                      </div>
-                    </Link>
+                      </Link>
+                    </div>
                   </div>
                 </div>
               )}
