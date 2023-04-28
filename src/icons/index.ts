@@ -345,6 +345,7 @@ import service_now from "./service-now.svg";
 import servicenow_logo from "./servicenow-logo.svg";
 import servicenow from "./servicenow.svg";
 import settings from "./settings.svg";
+import sftp from "./sftp.svg";
 import shield_user from "./shield-user.svg";
 import shield_warn from "./shield-warn.svg";
 import shield from "./shield.svg";
@@ -733,6 +734,7 @@ export const Icons = {
   "servicenow-logo": servicenow_logo,
   servicenow: servicenow,
   settings: settings,
+  sftp,
   "shield-user": shield_user,
   "shield-warn": shield_warn,
   shield: shield,
