@@ -52,13 +52,40 @@ import ErrorPage from "./components/Errors/ErrorPage";
 import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { Provider } from "jotai";
+import { resources } from "./services/permissions/resources";
+import { BsToggles } from "react-icons/bs";
+import { FeatureFlagsPage } from "./pages/FeatureFlagsPage";
+import {
+  FeatureFlagsContextProvider,
+  useFeatureFlagsContext
+} from "./context/FeatureFlagsContext";
 
 const navigation = [
-  { name: "Dashboard", href: "/topology", icon: TopologyIcon },
-  { name: "Health", href: "/health", icon: AiFillHeart },
-  { name: "Incidents", href: "/incidents", icon: ImLifebuoy },
-  { name: "Config", href: "/configs", icon: VscJson },
-  { name: "Logs", href: "/logs", icon: LogsIcon }
+  {
+    name: "Dashboard",
+    href: "/topology",
+    icon: TopologyIcon,
+    resouceName: resources.topology
+  },
+  {
+    name: "Health",
+    href: "/health",
+    icon: AiFillHeart,
+    resouceName: resources.health
+  },
+  {
+    name: "Incidents",
+    href: "/incidents",
+    icon: ImLifebuoy,
+    resouceName: resources.incidents
+  },
+  {
+    name: "Config",
+    href: "/configs",
+    icon: VscJson,
+    resouceName: resources.config
+  },
+  { name: "Logs", href: "/logs", icon: LogsIcon, resouceName: resources.logs }
 ];
 
 export type NavigationItems = typeof navigation;
@@ -71,7 +98,8 @@ const settingsNav = {
     {
       name: "Users",
       href: "/settings/users",
-      icon: HiUser
+      icon: HiUser,
+      resouceName: resources["settings.users"]
     },
     ...schemaResourceTypes.map((x) => ({
       ...x,
@@ -80,7 +108,14 @@ const settingsNav = {
     {
       name: "Jobs History",
       href: "/settings/jobs",
-      icon: FaTasks
+      icon: FaTasks,
+      resouceName: resources["settings.job_history"]
+    },
+    {
+      name: "Feature Flags",
+      href: "/settings/feature-flags",
+      icon: BsToggles,
+      resouceName: resources["settings.feature_flags"]
     }
   ]
 };
@@ -98,6 +133,12 @@ export function HealthRoutes({ sidebar }: { sidebar: ReactNode }) {
 }
 
 export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
+  const { featureFlagsLoaded } = useFeatureFlagsContext();
+
+  if (!featureFlagsLoaded) {
+    return <FullPageSkeletonLoader />;
+  }
+
   return (
     <Routes>
       <Route path="" element={<Navigate to="/topology" />} />
@@ -126,6 +167,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
       <Route path="settings" element={sidebar}>
         <Route path="users" element={<UsersPage />} />
         <Route path="jobs" element={<JobsHistorySettingsPage />} />
+        <Route path="feature-flags" element={<FeatureFlagsPage />} />
         {settingsNav.submenu
           .filter((v) => (v as SchemaResourceType).table)
           .map((x) => {
@@ -204,11 +246,13 @@ export function CanaryCheckerApp() {
   return (
     <BrowserRouter>
       <Provider>
-        <HealthPageContextProvider>
-          <ReactTooltip />
-          <Canary url="/api/canary/api/summary" />
-          <ReactQueryDevtools initialIsOpen={false} />
-        </HealthPageContextProvider>
+        <FeatureFlagsContextProvider>
+          <HealthPageContextProvider>
+            <ReactTooltip />
+            <Canary url="/api/canary/api/summary" />
+            <ReactQueryDevtools initialIsOpen={false} />
+          </HealthPageContextProvider>
+        </FeatureFlagsContextProvider>
       </Provider>
     </BrowserRouter>
   );
@@ -262,19 +306,21 @@ export function App() {
   return (
     <BrowserRouter>
       <Provider>
-        <TopologyPageContextProvider>
-          <HealthPageContextProvider>
-            <ConfigPageContextProvider>
-              <IncidentPageContextProvider>
-                <AuthContext.Provider value={{ user, setUser }}>
-                  <ReactTooltip />
-                  <IncidentManagerRoutes sidebar={<SidebarWrapper />} />
-                </AuthContext.Provider>
-                <ReactQueryDevtools initialIsOpen={false} />
-              </IncidentPageContextProvider>
-            </ConfigPageContextProvider>
-          </HealthPageContextProvider>
-        </TopologyPageContextProvider>
+        <FeatureFlagsContextProvider>
+          <TopologyPageContextProvider>
+            <HealthPageContextProvider>
+              <ConfigPageContextProvider>
+                <IncidentPageContextProvider>
+                  <AuthContext.Provider value={{ user, setUser }}>
+                    <ReactTooltip />
+                    <IncidentManagerRoutes sidebar={<SidebarWrapper />} />
+                  </AuthContext.Provider>
+                  <ReactQueryDevtools initialIsOpen={false} />
+                </IncidentPageContextProvider>
+              </ConfigPageContextProvider>
+            </HealthPageContextProvider>
+          </TopologyPageContextProvider>
+        </FeatureFlagsContextProvider>
       </Provider>
     </BrowserRouter>
   );

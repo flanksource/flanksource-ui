@@ -1,4 +1,3 @@
-import { Canary } from "../../components";
 import { Auth, CanaryChecker, IncidentCommander } from "../axios";
 import { resolve } from "../resolve";
 import packageJson from "../../../package.json";
