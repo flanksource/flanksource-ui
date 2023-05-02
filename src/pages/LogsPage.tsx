@@ -1,10 +1,7 @@
-import { SearchIcon } from "@heroicons/react/solid";
 import { BsGearFill, BsFlower2, BsGridFill, BsStack } from "react-icons/bs";
 import { useSearchParams } from "react-router-dom";
 import { SearchLayout } from "../components/Layout";
-import { TextInput } from "../components/TextInput";
 import { TimeRange, timeRanges } from "../components/Dropdown/TimeRange";
-import FilterLogsByComponent from "../components/FilterLogs/FilterLogsByComponent";
 import { useQuery } from "@tanstack/react-query";
 import { DropdownStandaloneWrapper } from "../components/Dropdown/StandaloneWrapper";
 import { LogsTable } from "../components/Logs/Table/LogsTable";
@@ -18,6 +15,7 @@ import {
   BreadcrumbRoot
 } from "../components/BreadcrumbNav";
 import { TopologyLink } from "../components/TopologyLink";
+import LogsFilterBar from "../components/FilterLogs/LogsFilterBar";
 
 export const logTypes = [
   {
@@ -43,7 +41,8 @@ export const logTypes = [
 ];
 
 export function LogsPage() {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
+
   const topologyId = searchParams.get("topologyId");
   const type = searchParams.get("type");
   const externalId = searchParams.get("topologyExternalId");
@@ -113,42 +112,7 @@ export function LogsPage() {
         }
       >
         <div className="flex flex-col space-y-6 h-full">
-          <div className="flex flex-row items-center w-full">
-            <FilterLogsByComponent />
-
-            <div className="mx-2 w-80 relative rounded-md shadow-sm">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
-                <button
-                  type="button"
-                  onClick={() => refetch()}
-                  className="hover"
-                >
-                  <SearchIcon
-                    className="h-5 w-5 text-gray-400 hover:text-gray-600"
-                    aria-hidden="true"
-                  />
-                </button>
-              </div>
-              <TextInput
-                placeholder="Search"
-                className="pl-10 pb-2.5 w-full flex-shrink-0"
-                style={{ height: "38px" }}
-                id="searchQuery"
-                onChange={(e) => {
-                  if (e.target.value !== "") {
-                    setSearchParams({
-                      ...Object.fromEntries(searchParams),
-                      query: e.target.value
-                    });
-                  } else {
-                    searchParams.delete("query");
-                    setSearchParams(searchParams);
-                  }
-                }}
-                defaultValue={query ?? undefined}
-              />
-            </div>
-          </div>
+          <LogsFilterBar refetch={refetch} />
           <LogsTable
             variant="comfortable"
             isLoading={isLoading}
