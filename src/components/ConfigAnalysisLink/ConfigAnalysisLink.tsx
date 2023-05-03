@@ -43,8 +43,8 @@ export function ConfigAnalysisLink({
             <>
               <Icon
                 name={
-                  configAnalysis?.config?.external_type ||
-                  configAnalysis?.config?.config_type
+                  configAnalysis?.config?.type ||
+                  configAnalysis?.config?.config_class
                 }
                 className="w-5 h-5 mr-1"
               />

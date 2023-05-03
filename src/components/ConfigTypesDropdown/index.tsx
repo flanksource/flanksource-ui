@@ -24,11 +24,11 @@ export function ConfigTypesDropdown({
     {
       select: useCallback((data: ConfigTypeItem[] | null) => {
         return data?.map((d) => ({
-          id: d.config_type,
-          value: d.config_type,
-          description: d.config_type,
-          name: d.config_type,
-          icon: <Icon name={d.config_type} secondary={d.config_type} />
+          id: d.config_class,
+          value: d.config_class,
+          description: d.config_class,
+          name: d.config_class,
+          icon: <Icon name={d.config_class} secondary={d.config_class} />
         }));
       }, [])
     }

@@ -8,12 +8,11 @@ import { resolve } from "../resolve";
 export interface ConfigItem {
   name: string;
   external_id: string;
-  config_type: string;
-  external_type?: string;
+  config_class?: string;
+  type?: string;
   id: string;
-  changes: Change[];
-  analysis: Analysis[];
-  type: string;
+  changes?: Change[];
+  analysis?: Analysis[];
   tags?: Record<string, any>;
   allTags?: Record<string, any>;
   created_at: string;
@@ -82,13 +81,13 @@ export const getAllChanges = (
   let queryString = "";
   Object.keys(queryParams).forEach((key) => {
     if (queryParams[key] && queryParams[key] !== "All") {
-      const queryKey = key === "type" ? `config.config_type` : key;
+      const queryKey = key === "type" ? `config.type` : key;
       queryString += `&${queryKey}=eq.${queryParams[key]}`;
     }
   });
   return resolve(
     ConfigDB.get<ConfigTypeChanges[]>(
-      `/config_changes?order=created_at.desc${pagingParams}&select=*,config:config_names!inner(id,name,config_type)${queryString}`,
+      `/config_changes?order=created_at.desc${pagingParams}&select=*,config:config_names!inner(id,name,type)${queryString}`,
       {
         headers: {
           Prefer: "count=exact"
@@ -180,7 +179,7 @@ export const searchConfigs = (type: string, input: string) => {
     : "";
   return resolve<ConfigItem[]>(
     ConfigDB.get(
-      `/configs?select=id,external_id,name,config_type,analysis,changes&config_type=ilike.${type}${orCondition}`
+      `/configs?select=id,external_id,name,type,analysis,changes&type=ilike.${type}${orCondition}`
     )
   );
 };
@@ -188,7 +187,7 @@ export const searchConfigs = (type: string, input: string) => {
 export const createConfigItem = (type: string, params: {}) =>
   resolve<ConfigItem>(
     ConfigDB.post(`/config_item`, {
-      config_type: type,
+      type: type,
       ...params
     })
   );
@@ -245,12 +244,12 @@ export const getRelatedConfigs = async (configID: string) => {
 };
 
 export type ConfigTypeItem = {
-  config_type: string;
+  config_class: string;
 };
 
 export const getConfigsTypes = async () => {
   const res = await IncidentCommander.get<ConfigTypeItem[] | null>(
-    `/config_types`
+    `/config_classes`
   );
   return res.data;
 };
@@ -279,14 +278,14 @@ export const getConfigsChangesTypesFilter = async () => {
 
 export const getConfigInsights = async <T>(configId: string) => {
   const res = await ConfigDB.get<T>(
-    `/config_analysis?select=*,config:configs(id,name,config_type,external_type)&config_id=eq.${configId}`
+    `/config_analysis?select=*,config:configs(id,name,config_class,type)&config_id=eq.${configId}`
   );
   return res.data;
 };
 
 export const getTopologyRelatedInsights = async (id: string) => {
   const res = await ConfigDB.get<ConfigTypeInsights[]>(
-    `/analysis_by_component?component_id=eq.${id}&select=*,config:configs(id,name,config_type,external_type,analysis:config_analysis(*))`
+    `/analysis_by_component?component_id=eq.${id}&select=*,config:configs(id,name,config_class,type,analysis:config_analysis(*))`
   );
   return res.data;
 };
@@ -296,7 +295,7 @@ export const getConfigInsight = async <T>(
   configInsightId: string
 ) => {
   const res = await ConfigDB.get<T>(
-    `/config_analysis?select=*,config:configs(id,name,config_type,external_type)&config_id=eq.${configId}&id=eq.${configInsightId}`
+    `/config_analysis?select=*,config:configs(id,name,config_class,type)&config_id=eq.${configId}&id=eq.${configInsightId}`
   );
   return res.data;
 };
@@ -327,7 +326,7 @@ export const getAllConfigInsights = async (
 
   return resolve(
     ConfigDB.get<ConfigTypeInsights[] | null>(
-      `/config_analysis?select=*,config:configs(id,name,config_type,external_type)${pagingParams}${queryParamsString}${sortString}`,
+      `/config_analysis?select=*,config:configs(id,name,config_class,type)${pagingParams}${queryParamsString}${sortString}`,
       {
         headers: {
           Prefer: "count=exact"

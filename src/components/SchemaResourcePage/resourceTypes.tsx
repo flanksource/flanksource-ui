@@ -109,7 +109,7 @@ export const schemaResourceTypes = [
   },
   {
     name: "Topology",
-    table: "templates",
+    table: "topologies",
     api: "canary-checker",
     icon: TopologyIcon,
     resouceName: resources["settings.topology"],

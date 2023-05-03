@@ -101,8 +101,8 @@ export function ConfigsList({
               <ConfigLink
                 configId={config.id}
                 configName={config.name}
-                configType={config.external_type}
-                configTypeSecondary={config.config_type}
+                configType={config.type}
+                configTypeSecondary={config.config_class}
               />
               {config.deleted_at && (
                 <Badge

@@ -28,12 +28,12 @@ export function HealthChecksSummary({
       warning: 0
     };
 
-    checks.forEach((check) => {
-      const status = check.status;
-      summary.healthy += status === "healthy" ? 1 : 0;
-      summary.warning += status === "warning" ? 1 : 0;
-      summary.unhealthy += status === "unhealthy" ? 1 : 0;
-    });
+    // checks.forEach((check) => {
+    //   const status = check.status;
+    //   summary.healthy += status === "healthy" ? 1 : 0;
+    //   summary.warning += status === "warning" ? 1 : 0;
+    //   summary.unhealthy += status === "unhealthy" ? 1 : 0;
+    // });
 
     let hide = true;
 

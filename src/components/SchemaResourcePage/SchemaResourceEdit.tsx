@@ -222,7 +222,7 @@ export function SchemaResourceEdit({
     if (table === "config_scrapers") {
       return "scrape_config";
     }
-    if (table === "templates") {
+    if (table === "topologies") {
       return "component";
     }
     if (table === "canaries") {

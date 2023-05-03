@@ -26,7 +26,7 @@ export function ConfigBreadcrumb({ setTitle }: ConfigBreadcrumbProps) {
               { to: "/configs", title: "Config" },
               <span>
                 <Icon
-                  name={data?.external_type || data?.config_type}
+                  name={data?.type || data?.config_class}
                   className="h-5 mr-1"
                 />
                 {data?.name}
