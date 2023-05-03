@@ -8,7 +8,7 @@ import FormikConfigEnvVarFieldsArray from "../Formik/FormikConfigEnvVarFieldsArr
 import FormikIconPicker from "../Formik/FormikIconPicker";
 import { getIn, useFormikContext } from "formik";
 import { useEffect } from "react";
-import FormikSelectDropdown from "../Formik/FormikAutomcompletDropdown";
+import FormikAutocompleteDropdown from "../Formik/FormikAutocompleteDropdown";
 
 type HTTPHealthFormEditorProps = {
   fieldName: string;
@@ -40,7 +40,7 @@ export function HTTPHealthFormEditor({ fieldName }: HTTPHealthFormEditorProps) {
         />
       </div>
 
-      <FormikSelectDropdown
+      <FormikAutocompleteDropdown
         name={`${fieldName}.schedule`}
         label="Schedule"
         required

@@ -1,4 +1,5 @@
 import { useField } from "formik";
+import { useCallback, useState } from "react";
 import CreatableSelect from "react-select/creatable";
 
 type FormikSelectDropdownProps = {
@@ -10,24 +11,31 @@ type FormikSelectDropdownProps = {
     value: string;
     label: string;
   }[];
+  isClearable?: boolean;
 };
 
-export default function FormikSelectDropdown({
+export default function FormikAutocompleteDropdown({
   name,
   required = false,
   label,
   options,
-  hint
+  hint,
+  isClearable = true
 }: FormikSelectDropdownProps) {
+  const [isTouched, setIsTouched] = useState(false);
+
   const [field, meta] = useField<string>({
     name,
     type: "checkbox",
     required,
-    validate: (value) => {
-      if (required && !value) {
-        return "This field is required";
-      }
-    }
+    validate: useCallback(
+      (value: string) => {
+        if (required && !value) {
+          return "This field is required";
+        }
+      },
+      [required]
+    )
   });
 
   return (
@@ -46,17 +54,26 @@ export default function FormikSelectDropdown({
               value: value?.value
             }
           });
+          setIsTouched(true);
         }}
         value={{
           label: field.value,
           value: field.value
         }}
         options={options}
-        onBlur={field.onBlur}
+        onBlur={(event) => {
+          field.onBlur(event);
+          setIsTouched(true);
+        }}
+        onFocus={(event) => {
+          field.onBlur(event);
+          setIsTouched(true);
+        }}
         name={field.name}
+        isClearable={isClearable}
       />
       {hint && <p className="text-sm text-gray-500">{hint}</p>}
-      {meta.touched && meta.error ? (
+      {isTouched && meta.error ? (
         <p className="text-sm text-red-500 w-full py-1">{meta.error}</p>
       ) : null}
     </div>

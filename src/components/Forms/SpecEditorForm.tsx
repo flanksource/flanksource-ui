@@ -6,7 +6,7 @@ import { FormikCodeEditor } from "./Formik/FormikCodeEditor";
 import { FaTrash } from "react-icons/fa";
 import { schemaResourceTypes } from "../SchemaResourcePage/resourceTypes";
 import FormikTextInput from "./Formik/FormikTextInput";
-import FormikSelectDropdown from "./Formik/FormikAutomcompletDropdown";
+import FormikAutocompleteDropdown from "./Formik/FormikAutocompleteDropdown";
 import FormikIconPicker from "./Formik/FormikIconPicker";
 
 type SpecEditorFormProps = {
@@ -104,7 +104,7 @@ export default function SpecEditorForm({
                 </div>
               )}
               {isFieldSupportedByResourceType("schedule") && (
-                <FormikSelectDropdown
+                <FormikAutocompleteDropdown
                   name="schedule"
                   label="Schedule"
                   options={[
