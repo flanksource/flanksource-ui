@@ -140,7 +140,8 @@ export function ConfigDetailsChanges({
           {showConfigLogo && (
             <>
               <Icon
-                name={config?.type || config?.config_class}
+                name={config?.type}
+                secondary={config?.config_class}
                 className="w-5 mr-1"
               />
               <span>{config?.name}</span>
