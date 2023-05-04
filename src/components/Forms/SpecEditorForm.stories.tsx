@@ -1,8 +1,9 @@
 import { Story } from "@storybook/react";
 import React, { ComponentProps } from "react";
-import AWSConfigsFormEditor from "./AWSConfigsFormEditor";
-import KubernetesConfigsFormEditor from "./KubernetesConfigsFormEditor";
+import AWSConfigsFormEditor from "./Configs/AWSConfigsFormEditor";
+import KubernetesConfigsFormEditor from "./Configs/KubernetesConfigsFormEditor";
 import SpecEditorForm from "./SpecEditorForm";
+import { HTTPHealthFormEditor } from "./Health/HTTPHealthFormEditor";
 
 export default {
   title: "SpecEditorForm",
@@ -40,4 +41,16 @@ AWSSpecEditorFormConfigs.args = {
     console.log(spec);
   },
   configForm: AWSConfigsFormEditor
+};
+
+export const HTTPHealthFormEditorConfigs: Story<
+  ComponentProps<typeof SpecEditorForm>
+> = Template.bind({});
+
+HTTPHealthFormEditorConfigs.args = {
+  updateSpec(spec) {
+    console.log(spec);
+  },
+  configForm: HTTPHealthFormEditor,
+  specFormFieldName: "spec.httpHealthCheck"
 };

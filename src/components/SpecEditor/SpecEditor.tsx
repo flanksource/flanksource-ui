@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Icon } from "../Icon";
-import SpecEditorForm from "../Forms/Configs/SpecEditorForm";
+import SpecEditorForm from "../Forms/SpecEditorForm";
 import { SchemaResourceTypes } from "../SchemaResourcePage/resourceTypes";
 
 export type SpecType = {
   name: string;
-  icon: string;
-  description: string;
+  label?: string;
+  icon: string | React.FC;
   loadSpec: () => Record<string, any>;
   updateSpec: (spec: Record<string, any>) => void;
-  configForm: React.FC<{ fieldName: string }>;
+  configForm: React.FC<{ fieldName: string }> | null;
   /**
    *
    * the field name is the name of the field in the spec that this config editor
@@ -25,13 +25,14 @@ export type SpecType = {
    *
    */
   formFieldName: string;
+  rawSpecInput?: boolean;
+  schemaFilePrefix: "component" | "canary" | "system" | "scrape_config";
 };
 
 type SpecEditorProps = {
   types: SpecType[];
   format?: "json" | "yaml";
   resourceName: SchemaResourceTypes[number]["name"];
-  canEdit?: boolean;
   selectedSpec?: string;
   deleteHandler?: (id: string) => void;
 };
@@ -40,13 +41,21 @@ export default function SpecEditor({
   types,
   format = "yaml",
   resourceName,
-  canEdit = true,
   selectedSpec,
   deleteHandler
 }: SpecEditorProps) {
   const [selectedSpecItem, setSelectedSpecItem] = useState<
     SpecType | undefined
-  >(() => types.find(({ name }) => name === selectedSpec));
+  >(() => {
+    if (selectedSpec) {
+      const selectedType = types.find(({ name }) => name === selectedSpec);
+      if (selectedType) {
+        return selectedType;
+      }
+      return types.find(({ name }) => name === "custom");
+    }
+    return undefined;
+  });
 
   // if the types change, we need to update the selectedSpecItem to the new
   // item, so that the form is updated, a good example is when we toggle canEdit
@@ -64,32 +73,35 @@ export default function SpecEditor({
   return (
     <div className="flex flex-col w-full flex-1 h-full overflow-y-auto">
       {selectedSpecItem ? (
-        <div className="flex flex-col space-y-2 p-4">
+        <div className="flex flex-col space-y-2">
           <SpecEditorForm
-            canEdit={canEdit}
             configForm={selectedSpecItem.configForm}
             updateSpec={selectedSpecItem.updateSpec}
             loadSpec={selectedSpecItem.loadSpec}
+            rawSpecInput={selectedSpecItem.rawSpecInput}
             specFormat={format}
             resourceName={resourceName}
-            onBack={() => setSelectedSpecItem(undefined)}
             specFormFieldName={selectedSpecItem.formFieldName}
             deleteHandler={deleteHandler}
+            schemaFilePrefix={selectedSpecItem.schemaFilePrefix}
           />
         </div>
       ) : (
-        <div className="flex flex-col space-y-4 p-2">
+        <div className="flex flex-wrap p-2">
           {types.map((type) => (
-            <div
-              onClick={() => setSelectedSpecItem(type)}
-              role={"button"}
-              className="flex flex-row px-4 py-2 border border-gray-700 hover:border-blue-200 hover:bg-gray-100 rounded-md space-x-4"
-              key={type.name}
-            >
-              <Icon name={type.icon} />
-              <div className="flex flex-col">
-                <div className="font-semibold">{type.name}</div>
-                <div className="text-gray-500">{type.description}</div>
+            <div className="flex flex-col w-1/5 p-2">
+              <div
+                onClick={() => setSelectedSpecItem(type)}
+                role={"button"}
+                className="flex flex-col items-center space-y-2 justify-center p-2 border border-gray-300 hover:border-blue-200 hover:bg-gray-100 rounded-md text-center h-20"
+                key={type.name}
+              >
+                {typeof type.icon === "string" ? (
+                  <Icon name={type.icon} />
+                ) : (
+                  <type.icon />
+                )}
+                <span>{type.label ?? type.name}</span>
               </div>
             </div>
           ))}

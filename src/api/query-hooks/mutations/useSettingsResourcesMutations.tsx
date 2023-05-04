@@ -3,10 +3,12 @@ import { SchemaResourceType } from "../../../components/SchemaResourcePage/resou
 import { toastSuccess, toastError } from "../../../components/Toast/toast";
 import {
   SchemaResourceI,
+  createResource,
   deleteResource,
   updateResource
 } from "../../schemaResources";
 import { useNavigate } from "react-router-dom";
+import { useUser } from "../../../context";
 
 export const useSettingsDeleteResource = (resourceInfo: SchemaResourceType) => {
   const navigate = useNavigate();
@@ -48,6 +50,28 @@ export const useSettingsUpdateResource = (
         toastSuccess(`${resourceInfo.name} updated successfully`);
         navigate(`/settings/${resourceInfo.table}`);
       },
+      onError: (ex: any) => {
+        toastError(ex);
+      }
+    }
+  );
+};
+
+export const useSettingsCreateResource = (
+  resourceInfo: SchemaResourceType,
+  onSuccess = () => {}
+) => {
+  const { user } = useUser();
+
+  return useMutation(
+    async (data: Partial<SchemaResourceI>) => {
+      await createResource(resourceInfo, {
+        ...data,
+        created_by: user?.id
+      });
+    },
+    {
+      onSuccess: onSuccess,
       onError: (ex: any) => {
         toastError(ex);
       }

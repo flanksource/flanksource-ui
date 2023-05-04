@@ -1,7 +1,8 @@
 import FormikTextInput from "../Formik/FormikTextInput";
-import FormikCheckbox from "../Formik/FormikiCheckbox";
+import FormikCheckbox from "../Formik/FormikCheckbox";
 import FormikEnvVarConfigsFields from "../Formik/FormikConfigEnvVarFields";
 import FormikConfigFormFieldsArray from "../Formik/FormikConfigFormFieldsArray";
+import FormikCheckboxFieldsGroup from "../Formik/FormikCheckboxFieldsGroup";
 
 type KubernetesConfigsFormEditorProps = {
   fieldName: string;
@@ -48,10 +49,12 @@ export default function KubernetesConfigsFormEditor({
           }
         ]}
       />
-      <FormikEnvVarConfigsFields
+      <FormikCheckboxFieldsGroup
         name={`${fieldName}.kubeconfig`}
         label="Allow Kubeconfig"
-      />
+      >
+        <FormikEnvVarConfigsFields name={`${fieldName}.kubeconfig`} />
+      </FormikCheckboxFieldsGroup>
     </>
   );
 }

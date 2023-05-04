@@ -1,7 +1,8 @@
 import FormikTextInput from "../Formik/FormikTextInput";
-import FormikCheckbox from "../Formik/FormikiCheckbox";
+import FormikCheckbox from "../Formik/FormikCheckbox";
 import FormikEnvVarConfigsFields from "../Formik/FormikConfigEnvVarFields";
 import FormikConfigFormFieldsArray from "../Formik/FormikConfigFormFieldsArray";
+import FormikCheckboxFieldsGroup from "../Formik/FormikCheckboxFieldsGroup";
 
 type AWSConfigsFormEditorProps = {
   fieldName: string;
@@ -21,15 +22,23 @@ export default function AWSConfigsFormEditor({
   return (
     <>
       <div className="flex flex-col space-y-2">
-        <label className="font-semibold">awsConnection</label>
-        <FormikEnvVarConfigsFields
-          name={`${fieldName}.awsConnection.accessKey`}
+        <label className="font-semibold text-sm">AWS Connection</label>
+        <FormikCheckboxFieldsGroup
           label="Access Key"
-        />
-        <FormikEnvVarConfigsFields
-          name={`${fieldName}.awsConnection.secretKey`}
+          name={`${fieldName}.awsConnection.accessKey`}
+        >
+          <FormikEnvVarConfigsFields
+            name={`${fieldName}.awsConnection.accessKey`}
+          />
+        </FormikCheckboxFieldsGroup>
+        <FormikCheckboxFieldsGroup
           label="Secret Key"
-        />
+          name={`${fieldName}.awsConnection.secretKey`}
+        >
+          <FormikEnvVarConfigsFields
+            name={`${fieldName}.awsConnection.secretKey`}
+          />
+        </FormikCheckboxFieldsGroup>
         <FormikConfigFormFieldsArray
           name={`${fieldName}.awsConnection.region`}
           label="region"
@@ -63,7 +72,7 @@ export default function AWSConfigsFormEditor({
       <FormikCheckbox name={`${fieldName}.compliance`} label="Compliance" />
 
       <div className="flex flex-col space-y-2">
-        <label className="font-semibold">Cloudtrail</label>
+        <label className="font-semibold text-sm">Cloudtrail</label>
         <div className="flex flex-col p-4 space-y-2 border border-gray-200 rounded-md">
           <FormikConfigFormFieldsArray
             name={`${fieldName}.cloudtrail.exclude`}
@@ -109,7 +118,7 @@ export default function AWSConfigsFormEditor({
       />
 
       <div className="flex flex-col space-y-2">
-        <label className="font-semibold">Cost Reporting</label>
+        <label className="font-semibold text-sm">Cost Reporting</label>
         <div className="flex flex-col p-4 space-y-2 border border-gray-200 rounded-md">
           <FormikTextInput
             name={`${fieldName}.cost_reporting.s3_bucket_path`}

@@ -2,6 +2,7 @@ import { useState } from "react";
 
 type Props = React.HTMLProps<HTMLDivElement> & {
   label: React.ReactNode;
+  labelClassName?: string;
   children: React.ReactNode;
   isChecked?: boolean;
   onChange?: (v: boolean) => void;
@@ -12,6 +13,7 @@ export default function CheckboxCollapsibleGroup({
   children,
   isChecked = false,
   className = "flex-1 flex flex-col  px-2 py-2 transform origin-top duration-1000 overflow-y-auto",
+  labelClassName = "flex-1 font-semibold",
   onChange = () => {},
   ...props
 }: Props) {
@@ -32,10 +34,7 @@ export default function CheckboxCollapsibleGroup({
             onChange(v.target.checked);
           }}
         />
-        <label
-          htmlFor={`hideFieldGroups-${label}`}
-          className="flex-1 font-semibold"
-        >
+        <label htmlFor={`hideFieldGroups-${label}`} className={labelClassName}>
           {label}
         </label>
       </div>

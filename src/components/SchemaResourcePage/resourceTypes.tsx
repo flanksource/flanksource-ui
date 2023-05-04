@@ -38,7 +38,8 @@ export const schemaResourceTypes = [
     fields: [
       {
         name: "name",
-        default: undefined
+        default: undefined,
+        hidden: false
       },
       {
         name: "spec",
@@ -69,7 +70,8 @@ export const schemaResourceTypes = [
     fields: [
       {
         name: "name",
-        default: undefined
+        default: undefined,
+        hidden: false
       },
       {
         name: "spec",
@@ -96,7 +98,8 @@ export const schemaResourceTypes = [
     fields: [
       {
         name: "name",
-        default: undefined
+        default: undefined,
+        hidden: false
       },
       {
         name: "spec",
@@ -123,7 +126,8 @@ export const schemaResourceTypes = [
     fields: [
       {
         name: "name",
-        default: undefined
+        default: undefined,
+        hidden: false
       },
       {
         name: "namespace",
@@ -140,7 +144,7 @@ export const schemaResourceTypes = [
     ]
   },
   {
-    name: "Health",
+    name: "Health Check",
     table: "canaries",
     api: "canary-checker",
     icon: HealthIcon,
@@ -158,12 +162,17 @@ export const schemaResourceTypes = [
     fields: [
       {
         name: "name",
-        default: undefined
+        default: undefined,
+        hidden: true
       },
       {
         name: "namespace",
         default: "default"
       },
+      // {
+      //   name: "schedule",
+      //   default: undefined
+      // },
       {
         name: "labels",
         default: {}

@@ -38,7 +38,7 @@ export function Switch({
         return (
           <button
             type="button"
-            className="rounded-md flex-1 items-center text-sm text-gray-600 font-medium focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2 focus:outline-none focus-visible:ring-offset-gray-100"
+            className="rounded-md items-center text-sm text-gray-600 font-medium focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2 focus:outline-none focus-visible:ring-offset-gray-100"
             tabIndex={0}
             onClick={(e) => handleClick(option)}
             key={option.valueOf().toString()}

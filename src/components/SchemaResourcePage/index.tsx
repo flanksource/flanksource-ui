@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { AiFillPlusCircle } from "react-icons/ai";
 import { useGetSettingsAllQuery } from "../../api/query-hooks/settingsResourcesHooks";
-import { createResource, SchemaResourceI } from "../../api/schemaResources";
-import { useUser } from "../../context";
 import { BreadcrumbNav, BreadcrumbRoot } from "../BreadcrumbNav";
 import { Head } from "../Head/Head";
 import { SearchLayout } from "../Layout";
@@ -12,13 +10,14 @@ import { SchemaResourceType } from "./resourceTypes";
 import { SchemaResourceEdit } from "./SchemaResourceEdit";
 import { SchemaResourceList } from "./SchemaResourceList";
 import ConfigScrapperSpecEditor from "../SpecEditor/ConfigScrapperSpecEditor";
+import HealthSpecEditor from "../SpecEditor/HealthSpecEditor";
+import { useSettingsCreateResource } from "../../api/query-hooks/mutations/useSettingsResourcesMutations";
 
 export function SchemaResourcePage({
   resourceInfo
 }: {
   resourceInfo: SchemaResourceType & { href: string };
 }) {
-  const { user } = useUser();
   const { name, href } = resourceInfo;
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -29,21 +28,13 @@ export function SchemaResourcePage({
     isLoading
   } = useGetSettingsAllQuery(resourceInfo);
 
-  const onSubmit = async (data: Partial<SchemaResourceI>) => {
-    if (resourceInfo.table === "canaries") {
-      await createResource(resourceInfo, {
-        ...data,
-        created_by: user?.id
-      });
-    } else {
-      await createResource(resourceInfo, {
-        ...data,
-        created_by: user?.id
-      });
+  const { mutate: createResource } = useSettingsCreateResource(
+    resourceInfo,
+    () => {
+      refetch();
+      setModalIsOpen(false);
     }
-    refetch();
-    setModalIsOpen(false);
-  };
+  );
 
   const onClose = () => setModalIsOpen(false);
 
@@ -90,19 +81,18 @@ export function SchemaResourcePage({
           onClose={onClose}
           bodyClass=""
           size="full"
-          title={`Create New ${resourceInfo.name}`}
+          title={`Add ${resourceInfo.name}`}
         >
           {resourceInfo.table === "config_scrapers" ? (
-            <ConfigScrapperSpecEditor
-              onSubmit={(val) => onSubmit(val)}
-              canEdit
-            />
+            <ConfigScrapperSpecEditor onSubmit={(val) => createResource(val)} />
+          ) : resourceInfo.table === "canaries" ? (
+            <HealthSpecEditor onSubmit={(val) => createResource(val)} />
           ) : (
             <SchemaResourceEdit
               resourceName={resourceInfo.name}
               isModal
               edit
-              onSubmit={onSubmit}
+              onSubmit={async (val) => createResource(val)}
               onCancel={onClose}
             />
           )}

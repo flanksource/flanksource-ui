@@ -13,13 +13,17 @@ const CodeEditor = dynamic(
 );
 
 type FormikCodeEditorProps = {
-  format?: "yaml" | "json";
+  format?: string;
   fieldName: string;
+  className?: string;
+  schemaFilePrefix?: "component" | "canary" | "system" | "scrape_config";
 };
 
 export function FormikCodeEditor({
   format = "yaml",
-  fieldName
+  fieldName,
+  className = "h-[min(1000px,calc(90vh))]",
+  schemaFilePrefix
 }: FormikCodeEditorProps) {
   const { setFieldValue } = useFormikContext<Record<string, any>>();
 
@@ -36,12 +40,16 @@ export function FormikCodeEditor({
   useEffect(() => {
     if (debouncedValues) {
       try {
-        setFieldValue(
-          fieldName,
-          format === "yaml"
-            ? YAML.parse(debouncedValues)
-            : JSON.parse(debouncedValues)
-        );
+        if (format === "yaml" || format === "json") {
+          setFieldValue(
+            fieldName,
+            format === "yaml"
+              ? YAML.parse(debouncedValues)
+              : JSON.parse(debouncedValues)
+          );
+        } else {
+          setFieldValue(fieldName, debouncedValues);
+        }
       } catch (e) {
         // do nothing, we don't want to set the values if the user is typing
       }
@@ -54,17 +62,21 @@ export function FormikCodeEditor({
   // jump around, and the user's cursor to jump around.
   const value = useMemo(() => {
     if (!isEmpty(values)) {
-      return format === "yaml"
-        ? YAML.stringify(values, {
-            sortMapEntries: true
-          })
-        : JSON.stringify(values);
+      if (format === "yaml" || format === "json") {
+        return format === "yaml"
+          ? YAML.stringify(values, {
+              sortMapEntries: true
+            })
+          : JSON.stringify(values);
+      } else {
+        return values;
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
-    <div className="h-[min(1000px,calc(90vh))]">
+    <div className={className}>
       <CodeEditor
         onChange={(v) => {
           if (v) {
@@ -76,6 +88,7 @@ export function FormikCodeEditor({
         }}
         value={value}
         language={format}
+        schemaFilePrefix={schemaFilePrefix}
       />
     </div>
   );
