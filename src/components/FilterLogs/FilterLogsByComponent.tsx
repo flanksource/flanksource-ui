@@ -47,23 +47,13 @@ function FilterLogsByComponent() {
   function onComponentSelect(value?: string) {
     if (value?.toLowerCase() === "none") {
       searchParams.delete("topologyId");
-      searchParams.delete("topologyExternalId");
-      searchParams.delete("type");
       setSearchParams(searchParams);
       return;
     }
     const selectedComponent = data?.find((c) => c.id === value);
     if (selectedComponent) {
-      setSearchParams({
-        ...Object.fromEntries(searchParams),
-        ...(selectedComponent.id && {
-          topologyId: selectedComponent.id
-        }),
-        ...(selectedComponent.external_id && {
-          topologyExternalId: selectedComponent.external_id
-        }),
-        ...(selectedComponent.type && { type: selectedComponent.type })
-      });
+      searchParams.set("topologyId", selectedComponent.id!);
+      setSearchParams(searchParams);
     }
   }
 

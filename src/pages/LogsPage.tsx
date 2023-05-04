@@ -44,12 +44,9 @@ export function LogsPage() {
   const [searchParams] = useSearchParams();
 
   const topologyId = searchParams.get("topologyId");
-  const type = searchParams.get("type");
-  const externalId = searchParams.get("topologyExternalId");
   const query = searchParams.get("query");
-  const start = searchParams.get("start") ?? timeRanges[0].value;
-
   const debouncedQueryValue = useDebouncedValue(query, 500);
+  const logsSelector = searchParams.get("logsSelector");
 
   const { data: topology } = useQuery(
     ["components", "names", topologyId],
@@ -72,13 +69,12 @@ export function LogsPage() {
     refetch
   } = useComponentGetLogsQuery(
     {
-      externalId: externalId!,
-      type: type!,
-      query: debouncedQueryValue!,
-      start
+      query: debouncedQueryValue ?? undefined,
+      logSelector: logsSelector!,
+      id: topologyId!
     },
     {
-      enabled: !!topologyId || !!query
+      enabled: !!topologyId && !!logsSelector
     }
   );
 
