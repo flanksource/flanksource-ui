@@ -26,6 +26,7 @@ export type SpecType = {
    */
   formFieldName: string;
   rawSpecInput?: boolean;
+  schemaFilePrefix: "component" | "canary" | "system" | "scrape_config";
 };
 
 type SpecEditorProps = {
@@ -82,6 +83,7 @@ export default function SpecEditor({
             resourceName={resourceName}
             specFormFieldName={selectedSpecItem.formFieldName}
             deleteHandler={deleteHandler}
+            schemaFilePrefix={selectedSpecItem.schemaFilePrefix}
           />
         </div>
       ) : (

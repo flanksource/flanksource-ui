@@ -20,6 +20,7 @@ type SpecEditorFormProps = {
   configForm: React.FC<{ fieldName: string }> | null;
   specFormFieldName: string;
   rawSpecInput?: boolean;
+  schemaFilePrefix?: "component" | "canary" | "system" | "scrape_config";
 };
 
 export default function SpecEditorForm({
@@ -30,7 +31,8 @@ export default function SpecEditorForm({
   specFormat = "yaml",
   configForm: ConfigForm,
   specFormFieldName,
-  rawSpecInput: showCodeEditorOnly = false
+  rawSpecInput: showCodeEditorOnly = false,
+  schemaFilePrefix
 }: SpecEditorFormProps) {
   const [activeTabs, setActiveTabs] = useState<"Form" | "Code">(
     showCodeEditorOnly ? "Code" : "Form"
@@ -85,7 +87,7 @@ export default function SpecEditorForm({
         >
           <div className="flex flex-col space-y-4 p-4">
             <div className="flex flex-col space-y-2">
-              {isFieldSupportedByResourceType("icon") && (
+              {isFieldSupportedByResourceType("name") && (
                 <FormikTextInput name="name" label="Name" required />
               )}
               {isFieldSupportedByResourceType("icon") && (
@@ -153,6 +155,7 @@ export default function SpecEditorForm({
                   <FormikCodeEditor
                     format={specFormat}
                     fieldName={specFormFieldName}
+                    schemaFilePrefix={schemaFilePrefix}
                   />
                 </>
               ) : (

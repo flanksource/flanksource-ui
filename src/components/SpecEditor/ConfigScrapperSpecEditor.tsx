@@ -106,7 +106,7 @@ export default function ConfigScrapperSpecEditor({
         },
         {
           name: "custom",
-          label: "Custom Config Spec",
+          label: "Custom",
           updateSpec: (value: Record<string, any>) => {
             onSubmit(value);
           },
@@ -116,9 +116,10 @@ export default function ConfigScrapperSpecEditor({
           icon: FaCog,
           configForm: null,
           formFieldName: "spec",
-          rawSpecInput: true
+          rawSpecInput: true,
+          schemaFilePrefix: "scrape_config"
         }
-      ].sort((a, b) => a.label.localeCompare(b.label)),
+      ].sort((a, b) => a.label.localeCompare(b.label)) as SpecType[],
     [onSubmit, spec]
   );
 

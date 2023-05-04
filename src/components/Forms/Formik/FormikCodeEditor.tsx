@@ -16,12 +16,14 @@ type FormikCodeEditorProps = {
   format?: string;
   fieldName: string;
   className?: string;
+  schemaFilePrefix?: "component" | "canary" | "system" | "scrape_config";
 };
 
 export function FormikCodeEditor({
   format = "yaml",
   fieldName,
-  className = "h-[min(1000px,calc(90vh))]"
+  className = "h-[min(1000px,calc(90vh))]",
+  schemaFilePrefix
 }: FormikCodeEditorProps) {
   const { setFieldValue } = useFormikContext<Record<string, any>>();
 
@@ -86,6 +88,7 @@ export function FormikCodeEditor({
         }}
         value={value}
         language={format}
+        schemaFilePrefix={schemaFilePrefix}
       />
     </div>
   );

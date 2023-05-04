@@ -14,7 +14,7 @@ export default function HealthSpecEditor({
   onSubmit = () => {},
   deleteHandler
 }: HealthSpecEditorProps) {
-  const configTypes: SpecType[] = useMemo(
+  const configTypes = useMemo(
     () =>
       [
         {
@@ -351,9 +351,10 @@ export default function HealthSpecEditor({
           icon: FaCog,
           configForm: null,
           formFieldName: "spec",
-          rawSpecInput: true
+          rawSpecInput: true,
+          schemaFilePrefix: "canary"
         }
-      ].sort((a, b) => a.label.localeCompare(b.label)),
+      ].sort((a, b) => a.label.localeCompare(b.label)) as SpecType[],
     [onSubmit, spec]
   );
 
