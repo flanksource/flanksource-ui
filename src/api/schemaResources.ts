@@ -79,7 +79,7 @@ export const getAll = ({
   if (endpoint) {
     const tableName = getTableName(table);
     return endpoint.get<SchemaResourceWithJobStatus[]>(
-      `/${tableName}?order=created_at.desc&select=*,created_by(${AVATAR_INFO})&limit=100`
+      `/${tableName}?order=created_at.desc&select=*,created_by(${AVATAR_INFO})&limit=100&deleted_at=is.null`
     );
   }
   return Promise.resolve({ data: [] } as any);
