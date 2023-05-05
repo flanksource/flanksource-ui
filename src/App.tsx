@@ -1,6 +1,6 @@
 import { AdjustmentsIcon } from "@heroicons/react/solid";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { ReactNode, useEffect, useState } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import { AiFillHeart } from "react-icons/ai";
 import { ImLifebuoy } from "react-icons/im";
 import { VscJson } from "react-icons/vsc";
@@ -62,38 +62,59 @@ import {
 import { ConnectionsPage } from "./pages/ConnectionsPage";
 import { BsLink } from "react-icons/bs";
 import { stringSortHelper } from "./utils/common";
+import { IconType } from "react-icons";
 
-const navigation = [
+export type NavigationItems = {
+  name: string;
+  icon: React.ComponentType<any> | IconType;
+  href: string;
+  resourceName: string;
+}[];
+
+const navigation: NavigationItems = [
   {
     name: "Dashboard",
     href: "/topology",
     icon: TopologyIcon,
-    resouceName: resources.topology
+    resourceName: resources.topology
   },
   {
     name: "Health",
     href: "/health",
     icon: AiFillHeart,
-    resouceName: resources.health
+    resourceName: resources.health
   },
   {
     name: "Incidents",
     href: "/incidents",
     icon: ImLifebuoy,
-    resouceName: resources.incidents
+    resourceName: resources.incidents
   },
   {
     name: "Config",
     href: "/configs",
     icon: VscJson,
-    resouceName: resources.config
+    resourceName: resources.config
   },
-  { name: "Logs", href: "/logs", icon: LogsIcon, resouceName: resources.logs }
+  { name: "Logs", href: "/logs", icon: LogsIcon, resourceName: resources.logs }
 ];
 
-export type NavigationItems = typeof navigation;
+export type SettingsNavigationItems = {
+  name: string;
+  icon: IconType;
+  checkPath: boolean;
+  submenu: (
+    | (SchemaResourceType & { href: string })
+    | {
+        name: string;
+        href: string;
+        icon: IconType;
+        resourceName: string;
+      }
+  )[];
+};
 
-const settingsNav = {
+const settingsNav: SettingsNavigationItems = {
   name: "Settings",
   icon: AdjustmentsIcon,
   checkPath: false,
@@ -102,13 +123,13 @@ const settingsNav = {
       name: "Connections",
       href: "/settings/connections",
       icon: BsLink,
-      resouceName: resources["settings.connections"]
+      resourceName: resources["settings.connections"]
     },
     {
       name: "Users",
       href: "/settings/users",
       icon: HiUser,
-      resouceName: resources["settings.users"]
+      resourceName: resources["settings.users"]
     },
     ...schemaResourceTypes.map((x) => ({
       ...x,
@@ -118,18 +139,16 @@ const settingsNav = {
       name: "Jobs History",
       href: "/settings/jobs",
       icon: FaTasks,
-      resouceName: resources["settings.job_history"]
+      resourceName: resources["settings.job_history"]
     },
     {
       name: "Feature Flags",
       href: "/settings/feature-flags",
       icon: BsToggles,
-      resouceName: resources["settings.feature_flags"]
+      resourceName: resources["settings.feature_flags"]
     }
   ].sort((v1, v2) => stringSortHelper(v1.name, v2.name))
 };
-
-export type SettingsNavigationItems = typeof settingsNav;
 
 const CANARY_API = "/api/canary/api/summary";
 

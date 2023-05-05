@@ -141,8 +141,8 @@ function SideNavGroup({
         </Menu.Button>
         {/* @ts-expect-error */}
         <Menu.Items className="absolute border left-0 ml-12 w-48 shadow-md top-0 z-10 bg-gray-800 space-y-1">
-          {submenu.map(({ name, icon, href, resouceName }) =>
-            !isFeatureDisabled(resouceName) ? (
+          {submenu.map(({ name, icon, href, resourceName }) =>
+            !isFeatureDisabled(resourceName!) ? (
               // @ts-expect-error
               <Menu.Item key={name}>
                 {({ active }) => (
@@ -187,7 +187,7 @@ function SideNavGroup({
           </Disclosure.Button>
           <Disclosure.Panel className="pl-4 space-y-1">
             {submenu.map((item) =>
-              !isFeatureDisabled(item.resouceName) ? (
+              !isFeatureDisabled(item.resourceName!) ? (
                 <SideNavItem
                   key={item.name}
                   {...item}
@@ -214,7 +214,7 @@ function SideNav({
     <nav className="flex-col space-y-2 divide-y divide-gray-500">
       <div>
         {navs.map((item) =>
-          !isFeatureDisabled(item.resouceName) ? (
+          !isFeatureDisabled(item.resourceName!) ? (
             <SideNavItem
               key={item.name}
               {...item}
