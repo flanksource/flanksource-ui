@@ -7,8 +7,8 @@ interface Props {
 export function Head({ prefix }: Props) {
   return (
     <NextHead>
-      <title>{prefix} | Incident Commander</title>
-      <meta name="description" content={`${prefix} | Incident Commander`} />
+      <title>{prefix} | Mission Control</title>
+      <meta name="description" content={`${prefix} | Mission Control`} />
       <meta name="theme-color" content="#000000" />
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" />

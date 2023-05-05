@@ -293,11 +293,17 @@ export function SidebarLayout({ navigation, settingsNav, checkPath }: Props) {
 
             {collapseSidebar ? (
               <div className="flex border-b border-b-gray-500 h-16 shadow">
-                <Icon name="flanksource-icon" className="w-10 h-auto m-auto" />
+                <Icon
+                  name="mission-control-white"
+                  className="w-10 h-auto m-auto fill-white stroke-white"
+                />
               </div>
             ) : (
               <div className="p-3 pl-5 border-b border-b-gray-500 shadow">
-                <Icon name="flanksource" className="h-10" />
+                <Icon
+                  name="mission-control-logo-white"
+                  className="h-10 stroke-white"
+                />
               </div>
             )}
 
