@@ -42,7 +42,11 @@ export function TopologyBreadcrumbs({
   refererId
 }: TopologyBreadcrumbsProps) {
   const componentId = refererId || topologyId;
-  const { data: component } = useComponentNameQuery(componentId, {});
+
+  const { data: component } = useComponentNameQuery(componentId, {
+    enabled: !!componentId
+  });
+
   const ids = useMemo(() => {
     const topologyIds = [
       ...(component?.path || "").split("."),

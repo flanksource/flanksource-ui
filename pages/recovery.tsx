@@ -89,7 +89,11 @@ const Recovery: NextPage = () => {
         <div className="flex min-h-full flex-col justify-center pt-12 pb-28 sm:px-6 lg:px-8">
           <div className="w-96">
             <div>
-              <img alt="Flanksource" src="/images/logo.svg" className="p-2 h-auto m-auto rounded-8px w-48" />
+              <img
+                alt="Mission Control"
+                src="/images/logo.svg"
+                className="p-2 h-auto m-auto rounded-8px w-48"
+              />
               <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
                 Recover account
               </h2>

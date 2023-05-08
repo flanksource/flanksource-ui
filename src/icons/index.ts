@@ -260,7 +260,9 @@ import memchache from "./memchache.svg";
 import metrics from "./metrics.svg";
 import microsoft from "./microsoft.svg";
 import minus from "./minus.svg";
+import mission_control_logo_white from "./mission-control-logo-white.svg";
 import mission_control_logo from "./mission-control-logo.svg";
+import mission_control_white from "./mission-control-white.svg";
 import mission_control from "./mission-control.svg";
 import mongo from "./mongo.svg";
 import mongodb from "./mongodb.svg";
@@ -387,6 +389,7 @@ import world from "./world.svg";
 import www from "./www.svg";
 import xml from "./xml.svg";
 import yaml from "./yaml.svg";
+
 export const Icons = {
   "access-denied": access_denied,
   acr: acr,
@@ -649,7 +652,9 @@ export const Icons = {
   metrics: metrics,
   microsoft: microsoft,
   minus: minus,
+  "mission-control-logo-white": mission_control_logo_white,
   "mission-control-logo": mission_control_logo,
+  "mission-control-white": mission_control_white,
   "mission-control": mission_control,
   mongo: mongo,
   mongodb: mongodb,
