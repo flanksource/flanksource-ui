@@ -140,7 +140,8 @@ export function ConfigDetailsChanges({
           {showConfigLogo && (
             <>
               <Icon
-                name={config?.external_type || config?.config_type}
+                name={config?.type}
+                secondary={config?.config_class}
                 className="w-5 mr-1"
               />
               <span>{config?.name}</span>
@@ -182,8 +183,8 @@ export function ConfigDetailChangeModal({
               className="text-blue-600 text-xl font-semibold whitespace-nowrap mr-1"
               configId={config.id}
               configName={config.name}
-              configType={config.external_type}
-              configTypeSecondary={config.config_type}
+              configType={config.type}
+              configTypeSecondary={config.config_class}
             />
             &nbsp;/&nbsp;
             <Icon

@@ -73,8 +73,8 @@ export default function ConfigInsightsDetailsModal({
             className="text-blue-600 text-xl font-semibold whitespace-nowrap mr-1"
             configId={configInsight.config!.id}
             configName={configInsight.config!.name}
-            configType={configInsight.config!.external_type}
-            configTypeSecondary={configInsight.config!.config_type}
+            configType={configInsight.config!.type}
+            configTypeSecondary={configInsight.config!.config_class}
           />
           {" / "}
           <ConfigInsightsIcon analysis={configInsight} />

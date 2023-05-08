@@ -36,8 +36,8 @@ export function TopologyConfigChanges({ topologyID }: Props) {
                   className="text-zinc-600"
                   configId={item.config_id}
                   configName={item.name}
-                  configType={item.external_type}
-                  configTypeSecondary={item.config_type}
+                  configType={item.type}
+                  configTypeSecondary={item.config_class}
                 />
                 &nbsp;/&nbsp;
                 <Link

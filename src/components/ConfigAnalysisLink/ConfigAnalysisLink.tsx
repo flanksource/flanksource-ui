@@ -42,10 +42,8 @@ export function ConfigAnalysisLink({
           {showConfigLogo && (
             <>
               <Icon
-                name={
-                  configAnalysis?.config?.external_type ||
-                  configAnalysis?.config?.config_type
-                }
+                name={configAnalysis?.config?.type}
+                secondary={configAnalysis?.config?.config_class}
                 className="w-5 h-5 mr-1"
               />
               <span>{configAnalysis?.config?.name}</span>

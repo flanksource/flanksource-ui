@@ -23,7 +23,7 @@ const items: GroupOptionsType = {
     id: "Type",
     name: "Type",
     description: "Type",
-    value: "config_type"
+    value: "type"
   },
   Name: {
     id: "Name",
@@ -51,10 +51,10 @@ export default function GroupByDropdown({
   value
 }: ConfigGroupByDropdownProps) {
   const [params, setParams] = useSearchParams({
-    [searchParamKey]: value ?? "config_type"
+    [searchParamKey]: value ?? "type"
   });
   const groupType = decodeURIComponent(
-    params.get("groupByProp") || params.get("groupBy") || "config_type"
+    params.get("groupByProp") || params.get("groupBy") || "type"
   );
 
   const [groupByOptions, setGroupByOptions] = useState<GroupOptionsType>();

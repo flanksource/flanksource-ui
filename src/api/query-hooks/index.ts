@@ -123,11 +123,11 @@ function prepareConfigListQuery({
 }: ConfigListFilterQueryOptions) {
   let query = "select=*";
   if (search) {
-    query = `${query}&or=(name.ilike.*${search}*,config_type.ilike.*${search}*,description.ilike.*${search}*,namespace.ilike.*${search}*)`;
+    query = `${query}&or=(name.ilike.*${search}*,type.ilike.*${search}*,description.ilike.*${search}*,namespace.ilike.*${search}*)`;
   } else {
     const filterQueries = [];
     if (configType && configType !== "All") {
-      filterQueries.push(`config_type=eq.${configType}`);
+      filterQueries.push(`type=eq.${configType}`);
     }
     if (tag && tag !== "All") {
       const [k, v] = decodeURI(tag).split("__:__");
@@ -138,7 +138,7 @@ function prepareConfigListQuery({
     }
   }
   if (sortBy && sortOrder) {
-    const sortField = sortBy === "config_type" ? `${sortBy},name` : sortBy;
+    const sortField = sortBy === "type" ? `${sortBy},name` : sortBy;
     query = `${query}&order=${sortField}.${sortOrder}`;
   }
   if (hideDeletedConfigs) {

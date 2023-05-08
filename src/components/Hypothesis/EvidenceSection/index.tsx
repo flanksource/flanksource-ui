@@ -134,8 +134,8 @@ const EvidenceAccordion: React.FC<{
           <ConfigLink
             configId={configId}
             configName={configName}
-            configType={config?.external_type}
-            configTypeSecondary={config?.config_type}
+            configType={config?.type}
+            configTypeSecondary={config?.config_class}
           />
         </div>
       </div>
