@@ -3,11 +3,7 @@ import { useEffect, useState } from "react";
 import { VscJson } from "react-icons/vsc";
 import { TbTrash, TbTrashOff } from "react-icons/tb";
 import ReactTooltip from "react-tooltip";
-import {
-  ConfigItem,
-  ConfigTypeRelationships,
-  getConfigsBy
-} from "../../api/services/configs";
+import { removeManualComponentConfigRelationship } from "../../api/services/configs";
 import CollapsiblePanel from "../CollapsiblePanel";
 import ConfigLink from "../ConfigLink/ConfigLink";
 import EmptyState from "../EmptyState";
@@ -15,9 +11,12 @@ import Title from "../Title/title";
 import { Badge } from "../Badge";
 import { IconButton } from "../IconButton";
 import TextSkeletonLoader from "../SkeletonLoader/TextSkeletonLoader";
-import { useQuery } from "@tanstack/react-query";
-import { refreshButtonClickedTrigger } from "../SlidingSideBar";
+import { BsTrash } from "react-icons/bs";
+import { toastSuccess, toastError } from "../Toast/toast";
+import { useComponentConfigRelationshipQuery } from "../../api/query-hooks/useComponentConfigRelationshipQuery";
+import { ConfirmationPromptDialog } from "../Dialogs/ConfirmationPromptDialog";
 import { useAtom } from "jotai";
+import { refreshButtonClickedTrigger } from "../SlidingSideBar";
 
 type Props = {
   topologyId?: string;
@@ -32,51 +31,38 @@ export function ConfigsList({
   configId,
   hideDeletedConfigs
 }: Props) {
+  const [triggerRefresh] = useAtom(refreshButtonClickedTrigger);
+  const [deletedConfigLinkId, setDeletedConfigLinkId] = useState<
+    string | undefined
+  >();
+
   const {
     data: configs = [],
     isLoading,
-    refetch,
-    isRefetching
-  } = useQuery(
-    [
-      "configs",
-      "related",
-      ...(topologyId ? ["topology", topologyId] : []),
-      ...(configId ? ["configs", configId] : [])
-    ],
-    async () => {
-      const res = await getConfigsBy({
-        topologyId: topologyId,
-        configId: configId
-      });
-      return res?.data ?? [];
-    },
-    {
-      select: (data) => {
-        const items = data
-          .map((item) => ({
-            configs: item.configs,
-            related: item.related
-          }))
-          .reduce((a: ConfigItem[], i) => {
-            if (a == null) {
-              a = [];
-            }
-            if ((i as ConfigTypeRelationships).configs?.id !== configId) {
-              a.push((i as ConfigTypeRelationships).configs);
-            }
-            if ((i as ConfigTypeRelationships).related?.id !== configId) {
-              a.push((i as ConfigTypeRelationships).related);
-            }
-            return a;
-          }, [])
-          .sort((ent: ConfigItem) => (ent.deleted_at ? 1 : -1));
-        return items ?? [];
-      }
-    }
-  );
+    isRefetching,
+    refetch
+  } = useComponentConfigRelationshipQuery({ topologyId, configId });
 
-  const [triggerRefresh] = useAtom(refreshButtonClickedTrigger);
+  const deleteLink = async (configId: string) => {
+    if (!topologyId) {
+      return;
+    }
+    try {
+      const response = await removeManualComponentConfigRelationship(
+        topologyId,
+        configId
+      );
+      if (response.data) {
+        toastSuccess("Deleted config link successfully");
+        refetch();
+        setDeletedConfigLinkId(undefined);
+        return;
+      }
+      toastError(response.error?.message);
+    } catch (ex) {
+      toastError((ex as Error).message);
+    }
+  };
 
   useEffect(() => {
     if (!isLoading && !isRefetching) {
@@ -94,7 +80,7 @@ export function ConfigsList({
           {configs.map((config) => (
             <li
               key={config.id}
-              className={clsx("p-1", {
+              className={clsx("p-1 relative", {
                 hidden: hideDeletedConfigs && config.deleted_at
               })}
             >
@@ -111,23 +97,52 @@ export function ConfigsList({
                   className="ml-2"
                 />
               )}
+              {topologyId && (
+                <IconButton
+                  className="bg-transparent flex items-center absolute right-4 top-2"
+                  ovalProps={{
+                    stroke: "blue",
+                    height: "18px",
+                    width: "18px",
+                    fill: "transparent"
+                  }}
+                  icon={<BsTrash />}
+                  onClick={() => {
+                    setDeletedConfigLinkId(config.id);
+                  }}
+                />
+              )}
             </li>
           ))}
         </ol>
       ) : (
         <EmptyState />
       )}
+      <ConfirmationPromptDialog
+        isOpen={Boolean(deletedConfigLinkId)}
+        title="Delete config link"
+        description={`Are you sure you want to delete this config link`}
+        yesLabel="Delete"
+        onClose={() => setDeletedConfigLinkId(undefined)}
+        onConfirm={() => {
+          deleteLink(deletedConfigLinkId!);
+        }}
+      />
     </div>
   );
 }
 
-// eslint-disable-next-line import/no-anonymous-default-export
 export default function Configs({
   isCollapsed,
   onCollapsedStateChange,
   ...props
 }: Props) {
-  const [hideDeletedConfigs, setHideDeletedConfigs] = useState(true);
+  const { data: configs = [] } = useComponentConfigRelationshipQuery({
+    ...props
+  });
+  const [hideDeletedConfigs, setHideDeletedConfigs] = useState(() => {
+    return props.hideDeletedConfigs;
+  });
 
   const TrashIconType = hideDeletedConfigs ? TbTrashOff : TbTrash;
   const handleTrashIconClick = (e: { stopPropagation: () => void }) => {
@@ -144,9 +159,14 @@ export default function Configs({
       onCollapsedStateChange={onCollapsedStateChange}
       isCollapsed={isCollapsed}
       Header={
-        <div className="flex flex-row items-center">
+        <div className="flex flex-row items-center space-x-2">
           <Title title="Configs" icon={<VscJson className="w-6 h-auto" />} />
-          <div className="flex grow ml-5 text-right justify-center">
+          <Badge
+            className="w-5 h-5 flex items-center justify-center"
+            roundedClass="rounded-full"
+            text={configs?.length ?? 0}
+          />
+          <div className="flex grow text-right justify-center">
             <IconButton
               data-tip={`${
                 hideDeletedConfigs ? "Show" : "Hide"
@@ -158,6 +178,7 @@ export default function Configs({
                 />
               }
               onClick={handleTrashIconClick}
+              className="ml-2"
             />
           </div>
         </div>

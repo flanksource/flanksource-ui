@@ -3,7 +3,7 @@
 import { ConfigTypeChanges } from "../../components/ConfigChanges";
 import { ConfigTypeInsights } from "../../components/ConfigInsights";
 import { Config, ConfigDB, IncidentCommander } from "../axios";
-import { resolve } from "../resolve";
+import { ApiResp, resolve } from "../resolve";
 
 export interface ConfigItem {
   name: string;
@@ -164,13 +164,43 @@ export const getConfigsBy = ({ topologyId, configId }: ConfigParams) => {
         `/config_component_relationships?component_id=eq.${topologyId}&select=configs!config_component_relationships_config_id_fkey(*)`
       )
     );
-  } else if (configId) {
+  }
+  if (configId) {
     return resolve(
       ConfigDB.get<Pick<ConfigTypeRelationships, "configs" | "related">[]>(
         `/config_relationships?or=(related_id.eq.${configId},config_id.eq.${configId})&select=configs:configs!config_relationships_config_id_fkey(*),related:configs!config_relationships_related_id_fkey(*)`
       )
     );
   }
+  return Promise.resolve({
+    totalEntries: 0,
+    data: [],
+    error: null
+  });
+};
+
+export const addManualComponentConfigRelationship = (
+  topologyId: string,
+  configId: string
+) => {
+  return resolve(
+    ConfigDB.post(`/config_component_relationships`, {
+      component_id: topologyId,
+      config_id: configId,
+      selector_id: "manual"
+    })
+  );
+};
+
+export const removeManualComponentConfigRelationship = (
+  topologyId: string,
+  configId: string
+) => {
+  return resolve(
+    ConfigDB.delete(
+      `/config_component_relationships?component_id=eq.${topologyId}&config_id=eq.${configId}&selector_id=eq.manual`
+    )
+  );
 };
 
 export const searchConfigs = (type: string, input: string) => {
