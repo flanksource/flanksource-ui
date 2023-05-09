@@ -98,6 +98,7 @@ export default function ConnectionForm({
             name={field.key}
             label={field.label}
             disabled={!edit}
+            labelClassName="font-bold"
           />
         );
       case "EnvVarSource":
@@ -155,7 +156,7 @@ export default function ConnectionForm({
             {...props}
           >
             <div className={clsx("flex flex-col px-2 mb-2")}>
-              <div className="flex flex-col space-y-2 overflow-y-auto p-2">
+              <div className="flex flex-col space-y-4 overflow-y-auto p-4">
                 {connectionType.fields.map((field, index) => {
                   return (
                     <React.Fragment key={index}>
@@ -217,22 +218,24 @@ export default function ConnectionForm({
 
   const getConnectionListingView = () => {
     return (
-      <div className="flex flex-row flex-wrap m-4">
+      <div className="flex flex-wrap p-2">
         {connectionTypes.map((item) => {
           return (
-            <div
-              className="flex flex-col w-1/5 items-center space-y-2 justify-center p-2 border border-gray-300 hover:border-blue-200 hover:bg-gray-100 rounded-md text-center h-16 m-2 cursor-pointer"
-              key={item.title}
-              onClick={(e) => {
-                setConnectionType(item);
-              }}
-            >
-              {typeof item.icon === "string" ? (
-                <Icon name={item.icon} />
-              ) : (
-                item.icon
-              )}
-              <div className="text-xs">{item.title}</div>
+            <div className="flex flex-col w-1/5 p-2" key={item.title}>
+              <div
+                role="button"
+                className="flex flex-col items-center space-y-2 justify-center p-2 border border-gray-300 hover:border-blue-200 hover:bg-gray-100 rounded-md text-center h-20"
+                onClick={(e) => {
+                  setConnectionType(item);
+                }}
+              >
+                {typeof item.icon === "string" ? (
+                  <Icon name={item.icon} />
+                ) : (
+                  item.icon
+                )}
+                <div>{item.title}</div>
+              </div>
             </div>
           );
         })}
@@ -254,19 +257,19 @@ export default function ConnectionForm({
               ) : (
                 connectionType.icon
               )}
-              <div className="text-xs">
+              <div className="font-semibold text-lg">
                 {connectionType.title} connection details
               </div>
             </div>
           ) : (
-            "Select connection"
+            <div className="font-semibold text-lg">Select connection</div>
           )
         }
         onClose={() => {
           setIsOpen(false);
         }}
         open={isOpen}
-        bodyClass=""
+        bodyClass="flex flex-col w-full flex-1 h-full overflow-y-auto"
       >
         {connectionType && getFormView(connectionType)}
         {!connectionType && getConnectionListingView()}

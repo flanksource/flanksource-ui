@@ -5,11 +5,13 @@ type FormikCheckboxProps = {
   required?: boolean;
   label?: string;
   disabled?: boolean;
+  labelClassName?: string;
 };
 
 export default function FormikCheckbox({
   name,
   required = false,
+  labelClassName = "text-sm font-semibold text-gray-700",
   disabled,
   label
 }: FormikCheckboxProps) {
@@ -29,7 +31,7 @@ export default function FormikCheckbox({
         {...field}
         disabled={disabled}
       />
-      <label htmlFor={name} className="text-sm font-semibold text-gray-700">
+      <label htmlFor={name} className={labelClassName}>
         {label}
       </label>
     </div>
