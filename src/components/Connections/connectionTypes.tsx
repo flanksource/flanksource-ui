@@ -3,10 +3,10 @@ import { DiGoogleCloudPlatform } from "react-icons/di";
 import { stringSortHelper } from "../../utils/common";
 import { Connection } from "./ConnectionForm";
 
-type FieldType = "checkbox" | "input" | "certificate" | "EnvVarSource";
+// supported field types
+type FieldType = "checkbox" | "input" | "EnvVarSource";
 
 const fieldTypes: { [key: string]: FieldType } = {
-  certificate: "certificate",
   checkbox: "checkbox",
   input: "input",
   EnvVarSource: "EnvVarSource"
@@ -24,6 +24,7 @@ export type Field = {
   key: string;
   type: string;
   variant?: Variant;
+  required?: boolean;
 };
 
 export type ConnectionType = {
@@ -40,19 +41,28 @@ export const connectionTypes: ConnectionType[] = [
     icon: "http",
     fields: [
       {
+        label: "Name",
+        key: "name",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
         label: "URL",
         key: "url",
-        type: fieldTypes.input
+        type: fieldTypes.input,
+        required: true
       },
       {
         label: "Username",
         key: "username",
-        type: fieldTypes.EnvVarSource
+        type: fieldTypes.EnvVarSource,
+        required: true
       },
       {
         label: "Password",
         key: "password",
-        type: fieldTypes.EnvVarSource
+        type: fieldTypes.EnvVarSource,
+        required: true
       }
     ]
   },
@@ -61,19 +71,28 @@ export const connectionTypes: ConnectionType[] = [
     icon: "mysql",
     fields: [
       {
+        label: "Name",
+        key: "name",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
         label: "URL",
         key: "url",
-        type: fieldTypes.input
+        type: fieldTypes.input,
+        required: true
       },
       {
         label: "Username",
         key: "username",
-        type: fieldTypes.EnvVarSource
+        type: fieldTypes.EnvVarSource,
+        required: true
       },
       {
         label: "Password",
         key: "password",
-        type: fieldTypes.EnvVarSource
+        type: fieldTypes.EnvVarSource,
+        required: true
       }
     ]
   },
@@ -82,19 +101,28 @@ export const connectionTypes: ConnectionType[] = [
     icon: "sqlserver",
     fields: [
       {
+        label: "Name",
+        key: "name",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
         label: "URL",
         key: "url",
-        type: fieldTypes.input
+        type: fieldTypes.input,
+        required: true
       },
       {
         label: "Username",
         key: "username",
-        type: fieldTypes.EnvVarSource
+        type: fieldTypes.EnvVarSource,
+        required: true
       },
       {
         label: "Password",
         key: "password",
-        type: fieldTypes.EnvVarSource
+        type: fieldTypes.EnvVarSource,
+        required: true
       }
     ]
   },
@@ -103,19 +131,28 @@ export const connectionTypes: ConnectionType[] = [
     icon: "http",
     fields: [
       {
+        label: "Name",
+        key: "name",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
         label: "URL",
         key: "url",
-        type: fieldTypes.input
+        type: fieldTypes.input,
+        required: true
       },
       {
         label: "Username",
         key: "username",
-        type: fieldTypes.EnvVarSource
+        type: fieldTypes.EnvVarSource,
+        required: true
       },
       {
         label: "Password",
         key: "password",
-        type: fieldTypes.EnvVarSource
+        type: fieldTypes.EnvVarSource,
+        required: true
       },
       {
         label: "Insecure TLS",
@@ -129,19 +166,28 @@ export const connectionTypes: ConnectionType[] = [
     icon: "prometheus",
     fields: [
       {
+        label: "Name",
+        key: "name",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
         label: "URL",
         key: "url",
-        type: fieldTypes.input
+        type: fieldTypes.input,
+        required: true
       },
       {
         label: "Username",
         key: "username",
-        type: fieldTypes.EnvVarSource
+        type: fieldTypes.EnvVarSource,
+        required: true
       },
       {
         label: "Password",
         key: "password",
-        type: fieldTypes.EnvVarSource
+        type: fieldTypes.EnvVarSource,
+        required: true
       },
       {
         label: "Insecure TLS",
@@ -155,19 +201,28 @@ export const connectionTypes: ConnectionType[] = [
     icon: "elasticsearch",
     fields: [
       {
+        label: "Name",
+        key: "name",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
         label: "URL",
         key: "url",
-        type: fieldTypes.input
+        type: fieldTypes.input,
+        required: true
       },
       {
         label: "Username",
         key: "username",
-        type: fieldTypes.EnvVarSource
+        type: fieldTypes.EnvVarSource,
+        required: true
       },
       {
         label: "Password",
         key: "password",
-        type: fieldTypes.EnvVarSource
+        type: fieldTypes.EnvVarSource,
+        required: true
       },
       {
         label: "Insecure TLS",
@@ -181,19 +236,28 @@ export const connectionTypes: ConnectionType[] = [
     icon: "mongo",
     fields: [
       {
+        label: "Name",
+        key: "name",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
         label: "URL",
         key: "url",
-        type: fieldTypes.input
+        type: fieldTypes.input,
+        required: true
       },
       {
         label: "Username",
         key: "username",
-        type: fieldTypes.EnvVarSource
+        type: fieldTypes.EnvVarSource,
+        required: true
       },
       {
         label: "Password",
         key: "password",
-        type: fieldTypes.EnvVarSource
+        type: fieldTypes.EnvVarSource,
+        required: true
       },
       {
         label: "Insecure TLS",
@@ -207,19 +271,28 @@ export const connectionTypes: ConnectionType[] = [
     icon: "ldap",
     fields: [
       {
+        label: "Name",
+        key: "name",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
         label: "URL",
         key: "url",
-        type: fieldTypes.input
+        type: fieldTypes.input,
+        required: true
       },
       {
         label: "Username",
         key: "username",
-        type: fieldTypes.EnvVarSource
+        type: fieldTypes.EnvVarSource,
+        required: true
       },
       {
         label: "Password",
         key: "password",
-        type: fieldTypes.EnvVarSource
+        type: fieldTypes.EnvVarSource,
+        required: true
       },
       {
         label: "Insecure TLS",
@@ -233,19 +306,28 @@ export const connectionTypes: ConnectionType[] = [
     icon: "redis",
     fields: [
       {
+        label: "Name",
+        key: "name",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
         label: "URL",
         key: "url",
-        type: fieldTypes.input
+        type: fieldTypes.input,
+        required: true
       },
       {
         label: "Username",
         key: "username",
-        type: fieldTypes.EnvVarSource
+        type: fieldTypes.EnvVarSource,
+        required: true
       },
       {
         label: "Password",
         key: "password",
-        type: fieldTypes.EnvVarSource
+        type: fieldTypes.EnvVarSource,
+        required: true
       },
       {
         label: "Insecure TLS",
@@ -259,24 +341,28 @@ export const connectionTypes: ConnectionType[] = [
     icon: <FaWindows className="w-5 h-5" />,
     fields: [
       {
-        label: "URL",
-        key: "url",
-        type: fieldTypes.input
+        label: "Name",
+        key: "name",
+        type: fieldTypes.input,
+        required: true
       },
       {
         label: "Username",
         key: "username",
-        type: fieldTypes.EnvVarSource
+        type: fieldTypes.EnvVarSource,
+        required: true
       },
       {
         label: "Password",
         key: "password",
-        type: fieldTypes.EnvVarSource
+        type: fieldTypes.EnvVarSource,
+        required: true
       },
       {
         label: "Domain",
         key: "domain",
-        type: fieldTypes.input
+        type: fieldTypes.input,
+        required: true
       }
     ],
     convertToFormSpecificValue: (data: Record<string, any>) => {
@@ -301,10 +387,17 @@ export const connectionTypes: ConnectionType[] = [
     icon: <DiGoogleCloudPlatform className="w-6 h-6" />,
     fields: [
       {
+        label: "Name",
+        key: "name",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
         label: "Certificate",
         key: "certificate",
         type: fieldTypes.EnvVarSource,
-        variant: variants.large
+        variant: variants.large,
+        required: true
       }
     ]
   },
@@ -313,24 +406,34 @@ export const connectionTypes: ConnectionType[] = [
     icon: "sftp",
     fields: [
       {
+        label: "Name",
+        key: "name",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
         label: "Host",
         key: "host",
-        type: fieldTypes.input
+        type: fieldTypes.input,
+        required: true
       },
       {
         label: "Username",
         key: "username",
-        type: fieldTypes.input
+        type: fieldTypes.input,
+        required: true
       },
       {
         label: "Password",
         key: "password",
-        type: fieldTypes.input
+        type: fieldTypes.input,
+        required: true
       },
       {
         label: "Port",
         key: "port",
-        type: fieldTypes.input
+        type: fieldTypes.input,
+        required: true
       }
     ],
     convertToFormSpecificValue: (data: Record<string, any>) => {
@@ -355,24 +458,34 @@ export const connectionTypes: ConnectionType[] = [
     icon: "aws",
     fields: [
       {
+        label: "Name",
+        key: "name",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
         label: "Region",
         key: "region",
-        type: fieldTypes.input
+        type: fieldTypes.input,
+        required: true
       },
       {
         label: "Profile",
         key: "profile",
-        type: fieldTypes.input
+        type: fieldTypes.input,
+        required: true
       },
       {
         label: "Access Key",
         key: "username",
-        type: fieldTypes.EnvVarSource
+        type: fieldTypes.EnvVarSource,
+        required: true
       },
       {
         label: "Secret Key",
         key: "password",
-        type: fieldTypes.EnvVarSource
+        type: fieldTypes.EnvVarSource,
+        required: true
       },
       {
         label: "Insecure TLS",
@@ -405,10 +518,17 @@ export const connectionTypes: ConnectionType[] = [
     icon: "kubernetes",
     fields: [
       {
+        label: "Name",
+        key: "name",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
         label: "Certificate",
         key: "certificate",
         type: fieldTypes.EnvVarSource,
-        variant: variants.large
+        variant: variants.large,
+        required: true
       }
     ]
   },
@@ -417,14 +537,22 @@ export const connectionTypes: ConnectionType[] = [
     icon: "azure-devops",
     fields: [
       {
+        label: "Name",
+        key: "name",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
         label: "Organization",
         key: "username",
-        type: fieldTypes.input
+        type: fieldTypes.input,
+        required: true
       },
       {
         label: "Personal Access Token",
         key: "password",
-        type: fieldTypes.EnvVarSource
+        type: fieldTypes.EnvVarSource,
+        required: true
       }
     ]
   }

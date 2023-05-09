@@ -90,6 +90,7 @@ export default function ConnectionForm({
             name={field.key}
             label={field.label}
             disabled={!edit}
+            required={field.required}
           />
         );
       case "checkbox":
@@ -98,7 +99,8 @@ export default function ConnectionForm({
             name={field.key}
             label={field.label}
             disabled={!edit}
-            labelClassName="font-bold"
+            labelClassName="font-semibold text-sm"
+            required={field.required}
           />
         );
       case "EnvVarSource":
@@ -108,15 +110,7 @@ export default function ConnectionForm({
             label={field.label}
             disabled={!edit}
             variant={field.variant}
-          />
-        );
-      case "certificate":
-        return (
-          <FormikEnvVarSource
-            name={field.key}
-            label={field.label}
-            disabled={!edit}
-            variant={field.variant}
+            required={field.required}
           />
         );
       default:
@@ -144,7 +138,6 @@ export default function ConnectionForm({
         onSubmit={(value) => {
           onConnectionSubmit?.({
             ...convertData(value),
-            name: connectionType.title,
             type: connectionType.title
           });
         }}
@@ -258,11 +251,11 @@ export default function ConnectionForm({
                 connectionType.icon
               )}
               <div className="font-semibold text-lg">
-                {connectionType.title} connection details
+                {connectionType.title} Connection Details
               </div>
             </div>
           ) : (
-            <div className="font-semibold text-lg">Select connection</div>
+            <div className="font-semibold text-lg">Select Connection Type</div>
           )
         }
         onClose={() => {

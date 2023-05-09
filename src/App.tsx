@@ -61,6 +61,7 @@ import {
 } from "./context/FeatureFlagsContext";
 import { ConnectionsPage } from "./pages/ConnectionsPage";
 import { BsLink } from "react-icons/bs";
+import { stringSortHelper } from "./utils/common";
 
 const navigation = [
   {
@@ -125,7 +126,7 @@ const settingsNav = {
       icon: BsToggles,
       resouceName: resources["settings.feature_flags"]
     }
-  ]
+  ].sort((v1, v2) => stringSortHelper(v1.name, v2.name))
 };
 
 export type SettingsNavigationItems = typeof settingsNav;

@@ -165,8 +165,10 @@ export function ConnectionsPage() {
         contentClass="p-0 h-full"
         loading={loading}
       >
-        <div className="flex flex-col flex-1 px-6 pb-0 h-full w-full">
-          {loading && <TableSkeletonLoader />}
+        <div className="flex flex-col flex-1 px-6 pb-0 h-full max-w-screen-xl mx-auto">
+          {loading && (
+            <TableSkeletonLoader className="max-w-screen-xl mx-auto" />
+          )}
           {!loading && (
             <ConnectionList
               className="mt-6 overflow-y-hidden"

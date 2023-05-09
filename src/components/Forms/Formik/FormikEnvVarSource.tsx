@@ -22,6 +22,7 @@ export function FormikEnvVarSource({
   label,
   disabled,
   readOnly,
+  required,
   ...props
 }: FormikEnvVarSourceProps) {
   const [type, setType] = useState<EnvVarSourceType>("Static");
@@ -31,10 +32,15 @@ export function FormikEnvVarSource({
     name: "",
     key: ""
   });
-  const [field] = useField({
+  const [field, meta] = useField({
     name: name!,
     type: "text",
-    required: props.required
+    required,
+    validate: (value) => {
+      if (required && !value) {
+        return "This field is required";
+      }
+    }
   });
 
   useEffect(() => {
@@ -86,11 +92,11 @@ export function FormikEnvVarSource({
     if (type === "Static") {
       value = data.static;
     }
-    if (type === "K8S Secret") {
-      value = `configmap://${data.name}/${data.key}`;
-    }
-    if (type === "K8S Configmap") {
+    if (type === "K8S Secret" && data.name && data.key) {
       value = `secret://${data.name}/${data.key}`;
+    }
+    if (type === "K8S Configmap" && data.name && data.key) {
+      value = `configmap://${data.name}/${data.key}`;
     }
     return value;
   };
@@ -144,86 +150,42 @@ export function FormikEnvVarSource({
   const getK8SView = () => {
     return (
       <div className="flex flex-col space-y-2">
-        {variant === "large" && (
-          <TextArea
-            id=""
-            name={`${prefix}.name`}
-            label="Name"
-            className="w-full h-32"
-            value={data.name}
-            onChange={(e) => {
-              setData((val) => {
-                return {
-                  ...val,
-                  name: e.target.value,
-                  static: ""
-                };
-              });
-            }}
-            disabled={disabled}
-            readOnly={readOnly}
-          />
-        )}
-        {variant === "small" && (
-          <TextInput
-            id=""
-            name={`${prefix}.name`}
-            label="Name"
-            className="w-full"
-            value={data.name}
-            onChange={(e) => {
-              setData((val) => {
-                return {
-                  ...val,
-                  name: e.target.value,
-                  static: ""
-                };
-              });
-            }}
-            disabled={disabled}
-            readOnly={readOnly}
-          />
-        )}
-        {variant === "large" && (
-          <TextArea
-            id=""
-            name={`${prefix}.key`}
-            label="Key"
-            className="w-full h-32"
-            value={data.key}
-            onChange={(e) => {
-              setData((val) => {
-                return {
-                  ...val,
-                  key: e.target.value,
-                  static: ""
-                };
-              });
-            }}
-            disabled={disabled}
-            readOnly={readOnly}
-          />
-        )}
-        {variant === "small" && (
-          <TextInput
-            id=""
-            name={`${prefix}.key`}
-            label="Key"
-            className="w-full"
-            value={data.key}
-            onChange={(e) => {
-              setData((val) => {
-                return {
-                  ...val,
-                  key: e.target.value,
-                  static: ""
-                };
-              });
-            }}
-            disabled={disabled}
-            readOnly={readOnly}
-          />
-        )}
+        <TextInput
+          id=""
+          name={`${prefix}.name`}
+          label="Name"
+          className="w-full"
+          value={data.name}
+          onChange={(e) => {
+            setData((val) => {
+              return {
+                ...val,
+                name: e.target.value,
+                static: ""
+              };
+            });
+          }}
+          disabled={disabled}
+          readOnly={readOnly}
+        />
+        <TextInput
+          id=""
+          name={`${prefix}.key`}
+          label="Key"
+          className="w-full"
+          value={data.key}
+          onChange={(e) => {
+            setData((val) => {
+              return {
+                ...val,
+                key: e.target.value,
+                static: ""
+              };
+            });
+          }}
+          disabled={disabled}
+          readOnly={readOnly}
+        />
       </div>
     );
   };
@@ -253,6 +215,9 @@ export function FormikEnvVarSource({
           {type === "Static" && getStaticView()}
           {type === "K8S Secret" && getK8SView()}
           {type === "K8S Configmap" && getK8SView()}
+          {meta.touched && meta.error ? (
+            <p className="text-sm text-red-500 w-full py-1">{meta.error}</p>
+          ) : null}
         </div>
       </div>
     </div>
