@@ -181,13 +181,13 @@ export const connectionTypes: ConnectionType[] = [
         label: "Username",
         key: "username",
         type: fieldTypes.EnvVarSource,
-        required: true
+        required: false
       },
       {
         label: "Password",
         key: "password",
         type: fieldTypes.EnvVarSource,
-        required: true
+        required: false
       },
       {
         label: "Insecure TLS",
@@ -321,13 +321,13 @@ export const connectionTypes: ConnectionType[] = [
         label: "Username",
         key: "username",
         type: fieldTypes.EnvVarSource,
-        required: true
+        required: false
       },
       {
         label: "Password",
         key: "password",
         type: fieldTypes.EnvVarSource,
-        required: true
+        required: false
       },
       {
         label: "Insecure TLS",
@@ -362,7 +362,7 @@ export const connectionTypes: ConnectionType[] = [
         label: "Domain",
         key: "domain",
         type: fieldTypes.input,
-        required: true
+        required: false
       }
     ],
     convertToFormSpecificValue: (data: Record<string, any>) => {
@@ -433,7 +433,7 @@ export const connectionTypes: ConnectionType[] = [
         label: "Port",
         key: "port",
         type: fieldTypes.input,
-        required: true
+        required: false
       }
     ],
     convertToFormSpecificValue: (data: Record<string, any>) => {
@@ -473,19 +473,19 @@ export const connectionTypes: ConnectionType[] = [
         label: "Profile",
         key: "profile",
         type: fieldTypes.input,
-        required: true
+        required: false
       },
       {
         label: "Access Key",
         key: "username",
         type: fieldTypes.EnvVarSource,
-        required: true
+        required: false
       },
       {
         label: "Secret Key",
         key: "password",
         type: fieldTypes.EnvVarSource,
-        required: true
+        required: false
       },
       {
         label: "Insecure TLS",
@@ -528,7 +528,7 @@ export const connectionTypes: ConnectionType[] = [
         key: "certificate",
         type: fieldTypes.EnvVarSource,
         variant: variants.large,
-        required: true
+        required: false
       }
     ]
   },
