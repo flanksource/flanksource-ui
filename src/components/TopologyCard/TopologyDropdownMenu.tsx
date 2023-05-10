@@ -34,7 +34,6 @@ export const TopologyDropdownMenu = ({ topology, onRefresh }: IProps) => {
   const [dropDownMenuStyles, setDropDownMenuStyles] = useState<CSSProperties>();
 
   const dropdownMenuStylesCalc = useCallback((node: HTMLDivElement) => {
-    console.log({ node });
     if (!node) {
       return;
     }

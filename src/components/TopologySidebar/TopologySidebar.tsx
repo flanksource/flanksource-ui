@@ -39,7 +39,6 @@ export default function TopologySidebar({
 
   const panelCollapsedStatusChange = useCallback(
     (status: boolean, panel: SidePanels) => {
-      console.log("panelCollapsedStatusChange", status, panel);
       if (status) {
         setOpenedPanel(panel);
       } else {
