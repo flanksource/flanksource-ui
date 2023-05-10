@@ -467,7 +467,7 @@ export const connectionTypes: ConnectionType[] = [
         label: "Region",
         key: "region",
         type: fieldTypes.input,
-        required: true
+        required: false
       },
       {
         label: "Profile",
