@@ -373,6 +373,7 @@ export const connectionTypes: ConnectionType[] = [
     },
     preSubmitConverter: (data: Record<string, string>) => {
       return {
+        name: data.name,
         username: data.username,
         password: data.password,
         url: data.url,
@@ -449,6 +450,7 @@ export const connectionTypes: ConnectionType[] = [
     },
     preSubmitConverter: (data: Record<string, string>) => {
       return {
+        name: data.name,
         url: `sftp://${data.username}:${data.password}@${data.host}:${data.port}`
       };
     }
@@ -503,6 +505,7 @@ export const connectionTypes: ConnectionType[] = [
     },
     preSubmitConverter: (data: Record<string, string>) => {
       return {
+        name: data.name,
         username: data.username,
         password: data.password,
         properties: {
