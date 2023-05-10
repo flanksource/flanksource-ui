@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type Props = {
   value?: string | number | boolean;
@@ -23,13 +23,16 @@ export function Switch({
 
   function handleClick(view: string | number | boolean) {
     onChange(view);
-    setActiveOption(view);
   }
+
+  useEffect(() => {
+    setActiveOption(value ?? options[0]);
+  }, [value]);
 
   return (
     <div
       className={clsx(
-        "group p-0.5 rounded-lg flex bg-gray-100 hover:bg-gray-200",
+        "flex flex-row group p-0.5 rounded-lg flex bg-gray-100 hover:bg-gray-200",
         className
       )}
       {...props}
@@ -38,7 +41,7 @@ export function Switch({
         return (
           <button
             type="button"
-            className="rounded-md items-center text-sm text-gray-600 font-medium focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2 focus:outline-none focus-visible:ring-offset-gray-100"
+            className="flex-1 rounded-md items-center text-sm text-gray-600 font-medium focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus:outline-none focus-visible:ring-offset-gray-100"
             tabIndex={0}
             onClick={(e) => handleClick(option)}
             key={option.valueOf().toString()}

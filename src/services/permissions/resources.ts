@@ -4,6 +4,7 @@ export const resources = {
   incidents: "incidents",
   config: "config",
   logs: "logs",
+  "settings.connections": "settings.connections",
   "settings.users": "settings.users",
   "settings.teams": "settings.teams",
   "settings.rules": "settings.rules",

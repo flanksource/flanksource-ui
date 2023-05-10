@@ -59,6 +59,9 @@ import {
   FeatureFlagsContextProvider,
   useFeatureFlagsContext
 } from "./context/FeatureFlagsContext";
+import { ConnectionsPage } from "./pages/ConnectionsPage";
+import { BsLink } from "react-icons/bs";
+import { stringSortHelper } from "./utils/common";
 
 const navigation = [
   {
@@ -96,6 +99,12 @@ const settingsNav = {
   checkPath: false,
   submenu: [
     {
+      name: "Connections",
+      href: "/settings/connections",
+      icon: BsLink,
+      resouceName: resources["settings.connections"]
+    },
+    {
       name: "Users",
       href: "/settings/users",
       icon: HiUser,
@@ -117,7 +126,7 @@ const settingsNav = {
       icon: BsToggles,
       resouceName: resources["settings.feature_flags"]
     }
-  ]
+  ].sort((v1, v2) => stringSortHelper(v1.name, v2.name))
 };
 
 export type SettingsNavigationItems = typeof settingsNav;
@@ -165,6 +174,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
       </Route>
 
       <Route path="settings" element={sidebar}>
+        <Route path="connections" element={<ConnectionsPage />} />
         <Route path="users" element={<UsersPage />} />
         <Route path="jobs" element={<JobsHistorySettingsPage />} />
         <Route path="feature-flags" element={<FeatureFlagsPage />} />
