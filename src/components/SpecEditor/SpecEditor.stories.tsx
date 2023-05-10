@@ -7,25 +7,25 @@ import SpecEditor, { SpecType } from "./SpecEditor";
 const specTypes: SpecType[] = [
   {
     name: "kubernetes",
-    description: "Edit kubernetes configs",
     updateSpec: (value: Record<string, any>) => {
       console.log(value);
     },
     loadSpec: () => ({}),
     icon: "kubernetes",
     configForm: KubernetesConfigsFormEditor,
-    formFieldName: "spec.kubernetes.0"
+    formFieldName: "spec.kubernetes.0",
+    schemaFilePrefix: "scrape_config"
   },
   {
     name: "aws",
-    description: "Edit aws configs",
     updateSpec: (value: Record<string, any>) => {
       console.log(value);
     },
     loadSpec: () => ({}),
     configForm: AWSConfigsFormEditor,
     icon: "aws",
-    formFieldName: "spec.aws.0"
+    formFieldName: "spec.aws.0",
+    schemaFilePrefix: "scrape_config"
   }
 ];
 
