@@ -42,7 +42,6 @@ configTags = configTags.map(([key, val]) => {
   };
 });
 
-console.log({ configTags });
 const TagTemplate = (args) => (
   <div className="w-96">
     <Select {...args} />
