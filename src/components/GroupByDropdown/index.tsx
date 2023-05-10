@@ -10,7 +10,16 @@ type ConfigGroupByDropdownProps = {
   value?: string;
 };
 
-type GroupOptionsType = Record<string, Record<string, string | boolean>>;
+type GroupOptionsType = {
+  [key: string]: {
+    id: string;
+    name: string;
+    description: string;
+    value: string;
+    icon?: React.ReactNode;
+    [key: string]: string | boolean | React.ReactNode | number;
+  };
+};
 
 const items: GroupOptionsType = {
   NoGrouping: {
