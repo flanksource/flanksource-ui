@@ -31,6 +31,14 @@ export type RegisteredUser = {
   };
   created_at: string | Date;
   updated_at: string | Date;
+  roles?: string[];
+};
+
+export type PeopleRoles = {
+  id: string;
+  name: string;
+  email: string;
+  roles: string[];
 };
 
 export interface User extends NewUser {
@@ -55,9 +63,17 @@ export const getPersonWithEmail = (email: string) =>
 export const createPerson = ({ name, email, avatar }: NewUser) =>
   resolve<User>(IncidentCommander.post("/people", { name, email, avatar }));
 
+export const fetchPeopleRoles = (personIds: string[]) =>
+  resolve<PeopleRoles[]>(
+    IncidentCommander.get(`/people_roles?id=in.(${personIds.toString()})`)
+  );
+
 export const getRegisteredUsers = () =>
   resolve<RegisteredUser[]>(
-    IncidentCommander.get(`/identities`).then((res) => {
+    IncidentCommander.get(`/identities`).then(async (res) => {
+      const { data: peopleRoles } = await fetchPeopleRoles(
+        res.data.map((item: { id: string }) => item.id)
+      );
       const data = res.data.map((item: RegisteredUser) => {
         return {
           ...item,
@@ -67,7 +83,10 @@ export const getRegisteredUsers = () =>
           name: `${item.traits?.name?.first ?? ""} ${
             item.traits?.name?.last ?? ""
           }`,
-          email: item.traits.email
+          email: item.traits.email,
+          roles:
+            peopleRoles?.find((peopleRoles) => peopleRoles.id === item.id)
+              ?.roles ?? []
         };
       });
       return {

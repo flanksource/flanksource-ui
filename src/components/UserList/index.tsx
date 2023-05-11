@@ -23,15 +23,20 @@ const columns: ColumnDef<User>[] = [
     aggregatedCell: ""
   },
   {
-    header: "Created At",
-    accessorKey: "created_at",
-    cell: DateCell,
-    sortingFn: "datetime",
+    header: "Roles",
+    accessorKey: "roles",
     aggregatedCell: ""
   },
   {
     header: "State",
     accessorKey: "state",
+    aggregatedCell: ""
+  },
+  {
+    header: "Created At",
+    accessorKey: "created_at",
+    cell: DateCell,
+    sortingFn: "datetime",
     aggregatedCell: ""
   }
 ];
