@@ -18,8 +18,8 @@ type SpecEditorFormProps = {
   specFormat: "yaml" | "json";
   // if you want to pass in any props to the config form, you can use a wrapper
   // component around the config form
-  configForm: React.FC<{ fieldName: string }> | null;
-  specFormFieldName: string;
+  configForm: React.FC<{ fieldName: string; specsMapField: string }> | null;
+  specsMapField: string;
   rawSpecInput?: boolean;
   schemaFilePrefix?: "component" | "canary" | "system" | "scrape_config";
   resourceInfo: SchemaResourceType;
@@ -31,7 +31,7 @@ export default function SpecEditorForm({
   updateSpec = () => {},
   specFormat = "yaml",
   configForm: ConfigForm,
-  specFormFieldName,
+  specsMapField: specFieldMapField,
   rawSpecInput: showCodeEditorOnly = false,
   schemaFilePrefix
 }: SpecEditorFormProps) {
@@ -155,7 +155,8 @@ export default function SpecEditorForm({
                   </label>
                   <FormikCodeEditor
                     format={specFormat}
-                    fieldName={specFormFieldName}
+                    // map to the spec field to the spec field in the resource
+                    fieldName={`spec.${specFieldMapField}`}
                     schemaFilePrefix={schemaFilePrefix}
                   />
                 </>
@@ -167,16 +168,16 @@ export default function SpecEditorForm({
                   <Tab label="Form" value="Form">
                     <div className="flex flex-col space-y-4 p-4">
                       {ConfigForm && (
-                        <ConfigForm fieldName={specFormFieldName} />
+                        <ConfigForm
+                          fieldName="spec"
+                          specsMapField={specFieldMapField}
+                        />
                       )}
                     </div>
                   </Tab>
                   <Tab label="Code" value="Code">
                     {/* confirm about this */}
-                    <FormikCodeEditor
-                      format={specFormat}
-                      fieldName={specFormFieldName}
-                    />
+                    <FormikCodeEditor format={specFormat} fieldName="spec" />
                   </Tab>
                 </Tabs>
               )}

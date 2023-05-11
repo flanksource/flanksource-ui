@@ -9,7 +9,7 @@ export type SpecType = {
   icon: string | React.FC;
   loadSpec: () => Record<string, any>;
   updateSpec: (spec: Record<string, any>) => void;
-  configForm: React.FC<{ fieldName: string }> | null;
+  configForm: React.FC<{ fieldName: string; specsMapField: string }> | null;
   /**
    *
    * the field name is the name of the field in the spec that this config editor
@@ -17,14 +17,14 @@ export type SpecType = {
    *
    * #### Example
    *
-   * if the spec is: `{ spec: { "kubernetes": { ... } }}` then the field name is `"spec.kubernetes"`
+   * if the spec is: `{ spec: { "kubernetes": { ... } }}` then the field name is `"kubernetes"`
    * and, in this case, it returns an object
    *
-   * if the spec is `{ spec: { kubernetes: [{ ... }] }}` then the field name is `"spec.kubernetes.0"`
+   * if the spec is `{ { kubernetes: [{ ... }] }}` then the field name is `"kubernetes.0"`
    * and, in this case, it returns an array of one item
    *
    */
-  formFieldName: string;
+  specsMapField: string;
   rawSpecInput?: boolean;
   schemaFilePrefix: "component" | "canary" | "system" | "scrape_config";
 };
@@ -79,7 +79,8 @@ export default function SpecEditor({
             rawSpecInput={selectedSpecItem.rawSpecInput}
             specFormat={format}
             resourceInfo={resourceInfo}
-            specFormFieldName={selectedSpecItem.formFieldName}
+            specsMapField={selectedSpecItem.specsMapField}
+            schemaFilePrefix={selectedSpecItem.schemaFilePrefix}
           />
         </div>
       ) : (

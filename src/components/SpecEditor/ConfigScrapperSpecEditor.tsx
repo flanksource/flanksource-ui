@@ -32,7 +32,7 @@ export default function ConfigScrapperSpecEditor({
           },
           icon: "kubernetes",
           configForm: KubernetesConfigsFormEditor,
-          formFieldName: "spec.kubernetes.0"
+          specsMapField: "kubernetes.0"
         },
         {
           name: "aws",
@@ -47,7 +47,7 @@ export default function ConfigScrapperSpecEditor({
           },
           configForm: AWSConfigsFormEditor,
           icon: "aws",
-          formFieldName: "spec.aws.0"
+          specsMapField: "aws.0"
         },
         {
           name: "file",
@@ -60,7 +60,7 @@ export default function ConfigScrapperSpecEditor({
           },
           icon: "folder",
           configForm: null,
-          formFieldName: "spec.file.0",
+          specsMapField: "file.0",
           rawSpecInput: true
         },
         {
@@ -74,7 +74,7 @@ export default function ConfigScrapperSpecEditor({
           },
           icon: "git",
           configForm: null,
-          formFieldName: "spec.git.0",
+          specsMapField: "git.0",
           rawSpecInput: true
         },
         {
@@ -88,7 +88,7 @@ export default function ConfigScrapperSpecEditor({
           },
           icon: "http",
           configForm: null,
-          formFieldName: "spec.http.0",
+          specsMapField: "http.0",
           rawSpecInput: true
         },
         {
@@ -102,7 +102,7 @@ export default function ConfigScrapperSpecEditor({
           },
           icon: "azure",
           configForm: null,
-          formFieldName: "spec.azureDevOps.0",
+          specsMapField: "azureDevOps.0",
           rawSpecInput: true
         },
         {
@@ -116,7 +116,7 @@ export default function ConfigScrapperSpecEditor({
           },
           icon: FaCog,
           configForm: null,
-          formFieldName: "spec",
+          specsMapField: "spec",
           rawSpecInput: true,
           schemaFilePrefix: "scrape_config"
         }
@@ -125,7 +125,7 @@ export default function ConfigScrapperSpecEditor({
   );
 
   // there should only be one spec, so we can just grab the first key
-  const selectedSpec = spec ? Object.keys(spec.spec)[0] : undefined;
+  const selectedSpec = spec ? Object.keys(spec)[0] : undefined;
 
   return (
     <SpecEditor

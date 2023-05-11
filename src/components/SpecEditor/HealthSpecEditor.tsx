@@ -29,7 +29,7 @@ export default function HealthSpecEditor({
           },
           icon: "http",
           configForm: HTTPHealthFormEditor,
-          formFieldName: "spec.http.0",
+          specsMapField: "http.0",
           rawSpecInput: false
         },
         {
@@ -43,7 +43,7 @@ export default function HealthSpecEditor({
           },
           icon: "aws",
           configForm: null,
-          formFieldName: "spec.awsConfigRule.0",
+          specsMapField: "awsConfigRule.0",
           rawSpecInput: true
         },
         {
@@ -57,7 +57,7 @@ export default function HealthSpecEditor({
           },
           icon: "aws-config",
           configForm: null,
-          formFieldName: "spec.awsConfig.0",
+          specsMapField: "awsConfig.0",
           rawSpecInput: true
         },
         {
@@ -71,7 +71,7 @@ export default function HealthSpecEditor({
           },
           icon: "github",
           configForm: null,
-          formFieldName: "spec.github.0",
+          specsMapField: "github.0",
           rawSpecInput: true
         },
         {
@@ -85,7 +85,7 @@ export default function HealthSpecEditor({
           },
           icon: "ec2",
           configForm: null,
-          formFieldName: "spec.ec2.0",
+          specsMapField: "ec2.0",
           rawSpecInput: true
         },
         {
@@ -99,7 +99,7 @@ export default function HealthSpecEditor({
           },
           icon: "ldap",
           configForm: null,
-          formFieldName: "spec.ldap.0",
+          specsMapField: "ldap.0",
           rawSpecInput: true
         },
         {
@@ -113,7 +113,7 @@ export default function HealthSpecEditor({
           },
           icon: "pod",
           configForm: null,
-          formFieldName: "spec.pod.0",
+          specsMapField: "pod.0",
           rawSpecInput: true
         },
         {
@@ -127,7 +127,7 @@ export default function HealthSpecEditor({
           },
           icon: "console",
           configForm: null,
-          formFieldName: "spec.exec.0",
+          specsMapField: "exec.0",
           rawSpecInput: true
         },
         {
@@ -141,7 +141,7 @@ export default function HealthSpecEditor({
           },
           icon: "alertManager",
           configForm: null,
-          formFieldName: "spec.alertManager.0",
+          specsMapField: "alertManager.0",
           rawSpecInput: true
         },
         {
@@ -155,7 +155,7 @@ export default function HealthSpecEditor({
           },
           icon: "cloudwatch",
           configForm: null,
-          formFieldName: "spec.cloudwatch.0",
+          specsMapField: "cloudwatch.0",
           rawSpecInput: true
         },
         {
@@ -169,7 +169,7 @@ export default function HealthSpecEditor({
           },
           icon: "elasticsearch",
           configForm: null,
-          formFieldName: "spec.elasticsearch.0",
+          specsMapField: "elasticsearch.0",
           rawSpecInput: true
         },
         {
@@ -183,7 +183,7 @@ export default function HealthSpecEditor({
           },
           icon: "redis",
           configForm: null,
-          formFieldName: "spec.redis.0",
+          specsMapField: "redis.0",
           rawSpecInput: true
         },
         {
@@ -197,7 +197,7 @@ export default function HealthSpecEditor({
           },
           icon: "mongo",
           configForm: null,
-          formFieldName: "spec.mongo.0",
+          specsMapField: "mongo.0",
           rawSpecInput: true
         },
         {
@@ -211,7 +211,7 @@ export default function HealthSpecEditor({
           },
           icon: "dns",
           configForm: null,
-          formFieldName: "spec.dns.0",
+          specsMapField: "dns.0",
           rawSpecInput: true
         },
         {
@@ -225,7 +225,7 @@ export default function HealthSpecEditor({
           },
           icon: "icmp",
           configForm: null,
-          formFieldName: "spec.ping.0",
+          specsMapField: "ping.0",
           rawSpecInput: true
         },
         {
@@ -239,7 +239,7 @@ export default function HealthSpecEditor({
           },
           icon: "gcp",
           configForm: null,
-          formFieldName: "spec.gcs.0",
+          specsMapField: "gcs.0",
           rawSpecInput: true
         },
         {
@@ -253,7 +253,7 @@ export default function HealthSpecEditor({
           },
           icon: "aws-s3-bucket",
           configForm: null,
-          formFieldName: "spec.s3.0",
+          specsMapField: "s3.0",
           rawSpecInput: true
         },
         {
@@ -267,7 +267,7 @@ export default function HealthSpecEditor({
           },
           icon: "smb",
           configForm: null,
-          formFieldName: "spec.smb.0",
+          specsMapField: "smb.0",
           rawSpecInput: true
         },
         {
@@ -281,7 +281,7 @@ export default function HealthSpecEditor({
           },
           icon: "sftp",
           configForm: null,
-          formFieldName: "spec.sftp.0",
+          specsMapField: "sftp.0",
           rawSpecInput: true
         },
         {
@@ -295,7 +295,7 @@ export default function HealthSpecEditor({
           },
           icon: "folder",
           configForm: null,
-          formFieldName: "spec.folder.0",
+          specsMapField: "folder.0",
           rawSpecInput: true
         },
         {
@@ -309,7 +309,7 @@ export default function HealthSpecEditor({
           },
           icon: "prometheus",
           configForm: null,
-          formFieldName: "spec.prometheus.0",
+          specsMapField: "prometheus.0",
           rawSpecInput: true
         },
         {
@@ -323,7 +323,7 @@ export default function HealthSpecEditor({
           },
           icon: "kubernetes",
           configForm: null,
-          formFieldName: "spec.kubernetes.0",
+          specsMapField: "kubernetes.0",
           rawSpecInput: true
         },
         {
@@ -337,7 +337,7 @@ export default function HealthSpecEditor({
           },
           icon: "postgres",
           configForm: null,
-          formFieldName: "spec.sql.0",
+          specsMapField: "sql.0",
           rawSpecInput: true
         },
         {
@@ -351,7 +351,7 @@ export default function HealthSpecEditor({
           },
           icon: FaCog,
           configForm: null,
-          formFieldName: "spec",
+          specsMapField: "spec",
           rawSpecInput: true,
           schemaFilePrefix: "canary"
         }
@@ -360,7 +360,7 @@ export default function HealthSpecEditor({
   );
 
   // there should only be one spec, so we can just grab the first key
-  const selectedSpec = spec ? Object.keys(spec.spec)[0] : undefined;
+  const selectedSpec = spec ? Object.keys(spec)[0] : undefined;
 
   return (
     <SpecEditor

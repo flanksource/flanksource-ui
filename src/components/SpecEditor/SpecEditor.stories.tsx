@@ -13,7 +13,7 @@ const specTypes: SpecType[] = [
     loadSpec: () => ({}),
     icon: "kubernetes",
     configForm: KubernetesConfigsFormEditor,
-    formFieldName: "spec.kubernetes.0",
+    specsMapField: "kubernetes.0",
     schemaFilePrefix: "scrape_config"
   },
   {
@@ -24,7 +24,7 @@ const specTypes: SpecType[] = [
     loadSpec: () => ({}),
     configForm: AWSConfigsFormEditor,
     icon: "aws",
-    formFieldName: "spec.aws.0",
+    specsMapField: "aws.0",
     schemaFilePrefix: "scrape_config"
   }
 ];

@@ -6,6 +6,7 @@ import FormikCheckboxFieldsGroup from "../Formik/FormikCheckboxFieldsGroup";
 
 type KubernetesConfigsFormEditorProps = {
   fieldName: string;
+  specsMapField: string;
 };
 
 /**
@@ -17,8 +18,11 @@ type KubernetesConfigsFormEditorProps = {
  *
  */
 export default function KubernetesConfigsFormEditor({
-  fieldName
+  fieldName: name,
+  specsMapField
 }: KubernetesConfigsFormEditorProps) {
+  const fieldName = `${name}.${specsMapField}`;
+
   return (
     <>
       <FormikTextInput name={`${fieldName}.clusterName`} label="Cluster Name" />

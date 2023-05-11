@@ -12,17 +12,23 @@ import FormikAutocompleteDropdown from "../Formik/FormikAutocompleteDropdown";
 
 type HTTPHealthFormEditorProps = {
   fieldName: string;
+  specsMapField: string;
 };
 
-export function HTTPHealthFormEditor({ fieldName }: HTTPHealthFormEditorProps) {
+export function HTTPHealthFormEditor({
+  fieldName: name,
+  specsMapField
+}: HTTPHealthFormEditorProps) {
   const { values, setFieldValue } = useFormikContext();
 
-  const name = getIn(values, `${fieldName}.name`);
+  const fieldName = `${name}.${specsMapField}`;
+
+  const nameValue = getIn(values, `${fieldName}.name`);
 
   // when name changes, we want to update the name of the top level field
   useEffect(() => {
-    setFieldValue("name", name);
-  }, [name, setFieldValue]);
+    setFieldValue("name", nameValue);
+  }, [nameValue, setFieldValue]);
 
   return (
     <>
@@ -40,8 +46,9 @@ export function HTTPHealthFormEditor({ fieldName }: HTTPHealthFormEditorProps) {
         />
       </div>
 
+      {/* this a top level schema field, not nested under http */}
       <FormikAutocompleteDropdown
-        name={`${fieldName}.schedule`}
+        name={`${name}.schedule`}
         label="Schedule"
         required
         options={[
