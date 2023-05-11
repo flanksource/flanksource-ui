@@ -31,7 +31,6 @@ type ConnectionFormProps = React.HTMLProps<HTMLDivElement> & {
   onConnectionSubmit: (data: Connection) => Promise<any>;
   onConnectionDelete: (data: Connection) => Promise<any>;
   formValue?: Connection;
-  editMode: boolean;
 };
 
 export default function ConnectionForm({
@@ -41,16 +40,10 @@ export default function ConnectionForm({
   onConnectionSubmit,
   onConnectionDelete,
   formValue,
-  editMode,
   ...props
 }: ConnectionFormProps) {
-  const [edit, setEdit] = useState(false);
   const [connectionType, setConnectionType] = useState<ConnectionType>();
   const [formInitialValue, setFormInitialValue] = useState<Connection>();
-
-  useEffect(() => {
-    setEdit(editMode);
-  }, [editMode]);
 
   useEffect(() => {
     let connection = connectionTypes.find(
@@ -89,7 +82,6 @@ export default function ConnectionForm({
           <FormikTextInput
             name={field.key}
             label={field.label}
-            disabled={!edit}
             required={field.required}
           />
         );
@@ -98,7 +90,6 @@ export default function ConnectionForm({
           <FormikCheckbox
             name={field.key}
             label={field.label}
-            disabled={!edit}
             labelClassName="font-semibold text-sm"
             required={field.required}
           />
@@ -108,7 +99,6 @@ export default function ConnectionForm({
           <FormikEnvVarSource
             name={field.key}
             label={field.label}
-            disabled={!edit}
             variant={field.variant}
             required={field.required}
           />
@@ -183,26 +173,11 @@ export default function ConnectionForm({
                 Back
               </button>
             )}
-            {formValue?.id && !edit ? (
-              <div className="flex flex-1 justify-end">
-                <button
-                  className="btn-primary"
-                  type="button"
-                  onClick={(event) => {
-                    event.preventDefault();
-                    setEdit(true);
-                  }}
-                >
-                  Edit
-                </button>
-              </div>
-            ) : (
-              <div className="flex flex-1 justify-end">
-                <button className="btn-primary" type="submit">
-                  Save
-                </button>
-              </div>
-            )}
+            <div className="flex flex-1 justify-end">
+              <button className="btn-primary" type="submit">
+                Save
+              </button>
+            </div>
           </div>
         </Form>
       </Formik>

@@ -170,7 +170,6 @@ export function FeatureFlagsPage() {
             onFeatureFlagSubmit={onSubmit}
             onFeatureFlagDelete={onDelete}
             formValue={editedRow}
-            editMode={Boolean(editedRow?.created_by)}
           />
         </div>
       </SearchLayout>
