@@ -186,7 +186,6 @@ export function ConnectionsPage() {
             onConnectionSubmit={onSubmit}
             onConnectionDelete={onDelete}
             formValue={editedRow}
-            editMode={!editedRow?.id}
             key={editedRow?.id || "connection-form"}
           />
         </div>

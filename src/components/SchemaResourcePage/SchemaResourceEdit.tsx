@@ -20,6 +20,8 @@ import YAML from "yaml";
 import ConfigScrapperSpecEditor from "../SpecEditor/ConfigScrapperSpecEditor";
 import { Head } from "../Head/Head";
 import HealthSpecEditor from "../SpecEditor/HealthSpecEditor";
+import { FaTrash } from "react-icons/fa";
+import { Button } from "../Button";
 
 const CodeEditor = dynamic(
   () => import("../CodeEditor").then((m) => m.CodeEditor),
@@ -45,7 +47,6 @@ type Props = FormFields & {
   onDelete?: (id: string) => void;
   onCancel?: () => void;
   resourceName: string;
-  edit?: boolean;
   isModal?: boolean;
 };
 
@@ -61,11 +62,9 @@ export function SchemaResourceEdit({
   onSubmit,
   onDelete,
   onCancel,
-  edit: startInEdit = false,
   isModal = false,
   schedule
 }: Props) {
-  const [edit, setEdit] = useState(startInEdit);
   const [disabled, setDisabled] = useState(false);
   const keyRef = useRef(v4());
   const labelsKeyRef = useRef(v4());
@@ -90,12 +89,12 @@ export function SchemaResourceEdit({
       return [];
     }
     return resourceType.subNav.filter((nav) => {
-      if (edit) {
+      if (id) {
         return nav.label === "Spec";
       }
       return true;
     });
-  }, [resourceName, edit]);
+  }, [resourceName, id]);
 
   const table = useMemo(() => {
     const resourceType = schemaResourceTypes.find(
@@ -155,18 +154,16 @@ export function SchemaResourceEdit({
     });
   }, [register, formFields, watch]);
 
-  const onEdit = () => setEdit(true);
   const doCancel = () => {
     onCancel && onCancel();
     formFields.forEach((formField) => {
       resetField(formField.name);
     });
-    setEdit(false);
     keyRef.current = v4();
   };
 
   const doSubmit = (props: any) => {
-    onSubmit(props).then(() => setEdit(false));
+    onSubmit(props);
   };
 
   const doDelete = () => {
@@ -263,7 +260,7 @@ export function SchemaResourceEdit({
                         onSubmit={handleSubmit(doSubmit)}
                       >
                         <div className="px-8 pt-4">
-                          {!source && edit ? (
+                          {!source ? (
                             <>
                               <Controller
                                 control={control}
@@ -343,7 +340,7 @@ export function SchemaResourceEdit({
                                       </label>
                                       <CodeEditor
                                         key={labelsKeyRef.current}
-                                        readOnly={!!source || disabled || !edit}
+                                        readOnly={!!source || disabled}
                                         value={
                                           typeof values.labels === "object"
                                             ? JSON.stringify(
@@ -382,9 +379,7 @@ export function SchemaResourceEdit({
                                       <AutoCompleteDropdown
                                         onChange={onChange}
                                         value={value}
-                                        isDisabled={
-                                          !!source || disabled || !edit
-                                        }
+                                        isDisabled={!!source || disabled}
                                         options={[
                                           {
                                             label: "@every 30s",
@@ -437,7 +432,7 @@ export function SchemaResourceEdit({
                           <div className="flex flex-col h-[min(850px,calc(100vh-500px))]">
                             <CodeEditor
                               key={keyRef.current}
-                              readOnly={!!source || disabled || !edit}
+                              readOnly={!!source || disabled}
                               value={specValueToString(values.spec)}
                               onChange={(val) => {
                                 setCodeEditorValueOnChange("spec", val);
@@ -458,46 +453,30 @@ export function SchemaResourceEdit({
                             )}
                           >
                             {!!id && (
-                              <button
-                                className="inline-flex items-center justify-center border-none shadow-sm font-medium rounded-md text-red-500 bg-red-100 hover:bg-red-200 focus:ring-offset-white focus:ring-red-500 focus:outline-none focus:ring-2 focus:ring-offset-2 px-4 py-2 text-sm leading-5"
+                              <Button
+                                text="Delete"
+                                icon={<FaTrash />}
+                                onClick={() => doDelete()}
+                                className="btn-danger"
                                 disabled={disabled}
-                                onClick={doDelete}
+                              />
+                            )}
+                            <div className="w-full flex justify-between">
+                              <button
+                                className="btn-secondary-base btn-secondary"
+                                disabled={disabled}
+                                onClick={doCancel}
                                 type="button"
                               >
-                                Delete
+                                Cancel
                               </button>
-                            )}
 
-                            {edit ? (
-                              <div className="w-full flex justify-between">
-                                <button
-                                  className="btn-secondary-base btn-secondary"
-                                  disabled={disabled}
-                                  onClick={doCancel}
-                                  type="button"
-                                >
-                                  Cancel
-                                </button>
-
-                                <button
-                                  disabled={disabled}
-                                  className="btn-primary"
-                                  type="submit"
-                                >
-                                  Save
-                                </button>
-                              </div>
-                            ) : (
-                              !!id && (
-                                <button
-                                  className="btn-primary"
-                                  disabled={disabled}
-                                  onClick={onEdit}
-                                >
-                                  Edit
-                                </button>
-                              )
-                            )}
+                              <Button
+                                type="submit"
+                                text={!!id ? "Update" : "Save"}
+                                className="btn-primary"
+                              />
+                            </div>
                           </div>
                         )}
                       </form>

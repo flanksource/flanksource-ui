@@ -8,6 +8,8 @@ import { ConnectionType, Field, connectionTypes } from "./connectionTypes";
 import { FormikEnvVarSource } from "../Forms/Formik/FormikEnvVarSource";
 import { Icon } from "../Icon";
 import React from "react";
+import { FaTrash } from "react-icons/fa";
+import { Button } from "../Button";
 
 export type Connection = {
   id?: string;
@@ -31,7 +33,6 @@ type ConnectionFormProps = React.HTMLProps<HTMLDivElement> & {
   onConnectionSubmit: (data: Connection) => Promise<any>;
   onConnectionDelete: (data: Connection) => Promise<any>;
   formValue?: Connection;
-  editMode: boolean;
 };
 
 export default function ConnectionForm({
@@ -41,16 +42,10 @@ export default function ConnectionForm({
   onConnectionSubmit,
   onConnectionDelete,
   formValue,
-  editMode,
   ...props
 }: ConnectionFormProps) {
-  const [edit, setEdit] = useState(false);
   const [connectionType, setConnectionType] = useState<ConnectionType>();
   const [formInitialValue, setFormInitialValue] = useState<Connection>();
-
-  useEffect(() => {
-    setEdit(editMode);
-  }, [editMode]);
 
   useEffect(() => {
     let connection = connectionTypes.find(
@@ -89,7 +84,6 @@ export default function ConnectionForm({
           <FormikTextInput
             name={field.key}
             label={field.label}
-            disabled={!edit}
             required={field.required}
           />
         );
@@ -98,7 +92,6 @@ export default function ConnectionForm({
           <FormikCheckbox
             name={field.key}
             label={field.label}
-            disabled={!edit}
             labelClassName="font-semibold text-sm"
             required={field.required}
           />
@@ -108,7 +101,6 @@ export default function ConnectionForm({
           <FormikEnvVarSource
             name={field.key}
             label={field.label}
-            disabled={!edit}
             variant={field.variant}
             required={field.required}
           />
@@ -162,15 +154,14 @@ export default function ConnectionForm({
           </div>
           <div className="flex items-center py-4 px-5 rounded-lg bg-gray-100">
             {Boolean(formValue?.id) && (
-              <button
-                className="inline-flex items-center justify-center border-none shadow-sm font-medium rounded-md text-red-500 bg-red-100 hover:bg-red-200 focus:ring-offset-white focus:ring-red-500 focus:outline-none focus:ring-2 focus:ring-offset-2 px-4 py-2 text-sm leading-5"
+              <Button
+                text="Delete"
+                icon={<FaTrash />}
                 onClick={() => {
                   onConnectionDelete?.(formValue!);
                 }}
-                type="button"
-              >
-                Delete
-              </button>
+                className="btn-danger"
+              />
             )}
             {connectionType && !Boolean(formValue?.id) && (
               <button
@@ -183,26 +174,13 @@ export default function ConnectionForm({
                 Back
               </button>
             )}
-            {formValue?.id && !edit ? (
-              <div className="flex flex-1 justify-end">
-                <button
-                  className="btn-primary"
-                  type="button"
-                  onClick={(event) => {
-                    event.preventDefault();
-                    setEdit(true);
-                  }}
-                >
-                  Edit
-                </button>
-              </div>
-            ) : (
-              <div className="flex flex-1 justify-end">
-                <button className="btn-primary" type="submit">
-                  Save
-                </button>
-              </div>
-            )}
+            <div className="flex flex-1 justify-end">
+              <Button
+                type="submit"
+                text={Boolean(formValue?.id) ? "Update" : "Save"}
+                className="btn-primary"
+              />
+            </div>
           </div>
         </Form>
       </Formik>
