@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import { identity, pickBy } from "lodash";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ConfirmationPromptDialog } from "../Dialogs/ConfirmationPromptDialog";
 import { Controller, useForm } from "react-hook-form";
 import { v4 } from "uuid";
 import { SchemaResourceI } from "../../api/schemaResources";
@@ -19,6 +20,7 @@ import AutoCompleteDropdown from "../AutoCompleteDropdown/AutoCompleteDropdown";
 import YAML from "yaml";
 import ConfigScrapperSpecEditor from "../SpecEditor/ConfigScrapperSpecEditor";
 import { Head } from "../Head/Head";
+import { Modal } from "../Modal";
 import HealthSpecEditor from "../SpecEditor/HealthSpecEditor";
 import { FaTrash } from "react-icons/fa";
 import { Button } from "../Button";
@@ -65,6 +67,9 @@ export function SchemaResourceEdit({
   isModal = false,
   schedule
 }: Props) {
+  const [openDeleteConfirmDialog, setOpenDeleteConfirmDialog] = useState(false);
+  const [edit, setEdit] = useState(startInEdit);
+
   const [disabled, setDisabled] = useState(false);
   const keyRef = useRef(v4());
   const labelsKeyRef = useRef(v4());
@@ -232,6 +237,25 @@ export function SchemaResourceEdit({
     <>
       <Head prefix={`Settings ${resourceName} - ${name}`} />
       <div className="flex flex-col flex-1  overflow-y-auto">
+        <Modal
+          open={openDeleteConfirmDialog}
+          onClose={() => setOpenDeleteConfirmDialog(false)}
+          size="small"
+          title="Delete Item"
+          containerClassName=""
+        >
+          <div className="mb-4 flex flex-col gap-4 mt-4">
+            <p>Are you sure you want to delete this item?</p>
+            <div className="flex justify-end">
+              <button
+                onClick={() => doDelete()}
+                className="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </Modal>
         <Tabs activeTab={activeTab} onSelectTab={(tab) => onSubNavClick(tab)}>
           {subNav.map((nav) => {
             return (
@@ -465,7 +489,7 @@ export function SchemaResourceEdit({
                               <button
                                 className="btn-secondary-base btn-secondary"
                                 disabled={disabled}
-                                onClick={doCancel}
+                                onClick={() => setOpenDeleteConfirmDialog(true)}
                                 type="button"
                               >
                                 Cancel
