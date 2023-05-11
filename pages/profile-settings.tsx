@@ -36,7 +36,11 @@ function SettingsCard({
     return null;
   }
 
-  return <div className="shadow sm:overflow-hidden sm:rounded-md bg-white p-4 my-4">{children}</div>;
+  return (
+    <div className="shadow sm:overflow-hidden sm:rounded-md bg-white p-4 my-4">
+      {children}
+    </div>
+  );
 }
 
 const ProfileSettings: NextPage = () => {
@@ -113,7 +117,11 @@ const ProfileSettings: NextPage = () => {
       <div className="flex bg-gray-50 justify-center">
         <div className="flex flex-col w-full pt-4 h-screen sm:px-6 lg:px-8">
           <div className="w-6/12 m-auto">
-            <img alt="Flanksource" src="/images/logo.svg" className="p-2 h-auto m-auto rounded-8px w-48" />
+            <img
+              alt="Mission Control"
+              src="/images/logo.svg"
+              className="p-2 h-auto m-auto rounded-8px w-48"
+            />
             <div className="pb-2">
               <Link href="/" passHref>
                 <a className="cursor-pointer font-medium text-blue-600 hover:text-blue-500">
@@ -122,7 +130,9 @@ const ProfileSettings: NextPage = () => {
               </Link>
               <Messages messages={messages} />
               <SettingsCard only="profile" flow={flow}>
-                <h2 className="text-lg font-medium leading-6 text-gray-900">Profile Settings</h2>
+                <h2 className="text-lg font-medium leading-6 text-gray-900">
+                  Profile Settings
+                </h2>
                 <Flow
                   hideGlobalMessages
                   onSubmit={onSubmit}
@@ -131,7 +141,9 @@ const ProfileSettings: NextPage = () => {
                 />
               </SettingsCard>
               <SettingsCard only="password" flow={flow}>
-                <h2 className="text-lg font-medium leading-6 text-gray-900">Change Password</h2>
+                <h2 className="text-lg font-medium leading-6 text-gray-900">
+                  Change Password
+                </h2>
                 <Flow
                   hideGlobalMessages
                   onSubmit={onSubmit}
@@ -140,14 +152,23 @@ const ProfileSettings: NextPage = () => {
                 />
               </SettingsCard>
               <SettingsCard only="oidc" flow={flow}>
-                <h2 className="text-lg font-medium leading-6 text-gray-900">Manage Social Sign In</h2>
-                <Flow hideGlobalMessages onSubmit={onSubmit} only="oidc" flow={flow} />
+                <h2 className="text-lg font-medium leading-6 text-gray-900">
+                  Manage Social Sign In
+                </h2>
+                <Flow
+                  hideGlobalMessages
+                  onSubmit={onSubmit}
+                  only="oidc"
+                  flow={flow}
+                />
               </SettingsCard>
               <SettingsCard only="lookup_secret" flow={flow}>
-                <h2 className="text-lg font-medium leading-6 text-gray-900">Manage 2FA Backup Recovery Codes</h2>
+                <h2 className="text-lg font-medium leading-6 text-gray-900">
+                  Manage 2FA Backup Recovery Codes
+                </h2>
                 <p>
-                  Recovery codes can be used in panic situations where you have lost
-                  access to your 2FA device.
+                  Recovery codes can be used in panic situations where you have
+                  lost access to your 2FA device.
                 </p>
                 <Flow
                   hideGlobalMessages
@@ -157,11 +178,17 @@ const ProfileSettings: NextPage = () => {
                 />
               </SettingsCard>
               <SettingsCard only="totp" flow={flow}>
-                <h2 className="text-lg font-medium leading-6 text-gray-900">Manage 2FA TOTP Authenticator App</h2>
+                <h2 className="text-lg font-medium leading-6 text-gray-900">
+                  Manage 2FA TOTP Authenticator App
+                </h2>
                 <p>
-                  Add a TOTP Authenticator App to your account to improve your account
-                  security. Popular Authenticator Apps are{" "}
-                  <a href="https://www.lastpass.com" rel="noreferrer" target="_blank">
+                  Add a TOTP Authenticator App to your account to improve your
+                  account security. Popular Authenticator Apps are{" "}
+                  <a
+                    href="https://www.lastpass.com"
+                    rel="noreferrer"
+                    target="_blank"
+                  >
                     LastPass
                   </a>{" "}
                   and Google Authenticator (
@@ -182,10 +209,17 @@ const ProfileSettings: NextPage = () => {
                   </a>
                   ).
                 </p>
-                <Flow hideGlobalMessages onSubmit={onSubmit} only="totp" flow={flow} />
+                <Flow
+                  hideGlobalMessages
+                  onSubmit={onSubmit}
+                  only="totp"
+                  flow={flow}
+                />
               </SettingsCard>
               <SettingsCard only="webauthn" flow={flow}>
-                <h2 className="text-lg font-medium leading-6 text-gray-900">Manage Hardware Tokens and Biometrics</h2>
+                <h2 className="text-lg font-medium leading-6 text-gray-900">
+                  Manage Hardware Tokens and Biometrics
+                </h2>
                 <p>
                   Use Hardware Tokens (e.g. YubiKey) or Biometrics (e.g. FaceID,
                   TouchID) to enhance your account security.

@@ -9,16 +9,15 @@ import mixins from "../../../utils/mixins.module.css";
 import { PopupTabs } from "./tabs";
 import { CheckStat } from "./CheckStat";
 import { getUptimePercentage } from "./utils";
-import { StatusHistory } from "./StatusHistory";
+import { StatusHistory } from "./StatusHistory/StatusHistory";
 import { DetailField } from "./DetailField";
 import { Duration } from "../renderers";
 import { DropdownStandaloneWrapper } from "../../Dropdown/StandaloneWrapper";
 import { TimeRange, timeRanges } from "../../Dropdown/TimeRange";
 import { HealthCheck } from "../../../types/healthChecks";
+import { CanaryCheckDetailsSpecTab } from "./CanaryCheckDetailsSpec";
 import { CanaryCheckDetailsLabel } from "./CanaryCheckDetailsLabel";
 import { relativeDateTime } from "../../../utils/date";
-import CanaryCheckDetailsUptime from "./CanaryCheckDetailsUptime";
-import { CanaryCheckDetailsSpecTab } from "./CanaryCheckDetailsSpec";
 
 const CanaryStatusChart = React.lazy(() =>
   import("../CanaryStatusChart").then(({ CanaryStatusChart }) => ({
@@ -43,12 +42,15 @@ export function CheckDetails({ check, timeRange, ...rest }: CheckDetailsProps) {
           statsRef.current.clientHeight -
           TabAndPaddingBottom
         }px`
-      : "0px";
+      : undefined;
 
   const prevCheck = usePrevious(check);
   const validCheck = check || prevCheck;
 
-  const uptimeValue = toFixedIfNecessary(getUptimePercentage(validCheck), 0);
+  const uptimeValue = toFixedIfNecessary(
+    getUptimePercentage(validCheck)?.toString()!,
+    0
+  );
   const validUptime =
     !Number.isNaN(validCheck?.uptime?.passed) &&
     !Number.isNaN(validCheck?.uptime?.failed);
@@ -56,27 +58,13 @@ export function CheckDetails({ check, timeRange, ...rest }: CheckDetailsProps) {
 
   const details: Record<string, React.ReactNode> = useMemo(
     () => ({
-      Name:
-        validCheck?.name ||
-        validCheck?.canary_name ||
-        validCheck?.endpoint ||
-        "-",
-      Type: validCheck?.type || "-",
       Labels: <CanaryCheckDetailsLabel check={validCheck} />,
       Owner: validCheck?.owner || "-",
       Interval: validCheck?.interval || "-",
       Location: validCheck?.location || "-",
       Schedule: validCheck?.schedule || "-",
-      Status: validCheck?.status || "-",
       "Last Runtime": validCheck?.lastRuntime
         ? relativeDateTime(validCheck.lastRuntime)
-        : "-",
-      Uptime: <CanaryCheckDetailsUptime uptime={validCheck?.uptime} />,
-      "Created At": validCheck?.createdAt
-        ? relativeDateTime(validCheck.createdAt)
-        : "-",
-      "Updated At": validCheck?.updatedAt
-        ? relativeDateTime(validCheck.updatedAt)
         : "-"
     }),
     [validCheck]
@@ -88,14 +76,14 @@ export function CheckDetails({ check, timeRange, ...rest }: CheckDetailsProps) {
 
   return (
     <div {...rest} ref={containerRef}>
-      <div className="flex flex-col flex-wrap" ref={statsRef}>
-        <div className="flex flex-row flex-wrap mb-2">
+      <div className="flex flex-col" ref={statsRef}>
+        <div className="flex flex-row flex-wrap">
           <CheckStat
             containerClassName="w-52 mb-4"
             title="Uptime"
             value={
               !Number.isNaN(uptimeValue)
-                ? `${toFixedIfNecessary(uptimeValue, 2)}%`
+                ? `${toFixedIfNecessary(uptimeValue.toString(), 2)}%`
                 : "-"
             }
             append={
@@ -151,18 +139,19 @@ export function CheckDetails({ check, timeRange, ...rest }: CheckDetailsProps) {
         </div>
       </div>
       <PopupTabs
-        shareHeight
+        shareHeight={false}
         style={{
-          display: "flex",
           flexDirection: "column",
           overflowY: "hidden"
         }}
+        className="flex-1 flex"
         contentStyle={{
           marginTop: "-1px",
           display: "flex",
           flexDirection: "column",
           overflowY: "hidden",
-          overflowX: "hidden"
+          overflowX: "hidden",
+          height: "100%"
         }}
         tabs={{
           statusHistory: {
@@ -177,25 +166,26 @@ export function CheckDetails({ check, timeRange, ...rest }: CheckDetailsProps) {
                   check={validCheck}
                   style={{
                     maxHeight,
-                    height: maxHeight
+                    height: maxHeight,
+                    display: !maxHeight ? "none" : undefined
                   }}
                 />
               </div>
             ),
             class:
-              "flex flex-col overflow-y-hidden border-b h-full border-gray-300"
+              "flex-1 flex flex-col overflow-y-hidden border-b h-full border-gray-300"
           },
           checkDetails: {
             label: "Check details",
             content: (
-              <div key="check-details" className="px-6 py-6">
+              <div key="check-details" className="px-6 py-6 h-full">
                 <AccordionBox
                   content={
                     <div className="flex flex-row flex-wrap">
                       {Object.entries(details).map(([label, value]) => (
                         <DetailField
                           key={label}
-                          className="w-1/2 mb-3 whitespace-nowrap"
+                          className="w-1/3 mb-3 whitespace-nowrap"
                           label={label}
                           value={value as any}
                         />
@@ -205,12 +195,12 @@ export function CheckDetails({ check, timeRange, ...rest }: CheckDetailsProps) {
                 />
               </div>
             ),
-            class: `flex flex-col overflow-y-auto  border border-gray-300 ${mixins.appleScrollbar}`
+            class: `flex-1 flex flex-col overflow-y-auto  border border-gray-300 ${mixins.appleScrollbar}`
           },
           specs: {
             label: "Spec",
             content: <CanaryCheckDetailsSpecTab check={validCheck} />,
-            class: `flex flex-col overflow-y-auto  border border-gray-300 ${mixins.appleScrollbar}`
+            class: `flex-1 flex flex-col overflow-y-auto  border border-gray-300 ${mixins.appleScrollbar}`
           }
         }}
       />

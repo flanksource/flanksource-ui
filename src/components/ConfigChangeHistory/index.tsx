@@ -1,14 +1,13 @@
 import { ColumnDef } from "@tanstack/table-core";
 import { useState } from "react";
-import { useConfigNameQuery } from "../../api/query-hooks";
+import { useGetConfigByIdQuery } from "../../api/query-hooks";
 import { ConfigTypeChanges } from "../ConfigChanges";
 import ConfigLink from "../ConfigLink/ConfigLink";
 
 import { DateCell } from "../ConfigViewer/columns";
 import { PaginationOptions } from "../DataTable";
-import EmptyState from "../EmptyState";
-import { DataTable, Icon, Modal } from "../index";
-import { JSONViewer } from "../JSONViewer";
+import { DataTable, Icon } from "../index";
+import { ConfigDetailChangeModal } from "../ConfigDetailsChanges/ConfigDetailsChanges";
 
 const columns: ColumnDef<ConfigTypeChanges>[] = [
   {
@@ -17,31 +16,40 @@ const columns: ColumnDef<ConfigTypeChanges>[] = [
     cell: function ConfigChangeTypeCell({ row, column }) {
       const changeType = row?.getValue(column.id) as string;
       return (
-        <>
+        <div className="text-ellipsis overflow-hidden">
           <Icon
             name={changeType}
             secondary="diff"
             className="w-5 h-auto pr-1"
           />
           {changeType}
-        </>
+        </div>
       );
     },
-    size: 16
+    size: 48
   },
   {
     header: "Summary",
-    accessorKey: "summary"
+    accessorKey: "summary",
+    meta: {
+      cellClassName: "text-ellipsis overflow-hidden"
+    }
   },
   {
     header: "Source",
     accessorKey: "source",
+    meta: {
+      cellClassName: "text-ellipsis overflow-hidden"
+    },
     size: 48
   },
   {
     header: "Created",
     accessorKey: "created_at",
-    size: 48,
+    meta: {
+      cellClassName: "text-ellipsis overflow-hidden"
+    },
+    size: 36,
     cell: DateCell
   }
 ];
@@ -59,8 +67,8 @@ const configLinkCol: ColumnDef<ConfigTypeChanges>[] = [
         <ConfigLink
           configId={config.id}
           configName={config.name}
-          configType={config.external_type}
-          configTypeSecondary={config.config_type}
+          configType={config.type}
+          configTypeSecondary={config.config_class}
         />
       );
     },
@@ -87,9 +95,7 @@ export function ConfigChangeHistory({
 }: ConfigChangeHistoryProps) {
   const [configTypeChange, setConfigTypeChange] = useState<ConfigTypeChanges>();
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const { data: config } = useConfigNameQuery(configTypeChange?.config_id, {
-    enabled: !!configTypeChange?.config_id
-  });
+  const { data: config } = useGetConfigByIdQuery(configTypeChange?.config_id!);
 
   return (
     <>
@@ -110,49 +116,12 @@ export function ConfigChangeHistory({
           setModalIsOpen(true);
         }}
       />
-      <Modal
+      <ConfigDetailChangeModal
         open={modalIsOpen}
-        onClose={() => setModalIsOpen(false)}
-        bodyClass=""
-        title={
-          config && (
-            <>
-              <ConfigLink
-                className="text-blue-600 text-xl font-semibold whitespace-nowrap mr-1"
-                configId={config.id}
-                configName={config.name}
-                configType={config.external_type}
-                configTypeSecondary={config.config_type}
-              />
-              &nbsp;/&nbsp;
-              <Icon
-                name={configTypeChange?.change_type}
-                secondary="diff"
-                className="w-5 h-auto pr-1"
-              />
-              {configTypeChange?.change_type}
-            </>
-          )
-        }
-      >
-        <div
-          className="flex flex-col h-full overflow-x-auto p-4 flex-wrap"
-          style={{
-            maxHeight: "calc(100vh - 8rem)"
-          }}
-        >
-          {!!configTypeChange?.patches && (
-            <JSONViewer
-              code={JSON.stringify(configTypeChange.patches, null, 2)}
-              format="yaml"
-              convertToYaml
-            />
-          )}
-          {!configTypeChange?.patches && (
-            <EmptyState title="There are no changes" />
-          )}
-        </div>
-      </Modal>
+        setOpen={setModalIsOpen}
+        config={config}
+        changeDetails={configTypeChange}
+      />
     </>
   );
 }

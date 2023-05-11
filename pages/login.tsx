@@ -83,7 +83,7 @@ const Login: NextPage = () => {
             }
             router.push("/");
           })
-          .then(() => { })
+          .then(() => {})
           .catch(handleFlowError(router, "login", setFlow))
           .catch((err: AxiosError) => {
             // If the previous handler did not catch the error it's most likely a form validation error
@@ -104,7 +104,11 @@ const Login: NextPage = () => {
         <div className="flex min-h-full flex-col justify-center pt-12 pb-28 sm:px-6 lg:px-8">
           <div className="w-96">
             <div>
-              <img alt="Flanksource" src="/images/logo.svg" className="p-2 h-auto m-auto rounded-8px w-48" />
+              <img
+                alt="Mission Control"
+                src="/images/logo.svg"
+                className="p-2 h-auto m-auto rounded-8px w-72"
+              />
               <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
                 {(() => {
                   if (flow?.refresh) {

@@ -6,11 +6,12 @@ import {
   getAllConfigsMatchingQuery,
   getConfig,
   getConfigAnalysis,
-  getConfigChange,
+  getConfigChanges,
   getConfigInsight,
   getConfigInsights,
   getConfigTagsList,
-  getConfigName
+  getConfigName,
+  getTopologyRelatedInsights
 } from "../services/configs";
 import { getHypothesisResponse } from "../services/hypothesis";
 import { getIncident } from "../services/incident";
@@ -42,7 +43,7 @@ export const useVersionInfo = () => {
 
 export const useIncidentQuery = (id: string) => {
   return useQuery(createIncidentQueryKey(id), () => getIncident(id), {
-    staleTime: defaultStaleTime
+    enabled: !!id
   });
 };
 
@@ -122,11 +123,11 @@ function prepareConfigListQuery({
 }: ConfigListFilterQueryOptions) {
   let query = "select=*";
   if (search) {
-    query = `${query}&or=(name.ilike.*${search}*,config_type.ilike.*${search}*,description.ilike.*${search}*,namespace.ilike.*${search}*)`;
+    query = `${query}&or=(name.ilike.*${search}*,type.ilike.*${search}*,description.ilike.*${search}*,namespace.ilike.*${search}*)`;
   } else {
     const filterQueries = [];
     if (configType && configType !== "All") {
-      filterQueries.push(`config_type=eq.${configType}`);
+      filterQueries.push(`type=eq.${configType}`);
     }
     if (tag && tag !== "All") {
       const [k, v] = decodeURI(tag).split("__:__");
@@ -137,7 +138,7 @@ function prepareConfigListQuery({
     }
   }
   if (sortBy && sortOrder) {
-    const sortField = sortBy === "config_type" ? `${sortBy},name` : sortBy;
+    const sortField = sortBy === "type" ? `${sortBy},name` : sortBy;
     query = `${query}&order=${sortField}.${sortOrder}`;
   }
   if (hideDeletedConfigs) {
@@ -264,32 +265,51 @@ export const useGetHypothesisQuery = (
 };
 
 export function useGetAllConfigsChangesQuery(
+  {
+    severity,
+    type,
+    change_type
+  }: {
+    severity?: string;
+    type?: string;
+    change_type?: string;
+  },
   pageIndex?: number,
   pageSize?: number,
   keepPreviousData?: boolean
 ) {
   return useQuery(
-    ["configs", "changes", "all", pageIndex, pageSize],
-    () => getAllChanges(pageIndex, pageSize),
+    [
+      "configs",
+      "changes",
+      "all",
+      severity,
+      type,
+      change_type,
+      pageIndex,
+      pageSize
+    ],
+    () => getAllChanges({ change_type, severity, type }, pageIndex, pageSize),
     {
       keepPreviousData
     }
   );
 }
 
-export function useGetConfigChangesQueryById(id: string) {
-  return useQuery(["configs", "changes", id], () => getConfigChange(id), {
-    select: (res) => {
-      if (res.error) {
-        throw res.error;
-      }
-      return res?.data?.length === 0 ? [] : res?.data;
-    },
-    onError: (err: any) => {
-      toastError(err);
-    },
-    enabled: !!id
-  });
+export function useGetConfigChangesByConfigIdQuery(
+  id: string,
+  pageIndex?: number,
+  pageSize?: number,
+  keepPreviousData?: boolean
+) {
+  return useQuery(
+    ["configs", "changes", id, pageIndex, pageSize],
+    () => getConfigChanges(id, pageIndex, pageSize),
+    {
+      enabled: !!id && !!pageSize,
+      keepPreviousData
+    }
+  );
 }
 
 export function useGetConfigByIdQuery(id: string) {
@@ -413,5 +433,22 @@ export function useComponentGetLogsQuery(
       return res.data.results;
     },
     options
+  );
+}
+
+export function useGetTopologyRelatedInsightsQuery(id: string) {
+  return useQuery(
+    ["topology", "insights", id],
+    async () => {
+      const res = await getTopologyRelatedInsights(id);
+      // ensure analysis has all the fields
+      return res.map((item) => ({
+        ...((item.config?.analysis?.length ?? 0) > 0
+          ? item.config?.analysis?.[0]
+          : {}),
+        ...item
+      }));
+    },
+    {}
   );
 }

@@ -41,6 +41,7 @@ export function SchemaResourceList({ items, baseUrl, table }: Props) {
                 table={table}
                 key={item.id}
                 {...item}
+                schedule={item.spec?.schedule}
                 baseUrl={baseUrl}
               />
             ))}
@@ -113,9 +114,12 @@ function SchemaResourceListItem({
         {!!source && <a href={`${source}`}>Link</a>}
       </Cell>
       {table === "canaries" && <Cell>{schedule}</Cell>}
-      <Cell className="text-gray-500">{relativeDateTime(created_at)}</Cell>
-      <Cell className="text-gray-500">{relativeDateTime(updated_at)}</Cell>
-
+      <Cell className="text-gray-500">
+        {created_at && relativeDateTime(created_at)}
+      </Cell>
+      <Cell className="text-gray-500">
+        {updated_at && relativeDateTime(updated_at)}
+      </Cell>
       <Cell className="text-gray-500 lowercase space-x-2">
         {job_status && (
           <>
@@ -127,7 +131,6 @@ function SchemaResourceListItem({
       <Cell className="text-gray-500">
         {job_time_start ? relativeDateTime(job_time_start) : ""}
       </Cell>
-
       <Cell className="text-gray-500">
         {created_by && <Avatar user={created_by} circular />}
       </Cell>

@@ -26,8 +26,8 @@ export const ConfigInsightsColumns: ColumnDef<
           >
             <Icon
               className="w-4 h-4"
-              name={config?.external_type}
-              secondary={config?.config_type}
+              name={config?.type}
+              secondary={config?.config_class}
             />
             <span>{config?.name}</span>
           </Link>

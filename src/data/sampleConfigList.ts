@@ -1,3 +1,5 @@
+import { ConfigItem } from "../api/services/configs";
+
 function canonTags(
   tags: undefined | { Key: string; Value: string }[] | { [index: string]: any }
 ) {
@@ -10,11 +12,11 @@ function canonTags(
   return Object.fromEntries(tags.map((kv) => [kv["Key"], kv["Value"]]));
 }
 
-const data = [
+const data: ConfigItem[] = [
   {
     id: "018099cf-530e-5b8a-9e10-3e6bec11ab98",
     scraper_id: null,
-    config_type: "Subnet",
+    type: "Subnet",
     external_id: "subnet-8ed885f5",
     name: "",
     namespace: null,
@@ -57,7 +59,7 @@ const data = [
   {
     id: "018099cf-5312-14a7-5bc2-a38b56f49cc7",
     scraper_id: null,
-    config_type: "Subnet",
+    type: "Subnet",
     external_id: "subnet-41d8b70c",
     name: "",
     namespace: null,
@@ -100,7 +102,7 @@ const data = [
   {
     id: "018099cf-5313-d2e8-24a6-46f2a0700758",
     scraper_id: null,
-    config_type: "Subnet",
+    type: "Subnet",
     external_id: "subnet-00023ad659ae1e065",
     name: "",
     namespace: null,
@@ -154,7 +156,7 @@ const data = [
   {
     id: "018099cf-5318-cd0d-30d9-930bfe0e2b4b",
     scraper_id: null,
-    config_type: "Subnet",
+    type: "Subnet",
     external_id: "subnet-efd61086",
     name: "",
     namespace: null,
@@ -197,7 +199,7 @@ const data = [
   {
     id: "018099cf-531a-fc72-cca6-ef930cadd235",
     scraper_id: null,
-    config_type: "Subnet",
+    type: "Subnet",
     external_id: "subnet-01811d23bca434bd3",
     name: "",
     namespace: null,
@@ -251,7 +253,7 @@ const data = [
   {
     id: "018099cf-531b-5986-247e-11064d480d2e",
     scraper_id: null,
-    config_type: "Subnet",
+    type: "Subnet",
     external_id: "subnet-03ee8e39821abdf76",
     name: "",
     namespace: null,
@@ -305,7 +307,7 @@ const data = [
   {
     id: "018099cf-531d-f90b-c7a4-b5595ab8e22e",
     scraper_id: null,
-    config_type: "Subnet",
+    type: "Subnet",
     external_id: "subnet-03c20ec3935232b26",
     name: "",
     namespace: null,
@@ -356,7 +358,7 @@ const data = [
   {
     id: "018099cf-531f-6cda-ca8a-b0234941dad4",
     scraper_id: null,
-    config_type: "EC2Instance",
+    type: "EC2Instance",
     external_id: "i-08b0205c8f05f0afd",
     name: "ip-10-0-5-82.eu-west-2.compute.internal",
     namespace: null,
@@ -696,7 +698,7 @@ const data = [
   {
     id: "018099cf-530b-255f-dde6-5ab45472bc55",
     scraper_id: null,
-    config_type: "Subnet",
+    type: "Subnet",
     external_id: "subnet-00938f91ab87c9906",
     name: "",
     namespace: null,
@@ -747,7 +749,7 @@ const data = [
   {
     id: "018099cf-5310-17d1-72b0-d66b2ffca241",
     scraper_id: null,
-    config_type: "Subnet",
+    type: "Subnet",
     external_id: "subnet-0bcbcb35662a9a793",
     name: "",
     namespace: null,
@@ -801,7 +803,7 @@ const data = [
   {
     id: "018099cf-5322-3407-8b60-5732d41d4058",
     scraper_id: null,
-    config_type: "EC2Instance",
+    type: "EC2Instance",
     external_id: "i-07d16293f351b1a54",
     name: "flanksource-canary-cluster-ng2-Node",
     namespace: null,
@@ -1079,7 +1081,7 @@ const data = [
   {
     id: "018099cf-5327-9c30-86aa-fe4a96768370",
     scraper_id: null,
-    config_type: "EC2Instance",
+    type: "EC2Instance",
     external_id: "i-08e9870380cb997fd",
     name: "ip-10-0-3-135.eu-west-2.compute.internal",
     namespace: null,

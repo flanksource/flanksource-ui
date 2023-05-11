@@ -4,6 +4,7 @@ import { AlarmIcon } from "../Icons/AlarmIcon";
 import { SearchInListIcon } from "../Icons/SearchInListIcon";
 import { TopologyIcon } from "../Icons/TopologyIcon";
 import { $ArrayElemType, $ArrayPick } from "../../types/utility";
+import { resources } from "../../services/permissions/resources";
 
 export type SchemaResourceTypes = typeof schemaResourceTypes;
 
@@ -19,6 +20,7 @@ export const schemaResourceTypes = [
     table: "teams",
     api: "incident-commander",
     icon: UserGroupIcon,
+    resouceName: resources["settings.teams"],
     subNav: [
       {
         label: "Spec",
@@ -36,7 +38,8 @@ export const schemaResourceTypes = [
     fields: [
       {
         name: "name",
-        default: undefined
+        default: undefined,
+        hidden: false
       },
       {
         name: "spec",
@@ -53,6 +56,7 @@ export const schemaResourceTypes = [
     table: "incident_rules",
     api: "incident-commander",
     icon: AlarmIcon,
+    resouceName: resources["settings.rules"],
     subNav: [
       {
         label: "Spec",
@@ -66,7 +70,8 @@ export const schemaResourceTypes = [
     fields: [
       {
         name: "name",
-        default: undefined
+        default: undefined,
+        hidden: false
       },
       {
         name: "spec",
@@ -79,6 +84,7 @@ export const schemaResourceTypes = [
     table: "config_scrapers",
     api: "config-db",
     icon: SearchInListIcon,
+    resouceName: resources["settings.config_scraper"],
     subNav: [
       {
         label: "Spec",
@@ -92,7 +98,8 @@ export const schemaResourceTypes = [
     fields: [
       {
         name: "name",
-        default: undefined
+        default: undefined,
+        hidden: false
       },
       {
         name: "spec",
@@ -102,9 +109,10 @@ export const schemaResourceTypes = [
   },
   {
     name: "Topology",
-    table: "templates",
+    table: "topologies",
     api: "canary-checker",
     icon: TopologyIcon,
+    resouceName: resources["settings.topology"],
     subNav: [
       {
         label: "Spec",
@@ -118,7 +126,8 @@ export const schemaResourceTypes = [
     fields: [
       {
         name: "name",
-        default: undefined
+        default: undefined,
+        hidden: false
       },
       {
         name: "namespace",
@@ -135,10 +144,11 @@ export const schemaResourceTypes = [
     ]
   },
   {
-    name: "Health",
+    name: "Health Check",
     table: "canaries",
     api: "canary-checker",
     icon: HealthIcon,
+    resouceName: resources["settings.health"],
     subNav: [
       {
         label: "Spec",
@@ -152,12 +162,17 @@ export const schemaResourceTypes = [
     fields: [
       {
         name: "name",
-        default: undefined
+        default: undefined,
+        hidden: true
       },
       {
         name: "namespace",
         default: "default"
       },
+      // {
+      //   name: "schedule",
+      //   default: undefined
+      // },
       {
         name: "labels",
         default: {}
@@ -165,10 +180,6 @@ export const schemaResourceTypes = [
       {
         name: "spec",
         default: {}
-      },
-      {
-        name: "schedule",
-        default: undefined
       }
     ]
   }

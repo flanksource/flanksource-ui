@@ -42,25 +42,23 @@ export function ConfigAnalysisLink({
           {showConfigLogo && (
             <>
               <Icon
-                name={
-                  configAnalysis?.config?.external_type ||
-                  configAnalysis?.config?.config_type
-                }
-                className="w-5 mr-1"
+                name={configAnalysis?.config?.type}
+                secondary={configAnalysis?.config?.config_class}
+                className="w-5 h-5 mr-1"
               />
               <span>{configAnalysis?.config?.name}</span>
               &nbsp;/&nbsp;
             </>
           )}
-          <span
-            className="overflow-hidden truncate cursor-pointer"
+          <div
+            className="overflow-hidden cursor-pointer"
             data-html={true}
             data-tip={configAnalysis.sanitizedMessageTxt}
             data-class="max-w-[20rem]"
           >
             <ConfigInsightsIcon analysis={configAnalysis} />
             {configAnalysis.analyzer}
-          </span>
+          </div>
         </div>
       )}
       {viewType === ViewType.detailed && (

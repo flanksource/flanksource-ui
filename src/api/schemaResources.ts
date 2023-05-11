@@ -10,7 +10,7 @@ import { JobHistoryStatus } from "../components/JobsHistory/JobsHistoryTable";
 export interface SchemaResourceI {
   id: string;
   name: string;
-  spec: string | object;
+  spec: { spec: string | undefined } & Record<string, any>;
   namespace: string;
   labels: { [key: string]: any };
   schedule?: string;
@@ -56,14 +56,23 @@ const getBackend = (api: SchemaBackends) => {
   }
 };
 
+const getTableName = (table: string) => {
+  switch (table) {
+    case "incident_rules":
+    case "connections":
+      return table;
+    default:
+      return `${table}_with_status`;
+  }
+};
+
 export const getAll = ({
   table,
   api
 }: SchemaApi): Promise<AxiosResponse<SchemaResourceWithJobStatus[]>> => {
   const endpoint = getBackend(api);
   if (endpoint) {
-    const tableName =
-      table === "incident_rules" ? "incident_rules" : `${table}_with_status`;
+    const tableName = getTableName(table);
     return endpoint.get<SchemaResourceWithJobStatus[]>(
       `/${tableName}?order=created_at.desc&select=*,created_by(${AVATAR_INFO})&limit=100`
     );

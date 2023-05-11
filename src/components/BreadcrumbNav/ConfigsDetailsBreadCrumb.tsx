@@ -24,7 +24,8 @@ export function ConfigsDetailsBreadcrumbNav({ configId, config }: Props) {
           <BreadcrumbChild>
             <span>
               <Icon
-                name={configItem?.external_type || configItem?.config_type}
+                name={configItem?.type}
+                secondary={configItem?.config_class}
                 className="h-5 mr-1"
               />
               {configItem?.name}

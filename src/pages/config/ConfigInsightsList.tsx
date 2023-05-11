@@ -6,9 +6,13 @@ import { Head } from "../../components/Head/Head";
 import { SearchLayout } from "../../components/Layout";
 import TabbedLinks from "../../components/Tabs/TabbedLinks";
 import { BreadcrumbNav, BreadcrumbRoot } from "../../components/BreadcrumbNav";
+import { useAtom } from "jotai";
+import { refreshButtonClickedTrigger } from "../../components/SlidingSideBar";
 
 export function ConfigInsightsPage() {
-  const [triggerRefresh, setTriggerRefresh] = useState(0);
+  const [triggerRefresh, setRefreshButtonClickedTrigger] = useAtom(
+    refreshButtonClickedTrigger
+  );
   const [isLoading, setIsLoading] = useState(true);
 
   return (
@@ -24,7 +28,7 @@ export function ConfigInsightsPage() {
             ]}
           />
         }
-        onRefresh={() => setTriggerRefresh(triggerRefresh + 1)}
+        onRefresh={() => setRefreshButtonClickedTrigger((prev) => prev + 1)}
         loading={isLoading}
         contentClass="p-0 h-full"
       >

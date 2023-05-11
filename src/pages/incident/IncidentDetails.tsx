@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { UseMutationResult } from "@tanstack/react-query";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { EvidenceType } from "../../api/services/evidence";
 import {
   createHypothesis,
@@ -223,10 +223,10 @@ export function IncidentDetailsPage() {
           />
         }
       >
-        <div className="flex flex-row min-h-full h-auto mt-2">
+        <div className="flex flex-row h-full mt-2">
           {incident ? (
             <>
-              <div className="flex flex-col flex-1 p-6 min-h-full h-auto">
+              <div className="flex flex-col flex-1 p-6 h-full">
                 <div className="max-w-3xl lg:max-w-6xl w-full mx-auto">
                   {Boolean(topologyIds?.length) && (
                     <section>

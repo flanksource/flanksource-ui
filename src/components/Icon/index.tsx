@@ -81,9 +81,6 @@ function findByName(name?: string) {
         Icons[prefixes[prefix as keyof typeof prefixes] as keyof typeof Icons];
     }
   }
-  if (icon == null) {
-    console.warn("Icon not found: " + name);
-  }
   return icon;
 }
 
@@ -123,6 +120,9 @@ export const Icon: React.FC<IconProps> = memo(
       if (icon == null && reactIcons[secondary as keyof typeof reactIcons]) {
         const Icon = reactIcons[secondary as keyof typeof reactIcons];
         return <Icon className={`inline-block object-center ${className}`} />;
+      }
+      if (icon == null) {
+        console.warn("Icon not found: " + name);
       }
     }
 

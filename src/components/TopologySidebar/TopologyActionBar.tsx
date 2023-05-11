@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { IconType } from "react-icons";
-import { BiShow, BiHide, BiZoomIn } from "react-icons/bi";
+import { BiShow, BiHide, BiZoomIn, BiLink } from "react-icons/bi";
 import { ImTree } from "react-icons/im";
 import { MdAlarmAdd, MdTableRows } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
@@ -8,8 +8,9 @@ import useUpdateComponentMutation from "../../api/query-hooks/mutations/useUpdat
 import { EvidenceType } from "../../api/services/evidence";
 import { Topology } from "../../context/TopologyPageContext";
 import { AttachEvidenceDialog } from "../AttachEvidenceDialog";
-import { Button } from "../Button";
 import TopologySnapshotModal from "../TopologyCard/TopologySnapshotModal";
+import { ActionLink } from "../ActionLink/ActionLink";
+import { TopologyConfigLinkModal } from "../TopologyConfigLinkModal/TopologyConfigLinkModal";
 
 type TopologyActionItem = {
   label: string;
@@ -181,31 +182,24 @@ export const topologyActionItems: Readonly<TopologyActionItem>[] = [
         <ChildComponent onClick={() => onModalOpen()} icon={icon} text={text} />
       );
     }
+  },
+  {
+    label: "Link to config",
+    icon: BiLink,
+    isShown: () => true,
+    ContainerComponent: function Container({
+      child: ChildComponent,
+      topology,
+      icon,
+      text,
+      openModalAction: onModalOpen = () => {}
+    }) {
+      return (
+        <ChildComponent onClick={() => onModalOpen()} icon={icon} text={text} />
+      );
+    }
   }
 ];
-
-type TopologyActionLinkProps = {
-  onClick?: () => void;
-  icon: React.ReactNode;
-  text: React.ReactNode;
-};
-
-function TopologyActionLink({
-  onClick = () => {},
-  icon,
-  text
-}: TopologyActionLinkProps) {
-  return (
-    <div className="flex flex-col items-center">
-      <Button
-        icon={icon}
-        text={text}
-        onClick={() => onClick()}
-        className="btn-white"
-      />
-    </div>
-  );
-}
 
 type TopologyActionBarProps = {
   topology?: Topology;
@@ -222,6 +216,20 @@ export default function TopologyActionBar({
   ] = useState(false);
 
   const [attachAsAsset, setAttachAsAsset] = useState(false);
+  const [linkToConfig, setLinkToConfig] = useState(false);
+
+  const onOpenModal = (label: string) => {
+    switch (label) {
+      case "Snapshot":
+        return setIsDownloadComponentSnapshotModalOpen(true);
+      case "Link to Incident":
+        return setAttachAsAsset(true);
+      case "Link to config":
+        return setLinkToConfig(true);
+      default:
+        break;
+    }
+  };
 
   if (!topology) {
     return null;
@@ -229,25 +237,24 @@ export default function TopologyActionBar({
 
   return (
     <>
-      <div className="flex flex-wrap justify-between py-4">
+      <div
+        className="flex flex-wrap py-4"
+        data-collapsible="false"
+      >
         {topologyActionItems.map(
-          ({ icon: Icon, isShown, label, ContainerComponent }) => {
+          ({ icon: Icon, isShown, label, ContainerComponent }, index) => {
             if (isShown(topology, "TopologySidebar")) {
               return (
-                <ContainerComponent
-                  onRefresh={onRefresh}
-                  topology={topology}
-                  child={TopologyActionLink}
-                  icon={<Icon />}
-                  text={label}
-                  openModalAction={
-                    label === "Snapshot"
-                      ? () => setIsDownloadComponentSnapshotModalOpen(true)
-                      : label === "Link to Incident"
-                      ? () => setAttachAsAsset(true)
-                      : undefined
-                  }
-                />
+                <div key={label} className="py-1 px-1">
+                  <ContainerComponent
+                    onRefresh={onRefresh}
+                    topology={topology}
+                    child={ActionLink}
+                    icon={<Icon />}
+                    text={label}
+                    openModalAction={() => onOpenModal(label)}
+                  />
+                </div>
               );
             }
             return null;
@@ -265,6 +272,12 @@ export default function TopologyActionBar({
       <TopologySnapshotModal
         onCloseModal={() => setIsDownloadComponentSnapshotModalOpen(false)}
         isModalOpen={isDownloadComponentSnapshotModalOpen}
+        topology={topology}
+      />
+
+      <TopologyConfigLinkModal
+        onCloseModal={() => setLinkToConfig(false)}
+        openModal={linkToConfig}
         topology={topology}
       />
     </>

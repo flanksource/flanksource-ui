@@ -5,6 +5,7 @@ import { IncidentsDefinitionOfDone } from "./DefinitionOfDone/IncidentsDefinitio
 import { IncidentChangelog } from "../Changelog/IncidentChangelog";
 import SlidingSideBar from "../SlidingSideBar";
 import { IncidentDetailsPanel } from "./IncidentDetailsPanel";
+import { useCallback, useState } from "react";
 
 export const priorities = Object.entries(severityItems).map(([key, value]) => ({
   label: value.name,
@@ -19,25 +20,51 @@ type IncidentSidebarProps = React.HTMLProps<HTMLDivElement> & {
   textButton: string;
 };
 
+type SidePanels = "IncidentDetails" | "DefinitionOfDone" | "Changelog";
+
 export const IncidentSidebar = ({
   incident,
   updateIncidentHandler
 }: IncidentSidebarProps) => {
+  const [openedPanel, setOpenedPanel] = useState<SidePanels | undefined>(
+    "IncidentDetails"
+  );
+
+  const panelCollapsedStatusChange = useCallback(
+    (status: boolean, panel: SidePanels) => {
+      if (status) {
+        setOpenedPanel(panel);
+      } else {
+        setOpenedPanel(undefined);
+      }
+    },
+    []
+  );
+
   return (
     <SlidingSideBar hideToggle={true}>
       <IncidentDetailsPanel
         incident={incident}
         updateIncidentHandler={updateIncidentHandler}
-        data-panel-height-ratio="1.125"
+        isCollapsed={openedPanel !== "IncidentDetails"}
+        onCollapsedStateChange={(status) =>
+          panelCollapsedStatusChange(status, "IncidentDetails")
+        }
       />
       <IncidentsDefinitionOfDone
         incidentId={incident.id}
-        data-panel-height-ratio="0.75"
+        isCollapsed={openedPanel !== "DefinitionOfDone"}
+        onCollapsedStateChange={(status) =>
+          panelCollapsedStatusChange(status, "DefinitionOfDone")
+        }
       />
       <IncidentChangelog
         incidentId={incident.id}
         className="flex flex-col bg-white"
-        data-panel-height-ratio="1.125"
+        isCollapsed={openedPanel !== "Changelog"}
+        onCollapsedStateChange={(status) =>
+          panelCollapsedStatusChange(status, "Changelog")
+        }
       />
     </SlidingSideBar>
   );

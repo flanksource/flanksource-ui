@@ -51,3 +51,5 @@ export const TimeRangeToMinutes: Record<string, number> = {
   "3y": 3 * MINUTES_IN_A_YEAR,
   "5y": 5 * MINUTES_IN_A_YEAR
 };
+
+export const HEALTH_SETTINGS = "healthSettings";

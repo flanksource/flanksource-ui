@@ -8,16 +8,16 @@ export default function ConfigListTypeCell({
   getValue
 }: CellContext<ConfigItem, unknown>) {
   const name = row.getIsGrouped()
-    ? row.subRows[0]?.original.external_type
-    : row.original.external_type;
+    ? row.subRows[0]?.original.type
+    : row.original.type;
   const secondary = row.getIsGrouped()
-    ? row.subRows[0]?.original.config_type
-    : row.original.config_type;
+    ? row.subRows[0]?.original.type
+    : row.original.type;
 
   return (
     <span className="flex flex-nowrap">
       <Icon name={name} secondary={secondary} />
-      <span className="pl-1"> {getValue<ConfigItem["config_type"]>()}</span>
+      <span className="pl-1"> {getValue<ConfigItem["type"]>()}</span>
     </span>
   );
 }
