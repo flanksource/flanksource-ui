@@ -32,7 +32,7 @@ export function FormatProperty({
         rel="noreferrer"
         className="underline"
       >
-        <span>{property.text.replace("https://", "")}</span>
+        <span>{property.text?.replace("https://", "")}</span>
         <FiExternalLink className="inline-block ml-1" />
       </a>
     );
