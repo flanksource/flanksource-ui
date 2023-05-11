@@ -20,6 +20,8 @@ import YAML from "yaml";
 import ConfigScrapperSpecEditor from "../SpecEditor/ConfigScrapperSpecEditor";
 import { Head } from "../Head/Head";
 import HealthSpecEditor from "../SpecEditor/HealthSpecEditor";
+import { FaTrash } from "react-icons/fa";
+import { Button } from "../Button";
 
 const CodeEditor = dynamic(
   () => import("../CodeEditor").then((m) => m.CodeEditor),
@@ -451,14 +453,13 @@ export function SchemaResourceEdit({
                             )}
                           >
                             {!!id && (
-                              <button
-                                className="inline-flex items-center justify-center border-none shadow-sm font-medium rounded-md text-red-500 bg-red-100 hover:bg-red-200 focus:ring-offset-white focus:ring-red-500 focus:outline-none focus:ring-2 focus:ring-offset-2 px-4 py-2 text-sm leading-5"
+                              <Button
+                                text="Delete"
+                                icon={<FaTrash />}
+                                onClick={() => doDelete()}
+                                className="btn-danger"
                                 disabled={disabled}
-                                onClick={doDelete}
-                                type="button"
-                              >
-                                Delete
-                              </button>
+                              />
                             )}
                             <div className="w-full flex justify-between">
                               <button
@@ -470,13 +471,11 @@ export function SchemaResourceEdit({
                                 Cancel
                               </button>
 
-                              <button
-                                disabled={disabled}
-                                className="btn-primary"
+                              <Button
                                 type="submit"
-                              >
-                                Save
-                              </button>
+                                text={!!id ? "Update" : "Save"}
+                                className="btn-primary"
+                              />
                             </div>
                           </div>
                         )}

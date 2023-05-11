@@ -5,6 +5,8 @@ import { Property } from "../../services/permissions/permissionsService";
 import { resourceList } from "../../services/permissions/resources";
 import FormikSelect from "../Forms/Formik/FormikSelect";
 import { toastError } from "../Toast/toast";
+import { FaTrash } from "react-icons/fa";
+import { Button } from "../Button";
 
 type FeatureFlagFormProps = React.HTMLProps<HTMLDivElement> & {
   isOpen: boolean;
@@ -83,15 +85,14 @@ export default function FeatureFlagForm({
           </div>
           <div className="flex items-center py-4 px-5 rounded-lg bg-gray-100">
             {Boolean(formValue?.created_at) && (
-              <button
-                className="inline-flex items-center justify-center border-none shadow-sm font-medium rounded-md text-red-500 bg-red-100 hover:bg-red-200 focus:ring-offset-white focus:ring-red-500 focus:outline-none focus:ring-2 focus:ring-offset-2 px-4 py-2 text-sm leading-5"
+              <Button
+                text="Delete"
+                icon={<FaTrash />}
                 onClick={() => {
                   onFeatureFlagDelete?.(formValue!);
                 }}
-                type="button"
-              >
-                Delete
-              </button>
+                className="btn-danger"
+              />
             )}
             <div className="flex flex-1 justify-end">
               <button
@@ -100,9 +101,11 @@ export default function FeatureFlagForm({
               >
                 Cancel
               </button>
-              <button className="btn-primary" type="submit">
-                Save
-              </button>
+              <Button
+                type="submit"
+                text={Boolean(formValue?.created_at) ? "Update" : "Save"}
+                className="btn-primary"
+              />
             </div>
           </div>
         </Form>
