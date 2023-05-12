@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-
 import { Icon } from "../Icon";
+import { HTMLAttributeAnchorTarget } from "react";
 
 type ConfigLinkProps = {
   configId: string;
@@ -9,6 +9,7 @@ type ConfigLinkProps = {
   className?: string;
   configTypeSecondary?: string;
   variant?: "label" | "link";
+  target?: HTMLAttributeAnchorTarget;
 };
 export default function ConfigLink({
   configId,
@@ -16,7 +17,8 @@ export default function ConfigLink({
   configType,
   configTypeSecondary,
   variant = "link",
-  className
+  className,
+  ...props
 }: ConfigLinkProps) {
   if (variant === "link") {
     return (
@@ -31,9 +33,14 @@ export default function ConfigLink({
     );
   }
   return (
-    <>
+    <Link
+      {...props}
+      to={{
+        pathname: `/configs/${configId}`
+      }}
+    >
       <Icon name={configType || configTypeSecondary} className="w-5 mr-1" />
       <span className={className}>{configName}</span>
-    </>
+    </Link>
   );
 }

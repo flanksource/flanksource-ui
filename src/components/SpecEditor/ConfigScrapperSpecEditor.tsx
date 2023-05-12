@@ -3,17 +3,18 @@ import SpecEditor, { SpecType } from "./SpecEditor";
 import AWSConfigsFormEditor from "../Forms/Configs/AWSConfigsFormEditor";
 import KubernetesConfigsFormEditor from "../Forms/Configs/KubernetesConfigsFormEditor";
 import { FaCog } from "react-icons/fa";
+import { SchemaResourceType } from "../SchemaResourcePage/resourceTypes";
 
 type ConfigScrapperSpecEditorProps = {
   spec?: Record<string, any>;
   onSubmit?: (spec: Record<string, any>) => void;
-  deleteHandler?: (id: string) => void;
+  resourceInfo: SchemaResourceType;
 };
 
 export default function ConfigScrapperSpecEditor({
   spec,
   onSubmit = () => {},
-  deleteHandler
+  resourceInfo
 }: ConfigScrapperSpecEditorProps) {
   const configTypes: SpecType[] = useMemo(
     () =>
@@ -130,9 +131,8 @@ export default function ConfigScrapperSpecEditor({
     <SpecEditor
       types={configTypes}
       format="yaml"
-      resourceName="Config Scraper"
+      resourceInfo={resourceInfo}
       selectedSpec={selectedSpec}
-      deleteHandler={deleteHandler}
     />
   );
 }

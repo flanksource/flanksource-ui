@@ -3,24 +3,51 @@ import { HealthIcon } from "../Icons/HealthIcon";
 import { AlarmIcon } from "../Icons/AlarmIcon";
 import { SearchInListIcon } from "../Icons/SearchInListIcon";
 import { TopologyIcon } from "../Icons/TopologyIcon";
-import { $ArrayElemType, $ArrayPick } from "../../types/utility";
 import { resources } from "../../services/permissions/resources";
+import { IconType } from "react-icons";
+import React from "react";
 
-export type SchemaResourceTypes = typeof schemaResourceTypes;
+export type SchemaResourceType = {
+  name:
+    | "Teams"
+    | "Rules"
+    | "Config Scraper"
+    | "Health Check"
+    | "Search"
+    | "Topology";
+  table:
+    | "teams"
+    | "incident_rules"
+    | "config_scrapers"
+    | "canaries"
+    | "topologies";
+  api: "incident-commander" | "canary-checker" | "config-db";
+  resourceName: string;
+  icon: React.ComponentType<any> | IconType;
+  subNav: {
+    label: string;
+    value: string;
+  }[];
+  fields: {
+    name: "name" | "spec" | "icon" | "labels" | "namespace" | "schedule";
+    default?: any;
+    hidden?: boolean;
+  }[];
+};
 
-export type SchemaResourceType = $ArrayElemType<SchemaResourceTypes>;
+export type SchemaResourceTypes = SchemaResourceType[];
 
 export type SchemaBackends = SchemaResourceType["api"];
 
-export type SchemaApi = $ArrayPick<SchemaResourceTypes, ["table" | "api"]>;
+export type SchemaApi = Pick<SchemaResourceType, "api" | "table">;
 
-export const schemaResourceTypes = [
+export const schemaResourceTypes: SchemaResourceType[] = [
   {
     name: "Teams",
     table: "teams",
     api: "incident-commander",
     icon: UserGroupIcon,
-    resouceName: resources["settings.teams"],
+    resourceName: resources["settings.teams"],
     subNav: [
       {
         label: "Spec",
@@ -56,7 +83,7 @@ export const schemaResourceTypes = [
     table: "incident_rules",
     api: "incident-commander",
     icon: AlarmIcon,
-    resouceName: resources["settings.rules"],
+    resourceName: resources["settings.rules"],
     subNav: [
       {
         label: "Spec",
@@ -84,7 +111,7 @@ export const schemaResourceTypes = [
     table: "config_scrapers",
     api: "config-db",
     icon: SearchInListIcon,
-    resouceName: resources["settings.config_scraper"],
+    resourceName: resources["settings.config_scraper"],
     subNav: [
       {
         label: "Spec",
@@ -112,7 +139,7 @@ export const schemaResourceTypes = [
     table: "topologies",
     api: "canary-checker",
     icon: TopologyIcon,
-    resouceName: resources["settings.topology"],
+    resourceName: resources["settings.topology"],
     subNav: [
       {
         label: "Spec",
@@ -148,7 +175,7 @@ export const schemaResourceTypes = [
     table: "canaries",
     api: "canary-checker",
     icon: HealthIcon,
-    resouceName: resources["settings.health"],
+    resourceName: resources["settings.health"],
     subNav: [
       {
         label: "Spec",
@@ -183,4 +210,4 @@ export const schemaResourceTypes = [
       }
     ]
   }
-] as const;
+];

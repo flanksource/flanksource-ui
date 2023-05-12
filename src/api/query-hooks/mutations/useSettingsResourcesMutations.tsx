@@ -10,7 +10,9 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../../context";
 
-export const useSettingsDeleteResource = (resourceInfo: SchemaResourceType) => {
+export const useSettingsDeleteResource = (
+  resourceInfo: Pick<SchemaResourceType, "name" | "table" | "api">
+) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 

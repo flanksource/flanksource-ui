@@ -15,10 +15,10 @@ class PermissionService {
     return await fetchProperties();
   }
 
-  isFeatureDisabled(resouceName: string, properties: Property[]): boolean {
-    const name = `${resouceName}.disable`;
+  isFeatureDisabled(resourceName: string, properties: Property[]): boolean {
+    const name = `${resourceName}.disable`;
     const parentResource =
-      resourceToParentMap[resouceName as keyof typeof resourceToParentMap];
+      resourceToParentMap[resourceName as keyof typeof resourceToParentMap];
     let isDisabled = Boolean(
       properties.find((item) => item.name === name && item.value === "true")
     );

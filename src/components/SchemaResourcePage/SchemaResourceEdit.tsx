@@ -7,7 +7,7 @@ import { SchemaResourceI } from "../../api/schemaResources";
 import { IconPicker } from "../IconPicker";
 import { TextInput } from "../TextInput";
 import { Icon } from "../Icon";
-import { schemaResourceTypes } from "./resourceTypes";
+import { SchemaResourceType, schemaResourceTypes } from "./resourceTypes";
 import { TeamMembers } from "../TeamMembers/TeamMembers";
 import {
   resourceTypeMap,
@@ -20,8 +20,8 @@ import YAML from "yaml";
 import ConfigScrapperSpecEditor from "../SpecEditor/ConfigScrapperSpecEditor";
 import { Head } from "../Head/Head";
 import HealthSpecEditor from "../SpecEditor/HealthSpecEditor";
-import { FaTrash } from "react-icons/fa";
 import { Button } from "../Button";
+import DeleteResource from "./Delete/DeleteResource";
 
 const CodeEditor = dynamic(
   () => import("../CodeEditor").then((m) => m.CodeEditor),
@@ -44,14 +44,13 @@ type FormFields = Partial<
 
 type Props = FormFields & {
   onSubmit: (val: Partial<SchemaResourceI>) => Promise<void>;
-  onDelete?: (id: string) => void;
   onCancel?: () => void;
-  resourceName: string;
+  edit?: boolean;
   isModal?: boolean;
+  resourceInfo: SchemaResourceType;
 };
 
 export function SchemaResourceEdit({
-  resourceName,
   id,
   spec,
   name,
@@ -60,10 +59,10 @@ export function SchemaResourceEdit({
   icon,
   source,
   onSubmit,
-  onDelete,
   onCancel,
   isModal = false,
-  schedule
+  schedule,
+  resourceInfo
 }: Props) {
   const [disabled, setDisabled] = useState(false);
   const keyRef = useRef(v4());
@@ -80,6 +79,8 @@ export function SchemaResourceEdit({
     },
     identity
   );
+
+  const resourceName = resourceInfo.name;
 
   const subNav = useMemo(() => {
     const resourceType = schemaResourceTypes.find(
@@ -166,19 +167,6 @@ export function SchemaResourceEdit({
     onSubmit(props);
   };
 
-  const doDelete = () => {
-    if (!id) {
-      console.error("Called delete for resource without id");
-      return;
-    }
-    if (!onDelete) {
-      console.error("onDelete called without being passed to the component.");
-      return;
-    }
-    setDisabled(true);
-    onDelete(id);
-  };
-
   const setCodeEditorValueOnChange = useCallback(
     (key: "spec" | "labels", value?: string) => {
       if (!value) {
@@ -243,7 +231,7 @@ export function SchemaResourceEdit({
                         <ConfigScrapperSpecEditor
                           onSubmit={(val) => doSubmit(val)}
                           spec={defaultValues}
-                          deleteHandler={onDelete}
+                          resourceInfo={resourceInfo}
                         />
                       </div>
                     ) : table === "canaries" && !source ? (
@@ -251,7 +239,7 @@ export function SchemaResourceEdit({
                         <HealthSpecEditor
                           onSubmit={(val) => doSubmit(val)}
                           spec={defaultValues}
-                          deleteHandler={onDelete}
+                          resourceInfo={resourceInfo}
                         />
                       </div>
                     ) : (
@@ -453,30 +441,17 @@ export function SchemaResourceEdit({
                             )}
                           >
                             {!!id && (
-                              <Button
-                                text="Delete"
-                                icon={<FaTrash />}
-                                onClick={() => doDelete()}
-                                className="btn-danger"
-                                disabled={disabled}
+                              <DeleteResource
+                                resourceId={id}
+                                resourceInfo={resourceInfo}
                               />
                             )}
-                            <div className="w-full flex justify-between">
-                              <button
-                                className="btn-secondary-base btn-secondary"
-                                disabled={disabled}
-                                onClick={doCancel}
-                                type="button"
-                              >
-                                Cancel
-                              </button>
 
-                              <Button
-                                type="submit"
-                                text={!!id ? "Update" : "Save"}
-                                className="btn-primary"
-                              />
-                            </div>
+                            <Button
+                              type="submit"
+                              text={!!id ? "Update" : "Save"}
+                              className="btn-primary"
+                            />
                           </div>
                         )}
                       </form>
