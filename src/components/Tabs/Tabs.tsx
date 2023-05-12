@@ -55,7 +55,7 @@ export function Tabs({
   onSelectTab,
   children,
   className,
-  contentClassName = "bg-white border border-t-0 border-gray-300",
+  contentClassName = "flex flex-col flex-1 overflow-y-auto bg-white border border-t-0 border-gray-300",
   ...rest
 }: TabsProps) {
   const tabs = useMemo(() => {

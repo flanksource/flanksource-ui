@@ -77,6 +77,7 @@ export default function FormikTemplateFields({
             (value) => value
           )}
           className="w-auto"
+          itemsClassName=""
           defaultValue="Go Template"
           value={selectedOption}
           onChange={(v) => {

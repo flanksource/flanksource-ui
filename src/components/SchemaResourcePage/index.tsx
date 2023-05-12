@@ -79,7 +79,7 @@ export function SchemaResourcePage({
         <Modal
           open={modalIsOpen}
           onClose={onClose}
-          bodyClass=""
+          bodyClass="flex flex-col flex-1 overflow-y-auto"
           size="full"
           title={`Add ${resourceInfo.name}`}
         >
@@ -96,7 +96,6 @@ export function SchemaResourcePage({
           ) : (
             <SchemaResourceEdit
               isModal
-              edit
               onSubmit={async (val) => createResource(val)}
               onCancel={onClose}
               resourceInfo={resourceInfo}

@@ -84,9 +84,9 @@ export default function SpecEditorForm({
         <Form
           onSubmit={handleSubmit}
           onReset={handleReset}
-          className="flex flex-col space-y-4"
+          className="flex flex-col flex-1 overflow-y-auto space-y-4"
         >
-          <div className="flex flex-col space-y-4 p-4">
+          <div className="flex flex-col flex-1 overflow-y-auto space-y-4 p-4">
             <div className="flex flex-col space-y-2">
               {isFieldSupportedByResourceType("name") && (
                 <FormikTextInput name="name" label="Name" required />
