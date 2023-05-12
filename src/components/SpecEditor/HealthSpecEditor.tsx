@@ -36,7 +36,8 @@ export default function HealthSpecEditor({
           icon: "http",
           configForm: HTTPHealthFormEditor,
           specsMapField: "http.0",
-          rawSpecInput: false
+          rawSpecInput: false,
+          schemaFilePrefix: "canary"
         },
         {
           name: "awsConfigRule",
@@ -50,7 +51,8 @@ export default function HealthSpecEditor({
           icon: "aws",
           configForm: null,
           specsMapField: "awsConfigRule.0",
-          rawSpecInput: true
+          rawSpecInput: true,
+          schemaFilePrefix: "canary"
         },
         {
           name: "awsConfig",
@@ -64,7 +66,8 @@ export default function HealthSpecEditor({
           icon: "aws-config",
           configForm: null,
           specsMapField: "awsConfig.0",
-          rawSpecInput: true
+          rawSpecInput: true,
+          schemaFilePrefix: "canary"
         },
         {
           name: "github",
@@ -78,7 +81,8 @@ export default function HealthSpecEditor({
           icon: "github",
           configForm: null,
           specsMapField: "github.0",
-          rawSpecInput: true
+          rawSpecInput: true,
+          schemaFilePrefix: "canary"
         },
         {
           name: "ec2",
@@ -92,7 +96,8 @@ export default function HealthSpecEditor({
           icon: "ec2",
           configForm: null,
           specsMapField: "ec2.0",
-          rawSpecInput: true
+          rawSpecInput: true,
+          schemaFilePrefix: "canary"
         },
         {
           name: "ldap",
@@ -106,7 +111,8 @@ export default function HealthSpecEditor({
           icon: "ldap",
           configForm: null,
           specsMapField: "ldap.0",
-          rawSpecInput: true
+          rawSpecInput: true,
+          schemaFilePrefix: "canary"
         },
         {
           name: "pod",
@@ -120,7 +126,8 @@ export default function HealthSpecEditor({
           icon: "pod",
           configForm: null,
           specsMapField: "pod.0",
-          rawSpecInput: true
+          rawSpecInput: true,
+          schemaFilePrefix: "canary"
         },
         {
           name: "exec",
@@ -134,7 +141,8 @@ export default function HealthSpecEditor({
           icon: "console",
           configForm: null,
           specsMapField: "exec.0",
-          rawSpecInput: true
+          rawSpecInput: true,
+          schemaFilePrefix: "canary"
         },
         {
           name: "alertManager",
@@ -148,7 +156,8 @@ export default function HealthSpecEditor({
           icon: "alertManager",
           configForm: null,
           specsMapField: "alertManager.0",
-          rawSpecInput: true
+          rawSpecInput: true,
+          schemaFilePrefix: "canary"
         },
         {
           name: "cloudwatch",
@@ -162,7 +171,8 @@ export default function HealthSpecEditor({
           icon: "cloudwatch",
           configForm: null,
           specsMapField: "cloudwatch.0",
-          rawSpecInput: true
+          rawSpecInput: true,
+          schemaFilePrefix: "canary"
         },
         {
           name: "elasticsearch",
@@ -176,7 +186,8 @@ export default function HealthSpecEditor({
           icon: "elasticsearch",
           configForm: null,
           specsMapField: "elasticsearch.0",
-          rawSpecInput: true
+          rawSpecInput: true,
+          schemaFilePrefix: "canary"
         },
         {
           name: "redis",
@@ -190,7 +201,8 @@ export default function HealthSpecEditor({
           icon: "redis",
           configForm: null,
           specsMapField: "redis.0",
-          rawSpecInput: true
+          rawSpecInput: true,
+          schemaFilePrefix: "canary"
         },
         {
           name: "mongo",
@@ -204,7 +216,8 @@ export default function HealthSpecEditor({
           icon: "mongo",
           configForm: null,
           specsMapField: "mongo.0",
-          rawSpecInput: true
+          rawSpecInput: true,
+          schemaFilePrefix: "canary"
         },
         {
           name: "dns",
@@ -218,7 +231,8 @@ export default function HealthSpecEditor({
           icon: "dns",
           configForm: null,
           specsMapField: "dns.0",
-          rawSpecInput: true
+          rawSpecInput: true,
+          schemaFilePrefix: "canary"
         },
         {
           name: "ping",
@@ -232,7 +246,8 @@ export default function HealthSpecEditor({
           icon: "icmp",
           configForm: null,
           specsMapField: "ping.0",
-          rawSpecInput: true
+          rawSpecInput: true,
+          schemaFilePrefix: "canary"
         },
         {
           name: "gcs",
@@ -246,7 +261,8 @@ export default function HealthSpecEditor({
           icon: "gcp",
           configForm: null,
           specsMapField: "gcs.0",
-          rawSpecInput: true
+          rawSpecInput: true,
+          schemaFilePrefix: "canary"
         },
         {
           name: "s3",
@@ -260,7 +276,8 @@ export default function HealthSpecEditor({
           icon: "aws-s3-bucket",
           configForm: null,
           specsMapField: "s3.0",
-          rawSpecInput: true
+          rawSpecInput: true,
+          schemaFilePrefix: "canary"
         },
         {
           name: "smb",
@@ -274,7 +291,8 @@ export default function HealthSpecEditor({
           icon: "smb",
           configForm: null,
           specsMapField: "smb.0",
-          rawSpecInput: true
+          rawSpecInput: true,
+          schemaFilePrefix: "canary"
         },
         {
           name: "sftp",
@@ -288,7 +306,8 @@ export default function HealthSpecEditor({
           icon: "sftp",
           configForm: null,
           specsMapField: "sftp.0",
-          rawSpecInput: true
+          rawSpecInput: true,
+          schemaFilePrefix: "canary"
         },
         {
           name: "folder",
@@ -302,7 +321,8 @@ export default function HealthSpecEditor({
           icon: "folder",
           configForm: null,
           specsMapField: "folder.0",
-          rawSpecInput: true
+          rawSpecInput: true,
+          schemaFilePrefix: "canary"
         },
         {
           name: "prometheus",
@@ -316,7 +336,8 @@ export default function HealthSpecEditor({
           icon: "prometheus",
           configForm: null,
           specsMapField: "prometheus.0",
-          rawSpecInput: true
+          rawSpecInput: true,
+          schemaFilePrefix: "canary"
         },
         {
           name: "kubernetes",
@@ -330,7 +351,8 @@ export default function HealthSpecEditor({
           icon: "kubernetes",
           configForm: null,
           specsMapField: "kubernetes.0",
-          rawSpecInput: true
+          rawSpecInput: true,
+          schemaFilePrefix: "canary"
         },
         {
           name: "sql",
@@ -344,7 +366,8 @@ export default function HealthSpecEditor({
           icon: "postgres",
           configForm: null,
           specsMapField: "sql.0",
-          rawSpecInput: true
+          rawSpecInput: true,
+          schemaFilePrefix: "canary"
         },
         {
           name: "custom",

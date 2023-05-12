@@ -32,7 +32,8 @@ export default function ConfigScrapperSpecEditor({
           },
           icon: "kubernetes",
           configForm: KubernetesConfigsFormEditor,
-          specsMapField: "kubernetes.0"
+          specsMapField: "kubernetes.0",
+          schemaFilePrefix: "scrape_config"
         },
         {
           name: "aws",
@@ -47,7 +48,8 @@ export default function ConfigScrapperSpecEditor({
           },
           configForm: AWSConfigsFormEditor,
           icon: "aws",
-          specsMapField: "aws.0"
+          specsMapField: "aws.0",
+          schemaFilePrefix: "scrape_config"
         },
         {
           name: "file",
@@ -61,7 +63,8 @@ export default function ConfigScrapperSpecEditor({
           icon: "folder",
           configForm: null,
           specsMapField: "file.0",
-          rawSpecInput: true
+          rawSpecInput: true,
+          schemaFilePrefix: "scrape_config"
         },
         {
           name: "git",
@@ -75,7 +78,8 @@ export default function ConfigScrapperSpecEditor({
           icon: "git",
           configForm: null,
           specsMapField: "git.0",
-          rawSpecInput: true
+          rawSpecInput: true,
+          schemaFilePrefix: "scrape_config"
         },
         {
           name: "http",
@@ -89,7 +93,8 @@ export default function ConfigScrapperSpecEditor({
           icon: "http",
           configForm: null,
           specsMapField: "http.0",
-          rawSpecInput: true
+          rawSpecInput: true,
+          schemaFilePrefix: "scrape_config"
         },
         {
           name: "azureDevOps",
@@ -103,7 +108,8 @@ export default function ConfigScrapperSpecEditor({
           icon: "azure",
           configForm: null,
           specsMapField: "azureDevOps.0",
-          rawSpecInput: true
+          rawSpecInput: true,
+          schemaFilePrefix: "scrape_config"
         },
         {
           name: "custom",
