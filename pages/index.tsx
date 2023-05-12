@@ -13,6 +13,8 @@ console.log('--------environment flags-----------');
 console.log(process.env);
 console.log('--------environment flags-----------');
 
+console.log(isCanaryUI, 'is it a canary checker ui');
+
 const Home: NextPage = () => {
   const [session, setSession] = useState<Session | undefined>();
 
