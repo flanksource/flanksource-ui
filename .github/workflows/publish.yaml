@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - main
-      - fix/canary-checker-ui-deployment
 jobs:
   semantic-release:
     runs-on: ubuntu-latest
