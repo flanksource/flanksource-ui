@@ -6,6 +6,7 @@ import FormikCheckboxFieldsGroup from "../Formik/FormikCheckboxFieldsGroup";
 
 type AWSConfigsFormEditorProps = {
   fieldName: string;
+  specsMapField: string;
 };
 
 /**
@@ -17,8 +18,11 @@ type AWSConfigsFormEditorProps = {
  *
  */
 export default function AWSConfigsFormEditor({
-  fieldName
+  fieldName: name,
+  specsMapField: schemaPath
 }: AWSConfigsFormEditorProps) {
+  const fieldName = `${name}.${schemaPath}`;
+
   return (
     <>
       <div className="flex flex-col space-y-2">

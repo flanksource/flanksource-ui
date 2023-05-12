@@ -5,13 +5,19 @@ import { FaCog } from "react-icons/fa";
 import { SchemaResourceType } from "../SchemaResourcePage/resourceTypes";
 
 type HealthSpecEditorProps = {
-  spec?: Record<string, any>;
+  resourceValue?: {
+    id?: string;
+    name?: string;
+    namespace?: string;
+    spec?: Record<string, any>;
+    [key: string]: any;
+  };
   onSubmit?: (spec: Record<string, any>) => void;
   resourceInfo: SchemaResourceType;
 };
 
 export default function HealthSpecEditor({
-  spec,
+  resourceValue,
   onSubmit = () => {},
   resourceInfo
 }: HealthSpecEditorProps) {
@@ -25,12 +31,13 @@ export default function HealthSpecEditor({
             onSubmit(value);
           },
           loadSpec: () => {
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: "http",
           configForm: HTTPHealthFormEditor,
-          formFieldName: "spec.http.0",
-          rawSpecInput: false
+          specsMapField: "http.0",
+          rawSpecInput: false,
+          schemaFilePrefix: "canary"
         },
         {
           name: "awsConfigRule",
@@ -39,12 +46,13 @@ export default function HealthSpecEditor({
             onSubmit(value);
           },
           loadSpec: () => {
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: "aws",
           configForm: null,
-          formFieldName: "spec.awsConfigRule.0",
-          rawSpecInput: true
+          specsMapField: "awsConfigRule.0",
+          rawSpecInput: true,
+          schemaFilePrefix: "canary"
         },
         {
           name: "awsConfig",
@@ -53,12 +61,13 @@ export default function HealthSpecEditor({
             onSubmit(value);
           },
           loadSpec: () => {
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: "aws-config",
           configForm: null,
-          formFieldName: "spec.awsConfig.0",
-          rawSpecInput: true
+          specsMapField: "awsConfig.0",
+          rawSpecInput: true,
+          schemaFilePrefix: "canary"
         },
         {
           name: "github",
@@ -67,12 +76,13 @@ export default function HealthSpecEditor({
             onSubmit(value);
           },
           loadSpec: () => {
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: "github",
           configForm: null,
-          formFieldName: "spec.github.0",
-          rawSpecInput: true
+          specsMapField: "github.0",
+          rawSpecInput: true,
+          schemaFilePrefix: "canary"
         },
         {
           name: "ec2",
@@ -81,12 +91,13 @@ export default function HealthSpecEditor({
             onSubmit(value);
           },
           loadSpec: () => {
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: "ec2",
           configForm: null,
-          formFieldName: "spec.ec2.0",
-          rawSpecInput: true
+          specsMapField: "ec2.0",
+          rawSpecInput: true,
+          schemaFilePrefix: "canary"
         },
         {
           name: "ldap",
@@ -95,12 +106,13 @@ export default function HealthSpecEditor({
             onSubmit(value);
           },
           loadSpec: () => {
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: "ldap",
           configForm: null,
-          formFieldName: "spec.ldap.0",
-          rawSpecInput: true
+          specsMapField: "ldap.0",
+          rawSpecInput: true,
+          schemaFilePrefix: "canary"
         },
         {
           name: "pod",
@@ -109,12 +121,13 @@ export default function HealthSpecEditor({
             onSubmit(value);
           },
           loadSpec: () => {
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: "pod",
           configForm: null,
-          formFieldName: "spec.pod.0",
-          rawSpecInput: true
+          specsMapField: "pod.0",
+          rawSpecInput: true,
+          schemaFilePrefix: "canary"
         },
         {
           name: "exec",
@@ -123,12 +136,13 @@ export default function HealthSpecEditor({
             onSubmit(value);
           },
           loadSpec: () => {
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: "console",
           configForm: null,
-          formFieldName: "spec.exec.0",
-          rawSpecInput: true
+          specsMapField: "exec.0",
+          rawSpecInput: true,
+          schemaFilePrefix: "canary"
         },
         {
           name: "alertManager",
@@ -137,12 +151,13 @@ export default function HealthSpecEditor({
             onSubmit(value);
           },
           loadSpec: () => {
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: "alertManager",
           configForm: null,
-          formFieldName: "spec.alertManager.0",
-          rawSpecInput: true
+          specsMapField: "alertManager.0",
+          rawSpecInput: true,
+          schemaFilePrefix: "canary"
         },
         {
           name: "cloudwatch",
@@ -151,12 +166,13 @@ export default function HealthSpecEditor({
             onSubmit(value);
           },
           loadSpec: () => {
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: "cloudwatch",
           configForm: null,
-          formFieldName: "spec.cloudwatch.0",
-          rawSpecInput: true
+          specsMapField: "cloudwatch.0",
+          rawSpecInput: true,
+          schemaFilePrefix: "canary"
         },
         {
           name: "elasticsearch",
@@ -165,12 +181,13 @@ export default function HealthSpecEditor({
             onSubmit(value);
           },
           loadSpec: () => {
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: "elasticsearch",
           configForm: null,
-          formFieldName: "spec.elasticsearch.0",
-          rawSpecInput: true
+          specsMapField: "elasticsearch.0",
+          rawSpecInput: true,
+          schemaFilePrefix: "canary"
         },
         {
           name: "redis",
@@ -179,12 +196,13 @@ export default function HealthSpecEditor({
             onSubmit(value);
           },
           loadSpec: () => {
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: "redis",
           configForm: null,
-          formFieldName: "spec.redis.0",
-          rawSpecInput: true
+          specsMapField: "redis.0",
+          rawSpecInput: true,
+          schemaFilePrefix: "canary"
         },
         {
           name: "mongo",
@@ -193,12 +211,13 @@ export default function HealthSpecEditor({
             onSubmit(value);
           },
           loadSpec: () => {
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: "mongo",
           configForm: null,
-          formFieldName: "spec.mongo.0",
-          rawSpecInput: true
+          specsMapField: "mongo.0",
+          rawSpecInput: true,
+          schemaFilePrefix: "canary"
         },
         {
           name: "dns",
@@ -207,12 +226,13 @@ export default function HealthSpecEditor({
             onSubmit(value);
           },
           loadSpec: () => {
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: "dns",
           configForm: null,
-          formFieldName: "spec.dns.0",
-          rawSpecInput: true
+          specsMapField: "dns.0",
+          rawSpecInput: true,
+          schemaFilePrefix: "canary"
         },
         {
           name: "ping",
@@ -221,12 +241,13 @@ export default function HealthSpecEditor({
             onSubmit(value);
           },
           loadSpec: () => {
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: "icmp",
           configForm: null,
-          formFieldName: "spec.ping.0",
-          rawSpecInput: true
+          specsMapField: "ping.0",
+          rawSpecInput: true,
+          schemaFilePrefix: "canary"
         },
         {
           name: "gcs",
@@ -235,12 +256,13 @@ export default function HealthSpecEditor({
             onSubmit(value);
           },
           loadSpec: () => {
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: "gcp",
           configForm: null,
-          formFieldName: "spec.gcs.0",
-          rawSpecInput: true
+          specsMapField: "gcs.0",
+          rawSpecInput: true,
+          schemaFilePrefix: "canary"
         },
         {
           name: "s3",
@@ -249,12 +271,13 @@ export default function HealthSpecEditor({
             onSubmit(value);
           },
           loadSpec: () => {
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: "aws-s3-bucket",
           configForm: null,
-          formFieldName: "spec.s3.0",
-          rawSpecInput: true
+          specsMapField: "s3.0",
+          rawSpecInput: true,
+          schemaFilePrefix: "canary"
         },
         {
           name: "smb",
@@ -263,12 +286,13 @@ export default function HealthSpecEditor({
             onSubmit(value);
           },
           loadSpec: () => {
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: "smb",
           configForm: null,
-          formFieldName: "spec.smb.0",
-          rawSpecInput: true
+          specsMapField: "smb.0",
+          rawSpecInput: true,
+          schemaFilePrefix: "canary"
         },
         {
           name: "sftp",
@@ -277,12 +301,13 @@ export default function HealthSpecEditor({
             onSubmit(value);
           },
           loadSpec: () => {
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: "sftp",
           configForm: null,
-          formFieldName: "spec.sftp.0",
-          rawSpecInput: true
+          specsMapField: "sftp.0",
+          rawSpecInput: true,
+          schemaFilePrefix: "canary"
         },
         {
           name: "folder",
@@ -291,12 +316,13 @@ export default function HealthSpecEditor({
             onSubmit(value);
           },
           loadSpec: () => {
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: "folder",
           configForm: null,
-          formFieldName: "spec.folder.0",
-          rawSpecInput: true
+          specsMapField: "folder.0",
+          rawSpecInput: true,
+          schemaFilePrefix: "canary"
         },
         {
           name: "prometheus",
@@ -305,12 +331,13 @@ export default function HealthSpecEditor({
             onSubmit(value);
           },
           loadSpec: () => {
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: "prometheus",
           configForm: null,
-          formFieldName: "spec.prometheus.0",
-          rawSpecInput: true
+          specsMapField: "prometheus.0",
+          rawSpecInput: true,
+          schemaFilePrefix: "canary"
         },
         {
           name: "kubernetes",
@@ -319,12 +346,13 @@ export default function HealthSpecEditor({
             onSubmit(value);
           },
           loadSpec: () => {
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: "kubernetes",
           configForm: null,
-          formFieldName: "spec.kubernetes.0",
-          rawSpecInput: true
+          specsMapField: "kubernetes.0",
+          rawSpecInput: true,
+          schemaFilePrefix: "canary"
         },
         {
           name: "sql",
@@ -333,12 +361,13 @@ export default function HealthSpecEditor({
             onSubmit(value);
           },
           loadSpec: () => {
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: "postgres",
           configForm: null,
-          formFieldName: "spec.sql.0",
-          rawSpecInput: true
+          specsMapField: "sql.0",
+          rawSpecInput: true,
+          schemaFilePrefix: "canary"
         },
         {
           name: "custom",
@@ -347,20 +376,22 @@ export default function HealthSpecEditor({
             onSubmit(value);
           },
           loadSpec: () => {
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: FaCog,
           configForm: null,
-          formFieldName: "spec",
+          specsMapField: "spec",
           rawSpecInput: true,
           schemaFilePrefix: "canary"
         }
       ].sort((a, b) => a.label.localeCompare(b.label)) as SpecType[],
-    [onSubmit, spec]
+    [onSubmit, resourceValue]
   );
 
-  // there should only be one spec, so we can just grab the first key
-  const selectedSpec = spec ? Object.keys(spec.spec)[0] : undefined;
+  // there should only be one spec, so we can just grab the first key that isn't schedule
+  const selectedSpec = resourceValue?.spec
+    ? Object.keys(resourceValue?.spec).filter((key) => key !== "schedule")[0]
+    : undefined;
 
   return (
     <SpecEditor

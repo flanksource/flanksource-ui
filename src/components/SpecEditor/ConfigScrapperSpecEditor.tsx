@@ -6,13 +6,13 @@ import { FaCog } from "react-icons/fa";
 import { SchemaResourceType } from "../SchemaResourcePage/resourceTypes";
 
 type ConfigScrapperSpecEditorProps = {
-  spec?: Record<string, any>;
+  resourceValue?: Record<string, any>;
   onSubmit?: (spec: Record<string, any>) => void;
   resourceInfo: SchemaResourceType;
 };
 
 export default function ConfigScrapperSpecEditor({
-  spec,
+  resourceValue,
   onSubmit = () => {},
   resourceInfo
 }: ConfigScrapperSpecEditorProps) {
@@ -28,11 +28,12 @@ export default function ConfigScrapperSpecEditor({
           },
           loadSpec: () => {
             // probably need to query the spec from the backend
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: "kubernetes",
           configForm: KubernetesConfigsFormEditor,
-          formFieldName: "spec.kubernetes.0"
+          specsMapField: "kubernetes.0",
+          schemaFilePrefix: "scrape_config"
         },
         {
           name: "aws",
@@ -43,11 +44,12 @@ export default function ConfigScrapperSpecEditor({
           },
           loadSpec: () => {
             // probably need to query the spec from the backend
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           configForm: AWSConfigsFormEditor,
           icon: "aws",
-          formFieldName: "spec.aws.0"
+          specsMapField: "aws.0",
+          schemaFilePrefix: "scrape_config"
         },
         {
           name: "file",
@@ -56,12 +58,13 @@ export default function ConfigScrapperSpecEditor({
             onSubmit(value);
           },
           loadSpec: () => {
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: "folder",
           configForm: null,
-          formFieldName: "spec.file.0",
-          rawSpecInput: true
+          specsMapField: "file.0",
+          rawSpecInput: true,
+          schemaFilePrefix: "scrape_config"
         },
         {
           name: "git",
@@ -70,12 +73,13 @@ export default function ConfigScrapperSpecEditor({
             onSubmit(value);
           },
           loadSpec: () => {
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: "git",
           configForm: null,
-          formFieldName: "spec.git.0",
-          rawSpecInput: true
+          specsMapField: "git.0",
+          rawSpecInput: true,
+          schemaFilePrefix: "scrape_config"
         },
         {
           name: "http",
@@ -84,12 +88,13 @@ export default function ConfigScrapperSpecEditor({
             onSubmit(value);
           },
           loadSpec: () => {
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: "http",
           configForm: null,
-          formFieldName: "spec.http.0",
-          rawSpecInput: true
+          specsMapField: "http.0",
+          rawSpecInput: true,
+          schemaFilePrefix: "scrape_config"
         },
         {
           name: "azureDevOps",
@@ -98,12 +103,13 @@ export default function ConfigScrapperSpecEditor({
             onSubmit(value);
           },
           loadSpec: () => {
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: "azure",
           configForm: null,
-          formFieldName: "spec.azureDevOps.0",
-          rawSpecInput: true
+          specsMapField: "azureDevOps.0",
+          rawSpecInput: true,
+          schemaFilePrefix: "scrape_config"
         },
         {
           name: "custom",
@@ -112,20 +118,22 @@ export default function ConfigScrapperSpecEditor({
             onSubmit(value);
           },
           loadSpec: () => {
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: FaCog,
           configForm: null,
-          formFieldName: "spec",
+          specsMapField: "spec",
           rawSpecInput: true,
           schemaFilePrefix: "scrape_config"
         }
       ].sort((a, b) => a.label.localeCompare(b.label)) as SpecType[],
-    [onSubmit, spec]
+    [onSubmit, resourceValue]
   );
 
-  // there should only be one spec, so we can just grab the first key
-  const selectedSpec = spec ? Object.keys(spec.spec)[0] : undefined;
+  // there should only be one spec, so we can just grab the first key that isn't schedule
+  const selectedSpec = resourceValue?.spec
+    ? Object.keys(resourceValue?.spec).filter((key) => key !== "schedule")[0]
+    : undefined;
 
   return (
     <SpecEditor
