@@ -44,6 +44,9 @@ export type Topology = {
     insights?: Record<string, any>;
     [key: string]: any;
   };
+  logs: {
+    name: string;
+  }[];
 } & CostsData;
 
 export type TopologyState = {

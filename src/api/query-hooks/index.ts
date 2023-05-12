@@ -28,7 +28,7 @@ import {
   getTopologyComponents
 } from "../services/topology";
 import { getPersons, getVersionInfo } from "../services/users";
-import { getLogs } from "../services/logs";
+import { searchLogs } from "../services/logs";
 import LogItem from "../../types/Logs";
 
 const cache: Record<string, any> = {};
@@ -402,36 +402,19 @@ export function useConfigAnalysisQuery(
 
 export function useComponentGetLogsQuery(
   {
-    externalId,
-    type,
     query,
-    start
+    id,
+    logSelector
   }: {
-    externalId: string;
-    type: string;
-    query: string;
-    start: string;
+    query?: string;
+    id: string;
+    logSelector: string;
   },
   options?: UseQueryOptions<LogItem[], Error>
 ) {
   return useQuery<LogItem[], Error>(
-    ["topology", "logs", externalId, type, query, start],
-    async () => {
-      const payload = {
-        query,
-        id: externalId,
-        type,
-        start
-      };
-      if (!externalId) {
-        return Promise.resolve([]);
-      }
-      const res = await getLogs(payload);
-      if (res.error) {
-        throw res.error;
-      }
-      return res.data.results;
-    },
+    ["topology", "logs", id, logSelector, query],
+    async () => searchLogs({ id, logSelector, query }),
     options
   );
 }

@@ -70,6 +70,15 @@ export const Snapshot = axios.create({
   }
 });
 
+export const LogsSearch = axios.create({
+  baseURL: `${API_BASE}/logs/search`,
+  headers: {
+    Accept: "application/json",
+    Prefer: "return=representation",
+    "Content-Type": "application/json"
+  }
+});
+
 export const Auth = axios.create({
   baseURL: `${API_BASE}/auth`,
   headers: {
