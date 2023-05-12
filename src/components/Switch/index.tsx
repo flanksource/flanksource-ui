@@ -6,6 +6,7 @@ type Props = {
   onChange?: (value: string | number | boolean) => void;
   options: (number | string | boolean)[];
   className?: string;
+  itemsClassName?: string;
 } & Omit<React.DetailsHTMLAttributes<HTMLDivElement>, "onChange">;
 
 export function Switch({
@@ -13,6 +14,7 @@ export function Switch({
   options,
   value,
   className,
+  itemsClassName = "flex-1",
   ...props
 }: Props) {
   const [activeOption, setActiveOption] = useState(() => value ?? options[0]);
@@ -32,7 +34,7 @@ export function Switch({
   return (
     <div
       className={clsx(
-        "flex flex-row group p-0.5 rounded-lg flex bg-gray-100 hover:bg-gray-200",
+        "flex flex-row group p-0.5 rounded-lg bg-gray-100 hover:bg-gray-200",
         className
       )}
       {...props}
@@ -41,7 +43,7 @@ export function Switch({
         return (
           <button
             type="button"
-            className="flex-1 rounded-md items-center text-sm text-gray-600 font-medium focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus:outline-none focus-visible:ring-offset-gray-100"
+            className={`${itemsClassName} rounded-md items-center text-sm text-gray-600 font-medium focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus:outline-none focus-visible:ring-offset-gray-100`}
             tabIndex={0}
             onClick={(e) => handleClick(option)}
             key={option.valueOf().toString()}

@@ -71,7 +71,7 @@ export default function SpecEditor({
   return (
     <div className="flex flex-col w-full flex-1 h-full overflow-y-auto">
       {selectedSpecItem ? (
-        <div className="flex flex-col space-y-2">
+        <div className="flex flex-col space-y-2 flex-1 overflow-y-auto">
           <SpecEditorForm
             configForm={selectedSpecItem.configForm}
             updateSpec={selectedSpecItem.updateSpec}
