@@ -230,16 +230,16 @@ export function SchemaResourceEdit({
                       <div className="flex-col">
                         <ConfigScrapperSpecEditor
                           onSubmit={(val) => doSubmit(val)}
-                          spec={defaultValues}
                           resourceInfo={resourceInfo}
+                          resourceValue={defaultValues}
                         />
                       </div>
                     ) : table === "canaries" && !source ? (
                       <div className="flex-col">
                         <HealthSpecEditor
                           onSubmit={(val) => doSubmit(val)}
-                          spec={defaultValues}
                           resourceInfo={resourceInfo}
+                          resourceValue={defaultValues}
                         />
                       </div>
                     ) : (

@@ -5,13 +5,19 @@ import { FaCog } from "react-icons/fa";
 import { SchemaResourceType } from "../SchemaResourcePage/resourceTypes";
 
 type HealthSpecEditorProps = {
-  spec?: Record<string, any>;
+  resourceValue?: {
+    id?: string;
+    name?: string;
+    namespace?: string;
+    spec?: Record<string, any>;
+    [key: string]: any;
+  };
   onSubmit?: (spec: Record<string, any>) => void;
   resourceInfo: SchemaResourceType;
 };
 
 export default function HealthSpecEditor({
-  spec,
+  resourceValue,
   onSubmit = () => {},
   resourceInfo
 }: HealthSpecEditorProps) {
@@ -25,7 +31,7 @@ export default function HealthSpecEditor({
             onSubmit(value);
           },
           loadSpec: () => {
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: "http",
           configForm: HTTPHealthFormEditor,
@@ -39,7 +45,7 @@ export default function HealthSpecEditor({
             onSubmit(value);
           },
           loadSpec: () => {
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: "aws",
           configForm: null,
@@ -53,7 +59,7 @@ export default function HealthSpecEditor({
             onSubmit(value);
           },
           loadSpec: () => {
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: "aws-config",
           configForm: null,
@@ -67,7 +73,7 @@ export default function HealthSpecEditor({
             onSubmit(value);
           },
           loadSpec: () => {
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: "github",
           configForm: null,
@@ -81,7 +87,7 @@ export default function HealthSpecEditor({
             onSubmit(value);
           },
           loadSpec: () => {
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: "ec2",
           configForm: null,
@@ -95,7 +101,7 @@ export default function HealthSpecEditor({
             onSubmit(value);
           },
           loadSpec: () => {
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: "ldap",
           configForm: null,
@@ -109,7 +115,7 @@ export default function HealthSpecEditor({
             onSubmit(value);
           },
           loadSpec: () => {
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: "pod",
           configForm: null,
@@ -123,7 +129,7 @@ export default function HealthSpecEditor({
             onSubmit(value);
           },
           loadSpec: () => {
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: "console",
           configForm: null,
@@ -137,7 +143,7 @@ export default function HealthSpecEditor({
             onSubmit(value);
           },
           loadSpec: () => {
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: "alertManager",
           configForm: null,
@@ -151,7 +157,7 @@ export default function HealthSpecEditor({
             onSubmit(value);
           },
           loadSpec: () => {
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: "cloudwatch",
           configForm: null,
@@ -165,7 +171,7 @@ export default function HealthSpecEditor({
             onSubmit(value);
           },
           loadSpec: () => {
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: "elasticsearch",
           configForm: null,
@@ -179,7 +185,7 @@ export default function HealthSpecEditor({
             onSubmit(value);
           },
           loadSpec: () => {
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: "redis",
           configForm: null,
@@ -193,7 +199,7 @@ export default function HealthSpecEditor({
             onSubmit(value);
           },
           loadSpec: () => {
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: "mongo",
           configForm: null,
@@ -207,7 +213,7 @@ export default function HealthSpecEditor({
             onSubmit(value);
           },
           loadSpec: () => {
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: "dns",
           configForm: null,
@@ -221,7 +227,7 @@ export default function HealthSpecEditor({
             onSubmit(value);
           },
           loadSpec: () => {
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: "icmp",
           configForm: null,
@@ -235,7 +241,7 @@ export default function HealthSpecEditor({
             onSubmit(value);
           },
           loadSpec: () => {
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: "gcp",
           configForm: null,
@@ -249,7 +255,7 @@ export default function HealthSpecEditor({
             onSubmit(value);
           },
           loadSpec: () => {
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: "aws-s3-bucket",
           configForm: null,
@@ -263,7 +269,7 @@ export default function HealthSpecEditor({
             onSubmit(value);
           },
           loadSpec: () => {
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: "smb",
           configForm: null,
@@ -277,7 +283,7 @@ export default function HealthSpecEditor({
             onSubmit(value);
           },
           loadSpec: () => {
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: "sftp",
           configForm: null,
@@ -291,7 +297,7 @@ export default function HealthSpecEditor({
             onSubmit(value);
           },
           loadSpec: () => {
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: "folder",
           configForm: null,
@@ -305,7 +311,7 @@ export default function HealthSpecEditor({
             onSubmit(value);
           },
           loadSpec: () => {
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: "prometheus",
           configForm: null,
@@ -319,7 +325,7 @@ export default function HealthSpecEditor({
             onSubmit(value);
           },
           loadSpec: () => {
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: "kubernetes",
           configForm: null,
@@ -333,7 +339,7 @@ export default function HealthSpecEditor({
             onSubmit(value);
           },
           loadSpec: () => {
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: "postgres",
           configForm: null,
@@ -347,7 +353,7 @@ export default function HealthSpecEditor({
             onSubmit(value);
           },
           loadSpec: () => {
-            return spec ?? {};
+            return resourceValue ?? {};
           },
           icon: FaCog,
           configForm: null,
@@ -356,11 +362,13 @@ export default function HealthSpecEditor({
           schemaFilePrefix: "canary"
         }
       ].sort((a, b) => a.label.localeCompare(b.label)) as SpecType[],
-    [onSubmit, spec]
+    [onSubmit, resourceValue]
   );
 
-  // there should only be one spec, so we can just grab the first key
-  const selectedSpec = spec ? Object.keys(spec)[0] : undefined;
+  // there should only be one spec, so we can just grab the first key that isn't schedule
+  const selectedSpec = resourceValue?.spec
+    ? Object.keys(resourceValue?.spec).filter((key) => key !== "schedule")[0]
+    : undefined;
 
   return (
     <SpecEditor
