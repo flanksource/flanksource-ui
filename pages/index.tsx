@@ -9,6 +9,10 @@ import { Head } from "../src/components/Head/Head";
 import { Session } from "@ory/client";
 import { isCanaryUI } from "../src/context/Environment";
 
+console.log('-------------------');
+console.log(process.env);
+console.log('-------------------');
+
 const Home: NextPage = () => {
   const [session, setSession] = useState<Session | undefined>();
 
