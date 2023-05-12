@@ -8,7 +8,7 @@ import FormikConfigEnvVarFieldsArray from "../Formik/FormikConfigEnvVarFieldsArr
 import FormikIconPicker from "../Formik/FormikIconPicker";
 import { getIn, useFormikContext } from "formik";
 import { useEffect } from "react";
-import FormikAutocompleteDropdown from "../Formik/FormikAutocompleteDropdown";
+import FormikScheduleField from "../Formik/FormikScheduleField";
 
 type HTTPHealthFormEditorProps = {
   fieldName: string;
@@ -47,45 +47,7 @@ export function HTTPHealthFormEditor({
       </div>
 
       {/* this a top level schema field, not nested under http */}
-      <FormikAutocompleteDropdown
-        name={`${name}.schedule`}
-        label="Schedule"
-        required
-        options={[
-          {
-            label: "@every 30s",
-            value: "@every 30s"
-          },
-          {
-            label: "@every 1m",
-            value: "@every 1m"
-          },
-          {
-            label: "@every 5m",
-            value: "@every 5m"
-          },
-          {
-            label: "@every 30m",
-            value: "@every 30m"
-          },
-          {
-            label: "@hourly",
-            value: "@hourly"
-          },
-          {
-            label: "@every 6h",
-            value: "@every 6h"
-          },
-          {
-            label: "@daily",
-            value: "@daily"
-          },
-          {
-            label: "@weekly",
-            value: "@weekly"
-          }
-        ]}
-      />
+      <FormikScheduleField name={`${name}.schedule`} />
 
       <FormikTextInput name={`${fieldName}.description`} label="Description" />
       <FormikTextInput name={`${fieldName}.endpoint`} label="URL" required />

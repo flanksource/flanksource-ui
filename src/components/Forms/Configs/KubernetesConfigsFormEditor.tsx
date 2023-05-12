@@ -3,7 +3,7 @@ import FormikCheckbox from "../Formik/FormikCheckbox";
 import FormikEnvVarConfigsFields from "../Formik/FormikConfigEnvVarFields";
 import FormikConfigFormFieldsArray from "../Formik/FormikConfigFormFieldsArray";
 import FormikCheckboxFieldsGroup from "../Formik/FormikCheckboxFieldsGroup";
-import FormikAutocompleteDropdown from "../Formik/FormikAutocompleteDropdown";
+import FormikScheduleField from "../Formik/FormikScheduleField";
 
 type KubernetesConfigsFormEditorProps = {
   fieldName: string;
@@ -30,45 +30,7 @@ export default function KubernetesConfigsFormEditor({
       <FormikTextInput name={`${fieldName}.namespace`} label="Namespace" />
 
       {/* this a top level schema field, not nested under http */}
-      <FormikAutocompleteDropdown
-        name={`${name}.schedule`}
-        label="Schedule"
-        required
-        options={[
-          {
-            label: "@every 30s",
-            value: "@every 30s"
-          },
-          {
-            label: "@every 1m",
-            value: "@every 1m"
-          },
-          {
-            label: "@every 5m",
-            value: "@every 5m"
-          },
-          {
-            label: "@every 30m",
-            value: "@every 30m"
-          },
-          {
-            label: "@hourly",
-            value: "@hourly"
-          },
-          {
-            label: "@every 6h",
-            value: "@every 6h"
-          },
-          {
-            label: "@daily",
-            value: "@daily"
-          },
-          {
-            label: "@weekly",
-            value: "@weekly"
-          }
-        ]}
-      />
+      <FormikScheduleField name={`${name}.schedule`} />
 
       <FormikCheckbox name={`${fieldName}.useCache`} label="Use Cache" />
       <FormikCheckbox
