@@ -1,4 +1,4 @@
-name: Release
+name: Docker
 on:
   push:
     branches:
@@ -26,7 +26,6 @@ jobs:
     strategy:
       matrix:
         deployment: [incident-manager-ui, canary-checker-ui]
-    if: ${{ needs.semantic-release.outputs.new-release-published == 'true' }}
     steps:
       - uses: actions/checkout@v3
       - name: Publish to Registry
