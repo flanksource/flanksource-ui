@@ -9,9 +9,9 @@ import { Head } from "../src/components/Head/Head";
 import { Session } from "@ory/client";
 import { isCanaryUI } from "../src/context/Environment";
 
-console.log('-------------------');
+console.log('--------environment flags-----------');
 console.log(process.env);
-console.log('-------------------');
+console.log('--------environment flags-----------');
 
 const Home: NextPage = () => {
   const [session, setSession] = useState<Session | undefined>();
