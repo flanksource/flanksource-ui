@@ -3,6 +3,7 @@ import FormikCheckbox from "../Formik/FormikCheckbox";
 import FormikEnvVarConfigsFields from "../Formik/FormikConfigEnvVarFields";
 import FormikConfigFormFieldsArray from "../Formik/FormikConfigFormFieldsArray";
 import FormikCheckboxFieldsGroup from "../Formik/FormikCheckboxFieldsGroup";
+import FormikAutocompleteDropdown from "../Formik/FormikAutocompleteDropdown";
 
 type AWSConfigsFormEditorProps = {
   fieldName: string;
@@ -25,6 +26,46 @@ export default function AWSConfigsFormEditor({
 
   return (
     <>
+      {/* this a top level schema field, not nested under http */}
+      <FormikAutocompleteDropdown
+        name={`${name}.schedule`}
+        label="Schedule"
+        required
+        options={[
+          {
+            label: "@every 30s",
+            value: "@every 30s"
+          },
+          {
+            label: "@every 1m",
+            value: "@every 1m"
+          },
+          {
+            label: "@every 5m",
+            value: "@every 5m"
+          },
+          {
+            label: "@every 30m",
+            value: "@every 30m"
+          },
+          {
+            label: "@hourly",
+            value: "@hourly"
+          },
+          {
+            label: "@every 6h",
+            value: "@every 6h"
+          },
+          {
+            label: "@daily",
+            value: "@daily"
+          },
+          {
+            label: "@weekly",
+            value: "@weekly"
+          }
+        ]}
+      />
       <div className="flex flex-col space-y-2">
         <label className="font-semibold text-sm">AWS Connection</label>
         <FormikCheckboxFieldsGroup
