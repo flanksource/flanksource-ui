@@ -3,7 +3,8 @@ import { ImUserPlus } from "react-icons/im";
 import {
   getRegisteredUsers,
   inviteUser,
-  RegisteredUser
+  RegisteredUser,
+  updateUserRole
 } from "../api/services/users";
 import { Modal } from "../components";
 import { Head } from "../components/Head/Head";
@@ -17,10 +18,16 @@ import { toastError, toastSuccess } from "../components/Toast/toast";
 import { UserList } from "../components/UserList";
 import { useLoader } from "../hooks";
 import { BreadcrumbNav, BreadcrumbRoot } from "../components/BreadcrumbNav";
+import { MdAdminPanelSettings } from "react-icons/md";
+import {
+  ManageUserRoleValue,
+  ManageUserRoles
+} from "../components/ManageUserRoles/ManageUserRoles";
 
 export function UsersPage() {
   const [users, setUsers] = useState<RegisteredUser[]>([]);
   const [isOpen, setIsOpen] = useState(false);
+  const [openRoleManageModal, setOpenRoleManageModal] = useState(false);
   const { loading, setLoading } = useLoader();
 
   const onSubmit = async (val: InviteUserFormValue) => {
@@ -35,13 +42,25 @@ export function UsersPage() {
     }
   };
 
+  const onRoleSubmit = async (val: ManageUserRoleValue) => {
+    try {
+      await updateUserRole(val.userId, [val.role]);
+      const user = users.find((item) => item.id === val.userId);
+      toastSuccess(`${user!.name} role updated successfully`);
+      setOpenRoleManageModal(false);
+      fetchUsersList();
+    } catch (ex) {
+      toastError(ex as any);
+    }
+  };
+
   async function fetchUsersList() {
     setLoading(true);
     try {
       const { data } = await getRegisteredUsers();
       setUsers(data || []);
     } catch (ex) {
-      toastError(ex);
+      toastError(ex as any);
     }
     setLoading(false);
   }
@@ -70,13 +89,19 @@ export function UsersPage() {
       >
         <div className="flex flex-col flex-1 p-6 pb-0 h-full w-full">
           <div className="flex justify-end">
-            <button
-              className="btn-primary w-36"
-              onClick={(e) => setIsOpen(true)}
-            >
-              <ImUserPlus className="mr-2" />
-              Invite User
-            </button>
+            <div className="flex flex-row space-x-4">
+              <button
+                className="btn-primary"
+                onClick={(e) => setOpenRoleManageModal(true)}
+              >
+                <MdAdminPanelSettings className="mr-2 h-5 w-5" />
+                Add Role to User
+              </button>
+              <button className="btn-primary" onClick={(e) => setIsOpen(true)}>
+                <ImUserPlus className="mr-2 h-5 w-5" />
+                Invite User
+              </button>
+            </div>
           </div>
           {loading && <TableSkeletonLoader />}
           {!loading && (
@@ -98,6 +123,21 @@ export function UsersPage() {
               className="flex flex-col bg-white p-4"
               onSubmit={onSubmit}
               closeModal={() => setIsOpen(false)}
+            />
+          </Modal>
+          <Modal
+            title="Update User Role"
+            onClose={() => {
+              setOpenRoleManageModal(false);
+            }}
+            open={openRoleManageModal}
+            bodyClass=""
+          >
+            <ManageUserRoles
+              className="flex flex-col bg-white p-4"
+              onSubmit={onRoleSubmit}
+              registeredUsers={users}
+              closeModal={() => setOpenRoleManageModal(false)}
             />
           </Modal>
         </div>

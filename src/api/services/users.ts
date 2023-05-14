@@ -1,4 +1,4 @@
-import { Auth, CanaryChecker, IncidentCommander } from "../axios";
+import { Auth, CanaryChecker, IncidentCommander, Rback } from "../axios";
 import { resolve } from "../resolve";
 import packageJson from "../../../package.json";
 
@@ -111,3 +111,13 @@ export const getVersionInfo = () =>
       return data;
     })
   );
+
+export const updateUserRole = (userId: string, roles: string[]) => {
+  return resolve<{
+    message: string;
+  }>(
+    Rback.post(`/${userId}/update_role`, {
+      roles
+    })
+  );
+};
