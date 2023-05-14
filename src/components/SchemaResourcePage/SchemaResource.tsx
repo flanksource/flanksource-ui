@@ -5,10 +5,10 @@ import { SchemaResourceType } from "./resourceTypes";
 import { SchemaResourceEdit } from "./SchemaResourceEdit";
 import { useGetSettingsResourceDetails } from "../../api/query-hooks/settingsResourcesHooks";
 import { Head } from "../Head/Head";
-import {
-  useSettingsDeleteResource,
-  useSettingsUpdateResource
-} from "../../api/query-hooks/mutations/useSettingsResourcesMutations";
+import { useSettingsUpdateResource } from "../../api/query-hooks/mutations/useSettingsResourcesMutations";
+import ErrorPage from "../Errors/ErrorPage";
+import TableSkeletonLoader from "../SkeletonLoader/TableSkeletonLoader";
+import EmptyState from "../EmptyState";
 
 export function SchemaResource({
   resourceInfo
@@ -18,13 +18,11 @@ export function SchemaResource({
   const { name } = resourceInfo;
   const { id } = useParams();
 
-  const { data: resource, isLoading } = useGetSettingsResourceDetails(
-    resourceInfo,
-    id
-  );
-
-  const { mutateAsync: deleteResourceItem } =
-    useSettingsDeleteResource(resourceInfo);
+  const {
+    data: resource,
+    isLoading,
+    error
+  } = useGetSettingsResourceDetails(resourceInfo, id);
 
   const { mutateAsync: updateResource } = useSettingsUpdateResource(
     resourceInfo,
@@ -50,6 +48,8 @@ export function SchemaResource({
         contentClass="flex flex-col h-full"
       >
         <div className="flex flex-col flex-1 overflow-y-auto mx-auto w-screen max-w-screen-xl p-4">
+          {!resource && isLoading && <TableSkeletonLoader />}
+          {error && <ErrorPage error={error} />}
           {resource && !isLoading && (
             <SchemaResourceEdit
               id={id}
@@ -57,6 +57,11 @@ export function SchemaResource({
               onSubmit={updateResource}
               resourceInfo={resourceInfo}
             />
+          )}
+          {!resource && !isLoading && !error && (
+            <div className="flex w-full flex-1 items-center justify-center text-gray-500">
+              <EmptyState title="No resource found" />
+            </div>
           )}
         </div>
       </SearchLayout>

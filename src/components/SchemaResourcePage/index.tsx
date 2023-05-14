@@ -12,6 +12,7 @@ import { SchemaResourceList } from "./SchemaResourceList";
 import ConfigScrapperSpecEditor from "../SpecEditor/ConfigScrapperSpecEditor";
 import HealthSpecEditor from "../SpecEditor/HealthSpecEditor";
 import { useSettingsCreateResource } from "../../api/query-hooks/mutations/useSettingsResourcesMutations";
+import ErrorPage from "../Errors/ErrorPage";
 
 export function SchemaResourcePage({
   resourceInfo
@@ -25,7 +26,8 @@ export function SchemaResourcePage({
   const {
     data: list,
     refetch,
-    isLoading
+    isLoading,
+    error
   } = useGetSettingsAllQuery(resourceInfo);
 
   const { mutate: createResource } = useSettingsCreateResource(
@@ -73,6 +75,8 @@ export function SchemaResourcePage({
                 table={resourceInfo.table}
               />
             )}
+
+            {error && <ErrorPage error={error as Error} />}
           </div>
         </div>
 
