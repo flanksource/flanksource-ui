@@ -88,6 +88,15 @@ export const Auth = axios.create({
   }
 });
 
+export const Rback = axios.create({
+  baseURL: `${API_BASE}/rbac`,
+  headers: {
+    Accept: "application/json",
+    Prefer: "return=representation",
+    "Content-Type": "application/json"
+  }
+});
+
 for (const client of [
   Auth,
   IncidentCommander,
@@ -95,6 +104,7 @@ for (const client of [
   CanaryChecker,
   Config,
   ConfigDB,
+  Rback,
   Snapshot
 ]) {
   client.interceptors.response.use(
