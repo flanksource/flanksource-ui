@@ -2,6 +2,7 @@ import clsx from "clsx";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { RegisteredUser } from "../../api/services/users";
+import { Roles } from "../../context/UserAccessContext";
 
 export type ManageUserRoleValue = {
   userId: string;
@@ -22,7 +23,7 @@ const defaultFormValue = {
   userId: ""
 };
 
-const allRoles = ["admin", "editor", "viewer", "commander", "responder"];
+const allRoles = Object.keys(Roles);
 
 export function ManageUserRoles({
   onSubmit,

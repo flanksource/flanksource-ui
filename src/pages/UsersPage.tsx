@@ -23,12 +23,15 @@ import {
   ManageUserRoleValue,
   ManageUserRoles
 } from "../components/ManageUserRoles/ManageUserRoles";
+import { useUserAccessStateContext } from "../context/UserAccessContext";
+import { resources } from "../services/permissions/resources";
 
 export function UsersPage() {
   const [users, setUsers] = useState<RegisteredUser[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [openRoleManageModal, setOpenRoleManageModal] = useState(false);
   const { loading, setLoading } = useLoader();
+  const { hasResourceAccess } = useUserAccessStateContext();
 
   const onSubmit = async (val: InviteUserFormValue) => {
     try {
@@ -90,17 +93,24 @@ export function UsersPage() {
         <div className="flex flex-col flex-1 p-6 pb-0 h-full max-w-screen-xl mx-auto">
           <div className="flex justify-end">
             <div className="flex flex-row space-x-4">
-              <button
-                className="btn-primary"
-                onClick={(e) => setOpenRoleManageModal(true)}
-              >
-                <MdAdminPanelSettings className="mr-2 h-5 w-5" />
-                Add Role to User
-              </button>
-              <button className="btn-primary" onClick={(e) => setIsOpen(true)}>
-                <ImUserPlus className="mr-2 h-5 w-5" />
-                Invite User
-              </button>
+              {hasResourceAccess(resources["users.add.role"]) && (
+                <button
+                  className="btn-primary"
+                  onClick={(e) => setOpenRoleManageModal(true)}
+                >
+                  <MdAdminPanelSettings className="mr-2 h-5 w-5" />
+                  Add Role to User
+                </button>
+              )}
+              {hasResourceAccess(resources["users.invite"]) && (
+                <button
+                  className="btn-primary"
+                  onClick={(e) => setIsOpen(true)}
+                >
+                  <ImUserPlus className="mr-2 h-5 w-5" />
+                  Invite User
+                </button>
+              )}
             </div>
           </div>
           {loading && <TableSkeletonLoader />}

@@ -62,6 +62,7 @@ import { ConfigInsightsPage } from "./pages/config/ConfigInsightsList";
 import { HealthPage } from "./pages/health";
 import { resources } from "./services/permissions/resources";
 import { stringSortHelper } from "./utils/common";
+import { UserAccessStateContextProvider } from "./context/UserAccessContext";
 
 export type NavigationItems = {
   name: string;
@@ -342,21 +343,23 @@ export function App() {
   return (
     <BrowserRouter>
       <Provider>
-        <FeatureFlagsContextProvider>
-          <TopologyPageContextProvider>
-            <HealthPageContextProvider>
-              <ConfigPageContextProvider>
-                <IncidentPageContextProvider>
-                  <AuthContext.Provider value={{ user, setUser }}>
-                    <ReactTooltip />
-                    <IncidentManagerRoutes sidebar={<SidebarWrapper />} />
-                  </AuthContext.Provider>
-                  <ReactQueryDevtools initialIsOpen={false} />
-                </IncidentPageContextProvider>
-              </ConfigPageContextProvider>
-            </HealthPageContextProvider>
-          </TopologyPageContextProvider>
-        </FeatureFlagsContextProvider>
+        <AuthContext.Provider value={{ user, setUser }}>
+          <UserAccessStateContextProvider>
+            <FeatureFlagsContextProvider>
+              <TopologyPageContextProvider>
+                <HealthPageContextProvider>
+                  <ConfigPageContextProvider>
+                    <IncidentPageContextProvider>
+                      <ReactTooltip />
+                      <IncidentManagerRoutes sidebar={<SidebarWrapper />} />
+                      <ReactQueryDevtools initialIsOpen={false} />
+                    </IncidentPageContextProvider>
+                  </ConfigPageContextProvider>
+                </HealthPageContextProvider>
+              </TopologyPageContextProvider>
+            </FeatureFlagsContextProvider>
+          </UserAccessStateContextProvider>
+        </AuthContext.Provider>
       </Provider>
     </BrowserRouter>
   );

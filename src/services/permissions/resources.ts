@@ -13,7 +13,9 @@ export const resources = {
   "settings.health": "settings.health",
   "settings.job_history": "settings.job_history",
   "settings.feature_flags": "settings.feature_flags",
-  "settings.logging_backends": "settings.logging_backends"
+  "settings.logging_backends": "settings.logging_backends",
+  "users.add.role": "users.add.role",
+  "users.invite": "users.invite"
 };
 
 export const resourceToParentMap = {
