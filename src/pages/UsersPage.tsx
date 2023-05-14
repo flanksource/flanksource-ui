@@ -87,7 +87,7 @@ export function UsersPage() {
         contentClass="p-0 h-full"
         loading={loading}
       >
-        <div className="flex flex-col flex-1 p-6 pb-0 h-full w-full">
+        <div className="flex flex-col flex-1 p-6 pb-0 h-full max-w-screen-xl mx-auto">
           <div className="flex justify-end">
             <div className="flex flex-row space-x-4">
               <button
