@@ -69,7 +69,7 @@ export function ManageUserRoles({
                 "rounded-md border-gray-300 shadow-sm inline-block w-full"
               )}
               {...register("userId", {
-                required: "required"
+                required: "Please select any user"
               })}
             >
               <option value="">select user</option>
@@ -100,7 +100,7 @@ export function ManageUserRoles({
                 "rounded-md border-gray-300 shadow-sm inline-block w-full"
               )}
               {...register("role", {
-                required: "required"
+                required: "Please select any role"
               })}
             >
               <option value="">select role</option>
