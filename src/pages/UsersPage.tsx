@@ -11,7 +11,7 @@ import { Head } from "../components/Head/Head";
 import {
   InviteUserForm,
   InviteUserFormValue
-} from "../components/InviteUserForm";
+} from "../components/InviteUserForm/InviteUserForm";
 import { SearchLayout } from "../components/Layout";
 import TableSkeletonLoader from "../components/SkeletonLoader/TableSkeletonLoader";
 import { toastError, toastSuccess } from "../components/Toast/toast";
@@ -23,19 +23,27 @@ import {
   ManageUserRoleValue,
   ManageUserRoles
 } from "../components/ManageUserRoles/ManageUserRoles";
-import { useUserAccessStateContext } from "../context/UserAccessContext";
 import { resources } from "../services/permissions/resources";
+import { AccessCheck } from "../components/AccessCheck/AccessCheck";
 
 export function UsersPage() {
   const [users, setUsers] = useState<RegisteredUser[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [openRoleManageModal, setOpenRoleManageModal] = useState(false);
   const { loading, setLoading } = useLoader();
-  const { hasResourceAccess } = useUserAccessStateContext();
 
   const onSubmit = async (val: InviteUserFormValue) => {
     try {
-      await inviteUser(val);
+      await inviteUser({
+        firstName: val.firstName,
+        lastName: val.lastName,
+        email: val.email
+      });
+      const users: RegisteredUser[] = await fetchUsersList();
+      const userId = users.find((item) => item.email === val.email)?.id;
+      if (userId) {
+        await updateUserRole(userId, [val.role]);
+      }
       const userName = `${val.firstName} ${val.lastName}`;
       toastSuccess(`${userName} invited successfully`);
       setIsOpen(false);
@@ -58,14 +66,17 @@ export function UsersPage() {
   };
 
   async function fetchUsersList() {
+    let users: RegisteredUser[] = [];
     setLoading(true);
     try {
       const { data } = await getRegisteredUsers();
+      users = data || [];
       setUsers(data || []);
     } catch (ex) {
       toastError(ex as any);
     }
     setLoading(false);
+    return users;
   }
 
   useEffect(() => {
@@ -93,7 +104,7 @@ export function UsersPage() {
         <div className="flex flex-col flex-1 p-6 pb-0 h-full max-w-screen-xl mx-auto">
           <div className="flex justify-end">
             <div className="flex flex-row space-x-4">
-              {hasResourceAccess(resources["users.add.role"]) && (
+              <AccessCheck resource={resources["users.add.role"]}>
                 <button
                   className="btn-primary"
                   onClick={(e) => setOpenRoleManageModal(true)}
@@ -101,8 +112,8 @@ export function UsersPage() {
                   <MdAdminPanelSettings className="mr-2 h-5 w-5" />
                   Add Role to User
                 </button>
-              )}
-              {hasResourceAccess(resources["users.invite"]) && (
+              </AccessCheck>
+              <AccessCheck resource={resources["users.invite"]}>
                 <button
                   className="btn-primary"
                   onClick={(e) => setIsOpen(true)}
@@ -110,7 +121,7 @@ export function UsersPage() {
                   <ImUserPlus className="mr-2 h-5 w-5" />
                   Invite User
                 </button>
-              )}
+              </AccessCheck>
             </div>
           </div>
           {loading && <TableSkeletonLoader />}
