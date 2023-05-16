@@ -151,7 +151,7 @@ export function FeatureFlagsPage() {
         contentClass="p-0 h-full"
         loading={loading}
       >
-        <div className="flex flex-col flex-1 px-6 pb-0 h-full w-full">
+        <div className="flex flex-col flex-1 px-6 pb-0 h-full max-w-screen-xl mx-auto">
           {loading && <TableSkeletonLoader />}
           {!loading && (
             <FeatureFlagsList
