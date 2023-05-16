@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 import { toastError } from "../components/Toast/toast";
 
@@ -52,7 +52,7 @@ export const CanaryChecker = axios.create({
 });
 
 export const Config = axios.create({
-  baseURL: `${API_BASE}/api/config`,
+  baseURL: `${API_BASE}/config`,
   headers: {
     Accept: "application/json",
     Prefer: "return=representation",
@@ -107,7 +107,7 @@ for (const client of [
   );
 }
 
-function redirectToLoginPageOnSessionExpiry(error) {
+function redirectToLoginPageOnSessionExpiry(error: AxiosError) {
   if (error?.response?.status === 401) {
     const url = `/login?return_to=${window.location.pathname}${window.location.search}`;
     window.location.href = url;
