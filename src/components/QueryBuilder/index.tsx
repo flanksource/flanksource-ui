@@ -1,4 +1,5 @@
-import {
+import React, {
+  ChangeEvent,
   Fragment,
   memo,
   useCallback,
@@ -24,17 +25,38 @@ import { TextWithDivider } from "../TextWithDivider";
 import { ClickableSvg } from "../ClickableSvg/ClickableSvg";
 import { FaCog } from "react-icons/fa";
 
-const QueryBuilderFC = ({ refreshConfigs, className, ...props }) => {
+type QueryBuilderProps = {
+  refreshConfigs: (configs: any[]) => void;
+} & React.HTMLAttributes<HTMLDivElement>;
+
+const QueryBuilderFC: React.FC<QueryBuilderProps> = ({
+  refreshConfigs,
+  className,
+  ...props
+}) => {
   const [params, setParams] = useSearchParams();
   const query = params.get("query") || "";
-  const [selectedQuery, setSelectedQuery] = useState(null);
-  const [queryList, setQueryList] = useState([]);
+  const [selectedQuery, setSelectedQuery] = useState<
+    Record<string, any> | undefined
+  >();
+  const [queryList, setQueryList] = useState<
+    {
+      id: string;
+      description?: string;
+      query: string;
+    }[]
+  >([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [savedQueryValue, setSavedQueryValue] = useState("");
   const { loading, setLoading } = useLoader();
   const optionCategories = useMemo(() => {
     const actions = [];
-    const savedQueryLoadActions = [];
+    const savedQueryLoadActions: {
+      id: string;
+      label?: string;
+      type: string;
+      context: Record<string, any>;
+    }[] = [];
 
     if (!selectedQuery) {
       actions.push({
@@ -87,8 +109,8 @@ const QueryBuilderFC = ({ refreshConfigs, className, ...props }) => {
     try {
       const result = await getAllSavedQueries();
       setQueryList(result?.data || []);
-      setSelectedQuery(null);
-    } catch (ex) {
+      setSelectedQuery(undefined);
+    } catch (ex: any) {
       toastError(ex);
     }
     setLoading(false);
@@ -101,13 +123,17 @@ const QueryBuilderFC = ({ refreshConfigs, className, ...props }) => {
     }
   }, []);
 
-  const handleSearch = (query) => {
+  const handleSearch = (query: string) => {
     setParams({
       query
     });
   };
 
-  const handleQueryBuilderAction = (option) => {
+  const handleQueryBuilderAction = (option: {
+    id: string;
+    type: string;
+    context: Record<string, any>;
+  }) => {
     if (option.type === "action_save") {
       handleSaveQuery();
     } else if (option.type === "action_saved_query") {
@@ -119,7 +145,7 @@ const QueryBuilderFC = ({ refreshConfigs, className, ...props }) => {
     } else if (option.type === "action_update") {
       updateQuery();
     } else if (option.type === "action_delete") {
-      handleQueryDelete(selectedQuery.id);
+      handleQueryDelete(selectedQuery?.id);
     }
   };
 
@@ -132,7 +158,7 @@ const QueryBuilderFC = ({ refreshConfigs, className, ...props }) => {
     setModalIsOpen(true);
   };
 
-  const handleRunQuery = async (queryToRun) => {
+  const handleRunQuery = async (queryToRun: string) => {
     if (!queryToRun) {
       toastError("Please provide a query before running");
       return;
@@ -141,7 +167,7 @@ const QueryBuilderFC = ({ refreshConfigs, className, ...props }) => {
     try {
       const result = await getConfigsByQuery(queryToRun);
       refreshConfigs(result);
-    } catch (ex) {
+    } catch (ex: any) {
       toastError(ex.message);
     }
   };
@@ -156,7 +182,7 @@ const QueryBuilderFC = ({ refreshConfigs, className, ...props }) => {
       await createSavedQuery(query, { description: savedQueryValue });
       toastSuccess(`${savedQueryValue || query} saved successfully`);
       await fetchQueries();
-    } catch (ex) {
+    } catch (ex: any) {
       toastError(ex);
     }
     setModalIsOpen(false);
@@ -170,19 +196,19 @@ const QueryBuilderFC = ({ refreshConfigs, className, ...props }) => {
     }
     setLoading(true);
     try {
-      await updateSavedQuery(selectedQuery.id, { query });
+      await updateSavedQuery(selectedQuery!.id, { query });
       toastSuccess(
-        `${selectedQuery.description || query} updated successfully`
+        `${selectedQuery?.description || query} updated successfully`
       );
       await fetchQueries();
-    } catch (ex) {
+    } catch (ex: any) {
       toastError(ex);
     }
     setModalIsOpen(false);
     setLoading(false);
   };
 
-  const handleQueryDelete = async (queryId) => {
+  const handleQueryDelete = async (queryId: string) => {
     const query = queryList.find((o) => o.id === queryId);
     const queryName = query?.description || query?.query;
     setLoading(true);
@@ -191,9 +217,9 @@ const QueryBuilderFC = ({ refreshConfigs, className, ...props }) => {
       if (!res?.error) {
         toastSuccess(`${queryName} deleted successfully`);
         await fetchQueries();
-        setSelectedQuery();
+        setSelectedQuery(undefined);
       }
-    } catch (ex) {
+    } catch (ex: any) {
       toastError(ex);
     }
     setLoading(false);
@@ -203,9 +229,12 @@ const QueryBuilderFC = ({ refreshConfigs, className, ...props }) => {
     setModalIsOpen(false);
   }, []);
 
-  const onSavedQueryValueChange = useCallback((e) => {
-    setSavedQueryValue(e.target.value);
-  }, []);
+  const onSavedQueryValueChange = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      setSavedQueryValue(e.target.value);
+    },
+    []
+  );
 
   return (
     <div className={clsx("flex flex-col", className)} {...props}>
@@ -218,8 +247,8 @@ const QueryBuilderFC = ({ refreshConfigs, className, ...props }) => {
           placeholder="Search configs by using custom queries written here"
           onSubmit={(e) => handleRunQuery(query)}
           style={{ width: "750px" }}
-          onClear={(e) => {
-            setSelectedQuery();
+          onClear={() => {
+            setSelectedQuery(undefined);
             setParams({});
           }}
           onKeyDown={(e) => {
@@ -263,17 +292,33 @@ const QueryBuilderFC = ({ refreshConfigs, className, ...props }) => {
   );
 };
 
-function QueryBuilderActionMenu({ onOptionClick, optionCategories }) {
+type QueryBuilderActionMenuProps = {
+  onOptionClick: (option: any) => void;
+  optionCategories: {
+    actions: {
+      id: string;
+      label?: string;
+    }[];
+    savedQueryLoadActions: {
+      id: string;
+      label?: string;
+    }[];
+  };
+};
+
+function QueryBuilderActionMenu({
+  onOptionClick,
+  optionCategories
+}: QueryBuilderActionMenuProps) {
   return (
-    <Menu
-      as="div"
-      className="flex relative inline-block text-left items-center"
-    >
+    <Menu as="div" className="relative inline-block text-left items-center">
+      {/* @ts-expect-error */}
       <Menu.Button className="inline-flex justify-center w-full pl-3 bg-warm-gray-50 text-sm font-medium text-gray-700">
         <ClickableSvg>
           <FaCog className="content-center w-6 h-6" />
         </ClickableSvg>
       </Menu.Button>
+      {/* @ts-expect-error */}
       <Transition
         as={Fragment}
         enter="transition ease-out duration-100"
@@ -283,6 +328,7 @@ function QueryBuilderActionMenu({ onOptionClick, optionCategories }) {
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
+        {/* @ts-expect-error */}
         <Menu.Items className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
           <TextWithDivider
             className="text-gray-500 text-md font-semibold"
@@ -290,6 +336,7 @@ function QueryBuilderActionMenu({ onOptionClick, optionCategories }) {
           />
           {optionCategories.actions.map((option) => {
             return (
+              // @ts-expect-error
               <Menu.Item key={option.id}>
                 {({ active }) => (
                   <div
