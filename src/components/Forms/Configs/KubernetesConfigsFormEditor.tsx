@@ -3,6 +3,7 @@ import FormikCheckbox from "../Formik/FormikCheckbox";
 import FormikEnvVarConfigsFields from "../Formik/FormikConfigEnvVarFields";
 import FormikConfigFormFieldsArray from "../Formik/FormikConfigFormFieldsArray";
 import FormikCheckboxFieldsGroup from "../Formik/FormikCheckboxFieldsGroup";
+import FormikScheduleField from "../Formik/FormikScheduleField";
 
 type KubernetesConfigsFormEditorProps = {
   fieldName: string;
@@ -27,6 +28,10 @@ export default function KubernetesConfigsFormEditor({
     <>
       <FormikTextInput name={`${fieldName}.clusterName`} label="Cluster Name" />
       <FormikTextInput name={`${fieldName}.namespace`} label="Namespace" />
+
+      {/* this a top level schema field, not nested under http */}
+      <FormikScheduleField name={`${name}.schedule`} />
+
       <FormikCheckbox name={`${fieldName}.useCache`} label="Use Cache" />
       <FormikCheckbox
         name={`${fieldName}.allowIncomplete`}

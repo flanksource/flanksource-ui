@@ -3,6 +3,7 @@ import FormikCheckbox from "../Formik/FormikCheckbox";
 import FormikEnvVarConfigsFields from "../Formik/FormikConfigEnvVarFields";
 import FormikConfigFormFieldsArray from "../Formik/FormikConfigFormFieldsArray";
 import FormikCheckboxFieldsGroup from "../Formik/FormikCheckboxFieldsGroup";
+import FormikScheduleField from "../Formik/FormikScheduleField";
 
 type AWSConfigsFormEditorProps = {
   fieldName: string;
@@ -25,6 +26,8 @@ export default function AWSConfigsFormEditor({
 
   return (
     <>
+      {/* this a top level schema field, not nested under http */}
+      <FormikScheduleField name={`${name}.schedule`} />
       <div className="flex flex-col space-y-2">
         <label className="font-semibold text-sm">AWS Connection</label>
         <FormikCheckboxFieldsGroup
