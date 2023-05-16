@@ -52,7 +52,7 @@ export const CanaryChecker = axios.create({
 });
 
 export const Config = axios.create({
-  baseURL: `${API_BASE}/api/config`,
+  baseURL: `${API_BASE}/config`,
   headers: {
     Accept: "application/json",
     Prefer: "return=representation",
