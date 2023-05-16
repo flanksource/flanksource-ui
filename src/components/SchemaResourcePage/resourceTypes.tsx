@@ -3,9 +3,10 @@ import { HealthIcon } from "../Icons/HealthIcon";
 import { AlarmIcon } from "../Icons/AlarmIcon";
 import { SearchInListIcon } from "../Icons/SearchInListIcon";
 import { TopologyIcon } from "../Icons/TopologyIcon";
-import { resources } from "../../services/permissions/resources";
+import { features } from "../../services/permissions/features";
 import { IconType } from "react-icons";
 import React from "react";
+import { tables } from "../../context/UserAccessContext/permissions";
 
 export type SchemaResourceType = {
   name:
@@ -26,6 +27,7 @@ export type SchemaResourceType = {
     | "connections"
     | "logging_backends";
   api: "incident-commander" | "canary-checker" | "config-db";
+  featureName: string;
   resourceName: string;
   icon: React.ComponentType<any> | IconType;
   subNav: {
@@ -51,7 +53,8 @@ export const schemaResourceTypes: SchemaResourceType[] = [
     table: "teams",
     api: "incident-commander",
     icon: UserGroupIcon,
-    resourceName: resources["settings.teams"],
+    featureName: features["settings.teams"],
+    resourceName: tables.database,
     subNav: [
       {
         label: "Spec",
@@ -87,7 +90,8 @@ export const schemaResourceTypes: SchemaResourceType[] = [
     table: "incident_rules",
     api: "incident-commander",
     icon: AlarmIcon,
-    resourceName: resources["settings.rules"],
+    featureName: features["settings.rules"],
+    resourceName: tables.database,
     subNav: [
       {
         label: "Spec",
@@ -115,7 +119,8 @@ export const schemaResourceTypes: SchemaResourceType[] = [
     table: "config_scrapers",
     api: "config-db",
     icon: SearchInListIcon,
-    resourceName: resources["settings.config_scraper"],
+    featureName: features["settings.config_scraper"],
+    resourceName: tables.config_scrapers,
     subNav: [
       {
         label: "Spec",
@@ -143,7 +148,8 @@ export const schemaResourceTypes: SchemaResourceType[] = [
     table: "topologies",
     api: "canary-checker",
     icon: TopologyIcon,
-    resourceName: resources["settings.topology"],
+    featureName: features["settings.topology"],
+    resourceName: tables.database,
     subNav: [
       {
         label: "Spec",
@@ -179,7 +185,8 @@ export const schemaResourceTypes: SchemaResourceType[] = [
     table: "canaries",
     api: "canary-checker",
     icon: HealthIcon,
-    resourceName: resources["settings.health"],
+    featureName: features["settings.health"],
+    resourceName: tables.canaries,
     subNav: [
       {
         label: "Spec",

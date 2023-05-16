@@ -1,19 +1,39 @@
-import { useUserAccessStateContext } from "../../context/UserAccessContext";
+import { ReactElement, useEffect, useState } from "react";
+import {
+  ActionType,
+  useUserAccessStateContext
+} from "../../context/UserAccessContext/UserAccessContext";
 
-type AccessCheckProps = React.HTMLProps<HTMLDivElement> & {
+type AccessCheckProps = {
   resource: string;
+  action: ActionType;
+  children: ReactElement;
 };
 
-export function AccessCheck({
-  resource,
-  className,
-  children,
-  ...props
-}: AccessCheckProps) {
+export function AccessCheck({ resource, action, children }: AccessCheckProps) {
   const { hasResourceAccess } = useUserAccessStateContext();
-  return (
-    <div className={className} {...props}>
-      {hasResourceAccess(resource) && children}
-    </div>
-  );
+  const [render, setRender] = useState(false);
+
+  useEffect(() => {
+    (async function () {
+      const shouldRender = await hasResourceAccess(resource, action);
+      setRender(shouldRender);
+    })();
+  }, [action, resource]);
+
+  if (render) return children ?? null;
+
+  return null;
 }
+
+export const withAccessCheck = (
+  component: ReactElement,
+  resource: string,
+  action: ActionType
+) => {
+  return (
+    <AccessCheck resource={resource} action={action}>
+      {component}
+    </AccessCheck>
+  );
+};
