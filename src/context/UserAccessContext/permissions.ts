@@ -32,7 +32,11 @@ export const permDefs = {
     write: [tables.comments, tables.incident]
   },
   viewer: {
-    read: [...Object.values(tables)],
+    read: [
+      ...Object.values(tables).filter(
+        (v) => ![tables.rbac, tables.identities].includes(v)
+      )
+    ],
     write: []
   }
 };

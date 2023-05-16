@@ -234,13 +234,17 @@ function SideNav({
             : null
         )}
       </div>
-      <div>
-        <SideNavGroup
-          {...settings}
-          collapseSidebar={collapseSidebar}
-          checkPath={checkPath}
-        />
-      </div>
+      {withAccessCheck(
+        <div>
+          <SideNavGroup
+            {...settings}
+            collapseSidebar={collapseSidebar}
+            checkPath={checkPath}
+          />
+        </div>,
+        settings.submenu.map((item) => item.resourceName),
+        "read"
+      )}
     </nav>
   );
 }

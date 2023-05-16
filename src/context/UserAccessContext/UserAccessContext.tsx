@@ -25,8 +25,13 @@ export const casbinAuthorizer = new Authorizer("manual");
 export type UserAccessState = {
   refresh: () => Promise<void>;
   isAdmin: boolean;
+  roles: string[];
   hasResourceAccess: (
     resourceName: string,
+    action: ActionType
+  ) => Promise<boolean>;
+  hasAnyResourceAccess: (
+    resourceNames: string[],
     action: ActionType
   ) => Promise<boolean>;
 };
@@ -34,7 +39,9 @@ export type UserAccessState = {
 const initialState: UserAccessState = {
   refresh: () => Promise.resolve(),
   isAdmin: false,
-  hasResourceAccess: (resourceName, action) => Promise.resolve(false)
+  roles: [],
+  hasResourceAccess: (resourceName, action) => Promise.resolve(false),
+  hasAnyResourceAccess: (resourceNames, action) => Promise.resolve(false)
 };
 
 const UserAccessStateContext = createContext(initialState);
@@ -66,6 +73,14 @@ export const UserAccessStateContextProvider = ({
     return casbinAuthorizer.can(action, resourceName);
   };
 
+  const hasAnyResourceAccess = (
+    resourceNames: string[],
+    action: ActionType
+  ) => {
+    defineRulesFor(roles);
+    return casbinAuthorizer.canAny(action, resourceNames);
+  };
+
   const fetchUserRoleInfo = async (userId: string) => {
     const { data = [] } = await fetchPeopleRoles([userId]);
     const roles = data!.find((item) => item.id === userId)?.roles || [];
@@ -84,7 +99,9 @@ export const UserAccessStateContextProvider = ({
       value={{
         refresh: () => fetchUserRoleInfo(user!.id),
         hasResourceAccess,
-        isAdmin
+        hasAnyResourceAccess,
+        isAdmin,
+        roles
       }}
     >
       {children}
