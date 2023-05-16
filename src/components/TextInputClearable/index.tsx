@@ -1,11 +1,12 @@
 import { SearchIcon } from "@heroicons/react/solid";
 import clsx from "clsx";
+import { ChangeEventHandler } from "react";
 import { IoCloseCircle } from "react-icons/io5";
 
 type Props = {
   className?: string;
   defaultValue?: string;
-  onChange?: (value?: string) => void;
+  onChange?: ChangeEventHandler<HTMLInputElement>;
   onSubmit?: (value?: string) => void;
   inputClassName?: string;
   inputOuterClassName?: string;
