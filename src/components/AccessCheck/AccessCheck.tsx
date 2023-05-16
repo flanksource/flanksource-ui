@@ -5,21 +5,26 @@ import {
 } from "../../context/UserAccessContext/UserAccessContext";
 
 type AccessCheckProps = {
-  resource: string;
+  resource: string | string[];
   action: ActionType;
   children: ReactElement;
 };
 
 export function AccessCheck({ resource, action, children }: AccessCheckProps) {
-  const { hasResourceAccess } = useUserAccessStateContext();
+  const { hasAnyResourceAccess, roles } = useUserAccessStateContext();
   const [render, setRender] = useState(false);
 
+  async function checkAccess() {
+    const shouldRender = await hasAnyResourceAccess(
+      Array.isArray(resource) ? resource : [resource],
+      action
+    );
+    setRender(shouldRender);
+  }
+
   useEffect(() => {
-    (async function () {
-      const shouldRender = await hasResourceAccess(resource, action);
-      setRender(shouldRender);
-    })();
-  }, [action, resource]);
+    checkAccess();
+  }, [action, resource, roles]);
 
   if (render) return children ?? null;
 
@@ -28,7 +33,7 @@ export function AccessCheck({ resource, action, children }: AccessCheckProps) {
 
 export const withAccessCheck = (
   component: ReactElement,
-  resource: string,
+  resource: string | string[],
   action: ActionType
 ) => {
   return (
