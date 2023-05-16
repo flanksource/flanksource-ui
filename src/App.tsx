@@ -60,14 +60,17 @@ import { LogBackendsPage } from "./pages/LogBackendsPage";
 import { UsersPage } from "./pages/UsersPage";
 import { ConfigInsightsPage } from "./pages/config/ConfigInsightsList";
 import { HealthPage } from "./pages/health";
-import { resources } from "./services/permissions/resources";
 import { stringSortHelper } from "./utils/common";
-import { UserAccessStateContextProvider } from "./context/UserAccessContext";
+import { UserAccessStateContextProvider } from "./context/UserAccessContext/UserAccessContext";
+import { features } from "./services/permissions/features";
+import { withAccessCheck } from "./components/AccessCheck/AccessCheck";
+import { tables } from "./context/UserAccessContext/permissions";
 
 export type NavigationItems = {
   name: string;
   icon: React.ComponentType<any> | IconType;
   href: string;
+  featureName: string;
   resourceName: string;
 }[];
 
@@ -76,27 +79,37 @@ const navigation: NavigationItems = [
     name: "Dashboard",
     href: "/topology",
     icon: TopologyIcon,
-    resourceName: resources.topology
+    featureName: features.topology,
+    resourceName: tables.database
   },
   {
     name: "Health",
     href: "/health",
     icon: AiFillHeart,
-    resourceName: resources.health
+    featureName: features.health,
+    resourceName: tables.canaries
   },
   {
     name: "Incidents",
     href: "/incidents",
     icon: ImLifebuoy,
-    resourceName: resources.incidents
+    featureName: features.incidents,
+    resourceName: tables.incident
   },
   {
     name: "Config",
     href: "/configs",
     icon: VscJson,
-    resourceName: resources.config
+    featureName: features.config,
+    resourceName: tables.database
   },
-  { name: "Logs", href: "/logs", icon: LogsIcon, resourceName: resources.logs }
+  {
+    name: "Logs",
+    href: "/logs",
+    icon: LogsIcon,
+    featureName: features.logs,
+    resourceName: tables.database
+  }
 ];
 
 export type SettingsNavigationItems = {
@@ -108,7 +121,8 @@ export type SettingsNavigationItems = {
     | {
         name: string;
         href: string;
-        icon: React.ComponentType<{ className: string }>;
+        icon: IconType;
+        featureName: string;
         resourceName: string;
       }
   )[];
@@ -123,13 +137,15 @@ const settingsNav: SettingsNavigationItems = {
       name: "Connections",
       href: "/settings/connections",
       icon: BsLink,
-      resourceName: resources["settings.connections"]
+      featureName: features["settings.connections"],
+      resourceName: tables.connections
     },
     {
       name: "Users",
       href: "/settings/users",
       icon: HiUser,
-      resourceName: resources["settings.users"]
+      featureName: features["settings.users"],
+      resourceName: tables.identities
     },
     ...schemaResourceTypes.map((x) => ({
       ...x,
@@ -139,19 +155,22 @@ const settingsNav: SettingsNavigationItems = {
       name: "Jobs History",
       href: "/settings/jobs",
       icon: FaTasks,
-      resourceName: resources["settings.job_history"]
+      featureName: features["settings.job_history"],
+      resourceName: tables.database
     },
     {
       name: "Feature Flags",
       href: "/settings/feature-flags",
       icon: BsToggles,
-      resourceName: resources["settings.feature_flags"]
+      featureName: features["settings.feature_flags"],
+      resouceName: tables.database,
     },
     {
       name: "Log Backends",
       href: "/settings/log-backends",
       icon: LogsIcon,
-      resourceName: resources["settings.logging_backends"]
+      featureName: features["settings.feature_flags"],
+      resourceName: tables.database
     }
   ].sort((v1, v2) => stringSortHelper(v1.name, v2.name))
 };
@@ -178,8 +197,14 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
       <Route path="" element={<Navigate to="/topology" />} />
 
       <Route path="topology" element={sidebar}>
-        <Route path=":id" element={<TopologyPage />} />
-        <Route index element={<TopologyPage />} />
+        <Route
+          path=":id"
+          element={withAccessCheck(<TopologyPage />, tables.database, "read")}
+        />
+        <Route
+          index
+          element={withAccessCheck(<TopologyPage />, tables.database, "read")}
+        />
       </Route>
 
       <Route path="incidents" element={sidebar}>
@@ -187,7 +212,11 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           path=":id"
           element={
             <ErrorBoundary>
-              <IncidentDetailsPage />
+              {withAccessCheck(
+                <IncidentDetailsPage />,
+                tables.incident,
+                "read"
+              )}
             </ErrorBoundary>
           }
         />
@@ -195,15 +224,53 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
       </Route>
 
       <Route path="health" element={sidebar}>
-        <Route index element={<HealthPage url={CANARY_API} />} />
+        <Route
+          index
+          element={withAccessCheck(
+            <HealthPage url={CANARY_API} />,
+            tables.canaries,
+            "read"
+          )}
+        />
       </Route>
 
       <Route path="settings" element={sidebar}>
-        <Route path="connections" element={<ConnectionsPage />} />
-        <Route path="log-backends" element={<LogBackendsPage />} />
-        <Route path="users" element={<UsersPage />} />
-        <Route path="jobs" element={<JobsHistorySettingsPage />} />
-        <Route path="feature-flags" element={<FeatureFlagsPage />} />
+        <Route
+          path="connections"
+          element={withAccessCheck(
+            <ConnectionsPage />,
+            tables.connections,
+            "read"
+          )}
+        />
+        <Route
+          path="users"
+          element={withAccessCheck(<UsersPage />, tables.identities, "read")}
+        />
+        <Route
+          path="jobs"
+          element={withAccessCheck(
+            <JobsHistorySettingsPage />,
+            tables.database,
+            "read"
+          )}
+        />
+        <Route
+          path="feature-flags"
+          element={withAccessCheck(
+            <FeatureFlagsPage />,
+            tables.database,
+            "read"
+          )}
+        />
+        <Route
+          path="log-backends"
+          element={withAccessCheck(
+            <LogBackendsPage />,
+            tables.database,
+            "read"
+          )}
+        />
         {settingsNav.submenu
           .filter((v) => (v as SchemaResourceType).table)
           .map((x) => {
@@ -212,18 +279,26 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
                 <Route
                   index
                   key={`${x.name}-list`}
-                  element={
+                  element={withAccessCheck(
                     <SchemaResourcePage
                       resourceInfo={x as SchemaResourceType & { href: string }}
-                    />
-                  }
+                    />,
+                    tables[
+                      (x as SchemaResourceType).table as keyof typeof tables
+                    ] ?? tables.database,
+                    "read"
+                  )}
                 />
                 <Route
                   key={`${x.name}-detail`}
                   path={`:id`}
-                  element={
-                    <SchemaResource resourceInfo={x as SchemaResourceType} />
-                  }
+                  element={withAccessCheck(
+                    <SchemaResource resourceInfo={x as SchemaResourceType} />,
+                    tables[
+                      (x as SchemaResourceType).table as keyof typeof tables
+                    ] ?? tables.database,
+                    "read"
+                  )}
                 />
               </Route>
             );
@@ -235,27 +310,54 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           index
           element={
             <ErrorBoundary>
-              <LogsPage />
+              {withAccessCheck(<LogsPage />, tables.database, "read")}
             </ErrorBoundary>
           }
         />
       </Route>
 
       <Route path="configs" element={sidebar}>
-        <Route index element={<ConfigListPage />} />
-        <Route path="changes" element={<ConfigChangesPage />} />
-        <Route path="insights" element={<ConfigInsightsPage />} />
-
+        <Route
+          index
+          element={withAccessCheck(<ConfigListPage />, tables.database, "read")}
+        />
+        <Route
+          path="changes"
+          element={withAccessCheck(
+            <ConfigChangesPage />,
+            tables.database,
+            "read"
+          )}
+        />
+        <Route
+          path="insights"
+          element={withAccessCheck(
+            <ConfigInsightsPage />,
+            tables.database,
+            "read"
+          )}
+        />
         <Route path=":id">
           <Route
             index
             element={
               <ErrorBoundary>
-                <ConfigDetailsPage />
+                {withAccessCheck(
+                  <ConfigDetailsPage />,
+                  tables.database,
+                  "read"
+                )}
               </ErrorBoundary>
             }
           />
-          <Route path="changes" element={<ConfigDetailsChangesPage />} />
+          <Route
+            path="changes"
+            element={withAccessCheck(
+              <ConfigDetailsChangesPage />,
+              tables.database,
+              "read"
+            )}
+          />
         </Route>
       </Route>
     </Routes>
@@ -305,8 +407,11 @@ function SidebarWrapper() {
     "teams",
     "incident_rules",
     "config_scrapers",
-    "templates",
-    "canaries"
+    "topologies",
+    "canaries",
+    "connections",
+    "feature-flags",
+    "jobs"
   ];
   const checkPath = pathTrack.includes(path);
 

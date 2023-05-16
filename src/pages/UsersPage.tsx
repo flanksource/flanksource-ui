@@ -23,8 +23,8 @@ import {
   ManageUserRoleValue,
   ManageUserRoles
 } from "../components/ManageUserRoles/ManageUserRoles";
-import { resources } from "../services/permissions/resources";
 import { AccessCheck } from "../components/AccessCheck/AccessCheck";
+import { tables } from "../context/UserAccessContext/permissions";
 
 export function UsersPage() {
   const [users, setUsers] = useState<RegisteredUser[]>([]);
@@ -104,7 +104,7 @@ export function UsersPage() {
         <div className="flex flex-col flex-1 p-6 pb-0 h-full max-w-screen-xl mx-auto">
           <div className="flex justify-end">
             <div className="flex flex-row space-x-4">
-              <AccessCheck resource={resources["users.add.role"]}>
+              <AccessCheck resource={tables.rbac} action="write">
                 <button
                   className="btn-primary"
                   onClick={(e) => setOpenRoleManageModal(true)}
@@ -113,7 +113,7 @@ export function UsersPage() {
                   Add Role to User
                 </button>
               </AccessCheck>
-              <AccessCheck resource={resources["users.invite"]}>
+              <AccessCheck resource={tables.identities} action="write">
                 <button
                   className="btn-primary"
                   onClick={(e) => setIsOpen(true)}

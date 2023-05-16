@@ -36,8 +36,8 @@ export const FeatureFlagsContextProvider = ({
     setFeatureFlagsLoaded(true);
   };
 
-  const isFeatureDisabled = (resourceName: string) => {
-    return permissionService.isFeatureDisabled(resourceName, featureFlags);
+  const isFeatureDisabled = (featureName: string) => {
+    return permissionService.isFeatureDisabled(featureName, featureFlags);
   };
 
   useEffect(() => {

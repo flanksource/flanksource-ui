@@ -5,9 +5,12 @@ import React, {
   useMemo,
   useState
 } from "react";
-import { useUser } from ".";
-import { fetchPeopleRoles } from "../api/services/users";
-import { resources } from "../services/permissions/resources";
+import { Authorizer } from "casbin.js";
+import { useUser } from "..";
+import { fetchPeopleRoles } from "../../api/services/users";
+import { permDefs } from "./permissions";
+
+export type ActionType = "write" | "read";
 
 export const Roles = {
   admin: "admin",
@@ -17,16 +20,21 @@ export const Roles = {
   responder: "responder"
 };
 
+export const casbinAuthorizer = new Authorizer("manual");
+
 export type UserAccessState = {
   refresh: () => Promise<void>;
   isAdmin: boolean;
-  hasResourceAccess: (_: string) => boolean;
+  hasResourceAccess: (
+    resourceName: string,
+    action: ActionType
+  ) => Promise<boolean>;
 };
 
 const initialState: UserAccessState = {
   refresh: () => Promise.resolve(),
   isAdmin: false,
-  hasResourceAccess: (_) => false
+  hasResourceAccess: (resourceName, action) => Promise.resolve(false)
 };
 
 const UserAccessStateContext = createContext(initialState);
@@ -42,19 +50,26 @@ export const UserAccessStateContextProvider = ({
     return roles.includes("admin");
   }, [roles]);
 
-  const hasResourceAccess = (resourceName: string) => {
-    if (
-      resources["users.add.role"] === resourceName &&
-      resources["users.invite"] === resourceName
-    ) {
-      return isAdmin;
-    }
-    return true;
+  const defineRulesFor = (roles: string[]) => {
+    const builtPerms: Record<string, any> = {};
+    roles.forEach((role) => {
+      const permissions = permDefs[role as keyof typeof permDefs] ?? {};
+      Object.entries(permissions).forEach(([key, value]) => {
+        builtPerms[key] = [...(builtPerms[key] || []), ...value];
+      });
+    });
+    casbinAuthorizer.setPermission(builtPerms);
+  };
+
+  const hasResourceAccess = (resourceName: string, action: ActionType) => {
+    defineRulesFor(roles);
+    return casbinAuthorizer.can(action, resourceName);
   };
 
   const fetchUserRoleInfo = async (userId: string) => {
     const { data = [] } = await fetchPeopleRoles([userId]);
-    setRoles(data!.find((item) => item.id === userId)?.roles || []);
+    const roles = data!.find((item) => item.id === userId)?.roles || [];
+    setRoles(roles);
   };
 
   useEffect(() => {

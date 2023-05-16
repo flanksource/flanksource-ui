@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import React from "react";
 import { useForm } from "react-hook-form";
-import { Roles } from "../../context/UserAccessContext";
+import { Roles } from "../../context/UserAccessContext/UserAccessContext";
 
 export type InviteUserFormValue = {
   firstName: string;

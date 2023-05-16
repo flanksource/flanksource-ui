@@ -1,4 +1,4 @@
-export const resources = {
+export const features = {
   topology: "topology",
   health: "health",
   incidents: "incidents",
@@ -14,17 +14,15 @@ export const resources = {
   "settings.job_history": "settings.job_history",
   "settings.feature_flags": "settings.feature_flags",
   "settings.logging_backends": "settings.logging_backends",
-  "users.add.role": "users.add.role",
-  "users.invite": "users.invite"
 };
 
-export const resourceToParentMap = {
+export const featureToParentMap = {
   "settings.config_scraper": "config",
   "settings.topology": "topology",
   "settings.health": "health",
   "settings.job_history": "health"
 };
 
-export const resourceList = Object.keys(resources).map(
+export const featuresList = Object.keys(features).map(
   (item) => `${item}.disable`
 );
