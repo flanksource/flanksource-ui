@@ -7,7 +7,7 @@ export const tables = {
   evidences: "evidences",
   comments: "comments",
   canaries: "canaries",
-  system_templates: "system_templates",
+  topologies: "topologies",
   config_scrapers: "config_scrapers",
   identities: "identities",
   connections: "connections",
@@ -20,8 +20,8 @@ export const permDefs = {
     write: [...Object.values(tables)]
   },
   editor: {
-    read: [tables.canaries, tables.system_templates, tables.config_scrapers],
-    write: [tables.canaries, tables.system_templates, tables.config_scrapers]
+    read: [tables.canaries, tables.topologies, tables.config_scrapers],
+    write: [tables.canaries, tables.topologies, tables.config_scrapers]
   },
   commander: {
     read: [tables.responder, tables.incident, tables.evidences],
