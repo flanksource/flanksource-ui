@@ -149,7 +149,7 @@ export const schemaResourceTypes: SchemaResourceType[] = [
     api: "canary-checker",
     icon: TopologyIcon,
     featureName: features["settings.topology"],
-    resourceName: tables.database,
+    resourceName: tables.topologies,
     subNav: [
       {
         label: "Spec",
