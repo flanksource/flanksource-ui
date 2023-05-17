@@ -89,13 +89,8 @@ export function SchemaResourceEdit({
     if (!resourceType) {
       return [];
     }
-    return resourceType.subNav.filter((nav) => {
-      if (id) {
-        return nav.label === "Spec";
-      }
-      return true;
-    });
-  }, [resourceName, id]);
+    return resourceType.subNav;
+  }, [resourceName]);
 
   const table = useMemo(() => {
     const resourceType = schemaResourceTypes.find(
@@ -189,9 +184,12 @@ export function SchemaResourceEdit({
     setActiveTab(tab);
   };
 
-  const hasSubNav = (nav: string) => {
-    return !!subNav.find((item) => item.value === nav) && activeTab === nav;
-  };
+  const hasSubNav = useCallback(
+    (nav: string) => {
+      return !!subNav.find((item) => item.value === nav) && activeTab === nav;
+    },
+    [subNav, activeTab]
+  );
 
   const specValueToString = useCallback((spec: unknown) => {
     if (typeof spec === "string") {
