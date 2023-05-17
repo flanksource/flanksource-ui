@@ -119,19 +119,12 @@ export function SchemaResourceEdit({
       defaultValues[formField.name] || formField.default;
   });
 
-  const {
-    control,
-    register,
-    handleSubmit,
-    setValue,
-    getValues,
-    resetField,
-    watch
-  } = useForm<FormFields>({
-    defaultValues: {
-      ...defaultValues
-    }
-  });
+  const { control, register, handleSubmit, setValue, getValues, watch } =
+    useForm<FormFields>({
+      defaultValues: {
+        ...defaultValues
+      }
+    });
 
   const values = getValues();
 
@@ -149,14 +142,6 @@ export function SchemaResourceEdit({
       watch(formField.name);
     });
   }, [register, formFields, watch]);
-
-  const doCancel = () => {
-    onCancel && onCancel();
-    formFields.forEach((formField) => {
-      resetField(formField.name);
-    });
-    keyRef.current = v4();
-  };
 
   const doSubmit = (props: any) => {
     onSubmit(props);
