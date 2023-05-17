@@ -80,7 +80,7 @@ export default function SpecEditorForm({
       validateOnBlur
       validateOnChange
     >
-      {({ handleSubmit, handleReset, values, setFieldValue }) => (
+      {({ handleSubmit, handleReset }) => (
         <Form
           onSubmit={handleSubmit}
           onReset={handleReset}
