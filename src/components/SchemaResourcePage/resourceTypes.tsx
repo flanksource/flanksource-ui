@@ -15,14 +15,16 @@ export type SchemaResourceType = {
     | "Health Check"
     | "Search"
     | "Topology"
-    | "Connections";
+    | "Connections"
+    | "Log Backends";
   table:
     | "teams"
     | "incident_rules"
     | "config_scrapers"
     | "canaries"
     | "topologies"
-    | "connections";
+    | "connections"
+    | "logging_backends";
   api: "incident-commander" | "canary-checker" | "config-db";
   resourceName: string;
   icon: React.ComponentType<any> | IconType;

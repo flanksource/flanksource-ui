@@ -1,7 +1,14 @@
 import { AdjustmentsIcon } from "@heroicons/react/solid";
+import { useQuery } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { AxiosError } from "axios";
+import { Provider } from "jotai";
 import React, { ReactNode, useEffect, useState } from "react";
+import { IconType } from "react-icons";
 import { AiFillHeart } from "react-icons/ai";
+import { BsLink, BsToggles } from "react-icons/bs";
+import { FaTasks } from "react-icons/fa";
+import { HiUser } from "react-icons/hi";
 import { ImLifebuoy } from "react-icons/im";
 import { VscJson } from "react-icons/vsc";
 import {
@@ -12,20 +19,31 @@ import {
   useLocation
 } from "react-router-dom";
 import ReactTooltip from "react-tooltip";
-
 import { getUser } from "./api/auth";
+import { User } from "./api/services/users";
 import { Canary } from "./components";
 import { ErrorBoundary } from "./components/ErrorBoundary";
+import ErrorPage from "./components/Errors/ErrorPage";
 import { LogsIcon } from "./components/Icons/LogsIcon";
 import { TopologyIcon } from "./components/Icons/TopologyIcon";
+import JobsHistorySettingsPage from "./components/JobsHistory/JobsHistorySettingsPage";
 import { SidebarLayout } from "./components/Layout";
 import { SchemaResourcePage } from "./components/SchemaResourcePage";
+import { SchemaResource } from "./components/SchemaResourcePage/SchemaResource";
 import {
   SchemaResourceType,
   schemaResourceTypes
 } from "./components/SchemaResourcePage/resourceTypes";
-import { SchemaResource } from "./components/SchemaResourcePage/SchemaResource";
+import FullPageSkeletonLoader from "./components/SkeletonLoader/FullPageSkeletonLoader";
 import { AuthContext } from "./context";
+import { ConfigPageContextProvider } from "./context/ConfigPageContext";
+import {
+  FeatureFlagsContextProvider,
+  useFeatureFlagsContext
+} from "./context/FeatureFlagsContext";
+import { HealthPageContextProvider } from "./context/HealthPageContext";
+import { IncidentPageContextProvider } from "./context/IncidentPageContext";
+import { TopologyPageContextProvider } from "./context/TopologyPageContext";
 import {
   ConfigChangesPage,
   ConfigDetailsChangesPage,
@@ -36,33 +54,14 @@ import {
   LogsPage,
   TopologyPage
 } from "./pages";
-import { HealthPage } from "./pages/health";
-import { TopologyPageContextProvider } from "./context/TopologyPageContext";
-import { HealthPageContextProvider } from "./context/HealthPageContext";
-import { ConfigPageContextProvider } from "./context/ConfigPageContext";
-import { IncidentPageContextProvider } from "./context/IncidentPageContext";
-import { User } from "./api/services/users";
-import FullPageSkeletonLoader from "./components/SkeletonLoader/FullPageSkeletonLoader";
-import { UsersPage } from "./pages/UsersPage";
-import { HiUser } from "react-icons/hi";
-import { FaTasks } from "react-icons/fa";
-import JobsHistorySettingsPage from "./components/JobsHistory/JobsHistorySettingsPage";
-import { ConfigInsightsPage } from "./pages/config/ConfigInsightsList";
-import ErrorPage from "./components/Errors/ErrorPage";
-import { useQuery } from "@tanstack/react-query";
-import { AxiosError } from "axios";
-import { Provider } from "jotai";
-import { resources } from "./services/permissions/resources";
-import { BsToggles } from "react-icons/bs";
-import { FeatureFlagsPage } from "./pages/FeatureFlagsPage";
-import {
-  FeatureFlagsContextProvider,
-  useFeatureFlagsContext
-} from "./context/FeatureFlagsContext";
 import { ConnectionsPage } from "./pages/ConnectionsPage";
-import { BsLink } from "react-icons/bs";
+import { FeatureFlagsPage } from "./pages/FeatureFlagsPage";
+import { LogBackendsPage } from "./pages/LogBackendsPage";
+import { UsersPage } from "./pages/UsersPage";
+import { ConfigInsightsPage } from "./pages/config/ConfigInsightsList";
+import { HealthPage } from "./pages/health";
+import { resources } from "./services/permissions/resources";
 import { stringSortHelper } from "./utils/common";
-import { IconType } from "react-icons";
 
 export type NavigationItems = {
   name: string;
@@ -108,7 +107,7 @@ export type SettingsNavigationItems = {
     | {
         name: string;
         href: string;
-        icon: IconType;
+        icon: React.ComponentType<{ className: string }>;
         resourceName: string;
       }
   )[];
@@ -146,6 +145,12 @@ const settingsNav: SettingsNavigationItems = {
       href: "/settings/feature-flags",
       icon: BsToggles,
       resourceName: resources["settings.feature_flags"]
+    },
+    {
+      name: "Log Backends",
+      href: "/settings/log-backends",
+      icon: LogsIcon,
+      resourceName: resources["settings.logging_backends"]
     }
   ].sort((v1, v2) => stringSortHelper(v1.name, v2.name))
 };
@@ -194,6 +199,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
 
       <Route path="settings" element={sidebar}>
         <Route path="connections" element={<ConnectionsPage />} />
+        <Route path="log-backends" element={<LogBackendsPage />} />
         <Route path="users" element={<UsersPage />} />
         <Route path="jobs" element={<JobsHistorySettingsPage />} />
         <Route path="feature-flags" element={<FeatureFlagsPage />} />

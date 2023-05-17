@@ -7,25 +7,33 @@ import { useSettingsDeleteResource } from "../../../api/query-hooks/mutations/us
 
 type DeleteResourceProps = {
   resourceId: string;
-  resourceInfo: SchemaResourceType;
+  resourceInfo: Pick<SchemaResourceType, "table" | "name" | "api">;
+  isModal?: boolean;
+  onDeleted?: () => void;
 };
 
 export default function DeleteResource({
   resourceId,
-  resourceInfo: { table, name: schemaResourceName, api }
+  resourceInfo: { table, name: schemaResourceName, api },
+  isModal = false,
+  onDeleted = () => {}
 }: DeleteResourceProps) {
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
 
-  const { mutate: deleteResource, isLoading } = useSettingsDeleteResource({
-    table,
-    name: schemaResourceName,
-    api
-  });
+  const { mutate: deleteResource, isLoading } = useSettingsDeleteResource(
+    {
+      table,
+      name: schemaResourceName,
+      api
+    },
+    isModal
+  );
 
   const onDeleteResource = useCallback(() => {
     setIsConfirmDialogOpen(false);
     deleteResource(resourceId);
-  }, [deleteResource, resourceId]);
+    onDeleted();
+  }, [deleteResource, onDeleted, resourceId]);
 
   return (
     <>
@@ -45,6 +53,7 @@ export default function DeleteResource({
           onConfirm={onDeleteResource}
           isOpen={isConfirmDialogOpen}
           onClose={() => setIsConfirmDialogOpen(false)}
+          className="z-[9999]"
         />
       )}
     </>

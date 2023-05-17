@@ -12,7 +12,8 @@ export const resources = {
   "settings.topology": "settings.topology",
   "settings.health": "settings.health",
   "settings.job_history": "settings.job_history",
-  "settings.feature_flags": "settings.feature_flags"
+  "settings.feature_flags": "settings.feature_flags",
+  "settings.logging_backends": "settings.logging_backends"
 };
 
 export const resourceToParentMap = {
