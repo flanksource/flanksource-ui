@@ -65,6 +65,7 @@ import { UserAccessStateContextProvider } from "./context/UserAccessContext/User
 import { features } from "./services/permissions/features";
 import { withAccessCheck } from "./components/AccessCheck/AccessCheck";
 import { tables } from "./context/UserAccessContext/permissions";
+import { isAuthEnabled } from "./context/Environment";
 
 export type NavigationItems = {
   name: string;
@@ -425,14 +426,14 @@ function SidebarWrapper() {
 }
 
 export function App() {
-  const [user, setUser] = useState<User>();
+  const [user, setUser] = useState<User | null>(null);
 
   const { isLoading, error } = useQuery<User | null, AxiosError>(
-    ["getUser", process.env.NEXT_PUBLIC_WITHOUT_SESSION === "true"],
+    ["getUser", !isAuthEnabled()],
     () => getUser(),
     {
       onSuccess: (data) => {
-        setUser(data ?? undefined);
+        setUser(data ?? null);
       }
     }
   );
