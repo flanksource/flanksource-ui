@@ -89,13 +89,8 @@ export function SchemaResourceEdit({
     if (!resourceType) {
       return [];
     }
-    return resourceType.subNav.filter((nav) => {
-      if (id) {
-        return nav.label === "Spec";
-      }
-      return true;
-    });
-  }, [resourceName, id]);
+    return resourceType.subNav;
+  }, [resourceName]);
 
   const table = useMemo(() => {
     const resourceType = schemaResourceTypes.find(
@@ -124,19 +119,12 @@ export function SchemaResourceEdit({
       defaultValues[formField.name] || formField.default;
   });
 
-  const {
-    control,
-    register,
-    handleSubmit,
-    setValue,
-    getValues,
-    resetField,
-    watch
-  } = useForm<FormFields>({
-    defaultValues: {
-      ...defaultValues
-    }
-  });
+  const { control, register, handleSubmit, setValue, getValues, watch } =
+    useForm<FormFields>({
+      defaultValues: {
+        ...defaultValues
+      }
+    });
 
   const values = getValues();
 
@@ -154,14 +142,6 @@ export function SchemaResourceEdit({
       watch(formField.name);
     });
   }, [register, formFields, watch]);
-
-  const doCancel = () => {
-    onCancel && onCancel();
-    formFields.forEach((formField) => {
-      resetField(formField.name);
-    });
-    keyRef.current = v4();
-  };
 
   const doSubmit = (props: any) => {
     onSubmit(props);
@@ -189,9 +169,12 @@ export function SchemaResourceEdit({
     setActiveTab(tab);
   };
 
-  const hasSubNav = (nav: string) => {
-    return !!subNav.find((item) => item.value === nav) && activeTab === nav;
-  };
+  const hasSubNav = useCallback(
+    (nav: string) => {
+      return !!subNav.find((item) => item.value === nav) && activeTab === nav;
+    },
+    [subNav, activeTab]
+  );
 
   const specValueToString = useCallback((spec: unknown) => {
     if (typeof spec === "string") {
