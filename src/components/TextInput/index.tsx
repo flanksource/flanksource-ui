@@ -45,7 +45,7 @@ export function TextInput({
             onEnter(e);
           }
         }}
-        className={`h-full shadow-sm focus:ring-blue-500 focus:border-blue-500 py-2 sm:text-sm border-gray-300 rounded-md ${className}`}
+        className={`shadow-sm focus:ring-blue-500 focus:border-blue-500 py-2 sm:text-sm border-gray-300 rounded-md ${className}`}
         {...rest}
       />
     </>
