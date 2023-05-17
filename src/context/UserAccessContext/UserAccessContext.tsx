@@ -83,7 +83,10 @@ export const UserAccessStateContextProvider = ({
 
   const fetchUserRoleInfo = async (userId: string) => {
     const { data = [] } = await fetchPeopleRoles([userId]);
-    const roles = data!.find((item) => item.id === userId)?.roles || [];
+    let roles = data!.find((item) => item.id === userId)?.roles || [];
+    if (!roles.length) {
+      roles = [Roles.viewer];
+    }
     setRoles(roles);
   };
 
