@@ -39,6 +39,7 @@ interface IProps {
   selectionMode?: boolean;
   selected?: boolean;
   onSelectionChange?: MouseEventHandler<HTMLDivElement>;
+  isTopologyPage?: boolean;
 }
 
 export function TopologyCard({
@@ -47,7 +48,8 @@ export function TopologyCard({
   topologyId,
   selectionMode,
   selected,
-  onSelectionChange
+  onSelectionChange,
+  isTopologyPage = false
 }: IProps) {
   const [topology, setTopology] = useState(topologyData);
   const [searchParams] = useSearchParams();
@@ -178,7 +180,10 @@ export function TopologyCard({
               />
             </div>
           ) : (
-            <TopologyDropdownMenu topology={topology} />
+            <TopologyDropdownMenu
+              topology={topology}
+              isTopologyPage={isTopologyPage}
+            />
           )}
         </div>
       </div>
