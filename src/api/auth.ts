@@ -6,7 +6,7 @@ export const getUser = async () => {
 
   if (isAuthDisabled) {
     let people = (await getPersons()).data;
-    return people?.[0];
+    return people?.[0] ?? null;
   }
 
   const {
@@ -15,5 +15,5 @@ export const getUser = async () => {
     }
   } = await ory.toSession();
   const res = await getPerson(userId);
-  return res.data?.[0];
+  return res.data?.[0] ?? null;
 };

@@ -320,12 +320,12 @@ function SidebarWrapper() {
 export function App() {
   const [user, setUser] = useState<User>();
 
-  const { isLoading, error } = useQuery<User | undefined, AxiosError>(
+  const { isLoading, error } = useQuery<User | null, AxiosError>(
     ["getUser", process.env.NEXT_PUBLIC_WITHOUT_SESSION === "true"],
     () => getUser(),
     {
       onSuccess: (data) => {
-        setUser(data);
+        setUser(data ?? undefined);
       }
     }
   );
