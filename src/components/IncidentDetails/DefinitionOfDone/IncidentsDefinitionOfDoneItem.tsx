@@ -9,6 +9,7 @@ import {
   Dispatch,
   SetStateAction,
   useCallback,
+  useLayoutEffect,
   useState
 } from "react";
 import { Size } from "../../../types";
@@ -42,12 +43,15 @@ export default function IncidentsDefinitionOfDoneItem({
 
   const { isLoading, mutate } = useUpdateEvidenceMutation({}, incidentId);
 
+  const [dropdownRef, setDropdownRef] = useState<HTMLDivElement | null>(null);
+
   const [dropDownMenuStyles, setDropDownMenuStyles] = useState<CSSProperties>();
 
-  const dropdownMenuStylesCalc = useCallback((node: HTMLDivElement) => {
+  const dropdownMenuStylesCalc = useCallback((node: HTMLDivElement | null) => {
     if (!node) {
       return;
     }
+    setDropdownRef(node);
     const left = node.getBoundingClientRect().left;
     const top = node.getBoundingClientRect().bottom;
 
@@ -61,6 +65,20 @@ export default function IncidentsDefinitionOfDoneItem({
       node.style.removeProperty("transform");
     }
   }, []);
+
+  // re-calculate dropdown menu position when collapsed/expanded
+  useLayoutEffect(() => {
+    const obs = new window.MutationObserver(() =>
+      dropdownMenuStylesCalc(dropdownRef)
+    );
+    if (dropdownRef?.parentNode) {
+      obs.observe(dropdownRef.parentNode, {
+        childList: true,
+        subtree: true
+      });
+    }
+    return () => obs.disconnect();
+  }, [dropdownMenuStylesCalc, dropdownRef]);
 
   return (
     <>
