@@ -71,7 +71,7 @@ export const Snapshot = axios.create({
 });
 
 export const LogsSearch = axios.create({
-  baseURL: `${API_BASE}/logs/search`,
+  baseURL: `${API_BASE}/logs`,
   headers: {
     Accept: "application/json",
     Prefer: "return=representation",
