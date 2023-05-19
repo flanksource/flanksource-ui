@@ -30,11 +30,15 @@ export default function ConfigListTypeCell({
 
   return (
     <span className="flex flex-nowrap gap-1">
-      <Icon name={primaryIcon} secondary={primaryIcon} className="h-5" />
+      <Icon
+        name={primaryIcon}
+        secondary={primaryIcon}
+        className="max-h-5 max-w-[1.25rem]"
+      />
       <Icon
         name={secondaryIcon}
         secondary={secondaryIcon}
-        className="h-5"
+        className="max-h-5 max-w-[1.25rem]"
         prefix={<span className="1">/</span>}
       />
       <span className="pl-1"> {value}</span>
