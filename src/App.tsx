@@ -122,7 +122,7 @@ export type SettingsNavigationItems = {
     | {
         name: string;
         href: string;
-        icon: IconType;
+        icon: React.ComponentType<{ className: string }>;
         featureName: string;
         resourceName: string;
       }
@@ -164,7 +164,7 @@ const settingsNav: SettingsNavigationItems = {
       href: "/settings/feature-flags",
       icon: BsToggles,
       featureName: features["settings.feature_flags"],
-      resouceName: tables.database,
+      resourceName: tables.database
     },
     {
       name: "Log Backends",

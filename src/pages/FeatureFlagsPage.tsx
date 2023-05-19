@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Head } from "../components/Head/Head";
 import { SearchLayout } from "../components/Layout";
-import TableSkeletonLoader from "../components/SkeletonLoader/TableSkeletonLoader";
 import { useLoader } from "../hooks";
 import { BreadcrumbNav, BreadcrumbRoot } from "../components/BreadcrumbNav";
 import { AiFillPlusCircle } from "react-icons/ai";
@@ -152,18 +151,15 @@ export function FeatureFlagsPage() {
         loading={loading}
       >
         <div className="flex flex-col flex-1 px-6 pb-0 h-full max-w-screen-xl mx-auto">
-          {loading && <TableSkeletonLoader />}
-          {!loading && (
-            <FeatureFlagsList
-              className="mt-6 overflow-y-hidden"
-              data={properties}
-              isLoading={loading}
-              onRowClick={(val) => {
-                setIsOpen(true);
-                setEditedRow(val);
-              }}
-            />
-          )}
+          <FeatureFlagsList
+            className="mt-6 overflow-y-hidden"
+            data={properties}
+            isLoading={loading}
+            onRowClick={(val) => {
+              setIsOpen(true);
+              setEditedRow(val);
+            }}
+          />
           <FeatureFlagForm
             isOpen={isOpen}
             setIsOpen={setIsOpen}

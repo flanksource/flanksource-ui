@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Head } from "../components/Head/Head";
 import { SearchLayout } from "../components/Layout";
-import TableSkeletonLoader from "../components/SkeletonLoader/TableSkeletonLoader";
 import { useLoader } from "../hooks";
 import { BreadcrumbNav, BreadcrumbRoot } from "../components/BreadcrumbNav";
 import ConnectionForm, {
@@ -166,20 +165,15 @@ export function ConnectionsPage() {
         loading={loading}
       >
         <div className="flex flex-col flex-1 px-6 pb-0 h-full max-w-screen-xl mx-auto">
-          {loading && (
-            <TableSkeletonLoader className="max-w-screen-xl mx-auto" />
-          )}
-          {!loading && (
-            <ConnectionList
-              className="mt-6 overflow-y-hidden"
-              data={connections}
-              isLoading={loading}
-              onRowClick={(val) => {
-                setIsOpen(true);
-                setEditedRow(val);
-              }}
-            />
-          )}
+          <ConnectionList
+            className="mt-6 overflow-y-hidden"
+            data={connections}
+            isLoading={loading}
+            onRowClick={(val) => {
+              setIsOpen(true);
+              setEditedRow(val);
+            }}
+          />
           <ConnectionForm
             isOpen={isOpen}
             setIsOpen={setIsOpen}

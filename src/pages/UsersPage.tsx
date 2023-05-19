@@ -13,7 +13,6 @@ import {
   InviteUserFormValue
 } from "../components/InviteUserForm/InviteUserForm";
 import { SearchLayout } from "../components/Layout";
-import TableSkeletonLoader from "../components/SkeletonLoader/TableSkeletonLoader";
 import { toastError, toastSuccess } from "../components/Toast/toast";
 import { UserList } from "../components/UserList";
 import { useLoader } from "../hooks";
@@ -30,7 +29,7 @@ export function UsersPage() {
   const [users, setUsers] = useState<RegisteredUser[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [openRoleManageModal, setOpenRoleManageModal] = useState(false);
-  const { loading, setLoading } = useLoader();
+  const { loading, setLoading, idle } = useLoader();
 
   const onSubmit = async (val: InviteUserFormValue) => {
     try {
@@ -124,14 +123,11 @@ export function UsersPage() {
               </AccessCheck>
             </div>
           </div>
-          {loading && <TableSkeletonLoader />}
-          {!loading && (
-            <UserList
-              className="mt-6 overflow-y-hidden"
-              data={users}
-              isLoading={loading}
-            />
-          )}
+          <UserList
+            className="mt-6 overflow-y-hidden"
+            data={users}
+            isLoading={loading || idle}
+          />
           <Modal
             title="Invite User"
             onClose={() => {
