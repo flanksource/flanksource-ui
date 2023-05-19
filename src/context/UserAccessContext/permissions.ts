@@ -20,21 +20,49 @@ export const permDefs = {
     write: [...Object.values(tables)]
   },
   editor: {
-    read: [tables.canaries, tables.topologies, tables.config_scrapers],
-    write: [tables.canaries, tables.topologies, tables.config_scrapers]
+    read: [
+      ...Object.values(tables).filter(
+        (item) =>
+          ![tables.connections, tables.identities, tables.rbac].includes(item)
+      )
+    ],
+    write: [
+      ...Object.values(tables).filter(
+        (item) =>
+          ![tables.connections, tables.identities, tables.rbac].includes(item)
+      )
+    ]
   },
   commander: {
-    read: [tables.responder, tables.incident, tables.evidences],
-    write: [tables.responder, tables.incident, tables.evidences]
+    read: [
+      ...Object.values(tables).filter(
+        (v) => ![tables.rbac, tables.identities, tables.connections].includes(v)
+      )
+    ],
+    write: [
+      tables.responder,
+      tables.incident,
+      tables.evidences,
+      tables.comments
+    ]
   },
   responder: {
-    read: [tables.comments, tables.incident],
-    write: [tables.comments, tables.incident]
+    read: [
+      ...Object.values(tables).filter(
+        (v) => ![tables.rbac, tables.identities, tables.connections].includes(v)
+      )
+    ],
+    write: [
+      tables.responder,
+      tables.incident,
+      tables.evidences,
+      tables.comments
+    ]
   },
   viewer: {
     read: [
       ...Object.values(tables).filter(
-        (v) => ![tables.rbac, tables.identities].includes(v)
+        (v) => ![tables.rbac, tables.identities, tables.connections].includes(v)
       )
     ],
     write: []
