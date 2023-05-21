@@ -8,6 +8,7 @@ import { AxiosResponse } from "axios";
 import { JobHistoryStatus } from "../components/JobsHistory/JobsHistoryTable";
 import { ConfigItem } from "./services/configs";
 import { TopologyComponentItem } from "../components/FilterIncidents/FilterIncidentsByComponents";
+import { LoggingBackend } from "../components/LogsBackends/LoggingBackends";
 
 export interface SchemaResourceI {
   id: string;
@@ -128,4 +129,11 @@ export async function getTemplatesRelatedComponents(templateID: string) {
     | undefined
   >(`topologies?select=id,components(id,name,type,icon)&id=eq.${templateID}`);
   return res.data?.[0]?.components;
+}
+
+export async function getLogsBackends() {
+  const res = await CanaryCheckerDB.get<LoggingBackend[] | null>(
+    `logging_backends?order=created_at.desc&select=*,created_by(${AVATAR_INFO})&deleted_at=is.null`
+  );
+  return res.data ?? [];
 }

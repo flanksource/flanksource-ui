@@ -1,5 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { SchemaResourceType } from "../../../components/SchemaResourcePage/resourceTypes";
+import {
+  SchemaApi,
+  SchemaResourceType
+} from "../../../components/SchemaResourcePage/resourceTypes";
 import { toastSuccess, toastError } from "../../../components/Toast/toast";
 import {
   SchemaResourceI,
@@ -11,7 +14,8 @@ import { useNavigate } from "react-router-dom";
 import { useUser } from "../../../context";
 
 export const useSettingsDeleteResource = (
-  resourceInfo: Pick<SchemaResourceType, "name" | "table" | "api">
+  resourceInfo: Pick<SchemaResourceType, "name" | "table" | "api">,
+  isModal = false
 ) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -25,7 +29,9 @@ export const useSettingsDeleteResource = (
         // force refetch of all resources
         queryClient.refetchQueries(["settings", "all", resourceInfo]);
         toastSuccess(`${resourceInfo.name} deleted successfully`);
-        navigate(`/settings/${resourceInfo.table}`);
+        if (!isModal) {
+          navigate(`/settings/${resourceInfo.table}`);
+        }
       },
       onError: (ex: any) => {
         toastError(ex);
@@ -35,8 +41,9 @@ export const useSettingsDeleteResource = (
 };
 
 export const useSettingsUpdateResource = (
-  resourceInfo: SchemaResourceType,
-  resource?: Record<string, any>
+  resourceInfo: Pick<SchemaResourceType, "api" | "table" | "name">,
+  resource?: Record<string, any>,
+  isModal = false
 ) => {
   const navigate = useNavigate();
 
@@ -50,7 +57,9 @@ export const useSettingsUpdateResource = (
     {
       onSuccess: () => {
         toastSuccess(`${resourceInfo.name} updated successfully`);
-        navigate(`/settings/${resourceInfo.table}`);
+        if (!isModal) {
+          navigate(`/settings/${resourceInfo.table}`);
+        }
       },
       onError: (ex: any) => {
         toastError(ex);
@@ -60,7 +69,7 @@ export const useSettingsUpdateResource = (
 };
 
 export const useSettingsCreateResource = (
-  resourceInfo: SchemaResourceType,
+  resourceInfo: SchemaApi,
   onSuccess = () => {}
 ) => {
   const { user } = useUser();

@@ -29,7 +29,7 @@ export function FormikCodeEditor({
   label,
   labelClassName,
   disabled,
-  className = "flex fle-col h-[min(1000px,calc(90vh))]"
+  className = "flex flex-col h-[min(1000px,calc(90vh))]"
 }: FormikCodeEditorProps) {
   const { setFieldValue } = useFormikContext<Record<string, any>>();
 
@@ -73,7 +73,7 @@ export function FormikCodeEditor({
           ? YAML.stringify(values, {
               sortMapEntries: true
             })
-          : JSON.stringify(values);
+          : JSON.stringify(values, null, 2);
       } else {
         return values;
       }

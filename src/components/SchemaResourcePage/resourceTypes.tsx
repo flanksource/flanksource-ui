@@ -14,13 +14,17 @@ export type SchemaResourceType = {
     | "Config Scraper"
     | "Health Check"
     | "Search"
-    | "Topology";
+    | "Topology"
+    | "Connections"
+    | "Log Backends";
   table:
     | "teams"
     | "incident_rules"
     | "config_scrapers"
     | "canaries"
-    | "topologies";
+    | "topologies"
+    | "connections"
+    | "logging_backends";
   api: "incident-commander" | "canary-checker" | "config-db";
   resourceName: string;
   icon: React.ComponentType<any> | IconType;

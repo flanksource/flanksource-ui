@@ -1,25 +1,21 @@
 import { CellContext, ColumnDef } from "@tanstack/table-core";
 import clsx from "clsx";
-import { User } from "../../api/services/users";
-import { relativeDateTime } from "../../utils/date";
 import { DataTable } from "../DataTable";
 import { Avatar } from "../Avatar";
 import { Connection } from "./ConnectionForm";
+import { DateCell } from "../ConfigViewer/columns";
 
 type ConnectionListProps = {
-  data: any[];
+  data: Connection[];
   isLoading?: boolean;
   onRowClick?: (data: Connection) => void;
 } & Omit<React.HTMLProps<HTMLDivElement>, "data">;
 
-const DateCell = ({ getValue }: CellContext<User, any>) =>
-  relativeDateTime(getValue<string>());
-
-const AvatarCell = ({ getValue }: CellContext<User, any>) => {
+const AvatarCell = ({ getValue }: CellContext<Connection, any>) => {
   return <Avatar user={getValue()} circular />;
 };
 
-const columns: ColumnDef<User>[] = [
+const columns: ColumnDef<Connection>[] = [
   {
     header: "Type",
     accessorKey: "type"
@@ -65,9 +61,7 @@ export function ConnectionList({
         style={{ maxHeight: "calc(100vh - 12rem)" }}
         preferencesKey="connections-list"
         savePreferences={false}
-        handleRowClick={(row) => {
-          onRowClick?.(row.original as unknown as Connection);
-        }}
+        handleRowClick={(row) => onRowClick?.(row.original)}
       />
     </div>
   );
