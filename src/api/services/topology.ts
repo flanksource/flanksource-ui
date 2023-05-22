@@ -130,6 +130,19 @@ export const getTopologyComponentsWithLogs = () => {
   );
 };
 
+type AgentItem = {
+  id: string;
+  name: string;
+  description: string;
+};
+
+export const getAgentByID = async (id: string) => {
+  const res = await IncidentCommander.get<AgentItem[] | null>(
+    `/agents?select=id,name,description&id=eq.${id}`
+  );
+  return res.data?.[0] ?? null;
+};
+
 export const getTopologyComponentByID = async (topologyID: string) => {
   const res = await IncidentCommander.get<TopologyComponentItem[]>(
     `/component_names?id=eq.${topologyID}`
