@@ -360,7 +360,12 @@ export function TopologyPage() {
                   getSortBy(sortLabels || []),
                   getSortOrder()
                 ).map((item) => (
-                  <TopologyCard key={item.id} topology={item} size={size} />
+                  <TopologyCard
+                    key={item.id}
+                    topology={item}
+                    size={size}
+                    isTopologyPage
+                  />
                 ))}
                 {!topology?.length && (
                   <InfoMessage
