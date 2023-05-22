@@ -153,6 +153,7 @@ type ConfigParams = {
 };
 
 export const getConfigsBy = ({ topologyId, configId }: ConfigParams) => {
+  const configFields = `id, type, name, config_class, deleted_at`;
   if (topologyId) {
     return resolve<
       {
@@ -161,14 +162,14 @@ export const getConfigsBy = ({ topologyId, configId }: ConfigParams) => {
       }[]
     >(
       ConfigDB.get(
-        `/config_component_relationships?component_id=eq.${topologyId}&select=configs!config_component_relationships_config_id_fkey(*)`
+        `/config_component_relationships?component_id=eq.${topologyId}&select=configs!config_component_relationships_config_id_fkey(${configFields})`
       )
     );
   }
   if (configId) {
     return resolve(
       ConfigDB.get<Pick<ConfigTypeRelationships, "configs" | "related">[]>(
-        `/config_relationships?or=(related_id.eq.${configId},config_id.eq.${configId})&select=configs:configs!config_relationships_config_id_fkey(*),related:configs!config_relationships_related_id_fkey(*)`
+        `/config_relationships?or=(related_id.eq.${configId},config_id.eq.${configId})&select=configs:configs!config_relationships_config_id_fkey(${configFields}),related:configs!config_relationships_related_id_fkey(${configFields})`
       )
     );
   }
