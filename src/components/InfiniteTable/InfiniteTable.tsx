@@ -21,6 +21,7 @@ type InfiniteTableProps<T> = React.HTMLProps<HTMLDivElement> & {
   virtualizedRowEstimatedHeight?: number;
   loaderView: React.ReactNode;
   stickyHead?: boolean;
+  columnsClassName?: { [key: string]: string };
 };
 
 export function InfiniteTable<T>({
@@ -33,6 +34,7 @@ export function InfiniteTable<T>({
   maxHeight,
   loaderView,
   stickyHead,
+  columnsClassName,
   virtualizedRowEstimatedHeight = 50
 }: InfiniteTableProps<T>) {
   const tableContainerRef = useRef<HTMLDivElement>(null);
@@ -100,19 +102,24 @@ export function InfiniteTable<T>({
     >
       <table
         className={clsx(
-          `table-auto table-fixed w-full`,
+          `table-auto table-fixed w-full flex flex-col p-0`,
           stickyHead && "relative"
         )}
       >
-        <thead className={`bg-white ${stickyHead ? "sticky top-0 z-01" : ""}`}>
+        <thead
+          className={`flex flex-col flex-1 bg-white ${
+            stickyHead ? "sticky top-0 z-1" : ""
+          }`}
+        >
           {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id}>
+            <tr className="flex flex-row flex-1" key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 return (
                   <th
                     key={header.id}
                     colSpan={header.colSpan}
-                    style={{ width: header.getSize(), textAlign: "left" }}
+                    style={{ padding: "0px" }}
+                    className={clsx(columnsClassName?.[header.id])}
                   >
                     {header.isPlaceholder ? null : (
                       <div
@@ -135,7 +142,7 @@ export function InfiniteTable<T>({
             </tr>
           ))}
         </thead>
-        <tbody>
+        <tbody className={`flex flex-col flex-1`}>
           {paddingTop > 0 && (
             <tr>
               <td style={{ height: `${paddingTop}px` }} />
@@ -144,10 +151,13 @@ export function InfiniteTable<T>({
           {virtualRows.map((virtualRow) => {
             const row = rows[virtualRow.index] as Row<T>;
             return (
-              <tr key={row.id}>
+              <tr className="flex flex-row flex-1" key={row.id}>
                 {row.getVisibleCells().map((cell) => {
                   return (
-                    <td key={cell.id}>
+                    <td
+                      key={cell.id}
+                      className={clsx(columnsClassName?.[cell.column.id])}
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
