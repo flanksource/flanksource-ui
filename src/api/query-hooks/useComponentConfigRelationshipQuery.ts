@@ -35,16 +35,13 @@ export function useComponentConfigRelationshipQuery({
         return getConfigsBy({ configId })?.then((res) => {
           let items: ConfigItem[] = [];
           res?.data?.forEach((item) => {
-            if (!item.related) {
-              return;
-            }
             const configs = item.configs as ConfigItem;
             const related = item.related as ConfigItem;
-            if (configs?.id !== configId) {
+            if (configs && configs.id !== configId) {
               items.push(configs);
             }
-            if (related?.id !== configId) {
-              items.push(configs);
+            if (related && related.id !== configId) {
+              items.push(related);
             }
           });
           items = items.sort((ent: ConfigItem) => (ent.deleted_at ? 1 : -1));
