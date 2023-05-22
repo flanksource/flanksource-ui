@@ -2,7 +2,6 @@ import { useSearchParams } from "react-router-dom";
 import { ReactSelectDropdown } from "../ReactSelectDropdown";
 import { getTopology } from "../../api/services/topology";
 import { useQuery } from "@tanstack/react-query";
-import { defaultSelections } from "../FilterLogs/FilterLogsByComponent";
 import { StateOption } from "../ReactSelectDropdown";
 
 type Props = {
@@ -15,7 +14,7 @@ export default function LogsSelectorDropdown({ classNames }: Props) {
   const topologyId = searchParams.get("topologyId");
   const logsSelector = searchParams.get("logsSelector");
 
-  const { data: logsSelectors = [], isLoading } = useQuery(
+  const { data: logsSelectors = {}, isLoading } = useQuery(
     ["topology", topologyId],
     async () => {
       const data = await getTopology({
@@ -36,6 +35,12 @@ export default function LogsSelectorDropdown({ classNames }: Props) {
           };
         });
         return options;
+      },
+      onSuccess: (data) => {
+        if (Object.keys(data).length > 0) {
+          searchParams.set("logsSelector", Object.keys(data)[0] ?? null);
+          setSearchParams(searchParams);
+        }
       }
     }
   );
@@ -54,8 +59,8 @@ export default function LogsSelectorDropdown({ classNames }: Props) {
         prefix="Logs selector:"
         name="component"
         className="w-auto max-w-[400px] capitalize"
-        value={logsSelector ?? "none"}
-        items={{ ...defaultSelections, ...logsSelectors }}
+        value={logsSelector ?? undefined}
+        items={{ ...logsSelectors }}
         dropDownClassNames="w-auto max-w-[400px] left-0"
         hideControlBorder
         isLoading={isLoading}

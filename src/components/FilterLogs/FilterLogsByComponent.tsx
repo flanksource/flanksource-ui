@@ -47,12 +47,14 @@ function FilterLogsByComponent() {
   function onComponentSelect(value?: string) {
     if (value?.toLowerCase() === "none") {
       searchParams.delete("topologyId");
+      searchParams.delete("logsSelector");
       setSearchParams(searchParams);
       return;
     }
     const selectedComponent = data?.find((c) => c.id === value);
     if (selectedComponent) {
       searchParams.set("topologyId", selectedComponent.id!);
+      searchParams.delete("logsSelector");
       setSearchParams(searchParams);
     }
   }
