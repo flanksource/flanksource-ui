@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { useJobsHistoryForSettingQuery } from "../../api/query-hooks/useJobsHistoryQuery";
 import JobsHistoryTable from "../JobsHistory/JobsHistoryTable";
+import ErrorPage from "../Errors/ErrorPage";
 
 type SchemaResourceJobsTabProps = {
   tableName: keyof typeof resourceTypeMap;
@@ -26,7 +27,7 @@ export function SchemaResourceJobsTab({
 
   const resourceType = useMemo(() => resourceTypeMap[tableName], [tableName]);
 
-  const { isLoading, data } = useJobsHistoryForSettingQuery(
+  const { isLoading, data, error } = useJobsHistoryForSettingQuery(
     { pageIndex, pageSize, resourceId, resourceType },
     {
       keepPreviousData: true
@@ -40,15 +41,19 @@ export function SchemaResourceJobsTab({
 
   return (
     <div className="flex flex-col flex-1 overflow-y-auto">
-      <JobsHistoryTable
-        jobs={jobs ?? []}
-        isLoading={isLoading}
-        pageCount={pageCount}
-        pageIndex={pageIndex}
-        pageSize={pageSize}
-        setPageState={setPageState}
-        hiddenColumns={["resource_id", "resource_type"]}
-      />
+      {!data && error && !isLoading ? (
+        <ErrorPage error={error} />
+      ) : (
+        <JobsHistoryTable
+          jobs={jobs ?? []}
+          isLoading={isLoading}
+          pageCount={pageCount}
+          pageIndex={pageIndex}
+          pageSize={pageSize}
+          setPageState={setPageState}
+          hiddenColumns={["resource_id", "resource_type"]}
+        />
+      )}
     </div>
   );
 }

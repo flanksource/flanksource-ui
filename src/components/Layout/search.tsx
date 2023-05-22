@@ -1,3 +1,4 @@
+import DashboardErrorBoundary from "../Errors/DashboardErrorBoundary";
 import { RefreshButton } from "../RefreshButton";
 import { UserProfile } from "../UserProfile/UserProfile";
 
@@ -39,7 +40,9 @@ export function SearchLayout({
         className="overflow-y-hidden h-full bg-warm-gray-50 "
         style={{ zIndex: 0 }}
       >
-        <div className={contentClass || "p-6"}>{children}</div>
+        <DashboardErrorBoundary>
+          <div className={contentClass || "p-6"}>{children}</div>
+        </DashboardErrorBoundary>
       </main>
     </div>
   );
