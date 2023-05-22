@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { MdOutlineError } from "react-icons/md";
 import { useSearchParams } from "react-router-dom";
-import { useComponentsQuery } from "../../api/query-hooks";
+import { useComponentsWithLogsQuery } from "../../api/query-hooks";
 import { Icon } from "../Icon";
 import { ReactSelectDropdown, StateOption } from "../ReactSelectDropdown";
 
@@ -18,7 +18,7 @@ function FilterLogsByComponent() {
 
   const topologyId = searchParams.get("topologyId");
 
-  const { isLoading, data, error } = useComponentsQuery({});
+  const { isLoading, data, error } = useComponentsWithLogsQuery({});
 
   const dropDownOptions = useMemo(() => {
     if (data) {

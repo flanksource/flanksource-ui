@@ -25,7 +25,8 @@ import {
   getHealthCheckItem,
   getTopology,
   getTopologyComponentLabels,
-  getTopologyComponents
+  getTopologyComponents,
+  getTopologyComponentsWithLogs
 } from "../services/topology";
 import { getPersons, getVersionInfo } from "../services/users";
 import { LogsResponse, searchLogs, SearchLogsPayload } from "../services/logs";
@@ -55,6 +56,25 @@ export const useComponentsQuery = ({
     ["allcomponents"],
     async () => {
       const res = await getTopologyComponents();
+      return res.data;
+    },
+    {
+      staleTime,
+      enabled,
+      ...rest
+    }
+  );
+};
+
+export const useComponentsWithLogsQuery = ({
+  enabled = true,
+  staleTime = defaultStaleTime,
+  ...rest
+}) => {
+  return useQuery(
+    ["components_with_logs", "logs"],
+    async () => {
+      const res = await getTopologyComponentsWithLogs();
       return res.data;
     },
     {
