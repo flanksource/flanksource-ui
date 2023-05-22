@@ -22,6 +22,7 @@ import { Head } from "../Head/Head";
 import HealthSpecEditor from "../SpecEditor/HealthSpecEditor";
 import { Button } from "../Button";
 import DeleteResource from "./Delete/DeleteResource";
+import { CustomCodeEditor } from "../CustomCodeEditor";
 
 const CodeEditor = dynamic(
   () => import("../CodeEditor").then((m) => m.CodeEditor),
@@ -309,37 +310,21 @@ export function SchemaResourceEdit({
                               </div>
                             )}
                             {supportsField("labels") && (
-                              <div className="py-4">
+                              <div className="py-4 mt-4">
                                 <Controller
                                   control={control}
                                   name="labels"
                                   render={({ field: { onChange, value } }) => {
                                     return (
-                                      <div className="h-[100px]">
-                                        <label className="block text-sm font-bold text-gray-700">
-                                          Labels
-                                        </label>
-                                        <CodeEditor
-                                          key={labelsKeyRef.current}
-                                          readOnly={!!source || disabled}
-                                          value={
-                                            typeof values.labels === "object"
-                                              ? JSON.stringify(
-                                                  values.labels,
-                                                  null,
-                                                  2
-                                                )
-                                              : undefined
-                                          }
-                                          onChange={(val) => {
-                                            setCodeEditorValueOnChange(
-                                              "labels",
-                                              val
-                                            );
-                                          }}
-                                          language="json"
-                                        />
-                                      </div>
+                                      <CustomCodeEditor
+                                        label="Labels"
+                                        id="labels"
+                                        value={values.labels}
+                                        onChange={(value) => {
+                                          setValue("labels", value);
+                                        }}
+                                        disabled={!!source || disabled}
+                                      />
                                     );
                                   }}
                                 />
