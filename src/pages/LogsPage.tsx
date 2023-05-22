@@ -113,7 +113,7 @@ export function LogsPage() {
             variant="comfortable"
             isLoading={isLoading}
             logs={logs?.results ?? []}
-            areQueryParamsEmpty={!topologyId && !query}
+            areQueryParamsEmpty={(!!topologyId && !!logsSelector) === false}
             componentId={topology?.id}
           />
         </div>
