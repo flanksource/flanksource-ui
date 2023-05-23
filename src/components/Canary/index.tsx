@@ -33,7 +33,7 @@ import { isCanaryUI } from "../../context/Environment";
 import clsx from "clsx";
 import HealthPageSkeletonLoader from "../SkeletonLoader/HealthPageSkeletonLoader";
 import { HealthChecksResponse } from "../../types/healthChecks";
-import { useSearchParams } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 import useRefreshRateFromLocalStorage from "../Hooks/useRefreshRateFromLocalStorage";
 import { HEALTH_SETTINGS } from "../../constants";
 
@@ -88,14 +88,17 @@ export function Canary({
   const timerRef = useRef<NodeJS.Timer>();
   const abortController = useRef<AbortController>();
 
-  const labelUpdateCallback = useCallback((newLabels: any) => {
-    setHealthState((state) => {
-      return {
-        ...state,
-        filteredLabels: newLabels
-      };
-    });
-  }, []);
+  const labelUpdateCallback = useCallback(
+    (newLabels: any) => {
+      setHealthState((state) => {
+        return {
+          ...state,
+          filteredLabels: newLabels
+        };
+      });
+    },
+    [setHealthState]
+  );
 
   useEffect(() => {
     setHealthState((state) => {
@@ -121,14 +124,17 @@ export function Canary({
     });
   }, [filteredChecks, setHealthState]);
 
-  const updateFilteredChecks = useCallback((newFilteredChecks: any[]) => {
-    setHealthState((state) => {
-      return {
-        ...state,
-        filteredChecks: newFilteredChecks || []
-      };
-    });
-  }, []);
+  const updateFilteredChecks = useCallback(
+    (newFilteredChecks: any[]) => {
+      setHealthState((state) => {
+        return {
+          ...state,
+          filteredChecks: newFilteredChecks || []
+        };
+      });
+    },
+    [setHealthState]
+  );
 
   const handleFetch = useCallback(async () => {
     if (url == null) {
@@ -498,10 +504,7 @@ export const MultiSelectLabelsDropdownStandalone = ({ labels = [] }) => {
       updateParams({ labels: conciseLabelState });
       setIsFirstLoad(false);
     },
-    [
-      isFirstLoad
-      //  selectAllByDefault
-    ]
+    [isFirstLoad, updateParams]
   );
 
   useEffect(() => {
@@ -532,9 +535,11 @@ export const TristateLabelStandalone = ({
   labelClass,
   ...props
 }: TristateLabelStandaloneProps) => {
+  const location = useLocation();
+
   const { labels: urlLabelState = {} } = useMemo(() => {
-    return decodeUrlSearchParams(window.location.search);
-  }, [window.location.search]);
+    return decodeUrlSearchParams(location.search);
+  }, [location.search]);
 
   const updateParams = useUpdateParams();
 
