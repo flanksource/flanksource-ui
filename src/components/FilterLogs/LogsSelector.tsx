@@ -56,9 +56,9 @@ export default function LogsSelectorDropdown({ classNames }: Props) {
           }
           setSearchParams(searchParams);
         }}
-        prefix="Logs selector:"
+        prefix="Selector:"
         name="component"
-        className="w-auto max-w-[400px] capitalize"
+        className="w-auto max-w-[400px]"
         value={logsSelector ?? undefined}
         items={{ ...logsSelectors }}
         dropDownClassNames="w-auto max-w-[400px] left-0"
