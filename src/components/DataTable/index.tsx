@@ -188,6 +188,7 @@ export function DataTable<TableColumns, Data extends TableColumns>({
         : undefined,
     manualPagination: !!pagination?.enable && pagination.remote,
     manualSorting: enableServerSideSorting,
+    enableSortingRemoval: true,
     enableHiding: true,
     onSortingChange: (sorting) => {
       if (onTableSortByChanged) {
@@ -226,17 +227,15 @@ export function DataTable<TableColumns, Data extends TableColumns>({
       ? table.getPaginationRowModel()
       : table.getRowModel();
 
-  const enableVirtualization = isVirtualized;
-
   const { getVirtualItems, getTotalSize } = useVirtualizer({
-    count: enableVirtualization ? rows.length : 0,
+    count: isVirtualized ? rows.length : 0,
     getScrollElement: () => tableContainerRef.current,
     estimateSize: () => virtualizedRowEstimatedHeight,
     overscan: overScan
   });
 
-  const virtualRows = enableVirtualization ? getVirtualItems() : emptyList;
-  const totalSize = enableVirtualization ? getTotalSize() : 0;
+  const virtualRows = isVirtualized ? getVirtualItems() : emptyList;
+  const totalSize = isVirtualized ? getTotalSize() : 0;
 
   const paddingTop = virtualRows.length > 0 ? virtualRows?.[0]?.start || 0 : 0;
   const paddingBottom =
@@ -327,12 +326,12 @@ export function DataTable<TableColumns, Data extends TableColumns>({
             ))}
           </thead>
           <tbody>
-            {enableVirtualization && paddingTop > 0 && (
+            {isVirtualized && paddingTop > 0 && (
               <tr>
                 <td style={{ height: `${paddingTop}px` }} />
               </tr>
             )}
-            {enableVirtualization
+            {isVirtualized
               ? getVirtualItems().map(({ index }) => {
                   const row = rows[index];
                   return (
@@ -358,7 +357,7 @@ export function DataTable<TableColumns, Data extends TableColumns>({
                     key={row.id}
                   />
                 ))}
-            {enableVirtualization && paddingBottom > 0 && (
+            {isVirtualized && paddingBottom > 0 && (
               <tr>
                 <td style={{ height: `${paddingBottom}px` }} />
               </tr>

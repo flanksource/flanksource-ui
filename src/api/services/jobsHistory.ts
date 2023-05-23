@@ -6,7 +6,11 @@ export const getJobsHistory = async (
   pageIndex: number,
   pageSize: number,
   resourceType?: string,
-  resourceId?: string
+  resourceId?: string,
+  name?: string,
+  status?: string,
+  sortBy?: string,
+  sortOrder?: string
 ) => {
   const pagingParams = `&limit=${pageSize}&offset=${pageIndex * pageSize}`;
 
@@ -16,9 +20,17 @@ export const getJobsHistory = async (
 
   const resourceIdParam = resourceId ? `&resource_id=eq.${resourceId}` : "";
 
+  const nameParam = name ? `&name=eq.${name}` : "";
+
+  const statusParam = status ? `&status=eq.${status}` : "";
+
+  const sortByParam = sortBy ? `&order=${sortBy}` : "&order=created_at";
+
+  const sortOrderParam = sortOrder ? `.${sortOrder}` : ".desc";
+
   return resolve(
     IncidentCommander.get<JobHistory[] | null>(
-      `/job_history?order=created_at.desc&select=*${pagingParams}${resourceTypeParam}${resourceIdParam}`,
+      `/job_history?&select=*${pagingParams}${resourceTypeParam}${resourceIdParam}${nameParam}${statusParam}${sortByParam}${sortOrderParam}`,
       {
         headers: {
           Prefer: "count=exact"
@@ -26,4 +38,17 @@ export const getJobsHistory = async (
       }
     )
   );
+};
+
+export type JobHistoryNames = {
+  name: string;
+};
+
+export const getJobsHistoryNames = async () => {
+  const res = await resolve(
+    IncidentCommander.get<JobHistoryNames[] | null>(
+      `/job_history_names?order=name.asc`
+    )
+  );
+  return res.data ?? [];
 };

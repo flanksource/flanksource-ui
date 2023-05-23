@@ -82,3 +82,8 @@ export const stringSortHelper = (val1: string, val2: string) => {
   }
   return 0;
 };
+
+export function formatJobName(word: string | null) {
+  const wordRe = /($[a-z])|[A-Z][^A-Z]+/g;
+  return word?.match(wordRe)?.join(" ");
+}

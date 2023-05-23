@@ -1,4 +1,4 @@
-import { Row, SortingState } from "@tanstack/react-table";
+import { Row, SortingState, Updater } from "@tanstack/react-table";
 import { useCallback, useMemo, useState } from "react";
 import { DataTable } from "../DataTable";
 import { JobsHistoryDetails } from "./JobsHistoryDetails";
@@ -30,8 +30,11 @@ type JobsHistoryTableProps = {
   pageCount: number;
   pageIndex: number;
   pageSize: number;
+  sortBy: string;
+  sortOrder: string;
   setPageState?: (state: { pageIndex: number; pageSize: number }) => void;
   hiddenColumns?: string[];
+  onSortByChanged?: (sortByState: Updater<SortingState>) => void;
 };
 
 export default function JobsHistoryTable({
@@ -40,17 +43,22 @@ export default function JobsHistoryTable({
   pageCount,
   pageIndex,
   pageSize,
-  setPageState = () => {},
-  hiddenColumns = []
+  hiddenColumns = [],
+  sortBy,
+  sortOrder,
+  onSortByChanged = () => {},
+  setPageState = () => {}
 }: JobsHistoryTableProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedJob, setSelectedJob] = useState<JobHistory>();
-  const [tableSortByState, setTableSortByState] = useState<SortingState>([
-    {
-      id: "time_start",
-      desc: true
-    }
-  ]);
+  const tableSortByState = useMemo(() => {
+    return [
+      {
+        id: sortBy,
+        desc: sortOrder === "desc"
+      }
+    ];
+  }, [sortBy, sortOrder]);
 
   const pagination = useMemo(() => {
     return {
@@ -84,14 +92,15 @@ export default function JobsHistoryTable({
         data={jobs}
         columns={columns}
         isLoading={isLoading}
-        tableSortByState={tableSortByState}
-        onTableSortByChanged={setTableSortByState}
         handleRowClick={onSelectJob}
         pagination={pagination}
         stickyHead
         preferencesKey="job-history"
         savePreferences={false}
         hiddenColumns={hiddenColumns}
+        tableSortByState={tableSortByState}
+        onTableSortByChanged={onSortByChanged}
+        enableServerSideSorting
       />
       <JobsHistoryDetails
         job={selectedJob}
