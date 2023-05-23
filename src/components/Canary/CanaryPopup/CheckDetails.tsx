@@ -34,16 +34,6 @@ export function CheckDetails({ check, timeRange, ...rest }: CheckDetailsProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const statsRef = useRef<HTMLDivElement>(null);
 
-  const TabAndPaddingBottom = 40;
-  const maxHeight =
-    containerRef.current && statsRef.current
-      ? `${
-          containerRef.current.clientHeight -
-          statsRef.current.clientHeight -
-          TabAndPaddingBottom
-        }px`
-      : undefined;
-
   const prevCheck = usePrevious(check);
   const validCheck = check || prevCheck;
 
@@ -159,17 +149,9 @@ export function CheckDetails({ check, timeRange, ...rest }: CheckDetailsProps) {
             content: (
               <div
                 key="status-history"
-                className={`border border-b-0 border-gray-300 bg-gray-50 overflow-hidden h-full relative -mb-px ${mixins.appleScrollbar}`}
+                className={`border border-b-0 border-gray-300 bg-gray-50 overflow-y-auto flex flex-col flex-1 relative -mb-px ${mixins.appleScrollbar}`}
               >
-                <StatusHistory
-                  timeRange={timeRange}
-                  check={validCheck}
-                  style={{
-                    maxHeight,
-                    height: maxHeight,
-                    display: !maxHeight ? "none" : undefined
-                  }}
-                />
+                <StatusHistory timeRange={timeRange} check={validCheck} />
               </div>
             ),
             class:
