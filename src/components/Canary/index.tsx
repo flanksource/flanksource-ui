@@ -325,7 +325,8 @@ export function Canary({
             <div className="mb-2 mr-2">
               <DropdownWrapper
                 dropdownElem={<GroupByDropdown name="groupBy" />}
-                checks={checks}
+                name="groupBy"
+                checks={checks ?? []}
                 defaultValue="canary_name"
                 paramKey="groupBy"
                 className="w-64"
@@ -340,9 +341,9 @@ export function Canary({
               <DropdownWrapper
                 dropdownElem={<TabByDropdown name="tabBy" />}
                 defaultValue={defaultTabSelections.namespace.value}
+                name="tabBy"
                 paramKey="tabBy"
-                checks={checks}
-                emptyable
+                checks={checks ?? []}
                 className="w-64"
                 prefix={
                   <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
@@ -431,7 +432,8 @@ const DropdownWrapper = ({
     if (value !== defaultValue && value !== null) {
       updateParams({ [paramKey]: value });
     }
-  }, [defaultValue, paramKey, updateParams, value]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [defaultValue, paramKey, value]);
 
   return (
     <DropdownStandaloneWrapper

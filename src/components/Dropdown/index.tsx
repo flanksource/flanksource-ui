@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { Fragment } from "react";
+import React, { Fragment } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, SelectorIcon } from "@heroicons/react/solid";
 import { Controller } from "react-hook-form";
@@ -15,8 +15,8 @@ type DropdownProps = {
   value?: any;
   placeholder?: string;
   emptyable?: boolean;
-  prefix?: string;
-  suffix?: string;
+  prefix?: React.ReactNode;
+  suffix?: React.ReactNode;
   labelPrefix?: string;
   labelSuffix?: string;
 };
@@ -119,8 +119,8 @@ type DropdownListboxProps = {
   value: any;
   label?: string;
   items: Record<string, any>;
-  prefix?: string;
-  suffix?: string;
+  prefix?: React.ReactNode;
+  suffix?: React.ReactNode;
   labelPrefix?: string;
   labelSuffix?: string;
 };
