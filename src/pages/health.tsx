@@ -86,7 +86,10 @@ export function HealthPage({ url }: Props) {
           size="full"
           title={`Add ${resourceInfo!.name}`}
         >
-          <HealthSpecEditor onSubmit={(val) => createResource(val)} />
+          <HealthSpecEditor
+            resourceInfo={schemaResourceTypes.at(-1)!}
+            onSubmit={(val) => createResource(val)}
+          />
         </Modal>
       </HealthRefreshDropdownRateContext.Provider>
     </>
