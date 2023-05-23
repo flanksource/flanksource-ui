@@ -70,7 +70,7 @@ export function LogsPage() {
   } = useComponentGetLogsQuery(
     {
       query: debouncedQueryValue ?? undefined,
-      logSelector: logsSelector!,
+      name: logsSelector!,
       id: topologyId!
     },
     {
@@ -112,8 +112,8 @@ export function LogsPage() {
           <LogsTable
             variant="comfortable"
             isLoading={isLoading}
-            logs={logs ?? []}
-            areQueryParamsEmpty={!topologyId && !query}
+            logs={logs?.results ?? []}
+            areQueryParamsEmpty={(!!topologyId && !!logsSelector) === false}
             componentId={topology?.id}
           />
         </div>

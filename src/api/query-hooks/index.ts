@@ -25,11 +25,11 @@ import {
   getHealthCheckItem,
   getTopology,
   getTopologyComponentLabels,
-  getTopologyComponents
+  getTopologyComponents,
+  getTopologyComponentsWithLogs
 } from "../services/topology";
 import { getPersons, getVersionInfo } from "../services/users";
-import { searchLogs } from "../services/logs";
-import LogItem from "../../types/Logs";
+import { LogsResponse, searchLogs, SearchLogsPayload } from "../services/logs";
 
 const cache: Record<string, any> = {};
 
@@ -56,6 +56,25 @@ export const useComponentsQuery = ({
     ["allcomponents"],
     async () => {
       const res = await getTopologyComponents();
+      return res.data;
+    },
+    {
+      staleTime,
+      enabled,
+      ...rest
+    }
+  );
+};
+
+export const useComponentsWithLogsQuery = ({
+  enabled = true,
+  staleTime = defaultStaleTime,
+  ...rest
+}) => {
+  return useQuery(
+    ["components_with_logs", "logs"],
+    async () => {
+      const res = await getTopologyComponentsWithLogs();
       return res.data;
     },
     {
@@ -401,20 +420,12 @@ export function useConfigAnalysisQuery(
 }
 
 export function useComponentGetLogsQuery(
-  {
-    query,
-    id,
-    logSelector
-  }: {
-    query?: string;
-    id: string;
-    logSelector: string;
-  },
-  options?: UseQueryOptions<LogItem[], Error>
+  { query, id, name }: SearchLogsPayload,
+  options?: UseQueryOptions<LogsResponse, Error>
 ) {
-  return useQuery<LogItem[], Error>(
-    ["topology", "logs", id, logSelector, query],
-    async () => searchLogs({ id, logSelector, query }),
+  return useQuery<LogsResponse, Error>(
+    ["topology", "logs", id, name, query],
+    async () => searchLogs({ id, name, query }),
     options
   );
 }

@@ -124,6 +124,12 @@ export const getTopologyComponents = () => {
   return IncidentCommander.get<TopologyComponentItem[]>(`/component_names`);
 };
 
+export const getTopologyComponentsWithLogs = () => {
+  return IncidentCommander.get<TopologyComponentItem[]>(
+    `/components_with_logs?order=name.asc`
+  );
+};
+
 export const getTopologyComponentByID = async (topologyID: string) => {
   const res = await IncidentCommander.get<TopologyComponentItem[]>(
     `/component_names?id=eq.${topologyID}`

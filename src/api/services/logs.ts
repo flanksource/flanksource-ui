@@ -1,31 +1,22 @@
-import { Logs, LogsSearch } from "../axios";
-import { resolve } from "../resolve";
+import LogItem from "../../types/Logs";
+import { LogsSearch } from "../axios";
 
-export const getLogs = async (query) => {
-  if (query == null && query.type == null) {
-    // eslint-disable-next-line no-console
-    console.warn("Skipping empty search");
-    return resolve([]);
-  }
-
-  return resolve(Logs.post("", query));
+export type LogsResponse = {
+  total: number;
+  results: LogItem[];
 };
 
-export const searchLogs = async ({
-  id,
-  logSelector,
-  query
-}: {
+export type SearchLogsPayload = {
   id: string;
-  logSelector: string;
+  name: string;
   query?: string;
-}) => {
-  const res = await resolve(
-    LogsSearch.post("", {
-      name: logSelector,
-      id,
-      query
-    })
-  );
+};
+
+export const searchLogs = async ({ id, name, query }: SearchLogsPayload) => {
+  const res = await LogsSearch.post<LogsResponse>("", {
+    name,
+    id,
+    query
+  });
   return res.data;
 };
