@@ -79,7 +79,7 @@ function FilterIncidentsByComponents({ control, value }: Props) {
         value={value}
         // @ts-expect-error
         items={{ ...defaultSelections, ...data }}
-        dropDownClassNames="w-auto max-w-[400px]"
+        dropDownClassNames="w-auto max-w-[40rem]"
         hideControlBorder
       />
     </div>
