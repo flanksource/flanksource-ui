@@ -39,13 +39,7 @@ function FilterIncidentsByComponents({ control, value }: Props) {
             return {
               value: component.id,
               name: component.name,
-              icon: (
-                <Icon
-                  name={component.icon}
-                  secondary={component.name}
-                  size="xl"
-                />
-              ),
+              icon: <Icon name={component.icon} secondary={component.name} />,
               label: component.name,
               description: component.name
             };
