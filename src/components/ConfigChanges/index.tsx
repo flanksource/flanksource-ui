@@ -43,14 +43,13 @@ export const columns: ColumnDef<ConfigTypeChanges, any>[] = [
     cell: ConfigChangeNameCell,
     aggregatedCell: "",
     accessorKey: "change_type",
-    size: 250,
     enableGrouping: true
   },
   {
     header: "Age",
+    id: "created_at",
     accessorKey: "created_at",
     cell: ConfigChangeAgeCell,
-    size: 270,
     enableGrouping: true,
     enableSorting: true
   }
@@ -113,6 +112,10 @@ export function ConfigChangesDetails({ configID }: Props) {
         }}
         stickyHead
         virtualizedRowEstimatedHeight={40}
+        columnsClassName={{
+          change_type: "flex-1 w-[100px]",
+          created_at: "text-right"
+        }}
       />
     </div>
   );

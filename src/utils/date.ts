@@ -130,15 +130,6 @@ export const relativeDateTime = (
   to = dayjs().toISOString()
 ) => {
   const fromDate = dayjs.utc(from).local();
-  const toDate = dayjs.utc(to).local();
-
-  if (
-    toDate.diff(fromDate, "days") === 1 &&
-    toDate.isSame(from, "month") &&
-    toDate.isSame(from, "year")
-  ) {
-    return `${fromDate.format(DATE_FORMATS.TIME)} yesterday`;
-  }
 
   return fromDate.fromNow();
 };
