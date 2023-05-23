@@ -41,6 +41,7 @@ export interface NewIncident {
 
 export interface Incident extends NewIncident {
   id: string;
+  incident_id: string;
   parent_id: string;
   hypotheses: Hypothesis[];
   created_at: string;
