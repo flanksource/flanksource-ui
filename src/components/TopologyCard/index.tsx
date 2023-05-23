@@ -14,7 +14,7 @@ import { TopologyDropdownMenu } from "./TopologyDropdownMenu";
 import IncidentCardSummary from "../IncidentCardSummary";
 import TopologyCardSkeletonLoader from "../SkeletonLoader/TopologyCardSkeletonLoader";
 import { TopologyConfigAnalysisLine } from "./TopologyConfigAnalysisLine";
-import TopologyCardAgent from "./TopologyCardAgent";
+import AgentName from "../Agents/AgentName";
 
 export enum ComponentStatus {
   unhealthy = "unhealthy",
@@ -156,7 +156,7 @@ export function TopologyCard({
               {!prepareTopologyLink(topology) &&
                 (topology.text || topology.name)}
             </p>
-            <TopologyCardAgent agentId={topology.agent_id} />
+            <AgentName agentId={topology.agent_id} />
             {topology.description && (
               <h3 className="text-gray-color overflow-hidden truncate text-2xsi leading-1.21rel font-medium">
                 {topology.description}

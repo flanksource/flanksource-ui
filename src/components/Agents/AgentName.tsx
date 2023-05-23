@@ -2,13 +2,13 @@ import { useQuery } from "@tanstack/react-query";
 import { getAgentByID } from "../../api/services/topology";
 
 type TopologyCardAgentProps = {
-  agentId: string;
+  agentId?: string;
 };
 
-export default function TopologyCardAgent({ agentId }: TopologyCardAgentProps) {
+export default function AgentName({ agentId }: TopologyCardAgentProps) {
   const { data: agent } = useQuery(
     ["db", "agent", agentId],
-    () => getAgentByID(agentId),
+    () => getAgentByID(agentId!),
     {
       enabled: !!agentId && agentId !== "00000000-0000-0000-0000-000000000000"
     }

@@ -33,6 +33,7 @@ export interface HealthCheck {
   owner?: any;
   loading?: boolean;
   severity?: string;
+  agent_id?: string;
 }
 
 export interface HealthCheckStatus {
