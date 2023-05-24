@@ -59,7 +59,12 @@ function addDefinitionOfDoneStepsReducer(
     case "addScriptPage":
       return {
         ...state,
-        currentStep: "addScript"
+        currentStep: "addScript",
+        script:
+          state.evidenceType === EvidenceType.Check &&
+          state.script === undefined
+            ? `check.status == "healthy" && check.age > duration("5m")`
+            : undefined
       };
 
     case "setScript":
