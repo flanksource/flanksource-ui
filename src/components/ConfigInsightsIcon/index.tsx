@@ -25,11 +25,17 @@ function insightSeverityToColorMap(severity: string) {
   return "text-gray-500";
 }
 
-export function insightTypeToIconMap(
-  type: string,
-  size = 22,
-  colorClass?: string
-) {
+type InsightTypeToIconProps = {
+  type: string;
+  size?: number;
+  colorClass?: string;
+};
+
+export function InsightTypeToIcon({
+  type,
+  size = 20,
+  colorClass = "text-gray-500"
+}: InsightTypeToIconProps) {
   switch (type) {
     case "cost":
       return (
@@ -112,9 +118,12 @@ export default function ConfigInsightsIcon({ analysis, size = 22 }: Props) {
   const colorClass = useMemo(() => {
     return insightSeverityToColorMap(analysis.severity);
   }, [analysis.severity]);
-  return insightTypeToIconMap(
-    analysis.analysis_type,
-    size,
-    `${colorClass} mr-1`
+
+  return (
+    <InsightTypeToIcon
+      type={analysis.analysis_type}
+      size={size}
+      colorClass={colorClass}
+    />
   );
 }

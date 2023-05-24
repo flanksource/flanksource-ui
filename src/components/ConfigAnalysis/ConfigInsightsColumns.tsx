@@ -4,7 +4,7 @@ import { ConfigItem } from "../../api/services/configs";
 import { ConfigTypeInsights } from "../ConfigInsights";
 import { DateCell } from "../ConfigViewer/columns";
 import { Icon } from "../Icon";
-import { AnalysisIcon } from "../ConfigList/Cells/ConfigListAnalysisCell";
+import ConfigInsightsIcon from "../ConfigInsightsIcon";
 
 export const ConfigInsightsColumns: ColumnDef<
   ConfigTypeInsights & { config?: ConfigItem },
@@ -47,7 +47,7 @@ export const ConfigInsightsColumns: ColumnDef<
       return (
         <div className="flex items-center max-w-full space-x-2">
           <span className="w-auto">
-            <AnalysisIcon analysis={data} />
+            <ConfigInsightsIcon analysis={data} />
           </span>
           <span>{data.analysis_type}</span>
         </div>
