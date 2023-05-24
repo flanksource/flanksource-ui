@@ -28,6 +28,8 @@ import { toastSuccess } from "../Toast/toast";
 import { Link } from "react-router-dom";
 import { severityItems, typeItems } from "../Incidents/data";
 import { ReactSelectDropdown } from "../ReactSelectDropdown";
+import { useQueryClient } from "@tanstack/react-query";
+import { createIncidentQueryKey } from "../../api/query-hooks";
 
 interface Props {
   title?: string;
@@ -151,6 +153,8 @@ export function AttachEvidenceDialog({
   isOpen,
   onClose
 }: Props & Partial<Record<string, any>>) {
+  const client = useQueryClient();
+
   const {
     control,
     handleSubmit,
@@ -321,6 +325,9 @@ export function AttachEvidenceDialog({
         </div>,
         { position: "top-right", duration: 5000 }
       );
+      await client.invalidateQueries({
+        queryKey: createIncidentQueryKey(incidentId)
+      });
       callback(true);
     } catch (e) {
       callback(false);
