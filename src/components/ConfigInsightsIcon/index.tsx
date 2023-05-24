@@ -30,12 +30,14 @@ export function insightTypeToIconMap(
   size = 22,
   colorClass?: string
 ) {
+  const adjustedSize = size + 2;
+
   switch (type) {
     case "cost":
       return (
         <BiDollarCircle
           className={clsx(colorClass, "inline-block")}
-          size={size}
+          size={adjustedSize}
           title="Cost"
         />
       );
@@ -51,7 +53,7 @@ export function insightTypeToIconMap(
       return (
         <IoMdSpeedometer
           className={clsx(colorClass, "inline-block")}
-          size={size}
+          size={adjustedSize}
           title="Performance"
         />
       );
@@ -97,7 +99,10 @@ export function insightTypeToIconMap(
       );
   }
   return (
-    <AiFillWarning className={clsx(colorClass, "inline-block")} size="20" />
+    <AiFillWarning
+      className={clsx(colorClass, "inline-block")}
+      size={adjustedSize}
+    />
   );
 }
 
