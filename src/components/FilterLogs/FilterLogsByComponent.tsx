@@ -69,7 +69,7 @@ function FilterLogsByComponent() {
         value={topologyId ?? "none"}
         // @ts-expect-error
         items={{ ...defaultSelections, ...dropDownOptions }}
-        dropDownClassNames="w-auto max-w-[400px] left-0"
+        dropDownClassNames="w-auto max-w-[40rem] left-0"
         hideControlBorder
         isLoading={isLoading}
         isDisabled={isLoading}

@@ -39,13 +39,7 @@ function FilterIncidentsByComponents({ control, value }: Props) {
             return {
               value: component.id,
               name: component.name,
-              icon: (
-                <Icon
-                  name={component.icon}
-                  secondary={component.name}
-                  size="xl"
-                />
-              ),
+              icon: <Icon name={component.icon} secondary={component.name} />,
               label: component.name,
               description: component.name
             };
@@ -85,7 +79,7 @@ function FilterIncidentsByComponents({ control, value }: Props) {
         value={value}
         // @ts-expect-error
         items={{ ...defaultSelections, ...data }}
-        dropDownClassNames="w-auto max-w-[400px]"
+        dropDownClassNames="w-auto max-w-[40rem]"
         hideControlBorder
       />
     </div>
