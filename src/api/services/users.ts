@@ -123,3 +123,6 @@ export const updateUserRole = (userId: string, roles: string[]) => {
     })
   );
 };
+
+export const deleteUser = (userId: string) =>
+  resolve<{}>(IncidentCommander.delete(`/identities?id=eq.${userId}`));

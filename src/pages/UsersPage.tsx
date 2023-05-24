@@ -1,12 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ImUserPlus } from "react-icons/im";
 import {
   getRegisteredUsers,
   inviteUser,
+  deleteUser,
   RegisteredUser,
   updateUserRole
 } from "../api/services/users";
 import { Modal } from "../components";
+import { ConfirmationPromptDialog } from "../components/Dialogs/ConfirmationPromptDialog";
 import { Head } from "../components/Head/Head";
 import {
   InviteUserForm,
@@ -27,9 +29,13 @@ import { tables } from "../context/UserAccessContext/permissions";
 
 export function UsersPage() {
   const [users, setUsers] = useState<RegisteredUser[]>([]);
+  const [openDeleteConfirmDialog, setOpenDeleteConfirmDialog] =
+    useState<boolean>(false);
+  const [deletedUserId, setDeletedUserId] = useState<string>();
   const [isOpen, setIsOpen] = useState(false);
   const [openRoleManageModal, setOpenRoleManageModal] = useState(false);
   const { loading, setLoading, idle } = useLoader();
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const onSubmit = async (val: InviteUserFormValue) => {
     try {
@@ -78,6 +84,22 @@ export function UsersPage() {
     return users;
   }
 
+  async function deleteUserAction(userId: string | undefined) {
+    if (!userId) {
+      return;
+    }
+    try {
+      const { data } = await deleteUser(userId);
+      fetchUsersList();
+      if (data) {
+        toastSuccess(`user deleted successfully`);
+      }
+    } catch (ex) {
+      toastError(ex);
+    }
+    setOpenDeleteConfirmDialog(false);
+  }
+
   useEffect(() => {
     fetchUsersList();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -100,7 +122,10 @@ export function UsersPage() {
         contentClass="p-0 h-full"
         loading={loading}
       >
-        <div className="flex flex-col flex-1 p-6 pb-0 h-full max-w-screen-xl mx-auto">
+        <div
+          className="flex flex-col flex-1 p-6 pb-0 h-full max-w-screen-xl mx-auto"
+          ref={containerRef}
+        >
           <div className="flex justify-end">
             <div className="flex flex-row space-x-4">
               <AccessCheck resource={tables.rbac} action="write">
@@ -127,6 +152,15 @@ export function UsersPage() {
             className="mt-6 overflow-y-hidden"
             data={users}
             isLoading={loading || idle}
+            style={{
+              height: `calc(100vh - ${
+                containerRef.current?.getBoundingClientRect()?.top ?? 0
+              }px)`
+            }}
+            deleteUser={(userId) => {
+              setDeletedUserId(userId);
+              setOpenDeleteConfirmDialog(true);
+            }}
           />
           <Modal
             title="Invite User"
@@ -157,6 +191,15 @@ export function UsersPage() {
               closeModal={() => setOpenRoleManageModal(false)}
             />
           </Modal>
+          <ConfirmationPromptDialog
+            isOpen={openDeleteConfirmDialog}
+            title="Delete User ?"
+            description="Are you sure you want to delete this user ?"
+            onClose={() => setOpenDeleteConfirmDialog(false)}
+            onConfirm={() => {
+              deleteUserAction(deletedUserId);
+            }}
+          />
         </div>
       </SearchLayout>
     </>

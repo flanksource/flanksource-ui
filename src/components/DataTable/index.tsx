@@ -255,7 +255,7 @@ export function DataTable<TableColumns, Data extends TableColumns>({
   }, [rows.length, virtualRows, pagination, paginationType, table]);
 
   return (
-    <div className="flex flex-col flex-1 overflow-y-auto space-y-2">
+    <div className="flex flex-col flex-1 overflow-y-auto space-y-2 h-full">
       <div
         ref={tableContainerRef}
         className={clsx("flex flex-col flex-1 overflow-y-auto", className)}
