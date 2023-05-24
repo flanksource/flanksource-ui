@@ -63,7 +63,7 @@ function addDefinitionOfDoneStepsReducer(
         script:
           state.evidenceType === EvidenceType.Check &&
           state.script === undefined
-            ? `check.status == "healthy" && check.age > duration("30s")`
+            ? `check.status == "healthy" && check.age > duration("5m")`
             : undefined
       };
 
