@@ -7,7 +7,7 @@ type FormikTextAreaProps = {
   required?: boolean;
   label?: string;
   hint?: string;
-} & Omit<React.ComponentProps<typeof TextArea>, "id">;
+} & Omit<React.HTMLProps<HTMLTextAreaElement>, "id">;
 
 export default function FormikTextArea({
   name,
@@ -15,9 +15,10 @@ export default function FormikTextArea({
   label,
   className = "flex flex-col",
   hint,
+  defaultValue,
   ...props
 }: FormikTextAreaProps) {
-  const [field, meta] = useField({
+  const [field, meta] = useField<string>({
     name,
     type: "text",
     required,
@@ -33,9 +34,11 @@ export default function FormikTextArea({
       <TextArea
         label={label}
         {...props}
+        defaultValue={defaultValue as string}
         required={required}
         id={name}
         {...field}
+        className="resize-none"
       />
       {hint && <p className="text-sm text-gray-500 py-1">{hint}</p>}
       {meta.touched && meta.error ? (
