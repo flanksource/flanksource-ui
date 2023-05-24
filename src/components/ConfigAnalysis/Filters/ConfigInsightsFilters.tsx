@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useSearchParams } from "react-router-dom";
-import ConfigAnalysisSeverityDropdown from "./ConfigAnalysisSeverityDropdown";
-import ConfigAnalysisTypeDropdown from "./ConfigAnalysisTypeDropdown";
+import ConfigInsightsTypeDropdown from "./ConfigInsightsTypeDropdown";
+import ConfigInsightsSeverityDropdown from "./ConfigInsightsSeverityDropdown";
 
 export function ConfigInsightsFilters() {
   const [params, setParams] = useSearchParams();
@@ -45,7 +45,7 @@ export function ConfigInsightsFilters() {
     <div className="flex flex-row space-x-4 py-4 px-2">
       <div className="flex items-center">
         <div className="flex items-center">
-          <ConfigAnalysisTypeDropdown
+          <ConfigInsightsTypeDropdown
             prefix="Type:"
             name="type"
             value={type}
@@ -55,7 +55,7 @@ export function ConfigInsightsFilters() {
             hideControlBorder
             showAllOption
           />
-          <ConfigAnalysisSeverityDropdown
+          <ConfigInsightsSeverityDropdown
             prefix="Severity:"
             name="severity"
             value={severity}

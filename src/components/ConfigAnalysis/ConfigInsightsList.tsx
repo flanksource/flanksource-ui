@@ -51,7 +51,7 @@ export default function ConfigInsightsList({
     useConfigInsightsQuery(
       {
         status,
-        severity,
+        severity: severity?.toLowerCase(),
         type
       },
       {

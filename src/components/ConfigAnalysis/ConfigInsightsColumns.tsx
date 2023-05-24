@@ -5,6 +5,7 @@ import { ConfigTypeInsights } from "../ConfigInsights";
 import { DateCell } from "../ConfigViewer/columns";
 import { Icon } from "../Icon";
 import ConfigInsightsIcon from "../ConfigInsightsIcon";
+import ConfigInsightsSeverityIcons from "./ConfigInsightsSeverityIcons";
 
 export const ConfigInsightsColumns: ColumnDef<
   ConfigTypeInsights & { config?: ConfigItem },
@@ -49,7 +50,7 @@ export const ConfigInsightsColumns: ColumnDef<
           <span className="w-auto">
             <ConfigInsightsIcon analysis={data} />
           </span>
-          <span>{data.analysis_type}</span>
+          <span className="capitalize">{data.analysis_type}</span>
         </div>
       );
     },
@@ -62,12 +63,10 @@ export const ConfigInsightsColumns: ColumnDef<
     accessorKey: "analyzer",
     size: 100,
     enableGrouping: true,
-    cell: ({ cell }) => {
-      const data = cell.row.original;
-
+    cell: ({ getValue }) => {
       return (
         <span className="flex-1 overflow-hidden overflow-ellipsis">
-          {data.analyzer}
+          {getValue<string>()}
         </span>
       );
     },
@@ -79,7 +78,15 @@ export const ConfigInsightsColumns: ColumnDef<
     aggregatedCell: "",
     accessorKey: "severity",
     size: 50,
-    enableSorting: false
+    enableSorting: false,
+    cell: ({ getValue }) => {
+      return (
+        <div className="flex-1 flex flex-row gap-1 items-center overflow-hidden overflow-ellipsis capitalize">
+          <ConfigInsightsSeverityIcons severity={getValue<string>()} />
+          <span>{getValue<string>()}</span>
+        </div>
+      );
+    }
   },
   {
     header: "Status",

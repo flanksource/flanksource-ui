@@ -1,8 +1,8 @@
 import React from "react";
 import { Control } from "react-hook-form";
-import ConfigInsightsIcon from "../ConfigInsightsIcon";
-import { defaultSelections } from "../Incidents/data";
-import { ReactSelectDropdown } from "../ReactSelectDropdown";
+import ConfigInsightsIcon from "../../ConfigInsightsIcon";
+import { defaultSelections } from "../../Incidents/data";
+import { ReactSelectDropdown } from "../../ReactSelectDropdown";
 
 export const configAnalysisTypeItems = {
   Cost: {
@@ -90,6 +90,26 @@ export const configAnalysisTypeItems = {
     name: "Reliability",
     description: "Reliability",
     value: "reliability"
+  },
+  Recommendation: {
+    id: "dropdown-type-recommendation",
+    icon: (
+      <ConfigInsightsIcon
+        analysis={{ analysis_type: "recommendation", severity: "" }}
+      />
+    ),
+    name: "Recommendation",
+    description: "Recommendation",
+    value: "recommendation"
+  },
+  Other: {
+    id: "dropdown-type-other",
+    icon: (
+      <ConfigInsightsIcon analysis={{ analysis_type: "other", severity: "" }} />
+    ),
+    name: "Other",
+    description: "Other",
+    value: "other"
   }
 } as const;
 
@@ -102,7 +122,7 @@ type Props = React.HTMLProps<HTMLDivElement> & {
   showAllOption?: boolean;
 };
 
-export default function ConfigAnalysisTypeDropdown({
+export default function ConfigInsightsTypeDropdown({
   control,
   value,
   prefix = "Severity:",
@@ -122,7 +142,9 @@ export default function ConfigAnalysisTypeDropdown({
       value={value}
       items={{
         ...(showAllOption ? defaultSelections : {}),
-        ...configAnalysisTypeItems
+        ...Object.values(configAnalysisTypeItems).sort((a, b) =>
+          a.name > b.name ? 1 : -1
+        )
       }}
       hideControlBorder={hideControlBorder}
     />

@@ -5,7 +5,7 @@ import { FaTasks } from "react-icons/fa";
 import { GrIntegration, GrWorkshop } from "react-icons/gr";
 import { ImHeartBroken } from "react-icons/im";
 import { IoMdSpeedometer } from "react-icons/io";
-import { MdSecurity } from "react-icons/md";
+import { MdOutlineRecommend, MdSecurity } from "react-icons/md";
 import { FaRegClock } from "react-icons/fa";
 import { ConfigTypeInsights } from "../ConfigInsights";
 import clsx from "clsx";
@@ -99,6 +99,14 @@ export function InsightTypeToIcon({
           className={`${colorClass}`}
           size={size}
           title="Technical Debt"
+        />
+      );
+    case "recommendation":
+      return (
+        <MdOutlineRecommend
+          className={clsx(colorClass, "inline-block")}
+          size={size}
+          title="Recommendation"
         />
       );
   }
