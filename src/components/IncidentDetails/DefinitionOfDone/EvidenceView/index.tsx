@@ -17,6 +17,7 @@ import { Icon } from "../../../Icon";
 import TextSkeletonLoader from "../../../SkeletonLoader/TextSkeletonLoader";
 import { StatusStyles } from "../../../TopologyCard";
 import { CardMetrics } from "../../../TopologyCard/CardMetrics";
+import { useQuery } from "@tanstack/react-query";
 
 type EvidenceViewProps = Omit<React.HTMLProps<HTMLDivElement>, "size"> & {
   evidence: Evidence;
@@ -164,33 +165,34 @@ function HealthEvidence({
   className,
   ...rest
 }: EvidenceViewProps) {
-  const [check, setCheck] = useState<any>();
+  const healthEvidence = evidence.evidence;
+  const id = evidence.check_id || healthEvidence.check_id;
+  const includeMessages = healthEvidence.includeMessages;
+  const start = healthEvidence.start;
 
-  useEffect(() => {
-    const healthEvidence: any = evidence.evidence;
-    const id = evidence.check_id || healthEvidence.check_id;
-    const includeMessages = healthEvidence.includeMessages;
-    const start = healthEvidence.start;
-    fetchCheckDetails(id, start, includeMessages);
-  }, [evidence]);
-
-  const fetchCheckDetails = (
-    id: string,
-    start: string,
-    includeMessages: boolean
-  ) => {
-    const payload = {
+  const payload = useMemo(
+    () => ({
       check: id,
       includeMessages,
       start
-    };
-    getCanaries(payload).then((results: any) => {
-      if (results == null || results.data.checks.length === 0) {
-        return;
+    }),
+    [id, includeMessages, start]
+  );
+
+  const { data: check } = useQuery(
+    ["check", payload],
+    () => {
+      return getCanaries(payload);
+    },
+    {
+      select: (results) => {
+        if (results.data === null || results.data?.checks.length === 0) {
+          return;
+        }
+        return results.data.checks[0];
       }
-      setCheck(results.data.checks[0]);
-    });
-  };
+    }
+  );
 
   return (
     <div className="overflow-hidden py-2" {...rest}>
