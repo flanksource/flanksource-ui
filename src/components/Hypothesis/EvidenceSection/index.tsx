@@ -419,16 +419,14 @@ export function HealthEvidenceViewer({
         onClose={() => setShowModal(false)}
         title={<CheckTitle check={check} />}
         size="medium"
-        bodyClass="px-8 h-full"
+        containerClassName="flex flex-col h-full overflow-y-auto"
+        bodyClass="flex flex-col flex-1 overflow-y-auto"
       >
-        <div
-          className="flex flex-col h-full py-4 mb-16"
-          style={{ height: "calc(100vh - 12rem)" }}
-        >
+        <div className="flex flex-col flex-1 py-4 overflow-y-auto">
           <CheckDetails
             check={check}
             timeRange={evidence.evidence.start}
-            className={`flex flex-col overflow-y-hidden ${mixins.appleScrollbar}`}
+            className={`flex flex-col flex-1 px-4 overflow-y-hidden ${mixins.appleScrollbar}`}
           />
         </div>
       </Modal>

@@ -8,6 +8,7 @@ import { DataTable } from "../../../DataTable";
 import clsx from "clsx";
 import { useCheckStattiQuery } from "../../../../api/query-hooks/useCheckStattiQuery";
 import { StatusHistoryFilters } from "./StatusHistoryFilters";
+import { Loading } from "../../../Loading";
 
 type StatusHistoryProps = React.HTMLProps<HTMLDivElement> & {
   check: Pick<Partial<HealthCheck>, "id" | "checkStatuses" | "description">;
@@ -155,60 +156,51 @@ export function StatusHistory({
     });
   };
 
-  const getHistoryListView = (
-    loading: boolean,
-    statti: HealthCheckStatus[]
-  ) => {
-    if (loading) {
-      return (
-        <div
-          className={clsx(
-            "h-64 flex items-center justify-center text-gray-400 text-md h-full",
-            className
-          )}
-          {...props}
-        >
-          Loading please wait...
-        </div>
-      );
-    }
-    if (!statii.length) {
-      return (
-        <div
-          className={clsx(
-            "h-64 flex items-center justify-center text-gray-400 text-md h-full",
-            className
-          )}
-          {...props}
-        >
-          No status history available
-        </div>
-      );
-    }
-    return null;
-  };
-
   if (!check) {
     return null;
   }
 
   return (
-    <div className={clsx("w-full flex flex-col", className)} {...props}>
+    <div
+      className={clsx("w-full flex flex-col flex-1 overflow-y-auto", className)}
+      {...props}
+    >
       <StatusHistoryFilters onFiltersChanges={onFiltersChange} />
-      {getHistoryListView(isLoading, statii)}
-      {Boolean(statii?.length) && (
-        <DataTable
-          stickyHead
-          columns={columns}
-          data={statii}
-          tableStyle={{ borderSpacing: "0" }}
-          className="flex-1"
-          pagination={pagination}
-          paginationClassName="px-2 pb-2"
-          preferencesKey="health-check-status-list"
-          savePreferences={false}
-        />
-      )}
+      <div className="flex flex-col flex-1  overflow-y-auto">
+        {statii && statii.length > 0 ? (
+          <DataTable
+            stickyHead
+            columns={columns}
+            data={statii}
+            tableStyle={{ borderSpacing: "0" }}
+            className="flex-1"
+            pagination={pagination}
+            paginationClassName="px-2 pb-2"
+            preferencesKey="health-check-status-list"
+            savePreferences={false}
+          />
+        ) : isLoading ? (
+          <div
+            className={clsx(
+              "flex flex-col items-center justify-center text-gray-400 text-md flex-1",
+              className
+            )}
+            {...props}
+          >
+            <Loading />
+          </div>
+        ) : (
+          <div
+            className={clsx(
+              "flex flex-col items-center justify-center text-gray-400 text-md flex-1",
+              className
+            )}
+            {...props}
+          >
+            No status history available
+          </div>
+        )}
+      </div>
     </div>
   );
 }
