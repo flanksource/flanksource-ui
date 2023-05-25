@@ -1,9 +1,10 @@
 import clsx from "clsx";
-import React from "react";
+import React, { useMemo } from "react";
 import { HealthCheck } from "../../../types/healthChecks";
 import { usePrevious } from "../../../utils/hooks";
 import { Badge } from "../../Badge";
 import { Icon } from "../../Icon";
+import AgentName from "../../Agents/AgentName";
 
 type CheckTitleProps = Omit<React.HTMLProps<HTMLDivElement>, "size"> & {
   check?: Partial<HealthCheck>;
@@ -18,6 +19,11 @@ export function CheckTitle({
 }: CheckTitleProps) {
   const prevCheck = usePrevious(check);
   const validCheck = check || prevCheck;
+
+  // todo: this is a hack to get the agent id from the check, before it gets
+  // update to a check without the agent id
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const agentID = useMemo(() => check?.agent_id, []);
 
   return (
     <div className={`flex flex-row items-center ${className}`} {...rest}>
@@ -67,6 +73,7 @@ export function CheckTitle({
         >
           <Badge text={validCheck?.namespace ?? ""} />
         </span>
+        <AgentName agentId={agentID} />
       </div>
     </div>
   );

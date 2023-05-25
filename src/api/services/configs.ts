@@ -3,7 +3,7 @@
 import { ConfigTypeChanges } from "../../components/ConfigChanges";
 import { ConfigTypeInsights } from "../../components/ConfigInsights";
 import { Config, ConfigDB, IncidentCommander } from "../axios";
-import { ApiResp, resolve } from "../resolve";
+import { resolve } from "../resolve";
 
 export interface ConfigItem {
   name: string;
@@ -23,6 +23,11 @@ export interface ConfigItem {
   cost_total_7d?: number;
   cost_total_30d?: number;
   config: Record<string, any>;
+  agent_id?: string;
+  agent?: {
+    id: string;
+    name: string;
+  };
 }
 
 export type ConfigTypeRelationships = {
@@ -62,9 +67,9 @@ export const getAllConfigs = () =>
   resolve<ConfigItem[]>(ConfigDB.get(`/configs`));
 
 export const getAllConfigsMatchingQuery = (query: string) => {
-  let url = `/configs`;
+  let url = `/configs?select=*,agent:agents(id,name)`;
   if (query) {
-    url = `${url}?${query}`;
+    url = `${url}&${query}`;
   }
   return resolve<ConfigItem[]>(ConfigDB.get(url));
 };

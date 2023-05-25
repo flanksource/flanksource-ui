@@ -33,7 +33,7 @@ import { isCanaryUI } from "../../context/Environment";
 import clsx from "clsx";
 import HealthPageSkeletonLoader from "../SkeletonLoader/HealthPageSkeletonLoader";
 import { HealthChecksResponse } from "../../types/healthChecks";
-import { useSearchParams } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 import useRefreshRateFromLocalStorage from "../Hooks/useRefreshRateFromLocalStorage";
 import { HEALTH_SETTINGS } from "../../constants";
 
@@ -88,14 +88,17 @@ export function Canary({
   const timerRef = useRef<NodeJS.Timer>();
   const abortController = useRef<AbortController>();
 
-  const labelUpdateCallback = useCallback((newLabels: any) => {
-    setHealthState((state) => {
-      return {
-        ...state,
-        filteredLabels: newLabels
-      };
-    });
-  }, []);
+  const labelUpdateCallback = useCallback(
+    (newLabels: any) => {
+      setHealthState((state) => {
+        return {
+          ...state,
+          filteredLabels: newLabels
+        };
+      });
+    },
+    [setHealthState]
+  );
 
   useEffect(() => {
     setHealthState((state) => {
@@ -121,14 +124,17 @@ export function Canary({
     });
   }, [filteredChecks, setHealthState]);
 
-  const updateFilteredChecks = useCallback((newFilteredChecks: any[]) => {
-    setHealthState((state) => {
-      return {
-        ...state,
-        filteredChecks: newFilteredChecks || []
-      };
-    });
-  }, []);
+  const updateFilteredChecks = useCallback(
+    (newFilteredChecks: any[]) => {
+      setHealthState((state) => {
+        return {
+          ...state,
+          filteredChecks: newFilteredChecks || []
+        };
+      });
+    },
+    [setHealthState]
+  );
 
   const handleFetch = useCallback(async () => {
     if (url == null) {
@@ -325,7 +331,8 @@ export function Canary({
             <div className="mb-2 mr-2">
               <DropdownWrapper
                 dropdownElem={<GroupByDropdown name="groupBy" />}
-                checks={checks}
+                name="groupBy"
+                checks={checks ?? []}
                 defaultValue="canary_name"
                 paramKey="groupBy"
                 className="w-64"
@@ -340,9 +347,9 @@ export function Canary({
               <DropdownWrapper
                 dropdownElem={<TabByDropdown name="tabBy" />}
                 defaultValue={defaultTabSelections.namespace.value}
+                name="tabBy"
                 paramKey="tabBy"
-                checks={checks}
-                emptyable
+                checks={checks ?? []}
                 className="w-64"
                 prefix={
                   <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
@@ -431,7 +438,8 @@ const DropdownWrapper = ({
     if (value !== defaultValue && value !== null) {
       updateParams({ [paramKey]: value });
     }
-  }, [defaultValue, paramKey, updateParams, value]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [defaultValue, paramKey, value]);
 
   return (
     <DropdownStandaloneWrapper
@@ -496,10 +504,7 @@ export const MultiSelectLabelsDropdownStandalone = ({ labels = [] }) => {
       updateParams({ labels: conciseLabelState });
       setIsFirstLoad(false);
     },
-    [
-      isFirstLoad
-      //  selectAllByDefault
-    ]
+    [isFirstLoad, updateParams]
   );
 
   useEffect(() => {
@@ -530,9 +535,11 @@ export const TristateLabelStandalone = ({
   labelClass,
   ...props
 }: TristateLabelStandaloneProps) => {
+  const location = useLocation();
+
   const { labels: urlLabelState = {} } = useMemo(() => {
-    return decodeUrlSearchParams(window.location.search);
-  }, [window.location.search]);
+    return decodeUrlSearchParams(location.search);
+  }, [location.search]);
 
   const updateParams = useUpdateParams();
 

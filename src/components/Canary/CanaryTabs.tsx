@@ -1,6 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { HealthCheck } from "../../types/healthChecks";
 import { Tab, Tabs } from "../Tabs/Tabs";
+import { useQuery } from "@tanstack/react-query";
+import { getAgentByIDs } from "../../api/services/topology";
 
 const defaultTabs = {
   all: {
@@ -29,6 +31,9 @@ export function filterChecksByTabSelection(
     if (tabBy === "namespace") {
       // if filter by namespace, show only selected namespace
       filteredChecks = checks.filter((o) => o.namespace === selectedTab);
+    } else if (tabBy === "agent_id") {
+      // if filter by agent_id, show only selected agent_id
+      filteredChecks = checks.filter((o) => o.agent_id === selectedTab);
     } else {
       // filtered by non-boolean labels
       filteredChecks = checks.filter(
@@ -107,18 +112,47 @@ export function CanaryTabs({
   setTabSelection,
   ...rest
 }: CanaryTabsProps) {
-  const [tabs, setTabs] = useState(generateTabs(tabBy, checks));
-  const [selectedTab, setSelectedTab] = useState(Object.values(tabs)[0].value);
+  const agentIDs = useMemo(() => {
+    const uniqueIds = new Set(
+      checks.filter((check) => check.agent_id).map((check) => check.agent_id)
+    );
+    return Array.from(uniqueIds) as string[];
+  }, [checks]);
 
-  // changes in checks and tabBy(dropdown) will generate new tabs
-  useEffect(() => {
-    setTabs(generateTabs(tabBy, checks));
-  }, [checks, tabBy]);
+  const { data: agents = [] } = useQuery(
+    ["db", "agents", ...agentIDs],
+    () => getAgentByIDs(agentIDs),
+    {
+      enabled: tabBy === "agent_id" && agentIDs.length > 0
+    }
+  );
+
+  const tabs = useMemo(() => {
+    if (tabBy === "agent_id") {
+      const tabs = agents.reduce(
+        (acc, agent) => ({
+          ...acc,
+          [agent.name]: {
+            key: agent.name,
+            value: agent.id,
+            label: agent.name
+          }
+        }),
+        {}
+      );
+      return { ...defaultTabs, ...tabs };
+    }
+    return generateTabs(tabBy, checks);
+  }, [agents, checks, tabBy]);
+
+  const [selectedTab, setSelectedTab] = useState(Object.values(tabs)[0].value);
 
   // checking if previously selected tab still exists in newly-generated tabs
   useEffect(() => {
     // if it doesnt exist, reset to the first tab value
-    if (!Object.prototype.hasOwnProperty.call(tabs, selectedTab)) {
+    if (
+      !Object.entries(tabs).find(([key, value]) => value.value === selectedTab)
+    ) {
       setSelectedTab(Object.values(tabs)[0].value);
     }
   }, [tabs, selectedTab]);

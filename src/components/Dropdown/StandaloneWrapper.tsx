@@ -1,13 +1,13 @@
 import React from "react";
 import { useSearchParams } from "react-router-dom";
-import { Dropdown } from ".";
 import { useUpdateParams } from "../Canary/url";
+import { GroupByDropdown } from "./GroupByDropdown";
 
 export type DropdownStandaloneWrapperProps = {
   dropdownElem: React.ReactElement;
   defaultValue: string;
   paramKey: string;
-} & React.ComponentProps<typeof Dropdown>;
+} & React.ComponentProps<typeof GroupByDropdown>;
 
 export function DropdownStandaloneWrapper({
   dropdownElem,

@@ -36,6 +36,7 @@ export type Topology = {
   status?: string;
   hidden?: boolean;
   external_id?: string;
+  agent_id?: string;
   summary?: {
     incidents?: Record<
       keyof typeof typeItems,

@@ -126,6 +126,18 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
     ]
   },
   {
+    header: "Agent",
+    accessorKey: "agent",
+    enableSorting: false,
+    cell: ({ getValue }: CellContext<ConfigItem, any>) => {
+      const agent = getValue<ConfigItem["agent"]>();
+      if (agent?.name === "local") {
+        return null;
+      }
+      return <span>{agent?.name}</span>;
+    }
+  },
+  {
     header: "Tags",
     accessorKey: "tags",
     cell: React.memo(ConfigListTagsCell),

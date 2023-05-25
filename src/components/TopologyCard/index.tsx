@@ -14,6 +14,7 @@ import { TopologyDropdownMenu } from "./TopologyDropdownMenu";
 import IncidentCardSummary from "../IncidentCardSummary";
 import TopologyCardSkeletonLoader from "../SkeletonLoader/TopologyCardSkeletonLoader";
 import { TopologyConfigAnalysisLine } from "./TopologyConfigAnalysisLine";
+import AgentName from "../Agents/AgentName";
 
 export enum ComponentStatus {
   unhealthy = "unhealthy",
@@ -136,7 +137,7 @@ export function TopologyCard({
       {...selectionModeRootProps}
     >
       <div className="flex flex-row -mt-1 bg-white border-b flex-nowrap rounded-t-md">
-        <div className="flex pr-1 pt-2.5 pb-3.5 pl-2 overflow-hidden">
+        <div className="flex gap-2 pr-1 pt-2.5 pb-3.5 pl-2 overflow-hidden">
           <div className="text-gray-color m-auto mr-1.5 flex-initial max-w-1/4 leading-1.21rel">
             <h3 className="text-gray-color text-2xsi leading-1.21rel">
               <Icon name={topology.icon} className="h-6" />
@@ -155,6 +156,7 @@ export function TopologyCard({
               {!prepareTopologyLink(topology) &&
                 (topology.text || topology.name)}
             </p>
+            <AgentName agentId={topology.agent_id} />
             {topology.description && (
               <h3 className="text-gray-color overflow-hidden truncate text-2xsi leading-1.21rel font-medium">
                 {topology.description}
