@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { filter } from "lodash";
-import { useEffect, useState } from "react";
-import { BsPersonFill } from "react-icons/bs";
+import { useMemo } from "react";
+import { BsFillCircleFill, BsPersonFill } from "react-icons/bs";
 import { Link } from "react-router-dom";
 import {
   useComponentNameQuery,
@@ -194,30 +194,39 @@ function HealthEvidence({
     }
   );
 
+  const isHealthCheckHealth = check?.status === "healthy";
+
   return (
     <div className="overflow-hidden py-2" {...rest}>
-      <div className={`flex flex-row`} {...rest}>
+      <div className={`flex flex-row items-center gap-1`} {...rest}>
         <div className={clsx("flex-shrink-0", "pr-2")}>
           <Icon name={check?.icon || check?.type} />
         </div>
-        <div className={clsx("overflow-hidden")}>
-          <div className="flex flex-row">
-            <span
-              title={check?.name}
-              className={clsx(
-                "text-gray-500 font-semibold whitespace-nowrap overflow-ellipsis overflow-hidden pr-4"
-              )}
-            >
-              {check?.name}
-            </span>{" "}
-            <span
-              className="inline-block float-right"
-              title={`Namespace for ${check?.name}`}
-              style={{ paddingTop: "1px" }}
-            >
-              <Badge text={check?.namespace} />
-            </span>
-          </div>
+        <div className="flex flex-row flex-1 overflow-hidden">
+          <span
+            title={check?.name}
+            className={clsx(
+              "text-gray-500 font-semibold whitespace-nowrap overflow-ellipsis overflow-hidden pr-4"
+            )}
+          >
+            {check?.name}
+          </span>
+          <span
+            className="inline-block float-right"
+            title={`Namespace for ${check?.name}`}
+            style={{ paddingTop: "1px" }}
+          >
+            <Badge text={check?.namespace} />
+          </span>
+        </div>
+
+        <div className="block px-2">
+          <BsFillCircleFill
+            className={clsx(
+              isHealthCheckHealth ? "text-green-500" : "text-red-500"
+            )}
+            size={10}
+          />
         </div>
       </div>
     </div>
