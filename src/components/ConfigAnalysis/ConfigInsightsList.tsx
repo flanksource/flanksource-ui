@@ -28,6 +28,7 @@ export default function ConfigInsightsList({
   const status = params.get("status") ?? undefined;
   const severity = params.get("severity") ?? undefined;
   const type = params.get("type") ?? undefined;
+  const analyzer = params.get("analyzer") ?? undefined;
 
   const sortState: SortingState = useMemo(() => {
     return [
@@ -52,7 +53,8 @@ export default function ConfigInsightsList({
       {
         status,
         severity: severity?.toLowerCase(),
-        type
+        type,
+        analyzer
       },
       {
         sortBy: params.get("sortBy") ?? undefined,

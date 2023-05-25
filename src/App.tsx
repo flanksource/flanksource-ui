@@ -434,6 +434,9 @@ export function App() {
     {
       onSuccess: (data) => {
         setUser(data ?? null);
+      },
+      onError: (err) => {
+        console.error(err);
       }
     }
   );

@@ -301,6 +301,17 @@ export const getConfigsAnalysisTypesFilter = async () => {
   return res.data;
 };
 
+export type ConfigAnalysisAnalyzerItem = {
+  analyzer: string;
+};
+
+export const getConfigsAnalysisAnalyzers = async () => {
+  const res = await IncidentCommander.get<ConfigAnalysisAnalyzerItem[] | null>(
+    `/config_analysis_analyzers?order=analyzer.asc`
+  );
+  return res.data ?? [];
+};
+
 export type ConfigChangesTypeItem = {
   change_type: string;
 };
@@ -353,18 +364,24 @@ export const getConfigInsight = async <T>(
 };
 
 export const getAllConfigInsights = async (
-  queryParams: { status?: string; type?: string; severity?: string },
+  queryParams: {
+    status?: string;
+    type?: string;
+    severity?: string;
+    analyzer?: string;
+  },
   sortBy: { sortBy?: string; sortOrder?: "asc" | "desc" },
   { pageIndex, pageSize }: PaginationInfo
 ) => {
   const pagingParams = `&limit=${pageSize}&offset=${pageIndex * pageSize}`;
 
-  const { status, type, severity } = queryParams;
+  const { status, type, severity, analyzer } = queryParams;
 
   const params = {
     status: status && `&status=eq.${status}`,
     type: type && `&analysis_type=eq.${type}`,
-    severity: severity && `&severity=eq.${severity}`
+    severity: severity && `&severity=eq.${severity}`,
+    analyzer: analyzer && `&analyzer=eq.${analyzer}`
   };
 
   const queryParamsString = Object.values(params)
