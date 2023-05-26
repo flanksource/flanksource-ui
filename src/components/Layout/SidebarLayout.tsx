@@ -5,7 +5,7 @@ import React, { useCallback, useContext, useEffect, useState } from "react";
 import { Toaster } from "react-hot-toast";
 import { IconType } from "react-icons";
 import { IoChevronForwardOutline } from "react-icons/io5";
-import { NavLink, Outlet } from "react-router-dom";
+import { Link, NavLink, Outlet } from "react-router-dom";
 import { $ArrayElemType } from "../../types/utility";
 import { NavigationItems, SettingsNavigationItems } from "../../App";
 
@@ -291,21 +291,27 @@ export function SidebarLayout({ navigation, settingsNav, checkPath }: Props) {
               <IoChevronForwardOutline />
             </button>
 
-            {collapseSidebar ? (
-              <div className="flex border-b border-b-gray-500 h-16 shadow">
-                <Icon
-                  name="mission-control-white"
-                  className="w-10 h-auto m-auto fill-white stroke-white"
-                />
-              </div>
-            ) : (
-              <div className="p-3 pl-5 border-b border-b-gray-500 shadow">
-                <Icon
-                  name="mission-control-logo-white"
-                  className="h-10 stroke-white"
-                />
-              </div>
-            )}
+            <Link
+              to={{
+                pathname: "/"
+              }}
+            >
+              {collapseSidebar ? (
+                <div className="flex border-b border-b-gray-500 h-16 shadow">
+                  <Icon
+                    name="mission-control-white"
+                    className="w-10 h-auto m-auto fill-white stroke-white"
+                  />
+                </div>
+              ) : (
+                <div className="p-3 pl-5 border-b border-b-gray-500 shadow">
+                  <Icon
+                    name="mission-control-logo-white"
+                    className="h-10 stroke-white"
+                  />
+                </div>
+              )}
+            </Link>
 
             <div
               className={clsx(
