@@ -4,6 +4,7 @@ import { DataTable } from "../DataTable";
 import { Avatar } from "../Avatar";
 import { Connection } from "./ConnectionForm";
 import { DateCell } from "../ConfigViewer/columns";
+import { Icon } from "../Icon";
 
 type ConnectionListProps = {
   data: Connection[];
@@ -11,18 +12,28 @@ type ConnectionListProps = {
   onRowClick?: (data: Connection) => void;
 } & Omit<React.HTMLProps<HTMLDivElement>, "data">;
 
+const NameCell = ({ row, getValue }: CellContext<Connection, any>) => {
+  return (
+    <div className="flex flex-row space-x-2 items-center">
+      <Icon name={row.original.type} />
+      <div>{getValue()}</div>
+    </div>
+  );
+};
+
 const AvatarCell = ({ getValue }: CellContext<Connection, any>) => {
   return <Avatar user={getValue()} circular />;
 };
 
 const columns: ColumnDef<Connection>[] = [
   {
-    header: "Type",
-    accessorKey: "type"
+    header: "Name",
+    accessorKey: "name",
+    cell: NameCell
   },
   {
-    header: "Name",
-    accessorKey: "name"
+    header: "Type",
+    accessorKey: "type"
   },
   {
     header: "Created By",
