@@ -3,6 +3,7 @@ import SpecEditor, { SpecType } from "./SpecEditor";
 import { HTTPHealthFormEditor } from "../Forms/Health/HTTPHealthFormEditor";
 import { FaCog } from "react-icons/fa";
 import { SchemaResourceType } from "../SchemaResourcePage/resourceTypes";
+import { FolderHealthFormEditor } from "../Forms/Health/FolderHealthFormEditor";
 
 type HealthSpecEditorProps = {
   resourceValue?: {
@@ -319,9 +320,9 @@ export default function HealthSpecEditor({
             return resourceValue ?? {};
           },
           icon: "folder",
-          configForm: null,
+          configForm: FolderHealthFormEditor,
           specsMapField: "folder.0",
-          rawSpecInput: true,
+          rawSpecInput: false,
           schemaFilePrefix: "canary"
         },
         {
