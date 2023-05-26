@@ -140,7 +140,7 @@ export default function ConfigChanges({
       Header={
         <div className="flex flex-row w-full items-center space-x-2">
           <Title title="Changes" icon={<GoDiff className="w-6 h-auto" />} />
-          <PillBadge>{response?.data?.length ?? 0}</PillBadge>
+          <PillBadge>{count}</PillBadge>
         </div>
       }
       dataCount={count}
