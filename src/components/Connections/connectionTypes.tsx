@@ -3,12 +3,10 @@ import { DiGoogleCloudPlatform } from "react-icons/di";
 import { stringSortHelper } from "../../utils/common";
 import { Connection } from "./ConnectionForm";
 
-// supported field types
-type FieldType = "checkbox" | "input" | "EnvVarSource";
-
-const fieldTypes: { [key: string]: FieldType } = {
+const fieldTypes = {
   checkbox: "checkbox",
   input: "input",
+  numberInput: "numberInput",
   EnvVarSource: "EnvVarSource"
 };
 
@@ -25,6 +23,7 @@ export type Field = {
   type: string;
   variant?: Variant;
   required?: boolean;
+  default?: boolean | number | string;
 };
 
 export type ConnectionType = {
@@ -312,6 +311,12 @@ export const connectionTypes: ConnectionType[] = [
         required: true
       },
       {
+        label: "Database",
+        key: "db",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
         label: "URL",
         key: "url",
         type: fieldTypes.input,
@@ -334,7 +339,25 @@ export const connectionTypes: ConnectionType[] = [
         key: "insecure_tls",
         type: fieldTypes.checkbox
       }
-    ]
+    ],
+    convertToFormSpecificValue: (data: Record<string, any>) => {
+      return {
+        ...data,
+        db: data.properties?.db
+      } as Connection;
+    },
+    preSubmitConverter: (data: Record<string, string>) => {
+      return {
+        name: data.name,
+        url: data.url,
+        username: data.username,
+        password: data.password,
+        insecure_tls: data.insecure_tls,
+        properties: {
+          db: data.db
+        }
+      };
+    }
   },
   {
     title: "Windows",
@@ -390,6 +413,12 @@ export const connectionTypes: ConnectionType[] = [
       {
         label: "Name",
         key: "name",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "Endpoint",
+        key: "url",
         type: fieldTypes.input,
         required: true
       },
@@ -558,6 +587,281 @@ export const connectionTypes: ConnectionType[] = [
         required: true
       }
     ]
+  },
+  {
+    title: "Azure",
+    icon: "azure",
+    fields: [
+      {
+        label: "Name",
+        key: "name",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "Client ID",
+        key: "username",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "Client Secret",
+        key: "password",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "Tenant ID",
+        key: "tenant",
+        type: fieldTypes.input,
+        required: true
+      }
+    ],
+    convertToFormSpecificValue: (data: Record<string, any>) => {
+      return {
+        ...data,
+        tenant: data.properties?.tenant
+      } as Connection;
+    },
+    preSubmitConverter: (data: Record<string, string>) => {
+      return {
+        name: data.name,
+        username: data.username,
+        password: data.password,
+        properties: {
+          tenant: data.tenant
+        }
+      };
+    }
+  },
+  {
+    title: "GitHub",
+    icon: "github",
+    fields: [
+      {
+        label: "Name",
+        key: "name",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "Personal Access Token",
+        key: "password",
+        type: fieldTypes.input,
+        required: true
+      }
+    ]
+  },
+  {
+    title: "Restic",
+    icon: "restic",
+    fields: [
+      {
+        label: "Name",
+        key: "name",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "Password",
+        key: "password",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "Repository URL",
+        key: "url",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label:
+          "CaCert path to the root cert (In case of self-signed certificates)",
+        key: "certificate",
+        type: fieldTypes.input
+      },
+      {
+        label: "Check the Integrity and consistency of the restic repository",
+        key: "checkIntegrity",
+        type: fieldTypes.checkbox
+      },
+      {
+        label: "MaxAge for backup freshness",
+        key: "maxAge",
+        type: fieldTypes.numberInput,
+        required: true
+      }
+    ],
+    convertToFormSpecificValue: (data: Record<string, any>) => {
+      return {
+        ...data,
+        checkIntegrity: data.properties?.checkIntegrity,
+        maxAge: data.properties?.maxAge
+      } as Connection;
+    },
+    preSubmitConverter: (data: Record<string, string>) => {
+      return {
+        name: data.name,
+        password: data.password,
+        url: data.url,
+        certificate: data.certificate,
+        properties: {
+          maxAge: data.maxAge,
+          checkIntegrity: data.checkIntegrity
+        }
+      };
+    }
+  },
+  {
+    title: "SMB",
+    icon: "smb",
+    fields: [
+      {
+        label: "Name",
+        key: "name",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "Username",
+        key: "username",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "Password",
+        key: "password",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "Workstation",
+        key: "workstation",
+        type: fieldTypes.input
+      },
+      {
+        label: "Share name",
+        key: "sharename",
+        type: fieldTypes.input
+      },
+      {
+        label: "Search path",
+        key: "searchPath",
+        type: fieldTypes.input
+      },
+      {
+        label: "Port",
+        key: "port",
+        type: fieldTypes.numberInput,
+        default: 445
+      }
+    ],
+    convertToFormSpecificValue: (data: Record<string, any>) => {
+      return {
+        ...data,
+        workstation: data.properties?.workstation,
+        sharename: data.properties?.sharename,
+        searchPath: data.properties?.searchPath,
+        port: data.properties?.port
+      } as Connection;
+    },
+    preSubmitConverter: (data: Record<string, string>) => {
+      return {
+        name: data.name,
+        username: data.username,
+        password: data.password,
+        properties: {
+          workstation: data.workstation,
+          sharename: data.sharename,
+          searchPath: data.searchPath,
+          port: data.port
+        }
+      };
+    }
+  },
+  {
+    title: "JMeter",
+    icon: "jmeter",
+    fields: [
+      {
+        label: "Name",
+        key: "name",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "Host",
+        key: "url",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "Port",
+        key: "port",
+        type: fieldTypes.numberInput
+      }
+    ],
+    convertToFormSpecificValue: (data: Record<string, any>) => {
+      return {
+        ...data,
+        port: data.properties?.port
+      } as Connection;
+    },
+    preSubmitConverter: (data: Record<string, string>) => {
+      return {
+        name: data.name,
+        url: data.url,
+        properties: {
+          port: data.port
+        }
+      };
+    }
+  },
+  {
+    title: "Dynatrace",
+    icon: "dynatrace",
+    fields: [
+      {
+        label: "Name",
+        key: "name",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "Host",
+        key: "url",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "API Key",
+        key: "password",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "Scheme",
+        key: "scheme",
+        type: fieldTypes.input,
+        required: true
+      }
+    ],
+    convertToFormSpecificValue: (data: Record<string, any>) => {
+      return {
+        ...data,
+        scheme: data.properties?.scheme
+      } as Connection;
+    },
+    preSubmitConverter: (data: Record<string, string>) => {
+      return {
+        name: data.name,
+        url: data.url,
+        password: data.password,
+        properties: {
+          scheme: data.scheme
+        }
+      };
+    }
   }
 ].sort((v1, v2) => {
   return stringSortHelper(v1.title, v2.title);

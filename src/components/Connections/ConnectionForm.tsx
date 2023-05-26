@@ -23,8 +23,16 @@ export type Connection = {
   region?: string;
   profile?: string;
   host?: string;
-  port?: string;
+  port?: string | number;
+  tenant?: string;
+  checkIntegrity?: boolean;
+  maxAge?: number;
   insecure_tls?: boolean;
+  workstation?: string;
+  sharename?: string;
+  searchPath?: string;
+  scheme?: string;
+  db?: string;
 };
 
 type ConnectionFormProps = React.HTMLProps<HTMLDivElement> & {
@@ -69,7 +77,7 @@ export default function ConnectionForm({
     if (connectionType?.preSubmitConverter) {
       return connectionType.preSubmitConverter(data as any) as Connection;
     }
-    const result: Record<string, string | undefined | boolean> = {};
+    const result: Record<string, string | undefined | boolean | number> = {};
     connectionType?.fields.forEach((field) => {
       result[field.key] = data[field.key as keyof Connection]!;
     });
@@ -85,6 +93,17 @@ export default function ConnectionForm({
             name={field.key}
             label={field.label}
             required={field.required}
+            defaultValue={field.default?.toString()}
+          />
+        );
+      case "numberInput":
+        return (
+          <FormikTextInput
+            type="number"
+            name={field.key}
+            label={field.label}
+            required={field.required}
+            defaultValue={field.default?.toString()}
           />
         );
       case "checkbox":
@@ -92,7 +111,7 @@ export default function ConnectionForm({
           <FormikCheckbox
             name={field.key}
             label={field.label}
-            labelClassName="font-semibold text-sm"
+            labelClassName="text-sm font-semibold text-gray-700"
             required={field.required}
           />
         );
