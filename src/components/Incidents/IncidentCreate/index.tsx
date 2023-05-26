@@ -140,60 +140,63 @@ export function IncidentCreate({
   };
 
   return (
-    <div className={`max-w-prose py-7 ${rest.className || ""}`} {...rest}>
+    <div className={`max-w-prose ${rest.className || ""}`} {...rest}>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="mb-4">
-          <ReactSelectDropdown
-            control={control}
-            label="Type"
-            name="type"
-            className="w-full"
-            labelClass="block text-sm font-bold text-gray-700 mb-2"
-            containerClassName="flex flex-col space-y-1"
-            items={typeItems}
-            value={type}
-          />
-          <p className="text-red-600 text-sm">{errors.type?.message}</p>
-        </div>
-        <div className="mb-4">
-          <Controller
-            control={control}
-            name="title"
-            render={({ field }) => {
-              const { onChange, value } = field;
-              return (
-                <TextInput
-                  label="Title"
-                  id="title"
-                  className="w-full"
-                  onChange={onChange}
-                  value={value}
-                />
-              );
-            }}
-          />
-          <p className="text-red-600 text-sm">{errors.title?.message}</p>
-        </div>
-        <div className="mb-4">
-          <Controller
-            control={control}
-            name="description"
-            render={({ field }) => {
-              const { onChange, value } = field;
-              return (
-                <TextInput
-                  label="Description"
-                  id="description"
-                  className="w-full"
-                  onChange={onChange}
-                  value={value}
-                />
-              );
-            }}
-          />
-          <p className="text-red-600 text-sm">{errors.description?.message}</p>
-        </div>
-        {/* <div className="mb-4">
+        <div className="p-5">
+          <div className="mb-4">
+            <ReactSelectDropdown
+              control={control}
+              label="Type"
+              name="type"
+              className="w-full"
+              labelClass="block text-sm font-bold text-gray-700 mb-2"
+              containerClassName="flex flex-col space-y-1"
+              items={typeItems}
+              value={type}
+            />
+            <p className="text-red-600 text-sm">{errors.type?.message}</p>
+          </div>
+          <div className="mb-4">
+            <Controller
+              control={control}
+              name="title"
+              render={({ field }) => {
+                const { onChange, value } = field;
+                return (
+                  <TextInput
+                    label="Title"
+                    id="title"
+                    className="w-full"
+                    onChange={onChange}
+                    value={value}
+                  />
+                );
+              }}
+            />
+            <p className="text-red-600 text-sm">{errors.title?.message}</p>
+          </div>
+          <div className="mb-4">
+            <Controller
+              control={control}
+              name="description"
+              render={({ field }) => {
+                const { onChange, value } = field;
+                return (
+                  <TextInput
+                    label="Description"
+                    id="description"
+                    className="w-full"
+                    onChange={onChange}
+                    value={value}
+                  />
+                );
+              }}
+            />
+            <p className="text-red-600 text-sm">
+              {errors.description?.message}
+            </p>
+          </div>
+          {/* <div className="mb-4">
           <Controller
             control={control}
             name="communicator_id"
@@ -255,34 +258,35 @@ export function IncidentCreate({
           <p className="text-red-600 text-sm">{errors.tracking?.message}</p>
         </div> */}
 
-        <div className="mb-4">
-          {/* have a look at this */}
-          <ReactSelectDropdown
-            control={control}
-            label="Severity"
-            name="severity"
-            className="w-full"
-            items={severityItems}
-            containerClassName="flex flex-col space-y-1"
-            labelClass="block text-sm font-bold text-gray-700 mb-2"
-            value={severity}
-          />
-          <p className="text-red-600 text-sm">{errors.severity?.message}</p>
+          <div className="mb-4">
+            {/* have a look at this */}
+            <ReactSelectDropdown
+              control={control}
+              label="Severity"
+              name="severity"
+              className="w-full"
+              items={severityItems}
+              containerClassName="flex flex-col space-y-1"
+              labelClass="block text-sm font-bold text-gray-700 mb-2"
+              value={severity}
+            />
+            <p className="text-red-600 text-sm">{errors.severity?.message}</p>
+          </div>
+          <div className="mb-4">
+            <ReactSelectDropdown
+              control={control}
+              label="Status"
+              name="status"
+              className="w-full"
+              items={incidentStatusItems}
+              labelClass="block text-sm font-bold text-gray-700 mb-2"
+              containerClassName="flex flex-col space-y-1"
+              value={status}
+            />
+            <p className="text-red-600 text-sm">{errors.status?.message}</p>
+          </div>
         </div>
-        <div className="mb-4">
-          <ReactSelectDropdown
-            control={control}
-            label="Status"
-            name="status"
-            className="w-full"
-            items={incidentStatusItems}
-            labelClass="block text-sm font-bold text-gray-700 mb-2"
-            containerClassName="flex flex-col space-y-1"
-            value={status}
-          />
-          <p className="text-red-600 text-sm">{errors.status?.message}</p>
-        </div>
-        <div className="flex justify-end">
+        <div className="flex justify-end bg-gray-100 px-5 py-4 w-full rounded">
           <button
             type="submit"
             className="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
