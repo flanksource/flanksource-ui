@@ -75,6 +75,9 @@ export function JSONViewer({
 }: JSONViewerProps) {
   // convert JSON object to YAML string
   const codeForHighlight = useMemo(() => {
+    if (format !== "json") {
+      return code;
+    }
     if (!code) {
       return "";
     }
@@ -82,14 +85,24 @@ export function JSONViewer({
       return stringify(parse(code));
     }
     return code;
-  }, [code, convertToYaml]);
+  }, [code, convertToYaml, format]);
+
+  const formatDerived = useMemo(() => {
+    if (format !== "json") {
+      return format;
+    }
+    if (convertToYaml) {
+      return "yaml";
+    }
+    return format;
+  }, [convertToYaml, format]);
 
   return (
     <Highlight
       {...defaultProps}
       code={codeForHighlight}
       theme={vsLight}
-      language={convertToYaml ? "yaml" : format}
+      language={formatDerived}
     >
       {({ className, style, tokens, getLineProps, getTokenProps }) => (
         <pre className={`${className} text-sm`} style={style}>
