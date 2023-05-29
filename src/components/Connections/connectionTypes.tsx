@@ -32,12 +32,13 @@ export type ConnectionType = {
   fields: Field[];
   convertToFormSpecificValue?: (data: Record<string, string>) => Connection;
   preSubmitConverter?: (data: Record<string, string>) => object;
+  hide?: boolean;
 };
 
 export const connectionTypes: ConnectionType[] = [
   {
     title: "Postgres",
-    icon: "http",
+    icon: "postgres",
     fields: [
       {
         label: "Name",
@@ -450,13 +451,13 @@ export const connectionTypes: ConnectionType[] = [
       {
         label: "Username",
         key: "username",
-        type: fieldTypes.input,
+        type: fieldTypes.EnvVarSource,
         required: true
       },
       {
         label: "Password",
         key: "password",
-        type: fieldTypes.input,
+        type: fieldTypes.EnvVarSource,
         required: true
       },
       {
@@ -607,7 +608,7 @@ export const connectionTypes: ConnectionType[] = [
       {
         label: "Client Secret",
         key: "password",
-        type: fieldTypes.input,
+        type: fieldTypes.EnvVarSource,
         required: true
       },
       {
@@ -647,7 +648,7 @@ export const connectionTypes: ConnectionType[] = [
       {
         label: "Personal Access Token",
         key: "password",
-        type: fieldTypes.input,
+        type: fieldTypes.EnvVarSource,
         required: true
       }
     ]
@@ -665,7 +666,7 @@ export const connectionTypes: ConnectionType[] = [
       {
         label: "Password",
         key: "password",
-        type: fieldTypes.input,
+        type: fieldTypes.EnvVarSource,
         required: true
       },
       {
@@ -675,28 +676,27 @@ export const connectionTypes: ConnectionType[] = [
         required: true
       },
       {
-        label:
-          "CaCert path to the root cert (In case of self-signed certificates)",
-        key: "certificate",
-        type: fieldTypes.input
+        label: "AWS Connection Name",
+        key: "awsConnectionName",
+        type: fieldTypes.input,
+        required: true
       },
       {
-        label: "Check the Integrity and consistency of the restic repository",
-        key: "checkIntegrity",
-        type: fieldTypes.checkbox
+        label: "Access Key",
+        key: "accessKey",
+        type: fieldTypes.EnvVarSource,
+        required: true
       },
       {
-        label: "MaxAge for backup freshness",
-        key: "maxAge",
-        type: fieldTypes.numberInput,
+        label: "Secret Key",
+        key: "secretKey",
+        type: fieldTypes.EnvVarSource,
         required: true
       }
     ],
     convertToFormSpecificValue: (data: Record<string, any>) => {
       return {
-        ...data,
-        checkIntegrity: data.properties?.checkIntegrity,
-        maxAge: data.properties?.maxAge
+        ...data
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
@@ -704,17 +704,16 @@ export const connectionTypes: ConnectionType[] = [
         name: data.name,
         password: data.password,
         url: data.url,
-        certificate: data.certificate,
-        properties: {
-          maxAge: data.maxAge,
-          checkIntegrity: data.checkIntegrity
-        }
+        awsConnectionName: data.awsConnectionName,
+        accessKey: data.accessKey,
+        secretKey: data.secretKey
       };
     }
   },
   {
     title: "SMB",
     icon: "smb",
+    hide: true,
     fields: [
       {
         label: "Name",
@@ -782,6 +781,7 @@ export const connectionTypes: ConnectionType[] = [
   {
     title: "JMeter",
     icon: "jmeter",
+    hide: true,
     fields: [
       {
         label: "Name",
@@ -836,7 +836,7 @@ export const connectionTypes: ConnectionType[] = [
       {
         label: "API Key",
         key: "password",
-        type: fieldTypes.input,
+        type: fieldTypes.EnvVarSource,
         required: true
       },
       {
@@ -863,6 +863,8 @@ export const connectionTypes: ConnectionType[] = [
       };
     }
   }
-].sort((v1, v2) => {
-  return stringSortHelper(v1.title, v2.title);
-});
+]
+  .sort((v1, v2) => {
+    return stringSortHelper(v1.title, v2.title);
+  })
+  .filter((item) => !item.hide);

@@ -155,8 +155,11 @@ export default function ConnectionForm({
       >
         <Form>
           <div
-            className={clsx("flex flex-col h-full my-2", className)}
-            style={{ maxHeight: "calc(100vh - 8rem)" }}
+            className={clsx(
+              "flex flex-col h-full my-2 overflow-y-auto",
+              className
+            )}
+            style={{ maxHeight: "calc(65vh)" }}
             {...props}
           >
             <div className={clsx("flex flex-col px-2 mb-2")}>
