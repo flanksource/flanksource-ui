@@ -46,11 +46,11 @@ const Login: NextPage = () => {
 
   return (
     <>
-      <div wide>
+      <div>
         <div>An error occurred</div>
         <div>{JSON.stringify(error, null, 2)}</div>
       </div>
-      <div wide>
+      <div>
         <Link href="/" passHref>
           <div>Go back</div>
         </Link>

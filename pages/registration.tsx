@@ -7,7 +7,6 @@ import type { NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { Icon } from "../src/components";
 import { Head } from "../src/components/Head/Head";
 
 // Import render helpers
@@ -79,7 +78,7 @@ const Registration: NextPage = () => {
             // If the previous handler did not catch the error it's most likely a form validation error
             if (err.response?.status === 400) {
               // Yup, it is!
-              setFlow(err.response?.data);
+              setFlow((err.response as any).data);
               return;
             }
 
