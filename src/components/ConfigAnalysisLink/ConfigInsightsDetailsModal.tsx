@@ -9,6 +9,9 @@ import ConfigInsightsIcon from "../ConfigInsightsIcon";
 import ConfigLink from "../ConfigLink/ConfigLink";
 import { DescriptionCard } from "../DescriptionCard";
 import { Modal } from "../Modal";
+import { Loading } from "../Loading";
+import { JSONViewer } from "../JSONViewer";
+import { useGetConfigByIdQuery } from "../../api/query-hooks";
 
 type Props = {
   configInsight?: ConfigTypeInsights & { config?: ConfigItem };
@@ -56,6 +59,36 @@ export default function ConfigInsightsDetailsModal({
       }
     ];
   }, [configInsight]);
+
+  const { isLoading, data: configDetails } = useGetConfigByIdQuery(
+    configInsight?.config_id!
+  );
+
+  const code = useMemo(() => {
+    if (!configDetails?.config) {
+      return "";
+    }
+    if (configDetails?.config?.content != null) {
+      return configDetails?.config.content;
+    }
+
+    const ordered = Object.keys(configDetails.config)
+      .sort()
+      .reduce((obj: Record<string, any>, key) => {
+        obj[key] = configDetails.config[key];
+        return obj;
+      }, {});
+
+    return configDetails?.config && JSON.stringify(ordered, null, 2);
+  }, [configDetails]);
+
+  const format = useMemo(
+    () =>
+      configDetails?.config.format != null
+        ? configDetails?.config.format
+        : "yaml",
+    [configDetails]
+  );
 
   const sanitizedMessageHTML = useMemo(() => {
     return sanitize(configInsight?.message! || "");
@@ -106,6 +139,29 @@ export default function ConfigInsightsDetailsModal({
                 }
               ]}
               labelStyle="top"
+            />
+            <DescriptionCard
+              items={[
+                {
+                  label: "Config",
+                  value: (
+                    <div className="w-full min-h-12 max-h-56 p-3 overflow-y-auto overflow-x-auto border border-gray-200 rounded">
+                      {isLoading ? (
+                        <Loading />
+                      ) : (
+                        <JSONViewer
+                          code={code}
+                          format={format}
+                          convertToYaml
+                          showLineNo
+                        />
+                      )}
+                    </div>
+                  )
+                }
+              ]}
+              labelStyle="top"
+              className="mt-4"
             />
           </div>
           <div className="flex items-center justify-end mt-4 py-2 px-4 rounded bg-gray-100">
