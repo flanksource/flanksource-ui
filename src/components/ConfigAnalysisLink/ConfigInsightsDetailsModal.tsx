@@ -145,7 +145,7 @@ export default function ConfigInsightsDetailsModal({
                 {
                   label: "Config",
                   value: (
-                    <div className="w-full min-h-12 max-h-56 p-3 overflow-y-auto overflow-x-auto border border-gray-200 rounded">
+                    <div className="w-full min-h-12 max-h-modal-body-md p-3 overflow-y-auto overflow-x-auto border border-gray-200 rounded">
                       {isLoading ? (
                         <Loading />
                       ) : (
