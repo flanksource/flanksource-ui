@@ -32,8 +32,6 @@ import {
 import { getPersons, getVersionInfo } from "../services/users";
 import { LogsResponse, searchLogs, SearchLogsPayload } from "../services/logs";
 
-const cache: Record<string, any> = {};
-
 const defaultStaleTime = 1000 * 60 * 5;
 
 export const createIncidentQueryKey = (id: string) => ["getIncident", id];
@@ -121,23 +119,18 @@ export const useComponentNameQuery = (
   topologyId = "",
   { enabled = true, staleTime = defaultStaleTime, ...rest }
 ) => {
-  const cacheKey = `topology${topologyId}`;
   return useQuery(
     ["topology", topologyId],
     () => {
       return getTopology({
         id: topologyId
       }).then((data) => {
-        cache[cacheKey] = data.data[0];
-        return data.data[0];
+        return data.components[0];
       });
     },
     {
       staleTime,
       enabled,
-      placeholderData: () => {
-        return cache[cacheKey];
-      },
       ...rest
     }
   );
@@ -230,21 +223,16 @@ export const useConfigNameQuery = (
   configId = "",
   { enabled = true, staleTime = defaultStaleTime, ...rest }
 ) => {
-  const cacheKey = `config${configId}`;
   return useQuery(
     ["config", configId],
     () => {
       return getConfigName(configId).then((data) => {
-        cache[cacheKey] = data?.data?.[0];
         return data?.data?.[0];
       });
     },
     {
       staleTime,
       enabled,
-      placeholderData: () => {
-        return cache[cacheKey];
-      },
       ...rest
     }
   );
