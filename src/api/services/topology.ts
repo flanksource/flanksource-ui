@@ -46,11 +46,11 @@ export const updateComponent = async (
 };
 
 export type GetTopologyApiResponse = {
-  components: Topology[];
-  healthStatuses: string[];
-  tags: Record<string, string[]>;
-  teams: string[];
-  types: string[];
+  components?: Topology[];
+  healthStatuses?: string[];
+  tags?: Record<string, string[]>;
+  teams?: string[];
+  types?: string[];
 };
 
 export const getTopology = async (
