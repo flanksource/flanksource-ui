@@ -45,19 +45,31 @@ export const updateComponent = async (
   });
 };
 
+export type GetTopologyApiResponse = {
+  components: Topology[];
+  healthStatuses: string[];
+  tags: Record<string, string[]>;
+  teams: string[];
+  types: string[];
+};
+
 export const getTopology = async (
   params: IParam
-): Promise<{
-  data: Topology[];
-}> => {
+): Promise<GetTopologyApiResponse> => {
   params = arrangeTopologyParams(params);
   const query = stringify(params);
-  let { data } = await CanaryChecker.get<Record<
-    "components",
-    Topology[]
-  > | null>(`/api/topology?${query}`);
-
-  return { data: data?.components || [] };
+  let { data } = await CanaryChecker.get<GetTopologyApiResponse | null>(
+    `/api/topology?${query}`
+  );
+  return (
+    data ?? {
+      components: [],
+      healthStatuses: [],
+      tags: {},
+      teams: [],
+      types: []
+    }
+  );
 };
 
 export const getTopologyWithoutUnroll = async (params: IParam) => {
