@@ -8,7 +8,10 @@ export const configAnalysisTypeItems = {
   Cost: {
     id: "dropdown-type-cost",
     icon: (
-      <ConfigInsightsIcon analysis={{ analysis_type: "cost", severity: "" }} />
+      <ConfigInsightsIcon
+        analysis={{ analysis_type: "cost", severity: "" }}
+        size={18}
+      />
     ),
     name: "Cost",
     description: "Cost",
@@ -19,6 +22,7 @@ export const configAnalysisTypeItems = {
     icon: (
       <ConfigInsightsIcon
         analysis={{ analysis_type: "availability", severity: "" }}
+        size={18}
       />
     ),
     name: "Availability",
@@ -30,6 +34,7 @@ export const configAnalysisTypeItems = {
     icon: (
       <ConfigInsightsIcon
         analysis={{ analysis_type: "performance", severity: "" }}
+        size={18}
       />
     ),
     name: "Performance",
@@ -41,6 +46,7 @@ export const configAnalysisTypeItems = {
     icon: (
       <ConfigInsightsIcon
         analysis={{ analysis_type: "security", severity: "" }}
+        size={18}
       />
     ),
     name: "Security",
@@ -52,6 +58,7 @@ export const configAnalysisTypeItems = {
     icon: (
       <ConfigInsightsIcon
         analysis={{ analysis_type: "integration", severity: "" }}
+        size={18}
       />
     ),
     name: "Integration",
@@ -63,6 +70,7 @@ export const configAnalysisTypeItems = {
     icon: (
       <ConfigInsightsIcon
         analysis={{ analysis_type: "compliance", severity: "" }}
+        size={18}
       />
     ),
     name: "Compliance",
@@ -74,6 +82,7 @@ export const configAnalysisTypeItems = {
     icon: (
       <ConfigInsightsIcon
         analysis={{ analysis_type: "technical_debt", severity: "" }}
+        size={18}
       />
     ),
     name: "Technical Debt",
@@ -85,6 +94,7 @@ export const configAnalysisTypeItems = {
     icon: (
       <ConfigInsightsIcon
         analysis={{ analysis_type: "reliability", severity: "" }}
+        size={18}
       />
     ),
     name: "Reliability",
@@ -96,6 +106,7 @@ export const configAnalysisTypeItems = {
     icon: (
       <ConfigInsightsIcon
         analysis={{ analysis_type: "recommendation", severity: "" }}
+        size={18}
       />
     ),
     name: "Recommendation",
@@ -105,7 +116,10 @@ export const configAnalysisTypeItems = {
   Other: {
     id: "dropdown-type-other",
     icon: (
-      <ConfigInsightsIcon analysis={{ analysis_type: "other", severity: "" }} />
+      <ConfigInsightsIcon
+        analysis={{ analysis_type: "other", severity: "" }}
+        size={18}
+      />
     ),
     name: "Other",
     description: "Other",
