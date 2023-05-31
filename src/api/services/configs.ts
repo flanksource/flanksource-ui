@@ -312,11 +312,27 @@ export const getConfigsChangesTypesFilter = async () => {
   return res.data;
 };
 
-export const getConfigInsights = async <T>(configId: string) => {
-  const res = await ConfigDB.get<T>(
-    `/config_analysis?select=*,config:configs(id,name,config_class,type)&config_id=eq.${configId}`
+export const getConfigInsights = async <T>(
+  configId: string,
+  pageIndex?: number,
+  pageSize?: number
+) => {
+  let paginationQueryParams = "";
+  if (pageIndex !== undefined && pageSize !== undefined) {
+    paginationQueryParams = `&limit=${pageSize}&offset=${
+      pageIndex! * pageSize
+    }`;
+  }
+  return resolve(
+    ConfigDB.get<T>(
+      `/config_analysis?select=*,config:configs(id,name,config_class,type)&config_id=eq.${configId}${paginationQueryParams}`,
+      {
+        headers: {
+          Prefer: "count=exact"
+        }
+      }
+    )
   );
-  return res.data;
 };
 
 export const getTopologyRelatedInsights = async (id: string) => {

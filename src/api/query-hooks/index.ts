@@ -374,12 +374,18 @@ export function useGetComponentsTeamQuery(
   );
 }
 
-export function useGetConfigInsights<T>(configId: string) {
+export function useGetConfigInsights<T>(
+  configId: string,
+  pageIndex?: number,
+  pageSize?: number,
+  keepPreviousData?: boolean
+) {
   return useQuery(
-    ["configs", "insights", configId],
-    () => getConfigInsights<T>(configId),
+    ["configs", "insights", configId, pageIndex, pageSize],
+    () => getConfigInsights<T>(configId, pageIndex, pageSize),
     {
-      enabled: !!configId
+      enabled: !!configId,
+      keepPreviousData
     }
   );
 }
