@@ -54,9 +54,9 @@ import {
   LogsPage,
   TopologyPage
 } from "./pages";
-import { ConnectionsPage } from "./pages/ConnectionsPage";
-import { FeatureFlagsPage } from "./pages/FeatureFlagsPage";
-import { LogBackendsPage } from "./pages/LogBackendsPage";
+import { ConnectionsPage } from "./pages/Settings/ConnectionsPage";
+import { FeatureFlagsPage } from "./pages/Settings/FeatureFlagsPage";
+import { LogBackendsPage } from "./pages/Settings/LogBackendsPage";
 import { UsersPage } from "./pages/UsersPage";
 import { ConfigInsightsPage } from "./pages/config/ConfigInsightsList";
 import { HealthPage } from "./pages/health";

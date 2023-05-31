@@ -1,21 +1,22 @@
 import { useEffect, useState } from "react";
-import { Head } from "../components/Head/Head";
-import { SearchLayout } from "../components/Layout";
-import { useLoader } from "../hooks";
-import { BreadcrumbNav, BreadcrumbRoot } from "../components/BreadcrumbNav";
+import { Head } from "../../components/Head/Head";
+import { SearchLayout } from "../../components/Layout";
+import TableSkeletonLoader from "../../components/SkeletonLoader/TableSkeletonLoader";
+import { useLoader } from "../../hooks";
+import { BreadcrumbNav, BreadcrumbRoot } from "../../components/BreadcrumbNav";
 import { AiFillPlusCircle } from "react-icons/ai";
-import { toastError, toastSuccess } from "../components/Toast/toast";
-import { useUser } from "../context";
-import { Property } from "../services/permissions/permissionsService";
-import { FeatureFlagsList } from "../components/FeatureFlags/FeatureFlagList";
-import FeatureFlagForm from "../components/FeatureFlags/FeatureFlagForm";
+import { toastError, toastSuccess } from "../../components/Toast/toast";
+import { useUser } from "../../context";
+import { Property } from "../../services/permissions/permissionsService";
+import { FeatureFlagsList } from "../../components/FeatureFlags/FeatureFlagList";
+import FeatureFlagForm from "../../components/FeatureFlags/FeatureFlagForm";
 import {
   deleteProperty,
   fetchProperties,
   saveProperty,
   updateProperty
-} from "../api/services/properties";
-import { useFeatureFlagsContext } from "../context/FeatureFlagsContext";
+} from "../../api/services/properties";
+import { useFeatureFlagsContext } from "../../context/FeatureFlagsContext";
 
 export function FeatureFlagsPage() {
   const [properties, setProperties] = useState<Property[]>([]);
