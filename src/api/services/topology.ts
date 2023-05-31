@@ -82,11 +82,17 @@ export const getCanaryGraph = async (
   return CanaryChecker.get(`/api/graph?${query}`);
 };
 
+type HealthCheckAPIResponse = {
+  checks: HealthCheck[];
+  duration: number;
+  runnerName: string;
+};
+
 export const getCanaries = async (
   params: Record<string, string | number | boolean>
 ) => {
   const query = stringify(params);
-  return CanaryChecker.get(`/api?${query}`);
+  return CanaryChecker.get<HealthCheckAPIResponse | null>(`/api?${query}`);
 };
 
 export const getCheckStatuses = (

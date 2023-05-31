@@ -28,7 +28,7 @@ export interface HealthCheck {
   endpoint?: string;
   interval?: any;
   location?: any;
-  status?: string;
+  status?: "healthy" | "unhealthy";
   schedule?: any;
   owner?: any;
   loading?: boolean;

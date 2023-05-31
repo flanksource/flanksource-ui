@@ -2,6 +2,9 @@ import { ComponentMeta, ComponentStory } from "@storybook/react";
 import { MemoryRouter } from "react-router-dom";
 import { sampleIncidentNode } from "../../../data/sampleIncident";
 import { EvidenceSection } from "./index";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const client = new QueryClient();
 
 export default {
   title: "EvidenceSection",
@@ -9,9 +12,11 @@ export default {
   parameters: { actions: { argTypesRegex: "^on.*" } },
   decorators: [
     (Story) => (
-      <MemoryRouter>
-        <Story />
-      </MemoryRouter>
+      <QueryClientProvider client={client}>
+        <MemoryRouter>
+          <Story />
+        </MemoryRouter>
+      </QueryClientProvider>
     )
   ]
 } as ComponentMeta<typeof EvidenceSection>;
