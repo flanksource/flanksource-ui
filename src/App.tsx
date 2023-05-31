@@ -66,6 +66,7 @@ import { features } from "./services/permissions/features";
 import { withAccessCheck } from "./components/AccessCheck/AccessCheck";
 import { tables } from "./context/UserAccessContext/permissions";
 import { isAuthEnabled } from "./context/Environment";
+import { EventQueueStatusPage } from "./pages/Settings/EventQueueStatus";
 
 export type NavigationItems = {
   name: string;
@@ -172,6 +173,13 @@ const settingsNav: SettingsNavigationItems = {
       icon: LogsIcon,
       featureName: features["settings.feature_flags"],
       resourceName: tables.database
+    },
+    {
+      name: "Event Queue Status",
+      href: "/settings/event-queue-status",
+      icon: FaTasks,
+      featureName: features["settings.event_queue_status"],
+      resourceName: tables.database
     }
   ].sort((v1, v2) => stringSortHelper(v1.name, v2.name))
 };
@@ -272,6 +280,16 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             "read"
           )}
         />
+
+        <Route
+          path="event-queue-status"
+          element={withAccessCheck(
+            <EventQueueStatusPage />,
+            tables.database,
+            "read"
+          )}
+        />
+
         {settingsNav.submenu
           .filter((v) => (v as SchemaResourceType).table)
           .map((x) => {
