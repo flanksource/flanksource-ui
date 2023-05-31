@@ -7,11 +7,11 @@
 
 [context.deploy-preview.environment]
   NEXT_PUBLIC_WITHOUT_SESSION = "false"
-  BACKEND_URL = "https://incident-commander.canary.lab.flanksource.com/"
+  BACKEND_URL = "https://incident-commander.demo.aws.flanksource.com/"
   NODE_ENV = "development"
   ENV = "netlify"
 
 [context.production.environment]
   NEXT_PUBLIC_WITHOUT_SESSION = "false"
-  BACKEND_URL = "https://incident-commander.canary.lab.flanksource.com/"
+  BACKEND_URL = "https://incident-commander.demo.aws.flanksource.com/"
   NODE_ENV = "development"
