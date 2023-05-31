@@ -2,7 +2,7 @@ import clsx from "clsx";
 import { Form, Formik } from "formik";
 import { Modal } from "../Modal";
 import { Property } from "../../services/permissions/permissionsService";
-import { resourceList } from "../../services/permissions/resources";
+import { featuresList } from "../../services/permissions/features";
 import FormikSelect from "../Forms/Formik/FormikSelect";
 import { toastError } from "../Toast/toast";
 import { FaTrash } from "react-icons/fa";
@@ -61,7 +61,7 @@ export default function FeatureFlagForm({
                   <FormikSelect name="name" label="Feature flag">
                     <>
                       <option value="">select any</option>
-                      {resourceList.map((item) => {
+                      {featuresList.map((item) => {
                         return (
                           <option key={item} value={item}>
                             {item}

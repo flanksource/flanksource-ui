@@ -15,6 +15,7 @@ import { getLocalItem, setLocalItem } from "../../utils/storage";
 import FullPageSkeletonLoader from "../SkeletonLoader/FullPageSkeletonLoader";
 import { Icon } from "../Icon";
 import { useFeatureFlagsContext } from "../../context/FeatureFlagsContext";
+import { withAccessCheck } from "../AccessCheck/AccessCheck";
 
 interface Props {
   navigation: NavigationItems;
@@ -139,25 +140,27 @@ function SideNavGroup({
             <NavLabel icon={icon} active={current} iconOnly name={name} />
           </NavItemWrapper>
         </Menu.Button>
-        {/* @ts-expect-error */}
         <Menu.Items className="absolute border left-0 ml-12 w-48 shadow-md top-0 z-10 bg-gray-800 space-y-1">
-          {submenu.map(({ name, icon, href, resourceName }) =>
-            !isFeatureDisabled(resourceName!) ? (
-              // @ts-expect-error
-              <Menu.Item key={name}>
-                {({ active }) => (
-                  <NavLink className="w-full" to={href}>
-                    <NavItemWrapper active={active}>
-                      <NavLabel
-                        icon={icon as IconType}
-                        active={active}
-                        name={name}
-                      />
-                    </NavItemWrapper>
-                  </NavLink>
-                )}
-              </Menu.Item>
-            ) : null
+          {submenu.map(({ name, icon, href, featureName, resourceName }) =>
+            !isFeatureDisabled(featureName!)
+              ? withAccessCheck(
+                  <Menu.Item key={name}>
+                    {({ active }) => (
+                      <NavLink className="w-full" to={href}>
+                        <NavItemWrapper active={active}>
+                          <NavLabel
+                            icon={icon as IconType}
+                            active={active}
+                            name={name}
+                          />
+                        </NavItemWrapper>
+                      </NavLink>
+                    )}
+                  </Menu.Item>,
+                  resourceName,
+                  "read"
+                )
+              : null
           )}
         </Menu.Items>
       </Menu>
@@ -187,13 +190,17 @@ function SideNavGroup({
           </Disclosure.Button>
           <Disclosure.Panel className="pl-4 space-y-1">
             {submenu.map((item) =>
-              !isFeatureDisabled(item.resourceName!) ? (
-                <SideNavItem
-                  key={item.name}
-                  {...item}
-                  collapseSidebar={false}
-                />
-              ) : null
+              !isFeatureDisabled(item.featureName!)
+                ? withAccessCheck(
+                    <SideNavItem
+                      key={item.name}
+                      {...item}
+                      collapseSidebar={false}
+                    />,
+                    item.resourceName,
+                    "read"
+                  )
+                : null
             )}
           </Disclosure.Panel>
         </>
@@ -214,22 +221,30 @@ function SideNav({
     <nav className="flex-col space-y-2 divide-y divide-gray-500">
       <div>
         {navs.map((item) =>
-          !isFeatureDisabled(item.resourceName!) ? (
-            <SideNavItem
-              key={item.name}
-              {...item}
-              collapseSidebar={collapseSidebar}
-            />
-          ) : null
+          !isFeatureDisabled(item.featureName!)
+            ? withAccessCheck(
+                <SideNavItem
+                  key={item.name}
+                  {...item}
+                  collapseSidebar={collapseSidebar}
+                />,
+                item.resourceName,
+                "read"
+              )
+            : null
         )}
       </div>
-      <div>
-        <SideNavGroup
-          {...settings}
-          collapseSidebar={collapseSidebar}
-          checkPath={checkPath}
-        />
-      </div>
+      {withAccessCheck(
+        <div>
+          <SideNavGroup
+            {...settings}
+            collapseSidebar={collapseSidebar}
+            checkPath={checkPath}
+          />
+        </div>,
+        settings.submenu.map((item) => item.resourceName),
+        "read"
+      )}
     </nav>
   );
 }

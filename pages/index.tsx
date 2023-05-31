@@ -7,15 +7,13 @@ import ory from "../src/components/ory/sdk";
 import { App, CanaryCheckerApp } from "../src/App";
 import { Head } from "../src/components/Head/Head";
 import { Session } from "@ory/client";
-import { isCanaryUI } from "../src/context/Environment";
+import { isAuthEnabled, isCanaryUI } from "../src/context/Environment";
 
 const Home: NextPage = () => {
   const [session, setSession] = useState<Session | undefined>();
 
-  const isAuthDisabled = process.env.NEXT_PUBLIC_WITHOUT_SESSION === "true";
-
   useEffect(() => {
-    if (isAuthDisabled) {
+    if (!isAuthEnabled()) {
       return;
     }
 
@@ -46,9 +44,9 @@ const Home: NextPage = () => {
         // Something else happened!
         return Promise.reject(err);
       });
-  }, [isAuthDisabled]);
+  }, []);
 
-  if (!isAuthDisabled && !session) {
+  if (isAuthEnabled() && !session) {
     return null;
   }
 

@@ -5,26 +5,34 @@ import { SchemaResourceWithJobStatus } from "../../api/schemaResources";
 import { relativeDateTime } from "../../utils/date";
 import { Avatar } from "../Avatar";
 import { JobHistoryStatus } from "../JobsHistory/JobsHistoryTable";
+import TableSkeletonLoader from "../SkeletonLoader/TableSkeletonLoader";
+import { InfoMessage } from "../InfoMessage";
 
 interface Props {
   items: SchemaResourceWithJobStatus[];
   baseUrl: string;
   table: string;
+  isLoading?: boolean;
 }
 
-export function SchemaResourceList({ items, baseUrl, table }: Props) {
+export function SchemaResourceList({
+  items,
+  baseUrl,
+  table,
+  isLoading
+}: Props) {
   return (
     <div className="max-w-screen-xl mx-auto space-y-6 flex flex-col justify-center">
       <div
-        className="overflow-y-auto"
+        className="flex flex-col overflow-y-auto flex-1 w-full"
         style={{ maxHeight: "calc(100vh - 8rem)" }}
       >
         <table
-          className="table-auto table-fixed w-full relative"
+          className="table-auto table-fixed relative w-full border border-gray-200 rounded-md"
           aria-label="table"
         >
-          <thead className={`bg-white sticky top-0 z-01`}>
-            <tr>
+          <thead className={`rounded-md sticky top-0 z-01`}>
+            <tr className="border-b border-gray-200 uppercase bg-column-background rounded-t-md items-center">
               <HCell colSpan={2}>Name</HCell>
               <HCell>Source Config</HCell>
               {table === "canaries" && <HCell>Schedule</HCell>}
@@ -47,6 +55,15 @@ export function SchemaResourceList({ items, baseUrl, table }: Props) {
             ))}
           </tbody>
         </table>
+        {items.length === 0 && (
+          <div className="flex items-center justify-center px-2 border-b border-gray-300 text-center text-gray-400">
+            {isLoading ? (
+              <TableSkeletonLoader className="mt-2" />
+            ) : (
+              <InfoMessage className="my-8 py-20" message="No data available" />
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -58,7 +75,11 @@ interface CellProps {
   colSpan?: number;
 }
 
-function HCell({ children, className, colSpan }: CellProps) {
+function HCell({
+  children,
+  className = "px-3 py-3 text-gray-500 font-medium text-xs text-left",
+  colSpan
+}: CellProps) {
   return (
     <th colSpan={colSpan ?? 1} className={className}>
       {children}

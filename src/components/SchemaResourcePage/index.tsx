@@ -65,18 +65,13 @@ export function SchemaResourcePage({
       >
         <div className="m-auto">
           <div className="flex flex-col p-6 pb-0 flex-1 w-full overflow-y-auto">
-            {isLoading && (
-              <TableSkeletonLoader className="max-w-screen-xl mx-auto" />
-            )}
-            {!isLoading && (
-              <SchemaResourceList
-                items={list || []}
-                baseUrl={href}
-                table={resourceInfo.table}
-              />
-            )}
-
-            {error && <ErrorPage error={error as Error} />}
+            <SchemaResourceList
+              items={list || []}
+              baseUrl={href}
+              table={resourceInfo.table}
+              isLoading={isLoading}
+            />
+            {Boolean(error) && <ErrorPage error={error as Error} />}
           </div>
         </div>
 

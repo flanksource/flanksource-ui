@@ -24,7 +24,8 @@ import TableSkeletonLoader from "../SkeletonLoader/TableSkeletonLoader";
 import usePreferences from "../../hooks/userPreferences";
 
 const tableStyles = {
-  theadHeaderClass: " tracking-wider",
+  theadHeaderClass:
+    "px-3 py-3 text-left text-gray-500 font-medium text-xs tracking-wider",
   tbodyRowClass: "cursor-pointer text-sm",
   tbodyDataClass: "whitespace-nowrap p-2"
 };
@@ -254,7 +255,7 @@ export function DataTable<TableColumns, Data extends TableColumns>({
   }, [rows.length, virtualRows, pagination, paginationType, table]);
 
   return (
-    <div className="flex flex-col flex-1 overflow-y-auto space-y-2">
+    <div className="flex flex-col flex-1 overflow-y-auto space-y-2 h-full">
       <div
         ref={tableContainerRef}
         className={clsx("flex flex-col flex-1 overflow-y-auto", className)}
@@ -267,16 +268,21 @@ export function DataTable<TableColumns, Data extends TableColumns>({
           className={clsx(
             // for some reason, it seems to need both auto and fixed, there may be
             // some other css class tied to auto
-            `table-auto table-fixed w-full`,
+            `table-auto table-fixed w-full border border-gray-200 rounded-md`,
             stickyHead && "relative"
           )}
           style={tableStyle}
         >
           <thead
-            className={`bg-white ${stickyHead ? "sticky top-0 z-01" : ""}`}
+            className={`bg-white rounded-md ${
+              stickyHead ? "sticky top-0 z-01" : ""
+            }`}
           >
             {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
+              <tr
+                className="border-b border-gray-200 uppercase bg-column-background rounded-t-md items-centerborder-b border-gray-200 uppercase bg-column-background rounded-t-md items-center"
+                key={headerGroup.id}
+              >
                 {headerGroup.headers.map((header, colIndex) =>
                   // First column goes inside the grouping column
                   // Hence the label for that is not needed
