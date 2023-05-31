@@ -24,17 +24,16 @@ export default function HttpConfigsFormEditor({
         name={`${fieldName}.connection`}
         label="Connection"
       />
-      <FormikTextInput name={`${fieldName}.type`} label="Type" />
-      <FormikTextInput name={`${fieldName}.url`} label="URL" />
-      <FormikTextInput name={`${fieldName}.id`} label="ID" />
-      <FormikTextInput name={`${fieldName}.format`} label="Format" required />
-      <FormikTextInput name={`${fieldName}.icon`} label="Icon" required />
-
+      <FormikTextInput name={`${fieldName}.url`} label="URL" required />
+      <FormikTextInput name={`${fieldName}.type`} label="Type" required />
+      <FormikTextInput name={`${fieldName}.id`} label="ID" required />
+      <FormikTextInput name={`${fieldName}.format`} label="Format" />
+      <FormikTextInput name={`${fieldName}.icon`} label="Icon" />
       <FormikTextInput name={`${fieldName}.tags`} label="Tags" />
 
       <FormikConfigFormFieldsArray
         name={`${fieldName}.ignore`}
-        label="ignore"
+        label="Ignore"
         fields={[
           {
             fieldComponent: FormikTextInput,
@@ -56,7 +55,7 @@ export default function HttpConfigsFormEditor({
 
       <div className="flex flex-col space-y-2">
         <label className="font-semibold text-sm">
-          Advanced scrapper options
+          Advanced Options
         </label>
         <div className="flex flex-col p-4 space-y-2 border border-gray-200 rounded-md">
           <FormikAdvancedScrapperFields fieldName={fieldName} />

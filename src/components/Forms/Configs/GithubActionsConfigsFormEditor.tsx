@@ -26,8 +26,6 @@ export default function GithubActionsConfigsFormEditor({
         name={`${fieldName}.connection`}
         label="Connection"
       />
-      <FormikTextInput name={`${fieldName}.type`} label="Type" />
-      <FormikTextInput name={`${fieldName}.id`} label="ID" />
       <FormikTextInput name={`${fieldName}.owner`} label="Owner" required />
       <FormikTextInput
         name={`${fieldName}.repository`}
@@ -42,8 +40,6 @@ export default function GithubActionsConfigsFormEditor({
         <FormikEnvVarConfigsFields name={`${fieldName}.personalAccessToken`} />
       </FormikCheckboxFieldsGroup>
 
-      <FormikTextInput name={`${fieldName}.tags`} label="Tags" />
-
       <FormikConfigFormFieldsArray
         name={`${fieldName}.workflows`}
         label="Workflows"
@@ -54,15 +50,7 @@ export default function GithubActionsConfigsFormEditor({
           }
         ]}
       />
-
-      <div className="flex flex-col space-y-2">
-        <label className="font-semibold text-sm">
-          Advanced scrapper options
-        </label>
-        <div className="flex flex-col p-4 space-y-2 border border-gray-200 rounded-md">
-          <FormikAdvancedScrapperFields fieldName={fieldName} />
-        </div>
-      </div>
+      <FormikTextInput name={`${fieldName}.tags`} label="Tags" />
     </>
   );
 }

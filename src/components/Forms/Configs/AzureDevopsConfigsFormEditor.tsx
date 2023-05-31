@@ -26,9 +26,6 @@ export default function AzureDevopsConfigsFormEditor({
         name={`${fieldName}.connection`}
         label="Connection"
       />
-      <FormikTextInput name={`${fieldName}.type`} label="Type" />
-      <FormikTextInput name={`${fieldName}.id`} label="ID" />
-      <FormikTextInput name={`${fieldName}.format`} label="Format" />
       <FormikTextInput
         name={`${fieldName}.organization`}
         label="Organization"
@@ -64,14 +61,6 @@ export default function AzureDevopsConfigsFormEditor({
       />
 
       <FormikTextInput name={`${fieldName}.tags`} label="Tags" />
-
-      <div className="flex flex-col space-y-2">
-        <label className="font-semibold text-sm">
-          Advanced scrapper options
-        </label>
-        <div className="flex flex-col p-4 space-y-2 border border-gray-200 rounded-md">
-          <FormikAdvancedScrapperFields fieldName={fieldName} />
-        </div>
       </div>
     </>
   );

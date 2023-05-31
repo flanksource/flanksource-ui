@@ -19,8 +19,6 @@ export default function TrivyConfigsFormEditor({
     <>
       <FormikScheduleField name={`${name}.schedule`} />
       <div className="flex flex-col space-y-2">
-        <FormikTextInput name={`${fieldName}.type`} label="Type" />
-        <FormikTextInput name={`${fieldName}.id`} label="ID" />
         <FormikConfigFormFieldsArray
           name={`${fieldName}.compliance`}
           label="Compliance"
@@ -35,7 +33,6 @@ export default function TrivyConfigsFormEditor({
           name={`${fieldName}.ignoreUnfixed`}
           label="Ignore Unfixed"
         />
-        <FormikTextInput name={`${fieldName}.items`} label="Items" />
         <FormikConfigFormFieldsArray
           name={`${fieldName}.ignoredLicenses`}
           label="Ignored Licenses"
@@ -45,27 +42,8 @@ export default function TrivyConfigsFormEditor({
               name: "ignoredLicenses"
             }
           ]}
-        />
-        <FormikConfigFormFieldsArray
-          name={`${fieldName}.createFields`}
-          label="Create Fields"
-          fields={[
-            {
-              fieldComponent: FormikTextInput,
-              name: "createFields"
-            }
-          ]}
-        />
-        <FormikConfigFormFieldsArray
-          name={`${fieldName}.deleteFields`}
-          label="Delete Fields"
-          fields={[
-            {
-              fieldComponent: FormikTextInput,
-              name: "deleteFields"
-            }
-          ]}
-        />
+        />   
+   
         <FormikCheckbox
           name={`${fieldName}.licenseFull`}
           label="License Full"
