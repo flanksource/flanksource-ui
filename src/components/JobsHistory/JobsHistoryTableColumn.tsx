@@ -23,6 +23,7 @@ export const JobsHistoryTableColumn: ColumnDef<JobHistory, any>[] = [
     id: "name",
     accessorKey: "name",
     size: 200,
+    enableSorting: false,
     cell: ({ getValue }) => {
       const value = getValue<JobHistory["name"]>();
       const formattedName = formatJobName(value);
