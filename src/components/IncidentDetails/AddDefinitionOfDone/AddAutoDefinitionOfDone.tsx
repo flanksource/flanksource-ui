@@ -43,6 +43,14 @@ export type SelectDefinitionOfDoneState = {
   comment?: string;
 };
 
+const defaultScriptValues = new Map<EvidenceType, string>([
+  [
+    EvidenceType.Check,
+    `check.status == "healthy" && check.age > duration("5m")`
+  ],
+  [EvidenceType.ConfigAnalysis, `analysis.status == 'resolved'`]
+]);
+
 function addDefinitionOfDoneStepsReducer(
   state: SelectDefinitionOfDoneState,
   action: Action
@@ -61,9 +69,8 @@ function addDefinitionOfDoneStepsReducer(
         ...state,
         currentStep: "addScript",
         script:
-          state.evidenceType === EvidenceType.Check &&
           state.script === undefined
-            ? `check.status == "healthy" && check.age > duration("5m")`
+            ? defaultScriptValues.get(state.evidenceType!)
             : undefined
       };
 
