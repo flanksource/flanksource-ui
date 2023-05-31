@@ -61,7 +61,6 @@ export default function AzureDevopsConfigsFormEditor({
       />
 
       <FormikTextInput name={`${fieldName}.tags`} label="Tags" />
-      </div>
     </>
   );
 }
