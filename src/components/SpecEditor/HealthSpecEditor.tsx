@@ -246,7 +246,7 @@ export default function HealthSpecEditor({
           },
           icon: "icmp",
           configForm: ICMPHealthFormEditor,
-          specsMapField: "ping.0",
+          specsMapField: "icmp.0",
           schemaFilePrefix: "canary"
         },
         {
