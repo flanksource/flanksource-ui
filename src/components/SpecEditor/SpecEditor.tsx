@@ -94,7 +94,7 @@ export default function SpecEditor({
                 key={type.name}
               >
                 {typeof type.icon === "string" ? (
-                  <Icon name={type.icon} />
+                  <Icon name={type.icon} className="w-5 h-5" />
                 ) : (
                   <type.icon />
                 )}

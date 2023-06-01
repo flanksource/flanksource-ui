@@ -379,6 +379,7 @@ import timezone from "./timezone.svg";
 import traces from "./traces.svg";
 import trafficlight from "./trafficlight.svg";
 import tree from "./tree.svg";
+import trivy from "./trivy.svg";
 import txt from "./txt.svg";
 import ubuntu from "./ubuntu.svg";
 import user from "./user.svg";
@@ -771,6 +772,7 @@ export const Icons = {
   traces: traces,
   trafficlight: trafficlight,
   tree: tree,
+  trivy: trivy,
   txt: txt,
   ubuntu: ubuntu,
   user: user,
