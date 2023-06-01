@@ -17,6 +17,7 @@ import EmptyState from "../EmptyState";
 import { useGetConfigChangesByConfigChangeIdQuery } from "../../api/query-hooks/useGetConfigChangesByConfigChangeIdQuery";
 import { ConfigItem } from "../../api/services/configs";
 import { User } from "../../api/services/users";
+import { DiffRenderer } from "../DiffRenderer/DiffRenderer";
 
 type ConfigDetailsChangesProps = {
   id: string;
@@ -108,19 +109,35 @@ export function ConfigDetailsChanges({
               labelStyle="top"
             />
           )}
-          {changeDetails?.patches && (
+          {changeDetails?.patches && !changeDetails?.diff && (
             <DescriptionCard
               className="mt-4"
               items={[
                 {
                   label: "Change",
                   value: (
-                    <div className="w-full max-h-56 overflow-y-auto overflow-x-auto border border-gray-200 rounded">
+                    <div className="w-full max-h-96 overflow-y-auto overflow-x-auto border border-gray-200 rounded">
                       <JSONViewer
                         code={JSON.stringify(changeDetails?.patches, null, 2)}
                         format="yaml"
                         convertToYaml
                       />
+                    </div>
+                  )
+                }
+              ]}
+              labelStyle="top"
+            />
+          )}
+          {changeDetails?.diff && (
+            <DescriptionCard
+              className="mt-4"
+              items={[
+                {
+                  label: "Change",
+                  value: (
+                    <div className="w-full max-h-96 overflow-y-auto overflow-x-auto border border-gray-200 rounded pr-2">
+                      <DiffRenderer diffText={changeDetails.diff} />
                     </div>
                   )
                 }
