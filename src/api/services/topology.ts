@@ -56,8 +56,11 @@ export const getTopology = async (
     "components",
     Topology[]
   > | null>(`/api/topology?${query}`);
-
-  return { data: data?.components || [] };
+  let components = data?.components || [];
+  if (params.hidden === false) {
+    components = components.filter((component) => component.hidden !== true);
+  }
+  return { data: components };
 };
 
 export const getTopologyWithoutUnroll = async (params: IParam) => {

@@ -378,10 +378,11 @@ export function TopologyPage() {
                   getSortOrder()
                 ).map((item) => (
                   <TopologyCard
-                    key={item.id}
+                    key={item.id + item.updated_at}
                     topology={item}
                     size={size}
                     isTopologyPage
+                    onRefresh={load}
                   />
                 ))}
                 {!topology?.length && (

@@ -41,6 +41,7 @@ interface IProps {
   selected?: boolean;
   onSelectionChange?: MouseEventHandler<HTMLDivElement>;
   isTopologyPage?: boolean;
+  onRefresh?: () => void;
 }
 
 export function TopologyCard({
@@ -50,6 +51,7 @@ export function TopologyCard({
   selectionMode,
   selected,
   onSelectionChange,
+  onRefresh,
   isTopologyPage = false
 }: IProps) {
   const [topology, setTopology] = useState(topologyData);
@@ -183,8 +185,10 @@ export function TopologyCard({
             </div>
           ) : (
             <TopologyDropdownMenu
+              key={topology.updated_at}
               topology={topology}
               isTopologyPage={isTopologyPage}
+              onRefresh={onRefresh}
             />
           )}
         </div>
