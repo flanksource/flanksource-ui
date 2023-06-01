@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url("../node_modules/react-diff-view/style/index.css");
 
 @layer base {
   html {
