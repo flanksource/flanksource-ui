@@ -39,7 +39,6 @@ export function ICMPHealthFormEditor({
         />
       </div>
 
-      {/* this a top level schema field, not nested under http */}
       <FormikScheduleField name={`${name}.schedule`} />
 
       <FormikTextInput
@@ -51,7 +50,7 @@ export function ICMPHealthFormEditor({
       <FormikTextInput
         name={`${fieldName}.endpoint`}
         hint="Address to query using ICMP"
-        label="URL"
+        label="Host"
         required
       />
 
