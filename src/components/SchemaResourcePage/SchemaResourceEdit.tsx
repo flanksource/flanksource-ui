@@ -21,6 +21,7 @@ import ConfigScrapperSpecEditor from "../SpecEditor/ConfigScrapperSpecEditor";
 import { Head } from "../Head/Head";
 import HealthSpecEditor from "../SpecEditor/HealthSpecEditor";
 import { Button } from "../Button";
+import useJsonToYupValidator from "../../hooks/useJsonToYupValidator";
 import DeleteResource from "./Delete/DeleteResource";
 
 const CodeEditor = dynamic(
@@ -104,6 +105,23 @@ export function SchemaResourceEdit({
 
   const [activeTab, setActiveTab] = useState<string>(subNav[0]?.value);
 
+  const jsonSchemaFilePrefix = useMemo(() => {
+    if (table === "config_scrapers") {
+      return "scrape_config";
+    }
+    if (table === "topologies") {
+      return "component";
+    }
+    if (table === "canaries") {
+      return "canary";
+    }
+    return undefined;
+  }, [table]);
+
+  const { validator: schemaSpecValidator } = useJsonToYupValidator(
+    jsonSchemaFilePrefix && `${jsonSchemaFilePrefix}.spec`
+  );
+
   const formFields = useMemo(() => {
     const resourceType = schemaResourceTypes.find(
       (item) => item.name === resourceName
@@ -143,7 +161,12 @@ export function SchemaResourceEdit({
     });
   }, [register, formFields, watch]);
 
-  const doSubmit = (props: any) => {
+  const doSubmit = async (props: any) => {
+    const specErrorMessage = await schemaSpecValidator(props?.["spec"]);
+    if (specErrorMessage) {
+      console.error(specErrorMessage);
+      return;
+    }
     onSubmit(props);
   };
 
@@ -185,19 +208,6 @@ export function SchemaResourceEdit({
     }
     return undefined;
   }, []);
-
-  const jsonSchemaFilePrefix = useMemo(() => {
-    if (table === "config_scrapers") {
-      return "scrape_config";
-    }
-    if (table === "topologies") {
-      return "component";
-    }
-    if (table === "canaries") {
-      return "canary";
-    }
-    return undefined;
-  }, [table]);
 
   return (
     <>

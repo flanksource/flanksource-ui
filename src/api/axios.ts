@@ -13,6 +13,15 @@ export const IncidentCommander = axios.create({
   }
 });
 
+export const JSONSchema = axios.create({
+  baseURL: `${API_BASE}`,
+  headers: {
+    Accept: "application/json",
+    Prefer: "return=representation",
+    "Content-Type": "application/json"
+  }
+});
+
 export const ConfigDB = axios.create({
   baseURL: `${API_BASE}/db`,
   headers: {
