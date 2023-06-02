@@ -1,0 +1,73 @@
+import FormikTextInput from "../Formik/FormikTextInput";
+import FormikScheduleField from "../Formik/FormikScheduleField";
+import FormikConfigFormFieldsArray from "../Formik/FormikConfigFormFieldsArray";
+
+type DNSHealthFormEditorProps = {
+  fieldName: string;
+  specsMapField: string;
+};
+
+/**
+ *
+ * DNSHealthFormEditor
+ *
+ * Renders Formik form fields needed to edit a DNSHealth object. This
+ * needs to be added in the context of a Formik form, otherwise it will not work.
+ *
+ */
+export default function DNSHealthFormEditor({
+  fieldName: name,
+  specsMapField
+}: DNSHealthFormEditorProps) {
+  const fieldName = `${name}.${specsMapField}`;
+
+  return (
+    <>
+      <FormikTextInput name={`${fieldName}.description`} label="Description" />
+      <FormikTextInput name={`${fieldName}.name`} label="Name" />
+
+      {/* this a top level schema field, not nested under http */}
+      <FormikScheduleField name={`${name}.schedule`} />
+
+      <FormikTextInput name={`${fieldName}.icon`} label="Icon" />
+
+      <FormikTextInput name={`${fieldName}.server`} label="Server" />
+
+      <FormikTextInput name={`${fieldName}.port`} label="Port" type="number" />
+
+      <FormikTextInput name={`${fieldName}.query`} label="Query" />
+      <FormikTextInput name={`${fieldName}.querytype`} label="Query Type" />
+      <FormikTextInput
+        name={`${fieldName}.minrecords`}
+        label="Min Records"
+        type="number"
+        min={0}
+      />
+
+      <FormikConfigFormFieldsArray
+        name={`${fieldName}.exactreply`}
+        label="Exact Reply"
+        fields={[
+          {
+            fieldComponent: FormikTextInput,
+            name: "exactreply"
+          }
+        ]}
+      />
+
+      <FormikTextInput
+        name={`${fieldName}.timeout`}
+        label="Timeout"
+        type="number"
+        min={0}
+      />
+
+      <FormikTextInput
+        name={`${fieldName}.thresholdMillis`}
+        label="ThresholdMillis"
+        type="number"
+        min={0}
+      />
+    </>
+  );
+}

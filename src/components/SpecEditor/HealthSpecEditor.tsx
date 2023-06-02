@@ -3,6 +3,7 @@ import SpecEditor, { SpecType } from "./SpecEditor";
 import { HTTPHealthFormEditor } from "../Forms/Health/HTTPHealthFormEditor";
 import { FaCog } from "react-icons/fa";
 import { SchemaResourceType } from "../SchemaResourcePage/resourceTypes";
+import DNSHealthFormEditor from "../Forms/Health/DNSHealthFormEditor";
 
 type HealthSpecEditorProps = {
   resourceValue?: {
@@ -229,9 +230,9 @@ export default function HealthSpecEditor({
             return resourceValue ?? {};
           },
           icon: "dns",
-          configForm: null,
+          configForm: DNSHealthFormEditor,
           specsMapField: "dns.0",
-          rawSpecInput: true,
+          rawSpecInput: false,
           schemaFilePrefix: "canary"
         },
         {
