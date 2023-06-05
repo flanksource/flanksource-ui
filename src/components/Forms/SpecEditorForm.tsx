@@ -15,6 +15,7 @@ import DeleteResource from "../SchemaResourcePage/Delete/DeleteResource";
 type SpecEditorFormProps = {
   loadSpec: () => Record<string, any>;
   updateSpec: (spec: Record<string, any>) => void;
+  onBack: () => void;
   specFormat: "yaml" | "json";
   // if you want to pass in any props to the config form, you can use a wrapper
   // component around the config form
@@ -29,6 +30,7 @@ export default function SpecEditorForm({
   resourceInfo,
   loadSpec = () => ({}),
   updateSpec = () => {},
+  onBack = () => {},
   specFormat = "yaml",
   configForm: ConfigForm,
   specsMapField: specFieldMapField,
@@ -183,18 +185,30 @@ export default function SpecEditorForm({
               )}
             </div>
           </div>
-          <div className="flex flex-row space-x-4 justify-end bg-gray-200 p-4">
-            {!!initialValues.id && (
-              <DeleteResource
-                resourceId={initialValues.id}
-                resourceInfo={resourceInfo}
+          <div className="flex flex-row bg-gray-100 p-4">
+            <div className="flex flex-1 flex-row">
+              {!initialValues.id && (
+                <Button
+                  type="button"
+                  text="Back"
+                  className="btn-default btn-btn-secondary-base btn-secondary"
+                  onClick={onBack}
+                />
+              )}
+            </div>
+            <div className="flex flex-1 flex-row space-x-4 justify-end">
+              {!!initialValues.id && (
+                <DeleteResource
+                  resourceId={initialValues.id}
+                  resourceInfo={resourceInfo}
+                />
+              )}
+              <Button
+                type="submit"
+                text={!!initialValues.id ? "Update" : "Save"}
+                className="btn-primary"
               />
-            )}
-            <Button
-              type="submit"
-              text={!!initialValues.id ? "Update" : "Add"}
-              className="btn-primary"
-            />
+            </div>
           </div>
         </Form>
       )}
