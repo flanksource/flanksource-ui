@@ -280,7 +280,7 @@ export function DataTable<TableColumns, Data extends TableColumns>({
           >
             {table.getHeaderGroups().map((headerGroup) => (
               <tr
-                className="border-b border-gray-200 uppercase bg-column-background rounded-t-md items-centerborder-b border-gray-200 uppercase bg-column-background rounded-t-md items-center"
+                className="border-b border-gray-200 uppercase bg-column-background rounded-t-md items-center"
                 key={headerGroup.id}
               >
                 {headerGroup.headers.map((header, colIndex) =>
