@@ -3,6 +3,7 @@ import SpecEditor, { SpecType } from "./SpecEditor";
 import { HTTPHealthFormEditor } from "../Forms/Health/HTTPHealthFormEditor";
 import { FaCog } from "react-icons/fa";
 import { SchemaResourceType } from "../SchemaResourcePage/resourceTypes";
+import PrometheusHealthFormEditor from "../Forms/Health/PrometheusHealthFormEditor";
 
 type HealthSpecEditorProps = {
   resourceValue?: {
@@ -334,9 +335,9 @@ export default function HealthSpecEditor({
             return resourceValue ?? {};
           },
           icon: "prometheus",
-          configForm: null,
+          configForm: PrometheusHealthFormEditor,
           specsMapField: "prometheus.0",
-          rawSpecInput: true,
+          rawSpecInput: false,
           schemaFilePrefix: "canary"
         },
         {
