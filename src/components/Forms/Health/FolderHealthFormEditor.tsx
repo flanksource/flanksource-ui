@@ -49,7 +49,7 @@ export function FolderHealthFormEditor({
         required
       />
 
-      {/* this a top level schema field, not nested under http */}
+      {/* this a top level schema field, not nested under folder*/}
       <FormikScheduleField name={`${name}.schedule`} />
 
       <FormikTextInput name={`${fieldName}.description`} label="Description" />
