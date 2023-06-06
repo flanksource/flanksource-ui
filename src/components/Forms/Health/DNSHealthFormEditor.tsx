@@ -1,6 +1,7 @@
 import FormikTextInput from "../Formik/FormikTextInput";
 import FormikScheduleField from "../Formik/FormikScheduleField";
 import FormikConfigFormFieldsArray from "../Formik/FormikConfigFormFieldsArray";
+import FormikIconPicker from "../Formik/FormikIconPicker";
 
 type DNSHealthFormEditorProps = {
   fieldName: string;
@@ -26,10 +27,10 @@ export default function DNSHealthFormEditor({
       <FormikTextInput name={`${fieldName}.description`} label="Description" />
       <FormikTextInput name={`${fieldName}.name`} label="Name" />
 
-      {/* this a top level schema field, not nested under http */}
+      {/* this a top level schema field, not nested under dns */}
       <FormikScheduleField name={`${name}.schedule`} />
 
-      <FormikTextInput name={`${fieldName}.icon`} label="Icon" />
+      <FormikIconPicker name={`${fieldName}.icon`} label="Icon" />
 
       <FormikTextInput name={`${fieldName}.server`} label="Server" />
 
