@@ -170,7 +170,7 @@ export function IncidentDetailsPanel({
           title="Started"
           className="h-8"
           value={
-            <span className="text-gray-500 font-medium">
+            <span className="text-gray-500 font-medium text-sm">
               {formattedCreatedAt}
             </span>
           }
@@ -179,7 +179,7 @@ export function IncidentDetailsPanel({
           title="Duration"
           className="h-8"
           value={
-            <span className="text-gray-500 font-medium">
+            <span className="text-gray-500 font-medium text-sm">
               {formattedDuration}
             </span>
           }

@@ -63,10 +63,10 @@ export default function TopologyDetails({
       value: map(topology.labels, (v, k) => (
         <div
           data-tip={`${k}: ${v}`}
-          className="max-w-full overflow-hidden text-ellipsis  mb-1 rounded-md text-gray-600 font-semibold text-sm"
+          className="max-w-full overflow-hidden text-ellipsis mb-1 rounded-md text-gray-600 font-semibold text-sm"
           key={k}
         >
-          {k}: <span className="font-light">{v}</span>
+          {k}: <span className="text-sm font-light">{v}</span>
         </div>
       ))
     });

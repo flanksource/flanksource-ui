@@ -23,7 +23,7 @@ export function TopologyLink({
         to={{
           pathname: `/topology/${component.id}`
         }}
-        className="flex flex-nowrap hover:text-gray-500 my-auto "
+        className="flex flex-nowrap hover:text-gray-500 my-auto"
       >
         <Icon name={component.icon} className="mr-1 object-center" />
         <span className={`text-${size}`}> {component.name}</span>

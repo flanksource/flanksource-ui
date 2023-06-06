@@ -59,7 +59,7 @@ export function ComponentTypesDropdown({
           onChange(val);
         }}
         prefix={
-          <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
+          <div className="text-sm text-gray-500 mr-2 whitespace-nowrap">
             {`${name}:`}
           </div>
         }
