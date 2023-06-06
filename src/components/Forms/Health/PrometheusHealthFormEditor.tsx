@@ -27,7 +27,7 @@ export default function PrometheusHealthFormEditor({
       <FormikTextInput name={`${fieldName}.description`} label="Description" />
       <FormikTextInput name={`${fieldName}.name`} label="Name" />
 
-      {/* this a top level schema field, not nested under http */}
+      {/* this a top level schema field, not nested under prometheus */}
       <FormikScheduleField name={`${name}.schedule`} />
 
       <FormikTemplateFields name={`${fieldName}.test`} label="Script" />
