@@ -104,6 +104,7 @@ import changes from "./changes.svg";
 import check from "./check.svg";
 import cisco from "./cisco.svg";
 import clock from "./clock.svg";
+import clone from "./clone.svg";
 import cloud_build from "./cloud-build.svg";
 import cloud_done from "./cloud-done.svg";
 import cloud_download from "./cloud-download.svg";
@@ -155,6 +156,7 @@ import eks from "./eks.svg";
 import elastic from "./elastic.svg";
 import elasticsearch from "./elasticsearch.svg";
 import elb from "./elb.svg";
+import edit from "./edit.svg";
 import envoy from "./envoy.svg";
 import error from "./error.svg";
 import etcd from "./etcd.svg";
@@ -249,8 +251,10 @@ import kustomize from "./kustomize.svg";
 import ldap from "./ldap.svg";
 import letsencrypt from "./letsencrypt.svg";
 import lifebuoy from "./lifebuoy.svg";
+import link from "./link.svg";
 import linux from "./linux.svg";
 import list from "./list.svg";
+import lock from "./lock.svg";
 import log from "./log.svg";
 import logic_apps from "./logic-apps.svg";
 import logs from "./logs.svg";
@@ -291,6 +295,7 @@ import ory_hydra from "./ory-hydra.svg";
 import ory_kratos from "./ory-kratos.svg";
 import ory_logo from "./ory-logo.svg";
 import ory from "./ory.svg";
+import pause from "./pause.svg";
 import package_install from "./package-install.svg";
 import package_rollback from "./package-rollback.svg";
 import package_uninstall from "./package-uninstall.svg";
@@ -309,6 +314,7 @@ import rabbitmq from "./rabbitmq.svg";
 import rancher from "./rancher.svg";
 import redhat from "./redhat.svg";
 import redis from "./redis.svg";
+import reload from "./reload.svg";
 import remove_clock from "./remove-clock.svg";
 import remove_cloud from "./remove-cloud.svg";
 import remove_comment from "./remove-comment.svg";
@@ -340,6 +346,7 @@ import scale_in from "./scale-in.svg";
 import scale_out from "./scale-out.svg";
 import scale_up from "./scale-up.svg";
 import seal from "./seal.svg";
+import search from "./search.svg";
 import server from "./server.svg";
 import servers from "./servers.svg";
 import servers2 from "./servers2.svg";
@@ -356,6 +363,7 @@ import slack from "./slack.svg";
 import smb from "./smb.svg";
 import source from "./source.svg";
 import speak from "./speak.svg";
+import split from "./split.svg";
 import spring from "./spring.svg";
 import sql from "./sql.svg";
 import sqlserver from "./sqlserver.svg";
@@ -365,8 +373,11 @@ import stackdriver_monitoring from "./stackdriver-monitoring.svg";
 import stackdriver_trace from "./stackdriver-trace.svg";
 import stackdriver from "./stackdriver.svg";
 import star from "./star.svg";
+import start from "./start.svg";
+import stop from "./stop.svg";
 import structure from "./structure.svg";
 import swagger from "./swagger.svg";
+import switch_icon from "./switch.svg";
 import sys from "./sys.svg";
 import tag from "./tag.svg";
 import talk from "./talk.svg";
@@ -382,6 +393,8 @@ import tree from "./tree.svg";
 import trivy from "./trivy.svg";
 import txt from "./txt.svg";
 import ubuntu from "./ubuntu.svg";
+import unlock from "./unlock.svg";
+import upload from "./upload.svg";
 import user from "./user.svg";
 import vault from "./vault.svg";
 import vsphere from "./vsphere.svg";
@@ -390,6 +403,15 @@ import world from "./world.svg";
 import www from "./www.svg";
 import xml from "./xml.svg";
 import yaml from "./yaml.svg";
+import send from "./send.svg";
+import hide from "./hide.svg";
+import show from "./show.svg";
+import download_file from "./download-file.svg";
+import ban from "./ban.svg";
+import toggle_on from "./toggle-on.svg";
+import toggle_off from "./toggle-off.svg";
+import cancel from "./cancel.svg";
+import archive from "./archive.svg";
 
 export const Icons = {
   "access-denied": access_denied,
@@ -782,5 +804,27 @@ export const Icons = {
   world: world,
   www: www,
   xml: xml,
-  yaml: yaml
+  yaml: yaml,
+  edit: edit,
+  lock: lock,
+  unlock: unlock,
+  upload: upload,
+  search: search,
+  switch: switch_icon,
+  start: start,
+  stop: stop,
+  pause: pause,
+  clone: clone,
+  split: split,
+  reload: reload,
+  send: send,
+  link: link,
+  show: show,
+  hide: hide,
+  "toggle-off": toggle_off,
+  "toggle-on": toggle_on,
+  "download-file": download_file,
+  ban: ban,
+  archive: archive,
+  cancel: cancel
 };
