@@ -27,6 +27,7 @@ import {
 } from "../context/TopologyPageContext";
 import { useLoader } from "../hooks";
 import { refreshButtonClickedTrigger } from "../components/SlidingSideBar";
+import { AgentNamesDropdown } from "../components/Agents/AgentNamesDropdown";
 
 export const allOption = {
   All: {
@@ -109,6 +110,7 @@ export function TopologyPage() {
 
   const selectedLabel = searchParams.get("labels") ?? "All";
   const team = searchParams.get("team") ?? "All";
+  const agentId = searchParams.get("agent_id") ?? "All";
   const topologyType = searchParams.get("type") ?? "All";
   const healthStatus = searchParams.get("status") ?? "All";
   const refererId = searchParams.get("refererId") ?? undefined;
@@ -139,6 +141,7 @@ export function TopologyPage() {
         status: params.status,
         type: params.type,
         team: params.team,
+        agent_id: params.agent_id,
         labels: params.labels,
         // only flatten, if topology type is set
         ...(params.type &&
@@ -344,6 +347,20 @@ export function TopologyPage() {
                     });
                   }}
                 />
+                <div className="flex p-3">
+                  <AgentNamesDropdown
+                    name="agent_id"
+                    value={agentId}
+                    className="inline-block p-3 w-auto max-w-[500px]"
+                    dropDownClassNames="w-auto max-w-[400px] left-0"
+                    onChange={(val: any) => {
+                      setSearchParams({
+                        ...Object.fromEntries(searchParams),
+                        agent_id: val
+                      });
+                    }}
+                  />
+                </div>
               </div>
               <TopologyPopOver
                 size={size}
