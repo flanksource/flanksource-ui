@@ -288,12 +288,12 @@ export const getRelatedConfigs = async (configID: string) => {
 };
 
 export type ConfigTypeItem = {
-  config_class: string;
+  type: string;
 };
 
 export const getConfigsTypes = async () => {
   const res = await IncidentCommander.get<ConfigTypeItem[] | null>(
-    `/config_classes`
+    `/config_types`
   );
   return res.data;
 };
