@@ -33,9 +33,9 @@ export function IncidentDetailsPanel({
   const commandersArray = useMemo(
     () => [
       {
-        label: incident.commander.name,
-        value: incident.commander.id,
-        avatar: incident.commander.avatar
+        label: incident.commander?.name,
+        value: incident.commander?.id,
+        avatar: incident.commander?.avatar
       }
     ],
     [incident]
@@ -53,7 +53,7 @@ export function IncidentDetailsPanel({
       type: typeItems[incident.type as keyof typeof typeItems]
         ? incident.type
         : undefined,
-      commanders: incident.commander.id,
+      commanders: incident.commander?.id,
       status: incidentStatusItems[
         incident.status as keyof typeof incidentStatusItems
       ]

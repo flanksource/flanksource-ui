@@ -51,11 +51,10 @@ export const getEvidence = async (id: string) =>
   resolve(IncidentCommander.get(`/evidences?id=eq.${id}`));
 
 export const createEvidence = async (
-  args: Omit<Evidence, "created_by" | "created_at" | "hypothesis_id">
+  args: Omit<Evidence, "created_by" | "created_at" | "hypothesis_id" | "id">
 ) => {
   const {
     user,
-    id,
     hypothesisId,
     evidence,
     config_id,
@@ -73,7 +72,6 @@ export const createEvidence = async (
 
   return resolve(
     IncidentCommander.post<Evidence[]>(`/evidences`, {
-      id,
       config_id,
       config_analysis_id,
       config_change_id,

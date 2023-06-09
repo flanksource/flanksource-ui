@@ -1,14 +1,19 @@
 import { MemoryRouter } from "react-router-dom";
 import { LogsViewer } from "./index";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const client = new QueryClient();
 
 export default {
   title: "LogsViewer",
   component: LogsViewer,
   decorators: [
     (Story) => (
-      <MemoryRouter>
-        <Story />
-      </MemoryRouter>
+      <QueryClientProvider client={client}>
+        <MemoryRouter>
+          <Story />
+        </MemoryRouter>
+      </QueryClientProvider>
     )
   ]
 };

@@ -1,6 +1,6 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { FaDotCircle } from "react-icons/fa";
-import { JobHistory, JobHistoryStatus } from "./JobsHistoryTable";
+import { JobHistory, classNameMaps } from "./JobsHistoryTable";
 import { formatJobName } from "../../utils/common";
 import dayjs from "dayjs";
 import { DateCell } from "../ConfigViewer/columns";
@@ -23,6 +23,7 @@ export const JobsHistoryTableColumn: ColumnDef<JobHistory, any>[] = [
     id: "name",
     accessorKey: "name",
     size: 200,
+    enableSorting: false,
     cell: ({ getValue }) => {
       const value = getValue<JobHistory["name"]>();
       const formattedName = formatJobName(value);
@@ -36,10 +37,6 @@ export const JobsHistoryTableColumn: ColumnDef<JobHistory, any>[] = [
     size: 100,
     cell: ({ getValue }) => {
       const value = getValue<JobHistory["status"]>();
-      const classNameMaps = new Map<JobHistoryStatus, string>([
-        ["FINISHED", "text-green-500"],
-        ["RUNNING", "text-yellow-500"]
-      ]);
       const className = classNameMaps.get(value) ?? "";
       return (
         <span className={`lowercase`}>

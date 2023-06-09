@@ -73,7 +73,7 @@ export default function CollapsiblePanel({
         leaveTo="opacity-0"
       >
         <div
-          className={`flex-1 p-2 flex flex-col border-b border-dashed border-gray-200`}
+          className={`flex-1 p-2 flex flex-col max-h-full border-b border-dashed border-gray-200`}
         >
           {children}
         </div>
