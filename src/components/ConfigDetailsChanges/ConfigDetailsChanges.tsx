@@ -1,9 +1,7 @@
 import clsx from "clsx";
 import { useEffect, useMemo, useState } from "react";
 import ReactTooltip from "react-tooltip";
-import { useGetConfigByIdQuery } from "../../api/query-hooks";
 import { useGetConfigChangesByConfigChangeIdQuery } from "../../api/query-hooks/useGetConfigChangesByConfigChangeIdQuery";
-import { ConfigItem } from "../../api/services/configs";
 import { EvidenceType } from "../../api/services/evidence";
 import { User } from "../../api/services/users";
 import { ViewType } from "../../types";
@@ -12,12 +10,13 @@ import AttachAsEvidenceButton from "../AttachEvidenceDialog/AttachAsEvidenceDial
 import { Avatar } from "../Avatar";
 import { ConfigTypeChanges } from "../ConfigChanges";
 import ConfigLink from "../ConfigLink/ConfigLink";
-import { DescriptionCard } from "../DescriptionCard";
 import { DiffRenderer } from "../DiffRenderer/DiffRenderer";
 import EmptyState from "../EmptyState";
 import { Icon } from "../Icon";
 import { JSONViewer } from "../JSONViewer";
 import { Modal } from "../Modal";
+import TextSkeletonLoader from "../SkeletonLoader/TextSkeletonLoader";
+import ConfigChangeDetailSection from "./ConfigChangeDetailsSection";
 
 type ConfigDetailsChangesProps = {
   id: string;
@@ -34,36 +33,55 @@ export function ConfigDetailsChanges({
   showConfigLogo,
   data
 }: ConfigDetailsChangesProps) {
-  const { data: historyData, isLoading } =
-    useGetConfigChangesByConfigChangeIdQuery(id, configId!, {
-      enabled: !data
-    });
-  const { data: config } = useGetConfigByIdQuery(configId);
   const [open, setOpen] = useState(false);
-  const [changeDetails, setChangeDetails] = useState<ConfigTypeChanges>();
+
+  const { data: change, isLoading } = useGetConfigChangesByConfigChangeIdQuery(
+    id,
+    configId!,
+    {
+      enabled: open
+    }
+  );
+
+  const config = useMemo(() => change?.config, [change]);
+
+  // if the change is not loaded, show the data from the props, otherwise show
+  // the data from the API which is more detailed
+  const changeDetails = useMemo(() => change ?? data, [change, data]);
+
   const properties = useMemo(() => {
     if (!changeDetails) {
       return [];
     }
     return [
       {
-        label: "Source",
-        value: changeDetails.source! || ""
-      },
-      {
         label: "Date",
         value: formatISODate(changeDetails.created_at!)
       },
       {
         label: "Created By",
-        value: <Avatar user={changeDetails.created_by! as unknown as User} />
+        value: (
+          // eslint-disable-next-line react/jsx-no-useless-fragment
+          <>
+            {changeDetails.created_by ? (
+              <Avatar
+                user={
+                  (changeDetails.created_by! as unknown as User) ??
+                  changeDetails.external_created_by
+                }
+              />
+            ) : (
+              <span>{changeDetails.external_created_by}</span>
+            )}
+          </>
+        )
+      },
+      {
+        label: "Source",
+        value: changeDetails.source || ""
       }
     ];
   }, [changeDetails]);
-
-  useEffect(() => {
-    setChangeDetails(historyData?.data?.[0] || data);
-  }, [historyData, id, data]);
 
   useEffect(() => {
     ReactTooltip.rebuild();
@@ -73,77 +91,65 @@ export function ConfigDetailsChanges({
     return <EmptyState />;
   }
 
+  if (!changeDetails && isLoading) {
+    return (
+      <div className="flex flex-col w-full p-4 gap-2">
+        <TextSkeletonLoader className="w-full" />
+        <TextSkeletonLoader className="w-full" />
+        <TextSkeletonLoader className="w-full" />
+      </div>
+    );
+  }
+
   return (
-    <div className="overflow-hidden bg-white cursor-pointer">
+    <div className="flex flex-col flex-1 overflow-y-auto bg-white cursor-pointer">
       <ConfigDetailChangeModal
-        open={open}
+        // do not show modal if the config is not loaded
+        open={open && !isLoading}
         setOpen={setOpen}
-        config={config}
         changeDetails={changeDetails}
       />
       {viewType === ViewType.detailed && (
-        <div className="px-4 py-5">
-          <DescriptionCard items={properties} labelStyle="top" columns={3} />
+        <div className="flex flex-col flex-1 px-4 py-5 overflow-y-auto">
+          <div className="flex flex-row w-full gap-4">
+            {properties.map((p) => (
+              <div
+                className={clsx(
+                  "flex flex-col w-auto py-4 text-left gap-2",
+                  p.label === "Source" ? "flex-1" : ""
+                )}
+              >
+                <div className="text-sm overflow-hidden truncate text-gray-500">
+                  {p.label}
+                </div>
+                <div className="flex justify-start break-all text-sm">
+                  {p.value}
+                </div>
+              </div>
+            ))}
+          </div>
           {changeDetails?.details && (
-            <DescriptionCard
-              className="mt-2"
-              items={[
-                {
-                  label: "Details",
-                  value: (
-                    <div
-                      className={clsx(
-                        "w-full max-h-56 overflow-y-auto overflow-x-auto border border-gray-200 rounded text-sm",
-                        changeDetails?.details ? "" : "h-16"
-                      )}
-                    >
-                      <JSONViewer
-                        code={JSON.stringify(changeDetails?.details, null, 2)}
-                        format="yaml"
-                        convertToYaml
-                      />
-                    </div>
-                  )
-                }
-              ]}
-              labelStyle="top"
-            />
+            <ConfigChangeDetailSection label="Details">
+              <JSONViewer
+                code={JSON.stringify(changeDetails?.details, null, 2)}
+                format="yaml"
+                convertToYaml
+              />
+            </ConfigChangeDetailSection>
           )}
           {changeDetails?.patches && !changeDetails?.diff && (
-            <DescriptionCard
-              className="mt-4"
-              items={[
-                {
-                  label: "Change",
-                  value: (
-                    <div className="w-full max-h-96 overflow-y-auto overflow-x-auto border border-gray-200 rounded text-sm">
-                      <JSONViewer
-                        code={JSON.stringify(changeDetails?.patches, null, 2)}
-                        format="yaml"
-                        convertToYaml
-                      />
-                    </div>
-                  )
-                }
-              ]}
-              labelStyle="top"
-            />
+            <ConfigChangeDetailSection label="Change">
+              <JSONViewer
+                code={JSON.stringify(changeDetails?.patches, null, 2)}
+                format="yaml"
+                convertToYaml
+              />
+            </ConfigChangeDetailSection>
           )}
           {changeDetails?.diff && (
-            <DescriptionCard
-              className="mt-4"
-              items={[
-                {
-                  label: "Change",
-                  value: (
-                    <div className="w-full max-h-96 overflow-y-auto overflow-x-auto border border-gray-200 rounded pr-2 text-sm">
-                      <DiffRenderer diffText={changeDetails.diff} />
-                    </div>
-                  )
-                }
-              ]}
-              labelStyle="top"
-            />
+            <ConfigChangeDetailSection label="Change">
+              <DiffRenderer diffText={changeDetails.diff} />
+            </ConfigChangeDetailSection>
           )}
         </div>
       )}
@@ -180,19 +186,16 @@ export function ConfigDetailsChanges({
 type ConfigDetailChangeModalProps = {
   open: boolean;
   setOpen: (val: boolean) => void;
-  config?: ConfigItem;
-  changeDetails?: Pick<
-    ConfigTypeChanges,
-    "change_type" | "id" | "config_id" | "config"
-  >;
+  changeDetails?: ConfigTypeChanges;
 };
 
 export function ConfigDetailChangeModal({
   open,
   setOpen,
-  config,
   changeDetails
 }: ConfigDetailChangeModalProps) {
+  const config = useMemo(() => changeDetails?.config, [changeDetails]);
+
   return (
     <Modal
       title={
@@ -222,17 +225,16 @@ export function ConfigDetailChangeModal({
         setOpen(false);
       }}
       size="full"
-      bodyClass=""
+      bodyClass="flex h-full flex-col flex-1 overflow-y-auto"
+      containerClassName="min-h-[15rem] h-auto max-h-full overflow-y-auto"
     >
-      <div
-        className="flex flex-col h-full"
-        style={{ maxHeight: "calc(100vh - 8rem)" }}
-      >
+      <div className="flex flex-col flex-1 overflow-y-auto">
         {changeDetails?.config_id && (
           <ConfigDetailsChanges
             configId={changeDetails.config_id}
             id={changeDetails.id}
             viewType={ViewType.detailed}
+            data={changeDetails}
           />
         )}
       </div>

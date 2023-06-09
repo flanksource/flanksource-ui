@@ -28,7 +28,7 @@ export default function ConfigLink({
         to={{
           pathname: `/catalog/${configId}`
         }}
-        className={clsx("flex flex-row space-x-1", className)}
+        className={clsx("flex flex-row space-x-1 border-0", className)}
       >
         <ConfigsTypeIcon
           config={{

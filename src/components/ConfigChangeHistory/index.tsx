@@ -8,6 +8,7 @@ import { DateCell } from "../ConfigViewer/columns";
 import { PaginationOptions } from "../DataTable";
 import { DataTable, Icon } from "../index";
 import { ConfigDetailChangeModal } from "../ConfigDetailsChanges/ConfigDetailsChanges";
+import { useGetConfigChangesByConfigChangeIdQuery } from "../../api/query-hooks/useGetConfigChangesByConfigChangeIdQuery";
 
 const columns: ColumnDef<ConfigTypeChanges>[] = [
   {
@@ -93,9 +94,17 @@ export function ConfigChangeHistory({
   pagination,
   tableStyle
 }: ConfigChangeHistoryProps) {
-  const [configTypeChange, setConfigTypeChange] = useState<ConfigTypeChanges>();
+  const [selectedConfigChange, setSelectedConfigChange] =
+    useState<ConfigTypeChanges>();
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const { data: config } = useGetConfigByIdQuery(configTypeChange?.config_id!);
+
+  const { data: configChange } = useGetConfigChangesByConfigChangeIdQuery(
+    selectedConfigChange?.id!,
+    selectedConfigChange?.config_id!,
+    {
+      enabled: !!selectedConfigChange
+    }
+  );
 
   return (
     <>
@@ -112,16 +121,17 @@ export function ConfigChangeHistory({
         preferencesKey="config-change-history"
         savePreferences={false}
         handleRowClick={(row) => {
-          setConfigTypeChange(row.original);
+          setSelectedConfigChange(row.original);
           setModalIsOpen(true);
         }}
       />
-      <ConfigDetailChangeModal
-        open={modalIsOpen}
-        setOpen={setModalIsOpen}
-        config={config}
-        changeDetails={configTypeChange}
-      />
+      {configChange && (
+        <ConfigDetailChangeModal
+          open={modalIsOpen}
+          setOpen={setModalIsOpen}
+          changeDetails={configChange}
+        />
+      )}
     </>
   );
 }
