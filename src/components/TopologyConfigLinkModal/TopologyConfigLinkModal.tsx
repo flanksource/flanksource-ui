@@ -26,8 +26,8 @@ type ConfigOption = {
   description: string;
   name: string;
   icon: React.ReactNode;
-  external_type?: string;
-  config_type: string;
+  config_class?: string;
+  type?: string;
 };
 
 export function TopologyConfigLinkModal({
@@ -48,8 +48,8 @@ export function TopologyConfigLinkModal({
         description: d.name,
         name: d.name,
         icon: null,
-        external_type: d.external_type,
-        config_type: d.config_type
+        type: d.type,
+        config_class: d.config_class
       }))
       .sort((v1, v2) => stringSortHelper(v1.name, v2.name));
   }, [response]);
@@ -130,8 +130,8 @@ export function TopologyConfigLinkModal({
                       <ConfigLink
                         configId={option.id}
                         configName={option.name}
-                        configType={option.external_type}
-                        configTypeSecondary={option.config_type}
+                        configType={option.type}
+                        configTypeSecondary={option.config_class}
                         variant="label"
                       />
                     </div>

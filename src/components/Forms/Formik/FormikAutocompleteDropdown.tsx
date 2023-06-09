@@ -56,10 +56,7 @@ export default function FormikAutocompleteDropdown({
           });
           setIsTouched(true);
         }}
-        value={{
-          label: field.value,
-          value: field.value
-        }}
+        value={options.find((item) => item.value === field.value)}
         options={options}
         onBlur={(event) => {
           field.onBlur(event);
@@ -70,7 +67,7 @@ export default function FormikAutocompleteDropdown({
           setIsTouched(true);
         }}
         name={field.name}
-        isClearable={isClearable}
+        isClearable={isClearable && Boolean(field.value?.trim())}
       />
       {hint && <p className="text-sm text-gray-500">{hint}</p>}
       {isTouched && meta.error ? (

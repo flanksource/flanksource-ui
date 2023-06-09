@@ -4,6 +4,14 @@ import AWSConfigsFormEditor from "../Forms/Configs/AWSConfigsFormEditor";
 import KubernetesConfigsFormEditor from "../Forms/Configs/KubernetesConfigsFormEditor";
 import { FaCog } from "react-icons/fa";
 import { SchemaResourceType } from "../SchemaResourcePage/resourceTypes";
+import KubernetesFileConfigsFormEditor from "../Forms/Configs/KubernetesFileConfigsFormEditor";
+import SQLConfigsFormEditor from "../Forms/Configs/SQLConfigsFormEditor";
+import TrivyConfigsFormEditor from "../Forms/Configs/TrivyConfigsFormEditor";
+import AzureConfigsFormEditor from "../Forms/Configs/AzureConfigsFormEditor";
+import GithubActionsConfigsFormEditor from "../Forms/Configs/GithubActionsConfigsFormEditor";
+import FileConfigsFormEditor from "../Forms/Configs/FileConfigsFormEditor";
+import HttpConfigsFormEditor from "../Forms/Configs/HttpConfigsFormEditor";
+import AzureDevopsConfigsFormEditor from "../Forms/Configs/AzureDevopsConfigsFormEditor";
 
 type ConfigScrapperSpecEditorProps = {
   resourceValue?: Record<string, any>;
@@ -36,6 +44,62 @@ export default function ConfigScrapperSpecEditor({
           schemaFilePrefix: "scrape_config"
         },
         {
+          name: "azure",
+          label: "Azure",
+          updateSpec: (value: Record<string, any>) => {
+            onSubmit(value);
+          },
+          loadSpec: () => {
+            return resourceValue ?? {};
+          },
+          icon: "azure",
+          configForm: AzureConfigsFormEditor,
+          specsMapField: "azure.0",
+          schemaFilePrefix: "scrape_config"
+        },
+        {
+          name: "kubernetesFile",
+          label: "Kubernetes File",
+          updateSpec: (value: Record<string, any>) => {
+            onSubmit(value);
+          },
+          loadSpec: () => {
+            return resourceValue ?? {};
+          },
+          icon: "kubernetes",
+          configForm: KubernetesFileConfigsFormEditor,
+          specsMapField: "kubernetesFile.0",
+          schemaFilePrefix: "scrape_config"
+        },
+        {
+          name: "sql",
+          label: "SQL",
+          updateSpec: (value: Record<string, any>) => {
+            onSubmit(value);
+          },
+          loadSpec: () => {
+            return resourceValue ?? {};
+          },
+          icon: "sql",
+          configForm: SQLConfigsFormEditor,
+          specsMapField: "sql.0",
+          schemaFilePrefix: "scrape_config"
+        },
+        {
+          name: "trivy",
+          label: "Trivy",
+          updateSpec: (value: Record<string, any>) => {
+            onSubmit(value);
+          },
+          loadSpec: () => {
+            return resourceValue ?? {};
+          },
+          icon: "trivy",
+          configForm: TrivyConfigsFormEditor,
+          specsMapField: "trivy.0",
+          schemaFilePrefix: "scrape_config"
+        },
+        {
           name: "aws",
           label: "AWS",
           description: "Edit aws configs",
@@ -61,14 +125,13 @@ export default function ConfigScrapperSpecEditor({
             return resourceValue ?? {};
           },
           icon: "folder",
-          configForm: null,
+          configForm: FileConfigsFormEditor,
           specsMapField: "file.0",
-          rawSpecInput: true,
           schemaFilePrefix: "scrape_config"
         },
         {
-          name: "git",
-          label: "Git",
+          name: "githubActions",
+          label: "Github Actions",
           updateSpec: (value: Record<string, any>) => {
             onSubmit(value);
           },
@@ -76,9 +139,8 @@ export default function ConfigScrapperSpecEditor({
             return resourceValue ?? {};
           },
           icon: "git",
-          configForm: null,
-          specsMapField: "git.0",
-          rawSpecInput: true,
+          configForm: GithubActionsConfigsFormEditor,
+          specsMapField: "githubActions.0",
           schemaFilePrefix: "scrape_config"
         },
         {
@@ -91,13 +153,12 @@ export default function ConfigScrapperSpecEditor({
             return resourceValue ?? {};
           },
           icon: "http",
-          configForm: null,
+          configForm: HttpConfigsFormEditor,
           specsMapField: "http.0",
-          rawSpecInput: true,
           schemaFilePrefix: "scrape_config"
         },
         {
-          name: "azureDevOps",
+          name: "azureDevops",
           label: "Azure DevOps",
           updateSpec: (value: Record<string, any>) => {
             onSubmit(value);
@@ -105,10 +166,9 @@ export default function ConfigScrapperSpecEditor({
           loadSpec: () => {
             return resourceValue ?? {};
           },
-          icon: "azure",
-          configForm: null,
-          specsMapField: "azureDevOps.0",
-          rawSpecInput: true,
+          icon: "azure-devops",
+          configForm: AzureDevopsConfigsFormEditor,
+          specsMapField: "azureDevops.0",
           schemaFilePrefix: "scrape_config"
         },
         {

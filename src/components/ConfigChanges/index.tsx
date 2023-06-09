@@ -22,7 +22,8 @@ export type ConfigTypeChanges = {
   severity: string;
   source: string;
   summary: string;
-  patches: string;
+  patches?: string;
+  diff?: string;
   details: string;
   created_at: string;
   created_by: string | User;
