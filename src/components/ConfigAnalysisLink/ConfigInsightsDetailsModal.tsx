@@ -77,7 +77,7 @@ export default function ConfigInsightsDetailsModal({
     configInsight?.config_id!
   );
 
-  const code = useMemo(() => {
+  const configCode = useMemo(() => {
     if (!configDetails?.config) {
       return "";
     }
@@ -94,6 +94,14 @@ export default function ConfigInsightsDetailsModal({
 
     return configDetails?.config && JSON.stringify(ordered, null, 2);
   }, [configDetails]);
+
+  const rawCode = useMemo(() => {
+    if (!configInsight?.analysis) {
+      return "";
+    }
+
+    return JSON.stringify(configInsight.analysis, null, 2);
+  }, [configInsight]);
 
   const format = useMemo(
     () =>
@@ -174,7 +182,7 @@ export default function ConfigInsightsDetailsModal({
                                   <Loading />
                                 ) : (
                                   <JSONViewer
-                                    code={code}
+                                    code={configCode}
                                     format={format}
                                     convertToYaml
                                     showLineNo
@@ -197,7 +205,12 @@ export default function ConfigInsightsDetailsModal({
                                 {isLoading ? (
                                   <Loading />
                                 ) : (
-                                  <div>Raw content</div>
+                                  <JSONViewer
+                                    code={rawCode}
+                                    format={"json"}
+                                    convertToYaml
+                                    showLineNo
+                                  />
                                 )}
                               </div>
                             )
