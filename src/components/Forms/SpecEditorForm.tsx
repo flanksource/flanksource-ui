@@ -1,5 +1,5 @@
 import { Form, Formik } from "formik";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import { Button } from "../Button";
 import { Tabs, Tab } from "../Tabs/Tabs";
 import { FormikCodeEditor } from "./Formik/FormikCodeEditor";
@@ -37,6 +37,7 @@ export default function SpecEditorForm({
   rawSpecInput: showCodeEditorOnly = false,
   schemaFilePrefix
 }: SpecEditorFormProps) {
+  const formRef = useRef<HTMLFormElement>(null);
   const [activeTabs, setActiveTabs] = useState<"Form" | "Code">(
     showCodeEditorOnly ? "Code" : "Form"
   );
@@ -73,6 +74,18 @@ export default function SpecEditorForm({
     ...(loadSpec ? loadSpec() : {})
   };
 
+  const touchAllFormFields = (
+    setFieldTouched: (
+      field: string,
+      isTouched?: boolean | undefined,
+      shouldValidate?: boolean | undefined
+    ) => void
+  ) => {
+    [...(formRef.current?.elements || [])].forEach((element) => {
+      setFieldTouched(element.getAttribute("name")!, true, true);
+    });
+  };
+
   return (
     <Formik
       initialValues={initialValues}
@@ -82,11 +95,15 @@ export default function SpecEditorForm({
       validateOnBlur
       validateOnChange
     >
-      {({ handleSubmit, handleReset }) => (
+      {({ handleSubmit, handleReset, setFieldTouched }) => (
         <Form
-          onSubmit={handleSubmit}
+          onSubmit={(e) => {
+            handleSubmit(e);
+            touchAllFormFields(setFieldTouched);
+          }}
           onReset={handleReset}
           className="flex flex-col flex-1 overflow-y-auto space-y-4"
+          ref={formRef}
         >
           <div className="flex flex-col flex-1 overflow-y-auto space-y-4 p-4">
             <div className="flex flex-col space-y-2">
