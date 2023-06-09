@@ -12,6 +12,7 @@ import { Modal } from "../Modal";
 import { Loading } from "../Loading";
 import { JSONViewer } from "../JSONViewer";
 import { useGetConfigByIdQuery } from "../../api/query-hooks";
+import { Tab, Tabs } from "../Tabs/Tabs";
 
 type Props = {
   configInsight?: ConfigTypeInsights & { config?: ConfigItem };
@@ -24,7 +25,19 @@ export default function ConfigInsightsDetailsModal({
   isOpen,
   onClose
 }: Props) {
+  const subNav = [
+    {
+      label: "Config",
+      value: "Config"
+    },
+    {
+      label: "Raw",
+      value: "Raw"
+    }
+  ];
+
   const [attachEvidence, setAttachEvidence] = useState(false);
+  const [activeTab, setActiveTab] = useState<string>(subNav[0]?.value);
 
   const properties = useMemo(() => {
     return [
@@ -98,6 +111,10 @@ export default function ConfigInsightsDetailsModal({
     return null;
   }
 
+  const onSubNavClick = (tab: string) => {
+    setActiveTab(tab);
+  };
+
   return (
     <Modal
       title={
@@ -140,29 +157,60 @@ export default function ConfigInsightsDetailsModal({
               ]}
               labelStyle="top"
             />
-            <DescriptionCard
-              items={[
-                {
-                  label: "Config",
-                  value: (
-                    <div className="w-full min-h-12 max-h-modal-body-md p-3 overflow-y-auto overflow-x-auto border border-gray-200 rounded">
-                      {isLoading ? (
-                        <Loading />
-                      ) : (
-                        <JSONViewer
-                          code={code}
-                          format={format}
-                          convertToYaml
-                          showLineNo
-                        />
-                      )}
-                    </div>
-                  )
-                }
-              ]}
-              labelStyle="top"
-              className="mt-4"
-            />
+            <Tabs
+              activeTab={activeTab}
+              onSelectTab={(tab) => onSubNavClick(tab)}
+            >
+              {subNav?.map((nav) => {
+                return (
+                  <Tab key={nav.label} label={nav.label} value={nav.value}>
+                    {nav.label === "Config" && (
+                      <DescriptionCard
+                        items={[
+                          {
+                            value: (
+                              <div className="w-full min-h-12 max-h-modal-body-md  p-3 overflow-y-auto overflow-x-auto">
+                                {isLoading ? (
+                                  <Loading />
+                                ) : (
+                                  <JSONViewer
+                                    code={code}
+                                    format={format}
+                                    convertToYaml
+                                    showLineNo
+                                  />
+                                )}
+                              </div>
+                            )
+                          }
+                        ]}
+                        labelStyle="top"
+                        className="mt-4"
+                      />
+                    )}
+                    {nav.label === "Raw" && (
+                      <DescriptionCard
+                        items={[
+                          {
+                            value: (
+                              <div className="w-full min-h-12 max-h-modal-body-md  p-3 overflow-y-auto overflow-x-auto">
+                                {isLoading ? (
+                                  <Loading />
+                                ) : (
+                                  <div>Raw content</div>
+                                )}
+                              </div>
+                            )
+                          }
+                        ]}
+                        labelStyle="top"
+                        className="mt-4"
+                      />
+                    )}
+                  </Tab>
+                );
+              })}
+            </Tabs>
           </div>
           <div className="flex items-center justify-end mt-4 py-2 px-4 rounded bg-gray-100">
             <button
