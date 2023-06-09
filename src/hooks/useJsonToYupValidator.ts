@@ -1,15 +1,13 @@
 import { useCallback, useMemo, useState } from "react";
 import convertToYup, { Config } from "json-schema-yup-transformer";
 import { AnyObject, ValidateOptions } from "yup/lib/types";
-import { useJsonSchemaQuery } from "../api/query-hooks/useSchemaQuery";
-import {
-  JSONSchema,
-  JSONSchema as JSONSchema7
-} from "json-schema-yup-transformer/dist/schema/types";
+import { useJsonSchemaQuery } from "../api/query-hooks/useJsonSchemaQuery";
+import { JSONSchema as JSONSchema7 } from "json-schema-yup-transformer/dist/schema/types";
 import { Resolver } from "@stoplight/json-ref-resolver";
 
 const useJsonToYupValidator = (schemaName?: string, jsonConfig?: Config) => {
   const [config, setConfig] = useState(jsonConfig);
+  const [errorMessage, setErrorMessage] = useState("");
   const { data } = useJsonSchemaQuery(schemaName);
 
   const yupValidator = useMemo(async () => {
@@ -21,15 +19,16 @@ const useJsonToYupValidator = (schemaName?: string, jsonConfig?: Config) => {
     async (value: any, options?: ValidateOptions<AnyObject>) => {
       try {
         (await yupValidator)?.validateSync(value, options);
-        return "";
+        setErrorMessage("");
       } catch (err: any) {
+        setErrorMessage(`${err.message}: At ${err.path}`);
         return `${err.message}: At ${err.path}`;
       }
     },
     [yupValidator]
   );
 
-  return { validator, setConfig };
+  return { validator, setConfig, errorMessage };
 };
 
 /**
@@ -53,7 +52,7 @@ const resolveSchema = async (schema?: JSONSchema7 | null) => {
  *
  * @param schema JSON schema.
  */
-const resolveMissingType = (schema: JSONSchema) => {
+const resolveMissingType = (schema: JSONSchema7) => {
   return Object.entries(schema).reduce(
     (prev, [key, value]) => {
       if (typeof value === "object" && !Array.isArray(value)) {

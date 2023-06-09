@@ -118,9 +118,10 @@ export function SchemaResourceEdit({
     return undefined;
   }, [table]);
 
-  const { validator: schemaSpecValidator } = useJsonToYupValidator(
-    jsonSchemaFilePrefix && `${jsonSchemaFilePrefix}.spec`
-  );
+  const { validator: schemaSpecValidator, errorMessage: specValidatorError } =
+    useJsonToYupValidator(
+      jsonSchemaFilePrefix && `${jsonSchemaFilePrefix}.spec`
+    );
 
   const formFields = useMemo(() => {
     const resourceType = schemaResourceTypes.find(
@@ -163,10 +164,7 @@ export function SchemaResourceEdit({
 
   const doSubmit = async (props: any) => {
     const specErrorMessage = await schemaSpecValidator(props?.["spec"]);
-    if (specErrorMessage) {
-      console.error(specErrorMessage);
-      return;
-    }
+    if (specErrorMessage) return;
     onSubmit(props);
   };
 
@@ -435,6 +433,13 @@ export function SchemaResourceEdit({
                             </div>
                           </div>
                         </div>
+                        {specValidatorError && (
+                          <div className="py-2 px-8">
+                            <p className="text-sm text-red-500 w-full py-1">
+                              *{specValidatorError}
+                            </p>
+                          </div>
+                        )}
                         {!source && (
                           <div
                             className={clsx(

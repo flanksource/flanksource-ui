@@ -2,12 +2,10 @@ import { UseQueryOptions, useQuery } from "@tanstack/react-query";
 import { JSONSchema } from "json-schema-yup-transformer/dist/schema/types";
 import { getJsonSchema } from "../services/schema";
 
-type Response =
-  | { error: Error; data: null }
-  | {
-      data: JSONSchema | null;
-      error: null;
-    };
+type Response = {
+  data: JSONSchema | null;
+  error: Error | null;
+};
 
 export const useJsonSchemaQuery = (
   schemaName?: string,
