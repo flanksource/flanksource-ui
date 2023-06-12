@@ -1,5 +1,5 @@
 import { useField } from "formik";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import CreatableSelect from "react-select/creatable";
 
 type FormikSelectDropdownProps = {
@@ -26,7 +26,7 @@ export default function FormikAutocompleteDropdown({
 
   const [field, meta] = useField<string>({
     name,
-    type: "checkbox",
+    type: "text",
     required,
     validate: useCallback(
       (value: string) => {
@@ -37,6 +37,10 @@ export default function FormikAutocompleteDropdown({
       [required]
     )
   });
+
+  useEffect(() => {
+    setIsTouched(isTouched || meta.touched || meta.initialTouched);
+  }, [isTouched, meta.initialTouched, meta.touched]);
 
   return (
     <div className="flex flex-col space-y-2 py-2">
