@@ -75,6 +75,9 @@ export default function SpecEditor({
           <SpecEditorForm
             configForm={selectedSpecItem.configForm}
             updateSpec={selectedSpecItem.updateSpec}
+            onBack={() => {
+              setSelectedSpecItem(undefined);
+            }}
             loadSpec={selectedSpecItem.loadSpec}
             rawSpecInput={selectedSpecItem.rawSpecInput}
             specFormat={format}
