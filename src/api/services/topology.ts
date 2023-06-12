@@ -19,7 +19,7 @@ interface IParam {
 }
 
 const arrangeTopologyParams = (params: IParam) => {
-  ["type", "team", "labels", "status"].forEach((param) => {
+  ["type", "team", "labels", "status", "agent_id"].forEach((param) => {
     if (params[param] === "All") {
       delete params[param];
     }
@@ -82,11 +82,17 @@ export const getCanaryGraph = async (
   return CanaryChecker.get(`/api/graph?${query}`);
 };
 
+type HealthCheckAPIResponse = {
+  checks: HealthCheck[];
+  duration: number;
+  runnerName: string;
+};
+
 export const getCanaries = async (
   params: Record<string, string | number | boolean>
 ) => {
   const query = stringify(params);
-  return CanaryChecker.get(`/api?${query}`);
+  return CanaryChecker.get<HealthCheckAPIResponse | null>(`/api?${query}`);
 };
 
 export const getCheckStatuses = (
@@ -148,6 +154,12 @@ export const getAgentByIDs = async (ids: string[]) => {
     `/agents?select=id,name,description&id=in.(${ids.join(",")})`
   );
   return res.data ?? [];
+};
+
+export const getAllAgents = () => {
+  return IncidentCommander.get<AgentItem[] | null>(
+    `/agents?select=id,name,description`
+  );
 };
 
 export const getTopologyComponentByID = async (topologyID: string) => {

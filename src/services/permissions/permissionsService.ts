@@ -1,5 +1,5 @@
 import { fetchProperties } from "../../api/services/properties";
-import { resourceToParentMap } from "./resources";
+import { featureToParentMap } from "./features";
 
 export type Property = {
   name: string;
@@ -15,10 +15,10 @@ class PermissionService {
     return await fetchProperties();
   }
 
-  isFeatureDisabled(resourceName: string, properties: Property[]): boolean {
-    const name = `${resourceName}.disable`;
+  isFeatureDisabled(featureName: string, properties: Property[]): boolean {
+    const name = `${featureName}.disable`;
     const parentResource =
-      resourceToParentMap[resourceName as keyof typeof resourceToParentMap];
+      featureToParentMap[featureName as keyof typeof featureToParentMap];
     let isDisabled = Boolean(
       properties.find((item) => item.name === name && item.value === "true")
     );

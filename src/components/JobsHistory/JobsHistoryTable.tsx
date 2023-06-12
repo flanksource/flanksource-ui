@@ -4,7 +4,22 @@ import { DataTable } from "../DataTable";
 import { JobsHistoryDetails } from "./JobsHistoryDetails";
 import { JobsHistoryTableColumn } from "./JobsHistoryTableColumn";
 
-export type JobHistoryStatus = "FINISHED" | "RUNNING";
+export type JobHistoryStatus =
+  | "FINISHED"
+  | "RUNNING"
+  | "WARNING"
+  | "FAILED"
+  | "SUCCESS"
+  | "STOPPED";
+
+export const classNameMaps = new Map<JobHistoryStatus, string>([
+  ["RUNNING", "text-yellow-500"],
+  ["WARNING", "text-orange-500"],
+  ["FINISHED", "text-green-500"],
+  ["SUCCESS", "text-green-500"],
+  ["FAILED", "text-red-500"],
+  ["STOPPED", "text-red-500"]
+]);
 
 export type JobHistory = {
   id: string;

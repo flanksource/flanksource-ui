@@ -1,10 +1,29 @@
-import { useMemo } from "react";
+import { ComponentProps, useMemo } from "react";
 import Highlight, { defaultProps, Language } from "prism-react-renderer";
 import vsLight from "prism-react-renderer/themes/vsLight";
 import { parse, stringify } from "yaml";
 
-const Line = ({ getTokenProps, onClick, showLineNo, idx, line, ...props }) => {
-  const onSelect = () => onClick && onClick(idx);
+type RenderProps = Parameters<
+  ComponentProps<typeof Highlight>["children"]
+>[number];
+
+type JSONViewerLineProps = {
+  getTokenProps: RenderProps["getTokenProps"];
+  onClick?: (idx: number) => void;
+  showLineNo?: boolean;
+  idx: number;
+  line: RenderProps["tokens"][number];
+} & React.HTMLAttributes<HTMLDivElement>;
+
+function JSONViewerLine({
+  getTokenProps,
+  onClick = () => {},
+  showLineNo = false,
+  idx,
+  line,
+  ...props
+}: JSONViewerLineProps) {
+  const onSelect = () => onClick(idx);
   return (
     <div
       {...props}
@@ -30,7 +49,7 @@ const Line = ({ getTokenProps, onClick, showLineNo, idx, line, ...props }) => {
       </span>
     </div>
   );
-};
+}
 
 type JSONViewerProps = {
   code: string;
@@ -56,6 +75,9 @@ export function JSONViewer({
 }: JSONViewerProps) {
   // convert JSON object to YAML string
   const codeForHighlight = useMemo(() => {
+    if (format !== "json") {
+      return code;
+    }
     if (!code) {
       return "";
     }
@@ -63,21 +85,31 @@ export function JSONViewer({
       return stringify(parse(code));
     }
     return code;
-  }, [code, convertToYaml]);
+  }, [code, convertToYaml, format]);
+
+  const formatDerived = useMemo(() => {
+    if (format !== "json") {
+      return format;
+    }
+    if (convertToYaml) {
+      return "yaml";
+    }
+    return format;
+  }, [convertToYaml, format]);
 
   return (
     <Highlight
       {...defaultProps}
       code={codeForHighlight}
       theme={vsLight}
-      language={convertToYaml ? "yaml" : format}
+      language={formatDerived}
     >
       {({ className, style, tokens, getLineProps, getTokenProps }) => (
         <pre className={`${className} text-sm`} style={style}>
           {tokens.map((line, i) => {
             const { style, ...props } = getLineProps({ line, key: i });
             return (
-              <Line
+              <JSONViewerLine
                 {...props}
                 style={{
                   ...style,

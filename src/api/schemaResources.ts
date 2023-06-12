@@ -8,7 +8,7 @@ import { AxiosResponse } from "axios";
 import { JobHistoryStatus } from "../components/JobsHistory/JobsHistoryTable";
 import { ConfigItem } from "./services/configs";
 import { TopologyComponentItem } from "../components/FilterIncidents/FilterIncidentsByComponents";
-import { LoggingBackend } from "../components/LogsBackends/LoggingBackends";
+import { LogBackends } from "../components/LogBackends/LogBackends";
 
 export interface SchemaResourceI {
   id: string;
@@ -72,6 +72,15 @@ const getTableName = (table: string) => {
   }
 };
 
+const hasDeletedAtColumn = (table: string) => {
+  switch (table) {
+    case "connections":
+      return false;
+    default:
+      return true;
+  }
+};
+
 export const getAll = ({
   table,
   api
@@ -80,7 +89,9 @@ export const getAll = ({
   if (endpoint) {
     const tableName = getTableName(table);
     return endpoint.get<SchemaResourceWithJobStatus[]>(
-      `/${tableName}?order=created_at.desc&select=*,created_by(${AVATAR_INFO})&limit=100&deleted_at=is.null`
+      `/${tableName}?order=created_at.desc&select=*,created_by(${AVATAR_INFO})&limit=100${
+        hasDeletedAtColumn(tableName) ? "&deleted_at=is.null" : ""
+      }`
     );
   }
   return Promise.resolve({ data: [] } as any);
@@ -132,7 +143,7 @@ export async function getTemplatesRelatedComponents(templateID: string) {
 }
 
 export async function getLogsBackends() {
-  const res = await CanaryCheckerDB.get<LoggingBackend[] | null>(
+  const res = await CanaryCheckerDB.get<LogBackends[] | null>(
     `logging_backends?order=created_at.desc&select=*,created_by(${AVATAR_INFO})&deleted_at=is.null`
   );
   return res.data ?? [];

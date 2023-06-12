@@ -37,8 +37,12 @@ export default function ConfigInsights({
   isCollapsed = false,
   onCollapsedStateChange = () => {}
 }: Props) {
-  const { data: response = [], isLoading } =
-    useGetConfigInsights<ConfigTypeInsights[]>(configID);
+  const { data: response } = useGetConfigInsights<ConfigTypeInsights[]>(
+    configID,
+    0,
+    50
+  );
+  const count = response?.totalEntries ?? 0;
 
   return (
     <CollapsiblePanel
@@ -50,12 +54,12 @@ export default function ConfigInsights({
             title="Insights"
             icon={<MdOutlineInsights className="w-6 h-auto" />}
           />
-          <PillBadge>{response?.length ?? 0}</PillBadge>
+          <PillBadge>{count}</PillBadge>
         </div>
       }
-      dataCount={response.length}
+      dataCount={count}
     >
-      <InsightsDetails isLoading={isLoading} insights={response ?? []} />
+      <InsightsDetails configId={configID} />
     </CollapsiblePanel>
   );
 }

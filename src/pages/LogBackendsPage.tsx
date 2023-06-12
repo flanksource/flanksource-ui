@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Head } from "../components/Head/Head";
 import { SearchLayout } from "../components/Layout";
-import TableSkeletonLoader from "../components/SkeletonLoader/TableSkeletonLoader";
 import { BreadcrumbNav, BreadcrumbRoot } from "../components/BreadcrumbNav";
 import { AiFillPlusCircle } from "react-icons/ai";
 import { useQuery } from "@tanstack/react-query";
@@ -49,17 +48,12 @@ export function LogBackendsPage() {
         loading={isLoading}
       >
         <div className="flex flex-col flex-1 px-6 pb-0 h-full max-w-screen-xl mx-auto">
-          {isLoading && !data && (
-            <TableSkeletonLoader className="max-w-screen-xl mx-auto" />
-          )}
-          {data && (
-            <LogBackendsList
-              className="mt-6 overflow-y-hidden"
-              data={data}
-              isLoading={isLoading}
-              onUpdated={refetch}
-            />
-          )}
+          <LogBackendsList
+            className="mt-6 overflow-y-hidden"
+            data={data || []}
+            isLoading={isLoading}
+            onUpdated={refetch}
+          />
           {error && !data && !isLoading && <ErrorPage error={error} />}
         </div>
         <Modal

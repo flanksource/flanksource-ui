@@ -22,7 +22,8 @@ export type ConfigTypeChanges = {
   severity: string;
   source: string;
   summary: string;
-  patches: string;
+  patches?: string;
+  diff?: string;
   details: string;
   created_at: string;
   created_by: string | User;
@@ -140,7 +141,7 @@ export default function ConfigChanges({
       Header={
         <div className="flex flex-row w-full items-center space-x-2">
           <Title title="Changes" icon={<GoDiff className="w-6 h-auto" />} />
-          <PillBadge>{response?.data?.length ?? 0}</PillBadge>
+          <PillBadge>{count}</PillBadge>
         </div>
       }
       dataCount={count}
