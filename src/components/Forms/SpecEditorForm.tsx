@@ -1,5 +1,5 @@
 import { Form, Formik } from "formik";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import { Button } from "../Button";
 import { Tabs, Tab } from "../Tabs/Tabs";
 import { FormikCodeEditor } from "./Formik/FormikCodeEditor";
@@ -15,6 +15,7 @@ import DeleteResource from "../SchemaResourcePage/Delete/DeleteResource";
 type SpecEditorFormProps = {
   loadSpec: () => Record<string, any>;
   updateSpec: (spec: Record<string, any>) => void;
+  onBack: () => void;
   specFormat: "yaml" | "json";
   // if you want to pass in any props to the config form, you can use a wrapper
   // component around the config form
@@ -29,12 +30,14 @@ export default function SpecEditorForm({
   resourceInfo,
   loadSpec = () => ({}),
   updateSpec = () => {},
+  onBack = () => {},
   specFormat = "yaml",
   configForm: ConfigForm,
   specsMapField: specFieldMapField,
   rawSpecInput: showCodeEditorOnly = false,
   schemaFilePrefix
 }: SpecEditorFormProps) {
+  const formRef = useRef<HTMLFormElement>(null);
   const [activeTabs, setActiveTabs] = useState<"Form" | "Code">(
     showCodeEditorOnly ? "Code" : "Form"
   );
@@ -71,6 +74,18 @@ export default function SpecEditorForm({
     ...(loadSpec ? loadSpec() : {})
   };
 
+  const touchAllFormFields = (
+    setFieldTouched: (
+      field: string,
+      isTouched?: boolean | undefined,
+      shouldValidate?: boolean | undefined
+    ) => void
+  ) => {
+    [...(formRef.current?.elements || [])].forEach((element) => {
+      setFieldTouched(element.getAttribute("name")!, true, true);
+    });
+  };
+
   return (
     <Formik
       initialValues={initialValues}
@@ -80,11 +95,15 @@ export default function SpecEditorForm({
       validateOnBlur
       validateOnChange
     >
-      {({ handleSubmit, handleReset }) => (
+      {({ handleSubmit, handleReset, setFieldTouched }) => (
         <Form
-          onSubmit={handleSubmit}
+          onSubmit={(e) => {
+            handleSubmit(e);
+            touchAllFormFields(setFieldTouched);
+          }}
           onReset={handleReset}
           className="flex flex-col flex-1 overflow-y-auto space-y-4"
+          ref={formRef}
         >
           <div className="flex flex-col flex-1 overflow-y-auto space-y-4 p-4">
             <div className="flex flex-col space-y-2">
@@ -183,18 +202,30 @@ export default function SpecEditorForm({
               )}
             </div>
           </div>
-          <div className="flex flex-row space-x-4 justify-end bg-gray-200 p-4">
-            {!!initialValues.id && (
-              <DeleteResource
-                resourceId={initialValues.id}
-                resourceInfo={resourceInfo}
+          <div className="flex flex-row bg-gray-100 p-4">
+            <div className="flex flex-1 flex-row">
+              {!initialValues.id && (
+                <Button
+                  type="button"
+                  text="Back"
+                  className="btn-default btn-btn-secondary-base btn-secondary"
+                  onClick={onBack}
+                />
+              )}
+            </div>
+            <div className="flex flex-1 flex-row space-x-4 justify-end">
+              {!!initialValues.id && (
+                <DeleteResource
+                  resourceId={initialValues.id}
+                  resourceInfo={resourceInfo}
+                />
+              )}
+              <Button
+                type="submit"
+                text={!!initialValues.id ? "Update" : "Save"}
+                className="btn-primary"
               />
-            )}
-            <Button
-              type="submit"
-              text={!!initialValues.id ? "Update" : "Add"}
-              className="btn-primary"
-            />
+            </div>
           </div>
         </Form>
       )}
