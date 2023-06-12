@@ -21,6 +21,7 @@ import {
 } from "../services/IncidentsHistory";
 import {
   ComponentTeamItem,
+  getAllAgents,
   getComponentTeams,
   getHealthCheckItem,
   getTopology,
@@ -56,6 +57,25 @@ export const useComponentsQuery = ({
     ["allcomponents"],
     async () => {
       const res = await getTopologyComponents();
+      return res.data;
+    },
+    {
+      staleTime,
+      enabled,
+      ...rest
+    }
+  );
+};
+
+export const useAllAgentNamesQuery = ({
+  enabled = true,
+  staleTime = defaultStaleTime,
+  ...rest
+}) => {
+  return useQuery(
+    ["allagents"],
+    async () => {
+      const res = await getAllAgents();
       return res.data;
     },
     {

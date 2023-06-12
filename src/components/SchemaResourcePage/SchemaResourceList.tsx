@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { SchemaResourceWithJobStatus } from "../../api/schemaResources";
 import { relativeDateTime } from "../../utils/date";
 import { Avatar } from "../Avatar";
-import { JobHistoryStatus } from "../JobsHistory/JobsHistoryTable";
+import { classNameMaps } from "../JobsHistory/JobsHistoryTable";
 import TableSkeletonLoader from "../SkeletonLoader/TableSkeletonLoader";
 import { InfoMessage } from "../InfoMessage";
 
@@ -116,11 +116,6 @@ function SchemaResourceListItem({
 }) {
   const navigate = useNavigate();
   const navigateToDetails = (id: string) => navigate(`${baseUrl}/${id}`);
-
-  const classNameMaps = new Map<JobHistoryStatus, string>([
-    ["FINISHED", "text-green-500"],
-    ["RUNNING", "text-yellow-500"]
-  ]);
   const className = job_status ? classNameMaps.get(job_status) ?? "" : "";
 
   return (
