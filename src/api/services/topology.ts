@@ -19,7 +19,7 @@ interface IParam {
 }
 
 const arrangeTopologyParams = (params: IParam) => {
-  ["type", "team", "labels", "status"].forEach((param) => {
+  ["type", "team", "labels", "status", "agent_id"].forEach((param) => {
     if (params[param] === "All") {
       delete params[param];
     }
@@ -154,6 +154,12 @@ export const getAgentByIDs = async (ids: string[]) => {
     `/agents?select=id,name,description&id=in.(${ids.join(",")})`
   );
   return res.data ?? [];
+};
+
+export const getAllAgents = () => {
+  return IncidentCommander.get<AgentItem[] | null>(
+    `/agents?select=id,name,description`
+  );
 };
 
 export const getTopologyComponentByID = async (topologyID: string) => {

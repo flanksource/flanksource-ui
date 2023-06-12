@@ -27,20 +27,23 @@ export default function ConfigLink({
           pathname: `/configs/${configId}`
         }}
       >
-        <Icon name={configType || configTypeSecondary} className="w-5 mr-1" />
+        <Icon
+          name={configType}
+          secondary={configTypeSecondary}
+          className="w-5 mr-1"
+        />
         <span className={className}>{configName}</span>
       </Link>
     );
   }
   return (
-    <Link
-      {...props}
-      to={{
-        pathname: `/configs/${configId}`
-      }}
-    >
-      <Icon name={configType || configTypeSecondary} className="w-5 mr-1" />
+    <>
+      <Icon
+        name={configType}
+        secondary={configTypeSecondary}
+        className="w-5 mr-1"
+      />
       <span className={className}>{configName}</span>
-    </Link>
+    </>
   );
 }
