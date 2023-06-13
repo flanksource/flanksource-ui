@@ -27,24 +27,25 @@ export default function ConfigLink({
         to={{
           pathname: `/configs/${configId}`
         }}
+        className={clsx("flex flex-row space-x-1", className)}
       >
         <Icon
           name={configType}
           secondary={configTypeSecondary}
-          className="w-5 mr-1"
+          className="w-5 mr-1 h-5"
         />
-        <span className={className}>{configName}</span>
+        <div className="h-5 overflow-hidden truncate flex-1">{configName}</div>
       </Link>
     );
   }
   return (
-    <>
+    <div className={clsx("flex flex-row space-x-1", className)}>
       <Icon
         name={configType}
         secondary={configTypeSecondary}
-        className="w-5 mr-1"
+        className="w-5 mr-1 h-5"
       />
-      <span className={clsx(className, "text-sm")}>{configName}</span>
-    </>
+      <div className="h-5 overflow-hidden truncate flex-1 text-sm">{configName}</div>
+    </div>
   );
 }

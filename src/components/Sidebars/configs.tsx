@@ -76,11 +76,11 @@ export function ConfigsList({
       {isLoading ? (
         <TextSkeletonLoader className="w-full my-2" />
       ) : configs.length > 0 ? (
-        <ol>
+        <ol className="flex flex-col w-full overflow-x-hidden">
           {configs.map((config) => (
             <li
               key={config.id}
-              className={clsx("p-1 relative", {
+              className={clsx("p-1 relative flex flex-row flex-1", {
                 hidden: hideDeletedConfigs && config.deleted_at
               })}
             >
@@ -89,6 +89,7 @@ export function ConfigsList({
                 configName={config.name}
                 configType={config.type}
                 configTypeSecondary={config.config_class}
+                className="overflow-hidden flex-1"
               />
               {config.deleted_at && (
                 <Badge
@@ -98,19 +99,21 @@ export function ConfigsList({
                 />
               )}
               {topologyId && (
-                <IconButton
-                  className="bg-transparent flex items-center absolute right-4 top-2"
-                  ovalProps={{
-                    stroke: "blue",
-                    height: "18px",
-                    width: "18px",
-                    fill: "transparent"
-                  }}
-                  icon={<BsTrash />}
-                  onClick={() => {
-                    setDeletedConfigLinkId(config.id);
-                  }}
-                />
+                <div className="flex flex-row justify-end items-center">
+                  <IconButton
+                    className="bg-transparent flex items-center"
+                    ovalProps={{
+                      stroke: "blue",
+                      height: "18px",
+                      width: "18px",
+                      fill: "transparent"
+                    }}
+                    icon={<BsTrash />}
+                    onClick={() => {
+                      setDeletedConfigLinkId(config.id);
+                    }}
+                  />
+                </div>
               )}
             </li>
           ))}
