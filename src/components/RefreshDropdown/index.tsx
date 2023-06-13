@@ -187,7 +187,7 @@ export default function RefreshDropdown({
                         disabled={refreshDropdownDisabledOptions.has(
                           optionsKeys as any
                         )}
-                        className={`flex group w-full items-center rounded-md px-2 py-2  ${
+                        className={`flex group w-full items-center rounded-md px-2 py-2 text-sm ${
                           disabled ? "text-gray-500" : "cursor-pointer"
                         } ${active ? "bg-blue-200" : "text-gray-900"} ${
                           refreshRate.rate === optionsKeys ? "font-bold" : ""

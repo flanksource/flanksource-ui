@@ -56,7 +56,6 @@ export default function TopologyOpenIncidentsFilterBar({
         name="type"
         control={control}
         prefix={"Type:"}
-        className="border-none shadow-none font-semibold space-x-3 capitalize text-base px-2"
         showAllOption
         value={type}
       />
@@ -65,7 +64,6 @@ export default function TopologyOpenIncidentsFilterBar({
         control={control}
         value={status}
         prefix={"Status:"}
-        className="border-none shadow-none font-semibold space-x-3 capitalize text-base px-2"
         showAllOption
       />
     </div>

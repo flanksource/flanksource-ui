@@ -152,7 +152,7 @@ export const ReactSelectDropdown = ({
           )}
           <div
             className={clsx(
-              `relative cursor-pointer h-full pl-3 rounded-md shadow-sm pr-8 py-2 text-left border border-gray-300 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm
+              `relative cursor-pointer h-full pl-3 rounded-md shadow-sm pr-8 py-2 text-left border border-gray-300 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-sm
                 ${SelectedOption?.id === "_empty" ? "text-gray-400" : ""}
               `,
               className
@@ -195,7 +195,7 @@ export const ReactSelectDropdown = ({
                   Option: (props: any) => {
                     return (
                       <components.Option {...props}>
-                        <div className="flex items-center">
+                        <div className="flex items-center text-sm">
                           {props.data.avatar && (
                             <Avatar user={props.data} size="sm" />
                           )}
@@ -248,7 +248,7 @@ export const ReactSelectDropdown = ({
               return (
                 <components.Option {...props}>
                   <div
-                    className="flex items-center"
+                    className="flex items-center text-sm"
                     title={props.data.description}
                   >
                     {props.data.avatar && (
@@ -339,7 +339,9 @@ const Dropdown: FunctionComponent<DropdownProps> = ({
   <div ref={inputRef as LegacyRef<HTMLDivElement>} className="relative w-auto">
     {target}
     {isOpen ? (
-      <Menu className={`absolute bg-white z-[99] drop-shadow-md ${className}`}>
+      <Menu
+        className={`absolute bg-white z-[99] drop-shadow-md text-sm ${className}`}
+      >
         {children}
       </Menu>
     ) : null}

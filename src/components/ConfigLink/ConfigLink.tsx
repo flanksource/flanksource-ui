@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Icon } from "../Icon";
 import { HTMLAttributeAnchorTarget } from "react";
+import clsx from "clsx";
 
 type ConfigLinkProps = {
   configId: string;
@@ -17,7 +18,7 @@ export default function ConfigLink({
   configType,
   configTypeSecondary,
   variant = "link",
-  className,
+  className = "text-zinc-600 text-sm",
   ...props
 }: ConfigLinkProps) {
   if (variant === "link") {
@@ -43,7 +44,7 @@ export default function ConfigLink({
         secondary={configTypeSecondary}
         className="w-5 mr-1"
       />
-      <span className={className}>{configName}</span>
+      <span className={clsx(className, "text-sm")}>{configName}</span>
     </>
   );
 }

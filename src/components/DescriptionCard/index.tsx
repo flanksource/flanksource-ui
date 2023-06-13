@@ -26,10 +26,12 @@ export function DescriptionCard({
                 className="border-slate-100 border-solid border-b border-t p-1"
                 key={(item.label ?? "") + index.toString()}
               >
-                <th className="text-gray-700 font-light  uppercase text-left break-all bg-zinc-50 pl-2">
+                <th className="text-sm text-gray-700 font-light uppercase text-left break-all bg-zinc-50 pl-2">
                   {item.label}{" "}
                 </th>
-                <td className="border-none p-1 break-all">{item.value}</td>
+                <td className="text-sm border-none p-1 break-all">
+                  {item.value}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -45,11 +47,11 @@ export function DescriptionCard({
           {items.map((item, index) => {
             return (
               <div className="col-span-1" key={index}>
-                <h2 className="text-sm font-medium text-gray-500">
+                <div className="text-sm font-medium text-gray-500">
                   {item.label}
-                </h2>
+                </div>
                 <div className="mt-1 space-y-1">
-                  <div className="flex justify-start">{item.value}</div>
+                  <div className="text-sm flex justify-start">{item.value}</div>
                 </div>
               </div>
             );
