@@ -6,6 +6,7 @@ import { ConfigDetailsPage } from "./config/ConfigDetailsPage";
 import { ConfigChangesPage } from "./config/ConfigChangesPage";
 import { ConfigDetailsChangesPage } from "./config/ConfigDetailsChangesPage";
 import { TopologyPage } from "./TopologyPage";
+import { ConfigDetailsInsights } from "./config/ConfigDetailsInsights";
 
 export {
   LogsPage,
@@ -15,5 +16,6 @@ export {
   ConfigDetailsChangesPage,
   TopologyPage,
   IncidentDetailsPage,
-  IncidentListPage
+  IncidentListPage,
+  ConfigDetailsInsights
 };

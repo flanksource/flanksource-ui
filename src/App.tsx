@@ -52,7 +52,8 @@ import {
   IncidentDetailsPage,
   IncidentListPage,
   LogsPage,
-  TopologyPage
+  TopologyPage,
+  ConfigDetailsInsights
 } from "./pages";
 import { ConnectionsPage } from "./pages/Settings/ConnectionsPage";
 import { FeatureFlagsPage } from "./pages/Settings/FeatureFlagsPage";
@@ -369,6 +370,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
               </ErrorBoundary>
             }
           />
+              <Route path="insights" element={<ConfigDetailsInsights />} />
           <Route
             path="changes"
             element={withAccessCheck(
@@ -377,6 +379,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
               "read"
             )}
           />
+
         </Route>
       </Route>
     </Routes>
