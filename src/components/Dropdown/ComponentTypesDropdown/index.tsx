@@ -1,12 +1,9 @@
-import { useEffect, useState } from "react";
-import { useComponentsQuery } from "../../../api/query-hooks";
-import { allOption } from "../../../pages/TopologyPage";
-import { TopologyComponentItem } from "../../FilterIncidents/FilterIncidentsByComponents";
 import { ReactSelectDropdown, StateOption } from "../../ReactSelectDropdown";
 
 type ComponentTypesDropdownProps = React.HTMLProps<HTMLDivElement> & {
   onChange: (val: any) => void;
   value: string | StateOption | undefined;
+  topologyTypes: StateOption[];
 };
 
 export function ComponentTypesDropdown({
@@ -15,37 +12,9 @@ export function ComponentTypesDropdown({
   className,
   value,
   onChange,
+  topologyTypes,
   ...rest
 }: ComponentTypesDropdownProps) {
-  const [topologyTypes, setTopologyTypes] = useState<any>({});
-
-  const { data: components } = useComponentsQuery({});
-
-  useEffect(() => {
-    setupTypesDropdown(components);
-  }, [components]);
-
-  function setupTypesDropdown(data?: TopologyComponentItem[]) {
-    const allTypes: { [key: string]: any } = {
-      ...allOption
-    };
-    if (!data) {
-      setTopologyTypes({ ...allTypes });
-      return;
-    }
-    data.forEach((component: any) => {
-      if (component.type) {
-        allTypes[component.type] = {
-          id: component.type,
-          name: component.type,
-          description: component.type,
-          value: component.type
-        };
-      }
-    });
-    setTopologyTypes({ ...allTypes });
-  }
-
   return (
     <div className={className} {...rest}>
       <ReactSelectDropdown
