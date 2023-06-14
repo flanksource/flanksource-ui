@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import { useMemo, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { BsCardList, BsShareFill } from "react-icons/bs";
@@ -12,22 +13,29 @@ import Title from "../Title/title";
 import { IncidentDetailsRow } from "./IncidentDetailsRow";
 import { priorities } from "./IncidentSidebar";
 import { IncidentWorkflow } from "./IncidentWorkflow";
+import { Responders } from "./Responders";
 
 type IncidentDetailsPanelProps = React.HTMLProps<HTMLDivElement> & {
   incident: Incident;
   updateIncidentHandler: (newDataIncident: Partial<Incident>) => void;
+  isCollapsed?: boolean;
+  onCollapsedStateChange?: (isClosed: boolean) => void;
 };
 
 export function IncidentDetailsPanel({
   incident,
-  updateIncidentHandler
+  updateIncidentHandler,
+  isCollapsed,
+  onCollapsedStateChange,
+  className,
+  ...props
 }: IncidentDetailsPanelProps) {
   const commandersArray = useMemo(
     () => [
       {
-        label: incident.commander.name,
-        value: incident.commander.id,
-        avatar: incident.commander.avatar
+        label: incident.commander?.name,
+        value: incident.commander?.id,
+        avatar: incident.commander?.avatar
       }
     ],
     [incident]
@@ -45,7 +53,7 @@ export function IncidentDetailsPanel({
       type: typeItems[incident.type as keyof typeof typeItems]
         ? incident.type
         : undefined,
-      commanders: incident.commander.id,
+      commanders: incident.commander?.id,
       status: incidentStatusItems[
         incident.status as keyof typeof incidentStatusItems
       ]
@@ -78,13 +86,17 @@ export function IncidentDetailsPanel({
 
   return (
     <CollapsiblePanel
+      isCollapsed={isCollapsed}
+      onCollapsedStateChange={onCollapsedStateChange}
       Header={
         <Title title="Details" icon={<BsCardList className="w-6 h-6" />} />
       }
+      className={clsx(className)}
+      {...props}
     >
-      <div className="flex flex-col">
+      <div className="flex flex-col space-y-2">
         <div className="py-4 border-b border-gray-200 hidden">
-          <div className="flex justify-between px-4">
+          <div className="flex justify-between">
             <h2 className="mt-0.5 text-2xl font-medium leading-7 text-dark-gray">
               Details
             </h2>
@@ -97,40 +109,8 @@ export function IncidentDetailsPanel({
           </div>
         </div>
         <IncidentDetailsRow
-          title="Commanders"
-          className="mt-4 px-4"
-          value={
-            <ReactSelectDropdown
-              control={control}
-              label=""
-              name="commanders"
-              className="w-full"
-              items={commandersArray}
-              value={watchCommanders}
-            />
-          }
-        />
-        <IncidentDetailsRow
-          title="Started"
-          className="mt-2.5 px-4"
-          value={
-            <span className="text-gray-500 font-medium">
-              {formattedCreatedAt}
-            </span>
-          }
-        />
-        <IncidentDetailsRow
-          title="Duration"
-          className="mt-2.5 px-4"
-          value={
-            <span className="text-gray-500 font-medium">
-              {formattedDuration}
-            </span>
-          }
-        />
-        <IncidentDetailsRow
           title="Type"
-          className="mt-3 px-4"
+          className=""
           value={
             <IncidentTypeDropdown
               control={control}
@@ -145,7 +125,7 @@ export function IncidentDetailsPanel({
         />
         <IncidentDetailsRow
           title="Status"
-          className="mt-3 px-4"
+          className=""
           value={
             <IncidentWorkflow
               control={control}
@@ -159,7 +139,7 @@ export function IncidentDetailsPanel({
         />
         <IncidentDetailsRow
           title="Priority"
-          className="mt-3 px-4"
+          className=""
           value={
             <ReactSelectDropdown
               control={control}
@@ -169,6 +149,35 @@ export function IncidentDetailsPanel({
               items={priorities}
               value={watchPriority}
             />
+          }
+        />
+        <IncidentDetailsRow
+          title="Commanders"
+          className=""
+          value={
+            <ReactSelectDropdown
+              control={control}
+              label=""
+              name="commanders"
+              className="w-full"
+              items={commandersArray}
+              value={watchCommanders}
+            />
+          }
+        />
+        <Responders className="py-3" incident={incident} />
+        <IncidentDetailsRow
+          title="Started"
+          className=""
+          value={
+            <div className="text-gray-500 text-sm">{formattedCreatedAt}</div>
+          }
+        />
+        <IncidentDetailsRow
+          title="Duration"
+          className=""
+          value={
+            <div className="text-gray-500 text-sm">{formattedDuration}</div>
           }
         />
       </div>

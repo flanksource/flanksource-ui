@@ -5,7 +5,7 @@ import React, { useCallback, useContext, useEffect, useState } from "react";
 import { Toaster } from "react-hot-toast";
 import { IconType } from "react-icons";
 import { IoChevronForwardOutline } from "react-icons/io5";
-import { NavLink, Outlet } from "react-router-dom";
+import { Link, NavLink, Outlet } from "react-router-dom";
 import { $ArrayElemType } from "../../types/utility";
 import { NavigationItems, SettingsNavigationItems } from "../../App";
 
@@ -14,6 +14,8 @@ import { useOuterClick } from "../../lib/useOuterClick";
 import { getLocalItem, setLocalItem } from "../../utils/storage";
 import FullPageSkeletonLoader from "../SkeletonLoader/FullPageSkeletonLoader";
 import { Icon } from "../Icon";
+import { useFeatureFlagsContext } from "../../context/FeatureFlagsContext";
+import { withAccessCheck } from "../AccessCheck/AccessCheck";
 
 interface Props {
   navigation: NavigationItems;
@@ -127,7 +129,8 @@ function SideNavGroup({
   current?: boolean;
   collapseSidebar: boolean;
 }) {
-  console.log(checkPath);
+  const { isFeatureDisabled } = useFeatureFlagsContext();
+
   if (collapseSidebar) {
     return (
       <Menu as="div" className="relative">
@@ -137,24 +140,28 @@ function SideNavGroup({
             <NavLabel icon={icon} active={current} iconOnly name={name} />
           </NavItemWrapper>
         </Menu.Button>
-        {/* @ts-expect-error */}
         <Menu.Items className="absolute border left-0 ml-12 w-48 shadow-md top-0 z-10 bg-gray-800 space-y-1">
-          {submenu.map(({ name, icon, href }) => (
-            // @ts-expect-error
-            <Menu.Item key={name}>
-              {({ active }) => (
-                <NavLink className="w-full" to={href}>
-                  <NavItemWrapper active={active}>
-                    <NavLabel
-                      icon={icon as IconType}
-                      active={active}
-                      name={name}
-                    />
-                  </NavItemWrapper>
-                </NavLink>
-              )}
-            </Menu.Item>
-          ))}
+          {submenu.map(({ name, icon, href, featureName, resourceName }) =>
+            !isFeatureDisabled(featureName!)
+              ? withAccessCheck(
+                  <Menu.Item key={name}>
+                    {({ active }) => (
+                      <NavLink className="w-full" to={href}>
+                        <NavItemWrapper active={active}>
+                          <NavLabel
+                            icon={icon as IconType}
+                            active={active}
+                            name={name}
+                          />
+                        </NavItemWrapper>
+                      </NavLink>
+                    )}
+                  </Menu.Item>,
+                  resourceName,
+                  "read"
+                )
+              : null
+          )}
         </Menu.Items>
       </Menu>
     );
@@ -182,9 +189,19 @@ function SideNavGroup({
             </NavItemWrapper>
           </Disclosure.Button>
           <Disclosure.Panel className="pl-4 space-y-1">
-            {submenu.map((item) => (
-              <SideNavItem key={item.name} {...item} collapseSidebar={false} />
-            ))}
+            {submenu.map((item) =>
+              !isFeatureDisabled(item.featureName!)
+                ? withAccessCheck(
+                    <SideNavItem
+                      key={item.name}
+                      {...item}
+                      collapseSidebar={false}
+                    />,
+                    item.resourceName,
+                    "read"
+                  )
+                : null
+            )}
           </Disclosure.Panel>
         </>
       )}
@@ -198,24 +215,36 @@ function SideNav({
   collapseSidebar = false,
   checkPath
 }: SideNavGroupProps) {
+  const { isFeatureDisabled } = useFeatureFlagsContext();
+
   return (
     <nav className="flex-col space-y-2 divide-y divide-gray-500">
       <div>
-        {navs.map((item) => (
-          <SideNavItem
-            key={item.name}
-            {...item}
+        {navs.map((item) =>
+          !isFeatureDisabled(item.featureName!)
+            ? withAccessCheck(
+                <SideNavItem
+                  key={item.name}
+                  {...item}
+                  collapseSidebar={collapseSidebar}
+                />,
+                item.resourceName,
+                "read"
+              )
+            : null
+        )}
+      </div>
+      {withAccessCheck(
+        <div>
+          <SideNavGroup
+            {...settings}
             collapseSidebar={collapseSidebar}
+            checkPath={checkPath}
           />
-        ))}
-      </div>
-      <div>
-        <SideNavGroup
-          {...settings}
-          collapseSidebar={collapseSidebar}
-          checkPath={checkPath}
-        />
-      </div>
+        </div>,
+        settings.submenu.map((item) => item.resourceName),
+        "read"
+      )}
     </nav>
   );
 }
@@ -277,15 +306,27 @@ export function SidebarLayout({ navigation, settingsNav, checkPath }: Props) {
               <IoChevronForwardOutline />
             </button>
 
-            {collapseSidebar ? (
-              <div className="flex border-b border-b-gray-500 h-16 shadow">
-                <Icon name="flanksource-icon" className="w-10 h-auto m-auto" />
-              </div>
-            ) : (
-              <div className="p-3 pl-5 border-b border-b-gray-500 shadow">
-                <Icon name="flanksource" className="h-10" />
-              </div>
-            )}
+            <Link
+              to={{
+                pathname: "/"
+              }}
+            >
+              {collapseSidebar ? (
+                <div className="flex border-b border-b-gray-500 h-16 shadow">
+                  <Icon
+                    name="mission-control-white"
+                    className="w-10 h-auto m-auto fill-white stroke-white"
+                  />
+                </div>
+              ) : (
+                <div className="p-3 pl-5 border-b border-b-gray-500 shadow">
+                  <Icon
+                    name="mission-control-logo-white"
+                    className="h-10 stroke-white"
+                  />
+                </div>
+              )}
+            </Link>
 
             <div
               className={clsx(

@@ -1,26 +1,46 @@
 import { useQuery } from "@tanstack/react-query";
 import { SchemaApi } from "../../components/SchemaResourcePage/resourceTypes";
-import { getAll, getResource } from "../schemaResources";
+import {
+  SchemaResourceWithJobStatus,
+  getAll,
+  getResource
+} from "../schemaResources";
 
 export function useGetSettingsAllQuery(resourceInfo: SchemaApi) {
-  return useQuery(["settings", "all", resourceInfo], async () => {
-    const res = await getAll(resourceInfo);
-    return res.data;
-  });
+  return useQuery<SchemaResourceWithJobStatus[], Error>(
+    ["settings", "all", resourceInfo],
+    async () => {
+      const res = await getAll(resourceInfo);
+      if (res.data.length === 0) {
+        return [];
+      }
+      return res.data ?? [];
+    },
+    {
+      cacheTime: 0,
+      staleTime: 0
+    }
+  );
 }
 
 export function useGetSettingsResourceDetails(
   resourceInfo: SchemaApi,
   resourceID?: string
 ) {
-  return useQuery(
+  return useQuery<Record<string, any>, Error>(
     ["settings", "details", resourceID, resourceInfo],
     async () => {
       const res = await getResource(resourceInfo, resourceID!);
+      if (res?.data.length === 0) {
+        return null;
+      }
       return res?.data[0];
     },
     {
-      enabled: !!resourceID
+      enabled: !!resourceID,
+      cacheTime: 0,
+      staleTime: 0,
+      keepPreviousData: false
     }
   );
 }

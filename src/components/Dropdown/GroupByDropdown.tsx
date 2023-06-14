@@ -4,6 +4,7 @@ import { AiOutlineAlignLeft } from "react-icons/ai";
 import { getLabelSelections } from "./lib/lists";
 import { ReactSelectDropdown } from "../ReactSelectDropdown";
 import { ComponentProps } from "react";
+import { HealthCheck } from "../../types/healthChecks";
 
 const defaultGroupSelections = {
   "no-group": {
@@ -45,7 +46,7 @@ const defaultGroupSelections = {
 };
 
 type Props = {
-  checks?: Array<any>;
+  checks?: HealthCheck[];
 } & ComponentProps<typeof ReactSelectDropdown>;
 
 export function GroupByDropdown({ checks, ...rest }: Props) {

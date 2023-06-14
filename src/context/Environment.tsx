@@ -1,4 +1,4 @@
-export function IsAuthEnabled() {
+export function isAuthEnabled() {
   return process.env.NEXT_PUBLIC_WITHOUT_SESSION !== "true";
 }
 

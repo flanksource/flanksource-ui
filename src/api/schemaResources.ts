@@ -6,11 +6,17 @@ import { CanaryCheckerDB, ConfigDB, IncidentCommander } from "./axios";
 import { AVATAR_INFO } from "../constants";
 import { AxiosResponse } from "axios";
 import { JobHistoryStatus } from "../components/JobsHistory/JobsHistoryTable";
+import { ConfigItem } from "./services/configs";
+import { TopologyComponentItem } from "../components/FilterIncidents/FilterIncidentsByComponents";
+import { LogBackends } from "../components/LogBackends/LogBackends";
 
 export interface SchemaResourceI {
   id: string;
   name: string;
-  spec: string | object;
+  spec: {
+    spec?: string;
+    [key: string]: any;
+  };
   namespace: string;
   labels: { [key: string]: any };
   schedule?: string;
@@ -56,16 +62,36 @@ const getBackend = (api: SchemaBackends) => {
   }
 };
 
+const getTableName = (table: string) => {
+  switch (table) {
+    case "incident_rules":
+    case "connections":
+      return table;
+    default:
+      return `${table}_with_status`;
+  }
+};
+
+const hasDeletedAtColumn = (table: string) => {
+  switch (table) {
+    case "connections":
+      return false;
+    default:
+      return true;
+  }
+};
+
 export const getAll = ({
   table,
   api
 }: SchemaApi): Promise<AxiosResponse<SchemaResourceWithJobStatus[]>> => {
   const endpoint = getBackend(api);
   if (endpoint) {
-    const tableName =
-      table === "incident_rules" ? "incident_rules" : `${table}_with_status`;
+    const tableName = getTableName(table);
     return endpoint.get<SchemaResourceWithJobStatus[]>(
-      `/${tableName}?order=created_at.desc&select=*,created_by(${AVATAR_INFO})&limit=100`
+      `/${tableName}?order=created_at.desc&select=*,created_by(${AVATAR_INFO})&limit=100${
+        hasDeletedAtColumn(tableName) ? "&deleted_at=is.null" : ""
+      }`
     );
   }
   return Promise.resolve({ data: [] } as any);
@@ -83,4 +109,42 @@ export const getResource = ({ api, table }: SchemaApi, id: string) =>
   getBackend(api)?.get<Record<string, any>[]>(`/${table}?id=eq.${id}`);
 
 export const deleteResource = ({ api, table }: SchemaApi, id: string) =>
-  getBackend(api)?.delete(`/${table}?id=eq.${id}`);
+  getBackend(api)?.patch(`/${table}?id=eq.${id}`, {
+    deleted_at: "now()"
+  });
+
+export async function getConfigsScrapperConfigsToDelete(
+  configScrapperID: string
+): Promise<
+  Pick<ConfigItem, "id" | "type" | "config_class" | "name">[] | undefined
+> {
+  const res = await CanaryCheckerDB.get<
+    {
+      config_items: Pick<ConfigItem, "id" | "type" | "config_class" | "name">[];
+    }[]
+  >(
+    `config_scrapers?select=config_items(id,name,external_type,config_type)&id=eq.${configScrapperID}`
+  );
+  return res.data?.[0]?.config_items;
+}
+
+type TopologyComponent = TopologyComponentItem & {
+  components: TopologyComponentItem[];
+};
+
+export async function getTemplatesRelatedComponents(templateID: string) {
+  const res = await IncidentCommander.get<
+    | {
+        components: TopologyComponent[];
+      }[]
+    | undefined
+  >(`topologies?select=id,components(id,name,type,icon)&id=eq.${templateID}`);
+  return res.data?.[0]?.components;
+}
+
+export async function getLogsBackends() {
+  const res = await CanaryCheckerDB.get<LogBackends[] | null>(
+    `logging_backends?order=created_at.desc&select=*,created_by(${AVATAR_INFO})&deleted_at=is.null`
+  );
+  return res.data ?? [];
+}

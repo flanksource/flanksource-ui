@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { UseMutationResult } from "@tanstack/react-query";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { EvidenceType } from "../../api/services/evidence";
 import {
   createHypothesis,
@@ -29,6 +29,11 @@ import { Tab, Tabs } from "../../components/Tabs/Tabs";
 import EmptyState from "../../components/EmptyState";
 import { useCreateCommentMutation } from "../../api/query-hooks/mutations/comment";
 import { useIncidentState } from "../../store/incident.state";
+import {
+  BreadcrumbChild,
+  BreadcrumbNav,
+  BreadcrumbRoot
+} from "../../components/BreadcrumbNav";
 
 export enum IncidentDetailsViewTypes {
   comments = "Comments",
@@ -208,24 +213,20 @@ export function IncidentDetailsPage() {
         contentClass="pl-6 h-full"
         onRefresh={() => refetchIncident()}
         title={
-          <div className="flex my-auto">
-            <span className="text-xl flex">
-              {" "}
-              <Link to="/incidents">Incidents&nbsp;</Link>
-              {" / "}
-              {!isLoading && incident && (
-                <div className="font-semibold">
-                  <div>&nbsp;{incident.title}</div>
-                </div>
-              )}
-            </span>
-          </div>
+          <BreadcrumbNav
+            list={[
+              <BreadcrumbRoot link="/incidents">Incidents</BreadcrumbRoot>,
+              !isLoading && incident && (
+                <BreadcrumbChild>{incident.title}</BreadcrumbChild>
+              )
+            ]}
+          />
         }
       >
-        <div className="flex flex-row min-h-full h-auto mt-2">
+        <div className="flex flex-row h-full mt-2">
           {incident ? (
             <>
-              <div className="flex flex-col flex-1 p-6 min-h-full h-auto">
+              <div className="flex flex-col flex-1 p-6 h-full">
                 <div className="max-w-3xl lg:max-w-6xl w-full mx-auto">
                   {Boolean(topologyIds?.length) && (
                     <section>

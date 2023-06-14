@@ -21,7 +21,7 @@ export function FormatProperty({
   let { text } = property;
 
   if (property.name === "created") {
-    return <>{relativeDateTime(text)}</>;
+    return <span className="text-sm">{relativeDateTime(text)}</span>;
   }
 
   if (property.type === "url") {
@@ -30,9 +30,9 @@ export function FormatProperty({
         href={property.text}
         target="_blank"
         rel="noreferrer"
-        className="underline"
+        className="underline text-sm"
       >
-        <span>{property.text.replace("https://", "")}</span>
+        <span>{property.text?.replace("https://", "")}</span>
         <FiExternalLink className="inline-block ml-1" />
       </a>
     );
@@ -75,7 +75,7 @@ export function FormatProperty({
       const percent = ((property.value / property.max) * 100).toFixed(0);
       text = `${percent}%`;
       if (parseFloat(percent) > 70) {
-        text = <span className="text-red-500">{text}</span>;
+        text = <span className="text-sm text-red-500">{text}</span>;
       }
     } else if (property.unit && property.unit.startsWith("milli")) {
       text = (property.value / 1000).toFixed(2);
@@ -106,7 +106,7 @@ export function FormatProperty({
     return null;
   }
   return (
-    <span data-tip={text} className="overflow-ellipsis">
+    <span data-tip={text} className="overflow-ellipsis text-sm">
       {text}
     </span>
   );

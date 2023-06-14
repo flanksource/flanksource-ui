@@ -4,9 +4,15 @@ import { CostInfoPanel, CostsData } from "../CostDetails/CostDetails";
 
 type Props = {
   configID: string;
+  isCollapsed?: boolean;
+  onCollapsedStateChange?: (isClosed: boolean) => void;
 };
 
-export default function ConfigCosts({ configID }: Props) {
+export default function ConfigCosts({
+  configID,
+  isCollapsed = true,
+  onCollapsedStateChange = () => {}
+}: Props) {
   const [configCosts, setConfigCosts] = useState<CostsData>();
   const { data, isLoading } = useConfigAnalysisQuery(configID);
 
@@ -21,5 +27,12 @@ export default function ConfigCosts({ configID }: Props) {
     return null;
   }
 
-  return <CostInfoPanel title="Costs" {...(configCosts || {})} />;
+  return (
+    <CostInfoPanel
+      onCollapsedStateChange={onCollapsedStateChange}
+      isCollapsed={isCollapsed}
+      title="Costs"
+      {...(configCosts || {})}
+    />
+  );
 }

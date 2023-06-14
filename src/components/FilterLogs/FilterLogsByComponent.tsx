@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { MdOutlineError } from "react-icons/md";
 import { useSearchParams } from "react-router-dom";
-import { useComponentsQuery } from "../../api/query-hooks";
+import { useComponentsWithLogsQuery } from "../../api/query-hooks";
 import { Icon } from "../Icon";
 import { ReactSelectDropdown, StateOption } from "../ReactSelectDropdown";
 
@@ -18,7 +18,7 @@ function FilterLogsByComponent() {
 
   const topologyId = searchParams.get("topologyId");
 
-  const { isLoading, data, error } = useComponentsQuery({});
+  const { isLoading, data, error } = useComponentsWithLogsQuery({});
 
   const dropDownOptions = useMemo(() => {
     if (data) {
@@ -47,23 +47,15 @@ function FilterLogsByComponent() {
   function onComponentSelect(value?: string) {
     if (value?.toLowerCase() === "none") {
       searchParams.delete("topologyId");
-      searchParams.delete("topologyExternalId");
-      searchParams.delete("type");
+      searchParams.delete("logsSelector");
       setSearchParams(searchParams);
       return;
     }
     const selectedComponent = data?.find((c) => c.id === value);
     if (selectedComponent) {
-      setSearchParams({
-        ...Object.fromEntries(searchParams),
-        ...(selectedComponent.id && {
-          topologyId: selectedComponent.id
-        }),
-        ...(selectedComponent.external_id && {
-          topologyExternalId: selectedComponent.external_id
-        }),
-        ...(selectedComponent.type && { type: selectedComponent.type })
-      });
+      searchParams.set("topologyId", selectedComponent.id!);
+      searchParams.delete("logsSelector");
+      setSearchParams(searchParams);
     }
   }
 
@@ -77,7 +69,7 @@ function FilterLogsByComponent() {
         value={topologyId ?? "none"}
         // @ts-expect-error
         items={{ ...defaultSelections, ...dropDownOptions }}
-        dropDownClassNames="w-auto max-w-[400px] left-0"
+        dropDownClassNames="w-auto max-w-[40rem] left-0"
         hideControlBorder
         isLoading={isLoading}
         isDisabled={isLoading}

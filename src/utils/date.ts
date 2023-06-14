@@ -1,6 +1,7 @@
 import dayjs, { ConfigType as DateConfig, ManipulateType } from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import isToday from "dayjs/plugin/isToday";
+import duration from "dayjs/plugin/duration";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 import relativeTime from "dayjs/plugin/relativeTime";
 import updateLocale from "dayjs/plugin/updateLocale";
@@ -15,6 +16,7 @@ dayjs.extend(isSameOrAfter);
 dayjs.extend(relativeTime);
 dayjs.extend(updateLocale);
 dayjs.extend(utc);
+dayjs.extend(duration);
 
 dayjs.updateLocale("en", {
   relativeTime: {
@@ -128,15 +130,6 @@ export const relativeDateTime = (
   to = dayjs().toISOString()
 ) => {
   const fromDate = dayjs.utc(from).local();
-  const toDate = dayjs.utc(to).local();
-
-  if (
-    toDate.diff(fromDate, "days") === 1 &&
-    toDate.isSame(from, "month") &&
-    toDate.isSame(from, "year")
-  ) {
-    return `${fromDate.format(DATE_FORMATS.TIME)} yesterday`;
-  }
 
   return fromDate.fromNow();
 };

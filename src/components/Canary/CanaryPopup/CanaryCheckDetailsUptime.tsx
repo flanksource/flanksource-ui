@@ -11,9 +11,9 @@ export default function CanaryCheckDetailsUptime({
     return <>-</>;
   }
   return (
-    <div className="flex flex-col">
-      <div className="flex flex-row">Passed: {uptime.passed}</div>
-      <div className="flex flex-row">Failed: {uptime.failed}</div>
+    <div className="flex flex-row space-x-2">
+      <div>Passed: {uptime.passed}</div>
+      <div>Failed: {uptime.failed}</div>
     </div>
   );
 }

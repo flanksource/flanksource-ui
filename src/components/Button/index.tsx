@@ -1,25 +1,25 @@
 import clsx from "clsx";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { Oval } from "react-loading-icons";
 import { Icon } from "../Icon";
 
-interface Props {
-  className?: string;
-  text: React.ReactNode;
+type Props = {
+  text?: React.ReactNode;
   icon?: React.ReactNode;
-  disabled?: boolean;
   size?: "xs" | "sm" | "md" | "lg" | "xl";
-  onClick: (e: React.MouseEvent<HTMLButtonElement>) => Promise<void> | void;
-}
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => Promise<void> | void;
+} & React.ButtonHTMLAttributes<HTMLButtonElement>;
 
-const ButtonFC = ({
+export function Button({
   className = "btn-primary",
   disabled = false,
   text,
   icon,
   size = "sm",
-  onClick
-}: Props) => {
+  onClick = () => {},
+  type = "button",
+  ...props
+}: Props) {
   switch (size) {
     case "xs":
       className += " px-2.5 py-1.5 text-xs rounded";
@@ -46,29 +46,32 @@ const ButtonFC = ({
   );
   const [_className, setClassName] = useState(className);
 
-  const handleOnClick: React.MouseEventHandler<HTMLButtonElement> = (e) => {
-    const oldIcon = _icon;
-    // setText("Updating...");
-    setClassName("btn-disabled");
-    setIcon(<Oval width="18px" height="18px" color="white" />);
+  const handleOnClick: React.MouseEventHandler<HTMLButtonElement> = useCallback(
+    (e) => {
+      const oldIcon = _icon;
+      // setText("Updating...");
+      setClassName("btn-disabled");
+      setIcon(<Oval width="18px" height="18px" color="white" />);
 
-    Promise.resolve(onClick(e)).finally(() => {
-      // setText(oldText);
-      setIcon(oldIcon);
-      setClassName(className);
-    });
-  };
+      Promise.resolve(onClick(e)).finally(() => {
+        // setText(oldText);
+        setIcon(oldIcon);
+        setClassName(className);
+      });
+    },
+    [_icon, className, onClick]
+  );
+
   return (
     <button
       disabled={disabled}
-      type="button"
+      type={type}
       onClick={handleOnClick}
       className={clsx(_className, "space-x-2")}
+      {...props}
     >
       {_icon != null && _icon}
-      <span>{text}</span>
+      {text && <span>{text}</span>}
     </button>
   );
-};
-
-export const Button = React.memo(ButtonFC);
+}

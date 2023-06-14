@@ -24,6 +24,7 @@ import {
 } from "../../../api/query-hooks";
 import { ConfigTypeInsights } from "../../ConfigInsights";
 import { ConfigAnalysisLink } from "../../ConfigAnalysisLink/ConfigAnalysisLink";
+import { CommentEvidence } from "../../IncidentDetails/DefinitionOfDone/EvidenceView";
 
 const ColumnSizes = {
   Time: {
@@ -74,6 +75,8 @@ export function EvidenceItem({
           <HealthEvidenceViewer evidence={evidence} />
         </div>
       );
+    case EvidenceType.Comment:
+      return <CommentEvidence evidence={evidence} />;
     case EvidenceType.ConfigChange:
       return (
         <div className="pt-2">
@@ -131,8 +134,8 @@ const EvidenceAccordion: React.FC<{
           <ConfigLink
             configId={configId}
             configName={configName}
-            configType={config?.external_type}
-            configTypeSecondary={config?.config_type}
+            configType={config?.type}
+            configTypeSecondary={config?.config_class}
           />
         </div>
       </div>
@@ -416,15 +419,14 @@ export function HealthEvidenceViewer({
         onClose={() => setShowModal(false)}
         title={<CheckTitle check={check} />}
         size="medium"
+        containerClassName="flex flex-col h-full overflow-y-auto"
+        bodyClass="flex flex-col flex-1 overflow-y-auto"
       >
-        <div
-          className="flex flex-col h-full py-4 mb-16"
-          style={{ maxHeight: "calc(100vh - 8rem)" }}
-        >
+        <div className="flex flex-col flex-1 py-4 overflow-y-auto">
           <CheckDetails
             check={check}
             timeRange={evidence.evidence.start}
-            className={`flex flex-col overflow-y-hidden ${mixins.appleScrollbar}`}
+            className={`flex flex-col flex-1 px-4 overflow-y-hidden ${mixins.appleScrollbar}`}
           />
         </div>
       </Modal>

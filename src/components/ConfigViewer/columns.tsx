@@ -4,7 +4,7 @@ import { relativeDateTime } from "../../utils/date";
 export const defaultTableColumns: ColumnDef<any>[] = [
   {
     header: "Type",
-    accessorKey: "config_type",
+    accessorKey: "type",
     meta: {
       cellCLassName: "px-5 py-2"
     }

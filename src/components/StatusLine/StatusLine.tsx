@@ -5,28 +5,48 @@ import { Chip } from "../Chip";
 import { Icon } from "../Icon";
 
 export type StatusInfo = {
-  label: string;
+  label: string | number;
   color: "red" | "green" | "orange" | "gray";
+  icon?: string | React.ReactNode;
   url?: string;
 };
 
-export type StatusLineProps = React.HTMLProps<HTMLDivElement> & {
+export type StatusLineData = {
   icon?: string | React.ReactNode;
   label: string;
   url?: string;
   statuses: StatusInfo[];
 };
 
+export type StatusLineProps = React.HTMLProps<HTMLDivElement> & StatusLineData;
+
+const renderIcon = (icon: string | React.ReactNode) => {
+  if (!icon) {
+    return null;
+  }
+  if (typeof icon === "object") {
+    return icon;
+  } else if (typeof icon === "string") {
+    return <Icon name={icon} className="w-4 h-4" />;
+  }
+};
+
 const StatusInfoEntry = ({ statusInfo }: { statusInfo: StatusInfo }) => {
   if (statusInfo.url) {
     return (
-      <Link key={statusInfo.url} to={statusInfo.url}>
+      <Link
+        className="inline-flex space-x-1"
+        key={statusInfo.url}
+        to={statusInfo.url}
+      >
+        {statusInfo.icon && renderIcon(statusInfo.icon)}
         <Chip text={statusInfo.label} color={statusInfo.color} />
       </Link>
     );
   } else {
     return (
-      <span className="inline-block m-1">
+      <span className="inline-flex space-x-1">
+        {statusInfo.icon && renderIcon(statusInfo.icon)}
         <Chip text={statusInfo.label} color={statusInfo.color} />
       </span>
     );
@@ -41,31 +61,30 @@ export function StatusLine({
   className = "py-1",
   ...rest
 }: StatusLineProps) {
-  const renderIcon = (icon: string | React.ReactNode) => {
-    if (!icon) {
-      return null;
-    }
-    if (typeof icon === "object") {
-      return icon;
-    } else if (typeof icon === "string") {
-      return <Icon name={icon} className="w-4" />;
-    }
-  };
-
   return (
-    <div className={clsx("flex items-center", className)} {...rest}>
-      {icon && <div className="mr-1 inline-block">{renderIcon(icon)}</div>}
+    <div
+      className={clsx("flex flex-row space-x-1 items-center", className)}
+      {...rest}
+    >
+      {icon && renderIcon(icon)}
       {url && (
-        <Link className="text-xs linear-1.21rel mr-1 cursor-pointer" to={url}>
+        <Link
+          title={label}
+          className="text-xs cursor-pointer h-4 overflow-hidden truncate"
+          to={url}
+        >
           {label}
         </Link>
       )}
       {!url && (
-        <span className="inline-block text-xs linear-1.21rel mr-1 cursor-pointer">
+        <span
+          title={label}
+          className="text-xs cursor-pointer h-4 overflow-hidden truncate"
+        >
           {label}
         </span>
       )}
-      <div className="flex space-x-1">
+      <div className="flex flex-row space-x-1.5">
         {statuses.map((status, index) => {
           return <StatusInfoEntry statusInfo={status} key={index} />;
         })}

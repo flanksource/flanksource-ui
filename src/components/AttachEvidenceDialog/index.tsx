@@ -8,6 +8,7 @@ import {
   createHypothesis,
   Hypothesis,
   HypothesisStatus,
+  NewHypothesis,
   searchHypothesis
 } from "../../api/services/hypothesis";
 import {
@@ -27,6 +28,8 @@ import { toastSuccess } from "../Toast/toast";
 import { Link } from "react-router-dom";
 import { severityItems, typeItems } from "../Incidents/data";
 import { ReactSelectDropdown } from "../ReactSelectDropdown";
+import { useQueryClient } from "@tanstack/react-query";
+import { createIncidentQueryKey } from "../../api/query-hooks";
 
 interface Props {
   title?: string;
@@ -150,6 +153,8 @@ export function AttachEvidenceDialog({
   isOpen,
   onClose
 }: Props & Partial<Record<string, any>>) {
+  const client = useQueryClient();
+
   const {
     control,
     handleSubmit,
@@ -192,13 +197,13 @@ export function AttachEvidenceDialog({
       return;
     }
     setNewIncidentCreated(!!(selectedIncident as any).__isNew__);
-  }, [selectedIncident]);
+  }, [selectedIncident, setValue]);
 
   useEffect(() => {
     return () => {
       reset();
     };
-  }, [isOpen]);
+  }, [isOpen, reset]);
 
   const fetchIncidentOptions = useCallback((query: string) => {
     const fn = async (query: string): Promise<IExtendedItem[]> => {
@@ -273,14 +278,12 @@ export function AttachEvidenceDialog({
       isNewHypothesis ||
       (!hypothesisData?.value && !hypothesisData?.description)
     ) {
-      const nodeDetails = { type: "root" };
-
-      const params = {
+      const params: NewHypothesis = {
         user,
         incident_id: incidentId,
         title: hypothesisData?.description || incidentData?.description,
         status: HypothesisStatus.Possible,
-        ...nodeDetails
+        type: "root"
       };
 
       const res = await createHypothesis(params);
@@ -306,30 +309,33 @@ export function AttachEvidenceDialog({
       description: data.description ?? ""
     };
 
-    createEvidence(evidence)
-      .then(() => {
-        toastSuccess(
-          <div>
-            Linked to{" "}
-            <Link
-              className="underline text-blue-600 hover:text-blue-800 visited:text-blue-600"
-              to={`/incidents/${incidentId}`}
-            >
-              {" "}
-              incident
-            </Link>{" "}
-            successfully
-          </div>,
-          { position: "top-right", duration: 5000 }
-        );
-        callback(true);
-      })
-      .catch(() => callback(false))
-      .finally(() => {
-        setIsSubmitting(false);
-        onClose();
-        reset();
+    try {
+      await createEvidence(evidence);
+      toastSuccess(
+        <div>
+          Linked to{" "}
+          <Link
+            className="underline text-blue-600 hover:text-blue-800 visited:text-blue-600"
+            to={`/incidents/${incidentId}`}
+          >
+            {" "}
+            incident
+          </Link>{" "}
+          successfully
+        </div>,
+        { position: "top-right", duration: 5000 }
+      );
+      await client.invalidateQueries({
+        queryKey: createIncidentQueryKey(incidentId)
       });
+      callback(true);
+    } catch (e) {
+      callback(false);
+    } finally {
+      setIsSubmitting(false);
+      onClose();
+      reset();
+    }
   };
 
   return (

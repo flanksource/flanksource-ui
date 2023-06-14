@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { filter } from "lodash";
-import { useEffect, useState } from "react";
-import { BsPersonFill } from "react-icons/bs";
+import { useMemo } from "react";
+import { BsFillCircleFill, BsPersonFill } from "react-icons/bs";
 import { Link } from "react-router-dom";
 import {
   useComponentNameQuery,
@@ -17,6 +17,7 @@ import { Icon } from "../../../Icon";
 import TextSkeletonLoader from "../../../SkeletonLoader/TextSkeletonLoader";
 import { StatusStyles } from "../../../TopologyCard";
 import { CardMetrics } from "../../../TopologyCard/CardMetrics";
+import { useQuery } from "@tanstack/react-query";
 
 type EvidenceViewProps = Omit<React.HTMLProps<HTMLDivElement>, "size"> & {
   evidence: Evidence;
@@ -58,7 +59,7 @@ function TopologyEvidence({
       {...rest}
     >
       <div className="flex flex-col -mt-1 bg-white divide-y divide-gray-200 w-full">
-        <div className="flex pr-1 pt-2.5 pb-2.5 pl-2 overflow-hidden">
+        <div className="flex pr-1 pt-2.5 pb-2.5 overflow-hidden">
           <div className="text-gray-500 m-auto mr-2.5 flex-initial max-w-1/4 leading-1.21rel">
             <h3 className="text-gray-500 leading-1.21rel">
               <Icon name={topology.icon} />
@@ -116,7 +117,7 @@ function LogEvidence({
   return (
     <div
       className={clsx(
-        "overflow-hidden p-2 font-medium text-gray-500",
+        "overflow-hidden py-2 font-medium text-gray-500",
         className
       )}
       {...rest}
@@ -151,8 +152,8 @@ function ConfigEvidence({
   }
 
   return (
-    <div className={clsx("overflow-hidden p-2", className)} {...rest}>
-      <Icon name={config.external_type} secondary={config.config_type} />{" "}
+    <div className={clsx("overflow-hidden py-2", className)} {...rest}>
+      <Icon name={config.type} secondary={config.config_class} />{" "}
       <span className="pl-1 text-gray-500 font-medium"> {config.name} </span>{" "}
     </div>
   );
@@ -164,72 +165,82 @@ function HealthEvidence({
   className,
   ...rest
 }: EvidenceViewProps) {
-  const [check, setCheck] = useState<any>();
+  const healthEvidence = evidence.evidence;
+  const id = evidence.check_id || healthEvidence.check_id;
+  const includeMessages = healthEvidence.includeMessages;
+  const start = healthEvidence.start;
 
-  useEffect(() => {
-    const healthEvidence: any = evidence.evidence;
-    const id = evidence.check_id || healthEvidence.check_id;
-    const includeMessages = healthEvidence.includeMessages;
-    const start = healthEvidence.start;
-    fetchCheckDetails(id, start, includeMessages);
-  }, [evidence]);
-
-  const fetchCheckDetails = (
-    id: string,
-    start: string,
-    includeMessages: boolean
-  ) => {
-    const payload = {
+  const payload = useMemo(
+    () => ({
       check: id,
       includeMessages,
       start
-    };
-    getCanaries(payload).then((results: any) => {
-      if (results == null || results.data.checks.length === 0) {
-        return;
+    }),
+    [id, includeMessages, start]
+  );
+
+  const { data: check } = useQuery(
+    ["check", payload],
+    () => {
+      return getCanaries(payload);
+    },
+    {
+      select: (results) => {
+        if (results.data === null || results.data?.checks.length === 0) {
+          return;
+        }
+        return results.data.checks[0];
       }
-      setCheck(results.data.checks[0]);
-    });
-  };
+    }
+  );
+
+  const isHealthCheckHealth = check?.status === "healthy";
 
   return (
-    <div className="overflow-hidden p-2" {...rest}>
-      <div className={`flex flex-row`} {...rest}>
+    <div className="overflow-hidden py-2" {...rest}>
+      <div className={`flex flex-row items-center gap-1`} {...rest}>
         <div className={clsx("flex-shrink-0", "pr-2")}>
           <Icon name={check?.icon || check?.type} />
         </div>
-        <div className={clsx("overflow-hidden")}>
-          <div className="flex flex-row">
-            <span
-              title={check?.name}
-              className={clsx(
-                "text-gray-500 font-semibold whitespace-nowrap overflow-ellipsis overflow-hidden pr-4"
-              )}
-            >
-              {check?.name}
-            </span>{" "}
-            <span
-              className="inline-block float-right"
-              title={`Namespace for ${check?.name}`}
-              style={{ paddingTop: "1px" }}
-            >
-              <Badge text={check?.namespace} />
-            </span>
-          </div>
+        <div className="flex flex-row flex-1 overflow-hidden">
+          <span
+            title={check?.name}
+            className={clsx(
+              "text-gray-500 font-semibold whitespace-nowrap overflow-ellipsis overflow-hidden pr-4"
+            )}
+          >
+            {check?.name}
+          </span>
+          <span
+            className="inline-block float-right"
+            title={`Namespace for ${check?.name}`}
+            style={{ paddingTop: "1px" }}
+          >
+            <Badge text={check?.namespace} />
+          </span>
+        </div>
+
+        <div className="block px-2">
+          <BsFillCircleFill
+            className={clsx(
+              isHealthCheckHealth ? "text-green-500" : "text-red-500"
+            )}
+            size={10}
+          />
         </div>
       </div>
     </div>
   );
 }
 
-function CommentEvidence({
+export function CommentEvidence({
   evidence,
   size,
   className,
   ...rest
 }: EvidenceViewProps) {
   return (
-    <div className="overflow-hidden p-2" {...rest}>
+    <div className="overflow-hidden py-2" {...rest}>
       <div className={`flex flex-row items-center`} {...rest}>
         <div className="flex flex-row">
           <div className={clsx("flex-shrink-0", "pr-2")}>
@@ -252,7 +263,7 @@ export function EvidenceView({
 }: EvidenceViewProps) {
   switch (evidence.type) {
     case EvidenceType.Log:
-      return <LogEvidence evidence={evidence} />;
+      return <LogEvidence evidence={evidence} {...rest} />;
     case EvidenceType.Topology:
       return (
         <TopologyEvidence className={className} evidence={evidence} {...rest} />

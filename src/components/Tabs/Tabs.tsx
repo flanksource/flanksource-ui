@@ -22,13 +22,10 @@ function TabItem({
         onClick?.(event);
         onSelectTab?.();
       }}
-      style={{
-        marginBottom: "-1px",
-        borderColor: value === activeTab ? "" : "transparent",
-        borderBottomColor: value === activeTab ? "white" : ""
-      }}
       className={clsx(
-        value === activeTab ? "text-gray-900 bg-white" : "text-gray-500",
+        value === activeTab
+          ? "text-gray-900 bg-white border-b-0"
+          : "text-gray-500 border-0 border-b",
         "cursor-pointer px-4 py-2 font-medium text-sm rounded-t-md border border-gray-300 hover:text-gray-900"
       )}
     >
@@ -58,7 +55,7 @@ export function Tabs({
   onSelectTab,
   children,
   className,
-  contentClassName = "bg-white border border-t-0 border-gray-300",
+  contentClassName = "flex flex-col flex-1 overflow-y-auto bg-white border border-t-0 border-gray-300",
   ...rest
 }: TabsProps) {
   const tabs = useMemo(() => {
@@ -85,7 +82,7 @@ export function Tabs({
   return (
     <>
       <div
-        className={`flex flex-wrap border-b border-gray-300 ${className}`}
+        className={clsx(`flex flex-wrap`, className)}
         aria-label="Tabs"
         {...rest}
       >
@@ -99,6 +96,7 @@ export function Tabs({
             onClick={tab.props?.onClick!}
           />
         ))}
+        <div className="flex-grow border-b border-gray-300"></div>
       </div>
       <div className={contentClassName}>{content}</div>
     </>

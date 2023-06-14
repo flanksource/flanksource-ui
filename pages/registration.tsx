@@ -7,7 +7,6 @@ import type { NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { Icon } from "../src/components";
 import { Head } from "../src/components/Head/Head";
 
 // Import render helpers
@@ -72,14 +71,14 @@ const Registration: NextPage = () => {
             console.log("This is the user session: ", data, data.identity);
 
             // For now however we just want to redirect home!
-            return router.push(flow?.return_to || "/").then(() => { });
+            return router.push(flow?.return_to || "/").then(() => {});
           })
           .catch(handleFlowError(router, "registration", setFlow))
           .catch((err: AxiosError) => {
             // If the previous handler did not catch the error it's most likely a form validation error
             if (err.response?.status === 400) {
               // Yup, it is!
-              setFlow(err.response?.data);
+              setFlow((err.response as any).data);
               return;
             }
 
@@ -95,7 +94,11 @@ const Registration: NextPage = () => {
           <div className="w-96">
             <div className="mt-6">
               <div>
-                <img alt="Flanksource" src="/images/logo.svg" className="p-2 h-auto m-auto rounded-8px w-48" />
+                <img
+                  alt="Mission Control"
+                  src="/images/logo.svg"
+                  className="p-2 h-auto m-auto rounded-8px w-48"
+                />
                 <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
                   Create account
                 </h2>

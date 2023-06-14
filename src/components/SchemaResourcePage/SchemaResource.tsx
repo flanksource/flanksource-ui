@@ -1,50 +1,33 @@
-import { useNavigate, useParams } from "react-router-dom";
-import {
-  deleteResource,
-  SchemaResourceI,
-  updateResource
-} from "../../api/schemaResources";
+import { useParams } from "react-router-dom";
 import { BreadcrumbNav } from "../BreadcrumbNav";
 import { SearchLayout } from "../Layout";
 import { SchemaResourceType } from "./resourceTypes";
 import { SchemaResourceEdit } from "./SchemaResourceEdit";
-import { toastError } from "../Toast/toast";
 import { useGetSettingsResourceDetails } from "../../api/query-hooks/settingsResourcesHooks";
 import { Head } from "../Head/Head";
+import { useSettingsUpdateResource } from "../../api/query-hooks/mutations/useSettingsResourcesMutations";
+import ErrorPage from "../Errors/ErrorPage";
+import TableSkeletonLoader from "../SkeletonLoader/TableSkeletonLoader";
+import EmptyState from "../EmptyState";
 
 export function SchemaResource({
   resourceInfo
 }: {
   resourceInfo: SchemaResourceType;
 }) {
-  const navigate = useNavigate();
   const { name } = resourceInfo;
   const { id } = useParams();
 
-  const { data: resource, isLoading } = useGetSettingsResourceDetails(
+  const {
+    data: resource,
+    isLoading,
+    error
+  } = useGetSettingsResourceDetails(resourceInfo, id);
+
+  const { mutateAsync: updateResource } = useSettingsUpdateResource(
     resourceInfo,
-    id
+    resource
   );
-
-  const onSubmit = async (props: Partial<SchemaResourceI>) => {
-    try {
-      await updateResource(resourceInfo, {
-        ...resource,
-        ...props
-      });
-    } catch (ex: any) {
-      toastError(ex);
-    }
-  };
-
-  const onDelete = async (id: string) => {
-    try {
-      await deleteResource(resourceInfo, id);
-      navigate(`../${resourceInfo.table}`);
-    } catch (ex: any) {
-      toastError(ex);
-    }
-  };
 
   return (
     <>
@@ -65,14 +48,20 @@ export function SchemaResource({
         contentClass="flex flex-col h-full"
       >
         <div className="flex flex-col flex-1 overflow-y-auto mx-auto w-screen max-w-screen-xl p-4">
+          {!resource && isLoading && <TableSkeletonLoader />}
+          {error && <ErrorPage error={error} />}
           {resource && !isLoading && (
             <SchemaResourceEdit
               id={id}
-              resourceName={resourceInfo.name}
               {...resource}
-              onSubmit={onSubmit}
-              onDelete={onDelete}
+              onSubmit={updateResource}
+              resourceInfo={resourceInfo}
             />
+          )}
+          {!resource && !isLoading && !error && (
+            <div className="flex w-full flex-1 items-center justify-center text-gray-500">
+              <EmptyState title="No resource found" />
+            </div>
           )}
         </div>
       </SearchLayout>

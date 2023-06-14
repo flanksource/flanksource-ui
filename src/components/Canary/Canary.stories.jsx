@@ -1,5 +1,8 @@
 import { MemoryRouter } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Canary } from "./index";
+
+const queryClient = new QueryClient();
 
 export default {
   title: "Canary",
@@ -8,7 +11,9 @@ export default {
   decorators: [
     (Story) => (
       <MemoryRouter>
-        <Story />
+        <QueryClientProvider client={queryClient}>
+          <Story />
+        </QueryClientProvider>
       </MemoryRouter>
     )
   ]

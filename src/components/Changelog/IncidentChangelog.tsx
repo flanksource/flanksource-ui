@@ -1,12 +1,9 @@
 import { useEffect } from "react";
 import { MdRefresh } from "react-icons/md";
 import { RiPlayListAddFill } from "react-icons/ri";
-import {
-  useIncidentQuery,
-  useIncidentsHistoryQuery
-} from "../../api/query-hooks";
+import { useIncidentsHistoryQuery } from "../../api/query-hooks";
 import { useIncidentState } from "../../store/incident.state";
-import { Badge } from "../Badge";
+import { CountBadge } from "../Badge/CountBadge";
 import { ClickableSvg } from "../ClickableSvg/ClickableSvg";
 import CollapsiblePanel from "../CollapsiblePanel";
 import { Loading } from "../Loading";
@@ -16,11 +13,15 @@ import IncidentChangelogItem from "./IncidentChangelogItems";
 
 type ChangelogProps = React.HTMLProps<HTMLDivElement> & {
   incidentId: string;
+  isCollapsed?: boolean;
+  onCollapsedStateChange?: (isClosed: boolean) => void;
 };
 
 export function IncidentChangelog({
   incidentId,
   className = "flex-1 flex-grow bg-white flex flex-col space-y-4",
+  isCollapsed,
+  onCollapsedStateChange,
   ...props
 }: ChangelogProps) {
   const {
@@ -37,16 +38,17 @@ export function IncidentChangelog({
 
   return (
     <CollapsiblePanel
+      isCollapsed={isCollapsed}
+      onCollapsedStateChange={onCollapsedStateChange}
       Header={
         <div className="flex flex-row w-full items-center space-x-2">
           <Title
             title="Changelog"
             icon={<RiPlayListAddFill className="w-6 h-6" />}
           />
-          <Badge
-            className="w-5 h-5 flex items-center justify-center"
+          <CountBadge
             roundedClass="rounded-full"
-            text={incidentHistory?.length ?? 0}
+            value={incidentHistory?.length ?? 0}
           />
           <div
             className="relative z-0 inline-flex justify-end ml-5"
@@ -66,26 +68,27 @@ export function IncidentChangelog({
           </div>
         </div>
       }
+      className={className}
+      {...props}
+      dataCount={incidentHistory?.length}
     >
-      <div className={className} {...props}>
-        {isLoading || !incidentHistory ? (
-          <Loading text="Loading ..." />
-        ) : incidentHistory.length > 0 ? (
-          <VerticalSCrollView>
-            <div className="px-8 py-2">
-              <ul className="border-l border-gray-200 dark:border-gray-900 relative flex-col px-4">
-                {incidentHistory.map((history) => (
-                  <IncidentChangelogItem key={history.id} history={history} />
-                ))}
-              </ul>
-            </div>
-          </VerticalSCrollView>
-        ) : (
+      {isLoading || !incidentHistory ? (
+        <Loading text="Loading ..." />
+      ) : incidentHistory.length > 0 ? (
+        <VerticalSCrollView>
           <div className="px-4 py-4">
-            <p className="text-gray-800">No changelog found</p>
+            <ul className="border-l border-gray-200 dark:border-gray-900 relative flex-col px-4">
+              {incidentHistory.map((history) => (
+                <IncidentChangelogItem key={history.id} history={history} />
+              ))}
+            </ul>
           </div>
-        )}
-      </div>
+        </VerticalSCrollView>
+      ) : (
+        <div className="px-4 py-4">
+          <p className="text-gray-800 text-sm">No changelog found</p>
+        </div>
+      )}
     </CollapsiblePanel>
   );
 }

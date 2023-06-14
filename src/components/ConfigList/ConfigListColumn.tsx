@@ -11,6 +11,7 @@ import ConfigListDateCell from "./Cells/ConfigListDateCell";
 import ConfigListNameCell from "./Cells/ConfigListNameCell";
 import ConfigListTagsCell from "./Cells/ConfigListTagsCell";
 import ConfigListTypeCell from "./Cells/ConfigListTypeCell";
+import { ConfigTypeInsights } from "../ConfigInsights";
 
 function CountBadge({ value }: { value: number | undefined | null }) {
   if (!value) {
@@ -26,10 +27,10 @@ function CountBadge({ value }: { value: number | undefined | null }) {
 export const configListColumns: ColumnDef<ConfigItem, any>[] = [
   {
     header: "Type",
-    id: "config_type",
+    id: "type",
     cell: ConfigListTypeCell,
     aggregatedCell: "",
-    accessorKey: "config_type",
+    accessorKey: "type",
     size: 250,
     enableGrouping: true
   },
@@ -67,19 +68,17 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
       const data = getValue();
       return (
         <div className="inline-flex space-x-2 overflow-hidden truncate">
-          {data.map(
-            (item: { count: number; analysis: ConfigAnalysisTypeItem }) => {
-              return (
-                <span
-                  className="inline-flex space-x-0.5"
-                  key={item.analysis.analysis_type}
-                >
-                  <ConfigInsightsIcon analysis={item.analysis} />{" "}
-                  <CountBadge value={item.count} />
-                </span>
-              );
-            }
-          )}
+          {data.map((item: { count: number; analysis: ConfigTypeInsights }) => {
+            return (
+              <span
+                className="inline-flex space-x-0.5"
+                key={item.analysis.analysis_type}
+              >
+                <ConfigInsightsIcon analysis={item.analysis} />{" "}
+                <CountBadge value={item.count} />
+              </span>
+            );
+          })}
         </div>
       );
     },
@@ -125,6 +124,18 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
         size: 30
       }
     ]
+  },
+  {
+    header: "Agent",
+    accessorKey: "agent",
+    enableSorting: false,
+    cell: ({ getValue }: CellContext<ConfigItem, any>) => {
+      const agent = getValue<ConfigItem["agent"]>();
+      if (agent?.name === "local") {
+        return null;
+      }
+      return <span>{agent?.name}</span>;
+    }
   },
   {
     header: "Tags",

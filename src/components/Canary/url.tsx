@@ -1,5 +1,5 @@
 import { isPlainObject } from "../../lib/isPlainObject";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { useCallback } from "react";
 
 const cleaner = (key: string, value: string) =>
@@ -42,8 +42,7 @@ export function decodeUrlSearchParams(url: string) {
 }
 
 export const useUpdateParams = () => {
-  const navigate = useNavigate();
-  const [_, setSearchParams] = useSearchParams();
+  const [, setSearchParams] = useSearchParams();
 
   return useCallback(
     (params: Record<string, any>) => {
@@ -54,6 +53,6 @@ export const useUpdateParams = () => {
       });
       setSearchParams(encoded);
     },
-    [navigate]
+    [setSearchParams]
   );
 };

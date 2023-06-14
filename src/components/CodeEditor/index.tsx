@@ -157,7 +157,8 @@ export function CodeEditor({
         readOnly,
         minimap: { enabled: false },
         formatOnPaste: true,
-        formatOnType: true
+        formatOnType: true,
+        scrollBeyondLastLine: false
       }}
       wrapperProps={{
         ref: editorWrapper

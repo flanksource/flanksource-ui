@@ -1,13 +1,18 @@
 import { useState } from "react";
-import { ConfigInsightsFilters } from "../../components/ConfigAnalysis/ConfigInsightsFilters";
+import { ConfigInsightsFilters } from "../../components/ConfigAnalysis/Filters/ConfigInsightsFilters";
 import ConfigInsightsList from "../../components/ConfigAnalysis/ConfigInsightsList";
 import { configTabsLists } from "../../components/ConfigsPage/ConfigTabsLinks";
 import { Head } from "../../components/Head/Head";
 import { SearchLayout } from "../../components/Layout";
 import TabbedLinks from "../../components/Tabs/TabbedLinks";
+import { BreadcrumbNav, BreadcrumbRoot } from "../../components/BreadcrumbNav";
+import { useAtom } from "jotai";
+import { refreshButtonClickedTrigger } from "../../components/SlidingSideBar";
 
 export function ConfigInsightsPage() {
-  const [triggerRefresh, setTriggerRefresh] = useState(0);
+  const [triggerRefresh, setRefreshButtonClickedTrigger] = useAtom(
+    refreshButtonClickedTrigger
+  );
   const [isLoading, setIsLoading] = useState(true);
 
   return (
@@ -15,11 +20,15 @@ export function ConfigInsightsPage() {
       <Head prefix="Config Insights" />
       <SearchLayout
         title={
-          <div className="flex space-x-2">
-            <span className="text-lg">Config Insights</span>
-          </div>
+          <BreadcrumbNav
+            list={[
+              <BreadcrumbRoot link="/configs/insights">
+                Config Insights
+              </BreadcrumbRoot>
+            ]}
+          />
         }
-        onRefresh={() => setTriggerRefresh(triggerRefresh + 1)}
+        onRefresh={() => setRefreshButtonClickedTrigger((prev) => prev + 1)}
         loading={isLoading}
         contentClass="p-0 h-full"
       >

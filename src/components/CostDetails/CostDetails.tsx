@@ -16,6 +16,8 @@ type CostDetailsTableProps = CostsData;
 type CostInfoPanelProps = CostsData & {
   loading?: boolean;
   title: string;
+  isCollapsed?: boolean;
+  onCollapsedStateChange?: (isClosed: boolean) => void;
 };
 
 type FormatCurrencyProps = {
@@ -54,7 +56,7 @@ export function FormatCurrency({
       return 0;
     }
     const parsedValue = typeof value === "string" ? parseInt(value) : value;
-    if (value <= 10) {
+    if (+value <= 10) {
       return parsedValue.toFixed(2);
     }
     return parsedValue.toFixed(0);
@@ -73,10 +75,8 @@ export function FormatCurrency({
 export function CostInfo({ label, value, defaultValue }: CostInfoProps) {
   return (
     <div className="overflow-hidden flex flex-col flex-1 space-y-2 px-2">
-      <div className="text-gray-500 text-sm font-medium  whitespace-nowrap">
-        {label}
-      </div>
-      <div className="text-black text-xl font-semibold">
+      <div className="text-gray-500 text-sm whitespace-nowrap">{label}</div>
+      <div className="text-black text-sm font-semibold">
         <FormatCurrency value={value} defaultValue={defaultValue} />
       </div>
     </div>
@@ -102,6 +102,8 @@ export function CostDetailsTable({
 export function CostInfoPanel({
   title,
   loading,
+  isCollapsed,
+  onCollapsedStateChange,
   ...costDetails
 }: CostInfoPanelProps) {
   if (isCostsDataEmpty({ ...costDetails })) {
@@ -110,6 +112,8 @@ export function CostInfoPanel({
 
   return (
     <CollapsiblePanel
+      isCollapsed={isCollapsed}
+      onCollapsedStateChange={onCollapsedStateChange}
       Header={
         <Title title={title} icon={<FaDollarSign className="w-6 h-auto" />} />
       }

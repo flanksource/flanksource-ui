@@ -3,16 +3,15 @@ import { useRouter } from "next/router";
 import { useState, useEffect, DependencyList } from "react";
 
 import ory from "./sdk";
+import { isAuthEnabled } from "../../context/Environment";
 
 // Returns a function which will log the user out
 export function useCreateLogoutHandler(deps?: DependencyList) {
   const [logoutToken, setLogoutToken] = useState<string>("");
   const router = useRouter();
 
-  const isAuthEnabled = process.env.NEXT_PUBLIC_WITHOUT_SESSION === "true";
-
   useEffect(() => {
-    if (isAuthEnabled) {
+    if (!isAuthEnabled()) {
       return;
     }
 

@@ -6,11 +6,11 @@ import { MOCK_DATA } from "./storybook-mock";
 ConfigDB.get = (url: string) => {
   if (url.indexOf("JIRA") > -1) {
     return Promise.resolve({
-      data: MOCK_DATA.filter((v) => v.config_type === "JIRA")
+      data: MOCK_DATA.filter((v) => v.type === "JIRA")
     });
   } else if (url.indexOf("EC2Instance") > -1) {
     return Promise.resolve({
-      data: MOCK_DATA.filter((v) => v.config_type === "EC2Instance")
+      data: MOCK_DATA.filter((v) => v.type === "EC2Instance")
     });
   } else if (url.indexOf("/config_item?id=eq.") > -1) {
     const id = url.replace("/config_item?id=eq.", "");

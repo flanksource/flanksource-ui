@@ -6,11 +6,12 @@ import {
   getAllConfigsMatchingQuery,
   getConfig,
   getConfigAnalysis,
-  getConfigChange,
+  getConfigChanges,
   getConfigInsight,
   getConfigInsights,
   getConfigTagsList,
-  getConfigName
+  getConfigName,
+  getTopologyRelatedInsights
 } from "../services/configs";
 import { getHypothesisResponse } from "../services/hypothesis";
 import { getIncident } from "../services/incident";
@@ -20,17 +21,16 @@ import {
 } from "../services/IncidentsHistory";
 import {
   ComponentTeamItem,
+  getAllAgents,
   getComponentTeams,
   getHealthCheckItem,
   getTopology,
   getTopologyComponentLabels,
-  getTopologyComponents
+  getTopologyComponents,
+  getTopologyComponentsWithLogs
 } from "../services/topology";
 import { getPersons, getVersionInfo } from "../services/users";
-import { getLogs } from "../services/logs";
-import LogItem from "../../types/Logs";
-
-const cache: Record<string, any> = {};
+import { LogsResponse, searchLogs, SearchLogsPayload } from "../services/logs";
 
 const defaultStaleTime = 1000 * 60 * 5;
 
@@ -42,7 +42,7 @@ export const useVersionInfo = () => {
 
 export const useIncidentQuery = (id: string) => {
   return useQuery(createIncidentQueryKey(id), () => getIncident(id), {
-    staleTime: defaultStaleTime
+    enabled: !!id
   });
 };
 
@@ -55,6 +55,44 @@ export const useComponentsQuery = ({
     ["allcomponents"],
     async () => {
       const res = await getTopologyComponents();
+      return res.data;
+    },
+    {
+      staleTime,
+      enabled,
+      ...rest
+    }
+  );
+};
+
+export const useAllAgentNamesQuery = ({
+  enabled = true,
+  staleTime = defaultStaleTime,
+  ...rest
+}) => {
+  return useQuery(
+    ["allagents"],
+    async () => {
+      const res = await getAllAgents();
+      return res.data;
+    },
+    {
+      staleTime,
+      enabled,
+      ...rest
+    }
+  );
+};
+
+export const useComponentsWithLogsQuery = ({
+  enabled = true,
+  staleTime = defaultStaleTime,
+  ...rest
+}) => {
+  return useQuery(
+    ["components_with_logs", "logs"],
+    async () => {
+      const res = await getTopologyComponentsWithLogs();
       return res.data;
     },
     {
@@ -81,23 +119,18 @@ export const useComponentNameQuery = (
   topologyId = "",
   { enabled = true, staleTime = defaultStaleTime, ...rest }
 ) => {
-  const cacheKey = `topology${topologyId}`;
   return useQuery(
     ["topology", topologyId],
     () => {
       return getTopology({
         id: topologyId
       }).then((data) => {
-        cache[cacheKey] = data.data[0];
-        return data.data[0];
+        return data.components[0];
       });
     },
     {
       staleTime,
       enabled,
-      placeholderData: () => {
-        return cache[cacheKey];
-      },
       ...rest
     }
   );
@@ -122,11 +155,11 @@ function prepareConfigListQuery({
 }: ConfigListFilterQueryOptions) {
   let query = "select=*";
   if (search) {
-    query = `${query}&or=(name.ilike.*${search}*,config_type.ilike.*${search}*,description.ilike.*${search}*,namespace.ilike.*${search}*)`;
+    query = `${query}&or=(name.ilike.*${search}*,type.ilike.*${search}*,description.ilike.*${search}*,namespace.ilike.*${search}*)`;
   } else {
     const filterQueries = [];
     if (configType && configType !== "All") {
-      filterQueries.push(`config_type=eq.${configType}`);
+      filterQueries.push(`type=eq.${configType}`);
     }
     if (tag && tag !== "All") {
       const [k, v] = decodeURI(tag).split("__:__");
@@ -137,7 +170,7 @@ function prepareConfigListQuery({
     }
   }
   if (sortBy && sortOrder) {
-    const sortField = sortBy === "config_type" ? `${sortBy},name` : sortBy;
+    const sortField = sortBy === "type" ? `${sortBy},name` : sortBy;
     query = `${query}&order=${sortField}.${sortOrder}`;
   }
   if (hideDeletedConfigs) {
@@ -190,21 +223,16 @@ export const useConfigNameQuery = (
   configId = "",
   { enabled = true, staleTime = defaultStaleTime, ...rest }
 ) => {
-  const cacheKey = `config${configId}`;
   return useQuery(
     ["config", configId],
     () => {
       return getConfigName(configId).then((data) => {
-        cache[cacheKey] = data?.data?.[0];
         return data?.data?.[0];
       });
     },
     {
       staleTime,
       enabled,
-      placeholderData: () => {
-        return cache[cacheKey];
-      },
       ...rest
     }
   );
@@ -264,32 +292,51 @@ export const useGetHypothesisQuery = (
 };
 
 export function useGetAllConfigsChangesQuery(
+  {
+    severity,
+    type,
+    change_type
+  }: {
+    severity?: string;
+    type?: string;
+    change_type?: string;
+  },
   pageIndex?: number,
   pageSize?: number,
   keepPreviousData?: boolean
 ) {
   return useQuery(
-    ["configs", "changes", "all", pageIndex, pageSize],
-    () => getAllChanges(pageIndex, pageSize),
+    [
+      "configs",
+      "changes",
+      "all",
+      severity,
+      type,
+      change_type,
+      pageIndex,
+      pageSize
+    ],
+    () => getAllChanges({ change_type, severity, type }, pageIndex, pageSize),
     {
       keepPreviousData
     }
   );
 }
 
-export function useGetConfigChangesQueryById(id: string) {
-  return useQuery(["configs", "changes", id], () => getConfigChange(id), {
-    select: (res) => {
-      if (res.error) {
-        throw res.error;
-      }
-      return res?.data?.length === 0 ? [] : res?.data;
-    },
-    onError: (err: any) => {
-      toastError(err);
-    },
-    enabled: !!id
-  });
+export function useGetConfigChangesByConfigIdQuery(
+  id: string,
+  pageIndex?: number,
+  pageSize?: number,
+  keepPreviousData?: boolean
+) {
+  return useQuery(
+    ["configs", "changes", id, pageIndex, pageSize],
+    () => getConfigChanges(id, pageIndex, pageSize),
+    {
+      enabled: !!id && !!pageSize,
+      keepPreviousData
+    }
+  );
 }
 
 export function useGetConfigByIdQuery(id: string) {
@@ -303,7 +350,8 @@ export function useGetConfigByIdQuery(id: string) {
       return data?.[0];
     },
     {
-      onError: (err: any) => toastError(err)
+      onError: (err: any) => toastError(err),
+      enabled: !!id
     }
   );
 }
@@ -334,12 +382,18 @@ export function useGetComponentsTeamQuery(
   );
 }
 
-export function useGetConfigInsights<T>(configId: string) {
+export function useGetConfigInsights<T>(
+  configId: string,
+  pageIndex?: number,
+  pageSize?: number,
+  keepPreviousData?: boolean
+) {
   return useQuery(
-    ["configs", "insights", configId],
-    () => getConfigInsights<T>(configId),
+    ["configs", "insights", configId, pageIndex, pageSize],
+    () => getConfigInsights<T>(configId, pageIndex, pageSize),
     {
-      enabled: !!configId
+      enabled: !!configId,
+      keepPreviousData
     }
   );
 }
@@ -380,37 +434,29 @@ export function useConfigAnalysisQuery(
 }
 
 export function useComponentGetLogsQuery(
-  {
-    externalId,
-    type,
-    query,
-    start
-  }: {
-    externalId: string;
-    type: string;
-    query: string;
-    start: string;
-  },
-  options?: UseQueryOptions<LogItem[], Error>
+  { query, id, name }: SearchLogsPayload,
+  options?: UseQueryOptions<LogsResponse, Error>
 ) {
-  return useQuery<LogItem[], Error>(
-    ["topology", "logs", externalId, type, query, start],
-    async () => {
-      const payload = {
-        query,
-        id: externalId,
-        type,
-        start
-      };
-      if (!externalId) {
-        return Promise.resolve([]);
-      }
-      const res = await getLogs(payload);
-      if (res.error) {
-        throw res.error;
-      }
-      return res.data.results;
-    },
+  return useQuery<LogsResponse, Error>(
+    ["topology", "logs", id, name, query],
+    async () => searchLogs({ id, name, query }),
     options
+  );
+}
+
+export function useGetTopologyRelatedInsightsQuery(id: string) {
+  return useQuery(
+    ["topology", "insights", id],
+    async () => {
+      const res = await getTopologyRelatedInsights(id);
+      // ensure analysis has all the fields
+      return res.map((item) => ({
+        ...((item.config?.analysis?.length ?? 0) > 0
+          ? item.config?.analysis?.[0]
+          : {}),
+        ...item
+      }));
+    },
+    {}
   );
 }

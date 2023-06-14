@@ -1,8 +1,6 @@
 import { useEffect, useState, useMemo, useCallback, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { useGetConfigByIdQuery } from "../../api/query-hooks";
-import { EvidenceType } from "../../api/services/evidence";
-import { AttachEvidenceDialog } from "../../components/AttachEvidenceDialog";
 import { ConfigsDetailsBreadcrumbNav } from "../../components/BreadcrumbNav/ConfigsDetailsBreadCrumb";
 import ConfigSidebar from "../../components/ConfigSidebar";
 import { useConfigDetailsTabs } from "../../components/ConfigsPage/ConfigTabsLinks";
@@ -13,11 +11,16 @@ import { Loading } from "../../components/Loading";
 import TabbedLinks from "../../components/Tabs/TabbedLinks";
 import { usePartialUpdateSearchParams } from "../../hooks/usePartialUpdateSearchParams";
 import useRunTaskOnPropChange from "../../hooks/useRunTaskOnPropChange";
+import { useAtom } from "jotai";
+import { refreshButtonClickedTrigger } from "../../components/SlidingSideBar";
 
 export function ConfigDetailsPage() {
+  const [, setRefreshButtonClickedTrigger] = useAtom(
+    refreshButtonClickedTrigger
+  );
+
   const { id } = useParams();
   const [searchParams, setSearchParams] = usePartialUpdateSearchParams();
-  const [attachAsAsset, setAttachAsAsset] = useState(false);
   const [checked, setChecked] = useState<Record<string, any>>({});
   const marginBottom = 24;
   const contentRef = useRef<HTMLDivElement>(null);
@@ -102,9 +105,6 @@ export function ConfigDetailsPage() {
     [configDetails]
   );
 
-  // TODO(ciju): make this lazy. Only needed for IncidentCreate.
-  const configLines = useMemo(() => code && code.split("\n"), [code]);
-
   return (
     <>
       <Head prefix={configDetails ? `Config - ${configDetails.name}` : ""} />
@@ -116,7 +116,10 @@ export function ConfigDetailsPage() {
             </span>
           </div>
         }
-        onRefresh={() => refetch()}
+        onRefresh={() => {
+          setRefreshButtonClickedTrigger((prev) => prev + 1);
+          refetch();
+        }}
         loading={isLoading}
         contentClass="p-0 h-full overflow-y-hidden"
       >
@@ -126,7 +129,7 @@ export function ConfigDetailsPage() {
             contentClassName={`bg-white border border-t-0 border-gray-300 flex-1 p-2`}
           >
             <div
-              className={`flex flex-col flex-1 p-6 pb-0 h-full`}
+              className={`flex flex-col flex-1 p-6 pb-0 h-full relative`}
               ref={contentRef}
             >
               <div className="flex flex-row items-start bg-white h-full">
@@ -154,25 +157,6 @@ export function ConfigDetailsPage() {
                     </div>
                   )}
                 </div>
-
-                <AttachEvidenceDialog
-                  key={`attach-evidence-dialog`}
-                  isOpen={attachAsAsset}
-                  onClose={() => setAttachAsAsset(false)}
-                  config_id={id}
-                  evidence={{
-                    lines: configLines,
-                    configName: configDetails?.name,
-                    configType: configDetails?.config_type,
-                    selected_lines: Object.fromEntries(
-                      Object.keys(checked).map((n) => [n, configLines[n]])
-                    )
-                  }}
-                  type={EvidenceType.Config}
-                  callback={(_: any) => {
-                    setChecked({});
-                  }}
-                />
               </div>
             </div>{" "}
           </TabbedLinks>

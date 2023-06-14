@@ -9,7 +9,11 @@ export const NodePodPropToLabelMap = {
   containerRuntime: "Container Runtime",
   kernel: "Kernel",
   kubeProxy: "Kubernetes proxy",
-  kubelet: "Kubelet "
+  kubelet: "Kubelet ",
+  version: "Version",
+  memory: "Memory",
+  cpu: "CPU",
+  ip: "IP"
 } as const;
 
 export const AVATAR_INFO = `id,name,avatar`;
@@ -51,3 +55,5 @@ export const TimeRangeToMinutes: Record<string, number> = {
   "3y": 3 * MINUTES_IN_A_YEAR,
   "5y": 5 * MINUTES_IN_A_YEAR
 };
+
+export const HEALTH_SETTINGS = "healthSettings";

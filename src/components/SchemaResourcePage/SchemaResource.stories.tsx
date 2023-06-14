@@ -6,6 +6,7 @@ import {
   QueryClient,
   QueryCache
 } from "@tanstack/react-query";
+import { schemaResourceTypes } from "./resourceTypes";
 
 const queryClient = new QueryClient({
   queryCache: new QueryCache()
@@ -32,8 +33,5 @@ const Template: ComponentStory<typeof SchemaResource> = (arg: any) => (
 
 export const Base = Template.bind({});
 Base.args = {
-  resourceInfo: {
-    spec: '{ test: "some" }',
-    name: "test resource"
-  }
+  resourceInfo: schemaResourceTypes[0]
 };

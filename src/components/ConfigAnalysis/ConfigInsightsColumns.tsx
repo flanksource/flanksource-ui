@@ -4,7 +4,8 @@ import { ConfigItem } from "../../api/services/configs";
 import { ConfigTypeInsights } from "../ConfigInsights";
 import { DateCell } from "../ConfigViewer/columns";
 import { Icon } from "../Icon";
-import { AnalysisIcon } from "../ConfigList/Cells/ConfigListAnalysisCell";
+import ConfigInsightsIcon from "../ConfigInsightsIcon";
+import ConfigInsightsSeverityIcons from "./ConfigInsightsSeverityIcons";
 
 export const ConfigInsightsColumns: ColumnDef<
   ConfigTypeInsights & { config?: ConfigItem },
@@ -26,8 +27,8 @@ export const ConfigInsightsColumns: ColumnDef<
           >
             <Icon
               className="w-4 h-4"
-              name={config?.external_type}
-              secondary={config?.config_type}
+              name={config?.type}
+              secondary={config?.config_class}
             />
             <span>{config?.name}</span>
           </Link>
@@ -47,9 +48,9 @@ export const ConfigInsightsColumns: ColumnDef<
       return (
         <div className="flex items-center max-w-full space-x-2">
           <span className="w-auto">
-            <AnalysisIcon analysis={data} />
+            <ConfigInsightsIcon analysis={data} />
           </span>
-          <span>{data.analysis_type}</span>
+          <span className="capitalize">{data.analysis_type}</span>
         </div>
       );
     },
@@ -62,12 +63,10 @@ export const ConfigInsightsColumns: ColumnDef<
     accessorKey: "analyzer",
     size: 100,
     enableGrouping: true,
-    cell: ({ cell }) => {
-      const data = cell.row.original;
-
+    cell: ({ getValue }) => {
       return (
         <span className="flex-1 overflow-hidden overflow-ellipsis">
-          {data.analyzer}
+          {getValue<string>()}
         </span>
       );
     },
@@ -79,7 +78,15 @@ export const ConfigInsightsColumns: ColumnDef<
     aggregatedCell: "",
     accessorKey: "severity",
     size: 50,
-    enableSorting: false
+    enableSorting: false,
+    cell: ({ getValue }) => {
+      return (
+        <div className="flex-1 flex flex-row gap-1 items-center overflow-hidden overflow-ellipsis capitalize">
+          <ConfigInsightsSeverityIcons severity={getValue<string>()} />
+          <span>{getValue<string>()}</span>
+        </div>
+      );
+    }
   },
   {
     header: "Status",

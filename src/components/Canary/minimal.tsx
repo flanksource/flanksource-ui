@@ -110,7 +110,10 @@ const MinimalCanaryFC = ({
       )}
       <AttachEvidenceDialog
         isOpen={attachAsAsset}
-        onClose={() => setAttachAsAsset(false)}
+        onClose={() => {
+          setAttachAsAsset(false);
+          clearCheck();
+        }}
         check_id={selectedCheck?.id}
         evidence={{
           check_id: selectedCheck?.id,
@@ -126,18 +129,17 @@ const MinimalCanaryFC = ({
         open={openChecksModal}
         onClose={() => clearCheck()}
         title={<CheckTitle check={selectedCheck} size="" />}
-        size="medium"
+        size="full"
+        containerClassName="flex flex-col h-full overflow-y-auto"
+        bodyClass="flex flex-col flex-1 overflow-y-auto"
       >
-        <div
-          className="flex flex-col h-full py-4 mb-16"
-          style={{ maxHeight: "calc(100vh - 12rem)" }}
-        >
+        <div className="flex flex-col flex-1 overflow-y-auto px-4 py-4 mb-16">
           <CheckDetails
             check={selectedCheck}
             timeRange={timeRange}
-            className={`flex flex-col overflow-y-hidden ${mixins.appleScrollbar}`}
+            className={`flex flex-col overflow-y-auto flex-1`}
           />
-          <div className="rounded-t-lg flex space-x-2 bg-gray-100 px-8 py-4 justify-end absolute w-full bottom-0 left-0">
+          <div className="rounded-t-none flex space-x-2 bg-gray-100 px-8 py-4 justify-end absolute w-full bottom-0 left-0">
             {selectedCheck?.canary_id && (
               <HealthCheckEdit check={selectedCheck as HealthCheck} />
             )}

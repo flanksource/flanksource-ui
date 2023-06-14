@@ -11,11 +11,15 @@ import { MdRefresh } from "react-icons/md";
 import { RiFullscreenLine } from "react-icons/ri";
 import { BsCardChecklist } from "react-icons/bs";
 import { ClickableSvg } from "../../ClickableSvg/ClickableSvg";
-import { Badge } from "../../Badge";
 import { useIncidentState } from "../../../store/incident.state";
+import EmptyState from "../../EmptyState";
+import { CountBadge } from "../../Badge/CountBadge";
+import { dateSortHelper } from "../../../utils/date";
 
-type DefinitionOfDoneProps = {
+type DefinitionOfDoneProps = React.HTMLProps<HTMLDivElement> & {
   incidentId: string;
+  isCollapsed?: boolean;
+  onCollapsedStateChange?: (isClosed: boolean) => void;
 };
 
 type AddDefinitionOfDoneProps = {
@@ -54,7 +58,11 @@ function AddDefinitionOfDone({ onClick, ...rest }: AddDefinitionOfDoneProps) {
 }
 
 export function IncidentsDefinitionOfDone({
-  incidentId
+  incidentId,
+  className,
+  isCollapsed,
+  onCollapsedStateChange,
+  ...props
 }: DefinitionOfDoneProps) {
   const [openDeleteConfirmDialog, setOpenDeleteConfirmDialog] = useState(false);
   const [evidenceBeingRemoved, setEvidenceBeingRemoved] = useState<Evidence>();
@@ -77,7 +85,13 @@ export function IncidentsDefinitionOfDone({
       });
     });
     setNonDODEvidences(data.filter((evidence) => !evidence.definition_of_done));
-    setDODEvidences(data.filter((evidence) => evidence.definition_of_done));
+    setDODEvidences(
+      data
+        .filter((evidence) => evidence.definition_of_done)
+        .sort((a, b) => {
+          return dateSortHelper("asc", a.created_at, b.created_at);
+        })
+    );
   }, [incident]);
 
   const rootHypothesis = useMemo(() => {
@@ -104,16 +118,17 @@ export function IncidentsDefinitionOfDone({
 
   return (
     <CollapsiblePanel
+      isCollapsed={isCollapsed}
+      onCollapsedStateChange={onCollapsedStateChange}
       Header={
         <div className="flex flex-row w-full items-center space-x-2">
           <Title
             title="Definition of done"
             icon={<BsCardChecklist className="w-6 h-6" />}
           />
-          <Badge
-            className="w-5 h-5 flex items-center justify-center"
+          <CountBadge
             roundedClass="rounded-full"
-            text={dodEvidences?.length ?? 0}
+            value={dodEvidences?.length ?? 0}
           />
           <div
             className="relative z-0 inline-flex justify-end ml-5"
@@ -138,12 +153,16 @@ export function IncidentsDefinitionOfDone({
           </div>
         </div>
       }
+      className={clsx(className)}
+      childrenClassName=""
+      {...props}
+      dataCount={dodEvidences?.length}
     >
       <div className="flex flex-col">
-        <div className="flex overflow-x-hidden w-full px-4 pb-6">
-          <div className="w-full">
+        <div className="flex overflow-x-hidden w-full pb-6 pt-2">
+          <div className="w-full space-y-1">
             {isLoading && !incident ? (
-              <div className="flex items-start py-2 pl-2 pr-2">
+              <div className="flex items-start pl-2 pr-2">
                 <div className="text-sm text-gray-500">
                   Loading evidences please wait...
                 </div>
@@ -155,7 +174,7 @@ export function IncidentsDefinitionOfDone({
                   evidence={evidence}
                   setEvidenceBeingRemoved={setEvidenceBeingRemoved}
                   setOpenDeleteConfirmDialog={setOpenDeleteConfirmDialog}
-                  refetch={refetchIncident}
+                  incidentId={incidentId}
                 />
               ))
             )}
@@ -204,6 +223,7 @@ export function IncidentsDefinitionOfDone({
           }}
           rootHypothesis={rootHypothesis!}
         />
+        {dodEvidences.length === 0 && !isLoading && <EmptyState />}
       </div>
     </CollapsiblePanel>
   );

@@ -19,12 +19,13 @@ import {
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { DataTableRow } from "./DataTableRow";
 import { InfoMessage } from "../InfoMessage";
-import { Pagination } from "./Pagination/Pagination";
+import { Pagination, PaginationType } from "./Pagination/Pagination";
 import TableSkeletonLoader from "../SkeletonLoader/TableSkeletonLoader";
 import usePreferences from "../../hooks/userPreferences";
 
 const tableStyles = {
-  theadHeaderClass: " tracking-wider",
+  theadHeaderClass:
+    "px-3 py-3 text-left text-gray-500 font-medium text-xs tracking-wider",
   tbodyRowClass: "cursor-pointer text-sm",
   tbodyDataClass: "whitespace-nowrap p-2"
 };
@@ -52,8 +53,9 @@ type DataTableProps<TableColumns, Data extends TableColumns> = {
   isVirtualized?: boolean;
   virtualizedRowEstimatedHeight?: number;
   paginationClassName?: string;
-  preferencesKey: string;
-  savePreferences: boolean;
+  paginationType?: PaginationType;
+  preferencesKey?: string;
+  savePreferences?: boolean;
   overScan?: number;
   /**
    * Columns used for sorting the table
@@ -124,9 +126,10 @@ export function DataTable<TableColumns, Data extends TableColumns>({
   determineRowClassNamesCallback = () => "",
   pagination,
   paginationClassName = "py-4",
+  paginationType = "complete",
   enableServerSideSorting = false,
-  preferencesKey,
-  savePreferences,
+  preferencesKey = "",
+  savePreferences = false,
   overScan = 10,
   ...rest
 }: DataTableProps<TableColumns, Data>) {
@@ -134,6 +137,7 @@ export function DataTable<TableColumns, Data extends TableColumns>({
   const [scrollTop, setScrollTop] = useState(0);
   const { storePreferences, preferences } =
     usePreferences<TablePreferences>(preferencesKey);
+  const emptyList = useMemo(() => [], []);
 
   const tableHiddenColumnsRecord = useMemo(
     () =>
@@ -185,6 +189,7 @@ export function DataTable<TableColumns, Data extends TableColumns>({
         : undefined,
     manualPagination: !!pagination?.enable && pagination.remote,
     manualSorting: enableServerSideSorting,
+    enableSortingRemoval: true,
     enableHiding: true,
     onSortingChange: (sorting) => {
       if (onTableSortByChanged) {
@@ -223,17 +228,15 @@ export function DataTable<TableColumns, Data extends TableColumns>({
       ? table.getPaginationRowModel()
       : table.getRowModel();
 
-  const enableVirtualization = isVirtualized;
-
   const { getVirtualItems, getTotalSize } = useVirtualizer({
-    count: enableVirtualization ? rows.length : 0,
+    count: isVirtualized ? rows.length : 0,
     getScrollElement: () => tableContainerRef.current,
     estimateSize: () => virtualizedRowEstimatedHeight,
     overscan: overScan
   });
 
-  const virtualRows = enableVirtualization ? getVirtualItems() : [];
-  const totalSize = enableVirtualization ? getTotalSize() : 0;
+  const virtualRows = isVirtualized ? getVirtualItems() : emptyList;
+  const totalSize = isVirtualized ? getTotalSize() : 0;
 
   const paddingTop = virtualRows.length > 0 ? virtualRows?.[0]?.start || 0 : 0;
   const paddingBottom =
@@ -241,8 +244,18 @@ export function DataTable<TableColumns, Data extends TableColumns>({
       ? totalSize - (virtualRows?.[virtualRows.length - 1]?.end || 0)
       : 0;
 
+  useEffect(() => {
+    const [lastItem] = [...virtualRows].reverse();
+    if (!lastItem || !pagination || paginationType !== "virtual") {
+      return;
+    }
+    if (lastItem.index >= rows.length - 1 && pagination.pageCount > 1) {
+      table.setPageSize(pagination.pageSize * 2);
+    }
+  }, [rows.length, virtualRows, pagination, paginationType, table]);
+
   return (
-    <div className="flex flex-col flex-1 overflow-y-auto space-y-2">
+    <div className="flex flex-col flex-1 overflow-y-auto space-y-2 h-full">
       <div
         ref={tableContainerRef}
         className={clsx("flex flex-col flex-1 overflow-y-auto", className)}
@@ -255,16 +268,21 @@ export function DataTable<TableColumns, Data extends TableColumns>({
           className={clsx(
             // for some reason, it seems to need both auto and fixed, there may be
             // some other css class tied to auto
-            `table-auto table-fixed w-full`,
+            `table-auto table-fixed w-full border border-gray-200 rounded-md`,
             stickyHead && "relative"
           )}
           style={tableStyle}
         >
           <thead
-            className={`bg-white ${stickyHead ? "sticky top-0 z-01" : ""}`}
+            className={`bg-white rounded-md ${
+              stickyHead ? "sticky top-0 z-01" : ""
+            }`}
           >
             {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
+              <tr
+                className="border-b border-gray-200 uppercase bg-column-background rounded-t-md items-centerborder-b border-gray-200 uppercase bg-column-background rounded-t-md items-center"
+                key={headerGroup.id}
+              >
                 {headerGroup.headers.map((header, colIndex) =>
                   // First column goes inside the grouping column
                   // Hence the label for that is not needed
@@ -314,12 +332,12 @@ export function DataTable<TableColumns, Data extends TableColumns>({
             ))}
           </thead>
           <tbody>
-            {enableVirtualization && paddingTop > 0 && (
+            {isVirtualized && paddingTop > 0 && (
               <tr>
                 <td style={{ height: `${paddingTop}px` }} />
               </tr>
             )}
-            {enableVirtualization
+            {isVirtualized
               ? getVirtualItems().map(({ index }) => {
                   const row = rows[index];
                   return (
@@ -345,7 +363,7 @@ export function DataTable<TableColumns, Data extends TableColumns>({
                     key={row.id}
                   />
                 ))}
-            {enableVirtualization && paddingBottom > 0 && (
+            {isVirtualized && paddingBottom > 0 && (
               <tr>
                 <td style={{ height: `${paddingBottom}px` }} />
               </tr>
@@ -362,23 +380,26 @@ export function DataTable<TableColumns, Data extends TableColumns>({
           </div>
         )}
       </div>
-      {pagination?.enable && Boolean(table.getRowModel().rows.length) && (
-        <Pagination
-          className={paginationClassName}
-          canPreviousPage={table.getCanPreviousPage()}
-          canNextPage={table.getCanNextPage()}
-          pageOptions={table.getPageOptions()}
-          pageCount={table.getPageCount()}
-          gotoPage={table.setPageIndex}
-          nextPage={table.nextPage}
-          previousPage={table.previousPage}
-          setPageSize={table.setPageSize}
-          state={{
-            ...table.getState().pagination
-          }}
-          loading={pagination.loading}
-        />
-      )}
+      {pagination?.enable &&
+        Boolean(table.getRowModel().rows.length) &&
+        paginationType !== "virtual" && (
+          <Pagination
+            paginationType={paginationType}
+            className={paginationClassName}
+            canPreviousPage={table.getCanPreviousPage()}
+            canNextPage={table.getCanNextPage()}
+            pageOptions={table.getPageOptions()}
+            pageCount={table.getPageCount()}
+            gotoPage={table.setPageIndex}
+            nextPage={table.nextPage}
+            previousPage={table.previousPage}
+            setPageSize={table.setPageSize}
+            state={{
+              ...table.getState().pagination
+            }}
+            loading={pagination.loading}
+          />
+        )}
     </div>
   );
 }

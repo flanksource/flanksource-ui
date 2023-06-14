@@ -12,9 +12,16 @@ import { TopologyLink } from "../TopologyLink";
 type Props = {
   topology?: Topology;
   refererId?: string;
+  isCollapsed?: boolean;
+  onCollapsedStateChange?: (isClosed: boolean) => void;
 };
 
-export default function TopologyDetails({ topology, refererId }: Props) {
+export default function TopologyDetails({
+  topology,
+  refererId,
+  isCollapsed = true,
+  onCollapsedStateChange = () => {}
+}: Props) {
   if (topology == null) {
     return null;
   }
@@ -53,15 +60,19 @@ export default function TopologyDetails({ topology, refererId }: Props) {
   if (topology.labels != null && Object.entries(topology.labels).length > 0) {
     items.push({
       label: "Labels",
-      value: map(topology.labels, (v, k) => (
-        <div
-          data-tip={`${k}: ${v}`}
-          className="max-w-full overflow-hidden text-ellipsis  mb-1 rounded-md text-gray-600 font-semibold text-sm"
-          key={k}
-        >
-          {k}: <span className="font-light">{v}</span>
+      value: (
+        <div className="flex flex-col">
+          {map(topology.labels, (v, k) => (
+            <div
+              data-tip={`${k}: ${v}`}
+              className="max-w-full overflow-hidden text-ellipsis  mb-1 rounded-md text-gray-600 font-semibold text-sm"
+              key={k}
+            >
+              {k}: <span className="text-sm font-light">{v}</span>
+            </div>
+          ))}
         </div>
-      ))
+      )
     });
   }
 
@@ -70,9 +81,11 @@ export default function TopologyDetails({ topology, refererId }: Props) {
       Header={
         <Title title="Details" icon={<BsCardList className="w-6 h-auto" />} />
       }
+      isCollapsed={isCollapsed}
+      onCollapsedStateChange={onCollapsedStateChange}
     >
       {Boolean(items.length) ? (
-        <DescriptionCard items={items} />
+        <DescriptionCard items={items} labelStyle="top" />
       ) : (
         <EmptyState />
       )}

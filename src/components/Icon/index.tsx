@@ -81,9 +81,6 @@ function findByName(name?: string) {
         Icons[prefixes[prefix as keyof typeof prefixes] as keyof typeof Icons];
     }
   }
-  if (icon == null) {
-    console.warn("Icon not found: " + name);
-  }
   return icon;
 }
 
@@ -93,6 +90,7 @@ type IconProps = {
   className?: string;
   alt?: string;
   icon?: string | { src: string };
+  prefix?: React.ReactNode;
 };
 
 export const Icon: React.FC<IconProps> = memo(
@@ -102,6 +100,7 @@ export const Icon: React.FC<IconProps> = memo(
     className = "w-5 h-auto",
     alt = "",
     icon,
+    prefix = undefined,
     ...props
   }) => {
     if (isEmpty(name) && isEmpty(secondary)) {
@@ -110,7 +109,12 @@ export const Icon: React.FC<IconProps> = memo(
 
     if (reactIcons[name as keyof typeof reactIcons]) {
       const Icon = reactIcons[name as keyof typeof reactIcons];
-      return <Icon className={`inline-block object-center ${className}`} />;
+      return (
+        <>
+          {prefix}
+          <Icon className={`inline-block object-center ${className}`} />
+        </>
+      );
     }
 
     if (name && (name.startsWith("http:") || name.startsWith("https://"))) {
@@ -122,7 +126,15 @@ export const Icon: React.FC<IconProps> = memo(
       }
       if (icon == null && reactIcons[secondary as keyof typeof reactIcons]) {
         const Icon = reactIcons[secondary as keyof typeof reactIcons];
-        return <Icon className={`inline-block object-center ${className}`} />;
+        return (
+          <>
+            {prefix}
+            <Icon className={`inline-block object-center ${className}`} />
+          </>
+        );
+      }
+      if (icon == null) {
+        console.warn("Icon not found: " + name);
       }
     }
 
@@ -133,18 +145,25 @@ export const Icon: React.FC<IconProps> = memo(
 
     if (src) {
       return (
-        <img
-          alt={alt}
-          src={src}
-          className={`inline-block object-center ${className}`}
-          {...props}
-        />
+        <>
+          {prefix}
+          <img
+            alt={alt}
+            src={src}
+            className={`inline-block object-center ${className}`}
+            {...props}
+          />
+        </>
       );
     }
 
     const Icon = icon as unknown as React.FC<React.SVGProps<SVGSVGElement>>;
 
-    return icon ? <Icon className={className} {...props} /> : null;
+    return icon ? (
+      <>
+        {prefix} <Icon className={className} {...props} />
+      </>
+    ) : null;
   }
 );
 

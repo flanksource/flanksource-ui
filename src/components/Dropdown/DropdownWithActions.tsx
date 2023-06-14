@@ -4,6 +4,7 @@ import AsyncSelect from "react-select/async";
 import { IItem } from "../../types/IItem";
 import { components } from "react-select";
 import { debounce } from "lodash";
+import clsx from "clsx";
 
 interface IDropdownWithActionsProps<T> {
   label: string;
@@ -18,6 +19,7 @@ interface IDropdownWithActionsProps<T> {
   value?: T;
   setValue: any;
   dependentValue?: any;
+  disabled?: boolean;
 }
 
 export function DropdownWithActions<T extends IItem>({
@@ -28,6 +30,7 @@ export function DropdownWithActions<T extends IItem>({
   value = { value: null, description: "" } as T,
   displayOption,
   setValue,
+  disabled,
   dependentValue
 }: IDropdownWithActionsProps<T>) {
   const [lastNoResultsQuery, setLastNoResultsQuery] = useState("");
@@ -116,14 +119,28 @@ export function DropdownWithActions<T extends IItem>({
         });
       }}
       components={{
-        Option: (props: any) => {
+        Option: ({ className, ...props }: any) => {
           return (
-            <components.Option {...props}>
+            <components.Option
+              className={clsx(className, "text-sm")}
+              {...props}
+            >
               {displayOption({ option: props.data } as any)}
             </components.Option>
           );
+        },
+        SingleValue: ({ className, ...props }: any) => {
+          return (
+            <components.SingleValue
+              className={clsx(className, "text-sm")}
+              {...props}
+            >
+              {displayOption({ option: props.data } as any)}
+            </components.SingleValue>
+          );
         }
       }}
+      isDisabled={disabled}
     />
   ) : (
     <AsyncSelect
@@ -145,14 +162,28 @@ export function DropdownWithActions<T extends IItem>({
       }}
       onInputChange={onChangeInputFn}
       components={{
-        Option: (props: any) => {
+        Option: ({ className, ...props }: any) => {
           return (
-            <components.Option {...props}>
+            <components.Option
+              className={clsx(className, "text-sm")}
+              {...props}
+            >
               {displayOption({ option: props.data } as any)}
             </components.Option>
           );
+        },
+        SingleValue: ({ className, ...props }: any) => {
+          return (
+            <components.SingleValue
+              className={clsx(className, "text-sm")}
+              {...props}
+            >
+              {displayOption({ option: props.data } as any)}
+            </components.SingleValue>
+          );
         }
       }}
+      isDisabled={disabled}
     />
   );
 }

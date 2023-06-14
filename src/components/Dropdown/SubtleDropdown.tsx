@@ -96,7 +96,7 @@ export const DropdownListbox = ({
           </Listbox.Label>
         )}
         <div className={`${label && "mt-1"} group relative h-full`}>
-          <Listbox.Button className="relative cursor-pointer w-full group-hover:bg-white border border-transparent group-hover:border-gray-300 rounded-full group-hover:shadow-sm p-1 text-left focus:outline-none sm:text-sm">
+          <Listbox.Button className="relative cursor-pointer w-full group-hover:bg-white border border-transparent group-hover:border-gray-300 rounded-full group-hover:shadow-sm p-1 text-left focus:outline-none text-sm">
             {items[value].iconTitle}
           </Listbox.Button>
 
@@ -114,7 +114,7 @@ export const DropdownListbox = ({
                   className={({ active }) =>
                     clsx(
                       active ? "text-white bg-blue-600" : "text-gray-900",
-                      "cursor-pointer select-none relative py-2 pl-3 pr-9"
+                      "cursor-pointer select-none relative py-2 pl-3 pr-9 text-sm"
                     )
                   }
                   value={item.value}

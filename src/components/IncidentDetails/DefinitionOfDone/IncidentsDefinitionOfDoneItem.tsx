@@ -4,7 +4,14 @@ import { BsHourglassSplit, BsTrash } from "react-icons/bs";
 import { Evidence, EvidenceType } from "../../../api/services/evidence";
 import { IconButton } from "../../IconButton";
 import { EvidenceView } from "./EvidenceView";
-import { Dispatch, SetStateAction, useState } from "react";
+import {
+  CSSProperties,
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useLayoutEffect,
+  useState
+} from "react";
 import { Size } from "../../../types";
 import { FaEdit } from "react-icons/fa";
 import EditEvidenceDefinitionOfDoneScript from "./EditEvidenceDefinitionOfDoneScript";
@@ -17,14 +24,14 @@ type Props = {
   evidence: Evidence;
   setOpenDeleteConfirmDialog: Dispatch<SetStateAction<boolean>>;
   setEvidenceBeingRemoved: Dispatch<SetStateAction<Evidence | undefined>>;
-  refetch: () => void;
+  incidentId: string;
 };
 
 export default function IncidentsDefinitionOfDoneItem({
   evidence,
   setEvidenceBeingRemoved,
   setOpenDeleteConfirmDialog,
-  refetch
+  incidentId
 }: Props) {
   const [isEditingDoDScriptModalOpen, setIsEditingDoDScriptModalOpen] =
     useState(false);
@@ -34,28 +41,64 @@ export default function IncidentsDefinitionOfDoneItem({
 
   const [isTogglingAsResolved, setIsTogglingAsResolved] = useState(false);
 
-  const { isLoading, mutate } = useUpdateEvidenceMutation({
-    onSuccess: () => refetch()
-  });
+  const { isLoading, mutate } = useUpdateEvidenceMutation({}, incidentId);
+
+  const [dropdownRef, setDropdownRef] = useState<HTMLDivElement | null>(null);
+
+  const [dropDownMenuStyles, setDropDownMenuStyles] = useState<CSSProperties>();
+
+  const dropdownMenuStylesCalc = useCallback((node: HTMLDivElement | null) => {
+    if (!node) {
+      return;
+    }
+    setDropdownRef(node);
+    const left = node.getBoundingClientRect().left;
+    const top = node.getBoundingClientRect().bottom;
+
+    if (left && top) {
+      setDropDownMenuStyles({
+        left: left - 200,
+        top: top,
+        position: "fixed",
+        transform: "unset"
+      });
+      node.style.removeProperty("transform");
+    }
+  }, []);
+
+  // re-calculate dropdown menu position when collapsed/expanded
+  useLayoutEffect(() => {
+    const obs = new window.MutationObserver(() =>
+      dropdownMenuStylesCalc(dropdownRef)
+    );
+    if (dropdownRef?.parentNode) {
+      obs.observe(dropdownRef.parentNode, {
+        childList: true,
+        subtree: true
+      });
+    }
+    return () => obs.disconnect();
+  }, [dropdownMenuStylesCalc, dropdownRef]);
 
   return (
     <>
-      <div className="relative flex items-center py-2">
-        {isLoading ? (
-          <MdRefresh className="animate-spin" />
-        ) : evidence.done ? (
-          <AiFillCheckCircle className="mr-1 fill-green-500" />
-        ) : (
-          <BsHourglassSplit className="mr-1" />
-        )}
-
-        <div className="min-w-0 flex-1 text-sm ml-2">
+      <div className="relative flex items-center">
+        <div className="min-w-0 flex-1 text-sm">
           <EvidenceView evidence={evidence} size={Size.small} />
         </div>
         <div className="flex items-center">
+          {isLoading ? (
+            <MdRefresh className="animate-spin" />
+          ) : evidence.done ? (
+            <AiFillCheckCircle className="mr-1 fill-green-500" />
+          ) : (
+            <BsHourglassSplit className="mr-1" />
+          )}
           <Menu>
-            <Menu.VerticalIconButton />
-            <Menu.Items widthClass="w-72">
+            <div className="" ref={dropdownMenuStylesCalc}>
+              <Menu.VerticalIconButton />
+            </div>
+            <Menu.Items className={`fixed z-50`} style={dropDownMenuStyles}>
               <Menu.Item
                 onClick={(e: any) => {
                   if (evidence.type === EvidenceType.Comment) {
@@ -131,9 +174,9 @@ export default function IncidentsDefinitionOfDoneItem({
           onCloseModal={() => setIsEditingDoDScriptModalOpen(false)}
           onSuccess={() => {
             setIsEditingDoDScriptModalOpen(false);
-            refetch();
           }}
           key={`script_${evidence.id}`}
+          incidentId={incidentId}
         />
       ) : (
         <EditEvidenceDefinitionOfDoneComment
@@ -142,9 +185,9 @@ export default function IncidentsDefinitionOfDoneItem({
           onCloseModal={() => setIsEditingDoDCommentModalOpen(false)}
           onSuccess={() => {
             setIsEditingDoDCommentModalOpen(false);
-            refetch();
           }}
           key={`comment_${evidence.id}`}
+          incidentId={incidentId}
         />
       )}
 

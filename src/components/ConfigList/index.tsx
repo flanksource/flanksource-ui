@@ -13,12 +13,12 @@ export interface Props {
 
 export default function ConfigList({ data, handleRowClick, isLoading }: Props) {
   const [queryParams, setSearchParams] = useSearchParams({
-    sortBy: "config_type",
+    sortBy: "type",
     sortOrder: "asc",
-    groupBy: "config_type"
+    groupBy: "type"
   });
 
-  const groupByField = queryParams.get("groupBy") || "config_type";
+  const groupByField = queryParams.get("groupBy") || "type";
   const sortField = queryParams.get("sortBy");
 
   const isSortOrderDesc =
@@ -77,11 +77,11 @@ export default function ConfigList({ data, handleRowClick, isLoading }: Props) {
         typeof newSortBy === "function" ? newSortBy(sortBy) : newSortBy;
       if (sortByValue.length > 0) {
         const { id, desc } = sortByValue[0];
-        if (id === "config_type") {
+        if (id === "type") {
           setSortBy(
             determineSortColumnOrder([
               {
-                id: "config_type",
+                id: "type",
                 desc: desc
               },
               {
