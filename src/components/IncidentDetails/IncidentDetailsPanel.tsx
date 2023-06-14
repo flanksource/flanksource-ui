@@ -168,20 +168,16 @@ export function IncidentDetailsPanel({
         <Responders className="py-3" incident={incident} />
         <IncidentDetailsRow
           title="Started"
-          className="h-8"
+          className=""
           value={
-            <span className="text-gray-500 font-medium text-sm">
-              {formattedCreatedAt}
-            </span>
+            <div className="text-gray-500 text-sm">{formattedCreatedAt}</div>
           }
         />
         <IncidentDetailsRow
           title="Duration"
-          className="h-8"
+          className=""
           value={
-            <span className="text-gray-500 font-medium text-sm">
-              {formattedDuration}
-            </span>
+            <div className="text-gray-500 text-sm">{formattedDuration}</div>
           }
         />
       </div>
