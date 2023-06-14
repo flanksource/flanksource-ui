@@ -9,6 +9,7 @@ import { JobHistoryStatus } from "../components/JobsHistory/JobsHistoryTable";
 import { ConfigItem } from "./services/configs";
 import { TopologyComponentItem } from "../components/FilterIncidents/FilterIncidentsByComponents";
 import { LogBackends } from "../components/LogBackends/LogBackends";
+import { EventQueueStatus } from "../components/EventQueueStatus/eventQueue";
 
 export interface SchemaResourceI {
   id: string;
@@ -145,6 +146,13 @@ export async function getTemplatesRelatedComponents(templateID: string) {
 export async function getLogsBackends() {
   const res = await CanaryCheckerDB.get<LogBackends[] | null>(
     `logging_backends?order=created_at.desc&select=*,created_by(${AVATAR_INFO})&deleted_at=is.null`
+  );
+  return res.data ?? [];
+}
+
+export async function getEventQueueStatus() {
+  const res = await CanaryCheckerDB.get<EventQueueStatus[] | null>(
+    `failed_push_queue?order=latest_failure.desc`
   );
   return res.data ?? [];
 }
