@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useGetTopologyRelatedInsightsQuery } from "../../api/query-hooks";
-import { insightTypeToIconMap } from "../ConfigInsightsIcon";
+import { InsightTypeToIcon } from "../ConfigInsightsIcon";
 import { MdOutlineInsights } from "react-icons/md";
 import {
   StatusInfo,
@@ -41,7 +41,9 @@ export function TopologyConfigAnalysisLine({
       ] || {
         label: 0,
         color: severityToColorMap(topologyInsight.severity),
-        icon: insightTypeToIconMap(topologyInsight.analysis_type, 17)
+        icon: (
+          <InsightTypeToIcon type={topologyInsight.analysis_type} size={17} />
+        )
       };
       (analysisToCountMap[topologyInsight.analysis_type].label as number) += 1;
     });
