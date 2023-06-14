@@ -1,7 +1,7 @@
 import { typeItems } from "../Incidents/data";
 
 interface IProps {
-  type: string;
+  type: keyof typeof typeItems;
   textClassName?: string;
 }
 export function IncidentTypeIcon({ type }: IProps) {

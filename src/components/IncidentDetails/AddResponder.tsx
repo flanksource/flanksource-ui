@@ -192,6 +192,7 @@ export type AddResponderFormValues = {
   product?: string | null;
   person?: string | null;
   external_id?: string | null;
+  configType?: string | null;
 };
 
 export type formPropKey = keyof AddResponderFormValues;
@@ -309,8 +310,8 @@ export const AddResponder = ({
     const defaults = { ...(responderConfig?.defaults || {}) };
     const data: { [key: string]: any } = {};
     Object.keys(watchAllFields).forEach((prop: string) => {
-      const value = watchAllFields[prop];
-      data[prop] = typeof value === "object" ? value?.name : value;
+      const value = watchAllFields[prop as keyof typeof watchAllFields];
+      data[prop] = typeof value === "object" ? (value as any)?.name : value;
     });
     data.incident = {
       ...incidentDetails
@@ -333,7 +334,7 @@ export const AddResponder = ({
     const teamsApiConfig = schemaResourceTypes.find(
       (item) => item.table === "teams"
     );
-    getAll(teamsApiConfig)
+    getAll(teamsApiConfig!)
       .then((res) => {
         const data = res.data.map((item) => {
           return {
@@ -510,13 +511,15 @@ export const AddResponder = ({
   };
 
   const saveResponderDetails = async () => {
-    const data = { ...getValues() };
-    Object.keys(data).forEach((key: formPropKey) => {
-      if (!data[key]) {
-        delete data[key];
+    const data = getValues();
+    Object.keys(data).forEach((key) => {
+      if (!data[key as keyof AddResponderFormValues]) {
+        delete data[key as keyof AddResponderFormValues];
       } else {
-        data[key] =
-          typeof data[key] === "string" ? data[key] : data[key]?.["value"];
+        data[key as keyof AddResponderFormValues] =
+          typeof data[key as keyof AddResponderFormValues] === "string"
+            ? data[key as keyof AddResponderFormValues]
+            : (data[key as keyof AddResponderFormValues] as any)?.["value"];
       }
     });
     const payload = {
@@ -540,7 +543,7 @@ export const AddResponder = ({
         onError();
         toastError("Adding responder failed");
       }
-    } catch (ex) {
+    } catch (ex: any) {
       toastError(ex.message);
       onError();
     }

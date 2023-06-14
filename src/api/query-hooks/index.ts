@@ -125,7 +125,7 @@ export const useComponentNameQuery = (
       return getTopology({
         id: topologyId
       }).then((data) => {
-        return data.components[0];
+        return data.components?.[0];
       });
     },
     {

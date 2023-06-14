@@ -3,6 +3,7 @@ import {
   Control,
   Controller,
   FieldErrors,
+  FieldErrorsImpl,
   UseFormSetValue
 } from "react-hook-form";
 import { TextInput } from "../../../TextInput";
@@ -10,10 +11,10 @@ import { AddResponderFormValues } from "../../AddResponder";
 
 type AwsServiceRequestProps = {
   control: Control;
-  errors: FieldErrors;
+  errors: FieldErrorsImpl<AddResponderFormValues>;
   setValue: UseFormSetValue<AddResponderFormValues>;
-  defaultValues: { [key: string]: any };
-  values: { [key: string]: any };
+  defaultValues?: { [key: string]: any };
+  values?: { [key: string]: any };
 } & React.HTMLProps<HTMLDivElement>;
 
 export const AwsServiceRequest = ({

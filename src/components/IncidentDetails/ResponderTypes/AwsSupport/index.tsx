@@ -2,7 +2,7 @@ import clsx from "clsx";
 import {
   Control,
   Controller,
-  FieldErrors,
+  FieldErrorsImpl,
   UseFormSetValue
 } from "react-hook-form";
 import { TextInput } from "../../../TextInput";
@@ -10,10 +10,10 @@ import { AddResponderFormValues } from "../../AddResponder";
 
 type AwsSupportProps = {
   control: Control;
-  errors: FieldErrors;
+  errors?: FieldErrorsImpl<AddResponderFormValues>;
   setValue: UseFormSetValue<AddResponderFormValues>;
-  defaultValues: { [key: string]: any };
-  values: { [key: string]: any };
+  defaultValues?: { [key: string]: any };
+  values?: { [key: string]: any };
 } & React.HTMLProps<HTMLDivElement>;
 
 export const AwsSupport = ({
@@ -47,7 +47,7 @@ export const AwsSupport = ({
             );
           }}
         />
-        <p className="text-red-600 text-sm">{errors.category?.message}</p>
+        <p className="text-red-600 text-sm">{errors?.category?.message}</p>
       </div>
       <div className="mb-4">
         <Controller
@@ -70,7 +70,7 @@ export const AwsSupport = ({
             );
           }}
         />
-        <p className="text-red-600 text-sm">{errors.description?.message}</p>
+        <p className="text-red-600 text-sm">{errors?.description?.message}</p>
       </div>
       <div className="mb-4">
         <Controller
@@ -93,7 +93,7 @@ export const AwsSupport = ({
             );
           }}
         />
-        <p className="text-red-600 text-sm">{errors.body?.message}</p>
+        <p className="text-red-600 text-sm">{errors?.body?.message}</p>
       </div>
     </div>
   );
