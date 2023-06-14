@@ -34,13 +34,17 @@ type SpecEditorProps = {
   format?: "json" | "yaml";
   resourceInfo: SchemaResourceType;
   selectedSpec?: string;
+  canEdit?: boolean;
+  cantEditMessage?: string;
 };
 
 export default function SpecEditor({
   types,
   format = "yaml",
   resourceInfo,
-  selectedSpec
+  selectedSpec,
+  canEdit = false,
+  cantEditMessage
 }: SpecEditorProps) {
   const [selectedSpecItem, setSelectedSpecItem] = useState<
     SpecType | undefined
@@ -84,6 +88,8 @@ export default function SpecEditor({
             resourceInfo={resourceInfo}
             specsMapField={selectedSpecItem.specsMapField}
             schemaFilePrefix={selectedSpecItem.schemaFilePrefix}
+            canEdit={canEdit}
+            cantEditMessage={cantEditMessage}
           />
         </div>
       ) : (
