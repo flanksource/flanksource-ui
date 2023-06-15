@@ -1,43 +1,12 @@
 import clsx from "clsx";
-import {
-  MouseEventHandler,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState
-} from "react";
-import { useForm } from "react-hook-form";
+import { MouseEventHandler, useState } from "react";
 import { FiUser } from "react-icons/fi";
 import { GrVmware } from "react-icons/gr";
 import { MdEmail } from "react-icons/md";
 import { SiJira } from "react-icons/si";
-import { isEqual, template } from "lodash";
-import { useParams } from "react-router-dom";
-import { getAll } from "../../../api/schemaResources";
-import { saveResponder } from "../../../api/services/responder";
-import { useUser } from "../../../context";
-import { useLoader } from "../../../hooks";
 import { Icon } from "../../Icon";
-import { incidentStatusItems, typeItems } from "../../Incidents/data";
-import { Modal } from "../../Modal";
-import { OptionsList } from "../../OptionsList";
-import { schemaResourceTypes } from "../../SchemaResourcePage/resourceTypes";
-import { Step } from "../../StepProgressBar";
-import { toastError, toastSuccess } from "../../Toast/toast";
-import { ActionButtonGroup } from "./ActionButtonGroup";
-import {
-  AwsServiceRequest,
-  AwsSupport,
-  CA,
-  Email,
-  Jira,
-  MicrosoftPlanner,
-  Oracle,
-  Person,
-  Redhat,
-  ServiceNow,
-  VMWare
-} from "../ResponderTypes";
+import { Incident } from "../../../api/services/incident";
+import AddResponderModal from "./AddResponderModal";
 
 export type AddResponderAction = {
   label: string;
@@ -149,27 +118,6 @@ export const ResponderTypeOptions = [
   }
 ];
 
-const ResponderSteps = [
-  {
-    label: "Team",
-    position: 1,
-    inProgress: true,
-    finished: false
-  },
-  {
-    label: "Responder Type",
-    position: 2,
-    inProgress: false,
-    finished: false
-  },
-  {
-    label: "Details",
-    position: 3,
-    inProgress: false,
-    finished: false
-  }
-];
-
 export type AddResponderFormValues = {
   to?: string | null;
   subject?: string | null;
@@ -190,12 +138,6 @@ export type AddResponderFormValues = {
 };
 
 export type formPropKey = keyof AddResponderFormValues;
-
-type AddResponderProps = {
-  onSuccess?: () => void;
-  onError?: () => void;
-  incident: any;
-} & React.HTMLProps<HTMLDivElement>;
 
 export const getOrderedKeys = (responder: any): formPropKey[] => {
   switch (responder?.type) {
@@ -233,6 +175,12 @@ export const getOrderedKeys = (responder: any): formPropKey[] => {
   }
 };
 
+type AddResponderProps = {
+  onSuccess?: () => void;
+  onError?: () => void;
+  incident: Incident;
+} & React.HTMLProps<HTMLDivElement>;
+
 export const AddResponder = ({
   onSuccess = () => {},
   onError = () => {},
@@ -240,450 +188,47 @@ export const AddResponder = ({
   incident,
   ...rest
 }: AddResponderProps) => {
-  const { loading, setLoading } = useLoader();
-  const { id } = useParams();
-  const { user } = useUser();
-  const [steps, setSteps] = useState(deepCloneSteps());
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedType, setSelectedType] = useState<any>(null);
-  const [selectedTeam, setSelectedTeam] = useState<any>(null);
-  const [teams, setTeams] = useState<any>([]);
-  const [fixedValues, setFixedValues] = useState<{ [key: string]: any }>();
-  const [defaultValues, setDefaultValues] = useState<{ [key: string]: any }>();
-  const {
-    control,
-    formState: { errors },
-    getValues,
-    reset,
-    handleSubmit,
-    watch,
-    setValue
-  } = useForm<AddResponderFormValues>({
-    defaultValues: {
-      to: null,
-      subject: null,
-      body: null,
-      category: null,
-      description: null,
-      project: null,
-      issueType: null,
-      priority: null,
-      summary: null,
-      product: null,
-      person: null
-    }
-  });
-  const watchAllFields = watch();
-  const incidentDetails = useMemo(() => {
-    return {
-      ...incident,
-      status:
-        incident.status === incidentStatusItems.open.value
-          ? incidentStatusItems.open.description
-          : incidentStatusItems.closed.description,
-      type: typeItems[incident.type as keyof typeof typeItems]?.description
-    };
-  }, [incident]);
-
-  function replacePlaceholders(
-    templateString: string,
-    context: object
-  ): string {
-    try {
-      return template(templateString)(context);
-    } catch (ex) {
-      return templateString;
-    }
-  }
-
-  useEffect(() => {
-    const responderType = selectedType?.value;
-    const responderConfig =
-      selectedTeam?.spec?.responder_clients?.[responderType];
-    const values = { ...(responderConfig?.values || {}) };
-    const defaults = { ...(responderConfig?.defaults || {}) };
-    const data: { [key: string]: any } = {};
-    Object.keys(watchAllFields).forEach((prop: string) => {
-      const value = watchAllFields[prop as keyof typeof watchAllFields];
-      data[prop] = typeof value === "object" ? (value as any)?.name : value;
-    });
-    data.incident = {
-      ...incidentDetails
-    };
-    if (defaults) {
-      const newDefaultValues: { [key: string]: any } = {};
-      Object.keys(defaults || {}).forEach((key) => {
-        newDefaultValues[key] = replacePlaceholders(defaults[key], data);
-      });
-      if (!isEqual(defaultValues, newDefaultValues)) {
-        setDefaultValues(newDefaultValues);
-      }
-    }
-    if (!isEqual(values, fixedValues)) {
-      setFixedValues(values);
-    }
-  }, [watchAllFields, selectedTeam, selectedType]);
-
-  useEffect(() => {
-    const teamsApiConfig = schemaResourceTypes.find(
-      (item) => item.table === "teams"
-    );
-    getAll(teamsApiConfig!)
-      .then((res) => {
-        const data = res.data.map((item) => {
-          return {
-            icon: null,
-            label: item.name,
-            value: item.id,
-            ...item
-          };
-        });
-        setTeams(data);
-      })
-      .catch(() => {
-        setTeams([]);
-      });
-  }, []);
-
-  function extractResponders(team: any) {
-    const types = Object.keys(team?.spec?.responder_clients || {});
-    return ResponderTypeOptions.filter((item) => {
-      return types.includes(item.value);
-    });
-  }
-
-  const responderTypes = useMemo(() => {
-    return extractResponders(selectedTeam);
-  }, [selectedTeam]);
-
-  function deepCloneSteps() {
-    return ResponderSteps.map((v) => ({ ...v }));
-  }
-
-  const onCloseModal = useCallback(() => {
-    cleanupState();
-  }, []);
-
-  const goToStep = (nextStep: Step, currentStep: Step) => {
-    currentStep.inProgress = false;
-    currentStep.finished = true;
-    for (let i = steps.length - 1; i >= 0; i--) {
-      steps[i].inProgress = false;
-      steps[i].finished = false;
-      if (steps[i] === nextStep) {
-        steps[i].inProgress = true;
-        break;
-      }
-    }
-    setSteps([...steps]);
-  };
-
-  const getResponderTypeForm = () => {
-    switch (selectedType?.value) {
-      case ResponderTypes.email:
-        return (
-          <Email
-            control={control}
-            errors={errors}
-            setValue={setValue}
-            defaultValues={defaultValues}
-            values={fixedValues}
-          />
-        );
-      case ResponderTypes.jira:
-        return (
-          <Jira
-            control={control}
-            errors={errors}
-            setValue={setValue}
-            defaultValues={defaultValues}
-            values={fixedValues}
-            teamId={selectedTeam?.id}
-          />
-        );
-      case ResponderTypes.serviceNow:
-        return (
-          <ServiceNow
-            control={control}
-            errors={errors}
-            setValue={setValue}
-            defaultValues={defaultValues}
-            values={fixedValues}
-          />
-        );
-      case ResponderTypes.ca:
-        return (
-          <CA
-            control={control}
-            errors={errors}
-            setValue={setValue}
-            defaultValues={defaultValues}
-            values={fixedValues}
-          />
-        );
-      case ResponderTypes.awsSupport:
-        return (
-          <AwsSupport
-            control={control}
-            errors={errors}
-            setValue={setValue}
-            defaultValues={defaultValues}
-            values={fixedValues}
-          />
-        );
-      case ResponderTypes.awsAmsServicesRequest:
-        return (
-          <AwsServiceRequest
-            control={control}
-            errors={errors}
-            setValue={setValue}
-          />
-        );
-      case ResponderTypes.redhat:
-        return (
-          <Redhat
-            control={control}
-            errors={errors}
-            setValue={setValue}
-            defaultValues={defaultValues}
-            values={fixedValues}
-          />
-        );
-      case ResponderTypes.oracle:
-        return (
-          <Oracle
-            control={control}
-            errors={errors}
-            setValue={setValue}
-            defaultValues={defaultValues}
-            values={fixedValues}
-          />
-        );
-      case ResponderTypes.msPlanner:
-        return (
-          <MicrosoftPlanner
-            control={control}
-            errors={errors}
-            setValue={setValue}
-            defaultValues={defaultValues}
-            values={fixedValues}
-            teamId={selectedTeam?.id}
-          />
-        );
-      case ResponderTypes.vmware:
-        return (
-          <VMWare
-            control={control}
-            errors={errors}
-            setValue={setValue}
-            defaultValues={defaultValues}
-            values={fixedValues}
-          />
-        );
-      case ResponderTypes.person:
-        return (
-          <Person
-            control={control}
-            errors={errors}
-            setValue={setValue}
-            defaultValues={defaultValues}
-            values={fixedValues}
-          />
-        );
-      default:
-        return null;
-    }
-  };
-
-  const onSubmit = async () => {
-    await handleSubmit(
-      () => {
-        saveResponderDetails();
-      },
-      () => {}
-    )();
-  };
-
-  const saveResponderDetails = async () => {
-    const data = getValues();
-    Object.keys(data).forEach((key) => {
-      if (!data[key as keyof AddResponderFormValues]) {
-        delete data[key as keyof AddResponderFormValues];
-      } else {
-        data[key as keyof AddResponderFormValues] =
-          typeof data[key as keyof AddResponderFormValues] === "string"
-            ? data[key as keyof AddResponderFormValues]
-            : (data[key as keyof AddResponderFormValues] as any)?.["value"];
-      }
-    });
-    const payload = {
-      type: selectedType.type === ResponderTypes.person ? "person" : "system",
-      incident_id: id,
-      created_by: user?.id,
-      team_id: selectedTeam.id,
-      properties: {
-        responderType: selectedType.value,
-        ...data
-      }
-    };
-    try {
-      setLoading(true);
-      const result = await saveResponder(payload);
-      if (!result?.error) {
-        toastSuccess("Added responder successfully");
-        cleanupState();
-        onSuccess();
-      } else {
-        onError();
-        toastError("Adding responder failed");
-      }
-    } catch (ex: any) {
-      toastError(ex.message);
-      onError();
-    }
-    setLoading(false);
-  };
-
-  const cleanupState = () => {
-    setIsOpen(false);
-    setSelectedTeam(null);
-    setSelectedType(null);
-  };
-
-  const getModalTitle = () => {
-    if (steps[0].inProgress) {
-      return `Select Team`;
-    }
-    if (steps[1].inProgress) {
-      return `Add Responder`;
-    }
-    return (
-      <div className="w-full">
-        {selectedType?.icon && <selectedType.icon className="inline-block" />}{" "}
-        <span>{selectedType?.label} Details</span>
-      </div>
-    );
-  };
 
   return (
-    <div className={clsx("flex flex-1", className)} {...rest}>
-      <button
-        className="text-sm font-medium text-blue-600 group-hover:text-blue-500"
-        onClick={() => {
-          setSelectedType(null);
-          reset();
-          setIsOpen(true);
-          setSteps(deepCloneSteps());
-        }}
-      >
-        Add Responder
-      </button>
-      <Modal
-        title={getModalTitle()}
-        onClose={onCloseModal}
-        open={isOpen}
-        bodyClass=""
-      >
-        <>
-          {steps[0].inProgress && (
-            <div className="px-8 py-4 h-modal-body-md">
-              <label
-                htmlFor="responder-types"
-                className="block text-base font-medium text-gray-500 my-2"
-              >
-                Teams
-              </label>
-              <OptionsList
-                name="responder-types"
-                options={teams}
-                onSelect={(e: any) => {
-                  setSelectedTeam(e);
-                  reset();
-                  const responders = extractResponders(e);
-                  if (responders.length === 1) {
-                    setSelectedType(responders[0]);
-                    goToStep(steps[1], steps[0]);
-                    goToStep(steps[2], steps[1]);
-                  } else {
-                    goToStep(steps[1], steps[0]);
-                  }
-                }}
-                value={selectedTeam}
-                className={clsx(
-                  "overflow-y-auto m-1",
-                  teams?.length > 6 ? "h-5/6" : ""
-                )}
-              />
-            </div>
-          )}
-          {steps[1].inProgress && (
-            <div className="px-8 pt-4 pb-12 h-modal-body-md">
-              <label
-                htmlFor="responder-types"
-                className="block text-base font-medium text-gray-500 my-2"
-              >
-                Responder Types
-              </label>
-              {Boolean(responderTypes.length) && (
-                <OptionsList
-                  name="responder-types"
-                  options={responderTypes}
-                  onSelect={(e: any) => {
-                    setSelectedType(e);
-                    goToStep(steps[2], steps[1]);
-                  }}
-                  value={selectedType}
-                  className={clsx(
-                    "overflow-y-auto m-1",
-                    responderTypes?.length > 6 ? "h-5/6" : ""
-                  )}
-                />
-              )}
-              {Boolean(!responderTypes.length) && (
-                <div className="text-sm text-center pt-10">
-                  There were no responders configured for this team
-                </div>
-              )}
-              <ActionButtonGroup
-                className="absolute w-full bottom-0 left-0"
-                previousAction={{
-                  label: "Back",
-                  disabled: false,
-                  handler: () => goToStep(steps[0], steps[1])
-                }}
-              />
-            </div>
-          )}
-          {steps[2].inProgress && (
-            <div>
-              <div className="px-8 py-3 min-h-modal-body-md max-h-modal-body-md mb-20 overflow-y-auto">
-                {getResponderTypeForm()}
-                <ActionButtonGroup
-                  className="absolute w-full bottom-0 left-0"
-                  nextAction={{
-                    label: !loading ? "Save" : "Saving...",
-                    disabled: !selectedType || loading,
-                    handler: onSubmit,
-                    primary: true
-                  }}
-                  previousAction={{
-                    label: "Back",
-                    disabled: !selectedType || loading,
-                    handler: () => {
-                      if (responderTypes.length === 1) {
-                        goToStep(steps[1], steps[2]);
-                        goToStep(steps[0], steps[1]);
-                      } else {
-                        goToStep(steps[1], steps[2]);
-                      }
-                    }
-                  }}
-                />
-              </div>
-            </div>
-          )}
-        </>
-      </Modal>
+    <div className={clsx("flex flex-col flex-1", className)} {...rest}>
+      <div className="relative flex items-center">
+        <div className="flex items-center bg-white rounded-md group gap-2">
+          <span className="flex items-center justify-center text-gray-400 border-2 border-gray-300 border-dashed rounded-full">
+            <svg
+              className="w-5 h-5"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                fillRule="evenodd"
+                d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+                clipRule="evenodd"
+              ></path>
+            </svg>
+          </span>
+          <span className="text-sm font-medium text-blue-600 group-hover:text-blue-500">
+            <button
+              className="text-sm font-medium text-blue-600 group-hover:text-blue-500"
+              onClick={() => {
+                setIsOpen(true);
+              }}
+            >
+              Add Responders
+            </button>
+          </span>
+        </div>
+      </div>
+
+      <AddResponderModal
+        incident={incident}
+        isOpen={isOpen}
+        onCloseModal={() => setIsOpen(false)}
+        onSuccess={onSuccess}
+        onError={onError}
+      />
     </div>
   );
 };

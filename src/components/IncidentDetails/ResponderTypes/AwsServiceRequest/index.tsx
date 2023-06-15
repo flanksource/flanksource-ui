@@ -2,7 +2,6 @@ import clsx from "clsx";
 import {
   Control,
   Controller,
-  FieldErrors,
   FieldErrorsImpl,
   UseFormSetValue
 } from "react-hook-form";

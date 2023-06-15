@@ -10,7 +10,7 @@ import {
 
 type ResponderDetailsToolTipProps = {
   element: React.ReactElement;
-  data?: { [key: string]: string | undefined };
+  data?: Record<string, any>;
   responder: any;
 } & React.HTMLProps<HTMLDivElement>;
 
