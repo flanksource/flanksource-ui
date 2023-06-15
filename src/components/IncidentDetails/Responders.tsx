@@ -8,7 +8,7 @@ import { ClickableSvg } from "../ClickableSvg/ClickableSvg";
 import { ConfirmationPromptDialog } from "../Dialogs/ConfirmationPromptDialog";
 import { IconButton } from "../IconButton";
 import { toastSuccess, toastError } from "../Toast/toast";
-import { AddResponder } from "./AddResponder";
+import { AddResponder } from "./AddResponders/AddResponder";
 import { IncidentDetailsRow } from "./IncidentDetailsRow";
 import { ResponderDetailsDialog } from "./ResponderDetailsDialog";
 import { ResponderDetailsToolTip } from "./ResponderDetailsToolTip";

@@ -1,18 +1,30 @@
-import {
-  useState,
-  useCallback,
-  MouseEventHandler,
-  useMemo,
-  useEffect
-} from "react";
 import clsx from "clsx";
-import { SiJira } from "react-icons/si";
-import { MdEmail } from "react-icons/md";
-import { GrVmware } from "react-icons/gr";
+import {
+  MouseEventHandler,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState
+} from "react";
 import { useForm } from "react-hook-form";
 import { FiUser } from "react-icons/fi";
-
-import { Modal } from "../Modal";
+import { GrVmware } from "react-icons/gr";
+import { MdEmail } from "react-icons/md";
+import { SiJira } from "react-icons/si";
+import { isEqual, template } from "lodash";
+import { useParams } from "react-router-dom";
+import { getAll } from "../../../api/schemaResources";
+import { saveResponder } from "../../../api/services/responder";
+import { useUser } from "../../../context";
+import { useLoader } from "../../../hooks";
+import { Icon } from "../../Icon";
+import { incidentStatusItems, typeItems } from "../../Incidents/data";
+import { Modal } from "../../Modal";
+import { OptionsList } from "../../OptionsList";
+import { schemaResourceTypes } from "../../SchemaResourcePage/resourceTypes";
+import { Step } from "../../StepProgressBar";
+import { toastError, toastSuccess } from "../../Toast/toast";
+import { ActionButtonGroup } from "./ActionButtonGroup";
 import {
   AwsServiceRequest,
   AwsSupport,
@@ -25,32 +37,14 @@ import {
   Redhat,
   ServiceNow,
   VMWare
-} from "./ResponderTypes";
-import { OptionsList } from "../OptionsList";
-import { Step } from "../StepProgressBar";
-import { Icon } from "../Icon";
-import { useParams } from "react-router-dom";
-import { useUser } from "../../context";
-import { saveResponder } from "../../api/services/responder";
-import { useLoader } from "../../hooks";
-import { toastError, toastSuccess } from "../Toast/toast";
-import { getAll } from "../../api/schemaResources";
-import { schemaResourceTypes } from "../SchemaResourcePage/resourceTypes";
+} from "../ResponderTypes";
 
-import _, { template, isEqual } from "lodash";
-import { incidentStatusItems, typeItems } from "../Incidents/data";
-
-type Action = {
+export type AddResponderAction = {
   label: string;
   disabled: boolean;
   handler: MouseEventHandler<HTMLButtonElement>;
   primary?: boolean;
 };
-
-type ActionButtonGroupProps = {
-  previousAction?: Action;
-  nextAction?: Action;
-} & React.HTMLProps<HTMLDivElement>;
 
 export type ResponderOption = {
   label: string;
@@ -346,7 +340,7 @@ export const AddResponder = ({
         });
         setTeams(data);
       })
-      .catch((err) => {
+      .catch(() => {
         setTeams([]);
       });
   }, []);
@@ -690,64 +684,6 @@ export const AddResponder = ({
           )}
         </>
       </Modal>
-    </div>
-  );
-};
-
-const ActionButtonGroup = ({
-  previousAction,
-  nextAction,
-  className,
-  ...rest
-}: ActionButtonGroupProps) => {
-  return (
-    <div
-      className={clsx(
-        "flex rounded-t-lg justify-between bg-gray-100 px-8 pb-4 items-end",
-        className
-      )}
-      {...rest}
-    >
-      <div className="flex flex-1">
-        {previousAction && (
-          <button
-            disabled={previousAction.disabled}
-            type="submit"
-            className={clsx(
-              !previousAction.primary
-                ? "inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:text-sm"
-                : "btn-primary",
-              "mt-4",
-              {
-                "btn-disabled": previousAction.disabled
-              }
-            )}
-            onClick={previousAction.handler}
-          >
-            {previousAction.label}
-          </button>
-        )}
-      </div>
-      <div className="flex flex-1 justify-end">
-        {nextAction && (
-          <button
-            disabled={nextAction.disabled}
-            type="submit"
-            className={clsx(
-              !nextAction.primary
-                ? "inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:text-sm"
-                : "btn-primary",
-              "mt-4",
-              {
-                "btn-disabled": nextAction.disabled
-              }
-            )}
-            onClick={nextAction.handler}
-          >
-            {nextAction.label}
-          </button>
-        )}
-      </div>
     </div>
   );
 };

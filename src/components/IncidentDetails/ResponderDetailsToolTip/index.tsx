@@ -6,7 +6,7 @@ import {
   getOrderedKeys,
   ResponderPropsKeyToLabelMap,
   ResponderOption
-} from "../AddResponder";
+} from "../AddResponders/AddResponder";
 
 type ResponderDetailsToolTipProps = {
   element: React.ReactElement;

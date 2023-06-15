@@ -10,7 +10,7 @@ import {
   getResponderTitleByValue,
   ResponderOption,
   ResponderPropsKeyToLabelMap
-} from "../AddResponder";
+} from "../AddResponders/AddResponder";
 
 type ResponderDetailsDialogProps = {
   open: boolean;

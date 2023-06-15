@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { template } from "lodash";
 import { Icon } from "../../components";
-import { ResponderPropsKeyToLabelMap } from "../../components/IncidentDetails/AddResponder";
+import { ResponderPropsKeyToLabelMap } from "../../components/IncidentDetails/AddResponders/AddResponder";
 import { getRespondersForTheIncident } from "../services/responder";
 
 export function useIncidentRespondersQuery(incidentId: string) {

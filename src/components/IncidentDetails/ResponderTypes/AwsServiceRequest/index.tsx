@@ -7,7 +7,7 @@ import {
   UseFormSetValue
 } from "react-hook-form";
 import { TextInput } from "../../../TextInput";
-import { AddResponderFormValues } from "../../AddResponder";
+import { AddResponderFormValues } from "../../AddResponders/AddResponder";
 
 type AwsServiceRequestProps = {
   control: Control;

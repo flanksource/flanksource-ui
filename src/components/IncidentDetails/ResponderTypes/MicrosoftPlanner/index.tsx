@@ -9,7 +9,7 @@ import {
 import { searchConfigs } from "../../../../api/services/configs";
 import { ConfigItem } from "../../../ConfigItem";
 import { TextInput } from "../../../TextInput";
-import { AddResponderFormValues } from "../../AddResponder";
+import { AddResponderFormValues } from "../../AddResponders/AddResponder";
 
 type MicrosoftProps = {
   teamId: string;
