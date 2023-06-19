@@ -23,6 +23,7 @@ export type Field = {
   type: string;
   variant?: Variant;
   required?: boolean;
+  hint?: string;
   default?: boolean | number | string;
 };
 
@@ -862,6 +863,781 @@ export const connectionTypes: ConnectionType[] = [
         }
       };
     }
+  },
+  {
+    title: "Bark",
+    icon: "bark", // TODO: add icon
+    fields: [
+      {
+        label: "Name",
+        key: "name",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "Device Key",
+        key: "username",
+        type: fieldTypes.EnvVarSource,
+        required: true
+      },
+      {
+        label: "Host",
+        key: "host",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "Path",
+        key: "path",
+        type: fieldTypes.input,
+        required: true
+      }
+    ],
+    convertToFormSpecificValue: (data: Record<string, any>) => {
+      return {
+        ...data,
+        path: data.properties?.path,
+        host: data.properties?.host
+      } as Connection;
+    },
+    preSubmitConverter: (data: Record<string, string>) => {
+      return {
+        name: data.name,
+        username: data.username,
+        password: data.password,
+        properties: {
+          path: data.path,
+          host: data.host
+        }
+      };
+    }
+  },
+  {
+    title: "Discord",
+    icon: "discord", // TODO: add icon
+    fields: [
+      {
+        label: "Name",
+        key: "name",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "Webhook ID",
+        key: "username",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "Token",
+        key: "username",
+        type: fieldTypes.EnvVarSource,
+        required: true
+      }
+    ]
+  },
+  {
+    title: "Email",
+    icon: "gmail", // TODO: add icon
+    fields: [
+      {
+        label: "Name",
+        key: "name",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "Username",
+        key: "username",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "Password",
+        key: "password",
+        type: fieldTypes.EnvVarSource,
+        required: true
+      },
+      {
+        label: "Host",
+        key: "url",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "Port",
+        key: "port",
+        type: fieldTypes.input,
+        required: true
+      }
+    ],
+    convertToFormSpecificValue: (data: Record<string, any>) => {
+      return {
+        ...data,
+        port: data.properties?.port
+      } as Connection;
+    },
+    preSubmitConverter: (data: Record<string, string>) => {
+      return {
+        name: data.name,
+        url: data.url,
+        username: data.username,
+        password: data.password,
+        properties: {
+          port: data.port
+        }
+      };
+    }
+  },
+  {
+    title: "Gotify",
+    icon: "gotify", // TODO: add icon
+    fields: [
+      {
+        label: "Name",
+        key: "name",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "Host",
+        key: "url",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "Token",
+        key: "password",
+        type: fieldTypes.EnvVarSource,
+        required: true
+      },
+      {
+        label: "Path",
+        key: "path",
+        type: fieldTypes.input,
+        required: false
+      }
+    ],
+    convertToFormSpecificValue: (data: Record<string, any>) => {
+      return {
+        ...data,
+        path: data.properties?.path
+      } as Connection;
+    },
+    preSubmitConverter: (data: Record<string, string>) => {
+      return {
+        name: data.name,
+        url: data.url,
+        password: data.password,
+        properties: {
+          path: data.path
+        }
+      };
+    }
+  },
+  {
+    title: "Google Chat",
+    icon: "google", // TODO: add icon
+    fields: [
+      {
+        label: "Name",
+        key: "name",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "Webhook Name",
+        key: "username",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "Token",
+        key: "password",
+        type: fieldTypes.EnvVarSource,
+        required: true
+      },
+      {
+        label: "Key",
+        key: "key",
+        type: fieldTypes.EnvVarSource,
+        required: true
+      }
+    ],
+    convertToFormSpecificValue: (data: Record<string, any>) => {
+      return {
+        ...data,
+        key: data.properties?.key
+      } as Connection;
+    },
+    preSubmitConverter: (data: Record<string, string>) => {
+      return {
+        name: data.name,
+        username: data.username,
+        password: data.password,
+        properties: {
+          key: data.key
+        }
+      };
+    }
+  },
+  {
+    title: "IFTTT",
+    icon: "ifttt", // TODO: add icon
+    fields: [
+      {
+        label: "Name",
+        key: "name",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "Webhook ID",
+        key: "username",
+        type: fieldTypes.input,
+        required: true
+      }
+    ]
+  },
+  {
+    title: "Join",
+    icon: "join", // TODO: add icon
+    fields: [
+      {
+        label: "Name",
+        key: "name",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "API Key",
+        key: "password",
+        type: fieldTypes.EnvVarSource,
+        required: true
+      }
+    ]
+  },
+  {
+    title: "Mattermost",
+    icon: "mattermost", // TODO: add icon
+    fields: [
+      {
+        label: "Name",
+        key: "name",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "Username",
+        key: "username",
+        hint: "Override webhook user",
+        type: fieldTypes.input,
+        required: false
+      },
+      {
+        label: "Host",
+        key: "host",
+        hint: "Mattermost server host",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "Token",
+        key: "password",
+        hint: "Webhook token",
+        type: fieldTypes.EnvVarSource,
+        required: true
+      },
+      {
+        label: "Channel",
+        key: "channel",
+        hint: "Override webhook channel",
+        type: fieldTypes.input,
+        required: false
+      }
+    ],
+    convertToFormSpecificValue: (data: Record<string, any>) => {
+      return {
+        ...data,
+        host: data.properties?.host,
+        channel: data.properties?.channel
+      } as Connection;
+    },
+    preSubmitConverter: (data: Record<string, string>) => {
+      return {
+        name: data.name,
+        username: data.username,
+        password: data.password,
+        properties: {
+          host: data.host,
+          channel: data.channel
+        }
+      };
+    }
+  },
+  {
+    title: "Matrix",
+    icon: "matrix", // TODO: add icon
+    fields: [
+      {
+        label: "Name",
+        key: "name",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "User",
+        key: "username",
+        hint: "Username or empty when using access token",
+        type: fieldTypes.input,
+        required: false
+      },
+      {
+        label: "Host",
+        key: "host",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "Password",
+        key: "password",
+        hint: "Password or access token",
+        type: fieldTypes.EnvVarSource,
+        required: true
+      }
+    ],
+    convertToFormSpecificValue: (data: Record<string, any>) => {
+      return {
+        ...data,
+        host: data.properties?.host,
+        channel: data.properties?.channel
+      } as Connection;
+    },
+    preSubmitConverter: (data: Record<string, string>) => {
+      return {
+        name: data.name,
+        username: data.username,
+        password: data.password,
+        properties: {
+          host: data.host,
+          channel: data.channel
+        }
+      };
+    }
+  },
+  {
+    title: "Ntfy",
+    icon: "ntfy", // TODO: add icon
+    fields: [
+      {
+        label: "Name",
+        key: "name",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "Username",
+        key: "username",
+        type: fieldTypes.input,
+        required: false
+      },
+      {
+        label: "Password",
+        key: "password",
+        type: fieldTypes.EnvVarSource,
+        required: true
+      },
+      {
+        label: "Host",
+        key: "host",
+        hint: "Ntfy server host. Default: ntfy.sh",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "Port",
+        key: "port",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "Topic",
+        key: "topic",
+        hint: "Target topic name",
+        type: fieldTypes.EnvVarSource,
+        required: true
+      }
+    ],
+    convertToFormSpecificValue: (data: Record<string, any>) => {
+      return {
+        ...data,
+        host: data.properties?.host,
+        topic: data.properties?.topic,
+        port: data.properties?.port
+      } as Connection;
+    },
+    preSubmitConverter: (data: Record<string, string>) => {
+      return {
+        name: data.name,
+        username: data.username,
+        password: data.password,
+        properties: {
+          host: data.host,
+          topic: data.topic,
+          port: data.port
+        }
+      };
+    }
+  },
+  {
+    title: "OpsGenie",
+    icon: "opsgenie", // TODO: add icon
+    fields: [
+      {
+        label: "Name",
+        key: "name",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "Host",
+        key: "host",
+        type: fieldTypes.input,
+        required: false
+      },
+      {
+        label: "Port",
+        key: "port",
+        type: fieldTypes.numberInput,
+        required: false
+      },
+      {
+        label: "API Key",
+        key: "password",
+        type: fieldTypes.EnvVarSource,
+        required: true
+      }
+    ],
+    convertToFormSpecificValue: (data: Record<string, any>) => {
+      return {
+        ...data,
+        host: data.properties?.host,
+        port: data.properties?.port
+      } as Connection;
+    },
+    preSubmitConverter: (data: Record<string, string>) => {
+      return {
+        name: data.name,
+        username: data.username,
+        password: data.password,
+        properties: {
+          host: data.host,
+          port: data.port
+        }
+      };
+    }
+  },
+  {
+    title: "Pushbullet",
+    icon: "pushbullet", // TODO: add icon
+    fields: [
+      {
+        label: "Name",
+        key: "name",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "Token",
+        key: "password",
+        type: fieldTypes.EnvVarSource,
+        required: true
+      },
+      {
+        label: "Targets",
+        key: "targets",
+        type: fieldTypes.input,
+        required: true
+      }
+    ],
+    convertToFormSpecificValue: (data: Record<string, any>) => {
+      return {
+        ...data,
+        targets: data.properties?.targets
+      } as Connection;
+    },
+    preSubmitConverter: (data: Record<string, string>) => {
+      return {
+        name: data.name,
+        username: data.username,
+        password: data.password,
+        properties: {
+          targets: data.targets
+        }
+      };
+    }
+  },
+  {
+    title: "Pushover",
+    icon: "pushover", // TODO: add icon
+    fields: [
+      {
+        label: "Name",
+        key: "name",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "User",
+        key: "username",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "Token",
+        key: "password",
+        type: fieldTypes.EnvVarSource,
+        required: true
+      }
+    ]
+  },
+  {
+    title: "Rocketchat",
+    icon: "rocketchat", // TODO: add icon
+    fields: [
+      {
+        label: "Name",
+        key: "name",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "Username",
+        key: "username",
+        type: fieldTypes.input,
+        required: false
+      },
+      {
+        label: "Host",
+        key: "host",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "Port",
+        key: "port",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "Token A",
+        key: "tokenA",
+        type: fieldTypes.EnvVarSource,
+        required: true
+      },
+      {
+        label: "Token B",
+        key: "tokenB",
+        type: fieldTypes.EnvVarSource,
+        required: true
+      },
+      {
+        label: "Channel",
+        key: "channel",
+        type: fieldTypes.input,
+        required: true
+      }
+    ],
+    convertToFormSpecificValue: (data: Record<string, any>) => {
+      return {
+        ...data,
+        host: data.properties?.host,
+        port: data.properties?.port,
+        tokenA: data.properties?.tokenA,
+        tokenB: data.properties?.tokenB,
+        channel: data.properties?.channel
+      } as Connection;
+    },
+    preSubmitConverter: (data: Record<string, string>) => {
+      return {
+        name: data.name,
+        username: data.username,
+        password: data.password,
+        properties: {
+          host: data.host,
+          port: data.port,
+          tokenA: data.tokenA,
+          tokenB: data.tokenB,
+          channel: data.channel
+        }
+      };
+    }
+  },
+  {
+    title: "Slack",
+    icon: "slack",
+    fields: [
+      {
+        label: "Name",
+        key: "name",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "Channel",
+        key: "username",
+        hint: "Channel to send messages to in Cxxxxxxxxxx format",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "Bot Token",
+        key: "password",
+        type: fieldTypes.EnvVarSource,
+        required: true
+      }
+    ]
+  },
+  {
+    title: "Teams",
+    icon: "teams",
+    fields: [
+      {
+        label: "Name",
+        key: "name",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "Group",
+        key: "group",
+        type: fieldTypes.input,
+        required: false
+      },
+      {
+        label: "Tenant",
+        key: "tenant",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "AltID",
+        key: "altID",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "GroupOwner",
+        key: "groupOwner",
+        type: fieldTypes.input,
+        required: true
+      }
+    ],
+    convertToFormSpecificValue: (data: Record<string, any>) => {
+      return {
+        ...data,
+        group: data.properties?.group,
+        tenant: data.properties?.tenant,
+        altID: data.properties?.altID,
+        groupOwner: data.properties?.groupOwner
+      } as Connection;
+    },
+    preSubmitConverter: (data: Record<string, string>) => {
+      return {
+        name: data.name,
+        properties: {
+          group: data.group,
+          tenant: data.tenant,
+          altID: data.altID,
+          groupOwner: data.groupOwner
+        }
+      };
+    }
+  },
+  {
+    title: "Telegram",
+    icon: "telegram", // TODO: add icon
+    fields: [
+      {
+        label: "Name",
+        key: "name",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "Token",
+        key: "password",
+        type: fieldTypes.EnvVarSource,
+        required: true
+      }
+    ]
+  },
+  {
+    title: "Zulip Chat",
+    icon: "zuplichat", // TODO: add icon
+    fields: [
+      {
+        label: "Name",
+        key: "name",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "BotMail",
+        key: "email",
+        hint: "Bot e-mail address",
+        type: fieldTypes.input,
+        required: false
+      },
+      {
+        label: "BotKey",
+        key: "key",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "Host",
+        key: "host",
+        type: fieldTypes.input,
+        required: true
+      }
+    ],
+    convertToFormSpecificValue: (data: Record<string, any>) => {
+      return {
+        ...data,
+        host: data.properties?.host,
+        key: data.properties?.key,
+        email: data.properties?.email
+      } as Connection;
+    },
+    preSubmitConverter: (data: Record<string, string>) => {
+      return {
+        name: data.name,
+        properties: {
+          host: data.host,
+          key: data.key,
+          email: data.email
+        }
+      };
+    }
+  },
+  {
+    title: "Generic Webhook",
+    icon: "http", // TODO: add icon
+    fields: [
+      {
+        label: "Name",
+        key: "name",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "URL",
+        key: "url",
+        type: fieldTypes.input,
+        required: true
+      }
+    ]
   }
 ]
   .sort((v1, v2) => {

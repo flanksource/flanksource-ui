@@ -19,6 +19,8 @@ export type Connection = {
   username?: string;
   password?: string;
   certificate?: string;
+  path?: string;
+  channel?: string;
   domain?: string;
   region?: string;
   profile?: string;
@@ -32,6 +34,15 @@ export type Connection = {
   sharename?: string;
   searchPath?: string;
   scheme?: string;
+  key?: string;
+  email?: string;
+  topic?: string;
+  tokenA?: string;
+  tokenB?: string;
+  targets?: string;
+  group?: string;
+  groupOwner?: string;
+  altID?: string;
   db?: string;
 };
 
@@ -93,6 +104,7 @@ export default function ConnectionForm({
             name={field.key}
             label={field.label}
             required={field.required}
+            hint={field.hint}
             defaultValue={field.default?.toString()}
           />
         );
@@ -103,6 +115,7 @@ export default function ConnectionForm({
             name={field.key}
             label={field.label}
             required={field.required}
+            hint={field.hint}
             defaultValue={field.default?.toString()}
           />
         );
@@ -113,6 +126,7 @@ export default function ConnectionForm({
             label={field.label}
             labelClassName="text-sm font-semibold text-gray-700"
             required={field.required}
+            hint={field.hint}
           />
         );
       case "EnvVarSource":
@@ -121,6 +135,7 @@ export default function ConnectionForm({
             name={field.key}
             label={field.label}
             variant={field.variant}
+            hint={field.hint}
             required={field.required}
           />
         );
