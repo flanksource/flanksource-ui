@@ -6,7 +6,7 @@ export function Status({ good, mixed, className = "" }) {
     : "bg-red-400";
   return (
     <span
-      className={`flex-shrink-0 inline-block h-3 w-3 rounded-full shadow-md ${className} ${color}`}
+      className={`flex-shrink-0 inline-block h-3 w-3 rounded-full ${className} ${color}`}
       aria-hidden="true"
     />
   );
