@@ -878,6 +878,7 @@ export const connectionTypes: ConnectionType[] = [
         label: "Device Key",
         key: "username",
         type: fieldTypes.EnvVarSource,
+        hint: "The key for each device",
         required: true
       },
       {
@@ -890,7 +891,7 @@ export const connectionTypes: ConnectionType[] = [
         label: "Path",
         key: "path",
         type: fieldTypes.input,
-        required: true
+        required: false
       }
     ],
     convertToFormSpecificValue: (data: Record<string, any>) => {
@@ -904,7 +905,7 @@ export const connectionTypes: ConnectionType[] = [
       return {
         name: data.name,
         username: data.username,
-        password: data.password,
+        url: `bark://:$(username)@${data.host}/${data.path}`,
         properties: {
           path: data.path,
           host: data.host
@@ -930,11 +931,19 @@ export const connectionTypes: ConnectionType[] = [
       },
       {
         label: "Token",
-        key: "username",
+        key: "password",
         type: fieldTypes.EnvVarSource,
         required: true
       }
-    ]
+    ],
+    preSubmitConverter: (data: Record<string, string>) => {
+      return {
+        name: data.name,
+        username: data.username,
+        password: data.password,
+        url: `discord://$(password)@${data.username}`
+      };
+    }
   },
   {
     title: "Email",
@@ -955,35 +964,81 @@ export const connectionTypes: ConnectionType[] = [
       {
         label: "Password",
         key: "password",
+        hint: "SMTP server password or hash (for OAuth2)",
         type: fieldTypes.EnvVarSource,
         required: true
       },
       {
+        label: "From Address",
+        key: "from",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "From Name",
+        key: "fromName",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
         label: "Host",
-        key: "url",
+        key: "host",
         type: fieldTypes.input,
         required: true
       },
       {
         label: "Port",
         key: "port",
-        type: fieldTypes.input,
+        type: fieldTypes.numberInput,
+        default: 25,
         required: true
+      },
+      {
+        label: "Encryption method",
+        key: "encryptionMethod",
+        type: fieldTypes.input,
+        hint: "None, ExplicitTLS, ImplicitTLS, Auto (default)",
+        default: "Auto",
+        required: true
+      },
+      {
+        label: "SMTP authentication method",
+        key: "authMethod",
+        type: fieldTypes.input,
+        hint: "None, Plain, CRAMMD5, Unknown, OAuth2",
+        default: "Unknown",
+        required: true
+      },
+      {
+        label: "Insecure TLS",
+        key: "insecure_tls",
+        type: fieldTypes.checkbox
       }
     ],
     convertToFormSpecificValue: (data: Record<string, any>) => {
       return {
         ...data,
+        authMethod: data.properties?.authMethod,
+        encryptionMethod: data.properties?.encryptionMethod,
+        from: data.properties?.from,
+        fromName: data.properties?.fromName,
+        host: data.properties?.host,
         port: data.properties?.port
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
       return {
         name: data.name,
-        url: data.url,
+        url: `smtp://$(username):$(password)@${data.host}:${data.port}/?UseStartTLS=${data.insecure_tls}&Encryption=${data.encryptionMethod}&Auth=${data.authMethod}`,
         username: data.username,
         password: data.password,
+        insecure_tls: data.insecure_tls,
         properties: {
+          authMethod: data.authMethod,
+          encryptionMethod: data.encryptionMethod,
+          from: data.from,
+          fromName: data.fromName,
+          host: data.host,
           port: data.port
         }
       };
@@ -1001,8 +1056,9 @@ export const connectionTypes: ConnectionType[] = [
       },
       {
         label: "Host",
-        key: "url",
+        key: "host",
         type: fieldTypes.input,
+        hint: "Server hostname (and optionally port)",
         required: true
       },
       {
@@ -1016,21 +1072,29 @@ export const connectionTypes: ConnectionType[] = [
         key: "path",
         type: fieldTypes.input,
         required: false
+      },
+      {
+        label: "Insecure TLS",
+        key: "insecure_tls",
+        type: fieldTypes.checkbox
       }
     ],
     convertToFormSpecificValue: (data: Record<string, any>) => {
       return {
         ...data,
-        path: data.properties?.path
+        path: data.properties?.path,
+        host: data.properties?.path
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
       return {
         name: data.name,
-        url: data.url,
+        url: `gotify://${data.host}/${data.path}/$(password)?DisableTLS=${data.insecure_tls}`,
         password: data.password,
+        insecure_tls: data.insecure_tls,
         properties: {
-          path: data.path
+          path: data.path,
+          host: data.host
         }
       };
     }
@@ -1046,9 +1110,9 @@ export const connectionTypes: ConnectionType[] = [
         required: true
       },
       {
-        label: "Webhook Name",
+        label: "Key",
         key: "username",
-        type: fieldTypes.input,
+        type: fieldTypes.EnvVarSource,
         required: true
       },
       {
@@ -1058,25 +1122,26 @@ export const connectionTypes: ConnectionType[] = [
         required: true
       },
       {
-        label: "Key",
-        key: "key",
-        type: fieldTypes.EnvVarSource,
+        label: "Webhook Name",
+        key: "webhook",
+        type: fieldTypes.input,
         required: true
       }
     ],
     convertToFormSpecificValue: (data: Record<string, any>) => {
       return {
         ...data,
-        key: data.properties?.key
+        webhook: data.properties?.webhook
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
       return {
         name: data.name,
+        url: `googlechat://chat.googleapis.com/v1/spaces/${data.webhook}/messages?key=$(username)&token=$(password)`,
         username: data.username,
         password: data.password,
         properties: {
-          key: data.key
+          webhook: data.webhook
         }
       };
     }
@@ -1097,7 +1162,14 @@ export const connectionTypes: ConnectionType[] = [
         type: fieldTypes.input,
         required: true
       }
-    ]
+    ],
+    preSubmitConverter: (data: Record<string, string>) => {
+      return {
+        name: data.name,
+        url: `ifttt://${data.username}`,
+        username: data.username
+      };
+    }
   },
   {
     title: "Join",
@@ -1110,12 +1182,27 @@ export const connectionTypes: ConnectionType[] = [
         required: true
       },
       {
+        label: "Devices",
+        hint: "Comma separated list of device IDs",
+        key: "username",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
         label: "API Key",
         key: "password",
         type: fieldTypes.EnvVarSource,
         required: true
       }
-    ]
+    ],
+    preSubmitConverter: (data: Record<string, string>) => {
+      return {
+        name: data.name,
+        url: `join://$(password)@join/?Devices=${data.username}`,
+        username: data.username,
+        password: data.password
+      };
+    }
   },
   {
     title: "Mattermost",
@@ -1137,7 +1224,7 @@ export const connectionTypes: ConnectionType[] = [
       {
         label: "Host",
         key: "host",
-        hint: "Mattermost server host",
+        hint: "Mattermost server host (host:port)",
         type: fieldTypes.input,
         required: true
       },
@@ -1167,6 +1254,7 @@ export const connectionTypes: ConnectionType[] = [
       return {
         name: data.name,
         username: data.username,
+        url: `mattermost://${data.username}@${data.host}/$(password)/${data.channel}`,
         password: data.password,
         properties: {
           host: data.host,
@@ -1193,17 +1281,22 @@ export const connectionTypes: ConnectionType[] = [
         required: false
       },
       {
+        label: "Password",
+        key: "password",
+        hint: "Password or access token",
+        type: fieldTypes.EnvVarSource,
+        required: true
+      },
+      {
         label: "Host",
         key: "host",
         type: fieldTypes.input,
         required: true
       },
       {
-        label: "Password",
-        key: "password",
-        hint: "Password or access token",
-        type: fieldTypes.EnvVarSource,
-        required: true
+        label: "Insecure TLS",
+        key: "insecure_tls",
+        type: fieldTypes.checkbox
       }
     ],
     convertToFormSpecificValue: (data: Record<string, any>) => {
@@ -1218,9 +1311,10 @@ export const connectionTypes: ConnectionType[] = [
         name: data.name,
         username: data.username,
         password: data.password,
+        insecure_tls: data.insecure_tls,
+        url: `matrix://${data.username}:$(password)@${data.host}/?DisableTLS=${data.insecure_tls}`,
         properties: {
-          host: data.host,
-          channel: data.channel
+          host: data.host
         }
       };
     }
@@ -1250,13 +1344,8 @@ export const connectionTypes: ConnectionType[] = [
       {
         label: "Host",
         key: "host",
-        hint: "Ntfy server host. Default: ntfy.sh",
-        type: fieldTypes.input,
-        required: true
-      },
-      {
-        label: "Port",
-        key: "port",
+        hint: "Server hostname and port",
+        default: "ntfy.sh",
         type: fieldTypes.input,
         required: true
       },
@@ -1264,27 +1353,32 @@ export const connectionTypes: ConnectionType[] = [
         label: "Topic",
         key: "topic",
         hint: "Target topic name",
-        type: fieldTypes.EnvVarSource,
+        type: fieldTypes.input,
         required: true
+      },
+      {
+        label: "Insecure TLS",
+        key: "insecure_tls",
+        type: fieldTypes.checkbox
       }
     ],
     convertToFormSpecificValue: (data: Record<string, any>) => {
       return {
         ...data,
         host: data.properties?.host,
-        topic: data.properties?.topic,
-        port: data.properties?.port
+        topic: data.properties?.topic
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
+      const scheme = data.insecure_tls ? "http" : "https";
       return {
         name: data.name,
         username: data.username,
         password: data.password,
+        url: `ntfy://${data.username}:$(password)@${data.host}/${data.topic}?Scheme=${scheme}`,
         properties: {
           host: data.host,
-          topic: data.topic,
-          port: data.port
+          topic: data.topic
         }
       };
     }
@@ -1302,14 +1396,16 @@ export const connectionTypes: ConnectionType[] = [
       {
         label: "Host",
         key: "host",
+        default: "api.opsgenie.com",
         type: fieldTypes.input,
-        required: false
+        required: true
       },
       {
         label: "Port",
         key: "port",
+        default: 443,
         type: fieldTypes.numberInput,
-        required: false
+        required: true
       },
       {
         label: "API Key",
@@ -1328,7 +1424,7 @@ export const connectionTypes: ConnectionType[] = [
     preSubmitConverter: (data: Record<string, string>) => {
       return {
         name: data.name,
-        username: data.username,
+        url: `opsgenie://${data.host}:${data.port}/$(password)`,
         password: data.password,
         properties: {
           host: data.host,
@@ -1369,7 +1465,7 @@ export const connectionTypes: ConnectionType[] = [
     preSubmitConverter: (data: Record<string, string>) => {
       return {
         name: data.name,
-        username: data.username,
+        url: `pushbullet://$(password)/${data.targets}`,
         password: data.password,
         properties: {
           targets: data.targets
@@ -1399,7 +1495,15 @@ export const connectionTypes: ConnectionType[] = [
         type: fieldTypes.EnvVarSource,
         required: true
       }
-    ]
+    ],
+    preSubmitConverter: (data: Record<string, string>) => {
+      return {
+        name: data.name,
+        url: `pushover://:$(password)@${data.username}/`,
+        username: data.username,
+        password: data.password
+      };
+    }
   },
   {
     title: "Rocketchat",
@@ -1413,7 +1517,7 @@ export const connectionTypes: ConnectionType[] = [
       },
       {
         label: "Username",
-        key: "username",
+        key: "user",
         type: fieldTypes.input,
         required: false
       },
@@ -1431,13 +1535,13 @@ export const connectionTypes: ConnectionType[] = [
       },
       {
         label: "Token A",
-        key: "tokenA",
+        key: "username",
         type: fieldTypes.EnvVarSource,
         required: true
       },
       {
         label: "Token B",
-        key: "tokenB",
+        key: "password",
         type: fieldTypes.EnvVarSource,
         required: true
       },
@@ -1453,8 +1557,7 @@ export const connectionTypes: ConnectionType[] = [
         ...data,
         host: data.properties?.host,
         port: data.properties?.port,
-        tokenA: data.properties?.tokenA,
-        tokenB: data.properties?.tokenB,
+        user: data.properties?.user,
         channel: data.properties?.channel
       } as Connection;
     },
@@ -1463,11 +1566,11 @@ export const connectionTypes: ConnectionType[] = [
         name: data.name,
         username: data.username,
         password: data.password,
+        url: `rocketchat://${data.user}@${data.host}:${data.port}/$(username)/$(password)/${data.channel}`,
         properties: {
           host: data.host,
           port: data.port,
-          tokenA: data.tokenA,
-          tokenB: data.tokenB,
+          user: data.user,
           channel: data.channel
         }
       };
@@ -1496,7 +1599,15 @@ export const connectionTypes: ConnectionType[] = [
         type: fieldTypes.EnvVarSource,
         required: true
       }
-    ]
+    ],
+    preSubmitConverter: (data: Record<string, string>) => {
+      return {
+        name: data.name,
+        username: data.username,
+        password: data.password,
+        url: `slack://$(password)@${data.username}`
+      };
+    }
   },
   {
     title: "Teams",
@@ -1531,6 +1642,13 @@ export const connectionTypes: ConnectionType[] = [
         key: "groupOwner",
         type: fieldTypes.input,
         required: true
+      },
+      {
+        label: "Host",
+        key: "host",
+        type: fieldTypes.input,
+        default: "outlook.office.com",
+        required: true
       }
     ],
     convertToFormSpecificValue: (data: Record<string, any>) => {
@@ -1539,16 +1657,19 @@ export const connectionTypes: ConnectionType[] = [
         group: data.properties?.group,
         tenant: data.properties?.tenant,
         altID: data.properties?.altID,
+        host: data.properties?.host,
         groupOwner: data.properties?.groupOwner
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
       return {
         name: data.name,
+        url: `teams://${data.group}@${data.tenant}/${data.altID}/${data.groupOwner}?host=${data.host}`,
         properties: {
           group: data.group,
           tenant: data.tenant,
           altID: data.altID,
+          host: data.host,
           groupOwner: data.groupOwner
         }
       };
@@ -1569,8 +1690,23 @@ export const connectionTypes: ConnectionType[] = [
         key: "password",
         type: fieldTypes.EnvVarSource,
         required: true
+      },
+      {
+        label: "Chats",
+        hitns: "Chat IDs or Channel names (using @channel-name)",
+        key: "username",
+        type: fieldTypes.input,
+        required: true
       }
-    ]
+    ],
+    preSubmitConverter: (data: Record<string, string>) => {
+      return {
+        name: data.name,
+        url: `telegram://$(password)@telegram/?Chats=${data.username}`,
+        username: data.username,
+        password: data.password
+      };
+    }
   },
   {
     title: "Zulip Chat",
@@ -1584,15 +1720,15 @@ export const connectionTypes: ConnectionType[] = [
       },
       {
         label: "BotMail",
-        key: "email",
+        key: "username",
         hint: "Bot e-mail address",
         type: fieldTypes.input,
         required: false
       },
       {
         label: "BotKey",
-        key: "key",
-        type: fieldTypes.input,
+        key: "password",
+        type: fieldTypes.EnvVarSource,
         required: true
       },
       {
@@ -1605,18 +1741,17 @@ export const connectionTypes: ConnectionType[] = [
     convertToFormSpecificValue: (data: Record<string, any>) => {
       return {
         ...data,
-        host: data.properties?.host,
-        key: data.properties?.key,
-        email: data.properties?.email
+        host: data.properties?.host
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
       return {
         name: data.name,
+        username: data.username,
+        password: data.password,
+        url: `zulip://${data.email}:$(password)@${data.host}/`,
         properties: {
-          host: data.host,
-          key: data.key,
-          email: data.email
+          host: data.host
         }
       };
     }
@@ -1633,11 +1768,66 @@ export const connectionTypes: ConnectionType[] = [
       },
       {
         label: "URL",
-        key: "url",
+        key: "username",
         type: fieldTypes.input,
         required: true
+      },
+      {
+        label: "ContentType",
+        default: "application/json",
+        key: "contentType",
+        type: fieldTypes.input
+      },
+      {
+        label: "Request Method",
+        key: "requestMethod",
+        type: fieldTypes.input,
+        default: "POST",
+        required: true
+      },
+      {
+        label: "Message Key",
+        default: "message",
+        key: "key",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "Title Key",
+        default: "title",
+        key: "titleKey",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "Insecure TLS",
+        key: "insecure_tls",
+        type: fieldTypes.checkbox
       }
-    ]
+    ],
+    convertToFormSpecificValue: (data: Record<string, any>) => {
+      return {
+        ...data,
+        contentType: data.properties?.contentType,
+        requestMethod: data.properties?.requestMethod,
+        key: data.properties?.key,
+        titleKey: data.properties?.titleKey
+      } as Connection;
+    },
+    preSubmitConverter: (data: Record<string, string>) => {
+      return {
+        name: data.name,
+        username: data.username,
+        url: `generic+${data.username}?ContentType=${data.contentType}&MessageKey=${data.key}&TitleKey=${data.titleKey}&RequestMethod=${data.requestMethod}&DisableTLS=${data.insecure_tls}`,
+        insecure_tls: data.insecure_tls,
+        properties: {
+          contentType: data.contentType,
+          requestMethod: data.requestMethod,
+          message: data.message,
+          titleKey: data.titleKey
+        }
+      };
+    }
   }
 ]
   .sort((v1, v2) => {
