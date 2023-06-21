@@ -1339,7 +1339,7 @@ export const connectionTypes: ConnectionType[] = [
         label: "Password",
         key: "password",
         type: fieldTypes.EnvVarSource,
-        required: true
+        required: false
       },
       {
         label: "Host",
@@ -1375,6 +1375,7 @@ export const connectionTypes: ConnectionType[] = [
         name: data.name,
         username: data.username,
         password: data.password,
+        insecure_tls: data.insecure_tls,
         url: `ntfy://${data.username}:$(password)@${data.host}/${data.topic}?Scheme=${scheme}`,
         properties: {
           host: data.host,
@@ -1598,14 +1599,29 @@ export const connectionTypes: ConnectionType[] = [
         key: "password",
         type: fieldTypes.EnvVarSource,
         required: true
+      },
+      {
+        label: "Bot Name",
+        key: "fromName",
+        type: fieldTypes.input,
+        required: false
       }
     ],
+    convertToFormSpecificValue: (data: Record<string, any>) => {
+      return {
+        ...data,
+        fromName: data.properties?.fromName
+      } as Connection;
+    },
     preSubmitConverter: (data: Record<string, string>) => {
       return {
         name: data.name,
         username: data.username,
         password: data.password,
-        url: `slack://$(password)@${data.username}`
+        url: `slack://$(password)@${data.username}?BotName=${data.fromName}`,
+        properties: {
+          fromName: data.fromName
+        }
       };
     }
   },
