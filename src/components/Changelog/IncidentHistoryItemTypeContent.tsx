@@ -79,7 +79,7 @@ const IncidentHistoryTypeToComponentMap = new Map<
       const evidence = incidentHistory.evidence;
       return (
         <>
-          added done definition{" "}
+          added definition of done{" "}
           <Badge
             value={evidence?.type}
             text={<EvidenceChangelogContent evidence={evidence} />}
