@@ -130,9 +130,9 @@ export default function IncidentHistoryItemTypeContent({
   incidentHistory
 }: IncidentHistoryItemTypeContentProps) {
   const { type } = incidentHistory;
+  console.log(incidentHistory);
 
   const Component = IncidentHistoryTypeToComponentMap.get(type);
-
   if (Component) {
     return <Component incidentHistory={incidentHistory} />;
   }
