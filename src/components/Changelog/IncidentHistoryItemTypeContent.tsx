@@ -74,6 +74,21 @@ const IncidentHistoryTypeToComponentMap = new Map<
     }
   ],
   [
+    "evidence.done_definition_added",
+    ({ incidentHistory }) => {
+      const evidence = incidentHistory.evidence;
+      return (
+        <>
+          added done definition{" "}
+          <Badge
+            value={evidence?.type}
+            text={<EvidenceChangelogContent evidence={evidence} />}
+          />
+        </>
+      );
+    }
+  ],
+  [
     "responder.commented",
     ({ incidentHistory }) => {
       const responder = incidentHistory.responder;

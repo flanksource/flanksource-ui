@@ -15,6 +15,7 @@ export enum IncidentHistoryType {
   "responder.created" = "responder.created",
   "evidence.created" = "evidence.created",
   "incident.status_updated" = "incident.status_updated",
+  "evidence.done_definition_added" = "evidence.done_definition_added",
   "incident_status.updated" = "incident_status.updated",
   "responder.commented" = "responder.commented",
   "hypothesis.created" = "hypothesis.created",
