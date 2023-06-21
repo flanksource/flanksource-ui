@@ -51,8 +51,8 @@ const IncidentHistoryTypeToComponentMap = new Map<
       const responder = incidentHistory.responder;
       return (
         <>
-          Added responder <Avatar user={responder?.person!} />{" "}
-          {responder?.person?.name}{" "}
+          Added responder <Avatar user={responder?.team || responder?.person} />{" "}
+          {responder?.team?.name || responder?.person?.name}{" "}
         </>
       );
     }
