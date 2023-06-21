@@ -64,7 +64,7 @@ const IncidentHistoryTypeToComponentMap = new Map<
 
       return (
         <>
-          added{" "}
+          added evidence{" "}
           <Badge text={<EvidenceChangelogContent evidence={evidence} />} />
         </>
       );
