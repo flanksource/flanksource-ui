@@ -65,7 +65,10 @@ const IncidentHistoryTypeToComponentMap = new Map<
       return (
         <>
           added evidence{" "}
-          <Badge text={<EvidenceChangelogContent evidence={evidence} />} />
+          <Badge
+            value={evidence?.type}
+            text={<EvidenceChangelogContent evidence={evidence} />}
+          />
         </>
       );
     }
@@ -130,7 +133,6 @@ export default function IncidentHistoryItemTypeContent({
   incidentHistory
 }: IncidentHistoryItemTypeContentProps) {
   const { type } = incidentHistory;
-  console.log(incidentHistory);
 
   const Component = IncidentHistoryTypeToComponentMap.get(type);
   if (Component) {
