@@ -38,7 +38,7 @@ export const MicrosoftPlanner = ({
   const [allValues, setAllValues] = useState<any>({});
 
   useEffect(() => {
-    searchConfigs("MsPlanner", "")
+    searchConfigs("ms_planner", "")
       .then(({ data }: any) => {
         const item = (data || [])
           .map((item: any) => ({
@@ -80,7 +80,7 @@ export const MicrosoftPlanner = ({
     <div className={clsx(className)} {...rest}>
       <div className="mb-4">
         <ConfigItem
-          type="MSPlanner"
+          type="ms_planner"
           control={control}
           name="configType"
           autoFetch={true}
@@ -103,7 +103,7 @@ export const MicrosoftPlanner = ({
         >
           <p className="text-red-600 text-sm">{errors?.configType?.message}</p>
           <ConfigItem
-            type="MSPlanner"
+            type="ms_planner"
             control={control}
             name="plan_id"
             value={
@@ -136,7 +136,7 @@ export const MicrosoftPlanner = ({
           >
             <p className="text-red-600 text-sm">{errors?.plan_id?.message}</p>
             <ConfigItem
-              type="MSPlanner"
+              type="ms_planner"
               control={control}
               name="bucket_id"
               value={
@@ -168,7 +168,7 @@ export const MicrosoftPlanner = ({
             />
             <p className="text-red-600 text-sm">{errors.bucket_id?.message}</p>
             <ConfigItem
-              type="MSPlanner"
+              type="ms_planner"
               control={control}
               name="priority"
               value={
