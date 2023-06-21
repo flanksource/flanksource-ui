@@ -34,6 +34,9 @@ export type ConnectionType = {
   convertToFormSpecificValue?: (data: Record<string, string>) => Connection;
   preSubmitConverter?: (data: Record<string, string>) => object;
   hide?: boolean;
+
+  /** indicates whether this connection is primarily for notification */
+  forNotification?: boolean;
 };
 
 export const connectionTypes: ConnectionType[] = [
@@ -866,6 +869,7 @@ export const connectionTypes: ConnectionType[] = [
   },
   {
     title: "Bark",
+    forNotification: true,
     icon: "bark", // TODO: add icon
     fields: [
       {
@@ -915,6 +919,7 @@ export const connectionTypes: ConnectionType[] = [
   },
   {
     title: "Discord",
+    forNotification: true,
     icon: "discord", // TODO: add icon
     fields: [
       {
@@ -947,6 +952,7 @@ export const connectionTypes: ConnectionType[] = [
   },
   {
     title: "Email",
+    forNotification: true,
     icon: "gmail", // TODO: add icon
     fields: [
       {
@@ -1046,6 +1052,7 @@ export const connectionTypes: ConnectionType[] = [
   },
   {
     title: "Gotify",
+    forNotification: true,
     icon: "gotify", // TODO: add icon
     fields: [
       {
@@ -1101,6 +1108,7 @@ export const connectionTypes: ConnectionType[] = [
   },
   {
     title: "Google Chat",
+    forNotification: true,
     icon: "google", // TODO: add icon
     fields: [
       {
@@ -1148,6 +1156,7 @@ export const connectionTypes: ConnectionType[] = [
   },
   {
     title: "IFTTT",
+    forNotification: true,
     icon: "ifttt", // TODO: add icon
     fields: [
       {
@@ -1173,6 +1182,7 @@ export const connectionTypes: ConnectionType[] = [
   },
   {
     title: "Join",
+    forNotification: true,
     icon: "join", // TODO: add icon
     fields: [
       {
@@ -1206,6 +1216,7 @@ export const connectionTypes: ConnectionType[] = [
   },
   {
     title: "Mattermost",
+    forNotification: true,
     icon: "mattermost", // TODO: add icon
     fields: [
       {
@@ -1265,6 +1276,7 @@ export const connectionTypes: ConnectionType[] = [
   },
   {
     title: "Matrix",
+    forNotification: true,
     icon: "matrix", // TODO: add icon
     fields: [
       {
@@ -1321,6 +1333,7 @@ export const connectionTypes: ConnectionType[] = [
   },
   {
     title: "Ntfy",
+    forNotification: true,
     icon: "ntfy", // TODO: add icon
     fields: [
       {
@@ -1386,6 +1399,7 @@ export const connectionTypes: ConnectionType[] = [
   },
   {
     title: "OpsGenie",
+    forNotification: true,
     icon: "opsgenie", // TODO: add icon
     fields: [
       {
@@ -1436,6 +1450,7 @@ export const connectionTypes: ConnectionType[] = [
   },
   {
     title: "Pushbullet",
+    forNotification: true,
     icon: "pushbullet", // TODO: add icon
     fields: [
       {
@@ -1476,6 +1491,7 @@ export const connectionTypes: ConnectionType[] = [
   },
   {
     title: "Pushover",
+    forNotification: true,
     icon: "pushover", // TODO: add icon
     fields: [
       {
@@ -1508,6 +1524,7 @@ export const connectionTypes: ConnectionType[] = [
   },
   {
     title: "Rocketchat",
+    forNotification: true,
     icon: "rocketchat", // TODO: add icon
     fields: [
       {
@@ -1579,6 +1596,7 @@ export const connectionTypes: ConnectionType[] = [
   },
   {
     title: "Slack",
+    forNotification: true,
     icon: "slack",
     fields: [
       {
@@ -1627,6 +1645,7 @@ export const connectionTypes: ConnectionType[] = [
   },
   {
     title: "Teams",
+    forNotification: true,
     icon: "teams",
     fields: [
       {
@@ -1693,6 +1712,7 @@ export const connectionTypes: ConnectionType[] = [
   },
   {
     title: "Telegram",
+    forNotification: true,
     icon: "telegram", // TODO: add icon
     fields: [
       {
@@ -1726,6 +1746,7 @@ export const connectionTypes: ConnectionType[] = [
   },
   {
     title: "Zulip Chat",
+    forNotification: true,
     icon: "zuplichat", // TODO: add icon
     fields: [
       {
@@ -1774,6 +1795,7 @@ export const connectionTypes: ConnectionType[] = [
   },
   {
     title: "Generic Webhook",
+    forNotification: true,
     icon: "http", // TODO: add icon
     fields: [
       {
