@@ -393,12 +393,15 @@ export default function HealthSpecEditor({
     ? Object.keys(resourceValue?.spec).filter((key) => key !== "schedule")[0]
     : undefined;
 
+  const canEdit = !!!resourceValue?.source;
+
   return (
     <SpecEditor
       types={configTypes}
       format="yaml"
       selectedSpec={selectedSpec}
       resourceInfo={resourceInfo}
+      canEdit={canEdit}
     />
   );
 }

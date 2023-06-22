@@ -95,7 +95,7 @@ export default function SpecEditor({
       ) : (
         <div className="flex flex-wrap p-2">
           {types.map((type) => (
-            <div className="flex flex-col w-1/5 p-2">
+            <div key={type.name} className="flex flex-col w-1/5 p-2">
               <div
                 onClick={() => setSelectedSpecItem(type)}
                 role={"button"}
