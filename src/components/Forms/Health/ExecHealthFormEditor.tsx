@@ -5,6 +5,8 @@ import FormikIconPicker from "../Formik/FormikIconPicker";
 import { getIn, useFormikContext } from "formik";
 import { useEffect } from "react";
 import FormikScheduleField from "../Formik/FormikScheduleField";
+import { FormikCodeEditor } from "../Formik/FormikCodeEditor";
+import FormikTextArea from "../Formik/FormikTextArea";
 
 type ExecHealthFormEditorProps = {
   fieldName: string;
@@ -46,7 +48,13 @@ export function ExecHealthFormEditor({
 
       <FormikTextInput name={`${fieldName}.description`} label="Description" />
 
-      <FormikTextInput name={`${fieldName}.script`} label="Script" />
+      <FormikCodeEditor
+        format="shell"
+        fieldName={`${fieldName}.script`}
+        label="Script"
+        className="flex flex-col h-[max(300px,calc(20vh))]"
+        required
+      />
 
       <FormikTemplateFields name={`${fieldName}.test`} label="Test" />
 

@@ -46,11 +46,11 @@ export function AlertmanagerHealthFormEditor({
       <FormikTextInput name={`${fieldName}.description`} label="Description" />
       <FormikTextInput name={`${fieldName}.host`} label="URL" required />
       <FormikAuthFieldsGroup name={`${fieldName}`} />
-      // TODO: These must array of text
+      {/* TODO: These must array of text */}
       <FormikTextInput name={`${fieldName}.alerts`} label="Alerts" />
-      // TODO: These must key/val pairs
+      {/* TODO: These must key/val pairs */}
       <FormikTextInput name={`${fieldName}.filters`} label="Filters" />
-      // TODO: These must array of text
+      {/* TODO: These must array of text */}
       <FormikTextInput name={`${fieldName}.ignore`} label="Ignore" />
       <FormikCheckboxFieldsGroup
         name={`${fieldName}.advanced`}

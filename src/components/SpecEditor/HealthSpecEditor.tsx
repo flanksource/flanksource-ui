@@ -6,6 +6,8 @@ import { SchemaResourceType } from "../SchemaResourcePage/resourceTypes";
 import { ICMPHealthFormEditor } from "../Forms/Health/ICMPHealthFormEditor";
 import { ExecHealthFormEditor } from "../Forms/Health/ExecHealthFormEditor";
 import { ElasticsearchHealthFormEditor } from "../Forms/Health/ElasticsearchHealthFormEditor";
+import { TCPHealthFormEditor } from "../Forms/Health/TCPHealthFormEditor";
+import { AlertmanagerHealthFormEditor } from "../Forms/Health/AlertmanagerHealthFormEditor";
 
 type HealthSpecEditorProps = {
   resourceValue?: {
@@ -157,9 +159,9 @@ export default function HealthSpecEditor({
             return resourceValue ?? {};
           },
           icon: "alertManager",
-          configForm: null,
+          configForm: AlertmanagerHealthFormEditor,
           specsMapField: "alertManager.0",
-          rawSpecInput: true,
+          rawSpecInput: false,
           schemaFilePrefix: "canary"
         },
         {
@@ -471,9 +473,9 @@ export default function HealthSpecEditor({
             return resourceValue ?? {};
           },
           icon: "network",
-          configForm: null,
+          configForm: TCPHealthFormEditor,
           specsMapField: "tcp.0",
-          rawSpecInput: true,
+          rawSpecInput: false,
           schemaFilePrefix: "canary"
         },
         {
