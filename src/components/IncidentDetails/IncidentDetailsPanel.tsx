@@ -109,6 +109,15 @@ export function IncidentDetailsPanel({
           </div>
         </div>
         <IncidentDetailsRow
+          title="Id"
+          className="h-8"
+          value={
+            <span className="text-gray-500 font-medium">
+              {incident.incident_id}
+            </span>
+          }
+        />
+        <IncidentDetailsRow
           title="Type"
           className=""
           value={

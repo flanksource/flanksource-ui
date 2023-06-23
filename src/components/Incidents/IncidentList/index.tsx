@@ -21,6 +21,9 @@ export function IncidentList({ list, ...props }: Props) {
       >
         <thead className="rounded-md sticky top-0">
           <tr className="border-b border-gray-200 uppercase bg-column-background rounded-t-md items-center">
+            <th className="px-3 py-3 text-gray-500 font-medium text-xs text-left w-32">
+              Id
+            </th>
             <th className="px-3 py-3 text-gray-500 font-medium text-xs text-left w-40">
               Type
             </th>
@@ -61,7 +64,8 @@ function IncidentItem({ incident }: { incident: Incident }) {
   const {
     title,
     id,
-    created_at: createdAt
+    created_at: createdAt,
+    incident_id: incidentId
     // status
   } = incident;
   const age = relativeDateTime(createdAt, true);
@@ -75,6 +79,9 @@ function IncidentItem({ incident }: { incident: Incident }) {
       className="last:border-b-0 border-b cursor-pointer"
       onClick={() => navigateToIncidentDetails(id)}
     >
+      <td className="py-4 px-3 text-gray-900 col-span-2 text-sm leading-5 font-medium">
+        {incidentId}
+      </td>
       <td className="py-4 px-3">
         <div className="flex flex-row items-center">
           <IncidentTypeTag type={incident.type!} />
