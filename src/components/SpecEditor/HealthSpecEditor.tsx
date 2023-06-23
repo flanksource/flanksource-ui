@@ -3,6 +3,7 @@ import SpecEditor, { SpecType } from "./SpecEditor";
 import { HTTPHealthFormEditor } from "../Forms/Health/HTTPHealthFormEditor";
 import { FaCog } from "react-icons/fa";
 import { SchemaResourceType } from "../SchemaResourcePage/resourceTypes";
+import { ICMPHealthFormEditor } from "../Forms/Health/ICMPHealthFormEditor";
 
 type HealthSpecEditorProps = {
   resourceValue?: {
@@ -244,9 +245,8 @@ export default function HealthSpecEditor({
             return resourceValue ?? {};
           },
           icon: "icmp",
-          configForm: null,
-          specsMapField: "ping.0",
-          rawSpecInput: true,
+          configForm: ICMPHealthFormEditor,
+          specsMapField: "icmp.0",
           schemaFilePrefix: "canary"
         },
         {
