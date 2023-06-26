@@ -1,5 +1,5 @@
 import { useAtom } from "jotai";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import { getTopology } from "../api/services/topology";
 import { Head } from "../components/Head/Head";
@@ -22,6 +22,7 @@ import {
 } from "../context/TopologyPageContext";
 import { toastError } from "../components/Toast/toast";
 import TopologyFilterBar from "../components/TopologyFilters/TopologyFilterBar";
+import LoadingBar, { LoadingBarRef } from "react-top-loading-bar";
 
 export const allOption = {
   All: {
@@ -83,6 +84,8 @@ export function TopologyPage() {
   const showHiddenComponents =
     searchParams.get("showHiddenComponents") ?? undefined;
 
+  const loadingBarRef = useRef<LoadingBarRef>(null);
+
   const { data, isLoading, refetch } = useQuery(
     [
       "topologies",
@@ -94,6 +97,7 @@ export function TopologyPage() {
       showHiddenComponents
     ],
     () => {
+      loadingBarRef.current?.continuousStart();
       const apiParams = {
         id,
         status: healthStatus,
@@ -108,6 +112,11 @@ export function TopologyPage() {
         hidden: showHiddenComponents === "no" ? false : undefined
       };
       return getTopology(apiParams);
+    },
+    {
+      onSettled: () => {
+        loadingBarRef.current?.complete();
+      }
     }
   );
 
@@ -197,6 +206,7 @@ export function TopologyPage() {
 
   return (
     <>
+      <LoadingBar color="#374151" height={4} ref={loadingBarRef} />
       <Head prefix="Topology" />
       <SearchLayout
         title={<TopologyBreadcrumbs topologyId={id} refererId={refererId} />}
