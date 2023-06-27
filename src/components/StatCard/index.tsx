@@ -1,4 +1,16 @@
-export function StatCard({ className, title, value, customValue }) {
+type StatCardProps = {
+  className?: string;
+  title: string;
+  value?: string;
+  customValue?: React.ReactNode;
+};
+
+export function StatCard({
+  className,
+  title,
+  value,
+  customValue
+}: StatCardProps) {
   return (
     <div className={`bg-white overflow-hidden shadow rounded-lg ${className}`}>
       <div className="px-4 py-5 sm:p-6">

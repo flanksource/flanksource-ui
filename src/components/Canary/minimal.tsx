@@ -4,7 +4,6 @@ import { CheckDetails } from "./CanaryPopup/CheckDetails";
 import { CheckTitle } from "./CanaryPopup/CheckTitle";
 import { CanaryCards } from "./card";
 import { CanaryTable } from "./table";
-import mixins from "../../utils/mixins.module.css";
 import { useSearchParams } from "react-router-dom";
 import { EvidenceType } from "../../api/services/evidence";
 import { AttachEvidenceDialog } from "../AttachEvidenceDialog";
