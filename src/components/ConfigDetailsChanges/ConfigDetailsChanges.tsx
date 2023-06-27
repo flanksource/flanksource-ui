@@ -93,7 +93,7 @@ export function ConfigDetailsChanges({
                   value: (
                     <div
                       className={clsx(
-                        "w-full max-h-56 overflow-y-auto overflow-x-auto border border-gray-200 rounded",
+                        "w-full max-h-56 overflow-y-auto overflow-x-auto border border-gray-200 rounded text-sm",
                         changeDetails?.details ? "" : "h-16"
                       )}
                     >
@@ -116,7 +116,7 @@ export function ConfigDetailsChanges({
                 {
                   label: "Change",
                   value: (
-                    <div className="w-full max-h-96 overflow-y-auto overflow-x-auto border border-gray-200 rounded">
+                    <div className="w-full max-h-96 overflow-y-auto overflow-x-auto border border-gray-200 rounded text-sm">
                       <JSONViewer
                         code={JSON.stringify(changeDetails?.patches, null, 2)}
                         format="yaml"
@@ -136,7 +136,7 @@ export function ConfigDetailsChanges({
                 {
                   label: "Change",
                   value: (
-                    <div className="w-full max-h-96 overflow-y-auto overflow-x-auto border border-gray-200 rounded pr-2">
+                    <div className="w-full max-h-96 overflow-y-auto overflow-x-auto border border-gray-200 rounded pr-2 text-sm">
                       <DiffRenderer diffText={changeDetails.diff} />
                     </div>
                   )
@@ -149,7 +149,7 @@ export function ConfigDetailsChanges({
       )}
       {viewType === ViewType.summary && (
         <div
-          className="overflow-hidden truncate"
+          className="overflow-hidden truncate text-sm"
           onClick={(e) => {
             setOpen(true);
           }}

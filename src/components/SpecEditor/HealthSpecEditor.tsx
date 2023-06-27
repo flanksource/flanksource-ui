@@ -3,6 +3,11 @@ import SpecEditor, { SpecType } from "./SpecEditor";
 import { HTTPHealthFormEditor } from "../Forms/Health/HTTPHealthFormEditor";
 import { FaCog } from "react-icons/fa";
 import { SchemaResourceType } from "../SchemaResourcePage/resourceTypes";
+import { ICMPHealthFormEditor } from "../Forms/Health/ICMPHealthFormEditor";
+import { ExecHealthFormEditor } from "../Forms/Health/ExecHealthFormEditor";
+import { ElasticsearchHealthFormEditor } from "../Forms/Health/ElasticsearchHealthFormEditor";
+import { TCPHealthFormEditor } from "../Forms/Health/TCPHealthFormEditor";
+import { AlertmanagerHealthFormEditor } from "../Forms/Health/AlertmanagerHealthFormEditor";
 
 type HealthSpecEditorProps = {
   resourceValue?: {
@@ -18,7 +23,7 @@ type HealthSpecEditorProps = {
 
 export default function HealthSpecEditor({
   resourceValue,
-  onSubmit = () => {},
+  onSubmit = () => { },
   resourceInfo
 }: HealthSpecEditorProps) {
   const configTypes = useMemo(
@@ -139,9 +144,9 @@ export default function HealthSpecEditor({
             return resourceValue ?? {};
           },
           icon: "console",
-          configForm: null,
+          configForm: ExecHealthFormEditor,
           specsMapField: "exec.0",
-          rawSpecInput: true,
+          rawSpecInput: false,
           schemaFilePrefix: "canary"
         },
         {
@@ -154,9 +159,9 @@ export default function HealthSpecEditor({
             return resourceValue ?? {};
           },
           icon: "alertManager",
-          configForm: null,
+          configForm: AlertmanagerHealthFormEditor,
           specsMapField: "alertManager.0",
-          rawSpecInput: true,
+          rawSpecInput: false,
           schemaFilePrefix: "canary"
         },
         {
@@ -176,7 +181,7 @@ export default function HealthSpecEditor({
         },
         {
           name: "elasticsearch",
-          label: "Elastic Search",
+          label: "Elasticsearch",
           updateSpec: (value: Record<string, any>) => {
             onSubmit(value);
           },
@@ -184,9 +189,9 @@ export default function HealthSpecEditor({
             return resourceValue ?? {};
           },
           icon: "elasticsearch",
-          configForm: null,
+          configForm: ElasticsearchHealthFormEditor,
           specsMapField: "elasticsearch.0",
-          rawSpecInput: true,
+          rawSpecInput: false,
           schemaFilePrefix: "canary"
         },
         {
@@ -244,9 +249,8 @@ export default function HealthSpecEditor({
             return resourceValue ?? {};
           },
           icon: "icmp",
-          configForm: null,
-          specsMapField: "ping.0",
-          rawSpecInput: true,
+          configForm: ICMPHealthFormEditor,
+          specsMapField: "icmp.0",
           schemaFilePrefix: "canary"
         },
         {
@@ -370,6 +374,111 @@ export default function HealthSpecEditor({
           schemaFilePrefix: "canary"
         },
         {
+          name: "configDB",
+          label: "Mission Control Config",
+          updateSpec: (value: Record<string, any>) => {
+            onSubmit(value);
+          },
+          loadSpec: () => {
+            return resourceValue ?? {};
+          },
+          icon: "config",
+          configForm: null,
+          specsMapField: "configDB.0",
+          rawSpecInput: true,
+          schemaFilePrefix: "canary"
+        },
+        {
+          name: "azureDevops",
+          label: "Azure DevOps",
+          updateSpec: (value: Record<string, any>) => {
+            onSubmit(value);
+          },
+          loadSpec: () => {
+            return resourceValue ?? {};
+          },
+          icon: "azure-devops",
+          configForm: null,
+          specsMapField: "azureDevops.0",
+          rawSpecInput: true,
+          schemaFilePrefix: "canary"
+        },
+        {
+          name: "jmeter",
+          label: "JMeter",
+          updateSpec: (value: Record<string, any>) => {
+            onSubmit(value);
+          },
+          loadSpec: () => {
+            return resourceValue ?? {};
+          },
+          icon: "jmeter",
+          configForm: null,
+          specsMapField: "jmeter.0",
+          rawSpecInput: true,
+          schemaFilePrefix: "canary"
+        },
+        {
+          name: "junit",
+          label: "JUnit",
+          updateSpec: (value: Record<string, any>) => {
+            onSubmit(value);
+          },
+          loadSpec: () => {
+            return resourceValue ?? {};
+          },
+          icon: "junit",
+          configForm: null,
+          specsMapField: "junit.0",
+          rawSpecInput: true,
+          schemaFilePrefix: "canary"
+        },
+        {
+          name: "dynatrace",
+          label: "Dynatrace",
+          updateSpec: (value: Record<string, any>) => {
+            onSubmit(value);
+          },
+          loadSpec: () => {
+            return resourceValue ?? {};
+          },
+          icon: "dynatrace",
+          configForm: null,
+          specsMapField: "dynatrace.0",
+          rawSpecInput: true,
+          schemaFilePrefix: "canary"
+        },
+        {
+          name: "namespace",
+          label: "Kubernetes Namespace",
+          updateSpec: (value: Record<string, any>) => {
+            onSubmit(value);
+          },
+          loadSpec: () => {
+            return resourceValue ?? {};
+          },
+          icon: "namespace",
+          configForm: null,
+          specsMapField: "namespace.0",
+          rawSpecInput: true,
+          schemaFilePrefix: "canary"
+        },
+        {
+          name: "tcp",
+          label: "TCP",
+          updateSpec: (value: Record<string, any>) => {
+            onSubmit(value);
+          },
+          loadSpec: () => {
+            return resourceValue ?? {};
+          },
+          icon: "network",
+          configForm: TCPHealthFormEditor,
+          specsMapField: "tcp.0",
+          rawSpecInput: false,
+          schemaFilePrefix: "canary"
+        },
+        {
           name: "custom",
           label: "Custom",
           updateSpec: (value: Record<string, any>) => {
@@ -393,12 +502,15 @@ export default function HealthSpecEditor({
     ? Object.keys(resourceValue?.spec).filter((key) => key !== "schedule")[0]
     : undefined;
 
+  const canEdit = !!!resourceValue?.source;
+
   return (
     <SpecEditor
       types={configTypes}
       format="yaml"
       selectedSpec={selectedSpec}
       resourceInfo={resourceInfo}
+      canEdit={canEdit}
     />
   );
 }

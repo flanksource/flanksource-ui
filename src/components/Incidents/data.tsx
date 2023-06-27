@@ -12,6 +12,8 @@ import {
   MdSecurity
 } from "react-icons/md";
 import {
+  HiExclamation,
+  HiInformationCircle,
   HiOutlineChevronDoubleDown,
   HiOutlineChevronDoubleUp,
   HiOutlineChevronDown,
@@ -31,6 +33,20 @@ export const defaultSelections = {
 };
 
 export const severityItems = {
+  Info: {
+    id: "dropdown-severity-info",
+    icon: <HiInformationCircle className="text-gray-500" />,
+    name: "Info",
+    description: "Info",
+    value: "info"
+  },
+  Warning: {
+    id: "dropdown-severity-warning",
+    icon: <HiExclamation className="text-yellow-500" />,
+    name: "Warning",
+    description: "Warning",
+    value: "warning"
+  },
   Low: {
     id: "dropdown-severity-low",
     icon: <HiOutlineChevronDoubleDown color="green" />,

@@ -167,14 +167,14 @@ export const getConfigsBy = ({ topologyId, configId }: ConfigParams) => {
       }[]
     >(
       ConfigDB.get(
-        `/config_component_relationships?component_id=eq.${topologyId}&select=configs!config_component_relationships_config_id_fkey(${configFields})`
+        `/config_component_relationships?component_id=eq.${topologyId}&configs.order=name&select=configs!config_component_relationships_config_id_fkey(${configFields})`
       )
     );
   }
   if (configId) {
     return resolve(
       ConfigDB.get<Pick<ConfigTypeRelationships, "configs" | "related">[]>(
-        `/config_relationships?or=(related_id.eq.${configId},config_id.eq.${configId})&select=configs:configs!config_relationships_config_id_fkey(${configFields}),related:configs!config_relationships_related_id_fkey(${configFields})`
+        `/config_relationships?or=(related_id.eq.${configId},config_id.eq.${configId})&configs.order=name&select=configs:configs!config_relationships_config_id_fkey(${configFields}),related:configs!config_relationships_related_id_fkey(${configFields})`
       )
     );
   }
@@ -301,6 +301,17 @@ export const getConfigsAnalysisTypesFilter = async () => {
   return res.data;
 };
 
+export type ConfigAnalysisAnalyzerItem = {
+  analyzer: string;
+};
+
+export const getConfigsAnalysisAnalyzers = async () => {
+  const res = await IncidentCommander.get<ConfigAnalysisAnalyzerItem[] | null>(
+    `/config_analysis_analyzers?order=analyzer.asc`
+  );
+  return res.data ?? [];
+};
+
 export type ConfigChangesTypeItem = {
   change_type: string;
 };
@@ -353,18 +364,24 @@ export const getConfigInsight = async <T>(
 };
 
 export const getAllConfigInsights = async (
-  queryParams: { status?: string; type?: string; severity?: string },
+  queryParams: {
+    status?: string;
+    type?: string;
+    severity?: string;
+    analyzer?: string;
+  },
   sortBy: { sortBy?: string; sortOrder?: "asc" | "desc" },
   { pageIndex, pageSize }: PaginationInfo
 ) => {
   const pagingParams = `&limit=${pageSize}&offset=${pageIndex * pageSize}`;
 
-  const { status, type, severity } = queryParams;
+  const { status, type, severity, analyzer } = queryParams;
 
   const params = {
     status: status && `&status=eq.${status}`,
     type: type && `&analysis_type=eq.${type}`,
-    severity: severity && `&severity=eq.${severity}`
+    severity: severity && `&severity=eq.${severity}`,
+    analyzer: analyzer && `&analyzer=eq.${analyzer}`
   };
 
   const queryParamsString = Object.values(params)

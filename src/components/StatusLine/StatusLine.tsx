@@ -68,11 +68,22 @@ export function StatusLine({
     >
       {icon && renderIcon(icon)}
       {url && (
-        <Link className="text-xs cursor-pointer" to={url}>
+        <Link
+          title={label}
+          className="text-xs cursor-pointer h-4 overflow-hidden truncate"
+          to={url}
+        >
           {label}
         </Link>
       )}
-      {!url && <span className="text-xs cursor-pointer">{label}</span>}
+      {!url && (
+        <span
+          title={label}
+          className="text-xs cursor-pointer h-4 overflow-hidden truncate"
+        >
+          {label}
+        </span>
+      )}
       <div className="flex flex-row space-x-1.5">
         {statuses.map((status, index) => {
           return <StatusInfoEntry statusInfo={status} key={index} />;

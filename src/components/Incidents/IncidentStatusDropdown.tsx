@@ -18,7 +18,7 @@ export default function IncidentStatusDropdown({
   value,
   prefix = "Status:",
   name = "status",
-  className,
+  className = "border-none shadow-none font-semibold space-x-3 capitalize text-sm px-2",
   showAllOption,
   dropDownClassNames,
   hideControlBorder

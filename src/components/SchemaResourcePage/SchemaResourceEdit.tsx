@@ -75,7 +75,8 @@ export function SchemaResourceEdit({
       labels,
       namespace,
       icon,
-      schedule
+      schedule,
+      source
     },
     identity
   );

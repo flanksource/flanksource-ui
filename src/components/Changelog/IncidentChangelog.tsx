@@ -86,7 +86,7 @@ export function IncidentChangelog({
         </VerticalSCrollView>
       ) : (
         <div className="px-4 py-4">
-          <p className="text-gray-800">No changelog found</p>
+          <p className="text-gray-800 text-sm">No changelog found</p>
         </div>
       )}
     </CollapsiblePanel>

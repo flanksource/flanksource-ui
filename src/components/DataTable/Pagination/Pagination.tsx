@@ -27,10 +27,6 @@ export const Pagination = ({
   paginationType,
   className
 }: PaginationProps) => {
-  if (pageOptions.length < 2) {
-    return null;
-  }
-
   return (
     <nav className={clsx("isolate rounded-md", className)}>
       <div className="inline-block pr-2">
@@ -53,6 +49,7 @@ export const Pagination = ({
               value={pageIndex + 1}
               min={1}
               max={pageCount}
+              readOnly={pageCount === 1}
               onChange={(e) => {
                 const page = e.target.value ? Number(e.target.value) - 1 : 0;
                 gotoPage(+page);
