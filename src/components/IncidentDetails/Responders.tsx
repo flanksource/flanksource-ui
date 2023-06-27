@@ -53,12 +53,6 @@ export function Responders({ incident, className, ...props }: RespondersProps) {
         className=""
         value={
           <div className="relative flex flex-col items-center">
-            <AddResponder
-              className="flex flex-col justify-end flex-1 w-full"
-              onSuccess={() => refetch()}
-              incident={incident}
-            />
-
             <div className="flex flex-col w-full">
               {responders.length > 0 && (
                 <div className="flex flex-col py-4 gap-2">
@@ -149,6 +143,12 @@ export function Responders({ incident, className, ...props }: RespondersProps) {
                 </div>
               )}
             </div>
+
+            <AddResponder
+              className="flex flex-col justify-end flex-1 w-full"
+              onSuccess={() => refetch()}
+              incident={incident}
+            />
           </div>
         }
       />

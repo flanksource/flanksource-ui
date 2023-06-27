@@ -3,67 +3,6 @@ import { resolve } from "../resolve";
 import { Team } from "./teams";
 import { User } from "./users";
 
-/**
- * column "id" {
-    null    = false
-    type    = uuid
-    default = sql("generate_ulid()")
-  }
-  column "incident_id" {
-    null = false
-    type = uuid
-  }
-  column "type" {
-    null = false
-    type = text
-  }
-  column "index" {
-    null = true
-    type = smallint
-  }
-  column "person_id" {
-    null = true
-    type = uuid
-  }
-  column "team_id" {
-    null = true
-    type = uuid
-  }
-  column "external_id" {
-    null = true
-    type = text
-  }
-  column "properties" {
-    null = true
-    type = jsonb
-  }
-  column "acknowledged" {
-    null = true
-    type = timestamptz
-  }
-  column "resolved" {
-    null = true
-    type = timestamptz
-  }
-  column "closed" {
-    null = true
-    type = timestamptz
-  }
-  column "created_by" {
-    null = false
-    type = uuid
-  }
-  column "created_at" {
-    null    = false
-    type    = timestamptz
-    default = sql("now()")
-  }
-  column "updated_at" {
-    null    = false
-    type    = timestamptz
-    default = sql("now()")
-  }
- */
 export type Responder = {
   id: string;
   incident_id?: string;
