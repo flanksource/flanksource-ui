@@ -94,7 +94,7 @@ export function Percentage({ val, upper, lower }) {
   );
 }
 
-export function Title({ icon, title }) {
+export function Title({ icon, title, isDeleted }) {
   return (
     <>
       {icon && (
@@ -102,7 +102,9 @@ export function Title({ icon, title }) {
           <Icon name={icon} className="inline h-6" />
         </span>
       )}
-      <span className="text-sm">{title}</span>
+      <span className="text-sm">
+        {title} {isDeleted ? " (deleted)" : ""}
+      </span>
     </>
   );
 }

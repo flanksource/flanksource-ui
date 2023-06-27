@@ -20,8 +20,12 @@ const config = withTM({
     const canaryPrefix = isCanary ? "" : "/canary";
     const LOCALHOST_ENV_URL_REWRITES = [
       {
+        source: "/api/.ory/:path*",
+        destination: `${backendURL}/kratos/:path*`
+      },
+      {
         source: "/api/:path*",
-        destination: `${backendURL}/api/:path*`
+        destination: `${backendURL}/:path*`
       }
     ];
     const URL_REWRITES = [
