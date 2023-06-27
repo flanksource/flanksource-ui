@@ -167,7 +167,7 @@ export const getConfigsBy = ({ topologyId, configId }: ConfigParams) => {
       }[]
     >(
       ConfigDB.get(
-        `/config_component_relationships?component_id=eq.${topologyId}&select=configs!config_component_relationships_config_id_fkey(${configFields})`
+        `/config_component_relationships?component_id=eq.${topologyId}&configs.order=name&select=configs!config_component_relationships_config_id_fkey(${configFields})`
       )
     );
   }
