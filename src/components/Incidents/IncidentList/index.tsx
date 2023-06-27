@@ -1,14 +1,14 @@
 import { useNavigate } from "react-router-dom";
-import { Incident } from "../../../api/services/incident";
+import { IncidentSummary } from "../../../api/services/incident";
 import { useCallback, useMemo } from "react";
 import { incidentListColumns } from "./IncidentListColumns";
 import { DataTable } from "../../DataTable";
 
 type Props = {
-  list: Incident[];
-} & React.HTMLAttributes<HTMLTableElement>;
+  incidents: IncidentSummary[];
+};
 
-export function IncidentList({ list, ...props }: Props) {
+export function IncidentList({ incidents }: Props) {
   const navigate = useNavigate();
 
   const navigateToIncidentDetails = useCallback(
@@ -24,7 +24,7 @@ export function IncidentList({ list, ...props }: Props) {
     <div className="flex flex-col overflow-y-auto flex-1  w-full">
       <DataTable
         columns={columns}
-        data={list}
+        data={incidents}
         stickyHead
         handleRowClick={(row) => navigateToIncidentDetails(row.original.id)}
         tableStyle={{ borderSpacing: "0" }}

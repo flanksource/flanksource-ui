@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { AiFillPlusCircle } from "react-icons/ai/";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { getIncidentsWithParams } from "../../api/services/incident";
+import { getIncidentsSummary } from "../../api/services/incident";
 import FilterIncidents from "../../components/FilterIncidents/FilterIncidents";
 import { IncidentCreate } from "../../components/Incidents/IncidentCreate";
 import { IncidentList } from "../../components/Incidents/IncidentList";
@@ -67,8 +67,8 @@ export function IncidentListPage() {
         component: component || undefined,
         search: search || undefined
       };
-      const res = await getIncidentsWithParams(toPostgresqlSearchParam(params));
-      return res.data ?? [];
+      const res = await getIncidentsSummary(toPostgresqlSearchParam(params));
+      return res;
     }
   );
 
@@ -104,7 +104,7 @@ export function IncidentListPage() {
               {!isLoading || Boolean(incidents?.length) ? (
                 <>
                   <FilterIncidents />
-                  <IncidentList list={incidents || []} />
+                  <IncidentList incidents={incidents || []} />
                   {!Boolean(incidents?.length) && (
                     <div className="absolute text-center text-base text-gray-500 w-full mt-2">
                       There are no incidents matching this criteria
