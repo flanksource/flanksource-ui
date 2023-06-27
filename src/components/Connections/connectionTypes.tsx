@@ -868,59 +868,9 @@ export const connectionTypes: ConnectionType[] = [
     }
   },
   {
-    title: "Bark",
-    forNotification: true,
-    icon: "bark", // TODO: add icon
-    fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: fieldTypes.input,
-        required: true
-      },
-      {
-        label: "Device Key",
-        key: "username",
-        type: fieldTypes.EnvVarSource,
-        hint: "The key for each device",
-        required: true
-      },
-      {
-        label: "Host",
-        key: "host",
-        type: fieldTypes.input,
-        required: true
-      },
-      {
-        label: "Path",
-        key: "path",
-        type: fieldTypes.input,
-        required: false
-      }
-    ],
-    convertToFormSpecificValue: (data: Record<string, any>) => {
-      return {
-        ...data,
-        path: data.properties?.path,
-        host: data.properties?.host
-      } as Connection;
-    },
-    preSubmitConverter: (data: Record<string, string>) => {
-      return {
-        name: data.name,
-        username: data.username,
-        url: `bark://:$(username)@${data.host}/${data.path}`,
-        properties: {
-          path: data.path,
-          host: data.host
-        }
-      };
-    }
-  },
-  {
     title: "Discord",
     forNotification: true,
-    icon: "discord", // TODO: add icon
+    icon: "discord",
     fields: [
       {
         label: "Name",
@@ -953,7 +903,7 @@ export const connectionTypes: ConnectionType[] = [
   {
     title: "Email",
     forNotification: true,
-    icon: "gmail", // TODO: add icon
+    icon: "email",
     fields: [
       {
         label: "Name",
@@ -1051,65 +1001,9 @@ export const connectionTypes: ConnectionType[] = [
     }
   },
   {
-    title: "Gotify",
-    forNotification: true,
-    icon: "gotify", // TODO: add icon
-    fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: fieldTypes.input,
-        required: true
-      },
-      {
-        label: "Host",
-        key: "host",
-        type: fieldTypes.input,
-        hint: "Server hostname (and optionally port)",
-        required: true
-      },
-      {
-        label: "Token",
-        key: "password",
-        type: fieldTypes.EnvVarSource,
-        required: true
-      },
-      {
-        label: "Path",
-        key: "path",
-        type: fieldTypes.input,
-        required: false
-      },
-      {
-        label: "Insecure TLS",
-        key: "insecure_tls",
-        type: fieldTypes.checkbox
-      }
-    ],
-    convertToFormSpecificValue: (data: Record<string, any>) => {
-      return {
-        ...data,
-        path: data.properties?.path,
-        host: data.properties?.path
-      } as Connection;
-    },
-    preSubmitConverter: (data: Record<string, string>) => {
-      return {
-        name: data.name,
-        url: `gotify://${data.host}/${data.path}/$(password)?DisableTLS=${data.insecure_tls}`,
-        password: data.password,
-        insecure_tls: data.insecure_tls,
-        properties: {
-          path: data.path,
-          host: data.host
-        }
-      };
-    }
-  },
-  {
     title: "Google Chat",
     forNotification: true,
-    icon: "google", // TODO: add icon
+    icon: "google-chat",
     fields: [
       {
         label: "Name",
@@ -1157,7 +1051,7 @@ export const connectionTypes: ConnectionType[] = [
   {
     title: "IFTTT",
     forNotification: true,
-    icon: "ifttt", // TODO: add icon
+    icon: "ifttt",
     fields: [
       {
         label: "Name",
@@ -1181,43 +1075,9 @@ export const connectionTypes: ConnectionType[] = [
     }
   },
   {
-    title: "Join",
-    forNotification: true,
-    icon: "join", // TODO: add icon
-    fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: fieldTypes.input,
-        required: true
-      },
-      {
-        label: "Devices",
-        hint: "Comma separated list of device IDs",
-        key: "username",
-        type: fieldTypes.input,
-        required: true
-      },
-      {
-        label: "API Key",
-        key: "password",
-        type: fieldTypes.EnvVarSource,
-        required: true
-      }
-    ],
-    preSubmitConverter: (data: Record<string, string>) => {
-      return {
-        name: data.name,
-        url: `join://$(password)@join/?Devices=${data.username}`,
-        username: data.username,
-        password: data.password
-      };
-    }
-  },
-  {
     title: "Mattermost",
     forNotification: true,
-    icon: "mattermost", // TODO: add icon
+    icon: "mattermost",
     fields: [
       {
         label: "Name",
@@ -1277,7 +1137,7 @@ export const connectionTypes: ConnectionType[] = [
   {
     title: "Matrix",
     forNotification: true,
-    icon: "matrix", // TODO: add icon
+    icon: "matrix",
     fields: [
       {
         label: "Name",
@@ -1334,7 +1194,7 @@ export const connectionTypes: ConnectionType[] = [
   {
     title: "Ntfy",
     forNotification: true,
-    icon: "ntfy", // TODO: add icon
+    icon: "ntfy",
     fields: [
       {
         label: "Name",
@@ -1400,7 +1260,7 @@ export const connectionTypes: ConnectionType[] = [
   {
     title: "OpsGenie",
     forNotification: true,
-    icon: "opsgenie", // TODO: add icon
+    icon: "opsgenie",
     fields: [
       {
         label: "Name",
@@ -1451,7 +1311,7 @@ export const connectionTypes: ConnectionType[] = [
   {
     title: "Pushbullet",
     forNotification: true,
-    icon: "pushbullet", // TODO: add icon
+    icon: "pushbullet",
     fields: [
       {
         label: "Name",
@@ -1492,7 +1352,7 @@ export const connectionTypes: ConnectionType[] = [
   {
     title: "Pushover",
     forNotification: true,
-    icon: "pushover", // TODO: add icon
+    icon: "pushover",
     fields: [
       {
         label: "Name",
@@ -1525,7 +1385,7 @@ export const connectionTypes: ConnectionType[] = [
   {
     title: "Rocketchat",
     forNotification: true,
-    icon: "rocketchat", // TODO: add icon
+    icon: "rocket",
     fields: [
       {
         label: "Name",
@@ -1713,7 +1573,7 @@ export const connectionTypes: ConnectionType[] = [
   {
     title: "Telegram",
     forNotification: true,
-    icon: "telegram", // TODO: add icon
+    icon: "telegram",
     fields: [
       {
         label: "Name",
@@ -1747,7 +1607,7 @@ export const connectionTypes: ConnectionType[] = [
   {
     title: "Zulip Chat",
     forNotification: true,
-    icon: "zuplichat", // TODO: add icon
+    icon: "zulip",
     fields: [
       {
         label: "Name",
@@ -1796,7 +1656,7 @@ export const connectionTypes: ConnectionType[] = [
   {
     title: "Generic Webhook",
     forNotification: true,
-    icon: "http", // TODO: add icon
+    icon: "http",
     fields: [
       {
         label: "Name",
