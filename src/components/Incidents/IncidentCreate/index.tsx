@@ -19,6 +19,7 @@ import { ReactSelectDropdown } from "../../ReactSelectDropdown";
 import { TextInput } from "../../TextInput";
 import { toastError } from "../../Toast/toast";
 import { severityItems, incidentStatusItems, typeItems } from "../data";
+import { Button } from "../../Button";
 
 const validationSchema = yup
   .object({
@@ -287,12 +288,11 @@ export function IncidentCreate({
           </div>
         </div>
         <div className="flex justify-end bg-gray-100 px-5 py-4 w-full rounded">
-          <button
+          <Button
             type="submit"
-            className="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-          >
-            Create
-          </button>
+            className="px-3 py-2 btn-secondary float-right"
+            text="Create"
+          />
         </div>
       </form>
     </div>
