@@ -24,7 +24,7 @@ export function Avatar({
   containerProps,
   imageProps,
   inline = false,
-  circular = false
+  circular = true
 }: IProps) {
   const srcList = user?.avatar;
   const fallbackInitials = user?.name || "?";
