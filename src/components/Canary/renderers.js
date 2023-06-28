@@ -103,7 +103,8 @@ export function Title({ icon, title, isDeleted }) {
         </span>
       )}
       <span className="text-sm">
-        {title} {isDeleted ? " (deleted)" : ""}
+        {title}{" "}
+        {isDeleted && <Icon name={"remove-trash"} className="inline h-6" />}
       </span>
     </>
   );
