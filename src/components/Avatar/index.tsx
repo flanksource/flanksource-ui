@@ -18,7 +18,7 @@ interface IProps {
 
 export function Avatar({
   user,
-  size,
+  size = "sm",
   unload,
   alt,
   containerProps,
@@ -40,7 +40,6 @@ export function Avatar({
       case "lg":
         return "w-12 h-12 text-base";
       case "md":
-      default:
         return "w-8 h-8 text-base";
     }
   }, [size]);
