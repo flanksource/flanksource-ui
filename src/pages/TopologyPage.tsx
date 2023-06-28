@@ -1,20 +1,13 @@
 import { useAtom } from "jotai";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import { getTopology } from "../api/services/topology";
-import { ComponentLabelsDropdown } from "../components/Dropdown/ComponentLabelsDropdown";
-import { ComponentTypesDropdown } from "../components/Dropdown/ComponentTypesDropdown";
 import { Head } from "../components/Head/Head";
 import { InfoMessage } from "../components/InfoMessage";
 import { SearchLayout } from "../components/Layout";
-import {
-  ReactSelectDropdown,
-  StateOption
-} from "../components/ReactSelectDropdown";
 import CardsSkeletonLoader from "../components/SkeletonLoader/CardsSkeletonLoader";
 import { TopologyBreadcrumbs } from "../components/TopologyBreadcrumbs";
 import { TopologyCard } from "../components/TopologyCard";
-import { TopologyPopOver } from "../components/TopologyPopover";
 import { getCardWidth } from "../components/TopologyPopover/topologyPreference";
 import {
   getSortLabels,
@@ -27,8 +20,9 @@ import {
   Topology,
   useTopologyPageContext
 } from "../context/TopologyPageContext";
-import { AgentNamesDropdown } from "../components/Agents/AgentNamesDropdown";
 import { toastError } from "../components/Toast/toast";
+import TopologyFilterBar from "../components/TopologyFilters/TopologyFilterBar";
+import LoadingBar, { LoadingBarRef } from "react-top-loading-bar";
 
 export const allOption = {
   All: {
@@ -78,16 +72,19 @@ export function TopologyPage() {
 
   const [searchParams, setSearchParams] = useSearchParams();
   const { setTopologyState } = useTopologyPageContext();
-  const [size, setSize] = useState(() => getCardWidth());
+  const [topologyCardSize, setTopologyCardSize] = useState(() =>
+    getCardWidth()
+  );
 
   const selectedLabel = searchParams.get("labels") ?? "All";
   const team = searchParams.get("team") ?? "All";
-  const agentId = searchParams.get("agent_id") ?? "All";
   const topologyType = searchParams.get("type") ?? "All";
   const healthStatus = searchParams.get("status") ?? "All";
   const refererId = searchParams.get("refererId") ?? undefined;
   const showHiddenComponents =
     searchParams.get("showHiddenComponents") ?? undefined;
+
+  const loadingBarRef = useRef<LoadingBarRef>(null);
 
   const { data, isLoading, refetch } = useQuery(
     [
@@ -100,6 +97,7 @@ export function TopologyPage() {
       showHiddenComponents
     ],
     () => {
+      loadingBarRef.current?.continuousStart();
       const apiParams = {
         id,
         status: healthStatus,
@@ -114,6 +112,11 @@ export function TopologyPage() {
         hidden: showHiddenComponents === "no" ? false : undefined
       };
       return getTopology(apiParams);
+    },
+    {
+      onSettled: () => {
+        loadingBarRef.current?.complete();
+      }
     }
   );
 
@@ -162,43 +165,6 @@ export function TopologyPage() {
     return components;
   }, [data?.components, id, searchParams, setTopologyState]);
 
-  // todo: add team and inspect the shape of the data
-  const teams = useMemo(() => {
-    const teamOptions =
-      data?.teams
-        ?.filter((team) => team)
-        .map((team) => ({
-          id: team,
-          name: team,
-          description: team,
-          value: team
-        })) ?? [];
-    return [allOption["All"], ...teamOptions];
-  }, [data]);
-
-  const topologyTypes = useMemo(() => {
-    const typeOptions =
-      data?.types
-        ?.filter((type) => type)
-        .map((type) => ({
-          id: type,
-          name: type,
-          description: type,
-          value: type
-        })) ?? [];
-    return [allOption["All"], ...typeOptions];
-  }, [data?.types]);
-
-  const healthStatuses = useMemo(() => {
-    const statusOptions: StateOption[] =
-      data?.healthStatuses?.map((status) => ({
-        id: status,
-        value: status,
-        label: status
-      })) ?? [];
-    return [allOption["All"], ...statusOptions];
-  }, [data?.healthStatuses]);
-
   const sortLabels = useMemo(() => {
     if (!topology) {
       return null;
@@ -232,8 +198,15 @@ export function TopologyPage() {
     setSearchParams(searchParams, { replace: true });
   }, [searchParams, setSearchParams, sortLabels]);
 
+  const sortedTopologies = useMemo(
+    () =>
+      getSortedTopology(topology, getSortBy(sortLabels || []), getSortOrder()),
+    [sortLabels, topology]
+  );
+
   return (
     <>
+      <LoadingBar color="#374151" height={4} ref={loadingBarRef} />
       <Head prefix="Topology" />
       <SearchLayout
         title={<TopologyBreadcrumbs topologyId={id} refererId={refererId} />}
@@ -243,112 +216,22 @@ export function TopologyPage() {
       >
         <div className="flex flex-row h-full py-2 overflow-y-auto">
           <div className="flex flex-col flex-1 h-full overflow-y-auto">
-            <div className="flex px-6">
-              <div className="flex flex-wrap">
-                <div className="flex p-3 pl-0">
-                  <ReactSelectDropdown
-                    name="health"
-                    label=""
-                    value={healthStatus}
-                    items={healthStatuses}
-                    className="inline-block p-3 w-auto max-w-[500px]"
-                    dropDownClassNames="w-auto max-w-[400px] left-0"
-                    onChange={(val: any) => {
-                      setSearchParams({
-                        ...Object.fromEntries(searchParams),
-                        status: val
-                      });
-                    }}
-                    prefix={
-                      <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
-                        Health:
-                      </div>
-                    }
-                  />
-                </div>
-                <ComponentTypesDropdown
-                  className="flex p-3"
-                  name="Types"
-                  label=""
-                  topologyTypes={topologyTypes}
-                  value={topologyType}
-                  onChange={(val: any) => {
-                    setSearchParams({
-                      ...Object.fromEntries(searchParams),
-                      type: val
-                    });
-                  }}
-                />
-                <div className="flex p-3">
-                  <ReactSelectDropdown
-                    name="team"
-                    label=""
-                    value={team}
-                    items={teams}
-                    className="inline-block p-3 w-auto max-w-[500px]"
-                    dropDownClassNames="w-auto max-w-[400px] left-0"
-                    onChange={(val: any) => {
-                      setSearchParams({
-                        ...Object.fromEntries(searchParams),
-                        team: val
-                      });
-                    }}
-                    prefix={
-                      <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
-                        Team:
-                      </div>
-                    }
-                  />
-                </div>
-                <ComponentLabelsDropdown
-                  name="Labels"
-                  label=""
-                  className="flex p-3 w-auto max-w-[500px]"
-                  value={selectedLabel}
-                  onChange={(val: any) => {
-                    setSearchParams({
-                      ...Object.fromEntries(searchParams),
-                      labels: val
-                    });
-                  }}
-                />
-                <div className="flex p-3">
-                  <AgentNamesDropdown
-                    name="agent_id"
-                    value={agentId}
-                    className="inline-block p-3 w-auto max-w-[500px]"
-                    dropDownClassNames="w-auto max-w-[400px] left-0"
-                    onChange={(val: any) => {
-                      setSearchParams({
-                        ...Object.fromEntries(searchParams),
-                        agent_id: val
-                      });
-                    }}
-                  />
-                </div>
-              </div>
-              <TopologyPopOver
-                size={size}
-                setSize={setSize}
-                sortLabels={sortLabels || []}
-                searchParams={searchParams}
-                setSearchParams={setSearchParams}
-              />
-            </div>
+            <TopologyFilterBar
+              data={data}
+              setTopologyCardSize={setTopologyCardSize}
+              topologyCardSize={topologyCardSize}
+              sortLabels={sortLabels ?? []}
+            />
             {isLoading && !topology?.length ? (
               <CardsSkeletonLoader />
             ) : (
               <div className="px-6 py-4 flex leading-1.21rel w-full">
                 <div className="flex flex-wrap w-full">
-                  {getSortedTopology(
-                    topology,
-                    getSortBy(sortLabels || []),
-                    getSortOrder()
-                  ).map((item) => (
+                  {sortedTopologies.map((item) => (
                     <TopologyCard
                       key={item.id}
                       topology={item}
-                      size={size}
+                      size={topologyCardSize}
                       isTopologyPage
                     />
                   ))}
