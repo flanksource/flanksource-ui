@@ -1,4 +1,4 @@
-// this file is generated using make index.ts
+// this file is generated using make index.js
 import access_denied from "./access-denied.svg";
 import acr from "./acr.svg";
 import activemq_icon from "./activemq-icon.svg";
@@ -28,6 +28,7 @@ import aks from "./aks.svg";
 import alert from "./alert.svg";
 import ansible from "./ansible.svg";
 import apiconnect from "./apiconnect.svg";
+import archive from "./archive.svg";
 import argo from "./argo.svg";
 import artifact_registry from "./artifact-registry.svg";
 import aws_acm from "./aws-acm.svg";
@@ -68,13 +69,13 @@ import aws_ses from "./aws-ses.svg";
 import aws_shield from "./aws-shield.svg";
 import aws_sns from "./aws-sns.svg";
 import aws_sqs from "./aws-sqs.svg";
+import aws from "./aws.svg";
 import aws_trusted_advisor_cost from "./aws-trusted-advisor-cost.svg";
 import aws_trusted_advisor_fault_tolerance from "./aws-trusted-advisor-fault-tolerance.svg";
 import aws_trusted_advisor_security from "./aws-trusted-advisor-security.svg";
 import aws_trusted_advisor from "./aws-trusted-advisor.svg";
 import aws_vpc from "./aws-vpc.svg";
 import aws_waf from "./aws-waf.svg";
-import aws from "./aws.svg";
 import azure_acl from "./azure-acl.svg";
 import azure_app_service from "./azure-app-service.svg";
 import azure_devops_pipeline from "./azure-devops-pipeline.svg";
@@ -86,18 +87,20 @@ import azure_service_bus from "./azure-service-bus.svg";
 import azure_sql_server from "./azure-sql-server.svg";
 import azure_sql from "./azure-sql.svg";
 import azure_subscription from "./azure-subscription.svg";
-import azure_vnet from "./azure-vnet.svg";
 import azure from "./azure.svg";
+import azure_vnet from "./azure-vnet.svg";
 import badge from "./badge.svg";
+import ban from "./ban.svg";
 import bash from "./bash.svg";
-import bizagi from "./bizagi.svg";
 import bizagi_icon from "./bizagi_icon.svg";
+import bizagi from "./bizagi.svg";
 import block from "./block.svg";
 import brain from "./brain.svg";
-import ca from "./ca.svg";
 import cal from "./cal.svg";
 import canary_checker from "./canary-checker.svg";
+import cancel from "./cancel.svg";
 import cassandra from "./cassandra.svg";
+import ca from "./ca.svg";
 import cert_manager from "./cert-manager.svg";
 import cfg from "./cfg.svg";
 import changes from "./changes.svg";
@@ -108,9 +111,9 @@ import clone from "./clone.svg";
 import cloud_build from "./cloud-build.svg";
 import cloud_done from "./cloud-done.svg";
 import cloud_download from "./cloud-download.svg";
-import cloud_upload from "./cloud-upload.svg";
 import cloudformation from "./cloudformation.svg";
 import cloudsql from "./cloudsql.svg";
+import cloud_upload from "./cloud-upload.svg";
 import cloudwatch_alarm from "./cloudwatch-alarm.svg";
 import cloudwatch_config from "./cloudwatch-config.svg";
 import cloudwatch from "./cloudwatch.svg";
@@ -122,23 +125,24 @@ import config from "./config.svg";
 import connected from "./connected.svg";
 import console from "./console.svg";
 import consul from "./consul.svg";
-import containerd from "./containerd.svg";
 import containerdPull from "./containerdPull.svg";
 import containerdPush from "./containerdPush.svg";
+import containerd from "./containerd.svg";
 import cpu from "./cpu.svg";
 import csi from "./csi.svg";
 import csv from "./csv.svg";
-import database_plus from "./database-plus.svg";
 import database2 from "./database2.svg";
+import database_plus from "./database-plus.svg";
 import databases from "./databases.svg";
 import datadog from "./datadog.svg";
 import datapower_monitoring from "./datapower-monitoring.svg";
 import datapower_routing from "./datapower-routing.svg";
-import datapower_threat from "./datapower-threat.svg";
 import datapower from "./datapower.svg";
+import datapower_threat from "./datapower-threat.svg";
 import debian from "./debian.svg";
 import decrease from "./decrease.svg";
 import dex from "./dex.svg";
+import discord from "./discord.svg";
 import disk from "./disk.svg";
 import django from "./django.svg";
 import dns from "./dns.svg";
@@ -147,16 +151,18 @@ import dockerPush from "./dockerPush.svg";
 import dollar from "./dollar.svg";
 import dotnet from "./dotnet.svg";
 import dots_triple from "./dots-triple.svg";
+import download_file from "./download-file.svg";
 import download from "./download.svg";
 import dynatrace from "./dynatrace.svg";
 import ec2 from "./ec2.svg";
 import ecr from "./ecr.svg";
 import editorconfig from "./editorconfig.svg";
-import eks from "./eks.svg";
-import elastic from "./elastic.svg";
-import elasticsearch from "./elasticsearch.svg";
-import elb from "./elb.svg";
 import edit from "./edit.svg";
+import eks from "./eks.svg";
+import elasticsearch from "./elasticsearch.svg";
+import elastic from "./elastic.svg";
+import elb from "./elb.svg";
+import email from "./email.svg";
 import envoy from "./envoy.svg";
 import error from "./error.svg";
 import etcd from "./etcd.svg";
@@ -172,32 +178,35 @@ import gcp_repos from "./gcp-repos.svg";
 import gcp from "./gcp.svg";
 import gcsBucket from "./gcsBucket.svg";
 import gilab from "./gilab.svg";
-import git from "./git.svg";
 import github from "./github.svg";
+import git from "./git.svg";
 import gke from "./gke.svg";
-import go from "./go.svg";
+import google_chat from "./google-chat.svg";
 import google from "./google.svg";
+import go from "./go.svg";
 import grafana from "./grafana.svg";
 import graphql from "./graphql.svg";
 import group from "./group.svg";
-import grpc from "./grpc.svg";
 import grpc2 from "./grpc2.svg";
+import grpc from "./grpc.svg";
 import haproxy from "./haproxy.svg";
 import harbor from "./harbor.svg";
 import hazelcast from "./hazelcast.svg";
 import health from "./health.svg";
 import heart from "./heart.svg";
 import helm from "./helm.svg";
+import hide from "./hide.svg";
 import html from "./html.svg";
-import http from "./http.svg";
 import https from "./https.svg";
+import http from "./http.svg";
 import ibm_cloud from "./ibm-cloud.svg";
 import ibm_mq from "./ibm-mq.svg";
 import ibm from "./ibm.svg";
 import icmp from "./icmp.svg";
+import ifttt from "./ifttt.svg";
 import incidents from "./incidents.svg";
-import increase from "./increase.svg";
 import increase2 from "./increase2.svg";
+import increase from "./increase.svg";
 import infinity from "./infinity.svg";
 import ini from "./ini.svg";
 import ip from "./ip.svg";
@@ -209,12 +218,12 @@ import jira_color from "./jira-color.svg";
 import jira_logo from "./jira-logo.svg";
 import jira from "./jira.svg";
 import jmeter from "./jmeter.svg";
-import js from "./js.svg";
 import json from "./json.svg";
+import js from "./js.svg";
 import junit from "./junit.svg";
 import jwt from "./jwt.svg";
-import k8s_clusterrole from "./k8s-clusterrole.svg";
 import k8s_clusterrolebinding from "./k8s-clusterrolebinding.svg";
+import k8s_clusterrole from "./k8s-clusterrole.svg";
 import k8s_configmap from "./k8s-configmap.svg";
 import k8s_cronjob from "./k8s-cronjob.svg";
 import k8s_customresourcedefinition from "./k8s-customresourcedefinition.svg";
@@ -229,22 +238,22 @@ import k8s_limits from "./k8s-limits.svg";
 import k8s_namespace from "./k8s-namespace.svg";
 import k8s_networkpolicy from "./k8s-networkpolicy.svg";
 import k8s_node from "./k8s-node.svg";
-import k8s_persistentvolume from "./k8s-persistentvolume.svg";
 import k8s_persistentvolumeclaim from "./k8s-persistentvolumeclaim.svg";
-import k8s_pod from "./k8s-pod.svg";
+import k8s_persistentvolume from "./k8s-persistentvolume.svg";
 import k8s_podsecuritypolicy from "./k8s-podsecuritypolicy.svg";
+import k8s_pod from "./k8s-pod.svg";
 import k8s_quota from "./k8s-quota.svg";
 import k8s_replicaset from "./k8s-replicaset.svg";
-import k8s_role from "./k8s-role.svg";
 import k8s_rolebinding from "./k8s-rolebinding.svg";
+import k8s_role from "./k8s-role.svg";
 import k8s_secret from "./k8s-secret.svg";
-import k8s_service from "./k8s-service.svg";
 import k8s_serviceaccount from "./k8s-serviceaccount.svg";
+import k8s_service from "./k8s-service.svg";
 import k8s_statefulset from "./k8s-statefulset.svg";
 import k8s_storageclass from "./k8s-storageclass.svg";
+import k8s from "./k8s.svg";
 import k8s_user from "./k8s-user.svg";
 import k8s_vol from "./k8s-vol.svg";
-import k8s from "./k8s.svg";
 import kubernetes from "./kubernetes.svg";
 import kubescape from "./kubescape.svg";
 import kustomize from "./kustomize.svg";
@@ -255,60 +264,66 @@ import link from "./link.svg";
 import linux from "./linux.svg";
 import list from "./list.svg";
 import lock from "./lock.svg";
-import log from "./log.svg";
 import logic_apps from "./logic-apps.svg";
 import logs from "./logs.svg";
+import log from "./log.svg";
 import lua from "./lua.svg";
-import mem from "./mem.svg";
+import matrix from "./matrix.svg";
+import mattermost from "./mattermost.svg";
 import memchache from "./memchache.svg";
+import mem from "./mem.svg";
 import metrics from "./metrics.svg";
 import microsoft from "./microsoft.svg";
 import minus from "./minus.svg";
-import mission_control_logo_white from "./mission-control-logo-white.svg";
 import mission_control_logo from "./mission-control-logo.svg";
-import mission_control_white from "./mission-control-white.svg";
+import mission_control_logo_white from "./mission-control-logo-white.svg";
 import mission_control from "./mission-control.svg";
-import mongo from "./mongo.svg";
+import mission_control_white from "./mission-control-white.svg";
 import mongodb from "./mongodb.svg";
+import mongo from "./mongo.svg";
 import msplanner from "./msplanner.svg";
 import mssql from "./mssql.svg";
 import multiple from "./multiple.svg";
-import mysql from "./mysql.svg";
 import mysql_logo from "./mysql_logo.svg";
-import namespace from "./namespace.svg";
+import mysql from "./mysql.svg";
 import namespaces from "./namespaces.svg";
+import namespace from "./namespace.svg";
 import network from "./network.svg";
 import newrelic from "./newrelic.svg";
 import nginx from "./nginx.svg";
 import nodejs from "./nodejs.svg";
 import nodes from "./nodes.svg";
 import npm from "./npm.svg";
+import ntfy from "./ntfy.svg";
 import o365 from "./o365.svg";
 import opa from "./opa.svg";
 import openid from "./openid.svg";
 import openshift from "./openshift.svg";
 import opentelemetry from "./opentelemetry.svg";
 import operatorframework from "./operatorframework.svg";
-import oracle from "./oracle.svg";
+import opsgenie from "./opsgenie.svg";
 import oracle_icon from "./oracle_icon.svg";
+import oracle from "./oracle.svg";
 import ory_hydra from "./ory-hydra.svg";
 import ory_kratos from "./ory-kratos.svg";
 import ory_logo from "./ory-logo.svg";
 import ory from "./ory.svg";
-import pause from "./pause.svg";
 import package_install from "./package-install.svg";
 import package_rollback from "./package-rollback.svg";
 import package_uninstall from "./package-uninstall.svg";
 import package_upgrade from "./package-upgrade.svg";
 import pagerduty from "./pagerduty.svg";
+import pause from "./pause.svg";
 import php from "./php.svg";
 import ping from "./ping.svg";
 import plus from "./plus.svg";
-import pod from "./pod.svg";
 import pods from "./pods.svg";
+import pod from "./pod.svg";
 import pom from "./pom.svg";
 import postgres from "./postgres.svg";
 import prometheus from "./prometheus.svg";
+import pushbullet from "./pushbullet.svg";
+import pushover from "./pushover.svg";
 import python from "./python.svg";
 import rabbitmq from "./rabbitmq.svg";
 import rancher from "./rancher.svg";
@@ -339,39 +354,42 @@ import restic from "./restic.svg";
 import restrict from "./restrict.svg";
 import rocket from "./rocket.svg";
 import ruby from "./ruby.svg";
-import s3 from "./s3.svg";
 import s3Bucket from "./s3Bucket.svg";
+import s3 from "./s3.svg";
 import scale_down from "./scale-down.svg";
 import scale_in from "./scale-in.svg";
 import scale_out from "./scale-out.svg";
 import scale_up from "./scale-up.svg";
 import seal from "./seal.svg";
 import search from "./search.svg";
-import server from "./server.svg";
-import servers from "./servers.svg";
+import send from "./send.svg";
 import servers2 from "./servers2.svg";
-import service_now from "./service-now.svg";
+import servers from "./servers.svg";
+import server from "./server.svg";
 import servicenow_logo from "./servicenow-logo.svg";
+import service_now from "./service-now.svg";
 import servicenow from "./servicenow.svg";
 import settings from "./settings.svg";
 import sftp from "./sftp.svg";
+import shield from "./shield.svg";
 import shield_user from "./shield-user.svg";
 import shield_warn from "./shield-warn.svg";
-import shield from "./shield.svg";
+import show from "./show.svg";
 import silence from "./silence.svg";
+import skip from "./skip.svg";
 import slack from "./slack.svg";
 import smb from "./smb.svg";
 import source from "./source.svg";
 import speak from "./speak.svg";
 import split from "./split.svg";
 import spring from "./spring.svg";
-import sql from "./sql.svg";
 import sqlserver from "./sqlserver.svg";
-import ssl from "./ssl.svg";
+import sql from "./sql.svg";
 import ssl2 from "./ssl2.svg";
+import ssl from "./ssl.svg";
 import stackdriver_monitoring from "./stackdriver-monitoring.svg";
-import stackdriver_trace from "./stackdriver-trace.svg";
 import stackdriver from "./stackdriver.svg";
+import stackdriver_trace from "./stackdriver-trace.svg";
 import star from "./star.svg";
 import start from "./start.svg";
 import stop from "./stop.svg";
@@ -383,10 +401,13 @@ import tag from "./tag.svg";
 import talk from "./talk.svg";
 import target from "./target.svg";
 import teams from "./teams.svg";
+import telegram from "./telegram.svg";
 import terraform from "./terraform.svg";
 import thousandeyes_logo from "./thousandeyes-logo.svg";
 import thousandeyes from "./thousandeyes.svg";
 import timezone from "./timezone.svg";
+import toggle_off from "./toggle-off.svg";
+import toggle_on from "./toggle-on.svg";
 import traces from "./traces.svg";
 import trafficlight from "./trafficlight.svg";
 import tree from "./tree.svg";
@@ -403,15 +424,7 @@ import world from "./world.svg";
 import www from "./www.svg";
 import xml from "./xml.svg";
 import yaml from "./yaml.svg";
-import send from "./send.svg";
-import hide from "./hide.svg";
-import show from "./show.svg";
-import download_file from "./download-file.svg";
-import ban from "./ban.svg";
-import toggle_on from "./toggle-on.svg";
-import toggle_off from "./toggle-off.svg";
-import cancel from "./cancel.svg";
-import archive from "./archive.svg";
+import zulip from "./zulip.svg";
 
 export const Icons = {
   "access-denied": access_denied,
@@ -443,6 +456,7 @@ export const Icons = {
   alert: alert,
   ansible: ansible,
   apiconnect: apiconnect,
+  archive: archive,
   argo: argo,
   "artifact-registry": artifact_registry,
   "aws-acm": aws_acm,
@@ -483,13 +497,13 @@ export const Icons = {
   "aws-shield": aws_shield,
   "aws-sns": aws_sns,
   "aws-sqs": aws_sqs,
+  aws: aws,
   "aws-trusted-advisor-cost": aws_trusted_advisor_cost,
   "aws-trusted-advisor-fault-tolerance": aws_trusted_advisor_fault_tolerance,
   "aws-trusted-advisor-security": aws_trusted_advisor_security,
   "aws-trusted-advisor": aws_trusted_advisor,
   "aws-vpc": aws_vpc,
   "aws-waf": aws_waf,
-  aws: aws,
   "azure-acl": azure_acl,
   "azure-app-service": azure_app_service,
   "azure-devops-pipeline": azure_devops_pipeline,
@@ -501,30 +515,33 @@ export const Icons = {
   "azure-sql-server": azure_sql_server,
   "azure-sql": azure_sql,
   "azure-subscription": azure_subscription,
-  "azure-vnet": azure_vnet,
   azure: azure,
+  "azure-vnet": azure_vnet,
   badge: badge,
+  ban: ban,
   bash: bash,
-  bizagi: bizagi,
   bizagi_icon: bizagi_icon,
+  bizagi: bizagi,
   block: block,
   brain: brain,
-  ca: ca,
   cal: cal,
   "canary-checker": canary_checker,
+  cancel: cancel,
   cassandra: cassandra,
+  ca: ca,
   "cert-manager": cert_manager,
   cfg: cfg,
   changes: changes,
   check: check,
   cisco: cisco,
   clock: clock,
+  clone: clone,
   "cloud-build": cloud_build,
   "cloud-done": cloud_done,
   "cloud-download": cloud_download,
-  "cloud-upload": cloud_upload,
   cloudformation: cloudformation,
   cloudsql: cloudsql,
+  "cloud-upload": cloud_upload,
   "cloudwatch-alarm": cloudwatch_alarm,
   "cloudwatch-config": cloudwatch_config,
   cloudwatch: cloudwatch,
@@ -536,23 +553,24 @@ export const Icons = {
   connected: connected,
   console: console,
   consul: consul,
-  containerd: containerd,
   containerdPull: containerdPull,
   containerdPush: containerdPush,
+  containerd: containerd,
   cpu: cpu,
   csi: csi,
   csv: csv,
-  "database-plus": database_plus,
   database2: database2,
+  "database-plus": database_plus,
   databases: databases,
   datadog: datadog,
   "datapower-monitoring": datapower_monitoring,
   "datapower-routing": datapower_routing,
-  "datapower-threat": datapower_threat,
   datapower: datapower,
+  "datapower-threat": datapower_threat,
   debian: debian,
   decrease: decrease,
   dex: dex,
+  discord: discord,
   disk: disk,
   django: django,
   dns: dns,
@@ -561,15 +579,18 @@ export const Icons = {
   dollar: dollar,
   dotnet: dotnet,
   "dots-triple": dots_triple,
+  "download-file": download_file,
   download: download,
   dynatrace: dynatrace,
   ec2: ec2,
   ecr: ecr,
   editorconfig: editorconfig,
+  edit: edit,
   eks: eks,
-  elastic: elastic,
   elasticsearch: elasticsearch,
+  elastic: elastic,
   elb: elb,
+  email: email,
   envoy: envoy,
   error: error,
   etcd: etcd,
@@ -585,32 +606,35 @@ export const Icons = {
   gcp: gcp,
   gcsBucket: gcsBucket,
   gilab: gilab,
-  git: git,
   github: github,
+  git: git,
   gke: gke,
-  go: go,
+  "google-chat": google_chat,
   google: google,
+  go: go,
   grafana: grafana,
   graphql: graphql,
   group: group,
-  grpc: grpc,
   grpc2: grpc2,
+  grpc: grpc,
   haproxy: haproxy,
   harbor: harbor,
   hazelcast: hazelcast,
   health: health,
   heart: heart,
   helm: helm,
+  hide: hide,
   html: html,
-  http: http,
   https: https,
+  http: http,
   "ibm-cloud": ibm_cloud,
   "ibm-mq": ibm_mq,
   ibm: ibm,
   icmp: icmp,
+  ifttt: ifttt,
   incidents: incidents,
-  increase: increase,
   increase2: increase2,
+  increase: increase,
   infinity: infinity,
   ini: ini,
   ip: ip,
@@ -622,12 +646,12 @@ export const Icons = {
   "jira-logo": jira_logo,
   jira: jira,
   jmeter: jmeter,
-  js: js,
   json: json,
+  js: js,
   junit: junit,
   jwt: jwt,
-  "k8s-clusterrole": k8s_clusterrole,
   "k8s-clusterrolebinding": k8s_clusterrolebinding,
+  "k8s-clusterrole": k8s_clusterrole,
   "k8s-configmap": k8s_configmap,
   "k8s-cronjob": k8s_cronjob,
   "k8s-customresourcedefinition": k8s_customresourcedefinition,
@@ -642,66 +666,72 @@ export const Icons = {
   "k8s-namespace": k8s_namespace,
   "k8s-networkpolicy": k8s_networkpolicy,
   "k8s-node": k8s_node,
-  "k8s-persistentvolume": k8s_persistentvolume,
   "k8s-persistentvolumeclaim": k8s_persistentvolumeclaim,
-  "k8s-pod": k8s_pod,
+  "k8s-persistentvolume": k8s_persistentvolume,
   "k8s-podsecuritypolicy": k8s_podsecuritypolicy,
+  "k8s-pod": k8s_pod,
   "k8s-quota": k8s_quota,
   "k8s-replicaset": k8s_replicaset,
-  "k8s-role": k8s_role,
   "k8s-rolebinding": k8s_rolebinding,
+  "k8s-role": k8s_role,
   "k8s-secret": k8s_secret,
-  "k8s-service": k8s_service,
   "k8s-serviceaccount": k8s_serviceaccount,
+  "k8s-service": k8s_service,
   "k8s-statefulset": k8s_statefulset,
   "k8s-storageclass": k8s_storageclass,
+  k8s: k8s,
   "k8s-user": k8s_user,
   "k8s-vol": k8s_vol,
-  k8s: k8s,
   kubernetes: kubernetes,
   kubescape: kubescape,
   kustomize: kustomize,
   ldap: ldap,
   letsencrypt: letsencrypt,
   lifebuoy: lifebuoy,
+  link: link,
   linux: linux,
   list: list,
-  log: log,
+  lock: lock,
   "logic-apps": logic_apps,
   logs: logs,
+  log: log,
   lua: lua,
-  mem: mem,
+  matrix: matrix,
+  mattermost: mattermost,
   memchache: memchache,
+  mem: mem,
   metrics: metrics,
   microsoft: microsoft,
   minus: minus,
-  "mission-control-logo-white": mission_control_logo_white,
   "mission-control-logo": mission_control_logo,
-  "mission-control-white": mission_control_white,
+  "mission-control-logo-white": mission_control_logo_white,
   "mission-control": mission_control,
-  mongo: mongo,
+  "mission-control-white": mission_control_white,
   mongodb: mongodb,
+  mongo: mongo,
   msplanner: msplanner,
   mssql: mssql,
   multiple: multiple,
-  mysql: mysql,
   mysql_logo: mysql_logo,
-  namespace: namespace,
+  mysql: mysql,
   namespaces: namespaces,
+  namespace: namespace,
   network: network,
   newrelic: newrelic,
   nginx: nginx,
   nodejs: nodejs,
   nodes: nodes,
   npm: npm,
+  ntfy: ntfy,
   o365: o365,
   opa: opa,
   openid: openid,
   openshift: openshift,
   opentelemetry: opentelemetry,
   operatorframework: operatorframework,
-  oracle: oracle,
+  opsgenie: opsgenie,
   oracle_icon: oracle_icon,
+  oracle: oracle,
   "ory-hydra": ory_hydra,
   "ory-kratos": ory_kratos,
   "ory-logo": ory_logo,
@@ -711,19 +741,23 @@ export const Icons = {
   "package-uninstall": package_uninstall,
   "package-upgrade": package_upgrade,
   pagerduty: pagerduty,
+  pause: pause,
   php: php,
   ping: ping,
   plus: plus,
-  pod: pod,
   pods: pods,
+  pod: pod,
   pom: pom,
   postgres: postgres,
   prometheus: prometheus,
+  pushbullet: pushbullet,
+  pushover: pushover,
   python: python,
   rabbitmq: rabbitmq,
   rancher: rancher,
   redhat: redhat,
   redis: redis,
+  reload: reload,
   "remove-clock": remove_clock,
   "remove-cloud": remove_cloud,
   "remove-comment": remove_comment,
@@ -748,55 +782,68 @@ export const Icons = {
   restrict: restrict,
   rocket: rocket,
   ruby: ruby,
-  s3: s3,
   s3Bucket: s3Bucket,
+  s3: s3,
   "scale-down": scale_down,
   "scale-in": scale_in,
   "scale-out": scale_out,
   "scale-up": scale_up,
   seal: seal,
-  server: server,
-  servers: servers,
+  search: search,
+  send: send,
   servers2: servers2,
-  "service-now": service_now,
+  servers: servers,
+  server: server,
   "servicenow-logo": servicenow_logo,
+  "service-now": service_now,
   servicenow: servicenow,
   settings: settings,
-  sftp,
+  sftp: sftp,
+  shield: shield,
   "shield-user": shield_user,
   "shield-warn": shield_warn,
-  shield: shield,
+  show: show,
   silence: silence,
+  skip: skip,
   slack: slack,
   smb: smb,
   source: source,
   speak: speak,
+  split: split,
   spring: spring,
-  sql: sql,
   sqlserver: sqlserver,
-  ssl: ssl,
+  sql: sql,
   ssl2: ssl2,
+  ssl: ssl,
   "stackdriver-monitoring": stackdriver_monitoring,
-  "stackdriver-trace": stackdriver_trace,
   stackdriver: stackdriver,
+  "stackdriver-trace": stackdriver_trace,
   star: star,
+  start: start,
+  stop: stop,
   structure: structure,
   swagger: swagger,
+  switch: switch_icon,
   sys: sys,
   tag: tag,
   talk: talk,
   target: target,
   teams: teams,
+  telegram: telegram,
   terraform: terraform,
   "thousandeyes-logo": thousandeyes_logo,
   thousandeyes: thousandeyes,
   timezone: timezone,
+  "toggle-off": toggle_off,
+  "toggle-on": toggle_on,
   traces: traces,
   trafficlight: trafficlight,
   tree: tree,
   trivy: trivy,
   txt: txt,
   ubuntu: ubuntu,
+  unlock: unlock,
+  upload: upload,
   user: user,
   vault: vault,
   vsphere: vsphere,
@@ -805,26 +852,5 @@ export const Icons = {
   www: www,
   xml: xml,
   yaml: yaml,
-  edit: edit,
-  lock: lock,
-  unlock: unlock,
-  upload: upload,
-  search: search,
-  switch: switch_icon,
-  start: start,
-  stop: stop,
-  pause: pause,
-  clone: clone,
-  split: split,
-  reload: reload,
-  send: send,
-  link: link,
-  show: show,
-  hide: hide,
-  "toggle-off": toggle_off,
-  "toggle-on": toggle_on,
-  "download-file": download_file,
-  ban: ban,
-  archive: archive,
-  cancel: cancel
+  zulip: zulip
 };

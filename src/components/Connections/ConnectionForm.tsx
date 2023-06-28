@@ -12,27 +12,45 @@ import { FaTrash } from "react-icons/fa";
 import { Button } from "../Button";
 
 export type Connection = {
+  altID?: string;
+  authMethod?: string;
+  certificate?: string;
+  channel?: string;
+  checkIntegrity?: boolean;
+  contentType?: string;
+  db?: string;
+  domain?: string;
+  email?: string;
+  encryptionMethod?: string;
+  from?: string;
+  fromName?: string;
+  group?: string;
+  groupOwner?: string;
+  host?: string;
   id?: string;
+  insecure_tls?: boolean;
+  key?: string;
+  maxAge?: number;
   name: string;
+  password?: string;
+  path?: string;
+  port?: string | number;
+  profile?: string;
+  region?: string;
+  requestMethod?: string;
+  scheme?: string;
+  searchPath?: string;
+  sharename?: string;
+  targets?: string;
+  tenant?: string;
+  titleKey?: string;
+  topic?: string;
   type: string;
   url?: string;
+  user?: string;
   username?: string;
-  password?: string;
-  certificate?: string;
-  domain?: string;
-  region?: string;
-  profile?: string;
-  host?: string;
-  port?: string | number;
-  tenant?: string;
-  checkIntegrity?: boolean;
-  maxAge?: number;
-  insecure_tls?: boolean;
+  webhook?: string;
   workstation?: string;
-  sharename?: string;
-  searchPath?: string;
-  scheme?: string;
-  db?: string;
 };
 
 type ConnectionFormProps = React.HTMLProps<HTMLDivElement> & {
@@ -93,6 +111,7 @@ export default function ConnectionForm({
             name={field.key}
             label={field.label}
             required={field.required}
+            hint={field.hint}
             defaultValue={field.default?.toString()}
           />
         );
@@ -103,6 +122,7 @@ export default function ConnectionForm({
             name={field.key}
             label={field.label}
             required={field.required}
+            hint={field.hint}
             defaultValue={field.default?.toString()}
           />
         );
@@ -113,6 +133,7 @@ export default function ConnectionForm({
             label={field.label}
             labelClassName="text-sm font-semibold text-gray-700"
             required={field.required}
+            hint={field.hint}
           />
         );
       case "EnvVarSource":
@@ -121,6 +142,7 @@ export default function ConnectionForm({
             name={field.key}
             label={field.label}
             variant={field.variant}
+            hint={field.hint}
             required={field.required}
           />
         );

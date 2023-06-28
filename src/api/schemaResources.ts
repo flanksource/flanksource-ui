@@ -73,15 +73,6 @@ const getTableName = (table: string) => {
   }
 };
 
-const hasDeletedAtColumn = (table: string) => {
-  switch (table) {
-    case "connections":
-      return false;
-    default:
-      return true;
-  }
-};
-
 export const getAll = ({
   table,
   api
@@ -89,12 +80,16 @@ export const getAll = ({
   const endpoint = getBackend(api);
   if (endpoint) {
     const tableName = getTableName(table);
+    const url = new URLSearchParams();
+    url.set("select", `*,created_by(${AVATAR_INFO})`);
+    url.set("deleted_at", "is.null");
+    url.set("order", "created_at.desc");
+    url.set("limit", "100");
     return endpoint.get<SchemaResourceWithJobStatus[]>(
-      `/${tableName}?order=created_at.desc&select=*,created_by(${AVATAR_INFO})&limit=100${
-        hasDeletedAtColumn(tableName) ? "&deleted_at=is.null" : ""
-      }`
+      `/${tableName}?${url.toString()}`
     );
   }
+
   return Promise.resolve({ data: [] } as any);
 };
 
