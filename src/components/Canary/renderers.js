@@ -1,6 +1,7 @@
 import { Icon } from "../Icon";
 import { Status } from "../Status";
 import { isEmpty } from "./utils";
+import { TbTrash } from "react-icons/tb";
 
 export const empty = (
   <span className="text-gray-500 text-light text-xs">-</span>
@@ -102,10 +103,7 @@ export function Title({ icon, title, isDeleted }) {
           <Icon name={icon} className="inline h-6" />
         </span>
       )}
-      <span className="text-sm">
-        {title}{" "}
-        {isDeleted && <Icon name={"remove-trash"} className="inline h-6" />}
-      </span>
+      <span className="text-sm">{title}</span> {isDeleted && <TbTrash />}
     </>
   );
 }
