@@ -121,20 +121,22 @@ export function TitleCell({ row }) {
           paddingLeft: `${row.depth * 1.1}rem`
         }}
       >
-        <Title title={title} icon={rowValues.icon || rowValues.type} />
-        {row.canExpand &&
-          rowValues.subRows &&
-          rowValues?.subRows.length > 1 && (
-            <span className="ml-1 flex items-center">
-              <Badge
-                className="ml-1"
-                colorClass="bg-gray-200 text-gray-800"
-                roundedClass="rounded-xl"
-                text={rowValues?.subRows.length}
-                size="xs"
-              />
-            </span>
-          )}
+        <Title
+          title={title}
+          icon={rowValues.icon || rowValues.type}
+          isDeleted={row.original.deleted_at}
+        />
+        {row.canExpand && rowValues.subRows && rowValues?.subRows.length > 1 && (
+          <span className="ml-1 flex items-center">
+            <Badge
+              className="ml-1"
+              colorClass="bg-gray-200 text-gray-800"
+              roundedClass="rounded-xl"
+              text={rowValues?.subRows.length}
+              size="xs"
+            />
+          </span>
+        )}
         {row.showNamespaceTags ? (
           rowValues.namespaces ? (
             <Badge

@@ -1,6 +1,7 @@
 import { Icon } from "../Icon";
 import { Status } from "../Status";
 import { isEmpty } from "./utils";
+import { TbTrash } from "react-icons/tb";
 
 export const empty = (
   <span className="text-gray-500 text-light text-xs">-</span>
@@ -94,7 +95,7 @@ export function Percentage({ val, upper, lower }) {
   );
 }
 
-export function Title({ icon, title }) {
+export function Title({ icon, title, isDeleted }) {
   return (
     <>
       {icon && (
@@ -102,7 +103,7 @@ export function Title({ icon, title }) {
           <Icon name={icon} className="inline h-6" />
         </span>
       )}
-      <span className="text-sm">{title}</span>
+      <span className="text-sm">{title}</span> {isDeleted && <TbTrash />}
     </>
   );
 }
