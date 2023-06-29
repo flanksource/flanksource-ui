@@ -19,16 +19,14 @@ import {
   formatISODate,
   subtractDateFromNow
 } from "../../../utils/date";
-
-type StatusType = {
-  time: string;
-  duration: number;
-};
+import { HealthCheck } from "../../../types/healthChecks";
+import { useQuery } from "@tanstack/react-query";
 
 // @TODO: duration should be formatted properly, not just by ms
 const formatDuration = (duration: number) => `${duration}ms`;
 
-const getFill = (entry) => (entry.status ? "#2cbd27" : "#df1a1a");
+const getFill = (entry: { status?: any }) =>
+  entry.status ? "#2cbd27" : "#df1a1a";
 
 function getUpdatedFormat(start: string) {
   switch (start) {
@@ -66,7 +64,16 @@ const getStartValue = (start: string) => {
   );
 };
 
-export function CanaryStatusChart({ check, timeRange, ...rest }) {
+type CanaryStatusChartProps = {
+  check: Partial<HealthCheck>;
+  timeRange: string;
+} & Omit<React.ComponentProps<typeof ResponsiveContainer>, "children">;
+
+export function CanaryStatusChart({
+  check,
+  timeRange,
+  ...rest
+}: CanaryStatusChartProps) {
   const [data, setData] = useState<StatusType[]>([]);
   const [dateFormatFn, setDateFormatFn] = useState(
     () => (date: string | Date) => formatDateToTime(date)
@@ -81,7 +88,7 @@ export function CanaryStatusChart({ check, timeRange, ...rest }) {
 
   useEffect(() => {
     const payload = {
-      check: check.id,
+      check: check.id!,
       count: 300,
       start: getStartValue(timeRange)
     };
@@ -168,9 +175,21 @@ function CustomXTick({ tickFormatter = (value: string) => value, ...rest }) {
   );
 }
 
-function CustomYTick({ tickFormatter = (value: number) => value, ...rest }) {
-  const { x, y, payload, fontSize = 12 } = rest;
+type CustomYTickProps = {
+  tickFormatter?: (value: number) => string | number | undefined;
+  x?: number;
+  y?: number;
+  payload?: { value?: number };
+  fontSize?: number;
+};
 
+function CustomYTick({
+  tickFormatter = (value?: number) => value,
+  x,
+  y,
+  payload,
+  fontSize = 12
+}: CustomYTickProps) {
   return (
     <g transform={`translate(${x},${y})`}>
       <text
@@ -181,7 +200,7 @@ function CustomYTick({ tickFormatter = (value: number) => value, ...rest }) {
         fill="#666"
         fontSize={fontSize}
       >
-        {tickFormatter(payload.value)}
+        {tickFormatter(payload?.value!)}
       </text>
     </g>
   );

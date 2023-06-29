@@ -87,11 +87,23 @@ export const getTopologyWithoutUnroll = async (params: IParam) => {
   });
 };
 
+export type CanaryGraphResponse = {
+  duration: number;
+  runnerName: string;
+  status: CanaryGraphStatus[];
+};
+
+export type CanaryGraphStatus = {
+  time: string;
+  status: boolean;
+  duration: number;
+};
+
 export const getCanaryGraph = async (
   params: Record<string, string | number | boolean>
 ) => {
   const query = stringify(params);
-  return CanaryChecker.get(`/api/graph?${query}`);
+  return CanaryChecker.get<CanaryGraphResponse | null>(`/api/graph?${query}`);
 };
 
 type HealthCheckAPIResponse = {
