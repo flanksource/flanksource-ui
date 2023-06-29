@@ -74,6 +74,14 @@ export const getAllConfigsMatchingQuery = (query: string) => {
   return resolve<ConfigItem[]>(ConfigDB.get(url));
 };
 
+export const getAllConfigsForSearchPurpose = async () => {
+  let url = `/configs?select=id,name,config_class,type`;
+  const res = await resolve<
+    Pick<ConfigItem, "name" | "config_class" | "type" | "id">[]
+  >(ConfigDB.get(url));
+  return res.data ?? [];
+};
+
 export const getAllChanges = (
   queryParams: Record<string, string | undefined>,
   pageIndex?: number,
