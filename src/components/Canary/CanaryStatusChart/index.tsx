@@ -74,7 +74,6 @@ export function CanaryStatusChart({
   timeRange,
   ...rest
 }: CanaryStatusChartProps) {
-  const [data, setData] = useState<StatusType[]>([]);
   const [dateFormatFn, setDateFormatFn] = useState(
     () => (date: string | Date) => formatDateToTime(date)
   );
@@ -86,20 +85,27 @@ export function CanaryStatusChart({
     [dateFormatFn]
   );
 
+  const { data = [] } = useQuery(
+    ["canaryGraph", check.id, timeRange],
+    async () => {
+      const payload = {
+        check: check.id!,
+        count: 300,
+        start: getStartValue(timeRange)
+      };
+      const res = await getCanaryGraph(payload);
+      return res.data;
+    },
+    {
+      select: (data) => (data?.status ?? []).reverse(),
+      suspense: true
+    }
+  );
+
   useEffect(() => {
-    const payload = {
-      check: check.id!,
-      count: 300,
-      start: getStartValue(timeRange)
-    };
-    getCanaryGraph(payload).then((results) => {
-      const updatedFormat = getUpdatedFormat(timeRange);
-      setData(() => {
-        return (results.data.status as StatusType[]).reverse();
-      });
-      setDateFormatFn(() => (date: string | Date) => updatedFormat(date));
-    });
-  }, [check, timeRange]);
+    const updatedFormat = getUpdatedFormat(timeRange);
+    setDateFormatFn(() => (date: string | Date) => updatedFormat(date));
+  }, [timeRange]);
 
   if (!data?.length) {
     return <Loading />;
