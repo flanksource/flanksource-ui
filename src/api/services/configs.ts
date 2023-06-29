@@ -67,7 +67,7 @@ export const getAllConfigs = () =>
   resolve<ConfigItem[]>(ConfigDB.get(`/configs`));
 
 export const getAllConfigsMatchingQuery = (query: string) => {
-  let url = `/configs?select=*,agent:agents(id,name)`;
+  let url = `/configs?`;
   if (query) {
     url = `${url}&${query}`;
   }

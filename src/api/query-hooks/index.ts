@@ -143,6 +143,7 @@ type ConfigListFilterQueryOptions = {
   hideDeletedConfigs?: boolean;
   sortBy?: string | null;
   sortOrder?: string | null;
+  includeAgents?: boolean;
 };
 
 function prepareConfigListQuery({
@@ -151,9 +152,13 @@ function prepareConfigListQuery({
   tag,
   sortBy,
   sortOrder,
-  hideDeletedConfigs
+  hideDeletedConfigs,
+  includeAgents = false
 }: ConfigListFilterQueryOptions) {
   let query = "select=*";
+  if (includeAgents) {
+    query = `${query},agent:agents(id,name)`;
+  }
   if (search) {
     query = `${query}&or=(name.ilike.*${search}*,type.ilike.*${search}*,description.ilike.*${search}*,namespace.ilike.*${search}*)`;
   } else {
@@ -186,7 +191,8 @@ export const useAllConfigsQuery = (
     configType,
     sortBy,
     sortOrder,
-    hideDeletedConfigs
+    hideDeletedConfigs,
+    includeAgents
   }: ConfigListFilterQueryOptions,
   { enabled = true, staleTime = defaultStaleTime, ...rest }
 ) => {
@@ -196,7 +202,8 @@ export const useAllConfigsQuery = (
     configType,
     sortBy,
     sortOrder,
-    hideDeletedConfigs
+    hideDeletedConfigs,
+    includeAgents
   });
   return useQuery(
     [
@@ -206,7 +213,8 @@ export const useAllConfigsQuery = (
       configType,
       sortBy,
       sortOrder,
-      hideDeletedConfigs
+      hideDeletedConfigs,
+      includeAgents
     ],
     () => {
       return getAllConfigsMatchingQuery(query);
