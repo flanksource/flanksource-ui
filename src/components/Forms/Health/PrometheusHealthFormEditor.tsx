@@ -1,7 +1,7 @@
 import FormikTextInput from "../Formik/FormikTextInput";
 import FormikTemplateFields from "../Formik/FormikTemplateFields";
-import FormikCheckboxFieldsGroup from "../Formik/FormikCheckboxFieldsGroup";
-import FormikScheduleField from "../Formik/FormikScheduleField";
+import FormikTextArea from "../Formik/FormikTextArea";
+import FormikIconPicker from "../Formik/FormikIconPicker";
 
 type PrometheusHealthFormEditorProps = {
   fieldName: string;
@@ -24,32 +24,28 @@ export default function PrometheusHealthFormEditor({
 
   return (
     <>
+      <div className="flex flex-row md:space-x-2">
+        <FormikTextInput
+          className="flex flex-col w-1/2"
+          name={`${fieldName}.name`}
+          label="Name"
+          required
+        />
+        <FormikIconPicker
+          className="flex flex-col w-1/2"
+          name={`${fieldName}.icon`}
+          label="Icon"
+        />
+      </div>
+
       <FormikTextInput name={`${fieldName}.description`} label="Description" />
-      <FormikTextInput name={`${fieldName}.name`} label="Name" />
 
-      {/* this a top level schema field, not nested under prometheus */}
-      <FormikScheduleField name={`${name}.schedule`} />
+      <FormikTemplateFields name={`${fieldName}.test`} label="Test" />
+      <FormikTemplateFields name={`${fieldName}.display`} label="Display" />
 
-      <FormikTemplateFields name={`${fieldName}.test`} label="Script" />
+      <FormikTextArea name={`${fieldName}.query`} label="Query" required />
 
-      <FormikCheckboxFieldsGroup
-        name={`${fieldName}.advanced`}
-        label="Advanced"
-        labelClassName="font-bold"
-      >
-        <FormikTemplateFields
-          name={`${fieldName}.display`}
-          label="Customize Response"
-        />
-
-        <FormikTemplateFields
-          name={`${fieldName}.transform`}
-          label="Transform Response"
-        />
-      </FormikCheckboxFieldsGroup>
-
-      <FormikTextInput name={`${fieldName}.connection`} label="Connection" />
-      <FormikTextInput name={`${fieldName}.host`} label="Host" />
+      <FormikTextInput name={`${fieldName}.host`} label="Host" required />
     </>
   );
 }

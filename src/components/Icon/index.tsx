@@ -2,6 +2,7 @@ import { isEmpty } from "lodash";
 import { GoDiff } from "react-icons/go";
 import { Icons } from "../../icons";
 import React, { memo } from "react";
+import { getIconsForAWSEvents } from "./AwsEventsIconMap";
 
 const aliases = {
   "AWS::EC2::Subnet": "network",
@@ -56,6 +57,9 @@ const prefixes = {
 function findByName(name?: string) {
   if (isEmpty(name) || !name) {
     return undefined;
+  }
+  if (getIconsForAWSEvents(name)) {
+    return getIconsForAWSEvents(name);
   }
   if (aliases[name as keyof typeof aliases]) {
     name = aliases[name as keyof typeof aliases];

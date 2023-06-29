@@ -28,7 +28,7 @@ export type Topology = {
   updated_at?: string;
   title?: string;
   properties?: TopologyProperty[];
-  components?: Record<string, any>[];
+  components?: Topology[];
   labels?: Record<string, string>;
   path?: string;
   icon?: string;
@@ -37,6 +37,7 @@ export type Topology = {
   hidden?: boolean;
   external_id?: string;
   agent_id?: string;
+  topology_id?: string;
   summary?: {
     incidents?: Record<
       keyof typeof typeItems,
@@ -51,7 +52,7 @@ export type Topology = {
 } & CostsData;
 
 export type TopologyState = {
-  topology: Topology[] | null;
+  topology: Topology[] | undefined;
   searchParams: URLSearchParamsInit;
 };
 
@@ -62,7 +63,7 @@ export type TopologyPageState = {
 
 const initialState: TopologyPageState = {
   topologyState: {
-    topology: null,
+    topology: undefined,
     searchParams: {}
   },
   setTopologyState: ({ ...props }) => {}

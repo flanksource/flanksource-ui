@@ -13,7 +13,7 @@ export default function ConfigInsightNameCell({
       data-html={true}
       data-tip={insight.sanitizedMessageTxt}
       data-class="max-w-[20rem]"
-      className="py-2 text-black overflow-hidden cursor-pointer flex-1"
+      className="py-2 text-black overflow-hidden cursor-pointer flex-1 text-sm"
     >
       <ConfigAnalysisLink key={insight.id} configAnalysis={insight} />
     </div>

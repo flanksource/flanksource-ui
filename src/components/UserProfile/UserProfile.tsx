@@ -1,13 +1,12 @@
 import { Menu, Transition } from "@headlessui/react";
 import { Fragment, useState } from "react";
-import { useUser } from "../../context";
 import { FaUserAlt } from "react-icons/fa";
-
+import { useUser } from "../../context";
+import { ClickableSvg } from "../ClickableSvg/ClickableSvg";
 import { CreateUserDialog } from "../CreateUserDialog";
 import { SelectUserDialog } from "../SelectUserDialog";
-import { useCreateLogoutHandler } from "../ory";
 import { VersionInfo } from "../VersionInfo/VersionInfo";
-import { ClickableSvg } from "../ClickableSvg/ClickableSvg";
+import { useCreateLogoutHandler } from "../ory";
 
 export function UserProfile() {
   const [isOpen, setIsOpen] = useState(false);
@@ -27,6 +26,7 @@ export function UserProfile() {
       />
       <Menu as="div" className="ml-3 relative flex-shrink-0">
         <div>
+          {/* @ts-expect-error */}
           <Menu.Button className="flex items-center text-sm rounded-full">
             {user?.avatar ? (
               <img
@@ -41,7 +41,9 @@ export function UserProfile() {
             )}
           </Menu.Button>
         </div>
+        {/* @ts-expect-error */}
         <Transition
+          // @ts-expect-error
           as={Fragment}
           enter="transition ease-out duration-100"
           enterFrom="transform opacity-0 scale-95"
@@ -50,7 +52,9 @@ export function UserProfile() {
           leaveFrom="transform opacity-100 scale-100"
           leaveTo="transform opacity-0 scale-95"
         >
-          <Menu.Items className="absolute bg-white focus:outline-none mt-2 opacity-100 origin-top-right right-0 ring-1 ring-black ring-opacity-5 rounded-md scale-100 shadow-lg shadow-md transform w-64">
+          {/* @ts-expect-error */}
+          <Menu.Items className="absolute bg-white focus:outline-none mt-2 opacity-100 origin-top-right right-0 ring-1 ring-black ring-opacity-5 rounded-md scale-100 shadow-md transform w-64">
+            {/* @ts-expect-error */}
             <Menu.Item>
               <span className="truncate bg-slate-300 block bold border-0 border-b border-gray-400 broder-black px-4 py-2 rounded-t-md text-gray-600 text-lg">
                 Hi <b title={user?.name}>{user?.name}</b>

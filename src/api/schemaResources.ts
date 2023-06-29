@@ -9,6 +9,7 @@ import { JobHistoryStatus } from "../components/JobsHistory/JobsHistoryTable";
 import { ConfigItem } from "./services/configs";
 import { TopologyComponentItem } from "../components/FilterIncidents/FilterIncidentsByComponents";
 import { LogBackends } from "../components/LogBackends/LogBackends";
+import { EventQueueStatus } from "../components/EventQueueStatus/eventQueue";
 
 export interface SchemaResourceI {
   id: string;
@@ -72,15 +73,6 @@ const getTableName = (table: string) => {
   }
 };
 
-const hasDeletedAtColumn = (table: string) => {
-  switch (table) {
-    case "connections":
-      return false;
-    default:
-      return true;
-  }
-};
-
 export const getAll = ({
   table,
   api
@@ -88,12 +80,16 @@ export const getAll = ({
   const endpoint = getBackend(api);
   if (endpoint) {
     const tableName = getTableName(table);
+    const url = new URLSearchParams();
+    url.set("select", `*,created_by(${AVATAR_INFO})`);
+    url.set("deleted_at", "is.null");
+    url.set("order", "created_at.desc");
+    url.set("limit", "100");
     return endpoint.get<SchemaResourceWithJobStatus[]>(
-      `/${tableName}?order=created_at.desc&select=*,created_by(${AVATAR_INFO})&limit=100${
-        hasDeletedAtColumn(tableName) ? "&deleted_at=is.null" : ""
-      }`
+      `/${tableName}?${url.toString()}`
     );
   }
+
   return Promise.resolve({ data: [] } as any);
 };
 
@@ -145,6 +141,13 @@ export async function getTemplatesRelatedComponents(templateID: string) {
 export async function getLogsBackends() {
   const res = await CanaryCheckerDB.get<LogBackends[] | null>(
     `logging_backends?order=created_at.desc&select=*,created_by(${AVATAR_INFO})&deleted_at=is.null`
+  );
+  return res.data ?? [];
+}
+
+export async function getEventQueueStatus() {
+  const res = await CanaryCheckerDB.get<EventQueueStatus[] | null>(
+    `failed_push_queue?order=latest_failure.desc`
   );
   return res.data ?? [];
 }

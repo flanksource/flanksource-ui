@@ -11,6 +11,8 @@ import FormikTextInput from "./Formik/FormikTextInput";
 import FormikAutocompleteDropdown from "./Formik/FormikAutocompleteDropdown";
 import FormikIconPicker from "./Formik/FormikIconPicker";
 import DeleteResource from "../SchemaResourcePage/Delete/DeleteResource";
+import clsx from "clsx";
+import { Icon } from "../Icon";
 
 type SpecEditorFormProps = {
   loadSpec: () => Record<string, any>;
@@ -24,6 +26,8 @@ type SpecEditorFormProps = {
   rawSpecInput?: boolean;
   schemaFilePrefix?: "component" | "canary" | "system" | "scrape_config";
   resourceInfo: SchemaResourceType;
+  canEdit?: boolean;
+  cantEditMessage?: string;
 };
 
 export default function SpecEditorForm({
@@ -35,7 +39,9 @@ export default function SpecEditorForm({
   configForm: ConfigForm,
   specsMapField: specFieldMapField,
   rawSpecInput: showCodeEditorOnly = false,
-  schemaFilePrefix
+  schemaFilePrefix,
+  canEdit = false,
+  cantEditMessage
 }: SpecEditorFormProps) {
   const formRef = useRef<HTMLFormElement>(null);
   const [activeTabs, setActiveTabs] = useState<"Form" | "Code">(
@@ -203,28 +209,39 @@ export default function SpecEditorForm({
             </div>
           </div>
           <div className="flex flex-row bg-gray-100 p-4">
-            <div className="flex flex-1 flex-row">
-              {!initialValues.id && (
-                <Button
-                  type="button"
-                  text="Back"
-                  className="btn-default btn-btn-secondary-base btn-secondary"
-                  onClick={onBack}
-                />
-              )}
-            </div>
             <div className="flex flex-1 flex-row space-x-4 justify-end">
-              {!!initialValues.id && (
+              {!!cantEditMessage && !canEdit && !!initialValues.id && (
+                <div className="flex items-center px-4 space-x-2 flex-1">
+                  <Icon name="k8s" />
+                  <span>{cantEditMessage}</span>
+                </div>
+              )}
+              {!initialValues.id && (
+                <div className="flex flex-1 flex-row">
+                  <Button
+                    type="button"
+                    text="Back"
+                    className="btn-default btn-btn-secondary-base btn-secondary"
+                    onClick={onBack}
+                  />{" "}
+                </div>
+              )}
+              {canEdit && !!initialValues.id && (
                 <DeleteResource
                   resourceId={initialValues.id}
                   resourceInfo={resourceInfo}
                 />
               )}
-              <Button
-                type="submit"
-                text={!!initialValues.id ? "Update" : "Save"}
-                className="btn-primary"
-              />
+
+              {canEdit && (
+                <Button
+                  type="submit"
+                  text={!!initialValues.id ? "Update" : "Save"}
+                  className={clsx(
+                    canEdit ? "btn-primary" : "btn-disabled cursor-no-drop"
+                  )}
+                />
+              )}
             </div>
           </div>
         </Form>

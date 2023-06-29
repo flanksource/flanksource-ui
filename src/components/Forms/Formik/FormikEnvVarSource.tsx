@@ -8,6 +8,7 @@ type FormikEnvVarSourceProps = React.HTMLProps<
   HTMLInputElement | HTMLTextAreaElement
 > & {
   variant?: "small" | "large";
+  hint?: string;
 };
 
 type EnvVarSourceType = "Static" | "K8S Secret" | "K8S Configmap";
@@ -20,6 +21,7 @@ export function FormikEnvVarSource({
   variant = "small",
   name,
   label,
+  hint,
   disabled,
   readOnly,
   required,
@@ -220,6 +222,7 @@ export function FormikEnvVarSource({
           ) : null}
         </div>
       </div>
+      {hint && <p className="text-sm text-gray-500 py-1">{hint}</p>}
     </div>
   );
 }

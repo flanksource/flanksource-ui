@@ -1,14 +1,17 @@
 import React from "react";
 import { Control } from "react-hook-form";
-import ConfigInsightsIcon from "../ConfigInsightsIcon";
-import { defaultSelections } from "../Incidents/data";
-import { ReactSelectDropdown } from "../ReactSelectDropdown";
+import ConfigInsightsIcon from "../../ConfigInsightsIcon";
+import { defaultSelections } from "../../Incidents/data";
+import { ReactSelectDropdown } from "../../ReactSelectDropdown";
 
 export const configAnalysisTypeItems = {
   Cost: {
     id: "dropdown-type-cost",
     icon: (
-      <ConfigInsightsIcon analysis={{ analysis_type: "cost", severity: "" }} />
+      <ConfigInsightsIcon
+        analysis={{ analysis_type: "cost", severity: "" }}
+        size={18}
+      />
     ),
     name: "Cost",
     description: "Cost",
@@ -19,6 +22,7 @@ export const configAnalysisTypeItems = {
     icon: (
       <ConfigInsightsIcon
         analysis={{ analysis_type: "availability", severity: "" }}
+        size={18}
       />
     ),
     name: "Availability",
@@ -30,6 +34,7 @@ export const configAnalysisTypeItems = {
     icon: (
       <ConfigInsightsIcon
         analysis={{ analysis_type: "performance", severity: "" }}
+        size={18}
       />
     ),
     name: "Performance",
@@ -41,6 +46,7 @@ export const configAnalysisTypeItems = {
     icon: (
       <ConfigInsightsIcon
         analysis={{ analysis_type: "security", severity: "" }}
+        size={18}
       />
     ),
     name: "Security",
@@ -52,6 +58,7 @@ export const configAnalysisTypeItems = {
     icon: (
       <ConfigInsightsIcon
         analysis={{ analysis_type: "integration", severity: "" }}
+        size={18}
       />
     ),
     name: "Integration",
@@ -63,6 +70,7 @@ export const configAnalysisTypeItems = {
     icon: (
       <ConfigInsightsIcon
         analysis={{ analysis_type: "compliance", severity: "" }}
+        size={18}
       />
     ),
     name: "Compliance",
@@ -74,6 +82,7 @@ export const configAnalysisTypeItems = {
     icon: (
       <ConfigInsightsIcon
         analysis={{ analysis_type: "technical_debt", severity: "" }}
+        size={18}
       />
     ),
     name: "Technical Debt",
@@ -85,11 +94,36 @@ export const configAnalysisTypeItems = {
     icon: (
       <ConfigInsightsIcon
         analysis={{ analysis_type: "reliability", severity: "" }}
+        size={18}
       />
     ),
     name: "Reliability",
     description: "Reliability",
     value: "reliability"
+  },
+  Recommendation: {
+    id: "dropdown-type-recommendation",
+    icon: (
+      <ConfigInsightsIcon
+        analysis={{ analysis_type: "recommendation", severity: "" }}
+        size={18}
+      />
+    ),
+    name: "Recommendation",
+    description: "Recommendation",
+    value: "recommendation"
+  },
+  Other: {
+    id: "dropdown-type-other",
+    icon: (
+      <ConfigInsightsIcon
+        analysis={{ analysis_type: "other", severity: "" }}
+        size={18}
+      />
+    ),
+    name: "Other",
+    description: "Other",
+    value: "other"
   }
 } as const;
 
@@ -102,7 +136,7 @@ type Props = React.HTMLProps<HTMLDivElement> & {
   showAllOption?: boolean;
 };
 
-export default function ConfigAnalysisTypeDropdown({
+export default function ConfigInsightsTypeDropdown({
   control,
   value,
   prefix = "Severity:",
@@ -122,7 +156,9 @@ export default function ConfigAnalysisTypeDropdown({
       value={value}
       items={{
         ...(showAllOption ? defaultSelections : {}),
-        ...configAnalysisTypeItems
+        ...Object.values(configAnalysisTypeItems).sort((a, b) =>
+          a.name > b.name ? 1 : -1
+        )
       }}
       hideControlBorder={hideControlBorder}
     />

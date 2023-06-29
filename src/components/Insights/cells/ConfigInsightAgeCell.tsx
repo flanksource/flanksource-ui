@@ -8,5 +8,5 @@ export default function ConfigInsightAgeCell({
   getValue
 }: CellContext<ConfigTypeInsights, unknown>) {
   const age = relativeDateTime(row.original.first_observed);
-  return <span className="flex flex-nowrap py-1">{age}</span>;
+  return <span className="flex flex-nowrap py-1 text-sm">{age}</span>;
 }
