@@ -323,7 +323,7 @@ export const getConfigsChangesTypesFilter = async () => {
   return res.data;
 };
 
-export const getConfigInsights = async <T>(
+export const getConfigInsights = (
   configId: string,
   pageIndex?: number,
   pageSize?: number
@@ -335,8 +335,8 @@ export const getConfigInsights = async <T>(
     }`;
   }
   return resolve(
-    ConfigDB.get<T>(
-      `/config_analysis?select=*,config:configs(id,name,config_class,type)&config_id=eq.${configId}${paginationQueryParams}`,
+    ConfigDB.get<ConfigTypeInsights[]>(
+      `/config_analysis?select=id,source,analyzer,analysis_type,message,severity,status,analysis,first_observed,config:configs(id,name,config_class,type)&config_id=eq.${configId}${paginationQueryParams}`,
       {
         headers: {
           Prefer: "count=exact"
@@ -346,11 +346,39 @@ export const getConfigInsights = async <T>(
   );
 };
 
-export const getTopologyRelatedInsights = async (id: string) => {
-  const res = await ConfigDB.get<ConfigTypeInsights[]>(
-    `/analysis_by_component?component_id=eq.${id}&select=*,config:configs(id,name,config_class,type,analysis:config_analysis(*))`
+export const getTopologyRelatedInsights = async (
+  id: string,
+  pageIndex?: number,
+  pageSize?: number
+) => {
+  let paginationQueryParams = "";
+  if (pageIndex !== undefined && pageSize !== undefined) {
+    paginationQueryParams = `&limit=${pageSize}&offset=${
+      pageIndex! * pageSize
+    }`;
+  }
+
+  return resolve(
+    ConfigDB.get<
+      | {
+          config: {
+            id: string;
+            name: string;
+            config_class: string;
+            type: string;
+            config_analysis: ConfigTypeInsights;
+          };
+        }[]
+      | null
+    >(
+      `/analysis_by_component?component_id=eq.${id}${paginationQueryParams}&select=config:configs(id,name,config_class,type,analysis:config_analysis(id,source,analyzer,analysis_type,message,severity,status,analysis,first_observed))`,
+      {
+        headers: {
+          Prefer: "count=exact"
+        }
+      }
+    )
   );
-  return res.data;
 };
 
 export const getConfigInsight = async <T>(

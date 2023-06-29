@@ -382,17 +382,18 @@ export function useGetComponentsTeamQuery(
   );
 }
 
-export function useGetConfigInsights<T>(
+export function useGetConfigInsights(
   configId: string,
   pageIndex?: number,
   pageSize?: number,
-  keepPreviousData?: boolean
+  keepPreviousData?: boolean,
+  isEnabled?: boolean
 ) {
   return useQuery(
     ["configs", "insights", configId, pageIndex, pageSize],
-    () => getConfigInsights<T>(configId, pageIndex, pageSize),
+    () => getConfigInsights(configId, pageIndex, pageSize),
     {
-      enabled: !!configId,
+      enabled: isEnabled,
       keepPreviousData
     }
   );
@@ -444,19 +445,25 @@ export function useComponentGetLogsQuery(
   );
 }
 
-export function useGetTopologyRelatedInsightsQuery(id: string) {
+export function useGetTopologyRelatedInsightsQuery(
+  id: string,
+  pageIndex?: number,
+  pageSize?: number,
+  keepPreviousData?: boolean,
+  isEnabled?: boolean
+) {
   return useQuery(
-    ["topology", "insights", id],
-    async () => {
-      const res = await getTopologyRelatedInsights(id);
-      // ensure analysis has all the fields
-      return res.map((item) => ({
-        ...((item.config?.analysis?.length ?? 0) > 0
-          ? item.config?.analysis?.[0]
-          : {}),
-        ...item
-      }));
-    },
-    {}
+    ["topology", "insights", id, pageIndex, pageSize],
+    async () => getTopologyRelatedInsights(id, pageIndex, pageSize),
+    {
+      enabled: isEnabled,
+      keepPreviousData,
+      select: (response) => {
+        return {
+          ...response,
+          data: response?.data?.map((item) => item.config.config_analysis)
+        };
+      }
+    }
   );
 }

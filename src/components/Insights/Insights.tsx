@@ -7,7 +7,10 @@ import {
 } from "../../utils/common";
 import { ConfigTypeInsights } from "../ConfigInsights";
 import EmptyState from "../EmptyState";
-import { useGetConfigInsights } from "../../api/query-hooks";
+import {
+  useGetConfigInsights,
+  useGetTopologyRelatedInsightsQuery
+} from "../../api/query-hooks";
 import { toastError } from "../Toast/toast";
 import { InfiniteTable } from "../InfiniteTable/InfiniteTable";
 import TextSkeletonLoader from "../SkeletonLoader/TextSkeletonLoader";
@@ -15,8 +18,39 @@ import ConfigInsightAgeCell from "./cells/ConfigInsightAgeCell";
 import { ColumnDef } from "@tanstack/react-table";
 import ConfigInsightNameCell from "./cells/ConfigInsightNameCell";
 
-type Props = {
+function useFetchInsights(
+  id: string,
+  type: "configs" | "topologies",
+  pageIndex: number,
+  pageSize: number
+) {
+  const resConfigInsightQuery = useGetConfigInsights(
+    id,
+    pageIndex,
+    pageSize,
+    false,
+    type === "configs"
+  );
+
+  const resTopologyInsightQuery = useGetTopologyRelatedInsightsQuery(
+    id,
+    pageIndex,
+    pageSize,
+    false,
+    type === "topologies"
+  );
+
+  return type === "configs" ? resConfigInsightQuery : resTopologyInsightQuery;
+}
+
+type ConfigInsightsProps = {
+  type: "configs";
   configId: string;
+};
+
+type TopologyInsightsProps = {
+  type: "topologies";
+  topologyId: string;
 };
 
 export const columns: ColumnDef<ConfigTypeInsights, any>[] = [
@@ -34,32 +68,30 @@ export const columns: ColumnDef<ConfigTypeInsights, any>[] = [
   }
 ];
 
-export default function InsightsDetails({ configId }: Props) {
+export default function InsightsDetails(
+  props: ConfigInsightsProps | TopologyInsightsProps
+) {
+  const id = props.type === "configs" ? props.configId : props.topologyId;
+
   const [{ pageIndex, pageSize }, setPageState] = useState({
     pageIndex: 0,
     pageSize: 50
   });
-  const [insights, setInsights] = useState<ConfigTypeInsights[]>([]);
+
   const {
     data: response,
     isLoading,
     isFetching
-  } = useGetConfigInsights<ConfigTypeInsights[]>(configId, pageIndex, pageSize);
+  } = useFetchInsights(id, props.type, pageIndex, pageSize);
 
-  let data = response?.data;
+  let insights = useMemo(() => response?.data ?? [], [response?.data]);
+
   const totalEntries = response?.totalEntries ?? 0;
 
   const canGoNext = () => {
     const pageCount = Math.ceil(totalEntries / pageSize);
     return pageCount >= pageIndex + 1;
   };
-
-  useMemo(() => {
-    if (!data?.length) {
-      return;
-    }
-    setInsights((val) => [...val, ...(data ?? [])]);
-  }, [data]);
 
   useEffect(() => {
     if (response?.error) {
@@ -86,7 +118,11 @@ export default function InsightsDetails({ configId }: Props) {
     ReactTooltip.rebuild();
   });
 
-  if (!data?.length && !isLoading) {
+  if (isLoading && !insights?.length) {
+    return <TextSkeletonLoader className="w-full my-2" />;
+  }
+
+  if (!insights?.length && !isLoading) {
     return <EmptyState />;
   }
 
