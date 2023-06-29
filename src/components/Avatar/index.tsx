@@ -8,6 +8,7 @@ import { User } from "../../api/services/users";
 interface IProps {
   size?: "sm" | "lg" | "md";
   circular?: boolean;
+  inline?: boolean;
   alt?: string;
   user?: Partial<User>;
   imageProps?: React.ComponentPropsWithoutRef<"img">;
@@ -17,12 +18,13 @@ interface IProps {
 
 export function Avatar({
   user,
-  size,
+  size = "sm",
   unload,
   alt,
   containerProps,
   imageProps,
-  circular = false
+  inline = false,
+  circular = true
 }: IProps) {
   const srcList = user?.avatar;
   const fallbackInitials = user?.name || "?";
@@ -38,7 +40,6 @@ export function Avatar({
       case "lg":
         return "w-12 h-12 text-base";
       case "md":
-      default:
         return "w-8 h-8 text-base";
     }
   }, [size]);
@@ -61,7 +62,8 @@ export function Avatar({
     <div
       {...containerProps}
       className={clsx(
-        "overflow-hidden flex justify-center items-center leading-none",
+        `overflow-hidden justify-center items-center leading-none 
+        ${inline ? "inline-flex" : "flex"} `,
         sizeClass,
         containerProps?.className,
         !src && initials ? "bg-dark-blue text-white" : "bg-lighter-gray",
