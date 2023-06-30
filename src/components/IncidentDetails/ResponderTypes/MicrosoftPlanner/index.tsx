@@ -1,23 +1,23 @@
 import clsx from "clsx";
-import { useEffect, useMemo, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   Control,
   Controller,
-  FieldErrors,
+  FieldErrorsImpl,
   UseFormSetValue
 } from "react-hook-form";
 import { searchConfigs } from "../../../../api/services/configs";
 import { ConfigItem } from "../../../ConfigItem";
 import { TextInput } from "../../../TextInput";
-import { AddResponderFormValues } from "../../AddResponder";
+import { AddResponderFormValues } from "../../AddResponders/AddResponder";
 
 type MicrosoftProps = {
   teamId: string;
   control: Control;
-  errors: FieldErrors;
+  errors: FieldErrorsImpl<AddResponderFormValues>;
   setValue: UseFormSetValue<AddResponderFormValues>;
-  defaultValues: { [key: string]: any };
-  values: { [key: string]: any };
+  defaultValues?: { [key: string]: any };
+  values?: { [key: string]: any };
 } & React.HTMLProps<HTMLDivElement>;
 
 export const MicrosoftPlanner = ({

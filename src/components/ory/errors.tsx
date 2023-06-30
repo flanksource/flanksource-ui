@@ -9,7 +9,7 @@ export function handleGetFlowError<S>(
   flowType: "login" | "registration" | "settings" | "recovery" | "verification",
   resetFlow: Dispatch<SetStateAction<S | undefined>>
 ) {
-  return async (err: AxiosError) => {
+  return async (err: AxiosError<any>) => {
     const url = `${window.location.pathname}${window.location.search}`;
     switch (err.response?.data.error?.id) {
       case "session_aal2_required":

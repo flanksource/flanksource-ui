@@ -52,7 +52,7 @@ export function UserProfile() {
           leaveFrom="transform opacity-100 scale-100"
           leaveTo="transform opacity-0 scale-95"
         >
-          {/* @ts-expect-error */}
+          {/* @ts-ignore */}
           <Menu.Items className="absolute bg-white focus:outline-none mt-2 opacity-100 origin-top-right right-0 ring-1 ring-black ring-opacity-5 rounded-md scale-100 shadow-md transform w-64">
             {/* @ts-expect-error */}
             <Menu.Item>
