@@ -53,7 +53,20 @@ type TopologyInsightsProps = {
   topologyId: string;
 };
 
-export const columns: ColumnDef<ConfigTypeInsights, any>[] = [
+export const columns: ColumnDef<
+  Pick<
+    ConfigTypeInsights,
+    | "id"
+    | "analyzer"
+    | "config"
+    | "severity"
+    | "analysis_type"
+    | "sanitizedMessageTxt"
+    | "sanitizedMessageHTML"
+    | "first_observed"
+  >,
+  any
+>[] = [
   {
     header: "Name",
     id: "change_type",
@@ -104,9 +117,9 @@ export default function InsightsDetails(
       insights.map((item) => {
         return {
           ...item,
-          sanitizedMessageHTML: sanitizeHTMLContent(item.message),
+          sanitizedMessageHTML: sanitizeHTMLContent(item?.message),
           sanitizedMessageTxt: truncateText(
-            sanitizeHTMLContentToText(item.message)!,
+            sanitizeHTMLContentToText(item?.message)!,
             500
           )
         };
@@ -128,7 +141,19 @@ export default function InsightsDetails(
 
   return (
     <div className="flex flex-col overflow-y-hidden">
-      <InfiniteTable<ConfigTypeInsights>
+      <InfiniteTable<
+        Pick<
+          ConfigTypeInsights,
+          | "id"
+          | "analyzer"
+          | "config"
+          | "severity"
+          | "analysis_type"
+          | "sanitizedMessageTxt"
+          | "sanitizedMessageHTML"
+          | "first_observed"
+        >
+      >
         columns={columns}
         isLoading={isLoading && !isFetching}
         isFetching={isFetching}

@@ -6,7 +6,20 @@ export default function ConfigInsightAgeCell({
   row,
   column,
   getValue
-}: CellContext<ConfigTypeInsights, unknown>) {
+}: CellContext<
+  Pick<
+    ConfigTypeInsights,
+    | "id"
+    | "analyzer"
+    | "config"
+    | "severity"
+    | "analysis_type"
+    | "sanitizedMessageTxt"
+    | "sanitizedMessageHTML"
+    | "first_observed"
+  >,
+  unknown
+>) {
   const age = relativeDateTime(row.original.first_observed);
   return <span className="flex flex-nowrap py-1 text-sm">{age}</span>;
 }

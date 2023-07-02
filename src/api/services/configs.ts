@@ -335,8 +335,21 @@ export const getConfigInsights = (
     }`;
   }
   return resolve(
-    ConfigDB.get<ConfigTypeInsights[]>(
-      `/config_analysis?select=id,source,analyzer,analysis_type,message,severity,status,analysis,first_observed,config:configs(id,name,config_class,type)&config_id=eq.${configId}${paginationQueryParams}`,
+    ConfigDB.get<
+      Pick<
+        ConfigTypeInsights,
+        | "id"
+        | "analyzer"
+        | "config"
+        | "severity"
+        | "analysis_type"
+        | "message"
+        | "sanitizedMessageTxt"
+        | "sanitizedMessageHTML"
+        | "first_observed"
+      >[]
+    >(
+      `/config_analysis?select=id,analyzer,analysis_type,message,severity,analysis,first_observed,config:configs(id,name,config_class,type)&config_id=eq.${configId}${paginationQueryParams}`,
       {
         headers: {
           Prefer: "count=exact"
@@ -344,6 +357,18 @@ export const getConfigInsights = (
       }
     )
   );
+};
+
+export const getConfigInsightsByID = async (id: string) => {
+  const res = await ConfigDB.get<ConfigTypeInsights[] | null>(
+    `/config_analysis?select=id,source,analyzer,analysis_type,message,severity,status,analysis,first_observed,config:configs(id,name,config_class,type)&id=eq.${id}`,
+    {
+      headers: {
+        Prefer: "count=exact"
+      }
+    }
+  );
+  return res.data?.[0] ?? null;
 };
 
 export const getTopologyRelatedInsights = async (
@@ -366,12 +391,23 @@ export const getTopologyRelatedInsights = async (
             name: string;
             config_class: string;
             type: string;
-            config_analysis: ConfigTypeInsights;
+            analysis: Pick<
+              ConfigTypeInsights,
+              | "id"
+              | "analyzer"
+              | "config"
+              | "severity"
+              | "analysis_type"
+              | "sanitizedMessageTxt"
+              | "sanitizedMessageHTML"
+              | "first_observed"
+              | "message"
+            >;
           };
         }[]
       | null
     >(
-      `/analysis_by_component?component_id=eq.${id}${paginationQueryParams}&select=config:configs(id,name,config_class,type,analysis:config_analysis(id,source,analyzer,analysis_type,message,severity,status,analysis,first_observed))`,
+      `/analysis_by_component?component_id=eq.${id}${paginationQueryParams}&select=config:configs(id,name,config_class,type,analysis:config_analysis(id,analyzer,analysis_type,message,severity,analysis,first_observed))`,
       {
         headers: {
           Prefer: "count=exact"

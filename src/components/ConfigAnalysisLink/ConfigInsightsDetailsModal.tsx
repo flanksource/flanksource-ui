@@ -1,27 +1,33 @@
 import { sanitize } from "dompurify";
 import { useMemo, useState } from "react";
-import { ConfigItem } from "../../api/services/configs";
+import { getConfigInsightsByID } from "../../api/services/configs";
 import { EvidenceType } from "../../api/services/evidence";
 import { formatISODate, isValidDate } from "../../utils/date";
 import { AttachEvidenceDialog } from "../AttachEvidenceDialog";
-import { ConfigTypeInsights } from "../ConfigInsights";
 import ConfigInsightsIcon from "../ConfigInsightsIcon";
 import ConfigLink from "../ConfigLink/ConfigLink";
 import { DescriptionCard } from "../DescriptionCard";
 import { Modal } from "../Modal";
+import { useQuery } from "@tanstack/react-query";
+import TextSkeletonLoader from "../SkeletonLoader/TextSkeletonLoader";
 
 type Props = {
-  configInsight?: ConfigTypeInsights & { config?: ConfigItem };
+  id: string;
   isOpen: boolean;
   onClose: () => void;
 };
 
 export default function ConfigInsightsDetailsModal({
-  configInsight,
+  id,
   isOpen,
   onClose
 }: Props) {
   const [attachEvidence, setAttachEvidence] = useState(false);
+
+  const { data: configInsight, isLoading } = useQuery(
+    ["config", "insights", id],
+    () => getConfigInsightsByID(id)
+  );
 
   const properties = useMemo(() => {
     return [
@@ -88,7 +94,9 @@ export default function ConfigInsightsDetailsModal({
       size="full"
       bodyClass=""
     >
-      {configInsight?.id && (
+      {isLoading ? (
+        <TextSkeletonLoader />
+      ) : (
         <>
           <div className="flex flex-col px-4 py-4 space-y-6">
             <DescriptionCard items={properties} labelStyle="top" columns={3} />
