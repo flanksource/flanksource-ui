@@ -68,7 +68,7 @@ export default function ConfigInsightsDetailsModal({
   return (
     <Modal
       title={
-        <>
+        <div className="flex flex-row items-center">
           <ConfigLink
             className="text-blue-600 text-xl font-semibold whitespace-nowrap mr-1"
             configId={configInsight.config!.id}
@@ -79,7 +79,7 @@ export default function ConfigInsightsDetailsModal({
           {" / "}
           <ConfigInsightsIcon analysis={configInsight} />
           {configInsight.analyzer}
-        </>
+        </div>
       }
       open={isOpen}
       onClose={() => {
