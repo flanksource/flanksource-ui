@@ -331,7 +331,7 @@ export const getConfigsChangesTypesFilter = async () => {
   return res.data;
 };
 
-export const getConfigInsights = async <T>(
+export const getConfigInsights = (
   configId: string,
   pageIndex?: number,
   pageSize?: number
@@ -343,8 +343,21 @@ export const getConfigInsights = async <T>(
     }`;
   }
   return resolve(
-    ConfigDB.get<T>(
-      `/config_analysis?select=*,config:configs(id,name,config_class,type)&config_id=eq.${configId}${paginationQueryParams}`,
+    ConfigDB.get<
+      Pick<
+        ConfigTypeInsights,
+        | "id"
+        | "analyzer"
+        | "config"
+        | "severity"
+        | "analysis_type"
+        | "message"
+        | "sanitizedMessageTxt"
+        | "sanitizedMessageHTML"
+        | "first_observed"
+      >[]
+    >(
+      `/config_analysis?select=id,analyzer,analysis_type,message,severity,analysis,first_observed,config:configs(id,name,config_class,type)&config_id=eq.${configId}${paginationQueryParams}`,
       {
         headers: {
           Prefer: "count=exact"
@@ -354,11 +367,62 @@ export const getConfigInsights = async <T>(
   );
 };
 
-export const getTopologyRelatedInsights = async (id: string) => {
-  const res = await ConfigDB.get<ConfigTypeInsights[]>(
-    `/analysis_by_component?component_id=eq.${id}&select=*,config:configs(id,name,config_class,type,analysis:config_analysis(*))`
+export const getConfigInsightsByID = async (id: string) => {
+  const res = await ConfigDB.get<ConfigTypeInsights[] | null>(
+    `/config_analysis?select=id,source,analyzer,analysis_type,message,severity,status,analysis,first_observed,config:configs(id,name,config_class,type)&id=eq.${id}`,
+    {
+      headers: {
+        Prefer: "count=exact"
+      }
+    }
   );
-  return res.data;
+  return res.data?.[0] ?? null;
+};
+
+export const getTopologyRelatedInsights = async (
+  id: string,
+  pageIndex?: number,
+  pageSize?: number
+) => {
+  let paginationQueryParams = "";
+  if (pageIndex !== undefined && pageSize !== undefined) {
+    paginationQueryParams = `&limit=${pageSize}&offset=${
+      pageIndex! * pageSize
+    }`;
+  }
+
+  return resolve(
+    ConfigDB.get<
+      | {
+          config: {
+            id: string;
+            name: string;
+            config_class: string;
+            type: string;
+            analysis: Pick<
+              ConfigTypeInsights,
+              | "id"
+              | "analyzer"
+              | "config"
+              | "severity"
+              | "analysis_type"
+              | "sanitizedMessageTxt"
+              | "sanitizedMessageHTML"
+              | "first_observed"
+              | "message"
+            >;
+          };
+        }[]
+      | null
+    >(
+      `/analysis_by_component?component_id=eq.${id}${paginationQueryParams}&select=config:configs(id,name,config_class,type,analysis:config_analysis(id,analyzer,analysis_type,message,severity,analysis,first_observed))`,
+      {
+        headers: {
+          Prefer: "count=exact"
+        }
+      }
+    )
+  );
 };
 
 export const getConfigInsight = async <T>(

@@ -29,13 +29,13 @@ export function TopologyConfigAnalysisLine({
   className,
   ...props
 }: TopologyConfigAnalysisLineProps) {
-  const { data: topologyInsights = [], isLoading } =
+  const { data: topologyInsights, isLoading } =
     useGetTopologyRelatedInsightsQuery(topologyId);
   const [openModal, setOpenModal] = useState(false);
 
   const analysis: StatusLineData = useMemo(() => {
     const analysisToCountMap: Record<string, StatusInfo> = {};
-    topologyInsights.forEach((topologyInsight) => {
+    topologyInsights?.data?.forEach((topologyInsight) => {
       analysisToCountMap[topologyInsight.analysis_type] = analysisToCountMap[
         topologyInsight.analysis_type
       ] || {
@@ -84,7 +84,7 @@ export function TopologyConfigAnalysisLine({
           className="flex flex-col divide-y divide-gray-200 space-y-4 p-2 overlow-y-auto"
           style={{ maxHeight: "calc(100vh - 8rem)" }}
         >
-          <InsightsDetails insights={topologyInsights} isLoading={isLoading} />
+          <InsightsDetails type="topologies" topologyId={topologyId} />
         </div>
       </Modal>
     </>
