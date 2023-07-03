@@ -60,15 +60,19 @@ export default function TopologyDetails({
   if (topology.labels != null && Object.entries(topology.labels).length > 0) {
     items.push({
       label: "Labels",
-      value: map(topology.labels, (v, k) => (
-        <div
-          data-tip={`${k}: ${v}`}
-          className="max-w-full overflow-hidden text-ellipsis  mb-1 rounded-md text-gray-600 font-semibold text-sm"
-          key={k}
-        >
-          {k}: <span className="font-light">{v}</span>
+      value: (
+        <div className="flex flex-col">
+          {map(topology.labels, (v, k) => (
+            <div
+              data-tip={`${k}: ${v}`}
+              className="max-w-full overflow-hidden text-ellipsis  mb-1 rounded-md text-gray-600 font-semibold text-sm"
+              key={k}
+            >
+              {k}: <span className="text-sm font-light">{v}</span>
+            </div>
+          ))}
         </div>
-      ))
+      )
     });
   }
 
@@ -81,7 +85,7 @@ export default function TopologyDetails({
       onCollapsedStateChange={onCollapsedStateChange}
     >
       {Boolean(items.length) ? (
-        <DescriptionCard items={items} />
+        <DescriptionCard items={items} labelStyle="top" />
       ) : (
         <EmptyState />
       )}

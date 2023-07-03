@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useImage } from "react-image";
 import { BsFillPersonFill } from "react-icons/bs";
 import clsx from "clsx";
@@ -8,6 +8,7 @@ import { User } from "../../api/services/users";
 interface IProps {
   size?: "sm" | "lg" | "md";
   circular?: boolean;
+  inline?: boolean;
   alt?: string;
   user?: Partial<User>;
   imageProps?: React.ComponentPropsWithoutRef<"img">;
@@ -17,13 +18,20 @@ interface IProps {
 
 export function Avatar({
   user,
-  size,
+  size = "sm",
   unload,
   alt,
   containerProps,
   imageProps,
-  circular = false
+  inline = false,
+  circular = true
 }: IProps) {
+  const [textSize, setTextSize] = useState(() => {
+    if (size !== "sm") {
+      return "16px";
+    }
+    return "14px";
+  });
   const srcList = user?.avatar;
   const fallbackInitials = user?.name || "?";
 
@@ -38,7 +46,6 @@ export function Avatar({
       case "lg":
         return "w-12 h-12 text-base";
       case "md":
-      default:
         return "w-8 h-8 text-base";
     }
   }, [size]);
@@ -53,6 +60,29 @@ export function Avatar({
     [fallbackInitials]
   );
 
+  const determineTextSize = useCallback(
+    (node: HTMLSpanElement | null) => {
+      if (node?.clientWidth && size !== "lg") {
+        if (node.clientWidth > 20) {
+          setTextSize(() => {
+            if (size === "sm") {
+              return "10px";
+            }
+            return "12px";
+          });
+        } else if (node.clientWidth > 18) {
+          setTextSize(() => {
+            if (size === "sm") {
+              return "12px";
+            }
+            return "14px";
+          });
+        }
+      }
+    },
+    [size]
+  );
+
   useEffect(() => {
     ReactTooltip.rebuild();
   }, []);
@@ -61,7 +91,8 @@ export function Avatar({
     <div
       {...containerProps}
       className={clsx(
-        "overflow-hidden flex justify-center items-center leading-none",
+        `overflow-hidden justify-center items-center leading-none 
+        ${inline ? "inline-flex" : "flex"} `,
         sizeClass,
         containerProps?.className,
         !src && initials ? "bg-dark-blue text-white" : "bg-lighter-gray",
@@ -80,13 +111,19 @@ export function Avatar({
             circular ? "rounded-full" : "rounded-md"
           )}
         />
+      ) : initials ? (
+        <span
+          style={{
+            fontSize: textSize
+          }}
+          ref={determineTextSize}
+        >
+          {initials}
+        </span>
+      ) : !isLoading && unload ? (
+        unload
       ) : (
-        initials ||
-        (!isLoading && unload ? (
-          unload
-        ) : (
-          <BsFillPersonFill className="text-warmer-gray" />
-        ))
+        <BsFillPersonFill className="text-warmer-gray" />
       )}
     </div>
   );

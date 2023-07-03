@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ConfigInsightsFilters } from "../../components/ConfigAnalysis/ConfigInsightsFilters";
+import { ConfigInsightsFilters } from "../../components/ConfigAnalysis/Filters/ConfigInsightsFilters";
 import ConfigInsightsList from "../../components/ConfigAnalysis/ConfigInsightsList";
 import { configTabsLists } from "../../components/ConfigsPage/ConfigTabsLinks";
 import { Head } from "../../components/Head/Head";

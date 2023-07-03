@@ -62,7 +62,7 @@ export function DetailsTable({
                   className={clsx(
                     "p-2",
                     index === 0
-                      ? "font-medium text-black whitespace-nowrap cursor-pointer"
+                      ? "text-sm text-black whitespace-nowrap cursor-pointer"
                       : "py-1"
                   )}
                   key={index}

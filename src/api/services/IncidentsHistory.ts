@@ -15,6 +15,7 @@ export enum IncidentHistoryType {
   "responder.created" = "responder.created",
   "evidence.created" = "evidence.created",
   "incident.status_updated" = "incident.status_updated",
+  "evidence.done_definition_added" = "evidence.done_definition_added",
   "incident_status.updated" = "incident_status.updated",
   "responder.commented" = "responder.commented",
   "hypothesis.created" = "hypothesis.created",
@@ -50,6 +51,7 @@ export interface Responder {
   person_id: string;
   person?: Pick<User, "id" | "name" | "avatar">;
   team_id?: string;
+  team?: { id: string; name: string; icon: string };
   external_id?: string;
   properties?: Record<string, any>;
   acknowledged?: string;
@@ -79,7 +81,7 @@ export interface IncidentHistory {
 
 export const getIncidentHistory = async (incidentID: string) => {
   const res = await IncidentCommander.get<IncidentHistory[]>(
-    `/incident_histories?incident_id=eq.${incidentID}&select=*,evidence:evidences(id,description,type,components(id,name,icon),configs(id,name),config_changes(id,change_type),config_analysis(id,analyzer,message,analysis),checks(id,icon,name)),hypothesis:hypotheses(id,title),responder:responders(id,person:person_id(id,name,avatar)),comment:comments(id,comment),created_by(id,name,avatar))&order=created_at.desc`
+    `/incident_histories?incident_id=eq.${incidentID}&select=*,evidence:evidences(id,description,type,components(id,name,icon),configs(id,name),config_changes(id,change_type),config_analysis(id,analyzer,message,analysis),checks(id,icon,name)),hypothesis:hypotheses(id,title),responder:responders(id,person:person_id(id,name,avatar),team:team_id(id,name,icon)),comment:comments(id,comment),created_by(id,name,avatar))&order=created_at.desc`
   );
   return res.data;
 };

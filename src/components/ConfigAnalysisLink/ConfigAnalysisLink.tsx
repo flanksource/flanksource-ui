@@ -8,7 +8,16 @@ import { Icon } from "../Icon";
 import ConfigInsightsDetailsModal from "./ConfigInsightsDetailsModal";
 
 type Props = {
-  configAnalysis: ConfigTypeInsights;
+  configAnalysis: Pick<
+    ConfigTypeInsights,
+    | "id"
+    | "analyzer"
+    | "config"
+    | "severity"
+    | "analysis_type"
+    | "sanitizedMessageTxt"
+    | "sanitizedMessageHTML"
+  >;
   viewType?: ViewType;
   showConfigLogo?: boolean;
 } & React.HTMLProps<HTMLDivElement>;
@@ -27,11 +36,13 @@ export function ConfigAnalysisLink({
 
   return (
     <div className="flex flex-col cursor-pointer  space-y-1" {...rest}>
-      <ConfigInsightsDetailsModal
-        configInsight={configAnalysis}
-        isOpen={open}
-        onClose={() => setOpen(false)}
-      />
+      {open && (
+        <ConfigInsightsDetailsModal
+          id={configAnalysis.id}
+          isOpen={open}
+          onClose={() => setOpen(false)}
+        />
+      )}
       {viewType === ViewType.summary && (
         <div
           className="inline-block"

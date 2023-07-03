@@ -8,5 +8,5 @@ export default function ConfigChangeAgeCell({
   getValue
 }: CellContext<ConfigTypeChanges, unknown>) {
   const age = relativeDateTime(row.original.created_at);
-  return <span className="flex flex-nowrap py-1">{age}</span>;
+  return <span className="flex flex-nowrap py-1 text-sm">{age}</span>;
 }

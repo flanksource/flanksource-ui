@@ -18,6 +18,21 @@ const statusOptions = {
     id: "2",
     label: "Running",
     value: "RUNNING"
+  },
+  success: {
+    id: "3",
+    label: "Success",
+    value: "SUCCESS"
+  },
+  warning: {
+    id: "4",
+    label: "Warning",
+    value: "WARNING"
+  },
+  failed: {
+    id: "5",
+    label: "Failed",
+    value: "FAILED"
   }
 };
 

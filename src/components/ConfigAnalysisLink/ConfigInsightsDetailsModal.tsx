@@ -1,10 +1,9 @@
 import { sanitize } from "dompurify";
 import { useMemo, useState } from "react";
-import { ConfigItem } from "../../api/services/configs";
+import { getConfigInsightsByID } from "../../api/services/configs";
 import { EvidenceType } from "../../api/services/evidence";
 import { formatISODate, isValidDate } from "../../utils/date";
 import { AttachEvidenceDialog } from "../AttachEvidenceDialog";
-import { ConfigTypeInsights } from "../ConfigInsights";
 import ConfigInsightsIcon from "../ConfigInsightsIcon";
 import ConfigLink from "../ConfigLink/ConfigLink";
 import { DescriptionCard } from "../DescriptionCard";
@@ -13,22 +12,24 @@ import { Loading } from "../Loading";
 import { JSONViewer } from "../JSONViewer";
 import { useGetConfigByIdQuery } from "../../api/query-hooks";
 import { Tab, Tabs } from "../Tabs/Tabs";
+import { useQuery } from "@tanstack/react-query";
+import TextSkeletonLoader from "../SkeletonLoader/TextSkeletonLoader";
 
 type Props = {
-  configInsight?: ConfigTypeInsights & { config?: ConfigItem };
+  id: string;
   isOpen: boolean;
   onClose: () => void;
 };
 
 export default function ConfigInsightsDetailsModal({
-  configInsight,
+  id,
   isOpen,
   onClose
 }: Props) {
   const subNav = [
     {
-      label: "Config",
-      value: "Config"
+      label: "Summary",
+      value: "Summary"
     },
     {
       label: "Raw",
@@ -38,6 +39,11 @@ export default function ConfigInsightsDetailsModal({
 
   const [attachEvidence, setAttachEvidence] = useState(false);
   const [activeTab, setActiveTab] = useState<string>(subNav[0]?.value);
+
+  const { data: configInsight, isLoading } = useQuery(
+    ["config", "insights", id],
+    () => getConfigInsightsByID(id)
+  );
 
   const properties = useMemo(() => {
     return [
@@ -73,9 +79,8 @@ export default function ConfigInsightsDetailsModal({
     ];
   }, [configInsight]);
 
-  const { isLoading, data: configDetails } = useGetConfigByIdQuery(
-    configInsight?.config_id!
-  );
+  const { isLoading: isConfigLoading, data: configDetails } =
+    useGetConfigByIdQuery(configInsight?.config_id!);
 
   const configCode = useMemo(() => {
     if (!configDetails?.config) {
@@ -94,14 +99,6 @@ export default function ConfigInsightsDetailsModal({
 
     return configDetails?.config && JSON.stringify(ordered, null, 2);
   }, [configDetails]);
-
-  const rawCode = useMemo(() => {
-    if (!configInsight?.analysis) {
-      return "";
-    }
-
-    return JSON.stringify(configInsight.analysis, null, 2);
-  }, [configInsight]);
 
   const format = useMemo(
     () =>
@@ -126,7 +123,7 @@ export default function ConfigInsightsDetailsModal({
   return (
     <Modal
       title={
-        <>
+        <div className="flex flex-row items-center">
           <ConfigLink
             className="text-blue-600 text-xl font-semibold whitespace-nowrap mr-1"
             configId={configInsight.config!.id}
@@ -137,93 +134,93 @@ export default function ConfigInsightsDetailsModal({
           {" / "}
           <ConfigInsightsIcon analysis={configInsight} />
           {configInsight.analyzer}
-        </>
+        </div>
       }
       open={isOpen}
       onClose={() => {
+        onSubNavClick(subNav[0]?.value);
         onClose();
       }}
       size="full"
       bodyClass=""
     >
-      {configInsight?.id && (
+      {isLoading ? (
+        <TextSkeletonLoader />
+      ) : (
         <>
           <div className="flex flex-col px-4 py-4 space-y-6">
             <DescriptionCard items={properties} labelStyle="top" columns={3} />
-            <DescriptionCard
-              items={[
-                {
-                  label: "",
-                  value: (
-                    <div
-                      dangerouslySetInnerHTML={{
-                        __html: sanitizedMessageHTML
-                      }}
-                    ></div>
-                  )
-                }
-              ]}
-              labelStyle="top"
-            />
-            <Tabs
-              activeTab={activeTab}
-              onSelectTab={(tab) => onSubNavClick(tab)}
-            >
-              {subNav?.map((nav) => {
-                return (
-                  <Tab key={nav.label} label={nav.label} value={nav.value}>
-                    {nav.label === "Config" && (
-                      <DescriptionCard
-                        items={[
-                          {
-                            value: (
-                              <div className="w-full min-h-12 max-h-modal-body-md  p-3 overflow-y-auto overflow-x-auto">
-                                {isLoading ? (
-                                  <Loading />
-                                ) : (
-                                  <JSONViewer
-                                    code={configCode}
-                                    format={format}
-                                    convertToYaml
-                                    showLineNo
-                                  />
-                                )}
-                              </div>
-                            )
-                          }
-                        ]}
-                        labelStyle="top"
-                        className="mt-4"
-                      />
-                    )}
-                    {nav.label === "Raw" && (
-                      <DescriptionCard
-                        items={[
-                          {
-                            value: (
-                              <div className="w-full min-h-12 max-h-modal-body-md  p-3 overflow-y-auto overflow-x-auto">
-                                {isLoading ? (
-                                  <Loading />
-                                ) : (
-                                  <JSONViewer
-                                    code={rawCode}
-                                    format={"json"}
-                                    convertToYaml
-                                    showLineNo
-                                  />
-                                )}
-                              </div>
-                            )
-                          }
-                        ]}
-                        labelStyle="top"
-                        className="mt-4"
-                      />
-                    )}
-                  </Tab>
-                );
-              })}
-            </Tabs>
+            {configCode !== null && configCode !== "{}" ? (
+              <Tabs
+                activeTab={activeTab}
+                onSelectTab={(tab) => onSubNavClick(tab)}
+              >
+                {subNav?.map((nav) => {
+                  return (
+                    <Tab key={nav.label} label={nav.label} value={nav.value}>
+                      {nav.label === "Summary" && (
+                        <DescriptionCard
+                          items={[
+                            {
+                              label: "",
+                              value: (
+                                <div
+                                  className="p-3"
+                                  dangerouslySetInnerHTML={{
+                                    __html: sanitizedMessageHTML
+                                  }}
+                                ></div>
+                              )
+                            }
+                          ]}
+                          labelStyle="top"
+                        />
+                      )}
+                      {nav.label === "Raw" && (
+                        <DescriptionCard
+                          items={[
+                            {
+                              value: (
+                                <div className="w-full min-h-12 max-h-modal-body-md  p-3 overflow-y-auto overflow-x-auto">
+                                  {isConfigLoading ? (
+                                    <Loading />
+                                  ) : (
+                                    <JSONViewer
+                                      code={configCode}
+                                      format={format}
+                                      convertToYaml
+                                      showLineNo
+                                    />
+                                  )}
+                                </div>
+                              )
+                            }
+                          ]}
+                          labelStyle="top"
+                          className="mt-4"
+                        />
+                      )}
+                    </Tab>
+                  );
+                })}
+              </Tabs>
+            ) : (
+              <DescriptionCard
+                items={[
+                  {
+                    label: "",
+                    value: (
+                      <div
+                        dangerouslySetInnerHTML={{
+                          __html: sanitizedMessageHTML
+                        }}
+                      ></div>
+                    )
+                  }
+                ]}
+                labelStyle="top"
+              />
+            )}
           </div>
           <div className="flex items-center justify-end mt-4 py-2 px-4 rounded bg-gray-100">
             <button

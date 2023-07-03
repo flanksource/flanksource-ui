@@ -1,4 +1,10 @@
-export function Status({ good, mixed, className = "" }) {
+type StatusProps = {
+  good?: boolean;
+  mixed?: boolean;
+  className?: string;
+};
+
+export function Status({ good, mixed, className = "" }: StatusProps) {
   const color = mixed
     ? "bg-light-orange"
     : good

@@ -37,11 +37,7 @@ export default function ConfigInsights({
   isCollapsed = false,
   onCollapsedStateChange = () => {}
 }: Props) {
-  const { data: response } = useGetConfigInsights<ConfigTypeInsights[]>(
-    configID,
-    0,
-    50
-  );
+  const { data: response } = useGetConfigInsights(configID, 0, 50);
   const count = response?.totalEntries ?? 0;
 
   return (
@@ -59,7 +55,7 @@ export default function ConfigInsights({
       }
       dataCount={count}
     >
-      <InsightsDetails configId={configID} />
+      <InsightsDetails type="configs" configId={configID} />
     </CollapsiblePanel>
   );
 }
