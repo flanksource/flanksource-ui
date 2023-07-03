@@ -36,11 +36,13 @@ export function ConfigAnalysisLink({
 
   return (
     <div className="flex flex-col cursor-pointer  space-y-1" {...rest}>
-      <ConfigInsightsDetailsModal
-        id={configAnalysis.id}
-        isOpen={open}
-        onClose={() => setOpen(false)}
-      />
+      {open && (
+        <ConfigInsightsDetailsModal
+          id={configAnalysis.id}
+          isOpen={open}
+          onClose={() => setOpen(false)}
+        />
+      )}
       {viewType === ViewType.summary && (
         <div
           className="inline-block"
