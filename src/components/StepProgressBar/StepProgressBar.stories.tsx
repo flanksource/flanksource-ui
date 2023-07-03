@@ -1,3 +1,4 @@
+import { ComponentStory } from "@storybook/react";
 import { StepProgressBar, StepProgressBarProps } from "./index";
 
 export default {
@@ -5,7 +6,9 @@ export default {
   component: StepProgressBar
 };
 
-const Template = (args: StepProgressBarProps) => <StepProgressBar {...args} />;
+const Template: ComponentStory<typeof StepProgressBar> = (
+  args: StepProgressBarProps
+) => <StepProgressBar {...args} />;
 
 export const Variant1 = Template.bind({});
 Variant1.args = {

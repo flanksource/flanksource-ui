@@ -1,5 +1,6 @@
 import { MemoryRouter } from "react-router-dom";
 import { HealthSummary } from "./index";
+import { ComponentMeta, ComponentStory } from "@storybook/react";
 
 export default {
   title: "HealthSummary",
@@ -11,7 +12,7 @@ export default {
       </MemoryRouter>
     )
   ]
-};
+} as ComponentMeta<typeof HealthSummary>;
 
 const component = {
   name: "ip-10-0-6-82.eu-west-2.compute.internal",
@@ -83,10 +84,12 @@ const component = {
   external_id: "eu-west-2c/ip-10-0-6-82.eu-west-2.compute.internal"
 };
 
-const Template = (arg) => <HealthSummary {...arg} />;
+const Template: ComponentStory<typeof HealthSummary> = (arg) => (
+  <HealthSummary {...arg} />
+);
 
 export const Variant1 = Template.bind({});
 Variant1.args = {
-  component,
+  component: component as any,
   summary: ""
 };

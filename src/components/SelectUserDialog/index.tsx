@@ -17,7 +17,7 @@ export function SelectUserDialog({ isOpen, onClose }: Props) {
 
   useEffect(() => {
     getPersons().then((res) => {
-      setUsers(res?.data);
+      setUsers(res?.data ?? []);
     });
   }, []);
 
@@ -43,6 +43,7 @@ export function SelectUserDialog({ isOpen, onClose }: Props) {
   };
 
   return (
+    // @ts-expect-error
     <Dialog as="div" className="relative z-10" open={isOpen} onClose={onClose}>
       <div className="fixed inset-0 bg-black bg-opacity-25" />
 
@@ -54,7 +55,7 @@ export function SelectUserDialog({ isOpen, onClose }: Props) {
               value={user?.id}
               onChange={onSelect}
               items={userOptions}
-              value={user}
+              name="user"
             />
           </Dialog.Panel>
         </div>

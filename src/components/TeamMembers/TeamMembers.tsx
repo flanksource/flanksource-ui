@@ -45,7 +45,7 @@ export function TeamMembers({ teamId }: TeamMembersProps) {
         toastError(error.message);
       }
     } catch (ex) {
-      toastError(ex);
+      toastError(ex as any);
     }
     setLoading(false);
   }
@@ -60,7 +60,7 @@ export function TeamMembers({ teamId }: TeamMembersProps) {
         toastError(error.message);
       }
     } catch (ex) {
-      toastError(ex);
+      toastError(ex as any);
     }
   }
 
@@ -81,7 +81,7 @@ export function TeamMembers({ teamId }: TeamMembersProps) {
         toastError(error.message);
       }
     } catch (ex) {
-      toastError(ex);
+      toastError(ex as any);
     }
     setOpen(false);
   }

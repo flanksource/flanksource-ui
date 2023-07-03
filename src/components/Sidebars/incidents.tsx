@@ -13,6 +13,7 @@ import Title from "../Title/title";
 import { IncidentTypeIcon } from "../incidentTypeTag";
 import { useAtom } from "jotai";
 import { refreshButtonClickedTrigger } from "../SlidingSideBar";
+import { typeItems } from "../Incidents/data";
 
 type Props = {
   topologyId?: string;
@@ -81,7 +82,7 @@ export default function Incidents({
       return {
         incident: (
           <div className="flex flex-row">
-            <IncidentTypeIcon type={item.type!} />
+            <IncidentTypeIcon type={item.type as keyof typeof typeItems} />
             <Link
               className="block mx-1 cursor-pointer text-sm"
               to={{
