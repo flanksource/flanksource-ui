@@ -143,6 +143,7 @@ type ConfigListFilterQueryOptions = {
   hideDeletedConfigs?: boolean;
   sortBy?: string | null;
   sortOrder?: string | null;
+  includeAgents?: boolean;
 };
 
 function prepareConfigListQuery({
@@ -151,9 +152,14 @@ function prepareConfigListQuery({
   tag,
   sortBy,
   sortOrder,
-  hideDeletedConfigs
+  hideDeletedConfigs,
+  includeAgents = false
 }: ConfigListFilterQueryOptions) {
-  let query = "select=*";
+  let query =
+    "select=id,type,config_class,name,tags,created_at,updated_at,deleted_at,cost_per_minute,cost_total_1d,cost_total_7d,cost_total_30d,changes,analysis";
+  if (includeAgents) {
+    query = `${query},agent:agents(id,name)`;
+  }
   if (search) {
     query = `${query}&or=(name.ilike.*${search}*,type.ilike.*${search}*,description.ilike.*${search}*,namespace.ilike.*${search}*)`;
   } else {
@@ -186,7 +192,8 @@ export const useAllConfigsQuery = (
     configType,
     sortBy,
     sortOrder,
-    hideDeletedConfigs
+    hideDeletedConfigs,
+    includeAgents
   }: ConfigListFilterQueryOptions,
   { enabled = true, staleTime = defaultStaleTime, ...rest }
 ) => {
@@ -196,7 +203,8 @@ export const useAllConfigsQuery = (
     configType,
     sortBy,
     sortOrder,
-    hideDeletedConfigs
+    hideDeletedConfigs,
+    includeAgents
   });
   return useQuery(
     [
@@ -206,7 +214,8 @@ export const useAllConfigsQuery = (
       configType,
       sortBy,
       sortOrder,
-      hideDeletedConfigs
+      hideDeletedConfigs,
+      includeAgents
     ],
     () => {
       return getAllConfigsMatchingQuery(query);

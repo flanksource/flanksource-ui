@@ -67,11 +67,19 @@ export const getAllConfigs = () =>
   resolve<ConfigItem[]>(ConfigDB.get(`/configs`));
 
 export const getAllConfigsMatchingQuery = (query: string) => {
-  let url = `/configs?select=*,agent:agents(id,name)`;
+  let url = `/configs?`;
   if (query) {
     url = `${url}&${query}`;
   }
   return resolve<ConfigItem[]>(ConfigDB.get(url));
+};
+
+export const getAllConfigsForSearchPurpose = async () => {
+  let url = `/configs?select=id,name,config_class,type`;
+  const res = await resolve<
+    Pick<ConfigItem, "name" | "config_class" | "type" | "id">[]
+  >(ConfigDB.get(url));
+  return res.data ?? [];
 };
 
 export const getAllChanges = (

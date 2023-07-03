@@ -1,18 +1,19 @@
-import { useAllConfigsQuery } from "../../api/query-hooks";
-import { Topology } from "../../context/TopologyPageContext";
-import { Modal } from "../Modal";
-import React, { useMemo, useState } from "react";
-import {
-  ConfigItem,
-  addManualComponentConfigRelationship
-} from "../../api/services/configs";
-import { DropdownWithActions } from "../Dropdown/DropdownWithActions";
-import { delayedPromise, stringSortHelper } from "../../utils/common";
-import { toastError, toastSuccess } from "../Toast/toast";
+import { useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
-import { queryClient } from "../../query-client";
+import React, { useCallback, useMemo, useState } from "react";
 import { componentConfigRelationshipQueryKey } from "../../api/query-hooks/useComponentConfigRelationshipQuery";
+import {
+  addManualComponentConfigRelationship,
+  getAllConfigsForSearchPurpose
+} from "../../api/services/configs";
+import { Topology } from "../../context/TopologyPageContext";
+import { queryClient } from "../../query-client";
+import { delayedPromise, stringSortHelper } from "../../utils/common";
 import ConfigLink from "../ConfigLink/ConfigLink";
+import { DropdownWithActions } from "../Dropdown/DropdownWithActions";
+import { Modal } from "../Modal";
+import TextSkeletonLoader from "../SkeletonLoader/TextSkeletonLoader";
+import { toastError, toastSuccess } from "../Toast/toast";
 
 type TopologyConfigLinkModalProps = {
   topology: Topology;
@@ -35,14 +36,16 @@ export function TopologyConfigLinkModal({
   openModal,
   onCloseModal
 }: TopologyConfigLinkModalProps) {
-  const { data: response } = useAllConfigsQuery({}, {});
+  const { data = [], isLoading } = useQuery(
+    ["all", "configs", "topology", "search"],
+    getAllConfigsForSearchPurpose
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [value, setValue] = useState<ConfigOption>();
   const maxResultsShown = 10;
   const configs = useMemo(() => {
-    const data = response?.data || [];
     return data
-      ?.map((d: ConfigItem) => ({
+      ?.map((d) => ({
         id: d.id,
         value: d.name,
         description: d.name,
@@ -52,17 +55,21 @@ export function TopologyConfigLinkModal({
         config_class: d.config_class
       }))
       .sort((v1, v2) => stringSortHelper(v1.name, v2.name));
-  }, [response]);
+  }, [data]);
 
-  const onSearch = async (query = "") => {
-    const result = configs
-      .filter((config) => {
-        return config.name.toLowerCase().indexOf(query.toLowerCase()) > -1;
-      })
-      .sort((v1, v2) => stringSortHelper(v1.name, v2.name))
-      .slice(0, maxResultsShown);
-    return await delayedPromise<ConfigOption[]>(result, 1000);
-  };
+  const onSearch = useCallback(
+    async (query = "") => {
+      console.log("query", query);
+      const result = configs
+        .filter(({ name }) => {
+          return name.toLowerCase().indexOf(query.toLowerCase()) > -1;
+        })
+        .sort((v1, v2) => stringSortHelper(v1.name, v2.name))
+        .slice(0, maxResultsShown);
+      return await delayedPromise<ConfigOption[]>(result, 1000);
+    },
+    [configs]
+  );
 
   const onSubmit = async () => {
     if (!topology.id || !value?.id || isSubmitting) {
@@ -111,35 +118,39 @@ export function TopologyConfigLinkModal({
           <div className="text-sm font-bold text-gray-700 inline-block">
             Config
           </div>
-          <div className="w-full">
-            <DropdownWithActions<ConfigOption>
-              onQuery={(e) => {
-                return onSearch(e);
-              }}
-              label=""
-              name="config"
-              value={value}
-              setValue={(_: string, val: ConfigOption) => {
-                setValue(val);
-              }}
-              creatable={false}
-              displayOption={({ option }) => {
-                return (
-                  <div className="w-auto cursor-pointer">
-                    <div className="flex flex-row truncate">
-                      <ConfigLink
-                        configId={option.id}
-                        configName={option.name}
-                        configType={option.type}
-                        configTypeSecondary={option.config_class}
-                        variant="label"
-                      />
+          <div className="flex flex-col w-full">
+            {isLoading ? (
+              <TextSkeletonLoader className="w-full" />
+            ) : (
+              <DropdownWithActions<ConfigOption>
+                onQuery={(e) => {
+                  return onSearch(e);
+                }}
+                label=""
+                name="config"
+                value={value}
+                setValue={(_: string, val: ConfigOption) => {
+                  setValue(val);
+                }}
+                creatable={false}
+                displayOption={({ option }) => {
+                  return (
+                    <div className="w-auto cursor-pointer">
+                      <div className="flex flex-row truncate">
+                        <ConfigLink
+                          configId={option.id}
+                          configName={option.name}
+                          configType={option.type}
+                          configTypeSecondary={option.config_class}
+                          variant="label"
+                        />
+                      </div>
                     </div>
-                  </div>
-                );
-              }}
-              disabled={!Boolean(configs.length)}
-            />
+                  );
+                }}
+                disabled={!Boolean(configs.length)}
+              />
+            )}
           </div>
         </div>
         <div className="flex items-center justify-end p-2 rounded bg-gray-100">
