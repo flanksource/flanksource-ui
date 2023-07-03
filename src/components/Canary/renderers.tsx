@@ -1,3 +1,4 @@
+import { HealthCheck, HealthCheckStatus } from "../../types/healthChecks";
 import { Icon } from "../Icon";
 import { Status } from "../Status";
 import { isEmpty } from "./utils";
@@ -7,14 +8,23 @@ export const empty = (
   <span className="text-gray-500 text-light text-xs">-</span>
 );
 
-export function CanaryStatus({ status, className }) {
+type CheckStatusProps = {
+  status: {
+    good?: boolean;
+    mixed?: boolean;
+    status?: boolean;
+  };
+  className?: string;
+};
+
+export function CanaryStatus({ status, className }: CheckStatusProps) {
   if (status.mixed) {
     return <Status mixed={status.mixed} className={className} />;
   }
   return <Status good={status.status} className={className} />;
 }
 
-export function toFormattedDuration(ms) {
+export function toFormattedDuration(ms: number) {
   if (ms == null || ms === 0) {
     return ["", ""];
   }
@@ -40,14 +50,18 @@ export function toFormattedDuration(ms) {
     val = ms / 1000 / 60 / 6;
     unit = "h";
   }
-  if (val != null && Math.round(val) !== val) {
+  if (val != null && Math.round(val as number) !== val) {
     val = Number(val).toFixed(0);
   }
   return [val, unit];
 }
 
-export function Duration({ ms }) {
-  const [val, unit] = toFormattedDuration(ms);
+type DurationProps = {
+  ms?: number;
+};
+
+export function Duration({ ms }: DurationProps) {
+  const [val, unit] = toFormattedDuration(ms!);
   if (!val && !unit) {
     return null;
   }
@@ -59,7 +73,11 @@ export function Duration({ ms }) {
   );
 }
 
-export function Latency({ check }) {
+type LatencyProps = {
+  check?: Partial<HealthCheck>;
+};
+
+export function Latency({ check }: LatencyProps) {
   if (check == null || check.latency == null) {
     return empty;
   }
@@ -69,7 +87,13 @@ export function Latency({ check }) {
   return <Duration ms={check.latency.p95} />;
 }
 
-export function Percentage({ val, upper, lower }) {
+type PercentageProps = {
+  val?: number;
+  upper?: number;
+  lower?: number;
+};
+
+export function Percentage({ val, upper, lower }: PercentageProps) {
   if ((isEmpty(lower) && isEmpty(val)) || (upper === 0 && lower === 0)) {
     return empty;
   }
@@ -79,6 +103,7 @@ export function Percentage({ val, upper, lower }) {
 
   if (val != null && Math.round(val) !== val) {
     try {
+      // @ts-expect-error
       val = Number(val).toFixed(1);
     } catch (e) {
       return empty;
@@ -95,7 +120,13 @@ export function Percentage({ val, upper, lower }) {
   );
 }
 
-export function Title({ icon, title, isDeleted }) {
+type TitleProps = {
+  icon?: string;
+  title: string;
+  isDeleted?: boolean;
+};
+
+export function Title({ icon, title, isDeleted }: TitleProps) {
   return (
     <>
       {icon && (
@@ -108,7 +139,11 @@ export function Title({ icon, title, isDeleted }) {
   );
 }
 
-export function Uptime({ check }) {
+type UptimeProps = {
+  check?: HealthCheck;
+};
+
+export function Uptime({ check }: UptimeProps) {
   if (check == null || check.uptime == null) {
     return "";
   }
@@ -120,7 +155,12 @@ export function Uptime({ check }) {
   );
 }
 
-export function StatusList({ check, checkStatuses }) {
+type StatusListProps = {
+  check?: HealthCheck;
+  checkStatuses?: HealthCheckStatus[];
+};
+
+export function StatusList({ check, checkStatuses }: StatusListProps) {
   if (check && check.checkStatuses && check.checkStatuses.length > 0) {
     return (
       <>

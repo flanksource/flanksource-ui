@@ -39,13 +39,16 @@ export function CheckTitle({
         />
       </div>
       <div
-        className={clsx("overflow-hidden", size === "large" ? " mr-10" : "")}
+        className={clsx(
+          "flex flex-1 flex-row whitespace-nowrap overflow-ellipsis overflow-hidden",
+          size === "large" ? " mr-10" : ""
+        )}
       >
-        <div className="flex flex-row items-center">
+        <div className="flex flex-row flex-1 overflow-x-auto items-center">
           <span
             title={validCheck?.name}
             className={clsx(
-              "text-gray-800 font-semibold whitespace-nowrap overflow-ellipsis overflow-hidden pr-4",
+              "text-gray-800 flex-1 font-semibold whitespace-nowrap overflow-ellipsis overflow-hidden pr-4",
               size === "large" ? "text-2xl" : ""
             )}
           >
