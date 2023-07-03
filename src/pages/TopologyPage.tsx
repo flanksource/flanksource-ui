@@ -104,13 +104,17 @@ export function TopologyPage() {
         type: topologyType,
         team: team,
         labels: selectedLabel,
-        // only flatten, if topology type is set
-        ...(topologyType &&
-          topologyType.toString().toLowerCase() !== "all" && {
-            flatten: true
-          }),
+        flatten: false,
         hidden: showHiddenComponents === "no" ? false : undefined
       };
+
+      if (
+        topologyType.toLowerCase() !== "all" ||
+        team.toLowerCase() !== "all"
+      ) {
+        apiParams.flatten = true;
+      }
+
       return getTopology(apiParams);
     },
     {
