@@ -13,7 +13,7 @@ export default function ConfigListDateCell({
     return null;
   }
   const isDeleted = !!row.original.deleted_at;
-  const value = isDeleted ? row.original.deleted_at : row.original.updated_at;
+  const value = isDeleted ? row.original.deleted_at : dateString;
   return (
     <div className="text-xs">
       {value ? relativeDateTime(value) : ""}
