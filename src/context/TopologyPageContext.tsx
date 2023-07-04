@@ -1,7 +1,7 @@
 import React, { useState, createContext, useContext } from "react";
 import { URLSearchParamsInit } from "react-router-dom";
 import { CostsData } from "../components/CostDetails/CostDetails";
-import { typeItems } from "../components/Incidents/data";
+import { severityItems, typeItems } from "../components/Incidents/data";
 
 export type ValueType = number | string | Date;
 
@@ -43,7 +43,10 @@ export type Topology = {
       keyof typeof typeItems,
       Record<"High" | "Medium" | "Low", number>
     >;
-    insights?: Record<string, any>;
+    insights?: Record<
+      keyof typeof typeItems,
+      Record<keyof typeof severityItems, number>
+    >;
     [key: string]: any;
   };
   logs: {
