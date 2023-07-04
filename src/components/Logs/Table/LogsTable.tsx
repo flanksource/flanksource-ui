@@ -63,7 +63,6 @@ export function LogsTable({
   const logsSelector = searchParams.get("logsSelector");
 
   useEffect(() => {
-    console.log("useEffect");
     setLines([]);
     setRowSelection({});
   }, [debouncedQueryValue, logsSelector, topologyId]);
