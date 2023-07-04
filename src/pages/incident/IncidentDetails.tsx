@@ -34,6 +34,7 @@ import {
   BreadcrumbNav,
   BreadcrumbRoot
 } from "../../components/BreadcrumbNav";
+import EditableIncidentTitleBreadcrumb from "../../components/IncidentDetails/EditableIncidentTitleBreadcrumb";
 
 export enum IncidentDetailsViewTypes {
   comments = "Comments",
@@ -217,7 +218,12 @@ export function IncidentDetailsPage() {
             list={[
               <BreadcrumbRoot link="/incidents">Incidents</BreadcrumbRoot>,
               !isLoading && incident && (
-                <BreadcrumbChild>{incident.title}</BreadcrumbChild>
+                <BreadcrumbChild>
+                  <EditableIncidentTitleBreadcrumb
+                    incident={incident}
+                    updateHandler={updateIncidentHandler}
+                  />
+                </BreadcrumbChild>
               )
             ]}
           />
