@@ -142,8 +142,10 @@ const sampleIncident = [
   }
 ];
 
-function buildTreeFromHypothesisList(list) {
-  const tree = {};
+function buildTreeFromHypothesisList(
+  list: { id: string; parent_id: string | null }[]
+) {
+  const tree: Record<any, any> = {};
 
   if (list.length === 0) {
     return null;
@@ -164,9 +166,9 @@ function buildTreeFromHypothesisList(list) {
   });
 
   // 3rd pass to remove children from root
-  list.forEach((node) => {
+  list.forEach((node: any) => {
     if (node.parent_id != null) {
-      delete tree[node.id];
+      delete tree[node.id as any];
     }
   });
 

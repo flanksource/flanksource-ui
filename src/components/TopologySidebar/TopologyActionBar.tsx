@@ -237,10 +237,7 @@ export default function TopologyActionBar({
 
   return (
     <>
-      <div
-        className="flex flex-wrap py-4"
-        data-collapsible="false"
-      >
+      <div className="flex flex-wrap py-4" data-collapsible="false">
         {topologyActionItems.map(
           ({ icon: Icon, isShown, label, ContainerComponent }, index) => {
             if (isShown(topology, "TopologySidebar")) {
@@ -275,11 +272,13 @@ export default function TopologyActionBar({
         topology={topology}
       />
 
-      <TopologyConfigLinkModal
-        onCloseModal={() => setLinkToConfig(false)}
-        openModal={linkToConfig}
-        topology={topology}
-      />
+      {linkToConfig && (
+        <TopologyConfigLinkModal
+          onCloseModal={() => setLinkToConfig(false)}
+          openModal={linkToConfig}
+          topology={topology}
+        />
+      )}
     </>
   );
 }

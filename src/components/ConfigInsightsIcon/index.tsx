@@ -5,7 +5,7 @@ import { FaTasks } from "react-icons/fa";
 import { GrIntegration, GrWorkshop } from "react-icons/gr";
 import { ImHeartBroken } from "react-icons/im";
 import { IoMdSpeedometer } from "react-icons/io";
-import { MdSecurity } from "react-icons/md";
+import { MdOutlineRecommend, MdSecurity } from "react-icons/md";
 import { FaRegClock } from "react-icons/fa";
 import { ConfigTypeInsights } from "../ConfigInsights";
 import clsx from "clsx";
@@ -25,19 +25,23 @@ function insightSeverityToColorMap(severity: string) {
   return "text-gray-500";
 }
 
-export function insightTypeToIconMap(
-  type: string,
-  size = 22,
-  colorClass?: string
-) {
-  const adjustedSize = size + 2;
+type InsightTypeToIconProps = {
+  type: string;
+  size?: number;
+  colorClass?: string;
+};
 
+export function InsightTypeToIcon({
+  type,
+  size = 20,
+  colorClass = "text-gray-500"
+}: InsightTypeToIconProps) {
   switch (type) {
     case "cost":
       return (
         <BiDollarCircle
           className={clsx(colorClass, "inline-block")}
-          size={adjustedSize}
+          size={22}
           title="Cost"
         />
       );
@@ -53,7 +57,7 @@ export function insightTypeToIconMap(
       return (
         <IoMdSpeedometer
           className={clsx(colorClass, "inline-block")}
-          size={adjustedSize}
+          size={22}
           title="Performance"
         />
       );
@@ -97,12 +101,17 @@ export function insightTypeToIconMap(
           title="Technical Debt"
         />
       );
+    case "recommendation":
+      return (
+        <MdOutlineRecommend
+          className={clsx(colorClass, "inline-block")}
+          size={size}
+          title="Recommendation"
+        />
+      );
   }
   return (
-    <AiFillWarning
-      className={clsx(colorClass, "inline-block")}
-      size={adjustedSize}
-    />
+    <AiFillWarning className={clsx(colorClass, "inline-block")} size={22} />
   );
 }
 
@@ -117,9 +126,12 @@ export default function ConfigInsightsIcon({ analysis, size = 22 }: Props) {
   const colorClass = useMemo(() => {
     return insightSeverityToColorMap(analysis.severity);
   }, [analysis.severity]);
-  return insightTypeToIconMap(
-    analysis.analysis_type,
-    size,
-    `${colorClass} mr-1`
+
+  return (
+    <InsightTypeToIcon
+      type={analysis.analysis_type}
+      size={size}
+      colorClass={colorClass}
+    />
   );
 }

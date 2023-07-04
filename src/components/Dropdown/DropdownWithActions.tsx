@@ -4,6 +4,7 @@ import AsyncSelect from "react-select/async";
 import { IItem } from "../../types/IItem";
 import { components } from "react-select";
 import { debounce } from "lodash";
+import clsx from "clsx";
 
 interface IDropdownWithActionsProps<T> {
   label: string;
@@ -118,16 +119,22 @@ export function DropdownWithActions<T extends IItem>({
         });
       }}
       components={{
-        Option: (props: any) => {
+        Option: ({ className, ...props }: any) => {
           return (
-            <components.Option {...props}>
+            <components.Option
+              className={clsx(className, "text-sm")}
+              {...props}
+            >
               {displayOption({ option: props.data } as any)}
             </components.Option>
           );
         },
-        SingleValue: (props: any) => {
+        SingleValue: ({ className, ...props }: any) => {
           return (
-            <components.SingleValue {...props}>
+            <components.SingleValue
+              className={clsx(className, "text-sm")}
+              {...props}
+            >
               {displayOption({ option: props.data } as any)}
             </components.SingleValue>
           );
@@ -155,16 +162,22 @@ export function DropdownWithActions<T extends IItem>({
       }}
       onInputChange={onChangeInputFn}
       components={{
-        Option: (props: any) => {
+        Option: ({ className, ...props }: any) => {
           return (
-            <components.Option {...props}>
+            <components.Option
+              className={clsx(className, "text-sm")}
+              {...props}
+            >
               {displayOption({ option: props.data } as any)}
             </components.Option>
           );
         },
-        SingleValue: (props: any) => {
+        SingleValue: ({ className, ...props }: any) => {
           return (
-            <components.SingleValue {...props}>
+            <components.SingleValue
+              className={clsx(className, "text-sm")}
+              {...props}
+            >
               {displayOption({ option: props.data } as any)}
             </components.SingleValue>
           );

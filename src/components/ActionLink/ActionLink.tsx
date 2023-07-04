@@ -17,7 +17,7 @@ export function ActionLink({
         icon={icon}
         text={text}
         onClick={() => onClick()}
-        className="btn-white"
+        className="btn-white text-sm"
       />
     </div>
   );

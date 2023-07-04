@@ -1,4 +1,5 @@
 import clsx from "clsx";
+import { NodePodPropToLabelMap } from "../../constants";
 
 type DescriptionCardProps = React.HTMLProps<HTMLDivElement> & {
   items: {
@@ -23,13 +24,17 @@ export function DescriptionCard({
           <tbody>
             {items.map((item, index) => (
               <tr
-                className="border-slate-100 border-solid border-b border-t p-1"
+                className="border-slate-100 border-solid border-b border-t px-1 py-0.5"
                 key={(item.label ?? "") + index.toString()}
               >
-                <th className="text-gray-700 font-light  uppercase text-left break-all bg-zinc-50 pl-2">
-                  {item.label}{" "}
+                <th className="text-sm overflow-hidden truncate text-gray-500">
+                  {NodePodPropToLabelMap[
+                    item.label as keyof typeof NodePodPropToLabelMap
+                  ] ?? item.label}{" "}
                 </th>
-                <td className="border-none p-1 break-all">{item.value}</td>
+                <td className="text-sm border-none break-all text-xs">
+                  {item.value}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -37,20 +42,20 @@ export function DescriptionCard({
       )}
       {labelStyle === "top" && (
         <div
-          className={clsx("grid gap-4")}
+          className={clsx("grid gap-2.5")}
           style={{
             gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`
           }}
         >
           {items.map((item, index) => {
             return (
-              <div className="col-span-1" key={index}>
-                <h2 className="text-sm font-medium text-gray-500">
-                  {item.label}
-                </h2>
-                <div className="mt-1 space-y-1">
-                  <div className="flex justify-start">{item.value}</div>
+              <div className="col-span-1 flex flex-col space-y-0.5" key={index}>
+                <div className="text-sm overflow-hidden truncate text-gray-500">
+                  {NodePodPropToLabelMap[
+                    item.label as keyof typeof NodePodPropToLabelMap
+                  ] ?? item.label}
                 </div>
+                <div className="flex justify-start text-sm">{item.value}</div>
               </div>
             );
           })}

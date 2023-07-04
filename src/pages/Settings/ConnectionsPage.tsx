@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
-import { Head } from "../components/Head/Head";
-import { SearchLayout } from "../components/Layout";
-import { useLoader } from "../hooks";
-import { BreadcrumbNav, BreadcrumbRoot } from "../components/BreadcrumbNav";
+import { Head } from "../../components/Head/Head";
+import { SearchLayout } from "../../components/Layout";
+import { useLoader } from "../../hooks";
+import { BreadcrumbNav, BreadcrumbRoot } from "../../components/BreadcrumbNav";
 import ConnectionForm, {
   Connection
-} from "../components/Connections/ConnectionForm";
-import { ConnectionList } from "../components/Connections/ConnectionsList";
+} from "../../components/Connections/ConnectionForm";
+import { ConnectionList } from "../../components/Connections/ConnectionsList";
 import { AiFillPlusCircle } from "react-icons/ai";
-import { getAll, updateResource } from "../api/schemaResources";
-import { toastError, toastSuccess } from "../components/Toast/toast";
-import { createResource } from "../api/schemaResources";
-import { deleteResource } from "../api/schemaResources";
-import { useUser } from "../context";
+import { getAll, updateResource } from "../../api/schemaResources";
+import { toastError, toastSuccess } from "../../components/Toast/toast";
+import { createResource } from "../../api/schemaResources";
+import { deleteResource } from "../../api/schemaResources";
+import { useUser } from "../../context";
 
 export function ConnectionsPage() {
   const [connections, setConnections] = useState<Connection[]>([]);

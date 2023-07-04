@@ -20,6 +20,7 @@ type FormikCodeEditorProps = {
   labelClassName?: string;
   label?: string;
   disabled?: boolean;
+  required?: boolean;
 };
 
 export function FormikCodeEditor({
@@ -29,11 +30,21 @@ export function FormikCodeEditor({
   label,
   labelClassName,
   disabled,
-  className = "flex flex-col h-[min(1000px,calc(90vh))]"
+  className = "flex flex-col h-[min(1000px,calc(90vh))]",
+  required = false
 }: FormikCodeEditorProps) {
   const { setFieldValue } = useFormikContext<Record<string, any>>();
 
-  const [field] = useField(fieldName);
+  const [field] = useField({
+    name: fieldName,
+    type: "text",
+    required,
+    validate: (value) => {
+      if (required && !value) {
+        return "This field is required";
+      }
+    }
+  });
 
   const { value: values } = field;
 

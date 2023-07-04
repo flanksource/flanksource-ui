@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useGetTopologyRelatedInsightsQuery } from "../../api/query-hooks";
-import { insightTypeToIconMap } from "../ConfigInsightsIcon";
+import { InsightTypeToIcon } from "../ConfigInsightsIcon";
 import { MdOutlineInsights } from "react-icons/md";
 import {
   StatusInfo,
@@ -29,19 +29,21 @@ export function TopologyConfigAnalysisLine({
   className,
   ...props
 }: TopologyConfigAnalysisLineProps) {
-  const { data: topologyInsights = [], isLoading } =
+  const { data: topologyInsights, isLoading } =
     useGetTopologyRelatedInsightsQuery(topologyId);
   const [openModal, setOpenModal] = useState(false);
 
   const analysis: StatusLineData = useMemo(() => {
     const analysisToCountMap: Record<string, StatusInfo> = {};
-    topologyInsights.forEach((topologyInsight) => {
+    topologyInsights?.data?.forEach((topologyInsight) => {
       analysisToCountMap[topologyInsight.analysis_type] = analysisToCountMap[
         topologyInsight.analysis_type
       ] || {
         label: 0,
         color: severityToColorMap(topologyInsight.severity),
-        icon: insightTypeToIconMap(topologyInsight.analysis_type, 17)
+        icon: (
+          <InsightTypeToIcon type={topologyInsight.analysis_type} size={17} />
+        )
       };
       (analysisToCountMap[topologyInsight.analysis_type].label as number) += 1;
     });
@@ -82,7 +84,7 @@ export function TopologyConfigAnalysisLine({
           className="flex flex-col divide-y divide-gray-200 space-y-4 p-2 overlow-y-auto"
           style={{ maxHeight: "calc(100vh - 8rem)" }}
         >
-          <InsightsDetails insights={topologyInsights} isLoading={isLoading} />
+          <InsightsDetails type="topologies" topologyId={topologyId} />
         </div>
       </Modal>
     </>

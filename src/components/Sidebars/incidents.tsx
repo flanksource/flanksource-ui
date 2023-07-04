@@ -83,14 +83,14 @@ export default function Incidents({
           <div className="flex flex-row">
             <IncidentTypeIcon type={item.type!} />
             <Link
-              className="block mx-1 cursor-pointer"
+              className="block mx-1 cursor-pointer text-sm"
               to={{
                 pathname: `/incidents/${item.id}`
               }}
             >
               {item.title}
             </Link>
-            <IncidentStatusTag status={item.status!} className="ml-1" />
+            <IncidentStatusTag status={item.status!} className="ml-1 text-sm" />
           </div>
         ),
         age: relativeDateTime(item.created_at)

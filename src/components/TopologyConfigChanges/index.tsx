@@ -33,7 +33,6 @@ export function TopologyConfigChanges({ topologyID }: Props) {
             componentConfigChanges.map((item) => (
               <div className="flex flex-row text-sm mb-2">
                 <ConfigLink
-                  className="text-zinc-600"
                   configId={item.config_id}
                   configName={item.name}
                   configType={item.type}
@@ -41,7 +40,7 @@ export function TopologyConfigChanges({ topologyID }: Props) {
                 />
                 &nbsp;/&nbsp;
                 <Link
-                  className="block"
+                  className="block text-sm"
                   to={{
                     pathname: `/configs/${item.config_id}/changes`
                   }}
@@ -49,7 +48,10 @@ export function TopologyConfigChanges({ topologyID }: Props) {
                   <Icon name={item.change_type} />
                   {item.summary ?? item.change_type}
                 </Link>
-                <span className="text-right grow" data-tip={item.created_at}>
+                <span
+                  className="text-right grow text-sm"
+                  data-tip={item.created_at}
+                >
                   {dayjs(item.created_at).fromNow()}
                 </span>
               </div>
