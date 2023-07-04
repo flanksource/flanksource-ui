@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
 import React, { useCallback, useMemo, useState } from "react";
 import { componentConfigRelationshipQueryKey } from "../../api/query-hooks/useComponentConfigRelationshipQuery";
@@ -14,6 +14,8 @@ import { DropdownWithActions } from "../Dropdown/DropdownWithActions";
 import { Modal } from "../Modal";
 import TextSkeletonLoader from "../SkeletonLoader/TextSkeletonLoader";
 import { toastError, toastSuccess } from "../Toast/toast";
+import { useAtom } from "jotai";
+import { refreshButtonClickedTrigger } from "../SlidingSideBar";
 
 type TopologyConfigLinkModalProps = {
   topology: Topology;
@@ -40,7 +42,6 @@ export function TopologyConfigLinkModal({
     ["all", "configs", "topology", "search"],
     getAllConfigsForSearchPurpose
   );
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [value, setValue] = useState<ConfigOption>();
   const maxResultsShown = 10;
   const configs = useMemo(() => {
@@ -57,6 +58,8 @@ export function TopologyConfigLinkModal({
       .sort((v1, v2) => stringSortHelper(v1.name, v2.name));
   }, [data]);
 
+  const [, setTriggerRefresh] = useAtom(refreshButtonClickedTrigger);
+
   const onSearch = useCallback(
     async (query = "") => {
       console.log("query", query);
@@ -71,35 +74,31 @@ export function TopologyConfigLinkModal({
     [configs]
   );
 
-  const onSubmit = async () => {
-    if (!topology.id || !value?.id || isSubmitting) {
-      if (!value?.id) {
-        toastError("Please select a config to link");
-      }
-      return Promise.resolve();
-    }
-    setIsSubmitting(true);
-    onCloseModal(false);
-    try {
-      const response = await addManualComponentConfigRelationship(
-        topology.id,
-        value.id
+  const { mutate: linkConfig, isLoading: isSubmitting } = useMutation({
+    mutationFn: ({
+      topologyId,
+      configId
+    }: {
+      topologyId: string;
+      configId: string;
+    }) => {
+      return addManualComponentConfigRelationship(topologyId, configId);
+    },
+    onSuccess: () => {
+      setTriggerRefresh((v) => v + 1);
+      toastSuccess("config link successful");
+      setValue(undefined);
+      queryClient.invalidateQueries(
+        componentConfigRelationshipQueryKey({ topologyId: topology.id })
       );
-      if (response.data) {
-        toastSuccess("config link successful");
-        setValue(undefined);
-        queryClient.invalidateQueries(
-          componentConfigRelationshipQueryKey({ topologyId: topology.id })
-        );
-        setIsSubmitting(false);
-        return;
-      }
-      toastError(response.error?.message);
-    } catch (ex) {
-      toastError((ex as Error).message);
+    },
+    onError: (err: any) => {
+      toastError(err?.message);
+    },
+    onSettled: () => {
+      onCloseModal(false);
     }
-    setIsSubmitting(false);
-  };
+  });
 
   return (
     <Modal
@@ -154,7 +153,19 @@ export function TopologyConfigLinkModal({
           </div>
         </div>
         <div className="flex items-center justify-end p-2 rounded bg-gray-100">
-          <button type="submit" onClick={onSubmit} className="btn-primary">
+          <button
+            type="submit"
+            disabled={!value || isSubmitting}
+            onClick={() => {
+              if (value) {
+                linkConfig({
+                  topologyId: topology.id,
+                  configId: value.id
+                });
+              }
+            }}
+            className="btn-primary"
+          >
             {isSubmitting ? "Linking.." : "Link"}
           </button>
         </div>
