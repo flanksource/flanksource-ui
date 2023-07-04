@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { debounce } from "lodash";
 import { useEffect, useMemo } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { BsCardList, BsShareFill } from "react-icons/bs";
 import { Incident } from "../../api/services/incident";
 import { IncidentPriority } from "../../constants";
@@ -10,7 +10,6 @@ import CollapsiblePanel from "../CollapsiblePanel";
 import IncidentTypeDropdown from "../Incidents/IncidentTypeDropdown";
 import { incidentStatusItems, typeItems } from "../Incidents/data";
 import { ReactSelectDropdown } from "../ReactSelectDropdown";
-import { TextInput } from "../TextInput";
 import Title from "../Title/title";
 import { IncidentDetailsRow } from "./IncidentDetailsRow";
 import { priorities } from "./IncidentSidebar";
@@ -89,8 +88,7 @@ export function IncidentDetailsPanel({
   const onSubmit = debounce(({ priority, type, title }: typeof formValues) => {
     updateIncidentHandler({
       severity: priority,
-      type,
-      title
+      type
     });
   }, 500);
 
@@ -130,21 +128,6 @@ export function IncidentDetailsPanel({
             <span className="text-gray-500 font-medium">
               {incident.incident_id}
             </span>
-          }
-        />
-        <IncidentDetailsRow
-          title="Title"
-          value={
-            <Controller
-              name="title"
-              control={control}
-              rules={{
-                required: true
-              }}
-              render={({ field }) => (
-                <TextInput id="title" {...field} className="w-full" />
-              )}
-            />
           }
         />
         <IncidentDetailsRow
