@@ -17,6 +17,7 @@ import { InfoMessage } from "../../InfoMessage";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { sanitizeHTMLContent } from "../../../utils/common";
 import TableSkeletonLoader from "../../SkeletonLoader/TableSkeletonLoader";
+import { useSearchParams } from "react-router-dom";
 
 const convert = new Convert();
 
@@ -52,8 +53,20 @@ export function LogsTable({
 }: LogsTableProps) {
   const [attachAsAsset, setAttachAsAsset] = useState(false);
   const [lines, setLines] = useState<LogItem[]>([]);
-
   const [rowSelection, setRowSelection] = useState({});
+
+  const [searchParams] = useSearchParams();
+
+  const topologyId = searchParams.get("topologyId");
+  const query = searchParams.get("query");
+  const debouncedQueryValue = useDebouncedValue(query, 500);
+  const logsSelector = searchParams.get("logsSelector");
+
+  useEffect(() => {
+    console.log("useEffect");
+    setLines([]);
+    setRowSelection({});
+  }, [debouncedQueryValue, logsSelector, topologyId]);
 
   const [columnSizing, setColumnSizing] = useState<ColumnSizingState>(() => {
     const savedColumnSizes = localStorage.getItem("logsTableColumnSizes");
@@ -167,7 +180,8 @@ export function LogsTable({
     debugTable: true,
     debugHeaders: true,
     debugColumns: true,
-    onColumnSizingChange: setColumnSizing
+    onColumnSizingChange: setColumnSizing,
+    autoResetAll: false
   });
 
   // in order to ensure column resizing doesn't affect the selection column, we
