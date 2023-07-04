@@ -32,11 +32,14 @@ export const saveResponder = (
 export const getRespondersForTheIncident = async (id: string) => {
   const res = await resolve(
     IncidentCommander.get<Responder[] | null>(
-      `/responders?incident_id=eq.${id}&select=*,team:team_id(id,name,icon,spec),person:person_id(id,name,avatar)`
+      `/responders?incident_id=eq.${id}&select=*,team:team_id(id,name,icon,spec),person:person_id(id,name,avatar)&deleted_at=is.null`
     )
   );
   return res.data ?? [];
 };
 
-export const deleteResponder = (id: string) =>
-  resolve(IncidentCommander.delete(`/responders?id=eq.${id}`));
+export const deleteResponder = (id: string) => {
+  return IncidentCommander.patch<Responder | null>(`/responders?id=eq.${id}`, {
+    deleted_at: "now()"
+  });
+};

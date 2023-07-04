@@ -12,6 +12,8 @@ import { AddResponder } from "./AddResponders/AddResponder";
 import { IncidentDetailsRow } from "./IncidentDetailsRow";
 import { ResponderDetailsDialog } from "./ResponderDetailsDialog";
 import { ResponderDetailsToolTip } from "./ResponderDetailsToolTip";
+import { useMutation } from "@tanstack/react-query";
+import { FaSpinner } from "react-icons/fa";
 
 type RespondersProps = React.HTMLProps<HTMLDivElement> & {
   incident: Incident;
@@ -21,30 +23,27 @@ export function Responders({ incident, className, ...props }: RespondersProps) {
   const { data: responders = [], refetch } = useIncidentRespondersQuery(
     incident.id
   );
-
   const [openDeleteConfirmDialog, setOpenDeleteConfirmDialog] = useState(false);
-  const [deletedResponder, setDeletedResponder] =
-    useState<Record<string, any>>();
   const [openResponderDetailsDialog, setOpenResponderDetailsDialog] =
     useState(false);
   const [selectedResponder, setSelectedResponder] =
     useState<Record<string, any>>();
+  const [deletedResponder, setDeletedResponder] =
+    useState<Record<string, any>>();
 
-  async function initiateDeleteResponder() {
-    const id = deletedResponder?.id;
-    try {
-      const result = await deleteResponder(id);
-      if (!result?.error) {
-        refetch();
-        toastSuccess("Responder deleted successfully");
-      } else {
-        toastError("Responder delete failed");
-      }
-    } catch (ex: any) {
-      toastError(ex.message);
+  const { mutate: deleteResponderFN, isLoading } = useMutation({
+    mutationFn: (id: string) => deleteResponder(id),
+    onError: (error: any) => {
+      toastError(error.message);
+    },
+    onSuccess: () => {
+      refetch();
+      toastSuccess("Responder deleted successfully");
+    },
+    onSettled: () => {
+      setOpenDeleteConfirmDialog(false);
     }
-    setOpenDeleteConfirmDialog(false);
-  }
+  });
 
   return (
     <div className={clsx(className)} {...props}>
@@ -125,10 +124,17 @@ export function Responders({ incident, className, ...props }: RespondersProps) {
                                     }}
                                     icon={
                                       <ClickableSvg styleFill={false}>
-                                        <BsTrash
-                                          className="text-gray-600 border-0 border-gray-200 border-l-1"
-                                          size={18}
-                                        />
+                                        {!isLoading ? (
+                                          <BsTrash
+                                            className="text-gray-600 border-0 border-gray-200 border-l-1"
+                                            size={18}
+                                          />
+                                        ) : (
+                                          <FaSpinner
+                                            className="animate-spin"
+                                            size={18}
+                                          />
+                                        )}
                                       </ClickableSvg>
                                     }
                                   />
@@ -158,9 +164,7 @@ export function Responders({ incident, className, ...props }: RespondersProps) {
         title="Delete Responder ?"
         description="Are you sure you want to delete the responder ?"
         onClose={() => setOpenDeleteConfirmDialog(false)}
-        onConfirm={() => {
-          initiateDeleteResponder();
-        }}
+        onConfirm={() => deleteResponderFN(deletedResponder?.id)}
       />
       <ResponderDetailsDialog
         size="medium"
