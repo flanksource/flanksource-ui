@@ -10,6 +10,8 @@ import { Head } from "../../components/Head/Head";
 import TabbedLinks from "../../components/Tabs/TabbedLinks";
 import { configTabsLists } from "../../components/ConfigsPage/ConfigTabsLinks";
 import { BreadcrumbNav, BreadcrumbRoot } from "../../components/BreadcrumbNav";
+import { useAtom } from "jotai";
+import { areDeletedConfigsHidden } from "../../components/ConfigListToggledDeletedItems/ConfigListToggledDeletedItems";
 
 export function ConfigListPage() {
   const [params] = useSearchParams();
@@ -25,7 +27,11 @@ export function ConfigListPage() {
   const groupByProp = decodeURIComponent(params.get("groupByProp") ?? "");
   const sortBy = params.get("sortBy");
   const sortOrder = params.get("sortOrder");
-  const hideDeletedConfigs = params.get("hideDeleted") === "yes";
+  const hideDeleted = params.get("hideDeleted");
+  const [deletedConfigsHidden, setDeletedConfigsHidden] = useAtom(
+    areDeletedConfigsHidden
+  );
+  const hideDeletedConfigs = deletedConfigsHidden === "yes";
 
   const {
     data: allConfigs,
@@ -46,6 +52,12 @@ export function ConfigListPage() {
       cacheTime: 0
     }
   );
+
+  useEffect(() => {
+    if (hideDeleted) {
+      setDeletedConfigsHidden(hideDeleted);
+    }
+  }, [hideDeleted, setDeletedConfigsHidden]);
 
   useEffect(() => {
     if (params.get("query")) {
