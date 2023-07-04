@@ -6,11 +6,11 @@ import {
   getOrderedKeys,
   ResponderPropsKeyToLabelMap,
   ResponderOption
-} from "../AddResponder";
+} from "../AddResponders/AddResponder";
 
 type ResponderDetailsToolTipProps = {
   element: React.ReactElement;
-  data?: { [key: string]: string | undefined };
+  data?: Record<string, any>;
   responder: any;
 } & React.HTMLProps<HTMLDivElement>;
 
@@ -42,10 +42,17 @@ export const ResponderDetailsToolTip = ({
     const options: ResponderOption[] = [];
     keys.forEach((key) => {
       options.push({
-        label: ResponderPropsKeyToLabelMap[key],
+        label:
+          ResponderPropsKeyToLabelMap[
+            key as keyof typeof ResponderPropsKeyToLabelMap
+          ],
         value: data?.[key],
         link: responder.properties.find(
-          (v: ResponderOption) => v.label === ResponderPropsKeyToLabelMap[key]
+          (v: ResponderOption) =>
+            v.label ===
+            ResponderPropsKeyToLabelMap[
+              key as keyof typeof ResponderPropsKeyToLabelMap
+            ]
         )?.link
       });
     });

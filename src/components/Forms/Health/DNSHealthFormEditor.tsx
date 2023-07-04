@@ -24,14 +24,20 @@ export default function DNSHealthFormEditor({
 
   return (
     <>
+      <div className="flex flex-row md:space-x-2">
+        <FormikTextInput
+          className="flex flex-col w-1/2"
+          name={`${fieldName}.name`}
+          label="Name"
+          required
+        />
+        <FormikIconPicker
+          className="flex flex-col w-1/2"
+          name={`${fieldName}.icon`}
+          label="Icon"
+        />
+      </div>
       <FormikTextInput name={`${fieldName}.description`} label="Description" />
-      <FormikTextInput name={`${fieldName}.name`} label="Name" />
-
-      {/* this a top level schema field, not nested under dns */}
-      <FormikScheduleField name={`${name}.schedule`} />
-
-      <FormikIconPicker name={`${fieldName}.icon`} label="Icon" />
-
       <FormikTextInput name={`${fieldName}.server`} label="Server" />
 
       <FormikTextInput name={`${fieldName}.port`} label="Port" type="number" />
@@ -40,7 +46,7 @@ export default function DNSHealthFormEditor({
       <FormikTextInput name={`${fieldName}.querytype`} label="Query Type" />
       <FormikTextInput
         name={`${fieldName}.minrecords`}
-        label="Min Records"
+        label="Minimum Records"
         type="number"
         min={0}
       />
@@ -56,16 +62,12 @@ export default function DNSHealthFormEditor({
         ]}
       />
 
-      <FormikTextInput
-        name={`${fieldName}.timeout`}
-        label="Timeout"
-        type="number"
-        min={0}
-      />
+      <FormikTextInput name={`${fieldName}.timeout`} label="Timeout" />
 
       <FormikTextInput
         name={`${fieldName}.thresholdMillis`}
-        label="ThresholdMillis"
+        hint="Expected response time threshold in ms"
+        label="Threshold millis"
         type="number"
         min={0}
       />

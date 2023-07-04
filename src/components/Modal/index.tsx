@@ -62,6 +62,7 @@ export function Modal({
         >
           {/* @ts-expect-error */}
           <Transition.Child
+            // @ts-expect-error
             as={Fragment}
             enter="ease-out duration-300"
             enterFrom="opacity-0"
@@ -74,6 +75,7 @@ export function Modal({
           </Transition.Child>
 
           <Transition.Child
+            // @ts-expect-error
             as={Fragment}
             enter="ease-out duration-300"
             enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
@@ -90,7 +92,12 @@ export function Modal({
               )}
             >
               <div className="py-4 px-4 flex item-center rounded-t-lg justify-between bg-gray-100">
-                <h1 className={clsx("font-semibold text-lg", titleClass)}>
+                <h1
+                  className={clsx(
+                    "font-semibold flex-1 overflow-x-auto text-lg",
+                    titleClass
+                  )}
+                >
                   {title}
                 </h1>
                 {/* top-right close button */}

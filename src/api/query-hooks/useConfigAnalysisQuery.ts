@@ -8,6 +8,7 @@ export function useConfigInsightsQuery(
     status?: string;
     severity?: string;
     type?: string;
+    analyzer?: string;
   },
   sortBy: {
     sortBy?: string;

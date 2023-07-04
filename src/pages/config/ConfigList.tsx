@@ -39,7 +39,8 @@ export function ConfigListPage() {
       configType,
       sortBy,
       sortOrder,
-      hideDeletedConfigs
+      hideDeletedConfigs,
+      includeAgents: true
     },
     {
       cacheTime: 0

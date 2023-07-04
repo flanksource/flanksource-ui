@@ -1,28 +1,35 @@
 import React from "react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
-import { IncidentSeverity } from "../../../api/services/incident";
+import {
+  IncidentSeverity,
+  IncidentStatus,
+  IncidentSummary
+} from "../../../api/services/incident";
 import { IncidentList } from "./index";
+import { ComponentStory } from "@storybook/react";
 
 export default {
   title: "IncidentList",
   component: IncidentList
 };
 
-const incidents = [
+const incidents: IncidentSummary[] = [
   {
     id: "b398da27-7047-407f-a07d-80d0ba168bd0",
     title: "Incident from config",
     created_by: "017fb74a-9c90-2074-6b29-61d71507c231",
     commander_id: "017fb74a-9c90-2074-6b29-61d71507c231",
     communicator_id: "017fb74a-9c90-2074-6b29-61d71507c231",
-    severity: 2,
+    severity: IncidentSeverity.Low,
     description: "",
-    type: "issue",
-    status: "open",
+    type: "security",
+    status: IncidentStatus.Open,
     created_at: "2022-04-10T11:32:37.285341",
     updated_at: "2022-04-10T11:32:37.285341",
     responders: [
       {
+        id: "017fb74a-9c90-2074-6b29-61d71507c231",
+        email: "johndoe@example.org",
         name: "Responder 1"
       }
     ]
@@ -35,12 +42,14 @@ const incidents = [
     communicator_id: "017fb74a-9c90-2074-6b29-61d71507c231",
     severity: IncidentSeverity.Low,
     description: "test",
-    type: "issue",
-    status: "open",
+    type: "security",
+    status: IncidentStatus.Open,
     created_at: "2022-04-05T07:55:30.479768",
     updated_at: "2022-04-05T07:55:30.479768",
     responders: [
       {
+        id: "017fb74a-9c90-2074-6b29-61d71507c231",
+        email: "johndoe@example.org",
         name: "Responder 2"
       }
     ]
@@ -53,12 +62,14 @@ const incidents = [
     communicator_id: "017fb74a-9c90-2074-6b29-61d71507c231",
     severity: IncidentSeverity.Low,
     description: "test",
-    type: "issue",
-    status: "open",
+    type: "security",
+    status: IncidentStatus.Open,
     created_at: "2022-04-05T07:23:11.288297",
     updated_at: "2022-04-05T07:23:11.288297",
     responders: [
       {
+        id: "017fb74a-9c90-2074-6b29-61d71507c231",
+        email: "johndoe@example.org",
         name: "Responder 3"
       }
     ]
@@ -71,13 +82,15 @@ const incidents = [
     communicator_id: "017fb74a-9c90-2074-6b29-61d71507c231",
     severity: IncidentSeverity.Low,
     description: "test",
-    type: "issue",
-    status: "open",
+    type: "cost",
+    status: IncidentStatus.Open,
     created_at: "2022-04-05T07:19:03.546871",
     updated_at: "2022-04-05T07:19:03.546871",
     responders: [
       {
-        name: "Responder 4"
+        id: "017fb74a-9c90-2074-6b29-61d71507c231",
+        email: "johndoe@example.org",
+        name: "Responder 3"
       },
       {
         name: "Responder 5",
@@ -88,7 +101,7 @@ const incidents = [
   }
 ];
 
-const Template = (arg) => (
+const Template: ComponentStory<typeof IncidentList> = (arg) => (
   <MemoryRouter initialEntries={["/incidents"]}>
     <Routes>
       <Route element={<IncidentList {...arg} />} path="/incidents" />
@@ -98,5 +111,5 @@ const Template = (arg) => (
 
 export const Variant1 = Template.bind({});
 Variant1.args = {
-  list: incidents
+  incidents: incidents
 };

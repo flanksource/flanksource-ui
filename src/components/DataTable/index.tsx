@@ -54,8 +54,8 @@ type DataTableProps<TableColumns, Data extends TableColumns> = {
   virtualizedRowEstimatedHeight?: number;
   paginationClassName?: string;
   paginationType?: PaginationType;
-  preferencesKey: string;
-  savePreferences: boolean;
+  preferencesKey?: string;
+  savePreferences?: boolean;
   overScan?: number;
   /**
    * Columns used for sorting the table
@@ -128,8 +128,8 @@ export function DataTable<TableColumns, Data extends TableColumns>({
   paginationClassName = "py-4",
   paginationType = "complete",
   enableServerSideSorting = false,
-  preferencesKey,
-  savePreferences,
+  preferencesKey = "",
+  savePreferences = false,
   overScan = 10,
   ...rest
 }: DataTableProps<TableColumns, Data>) {

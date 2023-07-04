@@ -163,7 +163,7 @@ export const ReactSelectDropdown = ({
               {prefix && (
                 <div className="flex flex-col text-gray-600"> {prefix} </div>
               )}
-              <div className="flex space-x-1 items-center">
+              <div className="flex text-sm space-x-1 items-center">
                 {SelectedOption?.icon && <div>{SelectedOption.icon}</div>}
                 <span className="block">{SelectedOption?.description}</span>
                 {!SelectedOption && value && isCreatable && (
@@ -340,7 +340,7 @@ const Dropdown: FunctionComponent<DropdownProps> = ({
     {target}
     {isOpen ? (
       <Menu
-        className={`absolute bg-white z-[99] drop-shadow-md text-sm ${className}`}
+        className={`absolute bg-white z-[99] text-sm drop-shadow-md ${className}`}
       >
         {children}
       </Menu>

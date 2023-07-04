@@ -51,8 +51,9 @@ const IncidentHistoryTypeToComponentMap = new Map<
       const responder = incidentHistory.responder;
       return (
         <>
-          Added responder <Avatar user={responder?.person!} />{" "}
-          {responder?.person?.name}{" "}
+          added responder{" "}
+          <Avatar inline={true} user={responder?.team || responder?.person} />{" "}
+          {responder?.team?.name || responder?.person?.name}{" "}
         </>
       );
     }
@@ -64,7 +65,19 @@ const IncidentHistoryTypeToComponentMap = new Map<
 
       return (
         <>
-          added{" "}
+          added {evidence?.type}{" "}
+          <Badge text={<EvidenceChangelogContent evidence={evidence} />} />
+        </>
+      );
+    }
+  ],
+  [
+    "evidence.done_definition_added",
+    ({ incidentHistory }) => {
+      const evidence = incidentHistory.evidence;
+      return (
+        <>
+          added DoD for {evidence?.type}{" "}
           <Badge text={<EvidenceChangelogContent evidence={evidence} />} />
         </>
       );
@@ -80,6 +93,7 @@ const IncidentHistoryTypeToComponentMap = new Map<
         <>
           <FaComment /> {comment?.comment} -{" "}
           <Avatar
+            inline={true}
             containerProps={{ className: "inline" }}
             user={responder?.person}
           />{" "}
@@ -132,7 +146,6 @@ export default function IncidentHistoryItemTypeContent({
   const { type } = incidentHistory;
 
   const Component = IncidentHistoryTypeToComponentMap.get(type);
-
   if (Component) {
     return <Component incidentHistory={incidentHistory} />;
   }

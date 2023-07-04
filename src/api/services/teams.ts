@@ -2,6 +2,34 @@ import { IncidentCommander } from "../axios";
 import { resolve } from "../resolve";
 import { User } from "./users";
 
+export type Team = {
+  id: string;
+  name: string;
+  icon: string;
+  spec: Record<string, any>;
+  source?: string;
+  created_by?: User;
+  created_at: string;
+  updated_at: string;
+  deleted_at?: string;
+};
+
+export const getTeam = async (id: string): Promise<Team | undefined> => {
+  const response = await IncidentCommander.get<Team | null>(
+    `/teams?id=eq.${id}`
+  );
+  const data = response.data;
+  return data || undefined;
+};
+
+export const getTeams = async (): Promise<Team[]> => {
+  const response = await IncidentCommander.get<Team[] | null>(
+    `/teams?deleted_at=is.null`
+  );
+  const data = response.data;
+  return data || [];
+};
+
 export const getTeamMembers = async (
   teamId: string
 ): Promise<{ data: User[] }> => {

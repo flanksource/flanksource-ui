@@ -31,3 +31,4 @@ src/data/*.real.json
 .next
 *.log
 src/components/SpecEditorControl/Untitled-1.json
+tsconfig.tsbuildinfo
