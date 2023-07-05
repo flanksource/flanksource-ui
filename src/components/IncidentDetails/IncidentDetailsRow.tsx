@@ -4,7 +4,7 @@ import clsx from "clsx";
 interface IProps {
   title: string;
   value: React.ReactNode;
-  className: string;
+  className?: string;
 }
 
 export const IncidentDetailsRow = ({ title, value, className }: IProps) => (

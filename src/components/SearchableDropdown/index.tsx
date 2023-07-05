@@ -1,4 +1,5 @@
 import clsx from "clsx";
+import { ComponentProps } from "react";
 import Select from "react-select";
 
 export function SearchableDropdown({
@@ -7,7 +8,7 @@ export function SearchableDropdown({
   defaultValue,
   className,
   ...props
-}) {
+}: ComponentProps<typeof Select>) {
   return (
     <Select
       defaultValue={defaultValue}

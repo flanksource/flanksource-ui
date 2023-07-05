@@ -94,7 +94,7 @@ export function UsersPage() {
       if (data) {
         toastSuccess(`user deleted successfully`);
       }
-    } catch (ex) {
+    } catch (ex: any) {
       toastError(ex);
     }
     setOpenDeleteConfirmDialog(false);
