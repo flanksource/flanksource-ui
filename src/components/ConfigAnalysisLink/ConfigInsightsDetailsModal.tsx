@@ -12,7 +12,7 @@ import { useQuery } from "@tanstack/react-query";
 import TextSkeletonLoader from "../SkeletonLoader/TextSkeletonLoader";
 
 type Props = {
-  id: string;
+  id?: string;
   isOpen: boolean;
   onClose: () => void;
 };
@@ -26,7 +26,10 @@ export default function ConfigInsightsDetailsModal({
 
   const { data: configInsight, isLoading } = useQuery(
     ["config", "insights", id],
-    () => getConfigInsightsByID(id)
+    () => getConfigInsightsByID(id!),
+    {
+      enabled: isOpen && !!id
+    }
   );
 
   const properties = useMemo(() => {
