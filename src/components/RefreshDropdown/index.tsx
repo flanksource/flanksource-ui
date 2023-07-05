@@ -153,7 +153,6 @@ export default function RefreshDropdown({
           </Menu.Button>
           {/* @ts-expect-error */}
           <Transition
-            as={Fragment}
             enter="transition ease-out duration-100"
             enterFrom="transform opacity-0 scale-95"
             enterTo="transform opacity-100 scale-100"
@@ -161,22 +160,16 @@ export default function RefreshDropdown({
             leaveFrom="transform opacity-100 scale-100"
             leaveTo="transform opacity-0 scale-95"
           >
-            {/* @ts-expect-error */}
-            <Menu.Items
-              as="ul"
-              className="absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-            >
+            <Menu.Items className="absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
               {RefreshOptionsList.map(([optionsKeys, optionsValue]) => (
                 <Fragment key={optionsValue}>
-                  {/* @ts-expect-error */}
+                  {/* @ts-ignore */}
                   <Menu.Item
-                    as="li"
-                    className="block"
                     disabled={refreshDropdownDisabledOptions.has(
                       optionsKeys as any
                     )}
                   >
-                    {({ active, disabled }) => (
+                    {({ active, disabled }: any) => (
                       <button
                         onClick={() =>
                           setRefreshRate({
