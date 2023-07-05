@@ -103,11 +103,11 @@ export function IncidentListPage() {
         <div className="flex flex-col h-full leading-1.21rel">
           <div className="flex-col flex-1 h-full space-x-2 space-y-2">
             <div className="relative max-w-screen-xl mx-auto h-full space-y-6 flex flex-col justify-center">
-              {!isLoading || Boolean(incidents?.length) ? (
+              <FilterIncidents />
+              {!isLoading || incidents?.length > 0 ? (
                 <>
-                  <FilterIncidents />
                   <IncidentList incidents={incidents || []} />
-                  {!Boolean(incidents?.length) && (
+                  {incidents?.length === 0 && (
                     <div className="absolute text-center text-base text-gray-500 w-full mt-2">
                       There are no incidents matching this criteria
                     </div>
