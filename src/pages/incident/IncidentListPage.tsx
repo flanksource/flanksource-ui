@@ -43,7 +43,9 @@ function toPostgresqlSearchParam({
 }
 
 export function IncidentListPage() {
-  const [searchParams] = useSearchParams();
+  const [searchParams] = useSearchParams({
+    status: "open"
+  });
 
   const severity = searchParams.get("severity");
   const status = searchParams.get("status");
