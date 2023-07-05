@@ -1,3 +1,4 @@
+import { ComponentStory } from "@storybook/react";
 import { RefreshButton } from "./index";
 
 export default {
@@ -10,6 +11,8 @@ export default {
   }
 };
 
-const Template = (arg) => <RefreshButton {...arg} />;
+const Template: ComponentStory<typeof RefreshButton> = (arg) => (
+  <RefreshButton {...arg} />
+);
 
 export const Variant1 = Template.bind({});

@@ -2,7 +2,9 @@ import { useState } from "react";
 import { ConfigItem } from "./index";
 import { ConfigDB } from "../../api/axios";
 import { MOCK_DATA } from "./storybook-mock";
+import { ComponentStory } from "@storybook/react";
 
+// @ts-expect-error
 ConfigDB.get = (url: string) => {
   if (url.indexOf("JIRA") > -1) {
     return Promise.resolve({
@@ -26,6 +28,7 @@ const EC2ConfigItemDropDown = ({ type }: { type: string }) => {
   return (
     <div className="flex flex-col">
       <ConfigItem
+        name="type"
         className="w-96"
         type={type}
         value={selectedItem}
@@ -38,6 +41,7 @@ const EC2ConfigItemDropDown = ({ type }: { type: string }) => {
         }}
       >
         <ConfigItem
+          name="type"
           className="w-96"
           type="esb"
           value={dependentSelectedItem}
@@ -64,6 +68,7 @@ const JiraConfigItemDropDown = ({ type }: { type: string }) => {
   return (
     <div className="flex flex-col">
       <ConfigItem
+        name="type"
         className="w-96"
         type={type}
         value={selectedItem}
@@ -140,6 +145,7 @@ const ConfigItemDropDown = ({ type }: { type: string }) => {
   return (
     <div className="flex flex-col">
       <ConfigItem
+        name="item"
         className="w-96"
         type={type}
         value={selectedItem}
@@ -157,6 +163,7 @@ const ConfigItemDropDown = ({ type }: { type: string }) => {
       >
         <label className="block font-light text-sm">Device Name</label>
         <ConfigItem
+          name="deviceName"
           className="w-96 mt-1"
           type="esb"
           value={dependentSelectedItem}
@@ -182,7 +189,9 @@ export default {
   component: ConfigItem
 };
 
-const LabelDescDefaultStyleTemplate = ({ ...props }) => (
+const LabelDescDefaultStyleTemplate: ComponentStory<
+  typeof EC2ConfigItemDropDown
+> = ({ ...props }) => (
   <EC2ConfigItemDropDown {...{ ...props, type: "EC2Instance" }} />
 );
 
@@ -191,7 +200,9 @@ export const LabelDescpritionDefaultStyle = LabelDescDefaultStyleTemplate.bind(
 );
 LabelDescpritionDefaultStyle.args = {};
 
-const LabelDescCustomStyleTemplate = ({ ...props }) => (
+const LabelDescCustomStyleTemplate: ComponentStory<
+  typeof JiraConfigItemDropDown
+> = ({ ...props }) => (
   <JiraConfigItemDropDown {...{ ...props, type: "JIRA" }} />
 );
 export const LabelDescriptionCustomStyle = LabelDescCustomStyleTemplate.bind(
@@ -199,7 +210,9 @@ export const LabelDescriptionCustomStyle = LabelDescCustomStyleTemplate.bind(
 );
 LabelDescriptionCustomStyle.args = {};
 
-const InlineLabelDescriptionTemplate = ({ ...props }) => (
+const InlineLabelDescriptionTemplate: ComponentStory<
+  typeof ConfigItemDropDown
+> = ({ ...props }) => (
   <ConfigItemDropDown {...{ ...props, type: "EC2Instance" }} />
 );
 export const InlineLabelDescription = InlineLabelDescriptionTemplate.bind({});

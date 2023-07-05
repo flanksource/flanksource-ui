@@ -1,5 +1,4 @@
 import { Story } from "@storybook/react";
-import { template } from "lodash";
 import { ComponentProps } from "react";
 import { FaChevronCircleDown } from "react-icons/fa";
 import Popover from "./Popover";

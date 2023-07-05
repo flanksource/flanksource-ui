@@ -1,6 +1,7 @@
 import { MemoryRouter } from "react-router-dom";
 import { LogsViewer } from "./index";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ComponentMeta, ComponentStory } from "@storybook/react";
 
 const client = new QueryClient();
 
@@ -16,7 +17,7 @@ export default {
       </QueryClientProvider>
     )
   ]
-};
+} as ComponentMeta<typeof LogsViewer>;
 
 const logsExample = [
   {
@@ -153,11 +154,12 @@ const logsExample = [
   }
 ];
 
-const Template = (arg) => <LogsViewer {...arg} />;
+const Template: ComponentStory<typeof LogsViewer> = (arg) => (
+  <LogsViewer {...arg} />
+);
 
 export const Variant1 = Template.bind({});
 Variant1.args = {
   logs: logsExample,
-  componentId: "123456",
-  loadingState: "idle"
+  componentId: "123456"
 };

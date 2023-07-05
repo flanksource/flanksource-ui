@@ -1,3 +1,4 @@
+import { ComponentStory } from "@storybook/react";
 import { Status } from "./index";
 
 export default {
@@ -5,7 +6,7 @@ export default {
   component: Status
 };
 
-const Template = (arg) => <Status {...arg} />;
+const Template: ComponentStory<typeof Status> = (arg) => <Status {...arg} />;
 
 export const Variant1 = Template.bind({});
 Variant1.args = {

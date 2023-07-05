@@ -1,18 +1,20 @@
 import { MemoryRouter } from "react-router-dom";
 import { defaultTableColumns } from "../ConfigViewer/columns";
 import { DataTable } from "./index";
+import React from "react";
+import { ComponentMeta, ComponentStory } from "@storybook/react";
 
 export default {
   title: "DataTable",
   component: DataTable,
   decorators: [
-    (Story) => (
+    (Story: React.FC) => (
       <MemoryRouter>
         <Story />
       </MemoryRouter>
     )
   ]
-};
+} as ComponentMeta<typeof DataTable>;
 
 const configData = [
   {
@@ -1384,20 +1386,16 @@ const configData = [
   }
 ];
 
-const Template = (arg) => <DataTable {...arg} />;
+const Template: ComponentStory<typeof DataTable> = (arg) => (
+  <DataTable {...arg} />
+);
 
 export const ConfigTable = Template.bind({});
+
 ConfigTable.args = {
   data: configData,
-  columns: defaultTableColumns,
+  columns: defaultTableColumns as any,
   isLoading: false,
   tableStyle: { borderSpacing: "0" },
-  stickyHead: false,
-  setSortBy: () => {},
-  sortBy: [
-    {
-      id: "type",
-      desc: false
-    }
-  ]
+  stickyHead: false
 };

@@ -24,6 +24,7 @@ export default {
 
 const incident = {
   id: "1aa1a99a-b487-495c-9cd9-a13cf717bc10",
+  incident_id: "incident_id",
   title: "Test incident 3",
   created_by: "017fb74a-9c90-2074-6b29-61d71507c231",
   commander: {

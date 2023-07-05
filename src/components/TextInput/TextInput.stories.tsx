@@ -1,3 +1,4 @@
+import { ComponentStory } from "@storybook/react";
 import { TextInput } from "./index";
 
 export default {
@@ -5,12 +6,13 @@ export default {
   component: TextInput
 };
 
-const Template = (arg) => <TextInput {...arg} />;
+const Template: ComponentStory<typeof TextInput> = (arg) => (
+  <TextInput {...arg} />
+);
 
 export const Variant1 = Template.bind({});
 Variant1.args = {
   id: "email1",
   label: "Email",
-  error: "just your name for now",
   type: "email"
 };

@@ -1,3 +1,4 @@
+import { ComponentStory } from "@storybook/react";
 import { TristateToggle } from "./index";
 
 export default {
@@ -5,11 +6,13 @@ export default {
   component: TristateToggle
 };
 
-const Template = (arg) => <TristateToggle {...arg} />;
+const Template: ComponentStory<typeof TristateToggle> = (arg) => (
+  <TristateToggle {...arg} />
+);
 
 export const Variant1 = Template.bind({});
 Variant1.args = {
-  label: "TristateToggle",
+  label: {},
   value: "value",
   onChange: () => {}
 };
