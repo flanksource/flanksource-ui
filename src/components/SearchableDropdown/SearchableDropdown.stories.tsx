@@ -1,3 +1,4 @@
+import { ComponentStory } from "@storybook/react";
 import { SearchableDropdown } from "./index";
 
 export default {
@@ -19,7 +20,9 @@ const options = [
   }
 ];
 
-const Template = (arg) => <SearchableDropdown {...arg} />;
+const Template: ComponentStory<typeof SearchableDropdown> = (arg) => (
+  <SearchableDropdown {...arg} />
+);
 
 export const Variant1 = Template.bind({});
 Variant1.args = {

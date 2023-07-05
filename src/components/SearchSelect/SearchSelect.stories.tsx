@@ -27,7 +27,9 @@ Variant1.args = {
   options: mockLabels
 };
 
-const configTagData = sampleConfigList.flatMap((d) => Object.entries(d.tags));
+const configTagData = sampleConfigList.flatMap((d) =>
+  Object.entries(d.tags ?? {})
+);
 const configTags = configTagData.map(([key, val]) => {
   const itemVal = `${key}__:__${val}`;
   return {

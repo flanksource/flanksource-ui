@@ -1,3 +1,4 @@
+import { ComponentStory } from "@storybook/react";
 import { OptionsList } from "./index";
 
 export default {
@@ -5,9 +6,12 @@ export default {
   component: OptionsList
 };
 
-const Template = (args) => <OptionsList {...args} />;
+const Template: ComponentStory<typeof OptionsList> = (args) => (
+  <OptionsList {...args} />
+);
 
 export const Variant1 = Template.bind({});
+
 Variant1.args = {
   options: [
     { label: "ServiceNow", value: "ServiceNow", icon: "servicenow" },
@@ -25,5 +29,5 @@ Variant1.args = {
   onSelect: (e: any) => {
     console.log(e);
   },
-  value: { label: "Microsoft", value: "Microsoft", icon: "microsoft" }
+  value: { label: "Microsoft", value: "Microsoft", icon: "microsoft" } as any
 };
