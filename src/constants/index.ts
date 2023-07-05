@@ -9,7 +9,11 @@ export const NodePodPropToLabelMap = {
   containerRuntime: "Container Runtime",
   kernel: "Kernel",
   kubeProxy: "Kubernetes proxy",
-  kubelet: "Kubelet "
+  kubelet: "Kubelet ",
+  version: "Version",
+  memory: "Memory",
+  cpu: "CPU",
+  ip: "IP"
 } as const;
 
 export const AVATAR_INFO = `id,name,avatar`;

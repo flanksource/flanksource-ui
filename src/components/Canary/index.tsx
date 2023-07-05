@@ -225,7 +225,6 @@ export function Canary({
     >
       <SidebarSticky topHeight={topLayoutOffset}>
         <div className="mb-4">
-          {/* @ts-expect-error */}
           <StatCard
             title="All Checks"
             className="mb-4"
@@ -245,7 +244,6 @@ export function Canary({
             }
           />
 
-          {/* @ts-expect-error */}
           <StatCard
             title="Filtered Checks"
             className="mb-4"
@@ -399,16 +397,18 @@ export const LabelFilterList = ({ labels }: { labels: any }) => {
             {labels.length > 1 ? (
               <>
                 <div className="text-xs whitespace-nowrap overflow-ellipsis w-full overflow-hidden mb-1 capitalize">
-                  {/* @ts-expect-error */}
-                  {FilterKeyToLabelMap[labelKey] || labelKey}
+                  {FilterKeyToLabelMap[
+                    labelKey as keyof typeof FilterKeyToLabelMap
+                  ] || labelKey}
                 </div>
                 <MultiSelectLabelsDropdownStandalone labels={labels} />
               </>
             ) : labels.length === 1 ? (
               <div className="flex w-full mb-3">
                 <div className="mr-3 w-full text-xs text-left text-gray-700 break-all overflow-ellipsis overflow-x-hidden flex items-center capitalize">
-                  {/* @ts-expect-error */}
-                  {FilterKeyToLabelMap[labels[0].key] || labels[0].key}
+                  {FilterKeyToLabelMap[
+                    labels[0].key as keyof typeof FilterKeyToLabelMap
+                  ] || labels[0].key}
                 </div>
                 <TristateLabelStandalone
                   label={labels[0]}

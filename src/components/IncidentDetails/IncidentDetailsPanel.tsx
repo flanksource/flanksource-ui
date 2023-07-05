@@ -1,13 +1,14 @@
 import clsx from "clsx";
-import { useMemo, useEffect } from "react";
+import { debounce } from "lodash";
+import { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { BsCardList, BsShareFill } from "react-icons/bs";
 import { Incident } from "../../api/services/incident";
 import { IncidentPriority } from "../../constants";
 import { relativeDateTime } from "../../utils/date";
 import CollapsiblePanel from "../CollapsiblePanel";
-import { typeItems, incidentStatusItems } from "../Incidents/data";
 import IncidentTypeDropdown from "../Incidents/IncidentTypeDropdown";
+import { incidentStatusItems, typeItems } from "../Incidents/data";
 import { ReactSelectDropdown } from "../ReactSelectDropdown";
 import Title from "../Title/title";
 import { IncidentDetailsRow } from "./IncidentDetailsRow";
@@ -41,8 +42,10 @@ export function IncidentDetailsPanel({
     [incident]
   );
 
-  const { control, watch } = useForm({
+  const { control, watch, handleSubmit, getValues } = useForm({
+    mode: "onBlur",
     defaultValues: {
+      title: incident.title,
       tracking: "123456",
       created_at: incident.created_at,
       chartRoomTitle: "#Slack",
@@ -68,6 +71,8 @@ export function IncidentDetailsPanel({
   const watchCommanders = watch("commanders");
   const watchStatus = watch("status");
 
+  const formValues = getValues();
+
   const formattedCreatedAt = useMemo(
     () => relativeDateTime(watchCreatedAt),
     [watchCreatedAt]
@@ -77,12 +82,20 @@ export function IncidentDetailsPanel({
     [watchCreatedAt]
   );
 
-  useEffect(() => {
-    const subscription = watch(({ priority, type }) => {
-      updateIncidentHandler({ severity: priority, type });
+  // we need to debounce this function because it's called on every key press in
+  // the form and this can cause a lot of unnecessary requests to the server
+  // when editing the title
+  const onSubmit = debounce(({ priority, type, title }: typeof formValues) => {
+    updateIncidentHandler({
+      severity: priority,
+      type
     });
+  }, 500);
+
+  useEffect(() => {
+    const subscription = watch(handleSubmit(onSubmit) as any);
     return () => subscription.unsubscribe();
-  }, [watch, updateIncidentHandler]);
+  }, [watch, handleSubmit, onSubmit]);
 
   return (
     <CollapsiblePanel
@@ -108,6 +121,15 @@ export function IncidentDetailsPanel({
             </button>
           </div>
         </div>
+        <IncidentDetailsRow
+          title="Id"
+          className="h-8"
+          value={
+            <span className="text-gray-500 font-medium">
+              {incident.incident_id}
+            </span>
+          }
+        />
         <IncidentDetailsRow
           title="Type"
           className=""
@@ -168,20 +190,16 @@ export function IncidentDetailsPanel({
         <Responders className="py-3" incident={incident} />
         <IncidentDetailsRow
           title="Started"
-          className="h-8"
+          className=""
           value={
-            <span className="text-gray-500 font-medium">
-              {formattedCreatedAt}
-            </span>
+            <div className="text-gray-500 text-sm">{formattedCreatedAt}</div>
           }
         />
         <IncidentDetailsRow
           title="Duration"
-          className="h-8"
+          className=""
           value={
-            <span className="text-gray-500 font-medium">
-              {formattedDuration}
-            </span>
+            <div className="text-gray-500 text-sm">{formattedDuration}</div>
           }
         />
       </div>

@@ -2,7 +2,6 @@ import { SortingState } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useConfigInsightsQuery } from "../../api/query-hooks/useConfigAnalysisQuery";
-import { ConfigItem } from "../../api/services/configs";
 import ConfigInsightsDetailsModal from "../ConfigAnalysisLink/ConfigInsightsDetailsModal";
 import { ConfigTypeInsights } from "../ConfigInsights";
 import { DataTable } from "../DataTable";
@@ -19,15 +18,15 @@ export default function ConfigInsightsList({
   triggerRefresh
 }: Props) {
   const [params, setParams] = useSearchParams();
-  const [clickedInsightItem, setClickedInsightItem] = useState<
-    ConfigTypeInsights & { config?: ConfigItem }
-  >();
+  const [clickedInsightItem, setClickedInsightItem] =
+    useState<ConfigTypeInsights>();
   const [isInsightDetailsModalOpen, setIsInsightDetailsModalOpen] =
     useState(false);
 
   const status = params.get("status") ?? undefined;
   const severity = params.get("severity") ?? undefined;
   const type = params.get("type") ?? undefined;
+  const analyzer = params.get("analyzer") ?? undefined;
 
   const sortState: SortingState = useMemo(() => {
     return [
@@ -51,8 +50,9 @@ export default function ConfigInsightsList({
     useConfigInsightsQuery(
       {
         status,
-        severity,
-        type
+        severity: severity?.toLowerCase(),
+        type,
+        analyzer
       },
       {
         sortBy: params.get("sortBy") ?? undefined,
@@ -128,7 +128,7 @@ export default function ConfigInsightsList({
       )}
 
       <ConfigInsightsDetailsModal
-        configInsight={clickedInsightItem}
+        id={clickedInsightItem?.id}
         isOpen={isInsightDetailsModalOpen}
         onClose={() => setIsInsightDetailsModalOpen(false)}
       />

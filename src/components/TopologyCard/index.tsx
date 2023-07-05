@@ -58,7 +58,9 @@ export function TopologyCard({
 
   useEffect(() => {
     if (topologyId != null && topologyData == null) {
-      getTopology({ id: topologyId }).then(({ data }) => setTopology(data[0]));
+      getTopology({ id: topologyId }).then(({ components }) =>
+        setTopology(components?.[0])
+      );
     }
   }, [topologyId, topologyData]);
 
@@ -222,7 +224,7 @@ export function TopologyCard({
               maxHeight="200px"
               minChildCount={5}
             >
-              <TopologyConfigAnalysisLine topologyId={topology?.id} />
+              <TopologyConfigAnalysisLine topology={topology} />
               {canShowChildHealth() && (
                 <HealthSummary
                   className=""

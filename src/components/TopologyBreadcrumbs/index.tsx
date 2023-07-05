@@ -53,7 +53,7 @@ export function TopologyBreadcrumbs({
       refererId,
       topologyId
     ].filter((v) => v?.trim());
-    return topologyIds;
+    return topologyIds as string[];
   }, [component, topologyId, refererId]);
 
   return (

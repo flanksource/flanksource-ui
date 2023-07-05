@@ -1,6 +1,5 @@
 import { EvidenceType } from "../../api/services/evidence";
 import { EvidenceWithEvidenceItems } from "../../api/services/IncidentsHistory";
-import LogItem from "../../types/Logs";
 import ConfigInsightsIcon from "../ConfigInsightsIcon";
 import { Icon } from "../Icon";
 
@@ -40,12 +39,12 @@ const evidenceChangelogContent = new Map<
   [
     "log",
     ({ evidence }) => {
-      const log = evidence.evidence as LogItem;
-      if (!log) {
+      const component = evidence.components;
+      if (!component) {
         return null;
       }
       // eslint-disable-next-line react/jsx-no-useless-fragment
-      return <>{log.message}</>;
+      return <>{component.name}</>;
     }
   ],
   [

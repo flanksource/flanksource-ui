@@ -32,8 +32,6 @@ import {
 import { getPersons, getVersionInfo } from "../services/users";
 import { LogsResponse, searchLogs, SearchLogsPayload } from "../services/logs";
 
-const cache: Record<string, any> = {};
-
 const defaultStaleTime = 1000 * 60 * 5;
 
 export const createIncidentQueryKey = (id: string) => ["getIncident", id];
@@ -121,23 +119,18 @@ export const useComponentNameQuery = (
   topologyId = "",
   { enabled = true, staleTime = defaultStaleTime, ...rest }
 ) => {
-  const cacheKey = `topology${topologyId}`;
   return useQuery(
     ["topology", topologyId],
     () => {
       return getTopology({
         id: topologyId
       }).then((data) => {
-        cache[cacheKey] = data.data[0];
-        return data.data[0];
+        return data.components?.[0];
       });
     },
     {
       staleTime,
       enabled,
-      placeholderData: () => {
-        return cache[cacheKey];
-      },
       ...rest
     }
   );
@@ -150,6 +143,7 @@ type ConfigListFilterQueryOptions = {
   hideDeletedConfigs?: boolean;
   sortBy?: string | null;
   sortOrder?: string | null;
+  includeAgents?: boolean;
 };
 
 function prepareConfigListQuery({
@@ -158,9 +152,14 @@ function prepareConfigListQuery({
   tag,
   sortBy,
   sortOrder,
-  hideDeletedConfigs
+  hideDeletedConfigs,
+  includeAgents = false
 }: ConfigListFilterQueryOptions) {
-  let query = "select=*";
+  let query =
+    "select=id,type,config_class,name,tags,created_at,updated_at,deleted_at,cost_per_minute,cost_total_1d,cost_total_7d,cost_total_30d,changes,analysis";
+  if (includeAgents) {
+    query = `${query},agent:agents(id,name)`;
+  }
   if (search) {
     query = `${query}&or=(name.ilike.*${search}*,type.ilike.*${search}*,description.ilike.*${search}*,namespace.ilike.*${search}*)`;
   } else {
@@ -193,7 +192,8 @@ export const useAllConfigsQuery = (
     configType,
     sortBy,
     sortOrder,
-    hideDeletedConfigs
+    hideDeletedConfigs,
+    includeAgents
   }: ConfigListFilterQueryOptions,
   { enabled = true, staleTime = defaultStaleTime, ...rest }
 ) => {
@@ -203,7 +203,8 @@ export const useAllConfigsQuery = (
     configType,
     sortBy,
     sortOrder,
-    hideDeletedConfigs
+    hideDeletedConfigs,
+    includeAgents
   });
   return useQuery(
     [
@@ -213,7 +214,8 @@ export const useAllConfigsQuery = (
       configType,
       sortBy,
       sortOrder,
-      hideDeletedConfigs
+      hideDeletedConfigs,
+      includeAgents
     ],
     () => {
       return getAllConfigsMatchingQuery(query);
@@ -230,21 +232,16 @@ export const useConfigNameQuery = (
   configId = "",
   { enabled = true, staleTime = defaultStaleTime, ...rest }
 ) => {
-  const cacheKey = `config${configId}`;
   return useQuery(
     ["config", configId],
     () => {
       return getConfigName(configId).then((data) => {
-        cache[cacheKey] = data?.data?.[0];
         return data?.data?.[0];
       });
     },
     {
       staleTime,
       enabled,
-      placeholderData: () => {
-        return cache[cacheKey];
-      },
       ...rest
     }
   );
@@ -394,17 +391,18 @@ export function useGetComponentsTeamQuery(
   );
 }
 
-export function useGetConfigInsights<T>(
+export function useGetConfigInsights(
   configId: string,
   pageIndex?: number,
   pageSize?: number,
-  keepPreviousData?: boolean
+  keepPreviousData?: boolean,
+  isEnabled?: boolean
 ) {
   return useQuery(
     ["configs", "insights", configId, pageIndex, pageSize],
-    () => getConfigInsights<T>(configId, pageIndex, pageSize),
+    () => getConfigInsights(configId, pageIndex, pageSize),
     {
-      enabled: !!configId,
+      enabled: isEnabled,
       keepPreviousData
     }
   );
@@ -456,19 +454,25 @@ export function useComponentGetLogsQuery(
   );
 }
 
-export function useGetTopologyRelatedInsightsQuery(id: string) {
+export function useGetTopologyRelatedInsightsQuery(
+  id: string,
+  pageIndex?: number,
+  pageSize?: number,
+  keepPreviousData?: boolean,
+  isEnabled?: boolean
+) {
   return useQuery(
-    ["topology", "insights", id],
-    async () => {
-      const res = await getTopologyRelatedInsights(id);
-      // ensure analysis has all the fields
-      return res.map((item) => ({
-        ...((item.config?.analysis?.length ?? 0) > 0
-          ? item.config?.analysis?.[0]
-          : {}),
-        ...item
-      }));
-    },
-    {}
+    ["topology", "insights", id, pageIndex, pageSize],
+    async () => getTopologyRelatedInsights(id, pageIndex, pageSize),
+    {
+      enabled: isEnabled,
+      keepPreviousData,
+      select: (response) => {
+        return {
+          ...response,
+          data: response?.data?.flatMap((item) => item.config?.analysis)
+        };
+      }
+    }
   );
 }

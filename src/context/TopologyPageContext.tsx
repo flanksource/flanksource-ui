@@ -1,7 +1,7 @@
 import React, { useState, createContext, useContext } from "react";
 import { URLSearchParamsInit } from "react-router-dom";
 import { CostsData } from "../components/CostDetails/CostDetails";
-import { typeItems } from "../components/Incidents/data";
+import { severityItems, typeItems } from "../components/Incidents/data";
 
 export type ValueType = number | string | Date;
 
@@ -28,7 +28,7 @@ export type Topology = {
   updated_at?: string;
   title?: string;
   properties?: TopologyProperty[];
-  components?: Record<string, any>[];
+  components?: Topology[];
   labels?: Record<string, string>;
   path?: string;
   icon?: string;
@@ -37,12 +37,16 @@ export type Topology = {
   hidden?: boolean;
   external_id?: string;
   agent_id?: string;
+  topology_id?: string;
   summary?: {
     incidents?: Record<
       keyof typeof typeItems,
       Record<"High" | "Medium" | "Low", number>
     >;
-    insights?: Record<string, any>;
+    insights?: Record<
+      keyof typeof typeItems,
+      Record<keyof typeof severityItems, number>
+    >;
     [key: string]: any;
   };
   logs: {
@@ -51,7 +55,7 @@ export type Topology = {
 } & CostsData;
 
 export type TopologyState = {
-  topology: Topology[] | null;
+  topology: Topology[] | undefined;
   searchParams: URLSearchParamsInit;
 };
 
@@ -62,7 +66,7 @@ export type TopologyPageState = {
 
 const initialState: TopologyPageState = {
   topologyState: {
-    topology: null,
+    topology: undefined,
     searchParams: {}
   },
   setTopologyState: ({ ...props }) => {}

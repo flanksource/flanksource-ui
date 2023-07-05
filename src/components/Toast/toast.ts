@@ -1,5 +1,4 @@
-import toast from "react-hot-toast";
-import { ToastOptions } from "react-hot-toast/dist/core/types";
+import toast, { ToastOptions } from "react-hot-toast";
 
 type ErrorMessage =
   | {

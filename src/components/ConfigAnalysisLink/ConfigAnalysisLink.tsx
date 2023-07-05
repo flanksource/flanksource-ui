@@ -8,7 +8,16 @@ import { Icon } from "../Icon";
 import ConfigInsightsDetailsModal from "./ConfigInsightsDetailsModal";
 
 type Props = {
-  configAnalysis: ConfigTypeInsights;
+  configAnalysis: Pick<
+    ConfigTypeInsights,
+    | "id"
+    | "analyzer"
+    | "config"
+    | "severity"
+    | "analysis_type"
+    | "sanitizedMessageTxt"
+    | "sanitizedMessageHTML"
+  >;
   viewType?: ViewType;
   showConfigLogo?: boolean;
 } & React.HTMLProps<HTMLDivElement>;
@@ -27,37 +36,39 @@ export function ConfigAnalysisLink({
 
   return (
     <div className="flex flex-col cursor-pointer  space-y-1" {...rest}>
-      <ConfigInsightsDetailsModal
-        configInsight={configAnalysis}
-        isOpen={open}
-        onClose={() => setOpen(false)}
-      />
+      {open && (
+        <ConfigInsightsDetailsModal
+          id={configAnalysis.id}
+          isOpen={open}
+          onClose={() => setOpen(false)}
+        />
+      )}
       {viewType === ViewType.summary && (
         <div
-          className="inline-block"
+          className="flex flex-row items-center"
           onClick={() => {
             setOpen(true);
           }}
         >
           {showConfigLogo && (
-            <>
+            <div className="flex flex-row gap-2 items-center">
               <Icon
                 name={configAnalysis?.config?.type}
                 secondary={configAnalysis?.config?.config_class}
-                className="w-5 h-5 mr-1"
+                className="w-5 h-5"
               />
               <span>{configAnalysis?.config?.name}</span>
-              &nbsp;/&nbsp;
-            </>
+              <span>/</span>
+            </div>
           )}
           <div
-            className="overflow-hidden cursor-pointer"
+            className="flex flex-row items-center gap-1 overflow-hidden cursor-pointer"
             data-html={true}
             data-tip={configAnalysis.sanitizedMessageTxt}
             data-class="max-w-[20rem]"
           >
             <ConfigInsightsIcon analysis={configAnalysis} />
-            {configAnalysis.analyzer}
+            <span>{configAnalysis.analyzer}</span>
           </div>
         </div>
       )}

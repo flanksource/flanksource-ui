@@ -18,7 +18,7 @@ export default function IncidentTypeDropdown({
   value,
   prefix = "Type:",
   name = "incidentType",
-  className,
+  className = "border-none shadow-none font-semibold space-x-3 capitalize text-sm px-2",
   showAllOption,
   dropDownClassNames,
   hideControlBorder

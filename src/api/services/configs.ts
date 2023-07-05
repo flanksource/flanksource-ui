@@ -67,11 +67,19 @@ export const getAllConfigs = () =>
   resolve<ConfigItem[]>(ConfigDB.get(`/configs`));
 
 export const getAllConfigsMatchingQuery = (query: string) => {
-  let url = `/configs?select=*,agent:agents(id,name)`;
+  let url = `/configs?`;
   if (query) {
     url = `${url}&${query}`;
   }
   return resolve<ConfigItem[]>(ConfigDB.get(url));
+};
+
+export const getAllConfigsForSearchPurpose = async () => {
+  let url = `/configs?select=id,name,config_class,type`;
+  const res = await resolve<
+    Pick<ConfigItem, "name" | "config_class" | "type" | "id">[]
+  >(ConfigDB.get(url));
+  return res.data ?? [];
 };
 
 export const getAllChanges = (
@@ -167,14 +175,14 @@ export const getConfigsBy = ({ topologyId, configId }: ConfigParams) => {
       }[]
     >(
       ConfigDB.get(
-        `/config_component_relationships?component_id=eq.${topologyId}&select=configs!config_component_relationships_config_id_fkey(${configFields})`
+        `/config_component_relationships?component_id=eq.${topologyId}&configs.order=name&select=configs!config_component_relationships_config_id_fkey(${configFields})`
       )
     );
   }
   if (configId) {
     return resolve(
       ConfigDB.get<Pick<ConfigTypeRelationships, "configs" | "related">[]>(
-        `/config_relationships?or=(related_id.eq.${configId},config_id.eq.${configId})&select=configs:configs!config_relationships_config_id_fkey(${configFields}),related:configs!config_relationships_related_id_fkey(${configFields})`
+        `/config_relationships?or=(related_id.eq.${configId},config_id.eq.${configId})&configs.order=name&select=configs:configs!config_relationships_config_id_fkey(${configFields}),related:configs!config_relationships_related_id_fkey(${configFields})`
       )
     );
   }
@@ -301,6 +309,17 @@ export const getConfigsAnalysisTypesFilter = async () => {
   return res.data;
 };
 
+export type ConfigAnalysisAnalyzerItem = {
+  analyzer: string;
+};
+
+export const getConfigsAnalysisAnalyzers = async () => {
+  const res = await IncidentCommander.get<ConfigAnalysisAnalyzerItem[] | null>(
+    `/config_analysis_analyzers?order=analyzer.asc`
+  );
+  return res.data ?? [];
+};
+
 export type ConfigChangesTypeItem = {
   change_type: string;
 };
@@ -312,7 +331,7 @@ export const getConfigsChangesTypesFilter = async () => {
   return res.data;
 };
 
-export const getConfigInsights = async <T>(
+export const getConfigInsights = (
   configId: string,
   pageIndex?: number,
   pageSize?: number
@@ -324,8 +343,21 @@ export const getConfigInsights = async <T>(
     }`;
   }
   return resolve(
-    ConfigDB.get<T>(
-      `/config_analysis?select=*,config:configs(id,name,config_class,type)&config_id=eq.${configId}${paginationQueryParams}`,
+    ConfigDB.get<
+      Pick<
+        ConfigTypeInsights,
+        | "id"
+        | "analyzer"
+        | "config"
+        | "severity"
+        | "analysis_type"
+        | "message"
+        | "sanitizedMessageTxt"
+        | "sanitizedMessageHTML"
+        | "first_observed"
+      >[]
+    >(
+      `/config_analysis?select=id,analyzer,analysis_type,message,severity,analysis,first_observed,config:configs(id,name,config_class,type)&config_id=eq.${configId}${paginationQueryParams}`,
       {
         headers: {
           Prefer: "count=exact"
@@ -335,11 +367,62 @@ export const getConfigInsights = async <T>(
   );
 };
 
-export const getTopologyRelatedInsights = async (id: string) => {
-  const res = await ConfigDB.get<ConfigTypeInsights[]>(
-    `/analysis_by_component?component_id=eq.${id}&select=*,config:configs(id,name,config_class,type,analysis:config_analysis(*))`
+export const getConfigInsightsByID = async (id: string) => {
+  const res = await ConfigDB.get<ConfigTypeInsights[] | null>(
+    `/config_analysis?select=id,source,analyzer,analysis_type,message,severity,status,analysis,first_observed,config:configs(id,name,config_class,type)&id=eq.${id}`,
+    {
+      headers: {
+        Prefer: "count=exact"
+      }
+    }
   );
-  return res.data;
+  return res.data?.[0] ?? null;
+};
+
+export const getTopologyRelatedInsights = async (
+  id: string,
+  pageIndex?: number,
+  pageSize?: number
+) => {
+  let paginationQueryParams = "";
+  if (pageIndex !== undefined && pageSize !== undefined) {
+    paginationQueryParams = `&limit=${pageSize}&offset=${
+      pageIndex! * pageSize
+    }`;
+  }
+
+  return resolve(
+    ConfigDB.get<
+      | {
+          config: {
+            id: string;
+            name: string;
+            config_class: string;
+            type: string;
+            analysis: Pick<
+              ConfigTypeInsights,
+              | "id"
+              | "analyzer"
+              | "config"
+              | "severity"
+              | "analysis_type"
+              | "sanitizedMessageTxt"
+              | "sanitizedMessageHTML"
+              | "first_observed"
+              | "message"
+            >;
+          };
+        }[]
+      | null
+    >(
+      `/analysis_by_component?component_id=eq.${id}${paginationQueryParams}&select=config:configs(id,name,config_class,type,analysis:config_analysis(id,analyzer,analysis_type,message,severity,analysis,first_observed))`,
+      {
+        headers: {
+          Prefer: "count=exact"
+        }
+      }
+    )
+  );
 };
 
 export const getConfigInsight = async <T>(
@@ -353,18 +436,24 @@ export const getConfigInsight = async <T>(
 };
 
 export const getAllConfigInsights = async (
-  queryParams: { status?: string; type?: string; severity?: string },
+  queryParams: {
+    status?: string;
+    type?: string;
+    severity?: string;
+    analyzer?: string;
+  },
   sortBy: { sortBy?: string; sortOrder?: "asc" | "desc" },
   { pageIndex, pageSize }: PaginationInfo
 ) => {
   const pagingParams = `&limit=${pageSize}&offset=${pageIndex * pageSize}`;
 
-  const { status, type, severity } = queryParams;
+  const { status, type, severity, analyzer } = queryParams;
 
   const params = {
     status: status && `&status=eq.${status}`,
     type: type && `&analysis_type=eq.${type}`,
-    severity: severity && `&severity=eq.${severity}`
+    severity: severity && `&severity=eq.${severity}`,
+    analyzer: analyzer && `&analyzer=eq.${analyzer}`
   };
 
   const queryParamsString = Object.values(params)

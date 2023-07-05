@@ -195,12 +195,20 @@ export default function ConfigScrapperSpecEditor({
     ? Object.keys(resourceValue?.spec).filter((key) => key !== "schedule")[0]
     : undefined;
 
+  const configCantEditMessage = `CRD linked to ${
+    resourceValue?.namespace ? `${resourceValue.namespace}/` : ""
+  }${resourceValue?.name}.`;
+
+  const canEdit = !!!resourceValue?.source;
+
   return (
     <SpecEditor
       types={configTypes}
       format="yaml"
       resourceInfo={resourceInfo}
       selectedSpec={selectedSpec}
+      canEdit={canEdit}
+      cantEditMessage={configCantEditMessage}
     />
   );
 }

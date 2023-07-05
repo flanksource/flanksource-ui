@@ -35,7 +35,7 @@ const StatusInfoEntry = ({ statusInfo }: { statusInfo: StatusInfo }) => {
   if (statusInfo.url) {
     return (
       <Link
-        className="inline-flex space-x-1"
+        className="inline-flex space-x-1 cursor-pointer"
         key={statusInfo.url}
         to={statusInfo.url}
       >
@@ -45,7 +45,7 @@ const StatusInfoEntry = ({ statusInfo }: { statusInfo: StatusInfo }) => {
     );
   } else {
     return (
-      <span className="inline-flex space-x-1">
+      <span className="inline-flex space-x-1 cursor-pointer">
         {statusInfo.icon && renderIcon(statusInfo.icon)}
         <Chip text={statusInfo.label} color={statusInfo.color} />
       </span>
@@ -63,17 +63,28 @@ export function StatusLine({
 }: StatusLineProps) {
   return (
     <div
-      className={clsx("flex flex-row space-x-1 items-center", className)}
+      className={clsx("flex flex-row space-x-1  items-center", className)}
       {...rest}
     >
       {icon && renderIcon(icon)}
       {url && (
-        <Link className="text-xs cursor-pointer" to={url}>
+        <Link
+          title={label}
+          className="text-xs cursor-pointer h-4 overflow-hidden truncate"
+          to={url}
+        >
           {label}
         </Link>
       )}
-      {!url && <span className="text-xs cursor-pointer">{label}</span>}
-      <div className="flex flex-row space-x-1.5">
+      {!url && (
+        <span
+          title={label}
+          className="text-xs cursor-pointer h-4 overflow-hidden truncate"
+        >
+          {label}
+        </span>
+      )}
+      <div className="flex flex-row  space-x-1.5">
         {statuses.map((status, index) => {
           return <StatusInfoEntry statusInfo={status} key={index} />;
         })}

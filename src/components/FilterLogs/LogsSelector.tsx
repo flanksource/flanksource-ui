@@ -17,15 +17,15 @@ export default function LogsSelectorDropdown({ classNames }: Props) {
   const { data: logsSelectors = {}, isLoading } = useQuery(
     ["topology", topologyId],
     async () => {
-      const data = await getTopology({
+      const { components } = await getTopology({
         id: topologyId!
       });
-      return data;
+      return components;
     },
     {
       enabled: !!topologyId,
-      select: ({ data }) => {
-        const selectors = data[0].logs ?? [];
+      select: (data) => {
+        const selectors = data?.[0]?.logs ?? [];
         const options: { [key: string]: StateOption } = {};
         selectors.forEach((selector) => {
           options[selector.name] = {

@@ -16,7 +16,7 @@ export default function IncidentChangelogItem({
         <Avatar user={history.created_by} circular size="sm" />
       </div>
       <div className="min-w-0 flex-1 flex items-center justify-between">
-        <div className="block flex-1 normal-case justify-center text-gray-500">
+        <div className="text-sm block flex-1 normal-case justify-center text-gray-500">
           <span className="text-gray-500">{history.created_by?.name}</span>{" "}
           <IncidentHistoryItemTypeContent incidentHistory={history} />{" "}
           <span className="text-gray-500 font-medium">

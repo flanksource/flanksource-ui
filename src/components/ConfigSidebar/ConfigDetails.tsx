@@ -8,6 +8,7 @@ import { DescriptionCard } from "../DescriptionCard";
 import { InfoMessage } from "../InfoMessage";
 import TextSkeletonLoader from "../SkeletonLoader/TextSkeletonLoader";
 import Title from "../Title/title";
+import { capitalize } from "lodash";
 
 type Props = {
   configId: string;
@@ -37,7 +38,7 @@ export function ConfigDetails({
           ? Object.entries(configDetails.tags)
               .filter(([key]) => key !== "Name")
               .map(([key, value]) => ({
-                label: key,
+                label: capitalize(key),
                 value
               }))
           : []),
@@ -88,7 +89,7 @@ export function ConfigDetails({
         {isLoading ? (
           <TextSkeletonLoader />
         ) : displayDetails && !error ? (
-          <DescriptionCard items={displayDetails} />
+          <DescriptionCard items={displayDetails} labelStyle="top" />
         ) : (
           <InfoMessage message="Details not found" />
         )}
