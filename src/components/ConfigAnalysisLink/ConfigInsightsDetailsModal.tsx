@@ -83,33 +83,29 @@ export default function ConfigInsightsDetailsModal({
   }, [configInsight]);
 
   const { isLoading: isConfigLoading, data: configDetails } =
-    useGetConfigByIdQuery(configInsight?.config_id!);
+    useGetConfigByIdQuery(configInsight?.config?.id!);
 
   const configCode = useMemo(() => {
-    if (!configDetails?.config) {
+    if (!configDetails || !configDetails.config) {
       return "";
     }
-    if (configDetails?.config?.content != null) {
-      return configDetails?.config.content;
-    }
 
-    const ordered = Object.keys(configDetails.config)
-      .sort()
-      .reduce((obj: Record<string, any>, key) => {
-        obj[key] = configDetails.config[key];
-        return obj;
-      }, {});
+    const { config } = configDetails;
 
-    return configDetails?.config && JSON.stringify(ordered, null, 2);
+    const ordered =
+      config.content != null
+        ? config.content
+        : JSON.stringify(
+            Object.fromEntries(Object.entries(config).sort()),
+            null,
+            2
+          );
+
+    return ordered;
   }, [configDetails]);
 
-  const format = useMemo(
-    () =>
-      configDetails?.config.format != null
-        ? configDetails?.config.format
-        : "yaml",
-    [configDetails]
-  );
+  let { config: { format = "yaml" } = {} } = configDetails ?? {};
+  format = useMemo(() => format, [format]);
 
   const sanitizedMessageHTML = useMemo(() => {
     return sanitize(configInsight?.message! || "");
@@ -151,12 +147,13 @@ export default function ConfigInsightsDetailsModal({
         <TextSkeletonLoader />
       ) : (
         <>
-          <div className="flex flex-col px-4 py-4 space-y-6">
+          <div className="flex flex-col px-4 py-4">
             <DescriptionCard items={properties} labelStyle="top" columns={3} />
             {configCode !== null && configCode !== "{}" ? (
               <Tabs
                 activeTab={activeTab}
                 onSelectTab={(tab) => onSubNavClick(tab)}
+                className="mt-4"
               >
                 {subNav?.map((nav) => {
                   return (
