@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useImage } from "react-image";
 import { BsFillPersonFill } from "react-icons/bs";
 import clsx from "clsx";
@@ -26,6 +26,12 @@ export function Avatar({
   inline = false,
   circular = true
 }: IProps) {
+  const [textSize, setTextSize] = useState(() => {
+    if (size !== "sm") {
+      return "16px";
+    }
+    return "14px";
+  });
   const srcList = user?.avatar;
   const fallbackInitials = user?.name || "?";
 
@@ -52,6 +58,29 @@ export function Avatar({
         .slice(0, 2)
         .join(""),
     [fallbackInitials]
+  );
+
+  const determineTextSize = useCallback(
+    (node: HTMLSpanElement | null) => {
+      if (node?.clientWidth && size !== "lg") {
+        if (node.clientWidth > 20) {
+          setTextSize(() => {
+            if (size === "sm") {
+              return "10px";
+            }
+            return "12px";
+          });
+        } else if (node.clientWidth > 18) {
+          setTextSize(() => {
+            if (size === "sm") {
+              return "12px";
+            }
+            return "14px";
+          });
+        }
+      }
+    },
+    [size]
   );
 
   useEffect(() => {
@@ -82,13 +111,19 @@ export function Avatar({
             circular ? "rounded-full" : "rounded-md"
           )}
         />
+      ) : initials ? (
+        <span
+          style={{
+            fontSize: textSize
+          }}
+          ref={determineTextSize}
+        >
+          {initials}
+        </span>
+      ) : !isLoading && unload ? (
+        unload
       ) : (
-        initials ||
-        (!isLoading && unload ? (
-          unload
-        ) : (
-          <BsFillPersonFill className="text-warmer-gray" />
-        ))
+        <BsFillPersonFill className="text-warmer-gray" />
       )}
     </div>
   );

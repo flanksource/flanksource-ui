@@ -6,6 +6,7 @@ type RoutedTabsLinksProps = React.HTMLProps<HTMLDivElement> & {
   children?: React.ReactNode;
   contentClassName?: string;
   containerClassName?: string;
+  activeTabName?: string;
   tabLinks: {
     label: React.ReactNode;
     path: string;
@@ -18,6 +19,7 @@ export default function TabbedLinks({
   contentClassName = "bg-white border border-t-0 border-gray-300 flex-1 overflow-y-auto p-2",
   containerClassName = "px-4 py-6 bg-gray-100",
   tabLinks,
+  activeTabName,
   ...rest
 }: RoutedTabsLinksProps) {
   return (
@@ -37,7 +39,7 @@ export default function TabbedLinks({
             className={({ isActive }) =>
               clsx(
                 "cursor-pointer px-4 py-2 font-medium text-sm rounded-t-md border border-b-0 border-gray-300 hover:text-gray-900 mb-[-2px]",
-                isActive
+                isActive || activeTabName === label
                   ? "text-gray-900 bg-white"
                   : "text-gray-500 border-transparent"
               )

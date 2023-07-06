@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import { ChevronRightIcon, DotsVerticalIcon } from "@heroicons/react/outline";
 import { TopologyCard } from "../../TopologyCard";
 import { BsTrash } from "react-icons/bs";
@@ -25,6 +25,7 @@ import {
 import { ConfigTypeInsights } from "../../ConfigInsights";
 import { ConfigAnalysisLink } from "../../ConfigAnalysisLink/ConfigAnalysisLink";
 import { CommentEvidence } from "../../IncidentDetails/DefinitionOfDone/EvidenceView";
+import { Hypothesis } from "../../../api/services/hypothesis";
 
 const ColumnSizes = {
   Time: {
@@ -62,8 +63,8 @@ export function EvidenceItem({
       return (
         <EvidenceAccordion
           date={evidence.created_at}
-          title={evidence.description}
-          configId={evidence.config_id}
+          title={evidence.description!}
+          configId={evidence.config_id!}
           configName={evidence.evidence.configName}
         >
           <ConfigEvidenceView evidenceItem={evidence} />
@@ -147,13 +148,13 @@ const EvidenceAccordion: React.FC<{
 export function ConfigEvidenceView({
   evidenceItem
 }: {
-  evidenceItem: Extract<Evidence, { evidence: { configName: string } }>;
+  evidenceItem: Pick<Evidence, "evidence">;
 }) {
   const hunkLineGap = 3;
   const fullConfig = evidenceItem?.evidence?.lines || {};
   const selectedLines =
     Object.keys(evidenceItem?.evidence?.selected_lines) || [];
-  const [hunks, setHunks] = useState([]);
+  const [hunks, setHunks] = useState<any[]>([]);
 
   useEffect(() => {
     setHunks(
@@ -193,7 +194,7 @@ export function ConfigEvidenceView({
                             selected ? "text-gray-800" : "text-gray-600"
                           }`}
                         >
-                          {line}
+                          {line as ReactNode}
                         </code>
                       </div>
                     );
@@ -212,7 +213,11 @@ export function ConfigEvidenceView({
   );
 }
 
-function createHunks(fullConfig, selectedLines, hunkLineGap) {
+function createHunks(
+  fullConfig: any,
+  selectedLines: any,
+  hunkLineGap: any
+): any {
   const hunks: any[] = [];
   const lineNumbers = Object.keys(selectedLines);
   let hunkStart = Math.max(0, parseInt(lineNumbers[0], 10) - hunkLineGap);
@@ -238,6 +243,15 @@ function createHunks(fullConfig, selectedLines, hunkLineGap) {
   return hunks;
 }
 
+type EvidenceSectionProps = {
+  evidenceList: Evidence[];
+  hypothesis: Hypothesis;
+  titlePrepend?: string;
+  onButtonClick?: () => void;
+  onDeleteEvidence?: (evidenceId: string) => void;
+  isLoading?: boolean;
+} & React.HTMLAttributes<HTMLDivElement>;
+
 export function EvidenceSection({
   evidenceList,
   hypothesis,
@@ -246,7 +260,7 @@ export function EvidenceSection({
   onDeleteEvidence,
   isLoading,
   ...rest
-}) {
+}: EvidenceSectionProps) {
   return (
     <div className={rest.className} {...rest}>
       <div className="flex justify-between items-center">
@@ -325,7 +339,10 @@ export function HealthEvidenceViewer({
     if (!check) {
       return;
     }
-    const uValue = toFixedIfNecessary(getUptimePercentage(check), 0);
+    const uValue = toFixedIfNecessary(
+      getUptimePercentage(check) as unknown as string,
+      0
+    );
     setUptimeValue(uValue);
     setValidCheck({
       ...check,
@@ -353,21 +370,21 @@ export function HealthEvidenceViewer({
 
   const evidenceDetailsView = () => {
     return (
-      <div className="inline-block min-w-full align-middle">
-        <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-          <div className="min-w-full divide-y divide-gray-300">
+      <div className="flex flex-col flex-1 overflow-x-auto align-middle">
+        <div className="flex flex-col flex-1 overflow-x-auto shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+          <div className="flex flex-col flex-1 overflow-x-auto divide-y divide-gray-300">
             <div
-              className="flex cursor-pointer whitespace-nowrap text-sm font-medium text-gray-900"
+              className="flex flex-row flex-1 max-w-full overflow-x-auto cursor-pointer whitespace-nowrap text-sm font-medium text-gray-900"
               onClick={(e) => setShowModal(true)}
             >
-              <div className="px-2 py-2 inline-block">
+              <div className="flex flex-col flex-1  px-2 py-2 ">
                 <CheckTitle
                   className="inline-block"
                   check={check}
                   size="small"
                 />
               </div>
-              <div className="px-2 py-2 inline-block">
+              <div className="flex flex-col w-auto px-2 py-2">
                 <div className="flex flex-row">
                   <label className="text-sm font-medium text-gray-700">
                     Health:
@@ -377,21 +394,21 @@ export function HealthEvidenceViewer({
                   </label>
                 </div>
               </div>
-              <div className="px-2 py-2 inline-block">
+              <div className="flex flex-col w-auto px-2 py-2">
                 <div className="flex flex-row">
                   <label className="text-sm font-medium text-gray-700">
                     Uptime:
                     <span className="pl-2 inline-block">
                       {!Number.isNaN(uptimeValue)
-                        ? `${toFixedIfNecessary(uptimeValue, 2)}%`
+                        ? `${toFixedIfNecessary(uptimeValue?.toString()!, 2)}%`
                         : "-"}
                     </span>
                   </label>
                 </div>
               </div>
-              <div className="px-2 py-2 inline-block">
+              <div className="flex flex-col w-auto px-2 py-2">
                 <div className="flex flex-row">
-                  <label className="block text-sm font-medium text-gray-700 inline-block">
+                  <label className="block text-sm font-medium text-gray-700">
                     Latency:
                     <span className="pl-2 inline-block">
                       <Duration ms={check.latency.p99} />
@@ -465,8 +482,8 @@ export function ConfigAnalysisEvidence({
   viewType?: ViewType;
 }) {
   const { data: response } = useGetConfigInsight<ConfigTypeInsights[]>(
-    evidence.config_id,
-    evidence.config_analysis_id
+    evidence.config_id!,
+    evidence.config_analysis_id!
   );
   const [configAnalysis, setConfigAnalysis] = useState<ConfigTypeInsights>();
 

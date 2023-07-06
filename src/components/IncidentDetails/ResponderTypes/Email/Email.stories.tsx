@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { AddResponderFormValues } from "../../AddResponder";
+import { AddResponderFormValues } from "../../AddResponders/AddResponder";
 import { Email } from "./index";
 
 export default {

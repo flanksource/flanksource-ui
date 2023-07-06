@@ -1,5 +1,4 @@
 import React, { useState, createContext, useContext } from "react";
-import { URLSearchParamsInit } from "react-router-dom";
 
 export type IncidentState = {
   incidents: any[] | null;

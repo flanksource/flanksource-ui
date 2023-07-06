@@ -25,7 +25,7 @@ export default function LogsSelectorDropdown({ classNames }: Props) {
     {
       enabled: !!topologyId,
       select: (data) => {
-        const selectors = data[0].logs ?? [];
+        const selectors = data?.[0]?.logs ?? [];
         const options: { [key: string]: StateOption } = {};
         selectors.forEach((selector) => {
           options[selector.name] = {

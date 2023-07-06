@@ -6,7 +6,20 @@ export default function ConfigInsightNameCell({
   row,
   column,
   getValue
-}: CellContext<ConfigTypeInsights, unknown>) {
+}: CellContext<
+  Pick<
+    ConfigTypeInsights,
+    | "id"
+    | "analyzer"
+    | "config"
+    | "severity"
+    | "analysis_type"
+    | "sanitizedMessageTxt"
+    | "sanitizedMessageHTML"
+    | "first_observed"
+  >,
+  unknown
+>) {
   const insight = row.original;
   return (
     <div

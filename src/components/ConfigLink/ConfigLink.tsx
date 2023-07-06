@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Icon } from "../Icon";
 import { HTMLAttributeAnchorTarget } from "react";
 import clsx from "clsx";
+import ConfigsTypeIcon from "../Configs/ConfigsTypeIcon";
 
 type ConfigLinkProps = {
   configId: string;
@@ -29,10 +30,10 @@ export default function ConfigLink({
         }}
         className={clsx("flex flex-row space-x-1", className)}
       >
-        <Icon
-          name={configType}
-          secondary={configTypeSecondary}
-          className="w-5 mr-1 h-5"
+        <ConfigsTypeIcon
+          config={{
+            type: configType
+          }}
         />
         <div className="h-5 overflow-hidden truncate flex-1">{configName}</div>
       </Link>
@@ -45,7 +46,9 @@ export default function ConfigLink({
         secondary={configTypeSecondary}
         className="w-5 mr-1 h-5"
       />
-      <div className="h-5 overflow-hidden truncate flex-1 text-sm">{configName}</div>
+      <div className="h-5 overflow-hidden truncate flex-1 text-sm">
+        {configName}
+      </div>
     </div>
   );
 }

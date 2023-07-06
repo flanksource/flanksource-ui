@@ -20,13 +20,15 @@ export default function TopologyInsights({
   onCollapsedStateChange = () => {}
 }: Props) {
   const {
-    data: topologyInsights = [],
+    data: topologyInsights,
     isLoading,
     isRefetching,
     refetch
   } = useGetTopologyRelatedInsightsQuery(topologyId);
 
   const [triggerRefresh] = useAtom(refreshButtonClickedTrigger);
+
+  const totalCount = topologyInsights?.totalEntries ?? 0;
 
   useEffect(() => {
     if (!isLoading && !isRefetching) {
@@ -45,11 +47,11 @@ export default function TopologyInsights({
             title="Insights"
             icon={<MdOutlineInsights className="w-6 h-auto" />}
           />
-          <PillBadge>{topologyInsights?.length ?? 0}</PillBadge>
+          <PillBadge>{totalCount}</PillBadge>
         </div>
       }
     >
-      <InsightsDetails insights={topologyInsights} isLoading={isLoading} />
+      <InsightsDetails type="topologies" topologyId={topologyId} />
     </CollapsiblePanel>
   );
 }

@@ -1,11 +1,11 @@
 import { CellContext } from "@tanstack/react-table";
-import { ConfigItem } from "../../../api/services/configs";
+import { ConfigItem, ConfigSummary } from "../../../api/services/configs";
 import { Icon } from "../../Icon";
 import { useMemo } from "react";
 
 export default function ConfigListTypeCell({
   getValue
-}: CellContext<ConfigItem, unknown>) {
+}: CellContext<ConfigItem, unknown> | CellContext<ConfigSummary, unknown>) {
   const configType = getValue<ConfigItem["type"]>();
 
   const [primaryIcon, secondaryIcon] = useMemo(() => {

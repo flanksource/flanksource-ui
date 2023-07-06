@@ -79,7 +79,7 @@ export function ConfigDetailsChangesPage() {
     const errorMessage =
       typeof error === "symbol"
         ? error
-        : error?.message ?? "Something went wrong";
+        : (error as any)?.message ?? "Something went wrong";
 
     return <InfoMessage message={errorMessage} />;
   }

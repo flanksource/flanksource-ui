@@ -33,7 +33,7 @@ const TimeRangePickerBodyFC = ({
   );
   const [showCalendar, setShowCalendar] = useState(false);
   const [calendarValue, setCalendarValue] = useState<Date>(new Date());
-  const [inputValueFrom, setInputValueFrom] = useState(
+  const [inputValueFrom, setInputValueFrom] = useState<string>(
     formatDateValue(currentRange.from)
   );
   const [inputValueTo, setInputValueTo] = useState(
@@ -43,9 +43,9 @@ const TimeRangePickerBodyFC = ({
   const [inputValueError, setInputValueError] = useState<string>();
   const [focusToInput, setFocusToInput] = useState<boolean>();
 
-  function formatDateValue(val: string) {
+  function formatDateValue(val: string): string {
     if (isValidDate(val)) {
-      return formatTimeRange(val);
+      return formatTimeRange(val) as string;
     }
     return val;
   }
@@ -75,12 +75,12 @@ const TimeRangePickerBodyFC = ({
   const onChangeCalendarValue = (value: Date) => {
     if (valueType === "from") {
       const from = formatTimeRange(value);
-      setInputValueFrom(from);
+      setInputValueFrom(from as string);
       setInputValueTo(isValidDate(inputValueTo) ? inputValueTo : "");
       setFocusToInput(true);
     } else if (valueType === "to") {
       const to = formatTimeRange(value);
-      setInputValueTo(to);
+      setInputValueTo(to as string);
       setInputValueFrom(isValidDate(inputValueFrom) ? inputValueFrom : "");
       setFocusToInput(false);
     }
@@ -142,7 +142,7 @@ const TimeRangePickerBodyFC = ({
   return (
     <div
       className={clsx(
-        "absolute right-0 mt-2 flex cursor-auto w-full max-h-96 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50 shadow-lg shadow-gray-200",
+        "absolute right-0 mt-2 flex cursor-auto w-full max-h-96 rounded-md bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50 shadow-lg shadow-gray-200",
         { "invisible opacity-0": !isOpen, "right-0": pickerLeft > 600 }
       )}
     >

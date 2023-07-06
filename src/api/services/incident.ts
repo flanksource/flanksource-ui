@@ -4,6 +4,7 @@ import { resolve } from "../resolve";
 import { Hypothesis } from "./hypothesis";
 import { User } from "./users";
 import { AVATAR_INFO } from "../../constants";
+import { typeItems } from "../../components/Incidents/data";
 
 export enum IncidentSeverity {
   Low = "Low",
@@ -119,6 +120,37 @@ export const getIncidentsBy = async ({
   }
 };
 
+export type IncidentSummary = {
+  id: string;
+  incident_id: string;
+  title: string;
+  severity: IncidentSeverity;
+  type: keyof typeof typeItems;
+  status: IncidentStatus;
+  created_at: string;
+  updated_at: string;
+  commander?: User;
+  responders?: User[];
+  commenters?: User[];
+};
+
+export const getIncidentsSummary = async (
+  params?: Record<string, string | undefined>
+) => {
+  const { search = "" } = params!;
+  const searchStr = search ? `&title=ilike.*${search}*` : "";
+  const { search: _, ...filters } = params ?? {};
+  const { data } = await resolve<IncidentSummary[] | null>(
+    IncidentCommander.get(
+      `/incident_summary?${searchStr}&order=created_at.desc`,
+      {
+        params: filters
+      }
+    )
+  );
+  return data || [];
+};
+
 export const getIncidentsWithParams = async (
   params?: Record<string, string | undefined>
 ) => {
@@ -127,13 +159,13 @@ export const getIncidentsWithParams = async (
     ? `hypotheses!inner(*,created_by(${AVATAR_INFO}),evidences!inner(id,evidence,type,component_id))`
     : `hypotheses(*,created_by(${AVATAR_INFO}),evidences(id,evidence,type,component_id))`;
 
-  const responder = `responders(created_by(${AVATAR_INFO}))`;
+  const responder = `responders(*,team:team_id(id,name,icon,spec),person:person_id(id,name,avatar),created_by(${AVATAR_INFO}))`;
   const { search = "" } = params!;
   const searchStr = search ? `&title=ilike.*${search}*` : "";
   const { search: _, ...filters } = params!;
 
   return resolve(
-    IncidentCommander.get(
+    IncidentCommander.get<Incident[]>(
       `/incidents?${searchStr}&select=*,${hypotheses},${comments},commander_id(${AVATAR_INFO}),communicator_id(${AVATAR_INFO}),${responder}&order=created_at.desc`,
       {
         params: filters
