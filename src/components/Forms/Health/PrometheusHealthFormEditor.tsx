@@ -2,6 +2,7 @@ import FormikTextInput from "../Formik/FormikTextInput";
 import FormikTemplateFields from "../Formik/FormikTemplateFields";
 import FormikTextArea from "../Formik/FormikTextArea";
 import FormikIconPicker from "../Formik/FormikIconPicker";
+import FormikScheduleField from "../Formik/FormikScheduleField";
 
 type PrometheusHealthFormEditorProps = {
   fieldName: string;
@@ -37,6 +38,9 @@ export default function PrometheusHealthFormEditor({
           label="Icon"
         />
       </div>
+
+      {/* this a top level schema field, not nested under http */}
+      <FormikScheduleField name={`${name}.schedule`} />
 
       <FormikTextInput name={`${fieldName}.description`} label="Description" />
 
