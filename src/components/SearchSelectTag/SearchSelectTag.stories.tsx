@@ -14,7 +14,9 @@ const TagTemplate: ComponentStory<typeof SearchSelectTag> = (args: any) => (
   </div>
 );
 
-const configTagData = sampleConfigList.flatMap((d) => Object.entries(d.tags));
+const configTagData = sampleConfigList.flatMap((d) =>
+  Object.entries(d.tags ?? {})
+);
 
 export const WithTags = TagTemplate.bind({});
 WithTags.args = {

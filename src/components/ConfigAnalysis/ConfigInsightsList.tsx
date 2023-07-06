@@ -2,7 +2,6 @@ import { SortingState } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useConfigInsightsQuery } from "../../api/query-hooks/useConfigAnalysisQuery";
-import { ConfigItem } from "../../api/services/configs";
 import ConfigInsightsDetailsModal from "../ConfigAnalysisLink/ConfigInsightsDetailsModal";
 import { ConfigTypeInsights } from "../ConfigInsights";
 import { DataTable } from "../DataTable";
@@ -19,9 +18,8 @@ export default function ConfigInsightsList({
   triggerRefresh
 }: Props) {
   const [params, setParams] = useSearchParams();
-  const [clickedInsightItem, setClickedInsightItem] = useState<
-    ConfigTypeInsights & { config?: ConfigItem }
-  >();
+  const [clickedInsightItem, setClickedInsightItem] =
+    useState<ConfigTypeInsights>();
   const [isInsightDetailsModalOpen, setIsInsightDetailsModalOpen] =
     useState(false);
 
@@ -130,7 +128,7 @@ export default function ConfigInsightsList({
       )}
 
       <ConfigInsightsDetailsModal
-        configInsight={clickedInsightItem}
+        id={clickedInsightItem?.id}
         isOpen={isInsightDetailsModalOpen}
         onClose={() => setIsInsightDetailsModalOpen(false)}
       />

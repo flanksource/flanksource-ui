@@ -14,12 +14,14 @@ import { TextInputClearable } from "../TextInputClearable";
 const removeNullValues = (obj: Record<string, string>) =>
   Object.fromEntries(
     Object.entries(obj).filter(
-      ([_k, v]) => v !== null && v !== undefined && v !== "" && v !== "all"
+      ([_k, v]) => v !== null && v !== undefined && v !== ""
     )
   );
 
 export default function FilterIncidents() {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams({
+    status: "open"
+  });
   const defaultValues = {
     severity:
       searchParams.get("severity") || Object.values(defaultSelections)[0].value,
@@ -51,7 +53,9 @@ export default function FilterIncidents() {
   useEffect(() => {
     const formChanges = watch((values) => {
       const params = removeNullValues(values);
-      setSearchParams(params);
+      setSearchParams(params, {
+        replace: true
+      });
     });
 
     return () => formChanges.unsubscribe();

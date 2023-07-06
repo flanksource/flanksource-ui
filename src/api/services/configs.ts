@@ -79,6 +79,29 @@ export const getAllConfigsForSearchPurpose = async () => {
   const res = await resolve<
     Pick<ConfigItem, "name" | "config_class" | "type" | "id">[]
   >(ConfigDB.get(url));
+
+  return res.data ?? [];
+};
+
+export type ConfigSummary = {
+  type: string;
+  analysis?: Record<string, any>;
+  changes?: string;
+  total_configs: number;
+  cost_per_minute?: number;
+  cost_total_1d?: number;
+  cost_total_7d?: number;
+  cost_total_30d?: number;
+  agent?: {
+    id: string;
+    name: string;
+  };
+};
+
+export const getConfigsSummary = async () => {
+  const res = await resolve<ConfigSummary[] | null>(
+    ConfigDB.get(`/config_summary`)
+  );
   return res.data ?? [];
 };
 
@@ -288,12 +311,12 @@ export const getRelatedConfigs = async (configID: string) => {
 };
 
 export type ConfigTypeItem = {
-  config_class: string;
+  type: string;
 };
 
 export const getConfigsTypes = async () => {
   const res = await IncidentCommander.get<ConfigTypeItem[] | null>(
-    `/config_classes`
+    `/config_types`
   );
   return res.data;
 };

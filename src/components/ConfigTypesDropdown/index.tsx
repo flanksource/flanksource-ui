@@ -2,37 +2,48 @@ import { useQuery } from "@tanstack/react-query";
 import { useCallback, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { getConfigsTypes, ConfigTypeItem } from "../../api/services/configs";
-import { Icon } from "../Icon";
 import { ReactSelectDropdown } from "../ReactSelectDropdown";
+import ConfigsTypeIcon from "../Configs/ConfigsTypeIcon";
 
 type Props = {
-  onChange?: (value: string | undefined) => void;
-  searchParamKey?: string;
-  value?: string;
-  paramsToReset?: Record<string, string>;
+  paramsToReset?: string[];
 };
 
-export function ConfigTypesDropdown({
-  onChange = () => {},
-  searchParamKey = "type",
-  paramsToReset = {},
-  value
-}: Props) {
+export function ConfigTypesDropdown({ paramsToReset }: Props) {
+  const [params, setParams] = useSearchParams();
+
   const { isLoading, data: configTypeOptions } = useQuery(
     ["db", "config_types"],
     getConfigsTypes,
     {
       select: useCallback((data: ConfigTypeItem[] | null) => {
-        return data?.map((d) => ({
-          id: d.config_class,
-          value: d.config_class,
-          description: d.config_class,
-          name: d.config_class,
-          icon: <Icon name={d.config_class} secondary={d.config_class} />
-        }));
+        return data?.map((d) => {
+          const label =
+            d.type?.split("::").length === 1
+              ? d.type
+              : d.type
+                  ?.substring(d.type.indexOf("::") + 2)
+                  .replaceAll("::", " ")
+                  .trim();
+
+          return {
+            id: d.type,
+            value: d.type,
+            description: label,
+            name: d.type,
+            icon: (
+              <ConfigsTypeIcon
+                className="max-h-4 max-w-[1.25rem]"
+                config={{ type: d.type }}
+              />
+            )
+          };
+        });
       }, [])
     }
   );
+
+  const type = params.get("type") ?? undefined;
 
   function sortOptions(a: { name: string }, b: { name: string }) {
     if (a.name === "All") {
@@ -58,24 +69,20 @@ export function ConfigTypesDropdown({
     [configTypeOptions]
   );
 
-  const [params, setParams] = useSearchParams({
-    ...(value && { [searchParamKey]: value })
-  });
-
   return (
     <ReactSelectDropdown
       isLoading={isLoading}
       items={configItemsOptionsItems}
       name="type"
       onChange={(value) => {
-        setParams({
-          ...Object.fromEntries(params),
-          [searchParamKey]: value ?? "",
-          ...paramsToReset
-        });
-        onChange(value);
+        if (value === "All" || !value) {
+          params.delete("type");
+        } else {
+          params.set("type", value);
+        }
+        setParams(params);
       }}
-      value={params.get(searchParamKey) ?? "All"}
+      value={type ?? "All"}
       className="w-auto max-w-[400px]"
       dropDownClassNames="w-auto max-w-[400px] left-0"
       hideControlBorder

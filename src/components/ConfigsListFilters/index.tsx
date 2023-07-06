@@ -8,8 +8,8 @@ import { Switch } from "../Switch";
 import { TextInputClearable } from "../TextInputClearable";
 import GroupByDropdown from "../GroupByDropdown";
 import { ConfigTagsDropdown } from "../ConfigTagsDropdown";
-import { ConfigTypesDropdown } from "../ConfigTypesDropdown";
 import { ConfigListToggledDeletedItems } from "../ConfigListToggledDeletedItems/ConfigListToggledDeletedItems";
+import { ConfigTypesDropdown } from "../ConfigTypesDropdown";
 
 const ConfigFilterViewTypes = {
   basic: "Basic",
@@ -37,19 +37,16 @@ function ConfigsListFilterControls() {
   return (
     <div className="flex space-x-2 mr-4">
       {configFilterView === ConfigFilterViewTypes.advanced ? (
-        <>
-          {/* @ts-expect-error */}
-          <QueryBuilder
-            refreshConfigs={(e: any) => {
-              setConfigState((state) => {
-                return {
-                  ...state,
-                  data: e
-                };
-              });
-            }}
-          />
-        </>
+        <QueryBuilder
+          refreshConfigs={(e: any) => {
+            setConfigState((state) => {
+              return {
+                ...state,
+                data: e
+              };
+            });
+          }}
+        />
       ) : (
         <>
           <ConfigTypesDropdown />
@@ -74,8 +71,8 @@ function ConfigsListFilterControls() {
       )}
 
       <Switch
-        onChange={(e: string) => {
-          setConfigFilterView(e);
+        onChange={(e) => {
+          setConfigFilterView(e as string);
           setParams({});
         }}
         options={options}

@@ -1,5 +1,4 @@
 import { useMemo, useState } from "react";
-import { useGetTopologyRelatedInsightsQuery } from "../../api/query-hooks";
 import { InsightTypeToIcon } from "../ConfigInsightsIcon";
 import { MdOutlineInsights } from "react-icons/md";
 import {
@@ -7,54 +6,77 @@ import {
   StatusLine,
   StatusLineData
 } from "../StatusLine/StatusLine";
+import { Topology } from "../../context/TopologyPageContext";
 import InsightsDetails from "../Insights/Insights";
 import { Modal } from "../Modal";
-
-type TopologyConfigAnalysisLineProps = React.HTMLProps<HTMLDivElement> & {
-  topologyId: string;
-};
 
 const severityToColorMap = (severity: string) => {
   if (severity === "critical") {
     return "red";
   }
-  if (severity === "warning") {
+  if (severity === "critical") {
+    return "red";
+  }
+  if (severity === "high") {
     return "orange";
+  }
+  if (severity === "warning") {
+    return "yellow";
+  }
+  if (severity === "info") {
+    return "gray";
+  }
+  if (severity === "low") {
+    return "green";
+  }
+  if (severity === "medium") {
+    return "green";
   }
   return "gray";
 };
 
+type TopologyConfigAnalysisLineProps = {
+  topology: Pick<Topology, "summary" | "id">;
+};
+
 export function TopologyConfigAnalysisLine({
-  topologyId,
-  className,
-  ...props
+  topology
 }: TopologyConfigAnalysisLineProps) {
-  const { data: topologyInsights, isLoading } =
-    useGetTopologyRelatedInsightsQuery(topologyId);
-  const [openModal, setOpenModal] = useState(false);
+  const insights = topology?.summary?.insights;
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const analysis: StatusLineData = useMemo(() => {
-    const analysisToCountMap: Record<string, StatusInfo> = {};
-    topologyInsights?.data?.forEach((topologyInsight) => {
-      analysisToCountMap[topologyInsight.analysis_type] = analysisToCountMap[
-        topologyInsight.analysis_type
-      ] || {
-        label: 0,
-        color: severityToColorMap(topologyInsight.severity),
-        icon: (
-          <InsightTypeToIcon type={topologyInsight.analysis_type} size={17} />
-        )
+    if (!insights) {
+      return {
+        icon: <MdOutlineInsights className="w-4 h-4" />,
+        label: "Insights",
+        statuses: []
       };
-      (analysisToCountMap[topologyInsight.analysis_type].label as number) += 1;
+    }
+    const analysisToCountMap: Record<string, StatusInfo> = {};
+
+    Object.entries(insights).forEach(([type, severityMap]) => {
+      Object.entries(severityMap).forEach(([severity, count]) => {
+        const color = severityToColorMap(severity) as any;
+        const icon = <InsightTypeToIcon type={type} size={17} />;
+        const label = count ?? 0;
+        const key = `${type}-${severity}`;
+        analysisToCountMap[key] = {
+          color,
+          icon,
+          label
+        };
+      });
     });
+
     return {
       icon: <MdOutlineInsights className="w-4 h-4" />,
       label: "Insights",
       statuses: Object.values(analysisToCountMap)
     };
-  }, [topologyInsights]);
+  }, [insights]);
 
-  if (!analysis?.statuses?.length) {
+  if (!insights) {
     return null;
   }
 
@@ -63,11 +85,11 @@ export function TopologyConfigAnalysisLine({
       <StatusLine
         {...analysis}
         className=""
-        onClick={(e) => setOpenModal(true)}
+        onClick={(e) => setIsModalOpen(true)}
       />
       <Modal
         onClose={() => {
-          setOpenModal(false);
+          setIsModalOpen(false);
         }}
         title={
           <span className="flex space-x-1 flex-row items-center">
@@ -75,7 +97,7 @@ export function TopologyConfigAnalysisLine({
             <span>Config Insights</span>
           </span>
         }
-        open={openModal}
+        open={isModalOpen}
         size="slightly-small"
         containerClassName=""
         bodyClass=""
@@ -84,7 +106,7 @@ export function TopologyConfigAnalysisLine({
           className="flex flex-col divide-y divide-gray-200 space-y-4 p-2 overlow-y-auto"
           style={{ maxHeight: "calc(100vh - 8rem)" }}
         >
-          <InsightsDetails type="topologies" topologyId={topologyId} />
+          <InsightsDetails type="topologies" topologyId={topology.id} />
         </div>
       </Modal>
     </>

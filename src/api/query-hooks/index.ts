@@ -11,7 +11,8 @@ import {
   getConfigInsights,
   getConfigTagsList,
   getConfigName,
-  getTopologyRelatedInsights
+  getTopologyRelatedInsights,
+  getConfigsSummary
 } from "../services/configs";
 import { getHypothesisResponse } from "../services/hypothesis";
 import { getIncident } from "../services/incident";
@@ -226,6 +227,12 @@ export const useAllConfigsQuery = (
       ...rest
     }
   );
+};
+
+export const useConfigSummaryQuery = ({ enabled = true }) => {
+  return useQuery(["configs", "configSummary"], getConfigsSummary, {
+    enabled
+  });
 };
 
 export const useConfigNameQuery = (

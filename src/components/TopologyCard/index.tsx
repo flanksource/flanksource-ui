@@ -224,7 +224,7 @@ export function TopologyCard({
               maxHeight="200px"
               minChildCount={5}
             >
-              <TopologyConfigAnalysisLine topologyId={topology?.id} />
+              <TopologyConfigAnalysisLine topology={topology} />
               {canShowChildHealth() && (
                 <HealthSummary
                   className=""

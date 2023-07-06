@@ -21,9 +21,9 @@ const compress = (total: number, ls: string[]) => {
 };
 
 interface TagOptionProps {
-  tagKey: string;
-  value: string;
-  compressedTo: integer;
+  tagKey?: string;
+  value?: string;
+  compressedTo?: number;
 }
 
 function TagOption({ tagKey, value, compressedTo }: TagOptionProps) {
@@ -68,7 +68,7 @@ type Tag = [string, string];
 interface SearchSelectTagProps {
   tags: Tag[];
   value: string;
-  onChange: (OptionItem) => void;
+  onChange: (OptionItem: any) => void;
   className?: string;
 }
 
@@ -101,7 +101,7 @@ export function SearchSelectTag({
           label: <TagOption tagKey={key} value={val} />
         };
       })
-      .filter(Boolean);
+      .filter(Boolean) as [];
 
     return [
       {
@@ -121,10 +121,11 @@ export function SearchSelectTag({
     <SearchSelect
       className={className}
       name=""
-      selected={selected}
+      selected={selected!}
       options={tagList}
       onChange={onChange}
       components={{
+        /* @ts-expect-error */
         RenderSelection
       }}
     />
