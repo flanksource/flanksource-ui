@@ -10,7 +10,6 @@ import ConfigListCostCell from "./Cells/ConfigListCostCell";
 import ConfigListDateCell from "./Cells/ConfigListDateCell";
 import ConfigListNameCell from "./Cells/ConfigListNameCell";
 import ConfigListTagsCell from "./Cells/ConfigListTagsCell";
-import ConfigListTypeCell from "./Cells/ConfigListTypeCell";
 import { ConfigTypeInsights } from "../ConfigInsights";
 
 function CountBadge({ value }: { value: number | undefined | null }) {
@@ -25,15 +24,6 @@ function CountBadge({ value }: { value: number | undefined | null }) {
 }
 
 export const configListColumns: ColumnDef<ConfigItem, any>[] = [
-  {
-    header: "Type",
-    id: "type",
-    cell: ConfigListTypeCell,
-    aggregatedCell: "",
-    accessorKey: "type",
-    size: 250,
-    enableGrouping: true
-  },
   {
     header: "Name",
     accessorKey: "name",
@@ -85,14 +75,15 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
     size: 150
   },
   {
-    header: "Cost",
+    id: "cost",
+    header: () => <div className="block w-full text-center">Cost</div>,
     accessorKey: "",
     cell: ConfigListCostCell,
     size: 180,
     enableSorting: false,
     columns: [
       {
-        header: "min",
+        header: () => <div className="block w-full text-center">min</div>,
         accessorKey: "cost_per_minute",
         aggregationFn: "sum",
         aggregatedCell: CostAggregate,
@@ -100,7 +91,7 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
         size: 30
       },
       {
-        header: "24hr",
+        header: () => <div className="block w-full text-center">1d</div>,
         accessorKey: "cost_total_1d",
         aggregationFn: "sum",
         aggregatedCell: CostAggregate,
@@ -108,7 +99,7 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
         size: 30
       },
       {
-        header: "7d",
+        header: () => <div className="block w-full text-center">7d</div>,
         accessorKey: "cost_total_7d",
         aggregationFn: "sum",
         aggregatedCell: CostAggregate,
@@ -116,7 +107,7 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
         size: 30
       },
       {
-        header: "30d",
+        header: () => <div className="block w-full text-center">30d</div>,
         accessorKey: "cost_total_30d",
         aggregationFn: "sum",
         aggregatedCell: CostAggregate,
@@ -142,7 +133,7 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
     accessorKey: "tags",
     cell: React.memo(ConfigListTagsCell),
     aggregatedCell: "",
-    size: 210
+    size: 240
   },
   {
     header: "All Tags",
@@ -151,7 +142,7 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
       <ConfigListTagsCell {...props} hideGroupByView />
     )),
     aggregatedCell: "",
-    size: 210
+    size: 240
   },
   {
     header: "Created",

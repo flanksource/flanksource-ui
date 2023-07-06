@@ -8,8 +8,8 @@ import { Switch } from "../Switch";
 import { TextInputClearable } from "../TextInputClearable";
 import GroupByDropdown from "../GroupByDropdown";
 import { ConfigTagsDropdown } from "../ConfigTagsDropdown";
-import { ConfigTypesDropdown } from "../ConfigTypesDropdown";
 import { ConfigListToggledDeletedItems } from "../ConfigListToggledDeletedItems/ConfigListToggledDeletedItems";
+import { ConfigTypesDropdown } from "../ConfigTypesDropdown";
 
 const ConfigFilterViewTypes = {
   basic: "Basic",
@@ -72,7 +72,7 @@ function ConfigsListFilterControls() {
 
       <Switch
         onChange={(e) => {
-          setConfigFilterView(e);
+          setConfigFilterView(e as string);
           setParams({});
         }}
         options={options}

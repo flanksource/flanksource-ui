@@ -1,19 +1,18 @@
 import { CellContext } from "@tanstack/react-table";
 import { FaTrash } from "react-icons/fa";
-import { ConfigItem } from "../../../api/services/configs";
 import { relativeDateTime } from "../../../utils/date";
 
-export default function ConfigListDateCell({
+export default function ConfigListDateCell<T extends Record<string, any>>({
   getValue,
   column,
   row
-}: CellContext<ConfigItem, any>) {
+}: CellContext<T, any>) {
   const dateString = getValue();
   if (dateString === "0001-01-01T00:00:00") {
     return null;
   }
   const isDeleted = !!row.original.deleted_at;
-  const value = isDeleted ? row.original.deleted_at : row.original.updated_at;
+  const value = isDeleted ? row.original.deleted_at : dateString;
   return (
     <div className="text-xs">
       {value ? relativeDateTime(value) : ""}
