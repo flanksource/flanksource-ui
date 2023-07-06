@@ -71,6 +71,9 @@ export function IncidentListPage() {
       };
       const res = await getIncidentsSummary(toPostgresqlSearchParam(params));
       return res;
+    },
+    {
+      refetchOnMount: "always"
     }
   );
 
