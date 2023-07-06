@@ -1,13 +1,16 @@
 import React, { useState } from "react";
 
 import { JSONViewer } from "./index";
+import { ComponentStory } from "@storybook/react";
 
 export default {
   title: "JSONViewer",
   component: JSONViewer
 };
 
-const Template = (arg) => <JSONViewer {...arg} />;
+const Template: ComponentStory<typeof JSONViewer> = (arg) => (
+  <JSONViewer {...arg} />
+);
 
 export const Default = Template.bind({});
 
@@ -37,10 +40,13 @@ WithLineNo.args = {
   showLineNo: true
 };
 
-const JSONViewerSelectable = ({ selections: defaultSelections, ...args }) => {
-  const [selections, setSelections] = useState(defaultSelections || []);
-  const onClick = (idx) => {
-    setSelections((selections) => {
+const JSONViewerSelectable = ({
+  selections: defaultSelections,
+  ...args
+}: any) => {
+  const [selections, setSelections] = useState<any>(defaultSelections || []);
+  const onClick = (idx: string) => {
+    setSelections((selections: any) => {
       selections[idx] = !selections[idx];
       return [...selections];
     });
@@ -49,7 +55,9 @@ const JSONViewerSelectable = ({ selections: defaultSelections, ...args }) => {
   return <JSONViewer {...args} selections={selections} onClick={onClick} />;
 };
 
-export const Selectable = JSONViewerSelectable.bind({});
+export const Selectable: ComponentStory<typeof JSONViewerSelectable> =
+  JSONViewerSelectable.bind({});
+
 Selectable.args = {
   code,
   selections: [false, false, true, false, true],

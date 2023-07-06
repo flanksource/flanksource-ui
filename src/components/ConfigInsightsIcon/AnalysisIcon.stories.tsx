@@ -1,3 +1,4 @@
+import { ComponentStory } from "@storybook/react";
 import ConfigInsightsIcon from "./index";
 
 export default {
@@ -11,7 +12,9 @@ export default {
   }
 };
 
-const Template = (arg) => <ConfigInsightsIcon {...arg} />;
+const Template: ComponentStory<typeof ConfigInsightsIcon> = (arg) => (
+  <ConfigInsightsIcon {...arg} />
+);
 
 export const Default = Template.bind({});
 

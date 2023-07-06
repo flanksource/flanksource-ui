@@ -1,12 +1,15 @@
 import { CgSmileSad } from "react-icons/cg";
 import { BannerMessage } from "./index";
+import { ComponentStory } from "@storybook/react";
 
 export default {
   title: "BannerMessage",
   component: BannerMessage
 };
 
-const Template = (arg) => <BannerMessage {...arg} />;
+const Template: ComponentStory<typeof BannerMessage> = (arg) => (
+  <BannerMessage {...arg} />
+);
 
 export const Variant1 = Template.bind({});
 Variant1.args = {

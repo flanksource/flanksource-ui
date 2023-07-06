@@ -1,3 +1,4 @@
+import { ComponentMeta, ComponentStory } from "@storybook/react";
 import RefreshDropdown from "./index";
 import { MemoryRouter } from "react-router-dom";
 export default {
@@ -15,9 +16,11 @@ export default {
     onClick: () => alert("hello!"),
     className: ""
   }
-};
+} as ComponentMeta<typeof RefreshDropdown>;
 
-const Template = (arg) => <RefreshDropdown {...arg} />;
+const Template: ComponentStory<typeof RefreshDropdown> = (arg) => (
+  <RefreshDropdown {...arg} />
+);
 
 export const Default = Template.bind({});
 
@@ -29,7 +32,7 @@ LoadingAnimation.story = {
   }
 };
 
-export const WithTimeRangeSetTo2Hr = Template.bind();
+export const WithTimeRangeSetTo2Hr = Template.bind({});
 
 WithTimeRangeSetTo2Hr.story = {
   parameters: {
@@ -41,7 +44,7 @@ WithTimeRangeSetTo2Hr.story = {
   }
 };
 
-export const WithTimeRangeSetTo3Hr = Template.bind();
+export const WithTimeRangeSetTo3Hr = Template.bind({});
 
 WithTimeRangeSetTo3Hr.story = {
   parameters: {

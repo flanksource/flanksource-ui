@@ -1,3 +1,4 @@
+import { ComponentStory } from "@storybook/react";
 import { Gauge } from "./index";
 
 export default {
@@ -5,7 +6,7 @@ export default {
   component: Gauge
 };
 
-const Template = (arg) => <Gauge {...arg} />;
+const Template: ComponentStory<typeof Gauge> = (arg) => <Gauge {...arg} />;
 
 export const VariantWithDefaultColorsAndLabel = Template.bind({});
 VariantWithDefaultColorsAndLabel.args = {

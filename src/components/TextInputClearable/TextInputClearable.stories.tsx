@@ -1,3 +1,4 @@
+import { ComponentStory } from "@storybook/react";
 import { TextInputClearable } from "./index";
 
 export default {
@@ -5,7 +6,9 @@ export default {
   component: TextInputClearable
 };
 
-const Template = (arg) => <TextInputClearable {...arg} />;
+const Template: ComponentStory<typeof TextInputClearable> = (arg) => (
+  <TextInputClearable {...arg} />
+);
 
 export const Variant1 = Template.bind({});
 Variant1.args = {

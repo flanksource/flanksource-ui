@@ -1,3 +1,4 @@
+import { ComponentStory } from "@storybook/react";
 import { EditableText } from "./index";
 
 export default {
@@ -5,7 +6,9 @@ export default {
   component: EditableText
 };
 
-const Template = (arg) => <EditableText {...arg} />;
+const Template: ComponentStory<typeof EditableText> = (arg) => (
+  <EditableText {...arg} />
+);
 
 export const Variant1 = Template.bind({});
 Variant1.args = {

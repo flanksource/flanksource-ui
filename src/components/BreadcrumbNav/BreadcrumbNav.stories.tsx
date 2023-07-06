@@ -2,6 +2,7 @@ import { MemoryRouter } from "react-router-dom";
 
 import { AiFillPlusCircle } from "react-icons/ai/";
 import { BreadcrumbNav } from "./index";
+import { ComponentMeta, ComponentStory } from "@storybook/react";
 
 export default {
   title: "BreadcrumbNav",
@@ -13,9 +14,11 @@ export default {
       </MemoryRouter>
     )
   ]
-};
+} as ComponentMeta<typeof BreadcrumbNav>;
 
-const Template = (arg) => <BreadcrumbNav {...arg} />;
+const Template: ComponentStory<typeof BreadcrumbNav> = (arg) => (
+  <BreadcrumbNav {...arg} />
+);
 
 export const Default = Template.bind({});
 
