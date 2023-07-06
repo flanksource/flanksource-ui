@@ -1,11 +1,9 @@
 import { useMemo } from "react";
-import PropTypes from "prop-types";
 import { Avatar } from "../Avatar";
 
 type Props = {
   users: {
     avatar?: string;
-    name: string;
   }[];
   size: "sm" | "lg" | "md";
   maxCount: number;
@@ -34,20 +32,4 @@ export const AvatarGroup = ({
       ))}
     </div>
   );
-};
-
-AvatarGroup.propTypes = {
-  users: PropTypes.arrayOf(
-    PropTypes.shape({
-      avatar: PropTypes.string,
-      name: PropTypes.string
-    })
-  ).isRequired,
-  size: PropTypes.string,
-  maxCount: PropTypes.number
-};
-
-AvatarGroup.defaultProps = {
-  size: "md",
-  maxCount: 5
 };

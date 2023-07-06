@@ -1,5 +1,4 @@
 import clsx from "clsx";
-import { filter } from "lodash";
 import { useMemo } from "react";
 import { BsFillCircleFill, BsPersonFill } from "react-icons/bs";
 import { Link } from "react-router-dom";
@@ -43,10 +42,7 @@ function TopologyEvidence({
     return <TextSkeletonLoader className="w-full" />;
   }
 
-  const heading = filter(
-    topology?.properties || [],
-    (i: Record<string & "headline", string>) => i.headline
-  );
+  const heading = (topology?.properties || []).filter((i) => i.headline);
 
   return (
     <div
@@ -74,12 +70,11 @@ function TopologyEvidence({
                 {topology.text || topology.name}
               </Link>
             </p>
-            {topology.description != null ||
-              (topology.id != null && (
-                <h3 className="text-gray-500 overflow-hidden truncate leading-1.21rel font-medium">
-                  {topology.description || topology.id}
-                </h3>
-              ))}
+            {topology.id != null && (
+              <h3 className="text-gray-500 overflow-hidden truncate leading-1.21rel font-medium">
+                {topology.id}
+              </h3>
+            )}
           </div>
         </div>
         {Boolean(heading?.length) && false && (

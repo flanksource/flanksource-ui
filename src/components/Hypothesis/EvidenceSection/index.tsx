@@ -246,7 +246,7 @@ function createHunks(
 type EvidenceSectionProps = {
   evidenceList: Evidence[];
   hypothesis: Hypothesis;
-  titlePrepend?: string;
+  titlePrepend?: React.ReactNode;
   onButtonClick?: () => void;
   onDeleteEvidence?: (evidenceId: string) => void;
   isLoading?: boolean;

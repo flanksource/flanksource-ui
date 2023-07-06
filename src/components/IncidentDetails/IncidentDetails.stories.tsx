@@ -1,7 +1,11 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MemoryRouter } from "react-router-dom";
-import { IncidentSeverity, IncidentStatus } from "../../api/services/incident";
+import {
+  Incident,
+  IncidentSeverity,
+  IncidentStatus
+} from "../../api/services/incident";
 import { IncidentSidebar } from "./IncidentSidebar";
 
 export default {
@@ -22,7 +26,7 @@ export default {
   parameters: { actions: { argTypesRegex: "^on.*" } }
 } as ComponentMeta<typeof IncidentSidebar>;
 
-const incident = {
+const incident: Incident = {
   id: "1aa1a99a-b487-495c-9cd9-a13cf717bc10",
   incident_id: "incident_id",
   title: "Test incident 3",
@@ -40,30 +44,12 @@ const incident = {
   communicator_id: "",
   severity: IncidentSeverity.Low,
   description: "test",
-  type: "issue",
+  type: "cost",
   status: IncidentStatus.Open,
   created_at: "2022-04-05T07:19:03.546871",
-  updated_at: "2022-04-05T07:19:03.546871",
-  hypothesis: [
-    {
-      id: "401cf26e-e941-4641-b6ab-1860a484b2a2",
-      created_by: {
-        name: "System",
-        avatar: undefined
-      },
-      incident_id: "1aa1a99a-b487-495c-9cd9-a13cf717bc10",
-      parent_id: null,
-      type: "root",
-      title: "Test incident 3",
-      status: "proven",
-      created_at: "2022-04-05T07:19:04.177198",
-      updated_at: "2022-04-05T07:19:04.177198"
-    }
-  ],
   parent_id: "",
   hypotheses: [],
-  involved: [],
-  responder: []
+  involved: []
 };
 
 const Template: ComponentStory<typeof IncidentSidebar> = (arg: any) => (

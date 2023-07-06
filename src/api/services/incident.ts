@@ -28,7 +28,7 @@ export interface NewIncident {
   description: string;
 
   severity: IncidentSeverity | string;
-  type?: string;
+  type?: keyof typeof typeItems;
   status?: IncidentStatus;
 
   created_by: string;

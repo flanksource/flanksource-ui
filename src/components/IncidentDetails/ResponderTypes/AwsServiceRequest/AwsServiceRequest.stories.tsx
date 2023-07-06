@@ -1,8 +1,7 @@
+import { StoryFn } from "@storybook/react";
 import { useForm } from "react-hook-form";
 import { AddResponderFormValues } from "../../AddResponders/AddResponder";
 import { AwsServiceRequest } from "./index";
-import { ComponentStory, StoryFn } from "@storybook/react";
-import { ComponentProps } from "react";
 
 export default {
   title: "AwsServiceRequest",
