@@ -37,19 +37,16 @@ function ConfigsListFilterControls() {
   return (
     <div className="flex space-x-2 mr-4">
       {configFilterView === ConfigFilterViewTypes.advanced ? (
-        <>
-          {/* @ts-expect-error */}
-          <QueryBuilder
-            refreshConfigs={(e: any) => {
-              setConfigState((state) => {
-                return {
-                  ...state,
-                  data: e
-                };
-              });
-            }}
-          />
-        </>
+        <QueryBuilder
+          refreshConfigs={(e: any) => {
+            setConfigState((state) => {
+              return {
+                ...state,
+                data: e
+              };
+            });
+          }}
+        />
       ) : (
         <>
           <ConfigTypesDropdown />
@@ -74,7 +71,7 @@ function ConfigsListFilterControls() {
       )}
 
       <Switch
-        onChange={(e: string) => {
+        onChange={(e) => {
           setConfigFilterView(e);
           setParams({});
         }}
