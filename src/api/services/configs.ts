@@ -92,6 +92,10 @@ export type ConfigSummary = {
   cost_total_1d?: number;
   cost_total_7d?: number;
   cost_total_30d?: number;
+  agent?: {
+    id: string;
+    name: string;
+  };
 };
 
 export const getConfigsSummary = async () => {

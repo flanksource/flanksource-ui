@@ -8,6 +8,7 @@ import { useCallback, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Badge } from "../Badge";
 import ConfigsTypeIcon from "../Configs/ConfigsTypeIcon";
+import ConfigListDateCell from "../ConfigList/Cells/ConfigListDateCell";
 
 function ConfigSummaryTypeCell({
   getValue,
@@ -72,13 +73,13 @@ const configSummaryColumns: ColumnDef<ConfigSummary, any>[] = [
     header: "type",
     accessorKey: "type",
     cell: ConfigSummaryTypeCell,
-    maxSize: 100
+    maxSize: 200
   },
   {
     header: "analysis",
     accessorKey: "analysis",
     cell: ConfigSummaryAnalysisCell,
-    maxSize: 50
+    maxSize: 100
   },
   {
     header: "changes",
@@ -90,12 +91,12 @@ const configSummaryColumns: ColumnDef<ConfigSummary, any>[] = [
       }
       return <CountBadge value={value} />;
     },
-    maxSize: 25
+    maxSize: 40
   },
   {
     id: "cost",
     header: () => <div className="block w-full text-center">cost</div>,
-    size: 100,
+    size: 200,
     columns: [
       {
         header: () => <div className="block w-full text-center">Min</div>,
@@ -118,6 +119,41 @@ const configSummaryColumns: ColumnDef<ConfigSummary, any>[] = [
         cell: ConfigListCostCell
       }
     ]
+  },
+  {
+    header: "Agent",
+    accessorKey: "agent",
+    enableSorting: false,
+    cell: ({ getValue }: CellContext<ConfigSummary, any>) => {
+      const agent = getValue<ConfigSummary["agent"]>();
+      if (agent?.name === "local" || !agent) {
+        return null;
+      }
+      return <span>{agent.name}</span>;
+    },
+    size: 70
+  },
+  {
+    header: "Tags",
+    accessorKey: "tags",
+    cell: ({ getValue }: CellContext<ConfigSummary, any>) => {
+      return null;
+    },
+    size: 140
+  },
+  {
+    header: "Created",
+    accessorKey: "created_at",
+    cell: ConfigListDateCell<ConfigSummary>,
+    aggregatedCell: "",
+    size: 50
+  },
+  {
+    header: "Last Updated",
+    accessorKey: "updated_at",
+    cell: ConfigListDateCell<ConfigSummary>,
+    aggregatedCell: "",
+    size: 50
   }
 ];
 
