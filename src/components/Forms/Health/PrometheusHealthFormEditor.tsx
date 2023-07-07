@@ -39,7 +39,6 @@ export default function PrometheusHealthFormEditor({
         />
       </div>
 
-      {/* this a top level schema field, not nested under http */}
       <FormikScheduleField name={`${name}.schedule`} />
 
       <FormikTextInput name={`${fieldName}.description`} label="Description" />
