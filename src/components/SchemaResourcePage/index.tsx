@@ -12,6 +12,7 @@ import HealthSpecEditor from "../SpecEditor/HealthSpecEditor";
 import { SchemaResourceEdit } from "./SchemaResourceEdit";
 import { SchemaResourceList } from "./SchemaResourceList";
 import { SchemaResourceType } from "./resourceTypes";
+import IncidentsRulesSpecEditor from "../SpecEditor/IncidentRulesSpecEditor";
 
 export function SchemaResourcePage({
   resourceInfo
@@ -88,6 +89,11 @@ export function SchemaResourcePage({
             />
           ) : resourceInfo.table === "canaries" ? (
             <HealthSpecEditor
+              onSubmit={(val) => createResource(val)}
+              resourceInfo={resourceInfo}
+            />
+          ) : resourceInfo.table === "incident_rules" ? (
+            <IncidentsRulesSpecEditor
               onSubmit={(val) => createResource(val)}
               resourceInfo={resourceInfo}
             />

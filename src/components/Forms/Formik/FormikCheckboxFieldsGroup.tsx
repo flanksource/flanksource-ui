@@ -57,6 +57,7 @@ export default function FormikCheckboxFieldsGroup({
         }
       }}
       labelClassName={labelClassName}
+      className="flex-1 flex flex-col px-2 py-2 transform origin-top duration-1000"
     >
       <div className={className}>{children}</div>
     </CheckboxCollapsibleGroup>

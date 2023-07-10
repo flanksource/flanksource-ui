@@ -170,6 +170,15 @@ export const getTopologyComponentsWithLogs = () => {
   );
 };
 
+export const getComponentTypes = async () => {
+  const res = await IncidentCommander.get<
+    {
+      type: string;
+    }[]
+  >(`/component_types?order=type.asc`);
+  return res.data ?? [];
+};
+
 type AgentItem = {
   id: string;
   name: string;

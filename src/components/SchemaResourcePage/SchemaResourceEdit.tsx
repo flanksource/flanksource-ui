@@ -1,28 +1,29 @@
 import clsx from "clsx";
 import { identity, pickBy } from "lodash";
+import dynamic from "next/dynamic";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { v4 } from "uuid";
-import { SchemaResourceI } from "../../api/schemaResources";
-import { IconPicker } from "../IconPicker";
-import { TextInput } from "../TextInput";
-import { Icon } from "../Icon";
-import { SchemaResourceType, schemaResourceTypes } from "./resourceTypes";
-import { TeamMembers } from "../TeamMembers/TeamMembers";
-import {
-  resourceTypeMap,
-  SchemaResourceJobsTab
-} from "./SchemaResourceEditJobsTab";
-import { Tab, Tabs } from "../Tabs/Tabs";
-import dynamic from "next/dynamic";
-import AutoCompleteDropdown from "../AutoCompleteDropdown/AutoCompleteDropdown";
 import YAML from "yaml";
-import ConfigScrapperSpecEditor from "../SpecEditor/ConfigScrapperSpecEditor";
-import { Head } from "../Head/Head";
-import HealthSpecEditor from "../SpecEditor/HealthSpecEditor";
+import { SchemaResourceI } from "../../api/schemaResources";
+import AutoCompleteDropdown from "../AutoCompleteDropdown/AutoCompleteDropdown";
 import { Button } from "../Button";
-import DeleteResource from "./Delete/DeleteResource";
 import { HealthCheckEdit } from "../Canary/HealthCheckEdit";
+import { Head } from "../Head/Head";
+import { Icon } from "../Icon";
+import { IconPicker } from "../IconPicker";
+import ConfigScrapperSpecEditor from "../SpecEditor/ConfigScrapperSpecEditor";
+import HealthSpecEditor from "../SpecEditor/HealthSpecEditor";
+import IncidentsRulesSpecEditor from "../SpecEditor/IncidentRulesSpecEditor";
+import { Tab, Tabs } from "../Tabs/Tabs";
+import { TeamMembers } from "../TeamMembers/TeamMembers";
+import { TextInput } from "../TextInput";
+import DeleteResource from "./Delete/DeleteResource";
+import {
+  SchemaResourceJobsTab,
+  resourceTypeMap
+} from "./SchemaResourceEditJobsTab";
+import { SchemaResourceType, schemaResourceTypes } from "./resourceTypes";
 
 const CodeEditor = dynamic(
   () => import("../CodeEditor").then((m) => m.CodeEditor),
@@ -227,6 +228,14 @@ export function SchemaResourceEdit({
                     ) : table === "canaries" && !source ? (
                       <div className="flex-col flex flex-1 overflow-y-auto">
                         <HealthSpecEditor
+                          onSubmit={(val) => doSubmit(val)}
+                          resourceInfo={resourceInfo}
+                          resourceValue={defaultValues}
+                        />
+                      </div>
+                    ) : table === "incident_rules" ? (
+                      <div className="flex-col flex flex-1 overflow-y-auto">
+                        <IncidentsRulesSpecEditor
                           onSubmit={(val) => doSubmit(val)}
                           resourceInfo={resourceInfo}
                           resourceValue={defaultValues}

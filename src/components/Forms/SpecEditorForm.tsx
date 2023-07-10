@@ -17,12 +17,12 @@ import { Icon } from "../Icon";
 type SpecEditorFormProps = {
   loadSpec: () => Record<string, any>;
   updateSpec: (spec: Record<string, any>) => void;
-  onBack: () => void;
+  onBack?: () => void;
   specFormat: "yaml" | "json";
   // if you want to pass in any props to the config form, you can use a wrapper
   // component around the config form
-  configForm: React.FC<{ fieldName: string; specsMapField: string }> | null;
-  specsMapField: string;
+  configForm: React.FC<{ fieldName: string; specsMapField?: string }> | null;
+  specsMapField?: string;
   rawSpecInput?: boolean;
   schemaFilePrefix?: "component" | "canary" | "system" | "scrape_config";
   resourceInfo: SchemaResourceType;
@@ -181,7 +181,9 @@ export default function SpecEditorForm({
                   <FormikCodeEditor
                     format={specFormat}
                     // map to the spec field to the spec field in the resource
-                    fieldName={`spec.${specFieldMapField}`}
+                    fieldName={`spec${
+                      specFieldMapField ? `.${specFieldMapField}` : ""
+                    }`}
                     schemaFilePrefix={schemaFilePrefix}
                   />
                 </>
@@ -189,13 +191,16 @@ export default function SpecEditorForm({
                 <Tabs
                   activeTab={activeTabs}
                   onSelectTab={(v) => setActiveTabs(v as "Code" | "Form")}
+                  contentClassName="flex flex-col flex-1 bg-white border border-t-0 border-gray-300"
                 >
                   <Tab label="Form" value="Form">
                     <div className="flex flex-col space-y-4 p-4">
                       {ConfigForm && (
                         <ConfigForm
                           fieldName="spec"
-                          specsMapField={specFieldMapField}
+                          specsMapField={`spec${
+                            specFieldMapField ? `.${specFieldMapField}` : ""
+                          }`}
                         />
                       )}
                     </div>
