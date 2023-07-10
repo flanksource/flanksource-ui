@@ -140,7 +140,7 @@ export async function getTemplatesRelatedComponents(templateID: string) {
 
 export async function getLogsBackends() {
   const res = await CanaryCheckerDB.get<LogBackends[] | null>(
-    `logging_backends?order=created_at.desc&select=*,created_by(${AVATAR_INFO})&deleted_at=is.null`
+    `logging_backends?order=created_at.desc&select=name,source,created_at,updated_at,created_by(${AVATAR_INFO})&deleted_at=is.null`
   );
   return res.data ?? [];
 }
