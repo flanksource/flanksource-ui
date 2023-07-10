@@ -5,6 +5,7 @@ import { CSSProperties, useCallback, useState } from "react";
 import { AttachEvidenceDialog } from "../AttachEvidenceDialog";
 import TopologySnapshotModal from "./TopologySnapshotModal";
 import { EvidenceType } from "../../api/services/evidence";
+import { TopologyConfigLinkModal } from "../TopologyConfigLinkModal/TopologyConfigLinkModal";
 
 type TopologyMenuItemProps = {
   onClick?: () => void;
@@ -69,8 +70,8 @@ export const TopologyDropdownMenu = ({
     isDownloadComponentSnapshotModalOpen,
     setIsDownloadComponentSnapshotModalOpen
   ] = useState(false);
-
   const [attachAsAsset, setAttachAsAsset] = useState(false);
+  const [linkToConfig, setLinkToConfig] = useState(false);
 
   return (
     <>
@@ -98,6 +99,8 @@ export const TopologyDropdownMenu = ({
                       ? () => setIsDownloadComponentSnapshotModalOpen(true)
                       : label === "Link to Incident"
                       ? () => setAttachAsAsset(true)
+                      : label === "Link to config"
+                      ? () => setLinkToConfig(true)
                       : undefined
                   }
                 />
@@ -119,6 +122,14 @@ export const TopologyDropdownMenu = ({
         isModalOpen={isDownloadComponentSnapshotModalOpen}
         topology={topology}
       />
+
+      {linkToConfig && (
+        <TopologyConfigLinkModal
+          onCloseModal={() => setLinkToConfig(false)}
+          openModal={linkToConfig}
+          topology={topology}
+        />
+      )}
     </>
   );
 };
