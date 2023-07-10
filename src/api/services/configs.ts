@@ -303,13 +303,6 @@ export const getConfigsByQuery = async (query: string) => {
   }));
 };
 
-export const getRelatedConfigs = async (configID: string) => {
-  const res = await ConfigDB.get<ConfigTypeRelationships[]>(
-    `/config_relationships?or=(related_id.eq.${configID},config_id.eq.${configID})&select=*,configs:configs!config_relationships_config_id_fkey(*),related:configs!config_relationships_related_id_fkey(*)`
-  );
-  return res.data;
-};
-
 export type ConfigTypeItem = {
   type: string;
 };

@@ -34,19 +34,6 @@ export type Evidence = {
   hypothesis_id: string;
 };
 
-export const getAllEvidenceByHypothesis = async (hypothesisId: string) => {
-  const { data, error } = await resolve<Evidence[]>(
-    IncidentCommander.get(
-      `/evidences?hypothesis_id=eq.${hypothesisId}&select=*,created_by(id,name,avatar)`
-    )
-  );
-  if (error) {
-    return { error };
-  }
-
-  return { data };
-};
-
 export const getEvidence = async (id: string) =>
   resolve(IncidentCommander.get(`/evidences?id=eq.${id}`));
 
