@@ -35,7 +35,7 @@ export default function ConfigLink({
             type: configType
           }}
         />
-        <div className="h-5 overflow-hidden truncate flex-1">{configName}</div>
+        <div className="overflow-hidden truncate flex-1">{configName}</div>
       </Link>
     );
   }
@@ -46,7 +46,7 @@ export default function ConfigLink({
         secondary={configTypeSecondary}
         className="w-5 mr-1 h-5"
       />
-      <div className="h-5 overflow-hidden truncate flex-1 text-sm">
+      <div className="overflow-hidden truncate flex-1 text-sm">
         {configName}
       </div>
     </div>
