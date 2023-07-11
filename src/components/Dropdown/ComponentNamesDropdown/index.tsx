@@ -1,88 +1,61 @@
-import { CSSProperties, useEffect, useState } from "react";
+import { useMemo } from "react";
+import { Control } from "react-hook-form";
 import { useComponentsQuery } from "../../../api/query-hooks";
 import { TopologyComponentItem } from "../../FilterIncidents/FilterIncidentsByComponents";
 import { Icon } from "../../Icon";
-import { SearchableDropdown } from "../../SearchableDropdown";
+import { defaultSelections } from "../../Incidents/data";
+import { ReactSelectDropdown, StateOption } from "../../ReactSelectDropdown";
 
-type ComponentNamesDropdownProps = Omit<
-  React.HTMLProps<HTMLDivElement>,
-  "value"
-> & {
-  value?: Record<string, any>;
-  onChange: any;
-  loading?: boolean;
-  placeholder?: string;
-  disabled?: boolean;
+type Props = React.HTMLProps<HTMLDivElement> & {
+  control?: Control<any, any>;
+  value?: string;
+  prefix?: string;
+  dropDownClassNames?: string;
+  hideControlBorder?: boolean;
+  showAllOption?: boolean;
 };
-
-type ComponentItem = TopologyComponentItem & { label: string; value: string };
-
-const optionStyles: CSSProperties = {
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
-  paddingLeft: "10px",
-  overflow: "hidden",
-  whiteSpace: "nowrap",
-  textOverflow: "ellipsis"
-};
-
-const formatOptionLabel = (data: { label: string; icon: any }) => (
-  <div style={optionStyles} title={data.label}>
-    <span>
-      <Icon name={data.icon} /> {data.label}
-    </span>
-  </div>
-);
 
 export function ComponentNamesDropdown({
+  control,
   value,
-  loading,
-  placeholder,
-  onChange,
-  className = "w-96",
-  disabled,
-  ...rest
-}: ComponentNamesDropdownProps) {
-  const [topologies, setTopologies] = useState<ComponentItem[]>([]);
+  prefix = "Severity:",
+  name = "severity",
+  className,
+  showAllOption,
+  dropDownClassNames,
+  hideControlBorder
+}: Props) {
+  const { data: components, isLoading } = useComponentsQuery({});
 
-  const { data: components } = useComponentsQuery({});
-
-  useEffect(() => {
+  const options = useMemo(() => {
     if (!components) {
-      return;
+      return [];
     }
-    const data = components
+    return components
       .filter((item: TopologyComponentItem) => {
         return item.external_id;
       })
       .map((item) => {
-        const option: ComponentItem = {
-          ...item,
+        const option: StateOption = {
           label: item.name || "",
-          value: item.id || ""
+          value: item.id || "",
+          icon: <Icon name={item.name} icon={item.icon} />
         };
         return option;
-      })
-      .sort((value1, value2) => {
-        return value1.label.localeCompare(value2.label);
       });
-    setTopologies(data);
   }, [components]);
 
   return (
-    <SearchableDropdown
+    <ReactSelectDropdown
+      control={control}
+      prefix={prefix}
+      name={name}
       className={className}
+      dropDownClassNames={dropDownClassNames}
       value={value}
-      isLoading={loading}
-      options={topologies}
-      isDisabled={disabled}
-      placeholder={placeholder}
-      onChange={onChange}
-      formatOptionLabel={formatOptionLabel}
-      formatGroupLabel={undefined}
-      defaultValue={undefined}
-      {...rest}
+      isLoading={isLoading}
+      items={[...(showAllOption ? [defaultSelections.all] : []), ...options]}
+      hideControlBorder={hideControlBorder}
     />
   );
 }

@@ -159,7 +159,9 @@ export const getCheckStatuses = (
 };
 
 export const getTopologyComponents = () => {
-  return IncidentCommander.get<TopologyComponentItem[]>(`/component_names`);
+  return IncidentCommander.get<TopologyComponentItem[]>(
+    `/component_names?order=name.asc`
+  );
 };
 
 export const getTopologyComponentsWithLogs = () => {
