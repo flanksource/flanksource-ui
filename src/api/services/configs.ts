@@ -123,7 +123,7 @@ export const getAllChanges = (
   });
   return resolve(
     ConfigDB.get<ConfigTypeChanges[]>(
-      `/config_changes?order=created_at.desc${pagingParams}&select=*,config:config_names!inner(id,name,type)${queryString}`,
+      `/config_changes?order=created_at.desc${pagingParams}&select=id,change_type,summary,source,created_at,config_id,config:config_names!inner(id,name,type)${queryString}`,
       {
         headers: {
           Prefer: "count=exact"
@@ -303,13 +303,6 @@ export const getConfigsByQuery = async (query: string) => {
   }));
 };
 
-export const getRelatedConfigs = async (configID: string) => {
-  const res = await ConfigDB.get<ConfigTypeRelationships[]>(
-    `/config_relationships?or=(related_id.eq.${configID},config_id.eq.${configID})&select=*,configs:configs!config_relationships_config_id_fkey(*),related:configs!config_relationships_related_id_fkey(*)`
-  );
-  return res.data;
-};
-
 export type ConfigTypeItem = {
   type: string;
 };
@@ -453,7 +446,7 @@ export const getConfigInsight = async <T>(
   configInsightId: string
 ) => {
   const res = await ConfigDB.get<T>(
-    `/config_analysis?select=*,config:configs(id,name,config_class,type)&config_id=eq.${configId}&id=eq.${configInsightId}`
+    `/config_analysis?select=id,message,analyzer,config:configs(id,name,config_class,type)&config_id=eq.${configId}&id=eq.${configInsightId}`
   );
   return res.data;
 };
@@ -490,7 +483,7 @@ export const getAllConfigInsights = async (
 
   return resolve(
     ConfigDB.get<ConfigTypeInsights[] | null>(
-      `/config_analysis?select=*,config:configs(id,name,config_class,type)${pagingParams}${queryParamsString}${sortString}`,
+      `/config_analysis?select=id,analysis_type,analyzer,severity,status,first_observed,last_observed,config:configs(id,name,config_class,type)${pagingParams}${queryParamsString}${sortString}`,
       {
         headers: {
           Prefer: "count=exact"
