@@ -105,6 +105,15 @@ export const getConfigsSummary = async () => {
   return res.data ?? [];
 };
 
+export const getConfigsByIDs = async (ids: string[]) => {
+  const res = await resolve<ConfigItem[] | null>(
+    ConfigDB.get(
+      `/configs?id=in.(${ids.join(",")})&select=id,name,config_class,type`
+    )
+  );
+  return res.data ?? [];
+};
+
 export const getAllChanges = (
   queryParams: Record<string, string | undefined>,
   pageIndex?: number,

@@ -4,6 +4,7 @@ import { AxiosResponseWithTotalEntries } from "../../types";
 import {
   getAllConfigInsights,
   getConfigAnalysisByComponent,
+  getConfigsByIDs,
   PaginationInfo
 } from "../services/configs";
 
@@ -45,8 +46,18 @@ export function useConfigInsightsQuery(
           }
           return true;
         });
+        const configIds = insights.map((item) => item.config_id);
+        const configs = await getConfigsByIDs(configIds);
         return {
-          data: insights,
+          data: insights.map((item) => {
+            const config = configs.find(
+              (config) => config.id === item.config_id
+            );
+            return {
+              ...item,
+              config
+            };
+          }),
           error: null
         };
       }
