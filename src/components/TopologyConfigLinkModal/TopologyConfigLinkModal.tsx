@@ -43,7 +43,6 @@ export function TopologyConfigLinkModal({
     getAllConfigsForSearchPurpose
   );
   const [value, setValue] = useState<ConfigOption>();
-  const maxResultsShown = 10;
   const configs = useMemo(() => {
     return data
       ?.map((d) => ({
@@ -62,13 +61,13 @@ export function TopologyConfigLinkModal({
 
   const onSearch = useCallback(
     async (query = "") => {
-      console.log("query", query);
       const result = configs
         .filter(({ name }) => {
           return name.toLowerCase().indexOf(query.toLowerCase()) > -1;
         })
         .sort((v1, v2) => stringSortHelper(v1.name, v2.name))
-        .slice(0, maxResultsShown);
+        // show only 50 results
+        .slice(0, 50);
       return await delayedPromise<ConfigOption[]>(result, 1000);
     },
     [configs]
