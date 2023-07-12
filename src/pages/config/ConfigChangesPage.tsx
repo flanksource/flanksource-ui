@@ -56,7 +56,7 @@ export function ConfigChangesPage() {
       pageIndex: ((pageState.pageIndex || 0) + 1).toString(),
       pageSize: (pageState.pageSize || itemsPerPage).toString()
     });
-  }, [pageState]);
+  }, [pageState, params, setParams]);
 
   useEffect(() => {
     setPageState({
@@ -92,7 +92,7 @@ export function ConfigChangesPage() {
       >
         <div className={`flex flex-col h-full`}>
           <TabbedLinks tabLinks={configTabsLists}>
-            <div className="flex flex-col h-full overflow-y-hidden">
+            <div className="flex flex-col gap-4 h-full overflow-y-hidden">
               {error ? (
                 <InfoMessage message={errorMessage} />
               ) : (

@@ -195,7 +195,7 @@ export function ConfigDetailChangeModal({
     <Modal
       title={
         config && (
-          <>
+          <div className="flex flex-row gap-1">
             <ConfigLink
               className="text-blue-600 text-xl font-semibold whitespace-nowrap mr-1"
               configId={config.id}
@@ -203,14 +203,14 @@ export function ConfigDetailChangeModal({
               configType={config.type}
               configTypeSecondary={config.config_class}
             />
-            &nbsp;/&nbsp;
+            /
             <Icon
               name={changeDetails?.change_type}
               secondary="diff"
               className="w-5 h-auto pr-1"
             />
             {changeDetails?.change_type}
-          </>
+          </div>
         )
       }
       open={open}
