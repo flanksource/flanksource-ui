@@ -18,6 +18,7 @@ import { HealthCheck } from "../../../types/healthChecks";
 import { CanaryCheckDetailsSpecTab } from "./CanaryCheckDetailsSpec";
 import { CanaryCheckDetailsLabel } from "./CanaryCheckDetailsLabel";
 import { relativeDateTime } from "../../../utils/date";
+import { useCanaryGraphQuery } from "../../../api/query-hooks/health";
 
 const CanaryStatusChart = React.lazy(() =>
   import("../CanaryStatusChart").then(({ CanaryStatusChart }) => ({
@@ -37,10 +38,13 @@ export function CheckDetails({ check, timeRange, ...rest }: CheckDetailsProps) {
   const prevCheck = usePrevious(check);
   const validCheck = check || prevCheck;
 
+  const { data } = useCanaryGraphQuery(timeRange, validCheck);
+
   const uptimeValue = toFixedIfNecessary(
-    getUptimePercentage(validCheck)?.toString()!,
+    getUptimePercentage(data)?.toString()!,
     0
   );
+
   const validUptime =
     !Number.isNaN(validCheck?.uptime?.passed) &&
     !Number.isNaN(validCheck?.uptime?.failed);
@@ -81,10 +85,10 @@ export function CheckDetails({ check, timeRange, ...rest }: CheckDetailsProps) {
               !Number.isNaN(uptimeValue) && (
                 <div className="flex flex-col justify-center mx-2 mt-0.5">
                   <span className="text-xs text-green-700 ">
-                    {validCheck?.uptime?.passed} passed
+                    {data?.uptime?.passed} passed
                   </span>
                   <span className="text-xs text-red-600">
-                    {validCheck?.uptime?.failed} failed
+                    {data?.uptime?.failed} failed
                   </span>
                 </div>
               )
@@ -93,17 +97,17 @@ export function CheckDetails({ check, timeRange, ...rest }: CheckDetailsProps) {
           <CheckStat
             containerClassName="w-40 mb-4"
             title="Latency (95%)"
-            value={<Duration ms={validCheck?.latency?.p95} />}
+            value={<Duration ms={data?.latency?.p95} />}
           />
           <CheckStat
             containerClassName="w-40 mb-4"
             title="Latency  (97%)"
-            value={<Duration ms={validCheck?.latency?.p97} />}
+            value={<Duration ms={data?.latency?.p97} />}
           />
           <CheckStat
             containerClassName="w-40 mb-4"
             title="Latency  (99%)"
-            value={<Duration ms={validCheck?.latency?.p99} />}
+            value={<Duration ms={data?.latency?.p99} />}
           />
           <CheckStat
             containerClassName="w-40 mb-4"
@@ -124,6 +128,7 @@ export function CheckDetails({ check, timeRange, ...rest }: CheckDetailsProps) {
           </div>
           <div className="w-full h-52 overflow-visible">
             <Suspense fallback={<div>Loading..</div>}>
+              {/*  */}
               <CanaryStatusChart timeRange={timeRange} check={validCheck} />
             </Suspense>
           </div>

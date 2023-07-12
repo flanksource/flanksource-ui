@@ -8,8 +8,7 @@ import {
   XAxis,
   YAxis
 } from "recharts";
-import { useCallback, useEffect, useState } from "react";
-import { getCanaryGraph } from "../../../api/services/topology";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Loading } from "../../Loading";
 import {
   formatDateToMonthDay,
@@ -20,7 +19,7 @@ import {
   subtractDateFromNow
 } from "../../../utils/date";
 import { HealthCheck } from "../../../types/healthChecks";
-import { useQuery } from "@tanstack/react-query";
+import { useCanaryGraphQuery } from "../../../api/query-hooks/health";
 
 // @TODO: duration should be formatted properly, not just by ms
 const formatDuration = (duration: number) => `${duration}ms`;
@@ -85,22 +84,10 @@ export function CanaryStatusChart({
     [dateFormatFn]
   );
 
-  const { data = [] } = useQuery(
-    ["canaryGraph", check.id, timeRange],
-    async () => {
-      const payload = {
-        check: check.id!,
-        count: 300,
-        start: getStartValue(timeRange)
-      };
-      const res = await getCanaryGraph(payload);
-      return res.data;
-    },
-    {
-      select: (data) => (data?.status ?? []).reverse(),
-      suspense: true
-    }
-  );
+  // we need to list this up
+  const { data: graphData } = useCanaryGraphQuery(timeRange, check);
+
+  const data = useMemo(() => (graphData?.status ?? []).reverse(), [graphData]);
 
   useEffect(() => {
     const updatedFormat = getUpdatedFormat(timeRange);
