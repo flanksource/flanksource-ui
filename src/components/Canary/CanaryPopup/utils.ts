@@ -1,22 +1,28 @@
 import { merge } from "lodash";
 
-export function getUptimePercentage(check) {
+export function getUptimePercentage(check?: {
+  uptime: { passed: number; failed: number };
+}) {
   const uptime = check?.uptime;
-  const passed = uptime?.passed;
-  const failed = uptime?.failed;
+  const passed = uptime?.passed ?? 0;
+  const failed = uptime?.failed ?? 0;
   const valid = !Number.isNaN(passed) && !Number.isNaN(failed);
   return valid ? (passed / (passed + failed)) * 100 : null;
 }
 
-export const setDeepWithString = (dotNotationKeyString, newValue, obj) => {
+export const setDeepWithString = (
+  dotNotationKeyString: string,
+  newValue: string,
+  obj: Record<string, any>
+) => {
   const keys = dotNotationKeyString.split(".");
-  let toMerge = null;
+  let toMerge: Record<string, any> | null = null;
   keys.reverse().forEach((key) => {
     if (!toMerge) {
       toMerge = {};
       toMerge[key] = newValue;
     } else {
-      const temp = {};
+      const temp: Record<string, any> = {};
       temp[key] = toMerge;
       toMerge = temp;
     }

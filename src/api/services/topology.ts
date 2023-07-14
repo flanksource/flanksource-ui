@@ -91,6 +91,14 @@ export type CanaryGraphResponse = {
   duration: number;
   runnerName: string;
   status: CanaryGraphStatus[];
+  latency: {
+    rollingIn: number;
+    [key: string]: number;
+  };
+  uptime: {
+    passed: number;
+    failed: number;
+  };
 };
 
 export type CanaryGraphStatus = {
