@@ -132,6 +132,7 @@ export function IncidentListPage() {
         size="small"
         title="Create New Incident"
         containerClassName=""
+        bodyClass="px-0"
       >
         <IncidentCreate
           callback={(response) => {

@@ -36,10 +36,7 @@ export function HypothesisActionPlanViewContainer({
 
   return (
     <div {...rest}>
-      <div className="flex items-center text-base font-semibold mb-5 justify-between px-4">
-        <div className="flex items-center">
-          <h2 className="text-dark-gray mr-3 text-2xl">Action plan</h2>
-        </div>
+      <div className="flex items-center text-base font-semibold mb-5 justify-end px-4">
         <div className="flex items-center">
           <div className="pr-4">
             {showAllComments ? "Collapse" : "Expand"} All
