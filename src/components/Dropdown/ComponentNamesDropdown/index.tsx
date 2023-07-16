@@ -39,7 +39,7 @@ export function ComponentNamesDropdown({
         const option: StateOption = {
           label: item.name || "",
           value: item.id || "",
-          icon: <Icon name={item.name} icon={item.icon} />
+          icon: <Icon name={item.name} icon={item.icon} className="h-5 w-5" />
         };
         return option;
       });
