@@ -71,6 +71,7 @@ export function TopologyConfigAnalysisLine({
     return {
       icon: <MdOutlineInsights className="w-4 h-4" />,
       label: "Insights",
+      url: `/configs/insights?component=${topology.id}`,
       statuses: Object.values(analysisToCountMap)
     };
   }, [insights, topology.id]);
