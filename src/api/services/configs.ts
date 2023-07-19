@@ -467,20 +467,22 @@ export const getAllConfigInsights = async (
     severity?: string;
     analyzer?: string;
     component?: string;
+    configId?: string;
   },
   sortBy: { sortBy?: string; sortOrder?: "asc" | "desc" },
   { pageIndex, pageSize }: PaginationInfo
 ) => {
   const pagingParams = `&limit=${pageSize}&offset=${pageIndex * pageSize}`;
 
-  const { status, type, severity, analyzer, component } = queryParams;
+  const { status, type, severity, analyzer, component, configId } = queryParams;
 
   const params = {
     status: status && `&status=eq.${status}`,
     type: type && `&analysis_type=eq.${type}`,
     severity: severity && `&severity=eq.${severity}`,
     analyzer: analyzer && `&analyzer=eq.${analyzer}`,
-    component: component && `&component_id=eq.${component}`
+    component: component && `&component_id=eq.${component}`,
+    configId: configId && `&config_id=eq.${configId}`
   };
 
   const queryParamsString = Object.values(params)

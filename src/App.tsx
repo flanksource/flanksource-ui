@@ -67,6 +67,7 @@ import { withAccessCheck } from "./components/AccessCheck/AccessCheck";
 import { tables } from "./context/UserAccessContext/permissions";
 import { isAuthEnabled } from "./context/Environment";
 import { EventQueueStatusPage } from "./pages/Settings/EventQueueStatus";
+import { ConfigDetailsInsightsPage } from "./pages/config/ConfigDetailsInsightsPage";
 
 export type NavigationItems = {
   name: string;
@@ -373,6 +374,14 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             path="changes"
             element={withAccessCheck(
               <ConfigDetailsChangesPage />,
+              tables.database,
+              "read"
+            )}
+          />
+          <Route
+            path="insights"
+            element={withAccessCheck(
+              <ConfigDetailsInsightsPage />,
               tables.database,
               "read"
             )}

@@ -1,6 +1,6 @@
 import { SortingState } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { useConfigInsightsQuery } from "../../api/query-hooks/useConfigAnalysisQuery";
 import ConfigInsightsDetailsModal from "../ConfigAnalysisLink/ConfigInsightsDetailsModal";
 import { ConfigTypeInsights } from "../ConfigInsights";
@@ -11,11 +11,13 @@ import { ConfigInsightsColumns } from "./ConfigInsightsColumns";
 type Props = {
   setIsLoading: (isLoading: boolean) => void;
   triggerRefresh: number;
+  configId?: string;
 };
 
 export default function ConfigInsightsList({
   setIsLoading,
-  triggerRefresh
+  triggerRefresh,
+  configId
 }: Props) {
   const [params, setParams] = useSearchParams();
   const [clickedInsightItem, setClickedInsightItem] =
@@ -54,7 +56,8 @@ export default function ConfigInsightsList({
         severity: severity?.toLowerCase(),
         type,
         analyzer,
-        component
+        component,
+        configId
       },
       {
         sortBy: params.get("sortBy") ?? undefined,
