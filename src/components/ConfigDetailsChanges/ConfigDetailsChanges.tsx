@@ -181,7 +181,10 @@ type ConfigDetailChangeModalProps = {
   open: boolean;
   setOpen: (val: boolean) => void;
   config?: ConfigItem;
-  changeDetails?: ConfigTypeChanges;
+  changeDetails?: Pick<
+    ConfigTypeChanges,
+    "change_type" | "id" | "config_id" | "config"
+  >;
 };
 
 export function ConfigDetailChangeModal({

@@ -29,6 +29,9 @@ export type ConfigTypeChanges = {
   created_by: string | User;
   external_created_by: string;
   config?: ConfigItem;
+  config_class?: string;
+  type?: string;
+  name?: string;
 };
 
 type Props = {

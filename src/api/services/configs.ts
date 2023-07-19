@@ -507,9 +507,9 @@ export const getConfigComponentRelationships = async <T>(configID: string) => {
   return res.data;
 };
 
-export const getComponentConfigChanges = async <T>(topologyID: string) => {
-  const res = await ConfigDB.get<T>(
-    `/changes_by_component?component_id=eq.${topologyID}`
+export const getComponentConfigChanges = async (topologyID: string) => {
+  const res = await ConfigDB.get<ConfigTypeChanges[]>(
+    `/changes_by_component?component_id=eq.${topologyID}&select=id,type,config_id,name,change_type,config_class,created_at,config:configs(id, name, type, config_class)`
   );
   return res.data;
 };
