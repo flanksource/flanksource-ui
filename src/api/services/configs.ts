@@ -105,6 +105,15 @@ export const getConfigsSummary = async () => {
   return res.data ?? [];
 };
 
+export const getConfigsByIDs = async (ids: string[]) => {
+  const res = await resolve<ConfigItem[] | null>(
+    ConfigDB.get(
+      `/configs?id=in.(${ids.join(",")})&select=id,name,config_class,type`
+    )
+  );
+  return res.data ?? [];
+};
+
 export const getAllChanges = (
   queryParams: Record<string, string | undefined>,
   pageIndex?: number,
@@ -457,19 +466,23 @@ export const getAllConfigInsights = async (
     type?: string;
     severity?: string;
     analyzer?: string;
+    component?: string;
+    configId?: string;
   },
   sortBy: { sortBy?: string; sortOrder?: "asc" | "desc" },
   { pageIndex, pageSize }: PaginationInfo
 ) => {
   const pagingParams = `&limit=${pageSize}&offset=${pageIndex * pageSize}`;
 
-  const { status, type, severity, analyzer } = queryParams;
+  const { status, type, severity, analyzer, component, configId } = queryParams;
 
   const params = {
     status: status && `&status=eq.${status}`,
     type: type && `&analysis_type=eq.${type}`,
     severity: severity && `&severity=eq.${severity}`,
-    analyzer: analyzer && `&analyzer=eq.${analyzer}`
+    analyzer: analyzer && `&analyzer=eq.${analyzer}`,
+    component: component && `&component_id=eq.${component}`,
+    configId: configId && `&config_id=eq.${configId}`
   };
 
   const queryParamsString = Object.values(params)
@@ -510,6 +523,13 @@ export const getConfigComponentRelationships = async <T>(configID: string) => {
 export const getComponentConfigChanges = async (topologyID: string) => {
   const res = await ConfigDB.get<ConfigTypeChanges[]>(
     `/changes_by_component?component_id=eq.${topologyID}&select=id,type,config_id,name,change_type,config_class,created_at,config:configs(id, name, type, config_class)`
+  );
+  return res.data;
+};
+
+export const getConfigAnalysisByComponent = async (componentId: string) => {
+  const res = await ConfigDB.get<ConfigTypeInsights[]>(
+    `/rpc/lookup_analysis_by_component?id=${componentId}`
   );
   return res.data;
 };

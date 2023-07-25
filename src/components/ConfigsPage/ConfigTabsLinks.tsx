@@ -11,7 +11,7 @@ export function useConfigDetailsTabs() {
 
   return [
     { label: "Config", path: `/configs/${id}` },
-    { label: "Changes", path: `/configs/${id}/changes` }
-    /* { label: "Insights", path: `/configs/${id}/insights` } */
+    { label: "Changes", path: `/configs/${id}/changes` },
+    { label: "Insights", path: `/configs/${id}/insights` }
   ];
 }
