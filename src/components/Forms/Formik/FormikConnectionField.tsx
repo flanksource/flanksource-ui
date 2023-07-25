@@ -1,56 +1,52 @@
-import { useEffect, useState } from "react";
-import FormikAutocompleteDropdown from "./FormikAutocompleteDropdown";
+import { useQuery } from "@tanstack/react-query";
 import { getAll } from "../../../api/schemaResources";
 import { toastError } from "../../Toast/toast";
+import FormikSelectDropdown from "./FormikSelectDropdown";
 
 type Props = {
   name: string;
-  label: string;
+  label?: string;
   required?: boolean;
+  hint?: string;
 };
 
 export default function FormikConnectionField({
   name,
   label,
-  required
+  required = false,
+  hint
 }: Props) {
-  const [connections, setConnections] = useState<
-    { label: string; value: string }[]
-  >([]);
-
-  async function fetchConnections() {
-    try {
-      const response = await getAll({
+  const { data: connections = [], isLoading } = useQuery({
+    queryKey: ["connections", "canary-checker"],
+    queryFn: async () => {
+      const res = await getAll({
         table: "connections",
         api: "canary-checker"
       });
-      if (response.data) {
-        setConnections(
-          response.data.map((item) => {
-            return {
-              label: item.name,
-              value: item.id
-            };
-          })
-        );
-        return;
-      }
-      toastError(response.statusText);
-    } catch (ex) {
-      toastError((ex as Error).message);
+      return res.data ?? [];
+    },
+    select: (connections) => {
+      return connections.map((connection) => {
+        return {
+          label: connection.name,
+          value: connection.id
+        };
+      });
+    },
+    onError: (err: Error) => {
+      toastError((err as Error).message);
     }
-  }
-
-  useEffect(() => {
-    fetchConnections();
-  }, []);
+  });
 
   return (
-    <FormikAutocompleteDropdown
+    <FormikSelectDropdown
       name={name}
-      label={label}
-      required={required}
+      className="h-full shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm border-gray-300 rounded-md"
       options={connections}
+      label={label}
+      isLoading={isLoading}
+      required={required}
+      hint={hint}
     />
   );
 }

@@ -31,7 +31,7 @@ export default function FormikSelectDropdown({
 }: Props) {
   const [isTouched, setIsTouched] = useState(false);
 
-  const [field, meta] = useField<string>({
+  const [field, meta] = useField<string | string[]>({
     name,
     type: "text",
     required,
@@ -45,10 +45,17 @@ export default function FormikSelectDropdown({
     )
   });
 
-  const value = useMemo(
-    () => options?.filter((item) => item.value === field.value),
-    [field.value, options]
-  );
+  console.log("field", field.value, name, options);
+
+  const value = useMemo(() => {
+    if (props.isMulti && Array.isArray(field.value)) {
+      const x = options?.filter((item) => field.value.includes(item.value));
+      return x;
+    }
+    return options?.filter((item) => item.value === field.value);
+  }, [field.value, options, props.isMulti]);
+
+  console.log("value", value, name);
 
   useEffect(() => {
     setIsTouched(isTouched || meta.touched || meta.initialTouched);
@@ -67,10 +74,13 @@ export default function FormikSelectDropdown({
         options={options}
         value={value}
         onChange={(value: any) => {
+          console.log({ value: value });
           field.onChange({
             target: {
               name: field.name,
-              value: value?.value
+              value: Array.isArray(value)
+                ? value.map((item) => item.value)
+                : value.value
             }
           });
         }}

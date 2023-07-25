@@ -55,7 +55,9 @@ export const getPerson = (id: string) =>
   resolve<User[]>(IncidentCommander.get<User[]>(`/people?id=eq.${id}`));
 
 export const getPersons = () =>
-  resolve<User[]>(IncidentCommander.get<User[]>(`/people`));
+  resolve<User[]>(
+    IncidentCommander.get<User[]>(`/people?select=*&order=name.asc`)
+  );
 
 export const getPersonWithEmail = (email: string) =>
   resolve<User>(IncidentCommander.get(`/people?email=eq.${email}`));
