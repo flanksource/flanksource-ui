@@ -52,10 +52,10 @@ export type InviteUserPayload = {
 };
 
 export const getPerson = (id: string) =>
-  resolve<User[]>(IncidentCommander.get(`/people?id=eq.${id}`));
+  resolve<User[]>(IncidentCommander.get<User[]>(`/people?id=eq.${id}`));
 
 export const getPersons = () =>
-  resolve<User[]>(IncidentCommander.get(`/people`));
+  resolve<User[]>(IncidentCommander.get<User[]>(`/people`));
 
 export const getPersonWithEmail = (email: string) =>
   resolve<User>(IncidentCommander.get(`/people?email=eq.${email}`));

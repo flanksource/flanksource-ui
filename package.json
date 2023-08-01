@@ -8,6 +8,7 @@
     "scripts/serve-build.js"
   ],
   "dependencies": {
+    "@clerk/nextjs": "^4.23.2",
     "@headlessui/react": "0.0.0-insiders.5af3bd4",
     "@heroicons/react": "^1.0.3",
     "@hookform/resolvers": "^2.8.8",

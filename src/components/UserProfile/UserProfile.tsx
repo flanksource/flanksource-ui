@@ -2,16 +2,19 @@ import { Menu, Transition } from "@headlessui/react";
 import { Fragment, useState } from "react";
 import { FaUserAlt } from "react-icons/fa";
 import { useUser } from "../../context";
+import ClerkLogoutButton from "../Authentication/Clerk/ClerkLogoutButton";
+import KratosLogoutButton from "../Authentication/Kratos/KratosLogoutButton";
+import useDetermineAuthSystem from "../Authentication/useDetermineAuthSystem";
 import { ClickableSvg } from "../ClickableSvg/ClickableSvg";
 import { CreateUserDialog } from "../CreateUserDialog";
 import { SelectUserDialog } from "../SelectUserDialog";
 import { VersionInfo } from "../VersionInfo/VersionInfo";
-import { useCreateLogoutHandler } from "../ory";
 
 export function UserProfile() {
   const [isOpen, setIsOpen] = useState(false);
   const [selectIsOpen, setSelectIsOpen] = useState(false);
-  const onLogout = useCreateLogoutHandler([]);
+
+  const authSystem = useDetermineAuthSystem();
 
   const { user } = useUser();
 
@@ -74,13 +77,11 @@ export function UserProfile() {
               <VersionInfo />
             </Menu.Item>
             <Menu.Item>
-              <button
-                type="button"
-                onClick={onLogout}
-                className="block w-full py-2 px-4 text-left text-sm text-gray-700  hover:bg-gray-50 hover:text-gray-900 border-0 border-b border-gray-200"
-              >
-                Sign out
-              </button>
+              {authSystem === "clerk" ? (
+                <ClerkLogoutButton />
+              ) : (
+                <KratosLogoutButton />
+              )}
             </Menu.Item>
           </Menu.Items>
         </Transition>
