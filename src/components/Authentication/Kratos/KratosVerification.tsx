@@ -1,9 +1,5 @@
-import {
-  SelfServiceVerificationFlow,
-  SubmitSelfServiceVerificationFlowBody
-} from "@ory/client";
+import { UpdateVerificationFlowBody, VerificationFlow } from "@ory/client";
 import { AxiosError } from "axios";
-import type { NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -12,7 +8,7 @@ import { Flow } from "../../ory";
 import ory from "../../ory/sdk";
 
 function KratosVerification() {
-  const [flow, setFlow] = useState<SelfServiceVerificationFlow>();
+  const [flow, setFlow] = useState<VerificationFlow>();
 
   // Get ?flow=... from the URL
   const router = useRouter();
@@ -27,14 +23,14 @@ function KratosVerification() {
     // If ?flow=.. was in the URL, we fetch it
     if (flowId) {
       ory
-        .getSelfServiceVerificationFlow(String(flowId))
+        .getVerificationFlow({ id: String(flowId) })
         .then(({ data }) => {
           setFlow(data);
         })
         .catch((err: AxiosError) => {
           switch (err.response?.status) {
-            case 410:
             // Status code 410 means the request has expired - so let's load a fresh flow!
+            case 410:
             case 403:
               // Status code 403 implies some other issue (e.g. CSRF) - let's reload!
               return router.push("/verification");
@@ -47,9 +43,9 @@ function KratosVerification() {
 
     // Otherwise we initialize it
     ory
-      .initializeSelfServiceVerificationFlowForBrowsers(
-        returnTo ? String(returnTo) : undefined
-      )
+      .createBrowserVerificationFlow({
+        returnTo: returnTo ? String(returnTo) : undefined
+      })
       .then(({ data }) => {
         setFlow(data);
       })
@@ -64,18 +60,17 @@ function KratosVerification() {
       });
   }, [flowId, router, router.isReady, returnTo, flow]);
 
-  const onSubmit = (values: SubmitSelfServiceVerificationFlowBody) =>
+  const onSubmit = (values: UpdateVerificationFlowBody) =>
     router
       // On submission, add the flow ID to the URL but do not navigate. This prevents the user loosing
       // his data when she/he reloads the page.
       .push(`/verification?flow=${flow?.id}`, undefined, { shallow: true })
       .then(() =>
         ory
-          .submitSelfServiceVerificationFlow(
-            String(flow?.id),
-            undefined,
-            values
-          )
+          .updateVerificationFlow({
+            flow: String(flow?.id),
+            updateVerificationFlowBody: values
+          })
           .then(({ data }) => {
             // Form submission was successful, show the message to the user!
             setFlow(data);
@@ -84,6 +79,7 @@ function KratosVerification() {
             switch (err.response?.status) {
               case 400:
                 // Status code 400 implies the form validation had an error
+                // @ts-ignore
                 setFlow(err.response?.data);
                 return;
             }

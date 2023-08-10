@@ -1,8 +1,5 @@
-import {
-  SelfServiceLoginFlow,
-  SubmitSelfServiceLoginFlowBody
-} from "@ory/client";
-import { AxiosError } from "axios";
+import { LoginFlow, UpdateLoginFlowBody } from "@ory/client";
+import { AxiosError, AxiosRequestConfig } from "axios";
 import type { NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -12,7 +9,7 @@ import { handleFlowError, handleGetFlowError } from "../../ory/errors";
 import ory from "../../ory/sdk";
 
 const Login: NextPage = () => {
-  const [flow, setFlow] = useState<SelfServiceLoginFlow>();
+  const [flow, setFlow] = useState<LoginFlow>();
 
   // Get ?flow=... from the URL
   const router = useRouter();
@@ -40,7 +37,9 @@ const Login: NextPage = () => {
     // If ?flow=.. was in the URL, we fetch it
     if (flowId) {
       ory
-        .getSelfServiceLoginFlow(String(flowId))
+        .getLoginFlow({
+          id: String(flowId)
+        })
         .then(({ data }) => {
           setFlow(data);
         })
@@ -50,25 +49,28 @@ const Login: NextPage = () => {
 
     // Otherwise we initialize it
     ory
-      .initializeSelfServiceLoginFlowForBrowsers(
-        Boolean(refresh),
-        aal ? String(aal) : undefined,
-        returnTo ? String(returnTo) : undefined
-      )
+      .createBrowserLoginFlow({
+        returnTo: returnTo ? String(returnTo) : undefined,
+        refresh: Boolean(refresh),
+        aal: aal ? String(aal) : undefined
+      })
       .then(({ data }) => {
         setFlow(data);
       })
       .catch(handleFlowError(router, "login", setFlow));
   }, [flowId, router, router.isReady, aal, refresh, returnTo, flow]);
 
-  const onSubmit = (values: SubmitSelfServiceLoginFlowBody) =>
+  const onSubmit = (values: UpdateLoginFlowBody) =>
     router
       // On submission, add the flow ID to the URL but do not navigate. This prevents the user loosing
       // his data when she/he reloads the page.
       .push(`/login?flow=${flow?.id}`, undefined, { shallow: true })
       .then(() =>
         ory
-          .submitSelfServiceLoginFlow(String(flow?.id), values)
+          .updateLoginFlow({
+            flow: flow?.id!,
+            updateLoginFlowBody: values
+          })
           // We logged in successfully! Let's bring the user home.
           .then((res) => {
             if (flow?.return_to) {

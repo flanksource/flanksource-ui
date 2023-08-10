@@ -1,9 +1,5 @@
-import {
-  SelfServiceRecoveryFlow,
-  SubmitSelfServiceRecoveryFlowBody
-} from "@ory/client";
+import { RecoveryFlow, UpdateRecoveryFlowBody } from "@ory/client";
 import { AxiosError } from "axios";
-import type { NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -13,7 +9,7 @@ import { handleFlowError } from "../../ory/errors";
 import ory from "../../ory/sdk";
 
 function KratosRecovery() {
-  const [flow, setFlow] = useState<SelfServiceRecoveryFlow>();
+  const [flow, setFlow] = useState<RecoveryFlow>();
 
   // Get ?flow=... from the URL
   const router = useRouter();
@@ -28,7 +24,7 @@ function KratosRecovery() {
     // If ?flow=.. was in the URL, we fetch it
     if (flowId) {
       ory
-        .getSelfServiceRecoveryFlow(String(flowId))
+        .getRecoveryFlow({ id: String(flowId) })
         .then(({ data }) => {
           setFlow(data);
         })
@@ -38,7 +34,9 @@ function KratosRecovery() {
 
     // Otherwise we initialize it
     ory
-      .initializeSelfServiceRecoveryFlowForBrowsers()
+      .createBrowserRecoveryFlow({
+        returnTo: returnTo ? String(returnTo) : undefined
+      })
       .then(({ data }) => {
         setFlow(data);
       })
@@ -55,14 +53,17 @@ function KratosRecovery() {
       });
   }, [flowId, router, router.isReady, returnTo, flow]);
 
-  const onSubmit = (values: SubmitSelfServiceRecoveryFlowBody) =>
+  const onSubmit = (values: UpdateRecoveryFlowBody) =>
     router
       // On submission, add the flow ID to the URL but do not navigate. This prevents the user loosing
       // his data when she/he reloads the page.
       .push(`/recovery?flow=${flow?.id}`, undefined, { shallow: true })
       .then(() =>
         ory
-          .submitSelfServiceRecoveryFlow(String(flow?.id), values)
+          .updateRecoveryFlow({
+            flow: String(flow?.id),
+            updateRecoveryFlowBody: values
+          })
           .then(({ data }) => {
             // Form submission was successful, show the message to the user!
             setFlow(data);

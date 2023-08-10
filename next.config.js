@@ -1,9 +1,7 @@
-const withTM = require("next-transpile-modules")(["monaco-editor"]); // pass the modules you would like to see transpiled
-
 /**
  * @type {import('next').NextConfig}
  */
-const config = withTM({
+const config = {
   productionBrowserSourceMaps: true,
   typescript: {
     // !! WARN !!
@@ -54,7 +52,8 @@ const config = withTM({
     // increase the default timeout for the proxy from 30s to 10m to allow for
     // long running requests to the backend
     proxyTimeout: 1000 * 60 * 10
-  }
-});
+  },
+  transpilePackages: ["monaco-editor"]
+};
 
 module.exports = config;

@@ -4,7 +4,9 @@ import SlidingSideBar from "./index";
 
 const data = Array.from(Array(100).keys());
 
-export default {};
+export default {
+  title: "SlidingSideBar"
+};
 
 function Template() {
   const [openedPanel, setOpenedPanel] = useState<"1" | "2" | "3" | undefined>(

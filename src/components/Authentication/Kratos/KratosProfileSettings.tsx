@@ -1,21 +1,16 @@
-import {
-  SelfServiceSettingsFlow,
-  SubmitSelfServiceSettingsFlowBody,
-  UiText
-} from "@ory/client";
+import { SettingsFlow, UiText, UpdateSettingsFlowBody } from "@ory/client";
 import { AxiosError } from "axios";
-import type { NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { ReactNode, useEffect, useState } from "react";
 
 import { Head } from "../../Head/Head";
-import { Flow, Methods, Messages } from "../../ory";
+import { Flow, Messages, Methods } from "../../ory";
 import { handleFlowError } from "../../ory/errors";
 import ory from "../../ory/sdk";
 
 interface Props {
-  flow?: SelfServiceSettingsFlow;
+  flow?: SettingsFlow;
   only?: Methods;
 }
 
@@ -44,7 +39,7 @@ function SettingsCard({
 }
 
 function KratosProfileSettings() {
-  const [flow, setFlow] = useState<SelfServiceSettingsFlow>();
+  const [flow, setFlow] = useState<SettingsFlow>();
   const [messages, setMessages] = useState<UiText[]>([]);
 
   // Get ?flow=... from the URL
@@ -60,7 +55,9 @@ function KratosProfileSettings() {
     // If ?flow=.. was in the URL, we fetch it
     if (flowId) {
       ory
-        .getSelfServiceSettingsFlow(String(flowId))
+        .getSettingsFlow({
+          id: String(flowId)
+        })
         .then(({ data }) => {
           setFlow(data);
         })
@@ -70,9 +67,9 @@ function KratosProfileSettings() {
 
     // Otherwise we initialize it
     ory
-      .initializeSelfServiceSettingsFlowForBrowsers(
-        returnTo ? String(returnTo) : undefined
-      )
+      .createBrowserSettingsFlow({
+        returnTo: returnTo ? String(returnTo) : undefined
+      })
       .then(({ data }) => {
         setFlow(data);
       })
@@ -86,14 +83,17 @@ function KratosProfileSettings() {
     }, 10000);
   }, [flow?.ui?.messages]);
 
-  const onSubmit = (values: SubmitSelfServiceSettingsFlowBody) =>
+  const onSubmit = (values: UpdateSettingsFlowBody) =>
     router
       // On submission, add the flow ID to the URL but do not navigate. This prevents the user loosing
       // his data when she/he reloads the page.
       .push(`/profile-settings?flow=${flow?.id}`, undefined, { shallow: true })
       .then(() =>
         ory
-          .submitSelfServiceSettingsFlow(String(flow?.id), values, undefined)
+          .updateSettingsFlow({
+            flow: String(flow?.id),
+            updateSettingsFlowBody: values
+          })
           .then(({ data }) => {
             // The settings have been saved and the flow was updated. Let's show it to the user!
             setFlow(data);
@@ -123,10 +123,12 @@ function KratosProfileSettings() {
               className="p-2 h-auto m-auto rounded-8px w-48"
             />
             <div className="pb-2">
-              <Link href="/" passHref>
-                <a className="cursor-pointer font-medium text-blue-600 hover:text-blue-500">
-                  Go back
-                </a>
+              <Link
+                as="a"
+                href="/"
+                className="cursor-pointer font-medium text-blue-600 hover:text-blue-500"
+              >
+                Go back
               </Link>
               <Messages messages={messages} />
               <SettingsCard only="profile" flow={flow}>

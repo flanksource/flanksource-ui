@@ -1,7 +1,4 @@
-import {
-  SelfServiceRegistrationFlow,
-  SubmitSelfServiceRegistrationFlowBody
-} from "@ory/client";
+import { RegistrationFlow, UpdateRegistrationFlowBody } from "@ory/client";
 import { AxiosError } from "axios";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -19,7 +16,7 @@ export default function KratosRegistration() {
 
   // The "flow" represents a registration process and contains
   // information about the form we need to render (e.g. username + password)
-  const [flow, setFlow] = useState<SelfServiceRegistrationFlow>();
+  const [flow, setFlow] = useState<RegistrationFlow>();
 
   // Get ?flow=... from the URL
   const { flow: flowId, return_to: returnTo } = router.query;
@@ -34,7 +31,7 @@ export default function KratosRegistration() {
     // If ?flow=.. was in the URL, we fetch it
     if (flowId) {
       ory
-        .getSelfServiceRegistrationFlow(String(flowId))
+        .getRegistrationFlow({ id: String(flowId) })
         .then(({ data }) => {
           // We received the flow - let's use its data and render the form!
           setFlow(data);
@@ -45,23 +42,26 @@ export default function KratosRegistration() {
 
     // Otherwise we initialize it
     ory
-      .initializeSelfServiceRegistrationFlowForBrowsers(
-        returnTo ? String(returnTo) : undefined
-      )
+      .createBrowserRegistrationFlow({
+        afterVerificationReturnTo: returnTo ? String(returnTo) : undefined
+      })
       .then(({ data }) => {
         setFlow(data);
       })
       .catch(handleFlowError(router, "registration", setFlow));
   }, [flowId, router, router.isReady, returnTo, flow]);
 
-  const onSubmit = (values: SubmitSelfServiceRegistrationFlowBody) =>
+  const onSubmit = (values: UpdateRegistrationFlowBody) =>
     router
       // On submission, add the flow ID to the URL but do not navigate. This prevents the user loosing
       // his data when she/he reloads the page.
       .push(`/registration?flow=${flow?.id}`, undefined, { shallow: true })
       .then(() =>
         ory
-          .submitSelfServiceRegistrationFlow(String(flow?.id), values)
+          .updateRegistrationFlow({
+            flow: String(flow?.id),
+            updateRegistrationFlowBody: values
+          })
           .then(({ data }) => {
             // If we ended up here, it means we are successfully signed up!
             //
@@ -101,10 +101,12 @@ export default function KratosRegistration() {
           </div>
         </div>
         <div className="mt-2">
-          <Link href="/login" passHref>
-            <a className="font-medium cursor-pointer text-blue-600 hover:text-blue-500">
-              Sign in
-            </a>
+          <Link
+            href="/login"
+            passHref
+            className="font-medium cursor-pointer text-blue-600 hover:text-blue-500"
+          >
+            Sign in
           </Link>
         </div>
       </div>

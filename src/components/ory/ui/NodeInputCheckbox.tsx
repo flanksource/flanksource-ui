@@ -1,5 +1,3 @@
-import { getNodeLabel } from "@ory/integrations/ui";
-
 import { NodeInputProps } from "./helpers";
 
 export function NodeInputCheckbox({
@@ -16,11 +14,6 @@ export function NodeInputCheckbox({
       defaultChecked={attributes.value === true}
       onChange={(e) => setValue(e.target.checked)}
       disabled={attributes.disabled || disabled}
-      label={getNodeLabel(node)}
-      state={
-        node.messages.find(({ type }) => type === "error") ? "error" : undefined
-      }
-      subtitle={node.messages.map(({ text }) => text).join("\n")}
     />
   );
 }
