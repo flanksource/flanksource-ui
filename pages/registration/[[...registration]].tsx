@@ -1,9 +1,8 @@
-// Import render helpers
-// Import the SDK
-import ClerkRegistration from "../src/components/Authentication/Clerk/ClerkRegistration";
-import KratosRegistration from "../src/components/Authentication/Kratos/KratosRegistration";
-import useDetermineAuthSystem from "../src/components/Authentication/useDetermineAuthSystem";
-import { Head } from "../src/components/Head/Head";
+import React from "react";
+import ClerkRegistration from "../../src/components/Authentication/Clerk/ClerkRegistration";
+import KratosRegistration from "../../src/components/Authentication/Kratos/KratosRegistration";
+import useDetermineAuthSystem from "../../src/components/Authentication/useDetermineAuthSystem";
+import { Head } from "../../src/components/Head/Head";
 
 // Renders the registration page
 export default function Registration() {

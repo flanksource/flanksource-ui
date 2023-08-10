@@ -2,8 +2,7 @@ import { isAuthEnabled } from "../context/Environment";
 import { getPerson, getPersons } from "./services/users";
 
 export const getUser = async (userId: string) => {
-  const isClerkAuthSystem = !!process.env.NEXT_PUBLIC_AUTH_IS_CLERK === true;
-  if (!isAuthEnabled() || isClerkAuthSystem) {
+  if (!isAuthEnabled()) {
     let people = (await getPersons()).data;
     return people?.[0] ?? null;
   }

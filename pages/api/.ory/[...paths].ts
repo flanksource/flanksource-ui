@@ -10,8 +10,5 @@ export { config };
 export default createApiHandler({
   fallbackToPlayground: true,
   dontUseTldForCookieDomain: true,
-  // we require this since we are proxying the Ory requests through nextjs
-  // Ory needs to know about our host to generate the correct urls for redirecting back between flows
-  // For example between Login MFA and Settings
   forwardAdditionalHeaders: ["x-forwarded-host"]
 });

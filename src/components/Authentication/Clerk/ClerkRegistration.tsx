@@ -1,6 +1,7 @@
 import { SignUp } from "@clerk/nextjs";
 import SignUpLayout from "./SignUpLayout";
 import { useRouter } from "next/router";
+import { clerkUrls } from "./ClerkAuthSessionChecker";
 
 export default function ClerkRegistration() {
   const { query } = useRouter();
@@ -11,7 +12,7 @@ export default function ClerkRegistration() {
     <SignUpLayout activeStep={1}>
       <SignUp
         signInUrl="/login"
-        afterSignUpUrl={`/create-org?return_to=${redirectUrl}`}
+        afterSignUpUrl={`/${clerkUrls.createOrganization}?return_to=${redirectUrl}`}
       />
     </SignUpLayout>
   );

@@ -1,6 +1,6 @@
-import useDetermineAuthSystem from "./useDetermineAuthSystem";
 import ClerkAuthSessionChecker from "./Clerk/ClerkAuthSessionChecker";
 import KratosAuthSessionChecker from "./Kratos/KratosAuthSessionChecker";
+import useDetermineAuthSystem from "./useDetermineAuthSystem";
 
 type AuthSessionCheckerProps = {
   children: React.ReactNode;

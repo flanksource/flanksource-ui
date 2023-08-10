@@ -1,5 +1,5 @@
 import { LoginFlow, UpdateLoginFlowBody } from "@ory/client";
-import { AxiosError, AxiosRequestConfig } from "axios";
+import { AxiosError } from "axios";
 import type { NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";

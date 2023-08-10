@@ -1,14 +1,11 @@
-import ClerkLogin from "../src/components/Authentication/Clerk/ClerkLogin";
-import KratosLogin from "../src/components/Authentication/Kratos/KratosLogin";
-import useDetermineAuthSystem from "../src/components/Authentication/useDetermineAuthSystem";
-import { Head } from "../src/components/Head/Head";
+import React from "react";
+import ClerkLogin from "../../src/components/Authentication/Clerk/ClerkLogin";
+import KratosLogin from "../../src/components/Authentication/Kratos/KratosLogin";
+import useDetermineAuthSystem from "../../src/components/Authentication/useDetermineAuthSystem";
+import { Head } from "../../src/components/Head/Head";
 
-export default function Login() {
+export default function Signin() {
   const authSystem = useDetermineAuthSystem();
-
-  if (authSystem === "clerk") {
-    // TODO: implement
-  }
 
   return (
     <>

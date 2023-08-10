@@ -137,13 +137,17 @@ const settingsNav: SettingsNavigationItems = {
       featureName: features["settings.connections"],
       resourceName: tables.connections
     },
-    {
-      name: "Users",
-      href: "/settings/users",
-      icon: HiUser,
-      featureName: features["settings.users"],
-      resourceName: tables.identities
-    },
+    ...(process.env.NEXT_PUBLIC_AUTH_IS_CLERK === "true"
+      ? []
+      : [
+          {
+            name: "Users",
+            href: "/settings/users",
+            icon: HiUser,
+            featureName: features["settings.users"],
+            resourceName: tables.identities
+          }
+        ]),
     ...schemaResourceTypes.map((x) => ({
       ...x,
       href: `/settings/${x.table}`
