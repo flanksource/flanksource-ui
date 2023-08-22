@@ -1,21 +1,20 @@
+import { ColumnDef } from "@tanstack/react-table";
 import { useEffect, useMemo, useState } from "react";
-import ReactTooltip from "react-tooltip";
-import {
-  sanitizeHTMLContent,
-  truncateText,
-  sanitizeHTMLContentToText
-} from "../../utils/common";
-import { ConfigTypeInsights } from "../ConfigInsights";
-import EmptyState from "../EmptyState";
 import {
   useGetConfigInsights,
   useGetTopologyRelatedInsightsQuery
 } from "../../api/query-hooks";
-import { toastError } from "../Toast/toast";
+import {
+  sanitizeHTMLContent,
+  sanitizeHTMLContentToText,
+  truncateText
+} from "../../utils/common";
+import { ConfigTypeInsights } from "../ConfigInsights";
+import EmptyState from "../EmptyState";
 import { InfiniteTable } from "../InfiniteTable/InfiniteTable";
 import TextSkeletonLoader from "../SkeletonLoader/TextSkeletonLoader";
+import { toastError } from "../Toast/toast";
 import ConfigInsightAgeCell from "./cells/ConfigInsightAgeCell";
-import { ColumnDef } from "@tanstack/react-table";
 import ConfigInsightNameCell from "./cells/ConfigInsightNameCell";
 
 function useFetchInsights(
@@ -126,10 +125,6 @@ export default function InsightsDetails(
       }),
     [insights]
   );
-
-  useEffect(() => {
-    ReactTooltip.rebuild();
-  });
 
   if (isLoading && !insights?.length) {
     return <TextSkeletonLoader className="w-full my-2" />;

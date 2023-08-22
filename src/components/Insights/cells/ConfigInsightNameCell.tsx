@@ -1,6 +1,6 @@
 import { CellContext } from "@tanstack/react-table";
-import { ConfigTypeInsights } from "../../ConfigInsights";
 import { ConfigAnalysisLink } from "../../ConfigAnalysisLink/ConfigAnalysisLink";
+import { ConfigTypeInsights } from "../../ConfigInsights";
 
 export default function ConfigInsightNameCell({
   row,
@@ -24,7 +24,6 @@ export default function ConfigInsightNameCell({
   return (
     <div
       data-html={true}
-      data-tip={insight.sanitizedMessageTxt}
       data-class="max-w-[20rem]"
       className="py-2 text-black overflow-hidden cursor-pointer flex-1 text-sm"
     >
