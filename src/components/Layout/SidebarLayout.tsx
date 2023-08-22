@@ -70,7 +70,7 @@ interface NavItemWrapperProps {
   className?: string;
 }
 
-const NavItemWrapper = (props: NavItemWrapperProps) => {
+function NavItemWrapper(props: NavItemWrapperProps) {
   const { as: Component = "div", active, children, className } = props;
 
   const cls = ({ isActive }: { isActive: boolean }) =>
@@ -78,7 +78,7 @@ const NavItemWrapper = (props: NavItemWrapperProps) => {
       active || isActive
         ? "bg-gray-800 text-gray-100"
         : "text-gray-200 hover:bg-gray-800 hover:text-gray-100",
-      "group rounded-md py-3 px-2 flex items-center text-md font-medium",
+      "group rounded-md py-1.5 px-2 flex items-center text-md font-medium",
       className
     );
   return Component === "div" ? (
@@ -88,7 +88,8 @@ const NavItemWrapper = (props: NavItemWrapperProps) => {
       {children}
     </Component>
   );
-};
+}
+
 function SideNavItem({
   name,
   current = false,
@@ -286,16 +287,19 @@ export function SidebarLayout({ navigation, settingsNav, checkPath }: Props) {
   return (
     <>
       <Toaster position="top-right" reverseOrder={false} />
-      <div className="flex h-screen min-w-[1280px] overflow-auto">
+      <div className="flex flex-row h-screen min-w-[1280px]">
         <div
-          className={clsx("transform duration-500 z-10 bg-gray-700", {
-            "w-56": !collapseSidebar,
-            "w-14": collapseSidebar
-          })}
+          className={clsx(
+            "transform duration-500 z-10 bg-gray-700 flex flex-col",
+            {
+              "w-56": !collapseSidebar,
+              "w-14": collapseSidebar
+            }
+          )}
           ref={innerRef}
         >
           <div
-            className={clsx("h-full transform duration-500", {
+            className={clsx("flex flex-col h-full transform duration-500", {
               "w-56": !collapseSidebar,
               "w-14": collapseSidebar
             })}
@@ -335,7 +339,7 @@ export function SidebarLayout({ navigation, settingsNav, checkPath }: Props) {
 
             <div
               className={clsx(
-                "flex flex-col flex-grow",
+                "flex flex-col flex-1 overflow-y-auto",
                 collapseSidebar ? "px-1" : "px-3"
               )}
             >
@@ -350,7 +354,9 @@ export function SidebarLayout({ navigation, settingsNav, checkPath }: Props) {
             </div>
           </div>
         </div>
-        <Outlet />
+        <div className="flex flex-col flex-1 h-screen overflow-auto bg-gray-50">
+          <Outlet />
+        </div>
       </div>
     </>
   );
