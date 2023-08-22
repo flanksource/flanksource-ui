@@ -286,16 +286,18 @@ export function SidebarLayout({ navigation, settingsNav, checkPath }: Props) {
   return (
     <>
       <Toaster position="top-right" reverseOrder={false} />
-      <div className="flex h-screen">
+      <div className="flex h-screen min-w-[1280px] overflow-auto">
         <div
-          className={clsx("transform duration-500 w-14 z-10 bg-gray-700", {
-            "lg:w-56": !collapseSidebar
+          className={clsx("transform duration-500 z-10 bg-gray-700", {
+            "w-56": !collapseSidebar,
+            "w-14": collapseSidebar
           })}
           ref={innerRef}
         >
           <div
-            className={clsx("h-full transform duration-500 w-14", {
-              "lg:w-56": !collapseSidebar
+            className={clsx("h-full transform duration-500", {
+              "w-56": !collapseSidebar,
+              "w-14": collapseSidebar
             })}
           >
             <button
