@@ -140,11 +140,14 @@ function SideNavGroup({
             <NavLabel icon={icon} active={current} iconOnly name={name} />
           </NavItemWrapper>
         </Menu.Button>
+        {/* @ts-expect-error */}
         <Menu.Items className="absolute border left-0 ml-12 w-48 shadow-md top-0 z-10 bg-gray-800 space-y-1">
           {submenu.map(({ name, icon, href, featureName, resourceName }) =>
             !isFeatureDisabled(featureName!)
               ? withAccessCheck(
+                  /* @ts-expect-error */
                   <Menu.Item key={name}>
+                    {/* @ts-expect-error */}
                     {({ active }) => (
                       <NavLink className="w-full" to={href}>
                         <NavItemWrapper active={active}>

@@ -1,4 +1,4 @@
-import { UserProfile } from "../UserProfile/UserProfile";
+import { UserProfileDropdown } from "../UserProfile/UserProfile";
 
 export function MinimalLayout({ children, title }) {
   return (
@@ -10,7 +10,7 @@ export function MinimalLayout({ children, title }) {
               <div>{title}</div>
             </div>
             <div className="ml-4 flex items-center md:ml-6">
-              <UserProfile />
+              <UserProfileDropdown />
             </div>
           </div>
         </div>

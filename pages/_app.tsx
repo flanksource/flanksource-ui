@@ -8,9 +8,6 @@ import Head from "next/head";
 export default function MyApp({ Component, pageProps }: AppProps) {
   return (
     <QueryClientProvider client={queryClient}>
-      <Head>
-        <link rel="shortcut icon" href="/favicon.svg" />
-      </Head>
       <div id="root" suppressHydrationWarning>
         <Component {...pageProps} />
       </div>

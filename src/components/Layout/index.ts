@@ -1,4 +1,4 @@
-import { SearchLayout } from "./search";
+import { SearchLayout } from "./SearchLayout";
 import { MinimalLayout } from "./minimal";
 import { SidebarLayout } from "./SidebarLayout";
 
