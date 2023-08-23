@@ -18,8 +18,8 @@ type Props = React.HTMLProps<HTMLDivElement> & {
 export function ComponentNamesDropdown({
   control,
   value,
-  prefix = "Severity:",
-  name = "severity",
+  prefix = "Component:",
+  name = "component",
   className,
   showAllOption,
   dropDownClassNames,
@@ -35,11 +35,17 @@ export function ComponentNamesDropdown({
       .filter((item: TopologyComponentItem) => {
         return item.external_id;
       })
-      .map((item) => {
+      .map((component) => {
         const option: StateOption = {
-          label: item.name || "",
-          value: item.id || "",
-          icon: <Icon name={item.name} icon={item.icon} className="h-5 w-5" />
+          label: component.name || "",
+          value: component.id || "",
+          icon: (
+            <Icon
+              name={component.icon}
+              secondary={component.name}
+              className="h-5 w-5"
+            />
+          )
         };
         return option;
       });
