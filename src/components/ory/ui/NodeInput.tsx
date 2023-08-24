@@ -5,7 +5,7 @@ import { NodeInputHidden } from "./NodeInputHidden";
 import { NodeInputSubmit } from "./NodeInputSubmit";
 import { NodeInputProps } from "./helpers";
 
-export function NodeInput<T>(props: NodeInputProps) {
+export function NodeInput(props: NodeInputProps) {
   const { attributes } = props;
 
   switch (attributes.type) {

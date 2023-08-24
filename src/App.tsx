@@ -1,7 +1,5 @@
 import { AdjustmentsIcon } from "@heroicons/react/solid";
-import { useQuery } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { AxiosError } from "axios";
 import { Provider } from "jotai";
 import React, { ReactNode, useEffect, useState } from "react";
 import { IconType } from "react-icons";
@@ -19,11 +17,10 @@ import {
   useLocation
 } from "react-router-dom";
 import ReactTooltip from "react-tooltip";
-import { getUser } from "./api/auth";
-import { User } from "./api/services/users";
 import { Canary } from "./components";
+import { withAccessCheck } from "./components/AccessCheck/AccessCheck";
+import AuthProviderWrapper from "./components/Authentication/AuthProviderWrapper";
 import { ErrorBoundary } from "./components/ErrorBoundary";
-import ErrorPage from "./components/Errors/ErrorPage";
 import { LogsIcon } from "./components/Icons/LogsIcon";
 import { TopologyIcon } from "./components/Icons/TopologyIcon";
 import JobsHistorySettingsPage from "./components/JobsHistory/JobsHistorySettingsPage";
@@ -35,7 +32,6 @@ import {
   schemaResourceTypes
 } from "./components/SchemaResourcePage/resourceTypes";
 import FullPageSkeletonLoader from "./components/SkeletonLoader/FullPageSkeletonLoader";
-import { AuthContext } from "./context";
 import { ConfigPageContextProvider } from "./context/ConfigPageContext";
 import {
   FeatureFlagsContextProvider,
@@ -44,6 +40,8 @@ import {
 import { HealthPageContextProvider } from "./context/HealthPageContext";
 import { IncidentPageContextProvider } from "./context/IncidentPageContext";
 import { TopologyPageContextProvider } from "./context/TopologyPageContext";
+import { UserAccessStateContextProvider } from "./context/UserAccessContext/UserAccessContext";
+import { tables } from "./context/UserAccessContext/permissions";
 import {
   ConfigChangesPage,
   ConfigDetailsChangesPage,
@@ -55,19 +53,15 @@ import {
   TopologyPage
 } from "./pages";
 import { ConnectionsPage } from "./pages/Settings/ConnectionsPage";
+import { EventQueueStatusPage } from "./pages/Settings/EventQueueStatus";
 import { FeatureFlagsPage } from "./pages/Settings/FeatureFlagsPage";
 import { LogBackendsPage } from "./pages/Settings/LogBackendsPage";
 import { UsersPage } from "./pages/UsersPage";
+import { ConfigDetailsInsightsPage } from "./pages/config/ConfigDetailsInsightsPage";
 import { ConfigInsightsPage } from "./pages/config/ConfigInsightsList";
 import { HealthPage } from "./pages/health";
-import { stringSortHelper } from "./utils/common";
-import { UserAccessStateContextProvider } from "./context/UserAccessContext/UserAccessContext";
 import { features } from "./services/permissions/features";
-import { withAccessCheck } from "./components/AccessCheck/AccessCheck";
-import { tables } from "./context/UserAccessContext/permissions";
-import { isAuthEnabled } from "./context/Environment";
-import { EventQueueStatusPage } from "./pages/Settings/EventQueueStatus";
-import { ConfigDetailsInsightsPage } from "./pages/config/ConfigDetailsInsightsPage";
+import { stringSortHelper } from "./utils/common";
 
 export type NavigationItems = {
   name: string;
@@ -143,13 +137,17 @@ const settingsNav: SettingsNavigationItems = {
       featureName: features["settings.connections"],
       resourceName: tables.connections
     },
-    {
-      name: "Users",
-      href: "/settings/users",
-      icon: HiUser,
-      featureName: features["settings.users"],
-      resourceName: tables.identities
-    },
+    ...(process.env.NEXT_PUBLIC_AUTH_IS_CLERK === "true"
+      ? []
+      : [
+          {
+            name: "Users",
+            href: "/settings/users",
+            icon: HiUser,
+            featureName: features["settings.users"],
+            resourceName: tables.identities
+          }
+        ]),
     ...schemaResourceTypes.map((x) => ({
       ...x,
       href: `/settings/${x.table}`
@@ -453,33 +451,10 @@ function SidebarWrapper() {
 }
 
 export function App() {
-  const [user, setUser] = useState<User | null>(null);
-
-  const { isLoading, error } = useQuery<User | null, AxiosError>(
-    ["getUser", !isAuthEnabled()],
-    () => getUser(),
-    {
-      onSuccess: (data) => {
-        setUser(data ?? null);
-      },
-      onError: (err) => {
-        console.error(err);
-      }
-    }
-  );
-
-  if (error && !user) {
-    return <ErrorPage error={error} />;
-  }
-
-  if (!user || isLoading) {
-    return <FullPageSkeletonLoader />;
-  }
-
   return (
     <BrowserRouter>
       <Provider>
-        <AuthContext.Provider value={{ user, setUser }}>
+        <AuthProviderWrapper>
           <UserAccessStateContextProvider>
             <FeatureFlagsContextProvider>
               <TopologyPageContextProvider>
@@ -495,7 +470,7 @@ export function App() {
               </TopologyPageContextProvider>
             </FeatureFlagsContextProvider>
           </UserAccessStateContextProvider>
-        </AuthContext.Provider>
+        </AuthProviderWrapper>
       </Provider>
     </BrowserRouter>
   );

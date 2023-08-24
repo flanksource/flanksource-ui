@@ -1,14 +1,14 @@
 import {
-  SelfServiceLoginFlow,
-  SelfServiceRecoveryFlow,
-  SelfServiceRegistrationFlow,
-  SelfServiceSettingsFlow,
-  SelfServiceVerificationFlow,
-  SubmitSelfServiceLoginFlowBody,
-  SubmitSelfServiceRecoveryFlowBody,
-  SubmitSelfServiceRegistrationFlowBody,
-  SubmitSelfServiceSettingsFlowBody,
-  SubmitSelfServiceVerificationFlowBody,
+  LoginFlow as SelfServiceLoginFlow,
+  RecoveryFlow as SelfServiceRecoveryFlow,
+  RegistrationFlow as SelfServiceRegistrationFlow,
+  SettingsFlow as SelfServiceSettingsFlow,
+  VerificationFlow as SelfServiceVerificationFlow,
+  UpdateLoginFlowBody as SubmitSelfServiceLoginFlowBody,
+  UpdateRecoveryFlowBody as SubmitSelfServiceRecoveryFlowBody,
+  UpdateRegistrationFlowBody as SubmitSelfServiceRegistrationFlowBody,
+  UpdateSettingsFlowBody as SubmitSelfServiceSettingsFlowBody,
+  UpdateVerificationFlowBody as SubmitSelfServiceVerificationFlowBody,
   UiNode
 } from "@ory/client";
 import { getNodeId } from "@ory/integrations/ui";

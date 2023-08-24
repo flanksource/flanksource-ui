@@ -52,10 +52,10 @@ export type InviteUserPayload = {
 };
 
 export const getPerson = (id: string) =>
-  resolve<User[]>(IncidentCommander.get(`/people?id=eq.${id}`));
+  resolve<User[]>(IncidentCommander.get<User[]>(`/people?id=eq.${id}`));
 
 export const getPersons = () =>
-  resolve<User[]>(IncidentCommander.get(`/people`));
+  resolve<User[]>(IncidentCommander.get<User[]>(`/people`));
 
 export const getPersonWithEmail = (email: string) =>
   resolve<User>(IncidentCommander.get(`/people?email=eq.${email}`));
@@ -126,3 +126,13 @@ export const updateUserRole = (userId: string, roles: string[]) => {
 
 export const deleteUser = (userId: string) =>
   resolve<{}>(IncidentCommander.delete(`/identities?id=eq.${userId}`));
+
+type WhoamiResponse = {
+  message: string;
+  payload: User;
+};
+
+export async function whoami() {
+  const res = await Auth.get<WhoamiResponse>(`/whoami`);
+  return res.data.payload;
+}

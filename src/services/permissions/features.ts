@@ -14,7 +14,8 @@ export const features = {
   "settings.job_history": "settings.job_history",
   "settings.feature_flags": "settings.feature_flags",
   "settings.logging_backends": "settings.logging_backends",
-  "settings.event_queue_status": "settings.event_queue_status"
+  "settings.event_queue_status": "settings.event_queue_status",
+  "settings.organization_profile": "settings.organization_profile"
 };
 
 export const featureToParentMap = {

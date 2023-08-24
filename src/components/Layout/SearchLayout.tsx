@@ -1,6 +1,6 @@
 import DashboardErrorBoundary from "../Errors/DashboardErrorBoundary";
 import { RefreshButton } from "../RefreshButton";
-import { UserProfile } from "../UserProfile/UserProfile";
+import { UserProfileDropdown } from "../UserProfile/UserProfile";
 
 interface IProps {
   children: React.ReactNode;
@@ -31,7 +31,7 @@ export function SearchLayout({
               <RefreshButton onClick={onRefresh} animate={loading} />
             )}
             {extra}
-            <UserProfile />
+            <UserProfileDropdown />
           </div>
         </div>
       </div>

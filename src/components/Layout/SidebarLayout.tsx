@@ -6,16 +6,16 @@ import { Toaster } from "react-hot-toast";
 import { IconType } from "react-icons";
 import { IoChevronForwardOutline } from "react-icons/io5";
 import { Link, NavLink, Outlet } from "react-router-dom";
-import { $ArrayElemType } from "../../types/utility";
 import { NavigationItems, SettingsNavigationItems } from "../../App";
+import { $ArrayElemType } from "../../types/utility";
 
 import { AuthContext } from "../../context";
+import { useFeatureFlagsContext } from "../../context/FeatureFlagsContext";
 import { useOuterClick } from "../../lib/useOuterClick";
 import { getLocalItem, setLocalItem } from "../../utils/storage";
-import FullPageSkeletonLoader from "../SkeletonLoader/FullPageSkeletonLoader";
-import { Icon } from "../Icon";
-import { useFeatureFlagsContext } from "../../context/FeatureFlagsContext";
 import { withAccessCheck } from "../AccessCheck/AccessCheck";
+import { Icon } from "../Icon";
+import FullPageSkeletonLoader from "../SkeletonLoader/FullPageSkeletonLoader";
 
 interface Props {
   navigation: NavigationItems;
@@ -140,11 +140,14 @@ function SideNavGroup({
             <NavLabel icon={icon} active={current} iconOnly name={name} />
           </NavItemWrapper>
         </Menu.Button>
+        {/* @ts-expect-error */}
         <Menu.Items className="absolute border left-0 ml-12 w-48 shadow-md top-0 z-10 bg-gray-800 space-y-1">
-          {submenu.map(({ name, icon, href, featureName, resourceName }) =>
-            !isFeatureDisabled(featureName!)
+          {submenu.map(({ name, icon, href, featureName, resourceName }) => {
+            return !isFeatureDisabled(featureName!)
               ? withAccessCheck(
+                  /* @ts-expect-error */
                   <Menu.Item key={name}>
+                    {/* @ts-expect-error */}
                     {({ active }) => (
                       <NavLink className="w-full" to={href}>
                         <NavItemWrapper active={active}>
@@ -160,8 +163,8 @@ function SideNavGroup({
                   resourceName,
                   "read"
                 )
-              : null
-          )}
+              : null;
+          })}
         </Menu.Items>
       </Menu>
     );
