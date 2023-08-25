@@ -174,7 +174,7 @@ const settingsNav: SettingsNavigationItems = {
       resourceName: tables.database
     },
     {
-      name: "Event Queue Status",
+      name: "Event Queue",
       href: "/settings/event-queue-status",
       icon: FaTasks,
       featureName: features["settings.event_queue_status"],

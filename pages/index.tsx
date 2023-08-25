@@ -8,7 +8,7 @@ import { isCanaryUI } from "../src/context/Environment";
 const Home: NextPage = () => {
   return (
     <AuthSessionChecker>
-      <div className="container-fluid">
+      <div className="container-fluid flex flex-col overflow-auto">
         <Head prefix="Home" />
         {isCanaryUI ? <CanaryCheckerApp /> : <App />}
       </div>
