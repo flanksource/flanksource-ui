@@ -1,48 +1,35 @@
 import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import { useState } from "react";
-import { getUser } from "../../../api/auth";
-import { User } from "../../../api/services/users";
+import { User, whoami } from "../../../api/services/users";
 import { AuthContext } from "../../../context";
-import { isAuthEnabled } from "../../../context/Environment";
 import ErrorPage from "../../Errors/ErrorPage";
 import FullPageSkeletonLoader from "../../SkeletonLoader/FullPageSkeletonLoader";
-import useCurrentKratosUser from "./useCurrentKratosUserID";
 
 type Props = {
   children: React.ReactNode;
 };
 
 export default function KratosAuthContextProvider({ children }: Props) {
-  const [user, setUser] = useState<User | null>(null);
+  const {
+    data: user,
+    isLoading,
+    error
+  } = useQuery<User, AxiosError>(["user", "whoami"], () => whoami(), {
+    refetchOnWindowFocus: false,
+    refetchInterval: 0,
+    refetchOnReconnect: false
+  });
 
-  const userId = useCurrentKratosUser();
-
-  const { isLoading, error } = useQuery<User | null, AxiosError>(
-    ["getUser", !isAuthEnabled()],
-    () => getUser(userId!),
-    {
-      onSuccess: (data) => {
-        setUser(data ?? null);
-      },
-      onError: (err) => {
-        console.error("Error fetching user", err);
-        console.error(err);
-      },
-      enabled: !!userId
-    }
-  );
+  if (isLoading && !user) {
+    return <FullPageSkeletonLoader />;
+  }
 
   if (error && !user) {
     return <ErrorPage error={error} />;
   }
 
-  if (!user || isLoading) {
-    return <FullPageSkeletonLoader />;
-  }
-
   return (
-    <AuthContext.Provider value={{ user, setUser }}>
+    <AuthContext.Provider value={{ user, setUser: () => {} }}>
       {children}
     </AuthContext.Provider>
   );
