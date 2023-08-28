@@ -1,14 +1,14 @@
-import FormikTextInput from "../Formik/FormikTextInput";
-import FormikTemplateFields from "../Formik/FormikTemplateFields";
-import HTTPMethodFieldsGroup from "./HTTPMethodFieldsGroup";
-import FormikAuthFieldsGroup from "../Formik/FormikAuthFieldsGroup";
-import FormikMultiSelectListField from "../Formik/FormikMultiSelectListField";
+import { getIn, useFormikContext } from "formik";
+import { useEffect } from "react";
+import FormikAuthFields from "../Formik/FormikAuthFields";
 import FormikCheckboxFieldsGroup from "../Formik/FormikCheckboxFieldsGroup";
 import FormikConfigEnvVarFieldsArray from "../Formik/FormikConfigEnvVarFieldsArray";
 import FormikIconPicker from "../Formik/FormikIconPicker";
-import { getIn, useFormikContext } from "formik";
-import { useEffect } from "react";
+import FormikMultiSelectListField from "../Formik/FormikMultiSelectListField";
 import FormikScheduleField from "../Formik/FormikScheduleField";
+import FormikTemplateFields from "../Formik/FormikTemplateFields";
+import FormikTextInput from "../Formik/FormikTextInput";
+import HTTPMethodFieldsGroup from "./HTTPMethodFieldsGroup";
 
 type HTTPHealthFormEditorProps = {
   fieldName: string;
@@ -61,7 +61,24 @@ export function HTTPHealthFormEditor({
         label="Headers"
       />
 
-      <FormikAuthFieldsGroup name={`${fieldName}`} />
+      <FormikAuthFields
+        label="Authentication"
+        types={[
+          {
+            value: { basic: true },
+            label: "Basic"
+          },
+          {
+            value: { ntlm: true },
+            label: "NTLM"
+          },
+          {
+            value: { ntlmv2: true },
+            label: "NTLMv2"
+          }
+        ]}
+        name={`${fieldName}`}
+      />
 
       <h5 className="font-bold">Test</h5>
       <FormikMultiSelectListField

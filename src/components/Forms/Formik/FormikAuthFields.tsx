@@ -1,14 +1,15 @@
 import { useFormikContext } from "formik";
 import { get } from "lodash";
-import { useState, useEffect, useCallback } from "react";
-import FormikCheckboxFieldsGroup from "./FormikCheckboxFieldsGroup";
-import FormikEnvVarConfigsFields from "./FormikConfigEnvVarFields";
+import { useCallback, useEffect, useState } from "react";
 import { Switch } from "../../Switch";
+import FormikEnvVarConfigsFields from "./FormikConfigEnvVarFields";
 
 type FormikAuthFieldsProps = {
   name: string;
-  fields: {
-    name: string;
+  types: {
+    value: {
+      [key: string]: boolean;
+    };
     label: string;
   }[];
   label?: string;
@@ -16,43 +17,47 @@ type FormikAuthFieldsProps = {
 
 export default function FormikAuthFields({
   name,
-  fields,
+  types,
   label = "Authentication"
 }: FormikAuthFieldsProps) {
   const { setFieldValue, values } = useFormikContext<Record<string, any>>();
 
   const [selectedMethod, setSelectedMethod] = useState<"None" | string>(() => {
-    fields.forEach((field) => {
-      if (get(values, `${name}.${field.name}`)) {
-        return field.name;
+    types.forEach((field) => {
+      console.log("field", field);
+      if (get(values, `${name}.${Object.keys(field.value)[0]}`)) {
+        return field.label;
       }
     });
     return "None";
   });
 
   useEffect(() => {
-    fields.forEach((field) => {
-      if (get(values, `${name}.${field.name}`)) {
-        setSelectedMethod(field.name);
+    types.forEach((field) => {
+      if (get(values, `${name}.${Object.keys(field.value)[0]}`)) {
+        setSelectedMethod(field.label);
       }
     });
-  }, [fields, name, values]);
+  }, [types, name, values]);
 
   const setAuthenticationMethodFormValue = useCallback(
     (method: "None" | string) => {
       // reset all fields
-      fields.forEach((field) => {
-        setFieldValue(`${name}.${field.name}`, undefined);
+      types.forEach((field) => {
+        setFieldValue(`${name}.${Object.keys(field.value)[0]}`, undefined);
       });
 
+      if (method === "None") {
+        return;
+      }
+
       // set the correct method
-      fields.forEach((field) => {
-        if (field.name === method) {
-          setFieldValue(`${name}.${field.name}`, true);
-        }
-      });
+      const selectedItem = types.find((field) => field.label === method);
+      if (selectedItem) {
+        setFieldValue(`${name}.${Object.keys(selectedItem.value)[0]}`, true);
+      }
     },
-    [fields, name, setFieldValue]
+    [types, name, setFieldValue]
   );
 
   return (
@@ -60,7 +65,7 @@ export default function FormikAuthFields({
       <label className="font-semibold text-sm">{label}</label>
       <div className="flex flex-row w-full">
         <Switch
-          options={fields.map((field) => field.label)}
+          options={["None", ...types.map((field) => field.label)]}
           defaultValue="None"
           value={selectedMethod}
           onChange={(v) => {
@@ -70,23 +75,16 @@ export default function FormikAuthFields({
         />
       </div>
       {selectedMethod !== "None" && (
-        <div className="flex flex-col p-2">
-          <FormikCheckboxFieldsGroup
-            name={`${name}.authentication.username`}
+        <div className="flex flex-col gap-4 p-2">
+          <FormikEnvVarConfigsFields
             label="Username"
-          >
-            <FormikEnvVarConfigsFields
-              name={`${name}.authentication.username`}
-            />
-          </FormikCheckboxFieldsGroup>
-          <FormikCheckboxFieldsGroup
-            name={`${name}.authentication.password`}
+            name={`${name}.authentication.username`}
+          />
+
+          <FormikEnvVarConfigsFields
             label="Password"
-          >
-            <FormikEnvVarConfigsFields
-              name={`${name}.authentication.password`}
-            />
-          </FormikCheckboxFieldsGroup>
+            name={`${name}.authentication.password`}
+          />
         </div>
       )}
     </div>

@@ -5,11 +5,18 @@ interface IProps {
   options: IItem[];
   value: string | number;
   onChange: (v?: string | number) => void;
+  className?: string;
 }
 
-export function RadioOptionsGroup({ name, options, value, onChange }: IProps) {
+export function RadioOptionsGroup({
+  name,
+  options,
+  value,
+  onChange,
+  className
+}: IProps) {
   return (
-    <div>
+    <div className={className}>
       {options.map((option) => (
         <div key={option.value} className="form-check">
           <label className="flex space-x-2 items-center form-check-label text-gray-800 hover:font-medium">

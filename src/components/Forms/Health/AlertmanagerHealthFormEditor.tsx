@@ -1,11 +1,11 @@
-import FormikTextInput from "../Formik/FormikTextInput";
-import FormikTemplateFields from "../Formik/FormikTemplateFields";
-import FormikCheckboxFieldsGroup from "../Formik/FormikCheckboxFieldsGroup";
-import FormikIconPicker from "../Formik/FormikIconPicker";
 import { getIn, useFormikContext } from "formik";
 import { useEffect } from "react";
+import FormikAuthFields from "../Formik/FormikAuthFields";
+import FormikCheckboxFieldsGroup from "../Formik/FormikCheckboxFieldsGroup";
+import FormikIconPicker from "../Formik/FormikIconPicker";
 import FormikScheduleField from "../Formik/FormikScheduleField";
-import FormikAuthFieldsGroup from "../Formik/FormikAuthFieldsGroup";
+import FormikTemplateFields from "../Formik/FormikTemplateFields";
+import FormikTextInput from "../Formik/FormikTextInput";
 
 type AlertmanagerHealthFormEditorProps = {
   fieldName: string;
@@ -45,7 +45,16 @@ export function AlertmanagerHealthFormEditor({
       <FormikScheduleField name={`${name}.schedule`} />
       <FormikTextInput name={`${fieldName}.description`} label="Description" />
       <FormikTextInput name={`${fieldName}.host`} label="URL" required />
-      <FormikAuthFieldsGroup name={`${fieldName}`} />
+      <FormikAuthFields
+        label="Authentication"
+        types={[
+          {
+            value: { basic: true },
+            label: "Basic"
+          }
+        ]}
+        name={`${fieldName}`}
+      />
       {/* TODO: These must array of text */}
       <FormikTextInput name={`${fieldName}.alerts`} label="Alerts" />
       {/* TODO: These must key/val pairs */}

@@ -1,13 +1,12 @@
-import FormikTextInput from "../Formik/FormikTextInput";
-import FormikTemplateFields from "../Formik/FormikTemplateFields";
-import FormikAuthFieldsGroup from "../Formik/FormikAuthFieldsGroup";
-import FormikCheckboxFieldsGroup from "../Formik/FormikCheckboxFieldsGroup";
-import FormikIconPicker from "../Formik/FormikIconPicker";
 import { getIn, useFormikContext } from "formik";
 import { useEffect } from "react";
-import FormikScheduleField from "../Formik/FormikScheduleField";
-import FormikEnvVarConfigsFields from "../Formik/FormikConfigEnvVarFields";
+import FormikAuthFields from "../Formik/FormikAuthFields";
+import FormikCheckboxFieldsGroup from "../Formik/FormikCheckboxFieldsGroup";
 import FormikConnectionField from "../Formik/FormikConnectionField";
+import FormikIconPicker from "../Formik/FormikIconPicker";
+import FormikScheduleField from "../Formik/FormikScheduleField";
+import FormikTemplateFields from "../Formik/FormikTemplateFields";
+import FormikTextInput from "../Formik/FormikTextInput";
 
 type MongoHealthFormEditorProps = {
   fieldName: string;
@@ -47,14 +46,6 @@ export function MongoHealthFormEditor({
 
       <FormikScheduleField name={`${name}.schedule`} />
 
-      <FormikCheckboxFieldsGroup name={`${name}.username`} label="Username">
-        <FormikEnvVarConfigsFields name={`${fieldName}.username`} />
-      </FormikCheckboxFieldsGroup>
-
-      <FormikCheckboxFieldsGroup name={`${name}.password`} label="Password">
-        <FormikEnvVarConfigsFields name={`${fieldName}.password`} />
-      </FormikCheckboxFieldsGroup>
-
       <FormikConnectionField
         name={`${fieldName}.connection`}
         label="Connection"
@@ -64,7 +55,16 @@ export function MongoHealthFormEditor({
 
       <FormikTemplateFields name={`${fieldName}.test`} label="Test" />
 
-      <FormikAuthFieldsGroup name={`${fieldName}`} />
+      <FormikAuthFields
+        label="Authentication"
+        types={[
+          {
+            value: { basic: true },
+            label: "Basic"
+          }
+        ]}
+        name={`${fieldName}`}
+      />
 
       <FormikCheckboxFieldsGroup
         name={`${fieldName}.advanced`}

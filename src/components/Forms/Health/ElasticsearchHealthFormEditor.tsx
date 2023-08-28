@@ -1,11 +1,11 @@
-import FormikTextInput from "../Formik/FormikTextInput";
-import FormikTemplateFields from "../Formik/FormikTemplateFields";
-import FormikAuthFieldsGroup from "../Formik/FormikAuthFieldsGroup";
-import FormikCheckboxFieldsGroup from "../Formik/FormikCheckboxFieldsGroup";
-import FormikIconPicker from "../Formik/FormikIconPicker";
 import { getIn, useFormikContext } from "formik";
 import { useEffect } from "react";
+import FormikAuthFields from "../Formik/FormikAuthFields";
+import FormikCheckboxFieldsGroup from "../Formik/FormikCheckboxFieldsGroup";
+import FormikIconPicker from "../Formik/FormikIconPicker";
 import FormikScheduleField from "../Formik/FormikScheduleField";
+import FormikTemplateFields from "../Formik/FormikTemplateFields";
+import FormikTextInput from "../Formik/FormikTextInput";
 
 type ElasticsearchHealthFormEditorProps = {
   fieldName: string;
@@ -60,7 +60,16 @@ export function ElasticsearchHealthFormEditor({
 
       <FormikTemplateFields name={`${fieldName}.test`} label="Test" />
 
-      <FormikAuthFieldsGroup name={`${fieldName}`} />
+      <FormikAuthFields
+        label="Authentication"
+        types={[
+          {
+            value: { basic: true },
+            label: "Basic"
+          }
+        ]}
+        name={`${fieldName}`}
+      />
 
       <FormikCheckboxFieldsGroup
         name={`${fieldName}.advanced`}

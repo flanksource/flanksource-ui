@@ -43,7 +43,7 @@ export function Switch<T extends string | number | boolean>({
         return (
           <button
             type="button"
-            className={`${itemsClassName} rounded-md items-center text-sm text-gray-600 font-medium focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus:outline-none focus-visible:ring-offset-gray-100`}
+            className={`${itemsClassName} rounded-md items-center text-sm text-gray-600 font-medium focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus:outline-none focus-visible:ring-offset-gray-100 whitespace-nowrap`}
             tabIndex={0}
             onClick={(e) => handleClick(option)}
             key={option.toString()}
