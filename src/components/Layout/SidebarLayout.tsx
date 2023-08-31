@@ -222,8 +222,8 @@ function SideNav({
   const { isFeatureDisabled } = useFeatureFlagsContext();
 
   return (
-    <nav className="flex-col space-y-2 divide-y divide-gray-500">
-      <div>
+    <nav className="flex flex-col divide-y divide-gray-500">
+      <div className="flex flex-col gap-1 mb-1">
         {navs.map((item) =>
           !isFeatureDisabled(item.featureName!)
             ? withAccessCheck(
