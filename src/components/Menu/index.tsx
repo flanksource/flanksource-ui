@@ -67,5 +67,6 @@ const MenuC = ({ children }: MenuProps) => (
 export const Menu = Object.assign(MenuC, {
   Item: Item,
   Items: Items,
-  VerticalIconButton: VerticalIconButton
+  VerticalIconButton: VerticalIconButton,
+  Button: HLMenu.Button
 });

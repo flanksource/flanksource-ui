@@ -87,6 +87,15 @@ export const Auth = axios.create({
   }
 });
 
+export const PlaybookAPI = axios.create({
+  baseURL: `${API_BASE}/playbook`,
+  headers: {
+    Accept: "application/json",
+    Prefer: "return=representation",
+    "Content-Type": "application/json"
+  }
+});
+
 export const Rback = axios.create({
   baseURL: `${API_BASE}/rbac`,
   headers: {

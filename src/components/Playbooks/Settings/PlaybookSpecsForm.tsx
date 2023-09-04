@@ -50,10 +50,10 @@ export default function PlaybookSpecsForm({
   });
 
   const { mutate: updatePlaybook } = useMutation({
-    mutationFn: async ({ id, name, source, spec }: PlaybookSpec) => {
+    mutationFn: async ({ ID: id, name, source, spec }: PlaybookSpec) => {
       // let's avoid updating fields that are not editable
       const newPayload: UpdatePlaybookSpec = {
-        id,
+        ID: id,
         name,
         source,
         spec
@@ -106,7 +106,7 @@ export default function PlaybookSpecsForm({
           }
         }
         onSubmit={(value) => {
-          if (playbook?.id) {
+          if (playbook?.ID) {
             updatePlaybook(value as PlaybookSpec);
           } else {
             createPlaybook(value as NewPlaybookSpec);
@@ -133,13 +133,13 @@ export default function PlaybookSpecsForm({
               </div>
             </div>
             <div className="flex items-center justify-between py-4 px-5 bg-gray-100">
-              {playbook?.id && (
+              {playbook?.ID && (
                 <Button
                   type="button"
                   text={isDeleting ? "Deleting..." : "Delete"}
                   icon={<FaTrash />}
                   onClick={() => {
-                    deletePlaybook(playbook.id);
+                    deletePlaybook(playbook.ID);
                   }}
                   className="btn-danger"
                 />
@@ -147,7 +147,7 @@ export default function PlaybookSpecsForm({
 
               <Button
                 type="submit"
-                text={playbook?.id ? "Update" : "Save"}
+                text={playbook?.ID ? "Update" : "Save"}
                 className="btn-primary"
               />
             </div>
