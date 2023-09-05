@@ -1,4 +1,4 @@
-import { ReactElement, useEffect, useState } from "react";
+import { ReactElement, useCallback, useEffect, useState } from "react";
 import {
   ActionType,
   useUserAccessStateContext
@@ -14,17 +14,17 @@ export function AccessCheck({ resource, action, children }: AccessCheckProps) {
   const { hasAnyResourceAccess, roles } = useUserAccessStateContext();
   const [render, setRender] = useState(false);
 
-  async function checkAccess() {
+  const checkAccess = useCallback(async () => {
     const shouldRender = await hasAnyResourceAccess(
       Array.isArray(resource) ? resource : [resource],
       action
     );
     setRender(shouldRender);
-  }
+  }, [action, hasAnyResourceAccess, resource]);
 
   useEffect(() => {
     checkAccess();
-  }, [action, resource, roles]);
+  }, [action, checkAccess, resource, roles]);
 
   if (render) return children ?? null;
 
