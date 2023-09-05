@@ -1,18 +1,28 @@
 import { useEffect, useState } from "react";
-import { Head } from "../../components/Head/Head";
-import { SearchLayout } from "../../components/Layout";
-import { useLoader } from "../../hooks";
+import { AiFillPlusCircle } from "react-icons/ai";
+import {
+  createResource,
+  deleteResource,
+  getAll,
+  updateResource
+} from "../../api/schemaResources";
 import { BreadcrumbNav, BreadcrumbRoot } from "../../components/BreadcrumbNav";
 import ConnectionForm, {
   Connection
 } from "../../components/Connections/ConnectionForm";
 import { ConnectionList } from "../../components/Connections/ConnectionsList";
-import { AiFillPlusCircle } from "react-icons/ai";
-import { getAll, updateResource } from "../../api/schemaResources";
+import { Head } from "../../components/Head/Head";
+import { SearchLayout } from "../../components/Layout";
+import { SchemaApi } from "../../components/SchemaResourcePage/resourceTypes";
 import { toastError, toastSuccess } from "../../components/Toast/toast";
-import { createResource } from "../../api/schemaResources";
-import { deleteResource } from "../../api/schemaResources";
 import { useUser } from "../../context";
+import { useLoader } from "../../hooks";
+
+const connectionsSchemaConnection: SchemaApi = {
+  table: "connections",
+  api: "canary-checker",
+  name: "Connections"
+};
 
 export function ConnectionsPage() {
   const [connections, setConnections] = useState<Connection[]>([]);
@@ -24,10 +34,7 @@ export function ConnectionsPage() {
   async function fetchConnections() {
     setLoading(true);
     try {
-      const response = await getAll({
-        table: "connections",
-        api: "canary-checker"
-      });
+      const response = await getAll(connectionsSchemaConnection);
       if (response.data) {
         setConnections(response.data as unknown as Connection[]);
         setLoading(false);
@@ -51,16 +58,10 @@ export function ConnectionsPage() {
   async function createConnection(data: Connection) {
     setLoading(true);
     try {
-      const response = await createResource(
-        {
-          table: "connections",
-          api: "canary-checker"
-        },
-        {
-          ...data,
-          created_by: user.user?.id
-        }
-      );
+      const response = await createResource(connectionsSchemaConnection, {
+        ...data,
+        created_by: user.user?.id
+      });
       if (response?.data) {
         fetchConnections();
         setIsOpen(false);
@@ -78,16 +79,10 @@ export function ConnectionsPage() {
   async function updateConnection(data: Connection) {
     setLoading(true);
     try {
-      const response = await updateResource(
-        {
-          table: "connections",
-          api: "canary-checker"
-        },
-        {
-          ...data,
-          created_by: user.user?.id
-        }
-      );
+      const response = await updateResource(connectionsSchemaConnection, {
+        ...data,
+        created_by: user.user?.id
+      });
       if (response?.data) {
         fetchConnections();
         setIsOpen(false);
@@ -106,10 +101,7 @@ export function ConnectionsPage() {
     setLoading(true);
     try {
       const response = await deleteResource(
-        {
-          table: "connections",
-          api: "canary-checker"
-        },
+        connectionsSchemaConnection,
         data.id!
       );
       setEditedRow(undefined);

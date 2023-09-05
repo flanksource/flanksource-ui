@@ -1,40 +1,41 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { Form, Formik } from "formik";
-import { Button } from "../Button";
-import { FormikCodeEditor } from "../Forms/Formik/FormikCodeEditor";
-import FormikTextInput from "../Forms/Formik/FormikTextInput";
-import DeleteResource from "../SchemaResourcePage/Delete/DeleteResource";
-import { LogBackends } from "./LogBackends";
 import {
   useSettingsCreateResource,
   useSettingsUpdateResource
 } from "../../api/query-hooks/mutations/useSettingsResourcesMutations";
-import { useQueryClient } from "@tanstack/react-query";
+import { Button } from "../Button";
+import { FormikCodeEditor } from "../Forms/Formik/FormikCodeEditor";
+import FormikTextInput from "../Forms/Formik/FormikTextInput";
+import DeleteResource from "../SchemaResourcePage/Delete/DeleteResource";
+import { SchemaResourceType } from "../SchemaResourcePage/resourceTypes";
+import { LogBackends } from "./LogBackends";
 
 type ResourceFormProps = {
   values?: LogBackends;
   onUpdated?: () => void;
 };
 
+const logsBackendSchemaAPI: Pick<SchemaResourceType, "api" | "table" | "name"> =
+  {
+    api: "canary-checker",
+    name: "Log Backends",
+    table: "logging_backends"
+  };
 export default function LogBackendsForm({
   values,
   onUpdated = () => {}
 }: ResourceFormProps) {
   const { mutate: updateLoggingBackend } = useSettingsUpdateResource(
-    {
-      api: "canary-checker",
-      name: "Log Backends",
-      table: "logging_backends"
-    },
+    logsBackendSchemaAPI,
     undefined,
     true
   );
 
   const queryClient = useQueryClient();
 
-  const { mutate: createLoggingBackend } = useSettingsCreateResource({
-    api: "canary-checker",
-    table: "logging_backends"
-  });
+  const { mutate: createLoggingBackend } =
+    useSettingsCreateResource(logsBackendSchemaAPI);
 
   const initialValues: Partial<Omit<LogBackends, "created_by">> = {
     ...(values ? values : {})
@@ -95,11 +96,7 @@ export default function LogBackendsForm({
               {!!initialValues.id && (
                 <DeleteResource
                   resourceId={initialValues.id}
-                  resourceInfo={{
-                    api: "canary-checker",
-                    name: "Log Backends",
-                    table: "logging_backends"
-                  }}
+                  resourceInfo={logsBackendSchemaAPI}
                   isModal
                   onDeleted={onUpdated}
                 />

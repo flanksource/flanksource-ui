@@ -1,12 +1,12 @@
 import { UserGroupIcon } from "@heroicons/react/solid";
-import { HealthIcon } from "../Icons/HealthIcon";
+import React from "react";
+import { IconType } from "react-icons";
+import { tables } from "../../context/UserAccessContext/permissions";
+import { features } from "../../services/permissions/features";
 import { AlarmIcon } from "../Icons/AlarmIcon";
+import { HealthIcon } from "../Icons/HealthIcon";
 import { SearchInListIcon } from "../Icons/SearchInListIcon";
 import { TopologyIcon } from "../Icons/TopologyIcon";
-import { features } from "../../services/permissions/features";
-import { IconType } from "react-icons";
-import React from "react";
-import { tables } from "../../context/UserAccessContext/permissions";
 
 export type SchemaResourceType = {
   name:
@@ -18,7 +18,8 @@ export type SchemaResourceType = {
     | "Topology"
     | "Connections"
     | "Log Backends"
-    | "Notifications";
+    | "Notifications"
+    | "Feature Flags";
   table:
     | "teams"
     | "incident_rules"
@@ -27,7 +28,8 @@ export type SchemaResourceType = {
     | "topologies"
     | "connections"
     | "logging_backends"
-    | "notifications";
+    | "notifications"
+    | "properties";
   api: "incident-commander" | "canary-checker" | "config-db";
   featureName: string;
   resourceName: string;
@@ -47,7 +49,7 @@ export type SchemaResourceTypes = SchemaResourceType[];
 
 export type SchemaBackends = SchemaResourceType["api"];
 
-export type SchemaApi = Pick<SchemaResourceType, "api" | "table">;
+export type SchemaApi = Pick<SchemaResourceType, "api" | "table" | "name">;
 
 export const schemaResourceTypes: SchemaResourceType[] = [
   {
