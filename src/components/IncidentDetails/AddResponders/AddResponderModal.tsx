@@ -22,6 +22,7 @@ import {
 import SelectPeopleResponderDropdown from "./SelectPeopleResponderDropdown";
 import SelectTeamResponderDropdown from "./SelectTeamResponderDropdown";
 import TeamResponderTypeForm from "./TeamResponderTypeForm";
+import { Events, sendAnalyticEvent } from "../../../services/analytics";
 
 export type SelectedResponderType = {
   value: string;
@@ -193,6 +194,7 @@ export default function AddResponderModal({
       responder: Omit<Responder, "id" | "updated_at" | "created_at">
     ) => saveResponder(responder),
     onSuccess: (_) => {
+      sendAnalyticEvent(Events.AddedResponderToIncident);
       toastSuccess("Responder added successfully");
       onSuccess();
       closeModal();

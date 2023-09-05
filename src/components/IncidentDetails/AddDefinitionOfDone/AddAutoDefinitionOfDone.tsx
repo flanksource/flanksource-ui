@@ -3,6 +3,7 @@ import { useUpdateEvidenceMutation } from "../../../api/query-hooks/mutations/ev
 import { Evidence, EvidenceType } from "../../../api/services/evidence";
 import { ScriptStep } from "./steps/ScriptStep";
 import EvidenceSelectorStep from "./steps/EvidenceSelectorStep";
+import { Events, sendAnalyticEvent } from "../../../services/analytics";
 
 export type DefinitionOfDoneType = `${EvidenceType}`;
 
@@ -115,6 +116,7 @@ export default function AddAutoDefinitionOfDoneStepper({
   const { isLoading, mutate: updateEvidence } = useUpdateEvidenceMutation(
     {
       onSuccess: (evidence) => {
+        sendAnalyticEvent(Events.AddedDoDToIncident);
         onAddDefinitionOfDone(evidence);
       }
     },

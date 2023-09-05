@@ -16,6 +16,7 @@ import TextSkeletonLoader from "../SkeletonLoader/TextSkeletonLoader";
 import { toastError, toastSuccess } from "../Toast/toast";
 import { useAtom } from "jotai";
 import { refreshButtonClickedTrigger } from "../SlidingSideBar";
+import { Events, sendAnalyticEvent } from "../../services/analytics";
 
 type TopologyConfigLinkModalProps = {
   topology: Topology;
@@ -86,6 +87,7 @@ export function TopologyConfigLinkModal({
     onSuccess: () => {
       setTriggerRefresh((v) => v + 1);
       toastSuccess("config link successful");
+      sendAnalyticEvent(Events.LinkedComponentToConfig);
       setValue(undefined);
       queryClient.invalidateQueries(
         componentConfigRelationshipQueryKey({ topologyId: topology.id })

@@ -64,6 +64,7 @@ import { HealthPage } from "./pages/health";
 import { features } from "./services/permissions/features";
 import { stringSortHelper } from "./utils/common";
 import { PlaybookSettingsPage } from "./pages/Settings/PlaybookSettingsPage";
+import SetupIntercom from "./components/Intercom/SetupIntercom";
 
 export type NavigationItems = {
   name: string;
@@ -488,21 +489,23 @@ export function App() {
     <BrowserRouter>
       <Provider>
         <AuthProviderWrapper>
-          <UserAccessStateContextProvider>
-            <FeatureFlagsContextProvider>
-              <TopologyPageContextProvider>
-                <HealthPageContextProvider>
-                  <ConfigPageContextProvider>
-                    <IncidentPageContextProvider>
-                      <ReactTooltip />
-                      <IncidentManagerRoutes sidebar={<SidebarWrapper />} />
-                      <ReactQueryDevtools initialIsOpen={false} />
-                    </IncidentPageContextProvider>
-                  </ConfigPageContextProvider>
-                </HealthPageContextProvider>
-              </TopologyPageContextProvider>
-            </FeatureFlagsContextProvider>
-          </UserAccessStateContextProvider>
+          <SetupIntercom>
+            <UserAccessStateContextProvider>
+              <FeatureFlagsContextProvider>
+                <TopologyPageContextProvider>
+                  <HealthPageContextProvider>
+                    <ConfigPageContextProvider>
+                      <IncidentPageContextProvider>
+                        <ReactTooltip />
+                        <IncidentManagerRoutes sidebar={<SidebarWrapper />} />
+                        <ReactQueryDevtools initialIsOpen={false} />
+                      </IncidentPageContextProvider>
+                    </ConfigPageContextProvider>
+                  </HealthPageContextProvider>
+                </TopologyPageContextProvider>
+              </FeatureFlagsContextProvider>
+            </UserAccessStateContextProvider>
+          </SetupIntercom>
         </AuthProviderWrapper>
       </Provider>
     </BrowserRouter>

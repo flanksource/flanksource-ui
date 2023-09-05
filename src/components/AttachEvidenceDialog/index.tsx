@@ -30,6 +30,7 @@ import { severityItems, typeItems } from "../Incidents/data";
 import { ReactSelectDropdown } from "../ReactSelectDropdown";
 import { useQueryClient } from "@tanstack/react-query";
 import { createIncidentQueryKey } from "../../api/query-hooks";
+import { Events, sendAnalyticEvent } from "../../services/analytics";
 
 interface Props {
   title?: string;
@@ -311,6 +312,7 @@ export function AttachEvidenceDialog({
 
     try {
       await createEvidence(evidence);
+      sendAnalyticEvent(Events.AttachEvidenceToIncident);
       toastSuccess(
         <div>
           Linked to{" "}

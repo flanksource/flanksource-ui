@@ -20,6 +20,7 @@ import {
   createIncident
 } from "../../../api/services/incident";
 import { useUser } from "../../../context";
+import { Events, sendAnalyticEvent } from "../../../services/analytics";
 import { Button } from "../../Button";
 import { ReactSelectDropdown } from "../../ReactSelectDropdown";
 import { TextInput } from "../../TextInput";
@@ -138,6 +139,9 @@ export function IncidentCreate({
       }
 
       await createEvidence(_evidence);
+
+      // Send Intercom event, when incident is created
+      sendAnalyticEvent(Events.CreatedIncident);
 
       if (callback != null) {
         callback(incident);
