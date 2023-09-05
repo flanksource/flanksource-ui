@@ -127,9 +127,13 @@ export const updateUserRole = (userId: string, roles: string[]) => {
 export const deleteUser = (userId: string) =>
   resolve<{}>(IncidentCommander.delete(`/identities?id=eq.${userId}`));
 
-type WhoamiResponse = {
+export type WhoamiResponse = {
   message: string;
-  payload: User;
+  payload: {
+    database: string;
+    hostname: string;
+    user: User;
+  };
 };
 
 export async function whoami() {

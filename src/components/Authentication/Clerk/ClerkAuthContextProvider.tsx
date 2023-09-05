@@ -1,7 +1,7 @@
 import { useOrganization } from "@clerk/nextjs";
 import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import { User, whoami } from "../../../api/services/users";
+import { WhoamiResponse, whoami } from "../../../api/services/users";
 import { AuthContext } from "../../../context";
 import ErrorPage from "../../Errors/ErrorPage";
 import FullPageSkeletonLoader from "../../SkeletonLoader/FullPageSkeletonLoader";
@@ -18,10 +18,10 @@ export default function ClerkAuthContextProvider({
   const { organization } = useOrganization();
 
   const {
-    data: user,
+    data: payload,
     isLoading,
     error
-  } = useQuery<User, AxiosError>(
+  } = useQuery<WhoamiResponse["payload"], AxiosError>(
     ["user", "whoami", organization],
     () => whoami(),
     {
@@ -31,7 +31,7 @@ export default function ClerkAuthContextProvider({
     }
   );
 
-  if (isLoading && !user) {
+  if (isLoading && !payload) {
     return <FullPageSkeletonLoader />;
   }
 
@@ -44,12 +44,12 @@ export default function ClerkAuthContextProvider({
     return <InstanceCreationInProgress />;
   }
 
-  if (error && !user) {
+  if (error && !payload) {
     return <ErrorPage error={error} />;
   }
 
   return (
-    <AuthContext.Provider value={{ user, setUser: () => {} }}>
+    <AuthContext.Provider value={{ user: payload.user, setUser: () => {} }}>
       {children}
     </AuthContext.Provider>
   );
