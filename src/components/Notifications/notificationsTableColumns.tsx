@@ -1,16 +1,12 @@
 import { CellContext, ColumnDef } from "@tanstack/react-table";
-import { User } from "../../api/services/users";
-import { DateCell } from "../ConfigViewer/columns";
-import { Avatar } from "../Avatar";
 import { Team } from "../../api/services/teams";
-import { Icon } from "../Icon";
+import { User } from "../../api/services/users";
+import { Avatar } from "../Avatar";
 import { Badge } from "../Badge";
-import {
-  JobHistoryStatus,
-  classNameMaps
-} from "../JobsHistory/JobsHistoryTable";
-import { FaDotCircle } from "react-icons/fa";
-import { useMemo } from "react";
+import { DateCell } from "../ConfigViewer/columns";
+import { Icon } from "../Icon";
+import JobHistoryStatusColumn from "../JobsHistory/JobHistoryStatusColumn";
+import { JobHistoryStatus } from "../JobsHistory/JobsHistoryTable";
 
 export const notificationEvents = [
   {
@@ -78,22 +74,7 @@ export const notificationEvents = [
 export function JobStatusColumn({ cell }: CellContext<Notification, any>) {
   const value = cell.row.original.job_status;
 
-  const className = useMemo(() => {
-    if (value) {
-      return classNameMaps.get(value);
-    }
-  }, [value]);
-
-  if (!value) {
-    return null;
-  }
-
-  return (
-    <>
-      <FaDotCircle className={`inline ${className}`} />
-      <span>{value}</span>
-    </>
-  );
+  return <JobHistoryStatusColumn status={value} />;
 }
 
 export type Notification = {
