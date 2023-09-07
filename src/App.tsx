@@ -57,11 +57,13 @@ import { ConnectionsPage } from "./pages/Settings/ConnectionsPage";
 import { EventQueueStatusPage } from "./pages/Settings/EventQueueStatus";
 import { FeatureFlagsPage } from "./pages/Settings/FeatureFlagsPage";
 import { LogBackendsPage } from "./pages/Settings/LogBackendsPage";
-import { PlaybookSettingsPage } from "./pages/Settings/PlaybookSettingsPage";
+import { PlaybooksListPage } from "./pages/playbooks/PlaybooksList";
 import { UsersPage } from "./pages/UsersPage";
 import { ConfigDetailsInsightsPage } from "./pages/config/ConfigDetailsInsightsPage";
 import { ConfigInsightsPage } from "./pages/config/ConfigInsightsList";
 import { HealthPage } from "./pages/health";
+import PlaybookRunsPage from "./pages/playbooks/PlaybookRuns";
+import PlaybookRunsDetailsPage from "./pages/playbooks/PlaybookRunsDetails";
 import { features } from "./services/permissions/features";
 import { stringSortHelper } from "./utils/common";
 
@@ -107,6 +109,13 @@ const navigation: NavigationItems = [
     href: "/logs",
     icon: LogsIcon,
     featureName: features.logs,
+    resourceName: tables.database
+  },
+  {
+    name: "Playbooks",
+    href: "/playbooks",
+    icon: FaTasks,
+    featureName: features.playbooks,
     resourceName: tables.database
   }
 ];
@@ -188,13 +197,6 @@ const settingsNav: SettingsNavigationItems = {
       icon: FaTasks,
       featureName: features["settings.event_queue_status"],
       resourceName: tables.database
-    },
-    {
-      name: "Playbooks",
-      href: "/settings/playbooks",
-      icon: FaTasks,
-      featureName: features["settings.playbooks"],
-      resourceName: tables.database
     }
   ].sort((v1, v2) => stringSortHelper(v1.name, v2.name))
 };
@@ -258,6 +260,37 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
         />
       </Route>
 
+      <Route path="playbooks" element={sidebar}>
+        <Route
+          index
+          element={withAccessCheck(
+            <PlaybooksListPage />,
+            tables.database,
+            "read"
+          )}
+        />
+
+        <Route path="runs">
+          <Route
+            index
+            element={withAccessCheck(
+              <PlaybookRunsPage />,
+              tables.database,
+              "read"
+            )}
+          />
+
+          <Route
+            path=":id"
+            element={withAccessCheck(
+              <PlaybookRunsDetailsPage />,
+              tables.database,
+              "read"
+            )}
+          />
+        </Route>
+      </Route>
+
       <Route path="settings" element={sidebar}>
         <Route
           path="connections"
@@ -308,15 +341,6 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           path="event-queue-status"
           element={withAccessCheck(
             <EventQueueStatusPage />,
-            tables.database,
-            "read"
-          )}
-        />
-
-        <Route
-          path="playbooks"
-          element={withAccessCheck(
-            <PlaybookSettingsPage />,
             tables.database,
             "read"
           )}

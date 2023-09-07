@@ -1,4 +1,3 @@
-import { User } from "@clerk/nextjs/dist/types/server";
 import { useQuery } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
 import { useAtom } from "jotai";
@@ -18,6 +17,7 @@ import TextSkeletonLoader from "../../SkeletonLoader/TextSkeletonLoader";
 import { refreshButtonClickedTrigger } from "../../SlidingSideBar";
 import Title from "../../Title/title";
 import { PlaybookSpec } from "../Settings/PlaybookSpecsTable";
+import { User } from "../../../api/services/users";
 
 type TopologySidePanelProps = {
   panelType: "topology";
@@ -47,10 +47,11 @@ export type PlaybookRunAction = {
   name: string;
   status: PlaybookRunStatus;
   playbook_run_id: string;
-  start_time?: string;
+  start_time: string;
   end_time?: string;
   result?: {
     stdout?: string;
+    [key: string]: unknown;
   };
   error?: string;
   playbooks?: PlaybookSpec;

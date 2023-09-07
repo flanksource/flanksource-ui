@@ -4,6 +4,7 @@ export const features = {
   incidents: "incidents",
   config: "config",
   logs: "logs",
+  playbooks: "playbooks",
   "settings.connections": "settings.connections",
   "settings.users": "settings.users",
   "settings.teams": "settings.teams",

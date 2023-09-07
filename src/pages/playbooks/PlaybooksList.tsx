@@ -9,8 +9,10 @@ import PlaybookSpecsForm from "../../components/Playbooks/Settings/PlaybookSpecs
 import PlaybookSpecsTable, {
   PlaybookSpec
 } from "../../components/Playbooks/Settings/PlaybookSpecsTable";
+import { playbookRunsPageTabs } from "../../components/Playbooks/Runs/PlaybookRunsPageTabs";
+import TabbedLinks from "../../components/Tabs/TabbedLinks";
 
-export function PlaybookSettingsPage() {
+export function PlaybooksListPage() {
   const [isOpen, setIsOpen] = useState(false);
   const [editedRow, setEditedRow] = useState<PlaybookSpec>();
 
@@ -45,24 +47,25 @@ export function PlaybookSettingsPage() {
           />
         }
         onRefresh={refetch}
-        contentClass="p-0 h-full"
+        contentClass="flex flex-col p-0 h-full"
         loading={isLoading}
       >
-        <div className="flex flex-col flex-1 px-6 h-full max-w-screen-xl mx-auto">
-          {error && !playbooks ? (
-            <ErrorPage error={error} />
-          ) : (
-            <PlaybookSpecsTable
-              data={playbooks ?? []}
-              isLoading={isLoading}
-              onRowClick={(val) => {
-                setIsOpen(true);
-                setEditedRow(val);
-              }}
-            />
-          )}
-        </div>
-
+        <TabbedLinks tabLinks={playbookRunsPageTabs}>
+          <div className="flex flex-col flex-1 px-6 h-full max-w-screen-xl mx-auto">
+            {error && !playbooks ? (
+              <ErrorPage error={error} />
+            ) : (
+              <PlaybookSpecsTable
+                data={playbooks ?? []}
+                isLoading={isLoading}
+                onRowClick={(val) => {
+                  setIsOpen(true);
+                  setEditedRow(val);
+                }}
+              />
+            )}
+          </div>
+        </TabbedLinks>
         <PlaybookSpecsForm
           isOpen={isOpen}
           onClose={() => {
