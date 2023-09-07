@@ -62,6 +62,7 @@ import { ConfigInsightsPage } from "./pages/config/ConfigInsightsList";
 import { HealthPage } from "./pages/health";
 import { features } from "./services/permissions/features";
 import { stringSortHelper } from "./utils/common";
+import { PlaybookSettingsPage } from "./pages/Settings/PlaybookSettingsPage";
 
 export type NavigationItems = {
   name: string;
@@ -179,6 +180,13 @@ const settingsNav: SettingsNavigationItems = {
       icon: FaTasks,
       featureName: features["settings.event_queue_status"],
       resourceName: tables.database
+    },
+    {
+      name: "Playbooks",
+      href: "/settings/playbooks",
+      icon: FaTasks,
+      featureName: features["settings.playbooks"],
+      resourceName: tables.database
     }
   ].sort((v1, v2) => stringSortHelper(v1.name, v2.name))
 };
@@ -284,6 +292,15 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           path="event-queue-status"
           element={withAccessCheck(
             <EventQueueStatusPage />,
+            tables.database,
+            "read"
+          )}
+        />
+
+        <Route
+          path="playbooks"
+          element={withAccessCheck(
+            <PlaybookSettingsPage />,
             tables.database,
             "read"
           )}
