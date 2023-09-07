@@ -16,7 +16,8 @@ export const features = {
   "settings.logging_backends": "settings.logging_backends",
   "settings.event_queue_status": "settings.event_queue_status",
   "settings.organization_profile": "settings.organization_profile",
-  "settings.notifications": "settings.notifications"
+  "settings.notifications": "settings.notifications",
+  "settings.playbooks": "settings.playbooks"
 };
 
 export const featureToParentMap = {
