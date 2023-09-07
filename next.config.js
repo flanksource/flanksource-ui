@@ -25,24 +25,24 @@ const config = {
     const LOCALHOST_ENV_URL_REWRITES = [
       {
         source: "/api/:path*",
-        destination: new URL(`/api/:path*`, backendURL).href
+        destination: `${backendURL}/api/:path*`
       }
     ];
 
     const URL_REWRITES = [
       {
         source: "/api/canary/:path*",
-        destination: new URL(`${canaryPrefix}/:path*`, backendURL).href
+        destination: `${backendURL}/${canaryPrefix}/:path*`
       },
       {
         source: "/api/.ory/:path*",
-        destination: new URL(`/kratos/:path*`, backendURL).href
+        destination: `${backendURL}/kratos/:path*`
       },
       // All other API requests are proxied to the backend on the same path
       // as the request.
       {
         source: "/api/:path*",
-        destination: new URL(`/:path*`, backendURL).href
+        destination: `${backendURL}/:path*`
       }
     ];
     const rewrites = ["localhost", "netlify"].includes(process.env.ENV)
