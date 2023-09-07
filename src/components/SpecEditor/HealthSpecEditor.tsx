@@ -23,7 +23,7 @@ type HealthSpecEditorProps = {
 
 export default function HealthSpecEditor({
   resourceValue,
-  onSubmit = () => { },
+  onSubmit = () => {},
   resourceInfo
 }: HealthSpecEditorProps) {
   const configTypes = useMemo(
@@ -375,7 +375,7 @@ export default function HealthSpecEditor({
         },
         {
           name: "configDB",
-          label: "Mission Control Config",
+          label: "Mission Control Catalog",
           updateSpec: (value: Record<string, any>) => {
             onSubmit(value);
           },

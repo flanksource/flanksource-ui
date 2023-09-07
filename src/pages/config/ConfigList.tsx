@@ -100,21 +100,21 @@ export function ConfigListPage() {
   const handleRowClick = (row?: { original?: { id: string } }) => {
     const id = row?.original?.id;
     if (id) {
-      navigate(`/configs/${id}`);
+      navigate(`/catalog/${id}`);
     }
   };
 
   return (
     <>
-      <Head prefix={`Configs`} />
+      <Head prefix={`Catalog`} />
       <SearchLayout
         title={
           <BreadcrumbNav
             list={[
-              <BreadcrumbRoot link="/configs">Configs</BreadcrumbRoot>,
+              <BreadcrumbRoot link="/catalog">Catalog</BreadcrumbRoot>,
               ...(configType
                 ? [
-                    <BreadcrumbRoot link={`/configs/${configType}`}>
+                    <BreadcrumbRoot link={`/catalog/${configType}`}>
                       <ConfigsTypeIcon
                         config={{ type: configType }}
                         showSecondaryIcon
@@ -131,7 +131,7 @@ export function ConfigListPage() {
         contentClass="p-0 h-full"
       >
         <div className={`flex flex-row h-full`}>
-          <TabbedLinks tabLinks={configTabsLists} activeTabName="Config">
+          <TabbedLinks tabLinks={configTabsLists} activeTabName="Catalog">
             <div className={`flex flex-col flex-1 h-full space-y-4`}>
               <div className="flex flex-row items-center">
                 <ConfigsListFilters />

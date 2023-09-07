@@ -12,7 +12,7 @@ export type SchemaResourceType = {
   name:
     | "Teams"
     | "Rules"
-    | "Config Scraper"
+    | "Catalog Scraper"
     | "Health Check"
     | "Search"
     | "Topology"
@@ -119,7 +119,7 @@ export const schemaResourceTypes: SchemaResourceType[] = [
     ]
   },
   {
-    name: "Config Scraper",
+    name: "Catalog Scraper",
     table: "config_scrapers",
     api: "config-db",
     icon: SearchInListIcon,

@@ -56,7 +56,7 @@ const columns: ColumnDef<ConfigTypeChanges>[] = [
 
 const configLinkCol: ColumnDef<ConfigTypeChanges>[] = [
   {
-    header: "Config",
+    header: "Catalog",
     accessorKey: "config_id",
     cell: function ConfigLinkCell({ row, column }) {
       const config = row.original.config;

@@ -116,7 +116,7 @@ export function TopologyConfigLinkModal({
       <div className="flex flex-col divide-y divide-gray-200 space-y-4">
         <div className={clsx("flex flex-col px-4 py-4")}>
           <div className="text-sm font-bold text-gray-700 inline-block">
-            Config
+            Catalog
           </div>
           <div className="flex flex-col w-full">
             {isLoading ? (

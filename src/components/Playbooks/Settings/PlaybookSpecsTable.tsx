@@ -35,7 +35,7 @@ const playbookSpecsTableColumns: ColumnDef<PlaybookSpec>[] = [
     size: 150
   },
   {
-    header: "Source Config",
+    header: "Source",
     accessorKey: "source",
     id: "source",
     size: 150

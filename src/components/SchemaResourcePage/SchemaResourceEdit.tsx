@@ -284,7 +284,7 @@ export function SchemaResourceEdit({
                                 </h2>
                                 {!!source && (
                                   <div className="px-2">
-                                    <a href={`${source}`}>Config source</a>
+                                    <a href={`${source}`}>Catalog source</a>
                                   </div>
                                 )}
                               </div>

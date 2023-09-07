@@ -58,7 +58,7 @@ export function TopologyConfigAnalysisLine({
         const icon = <InsightTypeToIcon type={type} size={17} />;
         const label = count ?? 0;
         const key = `${type}-${severity}`;
-        const url = `/configs/insights?component=${topology.id}&type=${type}&severity=${severity}`;
+        const url = `/catalog/insights?component=${topology.id}&type=${type}&severity=${severity}`;
         analysisToCountMap[key] = {
           color,
           icon,
@@ -71,7 +71,7 @@ export function TopologyConfigAnalysisLine({
     return {
       icon: <MdOutlineInsights className="w-4 h-4" />,
       label: "Insights",
-      url: `/configs/insights?component=${topology.id}`,
+      url: `/catalog/insights?component=${topology.id}`,
       statuses: Object.values(analysisToCountMap)
     };
   }, [insights, topology.id]);
