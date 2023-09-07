@@ -5,7 +5,7 @@ import React, { ReactNode, useEffect, useState } from "react";
 import { IconType } from "react-icons";
 import { AiFillHeart } from "react-icons/ai";
 import { BsLink, BsToggles } from "react-icons/bs";
-import { FaTasks } from "react-icons/fa";
+import { FaBell, FaTasks } from "react-icons/fa";
 import { HiUser } from "react-icons/hi";
 import { ImLifebuoy } from "react-icons/im";
 import { VscJson } from "react-icons/vsc";
@@ -25,6 +25,7 @@ import { LogsIcon } from "./components/Icons/LogsIcon";
 import { TopologyIcon } from "./components/Icons/TopologyIcon";
 import JobsHistorySettingsPage from "./components/JobsHistory/JobsHistorySettingsPage";
 import { SidebarLayout } from "./components/Layout";
+import NotificationsPage from "./components/Notifications/NotificationsSettingsPage";
 import { SchemaResourcePage } from "./components/SchemaResourcePage";
 import { SchemaResource } from "./components/SchemaResourcePage/SchemaResource";
 import {
@@ -161,6 +162,13 @@ const settingsNav: SettingsNavigationItems = {
       resourceName: tables.database
     },
     {
+      name: "Notifications",
+      href: "/settings/notifications",
+      icon: FaBell,
+      featureName: features["settings.notifications"],
+      resourceName: tables.database
+    },
+    {
       name: "Feature Flags",
       href: "/settings/feature-flags",
       icon: BsToggles,
@@ -267,6 +275,14 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           path="jobs"
           element={withAccessCheck(
             <JobsHistorySettingsPage />,
+            tables.database,
+            "read"
+          )}
+        />
+        <Route
+          path="notifications"
+          element={withAccessCheck(
+            <NotificationsPage />,
             tables.database,
             "read"
           )}

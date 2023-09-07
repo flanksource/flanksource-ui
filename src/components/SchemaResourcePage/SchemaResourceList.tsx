@@ -1,12 +1,11 @@
 import clsx from "clsx";
-import { FaDotCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { SchemaResourceWithJobStatus } from "../../api/schemaResources";
 import { relativeDateTime } from "../../utils/date";
 import { Avatar } from "../Avatar";
-import { classNameMaps } from "../JobsHistory/JobsHistoryTable";
-import TableSkeletonLoader from "../SkeletonLoader/TableSkeletonLoader";
 import { InfoMessage } from "../InfoMessage";
+import JobHistoryStatusColumn from "../JobsHistory/JobHistoryStatusColumn";
+import TableSkeletonLoader from "../SkeletonLoader/TableSkeletonLoader";
 
 interface Props {
   items: SchemaResourceWithJobStatus[];
@@ -116,7 +115,6 @@ function SchemaResourceListItem({
 }) {
   const navigate = useNavigate();
   const navigateToDetails = (id: string) => navigate(`${baseUrl}/${id}`);
-  const className = job_status ? classNameMaps.get(job_status) ?? "" : "";
 
   return (
     <tr
@@ -137,12 +135,7 @@ function SchemaResourceListItem({
         {updated_at && relativeDateTime(updated_at)}
       </Cell>
       <Cell className="text-gray-500 lowercase space-x-2">
-        {job_status && (
-          <>
-            <FaDotCircle className={`inline ${className}`} />
-            <span>{job_status}</span>
-          </>
-        )}
+        <JobHistoryStatusColumn status={job_status} />
       </Cell>
       <Cell className="text-gray-500">
         {job_time_start ? relativeDateTime(job_time_start) : ""}

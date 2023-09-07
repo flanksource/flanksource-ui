@@ -24,7 +24,7 @@ export const getTeam = async (id: string): Promise<Team | undefined> => {
 
 export const getTeams = async (): Promise<Team[]> => {
   const response = await IncidentCommander.get<Team[] | null>(
-    `/teams?deleted_at=is.null`
+    `/teams?deleted_at=is.null&order=name.asc`
   );
   const data = response.data;
   return data || [];

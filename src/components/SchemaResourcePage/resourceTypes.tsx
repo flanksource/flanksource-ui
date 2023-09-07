@@ -17,7 +17,8 @@ export type SchemaResourceType = {
     | "Search"
     | "Topology"
     | "Connections"
-    | "Log Backends";
+    | "Log Backends"
+    | "Notifications";
   table:
     | "teams"
     | "incident_rules"
@@ -25,7 +26,8 @@ export type SchemaResourceType = {
     | "canaries"
     | "topologies"
     | "connections"
-    | "logging_backends";
+    | "logging_backends"
+    | "notifications";
   api: "incident-commander" | "canary-checker" | "config-db";
   featureName: string;
   resourceName: string;

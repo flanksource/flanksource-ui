@@ -7,7 +7,7 @@ import { get } from "lodash";
 
 type FormikConfigFormFormsArrayProps = {
   name: string;
-  label: string;
+  label?: string;
   containerClassName?: string;
   renderForm: (index: number) => React.ReactNode;
 };
@@ -29,7 +29,9 @@ export default function FormikConfigFormFormsArray({
           <>
             <div className="flex flex-row items-center">
               <div className="flex-1">
-                <label className="text-sm font-semibold">{label}</label>
+                {label && (
+                  <label className="text-sm font-semibold">{label}</label>
+                )}
               </div>
               <Button
                 onClick={() => arrayHelpers.push({})}
@@ -38,11 +40,11 @@ export default function FormikConfigFormFormsArray({
                 className="btn-white float-right"
               />
             </div>
-            <div
-              className={`flex flex-col space-y-2 p-4 border border-gray-200 rounded-md`}
-            >
-              {Boolean(fieldValue?.length) &&
-                fieldValue.map((_: any, index: number) => {
+            {fieldValue?.length > 0 && (
+              <div
+                className={`flex flex-col space-y-2 p-4 border border-gray-200 rounded-md`}
+              >
+                {fieldValue.map((_: any, index: number) => {
                   return (
                     <React.Fragment key={index}>
                       {renderForm(index)}
@@ -59,7 +61,8 @@ export default function FormikConfigFormFormsArray({
                     </React.Fragment>
                   );
                 })}
-            </div>
+              </div>
+            )}
           </>
         )}
       />

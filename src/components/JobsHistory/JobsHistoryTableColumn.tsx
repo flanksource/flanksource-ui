@@ -1,11 +1,11 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { FaDotCircle } from "react-icons/fa";
-import { JobHistory, classNameMaps } from "./JobsHistoryTable";
-import { formatJobName } from "../../utils/common";
 import dayjs from "dayjs";
-import { DateCell } from "../ConfigViewer/columns";
 import duration from "dayjs/plugin/duration";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { formatJobName } from "../../utils/common";
+import { DateCell } from "../ConfigViewer/columns";
+import JobHistoryStatusColumn from "./JobHistoryStatusColumn";
+import { JobHistory } from "./JobsHistoryTable";
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
@@ -37,10 +37,9 @@ export const JobsHistoryTableColumn: ColumnDef<JobHistory, any>[] = [
     size: 100,
     cell: ({ getValue }) => {
       const value = getValue<JobHistory["status"]>();
-      const className = classNameMaps.get(value) ?? "";
       return (
         <span className={`lowercase`}>
-          <FaDotCircle className={`inline ${className}`} /> {value}
+          <JobHistoryStatusColumn status={value} />
         </span>
       );
     }
