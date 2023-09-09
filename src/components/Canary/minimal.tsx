@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Modal } from "../Modal";
 import { CheckDetails } from "./CanaryPopup/CheckDetails";
 import { CheckTitle } from "./CanaryPopup/CheckTitle";
@@ -13,6 +13,8 @@ import { HealthCheck } from "../../types/healthChecks";
 import { timeRanges } from "../Dropdown/TimeRange";
 import { getCanaries } from "../../api/services/topology";
 import { toastError } from "../Toast/toast";
+import { useFeatureFlagsContext } from "../../context/FeatureFlagsContext";
+import { features } from "../../services/permissions/features";
 
 type MinimalCanaryFCProps = {
   checks?: HealthCheck[];
@@ -41,6 +43,13 @@ const MinimalCanaryFC = ({
   const [selectedCheck, setSelectedCheck] = useState<Partial<HealthCheck>>();
   const [attachAsAsset, setAttachAsAsset] = useState(false);
   const [openChecksModal, setOpenChecksModal] = useState(false);
+
+  const { isFeatureDisabled } = useFeatureFlagsContext();
+
+  const isIncidentManagementFeatureDisabled = useMemo(
+    () => isFeatureDisabled(features.incidents),
+    [isFeatureDisabled]
+  );
 
   const handleCheckSelect = useCallback(
     (check: Pick<HealthCheck, "id">) => {
@@ -107,23 +116,25 @@ const MinimalCanaryFC = ({
           }}
         />
       )}
-      <AttachEvidenceDialog
-        isOpen={attachAsAsset}
-        onClose={() => {
-          setAttachAsAsset(false);
-          clearCheck();
-        }}
-        check_id={selectedCheck?.id}
-        evidence={{
-          check_id: selectedCheck?.id,
-          includeMessages: true,
-          start: timeRange
-        }}
-        type={EvidenceType.Check}
-        callback={(success: boolean) => {
-          console.log(success);
-        }}
-      />
+      {!isIncidentManagementFeatureDisabled && (
+        <AttachEvidenceDialog
+          isOpen={attachAsAsset}
+          onClose={() => {
+            setAttachAsAsset(false);
+            clearCheck();
+          }}
+          check_id={selectedCheck?.id}
+          evidence={{
+            check_id: selectedCheck?.id,
+            includeMessages: true,
+            start: timeRange
+          }}
+          type={EvidenceType.Check}
+          callback={(success: boolean) => {
+            console.log(success);
+          }}
+        />
+      )}
       <Modal
         open={openChecksModal}
         onClose={() => clearCheck()}
@@ -142,7 +153,7 @@ const MinimalCanaryFC = ({
             {selectedCheck?.canary_id && (
               <HealthCheckEdit check={selectedCheck as HealthCheck} />
             )}
-            {!isCanaryUI && (
+            {!isCanaryUI && !isFeatureDisabled && (
               <button
                 className="btn-primary float-right"
                 onClick={(e) => setAttachAsAsset(true)}

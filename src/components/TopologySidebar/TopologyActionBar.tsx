@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { IconType } from "react-icons";
 import { BiShow, BiHide, BiZoomIn, BiLink } from "react-icons/bi";
 import { ImTree } from "react-icons/im";
@@ -11,6 +11,8 @@ import { AttachEvidenceDialog } from "../AttachEvidenceDialog";
 import TopologySnapshotModal from "../TopologyCard/TopologySnapshotModal";
 import { ActionLink } from "../ActionLink/ActionLink";
 import { TopologyConfigLinkModal } from "../TopologyConfigLinkModal/TopologyConfigLinkModal";
+import { useFeatureFlagsContext } from "../../context/FeatureFlagsContext";
+import { features } from "../../services/permissions/features";
 
 type TopologyActionItem = {
   label: string;
@@ -215,6 +217,13 @@ export default function TopologyActionBar({
     setIsDownloadComponentSnapshotModalOpen
   ] = useState(false);
 
+  const { isFeatureDisabled } = useFeatureFlagsContext();
+
+  const isIncidentManagementFeatureDisabled = useMemo(
+    () => isFeatureDisabled(features.incidents),
+    [isFeatureDisabled]
+  );
+
   const [attachAsAsset, setAttachAsAsset] = useState(false);
   const [linkToConfig, setLinkToConfig] = useState(false);
 
@@ -238,8 +247,14 @@ export default function TopologyActionBar({
   return (
     <>
       <div className="flex flex-wrap py-4" data-collapsible="false">
-        {topologyActionItems.map(
-          ({ icon: Icon, isShown, label, ContainerComponent }, index) => {
+        {topologyActionItems
+          .filter((item) => {
+            if (item.label === "Link to Incident") {
+              return !isIncidentManagementFeatureDisabled;
+            }
+            return true;
+          })
+          .map(({ icon: Icon, isShown, label, ContainerComponent }, index) => {
             if (isShown(topology, "TopologySidebar")) {
               return (
                 <div key={label} className="py-1 px-1">
@@ -255,8 +270,7 @@ export default function TopologyActionBar({
               );
             }
             return null;
-          }
-        )}
+          })}
       </div>
 
       <AttachEvidenceDialog

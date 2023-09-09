@@ -18,14 +18,14 @@ export const features = {
   "settings.organization_profile": "settings.organization_profile",
   "settings.notifications": "settings.notifications",
   "settings.playbooks": "settings.playbooks"
-};
+} as const;
 
 export const featureToParentMap = {
   "settings.config_scraper": "config",
   "settings.topology": "topology",
   "settings.health": "health",
   "settings.job_history": "health"
-};
+} as const;
 
 export const featuresList = Object.keys(features).map(
   (item) => `${item}.disable`

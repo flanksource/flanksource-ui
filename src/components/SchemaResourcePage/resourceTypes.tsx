@@ -94,7 +94,7 @@ export const schemaResourceTypes: SchemaResourceType[] = [
     table: "incident_rules",
     api: "incident-commander",
     icon: AlarmIcon,
-    featureName: features["settings.rules"],
+    featureName: features["incidents"],
     resourceName: tables.database,
     subNav: [
       {

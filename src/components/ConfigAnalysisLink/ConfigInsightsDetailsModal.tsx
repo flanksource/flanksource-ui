@@ -10,6 +10,8 @@ import { DescriptionCard } from "../DescriptionCard";
 import { Modal } from "../Modal";
 import { useQuery } from "@tanstack/react-query";
 import TextSkeletonLoader from "../SkeletonLoader/TextSkeletonLoader";
+import { useFeatureFlagsContext } from "../../context/FeatureFlagsContext";
+import { features } from "../../services/permissions/features";
 
 type Props = {
   id?: string;
@@ -30,6 +32,13 @@ export default function ConfigInsightsDetailsModal({
     {
       enabled: isOpen && !!id
     }
+  );
+
+  const { isFeatureDisabled } = useFeatureFlagsContext();
+
+  const isIncidentManagementFeatureDisabled = useMemo(
+    () => isFeatureDisabled(features.incidents),
+    [isFeatureDisabled]
   );
 
   const properties = useMemo(() => {
@@ -119,31 +128,37 @@ export default function ConfigInsightsDetailsModal({
               labelStyle="top"
             />
           </div>
-          <div className="flex items-center justify-end mt-4 py-2 px-4 rounded bg-gray-100">
-            <button
-              type="button"
-              onClick={() => {
-                setAttachEvidence(true);
-              }}
-              className="btn-primary"
-            >
-              Attach as Evidence
-            </button>
-          </div>
-          <AttachEvidenceDialog
-            key={`attach-evidence-dialog`}
-            isOpen={attachEvidence}
-            onClose={() => setAttachEvidence(false)}
-            config_analysis_id={configInsight.id}
-            config_id={configInsight.config_id}
-            evidence={{}}
-            type={EvidenceType.ConfigAnalysis}
-            callback={(success: boolean) => {
-              if (success) {
-                setAttachEvidence(false);
-              }
-            }}
-          />
+
+          {!isIncidentManagementFeatureDisabled && (
+            <>
+              <div className="flex items-center justify-end mt-4 py-2 px-4 rounded bg-gray-100">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAttachEvidence(true);
+                  }}
+                  className="btn-primary"
+                >
+                  Attach as Evidence
+                </button>
+              </div>
+
+              <AttachEvidenceDialog
+                key={`attach-evidence-dialog`}
+                isOpen={attachEvidence}
+                onClose={() => setAttachEvidence(false)}
+                config_analysis_id={configInsight.id}
+                config_id={configInsight.config_id}
+                evidence={{}}
+                type={EvidenceType.ConfigAnalysis}
+                callback={(success: boolean) => {
+                  if (success) {
+                    setAttachEvidence(false);
+                  }
+                }}
+              />
+            </>
+          )}
         </>
       )}
     </Modal>

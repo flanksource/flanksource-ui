@@ -6,6 +6,8 @@ import { usePartialUpdateSearchParams } from "../../hooks/usePartialUpdateSearch
 import { AttachEvidenceDialog } from "../AttachEvidenceDialog";
 import { EvidenceType } from "../../api/services/evidence";
 import { MdAlarmAdd } from "react-icons/md";
+import { useFeatureFlagsContext } from "../../context/FeatureFlagsContext";
+import { features } from "../../services/permissions/features";
 
 type ConfigActionBarProps = {
   configId: string;
@@ -20,6 +22,13 @@ export default function ConfigActionBar({
   const [checked, setChecked] = useState<Record<string, any>>({});
   const [attachAsEvidence, setAttachAsEvidence] = useState(false);
   const { data: configDetails } = useGetConfigByIdQuery(configId);
+
+  const { isFeatureDisabled } = useFeatureFlagsContext();
+
+  const isIncidentManagementFeatureDisabled = useMemo(
+    () => isFeatureDisabled(features.incidents),
+    [isFeatureDisabled]
+  );
 
   useEffect(() => {
     if (!configDetails?.config) {
@@ -48,6 +57,10 @@ export default function ConfigActionBar({
   }, [configDetails]);
 
   const configLines = useMemo(() => code && code.split("\n"), [code]);
+
+  if (isIncidentManagementFeatureDisabled) {
+    return null;
+  }
 
   return (
     <div

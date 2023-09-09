@@ -18,6 +18,8 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 import { sanitizeHTMLContent } from "../../../utils/common";
 import TableSkeletonLoader from "../../SkeletonLoader/TableSkeletonLoader";
 import { useSearchParams } from "react-router-dom";
+import { useFeatureFlagsContext } from "../../../context/FeatureFlagsContext";
+import { features } from "../../../services/permissions/features";
 
 const convert = new Convert();
 
@@ -116,7 +118,7 @@ export function LogsTable({
             return (
               <div className="flex justify-between">
                 <span className="align-middle my-auto">Message</span>
-                {!viewOnly && (
+                {(!viewOnly || isIncidentManagementFeatureDisabled) && (
                   <div className="flex justify-end -m-2 flex-wrap">
                     <div className="p-2">
                       <button
@@ -183,6 +185,13 @@ export function LogsTable({
     autoResetAll: false
   });
 
+  const { isFeatureDisabled } = useFeatureFlagsContext();
+
+  const isIncidentManagementFeatureDisabled = useMemo(
+    () => isFeatureDisabled(features.incidents),
+    [isFeatureDisabled]
+  );
+
   // in order to ensure column resizing doesn't affect the selection column, we
   // need to rebase the new size to the base size of 400, total size of all
   // columns, including the selection column. This will ensure that the
@@ -225,18 +234,20 @@ export function LogsTable({
       className="flex flex-col flex-1 overflow-y-auto"
     >
       <div className="block pb-6 w-full">
-        <AttachEvidenceDialog
-          isOpen={attachAsAsset}
-          onClose={() => setAttachAsAsset(false)}
-          evidence={{ lines }}
-          type={EvidenceType.Log}
-          component_id={componentId}
-          callback={(success: boolean) => {
-            if (success) {
-              setLines([]);
-            }
-          }}
-        />
+        {!isIncidentManagementFeatureDisabled && (
+          <AttachEvidenceDialog
+            isOpen={attachAsAsset}
+            onClose={() => setAttachAsAsset(false)}
+            evidence={{ lines }}
+            type={EvidenceType.Log}
+            component_id={componentId}
+            callback={(success: boolean) => {
+              if (success) {
+                setLines([]);
+              }
+            }}
+          />
+        )}
         <table
           className={clsx(
             "w-full table-fixed",

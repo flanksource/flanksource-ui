@@ -18,6 +18,8 @@ import { useGetConfigChangesByConfigChangeIdQuery } from "../../api/query-hooks/
 import { ConfigItem } from "../../api/services/configs";
 import { User } from "../../api/services/users";
 import { DiffRenderer } from "../DiffRenderer/DiffRenderer";
+import { useFeatureFlagsContext } from "../../context/FeatureFlagsContext";
+import { features } from "../../services/permissions/features";
 
 type ConfigDetailsChangesProps = {
   id: string;
@@ -194,6 +196,14 @@ export function ConfigDetailChangeModal({
   changeDetails
 }: ConfigDetailChangeModalProps) {
   const [attachEvidence, setAttachEvidence] = useState(false);
+
+  const { isFeatureDisabled } = useFeatureFlagsContext();
+
+  const isIncidentManagementFeatureDisabled = useMemo(
+    () => isFeatureDisabled(features.incidents),
+    [isFeatureDisabled]
+  );
+
   return (
     <Modal
       title={
@@ -237,31 +247,36 @@ export function ConfigDetailChangeModal({
           />
         )}
       </div>
-      <div className="flex items-center justify-end py-4 px-5 rounded-lg bg-gray-100">
-        <button
-          type="button"
-          onClick={() => {
-            setAttachEvidence(true);
-          }}
-          className="btn-primary"
-        >
-          Attach as Evidence
-        </button>
-      </div>
-      <AttachEvidenceDialog
-        key={`attach-evidence-dialog`}
-        isOpen={attachEvidence}
-        onClose={() => setAttachEvidence(false)}
-        config_change_id={changeDetails?.id}
-        config_id={changeDetails?.config_id}
-        evidence={{}}
-        type={EvidenceType.ConfigChange}
-        callback={(success: boolean) => {
-          if (success) {
-            setAttachEvidence(false);
-          }
-        }}
-      />
+      {isIncidentManagementFeatureDisabled && (
+        <>
+          <div className="flex items-center justify-end py-4 px-5 rounded-lg bg-gray-100">
+            <button
+              type="button"
+              onClick={() => {
+                setAttachEvidence(true);
+              }}
+              className="btn-primary"
+            >
+              Attach as Evidence
+            </button>
+          </div>
+
+          <AttachEvidenceDialog
+            key={`attach-evidence-dialog`}
+            isOpen={attachEvidence}
+            onClose={() => setAttachEvidence(false)}
+            config_change_id={changeDetails?.id}
+            config_id={changeDetails?.config_id}
+            evidence={{}}
+            type={EvidenceType.ConfigChange}
+            callback={(success: boolean) => {
+              if (success) {
+                setAttachEvidence(false);
+              }
+            }}
+          />
+        </>
+      )}
     </Modal>
   );
 }
