@@ -180,7 +180,7 @@ const settingsNav: SettingsNavigationItems = {
       name: "Log Backends",
       href: "/settings/log-backends",
       icon: LogsIcon,
-      featureName: features["settings.feature_flags"],
+      featureName: features["logs"],
       resourceName: tables.database
     },
     {

@@ -224,6 +224,11 @@ export default function TopologyActionBar({
     [isFeatureDisabled]
   );
 
+  const isLogsFeatureDisabled = useMemo(
+    () => isFeatureDisabled(features.logs),
+    [isFeatureDisabled]
+  );
+
   const [attachAsAsset, setAttachAsAsset] = useState(false);
   const [linkToConfig, setLinkToConfig] = useState(false);
 
@@ -251,6 +256,9 @@ export default function TopologyActionBar({
           .filter((item) => {
             if (item.label === "Link to Incident") {
               return !isIncidentManagementFeatureDisabled;
+            }
+            if (item.label === "View Logs") {
+              return !isLogsFeatureDisabled;
             }
             return true;
           })

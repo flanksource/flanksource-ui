@@ -48,6 +48,11 @@ export const TopologyDropdownMenu = ({
     [isFeatureDisabled]
   );
 
+  const isLogsFeatureDisabled = useMemo(
+    () => isFeatureDisabled(features.logs),
+    [isFeatureDisabled]
+  );
+
   const dropdownMenuStylesCalc = useCallback(
     (node: HTMLDivElement) => {
       if (!node) {
@@ -93,6 +98,9 @@ export const TopologyDropdownMenu = ({
             .filter((item) => {
               if (item.label === "Link to Incident") {
                 return !isIncidentManagementFeatureDisabled;
+              }
+              if (item.label === "View Logs") {
+                return !isLogsFeatureDisabled;
               }
               return true;
             })
