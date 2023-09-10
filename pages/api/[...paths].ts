@@ -1,6 +1,7 @@
 import { getAuth } from "@clerk/nextjs/server";
 import { NextApiRequest, NextApiResponse } from "next";
 import httpProxyMiddleware from "next-http-proxy-middleware";
+import { clerkClient } from "@clerk/nextjs";
 
 const API_URL = process.env.BACKEND_URL;
 const isCanary = process.env.NEXT_PUBLIC_APP_DEPLOYMENT === "CANARY_CHECKER";
@@ -16,11 +17,17 @@ export const config = {
   }
 };
 
-function getTargetURL(req: NextApiRequest) {
+async function getTargetURL(req: NextApiRequest) {
   if (isClerkAuth) {
     const user = getAuth(req);
+    const org = await clerkClient.organizations.getOrganization({
+      organizationId: user.sessionClaims?.org_id!
+    });
     const organizationSlug = user.sessionClaims?.org_slug;
-    const target = `https://${organizationSlug}.${clerkDomain}/`;
+    const backendURL = org?.publicMetadata?.backend_url;
+    // for now, lets fallback to the old way of doing things, if the backend_url
+    // is not set in the org metadata
+    const target = backendURL ?? `https://${organizationSlug}.${clerkDomain}/`;
     return target;
   }
   return API_URL;
@@ -55,8 +62,11 @@ const kratosBackendPathRewrites = ["localhost", "netlify"].includes(env!)
       }
     ];
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  const target = getTargetURL(req);
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  const target = await getTargetURL(req);
 
   if (!target) {
     return res.status(500).json({ error: "Missing target" });
