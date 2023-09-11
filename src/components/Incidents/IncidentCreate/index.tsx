@@ -5,21 +5,27 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import * as yup from "yup";
 import {
-  createEvidence,
   Evidence,
-  EvidenceType
+  EvidenceType,
+  createEvidence
 } from "../../../api/services/evidence";
 import {
-  createHypothesisOld,
-  HypothesisStatus
+  HypothesisStatus,
+  createHypothesisOld
 } from "../../../api/services/hypothesis";
-import { createIncident, Incident } from "../../../api/services/incident";
+import {
+  Incident,
+  IncidentStatus,
+  NewIncident,
+  createIncident
+} from "../../../api/services/incident";
 import { useUser } from "../../../context";
+import { Events, sendAnalyticEvent } from "../../../services/analytics";
+import { Button } from "../../Button";
 import { ReactSelectDropdown } from "../../ReactSelectDropdown";
 import { TextInput } from "../../TextInput";
 import { toastError } from "../../Toast/toast";
-import { severityItems, incidentStatusItems, typeItems } from "../data";
-import { Button } from "../../Button";
+import { incidentStatusItems, severityItems, typeItems } from "../data";
 
 const validationSchema = yup
   .object({
@@ -57,13 +63,15 @@ export function IncidentCreate({
     formState: { errors },
     handleSubmit,
     watch
-  } = useForm({
+  } = useForm<
+    Omit<NewIncident, "created_by" | "commander_id" | "communicator_id">
+  >({
     defaultValues: {
       title: "",
       description: "",
       // tracking: "",
       severity: "Low",
-      status: "open",
+      status: IncidentStatus.Open,
       type: "availability"
     },
     resolver: yupResolver(validationSchema)
@@ -82,13 +90,14 @@ export function IncidentCreate({
     updated_at: "now()"
   };
 
-  const onSubmit = async (data: Record<string, any>) => {
-    const payload: Record<string, any> = { ...data, ...additionalFields };
+  const onSubmit = async (
+    data: Omit<NewIncident, "created_by" | "commander_id" | "communicator_id">
+  ) => {
+    const payload = { ...data, ...additionalFields };
     payload.id = uuidv4();
     // TODO(ciju): Handle failure cases
     try {
-      // @ts-expect-error
-      const { data: incident, error } = await createIncident(user!, payload);
+      const { data: incident } = await createIncident(user!, payload);
 
       const hypothesis = await createHypothesisOld(
         user!,
@@ -106,12 +115,13 @@ export function IncidentCreate({
         return;
       }
 
-      let _evidence: Evidence = {
-        // @ts-expect-error
-        user,
-        id: uuidv4(),
+      let _evidence: Omit<
+        Evidence,
+        "created_by" | "created_at" | "hypothesis_id" | "id"
+      > = {
+        user: user!,
         hypothesisId: hypothesis.data[0].id
-      };
+      } as any;
 
       if (evidence) {
         _evidence.evidence = {
@@ -129,6 +139,9 @@ export function IncidentCreate({
       }
 
       await createEvidence(_evidence);
+
+      // Send Intercom event, when incident is created
+      sendAnalyticEvent(Events.CreatedIncident);
 
       if (callback != null) {
         callback(incident);
@@ -237,7 +250,7 @@ export function IncidentCreate({
           />
           <p className="text-red-600 text-sm">{errors.commander_id?.message}</p>
         </div> */}
-        {/* <div className="mb-4">
+          {/* <div className="mb-4">
           <Controller
             control={control}
             name="tracking"

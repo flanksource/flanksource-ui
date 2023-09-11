@@ -1,17 +1,17 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import {
   SchemaApi,
   SchemaResourceType
 } from "../../../components/SchemaResourcePage/resourceTypes";
-import { toastSuccess, toastError } from "../../../components/Toast/toast";
+import { toastError, toastSuccess } from "../../../components/Toast/toast";
+import { useUser } from "../../../context";
 import {
   SchemaResourceI,
   createResource,
   deleteResource,
   updateResource
 } from "../../schemaResources";
-import { useNavigate } from "react-router-dom";
-import { useUser } from "../../../context";
 
 export const useSettingsDeleteResource = (
   resourceInfo: Pick<SchemaResourceType, "name" | "table" | "api">,
