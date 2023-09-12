@@ -72,7 +72,7 @@ export function ConfigDetailsChangesPage() {
 
   return (
     <>
-      <Head prefix={configItem ? `Config Changes - ${configItem.name}` : ""} />
+      <Head prefix={configItem ? `Catalog Changes - ${configItem.name}` : ""} />
       <SearchLayout
         title={
           <div className="flex space-x-2">

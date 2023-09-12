@@ -12,7 +12,7 @@ export const ConfigInsightsColumns: ColumnDef<
   any
 >[] = [
   {
-    header: "Config",
+    header: "Catalog",
     id: "config",
     aggregatedCell: "",
     size: 100,
@@ -23,7 +23,7 @@ export const ConfigInsightsColumns: ColumnDef<
         <div className="flex max-w-full truncate">
           <Link
             className="space-x-2  items-center"
-            to={`/configs/${config?.id}`}
+            to={`/catalog/${config?.id}`}
           >
             <Icon
               className="w-4 h-4"

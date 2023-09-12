@@ -26,7 +26,7 @@ export function ConfigDetailsInsightsPage() {
   return (
     <>
       <Head
-        prefix={`Config Insights${
+        prefix={`Catalog Insights${
           configItem?.name ? ` - ${configItem?.name}` : ""
         }`}
       />

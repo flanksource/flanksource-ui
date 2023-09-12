@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import {
   Control,
   Controller,
-  FieldErrors,
+  FieldErrorsImpl,
   UseFormSetValue
 } from "react-hook-form";
 import { searchConfigs } from "../../../../api/services/configs";
@@ -14,7 +14,7 @@ import { AddResponderFormValues } from "../../AddResponders/AddResponder";
 type JiraProps = {
   teamId: string;
   control: Control;
-  errors: FieldErrors;
+  errors: FieldErrorsImpl<AddResponderFormValues>;
   setValue: UseFormSetValue<AddResponderFormValues>;
   defaultValues?: { [key: string]: any } | undefined;
   values?: { [key: string]: any } | undefined;
@@ -91,7 +91,7 @@ export const Jira = ({
           }}
           label={
             <label className="block text-sm font-bold text-gray-700 mb-2">
-              Jira Config Type
+              Jira Instance
             </label>
           }
           value={jiraProjectType}

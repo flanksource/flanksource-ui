@@ -17,7 +17,7 @@ export function ConfigsDetailsBreadcrumbNav({ configId, config }: Props) {
   return (
     <BreadcrumbNav
       list={[
-        <BreadcrumbRoot link="/configs">Config</BreadcrumbRoot>,
+        <BreadcrumbRoot link="/catalog">Catalog</BreadcrumbRoot>,
         isLoading && !configItem ? (
           <TextSkeletonLoader />
         ) : (

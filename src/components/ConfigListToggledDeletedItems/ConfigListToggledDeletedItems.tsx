@@ -24,7 +24,7 @@ export function ConfigListToggledDeletedItems() {
               setHideDeletedConfigs("no");
             }
           }}
-          label="Hide Deleted Configs"
+          label="Hide Deleted Catalog"
           value={hideDeletedConfigs === "yes"}
         />
       </div>

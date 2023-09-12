@@ -72,13 +72,13 @@ export function ConfigChangesPage() {
 
   return (
     <>
-      <Head prefix="Config Changes" />
+      <Head prefix="Catalog Changes" />
       <SearchLayout
         title={
           <BreadcrumbNav
             list={[
-              <BreadcrumbRoot link="/configs/changes">
-                Config Changes
+              <BreadcrumbRoot link="/catalog/changes">
+                Catalog Changes
               </BreadcrumbRoot>
             ]}
           />

@@ -107,7 +107,7 @@ export function ConfigDetailsPage() {
 
   return (
     <>
-      <Head prefix={configDetails ? `Config - ${configDetails.name}` : ""} />
+      <Head prefix={configDetails ? `Catalog - ${configDetails.name}` : ""} />
       <SearchLayout
         title={
           <div className="flex space-x-2">

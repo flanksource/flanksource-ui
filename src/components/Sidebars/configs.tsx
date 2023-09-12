@@ -163,7 +163,7 @@ export default function Configs({
       isCollapsed={isCollapsed}
       Header={
         <div className="flex flex-row items-center space-x-2">
-          <Title title="Configs" icon={<VscJson className="w-6 h-auto" />} />
+          <Title title="Catalog" icon={<VscJson className="w-6 h-auto" />} />
           <Badge
             className="w-5 h-5 flex items-center justify-center"
             roundedClass="rounded-full"

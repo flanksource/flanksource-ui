@@ -97,8 +97,8 @@ const navigation: NavigationItems = [
     resourceName: tables.incident
   },
   {
-    name: "Config",
-    href: "/configs",
+    name: "Catalog",
+    href: "/catalog",
     icon: VscJson,
     featureName: features.config,
     resourceName: tables.database
@@ -368,7 +368,10 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
         />
       </Route>
 
-      <Route path="configs" element={sidebar}>
+      {/* Redirect configs to catalog */}
+      <Route path="configs" element={<Navigate to="/catalog" />} />
+
+      <Route path="catalog" element={sidebar}>
         <Route
           index
           element={withAccessCheck(<ConfigListPage />, tables.database, "read")}
