@@ -1,11 +1,11 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { ActionLink } from "../ActionLink/ActionLink";
 import clsx from "clsx";
-import { useGetConfigByIdQuery } from "../../api/query-hooks";
-import { usePartialUpdateSearchParams } from "../../hooks/usePartialUpdateSearchParams";
-import { AttachEvidenceDialog } from "../AttachEvidenceDialog";
-import { EvidenceType } from "../../api/services/evidence";
+import React, { useEffect, useMemo, useState } from "react";
 import { MdAlarmAdd } from "react-icons/md";
+import { useGetConfigByIdQuery } from "../../api/query-hooks";
+import { EvidenceType } from "../../api/services/evidence";
+import { usePartialUpdateSearchParams } from "../../hooks/usePartialUpdateSearchParams";
+import { ActionLink } from "../ActionLink/ActionLink";
+import AttachAsEvidenceButton from "../AttachEvidenceDialog/AttachAsEvidenceDialogButton";
 
 type ConfigActionBarProps = {
   configId: string;
@@ -18,7 +18,6 @@ export default function ConfigActionBar({
 }: ConfigActionBarProps) {
   const [searchParams] = usePartialUpdateSearchParams();
   const [checked, setChecked] = useState<Record<string, any>>({});
-  const [attachAsEvidence, setAttachAsEvidence] = useState(false);
   const { data: configDetails } = useGetConfigByIdQuery(configId);
 
   useEffect(() => {
@@ -55,17 +54,7 @@ export default function ConfigActionBar({
       className={clsx("flex flex-wrap justify-between py-4 px-1", className)}
       {...props}
     >
-      <ActionLink
-        text="Link to incident"
-        icon={<MdAlarmAdd />}
-        onClick={() => {
-          setAttachAsEvidence(true);
-        }}
-      />
-      <AttachEvidenceDialog
-        key={`attach-evidence-dialog`}
-        isOpen={attachAsEvidence}
-        onClose={() => setAttachAsEvidence(false)}
+      <AttachAsEvidenceButton
         config_id={configId}
         evidence={{
           lines: configLines,
@@ -76,6 +65,15 @@ export default function ConfigActionBar({
           )
         }}
         type={EvidenceType.Config}
+        buttonComponent={({ onClick, disabled: _ }) => {
+          return (
+            <ActionLink
+              text="Link to incident"
+              icon={<MdAlarmAdd />}
+              onClick={() => onClick()}
+            />
+          );
+        }}
         callback={(_: any) => {
           setChecked({});
         }}

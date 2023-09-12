@@ -1,11 +1,13 @@
 import { Menu } from "../Menu";
 import { Topology } from "../../context/TopologyPageContext";
 import { topologyActionItems } from "../TopologySidebar/TopologyActionBar";
-import { CSSProperties, useCallback, useState } from "react";
+import { CSSProperties, useCallback, useMemo, useState } from "react";
 import { AttachEvidenceDialog } from "../AttachEvidenceDialog";
 import TopologySnapshotModal from "./TopologySnapshotModal";
 import { EvidenceType } from "../../api/services/evidence";
 import { TopologyConfigLinkModal } from "../TopologyConfigLinkModal/TopologyConfigLinkModal";
+import { useFeatureFlagsContext } from "../../context/FeatureFlagsContext";
+import { features } from "../../services/permissions/features";
 
 type TopologyMenuItemProps = {
   onClick?: () => void;
@@ -38,6 +40,18 @@ export const TopologyDropdownMenu = ({
   isTopologyPage = false
 }: IProps) => {
   const [dropDownMenuStyles, setDropDownMenuStyles] = useState<CSSProperties>();
+
+  const { isFeatureDisabled } = useFeatureFlagsContext();
+
+  const isIncidentManagementFeatureDisabled = useMemo(
+    () => isFeatureDisabled(features.incidents),
+    [isFeatureDisabled]
+  );
+
+  const isLogsFeatureDisabled = useMemo(
+    () => isFeatureDisabled(features.logs),
+    [isFeatureDisabled]
+  );
 
   const dropdownMenuStylesCalc = useCallback(
     (node: HTMLDivElement) => {
@@ -80,42 +94,59 @@ export const TopologyDropdownMenu = ({
           <Menu.VerticalIconButton />
         </div>
         <Menu.Items className={`z-50`} style={dropDownMenuStyles}>
-          {topologyActionItems.map(
-            ({ isShown, ContainerComponent: Container, icon: Icon, label }) => {
-              if (!isShown(topology, "TopologyCard")) {
-                return null;
+          {topologyActionItems
+            .filter((item) => {
+              if (item.label === "Link to Incident") {
+                return !isIncidentManagementFeatureDisabled;
               }
+              if (item.label === "View Logs") {
+                return !isLogsFeatureDisabled;
+              }
+              return true;
+            })
+            .map(
+              ({
+                isShown,
+                ContainerComponent: Container,
+                icon: Icon,
+                label
+              }) => {
+                if (!isShown(topology, "TopologyCard")) {
+                  return null;
+                }
 
-              return (
-                <Container
-                  child={TopologyMenuItem}
-                  topology={topology}
-                  key={label}
-                  onRefresh={onRefresh}
-                  icon={<Icon />}
-                  text={label}
-                  openModalAction={
-                    label === "Snapshot"
-                      ? () => setIsDownloadComponentSnapshotModalOpen(true)
-                      : label === "Link to Incident"
-                      ? () => setAttachAsAsset(true)
-                      : label === "Link to config"
-                      ? () => setLinkToConfig(true)
-                      : undefined
-                  }
-                />
-              );
-            }
-          )}
+                return (
+                  <Container
+                    child={TopologyMenuItem}
+                    topology={topology}
+                    key={label}
+                    onRefresh={onRefresh}
+                    icon={<Icon />}
+                    text={label}
+                    openModalAction={
+                      label === "Snapshot"
+                        ? () => setIsDownloadComponentSnapshotModalOpen(true)
+                        : label === "Link to Incident"
+                        ? () => setAttachAsAsset(true)
+                        : label === "Link to config"
+                        ? () => setLinkToConfig(true)
+                        : undefined
+                    }
+                  />
+                );
+              }
+            )}
         </Menu.Items>
       </Menu>
 
-      <AttachEvidenceDialog
-        isOpen={attachAsAsset}
-        onClose={() => setAttachAsAsset(false)}
-        type={EvidenceType.Topology}
-        component_id={topology.id}
-      />
+      {!isIncidentManagementFeatureDisabled && (
+        <AttachEvidenceDialog
+          isOpen={attachAsAsset}
+          onClose={() => setAttachAsAsset(false)}
+          type={EvidenceType.Topology}
+          component_id={topology.id}
+        />
+      )}
 
       <TopologySnapshotModal
         onCloseModal={() => setIsDownloadComponentSnapshotModalOpen(false)}

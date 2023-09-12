@@ -3,12 +3,13 @@ import {
   Property,
   permissionService
 } from "../services/permissions/permissionsService";
+import { features } from "../services/permissions/features";
 
 export type FeatureFlagsState = {
   featureFlags: Property[];
   featureFlagsLoaded: boolean;
   refreshFeatureFlags: () => void;
-  isFeatureDisabled: (_: string) => boolean;
+  isFeatureDisabled: (_: keyof typeof features) => boolean;
 };
 
 const initialState: FeatureFlagsState = {
