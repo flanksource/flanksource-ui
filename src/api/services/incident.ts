@@ -130,8 +130,8 @@ export type IncidentSummary = {
   created_at: string;
   updated_at: string;
   commander?: User;
-  responders?: User;
-  commenters?: User;
+  responders?: User[];
+  commenters?: User[];
 };
 
 export const getIncidentsSummary = async (

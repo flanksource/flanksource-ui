@@ -14,6 +14,8 @@ import { IncidentTypeIcon } from "../incidentTypeTag";
 import { useAtom } from "jotai";
 import { refreshButtonClickedTrigger } from "../SlidingSideBar";
 import { typeItems } from "../Incidents/data";
+import { useFeatureFlagsContext } from "../../context/FeatureFlagsContext";
+import { features } from "../../services/permissions/features";
 
 type Props = {
   topologyId?: string;
@@ -45,6 +47,13 @@ export default function Incidents({
       status: "open",
       age: 0
     });
+
+  const { isFeatureDisabled } = useFeatureFlagsContext();
+
+  const isIncidentManagementFeatureDisabled = useMemo(
+    () => isFeatureDisabled(features.incidents),
+    [isFeatureDisabled]
+  );
 
   const { isLoading, data, isRefetching, refetch } = useQuery(
     [
@@ -98,6 +107,10 @@ export default function Incidents({
       };
     });
   }, [data]);
+
+  if (isIncidentManagementFeatureDisabled) {
+    return null;
+  }
 
   return (
     <CollapsiblePanel

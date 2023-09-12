@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
 import { AddResponderFormValues } from "../../AddResponders/AddResponder";
 import { MicrosoftPlanner } from "./index";
+import { StoryFn } from "@storybook/react";
 
 export default {
   title: "MicrosoftPlanner",
@@ -39,7 +40,12 @@ const FormContainer = () => {
   };
   return (
     <div className="flex flex-col">
-      <MicrosoftPlanner control={control} errors={errors} setValue={setValue} />
+      <MicrosoftPlanner
+        teamId=""
+        control={control}
+        errors={errors}
+        setValue={setValue}
+      />
       <div className="flex flex-row">
         <button className="btn-secondary p-2 m-2" onClick={(e) => reset()}>
           reset
@@ -52,7 +58,7 @@ const FormContainer = () => {
   );
 };
 
-const Template = (arg) => <FormContainer {...arg} />;
+const Template: StoryFn = (arg) => <FormContainer {...arg} />;
 
 export const Variant1 = Template.bind({});
 Variant1.args = {};

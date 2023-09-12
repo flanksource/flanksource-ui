@@ -36,9 +36,10 @@ export default function IncidentCardSummary({
       const statusLine: StatusLineProps = {
         icon: typeItems[key as IncidentSummaryTypes].icon,
         label: typeItems[key as IncidentSummaryTypes].description,
-        url: `/incidents?type=${key}`,
+        url: `/incidents?type=${key}&component=${topology.id}`,
         statuses: []
       };
+      const type = typeItems[key as IncidentSummaryTypes].value;
       Object.entries(summary).forEach(([key, value], i) => {
         if (value <= 0) {
           return;
@@ -48,7 +49,7 @@ export default function IncidentCardSummary({
         const item = {
           label: value.toString(),
           color: chipColorFromSeverity(key as IncidentSeverity),
-          url: `/incidents?severity=${severityObject.value}&component=${topology.id}`
+          url: `/incidents?severity=${severityObject.value}&component=${topology.id}&type=${type}`
         };
         statusLine.statuses.push(item);
       });

@@ -1,20 +1,19 @@
+import { useAtom } from "jotai";
+import { useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
+import {
+  useGetConfigByIdQuery,
+  useGetConfigChangesByConfigIdQuery
+} from "../../api/query-hooks";
+import { ConfigsDetailsBreadcrumbNav } from "../../components/BreadcrumbNav/ConfigsDetailsBreadCrumb";
 import { ConfigChangeHistory } from "../../components/ConfigChangeHistory";
+import ConfigSidebar from "../../components/ConfigSidebar";
+import { useConfigDetailsTabs } from "../../components/ConfigsPage/ConfigTabsLinks";
+import { Head } from "../../components/Head/Head";
 import { InfoMessage } from "../../components/InfoMessage";
 import { SearchLayout } from "../../components/Layout";
-import ConfigSidebar from "../../components/ConfigSidebar";
-import { ConfigsDetailsBreadcrumbNav } from "../../components/BreadcrumbNav/ConfigsDetailsBreadCrumb";
-import {
-  useGetConfigChangesByConfigIdQuery,
-  useGetConfigByIdQuery
-} from "../../api/query-hooks";
-import { Head } from "../../components/Head/Head";
-import TabbedLinks from "../../components/Tabs/TabbedLinks";
-import { useConfigDetailsTabs } from "../../components/ConfigsPage/ConfigTabsLinks";
-import { useMemo, useRef, useState } from "react";
-import useRunTaskOnPropChange from "../../hooks/useRunTaskOnPropChange";
 import { refreshButtonClickedTrigger } from "../../components/SlidingSideBar";
-import { useAtom } from "jotai";
+import TabbedLinks from "../../components/Tabs/TabbedLinks";
 
 export function ConfigDetailsChangesPage() {
   const { id } = useParams();
@@ -50,30 +49,8 @@ export function ConfigDetailsChangesPage() {
   }, [pageIndex, pageSize, pageCount, isLoading, isRefetching]);
 
   const { data: configItem, error: itemError } = useGetConfigByIdQuery(id!);
-  const marginBottom = 24;
-  const contentRef = useRef<HTMLDivElement>(null);
-  const element = contentRef.current;
-  const contentDivHeight = contentRef.current?.parentElement
-    ? document.body.clientHeight -
-      contentRef.current.parentElement.getBoundingClientRect().top -
-      marginBottom
-    : 0;
-  const configTabList = useConfigDetailsTabs();
 
-  useRunTaskOnPropChange(
-    () => {
-      return contentDivHeight;
-    },
-    () => {
-      if (!element) {
-        return;
-      }
-      element.parentElement?.style.setProperty(
-        "max-height",
-        `${contentDivHeight}px`
-      );
-    }
-  );
+  const configTabList = useConfigDetailsTabs();
 
   if (error) {
     const errorMessage =
@@ -95,7 +72,7 @@ export function ConfigDetailsChangesPage() {
 
   return (
     <>
-      <Head prefix={configItem ? `Config Changes - ${configItem.name}` : ""} />
+      <Head prefix={configItem ? `Catalog Changes - ${configItem.name}` : ""} />
       <SearchLayout
         title={
           <div className="flex space-x-2">
@@ -116,10 +93,7 @@ export function ConfigDetailsChangesPage() {
             tabLinks={configTabList}
             contentClassName="bg-white border border-t-0 border-gray-300 flex-1 p-2"
           >
-            <div
-              className={`flex flex-col flex-1 p-6 pb-0 h-full`}
-              ref={contentRef}
-            >
+            <div className={`flex flex-col flex-1 p-6 pb-0 h-full`}>
               <div className="flex flex-col items-start overflow-y-auto">
                 <ConfigChangeHistory
                   data={historyData?.data ?? []}

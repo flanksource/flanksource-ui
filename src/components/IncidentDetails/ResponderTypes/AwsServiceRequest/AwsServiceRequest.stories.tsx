@@ -1,6 +1,8 @@
 import { useForm } from "react-hook-form";
 import { AddResponderFormValues } from "../../AddResponders/AddResponder";
 import { AwsServiceRequest } from "./index";
+import { ComponentStory, StoryFn } from "@storybook/react";
+import { ComponentProps } from "react";
 
 export default {
   title: "AwsServiceRequest",
@@ -56,7 +58,7 @@ const FormContainer = () => {
   );
 };
 
-const Template = (arg) => <FormContainer {...arg} />;
+const Template: StoryFn = (arg) => <FormContainer {...arg} />;
 
 export const Variant1 = Template.bind({});
 Variant1.args = {};

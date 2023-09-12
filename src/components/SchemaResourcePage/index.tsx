@@ -1,18 +1,17 @@
 import { useState } from "react";
 import { AiFillPlusCircle } from "react-icons/ai";
+import { useSettingsCreateResource } from "../../api/query-hooks/mutations/useSettingsResourcesMutations";
 import { useGetSettingsAllQuery } from "../../api/query-hooks/settingsResourcesHooks";
 import { BreadcrumbNav, BreadcrumbRoot } from "../BreadcrumbNav";
+import ErrorPage from "../Errors/ErrorPage";
 import { Head } from "../Head/Head";
 import { SearchLayout } from "../Layout";
 import { Modal } from "../Modal";
-import TableSkeletonLoader from "../SkeletonLoader/TableSkeletonLoader";
-import { SchemaResourceType } from "./resourceTypes";
-import { SchemaResourceEdit } from "./SchemaResourceEdit";
-import { SchemaResourceList } from "./SchemaResourceList";
 import ConfigScrapperSpecEditor from "../SpecEditor/ConfigScrapperSpecEditor";
 import HealthSpecEditor from "../SpecEditor/HealthSpecEditor";
-import { useSettingsCreateResource } from "../../api/query-hooks/mutations/useSettingsResourcesMutations";
-import ErrorPage from "../Errors/ErrorPage";
+import { SchemaResourceEdit } from "./SchemaResourceEdit";
+import { SchemaResourceList } from "./SchemaResourceList";
+import { SchemaResourceType } from "./resourceTypes";
 
 export function SchemaResourcePage({
   resourceInfo

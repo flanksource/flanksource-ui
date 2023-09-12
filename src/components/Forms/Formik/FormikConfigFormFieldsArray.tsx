@@ -19,10 +19,12 @@ type ConfigFormFieldProps = {
     name: string;
     label?: string;
     className?: string;
+    hint?: string;
     fieldComponent: React.FC<{
       name: string;
       label?: string;
       className?: string;
+      hint?: string;
     }>;
   }[];
 };

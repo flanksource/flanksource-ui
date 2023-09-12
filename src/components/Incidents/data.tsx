@@ -52,7 +52,7 @@ export const severityItems = {
     icon: <HiOutlineChevronDoubleDown color="green" />,
     name: "Low",
     description: "Low",
-    value: "Low"
+    value: "low"
   },
   Medium: {
     id: "dropdown-severity-medium",
@@ -66,21 +66,21 @@ export const severityItems = {
     icon: <HiOutlineMinus color="orange" />,
     name: "High",
     description: "High",
-    value: "High"
+    value: "high"
   },
   Blocker: {
     id: "dropdown-severity-blocker",
     icon: <HiOutlineChevronUp color="red" />,
     name: "Blocker",
     description: "Blocker",
-    value: "Blocker"
+    value: "blocker"
   },
   Critical: {
     id: "dropdown-severity-critical",
     icon: <HiOutlineChevronDoubleUp color="red" />,
     name: "Critical",
     description: "Critical",
-    value: "Critical"
+    value: "critical"
   }
 } as const;
 

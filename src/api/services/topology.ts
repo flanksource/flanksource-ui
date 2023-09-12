@@ -91,6 +91,14 @@ export type CanaryGraphResponse = {
   duration: number;
   runnerName: string;
   status: CanaryGraphStatus[];
+  latency: {
+    rollingIn: number;
+    [key: string]: number;
+  };
+  uptime: {
+    passed: number;
+    failed: number;
+  };
 };
 
 export type CanaryGraphStatus = {
@@ -151,7 +159,9 @@ export const getCheckStatuses = (
 };
 
 export const getTopologyComponents = () => {
-  return IncidentCommander.get<TopologyComponentItem[]>(`/component_names`);
+  return IncidentCommander.get<TopologyComponentItem[]>(
+    `/component_names?order=name.asc`
+  );
 };
 
 export const getTopologyComponentsWithLogs = () => {

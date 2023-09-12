@@ -39,7 +39,13 @@ const aliases = {
   clusterissuer: "cert-manager",
   issuer: "cert-manager",
   controllerrevision: "kubernetes",
-  clusterservicerevision: "kubernetes"
+  clusterservicerevision: "kubernetes",
+  // connection icons type aliases
+  "Zulip Chat": "zulip",
+  "Google Chat": "google-chat",
+  "Google Cloud": "gcp",
+  "Azure Devops": "azure-devops",
+  "SQL Server": "sqlserver"
 } as const;
 
 const reactIcons = {

@@ -50,7 +50,7 @@ export const jobHistoryResourceTypes = [
     value: "topology"
   },
   {
-    label: "Config Scraper",
+    label: "Catalog Scraper",
     value: "config_scraper"
   }
 ];

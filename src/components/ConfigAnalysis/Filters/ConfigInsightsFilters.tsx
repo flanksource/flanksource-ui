@@ -4,6 +4,7 @@ import { useSearchParams } from "react-router-dom";
 import ConfigInsightsTypeDropdown from "./ConfigInsightsTypeDropdown";
 import ConfigInsightsSeverityDropdown from "./ConfigInsightsSeverityDropdown";
 import ConfigInsightsAnalyzerDropdown from "./ConfigInsightsAnalyzerDropdown";
+import { ComponentNamesDropdown } from "../../Dropdown/ComponentNamesDropdown";
 
 export function ConfigInsightsFilters() {
   const [params, setParams] = useSearchParams();
@@ -11,16 +12,18 @@ export function ConfigInsightsFilters() {
   const severityURL = params.get("severity");
   const typeURL = params.get("type");
   const analyzerURL = params.get("analyzer");
+  const componentID = params.get("component");
 
   const { control, watch } = useForm({
     defaultValues: {
       severity: severityURL ?? "all",
       type: typeURL ?? "all",
-      analyzer: analyzerURL ?? "all"
+      analyzer: analyzerURL ?? "all",
+      component: componentID ?? "all"
     }
   });
 
-  const { severity, type, analyzer } = watch();
+  const { severity, type, analyzer, component } = watch();
 
   useEffect(() => {
     const subscribe = watch((values) => {
@@ -72,6 +75,16 @@ export function ConfigInsightsFilters() {
             prefix="Analyzer:"
             name="analyzer"
             value={analyzer}
+            className="w-auto max-w-[400px] mr-2 flex-shrink-0"
+            dropDownClassNames="w-auto max-w-[400px] left-0"
+            control={control}
+            hideControlBorder
+            showAllOption
+          />
+          <ComponentNamesDropdown
+            prefix="Component:"
+            name="component"
+            value={component}
             className="w-auto max-w-[400px] mr-2 flex-shrink-0"
             dropDownClassNames="w-auto max-w-[400px] left-0"
             control={control}

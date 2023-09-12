@@ -376,7 +376,7 @@ export default function HealthSpecEditor({
         },
         {
           name: "configDB",
-          label: "Mission Control Config",
+          label: "Mission Control Catalog",
           updateSpec: (value: Record<string, any>) => {
             onSubmit(value);
           },

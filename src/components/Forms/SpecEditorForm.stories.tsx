@@ -63,6 +63,5 @@ HTTPHealthFormEditorConfigs.args = {
     console.log(spec);
   },
   configForm: HTTPHealthFormEditor,
-  specFormFieldName: "spec.httpHealthCheck",
   resourceInfo: schemaResourceTypes.at(-1)
 };

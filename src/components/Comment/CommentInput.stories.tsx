@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { Meta, StoryFn } from "@storybook/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ComponentMeta, ComponentStory } from "@storybook/react";
-import withMock from "storybook-addon-mock";
+import { rest } from "msw";
+import { useState } from "react";
 
 import { CommentInput } from "./index";
 
@@ -10,11 +10,37 @@ const defaultQueryClient = new QueryClient();
 export default {
   title: "CommentInput",
   component: CommentInput,
-  parameters: { actions: { argTypesRegex: "^on.*" } },
-  decorators: [withMock]
-} as ComponentMeta<typeof CommentInput>;
+  parameters: {
+    actions: { argTypesRegex: "^on.*" },
+    msw: {
+      handlers: [
+        rest.get("/people", (req, res, ctx) => {
+          return res(
+            ctx.json([
+              {
+                id: "einstein",
+                name: "Albert Einstein",
+                avatar: "https://i.pravatar.cc/150?u=einstein"
+              },
+              {
+                id: "galileo",
+                name: "Galileo Galilei",
+                avatar: null
+              },
+              {
+                id: "issac",
+                name: "Issac Newton",
+                avatar: "https://i.pravatar.cc/150?u=issac"
+              }
+            ])
+          );
+        })
+      ]
+    }
+  }
+} as Meta<typeof CommentInput>;
 
-const Template: ComponentStory<typeof CommentInput> = (arg: any) => {
+const Template: StoryFn<typeof CommentInput> = (arg: any) => {
   const [comment, setComment] = useState(arg.value);
 
   return (
@@ -35,29 +61,4 @@ Variant1.args = {
     "Galileo di Vincenzo Bonaiuti de' Galilei (/ˌɡælɪˈleɪ.oʊ ˌɡælɪˈleɪ.iˌ/ GAL-ih-LAY-oh GAL-ih-LAY-ee, Italian: [ɡaliˈlɛːo ɡaliˈlɛi]; 15 February 1564 – 8 January 1642), commonly referred to as @[Galileo](user:galileo), was an Italian astronomer, physicist and engineer, sometimes described as a polymath, from the city of Pisa, then part of the Duchy of Florence. Galileo has been called the father of observational astronomy, modern physics, the scientific method, and modern science."
 };
 
-Variant1.parameters = {
-  mockData: [
-    {
-      url: "/db/person",
-      method: "GET",
-      status: 200,
-      response: [
-        {
-          id: "einstein",
-          name: "Albert Einstein",
-          avatar: "https://i.pravatar.cc/150?u=einstein"
-        },
-        {
-          id: "galileo",
-          name: "Galileo Galilei",
-          avatar: null
-        },
-        {
-          id: "issac",
-          name: "Issac Newton",
-          avatar: "https://i.pravatar.cc/150?u=issac"
-        }
-      ]
-    }
-  ]
-};
+Variant1.parameters = {};

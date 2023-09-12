@@ -1,16 +1,16 @@
+import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { AiFillPlusCircle } from "react-icons/ai/";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { getIncidentsSummary } from "../../api/services/incident";
+import { BreadcrumbNav, BreadcrumbRoot } from "../../components/BreadcrumbNav";
 import FilterIncidents from "../../components/FilterIncidents/FilterIncidents";
+import { Head } from "../../components/Head/Head";
 import { IncidentCreate } from "../../components/Incidents/IncidentCreate";
 import { IncidentList } from "../../components/Incidents/IncidentList";
 import { SearchLayout } from "../../components/Layout";
 import { Modal } from "../../components/Modal";
 import IncidentListSkeletonLoader from "../../components/SkeletonLoader/IncidentListSkeletonLoader";
-import { Head } from "../../components/Head/Head";
-import { BreadcrumbNav, BreadcrumbRoot } from "../../components/BreadcrumbNav";
-import { useQuery } from "@tanstack/react-query";
 
 type IncidentFilters = {
   severity?: string;
@@ -43,7 +43,9 @@ function toPostgresqlSearchParam({
 }
 
 export function IncidentListPage() {
-  const [searchParams] = useSearchParams();
+  const [searchParams] = useSearchParams({
+    status: "open"
+  });
 
   const severity = searchParams.get("severity");
   const status = searchParams.get("status");
@@ -69,6 +71,9 @@ export function IncidentListPage() {
       };
       const res = await getIncidentsSummary(toPostgresqlSearchParam(params));
       return res;
+    },
+    {
+      refetchOnMount: "always"
     }
   );
 
@@ -127,6 +132,7 @@ export function IncidentListPage() {
         size="small"
         title="Create New Incident"
         containerClassName=""
+        bodyClass="px-0"
       >
         <IncidentCreate
           callback={(response) => {

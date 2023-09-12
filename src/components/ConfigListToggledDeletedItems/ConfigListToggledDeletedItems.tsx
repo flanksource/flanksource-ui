@@ -1,11 +1,17 @@
-import { useSearchParams } from "react-router-dom";
 import Popover from "../Popover/Popover";
 import { Toggle } from "../Toggle";
+import { useAtom } from "jotai";
+import { atomWithStorage } from "jotai/utils";
+
+export const areDeletedConfigsHidden = atomWithStorage(
+  "areDeletedConfigsHidden",
+  "yes"
+);
 
 export function ConfigListToggledDeletedItems() {
-  const [searchParams, setSearchParams] = useSearchParams({
-    hideDeleted: "no"
-  });
+  const [hideDeletedConfigs, setHideDeletedConfigs] = useAtom(
+    areDeletedConfigsHidden
+  );
 
   return (
     <Popover className="flex items-center" title="Preferences">
@@ -13,15 +19,13 @@ export function ConfigListToggledDeletedItems() {
         <Toggle
           onChange={(value) => {
             if (value) {
-              searchParams.set("hideDeleted", "yes");
+              setHideDeletedConfigs("yes");
             } else {
-              searchParams.delete("hideDeleted");
+              setHideDeletedConfigs("no");
             }
-            // don't add a new history entry
-            setSearchParams(searchParams, { replace: true });
           }}
-          label="Hide Deleted Configs"
-          value={searchParams.get("hideDeleted") === "yes"}
+          label="Hide Deleted Catalog"
+          value={hideDeletedConfigs === "yes"}
         />
       </div>
     </Popover>

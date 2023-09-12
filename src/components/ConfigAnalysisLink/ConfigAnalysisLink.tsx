@@ -1,5 +1,4 @@
-import { useState, useEffect } from "react";
-import ReactTooltip from "react-tooltip";
+import { useState } from "react";
 import { ViewType } from "../../types";
 import { ConfigTypeInsights } from "../ConfigInsights";
 import ConfigInsightsIcon from "../ConfigInsightsIcon";
@@ -29,10 +28,6 @@ export function ConfigAnalysisLink({
   ...rest
 }: Props) {
   const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    ReactTooltip.rebuild();
-  });
 
   return (
     <div className="flex flex-col cursor-pointer  space-y-1" {...rest}>
@@ -64,7 +59,6 @@ export function ConfigAnalysisLink({
           <div
             className="flex flex-row items-center gap-1 overflow-hidden cursor-pointer"
             data-html={true}
-            data-tip={configAnalysis.sanitizedMessageTxt}
             data-class="max-w-[20rem]"
           >
             <ConfigInsightsIcon analysis={configAnalysis} />

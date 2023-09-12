@@ -1,3 +1,4 @@
+import { ComponentStory } from "@storybook/react";
 import { CustomScroll, CustomScrollProps } from "./index";
 
 export default {
@@ -5,7 +6,9 @@ export default {
   component: CustomScroll
 };
 
-const Template = (args: CustomScrollProps) => <CustomScroll {...args} />;
+const Template: ComponentStory<typeof CustomScroll> = (
+  args: CustomScrollProps
+) => <CustomScroll {...args} />;
 
 export const Variant1 = Template.bind({});
 Variant1.args = {

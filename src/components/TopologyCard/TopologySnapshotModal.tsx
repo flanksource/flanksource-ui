@@ -8,6 +8,7 @@ import { toastError } from "../Toast/toast";
 import { Toggle } from "../Toggle";
 import { FaDownload } from "react-icons/fa";
 import { Oval } from "react-loading-icons";
+import { Events, sendAnalyticEvent } from "../../services/analytics";
 
 type Props = {
   onCloseModal: () => void;
@@ -58,6 +59,7 @@ export default function TopologySnapshotModal({
   const onSubmit = async (data: TopologySnapshotFormData) => {
     try {
       await download(data.timeRange, data.relatedComponents);
+      sendAnalyticEvent(Events.DownloadedSnapshot);
     } catch (error) {
       toastError("Error downloading file");
     }

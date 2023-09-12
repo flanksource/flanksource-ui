@@ -6,16 +6,16 @@ import { Toaster } from "react-hot-toast";
 import { IconType } from "react-icons";
 import { IoChevronForwardOutline } from "react-icons/io5";
 import { Link, NavLink, Outlet } from "react-router-dom";
-import { $ArrayElemType } from "../../types/utility";
 import { NavigationItems, SettingsNavigationItems } from "../../App";
+import { $ArrayElemType } from "../../types/utility";
 
 import { AuthContext } from "../../context";
+import { useFeatureFlagsContext } from "../../context/FeatureFlagsContext";
 import { useOuterClick } from "../../lib/useOuterClick";
 import { getLocalItem, setLocalItem } from "../../utils/storage";
-import FullPageSkeletonLoader from "../SkeletonLoader/FullPageSkeletonLoader";
-import { Icon } from "../Icon";
-import { useFeatureFlagsContext } from "../../context/FeatureFlagsContext";
 import { withAccessCheck } from "../AccessCheck/AccessCheck";
+import { Icon } from "../Icon";
+import FullPageSkeletonLoader from "../SkeletonLoader/FullPageSkeletonLoader";
 
 interface Props {
   navigation: NavigationItems;
@@ -70,7 +70,7 @@ interface NavItemWrapperProps {
   className?: string;
 }
 
-const NavItemWrapper = (props: NavItemWrapperProps) => {
+function NavItemWrapper(props: NavItemWrapperProps) {
   const { as: Component = "div", active, children, className } = props;
 
   const cls = ({ isActive }: { isActive: boolean }) =>
@@ -78,7 +78,7 @@ const NavItemWrapper = (props: NavItemWrapperProps) => {
       active || isActive
         ? "bg-gray-800 text-gray-100"
         : "text-gray-200 hover:bg-gray-800 hover:text-gray-100",
-      "group rounded-md py-3 px-2 flex items-center text-md font-medium",
+      "group rounded-md py-1.5 px-2 flex items-center text-md font-medium",
       className
     );
   return Component === "div" ? (
@@ -88,7 +88,8 @@ const NavItemWrapper = (props: NavItemWrapperProps) => {
       {children}
     </Component>
   );
-};
+}
+
 function SideNavItem({
   name,
   current = false,
@@ -140,11 +141,14 @@ function SideNavGroup({
             <NavLabel icon={icon} active={current} iconOnly name={name} />
           </NavItemWrapper>
         </Menu.Button>
+        {/* @ts-expect-error */}
         <Menu.Items className="absolute border left-0 ml-12 w-48 shadow-md top-0 z-10 bg-gray-800 space-y-1">
-          {submenu.map(({ name, icon, href, featureName, resourceName }) =>
-            !isFeatureDisabled(featureName!)
+          {submenu.map(({ name, icon, href, featureName, resourceName }) => {
+            return !isFeatureDisabled(featureName!)
               ? withAccessCheck(
+                  /* @ts-expect-error */
                   <Menu.Item key={name}>
+                    {/* @ts-expect-error */}
                     {({ active }) => (
                       <NavLink className="w-full" to={href}>
                         <NavItemWrapper active={active}>
@@ -160,8 +164,8 @@ function SideNavGroup({
                   resourceName,
                   "read"
                 )
-              : null
-          )}
+              : null;
+          })}
         </Menu.Items>
       </Menu>
     );
@@ -218,8 +222,8 @@ function SideNav({
   const { isFeatureDisabled } = useFeatureFlagsContext();
 
   return (
-    <nav className="flex-col space-y-2 divide-y divide-gray-500">
-      <div>
+    <nav className="flex flex-col divide-y divide-gray-500">
+      <div className="flex flex-col gap-1 mb-1">
         {navs.map((item) =>
           !isFeatureDisabled(item.featureName!)
             ? withAccessCheck(
@@ -283,16 +287,21 @@ export function SidebarLayout({ navigation, settingsNav, checkPath }: Props) {
   return (
     <>
       <Toaster position="top-right" reverseOrder={false} />
-      <div className="flex h-screen">
+      <div className="flex flex-row h-screen min-w-[1280px]">
         <div
-          className={clsx("transform duration-500 w-14 z-10 bg-gray-700", {
-            "lg:w-56": !collapseSidebar
-          })}
+          className={clsx(
+            "transform duration-500 z-10 bg-gray-700 flex flex-col",
+            {
+              "w-56": !collapseSidebar,
+              "w-14": collapseSidebar
+            }
+          )}
           ref={innerRef}
         >
           <div
-            className={clsx("h-full transform duration-500 w-14", {
-              "lg:w-56": !collapseSidebar
+            className={clsx("flex flex-col h-full transform duration-500", {
+              "w-56": !collapseSidebar,
+              "w-14": collapseSidebar
             })}
           >
             <button
@@ -330,7 +339,7 @@ export function SidebarLayout({ navigation, settingsNav, checkPath }: Props) {
 
             <div
               className={clsx(
-                "flex flex-col flex-grow",
+                "flex flex-col flex-1 overflow-y-auto",
                 collapseSidebar ? "px-1" : "px-3"
               )}
             >
@@ -345,7 +354,9 @@ export function SidebarLayout({ navigation, settingsNav, checkPath }: Props) {
             </div>
           </div>
         </div>
-        <Outlet />
+        <div className="flex flex-col flex-1 h-screen overflow-auto bg-gray-50">
+          <Outlet />
+        </div>
       </div>
     </>
   );

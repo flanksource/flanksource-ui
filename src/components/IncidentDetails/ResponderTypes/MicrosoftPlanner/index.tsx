@@ -91,7 +91,7 @@ export const MicrosoftPlanner = ({
           }}
           label={
             <label className="block text-sm font-bold text-gray-700 mb-2">
-              MSPlanner Config Type
+              Microsoft Planner Instance
             </label>
           }
           value={msProjectType}

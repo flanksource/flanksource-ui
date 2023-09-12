@@ -16,7 +16,7 @@ export function useCreateLogoutHandler(deps?: DependencyList) {
     }
 
     ory
-      .createSelfServiceLogoutFlowUrlForBrowsers()
+      .createBrowserLogoutFlow()
       .then(({ data }) => {
         setLogoutToken(data.logout_token);
       })
@@ -35,7 +35,9 @@ export function useCreateLogoutHandler(deps?: DependencyList) {
   return () => {
     if (logoutToken) {
       ory
-        .submitSelfServiceLogoutFlow(logoutToken)
+        .updateLogoutFlow({
+          token: logoutToken
+        })
         .then(() => router.push("/login"))
         .then(() => router.reload());
     }

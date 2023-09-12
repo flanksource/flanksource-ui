@@ -79,6 +79,38 @@ export const getAllConfigsForSearchPurpose = async () => {
   const res = await resolve<
     Pick<ConfigItem, "name" | "config_class" | "type" | "id">[]
   >(ConfigDB.get(url));
+
+  return res.data ?? [];
+};
+
+export type ConfigSummary = {
+  type: string;
+  analysis?: Record<string, any>;
+  changes?: string;
+  total_configs: number;
+  cost_per_minute?: number;
+  cost_total_1d?: number;
+  cost_total_7d?: number;
+  cost_total_30d?: number;
+  agent?: {
+    id: string;
+    name: string;
+  };
+};
+
+export const getConfigsSummary = async () => {
+  const res = await resolve<ConfigSummary[] | null>(
+    ConfigDB.get(`/config_summary`)
+  );
+  return res.data ?? [];
+};
+
+export const getConfigsByIDs = async (ids: string[]) => {
+  const res = await resolve<ConfigItem[] | null>(
+    ConfigDB.get(
+      `/configs?id=in.(${ids.join(",")})&select=id,name,config_class,type`
+    )
+  );
   return res.data ?? [];
 };
 
@@ -100,7 +132,7 @@ export const getAllChanges = (
   });
   return resolve(
     ConfigDB.get<ConfigTypeChanges[]>(
-      `/config_changes?order=created_at.desc${pagingParams}&select=*,config:config_names!inner(id,name,type)${queryString}`,
+      `/config_changes?order=created_at.desc${pagingParams}&select=id,change_type,summary,source,created_at,config_id,config:config_names!inner(id,name,type)${queryString}`,
       {
         headers: {
           Prefer: "count=exact"
@@ -280,20 +312,13 @@ export const getConfigsByQuery = async (query: string) => {
   }));
 };
 
-export const getRelatedConfigs = async (configID: string) => {
-  const res = await ConfigDB.get<ConfigTypeRelationships[]>(
-    `/config_relationships?or=(related_id.eq.${configID},config_id.eq.${configID})&select=*,configs:configs!config_relationships_config_id_fkey(*),related:configs!config_relationships_related_id_fkey(*)`
-  );
-  return res.data;
-};
-
 export type ConfigTypeItem = {
-  config_class: string;
+  type: string;
 };
 
 export const getConfigsTypes = async () => {
   const res = await IncidentCommander.get<ConfigTypeItem[] | null>(
-    `/config_classes`
+    `/config_types`
   );
   return res.data;
 };
@@ -430,7 +455,7 @@ export const getConfigInsight = async <T>(
   configInsightId: string
 ) => {
   const res = await ConfigDB.get<T>(
-    `/config_analysis?select=*,config:configs(id,name,config_class,type)&config_id=eq.${configId}&id=eq.${configInsightId}`
+    `/config_analysis?select=id,message,analyzer,config:configs(id,name,config_class,type)&config_id=eq.${configId}&id=eq.${configInsightId}`
   );
   return res.data;
 };
@@ -441,19 +466,23 @@ export const getAllConfigInsights = async (
     type?: string;
     severity?: string;
     analyzer?: string;
+    component?: string;
+    configId?: string;
   },
   sortBy: { sortBy?: string; sortOrder?: "asc" | "desc" },
   { pageIndex, pageSize }: PaginationInfo
 ) => {
   const pagingParams = `&limit=${pageSize}&offset=${pageIndex * pageSize}`;
 
-  const { status, type, severity, analyzer } = queryParams;
+  const { status, type, severity, analyzer, component, configId } = queryParams;
 
   const params = {
     status: status && `&status=eq.${status}`,
     type: type && `&analysis_type=eq.${type}`,
     severity: severity && `&severity=eq.${severity}`,
-    analyzer: analyzer && `&analyzer=eq.${analyzer}`
+    analyzer: analyzer && `&analyzer=eq.${analyzer}`,
+    component: component && `&component_id=eq.${component}`,
+    configId: configId && `&config_id=eq.${configId}`
   };
 
   const queryParamsString = Object.values(params)
@@ -467,7 +496,7 @@ export const getAllConfigInsights = async (
 
   return resolve(
     ConfigDB.get<ConfigTypeInsights[] | null>(
-      `/config_analysis?select=*,config:configs(id,name,config_class,type)${pagingParams}${queryParamsString}${sortString}`,
+      `/config_analysis?select=id,analysis_type,analyzer,severity,status,first_observed,last_observed,config:configs(id,name,config_class,type)${pagingParams}${queryParamsString}${sortString}`,
       {
         headers: {
           Prefer: "count=exact"
@@ -491,9 +520,16 @@ export const getConfigComponentRelationships = async <T>(configID: string) => {
   return res.data;
 };
 
-export const getComponentConfigChanges = async <T>(topologyID: string) => {
-  const res = await ConfigDB.get<T>(
-    `/changes_by_component?component_id=eq.${topologyID}`
+export const getComponentConfigChanges = async (topologyID: string) => {
+  const res = await ConfigDB.get<ConfigTypeChanges[]>(
+    `/changes_by_component?component_id=eq.${topologyID}&select=id,type,config_id,name,change_type,config_class,created_at,config:configs(id, name, type, config_class)`
+  );
+  return res.data;
+};
+
+export const getConfigAnalysisByComponent = async (componentId: string) => {
+  const res = await ConfigDB.get<ConfigTypeInsights[]>(
+    `/rpc/lookup_analysis_by_component?id=${componentId}`
   );
   return res.data;
 };

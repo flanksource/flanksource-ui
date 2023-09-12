@@ -17,13 +17,13 @@ export function ConfigInsightsPage() {
 
   return (
     <>
-      <Head prefix="Config Insights" />
+      <Head prefix="Catalog Insights" />
       <SearchLayout
         title={
           <BreadcrumbNav
             list={[
-              <BreadcrumbRoot link="/configs/insights">
-                Config Insights
+              <BreadcrumbRoot link="/catalog/insights">
+                Catalog Insights
               </BreadcrumbRoot>
             ]}
           />

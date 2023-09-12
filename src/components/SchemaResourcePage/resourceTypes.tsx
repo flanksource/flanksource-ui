@@ -1,23 +1,25 @@
 import { UserGroupIcon } from "@heroicons/react/solid";
-import { HealthIcon } from "../Icons/HealthIcon";
+import React from "react";
+import { IconType } from "react-icons";
+import { tables } from "../../context/UserAccessContext/permissions";
+import { features } from "../../services/permissions/features";
 import { AlarmIcon } from "../Icons/AlarmIcon";
+import { HealthIcon } from "../Icons/HealthIcon";
 import { SearchInListIcon } from "../Icons/SearchInListIcon";
 import { TopologyIcon } from "../Icons/TopologyIcon";
-import { features } from "../../services/permissions/features";
-import { IconType } from "react-icons";
-import React from "react";
-import { tables } from "../../context/UserAccessContext/permissions";
 
 export type SchemaResourceType = {
   name:
     | "Teams"
     | "Rules"
-    | "Config Scraper"
+    | "Catalog Scraper"
     | "Health Check"
     | "Search"
     | "Topology"
     | "Connections"
-    | "Log Backends";
+    | "Log Backends"
+    | "Notifications"
+    | "Feature Flags";
   table:
     | "teams"
     | "incident_rules"
@@ -25,7 +27,9 @@ export type SchemaResourceType = {
     | "canaries"
     | "topologies"
     | "connections"
-    | "logging_backends";
+    | "logging_backends"
+    | "notifications"
+    | "properties";
   api: "incident-commander" | "canary-checker" | "config-db";
   featureName: string;
   resourceName: string;
@@ -45,7 +49,7 @@ export type SchemaResourceTypes = SchemaResourceType[];
 
 export type SchemaBackends = SchemaResourceType["api"];
 
-export type SchemaApi = Pick<SchemaResourceType, "api" | "table">;
+export type SchemaApi = Pick<SchemaResourceType, "api" | "table" | "name">;
 
 export const schemaResourceTypes: SchemaResourceType[] = [
   {
@@ -90,7 +94,7 @@ export const schemaResourceTypes: SchemaResourceType[] = [
     table: "incident_rules",
     api: "incident-commander",
     icon: AlarmIcon,
-    featureName: features["settings.rules"],
+    featureName: features["incidents"],
     resourceName: tables.database,
     subNav: [
       {
@@ -115,7 +119,7 @@ export const schemaResourceTypes: SchemaResourceType[] = [
     ]
   },
   {
-    name: "Config Scraper",
+    name: "Catalog Scraper",
     table: "config_scrapers",
     api: "config-db",
     icon: SearchInListIcon,

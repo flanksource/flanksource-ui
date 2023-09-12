@@ -1,13 +1,11 @@
 import { AdjustmentsIcon } from "@heroicons/react/solid";
-import { useQuery } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { AxiosError } from "axios";
 import { Provider } from "jotai";
 import React, { ReactNode, useEffect, useState } from "react";
 import { IconType } from "react-icons";
 import { AiFillHeart } from "react-icons/ai";
 import { BsLink, BsToggles } from "react-icons/bs";
-import { FaTasks } from "react-icons/fa";
+import { FaBell, FaTasks } from "react-icons/fa";
 import { HiUser } from "react-icons/hi";
 import { ImLifebuoy } from "react-icons/im";
 import { VscJson } from "react-icons/vsc";
@@ -19,15 +17,15 @@ import {
   useLocation
 } from "react-router-dom";
 import ReactTooltip from "react-tooltip";
-import { getUser } from "./api/auth";
-import { User } from "./api/services/users";
 import { Canary } from "./components";
+import { withAccessCheck } from "./components/AccessCheck/AccessCheck";
+import AuthProviderWrapper from "./components/Authentication/AuthProviderWrapper";
 import { ErrorBoundary } from "./components/ErrorBoundary";
-import ErrorPage from "./components/Errors/ErrorPage";
 import { LogsIcon } from "./components/Icons/LogsIcon";
 import { TopologyIcon } from "./components/Icons/TopologyIcon";
 import JobsHistorySettingsPage from "./components/JobsHistory/JobsHistorySettingsPage";
 import { SidebarLayout } from "./components/Layout";
+import NotificationsPage from "./components/Notifications/NotificationsSettingsPage";
 import { SchemaResourcePage } from "./components/SchemaResourcePage";
 import { SchemaResource } from "./components/SchemaResourcePage/SchemaResource";
 import {
@@ -35,7 +33,6 @@ import {
   schemaResourceTypes
 } from "./components/SchemaResourcePage/resourceTypes";
 import FullPageSkeletonLoader from "./components/SkeletonLoader/FullPageSkeletonLoader";
-import { AuthContext } from "./context";
 import { ConfigPageContextProvider } from "./context/ConfigPageContext";
 import {
   FeatureFlagsContextProvider,
@@ -44,6 +41,8 @@ import {
 import { HealthPageContextProvider } from "./context/HealthPageContext";
 import { IncidentPageContextProvider } from "./context/IncidentPageContext";
 import { TopologyPageContextProvider } from "./context/TopologyPageContext";
+import { UserAccessStateContextProvider } from "./context/UserAccessContext/UserAccessContext";
+import { tables } from "./context/UserAccessContext/permissions";
 import {
   ConfigChangesPage,
   ConfigDetailsChangesPage,
@@ -55,18 +54,17 @@ import {
   TopologyPage
 } from "./pages";
 import { ConnectionsPage } from "./pages/Settings/ConnectionsPage";
+import { EventQueueStatusPage } from "./pages/Settings/EventQueueStatus";
 import { FeatureFlagsPage } from "./pages/Settings/FeatureFlagsPage";
 import { LogBackendsPage } from "./pages/Settings/LogBackendsPage";
 import { UsersPage } from "./pages/UsersPage";
+import { ConfigDetailsInsightsPage } from "./pages/config/ConfigDetailsInsightsPage";
 import { ConfigInsightsPage } from "./pages/config/ConfigInsightsList";
 import { HealthPage } from "./pages/health";
-import { stringSortHelper } from "./utils/common";
-import { UserAccessStateContextProvider } from "./context/UserAccessContext/UserAccessContext";
 import { features } from "./services/permissions/features";
-import { withAccessCheck } from "./components/AccessCheck/AccessCheck";
-import { tables } from "./context/UserAccessContext/permissions";
-import { isAuthEnabled } from "./context/Environment";
-import { EventQueueStatusPage } from "./pages/Settings/EventQueueStatus";
+import { stringSortHelper } from "./utils/common";
+import { PlaybookSettingsPage } from "./pages/Settings/PlaybookSettingsPage";
+import SetupIntercom from "./components/Intercom/SetupIntercom";
 
 export type NavigationItems = {
   name: string;
@@ -99,8 +97,8 @@ const navigation: NavigationItems = [
     resourceName: tables.incident
   },
   {
-    name: "Config",
-    href: "/configs",
+    name: "Catalog",
+    href: "/catalog",
     icon: VscJson,
     featureName: features.config,
     resourceName: tables.database
@@ -142,13 +140,17 @@ const settingsNav: SettingsNavigationItems = {
       featureName: features["settings.connections"],
       resourceName: tables.connections
     },
-    {
-      name: "Users",
-      href: "/settings/users",
-      icon: HiUser,
-      featureName: features["settings.users"],
-      resourceName: tables.identities
-    },
+    ...(process.env.NEXT_PUBLIC_AUTH_IS_CLERK === "true"
+      ? []
+      : [
+          {
+            name: "Users",
+            href: "/settings/users",
+            icon: HiUser,
+            featureName: features["settings.users"],
+            resourceName: tables.identities
+          }
+        ]),
     ...schemaResourceTypes.map((x) => ({
       ...x,
       href: `/settings/${x.table}`
@@ -158,6 +160,13 @@ const settingsNav: SettingsNavigationItems = {
       href: "/settings/jobs",
       icon: FaTasks,
       featureName: features["settings.job_history"],
+      resourceName: tables.database
+    },
+    {
+      name: "Notifications",
+      href: "/settings/notifications",
+      icon: FaBell,
+      featureName: features["settings.notifications"],
       resourceName: tables.database
     },
     {
@@ -171,14 +180,21 @@ const settingsNav: SettingsNavigationItems = {
       name: "Log Backends",
       href: "/settings/log-backends",
       icon: LogsIcon,
-      featureName: features["settings.feature_flags"],
+      featureName: features["logs"],
       resourceName: tables.database
     },
     {
-      name: "Event Queue Status",
+      name: "Event Queue",
       href: "/settings/event-queue-status",
       icon: FaTasks,
       featureName: features["settings.event_queue_status"],
+      resourceName: tables.database
+    },
+    {
+      name: "Playbooks",
+      href: "/settings/playbooks",
+      icon: FaTasks,
+      featureName: features["settings.playbooks"],
       resourceName: tables.database
     }
   ].sort((v1, v2) => stringSortHelper(v1.name, v2.name))
@@ -265,6 +281,14 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           )}
         />
         <Route
+          path="notifications"
+          element={withAccessCheck(
+            <NotificationsPage />,
+            tables.database,
+            "read"
+          )}
+        />
+        <Route
           path="feature-flags"
           element={withAccessCheck(
             <FeatureFlagsPage />,
@@ -285,6 +309,15 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           path="event-queue-status"
           element={withAccessCheck(
             <EventQueueStatusPage />,
+            tables.database,
+            "read"
+          )}
+        />
+
+        <Route
+          path="playbooks"
+          element={withAccessCheck(
+            <PlaybookSettingsPage />,
             tables.database,
             "read"
           )}
@@ -335,7 +368,10 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
         />
       </Route>
 
-      <Route path="configs" element={sidebar}>
+      {/* Redirect configs to catalog */}
+      <Route path="configs" element={<Navigate to="/catalog" />} />
+
+      <Route path="catalog" element={sidebar}>
         <Route
           index
           element={withAccessCheck(<ConfigListPage />, tables.database, "read")}
@@ -373,6 +409,14 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             path="changes"
             element={withAccessCheck(
               <ConfigDetailsChangesPage />,
+              tables.database,
+              "read"
+            )}
+          />
+          <Route
+            path="insights"
+            element={withAccessCheck(
+              <ConfigDetailsInsightsPage />,
               tables.database,
               "read"
             )}
@@ -444,49 +488,28 @@ function SidebarWrapper() {
 }
 
 export function App() {
-  const [user, setUser] = useState<User | null>(null);
-
-  const { isLoading, error } = useQuery<User | null, AxiosError>(
-    ["getUser", !isAuthEnabled()],
-    () => getUser(),
-    {
-      onSuccess: (data) => {
-        setUser(data ?? null);
-      },
-      onError: (err) => {
-        console.error(err);
-      }
-    }
-  );
-
-  if (error && !user) {
-    return <ErrorPage error={error} />;
-  }
-
-  if (!user || isLoading) {
-    return <FullPageSkeletonLoader />;
-  }
-
   return (
     <BrowserRouter>
       <Provider>
-        <AuthContext.Provider value={{ user, setUser }}>
-          <UserAccessStateContextProvider>
-            <FeatureFlagsContextProvider>
-              <TopologyPageContextProvider>
-                <HealthPageContextProvider>
-                  <ConfigPageContextProvider>
-                    <IncidentPageContextProvider>
-                      <ReactTooltip />
-                      <IncidentManagerRoutes sidebar={<SidebarWrapper />} />
-                      <ReactQueryDevtools initialIsOpen={false} />
-                    </IncidentPageContextProvider>
-                  </ConfigPageContextProvider>
-                </HealthPageContextProvider>
-              </TopologyPageContextProvider>
-            </FeatureFlagsContextProvider>
-          </UserAccessStateContextProvider>
-        </AuthContext.Provider>
+        <AuthProviderWrapper>
+          <SetupIntercom>
+            <UserAccessStateContextProvider>
+              <FeatureFlagsContextProvider>
+                <TopologyPageContextProvider>
+                  <HealthPageContextProvider>
+                    <ConfigPageContextProvider>
+                      <IncidentPageContextProvider>
+                        <ReactTooltip />
+                        <IncidentManagerRoutes sidebar={<SidebarWrapper />} />
+                        <ReactQueryDevtools initialIsOpen={false} />
+                      </IncidentPageContextProvider>
+                    </ConfigPageContextProvider>
+                  </HealthPageContextProvider>
+                </TopologyPageContextProvider>
+              </FeatureFlagsContextProvider>
+            </UserAccessStateContextProvider>
+          </SetupIntercom>
+        </AuthProviderWrapper>
       </Provider>
     </BrowserRouter>
   );

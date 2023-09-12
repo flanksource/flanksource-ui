@@ -1,16 +1,15 @@
+import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import { AiFillPlusCircle } from "react-icons/ai";
+import { getLogsBackends } from "../../api/schemaResources";
+import { BreadcrumbNav, BreadcrumbRoot } from "../../components/BreadcrumbNav";
+import ErrorPage from "../../components/Errors/ErrorPage";
 import { Head } from "../../components/Head/Head";
 import { SearchLayout } from "../../components/Layout";
-import TableSkeletonLoader from "../../components/SkeletonLoader/TableSkeletonLoader";
-import { BreadcrumbNav, BreadcrumbRoot } from "../../components/BreadcrumbNav";
-import { AiFillPlusCircle } from "react-icons/ai";
-import { useQuery } from "@tanstack/react-query";
-import { getLogsBackends } from "../../api/schemaResources";
-import LogBackendsList from "../../components/LogBackends/LogBackendsList";
-import ErrorPage from "../../components/Errors/ErrorPage";
 import { LogBackends } from "../../components/LogBackends/LogBackends";
-import { Modal } from "../../components/Modal";
 import LogBackendsForm from "../../components/LogBackends/LogBackendsForm";
+import LogBackendsList from "../../components/LogBackends/LogBackendsList";
+import { Modal } from "../../components/Modal";
 
 export function LogBackendsPage() {
   const [isOpen, setIsOpen] = useState(false);

@@ -28,12 +28,12 @@ const items: GroupOptionsType = {
     description: "No Grouping",
     value: "no_grouping"
   },
-  Type: {
+  /* Type: {
     id: "Type",
     name: "Type",
     description: "Type",
     value: "type"
-  },
+  }, */
   Name: {
     id: "Name",
     name: "Name",

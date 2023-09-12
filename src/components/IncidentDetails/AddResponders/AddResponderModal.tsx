@@ -22,6 +22,7 @@ import {
 import SelectPeopleResponderDropdown from "./SelectPeopleResponderDropdown";
 import SelectTeamResponderDropdown from "./SelectTeamResponderDropdown";
 import TeamResponderTypeForm from "./TeamResponderTypeForm";
+import { Events, sendAnalyticEvent } from "../../../services/analytics";
 
 export type SelectedResponderType = {
   value: string;
@@ -40,11 +41,13 @@ type TeamResponderActions = {
     | "Selected Responder"
     | "Selected Responder Type"
     | "Save Responder"
+    | "Save Team Responder"
     | "Previous"
     | "reset";
   payload?: {
     teamResponder?: Team;
     personResponder?: User;
+    teamResponderType?: SelectedResponderType;
   };
 };
 
@@ -76,6 +79,12 @@ function teamRespondersStepsReducer(
         ...state,
         currentStep: "Select Responder"
       };
+    case "Save Team Responder":
+      return {
+        ...state,
+        currentStep: "Save Team Responder",
+        responderType: action.payload?.teamResponderType
+      };
     case "Previous":
       if (state.currentStep === "Responder Type") {
         return {
@@ -96,6 +105,7 @@ function teamRespondersStepsReducer(
           modalTitle: "Select Responder"
         };
       }
+
     case "reset":
       return {
         currentStep: "Select Responder"
@@ -184,6 +194,7 @@ export default function AddResponderModal({
       responder: Omit<Responder, "id" | "updated_at" | "created_at">
     ) => saveResponder(responder),
     onSuccess: (_) => {
+      sendAnalyticEvent(Events.AddedResponderToIncident);
       toastSuccess("Responder added successfully");
       onSuccess();
       closeModal();
@@ -385,7 +396,10 @@ export default function AddResponderModal({
                 onSelect={(e: any) => {
                   setSelectedType(e);
                   dispatch({
-                    action: "Save Responder"
+                    action: "Save Team Responder",
+                    payload: {
+                      teamResponderType: e
+                    }
                   });
                 }}
                 value={selectedType as any}

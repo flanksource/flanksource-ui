@@ -1,18 +1,28 @@
-import React from "react";
-import type { AppProps } from "next/app";
+import { ClerkProvider } from "@clerk/nextjs";
 import { QueryClientProvider } from "@tanstack/react-query";
-import "./global.css";
+import type { AppProps } from "next/app";
+import React from "react";
+import useDetermineAuthSystem from "../src/components/Authentication/useDetermineAuthSystem";
 import { queryClient } from "../src/query-client";
-import Head from "next/head";
+import "./global.css";
 
 export default function MyApp({ Component, pageProps }: AppProps) {
+  const authProvider = useDetermineAuthSystem();
+
   return (
     <QueryClientProvider client={queryClient}>
-      <Head>
-        <link rel="shortcut icon" href="/favicon.svg" />
-      </Head>
-      <div id="root" suppressHydrationWarning>
-        <Component {...pageProps} />
+      <div
+        id="root"
+        className="flex flex-col w-screen h-screen overflow-auto"
+        suppressHydrationWarning
+      >
+        {authProvider === "clerk" ? (
+          <ClerkProvider {...pageProps}>
+            <Component {...pageProps} />
+          </ClerkProvider>
+        ) : (
+          <Component {...pageProps} />
+        )}
       </div>
     </QueryClientProvider>
   );
