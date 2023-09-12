@@ -99,7 +99,7 @@ export default function NotificationsPage() {
         title="Create Notification"
         bodyClass="flex flex-col w-full flex-1 h-full overflow-y-auto"
       >
-        <NotificationsForm onSubmit={onSubmit} />
+        <NotificationsForm onSubmit={onSubmit} onDeleted={refetch} />
       </Modal>
     </>
   );
