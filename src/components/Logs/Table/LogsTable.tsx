@@ -1,25 +1,23 @@
+import {
+  ColumnDef,
+  ColumnSizingState,
+  flexRender,
+  getCoreRowModel,
+  useReactTable
+} from "@tanstack/react-table";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import Convert from "ansi-to-html";
 import clsx from "clsx";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import {
-  ColumnDef,
-  useReactTable,
-  getCoreRowModel,
-  flexRender,
-  ColumnSizingState
-} from "@tanstack/react-table";
-import { EvidenceType } from "../../../api/services/evidence";
-import LogItem from "../../../types/Logs";
-import { AttachEvidenceDialog } from "../../AttachEvidenceDialog";
-import { LogsTableLabelsCell, LogsTableTimestampCell } from "./LogsTableCells";
-import useDebouncedValue from "../../../hooks/useDebounce";
-import { InfoMessage } from "../../InfoMessage";
-import { useVirtualizer } from "@tanstack/react-virtual";
-import { sanitizeHTMLContent } from "../../../utils/common";
-import TableSkeletonLoader from "../../SkeletonLoader/TableSkeletonLoader";
 import { useSearchParams } from "react-router-dom";
-import { useFeatureFlagsContext } from "../../../context/FeatureFlagsContext";
-import { features } from "../../../services/permissions/features";
+import { EvidenceType } from "../../../api/services/evidence";
+import useDebouncedValue from "../../../hooks/useDebounce";
+import LogItem from "../../../types/Logs";
+import { sanitizeHTMLContent } from "../../../utils/common";
+import AttachAsEvidenceButton from "../../AttachEvidenceDialog/AttachAsEvidenceDialogButton";
+import { InfoMessage } from "../../InfoMessage";
+import TableSkeletonLoader from "../../SkeletonLoader/TableSkeletonLoader";
+import { LogsTableLabelsCell, LogsTableTimestampCell } from "./LogsTableCells";
 
 const convert = new Convert();
 
@@ -53,7 +51,6 @@ export function LogsTable({
   componentId,
   columnSizes
 }: LogsTableProps) {
-  const [attachAsAsset, setAttachAsAsset] = useState(false);
   const [lines, setLines] = useState<LogItem[]>([]);
   const [rowSelection, setRowSelection] = useState({});
 
@@ -118,22 +115,26 @@ export function LogsTable({
             return (
               <div className="flex justify-between">
                 <span className="align-middle my-auto">Message</span>
-                {(!viewOnly || isIncidentManagementFeatureDisabled) && (
+                {!viewOnly && (
                   <div className="flex justify-end -m-2 flex-wrap">
                     <div className="p-2">
-                      <button
-                        type="button"
+                      <AttachAsEvidenceButton
                         disabled={!hasSelectedRows}
                         onClick={() => {
                           setLines(selectedFlatRows.map((d) => d.original));
-                          setAttachAsAsset(true);
                         }}
                         className={clsx(
                           hasSelectedRows ? "btn-primary" : "hidden"
                         )}
-                      >
-                        Attach as Evidence
-                      </button>
+                        evidence={{ lines }}
+                        type={EvidenceType.Log}
+                        component_id={componentId}
+                        callback={(success: boolean) => {
+                          if (success) {
+                            setLines([]);
+                          }
+                        }}
+                      />
                     </div>
                   </div>
                 )}
@@ -185,13 +186,6 @@ export function LogsTable({
     autoResetAll: false
   });
 
-  const { isFeatureDisabled } = useFeatureFlagsContext();
-
-  const isIncidentManagementFeatureDisabled = useMemo(
-    () => isFeatureDisabled(features.incidents),
-    [isFeatureDisabled]
-  );
-
   // in order to ensure column resizing doesn't affect the selection column, we
   // need to rebase the new size to the base size of 400, total size of all
   // columns, including the selection column. This will ensure that the
@@ -234,20 +228,6 @@ export function LogsTable({
       className="flex flex-col flex-1 overflow-y-auto"
     >
       <div className="block pb-6 w-full">
-        {!isIncidentManagementFeatureDisabled && (
-          <AttachEvidenceDialog
-            isOpen={attachAsAsset}
-            onClose={() => setAttachAsAsset(false)}
-            evidence={{ lines }}
-            type={EvidenceType.Log}
-            component_id={componentId}
-            callback={(success: boolean) => {
-              if (success) {
-                setLines([]);
-              }
-            }}
-          />
-        )}
         <table
           className={clsx(
             "w-full table-fixed",

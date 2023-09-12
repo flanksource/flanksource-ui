@@ -1,25 +1,23 @@
-import { useGetConfigByIdQuery } from "../../api/query-hooks";
-import { useEffect, useMemo, useState } from "react";
-import { ConfigTypeChanges } from "../ConfigChanges";
-import { formatISODate } from "../../utils/date";
-import { JSONViewer } from "../JSONViewer";
-import { Icon } from "../Icon";
-import { Avatar } from "../Avatar";
 import clsx from "clsx";
-import { AttachEvidenceDialog } from "../AttachEvidenceDialog";
-import { Modal } from "../Modal";
-import { EvidenceType } from "../../api/services/evidence";
-import { DescriptionCard } from "../DescriptionCard";
-import ConfigLink from "../ConfigLink/ConfigLink";
+import { useEffect, useMemo, useState } from "react";
 import ReactTooltip from "react-tooltip";
-import { ViewType } from "../../types";
-import EmptyState from "../EmptyState";
+import { useGetConfigByIdQuery } from "../../api/query-hooks";
 import { useGetConfigChangesByConfigChangeIdQuery } from "../../api/query-hooks/useGetConfigChangesByConfigChangeIdQuery";
 import { ConfigItem } from "../../api/services/configs";
+import { EvidenceType } from "../../api/services/evidence";
 import { User } from "../../api/services/users";
+import { ViewType } from "../../types";
+import { formatISODate } from "../../utils/date";
+import AttachAsEvidenceButton from "../AttachEvidenceDialog/AttachAsEvidenceDialogButton";
+import { Avatar } from "../Avatar";
+import { ConfigTypeChanges } from "../ConfigChanges";
+import ConfigLink from "../ConfigLink/ConfigLink";
+import { DescriptionCard } from "../DescriptionCard";
 import { DiffRenderer } from "../DiffRenderer/DiffRenderer";
-import { useFeatureFlagsContext } from "../../context/FeatureFlagsContext";
-import { features } from "../../services/permissions/features";
+import EmptyState from "../EmptyState";
+import { Icon } from "../Icon";
+import { JSONViewer } from "../JSONViewer";
+import { Modal } from "../Modal";
 
 type ConfigDetailsChangesProps = {
   id: string;
@@ -195,15 +193,6 @@ export function ConfigDetailChangeModal({
   config,
   changeDetails
 }: ConfigDetailChangeModalProps) {
-  const [attachEvidence, setAttachEvidence] = useState(false);
-
-  const { isFeatureDisabled } = useFeatureFlagsContext();
-
-  const isIncidentManagementFeatureDisabled = useMemo(
-    () => isFeatureDisabled(features.incidents),
-    [isFeatureDisabled]
-  );
-
   return (
     <Modal
       title={
@@ -247,36 +236,14 @@ export function ConfigDetailChangeModal({
           />
         )}
       </div>
-      {isIncidentManagementFeatureDisabled && (
-        <>
-          <div className="flex items-center justify-end py-4 px-5 rounded-lg bg-gray-100">
-            <button
-              type="button"
-              onClick={() => {
-                setAttachEvidence(true);
-              }}
-              className="btn-primary"
-            >
-              Attach as Evidence
-            </button>
-          </div>
-
-          <AttachEvidenceDialog
-            key={`attach-evidence-dialog`}
-            isOpen={attachEvidence}
-            onClose={() => setAttachEvidence(false)}
-            config_change_id={changeDetails?.id}
-            config_id={changeDetails?.config_id}
-            evidence={{}}
-            type={EvidenceType.ConfigChange}
-            callback={(success: boolean) => {
-              if (success) {
-                setAttachEvidence(false);
-              }
-            }}
-          />
-        </>
-      )}
+      <div className="flex items-center justify-end py-4 px-5 rounded-lg bg-gray-100">
+        <AttachAsEvidenceButton
+          config_change_id={changeDetails?.id}
+          config_id={changeDetails?.config_id}
+          evidence={{}}
+          type={EvidenceType.ConfigChange}
+        />
+      </div>
     </Modal>
   );
 }

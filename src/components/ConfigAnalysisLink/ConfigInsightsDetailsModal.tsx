@@ -1,17 +1,15 @@
+import { useQuery } from "@tanstack/react-query";
 import { sanitize } from "dompurify";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { getConfigInsightsByID } from "../../api/services/configs";
 import { EvidenceType } from "../../api/services/evidence";
 import { formatISODate, isValidDate } from "../../utils/date";
-import { AttachEvidenceDialog } from "../AttachEvidenceDialog";
+import AttachAsEvidenceButton from "../AttachEvidenceDialog/AttachAsEvidenceDialogButton";
 import ConfigInsightsIcon from "../ConfigInsightsIcon";
 import ConfigLink from "../ConfigLink/ConfigLink";
 import { DescriptionCard } from "../DescriptionCard";
 import { Modal } from "../Modal";
-import { useQuery } from "@tanstack/react-query";
 import TextSkeletonLoader from "../SkeletonLoader/TextSkeletonLoader";
-import { useFeatureFlagsContext } from "../../context/FeatureFlagsContext";
-import { features } from "../../services/permissions/features";
 
 type Props = {
   id?: string;
@@ -24,21 +22,12 @@ export default function ConfigInsightsDetailsModal({
   isOpen,
   onClose
 }: Props) {
-  const [attachEvidence, setAttachEvidence] = useState(false);
-
   const { data: configInsight, isLoading } = useQuery(
     ["config", "insights", id],
     () => getConfigInsightsByID(id!),
     {
       enabled: isOpen && !!id
     }
-  );
-
-  const { isFeatureDisabled } = useFeatureFlagsContext();
-
-  const isIncidentManagementFeatureDisabled = useMemo(
-    () => isFeatureDisabled(features.incidents),
-    [isFeatureDisabled]
   );
 
   const properties = useMemo(() => {
@@ -129,36 +118,14 @@ export default function ConfigInsightsDetailsModal({
             />
           </div>
 
-          {!isIncidentManagementFeatureDisabled && (
-            <>
-              <div className="flex items-center justify-end mt-4 py-2 px-4 rounded bg-gray-100">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setAttachEvidence(true);
-                  }}
-                  className="btn-primary"
-                >
-                  Attach as Evidence
-                </button>
-              </div>
-
-              <AttachEvidenceDialog
-                key={`attach-evidence-dialog`}
-                isOpen={attachEvidence}
-                onClose={() => setAttachEvidence(false)}
-                config_analysis_id={configInsight.id}
-                config_id={configInsight.config_id}
-                evidence={{}}
-                type={EvidenceType.ConfigAnalysis}
-                callback={(success: boolean) => {
-                  if (success) {
-                    setAttachEvidence(false);
-                  }
-                }}
-              />
-            </>
-          )}
+          <div className="flex items-center justify-end mt-4 py-2 px-4 rounded bg-gray-100">
+            <AttachAsEvidenceButton
+              config_analysis_id={configInsight.id}
+              config_id={configInsight.config_id}
+              evidence={{}}
+              type={EvidenceType.ConfigAnalysis}
+            />
+          </div>
         </>
       )}
     </Modal>
