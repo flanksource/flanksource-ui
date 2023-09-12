@@ -91,7 +91,7 @@ export const Jira = ({
           }}
           label={
             <label className="block text-sm font-bold text-gray-700 mb-2">
-              Jira Catalog Type
+              Jira Instance
             </label>
           }
           value={jiraProjectType}
