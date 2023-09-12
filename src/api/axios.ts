@@ -1,5 +1,4 @@
 import axios, { AxiosError } from "axios";
-
 import { toastError } from "../components/Toast/toast";
 
 const API_BASE = "/api";
@@ -119,6 +118,14 @@ for (const client of [
 
 function redirectToLoginPageOnSessionExpiry(error: AxiosError) {
   if (error?.response?.status === 401) {
+    const isClerkAuthSystem = !!process.env.NEXT_PUBLIC_AUTH_IS_CLERK === true;
+
+    if (isClerkAuthSystem) {
+      const url = `/auth-state-checker?return_to=${window.location.pathname}${window.location.search}`;
+      window.location.href = url;
+      return;
+    }
+
     const url = `/login?return_to=${window.location.pathname}${window.location.search}`;
     window.location.href = url;
   }

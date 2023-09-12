@@ -1,4 +1,4 @@
-import { SelfServiceError } from "@ory/client";
+import { FlowError } from "@ory/client";
 import { AxiosError } from "axios";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import ory from "../../ory/sdk";
 
 export default function KratosErrorPage() {
-  const [error, setError] = useState<SelfServiceError | string>();
+  const [error, setError] = useState<FlowError | string>();
 
   // Get ?id=... from the URL
   const router = useRouter();
@@ -19,7 +19,9 @@ export default function KratosErrorPage() {
     }
 
     ory
-      .getSelfServiceError(String(id))
+      .getFlowError({
+        id: String(id)
+      })
       .then(({ data }) => {
         setError(data);
       })
@@ -27,8 +29,10 @@ export default function KratosErrorPage() {
         switch (err.response?.status) {
           case 404:
           // The error id could not be found. Let's just redirect home!
+          // eslint-disable-next-line no-fallthrough
           case 403:
           // The error id could not be fetched due to e.g. a CSRF issue. Let's just redirect home!
+          // eslint-disable-next-line no-fallthrough
           case 410:
             // The error id expired. Let's just redirect home!
             return router.push("/");
