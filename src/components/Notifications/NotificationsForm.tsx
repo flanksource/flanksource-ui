@@ -41,7 +41,7 @@ export default function NotificationsForm({
             className="flex flex-col overflow-y-auto gap-4"
           >
             <div className="flex flex-col overflow-y-auto gap-4 p-4">
-              <FormikTextInput name="title" label="Title" required />
+              <FormikTextInput name="title" label="Title" />
               <FormikNotificationEventsDropdown
                 name="events"
                 label="Events"

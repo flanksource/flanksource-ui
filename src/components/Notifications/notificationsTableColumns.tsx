@@ -68,8 +68,28 @@ export const notificationEvents = [
   {
     label: "incident.status.identified",
     value: "incident.status.cancelled"
+  },
+  {
+    label: "component.status.healthy",
+    value: "component.status.healthy"
+  },
+  {
+    label: "component.status.unhealthy",
+    value: "component.status.unhealthy"
+  },
+  {
+    label: "component.status.warning",
+    value: "component.status.warning"
+  },
+  {
+    label: "component.status.error",
+    value: "component.status.error"
+  },
+  {
+    label: "component.status.info",
+    value: "component.status.info"
   }
-];
+].sort((a, b) => a.label.localeCompare(b.label));
 
 export function JobStatusColumn({ cell }: CellContext<Notification, any>) {
   const value = cell.row.original.job_status;
