@@ -7,7 +7,8 @@ type DescriptionCardProps = React.HTMLProps<HTMLDivElement> & {
     value: React.ReactNode;
   }[];
   columns?: number;
-  labelStyle?: "left" | "top";
+  labelStyle?: "left" | "top" | "column";
+  contentClassName?: string;
 };
 
 export function DescriptionCard({
@@ -15,6 +16,7 @@ export function DescriptionCard({
   labelStyle = "left",
   columns = 1,
   className,
+  contentClassName = "flex justify-start break-all text-sm",
   ...rest
 }: DescriptionCardProps) {
   return (
@@ -32,7 +34,11 @@ export function DescriptionCard({
                     item.label as keyof typeof NodePodPropToLabelMap
                   ] ?? item.label}{" "}
                 </th>
-                <td className="text-sm border-none break-all text-xs">{item.value}</td>
+                <td
+                  className={`border-none break-all text-xs ${contentClassName}`}
+                >
+                  {item.value}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -53,7 +59,26 @@ export function DescriptionCard({
                     item.label as keyof typeof NodePodPropToLabelMap
                   ] ?? item.label}
                 </div>
-                <div className="flex justify-start text-sm">{item.value}</div>
+                <div className={contentClassName}>{item.value}</div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+      {labelStyle === "column" && (
+        <div className={clsx("flex flex-col flex-1 overflow-y-auto gap-2")}>
+          {items.map((item, index) => {
+            return (
+              <div
+                className="flex flex-col overflow-y-auto space-y-0.5"
+                key={index}
+              >
+                <div className="text-sm overflow-hidden truncate text-gray-500">
+                  {NodePodPropToLabelMap[
+                    item.label as keyof typeof NodePodPropToLabelMap
+                  ] ?? item.label}
+                </div>
+                <div className={contentClassName}>{item.value}</div>
               </div>
             );
           })}

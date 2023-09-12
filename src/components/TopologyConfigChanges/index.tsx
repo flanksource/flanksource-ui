@@ -13,6 +13,7 @@ import { Icon } from "../Icon";
 import TextSkeletonLoader from "../SkeletonLoader/TextSkeletonLoader";
 import { refreshButtonClickedTrigger } from "../SlidingSideBar";
 import Title from "../Title/title";
+import { useGetConfigChangesByConfigChangeIdQuery } from "../../api/query-hooks/useGetConfigChangesByConfigChangeIdQuery";
 
 type Props = {
   topologyID: string;
@@ -25,10 +26,17 @@ export function TopologyConfigChanges({ topologyID }: Props) {
     useComponentConfigChanges(topologyID);
 
   const [open, setOpen] = useState(false);
-  const [configChangeDetails, setConfigChanges] =
+
+  const [selectedConfigChange, setSelectedConfigChanges] =
     useState<
       Pick<ConfigTypeChanges, "change_type" | "id" | "config_id" | "config">
     >();
+
+  const { data: changeDetails } = useGetConfigChangesByConfigChangeIdQuery(
+    selectedConfigChange?.id!,
+    selectedConfigChange?.config_id!,
+    {}
+  );
 
   return (
     <>
@@ -50,7 +58,7 @@ export function TopologyConfigChanges({ topologyID }: Props) {
                   <span
                     role="button"
                     onClick={() => {
-                      setConfigChanges(item);
+                      setSelectedConfigChanges(item);
                       setOpen(true);
                     }}
                   >
@@ -71,12 +79,13 @@ export function TopologyConfigChanges({ topologyID }: Props) {
           </div>
         </div>
       </div>
-      <ConfigDetailChangeModal
-        open={open}
-        setOpen={setOpen}
-        changeDetails={configChangeDetails}
-        config={configChangeDetails?.config}
-      />
+      {changeDetails && (
+        <ConfigDetailChangeModal
+          open={open}
+          setOpen={setOpen}
+          changeDetails={changeDetails}
+        />
+      )}
     </>
   );
 }
