@@ -16,12 +16,12 @@ export const incidentListColumns: ColumnDef<IncidentSummary, any>[] = [
   {
     header: "Id",
     accessorKey: "incident_id",
-    size: 20
+    size: 50
   },
   {
     header: "Type",
     accessorKey: "type",
-    size: 30,
+    size: 50,
     cell: ({ getValue }: CellContext<any, any>) => {
       const type = getValue<keyof typeof typeItems>();
       return (
@@ -34,7 +34,7 @@ export const incidentListColumns: ColumnDef<IncidentSummary, any>[] = [
   {
     header: "Severity",
     accessorKey: "severity",
-    size: 30,
+    size: 50,
     cell: ({ getValue }: CellContext<any, any>) => {
       const severity = getValue<IncidentSeverity>();
       return (
