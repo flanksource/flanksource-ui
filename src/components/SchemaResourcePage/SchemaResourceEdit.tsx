@@ -22,6 +22,7 @@ import { Head } from "../Head/Head";
 import HealthSpecEditor from "../SpecEditor/HealthSpecEditor";
 import { Button } from "../Button";
 import DeleteResource from "./Delete/DeleteResource";
+import { HealthCheckEdit } from "../Canary/HealthCheckEdit";
 
 const CodeEditor = dynamic(
   () => import("../CodeEditor").then((m) => m.CodeEditor),
@@ -282,7 +283,13 @@ export function SchemaResourceEdit({
                                   )}
                                   <span>{name}</span>
                                 </h2>
-                                {!!source && (
+                                {!!source && table === "canaries" && id ? (
+                                  <HealthCheckEdit
+                                    check={{
+                                      canary_id: id
+                                    }}
+                                  />
+                                ) : (
                                   <div className="px-2">
                                     <a href={`${source}`}>Catalog source</a>
                                   </div>
