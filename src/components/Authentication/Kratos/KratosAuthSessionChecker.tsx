@@ -14,7 +14,7 @@ export default function KratosAuthSessionChecker({
 }: KratosAuthSessionCheckerProps) {
   const [session, setSession] = useState<Session | undefined>();
 
-  const { push, pathname } = useRouter();
+  const { push } = useRouter();
 
   useEffect(() => {
     if (!isAuthEnabled()) {
@@ -27,7 +27,11 @@ export default function KratosAuthSessionChecker({
         setSession(data);
       })
       .catch((err: AxiosError) => {
-        const url = `${pathname}`;
+        // Due to the conflict between NextJS Routing and React Router, we can
+        // get the current URL from next router accurately, but we can rely on
+        // the window location to get the current URL accurately. This can be
+        // fixed in the future when we move to NextJS fully.
+        const url = window.location.pathname;
         switch (err.response?.status) {
           case 403:
             // This is a legacy error code thrown. See code 422 for
@@ -48,7 +52,7 @@ export default function KratosAuthSessionChecker({
         // Something else happened!
         return Promise.reject(err);
       });
-  }, [pathname, push]);
+  }, [push]);
 
   if (isAuthEnabled() && !session) {
     return null;
