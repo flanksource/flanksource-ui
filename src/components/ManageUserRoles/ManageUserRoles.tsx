@@ -76,7 +76,8 @@ export function ManageUserRoles({
               {registeredUsers.map((registeredUser) => {
                 return (
                   <option key={registeredUser.id} value={registeredUser.id}>
-                    {registeredUser.name}
+                    {registeredUser.name.slice(0, 50)}
+                    {registeredUser.name.length > 50 ? "..." : ""}
                   </option>
                 );
               })}
