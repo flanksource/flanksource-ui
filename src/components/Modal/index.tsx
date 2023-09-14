@@ -41,7 +41,7 @@ export function Modal({
   hideCloseButton,
   size,
   children,
-  containerClassName = "overflow-auto",
+  containerClassName = "overflow-auto max-h-full",
   ...rest
 }: IModalProps) {
   return (
@@ -86,7 +86,7 @@ export function Modal({
           >
             <div
               className={clsx(
-                "bg-white rounded-lg text-left shadow-xl transform transition-all w-full max-h-full flex flex-col",
+                "bg-white rounded-lg text-left shadow-xl transform transition-all w-full  flex flex-col",
                 containerClassName,
                 modalClassMap[size]
               )}

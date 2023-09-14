@@ -23,6 +23,7 @@ import AuthProviderWrapper from "./components/Authentication/AuthProviderWrapper
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { LogsIcon } from "./components/Icons/LogsIcon";
 import { TopologyIcon } from "./components/Icons/TopologyIcon";
+import SetupIntercom from "./components/Intercom/SetupIntercom";
 import JobsHistorySettingsPage from "./components/JobsHistory/JobsHistorySettingsPage";
 import { SidebarLayout } from "./components/Layout";
 import NotificationsPage from "./components/Notifications/NotificationsSettingsPage";
@@ -40,7 +41,6 @@ import {
 } from "./context/FeatureFlagsContext";
 import { HealthPageContextProvider } from "./context/HealthPageContext";
 import { IncidentPageContextProvider } from "./context/IncidentPageContext";
-import { TopologyPageContextProvider } from "./context/TopologyPageContext";
 import { UserAccessStateContextProvider } from "./context/UserAccessContext/UserAccessContext";
 import { tables } from "./context/UserAccessContext/permissions";
 import {
@@ -57,14 +57,13 @@ import { ConnectionsPage } from "./pages/Settings/ConnectionsPage";
 import { EventQueueStatusPage } from "./pages/Settings/EventQueueStatus";
 import { FeatureFlagsPage } from "./pages/Settings/FeatureFlagsPage";
 import { LogBackendsPage } from "./pages/Settings/LogBackendsPage";
+import { PlaybookSettingsPage } from "./pages/Settings/PlaybookSettingsPage";
 import { UsersPage } from "./pages/UsersPage";
 import { ConfigDetailsInsightsPage } from "./pages/config/ConfigDetailsInsightsPage";
 import { ConfigInsightsPage } from "./pages/config/ConfigInsightsList";
 import { HealthPage } from "./pages/health";
 import { features } from "./services/permissions/features";
 import { stringSortHelper } from "./utils/common";
-import { PlaybookSettingsPage } from "./pages/Settings/PlaybookSettingsPage";
-import SetupIntercom from "./components/Intercom/SetupIntercom";
 
 export type NavigationItems = {
   name: string;
@@ -495,17 +494,15 @@ export function App() {
           <SetupIntercom>
             <UserAccessStateContextProvider>
               <FeatureFlagsContextProvider>
-                <TopologyPageContextProvider>
-                  <HealthPageContextProvider>
-                    <ConfigPageContextProvider>
-                      <IncidentPageContextProvider>
-                        <ReactTooltip />
-                        <IncidentManagerRoutes sidebar={<SidebarWrapper />} />
-                        <ReactQueryDevtools initialIsOpen={false} />
-                      </IncidentPageContextProvider>
-                    </ConfigPageContextProvider>
-                  </HealthPageContextProvider>
-                </TopologyPageContextProvider>
+                <HealthPageContextProvider>
+                  <ConfigPageContextProvider>
+                    <IncidentPageContextProvider>
+                      <ReactTooltip />
+                      <IncidentManagerRoutes sidebar={<SidebarWrapper />} />
+                      <ReactQueryDevtools initialIsOpen={false} />
+                    </IncidentPageContextProvider>
+                  </ConfigPageContextProvider>
+                </HealthPageContextProvider>
               </FeatureFlagsContextProvider>
             </UserAccessStateContextProvider>
           </SetupIntercom>

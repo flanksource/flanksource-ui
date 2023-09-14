@@ -1488,7 +1488,7 @@ export const connectionTypes: ConnectionType[] = [
     convertToFormSpecificValue: (data: Record<string, any>) => {
       return {
         ...data,
-        fromName: data.properties?.fromName
+        fromName: data.properties?.BotName
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
@@ -1496,9 +1496,9 @@ export const connectionTypes: ConnectionType[] = [
         name: data.name,
         username: data.username,
         password: data.password,
-        url: `slack://$(password)@${data.username}?BotName=${data.fromName}`,
+        url: `slack://$(password)@${data.username}`,
         properties: {
-          fromName: data.fromName
+          BotName: data.fromName
         }
       };
     }

@@ -27,6 +27,7 @@ src/data/*.real.json
 .idea/
 .log/
 .rgignore
+.tool-versions
 
 .next
 *.log

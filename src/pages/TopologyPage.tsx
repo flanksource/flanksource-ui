@@ -1,28 +1,25 @@
+import { useQuery } from "@tanstack/react-query";
 import { useAtom } from "jotai";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
+import LoadingBar, { LoadingBarRef } from "react-top-loading-bar";
 import { getTopology } from "../api/services/topology";
 import { Head } from "../components/Head/Head";
 import { InfoMessage } from "../components/InfoMessage";
 import { SearchLayout } from "../components/Layout";
 import CardsSkeletonLoader from "../components/SkeletonLoader/CardsSkeletonLoader";
+import { refreshButtonClickedTrigger } from "../components/SlidingSideBar";
+import { toastError } from "../components/Toast/toast";
 import { TopologyBreadcrumbs } from "../components/TopologyBreadcrumbs";
 import { TopologyCard } from "../components/TopologyCard";
+import TopologyFilterBar from "../components/TopologyFilters/TopologyFilterBar";
 import { getCardWidth } from "../components/TopologyPopover/topologyPreference";
 import {
   getSortLabels,
   getSortedTopology
 } from "../components/TopologyPopover/topologySort";
 import TopologySidebar from "../components/TopologySidebar/TopologySidebar";
-import { refreshButtonClickedTrigger } from "../components/SlidingSideBar";
-import { useQuery } from "@tanstack/react-query";
-import {
-  Topology,
-  useTopologyPageContext
-} from "../context/TopologyPageContext";
-import { toastError } from "../components/Toast/toast";
-import TopologyFilterBar from "../components/TopologyFilters/TopologyFilterBar";
-import LoadingBar, { LoadingBarRef } from "react-top-loading-bar";
+import { Topology } from "../context/TopologyPageContext";
 
 export const allOption = {
   All: {
@@ -71,7 +68,7 @@ export function TopologyPage() {
   const [, setTriggerRefresh] = useAtom(refreshButtonClickedTrigger);
 
   const [searchParams, setSearchParams] = useSearchParams();
-  const { setTopologyState } = useTopologyPageContext();
+
   const [topologyCardSize, setTopologyCardSize] = useState(() =>
     getCardWidth()
   );
@@ -157,13 +154,8 @@ export function TopologyPage() {
         components = [];
       }
     }
-
-    setTopologyState({
-      topology: components,
-      searchParams
-    });
     return components;
-  }, [data?.components, id, searchParams, setTopologyState]);
+  }, [data?.components, id]);
 
   const sortLabels = useMemo(() => {
     if (!topology) {

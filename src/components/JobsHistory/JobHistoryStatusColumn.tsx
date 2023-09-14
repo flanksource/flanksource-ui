@@ -20,7 +20,7 @@ export default function JobHistoryStatusColumn({ status }: Props) {
   return (
     <>
       <FaDotCircle className={`inline ${className}`} />
-      <span>{status}</span>
+      <span className="ml-1">{status}</span>
     </>
   );
 }

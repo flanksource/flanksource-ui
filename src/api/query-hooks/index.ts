@@ -161,13 +161,13 @@ function prepareConfigListQuery({
   if (includeAgents) {
     query = `${query},agent:agents(id,name)`;
   }
+  if (configType && configType !== "All") {
+    query = `${query}&type=eq.${configType}`;
+  }
   if (search) {
     query = `${query}&or=(name.ilike.*${search}*,type.ilike.*${search}*,description.ilike.*${search}*,namespace.ilike.*${search}*)`;
   } else {
     const filterQueries = [];
-    if (configType && configType !== "All") {
-      filterQueries.push(`type=eq.${configType}`);
-    }
     if (tag && tag !== "All") {
       const [k, v] = decodeURI(tag).split("__:__");
       filterQueries.push(`tags->>${k}=eq.${encodeURIComponent(v)}`);

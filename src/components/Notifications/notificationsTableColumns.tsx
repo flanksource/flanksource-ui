@@ -68,8 +68,28 @@ export const notificationEvents = [
   {
     label: "incident.status.identified",
     value: "incident.status.cancelled"
+  },
+  {
+    label: "component.status.healthy",
+    value: "component.status.healthy"
+  },
+  {
+    label: "component.status.unhealthy",
+    value: "component.status.unhealthy"
+  },
+  {
+    label: "component.status.warning",
+    value: "component.status.warning"
+  },
+  {
+    label: "component.status.error",
+    value: "component.status.error"
+  },
+  {
+    label: "component.status.info",
+    value: "component.status.info"
   }
-];
+].sort((a, b) => a.label.localeCompare(b.label));
 
 export function JobStatusColumn({ cell }: CellContext<Notification, any>) {
   const value = cell.row.original.job_status;
@@ -124,13 +144,13 @@ export const notificationsTableColumns: ColumnDef<Notification, any>[] = [
       return (
         <div className="flex flex-wrap gap-2">
           {person && (
-            <div className="flex flex-row gap-2 items-center">
+            <div className="flex flex-wrap gap-2 items-center max-w-full">
               <Avatar user={person} circular size="sm" /> {person.name}{" "}
             </div>
           )}
 
           {team && (
-            <div className="flex flex-row gap-2 items-center">
+            <div className="flex flex-wrap gap-2 items-center max-w-full">
               <Icon className="inline-block h-6" name={team.icon} /> {team.name}{" "}
             </div>
           )}
@@ -175,16 +195,28 @@ export const notificationsTableColumns: ColumnDef<Notification, any>[] = [
     header: "Title",
     id: "title",
     size: 100,
-    accessorKey: "title"
+    accessorKey: "title",
+    cell: ({ getValue }) => {
+      const value = getValue<string>();
+      return (
+        <div className="w-full overflow-hidden text-ellipsis">{value}</div>
+      );
+    }
   },
   {
     header: "Filter",
     id: "filter",
     size: 100,
-    accessorKey: "filter"
+    accessorKey: "filter",
+    cell: ({ getValue }) => {
+      const value = getValue<string>();
+      return (
+        <div className="w-full overflow-hidden text-ellipsis">{value}</div>
+      );
+    }
   },
   {
-    header: "Job Status",
+    header: "Status",
     id: "job_status",
     cell: JobStatusColumn
   },
