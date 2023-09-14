@@ -129,8 +129,10 @@ export const relativeDateTime = (
   from: string | Date,
   to = dayjs().toISOString()
 ) => {
+  if (dayjs(from).isSame(dayjs("0001-01-01T00:00:00+00:00"))) {
+    return "";
+  }
   const fromDate = dayjs.utc(from).local();
-
   return fromDate.fromNow();
 };
 
