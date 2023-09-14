@@ -7,12 +7,14 @@ type FormikCheckboxProps = {
   hint?: string;
   disabled?: boolean;
   labelClassName?: string;
+  className?: string;
 };
 
 export default function FormikCheckbox({
   name,
   required = false,
   labelClassName = "text-sm font-semibold text-gray-700",
+  className = "",
   disabled,
   hint,
   label
@@ -25,7 +27,7 @@ export default function FormikCheckbox({
   });
 
   return (
-    <div className="flex flex-row items-center space-x-2">
+    <div className={`flex flex-row items-center space-x-2 ${className}`}>
       <input
         id={name}
         type="checkbox"
