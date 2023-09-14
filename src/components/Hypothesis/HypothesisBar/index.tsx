@@ -2,6 +2,7 @@ import { ChevronRightIcon } from "@heroicons/react/outline";
 import clsx from "clsx";
 import { debounce } from "lodash";
 import { useEffect, useMemo, useState } from "react";
+import { useAtomValue, useSetAtom } from "jotai";
 import { useForm } from "react-hook-form";
 import {
   BsBraces,
@@ -17,6 +18,7 @@ import { AvatarGroup } from "../../AvatarGroup";
 import { EditableText } from "../../EditableText";
 import { HypothesisBarMenu } from "../HypothesisBarMenu";
 import { StatusDropdownContainer } from "../StatusDropdownContainer";
+import { recentlyAddedHypothesisIdAtom } from "../../../store/hypothesis.state";
 
 enum CommentInfo {
   Comment = "comment"
@@ -71,6 +73,15 @@ export function HypothesisBar({
   } = hypothesis;
 
   const [deleting, setDeleting] = useState<boolean>(false);
+  const recentlyAddedHypothesisId = useAtomValue(recentlyAddedHypothesisIdAtom);
+  const setRecentlyAddedHypothesisId = useSetAtom(
+    recentlyAddedHypothesisIdAtom
+  );
+  const isPartOfDOD = useMemo(() => {
+    return (
+      hypothesis.evidences?.filter((item) => item.definition_of_done).length > 0
+    );
+  }, [hypothesis]);
 
   const handleApiUpdate = useMemo(
     () =>
@@ -89,6 +100,16 @@ export function HypothesisBar({
   watch();
 
   const [editTitle, setEditTitle] = useState(initEditTitle);
+
+  useEffect(() => {
+    if (!recentlyAddedHypothesisId) {
+      return;
+    }
+    if (hypothesis.id === recentlyAddedHypothesisId) {
+      onToggleExpand(hypothesis.id === recentlyAddedHypothesisId);
+      setRecentlyAddedHypothesisId(null);
+    }
+  }, [recentlyAddedHypothesisId, hypothesis.id]);
 
   useEffect(() => {
     const subscription = watch((value) => {
@@ -121,7 +142,8 @@ export function HypothesisBar({
     <div
       className={clsx(
         "relative w-full flex justify-between shadow-md bg-white rounded-8px border focus:outline-non cursor-pointer space-x-2",
-        deleting && "pointer-events-none cursor-not-allowed blur-[2px]"
+        deleting && "pointer-events-none cursor-not-allowed blur-[2px]",
+        isPartOfDOD ? "border-t-blue-600 border-t-2" : ""
       )}
     >
       <div className="flex flex-grow-0 items-center space-x-2 my-1 w-full">

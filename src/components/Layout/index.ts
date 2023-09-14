@@ -1,6 +1,5 @@
-import { SearchLayout } from "./search";
+import { SearchLayout } from "./SearchLayout";
 import { MinimalLayout } from "./minimal";
 import { SidebarLayout } from "./SidebarLayout";
-import { ConfigLayout } from "./ConfigLayout";
 
-export { SearchLayout, SidebarLayout, MinimalLayout, ConfigLayout };
+export { SearchLayout, SidebarLayout, MinimalLayout };

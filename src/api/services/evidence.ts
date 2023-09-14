@@ -8,48 +8,40 @@ export enum EvidenceType {
   Topology = "topology",
   Check = "check",
   ConfigAnalysis = "config_analysis",
-  ConfigChange = "config_change"
+  ConfigChange = "config_change",
+  // inline comment
+  Comment = "comment"
 }
 
 export type Evidence = {
   user: User;
   id: string;
   hypothesisId: string;
-  component_id: string;
-  config_id: string;
-  config_analysis_id: string;
-  config_change_id: string;
-  check_id: string;
+  component_id?: string;
+  config_id?: string;
+  config_analysis_id?: string;
+  config_change_id?: string;
+  check_id?: string;
   evidence: Record<string, any>;
-  description: string;
-  definition_of_done: boolean;
-  properties: string;
+  description?: string;
+  definition_of_done?: boolean;
+  script?: string;
+  properties?: string;
   created_at: string;
   created_by: User;
   type: EvidenceType;
-  done: boolean;
-};
-
-export const getAllEvidenceByHypothesis = async (hypothesisId: string) => {
-  const { data, error } = await resolve<Evidence[]>(
-    IncidentCommander.get(
-      `/evidences?hypothesis_id=eq.${hypothesisId}&select=*,created_by(id,name,avatar)`
-    )
-  );
-  if (error) {
-    return { error };
-  }
-
-  return { data };
+  done?: boolean;
+  hypothesis_id: string;
 };
 
 export const getEvidence = async (id: string) =>
   resolve(IncidentCommander.get(`/evidences?id=eq.${id}`));
 
-export const createEvidence = async (args: Evidence) => {
+export const createEvidence = async (
+  args: Omit<Evidence, "created_by" | "created_at" | "hypothesis_id" | "id">
+) => {
   const {
     user,
-    id,
     hypothesisId,
     evidence,
     config_id,
@@ -59,12 +51,14 @@ export const createEvidence = async (args: Evidence) => {
     check_id,
     type,
     description,
-    properties
+    properties,
+    definition_of_done,
+    done,
+    script
   } = args;
 
   return resolve(
-    IncidentCommander.post(`/evidences`, {
-      id,
+    IncidentCommander.post<Evidence[]>(`/evidences`, {
       config_id,
       config_analysis_id,
       config_change_id,
@@ -75,13 +69,20 @@ export const createEvidence = async (args: Evidence) => {
       evidence,
       type,
       description,
-      properties
+      properties,
+      definition_of_done,
+      done,
+      script
     })
   );
 };
 
-export const updateEvidence = async (id: string, params: {}) =>
-  resolve(IncidentCommander.patch(`/evidences?id=eq.${id}`, { ...params }));
+export const updateEvidence = async (id: string, params: Partial<Evidence>) =>
+  resolve(
+    IncidentCommander.patch<Evidence[] | null>(`/evidences?id=eq.${id}`, {
+      ...params
+    })
+  );
 
 export const deleteEvidence = async (id: string) =>
   resolve(IncidentCommander.delete(`/evidences?id=eq.${id}`));

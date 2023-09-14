@@ -1,46 +1,83 @@
-import { useState } from "react";
-import { IoChevronDownOutline, IoChevronUpOutline } from "react-icons/io5";
+import clsx from "clsx";
+import { useEffect, useState } from "react";
+import { IoChevronUpOutline } from "react-icons/io5";
+import { ClickableSvg } from "../ClickableSvg/ClickableSvg";
+import { Transition } from "@headlessui/react";
 
-type Props = {
+type Props = React.HTMLProps<HTMLDivElement> & {
   Header: React.ReactNode;
   children: React.ReactNode;
   isClosed?: boolean;
+  childrenClassName?: string;
+  dataCount?: number;
+  isCollapsed?: boolean;
+  onCollapsedStateChange?: (isClosed: boolean) => void;
 };
 
 export default function CollapsiblePanel({
   Header,
   children,
-  isClosed = false
+  isCollapsed = false,
+  className,
+  childrenClassName = "overflow-y-auto",
+  dataCount,
+  onCollapsedStateChange = () => {},
+  ...props
 }: Props) {
-  const [isOpen, setIsOpen] = useState(!isClosed);
+  const [isOpen, setIsOpen] = useState(!isCollapsed);
+
+  useEffect(() => {
+    setIsOpen(!isCollapsed);
+  }, [isCollapsed]);
 
   return (
-    <div className="flex flex-col ">
+    <div
+      className={clsx("flex flex-col h-auto space-y-2", className)}
+      {...props}
+      data-minimized={isCollapsed}
+    >
       <div
-        onClick={() => setIsOpen(!isOpen)}
-        className={`flex flex-row py-1 cursor-pointer items-center justify-center ${
-          isOpen && "border-b border-dashed border-gray-200"
-        }`}
+        role="button"
+        onClick={() => {
+          setIsOpen(!isOpen);
+          onCollapsedStateChange(!isOpen);
+        }}
+        className={`flex flex-row py-2 cursor-pointer items-center justify-center h-12 bg-gray-50 rounded-md px-2 shadow-sm`}
       >
-        <div className="flex flex-1">{Header}</div>
+        <div className="flex flex-row flex-1 items-center">{Header}</div>
         <div
-          className="flex flex-col items-center justify-center space-y-0"
-          onClick={() => setIsOpen(!isOpen)}
+          className="flex items-center justify-center space-y-0"
+          onClick={() => {
+            setIsOpen(!isOpen);
+            onCollapsedStateChange(!isOpen);
+          }}
         >
-          {isOpen ? (
-            <IoChevronUpOutline size={20} />
-          ) : (
-            <IoChevronDownOutline size={20} />
-          )}
+          <ClickableSvg
+            className={clsx("transform duration-1000", {
+              "rotate-180": !isOpen
+            })}
+          >
+            <IoChevronUpOutline className="w-6 h-6" />
+          </ClickableSvg>
         </div>
       </div>
-      <div
-        className={`flex flex-col transform origin-bottom duration-500 ${
-          isOpen ? "" : "hidden"
-        }`}
+      {/* @ts-expect-error */}
+      <Transition
+        className={`flex-1 max-h-full flex flex-col ${childrenClassName}`}
+        show={isOpen}
+        enter="transition-opacity duration-75"
+        enterFrom="opacity-0"
+        enterTo="opacity-100"
+        leave="transition-opacity duration-75"
+        leaveFrom="opacity-100"
+        leaveTo="opacity-0"
       >
-        {children}
-      </div>
+        <div
+          className={`flex-1 p-2 flex flex-col max-h-full border-b border-dashed border-gray-200`}
+        >
+          {children}
+        </div>
+      </Transition>
     </div>
   );
 }

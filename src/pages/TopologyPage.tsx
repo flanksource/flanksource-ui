@@ -1,35 +1,25 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useAtom } from "jotai";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
-import {
-  getTopology,
-  updateComponentVisibility
-} from "../api/services/topology";
+import LoadingBar, { LoadingBarRef } from "react-top-loading-bar";
+import { getTopology } from "../api/services/topology";
+import { Head } from "../components/Head/Head";
+import { InfoMessage } from "../components/InfoMessage";
 import { SearchLayout } from "../components/Layout";
-import { ReactSelectDropdown } from "../components/ReactSelectDropdown";
-import { schemaResourceTypes } from "../components/SchemaResourcePage/resourceTypes";
 import CardsSkeletonLoader from "../components/SkeletonLoader/CardsSkeletonLoader";
-import { toastError, toastSuccess } from "../components/Toast/toast";
+import { refreshButtonClickedTrigger } from "../components/SlidingSideBar";
+import { toastError } from "../components/Toast/toast";
+import { TopologyBreadcrumbs } from "../components/TopologyBreadcrumbs";
 import { TopologyCard } from "../components/TopologyCard";
-import { TopologyPopOver } from "../components/TopologyPopover";
+import TopologyFilterBar from "../components/TopologyFilters/TopologyFilterBar";
 import { getCardWidth } from "../components/TopologyPopover/topologyPreference";
 import {
-  getSortedTopology,
-  getSortLabels
+  getSortLabels,
+  getSortedTopology
 } from "../components/TopologyPopover/topologySort";
-import TopologySidebar from "../components/TopologySidebar";
-
-import { getAll } from "../api/schemaResources";
-import { Toggle } from "../components";
-import { ComponentLabelsDropdown } from "../components/Dropdown/ComponentLabelsDropdown";
-import { ComponentTypesDropdown } from "../components/Dropdown/ComponentTypesDropdown";
-import { InfoMessage } from "../components/InfoMessage";
-import { TopologyBreadcrumbs } from "../components/TopologyBreadcrumbs";
-import {
-  Topology,
-  useTopologyPageContext
-} from "../context/TopologyPageContext";
-import { useLoader } from "../hooks";
-import { searchParamsToObj } from "../utils/common";
+import TopologySidebar from "../components/TopologySidebar/TopologySidebar";
+import { Topology } from "../context/TopologyPageContext";
 
 export const allOption = {
   All: {
@@ -37,28 +27,6 @@ export const allOption = {
     name: "All",
     description: "All",
     value: "All"
-  }
-};
-
-export const healthTypes = {
-  ...allOption,
-  healthy: {
-    id: "healthy",
-    name: "Healthy",
-    description: "Healthy",
-    value: "healthy"
-  },
-  unhealthy: {
-    id: "unhealthy",
-    name: "Unhealthy",
-    description: "Unhealthy",
-    value: "unhealthy"
-  },
-  warning: {
-    id: "warning",
-    name: "Warning",
-    description: "Warning",
-    value: "warning"
   }
 };
 
@@ -97,16 +65,13 @@ export const getSortOrder = () => {
 export function TopologyPage() {
   const { id } = useParams();
 
-  const { loading, setLoading } = useLoader();
-  const { topologyState, setTopologyState } = useTopologyPageContext();
-  const [searchParams, setSearchParams] = useSearchParams(
-    topologyState?.searchParams
+  const [, setTriggerRefresh] = useAtom(refreshButtonClickedTrigger);
+
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const [topologyCardSize, setTopologyCardSize] = useState(() =>
+    getCardWidth()
   );
-
-  const [currentTopology, setCurrentTopology] = useState<Topology>();
-
-  const [teams, setTeams] = useState<any>({});
-  const [size, setSize] = useState(() => getCardWidth());
 
   const selectedLabel = searchParams.get("labels") ?? "All";
   const team = searchParams.get("team") ?? "All";
@@ -114,9 +79,83 @@ export function TopologyPage() {
   const healthStatus = searchParams.get("status") ?? "All";
   const refererId = searchParams.get("refererId") ?? undefined;
   const showHiddenComponents =
-    searchParams.get("showHiddenComponents") !== "no";
+    searchParams.get("showHiddenComponents") ?? undefined;
 
-  const topology = topologyState.topology;
+  const loadingBarRef = useRef<LoadingBarRef>(null);
+
+  const { data, isLoading, refetch } = useQuery(
+    [
+      "topologies",
+      id,
+      healthStatus,
+      team,
+      selectedLabel,
+      topologyType,
+      showHiddenComponents
+    ],
+    () => {
+      loadingBarRef.current?.continuousStart();
+      const apiParams = {
+        id,
+        status: healthStatus,
+        type: topologyType,
+        team: team,
+        labels: selectedLabel,
+        // only flatten, if topology type is set
+        ...(topologyType &&
+          topologyType.toString().toLowerCase() !== "all" && {
+            flatten: true
+          }),
+        hidden: showHiddenComponents === "no" ? false : undefined
+      };
+      return getTopology(apiParams);
+    },
+    {
+      onSettled: () => {
+        loadingBarRef.current?.complete();
+      }
+    }
+  );
+
+  const currentTopology = useMemo(() => data?.components?.[0], [data]);
+
+  const topology = useMemo(() => {
+    let topologyData: Topology[] | undefined;
+
+    if (id) {
+      const x = Array.isArray(data?.components) ? data?.components : [];
+
+      if (x!.length > 1) {
+        console.warn("Multiple nodes for same id?");
+        toastError("Response has multiple components for the id.");
+      }
+
+      topologyData = x![0]?.components;
+
+      if (!topologyData) {
+        console.warn("Component doesn't have any child components.");
+        topologyData = data?.components;
+      }
+    } else {
+      topologyData = data?.components ?? [];
+    }
+
+    let components = topologyData?.filter(
+      (item) => (item.name || item.title) && item.id !== id
+    );
+
+    if (!components?.length && topologyData?.length) {
+      let filtered = topologyData?.find(
+        (x: Record<string, any>) => x.id === id
+      );
+      if (filtered) {
+        components = [filtered];
+      } else {
+        components = [];
+      }
+    }
+    return components;
+  }, [data?.components, id]);
 
   const sortLabels = useMemo(() => {
     if (!topology) {
@@ -125,285 +164,88 @@ export function TopologyPage() {
     return getSortLabels(topology);
   }, [topology]);
 
+  const onRefresh = useCallback(() => {
+    refetch();
+    setTriggerRefresh((prev) => prev + 1);
+  }, [refetch, setTriggerRefresh]);
+
   useEffect(() => {
     if (!sortLabels) {
       return;
     }
-    const sortBy = getSortBy(sortLabels) || "status";
-    const sortOrder = localStorage.getItem("topologyCardsSortOrder") || "desc";
-    setSearchParams({
-      ...searchParamsToObj(searchParams),
-      sortBy,
-      sortOrder
-    });
+
+    const sortByFromURL = searchParams.get("sortBy");
+    const sortOrderFromURL = searchParams.get("sortOrder");
+
+    const sortByFromLocalStorage = getSortBy(sortLabels) || "status";
+    const sortOrderFromLocalStorage =
+      localStorage.getItem("topologyCardsSortOrder") || "desc";
+
+    if (!sortByFromURL && !sortOrderFromURL) {
+      searchParams.set("sortBy", sortByFromLocalStorage);
+      searchParams.set("sortOrder", sortOrderFromLocalStorage);
+    }
+
+    // this will replace the history, so that the back button will work as expected
+    setSearchParams(searchParams, { replace: true });
   }, [searchParams, setSearchParams, sortLabels]);
 
-  const load = useCallback(async () => {
-    const params = Object.fromEntries(searchParams);
-
-    if (id != null) {
-      params.id = id;
-    }
-
-    setLoading(true);
-
-    try {
-      const apiParams = {
-        id,
-        status: params.status,
-        type: params.type,
-        team: params.team,
-        labels: params.labels,
-        // only flatten, if topology type is set
-        ...(params.type &&
-          params.type.toString().toLowerCase() !== "all" && {
-            flatten: true
-          }),
-        hidden: params.showHiddenComponents === "no" ? false : undefined
-      };
-      // @ts-ignore
-      const res = await getTopology(apiParams);
-      if (res.error) {
-        toastError(res.error);
-        return;
-      }
-
-      const currentTopology = res.data[0];
-      setCurrentTopology(currentTopology);
-
-      let data;
-
-      if (id) {
-        res.data = Array.isArray(res.data) ? res.data : [];
-        if (res.data.length > 1) {
-          console.warn("Multiple nodes for same id?");
-          toastError("Response has multiple components for the id.");
-        }
-        data = res.data[0]?.components;
-
-        if (!data) {
-          console.warn("Component doesn't have any child components.");
-          data = res.data;
-        }
-      } else {
-        data = Array.isArray(res.data) ? res.data : [];
-      }
-
-      let result = data.filter(
-        (item: { name: string; title: string; id: string }) =>
-          (item.name || item.title) && item.id !== id
-      );
-
-      if (!result.length && data.length) {
-        let filtered = data.find((x: Record<string, any>) => x.id === id);
-        if (filtered) {
-          result = [filtered];
-        } else {
-          result = [];
-        }
-      }
-
-      setTopologyState({
-        topology: result,
-        searchParams
-      });
-    } catch (ex: any) {
-      toastError(ex);
-    }
-
-    setLoading(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, searchParams, setTopologyState]);
-
-  useEffect(() => {
-    load();
-  }, [searchParams, id, load]);
-
-  useEffect(() => {
-    const teamsApiConfig = schemaResourceTypes.find(
-      (item) => item.table === "teams"
-    );
-
-    getAll(teamsApiConfig)
-      .then((res) => {
-        const data: any = {
-          ...allOption
-        };
-        res.data.forEach((item: any) => {
-          data[item.name] = {
-            id: item.name,
-            name: item.name,
-            description: item.name,
-            value: item.name
-          };
-        });
-
-        setTeams(data);
-      })
-      .catch((_) => {
-        setTeams({
-          ...allOption
-        });
-      });
-  }, []);
-
-  const updateVisibility = async (
-    topologyId: string | undefined,
-    updatedVisibility: boolean
-  ) => {
-    // don't update if topologyId is not present
-    if (!topologyId) {
-      return;
-    }
-    try {
-      const { data } = await updateComponentVisibility(
-        topologyId,
-        updatedVisibility
-      );
-      if (data) {
-        toastSuccess(`Component visibility updated successfully`);
-      }
-    } catch (ex: any) {
-      toastError(ex);
-    }
-    load();
-  };
-
-  if ((loading && !topology) || !topology) {
-    return <CardsSkeletonLoader showBreadcrumb />;
-  }
+  const sortedTopologies = useMemo(
+    () =>
+      getSortedTopology(topology, getSortBy(sortLabels || []), getSortOrder()),
+    [sortLabels, topology]
+  );
 
   return (
-    <SearchLayout
-      title={
-        <div className="flex text-xl text-gray-400">
-          <TopologyBreadcrumbs topologyId={id} refererId={refererId} />
-        </div>
-      }
-      onRefresh={() => {
-        load();
-      }}
-      contentClass="p-0 h-full"
-      loading={loading}
-    >
-      <div className="flex flex-row min-h-full h-auto">
-        <div className="flex flex-col flex-1 p-6 min-h-full h-auto">
-          <div className="flex">
-            <div className="flex flex-wrap">
-              <div className="flex p-3">
-                <ReactSelectDropdown
-                  name="health"
-                  label=""
-                  value={healthStatus}
-                  items={healthTypes}
-                  className="inline-block p-3 w-auto max-w-[500px]"
-                  dropDownClassNames="w-auto max-w-[400px] left-0"
-                  onChange={(val: any) => {
-                    setSearchParams({
-                      ...Object.fromEntries(searchParams),
-                      status: val
-                    });
-                  }}
-                  prefix={
-                    <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
-                      Health:
-                    </div>
-                  }
-                />
-              </div>
-              <ComponentTypesDropdown
-                className="flex p-3"
-                name="Types"
-                label=""
-                value={topologyType}
-                onChange={(val: any) => {
-                  setSearchParams({
-                    ...Object.fromEntries(searchParams),
-                    type: val
-                  });
-                }}
-              />
-              <div className="flex p-3">
-                <ReactSelectDropdown
-                  name="team"
-                  label=""
-                  value={team}
-                  items={teams}
-                  className="inline-block p-3 w-auto max-w-[500px]"
-                  dropDownClassNames="w-auto max-w-[400px] left-0"
-                  onChange={(val: any) => {
-                    setSearchParams({
-                      ...Object.fromEntries(searchParams),
-                      team: val
-                    });
-                  }}
-                  prefix={
-                    <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
-                      Team:
-                    </div>
-                  }
-                />
-              </div>
-              <ComponentLabelsDropdown
-                name="Labels"
-                label=""
-                className="flex p-3 w-auto max-w-[500px]"
-                value={selectedLabel}
-                onChange={(val: any) => {
-                  setSearchParams({
-                    ...Object.fromEntries(searchParams),
-                    labels: val
-                  });
-                }}
-              />
-              <Toggle
-                className="p-3 flex"
-                label="Show hidden components"
-                value={showHiddenComponents}
-                onChange={(val) => {
-                  const newValue = val ? "yes" : "no";
-                  setSearchParams({
-                    ...Object.fromEntries(searchParams),
-                    showHiddenComponents: newValue
-                  });
-                }}
-              />
-            </div>
-            <TopologyPopOver
-              size={size}
-              setSize={setSize}
-              sortLabels={sortLabels || []}
-              searchParams={searchParams}
-              setSearchParams={setSearchParams}
+    <>
+      <LoadingBar color="#374151" height={4} ref={loadingBarRef} />
+      <Head prefix="Topology" />
+      <SearchLayout
+        title={<TopologyBreadcrumbs topologyId={id} refererId={refererId} />}
+        onRefresh={onRefresh}
+        contentClass="p-0 h-full"
+        loading={isLoading}
+      >
+        <div className="flex flex-row h-full py-2 overflow-y-auto">
+          <div className="flex flex-col flex-1 h-full overflow-y-auto">
+            <TopologyFilterBar
+              data={data}
+              setTopologyCardSize={setTopologyCardSize}
+              topologyCardSize={topologyCardSize}
+              sortLabels={sortLabels ?? []}
             />
+            {isLoading && !topology?.length ? (
+              <CardsSkeletonLoader />
+            ) : (
+              <div className="px-6 py-4 flex leading-1.21rel w-full">
+                <div className="flex flex-wrap w-full">
+                  {sortedTopologies.map((item) => (
+                    <TopologyCard
+                      key={item.id}
+                      topology={item}
+                      size={topologyCardSize}
+                      isTopologyPage
+                    />
+                  ))}
+                  {!topology?.length && !isLoading && (
+                    <InfoMessage
+                      className="my-8"
+                      message="There are no components matching this criteria"
+                    />
+                  )}
+                </div>
+              </div>
+            )}
           </div>
-          <div className="flex leading-1.21rel w-full mt-4">
-            <div className="flex flex-wrap w-full">
-              {getSortedTopology(
-                topology,
-                getSortBy(sortLabels || []),
-                getSortOrder()
-              ).map((item) => (
-                <TopologyCard
-                  key={item.id}
-                  topology={item}
-                  size={size}
-                  updateVisibility={updateVisibility}
-                />
-              ))}
-              {!topology?.length && (
-                <InfoMessage
-                  className="my-8"
-                  message="There are no components matching this criteria"
-                />
-              )}
-            </div>
-          </div>
+          {id && (
+            <TopologySidebar
+              topology={currentTopology}
+              refererId={refererId}
+              onRefresh={refetch}
+            />
+          )}
         </div>
-        {id && (
-          <TopologySidebar topology={currentTopology} refererId={refererId} />
-        )}
-      </div>
-    </SearchLayout>
+      </SearchLayout>
+    </>
   );
 }

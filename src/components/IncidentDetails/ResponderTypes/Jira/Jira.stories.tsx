@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
-import { AddResponderFormValues } from "../../AddResponder";
+import { AddResponderFormValues } from "../../AddResponders/AddResponder";
 import { Jira } from "./index";
+import { StoryFn } from "@storybook/react";
 
 export default {
   title: "Jira",
@@ -39,7 +40,7 @@ const FormContainer = () => {
   };
   return (
     <div className="flex flex-col">
-      <Jira control={control} errors={errors} setValue={setValue} />
+      <Jira control={control} errors={errors} setValue={setValue} teamId="" />
       <div className="flex flex-row">
         <button className="btn-secondary p-2 m-2" onClick={(e) => reset()}>
           reset
@@ -52,7 +53,7 @@ const FormContainer = () => {
   );
 };
 
-const Template = (arg) => <FormContainer {...arg} />;
+const Template: StoryFn = (arg) => <FormContainer {...arg} />;
 
 export const Variant1 = Template.bind({});
 Variant1.args = {};

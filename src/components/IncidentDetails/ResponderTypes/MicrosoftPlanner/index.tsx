@@ -1,23 +1,23 @@
 import clsx from "clsx";
-import { useEffect, useMemo, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   Control,
   Controller,
-  FieldErrors,
+  FieldErrorsImpl,
   UseFormSetValue
 } from "react-hook-form";
 import { searchConfigs } from "../../../../api/services/configs";
 import { ConfigItem } from "../../../ConfigItem";
 import { TextInput } from "../../../TextInput";
-import { AddResponderFormValues } from "../../AddResponder";
+import { AddResponderFormValues } from "../../AddResponders/AddResponder";
 
 type MicrosoftProps = {
   teamId: string;
   control: Control;
-  errors: FieldErrors;
+  errors: FieldErrorsImpl<AddResponderFormValues>;
   setValue: UseFormSetValue<AddResponderFormValues>;
-  defaultValues: { [key: string]: any };
-  values: { [key: string]: any };
+  defaultValues?: { [key: string]: any };
+  values?: { [key: string]: any };
 } & React.HTMLProps<HTMLDivElement>;
 
 export const MicrosoftPlanner = ({
@@ -38,7 +38,7 @@ export const MicrosoftPlanner = ({
   const [allValues, setAllValues] = useState<any>({});
 
   useEffect(() => {
-    searchConfigs("MsPlanner", "")
+    searchConfigs("ms_planner", "")
       .then(({ data }: any) => {
         const item = (data || [])
           .map((item: any) => ({
@@ -80,7 +80,7 @@ export const MicrosoftPlanner = ({
     <div className={clsx(className)} {...rest}>
       <div className="mb-4">
         <ConfigItem
-          type="MSPlanner"
+          type="ms_planner"
           control={control}
           name="configType"
           autoFetch={true}
@@ -91,7 +91,7 @@ export const MicrosoftPlanner = ({
           }}
           label={
             <label className="block text-sm font-bold text-gray-700 mb-2">
-              MSPlanner Config Type
+              Microsoft Planner Instance
             </label>
           }
           value={msProjectType}
@@ -103,7 +103,7 @@ export const MicrosoftPlanner = ({
         >
           <p className="text-red-600 text-sm">{errors?.configType?.message}</p>
           <ConfigItem
-            type="MSPlanner"
+            type="ms_planner"
             control={control}
             name="plan_id"
             value={
@@ -136,7 +136,7 @@ export const MicrosoftPlanner = ({
           >
             <p className="text-red-600 text-sm">{errors?.plan_id?.message}</p>
             <ConfigItem
-              type="MSPlanner"
+              type="ms_planner"
               control={control}
               name="bucket_id"
               value={
@@ -168,7 +168,7 @@ export const MicrosoftPlanner = ({
             />
             <p className="text-red-600 text-sm">{errors.bucket_id?.message}</p>
             <ConfigItem
-              type="MSPlanner"
+              type="ms_planner"
               control={control}
               name="priority"
               value={

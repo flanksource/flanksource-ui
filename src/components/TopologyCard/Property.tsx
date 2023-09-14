@@ -1,5 +1,4 @@
 import clsx from "clsx";
-import PropTypes from "prop-types";
 import { FiExternalLink } from "react-icons/fi";
 import { NodePodPropToLabelMap } from "../../constants";
 import { formatBytes } from "../../utils/common";
@@ -7,14 +6,22 @@ import { relativeDateTime } from "../../utils/date";
 import { isEmpty } from "../Canary/utils";
 import { Icon } from "../Icon";
 
-export const FormatProperty = ({ property, short = false }) => {
+type FormatPropertyProps = {
+  property: Record<string, any>;
+  short?: boolean;
+};
+
+export function FormatProperty({
+  property,
+  short = false
+}: FormatPropertyProps) {
   if (property == null) {
-    return "undefined";
+    return null;
   }
   let { text } = property;
 
   if (property.name === "created") {
-    return relativeDateTime(text);
+    return <span className="text-sm">{relativeDateTime(text)}</span>;
   }
 
   if (property.type === "url") {
@@ -23,9 +30,9 @@ export const FormatProperty = ({ property, short = false }) => {
         href={property.text}
         target="_blank"
         rel="noreferrer"
-        className="underline"
+        className="underline text-sm"
       >
-        <span>{property.text.replace("https://", "")}</span>
+        <span>{property.text?.replace("https://", "")}</span>
         <FiExternalLink className="inline-block ml-1" />
       </a>
     );
@@ -51,7 +58,6 @@ export const FormatProperty = ({ property, short = false }) => {
     //       <span className="align-middle">
     //         <BsCurrencyDollar color="gray" size={16} />
     //       </span>
-
     //       <span className="align-bottom">{amount}</span>
     //     </span>
     //   );
@@ -68,36 +74,56 @@ export const FormatProperty = ({ property, short = false }) => {
     if (property.max != null) {
       const percent = ((property.value / property.max) * 100).toFixed(0);
       text = `${percent}%`;
-      if (percent > 70) {
-        text = <span className="text-red-500">{text}</span>;
+      if (parseFloat(percent) > 70) {
+        text = <span className="text-sm text-red-500">{text}</span>;
       }
     } else if (property.unit && property.unit.startsWith("milli")) {
       text = (property.value / 1000).toFixed(2);
     } else if (property.unit === "bytes") {
       text = formatBytes(property.value, 0);
     }
-
+    let suffix = "";
     if (!short && property.max != null) {
       if (property.unit.startsWith("milli")) {
-        text += ` of ${(property.max / 1000).toFixed(2)}`;
+        suffix = ` of ${(property.max / 1000).toFixed(2)}`;
       } else if (property.unit === "bytes") {
-        text += ` of ${formatBytes(property.max, 0)}`;
+        suffix = ` of ${formatBytes(property.max, 0)}`;
       }
+    }
+    if (suffix && text) {
+      text =
+        typeof text === "object" ? (
+          <>
+            {text}
+            {suffix}
+          </>
+        ) : (
+          text + suffix
+        );
     }
   }
   if (isEmpty(text)) {
-    return "";
+    return null;
   }
   return (
-    <span data-tip={text} className="overflow-ellipsis">
+    <span data-tip={text} className="overflow-ellipsis text-sm">
       {text}
     </span>
   );
-};
+}
 
-export const Property = ({ property, className, ...rest }) => {
+type PropertyProps = {
+  property: Record<string, any>;
+} & React.HTMLAttributes<HTMLDivElement>;
+
+export const Property = ({
+  property,
+  className = "",
+  ...rest
+}: PropertyProps) => {
   const { name, icon, color } = property;
-  const label = NodePodPropToLabelMap[name] || name;
+  const label =
+    NodePodPropToLabelMap[name as keyof typeof NodePodPropToLabelMap] || name;
 
   if (
     property.type === "hidden" ||
@@ -131,15 +157,4 @@ export const Property = ({ property, className, ...rest }) => {
       </span>
     </div>
   );
-};
-Property.propTypes = {
-  // property: PropTypes.shape({
-  //   name: PropTypes.string.isRequired,
-  //   text: PropTypes.string,
-  // }).isRequired,
-  className: PropTypes.string
-};
-
-Property.defaultProps = {
-  className: ""
 };

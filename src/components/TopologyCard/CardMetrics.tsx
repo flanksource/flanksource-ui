@@ -21,7 +21,7 @@ export const CardMetrics = ({
   row,
   showLabelIcons = false,
   containerClasses = "text-gray-800 px-2 align-middle text-center h-full  flex flex-1",
-  labelClasses = "text-gray-color text-xs mb-0.5",
+  labelClasses = "text-gray-600 font-semibold text-xs mb-0.5",
   metricsClasses = "font-bold text-xs leading-1.21rel flex flex-center justify-center"
 }: IProps) => {
   return (

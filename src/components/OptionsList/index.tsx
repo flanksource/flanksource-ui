@@ -25,7 +25,9 @@ export const OptionsList = ({
   className,
   ...rest
 }: OptionsListProps) => {
-  const [selectedOption, setSelectedOption] = useState<Option>(value);
+  const [selectedOption, setSelectedOption] = useState<Option | undefined>(
+    value
+  );
 
   const optionSelect = (option: Option) => {
     setSelectedOption(option);

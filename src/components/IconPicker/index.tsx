@@ -6,7 +6,7 @@ const iconList = Object.entries(Icons).map(([name, _icon]) => ({
   value: name,
   label: (
     <div className="flex pl-2 space-x-4 items-center">
-      <Icon size="md" name={name} /> <span>{name}</span>
+      <Icon name={name} /> <span>{name}</span>
     </div>
   )
 }));
@@ -14,16 +14,23 @@ const iconList = Object.entries(Icons).map(([name, _icon]) => ({
 interface Props {
   onChange: (val: { value: string }) => void;
   icon?: string | undefined;
+  name?: string;
+  className?: string;
 }
-export function IconPicker({ onChange, icon }: Props) {
+export function IconPicker({
+  onChange,
+  icon,
+  name = "Icon",
+  className = "w-72"
+}: Props) {
   const value = iconList.find((x) => x.value === icon);
 
   return (
-    <div className="w-72">
+    <div className={className}>
       <Select
         value={value}
         onChange={onChange}
-        name="Icon"
+        name={name}
         options={iconList}
       />
     </div>

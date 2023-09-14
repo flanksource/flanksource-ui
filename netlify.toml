@@ -1,17 +1,14 @@
 [build]
-  command = "npm run build"
   publish = ".next"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
 [context.deploy-preview.environment]
-  NEXT_PUBLIC_WITHOUT_SESSION = "true"
-  BACKEND_URL = "https://incident-commander.canary.lab.flanksource.com/"
+  NEXT_PUBLIC_WITHOUT_SESSION = "false"
   NODE_ENV = "development"
   ENV = "netlify"
 
 [context.production.environment]
-  NEXT_PUBLIC_WITHOUT_SESSION = "true"
-  BACKEND_URL = "https://incident-commander.canary.lab.flanksource.com/"
+  NEXT_PUBLIC_WITHOUT_SESSION = "false"
   NODE_ENV = "development"

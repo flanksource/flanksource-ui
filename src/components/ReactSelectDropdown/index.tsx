@@ -14,15 +14,16 @@ import { Controller } from "react-hook-form";
 import Select, { SingleValue, StylesConfig } from "react-select";
 import { defaultTheme, components } from "react-select";
 import { Avatar } from "../Avatar";
+import CreatableSelect from "react-select/creatable";
 
 const { colors } = defaultTheme;
 
 export interface StateOption {
   id?: string;
-  label?: string;
+  label?: string | JSX.Element;
   value?: string;
   icon?: any;
-  description?: string;
+  description?: string | JSX.Element;
   order?: number;
   avatar?: any;
 }
@@ -52,15 +53,18 @@ type ReactSelectDropdownProps = {
   placeholder?: string;
   prefix?: ReactNode;
   labelClass?: string;
+  containerClassName?: string;
   dropDownClassNames?: string;
   hideControlBorder?: boolean;
   isLoading?: boolean;
   isDisabled?: boolean;
+  isCreatable?: boolean;
 };
 
 export const ReactSelectDropdown = ({
   className,
   dropDownClassNames = "w-auto max-w-[300px]",
+  containerClassName = "flex flex-row space-x-2 items-center",
   label,
   control,
   items,
@@ -69,10 +73,10 @@ export const ReactSelectDropdown = ({
   value,
   prefix,
   labelClass,
-  hideControlBorder = false,
   placeholder = "Search...",
   isLoading = false,
-  isDisabled = false
+  isDisabled = false,
+  isCreatable = false
 }: ReactSelectDropdownProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [options, setOptions] = useState<StateOption[]>([]);
@@ -123,6 +127,10 @@ export const ReactSelectDropdown = ({
     onChange(typeof value === "string" ? value : value?.value);
   };
 
+  const SelectComponent = useMemo(() => {
+    return isCreatable ? CreatableSelect : Select;
+  }, [isCreatable]);
+
   return (
     <Dropdown
       isOpen={isOpen}
@@ -130,25 +138,24 @@ export const ReactSelectDropdown = ({
       inputRef={ref}
       className={dropDownClassNames}
       target={
-        <div className={`${label ? "space-x-2" : ""}`}>
-          <label
-            className={
-              labelClass
-                ? labelClass
-                : "text-sm font-medium text-gray-700 block"
-            }
-          >
-            {label}
-          </label>
+        <div className={containerClassName}>
+          {label && (
+            <label
+              className={
+                labelClass
+                  ? labelClass
+                  : "text-sm font-medium text-gray-700 block"
+              }
+            >
+              {label}
+            </label>
+          )}
           <div
             className={clsx(
-              `relative cursor-pointer h-full pl-3 rounded-md shadow-sm pr-8 py-2 text-left border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm
-                ${SelectedOption?.id === "_empty" && "text-gray-400"}
+              `relative cursor-pointer h-full pl-3 rounded-md shadow-sm pr-8 py-2 text-left border border-gray-300 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-sm
+                ${SelectedOption?.id === "_empty" ? "text-gray-400" : ""}
               `,
-              className,
-              !hideControlBorder &&
-                "bg-white border border-white-300 shadow-sm",
-              hideControlBorder ? (isOpen ? "bg-gray-100" : "bg-white") : ""
+              className
             )}
             onClick={toggleOpen}
           >
@@ -156,9 +163,12 @@ export const ReactSelectDropdown = ({
               {prefix && (
                 <div className="flex flex-col text-gray-600"> {prefix} </div>
               )}
-              <div className="flex space-x-1 items-center">
+              <div className="flex text-sm space-x-1 items-center">
                 {SelectedOption?.icon && <div>{SelectedOption.icon}</div>}
                 <span className="block">{SelectedOption?.description}</span>
+                {!SelectedOption && value && isCreatable && (
+                  <span className="block">{value?.toString()}</span>
+                )}
               </div>
             </div>
             <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
@@ -176,7 +186,7 @@ export const ReactSelectDropdown = ({
             const { onChange: onChangeControlled, value: valueControlled } =
               field;
             return (
-              <Select
+              <SelectComponent
                 autoFocus
                 backspaceRemovesValue={false}
                 components={{
@@ -185,7 +195,7 @@ export const ReactSelectDropdown = ({
                   Option: (props: any) => {
                     return (
                       <components.Option {...props}>
-                        <div className="flex items-center">
+                        <div className="flex items-center text-sm">
                           {props.data.avatar && (
                             <Avatar user={props.data} size="sm" />
                           )}
@@ -198,7 +208,9 @@ export const ReactSelectDropdown = ({
                               "ml-2 block truncate"
                             )}
                           >
-                            {props.data.description}
+                            {isCreatable
+                              ? props.data.value
+                              : props.data.description}
                           </span>
                         </div>
                       </components.Option>
@@ -226,7 +238,7 @@ export const ReactSelectDropdown = ({
           }}
         />
       ) : (
-        <Select
+        <SelectComponent
           autoFocus
           backspaceRemovesValue={false}
           components={{
@@ -236,7 +248,7 @@ export const ReactSelectDropdown = ({
               return (
                 <components.Option {...props}>
                   <div
-                    className="flex items-center"
+                    className="flex items-center text-sm"
                     title={props.data.description}
                   >
                     {props.data.avatar && (
@@ -251,7 +263,7 @@ export const ReactSelectDropdown = ({
                         "ml-2 block truncate"
                       )}
                     >
-                      {props.data.description}
+                      {isCreatable ? props.data.value : props.data.description}
                     </span>
                   </div>
                 </components.Option>
@@ -324,10 +336,12 @@ const Dropdown: FunctionComponent<DropdownProps> = ({
   className = "w-full right-0",
   onClose
 }) => (
-  <div ref={inputRef as LegacyRef<HTMLDivElement>} className="relative">
+  <div ref={inputRef as LegacyRef<HTMLDivElement>} className="relative w-auto">
     {target}
     {isOpen ? (
-      <Menu className={`absolute bg-white z-[99] drop-shadow-md ${className}`}>
+      <Menu
+        className={`absolute bg-white z-[99] text-sm drop-shadow-md ${className}`}
+      >
         {children}
       </Menu>
     ) : null}

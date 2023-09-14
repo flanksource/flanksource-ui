@@ -1,23 +1,31 @@
-import React, { useEffect, useState } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import { ChevronRightIcon, DotsVerticalIcon } from "@heroicons/react/outline";
 import { TopologyCard } from "../../TopologyCard";
 import { BsTrash } from "react-icons/bs";
-import { Link } from "react-router-dom";
 import { Evidence, EvidenceType } from "../../../api/services/evidence";
 import { getCanaries } from "../../../api/services/topology";
 import mixins from "../../../utils/mixins.module.css";
 import { CheckDetails } from "../../Canary/CanaryPopup/CheckDetails";
 import { CheckTitle } from "../../Canary/CanaryPopup/CheckTitle";
-import { toFixedIfNecessary } from "../../../utils/common";
+import { sanitizeHTMLContent, toFixedIfNecessary } from "../../../utils/common";
 import { getUptimePercentage } from "../../Canary/CanaryPopup/utils";
 import { Duration, StatusList } from "../../Canary/renderers";
 import { Modal } from "../../Modal";
 import { relativeDateTime } from "../../../utils/date";
-import { Size } from "../../../types";
+import { Size, ViewType } from "../../../types";
 import ConfigLink from "../../ConfigLink/ConfigLink";
 import { LogsTable } from "../../Logs/Table/LogsTable";
 import { Icon } from "../../Icon";
 import { Button } from "../../Button";
+import { ConfigDetailsChanges } from "../../ConfigDetailsChanges/ConfigDetailsChanges";
+import {
+  useGetConfigByIdQuery,
+  useGetConfigInsight
+} from "../../../api/query-hooks";
+import { ConfigTypeInsights } from "../../ConfigInsights";
+import { ConfigAnalysisLink } from "../../ConfigAnalysisLink/ConfigAnalysisLink";
+import { CommentEvidence } from "../../IncidentDetails/DefinitionOfDone/EvidenceView";
+import { Hypothesis } from "../../../api/services/hypothesis";
 
 const ColumnSizes = {
   Time: {
@@ -26,7 +34,13 @@ const ColumnSizes = {
   }
 };
 
-export function EvidenceItem({ evidence }: { evidence: Evidence }) {
+export function EvidenceItem({
+  evidence,
+  viewType = ViewType.summary
+}: {
+  evidence: Evidence;
+  viewType?: ViewType;
+}) {
   switch (evidence.type) {
     case EvidenceType.Log:
       return (
@@ -49,10 +63,9 @@ export function EvidenceItem({ evidence }: { evidence: Evidence }) {
       return (
         <EvidenceAccordion
           date={evidence.created_at}
-          title={evidence.description}
-          configId={evidence.config_id}
+          title={evidence.description!}
+          configId={evidence.config_id!}
           configName={evidence.evidence.configName}
-          configType={evidence.evidence.configType}
         >
           <ConfigEvidenceView evidenceItem={evidence} />
         </EvidenceAccordion>
@@ -61,6 +74,24 @@ export function EvidenceItem({ evidence }: { evidence: Evidence }) {
       return (
         <div className="pt-2">
           <HealthEvidenceViewer evidence={evidence} />
+        </div>
+      );
+    case EvidenceType.Comment:
+      return <CommentEvidence evidence={evidence} />;
+    case EvidenceType.ConfigChange:
+      return (
+        <div className="pt-2">
+          <ConfigChangeEvidence evidence={evidence} viewType={viewType} />
+        </div>
+      );
+    case EvidenceType.ConfigAnalysis:
+      return (
+        <div className="pt-2">
+          <ConfigAnalysisEvidence
+            className="flex flex-col w-full bg-white p-3 shadow-card shadow rounded"
+            evidence={evidence}
+            viewType={viewType}
+          />
         </div>
       );
     default:
@@ -73,10 +104,11 @@ const EvidenceAccordion: React.FC<{
   title: string;
   configId: string;
   configName: string;
-  configType: string;
   children: React.ReactNode;
-}> = ({ title, date, configId, configName, configType, children, ...rest }) => {
+}> = ({ title, date, configId, configName, children, ...rest }) => {
+  const { data: config } = useGetConfigByIdQuery(configId);
   const [expanded, setExpanded] = useState(true);
+
   return (
     <div className="border-b last:border-b-0 flex flex-col" {...rest}>
       <div className="flex items-center justify-between">
@@ -103,7 +135,8 @@ const EvidenceAccordion: React.FC<{
           <ConfigLink
             configId={configId}
             configName={configName}
-            configType={configType}
+            configType={config?.type}
+            configTypeSecondary={config?.config_class}
           />
         </div>
       </div>
@@ -115,13 +148,13 @@ const EvidenceAccordion: React.FC<{
 export function ConfigEvidenceView({
   evidenceItem
 }: {
-  evidenceItem: Extract<Evidence, { evidence: { configName: string } }>;
+  evidenceItem: Pick<Evidence, "evidence">;
 }) {
   const hunkLineGap = 3;
   const fullConfig = evidenceItem?.evidence?.lines || {};
   const selectedLines =
     Object.keys(evidenceItem?.evidence?.selected_lines) || [];
-  const [hunks, setHunks] = useState([]);
+  const [hunks, setHunks] = useState<any[]>([]);
 
   useEffect(() => {
     setHunks(
@@ -134,7 +167,7 @@ export function ConfigEvidenceView({
   }, [evidenceItem]);
 
   return (
-    <div>
+    <div className="break-all	overflow-y-hidden">
       {evidenceItem ? (
         <div className="flex flex-col">
           {hunks.map(([hunkStart, hunkEnd], hunkIndex) => (
@@ -161,7 +194,7 @@ export function ConfigEvidenceView({
                             selected ? "text-gray-800" : "text-gray-600"
                           }`}
                         >
-                          {line}
+                          {line as ReactNode}
                         </code>
                       </div>
                     );
@@ -180,7 +213,11 @@ export function ConfigEvidenceView({
   );
 }
 
-function createHunks(fullConfig, selectedLines, hunkLineGap) {
+function createHunks(
+  fullConfig: any,
+  selectedLines: any,
+  hunkLineGap: any
+): any {
   const hunks: any[] = [];
   const lineNumbers = Object.keys(selectedLines);
   let hunkStart = Math.max(0, parseInt(lineNumbers[0], 10) - hunkLineGap);
@@ -206,6 +243,15 @@ function createHunks(fullConfig, selectedLines, hunkLineGap) {
   return hunks;
 }
 
+type EvidenceSectionProps = {
+  evidenceList: Evidence[];
+  hypothesis: Hypothesis;
+  titlePrepend?: string;
+  onButtonClick?: () => void;
+  onDeleteEvidence?: (evidenceId: string) => void;
+  isLoading?: boolean;
+} & React.HTMLAttributes<HTMLDivElement>;
+
 export function EvidenceSection({
   evidenceList,
   hypothesis,
@@ -214,7 +260,7 @@ export function EvidenceSection({
   onDeleteEvidence,
   isLoading,
   ...rest
-}) {
+}: EvidenceSectionProps) {
   return (
     <div className={rest.className} {...rest}>
       <div className="flex justify-between items-center">
@@ -293,7 +339,10 @@ export function HealthEvidenceViewer({
     if (!check) {
       return;
     }
-    const uValue = toFixedIfNecessary(getUptimePercentage(check), 0);
+    const uValue = toFixedIfNecessary(
+      getUptimePercentage(check) as unknown as string,
+      0
+    );
     setUptimeValue(uValue);
     setValidCheck({
       ...check,
@@ -321,21 +370,21 @@ export function HealthEvidenceViewer({
 
   const evidenceDetailsView = () => {
     return (
-      <div className="inline-block min-w-full align-middle">
-        <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-          <div className="min-w-full divide-y divide-gray-300">
+      <div className="flex flex-col flex-1 overflow-x-auto align-middle">
+        <div className="flex flex-col flex-1 overflow-x-auto shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+          <div className="flex flex-col flex-1 overflow-x-auto divide-y divide-gray-300">
             <div
-              className="flex cursor-pointer whitespace-nowrap text-sm font-medium text-gray-900"
+              className="flex flex-row flex-1 max-w-full overflow-x-auto cursor-pointer whitespace-nowrap text-sm font-medium text-gray-900"
               onClick={(e) => setShowModal(true)}
             >
-              <div className="px-2 py-2 inline-block">
+              <div className="flex flex-col flex-1  px-2 py-2 ">
                 <CheckTitle
                   className="inline-block"
                   check={check}
                   size="small"
                 />
               </div>
-              <div className="px-2 py-2 inline-block">
+              <div className="flex flex-col w-auto px-2 py-2">
                 <div className="flex flex-row">
                   <label className="text-sm font-medium text-gray-700">
                     Health:
@@ -345,21 +394,21 @@ export function HealthEvidenceViewer({
                   </label>
                 </div>
               </div>
-              <div className="px-2 py-2 inline-block">
+              <div className="flex flex-col w-auto px-2 py-2">
                 <div className="flex flex-row">
                   <label className="text-sm font-medium text-gray-700">
                     Uptime:
                     <span className="pl-2 inline-block">
                       {!Number.isNaN(uptimeValue)
-                        ? `${toFixedIfNecessary(uptimeValue, 2)}%`
+                        ? `${toFixedIfNecessary(uptimeValue?.toString()!, 2)}%`
                         : "-"}
                     </span>
                   </label>
                 </div>
               </div>
-              <div className="px-2 py-2 inline-block">
+              <div className="flex flex-col w-auto px-2 py-2">
                 <div className="flex flex-row">
-                  <label className="block text-sm font-medium text-gray-700 inline-block">
+                  <label className="block text-sm font-medium text-gray-700">
                     Latency:
                     <span className="pl-2 inline-block">
                       <Duration ms={check.latency.p99} />
@@ -387,18 +436,77 @@ export function HealthEvidenceViewer({
         onClose={() => setShowModal(false)}
         title={<CheckTitle check={check} />}
         size="medium"
+        containerClassName="flex flex-col h-full overflow-y-auto"
+        bodyClass="flex flex-col flex-1 overflow-y-auto"
       >
-        <div
-          className="flex flex-col h-full py-4 mb-16"
-          style={{ maxHeight: "calc(100vh - 8rem)" }}
-        >
+        <div className="flex flex-col flex-1 py-4 overflow-y-auto">
           <CheckDetails
             check={check}
             timeRange={evidence.evidence.start}
-            className={`flex flex-col overflow-y-hidden ${mixins.appleScrollbar}`}
+            className={`flex flex-col flex-1 px-4 overflow-y-hidden ${mixins.appleScrollbar}`}
           />
         </div>
       </Modal>
+    </div>
+  );
+}
+
+export function ConfigChangeEvidence({
+  evidence,
+  className = "w-full bg-white rounded shadow-card card p-3",
+  viewType
+}: {
+  evidence: Evidence;
+  className?: string;
+  viewType?: ViewType;
+}) {
+  return (
+    <div className={className}>
+      <ConfigDetailsChanges
+        configId={evidence.config_id!}
+        id={evidence.config_change_id!}
+        viewType={viewType}
+        showConfigLogo={true}
+      />
+    </div>
+  );
+}
+
+export function ConfigAnalysisEvidence({
+  evidence,
+  viewType,
+  className = "flex flex-col w-full bg-white"
+}: {
+  evidence: Evidence;
+  className?: string;
+  viewType?: ViewType;
+}) {
+  const { data: response } = useGetConfigInsight<ConfigTypeInsights[]>(
+    evidence.config_id!,
+    evidence.config_analysis_id!
+  );
+  const [configAnalysis, setConfigAnalysis] = useState<ConfigTypeInsights>();
+
+  useEffect(() => {
+    const analysis = response?.[0];
+    if (!analysis) {
+      return;
+    }
+    analysis.sanitizedMessageHTML = sanitizeHTMLContent(analysis.message);
+    setConfigAnalysis(analysis);
+  }, [response]);
+
+  if (!configAnalysis) {
+    return null;
+  }
+
+  return (
+    <div className={className}>
+      <ConfigAnalysisLink
+        configAnalysis={configAnalysis}
+        viewType={viewType}
+        showConfigLogo={true}
+      />
     </div>
   );
 }

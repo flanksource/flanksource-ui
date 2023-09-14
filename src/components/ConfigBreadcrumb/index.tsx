@@ -13,7 +13,7 @@ export function ConfigBreadcrumb({ setTitle }: ConfigBreadcrumbProps) {
 
   useEffect(() => {
     if (!id) {
-      setTitle(<BreadcrumbNav list={["Config"]} />);
+      setTitle(<BreadcrumbNav list={["Catalog"]} />);
       return;
     }
 
@@ -23,10 +23,11 @@ export function ConfigBreadcrumb({ setTitle }: ConfigBreadcrumbProps) {
         setTitle(
           <BreadcrumbNav
             list={[
-              { to: "/configs", title: "Config" },
+              { to: "/catalog", title: "Catalog" },
               <span>
                 <Icon
-                  name={data?.external_type || data?.config_type}
+                  name={data?.type}
+                  secondary={data?.config_class}
                   className="h-5 mr-1"
                 />
                 {data?.name}

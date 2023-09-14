@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { orderBy } from "lodash";
-import { CanaryTabs, filterChecksByTabSelection } from "../Canary/tabs";
+import { CanaryTabs, filterChecksByTabSelection } from "../Canary/CanaryTabs";
 import { MinimalCanary } from "../Canary/minimal";
 import { filterChecks, filterChecksByText } from "../Canary/filter";
 import {
@@ -23,22 +23,34 @@ const CanaryInterfaceMinimalFC = ({
   onFilterCallback,
   onLabelFiltersCallback
 }: Props) => {
-  const [searchParams] = useSearchParams();
+  const [searchParams] = useSearchParams({
+    tabBy: "namespace",
+    groupBy: "canary_name",
+    hidePassing: "true"
+  });
 
   const [filteredChecks, setFilteredChecks] = useState(checks);
   const [checksForTabGeneration, setChecksForTabGeneration] = useState(checks);
   const [selectedTab, setSelectedTab] = useState<string>();
 
   const hidePassing = searchParams.get("hidePassing") === "true";
+  const tabBy = searchParams.get("tabBy");
+  const labels = searchParams.get("labels");
+  const query = searchParams.get("query");
+
+  const urlLabels = useMemo(() => {
+    if (labels) {
+      try {
+        return JSON.parse(decodeURIComponent(labels));
+      } catch (e) {
+        console.error("Error parsing labels", e);
+        return undefined;
+      }
+    }
+  }, [labels]);
 
   // check filtering on checks/tab/params change.
   useEffect(() => {
-    const {
-      labels: urlLabels,
-      tabBy,
-      query
-    } = Object.fromEntries(searchParams.entries());
-
     if (checks?.length > 0) {
       let filtered = filterChecks(checks, hidePassing, []); // first filter for pass/fail
       filtered = filterChecksByText(filtered, query || ""); // filter by name, description, endpoint
@@ -49,7 +61,7 @@ const CanaryInterfaceMinimalFC = ({
       const labelFilters = getLabelFilters(urlLabels, getLabels(checks)); // get include/exclude filters from url state
       filtered = Object.values(filterChecksByLabels(filtered, labelFilters)); // filters checks by its 'include/exclude' filters
       setChecksForTabGeneration(filtered);
-      filtered = filterChecksByTabSelection(tabBy, selectedTab, filtered); // filter based on selected tab
+      filtered = filterChecksByTabSelection(tabBy!, selectedTab!, filtered); // filter based on selected tab
       filtered = orderBy(filtered, CanarySorter); // do sorting
       setFilteredChecks(filtered);
       if (onFilterCallback) {
@@ -62,24 +74,25 @@ const CanaryInterfaceMinimalFC = ({
     onFilterCallback,
     onLabelFiltersCallback,
     searchParams,
-    hidePassing
+    hidePassing,
+    query,
+    urlLabels,
+    tabBy
   ]);
 
   return (
-    <>
-      <CanaryTabs
-        className=""
-        // style={tabsStyle}
-        checks={checksForTabGeneration}
-        tabBy={searchParams.get("tabBy")}
-        setTabSelection={setSelectedTab}
-      />
+    <CanaryTabs
+      // style={tabsStyle}
+      checks={checksForTabGeneration}
+      tabBy={searchParams.get("tabBy")!}
+      setTabSelection={setSelectedTab}
+    >
       <MinimalCanary
         // tableHeadStyle={tableHeadStyle}
         checks={filteredChecks}
         selectedTab={selectedTab}
       />
-    </>
+    </CanaryTabs>
   );
 };
 

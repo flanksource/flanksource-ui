@@ -29,13 +29,7 @@ export function AnalysisTypesDropdown({
           value: d.analysis_type,
           description: d.analysis_type,
           name: d.analysis_type,
-          icon: (
-            <Icon
-              name={d.analysis_type}
-              secondary={d.analysis_type}
-              size="lg"
-            />
-          )
+          icon: <Icon name={d.analysis_type} secondary={d.analysis_type} />
         }));
       }, [])
     }

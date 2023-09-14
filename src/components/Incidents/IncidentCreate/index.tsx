@@ -5,20 +5,27 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import * as yup from "yup";
 import {
-  createEvidence,
   Evidence,
-  EvidenceType
+  EvidenceType,
+  createEvidence
 } from "../../../api/services/evidence";
 import {
-  createHypothesisOld,
-  HypothesisStatus
+  HypothesisStatus,
+  createHypothesisOld
 } from "../../../api/services/hypothesis";
-import { createIncident, Incident } from "../../../api/services/incident";
+import {
+  Incident,
+  IncidentStatus,
+  NewIncident,
+  createIncident
+} from "../../../api/services/incident";
 import { useUser } from "../../../context";
+import { Events, sendAnalyticEvent } from "../../../services/analytics";
+import { Button } from "../../Button";
 import { ReactSelectDropdown } from "../../ReactSelectDropdown";
 import { TextInput } from "../../TextInput";
 import { toastError } from "../../Toast/toast";
-import { severityItems, statusItems, typeItems } from "../data";
+import { incidentStatusItems, severityItems, typeItems } from "../data";
 
 const validationSchema = yup
   .object({
@@ -38,7 +45,7 @@ const validationSchema = yup
 
 type IncidentCreateProps = {
   callback: (incident?: Incident) => void;
-  evidence: Record<string, any>;
+  evidence?: Record<string, any>;
 } & React.HTMLAttributes<HTMLDivElement>;
 
 export function IncidentCreate({
@@ -56,13 +63,15 @@ export function IncidentCreate({
     formState: { errors },
     handleSubmit,
     watch
-  } = useForm({
+  } = useForm<
+    Omit<NewIncident, "created_by" | "commander_id" | "communicator_id">
+  >({
     defaultValues: {
       title: "",
       description: "",
       // tracking: "",
       severity: "Low",
-      status: "open",
+      status: IncidentStatus.Open,
       type: "availability"
     },
     resolver: yupResolver(validationSchema)
@@ -81,13 +90,14 @@ export function IncidentCreate({
     updated_at: "now()"
   };
 
-  const onSubmit = async (data: Record<string, any>) => {
-    const payload: Record<string, any> = { ...data, ...additionalFields };
+  const onSubmit = async (
+    data: Omit<NewIncident, "created_by" | "commander_id" | "communicator_id">
+  ) => {
+    const payload = { ...data, ...additionalFields };
     payload.id = uuidv4();
     // TODO(ciju): Handle failure cases
     try {
-      // @ts-expect-error
-      const { data: incident, error } = await createIncident(user!, payload);
+      const { data: incident } = await createIncident(user!, payload);
 
       const hypothesis = await createHypothesisOld(
         user!,
@@ -105,12 +115,13 @@ export function IncidentCreate({
         return;
       }
 
-      let _evidence: Evidence = {
-        // @ts-expect-error
-        user,
-        id: uuidv4(),
+      let _evidence: Omit<
+        Evidence,
+        "created_by" | "created_at" | "hypothesis_id" | "id"
+      > = {
+        user: user!,
         hypothesisId: hypothesis.data[0].id
-      };
+      } as any;
 
       if (evidence) {
         _evidence.evidence = {
@@ -129,6 +140,9 @@ export function IncidentCreate({
 
       await createEvidence(_evidence);
 
+      // Send Intercom event, when incident is created
+      sendAnalyticEvent(Events.CreatedIncident);
+
       if (callback != null) {
         callback(incident);
       } else {
@@ -140,59 +154,63 @@ export function IncidentCreate({
   };
 
   return (
-    <div className={`max-w-prose py-7 ${rest.className || ""}`} {...rest}>
+    <div className={`max-w-prose ${rest.className || ""}`} {...rest}>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="mb-4">
-          <ReactSelectDropdown
-            control={control}
-            label="Type"
-            name="type"
-            className="w-full"
-            labelClass="block text-sm font-bold text-gray-700 mb-2"
-            items={typeItems}
-            value={type}
-          />
-          <p className="text-red-600 text-sm">{errors.type?.message}</p>
-        </div>
-        <div className="mb-4">
-          <Controller
-            control={control}
-            name="title"
-            render={({ field }) => {
-              const { onChange, value } = field;
-              return (
-                <TextInput
-                  label="Title"
-                  id="title"
-                  className="w-full"
-                  onChange={onChange}
-                  value={value}
-                />
-              );
-            }}
-          />
-          <p className="text-red-600 text-sm">{errors.title?.message}</p>
-        </div>
-        <div className="mb-4">
-          <Controller
-            control={control}
-            name="description"
-            render={({ field }) => {
-              const { onChange, value } = field;
-              return (
-                <TextInput
-                  label="Description"
-                  id="description"
-                  className="w-full"
-                  onChange={onChange}
-                  value={value}
-                />
-              );
-            }}
-          />
-          <p className="text-red-600 text-sm">{errors.description?.message}</p>
-        </div>
-        {/* <div className="mb-4">
+        <div className="p-5">
+          <div className="mb-4">
+            <ReactSelectDropdown
+              control={control}
+              label="Type"
+              name="type"
+              className="w-full"
+              labelClass="block text-sm font-bold text-gray-700 mb-2"
+              containerClassName="flex flex-col space-y-1"
+              items={typeItems}
+              value={type}
+            />
+            <p className="text-red-600 text-sm">{errors.type?.message}</p>
+          </div>
+          <div className="mb-4">
+            <Controller
+              control={control}
+              name="title"
+              render={({ field }) => {
+                const { onChange, value } = field;
+                return (
+                  <TextInput
+                    label="Title"
+                    id="title"
+                    className="w-full"
+                    onChange={onChange}
+                    value={value}
+                  />
+                );
+              }}
+            />
+            <p className="text-red-600 text-sm">{errors.title?.message}</p>
+          </div>
+          <div className="mb-4">
+            <Controller
+              control={control}
+              name="description"
+              render={({ field }) => {
+                const { onChange, value } = field;
+                return (
+                  <TextInput
+                    label="Description"
+                    id="description"
+                    className="w-full"
+                    onChange={onChange}
+                    value={value}
+                  />
+                );
+              }}
+            />
+            <p className="text-red-600 text-sm">
+              {errors.description?.message}
+            </p>
+          </div>
+          {/* <div className="mb-4">
           <Controller
             control={control}
             name="communicator_id"
@@ -232,7 +250,7 @@ export function IncidentCreate({
           />
           <p className="text-red-600 text-sm">{errors.commander_id?.message}</p>
         </div> */}
-        {/* <div className="mb-4">
+          {/* <div className="mb-4">
           <Controller
             control={control}
             name="tracking"
@@ -254,38 +272,40 @@ export function IncidentCreate({
           <p className="text-red-600 text-sm">{errors.tracking?.message}</p>
         </div> */}
 
-        <div className="mb-4">
-          {/* have a look at this */}
-          <ReactSelectDropdown
-            control={control}
-            label="Severity"
-            name="severity"
-            className="w-full"
-            items={severityItems}
-            labelClass="block text-sm font-bold text-gray-700 mb-2"
-            value={severity}
-          />
-          <p className="text-red-600 text-sm">{errors.severity?.message}</p>
+          <div className="mb-4">
+            {/* have a look at this */}
+            <ReactSelectDropdown
+              control={control}
+              label="Severity"
+              name="severity"
+              className="w-full"
+              items={severityItems}
+              containerClassName="flex flex-col space-y-1"
+              labelClass="block text-sm font-bold text-gray-700 mb-2"
+              value={severity}
+            />
+            <p className="text-red-600 text-sm">{errors.severity?.message}</p>
+          </div>
+          <div className="mb-4">
+            <ReactSelectDropdown
+              control={control}
+              label="Status"
+              name="status"
+              className="w-full"
+              items={incidentStatusItems}
+              labelClass="block text-sm font-bold text-gray-700 mb-2"
+              containerClassName="flex flex-col space-y-1"
+              value={status}
+            />
+            <p className="text-red-600 text-sm">{errors.status?.message}</p>
+          </div>
         </div>
-        <div className="mb-4">
-          <ReactSelectDropdown
-            control={control}
-            label="Status"
-            name="status"
-            className="w-full"
-            items={statusItems}
-            labelClass="block text-sm font-bold text-gray-700 mb-2"
-            value={status}
-          />
-          <p className="text-red-600 text-sm">{errors.status?.message}</p>
-        </div>
-        <div className="flex justify-end">
-          <button
+        <div className="flex justify-end bg-gray-100 px-5 py-4 w-full rounded">
+          <Button
             type="submit"
-            className="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-          >
-            Create
-          </button>
+            className="px-3 py-2 btn-secondary float-right"
+            text="Create"
+          />
         </div>
       </form>
     </div>

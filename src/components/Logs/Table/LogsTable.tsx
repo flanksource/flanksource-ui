@@ -1,21 +1,23 @@
-import Convert from "ansi-to-html";
-import clsx from "clsx";
-import DOMPurify from "dompurify";
-import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ColumnDef,
-  useReactTable,
-  getCoreRowModel,
+  ColumnSizingState,
   flexRender,
-  ColumnSizingState
+  getCoreRowModel,
+  useReactTable
 } from "@tanstack/react-table";
+import { useVirtualizer } from "@tanstack/react-virtual";
+import Convert from "ansi-to-html";
+import clsx from "clsx";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { EvidenceType } from "../../../api/services/evidence";
-import LogItem from "../../../types/Logs";
-import { AttachEvidenceDialog } from "../../AttachEvidenceDialog";
-import { Loading } from "../../Loading";
-import { LogsTableLabelsCell, LogsTableTimestampCell } from "./LogsTableCells";
 import useDebouncedValue from "../../../hooks/useDebounce";
+import LogItem from "../../../types/Logs";
+import { sanitizeHTMLContent } from "../../../utils/common";
+import AttachAsEvidenceButton from "../../AttachEvidenceDialog/AttachAsEvidenceDialogButton";
 import { InfoMessage } from "../../InfoMessage";
+import TableSkeletonLoader from "../../SkeletonLoader/TableSkeletonLoader";
+import { LogsTableLabelsCell, LogsTableTimestampCell } from "./LogsTableCells";
 
 const convert = new Convert();
 
@@ -49,10 +51,20 @@ export function LogsTable({
   componentId,
   columnSizes
 }: LogsTableProps) {
-  const [attachAsAsset, setAttachAsAsset] = useState(false);
   const [lines, setLines] = useState<LogItem[]>([]);
-
   const [rowSelection, setRowSelection] = useState({});
+
+  const [searchParams] = useSearchParams();
+
+  const topologyId = searchParams.get("topologyId");
+  const query = searchParams.get("query");
+  const debouncedQueryValue = useDebouncedValue(query, 500);
+  const logsSelector = searchParams.get("logsSelector");
+
+  useEffect(() => {
+    setLines([]);
+    setRowSelection({});
+  }, [debouncedQueryValue, logsSelector, topologyId]);
 
   const [columnSizing, setColumnSizing] = useState<ColumnSizingState>(() => {
     const savedColumnSizes = localStorage.getItem("logsTableColumnSizes");
@@ -106,19 +118,23 @@ export function LogsTable({
                 {!viewOnly && (
                   <div className="flex justify-end -m-2 flex-wrap">
                     <div className="p-2">
-                      <button
-                        type="button"
+                      <AttachAsEvidenceButton
                         disabled={!hasSelectedRows}
                         onClick={() => {
                           setLines(selectedFlatRows.map((d) => d.original));
-                          setAttachAsAsset(true);
                         }}
                         className={clsx(
                           hasSelectedRows ? "btn-primary" : "hidden"
                         )}
-                      >
-                        Attach as Evidence
-                      </button>
+                        evidence={{ lines }}
+                        type={EvidenceType.Log}
+                        component_id={componentId}
+                        callback={(success: boolean) => {
+                          if (success) {
+                            setLines([]);
+                          }
+                        }}
+                      />
                     </div>
                   </div>
                 )}
@@ -134,7 +150,7 @@ export function LogsTable({
                 className="break-all"
                 // eslint-disable-next-line react/no-danger
                 dangerouslySetInnerHTML={{
-                  __html: DOMPurify.sanitize(
+                  __html: sanitizeHTMLContent(
                     convert.toHtml(row.original.message)
                   )
                 }}
@@ -166,7 +182,8 @@ export function LogsTable({
     debugTable: true,
     debugHeaders: true,
     debugColumns: true,
-    onColumnSizingChange: setColumnSizing
+    onColumnSizingChange: setColumnSizing,
+    autoResetAll: false
   });
 
   // in order to ensure column resizing doesn't affect the selection column, we
@@ -185,21 +202,32 @@ export function LogsTable({
     [table]
   );
 
+  const { rows } = table.getRowModel();
+
+  const tableContainerRef = useRef<HTMLDivElement>(null);
+
+  const { getVirtualItems, getTotalSize } = useVirtualizer({
+    count: rows.length,
+    getScrollElement: () => tableContainerRef.current,
+    estimateSize: () => 62,
+    overscan: 10
+  });
+
+  const virtualRows = getVirtualItems();
+  const totalSize = getTotalSize();
+
+  const paddingTop = virtualRows.length > 0 ? virtualRows?.[0]?.start || 0 : 0;
+  const paddingBottom =
+    virtualRows.length > 0
+      ? totalSize - (virtualRows?.[virtualRows.length - 1]?.end || 0)
+      : 0;
+
   return (
-    <div className="flex flex-col flex-1 overflow-y-auto">
+    <div
+      ref={tableContainerRef}
+      className="flex flex-col flex-1 overflow-y-auto"
+    >
       <div className="block pb-6 w-full">
-        <AttachEvidenceDialog
-          isOpen={attachAsAsset}
-          onClose={() => setAttachAsAsset(false)}
-          evidence={{ lines }}
-          type={EvidenceType.Log}
-          component_id={componentId}
-          callback={(success: boolean) => {
-            if (success) {
-              setLines([]);
-            }
-          }}
-        />
         <table
           className={clsx(
             "w-full table-fixed",
@@ -241,7 +269,13 @@ export function LogsTable({
             })}
           </thead>
           <tbody>
-            {table.getRowModel().rows.map((row) => {
+            {paddingTop > 0 && (
+              <tr>
+                <td style={{ height: `${paddingTop}px` }} />
+              </tr>
+            )}
+            {virtualRows.map((item) => {
+              const row = rows[item.index];
               return (
                 <tr key={row.id}>
                   {row.getVisibleCells().map((cell) => (
@@ -250,7 +284,6 @@ export function LogsTable({
                       style={{
                         width: cell.column.getSize()
                       }}
-                      className="overflow-hidden"
                     >
                       {flexRender(
                         cell.column.columnDef.cell,
@@ -270,7 +303,7 @@ export function LogsTable({
                       message="Please select a component to view the logs"
                     />
                   ) : isLoading ? (
-                    <Loading text="Loading logs ..." />
+                    <TableSkeletonLoader />
                   ) : (
                     <InfoMessage
                       className="my-8"
@@ -278,6 +311,11 @@ export function LogsTable({
                     />
                   )}
                 </td>
+              </tr>
+            )}
+            {paddingBottom > 0 && (
+              <tr>
+                <td style={{ height: `${paddingBottom}px` }} />
               </tr>
             )}
           </tbody>

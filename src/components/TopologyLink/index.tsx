@@ -4,9 +4,11 @@ import { useComponentNameQuery } from "../../api/query-hooks";
 
 export function TopologyLink({
   topologyId,
+  viewType = "link",
   size = "xl"
 }: {
   topologyId: string | undefined;
+  viewType?: "link" | "label";
   size?: "xl" | "lg" | "md" | "sm" | "xs";
 }) {
   const { data: component } = useComponentNameQuery(topologyId, {});
@@ -15,15 +17,24 @@ export function TopologyLink({
     return null;
   }
 
+  if (viewType === "link") {
+    return (
+      <Link
+        to={{
+          pathname: `/topology/${component.id}`
+        }}
+        className="flex flex-nowrap hover:text-gray-500 my-auto"
+      >
+        <Icon name={component.icon} className="mr-1 object-center" />
+        <span className={`text-${size}`}> {component.name}</span>
+      </Link>
+    );
+  }
+
   return (
-    <Link
-      to={{
-        pathname: `/topology/${component.id}`
-      }}
-      className="flex flex-nowrap hover:text-gray-500 my-auto "
-    >
-      <Icon name={component.icon} size={size} className="mr-1 object-center" />
+    <>
+      <Icon name={component.icon} className="mr-1 object-center" />
       <span className={`text-${size}`}> {component.name}</span>
-    </Link>
+    </>
   );
 }

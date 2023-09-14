@@ -1,7 +1,7 @@
 export const MOCK_DATA = [
   {
     id: "0181ebeb-b9e7-009b-a28d-72c2e6d13f1b",
-    config_type: "JIRA",
+    type: "JIRA",
     external_id: "JIRA",
     name: "Jira Projects",
     tags: {},
@@ -39,7 +39,7 @@ export const MOCK_DATA = [
   {
     id: "0181ebeb-b9e7-009b-a28d-72c2e6d13f1b",
     scraper_id: null,
-    config_type: "Subnet",
+    type: "Subnet",
     external_id: "subnet-8ed885f5",
     name: "",
     namespace: null,
@@ -84,7 +84,7 @@ export const MOCK_DATA = [
   {
     id: "0181ebeb-b9fe-0f2d-951e-0463fed6a370",
     scraper_id: null,
-    config_type: "EC2Instance",
+    type: "EC2Instance",
     external_id: "i-05885b04545c37f14",
     name: "flanksource-canary-cluster-ng2-Node",
     namespace: null,
@@ -374,7 +374,7 @@ export const MOCK_DATA = [
   {
     id: "0181ebeb-b9f5-d672-7279-58c24fc1e216",
     scraper_id: null,
-    config_type: "EC2Instance",
+    type: "EC2Instance",
     external_id: "i-08b0205c8f05f0afd",
     name: "ip-10-0-5-82.eu-west-2.compute.internal",
     namespace: null,
@@ -681,7 +681,7 @@ export const MOCK_DATA = [
   {
     id: "0181ebeb-b9e4-8a77-3804-9b98795ca9ce",
     scraper_id: null,
-    config_type: "Subnet",
+    type: "Subnet",
     external_id: "subnet-00938f91ab87c9906",
     name: "",
     namespace: null,
@@ -738,7 +738,7 @@ export const MOCK_DATA = [
   {
     id: "0181ebeb-b9ed-766c-a98a-8c3b2ea0b14d",
     scraper_id: null,
-    config_type: "Subnet",
+    type: "Subnet",
     external_id: "subnet-00023ad659ae1e065",
     name: "",
     namespace: null,
@@ -795,7 +795,7 @@ export const MOCK_DATA = [
   {
     id: "0181ebeb-b9f8-06f6-5a14-d8da96a0ead4",
     scraper_id: null,
-    config_type: "EC2Instance",
+    type: "EC2Instance",
     external_id: "i-08e9870380cb997fd",
     name: "ip-10-0-3-135.eu-west-2.compute.internal",
     namespace: null,
@@ -1145,7 +1145,7 @@ export const MOCK_DATA = [
   {
     id: "0181ebeb-b9eb-070d-813e-4ede9fda2f4f",
     scraper_id: null,
-    config_type: "Subnet",
+    type: "Subnet",
     external_id: "subnet-41d8b70c",
     name: "",
     namespace: null,
@@ -1190,7 +1190,7 @@ export const MOCK_DATA = [
   {
     id: "0181ebeb-b9f0-d17d-dd5d-edb9ef828233",
     scraper_id: null,
-    config_type: "Subnet",
+    type: "Subnet",
     external_id: "subnet-01811d23bca434bd3",
     name: "",
     namespace: null,
@@ -1247,7 +1247,7 @@ export const MOCK_DATA = [
   {
     id: "0181ebeb-b9e9-3b2e-1f8d-60d65f765aa6",
     scraper_id: null,
-    config_type: "Subnet",
+    type: "Subnet",
     external_id: "subnet-0bcbcb35662a9a793",
     name: "",
     namespace: null,
@@ -1304,7 +1304,7 @@ export const MOCK_DATA = [
   {
     id: "0181ebeb-b9f2-ebda-3f15-501c051986d0",
     scraper_id: null,
-    config_type: "Subnet",
+    type: "Subnet",
     external_id: "subnet-03ee8e39821abdf76",
     name: "",
     namespace: null,
@@ -1361,7 +1361,7 @@ export const MOCK_DATA = [
   {
     id: "0181ebeb-b9ef-23ec-f003-29e17c59300b",
     scraper_id: null,
-    config_type: "Subnet",
+    type: "Subnet",
     external_id: "subnet-efd61086",
     name: "",
     namespace: null,
@@ -1406,7 +1406,7 @@ export const MOCK_DATA = [
   {
     id: "0181ebeb-b9f3-a8f2-1c11-85d18ce59979",
     scraper_id: null,
-    config_type: "Subnet",
+    type: "Subnet",
     external_id: "subnet-03c20ec3935232b26",
     name: "",
     namespace: null,

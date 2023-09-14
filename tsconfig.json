@@ -5,7 +5,6 @@
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "downlevelIteration": true,
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
     "jsx": "preserve",
@@ -18,7 +17,13 @@
     "skipLibCheck": true,
     "strict": true,
     "incremental": true,
-    "downlevelIteration": true
+    "downlevelIteration": true,
+    "types": [
+      "@types/jest",
+      "node",
+      "@types/testing-library__jest-dom",
+      "@types/intercom-web"
+    ]
   },
   "include": ["src"],
   "exclude": ["node_modules"]

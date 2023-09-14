@@ -9,7 +9,8 @@ export function handleGetFlowError<S>(
   flowType: "login" | "registration" | "settings" | "recovery" | "verification",
   resetFlow: Dispatch<SetStateAction<S | undefined>>
 ) {
-  return async (err: AxiosError) => {
+  return async (err: AxiosError<any>) => {
+    const url = `${window.location.pathname}${window.location.search}`;
     switch (err.response?.data.error?.id) {
       case "session_aal2_required":
         // 2FA is enabled and enforced, but user did not perform 2fa yet!
@@ -21,7 +22,6 @@ export function handleGetFlowError<S>(
         return;
       case "session_refresh_required":
         // We need to re-authenticate to perform this action
-        const url = `${window.location.pathname}${window.location.search}`;
         window.location.href = `/login?return_to=${url}&refresh=true`;
         return;
       case "self_service_flow_return_to_forbidden":
@@ -54,6 +54,10 @@ export function handleGetFlowError<S>(
       case "browser_location_change_required":
         // Ory Kratos asked us to point the user to this URL.
         window.location.href = err.response.data.redirect_browser_to;
+        return;
+      case "session_inactive":
+        // We need to re-authenticate to perform this action
+        window.location.href = `/login?return_to=${url}`;
         return;
     }
 

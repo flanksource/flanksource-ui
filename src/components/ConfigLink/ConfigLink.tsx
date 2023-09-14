@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
-
 import { Icon } from "../Icon";
+import { HTMLAttributeAnchorTarget } from "react";
+import clsx from "clsx";
+import ConfigsTypeIcon from "../Configs/ConfigsTypeIcon";
 
 type ConfigLinkProps = {
   configId: string;
@@ -8,27 +10,45 @@ type ConfigLinkProps = {
   configType?: string;
   className?: string;
   configTypeSecondary?: string;
+  variant?: "label" | "link";
+  target?: HTMLAttributeAnchorTarget;
 };
 export default function ConfigLink({
   configId,
   configName,
   configType,
   configTypeSecondary,
-  className
+  variant = "link",
+  className = "text-zinc-600 text-sm",
+  ...props
 }: ConfigLinkProps) {
+  if (variant === "link") {
+    return (
+      <Link
+        to={{
+          pathname: `/catalog/${configId}`
+        }}
+        className={clsx("flex flex-row space-x-1 border-0", className)}
+      >
+        <ConfigsTypeIcon
+          config={{
+            type: configType
+          }}
+        />
+        <div className="overflow-hidden truncate flex-1">{configName}</div>
+      </Link>
+    );
+  }
   return (
-    <Link
-      to={{
-        pathname: `/configs/${configId}`
-      }}
-    >
+    <div className={clsx("flex flex-row space-x-1", className)}>
       <Icon
         name={configType}
         secondary={configTypeSecondary}
-        size="lg"
-        className="w-5 mr-1"
+        className="w-5 mr-1 h-5"
       />
-      <span className={className}>{configName}</span>
-    </Link>
+      <div className="overflow-hidden truncate flex-1 text-sm">
+        {configName}
+      </div>
+    </div>
   );
 }

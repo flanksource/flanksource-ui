@@ -8,6 +8,7 @@ import { Switch } from "../Switch";
 import { TextInputClearable } from "../TextInputClearable";
 import GroupByDropdown from "../GroupByDropdown";
 import { ConfigTagsDropdown } from "../ConfigTagsDropdown";
+import { ConfigListToggledDeletedItems } from "../ConfigListToggledDeletedItems/ConfigListToggledDeletedItems";
 import { ConfigTypesDropdown } from "../ConfigTypesDropdown";
 
 const ConfigFilterViewTypes = {
@@ -36,19 +37,16 @@ function ConfigsListFilterControls() {
   return (
     <div className="flex space-x-2 mr-4">
       {configFilterView === ConfigFilterViewTypes.advanced ? (
-        <>
-          {/* @ts-expect-error */}
-          <QueryBuilder
-            refreshConfigs={(e: any) => {
-              setConfigState((state) => {
-                return {
-                  ...state,
-                  data: e
-                };
-              });
-            }}
-          />
-        </>
+        <QueryBuilder
+          refreshConfigs={(e: any) => {
+            setConfigState((state) => {
+              return {
+                ...state,
+                data: e
+              };
+            });
+          }}
+        />
       ) : (
         <>
           <ConfigTypesDropdown />
@@ -57,7 +55,6 @@ function ConfigsListFilterControls() {
 
           <ConfigTagsDropdown />
 
-          {/* @ts-expect-error */}
           <TextInputClearable
             onChange={debounce((e) => {
               const query = e.target.value || "";
@@ -66,14 +63,16 @@ function ConfigsListFilterControls() {
             }, 200)}
             className="w-80"
             placeholder="Search for configs"
-            defaultValue={params.get("search")}
+            defaultValue={params.get("search") ?? undefined}
           />
+
+          <ConfigListToggledDeletedItems />
         </>
       )}
 
       <Switch
-        onChange={(e: string) => {
-          setConfigFilterView(e);
+        onChange={(e) => {
+          setConfigFilterView(e as string);
           setParams({});
         }}
         options={options}
@@ -83,4 +82,5 @@ function ConfigsListFilterControls() {
   );
 }
 
-export default React.memo(ConfigsListFilterControls);
+const ConfigsListFilters = React.memo(ConfigsListFilterControls);
+export default ConfigsListFilters;

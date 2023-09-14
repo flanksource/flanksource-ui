@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import clsx from "clsx";
 
 import { Modal } from "../../Modal";
-import { Comment, createComment } from "../../../api/services/comments";
+import { Comment } from "../../../api/services/comments";
 import {
   deleteEvidence,
   Evidence,
@@ -13,13 +13,9 @@ import { toastError } from "../../Toast/toast";
 import { EvidenceBuilder } from "../../EvidenceBuilder";
 import { CommentsSection } from "../Comments";
 import { ResponseLine } from "../ResponseLine";
-import {
-  getHypothesisResponse,
-  Hypothesis
-} from "../../../api/services/hypothesis";
+import { Hypothesis } from "../../../api/services/hypothesis";
 import { TreeNode } from "../../../pages/incident/IncidentDetails";
-import { useSearchParams } from "react-router-dom";
-import { searchParamsToObj } from "../../../utils/common";
+import { useIncidentState } from "../../../store/incident.state";
 
 interface IProps {
   node: TreeNode<Hypothesis>;
@@ -29,38 +25,24 @@ interface IProps {
 type Response = Evidence & Comment;
 
 export function HypothesisDetails({ node, api, ...rest }: IProps) {
+  const { refetchIncident } = useIncidentState(node.incident_id);
   const [evidenceBuilderOpen, setEvidenceBuilderOpen] = useState(false);
   const { user } = useUser();
-  const [isLoading, setIsLoading] = useState(true);
   const [responses, setResponses] = useState<Response[]>([]);
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [refreshEvidencesToken, setRefreshEvidencesToken] = useState<
-    string | null
-  >(null);
 
-  const fetchResponses = async (id: string) => {
-    setIsLoading(true);
-
-    try {
-      const { data, error } = await getHypothesisResponse(id);
-      if (error) {
-        toastError(`Error fetching hypothesis responses: ${error?.message}`);
-      }
-      arrangeData(data);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  useEffect(() => {
+    arrangeData(node);
+  }, [node]);
 
   const arrangeData = (data: any) => {
-    const responses = (data?.comments || [])
+    let responses = (data?.comments || [])
       .concat(data?.evidences || [])
       .sort((a: Response, b: Response) => {
         if (a.created_at > b.created_at) return 1;
         return -1;
       });
 
-    responses.forEach((response: any) => {
+    responses = responses.map((response: any) => {
       response.created_by = response.external_created_by
         ? {
             name: response.external_created_by,
@@ -71,21 +53,27 @@ export function HypothesisDetails({ node, api, ...rest }: IProps) {
             }
           }
         : response.created_by;
+      return response;
     });
     setResponses(responses);
   };
 
-  const handleComment = (value: string) =>
-    createComment({
-      user,
-      incidentId: node.incident_id,
-      hypothesisId: node.id,
-      comment: value
-    })
-      .catch(toastError)
+  const handleComment = (value: string) => {
+    return api.createComment
+      .mutateAsync({
+        user: user!,
+        incidentId: node.incident_id,
+        hypothesisId: node.id,
+        comment: value
+      })
+      .catch((err) => {
+        toastError(err);
+        return Promise.resolve();
+      })
       .then(() => {
-        fetchResponses(node.id);
+        refetchIncident();
       });
+  };
 
   const deleteEvidenceCb = async (id: string) => {
     const { error } = await deleteEvidence(id);
@@ -97,7 +85,6 @@ export function HypothesisDetails({ node, api, ...rest }: IProps) {
     }
 
     setResponses((ls) => ls.filter((e) => e.id !== id));
-    assignNewEvidencesRefreshToken();
   };
 
   const updateEvidenceCb = async (evidence: Evidence) => {
@@ -109,38 +96,11 @@ export function HypothesisDetails({ node, api, ...rest }: IProps) {
       const message = evidence.definition_of_done
         ? "Removing evidence from definition of done failed"
         : "Marking evidence as part of definition of done failed";
-      console.error("update failed", error);
       toastError(message);
       return;
     }
-    responses.forEach((response: any) => {
-      if (response.id === evidence.id) {
-        response.definition_of_done = !response.definition_of_done;
-      }
-    });
-    setResponses([...responses]);
-    assignNewEvidencesRefreshToken();
+    refetchIncident();
   };
-
-  const assignNewEvidencesRefreshToken = () => {
-    const token = (+new Date()).toString();
-    setRefreshEvidencesToken(token);
-    setSearchParams({
-      ...searchParamsToObj(searchParams),
-      refresh_evidences: token
-    });
-  };
-
-  useEffect(() => {
-    if (
-      searchParams.get("refresh_evidences") === refreshEvidencesToken &&
-      refreshEvidencesToken
-    ) {
-      return;
-    }
-    arrangeData(node);
-    node?.id && fetchResponses(node.id);
-  }, [node?.id, searchParams]);
 
   return (
     <>
@@ -166,7 +126,12 @@ export function HypothesisDetails({ node, api, ...rest }: IProps) {
               />
             ))}
         </ul>
-        <CommentsSection onComment={(value) => handleComment(value)} />
+        <CommentsSection
+          onComment={(value) => {
+            handleComment(value);
+            return Promise.resolve();
+          }}
+        />
       </div>
       <Modal
         open={evidenceBuilderOpen}

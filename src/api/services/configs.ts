@@ -1,25 +1,33 @@
 // http://incident-commander.canary.lab.flanksource.com/config/db
 
+import { ConfigTypeChanges } from "../../components/ConfigChanges";
+import { ConfigTypeInsights } from "../../components/ConfigInsights";
 import { Config, ConfigDB, IncidentCommander } from "../axios";
 import { resolve } from "../resolve";
 
 export interface ConfigItem {
   name: string;
   external_id: string;
-  config_type: string;
-  external_type?: string;
+  config_class?: string;
+  type?: string;
   id: string;
-  changes: Change[];
-  analysis: Analysis[];
-  type: string;
+  changes?: Change[];
+  analysis?: Analysis[];
   tags?: Record<string, any>;
   allTags?: Record<string, any>;
   created_at: string;
   updated_at: string;
+  deleted_at?: string;
   cost_per_minute?: number;
   cost_total_1d?: number;
   cost_total_7d?: number;
   cost_total_30d?: number;
+  config: Record<string, any>;
+  agent_id?: string;
+  agent?: {
+    id: string;
+    name: string;
+  };
 }
 
 export type ConfigTypeRelationships = {
@@ -35,8 +43,9 @@ export type ConfigTypeRelationships = {
 };
 
 interface Change {
-  type: string;
-  count: number;
+  change_type: string;
+  total: number;
+  severity?: string;
 }
 
 interface Analysis {
@@ -47,24 +56,135 @@ interface Analysis {
   analyzer: string;
 }
 
+export type PaginationInfo = {
+  pageSize: number;
+  pageIndex: number;
+};
+
 // Config Items
 
 export const getAllConfigs = () =>
   resolve<ConfigItem[]>(ConfigDB.get(`/configs`));
 
-export const getAllChanges = () =>
-  resolve(ConfigDB.get(`/config_changes?order=created_at.desc`));
+export const getAllConfigsMatchingQuery = (query: string) => {
+  let url = `/configs?`;
+  if (query) {
+    url = `${url}&${query}`;
+  }
+  return resolve<ConfigItem[]>(ConfigDB.get(url));
+};
+
+export const getAllConfigsForSearchPurpose = async () => {
+  let url = `/configs?select=id,name,config_class,type`;
+  const res = await resolve<
+    Pick<ConfigItem, "name" | "config_class" | "type" | "id">[]
+  >(ConfigDB.get(url));
+
+  return res.data ?? [];
+};
+
+export type ConfigSummary = {
+  type: string;
+  analysis?: Record<string, any>;
+  changes?: string;
+  total_configs: number;
+  cost_per_minute?: number;
+  cost_total_1d?: number;
+  cost_total_7d?: number;
+  cost_total_30d?: number;
+  agent?: {
+    id: string;
+    name: string;
+  };
+};
+
+export const getConfigsSummary = async () => {
+  const res = await resolve<ConfigSummary[] | null>(
+    ConfigDB.get(`/config_summary`)
+  );
+  return res.data ?? [];
+};
+
+export const getConfigsByIDs = async (ids: string[]) => {
+  const res = await resolve<ConfigItem[] | null>(
+    ConfigDB.get(
+      `/configs?id=in.(${ids.join(",")})&select=id,name,config_class,type`
+    )
+  );
+  return res.data ?? [];
+};
+
+export const getAllChanges = (
+  queryParams: Record<string, string | undefined>,
+  pageIndex?: number,
+  pageSize?: number
+) => {
+  const pagingParams =
+    pageIndex || pageSize
+      ? `&limit=${pageSize}&offset=${pageIndex! * pageSize!}`
+      : "";
+  let queryString = "";
+  Object.keys(queryParams).forEach((key) => {
+    if (queryParams[key] && queryParams[key] !== "All") {
+      const queryKey = key === "type" ? `config.type` : key;
+      queryString += `&${queryKey}=eq.${queryParams[key]}`;
+    }
+  });
+  return resolve(
+    ConfigDB.get<ConfigTypeChanges[]>(
+      `/config_changes?order=created_at.desc${pagingParams}&select=id,change_type,summary,source,created_at,config_id,config:config_names!inner(id,name,type)${queryString}`,
+      {
+        headers: {
+          Prefer: "count=exact"
+        }
+      }
+    )
+  );
+};
 
 export const getConfig = (id: string) =>
   resolve<ConfigItem[]>(ConfigDB.get(`/config_items?id=eq.${id}`));
 
+export type ConfigsTagList = {
+  key: string;
+  value: any;
+};
+
+export const getConfigTagsList = () =>
+  resolve<ConfigsTagList[] | null>(ConfigDB.get(`/config_tags`));
+
 export const getConfigName = (id: string) =>
   resolve<ConfigItem[]>(ConfigDB.get(`/config_names?id=eq.${id}`));
 
-export const getConfigChange = (id: string) =>
-  resolve(
-    ConfigDB.get(`/config_changes?config_id=eq.${id}&order=created_at.desc`)
+export const getConfigChanges = (
+  id: string,
+  pageIndex?: number,
+  pageSize?: number
+) => {
+  let paginationQueryParams = "";
+  if (pageIndex !== undefined && pageSize !== undefined) {
+    paginationQueryParams = `&limit=${pageSize}&offset=${
+      pageIndex! * pageSize
+    }`;
+  }
+  return resolve(
+    ConfigDB.get<ConfigTypeChanges[]>(
+      `/config_changes?config_id=eq.${id}&order=created_at.desc${paginationQueryParams}`,
+      {
+        headers: {
+          Prefer: "count=exact"
+        }
+      }
+    )
   );
+};
+
+export const getConfigChangeById = async (id: string, configId: string) => {
+  const res = await ConfigDB.get<ConfigTypeChanges[] | null>(
+    `/config_changes?config_id=eq.${configId}&id=eq.${id}&select=id,config_id,change_type,created_at,external_created_by,source,diff,details,patches,created_by,config:configs(id,name,type,config_class)`
+  );
+  return res.data?.[0] || undefined;
+};
 
 type ConfigParams = {
   topologyId?: string;
@@ -72,19 +192,55 @@ type ConfigParams = {
 };
 
 export const getConfigsBy = ({ topologyId, configId }: ConfigParams) => {
+  const configFields = `id, type, name, config_class, deleted_at`;
   if (topologyId) {
-    return resolve<ConfigItem[]>(
+    return resolve<
+      {
+        configs?: ConfigItem[];
+        related?: ConfigItem[];
+      }[]
+    >(
       ConfigDB.get(
-        `/config_component_relationships?component_id=eq.${topologyId}&select=*,configs!config_component_relationships_config_id_fkey(*)`
-      )
-    );
-  } else if (configId) {
-    return resolve(
-      ConfigDB.get<ConfigTypeRelationships[]>(
-        `/config_relationships?or=(related_id.eq.${configId},config_id.eq.${configId})&select=*,configs:configs!config_relationships_config_id_fkey(*),related:configs!config_relationships_related_id_fkey(*)`
+        `/config_component_relationships?component_id=eq.${topologyId}&configs.order=name&select=configs!config_component_relationships_config_id_fkey(${configFields})`
       )
     );
   }
+  if (configId) {
+    return resolve(
+      ConfigDB.get<Pick<ConfigTypeRelationships, "configs" | "related">[]>(
+        `/config_relationships?or=(related_id.eq.${configId},config_id.eq.${configId})&configs.order=name&select=configs:configs!config_relationships_config_id_fkey(${configFields}),related:configs!config_relationships_related_id_fkey(${configFields})`
+      )
+    );
+  }
+  return Promise.resolve({
+    totalEntries: 0,
+    data: [],
+    error: null
+  });
+};
+
+export const addManualComponentConfigRelationship = (
+  topologyId: string,
+  configId: string
+) => {
+  return resolve(
+    ConfigDB.post(`/config_component_relationships`, {
+      component_id: topologyId,
+      config_id: configId,
+      selector_id: "manual"
+    })
+  );
+};
+
+export const removeManualComponentConfigRelationship = (
+  topologyId: string,
+  configId: string
+) => {
+  return resolve(
+    ConfigDB.delete(
+      `/config_component_relationships?component_id=eq.${topologyId}&config_id=eq.${configId}&selector_id=eq.manual`
+    )
+  );
 };
 
 export const searchConfigs = (type: string, input: string) => {
@@ -93,7 +249,7 @@ export const searchConfigs = (type: string, input: string) => {
     : "";
   return resolve<ConfigItem[]>(
     ConfigDB.get(
-      `/configs?select=id,external_id,name,config_type,analysis,changes&config_type=ilike.${type}${orCondition}`
+      `/configs?select=id,external_id,name,type,analysis,changes&type=ilike.${type}${orCondition}`
     )
   );
 };
@@ -101,7 +257,7 @@ export const searchConfigs = (type: string, input: string) => {
 export const createConfigItem = (type: string, params: {}) =>
   resolve<ConfigItem>(
     ConfigDB.post(`/config_item`, {
-      config_type: type,
+      type: type,
       ...params
     })
   );
@@ -150,15 +306,8 @@ export const getConfigsByQuery = async (query: string) => {
   }));
 };
 
-export const getRelatedConfigs = async (configID: string) => {
-  const res = await ConfigDB.get<ConfigTypeRelationships[]>(
-    `/config_relationships?or=(related_id.eq.${configID},config_id.eq.${configID})&select=*,configs:configs!config_relationships_config_id_fkey(*),related:configs!config_relationships_related_id_fkey(*)`
-  );
-  return res.data;
-};
-
 export type ConfigTypeItem = {
-  config_type: string;
+  type: string;
 };
 
 export const getConfigsTypes = async () => {
@@ -179,6 +328,17 @@ export const getConfigsAnalysisTypesFilter = async () => {
   return res.data;
 };
 
+export type ConfigAnalysisAnalyzerItem = {
+  analyzer: string;
+};
+
+export const getConfigsAnalysisAnalyzers = async () => {
+  const res = await IncidentCommander.get<ConfigAnalysisAnalyzerItem[] | null>(
+    `/config_analysis_analyzers?order=analyzer.asc`
+  );
+  return res.data ?? [];
+};
+
 export type ConfigChangesTypeItem = {
   change_type: string;
 };
@@ -186,6 +346,184 @@ export type ConfigChangesTypeItem = {
 export const getConfigsChangesTypesFilter = async () => {
   const res = await IncidentCommander.get<ConfigChangesTypeItem[] | null>(
     `/change_types`
+  );
+  return res.data;
+};
+
+export const getConfigInsights = (
+  configId: string,
+  pageIndex?: number,
+  pageSize?: number
+) => {
+  let paginationQueryParams = "";
+  if (pageIndex !== undefined && pageSize !== undefined) {
+    paginationQueryParams = `&limit=${pageSize}&offset=${
+      pageIndex! * pageSize
+    }`;
+  }
+  return resolve(
+    ConfigDB.get<
+      Pick<
+        ConfigTypeInsights,
+        | "id"
+        | "analyzer"
+        | "config"
+        | "severity"
+        | "analysis_type"
+        | "message"
+        | "sanitizedMessageTxt"
+        | "sanitizedMessageHTML"
+        | "first_observed"
+      >[]
+    >(
+      `/config_analysis?select=id,analyzer,analysis_type,message,severity,analysis,first_observed,config:configs(id,name,config_class,type)&config_id=eq.${configId}${paginationQueryParams}`,
+      {
+        headers: {
+          Prefer: "count=exact"
+        }
+      }
+    )
+  );
+};
+
+export const getConfigInsightsByID = async (id: string) => {
+  const res = await ConfigDB.get<ConfigTypeInsights[] | null>(
+    `/config_analysis?select=id,source,analyzer,analysis_type,message,severity,status,analysis,first_observed,config:configs(id,name,config_class,type)&id=eq.${id}`,
+    {
+      headers: {
+        Prefer: "count=exact"
+      }
+    }
+  );
+  return res.data?.[0] ?? null;
+};
+
+export const getTopologyRelatedInsights = async (
+  id: string,
+  pageIndex?: number,
+  pageSize?: number
+) => {
+  let paginationQueryParams = "";
+  if (pageIndex !== undefined && pageSize !== undefined) {
+    paginationQueryParams = `&limit=${pageSize}&offset=${
+      pageIndex! * pageSize
+    }`;
+  }
+
+  return resolve(
+    ConfigDB.get<
+      | {
+          config: {
+            id: string;
+            name: string;
+            config_class: string;
+            type: string;
+            analysis: Pick<
+              ConfigTypeInsights,
+              | "id"
+              | "analyzer"
+              | "config"
+              | "severity"
+              | "analysis_type"
+              | "sanitizedMessageTxt"
+              | "sanitizedMessageHTML"
+              | "first_observed"
+              | "message"
+            >;
+          };
+        }[]
+      | null
+    >(
+      `/analysis_by_component?component_id=eq.${id}${paginationQueryParams}&select=config:configs(id,name,config_class,type,analysis:config_analysis(id,analyzer,analysis_type,message,severity,analysis,first_observed))`,
+      {
+        headers: {
+          Prefer: "count=exact"
+        }
+      }
+    )
+  );
+};
+
+export const getConfigInsight = async <T>(
+  configId: string,
+  configInsightId: string
+) => {
+  const res = await ConfigDB.get<T>(
+    `/config_analysis?select=id,message,analyzer,config:configs(id,name,config_class,type)&config_id=eq.${configId}&id=eq.${configInsightId}`
+  );
+  return res.data;
+};
+
+export const getAllConfigInsights = async (
+  queryParams: {
+    status?: string;
+    type?: string;
+    severity?: string;
+    analyzer?: string;
+    component?: string;
+    configId?: string;
+  },
+  sortBy: { sortBy?: string; sortOrder?: "asc" | "desc" },
+  { pageIndex, pageSize }: PaginationInfo
+) => {
+  const pagingParams = `&limit=${pageSize}&offset=${pageIndex * pageSize}`;
+
+  const { status, type, severity, analyzer, component, configId } = queryParams;
+
+  const params = {
+    status: status && `&status=eq.${status}`,
+    type: type && `&analysis_type=eq.${type}`,
+    severity: severity && `&severity=eq.${severity}`,
+    analyzer: analyzer && `&analyzer=eq.${analyzer}`,
+    component: component && `&component_id=eq.${component}`,
+    configId: configId && `&config_id=eq.${configId}`
+  };
+
+  const queryParamsString = Object.values(params)
+    .filter((value) => !!value)
+    .join("");
+
+  const sortString = sortBy.sortBy
+    ? `&order=${sortBy.sortBy}.${sortBy.sortOrder}`
+    : // default sort by first_observed
+      "&order=first_observed.desc";
+
+  return resolve(
+    ConfigDB.get<ConfigTypeInsights[] | null>(
+      `/config_analysis?select=id,analysis_type,analyzer,severity,status,first_observed,last_observed,config:configs(id,name,config_class,type)${pagingParams}${queryParamsString}${sortString}`,
+      {
+        headers: {
+          Prefer: "count=exact"
+        }
+      }
+    )
+  );
+};
+
+export const getConfigAnalysis = async <T>(configId: string) => {
+  const res = await ConfigDB.get<T>(
+    `/configs?id=eq.${configId}&select=cost_per_minute,cost_total_1d,cost_total_7d,cost_total_30d`
+  );
+  return res.data;
+};
+
+export const getConfigComponentRelationships = async <T>(configID: string) => {
+  const res = await ConfigDB.get<T>(
+    `/config_component_relationships?config_id=eq.${configID}&select=components!config_component_relationships_component_id_fkey(id, icon, name)`
+  );
+  return res.data;
+};
+
+export const getComponentConfigChanges = async (topologyID: string) => {
+  const res = await ConfigDB.get<ConfigTypeChanges[]>(
+    `/changes_by_component?component_id=eq.${topologyID}&select=id,type,config_id,name,change_type,config_class,created_at,config:configs(id, name, type, config_class)`
+  );
+  return res.data;
+};
+
+export const getConfigAnalysisByComponent = async (componentId: string) => {
+  const res = await ConfigDB.get<ConfigTypeInsights[]>(
+    `/rpc/lookup_analysis_by_component?id=${componentId}`
   );
   return res.data;
 };

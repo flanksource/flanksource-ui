@@ -8,6 +8,7 @@ import {
   createHypothesis,
   Hypothesis,
   HypothesisStatus,
+  NewHypothesis,
   searchHypothesis
 } from "../../api/services/hypothesis";
 import {
@@ -27,12 +28,15 @@ import { toastSuccess } from "../Toast/toast";
 import { Link } from "react-router-dom";
 import { severityItems, typeItems } from "../Incidents/data";
 import { ReactSelectDropdown } from "../ReactSelectDropdown";
+import { useQueryClient } from "@tanstack/react-query";
+import { createIncidentQueryKey } from "../../api/query-hooks";
+import { Events, sendAnalyticEvent } from "../../services/analytics";
 
 interface Props {
   title?: string;
   config_id?: string;
   config_change_id?: string;
-  config_analysis_d?: string;
+  config_analysis_id?: string;
   component_id?: string;
   check_id?: string;
   disabled?: boolean;
@@ -103,7 +107,7 @@ Rudamentary hacky checks like if it's a new incident, show differnt error
 message than if an incident is selected. */
 const validationSchema = yup
   .object({
-    description: yup.string().required(),
+    description: yup.string(),
     incident: yup
       .object()
       .shape({
@@ -120,9 +124,9 @@ const validationSchema = yup
         description: yup.string()
       })
       .when("incident", (incident) => {
-        if (!incident?.value) {
+        if (incident?.__isNew__ || !incident?.value) {
           return yup.object().shape({
-            description: yup.string().required("Must specify a hypothesis")
+            description: yup.string()
           });
         }
         return yup.object().shape({
@@ -150,6 +154,8 @@ export function AttachEvidenceDialog({
   isOpen,
   onClose
 }: Props & Partial<Record<string, any>>) {
+  const client = useQueryClient();
+
   const {
     control,
     handleSubmit,
@@ -192,13 +198,13 @@ export function AttachEvidenceDialog({
       return;
     }
     setNewIncidentCreated(!!(selectedIncident as any).__isNew__);
-  }, [selectedIncident]);
+  }, [selectedIncident, setValue]);
 
   useEffect(() => {
     return () => {
       reset();
     };
-  }, []);
+  }, [isOpen, reset]);
 
   const fetchIncidentOptions = useCallback((query: string) => {
     const fn = async (query: string): Promise<IExtendedItem[]> => {
@@ -236,7 +242,11 @@ export function AttachEvidenceDialog({
       console.error(error || "No data?");
       return [];
     }
-    return toOpts(data);
+    const hypotheses = toOpts(data);
+    if (hypotheses.length === 1) {
+      setValue("hypothesis", hypotheses[0]);
+    }
+    return hypotheses;
   };
 
   const onSubmit = async (data: IFormValues) => {
@@ -265,15 +275,16 @@ export function AttachEvidenceDialog({
       incidentId = incidentResp.id;
     }
 
-    if (isNewHypothesis) {
-      const nodeDetails = { type: "root" };
-
-      const params = {
+    if (
+      isNewHypothesis ||
+      (!hypothesisData?.value && !hypothesisData?.description)
+    ) {
+      const params: NewHypothesis = {
         user,
         incident_id: incidentId,
-        title: hypothesisData?.description,
+        title: hypothesisData?.description || incidentData?.description,
         status: HypothesisStatus.Possible,
-        ...nodeDetails
+        type: "root"
       };
 
       const res = await createHypothesis(params);
@@ -296,32 +307,37 @@ export function AttachEvidenceDialog({
       hypothesisId: hypothesisId,
       evidence: evidenceAttachment,
       type,
-      description: data.description
+      description: data.description ?? ""
     };
 
-    createEvidence(evidence)
-      .then(() => {
-        toastSuccess(
-          <div>
-            Linked to{" "}
-            <Link
-              className="underline text-blue-600 hover:text-blue-800 visited:text-blue-600"
-              to={`/incidents/${incidentId}`}
-            >
-              {" "}
-              incident
-            </Link>{" "}
-            successfully
-          </div>,
-          { position: "top-right", duration: 5000 }
-        );
-        callback(true);
-      })
-      .catch(() => callback(false))
-      .finally(() => {
-        setIsSubmitting(false);
-        onClose();
+    try {
+      await createEvidence(evidence);
+      sendAnalyticEvent(Events.AttachEvidenceToIncident);
+      toastSuccess(
+        <div>
+          Linked to{" "}
+          <Link
+            className="underline text-blue-600 hover:text-blue-800 visited:text-blue-600"
+            to={`/incidents/${incidentId}`}
+          >
+            {" "}
+            incident
+          </Link>{" "}
+          successfully
+        </div>,
+        { position: "top-right", duration: 5000 }
+      );
+      await client.invalidateQueries({
+        queryKey: createIncidentQueryKey(incidentId)
       });
+      callback(true);
+    } catch (e) {
+      callback(false);
+    } finally {
+      setIsSubmitting(false);
+      onClose();
+      reset();
+    }
   };
 
   return (
@@ -335,28 +351,11 @@ export function AttachEvidenceDialog({
       onClose={onClose}
       size="slightly-small"
       bodyClass=""
+      containerClassName=""
     >
       <div className="pt-7">
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="px-8">
-            <div className="mb-4">
-              <Controller
-                control={control}
-                name="description"
-                render={({ field: { onChange, value } }) => (
-                  <TextInput
-                    label="Description"
-                    id="description"
-                    className="w-full"
-                    onChange={onChange}
-                    value={value}
-                  />
-                )}
-              />
-              <p className="text-red-600 text-sm">
-                {errors.description?.message}
-              </p>
-            </div>
             <div className="mb-4">
               <div className="block text-sm font-bold text-gray-700 mb-2">
                 Incident
@@ -371,6 +370,24 @@ export function AttachEvidenceDialog({
                 displayOption={IncidentOption}
               />
               <p className="text-red-600 text-sm">{errors.incident?.message}</p>
+              <div className="pt-4">
+                <Controller
+                  control={control}
+                  name="description"
+                  render={({ field: { onChange, value } }) => (
+                    <TextInput
+                      label="Description"
+                      id="description"
+                      className="w-full"
+                      onChange={onChange}
+                      value={value}
+                    />
+                  )}
+                />
+                <p className="text-red-600 text-sm">
+                  {errors.description?.message}
+                </p>
+              </div>
               {newIncidentCreated && (
                 <div className="space-y-2 pt-4">
                   <div className="flex flex-col">

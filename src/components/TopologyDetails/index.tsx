@@ -1,7 +1,9 @@
 import { isEmpty, map } from "lodash";
 import { BsCardList } from "react-icons/bs";
 import { Topology } from "../../context/TopologyPageContext";
+import CollapsiblePanel from "../CollapsiblePanel";
 import { DescriptionCard } from "../DescriptionCard";
+import EmptyState from "../EmptyState";
 import { Icon } from "../Icon";
 import Title from "../Title/title";
 import { FormatProperty } from "../TopologyCard/Property";
@@ -10,9 +12,16 @@ import { TopologyLink } from "../TopologyLink";
 type Props = {
   topology?: Topology;
   refererId?: string;
+  isCollapsed?: boolean;
+  onCollapsedStateChange?: (isClosed: boolean) => void;
 };
 
-export default function TopologyDetails({ topology, refererId }: Props) {
+export default function TopologyDetails({
+  topology,
+  refererId,
+  isCollapsed = true,
+  onCollapsedStateChange = () => {}
+}: Props) {
   if (topology == null) {
     return null;
   }
@@ -48,25 +57,38 @@ export default function TopologyDetails({ topology, refererId }: Props) {
     });
   }
 
-  if (topology.labels != null && topology.labels.length > 0) {
+  if (topology.labels != null && Object.entries(topology.labels).length > 0) {
     items.push({
       label: "Labels",
-      value: map(topology.labels, (v, k) => (
-        <div
-          data-tip={`${k}: ${v}`}
-          className="max-w-full overflow-hidden text-ellipsis  mb-1 rounded-md text-gray-600 font-semibold text-sm"
-          key={k}
-        >
-          {k}: <span className="font-light">{v}</span>
+      value: (
+        <div className="flex flex-col">
+          {map(topology.labels, (v, k) => (
+            <div
+              data-tip={`${k}: ${v}`}
+              className="max-w-full overflow-hidden text-ellipsis  mb-1 rounded-md text-gray-600 font-semibold text-sm"
+              key={k}
+            >
+              {k}: <span className="text-sm font-light">{v}</span>
+            </div>
+          ))}
         </div>
-      ))
+      )
     });
   }
 
   return (
-    <div className="flex flex-col space-y-2">
-      <Title title="Details" icon={<BsCardList className="w-6 h-auto" />} />
-      <DescriptionCard items={items} />
-    </div>
+    <CollapsiblePanel
+      Header={
+        <Title title="Details" icon={<BsCardList className="w-6 h-auto" />} />
+      }
+      isCollapsed={isCollapsed}
+      onCollapsedStateChange={onCollapsedStateChange}
+    >
+      {Boolean(items.length) ? (
+        <DescriptionCard items={items} labelStyle="top" />
+      ) : (
+        <EmptyState />
+      )}
+    </CollapsiblePanel>
   );
 }

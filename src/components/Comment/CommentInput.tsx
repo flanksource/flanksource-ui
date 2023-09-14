@@ -1,11 +1,9 @@
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import { Mention, MentionsInput, SuggestionDataItem } from "react-mentions";
 import { useGetPeopleQuery } from "../../api/query-hooks";
-
-import { getPersons, User } from "../../api/services/users";
 import { Icon } from "../Icon";
 
-const mentionsStyle = {
+export const mentionsStyle = {
   control: {
     fontSize: 14
   },
@@ -62,23 +60,26 @@ const mentionsStyle = {
   }
 };
 
-const Suggestion = ({
+export const Suggestion = ({
   display,
   avatar
 }: SuggestionDataItem & { avatar?: string }) => (
   <div className="flex items-center">
-    {avatar && <Icon name={avatar} size="xl" />}
+    {avatar && <Icon name={avatar} />}
     <p className="pl-2">{display}</p>
   </div>
 );
 
 interface Props {
-  value: string;
+  value?: string;
   trigger?: string;
   markup?: string;
   onChange: (text: string) => void;
   onEnter: () => void;
-  singleLine: boolean;
+  placeholder?: string;
+  inputStyle?: Record<string, string | number>;
+  className?: string;
+  isSingleLine?: boolean;
 }
 
 export const MENTION_MARKUP = "@[__display__](user:__id__)";
@@ -89,14 +90,30 @@ export const CommentInput = ({
   onChange,
   onEnter,
   markup = MENTION_MARKUP,
-  trigger = MENTION_TRIGGER
+  trigger = MENTION_TRIGGER,
+  inputStyle = {},
+  placeholder = "Comment",
+  isSingleLine = false,
+  className = ""
 }: Props) => {
   const { data: users } = useGetPeopleQuery({});
+  const computedMentionsStyle = useMemo(() => {
+    const styles = { ...mentionsStyle };
+    styles["&multiLine"].input = {
+      ...styles["&multiLine"].input,
+      ...inputStyle
+    };
+    styles["&singleLine"].input = {
+      ...styles["&singleLine"].input,
+      ...inputStyle
+    };
+    return styles;
+  }, [inputStyle]);
 
   return (
     <MentionsInput
-      placeholder="Comment"
-      singleLine
+      placeholder={placeholder}
+      singleLine={isSingleLine}
       value={value}
       onChange={(e) => onChange(e.target.value)}
       onKeyUp={(e) => {
@@ -105,14 +122,20 @@ export const CommentInput = ({
         }
       }}
       a11ySuggestionsListLabel="Suggested mentions"
-      style={mentionsStyle}
+      style={computedMentionsStyle}
       allowSpaceInQuery
       allowSuggestionsAboveCursor
+      className={className}
     >
       <Mention
         markup={markup}
         trigger={trigger}
-        data={users}
+        data={
+          users?.map((user) => ({
+            id: user.id,
+            display: user.name
+          })) ?? []
+        }
         renderSuggestion={Suggestion}
         className="bg-blue-200 rounded"
       />

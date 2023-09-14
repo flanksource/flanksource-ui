@@ -8,8 +8,7 @@ import {
   XAxis,
   YAxis
 } from "recharts";
-import { useCallback, useEffect, useState } from "react";
-import { getCanaryGraph } from "../../../api/services/topology";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Loading } from "../../Loading";
 import {
   formatDateToMonthDay,
@@ -19,16 +18,14 @@ import {
   formatISODate,
   subtractDateFromNow
 } from "../../../utils/date";
-
-type StatusType = {
-  time: string;
-  duration: number;
-};
+import { HealthCheck } from "../../../types/healthChecks";
+import { useCanaryGraphQuery } from "../../../api/query-hooks/health";
 
 // @TODO: duration should be formatted properly, not just by ms
 const formatDuration = (duration: number) => `${duration}ms`;
 
-const getFill = (entry) => (entry.status ? "#2cbd27" : "#df1a1a");
+const getFill = (entry: { status?: any }) =>
+  entry.status ? "#2cbd27" : "#df1a1a";
 
 function getUpdatedFormat(start: string) {
   switch (start) {
@@ -66,8 +63,16 @@ const getStartValue = (start: string) => {
   );
 };
 
-export function CanaryStatusChart({ check, checkTimeRange, ...rest }) {
-  const [data, setData] = useState<StatusType[]>([]);
+type CanaryStatusChartProps = {
+  check: Partial<HealthCheck>;
+  timeRange: string;
+} & Omit<React.ComponentProps<typeof ResponsiveContainer>, "children">;
+
+export function CanaryStatusChart({
+  check,
+  timeRange,
+  ...rest
+}: CanaryStatusChartProps) {
   const [dateFormatFn, setDateFormatFn] = useState(
     () => (date: string | Date) => formatDateToTime(date)
   );
@@ -79,20 +84,15 @@ export function CanaryStatusChart({ check, checkTimeRange, ...rest }) {
     [dateFormatFn]
   );
 
+  // we need to list this up
+  const { data: graphData } = useCanaryGraphQuery(timeRange, check);
+
+  const data = useMemo(() => (graphData?.status ?? []).reverse(), [graphData]);
+
   useEffect(() => {
-    const payload = {
-      check: check.id,
-      count: 300,
-      start: getStartValue(checkTimeRange)
-    };
-    getCanaryGraph(payload).then((results) => {
-      const updatedFormat = getUpdatedFormat(checkTimeRange);
-      setData(() => {
-        return (results.data.status as StatusType[]).reverse();
-      });
-      setDateFormatFn(() => (date: string | Date) => updatedFormat(date));
-    });
-  }, [check, checkTimeRange]);
+    const updatedFormat = getUpdatedFormat(timeRange);
+    setDateFormatFn(() => (date: string | Date) => updatedFormat(date));
+  }, [timeRange]);
 
   if (!data?.length) {
     return <Loading />;
@@ -168,9 +168,21 @@ function CustomXTick({ tickFormatter = (value: string) => value, ...rest }) {
   );
 }
 
-function CustomYTick({ tickFormatter = (value: number) => value, ...rest }) {
-  const { x, y, payload, fontSize = 12 } = rest;
+type CustomYTickProps = {
+  tickFormatter?: (value: number) => string | number | undefined;
+  x?: number;
+  y?: number;
+  payload?: { value?: number };
+  fontSize?: number;
+};
 
+function CustomYTick({
+  tickFormatter = (value?: number) => value,
+  x,
+  y,
+  payload,
+  fontSize = 12
+}: CustomYTickProps) {
   return (
     <g transform={`translate(${x},${y})`}>
       <text
@@ -181,7 +193,7 @@ function CustomYTick({ tickFormatter = (value: number) => value, ...rest }) {
         fill="#666"
         fontSize={fontSize}
       >
-        {tickFormatter(payload.value)}
+        {tickFormatter(payload?.value!)}
       </text>
     </g>
   );

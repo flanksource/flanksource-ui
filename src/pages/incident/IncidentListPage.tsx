@@ -1,20 +1,16 @@
-import { debounce } from "lodash";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import { AiFillPlusCircle } from "react-icons/ai/";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useGetPeopleQuery } from "../../api/query-hooks";
-import { getIncidentsWithParams } from "../../api/services/incident";
-import { getPersons } from "../../api/services/users";
+import { getIncidentsSummary } from "../../api/services/incident";
+import { BreadcrumbNav, BreadcrumbRoot } from "../../components/BreadcrumbNav";
 import FilterIncidents from "../../components/FilterIncidents/FilterIncidents";
+import { Head } from "../../components/Head/Head";
 import { IncidentCreate } from "../../components/Incidents/IncidentCreate";
 import { IncidentList } from "../../components/Incidents/IncidentList";
 import { SearchLayout } from "../../components/Layout";
-import { Loading } from "../../components/Loading";
 import { Modal } from "../../components/Modal";
-import {
-  IncidentState,
-  useIncidentPageContext
-} from "../../context/IncidentPageContext";
+import IncidentListSkeletonLoader from "../../components/SkeletonLoader/IncidentListSkeletonLoader";
 
 type IncidentFilters = {
   severity?: string;
@@ -22,6 +18,7 @@ type IncidentFilters = {
   owner?: string;
   type?: string;
   component?: string;
+  search?: string;
 };
 
 function toPostgresqlSearchParam({
@@ -29,170 +26,99 @@ function toPostgresqlSearchParam({
   status,
   owner,
   type,
-  component
+  component,
+  search
 }: IncidentFilters): Record<string, string | undefined> {
   const params = Object.entries({
     severity,
     status,
     type,
     created_by: owner,
-    "hypotheses.evidences.evidence->>id": component
+    "hypotheses.evidences.component_id": component,
+    search
   })
     .filter(([_k, v]) => v && v !== "all")
-    .map(([k, v]) => [k, `eq.${v}`]);
-
+    .map(([k, v]) => (k === "search" ? [k, v] : [k, `eq.${v}`]));
   return Object.fromEntries(params);
 }
 
 export function IncidentListPage() {
-  const [searchParams] = useSearchParams();
+  const [searchParams] = useSearchParams({
+    status: "open"
+  });
 
   const severity = searchParams.get("severity");
   const status = searchParams.get("status");
   const owner = searchParams.get("owner");
   const type = searchParams.get("type");
   const component = searchParams.get("component");
+  const search = searchParams.get("search");
+
+  const {
+    isLoading,
+    data: incidents = [],
+    refetch
+  } = useQuery(
+    ["incidents", { severity, status, owner, type, component, search }],
+    async () => {
+      const params = {
+        severity: severity || undefined,
+        status: status || undefined,
+        owner: owner || undefined,
+        type: type || undefined,
+        component: component || undefined,
+        search: search || undefined
+      };
+      const res = await getIncidentsSummary(toPostgresqlSearchParam(params));
+      return res;
+    },
+    {
+      refetchOnMount: "always"
+    }
+  );
 
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(true);
-  const {
-    incidentState: { incidents },
-    setIncidentState
-  } = useIncidentPageContext();
 
   const [incidentModalIsOpen, setIncidentModalIsOpen] = useState(false);
-  const { data: users } = useGetPeopleQuery({});
-
-  useEffect(() => {
-    if (!users?.length) {
-      return;
-    }
-    const owners = users.map(({ name, id }) => [
-      id,
-      { name, value: id, description: name }
-    ]);
-    // @ts-expect-error
-    setIncidentState((state: IncidentState) => {
-      return {
-        ...state,
-        ownerSelections: Object.fromEntries(owners)
-      } as any;
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [users]);
-
-  async function fetchIncidents(
-    params: Record<string, string | undefined>
-  ): Promise<void> {
-    try {
-      const res = await getIncidentsWithParams(params);
-      const data = res.data.map((x: any) => {
-        const responders: any[] = [];
-
-        const commentsSet = new Map(
-          x?.comments.map((x: any) => [x?.created_by?.id, x?.created_by])
-        );
-        responders.forEach((x) => commentsSet.delete(x.id));
-        return {
-          ...x,
-          responders,
-          involved: responders.concat(Array.from(commentsSet.values()))
-        };
-      });
-      // @ts-expect-error
-      setIncidentState((state: any) => {
-        return {
-          ...state,
-          incidents: data
-        };
-      });
-      // setIncidents(data);
-      setIsLoading(false);
-    } catch (ex) {
-      console.error(ex);
-      // setIncidents([]);
-      // @ts-expect-error
-      setIncidentState((state: any) => {
-        return {
-          ...state,
-          incidents: []
-        };
-      });
-      setIsLoading(false);
-    }
-  }
-
-  const loadIncidents = useRef(
-    debounce((params: Record<string, string | undefined>) => {
-      // TODO: integrate labels
-      setIsLoading(true);
-      fetchIncidents(toPostgresqlSearchParam(params));
-    }, 100)
-  ).current;
-
-  useEffect(() => {
-    loadIncidents({});
-  }, [loadIncidents]);
-
-  const refreshIncidents = useCallback(() => {
-    loadIncidents({
-      severity: severity || undefined,
-      status: status || undefined,
-      owner: owner || undefined,
-      type: type || undefined,
-      component: component || undefined
-    });
-  }, [component, loadIncidents, owner, severity, status, type]);
-
-  useEffect(() => {
-    loadIncidents({
-      severity: severity || undefined,
-      status: status || undefined,
-      owner: owner || undefined,
-      type: type || undefined,
-      component: component || undefined
-    });
-  }, [severity, status, owner, type, component, loadIncidents]);
 
   return (
     <>
+      <Head prefix="Incidents" />
       <SearchLayout
         loading={isLoading}
         title={
-          <div className="flex items-center flex-shrink-0">
-            <span className="text-xl font-semibold mr-4 whitespace-nowrap">
-              Incidents /{" "}
-            </span>
-            <div className="flex">
+          <BreadcrumbNav
+            list={[
+              <BreadcrumbRoot link="/incidents">Incidents</BreadcrumbRoot>,
               <button
                 type="button"
                 className=""
                 onClick={() => setIncidentModalIsOpen(true)}
               >
-                <AiFillPlusCircle size={36} color="#326CE5" />
+                <AiFillPlusCircle className="text-blue-600" size={32} />
               </button>
-            </div>
-          </div>
+            ]}
+          />
         }
-        onRefresh={() => refreshIncidents()}
+        onRefresh={() => refetch()}
         contentClass="flex flex-col h-full"
       >
         <div className="flex flex-col h-full leading-1.21rel">
           <div className="flex-col flex-1 h-full space-x-2 space-y-2">
-            <div className="max-w-screen-xl mx-auto h-full space-y-6 flex flex-col justify-center">
-              <FilterIncidents />
+            <div className="relative max-w-screen-xl mx-auto h-full space-y-6 flex flex-col justify-center">
               {!isLoading || Boolean(incidents?.length) ? (
                 <>
-                  <IncidentList list={incidents || []} />
+                  <FilterIncidents />
+                  <IncidentList incidents={incidents || []} />
                   {!Boolean(incidents?.length) && (
-                    <div className="text-center text-base text-gray-500 w-full mt-2">
+                    <div className="absolute text-center text-base text-gray-500 w-full mt-2">
                       There are no incidents matching this criteria
                     </div>
                   )}
                 </>
               ) : (
                 <div className="flex-1">
-                  <Loading text="fetching incidents" />
+                  <IncidentListSkeletonLoader />
                 </div>
               )}
             </div>
@@ -205,12 +131,13 @@ export function IncidentListPage() {
         onClose={() => setIncidentModalIsOpen(false)}
         size="small"
         title="Create New Incident"
+        containerClassName=""
+        bodyClass="px-0"
       >
-        {/* @ts-expect-error */}
         <IncidentCreate
-          callback={(response: any) => {
+          callback={(response) => {
             if (!response) {
-              refreshIncidents();
+              refetch();
               setIncidentModalIsOpen(false);
               return;
             }

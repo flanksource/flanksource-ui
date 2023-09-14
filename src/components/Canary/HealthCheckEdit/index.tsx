@@ -8,7 +8,7 @@ import {
 } from "../../../api/services/topology";
 import { HealthCheck } from "../../../types/healthChecks";
 import { Icon } from "../../Icon";
-import { Loading } from "../../Loading";
+import TextSkeletonLoader from "../../SkeletonLoader/TextSkeletonLoader";
 
 type HealthCheckEditComponentProps = {
   check: Pick<HealthCheck, "source">;
@@ -23,8 +23,8 @@ function HealthCheckEditComponent({ check }: HealthCheckEditComponentProps) {
       const res = await getTopology({
         id: componentID
       });
-      if (res.system_template_id) {
-        const system_template_id = res.system_template_id;
+      if (res.components?.[0].topology_id) {
+        const system_template_id = res.components?.[0]?.topology_id;
         const template = await getComponentTemplate(system_template_id);
         return template;
       }
@@ -36,7 +36,7 @@ function HealthCheckEditComponent({ check }: HealthCheckEditComponentProps) {
   );
 
   if (isLoading) {
-    return <Loading text="Loading ..." />;
+    return <TextSkeletonLoader />;
   }
 
   if (!template) {
@@ -44,17 +44,16 @@ function HealthCheckEditComponent({ check }: HealthCheckEditComponentProps) {
   }
 
   return (
-    <>
-      Created by
+    <div className="flex items-center">
       <Link
         to={{
-          pathname: `/settings/topology/${componentID}`
+          pathname: `/settings/topologies/${template.id}`
         }}
-        className="flex"
       >
-        {template.name}
+        {/*  eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+        <a className="block "> Created by {template.name}</a>
       </Link>
-    </>
+    </div>
   );
 }
 

@@ -3,8 +3,8 @@ import { IncidentCommander } from "../axios";
 import { resolve } from "../resolve";
 import { Hypothesis } from "./hypothesis";
 import { User } from "./users";
-
-const AVATAR_INFO = `id,name,avatar`;
+import { AVATAR_INFO } from "../../constants";
+import { typeItems } from "../../components/Incidents/data";
 
 export enum IncidentSeverity {
   Low = "Low",
@@ -32,12 +32,17 @@ export interface NewIncident {
   status?: IncidentStatus;
 
   created_by: string;
-  commander_id: string;
+  commander_id: {
+    id?: string;
+    name?: string;
+    avatar?: string;
+  };
   communicator_id: string;
 }
 
 export interface Incident extends NewIncident {
   id: string;
+  incident_id: string;
   parent_id: string;
   hypotheses: Hypothesis[];
   created_at: string;
@@ -46,7 +51,7 @@ export interface Incident extends NewIncident {
 }
 
 export const searchIncident = (query: string) => {
-  const hypotheses = `hypotheses!hypotheses_incident_id_fkey(id, type)`;
+  const hypotheses = `hypotheses(id, type)`;
   return resolve<Incident[]>(
     IncidentCommander.get(
       `/incidents?order=created_at.desc&title=ilike.*${query}*&select=*,${hypotheses}`
@@ -55,7 +60,7 @@ export const searchIncident = (query: string) => {
 };
 export const getAllIncident = ({ limit = 10 }) => {
   const limitStr = limit ? `limit=${limit}` : "";
-  const hypotheses = `hypotheses!hypotheses_incident_id_fkey(id, type)`;
+  const hypotheses = `hypotheses(id, type)`;
   return resolve<Incident[]>(
     IncidentCommander.get(
       `/incidents?order=created_at.desc&${limitStr}&select=*,${hypotheses}`
@@ -64,11 +69,11 @@ export const getAllIncident = ({ limit = 10 }) => {
 };
 
 export const getIncident = async (id: string) => {
-  const hypotheses = `hypotheses!hypotheses_incident_id_fkey(*,created_by(${AVATAR_INFO}),evidences(*),comments(comment,external_created_by,responder_id(team_id(*)),created_by(id,${AVATAR_INFO}),id))`;
+  const hypotheses = `hypotheses(*,created_by(${AVATAR_INFO}),evidences(*,created_by(${AVATAR_INFO})),comments(created_at,comment,external_created_by,responder_id(team_id(*)),created_by(id,${AVATAR_INFO}),id))`;
 
   const res = await resolve<Incident[] | null>(
     IncidentCommander.get(
-      `/incidents?id=eq.${id}&select=*,${hypotheses},commander:commander_id(${AVATAR_INFO}),communicator_id(${AVATAR_INFO}),responders!responders_incident_id_fkey(created_by(${AVATAR_INFO}))`
+      `/incidents?id=eq.${id}&select=*,${hypotheses},commander:commander_id(${AVATAR_INFO}),communicator_id(${AVATAR_INFO}),responders(created_by(${AVATAR_INFO}))`
     )
   );
   return res.data?.[0];
@@ -101,31 +106,69 @@ export const getIncidentsBy = async ({
   if (topologyId) {
     params["component_id"] = `eq.${topologyId}`;
     return resolve(
-      IncidentCommander.get(`incidents_by_component?${stringify(params)}`)
+      IncidentCommander.get<Incident[] | null>(
+        `incidents_by_component?${stringify(params)}`
+      )
     );
   } else {
     params["config_id"] = `eq.${configId}`;
     return resolve(
-      IncidentCommander.get(`incidents_by_config?${stringify(params)}`)
+      IncidentCommander.get<Incident[] | null>(
+        `incidents_by_config?${stringify(params)}`
+      )
     );
   }
+};
+
+export type IncidentSummary = {
+  id: string;
+  incident_id: string;
+  title: string;
+  severity: IncidentSeverity;
+  type: keyof typeof typeItems;
+  status: IncidentStatus;
+  created_at: string;
+  updated_at: string;
+  commander?: User;
+  responders?: User[];
+  commenters?: User[];
+};
+
+export const getIncidentsSummary = async (
+  params?: Record<string, string | undefined>
+) => {
+  const { search = "" } = params!;
+  const searchStr = search ? `&title=ilike.*${search}*` : "";
+  const { search: _, ...filters } = params ?? {};
+  const { data } = await resolve<IncidentSummary[] | null>(
+    IncidentCommander.get(
+      `/incident_summary?${searchStr}&order=created_at.desc`,
+      {
+        params: filters
+      }
+    )
+  );
+  return data || [];
 };
 
 export const getIncidentsWithParams = async (
   params?: Record<string, string | undefined>
 ) => {
-  const comments = `comments!comments_incident_id_fkey(id,created_by(${AVATAR_INFO}))`;
-  const hypotheses = params?.["hypotheses.evidences.evidence->>id"]
-    ? `hypotheses!hypotheses_incident_id_fkey!inner(*,created_by(${AVATAR_INFO}),evidences!evidences_hypothesis_id_fkey!inner(id, evidence))`
-    : `hypotheses!hypotheses_incident_id_fkey(*,created_by(${AVATAR_INFO}),evidences(id,evidence,type))`;
+  const comments = `comments(id,created_by(${AVATAR_INFO}))`;
+  const hypotheses = params?.["hypotheses.evidences.component_id"]
+    ? `hypotheses!inner(*,created_by(${AVATAR_INFO}),evidences!inner(id,evidence,type,component_id))`
+    : `hypotheses(*,created_by(${AVATAR_INFO}),evidences(id,evidence,type,component_id))`;
 
-  const responder = `responders!responders_incident_id_fkey(created_by(${AVATAR_INFO}))`;
+  const responder = `responders(*,team:team_id(id,name,icon,spec),person:person_id(id,name,avatar),created_by(${AVATAR_INFO}))`;
+  const { search = "" } = params!;
+  const searchStr = search ? `&title=ilike.*${search}*` : "";
+  const { search: _, ...filters } = params!;
 
   return resolve(
-    IncidentCommander.get(
-      `/incidents?&select=*,${hypotheses},${comments},commander_id(${AVATAR_INFO}),communicator_id(${AVATAR_INFO}),${responder}&order=created_at.desc`,
+    IncidentCommander.get<Incident[]>(
+      `/incidents?${searchStr}&select=*,${hypotheses},${comments},commander_id(${AVATAR_INFO}),communicator_id(${AVATAR_INFO}),${responder}&order=created_at.desc`,
       {
-        params
+        params: filters
       }
     )
   );

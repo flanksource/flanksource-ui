@@ -1,6 +1,6 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { UseMutationResult } from "@tanstack/react-query";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { EvidenceType } from "../../api/services/evidence";
 import {
   createHypothesis,
@@ -14,17 +14,32 @@ import {
   IncidentStatus,
   updateIncident
 } from "../../api/services/incident";
-import { Changelog } from "../../components/Change";
 import { HypothesisBuilder } from "../../components/Hypothesis/HypothesisBuilder";
-import { IncidentDetails } from "../../components/IncidentDetails";
+import { IncidentSidebar } from "../../components/IncidentDetails/IncidentSidebar";
 import { SearchLayout } from "../../components/Layout";
-import { Loading } from "../../components/Loading";
-import { useCreateHypothesisMutation } from "../../components/mutations/useCreateHypothesisMutation";
-import { useUpdateHypothesisMutation } from "../../components/mutations/useUpdateHypothesisMutation";
-import { useIncidentQuery } from "../../api/query-hooks";
+import { useCreateHypothesisMutation } from "../../api/mutations/useCreateHypothesisMutation";
+import { useUpdateHypothesisMutation } from "../../api/mutations/useUpdateHypothesisMutation";
 import { TopologyCard } from "../../components/TopologyCard";
 import { Size } from "../../types";
-import SlidingSideBar from "../../components/SlidingSideBar";
+import IncidentDetailsPageSkeletonLoader from "../../components/SkeletonLoader/IncidentDetailsPageSkeletonLoader";
+import { Head } from "../../components/Head/Head";
+import { HypothesisCommentsViewContainer } from "../../components/Hypothesis/HypothesisCommentsViewContainer/HypothesisCommentsViewContainer";
+import { HypothesisActionPlanViewContainer } from "../../components/Hypothesis/HypothesisActionPlanViewContainer/HypothesisActionPlanViewContainer";
+import { Tab, Tabs } from "../../components/Tabs/Tabs";
+import EmptyState from "../../components/EmptyState";
+import { useCreateCommentMutation } from "../../api/query-hooks/mutations/comment";
+import { useIncidentState } from "../../store/incident.state";
+import {
+  BreadcrumbChild,
+  BreadcrumbNav,
+  BreadcrumbRoot
+} from "../../components/BreadcrumbNav";
+import EditableIncidentTitleBreadcrumb from "../../components/IncidentDetails/EditableIncidentTitleBreadcrumb";
+
+export enum IncidentDetailsViewTypes {
+  comments = "Comments",
+  actionPlan = "Action Plan"
+}
 
 export type TreeNode<T> = T & {
   children?: T[];
@@ -39,6 +54,7 @@ export interface HypothesisAPIs {
   // todo: Type this correctly
   updateMutation: UseMutationResult<any, any, any>;
   createMutation: UseMutationResult<any, any, any>;
+  createComment: UseMutationResult<any, any, any>;
 }
 
 interface Tree {
@@ -73,14 +89,20 @@ function buildTreeFromHypothesisList(list: Hypothesis[]) {
       delete tree[node.id];
     }
   });
-
   return Object.values(tree);
 }
 
 export function IncidentDetailsPage() {
   const { id: incidentId } = useParams();
   const isNewlyCreated = false; // TODO: set this to true if its a newly created incident
-  const { isLoading, data: incident, refetch } = useIncidentQuery(incidentId!);
+  const { incident, refetchIncident, isLoading } = useIncidentState(
+    incidentId!
+  );
+  const createComment = useCreateCommentMutation();
+  const [refetchChangelog, setRefetchChangelog] = useState(0);
+  const [activeViewType, setActiveViewType] = useState(
+    IncidentDetailsViewTypes.comments
+  );
 
   const error = !!incident;
 
@@ -103,103 +125,153 @@ export function IncidentDetailsPage() {
   const createMutation = useCreateHypothesisMutation({ incidentId });
 
   const updateStatus = (status: IncidentStatus) =>
-    updateIncident(incident?.id || null, { status }).then(() => refetch());
+    updateIncident(incident?.id || null, { status }).then(() =>
+      refetchIncident()
+    );
 
   const updateIncidentHandler = useCallback(
     (newDataIncident: Partial<Incident>) => {
-      updateIncident(incident?.id || null, newDataIncident).then(() =>
-        refetch()
-      );
+      updateIncident(incident?.id || null, newDataIncident).then(() => {
+        refetchIncident();
+        setRefetchChangelog(refetchChangelog + 1);
+      });
     },
-    [incident?.id, refetch]
+    [incident?.id, refetchIncident, refetchChangelog]
   );
 
-  if (incident == null) {
-    return <Loading />;
+  const getHypothesisView = () => {
+    if (isLoading && !error) {
+      return <div>fetching tree...</div>;
+    }
+
+    return (
+      <Tabs
+        activeTab={activeViewType}
+        onSelectTab={(tab) =>
+          setActiveViewType(tab as IncidentDetailsViewTypes)
+        }
+      >
+        <Tab
+          label={IncidentDetailsViewTypes.comments}
+          value={IncidentDetailsViewTypes.comments}
+        >
+          <HypothesisCommentsViewContainer
+            incidentId={incidentId!}
+            loadedTrees={loadedTrees}
+            api={{
+              incidentId,
+              create: createHypothesis,
+              delete: deleteHypothesis,
+              deleteBulk: deleteHypothesisBulk,
+              update: updateHypothesis,
+              createComment,
+              updateMutation,
+              createMutation
+            }}
+          />
+        </Tab>
+        <Tab
+          label={IncidentDetailsViewTypes.actionPlan}
+          value={IncidentDetailsViewTypes.actionPlan}
+        >
+          <HypothesisActionPlanViewContainer className="py-4">
+            <div className="flex flex-col p-4">
+              {loadedTrees?.map((loadedTree, index) => {
+                return (
+                  <HypothesisBuilder
+                    loadedTree={loadedTree}
+                    // showGeneratedOutput
+                    initialEditMode={isNewlyCreated}
+                    api={{
+                      incidentId,
+                      create: createHypothesis,
+                      delete: deleteHypothesis,
+                      deleteBulk: deleteHypothesisBulk,
+                      update: updateHypothesis,
+                      createComment,
+                      updateMutation,
+                      createMutation
+                    }}
+                    key={loadedTree.id}
+                  />
+                );
+              })}
+            </div>
+          </HypothesisActionPlanViewContainer>
+        </Tab>
+      </Tabs>
+    );
+  };
+
+  if (!incident && isLoading) {
+    return <IncidentDetailsPageSkeletonLoader />;
   }
+
   return (
-    <SearchLayout
-      contentClass="pl-6"
-      onRefresh={() => refetch()}
-      title={
-        <div className="flex my-auto">
-          <span className="text-xl flex">
-            {" "}
-            <Link to="/incidents">Incidents&nbsp;</Link>
-            {" / "}
-            {!isLoading && (
-              <div className="font-semibold">
-                <div>&nbsp;{incident.title}</div>
-              </div>
-            )}
-          </span>
-        </div>
-      }
-    >
-      <div className="flex flex-row min-h-full h-auto mt-2">
-        <div className="flex flex-col flex-1 p-6 min-h-full h-auto">
-          <div className="max-w-3xl lg:max-w-6xl w-full mx-auto">
-            {Boolean(topologyIds?.length) && (
-              <section>
-                <div className="border-b">
-                  <div className="px-2 py-2 flex flex-nowrap overflow-x-auto">
-                    {topologyIds?.map((id) => (
-                      <TopologyCard
-                        key={id}
-                        size={Size.large}
-                        topologyId={id}
-                      />
-                    ))}
-                  </div>
+    <>
+      <Head prefix={incident ? `Incident - ${incident.title}` : ""} />
+      <SearchLayout
+        contentClass="pl-6 h-full"
+        onRefresh={() => refetchIncident()}
+        title={
+          <BreadcrumbNav
+            list={[
+              <BreadcrumbRoot link="/incidents">Incidents</BreadcrumbRoot>,
+              !isLoading && incident && (
+                <BreadcrumbChild>
+                  <EditableIncidentTitleBreadcrumb
+                    incident={incident}
+                    updateHandler={updateIncidentHandler}
+                  />
+                </BreadcrumbChild>
+              )
+            ]}
+          />
+        }
+      >
+        <div className="flex flex-row h-full mt-2">
+          {incident ? (
+            <>
+              <div className="flex flex-col flex-1 p-6 h-full">
+                <div className="max-w-3xl lg:max-w-6xl w-full mx-auto">
+                  {Boolean(topologyIds?.length) && (
+                    <section>
+                      <div className="border-b">
+                        <div className="px-2 py-2 flex flex-nowrap overflow-x-auto">
+                          {topologyIds?.map((id) => (
+                            <TopologyCard
+                              key={id}
+                              size={Size.large}
+                              topologyId={id}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    </section>
+                  )}
+                  <section className="mt-4">{getHypothesisView()}</section>
                 </div>
-              </section>
-            )}
-            <section>
-              {!isLoading ? (
-                loadedTrees?.map((loadedTree, index) => {
-                  return (
-                    <HypothesisBuilder
-                      loadedTree={loadedTree}
-                      // showGeneratedOutput
-                      initialEditMode={isNewlyCreated}
-                      api={{
-                        incidentId,
-                        create: createHypothesis,
-                        delete: deleteHypothesis,
-                        deleteBulk: deleteHypothesisBulk,
-                        update: updateHypothesis,
-                        updateMutation,
-                        createMutation
-                      }}
-                      key={loadedTree.id}
-                      showHeader={index === 0}
-                    />
-                  );
-                })
-              ) : (
-                <div>{!error && "fetching tree..."}</div>
-              )}
-            </section>
-          </div>
+              </div>
+              <IncidentSidebar
+                incident={incident}
+                updateStatusHandler={() =>
+                  updateStatus(
+                    status === IncidentStatus.Open
+                      ? IncidentStatus.Closed
+                      : IncidentStatus.Open
+                  )
+                }
+                updateIncidentHandler={updateIncidentHandler}
+                textButton={status === IncidentStatus.Open ? "Close" : "Reopen"}
+              />
+            </>
+          ) : (
+            <div className="flex flex-col flex-1 p-6 justify-center font-semibold">
+              <EmptyState title="Incident not found" />
+            </div>
+          )}
         </div>
-        <SlidingSideBar hideToggle={true}>
-          <div>
-            <IncidentDetails
-              incident={incident}
-              updateStatusHandler={() =>
-                updateStatus(
-                  status === IncidentStatus.Open
-                    ? IncidentStatus.Closed
-                    : IncidentStatus.Open
-                )
-              }
-              updateIncidentHandler={updateIncidentHandler}
-              textButton={status === IncidentStatus.Open ? "Close" : "Reopen"}
-            />
-            <Changelog />
-          </div>
-        </SlidingSideBar>
-      </div>
-    </SearchLayout>
+      </SearchLayout>
+    </>
   );
 }

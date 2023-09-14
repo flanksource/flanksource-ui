@@ -2,6 +2,7 @@ export interface HealthChecksResponse {
   duration: number;
   runnerName: string;
   checks: HealthCheck[];
+  checks_summary: HealthCheck[];
 }
 
 export interface HealthCheck {
@@ -27,11 +28,12 @@ export interface HealthCheck {
   endpoint?: string;
   interval?: any;
   location?: any;
-  status?: string;
+  status?: "healthy" | "unhealthy";
   schedule?: any;
   owner?: any;
   loading?: boolean;
   severity?: string;
+  agent_id?: string;
 }
 
 export interface HealthCheckStatus {

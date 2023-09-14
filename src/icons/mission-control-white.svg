@@ -1,0 +1,47 @@
+<svg id="SvgjsSvg1001" width="288" height="288" xmlns="http://www.w3.org/2000/svg" version="1.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs">
+    <defs id="SvgjsDefs1002"></defs>
+    <g id="SvgjsG1008">
+        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+            viewBox="176.329 177.607 30.703 32" width="288" height="288">
+            <defs>
+                <linearGradient id="a" x1="250.41" x2="346.76" y1="-315.39" y2="-315.39"
+                    gradientTransform="rotate(-29.891 648.906 -161.496) scale(.2304)"
+                    gradientUnits="userSpaceOnUse">
+                    <stop offset="0" stop-color="#ffffff" class="stopColor2980f3 svgShape"></stop>
+                    <stop offset="1" stop-color="#ffffff" class="stopColor2652d9 svgShape"></stop>
+                </linearGradient>
+                <linearGradient id="b" x1="268.19" x2="332.81" y1="-355.21" y2="-355.21"
+                    gradientTransform="rotate(-29.891 725.422 -206.72) scale(.22822)"
+                    xlink:href="#a"></linearGradient>
+                <linearGradient id="c" x1="286.93" x2="320.28" y1="-392.73" y2="-392.73"
+                    gradientTransform="rotate(-29.891 725.422 -206.72) scale(.22822)"
+                    xlink:href="#a"></linearGradient>
+                <linearGradient id="d" x1="8366.58" x2="8266.31" y1="2144.55" y2="2144.55"
+                    gradientTransform="rotate(150.109 1097.16 108.994) scale(.2304)" xlink:href="#a"></linearGradient>
+                <linearGradient id="e" x1="8352.46" x2="8283.62" y1="2103.86" y2="2103.86"
+                    gradientTransform="rotate(150.109 1097.16 108.994) scale(.2304)" xlink:href="#a"></linearGradient>
+                <linearGradient id="f" x1="8338.52" x2="8300.28" y1="2064.09" y2="2064.09"
+                    gradientTransform="rotate(150.109 1097.16 108.994) scale(.2304)" xlink:href="#a"></linearGradient>
+            </defs>
+            <path fill="url(#a)"
+                d="M 198.224 200.767 L 200.484 202.976 C 200.62 203.113 200.62 203.334 200.484 203.471 C 200.443 203.511 200.394 203.539 200.342 203.557 L 179.918 209.607 L 177.08 206.828 L 198.224 200.767 Z"
+                class="cls-2"></path>
+            <path fill="url(#b)"
+                d="M 190.444 193.71 L 192.713 195.954 C 192.847 196.089 192.847 196.307 192.713 196.442 C 192.67 196.486 192.616 196.518 192.555 196.534 L 179.193 200.239 L 176.398 197.475 L 190.444 193.71 Z"
+                class="cls-3"></path>
+            <path fill="url(#c)"
+                d="M 183.312 186.926 L 185.372 189.001 C 185.507 189.137 185.507 189.357 185.372 189.494 C 185.326 189.537 185.27 189.57 185.209 189.586 L 178.863 191.237 L 176.329 188.673 L 183.312 186.926 Z"
+                class="cls-4"></path>
+            <path fill="url(#d)"
+                d="M 184.045 187.8 L 179.716 183.471 C 179.582 183.336 179.582 183.117 179.716 182.982 C 179.762 182.937 179.82 182.904 179.882 182.888 L 201.042 177.607 L 205.649 182.215 L 184.045 187.8 Z"
+                class="cls-5"></path>
+            <path fill="url(#e)"
+                d="M 191.699 195.058 L 187.991 191.298 C 187.855 191.161 187.855 190.94 187.991 190.804 C 188.035 190.761 188.091 190.73 188.151 190.714 L 202.108 187.005 L 206.149 191.046 L 191.699 195.058 Z"
+                class="cls-6"></path>
+            <path fill="url(#f)"
+                d="M 199.765 202.375 L 195.773 198.35 C 195.635 198.214 195.635 197.993 195.773 197.856 C 195.814 197.815 195.866 197.785 195.922 197.769 L 202.617 195.822 L 207.032 200.225 L 199.765 202.375 Z"
+                class="cls-7"></path>
+        </svg>
+    </g>
+</svg>

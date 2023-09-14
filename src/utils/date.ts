@@ -1,12 +1,14 @@
 import dayjs, { ConfigType as DateConfig, ManipulateType } from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import isToday from "dayjs/plugin/isToday";
+import duration from "dayjs/plugin/duration";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 import relativeTime from "dayjs/plugin/relativeTime";
 import updateLocale from "dayjs/plugin/updateLocale";
 import utc from "dayjs/plugin/utc";
 
 import { ValueType } from "../context/TopologyPageContext";
+import { SortOrders } from "../constants";
 
 dayjs.extend(isBetween);
 dayjs.extend(isToday);
@@ -14,6 +16,7 @@ dayjs.extend(isSameOrAfter);
 dayjs.extend(relativeTime);
 dayjs.extend(updateLocale);
 dayjs.extend(utc);
+dayjs.extend(duration);
 
 dayjs.updateLocale("en", {
   relativeTime: {
@@ -106,7 +109,7 @@ const formatDate = (
 export const formatLongDate = (date: string | Date) => {
   return formatDate(date, {
     stringFormat: DATE_FORMATS.LONG
-  });
+  }).toString();
 };
 
 export const formatTimeRange = (date: string | Date) => {
@@ -126,17 +129,10 @@ export const relativeDateTime = (
   from: string | Date,
   to = dayjs().toISOString()
 ) => {
-  const fromDate = dayjs.utc(from).local();
-  const toDate = dayjs.utc(to).local();
-
-  if (
-    toDate.diff(fromDate, "days") === 1 &&
-    toDate.isSame(from, "month") &&
-    toDate.isSame(from, "year")
-  ) {
-    return `${fromDate.format(DATE_FORMATS.TIME)} yesterday`;
+  if (dayjs(from).isSame(dayjs("0001-01-01T00:00:00+00:00"))) {
+    return "";
   }
-
+  const fromDate = dayjs.utc(from).local();
   return fromDate.fromNow();
 };
 
@@ -181,9 +177,9 @@ export const subtractDateFromNow = (decValue: number, decUnit: string) =>
 export const dateDiff = (
   date1: DateConfig,
   date2: DateConfig,
-  diffUnit?: string,
+  diffUnit?: ManipulateType,
   isDiffInFloat?: boolean
-) => dayjs(date1).diff(dayjs(date2), diffUnit as ManipulateType, isDiffInFloat);
+) => dayjs(date1).diff(dayjs(date2), diffUnit, isDiffInFloat);
 
 export const formatDateToMonthDayTime = (date: string | Date) => {
   return dayjs(date).format("MMM DD(HH:mm)");
@@ -199,4 +195,19 @@ export const formatDateToYear = (date: string | Date) => {
 
 export const formatDateToTime = (date: string | Date) => {
   return dayjs(date).format("HH:mm");
+};
+
+export const dateSortHelper = (
+  order: string,
+  dateOne: string,
+  dateTwo: string
+) => {
+  const value1 = +new Date(dateOne);
+  const value2 = +new Date(dateTwo);
+  if (value1 > value2) {
+    return SortOrders.asc === order ? 1 : -1;
+  } else if (value1 < value2) {
+    return SortOrders.asc === order ? -1 : 1;
+  }
+  return 0;
 };

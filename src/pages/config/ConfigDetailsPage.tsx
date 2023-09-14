@@ -1,61 +1,78 @@
-import { useEffect, useState, useMemo, useCallback } from "react";
-import { useParams, useSearchParams, useOutletContext } from "react-router-dom";
-import { ConfigItem, getConfig } from "../../api/services/configs";
-import { EvidenceType } from "../../api/services/evidence";
-import { AttachEvidenceDialog } from "../../components/AttachEvidenceDialog";
-import { Button } from "../../components/Button";
+import { useEffect, useState, useMemo, useCallback, useRef } from "react";
+import { useParams } from "react-router-dom";
+import { useGetConfigByIdQuery } from "../../api/query-hooks";
+import { ConfigsDetailsBreadcrumbNav } from "../../components/BreadcrumbNav/ConfigsDetailsBreadCrumb";
+import ConfigSidebar from "../../components/ConfigSidebar";
+import { useConfigDetailsTabs } from "../../components/ConfigsPage/ConfigTabsLinks";
+import { Head } from "../../components/Head/Head";
 import { JSONViewer } from "../../components/JSONViewer";
+import { SearchLayout } from "../../components/Layout";
 import { Loading } from "../../components/Loading";
-import { toastError } from "../../components/Toast/toast";
+import TabbedLinks from "../../components/Tabs/TabbedLinks";
+import { usePartialUpdateSearchParams } from "../../hooks/usePartialUpdateSearchParams";
+import useRunTaskOnPropChange from "../../hooks/useRunTaskOnPropChange";
+import { useAtom } from "jotai";
+import { refreshButtonClickedTrigger } from "../../components/SlidingSideBar";
 
 export function ConfigDetailsPage() {
+  const [, setRefreshButtonClickedTrigger] = useAtom(
+    refreshButtonClickedTrigger
+  );
+
   const { id } = useParams();
-  const [params, setParams] = useSearchParams();
-  const [isLoading, setIsLoading] = useState(true);
-  const [showIncidentModal] = useState(false);
-  const [attachAsAsset, setAttachAsAsset] = useState(false);
-  const [dialogKey, setDialogKey] = useState(0);
-  const [checked, setChecked] = useState({});
-  const [configDetails, setConfigDetails] = useState<ConfigItem | undefined>();
-  // @ts-ignore
-  const { setTabRight } = useOutletContext();
+  const [searchParams, setSearchParams] = usePartialUpdateSearchParams();
+  const [checked, setChecked] = useState<Record<string, any>>({});
+  const marginBottom = 24;
+  const contentRef = useRef<HTMLDivElement>(null);
+  const element = contentRef.current;
+  const contentDivHeight = contentRef.current?.parentElement
+    ? document.body.clientHeight -
+      contentRef.current.parentElement.getBoundingClientRect().top -
+      marginBottom
+    : 0;
+  const configTabList = useConfigDetailsTabs();
+
+  useRunTaskOnPropChange(
+    () => {
+      return contentDivHeight;
+    },
+    () => {
+      if (!element) {
+        return;
+      }
+      element.parentElement?.style.setProperty(
+        "max-height",
+        `${contentDivHeight}px`
+      );
+    }
+  );
+
+  const {
+    isLoading,
+    data: configDetails,
+    refetch
+  } = useGetConfigByIdQuery(id!);
 
   useEffect(() => {
-    getConfig(id!)
-      .then((res) => {
-        const data = res?.data?.[0];
-        setConfigDetails(data);
-      })
-      .catch((err) => toastError(err))
-      .finally(() => {
-        setIsLoading(false);
-      });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
-
-  useEffect(() => {
-    if (!(configDetails as any)?.config) {
+    if (!configDetails?.config) {
       return;
     }
 
-    const selected = params.getAll("selected");
+    const selected = searchParams.getAll("selected");
     setChecked(Object.fromEntries(selected.map((x) => [x, true])));
-  }, [params, configDetails]);
+  }, [searchParams, configDetails]);
 
   useEffect(() => {
     const selected = Object.keys(checked);
-    setParams({ selected });
-  }, [checked]);
+    setSearchParams({ selected });
+  }, [checked, setSearchParams]);
 
   const handleClick = useCallback((idx: any) => {
     setChecked((checked) => {
       const obj = { ...checked };
-      // @ts-ignore
       if (obj[idx]) {
-        // @ts-ignore
         delete obj[idx];
       } else {
-        // @ts-ignore
         obj[idx] = true;
       }
       return obj;
@@ -63,8 +80,6 @@ export function ConfigDetailsPage() {
   }, []);
 
   const code = useMemo(() => {
-    // @ts-ignore
-
     if (!configDetails?.config) {
       return "";
     }
@@ -74,7 +89,7 @@ export function ConfigDetailsPage() {
 
     const ordered = Object.keys(configDetails.config)
       .sort()
-      .reduce((obj, key) => {
+      .reduce((obj: Record<string, any>, key) => {
         obj[key] = configDetails.config[key];
         return obj;
       }, {});
@@ -84,122 +99,70 @@ export function ConfigDetailsPage() {
 
   const format = useMemo(
     () =>
-      // @ts-ignore
       configDetails?.config.format != null
         ? configDetails?.config.format
-        : "json",
+        : "yaml",
     [configDetails]
   );
 
-  // TODO(ciju): make this lazy. Only needed for IncidentCreate.
-  const configLines = useMemo(() => code && code.split("\n"), [code]);
-
-  const selectedCount = Object.keys(checked).length;
-
-  let selectionControls = (
-    <div className="flex flex-row space-x-2">
-      {selectedCount > 0 && (
-        <>
-          <div className="flex items-center mx-4">
-            {selectedCount} lines selected
-          </div>
-          <Button
-            className="btn-secondary"
-            text="Clear"
-            onClick={() => {
-              setChecked({});
-              return Promise.resolve();
-            }}
-          />
-        </>
-      )}
-      <button
-        type="button"
-        onClick={() => {
-          setAttachAsAsset(true);
-          setDialogKey(Math.floor(Math.random() * 1000));
-        }}
-        className="btn-primary"
-      >
-        Attach to Incident
-      </button>
-    </div>
-  );
-
-  useEffect(() => {
-    setTabRight(selectionControls);
-    return () => setTabRight(null);
-  }, [checked, showIncidentModal]);
-
   return (
-    <div className="flex flex-row items-start space-x-2 bg-white">
-      <div className="flex flex-col w-full max-w-full">
-        {!isLoading ? (
-          <div className="flex flex-row space-x-2 p-2">
-            <div className="flex flex-col w-full object-contain">
-              {configDetails && (
-                <div className="flex flex-col p-2">
-                  <div className="block py-6 px-4 border-gray-300 bg-white rounded shadow">
-                    <div className="block text-lg tracking-wide">
-                      <span className="font-semibold">Name:</span>{" "}
-                      {configDetails.name}
+    <>
+      <Head prefix={configDetails ? `Catalog - ${configDetails.name}` : ""} />
+      <SearchLayout
+        title={
+          <div className="flex space-x-2">
+            <span className="text-lg">
+              <ConfigsDetailsBreadcrumbNav config={configDetails} />
+            </span>
+          </div>
+        }
+        onRefresh={() => {
+          setRefreshButtonClickedTrigger((prev) => prev + 1);
+          refetch();
+        }}
+        loading={isLoading}
+        contentClass="p-0 h-full overflow-y-hidden"
+      >
+        <div className={`flex flex-row h-full`}>
+          <TabbedLinks
+            tabLinks={configTabList}
+            contentClassName={`bg-white border border-t-0 border-gray-300 flex-1 p-2`}
+          >
+            <div
+              className={`flex flex-col flex-1 p-6 pb-0 h-full relative`}
+              ref={contentRef}
+            >
+              <div className="flex flex-row items-start bg-white h-full">
+                <div className="flex flex-col w-full max-w-full h-full">
+                  {!isLoading ? (
+                    <div className="flex flex-row space-x-2 h-full">
+                      <div className="flex flex-col w-full object-contain h-full">
+                        <div className="flex flex-col mb-6 w-full h-full">
+                          <div className="flex relative pt-2 px-4 border-gray-300 bg-white rounded shadow-md flex-1 overflow-x-auto overflow-y-atuo">
+                            <JSONViewer
+                              code={code}
+                              format={format}
+                              showLineNo
+                              convertToYaml
+                              onClick={handleClick}
+                              selections={checked}
+                            />
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    {configDetails.tags &&
-                      Object.entries(configDetails.tags)
-                        .filter(([key]) => key !== "Name")
-                        .map(([key, value]) => (
-                          <>
-                            {/* @ts-ignore */}
-                            <div
-                              key={key}
-                              className="block text-lg tracking-wide"
-                            >
-                              <span className="font-semibold">{key}:</span>
-                              {value}
-                            </div>
-                          </>
-                        ))}
-                  </div>
-                </div>
-              )}
-              <div className="flex flex-col p-2 mb-6 w-full">
-                <div className="flex relative py-6 px-4 border-gray-300 bg-white rounded shadow-md flex-1 overflow-x-auto">
-                  <JSONViewer
-                    code={code}
-                    format={format}
-                    showLineNo
-                    onClick={handleClick}
-                    selections={checked}
-                  />
+                  ) : (
+                    <div className="h-32 flex items-center justify-center">
+                      <Loading />
+                    </div>
+                  )}
                 </div>
               </div>
-            </div>
-          </div>
-        ) : (
-          <div className="h-32 flex items-center justify-center">
-            <Loading />
-          </div>
-        )}
-      </div>
-
-      <AttachEvidenceDialog
-        key={`link-${dialogKey}`}
-        isOpen={attachAsAsset}
-        onClose={() => setAttachAsAsset(false)}
-        config_id={id}
-        evidence={{
-          lines: configLines,
-          configName: configDetails?.name,
-          configType: configDetails?.config_type,
-          selected_lines: Object.fromEntries(
-            Object.keys(checked).map((n) => [n, configLines[n]])
-          )
-        }}
-        type={EvidenceType.Config}
-        callback={(_: any) => {
-          setChecked({});
-        }}
-      />
-    </div>
+            </div>{" "}
+          </TabbedLinks>
+          <ConfigSidebar />
+        </div>
+      </SearchLayout>
+    </>
   );
 }

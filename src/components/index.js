@@ -9,7 +9,6 @@ import { Icon } from "./Icon";
 import { Notification } from "./Notification";
 import { Modal } from "./Modal";
 import { Status } from "./Status";
-import { Table } from "./Table";
 import { DataTable } from "./DataTable";
 import { Toggle } from "./Toggle";
 
@@ -25,7 +24,6 @@ export {
   Notification,
   Modal,
   Status,
-  Table,
   DataTable,
   Toggle
 };

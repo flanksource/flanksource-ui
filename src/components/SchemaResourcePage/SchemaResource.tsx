@@ -1,85 +1,70 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { dump } from "js-yaml";
-import { isEmpty } from "lodash";
-import {
-  deleteResource,
-  getResource,
-  updateResource
-} from "../../api/schemaResources";
+import { useParams } from "react-router-dom";
 import { BreadcrumbNav } from "../BreadcrumbNav";
 import { SearchLayout } from "../Layout";
 import { SchemaResourceType } from "./resourceTypes";
 import { SchemaResourceEdit } from "./SchemaResourceEdit";
-import { toastError } from "../Toast/toast";
+import { useGetSettingsResourceDetails } from "../../api/query-hooks/settingsResourcesHooks";
+import { Head } from "../Head/Head";
+import { useSettingsUpdateResource } from "../../api/query-hooks/mutations/useSettingsResourcesMutations";
+import ErrorPage from "../Errors/ErrorPage";
+import TableSkeletonLoader from "../SkeletonLoader/TableSkeletonLoader";
+import EmptyState from "../EmptyState";
 
 export function SchemaResource({
   resourceInfo
 }: {
   resourceInfo: SchemaResourceType;
 }) {
-  const [resource, setResource] = useState({});
-  const navigate = useNavigate();
-  const [loadingState, setLoadingState] = useState("initial");
   const { name } = resourceInfo;
   const { id } = useParams();
 
-  useEffect(() => {
-    if (!id) return;
-    setLoadingState("loading");
-    getResource(resourceInfo, id)?.then((res) => {
-      const specData = res.data[0]?.spec;
-      setResource({
-        ...res.data[0],
-        spec:
-          specData && !isEmpty(specData)
-            ? dump(specData, { sortKeys: true })
-            : ""
-      });
-      setLoadingState("success");
-    });
-  }, [resourceInfo, id]);
+  const {
+    data: resource,
+    isLoading,
+    error
+  } = useGetSettingsResourceDetails(resourceInfo, id);
 
-  const onSubmit = async (props: any) => {
-    try {
-      await updateResource(resourceInfo, {
-        ...resource,
-        ...props,
-        updated_at: new Date().toISOString()
-      });
-    } catch (ex) {
-      toastError(ex);
-    }
-  };
-
-  const onDelete = async (id: string) => {
-    try {
-      await deleteResource(resourceInfo, id);
-      navigate(`../${resourceInfo.table}`);
-    } catch (ex) {
-      toastError(ex);
-    }
-  };
+  const { mutateAsync: updateResource } = useSettingsUpdateResource(
+    resourceInfo,
+    resource
+  );
 
   return (
-    <SearchLayout
-      title={
-        <BreadcrumbNav
-          list={[{ title: name, to: `../${resourceInfo.table}` }, id]}
-        />
-      }
-    >
-      <div className="self-center m-auto max-w-screen-xl p-4">
-        {loadingState === "success" && id && (
-          <SchemaResourceEdit
-            id={id}
-            resourceName={resourceInfo.name}
-            {...resource}
-            onSubmit={onSubmit}
-            onDelete={onDelete}
+    <>
+      <Head
+        prefix={`Settings - ${name} ${
+          resource?.name ? ` - ${resource.name}` : ""
+        } `}
+      />
+      <SearchLayout
+        title={
+          <BreadcrumbNav
+            list={[
+              { title: name, to: `/settings/${resourceInfo.table}` },
+              resource?.name
+            ]}
           />
-        )}
-      </div>
-    </SearchLayout>
+        }
+        contentClass="flex flex-col h-full"
+      >
+        <div className="flex flex-col flex-1 overflow-y-auto mx-auto w-screen max-w-screen-xl p-4">
+          {!resource && isLoading && <TableSkeletonLoader />}
+          {error && <ErrorPage error={error} />}
+          {resource && !isLoading && (
+            <SchemaResourceEdit
+              id={id}
+              {...resource}
+              onSubmit={updateResource}
+              resourceInfo={resourceInfo}
+            />
+          )}
+          {!resource && !isLoading && !error && (
+            <div className="flex w-full flex-1 items-center justify-center text-gray-500">
+              <EmptyState title="No resource found" />
+            </div>
+          )}
+        </div>
+      </SearchLayout>
+    </>
   );
 }

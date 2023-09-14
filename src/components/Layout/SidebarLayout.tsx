@@ -5,25 +5,29 @@ import React, { useCallback, useContext, useEffect, useState } from "react";
 import { Toaster } from "react-hot-toast";
 import { IconType } from "react-icons";
 import { IoChevronForwardOutline } from "react-icons/io5";
-import { NavLink, Outlet } from "react-router-dom";
-import { $ArrayElemType } from "../../types/utility";
+import { Link, NavLink, Outlet } from "react-router-dom";
 import { NavigationItems, SettingsNavigationItems } from "../../App";
+import { $ArrayElemType } from "../../types/utility";
 
 import { AuthContext } from "../../context";
+import { useFeatureFlagsContext } from "../../context/FeatureFlagsContext";
 import { useOuterClick } from "../../lib/useOuterClick";
 import { getLocalItem, setLocalItem } from "../../utils/storage";
-import FullPageSkeletonLoader from "../SkeletonLoader/FullPageSkeletonLoader";
+import { withAccessCheck } from "../AccessCheck/AccessCheck";
 import { Icon } from "../Icon";
+import FullPageSkeletonLoader from "../SkeletonLoader/FullPageSkeletonLoader";
 
 interface Props {
   navigation: NavigationItems;
   settingsNav: SettingsNavigationItems;
+  checkPath: boolean;
 }
 
 interface SideNavGroupProps {
   navs: NavigationItems;
   settings: SettingsNavigationItems;
   collapseSidebar?: boolean;
+  checkPath: boolean;
 }
 
 type NavLabelProps = {
@@ -66,7 +70,7 @@ interface NavItemWrapperProps {
   className?: string;
 }
 
-const NavItemWrapper = (props: NavItemWrapperProps) => {
+function NavItemWrapper(props: NavItemWrapperProps) {
   const { as: Component = "div", active, children, className } = props;
 
   const cls = ({ isActive }: { isActive: boolean }) =>
@@ -74,7 +78,7 @@ const NavItemWrapper = (props: NavItemWrapperProps) => {
       active || isActive
         ? "bg-gray-800 text-gray-100"
         : "text-gray-200 hover:bg-gray-800 hover:text-gray-100",
-      "group rounded-md py-3 px-2 flex items-center text-md font-medium",
+      "group rounded-md py-1.5 px-2 flex items-center text-md font-medium",
       className
     );
   return Component === "div" ? (
@@ -84,7 +88,8 @@ const NavItemWrapper = (props: NavItemWrapperProps) => {
       {children}
     </Component>
   );
-};
+}
+
 function SideNavItem({
   name,
   current = false,
@@ -119,11 +124,14 @@ function SideNavGroup({
   name,
   icon,
   collapseSidebar,
-  current = false
+  current = false,
+  checkPath
 }: SettingsNavigationItems & {
   current?: boolean;
   collapseSidebar: boolean;
 }) {
+  const { isFeatureDisabled } = useFeatureFlagsContext();
+
   if (collapseSidebar) {
     return (
       <Menu as="div" className="relative">
@@ -135,29 +143,36 @@ function SideNavGroup({
         </Menu.Button>
         {/* @ts-expect-error */}
         <Menu.Items className="absolute border left-0 ml-12 w-48 shadow-md top-0 z-10 bg-gray-800 space-y-1">
-          {submenu.map(({ name, icon, href }) => (
-            // @ts-expect-error
-            <Menu.Item key={name}>
-              {({ active }) => (
-                <NavLink className="w-full" to={href}>
-                  <NavItemWrapper active={active}>
-                    <NavLabel
-                      icon={icon as IconType}
-                      active={active}
-                      name={name}
-                    />
-                  </NavItemWrapper>
-                </NavLink>
-              )}
-            </Menu.Item>
-          ))}
+          {submenu.map(({ name, icon, href, featureName, resourceName }) => {
+            return !isFeatureDisabled(featureName!)
+              ? withAccessCheck(
+                  /* @ts-expect-error */
+                  <Menu.Item key={name}>
+                    {/* @ts-expect-error */}
+                    {({ active }) => (
+                      <NavLink className="w-full" to={href}>
+                        <NavItemWrapper active={active}>
+                          <NavLabel
+                            icon={icon as IconType}
+                            active={active}
+                            name={name}
+                          />
+                        </NavItemWrapper>
+                      </NavLink>
+                    )}
+                  </Menu.Item>,
+                  resourceName,
+                  "read"
+                )
+              : null;
+          })}
         </Menu.Items>
       </Menu>
     );
   }
 
   return (
-    <Disclosure as="div">
+    <Disclosure as="div" defaultOpen={checkPath ? true : false}>
       {({ open }) => (
         <>
           <Disclosure.Button className="w-full">
@@ -178,9 +193,19 @@ function SideNavGroup({
             </NavItemWrapper>
           </Disclosure.Button>
           <Disclosure.Panel className="pl-4 space-y-1">
-            {submenu.map((item) => (
-              <SideNavItem key={item.name} {...item} collapseSidebar={false} />
-            ))}
+            {submenu.map((item) =>
+              !isFeatureDisabled(item.featureName!)
+                ? withAccessCheck(
+                    <SideNavItem
+                      key={item.name}
+                      {...item}
+                      collapseSidebar={false}
+                    />,
+                    item.resourceName,
+                    "read"
+                  )
+                : null
+            )}
           </Disclosure.Panel>
         </>
       )}
@@ -191,27 +216,44 @@ function SideNavGroup({
 function SideNav({
   navs,
   settings,
-  collapseSidebar = false
+  collapseSidebar = false,
+  checkPath
 }: SideNavGroupProps) {
+  const { isFeatureDisabled } = useFeatureFlagsContext();
+
   return (
-    <nav className="flex-col space-y-2 divide-y divide-gray-500">
-      <div>
-        {navs.map((item) => (
-          <SideNavItem
-            key={item.name}
-            {...item}
+    <nav className="flex flex-col divide-y divide-gray-500">
+      <div className="flex flex-col gap-1 mb-1">
+        {navs.map((item) =>
+          !isFeatureDisabled(item.featureName!)
+            ? withAccessCheck(
+                <SideNavItem
+                  key={item.name}
+                  {...item}
+                  collapseSidebar={collapseSidebar}
+                />,
+                item.resourceName,
+                "read"
+              )
+            : null
+        )}
+      </div>
+      {withAccessCheck(
+        <div>
+          <SideNavGroup
+            {...settings}
             collapseSidebar={collapseSidebar}
+            checkPath={checkPath}
           />
-        ))}
-      </div>
-      <div>
-        <SideNavGroup {...settings} collapseSidebar={collapseSidebar} />
-      </div>
+        </div>,
+        settings.submenu.map((item) => item.resourceName),
+        "read"
+      )}
     </nav>
   );
 }
 
-export function SidebarLayout({ navigation, settingsNav }: Props) {
+export function SidebarLayout({ navigation, settingsNav, checkPath }: Props) {
   const { user } = useContext(AuthContext);
   const [collapseSidebar, setCollapseSidebar] = useState(false);
 
@@ -245,16 +287,21 @@ export function SidebarLayout({ navigation, settingsNav }: Props) {
   return (
     <>
       <Toaster position="top-right" reverseOrder={false} />
-      <div className="flex h-screen">
+      <div className="flex flex-row h-screen min-w-[1280px]">
         <div
-          className={clsx("transform duration-500 w-14 z-10 bg-gray-700", {
-            "lg:w-56": !collapseSidebar
-          })}
+          className={clsx(
+            "transform duration-500 z-10 bg-gray-700 flex flex-col",
+            {
+              "w-56": !collapseSidebar,
+              "w-14": collapseSidebar
+            }
+          )}
           ref={innerRef}
         >
           <div
-            className={clsx("h-full transform duration-500 w-14", {
-              "lg:w-56": !collapseSidebar
+            className={clsx("flex flex-col h-full transform duration-500", {
+              "w-56": !collapseSidebar,
+              "w-14": collapseSidebar
             })}
           >
             <button
@@ -268,19 +315,31 @@ export function SidebarLayout({ navigation, settingsNav }: Props) {
               <IoChevronForwardOutline />
             </button>
 
-            {collapseSidebar ? (
-              <div className="flex border-b border-b-gray-500 h-16 shadow">
-                <Icon name="flanksource-icon" className="w-10 h-auto m-auto" />
-              </div>
-            ) : (
-              <div className="p-3 pl-5 border-b border-b-gray-500 shadow">
-                <Icon name="flanksource" className="h-10" />
-              </div>
-            )}
+            <Link
+              to={{
+                pathname: "/"
+              }}
+            >
+              {collapseSidebar ? (
+                <div className="flex border-b border-b-gray-500 h-16 shadow">
+                  <Icon
+                    name="mission-control-white"
+                    className="w-10 h-auto m-auto fill-white stroke-white"
+                  />
+                </div>
+              ) : (
+                <div className="p-3 pl-5 border-b border-b-gray-500 shadow">
+                  <Icon
+                    name="mission-control-logo-white"
+                    className="h-10 stroke-white"
+                  />
+                </div>
+              )}
+            </Link>
 
             <div
               className={clsx(
-                "flex flex-col flex-grow",
+                "flex flex-col flex-1 overflow-y-auto",
                 collapseSidebar ? "px-1" : "px-3"
               )}
             >
@@ -289,12 +348,15 @@ export function SidebarLayout({ navigation, settingsNav }: Props) {
                   navs={navigation}
                   settings={settingsNav}
                   collapseSidebar={collapseSidebar}
+                  checkPath={checkPath}
                 />
               </div>
             </div>
           </div>
         </div>
-        <Outlet />
+        <div className="flex flex-col flex-1 h-screen overflow-auto bg-gray-50">
+          <Outlet />
+        </div>
       </div>
     </>
   );

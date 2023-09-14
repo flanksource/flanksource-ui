@@ -1,126 +1,160 @@
 import { useEffect, useMemo } from "react";
-import {
-  useNavigate,
-  useSearchParams,
-  useOutletContext
-} from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import objectHash from "object-hash";
-import { filterConfigsByText } from "../../components/ConfigViewer/utils";
 import ConfigList from "../../components/ConfigList";
-import { RefreshButton } from "../../components/RefreshButton";
-import { useConfigPageContext } from "../../context/ConfigPageContext";
-import { useAllConfigsQuery } from "../../api/query-hooks";
-import { getAllConfigs } from "../../api/services/configs";
+import {
+  useAllConfigsQuery,
+  useConfigSummaryQuery
+} from "../../api/query-hooks";
+import { SearchLayout } from "../../components/Layout";
+import ConfigsListFilters from "../../components/ConfigsListFilters";
+import { Head } from "../../components/Head/Head";
+import TabbedLinks from "../../components/Tabs/TabbedLinks";
+import { configTabsLists } from "../../components/ConfigsPage/ConfigTabsLinks";
+import { BreadcrumbNav, BreadcrumbRoot } from "../../components/BreadcrumbNav";
+import { useAtom } from "jotai";
+import { areDeletedConfigsHidden } from "../../components/ConfigListToggledDeletedItems/ConfigListToggledDeletedItems";
+import ConfigsTypeIcon from "../../components/Configs/ConfigsTypeIcon";
+import ConfigSummaryList from "../../components/ConfigSummary/ConfigSummaryList";
 
 export function ConfigListPage() {
   const [params] = useSearchParams();
   const navigate = useNavigate();
-  const {
-    configState: { data, filteredData },
-    setConfigState
-  } = useConfigPageContext();
-  const { setTitleExtras } = useOutletContext<any>();
+
+  const search = params.get("search");
+  const tag = decodeURIComponent(params.get("tag") || "");
+  const groupByProp = decodeURIComponent(params.get("groupByProp") ?? "");
+  const sortBy = params.get("sortBy");
+  const sortOrder = params.get("sortOrder");
+  const hideDeleted = params.get("hideDeleted");
+  const [deletedConfigsHidden, setDeletedConfigsHidden] = useAtom(
+    areDeletedConfigsHidden
+  );
+  const hideDeletedConfigs = deletedConfigsHidden === "yes";
+  const configType = params.get("type") ?? undefined;
+
+  // Show summary if no search, tag or configType is provided
+  const showConfigSummaryList = useMemo(
+    () => !configType && !search && !tag,
+    [configType, search, tag]
+  );
 
   const {
     data: allConfigs,
-    isLoading,
+    isLoading: isLoadingConfigList,
+    refetch: isRefetchingConfigList,
     isRefetching
-  } = useAllConfigsQuery({
-    cacheTime: 0
-  });
-
-  const search = params.get("search");
-  const tag = decodeURIComponent(params.get("tag") || "All");
-  const configType = decodeURIComponent(params.get("type") || "All");
-  const groupByProp = decodeURIComponent(params.get("groupByProp") ?? "");
+  } = useAllConfigsQuery(
+    {
+      search,
+      tag,
+      configType,
+      sortBy,
+      sortOrder,
+      hideDeletedConfigs,
+      includeAgents: true
+    },
+    {
+      cacheTime: 0,
+      enabled: !showConfigSummaryList
+    }
+  );
 
   useEffect(() => {
+    if (hideDeleted) {
+      setDeletedConfigsHidden(hideDeleted);
+    }
+  }, [hideDeleted, setDeletedConfigsHidden]);
+
+  const {
+    isLoading: isLoadingSummary,
+    data: configSummary = [],
+    refetch: refetchSummary
+  } = useConfigSummaryQuery({
+    enabled: showConfigSummaryList
+  });
+
+  const isLoading = isLoadingConfigList || isLoadingSummary || isRefetching;
+  const refetch = refetchSummary || isRefetchingConfigList;
+
+  const configList = useMemo(() => {
     if (params.get("query")) {
-      return;
+      return [];
     }
     if (!allConfigs?.data) {
-      return;
+      return [];
     }
-    allConfigs.data.forEach((item) => {
-      item.tags = item.tags || {};
-      item.allTags = { ...item.tags };
-      item.tags.toString = () => {
+    return allConfigs.data.map((item) => {
+      const tags = item.tags || {};
+      tags.toString = () => {
         return objectHash(item.tags?.[groupByProp] || {});
       };
-    });
-    setConfigState((state) => {
       return {
-        ...state,
-        data: allConfigs.data
+        ...item,
+        tags,
+        allTags: { ...item.tags }
       };
     });
-  }, [params, allConfigs]);
-
-  const loading = useMemo(() => {
-    return isLoading || isRefetching;
-  }, [isLoading, isRefetching]);
+  }, [params, allConfigs, groupByProp]);
 
   const handleRowClick = (row?: { original?: { id: string } }) => {
     const id = row?.original?.id;
     if (id) {
-      navigate(`/configs/${id}`);
+      navigate(`/catalog/${id}`);
     }
   };
 
-  useEffect(() => {
-    setTitleExtras(
-      <RefreshButton onClick={() => getAllConfigs()} animate={isLoading} />
-    );
-  }, [loading, setTitleExtras]);
-
-  useEffect(() => {
-    let filteredData = data;
-    if (data?.length! > 0) {
-      // do filtering here
-      filteredData = filterConfigsByText(filteredData, search);
-
-      if (configType && configType !== "All") {
-        filteredData = filteredData!.filter(
-          (d) => configType === d.config_type
-        );
-      }
-
-      if (tag && tag !== "All") {
-        filteredData = filteredData
-          ?.filter((d) => d.tags)!
-          .filter((d) => {
-            if (!d.tags) {
-              return false;
-            }
-            if (Array.isArray(decodeURI(tag))) {
-              const kvs = (decodeURI(tag) as unknown as string[]).map((x) =>
-                x.split("__:__")
-              );
-              return kvs.some(([key, val]) => d.tags?.[key] === val);
-            } else {
-              const [k, v] = decodeURI(tag).split("__:__");
-              return !!Object.entries(d.tags).find(
-                ([key, value]) => value === v && key === k
-              );
-            }
-          });
-      }
-    }
-    setConfigState((state) => {
-      return {
-        ...state,
-        filteredData: filteredData
-      };
-    });
-  }, [data, search, configType, tag]);
-
   return (
-    <div className="flex flex-col h-full overflow-y-hidden bg-white">
-      <ConfigList
-        data={filteredData!}
-        handleRowClick={handleRowClick}
-        isLoading={loading}
-      />
-    </div>
+    <>
+      <Head prefix={`Catalog`} />
+      <SearchLayout
+        title={
+          <BreadcrumbNav
+            list={[
+              <BreadcrumbRoot link="/catalog">Catalog</BreadcrumbRoot>,
+              ...(configType
+                ? [
+                    <BreadcrumbRoot link={`/catalog/${configType}`}>
+                      <ConfigsTypeIcon
+                        config={{ type: configType }}
+                        showSecondaryIcon
+                        showLabel
+                      />
+                    </BreadcrumbRoot>
+                  ]
+                : [])
+            ]}
+          />
+        }
+        onRefresh={() => refetch()}
+        loading={isLoading}
+        contentClass="p-0 h-full"
+      >
+        <div className={`flex flex-row h-full`}>
+          <TabbedLinks tabLinks={configTabsLists} activeTabName="Catalog">
+            <div className={`flex flex-col flex-1 h-full space-y-4`}>
+              <div className="flex flex-row items-center">
+                <ConfigsListFilters />
+              </div>
+
+              <div className="flex flex-col h-full overflow-y-hidden">
+                {showConfigSummaryList ? (
+                  <ConfigSummaryList
+                    isLoading={isLoadingSummary}
+                    data={configSummary}
+                  />
+                ) : (
+                  <ConfigList
+                    data={configList!}
+                    handleRowClick={handleRowClick}
+                    isLoading={isLoading}
+                  />
+                )}
+              </div>
+            </div>
+          </TabbedLinks>
+        </div>
+      </SearchLayout>
+    </>
   );
 }

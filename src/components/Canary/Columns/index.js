@@ -8,6 +8,9 @@ import { removeNamespacePrefix } from "../utils";
 import { GetName } from "../data";
 import { Badge } from "../../Badge";
 import style from "../index.module.css";
+import { Status } from "../../Status";
+import { dateDiff, relativeDateTime } from "../../../utils/date";
+import clsx from "clsx";
 
 export function Cell({ state, value, row, column }) {
   const { pivotCellType } = state;
@@ -23,12 +26,24 @@ export function Cell({ state, value, row, column }) {
     return UptimeCell({ value: newValue });
   }
 
-  if (pivotCellType === "checkStatuses" || column.id === "checkStatuses") {
-    if (value == null) {
+  if (pivotCellType === "status" || column.id === "status") {
+    if (!value) {
       return empty;
     }
-    const newValue = value?.checkStatuses ?? value;
-    return HealthCell({ value: newValue });
+    if (typeof value === "object") {
+      return <Status good={value.good} mixed={value.mixed} />;
+    } else {
+      const date = new Date().toISOString().split(".")[0];
+      const lastRutime = row.original.last_runtime;
+      const showTime = dateDiff(date, lastRutime, "minute") > 15;
+      return (
+        <div className="items-center flex space-x-1">
+          <Status good={value === "healthy"} />
+          {showTime &&
+            LastTransistionCell({ value: row.original.last_runtime })}
+        </div>
+      );
+    }
   }
   if (pivotCellType === "latency" || column.id === "latency") {
     if (value == null) {
@@ -37,7 +52,41 @@ export function Cell({ state, value, row, column }) {
     const newValue = value?.latency ?? value;
     return LatencyCell({ value: newValue });
   }
+
+  if (
+    pivotCellType === "last_transition_time" ||
+    column.id === "last_transition_time"
+  ) {
+    if (value == null) {
+      return empty;
+    }
+    const newValue = value?.latency ?? value;
+    return LastTransistionCell({ value: newValue });
+  }
   return null;
+}
+
+export function LastTransistionCell({ value }) {
+  const hasAgoString = relativeDateTime(value).indexOf("ago") > -1;
+  const hasYesterdayString = relativeDateTime(value).indexOf("yesterday") > -1;
+  return (
+    <>
+      <span className="text-md">
+        {relativeDateTime(value)
+          .replace("ago", "")
+          .replace("yesterday", "")
+          .trim()}
+      </span>
+      {hasAgoString && (
+        <span className="text-gray-500 text-light text-xs ml-0.5">ago</span>
+      )}
+      {hasYesterdayString && (
+        <span className="text-gray-500 text-light text-xs ml-0.5">
+          yesterday
+        </span>
+      )}
+    </>
+  );
 }
 
 export function HealthCell({ value }) {
@@ -51,7 +100,7 @@ export function UptimeCell({ value }) {
 }
 
 export function LatencyCell({ value }) {
-  return <Duration ms={value.p95} />;
+  return <Duration ms={value.p95 || value.p97 || value.p99} />;
 }
 
 export function TitleCell({ row }) {
@@ -65,14 +114,18 @@ export function TitleCell({ row }) {
   }
 
   return (
-    <div className={style.checkTitleRow}>
+    <div className={clsx(style.checkTitleRow, "w-96")}>
       <span
         className="flex flex-row items-center"
         style={{
           paddingLeft: `${row.depth * 1.1}rem`
         }}
       >
-        <Title title={title} icon={rowValues.icon || rowValues.type} />
+        <Title
+          title={title}
+          icon={rowValues.icon || rowValues.type}
+          isDeleted={row.original.deleted_at}
+        />
         {row.canExpand && rowValues.subRows && rowValues?.subRows.length > 1 && (
           <span className="ml-1 flex items-center">
             <Badge
@@ -223,7 +276,7 @@ export function getColumns({ columnObject, pivotCellType = null }) {
       ...(id == null && typeof accessor === "function" && { id: k }),
       ...(accessor != null && { accessor }),
       Header: Header ?? (() => null),
-      cellClass: cellClass ?? `px-5 py-2`,
+      cellClass: cellClass ?? `py-2`,
       Cell: IncomingCell ?? Cell,
       sortType:
         pivotCellType != null

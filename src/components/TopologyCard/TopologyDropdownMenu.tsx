@@ -1,84 +1,166 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { BiHide, BiShow, BiZoomIn } from "react-icons/bi";
-import { MdAlarmAdd, MdTableRows } from "react-icons/md";
-import { EvidenceType } from "../../api/services/evidence";
-import { AttachEvidenceDialog } from "../AttachEvidenceDialog";
 import { Menu } from "../Menu";
+import { Topology } from "../../context/TopologyPageContext";
+import { topologyActionItems } from "../TopologySidebar/TopologyActionBar";
+import { CSSProperties, useCallback, useMemo, useState } from "react";
+import { AttachEvidenceDialog } from "../AttachEvidenceDialog";
+import TopologySnapshotModal from "./TopologySnapshotModal";
+import { EvidenceType } from "../../api/services/evidence";
+import { TopologyConfigLinkModal } from "../TopologyConfigLinkModal/TopologyConfigLinkModal";
+import { useFeatureFlagsContext } from "../../context/FeatureFlagsContext";
+import { features } from "../../services/permissions/features";
+
+type TopologyMenuItemProps = {
+  onClick?: () => void;
+  icon: React.ReactNode;
+  text: React.ReactNode;
+};
+
+function TopologyMenuItem({
+  onClick = () => {},
+  icon,
+  text
+}: TopologyMenuItemProps) {
+  return (
+    <Menu.Item as="button" onClick={onClick}>
+      {icon}
+      <span className="pl-1 text-sm block">{text}</span>
+    </Menu.Item>
+  );
+}
 
 interface IProps {
-  topology: any;
-  updateVisibility: (
-    topologyId: string | undefined,
-    updatedVisibility: boolean
-  ) => void;
+  topology: Topology;
+  onRefresh?: () => void;
+  isTopologyPage?: boolean;
 }
 
 export const TopologyDropdownMenu = ({
   topology,
-  updateVisibility
+  onRefresh,
+  isTopologyPage = false
 }: IProps) => {
-  const [attachAsAsset, setAttachAsAsset] = useState(false);
+  const [dropDownMenuStyles, setDropDownMenuStyles] = useState<CSSProperties>();
 
-  const navigate = useNavigate();
-  const viewLogs = () => {
-    navigate(`/logs?topologyId=${topology.id}`);
-  };
+  const { isFeatureDisabled } = useFeatureFlagsContext();
+
+  const isIncidentManagementFeatureDisabled = useMemo(
+    () => isFeatureDisabled(features.incidents),
+    [isFeatureDisabled]
+  );
+
+  const isLogsFeatureDisabled = useMemo(
+    () => isFeatureDisabled(features.logs),
+    [isFeatureDisabled]
+  );
+
+  const dropdownMenuStylesCalc = useCallback(
+    (node: HTMLDivElement) => {
+      if (!node) {
+        return;
+      }
+      const left = node.getBoundingClientRect().left;
+      const top = node.getBoundingClientRect().bottom;
+
+      if (left && top) {
+        if (isTopologyPage) {
+          setDropDownMenuStyles({
+            right: 0,
+            top: "1.5rem",
+            position: "absolute"
+          });
+        } else {
+          setDropDownMenuStyles({
+            left: left - 200,
+            top: top,
+            position: "fixed"
+          });
+        }
+      }
+    },
+    [isTopologyPage]
+  );
+
+  const [
+    isDownloadComponentSnapshotModalOpen,
+    setIsDownloadComponentSnapshotModalOpen
+  ] = useState(false);
+  const [attachAsAsset, setAttachAsAsset] = useState(false);
+  const [linkToConfig, setLinkToConfig] = useState(false);
 
   return (
     <>
       <Menu>
-        <Menu.VerticalIconButton />
-        <Menu.Items>
-          {topology.external_id && (
-            <Menu.Item as="button" onClick={viewLogs}>
-              <MdTableRows />
-              <span className="pl-1 text-sm block">View Logs</span>
-            </Menu.Item>
-          )}
+        <div ref={dropdownMenuStylesCalc} className="">
+          <Menu.VerticalIconButton />
+        </div>
+        <Menu.Items className={`z-50`} style={dropDownMenuStyles}>
+          {topologyActionItems
+            .filter((item) => {
+              if (item.label === "Link to Incident") {
+                return !isIncidentManagementFeatureDisabled;
+              }
+              if (item.label === "View Logs") {
+                return !isLogsFeatureDisabled;
+              }
+              return true;
+            })
+            .map(
+              ({
+                isShown,
+                ContainerComponent: Container,
+                icon: Icon,
+                label
+              }) => {
+                if (!isShown(topology, "TopologyCard")) {
+                  return null;
+                }
 
-          <Menu.Item as="button" onClick={() => setAttachAsAsset(true)}>
-            <MdAlarmAdd />
-            <span className="pl-1 text-sm block">Link to Incident</span>
-          </Menu.Item>
-
-          <Menu.Item>
-            <Link
-              to={`/topology/${topology.id}`}
-              className="flex items-center w-full"
-            >
-              <BiZoomIn />
-              <span className="pl-1 text-sm block">Zoom In</span>
-            </Link>
-          </Menu.Item>
-
-          {updateVisibility && (
-            <Menu.Item
-              as="button"
-              onClick={() => updateVisibility(topology.id, !topology.hidden)}
-            >
-              {topology.hidden ? (
-                <>
-                  <BiShow />
-                  <span className="pl-1 text-sm block">Unhide</span>
-                </>
-              ) : (
-                <>
-                  <BiHide />
-                  <span className="pl-1 text-sm block">Hide</span>
-                </>
-              )}
-            </Menu.Item>
-          )}
+                return (
+                  <Container
+                    child={TopologyMenuItem}
+                    topology={topology}
+                    key={label}
+                    onRefresh={onRefresh}
+                    icon={<Icon />}
+                    text={label}
+                    openModalAction={
+                      label === "Snapshot"
+                        ? () => setIsDownloadComponentSnapshotModalOpen(true)
+                        : label === "Link to Incident"
+                        ? () => setAttachAsAsset(true)
+                        : label === "Link to config"
+                        ? () => setLinkToConfig(true)
+                        : undefined
+                    }
+                  />
+                );
+              }
+            )}
         </Menu.Items>
       </Menu>
 
-      <AttachEvidenceDialog
-        isOpen={attachAsAsset}
-        onClose={() => setAttachAsAsset(false)}
-        type={EvidenceType.Topology}
-        component_id={topology.id}
+      {!isIncidentManagementFeatureDisabled && (
+        <AttachEvidenceDialog
+          isOpen={attachAsAsset}
+          onClose={() => setAttachAsAsset(false)}
+          type={EvidenceType.Topology}
+          component_id={topology.id}
+        />
+      )}
+
+      <TopologySnapshotModal
+        onCloseModal={() => setIsDownloadComponentSnapshotModalOpen(false)}
+        isModalOpen={isDownloadComponentSnapshotModalOpen}
+        topology={topology}
       />
+
+      {linkToConfig && (
+        <TopologyConfigLinkModal
+          onCloseModal={() => setLinkToConfig(false)}
+          openModal={linkToConfig}
+          topology={topology}
+        />
+      )}
     </>
   );
 };

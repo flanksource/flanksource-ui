@@ -1,6 +1,6 @@
 import React from "react";
 import { Control } from "react-hook-form";
-import { statusItems } from "./data";
+import { incidentStatusItems } from "./data";
 import { ReactSelectDropdown } from "../ReactSelectDropdown";
 import { defaultSelections } from "./data";
 
@@ -18,7 +18,7 @@ export default function IncidentStatusDropdown({
   value,
   prefix = "Status:",
   name = "status",
-  className,
+  className = "border-none shadow-none font-semibold space-x-3 capitalize text-sm px-2",
   showAllOption,
   dropDownClassNames,
   hideControlBorder
@@ -31,7 +31,10 @@ export default function IncidentStatusDropdown({
       className={className}
       dropDownClassNames={dropDownClassNames}
       value={value}
-      items={{ ...(showAllOption ? defaultSelections : {}), ...statusItems }}
+      items={{
+        ...(showAllOption ? defaultSelections : {}),
+        ...incidentStatusItems
+      }}
       hideControlBorder={hideControlBorder}
     />
   );

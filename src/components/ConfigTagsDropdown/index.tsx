@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
-import { useConfigPageContext } from "../../context/ConfigPageContext";
-import { ReactSelectDropdown, StateOption } from "../ReactSelectDropdown";
+import { useGetConfigTagsListQuery } from "../../api/query-hooks";
+import { ReactSelectDropdown } from "../ReactSelectDropdown";
 
 type Props = {
   onChange?: (value: string | undefined) => void;
@@ -18,23 +18,21 @@ export function ConfigTagsDropdown({
     ...(value && { [searchParamKey]: value })
   });
 
-  const {
-    configState: { data }
-  } = useConfigPageContext();
+  const { data, isLoading } = useGetConfigTagsListQuery();
 
-  const configTagItems: StateOption[] = useMemo(() => {
-    if (!data) return [];
-    const options = data.flatMap((d) => {
-      return Object.entries(d?.tags || {})
-        .filter(([key]) => {
-          return key !== "toString";
-        })
-        .map(([key, value]) => ({
-          label: `${key}: ${value}`,
-          value: `${key}__:__${value}`
-        }));
-    });
-    return [{ label: "All", value: "All" }, ...options];
+  const configTagItems = useMemo(() => {
+    if (data) {
+      const options = data.map((tag) => ({
+        label: (
+          <div className="block space-x-1 text-sm">
+            <span className="w-auto text-gray-600">{tag.key}:</span>
+            <span className="w-full">{tag.value}</span>
+          </div>
+        ),
+        value: `${tag.key}__:__${tag.value}`
+      }));
+      return [{ label: "All", value: "All" }, ...options];
+    }
   }, [data]);
 
   return (
@@ -49,12 +47,13 @@ export function ConfigTagsDropdown({
         onChange(value);
       }}
       value={params.get(searchParamKey) ?? "All"}
-      className="w-auto max-w-[400px]"
-      dropDownClassNames="w-auto max-w-[400px] left-0"
+      className="w-auto max-w-[38rem]"
+      dropDownClassNames="w-auto max-w-[38rem] left-0"
       hideControlBorder
       prefix={
         <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">Tag:</div>
       }
+      isLoading={isLoading}
     />
   );
 }

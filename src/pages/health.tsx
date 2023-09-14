@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { SearchLayout } from "../components/Layout";
 import { Canary } from "../components/Canary";
 import RefreshDropdown, {
@@ -6,12 +6,12 @@ import RefreshDropdown, {
 } from "../components/RefreshDropdown";
 import { HealthRefreshDropdownRateContext } from "../components/RefreshDropdown/RefreshRateContext";
 import { Modal } from "../components";
-import { SchemaResourceEdit } from "../components/SchemaResourcePage/SchemaResourceEdit";
-import { SchemaResourceI, createResource } from "../api/schemaResources";
-import { AuthContext } from "../context";
 import { schemaResourceTypes } from "../components/SchemaResourcePage/resourceTypes";
 import { AiFillPlusCircle } from "react-icons/ai";
-import { BreadcrumbNav } from "../components/BreadcrumbNav";
+import { BreadcrumbNav, BreadcrumbRoot } from "../components/BreadcrumbNav";
+import { Head } from "../components/Head/Head";
+import HealthSpecEditor from "../components/SpecEditor/HealthSpecEditor";
+import { useSettingsCreateResource } from "../api/query-hooks/mutations/useSettingsResourcesMutations";
 
 type Props = {
   url: string;
@@ -20,10 +20,16 @@ type Props = {
 export function HealthPage({ url }: Props) {
   const [loading, setLoading] = useState(true);
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const { user } = useContext(AuthContext);
 
   const resourceInfo = schemaResourceTypes.find(
-    (item) => item.name === "Health"
+    (item) => item.name === "Health Check"
+  );
+
+  const { mutate: createResource } = useSettingsCreateResource(
+    resourceInfo!,
+    () => {
+      setModalIsOpen(false);
+    }
   );
 
   /**
@@ -35,69 +41,57 @@ export function HealthPage({ url }: Props) {
     return refreshRate ?? "";
   });
 
-  const onSubmit = async (data: Partial<SchemaResourceI>) => {
-    await createResource(resourceInfo, {
-      ...data,
-      created_by: user?.id,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    });
-    // todo: wire up to refresh
-    // setReload((x) => x + 1);
-    setModalIsOpen(false);
-  };
-
   return (
-    <HealthRefreshDropdownRateContext.Provider
-      value={{
-        refreshRate,
-        setRefreshRate
-      }}
-    >
-      <SearchLayout
-        title={
-          <BreadcrumbNav
-            list={[
-              <h1 className="text-xl font-semibold">Health</h1>,
-              <button
-                type="button"
-                className=""
-                onClick={() => setModalIsOpen(true)}
-              >
-                <AiFillPlusCircle size={36} color="#326CE5" />
-              </button>
-            ]}
-          />
-        }
-        extra={
-          <RefreshDropdown
-            onClick={() => setTriggerRefresh(triggerRefresh + 1)}
-            isLoading={loading}
-          />
-        }
-        contentClass="p-0"
+    <>
+      <Head prefix="Health" />
+      <HealthRefreshDropdownRateContext.Provider
+        value={{
+          refreshRate,
+          setRefreshRate
+        }}
       >
-        <Canary
-          url={url}
-          onLoading={setLoading}
-          triggerRefresh={triggerRefresh}
-        />
-      </SearchLayout>
-      <Modal
-        open={modalIsOpen}
-        onClose={() => setModalIsOpen(false)}
-        bodyClass=""
-        size="full"
-        title={`Create New ${resourceInfo!.name}`}
-      >
-        <SchemaResourceEdit
-          resourceName={resourceInfo!.name}
-          isModal
-          edit
-          onSubmit={onSubmit}
-          onCancel={() => setModalIsOpen(false)}
-        />
-      </Modal>
-    </HealthRefreshDropdownRateContext.Provider>
+        <SearchLayout
+          title={
+            <BreadcrumbNav
+              list={[
+                <BreadcrumbRoot link="/health">Health</BreadcrumbRoot>,
+                <button
+                  type="button"
+                  className=""
+                  onClick={() => setModalIsOpen(true)}
+                >
+                  <AiFillPlusCircle size={32} className="text-blue-600" />
+                </button>
+              ]}
+            />
+          }
+          extra={
+            <RefreshDropdown
+              onClick={() => setTriggerRefresh(triggerRefresh + 1)}
+              isLoading={loading}
+            />
+          }
+          contentClass="p-0"
+        >
+          <Canary
+            url={url}
+            onLoading={setLoading}
+            triggerRefresh={triggerRefresh}
+          />
+        </SearchLayout>
+        <Modal
+          open={modalIsOpen}
+          onClose={() => setModalIsOpen(false)}
+          bodyClass=""
+          size="full"
+          title={`Add ${resourceInfo!.name}`}
+        >
+          <HealthSpecEditor
+            resourceInfo={schemaResourceTypes.at(-1)!}
+            onSubmit={(val) => createResource(val)}
+          />
+        </Modal>
+      </HealthRefreshDropdownRateContext.Provider>
+    </>
   );
 }

@@ -5,37 +5,42 @@ import { FaTasks } from "react-icons/fa";
 import { GrIntegration, GrWorkshop } from "react-icons/gr";
 import { ImHeartBroken } from "react-icons/im";
 import { IoMdSpeedometer } from "react-icons/io";
-import { MdSecurity } from "react-icons/md";
+import { MdOutlineRecommend, MdSecurity } from "react-icons/md";
+import { FaRegClock } from "react-icons/fa";
 import { ConfigTypeInsights } from "../ConfigInsights";
+import clsx from "clsx";
 
 type Props = {
   analysis: Pick<ConfigTypeInsights, "severity" | "analysis_type">;
+  size?: number;
 };
 
-/**
- * AnalysisIcon
- *
- * Given an analysis_type and severity, return the appropriate icon and icon
- * color.
- *
- */
-export default function ConfigInsightsIcon({ analysis }: Props) {
-  const size = 22;
-  const colorClass = useMemo(() => {
-    if (analysis.severity === "critical") {
-      return "text-red-500 mr-1";
-    }
-    if (analysis.severity === "warning") {
-      return "text-yellow-500 mr-1";
-    }
-    return "text-gray-500 mr-1";
-  }, [analysis.severity]);
+function insightSeverityToColorMap(severity: string) {
+  if (severity === "critical") {
+    return "text-red-500";
+  }
+  if (severity === "warning") {
+    return "text-yellow-500";
+  }
+  return "text-gray-500";
+}
 
-  switch (analysis.analysis_type) {
+type InsightTypeToIconProps = {
+  type: string;
+  size?: number;
+  colorClass?: string;
+};
+
+export function InsightTypeToIcon({
+  type,
+  size = 20,
+  colorClass = "text-gray-500"
+}: InsightTypeToIconProps) {
+  switch (type) {
     case "cost":
       return (
         <BiDollarCircle
-          className={`${colorClass} inline-block`}
+          className={clsx(colorClass, "inline-block")}
           size={size}
           title="Cost"
         />
@@ -43,7 +48,7 @@ export default function ConfigInsightsIcon({ analysis }: Props) {
     case "availability":
       return (
         <ImHeartBroken
-          className={`${colorClass} inline-block`}
+          className={clsx(colorClass, "inline-block")}
           size={size}
           title="Availability"
         />
@@ -51,7 +56,7 @@ export default function ConfigInsightsIcon({ analysis }: Props) {
     case "performance":
       return (
         <IoMdSpeedometer
-          className={`${colorClass} inline-block`}
+          className={clsx(colorClass, "inline-block")}
           size={size}
           title="Performance"
         />
@@ -59,7 +64,7 @@ export default function ConfigInsightsIcon({ analysis }: Props) {
     case "security":
       return (
         <MdSecurity
-          className={`${colorClass} inline-block`}
+          className={clsx(colorClass, "inline-block")}
           size={size}
           title="Security"
         />
@@ -67,7 +72,7 @@ export default function ConfigInsightsIcon({ analysis }: Props) {
     case "integration":
       return (
         <GrIntegration
-          className={`${colorClass} inline-block`}
+          className={clsx(colorClass, "inline-block")}
           size={size}
           title="Integration"
         />
@@ -75,9 +80,17 @@ export default function ConfigInsightsIcon({ analysis }: Props) {
     case "compliance":
       return (
         <FaTasks
-          className={`${colorClass} inline-block`}
+          className={clsx(colorClass, "inline-block")}
           size={size}
           title="Compliance"
+        />
+      );
+    case "reliability":
+      return (
+        <FaRegClock
+          className={clsx(colorClass, "inline-block")}
+          size={size}
+          title="Reliability"
         />
       );
     case "technicalDebt":
@@ -88,6 +101,37 @@ export default function ConfigInsightsIcon({ analysis }: Props) {
           title="Technical Debt"
         />
       );
+    case "recommendation":
+      return (
+        <MdOutlineRecommend
+          className={clsx(colorClass, "inline-block")}
+          size={size}
+          title="Recommendation"
+        />
+      );
   }
-  return <AiFillWarning className={`${colorClass} inline-block`} size="20" />;
+  return (
+    <AiFillWarning className={clsx(colorClass, "inline-block")} size="20" />
+  );
+}
+
+/**
+ * AnalysisIcon
+ *
+ * Given an analysis_type and severity, return the appropriate icon and icon
+ * color.
+ *
+ */
+export default function ConfigInsightsIcon({ analysis, size = 22 }: Props) {
+  const colorClass = useMemo(() => {
+    return insightSeverityToColorMap(analysis.severity);
+  }, [analysis.severity]);
+
+  return (
+    <InsightTypeToIcon
+      type={analysis.analysis_type}
+      size={size}
+      colorClass={colorClass}
+    />
+  );
 }

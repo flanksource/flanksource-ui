@@ -1,86 +1,106 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { AiFillPlusCircle } from "react-icons/ai";
-
-import {
-  createResource,
-  getAll,
-  SchemaResourceI
-} from "../../api/schemaResources";
-import { useUser } from "../../context";
-import { BreadcrumbNav } from "../BreadcrumbNav";
+import { useSettingsCreateResource } from "../../api/query-hooks/mutations/useSettingsResourcesMutations";
+import { useGetSettingsAllQuery } from "../../api/query-hooks/settingsResourcesHooks";
+import { BreadcrumbNav, BreadcrumbRoot } from "../BreadcrumbNav";
+import ErrorPage from "../Errors/ErrorPage";
+import { Head } from "../Head/Head";
 import { SearchLayout } from "../Layout";
 import { Modal } from "../Modal";
-import { SchemaResourceType } from "./resourceTypes";
+import ConfigScrapperSpecEditor from "../SpecEditor/ConfigScrapperSpecEditor";
+import HealthSpecEditor from "../SpecEditor/HealthSpecEditor";
 import { SchemaResourceEdit } from "./SchemaResourceEdit";
 import { SchemaResourceList } from "./SchemaResourceList";
+import { SchemaResourceType } from "./resourceTypes";
 
 export function SchemaResourcePage({
   resourceInfo
 }: {
-  resourceInfo: SchemaResourceType;
+  resourceInfo: SchemaResourceType & { href: string };
 }) {
-  const { user } = useUser();
-  const [list, setList] = useState<SchemaResourceI[]>([]);
-  const [reload, setReload] = useState(1);
   const { name, href } = resourceInfo;
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
-  useEffect(() => {
-    getAll(resourceInfo).then((res) => {
-      setList(res.data);
-    });
-  }, [resourceInfo, reload]);
+  const {
+    data: list,
+    refetch,
+    isLoading,
+    error
+  } = useGetSettingsAllQuery(resourceInfo);
 
-  const onSubmit = async (data: Partial<SchemaResourceI>) => {
-    await createResource(resourceInfo, {
-      ...data,
-      created_by: user?.id,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    });
-    setReload((x) => x + 1);
-    setModalIsOpen(false);
-  };
+  const { mutate: createResource } = useSettingsCreateResource(
+    resourceInfo,
+    () => {
+      refetch();
+      setModalIsOpen(false);
+    }
+  );
 
   const onClose = () => setModalIsOpen(false);
 
   return (
-    <SearchLayout
-      title={
-        <BreadcrumbNav
-          list={[
-            name,
-            <button
-              type="button"
-              className=""
-              onClick={() => setModalIsOpen(true)}
-            >
-              <AiFillPlusCircle size={36} color="#326CE5" />
-            </button>
-          ]}
-        />
-      }
-    >
-      <div className="self-center m-auto">
-        <SchemaResourceList items={list} baseUrl={href} />
-      </div>
-
-      <Modal
-        open={modalIsOpen}
-        onClose={onClose}
-        bodyClass=""
-        size="full"
-        title={`Create New ${resourceInfo.name}`}
+    <>
+      <Head prefix={resourceInfo ? `Settings - ${resourceInfo.name}` : ""} />
+      <SearchLayout
+        loading={isLoading}
+        title={
+          <BreadcrumbNav
+            list={[
+              <BreadcrumbRoot link={`/settings/${resourceInfo.table}`}>
+                {name}
+              </BreadcrumbRoot>,
+              <button
+                type="button"
+                className=""
+                onClick={() => setModalIsOpen(true)}
+              >
+                <AiFillPlusCircle size={32} className="text-blue-600" />
+              </button>
+            ]}
+          />
+        }
+        contentClass="p-6"
       >
-        <SchemaResourceEdit
-          resourceName={resourceInfo.name}
-          isModal
-          edit
-          onSubmit={onSubmit}
-          onCancel={onClose}
-        />
-      </Modal>
-    </SearchLayout>
+        <div className="m-auto">
+          <div className="flex flex-col p-6 pb-0 flex-1 w-full overflow-y-auto">
+            <SchemaResourceList
+              items={list || []}
+              baseUrl={href}
+              table={resourceInfo.table}
+              isLoading={isLoading}
+            />
+            {Boolean(error) && <ErrorPage error={error as Error} />}
+          </div>
+        </div>
+
+        <Modal
+          open={modalIsOpen}
+          onClose={onClose}
+          bodyClass="flex flex-col flex-1 overflow-y-auto"
+          size="full"
+          title={`Add ${resourceInfo.name}`}
+        >
+          {resourceInfo.table === "config_scrapers" ? (
+            <ConfigScrapperSpecEditor
+              onSubmit={(val) => createResource(val)}
+              resourceInfo={resourceInfo}
+            />
+          ) : resourceInfo.table === "canaries" ? (
+            <HealthSpecEditor
+              onSubmit={(val) => createResource(val)}
+              resourceInfo={resourceInfo}
+            />
+          ) : (
+            <SchemaResourceEdit
+              isModal
+              onSubmit={async (val) => createResource(val)}
+              onCancel={onClose}
+              resourceInfo={resourceInfo}
+            />
+          )}
+        </Modal>
+      </SearchLayout>
+    </>
   );
 }

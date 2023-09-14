@@ -1,100 +1,147 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect, useMemo, useState } from "react";
 import { ImLifebuoy } from "react-icons/im";
-import { getIncidentsBy, Incident } from "../../api/services/incident";
+import { Link } from "react-router-dom";
+import { getIncidentsBy } from "../../api/services/incident";
+import { relativeDateTime } from "../../utils/date";
+import PillBadge from "../Badge/PillBadge";
 import CollapsiblePanel from "../CollapsiblePanel";
-import EmptyState from "../EmptyState";
-import IncidentCard from "../IncidentCard/IncidentCard";
+import { DetailsTable } from "../DetailsTable/DetailsTable";
+import { IncidentStatusTag } from "../IncidentStatusTag";
 import IncidentsFilterBar, { IncidentFilter } from "../IncidentsFilterBar";
-import { Loading } from "../Loading";
 import Title from "../Title/title";
+import { IncidentTypeIcon } from "../incidentTypeTag";
+import { useAtom } from "jotai";
+import { refreshButtonClickedTrigger } from "../SlidingSideBar";
+import { typeItems } from "../Incidents/data";
+import { useFeatureFlagsContext } from "../../context/FeatureFlagsContext";
+import { features } from "../../services/permissions/features";
 
 type Props = {
   topologyId?: string;
   configId?: string;
+  isCollapsed?: boolean;
+  onCollapsedStateChange?: (isClosed: boolean) => void;
 };
 
-export function useTopologyIncidents(topologyId: string, configId: string) {
-  const [incidents, setIncidents] = useState<Incident[]>([]);
+const columns = [
+  {
+    key: "incident",
+    label: "Incident"
+  },
+  {
+    key: "age",
+    label: "Age"
+  }
+];
 
-  const [isLoading, setIsLoading] = useState(false);
-
+export default function Incidents({
+  topologyId,
+  configId,
+  isCollapsed = true,
+  onCollapsedStateChange = () => {}
+}: Props) {
   const [filterIncidentOptions, setFilterIncidentOptions] =
     useState<IncidentFilter>({
       type: "all",
-      status: "Open",
+      status: "open",
       age: 0
     });
 
-  useEffect(() => {
-    async function fetchIncidents() {
-      if (topologyId == null && configId == null) {
-        console.error("Missing topologyId or configId");
-      }
+  const { isFeatureDisabled } = useFeatureFlagsContext();
 
-      setIsLoading(true);
+  const isIncidentManagementFeatureDisabled = useMemo(
+    () => isFeatureDisabled(features.incidents),
+    [isFeatureDisabled]
+  );
 
+  const { isLoading, data, isRefetching, refetch } = useQuery(
+    [
+      "incidents",
+      ...(topologyId ? ["topology-", topologyId] : []),
+      ...(configId ? ["configs", configId] : []),
+      filterIncidentOptions.status,
+      filterIncidentOptions.type
+    ],
+    async () => {
       const res = await getIncidentsBy({
         topologyId: topologyId,
         configId: configId,
         type: filterIncidentOptions.type,
         status: filterIncidentOptions.status
       });
-      setIncidents(res.data);
-      setIsLoading(false);
+      return res.data ?? [];
+    },
+    {
+      enabled: !!topologyId || !!configId
     }
+  );
 
-    fetchIncidents();
-  }, [
-    filterIncidentOptions.status,
-    filterIncidentOptions.type,
-    topologyId,
-    configId
-  ]);
+  const [triggerRefresh] = useAtom(refreshButtonClickedTrigger);
 
-  return {
-    incidents,
-    filterIncidentOptions,
-    setFilterIncidentOptions,
-    isLoading
-  };
-}
+  useEffect(() => {
+    if (!isLoading && !isRefetching) {
+      refetch();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [triggerRefresh]);
 
-export default function Incidents({ topologyId, configId }: Props) {
-  const {
-    incidents,
-    filterIncidentOptions,
-    setFilterIncidentOptions,
-    isLoading
-  } = useTopologyIncidents(topologyId, configId);
+  const incidents = useMemo(() => {
+    return data?.map((item) => {
+      return {
+        incident: (
+          <div className="flex flex-row">
+            <IncidentTypeIcon type={item.type as keyof typeof typeItems} />
+            <Link
+              className="block mx-1 cursor-pointer text-sm"
+              to={{
+                pathname: `/incidents/${item.id}`
+              }}
+            >
+              {item.title}
+            </Link>
+            <IncidentStatusTag status={item.status!} className="ml-1 text-sm" />
+          </div>
+        ),
+        age: relativeDateTime(item.created_at)
+      };
+    });
+  }, [data]);
+
+  if (isIncidentManagementFeatureDisabled) {
+    return null;
+  }
 
   return (
     <CollapsiblePanel
+      isCollapsed={isCollapsed}
+      onCollapsedStateChange={onCollapsedStateChange}
       Header={
-        <>
+        <div className="flex flex-row items-center justify-center space-x-2">
           <Title
             title="Incidents"
             icon={<ImLifebuoy className="w-6 h-auto" />}
           />
-          <div className="ml-5 text-right grow">
-            <IncidentsFilterBar
-              defaultValues={filterIncidentOptions}
-              onChangeFilterValues={(value) => setFilterIncidentOptions(value)}
-            />
-          </div>
-        </>
+          <PillBadge>{incidents?.length ?? 0}</PillBadge>
+        </div>
       }
+      dataCount={incidents?.length}
+      childrenClassName=""
     >
-      <div className="flex flex-col mt-2">
-        <div className="flex flex-col space-y-1">
-          {isLoading ? (
-            <Loading />
-          ) : incidents.length > 0 ? (
-            incidents.map((incident) => (
-              <IncidentCard incident={incident} key={incident.id} />
-            ))
-          ) : (
-            <EmptyState />
-          )}
+      <div className="flex flex-col">
+        <div className="flex flex-col items-start relative">
+          <IncidentsFilterBar
+            defaultValues={filterIncidentOptions}
+            onChangeFilterValues={(value) => setFilterIncidentOptions(value)}
+          />
+        </div>
+        <div className="flex max-h-full overflow-y-auto flex-col space-y-1">
+          <DetailsTable
+            loading={isLoading}
+            data={incidents || []}
+            columns={columns}
+            showHeader={false}
+          />
         </div>
       </div>
     </CollapsiblePanel>

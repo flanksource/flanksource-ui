@@ -1,26 +1,48 @@
 import { AdjustmentsIcon } from "@heroicons/react/solid";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { Fragment, ReactNode, useEffect, useState } from "react";
+import { Provider } from "jotai";
+import React, { ReactNode, useEffect, useState } from "react";
+import { IconType } from "react-icons";
 import { AiFillHeart } from "react-icons/ai";
+import { BsLink, BsToggles } from "react-icons/bs";
+import { FaBell, FaTasks } from "react-icons/fa";
+import { HiUser } from "react-icons/hi";
 import { ImLifebuoy } from "react-icons/im";
 import { VscJson } from "react-icons/vsc";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter,
+  Navigate,
+  Route,
+  Routes,
+  useLocation
+} from "react-router-dom";
 import ReactTooltip from "react-tooltip";
-
-import { getUser } from "./api/auth";
 import { Canary } from "./components";
+import { withAccessCheck } from "./components/AccessCheck/AccessCheck";
+import AuthProviderWrapper from "./components/Authentication/AuthProviderWrapper";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { LogsIcon } from "./components/Icons/LogsIcon";
 import { TopologyIcon } from "./components/Icons/TopologyIcon";
-import { ConfigLayout, SidebarLayout } from "./components/Layout";
+import SetupIntercom from "./components/Intercom/SetupIntercom";
+import JobsHistorySettingsPage from "./components/JobsHistory/JobsHistorySettingsPage";
+import { SidebarLayout } from "./components/Layout";
+import NotificationsPage from "./components/Notifications/NotificationsSettingsPage";
 import { SchemaResourcePage } from "./components/SchemaResourcePage";
+import { SchemaResource } from "./components/SchemaResourcePage/SchemaResource";
 import {
   SchemaResourceType,
   schemaResourceTypes
 } from "./components/SchemaResourcePage/resourceTypes";
-import { SchemaResource } from "./components/SchemaResourcePage/SchemaResource";
-import { AuthContext } from "./context";
+import FullPageSkeletonLoader from "./components/SkeletonLoader/FullPageSkeletonLoader";
+import { ConfigPageContextProvider } from "./context/ConfigPageContext";
+import {
+  FeatureFlagsContextProvider,
+  useFeatureFlagsContext
+} from "./context/FeatureFlagsContext";
+import { HealthPageContextProvider } from "./context/HealthPageContext";
+import { IncidentPageContextProvider } from "./context/IncidentPageContext";
+import { UserAccessStateContextProvider } from "./context/UserAccessContext/UserAccessContext";
+import { tables } from "./context/UserAccessContext/permissions";
 import {
   ConfigChangesPage,
   ConfigDetailsChangesPage,
@@ -31,55 +53,153 @@ import {
   LogsPage,
   TopologyPage
 } from "./pages";
-import { HealthPage } from "./pages/health";
-import { TopologyPageContextProvider } from "./context/TopologyPageContext";
-import { HealthPageContextProvider } from "./context/HealthPageContext";
-import { ConfigPageContextProvider } from "./context/ConfigPageContext";
-import { IncidentPageContextProvider } from "./context/IncidentPageContext";
-import { User } from "./api/services/users";
-import FullPageSkeletonLoader from "./components/SkeletonLoader/FullPageSkeletonLoader";
+import { ConnectionsPage } from "./pages/Settings/ConnectionsPage";
+import { EventQueueStatusPage } from "./pages/Settings/EventQueueStatus";
+import { FeatureFlagsPage } from "./pages/Settings/FeatureFlagsPage";
+import { LogBackendsPage } from "./pages/Settings/LogBackendsPage";
+import { PlaybookSettingsPage } from "./pages/Settings/PlaybookSettingsPage";
 import { UsersPage } from "./pages/UsersPage";
-import { HiUser } from "react-icons/hi";
+import { ConfigDetailsInsightsPage } from "./pages/config/ConfigDetailsInsightsPage";
+import { ConfigInsightsPage } from "./pages/config/ConfigInsightsList";
+import { HealthPage } from "./pages/health";
+import { features } from "./services/permissions/features";
+import { stringSortHelper } from "./utils/common";
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: true,
-      refetchOnMount: true,
-      refetchOnReconnect: true
-    }
+export type NavigationItems = {
+  name: string;
+  icon: React.ComponentType<any> | IconType;
+  href: string;
+  featureName: string;
+  resourceName: string;
+}[];
+
+const navigation: NavigationItems = [
+  {
+    name: "Dashboard",
+    href: "/topology",
+    icon: TopologyIcon,
+    featureName: features.topology,
+    resourceName: tables.database
+  },
+  {
+    name: "Health",
+    href: "/health",
+    icon: AiFillHeart,
+    featureName: features.health,
+    resourceName: tables.canaries
+  },
+  {
+    name: "Incidents",
+    href: "/incidents",
+    icon: ImLifebuoy,
+    featureName: features.incidents,
+    resourceName: tables.incident
+  },
+  {
+    name: "Catalog",
+    href: "/catalog",
+    icon: VscJson,
+    featureName: features.config,
+    resourceName: tables.database
+  },
+  {
+    name: "Logs",
+    href: "/logs",
+    icon: LogsIcon,
+    featureName: features.logs,
+    resourceName: tables.database
   }
-});
-
-const navigation = [
-  { name: "Topology", href: "/topology", icon: TopologyIcon },
-  { name: "Health", href: "/health", icon: AiFillHeart },
-  { name: "Logs", href: "/logs", icon: LogsIcon },
-  { name: "Config", href: "/configs", icon: VscJson },
-  { name: "Incidents", href: "/incidents", icon: ImLifebuoy }
 ];
 
-export type NavigationItems = typeof navigation;
+export type SettingsNavigationItems = {
+  name: string;
+  icon: IconType;
+  checkPath: boolean;
+  submenu: (
+    | (SchemaResourceType & { href: string })
+    | {
+        name: string;
+        href: string;
+        icon: React.ComponentType<{ className: string }>;
+        featureName: string;
+        resourceName: string;
+      }
+  )[];
+};
 
-const settingsNav = {
+const settingsNav: SettingsNavigationItems = {
   name: "Settings",
   icon: AdjustmentsIcon,
+  checkPath: false,
   submenu: [
     {
-      name: "Users",
-      href: "/settings/users",
-      icon: HiUser
+      name: "Connections",
+      href: "/settings/connections",
+      icon: BsLink,
+      featureName: features["settings.connections"],
+      resourceName: tables.connections
     },
+    ...(process.env.NEXT_PUBLIC_AUTH_IS_CLERK === "true"
+      ? []
+      : [
+          {
+            name: "Users",
+            href: "/settings/users",
+            icon: HiUser,
+            featureName: features["settings.users"],
+            resourceName: tables.identities
+          }
+        ]),
     ...schemaResourceTypes.map((x) => ({
       ...x,
       href: `/settings/${x.table}`
-    }))
-  ]
+    })),
+    {
+      name: "Jobs History",
+      href: "/settings/jobs",
+      icon: FaTasks,
+      featureName: features["settings.job_history"],
+      resourceName: tables.database
+    },
+    {
+      name: "Notifications",
+      href: "/settings/notifications",
+      icon: FaBell,
+      featureName: features["settings.notifications"],
+      resourceName: tables.database
+    },
+    {
+      name: "Feature Flags",
+      href: "/settings/feature-flags",
+      icon: BsToggles,
+      featureName: features["settings.feature_flags"],
+      resourceName: tables.database
+    },
+    {
+      name: "Log Backends",
+      href: "/settings/log-backends",
+      icon: LogsIcon,
+      featureName: features["logs"],
+      resourceName: tables.database
+    },
+    {
+      name: "Event Queue",
+      href: "/settings/event-queue-status",
+      icon: FaTasks,
+      featureName: features["settings.event_queue_status"],
+      resourceName: tables.database
+    },
+    {
+      name: "Playbooks",
+      href: "/settings/playbooks",
+      icon: FaTasks,
+      featureName: features["settings.playbooks"],
+      resourceName: tables.database
+    }
+  ].sort((v1, v2) => stringSortHelper(v1.name, v2.name))
 };
 
-export type SettingsNavigationItems = typeof settingsNav;
-
-const CANARY_API = "/api/canary/api";
+const CANARY_API = "/api/canary/api/summary";
 
 export function HealthRoutes({ sidebar }: { sidebar: ReactNode }) {
   return (
@@ -90,42 +210,148 @@ export function HealthRoutes({ sidebar }: { sidebar: ReactNode }) {
 }
 
 export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
+  const { featureFlagsLoaded } = useFeatureFlagsContext();
+
+  if (!featureFlagsLoaded) {
+    return <FullPageSkeletonLoader />;
+  }
+
   return (
     <Routes>
       <Route path="" element={<Navigate to="/topology" />} />
 
       <Route path="topology" element={sidebar}>
-        <Route path=":id" element={<TopologyPage />} />
-        <Route index element={<TopologyPage />} />
+        <Route
+          path=":id"
+          element={withAccessCheck(<TopologyPage />, tables.database, "read")}
+        />
+        <Route
+          index
+          element={withAccessCheck(<TopologyPage />, tables.database, "read")}
+        />
       </Route>
 
       <Route path="incidents" element={sidebar}>
-        <Route path=":id" element={<IncidentDetailsPage />} />
+        <Route
+          path=":id"
+          element={
+            <ErrorBoundary>
+              {withAccessCheck(
+                <IncidentDetailsPage />,
+                tables.incident,
+                "read"
+              )}
+            </ErrorBoundary>
+          }
+        />
         <Route index element={<IncidentListPage />} />
       </Route>
 
       <Route path="health" element={sidebar}>
-        <Route index element={<HealthPage url={CANARY_API} />} />
+        <Route
+          index
+          element={withAccessCheck(
+            <HealthPage url={CANARY_API} />,
+            tables.canaries,
+            "read"
+          )}
+        />
       </Route>
 
       <Route path="settings" element={sidebar}>
-        <Route path="users" element={<UsersPage />} />
+        <Route
+          path="connections"
+          element={withAccessCheck(
+            <ConnectionsPage />,
+            tables.connections,
+            "read"
+          )}
+        />
+        <Route
+          path="users"
+          element={withAccessCheck(<UsersPage />, tables.identities, "read")}
+        />
+        <Route
+          path="jobs"
+          element={withAccessCheck(
+            <JobsHistorySettingsPage />,
+            tables.database,
+            "read"
+          )}
+        />
+        <Route
+          path="notifications"
+          element={withAccessCheck(
+            <NotificationsPage />,
+            tables.database,
+            "read"
+          )}
+        />
+        <Route
+          path="feature-flags"
+          element={withAccessCheck(
+            <FeatureFlagsPage />,
+            tables.database,
+            "read"
+          )}
+        />
+        <Route
+          path="log-backends"
+          element={withAccessCheck(
+            <LogBackendsPage />,
+            tables.database,
+            "read"
+          )}
+        />
+
+        <Route
+          path="event-queue-status"
+          element={withAccessCheck(
+            <EventQueueStatusPage />,
+            tables.database,
+            "read"
+          )}
+        />
+
+        <Route
+          path="playbooks"
+          element={withAccessCheck(
+            <PlaybookSettingsPage />,
+            tables.database,
+            "read"
+          )}
+        />
+
         {settingsNav.submenu
-          .filter((v: SchemaResourceType) => v.table)
+          .filter((v) => (v as SchemaResourceType).table)
           .map((x) => {
             return (
-              <Fragment key={x.name}>
+              <Route key={x.name} path={(x as SchemaResourceType).table}>
                 <Route
+                  index
                   key={`${x.name}-list`}
-                  path={x.table}
-                  element={<SchemaResourcePage resourceInfo={x} />}
+                  element={withAccessCheck(
+                    <SchemaResourcePage
+                      resourceInfo={x as SchemaResourceType & { href: string }}
+                    />,
+                    tables[
+                      (x as SchemaResourceType).table as keyof typeof tables
+                    ] ?? tables.database,
+                    "read"
+                  )}
                 />
                 <Route
                   key={`${x.name}-detail`}
-                  path={`${x.table}/:id`}
-                  element={<SchemaResource resourceInfo={x} />}
+                  path={`:id`}
+                  element={withAccessCheck(
+                    <SchemaResource resourceInfo={x as SchemaResourceType} />,
+                    tables[
+                      (x as SchemaResourceType).table as keyof typeof tables
+                    ] ?? tables.database,
+                    "read"
+                  )}
                 />
-              </Fragment>
+              </Route>
             );
           })}
       </Route>
@@ -135,56 +361,65 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           index
           element={
             <ErrorBoundary>
-              <LogsPage />
+              {withAccessCheck(<LogsPage />, tables.database, "read")}
             </ErrorBoundary>
           }
         />
       </Route>
 
-      <Route path="configs" element={sidebar}>
-        {/* https://github.com/remix-run/react-router/issues/7239#issuecomment-898747642 */}
-        <Route
-          path=""
-          element={
-            <ConfigLayout
-              title="Config"
-              showSearchInput
-              basePath="/configs"
-              navLinks={[
-                { title: "Items", index: true },
-                { title: "Changes", path: "changes" }
-              ]}
-            />
-          }
-        >
-          <Route index element={<ConfigListPage />} />
-          <Route path="changes" element={<ConfigChangesPage />} />
-        </Route>
+      {/* Redirect configs to catalog */}
+      <Route path="configs" element={<Navigate to="/catalog" />} />
 
+      <Route path="catalog" element={sidebar}>
         <Route
-          path=":id"
-          element={
-            <ConfigLayout
-              showSidePanel
-              isConfigDetails
-              title="Config"
-              basePath="/configs/:id"
-              navLinks={[
-                { title: "Config", index: true },
-                { title: "Changes", path: "changes" }
-              ]}
-            />
-          }
-        >
+          index
+          element={withAccessCheck(<ConfigListPage />, tables.database, "read")}
+        />
+        <Route
+          path="changes"
+          element={withAccessCheck(
+            <ConfigChangesPage />,
+            tables.database,
+            "read"
+          )}
+        />
+        <Route
+          path="insights"
+          element={withAccessCheck(
+            <ConfigInsightsPage />,
+            tables.database,
+            "read"
+          )}
+        />
+        <Route path=":id">
           <Route
             index
             element={
               <ErrorBoundary>
-                <ConfigDetailsPage />
+                {withAccessCheck(
+                  <ConfigDetailsPage />,
+                  tables.database,
+                  "read"
+                )}
               </ErrorBoundary>
             }
           />
-          <Route path="changes" element={<ConfigDetailsChangesPage />} />
+          <Route
+            path="changes"
+            element={withAccessCheck(
+              <ConfigDetailsChangesPage />,
+              tables.database,
+              "read"
+            )}
+          />
+          <Route
+            path="insights"
+            element={withAccessCheck(
+              <ConfigDetailsInsightsPage />,
+              tables.database,
+              "read"
+            )}
+          />
         </Route>
       </Route>
     </Routes>
@@ -210,51 +445,69 @@ export function CanaryCheckerApp() {
 
   return (
     <BrowserRouter>
-      <QueryClientProvider client={queryClient}>
-        <HealthPageContextProvider>
-          <ReactTooltip />
-          <Canary url="/api/canary/api" />
-          <ReactQueryDevtools initialIsOpen={false} />
-        </HealthPageContextProvider>
-      </QueryClientProvider>
+      <Provider>
+        <FeatureFlagsContextProvider>
+          <HealthPageContextProvider>
+            <ReactTooltip />
+            <Canary url="/api/canary/api/summary" />
+            <ReactQueryDevtools initialIsOpen={false} />
+          </HealthPageContextProvider>
+        </FeatureFlagsContextProvider>
+      </Provider>
     </BrowserRouter>
   );
 }
 
 function SidebarWrapper() {
-  return <SidebarLayout navigation={navigation} settingsNav={settingsNav} />;
+  const location = useLocation();
+  const url = location.pathname.split("/");
+  const path = url[2];
+
+  const pathTrack = [
+    "users",
+    "jobs",
+    "teams",
+    "incident_rules",
+    "config_scrapers",
+    "topologies",
+    "canaries",
+    "connections",
+    "feature-flags",
+    "jobs"
+  ];
+  const checkPath = pathTrack.includes(path);
+
+  return (
+    <SidebarLayout
+      navigation={navigation}
+      settingsNav={settingsNav}
+      checkPath={checkPath}
+    />
+  );
 }
 
 export function App() {
-  const [user, setUser] = useState<User>();
-
-  useEffect(() => {
-    getUser().then((u) => {
-      setUser(u);
-    });
-  }, []);
-
-  if (!user) {
-    return <FullPageSkeletonLoader />;
-  }
-
   return (
     <BrowserRouter>
-      <QueryClientProvider client={queryClient}>
-        <TopologyPageContextProvider>
-          <HealthPageContextProvider>
-            <ConfigPageContextProvider>
-              <IncidentPageContextProvider>
-                <AuthContext.Provider value={{ user, setUser }}>
-                  <ReactTooltip />
-                  <IncidentManagerRoutes sidebar={<SidebarWrapper />} />
-                </AuthContext.Provider>
-                <ReactQueryDevtools initialIsOpen={false} />
-              </IncidentPageContextProvider>
-            </ConfigPageContextProvider>
-          </HealthPageContextProvider>
-        </TopologyPageContextProvider>
-      </QueryClientProvider>
+      <Provider>
+        <AuthProviderWrapper>
+          <SetupIntercom>
+            <UserAccessStateContextProvider>
+              <FeatureFlagsContextProvider>
+                <HealthPageContextProvider>
+                  <ConfigPageContextProvider>
+                    <IncidentPageContextProvider>
+                      <ReactTooltip />
+                      <IncidentManagerRoutes sidebar={<SidebarWrapper />} />
+                      <ReactQueryDevtools initialIsOpen={false} />
+                    </IncidentPageContextProvider>
+                  </ConfigPageContextProvider>
+                </HealthPageContextProvider>
+              </FeatureFlagsContextProvider>
+            </UserAccessStateContextProvider>
+          </SetupIntercom>
+        </AuthProviderWrapper>
+      </Provider>
     </BrowserRouter>
   );
 }

@@ -1,12 +1,10 @@
-import dayjs from "dayjs";
-import { useEffect, useState } from "react";
 import { MdOutlineInsights } from "react-icons/md";
-import ReactTooltip from "react-tooltip";
+import { useGetConfigInsights } from "../../api/query-hooks";
+import { ConfigItem } from "../../api/services/configs";
 import CollapsiblePanel from "../CollapsiblePanel";
-import ConfigInsightsIcon from "../ConfigInsightsIcon";
-import EmptyState from "../EmptyState";
-import { Loading } from "../Loading";
+import InsightsDetails from "../Insights/Insights";
 import Title from "../Title/title";
+import PillBadge from "../Badge/PillBadge";
 
 export type ConfigTypeInsights = {
   id: string;
@@ -17,91 +15,47 @@ export type ConfigTypeInsights = {
   summary: string;
   status: string;
   message: string;
+  sanitizedMessageHTML?: string;
+  sanitizedMessageTxt?: string;
   analysis: string;
   first_observed: string;
   last_observed: string;
+  created_at: string | number | Date | null | undefined;
+  source: any;
+  created_by: any;
+  config?: ConfigItem;
 };
 
 type Props = {
   configID: string;
+  isCollapsed?: boolean;
+  onCollapsedStateChange?: (isClosed: boolean) => void;
 };
 
-function ConfigInsightsDetails({ configID }: Props) {
-  const [configInsights, setConfigInsights] = useState<ConfigTypeInsights[]>(
-    []
-  );
-  const [isLoading, setIsLoading] = useState(true);
+export default function ConfigInsights({
+  configID,
+  isCollapsed = false,
+  onCollapsedStateChange = () => {}
+}: Props) {
+  const { data: response } = useGetConfigInsights(configID, 0, 50);
+  const count = response?.totalEntries ?? 0;
 
-  useEffect(() => {
-    async function fetchConfigAnalysis(configID: string) {
-      setIsLoading(true);
-      const res = await fetch(
-        `/api/db/config_analysis?config_id=eq.${configID}`
-      );
-      const data = (await res.json()) as ConfigTypeInsights[];
-      setConfigInsights(data);
-      setIsLoading(false);
-    }
-
-    fetchConfigAnalysis(configID);
-  }, [configID]);
-
-  useEffect(() => {
-    ReactTooltip.rebuild();
-  });
-
-  return (
-    <div className="flex flex-col space-y-2">
-      {isLoading ? (
-        <Loading />
-      ) : configInsights.length > 0 ? (
-        <table className="w-full text-sm text-left">
-          <thead className="text-sm uppercase text-gray-600">
-            <tr>
-              <th scope="col" className="p-2">
-                Name
-              </th>
-              <th scope="col" className="p-2">
-                Age
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {configInsights.map((insight) => (
-              <tr key={insight.id}>
-                <td
-                  data-tip={insight.message}
-                  data-class="max-w-[20rem]"
-                  className="p-2 font-medium text-black whitespace-nowrap"
-                >
-                  <ConfigInsightsIcon analysis={insight} />
-                  {insight.analyzer}
-                </td>
-                <td className="p-2 ">
-                  {dayjs(insight.first_observed).fromNow()}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      ) : (
-        <EmptyState />
-      )}
-    </div>
-  );
-}
-
-export default function ConfigInsights(props: Props) {
   return (
     <CollapsiblePanel
+      isCollapsed={isCollapsed}
+      onCollapsedStateChange={onCollapsedStateChange}
       Header={
-        <Title
-          title="Insights"
-          icon={<MdOutlineInsights className="w-6 h-auto" />}
-        />
+        <div className="flex flex-row w-full items-center space-x-2">
+          <Title
+            title="Insights"
+            icon={<MdOutlineInsights className="w-6 h-auto" />}
+          />
+          <PillBadge>{count}</PillBadge>
+        </div>
       }
+      dataCount={count}
     >
-      <ConfigInsightsDetails {...props} />
+      <InsightsDetails type="configs" configId={configID} />
     </CollapsiblePanel>
   );
 }

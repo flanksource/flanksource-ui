@@ -3,7 +3,7 @@ import AsyncSelect from "react-select/async";
 import { components, GroupBase, OptionProps } from "react-select";
 import clsx from "clsx";
 import { JSONPath } from "jsonpath-plus";
-import { Control, Controller, useWatch } from "react-hook-form";
+import { Control, Controller } from "react-hook-form";
 import { debounce } from "lodash";
 import Select, { Props } from "react-select";
 

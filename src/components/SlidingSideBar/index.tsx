@@ -1,11 +1,17 @@
 import clsx from "clsx";
-import { useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { IoChevronBackOutline, IoChevronForwardOutline } from "react-icons/io5";
+import useRunTaskOnPropChange from "../../hooks/useRunTaskOnPropChange";
+import { atom } from "jotai";
 
 type Props = React.HTMLProps<HTMLDivElement> & {
   children?: React.ReactNode;
   hideToggle?: boolean;
 };
+
+// when refresh button is clicked, we increment this to trigger refreshes in any
+// children listening in on this atom
+export const refreshButtonClickedTrigger = atom(0);
 
 export default function SlidingSideBar({
   children,
@@ -14,21 +20,104 @@ export default function SlidingSideBar({
   ...rest
 }: Props) {
   const [open, setOpen] = useState<boolean>(false);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  function configureChildrenHeights() {
+    if (!contentRef.current?.children) {
+      return;
+    }
+    const totalHeight = contentRef.current.offsetHeight;
+    const collapsedChildren = [...contentRef.current?.children]
+      .filter(
+        (element) =>
+          element.getAttribute("data-minimized") === "true" ||
+          element.getAttribute("data-collapsible") === "false"
+      )
+      .map((element) => element.clientHeight);
+
+    const totalHeightOfMinimizedChildren = collapsedChildren.reduce(
+      (acc, height) => {
+        return acc + height;
+      }
+    );
+
+    [...contentRef.current?.children]
+      .filter(
+        (element) =>
+          element.getAttribute("data-minimized") !== "true" &&
+          element.getAttribute("data-collapsible") !== "false"
+      )
+      .forEach((element) => {
+        (element as HTMLDivElement).style.setProperty(
+          "max-height",
+          `${totalHeight - totalHeightOfMinimizedChildren}px`
+        );
+      });
+  }
+
+  useLayoutEffect(() => {
+    // Observe the contentRef for changes in children i.e. when a child is
+    // minimized or maximized, we need to update the max-height of the maximized
+    // children
+    const obs = new window.MutationObserver(() => configureChildrenHeights());
+    if (contentRef.current) {
+      obs.observe(contentRef.current, {
+        childList: true,
+        subtree: true
+      });
+    }
+    return () => obs.disconnect();
+  }, []);
+
+  useLayoutEffect(() => {
+    function updateSize() {
+      configureChildrenHeights();
+    }
+    window.addEventListener("resize", updateSize);
+
+    return () => {
+      window.removeEventListener("resize", updateSize);
+    };
+  }, []);
+
+  useEffect(() => {
+    configureChildrenHeights();
+  }, [children, contentRef]);
+
+  useRunTaskOnPropChange(
+    () => {
+      if (!contentRef.current?.children) {
+        return;
+      }
+      const children = [...contentRef.current?.children];
+      let minimizedChildCount = 0;
+      children.forEach((child) => {
+        minimizedChildCount +=
+          child.getAttribute("data-minimized") === "true" ? 1 : 0;
+      });
+      return minimizedChildCount;
+    },
+    () => {
+      configureChildrenHeights();
+    }
+  );
 
   return (
     <div
       className={clsx(
-        ` flex flex-col bg-white border-l transform origin-right duration-500 border-gray-200 w-full pb-6
-            ${open ? "w-3" : "w-[35rem]"}
-          `,
-        className
+        `flex flex-col bg-white border-l border-gray-200 h-full overflow-y-auto px-4`,
+        open ? "w-3" : "w-[35rem]",
+        className,
+        !hideToggle ? "transform origin-right duration-500" : ""
       )}
       {...rest}
+      style={{ paddingBottom: "64px" }}
     >
       <div
-        className={`flex flex-col overflow-y-hidden space-y-8 sticky top-0 ${
-          open && "hidden"
+        className={`h-full flex flex-col space-y-2 pb-4 ${
+          open ? "hidden" : ""
         }`}
+        ref={contentRef}
       >
         {children}
       </div>

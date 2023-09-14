@@ -14,7 +14,7 @@ import { BiCheck } from "react-icons/bi";
 import { IoMdRemoveCircle } from "react-icons/io";
 import { useCallback, useMemo } from "react";
 
-type CreatedBy = User & {
+export type CreatedBy = User & {
   team: {
     icon: string;
     name: string;
@@ -67,14 +67,9 @@ export function ResponseLine({
   return (
     <div className="pb-4 flex items-start space-x-3 group">
       {created_by.team ? (
-        <Icon size="2xl" name={created_by.team.icon} />
+        <Icon className="rounded-full" name={created_by.team.icon} />
       ) : (
-        <Avatar
-          containerProps={{
-            className: "mt-1"
-          }}
-          user={created_by}
-        />
+        <Avatar user={created_by} circular />
       )}
       <div className="min-w-0 flex-1">
         <div className="flex space-x-2">

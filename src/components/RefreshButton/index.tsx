@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import { HiOutlineRefresh } from "react-icons/hi";
+import { ClickableSvg } from "../ClickableSvg/ClickableSvg";
 
 interface IProps extends React.ComponentPropsWithoutRef<"button"> {
   onClick: () => void;
@@ -24,10 +25,12 @@ export function RefreshButton({
       {...rest}
     >
       <span className="sr-only">Refresh</span>
-      <HiOutlineRefresh
-        className={clsx("h-6 w-6", animate ? "animate-spin" : "")}
-        aria-hidden="true"
-      />
+      <ClickableSvg styleFill={false}>
+        <HiOutlineRefresh
+          className={clsx("h-6 w-6", animate ? "animate-spin" : "")}
+          aria-hidden="true"
+        />
+      </ClickableSvg>
     </button>
   );
 }

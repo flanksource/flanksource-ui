@@ -14,7 +14,8 @@ export const IconButton = ({
   className,
   icon,
   onClick,
-  ovalProps = {}
+  ovalProps = {},
+  ...rest
 }: Props) => {
   const [inProgress, setInProgress] = useState<boolean>(false);
 
@@ -30,6 +31,7 @@ export const IconButton = ({
       onClick={handleOnClick}
       disabled={inProgress}
       className={clsx(className, inProgress && "disabled")}
+      {...rest}
     >
       {inProgress ? <Oval stroke="blue" height="1em" {...ovalProps} /> : icon}
     </button>

@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
 import { FaExclamationTriangle } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { useConfigComponentsRelationshipQuery } from "../../api/query-hooks/useConfigComponentsRelationshipQuery";
+import { CountBadge } from "../Badge/CountBadge";
 import CollapsiblePanel from "../CollapsiblePanel";
 import { Icon } from "../Icon";
 import { TopologyIcon } from "../Icons/TopologyIcon";
-import { Loading } from "../Loading";
+import TextSkeletonLoader from "../SkeletonLoader/TextSkeletonLoader";
 
 export type ConfigsComponents = {
   id: string;
@@ -17,27 +18,13 @@ type Props = {
 };
 
 function ConfigComponentsDetails({ configID }: Props) {
-  const [components, setConfigComponents] = useState<ConfigsComponents[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchConfigAnalysis(configID: string) {
-      setIsLoading(true);
-      const res = await fetch(
-        `/api/db/config_component_relationships?config_id=eq.${configID}&select=components!config_component_relationships_component_id_fkey(id, icon, name)`
-      );
-      const data = (await res.json()) as Record<string, any>[];
-      setConfigComponents(data.map((item) => item.components));
-      setIsLoading(false);
-    }
-
-    fetchConfigAnalysis(configID);
-  }, [configID]);
+  const { data: components = [], isLoading } =
+    useConfigComponentsRelationshipQuery<Record<string, any>[]>(configID);
 
   return (
     <div className="flex flex-col space-y-2">
       {isLoading ? (
-        <Loading />
+        <TextSkeletonLoader />
       ) : components.length > 0 ? (
         <ol className="w-full text-sm text-left">
           {components.map((analysis) => (
@@ -69,14 +56,20 @@ function ConfigComponentsDetails({ configID }: Props) {
 }
 
 export default function ConfigComponents(props: Props) {
+  const { data: components = [] } = useConfigComponentsRelationshipQuery<
+    Record<string, any>[]
+  >(props.configID);
+
   return (
     <CollapsiblePanel
       Header={
-        <h3 className="flex flex-row space-x-2 items-center text-xl font-semibold">
+        <div className="flex flex-row space-x-2 items-center text-xl font-semibold">
           <TopologyIcon className="text-gray-400 h-5 w-5" />
           <span>Components</span>
-        </h3>
+          <CountBadge roundedClass="rounded-full" value={components.length} />
+        </div>
       }
+      dataCount={components.length}
     >
       <ConfigComponentsDetails {...props} />
     </CollapsiblePanel>

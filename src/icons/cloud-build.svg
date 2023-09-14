@@ -1,1 +1,10 @@
-<svg id="Product_Icons" data-name="Product Icons" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><defs><style>.cls-1{fill:#4285f4;}.cls-2{fill:#669df6;}.cls-3{fill:#aecbfa;}</style></defs><title>Icon_24px_Color_CloudBuild</title><g id="Container-Builder"><g id="Group"><g id="Shape"><polygon class="cls-1" points="12.15 16.24 15.67 14.21 15.67 10.15 14.49 9.46 10.97 15.56 12.15 16.24"/><polygon class="cls-2" points="8.63 10.15 8.63 14.21 9.81 14.89 13.34 8.8 12.15 8.11 8.63 10.15"/></g></g></g><polygon class="cls-3" points="11.46 17.45 7.24 15.01 7.24 10.15 3.49 7.98 3.49 17.18 11.46 21.78 11.46 17.45"/><polygon class="cls-3" points="7.93 8.95 12.15 6.51 16.37 8.95 20.13 6.78 12.15 2.17 4.17 6.78 7.93 8.95"/><polygon class="cls-3" points="17.06 15.01 12.84 17.45 12.84 21.78 20.82 17.18 20.82 7.98 17.06 10.15 17.06 15.01"/></svg>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32" height="32" viewBox="0 0 32 32" version="1.1">
+<g id="surface1">
+<path style=" stroke:none;fill-rule:nonzero;fill:rgb(25.882354%,52.156866%,95.686275%);fill-opacity:1;" d="M 16.199219 21.652344 L 20.894531 18.945312 L 20.894531 13.535156 L 19.320312 12.613281 L 14.625 20.746094 Z M 16.199219 21.652344 "/>
+<path style=" stroke:none;fill-rule:nonzero;fill:rgb(40.000001%,61.56863%,96.470588%);fill-opacity:1;" d="M 11.507812 13.535156 L 11.507812 18.945312 L 13.078125 19.851562 L 17.785156 11.734375 L 16.199219 10.8125 Z M 11.507812 13.535156 "/>
+<path style=" stroke:none;fill-rule:nonzero;fill:rgb(68.235296%,79.607844%,98.039216%);fill-opacity:1;" d="M 15.28125 23.265625 L 9.652344 20.011719 L 9.652344 13.535156 L 4.652344 10.640625 L 4.652344 22.90625 L 15.28125 29.039062 Z M 15.28125 23.265625 "/>
+<path style=" stroke:none;fill-rule:nonzero;fill:rgb(68.235296%,79.607844%,98.039216%);fill-opacity:1;" d="M 10.574219 11.933594 L 16.199219 8.679688 L 21.828125 11.933594 L 26.839844 9.039062 L 16.199219 2.894531 L 5.558594 9.039062 Z M 10.574219 11.933594 "/>
+<path style=" stroke:none;fill-rule:nonzero;fill:rgb(68.235296%,79.607844%,98.039216%);fill-opacity:1;" d="M 22.746094 20.011719 L 17.121094 23.265625 L 17.121094 29.039062 L 27.761719 22.90625 L 27.761719 10.640625 L 22.746094 13.535156 Z M 22.746094 20.011719 "/>
+</g>
+</svg>

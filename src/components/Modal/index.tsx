@@ -21,11 +21,12 @@ interface IModalProps {
   footerClassName: string;
   actions?: React.ReactNode[];
   open: boolean;
-  onClose: () => void;
+  onClose: (e?: MouseEvent) => void;
   allowBackgroundClose: boolean;
   hideCloseButton: boolean;
   size: ModalSize;
   children: React.ReactNode;
+  containerClassName?: string;
 }
 
 export function Modal({
@@ -39,17 +40,19 @@ export function Modal({
   allowBackgroundClose,
   hideCloseButton,
   size,
+  children,
+  containerClassName = "overflow-auto max-h-full",
   ...rest
 }: IModalProps) {
-  const { children } = { ...rest };
-
   return (
+    /* @ts-expect-error */
     <Transition.Root show={open} as={Fragment}>
+      {/* @ts-expect-error */}
       <Dialog
         as="div"
         auto-reopen="true"
-        className="fixed z-50 inset-0 overflow-y-auto"
-        onClose={allowBackgroundClose ? onClose : () => {}}
+        className="fixed z-50 inset-0 overflow-y-auto my-20"
+        onClose={allowBackgroundClose ? () => onClose() : () => {}}
         {...rest}
       >
         <div
@@ -57,7 +60,9 @@ export function Modal({
             "py-8": size === "full"
           })}
         >
+          {/* @ts-expect-error */}
           <Transition.Child
+            // @ts-expect-error
             as={Fragment}
             enter="ease-out duration-300"
             enterFrom="opacity-0"
@@ -70,6 +75,7 @@ export function Modal({
           </Transition.Child>
 
           <Transition.Child
+            // @ts-expect-error
             as={Fragment}
             enter="ease-out duration-300"
             enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
@@ -80,12 +86,18 @@ export function Modal({
           >
             <div
               className={clsx(
-                "bg-white rounded-lg text-left shadow-xl transform transition-all w-full flex flex-col",
+                "bg-white rounded-lg text-left shadow-xl transform transition-all w-full  flex flex-col",
+                containerClassName,
                 modalClassMap[size]
               )}
             >
-              <div className="py-4 px-8 flex item-center rounded-t-lg justify-between bg-gray-100">
-                <h1 className={clsx("font-semibold text-lg", titleClass)}>
+              <div className="py-4 px-4 flex item-center rounded-t-lg justify-between bg-gray-100">
+                <h1
+                  className={clsx(
+                    "font-semibold flex-1 overflow-x-auto text-lg",
+                    titleClass
+                  )}
+                >
                   {title}
                 </h1>
                 {/* top-right close button */}
@@ -94,11 +106,11 @@ export function Modal({
                     <button
                       type="button"
                       className="text-gray-400 hover:text-gray-500 focus:outline-none"
-                      onClick={onClose}
+                      onClick={() => onClose()}
                     >
                       <span className="sr-only">Close</span>
                       <XIcon
-                        className="drop-shadow w-6 h-6"
+                        className="fill-gray-700 w-6 h-6"
                         aria-hidden="true"
                       />
                     </button>

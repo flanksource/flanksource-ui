@@ -50,7 +50,7 @@ export function TristateToggle({
     // map and update position, bgColor, and tooltip text
     let pos;
     let colorIndex;
-    switch (stateValue) {
+    switch (+stateValue) {
       case -1:
         pos = "left";
         colorIndex = 1;

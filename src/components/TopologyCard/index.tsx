@@ -7,12 +7,14 @@ import { Size } from "../../types";
 import { CustomScroll } from "../CustomScroll";
 import { HealthSummary } from "../HealthSummary";
 import { Icon } from "../Icon";
-import { Loading } from "../Loading";
 import { HealthChecksSummary } from "../HealthChecksSummary";
 import { CardMetrics } from "./CardMetrics";
 import { Property } from "./Property";
 import { TopologyDropdownMenu } from "./TopologyDropdownMenu";
 import IncidentCardSummary from "../IncidentCardSummary";
+import TopologyCardSkeletonLoader from "../SkeletonLoader/TopologyCardSkeletonLoader";
+import { TopologyConfigAnalysisLine } from "./TopologyConfigAnalysisLine";
+import AgentName from "../Agents/AgentName";
 
 export enum ComponentStatus {
   unhealthy = "unhealthy",
@@ -38,10 +40,7 @@ interface IProps {
   selectionMode?: boolean;
   selected?: boolean;
   onSelectionChange?: MouseEventHandler<HTMLDivElement>;
-  updateVisibility?: (
-    topologyId: string | undefined,
-    updatedVisibility: boolean
-  ) => void;
+  isTopologyPage?: boolean;
 }
 
 export function TopologyCard({
@@ -51,7 +50,7 @@ export function TopologyCard({
   selectionMode,
   selected,
   onSelectionChange,
-  updateVisibility
+  isTopologyPage = false
 }: IProps) {
   const [topology, setTopology] = useState(topologyData);
   const [searchParams] = useSearchParams();
@@ -59,7 +58,9 @@ export function TopologyCard({
 
   useEffect(() => {
     if (topologyId != null && topologyData == null) {
-      getTopology({ id: topologyId }).then(({ data }) => setTopology(data[0]));
+      getTopology({ id: topologyId }).then(({ components }) =>
+        setTopology(components?.[0])
+      );
     }
   }, [topologyId, topologyData]);
 
@@ -99,14 +100,20 @@ export function TopologyCard({
     path: string;
   }) => {
     if (topologyItem.id === parentId && parentId) {
-      return null;
+      return "";
     }
 
-    if (searchParams.get("refererId")) {
-      searchParams.delete("refererId");
-    }
+    const params = Object.fromEntries(searchParams.entries());
+    delete params.refererId;
+    delete params.status;
+    const queryString = Object.entries(params)
+      .map(([key, value]) => {
+        return `${key}=${value}`;
+      })
+      .join("&");
+
     const parentIdAsPerPath = (topologyItem.path || "").split(".").pop();
-    return `/topology/${topologyItem.id}?${searchParams.toString()}${
+    return `/topology/${topologyItem.id}?${queryString}${
       parentId && parentIdAsPerPath !== parentId && parentId !== topologyItem.id
         ? `&refererId=${parentId}`
         : ""
@@ -114,7 +121,7 @@ export function TopologyCard({
   };
 
   if (topology == null) {
-    return <Loading text={`Loading ${topologyId}`} />;
+    return <TopologyCardSkeletonLoader />;
   }
 
   topology.properties = topology.properties || [];
@@ -132,7 +139,7 @@ export function TopologyCard({
       {...selectionModeRootProps}
     >
       <div className="flex flex-row -mt-1 bg-white border-b flex-nowrap rounded-t-md">
-        <div className="flex pr-1 pt-2.5 pb-3.5 pl-2 overflow-hidden">
+        <div className="flex gap-2 pr-1 pt-2.5 pb-3.5 pl-2 overflow-hidden">
           <div className="text-gray-color m-auto mr-1.5 flex-initial max-w-1/4 leading-1.21rel">
             <h3 className="text-gray-color text-2xsi leading-1.21rel">
               <Icon name={topology.icon} className="h-6" />
@@ -151,12 +158,12 @@ export function TopologyCard({
               {!prepareTopologyLink(topology) &&
                 (topology.text || topology.name)}
             </p>
-            {topology.description != null ||
-              (topology.id != null && (
-                <h3 className="text-gray-color overflow-hidden truncate text-2xsi leading-1.21rel font-medium">
-                  {topology.description || topology.id}
-                </h3>
-              ))}
+            <AgentName agentId={topology.agent_id} />
+            {topology.description && (
+              <h3 className="text-gray-color overflow-hidden truncate text-2xsi leading-1.21rel font-medium">
+                {topology.description}
+              </h3>
+            )}
           </div>
         </div>
 
@@ -179,7 +186,7 @@ export function TopologyCard({
           ) : (
             <TopologyDropdownMenu
               topology={topology}
-              updateVisibility={updateVisibility}
+              isTopologyPage={isTopologyPage}
             />
           )}
         </div>
@@ -212,23 +219,24 @@ export function TopologyCard({
               </CustomScroll>
             )}
             <CustomScroll
-              className="flex-1 py-4 pl-2 pr-2"
+              className="flex-1 py-4 pl-2 pr-2 space-y-1.5"
               showMoreClass="text-xs linear-1.21rel mr-1 cursor-pointer"
               maxHeight="200px"
               minChildCount={5}
             >
+              <TopologyConfigAnalysisLine topology={topology} />
               {canShowChildHealth() && (
                 <HealthSummary
-                  className="mb-2"
+                  className=""
                   key={topology.id}
                   component={topology}
                 />
               )}
-              <HealthChecksSummary checks={topology?.checks} />
+              <HealthChecksSummary checks={topology?.checks} className="" />
               {topology?.id && <IncidentCardSummary topology={topology} />}
               {topology?.components?.map((component: any) => (
                 <HealthSummary
-                  className="mb-2"
+                  className=""
                   key={component.id}
                   component={component}
                 />

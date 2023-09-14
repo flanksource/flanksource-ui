@@ -4,14 +4,14 @@ import clsx from "clsx";
 interface IProps {
   title: string;
   value: React.ReactNode;
-  className: string;
+  className?: string;
 }
 
 export const IncidentDetailsRow = ({ title, value, className }: IProps) => (
-  <div className={clsx("grid grid-cols-1-to-2 gap-6 items-center", className)}>
+  <div className={clsx("flex flex-col space-y-1", className)}>
     <div>
-      <h6 className="text-gray-500">{title}</h6>
+      <h6 className="text-sm text-gray-500">{title}</h6>
     </div>
-    <div className="font-medium text-gray-500">{value}</div>
+    <div className="text-sm text-gray-500">{value}</div>
   </div>
 );

@@ -3,18 +3,18 @@ import { useEffect, useRef, useState } from "react";
 import {
   Control,
   Controller,
-  FieldErrors,
+  FieldErrorsImpl,
   UseFormSetValue
 } from "react-hook-form";
 import { searchConfigs } from "../../../../api/services/configs";
 import { ConfigItem } from "../../../ConfigItem";
 import { TextInput } from "../../../TextInput";
-import { AddResponderFormValues } from "../../AddResponder";
+import { AddResponderFormValues } from "../../AddResponders/AddResponder";
 
 type JiraProps = {
   teamId: string;
   control: Control;
-  errors: FieldErrors;
+  errors: FieldErrorsImpl<AddResponderFormValues>;
   setValue: UseFormSetValue<AddResponderFormValues>;
   defaultValues?: { [key: string]: any } | undefined;
   values?: { [key: string]: any } | undefined;
@@ -38,7 +38,7 @@ export const Jira = ({
   const [allValues, setAllValues] = useState<any>({});
 
   useEffect(() => {
-    searchConfigs("Jira", "")
+    searchConfigs("jira", "")
       .then(({ data }: any) => {
         const item = (data || [])
           .map((item: any) => ({
@@ -80,7 +80,7 @@ export const Jira = ({
     <div className={clsx(className)} {...rest}>
       <div className="mb-4">
         <ConfigItem
-          type="Jira"
+          type="jira"
           control={control}
           name="configType"
           autoFetch={true}
@@ -91,7 +91,7 @@ export const Jira = ({
           }}
           label={
             <label className="block text-sm font-bold text-gray-700 mb-2">
-              Jira Config Type
+              Jira Instance
             </label>
           }
           value={jiraProjectType}
@@ -103,7 +103,7 @@ export const Jira = ({
         >
           <p className="text-red-600 text-sm">{errors?.configType?.message}</p>
           <ConfigItem
-            type="Jira"
+            type="jira"
             control={control}
             name="project"
             value={
@@ -136,7 +136,7 @@ export const Jira = ({
           >
             <p className="text-red-600 text-sm">{errors?.project?.message}</p>
             <ConfigItem
-              type="Jira"
+              type="jira"
               control={control}
               name="issueType"
               value={
@@ -168,7 +168,7 @@ export const Jira = ({
             />
             <p className="text-red-600 text-sm">{errors.issueType?.message}</p>
             <ConfigItem
-              type="Jira"
+              type="jira"
               control={control}
               name="priority"
               value={

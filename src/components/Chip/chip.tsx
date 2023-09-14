@@ -1,5 +1,6 @@
 import React from "react";
 import clsx from "clsx";
+import { Tag } from "../Tag/Tag";
 
 const getBackgroundColorClass = (color?: string) => {
   switch (color) {
@@ -24,16 +25,10 @@ type Props = {
   HTMLDivElement
 >;
 
-export function Chip({ text, color, children, ...props }: Props) {
+export function Chip({ text, color, children, className, ...props }: Props) {
   return (
-    <div
-      className={clsx(
-        "text-center align-baseline min-w-8 min-h-8 text-2xs rounded-4px font-bold break-all",
-        getBackgroundColorClass(color)
-      )}
-      {...props}
-    >
+    <Tag className={clsx(getBackgroundColorClass(color), className)} {...props}>
       {text || children}
-    </div>
+    </Tag>
   );
 }

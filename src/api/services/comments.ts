@@ -2,7 +2,7 @@ import { IncidentCommander } from "../axios";
 import { resolve } from "../resolve";
 import { User } from "./users";
 
-interface NewComment {
+export interface NewComment {
   user: User;
   incidentId: string;
   hypothesisId: string;

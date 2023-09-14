@@ -4,25 +4,86 @@ import ConfigCosts from "../ConfigCosts";
 import ConfigInsights from "../ConfigInsights";
 import Configs from "../Sidebars/configs";
 import Incidents from "../Sidebars/incidents";
+import SlidingSideBar from "../SlidingSideBar";
+import { ConfigDetails } from "./ConfigDetails";
+import ConfigActionBar from "./ConfigActionBar";
+import { useCallback, useState } from "react";
+
+type SidePanels =
+  | "ConfigDetails"
+  | "Configs"
+  | "Incidents"
+  | "Costs"
+  | "ConfigChanges"
+  | "Insights";
 
 export default function ConfigSidebar() {
+  const [openedPanel, setOpenedPanel] = useState<SidePanels | undefined>(
+    "ConfigDetails"
+  );
+
   const { id } = useParams();
+
+  const panelCollapsedStatusChange = useCallback(
+    (status: boolean, panel: SidePanels) => {
+      if (status) {
+        setOpenedPanel(panel);
+      } else {
+        setOpenedPanel(undefined);
+      }
+    },
+    []
+  );
 
   if (!id) {
     return null;
   }
 
   return (
-    <div
-      className={`flex flex-col bg-white border-l transform origin-right duration-500 border-gray-200 w-full py-6 px-4  ${"w-[35rem]"}`}
-    >
-      <div className={`flex flex-col overflow-y-auto space-y-8 sticky top-0`}>
-        <Incidents configId={id} />
-        <ConfigInsights configID={id} />
-        <ConfigCosts configID={id} />
-        <ConfigChanges configID={id} />
-        <Configs configId={id} />
-      </div>
-    </div>
+    <SlidingSideBar hideToggle>
+      <ConfigActionBar configId={id} />
+      <ConfigDetails
+        configId={id}
+        isCollapsed={openedPanel !== "ConfigDetails"}
+        onCollapsedStateChange={(status) =>
+          panelCollapsedStatusChange(status, "ConfigDetails")
+        }
+      />
+      <Incidents
+        configId={id}
+        isCollapsed={openedPanel !== "Incidents"}
+        onCollapsedStateChange={(status) =>
+          panelCollapsedStatusChange(status, "Incidents")
+        }
+      />
+      <ConfigInsights
+        configID={id}
+        isCollapsed={openedPanel !== "Insights"}
+        onCollapsedStateChange={(status) =>
+          panelCollapsedStatusChange(status, "Insights")
+        }
+      />
+      <ConfigCosts
+        configID={id}
+        isCollapsed={openedPanel !== "Costs"}
+        onCollapsedStateChange={(status) =>
+          panelCollapsedStatusChange(status, "Costs")
+        }
+      />
+      <ConfigChanges
+        configID={id}
+        isCollapsed={openedPanel !== "ConfigChanges"}
+        onCollapsedStateChange={(status) =>
+          panelCollapsedStatusChange(status, "ConfigChanges")
+        }
+      />
+      <Configs
+        configId={id}
+        isCollapsed={openedPanel !== "Configs"}
+        onCollapsedStateChange={(status) =>
+          panelCollapsedStatusChange(status, "Configs")
+        }
+      />
+    </SlidingSideBar>
   );
 }
