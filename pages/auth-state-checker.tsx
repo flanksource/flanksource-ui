@@ -15,7 +15,7 @@ export function ClerkAuthStateChecker() {
     if (isLoaded && !isSignedIn) {
       push(`/login?return_to=${returnURL}`);
     } else {
-      push("/error?code=BAD_SESSION");
+      push("/error?error_code=BAD_SESSION");
     }
   }, [isLoaded, isSignedIn, push, returnURL]);
 
