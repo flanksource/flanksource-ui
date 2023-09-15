@@ -6,7 +6,7 @@ import { clerkClient } from "@clerk/nextjs";
 const API_URL = process.env.BACKEND_URL;
 const isCanary = process.env.NEXT_PUBLIC_APP_DEPLOYMENT === "CANARY_CHECKER";
 const env = process.env.ENV;
-const isClerkAuth = process.env.NEXT_PUBLIC_AUTH_IS_CLERK;
+const isClerkAuth = process.env.NEXT_PUBLIC_AUTH_IS_CLERK === "true";
 const clerkDomain = process.env.NEXT_PUBLIC_CLERK_BACKEND_DOMAIN;
 
 const canaryPrefix = isCanary ? "" : "/canary";
