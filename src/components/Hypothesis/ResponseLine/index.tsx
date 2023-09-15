@@ -118,7 +118,7 @@ type ResponseLineMenuActionsProps = {
     markAsDefinitionOfDone: boolean;
   };
   data: {
-    definition_of_done: boolean;
+    definition_of_done: boolean | undefined;
   };
   onClick: (action: ActionType) => void;
 };

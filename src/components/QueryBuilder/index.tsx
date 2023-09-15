@@ -312,14 +312,14 @@ function QueryBuilderActionMenu({
 }: QueryBuilderActionMenuProps) {
   return (
     <Menu as="div" className="relative inline-block text-left items-center">
-      {/* @ts-expect-error */}
       <Menu.Button className="inline-flex justify-center w-full pl-3 bg-warm-gray-50 text-sm font-medium text-gray-700">
         <ClickableSvg>
           <FaCog className="content-center w-6 h-6" />
         </ClickableSvg>
       </Menu.Button>
-      {/* @ts-expect-error */}
+      {/* @ts-ignore */}
       <Transition
+        // @ts-ignore
         as={Fragment}
         enter="transition ease-out duration-100"
         enterFrom="transform opacity-0 scale-95"
@@ -328,7 +328,6 @@ function QueryBuilderActionMenu({
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        {/* @ts-expect-error */}
         <Menu.Items className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
           <TextWithDivider
             className="text-gray-500 text-md font-semibold"
@@ -336,7 +335,6 @@ function QueryBuilderActionMenu({
           />
           {optionCategories.actions.map((option) => {
             return (
-              // @ts-expect-error
               <Menu.Item key={option.id}>
                 {({ active }) => (
                   <div

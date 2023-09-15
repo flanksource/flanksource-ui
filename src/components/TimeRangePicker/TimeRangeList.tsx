@@ -1,10 +1,6 @@
 import clsx from "clsx";
-import { memo, useCallback } from "react";
-import {
-  RangeOption,
-  rangeOptionsCategories,
-  RangeOptionsCategory
-} from "./rangeOptions";
+import { memo } from "react";
+import { RangeOption, rangeOptionsCategories } from "./rangeOptions";
 
 type TimeRangeListProps = {
   closePicker: () => void;

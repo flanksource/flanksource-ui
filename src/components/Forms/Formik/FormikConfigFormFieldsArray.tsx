@@ -70,11 +70,14 @@ export default function FormikConfigFormFieldsArray({
                         />
                       )
                     )}
-                  <Button
-                    onClick={() => arrayHelpers.remove(index)}
-                    icon={<FaTrash />}
-                    className="btn-white w-auto"
-                  />
+                  <div className="flex flex-col justify-end">
+                    <Button
+                      onClick={() => arrayHelpers.remove(index)}
+                      icon={<FaTrash />}
+                      className="btn-white w-auto"
+                      size="xl"
+                    />
+                  </div>
                 </div>
               ))}
             <div className="flex flex-row flex-1">

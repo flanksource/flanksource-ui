@@ -9,7 +9,7 @@ export type SpecType = {
   icon: string | React.FC;
   loadSpec: () => Record<string, any>;
   updateSpec: (spec: Record<string, any>) => void;
-  configForm: React.FC<{ fieldName: string; specsMapField: string }> | null;
+  configForm: React.FC<{ fieldName: string; specsMapField?: string }> | null;
   /**
    *
    * the field name is the name of the field in the spec that this config editor

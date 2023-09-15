@@ -137,7 +137,6 @@ export function DropdownListbox({
   ...rest
 }: DropdownListboxProps) {
   return (
-    // @ts-expect-error
     <Listbox
       value={value}
       onChange={(e) => {
@@ -156,7 +155,6 @@ export function DropdownListbox({
             </Listbox.Label>
           )}
           <div className={`${label && "mt-1"} relative h-full`}>
-            {/* @ts-expect-error */}
             <Listbox.Button
               className={`relative cursor-pointer h-full w-full bg-white border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-1 text-left  focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm
               ${items[value]?.id === "_empty" && "text-gray-400"}
@@ -180,15 +178,15 @@ export function DropdownListbox({
               </span>
             </Listbox.Button>
 
-            {/* @ts-expect-error */}
+            {/* @ts-ignore */}
             <Transition
               show={open}
+              // @ts-ignore
               as={Fragment}
               leave="transition ease-in duration-100"
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
             >
-              {/* @ts-expect-error */}
               <Listbox.Options className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
                 {Object.values(items)
                   .sort((a, b) => {
@@ -207,7 +205,6 @@ export function DropdownListbox({
                     return 0;
                   })
                   .map((item) => (
-                    // @ts-expect-error
                     <Listbox.Option
                       key={item.id || item.value}
                       className={({ active }) =>

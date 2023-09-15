@@ -61,7 +61,7 @@ export default function CollapsiblePanel({
           </ClickableSvg>
         </div>
       </div>
-      {/* @ts-expect-error */}
+      {/* @ts-ignore */}
       <Transition
         className={`flex-1 max-h-full flex flex-col ${childrenClassName}`}
         show={isOpen}

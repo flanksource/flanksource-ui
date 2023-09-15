@@ -100,8 +100,10 @@ export const DropdownListbox = ({
             {items[value].iconTitle}
           </Listbox.Button>
 
+          {/* @ts-ignore */}
           <Transition
             show={open}
+            // @ts-expect-error
             as={Fragment}
             leave="transition ease-in duration-100"
             leaveFrom="opacity-100"

@@ -110,7 +110,7 @@ export const schemaResourceTypes: SchemaResourceType[] = [
       {
         name: "name",
         default: undefined,
-        hidden: false
+        hidden: true
       },
       {
         name: "spec",
