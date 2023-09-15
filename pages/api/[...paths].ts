@@ -6,8 +6,7 @@ import { clerkClient } from "@clerk/nextjs";
 const API_URL = process.env.BACKEND_URL;
 const isCanary = process.env.NEXT_PUBLIC_APP_DEPLOYMENT === "CANARY_CHECKER";
 const env = process.env.ENV;
-const isClerkAuth = process.env.NEXT_PUBLIC_AUTH_IS_CLERK;
-const clerkDomain = process.env.NEXT_PUBLIC_CLERK_BACKEND_DOMAIN;
+const isClerkAuth = process.env.NEXT_PUBLIC_AUTH_IS_CLERK === "true";
 
 const canaryPrefix = isCanary ? "" : "/canary";
 
@@ -23,11 +22,10 @@ async function getTargetURL(req: NextApiRequest) {
     const org = await clerkClient.organizations.getOrganization({
       organizationId: user.sessionClaims?.org_id!
     });
-    const organizationSlug = user.sessionClaims?.org_slug;
     const backendURL = org?.publicMetadata?.backend_url;
     // for now, lets fallback to the old way of doing things, if the backend_url
     // is not set in the org metadata
-    const target = backendURL ?? `https://${organizationSlug}.${clerkDomain}/`;
+    const target = backendURL;
     return target;
   }
   return API_URL;
