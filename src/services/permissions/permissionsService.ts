@@ -20,7 +20,7 @@ class PermissionService {
     const parentResource =
       featureToParentMap[featureName as keyof typeof featureToParentMap];
     let isDisabled = Boolean(
-      properties.find((item) => item.name === name && item.value === "true")
+      properties?.find((item) => item.name === name && item.value === "true")
     );
     if (isDisabled || !parentResource) {
       return isDisabled;
