@@ -17,6 +17,8 @@ export default function ClerkAuthContextProvider({
   // when organization is switched, we need to re-fetch the user and the UI
   const { organization } = useOrganization();
 
+  const backendURL = organization?.publicMetadata.backend_url;
+
   const {
     data: payload,
     isLoading,
@@ -25,23 +27,31 @@ export default function ClerkAuthContextProvider({
     ["user", "whoami", organization],
     () => whoami(),
     {
+      enabled: !!backendURL,
       refetchOnWindowFocus: false,
       refetchInterval: 0,
       refetchOnReconnect: false
     }
   );
 
-  if (isLoading && !payload) {
-    return <FullPageSkeletonLoader />;
+  // if the organization backend is not yet created, we need to wait for it to
+  // be created before showing the UI
+  if (!backendURL) {
+    return <InstanceCreationInProgress />;
   }
 
-  // if the organization backend is not yet created, we need to wait for it to
+  // if the organization backend returns a 404 or a 5xx error, we need to wait
+  // for it to be created before showing the UI
   if (
     error &&
     (error.response?.status?.toString().startsWith("5") ||
       error?.response?.status === 404)
   ) {
     return <InstanceCreationInProgress />;
+  }
+
+  if (isLoading && !payload) {
+    return <FullPageSkeletonLoader />;
   }
 
   if (error && !payload) {
