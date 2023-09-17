@@ -101,7 +101,7 @@ export function ConfigDetailsPage() {
     () =>
       configDetails?.config.format != null
         ? configDetails?.config.format
-        : "yaml",
+        : "json",
     [configDetails]
   );
 

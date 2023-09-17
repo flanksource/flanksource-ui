@@ -75,14 +75,19 @@ export function JSONViewer({
 }: JSONViewerProps) {
   // convert JSON object to YAML string
   const codeForHighlight = useMemo(() => {
-    if (format !== "json") {
+    if (format !== "json" && format !== "yaml") {
       return code;
     }
     if (!code) {
       return "";
     }
     if (convertToYaml) {
-      return stringify(parse(code));
+      try {
+        return stringify(parse(code));
+      } catch (e) {
+        console.error(e);
+        return code;
+      }
     }
     return code;
   }, [code, convertToYaml, format]);
