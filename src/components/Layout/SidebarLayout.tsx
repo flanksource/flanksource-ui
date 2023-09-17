@@ -16,6 +16,7 @@ import { getLocalItem, setLocalItem } from "../../utils/storage";
 import { withAccessCheck } from "../AccessCheck/AccessCheck";
 import { Icon } from "../Icon";
 import FullPageSkeletonLoader from "../SkeletonLoader/FullPageSkeletonLoader";
+import { features } from "../../services/permissions/features";
 
 interface Props {
   navigation: NavigationItems;
@@ -135,20 +136,19 @@ function SideNavGroup({
   if (collapseSidebar) {
     return (
       <Menu as="div" className="relative">
-        {/* @ts-expect-error */}
         <Menu.Button className="w-full">
           <NavItemWrapper className="justify-center">
             <NavLabel icon={icon} active={current} iconOnly name={name} />
           </NavItemWrapper>
         </Menu.Button>
-        {/* @ts-expect-error */}
+
         <Menu.Items className="absolute border left-0 ml-12 w-48 shadow-md top-0 z-10 bg-gray-800 space-y-1">
           {submenu.map(({ name, icon, href, featureName, resourceName }) => {
-            return !isFeatureDisabled(featureName!)
+            return !isFeatureDisabled(
+              featureName as unknown as keyof typeof features
+            )
               ? withAccessCheck(
-                  /* @ts-expect-error */
                   <Menu.Item key={name}>
-                    {/* @ts-expect-error */}
                     {({ active }) => (
                       <NavLink className="w-full" to={href}>
                         <NavItemWrapper active={active}>
@@ -194,7 +194,9 @@ function SideNavGroup({
           </Disclosure.Button>
           <Disclosure.Panel className="pl-4 space-y-1">
             {submenu.map((item) =>
-              !isFeatureDisabled(item.featureName!)
+              !isFeatureDisabled(
+                item.featureName as unknown as keyof typeof features
+              )
                 ? withAccessCheck(
                     <SideNavItem
                       key={item.name}
@@ -225,7 +227,9 @@ function SideNav({
     <nav className="flex flex-col divide-y divide-gray-500">
       <div className="flex flex-col gap-1 mb-1">
         {navs.map((item) =>
-          !isFeatureDisabled(item.featureName!)
+          !isFeatureDisabled(
+            item.featureName as unknown as keyof typeof features
+          )
             ? withAccessCheck(
                 <SideNavItem
                   key={item.name}

@@ -22,7 +22,6 @@ export function Toggle({
 }: Props) {
   return (
     <Switch.Group as="div" className={className}>
-      {/* @ts-expect-error */}
       <Switch
         checked={value}
         onChange={onChange}

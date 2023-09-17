@@ -6,7 +6,7 @@ import { ReactSelectDropdown } from "../ReactSelectDropdown";
 import ConfigsTypeIcon from "../Configs/ConfigsTypeIcon";
 
 type Props = {
-  paramsToReset?: string[];
+  paramsToReset?: Record<string, string | undefined>;
 };
 
 export function ConfigTypesDropdown({ paramsToReset }: Props) {

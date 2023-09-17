@@ -146,12 +146,11 @@ export default function RefreshDropdown({
       </button>
       <div className="relative">
         <Menu>
-          {/* @ts-expect-error */}
           <Menu.Button className="border border-gray-300 p-2 text-sm rounded-md rounded-l-none">
             <span className="inline p-1 pr-2">{refreshRate.rate}</span>
             <HiOutlineChevronDown className="inline" />
           </Menu.Button>
-          {/* @ts-expect-error */}
+          {/* @ts-ignore */}
           <Transition
             enter="transition ease-out duration-100"
             enterFrom="transform opacity-0 scale-95"
@@ -163,7 +162,6 @@ export default function RefreshDropdown({
             <Menu.Items className="absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
               {RefreshOptionsList.map(([optionsKeys, optionsValue]) => (
                 <Fragment key={optionsValue}>
-                  {/* @ts-ignore */}
                   <Menu.Item
                     disabled={refreshDropdownDisabledOptions.has(
                       optionsKeys as any

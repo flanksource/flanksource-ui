@@ -118,7 +118,7 @@ type ResponseLineMenuActionsProps = {
     markAsDefinitionOfDone: boolean;
   };
   data: {
-    definition_of_done: boolean;
+    definition_of_done?: boolean;
   };
   onClick: (action: ActionType) => void;
 };
@@ -133,7 +133,7 @@ function ResponseLineMenuActions({
       {actions.delete && actions.markAsDefinitionOfDone && (
         <Menu.VerticalIconButton />
       )}
-      <Menu.Items widthClass="w-72">
+      <Menu.Items className="w-72">
         {actions.delete && (
           <Menu.Item
             onClick={() => {

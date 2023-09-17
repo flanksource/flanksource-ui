@@ -1,6 +1,7 @@
 import { Dialog } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
 import clsx from "clsx";
+import { ComponentProps } from "react";
 
 type ConfirmationPromptDialogProps = {
   isOpen: boolean;
@@ -10,7 +11,7 @@ type ConfirmationPromptDialogProps = {
   onConfirm: () => void;
   yesLabel?: string;
   closeLabel?: string;
-} & React.HTMLProps<HTMLDivElement>;
+} & ComponentProps<typeof Dialog>;
 
 export function ConfirmationPromptDialog({
   title,
@@ -24,11 +25,9 @@ export function ConfirmationPromptDialog({
   ...rest
 }: ConfirmationPromptDialogProps) {
   return (
-    // @ts-expect-error
     <Dialog
       open={isOpen}
-      // @ts-expect-error
-      as="div"
+      as={"div" as any}
       className={clsx("relative z-10", className)}
       onClose={onClose}
       {...rest}

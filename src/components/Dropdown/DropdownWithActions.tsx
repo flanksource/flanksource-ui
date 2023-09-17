@@ -148,7 +148,7 @@ export function DropdownWithActions<T extends IItem>({
       className="relative mt-1"
       cacheOptions
       defaultOptions={defaultOptions}
-      loadOptions={getOptions}
+      loadOptions={getOptions as any}
       value={value}
       isLoading={isLoading}
       getOptionValue={(option: any) => option.value}

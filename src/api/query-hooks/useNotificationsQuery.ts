@@ -56,7 +56,8 @@ export const useUpdateNotification = (onSuccess = () => {}) => {
       await updateResource(
         {
           api: "config-db",
-          table: "notifications"
+          table: "notifications",
+          name: "Notifications"
         },
         payload
       );
@@ -81,7 +82,8 @@ export const useCreateNotification = (onSuccess = () => {}) => {
       await createResource(
         {
           api: "config-db",
-          table: "notifications"
+          table: "notifications",
+          name: "Notifications"
         },
         {
           ...data,

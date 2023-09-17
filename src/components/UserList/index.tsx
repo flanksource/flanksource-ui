@@ -84,7 +84,7 @@ function ActionMenu({ deleteUser }: { deleteUser: () => void }) {
     <div className="relative">
       <Menu>
         <Menu.VerticalIconButton />
-        <Menu.Items widthClass="w-48 right-16">
+        <Menu.Items className="w-48 right-16">
           <Menu.Item
             onClick={() => {
               deleteUser();
