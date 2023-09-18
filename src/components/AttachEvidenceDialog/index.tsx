@@ -415,12 +415,11 @@ export function AttachEvidenceDialog({
                       Severity
                     </span>
                     <ReactSelectDropdown
-                      control={control}
-                      label=""
                       name="severity"
+                      label=""
                       className="w-full"
+                      control={control}
                       items={severityItems}
-                      labelClass=""
                       value={watchSeverity}
                     />
                     <p className="text-red-600 text-sm">
