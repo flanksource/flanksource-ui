@@ -1,13 +1,17 @@
 import clsx from "clsx";
-import { FiExternalLink } from "react-icons/fi";
 import { NodePodPropToLabelMap } from "../../constants";
-import { formatBytes } from "../../utils/common";
+import { TopologyProperty } from "../../context/TopologyPageContext";
 import { relativeDateTime } from "../../utils/date";
 import { isEmpty } from "../Canary/utils";
 import { Icon } from "../Icon";
+import {
+  FormatPropertyCurrency,
+  FormatPropertyDefault,
+  FormatPropertyURL
+} from "./Utils/FormatProperties";
 
 type FormatPropertyProps = {
-  property: Record<string, any>;
+  property: TopologyProperty;
   short?: boolean;
 };
 
@@ -20,100 +24,23 @@ export function FormatProperty({
   }
   let { text } = property;
 
-  if (property.name === "created") {
+  if (property.name === "created" && typeof text === "string") {
     return <span className="text-sm">{relativeDateTime(text)}</span>;
   }
 
   if (property.type === "url") {
-    return (
-      <a
-        href={property.text}
-        target="_blank"
-        rel="noreferrer"
-        className="underline text-sm"
-      >
-        <span>{property.text?.replace("https://", "")}</span>
-        <FiExternalLink className="inline-block ml-1" />
-      </a>
-    );
+    return <FormatPropertyURL property={property} />;
   }
 
   if (property.type === "currency") {
-    var amount = property.value;
-    if (amount > 1000) {
-      amount = (amount / 1000).toFixed(1) + "k";
-    } else if (amount > 100) {
-      amount = amount.toFixed(0);
-    } else if (amount > 10) {
-      amount = amount.toFixed(1);
-    } else if (amount > 0.01) {
-      amount = amount.toFixed(2);
-    } else if (amount > 0.001) {
-      amount = amount.toFixed(3);
-    }
-
-    // if (property.unit.toUpperCase() === "USD") {
-    //   return (
-    //     <span className="flex flex-center">
-    //       <span className="align-middle">
-    //         <BsCurrencyDollar color="gray" size={16} />
-    //       </span>
-    //       <span className="align-bottom">{amount}</span>
-    //     </span>
-    //   );
-    // }
-    return (
-      <span>
-        {/* {property.unit} */}
-        {amount}
-      </span>
-    );
+    return <FormatPropertyCurrency property={property} />;
   }
 
-  if (property.value != null) {
-    if (property.max != null) {
-      const percent = ((property.value / property.max) * 100).toFixed(0);
-      text = `${percent}%`;
-      if (parseFloat(percent) > 70) {
-        text = <span className="text-sm text-red-500">{text}</span>;
-      }
-    } else if (property.unit && property.unit.startsWith("milli")) {
-      text = (property.value / 1000).toFixed(2);
-    } else if (property.unit === "bytes") {
-      text = formatBytes(property.value, 0);
-    }
-    let suffix = "";
-    if (!short && property.max != null) {
-      if (property.unit.startsWith("milli")) {
-        suffix = ` of ${(property.max / 1000).toFixed(2)}`;
-      } else if (property.unit === "bytes") {
-        suffix = ` of ${formatBytes(property.max, 0)}`;
-      }
-    }
-    if (suffix && text) {
-      text =
-        typeof text === "object" ? (
-          <>
-            {text}
-            {suffix}
-          </>
-        ) : (
-          text + suffix
-        );
-    }
-  }
-  if (isEmpty(text)) {
-    return null;
-  }
-  return (
-    <span data-tip={text} className="overflow-ellipsis text-sm">
-      {text}
-    </span>
-  );
+  return <FormatPropertyDefault property={property} short={short} />;
 }
 
 type PropertyProps = {
-  property: Record<string, any>;
+  property: TopologyProperty;
 } & React.HTMLAttributes<HTMLDivElement>;
 
 export const Property = ({
