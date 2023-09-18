@@ -10,6 +10,7 @@ import ConfigLink from "../ConfigLink/ConfigLink";
 import { DescriptionCard } from "../DescriptionCard";
 import { Modal } from "../Modal";
 import TextSkeletonLoader from "../SkeletonLoader/TextSkeletonLoader";
+import ModalTitleListItems from "../Modal/ModalTitleListItems";
 
 type Props = {
   id?: string;
@@ -35,10 +36,10 @@ export default function ConfigInsightsDetailsModal({
       {
         label: "Type",
         value: (
-          <>
+          <div className="flex flex-row gap-2">
             <ConfigInsightsIcon analysis={configInsight!} />
             {configInsight?.analysis_type}
-          </>
+          </div>
         )
       },
       {
@@ -75,18 +76,21 @@ export default function ConfigInsightsDetailsModal({
   return (
     <Modal
       title={
-        <div className="flex flex-row items-center">
-          <ConfigLink
-            className="text-blue-600 text-xl font-semibold whitespace-nowrap mr-1"
-            configId={configInsight.config!.id}
-            configName={configInsight.config!.name}
-            configType={configInsight.config!.type}
-            configTypeSecondary={configInsight.config!.config_class}
-          />
-          {" / "}
-          <ConfigInsightsIcon analysis={configInsight} />
-          {configInsight.analyzer}
-        </div>
+        <ModalTitleListItems
+          items={[
+            <div className="flex flex-row flex-grow-0 gap-1 whitespace-nowrap items-center">
+              <ConfigInsightsIcon analysis={configInsight} />
+              <span>{configInsight.analyzer}</span>
+            </div>,
+            <ConfigLink
+              className="text-blue-600 text-xl font-semibold whitespace-nowrap overflow-hidden overflow-ellipsis"
+              configId={configInsight.config!.id}
+              configName={configInsight.config!.name}
+              configType={configInsight.config!.type}
+              configTypeSecondary={configInsight.config!.config_class}
+            />
+          ]}
+        />
       }
       open={isOpen}
       onClose={() => {

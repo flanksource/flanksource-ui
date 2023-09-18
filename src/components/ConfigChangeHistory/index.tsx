@@ -1,14 +1,12 @@
 import { ColumnDef } from "@tanstack/table-core";
 import { useState } from "react";
-import { useGetConfigByIdQuery } from "../../api/query-hooks";
 import { ConfigTypeChanges } from "../ConfigChanges";
 import ConfigLink from "../ConfigLink/ConfigLink";
-
+import { useGetConfigChangesByConfigChangeIdQuery } from "../../api/query-hooks/useGetConfigChangesByConfigChangeIdQuery";
+import { ConfigDetailChangeModal } from "../ConfigDetailsChanges/ConfigDetailsChanges";
 import { DateCell } from "../ConfigViewer/columns";
 import { PaginationOptions } from "../DataTable";
 import { DataTable, Icon } from "../index";
-import { ConfigDetailChangeModal } from "../ConfigDetailsChanges/ConfigDetailsChanges";
-import { useGetConfigChangesByConfigChangeIdQuery } from "../../api/query-hooks/useGetConfigChangesByConfigChangeIdQuery";
 
 const columns: ColumnDef<ConfigTypeChanges>[] = [
   {
