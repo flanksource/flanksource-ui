@@ -11,6 +11,7 @@ import {
   ResponderOption,
   ResponderPropsKeyToLabelMap
 } from "../AddResponders/AddResponder";
+import { ComponentProps } from "react";
 
 type ResponderDetailsDialogProps = {
   open: boolean;
@@ -18,7 +19,7 @@ type ResponderDetailsDialogProps = {
   onClose: () => void;
   responder: any;
   data: AddResponderFormValues;
-} & Omit<React.HTMLProps<HTMLDivElement>, "size">;
+} & ComponentProps<typeof Dialog>;
 
 export function ResponderDetailsDialog({
   size,
@@ -110,10 +111,8 @@ export function ResponderDetailsDialog({
   };
 
   return (
-    // @ts-expect-error
     <Dialog
       open={open}
-      /* @ts-expect-error */
       as="div"
       className={clsx("relative z-10", className)}
       onClose={onClose}

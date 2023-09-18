@@ -4,20 +4,19 @@ import { FaUsers } from "react-icons/fa";
 import { HiOutlineMail } from "react-icons/hi";
 import {
   addUserToTeam,
-  removeUserFromTeam,
-  getTeamMembers
+  getTeamMembers,
+  removeUserFromTeam
 } from "../../api/services/teams";
-import { getPersons, User } from "../../api/services/users";
-import { Menu } from "../Menu";
+import { User, getPersons } from "../../api/services/users";
+import { useLoader } from "../../hooks";
 import { Avatar } from "../Avatar";
+import EmptyState from "../EmptyState";
 import { IconButton } from "../IconButton";
+import { Menu } from "../Menu";
 import { Modal } from "../Modal";
 import MultiSelectList from "../MultiSelectList/MultiSelectList";
-import { toastError, toastSuccess } from "../Toast/toast";
-import { useLoader } from "../../hooks";
-import EmptyState from "../EmptyState";
 import TableSkeletonLoader from "../SkeletonLoader/TableSkeletonLoader";
-import clsx from "clsx";
+import { toastError, toastSuccess } from "../Toast/toast";
 
 type TeamMembersProps = {
   teamId: string;
@@ -160,7 +159,7 @@ export function TeamMembers({ teamId }: TeamMembersProps) {
                   <div className="flex-shrink-0">
                     <Menu>
                       <Menu.VerticalIconButton />
-                      <Menu.Items widthClass="w-72">
+                      <Menu.Items className="w-72">
                         <Menu.Item
                           onClick={(e: any) => {
                             removeTeamMember(teamMember);

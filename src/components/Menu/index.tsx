@@ -1,13 +1,12 @@
 import { Menu as HLMenu, Transition } from "@headlessui/react";
 import { DotsVerticalIcon } from "@heroicons/react/outline";
 import clsx from "clsx";
-import React, { Fragment } from "react";
+import React from "react";
 import { $ElementProps } from "../../types/utility";
 
 type ItemProps = Partial<$ElementProps<typeof HLMenu.Item>>;
 
 const Item = ({ children, ...props }: ItemProps) => (
-  // @ts-expect-error
   <HLMenu.Item
     as="div"
     className="flex items-center w-full text-gray-700 hover:bg-gray-200 p-3"
@@ -19,6 +18,7 @@ const Item = ({ children, ...props }: ItemProps) => (
 
 type ItemsProps = Partial<$ElementProps<typeof HLMenu.Items>> & {
   style?: React.CSSProperties;
+  widthClass?: string;
 };
 const Items = ({
   children,
@@ -26,9 +26,8 @@ const Items = ({
   widthClass = "w-56",
   style: styles
 }: ItemsProps) => (
-  /* @ts-expect-error */
+  /* @ts-ignore */
   <Transition
-    as={Fragment}
     enter="transition ease-out duration-100"
     enterFrom="transform opacity-0 scale-95"
     enterTo="transform opacity-100 scale-100"
@@ -36,7 +35,6 @@ const Items = ({
     leaveFrom="transform opacity-100 scale-100"
     leaveTo="transform opacity-0 scale-95"
   >
-    {/* @ts-expect-error */}
     <HLMenu.Items
       as="div"
       className={clsx(
@@ -53,7 +51,6 @@ const Items = ({
 
 type VerticalIconButtonProps = Partial<$ElementProps<typeof HLMenu.Button>>;
 const VerticalIconButton = (_props: VerticalIconButtonProps) => (
-  /* @ts-expect-error */
   <HLMenu.Button className="p-0.5 min-w-7 rounded-full text-gray-400 hover:text-gray-500">
     <DotsVerticalIcon className="h-6 w-6" />
   </HLMenu.Button>

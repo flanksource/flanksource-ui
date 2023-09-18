@@ -45,9 +45,8 @@ export function Modal({
   ...rest
 }: IModalProps) {
   return (
-    /* @ts-expect-error */
+    /* @ts-ignore */
     <Transition.Root show={open} as={Fragment}>
-      {/* @ts-expect-error */}
       <Dialog
         as="div"
         auto-reopen="true"
@@ -60,10 +59,8 @@ export function Modal({
             "py-8": size === "full"
           })}
         >
-          {/* @ts-expect-error */}
+          {/* @ts-ignore */}
           <Transition.Child
-            // @ts-expect-error
-            as={Fragment}
             enter="ease-out duration-300"
             enterFrom="opacity-0"
             enterTo="opacity-100"
@@ -75,8 +72,6 @@ export function Modal({
           </Transition.Child>
 
           <Transition.Child
-            // @ts-expect-error
-            as={Fragment}
             enter="ease-out duration-300"
             enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             enterTo="opacity-100 translate-y-0 sm:scale-100"

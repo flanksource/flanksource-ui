@@ -132,7 +132,7 @@ export function ConfigDetailsChanges({
             <ConfigChangeDetailSection label="Details">
               <JSONViewer
                 code={JSON.stringify(changeDetails?.details, null, 2)}
-                format="yaml"
+                format="json"
                 convertToYaml
               />
             </ConfigChangeDetailSection>
@@ -141,7 +141,7 @@ export function ConfigDetailsChanges({
             <ConfigChangeDetailSection label="Change">
               <JSONViewer
                 code={JSON.stringify(changeDetails?.patches, null, 2)}
-                format="yaml"
+                format="json"
                 convertToYaml
               />
             </ConfigChangeDetailSection>

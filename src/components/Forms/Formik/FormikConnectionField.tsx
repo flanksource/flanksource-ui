@@ -21,7 +21,8 @@ export default function FormikConnectionField({
     queryFn: async () => {
       const res = await getAll({
         table: "connections",
-        api: "canary-checker"
+        api: "canary-checker",
+        name: "Connections"
       });
       return res.data ?? [];
     },

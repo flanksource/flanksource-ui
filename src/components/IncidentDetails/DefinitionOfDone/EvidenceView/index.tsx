@@ -1,5 +1,5 @@
+import { useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
-import { filter } from "lodash";
 import { useMemo } from "react";
 import { BsFillCircleFill, BsPersonFill } from "react-icons/bs";
 import { Link } from "react-router-dom";
@@ -11,13 +11,14 @@ import { Evidence, EvidenceType } from "../../../../api/services/evidence";
 import { getCanaries } from "../../../../api/services/topology";
 import { Size, ViewType } from "../../../../types";
 import { Badge } from "../../../Badge";
-import { ConfigChangeEvidence } from "../../../Hypothesis/EvidenceSection";
-import { ConfigAnalysisEvidence } from "../../../Hypothesis/EvidenceSection";
+import {
+  ConfigAnalysisEvidence,
+  ConfigChangeEvidence
+} from "../../../Hypothesis/EvidenceSection";
 import { Icon } from "../../../Icon";
 import TextSkeletonLoader from "../../../SkeletonLoader/TextSkeletonLoader";
 import { StatusStyles } from "../../../TopologyCard";
 import { CardMetrics } from "../../../TopologyCard/CardMetrics";
-import { useQuery } from "@tanstack/react-query";
 
 type EvidenceViewProps = Omit<React.HTMLProps<HTMLDivElement>, "size"> & {
   evidence: Evidence;
@@ -43,10 +44,7 @@ function TopologyEvidence({
     return <TextSkeletonLoader className="w-full" />;
   }
 
-  const heading = filter(
-    topology?.properties || [],
-    (i: Record<string & "headline", string>) => i.headline
-  );
+  const heading = (topology?.properties || []).filter((i) => i.headline);
 
   return (
     <div
@@ -74,15 +72,15 @@ function TopologyEvidence({
                 {topology.text || topology.name}
               </Link>
             </p>
-            {topology.description != null ||
+            {(topology as any).description != null ||
               (topology.id != null && (
                 <h3 className="text-gray-500 overflow-hidden truncate leading-1.21rel font-medium">
-                  {topology.description || topology.id}
+                  {(topology as any).description || topology.id}
                 </h3>
               ))}
           </div>
         </div>
-        {Boolean(heading?.length) && false && (
+        {heading?.length > 0 && false && (
           <div className="flex pl-1 pr-1.5 pb-3.5 pt-3">
             <CardMetrics items={heading} row={false} />
           </div>

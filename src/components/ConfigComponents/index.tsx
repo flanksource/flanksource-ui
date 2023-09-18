@@ -35,11 +35,7 @@ function ConfigComponentsDetails({ configID }: Props) {
                   pathname: `/topology/${analysis.id}`
                 }}
               >
-                <Icon
-                  name={analysis.icon}
-                  size="2xl"
-                  secondary={analysis.name}
-                />
+                <Icon name={analysis.icon} secondary={analysis.name} />
                 <span className="capitalize">{analysis.name}</span>
               </Link>
             </li>
