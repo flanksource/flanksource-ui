@@ -1,6 +1,6 @@
 import { FiExternalLink } from "react-icons/fi";
 import { TopologyProperty } from "../../../context/TopologyPageContext";
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { formatBytes } from "../../../utils/common";
 import { isEmpty } from "lodash";
 
@@ -65,10 +65,21 @@ export function FormatPropertyCurrency({ property }: FormatPropertyProps) {
   return <span>{amount}</span>;
 }
 
+function convertUnitsToDisplayValue(value: number, unit?: string) {
+  if (unit?.startsWith("milli")) {
+    return `${(value / 1000).toFixed(2)}`;
+  } else if (unit === "bytes") {
+    return `${formatBytes(value, 1)}`;
+  }
+  return value;
+}
+
 export function FormatPropertyDefault({
   property,
   short
 }: FormatPropertyProps) {
+  const [tooltip, setTooltip] = useState<string>();
+
   const value = useMemo(() => {
     if (property == null) {
       return null;
@@ -84,34 +95,43 @@ export function FormatPropertyDefault({
           derivedValue = (
             <span className="text-sm text-red-500">{derivedValue}</span>
           );
+          setTooltip(
+            `${convertUnitsToDisplayValue(
+              Number(property.value),
+              property.unit
+            )}`
+          );
         }
       } else if (property.unit && property.unit.startsWith("milli")) {
         derivedValue = (Number(property.value) / 1000).toFixed(2);
       } else if (property.unit === "bytes") {
-        derivedValue = formatBytes(property.max!, 1);
+        // questions here
+        derivedValue = formatBytes(Number(property.value), 1);
       }
       let suffix = "";
       if (!short && property.max != null) {
         if (property.unit?.startsWith("milli")) {
           suffix = ` of ${(property.max / 1000).toFixed(2)}`;
         } else if (property.unit === "bytes") {
-          suffix = ` of ${formatBytes(property.max, 1)}`;
+          suffix = ` of ${formatBytes(Number(property.max), 1)}`;
         }
       }
       if (suffix && derivedValue) {
         derivedValue =
           typeof derivedValue === "object" ? (
             <>
-              {derivedValue}
-              {suffix}
+              {derivedValue} {suffix}
             </>
           ) : (
             derivedValue + suffix
           );
       }
     }
+    if (derivedValue === property.text && !tooltip) {
+      setTooltip(property.text);
+    }
     return derivedValue;
-  }, [property, short]);
+  }, [property, short, tooltip]);
 
   if (property == null) {
     return null;
@@ -122,7 +142,7 @@ export function FormatPropertyDefault({
   }
 
   return (
-    <span data-tip={value} className="overflow-ellipsis text-sm">
+    <span data-tip={tooltip} className="overflow-ellipsis text-sm">
       {value}
     </span>
   );
