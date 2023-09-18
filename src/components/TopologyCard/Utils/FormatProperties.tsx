@@ -88,14 +88,14 @@ export function FormatPropertyDefault({
       } else if (property.unit && property.unit.startsWith("milli")) {
         derivedValue = (Number(property.value) / 1000).toFixed(2);
       } else if (property.unit === "bytes") {
-        derivedValue = formatBytes(property.max!, 0);
+        derivedValue = formatBytes(property.max!, 1);
       }
       let suffix = "";
       if (!short && property.max != null) {
         if (property.unit?.startsWith("milli")) {
           suffix = ` of ${(property.max / 1000).toFixed(2)}`;
         } else if (property.unit === "bytes") {
-          suffix = ` of ${formatBytes(Number(property.value), 0)}`;
+          suffix = ` of ${formatBytes(property.max, 1)}`;
         }
       }
       if (suffix && derivedValue) {
