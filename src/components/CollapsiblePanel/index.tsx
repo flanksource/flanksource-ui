@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { IoChevronUpOutline } from "react-icons/io5";
 import { ClickableSvg } from "../ClickableSvg/ClickableSvg";
 import { Transition } from "@headlessui/react";
@@ -61,8 +61,10 @@ export default function CollapsiblePanel({
           </ClickableSvg>
         </div>
       </div>
-      {/* @ts-expect-error */}
+
+      {/* @ts-ignore */}
       <Transition
+        as={Fragment as any}
         className={`flex-1 max-h-full flex flex-col ${childrenClassName}`}
         show={isOpen}
         enter="transition-opacity duration-75"

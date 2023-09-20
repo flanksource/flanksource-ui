@@ -4,6 +4,7 @@ import { useUser } from "../../../context";
 import { ClickableSvg } from "../../ClickableSvg/ClickableSvg";
 import { VersionInfo } from "../../VersionInfo/VersionInfo";
 import KratosLogoutButton from "./KratosLogoutButton";
+import { Fragment } from "react";
 
 export function KratosUserProfileDropdown() {
   const { user } = useUser();
@@ -29,6 +30,7 @@ export function KratosUserProfileDropdown() {
       </div>
       {/* @ts-ignore */}
       <Transition
+        as={Fragment as any}
         enter="transition ease-out duration-100"
         enterFrom="transform opacity-0 scale-95"
         enterTo="transform opacity-100 scale-100"

@@ -1,4 +1,5 @@
 import { Menu, Transition } from "@headlessui/react";
+import { Fragment } from "react";
 
 type DropdownMenuProps = {
   buttonElement: JSX.Element;
@@ -24,6 +25,7 @@ export function DropdownMenu({
       <Menu.Button className={`${buttonClass}`}>{buttonElement}</Menu.Button>
       {/* @ts-ignore */}
       <Transition
+        as={Fragment as any}
         enter="transition ease-out duration-100"
         enterFrom="transform opacity-0 scale-95"
         enterTo="transform opacity-100 scale-100"
