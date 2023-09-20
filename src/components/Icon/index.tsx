@@ -65,16 +65,16 @@ function findByName(name?: string) {
     return undefined;
   }
   if (getIconsForAWSEvents(name)) {
-    return getIconsForAWSEvents(name);
+    name = getIconsForAWSEvents(name);
   }
   if (aliases[name as keyof typeof aliases]) {
     name = aliases[name as keyof typeof aliases];
   }
-  name = name.replaceAll("::", "-").replaceAll("--", "-").toLowerCase();
+  name = name?.replaceAll("::", "-").replaceAll("--", "-").toLowerCase();
   if (aliases[name as keyof typeof aliases]) {
     name = aliases[name as keyof typeof aliases];
   }
-  var icon = Icons[name.toLowerCase() as keyof typeof Icons];
+  var icon = Icons[name?.toLowerCase() as keyof typeof Icons];
   if (icon == null) {
     icon = Icons[("aws-" + name) as keyof typeof Icons];
   }
@@ -86,7 +86,7 @@ function findByName(name?: string) {
   }
 
   for (let prefix in prefixes) {
-    if (name.toLowerCase().startsWith(prefix)) {
+    if (name?.toLowerCase().startsWith(prefix)) {
       icon =
         Icons[prefixes[prefix as keyof typeof prefixes] as keyof typeof Icons];
     }
@@ -131,7 +131,7 @@ export const Icon: React.FC<IconProps> = memo(
       icon = name;
     } else if (!isEmpty(name) || !isEmpty(secondary)) {
       icon = findByName(name);
-      if (icon == null) {
+      if (!icon) {
         icon = findByName(secondary);
       }
       if (icon == null && reactIcons[secondary as keyof typeof reactIcons]) {
