@@ -1,7 +1,7 @@
 import { Menu as HLMenu, Transition } from "@headlessui/react";
 import { DotsVerticalIcon } from "@heroicons/react/outline";
 import clsx from "clsx";
-import React from "react";
+import React, { Fragment } from "react";
 import { $ElementProps } from "../../types/utility";
 
 type ItemProps = Partial<$ElementProps<typeof HLMenu.Item>>;
@@ -28,6 +28,7 @@ const Items = ({
 }: ItemsProps) => (
   /* @ts-ignore */
   <Transition
+    as={Fragment as any}
     enter="transition ease-out duration-100"
     enterFrom="transform opacity-0 scale-95"
     enterTo="transform opacity-100 scale-100"

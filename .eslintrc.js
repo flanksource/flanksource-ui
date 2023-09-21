@@ -7,7 +7,12 @@ module.exports = {
     node: true,
     mocha: true
   },
-  extends: ["react-app", "react-app/jest", "plugin:storybook/recommended", "plugin:jest-dom/recommended",],
+  extends: [
+    "react-app",
+    "react-app/jest",
+    "plugin:storybook/recommended",
+    "plugin:jest-dom/recommended"
+  ],
   rules: {
     "react/function-component-definition": [
       2,

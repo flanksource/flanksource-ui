@@ -2,6 +2,7 @@ import { Menu, Transition } from "@headlessui/react";
 import clsx from "clsx";
 import React, {
   ChangeEvent,
+  Fragment,
   memo,
   useCallback,
   useEffect,
@@ -318,6 +319,7 @@ function QueryBuilderActionMenu({
       </Menu.Button>
       {/* @ts-ignore */}
       <Transition
+        as={Fragment as any}
         enter="transition ease-out duration-100"
         enterFrom="transform opacity-0 scale-95"
         enterTo="transform opacity-100 scale-100"

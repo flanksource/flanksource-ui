@@ -152,6 +152,7 @@ export default function RefreshDropdown({
           </Menu.Button>
           {/* @ts-ignore */}
           <Transition
+            as={Fragment as any}
             enter="transition ease-out duration-100"
             enterFrom="transform opacity-0 scale-95"
             enterTo="transform opacity-100 scale-100"
