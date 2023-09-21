@@ -97,7 +97,6 @@ const selectAllOptionFeatureDecorator = (originalProps) => {
 const selectColourStyles = {
   control: (styles, { isFocused }) => ({
     ...styles,
-    minHeight: "42px",
     border: "1px solid #D1D5DB",
     borderColor: isFocused ? "#6366F1" : undefined,
     boxShadow: isFocused
