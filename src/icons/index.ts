@@ -19,6 +19,7 @@ import add_group from "./add-group.svg";
 import add_inbox from "./add-inbox.svg";
 import add_key from "./add-key.svg";
 import add_list from "./add-list.svg";
+import add_network_card from "./add-network-card.svg";
 import add_node from "./add-node.svg";
 import add_page from "./add-page.svg";
 import add_receipt from "./add-receipt.svg";
@@ -190,6 +191,7 @@ import elb from "./elb.svg";
 import email from "./email.svg";
 import envoy from "./envoy.svg";
 import error_database from "./error-database.svg";
+import error_network_card from "./error-network-card.svg";
 import error from "./error.svg";
 import etcd from "./etcd.svg";
 import exchange from "./exchange.svg";
@@ -331,6 +333,7 @@ import mysql from "./mysql.svg";
 import mysql_logo from "./mysql_logo.svg";
 import namespace from "./namespace.svg";
 import namespaces from "./namespaces.svg";
+import network_card from "./network-card.svg";
 import network from "./network.svg";
 import newrelic from "./newrelic.svg";
 import nginx from "./nginx.svg";
@@ -392,6 +395,7 @@ import remove_group from "./remove-group.svg";
 import remove_key from "./remove-key.svg";
 import remove_link from "./remove-link.svg";
 import remove_list from "./remove-list.svg";
+import remove_network_card from "./remove-network-card.svg";
 import remove_node from "./remove-node.svg";
 import remove_page from "./remove-page.svg";
 import remove_shield from "./remove-shield.svg";
@@ -404,9 +408,11 @@ import remove from "./remove.svg";
 import restic from "./restic.svg";
 import restrict from "./restrict.svg";
 import rocket from "./rocket.svg";
+import router from "./router.svg";
 import ruby from "./ruby.svg";
 import s3 from "./s3.svg";
 import s3Bucket from "./s3Bucket.svg";
+import save from "./save.svg";
 import scale_down from "./scale-down.svg";
 import scale_in from "./scale-in.svg";
 import scale_out from "./scale-out.svg";
@@ -416,8 +422,8 @@ import seal from "./seal.svg";
 import search from "./search.svg";
 import send from "./send.svg";
 import server from "./server.svg";
+import servers_outline from "./servers-outline.svg";
 import servers from "./servers.svg";
-import servers2 from "./servers2.svg";
 import service_now from "./service-now.svg";
 import servicenow_logo from "./servicenow-logo.svg";
 import servicenow from "./servicenow.svg";
@@ -513,6 +519,7 @@ export const Icons = {
   "add-inbox": add_inbox,
   "add-key": add_key,
   "add-list": add_list,
+  "add-network-card": add_network_card,
   "add-node": add_node,
   "add-page": add_page,
   "add-receipt": add_receipt,
@@ -684,6 +691,7 @@ export const Icons = {
   email: email,
   envoy: envoy,
   "error-database": error_database,
+  "error-network-card": error_network_card,
   error: error,
   etcd: etcd,
   exchange: exchange,
@@ -825,6 +833,7 @@ export const Icons = {
   mysql_logo: mysql_logo,
   namespace: namespace,
   namespaces: namespaces,
+  "network-card": network_card,
   network: network,
   newrelic: newrelic,
   nginx: nginx,
@@ -886,6 +895,7 @@ export const Icons = {
   "remove-key": remove_key,
   "remove-link": remove_link,
   "remove-list": remove_list,
+  "remove-network-card": remove_network_card,
   "remove-node": remove_node,
   "remove-page": remove_page,
   "remove-shield": remove_shield,
@@ -898,9 +908,11 @@ export const Icons = {
   restic: restic,
   restrict: restrict,
   rocket: rocket,
+  router: router,
   ruby: ruby,
   s3: s3,
   s3Bucket: s3Bucket,
+  save: save,
   "scale-down": scale_down,
   "scale-in": scale_in,
   "scale-out": scale_out,
@@ -910,8 +922,8 @@ export const Icons = {
   search: search,
   send: send,
   server: server,
+  "servers-outline": servers_outline,
   servers: servers,
-  servers2: servers2,
   "service-now": service_now,
   "servicenow-logo": servicenow_logo,
   servicenow: servicenow,

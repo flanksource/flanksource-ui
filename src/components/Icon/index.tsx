@@ -4,42 +4,51 @@ import React, { memo } from "react";
 
 type IconMap = Record<string, string>;
 const aliases: IconMap = {
-  "aws::::account": "aws",
-  "aws::ec2::dhcpoptions": "settings",
-  "aws::ec2::securitygroup": "firewall",
-  "aws::ec2::subnet": "network",
-  "aws::elasticloadbalancing::loadbalancer": "aws-elb",
-  "aws::elasticloadbalancingv2::loadbalancer": "aws-alb",
-  "aws::iam::user": "user",
-  "aws::instance": "aws-ec2-instance",
-  "aws::region": "aws",
-  "aws::subnet": "network",
+  "aws--account": "aws",
+  "aws-ec2-dhcpoptions": "settings",
+  "aws-ec2-securitygroup": "firewall",
+  "aws-ec2-subnet": "network",
+  "aws-elasticloadbalancing-loadbalancer": "aws-elb",
+  "aws-elasticloadbalancingv2-loadbalancer": "aws-alb",
+  "aws-iam-user": "user",
+  "aws-instance": "aws-ec2-instance",
+  "aws-region": "aws",
+  "aws-subnet": "network",
   "azure devops": "azure-devops",
-  "azuredevops::pipelinerun": "azure::devops::pipeline",
+  "azuredevops-pipelinerun": "azure-devops-pipeline",
   azuredevops: "azure-devops",
+  attachnetworkinterface: "add-network-card",
+  createnetworkinterface: "add-network-card",
+  detachnetworkinterface: "remove-network-card",
+  networkinterface: "network-card",
   "cert-manager.io": "cert-manager",
   "google chat": "google-chat",
   "google cloud": "gcp",
   keypairverified: "id-verified",
-  "IAM::User": "user",
-  "IAM::Role": "shield",
-  "ElasticLoadBalancing::LoadBalancer": "aws-elb",
-  "EC2::Subnet": "network",
-  "EC2::SecurityGroup": "firewall",
-  "mssql::database": "mssql",
+  "iam-user": "user",
+  "iam-role": "shield",
+  "iam-instanceprofile": "server",
+  "k8s-cluster": "servers",
+  "elasticloadbalancing-loadbalancer": "aws-elb",
+  "ec2-subnet": "network",
+  "ec2-securitygroup": "firewall",
+  "mssql-database": "mssql",
   "sql server": "sqlserver",
   "zulip chat": "zulip",
+  statefulset: "k8s-statefulset",
   connection: "cog",
-  CreateRole: "add-shield",
-  UpdateCertificate: "certificate",
-  UpdatedLoadBalancer: "loadbalancer",
-  AttachRolePolicy: "add-shield",
-  AttachUserPolicy: "add-shield",
-  DetachUserPolicy: "remove-shield",
-  DetachRolePolicy: "remove-shield",
-  AttachVolume: "up-database",
-  DettachVolume: "down-database",
-  RebootScheduled: "schedule",
+  createrole: "add-shield",
+  UpdateLoginProfile: "user",
+  "k8s-certificaterequest": "certificate",
+  updatecertificate: "certificate",
+  updatedloadbalancer: "loadbalancer",
+  attachrolepolicy: "add-shield",
+  attachuserpolicy: "add-shield",
+  detachuserpolicy: "remove-shield",
+  detachrolepolicy: "remove-shield",
+  attachvolume: "up-database",
+  dettachvolume: "down-database",
+  rebootscheduled: "schedule",
   // connection icons type aliases
   addmemberstogroup: "add-group",
   addorupdategroups: "add-group",
@@ -69,7 +78,6 @@ const aliases: IconMap = {
   buildsuggesters: "cmd",
   bulkpublish: "upload",
   catalogsource: "operatorframework",
-  certificate: "cert-manager",
   certificateissued: "certificate",
   clusterissuer: "cert-manager",
   clusterservicerevision: "kubernetes",
@@ -172,7 +180,7 @@ const aliases: IconMap = {
   deletevpnconnectionroute: "remove-link",
   deletevpngateway: "remove-link",
   deliverconfigsnapshot: "check",
-  DetachVolume: "down-database",
+  detachvolume: "down-database",
   deployment: "rocket",
   disablealarmactions: "remove-alarm",
   drain: "scale-in",
@@ -181,7 +189,7 @@ const aliases: IconMap = {
   endpoints: "endpoint",
   endsecretversiondelete: "cancel",
   ensuredloadbalancer: "ok",
-  CreateLoadBalancer: "loadbalancer",
+  createloadbalancer: "loadbalancer",
   detatchvolume: "down-database",
   ensuringloadbalancer: "hourglass",
   enterstandby: "pause",
@@ -361,7 +369,7 @@ var prefixes: IconMap = {
   renew: "reload",
   replace: "reload",
   report: "list",
-  scheduled: "clock",
+  scheduled: "schedule",
   enabled: "on",
   disabled: "off",
   request: "send",
@@ -380,10 +388,7 @@ var prefixes: IconMap = {
   rotate: "reload",
   run: "cmd",
   sample: "cmd",
-  save: "plus",
   scan: "search",
-  search: "search",
-  send: "send",
   set: "edit",
   shutdown: "stop",
   signal: "cmd",
@@ -427,22 +432,24 @@ function findByName(name?: string) {
     return undefined;
   }
 
-  if (aliases[name as keyof typeof aliases]) {
-    name = aliases[name as keyof typeof aliases];
-  }
   name = name
-    .replaceAll("::", "-")
+    .replaceAll("-", "-")
     .replaceAll("--", "-")
+    .replaceAll("::", "-")
     .toLowerCase()
-    .replaceAll("k8-", "k8s-");
+    .replaceAll("k8-", "k8s-")
+    .replaceAll("kubernetes-", "k8s-");
   if (aliases[name as keyof typeof aliases]) {
-    console.log(
-      `found ${name} with alias ${aliases[name as keyof typeof aliases]}`
-    );
     name = aliases[name as keyof typeof aliases];
   }
+
   console.log(name);
-  var icon = Icons[name.toLowerCase() as keyof typeof Icons];
+
+  if (aliases[name as keyof typeof aliases]) {
+    name = aliases[name as keyof typeof aliases];
+  }
+  var icon = Icons[name as keyof typeof Icons];
+
   if (icon == null) {
     icon = Icons[("aws-" + name) as keyof typeof Icons];
   } else if (icon != null) {
@@ -472,6 +479,8 @@ function findByName(name?: string) {
       return icon;
     }
   }
+  console.log(name, icon == null);
+
   return icon;
 }
 

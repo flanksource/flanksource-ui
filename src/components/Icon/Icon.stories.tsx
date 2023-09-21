@@ -12,6 +12,8 @@ const icons = [
   "IAM::User",
   "IAM::Role",
   "ElasticLoadBalancing::LoadBalancer",
+  "Kubernetes::CertificateRequest",
+  "Kubernetes::Cluster",
   "EC2::Subnet",
   "EC2::SecurityGroup",
   "K8::StatefulSet",
