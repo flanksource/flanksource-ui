@@ -21,9 +21,18 @@ const aliases: IconMap = {
   "google chat": "google-chat",
   "google cloud": "gcp",
   keypairverified: "id-verified",
+  "IAM::User": "user",
+  "IAM::Role": "shield",
+  "ElasticLoadBalancing::LoadBalancer": "aws-elb",
+  "EC2::Subnet": "network",
+  "EC2::SecurityGroup": "firewall",
   "mssql::database": "mssql",
   "sql server": "sqlserver",
   "zulip chat": "zulip",
+  connection: "cog",
+  CreateRole: "add-shield",
+  UpdateCertificate: "certificate",
+  UpdatedLoadBalancer: "loadbalancer",
   AttachRolePolicy: "add-shield",
   AttachUserPolicy: "add-shield",
   DetachUserPolicy: "remove-shield",
@@ -421,13 +430,18 @@ function findByName(name?: string) {
   if (aliases[name as keyof typeof aliases]) {
     name = aliases[name as keyof typeof aliases];
   }
-  name = name.replaceAll("::", "-").replaceAll("--", "-").toLowerCase();
+  name = name
+    .replaceAll("::", "-")
+    .replaceAll("--", "-")
+    .toLowerCase()
+    .replaceAll("k8-", "k8s-");
   if (aliases[name as keyof typeof aliases]) {
     console.log(
       `found ${name} with alias ${aliases[name as keyof typeof aliases]}`
     );
     name = aliases[name as keyof typeof aliases];
   }
+  console.log(name);
   var icon = Icons[name.toLowerCase() as keyof typeof Icons];
   if (icon == null) {
     icon = Icons[("aws-" + name) as keyof typeof Icons];

@@ -129,6 +129,7 @@ import cloudwatch from "./cloudwatch.svg";
 import cluster from "./cluster.svg";
 import cmd from "./cmd.svg";
 import cni from "./cni.svg";
+import cog from "./cog.svg";
 import compute_engine from "./compute-engine.svg";
 import config from "./config.svg";
 import connected from "./connected.svg";
@@ -622,6 +623,7 @@ export const Icons = {
   cluster: cluster,
   cmd: cmd,
   cni: cni,
+  cog: cog,
   "compute-engine": compute_engine,
   config: config,
   connected: connected,

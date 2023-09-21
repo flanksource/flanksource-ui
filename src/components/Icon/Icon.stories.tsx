@@ -9,6 +9,17 @@ export default meta;
 type Story = StoryObj<typeof Icon>;
 
 const icons = [
+  "IAM::User",
+  "IAM::Role",
+  "ElasticLoadBalancing::LoadBalancer",
+  "EC2::Subnet",
+  "EC2::SecurityGroup",
+  "K8::StatefulSet",
+  "K8::Deployment",
+  "StatefulSet",
+  "connection",
+  "K8::DaemonSet",
+  "K8::Cluster",
   "diff",
   "add",
   "AttachNetworkInterface",
