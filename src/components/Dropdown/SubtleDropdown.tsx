@@ -100,6 +100,7 @@ export const DropdownListbox = ({
             {items[value].iconTitle}
           </Listbox.Button>
 
+          {/* @ts-ignore */}
           <Transition
             show={open}
             as={Fragment as any}
