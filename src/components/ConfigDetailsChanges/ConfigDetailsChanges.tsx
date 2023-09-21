@@ -17,6 +17,7 @@ import { JSONViewer } from "../JSONViewer";
 import { Modal } from "../Modal";
 import TextSkeletonLoader from "../SkeletonLoader/TextSkeletonLoader";
 import ConfigChangeDetailSection from "./ConfigChangeDetailsSection";
+import ModalTitleListItems from "../Modal/ModalTitleListItems";
 
 type ConfigDetailsChangesProps = {
   id: string;
@@ -200,22 +201,25 @@ export function ConfigDetailChangeModal({
     <Modal
       title={
         config && (
-          <div className="flex flex-row gap-1">
-            <ConfigLink
-              className="text-blue-600 text-xl font-semibold whitespace-nowrap mr-1"
-              configId={config.id}
-              configName={config.name}
-              configType={config.type}
-              configTypeSecondary={config.config_class}
-            />
-            /
-            <Icon
-              name={changeDetails?.change_type}
-              secondary="diff"
-              className="w-5 h-auto pr-1"
-            />
-            {changeDetails?.change_type}
-          </div>
+          <ModalTitleListItems
+            items={[
+              <div className="flex flex-row flex-grow-0 gap-1 whitespace-nowrap items-center">
+                <Icon
+                  name={changeDetails?.change_type}
+                  secondary="diff"
+                  className="w-5 h-auto pr-1"
+                />
+                <span> {changeDetails?.change_type}</span>
+              </div>,
+              <ConfigLink
+                className="text-blue-600 text-xl font-semibold whitespace-nowrap overflow-hidden overflow-ellipsis"
+                configId={config.id}
+                configName={config.name}
+                configType={config.type}
+                configTypeSecondary={config.config_class}
+              />
+            ]}
+          />
         )
       }
       open={open}

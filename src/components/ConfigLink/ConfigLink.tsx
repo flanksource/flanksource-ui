@@ -13,14 +13,14 @@ type ConfigLinkProps = {
   variant?: "label" | "link";
   target?: HTMLAttributeAnchorTarget;
 };
+
 export default function ConfigLink({
   configId,
   configName,
   configType,
   configTypeSecondary,
   variant = "link",
-  className = "text-zinc-600 text-sm",
-  ...props
+  className = "text-zinc-600 text-sm whitespace-nowrap overflow-hidden overflow-ellipsis"
 }: ConfigLinkProps) {
   if (variant === "link") {
     return (
@@ -35,7 +35,7 @@ export default function ConfigLink({
             type: configType
           }}
         />
-        <div className="overflow-hidden truncate flex-1">{configName}</div>
+        <div className="overflow-hidden text-ellipsis flex-1">{configName}</div>
       </Link>
     );
   }
@@ -46,9 +46,7 @@ export default function ConfigLink({
         secondary={configTypeSecondary}
         className="w-5 mr-1 h-5"
       />
-      <div className="overflow-hidden truncate flex-1 text-sm">
-        {configName}
-      </div>
+      <div className="overflow-hidden text-ellipsis text-sm">{configName}</div>
     </div>
   );
 }

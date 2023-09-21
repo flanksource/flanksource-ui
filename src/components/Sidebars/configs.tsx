@@ -89,7 +89,7 @@ export function ConfigsList({
                 configName={config.name}
                 configType={config.type}
                 configTypeSecondary={config.config_class}
-                className="overflow-hidden flex-1"
+                className="overflow-hidden text-ellipsis flex-1 whitespace-nowrap"
               />
               {config.deleted_at && (
                 <Badge
