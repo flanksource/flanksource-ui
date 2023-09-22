@@ -433,7 +433,6 @@ function findByName(name?: string) {
   }
 
   name = name
-    .replaceAll("-", "-")
     .replaceAll("--", "-")
     .replaceAll("::", "-")
     .toLowerCase()
