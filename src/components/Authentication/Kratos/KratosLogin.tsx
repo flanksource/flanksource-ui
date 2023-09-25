@@ -1,5 +1,4 @@
 import { LoginFlow, UpdateLoginFlowBody } from "@ory/client";
-import { AxiosError } from "axios";
 import type { NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -29,69 +28,59 @@ const Login: NextPage = () => {
   const onLogout = useCreateLogoutHandler([aal, refresh]);
 
   useEffect(() => {
-    // If the router is not ready yet, or we already have a flow, do nothing.
-    if (!router.isReady || flow) {
-      return;
-    }
+    const fetchFlow = async () => {
+      if (!router.isReady || flow) {
+        return;
+      }
 
-    // If ?flow=.. was in the URL, we fetch it
-    if (flowId) {
-      ory
-        .getLoginFlow({
-          id: String(flowId)
-        })
-        .then(({ data }) => {
+      if (flowId) {
+        try {
+          const { data } = await ory.getLoginFlow({ id: String(flowId) });
           setFlow(data);
-        })
-        .catch(handleGetFlowError(router, "login", setFlow));
-      return;
-    }
+        } catch (err: any) {
+          await handleGetFlowError(router, "login", setFlow)(err);
+        }
+        return;
+      }
 
-    // Otherwise we initialize it
-    ory
-      .createBrowserLoginFlow({
-        returnTo: returnTo ? String(returnTo) : undefined,
-        refresh: Boolean(refresh),
-        aal: aal ? String(aal) : undefined
-      })
-      .then(({ data }) => {
+      try {
+        const { data } = await ory.createBrowserLoginFlow({
+          returnTo: returnTo ? String(returnTo) : undefined,
+          refresh: Boolean(refresh),
+          aal: aal ? String(aal) : undefined
+        });
         setFlow(data);
-      })
-      .catch(handleFlowError(router, "login", setFlow));
+      } catch (err: any) {
+        await handleFlowError(router, "login", setFlow)(err);
+      }
+    };
+
+    fetchFlow();
   }, [flowId, router, router.isReady, aal, refresh, returnTo, flow]);
 
-  const onSubmit = (values: UpdateLoginFlowBody) =>
-    router
-      // On submission, add the flow ID to the URL but do not navigate. This prevents the user loosing
-      // his data when she/he reloads the page.
-      .push(`/login?flow=${flow?.id}`, undefined, { shallow: true })
-      .then(() =>
-        ory
-          .updateLoginFlow({
-            flow: flow?.id!,
-            updateLoginFlowBody: values
-          })
-          // We logged in successfully! Let's bring the user home.
-          .then((res) => {
-            if (flow?.return_to) {
-              router.push(flow?.return_to);
-              return;
-            }
-            router.push("/");
-          })
-          .then(() => {})
-          .catch(handleFlowError(router, "login", setFlow))
-          .catch((err: AxiosError) => {
-            // If the previous handler did not catch the error it's most likely a form validation error
-            if (err.response?.status === 400) {
-              // Yup, it is!
-              setFlow((err.response as any).data);
-              return;
-            }
-
-            return Promise.reject(err);
-          })
-      );
+  const onSubmit = async (values: UpdateLoginFlowBody) => {
+    try {
+      await router.push(`/login?flow=${flow?.id}`, undefined, {
+        shallow: true
+      });
+      await ory.updateLoginFlow({
+        flow: flow?.id!,
+        updateLoginFlowBody: values
+      });
+      if (flow?.return_to) {
+        await router.push(flow?.return_to);
+      } else {
+        await router.push("/");
+      }
+    } catch (err: any) {
+      await handleFlowError(router, "login", setFlow)(err);
+      if (err.response?.status === 400) {
+        setFlow((err.response as any).data);
+      } else {
+        throw err;
+      }
+    }
+  };
 
   return (
     <div className="w-96">
