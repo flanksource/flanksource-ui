@@ -78,6 +78,8 @@ export function TopologyPage() {
   const topologyType = searchParams.get("type") ?? "All";
   const healthStatus = searchParams.get("status") ?? "All";
   const refererId = searchParams.get("refererId") ?? undefined;
+  const sortBy = searchParams.get("sortBy") ?? undefined;
+  const sortOrder = searchParams.get("sortOrder") ?? undefined;
   const showHiddenComponents =
     searchParams.get("showHiddenComponents") ?? undefined;
 
@@ -91,7 +93,9 @@ export function TopologyPage() {
       team,
       selectedLabel,
       topologyType,
-      showHiddenComponents
+      showHiddenComponents,
+      sortBy,
+      sortOrder
     ],
     () => {
       loadingBarRef.current?.continuousStart();
@@ -101,6 +105,8 @@ export function TopologyPage() {
         type: topologyType,
         team: team,
         labels: selectedLabel,
+        sortBy,
+        sortOrder,
         // only flatten, if topology type is set
         ...(topologyType &&
           topologyType.toString().toLowerCase() !== "all" && {
