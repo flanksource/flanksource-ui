@@ -62,6 +62,7 @@ export function ConfirmationPromptDialog({
               <button
                 className="btn-secondary btn-secondary-base"
                 onClick={onConfirm}
+                data-testid="confirm-button"
               >
                 {yesLabel}
               </button>

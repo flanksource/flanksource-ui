@@ -69,6 +69,16 @@ export const Snapshot = axios.create({
   }
 });
 
+export const AgentAPI = axios.create({
+  baseURL: `${API_BASE}/agent`,
+  headers: {
+    Accept: "application/json",
+    Prefer: "return=representation",
+    "Content-Type": "application/json",
+    responseType: "blob"
+  }
+});
+
 export const LogsSearch = axios.create({
   baseURL: `${API_BASE}/logs`,
   headers: {

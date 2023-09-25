@@ -11,7 +11,8 @@ export const tables = {
   config_scrapers: "config_scrapers",
   identities: "identities",
   connections: "connections",
-  kratos: "kratos"
+  kratos: "kratos",
+  agents: "agents"
 };
 
 export const permDefs = {

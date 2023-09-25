@@ -12,18 +12,18 @@ import { createResource, updateResource } from "../schemaResources";
 import { toastError, toastSuccess } from "../../components/Toast/toast";
 import { useUser } from "../../context";
 
-type Response =
+export type DatabaseResponse<T extends Record<string, any>> =
   | { error: Error; data: null; totalEntries: undefined }
   | {
-      data: Notification[] | null;
+      data: T[] | null;
       totalEntries?: number | undefined;
       error: null;
     };
 
 export function useNotificationsSummaryQuery(
-  options?: UseQueryOptions<Response, Error>
+  options?: UseQueryOptions<DatabaseResponse<Notification>, Error>
 ) {
-  return useQuery<Response, Error>(
+  return useQuery<DatabaseResponse<Notification>, Error>(
     ["notifications", "settings"],
     () => getNotificationsSummary(),
     options
