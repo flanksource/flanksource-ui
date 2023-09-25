@@ -1,8 +1,8 @@
-import React, { Fragment } from "react";
-import PropTypes from "prop-types";
 import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/solid";
 import clsx from "clsx";
+import PropTypes from "prop-types";
+import React, { Fragment } from "react";
 
 type ModalSize = "small" | "slightly-small" | "medium" | "large" | "full";
 
