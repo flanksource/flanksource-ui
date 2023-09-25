@@ -1,11 +1,13 @@
 import clsx from "clsx";
 import { useNavigate } from "react-router-dom";
 import { SchemaResourceWithJobStatus } from "../../api/schemaResources";
+import { tables } from "../../context/UserAccessContext/permissions";
 import { relativeDateTime } from "../../utils/date";
 import { Avatar } from "../Avatar";
 import { InfoMessage } from "../InfoMessage";
 import JobHistoryStatusColumn from "../JobsHistory/JobHistoryStatusColumn";
 import TableSkeletonLoader from "../SkeletonLoader/TableSkeletonLoader";
+import ConfigScrapperIcon from "./ConfigScrapperIcon";
 
 interface Props {
   items: SchemaResourceWithJobStatus[];
@@ -108,7 +110,8 @@ function SchemaResourceListItem({
   table,
   schedule,
   job_status,
-  job_time_start
+  job_time_start,
+  spec
 }: SchemaResourceWithJobStatus & {
   baseUrl: string;
   table: string;
@@ -122,7 +125,12 @@ function SchemaResourceListItem({
       onClick={() => navigateToDetails(id)}
     >
       <Cell colSpan={2} className="leading-5 text-gray-900 font-medium">
-        {name}
+        <div className="flex flex-row gap-2 items-center">
+          {table === tables.config_scrapers && (
+            <ConfigScrapperIcon spec={spec} />
+          )}
+          <div> {name}</div>
+        </div>
       </Cell>
       <Cell className="shrink-0">
         {!!source && <a href={`${source}`}>Link</a>}
