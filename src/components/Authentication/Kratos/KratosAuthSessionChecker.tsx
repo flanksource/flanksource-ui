@@ -29,21 +29,13 @@ export default function KratosAuthSessionChecker({
         const url = window.location.pathname;
         switch ((err as AxiosError).response?.status) {
           case 403:
-            // This is a legacy error code thrown. See code 422 for
-            // more details.
             push(`/login?aal=aal2&return_to=${url}`);
-            return;
             break;
           case 422:
-            // This status code is returned when we are trying to
-            // validate a session which has not yet completed
-            // it's second factor
             push(`/login?aal=aal2&return_to=${url}`);
-            return;
             break;
           case 401:
             push(`/login?return_to=${url}`);
-            return;
             break;
           default:
             throw err;
