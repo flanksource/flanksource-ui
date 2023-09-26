@@ -17,41 +17,33 @@ export default function KratosAuthSessionChecker({
   const { push } = useRouter();
 
   useEffect(() => {
-    if (!isAuthEnabled()) {
-      return;
-    }
+    const getSession = async () => {
+      if (!isAuthEnabled()) {
+        return;
+      }
 
-    ory
-      .toSession()
-      .then(({ data }) => {
+      try {
+        const { data } = await ory.toSession();
         setSession(data);
-      })
-      .catch((err: AxiosError) => {
-        // Due to the conflict between NextJS Routing and React Router, we can
-        // get the current URL from next router accurately, but we can rely on
-        // the window location to get the current URL accurately. This can be
-        // fixed in the future when we move to NextJS fully.
+      } catch (err) {
         const url = window.location.pathname;
-        switch (err.response?.status) {
+        switch ((err as AxiosError).response?.status) {
           case 403:
-            // This is a legacy error code thrown. See code 422 for
-            // more details.
             push(`/login?aal=aal2&return_to=${url}`);
-            return;
+            break;
           case 422:
-            // This status code is returned when we are trying to
-            // validate a session which has not yet completed
-            // it's second factor
             push(`/login?aal=aal2&return_to=${url}`);
-            return;
+            break;
           case 401:
             push(`/login?return_to=${url}`);
-            return;
+            break;
+          default:
+            throw err;
         }
+      }
+    };
 
-        // Something else happened!
-        return Promise.reject(err);
-      });
+    getSession();
   }, [push]);
 
   if (isAuthEnabled() && !session) {
