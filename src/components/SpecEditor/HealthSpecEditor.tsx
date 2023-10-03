@@ -9,6 +9,8 @@ import { ExecHealthFormEditor } from "../Forms/Health/ExecHealthFormEditor";
 import { ElasticsearchHealthFormEditor } from "../Forms/Health/ElasticsearchHealthFormEditor";
 import { TCPHealthFormEditor } from "../Forms/Health/TCPHealthFormEditor";
 import { AlertmanagerHealthFormEditor } from "../Forms/Health/AlertmanagerHealthFormEditor";
+import { RedisHealthFormEditor } from "../Forms/Health/RedisHealthFormEditor";
+import { MongoHealthFormEditor } from "../Forms/Health/MongoHealthFormEditor";
 
 type HealthSpecEditorProps = {
   resourceValue?: {
@@ -205,9 +207,9 @@ export default function HealthSpecEditor({
             return resourceValue ?? {};
           },
           icon: "redis",
-          configForm: null,
+          configForm: RedisHealthFormEditor,
           specsMapField: "redis.0",
-          rawSpecInput: true,
+          rawSpecInput: false,
           schemaFilePrefix: "canary"
         },
         {
@@ -220,9 +222,9 @@ export default function HealthSpecEditor({
             return resourceValue ?? {};
           },
           icon: "mongo",
-          configForm: null,
+          configForm: MongoHealthFormEditor,
           specsMapField: "mongo.0",
-          rawSpecInput: true,
+          rawSpecInput: false,
           schemaFilePrefix: "canary"
         },
         {

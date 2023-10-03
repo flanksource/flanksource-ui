@@ -1,4 +1,4 @@
-import FormikAuthFieldsGroup from "../Formik/FormikAuthFieldsGroup";
+import FormikAuthFields from "../Formik/FormikAuthFields";
 import FormikTextInput from "../Formik/FormikTextInput";
 
 /**
@@ -14,7 +14,16 @@ export const SFTPConnectionFormEditor = ({ name }: { name: string }) => {
       <FormikTextInput name={`${name}.connection`} label="Connection URL" />
       <FormikTextInput name={`${name}.port`} type="number" label="Port" />
       <FormikTextInput name={`${name}.host`} label="Host" />
-      <FormikAuthFieldsGroup name={name} />
+      <FormikAuthFields
+        label="Authentication"
+        types={[
+          {
+            value: { basic: true },
+            label: "Basic"
+          }
+        ]}
+        name={`${name}`}
+      />
     </div>
   );
 };

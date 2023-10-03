@@ -203,12 +203,14 @@ export function ConfigDetailChangeModal({
         config && (
           <ModalTitleListItems
             items={[
-              <div className="flex flex-row flex-grow-0 gap-1 whitespace-nowrap items-center">
-                <Icon
-                  name={changeDetails?.change_type}
-                  secondary="diff"
-                  className="w-5 h-auto pr-1"
-                />
+              <div className="flex flex-row gap-1 flex-shrink items-center">
+                <div className="block w-6 h-auto">
+                  <Icon
+                    name={changeDetails?.change_type}
+                    secondary="diff"
+                    className="w-5 h-5"
+                  />
+                </div>
                 <span> {changeDetails?.change_type}</span>
               </div>,
               <ConfigLink

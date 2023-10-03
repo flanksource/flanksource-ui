@@ -2,23 +2,21 @@ import { getIn, useFormikContext } from "formik";
 import { useEffect } from "react";
 import FormikAuthFields from "../Formik/FormikAuthFields";
 import FormikCheckboxFieldsGroup from "../Formik/FormikCheckboxFieldsGroup";
-import FormikConfigEnvVarFieldsArray from "../Formik/FormikConfigEnvVarFieldsArray";
+import FormikConnectionField from "../Formik/FormikConnectionField";
 import FormikIconPicker from "../Formik/FormikIconPicker";
-import FormikMultiSelectListField from "../Formik/FormikMultiSelectListField";
 import FormikScheduleField from "../Formik/FormikScheduleField";
 import FormikTemplateFields from "../Formik/FormikTemplateFields";
 import FormikTextInput from "../Formik/FormikTextInput";
-import HTTPMethodFieldsGroup from "./HTTPMethodFieldsGroup";
 
-type HTTPHealthFormEditorProps = {
+type MongoHealthFormEditorProps = {
   fieldName: string;
   specsMapField: string;
 };
 
-export function HTTPHealthFormEditor({
+export function MongoHealthFormEditor({
   fieldName: name,
   specsMapField
-}: HTTPHealthFormEditorProps) {
+}: MongoHealthFormEditorProps) {
   const { values, setFieldValue } = useFormikContext();
 
   const fieldName = `${name}.${specsMapField}`;
@@ -46,20 +44,16 @@ export function HTTPHealthFormEditor({
         />
       </div>
 
-      {/* this a top level schema field, not nested under http */}
       <FormikScheduleField name={`${name}.schedule`} />
 
-      <FormikTextInput name={`${fieldName}.description`} label="Description" />
-      <FormikTextInput name={`${fieldName}.endpoint`} label="URL" required />
-      <HTTPMethodFieldsGroup
-        bodyFieldName={`${fieldName}.body`}
-        methodFieldName={`${fieldName}.method`}
+      <FormikConnectionField
+        name={`${fieldName}.connection`}
+        label="Connection"
       />
 
-      <FormikConfigEnvVarFieldsArray
-        name={`${fieldName}.headers`}
-        label="Headers"
-      />
+      <FormikTextInput name={`${fieldName}.url`} label="URL" />
+
+      <FormikTemplateFields name={`${fieldName}.test`} label="Test" />
 
       <FormikAuthFields
         label="Authentication"
@@ -67,45 +61,10 @@ export function HTTPHealthFormEditor({
           {
             value: { basic: true },
             label: "Basic"
-          },
-          {
-            value: { ntlm: true },
-            label: "NTLM"
-          },
-          {
-            value: { ntlmv2: true },
-            label: "NTLMv2"
           }
         ]}
         name={`${fieldName}`}
       />
-
-      <h5 className="font-bold">Test</h5>
-      <FormikMultiSelectListField
-        options={[200, 201, 202, 204, 301, 302, 401, 404, 500, 502, 503]}
-        label="Response Codes"
-        name={`${fieldName}.responseCodes`}
-      />
-      <FormikTextInput
-        name={`${fieldName}.thresholdMillis`}
-        label="Max Response Time (in millis)"
-        type="number"
-        min={0}
-      />
-      <FormikTextInput
-        name={`${fieldName}.responseContent`}
-        label="Response Text (Exact Match)"
-        hint="Exact response content expected to be returned by the endpoint"
-      />
-      <FormikTextInput
-        name={`${fieldName}.maxSSLExpiry`}
-        label="Max SSL Expiry Age (days)"
-        hint="Maximum number of days until the SSL Certificate expires."
-        type="number"
-        min={0}
-      />
-
-      <FormikTemplateFields name={`${fieldName}.test`} label="Script" />
 
       <FormikCheckboxFieldsGroup
         name={`${fieldName}.advanced`}

@@ -1,4 +1,4 @@
-import FormikAuthFieldsGroup from "../Formik/FormikAuthFieldsGroup";
+import FormikAuthFields from "../Formik/FormikAuthFields";
 import FormikTextInput from "../Formik/FormikTextInput";
 
 /**
@@ -17,7 +17,16 @@ export const SMBConnectionFormEditor = ({ name }: { name: string }) => {
       <FormikTextInput name={`${name}.workstation`} label="Work Station" />
       <FormikTextInput name={`${name}.sharename`} label="Sharename" />
       <FormikTextInput name={`${name}.searchPath`} label="Search Path" />
-      <FormikAuthFieldsGroup name={name} />
+      <FormikAuthFields
+        label="Authentication"
+        types={[
+          {
+            value: { basic: true },
+            label: "Basic"
+          }
+        ]}
+        name={`${name}`}
+      />
     </div>
   );
 };

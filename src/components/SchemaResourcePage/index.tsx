@@ -1,15 +1,9 @@
-import { useState } from "react";
-import { AiFillPlusCircle } from "react-icons/ai";
-import { useSettingsCreateResource } from "../../api/query-hooks/mutations/useSettingsResourcesMutations";
 import { useGetSettingsAllQuery } from "../../api/query-hooks/settingsResourcesHooks";
 import { BreadcrumbNav, BreadcrumbRoot } from "../BreadcrumbNav";
 import ErrorPage from "../Errors/ErrorPage";
 import { Head } from "../Head/Head";
 import { SearchLayout } from "../Layout";
-import { Modal } from "../Modal";
-import ConfigScrapperSpecEditor from "../SpecEditor/ConfigScrapperSpecEditor";
-import HealthSpecEditor from "../SpecEditor/HealthSpecEditor";
-import { SchemaResourceEdit } from "./SchemaResourceEdit";
+import AddSchemaResourceModal from "./AddSchemaResourceModal";
 import { SchemaResourceList } from "./SchemaResourceList";
 import { SchemaResourceType } from "./resourceTypes";
 
@@ -20,24 +14,12 @@ export function SchemaResourcePage({
 }) {
   const { name, href } = resourceInfo;
 
-  const [modalIsOpen, setModalIsOpen] = useState(false);
-
   const {
     data: list,
     refetch,
     isLoading,
     error
   } = useGetSettingsAllQuery(resourceInfo);
-
-  const { mutate: createResource } = useSettingsCreateResource(
-    resourceInfo,
-    () => {
-      refetch();
-      setModalIsOpen(false);
-    }
-  );
-
-  const onClose = () => setModalIsOpen(false);
 
   return (
     <>
@@ -50,13 +32,10 @@ export function SchemaResourcePage({
               <BreadcrumbRoot link={`/settings/${resourceInfo.table}`}>
                 {name}
               </BreadcrumbRoot>,
-              <button
-                type="button"
-                className=""
-                onClick={() => setModalIsOpen(true)}
-              >
-                <AiFillPlusCircle size={32} className="text-blue-600" />
-              </button>
+              <AddSchemaResourceModal
+                onClose={() => refetch()}
+                resourceInfo={resourceInfo!}
+              />
             ]}
           />
         }
@@ -73,33 +52,6 @@ export function SchemaResourcePage({
             {Boolean(error) && <ErrorPage error={error as Error} />}
           </div>
         </div>
-
-        <Modal
-          open={modalIsOpen}
-          onClose={onClose}
-          bodyClass="flex flex-col flex-1 overflow-y-auto"
-          size="full"
-          title={`Add ${resourceInfo.name}`}
-        >
-          {resourceInfo.table === "config_scrapers" ? (
-            <ConfigScrapperSpecEditor
-              onSubmit={(val) => createResource(val)}
-              resourceInfo={resourceInfo}
-            />
-          ) : resourceInfo.table === "canaries" ? (
-            <HealthSpecEditor
-              onSubmit={(val) => createResource(val)}
-              resourceInfo={resourceInfo}
-            />
-          ) : (
-            <SchemaResourceEdit
-              isModal
-              onSubmit={async (val) => createResource(val)}
-              onCancel={onClose}
-              resourceInfo={resourceInfo}
-            />
-          )}
-        </Modal>
       </SearchLayout>
     </>
   );
