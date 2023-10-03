@@ -28,7 +28,7 @@ export default function ConfigLink({
         to={{
           pathname: `/catalog/${configId}`
         }}
-        className={clsx("flex flex-row space-x-1 border-0", className)}
+        className={clsx("flex flex-row gap-2", className)}
       >
         <ConfigsTypeIcon
           config={{
@@ -40,11 +40,11 @@ export default function ConfigLink({
     );
   }
   return (
-    <div className={clsx("flex flex-row space-x-1", className)}>
+    <div className={clsx("flex flex-row gap-1", className)}>
       <Icon
         name={configType}
         secondary={configTypeSecondary}
-        className="w-5 mr-1 h-5"
+        className="w-5 h-5"
       />
       <div className="overflow-hidden text-ellipsis text-sm">{configName}</div>
     </div>
