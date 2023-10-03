@@ -1,17 +1,14 @@
 import { useState } from "react";
-import { SearchLayout } from "../components/Layout";
+import { BreadcrumbNav, BreadcrumbRoot } from "../components/BreadcrumbNav";
 import { Canary } from "../components/Canary";
+import { Head } from "../components/Head/Head";
+import { SearchLayout } from "../components/Layout";
 import RefreshDropdown, {
   HEALTH_PAGE_REFRESH_RATE_KEY
 } from "../components/RefreshDropdown";
 import { HealthRefreshDropdownRateContext } from "../components/RefreshDropdown/RefreshRateContext";
-import { Modal } from "../components";
+import AddSchemaResourceModal from "../components/SchemaResourcePage/AddSchemaResourceModal";
 import { schemaResourceTypes } from "../components/SchemaResourcePage/resourceTypes";
-import { AiFillPlusCircle } from "react-icons/ai";
-import { BreadcrumbNav, BreadcrumbRoot } from "../components/BreadcrumbNav";
-import { Head } from "../components/Head/Head";
-import HealthSpecEditor from "../components/SpecEditor/HealthSpecEditor";
-import { useSettingsCreateResource } from "../api/query-hooks/mutations/useSettingsResourcesMutations";
 
 type Props = {
   url: string;
@@ -19,17 +16,9 @@ type Props = {
 
 export function HealthPage({ url }: Props) {
   const [loading, setLoading] = useState(true);
-  const [modalIsOpen, setModalIsOpen] = useState(false);
 
   const resourceInfo = schemaResourceTypes.find(
     (item) => item.name === "Health Check"
-  );
-
-  const { mutate: createResource } = useSettingsCreateResource(
-    resourceInfo!,
-    () => {
-      setModalIsOpen(false);
-    }
   );
 
   /**
@@ -55,13 +44,10 @@ export function HealthPage({ url }: Props) {
             <BreadcrumbNav
               list={[
                 <BreadcrumbRoot link="/health">Health</BreadcrumbRoot>,
-                <button
-                  type="button"
-                  className=""
-                  onClick={() => setModalIsOpen(true)}
-                >
-                  <AiFillPlusCircle size={32} className="text-blue-600" />
-                </button>
+                <AddSchemaResourceModal
+                  onClose={() => setTriggerRefresh(triggerRefresh + 1)}
+                  resourceInfo={resourceInfo!}
+                />
               ]}
             />
           }
@@ -79,18 +65,6 @@ export function HealthPage({ url }: Props) {
             triggerRefresh={triggerRefresh}
           />
         </SearchLayout>
-        <Modal
-          open={modalIsOpen}
-          onClose={() => setModalIsOpen(false)}
-          bodyClass=""
-          size="full"
-          title={`Add ${resourceInfo!.name}`}
-        >
-          <HealthSpecEditor
-            resourceInfo={schemaResourceTypes.at(-1)!}
-            onSubmit={(val) => createResource(val)}
-          />
-        </Modal>
       </HealthRefreshDropdownRateContext.Provider>
     </>
   );
