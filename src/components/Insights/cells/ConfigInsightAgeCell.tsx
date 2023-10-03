@@ -21,5 +21,5 @@ export default function ConfigInsightAgeCell({
   unknown
 >) {
   const age = relativeDateTime(row.original.first_observed);
-  return <span className="flex flex-nowrap py-1 text-sm">{age}</span>;
+  return <span className="flex whitespace-nowrap py-1 text-sm">{age}</span>;
 }

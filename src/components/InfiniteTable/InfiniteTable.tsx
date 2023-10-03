@@ -101,25 +101,17 @@ export function InfiniteTable<T>({
       style={containerStyle}
     >
       <table
-        className={clsx(
-          `table-auto table-fixed w-full flex flex-col p-0`,
-          stickyHead && "relative"
-        )}
+        className={clsx(`table-auto table-fixed p-0`, stickyHead && "relative")}
       >
-        <thead
-          className={`flex flex-col flex-1 bg-white ${
-            stickyHead ? "sticky top-0 z-1" : ""
-          }`}
-        >
+        <thead className={`bg-white ${stickyHead ? "sticky top-0 z-1" : ""}`}>
           {table.getHeaderGroups().map((headerGroup) => (
-            <tr className="flex flex-row flex-1" key={headerGroup.id}>
+            <tr className="" key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 return (
                   <th
                     key={header.id}
                     colSpan={header.colSpan}
-                    style={{ padding: "0px" }}
-                    className={clsx(columnsClassName?.[header.id])}
+                    className={clsx(columnsClassName?.[header.id], "py-0")}
                   >
                     {header.isPlaceholder ? null : (
                       <div
@@ -142,7 +134,7 @@ export function InfiniteTable<T>({
             </tr>
           ))}
         </thead>
-        <tbody className={`flex flex-col flex-1`}>
+        <tbody>
           {paddingTop > 0 && (
             <tr>
               <td style={{ height: `${paddingTop}px` }} />
@@ -151,12 +143,15 @@ export function InfiniteTable<T>({
           {virtualRows.map((virtualRow) => {
             const row = rows[virtualRow.index] as Row<T>;
             return (
-              <tr className="flex flex-row flex-1" key={row.id}>
+              <tr key={row.id}>
                 {row.getVisibleCells().map((cell) => {
                   return (
                     <td
                       key={cell.id}
-                      className={clsx(columnsClassName?.[cell.column.id])}
+                      className={clsx(
+                        columnsClassName?.[cell.column.id],
+                        "py-1"
+                      )}
                     >
                       {flexRender(
                         cell.column.columnDef.cell,
