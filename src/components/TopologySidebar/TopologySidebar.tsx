@@ -10,6 +10,7 @@ import TopologyActionBar from "./TopologyActionBar";
 import TopologyCost from "./TopologyCost";
 import TopologyInsights from "./TopologyInsights";
 import { useCallback, useState } from "react";
+import { PlaybookRunsSidePanel } from "../Playbooks/Runs/PlaybookRunsSidePanel";
 
 type Props = {
   topology?: Topology;
@@ -24,7 +25,8 @@ type SidePanels =
   | "Costs"
   | "ConfigChanges"
   | "Teams"
-  | "Insights";
+  | "Insights"
+  | "PlaybookRuns";
 
 export default function TopologySidebar({
   topology,
@@ -77,6 +79,7 @@ export default function TopologySidebar({
           panelCollapsedStatusChange(status, "Incidents")
         }
       />
+
       <TopologyCost
         topology={topology}
         isCollapsed={openedPanel !== "Costs"}
@@ -91,6 +94,16 @@ export default function TopologySidebar({
           panelCollapsedStatusChange(status, "ConfigChanges")
         }
       />
+
+      <PlaybookRunsSidePanel
+        panelType="topology"
+        componentId={id}
+        isCollapsed={openedPanel !== "PlaybookRuns"}
+        onCollapsedStateChange={(status) =>
+          panelCollapsedStatusChange(status, "PlaybookRuns")
+        }
+      />
+
       <ComponentTeams
         componentId={id}
         isCollapsed={openedPanel !== "Teams"}

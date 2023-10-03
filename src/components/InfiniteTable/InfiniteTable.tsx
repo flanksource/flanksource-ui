@@ -22,6 +22,7 @@ type InfiniteTableProps<T> = React.HTMLProps<HTMLDivElement> & {
   loaderView: React.ReactNode;
   stickyHead?: boolean;
   columnsClassName?: { [key: string]: string };
+  onRowClick?: (row: Row<T>) => void;
 };
 
 export function InfiniteTable<T>({
@@ -35,7 +36,8 @@ export function InfiniteTable<T>({
   loaderView,
   stickyHead,
   columnsClassName,
-  virtualizedRowEstimatedHeight = 50
+  virtualizedRowEstimatedHeight = 50,
+  onRowClick = () => {}
 }: InfiniteTableProps<T>) {
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const containerStyle = useMemo(() => {
@@ -143,7 +145,7 @@ export function InfiniteTable<T>({
           {virtualRows.map((virtualRow) => {
             const row = rows[virtualRow.index] as Row<T>;
             return (
-              <tr key={row.id}>
+              <tr role="button" onClick={() => onRowClick(row)} key={row.id}>
                 {row.getVisibleCells().map((cell) => {
                   return (
                     <td

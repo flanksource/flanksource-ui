@@ -1,3 +1,4 @@
+import { PlaybookRunAction } from "../../components/Playbooks/Runs/PlaybookRunsSidePanel";
 import { SubmitPlaybookRunFormValues } from "../../components/Playbooks/Runs/SubmitPlaybookRunForm";
 import {
   NewPlaybookSpec,
@@ -5,8 +6,9 @@ import {
   UpdatePlaybookSpec
 } from "../../components/Playbooks/Settings/PlaybookSpecsTable";
 import { AVATAR_INFO } from "../../constants";
-import { IncidentCommander, PlaybookAPI } from "../axios";
+import { ConfigDB, IncidentCommander, PlaybookAPI } from "../axios";
 import { GetPlaybooksToRunParams } from "../query-hooks/playbooks";
+import { resolve } from "../resolve";
 
 export async function getAllPlaybooksSpecs() {
   const res = await IncidentCommander.get<PlaybookSpec[] | null>(
@@ -61,4 +63,23 @@ export async function getPlaybookRun(params: GetPlaybooksToRunParams) {
     `/list?${paramsString}`
   );
   return res.data ?? [];
+}
+
+export async function getPlaybookRuns(componentId?: string, configId?: string) {
+  const componentParamString = componentId
+    ? `&component_id=eq.${componentId}`
+    : "";
+  const configParamString = configId ? `&config_id=eq.${configId}` : "";
+
+  const res = await resolve(
+    ConfigDB.get<PlaybookRunAction[] | null>(
+      `/playbook_runs?select=*,playbooks(id,name)&order=created_at.desc${componentParamString}&${configParamString}`,
+      {
+        headers: {
+          Prefer: "count=exact"
+        }
+      }
+    )
+  );
+  return res;
 }

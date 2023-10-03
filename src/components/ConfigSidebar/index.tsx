@@ -8,6 +8,7 @@ import SlidingSideBar from "../SlidingSideBar";
 import { ConfigDetails } from "./ConfigDetails";
 import ConfigActionBar from "./ConfigActionBar";
 import { useCallback, useState } from "react";
+import { PlaybookRunsSidePanel } from "../Playbooks/Runs/PlaybookRunsSidePanel";
 
 type SidePanels =
   | "ConfigDetails"
@@ -15,7 +16,8 @@ type SidePanels =
   | "Incidents"
   | "Costs"
   | "ConfigChanges"
-  | "Insights";
+  | "Insights"
+  | "PlaybookRuns";
 
 export default function ConfigSidebar() {
   const [openedPanel, setOpenedPanel] = useState<SidePanels | undefined>(
@@ -68,6 +70,14 @@ export default function ConfigSidebar() {
         isCollapsed={openedPanel !== "Costs"}
         onCollapsedStateChange={(status) =>
           panelCollapsedStatusChange(status, "Costs")
+        }
+      />
+      <PlaybookRunsSidePanel
+        panelType="config"
+        configId={id}
+        isCollapsed={openedPanel !== "PlaybookRuns"}
+        onCollapsedStateChange={(status) =>
+          panelCollapsedStatusChange(status, "PlaybookRuns")
         }
       />
       <ConfigChanges
