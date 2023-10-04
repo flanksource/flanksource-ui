@@ -6,7 +6,7 @@ import { Icon } from "../Icon";
 
 export type StatusInfo = {
   label: string | number;
-  color: "red" | "green" | "orange" | "gray";
+  color: "red" | "green" | "orange" | "gray" | "yellow";
   icon?: string | React.ReactNode;
   url?: string;
 };

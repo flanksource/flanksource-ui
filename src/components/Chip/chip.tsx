@@ -19,7 +19,7 @@ const getBackgroundColorClass = (color?: string) => {
 
 type Props = {
   text?: React.ReactNode;
-  color?: "red" | "orange" | "green" | "gray";
+  color?: "red" | "orange" | "green" | "gray" | "yellow";
 } & React.DetailedHTMLProps<
   React.HTMLAttributes<HTMLDivElement>,
   HTMLDivElement
