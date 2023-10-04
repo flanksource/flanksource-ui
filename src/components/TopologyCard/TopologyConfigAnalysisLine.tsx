@@ -12,9 +12,6 @@ const severityToColorMap = (severity: string) => {
   if (severity === "critical") {
     return "red";
   }
-  if (severity === "critical") {
-    return "red";
-  }
   if (severity === "high") {
     return "orange";
   }
