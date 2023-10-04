@@ -1,5 +1,5 @@
 import { CostsData } from "../components/CostDetails/CostDetails";
-import { severityItems, typeItems } from "../components/Incidents/data";
+import { Severity, typeItems } from "../components/Incidents/data";
 
 export type ValueType = number | string | Date;
 
@@ -43,7 +43,7 @@ export type Topology = {
     >;
     insights?: Record<
       keyof typeof typeItems,
-      Record<keyof typeof severityItems, number>
+      Record<Severity, number | undefined>
     >;
     [key: string]: any;
   };

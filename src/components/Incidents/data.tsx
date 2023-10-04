@@ -32,6 +32,15 @@ export const defaultSelections = {
   }
 };
 
+export type Severity =
+  | "info"
+  | "warning"
+  | "low"
+  | "medium"
+  | "high"
+  | "blocker"
+  | "critical";
+
 export const severityItems = {
   Info: {
     id: "dropdown-severity-info",
