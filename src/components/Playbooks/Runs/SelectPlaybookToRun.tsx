@@ -10,12 +10,14 @@ type SelectPlaybookToRunProps = {
   component_id?: string;
   config_id?: string;
   check_id?: string;
+  className?: string;
 };
 
 export default function SelectPlaybookToRun({
   check_id,
   component_id,
-  config_id
+  config_id,
+  className = "text-sm btn-white"
 }: SelectPlaybookToRunProps) {
   const [selectedPlaybookSpec, setSelectedPlaybookSpec] =
     useState<PlaybookSpec>();
@@ -47,7 +49,7 @@ export default function SelectPlaybookToRun({
                     {!open ? <FaChevronDown /> : <FaChevronUp />}
                   </div>
                 }
-                className="text-sm btn-white"
+                className={className}
                 disabled={isLoading}
               />
             </div>
