@@ -57,9 +57,11 @@ export function TopologyConfigAnalysisLine({
       };
       Object.entries(severityMapWithLowMediumCombined)
         .filter(([_, count]) => count !== undefined)
-        .forEach(([severity, count]) => {
+        .forEach(([severity, count], index) => {
           const color = severityToColorMap(severity);
-          const icon = <InsightTypeToIcon type={type} size={17} />;
+          // Only show icon for first insight, otherwise it's too much
+          const icon =
+            index === 0 ? <InsightTypeToIcon type={type} size={17} /> : null;
           const label = count ?? 0;
           const key = `${type}-${severity}`;
           const url = `/catalog/insights?component=${topology.id}&type=${type}&severity=${severity}`;
