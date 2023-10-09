@@ -1,14 +1,14 @@
 import {
-  useReactTable,
-  getCoreRowModel,
-  getSortedRowModel,
   ColumnDef,
   Row,
-  flexRender
+  flexRender,
+  getCoreRowModel,
+  getSortedRowModel,
+  useReactTable
 } from "@tanstack/react-table";
-import React, { useCallback, useMemo, useRef } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import clsx from "clsx";
+import React, { useCallback, useMemo, useRef } from "react";
 
 type InfiniteTableProps<T> = React.HTMLProps<HTMLDivElement> & {
   columns: ColumnDef<T, any>[];

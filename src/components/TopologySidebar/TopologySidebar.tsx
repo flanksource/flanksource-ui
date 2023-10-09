@@ -1,5 +1,7 @@
+import { useCallback, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Topology } from "../../context/TopologyPageContext";
+import { PlaybookRunsSidePanel } from "../Playbooks/Runs/PlaybookRunsSidePanel";
 import Configs from "../Sidebars/configs";
 import Incidents from "../Sidebars/incidents";
 import SlidingSideBar from "../SlidingSideBar";
@@ -9,8 +11,6 @@ import { ComponentTeams } from "./ComponentTeams";
 import TopologyActionBar from "./TopologyActionBar";
 import TopologyCost from "./TopologyCost";
 import TopologyInsights from "./TopologyInsights";
-import { useCallback, useState } from "react";
-import { PlaybookRunsSidePanel } from "../Playbooks/Runs/PlaybookRunsSidePanel";
 
 type Props = {
   topology?: Topology;

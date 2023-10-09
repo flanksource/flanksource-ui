@@ -3,6 +3,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { useAtom } from "jotai";
 import { useEffect, useMemo, useState } from "react";
 import { AiOutlineTeam } from "react-icons/ai";
+import { useNavigate } from "react-router-dom";
 import { getPlaybookRuns } from "../../../api/services/playbooks";
 import { relativeDateTime } from "../../../utils/date";
 import PillBadge from "../../Badge/PillBadge";
@@ -13,7 +14,6 @@ import TextSkeletonLoader from "../../SkeletonLoader/TextSkeletonLoader";
 import { refreshButtonClickedTrigger } from "../../SlidingSideBar";
 import Title from "../../Title/title";
 import { PlaybookSpec } from "../Settings/PlaybookSpecsTable";
-import { useNavigate } from "react-router-dom";
 
 type TopologySidePanelProps = {
   panelType: "topology";
