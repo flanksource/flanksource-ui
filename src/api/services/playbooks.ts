@@ -12,7 +12,7 @@ import { resolve } from "../resolve";
 
 export async function getAllPlaybooksSpecs() {
   const res = await IncidentCommander.get<PlaybookSpec[] | null>(
-    `/playbooks?select=*,created_by(${AVATAR_INFO})&deleted_at=is.null`
+    `/playbooks?select=*,created_by(${AVATAR_INFO})&deleted_at=is.null&order=created_at.desc`
   );
   return res.data ?? [];
 }
