@@ -1,14 +1,14 @@
 import {
-  useReactTable,
-  getCoreRowModel,
-  getSortedRowModel,
   ColumnDef,
   Row,
-  flexRender
+  flexRender,
+  getCoreRowModel,
+  getSortedRowModel,
+  useReactTable
 } from "@tanstack/react-table";
-import React, { useCallback, useMemo, useRef } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import clsx from "clsx";
+import React, { useCallback, useMemo, useRef } from "react";
 
 type InfiniteTableProps<T> = React.HTMLProps<HTMLDivElement> & {
   columns: ColumnDef<T, any>[];
@@ -22,6 +22,7 @@ type InfiniteTableProps<T> = React.HTMLProps<HTMLDivElement> & {
   loaderView: React.ReactNode;
   stickyHead?: boolean;
   columnsClassName?: { [key: string]: string };
+  onRowClick?: (row: Row<T>) => void;
 };
 
 export function InfiniteTable<T>({
@@ -35,7 +36,8 @@ export function InfiniteTable<T>({
   loaderView,
   stickyHead,
   columnsClassName,
-  virtualizedRowEstimatedHeight = 50
+  virtualizedRowEstimatedHeight = 50,
+  onRowClick = () => {}
 }: InfiniteTableProps<T>) {
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const containerStyle = useMemo(() => {
@@ -101,25 +103,17 @@ export function InfiniteTable<T>({
       style={containerStyle}
     >
       <table
-        className={clsx(
-          `table-auto table-fixed w-full flex flex-col p-0`,
-          stickyHead && "relative"
-        )}
+        className={clsx(`table-auto table-fixed p-0`, stickyHead && "relative")}
       >
-        <thead
-          className={`flex flex-col flex-1 bg-white ${
-            stickyHead ? "sticky top-0 z-1" : ""
-          }`}
-        >
+        <thead className={`bg-white ${stickyHead ? "sticky top-0 z-1" : ""}`}>
           {table.getHeaderGroups().map((headerGroup) => (
-            <tr className="flex flex-row flex-1" key={headerGroup.id}>
+            <tr className="" key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 return (
                   <th
                     key={header.id}
                     colSpan={header.colSpan}
-                    style={{ padding: "0px" }}
-                    className={clsx(columnsClassName?.[header.id])}
+                    className={clsx(columnsClassName?.[header.id], "py-0")}
                   >
                     {header.isPlaceholder ? null : (
                       <div
@@ -142,7 +136,7 @@ export function InfiniteTable<T>({
             </tr>
           ))}
         </thead>
-        <tbody className={`flex flex-col flex-1`}>
+        <tbody>
           {paddingTop > 0 && (
             <tr>
               <td style={{ height: `${paddingTop}px` }} />
@@ -151,12 +145,15 @@ export function InfiniteTable<T>({
           {virtualRows.map((virtualRow) => {
             const row = rows[virtualRow.index] as Row<T>;
             return (
-              <tr className="flex flex-row flex-1" key={row.id}>
+              <tr role="button" onClick={() => onRowClick(row)} key={row.id}>
                 {row.getVisibleCells().map((cell) => {
                   return (
                     <td
                       key={cell.id}
-                      className={clsx(columnsClassName?.[cell.column.id])}
+                      className={clsx(
+                        columnsClassName?.[cell.column.id],
+                        "py-1"
+                      )}
                     >
                       {flexRender(
                         cell.column.columnDef.cell,

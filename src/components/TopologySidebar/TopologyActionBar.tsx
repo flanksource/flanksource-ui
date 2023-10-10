@@ -1,18 +1,19 @@
 import React, { useMemo, useState } from "react";
 import { IconType } from "react-icons";
-import { BiShow, BiHide, BiZoomIn, BiLink } from "react-icons/bi";
+import { BiHide, BiLink, BiShow, BiZoomIn } from "react-icons/bi";
 import { ImTree } from "react-icons/im";
 import { MdAlarmAdd, MdTableRows } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import useUpdateComponentMutation from "../../api/query-hooks/mutations/useUpdateComponentMutation";
 import { EvidenceType } from "../../api/services/evidence";
-import { Topology } from "../../context/TopologyPageContext";
-import { AttachEvidenceDialog } from "../AttachEvidenceDialog";
-import TopologySnapshotModal from "../TopologyCard/TopologySnapshotModal";
-import { ActionLink } from "../ActionLink/ActionLink";
-import { TopologyConfigLinkModal } from "../TopologyConfigLinkModal/TopologyConfigLinkModal";
 import { useFeatureFlagsContext } from "../../context/FeatureFlagsContext";
+import { Topology } from "../../context/TopologyPageContext";
 import { features } from "../../services/permissions/features";
+import { ActionLink } from "../ActionLink/ActionLink";
+import { AttachEvidenceDialog } from "../AttachEvidenceDialog";
+import SelectPlaybookToRun from "../Playbooks/Runs/SelectPlaybookToRun";
+import TopologySnapshotModal from "../TopologyCard/TopologySnapshotModal";
+import { TopologyConfigLinkModal } from "../TopologyConfigLinkModal/TopologyConfigLinkModal";
 
 type TopologyActionItem = {
   label: string;
@@ -279,6 +280,7 @@ export default function TopologyActionBar({
             }
             return null;
           })}
+        <SelectPlaybookToRun component_id={topology.id} />
       </div>
 
       <AttachEvidenceDialog

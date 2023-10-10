@@ -5,7 +5,7 @@ import { DateCell } from "../../ConfigViewer/columns";
 import { DataTable } from "../../DataTable";
 
 export type PlaybookSpec = {
-  id: string;
+  ID: string;
   name: string;
   created_by?: User;
   spec: any;

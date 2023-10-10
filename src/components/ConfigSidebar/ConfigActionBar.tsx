@@ -6,6 +6,7 @@ import { EvidenceType } from "../../api/services/evidence";
 import { usePartialUpdateSearchParams } from "../../hooks/usePartialUpdateSearchParams";
 import { ActionLink } from "../ActionLink/ActionLink";
 import AttachAsEvidenceButton from "../AttachEvidenceDialog/AttachAsEvidenceDialogButton";
+import SelectPlaybookToRun from "../Playbooks/Runs/SelectPlaybookToRun";
 
 type ConfigActionBarProps = {
   configId: string;
@@ -78,6 +79,7 @@ export default function ConfigActionBar({
           setChecked({});
         }}
       />
+      <SelectPlaybookToRun config_id={configId} />
     </div>
   );
 }

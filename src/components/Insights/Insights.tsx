@@ -166,8 +166,8 @@ export default function InsightsDetails(
         stickyHead
         virtualizedRowEstimatedHeight={40}
         columnsClassName={{
-          change_type: "flex-1 w-[100px]",
-          first_observed: "text-right"
+          change_type: "",
+          first_observed: "fit-content whitespace-nowrap"
         }}
       />
     </div>
