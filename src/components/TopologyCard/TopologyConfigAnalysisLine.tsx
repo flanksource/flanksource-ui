@@ -12,9 +12,6 @@ const severityToColorMap = (severity: string) => {
   if (severity === "critical") {
     return "red";
   }
-  if (severity === "critical") {
-    return "red";
-  }
   if (severity === "high") {
     return "orange";
   }
@@ -53,19 +50,28 @@ export function TopologyConfigAnalysisLine({
     const analysisToCountMap: Record<string, StatusInfo> = {};
 
     Object.entries(insights).forEach(([type, severityMap]) => {
-      Object.entries(severityMap).forEach(([severity, count]) => {
-        const color = severityToColorMap(severity) as any;
-        const icon = <InsightTypeToIcon type={type} size={17} />;
-        const label = count ?? 0;
-        const key = `${type}-${severity}`;
-        const url = `/catalog/insights?component=${topology.id}&type=${type}&severity=${severity}`;
-        analysisToCountMap[key] = {
-          color,
-          icon,
-          label,
-          url
-        };
-      });
+      const severityMapWithLowMediumCombined: typeof severityMap = {
+        ...severityMap,
+        medium: (severityMap.medium ?? 0) + (severityMap.low ?? 0),
+        low: undefined
+      };
+      Object.entries(severityMapWithLowMediumCombined)
+        .filter(([_, count]) => count !== undefined)
+        .forEach(([severity, count], index) => {
+          const color = severityToColorMap(severity);
+          // Only show icon for first insight, otherwise it's too much
+          const icon =
+            index === 0 ? <InsightTypeToIcon type={type} size={17} /> : null;
+          const label = count ?? 0;
+          const key = `${type}-${severity}`;
+          const url = `/catalog/insights?component=${topology.id}&type=${type}&severity=${severity}`;
+          analysisToCountMap[key] = {
+            color,
+            icon,
+            label,
+            url
+          };
+        });
     });
 
     return {

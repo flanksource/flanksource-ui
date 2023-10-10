@@ -33,6 +33,12 @@ export default function IncidentCardSummary({
   const statusLines: StatusLineProps[] = useMemo(() => {
     const incidentSummary = Object.entries(topology?.summary?.incidents || {});
     return incidentSummary.map(([key, summary]) => {
+      // For presentation purposes, we combine Low and Medium into one
+      const { Low, ...rest } = summary;
+      const summaryWithLowMediumCombined = {
+        ...rest,
+        Medium: (summary.Medium ?? 0) + (summary.Low ?? 0)
+      };
       const statusLine: StatusLineProps = {
         icon: typeItems[key as IncidentSummaryTypes].icon,
         label: typeItems[key as IncidentSummaryTypes].description,
@@ -40,19 +46,21 @@ export default function IncidentCardSummary({
         statuses: []
       };
       const type = typeItems[key as IncidentSummaryTypes].value;
-      Object.entries(summary).forEach(([key, value], i) => {
-        if (value <= 0) {
-          return;
+      Object.entries(summaryWithLowMediumCombined).forEach(
+        ([key, value], i) => {
+          if (value <= 0) {
+            return;
+          }
+          const severityObject =
+            severityItems[key as IncidentSeverity] || severityItems.Low;
+          const item = {
+            label: value.toString(),
+            color: chipColorFromSeverity(key as IncidentSeverity),
+            url: `/incidents?severity=${severityObject.value}&component=${topology.id}&type=${type}`
+          };
+          statusLine.statuses.push(item);
         }
-        const severityObject =
-          severityItems[key as IncidentSeverity] || severityItems.Low;
-        const item = {
-          label: value.toString(),
-          color: chipColorFromSeverity(key as IncidentSeverity),
-          url: `/incidents?severity=${severityObject.value}&component=${topology.id}&type=${type}`
-        };
-        statusLine.statuses.push(item);
-      });
+      );
       return statusLine;
     });
   }, [topology]);
