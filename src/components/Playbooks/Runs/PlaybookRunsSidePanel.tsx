@@ -1,10 +1,14 @@
+import { User } from "@clerk/nextjs/dist/types/server";
 import { useQuery } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
 import { useAtom } from "jotai";
 import { useEffect, useMemo, useState } from "react";
 import { AiOutlineTeam } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
+import { ConfigItem } from "../../../api/services/configs";
 import { getPlaybookRuns } from "../../../api/services/playbooks";
+import { Topology } from "../../../context/TopologyPageContext";
+import { HealthCheck } from "../../../types/healthChecks";
 import { relativeDateTime } from "../../../utils/date";
 import PillBadge from "../../Badge/PillBadge";
 import CollapsiblePanel from "../../CollapsiblePanel";
@@ -50,6 +54,17 @@ export type PlaybookRunAction = {
   };
   error?: string;
   playbooks?: PlaybookSpec;
+  playbook_id: string;
+  created_at: string;
+  created_by: User;
+  check_id?: string;
+  config_id?: string;
+  component_id?: string;
+  parameters: Record<string, unknown>;
+  agent_id?: string;
+  component?: Pick<Topology, "id" | "name" | "icon">;
+  check?: Pick<HealthCheck, "id" | "name" | "icon">;
+  config?: Pick<ConfigItem, "id" | "name" | "type" | "config_class">;
 };
 
 const runsColumns: ColumnDef<PlaybookRunAction, any>[] = [
@@ -86,13 +101,21 @@ export function PlaybookRunsSidePanel({
   onCollapsedStateChange,
   ...props
 }: ConfigSidePanelProps | TopologySidePanelProps) {
+  const [{ pageIndex, pageSize }, setPageState] = useState({
+    pageIndex: 0,
+    pageSize: 50
+  });
+
   const { data, isLoading, refetch, isFetching } = useQuery(
     ["componentTeams", props],
     () =>
-      getPlaybookRuns(
-        props.panelType === "topology" ? props.componentId : undefined,
-        props.panelType === "config" ? props.configId : undefined
-      )
+      getPlaybookRuns({
+        pageIndex,
+        pageSize,
+        componentId:
+          props.panelType === "topology" ? props.componentId : undefined,
+        configId: props.panelType === "config" ? props.configId : undefined
+      })
   );
 
   const totalEntries = data?.totalEntries ?? 0;
@@ -100,11 +123,6 @@ export function PlaybookRunsSidePanel({
   const playbookRuns = data?.data ?? [];
 
   const navigate = useNavigate();
-
-  const [{ pageIndex, pageSize }, setPageState] = useState({
-    pageIndex: 0,
-    pageSize: 50
-  });
 
   const canGoNext = () => {
     const pageCount = Math.ceil(totalEntries / pageSize);
