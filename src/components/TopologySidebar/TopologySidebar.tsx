@@ -11,6 +11,7 @@ import { ComponentTeams } from "./ComponentTeams";
 import TopologyActionBar from "./TopologyActionBar";
 import TopologyCost from "./TopologyCost";
 import TopologyInsights from "./TopologyInsights";
+import { ComponentChecks } from "./ComponentChecks";
 
 type Props = {
   topology?: Topology;
@@ -26,7 +27,8 @@ type SidePanels =
   | "ConfigChanges"
   | "Teams"
   | "Insights"
-  | "PlaybookRuns";
+  | "PlaybookRuns"
+  | "ComponentChecks";
 
 export default function TopologySidebar({
   topology,
@@ -92,6 +94,14 @@ export default function TopologySidebar({
         isCollapsed={openedPanel !== "ConfigChanges"}
         onCollapsedStateChange={(status) =>
           panelCollapsedStatusChange(status, "ConfigChanges")
+        }
+      />
+
+      <ComponentChecks
+        componentId={id}
+        isCollapsed={openedPanel !== "ComponentChecks"}
+        onCollapsedStateChange={(status) =>
+          panelCollapsedStatusChange(status, "ComponentChecks")
         }
       />
 
