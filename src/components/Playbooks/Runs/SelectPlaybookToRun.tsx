@@ -70,8 +70,9 @@ export default function SelectPlaybookToRun({
       </Menu>
       {selectedPlaybookSpec && (
         <SubmitPlaybookRunForm
-          type="component"
-          componentId={component_id!}
+          componentId={component_id}
+          checkId={check_id}
+          configId={config_id}
           isOpen={!!selectedPlaybookSpec}
           onClose={() => {
             setSelectedPlaybookSpec(undefined);

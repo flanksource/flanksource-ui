@@ -19,50 +19,28 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
   playbookSpec: PlaybookSpec;
+  checkId?: string;
+  componentId?: string;
+  configId?: string;
 };
-
-type SubmitPlaybookRunFormForComponentProps = {
-  type: "component";
-  componentId: string;
-} & Props;
-
-type SubmitPlaybookRunFormForConfigProps = {
-  type: "config";
-  configId: string;
-} & Props;
-
-type SubmitPlaybookRunFormForCheckProps = {
-  type: "check";
-  checkId: string;
-} & Props;
-
-type SubmitPlaybookRunFormProps =
-  | SubmitPlaybookRunFormForComponentProps
-  | SubmitPlaybookRunFormForConfigProps
-  | SubmitPlaybookRunFormForCheckProps;
 
 export default function SubmitPlaybookRunForm({
   isOpen,
   onClose,
   playbookSpec,
-  ...props
-}: SubmitPlaybookRunFormProps) {
+  componentId,
+  checkId,
+  configId
+}: Props) {
   const initialValues: Partial<SubmitPlaybookRunFormValues> = useMemo(
     () => ({
       id: playbookSpec.ID,
       params: undefined,
-
-      ...(props.type === "component"
-        ? { component_id: props.componentId }
-        : props.type === "check"
-        ? {
-            check_id: props.checkId
-          }
-        : {
-            config_id: props.configId
-          })
+      component_id: componentId,
+      check_id: checkId,
+      config_id: configId
     }),
-    [props, playbookSpec]
+    [checkId, componentId, configId, playbookSpec.ID]
   );
 
   const { mutate: submitPlaybookRun } = useSubmitPlaybookRunMutation({
