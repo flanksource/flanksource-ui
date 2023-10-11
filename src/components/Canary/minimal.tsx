@@ -121,29 +121,33 @@ const MinimalCanaryFC = ({
             timeRange={timeRange}
             className={`flex flex-col overflow-y-auto flex-1`}
           />
-          <div className="rounded-t-none flex gap-2 bg-gray-100 px-8 py-4 justify-end absolute w-full bottom-0 left-0">
+          <div className="rounded-t-none  flex gap-2 bg-gray-100 px-8 py-4 justify-end absolute w-full bottom-0 left-0">
             {selectedCheck?.canary_id && (
               <HealthCheckEdit check={selectedCheck as HealthCheck} />
             )}
             {!isCanaryUI && (
               <>
-                <SelectPlaybookToRun
-                  className="btn-primary"
-                  check_id={selectedCheck?.id}
-                />
-                <AttachAsEvidenceButton
-                  check_id={selectedCheck?.id}
-                  evidence={{
-                    check_id: selectedCheck?.id,
-                    includeMessages: true,
-                    start: timeRange
-                  }}
-                  type={EvidenceType.Check}
-                  callback={(success: boolean) => {
-                    console.log(success);
-                  }}
-                  className="btn-primary"
-                />
+                <div className="flex flex-col items-center ">
+                  <SelectPlaybookToRun
+                    className="btn-primary"
+                    check_id={selectedCheck?.id}
+                  />
+                </div>
+                <div className="flex flex-col items-center py-1">
+                  <AttachAsEvidenceButton
+                    check_id={selectedCheck?.id}
+                    evidence={{
+                      check_id: selectedCheck?.id,
+                      includeMessages: true,
+                      start: timeRange
+                    }}
+                    type={EvidenceType.Check}
+                    callback={(success: boolean) => {
+                      console.log(success);
+                    }}
+                    className="btn-primary"
+                  />
+                </div>
               </>
             )}
           </div>
