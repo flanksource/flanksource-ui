@@ -1,8 +1,11 @@
+import { yupResolver } from "@hookform/resolvers/yup";
 import { useCallback, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
 
+import { useQueryClient } from "@tanstack/react-query";
+import { Link } from "react-router-dom";
+import { createIncidentQueryKey } from "../../api/query-hooks";
 import { createEvidence } from "../../api/services/evidence";
 import {
   createHypothesis,
@@ -13,24 +16,21 @@ import {
 } from "../../api/services/hypothesis";
 import {
   createIncident,
-  searchIncident,
   IncidentSeverity,
-  IncidentStatus
+  IncidentStatus,
+  searchIncident
 } from "../../api/services/incident";
 import { useUser } from "../../context";
-import { TextInput } from "../TextInput";
-import { Modal } from "../Modal";
-import { DropdownWithActions } from "../Dropdown/DropdownWithActions";
-import { IncidentStatusTag } from "../IncidentStatusTag";
-import { IncidentSeverityTag } from "../IncidentSeverityTag";
-import { IItem } from "../../types/IItem";
-import { toastSuccess } from "../Toast/toast";
-import { Link } from "react-router-dom";
-import { severityItems, typeItems } from "../Incidents/data";
-import { ReactSelectDropdown } from "../ReactSelectDropdown";
-import { useQueryClient } from "@tanstack/react-query";
-import { createIncidentQueryKey } from "../../api/query-hooks";
 import { Events, sendAnalyticEvent } from "../../services/analytics";
+import { IItem } from "../../types/IItem";
+import { DropdownWithActions } from "../Dropdown/DropdownWithActions";
+import SelectDropdown from "../Dropdown/SelectDropdown";
+import { severityItems, typeItems } from "../Incidents/data";
+import { IncidentSeverityTag } from "../IncidentSeverityTag";
+import { IncidentStatusTag } from "../IncidentStatusTag";
+import { Modal } from "../Modal";
+import { TextInput } from "../TextInput";
+import { toastSuccess } from "../Toast/toast";
 
 interface Props {
   title?: string;
@@ -140,6 +140,22 @@ const validationSchema = yup
     type: yup.string().required("Please select an incident type")
   })
   .required();
+
+export const severityOptions = Object.entries(severityItems).map(
+  ([_, { value, description, icon }]) => ({
+    value,
+    label: description,
+    icon
+  })
+);
+
+export const typeOptions = Object.entries(typeItems).map(
+  ([_, { value, description, icon }]) => ({
+    value,
+    label: description,
+    icon
+  })
+);
 
 export function AttachEvidenceDialog({
   title = "Link to Incident",
@@ -394,13 +410,15 @@ export function AttachEvidenceDialog({
                     <span className="text-sm font-bold text-gray-700 mb-1 mr-4 w-16">
                       Type
                     </span>
-                    <ReactSelectDropdown
+                    <SelectDropdown
                       name="type"
-                      label=""
                       className="w-full"
-                      control={control}
-                      items={typeItems}
+                      options={typeOptions}
                       value={watchType}
+                      onChange={(e) => {
+                        if (!e) return;
+                        setValue("type", e);
+                      }}
                     />
                     <p className="text-red-600 text-sm">
                       {errors.type?.message}
@@ -414,14 +432,15 @@ export function AttachEvidenceDialog({
                     <span className="text-sm font-bold text-gray-700 mb-1 mr-4 w-16">
                       Severity
                     </span>
-                    <ReactSelectDropdown
-                      control={control}
-                      label=""
+                    <SelectDropdown
                       name="severity"
                       className="w-full"
-                      items={severityItems}
-                      labelClass=""
+                      options={severityOptions}
                       value={watchSeverity}
+                      onChange={(e) => {
+                        if (!e) return;
+                        setValue("severity", e);
+                      }}
                     />
                     <p className="text-red-600 text-sm">
                       {errors.severity?.message}

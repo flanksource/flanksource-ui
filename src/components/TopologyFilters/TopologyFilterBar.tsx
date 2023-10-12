@@ -73,14 +73,14 @@ export default function TopologyFilterBar({
 
   return (
     <div className="flex px-6">
-      <div className="flex flex-wrap">
-        <div className="flex p-3 pl-0">
+      <div className="flex gap-2 py-3 flex-wrap">
+        <div className="flex">
           <ReactSelectDropdown
             name="health"
             label=""
             value={healthStatus}
             items={healthStatuses}
-            className="inline-block p-3 w-auto max-w-[500px]"
+            className="inline-block w-auto max-w-[500px]"
             dropDownClassNames="w-auto max-w-[400px] left-0"
             onChange={(val: any) => {
               setSearchParams({
@@ -96,7 +96,7 @@ export default function TopologyFilterBar({
           />
         </div>
         <ComponentTypesDropdown
-          className="flex p-3"
+          className="flex"
           name="Types"
           label=""
           topologyTypes={topologyTypes}
@@ -108,13 +108,13 @@ export default function TopologyFilterBar({
             });
           }}
         />
-        <div className="flex p-3">
+        <div className="flex">
           <ReactSelectDropdown
             name="team"
             label=""
             value={team}
             items={teams}
-            className="inline-block p-3 w-auto max-w-[500px]"
+            className="inline-block w-auto max-w-[500px]"
             dropDownClassNames="w-auto max-w-[400px] left-0"
             onChange={(val: any) => {
               setSearchParams({
@@ -132,7 +132,7 @@ export default function TopologyFilterBar({
         <ComponentLabelsDropdown
           name="Labels"
           label=""
-          className="flex p-3 w-auto max-w-[500px]"
+          className="flex w-auto max-w-[500px]"
           value={selectedLabel}
           onChange={(val: any) => {
             setSearchParams({
@@ -141,11 +141,11 @@ export default function TopologyFilterBar({
             });
           }}
         />
-        <div className="flex p-3">
+        <div className="flex">
           <AgentNamesDropdown
             name="agent_id"
             value={agentId}
-            className="inline-block p-3 w-auto max-w-[500px]"
+            className="inline-block w-auto max-w-[500px]"
             dropDownClassNames="w-auto max-w-[400px] left-0"
             onChange={(val: any) => {
               setSearchParams({

@@ -21,11 +21,20 @@ import {
 } from "../../../api/services/incident";
 import { useUser } from "../../../context";
 import { Events, sendAnalyticEvent } from "../../../services/analytics";
+import { severityOptions, typeOptions } from "../../AttachEvidenceDialog";
 import { Button } from "../../Button";
-import { ReactSelectDropdown } from "../../ReactSelectDropdown";
+import SelectDropdown from "../../Dropdown/SelectDropdown";
 import { TextInput } from "../../TextInput";
 import { toastError } from "../../Toast/toast";
-import { incidentStatusItems, severityItems, typeItems } from "../data";
+import { incidentStatusItems, severityItems } from "../data";
+
+const incidentStatusOptions = Object.entries(incidentStatusItems).map(
+  ([_, { value, description, icon }]) => ({
+    value,
+    label: description,
+    icon
+  })
+);
 
 const validationSchema = yup
   .object({
@@ -62,7 +71,8 @@ export function IncidentCreate({
     control,
     formState: { errors },
     handleSubmit,
-    watch
+    watch,
+    setValue
   } = useForm<
     Omit<NewIncident, "created_by" | "commander_id" | "communicator_id">
   >({
@@ -156,21 +166,26 @@ export function IncidentCreate({
   return (
     <div className={`max-w-prose ${rest.className || ""}`} {...rest}>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="p-5">
-          <div className="mb-4">
-            <ReactSelectDropdown
-              control={control}
-              label="Type"
-              name="type"
-              className="w-full"
-              labelClass="block text-sm font-bold text-gray-700 mb-2"
-              containerClassName="flex flex-col space-y-1"
-              items={typeItems}
-              value={type}
-            />
-            <p className="text-red-600 text-sm">{errors.type?.message}</p>
+        <div className="flex flex-col gap-4 p-5">
+          <div className="flex flex-col">
+            <div className="flex flex-col">
+              <span className="text-sm font-bold text-gray-700 mb-1 mr-4 w-16">
+                Type
+              </span>
+              <SelectDropdown
+                name="type"
+                className="w-full"
+                options={typeOptions}
+                value={type}
+                onChange={(e) => {
+                  if (!e) return;
+                  setValue("type", e);
+                }}
+              />
+              <p className="text-red-600 text-sm">{errors.type?.message}</p>
+            </div>
           </div>
-          <div className="mb-4">
+          <div className="flex flex-col">
             <Controller
               control={control}
               name="title"
@@ -189,7 +204,7 @@ export function IncidentCreate({
             />
             <p className="text-red-600 text-sm">{errors.title?.message}</p>
           </div>
-          <div className="mb-4">
+          <div className="flex flex-col">
             <Controller
               control={control}
               name="description"
@@ -210,94 +225,39 @@ export function IncidentCreate({
               {errors.description?.message}
             </p>
           </div>
-          {/* <div className="mb-4">
-          <Controller
-            control={control}
-            name="communicator_id"
-            render={({ field }) => {
-              const { onChange, value } = field;
-              return (
-                <TextInput
-                  label="Communicator"
-                  id="communicator_id"
-                  className="w-full"
-                  onChange={onChange}
-                  value={value}
-                />
-              );
-            }}
-          />
-          <p className="text-red-600 text-sm">
-            {errors.communicator_id?.message}
-          </p>
-        </div>
-        <div className="mb-4">
-          <Controller
-            control={control}
-            name="commander_id"
-            render={({ field }) => {
-              const { onChange, value } = field;
-              return (
-                <TextInput
-                  label="Commander"
-                  id="commander_id"
-                  className="w-full"
-                  onChange={onChange}
-                  value={value}
-                />
-              );
-            }}
-          />
-          <p className="text-red-600 text-sm">{errors.commander_id?.message}</p>
-        </div> */}
-          {/* <div className="mb-4">
-          <Controller
-            control={control}
-            name="tracking"
-            render={({ field }) => {
-              const { onChange, value } = field;
-              return (
-                <TextInput
-                  label="Tracking"
-                  id="tracking"
-                  type="email"
-                  placeholder="example@company.com"
-                  className="w-full"
-                  onChange={onChange}
-                  value={value}
-                />
-              );
-            }}
-          />
-          <p className="text-red-600 text-sm">{errors.tracking?.message}</p>
-        </div> */}
 
-          <div className="mb-4">
-            {/* have a look at this */}
-            <ReactSelectDropdown
-              control={control}
-              label="Severity"
+          <div className="flex flex-col">
+            <span className="text-sm font-bold text-gray-700 mb-1 mr-4 w-16">
+              Severity
+            </span>
+            <SelectDropdown
               name="severity"
               className="w-full"
-              items={severityItems}
-              containerClassName="flex flex-col space-y-1"
-              labelClass="block text-sm font-bold text-gray-700 mb-2"
+              options={severityOptions}
               value={severity}
+              onChange={(e) => {
+                if (!e) return;
+                setValue("severity", e);
+              }}
             />
             <p className="text-red-600 text-sm">{errors.severity?.message}</p>
           </div>
-          <div className="mb-4">
-            <ReactSelectDropdown
-              control={control}
-              label="Status"
+
+          <div className="flex flex-col">
+            <span className="text-sm font-bold text-gray-700 mb-1 mr-4 w-16">
+              Status
+            </span>
+            <SelectDropdown
               name="status"
               className="w-full"
-              items={incidentStatusItems}
-              labelClass="block text-sm font-bold text-gray-700 mb-2"
-              containerClassName="flex flex-col space-y-1"
+              options={incidentStatusOptions}
               value={status}
+              onChange={(e) => {
+                if (!e) return;
+                setValue("status", e);
+              }}
             />
-            <p className="text-red-600 text-sm">{errors.status?.message}</p>
+            <p className="text-red-600 text-sm">{errors.severity?.message}</p>
           </div>
         </div>
         <div className="flex justify-end bg-gray-100 px-5 py-4 w-full rounded">

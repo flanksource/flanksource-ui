@@ -6,12 +6,12 @@ import { User } from "./users";
 import { AVATAR_INFO } from "../../constants";
 import { typeItems } from "../../components/Incidents/data";
 
-export enum IncidentSeverity {
-  Low = "Low",
-  Medium = "Medium",
-  High = "High",
-  Blocker = "Blocker",
-  Critical = "Critical"
+export const enum IncidentSeverity {
+  Low = "low",
+  Medium = "medium",
+  High = "high",
+  Blocker = "blocker",
+  Critical = "critical"
 }
 
 export enum IncidentStatus {
