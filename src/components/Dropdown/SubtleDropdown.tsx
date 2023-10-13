@@ -7,10 +7,10 @@ import { IItem } from "../../types/IItem";
 
 interface Props {
   className: string;
-  value: string;
-  label: string;
+  value?: string;
+  label?: string;
   control: any;
-  onChange: (value: string) => void;
+  onChange?: (value: string) => void;
   name: string;
   items: { [k: string]: IItem };
 }
@@ -72,9 +72,9 @@ export function SubtleDropdown({
 }
 
 interface IDropdownListbox {
-  onChange: (val: string) => void;
-  value: string;
-  label: string;
+  onChange?: (val: string) => void;
+  value?: string;
+  label?: string;
   items: { [k: string]: IItem };
 }
 
@@ -97,9 +97,9 @@ export const DropdownListbox = ({
         )}
         <div className={`${label && "mt-1"} group relative h-full`}>
           <Listbox.Button className="relative cursor-pointer w-full group-hover:bg-white border border-transparent group-hover:border-gray-300 rounded-full group-hover:shadow-sm p-1 text-left focus:outline-none text-sm">
-            {items[value].iconTitle}
+            {items[value!].iconTitle}
           </Listbox.Button>
-
+          {/* @ts-ignore */}
           <Transition
             show={open}
             as={Fragment as any}

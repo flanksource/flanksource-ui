@@ -50,4 +50,6 @@ export type Topology = {
   logs: {
     name: string;
   }[];
+  parents: string[];
+  children: string[];
 } & CostsData;
