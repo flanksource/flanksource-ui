@@ -1,12 +1,16 @@
-import React, { ComponentType, useCallback, useEffect, useState } from "react";
-import AsyncSelect from "react-select/async";
-import { components, GroupBase, OptionProps } from "react-select";
 import clsx from "clsx";
 import { JSONPath } from "jsonpath-plus";
-import { Control, Controller } from "react-hook-form";
 import { debounce } from "lodash";
-import Select, { Props } from "react-select";
-
+import React, { ComponentType, useCallback, useEffect, useState } from "react";
+import { Control, Controller } from "react-hook-form";
+import Select, {
+  GroupBase,
+  OptionProps,
+  Props,
+  SingleValueProps,
+  components
+} from "react-select";
+import AsyncSelect from "react-select/async";
 import { getConfig, searchConfigs } from "../../api/services/configs";
 import { useLoader } from "../../hooks";
 
@@ -15,7 +19,7 @@ interface IOption {
   external_id: string;
 }
 
-export const SingleValue = ({ ...props }) => {
+export const SingleValue = ({ ...props }: SingleValueProps<IOption>) => {
   return (
     <components.SingleValue {...props}>
       <div className="flex flex-wrap">{props.data.name}</div>

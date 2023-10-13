@@ -1,8 +1,9 @@
+import { Float } from "@headlessui-float/react";
 import { Fragment, useState } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { useGetPlaybooksToRun } from "../../../api/query-hooks/playbooks";
 import { Button } from "../../Button";
-import { Menu } from "../../Menu";
+import { Menu } from "@headlessui/react";
 import { PlaybookSpec } from "../Settings/PlaybookSpecsTable";
 import SubmitPlaybookRunForm from "./SubmitPlaybookRunForm";
 
@@ -39,39 +40,45 @@ export default function SelectPlaybookToRun({
   return (
     <div className="flex flex-col items-center p-1 relative">
       <Menu>
-        <Menu.Button as={Fragment}>
-          {({ open }) => (
-            <div className="flex items-center">
-              <Button
-                text={
-                  <div className="flex flex-row gap-2">
-                    <span>Playbooks</span>
-                    {!open ? <FaChevronDown /> : <FaChevronUp />}
-                  </div>
-                }
-                className={className}
-                disabled={isLoading}
-              />
-            </div>
-          )}
-        </Menu.Button>
-        <Menu.Items>
-          {playbooks?.map((playbook) => (
-            <Menu.Item
-              className="flex text-left w-full text-gray-700 hover:bg-gray-200 p-1.5"
-              as="button"
-              onClick={() => setSelectedPlaybookSpec(playbook)}
-              key={playbook.ID}
-            >
-              {playbook.name}
-            </Menu.Item>
-          ))}
-        </Menu.Items>
+        <Float portal>
+          <Menu.Button as={Fragment}>
+            {({ open }) => (
+              <div className="flex items-center">
+                <Button
+                  text={
+                    <div className="flex flex-row gap-2">
+                      <span>Playbooks</span>
+                      {!open ? <FaChevronDown /> : <FaChevronUp />}
+                    </div>
+                  }
+                  className={className}
+                  disabled={isLoading}
+                />
+              </div>
+            )}
+          </Menu.Button>
+          <Menu.Items
+            as="div"
+            className={`mt-2 origin-top-right w-56 bg-white divide-y divide-gray-100 rounded-md shadow-card  focus:outline-none z-10`}
+          >
+            {playbooks?.map((playbook) => (
+              <Menu.Item
+                className="flex text-left w-full text-gray-700 hover:bg-gray-200 hover:rounded-md p-1.5"
+                as="button"
+                onClick={() => setSelectedPlaybookSpec(playbook)}
+                key={playbook.ID}
+              >
+                {playbook.name}
+              </Menu.Item>
+            ))}
+          </Menu.Items>
+        </Float>
       </Menu>
       {selectedPlaybookSpec && (
         <SubmitPlaybookRunForm
-          type="component"
-          componentId={component_id!}
+          componentId={component_id}
+          checkId={check_id}
+          configId={config_id}
           isOpen={!!selectedPlaybookSpec}
           onClose={() => {
             setSelectedPlaybookSpec(undefined);
