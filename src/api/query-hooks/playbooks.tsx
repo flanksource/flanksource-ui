@@ -7,7 +7,7 @@ import {
 import { PlaybookSpec } from "../../components/Playbooks/Settings/PlaybookSpecsTable";
 import {
   getAllPlaybooksSpecs,
-  getPlaybookRun,
+  getPlaybookToRunForResource,
   getPlaybookSpec,
   submitPlaybookRun
 } from "../services/playbooks";
@@ -39,7 +39,7 @@ export function useGetPlaybooksToRun(
 ) {
   return useQuery<PlaybookSpec[], Error>(
     ["playbooks", "run", params],
-    () => getPlaybookRun(params),
+    () => getPlaybookToRunForResource(params),
     {
       cacheTime: 0,
       staleTime: 0,

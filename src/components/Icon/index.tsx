@@ -442,8 +442,6 @@ function findByName(name?: string) {
     name = aliases[name as keyof typeof aliases];
   }
 
-  console.log(name);
-
   if (aliases[name as keyof typeof aliases]) {
     name = aliases[name as keyof typeof aliases];
   }

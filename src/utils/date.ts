@@ -125,14 +125,15 @@ export const formatTimeRange = (date: string | Date) => {
  * @param date
  * @returns relative date as string
  */
-export const relativeDateTime = (
-  from: string | Date,
-  to = dayjs().toISOString()
-) => {
+export const relativeDateTime = (from: string | Date, to?: string | Date) => {
   if (dayjs(from).isSame(dayjs("0001-01-01T00:00:00+00:00"))) {
     return "";
   }
   const fromDate = dayjs.utc(from).local();
+  if (to) {
+    const toDate = dayjs.utc(to).local();
+    return fromDate.from(toDate, true);
+  }
   return fromDate.fromNow();
 };
 
