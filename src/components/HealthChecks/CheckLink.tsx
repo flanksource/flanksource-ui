@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
 import { ComponentHealthCheckView } from "../../api/services/topology";
+import { HealthCheck } from "../../types/healthChecks";
 import { Icon } from "../Icon";
-import { Status } from "../Status";
+import { HealthCheckStatus } from "../Status/HealthCheckStatus";
 
 type ComponentCheckLinkProps = {
   componentCheck: ComponentHealthCheckView;
@@ -18,7 +19,7 @@ export function CheckLink({ componentCheck: check }: ComponentCheckLinkProps) {
     >
       <div className="flex flex-row gap-2 w-full items-center">
         <div className="flex flex-row space-x-1 items-center flex-1text-sm ">
-          <Status good={check.status === "healthy"} />
+          <HealthCheckStatus check={check as Pick<HealthCheck, "status">} />
           <Icon name={check.type} className="w-4 h-auto" />
           <div className="overflow-hidden text-ellipsis flex-1">
             {check.name}
