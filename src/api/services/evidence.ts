@@ -14,7 +14,7 @@ export enum EvidenceType {
 }
 
 export type Evidence = {
-  user: User;
+  user?: User;
   id: string;
   hypothesisId: string;
   component_id?: string;
@@ -22,13 +22,14 @@ export type Evidence = {
   config_analysis_id?: string;
   config_change_id?: string;
   check_id?: string;
-  evidence: Record<string, any>;
+  evidence?: Record<string, any>;
   description?: string;
   definition_of_done?: boolean;
   script?: string;
   properties?: string;
   created_at: string;
-  created_by: User;
+  updated_at?: string;
+  created_by?: User;
   type: EvidenceType;
   done?: boolean;
   hypothesis_id: string;
@@ -64,7 +65,7 @@ export const createEvidence = async (
       config_change_id,
       component_id,
       check_id,
-      created_by: user.id,
+      created_by: user?.id,
       hypothesis_id: hypothesisId,
       evidence,
       type,

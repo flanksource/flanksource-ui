@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import React from "react";
+import React, { ComponentProps } from "react";
 import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { HiOutlineSelector, HiSearch } from "react-icons/hi";
 import Select, { SingleValue } from "react-select";
@@ -17,7 +17,7 @@ export interface GroupedOptionItem {
 export interface SearchSelectProps {
   options: OptionItem[] | GroupedOptionItem[];
   name?: string;
-  components?: { [index: string]: ReactNode };
+  components?: ComponentProps<typeof Select<OptionItem>>["components"];
   onChange: (val: SingleValue<OptionItem>) => void;
   selected: OptionItem;
   className?: string;
@@ -98,7 +98,7 @@ export function SearchSelect({
       {isOpen ? (
         <>
           <div className={selectContainerClassName}>
-            <Select
+            <Select<OptionItem>
               autoFocus
               backspaceRemovesValue={false}
               components={{

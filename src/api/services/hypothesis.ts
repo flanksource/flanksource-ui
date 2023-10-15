@@ -25,6 +25,7 @@ export interface Hypothesis {
   id: string;
   incident_id: string;
   type: HypothesisNodeType;
+  children?: any[];
 }
 
 const hypothesisChildType = {

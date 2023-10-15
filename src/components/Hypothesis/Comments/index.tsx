@@ -8,8 +8,8 @@ import { ResponseLine } from "../ResponseLine";
 
 interface Props {
   comments: Comment[];
-  titlePrepend: React.ReactElement;
-  onComment: (str: string) => Promise<void>;
+  titlePrepend?: React.ReactElement;
+  onComment?: (str: string) => Promise<void>;
 }
 
 export function CommentsSection({
@@ -24,16 +24,11 @@ export function CommentsSection({
   const handleComment = () => {
     if (commentTextValue) {
       setIsLoading(true);
-      onComment(commentTextValue).finally(() => {
+      onComment?.(commentTextValue).finally(() => {
         setCommentTextValue("");
         setIsLoading(false);
       });
     }
-  };
-
-  const onClickUserTag = (type: string, id: string) => {
-    // eslint-disable-next-line no-console
-    console.log("type tag", type, "value", id);
   };
 
   return (
@@ -44,9 +39,9 @@ export function CommentsSection({
           {comments.map(({ id, created_by, created_at, ...comment }) => (
             <ResponseLine
               key={id}
-              created_by={created_by}
+              created_by={created_by as any}
               created_at={created_at}
-              response={comment}
+              response={comment as any}
             />
           ))}
         </div>

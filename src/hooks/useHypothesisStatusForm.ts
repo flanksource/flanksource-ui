@@ -1,18 +1,13 @@
+import { UseMutationResult } from "@tanstack/react-query";
 import { debounce } from "lodash";
 import { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
-import { MutationFunction } from "@tanstack/react-query";
 import { Hypothesis, HypothesisStatus } from "../api/services/hypothesis";
 
 interface Props {
   id: string;
   status: HypothesisStatus;
-  updateMutation: {
-    mutate: MutationFunction<
-      Hypothesis,
-      { id: string; params: { status: HypothesisStatus } }
-    >;
-  };
+  updateMutation: UseMutationResult<Hypothesis, { status: HypothesisStatus }>;
 }
 
 export default function useHypothesisStatusForm({

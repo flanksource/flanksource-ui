@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import clsx from "clsx";
 
 import { Modal } from "../../Modal";
@@ -17,10 +17,10 @@ import { Hypothesis } from "../../../api/services/hypothesis";
 import { TreeNode } from "../../../pages/incident/IncidentDetails";
 import { useIncidentState } from "../../../store/incident.state";
 
-interface IProps {
+type IProps = {
   node: TreeNode<Hypothesis>;
   api: any;
-}
+} & React.HTMLProps<HTMLDivElement>;
 
 type Response = Evidence & Comment;
 
@@ -66,7 +66,7 @@ export function HypothesisDetails({ node, api, ...rest }: IProps) {
         hypothesisId: node.id,
         comment: value
       })
-      .catch((err) => {
+      .catch((err: any) => {
         toastError(err);
         return Promise.resolve();
       })
@@ -111,10 +111,12 @@ export function HypothesisDetails({ node, api, ...rest }: IProps) {
               <ResponseLine
                 key={evidence.id}
                 created_at={evidence.created_at}
-                created_by={evidence.created_by}
+                created_by={evidence.created_by as any}
                 response={evidence}
                 onDelete={
-                  evidence.type ? () => deleteEvidenceCb(evidence.id) : null
+                  evidence.type
+                    ? () => deleteEvidenceCb(evidence.id)
+                    : undefined
                 }
                 markAsDefinitionOfDone={
                   evidence.type
@@ -127,6 +129,7 @@ export function HypothesisDetails({ node, api, ...rest }: IProps) {
             ))}
         </ul>
         <CommentsSection
+          comments={[]}
           onComment={(value) => {
             handleComment(value);
             return Promise.resolve();

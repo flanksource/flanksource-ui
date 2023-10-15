@@ -1,14 +1,14 @@
-import React, { useEffect } from "react";
-import { MutationFunction } from "@tanstack/react-query";
+import { UseMutationResult } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { Hypothesis, HypothesisStatus } from "../../../api/services/hypothesis";
+import { hypothesisStatusDropdownOptions } from "../../../constants/hypothesisStatusOptions";
 import useHypothesisStatusForm from "../../../hooks/useHypothesisStatusForm";
 import { SubtleDropdown } from "../../Dropdown/SubtleDropdown";
-import { hypothesisStatusDropdownOptions } from "../../../constants/hypothesisStatusOptions";
 
 interface Props {
   nodeId: string;
   status: HypothesisStatus;
-  updateMutation: MutationFunction<Hypothesis, { status: HypothesisStatus }>;
+  updateMutation: UseMutationResult<Hypothesis, { status: HypothesisStatus }>;
 }
 
 export function StatusDropdownContainer({

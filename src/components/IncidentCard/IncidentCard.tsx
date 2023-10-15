@@ -1,10 +1,10 @@
+import clsx from "clsx";
 import { Link } from "react-router-dom";
 import { Incident } from "../../api/services/incident";
-import { IncidentStatusTag } from "../IncidentStatusTag";
-import { IncidentTypeIcon } from "../incidentTypeTag";
-
-import clsx from "clsx";
 import { relativeDateTime } from "../../utils/date";
+import { IncidentStatusTag } from "../IncidentStatusTag";
+import { typeItems } from "../Incidents/data";
+import { IncidentTypeIcon } from "../incidentTypeTag";
 
 type IncidentCardProps = {
   incident: Incident;
@@ -18,7 +18,7 @@ export default function IncidentCard({
   return (
     <div className={clsx("border-b border-dashed", className)} {...props}>
       <div className="flex flex-row text-sm pl-2 pb-1">
-        <IncidentTypeIcon type={incident.type!} />
+        <IncidentTypeIcon type={incident.type as keyof typeof typeItems} />
         <Link
           className="block text-xs mx-1 cursor-pointer"
           to={{
