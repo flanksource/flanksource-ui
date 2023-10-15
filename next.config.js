@@ -3,13 +3,6 @@
  */
 const config = {
   productionBrowserSourceMaps: true,
-  typescript: {
-    // !! WARN !!
-    // Dangerously allow production builds to successfully complete even if
-    // your project has type errors.
-    // !! WARN !!
-    ignoreBuildErrors: true
-  },
   async rewrites() {
     // if clerk is enabled, we will use next API routes to proxy requests to
     // the backend
