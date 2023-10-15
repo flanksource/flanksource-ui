@@ -34,13 +34,13 @@ export default function SubmitPlaybookRunForm({
 }: Props) {
   const initialValues: Partial<SubmitPlaybookRunFormValues> = useMemo(
     () => ({
-      id: playbookSpec.ID,
+      id: playbookSpec.id,
       params: undefined,
       component_id: componentId,
       check_id: checkId,
       config_id: configId
     }),
-    [checkId, componentId, configId, playbookSpec.ID]
+    [checkId, componentId, configId, playbookSpec.id]
   );
 
   const { mutate: submitPlaybookRun } = useSubmitPlaybookRunMutation({

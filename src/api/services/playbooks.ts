@@ -32,7 +32,7 @@ export async function createPlaybookSpec(spec: NewPlaybookSpec) {
 
 export async function updatePlaybookSpec(spec: UpdatePlaybookSpec) {
   const res = await IncidentCommander.patch<PlaybookSpec>(
-    `/playbooks?id=eq.${spec.ID}`,
+    `/playbooks?id=eq.${spec.id}`,
     spec
   );
   return res.data;

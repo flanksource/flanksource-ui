@@ -66,7 +66,7 @@ export default function SelectPlaybookToRun({
                 className="flex text-left w-full text-gray-700 hover:bg-gray-200 hover:rounded-md p-1.5"
                 as="button"
                 onClick={() => setSelectedPlaybookSpec(playbook)}
-                key={playbook.ID}
+                key={playbook.id}
               >
                 {playbook.name}
               </Menu.Item>
