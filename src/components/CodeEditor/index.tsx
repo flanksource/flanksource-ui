@@ -1,6 +1,6 @@
 import Editor, { useMonaco } from "@monaco-editor/react";
 import { useEffect, useRef } from "react";
-import { setDiagnosticsOptions } from "monaco-yaml";
+import { configureMonacoYaml } from "monaco-yaml";
 import * as monaco from "monaco-editor";
 import { loader } from "@monaco-editor/react";
 import YAML from "yaml";
@@ -49,7 +49,9 @@ window.MonacoEnvironment = {
           )
         );
       case "yaml":
-        return new Worker(new URL("monaco-yaml/yaml.worker", import.meta.url));
+        return new Worker(
+          new URL("monaco-yaml/yaml.worker?worker", import.meta.url)
+        );
       default:
         throw new Error(`Unknown label ${label}`);
     }
@@ -84,7 +86,7 @@ export function CodeEditor({
     // default paste event handler type is just Event, which is inaccurate, hence we
     // are overriding it here, so we can use ClipboardEvent, which is more
     // accurate and allows us to access clipboardData safely
-    // @ts-expect-error
+    // @ts-ignore
     window.addEventListener("paste", (e: ClipboardEvent) => {
       if (editorWrapper.current?.id === document.activeElement?.id && monaco) {
         e.preventDefault();
@@ -115,11 +117,14 @@ export function CodeEditor({
   }, [language, extractYamlSpecFieldOnPaste, monaco]);
 
   useEffect(() => {
+    if (!monaco) {
+      return;
+    }
     if (!schemaFilePrefix || language !== "yaml") {
       return;
     }
     const schemaFileName = `${schemaFilePrefix}.spec.schema.json`;
-    setDiagnosticsOptions({
+    const yaml = configureMonacoYaml(monaco, {
       enableSchemaRequest: true,
       hover: true,
       completion: true,
@@ -134,7 +139,15 @@ export function CodeEditor({
         }
       ]
     });
-  }, [language, schemaFilePrefix]);
+
+    // on unmount, we need to remove the schema for the editor to avoid memory
+    // leak, as the schema is stored in the global monaco object
+    return () => {
+      yaml.update({
+        schemas: []
+      });
+    };
+  }, [language, monaco, schemaFilePrefix]);
 
   useEffect(() => {
     if (!monaco) {
