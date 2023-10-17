@@ -30,7 +30,7 @@ interface InfoIconProps extends IconBaseProps {
   icon: InfoType;
 }
 
-const ICON_MAP: { [key in InfoType]: IconType } = {
+const ICON_MAP: Record<string, IconType> = {
   comment: BsFillChatSquareTextFill,
   config: BsBraces,
   log: BsFillBarChartFill,
@@ -53,8 +53,6 @@ interface HypothesisBarProps {
   onToggleExpand: (expand: boolean) => void;
   onDisprove: () => void;
 }
-
-type Entries<T> = { [K in keyof T]: [K, T[K]] }[keyof T];
 
 export function HypothesisBar({
   hypothesis,
@@ -79,7 +77,8 @@ export function HypothesisBar({
   );
   const isPartOfDOD = useMemo(() => {
     return (
-      hypothesis.evidences?.filter((item) => item.definition_of_done).length > 0
+      (hypothesis.evidences?.filter((item) => item.definition_of_done) ?? [])
+        .length > 0
     );
   }, [hypothesis]);
 
@@ -125,11 +124,9 @@ export function HypothesisBar({
     .reduce<Partial<IconCounts>>((acc, i) => {
       return {
         ...acc,
-        [i]: (acc[i] || 0) + 1
+        [i]: ((acc as any)[i] || 0) + 1
       };
     }, {});
-
-  const counts = Object.entries(infoIcons) as Entries<IconCounts>[];
 
   const commentsMap = new Map(
     (comment || []).map((c) => [c?.created_by?.id, c?.created_by])
@@ -187,9 +184,12 @@ export function HypothesisBar({
       </div>
       <div className="flex items-center space-x-2">
         <div className="flex flex-row items-center">
-          {counts.map(([typ, count], idx: number) => (
+          {Object.entries(infoIcons).map(([typ, count], idx: number) => (
             <span key={`${typ}-${idx}`} className="flex flex-row items-center">
-              <InfoIcon icon={typ} className="px-1 text-dark-blue" />
+              <InfoIcon
+                icon={typ as InfoType}
+                className="px-1 text-dark-blue"
+              />
               {count > 1 && (
                 <span className="-ml-1 font-bold mr-1 mt-3 text-gray-500 text-xs">
                   {count}
@@ -199,7 +199,9 @@ export function HypothesisBar({
           ))}
         </div>
         <div>
-          {createdBy && <AvatarGroup maxCount={5} users={involved} size="sm" />}
+          {createdBy && (
+            <AvatarGroup maxCount={5} users={involved as any} size="sm" />
+          )}
         </div>
         <div className="flex pt-0.5">
           <HypothesisBarMenu

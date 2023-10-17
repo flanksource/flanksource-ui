@@ -28,7 +28,6 @@ const Template: ComponentStory<typeof HypothesisNode> = (arg: any) => (
 export const Base = Template.bind({});
 Base.args = {
   node: sampleIncidentNode,
-  setModalIsOpen: () => {},
   setSelectedNode: () => {},
   setCreateHypothesisModalIsOpen: () => {}
 };

@@ -52,7 +52,9 @@ export default function IncidentCardSummary({
             return;
           }
           const severityObject =
-            severityItems[key as IncidentSeverity] || severityItems.Low;
+            Object.values(severityItems).find(
+              (values) => values.value === key
+            ) || severityItems.Low;
           const item = {
             label: value.toString(),
             color: chipColorFromSeverity(key as IncidentSeverity),

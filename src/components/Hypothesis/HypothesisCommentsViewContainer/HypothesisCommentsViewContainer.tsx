@@ -44,21 +44,23 @@ type CommentViewEntry = {
   data: Comment & Evidence;
 };
 
-const GroupHeading = (props: GroupHeadingProps<GroupedOptionItem>) => (
-  <div className="relative">
-    <div className="text-lg border-b mb-2">
-      <components.GroupHeading {...props} />
+function GroupHeading(props: GroupHeadingProps<any>) {
+  return (
+    <div className="relative">
+      <div className="text-lg border-b mb-2">
+        <components.GroupHeading {...props} />
+      </div>
     </div>
-  </div>
-);
+  );
+}
 
-const Option = (props: OptionProps<OptionItem>) => {
+function Option(props: OptionProps<OptionItem>) {
   return (
     <div className="text-sm pl-4">
       <components.Option {...props} />
     </div>
   );
-};
+}
 
 export function HypothesisCommentsViewContainer({
   incidentId,

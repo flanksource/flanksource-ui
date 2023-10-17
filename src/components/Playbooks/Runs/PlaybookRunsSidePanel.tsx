@@ -44,9 +44,9 @@ export type PlaybookRunStatus =
 
 export type PlaybookRunAction = {
   id: string;
-  name: string;
+  name?: string;
   status: PlaybookRunStatus;
-  playbook_run_id: string;
+  playbook_run_id?: string;
   start_time: string;
   end_time?: string;
   result?: {
@@ -55,13 +55,13 @@ export type PlaybookRunAction = {
   };
   error?: string;
   playbooks?: PlaybookSpec;
-  playbook_id: string;
-  created_at: string;
-  created_by: User;
+  playbook_id?: string;
+  created_at?: string;
+  created_by?: User;
   check_id?: string;
   config_id?: string;
   component_id?: string;
-  parameters: Record<string, unknown>;
+  parameters?: Record<string, unknown>;
   agent_id?: string;
   component?: Pick<Topology, "id" | "name" | "icon">;
   check?: Pick<HealthCheck, "id" | "name" | "icon">;

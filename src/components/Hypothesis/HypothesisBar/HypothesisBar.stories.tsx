@@ -42,6 +42,5 @@ Basic.args = {
         }
       }
     ]
-  },
-  onTitleClick: () => console.log("title click")
+  }
 };

@@ -82,6 +82,7 @@ export function CanaryTable({
   }, [params, checks, groupBy, groupSingleItems]);
 
   const { rows, meta } = useMemo(
+    // @ts-expect-error
     () => prepareRows({ tableData, hideNamespacePrefix, pivotBy, pivotLookup }),
     [hideNamespacePrefix, tableData, pivotBy, pivotLookup]
   );
@@ -132,7 +133,7 @@ export function CanaryTable({
 type TableProps = {
   data: any[];
   columns: any[];
-  labels: string[];
+  labels?: string[];
   pivotCellType: string | null;
   hasGrouping: boolean;
   onUnexpandableRowClick: (check: HealthCheck) => void;
@@ -153,7 +154,7 @@ export function Table({
   theadStyle = {},
   ...rest
 }: TableProps) {
-  const rowFinder = (row) => {
+  const rowFinder = (row: any) => {
     const rowValues =
       row?.pivoted === true ? row[row.valueLookup] ?? null : row;
     return rowValues?.subRows || [];
@@ -165,14 +166,17 @@ export function Table({
     getTableBodyProps,
     headerGroups,
     rows,
+    // @ts-expect-error
     setSortBy,
     prepareRow,
     toggleHideColumn,
+    // @ts-expect-error
     toggleRowExpanded
   } = useTable(
     {
       columns,
       data,
+      // @ts-expect-error
       disableMultiSort: true,
       autoResetSortBy: false,
       autoResetExpanded: false,
@@ -191,6 +195,7 @@ export function Table({
     useExpanded
   );
 
+  // @ts-expect-error
   const tableSortState = tableState?.sortBy;
 
   // Hide expander column if there is no grouping
@@ -215,7 +220,7 @@ export function Table({
 
   // Table-state changes will trigger url changes
   useEffect(() => {
-    const updateURLBySortState = (sortBy, sortDesc) => {
+    const updateURLBySortState = (sortBy: string, sortDesc: boolean) => {
       const searchParams = window.location.search;
       const decodedParams = decodeUrlSearchParams(searchParams);
 
@@ -256,19 +261,25 @@ export function Table({
               {headerGroup.headers.map((column) => (
                 <th
                   className={clsx(styles.theadHeaderClass)}
+                  // @ts-expect-error
                   {...column.getHeaderProps(column.getSortByToggleProps())}
                   // Table header onClick sorting override:
                   // sortDesc cannot be null, only either true/false
                   onClick={() =>
+                    // @ts-expect-error
                     column.toggleSortBy(
+                      // @ts-expect-error
                       column.isSortedDesc != null ? !column.isSortedDesc : false
                     )
                   }
                 >
+                  {/* @ts-expect-error */}
                   <div className={clsx("flex select-none", column.cellClass)}>
                     {column.render("Header")}
                     <span>
+                      {/* @ts-expect-error */}
                       {column.isSorted ? (
+                        // @ts-expect-error
                         column.isSortedDesc ? (
                           <TiArrowSortedUp />
                         ) : (
@@ -288,16 +299,21 @@ export function Table({
           {rows.length > 0 &&
             rows.map((row) => {
               prepareRow(row);
+              // @ts-expect-error
               row.showNamespaceTags = showNamespaceTags;
+              // @ts-expect-error
               row.hideNamespacePrefix = hideNamespacePrefix;
               return (
                 <tr
+                  // @ts-expect-error
                   key={row.id}
                   className={`${styles.tbodyRowClass} ${
+                    // @ts-expect-error
                     row.canExpand ? styles.tbodyRowExpandableClass : ""
                   }`}
                   style={{}}
                   onClick={
+                    // @ts-expect-error
                     row.canExpand
                       ? () => toggleRowExpanded(row.id)
                       : () => onUnexpandableRowClick(row.original)
@@ -306,8 +322,10 @@ export function Table({
                 >
                   {row.cells.map((cell) => (
                     <td
+                      // @ts-expect-error
                       key={cell.column.Header}
                       className={`${styles.tbodyDataClass} ${
+                        // @ts-expect-error
                         cell.column.cellClass || ""
                       }`}
                       {...cell.getCellProps()}

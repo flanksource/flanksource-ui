@@ -164,9 +164,9 @@ function HealthEvidence({
   ...rest
 }: EvidenceViewProps) {
   const healthEvidence = evidence.evidence;
-  const id = evidence.check_id || healthEvidence.check_id;
-  const includeMessages = healthEvidence.includeMessages;
-  const start = healthEvidence.start;
+  const id = evidence.check_id || healthEvidence?.check_id;
+  const includeMessages = healthEvidence?.includeMessages;
+  const start = healthEvidence?.start;
 
   const payload = useMemo(
     () => ({
@@ -245,7 +245,7 @@ export function CommentEvidence({
             <BsPersonFill size={22} />
           </div>
           <div className={clsx("overflow-hidden")}>
-            {evidence.evidence.comment}
+            {evidence.evidence?.comment}
           </div>
         </div>
       </div>

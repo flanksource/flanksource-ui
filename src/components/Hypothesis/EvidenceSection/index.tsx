@@ -54,7 +54,7 @@ export function EvidenceItem({
       return (
         <div className="pt-2">
           <TopologyCard
-            topologyId={evidence.component_id || evidence.evidence.id}
+            topologyId={evidence.component_id || evidence.evidence?.id}
             size={Size.large}
           />
         </div>
@@ -65,7 +65,7 @@ export function EvidenceItem({
           date={evidence.created_at}
           title={evidence.description!}
           configId={evidence.config_id!}
-          configName={evidence.evidence.configName}
+          configName={evidence.evidence?.configName}
         >
           <ConfigEvidenceView evidenceItem={evidence} />
         </EvidenceAccordion>
@@ -246,7 +246,7 @@ function createHunks(
 type EvidenceSectionProps = {
   evidenceList: Evidence[];
   hypothesis: Hypothesis;
-  titlePrepend?: string;
+  titlePrepend?: React.ReactNode;
   onButtonClick?: () => void;
   onDeleteEvidence?: (evidenceId: string) => void;
   isLoading?: boolean;
@@ -442,7 +442,7 @@ export function HealthEvidenceViewer({
         <div className="flex flex-col flex-1 py-4 overflow-y-auto">
           <CheckDetails
             check={check}
-            timeRange={evidence.evidence.start}
+            timeRange={evidence.evidence?.start}
             className={`flex flex-col flex-1 px-4 overflow-y-hidden ${mixins.appleScrollbar}`}
           />
         </div>

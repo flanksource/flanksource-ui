@@ -10,21 +10,19 @@ export default {
   component: DropdownWithActions
 } as ComponentMeta<typeof DropdownWithActions>;
 
-const Template: ComponentStory<typeof DropdownWithActions> = (args: any) => {
-  const { items } = args;
-  const {
-    control,
-    formState: { errors },
-    getValues,
-    watch
-  } = useForm<{ severity: string; something: IncidentSeverity | string }>({
+const Template: ComponentStory<typeof DropdownWithActions> = (args) => {
+  const items = Object.values(severityItems);
+  const { control, getValues, setValue } = useForm<{
+    severity: string;
+    something: IncidentSeverity | string;
+  }>({
     defaultValues: {
       severity: severityItems.Low.value,
       something: severityItems.Low.value
     }
   });
 
-  const onQuery = (query) => {
+  const onQuery = (query: string) => {
     const filtered =
       query === ""
         ? items
@@ -36,8 +34,6 @@ const Template: ComponentStory<typeof DropdownWithActions> = (args: any) => {
     return Promise.resolve(filtered);
   };
 
-  watch("severity");
-
   return (
     <div className="flex flex-col max-w-prose space-y-4">
       <div className="flex">
@@ -45,14 +41,18 @@ const Template: ComponentStory<typeof DropdownWithActions> = (args: any) => {
           control={control}
           name="severity"
           render={({ field: { onChange, value } }) => {
+            const itemValue = items.find(
+              (x) => x.value === getValues("severity")
+            );
+
             return (
               <DropdownWithActions
                 {...args}
                 onQuery={onQuery}
                 name="severity"
                 label="Input"
-                value={value}
-                displayValue={(x) => x.description}
+                value={itemValue}
+                setValue={setValue}
                 displayOption={({ option }) => {
                   return (
                     <div className="text-gray-900">
@@ -60,8 +60,6 @@ const Template: ComponentStory<typeof DropdownWithActions> = (args: any) => {
                     </div>
                   );
                 }}
-                onChange={(...args) => onChange(...args)}
-                errors={errors}
               />
             );
           }}
@@ -94,9 +92,6 @@ const Template: ComponentStory<typeof DropdownWithActions> = (args: any) => {
 export const Base = Template.bind({});
 
 Base.args = {
-  className: "w-32",
-  items: Object.values(severityItems),
   label: "Severity",
-  name: "severity",
-  displayValue: ({ value }) => value?.description
+  name: "severity"
 };
