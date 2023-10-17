@@ -69,7 +69,7 @@ export default function KratosRegistration() {
             console.log("This is the user session: ", data, data.identity);
 
             // For now however we just want to redirect home!
-            return router.push(flow?.return_to || "/").then(() => {});
+            window.location.href = flow?.return_to || "/";
           })
           .catch(handleFlowError(router, "registration", setFlow))
           .catch((err: AxiosError) => {

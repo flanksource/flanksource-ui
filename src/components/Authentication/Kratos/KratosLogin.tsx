@@ -67,11 +67,7 @@ const Login: NextPage = () => {
         flow: flow?.id!,
         updateLoginFlowBody: values
       });
-      if (flow?.return_to) {
-        window.location.href = flow?.return_to;
-      } else {
-        await router.push("/");
-      }
+      window.location.href = flow?.return_to ?? "/";
     } catch (err: any) {
       console.error(err);
       await handleFlowError(router, "login", setFlow)(err);
