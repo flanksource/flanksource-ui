@@ -1,21 +1,40 @@
 import { PlaybookRunAction } from "./PlaybookRunsSidePanel";
+import Convert from "ansi-to-html";
+
+const convert = new Convert();
 
 type Props = {
-  action: Pick<PlaybookRunAction, "result">;
+  action: Pick<PlaybookRunAction, "result" | "error">;
+  className?: string;
 };
 
-export default function PlaybooksRunActionsResults({ action }: Props) {
-  const { result } = action;
+export default function PlaybooksRunActionsResults({
+  action,
+  className = "whitespace-pre-wrap break-all"
+}: Props) {
+  const { result, error } = action;
 
-  if (!result) {
+  if (!result && !error) {
     return <>No result</>;
   }
 
-  if (result.stdout) {
-    return <pre>{result.stdout}</pre>;
+  if (action.error) {
+    return <pre className={className}>{action.error}</pre>;
+  }
+
+  if (result?.stdout) {
+    return <pre className={className}>{result.stdout}</pre>;
+  }
+
+  if (result?.logs) {
+    const html = convert.toHtml(result.logs);
+
+    return (
+      <pre className={className} dangerouslySetInnerHTML={{ __html: html }} />
+    );
   }
 
   const json = JSON.stringify(result, null, 2);
 
-  return <pre className="overflow-auto">{json}</pre>;
+  return <pre className={className}>{json}</pre>;
 }

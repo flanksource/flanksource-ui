@@ -97,9 +97,9 @@ export default function PlaybookRunsActions({ data }: PlaybookRunActionsProps) {
             ))}
           </div>
         </div>
-        <div className="flex flex-col flex-1 h-full font-mono px-4 py-2 text-white bg-gray-700">
+        <div className="flex flex-col flex-1 h-full font-mono px-4 py-2 text-white bg-gray-700 overflow-hidden">
           {selectedAction && (
-            <div className="flex flex-col flex-1 w-full overflow-auto gap-2 whitespace-pre-wrap ">
+            <div className="flex flex-col flex-1 w-full overflow-x-hidden overflow-y-auto gap-2 whitespace-pre-wrap break-all">
               <PlaybooksRunActionsResults action={selectedAction} />
             </div>
           )}

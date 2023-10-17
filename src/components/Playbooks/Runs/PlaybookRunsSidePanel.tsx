@@ -51,6 +51,7 @@ export type PlaybookRunAction = {
   end_time?: string;
   result?: {
     stdout?: string;
+    logs?: string;
     [key: string]: unknown;
   };
   error?: string;
