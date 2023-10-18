@@ -1,5 +1,8 @@
-import { PlaybookRunWithActions } from "../../components/Playbooks/Runs/PlaybookRunsActions";
-import { PlaybookRunAction } from "../../components/Playbooks/Runs/PlaybookRunsSidePanel";
+import { PlaybookRunWithActions } from "../../components/Playbooks/Runs/Actions/PlaybookRunsActions";
+import {
+  PlaybookRun,
+  PlaybookRunAction
+} from "../../components/Playbooks/Runs/PlaybookRunTypes";
 import { SubmitPlaybookRunFormValues } from "../../components/Playbooks/Runs/SubmitPlaybookRunForm";
 import {
   NewPlaybookSpec,
@@ -70,7 +73,14 @@ export async function getPlaybookToRunForResource(
 
 export async function getPlaybookRun(id: string) {
   const res = await IncidentCommander.get<PlaybookRunWithActions[] | null>(
-    `/playbook_runs?id=eq.${id}&select=*,created_by(${AVATAR_INFO}),playbooks(id,name),component:components(id,name,icon),actions:playbook_run_actions(*)`
+    `/playbook_runs?id=eq.${id}&select=*,created_by(${AVATAR_INFO}),playbooks(id,name),component:components(id,name,icon),actions:playbook_run_actions(id,name,status,start_time,end_time)`
+  );
+  return res.data?.[0] ?? undefined;
+}
+
+export async function getPlaybookRunActionById(id: string) {
+  const res = await IncidentCommander.get<PlaybookRunAction[] | null>(
+    `/playbook_run_actions?id=eq.${id}&select=*`
   );
   return res.data?.[0] ?? undefined;
 }
@@ -94,7 +104,7 @@ export async function getPlaybookRuns({
   const pagingParams = `&limit=${pageSize}&offset=${pageIndex * pageSize}`;
 
   const res = await resolve(
-    ConfigDB.get<PlaybookRunAction[] | null>(
+    ConfigDB.get<PlaybookRun[] | null>(
       `/playbook_runs?select=*,playbooks(id,name),component:components(id,name,icon),check:checks(id,name,icon),config:config_items(id,name,type,config_class)&order=created_at.desc${componentParamString}&${configParamString}${pagingParams}}`,
       {
         headers: {

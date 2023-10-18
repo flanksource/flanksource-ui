@@ -5,6 +5,7 @@ import { Avatar } from "../../../Avatar";
 import { Icon } from "../../../Icon";
 import { PlaybookRun, PlaybookRunAction } from "../PlaybookRunTypes";
 import PlaybookRunsStatus from "./../PlaybookRunsStatus";
+import PlaybookRunActionFetch from "./PlaybookRunActionFetch";
 import PlaybookRunsActionItem from "./PlaybookRunsActionItem";
 
 export type PlaybookRunWithActions = PlaybookRun & {
@@ -98,7 +99,9 @@ export default function PlaybookRunsActions({ data }: PlaybookRunActionsProps) {
         </div>
         <div className="flex flex-col flex-1 h-full font-mono px-4 py-2 text-white bg-gray-700 overflow-hidden">
           {selectedAction && (
-            <div className="flex flex-col flex-1 w-full overflow-x-hidden overflow-y-auto gap-2 whitespace-pre-wrap break-all"></div>
+            <div className="flex flex-col flex-1 w-full overflow-x-hidden overflow-y-auto gap-2 whitespace-pre-wrap break-all">
+              <PlaybookRunActionFetch playbookRunActionId={selectedAction.id} />
+            </div>
           )}
         </div>
       </div>
