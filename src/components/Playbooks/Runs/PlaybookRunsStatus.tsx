@@ -1,6 +1,6 @@
 import { BsFillExclamationCircleFill } from "react-icons/bs";
 import { FaCheckCircle, FaClock, FaSpinner } from "react-icons/fa";
-import { PlaybookRunStatus } from "./PlaybookRunsSidePanel";
+import { PlaybookRunStatus } from "./PlaybookRunTypes";
 
 const statusIconMap: Record<PlaybookRunStatus, { icon: React.ReactNode }> = {
   completed: {
