@@ -22,7 +22,7 @@ dayjs.updateLocale("en", {
   relativeTime: {
     future: "in %s",
     past: "%s ago",
-    s: "seconds",
+    s: "%ds",
     m: "1m",
     mm: "%dm",
     h: "1h",
@@ -132,6 +132,12 @@ export const relativeDateTime = (from: string | Date, to?: string | Date) => {
   const fromDate = dayjs.utc(from).local();
   if (to) {
     const toDate = dayjs.utc(to).local();
+    // if the difference is less than 1 second, return difference in
+    // milliseconds. This is to avoid returning 0 seconds when DateTime.from
+    // from dayjs.
+    if (toDate.diff(fromDate) < 1000) {
+      return `${toDate.diff(fromDate)}ms`;
+    }
     return fromDate.from(toDate, true);
   }
   return fromDate.fromNow();
