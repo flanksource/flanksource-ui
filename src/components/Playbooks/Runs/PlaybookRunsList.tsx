@@ -7,10 +7,10 @@ import { Avatar } from "../../Avatar";
 import { DateCell } from "../../ConfigViewer/columns";
 import { DataTable, PaginationOptions } from "../../DataTable";
 import { Icon } from "../../Icon";
-import { PlaybookRunAction, PlaybookRunStatus } from "./PlaybookRunsSidePanel";
+import { PlaybookRun, PlaybookRunStatus } from "./PlaybookRunTypes";
 import PlaybookRunsStatus from "./PlaybookRunsStatus";
 
-const playbookRunsTableColumns: ColumnDef<PlaybookRunAction>[] = [
+const playbookRunsTableColumns: ColumnDef<PlaybookRun>[] = [
   {
     header: "Name",
     accessorKey: "name",
@@ -86,7 +86,7 @@ const playbookRunsTableColumns: ColumnDef<PlaybookRunAction>[] = [
 ];
 
 type Props = {
-  data: PlaybookRunAction[];
+  data: PlaybookRun[];
   isLoading?: boolean;
   pagination?: PaginationOptions;
 } & Omit<React.HTMLProps<HTMLDivElement>, "data">;
@@ -100,7 +100,7 @@ export default function PlaybookRunsTable({
   const navigate = useNavigate();
 
   const onRowClick = useCallback(
-    (row: PlaybookRunAction) => {
+    (row: PlaybookRun) => {
       navigate(`/playbooks/runs/${row.id}`);
     },
     [navigate]

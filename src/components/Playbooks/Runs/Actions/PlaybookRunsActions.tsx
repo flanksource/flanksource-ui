@@ -1,14 +1,13 @@
 import { ReactNode, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { relativeDateTime } from "../../../utils/date";
-import { Avatar } from "../../Avatar";
-import { Icon } from "../../Icon";
+import { relativeDateTime } from "../../../../utils/date";
+import { Avatar } from "../../../Avatar";
+import { Icon } from "../../../Icon";
+import { PlaybookRun, PlaybookRunAction } from "../PlaybookRunTypes";
+import PlaybookRunsStatus from "./../PlaybookRunsStatus";
 import PlaybookRunsActionItem from "./PlaybookRunsActionItem";
-import { PlaybookRunAction } from "./PlaybookRunsSidePanel";
-import PlaybookRunsStatus from "./PlaybookRunsStatus";
-import PlaybooksRunActionsResults from "./PlaybooksActionsResults";
 
-export type PlaybookRunWithActions = PlaybookRunAction & {
+export type PlaybookRunWithActions = PlaybookRun & {
   actions: PlaybookRunAction[];
 };
 
@@ -99,9 +98,7 @@ export default function PlaybookRunsActions({ data }: PlaybookRunActionsProps) {
         </div>
         <div className="flex flex-col flex-1 h-full font-mono px-4 py-2 text-white bg-gray-700 overflow-hidden">
           {selectedAction && (
-            <div className="flex flex-col flex-1 w-full overflow-x-hidden overflow-y-auto gap-2 whitespace-pre-wrap break-all">
-              <PlaybooksRunActionsResults action={selectedAction} />
-            </div>
+            <div className="flex flex-col flex-1 w-full overflow-x-hidden overflow-y-auto gap-2 whitespace-pre-wrap break-all"></div>
           )}
         </div>
       </div>

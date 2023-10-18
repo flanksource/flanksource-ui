@@ -1,6 +1,6 @@
-import { relativeDateTime } from "../../../utils/date";
-import { PlaybookRunAction } from "./PlaybookRunsSidePanel";
-import PlaybookRunsStatus from "./PlaybookRunsStatus";
+import { relativeDateTime } from "../../../../utils/date";
+import { PlaybookRunAction } from "../PlaybookRunTypes";
+import PlaybookRunsStatus from "../PlaybookRunsStatus";
 
 type PlaybookRunsActionItemProps = {
   action: PlaybookRunAction;

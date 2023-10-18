@@ -7,7 +7,7 @@ import {
   BreadcrumbRoot
 } from "../../components/BreadcrumbNav";
 import { SearchLayout } from "../../components/Layout";
-import PlaybookRunsActions from "../../components/Playbooks/Runs/PlaybookRunsActions";
+import PlaybookRunsActions from "../../components/Playbooks/Runs/Actions/PlaybookRunsActions";
 import CardsSkeletonLoader from "../../components/SkeletonLoader/CardsSkeletonLoader";
 import { Head } from "../../components/Head/Head";
 import { playbookRunsPageTabs } from "../../components/Playbooks/Runs/PlaybookRunsPageTabs";

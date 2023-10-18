@@ -1,5 +1,5 @@
-import { PlaybookRunAction } from "./PlaybookRunsSidePanel";
 import Convert from "ansi-to-html";
+import { PlaybookRunAction } from "../PlaybookRunTypes";
 
 const convert = new Convert();
 
