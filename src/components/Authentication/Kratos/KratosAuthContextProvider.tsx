@@ -5,6 +5,8 @@ import { AuthContext } from "../../../context";
 import ErrorPage from "../../Errors/ErrorPage";
 import FullPageSkeletonLoader from "../../SkeletonLoader/FullPageSkeletonLoader";
 
+const backendURL = process.env.NEXT_PUBLIC_BACKEND_URL;
+
 type Props = {
   children: React.ReactNode;
 };
@@ -33,7 +35,9 @@ export default function KratosAuthContextProvider({ children }: Props) {
   }
 
   return (
-    <AuthContext.Provider value={{ user: payload.user }}>
+    <AuthContext.Provider
+      value={{ user: payload.user, backendUrl: backendURL }}
+    >
       {children}
     </AuthContext.Provider>
   );

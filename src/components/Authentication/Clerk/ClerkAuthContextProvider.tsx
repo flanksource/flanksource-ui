@@ -61,7 +61,12 @@ export default function ClerkAuthContextProvider({
   return (
     // remove the ?? (payload as any) when the API is updated to return the user
     // inside payload instead of the payload itself
-    <AuthContext.Provider value={{ user: payload.user ?? (payload as any) }}>
+    <AuthContext.Provider
+      value={{
+        user: payload.user ?? (payload as any),
+        backendUrl: backendURL as string
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

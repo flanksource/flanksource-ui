@@ -1,7 +1,9 @@
+import { useContext } from "react";
 import { GeneratedAgent } from "../../api/services/agents";
 import { Button } from "../Button";
 import CodeBlock from "../CodeBlock/CodeBlock";
 import { Modal } from "../Modal";
+import { AuthContext } from "../../context";
 
 type Props = {
   isOpen: boolean;
@@ -14,6 +16,8 @@ export default function InstallAgentModal({
   onClose,
   generatedAgent
 }: Props) {
+  const { backendUrl } = useContext(AuthContext);
+
   return (
     <Modal
       title={"Installation Instructions"}
@@ -26,7 +30,7 @@ export default function InstallAgentModal({
         <CodeBlock
           code={`helm repo add flanksource https://flanksource.github.io/charts
 helm repo update
-helm install mc-agent flanksource/mission-control-agent -n "mission-control-agent"  --create-namespace --set upstream.createSecret=true --set upstream.host=$host --set upstream.username=${generatedAgent.username} --set upstream.password=${generatedAgent.access_token}`}
+helm install mc-agent flanksource/mission-control-agent -n "mission-control-agent"  --create-namespace --set upstream.createSecret=true --set upstream.host=${backendUrl} --set upstream.username=${generatedAgent.username} --set upstream.password=${generatedAgent.access_token}`}
         />
       </div>
       <div className="flex flex-row justify-end gap-4 p-4">
