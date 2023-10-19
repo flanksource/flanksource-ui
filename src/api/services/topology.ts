@@ -279,3 +279,19 @@ export const getTopologySnapshot = async (
   });
   return res.data;
 };
+
+export type ComponentHealthCheckView = {
+  component_id: string;
+  id: string;
+  type: string;
+  name: string;
+  severity: string;
+  status: string;
+};
+
+export const getComponentChecks = async (id: string) => {
+  const res = await IncidentCommander.get<ComponentHealthCheckView[]>(
+    `/checks_by_component?component_id=eq.${id}`
+  );
+  return res.data;
+};
