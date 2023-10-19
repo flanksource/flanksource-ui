@@ -22,12 +22,6 @@ type GroupOptionsType = {
 };
 
 const items: GroupOptionsType = {
-  NoGrouping: {
-    id: "No Grouping",
-    name: "No Grouping",
-    description: "No Grouping",
-    value: "no_grouping"
-  },
   /* Type: {
     id: "Type",
     name: "Type",
@@ -97,6 +91,15 @@ export default function GroupByDropdown({
   }, [allConfigs?.data]);
 
   const groupByChange = (value: string | undefined) => {
+    if (value === undefined || value === "no_grouping") {
+      params.delete("groupBy");
+      params.delete("groupByProp");
+      setParams({
+        ...Object.fromEntries(params)
+      });
+      onChange(undefined);
+      return;
+    }
     const options = groupByOptions as any;
     let selectedOption: any;
     Object.keys(options).forEach((key) => {
@@ -121,7 +124,15 @@ export default function GroupByDropdown({
     <ReactSelectDropdown
       name="group"
       isLoading={isLoading}
-      items={groupByOptions}
+      items={[
+        {
+          id: "No Grouping",
+          name: "No Grouping",
+          description: "No Grouping",
+          value: "no_grouping"
+        },
+        ...groupByOptions
+      ]}
       onChange={groupByChange}
       value={groupType}
       className="w-auto max-w-[400px]"
