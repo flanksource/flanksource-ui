@@ -35,8 +35,8 @@ export function ConfigListPage() {
 
   // Show summary if no search, tag or configType is provided
   const showConfigSummaryList = useMemo(
-    () => !configType && !search && !tag,
-    [configType, search, tag]
+    () => !configType && !search && !tag && !groupByProp,
+    [configType, groupByProp, search, tag]
   );
 
   const {
