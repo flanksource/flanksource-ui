@@ -1,10 +1,10 @@
 import { Float } from "@headlessui-float/react";
 import { Fragment, useState } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
-import { useGetPlaybooksToRun } from "../../../api/query-hooks/playbooks";
-import { Button } from "../../Button";
+import { useGetPlaybooksToRun } from "../../../../api/query-hooks/playbooks";
+import { Button } from "../../../Button";
 import { Menu } from "@headlessui/react";
-import { PlaybookSpec } from "../Settings/PlaybookSpecsTable";
+import { PlaybookSpec } from "../../Settings/PlaybookSpecsTable";
 import SubmitPlaybookRunForm from "./SubmitPlaybookRunForm";
 
 type SelectPlaybookToRunProps = {

@@ -3,7 +3,7 @@ import {
   PlaybookRun,
   PlaybookRunAction
 } from "../../components/Playbooks/Runs/PlaybookRunTypes";
-import { SubmitPlaybookRunFormValues } from "../../components/Playbooks/Runs/SubmitPlaybookRunForm";
+import { SubmitPlaybookRunFormValues } from "../../components/Playbooks/Runs/Submit/SubmitPlaybookRunForm";
 import {
   NewPlaybookSpec,
   PlaybookSpec,

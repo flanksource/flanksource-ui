@@ -7,7 +7,7 @@ import { HealthCheck } from "../../types/healthChecks";
 import AttachAsEvidenceButton from "../AttachEvidenceDialog/AttachAsEvidenceDialogButton";
 import { timeRanges } from "../Dropdown/TimeRange";
 import { Modal } from "../Modal";
-import SelectPlaybookToRun from "../Playbooks/Runs/SelectPlaybookToRun";
+import SelectPlaybookToRun from "../Playbooks/Runs/Submit/SelectPlaybookToRun";
 import { toastError } from "../Toast/toast";
 import { CheckDetails } from "./CanaryPopup/CheckDetails";
 import { CheckTitle } from "./CanaryPopup/CheckTitle";
