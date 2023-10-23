@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useMemo } from "react";
 import { BiLabel } from "react-icons/bi";
 import { useSearchParams } from "react-router-dom";
 import { useAllConfigsQuery } from "../../api/query-hooks";
@@ -22,12 +22,6 @@ type GroupOptionsType = {
 };
 
 const items: GroupOptionsType = {
-  NoGrouping: {
-    id: "No Grouping",
-    name: "No Grouping",
-    description: "No Grouping",
-    value: "no_grouping"
-  },
   /* Type: {
     id: "Type",
     name: "Type",
@@ -66,12 +60,13 @@ export default function GroupByDropdown({
     params.get("groupByProp") || params.get("groupBy") || "type"
   );
 
-  const [groupByOptions, setGroupByOptions] = useState<GroupOptionsType>();
   const { data: allConfigs, isLoading } = useAllConfigsQuery({}, {});
 
-  useEffect(() => {
+  const groupByOptions = useMemo(() => {
     if (!allConfigs?.data) {
-      setGroupByOptions(items);
+      return Object.values(items).sort((a, b) => {
+        return a.name.localeCompare(b.name);
+      });
     }
     const newItems = items;
     allConfigs?.data?.forEach((d) => {
@@ -90,10 +85,21 @@ export default function GroupByDropdown({
           };
         });
     });
-    setGroupByOptions({ ...newItems });
-  }, [allConfigs?.data, isLoading]);
+    return Object.values({ ...newItems }).sort((a, b) => {
+      return a.name.localeCompare(b.name);
+    });
+  }, [allConfigs?.data]);
 
   const groupByChange = (value: string | undefined) => {
+    if (value === undefined || value === "no_grouping") {
+      params.delete("groupBy");
+      params.delete("groupByProp");
+      setParams({
+        ...Object.fromEntries(params)
+      });
+      onChange(undefined);
+      return;
+    }
     const options = groupByOptions as any;
     let selectedOption: any;
     Object.keys(options).forEach((key) => {
@@ -117,7 +123,16 @@ export default function GroupByDropdown({
   return (
     <ReactSelectDropdown
       name="group"
-      items={groupByOptions}
+      isLoading={isLoading}
+      items={[
+        {
+          id: "No Grouping",
+          name: "No Grouping",
+          description: "No Grouping",
+          value: "no_grouping"
+        },
+        ...groupByOptions
+      ]}
       onChange={groupByChange}
       value={groupType}
       className="w-auto max-w-[400px]"
