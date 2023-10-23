@@ -477,7 +477,9 @@ export function useGetTopologyRelatedInsightsQuery(
       select: (response) => {
         return {
           ...response,
-          data: response?.data?.flatMap((item) => item.config?.analysis)
+          data: response?.data?.map((item) =>
+            item.config.analysis.find((a) => a.id === item.analysis_id)
+          )
         };
       }
     }
