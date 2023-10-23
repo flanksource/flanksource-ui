@@ -4,7 +4,12 @@ import FormikTextInput from "../Forms/Formik/FormikTextInput";
 import FormikCheckbox from "../Forms/Formik/FormikCheckbox";
 import { Modal } from "../Modal";
 import { useEffect, useState } from "react";
-import { ConnectionType, Field, connectionTypes } from "./connectionTypes";
+import {
+  ConnectionType,
+  ConnectionValueType,
+  Field,
+  connectionTypes
+} from "./connectionTypes";
 import { FormikEnvVarSource } from "../Forms/Formik/FormikEnvVarSource";
 import { Icon } from "../Icon";
 import React from "react";
@@ -45,7 +50,7 @@ export type Connection = {
   tenant?: string;
   titleKey?: string;
   topic?: string;
-  type: string;
+  type?: ConnectionValueType;
   url?: string;
   user?: string;
   username?: string;
@@ -157,7 +162,7 @@ export default function ConnectionForm({
         initialValues={
           formInitialValue || {
             name: "",
-            type: "",
+            type: undefined,
             url: "",
             username: "",
             password: "",
@@ -171,7 +176,7 @@ export default function ConnectionForm({
         onSubmit={(value) => {
           onConnectionSubmit?.({
             ...convertData(value),
-            type: connectionType.title
+            type: connectionType.value
           });
         }}
       >
