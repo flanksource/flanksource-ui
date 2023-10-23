@@ -66,6 +66,8 @@ import PlaybookRunsPage from "./pages/playbooks/PlaybookRuns";
 import PlaybookRunsDetailsPage from "./pages/playbooks/PlaybookRunsDetails";
 import { features } from "./services/permissions/features";
 import { stringSortHelper } from "./utils/common";
+import { MdOutlineSupportAgent } from "react-icons/md";
+import AgentsPage from "./components/Agents/AgentPage";
 
 export type NavigationItems = {
   name: string;
@@ -196,6 +198,13 @@ const settingsNav: SettingsNavigationItems = {
       href: "/settings/event-queue-status",
       icon: FaTasks,
       featureName: features["settings.event_queue_status"],
+      resourceName: tables.database
+    },
+    {
+      name: "Agents",
+      href: "/settings/agents",
+      icon: MdOutlineSupportAgent,
+      featureName: features.agents,
       resourceName: tables.database
     }
   ].sort((v1, v2) => stringSortHelper(v1.name, v2.name))
@@ -345,6 +354,13 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             "read"
           )}
         />
+
+        <Route path="agents">
+          <Route
+            index
+            element={withAccessCheck(<AgentsPage />, tables.agents, "read")}
+          />
+        </Route>
 
         {settingsNav.submenu
           .filter((v) => (v as SchemaResourceType).table)

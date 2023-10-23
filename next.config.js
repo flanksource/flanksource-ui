@@ -3,6 +3,10 @@
  */
 const config = {
   productionBrowserSourceMaps: true,
+  env: {
+    // make the backend URL available to the frontend
+    NEXT_PUBLIC_BACKEND_URL: process.env.BACKEND_URL
+  },
   async rewrites() {
     // if clerk is enabled, we will use next API routes to proxy requests to
     // the backend
