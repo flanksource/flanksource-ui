@@ -48,15 +48,19 @@ export function useGetPlaybooksToRun(
   );
 }
 
-export function useGetPlaybookSpecsDetails(id: string) {
-  return useQuery<Record<string, any>, Error>(
+export function useGetPlaybookSpecsDetails(
+  id: string,
+  options: UseQueryOptions<PlaybookSpec | undefined, Error> = {}
+) {
+  return useQuery<PlaybookSpec | undefined, Error>(
     ["playbooks", "settings", "specs", id],
     async () => getPlaybookSpec(id),
     {
       enabled: !!id,
       cacheTime: 0,
       staleTime: 0,
-      keepPreviousData: false
+      keepPreviousData: false,
+      ...options
     }
   );
 }
