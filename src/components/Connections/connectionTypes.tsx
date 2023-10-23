@@ -27,8 +27,52 @@ export type Field = {
   default?: boolean | number | string;
 };
 
+export const enum ConnectionValueType {
+  AWS = "aws",
+  Azure = "azure",
+  AzureDevops = "azure_devops",
+  Discord = "discord",
+  Dynatrace = "dynatrace",
+  ElasticSearch = "elasticsearch",
+  Email = "email",
+  GCP = "google_cloud",
+  GenericWebhook = "generic_webhook",
+  Git = "git",
+  Github = "github",
+  GoogleChat = "google_chat",
+  HTTP = "http",
+  IFTTT = "ifttt",
+  JMeter = "jmeter",
+  Kubernetes = "kubernetes",
+  LDAP = "ldap",
+  Matrix = "matrix",
+  Mattermost = "mattermost",
+  Mongo = "mongo",
+  MySQL = "mysql",
+  Ntfy = "ntfy",
+  OpsGenie = "opsgenie",
+  Postgres = "postgres",
+  Prometheus = "prometheus",
+  Pushbullet = "pushbullet",
+  Pushover = "pushover",
+  Redis = "redis",
+  Restic = "restic",
+  Rocketchat = "rocketchat",
+  SFTP = "sftp",
+  Slack = "slack",
+  SlackWebhook = "slackwebhook",
+  SMB = "smb",
+  SQLServer = "sql_server",
+  Teams = "teams",
+  Telegram = "telegram",
+  Webhook = "webhook",
+  Windows = "windows",
+  ZulipChat = "zulip_chat"
+}
+
 export type ConnectionType = {
   title: string;
+  value: ConnectionValueType;
   icon?: React.ReactNode | string | null;
   fields: Field[];
   convertToFormSpecificValue?: (data: Record<string, string>) => Connection;
@@ -43,6 +87,7 @@ export const connectionTypes: ConnectionType[] = [
   {
     title: "Postgres",
     icon: "postgres",
+    value: ConnectionValueType.Postgres,
     fields: [
       {
         label: "Name",
@@ -73,6 +118,7 @@ export const connectionTypes: ConnectionType[] = [
   {
     title: "MySQL",
     icon: "mysql",
+    value: ConnectionValueType.MySQL,
     fields: [
       {
         label: "Name",
@@ -103,6 +149,7 @@ export const connectionTypes: ConnectionType[] = [
   {
     title: "SQL Server",
     icon: "sqlserver",
+    value: ConnectionValueType.SQLServer,
     fields: [
       {
         label: "Name",
@@ -133,6 +180,7 @@ export const connectionTypes: ConnectionType[] = [
   {
     title: "HTTP",
     icon: "http",
+    value: ConnectionValueType.HTTP,
     fields: [
       {
         label: "Name",
@@ -168,6 +216,7 @@ export const connectionTypes: ConnectionType[] = [
   {
     title: "Prometheus",
     icon: "prometheus",
+    value: ConnectionValueType.Prometheus,
     fields: [
       {
         label: "Name",
@@ -203,6 +252,7 @@ export const connectionTypes: ConnectionType[] = [
   {
     title: "Elasticsearch",
     icon: "elasticsearch",
+    value: ConnectionValueType.ElasticSearch,
     fields: [
       {
         label: "Name",
@@ -238,6 +288,7 @@ export const connectionTypes: ConnectionType[] = [
   {
     title: "Mongo",
     icon: "mongo",
+    value: ConnectionValueType.Mongo,
     fields: [
       {
         label: "Name",
@@ -273,6 +324,7 @@ export const connectionTypes: ConnectionType[] = [
   {
     title: "LDAP",
     icon: "ldap",
+    value: ConnectionValueType.LDAP,
     fields: [
       {
         label: "Name",
@@ -308,6 +360,7 @@ export const connectionTypes: ConnectionType[] = [
   {
     title: "Redis",
     icon: "redis",
+    value: ConnectionValueType.AWS,
     fields: [
       {
         label: "Name",
@@ -366,6 +419,7 @@ export const connectionTypes: ConnectionType[] = [
   },
   {
     title: "Windows",
+    value: ConnectionValueType.Windows,
     icon: <FaWindows className="w-5 h-5" />,
     fields: [
       {
@@ -413,6 +467,7 @@ export const connectionTypes: ConnectionType[] = [
   },
   {
     title: "Google Cloud",
+    value: ConnectionValueType.GCP,
     icon: <DiGoogleCloudPlatform className="w-6 h-6" />,
     fields: [
       {
@@ -439,6 +494,7 @@ export const connectionTypes: ConnectionType[] = [
   {
     title: "SFTP",
     icon: "sftp",
+    value: ConnectionValueType.SFTP,
     fields: [
       {
         label: "Name",
@@ -492,6 +548,7 @@ export const connectionTypes: ConnectionType[] = [
   {
     title: "AWS",
     icon: "aws",
+    value: ConnectionValueType.AWS,
     fields: [
       {
         label: "Name",
@@ -553,6 +610,7 @@ export const connectionTypes: ConnectionType[] = [
   {
     title: "Kubernetes",
     icon: "kubernetes",
+    value: ConnectionValueType.Kubernetes,
     fields: [
       {
         label: "Name",
@@ -572,6 +630,7 @@ export const connectionTypes: ConnectionType[] = [
   {
     title: "Azure Devops",
     icon: "azure-devops",
+    value: ConnectionValueType.AzureDevops,
     fields: [
       {
         label: "Name",
@@ -596,6 +655,7 @@ export const connectionTypes: ConnectionType[] = [
   {
     title: "Azure",
     icon: "azure",
+    value: ConnectionValueType.Azure,
     fields: [
       {
         label: "Name",
@@ -642,6 +702,7 @@ export const connectionTypes: ConnectionType[] = [
   {
     title: "GitHub",
     icon: "github",
+    value: ConnectionValueType.Github,
     fields: [
       {
         label: "Name",
@@ -660,6 +721,7 @@ export const connectionTypes: ConnectionType[] = [
   {
     title: "Restic",
     icon: "restic",
+    value: ConnectionValueType.Restic,
     fields: [
       {
         label: "Name",
@@ -717,6 +779,7 @@ export const connectionTypes: ConnectionType[] = [
   {
     title: "SMB",
     icon: "smb",
+    value: ConnectionValueType.SMB,
     hide: true,
     fields: [
       {
@@ -785,6 +848,7 @@ export const connectionTypes: ConnectionType[] = [
   {
     title: "JMeter",
     icon: "jmeter",
+    value: ConnectionValueType.JMeter,
     hide: true,
     fields: [
       {
@@ -824,6 +888,7 @@ export const connectionTypes: ConnectionType[] = [
   {
     title: "Dynatrace",
     icon: "dynatrace",
+    value: ConnectionValueType.Dynatrace,
     fields: [
       {
         label: "Name",
@@ -871,6 +936,7 @@ export const connectionTypes: ConnectionType[] = [
     title: "Discord",
     forNotification: true,
     icon: "discord",
+    value: ConnectionValueType.Discord,
     fields: [
       {
         label: "Name",
@@ -904,6 +970,7 @@ export const connectionTypes: ConnectionType[] = [
     title: "Email",
     forNotification: true,
     icon: "email",
+    value: ConnectionValueType.Email,
     fields: [
       {
         label: "Name",
@@ -1004,6 +1071,7 @@ export const connectionTypes: ConnectionType[] = [
     title: "Google Chat",
     forNotification: true,
     icon: "google-chat",
+    value: ConnectionValueType.GoogleChat,
     fields: [
       {
         label: "Name",
@@ -1052,6 +1120,7 @@ export const connectionTypes: ConnectionType[] = [
     title: "IFTTT",
     forNotification: true,
     icon: "ifttt",
+    value: ConnectionValueType.IFTTT,
     fields: [
       {
         label: "Name",
@@ -1078,6 +1147,7 @@ export const connectionTypes: ConnectionType[] = [
     title: "Mattermost",
     forNotification: true,
     icon: "mattermost",
+    value: ConnectionValueType.Mattermost,
     fields: [
       {
         label: "Name",
@@ -1137,6 +1207,7 @@ export const connectionTypes: ConnectionType[] = [
   {
     title: "Matrix",
     forNotification: true,
+    value: ConnectionValueType.Matrix,
     icon: "matrix",
     fields: [
       {
@@ -1194,6 +1265,7 @@ export const connectionTypes: ConnectionType[] = [
   {
     title: "Ntfy",
     forNotification: true,
+    value: ConnectionValueType.Ntfy,
     icon: "ntfy",
     fields: [
       {
@@ -1261,6 +1333,7 @@ export const connectionTypes: ConnectionType[] = [
     title: "OpsGenie",
     forNotification: true,
     icon: "opsgenie",
+    value: ConnectionValueType.OpsGenie,
     fields: [
       {
         label: "Name",
@@ -1312,6 +1385,7 @@ export const connectionTypes: ConnectionType[] = [
     title: "Pushbullet",
     forNotification: true,
     icon: "pushbullet",
+    value: ConnectionValueType.Pushbullet,
     fields: [
       {
         label: "Name",
@@ -1353,6 +1427,7 @@ export const connectionTypes: ConnectionType[] = [
     title: "Pushover",
     forNotification: true,
     icon: "pushover",
+    value: ConnectionValueType.Pushover,
     fields: [
       {
         label: "Name",
@@ -1386,6 +1461,7 @@ export const connectionTypes: ConnectionType[] = [
     title: "Rocketchat",
     forNotification: true,
     icon: "rocket",
+    value: ConnectionValueType.Rocketchat,
     fields: [
       {
         label: "Name",
@@ -1458,6 +1534,7 @@ export const connectionTypes: ConnectionType[] = [
     title: "Slack",
     forNotification: true,
     icon: "slack",
+    value: ConnectionValueType.Slack,
     fields: [
       {
         label: "Name",
@@ -1507,6 +1584,7 @@ export const connectionTypes: ConnectionType[] = [
     title: "Teams",
     forNotification: true,
     icon: "teams",
+    value: ConnectionValueType.Teams,
     fields: [
       {
         label: "Name",
@@ -1574,6 +1652,7 @@ export const connectionTypes: ConnectionType[] = [
     title: "Telegram",
     forNotification: true,
     icon: "telegram",
+    value: ConnectionValueType.Telegram,
     fields: [
       {
         label: "Name",
@@ -1608,6 +1687,7 @@ export const connectionTypes: ConnectionType[] = [
     title: "Zulip Chat",
     forNotification: true,
     icon: "zulip",
+    value: ConnectionValueType.ZulipChat,
     fields: [
       {
         label: "Name",
@@ -1657,6 +1737,7 @@ export const connectionTypes: ConnectionType[] = [
     title: "Generic Webhook",
     forNotification: true,
     icon: "http",
+    value: ConnectionValueType.GenericWebhook,
     fields: [
       {
         label: "Name",
