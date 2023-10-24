@@ -4,6 +4,8 @@ import React, { memo } from "react";
 
 type IconMap = Record<string, string>;
 const aliases: IconMap = {
+  "aws-cloudwatch-alarm": "aws-cloudwatch",
+  "aws-config-alarm": "aws-config",
   "aws--account": "aws",
   "aws-ec2-dhcpoptions": "settings",
   "aws-ec2-securitygroup": "firewall",
@@ -476,8 +478,6 @@ function findByName(name?: string) {
       return icon;
     }
   }
-  console.log(name, icon == null);
-
   return icon;
 }
 
@@ -513,7 +513,7 @@ export const Icon: React.FC<IconProps> = memo(
     }
 
     if (icon == null) {
-      console.warn("Icon not found: " + name);
+      console.log("Icon not found: " + name);
       return null;
     }
 

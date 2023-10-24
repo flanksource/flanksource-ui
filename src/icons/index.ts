@@ -262,6 +262,7 @@ import js from "./js.svg";
 import json from "./json.svg";
 import junit from "./junit.svg";
 import jwt from "./jwt.svg";
+import k6 from "./k6.svg";
 import k8s_clusterrole from "./k8s-clusterrole.svg";
 import k8s_clusterrolebinding from "./k8s-clusterrolebinding.svg";
 import k8s_configmap from "./k8s-configmap.svg";
@@ -347,6 +348,8 @@ import ok from "./ok.svg";
 import on from "./on.svg";
 import opa from "./opa.svg";
 import openid from "./openid.svg";
+import opensearch from "./opensearch.svg";
+import opensearch_logo from "./opensearch_logo.svg";
 import openshift from "./openshift.svg";
 import opentelemetry from "./opentelemetry.svg";
 import operatorframework from "./operatorframework.svg";
@@ -365,11 +368,14 @@ import pagerduty from "./pagerduty.svg";
 import pause from "./pause.svg";
 import php from "./php.svg";
 import ping from "./ping.svg";
+import playwright from "./playwright.svg";
 import plus from "./plus.svg";
 import pod from "./pod.svg";
 import pods from "./pods.svg";
 import pom from "./pom.svg";
 import postgres from "./postgres.svg";
+import postman from "./postman.svg";
+import powershell from "./powershell.svg";
 import prometheus from "./prometheus.svg";
 import pushbullet from "./pushbullet.svg";
 import pushover from "./pushover.svg";
@@ -762,6 +768,7 @@ export const Icons = {
   json: json,
   junit: junit,
   jwt: jwt,
+  k6: k6,
   "k8s-clusterrole": k8s_clusterrole,
   "k8s-clusterrolebinding": k8s_clusterrolebinding,
   "k8s-configmap": k8s_configmap,
@@ -847,6 +854,8 @@ export const Icons = {
   on: on,
   opa: opa,
   openid: openid,
+  opensearch: opensearch,
+  opensearch_logo: opensearch_logo,
   openshift: openshift,
   opentelemetry: opentelemetry,
   operatorframework: operatorframework,
@@ -865,11 +874,14 @@ export const Icons = {
   pause: pause,
   php: php,
   ping: ping,
+  playwright: playwright,
   plus: plus,
   pod: pod,
   pods: pods,
   pom: pom,
   postgres: postgres,
+  postman: postman,
+  powershell: powershell,
   prometheus: prometheus,
   pushbullet: pushbullet,
   pushover: pushover,
