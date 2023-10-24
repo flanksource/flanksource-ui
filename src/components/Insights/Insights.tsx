@@ -116,9 +116,9 @@ export default function InsightsDetails(
       insights.map((item) => {
         return {
           ...item,
-          sanitizedMessageHTML: sanitizeHTMLContent(item?.message),
+          sanitizedMessageHTML: sanitizeHTMLContent(item?.message ?? ""),
           sanitizedMessageTxt: truncateText(
-            sanitizeHTMLContentToText(item?.message)!,
+            sanitizeHTMLContentToText(item?.message ?? "")!,
             500
           )
         };
@@ -152,7 +152,7 @@ export default function InsightsDetails(
         columns={columns}
         isLoading={isLoading && !isFetching}
         isFetching={isFetching}
-        allRows={insightsWithSanitizedMessages}
+        allRows={insightsWithSanitizedMessages as ConfigTypeInsights[]}
         loaderView={<TextSkeletonLoader className="w-full my-2" />}
         totalEntries={totalEntries}
         fetchNextPage={() => {

@@ -413,6 +413,7 @@ export const getTopologyRelatedInsights = async (
   return resolve(
     ConfigDB.get<
       | {
+          analysis_id: string;
           config: {
             id: string;
             name: string;
@@ -429,12 +430,12 @@ export const getTopologyRelatedInsights = async (
               | "sanitizedMessageHTML"
               | "first_observed"
               | "message"
-            >;
+            >[];
           };
         }[]
       | null
     >(
-      `/analysis_by_component?component_id=eq.${id}${paginationQueryParams}&select=config:configs(id,name,config_class,type,analysis:config_analysis(id,analyzer,analysis_type,message,severity,analysis,first_observed))`,
+      `/analysis_by_component?component_id=eq.${id}${paginationQueryParams}&select=analysis_id,config:configs(id,name,config_class,type,analysis:config_analysis(id,analyzer,analysis_type,message,severity,analysis,first_observed))`,
       {
         headers: {
           Prefer: "count=exact"
