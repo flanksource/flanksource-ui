@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { Incident } from "../../api/services/incident";
-import { IconButton } from "../IconButton";
 import { MdModeEditOutline } from "react-icons/md";
-import { TextInput } from "../TextInput";
+import { Incident } from "../../api/types/incident";
+import { IconButton } from "../IconButton";
 import { EditIncidentTitleForm } from "./EditIncidentTitleForm";
 
 type EditableIncidentTitleBreadcrumbProps = {

@@ -1,17 +1,16 @@
 import clsx from "clsx";
-import { useEffect, useState } from "react";
 import { useAtomValue, useSetAtom } from "jotai";
-
+import { useEffect, useState } from "react";
 import { AiOutlinePlusCircle } from "react-icons/ai";
 import {
-  getHypothesisChildType,
   Hypothesis,
-  HypothesisStatus
-} from "../../../api/services/hypothesis";
+  HypothesisStatus,
+  getHypothesisChildType
+} from "../../../api/types/hypothesis";
 import { HypothesisAPIs } from "../../../pages/incident/IncidentDetails";
+import { recentlyAddedHypothesisIdAtom } from "../../../store/hypothesis.state";
 import { HypothesisBar } from "../HypothesisBar";
 import { HypothesisDetails } from "../HypothesisDetails";
-import { recentlyAddedHypothesisIdAtom } from "../../../store/hypothesis.state";
 
 interface IHypothesisNodeProps {
   hasParent?: boolean;

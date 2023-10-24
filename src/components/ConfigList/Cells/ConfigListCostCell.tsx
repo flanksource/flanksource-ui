@@ -1,5 +1,5 @@
 import { CellContext } from "@tanstack/react-table";
-import { ConfigItem, ConfigSummary } from "../../../api/services/configs";
+import { ConfigItem, ConfigSummary } from "../../../api/types/configs";
 import { FormatCurrency } from "../../CostDetails/CostDetails";
 
 export default function ConfigListCostCell({

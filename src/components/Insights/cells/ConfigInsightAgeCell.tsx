@@ -1,6 +1,6 @@
 import { CellContext } from "@tanstack/react-table";
-import { ConfigTypeInsights } from "../../ConfigInsights";
-import { Age } from "../../UI/Age";
+import { Age } from "../../../ui/Age";
+import { ConfigAnalysis } from "../../../api/types/configs";
 
 export default function ConfigInsightAgeCell({
   row,
@@ -8,7 +8,7 @@ export default function ConfigInsightAgeCell({
   getValue
 }: CellContext<
   Pick<
-    ConfigTypeInsights,
+    ConfigAnalysis,
     | "id"
     | "analyzer"
     | "config"
@@ -20,7 +20,5 @@ export default function ConfigInsightAgeCell({
   >,
   unknown
 >) {
-  return (
-    <Age className="flex py-1 text-sm" from={row.original.first_observed} />
-  );
+  return <Age className="flex py-1" from={row.original.first_observed} />;
 }

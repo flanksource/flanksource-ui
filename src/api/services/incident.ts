@@ -1,54 +1,14 @@
 import { stringify } from "qs";
+import { AVATAR_INFO } from "../../constants";
 import { IncidentCommander } from "../axios";
 import { resolve } from "../resolve";
-import { Hypothesis } from "./hypothesis";
-import { User } from "./users";
-import { AVATAR_INFO } from "../../constants";
-import { typeItems } from "../../components/Incidents/data";
-
-export const enum IncidentSeverity {
-  Low = "low",
-  Medium = "medium",
-  High = "high",
-  Blocker = "blocker",
-  Critical = "critical"
-}
-
-export enum IncidentStatus {
-  "New" = "new",
-  Open = "open",
-  Investigating = "investigating",
-  Mitigated = "mitigated",
-  Resolved = "resolved",
-  Closed = "closed"
-}
-
-export interface NewIncident {
-  title: string;
-  description: string;
-
-  severity: IncidentSeverity | string;
-  type?: string;
-  status?: IncidentStatus;
-
-  created_by: string;
-  commander_id: {
-    id?: string;
-    name?: string;
-    avatar?: string;
-  };
-  communicator_id: string;
-}
-
-export interface Incident extends NewIncident {
-  id: string;
-  incident_id: string;
-  parent_id: string;
-  hypotheses: Hypothesis[];
-  created_at: string;
-  involved: User[];
-  commander: User;
-}
+import {
+  Incident,
+  IncidentStatus,
+  IncidentSummary,
+  NewIncident
+} from "../types/incident";
+import { User } from "../types/users";
 
 export const searchIncident = (query: string) => {
   const hypotheses = `hypotheses(id, type)`;
@@ -118,20 +78,6 @@ export const getIncidentsBy = async ({
       )
     );
   }
-};
-
-export type IncidentSummary = {
-  id: string;
-  incident_id: string;
-  title: string;
-  severity: IncidentSeverity;
-  type: keyof typeof typeItems;
-  status: IncidentStatus;
-  created_at: string;
-  updated_at: string;
-  commander?: User;
-  responders?: User[];
-  commenters?: User[];
 };
 
 export const getIncidentsSummary = async (

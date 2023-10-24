@@ -1,5 +1,5 @@
 import { CellContext, ColumnDef, Row } from "@tanstack/react-table";
-import { ConfigSummary } from "../../api/services/configs";
+import { ConfigSummary } from "../../api/types/configs";
 import { DataTable } from "../DataTable";
 import ConfigInsightsIcon from "../ConfigInsightsIcon";
 import { CountBadge } from "../Badge/CountBadge";

@@ -4,8 +4,8 @@ import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { useGetPlaybooksToRun } from "../../../../api/query-hooks/playbooks";
 import { Button } from "../../../Button";
 import { Menu } from "@headlessui/react";
-import { PlaybookSpec } from "../../Settings/PlaybookSpecsTable";
 import SubmitPlaybookRunForm from "./SubmitPlaybookRunForm";
+import { PlaybookSpec } from "../../../../api/types/playbooks";
 
 type SelectPlaybookToRunProps = {
   component_id?: string;

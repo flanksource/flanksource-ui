@@ -12,8 +12,8 @@ import { InfiniteTable } from "../../InfiniteTable/InfiniteTable";
 import TextSkeletonLoader from "../../SkeletonLoader/TextSkeletonLoader";
 import { refreshButtonClickedTrigger } from "../../SlidingSideBar";
 import Title from "../../Title/title";
-import { Age } from "../../UI/Age";
-import { PlaybookRun } from "./PlaybookRunTypes";
+import { Age } from "../../../ui/Age";
+import { PlaybookRun } from "../../../api/types/playbooks";
 
 type TopologySidePanelProps = {
   panelType: "topology";

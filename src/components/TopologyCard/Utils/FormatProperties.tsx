@@ -1,8 +1,8 @@
 import { FiExternalLink } from "react-icons/fi";
-import { TopologyProperty } from "../../../context/TopologyPageContext";
 import React, { useMemo, useState } from "react";
 import { formatBytes } from "../../../utils/common";
 import { isEmpty } from "lodash";
+import { TopologyProperty } from "../../../api/types/topology";
 
 type FormatPropertyProps = {
   property?: TopologyProperty;

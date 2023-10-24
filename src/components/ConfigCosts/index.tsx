@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useConfigAnalysisQuery } from "../../api/query-hooks";
-import { CostInfoPanel, CostsData } from "../CostDetails/CostDetails";
+import { CostInfoPanel } from "../CostDetails/CostDetails";
+import { CostsData } from "../../api/types/common";
 
 type Props = {
   configID: string;

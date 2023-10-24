@@ -2,7 +2,7 @@ import { Row, SortingState, Updater } from "@tanstack/react-table";
 import { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { DataTable } from "../";
-import { ConfigItem } from "../../api/services/configs";
+import { ConfigItem } from "../../api/types/configs";
 import { configListColumns } from "./ConfigListColumn";
 
 export interface Props {

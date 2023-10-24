@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import React, { useMemo } from "react";
-import { HealthCheck } from "../../../types/healthChecks";
+import { HealthCheck } from "../../../api/types/health";
 import { usePrevious } from "../../../utils/hooks";
 import { Badge } from "../../Badge";
 import { Icon } from "../../Icon";

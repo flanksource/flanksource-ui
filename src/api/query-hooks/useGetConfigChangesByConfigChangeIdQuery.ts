@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { getConfigChangeById } from "../services/configs";
 
-export function useGetConfigChangesByConfigChangeIdQuery(
+export function useGetConfigChangesById(
   id: string,
   configId: string,
   { enabled = true }

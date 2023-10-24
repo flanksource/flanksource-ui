@@ -1,16 +1,16 @@
 import { CellContext } from "@tanstack/react-table";
-import { ConfigTypeChanges } from "..";
 import { ViewType } from "../../../types";
 import { ConfigDetailsChanges } from "../../ConfigDetailsChanges/ConfigDetailsChanges";
+import { ConfigChange } from "../../../api/types/configs";
 
 export default function ConfigChangeNameCell({
   row,
   column,
   getValue
-}: CellContext<ConfigTypeChanges, unknown>) {
+}: CellContext<ConfigChange, unknown>) {
   const item = row.original;
   return (
-    <div className="whitespace-nowrap py-1">
+    <div className="whitespace-nowrap text-xs ">
       <ConfigDetailsChanges
         key={item.id}
         id={item.id}

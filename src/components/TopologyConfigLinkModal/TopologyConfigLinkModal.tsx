@@ -6,7 +6,6 @@ import {
   addManualComponentConfigRelationship,
   getAllConfigsForSearchPurpose
 } from "../../api/services/configs";
-import { Topology } from "../../context/TopologyPageContext";
 import { queryClient } from "../../query-client";
 import { delayedPromise, stringSortHelper } from "../../utils/common";
 import ConfigLink from "../ConfigLink/ConfigLink";
@@ -17,7 +16,9 @@ import { toastError, toastSuccess } from "../Toast/toast";
 import { useAtom } from "jotai";
 import { refreshButtonClickedTrigger } from "../SlidingSideBar";
 import { Events, sendAnalyticEvent } from "../../services/analytics";
-import { ConfigItem } from "../../api/services/configs";
+import { ConfigItem } from "../../api/types/configs";
+import { Topology } from "../../api/types/topology";
+
 type TopologyConfigLinkModalProps = {
   topology: Topology;
   openModal: boolean;

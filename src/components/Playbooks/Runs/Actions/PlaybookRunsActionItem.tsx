@@ -1,5 +1,5 @@
-import { Age } from "../../../UI/Age";
-import { PlaybookRunAction } from "../PlaybookRunTypes";
+import { PlaybookRunAction } from "../../../../api/types/playbooks";
+import { Age } from "../../../../ui/Age";
 import PlaybookRunsStatus from "../PlaybookRunsStatus";
 
 type PlaybookRunsActionItemProps = {

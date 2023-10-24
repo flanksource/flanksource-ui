@@ -17,7 +17,7 @@ import {
   NewPlaybookSpec,
   PlaybookSpec,
   UpdatePlaybookSpec
-} from "./PlaybookSpecsTable";
+} from "../../../api/types/playbooks";
 
 type PlaybookSpecsFormProps = {
   playbook?: PlaybookSpec;

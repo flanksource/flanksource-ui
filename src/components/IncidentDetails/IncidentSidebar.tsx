@@ -1,11 +1,14 @@
 import { severityItems } from "../Incidents/data";
-import { IncidentPriority } from "../../constants/incidentPriority";
-import { Incident, IncidentStatus } from "../../api/services/incident";
 import { IncidentsDefinitionOfDone } from "./DefinitionOfDone/IncidentsDefinitionOfDone";
 import { IncidentChangelog } from "../Changelog/IncidentChangelog";
 import SlidingSideBar from "../SlidingSideBar";
 import { IncidentDetailsPanel } from "./IncidentDetailsPanel";
 import { useCallback, useState } from "react";
+import {
+  Incident,
+  IncidentPriority,
+  IncidentStatus
+} from "../../api/types/incident";
 
 export const priorities = Object.entries(severityItems).map(([key, value]) => ({
   label: value.name,

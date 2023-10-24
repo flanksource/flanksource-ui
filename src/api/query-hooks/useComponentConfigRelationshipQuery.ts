@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { ConfigItem, getConfigsBy } from "../services/configs";
+import { getConfigsBy } from "../services/configs";
+import { ConfigItem } from "../types/configs";
 
 export const componentConfigRelationshipQueryKey = ({
   topologyId,

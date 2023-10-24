@@ -4,7 +4,6 @@ import {
   getRegisteredUsers,
   inviteUser,
   deleteUser,
-  RegisteredUser,
   updateUserRole
 } from "../api/services/users";
 import { Modal } from "../components";
@@ -26,6 +25,7 @@ import {
 } from "../components/ManageUserRoles/ManageUserRoles";
 import { AccessCheck } from "../components/AccessCheck/AccessCheck";
 import { tables } from "../context/UserAccessContext/permissions";
+import { RegisteredUser } from "../api/types/users";
 
 export function UsersPage() {
   const [users, setUsers] = useState<RegisteredUser[]>([]);

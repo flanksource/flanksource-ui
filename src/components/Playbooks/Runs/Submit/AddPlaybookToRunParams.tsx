@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import FormikTextInput from "../../../Forms/Formik/FormikTextInput";
-import { PlaybookSpec } from "../../Settings/PlaybookSpecsTable";
+import { PlaybookSpec } from "../../../../api/types/playbooks";
 
 type AddPlaybookToRunParamsProps = {
   playbookSpec: PlaybookSpec;

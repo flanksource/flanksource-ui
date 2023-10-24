@@ -3,8 +3,8 @@ import clsx from "clsx";
 import { DataTable } from "../DataTable";
 import { Avatar } from "../Avatar";
 import { Connection } from "./ConnectionForm";
-import { DateCell } from "../ConfigViewer/columns";
 import { Icon } from "../Icon";
+import { DateCell } from "../../ui/table";
 
 type ConnectionListProps = {
   data: Connection[];

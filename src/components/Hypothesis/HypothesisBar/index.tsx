@@ -11,14 +11,14 @@ import {
 } from "react-icons/bs";
 import { IconBaseProps, IconType } from "react-icons/lib";
 import { VscTypeHierarchy } from "react-icons/vsc";
-import { EvidenceType } from "../../../api/services/evidence";
-import { Hypothesis } from "../../../api/services/hypothesis";
 import { HypothesisAPIs } from "../../../pages/incident/IncidentDetails";
 import { AvatarGroup } from "../../AvatarGroup";
 import { EditableText } from "../../EditableText";
 import { HypothesisBarMenu } from "../HypothesisBarMenu";
 import { StatusDropdownContainer } from "../StatusDropdownContainer";
 import { recentlyAddedHypothesisIdAtom } from "../../../store/hypothesis.state";
+import { EvidenceType } from "../../../api/types/evidence";
+import { Hypothesis } from "../../../api/types/hypothesis";
 
 enum CommentInfo {
   Comment = "comment"

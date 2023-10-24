@@ -1,6 +1,6 @@
 import React, { Suspense, useMemo, useRef } from "react";
 import { useCanaryGraphQuery } from "../../../api/query-hooks/health";
-import { HealthCheck } from "../../../types/healthChecks";
+import { HealthCheck } from "../../../api/types/health";
 import {
   capitalizeFirstLetter,
   toFixedIfNecessary
@@ -10,7 +10,7 @@ import mixins from "../../../utils/mixins.module.css";
 import { AccordionBox } from "../../AccordionBox";
 import { DropdownStandaloneWrapper } from "../../Dropdown/StandaloneWrapper";
 import { TimeRange, timeRanges } from "../../Dropdown/TimeRange";
-import { Age } from "../../UI/Age";
+import { Age } from "../../../ui/Age";
 import { Duration } from "../renderers";
 import { CanaryCheckDetailsLabel } from "./CanaryCheckDetailsLabel";
 import { CanaryCheckDetailsSpecTab } from "./CanaryCheckDetailsSpec";

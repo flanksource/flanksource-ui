@@ -1,7 +1,7 @@
 import { CellContext } from "@tanstack/react-table";
-import { ConfigItem } from "../../../api/services/configs";
 import Popover from "../../Popover/Popover";
 import ConfigInsightsIcon from "../../ConfigInsightsIcon";
+import { ConfigItem } from "../../../api/types/configs";
 
 export default function ConfigListAnalysisCell({
   row,

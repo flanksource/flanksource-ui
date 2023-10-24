@@ -1,14 +1,13 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Link } from "react-router-dom";
-import { ConfigItem } from "../../api/services/configs";
-import { ConfigTypeInsights } from "../ConfigInsights";
+import { ConfigAnalysis, ConfigItem } from "../../api/types/configs";
 import ConfigInsightsIcon from "../ConfigInsightsIcon";
-import { DateCell } from "../ConfigViewer/columns";
 import { ConfigIcon } from "../Icon/ConfigIcon";
 import ConfigInsightsSeverityIcons from "./ConfigInsightsSeverityIcons";
+import { DateCell } from "../../ui/table";
 
 export const ConfigInsightsColumns: ColumnDef<
-  ConfigTypeInsights & { config?: ConfigItem },
+  ConfigAnalysis & { config?: ConfigItem },
   any
 >[] = [
   {

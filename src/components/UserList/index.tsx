@@ -2,14 +2,14 @@ import { CellContext } from "@tanstack/table-core";
 import clsx from "clsx";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { BsTrash } from "react-icons/bs";
-import { User } from "../../api/services/users";
+import { User } from "../../api/types/users";
 import { useUserAccessStateContext } from "../../context/UserAccessContext/UserAccessContext";
 import { tables } from "../../context/UserAccessContext/permissions";
 import { withAccessCheck } from "../AccessCheck/AccessCheck";
 import { DataTable } from "../DataTable";
 import { IconButton } from "../IconButton";
 import { Menu } from "../Menu";
-import { Age } from "../UI/Age";
+import { Age } from "../../ui/Age";
 
 type UserListProps = {
   data: any[];

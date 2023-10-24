@@ -1,4 +1,4 @@
-import { IncidentSeverity } from "../api/services/incident";
+import { IncidentSeverity } from "../api/types/incident";
 
 const sampleIncident = [
   {

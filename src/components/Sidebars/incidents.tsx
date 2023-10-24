@@ -14,7 +14,7 @@ import { typeItems } from "../Incidents/data";
 import IncidentsFilterBar, { IncidentFilter } from "../IncidentsFilterBar";
 import { refreshButtonClickedTrigger } from "../SlidingSideBar";
 import Title from "../Title/title";
-import { Age } from "../UI/Age";
+import { Age } from "../../ui/Age";
 import { IncidentTypeIcon } from "../incidentTypeTag";
 
 type Props = {

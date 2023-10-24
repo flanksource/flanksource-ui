@@ -1,6 +1,6 @@
 import { CellContext } from "@tanstack/react-table";
 import { FaTrash } from "react-icons/fa";
-import { Age } from "../../UI/Age";
+import { Age } from "../../../ui/Age";
 
 export default function ConfigListDateCell<T extends Record<string, any>>({
   getValue,

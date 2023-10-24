@@ -1,4 +1,4 @@
-import { HealthCheck } from "../../types/healthChecks";
+import { HealthCheck } from "../../api/types/health";
 
 type StatusProps = {
   check?: Pick<HealthCheck, "status">;

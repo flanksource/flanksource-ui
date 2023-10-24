@@ -7,8 +7,8 @@ import {
   useComponentNameQuery,
   useConfigNameQuery
 } from "../../../../api/query-hooks";
-import { Evidence, EvidenceType } from "../../../../api/services/evidence";
 import { getCanaries } from "../../../../api/services/topology";
+import { Evidence, EvidenceType } from "../../../../api/types/evidence";
 import { Size, ViewType } from "../../../../types";
 import { Badge } from "../../../Badge";
 import {
@@ -16,10 +16,10 @@ import {
   ConfigChangeEvidence
 } from "../../../Hypothesis/EvidenceSection";
 import { Icon } from "../../../Icon";
+import { ConfigIcon } from "../../../Icon/ConfigIcon";
 import TextSkeletonLoader from "../../../SkeletonLoader/TextSkeletonLoader";
 import { StatusStyles } from "../../../TopologyCard";
 import { CardMetrics } from "../../../TopologyCard/CardMetrics";
-import { ConfigIcon } from "../../../Icon/ConfigIcon";
 
 type EvidenceViewProps = Omit<React.HTMLProps<HTMLDivElement>, "size"> & {
   evidence: Evidence;

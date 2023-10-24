@@ -1,30 +1,9 @@
 import { MdOutlineInsights } from "react-icons/md";
 import { useGetConfigInsights } from "../../api/query-hooks";
-import { ConfigItem } from "../../api/services/configs";
 import CollapsiblePanel from "../CollapsiblePanel";
 import InsightsDetails from "../Insights/Insights";
 import Title from "../Title/title";
 import PillBadge from "../Badge/PillBadge";
-
-export type ConfigTypeInsights = {
-  id: string;
-  config_id: string;
-  analyzer: string;
-  analysis_type: string;
-  severity: string;
-  summary: string;
-  status: string;
-  message: string;
-  sanitizedMessageHTML?: string;
-  sanitizedMessageTxt?: string;
-  analysis: string;
-  first_observed: string;
-  last_observed: string;
-  created_at: string | number | Date | null | undefined;
-  source: any;
-  created_by: any;
-  config?: ConfigItem;
-};
 
 type Props = {
   configID: string;

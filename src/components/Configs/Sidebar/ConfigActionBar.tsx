@@ -1,12 +1,12 @@
 import clsx from "clsx";
 import React, { useEffect, useMemo, useState } from "react";
 import { MdAlarmAdd } from "react-icons/md";
-import { useGetConfigByIdQuery } from "../../../api/query-hooks";
-import { EvidenceType } from "../../../api/services/evidence";
-import { usePartialUpdateSearchParams } from "../../../hooks/usePartialUpdateSearchParams";
-import { ActionLink } from "../../ActionLink/ActionLink";
-import AttachAsEvidenceButton from "../../AttachEvidenceDialog/AttachAsEvidenceDialogButton";
-import SelectPlaybookToRun from "../../Playbooks/Runs/Submit/SelectPlaybookToRun";
+import { useGetConfigByIdQuery } from "../../api/query-hooks";
+import { usePartialUpdateSearchParams } from "../../hooks/usePartialUpdateSearchParams";
+import { ActionLink } from "../ActionLink/ActionLink";
+import AttachAsEvidenceButton from "../AttachEvidenceDialog/AttachAsEvidenceDialogButton";
+import SelectPlaybookToRun from "../Playbooks/Runs/Submit/SelectPlaybookToRun";
+import { EvidenceType } from "../../api/types/evidence";
 
 type ConfigActionBarProps = {
   configId: string;
@@ -40,7 +40,7 @@ export default function ConfigActionBar({
     const ordered = Object.keys(configDetails.config)
       .sort()
       .reduce((obj: Record<string, any>, key) => {
-        obj[key] = configDetails.config[key];
+        obj[key] = configDetails.config ? [key] : null;
         return obj;
       }, {});
 

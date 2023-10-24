@@ -1,4 +1,4 @@
-import { Age } from "../UI/Age";
+import { Age } from "../../ui/Age";
 
 export const EvidenceLogList = ({ evidence }) => (
   <div className="flex flex-row gap-x-10 py-1.5 border-b" key={evidence.id}>

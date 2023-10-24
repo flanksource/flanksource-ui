@@ -1,10 +1,10 @@
 import clsx from "clsx";
 import { Link } from "react-router-dom";
-import { Incident } from "../../api/services/incident";
 import { IncidentStatusTag } from "../IncidentStatusTag";
 import { typeItems } from "../Incidents/data";
 import { IncidentTypeIcon } from "../incidentTypeTag";
-import { Age } from "../UI/Age";
+import { Age } from "../../ui/Age";
+import { Incident } from "../../api/types/incident";
 
 type IncidentCardProps = {
   incident: Incident;

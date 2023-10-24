@@ -18,7 +18,7 @@ import {
   formatISODate,
   subtractDateFromNow
 } from "../../../utils/date";
-import { HealthCheck } from "../../../types/healthChecks";
+import { HealthCheck } from "../../../api/types/health";
 import { useCanaryGraphQuery } from "../../../api/query-hooks/health";
 
 // @TODO: duration should be formatted properly, not just by ms

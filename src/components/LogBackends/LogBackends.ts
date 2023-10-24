@@ -1,4 +1,4 @@
-import { User } from "../../api/services/users";
+import { User } from "../../api/types/users";
 
 type LogBackendsSource = "KubernetesCRD" | "ConfigFile";
 

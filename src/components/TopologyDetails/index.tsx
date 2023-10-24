@@ -1,6 +1,5 @@
 import { isEmpty, map } from "lodash";
 import { BsCardList } from "react-icons/bs";
-import { Topology } from "../../context/TopologyPageContext";
 import CollapsiblePanel from "../CollapsiblePanel";
 import { DescriptionCard } from "../DescriptionCard";
 import EmptyState from "../EmptyState";
@@ -9,6 +8,7 @@ import Title from "../Title/title";
 import { FormatProperty } from "../TopologyCard/Property";
 import { TopologyLink } from "../TopologyLink";
 import { useMemo } from "react";
+import { Topology } from "../../api/types/topology";
 
 type Props = {
   topology?: Topology;

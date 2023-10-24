@@ -6,7 +6,7 @@ import { Avatar } from "../Avatar";
 import { InfoMessage } from "../InfoMessage";
 import JobHistoryStatusColumn from "../JobsHistory/JobHistoryStatusColumn";
 import TableSkeletonLoader from "../SkeletonLoader/TableSkeletonLoader";
-import { Age } from "../UI/Age";
+import { Age } from "../../ui/Age";
 import ConfigScrapperIcon from "./ConfigScrapperIcon";
 interface Props {
   items: SchemaResourceWithJobStatus[];
@@ -136,16 +136,16 @@ function SchemaResourceListItem({
       </Cell>
       {table === "canaries" && <Cell>{schedule}</Cell>}
       <Cell className="text-gray-500">
-        <Age from={created_at} />
+        <Age from={created_at} suffix={true} />
       </Cell>
       <Cell className="text-gray-500">
-        <Age from={updated_at} />
+        <Age from={updated_at} suffix={true} />
       </Cell>
       <Cell className="text-gray-500 lowercase space-x-2">
         <JobHistoryStatusColumn status={job_status} />
       </Cell>
       <Cell className="text-gray-500">
-        <Age from={job_time_start} />
+        <Age from={job_time_start} suffix={true} />
       </Cell>
       <Cell className="text-gray-500">
         {created_by && <Avatar user={created_by} circular />}

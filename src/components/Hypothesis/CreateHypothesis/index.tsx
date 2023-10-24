@@ -1,10 +1,9 @@
 import { Controller, useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
-
 import {
-  getHypothesisChildType,
-  HypothesisStatus
-} from "../../../api/services/hypothesis";
+  HypothesisStatus,
+  getHypothesisChildType
+} from "../../../api/types/hypothesis";
 import { hypothesisStatusDropdownOptions } from "../../../constants/hypothesisStatusOptions";
 import { useUser } from "../../../context";
 import { capitalizeFirstLetter } from "../../../utils/common";

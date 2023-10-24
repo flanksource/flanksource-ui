@@ -19,7 +19,7 @@ import {
   getSortedTopology
 } from "../components/TopologyPopover/topologySort";
 import TopologySidebar from "../components/TopologySidebar/TopologySidebar";
-import { Topology } from "../context/TopologyPageContext";
+import { Topology } from "../api/types/topology";
 
 export const allOption = {
   All: {

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { ComponentHealthCheckView } from "../../api/services/topology";
-import { HealthCheck } from "../../types/healthChecks";
+import { HealthCheck } from "../../api/types/health";
 import { Icon } from "../Icon";
 import { HealthCheckStatus } from "../Status/HealthCheckStatus";
 

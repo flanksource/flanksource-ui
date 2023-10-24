@@ -3,7 +3,7 @@ import { useImage } from "react-image";
 import { BsFillPersonFill } from "react-icons/bs";
 import clsx from "clsx";
 import ReactTooltip from "react-tooltip";
-import { User } from "../../api/services/users";
+import { User } from "../../api/types/users";
 
 interface IProps {
   size?: "sm" | "lg" | "md";
@@ -91,7 +91,7 @@ export function Avatar({
     <div
       {...containerProps}
       className={clsx(
-        `overflow-hidden justify-center items-center leading-none 
+        `overflow-hidden justify-center items-center leading-none
         ${inline ? "inline-flex" : "flex"} `,
         sizeClass,
         containerProps?.className,

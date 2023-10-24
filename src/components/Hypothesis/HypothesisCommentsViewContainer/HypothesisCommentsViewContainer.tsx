@@ -2,9 +2,7 @@ import clsx from "clsx";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { IoMdSend } from "react-icons/io";
 import { GroupHeadingProps, OptionProps, components } from "react-select";
-import { Comment } from "../../../api/services/comments";
-import { Evidence } from "../../../api/services/evidence";
-import { Hypothesis } from "../../../api/services/hypothesis";
+import { Comment } from "../../../api/types/incident";
 import { SortOrders } from "../../../constants";
 import { useUser } from "../../../context";
 import useRunTaskOnPropChange from "../../../hooks/useRunTaskOnPropChange";
@@ -13,6 +11,7 @@ import {
   TreeNode
 } from "../../../pages/incident/IncidentDetails";
 import { useIncidentState } from "../../../store/incident.state";
+import { Age } from "../../../ui/Age";
 import { dateSortHelper } from "../../../utils/date";
 import { Avatar } from "../../Avatar";
 import { CommentInput, CommentText } from "../../Comment";
@@ -20,9 +19,12 @@ import { Icon } from "../../Icon";
 import { OptionItem, SearchSelect } from "../../SearchSelect";
 import { Tag } from "../../Tag/Tag";
 import { toastError } from "../../Toast/toast";
-import { Age } from "../../UI/Age";
 import { EvidenceItem } from "../EvidenceSection";
-import { CreatedBy } from "../ResponseLine";
+
+import { Evidence } from "../../../api/types/evidence";
+import { Hypothesis } from "../../../api/types/hypothesis";
+import { UserWithTeam } from "../../../api/types/users";
+import { DateType } from "../../../api/types/common";
 
 interface IProps {
   incidentId: string;
@@ -201,7 +203,7 @@ export function HypothesisCommentsViewContainer({
               }
               key={index}
               hypothesis={hypothesis}
-              created_by={data.created_by as CreatedBy}
+              created_by={data.created_by as UserWithTeam}
               created_at={data.created_at}
               data={data}
               lastComment={index === comments.length - 1}
@@ -285,9 +287,9 @@ export function HypothesisCommentViewEntry({
   className
 }: {
   type: CommentViewEntryTypes;
-  created_by: CreatedBy;
+  created_by: UserWithTeam;
   hypothesis: string;
-  created_at: string;
+  created_at: DateType;
   data: Comment & Evidence;
   lastComment: boolean;
   className?: string;

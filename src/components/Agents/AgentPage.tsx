@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useAgentsListQuery } from "../../api/query-hooks/useAgentsQuery";
-import { User } from "../../api/services/users";
+import { User } from "../../api/types/users";
 import { BreadcrumbNav, BreadcrumbRoot } from "../BreadcrumbNav";
 import { Head } from "../Head/Head";
 import { SearchLayout } from "../Layout";

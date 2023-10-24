@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { ConfigItem } from "../../api/services/configs";
+import { ConfigItem } from "../../api/types/configs";
 import { Icon } from "../Icon";
 
 type ConfigIconProps = {

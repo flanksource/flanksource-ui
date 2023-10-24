@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { EvidenceType } from "../../api/services/evidence";
 import { getCanaries } from "../../api/services/topology";
+import { EvidenceType } from "../../api/types/evidence";
+import { HealthCheck } from "../../api/types/health";
 import { isCanaryUI } from "../../context/Environment";
-import { HealthCheck } from "../../types/healthChecks";
 import AttachAsEvidenceButton from "../AttachEvidenceDialog/AttachAsEvidenceDialogButton";
 import { timeRanges } from "../Dropdown/TimeRange";
 import { Modal } from "../Modal";

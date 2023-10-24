@@ -1,91 +1,13 @@
-// http://incident-commander.canary.lab.flanksource.com/config/db
-
-import { ConfigTypeInsights } from "../../components/ConfigInsights";
-import { User } from "../../api/services/users";
 import { Config, ConfigDB, IncidentCommander } from "../axios";
 import { resolve } from "../resolve";
-
-export type ConfigChange = {
-  id: string;
-  config_id: string;
-  external_change_id: string;
-  change_type: string;
-  severity: string;
-  source: string;
-  summary: string;
-  patches?: string;
-  diff?: string;
-  details: string;
-  created_at: string;
-  created_by: string | User;
-  external_created_by: string;
-  config?: ConfigItem;
-  config_class?: string;
-  type?: string;
-  name?: string;
-};
-
-export type ConfigItem = {
-  name: string;
-  external_id?: string;
-  config_class?: string;
-  type?: string;
-  id: string;
-  changes?: Change[];
-  analysis?: Analysis[];
-  tags?: Record<string, any>;
-  allTags?: Record<string, any>;
-  created_at?: string;
-  updated_at?: string;
-  deleted_at?: string;
-  cost_per_minute?: number;
-  cost_total_1d?: number;
-  cost_total_7d?: number;
-  cost_total_30d?: number;
-  config: Record<string, any>;
-  agent_id?: string;
-  agent?: {
-    id: string;
-    name: string;
-  };
-  config_scrapers?: {
-    id: string;
-    name: string;
-  };
-}
-
-export type ConfigTypeRelationships = {
-  config_id: string;
-  related_id: string;
-  property: string;
-  created_at: string;
-  updated_at: string;
-  deleted_at: string;
-  selector_id: string;
-  configs: ConfigItem;
-  related: ConfigItem;
-};
-
-interface Change {
-  change_type: string;
-  total: number;
-  severity?: string;
-}
-
-interface Analysis {
-  category: string;
-  severity: string;
-  description: string;
-  analysis_type: string;
-  analyzer: string;
-}
-
-export type PaginationInfo = {
-  pageSize: number;
-  pageIndex: number;
-};
-
-// Config Items
+import { PaginationInfo } from "../types/common";
+import {
+  ConfigAnalysis,
+  ConfigChange,
+  ConfigItem,
+  ConfigSummary,
+  ConfigTypeRelationships
+} from "../types/configs";
 
 export const getAllConfigs = () =>
   resolve<ConfigItem[]>(ConfigDB.get(`/configs`));
@@ -105,21 +27,6 @@ export const getAllConfigsForSearchPurpose = async () => {
   >(ConfigDB.get(url));
 
   return res.data ?? [];
-};
-
-export type ConfigSummary = {
-  type: string;
-  analysis?: Record<string, any>;
-  changes?: string;
-  total_configs: number;
-  cost_per_minute?: number;
-  cost_total_1d?: number;
-  cost_total_7d?: number;
-  cost_total_30d?: number;
-  agent?: {
-    id: string;
-    name: string;
-  };
 };
 
 export const getConfigsSummary = async () => {
@@ -388,7 +295,7 @@ export const getConfigInsights = (
   return resolve(
     ConfigDB.get<
       Pick<
-        ConfigTypeInsights,
+        ConfigAnalysis,
         | "id"
         | "analyzer"
         | "config"
@@ -411,7 +318,7 @@ export const getConfigInsights = (
 };
 
 export const getConfigInsightsByID = async (id: string) => {
-  const res = await ConfigDB.get<ConfigTypeInsights[] | null>(
+  const res = await ConfigDB.get<ConfigAnalysis[] | null>(
     `/config_analysis?select=id,source,analyzer,analysis_type,message,severity,status,analysis,first_observed,config:configs(id,name,config_class,type)&id=eq.${id}`,
     {
       headers: {
@@ -443,7 +350,7 @@ export const getTopologyRelatedInsights = async (
           config_class: string;
           type: string;
           analysis: Pick<
-            ConfigTypeInsights,
+            ConfigAnalysis,
             | "id"
             | "analyzer"
             | "config"
@@ -513,7 +420,7 @@ export const getAllConfigInsights = async (
     "&order=first_observed.desc";
 
   return resolve(
-    ConfigDB.get<ConfigTypeInsights[] | null>(
+    ConfigDB.get<ConfigAnalysis[] | null>(
       `/config_analysis?select=id,analysis_type,analyzer,severity,status,first_observed,last_observed,config:configs(id,name,config_class,type)${pagingParams}${queryParamsString}${sortString}`,
       {
         headers: {
@@ -546,7 +453,7 @@ export const getComponentConfigChanges = async (topologyID: string) => {
 };
 
 export const getConfigAnalysisByComponent = async (componentId: string) => {
-  const res = await ConfigDB.get<ConfigTypeInsights[]>(
+  const res = await ConfigDB.get<ConfigAnalysis[]>(
     `/rpc/lookup_analysis_by_component?id=${componentId}`
   );
   return res.data;

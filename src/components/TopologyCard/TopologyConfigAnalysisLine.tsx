@@ -1,12 +1,12 @@
 import { useMemo } from "react";
 import { MdOutlineInsights } from "react-icons/md";
-import { Topology } from "../../context/TopologyPageContext";
 import { InsightTypeToIcon } from "../ConfigInsightsIcon";
 import {
   StatusInfo,
   StatusLine,
   StatusLineData
 } from "../StatusLine/StatusLine";
+import { Topology } from "../../api/types/topology";
 
 const severityToColorMap = (severity: string) => {
   if (severity === "critical") {

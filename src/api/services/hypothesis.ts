@@ -1,42 +1,14 @@
 import { IncidentCommander } from "../axios";
 import { resolve } from "../resolve";
-import { Comment } from "./comments";
-import { Evidence } from "./evidence";
-import { User } from "./users";
-
-export type HypothesisNodeType = "root" | "factor" | "solution";
-
-export enum HypothesisStatus {
-  Proven = "proven",
-  Likely = "likely",
-  Possible = "possible",
-  Unlikely = "unlikely",
-  Improbable = "improbable",
-  Disproven = "disproven"
-}
-
-export interface Hypothesis {
-  title: string;
-  status: HypothesisStatus;
-  created_by?: User;
-  parent_id?: string;
-  evidences?: Evidence[];
-  comment?: any[];
-  id: string;
-  incident_id: string;
-  type: HypothesisNodeType;
-  children?: any[];
-}
-
-const hypothesisChildType = {
-  default: "root",
-  root: "factor",
-  factor: "solution"
-} as const;
-
-export const getHypothesisChildType = (
-  nodeType?: keyof typeof hypothesisChildType
-) => hypothesisChildType[nodeType || "default"];
+import { Evidence } from "../types/evidence";
+import {
+  Hypothesis,
+  HypothesisInfo,
+  HypothesisStatus,
+  NewHypothesis
+} from "../types/hypothesis";
+import { User } from "../types/users";
+import { Comment } from "../types/incident";
 
 export const getAllHypothesisByIncident = (incidentId: string) =>
   resolve<Hypothesis[]>(
@@ -85,30 +57,6 @@ export const searchHypothesis = (incidentId: string, query: string) =>
       `/hypotheses?order=created_at.desc&title=ilike.*${query}*&incident_id=eq.${incidentId}`
     )
   );
-
-export interface HypothesisInfo {
-  type: HypothesisNodeType;
-  title: string;
-  status: HypothesisStatus;
-}
-
-interface NewBaseHypothesis {
-  user: User;
-  incident_id: string;
-  title?: string;
-  status: HypothesisStatus;
-}
-
-export type NewRootNode = {
-  type: "root";
-} & NewBaseHypothesis;
-
-export type NewChildNode = {
-  type: "factor" | "solution";
-  parent_id?: string;
-} & NewBaseHypothesis;
-
-export type NewHypothesis = NewRootNode | NewChildNode;
 
 export const createHypothesis = async ({ user, ...params }: NewHypothesis) => {
   const { data, error } = await resolve<[Hypothesis]>(

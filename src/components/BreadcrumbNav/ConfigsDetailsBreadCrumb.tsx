@@ -1,6 +1,6 @@
 import { BreadcrumbChild, BreadcrumbNav, BreadcrumbRoot } from ".";
 import { useGetConfigByIdQuery } from "../../api/query-hooks";
-import { ConfigItem } from "../../api/services/configs";
+import { ConfigItem } from "../../api/types/configs";
 import { ConfigIcon } from "../Icon/ConfigIcon";
 import TextSkeletonLoader from "../SkeletonLoader/TextSkeletonLoader";
 

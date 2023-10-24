@@ -1,7 +1,6 @@
 import React, { memo } from "react";
-
 import { Icon, IconProps } from ".";
-import { ConfigChange } from "../../api/services/configs";
+import { ConfigChange } from "../../api/types/configs";
 
 interface ChangeIconProps extends IconProps {
   change?: ConfigChange;

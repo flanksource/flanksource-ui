@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import React from "react";
 import { useForm } from "react-hook-form";
-import { RegisteredUser } from "../../api/services/users";
+import { RegisteredUser } from "../../api/types/users";
 import { Roles } from "../../context/UserAccessContext/UserAccessContext";
 
 export type ManageUserRoleValue = {

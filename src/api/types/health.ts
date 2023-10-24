@@ -1,3 +1,5 @@
+import { Agent, Avatar, Timestamped } from "../traits";
+
 export interface HealthChecksResponse {
   duration: number;
   runnerName: string;
@@ -5,7 +7,7 @@ export interface HealthChecksResponse {
   checks_summary: HealthCheck[];
 }
 
-export interface HealthCheck {
+export interface HealthCheck extends Timestamped, Avatar, Agent {
   id: string;
   canary_id: string;
   type: string;
@@ -18,10 +20,7 @@ export interface HealthCheck {
   latency: HealthCheckLatency;
   checkStatuses: HealthCheckStatus[];
   lastRuntime: string;
-  updatedAt: string;
-  createdAt: string;
   description?: string;
-  deletedAt?: string;
   source?: string;
   spec?: any;
   icon?: string;
@@ -33,7 +32,6 @@ export interface HealthCheck {
   owner?: any;
   loading?: boolean;
   severity?: string;
-  agent_id?: string;
 }
 
 export interface HealthCheckStatus {

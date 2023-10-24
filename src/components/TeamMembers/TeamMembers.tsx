@@ -7,7 +7,7 @@ import {
   getTeamMembers,
   removeUserFromTeam
 } from "../../api/services/teams";
-import { User, getPersons } from "../../api/services/users";
+import { getPersons } from "../../api/services/users";
 import { useLoader } from "../../hooks";
 import { Avatar } from "../Avatar";
 import EmptyState from "../EmptyState";
@@ -17,6 +17,7 @@ import { Modal } from "../Modal";
 import MultiSelectList from "../MultiSelectList/MultiSelectList";
 import TableSkeletonLoader from "../SkeletonLoader/TableSkeletonLoader";
 import { toastError, toastSuccess } from "../Toast/toast";
+import { User } from "../../api/types/users";
 
 type TeamMembersProps = {
   teamId: string;

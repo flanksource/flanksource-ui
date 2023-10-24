@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { Controller } from "react-hook-form";
-import { Evidence, updateEvidence } from "../../api/services/evidence";
-import { Hypothesis } from "../../api/services/hypothesis";
-import { IncidentStatus, updateIncident } from "../../api/services/incident";
+import { updateEvidence } from "../../api/services/evidence";
+import { updateIncident } from "../../api/services/incident";
+import { Evidence } from "../../api/types/evidence";
+import { Hypothesis } from "../../api/types/hypothesis";
+import { IncidentStatus } from "../../api/types/incident";
 import { useIncidentState } from "../../store/incident.state";
 import { incidentStatusItems } from "../Incidents/data";
 import { ReactSelectDropdown } from "../ReactSelectDropdown";

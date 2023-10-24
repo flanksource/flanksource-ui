@@ -1,8 +1,8 @@
-import { ConfigItem } from "../../../api/services/configs";
-import { User } from "../../../api/services/users";
-import { Topology } from "../../../context/TopologyPageContext";
-import { HealthCheck } from "../../../types/healthChecks";
-import { PlaybookSpec } from "../Settings/PlaybookSpecsTable";
+import { Agent, CreatedAt, Avatar } from "../traits";
+import { ConfigItem } from "./configs";
+import { HealthCheck } from "./health";
+import { Topology } from "./topology";
+import { User } from "./users";
 
 export type PlaybookRunStatus =
   | "scheduled"
@@ -28,23 +28,47 @@ export type PlaybookRunAction = {
   error?: string;
 };
 
-export type PlaybookRun = {
+export type PlaybookRunWithActions = PlaybookRun & {
+  actions: PlaybookRunAction[];
+};
+
+export interface PlaybookRun extends CreatedAt, Avatar, Agent {
   id: string;
   playbook_id?: string;
   status: PlaybookRunStatus;
   start_time: string;
   scheduled_time?: string;
   end_time?: string;
-  created_at?: string;
-  created_by?: User;
   check_id?: string;
   config_id?: string;
   component_id?: string;
   parameters?: Record<string, unknown>;
-  agent_id?: string;
   /* relationships */
   playbooks?: PlaybookSpec;
   component?: Pick<Topology, "id" | "name" | "icon">;
   check?: Pick<HealthCheck, "id" | "name" | "icon">;
   config?: Pick<ConfigItem, "id" | "name" | "type" | "config_class">;
+}
+
+export type PlaybookSpec = {
+  id: string;
+  name: string;
+  created_by?: User;
+  spec: any;
+  source: "KubernetesCRD" | "ConfigFile" | "UI";
+  created_at: string;
+  updated_at: string;
+  deleted_at?: string;
 };
+
+export type NewPlaybookSpec = Omit<
+  PlaybookSpec,
+  "id" | "created_at" | "updated_at" | "deleted_at" | "created_by"
+> & {
+  created_by?: string;
+};
+
+export type UpdatePlaybookSpec = Omit<
+  PlaybookSpec,
+  "created_at" | "updated_at" | "deleted_at" | "created_by"
+>;

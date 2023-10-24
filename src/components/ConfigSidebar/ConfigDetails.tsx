@@ -8,7 +8,7 @@ import { DescriptionCard } from "../DescriptionCard";
 import { InfoMessage } from "../InfoMessage";
 import TextSkeletonLoader from "../SkeletonLoader/TextSkeletonLoader";
 import Title from "../Title/title";
-import { Age } from "../UI/Age";
+import { Age } from "../../ui/Age";
 
 type Props = {
   configId: string;

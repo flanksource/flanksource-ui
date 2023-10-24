@@ -1,40 +1,37 @@
-import { useCallback, useMemo, useState } from "react";
 import { UseMutationResult } from "@tanstack/react-query";
+import { useCallback, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
-import { EvidenceType } from "../../api/services/evidence";
+import { useCreateHypothesisMutation } from "../../api/mutations/useCreateHypothesisMutation";
+import { useUpdateHypothesisMutation } from "../../api/mutations/useUpdateHypothesisMutation";
+import { useCreateCommentMutation } from "../../api/query-hooks/mutations/comment";
 import {
   createHypothesis,
   deleteHypothesis,
   deleteHypothesisBulk,
-  Hypothesis,
   updateHypothesis
 } from "../../api/services/hypothesis";
-import {
-  Incident,
-  IncidentStatus,
-  updateIncident
-} from "../../api/services/incident";
-import { HypothesisBuilder } from "../../components/Hypothesis/HypothesisBuilder";
-import { IncidentSidebar } from "../../components/IncidentDetails/IncidentSidebar";
-import { SearchLayout } from "../../components/Layout";
-import { useCreateHypothesisMutation } from "../../api/mutations/useCreateHypothesisMutation";
-import { useUpdateHypothesisMutation } from "../../api/mutations/useUpdateHypothesisMutation";
-import { TopologyCard } from "../../components/TopologyCard";
-import { Size } from "../../types";
-import IncidentDetailsPageSkeletonLoader from "../../components/SkeletonLoader/IncidentDetailsPageSkeletonLoader";
-import { Head } from "../../components/Head/Head";
-import { HypothesisCommentsViewContainer } from "../../components/Hypothesis/HypothesisCommentsViewContainer/HypothesisCommentsViewContainer";
-import { HypothesisActionPlanViewContainer } from "../../components/Hypothesis/HypothesisActionPlanViewContainer/HypothesisActionPlanViewContainer";
-import { Tab, Tabs } from "../../components/Tabs/Tabs";
-import EmptyState from "../../components/EmptyState";
-import { useCreateCommentMutation } from "../../api/query-hooks/mutations/comment";
-import { useIncidentState } from "../../store/incident.state";
+import { updateIncident } from "../../api/services/incident";
+import { EvidenceType } from "../../api/types/evidence";
+import { Hypothesis } from "../../api/types/hypothesis";
+import { Incident, IncidentStatus } from "../../api/types/incident";
 import {
   BreadcrumbChild,
   BreadcrumbNav,
   BreadcrumbRoot
 } from "../../components/BreadcrumbNav";
+import EmptyState from "../../components/EmptyState";
+import { Head } from "../../components/Head/Head";
+import { HypothesisActionPlanViewContainer } from "../../components/Hypothesis/HypothesisActionPlanViewContainer/HypothesisActionPlanViewContainer";
+import { HypothesisBuilder } from "../../components/Hypothesis/HypothesisBuilder";
+import { HypothesisCommentsViewContainer } from "../../components/Hypothesis/HypothesisCommentsViewContainer/HypothesisCommentsViewContainer";
 import EditableIncidentTitleBreadcrumb from "../../components/IncidentDetails/EditableIncidentTitleBreadcrumb";
+import { IncidentSidebar } from "../../components/IncidentDetails/IncidentSidebar";
+import { SearchLayout } from "../../components/Layout";
+import IncidentDetailsPageSkeletonLoader from "../../components/SkeletonLoader/IncidentDetailsPageSkeletonLoader";
+import { Tab, Tabs } from "../../components/Tabs/Tabs";
+import { TopologyCard } from "../../components/TopologyCard";
+import { useIncidentState } from "../../store/incident.state";
+import { Size } from "../../types";
 
 export enum IncidentDetailsViewTypes {
   comments = "Comments",

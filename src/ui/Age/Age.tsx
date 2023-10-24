@@ -2,13 +2,15 @@ import dayjs from "dayjs";
 import clsx from "clsx";
 
 export default function Age({
-  className = "text-sm",
+  className = "",
   from,
-  to
+  to,
+  suffix = false
 }: {
   className?: string;
   from?: Date | string;
   to?: Date | string;
+  suffix?: boolean;
 }) {
   if (
     from === "" ||
@@ -22,7 +24,7 @@ export default function Age({
   if (to == null) {
     return (
       <span title={_from.format()} className={className}>
-        {_from.local().fromNow(true)}
+        {_from.local().fromNow(!suffix)}
       </span>
     );
   }

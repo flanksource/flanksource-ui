@@ -1,9 +1,9 @@
 import { useMemo, useReducer } from "react";
 import { useUpdateEvidenceMutation } from "../../../api/query-hooks/mutations/evidence";
-import { Evidence, EvidenceType } from "../../../api/services/evidence";
-import { ScriptStep } from "./steps/ScriptStep";
-import EvidenceSelectorStep from "./steps/EvidenceSelectorStep";
+import { Evidence, EvidenceType } from "../../../api/types/evidence";
 import { Events, sendAnalyticEvent } from "../../../services/analytics";
+import EvidenceSelectorStep from "./steps/EvidenceSelectorStep";
+import { ScriptStep } from "./steps/ScriptStep";
 
 export type DefinitionOfDoneType = `${EvidenceType}`;
 

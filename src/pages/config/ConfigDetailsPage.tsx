@@ -80,7 +80,7 @@ export function ConfigDetailsPage() {
   }, []);
 
   const code = useMemo(() => {
-    if (!configDetails?.config) {
+    if (configDetails === null || !configDetails?.config) {
       return "";
     }
     if (configDetails?.config?.content != null) {
@@ -90,7 +90,7 @@ export function ConfigDetailsPage() {
     const ordered = Object.keys(configDetails.config)
       .sort()
       .reduce((obj: Record<string, any>, key) => {
-        obj[key] = configDetails.config[key];
+        obj[key] = configDetails.config ? [key] : null;
         return obj;
       }, {});
 
@@ -99,7 +99,7 @@ export function ConfigDetailsPage() {
 
   const format = useMemo(
     () =>
-      configDetails?.config.format != null
+      configDetails?.config?.format != null
         ? configDetails?.config.format
         : "json",
     [configDetails]

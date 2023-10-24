@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Evidence } from "../../../api/services/evidence";
+import { Evidence } from "../../../api/types/evidence";
 import { TextInput } from "../../TextInput";
 import useAddCommentAsDoD from "./useAddCommentAsDoD";
 

@@ -1,5 +1,5 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react";
-import { IncidentSeverity } from "../../api/services/incident";
+import { IncidentSeverity } from "../../api/types/incident";
 import { severityItems } from "../Incidents/data";
 import { RadioOptionsGroup } from "./index";
 

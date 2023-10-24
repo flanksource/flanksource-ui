@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { HTMLAttributeAnchorTarget } from "react";
 import { Link } from "react-router-dom";
-import { ConfigItem } from "../../api/services/configs";
+import { ConfigItem } from "../../api/types/configs";
 import ConfigsTypeIcon from "../Configs/ConfigsTypeIcon";
 import { ConfigIcon } from "../Icon/ConfigIcon";
 

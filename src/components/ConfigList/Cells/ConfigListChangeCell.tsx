@@ -1,6 +1,6 @@
 import { CellContext } from "@tanstack/react-table";
 import { useMemo } from "react";
-import { ConfigItem } from "../../../api/services/configs";
+import { ConfigItem } from "../../../api/types/configs";
 
 export default function ConfigListChangeCell({
   row,

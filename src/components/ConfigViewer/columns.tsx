@@ -1,5 +1,6 @@
-import { CellContext, ColumnDef } from "@tanstack/table-core";
-import { Age } from "../UI/Age";
+import { ColumnDef } from "@tanstack/react-table";
+import { DateCell } from "../../ui/table/DateCells";
+import { TagsCell } from "../../ui/table/TagCell";
 
 export const defaultTableColumns: ColumnDef<any>[] = [
   {
@@ -41,33 +42,3 @@ export const defaultTableColumns: ColumnDef<any>[] = [
     }
   }
 ];
-
-export function TagsCell({ row, column }: CellContext<any, any>): JSX.Element {
-  const tags = row?.getValue<any[]>(column.id);
-
-  return (
-    <div className="flex">
-      {tags?.length > 0 ? (
-        tags?.map((tag) => (
-          <div
-            className="bg-gray-200 px-1 py-0.5 mr-1 rounded-md text-gray-600 font-semibold text-xs"
-            key={tag}
-          >
-            {tag}
-          </div>
-        ))
-      ) : (
-        <span className="text-gray-400"></span>
-      )}
-    </div>
-  );
-}
-
-export function DateCell({ row, column }: CellContext<any, any>) {
-  const dateString = row?.getValue<string>(column.id);
-  return (
-    <div className="text-xs">
-      <Age from={dateString} />
-    </div>
-  );
-}

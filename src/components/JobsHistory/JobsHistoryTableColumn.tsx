@@ -3,9 +3,9 @@ import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { formatJobName } from "../../utils/common";
-import { DateCell } from "../ConfigViewer/columns";
 import JobHistoryStatusColumn from "./JobHistoryStatusColumn";
 import { JobHistory } from "./JobsHistoryTable";
+import { DateCell } from "../../ui/table";
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);

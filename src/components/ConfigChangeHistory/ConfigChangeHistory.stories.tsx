@@ -1,9 +1,8 @@
 import { MemoryRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
 import { ConfigChangeHistory } from "./index";
 import { ComponentMeta, ComponentStory } from "@storybook/react";
-import { ConfigTypeChanges } from "../ConfigChanges";
+import { ConfigChange } from "../../api/types/configs";
 
 export default {
   title: "ConfigChangeHistory",
@@ -59,7 +58,7 @@ const data = Array(10)
     created_at: new Date(),
     config_id: `id-${i}`,
     patches: codeSample(i)
-  })) as unknown as ConfigTypeChanges[];
+  })) as unknown as ConfigChange[];
 
 Default.args = { data: Array.from(data), isLoading: false };
 

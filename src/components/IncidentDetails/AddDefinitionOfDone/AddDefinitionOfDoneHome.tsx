@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { BsPersonFill } from "react-icons/bs";
 import { SiAutomattic } from "react-icons/si";
-import { Evidence } from "../../../api/services/evidence";
+import { Evidence } from "../../../api/types/evidence";
+import { Hypothesis } from "../../../api/types/hypothesis";
 import { Modal } from "../../Modal";
-import AddManualDefinitionOfDone from "./AddManualDefinitionOfDone";
 import AddAutoDefinitionOfDoneStepper from "./AddAutoDefinitionOfDone";
-import { Hypothesis } from "../../../api/services/hypothesis";
+import AddManualDefinitionOfDone from "./AddManualDefinitionOfDone";
 
 type DefinitionOfDoneOptions = "Auto" | "Manual";
 

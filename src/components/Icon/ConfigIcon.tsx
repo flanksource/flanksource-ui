@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import { Icon, IconProps } from ".";
-import { ConfigItem } from "../../api/services/configs";
+import { ConfigItem } from "../../api/types/configs";
 
 interface ConfigIconProps extends IconProps {
   config?: ConfigItem;

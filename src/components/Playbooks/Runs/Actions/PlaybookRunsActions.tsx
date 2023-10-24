@@ -2,15 +2,14 @@ import { ReactNode, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Avatar } from "../../../Avatar";
 import { Icon } from "../../../Icon";
-import { Age } from "../../../UI/Age";
-import { PlaybookRun, PlaybookRunAction } from "../PlaybookRunTypes";
+import { Age } from "../../../../ui/Age";
 import PlaybookRunsStatus from "./../PlaybookRunsStatus";
 import PlaybookRunActionFetch from "./PlaybookRunActionFetch";
 import PlaybookRunsActionItem from "./PlaybookRunsActionItem";
-
-export type PlaybookRunWithActions = PlaybookRun & {
-  actions: PlaybookRunAction[];
-};
+import {
+  PlaybookRunWithActions,
+  PlaybookRunAction
+} from "../../../../api/types/playbooks";
 
 type PlaybookRunActionsProps = {
   data: PlaybookRunWithActions;

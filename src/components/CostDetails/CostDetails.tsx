@@ -3,13 +3,7 @@ import { FaDollarSign } from "react-icons/fa";
 import Title from "../Title/title";
 import CollapsiblePanel from "../CollapsiblePanel";
 import { Loading } from "../Loading";
-
-export type CostsData = {
-  cost_per_minute?: number;
-  cost_total_1d?: number;
-  cost_total_7d?: number;
-  cost_total_30d?: number;
-};
+import { CostsData } from "../../api/types/common";
 
 type CostDetailsTableProps = CostsData;
 

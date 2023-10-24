@@ -5,8 +5,6 @@ import {
   useGetConfigByIdQuery,
   useGetConfigInsight
 } from "../../../api/query-hooks";
-import { Evidence, EvidenceType } from "../../../api/services/evidence";
-import { Hypothesis } from "../../../api/services/hypothesis";
 import { getCanaries } from "../../../api/services/topology";
 import { Size, ViewType } from "../../../types";
 import { sanitizeHTMLContent, toFixedIfNecessary } from "../../../utils/common";
@@ -18,14 +16,16 @@ import { getUptimePercentage } from "../../Canary/CanaryPopup/utils";
 import { Duration, StatusList } from "../../Canary/renderers";
 import { ConfigAnalysisLink } from "../../ConfigAnalysisLink/ConfigAnalysisLink";
 import { ConfigDetailsChanges } from "../../ConfigDetailsChanges/ConfigDetailsChanges";
-import { ConfigTypeInsights } from "../../ConfigInsights";
 import ConfigLink from "../../ConfigLink/ConfigLink";
 import { Icon } from "../../Icon";
 import { CommentEvidence } from "../../IncidentDetails/DefinitionOfDone/EvidenceView";
 import { LogsTable } from "../../Logs/Table/LogsTable";
 import { Modal } from "../../Modal";
 import { TopologyCard } from "../../TopologyCard";
-import { Age } from "../../UI/Age";
+import { Age } from "../../../ui/Age";
+import { ConfigAnalysis } from "../../../api/types/configs";
+import { Evidence, EvidenceType } from "../../../api/types/evidence";
+import { Hypothesis } from "../../../api/types/hypothesis";
 
 const ColumnSizes = {
   Time: {
@@ -62,7 +62,7 @@ export function EvidenceItem({
     case EvidenceType.Config:
       return (
         <EvidenceAccordion
-          date={evidence.created_at}
+          date={evidence.created_at || ""}
           title={evidence.description!}
           configId={evidence.config_id!}
           configName={evidence.evidence?.configName}
@@ -100,7 +100,7 @@ export function EvidenceItem({
 }
 
 const EvidenceAccordion: React.FC<{
-  date: string;
+  date: string | Date;
   title: string;
   configId: string;
   configName: string;
@@ -476,11 +476,11 @@ export function ConfigAnalysisEvidence({
   className?: string;
   viewType?: ViewType;
 }) {
-  const { data: response } = useGetConfigInsight<ConfigTypeInsights[]>(
+  const { data: response } = useGetConfigInsight<ConfigAnalysis[]>(
     evidence.config_id!,
     evidence.config_analysis_id!
   );
-  const [configAnalysis, setConfigAnalysis] = useState<ConfigTypeInsights>();
+  const [configAnalysis, setConfigAnalysis] = useState<ConfigAnalysis>();
 
   useEffect(() => {
     const analysis = response?.[0];

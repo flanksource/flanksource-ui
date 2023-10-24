@@ -4,8 +4,8 @@ import { useSubmitPlaybookRunMutation } from "../../../../api/query-hooks/playbo
 import { Button } from "../../../Button";
 import { Modal } from "../../../Modal";
 import { toastError, toastSuccess } from "../../../Toast/toast";
-import { PlaybookSpec } from "../../Settings/PlaybookSpecsTable";
 import AddPlaybookToRunParams from "./AddPlaybookToRunParams";
+import { PlaybookSpec } from "../../../../api/types/playbooks";
 
 export type SubmitPlaybookRunFormValues = {
   // if this is present in the form, we show step to add params

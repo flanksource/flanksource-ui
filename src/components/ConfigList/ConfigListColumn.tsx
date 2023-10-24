@@ -1,6 +1,6 @@
 import { CellContext, ColumnDef, Row } from "@tanstack/react-table";
 import React from "react";
-import { ConfigAnalysisTypeItem, ConfigItem } from "../../api/services/configs";
+import { ConfigAnalysisTypeItem } from "../../api/services/configs";
 import { getTimeBucket, TIME_BUCKETS } from "../../utils/date";
 import ConfigInsightsIcon from "../ConfigInsightsIcon";
 import { FormatCurrency } from "../CostDetails/CostDetails";
@@ -10,7 +10,7 @@ import ConfigListCostCell from "./Cells/ConfigListCostCell";
 import ConfigListDateCell from "./Cells/ConfigListDateCell";
 import ConfigListNameCell from "./Cells/ConfigListNameCell";
 import ConfigListTagsCell from "./Cells/ConfigListTagsCell";
-import { ConfigTypeInsights } from "../ConfigInsights";
+import { ConfigAnalysis, ConfigItem } from "../../api/types/configs";
 
 function CountBadge({ value }: { value: number | undefined | null }) {
   if (!value) {
@@ -58,7 +58,7 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
       const data = getValue();
       return (
         <div className="inline-flex space-x-2 overflow-hidden truncate">
-          {data.map((item: { count: number; analysis: ConfigTypeInsights }) => {
+          {data.map((item: { count: number; analysis: ConfigAnalysis }) => {
             return (
               <span
                 className="inline-flex space-x-0.5"

@@ -1,11 +1,10 @@
 import { CellContext, ColumnDef } from "@tanstack/table-core";
 import clsx from "clsx";
-import { User } from "../../api/services/users";
-import { relativeDateTime } from "../../utils/date";
-import { DataTable } from "../DataTable";
-import { Avatar } from "../Avatar";
+import { User } from "../../api/types/users";
 import { Property } from "../../services/permissions/permissionsService";
-import { Age } from "../UI/Age";
+import { Avatar } from "../Avatar";
+import { DataTable } from "../DataTable";
+import { Age } from "../../ui/Age";
 
 type FeatureFlagsListProps = {
   data: any[];

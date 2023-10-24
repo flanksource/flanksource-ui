@@ -1,7 +1,8 @@
-import { CostsData } from "../components/CostDetails/CostDetails";
-import { Severity, typeItems } from "../components/Incidents/data";
-
-export type ValueType = number | string | Date;
+import { Agent, Namespaced, Timestamped } from "../traits";
+import { ValueType } from "./common";
+import { CostsData, Severity } from "./common";
+import { IncidentType } from "./incident";
+import { User } from "./users";
 
 export type TopologyProperty = {
   name: string;
@@ -17,13 +18,10 @@ export type TopologyProperty = {
   color?: string;
 };
 
-export type Topology = {
+export interface Topology extends Timestamped, CostsData, Agent, Namespaced {
   id: string;
   parent_id?: string;
-  name: string;
   type?: string;
-  created_at?: string;
-  updated_at?: string;
   title?: string;
   properties?: TopologyProperty[];
   components?: Topology[];
@@ -33,18 +31,14 @@ export type Topology = {
   text?: string;
   status?: string;
   status_reason?: string;
-  namespace?: string;
   hidden?: boolean;
   external_id?: string;
-  agent_id?: string;
   topology_id?: string;
   summary?: {
-    incidents?: Record<
-      keyof typeof typeItems,
+    incidents?: Record<IncidentType,
       Record<"High" | "Medium" | "Low", number>
     >;
-    insights?: Record<
-      keyof typeof typeItems,
+    insights?: Record<IncidentType,
       Record<Severity, number | undefined>
     >;
     [key: string]: any;
@@ -61,5 +55,29 @@ export type Topology = {
     warning: number;
     unhealthy: number;
   };
-  deleted_at?: string;
-} & CostsData;
+};
+
+
+export type ComponentTeamItem = {
+  component_id: string;
+  team_id: string;
+  role: string;
+  selector_id: string;
+  team: {
+    id: string;
+    name: string;
+    icon: string;
+    spec: any;
+    source: string;
+    created_by: Pick<User, "avatar" | "id" | "name">;
+    created_at: string;
+    updated_at: string;
+  };
+};
+
+export interface ComponentTemplateItem extends Timestamped, Namespaced {
+  id: string;
+  labels: Record<string, string>;
+  spec: any;
+  schedule: string;
+};

@@ -1,12 +1,12 @@
 import { CellContext } from "@tanstack/react-table";
-import { ConfigTypeChanges } from "..";
-import { Age } from "../../UI/Age";
+import { Age } from "../../../ui/Age";
+import { ConfigChange } from "../../../api/types/configs";
 
 export default function ConfigChangeAgeCell({
   row,
   column,
   getValue
-}: CellContext<ConfigTypeChanges, unknown>) {
+}: CellContext<ConfigChange, unknown>) {
   return (
     <Age
       className="whitespace-nowrap  text-xs text-slate-500 pr-2"

@@ -4,12 +4,12 @@ import {
   useGetConfigInsights,
   useGetTopologyRelatedInsightsQuery
 } from "../../api/query-hooks";
+import { ConfigAnalysis } from "../../api/types/configs";
 import {
   sanitizeHTMLContent,
   sanitizeHTMLContentToText,
   truncateText
 } from "../../utils/common";
-import { ConfigTypeInsights } from "../ConfigInsights";
 import EmptyState from "../EmptyState";
 import { InfiniteTable } from "../InfiniteTable/InfiniteTable";
 import TextSkeletonLoader from "../SkeletonLoader/TextSkeletonLoader";
@@ -54,7 +54,7 @@ type TopologyInsightsProps = {
 
 export const columns: ColumnDef<
   Pick<
-    ConfigTypeInsights,
+    ConfigAnalysis,
     | "id"
     | "analyzer"
     | "config"
@@ -138,7 +138,7 @@ export default function InsightsDetails(
     <div className="flex flex-col overflow-y-hidden">
       <InfiniteTable<
         Pick<
-          ConfigTypeInsights,
+          ConfigAnalysis,
           | "id"
           | "analyzer"
           | "config"
@@ -152,7 +152,7 @@ export default function InsightsDetails(
         columns={columns}
         isLoading={isLoading && !isFetching}
         isFetching={isFetching}
-        allRows={insightsWithSanitizedMessages as ConfigTypeInsights[]}
+        allRows={insightsWithSanitizedMessages as ConfigAnalysis[]}
         loaderView={<TextSkeletonLoader className="w-full my-2" />}
         totalEntries={totalEntries}
         fetchNextPage={() => {

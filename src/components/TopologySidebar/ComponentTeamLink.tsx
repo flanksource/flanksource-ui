@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ComponentTeamItem } from "../../api/services/topology";
+import { ComponentTeamItem } from "../../api/types/topology";
 import { Icon } from "../Icon";
 
 type Props = {

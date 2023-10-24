@@ -1,11 +1,11 @@
+import { ChangeEvent, useCallback, useMemo } from "react";
+import { Evidence, EvidenceType } from "../../../../api/types/evidence";
+import { EvidenceItem } from "../../../Hypothesis/EvidenceSection";
+import MultiSelectList from "../../../MultiSelectList/MultiSelectList";
 import {
   Action,
   SelectDefinitionOfDoneState
 } from "../AddAutoDefinitionOfDone";
-import { ChangeEvent, useCallback, useMemo } from "react";
-import { Evidence, EvidenceType } from "../../../../api/services/evidence";
-import { EvidenceItem } from "../../../Hypothesis/EvidenceSection";
-import MultiSelectList from "../../../MultiSelectList/MultiSelectList";
 
 type EvidenceGroupSelectorStepProps = {
   noneDODEvidences: Evidence[];

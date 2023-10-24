@@ -1,30 +1,30 @@
 import clsx from "clsx";
 import { useEffect, useMemo, useState } from "react";
 import ReactTooltip from "react-tooltip";
-import { useGetConfigChangesByConfigChangeIdQuery } from "../../api/query-hooks/useGetConfigChangesByConfigChangeIdQuery";
-import { EvidenceType } from "../../api/services/evidence";
-import { User } from "../../api/services/users";
+import { useGetConfigChangesById } from "../../api/query-hooks/useGetConfigChangesByConfigChangeIdQuery";
+import { ConfigChange } from "../../api/types/configs";
+import { User } from "../../api/types/users";
 import { ViewType } from "../../types";
 import { formatISODate } from "../../utils/date";
 import AttachAsEvidenceButton from "../AttachEvidenceDialog/AttachAsEvidenceDialogButton";
 import { Avatar } from "../Avatar";
-import { ConfigTypeChanges } from "../ConfigChanges";
 import ConfigLink from "../ConfigLink/ConfigLink";
 import { DiffRenderer } from "../DiffRenderer/DiffRenderer";
 import EmptyState from "../EmptyState";
 import { ChangeIcon } from "../Icon/ChangeIcon";
+import { ConfigIcon } from "../Icon/ConfigIcon";
 import { JSONViewer } from "../JSONViewer";
 import { Modal } from "../Modal";
+import ModalTitleListItems from "../Modal/ModalTitleListItems";
 import TextSkeletonLoader from "../SkeletonLoader/TextSkeletonLoader";
 import ConfigChangeDetailSection from "./ConfigChangeDetailsSection";
-import ModalTitleListItems from "../Modal/ModalTitleListItems";
-import { ConfigIcon } from "../Icon/ConfigIcon";
+import { EvidenceType } from "../../api/types/evidence";
 
 type ConfigDetailsChangesProps = {
   id: string;
   configId: string;
   viewType?: ViewType;
-  data?: ConfigTypeChanges;
+  data?: ConfigChange;
   showConfigLogo?: boolean;
 };
 
@@ -37,13 +37,9 @@ export function ConfigDetailsChanges({
 }: ConfigDetailsChangesProps) {
   const [open, setOpen] = useState(false);
 
-  const { data: change, isLoading } = useGetConfigChangesByConfigChangeIdQuery(
-    id,
-    configId!,
-    {
-      enabled: open
-    }
-  );
+  const { data: change, isLoading } = useGetConfigChangesById(id, configId!, {
+    enabled: open
+  });
 
   const config = useMemo(() => change?.config, [change]);
 
@@ -181,7 +177,7 @@ export function ConfigDetailsChanges({
 type ConfigDetailChangeModalProps = {
   open: boolean;
   setOpen: (val: boolean) => void;
-  changeDetails?: ConfigTypeChanges;
+  changeDetails?: ConfigChange;
 };
 
 export function ConfigDetailChangeModal({

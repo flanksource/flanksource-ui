@@ -2,7 +2,7 @@ import { UseMutationResult } from "@tanstack/react-query";
 import { debounce } from "lodash";
 import { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
-import { Hypothesis, HypothesisStatus } from "../api/services/hypothesis";
+import { Hypothesis, HypothesisStatus } from "../api/types/hypothesis";
 
 interface Props {
   id: string;

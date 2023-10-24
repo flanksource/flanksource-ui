@@ -1,6 +1,6 @@
 import { UseMutationResult } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { Hypothesis, HypothesisStatus } from "../../../api/services/hypothesis";
+import { Hypothesis, HypothesisStatus } from "../../../api/types/hypothesis";
 import { hypothesisStatusDropdownOptions } from "../../../constants/hypothesisStatusOptions";
 import useHypothesisStatusForm from "../../../hooks/useHypothesisStatusForm";
 import { SubtleDropdown } from "../../Dropdown/SubtleDropdown";

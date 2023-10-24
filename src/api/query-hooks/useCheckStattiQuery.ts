@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { PaginationInfo } from "../services/configs";
+import { PaginationInfo } from "../types/common";
 import { getCheckStatuses } from "../services/topology";
 
 export function useCheckStattiQuery(

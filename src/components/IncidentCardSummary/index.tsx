@@ -1,8 +1,9 @@
 import { useMemo } from "react";
-import { IncidentSeverity } from "../../api/services/incident";
-import { Topology } from "../../context/TopologyPageContext";
+import { IncidentSeverity } from "../../api/types/incident";
+
 import { typeItems, severityItems } from "../Incidents/data";
 import { StatusLine, StatusLineProps } from "../StatusLine/StatusLine";
+import { Topology } from "../../api/types/topology";
 
 const chipColorFromSeverity = (
   severity: IncidentSeverity

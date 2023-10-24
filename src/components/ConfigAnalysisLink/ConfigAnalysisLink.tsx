@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { ViewType } from "../../types";
-import { ConfigTypeInsights } from "../ConfigInsights";
 import ConfigInsightsIcon from "../ConfigInsightsIcon";
 import { DescriptionCard } from "../DescriptionCard";
 import { ConfigIcon } from "../Icon/ConfigIcon";
 import ConfigInsightsDetailsModal from "./ConfigInsightsDetailsModal";
+import { ConfigAnalysis } from "../../api/types/configs";
 
 type Props = {
   configAnalysis: Pick<
-    ConfigTypeInsights,
+    ConfigAnalysis,
     | "id"
     | "analyzer"
     | "config"

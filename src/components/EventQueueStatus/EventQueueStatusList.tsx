@@ -1,9 +1,9 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { useState } from "react";
-import { DateCell } from "../ConfigViewer/columns";
 import { DataTable } from "../DataTable";
 import { Modal } from "../Modal";
 import { EventQueueStatus } from "./eventQueue";
+import { DateCell } from "../../ui/table";
 
 const columns: ColumnDef<EventQueueStatus>[] = [
   {

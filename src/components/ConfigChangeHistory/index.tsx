@@ -1,16 +1,15 @@
 import { ColumnDef } from "@tanstack/table-core";
 import { useState } from "react";
-import { useGetConfigChangesByConfigChangeIdQuery } from "../../api/query-hooks/useGetConfigChangesByConfigChangeIdQuery";
-import { ConfigChange } from "../../api/services/configs";
-import { ConfigTypeChanges } from "../ConfigChanges";
+import { useGetConfigChangesById } from "../../api/query-hooks/useGetConfigChangesByConfigChangeIdQuery";
 import { ConfigDetailChangeModal } from "../ConfigDetailsChanges/ConfigDetailsChanges";
 import ConfigLink from "../ConfigLink/ConfigLink";
-import { DateCell } from "../ConfigViewer/columns";
 import { PaginationOptions } from "../DataTable";
 import { ChangeIcon } from "../Icon/ChangeIcon";
 import { DataTable } from "../index";
+import { ConfigChange } from "../../api/types/configs";
+import { DateCell } from "../../ui/table";
 
-const columns: ColumnDef<ConfigTypeChanges>[] = [
+const columns: ColumnDef<ConfigChange>[] = [
   {
     header: "Type",
     accessorKey: "change_type",
@@ -87,7 +86,7 @@ export function ConfigChangeHistory({
     useState<ConfigChange>();
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
-  const { data: configChange } = useGetConfigChangesByConfigChangeIdQuery(
+  const { data: configChange } = useGetConfigChangesById(
     selectedConfigChange?.id!,
     selectedConfigChange?.config_id!,
     {

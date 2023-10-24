@@ -1,4 +1,4 @@
-import { Topology } from "../../context/TopologyPageContext";
+import { Topology } from "../../api/types/topology";
 import { CostInfoPanel } from "../CostDetails/CostDetails";
 
 type Props = {

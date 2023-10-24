@@ -32,7 +32,7 @@ import { useHealthPageContext } from "../../context/HealthPageContext";
 import { isCanaryUI } from "../../context/Environment";
 import clsx from "clsx";
 import HealthPageSkeletonLoader from "../SkeletonLoader/HealthPageSkeletonLoader";
-import { HealthChecksResponse } from "../../types/healthChecks";
+import { HealthChecksResponse } from "../../api/types/health";
 import { useLocation, useSearchParams } from "react-router-dom";
 import useRefreshRateFromLocalStorage from "../Hooks/useRefreshRateFromLocalStorage";
 import { HEALTH_SETTINGS } from "../../constants";

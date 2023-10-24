@@ -1,18 +1,16 @@
-import { PlaybookRunWithActions } from "../../components/Playbooks/Runs/Actions/PlaybookRunsActions";
-import {
-  PlaybookRun,
-  PlaybookRunAction
-} from "../../components/Playbooks/Runs/PlaybookRunTypes";
 import { SubmitPlaybookRunFormValues } from "../../components/Playbooks/Runs/Submit/SubmitPlaybookRunForm";
-import {
-  NewPlaybookSpec,
-  PlaybookSpec,
-  UpdatePlaybookSpec
-} from "../../components/Playbooks/Settings/PlaybookSpecsTable";
 import { AVATAR_INFO } from "../../constants";
 import { ConfigDB, IncidentCommander, PlaybookAPI } from "../axios";
 import { GetPlaybooksToRunParams } from "../query-hooks/playbooks";
 import { resolve } from "../resolve";
+import {
+  NewPlaybookSpec,
+  PlaybookRun,
+  PlaybookRunAction,
+  PlaybookRunWithActions,
+  PlaybookSpec,
+  UpdatePlaybookSpec
+} from "../types/playbooks";
 
 export async function getAllPlaybooksSpecs() {
   const res = await IncidentCommander.get<PlaybookSpec[] | null>(

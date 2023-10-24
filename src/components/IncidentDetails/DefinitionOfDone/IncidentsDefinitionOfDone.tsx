@@ -1,20 +1,21 @@
 import clsx from "clsx";
 import { useEffect, useMemo, useState } from "react";
-import { Evidence, updateEvidence } from "../../../api/services/evidence";
-import { ConfirmationPromptDialog } from "../../Dialogs/ConfirmationPromptDialog";
-import EvidenceSelectionModal from "./EvidenceSelectionModal";
-import IncidentsDefinitionOfDoneItem from "./IncidentsDefinitionOfDoneItem";
-import AddDefinitionOfDoneModal from "../AddDefinitionOfDone/AddDefinitionOfDoneHome";
-import CollapsiblePanel from "../../CollapsiblePanel";
-import Title from "../../Title/title";
+import { BsCardChecklist } from "react-icons/bs";
 import { MdRefresh } from "react-icons/md";
 import { RiFullscreenLine } from "react-icons/ri";
-import { BsCardChecklist } from "react-icons/bs";
-import { ClickableSvg } from "../../ClickableSvg/ClickableSvg";
+import { updateEvidence } from "../../../api/services/evidence";
+import { Evidence } from "../../../api/types/evidence";
 import { useIncidentState } from "../../../store/incident.state";
-import EmptyState from "../../EmptyState";
-import { CountBadge } from "../../Badge/CountBadge";
 import { dateSortHelper } from "../../../utils/date";
+import { CountBadge } from "../../Badge/CountBadge";
+import { ClickableSvg } from "../../ClickableSvg/ClickableSvg";
+import CollapsiblePanel from "../../CollapsiblePanel";
+import { ConfirmationPromptDialog } from "../../Dialogs/ConfirmationPromptDialog";
+import EmptyState from "../../EmptyState";
+import Title from "../../Title/title";
+import AddDefinitionOfDoneModal from "../AddDefinitionOfDone/AddDefinitionOfDoneHome";
+import EvidenceSelectionModal from "./EvidenceSelectionModal";
+import IncidentsDefinitionOfDoneItem from "./IncidentsDefinitionOfDoneItem";
 
 type DefinitionOfDoneProps = React.HTMLProps<HTMLDivElement> & {
   incidentId: string;

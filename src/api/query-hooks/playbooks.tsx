@@ -5,13 +5,13 @@ import {
   useQuery
 } from "@tanstack/react-query";
 import { SubmitPlaybookRunFormValues } from "../../components/Playbooks/Runs/Submit/SubmitPlaybookRunForm";
-import { PlaybookSpec } from "../../components/Playbooks/Settings/PlaybookSpecsTable";
 import {
   getAllPlaybooksSpecs,
   getPlaybookSpec,
   getPlaybookToRunForResource,
   submitPlaybookRun
 } from "../services/playbooks";
+import { PlaybookSpec } from "../types/playbooks";
 
 export function useGetAllPlaybookSpecs(
   options: UseQueryOptions<PlaybookSpec[], Error> = {}

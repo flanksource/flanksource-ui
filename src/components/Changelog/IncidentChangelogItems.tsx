@@ -1,6 +1,6 @@
-import { IncidentHistory } from "../../api/services/IncidentsHistory";
+import { IncidentHistory } from "../../api/types/incident";
 import { Avatar } from "../Avatar";
-import { Age } from "../UI/Age";
+import { Age } from "../../ui/Age";
 import IncidentHistoryItemTypeContent from "./IncidentHistoryItemTypeContent";
 
 type IncidentChangelogItemProps = {

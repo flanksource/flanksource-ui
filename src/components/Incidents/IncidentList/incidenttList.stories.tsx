@@ -4,7 +4,7 @@ import {
   IncidentSeverity,
   IncidentStatus,
   IncidentSummary
-} from "../../../api/services/incident";
+} from "../../../api/types/incident";
 import { IncidentList } from "./index";
 import { ComponentStory } from "@storybook/react";
 

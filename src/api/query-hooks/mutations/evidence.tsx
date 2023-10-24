@@ -1,10 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
-import {
-  createEvidence,
-  Evidence,
-  updateEvidence
-} from "../../services/evidence";
+import { createEvidence, updateEvidence } from "../../services/evidence";
 import { useIncidentState } from "../../../store/incident.state";
+import { Evidence } from "../../types/evidence";
 
 /**
  *

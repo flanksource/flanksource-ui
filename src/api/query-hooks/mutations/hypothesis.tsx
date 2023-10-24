@@ -1,11 +1,10 @@
 import { useMutation } from "@tanstack/react-query";
+import { createHypothesis, updateHypothesis } from "../../services/hypothesis";
 import {
   Hypothesis,
-  NewHypothesis,
-  createHypothesis,
   HypothesisInfo,
-  updateHypothesis
-} from "../../services/hypothesis";
+  NewHypothesis
+} from "../../types/hypothesis";
 
 export function useCreateHypothesisMutation({
   onSuccess

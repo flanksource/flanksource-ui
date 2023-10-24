@@ -10,7 +10,7 @@ import Convert from "ansi-to-html";
 import clsx from "clsx";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { EvidenceType } from "../../../api/services/evidence";
+import { EvidenceType } from "../../../api/types/evidence";
 import useDebouncedValue from "../../../hooks/useDebounce";
 import LogItem from "../../../types/Logs";
 import { sanitizeHTMLContent } from "../../../utils/common";

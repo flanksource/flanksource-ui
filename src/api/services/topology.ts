@@ -1,17 +1,19 @@
 import { stringify } from "qs";
+import { TopologyComponentItem } from "../../components/FilterIncidents/FilterIncidentsByComponents";
+import { AVATAR_INFO, TimeRangeToMinutes } from "../../constants";
 import {
   CanaryChecker,
   CanaryCheckerDB,
   IncidentCommander,
   Snapshot
 } from "../axios";
-import { TopologyComponentItem } from "../../components/FilterIncidents/FilterIncidentsByComponents";
-import { HealthCheck, HealthCheckStatus } from "../../types/healthChecks";
-import { AVATAR_INFO, TimeRangeToMinutes } from "../../constants";
-import { User } from "./users";
-import { Topology } from "../../context/TopologyPageContext";
-import { PaginationInfo } from "./configs";
 import { resolve } from "../resolve";
+import { PaginationInfo } from "../types/common";
+import { HealthCheck, HealthCheckStatus } from "../types/health";
+import { Topology } from "../types/topology";
+import { ComponentTeamItem } from "../types/topology";
+import { ComponentTemplateItem } from "../types/topology";
+import { AgentItem } from "../types/common";
 
 interface IParam {
   id?: string;
@@ -170,12 +172,6 @@ export const getTopologyComponentsWithLogs = () => {
   );
 };
 
-type AgentItem = {
-  id: string;
-  name: string;
-  description: string;
-};
-
 export const getAgentByID = async (id: string) => {
   const res = await IncidentCommander.get<AgentItem[] | null>(
     `/agents?select=id,name,description&id=eq.${id}`
@@ -213,18 +209,6 @@ export const getTopologyComponent = (id: string) => {
   );
 };
 
-export type ComponentTemplateItem = {
-  id: string;
-  name: string;
-  namespace: string;
-  labels: Record<string, string>;
-  spec: any;
-  created_at: string;
-  updated_at: string;
-  schedule: string;
-  deleted_at: string;
-};
-
 export const getComponentTemplate = async (id: string) => {
   const res = await IncidentCommander.get<ComponentTemplateItem[] | null>(
     `/topologies?id=eq.${id}`
@@ -237,23 +221,6 @@ export const getHealthCheckItem = async (id: string) => {
     `/canaries?id=eq.${id}`
   );
   return res.data?.[0];
-};
-
-export type ComponentTeamItem = {
-  component_id: string;
-  team_id: string;
-  role: string;
-  selector_id: string;
-  team: {
-    id: string;
-    name: string;
-    icon: string;
-    spec: any;
-    source: string;
-    created_by: Pick<User, "avatar" | "id" | "name">;
-    created_at: string;
-    updated_at: string;
-  };
 };
 
 export const getComponentTeams = async (id: string) => {

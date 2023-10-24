@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { useState } from "react";
-import { Evidence } from "../../../api/services/evidence";
+import { Evidence } from "../../../api/types/evidence";
 import { ViewType } from "../../../types";
 import { EvidenceItem } from "../../Hypothesis/EvidenceSection";
 import { InfoMessage } from "../../InfoMessage";

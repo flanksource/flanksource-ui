@@ -1,21 +1,18 @@
-import React, { useEffect, useState } from "react";
 import clsx from "clsx";
-
-import { Modal } from "../../Modal";
-import { Comment } from "../../../api/services/comments";
-import {
-  deleteEvidence,
-  Evidence,
-  updateEvidence
-} from "../../../api/services/evidence";
+import React, { useEffect, useState } from "react";
+import { deleteEvidence, updateEvidence } from "../../../api/services/evidence";
+import { sortByCreatedAt } from "../../../api/types/common";
+import { Evidence } from "../../../api/types/evidence";
+import { Hypothesis } from "../../../api/types/hypothesis";
+import { Comment } from "../../../api/types/incident";
 import { useUser } from "../../../context";
-import { toastError } from "../../Toast/toast";
-import { EvidenceBuilder } from "../../EvidenceBuilder";
-import { CommentsSection } from "../Comments";
-import { ResponseLine } from "../ResponseLine";
-import { Hypothesis } from "../../../api/services/hypothesis";
 import { TreeNode } from "../../../pages/incident/IncidentDetails";
 import { useIncidentState } from "../../../store/incident.state";
+import { EvidenceBuilder } from "../../EvidenceBuilder";
+import { Modal } from "../../Modal";
+import { toastError } from "../../Toast/toast";
+import { CommentsSection } from "../Comments";
+import { ResponseLine } from "../ResponseLine";
 
 type IProps = {
   node: TreeNode<Hypothesis>;
@@ -37,10 +34,7 @@ export function HypothesisDetails({ node, api, ...rest }: IProps) {
   const arrangeData = (data: any) => {
     let responses = (data?.comments || [])
       .concat(data?.evidences || [])
-      .sort((a: Response, b: Response) => {
-        if (a.created_at > b.created_at) return 1;
-        return -1;
-      });
+      .sort(sortByCreatedAt);
 
     responses = responses.map((response: any) => {
       response.created_by = response.external_created_by
