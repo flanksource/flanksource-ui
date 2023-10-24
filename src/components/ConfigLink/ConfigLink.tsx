@@ -1,13 +1,12 @@
-import { Link } from "react-router-dom";
-import { Icon } from "../Icon";
-import { HTMLAttributeAnchorTarget } from "react";
 import clsx from "clsx";
+import { HTMLAttributeAnchorTarget } from "react";
+import { Link } from "react-router-dom";
+import { ConfigItem } from "../../api/services/configs";
 import ConfigsTypeIcon from "../Configs/ConfigsTypeIcon";
+import { ConfigIcon } from "../Icon/ConfigIcon";
 
 type ConfigLinkProps = {
-  configId: string;
-  configName: string;
-  configType?: string;
+  config?: ConfigItem;
   className?: string;
   configTypeSecondary?: string;
   variant?: "label" | "link";
@@ -15,38 +14,33 @@ type ConfigLinkProps = {
 };
 
 export default function ConfigLink({
-  configId,
-  configName,
-  configType,
-  configTypeSecondary,
+  config,
   variant = "link",
   className = "text-zinc-600 text-sm whitespace-nowrap overflow-hidden overflow-ellipsis"
 }: ConfigLinkProps) {
+  if (config == null) {
+    return null;
+  }
   if (variant === "link") {
     return (
       <Link
         to={{
-          pathname: `/catalog/${configId}`
+          pathname: `/catalog/${config.id}`
         }}
         className={clsx("flex flex-row gap-2", className)}
       >
-        <ConfigsTypeIcon
-          config={{
-            type: configType
-          }}
-        />
-        <div className="overflow-hidden text-ellipsis flex-1">{configName}</div>
+        <ConfigsTypeIcon config={config} />
+
+        <div className="overflow-hidden text-ellipsis flex-1">
+          {config.name}
+        </div>
       </Link>
     );
   }
   return (
     <div className={clsx("flex flex-row gap-1", className)}>
-      <Icon
-        name={configType}
-        secondary={configTypeSecondary}
-        className="w-5 h-5"
-      />
-      <div className="overflow-hidden text-ellipsis text-sm">{configName}</div>
+      <ConfigIcon config={config} />
+      <div className="overflow-hidden text-ellipsis text-sm">{config.name}</div>
     </div>
   );
 }

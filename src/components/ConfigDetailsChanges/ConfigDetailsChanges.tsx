@@ -12,12 +12,13 @@ import { ConfigTypeChanges } from "../ConfigChanges";
 import ConfigLink from "../ConfigLink/ConfigLink";
 import { DiffRenderer } from "../DiffRenderer/DiffRenderer";
 import EmptyState from "../EmptyState";
-import { Icon } from "../Icon";
+import { ChangeIcon } from "../Icon/ChangeIcon";
 import { JSONViewer } from "../JSONViewer";
 import { Modal } from "../Modal";
 import TextSkeletonLoader from "../SkeletonLoader/TextSkeletonLoader";
 import ConfigChangeDetailSection from "./ConfigChangeDetailsSection";
 import ModalTitleListItems from "../Modal/ModalTitleListItems";
+import { ConfigIcon } from "../Icon/ConfigIcon";
 
 type ConfigDetailsChangesProps = {
   id: string;
@@ -103,7 +104,7 @@ export function ConfigDetailsChanges({
   }
 
   return (
-    <div className="flex flex-col flex-1 overflow-y-auto bg-white cursor-pointer">
+    <div className="flex flex-col flex-1 overflow-y-auto cursor-pointer">
       <ConfigDetailChangeModal
         // do not show modal if the config is not loaded
         open={open && !isLoading}
@@ -163,20 +164,13 @@ export function ConfigDetailsChanges({
         >
           {showConfigLogo && (
             <>
-              <Icon
-                name={config?.type}
-                secondary={config?.config_class}
-                className="w-5 mr-1"
-              />
+              <ConfigIcon config={config} />
               <span>{config?.name}</span>
               &nbsp;/&nbsp;
             </>
           )}
-          <Icon
-            name={changeDetails?.change_type}
-            secondary="diff"
-            className="w-5 h-auto pr-1"
-          />
+
+          <ChangeIcon change={changeDetails} className="w-5 h-auto pr-1" />
           {changeDetails?.change_type}
         </div>
       )}
@@ -205,20 +199,13 @@ export function ConfigDetailChangeModal({
             items={[
               <div className="flex flex-row gap-1 flex-shrink items-center">
                 <div className="block w-6 h-auto">
-                  <Icon
-                    name={changeDetails?.change_type}
-                    secondary="diff"
-                    className="w-5 h-5"
-                  />
+                  <ChangeIcon change={changeDetails} />
                 </div>
                 <span> {changeDetails?.change_type}</span>
               </div>,
               <ConfigLink
                 className="text-blue-600 text-xl font-semibold whitespace-nowrap overflow-hidden overflow-ellipsis"
-                configId={config.id}
-                configName={config.name}
-                configType={config.type}
-                configTypeSecondary={config.config_class}
+                config={config}
               />
             ]}
           />

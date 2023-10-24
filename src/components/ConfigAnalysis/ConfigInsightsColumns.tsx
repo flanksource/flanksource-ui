@@ -2,9 +2,9 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Link } from "react-router-dom";
 import { ConfigItem } from "../../api/services/configs";
 import { ConfigTypeInsights } from "../ConfigInsights";
-import { DateCell } from "../ConfigViewer/columns";
-import { Icon } from "../Icon";
 import ConfigInsightsIcon from "../ConfigInsightsIcon";
+import { DateCell } from "../ConfigViewer/columns";
+import { ConfigIcon } from "../Icon/ConfigIcon";
 import ConfigInsightsSeverityIcons from "./ConfigInsightsSeverityIcons";
 
 export const ConfigInsightsColumns: ColumnDef<
@@ -25,11 +25,7 @@ export const ConfigInsightsColumns: ColumnDef<
             className="space-x-2  items-center"
             to={`/catalog/${config?.id}`}
           >
-            <Icon
-              className="w-4 h-4"
-              name={config?.type}
-              secondary={config?.config_class}
-            />
+            <ConfigIcon config={config} className="w-4 h-4" />
             <span>{config?.name}</span>
           </Link>
         </div>

@@ -19,6 +19,7 @@ import { Icon } from "../../../Icon";
 import TextSkeletonLoader from "../../../SkeletonLoader/TextSkeletonLoader";
 import { StatusStyles } from "../../../TopologyCard";
 import { CardMetrics } from "../../../TopologyCard/CardMetrics";
+import { ConfigIcon } from "../../../Icon/ConfigIcon";
 
 type EvidenceViewProps = Omit<React.HTMLProps<HTMLDivElement>, "size"> & {
   evidence: Evidence;
@@ -151,8 +152,11 @@ function ConfigEvidence({
 
   return (
     <div className={clsx("overflow-hidden py-2", className)} {...rest}>
-      <Icon name={config.type} secondary={config.config_class} />{" "}
-      <span className="pl-1 text-gray-500 font-medium"> {config.name} </span>{" "}
+      <ConfigIcon config={config} />
+      <span className="pl-1 text-gray-500 font-medium">
+        {" "}
+        {config.name}{" "}
+      </span>{" "}
     </div>
   );
 }

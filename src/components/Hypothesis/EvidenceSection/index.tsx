@@ -1,31 +1,31 @@
-import React, { ReactNode, useEffect, useState } from "react";
 import { ChevronRightIcon, DotsVerticalIcon } from "@heroicons/react/outline";
-import { TopologyCard } from "../../TopologyCard";
+import React, { ReactNode, useEffect, useState } from "react";
 import { BsTrash } from "react-icons/bs";
-import { Evidence, EvidenceType } from "../../../api/services/evidence";
-import { getCanaries } from "../../../api/services/topology";
-import mixins from "../../../utils/mixins.module.css";
-import { CheckDetails } from "../../Canary/CanaryPopup/CheckDetails";
-import { CheckTitle } from "../../Canary/CanaryPopup/CheckTitle";
-import { sanitizeHTMLContent, toFixedIfNecessary } from "../../../utils/common";
-import { getUptimePercentage } from "../../Canary/CanaryPopup/utils";
-import { Duration, StatusList } from "../../Canary/renderers";
-import { Modal } from "../../Modal";
-import { relativeDateTime } from "../../../utils/date";
-import { Size, ViewType } from "../../../types";
-import ConfigLink from "../../ConfigLink/ConfigLink";
-import { LogsTable } from "../../Logs/Table/LogsTable";
-import { Icon } from "../../Icon";
-import { Button } from "../../Button";
-import { ConfigDetailsChanges } from "../../ConfigDetailsChanges/ConfigDetailsChanges";
 import {
   useGetConfigByIdQuery,
   useGetConfigInsight
 } from "../../../api/query-hooks";
-import { ConfigTypeInsights } from "../../ConfigInsights";
-import { ConfigAnalysisLink } from "../../ConfigAnalysisLink/ConfigAnalysisLink";
-import { CommentEvidence } from "../../IncidentDetails/DefinitionOfDone/EvidenceView";
+import { Evidence, EvidenceType } from "../../../api/services/evidence";
 import { Hypothesis } from "../../../api/services/hypothesis";
+import { getCanaries } from "../../../api/services/topology";
+import { Size, ViewType } from "../../../types";
+import { sanitizeHTMLContent, toFixedIfNecessary } from "../../../utils/common";
+import mixins from "../../../utils/mixins.module.css";
+import { Button } from "../../Button";
+import { CheckDetails } from "../../Canary/CanaryPopup/CheckDetails";
+import { CheckTitle } from "../../Canary/CanaryPopup/CheckTitle";
+import { getUptimePercentage } from "../../Canary/CanaryPopup/utils";
+import { Duration, StatusList } from "../../Canary/renderers";
+import { ConfigAnalysisLink } from "../../ConfigAnalysisLink/ConfigAnalysisLink";
+import { ConfigDetailsChanges } from "../../ConfigDetailsChanges/ConfigDetailsChanges";
+import { ConfigTypeInsights } from "../../ConfigInsights";
+import ConfigLink from "../../ConfigLink/ConfigLink";
+import { Icon } from "../../Icon";
+import { CommentEvidence } from "../../IncidentDetails/DefinitionOfDone/EvidenceView";
+import { LogsTable } from "../../Logs/Table/LogsTable";
+import { Modal } from "../../Modal";
+import { TopologyCard } from "../../TopologyCard";
+import { Age } from "../../UI/Age";
 
 const ColumnSizes = {
   Time: {
@@ -125,19 +125,14 @@ const EvidenceAccordion: React.FC<{
           <div className="flex justify-between w-full items-center">
             {title || <span className="text-gray-400">(no title)</span>}
             {date && (
-              <div className="text-gray-400 text-sm pl-2">
-                {relativeDateTime(date)}
+              <div className="text-gray-400  pl-2">
+                <Age from={date} />
               </div>
             )}
           </div>
         </button>
         <div>
-          <ConfigLink
-            configId={configId}
-            configName={configName}
-            configType={config?.type}
-            configTypeSecondary={config?.config_class}
-          />
+          <ConfigLink config={config} />
         </div>
       </div>
       {expanded && children}

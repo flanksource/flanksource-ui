@@ -3,7 +3,7 @@ import { ViewType } from "../../types";
 import { ConfigTypeInsights } from "../ConfigInsights";
 import ConfigInsightsIcon from "../ConfigInsightsIcon";
 import { DescriptionCard } from "../DescriptionCard";
-import { Icon } from "../Icon";
+import { ConfigIcon } from "../Icon/ConfigIcon";
 import ConfigInsightsDetailsModal from "./ConfigInsightsDetailsModal";
 
 type Props = {
@@ -47,10 +47,9 @@ export function ConfigAnalysisLink({
         >
           {showConfigLogo && (
             <div className="flex flex-row gap-2 items-center">
-              <Icon
-                name={configAnalysis?.config?.type}
-                secondary={configAnalysis?.config?.config_class}
-                className="w-5 h-5"
+              <ConfigIcon
+                config={configAnalysis?.config}
+                className="h-5 mr-1"
               />
               <span>{configAnalysis?.config?.name}</span>
               <span>/</span>

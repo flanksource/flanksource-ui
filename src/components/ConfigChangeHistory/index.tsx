@@ -1,12 +1,14 @@
 import { ColumnDef } from "@tanstack/table-core";
 import { useState } from "react";
-import { ConfigTypeChanges } from "../ConfigChanges";
-import ConfigLink from "../ConfigLink/ConfigLink";
 import { useGetConfigChangesByConfigChangeIdQuery } from "../../api/query-hooks/useGetConfigChangesByConfigChangeIdQuery";
+import { ConfigChange } from "../../api/services/configs";
+import { ConfigTypeChanges } from "../ConfigChanges";
 import { ConfigDetailChangeModal } from "../ConfigDetailsChanges/ConfigDetailsChanges";
+import ConfigLink from "../ConfigLink/ConfigLink";
 import { DateCell } from "../ConfigViewer/columns";
 import { PaginationOptions } from "../DataTable";
-import { DataTable, Icon } from "../index";
+import { ChangeIcon } from "../Icon/ChangeIcon";
+import { DataTable } from "../index";
 
 const columns: ColumnDef<ConfigTypeChanges>[] = [
   {
@@ -16,12 +18,8 @@ const columns: ColumnDef<ConfigTypeChanges>[] = [
       const changeType = row?.getValue(column.id) as string;
       return (
         <div className="text-ellipsis overflow-hidden">
-          <Icon
-            name={changeType}
-            secondary="diff"
-            className="w-5 h-auto pr-1"
-          />
-          {changeType}
+          <ChangeIcon change={row.original} className="w-5 pr-1" />
+          <span>{changeType}</span>
         </div>
       );
     },
@@ -53,7 +51,7 @@ const columns: ColumnDef<ConfigTypeChanges>[] = [
   }
 ];
 
-const configLinkCol: ColumnDef<ConfigTypeChanges>[] = [
+const configLinkCol: ColumnDef<ConfigChange>[] = [
   {
     header: "Catalog",
     accessorKey: "config_id",
@@ -62,21 +60,14 @@ const configLinkCol: ColumnDef<ConfigTypeChanges>[] = [
       if (!config) {
         return null;
       }
-      return (
-        <ConfigLink
-          configId={config.id}
-          configName={config.name}
-          configType={config.type}
-          configTypeSecondary={config.config_class}
-        />
-      );
+      return <ConfigLink config={config} />;
     },
     size: 84
   }
 ];
 
 type ConfigChangeHistoryProps = {
-  data: ConfigTypeChanges[];
+  data: ConfigChange[];
   isLoading?: boolean;
   linkConfig?: boolean;
   className?: string;
@@ -93,7 +84,7 @@ export function ConfigChangeHistory({
   tableStyle
 }: ConfigChangeHistoryProps) {
   const [selectedConfigChange, setSelectedConfigChange] =
-    useState<ConfigTypeChanges>();
+    useState<ConfigChange>();
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
   const { data: configChange } = useGetConfigChangesByConfigChangeIdQuery(

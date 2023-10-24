@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { getConfigName } from "../../api/services/configs";
 import { BreadcrumbNav } from "../BreadcrumbNav";
-import { Icon } from "../Icon";
+import { ConfigIcon } from "../Icon/ConfigIcon";
 
 type ConfigBreadcrumbProps = {
   setTitle: (child: React.ReactNode) => void;
@@ -25,11 +25,7 @@ export function ConfigBreadcrumb({ setTitle }: ConfigBreadcrumbProps) {
             list={[
               { to: "/catalog", title: "Catalog" },
               <span>
-                <Icon
-                  name={data?.type}
-                  secondary={data?.config_class}
-                  className="h-5 mr-1"
-                />
+                <ConfigIcon config={data} className="h-5 mr-1" />
                 {data?.name}
               </span>
             ]}

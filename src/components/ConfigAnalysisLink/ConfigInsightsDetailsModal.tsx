@@ -84,10 +84,7 @@ export default function ConfigInsightsDetailsModal({
             </div>,
             <ConfigLink
               className="text-blue-600 text-xl font-semibold whitespace-nowrap overflow-hidden overflow-ellipsis"
-              configId={configInsight.config!.id}
-              configName={configInsight.config!.name}
-              configType={configInsight.config!.type}
-              configTypeSecondary={configInsight.config!.config_class}
+              config={configInsight.config}
             />
           ]}
         />

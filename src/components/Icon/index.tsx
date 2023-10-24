@@ -481,7 +481,7 @@ function findByName(name?: string) {
   return icon;
 }
 
-type IconProps = {
+export type IconProps = {
   name?: string;
   secondary?: string;
   className?: string;

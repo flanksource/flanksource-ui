@@ -3,13 +3,13 @@ import clsx from "clsx";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { BsTrash } from "react-icons/bs";
 import { User } from "../../api/services/users";
-import { relativeDateTime } from "../../utils/date";
+import { useUserAccessStateContext } from "../../context/UserAccessContext/UserAccessContext";
+import { tables } from "../../context/UserAccessContext/permissions";
+import { withAccessCheck } from "../AccessCheck/AccessCheck";
 import { DataTable } from "../DataTable";
 import { IconButton } from "../IconButton";
 import { Menu } from "../Menu";
-import { withAccessCheck } from "../AccessCheck/AccessCheck";
-import { tables } from "../../context/UserAccessContext/permissions";
-import { useUserAccessStateContext } from "../../context/UserAccessContext/UserAccessContext";
+import { Age } from "../UI/Age";
 
 type UserListProps = {
   data: any[];
@@ -17,8 +17,9 @@ type UserListProps = {
   deleteUser: (userId: string) => void;
 } & Omit<React.HTMLProps<HTMLDivElement>, "data">;
 
-const DateCell = ({ getValue }: CellContext<User, any>) =>
-  relativeDateTime(getValue<string>());
+const DateCell = ({ getValue }: CellContext<User, any>) => (
+  <Age from={getValue<string>()} />
+);
 
 const getColumns = (
   deleteUser: (userId: string) => void,

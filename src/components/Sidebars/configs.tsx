@@ -85,10 +85,7 @@ export function ConfigsList({
               })}
             >
               <ConfigLink
-                configId={config.id}
-                configName={config.name}
-                configType={config.type}
-                configTypeSecondary={config.config_class}
+                config={config}
                 className="overflow-hidden text-ellipsis flex-1 whitespace-nowrap"
               />
               {config.deleted_at && (
