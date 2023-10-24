@@ -1,12 +1,16 @@
 import { CellContext } from "@tanstack/react-table";
 import { ConfigTypeChanges } from "..";
-import { relativeDateTime } from "../../../utils/date";
+import { Age } from "../../UI/Age";
 
 export default function ConfigChangeAgeCell({
   row,
   column,
   getValue
 }: CellContext<ConfigTypeChanges, unknown>) {
-  const age = relativeDateTime(row.original.created_at);
-  return <span className="flex flex-nowrap py-1 text-sm">{age}</span>;
+  return (
+    <Age
+      className="whitespace-nowrap  text-xs text-slate-500 pr-2"
+      from={row.original.created_at}
+    />
+  );
 }

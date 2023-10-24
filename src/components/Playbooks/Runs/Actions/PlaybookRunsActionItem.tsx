@@ -1,4 +1,4 @@
-import { relativeDateTime } from "../../../../utils/date";
+import { Age } from "../../../UI/Age";
 import { PlaybookRunAction } from "../PlaybookRunTypes";
 import PlaybookRunsStatus from "../PlaybookRunsStatus";
 
@@ -31,7 +31,7 @@ export default function PlaybookRunsActionItem({
       </div>
       <div className="flex flex-col">
         <div className="text-sm font-medium text-gray-600">
-          {relativeDateTime(action.start_time!, action.end_time)}
+          <Age from={action.start_time} to={action.end_time} />
         </div>
       </div>
     </div>

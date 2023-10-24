@@ -1,9 +1,9 @@
 import clsx from "clsx";
 import { NodePodPropToLabelMap } from "../../constants";
 import { TopologyProperty } from "../../context/TopologyPageContext";
-import { relativeDateTime } from "../../utils/date";
 import { isEmpty } from "../Canary/utils";
 import { Icon } from "../Icon";
+import { Age } from "../UI/Age";
 import {
   FormatPropertyCurrency,
   FormatPropertyDefault,
@@ -25,7 +25,7 @@ export function FormatProperty({
   let { text } = property;
 
   if (property.name === "created" && typeof text === "string") {
-    return <span className="text-sm">{relativeDateTime(text)}</span>;
+    return <Age from={text} />;
   }
 
   if (property.type === "url") {

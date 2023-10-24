@@ -1,10 +1,10 @@
 import clsx from "clsx";
 import { Link } from "react-router-dom";
 import { Incident } from "../../api/services/incident";
-import { relativeDateTime } from "../../utils/date";
 import { IncidentStatusTag } from "../IncidentStatusTag";
 import { typeItems } from "../Incidents/data";
 import { IncidentTypeIcon } from "../incidentTypeTag";
+import { Age } from "../UI/Age";
 
 type IncidentCardProps = {
   incident: Incident;
@@ -28,8 +28,8 @@ export default function IncidentCard({
           {incident.title}
         </Link>
         <IncidentStatusTag status={incident.status!} className="ml-1" />
-        <div className="text-right grow text-xs">
-          {relativeDateTime(incident.created_at)}
+        <div className="text-right grow">
+          <Age from={incident.created_at} />
         </div>
       </div>
     </div>

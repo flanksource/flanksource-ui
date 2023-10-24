@@ -1,6 +1,6 @@
 import { CellContext } from "@tanstack/react-table";
-import { relativeDateTime } from "../../../utils/date";
 import { ConfigTypeInsights } from "../../ConfigInsights";
+import { Age } from "../../UI/Age";
 
 export default function ConfigInsightAgeCell({
   row,
@@ -20,6 +20,7 @@ export default function ConfigInsightAgeCell({
   >,
   unknown
 >) {
-  const age = relativeDateTime(row.original.first_observed);
-  return <span className="flex whitespace-nowrap py-1 text-sm">{age}</span>;
+  return (
+    <Age className="flex py-1 text-sm" from={row.original.first_observed} />
+  );
 }

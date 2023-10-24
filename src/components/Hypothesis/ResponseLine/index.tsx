@@ -1,18 +1,18 @@
 import { BsTrash } from "react-icons/bs";
 
-import { Evidence } from "../../../api/services/evidence";
-import { Comment } from "../../../api/services/comments";
-import { User } from "../../../api/services/users";
-import { relativeDateTime } from "../../../utils/date";
-import { Avatar } from "../../Avatar";
-import { CommentText } from "../../Comment";
-import { IconButton } from "../../IconButton";
-import { EvidenceItem } from "../EvidenceSection";
-import { Icon } from "../../Icon";
-import { Menu } from "../../Menu";
+import { useCallback, useMemo } from "react";
 import { BiCheck } from "react-icons/bi";
 import { IoMdRemoveCircle } from "react-icons/io";
-import { useCallback, useMemo } from "react";
+import { Comment } from "../../../api/services/comments";
+import { Evidence } from "../../../api/services/evidence";
+import { User } from "../../../api/services/users";
+import { Avatar } from "../../Avatar";
+import { CommentText } from "../../Comment";
+import { Icon } from "../../Icon";
+import { IconButton } from "../../IconButton";
+import { Menu } from "../../Menu";
+import { Age } from "../../UI/Age";
+import { EvidenceItem } from "../EvidenceSection";
 
 export type CreatedBy = User & {
   team: {
@@ -84,8 +84,8 @@ export function ResponseLine({
               </span>
             )}
           </div>
-          <p className="mt-0.5 text-gray-500 text-xs leading-5 font-normal">
-            {relativeDateTime(created_at)}
+          <p className="mt-0.5 text-gray-500 leading-5 font-normal">
+            <Age from={created_at} />
           </p>
         </div>
 

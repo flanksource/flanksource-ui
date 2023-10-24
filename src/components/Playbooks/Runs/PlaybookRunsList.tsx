@@ -2,11 +2,11 @@ import { ColumnDef } from "@tanstack/react-table";
 import { useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { User } from "../../../api/services/users";
-import { relativeDateTime } from "../../../utils/date";
 import { Avatar } from "../../Avatar";
 import { DateCell } from "../../ConfigViewer/columns";
 import { DataTable, PaginationOptions } from "../../DataTable";
 import { Icon } from "../../Icon";
+import { Age } from "../../UI/Age";
 import { PlaybookRun, PlaybookRunStatus } from "./PlaybookRunTypes";
 import PlaybookRunsStatus from "./PlaybookRunsStatus";
 
@@ -59,14 +59,7 @@ const playbookRunsTableColumns: ColumnDef<PlaybookRun>[] = [
     header: "Duration",
     accessorKey: "duration",
     cell: ({ row }) => {
-      const startTime = row.original.start_time;
-      const endTime = row.original.end_time;
-
-      return (
-        <span>
-          {startTime && endTime && relativeDateTime(startTime, endTime)}
-        </span>
-      );
+      return <Age from={row.original.start_time} to={row.original.end_time} />;
     }
   },
   {

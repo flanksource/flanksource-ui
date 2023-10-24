@@ -1,6 +1,6 @@
 import { CellContext } from "@tanstack/react-table";
 import { FaTrash } from "react-icons/fa";
-import { relativeDateTime } from "../../../utils/date";
+import { Age } from "../../UI/Age";
 
 export default function ConfigListDateCell<T extends Record<string, any>>({
   getValue,
@@ -15,7 +15,7 @@ export default function ConfigListDateCell<T extends Record<string, any>>({
   const value = isDeleted ? row.original.deleted_at : dateString;
   return (
     <div className="text-xs">
-      {value ? relativeDateTime(value) : ""}
+      <Age from={value} />
       {column.id === "updated_at" && isDeleted && (
         <FaTrash className="h-4 w-4 inline align-middle mx-2 text-gray-400" />
       )}

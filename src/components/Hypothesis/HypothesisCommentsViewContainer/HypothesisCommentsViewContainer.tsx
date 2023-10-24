@@ -1,31 +1,28 @@
+import clsx from "clsx";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { IoMdSend } from "react-icons/io";
+import { GroupHeadingProps, OptionProps, components } from "react-select";
 import { Comment } from "../../../api/services/comments";
-import { dateSortHelper, relativeDateTime } from "../../../utils/date";
-import { CommentInput, CommentText } from "../../Comment";
-import { Icon } from "../../Icon";
-import { Avatar } from "../../Avatar";
-import { CreatedBy } from "../ResponseLine";
-import { Tag } from "../../Tag/Tag";
-import { SortOrders } from "../../../constants";
+import { Evidence } from "../../../api/services/evidence";
 import { Hypothesis } from "../../../api/services/hypothesis";
+import { SortOrders } from "../../../constants";
+import { useUser } from "../../../context";
+import useRunTaskOnPropChange from "../../../hooks/useRunTaskOnPropChange";
 import {
   HypothesisAPIs,
   TreeNode
 } from "../../../pages/incident/IncidentDetails";
-import { Evidence } from "../../../api/services/evidence";
-import { EvidenceItem } from "../EvidenceSection";
-import { useUser } from "../../../context";
-import { toastError } from "../../Toast/toast";
-import clsx from "clsx";
-import { IoMdSend } from "react-icons/io";
-import {
-  GroupedOptionItem,
-  OptionItem,
-  SearchSelect
-} from "../../SearchSelect";
-import useRunTaskOnPropChange from "../../../hooks/useRunTaskOnPropChange";
-import { components, GroupHeadingProps, OptionProps } from "react-select";
 import { useIncidentState } from "../../../store/incident.state";
+import { dateSortHelper } from "../../../utils/date";
+import { Avatar } from "../../Avatar";
+import { CommentInput, CommentText } from "../../Comment";
+import { Icon } from "../../Icon";
+import { OptionItem, SearchSelect } from "../../SearchSelect";
+import { Tag } from "../../Tag/Tag";
+import { toastError } from "../../Toast/toast";
+import { Age } from "../../UI/Age";
+import { EvidenceItem } from "../EvidenceSection";
+import { CreatedBy } from "../ResponseLine";
 
 interface IProps {
   incidentId: string;
@@ -319,7 +316,7 @@ export function HypothesisCommentViewEntry({
                   ? `${created_by.team.name} (${created_by?.name})`
                   : created_by?.name}
                 <span className="inline-block pl-1 text-xs text-gray-500">
-                  {relativeDateTime(created_at)}{" "}
+                  <Age from={created_at} />
                   {type === CommentViewEntryTypes.evidence && "added evidence"}
                 </span>
               </div>

@@ -5,6 +5,7 @@ import { relativeDateTime } from "../../utils/date";
 import { DataTable } from "../DataTable";
 import { Avatar } from "../Avatar";
 import { Property } from "../../services/permissions/permissionsService";
+import { Age } from "../UI/Age";
 
 type FeatureFlagsListProps = {
   data: any[];
@@ -12,8 +13,9 @@ type FeatureFlagsListProps = {
   onRowClick?: (data: Property) => void;
 } & Omit<React.HTMLProps<HTMLDivElement>, "data">;
 
-const DateCell = ({ getValue }: CellContext<User, any>) =>
-  relativeDateTime(getValue<string>());
+const DateCell = ({ getValue }: CellContext<User, any>) => (
+  <Age from={getValue()} />
+);
 
 const AvatarCell = ({ getValue }: CellContext<User, any>) => {
   return <Avatar user={getValue()} circular />;

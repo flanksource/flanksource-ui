@@ -1,5 +1,5 @@
 import { CellContext, ColumnDef } from "@tanstack/table-core";
-import { relativeDateTime } from "../../utils/date";
+import { Age } from "../UI/Age";
 
 export const defaultTableColumns: ColumnDef<any>[] = [
   {
@@ -67,7 +67,7 @@ export function DateCell({ row, column }: CellContext<any, any>) {
   const dateString = row?.getValue<string>(column.id);
   return (
     <div className="text-xs">
-      {dateString ? relativeDateTime(dateString) : "None"}
+      <Age from={dateString} />
     </div>
   );
 }

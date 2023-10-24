@@ -1,6 +1,6 @@
 import { IncidentHistory } from "../../api/services/IncidentsHistory";
-import { relativeDateTime } from "../../utils/date";
 import { Avatar } from "../Avatar";
+import { Age } from "../UI/Age";
 import IncidentHistoryItemTypeContent from "./IncidentHistoryItemTypeContent";
 
 type IncidentChangelogItemProps = {
@@ -20,7 +20,7 @@ export default function IncidentChangelogItem({
           <span className="text-gray-500">{history.created_by?.name}</span>{" "}
           <IncidentHistoryItemTypeContent incidentHistory={history} />{" "}
           <span className="text-gray-500 font-medium">
-            {relativeDateTime(history.created_at)}
+            <Age from={history.created_at} />
           </span>
         </div>
       </div>

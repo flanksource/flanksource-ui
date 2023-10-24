@@ -1,8 +1,8 @@
 import { ReactNode, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { relativeDateTime } from "../../../../utils/date";
 import { Avatar } from "../../../Avatar";
 import { Icon } from "../../../Icon";
+import { Age } from "../../../UI/Age";
 import { PlaybookRun, PlaybookRunAction } from "../PlaybookRunTypes";
 import PlaybookRunsStatus from "./../PlaybookRunsStatus";
 import PlaybookRunActionFetch from "./PlaybookRunActionFetch";
@@ -47,8 +47,8 @@ export default function PlaybookRunsActions({ data }: PlaybookRunActionsProps) {
             <PlaybookRunsStatus status={data.status} />
           </div>
         ],
-        ["Start Time", relativeDateTime(data.start_time)],
-        ["Duration", relativeDateTime(data.start_time, data.end_time)],
+        ["Start Time", <Age from={data.start_time} />],
+        ["Duration", <Age from={data.start_time} to={data.end_time} />],
         [
           "Triggered By",
           data.created_by ? (
