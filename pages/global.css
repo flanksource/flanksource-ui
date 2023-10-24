@@ -36,12 +36,16 @@
 
 @layer components {
   .table-auto {
-    @apply shadow-lg bg-white rounded-md  py-2 px-4;
+    @apply shadow-lg rounded-md  py-2 px-4;
   }
+
+  .table-auto tbody tr {
+    @apply hover:bg-slate-50;
+    }
 
   .table-auto thead tr {
     border-bottom-width: 1px;
-    @apply border-gray-200 uppercase text-gray-600 font-bold text-sm items-center text-left px-4 py-4;
+    @apply border-gray-200  bg-white text-gray-600 font-bold text-sm items-center text-left px-4 py-1;
   }
 
   .table-auto thead tr th {
@@ -51,6 +55,16 @@
   .table-auto td {
     border-bottom-width: 1px;
     @apply px-4;
+  }
+
+  .table-condensed thead tr th {
+    @apply px-2 py-1 text-xs;
+  }
+
+  .table-condensed td {
+    border-bottom-width: 1px;
+    @apply px-1 text-xs;
+
   }
 
   .btn-primary {

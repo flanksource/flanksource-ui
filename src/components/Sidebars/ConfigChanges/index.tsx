@@ -1,38 +1,17 @@
 import { ColumnDef } from "@tanstack/table-core";
 import { useEffect, useMemo, useState } from "react";
-import { GoDiff } from "react-icons/go";
-import { useGetConfigChangesByConfigIdQuery } from "../../api/query-hooks";
-import { ConfigItem } from "../../api/services/configs";
-import { User } from "../../api/services/users";
-import PillBadge from "../Badge/PillBadge";
-import CollapsiblePanel from "../CollapsiblePanel";
-import EmptyState from "../EmptyState";
-import Title from "../Title/title";
-import { toastError } from "../Toast/toast";
-import ConfigChangeAgeCell from "./Cells/ConfigChangeAgeCell";
+import { useGetConfigChangesByConfigIdQuery } from "../../../api/query-hooks";
+import { ConfigChange } from "../../../api/types/configs";
+import { CreatedAtCell } from "../../../ui/table/DateCells";
+import PillBadge from "../../Badge/PillBadge";
+import CollapsiblePanel from "../../CollapsiblePanel";
+import EmptyState from "../../EmptyState";
+import { Icon } from "../../Icon";
+import { InfiniteTable } from "../../InfiniteTable/InfiniteTable";
+import TextSkeletonLoader from "../../SkeletonLoader/TextSkeletonLoader";
+import Title from "../../Title/title";
+import { toastError } from "../../Toast/toast";
 import ConfigChangeNameCell from "./Cells/ConfigChangeNameCell";
-import { InfiniteTable } from "../InfiniteTable/InfiniteTable";
-import TextSkeletonLoader from "../SkeletonLoader/TextSkeletonLoader";
-
-export type ConfigTypeChanges = {
-  id: string;
-  config_id: string;
-  external_change_id: string;
-  change_type: string;
-  severity: string;
-  source: string;
-  summary: string;
-  patches?: string;
-  diff?: string;
-  details: string;
-  created_at: string;
-  created_by: string | User;
-  external_created_by: string;
-  config?: ConfigItem;
-  config_class?: string;
-  type?: string;
-  name?: string;
-};
 
 type Props = {
   configID: string;
@@ -40,7 +19,7 @@ type Props = {
   onCollapsedStateChange?: (isClosed: boolean) => void;
 };
 
-export const columns: ColumnDef<ConfigTypeChanges, any>[] = [
+export const columns: ColumnDef<ConfigChange, any>[] = [
   {
     header: "Name",
     id: "change_type",
@@ -53,7 +32,7 @@ export const columns: ColumnDef<ConfigTypeChanges, any>[] = [
     header: "Age",
     id: "created_at",
     accessorKey: "created_at",
-    cell: ConfigChangeAgeCell,
+    cell: CreatedAtCell,
     enableGrouping: true,
     enableSorting: true
   }
@@ -64,7 +43,7 @@ export function ConfigChangesDetails({ configID }: Props) {
     pageIndex: 0,
     pageSize: 50
   });
-  const [changes, setChanges] = useState<ConfigTypeChanges[]>([]);
+  const [changes, setChanges] = useState<ConfigChange[]>([]);
 
   const {
     data: response,
@@ -99,8 +78,9 @@ export function ConfigChangesDetails({ configID }: Props) {
 
   return (
     <div className="flex flex-col overflow-y-hidden">
-      <InfiniteTable<ConfigTypeChanges>
+      <InfiniteTable<ConfigChange>
         columns={columns}
+        // className="border-none"
         isLoading={isLoading && !isFetching}
         isFetching={isFetching}
         allRows={changes}
@@ -114,10 +94,8 @@ export function ConfigChangesDetails({ configID }: Props) {
             });
           }
         }}
-        stickyHead
         virtualizedRowEstimatedHeight={40}
         columnsClassName={{
-          change_type: "flex-1 w-[100px]",
           created_at: "text-right"
         }}
       />
@@ -143,7 +121,10 @@ export default function ConfigChanges({
       onCollapsedStateChange={onCollapsedStateChange}
       Header={
         <div className="flex flex-row w-full items-center space-x-2">
-          <Title title="Changes" icon={<GoDiff className="w-6 h-auto" />} />
+          <Title
+            title="Changes"
+            icon={<Icon name="diff" className="w-6 h-auto opacity-40" />}
+          />
           <PillBadge>{count}</PillBadge>
         </div>
       }

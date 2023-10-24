@@ -1,10 +1,10 @@
 import { useParams } from "react-router-dom";
-import ConfigChanges from "../../ConfigChanges";
-import ConfigCosts from "../../ConfigCosts";
-import ConfigInsights from "../../ConfigInsights";
-import Configs from "../../Sidebars/configs";
-import Incidents from "../../Sidebars/incidents";
-import SlidingSideBar from "../../SlidingSideBar";
+import ConfigChanges from "../Sidebars/ConfigChanges";
+import ConfigCosts from "../ConfigCosts";
+import ConfigInsights from "../Sidebars/ConfigInsights";
+import Configs from "../Sidebars/configs";
+import Incidents from "../Sidebars/incidents";
+import SlidingSideBar from "../SlidingSideBar";
 import { ConfigDetails } from "./ConfigDetails";
 import ConfigActionBar from "./ConfigActionBar";
 import { useCallback, useState } from "react";

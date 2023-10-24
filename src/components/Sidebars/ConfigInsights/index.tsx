@@ -1,9 +1,9 @@
 import { MdOutlineInsights } from "react-icons/md";
-import { useGetConfigInsights } from "../../api/query-hooks";
-import CollapsiblePanel from "../CollapsiblePanel";
-import InsightsDetails from "../Insights/Insights";
-import Title from "../Title/title";
-import PillBadge from "../Badge/PillBadge";
+import { useGetConfigInsights } from "../../../api/query-hooks";
+import CollapsiblePanel from "../../CollapsiblePanel";
+import InsightsDetails from "../../Insights/Insights";
+import Title from "../../Title/title";
+import PillBadge from "../../Badge/PillBadge";
 
 type Props = {
   configID: string;

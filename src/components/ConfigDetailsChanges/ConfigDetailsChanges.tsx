@@ -214,7 +214,7 @@ export function ConfigDetailChangeModal({
         setOpen(false);
       }}
       size="full"
-      bodyClass="flex h-full flex-col flex-1 overflow-y-auto"
+      bodyClass="flex h-full w-full flex-col flex-1 overflow-y-auto"
       containerClassName="min-h-[15rem] h-auto max-h-full overflow-y-auto"
     >
       <div className="flex flex-col flex-1 overflow-y-auto">

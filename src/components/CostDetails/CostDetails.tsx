@@ -70,7 +70,7 @@ export function CostInfo({ label, value, defaultValue }: CostInfoProps) {
   return (
     <div className="overflow-hidden flex flex-col flex-1 space-y-2 px-2">
       <div className="text-gray-500 text-sm whitespace-nowrap">{label}</div>
-      <div className="text-black text-sm font-semibold">
+      <div className="text-black font-semibold">
         <FormatCurrency value={value} defaultValue={defaultValue} />
       </div>
     </div>

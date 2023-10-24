@@ -163,7 +163,6 @@ export default function InsightsDetails(
             });
           }
         }}
-        stickyHead
         virtualizedRowEstimatedHeight={40}
         columnsClassName={{
           change_type: "",

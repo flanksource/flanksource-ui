@@ -13,6 +13,7 @@ import React, { useCallback, useMemo, useRef } from "react";
 type InfiniteTableProps<T> = React.HTMLProps<HTMLDivElement> & {
   columns: ColumnDef<T, any>[];
   isFetching: boolean;
+  className?: string;
   isLoading: boolean;
   totalEntries: number;
   allRows: T[];
@@ -31,6 +32,7 @@ export function InfiniteTable<T>({
   isLoading,
   totalEntries,
   allRows,
+  className = "table-auto table-condensed",
   fetchNextPage,
   maxHeight,
   loaderView,
@@ -102,18 +104,16 @@ export function InfiniteTable<T>({
       ref={tableContainerRef}
       style={containerStyle}
     >
-      <table
-        className={clsx(`table-auto table-fixed p-0`, stickyHead && "relative")}
-      >
-        <thead className={`bg-white ${stickyHead ? "sticky top-0 z-1" : ""}`}>
+      <table className={clsx(`p-0 mr-2`, stickyHead && "relative", className)}>
+        <thead className={`${stickyHead ? "sticky top-0 " : ""}`}>
           {table.getHeaderGroups().map((headerGroup) => (
-            <tr className="" key={headerGroup.id}>
+            <tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 return (
                   <th
                     key={header.id}
                     colSpan={header.colSpan}
-                    className={clsx(columnsClassName?.[header.id], "py-0")}
+                    className={clsx(columnsClassName?.[header.id], "py-0 ")}
                   >
                     {header.isPlaceholder ? null : (
                       <div
@@ -152,7 +152,7 @@ export function InfiniteTable<T>({
                       key={cell.id}
                       className={clsx(
                         columnsClassName?.[cell.column.id],
-                        "py-1"
+                        "py-0.5 px-0.5"
                       )}
                     >
                       {flexRender(
