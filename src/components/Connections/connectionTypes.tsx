@@ -1807,6 +1807,69 @@ export const connectionTypes: ConnectionType[] = [
         }
       };
     }
+  },
+  {
+    title: "Git",
+    icon: "git",
+    value: ConnectionValueType.Git,
+    fields: [
+      {
+        label: "Name",
+        key: "name",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "URL",
+        key: "url",
+        type: fieldTypes.input,
+        required: true
+      },
+      {
+        label: "Username",
+        key: "username",
+        type: fieldTypes.EnvVarSource,
+        required: true
+      },
+      {
+        label: "Password",
+        key: "password",
+        type: fieldTypes.EnvVarSource,
+        required: true
+      },
+      {
+        label: "SSH Key",
+        key: "certificate",
+        type: fieldTypes.EnvVarSource,
+        variant: variants.large,
+        required: true
+      },
+      {
+        label: "Ref",
+        default: "main",
+        key: "ref",
+        type: fieldTypes.input,
+        required: true
+      }
+    ],
+    convertToFormSpecificValue: (data: Record<string, any>) => {
+      return {
+        ...data,
+        ref: data.properties?.ref
+      } as Connection;
+    },
+    preSubmitConverter: (data: Record<string, string>) => {
+      return {
+        name: data.name,
+        url: data.url,
+        password: data.password,
+        username: data.username,
+        certificate: data.certificate,
+        properties: {
+          ref: data.ref
+        }
+      };
+    }
   }
 ]
   .sort((v1, v2) => {

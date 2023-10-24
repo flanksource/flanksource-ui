@@ -58,6 +58,7 @@ export type Connection = {
   webhook?: string;
   workstation?: string;
   properties?: Record<string, any>;
+  ref?: string;
 };
 
 type ConnectionFormProps = React.HTMLProps<HTMLDivElement> & {
