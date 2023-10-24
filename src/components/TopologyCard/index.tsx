@@ -1,5 +1,6 @@
+import { useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
-import { MouseEventHandler, useEffect, useMemo, useState } from "react";
+import { MouseEventHandler, useMemo } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { getTopology } from "../../api/services/topology";
 import { Topology } from "../../context/TopologyPageContext";
@@ -34,7 +35,7 @@ export const StatusStyles: Record<keyof typeof ComponentStatus, string> = {
 };
 
 interface IProps {
-  size: Size | string;
+  size?: Size | string;
   topologyId?: string;
   topology?: Topology;
   selectionMode?: boolean;
@@ -52,17 +53,18 @@ export function TopologyCard({
   onSelectionChange,
   isTopologyPage = false
 }: IProps) {
-  const [topology, setTopology] = useState(topologyData);
   const [searchParams] = useSearchParams();
   const { id: parentId } = useParams();
 
-  useEffect(() => {
-    if (topologyId != null && topologyData == null) {
-      getTopology({ id: topologyId }).then(({ components }) =>
-        setTopology(components?.[0])
-      );
-    }
-  }, [topologyId, topologyData]);
+  const { data } = useQuery({
+    queryKey: ["topology", topologyId],
+    queryFn: () => getTopology({ id: topologyId }),
+    enabled: !!topologyId && topologyData == null
+  });
+
+  const topology = useMemo(() => {
+    return topologyData || data?.components?.[0];
+  }, [data, topologyData]);
 
   let selectionModeRootProps = null;
 
