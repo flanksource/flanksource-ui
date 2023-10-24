@@ -2,8 +2,8 @@ import { useField, useFormikContext } from "formik";
 import { isEmpty } from "lodash";
 import dynamic from "next/dynamic";
 import { useEffect, useMemo, useState } from "react";
-import useDebounce from "../../../hooks/useDebounce";
 import YAML from "yaml";
+import useDebounce from "../../../hooks/useDebounce";
 
 const CodeEditor = dynamic(
   () => import("../../CodeEditor").then((m) => m.CodeEditor),
@@ -55,9 +55,9 @@ export function FormikCodeEditor({
   const debouncedValues = useDebounce(codeEditorValue, 300);
 
   useEffect(() => {
-    if (debouncedValues) {
-      try {
-        if (format === "yaml" || format === "json") {
+    try {
+      if (format === "yaml" || format === "json") {
+        if (debouncedValues) {
           setFieldValue(
             fieldName,
             format === "yaml"
@@ -65,11 +65,13 @@ export function FormikCodeEditor({
               : JSON.parse(debouncedValues)
           );
         } else {
-          setFieldValue(fieldName, debouncedValues);
+          setFieldValue(fieldName, undefined);
         }
-      } catch (e) {
-        // do nothing, we don't want to set the values if the user is typing
+      } else {
+        setFieldValue(fieldName, debouncedValues);
       }
+    } catch (e) {
+      // do nothing, we don't want to set the values if the user is typing
     }
   }, [debouncedValues, fieldName, format, setFieldValue]);
 
@@ -106,8 +108,9 @@ export function FormikCodeEditor({
           if (v) {
             setCodeEditorValue(v);
           } else {
-            // if the value is empty, we want to reset the form
-            setFieldValue(fieldName, {});
+            setCodeEditorValue(undefined);
+            // if the value is empty, we want to set to undefined
+            setFieldValue(fieldName, undefined);
           }
         }}
         value={value}

@@ -70,7 +70,6 @@ export default function FormikSelectDropdown({
         options={options}
         value={value}
         onChange={(value: any) => {
-          console.log({ value: value });
           field.onChange({
             target: {
               name: field.name,
