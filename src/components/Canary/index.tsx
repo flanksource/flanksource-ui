@@ -311,9 +311,9 @@ export function Canary({
         </div>
       </SidebarSticky>
 
-      <div className="flex-grow p-6 max-w-7xl">
+      <div className="flex-grow p-6 2xl:max-w-7xl max-w-[calc(100%-13rem)] xl:max-w-[calc(100%-15rem)]">
         <div className="flex flex-wrap mb-2">
-          <div className="flex-1">
+          <div className="xl:flex-1 xl:mb-0 mb-4 mr-2">
             <CanarySearchBar
               onChange={(e) => handleSearch(e.target.value)}
               onSubmit={(value) => handleSearch(value)}
@@ -325,7 +325,7 @@ export function Canary({
               defaultValue={searchParams.get("query") ?? ""}
             />
           </div>
-          <div className="flex-1 flex justify-end">
+          <div className="xl:flex-1 flex xl:justify-start lg:justify-end lg:flex-nowrap flex-wrap">
             <div className="mb-2 mr-2">
               <DropdownWrapper
                 dropdownElem={<GroupByDropdown name="groupBy" />}
@@ -655,12 +655,12 @@ function SidebarSticky({
   const topHeightPx = `${isCanaryUI ? 0 : topHeight}px`;
   return (
     <div
-      className={className || "flex flex-col w-80 border-r"}
+      className={className || "flex flex-col w-52 xl:w-60 2xl:w-80 border-r"}
       style={style || { minHeight: `calc(100vh -  ${topHeightPx})` }}
       {...props}
     >
       <div
-        className={`h-full overflow-y-auto w-80 overflow-x-hidden p-4 ${mixins.appleScrollbar}`}
+        className={`h-full overflow-y-auto w-52 xl:w-60 2xl:w-80 overflow-x-hidden p-4 ${mixins.appleScrollbar}`}
         style={{
           position: "fixed",
           top: `${topHeightPx}`,

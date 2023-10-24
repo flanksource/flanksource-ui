@@ -32,21 +32,23 @@ export const columnObject = {
   health: {
     Header: "Health",
     accessor: "status",
-    cellClass: "w-36 overflow-hidden overflow-ellipsis relative"
+    cellClass:
+      "w-16 xl:w-20 2xl:w-36 overflow-hidden overflow-ellipsis relative"
   },
   last_transition_time: {
     Header: "Last Transition",
     accessor: "last_transition_time",
-    cellClass: "w-36 overflow-hidden overflow-ellipsis relative"
+    cellClass:
+      "w-20 xl:w-24 2xl:w-36 overflow-hidden overflow-ellipsis relative"
   },
   uptime: {
     Header: "Uptime",
     accessor: "uptime",
-    cellClass: "w-28 overflow-hidden overflow-ellipsis relative"
+    cellClass: "w-16 2xl:w-36 overflow-hidden overflow-ellipsis relative"
   },
   latency: {
     Header: "Latency",
     accessor: "latency",
-    cellClass: "w-28 overflow-hidden overflow-ellipsis relative"
+    cellClass: "w-16 2xl:w-36 overflow-hidden overflow-ellipsis relative"
   }
 };
