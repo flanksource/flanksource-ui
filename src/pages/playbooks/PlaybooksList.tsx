@@ -1,20 +1,19 @@
 import { useState } from "react";
 import { AiFillPlusCircle } from "react-icons/ai";
+import { useNavigate } from "react-router-dom";
 import { useGetAllPlaybookSpecs } from "../../api/query-hooks/playbooks";
 import { BreadcrumbNav, BreadcrumbRoot } from "../../components/BreadcrumbNav";
 import ErrorPage from "../../components/Errors/ErrorPage";
 import { Head } from "../../components/Head/Head";
 import { SearchLayout } from "../../components/Layout";
-import PlaybookSpecsForm from "../../components/Playbooks/Settings/PlaybookSpecsForm";
-import PlaybookSpecsTable, {
-  PlaybookSpec
-} from "../../components/Playbooks/Settings/PlaybookSpecsTable";
 import { playbookRunsPageTabs } from "../../components/Playbooks/Runs/PlaybookRunsPageTabs";
+import PlaybookSpecsForm from "../../components/Playbooks/Settings/PlaybookSpecsForm";
+import PlaybookSpecsTable from "../../components/Playbooks/Settings/PlaybookSpecsTable";
 import TabbedLinks from "../../components/Tabs/TabbedLinks";
 
 export function PlaybooksListPage() {
   const [isOpen, setIsOpen] = useState(false);
-  const [editedRow, setEditedRow] = useState<PlaybookSpec>();
+  const navigate = useNavigate();
 
   const {
     isLoading,
@@ -38,7 +37,6 @@ export function PlaybooksListPage() {
                 className=""
                 onClick={() => {
                   setIsOpen(true);
-                  setEditedRow(undefined);
                 }}
               >
                 <AiFillPlusCircle size={32} className="text-blue-600" />
@@ -58,9 +56,8 @@ export function PlaybooksListPage() {
               <PlaybookSpecsTable
                 data={playbooks ?? []}
                 isLoading={isLoading}
-                onRowClick={(val) => {
-                  setIsOpen(true);
-                  setEditedRow(val);
+                onRowClick={(playbook) => {
+                  navigate(`/playbooks/runs?playbook=${playbook.id}`);
                 }}
               />
             )}
@@ -70,9 +67,7 @@ export function PlaybooksListPage() {
           isOpen={isOpen}
           onClose={() => {
             setIsOpen(false);
-            setEditedRow(undefined);
           }}
-          playbook={editedRow}
           refresh={refetch}
         />
       </SearchLayout>

@@ -6,18 +6,19 @@ import {
   BreadcrumbNav,
   BreadcrumbRoot
 } from "../../components/BreadcrumbNav";
+import { Head } from "../../components/Head/Head";
 import { SearchLayout } from "../../components/Layout";
 import PlaybookRunsActions from "../../components/Playbooks/Runs/Actions/PlaybookRunsActions";
-import CardsSkeletonLoader from "../../components/SkeletonLoader/CardsSkeletonLoader";
-import { Head } from "../../components/Head/Head";
 import { playbookRunsPageTabs } from "../../components/Playbooks/Runs/PlaybookRunsPageTabs";
+import CardsSkeletonLoader from "../../components/SkeletonLoader/CardsSkeletonLoader";
 import TabbedLinks from "../../components/Tabs/TabbedLinks";
+import { relativeDateTime } from "../../utils/date";
 
 export default function PlaybookRunsDetailsPage() {
   const { id } = useParams();
 
   const {
-    data: playbookRuns,
+    data: playbookRun,
     isLoading,
     refetch
   } = useQuery({
@@ -34,8 +35,23 @@ export default function PlaybookRunsDetailsPage() {
           <BreadcrumbNav
             list={[
               <BreadcrumbRoot link="/playbooks">Playbooks</BreadcrumbRoot>,
+              ...(playbookRun?.playbooks
+                ? [
+                    <BreadcrumbChild
+                      link={`/playbooks/${playbookRun?.playbooks.id}`}
+                    >
+                      {playbookRun?.playbooks.name}
+                    </BreadcrumbChild>
+                  ]
+                : []),
               <BreadcrumbChild link="/playbooks/runs">Runs</BreadcrumbChild>,
-              <BreadcrumbChild>{id}</BreadcrumbChild>
+              ...(playbookRun?.start_time
+                ? [
+                    <BreadcrumbChild>
+                      {relativeDateTime(playbookRun.start_time)}
+                    </BreadcrumbChild>
+                  ]
+                : [<BreadcrumbChild>{playbookRun?.id}</BreadcrumbChild>])
             ]}
           />
         }
@@ -45,8 +61,8 @@ export default function PlaybookRunsDetailsPage() {
       >
         <TabbedLinks activeTabName={`Runs`} tabLinks={playbookRunsPageTabs}>
           <div className={`flex flex-col mx-auto h-full p-4`}>
-            {playbookRuns ? (
-              <PlaybookRunsActions data={playbookRuns} />
+            {playbookRun ? (
+              <PlaybookRunsActions data={playbookRun} />
             ) : (
               <CardsSkeletonLoader />
             )}

@@ -11,7 +11,7 @@ import { Topology } from "../../context/TopologyPageContext";
 import { features } from "../../services/permissions/features";
 import { ActionLink } from "../ActionLink/ActionLink";
 import { AttachEvidenceDialog } from "../AttachEvidenceDialog";
-import SelectPlaybookToRun from "../Playbooks/Runs/SelectPlaybookToRun";
+import SelectPlaybookToRun from "../Playbooks/Runs/Submit/SelectPlaybookToRun";
 import TopologySnapshotModal from "../TopologyCard/TopologySnapshotModal";
 import { TopologyConfigLinkModal } from "../TopologyConfigLinkModal/TopologyConfigLinkModal";
 
