@@ -32,6 +32,8 @@ export type Topology = {
   icon?: string;
   text?: string;
   status?: string;
+  status_reason?: string;
+  namespace?: string;
   hidden?: boolean;
   external_id?: string;
   agent_id?: string;
@@ -47,9 +49,17 @@ export type Topology = {
     >;
     [key: string]: any;
   };
-  logs: {
+  logs?: {
     name: string;
   }[];
-  parents: string[];
-  children: string[];
+  parents?: string[];
+  children?: string[];
+  is_leaf?: boolean;
+  description?: string;
+  checks?: {
+    health: number;
+    warning: number;
+    unhealthy: number;
+  };
+  deleted_at?: string;
 } & CostsData;

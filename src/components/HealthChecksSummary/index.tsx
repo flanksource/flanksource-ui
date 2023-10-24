@@ -3,7 +3,7 @@ import { AiFillHeart } from "react-icons/ai";
 import { StatusLine, StatusLineProps } from "../StatusLine/StatusLine";
 
 type HealthChecksSummaryProps = React.HTMLProps<HTMLDivElement> & {
-  checks: {
+  checks?: {
     health: number;
     warning: number;
     unhealthy: number;

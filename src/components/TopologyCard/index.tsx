@@ -1,20 +1,20 @@
 import clsx from "clsx";
-import { filter } from "lodash";
-import { useEffect, useState, useMemo, MouseEventHandler } from "react";
+import { MouseEventHandler, useEffect, useMemo, useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { getTopology } from "../../api/services/topology";
+import { Topology } from "../../context/TopologyPageContext";
 import { Size } from "../../types";
+import AgentName from "../Agents/AgentName";
 import { CustomScroll } from "../CustomScroll";
+import { HealthChecksSummary } from "../HealthChecksSummary";
 import { HealthSummary } from "../HealthSummary";
 import { Icon } from "../Icon";
-import { HealthChecksSummary } from "../HealthChecksSummary";
-import { CardMetrics } from "./CardMetrics";
-import { Property } from "./Property";
-import { TopologyDropdownMenu } from "./TopologyDropdownMenu";
 import IncidentCardSummary from "../IncidentCardSummary";
 import TopologyCardSkeletonLoader from "../SkeletonLoader/TopologyCardSkeletonLoader";
+import { CardMetrics } from "./CardMetrics";
+import { Property } from "./Property";
 import { TopologyConfigAnalysisLine } from "./TopologyConfigAnalysisLine";
-import AgentName from "../Agents/AgentName";
+import { TopologyDropdownMenu } from "./TopologyDropdownMenu";
 
 export enum ComponentStatus {
   unhealthy = "unhealthy",
@@ -36,7 +36,7 @@ export const StatusStyles: Record<keyof typeof ComponentStatus, string> = {
 interface IProps {
   size: Size | string;
   topologyId?: string;
-  topology?: any;
+  topology?: Topology;
   selectionMode?: boolean;
   selected?: boolean;
   onSelectionChange?: MouseEventHandler<HTMLDivElement>;
@@ -85,7 +85,7 @@ export function TopologyCard({
       topology.summary.unhealthy = topology.summary.unhealthy || 0;
       topology.summary.warning = topology.summary.warning || 0;
       Object.keys(topology.summary).forEach((key) => {
-        totalCount += topology.summary[key];
+        totalCount += topology.summary?.[key];
       });
     }
     return (
@@ -94,11 +94,7 @@ export function TopologyCard({
     );
   };
 
-  const prepareTopologyLink = (topologyItem: {
-    id: string;
-    parent_id: string;
-    path: string;
-  }) => {
+  const prepareTopologyLink = (topologyItem: Topology) => {
     if (topologyItem.id === parentId && parentId) {
       return "";
     }
@@ -125,8 +121,8 @@ export function TopologyCard({
   }
 
   topology.properties = topology.properties || [];
-  const properties = filter(topology.properties, (i) => !i.headline);
-  const heading = filter(topology.properties, (i) => i.headline);
+  const properties = topology.properties.filter((i) => !i.headline);
+  const heading = topology.properties.filter((i) => i.headline);
 
   return (
     <div
@@ -210,7 +206,7 @@ export function TopologyCard({
                     key={index}
                     property={property}
                     className={
-                      index === topology.properties.length - 1
+                      index === topology.properties!.length - 1
                         ? "mb-0"
                         : "mb-2.5"
                     }

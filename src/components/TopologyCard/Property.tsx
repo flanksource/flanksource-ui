@@ -41,12 +41,12 @@ export function FormatProperty({
 
 type PropertyProps = {
   property: TopologyProperty;
-} & React.HTMLAttributes<HTMLDivElement>;
+} & Omit<React.HTMLAttributes<HTMLDivElement>, "property">;
 
 export const Property = ({
   property,
   className = "",
-  ...rest
+  ...props
 }: PropertyProps) => {
   const { name, icon, color } = property;
   const label =
@@ -65,7 +65,7 @@ export const Property = ({
         { [className]: className },
         icon ? "flex-row" : "flex-col"
       )}
-      {...rest}
+      {...props}
     >
       <Icon name={icon} className="mr-1 w-4" />
       {!isEmpty(label) && (
