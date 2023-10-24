@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { getAgentByID } from "../../api/services/topology";
+import { Badge } from "../Badge";
 
 type TopologyCardAgentProps = {
   agentId?: string;
@@ -18,5 +19,5 @@ export default function AgentName({ agentId }: TopologyCardAgentProps) {
     return null;
   }
 
-  return <div className="text-gray-400 text-sm">{agent.name}</div>;
+  return <Badge title={agent.description} text={agent.name} />;
 }

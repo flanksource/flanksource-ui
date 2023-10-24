@@ -143,8 +143,8 @@ export function TopologyCard({
               <Icon name={topology.icon} className="h-6" />
             </h3>
           </div>
-          <div className="flex-1 m-auto overflow-hidden">
-            <p
+          <div className="flex flex-col flex-1 m-auto overflow-hidden">
+            <div
               className="font-bold overflow-hidden truncate align-middle text-15pxinrem leading-1.21rel"
               title={topology.name}
             >
@@ -155,13 +155,18 @@ export function TopologyCard({
               )}
               {!prepareTopologyLink(topology) &&
                 (topology.text || topology.name)}
-            </p>
-            <AgentName agentId={topology.agent_id} />
-            {topology.description && (
-              <h3 className="text-gray-color overflow-hidden truncate text-2xsi leading-1.21rel font-medium">
-                {topology.description}
-              </h3>
-            )}
+            </div>
+            <div className="flex flex-row items-center gap-1.5 text-gray-500">
+              <AgentName agentId={topology.agent_id} />
+              {topology.status_reason && (
+                <div
+                  title={topology.status_reason}
+                  className="text-sm text-gray-400 flex-1 text-ellipsis overflow-hidden whitespace-nowrap"
+                >
+                  {topology.status_reason}
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
