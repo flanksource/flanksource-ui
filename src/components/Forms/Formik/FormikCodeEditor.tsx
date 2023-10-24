@@ -2,8 +2,8 @@ import { useField, useFormikContext } from "formik";
 import { isEmpty } from "lodash";
 import dynamic from "next/dynamic";
 import { useEffect, useMemo, useState } from "react";
-import useDebounce from "../../../hooks/useDebounce";
 import YAML from "yaml";
+import useDebounce from "../../../hooks/useDebounce";
 
 const CodeEditor = dynamic(
   () => import("../../CodeEditor").then((m) => m.CodeEditor),
