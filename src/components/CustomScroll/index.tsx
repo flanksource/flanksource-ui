@@ -1,9 +1,9 @@
 import clsx from "clsx";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 export type CustomScrollProps = {
   maxHeight: string;
-  children: JSX.Element | JSX.Element[];
+  children: React.ReactNode;
   showMoreClass?: string;
   minChildCount: number;
 } & React.HTMLProps<HTMLDivElement>;

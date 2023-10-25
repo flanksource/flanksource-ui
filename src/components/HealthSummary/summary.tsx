@@ -4,22 +4,15 @@ import {
   StatusLine,
   StatusLineProps
 } from "../StatusLine/StatusLine";
-
-type TopologyComponentProp = {
-  id: string;
-  name: string;
-  icon: string;
-  summary: { [key: string]: number };
-  components?: TopologyComponentProp[];
-} & { [key: string]: any };
+import { Topology } from "../../context/TopologyPageContext";
 
 type HealthSummaryProps = {
-  component: TopologyComponentProp;
+  component: Topology;
   iconSize?: "2xs" | "2xsi" | "xs" | "sm" | "md" | "lg" | "xl" | "2xl";
   viewType?: "individual_level" | "children_level";
 } & React.HTMLProps<HTMLDivElement>;
 
-function getStatuses(summary: { [key: string]: number }, url?: string) {
+function getStatuses(summary?: { [key: string]: number }, url?: string) {
   if (!summary) {
     return [];
   }
@@ -88,7 +81,7 @@ export const HealthSummary = ({
       data.label = component.name;
       data.url = `/topology/${component.id}`;
       data.statuses = getStatuses(
-        component.summary,
+        component?.summary,
         `/topology/${component.id}`
       );
     } else {

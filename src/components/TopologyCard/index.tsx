@@ -1,20 +1,21 @@
+import { useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
-import { filter } from "lodash";
-import { useEffect, useState, useMemo, MouseEventHandler } from "react";
+import { MouseEventHandler, useMemo } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { getTopology } from "../../api/services/topology";
+import { Topology } from "../../context/TopologyPageContext";
 import { Size } from "../../types";
+import AgentName from "../Agents/AgentName";
 import { CustomScroll } from "../CustomScroll";
+import { HealthChecksSummary } from "../HealthChecksSummary";
 import { HealthSummary } from "../HealthSummary";
 import { Icon } from "../Icon";
-import { HealthChecksSummary } from "../HealthChecksSummary";
-import { CardMetrics } from "./CardMetrics";
-import { Property } from "./Property";
-import { TopologyDropdownMenu } from "./TopologyDropdownMenu";
 import IncidentCardSummary from "../IncidentCardSummary";
 import TopologyCardSkeletonLoader from "../SkeletonLoader/TopologyCardSkeletonLoader";
+import { CardMetrics } from "./CardMetrics";
+import { Property } from "./Property";
 import { TopologyConfigAnalysisLine } from "./TopologyConfigAnalysisLine";
-import AgentName from "../Agents/AgentName";
+import { TopologyDropdownMenu } from "./TopologyDropdownMenu";
 
 export enum ComponentStatus {
   unhealthy = "unhealthy",
@@ -34,9 +35,9 @@ export const StatusStyles: Record<keyof typeof ComponentStatus, string> = {
 };
 
 interface IProps {
-  size: Size | string;
+  size?: Size | string;
   topologyId?: string;
-  topology?: any;
+  topology?: Topology;
   selectionMode?: boolean;
   selected?: boolean;
   onSelectionChange?: MouseEventHandler<HTMLDivElement>;
@@ -52,17 +53,18 @@ export function TopologyCard({
   onSelectionChange,
   isTopologyPage = false
 }: IProps) {
-  const [topology, setTopology] = useState(topologyData);
   const [searchParams] = useSearchParams();
   const { id: parentId } = useParams();
 
-  useEffect(() => {
-    if (topologyId != null && topologyData == null) {
-      getTopology({ id: topologyId }).then(({ components }) =>
-        setTopology(components?.[0])
-      );
-    }
-  }, [topologyId, topologyData]);
+  const { data } = useQuery({
+    queryKey: ["topology", topologyId],
+    queryFn: () => getTopology({ id: topologyId }),
+    enabled: !!topologyId && topologyData == null
+  });
+
+  const topology = useMemo(() => {
+    return topologyData || data?.components?.[0];
+  }, [data, topologyData]);
 
   let selectionModeRootProps = null;
 
@@ -85,7 +87,7 @@ export function TopologyCard({
       topology.summary.unhealthy = topology.summary.unhealthy || 0;
       topology.summary.warning = topology.summary.warning || 0;
       Object.keys(topology.summary).forEach((key) => {
-        totalCount += topology.summary[key];
+        totalCount += topology.summary?.[key];
       });
     }
     return (
@@ -94,11 +96,7 @@ export function TopologyCard({
     );
   };
 
-  const prepareTopologyLink = (topologyItem: {
-    id: string;
-    parent_id: string;
-    path: string;
-  }) => {
+  const prepareTopologyLink = (topologyItem: Topology) => {
     if (topologyItem.id === parentId && parentId) {
       return "";
     }
@@ -125,8 +123,8 @@ export function TopologyCard({
   }
 
   topology.properties = topology.properties || [];
-  const properties = filter(topology.properties, (i) => !i.headline);
-  const heading = filter(topology.properties, (i) => i.headline);
+  const properties = topology.properties.filter((i) => !i.headline);
+  const heading = topology.properties.filter((i) => i.headline);
 
   return (
     <div
@@ -145,8 +143,8 @@ export function TopologyCard({
               <Icon name={topology.icon} className="h-6" />
             </h3>
           </div>
-          <div className="flex-1 m-auto overflow-hidden">
-            <p
+          <div className="flex flex-col flex-1 m-auto overflow-hidden">
+            <div
               className="font-bold overflow-hidden truncate align-middle text-15pxinrem leading-1.21rel"
               title={topology.name}
             >
@@ -157,13 +155,18 @@ export function TopologyCard({
               )}
               {!prepareTopologyLink(topology) &&
                 (topology.text || topology.name)}
-            </p>
-            <AgentName agentId={topology.agent_id} />
-            {topology.description && (
-              <h3 className="text-gray-color overflow-hidden truncate text-2xsi leading-1.21rel font-medium">
-                {topology.description}
-              </h3>
-            )}
+            </div>
+            <div className="flex flex-row items-center gap-1.5 text-gray-500">
+              <AgentName agentId={topology.agent_id} />
+              {topology.status_reason && (
+                <div
+                  title={topology.status_reason}
+                  className="text-sm text-gray-400 flex-1 text-ellipsis overflow-hidden whitespace-nowrap"
+                >
+                  {topology.status_reason}
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
@@ -210,7 +213,7 @@ export function TopologyCard({
                     key={index}
                     property={property}
                     className={
-                      index === topology.properties.length - 1
+                      index === topology.properties!.length - 1
                         ? "mb-0"
                         : "mb-2.5"
                     }
