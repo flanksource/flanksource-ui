@@ -1,7 +1,10 @@
-import { ComponentProps, useMemo } from "react";
-import Highlight, { defaultProps, Language } from "prism-react-renderer";
+import Highlight, { Language, defaultProps } from "prism-react-renderer";
 import vsLight from "prism-react-renderer/themes/vsLight";
+import { ComponentProps, useMemo } from "react";
+import { GoCopy } from "react-icons/go";
 import { parse, stringify } from "yaml";
+import { Button } from "../Button";
+import { useCopyToClipboard } from "../Hooks/useCopyToClipboard";
 
 type RenderProps = Parameters<
   ComponentProps<typeof Highlight>["children"]
@@ -34,7 +37,7 @@ function JSONViewerLine({
     >
       {showLineNo && (
         <span
-          className="text-gray-400 text-xs px-1 select-none"
+          className="text-gray-400 text-xs pr-2 select-none"
           style={{ display: "table-cell" }}
         >
           {idx + 1}
@@ -63,6 +66,7 @@ type JSONViewerProps = {
    *
    **/
   convertToYaml?: boolean;
+  hideCopyButton?: boolean;
 };
 
 export function JSONViewer({
@@ -71,7 +75,8 @@ export function JSONViewer({
   showLineNo,
   selections,
   onClick = () => {},
-  convertToYaml = false
+  convertToYaml = false,
+  hideCopyButton = false
 }: JSONViewerProps) {
   // convert JSON object to YAML string
   const codeForHighlight = useMemo(() => {
@@ -92,6 +97,8 @@ export function JSONViewer({
     return code;
   }, [code, convertToYaml, format]);
 
+  const copyFn = useCopyToClipboard();
+
   const formatDerived = useMemo(() => {
     if (format !== "json") {
       return format;
@@ -103,34 +110,49 @@ export function JSONViewer({
   }, [convertToYaml, format]);
 
   return (
-    <Highlight
-      {...defaultProps}
-      code={codeForHighlight}
-      theme={vsLight}
-      language={formatDerived}
-    >
-      {({ className, style, tokens, getLineProps, getTokenProps }) => (
-        <pre className={`${className} text-sm`} style={style}>
-          {tokens.map((line, i) => {
-            const { style, ...props } = getLineProps({ line, key: i });
-            return (
-              <JSONViewerLine
-                {...props}
-                style={{
-                  ...style,
-                  display: showLineNo ? "table-row" : "block",
-                  backgroundColor: selections && selections[i] ? "#cfe3ff" : ""
-                }}
-                onClick={onClick}
-                getTokenProps={getTokenProps}
-                showLineNo={showLineNo}
-                idx={i}
-                line={line}
-              />
-            );
-          })}
-        </pre>
+    <div className="flex flex-col relative">
+      <Highlight
+        {...defaultProps}
+        code={codeForHighlight}
+        theme={vsLight}
+        language={formatDerived}
+      >
+        {({ className, style, tokens, getLineProps, getTokenProps }) => (
+          <pre className={`${className} text-sm`} style={style}>
+            {tokens.map((line, i) => {
+              const { style, ...props } = getLineProps({ line, key: i });
+              return (
+                <JSONViewerLine
+                  {...props}
+                  style={{
+                    ...style,
+                    display: showLineNo ? "table-row" : "block",
+                    backgroundColor:
+                      selections && selections[i] ? "#cfe3ff" : ""
+                  }}
+                  onClick={onClick}
+                  getTokenProps={getTokenProps}
+                  showLineNo={showLineNo}
+                  idx={i}
+                  line={line}
+                />
+              );
+            })}
+          </pre>
+        )}
+      </Highlight>
+      {!hideCopyButton && (
+        <Button
+          icon={<GoCopy />}
+          title="Copy to clipboard"
+          className={
+            "bg-white z-[99999999999999999] absolute right-4  text-black"
+          }
+          onClick={async () => {
+            await copyFn(codeForHighlight);
+          }}
+        />
       )}
-    </Highlight>
+    </div>
   );
 }
