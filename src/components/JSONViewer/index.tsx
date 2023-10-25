@@ -34,7 +34,7 @@ function JSONViewerLine({
     >
       {showLineNo && (
         <span
-          className="text-gray-400 text-xs px-1"
+          className="text-gray-400 text-xs px-1 select-none"
           style={{ display: "table-cell" }}
         >
           {idx + 1}
