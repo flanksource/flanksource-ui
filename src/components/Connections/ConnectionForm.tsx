@@ -15,6 +15,7 @@ import { Icon } from "../Icon";
 import React from "react";
 import { FaTrash } from "react-icons/fa";
 import { Button } from "../Button";
+import { mapValues, method } from "lodash";
 
 export type Connection = {
   altID?: string;
@@ -56,6 +57,7 @@ export type Connection = {
   username?: string;
   webhook?: string;
   workstation?: string;
+  properties?: Record<string, any>;
 };
 
 type ConnectionFormProps = React.HTMLProps<HTMLDivElement> & {
@@ -98,13 +100,22 @@ export default function ConnectionForm({
 
   const convertData = (data: Connection) => {
     if (connectionType?.preSubmitConverter) {
-      return connectionType.preSubmitConverter(data as any) as Connection;
+      const x = connectionType.preSubmitConverter(data as any) as Connection;
+      return {
+        ...x,
+        properties: mapValues(x.properties, method("toString"))
+      };
     }
     const result: Record<string, string | undefined | boolean | number> = {};
     connectionType?.fields.forEach((field) => {
-      result[field.key] = data[field.key as keyof Connection]!;
+      result[field.key] =
+        data[field.key as keyof Omit<Connection, "properties">]!;
     });
-    return result as Connection;
+    return {
+      ...result,
+      name: data.name,
+      properties: mapValues(data.properties, method("toString"))
+    } as Connection;
   };
 
   const getFieldView = (field: Field) => {

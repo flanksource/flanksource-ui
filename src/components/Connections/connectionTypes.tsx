@@ -591,7 +591,7 @@ export const connectionTypes: ConnectionType[] = [
         ...data,
         region: data.properties?.region,
         profile: data.properties?.profile,
-        insecure_tls: data.properties?.insecureTLS
+        insecure_tls: data.properties?.insecureTLS === "true"
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
