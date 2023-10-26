@@ -360,7 +360,7 @@ export const connectionTypes: ConnectionType[] = [
   {
     title: "Redis",
     icon: "redis",
-    value: ConnectionValueType.AWS,
+    value: ConnectionValueType.Redis,
     fields: [
       {
         label: "Name",
