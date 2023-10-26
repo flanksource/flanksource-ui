@@ -1,13 +1,13 @@
 import { useMemo } from "react";
 import { FaTags } from "react-icons/fa";
-import { useGetConfigByIdQuery } from "../../api/query-hooks";
-import { relativeDateTime } from "../../utils/date";
-import { CountBadge } from "../Badge/CountBadge";
-import CollapsiblePanel from "../CollapsiblePanel";
-import { DescriptionCard } from "../DescriptionCard";
-import { InfoMessage } from "../InfoMessage";
-import TextSkeletonLoader from "../SkeletonLoader/TextSkeletonLoader";
-import Title from "../Title/title";
+import { useGetConfigByIdQuery } from "../../../api/query-hooks";
+import { relativeDateTime } from "../../../utils/date";
+import { CountBadge } from "../../Badge/CountBadge";
+import CollapsiblePanel from "../../CollapsiblePanel";
+import { DescriptionCard } from "../../DescriptionCard";
+import { InfoMessage } from "../../InfoMessage";
+import TextSkeletonLoader from "../../SkeletonLoader/TextSkeletonLoader";
+import Title from "../../Title/title";
 import { capitalize } from "lodash";
 
 type Props = {

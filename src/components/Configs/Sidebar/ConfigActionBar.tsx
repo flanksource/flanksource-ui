@@ -1,12 +1,12 @@
 import clsx from "clsx";
 import React, { useEffect, useMemo, useState } from "react";
 import { MdAlarmAdd } from "react-icons/md";
-import { useGetConfigByIdQuery } from "../../api/query-hooks";
-import { EvidenceType } from "../../api/services/evidence";
-import { usePartialUpdateSearchParams } from "../../hooks/usePartialUpdateSearchParams";
-import { ActionLink } from "../ActionLink/ActionLink";
-import AttachAsEvidenceButton from "../AttachEvidenceDialog/AttachAsEvidenceDialogButton";
-import SelectPlaybookToRun from "../Playbooks/Runs/Submit/SelectPlaybookToRun";
+import { useGetConfigByIdQuery } from "../../../api/query-hooks";
+import { EvidenceType } from "../../../api/services/evidence";
+import { usePartialUpdateSearchParams } from "../../../hooks/usePartialUpdateSearchParams";
+import { ActionLink } from "../../ActionLink/ActionLink";
+import AttachAsEvidenceButton from "../../AttachEvidenceDialog/AttachAsEvidenceDialogButton";
+import SelectPlaybookToRun from "../../Playbooks/Runs/Submit/SelectPlaybookToRun";
 
 type ConfigActionBarProps = {
   configId: string;
