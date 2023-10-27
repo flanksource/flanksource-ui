@@ -1,0 +1,62 @@
+import { useFormikContext } from "formik";
+import { get } from "lodash";
+import { useState } from "react";
+import { Switch } from "../Switch";
+import RenderConnectionFormFields from "./RenderConnectionFormFields";
+import { ConnectionFormFields } from "./connectionTypes";
+
+type Props = {
+  field: ConnectionFormFields;
+};
+
+export default function FormikConnectionOptionsSwitchField({ field }: Props) {
+  const { setFieldValue, values } = useFormikContext<Record<string, any>>();
+
+  const [selectedGroup, setSelectedGroup] = useState(() => {
+    // find the first field that has a value
+    const firstField = field.options?.find((option) => {
+      return option.fields?.find((field) => get(values, field.key));
+    });
+    return firstField?.key ?? field.default ?? field.options?.[0]?.key;
+  });
+
+  if (!field.options) {
+    return null;
+  }
+
+  const selectedField = field.options.find(
+    (option) => option.key === selectedGroup
+  );
+
+  return (
+    <div className="flex flex-col gap-4 overflow-y-auto">
+      <label className="font-semibold text-sm">{field.label}</label>
+      <div className="flex flex-row">
+        <Switch
+          options={[...field.options?.map((option) => option.label)]}
+          defaultValue="None"
+          value={
+            field.options?.find((option) => option.key === selectedGroup)?.label
+          }
+          onChange={(v) => {
+            // reset all other fields that are not selected
+            field.options?.forEach((option) => {
+              if (option.key === v) {
+                return;
+              }
+              setFieldValue(option.key, undefined);
+            });
+            setSelectedGroup(
+              field.options?.find((option) => option.label === v)?.key
+            );
+          }}
+        />
+      </div>
+      <div className="flex flex-col gap-4 overflow-y-auto px-4">
+        {selectedField?.fields?.map((field) => (
+          <RenderConnectionFormFields field={field} key={field.key} />
+        ))}
+      </div>
+    </div>
+  );
+}

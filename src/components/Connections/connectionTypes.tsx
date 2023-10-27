@@ -7,7 +7,8 @@ const enum ConnectionsFieldTypes {
   checkbox = "checkbox",
   input = "input",
   numberInput = "numberInput",
-  EnvVarSource = "EnvVarSource"
+  EnvVarSource = "EnvVarSource",
+  switch = "switch"
 }
 
 type Variant = "small" | "large";
@@ -17,7 +18,7 @@ const variants: { [key: string]: Variant } = {
   large: "large"
 };
 
-export type Field = {
+export type ConnectionFormFields = {
   label: string;
   key: string;
   type: ConnectionsFieldTypes;
@@ -25,6 +26,11 @@ export type Field = {
   required?: boolean;
   hint?: string;
   default?: boolean | number | string;
+  options?: {
+    label: string;
+    key: string;
+    fields: Omit<ConnectionFormFields, "options">[];
+  }[];
 };
 
 export const enum ConnectionValueType {
@@ -74,7 +80,7 @@ export type ConnectionType = {
   title: string;
   value: ConnectionValueType;
   icon?: React.ReactNode | string | null;
-  fields: Field[];
+  fields: ConnectionFormFields[];
   convertToFormSpecificValue?: (data: Record<string, string>) => Connection;
   preSubmitConverter?: (data: Record<string, string>) => object;
   hide?: boolean;
@@ -1826,22 +1832,40 @@ export const connectionTypes: ConnectionType[] = [
         required: true
       },
       {
-        label: "Username",
-        key: "username",
-        type: ConnectionsFieldTypes.EnvVarSource,
-        variant: variants.large
-      },
-      {
-        label: "Password",
-        key: "password",
-        type: ConnectionsFieldTypes.EnvVarSource,
-        variant: variants.large
-      },
-      {
-        label: "SSH Key",
-        key: "certificate",
-        type: ConnectionsFieldTypes.EnvVarSource,
-        variant: variants.large
+        label: "Authentication",
+        key: "authentication",
+        type: ConnectionsFieldTypes.switch,
+        default: "password",
+        options: [
+          {
+            label: "Password",
+            key: "password",
+            fields: [
+              {
+                label: "Username",
+                key: "username",
+                type: ConnectionsFieldTypes.EnvVarSource
+              },
+              {
+                label: "Password",
+                key: "password",
+                type: ConnectionsFieldTypes.EnvVarSource
+              }
+            ]
+          },
+          {
+            label: "SSH Key",
+            key: "certificate",
+            fields: [
+              {
+                label: "SSH Key",
+                key: "certificate",
+                type: ConnectionsFieldTypes.EnvVarSource,
+                variant: variants.large
+              }
+            ]
+          }
+        ]
       },
       {
         label: "Ref",

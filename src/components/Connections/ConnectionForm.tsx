@@ -1,21 +1,17 @@
 import clsx from "clsx";
 import { Form, Formik } from "formik";
-import FormikTextInput from "../Forms/Formik/FormikTextInput";
-import FormikCheckbox from "../Forms/Formik/FormikCheckbox";
+import { mapValues, method } from "lodash";
+import React, { useEffect, useState } from "react";
+import { FaTrash } from "react-icons/fa";
+import { Button } from "../Button";
+import { Icon } from "../Icon";
 import { Modal } from "../Modal";
-import { useEffect, useState } from "react";
+import RenderConnectionFormFields from "./RenderConnectionFormFields";
 import {
   ConnectionType,
   ConnectionValueType,
-  Field,
   connectionTypes
 } from "./connectionTypes";
-import { FormikEnvVarSource } from "../Forms/Formik/FormikEnvVarSource";
-import { Icon } from "../Icon";
-import React from "react";
-import { FaTrash } from "react-icons/fa";
-import { Button } from "../Button";
-import { mapValues, method } from "lodash";
 
 export type Connection = {
   altID?: string;
@@ -119,55 +115,6 @@ export default function ConnectionForm({
     } as Connection;
   };
 
-  const getFieldView = (field: Field) => {
-    const type = field.type ?? "input";
-    switch (type) {
-      case "input":
-        return (
-          <FormikTextInput
-            name={field.key}
-            label={field.label}
-            required={field.required}
-            hint={field.hint}
-            defaultValue={field.default?.toString()}
-          />
-        );
-      case "numberInput":
-        return (
-          <FormikTextInput
-            type="number"
-            name={field.key}
-            label={field.label}
-            required={field.required}
-            hint={field.hint}
-            defaultValue={field.default?.toString()}
-          />
-        );
-      case "checkbox":
-        return (
-          <FormikCheckbox
-            name={field.key}
-            label={field.label}
-            labelClassName="text-sm font-semibold text-gray-700"
-            required={field.required}
-            hint={field.hint}
-          />
-        );
-      case "EnvVarSource":
-        return (
-          <FormikEnvVarSource
-            name={field.key}
-            label={field.label}
-            variant={field.variant}
-            hint={field.hint}
-            required={field.required}
-          />
-        );
-      default:
-        return null;
-    }
-  };
-
   const getFormView = (connectionType: ConnectionType) => {
     return (
       <Formik
@@ -204,9 +151,7 @@ export default function ConnectionForm({
               <div className="flex flex-col space-y-4 overflow-y-auto p-4">
                 {connectionType.fields.map((field, index) => {
                   return (
-                    <React.Fragment key={index}>
-                      {getFieldView(field)}
-                    </React.Fragment>
+                    <RenderConnectionFormFields field={field} key={field.key} />
                   );
                 })}
               </div>
