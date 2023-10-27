@@ -191,13 +191,12 @@ export default function ConnectionForm({
           });
         }}
       >
-        <Form>
+        <Form className="flex flex-col flex-1 overflow-y-auto">
           <div
             className={clsx(
-              "flex flex-col h-full my-2 overflow-y-auto",
+              "flex flex-col flex-1 my-2 overflow-y-auto",
               className
             )}
-            style={{ maxHeight: "calc(65vh)" }}
             {...props}
           >
             <div className={clsx("flex flex-col px-2 mb-2")}>
@@ -280,7 +279,7 @@ export default function ConnectionForm({
         title={
           connectionType ? (
             <div
-              className="flex flex-row items-center space-x-2"
+              className="flex flex-row items-center gap-2 overflow-y-auto"
               key={connectionType.title}
             >
               {typeof connectionType?.icon === "string" ? (
