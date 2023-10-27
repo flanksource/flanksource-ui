@@ -148,26 +148,30 @@ export const TopologySort = ({
     <>
       <div
         ref={popoverRef as LegacyRef<HTMLDivElement>}
-        className="flex mt-1 cursor-pointer md:mt-0 md:items-center border border-gray-300 bg-white rounded-md shadow-sm px-3 py-2"
+        className="flex cursor-pointer p-0 items-center border border-gray-300 bg-white rounded-md shadow-sm"
       >
-        {sortByDirection === "asc" && (
-          <BsSortUp
-            className="w-5 h-5 text-gray-700 hover:text-gray-900"
-            onClick={() => onSelectSortOption(sortBy, "desc")}
-          />
-        )}
-        {sortByDirection === "desc" && (
-          <BsSortDown
-            className="w-5 h-5 text-gray-700 hover:text-gray-900"
-            onClick={() => onSelectSortOption(sortBy, "asc")}
-          />
-        )}
-        <span
-          className="flex ml-2 text-sm text-gray-700 capitalize bold hover:text-gray-900"
+        <div
+          onClick={() =>
+            onSelectSortOption(
+              sortBy,
+              sortByDirection === "asc" ? "desc" : "asc"
+            )
+          }
+          className="flex items-center justify-center text-gray-700 hover:text-gray-900 px-3 py-1 pr-1 rounded-l-md h-full"
+        >
+          {sortByDirection === "asc" && (
+            <BsSortUp className="w-5 h-5 text-gray-700 hover:text-gray-900" />
+          )}
+          {sortByDirection === "desc" && (
+            <BsSortDown className="w-5 h-5 text-gray-700 hover:text-gray-900" />
+          )}
+        </div>
+        <div
+          className="flex ml-2 text-sm text-gray-700 capitalize bold hover:text-gray-900 px-3 py-1 pl-0 rounded-r-md h-full items-center"
           onClick={() => setIsPopoverActive((val) => !val)}
         >
           {sortLabels.find((s) => s.value === sortBy)?.label}
-        </span>
+        </div>
       </div>
       <div className="relative">
         <div
@@ -175,7 +179,7 @@ export const TopologySort = ({
           aria-orientation="vertical"
           aria-labelledby="menu-button"
           className={clsx(
-            "origin-top-right absolute right-0 mt-6 z-50 divide-y divide-gray-100 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none capitalize w-48",
+            "origin-top-right absolute right-0 mt-10 z-50 divide-y divide-gray-100 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none capitalize w-48",
             isPopoverActive ? "display-block" : "hidden"
           )}
         >
