@@ -22,7 +22,8 @@ module.exports = {
       }
     ],
     "react/jsx-fragments": [2, "syntax"],
-    "react/jsx-no-useless-fragment": [2]
+    "react/jsx-no-useless-fragment": [2],
+    "react/jsx-key": "warn"
   },
   overrides: [
     {
