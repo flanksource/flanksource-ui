@@ -8,7 +8,7 @@ import { DateCell } from "../../../ui/table";
 import { Avatar } from "../../Avatar";
 import { DataTable, PaginationOptions } from "../../DataTable";
 import { Icon } from "../../Icon";
-import PlaybookRunsStatus from "./PlaybookRunsStatus";
+import { PlaybookStatusDescription } from "./PlaybookRunsStatus";
 
 const playbookRunsTableColumns: ColumnDef<PlaybookRun>[] = [
   {
@@ -46,7 +46,7 @@ const playbookRunsTableColumns: ColumnDef<PlaybookRun>[] = [
     accessorKey: "status",
     cell: ({ getValue }) => {
       const status = getValue<PlaybookRunStatus>();
-      return <PlaybookRunsStatus status={status} className="capitalize" />;
+      return <PlaybookStatusDescription status={status} />;
     }
   },
   {

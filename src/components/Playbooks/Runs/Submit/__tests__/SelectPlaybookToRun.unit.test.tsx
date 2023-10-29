@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { rest } from "msw";
 import { setupServer } from "msw/node";
 import { PlaybookSpec } from "../../../Settings/PlaybookSpecsTable";
-import SelectPlaybookToRun from "./../SelectPlaybookToRun";
+import PlaybooksDropdownMenu from "../PlaybooksDropdownMenu";
 
 const playbooks: PlaybookSpec[] = [
   {
@@ -48,7 +48,7 @@ describe("SelectPlaybookToRun", () => {
   it("should render dropdown list with playbooks", async () => {
     render(
       <QueryClientProvider client={queryClient}>
-        <SelectPlaybookToRun component_id="component_id" />
+        <PlaybooksDropdownMenu component_id="component_id" />
       </QueryClientProvider>
     );
 
@@ -65,7 +65,7 @@ describe("SelectPlaybookToRun", () => {
   it("should open runs page, when you click a playbook item", async () => {
     render(
       <QueryClientProvider client={queryClient}>
-        <SelectPlaybookToRun check_id="check_id" />
+        <PlaybooksDropdownMenu check_id="check_id" />
       </QueryClientProvider>
     );
 

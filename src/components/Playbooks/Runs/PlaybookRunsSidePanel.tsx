@@ -14,6 +14,7 @@ import { refreshButtonClickedTrigger } from "../../SlidingSideBar";
 import Title from "../../Title/title";
 import { Age } from "../../../ui/Age";
 import { PlaybookRun } from "../../../api/types/playbooks";
+import { PlaybookStatusIcon } from "../../Icon/PlaybookStatusIcon";
 
 type TopologySidePanelProps = {
   panelType: "topology";
@@ -34,24 +35,26 @@ const runsColumns: ColumnDef<PlaybookRun, any>[] = [
   {
     header: "Name",
     id: "name",
-    size: 60,
+    size: 80,
     cell: ({ row }) => {
       const name = row.original.playbooks?.name;
-      return <span>{name}</span>;
+      return (
+        <span>
+          <PlaybookStatusIcon status={row.original.status} /> {name}
+        </span>
+      );
     }
   },
   {
-    header: "Status",
-    id: "status",
-    accessorKey: "status",
-    size: 60
-  },
-  {
-    header: "Duration",
-    id: "duration",
+    header: "Age",
+    id: "age",
     cell: ({ row }) => {
-      const { start_time, end_time } = row.original;
-      return <Age from={start_time} to={end_time} />;
+      return (
+        <Age
+          from={row.original.start_time}
+          className="text-xs text-slate-500 pr-2"
+        />
+      );
     },
     size: 20
   }
@@ -136,17 +139,12 @@ export function PlaybookRunsSidePanel({
                   });
                 }
               }}
-              stickyHead
               virtualizedRowEstimatedHeight={40}
               columnsClassName={{
-                name: "",
-                status: "fit-content",
-                duration: "fit-content"
+                age: "text-right"
               }}
               onRowClick={(row) => {
-                navigate(
-                  `/playbooks/runs/018af987-d406-a5df-5a63-a07d8842c7cf/${row.original.id}`
-                );
+                navigate(`/playbooks/runs/${row.original.id}`);
               }}
             />
           </div>
