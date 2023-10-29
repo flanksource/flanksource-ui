@@ -1,5 +1,5 @@
 import Highlight, { Language, defaultProps } from "prism-react-renderer";
-import vsLight from "prism-react-renderer/themes/vsLight";
+import theme from "./theme";
 import { ComponentProps, useMemo } from "react";
 import { GoCopy } from "react-icons/go";
 import { parse, stringify } from "yaml";
@@ -37,7 +37,7 @@ function JSONViewerLine({
     >
       {showLineNo && (
         <span
-          className="text-gray-400 text-xs pr-2 select-none"
+          className="text-gray-300 text-xs pr-3 select-none"
           style={{ display: "table-cell" }}
         >
           {idx + 1}
@@ -47,6 +47,7 @@ function JSONViewerLine({
         {line.map((token, key) => (
           // key is in the getTokenProps responses. Disabling eslint to skip
           // check for explicit keys.
+          // eslint-disable-next-line react/jsx-key
           <span {...getTokenProps({ token, key })} />
         ))}
       </span>
@@ -99,6 +100,8 @@ export function JSONViewer({
 
   const copyFn = useCopyToClipboard();
 
+  theme.plain.backgroundColor = "#fffff";
+
   const formatDerived = useMemo(() => {
     if (format !== "json") {
       return format;
@@ -110,11 +113,11 @@ export function JSONViewer({
   }, [convertToYaml, format]);
 
   return (
-    <div className="flex flex-col relative">
+    <div className="flex flex-col w-full relative">
       <Highlight
         {...defaultProps}
         code={codeForHighlight}
-        theme={vsLight}
+        theme={theme}
         language={formatDerived}
       >
         {({ className, style, tokens, getLineProps, getTokenProps }) => (
