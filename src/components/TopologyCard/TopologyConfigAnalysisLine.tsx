@@ -31,11 +31,13 @@ const severityToColorMap = (severity: string) => {
 };
 
 type TopologyConfigAnalysisLineProps = {
+  target?: string;
   topology: Pick<Topology, "summary" | "id">;
 };
 
 export function TopologyConfigAnalysisLine({
-  topology
+  topology,
+  target = ""
 }: TopologyConfigAnalysisLineProps) {
   const insights = topology?.summary?.insights;
 
@@ -86,5 +88,5 @@ export function TopologyConfigAnalysisLine({
     return null;
   }
 
-  return <StatusLine {...analysis} className="" />;
+  return <StatusLine {...analysis} className="" target={target} />;
 }

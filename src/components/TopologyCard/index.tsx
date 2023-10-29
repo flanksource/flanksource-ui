@@ -3,7 +3,6 @@ import clsx from "clsx";
 import { MouseEventHandler, useMemo } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { getTopology } from "../../api/services/topology";
-import { Topology } from "../../context/TopologyPageContext";
 import { Size } from "../../types";
 import AgentName from "../Agents/AgentName";
 import { CustomScroll } from "../CustomScroll";
@@ -16,6 +15,7 @@ import { CardMetrics } from "./CardMetrics";
 import { Property } from "./Property";
 import { TopologyConfigAnalysisLine } from "./TopologyConfigAnalysisLine";
 import { TopologyDropdownMenu } from "./TopologyDropdownMenu";
+import { Topology } from "../../api/types/topology";
 
 export enum ComponentStatus {
   unhealthy = "unhealthy",
@@ -39,9 +39,12 @@ interface IProps {
   topologyId?: string;
   topology?: Topology;
   selectionMode?: boolean;
+  hideMenu?: boolean;
+  // where to open new links
+  target?: string;
   selected?: boolean;
   onSelectionChange?: MouseEventHandler<HTMLDivElement>;
-  isTopologyPage?: boolean;
+  menuPosition?: "fixed" | "absolute";
 }
 
 export function TopologyCard({
@@ -49,9 +52,11 @@ export function TopologyCard({
   topology: topologyData,
   topologyId,
   selectionMode,
+  target = "",
+  hideMenu,
   selected,
   onSelectionChange,
-  isTopologyPage = false
+  menuPosition = "fixed"
 }: IProps) {
   const [searchParams] = useSearchParams();
   const { id: parentId } = useParams();
@@ -177,7 +182,7 @@ export function TopologyCard({
         )}
 
         <div className="flex ml-auto pl-1 pr-1.5 pb-3.5 pt-3">
-          {selectionMode ? (
+          {selectionMode && (
             <div className="pr-1.5 pt-1 flex min-w-7 justify-end items-start">
               <input
                 type="checkbox"
@@ -186,11 +191,10 @@ export function TopologyCard({
                 readOnly
               />
             </div>
-          ) : (
-            <TopologyDropdownMenu
-              topology={topology}
-              isTopologyPage={isTopologyPage}
-            />
+          )}
+
+          {!selectionMode && !hideMenu && (
+            <TopologyDropdownMenu topology={topology} position={menuPosition} />
           )}
         </div>
       </div>
@@ -231,6 +235,7 @@ export function TopologyCard({
               {canShowChildHealth() && (
                 <HealthSummary
                   className=""
+                  target={target}
                   key={topology.id}
                   component={topology}
                 />
@@ -240,6 +245,7 @@ export function TopologyCard({
               {topology?.components?.map((component: any) => (
                 <HealthSummary
                   className=""
+                  target={target}
                   key={component.id}
                   component={component}
                 />

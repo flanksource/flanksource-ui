@@ -68,6 +68,7 @@ import { features } from "./services/permissions/features";
 import { stringSortHelper } from "./utils/common";
 import { MdOutlineSupportAgent } from "react-icons/md";
 import AgentsPage from "./components/Agents/AgentPage";
+import { TopologyCardPage } from "./pages/TopologyCard";
 
 export type NavigationItems = {
   name: string;
@@ -223,13 +224,26 @@ export function HealthRoutes({ sidebar }: { sidebar: ReactNode }) {
 export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
   const { featureFlagsLoaded } = useFeatureFlagsContext();
 
-  if (!featureFlagsLoaded) {
+  console.log(window.location.pathname);
+  if (
+    !featureFlagsLoaded &&
+    !window.location.pathname.startsWith("/view/topology")
+  ) {
     return <FullPageSkeletonLoader />;
   }
 
   return (
     <Routes>
       <Route path="" element={<Navigate to="/topology" />} />
+
+      <Route
+        path="/view/topology/:id"
+        element={withAccessCheck(
+          <TopologyCardPage />,
+          tables.topologies,
+          "read"
+        )}
+      />
 
       <Route path="topology" element={sidebar}>
         <Route

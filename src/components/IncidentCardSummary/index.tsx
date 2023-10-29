@@ -25,11 +25,13 @@ const chipColorFromSeverity = (
 type IncidentSummaryTypes = keyof typeof typeItems;
 
 type IncidentCardSummaryProps = {
+  target?: string;
   topology: Pick<Topology, "summary" | "id">;
 };
 
 export default function IncidentCardSummary({
-  topology
+  topology,
+  target = ""
 }: IncidentCardSummaryProps) {
   const statusLines: StatusLineProps[] = useMemo(() => {
     const incidentSummary = Object.entries(topology?.summary?.incidents || {});
@@ -75,7 +77,14 @@ export default function IncidentCardSummary({
   return (
     <>
       {statusLines.map((statusLine, index) => {
-        return <StatusLine key={index} {...statusLine} className="" />;
+        return (
+          <StatusLine
+            key={index}
+            {...statusLine}
+            className=""
+            target={target}
+          />
+        );
       })}
     </>
   );

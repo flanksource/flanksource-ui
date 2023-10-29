@@ -31,13 +31,13 @@ function TopologyMenuItem({
 interface IProps {
   topology: Topology;
   onRefresh?: () => void;
-  isTopologyPage?: boolean;
+  position?: "fixed" | "absolute";
 }
 
 export const TopologyDropdownMenu = ({
   topology,
   onRefresh,
-  isTopologyPage = false
+  position = "fixed"
 }: IProps) => {
   const [dropDownMenuStyles, setDropDownMenuStyles] = useState<CSSProperties>();
 
@@ -62,13 +62,13 @@ export const TopologyDropdownMenu = ({
       const top = node.getBoundingClientRect().bottom;
 
       if (left && top) {
-        if (isTopologyPage) {
+        if (position === "absolute") {
           setDropDownMenuStyles({
             right: 0,
             top: "1.5rem",
             position: "absolute"
           });
-        } else {
+        } else if (position === "fixed") {
           setDropDownMenuStyles({
             left: left - 200,
             top: top,
@@ -77,7 +77,7 @@ export const TopologyDropdownMenu = ({
         }
       }
     },
-    [isTopologyPage]
+    [position]
   );
 
   const [

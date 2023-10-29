@@ -31,13 +31,20 @@ const renderIcon = (icon: string | React.ReactNode) => {
   }
 };
 
-const StatusInfoEntry = ({ statusInfo }: { statusInfo: StatusInfo }) => {
+const StatusInfoEntry = ({
+  statusInfo,
+  target
+}: {
+  statusInfo: StatusInfo;
+  target?: string;
+}) => {
   if (statusInfo.url) {
     return (
       <Link
         className="inline-flex space-x-1 cursor-pointer"
         key={statusInfo.url}
         to={statusInfo.url}
+        target={target || ""}
       >
         {statusInfo.icon && renderIcon(statusInfo.icon)}
         <Chip text={statusInfo.label} color={statusInfo.color} />
@@ -55,6 +62,7 @@ const StatusInfoEntry = ({ statusInfo }: { statusInfo: StatusInfo }) => {
 
 export function StatusLine({
   icon,
+  target = "",
   label,
   url,
   statuses,
@@ -70,6 +78,7 @@ export function StatusLine({
       {url && (
         <Link
           title={label}
+          target={target || ""}
           className="text-xs cursor-pointer h-4 overflow-hidden truncate"
           to={url}
         >
