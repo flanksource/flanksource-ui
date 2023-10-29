@@ -45,6 +45,16 @@ export const getConfigsByIDs = async (ids: string[]) => {
   return res.data ?? [];
 };
 
+export const getConfigsByID = async (id: string) => {
+  const res = await resolve<ConfigItem[] | null>(
+    ConfigDB.get(`/configs?id=eq.${id}&select=id,name,config_class,type`)
+  );
+  if (res.data && res.data.length > 0) {
+    return res.data[0];
+  }
+  return null;
+};
+
 export const getAllChanges = (
   queryParams: Record<string, string | undefined>,
   pageIndex?: number,
@@ -96,8 +106,9 @@ export const getConfigChanges = (
 ) => {
   let paginationQueryParams = "";
   if (pageIndex !== undefined && pageSize !== undefined) {
-    paginationQueryParams = `&limit=${pageSize}&offset=${pageIndex! * pageSize
-      }`;
+    paginationQueryParams = `&limit=${pageSize}&offset=${
+      pageIndex! * pageSize
+    }`;
   }
   return resolve(
     ConfigDB.get<ConfigChange[]>(
@@ -289,8 +300,9 @@ export const getConfigInsights = (
 ) => {
   let paginationQueryParams = "";
   if (pageIndex !== undefined && pageSize !== undefined) {
-    paginationQueryParams = `&limit=${pageSize}&offset=${pageIndex! * pageSize
-      }`;
+    paginationQueryParams = `&limit=${pageSize}&offset=${
+      pageIndex! * pageSize
+    }`;
   }
   return resolve(
     ConfigDB.get<
@@ -336,33 +348,34 @@ export const getTopologyRelatedInsights = async (
 ) => {
   let paginationQueryParams = "";
   if (pageIndex !== undefined && pageSize !== undefined) {
-    paginationQueryParams = `&limit=${pageSize}&offset=${pageIndex! * pageSize
-      }`;
+    paginationQueryParams = `&limit=${pageSize}&offset=${
+      pageIndex! * pageSize
+    }`;
   }
 
   return resolve(
     ConfigDB.get<
       | {
-        analysis_id: string;
-        config: {
-          id: string;
-          name: string;
-          config_class: string;
-          type: string;
-          analysis: Pick<
-            ConfigAnalysis,
-            | "id"
-            | "analyzer"
-            | "config"
-            | "severity"
-            | "analysis_type"
-            | "sanitizedMessageTxt"
-            | "sanitizedMessageHTML"
-            | "first_observed"
-            | "message"
-          >[];
-        };
-      }[]
+          analysis_id: string;
+          config: {
+            id: string;
+            name: string;
+            config_class: string;
+            type: string;
+            analysis: Pick<
+              ConfigAnalysis,
+              | "id"
+              | "analyzer"
+              | "config"
+              | "severity"
+              | "analysis_type"
+              | "sanitizedMessageTxt"
+              | "sanitizedMessageHTML"
+              | "first_observed"
+              | "message"
+            >[];
+          };
+        }[]
       | null
     >(
       `/analysis_by_component?component_id=eq.${id}${paginationQueryParams}&select=analysis_id,config:configs(id,name,config_class,type,analysis:config_analysis(id,analyzer,analysis_type,message,severity,analysis,first_observed))`,
@@ -417,7 +430,7 @@ export const getAllConfigInsights = async (
   const sortString = sortBy.sortBy
     ? `&order=${sortBy.sortBy}.${sortBy.sortOrder}`
     : // default sort by first_observed
-    "&order=first_observed.desc";
+      "&order=first_observed.desc";
 
   return resolve(
     ConfigDB.get<ConfigAnalysis[] | null>(

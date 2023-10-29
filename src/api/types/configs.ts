@@ -43,6 +43,10 @@ export interface ConfigItem extends Timestamped, Avatar, Agent {
     id: string;
     name: string;
   };
+  config_scrapers?: {
+    id: string;
+    name: string;
+  };
 }
 
 export interface ConfigTypeRelationships extends Timestamped {

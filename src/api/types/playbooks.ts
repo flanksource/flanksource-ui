@@ -1,8 +1,9 @@
 import { Agent, CreatedAt, Avatar } from "../traits";
 import { ConfigItem } from "./configs";
-import { HealthCheck } from "./health";
+import { HealthCheck, HealthCheckSummary } from "./health";
 import { Topology } from "./topology";
 import { User } from "./users";
+import { ElementType } from "react";
 
 export type PlaybookRunStatus =
   | "scheduled"
@@ -28,9 +29,9 @@ export type PlaybookRunAction = {
   error?: string;
 };
 
-export type PlaybookRunWithActions = PlaybookRun & {
+export interface PlaybookRunWithActions extends PlaybookRun {
   actions: PlaybookRunAction[];
-};
+}
 
 export interface PlaybookRun extends CreatedAt, Avatar, Agent {
   id: string;
@@ -46,7 +47,7 @@ export interface PlaybookRun extends CreatedAt, Avatar, Agent {
   /* relationships */
   playbooks?: PlaybookSpec;
   component?: Pick<Topology, "id" | "name" | "icon">;
-  check?: Pick<HealthCheck, "id" | "name" | "icon">;
+  check?: HealthCheckSummary;
   config?: Pick<ConfigItem, "id" | "name" | "type" | "config_class">;
 }
 
@@ -59,6 +60,18 @@ export type PlaybookSpec = {
   created_at: string;
   updated_at: string;
   deleted_at?: string;
+};
+
+export type PlaybookParam = {
+  name: string;
+  label: string;
+};
+
+export type RunnablePlaybook = Omit<PlaybookSpec, "spec"> & {
+  check_id?: string;
+  config_id?: string;
+  component_id?: string;
+  parameters: PlaybookParam[];
 };
 
 export type NewPlaybookSpec = Omit<

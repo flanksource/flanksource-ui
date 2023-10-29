@@ -11,7 +11,7 @@ import {
   getPlaybookToRunForResource,
   submitPlaybookRun
 } from "../services/playbooks";
-import { PlaybookSpec } from "../types/playbooks";
+import { PlaybookSpec, RunnablePlaybook } from "../types/playbooks";
 
 export function useGetAllPlaybookSpecs(
   options: UseQueryOptions<PlaybookSpec[], Error> = {}
@@ -35,9 +35,9 @@ export type GetPlaybooksToRunParams = {
 
 export function useGetPlaybooksToRun(
   params: GetPlaybooksToRunParams,
-  options: UseQueryOptions<PlaybookSpec[], Error> = {}
+  options: UseQueryOptions<RunnablePlaybook[], Error> = {}
 ) {
-  return useQuery<PlaybookSpec[], Error>(
+  return useQuery<RunnablePlaybook[], Error>(
     ["playbooks", "run", params],
     () => getPlaybookToRunForResource(params),
     {

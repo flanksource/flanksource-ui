@@ -9,11 +9,14 @@ import {
 } from "../axios";
 import { resolve } from "../resolve";
 import { PaginationInfo } from "../types/common";
-import { HealthCheck, HealthCheckStatus } from "../types/health";
-import { Topology } from "../types/topology";
+import {
+  HealthCheck,
+  HealthCheckStatus,
+  HealthCheckSummary
+} from "../types/health";
+import { ComponentHealthCheckView, Topology } from "../types/topology";
 import { ComponentTeamItem } from "../types/topology";
 import { ComponentTemplateItem } from "../types/topology";
-import { AgentItem } from "../types/common";
 
 interface IParam {
   id?: string;
@@ -172,26 +175,6 @@ export const getTopologyComponentsWithLogs = () => {
   );
 };
 
-export const getAgentByID = async (id: string) => {
-  const res = await IncidentCommander.get<AgentItem[] | null>(
-    `/agents?select=id,name,description&id=eq.${id}`
-  );
-  return res.data?.[0] ?? null;
-};
-
-export const getAgentByIDs = async (ids: string[]) => {
-  const res = await IncidentCommander.get<AgentItem[] | null>(
-    `/agents?select=id,name,description&id=in.(${ids.join(",")})`
-  );
-  return res.data ?? [];
-};
-
-export const getAllAgents = () => {
-  return IncidentCommander.get<AgentItem[] | null>(
-    `/agents?select=id,name,description`
-  );
-};
-
 export const getTopologyComponentByID = async (topologyID: string) => {
   const res = await IncidentCommander.get<TopologyComponentItem[]>(
     `/component_names?id=eq.${topologyID}`
@@ -214,6 +197,16 @@ export const getComponentTemplate = async (id: string) => {
     `/topologies?id=eq.${id}`
   );
   return res.data?.[0];
+};
+
+export const getHealthCheckSummary = async (id: string) => {
+  const res = await resolve<HealthCheckSummary[] | null>(
+    IncidentCommander.get(`/checks?id=eq.${id}&select=id,name,icon,status,type`)
+  );
+  if (res.data && res.data.length > 0) {
+    return res.data[0];
+  }
+  return null;
 };
 
 export const getHealthCheckItem = async (id: string) => {
@@ -245,15 +238,6 @@ export const getTopologySnapshot = async (
     responseType: "blob"
   });
   return res.data;
-};
-
-export type ComponentHealthCheckView = {
-  component_id: string;
-  id: string;
-  type: string;
-  name: string;
-  severity: string;
-  status: string;
 };
 
 export const getComponentChecks = async (id: string) => {

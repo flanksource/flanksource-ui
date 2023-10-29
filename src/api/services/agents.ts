@@ -2,6 +2,7 @@ import { Agent, AgentSummary } from "../../components/Agents/AgentPage";
 import { AVATAR_INFO } from "../../constants";
 import { AgentAPI, IncidentCommander } from "../axios";
 import { resolve } from "../resolve";
+import { AgentItem } from "../types/common";
 
 export const getAgentsList = async (
   params: {
@@ -69,3 +70,20 @@ export async function deleteAgent(id: string, cleanup: boolean = false) {
   });
   return res.data;
 }
+export const getAgentByID = async (id: string) => {
+  const res = await IncidentCommander.get<AgentItem[] | null>(
+    `/agents?select=id,name,description&id=eq.${id}`
+  );
+  return res.data?.[0] ?? null;
+};
+export const getAgentByIDs = async (ids: string[]) => {
+  const res = await IncidentCommander.get<AgentItem[] | null>(
+    `/agents?select=id,name,description&id=in.(${ids.join(",")})`
+  );
+  return res.data ?? [];
+};
+export const getAllAgents = () => {
+  return IncidentCommander.get<AgentItem[] | null>(
+    `/agents?select=id,name,description`
+  );
+};

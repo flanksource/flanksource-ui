@@ -34,6 +34,11 @@ export interface HealthCheck extends Timestamped, Avatar, Agent {
   severity?: string;
 }
 
+export type HealthCheckSummary = Pick<
+  HealthCheck,
+  "id" | "name" | "icon" | "type" | "status" | "severity"
+>;
+
 export interface HealthCheckStatus {
   status: boolean;
   time: string;

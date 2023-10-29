@@ -19,7 +19,6 @@ import { getIncident } from "../services/incident";
 import { getIncidentHistory } from "../services/IncidentsHistory";
 import { LogsResponse, searchLogs, SearchLogsPayload } from "../services/logs";
 import {
-  getAllAgents,
   getComponentTeams,
   getHealthCheckItem,
   getTopology,
@@ -27,6 +26,7 @@ import {
   getTopologyComponents,
   getTopologyComponentsWithLogs
 } from "../services/topology";
+import { getAllAgents } from "../services/agents";
 import { ComponentTeamItem } from "../types/topology";
 import { getPersons, getVersionInfo } from "../services/users";
 import { IncidentHistory } from "../types/incident";

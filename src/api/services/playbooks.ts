@@ -9,6 +9,7 @@ import {
   PlaybookRunAction,
   PlaybookRunWithActions,
   PlaybookSpec,
+  RunnablePlaybook,
   UpdatePlaybookSpec
 } from "../types/playbooks";
 
@@ -49,10 +50,15 @@ export async function deletePlaybookSpec(id: string) {
   return res.data;
 }
 
+export type PlaybookRunResponse = {
+  run_id: string;
+  starts_at: string;
+};
+
 export async function submitPlaybookRun(
   input: Omit<SubmitPlaybookRunFormValues, "playbook_spec">
 ) {
-  const res = await PlaybookAPI.post("/run", input);
+  const res = await PlaybookAPI.post<PlaybookRunResponse>("/run", input);
   return res.data;
 }
 
@@ -63,7 +69,7 @@ export async function getPlaybookToRunForResource(
     .filter(([, value]) => value)
     .map(([key, value]) => `${key}=${value}`)
     .join("&");
-  const res = await PlaybookAPI.get<PlaybookSpec[] | null>(
+  const res = await PlaybookAPI.get<RunnablePlaybook[] | null>(
     `/list?${paramsString}`
   );
   return res.data ?? [];

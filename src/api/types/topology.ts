@@ -1,6 +1,7 @@
 import { Agent, Namespaced, Timestamped } from "../traits";
 import { ValueType } from "./common";
 import { CostsData, Severity } from "./common";
+import { HealthCheckSummary } from "./health";
 import { IncidentType } from "./incident";
 import { User } from "./users";
 
@@ -35,12 +36,8 @@ export interface Topology extends Timestamped, CostsData, Agent, Namespaced {
   external_id?: string;
   topology_id?: string;
   summary?: {
-    incidents?: Record<IncidentType,
-      Record<"High" | "Medium" | "Low", number>
-    >;
-    insights?: Record<IncidentType,
-      Record<Severity, number | undefined>
-    >;
+    incidents?: Record<IncidentType, Record<"High" | "Medium" | "Low", number>>;
+    insights?: Record<IncidentType, Record<Severity, number | undefined>>;
     [key: string]: any;
   };
   logs?: {
@@ -55,8 +52,7 @@ export interface Topology extends Timestamped, CostsData, Agent, Namespaced {
     warning: number;
     unhealthy: number;
   };
-};
-
+}
 
 export type ComponentTeamItem = {
   component_id: string;
@@ -80,4 +76,8 @@ export interface ComponentTemplateItem extends Timestamped, Namespaced {
   labels: Record<string, string>;
   spec: any;
   schedule: string;
+}
+
+export type ComponentHealthCheckView = HealthCheckSummary & {
+  component_id: string;
 };
