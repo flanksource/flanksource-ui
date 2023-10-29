@@ -193,7 +193,13 @@ export function LogsTable({
   // sizes are rebased to relation to 100% of the width.
   const determineColumnWidth = useCallback(
     (column: string) => {
-      const columnSize = table.getColumn(column).getSize();
+      if (column === undefined) {
+        return;
+      }
+      const columnSize = table.getColumn(column)?.getSize();
+      if (columnSize === undefined) {
+        return (1 / (table.getTotalSize() - 6)) * 400;
+      }
       if (column === "selection") {
         return columnSize;
       }

@@ -114,6 +114,8 @@ export function DataTable<TableColumns, Data extends TableColumns>({
   isLoading,
   groupBy,
   hiddenColumns,
+  // for some reason, it seems to need both auto and fixed, there may be
+  // some other css class tied to auto
   className = "table-auto table-fixed",
   theadHeaderClass = "px-3 py-3 text-left text-gray-500 font-medium text-xs tracking-wider",
   tbodyRowClass = "cursor-pointer text-sm",
@@ -265,8 +267,7 @@ export function DataTable<TableColumns, Data extends TableColumns>({
       >
         <table
           className={clsx(
-            // for some reason, it seems to need both auto and fixed, there may be
-            // some other css class tied to auto
+            className,
             `w-full border border-gray-200 rounded-md`,
             stickyHead && "relative"
           )}

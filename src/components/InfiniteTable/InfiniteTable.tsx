@@ -32,7 +32,7 @@ export function InfiniteTable<T>({
   isLoading,
   totalEntries,
   allRows,
-  className = "table-auto table-condensed",
+  className = "table-auto table-condensed text-sm",
   fetchNextPage,
   maxHeight,
   loaderView,

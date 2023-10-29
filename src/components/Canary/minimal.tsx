@@ -7,7 +7,7 @@ import { isCanaryUI } from "../../context/Environment";
 import AttachAsEvidenceButton from "../AttachEvidenceDialog/AttachAsEvidenceDialogButton";
 import { timeRanges } from "../Dropdown/TimeRange";
 import { Modal } from "../Modal";
-import SelectPlaybookToRun from "../Playbooks/Runs/Submit/SelectPlaybookToRun";
+import PlaybooksDropdownMenu from "../Playbooks/Runs/Submit/PlaybooksDropdownMenu";
 import { toastError } from "../Toast/toast";
 import { CheckDetails } from "./CanaryPopup/CheckDetails";
 import { CheckTitle } from "./CanaryPopup/CheckTitle";
@@ -128,7 +128,7 @@ const MinimalCanaryFC = ({
             {!isCanaryUI && (
               <>
                 <div className="flex flex-col items-center ">
-                  <SelectPlaybookToRun
+                  <PlaybooksDropdownMenu
                     className="btn-primary"
                     check_id={selectedCheck?.id}
                   />

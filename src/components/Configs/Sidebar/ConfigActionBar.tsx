@@ -5,7 +5,7 @@ import { useGetConfigByIdQuery } from "../../../api/query-hooks";
 import { usePartialUpdateSearchParams } from "../../../hooks/usePartialUpdateSearchParams";
 import { ActionLink } from "../../ActionLink/ActionLink";
 import AttachAsEvidenceButton from "../../AttachEvidenceDialog/AttachAsEvidenceDialogButton";
-import SelectPlaybookToRun from "../../Playbooks/Runs/Submit/SelectPlaybookToRun";
+import PlaybooksDropdownMenu from "../../Playbooks/Runs/Submit/PlaybooksDropdownMenu";
 import { EvidenceType } from "../../../api/types/evidence";
 
 type ConfigActionBarProps = {
@@ -79,7 +79,7 @@ export default function ConfigActionBar({
           setChecked({});
         }}
       />
-      <SelectPlaybookToRun config_id={configId} />
+      <PlaybooksDropdownMenu config_id={configId} />
     </div>
   );
 }

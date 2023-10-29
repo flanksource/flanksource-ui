@@ -22,14 +22,15 @@ const columns: ColumnDef<ConfigChange>[] = [
         </div>
       );
     },
-    size: 48
+    maxSize: 40
   },
   {
     header: "Summary",
     accessorKey: "summary",
     meta: {
       cellClassName: "text-ellipsis overflow-hidden"
-    }
+    },
+    maxSize: 150
   },
   {
     header: "Source",
@@ -45,7 +46,7 @@ const columns: ColumnDef<ConfigChange>[] = [
     meta: {
       cellClassName: "text-ellipsis overflow-hidden"
     },
-    size: 36,
+    maxSize: 20,
     cell: DateCell
   }
 ];
@@ -78,7 +79,7 @@ export function ConfigChangeHistory({
   data,
   isLoading,
   linkConfig,
-  className = "w-full",
+  className = "table-auto table-fixed",
   pagination,
   tableStyle
 }: ConfigChangeHistoryProps) {

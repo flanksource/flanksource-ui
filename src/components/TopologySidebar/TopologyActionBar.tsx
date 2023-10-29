@@ -11,7 +11,7 @@ import { useFeatureFlagsContext } from "../../context/FeatureFlagsContext";
 import { features } from "../../services/permissions/features";
 import { ActionLink } from "../ActionLink/ActionLink";
 import { AttachEvidenceDialog } from "../AttachEvidenceDialog";
-import SelectPlaybookToRun from "../Playbooks/Runs/Submit/SelectPlaybookToRun";
+import PlaybooksDropdownMenu from "../Playbooks/Runs/Submit/PlaybooksDropdownMenu";
 import TopologySnapshotModal from "../TopologyCard/TopologySnapshotModal";
 import { TopologyConfigLinkModal } from "../TopologyConfigLinkModal/TopologyConfigLinkModal";
 
@@ -280,7 +280,7 @@ export default function TopologyActionBar({
             }
             return null;
           })}
-        <SelectPlaybookToRun component_id={topology.id} />
+        <PlaybooksDropdownMenu component_id={topology.id} />
       </div>
 
       <AttachEvidenceDialog
