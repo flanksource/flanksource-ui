@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo, useCallback, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { useGetConfigByIdQuery } from "../../api/query-hooks";
 import { ConfigsDetailsBreadcrumbNav } from "../../components/BreadcrumbNav/ConfigsDetailsBreadCrumb";
-import ConfigSidebar from "../../components/ConfigSidebar";
+import ConfigSidebar from "../../components/Configs/Sidebar/ConfigSidebar";
 import { useConfigDetailsTabs } from "../../components/ConfigsPage/ConfigTabsLinks";
 import { Head } from "../../components/Head/Head";
 import { JSONViewer } from "../../components/JSONViewer";

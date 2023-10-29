@@ -7,7 +7,7 @@ import {
 } from "../../api/query-hooks";
 import { ConfigsDetailsBreadcrumbNav } from "../../components/BreadcrumbNav/ConfigsDetailsBreadCrumb";
 import { ConfigChangeHistory } from "../../components/ConfigChangeHistory";
-import ConfigSidebar from "../../components/ConfigSidebar";
+import ConfigSidebar from "../../components/Configs/Sidebar/ConfigSidebar";
 import { useConfigDetailsTabs } from "../../components/ConfigsPage/ConfigTabsLinks";
 import { Head } from "../../components/Head/Head";
 import { InfoMessage } from "../../components/InfoMessage";

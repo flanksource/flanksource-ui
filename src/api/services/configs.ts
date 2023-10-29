@@ -28,6 +28,10 @@ export interface ConfigItem {
     id: string;
     name: string;
   };
+  config_scrapers?: {
+    id: string;
+    name: string;
+  };
 }
 
 export type ConfigTypeRelationships = {
@@ -143,7 +147,9 @@ export const getAllChanges = (
 };
 
 export const getConfig = (id: string) =>
-  resolve<ConfigItem[]>(ConfigDB.get(`/config_items?id=eq.${id}`));
+  resolve<ConfigItem[]>(
+    ConfigDB.get(`/config_items?id=eq.${id}&select=*,config_scrapers(id,name)`)
+  );
 
 export type ConfigsTagList = {
   key: string;
