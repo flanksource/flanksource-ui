@@ -16,7 +16,7 @@ describe("CheckLink", () => {
   it("renders with healthy status", () => {
     render(
       <MemoryRouter>
-        <CheckLink componentCheck={check} />
+        <CheckLink check={check} />
       </MemoryRouter>
     );
 
@@ -38,7 +38,7 @@ describe("CheckLink", () => {
 
     render(
       <MemoryRouter>
-        <CheckLink componentCheck={unhealthyCheck} />
+        <CheckLink check={unhealthyCheck} />
       </MemoryRouter>
     );
 

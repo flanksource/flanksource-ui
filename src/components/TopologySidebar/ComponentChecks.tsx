@@ -61,10 +61,7 @@ export function ComponentChecks({
           <TextSkeletonLoader />
         ) : componentChecks && componentChecks.length > 0 ? (
           componentChecks.map((componentCheck) => (
-            <CheckLink
-              key={componentCheck.id}
-              componentCheck={componentCheck}
-            />
+            <CheckLink key={componentCheck.id} check={componentCheck} />
           ))
         ) : (
           <EmptyState />

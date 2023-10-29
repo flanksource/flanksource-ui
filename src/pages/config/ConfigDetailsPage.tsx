@@ -90,7 +90,8 @@ export function ConfigDetailsPage() {
     const ordered = Object.keys(configDetails.config)
       .sort()
       .reduce((obj: Record<string, any>, key) => {
-        obj[key] = configDetails.config ? [key] : null;
+        //eslint-disable-next-line
+        obj[key] = configDetails.config[key];
         return obj;
       }, {});
 

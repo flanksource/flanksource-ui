@@ -12,7 +12,6 @@ export function TopologyCardPage() {
     queryKey: ["topology", id],
     queryFn: () => getTopology({ id: id })
   });
-
   if (!data || !data.components || data.components?.length === 0) {
     return <InfoMessage message="Component not found" />;
   }

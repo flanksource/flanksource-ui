@@ -134,7 +134,7 @@ export default function ConfigList({ data, handleRowClick, isLoading }: Props) {
           : [groupByField]
       }
       hiddenColumns={setHiddenColumns()}
-      className="max-w-full overflow-x-auto"
+      className="max-w-full table-auto table-fixed"
       tableSortByState={sortBy}
       onTableSortByChanged={updateSortBy}
       determineRowClassNamesCallback={determineRowClassNames}

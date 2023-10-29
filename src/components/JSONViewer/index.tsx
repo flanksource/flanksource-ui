@@ -100,8 +100,6 @@ export function JSONViewer({
 
   const copyFn = useCopyToClipboard();
 
-  theme.plain.backgroundColor = "#fffff";
-
   const formatDerived = useMemo(() => {
     if (format !== "json") {
       return format;
