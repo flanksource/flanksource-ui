@@ -9,6 +9,8 @@ import { FormatProperty } from "../TopologyCard/Property";
 import { TopologyLink } from "../TopologyLink";
 import { useMemo } from "react";
 import { Topology } from "../../api/types/topology";
+import ConfigCostValue from "../ConfigCosts/ConfigCostValue";
+import { isCostsEmpty } from "../../api/types/configs";
 
 type Props = {
   topology?: Topology;
@@ -38,6 +40,13 @@ export default function TopologyDetails({
       items.push({
         label: "Parent",
         value: <TopologyLink size="sm" topologyId={topology.parent_id} />
+      });
+    }
+
+    if (!isCostsEmpty(topology)) {
+      items.push({
+        label: "Costs",
+        value: <ConfigCostValue config={topology} />
       });
     }
 

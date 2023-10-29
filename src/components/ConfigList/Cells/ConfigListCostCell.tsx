@@ -1,14 +1,10 @@
 import { CellContext } from "@tanstack/react-table";
 import { ConfigItem, ConfigSummary } from "../../../api/types/configs";
-import { FormatCurrency } from "../../CostDetails/CostDetails";
+import ConfigCostValue from "../../ConfigCosts/ConfigCostValue";
 
 export default function ConfigListCostCell({
-  getValue
+  getValue,
+  row
 }: CellContext<ConfigItem, any> | CellContext<ConfigSummary, any>) {
-  const cost = getValue<string | number>();
-  return (
-    <div className="w-full text-center">
-      <FormatCurrency value={cost} defaultValue="" hideMinimumValue />
-    </div>
-  );
+  return <ConfigCostValue config={row.original} popover={false} />;
 }

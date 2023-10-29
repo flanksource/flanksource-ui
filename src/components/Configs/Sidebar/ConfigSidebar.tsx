@@ -1,6 +1,5 @@
 import { useParams } from "react-router-dom";
 import ConfigChanges from "../../Sidebars/ConfigChanges";
-import ConfigCosts from "../../ConfigCosts";
 import ConfigInsights from "../../Sidebars/ConfigInsights";
 import Configs from "../../Sidebars/configs";
 import Incidents from "../../Sidebars/incidents";
@@ -63,13 +62,6 @@ export default function ConfigSidebar() {
         isCollapsed={openedPanel !== "Insights"}
         onCollapsedStateChange={(status) =>
           panelCollapsedStatusChange(status, "Insights")
-        }
-      />
-      <ConfigCosts
-        configID={id}
-        isCollapsed={openedPanel !== "Costs"}
-        onCollapsedStateChange={(status) =>
-          panelCollapsedStatusChange(status, "Costs")
         }
       />
       <PlaybookRunsSidePanel

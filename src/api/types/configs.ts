@@ -24,7 +24,23 @@ export interface Change {
   severity?: string;
 }
 
-export interface ConfigItem extends Timestamped, Avatar, Agent {
+export interface Costs {
+  cost_per_minute?: number;
+  cost_total_1d?: number;
+  cost_total_7d?: number;
+  cost_total_30d?: number;
+}
+
+export function isCostsEmpty(costs: Costs) {
+  return (
+    costs.cost_per_minute === undefined &&
+    costs.cost_total_1d === undefined &&
+    costs.cost_total_7d === undefined &&
+    costs.cost_total_30d === undefined
+  );
+}
+
+export interface ConfigItem extends Timestamped, Avatar, Agent, Costs {
   id: string;
   name: string;
   external_id?: string;
@@ -34,10 +50,6 @@ export interface ConfigItem extends Timestamped, Avatar, Agent {
   analysis?: Analysis[];
   tags?: Record<string, any>;
   allTags?: Record<string, any>;
-  cost_per_minute?: number;
-  cost_total_1d?: number;
-  cost_total_7d?: number;
-  cost_total_30d?: number;
   config?: Record<string, any>;
   agent?: {
     id: string;

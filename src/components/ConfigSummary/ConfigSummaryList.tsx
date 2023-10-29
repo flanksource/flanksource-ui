@@ -76,12 +76,6 @@ const configSummaryColumns: ColumnDef<ConfigSummary, any>[] = [
     maxSize: 200
   },
   {
-    header: "analysis",
-    accessorKey: "analysis",
-    cell: ConfigSummaryAnalysisCell,
-    maxSize: 100
-  },
-  {
     header: "changes",
     accessorKey: "changes",
     cell: ({ getValue }: CellContext<ConfigSummary, any>) => {
@@ -91,69 +85,33 @@ const configSummaryColumns: ColumnDef<ConfigSummary, any>[] = [
       }
       return <CountBadge value={value} />;
     },
-    maxSize: 40
+    maxSize: 20
   },
   {
-    id: "cost",
-    header: () => <div className="block w-full text-center">cost</div>,
-    size: 200,
-    columns: [
-      {
-        header: () => <div className="block w-full text-center">Min</div>,
-        accessorKey: "cost_per_minute",
-        cell: ConfigListCostCell
-      },
-      {
-        header: () => <div className="block w-full text-center">1d</div>,
-        accessorKey: "cost_total_1d",
-        cell: ConfigListCostCell
-      },
-      {
-        header: () => <div className="block w-full text-center">7d</div>,
-        accessorKey: "cost_total_7d",
-        cell: ConfigListCostCell
-      },
-      {
-        header: () => <div className="block w-full text-center">30d</div>,
-        accessorKey: "cost_total_30d",
-        cell: ConfigListCostCell
-      }
-    ]
+    header: "analysis",
+    accessorKey: "analysis",
+    cell: ConfigSummaryAnalysisCell,
+    maxSize: 60
   },
   {
-    header: "Agent",
-    accessorKey: "agent",
-    enableSorting: false,
-    cell: ({ getValue }: CellContext<ConfigSummary, any>) => {
-      const agent = getValue<ConfigSummary["agent"]>();
-      if (agent?.name === "local" || !agent) {
-        return null;
-      }
-      return <span>{agent.name}</span>;
-    },
-    size: 70
-  },
-  {
-    header: "Tags",
-    accessorKey: "tags",
-    cell: ({ getValue }: CellContext<ConfigSummary, any>) => {
-      return null;
-    },
-    size: 140
+    header: () => <div title="Cost">Cost (30d)</div>,
+    accessorKey: "cost_total_30d",
+    cell: ConfigListCostCell,
+    maxSize: 20
   },
   {
     header: "Created",
     accessorKey: "created_at",
     cell: ConfigListDateCell<ConfigSummary>,
     aggregatedCell: "",
-    size: 50
+    maxSize: 30
   },
   {
-    header: "Last Updated",
+    header: "Updated",
     accessorKey: "updated_at",
     cell: ConfigListDateCell<ConfigSummary>,
     aggregatedCell: "",
-    size: 50
+    maxSize: 30
   }
 ];
 
@@ -186,7 +144,7 @@ export default function ConfigSummaryList({
       handleRowClick={handleRowClick}
       tableStyle={{ borderSpacing: "0" }}
       isLoading={isLoading}
-      className="max-w-full overflow-x-auto"
+      className="max-w-full overflow-x-auto table-fixed table-auto"
       preferencesKey={""}
       savePreferences={false}
     />
