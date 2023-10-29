@@ -77,6 +77,21 @@ export const getTopology = async (
   );
 };
 
+type ComponentsTopology = {
+  id: string;
+  topologies: {
+    id: string;
+    name: string;
+  };
+};
+
+export const getComponentsTopology = async (id: string) => {
+  const res = await IncidentCommander.get<ComponentsTopology[] | null>(
+    `/components?id=eq.${id}&select=id,topologies(id,name)`
+  );
+  return res.data?.[0] ?? null;
+};
+
 export const getTopologyWithoutUnroll = async (params: IParam) => {
   params = arrangeTopologyParams(params);
   const query = stringify(params);
