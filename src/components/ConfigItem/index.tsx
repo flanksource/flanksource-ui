@@ -218,9 +218,7 @@ export const ConfigItem = ({
     return (
       <>
         {label && typeof label === "string" && (
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            {label}
-          </label>
+          <label className="form-label mb-2">{label}</label>
         )}
         {label && typeof label !== "string" && label}
       </>

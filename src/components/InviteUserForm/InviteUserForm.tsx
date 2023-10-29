@@ -57,10 +57,7 @@ export function InviteUserForm({
         noValidate
       >
         <div>
-          <label
-            className="block text-sm font-medium text-gray-700"
-            htmlFor="firstName"
-          >
+          <label className="form-label" htmlFor="firstName">
             First name
           </label>
           <div className="mt-1">
@@ -80,10 +77,7 @@ export function InviteUserForm({
           )}
         </div>
         <div>
-          <label
-            className="block text-sm font-medium text-gray-700"
-            htmlFor="lastName"
-          >
+          <label className="form-label" htmlFor="lastName">
             Last name
           </label>
           <div className="mt-1">
@@ -103,10 +97,7 @@ export function InviteUserForm({
           )}
         </div>
         <div>
-          <label
-            htmlFor="email"
-            className="block text-sm font-medium text-gray-700"
-          >
+          <label htmlFor="email" className="form-label">
             Email
           </label>
           <div className="mt-1">
@@ -128,10 +119,7 @@ export function InviteUserForm({
           )}
         </div>
         <div>
-          <label
-            htmlFor="role"
-            className="block text-sm font-medium text-gray-700"
-          >
+          <label htmlFor="role" className="form-label">
             Role
           </label>
           <div className="mt-1">

@@ -19,10 +19,7 @@ export function TextArea({
   return (
     <>
       {label && (
-        <label
-          htmlFor={id}
-          className={`block text-sm font-bold text-gray-700 mb-2 ${labelClassName}`}
-        >
+        <label htmlFor={id} className={`form-label ${labelClassName}`}>
           {label}
         </label>
       )}

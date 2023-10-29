@@ -371,9 +371,7 @@ export function AttachEvidenceDialog({
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="px-8">
             <div className="mb-4">
-              <div className="block text-sm font-bold text-gray-700 mb-2">
-                Incident
-              </div>
+              <div className="form-label">Incident</div>
               <DropdownWithActions
                 onQuery={fetchIncidentOptions}
                 label="Incident"
@@ -448,9 +446,7 @@ export function AttachEvidenceDialog({
               )}
             </div>
             <div>
-              <div className="block text-sm font-bold text-gray-700 mb-2">
-                Hypothesis
-              </div>
+              <div className="form-label">Hypothesis</div>
               <DropdownWithActions
                 onQuery={(e) => {
                   return fetchHypothesisOptions(e, watch("incident"));

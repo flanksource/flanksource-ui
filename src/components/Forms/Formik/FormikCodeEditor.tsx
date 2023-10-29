@@ -97,11 +97,7 @@ export function FormikCodeEditor({
   return (
     <div className={className}>
       {label && (
-        <label
-          className={`block text-sm font-bold text-gray-700 mb-2 ${labelClassName}`}
-        >
-          {label}
-        </label>
+        <label className={`form-label ${labelClassName}`}>{label}</label>
       )}
       <CodeEditor
         onChange={(v) => {

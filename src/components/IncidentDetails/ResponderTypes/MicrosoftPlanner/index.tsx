@@ -90,9 +90,7 @@ export const MicrosoftPlanner = ({
             setValue("issueType", "");
           }}
           label={
-            <label className="block text-sm font-bold text-gray-700 mb-2">
-              Microsoft Planner Instance
-            </label>
+            <label className="form-label">Microsoft Planner Instance</label>
           }
           value={msProjectType}
           isDisabled={msProjectType}
@@ -121,10 +119,7 @@ export const MicrosoftPlanner = ({
             namePath="$.name"
             valuePath="$.id"
             label={
-              <label
-                htmlFor="plan_id"
-                className="block text-sm font-bold text-gray-700 mb-2 mt-4"
-              >
+              <label htmlFor="plan_id" className="form-label mt-4">
                 Plan ID
               </label>
             }
@@ -153,10 +148,7 @@ export const MicrosoftPlanner = ({
               namePath="$.name"
               valuePath="$.id"
               label={
-                <label
-                  htmlFor="bucket_id"
-                  className="block text-sm font-bold text-gray-700 mb-2 mt-4"
-                >
+                <label htmlFor="bucket_id" className="form-label mt-4">
                   Bucket ID
                 </label>
               }
@@ -185,10 +177,7 @@ export const MicrosoftPlanner = ({
               namePath="$"
               valuePath="$"
               label={
-                <label
-                  htmlFor="priority"
-                  className="block text-sm font-bold text-gray-700 mb-2 mt-4"
-                >
+                <label htmlFor="priority" className="form-label mt-4">
                   Priority
                 </label>
               }

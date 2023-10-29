@@ -403,7 +403,7 @@ export function HealthEvidenceViewer({
               </div>
               <div className="flex flex-col w-auto px-2 py-2">
                 <div className="flex flex-row">
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="form-label">
                     Latency:
                     <span className="pl-2 inline-block">
                       <Duration ms={check.latency.p99} />

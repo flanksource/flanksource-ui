@@ -56,10 +56,7 @@ export function ManageUserRoles({
         noValidate
       >
         <div>
-          <label
-            className="block text-sm font-medium text-gray-700"
-            htmlFor="userId"
-          >
+          <label className="form-label" htmlFor="userId">
             User
           </label>
           <div className="mt-1">
@@ -88,10 +85,7 @@ export function ManageUserRoles({
           )}
         </div>
         <div>
-          <label
-            className="block text-sm font-medium text-gray-700"
-            htmlFor="role"
-          >
+          <label className="form-label" htmlFor="role">
             Role
           </label>
           <div className="mt-1">
