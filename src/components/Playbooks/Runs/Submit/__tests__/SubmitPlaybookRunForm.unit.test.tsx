@@ -3,21 +3,19 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { rest } from "msw";
 import { setupServer } from "msw/node";
-import { PlaybookSpec } from "../../../Settings/PlaybookSpecsTable";
 import SubmitPlaybookRunForm from "./../SubmitPlaybookRunForm";
+import { RunnablePlaybook } from "../../../../../api/types/playbooks";
 
-const playbookSpec: PlaybookSpec = {
+const playbook: RunnablePlaybook = {
   id: "1",
   name: "Playbook 1",
   source: "UI",
-  spec: {
-    parameters: [
-      {
-        label: "Label",
-        name: "name"
-      }
-    ]
-  },
+  parameters: [
+    {
+      label: "Label",
+      name: "name"
+    }
+  ],
   created_at: "2021-09-01T00:00:00Z",
   updated_at: "2021-09-01T00:00:00Z"
 };
@@ -31,7 +29,7 @@ global.ResizeObserver = jest.fn().mockImplementation(() => ({
 // Define a mock server to handle PATCH requests
 const server = setupServer(
   rest.post("/api/playbook/run", (req, res, ctx) => {
-    return res(ctx.json(playbookSpec));
+    return res(ctx.json(playbook));
   })
 );
 
@@ -54,7 +52,7 @@ describe("SubmitPlaybookRunForm", () => {
         <SubmitPlaybookRunForm
           isOpen={true}
           onClose={closeFn}
-          playbookSpec={playbookSpec}
+          playbook={playbook}
           componentId={componentId}
           checkId={checkId}
           configId={configId}
@@ -68,7 +66,7 @@ describe("SubmitPlaybookRunForm", () => {
 
     expect(screen.getByLabelText("Label")).toBeInTheDocument();
 
-    expect(screen.getByRole("button", { name: /Submit/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Run/i })).toBeInTheDocument();
 
     userEvent.click(screen.getByRole("button", { name: /close/i }));
 
@@ -84,7 +82,7 @@ describe("SubmitPlaybookRunForm", () => {
         <SubmitPlaybookRunForm
           isOpen={true}
           onClose={closeFn}
-          playbookSpec={playbookSpec}
+          playbook={playbook}
           componentId={componentId}
           checkId={checkId}
           configId={configId}
@@ -100,7 +98,7 @@ describe("SubmitPlaybookRunForm", () => {
 
     fireEvent.change(input, { target: { value: "test" } });
 
-    const btn = screen.getByRole("button", { name: /Submit/i });
+    const btn = screen.getByRole("button", { name: /Run/i });
 
     userEvent.click(btn);
 

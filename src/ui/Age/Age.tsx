@@ -1,13 +1,6 @@
 import dayjs from "dayjs";
 import clsx from "clsx";
-
-export function isEmpty(value: any): boolean {
-  return (
-    value === "" ||
-    value == null ||
-    dayjs(value).isSame(dayjs("0001-01-01T00:00:00+00:00"))
-  );
-}
+import { isEmpty } from "../../utils/date";
 
 export default function Age({
   className = "",

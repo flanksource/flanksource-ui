@@ -21,7 +21,7 @@ export default function PlaybookRunParams({
         </>
       )}
       <div className="flex flex-col gap-2">
-        {playbook.parameters.length > 0 ? (
+        {playbook.parameters && playbook.parameters.length > 0 ? (
           playbook.parameters.map((i) => (
             <FormikTextInput
               name={`params.${i.name}`}

@@ -38,15 +38,12 @@ export default function SubmitPlaybookRunForm({
   const initialValues: Partial<SubmitPlaybookRunFormValues> = useMemo(
     () => ({
       id: playbook.id,
-      params: undefined,
       component_id: componentId,
       check_id: checkId,
       config_id: configId
     }),
     [checkId, componentId, configId, playbook.id]
   );
-
-  console.log("initialValues", initialValues);
 
   const { mutate: submitPlaybookRun } = useSubmitPlaybookRunMutation({
     onSuccess: (run) => {
@@ -96,6 +93,7 @@ export default function SubmitPlaybookRunForm({
                 <Button
                   disabled={values.id === undefined}
                   text="Run"
+                  role="button"
                   type="submit"
                 />
               </div>

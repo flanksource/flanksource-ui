@@ -48,6 +48,14 @@ export function isDate(dateString?: ValueType) {
   return !isNaN(new Date(dateString).getDate());
 }
 
+export function isEmpty(value: any): boolean {
+  return (
+    value === "" ||
+    value == null ||
+    dayjs(value).isSame(dayjs("0001-01-01T00:00:00+00:00"))
+  );
+}
+
 export const TIME_BUCKETS = {
   TODAY: { name: "today", sortOrder: 0 },
   THIS_WEEK: { name: "this week", sortOrder: 1 },

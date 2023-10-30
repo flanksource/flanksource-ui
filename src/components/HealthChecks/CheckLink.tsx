@@ -5,12 +5,12 @@ import { HealthCheckSummary } from "../../api/types/health";
 import { Icon } from "../Icon";
 import { HealthCheckStatus } from "../Status/HealthCheckStatus";
 
-type ComponentCheckLinkProps = {
+type CheckLinkProps = {
   check?: HealthCheckSummary;
   checkId?: string;
 };
 
-export function CheckLink({ check, checkId }: ComponentCheckLinkProps) {
+export function CheckLink({ check, checkId }: CheckLinkProps) {
   const { data } = useQuery(["check", checkId, check], () => {
     if (check) {
       return check;
@@ -27,6 +27,7 @@ export function CheckLink({ check, checkId }: ComponentCheckLinkProps) {
 
   return (
     <Link
+      role="link"
       to={{
         pathname: `/health`,
         search: `?checkId=${data.id}&timeRange=1h`
