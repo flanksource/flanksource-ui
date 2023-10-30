@@ -13,6 +13,7 @@ import { usePartialUpdateSearchParams } from "../../hooks/usePartialUpdateSearch
 import useRunTaskOnPropChange from "../../hooks/useRunTaskOnPropChange";
 import { useAtom } from "jotai";
 import { refreshButtonClickedTrigger } from "../../components/SlidingSideBar";
+import React from "react";
 
 export function ConfigDetailsPage() {
   const [, setRefreshButtonClickedTrigger] = useAtom(
@@ -90,8 +91,9 @@ export function ConfigDetailsPage() {
     const ordered = Object.keys(configDetails.config)
       .sort()
       .reduce((obj: Record<string, any>, key) => {
-        //eslint-disable-next-line
-        obj[key] = configDetails.config[key];
+        if (configDetails.config) {
+          obj[key] = configDetails.config[key];
+        }
         return obj;
       }, {});
 
