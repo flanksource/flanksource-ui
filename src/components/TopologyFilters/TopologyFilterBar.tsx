@@ -7,6 +7,7 @@ import { ComponentLabelsDropdown } from "../Dropdown/ComponentLabelsDropdown";
 import { ComponentTypesDropdown } from "../Dropdown/ComponentTypesDropdown";
 import { ReactSelectDropdown, StateOption } from "../ReactSelectDropdown";
 import TopologyPopOver from "../TopologyPopover";
+import { TopologySort } from "../TopologyPopover/topologySort";
 
 type TopologyFilterBarProps = {
   data?: GetTopologyApiResponse;
@@ -155,14 +156,13 @@ export default function TopologyFilterBar({
             }}
           />
         </div>
+
+        <div className="flex">
+          <TopologySort sortLabels={sortLabels} />
+        </div>
       </div>
-      <TopologyPopOver
-        size={topologyCardSize}
-        setSize={setTopologyCardSize}
-        sortLabels={sortLabels || []}
-        searchParams={searchParams}
-        setSearchParams={setSearchParams}
-      />
+
+      <TopologyPopOver size={topologyCardSize} setSize={setTopologyCardSize} />
     </div>
   );
 }
