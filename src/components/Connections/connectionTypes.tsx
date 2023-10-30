@@ -360,7 +360,7 @@ export const connectionTypes: ConnectionType[] = [
   {
     title: "Redis",
     icon: "redis",
-    value: ConnectionValueType.AWS,
+    value: ConnectionValueType.Redis,
     fields: [
       {
         label: "Name",
@@ -591,7 +591,7 @@ export const connectionTypes: ConnectionType[] = [
         ...data,
         region: data.properties?.region,
         profile: data.properties?.profile,
-        insecure_tls: data.properties?.insecureTLS
+        insecure_tls: data.properties?.insecureTLS === "true"
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
