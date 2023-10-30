@@ -2,12 +2,14 @@ import { useMemo } from "react";
 import { FaTags } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useGetConfigByIdQuery } from "../../../api/query-hooks";
-import { relativeDateTime } from "../../../utils/date";
 import CollapsiblePanel from "../../CollapsiblePanel";
 import { InfoMessage } from "../../InfoMessage";
 import TextSkeletonLoader from "../../SkeletonLoader/TextSkeletonLoader";
 import Title from "../../Title/title";
 import DisplayDetailsRow from "../../Utils/DisplayDetailsRow";
+import { Age } from "../../../ui/Age";
+import ConfigCostValue from "../../ConfigCosts/ConfigCostValue";
+import { isCostsEmpty } from "../../../api/types/configs";
 
 type Props = {
   configId: string;
@@ -97,11 +99,11 @@ export function ConfigDetails({
               items={[
                 {
                   label: "Created At",
-                  value: relativeDateTime(configDetails.created_at)
+                  value: <Age from={configDetails.created_at} />
                 },
                 {
                   label: "Updated At",
-                  value: relativeDateTime(configDetails.updated_at)
+                  value: <Age from={configDetails.updated_at} />
                 }
               ]}
             />
@@ -110,7 +112,7 @@ export function ConfigDetails({
               <DisplayDetailsRow
                 items={[
                   {
-                    label: "Scrapper",
+                    label: "Scraper",
                     value: (
                       <Link
                         to={`/settings/config_scrapers/${configDetails.config_scrapers.id}`}
@@ -118,6 +120,17 @@ export function ConfigDetails({
                         {configDetails.config_scrapers.name}
                       </Link>
                     )
+                  }
+                ]}
+              />
+            )}
+
+            {!isCostsEmpty(configDetails) && (
+              <DisplayDetailsRow
+                items={[
+                  {
+                    label: "Cost",
+                    value: <ConfigCostValue config={configDetails} />
                   }
                 ]}
               />
@@ -169,7 +182,7 @@ export function ConfigDetails({
                 items={[
                   {
                     label: "Deleted At",
-                    value: relativeDateTime(configDetails.deleted_at)
+                    value: <Age from={configDetails.deleted_at} />
                   }
                 ]}
               />

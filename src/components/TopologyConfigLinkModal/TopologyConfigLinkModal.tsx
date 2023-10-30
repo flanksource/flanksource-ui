@@ -6,7 +6,6 @@ import {
   addManualComponentConfigRelationship,
   getAllConfigsForSearchPurpose
 } from "../../api/services/configs";
-import { Topology } from "../../context/TopologyPageContext";
 import { queryClient } from "../../query-client";
 import { delayedPromise, stringSortHelper } from "../../utils/common";
 import ConfigLink from "../ConfigLink/ConfigLink";
@@ -17,6 +16,8 @@ import { toastError, toastSuccess } from "../Toast/toast";
 import { useAtom } from "jotai";
 import { refreshButtonClickedTrigger } from "../SlidingSideBar";
 import { Events, sendAnalyticEvent } from "../../services/analytics";
+import { ConfigItem } from "../../api/types/configs";
+import { Topology } from "../../api/types/topology";
 
 type TopologyConfigLinkModalProps = {
   topology: Topology;
@@ -138,10 +139,14 @@ export function TopologyConfigLinkModal({
                     <div className="w-auto cursor-pointer">
                       <div className="flex flex-row truncate">
                         <ConfigLink
-                          configId={option.id}
-                          configName={option.name}
-                          configType={option.type}
-                          configTypeSecondary={option.config_class}
+                          config={
+                            {
+                              id: option.id,
+                              name: option.name,
+                              type: option.type,
+                              config_class: option.config_class
+                            } as ConfigItem
+                          }
                           variant="label"
                         />
                       </div>

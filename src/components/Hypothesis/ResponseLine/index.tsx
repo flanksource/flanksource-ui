@@ -1,29 +1,22 @@
+import { useCallback, useMemo } from "react";
+import { BiCheck } from "react-icons/bi";
 import { BsTrash } from "react-icons/bs";
-
-import { Evidence } from "../../../api/services/evidence";
-import { Comment } from "../../../api/services/comments";
-import { User } from "../../../api/services/users";
-import { relativeDateTime } from "../../../utils/date";
+import { IoMdRemoveCircle } from "react-icons/io";
+import { Evidence } from "../../../api/types/evidence";
+import { Comment } from "../../../api/types/incident";
+import { UserWithTeam } from "../../../api/types/users";
+import { Age } from "../../../ui/Age";
 import { Avatar } from "../../Avatar";
 import { CommentText } from "../../Comment";
-import { IconButton } from "../../IconButton";
-import { EvidenceItem } from "../EvidenceSection";
 import { Icon } from "../../Icon";
+import { IconButton } from "../../IconButton";
 import { Menu } from "../../Menu";
-import { BiCheck } from "react-icons/bi";
-import { IoMdRemoveCircle } from "react-icons/io";
-import { useCallback, useMemo } from "react";
-
-export type CreatedBy = User & {
-  team: {
-    icon: string;
-    name: string;
-  };
-};
+import { EvidenceItem } from "../EvidenceSection";
+import { DateType } from "../../../api/types/common";
 
 interface IProps {
-  created_by: CreatedBy;
-  created_at: string;
+  created_by: UserWithTeam;
+  created_at?: DateType;
   response: Comment & Evidence;
   onDelete?: () => void;
   markAsDefinitionOfDone?: () => void;
@@ -84,8 +77,8 @@ export function ResponseLine({
               </span>
             )}
           </div>
-          <p className="mt-0.5 text-gray-500 text-xs leading-5 font-normal">
-            {relativeDateTime(created_at)}
+          <p className="mt-0.5 text-gray-500 leading-5 font-normal">
+            <Age from={created_at} />
           </p>
         </div>
 

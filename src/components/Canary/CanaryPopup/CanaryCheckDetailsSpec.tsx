@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useCanaryCheckItemQuery } from "../../../api/query-hooks";
-import { HealthCheck } from "../../../types/healthChecks";
+import { HealthCheck } from "../../../api/types/health";
 import { JSONViewer } from "../../JSONViewer";
 import { Loading } from "../../Loading";
 

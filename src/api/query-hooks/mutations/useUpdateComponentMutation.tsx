@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
-import { Topology } from "../../../context/TopologyPageContext";
 import { updateComponent } from "../../services/topology";
+import { Topology } from "../../types/topology";
 
 export default function useUpdateComponentMutation(onSuccess?: () => void) {
   return useMutation(

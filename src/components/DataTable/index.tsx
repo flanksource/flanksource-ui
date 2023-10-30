@@ -23,13 +23,6 @@ import { Pagination, PaginationType } from "./Pagination/Pagination";
 import TableSkeletonLoader from "../SkeletonLoader/TableSkeletonLoader";
 import usePreferences from "../../hooks/userPreferences";
 
-const tableStyles = {
-  theadHeaderClass:
-    "px-3 py-3 text-left text-gray-500 font-medium text-xs tracking-wider",
-  tbodyRowClass: "cursor-pointer text-sm",
-  tbodyDataClass: "whitespace-nowrap p-2"
-};
-
 export type PaginationOptions = {
   setPagination: any;
   pageIndex: number;
@@ -49,6 +42,9 @@ type DataTableProps<TableColumns, Data extends TableColumns> = {
   isLoading?: boolean;
   groupBy?: string[];
   hiddenColumns?: string[];
+  theadHeaderClass?: string;
+  tbodyRowClass?: string;
+  tbodyDataClass?: string;
   className?: string;
   isVirtualized?: boolean;
   virtualizedRowEstimatedHeight?: number;
@@ -118,7 +114,12 @@ export function DataTable<TableColumns, Data extends TableColumns>({
   isLoading,
   groupBy,
   hiddenColumns,
-  className,
+  // for some reason, it seems to need both auto and fixed, there may be
+  // some other css class tied to auto
+  className = "table-auto table-fixed",
+  theadHeaderClass = "px-3 py-3 text-left text-gray-500 font-medium text-xs tracking-wider",
+  tbodyRowClass = "cursor-pointer text-sm",
+  tbodyDataClass = "whitespace-nowrap p-2",
   isVirtualized = false,
   virtualizedRowEstimatedHeight = 35,
   tableSortByState,
@@ -255,7 +256,7 @@ export function DataTable<TableColumns, Data extends TableColumns>({
   }, [rows.length, virtualRows, pagination, paginationType, table]);
 
   return (
-    <div className="flex flex-col flex-1 overflow-y-auto space-y-2 h-full">
+    <div className="flex flex-col flex-1 overflow-y-auto space-y-2 w-full h-full">
       <div
         ref={tableContainerRef}
         className={clsx("flex flex-col flex-1 overflow-y-auto", className)}
@@ -266,9 +267,8 @@ export function DataTable<TableColumns, Data extends TableColumns>({
       >
         <table
           className={clsx(
-            // for some reason, it seems to need both auto and fixed, there may be
-            // some other css class tied to auto
-            `table-auto table-fixed w-full border border-gray-200 rounded-md`,
+            className,
+            `w-full border border-gray-200 rounded-md`,
             stickyHead && "relative"
           )}
           style={tableStyle}
@@ -291,7 +291,7 @@ export function DataTable<TableColumns, Data extends TableColumns>({
                   colIndex === 1 ? null : (
                     <th
                       key={header.id}
-                      className={`${tableStyles.theadHeaderClass}${
+                      className={`${theadHeaderClass}${
                         header.column.getCanSort() ? " cursor-pointer" : ""
                       }`}
                       onClick={header.column.getToggleSortingHandler()}
@@ -343,10 +343,10 @@ export function DataTable<TableColumns, Data extends TableColumns>({
                   return (
                     <DataTableRow
                       row={row}
-                      cellClassNames={tableStyles.tbodyDataClass}
+                      cellClassNames={tbodyDataClass}
                       onRowClick={handleRowClick}
                       isGrouped={isGrouped}
-                      rowClassNames={tableStyles.tbodyRowClass}
+                      rowClassNames={tbodyRowClass}
                       key={row.id}
                     />
                   );
@@ -354,12 +354,12 @@ export function DataTable<TableColumns, Data extends TableColumns>({
               : rows.map((row) => (
                   <DataTableRow
                     row={row}
-                    cellClassNames={tableStyles.tbodyDataClass}
+                    cellClassNames={tbodyDataClass}
                     onRowClick={handleRowClick}
                     isGrouped={isGrouped}
-                    rowClassNames={`${
-                      tableStyles.tbodyRowClass
-                    } ${determineRowClassNamesCallback(row)}`}
+                    rowClassNames={`${tbodyRowClass} ${determineRowClassNamesCallback(
+                      row
+                    )}`}
                     key={row.id}
                   />
                 ))}

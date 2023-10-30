@@ -1,12 +1,12 @@
 import { useMemo } from "react";
 import { MdOutlineInsights } from "react-icons/md";
-import { Topology } from "../../context/TopologyPageContext";
 import { InsightTypeToIcon } from "../ConfigInsightsIcon";
 import {
   StatusInfo,
   StatusLine,
   StatusLineData
 } from "../StatusLine/StatusLine";
+import { Topology } from "../../api/types/topology";
 
 const severityToColorMap = (severity: string) => {
   if (severity === "critical") {
@@ -31,11 +31,13 @@ const severityToColorMap = (severity: string) => {
 };
 
 type TopologyConfigAnalysisLineProps = {
+  target?: string;
   topology: Pick<Topology, "summary" | "id">;
 };
 
 export function TopologyConfigAnalysisLine({
-  topology
+  topology,
+  target = ""
 }: TopologyConfigAnalysisLineProps) {
   const insights = topology?.summary?.insights;
 
@@ -86,5 +88,5 @@ export function TopologyConfigAnalysisLine({
     return null;
   }
 
-  return <StatusLine {...analysis} className="" />;
+  return <StatusLine {...analysis} className="" target={target} />;
 }

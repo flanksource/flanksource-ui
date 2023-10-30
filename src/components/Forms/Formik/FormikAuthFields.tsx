@@ -24,7 +24,6 @@ export default function FormikAuthFields({
 
   const [selectedMethod, setSelectedMethod] = useState<"None" | string>(() => {
     types.forEach((field) => {
-      console.log("field", field);
       if (get(values, `${name}.${Object.keys(field.value)[0]}`)) {
         return field.label;
       }

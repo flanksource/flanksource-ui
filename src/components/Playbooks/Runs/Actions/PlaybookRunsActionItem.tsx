@@ -1,6 +1,6 @@
-import { relativeDateTime } from "../../../../utils/date";
-import { PlaybookRunAction } from "../PlaybookRunTypes";
-import PlaybookRunsStatus from "../PlaybookRunsStatus";
+import { PlaybookRunAction } from "../../../../api/types/playbooks";
+import { Age } from "../../../../ui/Age";
+import { PlaybookStatusIcon } from "../../../Icon/PlaybookStatusIcon";
 
 type PlaybookRunsActionItemProps = {
   action: PlaybookRunAction;
@@ -23,15 +23,15 @@ export default function PlaybookRunsActionItem({
       }`}
     >
       <div className="flex flex-col">
-        <div className="flex flex-row gap-2 text-sm font-medium text-gray-600">
-          <PlaybookRunsStatus status={action.status} hideStatusLabel />
+        <div className="flex flex-row gap-2 text-sm text-gray-600">
+          <PlaybookStatusIcon status={action.status} />
           {action.name}
         </div>
         <div className={`text-xs flex flex-row gap-1 items-center`}></div>
       </div>
       <div className="flex flex-col">
-        <div className="text-sm font-medium text-gray-600">
-          {relativeDateTime(action.start_time!, action.end_time)}
+        <div className="text-sm  text-gray-600">
+          <Age from={action.start_time} to={action.end_time} />
         </div>
       </div>
     </div>

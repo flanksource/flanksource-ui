@@ -1,6 +1,6 @@
 import { CellContext, ColumnDef, Row } from "@tanstack/react-table";
 import React from "react";
-import { ConfigAnalysisTypeItem, ConfigItem } from "../../api/services/configs";
+import { ConfigAnalysisTypeItem } from "../../api/services/configs";
 import { getTimeBucket, TIME_BUCKETS } from "../../utils/date";
 import ConfigInsightsIcon from "../ConfigInsightsIcon";
 import { FormatCurrency } from "../CostDetails/CostDetails";
@@ -10,7 +10,7 @@ import ConfigListCostCell from "./Cells/ConfigListCostCell";
 import ConfigListDateCell from "./Cells/ConfigListDateCell";
 import ConfigListNameCell from "./Cells/ConfigListNameCell";
 import ConfigListTagsCell from "./Cells/ConfigListTagsCell";
-import { ConfigTypeInsights } from "../ConfigInsights";
+import { ConfigAnalysis, ConfigItem } from "../../api/types/configs";
 
 function CountBadge({ value }: { value: number | undefined | null }) {
   if (!value) {
@@ -58,7 +58,7 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
       const data = getValue();
       return (
         <div className="inline-flex space-x-2 overflow-hidden truncate">
-          {data.map((item: { count: number; analysis: ConfigTypeInsights }) => {
+          {data.map((item: { count: number; analysis: ConfigAnalysis }) => {
             return (
               <span
                 className="inline-flex space-x-0.5"
@@ -74,60 +74,28 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
     },
     size: 150
   },
+
   {
-    id: "cost",
-    header: () => <div className="block w-full text-center">Cost</div>,
-    accessorKey: "",
+    header: () => <div>Cost</div>,
+    accessorKey: "cost_total_1d",
+    aggregationFn: "sum",
+    aggregatedCell: CostAggregate,
     cell: ConfigListCostCell,
-    size: 180,
-    enableSorting: false,
-    columns: [
-      {
-        header: () => <div className="block w-full text-center">min</div>,
-        accessorKey: "cost_per_minute",
-        aggregationFn: "sum",
-        aggregatedCell: CostAggregate,
-        cell: ConfigListCostCell,
-        size: 30
-      },
-      {
-        header: () => <div className="block w-full text-center">1d</div>,
-        accessorKey: "cost_total_1d",
-        aggregationFn: "sum",
-        aggregatedCell: CostAggregate,
-        cell: ConfigListCostCell,
-        size: 30
-      },
-      {
-        header: () => <div className="block w-full text-center">7d</div>,
-        accessorKey: "cost_total_7d",
-        aggregationFn: "sum",
-        aggregatedCell: CostAggregate,
-        cell: ConfigListCostCell,
-        size: 30
-      },
-      {
-        header: () => <div className="block w-full text-center">30d</div>,
-        accessorKey: "cost_total_30d",
-        aggregationFn: "sum",
-        aggregatedCell: CostAggregate,
-        cell: ConfigListCostCell,
-        size: 30
-      }
-    ]
+    maxSize: 60
   },
-  {
-    header: "Agent",
-    accessorKey: "agent",
-    enableSorting: false,
-    cell: ({ getValue }: CellContext<ConfigItem, any>) => {
-      const agent = getValue<ConfigItem["agent"]>();
-      if (agent?.name === "local") {
-        return null;
-      }
-      return <span>{agent?.name}</span>;
-    }
-  },
+
+  // {
+  //   header: "Agent",
+  //   accessorKey: "agent",
+  //   enableSorting: false,
+  //   cell: ({ getValue }: CellContext<ConfigItem, any>) => {
+  //     const agent = getValue<ConfigItem["agent"]>();
+  //     if (agent?.name === "local") {
+  //       return null;
+  //     }
+  //     return <span>{agent?.name}</span>;
+  //   }
+  // },
   {
     header: "Tags",
     accessorKey: "tags",
@@ -149,14 +117,14 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
     accessorKey: "created_at",
     cell: ConfigListDateCell,
     aggregatedCell: "",
-    size: 100
+    maxSize: 70
   },
   {
-    header: "Last Updated",
+    header: "Updated",
     accessorKey: "updated_at",
     cell: ConfigListDateCell,
     aggregatedCell: "",
-    size: 130
+    maxSize: 70
   },
   {
     header: "Deleted At",

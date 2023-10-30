@@ -20,9 +20,9 @@ import {
   HiOutlineChevronUp,
   HiOutlineMinus
 } from "react-icons/hi";
-import { IncidentStatus } from "../../api/services/incident";
 import { capitalizeFirstLetter } from "../../utils/common";
 import { GoIssueClosed, GoIssueOpened } from "react-icons/go";
+import { IncidentStatus } from "../../api/types/incident";
 
 export const defaultSelections = {
   all: {
@@ -31,15 +31,6 @@ export const defaultSelections = {
     order: -1
   }
 };
-
-export type Severity =
-  | "info"
-  | "warning"
-  | "low"
-  | "medium"
-  | "high"
-  | "blocker"
-  | "critical";
 
 export const severityItems = {
   Info: {

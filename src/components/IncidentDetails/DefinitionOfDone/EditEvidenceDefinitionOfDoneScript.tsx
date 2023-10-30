@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useUpdateEvidenceMutation } from "../../../api/query-hooks/mutations/evidence";
-import { Evidence } from "../../../api/services/evidence";
+import { Evidence } from "../../../api/types/evidence";
 import { Modal } from "../../Modal";
 import { ScriptStep } from "../AddDefinitionOfDone/steps/ScriptStep";
 

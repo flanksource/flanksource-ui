@@ -7,8 +7,8 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import updateLocale from "dayjs/plugin/updateLocale";
 import utc from "dayjs/plugin/utc";
 
-import { ValueType } from "../context/TopologyPageContext";
 import { SortOrders } from "../constants";
+import { ValueType } from "../api/types/common";
 
 dayjs.extend(isBetween);
 dayjs.extend(isToday);
@@ -46,6 +46,14 @@ export function isDate(dateString?: ValueType) {
   }
 
   return !isNaN(new Date(dateString).getDate());
+}
+
+export function isEmpty(value: any): boolean {
+  return (
+    value === "" ||
+    value == null ||
+    dayjs(value).isSame(dayjs("0001-01-01T00:00:00+00:00"))
+  );
 }
 
 export const TIME_BUCKETS = {
@@ -116,6 +124,17 @@ export const formatTimeRange = (date: string | Date) => {
   return formatDate(date, {
     stringFormat: DATE_FORMATS.TIME_RANGE
   });
+};
+
+export const age = (from: string | Date) => {
+  if (
+    from === "" ||
+    from == null ||
+    dayjs(from).isSame(dayjs("0001-01-01T00:00:00+00:00"))
+  ) {
+    return "";
+  }
+  return dayjs.utc(from).local().fromNow(true);
 };
 
 /**
@@ -206,9 +225,10 @@ export const formatDateToTime = (date: string | Date) => {
 
 export const dateSortHelper = (
   order: string,
-  dateOne: string,
-  dateTwo: string
+  dateOne?: string | Date,
+  dateTwo?: string | Date
 ) => {
+  if (dateOne === undefined || dateTwo === undefined) return 0;
   const value1 = +new Date(dateOne);
   const value2 = +new Date(dateTwo);
   if (value1 > value2) {

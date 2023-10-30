@@ -1,5 +1,7 @@
-import { EvidenceType } from "../../api/services/evidence";
-import { EvidenceWithEvidenceItems } from "../../api/services/IncidentsHistory";
+import {
+  EvidenceWithEvidenceItems,
+  EvidenceType
+} from "../../api/types/evidence";
 import ConfigInsightsIcon from "../ConfigInsightsIcon";
 import { Icon } from "../Icon";
 

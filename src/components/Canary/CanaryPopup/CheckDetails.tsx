@@ -1,25 +1,24 @@
 import React, { Suspense, useMemo, useRef } from "react";
-import { usePrevious } from "../../../utils/hooks";
-import { AccordionBox } from "../../AccordionBox";
+import { useCanaryGraphQuery } from "../../../api/query-hooks/health";
+import { HealthCheck } from "../../../api/types/health";
 import {
   capitalizeFirstLetter,
   toFixedIfNecessary
 } from "../../../utils/common";
+import { usePrevious } from "../../../utils/hooks";
 import mixins from "../../../utils/mixins.module.css";
-import { PopupTabs } from "./tabs";
-import { CheckStat } from "./CheckStat";
-import { getUptimePercentage } from "./utils";
-import { StatusHistory } from "./StatusHistory/StatusHistory";
-import { DetailField } from "./DetailField";
-import { Duration } from "../renderers";
+import { AccordionBox } from "../../AccordionBox";
 import { DropdownStandaloneWrapper } from "../../Dropdown/StandaloneWrapper";
 import { TimeRange, timeRanges } from "../../Dropdown/TimeRange";
-import { HealthCheck } from "../../../types/healthChecks";
-import { CanaryCheckDetailsSpecTab } from "./CanaryCheckDetailsSpec";
+import { Age } from "../../../ui/Age";
+import { Duration } from "../renderers";
 import { CanaryCheckDetailsLabel } from "./CanaryCheckDetailsLabel";
-import { relativeDateTime } from "../../../utils/date";
-import { useCanaryGraphQuery } from "../../../api/query-hooks/health";
-
+import { CanaryCheckDetailsSpecTab } from "./CanaryCheckDetailsSpec";
+import { CheckStat } from "./CheckStat";
+import { DetailField } from "./DetailField";
+import { StatusHistory } from "./StatusHistory/StatusHistory";
+import { PopupTabs } from "./tabs";
+import { getUptimePercentage } from "./utils";
 const CanaryStatusChart = React.lazy(() =>
   import("../CanaryStatusChart").then(({ CanaryStatusChart }) => ({
     default: CanaryStatusChart
@@ -57,9 +56,11 @@ export function CheckDetails({ check, timeRange, ...rest }: CheckDetailsProps) {
       Interval: validCheck?.interval || "-",
       Location: validCheck?.location || "-",
       Schedule: validCheck?.schedule || "-",
-      "Last Runtime": validCheck?.lastRuntime
-        ? relativeDateTime(validCheck.lastRuntime)
-        : "-"
+      "Last Runtime": validCheck?.lastRuntime ? (
+        <Age from={validCheck.lastRuntime} />
+      ) : (
+        "-"
+      )
     }),
     [validCheck]
   );

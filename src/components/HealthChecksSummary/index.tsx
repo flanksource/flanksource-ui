@@ -3,6 +3,7 @@ import { AiFillHeart } from "react-icons/ai";
 import { StatusLine, StatusLineProps } from "../StatusLine/StatusLine";
 
 type HealthChecksSummaryProps = React.HTMLProps<HTMLDivElement> & {
+  target?: string;
   checks?: {
     health: number;
     warning: number;
@@ -12,6 +13,7 @@ type HealthChecksSummaryProps = React.HTMLProps<HTMLDivElement> & {
 
 export function HealthChecksSummary({
   checks,
+  target = "",
   ...rest
 }: HealthChecksSummaryProps) {
   const statusLineInfo = useMemo(() => {
@@ -53,5 +55,5 @@ export function HealthChecksSummary({
     return null;
   }
 
-  return <StatusLine {...statusLineInfo} {...rest} />;
+  return <StatusLine {...statusLineInfo} {...rest} target={target} />;
 }

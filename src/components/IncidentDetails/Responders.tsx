@@ -2,7 +2,7 @@ import clsx from "clsx";
 import { useState } from "react";
 import { BsTrash } from "react-icons/bs";
 import { useIncidentRespondersQuery } from "../../api/query-hooks/useIncidentRespondersQuery";
-import { Incident } from "../../api/services/incident";
+import { Incident } from "../../api/types/incident";
 import { deleteResponder } from "../../api/services/responder";
 import { ClickableSvg } from "../ClickableSvg/ClickableSvg";
 import { ConfirmationPromptDialog } from "../Dialogs/ConfirmationPromptDialog";

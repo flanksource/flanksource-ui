@@ -107,7 +107,7 @@ export function Modal({
                     >
                       <span className="sr-only">Close</span>
                       <XIcon
-                        className="fill-gray-700 w-6 h-6"
+                        className="fill-gray-400 w-6 h-6"
                         aria-hidden="true"
                       />
                     </button>

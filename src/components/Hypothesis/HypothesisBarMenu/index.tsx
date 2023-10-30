@@ -1,11 +1,12 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useState } from "react";
 import { BiHide } from "react-icons/bi";
 import { BsTrash } from "react-icons/bs";
-import { useQueryClient } from "@tanstack/react-query";
-import { deleteHypothesis, Hypothesis } from "../../../api/services/hypothesis";
+import { createIncidentQueryKey } from "../../../api/query-hooks";
+import { deleteHypothesis } from "../../../api/services/hypothesis";
+import { Hypothesis } from "../../../api/types/hypothesis";
 import { IconButton } from "../../IconButton";
 import { Menu } from "../../Menu";
-import { createIncidentQueryKey } from "../../../api/query-hooks";
 import { HypothesisDeleteDialog } from "../HypothesisDeleteDialog";
 
 interface IProps {

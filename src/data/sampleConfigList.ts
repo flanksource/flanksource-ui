@@ -1,4 +1,4 @@
-import { ConfigItem } from "../api/services/configs";
+import { ConfigItem } from "../api/types/configs";
 
 function canonTags(
   tags: undefined | { Key: string; Value: string }[] | { [index: string]: any }

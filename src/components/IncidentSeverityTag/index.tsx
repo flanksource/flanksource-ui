@@ -1,4 +1,4 @@
-import { IncidentSeverity } from "../../api/services/incident";
+import { IncidentSeverity } from "../../api/types/incident";
 import { severityItems } from "../Incidents/data";
 
 const getSeverity = (severity: IncidentSeverity | string) => {

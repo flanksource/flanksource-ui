@@ -89,11 +89,7 @@ export const Jira = ({
             setValue("project", "");
             setValue("issueType", "");
           }}
-          label={
-            <label className="block text-sm font-bold text-gray-700 mb-2">
-              Jira Instance
-            </label>
-          }
+          label={<label className="form-label">Jira Instance</label>}
           value={jiraProjectType}
           id="config-type"
           isDisabled={jiraProjectType}
@@ -121,10 +117,7 @@ export const Jira = ({
             namePath="$.name"
             valuePath="$.key"
             label={
-              <label
-                htmlFor="project"
-                className="block text-sm font-bold text-gray-700 mb-2 mt-4"
-              >
+              <label htmlFor="project" className="form-label mt-4">
                 Project
               </label>
             }
@@ -153,10 +146,7 @@ export const Jira = ({
               namePath="$"
               valuePath="$"
               label={
-                <label
-                  htmlFor="issueType"
-                  className="block text-sm font-bold text-gray-700 mb-2 mt-4"
-                >
+                <label htmlFor="issueType" className="form-label mt-4">
                   Issue Type
                 </label>
               }
@@ -185,10 +175,7 @@ export const Jira = ({
               namePath="$"
               valuePath="$"
               label={
-                <label
-                  htmlFor="priority"
-                  className="block text-sm font-bold text-gray-700 mb-2 mt-4"
-                >
+                <label htmlFor="priority" className="form-label mt-4">
                   Priority
                 </label>
               }

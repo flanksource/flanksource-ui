@@ -1,6 +1,6 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { HypothesisStatus } from "../../../api/services/hypothesis";
+import { HypothesisStatus } from "../../../api/types/hypothesis";
 import { HypothesisBarMenu } from "./index";
 
 const defaultQueryClient = new QueryClient();

@@ -1,18 +1,6 @@
 import { IncidentCommander } from "../axios";
 import { resolve } from "../resolve";
-import { User } from "./users";
-
-export type Team = {
-  id: string;
-  name: string;
-  icon: string;
-  spec: Record<string, any>;
-  source?: string;
-  created_by?: User;
-  created_at: string;
-  updated_at: string;
-  deleted_at?: string;
-};
+import { Team, User } from "../types/users";
 
 export const getTeam = async (id: string): Promise<Team | undefined> => {
   const response = await IncidentCommander.get<Team | null>(

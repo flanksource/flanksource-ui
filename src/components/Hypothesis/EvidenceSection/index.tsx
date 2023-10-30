@@ -1,31 +1,31 @@
-import React, { ReactNode, useEffect, useState } from "react";
 import { ChevronRightIcon, DotsVerticalIcon } from "@heroicons/react/outline";
-import { TopologyCard } from "../../TopologyCard";
+import React, { ReactNode, useEffect, useState } from "react";
 import { BsTrash } from "react-icons/bs";
-import { Evidence, EvidenceType } from "../../../api/services/evidence";
-import { getCanaries } from "../../../api/services/topology";
-import mixins from "../../../utils/mixins.module.css";
-import { CheckDetails } from "../../Canary/CanaryPopup/CheckDetails";
-import { CheckTitle } from "../../Canary/CanaryPopup/CheckTitle";
-import { sanitizeHTMLContent, toFixedIfNecessary } from "../../../utils/common";
-import { getUptimePercentage } from "../../Canary/CanaryPopup/utils";
-import { Duration, StatusList } from "../../Canary/renderers";
-import { Modal } from "../../Modal";
-import { relativeDateTime } from "../../../utils/date";
-import { Size, ViewType } from "../../../types";
-import ConfigLink from "../../ConfigLink/ConfigLink";
-import { LogsTable } from "../../Logs/Table/LogsTable";
-import { Icon } from "../../Icon";
-import { Button } from "../../Button";
-import { ConfigDetailsChanges } from "../../ConfigDetailsChanges/ConfigDetailsChanges";
 import {
   useGetConfigByIdQuery,
   useGetConfigInsight
 } from "../../../api/query-hooks";
-import { ConfigTypeInsights } from "../../ConfigInsights";
+import { getCanaries } from "../../../api/services/topology";
+import { Size, ViewType } from "../../../types";
+import { sanitizeHTMLContent, toFixedIfNecessary } from "../../../utils/common";
+import mixins from "../../../utils/mixins.module.css";
+import { Button } from "../../Button";
+import { CheckDetails } from "../../Canary/CanaryPopup/CheckDetails";
+import { CheckTitle } from "../../Canary/CanaryPopup/CheckTitle";
+import { getUptimePercentage } from "../../Canary/CanaryPopup/utils";
+import { Duration, StatusList } from "../../Canary/renderers";
 import { ConfigAnalysisLink } from "../../ConfigAnalysisLink/ConfigAnalysisLink";
+import { ConfigDetailsChanges } from "../../ConfigDetailsChanges/ConfigDetailsChanges";
+import ConfigLink from "../../ConfigLink/ConfigLink";
+import { Icon } from "../../Icon";
 import { CommentEvidence } from "../../IncidentDetails/DefinitionOfDone/EvidenceView";
-import { Hypothesis } from "../../../api/services/hypothesis";
+import { LogsTable } from "../../Logs/Table/LogsTable";
+import { Modal } from "../../Modal";
+import { TopologyCard } from "../../TopologyCard";
+import { Age } from "../../../ui/Age";
+import { ConfigAnalysis } from "../../../api/types/configs";
+import { Evidence, EvidenceType } from "../../../api/types/evidence";
+import { Hypothesis } from "../../../api/types/hypothesis";
 
 const ColumnSizes = {
   Time: {
@@ -62,7 +62,7 @@ export function EvidenceItem({
     case EvidenceType.Config:
       return (
         <EvidenceAccordion
-          date={evidence.created_at}
+          date={evidence.created_at || ""}
           title={evidence.description!}
           configId={evidence.config_id!}
           configName={evidence.evidence?.configName}
@@ -100,7 +100,7 @@ export function EvidenceItem({
 }
 
 const EvidenceAccordion: React.FC<{
-  date: string;
+  date: string | Date;
   title: string;
   configId: string;
   configName: string;
@@ -125,19 +125,14 @@ const EvidenceAccordion: React.FC<{
           <div className="flex justify-between w-full items-center">
             {title || <span className="text-gray-400">(no title)</span>}
             {date && (
-              <div className="text-gray-400 text-sm pl-2">
-                {relativeDateTime(date)}
+              <div className="text-gray-400  pl-2">
+                <Age from={date} />
               </div>
             )}
           </div>
         </button>
         <div>
-          <ConfigLink
-            configId={configId}
-            configName={configName}
-            configType={config?.type}
-            configTypeSecondary={config?.config_class}
-          />
+          <ConfigLink config={config} />
         </div>
       </div>
       {expanded && children}
@@ -408,7 +403,7 @@ export function HealthEvidenceViewer({
               </div>
               <div className="flex flex-col w-auto px-2 py-2">
                 <div className="flex flex-row">
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="form-label">
                     Latency:
                     <span className="pl-2 inline-block">
                       <Duration ms={check.latency.p99} />
@@ -481,11 +476,11 @@ export function ConfigAnalysisEvidence({
   className?: string;
   viewType?: ViewType;
 }) {
-  const { data: response } = useGetConfigInsight<ConfigTypeInsights[]>(
+  const { data: response } = useGetConfigInsight<ConfigAnalysis[]>(
     evidence.config_id!,
     evidence.config_analysis_id!
   );
-  const [configAnalysis, setConfigAnalysis] = useState<ConfigTypeInsights>();
+  const [configAnalysis, setConfigAnalysis] = useState<ConfigAnalysis>();
 
   useEffect(() => {
     const analysis = response?.[0];

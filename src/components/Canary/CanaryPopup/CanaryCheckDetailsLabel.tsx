@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import ReactTooltip from "react-tooltip";
-import { HealthCheck } from "../../../types/healthChecks";
+import { HealthCheck } from "../../../api/types/health";
 
 type CanaryCheckDetailsLabelProps = {
   check?: Partial<HealthCheck>;

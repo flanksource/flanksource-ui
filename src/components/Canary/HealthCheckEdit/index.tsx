@@ -6,7 +6,7 @@ import {
   getComponentTemplate,
   getTopology
 } from "../../../api/services/topology";
-import { HealthCheck } from "../../../types/healthChecks";
+import { HealthCheck } from "../../../api/types/health";
 import { Icon } from "../../Icon";
 import TextSkeletonLoader from "../../SkeletonLoader/TextSkeletonLoader";
 

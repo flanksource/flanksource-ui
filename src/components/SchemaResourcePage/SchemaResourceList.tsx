@@ -2,13 +2,12 @@ import clsx from "clsx";
 import { useNavigate } from "react-router-dom";
 import { SchemaResourceWithJobStatus } from "../../api/schemaResources";
 import { tables } from "../../context/UserAccessContext/permissions";
-import { relativeDateTime } from "../../utils/date";
 import { Avatar } from "../Avatar";
 import { InfoMessage } from "../InfoMessage";
 import JobHistoryStatusColumn from "../JobsHistory/JobHistoryStatusColumn";
 import TableSkeletonLoader from "../SkeletonLoader/TableSkeletonLoader";
+import { Age } from "../../ui/Age";
 import ConfigScrapperIcon from "./ConfigScrapperIcon";
-
 interface Props {
   items: SchemaResourceWithJobStatus[];
   baseUrl: string;
@@ -137,16 +136,16 @@ function SchemaResourceListItem({
       </Cell>
       {table === "canaries" && <Cell>{schedule}</Cell>}
       <Cell className="text-gray-500">
-        {created_at && relativeDateTime(created_at)}
+        <Age from={created_at} suffix={true} />
       </Cell>
       <Cell className="text-gray-500">
-        {updated_at && relativeDateTime(updated_at)}
+        <Age from={updated_at} suffix={true} />
       </Cell>
       <Cell className="text-gray-500 lowercase space-x-2">
         <JobHistoryStatusColumn status={job_status} />
       </Cell>
       <Cell className="text-gray-500">
-        {job_time_start ? relativeDateTime(job_time_start) : ""}
+        <Age from={job_time_start} suffix={true} />
       </Cell>
       <Cell className="text-gray-500">
         {created_by && <Avatar user={created_by} circular />}

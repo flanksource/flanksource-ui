@@ -5,13 +5,13 @@ import { ImTree } from "react-icons/im";
 import { MdAlarmAdd, MdTableRows } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import useUpdateComponentMutation from "../../api/query-hooks/mutations/useUpdateComponentMutation";
-import { EvidenceType } from "../../api/services/evidence";
+import { EvidenceType } from "../../api/types/evidence";
+import { Topology } from "../../api/types/topology";
 import { useFeatureFlagsContext } from "../../context/FeatureFlagsContext";
-import { Topology } from "../../context/TopologyPageContext";
 import { features } from "../../services/permissions/features";
 import { ActionLink } from "../ActionLink/ActionLink";
 import { AttachEvidenceDialog } from "../AttachEvidenceDialog";
-import SelectPlaybookToRun from "../Playbooks/Runs/Submit/SelectPlaybookToRun";
+import PlaybooksDropdownMenu from "../Playbooks/Runs/Submit/PlaybooksDropdownMenu";
 import TopologySnapshotModal from "../TopologyCard/TopologySnapshotModal";
 import { TopologyConfigLinkModal } from "../TopologyConfigLinkModal/TopologyConfigLinkModal";
 
@@ -280,7 +280,7 @@ export default function TopologyActionBar({
             }
             return null;
           })}
-        <SelectPlaybookToRun component_id={topology.id} />
+        <PlaybooksDropdownMenu component_id={topology.id} />
       </div>
 
       <AttachEvidenceDialog

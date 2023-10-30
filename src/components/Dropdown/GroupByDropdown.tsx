@@ -4,7 +4,7 @@ import { AiOutlineAlignLeft } from "react-icons/ai";
 import { getLabelSelections } from "./lib/lists";
 import { ReactSelectDropdown } from "../ReactSelectDropdown";
 import { ComponentProps } from "react";
-import { HealthCheck } from "../../types/healthChecks";
+import { HealthCheck } from "../../api/types/health";
 
 const defaultGroupSelections = {
   "no-group": {

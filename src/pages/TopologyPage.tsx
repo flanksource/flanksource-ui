@@ -19,7 +19,7 @@ import {
   getSortedTopology
 } from "../components/TopologyPopover/topologySort";
 import TopologySidebar from "../components/TopologySidebar/TopologySidebar";
-import { Topology } from "../context/TopologyPageContext";
+import { Topology } from "../api/types/topology";
 
 export const allOption = {
   All: {
@@ -80,6 +80,7 @@ export function TopologyPage() {
   const refererId = searchParams.get("refererId") ?? undefined;
   const sortBy = searchParams.get("sortBy") ?? undefined;
   const sortOrder = searchParams.get("sortOrder") ?? undefined;
+  const hideFilters = searchParams.get("hideFilters") ?? undefined;
   const showHiddenComponents =
     searchParams.get("showHiddenComponents") ?? undefined;
 
@@ -230,7 +231,7 @@ export function TopologyPage() {
                       key={item.id}
                       topology={item}
                       size={topologyCardSize}
-                      isTopologyPage
+                      menuPosition="absolute"
                     />
                   ))}
                   {!topology?.length && !isLoading && (

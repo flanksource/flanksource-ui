@@ -1,17 +1,16 @@
+import clsx from "clsx";
 import { useMemo } from "react";
 import { AiFillWarning } from "react-icons/ai";
 import { BiDollarCircle } from "react-icons/bi";
-import { FaTasks } from "react-icons/fa";
+import { FaRegClock, FaTasks } from "react-icons/fa";
 import { GrIntegration, GrWorkshop } from "react-icons/gr";
 import { ImHeartBroken } from "react-icons/im";
 import { IoMdSpeedometer } from "react-icons/io";
 import { MdOutlineRecommend, MdSecurity } from "react-icons/md";
-import { FaRegClock } from "react-icons/fa";
-import { ConfigTypeInsights } from "../ConfigInsights";
-import clsx from "clsx";
+import { ConfigAnalysis } from "../../api/types/configs";
 
 type Props = {
-  analysis: Pick<ConfigTypeInsights, "severity" | "analysis_type">;
+  analysis: Pick<ConfigAnalysis, "severity" | "analysis_type">;
   size?: number;
 };
 

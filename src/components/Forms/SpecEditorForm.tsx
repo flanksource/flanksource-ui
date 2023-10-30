@@ -121,9 +121,7 @@ export default function SpecEditorForm({
               )}
               {isFieldSupportedByResourceType("labels") && (
                 <div className="flex flex-col space-y-2">
-                  <label className="block text-sm font-bold text-gray-700">
-                    Labels
-                  </label>
+                  <label className="form-label">Labels</label>
                   <FormikCodeEditor
                     fieldName="labels"
                     format="json"
@@ -175,9 +173,7 @@ export default function SpecEditorForm({
             <div className="flex flex-col py-2">
               {showCodeEditorOnly ? (
                 <>
-                  <label className="block text-sm font-bold text-gray-700">
-                    Specs
-                  </label>
+                  <label className="form-label">Specs</label>
                   <FormikCodeEditor
                     format={specFormat}
                     // map to the spec field to the spec field in the resource

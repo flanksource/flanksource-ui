@@ -2,15 +2,15 @@ import { CellContext, ColumnDef } from "@tanstack/react-table";
 import {
   IncidentSeverity,
   IncidentStatus,
-  IncidentSummary
-} from "../../../api/services/incident";
-import { DateCell } from "../../ConfigViewer/columns";
-import { typeItems } from "../data";
-import { IncidentTypeTag } from "../../incidentTypeTag";
+  IncidentSummary,
+  Responder
+} from "../../../api/types/incident";
+import { DateCell } from "../../../ui/table";
+import { Avatar } from "../../Avatar";
 import { IncidentSeverityTag } from "../../IncidentSeverityTag";
 import { IncidentStatusTag } from "../../IncidentStatusTag";
-import { Responder } from "../../../api/services/responder";
-import { Avatar } from "../../Avatar";
+import { IncidentTypeTag } from "../../incidentTypeTag";
+import { typeItems } from "../data";
 
 export const incidentListColumns: ColumnDef<IncidentSummary, any>[] = [
   {

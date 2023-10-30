@@ -1,18 +1,17 @@
-import { PlaybookRunWithActions } from "../../components/Playbooks/Runs/Actions/PlaybookRunsActions";
-import {
-  PlaybookRun,
-  PlaybookRunAction
-} from "../../components/Playbooks/Runs/PlaybookRunTypes";
 import { SubmitPlaybookRunFormValues } from "../../components/Playbooks/Runs/Submit/SubmitPlaybookRunForm";
-import {
-  NewPlaybookSpec,
-  PlaybookSpec,
-  UpdatePlaybookSpec
-} from "../../components/Playbooks/Settings/PlaybookSpecsTable";
 import { AVATAR_INFO } from "../../constants";
 import { ConfigDB, IncidentCommander, PlaybookAPI } from "../axios";
 import { GetPlaybooksToRunParams } from "../query-hooks/playbooks";
 import { resolve } from "../resolve";
+import {
+  NewPlaybookSpec,
+  PlaybookRun,
+  PlaybookRunAction,
+  PlaybookRunWithActions,
+  PlaybookSpec,
+  RunnablePlaybook,
+  UpdatePlaybookSpec
+} from "../types/playbooks";
 
 export async function getAllPlaybooksSpecs() {
   const res = await IncidentCommander.get<PlaybookSpec[] | null>(
@@ -51,10 +50,15 @@ export async function deletePlaybookSpec(id: string) {
   return res.data;
 }
 
+export type PlaybookRunResponse = {
+  run_id: string;
+  starts_at: string;
+};
+
 export async function submitPlaybookRun(
   input: Omit<SubmitPlaybookRunFormValues, "playbook_spec">
 ) {
-  const res = await PlaybookAPI.post("/run", input);
+  const res = await PlaybookAPI.post<PlaybookRunResponse>("/run", input);
   return res.data;
 }
 
@@ -65,7 +69,7 @@ export async function getPlaybookToRunForResource(
     .filter(([, value]) => value)
     .map(([key, value]) => `${key}=${value}`)
     .join("&");
-  const res = await PlaybookAPI.get<PlaybookSpec[] | null>(
+  const res = await PlaybookAPI.get<RunnablePlaybook[] | null>(
     `/list?${paramsString}`
   );
   return res.data ?? [];

@@ -1,7 +1,7 @@
 import { ThumbDownIcon, ThumbUpIcon } from "@heroicons/react/solid";
 import clsx from "clsx";
 import { ComponentProps } from "react";
-import { HypothesisStatus } from "../api/services/hypothesis";
+import { HypothesisStatus } from "../api/types/hypothesis";
 
 const { Proven, Likely, Possible, Unlikely, Improbable, Disproven } =
   HypothesisStatus;

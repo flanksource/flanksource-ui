@@ -2,7 +2,6 @@ import { useQuery } from "@tanstack/react-query";
 import { sanitize } from "dompurify";
 import { useMemo } from "react";
 import { getConfigInsightsByID } from "../../api/services/configs";
-import { EvidenceType } from "../../api/services/evidence";
 import { formatISODate, isValidDate } from "../../utils/date";
 import AttachAsEvidenceButton from "../AttachEvidenceDialog/AttachAsEvidenceDialogButton";
 import ConfigInsightsIcon from "../ConfigInsightsIcon";
@@ -11,6 +10,7 @@ import { DescriptionCard } from "../DescriptionCard";
 import { Modal } from "../Modal";
 import TextSkeletonLoader from "../SkeletonLoader/TextSkeletonLoader";
 import ModalTitleListItems from "../Modal/ModalTitleListItems";
+import { EvidenceType } from "../../api/types/evidence";
 
 type Props = {
   id?: string;
@@ -84,10 +84,7 @@ export default function ConfigInsightsDetailsModal({
             </div>,
             <ConfigLink
               className="text-blue-600 text-xl font-semibold whitespace-nowrap overflow-hidden overflow-ellipsis"
-              configId={configInsight.config!.id}
-              configName={configInsight.config!.name}
-              configType={configInsight.config!.type}
-              configTypeSecondary={configInsight.config!.config_class}
+              config={configInsight.config}
             />
           ]}
         />

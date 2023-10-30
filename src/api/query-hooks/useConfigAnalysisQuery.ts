@@ -1,12 +1,12 @@
 import { useQuery, UseQueryOptions } from "@tanstack/react-query";
-import { ConfigTypeInsights } from "../../components/ConfigInsights";
 import { AxiosResponseWithTotalEntries } from "../../types";
 import {
   getAllConfigInsights,
   getConfigAnalysisByComponent,
-  getConfigsByIDs,
-  PaginationInfo
+  getConfigsByIDs
 } from "../services/configs";
+import { PaginationInfo } from "../types/common";
+import { ConfigAnalysis } from "../types/configs";
 
 export function useConfigInsightsQuery(
   queryParams: {
@@ -23,11 +23,11 @@ export function useConfigInsightsQuery(
   },
   pageInfo: PaginationInfo,
   options?: UseQueryOptions<
-    AxiosResponseWithTotalEntries<ConfigTypeInsights[]>,
+    AxiosResponseWithTotalEntries<ConfigAnalysis[]>,
     Error
   >
 ) {
-  return useQuery<AxiosResponseWithTotalEntries<ConfigTypeInsights[]>, Error>(
+  return useQuery<AxiosResponseWithTotalEntries<ConfigAnalysis[]>, Error>(
     ["configs", "insights", pageInfo, queryParams, sortBy],
     async () => {
       if (queryParams.component) {

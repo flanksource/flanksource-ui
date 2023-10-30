@@ -9,25 +9,23 @@ import { createIncidentQueryKey } from "../../api/query-hooks";
 import { createEvidence } from "../../api/services/evidence";
 import {
   createHypothesis,
-  Hypothesis,
-  HypothesisStatus,
-  NewHypothesis,
   searchHypothesis
 } from "../../api/services/hypothesis";
+import { createIncident, searchIncident } from "../../api/services/incident";
 import {
-  createIncident,
-  IncidentSeverity,
-  IncidentStatus,
-  searchIncident
-} from "../../api/services/incident";
+  Hypothesis,
+  HypothesisStatus,
+  NewHypothesis
+} from "../../api/types/hypothesis";
+import { IncidentSeverity, IncidentStatus } from "../../api/types/incident";
 import { useUser } from "../../context";
 import { Events, sendAnalyticEvent } from "../../services/analytics";
 import { IItem } from "../../types/IItem";
 import { DropdownWithActions } from "../Dropdown/DropdownWithActions";
 import SelectDropdown from "../Dropdown/SelectDropdown";
-import { severityItems, typeItems } from "../Incidents/data";
 import { IncidentSeverityTag } from "../IncidentSeverityTag";
 import { IncidentStatusTag } from "../IncidentStatusTag";
+import { severityItems, typeItems } from "../Incidents/data";
 import { Modal } from "../Modal";
 import { TextInput } from "../TextInput";
 import { toastSuccess } from "../Toast/toast";
@@ -373,9 +371,7 @@ export function AttachEvidenceDialog({
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="px-8">
             <div className="mb-4">
-              <div className="block text-sm font-bold text-gray-700 mb-2">
-                Incident
-              </div>
+              <div className="form-label">Incident</div>
               <DropdownWithActions
                 onQuery={fetchIncidentOptions}
                 label="Incident"
@@ -450,9 +446,7 @@ export function AttachEvidenceDialog({
               )}
             </div>
             <div>
-              <div className="block text-sm font-bold text-gray-700 mb-2">
-                Hypothesis
-              </div>
+              <div className="form-label">Hypothesis</div>
               <DropdownWithActions
                 onQuery={(e) => {
                   return fetchHypothesisOptions(e, watch("incident"));

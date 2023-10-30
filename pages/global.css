@@ -35,13 +35,22 @@
 }
 
 @layer components {
-  .table-auto {
-    @apply shadow-lg bg-white rounded-md  py-2 px-4;
+
+  .form-label {
+    @apply block text-sm font-semibold text-gray-700 mb-2;
   }
+
+  .table-auto {
+    @apply shadow-lg   bg-white  rounded-md  py-2 px-4;
+  }
+
+  .table-auto tbody tr {
+    @apply hover:bg-slate-50;
+    }
 
   .table-auto thead tr {
     border-bottom-width: 1px;
-    @apply border-gray-200 uppercase text-gray-600 font-bold text-sm items-center text-left px-4 py-4;
+    @apply border-gray-200  uppercase text-gray-600 font-bold text-sm items-center text-left px-4 py-1;
   }
 
   .table-auto thead tr th {
@@ -53,16 +62,26 @@
     @apply px-4;
   }
 
+  .table-condensed thead tr th {
+    @apply px-2 py-1 text-sm;
+  }
+
+  .table-condensed td {
+    border-bottom-width: 1px;
+    @apply px-1 text-sm;
+  }
+
+
   .btn-primary {
-    @apply inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-blue-500;
+    @apply inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none ;
   }
 
   .btn-white {
-    @apply inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-blue-500;
+    @apply inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-100 focus:outline-none ;
   }
 
   .btn-danger {
-    @apply inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-red-500;
+    @apply inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none ;
   }
 
   .btn-disabled {
@@ -70,7 +89,7 @@
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center border-none shadow-sm font-medium rounded-md text-blue-500 bg-blue-100 hover:bg-blue-200 focus:ring-offset-white focus:ring-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2;
+    @apply inline-flex items-center justify-center border-none shadow-sm font-medium rounded-md text-blue-500 bg-blue-100 hover:bg-blue-200 focus:ring-offset-white focus:ring-blue-500 focus:outline-none ;
   }
 
   .btn-secondary-disabled {
@@ -222,4 +241,14 @@
     width: 3.125rem;
     height: 3.125rem;
   }
+
+  .menu-items {
+    @apply absolute bg-white focus:outline-none mt-2 opacity-100 origin-top-right right-0 ring-1 ring-black ring-opacity-5 rounded-md scale-100 shadow-md transform w-64 z-50;
+  }
+
+  .menu-item {
+  @apply block w-full py-2 px-4  text-sm text-gray-700  hover:bg-gray-50 hover:text-gray-900 divide-gray-300 text-left;
+  }
+
+
 }

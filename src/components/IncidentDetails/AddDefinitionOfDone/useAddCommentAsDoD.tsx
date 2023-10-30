@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { useCreateEvidenceMutation } from "../../../api/query-hooks/mutations/evidence";
-import { Evidence, EvidenceType } from "../../../api/services/evidence";
+import { Evidence, EvidenceType } from "../../../api/types/evidence";
 import { useUser } from "../../../context";
 
 export default function useAddCommentAsDoD(

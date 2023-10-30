@@ -2,8 +2,8 @@ import { SortingState } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useConfigInsightsQuery } from "../../api/query-hooks/useConfigAnalysisQuery";
+import { ConfigAnalysis } from "../../api/types/configs";
 import ConfigInsightsDetailsModal from "../ConfigAnalysisLink/ConfigInsightsDetailsModal";
-import { ConfigTypeInsights } from "../ConfigInsights";
 import { DataTable } from "../DataTable";
 import { InfoMessage } from "../InfoMessage";
 import { ConfigInsightsColumns } from "./ConfigInsightsColumns";
@@ -21,7 +21,7 @@ export default function ConfigInsightsList({
 }: Props) {
   const [params, setParams] = useSearchParams();
   const [clickedInsightItem, setClickedInsightItem] =
-    useState<ConfigTypeInsights>();
+    useState<ConfigAnalysis>();
   const [isInsightDetailsModalOpen, setIsInsightDetailsModalOpen] =
     useState(false);
 

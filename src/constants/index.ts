@@ -1,5 +1,3 @@
-export { IncidentPriority } from "./incidentPriority";
-
 export const NodePodPropToLabelMap = {
   node: "Node",
   created: "Created At",

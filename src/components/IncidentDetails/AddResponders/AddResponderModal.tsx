@@ -4,11 +4,11 @@ import { isEqual, template } from "lodash";
 import { useCallback, useEffect, useMemo, useReducer, useState } from "react";
 import { useForm } from "react-hook-form";
 import { IconType } from "react-icons";
-import { Incident } from "../../../api/services/incident";
-import { Responder, saveResponder } from "../../../api/services/responder";
-import { Team } from "../../../api/services/teams";
-import { User } from "../../../api/services/users";
+import { saveResponder } from "../../../api/services/responder";
+import { Incident, Responder } from "../../../api/types/incident";
+import { Team, User } from "../../../api/types/users";
 import { useUser } from "../../../context";
+import { Events, sendAnalyticEvent } from "../../../services/analytics";
 import { incidentStatusItems, typeItems } from "../../Incidents/data";
 import { Modal } from "../../Modal";
 import { OptionsList } from "../../OptionsList";
@@ -22,7 +22,6 @@ import {
 import SelectPeopleResponderDropdown from "./SelectPeopleResponderDropdown";
 import SelectTeamResponderDropdown from "./SelectTeamResponderDropdown";
 import TeamResponderTypeForm from "./TeamResponderTypeForm";
-import { Events, sendAnalyticEvent } from "../../../services/analytics";
 
 export type SelectedResponderType = {
   value: string;
@@ -190,9 +189,7 @@ export default function AddResponderModal({
   };
 
   const { mutate: addResponder, isLoading: loading } = useMutation({
-    mutationFn: (
-      responder: Omit<Responder, "id" | "updated_at" | "created_at">
-    ) => saveResponder(responder),
+    mutationFn: (responder: Omit<Responder, "id">) => saveResponder(responder),
     onSuccess: (_) => {
       sendAnalyticEvent(Events.AddedResponderToIncident);
       toastSuccess("Responder added successfully");

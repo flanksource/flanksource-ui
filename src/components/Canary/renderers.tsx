@@ -1,4 +1,4 @@
-import { HealthCheck, HealthCheckStatus } from "../../types/healthChecks";
+import { HealthCheck, HealthCheckStatus } from "../../api/types/health";
 import { Icon } from "../Icon";
 import { Status } from "../Status";
 import { isEmpty } from "./utils";

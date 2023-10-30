@@ -261,7 +261,7 @@ export function SchemaResourceEdit({
                                   <div className="space-y-2">
                                     <label
                                       htmlFor="icon-picker"
-                                      className="block text-sm font-bold text-gray-700 pt-4"
+                                      className="form-label pt-4"
                                     >
                                       Icon
                                     </label>
@@ -324,7 +324,7 @@ export function SchemaResourceEdit({
                                   render={({ field: { onChange, value } }) => {
                                     return (
                                       <div className="h-[100px]">
-                                        <label className="block text-sm font-bold text-gray-700">
+                                        <label className="form-label">
                                           Labels
                                         </label>
                                         <CodeEditor
@@ -362,7 +362,7 @@ export function SchemaResourceEdit({
                                   render={({ field: { onChange, value } }) => {
                                     return (
                                       <div className="space-y-2">
-                                        <label className="block text-sm font-bold text-gray-700">
+                                        <label className="form-label">
                                           Schedule
                                         </label>
                                         <AutoCompleteDropdown
@@ -412,10 +412,7 @@ export function SchemaResourceEdit({
                             )}
                           </div>
                           <div className="px-8 space-y-2">
-                            <label
-                              htmlFor="icon-picker"
-                              className="block text-sm font-bold text-gray-700"
-                            >
+                            <label htmlFor="icon-picker" className="form-label">
                               Spec
                             </label>
                             <div className="flex flex-col h-[min(850px,calc(100vh-500px))]">

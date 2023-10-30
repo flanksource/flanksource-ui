@@ -1,24 +1,21 @@
 import React, { useState } from "react";
-import { EvidenceSearch } from "./components/EvidenceSearch";
-import { EvidenceSelect } from "./components/EvidenceSelect";
 import { EvidenceStepper } from "./components/EvidenceStepper";
-import { EvidenceType } from "./components/EvidenceType";
 
 export const evidenceSteps = [
   {
     title: "Evidence type",
     description: "Lorem ipsum dolor sit amet",
-    component: <EvidenceType />
+    component: <div>EvidenceType</div>
   },
   {
     title: "Search",
     description: "Lorem ipsum dolor sit amet",
-    component: <EvidenceSearch />
+    component: <div>EvidenceSearch</div>
   },
   {
     title: "Select",
     description: "Lorem ipsum dolor sit amet",
-    component: <EvidenceSelect />
+    component: <div>EvidenceSelect</div>
   }
 ];
 

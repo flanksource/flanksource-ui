@@ -1,11 +1,11 @@
 import { CellContext, ColumnDef } from "@tanstack/react-table";
 import { LogBackends } from "./LogBackends";
-import { DateCell } from "../ConfigViewer/columns";
 import { Avatar } from "../Avatar";
 import { DataTable } from "../DataTable";
 import { useState } from "react";
 import { Modal } from "../Modal";
 import LogBackendsForm from "./LogBackendsForm";
+import { DateCell } from "../../ui/table";
 
 const columns: ColumnDef<LogBackends>[] = [
   {

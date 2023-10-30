@@ -3,7 +3,7 @@ import { MemoryRouter } from "react-router-dom";
 import { sampleIncidentNode } from "../../../data/sampleIncident";
 import { EvidenceSection } from "./index";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { EvidenceType } from "../../../api/services/evidence";
+import { EvidenceType } from "../../../api/types/evidence";
 
 const client = new QueryClient();
 
@@ -37,8 +37,7 @@ Base.args = {
       hypothesis_id: "f87c055a-7529-47ee-b363-7059c258e135",
       created_by: {
         id: "01814f6d-edba-8467-55ca-78974a2004f6",
-        name: "Galileo Galilei",
-        email: ""
+        name: "Galileo Galilei"
       },
       type: EvidenceType.Log,
       evidence: {

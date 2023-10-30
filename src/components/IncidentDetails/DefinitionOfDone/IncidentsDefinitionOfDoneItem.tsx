@@ -1,9 +1,3 @@
-import { Menu } from "../../Menu";
-import { AiFillCheckCircle } from "react-icons/ai";
-import { BsHourglassSplit, BsTrash } from "react-icons/bs";
-import { Evidence, EvidenceType } from "../../../api/services/evidence";
-import { IconButton } from "../../IconButton";
-import { EvidenceView } from "./EvidenceView";
 import {
   CSSProperties,
   Dispatch,
@@ -12,13 +6,19 @@ import {
   useLayoutEffect,
   useState
 } from "react";
-import { Size } from "../../../types";
+import { AiFillCheckCircle } from "react-icons/ai";
+import { BsHourglassSplit, BsTrash } from "react-icons/bs";
 import { FaEdit } from "react-icons/fa";
-import EditEvidenceDefinitionOfDoneScript from "./EditEvidenceDefinitionOfDoneScript";
-import EditEvidenceDefinitionOfDoneComment from "./EditEvidenceDefinitionOfDoneComment";
-import { ConfirmationPromptDialog } from "../../Dialogs/ConfirmationPromptDialog";
-import { useUpdateEvidenceMutation } from "../../../api/query-hooks/mutations/evidence";
 import { MdRefresh } from "react-icons/md";
+import { useUpdateEvidenceMutation } from "../../../api/query-hooks/mutations/evidence";
+import { Evidence, EvidenceType } from "../../../api/types/evidence";
+import { Size } from "../../../types";
+import { ConfirmationPromptDialog } from "../../Dialogs/ConfirmationPromptDialog";
+import { IconButton } from "../../IconButton";
+import { Menu } from "../../Menu";
+import EditEvidenceDefinitionOfDoneComment from "./EditEvidenceDefinitionOfDoneComment";
+import EditEvidenceDefinitionOfDoneScript from "./EditEvidenceDefinitionOfDoneScript";
+import { EvidenceView } from "./EvidenceView";
 
 type Props = {
   evidence: Evidence;

@@ -1,23 +1,7 @@
 import { IncidentCommander } from "../axios";
 import { resolve } from "../resolve";
-import { User } from "./users";
-
-export interface NewComment {
-  user: User;
-  incidentId: string;
-  hypothesisId: string;
-  comment: string;
-}
-
-export interface Comment {
-  id: string;
-  created_by: User;
-  incident_id: string;
-  hypothesis_id: string;
-  comment: string;
-  created_at: string;
-  updated_at: string;
-}
+import { NewComment } from "../types/incident";
+import { Comment } from "../types/incident";
 
 export const getCommentsByHypothesis = (hypothesisId: string) =>
   resolve<Comment[]>(

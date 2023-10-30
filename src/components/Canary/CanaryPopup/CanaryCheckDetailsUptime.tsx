@@ -1,4 +1,4 @@
-import { HealthCheckUptime } from "../../../types/healthChecks";
+import { HealthCheckUptime } from "../../../api/types/health";
 
 type CanaryCheckDetailsUptimeProps = {
   uptime?: HealthCheckUptime;

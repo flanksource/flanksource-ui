@@ -1,5 +1,5 @@
 import React, { useState, createContext, useContext } from "react";
-import { ConfigItem } from "../api/services/configs";
+import { ConfigItem } from "../api/types/configs";
 
 export type ConfigState = {
   data?: ConfigItem[];

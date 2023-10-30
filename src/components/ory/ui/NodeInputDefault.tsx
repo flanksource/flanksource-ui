@@ -22,10 +22,7 @@ export function NodeInputDefault(props: NodeInputProps) {
   // Render a generic text input field.
   return (
     <div className="space-y-1">
-      <label
-        htmlFor={attributes.name}
-        className="block text-sm font-bold text-gray-700"
-      >
+      <label htmlFor={attributes.name} className="form-label">
         {node.meta.label?.text}
       </label>
       <div className="mt-1">

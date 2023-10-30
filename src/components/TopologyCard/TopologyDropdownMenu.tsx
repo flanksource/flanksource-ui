@@ -1,13 +1,13 @@
 import { CSSProperties, useCallback, useMemo, useState } from "react";
-import { EvidenceType } from "../../api/services/evidence";
 import { useFeatureFlagsContext } from "../../context/FeatureFlagsContext";
-import { Topology } from "../../context/TopologyPageContext";
 import { features } from "../../services/permissions/features";
 import { AttachEvidenceDialog } from "../AttachEvidenceDialog";
 import { Menu } from "../Menu";
 import { TopologyConfigLinkModal } from "../TopologyConfigLinkModal/TopologyConfigLinkModal";
 import { topologyActionItems } from "../TopologySidebar/TopologyActionBar";
 import TopologySnapshotModal from "./TopologySnapshotModal";
+import { Topology } from "../../api/types/topology";
+import { EvidenceType } from "../../api/types/evidence";
 
 type TopologyMenuItemProps = {
   onClick?: () => void;
@@ -31,13 +31,13 @@ function TopologyMenuItem({
 interface IProps {
   topology: Topology;
   onRefresh?: () => void;
-  isTopologyPage?: boolean;
+  position?: "fixed" | "absolute";
 }
 
 export const TopologyDropdownMenu = ({
   topology,
   onRefresh,
-  isTopologyPage = false
+  position = "fixed"
 }: IProps) => {
   const [dropDownMenuStyles, setDropDownMenuStyles] = useState<CSSProperties>();
 
@@ -62,13 +62,13 @@ export const TopologyDropdownMenu = ({
       const top = node.getBoundingClientRect().bottom;
 
       if (left && top) {
-        if (isTopologyPage) {
+        if (position === "absolute") {
           setDropDownMenuStyles({
             right: 0,
             top: "1.5rem",
             position: "absolute"
           });
-        } else {
+        } else if (position === "fixed") {
           setDropDownMenuStyles({
             left: left - 200,
             top: top,
@@ -77,7 +77,7 @@ export const TopologyDropdownMenu = ({
         }
       }
     },
-    [isTopologyPage]
+    [position]
   );
 
   const [

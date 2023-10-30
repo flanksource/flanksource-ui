@@ -1,15 +1,15 @@
+import { AxiosResponse } from "axios";
+import { EventQueueStatus } from "../components/EventQueueStatus/eventQueue";
+import { TopologyComponentItem } from "../components/FilterIncidents/FilterIncidentsByComponents";
+import { JobHistoryStatus } from "../components/JobsHistory/JobsHistoryTable";
+import { LogBackends } from "../components/LogBackends/LogBackends";
 import {
   SchemaApi,
   SchemaBackends
 } from "../components/SchemaResourcePage/resourceTypes";
-import { CanaryCheckerDB, ConfigDB, IncidentCommander } from "./axios";
 import { AVATAR_INFO } from "../constants";
-import { AxiosResponse } from "axios";
-import { JobHistoryStatus } from "../components/JobsHistory/JobsHistoryTable";
-import { ConfigItem } from "./services/configs";
-import { TopologyComponentItem } from "../components/FilterIncidents/FilterIncidentsByComponents";
-import { LogBackends } from "../components/LogBackends/LogBackends";
-import { EventQueueStatus } from "../components/EventQueueStatus/eventQueue";
+import { CanaryCheckerDB, ConfigDB, IncidentCommander } from "./axios";
+import { ConfigItem } from "./types/configs";
 
 export interface SchemaResourceI {
   id: string;

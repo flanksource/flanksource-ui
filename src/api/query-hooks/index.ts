@@ -1,5 +1,5 @@
 import { useQuery, UseQueryOptions } from "@tanstack/react-query";
-import { CostsData } from "../../components/CostDetails/CostDetails";
+import { CostsData } from "../../api/types/common";
 import { toastError } from "../../components/Toast/toast";
 import {
   getAllChanges,
@@ -9,20 +9,16 @@ import {
   getConfigChanges,
   getConfigInsight,
   getConfigInsights,
-  getConfigTagsList,
   getConfigName,
-  getTopologyRelatedInsights,
-  getConfigsSummary
+  getConfigsSummary,
+  getConfigTagsList,
+  getTopologyRelatedInsights
 } from "../services/configs";
 import { getHypothesisResponse } from "../services/hypothesis";
 import { getIncident } from "../services/incident";
+import { getIncidentHistory } from "../services/IncidentsHistory";
+import { LogsResponse, searchLogs, SearchLogsPayload } from "../services/logs";
 import {
-  getIncidentHistory,
-  IncidentHistory
-} from "../services/IncidentsHistory";
-import {
-  ComponentTeamItem,
-  getAllAgents,
   getComponentTeams,
   getHealthCheckItem,
   getTopology,
@@ -30,8 +26,10 @@ import {
   getTopologyComponents,
   getTopologyComponentsWithLogs
 } from "../services/topology";
+import { getAllAgents } from "../services/agents";
+import { ComponentTeamItem } from "../types/topology";
 import { getPersons, getVersionInfo } from "../services/users";
-import { LogsResponse, searchLogs, SearchLogsPayload } from "../services/logs";
+import { IncidentHistory } from "../types/incident";
 
 const defaultStaleTime = 1000 * 60 * 5;
 

@@ -4,21 +4,9 @@ import { Controller, useForm } from "react-hook-form";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import * as yup from "yup";
-import {
-  Evidence,
-  EvidenceType,
-  createEvidence
-} from "../../../api/services/evidence";
-import {
-  HypothesisStatus,
-  createHypothesisOld
-} from "../../../api/services/hypothesis";
-import {
-  Incident,
-  IncidentStatus,
-  NewIncident,
-  createIncident
-} from "../../../api/services/incident";
+import { createEvidence } from "../../../api/services/evidence";
+import { createHypothesisOld } from "../../../api/services/hypothesis";
+import { createIncident } from "../../../api/services/incident";
 import { useUser } from "../../../context";
 import { Events, sendAnalyticEvent } from "../../../services/analytics";
 import { severityOptions, typeOptions } from "../../AttachEvidenceDialog";
@@ -27,6 +15,14 @@ import SelectDropdown from "../../Dropdown/SelectDropdown";
 import { TextInput } from "../../TextInput";
 import { toastError } from "../../Toast/toast";
 import { incidentStatusItems, severityItems } from "../data";
+import { Evidence } from "../../../api/types/evidence";
+import { HypothesisStatus } from "../../../api/types/hypothesis";
+import {
+  Incident,
+  NewIncident,
+  IncidentStatus
+} from "../../../api/types/incident";
+import { EvidenceType } from "../../../api/types/evidence";
 
 const incidentStatusOptions = Object.entries(incidentStatusItems).map(
   ([_, { value, description, icon }]) => ({

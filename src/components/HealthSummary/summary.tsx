@@ -4,7 +4,7 @@ import {
   StatusLine,
   StatusLineProps
 } from "../StatusLine/StatusLine";
-import { Topology } from "../../context/TopologyPageContext";
+import { Topology } from "../../api/types/topology";
 
 type HealthSummaryProps = {
   component: Topology;

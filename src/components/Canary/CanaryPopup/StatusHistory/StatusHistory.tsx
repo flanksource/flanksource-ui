@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { format } from "timeago.js";
 import { CanaryStatus, Duration } from "../../renderers";
-import { HealthCheck, HealthCheckStatus } from "../../../../types/healthChecks";
+import { HealthCheck, HealthCheckStatus } from "../../../../api/types/health";
 import { toastError } from "../../../Toast/toast";
 import { CellContext, ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "../../../DataTable";

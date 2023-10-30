@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import { Team, getTeams } from "../services/teams";
-import { User, getPersons } from "../services/users";
+import { getTeams } from "../services/teams";
+import { Team, User } from "../types/users";
+import { getPersons } from "../services/users";
 
 export function useGetAllTeams() {
   return useQuery<Team[], Error>(["teams", "all"], () => getTeams());

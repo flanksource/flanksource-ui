@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { HypothesisNode } from "../HypothesisNode";
 import { CreateHypothesis } from "../CreateHypothesis";
 import { HypothesisAPIs } from "../../../pages/incident/IncidentDetails";
-import { Hypothesis } from "../../../api/services/hypothesis";
+import { Hypothesis } from "../../../api/types/hypothesis";
 import { useSearchParams } from "react-router-dom";
 
 interface IProps {

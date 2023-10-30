@@ -1,7 +1,6 @@
 import { StoryObj } from "@storybook/react";
-import PlaybookRunsActions, {
-  PlaybookRunWithActions
-} from "./PlaybookRunsActions";
+import PlaybookRunsActions from "./PlaybookRunsActions";
+import { PlaybookRunWithActions } from "../../../../api/types/playbooks";
 
 export default {
   title: "PlaybookRunsActions",
@@ -21,8 +20,7 @@ const mockPlaybookRun: PlaybookRunWithActions = {
   },
   created_by: {
     id: "f4e2326c-9c37-4195-8677-40dd30ae824f",
-    name: "Admin",
-    email: ""
+    name: "Admin"
   },
   playbooks: {
     id: "018abbad-1869-23c9-61c2-1ad79513d598",

@@ -10,7 +10,7 @@ import {
 } from "../Canary/labels";
 import { CanarySorter } from "../Canary/data";
 import { useSearchParams } from "react-router-dom";
-import { HealthCheck } from "../../types/healthChecks";
+import { HealthCheck } from "../../api/types/health";
 
 type Props = {
   checks?: HealthCheck[];

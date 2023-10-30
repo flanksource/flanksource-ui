@@ -1,5 +1,5 @@
 import dynamic from "next/dynamic";
-import { EvidenceType } from "../../../../api/services/evidence";
+import { EvidenceType } from "../../../../api/types/evidence";
 
 const CodeEditor = dynamic(
   () => import("../../../CodeEditor").then((m) => m.CodeEditor),

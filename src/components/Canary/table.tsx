@@ -13,7 +13,7 @@ import { columnObject, firstColumns } from "./Columns/columns";
 import { prepareRows } from "./Rows/lib";
 import { useCheckSetEqualityForPreviousVsCurrent } from "../Hooks/useCheckSetEqualityForPreviousVsCurrent";
 import { useSearchParams } from "react-router-dom";
-import { HealthCheck } from "../../types/healthChecks";
+import { HealthCheck } from "../../api/types/health";
 import clsx from "clsx";
 
 const styles = {

@@ -3,9 +3,10 @@ import { useAtom } from "jotai";
 import { useEffect, useState } from "react";
 import { GoDiff } from "react-icons/go";
 import { useComponentConfigChanges } from "../../api/query-hooks/useComponentConfigChanges";
+import { useGetConfigChangesById } from "../../api/query-hooks/useGetConfigChangesByConfigChangeIdQuery";
+import { ConfigChange } from "../../api/types/configs";
 import PillBadge from "../Badge/PillBadge";
 import CollapsiblePanel from "../CollapsiblePanel";
-import { ConfigTypeChanges } from "../ConfigChanges";
 import { ConfigDetailChangeModal } from "../ConfigDetailsChanges/ConfigDetailsChanges";
 import ConfigLink from "../ConfigLink/ConfigLink";
 import EmptyState from "../EmptyState";
@@ -13,7 +14,6 @@ import { Icon } from "../Icon";
 import TextSkeletonLoader from "../SkeletonLoader/TextSkeletonLoader";
 import { refreshButtonClickedTrigger } from "../SlidingSideBar";
 import Title from "../Title/title";
-import { useGetConfigChangesByConfigChangeIdQuery } from "../../api/query-hooks/useGetConfigChangesByConfigChangeIdQuery";
 
 type Props = {
   topologyID: string;
@@ -29,10 +29,10 @@ export function TopologyConfigChanges({ topologyID }: Props) {
 
   const [selectedConfigChange, setSelectedConfigChanges] =
     useState<
-      Pick<ConfigTypeChanges, "change_type" | "id" | "config_id" | "config">
+      Pick<ConfigChange, "change_type" | "id" | "config_id" | "config">
     >();
 
-  const { data: changeDetails } = useGetConfigChangesByConfigChangeIdQuery(
+  const { data: changeDetails } = useGetConfigChangesById(
     selectedConfigChange?.id!,
     selectedConfigChange?.config_id!,
     {}
@@ -48,12 +48,7 @@ export function TopologyConfigChanges({ topologyID }: Props) {
             ) : componentConfigChanges.length > 0 ? (
               componentConfigChanges.map((item) => (
                 <div className="flex flex-row text-sm mb-2">
-                  <ConfigLink
-                    configId={item.config_id}
-                    configName={item.config?.name!}
-                    configType={item.type}
-                    configTypeSecondary={item.config_class}
-                  />
+                  <ConfigLink config={item.config} />
                   &nbsp;/&nbsp;
                   <span
                     role="button"

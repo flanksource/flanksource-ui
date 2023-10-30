@@ -1,5 +1,5 @@
 import { Form, Formik } from "formik";
-import { Incident } from "../../api/services/incident";
+import { Incident } from "../../api/types/incident";
 import { EditableText } from "../EditableText";
 
 type EditIncidentTitleFormProps = {

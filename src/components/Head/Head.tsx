@@ -2,13 +2,17 @@ import NextHead from "next/head";
 
 interface Props {
   prefix: string;
+  suffix?: string;
 }
 
-export function Head({ prefix }: Props) {
+export function Head({ prefix, suffix = " | Mission Control" }: Props) {
   return (
     <NextHead>
-      <title>{prefix} | Mission Control</title>
-      <meta name="description" content={`${prefix} | Mission Control`} />
+      <title>
+        {prefix}
+        {suffix}
+      </title>
+      <meta name="description" content={`${prefix}${suffix}`} />
     </NextHead>
   );
 }

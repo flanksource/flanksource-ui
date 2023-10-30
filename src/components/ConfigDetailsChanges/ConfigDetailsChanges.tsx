@@ -1,29 +1,30 @@
 import clsx from "clsx";
 import { useEffect, useMemo, useState } from "react";
 import ReactTooltip from "react-tooltip";
-import { useGetConfigChangesByConfigChangeIdQuery } from "../../api/query-hooks/useGetConfigChangesByConfigChangeIdQuery";
-import { EvidenceType } from "../../api/services/evidence";
-import { User } from "../../api/services/users";
+import { useGetConfigChangesById } from "../../api/query-hooks/useGetConfigChangesByConfigChangeIdQuery";
+import { ConfigChange } from "../../api/types/configs";
+import { User } from "../../api/types/users";
 import { ViewType } from "../../types";
 import { formatISODate } from "../../utils/date";
 import AttachAsEvidenceButton from "../AttachEvidenceDialog/AttachAsEvidenceDialogButton";
 import { Avatar } from "../Avatar";
-import { ConfigTypeChanges } from "../ConfigChanges";
 import ConfigLink from "../ConfigLink/ConfigLink";
 import { DiffRenderer } from "../DiffRenderer/DiffRenderer";
 import EmptyState from "../EmptyState";
-import { Icon } from "../Icon";
+import { ChangeIcon } from "../Icon/ChangeIcon";
+import { ConfigIcon } from "../Icon/ConfigIcon";
 import { JSONViewer } from "../JSONViewer";
 import { Modal } from "../Modal";
+import ModalTitleListItems from "../Modal/ModalTitleListItems";
 import TextSkeletonLoader from "../SkeletonLoader/TextSkeletonLoader";
 import ConfigChangeDetailSection from "./ConfigChangeDetailsSection";
-import ModalTitleListItems from "../Modal/ModalTitleListItems";
+import { EvidenceType } from "../../api/types/evidence";
 
 type ConfigDetailsChangesProps = {
   id: string;
   configId: string;
   viewType?: ViewType;
-  data?: ConfigTypeChanges;
+  data?: ConfigChange;
   showConfigLogo?: boolean;
 };
 
@@ -36,13 +37,9 @@ export function ConfigDetailsChanges({
 }: ConfigDetailsChangesProps) {
   const [open, setOpen] = useState(false);
 
-  const { data: change, isLoading } = useGetConfigChangesByConfigChangeIdQuery(
-    id,
-    configId!,
-    {
-      enabled: open
-    }
-  );
+  const { data: change, isLoading } = useGetConfigChangesById(id, configId!, {
+    enabled: open
+  });
 
   const config = useMemo(() => change?.config, [change]);
 
@@ -103,7 +100,7 @@ export function ConfigDetailsChanges({
   }
 
   return (
-    <div className="flex flex-col flex-1 overflow-y-auto bg-white cursor-pointer">
+    <div className="flex flex-col flex-1 overflow-y-auto cursor-pointer">
       <ConfigDetailChangeModal
         // do not show modal if the config is not loaded
         open={open && !isLoading}
@@ -163,20 +160,13 @@ export function ConfigDetailsChanges({
         >
           {showConfigLogo && (
             <>
-              <Icon
-                name={config?.type}
-                secondary={config?.config_class}
-                className="w-5 mr-1"
-              />
+              <ConfigIcon config={config} />
               <span>{config?.name}</span>
               &nbsp;/&nbsp;
             </>
           )}
-          <Icon
-            name={changeDetails?.change_type}
-            secondary="diff"
-            className="w-5 h-auto pr-1"
-          />
+
+          <ChangeIcon change={changeDetails} className="w-5 h-auto pr-1" />
           {changeDetails?.change_type}
         </div>
       )}
@@ -187,7 +177,7 @@ export function ConfigDetailsChanges({
 type ConfigDetailChangeModalProps = {
   open: boolean;
   setOpen: (val: boolean) => void;
-  changeDetails?: ConfigTypeChanges;
+  changeDetails?: ConfigChange;
 };
 
 export function ConfigDetailChangeModal({
@@ -205,20 +195,13 @@ export function ConfigDetailChangeModal({
             items={[
               <div className="flex flex-row gap-1 flex-shrink items-center">
                 <div className="block w-6 h-auto">
-                  <Icon
-                    name={changeDetails?.change_type}
-                    secondary="diff"
-                    className="w-5 h-5"
-                  />
+                  <ChangeIcon change={changeDetails} />
                 </div>
                 <span> {changeDetails?.change_type}</span>
               </div>,
               <ConfigLink
                 className="text-blue-600 text-xl font-semibold whitespace-nowrap overflow-hidden overflow-ellipsis"
-                configId={config.id}
-                configName={config.name}
-                configType={config.type}
-                configTypeSecondary={config.config_class}
+                config={config}
               />
             ]}
           />
@@ -231,7 +214,7 @@ export function ConfigDetailChangeModal({
         setOpen(false);
       }}
       size="full"
-      bodyClass="flex h-full flex-col flex-1 overflow-y-auto"
+      bodyClass="flex h-full w-full flex-col flex-1 overflow-y-auto"
       containerClassName="min-h-[15rem] h-auto max-h-full overflow-y-auto"
     >
       <div className="flex flex-col flex-1 overflow-y-auto">

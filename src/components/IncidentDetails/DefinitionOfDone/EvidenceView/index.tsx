@@ -7,8 +7,8 @@ import {
   useComponentNameQuery,
   useConfigNameQuery
 } from "../../../../api/query-hooks";
-import { Evidence, EvidenceType } from "../../../../api/services/evidence";
 import { getCanaries } from "../../../../api/services/topology";
+import { Evidence, EvidenceType } from "../../../../api/types/evidence";
 import { Size, ViewType } from "../../../../types";
 import { Badge } from "../../../Badge";
 import {
@@ -16,6 +16,7 @@ import {
   ConfigChangeEvidence
 } from "../../../Hypothesis/EvidenceSection";
 import { Icon } from "../../../Icon";
+import { ConfigIcon } from "../../../Icon/ConfigIcon";
 import TextSkeletonLoader from "../../../SkeletonLoader/TextSkeletonLoader";
 import { StatusStyles } from "../../../TopologyCard";
 import { CardMetrics } from "../../../TopologyCard/CardMetrics";
@@ -151,8 +152,11 @@ function ConfigEvidence({
 
   return (
     <div className={clsx("overflow-hidden py-2", className)} {...rest}>
-      <Icon name={config.type} secondary={config.config_class} />{" "}
-      <span className="pl-1 text-gray-500 font-medium"> {config.name} </span>{" "}
+      <ConfigIcon config={config} />
+      <span className="pl-1 text-gray-500 font-medium">
+        {" "}
+        {config.name}{" "}
+      </span>{" "}
     </div>
   );
 }

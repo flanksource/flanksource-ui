@@ -1,31 +1,9 @@
 import { CellContext, ColumnDef } from "@tanstack/react-table";
-import { User } from "../../../api/services/users";
 import { Avatar } from "../../Avatar";
-import { DateCell } from "../../ConfigViewer/columns";
 import { DataTable } from "../../DataTable";
-
-export type PlaybookSpec = {
-  id: string;
-  name: string;
-  created_by?: User;
-  spec: any;
-  source: "KubernetesCRD" | "ConfigFile" | "UI";
-  created_at: string;
-  updated_at: string;
-  deleted_at?: string;
-};
-
-export type NewPlaybookSpec = Omit<
-  PlaybookSpec,
-  "id" | "created_at" | "updated_at" | "deleted_at" | "created_by"
-> & {
-  created_by?: string;
-};
-
-export type UpdatePlaybookSpec = Omit<
-  PlaybookSpec,
-  "created_at" | "updated_at" | "deleted_at" | "created_by"
->;
+import { PlaybookSpec } from "../../../api/types/playbooks";
+import { User } from "../../../api/types/users";
+import { DateCell } from "../../../ui/table";
 
 const playbookSpecsTableColumns: ColumnDef<PlaybookSpec>[] = [
   {

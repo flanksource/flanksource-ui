@@ -1,48 +1,60 @@
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { CheckLink } from "./../CheckLink";
-import { ComponentHealthCheckView } from "../../../api/services/topology";
+import { HealthCheckSummary } from "../../../api/types/health";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
+let queryClient = new QueryClient({});
 describe("CheckLink", () => {
-  const check: ComponentHealthCheckView = {
+  const check: HealthCheckSummary = {
     id: "1",
     name: "Example Check",
     type: "example",
     status: "healthy",
-    component_id: "1",
     severity: "critical"
   };
 
-  it("renders with healthy status", () => {
+  it("renders with healthy status", async () => {
     render(
       <MemoryRouter>
-        <CheckLink componentCheck={check} />
+        <QueryClientProvider client={queryClient}>
+          <CheckLink check={check} />
+        </QueryClientProvider>
       </MemoryRouter>
     );
 
-    const linkElement = screen.getByRole("link");
+    const linkElement = await screen.findByRole("link");
     expect(linkElement).toHaveAttribute(
       "href",
       "/health?checkId=1&timeRange=1h"
     );
 
     const statusElement = screen.getByTestId("health-check-status");
+
     expect(statusElement).toHaveClass("bg-green-400");
 
     const nameElement = screen.getByText("Example Check");
     expect(nameElement).toBeInTheDocument();
   });
 
-  it("renders with unhealthy status", () => {
-    const unhealthyCheck = { ...check, status: "unhealthy" };
+  it("renders with unhealthy status", async () => {
+    const unhealthyCheck: HealthCheckSummary = {
+      id: "1",
+      name: "Example Check",
+      type: "example",
+      status: "unhealthy",
+      severity: "critical"
+    };
 
     render(
       <MemoryRouter>
-        <CheckLink componentCheck={unhealthyCheck} />
+        <QueryClientProvider client={queryClient}>
+          <CheckLink check={unhealthyCheck} />
+        </QueryClientProvider>
       </MemoryRouter>
     );
 
-    const statusElement = screen.getByTestId("health-check-status");
+    const statusElement = await screen.findByTestId("health-check-status");
     expect(statusElement).toHaveClass("bg-red-400");
   });
 });

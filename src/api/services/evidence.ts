@@ -1,39 +1,6 @@
 import { IncidentCommander } from "../axios";
 import { resolve } from "../resolve";
-import { User } from "./users";
-
-export enum EvidenceType {
-  Log = "log",
-  Config = "config",
-  Topology = "topology",
-  Check = "check",
-  ConfigAnalysis = "config_analysis",
-  ConfigChange = "config_change",
-  // inline comment
-  Comment = "comment"
-}
-
-export type Evidence = {
-  user?: User;
-  id: string;
-  hypothesisId: string;
-  component_id?: string;
-  config_id?: string;
-  config_analysis_id?: string;
-  config_change_id?: string;
-  check_id?: string;
-  evidence?: Record<string, any>;
-  description?: string;
-  definition_of_done?: boolean;
-  script?: string;
-  properties?: string;
-  created_at: string;
-  updated_at?: string;
-  created_by?: User;
-  type: EvidenceType;
-  done?: boolean;
-  hypothesis_id: string;
-};
+import { Evidence } from "../types/evidence";
 
 export const getEvidence = async (id: string) =>
   resolve(IncidentCommander.get(`/evidences?id=eq.${id}`));

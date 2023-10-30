@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { IncidentSummary } from "../../../api/services/incident";
+import { IncidentSummary } from "../../../api/types/incident";
 import { useCallback, useMemo } from "react";
 import { incidentListColumns } from "./IncidentListColumns";
 import { DataTable } from "../../DataTable";

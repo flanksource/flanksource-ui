@@ -1,7 +1,7 @@
 import { BreadcrumbChild, BreadcrumbNav, BreadcrumbRoot } from ".";
 import { useGetConfigByIdQuery } from "../../api/query-hooks";
-import { ConfigItem } from "../../api/services/configs";
-import { Icon } from "../Icon";
+import { ConfigItem } from "../../api/types/configs";
+import { ConfigIcon } from "../Icon/ConfigIcon";
 import TextSkeletonLoader from "../SkeletonLoader/TextSkeletonLoader";
 
 type Props = {
@@ -23,11 +23,7 @@ export function ConfigsDetailsBreadcrumbNav({ configId, config }: Props) {
         ) : (
           <BreadcrumbChild>
             <span>
-              <Icon
-                name={configItem?.type}
-                secondary={configItem?.config_class}
-                className="h-5 mr-1"
-              />
+              <ConfigIcon config={configItem!} className="h-5 mr-1" />
               {configItem?.name}
             </span>
           </BreadcrumbChild>

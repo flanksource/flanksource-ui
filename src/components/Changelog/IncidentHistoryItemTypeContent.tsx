@@ -1,9 +1,9 @@
 import { FaComment } from "react-icons/fa";
-import { IncidentStatus } from "../../api/services/incident";
 import {
   IncidentHistory,
-  IncidentHistoryType
-} from "../../api/services/IncidentsHistory";
+  IncidentHistoryType,
+  IncidentStatus
+} from "../../api/types/incident";
 import { hypothesisStatusIconMap } from "../../constants/hypothesisStatusOptions";
 import { Avatar } from "../Avatar";
 import { Badge } from "../Badge";

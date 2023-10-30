@@ -10,7 +10,7 @@ import Convert from "ansi-to-html";
 import clsx from "clsx";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { EvidenceType } from "../../../api/services/evidence";
+import { EvidenceType } from "../../../api/types/evidence";
 import useDebouncedValue from "../../../hooks/useDebounce";
 import LogItem from "../../../types/Logs";
 import { sanitizeHTMLContent } from "../../../utils/common";
@@ -193,7 +193,13 @@ export function LogsTable({
   // sizes are rebased to relation to 100% of the width.
   const determineColumnWidth = useCallback(
     (column: string) => {
-      const columnSize = table.getColumn(column).getSize();
+      if (column === undefined) {
+        return;
+      }
+      const columnSize = table.getColumn(column)?.getSize();
+      if (columnSize === undefined) {
+        return (1 / (table.getTotalSize() - 6)) * 400;
+      }
       if (column === "selection") {
         return columnSize;
       }

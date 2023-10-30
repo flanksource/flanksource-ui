@@ -3,16 +3,16 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { rest } from "msw";
 import { setupServer } from "msw/node";
-import { PlaybookSpec } from "../../../Settings/PlaybookSpecsTable";
-import SelectPlaybookToRun from "./../SelectPlaybookToRun";
+import PlaybooksDropdownMenu from "../PlaybooksDropdownMenu";
+import { RunnablePlaybook } from "../../../../../api/types/playbooks";
 
-const playbooks: PlaybookSpec[] = [
+const playbooks: RunnablePlaybook[] = [
   {
     id: "1",
     name: "Playbook 1",
     created_at: "2021-09-01T00:00:00Z",
     source: "UI",
-    spec: {},
+    parameters: [],
     updated_at: "2021-09-01T00:00:00Z"
   },
   {
@@ -20,7 +20,7 @@ const playbooks: PlaybookSpec[] = [
     name: "Playbook 2",
     created_at: "2021-09-01T00:00:00Z",
     source: "UI",
-    spec: {},
+    parameters: [],
     updated_at: "2021-09-01T00:00:00Z"
   }
 ];
@@ -48,7 +48,7 @@ describe("SelectPlaybookToRun", () => {
   it("should render dropdown list with playbooks", async () => {
     render(
       <QueryClientProvider client={queryClient}>
-        <SelectPlaybookToRun component_id="component_id" />
+        <PlaybooksDropdownMenu component_id="component_id" />
       </QueryClientProvider>
     );
 
@@ -65,7 +65,7 @@ describe("SelectPlaybookToRun", () => {
   it("should open runs page, when you click a playbook item", async () => {
     render(
       <QueryClientProvider client={queryClient}>
-        <SelectPlaybookToRun check_id="check_id" />
+        <PlaybooksDropdownMenu check_id="check_id" />
       </QueryClientProvider>
     );
 

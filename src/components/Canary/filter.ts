@@ -1,5 +1,5 @@
-import { orderBy, findIndex, forEach, isEmpty } from "lodash";
-import { HealthCheck, HealthCheckLabels } from "../../types/healthChecks";
+import { findIndex, isEmpty, orderBy } from "lodash";
+import { HealthCheck, HealthCheckLabels } from "../../api/types/health";
 import { hasStringMatch } from "../../utils/common";
 
 export function matchesLabel(

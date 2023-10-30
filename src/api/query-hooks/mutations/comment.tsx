@@ -5,7 +5,9 @@ import {
 } from "@tanstack/react-query";
 import { uniqueId } from "lodash";
 import { createIncidentQueryKey } from "..";
-import { Comment, createComment, NewComment } from "../../services/comments";
+import { createComment } from "../../services/comments";
+import { NewComment } from "../../types/incident";
+import { Comment } from "../../types/incident";
 
 const updatesHypothesisComments = (
   queryClient: QueryClient,
@@ -41,9 +43,7 @@ export function useCreateCommentMutation() {
         created_by: user,
         incident_id: incidentId,
         hypothesis_id: hypothesisId,
-        comment,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        comment
       };
       updatesHypothesisComments(queryClient, payload, "add");
       return createComment({ user, incidentId, hypothesisId, comment }).catch(

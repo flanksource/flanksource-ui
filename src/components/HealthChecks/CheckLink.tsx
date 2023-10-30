@@ -1,28 +1,45 @@
+import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { ComponentHealthCheckView } from "../../api/services/topology";
-import { HealthCheck } from "../../types/healthChecks";
+import { getHealthCheckSummary } from "../../api/services/topology";
+import { HealthCheckSummary } from "../../api/types/health";
 import { Icon } from "../Icon";
 import { HealthCheckStatus } from "../Status/HealthCheckStatus";
 
-type ComponentCheckLinkProps = {
-  componentCheck: ComponentHealthCheckView;
+type CheckLinkProps = {
+  check?: HealthCheckSummary;
+  checkId?: string;
 };
 
-export function CheckLink({ componentCheck: check }: ComponentCheckLinkProps) {
+export function CheckLink({ check, checkId }: CheckLinkProps) {
+  const { data } = useQuery(["check", checkId, check], () => {
+    if (check) {
+      return check;
+    }
+    if (checkId != null) {
+      return getHealthCheckSummary(checkId);
+    }
+    return null;
+  });
+
+  if (data == null) {
+    return null;
+  }
+
   return (
     <Link
+      role="link"
       to={{
         pathname: `/health`,
-        search: `?checkId=${check.id}&timeRange=1h`
+        search: `?checkId=${data.id}&timeRange=1h`
       }}
       className={`flex flex-row justify-between w-full items-center space-x-2 p-2 rounded-md hover:bg-gray-100`}
     >
       <div className="flex flex-row gap-2 w-full items-center">
         <div className="flex flex-row space-x-1 items-center flex-1text-sm ">
-          <HealthCheckStatus check={check as Pick<HealthCheck, "status">} />
-          <Icon name={check.type} className="w-4 h-auto" />
+          <HealthCheckStatus check={data} />
+          <Icon name={data.type} className="w-4 h-auto" />
           <div className="overflow-hidden text-ellipsis flex-1">
-            {check.name}
+            {data.name}
           </div>
         </div>
       </div>

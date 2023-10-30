@@ -6,7 +6,7 @@ import React, {
   SetStateAction
 } from "react";
 import { URLSearchParamsInit } from "react-router-dom";
-import { HealthCheck } from "../types/healthChecks";
+import { HealthCheck } from "../api/types/health";
 
 export type HealthState = {
   checks: HealthCheck[] | null;

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { HealthCheck } from "../../types/healthChecks";
+import { HealthCheck } from "../types/health";
 import { getStartValue } from "../../utils/common";
 import { getCanaryGraph } from "../services/topology";
 

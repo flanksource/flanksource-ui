@@ -1,6 +1,5 @@
 import { useCallback, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Topology } from "../../context/TopologyPageContext";
 import { PlaybookRunsSidePanel } from "../Playbooks/Runs/PlaybookRunsSidePanel";
 import Configs from "../Sidebars/configs";
 import Incidents from "../Sidebars/incidents";
@@ -9,9 +8,9 @@ import TopologyConfigChanges from "../TopologyConfigChanges";
 import TopologyDetails from "../TopologyDetails";
 import { ComponentTeams } from "./ComponentTeams";
 import TopologyActionBar from "./TopologyActionBar";
-import TopologyCost from "./TopologyCost";
 import TopologyInsights from "./TopologyInsights";
 import { ComponentChecks } from "./ComponentChecks";
+import { Topology } from "../../api/types/topology";
 
 type Props = {
   topology?: Topology;
@@ -82,13 +81,6 @@ export default function TopologySidebar({
         }
       />
 
-      <TopologyCost
-        topology={topology}
-        isCollapsed={openedPanel !== "Costs"}
-        onCollapsedStateChange={(status) =>
-          panelCollapsedStatusChange(status, "Costs")
-        }
-      />
       <TopologyConfigChanges
         topologyID={id}
         isCollapsed={openedPanel !== "ConfigChanges"}

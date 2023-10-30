@@ -3,7 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MemoryRouter } from "react-router-dom";
 import { Size } from "../../types";
 import { TopologyCard } from "./index";
-import { Topology } from "../../context/TopologyPageContext";
+import { Topology } from "../../api/types/topology";
 
 const defaultQueryClient = new QueryClient();
 

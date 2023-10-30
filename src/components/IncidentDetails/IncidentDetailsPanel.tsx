@@ -3,18 +3,17 @@ import { debounce } from "lodash";
 import { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { BsCardList, BsShareFill } from "react-icons/bs";
-import { Incident } from "../../api/services/incident";
-import { IncidentPriority } from "../../constants";
-import { relativeDateTime } from "../../utils/date";
 import CollapsiblePanel from "../CollapsiblePanel";
 import IncidentTypeDropdown from "../Incidents/IncidentTypeDropdown";
 import { incidentStatusItems, typeItems } from "../Incidents/data";
 import { ReactSelectDropdown } from "../ReactSelectDropdown";
 import Title from "../Title/title";
+import { Age } from "../../ui/Age";
 import { IncidentDetailsRow } from "./IncidentDetailsRow";
 import { priorities } from "./IncidentSidebar";
 import { IncidentWorkflow } from "./IncidentWorkflow";
 import { Responders } from "./Responders";
+import { Incident, IncidentPriority } from "../../api/types/incident";
 
 type IncidentDetailsPanelProps = React.HTMLProps<HTMLDivElement> & {
   incident: Incident;
@@ -46,12 +45,7 @@ export function IncidentDetailsPanel({
     mode: "onBlur",
     defaultValues: {
       title: incident.title,
-      tracking: "123456",
       created_at: incident.created_at,
-      chartRoomTitle: "#Slack",
-      chartRoom: "https://google.com.ua",
-      statusPageTitle: "StatusPage.io",
-      statusPage: "https://www.atlassian.com/software/statuspage",
       priority: incident.severity ?? IncidentPriority.High,
       type: typeItems[incident.type as keyof typeof typeItems]
         ? incident.type
@@ -74,11 +68,11 @@ export function IncidentDetailsPanel({
   const formValues = getValues();
 
   const formattedCreatedAt = useMemo(
-    () => relativeDateTime(watchCreatedAt),
+    () => <Age from={watchCreatedAt} />,
     [watchCreatedAt]
   );
   const formattedDuration = useMemo(
-    () => relativeDateTime(watchCreatedAt),
+    () => <Age from={watchCreatedAt} />,
     [watchCreatedAt]
   );
 

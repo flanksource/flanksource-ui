@@ -1,7 +1,7 @@
 import { atom, useAtomValue, useSetAtom } from "jotai";
 import { useEffect } from "react";
 import { useIncidentQuery } from "../api/query-hooks";
-import { Incident } from "../api/services/incident";
+import { Incident } from "../api/types/incident";
 
 export const viewedIncidentAtom = atom<Incident | null>(null);
 
