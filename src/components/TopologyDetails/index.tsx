@@ -1,16 +1,19 @@
+import { useQuery } from "@tanstack/react-query";
 import { isEmpty, map } from "lodash";
+import { useMemo } from "react";
 import { BsCardList } from "react-icons/bs";
+import { Link } from "react-router-dom";
+import { getComponentsTopology } from "../../api/services/topology";
+import { isCostsEmpty } from "../../api/types/configs";
+import { Topology } from "../../api/types/topology";
 import CollapsiblePanel from "../CollapsiblePanel";
+import ConfigCostValue from "../ConfigCosts/ConfigCostValue";
 import { DescriptionCard } from "../DescriptionCard";
 import EmptyState from "../EmptyState";
 import { Icon } from "../Icon";
 import Title from "../Title/title";
 import { FormatProperty } from "../TopologyCard/Property";
 import { TopologyLink } from "../TopologyLink";
-import { useMemo } from "react";
-import { Topology } from "../../api/types/topology";
-import ConfigCostValue from "../ConfigCosts/ConfigCostValue";
-import { isCostsEmpty } from "../../api/types/configs";
 
 type Props = {
   topology?: Topology;
@@ -25,6 +28,13 @@ export default function TopologyDetails({
   isCollapsed = true,
   onCollapsedStateChange = () => {}
 }: Props) {
+  const { data } = useQuery({
+    queryFn: () => getComponentsTopology(topology!.id),
+    enabled: topology != null,
+    queryKey: ["components", "topology", topology?.id],
+    select: (data) => data?.topologies
+  });
+
   const items = useMemo(() => {
     if (topology == null) {
       return [];
@@ -86,8 +96,24 @@ export default function TopologyDetails({
         )
       });
     }
+
+    if (data != null) {
+      items.push({
+        label: "Topology",
+        value: (
+          <Link
+            to={{
+              pathname: `/settings/topologies/${data.id}`
+            }}
+            className="flex flex-nowrap hover:text-gray-500 my-auto"
+          >
+            {data.name}
+          </Link>
+        )
+      });
+    }
     return items;
-  }, [refererId, topology]);
+  }, [data, refererId, topology]);
 
   if (topology == null) {
     return null;
