@@ -1,4 +1,3 @@
-
 name: Lint
 on:
   push:
@@ -6,20 +5,22 @@ on:
       - main
   pull_request:
     paths:
-      - 'Makefile'
-      - '**.jsx?'
-      - '**.tsx?'
-      - '**/.babelrc'
-      - '**/.eslint*'
-      - '**/.prettierrc*'
-      - '**/package.json'
-      - '**/github/workflows/lint.yml'
+      - "Makefile"
+      - "**.jsx?"
+      - "**.tsx?"
+      - "**/.babelrc"
+      - "**/.eslint*"
+      - "**/.prettierrc*"
+      - "**/package.json"
+      - "**/github/workflows/lint.yml"
 jobs:
   eslint:
     runs-on: ubuntu-latest
-    container:
-      image: node:16-alpine
     steps:
       - uses: actions/checkout@master
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: "npm"
       - run: npm i
       - run: npm run lint:eslint
