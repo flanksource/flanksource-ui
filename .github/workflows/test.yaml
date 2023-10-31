@@ -44,4 +44,6 @@ jobs:
           node-version: 20
           cache: "npm"
       - run: npm i
-      - run: npm run build
+      - run: |
+          export NODE_OPTIONS=--max_old_space_size=4096
+          npm run build
