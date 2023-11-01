@@ -156,17 +156,15 @@ export const notificationsTableColumns: ColumnDef<Notification, any>[] = [
 
           {custom_services &&
             custom_services.length > 0 &&
-            custom_services.map(
-              ({ connection, name, filters, properties, url }) => (
-                <div className="flex flex-row gap-2 items-center">
-                  <Icon
-                    className="inline-block h-6"
-                    name={connection ?? name}
-                  />
-                  {name}
-                </div>
-              )
-            )}
+            custom_services.map(({ connection, name }) => (
+              <div
+                className="flex flex-row gap-2 items-center"
+                key={connection ?? name}
+              >
+                <Icon className="inline-block h-6" name={connection ?? name} />
+                {name}
+              </div>
+            ))}
         </div>
       );
     }
@@ -182,7 +180,7 @@ export const notificationsTableColumns: ColumnDef<Notification, any>[] = [
       return (
         <div className="w-full flex flex-col">
           {value.map((event) => (
-            <div className="block p-1">
+            <div className="block p-1" key={event}>
               <Badge text={event} className="w-auto text-sm" />
             </div>
           ))}

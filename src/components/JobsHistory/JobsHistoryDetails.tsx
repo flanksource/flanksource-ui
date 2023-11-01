@@ -2,12 +2,6 @@ import { Modal } from "../Modal";
 import { JobHistory } from "./JobsHistoryTable";
 import clsx from "clsx";
 
-type JobsHistoryDetailsProps = {
-  job?: JobHistory;
-  isModalOpen: boolean;
-  setIsModalOpen: (value: boolean) => void;
-};
-
 interface CellProps {
   children: React.ReactNode;
   className?: string;
@@ -24,6 +18,12 @@ function Cell({ children, className }: CellProps) {
     </td>
   );
 }
+
+type JobsHistoryDetailsProps = {
+  job?: Pick<JobHistory, "details" | "name">;
+  isModalOpen: boolean;
+  setIsModalOpen: (value: boolean) => void;
+};
 
 export function JobsHistoryDetails({
   job,
@@ -56,7 +56,10 @@ export function JobsHistoryDetails({
             </thead>
             <tbody>
               {job.details?.errors?.map((error, index) => (
-                <tr className="last:border-b-0 border-b cursor-pointer">
+                <tr
+                  key={error}
+                  className="last:border-b-0 border-b cursor-pointer"
+                >
                   <Cell className="leading-5 text-gray-900 font-medium">
                     {error}
                   </Cell>
