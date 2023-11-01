@@ -1,8 +1,8 @@
-import { GetName } from "../data";
-import { removeNamespacePrefix } from "../utils";
+import { HealthCheck } from "../../../api/types/health";
 import { isPlainObject } from "../../../lib/isPlainObject";
 import { aggregate } from "../aggregate";
-import { HealthCheck } from "../../../api/types/health";
+import { GetName } from "../data";
+import { removeNamespacePrefix } from "../utils";
 
 export function makeRow({
   row = {},
