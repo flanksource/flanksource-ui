@@ -1,3 +1,4 @@
+import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { AiFillPlusCircle } from "react-icons/ai";
 import {
@@ -16,7 +17,6 @@ import { SearchLayout } from "../../components/Layout";
 import { SchemaApi } from "../../components/SchemaResourcePage/resourceTypes";
 import { toastError, toastSuccess } from "../../components/Toast/toast";
 import { useUser } from "../../context";
-import { useLoader } from "../../hooks";
 
 const connectionsSchemaConnection: SchemaApi = {
   table: "connections",
@@ -25,27 +25,21 @@ const connectionsSchemaConnection: SchemaApi = {
 };
 
 export function ConnectionsPage() {
-  const [connections, setConnections] = useState<Connection[]>([]);
   const user = useUser();
   const [isOpen, setIsOpen] = useState(false);
-  const { loading, setLoading } = useLoader();
   const [editedRow, setEditedRow] = useState<Connection>();
 
-  async function fetchConnections() {
-    setLoading(true);
-    try {
+  const {
+    isLoading: loading,
+    data: connections,
+    refetch
+  } = useQuery({
+    queryKey: ["connections", "all"],
+    queryFn: async () => {
       const response = await getAll(connectionsSchemaConnection);
-      if (response.data) {
-        setConnections(response.data as unknown as Connection[]);
-        setLoading(false);
-        return;
-      }
-      toastError(response.statusText);
-    } catch (ex) {
-      toastError((ex as Error).message);
+      return (response.data ?? []) as unknown as Connection[];
     }
-    setLoading(false);
-  }
+  });
 
   async function onSubmit(data: Connection) {
     if (!editedRow?.id) {
@@ -56,16 +50,15 @@ export function ConnectionsPage() {
   }
 
   async function createConnection(data: Connection) {
-    setLoading(true);
     try {
       const response = await createResource(connectionsSchemaConnection, {
         ...data,
         created_by: user.user?.id
       });
       if (response?.data) {
-        fetchConnections();
+        refetch();
         setIsOpen(false);
-        setLoading(false);
+
         toastSuccess("Connection added successfully");
         return;
       }
@@ -73,20 +66,17 @@ export function ConnectionsPage() {
     } catch (ex) {
       toastError((ex as Error).message);
     }
-    setLoading(false);
   }
 
   async function updateConnection(data: Connection) {
-    setLoading(true);
     try {
       const response = await updateResource(connectionsSchemaConnection, {
         ...data,
         created_by: user.user?.id
       });
       if (response?.data) {
-        fetchConnections();
+        refetch();
         setIsOpen(false);
-        setLoading(false);
         toastSuccess("Connection updated successfully");
         return;
       }
@@ -94,11 +84,9 @@ export function ConnectionsPage() {
     } catch (ex) {
       toastError((ex as Error).message);
     }
-    setLoading(false);
   }
 
   async function onDelete(data: Connection) {
-    setLoading(true);
     try {
       const response = await deleteResource(
         connectionsSchemaConnection,
@@ -106,9 +94,9 @@ export function ConnectionsPage() {
       );
       setEditedRow(undefined);
       if (response?.data) {
-        fetchConnections();
+        refetch();
         setIsOpen(false);
-        setLoading(false);
+
         toastSuccess("Connection removed successfully");
         return;
       }
@@ -116,12 +104,7 @@ export function ConnectionsPage() {
     } catch (ex) {
       toastError((ex as Error).message);
     }
-    setLoading(false);
   }
-
-  useEffect(() => {
-    fetchConnections();
-  }, []);
 
   useEffect(() => {
     if (isOpen) {
@@ -152,7 +135,7 @@ export function ConnectionsPage() {
           />
         }
         onRefresh={() => {
-          fetchConnections();
+          refetch();
         }}
         contentClass="p-0 h-full"
         loading={loading}
@@ -160,7 +143,7 @@ export function ConnectionsPage() {
         <div className="flex flex-col flex-1 px-6 pb-0 h-full max-w-screen-xl mx-auto">
           <ConnectionList
             className="mt-6 overflow-y-hidden"
-            data={connections}
+            data={connections ?? []}
             isLoading={loading}
             onRowClick={(val) => {
               setIsOpen(true);
