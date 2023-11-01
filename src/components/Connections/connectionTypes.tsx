@@ -1,7 +1,7 @@
 import { FaWindows } from "react-icons/fa";
 import { DiGoogleCloudPlatform } from "react-icons/di";
 import { stringSortHelper } from "../../utils/common";
-import { Connection } from "./ConnectionForm";
+import { Connection } from "./ConnectionFormModal";
 
 const enum ConnectionsFieldTypes {
   checkbox = "checkbox",
@@ -407,7 +407,7 @@ export const connectionTypes: ConnectionType[] = [
     convertToFormSpecificValue: (data: Record<string, any>) => {
       return {
         ...data,
-        db: data.properties?.db
+        db: data?.properties?.db
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
@@ -456,7 +456,7 @@ export const connectionTypes: ConnectionType[] = [
     convertToFormSpecificValue: (data: Record<string, any>) => {
       return {
         ...data,
-        domain: data.properties?.domain
+        domain: data?.properties?.domain
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
@@ -595,9 +595,9 @@ export const connectionTypes: ConnectionType[] = [
     convertToFormSpecificValue: (data: Record<string, any>) => {
       return {
         ...data,
-        region: data.properties?.region,
-        profile: data.properties?.profile,
-        insecure_tls: data.properties?.insecureTLS === "true"
+        region: data?.properties?.region,
+        profile: data?.properties?.profile,
+        insecure_tls: data?.properties?.insecureTLS === "true"
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
@@ -691,7 +691,7 @@ export const connectionTypes: ConnectionType[] = [
     convertToFormSpecificValue: (data: Record<string, any>) => {
       return {
         ...data,
-        tenant: data.properties?.tenant
+        tenant: data?.properties?.tenant
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
@@ -831,10 +831,10 @@ export const connectionTypes: ConnectionType[] = [
     convertToFormSpecificValue: (data: Record<string, any>) => {
       return {
         ...data,
-        workstation: data.properties?.workstation,
-        sharename: data.properties?.sharename,
-        searchPath: data.properties?.searchPath,
-        port: data.properties?.port
+        workstation: data?.properties?.workstation,
+        sharename: data?.properties?.sharename,
+        searchPath: data?.properties?.searchPath,
+        port: data?.properties?.port
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
@@ -878,7 +878,7 @@ export const connectionTypes: ConnectionType[] = [
     convertToFormSpecificValue: (data: Record<string, any>) => {
       return {
         ...data,
-        port: data.properties?.port
+        port: data?.properties?.port
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
@@ -924,7 +924,7 @@ export const connectionTypes: ConnectionType[] = [
     convertToFormSpecificValue: (data: Record<string, any>) => {
       return {
         ...data,
-        scheme: data.properties?.scheme
+        scheme: data?.properties?.scheme
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
@@ -1047,12 +1047,12 @@ export const connectionTypes: ConnectionType[] = [
     convertToFormSpecificValue: (data: Record<string, any>) => {
       return {
         ...data,
-        authMethod: data.properties?.authMethod,
-        encryptionMethod: data.properties?.encryptionMethod,
-        from: data.properties?.from,
-        fromName: data.properties?.fromName,
-        host: data.properties?.host,
-        port: data.properties?.port
+        authMethod: data?.properties?.authMethod,
+        encryptionMethod: data?.properties?.encryptionMethod,
+        from: data?.properties?.from,
+        fromName: data?.properties?.fromName,
+        host: data?.properties?.host,
+        port: data?.properties?.port
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
@@ -1107,7 +1107,7 @@ export const connectionTypes: ConnectionType[] = [
     convertToFormSpecificValue: (data: Record<string, any>) => {
       return {
         ...data,
-        webhook: data.properties?.webhook
+        webhook: data?.properties?.webhook
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
@@ -1193,8 +1193,8 @@ export const connectionTypes: ConnectionType[] = [
     convertToFormSpecificValue: (data: Record<string, any>) => {
       return {
         ...data,
-        host: data.properties?.host,
-        channel: data.properties?.channel
+        host: data?.properties?.host,
+        channel: data?.properties?.channel
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
@@ -1251,8 +1251,8 @@ export const connectionTypes: ConnectionType[] = [
     convertToFormSpecificValue: (data: Record<string, any>) => {
       return {
         ...data,
-        host: data.properties?.host,
-        channel: data.properties?.channel
+        host: data?.properties?.host,
+        channel: data?.properties?.channel
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
@@ -1316,8 +1316,8 @@ export const connectionTypes: ConnectionType[] = [
     convertToFormSpecificValue: (data: Record<string, any>) => {
       return {
         ...data,
-        host: data.properties?.host,
-        topic: data.properties?.topic
+        host: data?.properties?.host,
+        topic: data?.properties?.topic
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
@@ -1371,8 +1371,8 @@ export const connectionTypes: ConnectionType[] = [
     convertToFormSpecificValue: (data: Record<string, any>) => {
       return {
         ...data,
-        host: data.properties?.host,
-        port: data.properties?.port
+        host: data?.properties?.host,
+        port: data?.properties?.port
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
@@ -1415,7 +1415,7 @@ export const connectionTypes: ConnectionType[] = [
     convertToFormSpecificValue: (data: Record<string, any>) => {
       return {
         ...data,
-        targets: data.properties?.targets
+        targets: data?.properties?.targets
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
@@ -1515,10 +1515,10 @@ export const connectionTypes: ConnectionType[] = [
     convertToFormSpecificValue: (data: Record<string, any>) => {
       return {
         ...data,
-        host: data.properties?.host,
-        port: data.properties?.port,
-        user: data.properties?.user,
-        channel: data.properties?.channel
+        host: data?.properties?.host,
+        port: data?.properties?.port,
+        user: data?.properties?.user,
+        channel: data?.properties?.channel
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
@@ -1571,7 +1571,7 @@ export const connectionTypes: ConnectionType[] = [
     convertToFormSpecificValue: (data: Record<string, any>) => {
       return {
         ...data,
-        fromName: data.properties?.BotName
+        fromName: data?.properties?.BotName
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
@@ -1633,11 +1633,11 @@ export const connectionTypes: ConnectionType[] = [
     convertToFormSpecificValue: (data: Record<string, any>) => {
       return {
         ...data,
-        group: data.properties?.group,
-        tenant: data.properties?.tenant,
-        altID: data.properties?.altID,
-        host: data.properties?.host,
-        groupOwner: data.properties?.groupOwner
+        group: data?.properties?.group,
+        tenant: data?.properties?.tenant,
+        altID: data?.properties?.altID,
+        host: data?.properties?.host,
+        groupOwner: data?.properties?.groupOwner
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
@@ -1724,7 +1724,7 @@ export const connectionTypes: ConnectionType[] = [
     convertToFormSpecificValue: (data: Record<string, any>) => {
       return {
         ...data,
-        host: data.properties?.host
+        host: data?.properties?.host
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
@@ -1793,10 +1793,10 @@ export const connectionTypes: ConnectionType[] = [
     convertToFormSpecificValue: (data: Record<string, any>) => {
       return {
         ...data,
-        contentType: data.properties?.contentType,
-        requestMethod: data.properties?.requestMethod,
-        key: data.properties?.key,
-        titleKey: data.properties?.titleKey
+        contentType: data?.properties?.contentType,
+        requestMethod: data?.properties?.requestMethod,
+        key: data?.properties?.key,
+        titleKey: data?.properties?.titleKey
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
@@ -1878,7 +1878,7 @@ export const connectionTypes: ConnectionType[] = [
     convertToFormSpecificValue: (data: Record<string, any>) => {
       return {
         ...data,
-        ref: data.properties?.ref
+        ref: data?.properties?.ref ?? "ref"
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
