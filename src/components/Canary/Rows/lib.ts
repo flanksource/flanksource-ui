@@ -2,8 +2,15 @@ import { GetName } from "../data";
 import { removeNamespacePrefix } from "../utils";
 import { isPlainObject } from "../../../lib/isPlainObject";
 import { aggregate } from "../aggregate";
+import { HealthCheck } from "../../../api/types/health";
 
-export function makeRow({ row, hideNamespacePrefix = true } = {}) {
+export function makeRow({
+  row = {},
+  hideNamespacePrefix = true
+}: {
+  row: any;
+  hideNamespacePrefix?: boolean;
+}) {
   return {
     ...row,
     name: GetName(row),
@@ -14,9 +21,9 @@ export function makeRow({ row, hideNamespacePrefix = true } = {}) {
   };
 }
 
-export function filterRowsByPivotSet(rows, pivotSet) {
-  return Array.from(pivotSet).reduce((accPivots, pivot) => {
-    const filteredRows = rows.reduce((acc, row) => {
+export function filterRowsByPivotSet(rows: any, pivotSet: any) {
+  return Array.from(pivotSet).reduce((accPivots: any, pivot: any) => {
+    const filteredRows = rows.reduce((acc: any, row: any) => {
       if (row[pivot] != null) {
         acc[acc.length] = row[pivot];
       }
@@ -26,18 +33,23 @@ export function filterRowsByPivotSet(rows, pivotSet) {
       accPivots[pivot] = aggregate(pivot, filteredRows);
     }
     return accPivots;
-  }, {});
+  }, {} as Record<string, any>);
 }
 
 export function prepareRows({
-  tableData,
+  tableData = [],
   hideNamespacePrefix = true,
   pivotBy = null,
   pivotLookup = null
+}: {
+  tableData?: HealthCheck[];
+  hideNamespacePrefix?: boolean;
+  pivotBy?: string | null;
+  pivotLookup?: string | null;
 }) {
   if (pivotBy == null || pivotBy === "none") {
     const values = tableData?.reduce(
-      (acc, row, i) => {
+      (acc: any, row, i) => {
         acc.rows[i] = makeRow({ row, hideNamespacePrefix });
         return acc;
       },
@@ -48,7 +60,7 @@ export function prepareRows({
   }
   if (pivotBy != null && pivotBy !== "none") {
     const values = tableData.reduce(
-      (acc, row) => {
+      (acc: any, row: any) => {
         const {
           rows: { length }
         } = acc;
@@ -70,11 +82,11 @@ export function prepareRows({
           if (subRows.rows.length === 0) {
             return acc;
           }
-          subRows.meta.pivotSet.forEach((value) => {
+          subRows.meta.pivotSet.forEach((value: any) => {
             acc.meta.pivotSet.add(value);
           });
           const newRow = { ...row, subRows: subRows.rows };
-          const aggregateFilters = filterRowsByPivotSet(
+          const aggregateFilters: any = filterRowsByPivotSet(
             subRows.rows,
             acc.meta.pivotSet
           );
@@ -110,7 +122,7 @@ export function prepareRows({
                 }
                 return keyObjectAcc;
               },
-              {}
+              {} as Record<string, any>
             );
             if (Object.keys(keyObject).length === 0) {
               return acc;

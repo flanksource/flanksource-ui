@@ -1,12 +1,14 @@
+import { HealthCheck } from "../../api/types/health";
+
 // process table groupings, given a list of checks and a 'groupBy' object
-export function getGroupedChecks(checks, groupBy) {
+export function getGroupedChecks(checks: HealthCheck[] = [], groupBy?: string) {
   if (
     groupBy === "name" ||
     groupBy === "description" ||
     groupBy === "canary_name"
   ) {
-    const groupedChecks = {};
-    const groupNames = [];
+    const groupedChecks: Record<string, HealthCheck[]> = {};
+    const groupNames: string[] = [];
     checks.forEach((check) => {
       const value = check[groupBy] || "(none)";
       if (groupNames.indexOf(value) === -1) {
@@ -17,11 +19,12 @@ export function getGroupedChecks(checks, groupBy) {
     });
     return groupedChecks;
   }
-  const groupedChecks = { Others: [] };
+
+  const groupedChecks: Record<string, HealthCheck[]> = { Others: [] };
   const groupNames = ["Others"];
   checks.forEach((check) => {
     let hasValidGroup = false;
-    let groupName;
+    let groupName: any;
 
     if (check.labels) {
       const labelKeys = Object.keys(check.labels);
@@ -39,7 +42,7 @@ export function getGroupedChecks(checks, groupBy) {
       });
     }
     if (hasValidGroup) {
-      groupedChecks[groupName].push(check);
+      groupedChecks[groupName!].push(check);
     } else {
       groupedChecks.Others.push(check);
     }
