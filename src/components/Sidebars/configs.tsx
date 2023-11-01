@@ -37,11 +37,13 @@ export function ConfigsList({
   >();
 
   const {
-    data: configs = [],
+    data: res,
     isLoading,
     isRefetching,
     refetch
   } = useComponentConfigRelationshipQuery({ topologyId, configId });
+
+  const configs = res?.data ?? [];
 
   const deleteLink = async (configId: string) => {
     if (!topologyId) {
@@ -79,13 +81,13 @@ export function ConfigsList({
         <ol className="flex flex-col w-full overflow-x-hidden">
           {configs.map((config) => (
             <li
-              key={config.id}
+              key={config.config_id}
               className={clsx("p-1 relative flex flex-row flex-1", {
                 hidden: hideDeletedConfigs && config.deleted_at
               })}
             >
               <ConfigLink
-                config={config}
+                config={config.configs}
                 className="overflow-hidden text-ellipsis flex-1 whitespace-nowrap"
               />
               {config.deleted_at && (
@@ -95,9 +97,10 @@ export function ConfigsList({
                   className="ml-2"
                 />
               )}
-              {topologyId && (
+              {/* only show delete button on manually linked configs */}
+              {topologyId && config.selector_id === "manual" && (
                 <TopologyConfigsActionsDropdown
-                  onUnlinkUser={() => setDeletedConfigLinkId(config.id)}
+                  onUnlinkUser={() => setDeletedConfigLinkId(config.config_id)}
                 />
               )}
             </li>
@@ -129,10 +132,12 @@ export default function Configs({
     () => props.hideDeletedConfigs ?? true
   );
 
-  const { data: configs = [] } = useComponentConfigRelationshipQuery({
+  const { data: res } = useComponentConfigRelationshipQuery({
     ...props,
     hideDeleted: hideDeletedConfigs
   });
+
+  const configs = res?.data ?? [];
 
   const TrashIconType = hideDeletedConfigs ? TbTrashOff : TbTrash;
   const handleTrashIconClick = (e: { stopPropagation: () => void }) => {
