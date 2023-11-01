@@ -7,9 +7,9 @@ import {
   updateResource
 } from "../../api/schemaResources";
 import { BreadcrumbNav, BreadcrumbRoot } from "../../components/BreadcrumbNav";
-import ConnectionForm, {
+import ConnectionFormModal, {
   Connection
-} from "../../components/Connections/ConnectionForm";
+} from "../../components/Connections/ConnectionFormModal";
 import { ConnectionList } from "../../components/Connections/ConnectionsList";
 import { Head } from "../../components/Head/Head";
 import { SearchLayout } from "../../components/Layout";
@@ -137,10 +137,11 @@ export function ConnectionsPage() {
         title={
           <BreadcrumbNav
             list={[
-              <BreadcrumbRoot link="/settings/connections">
+              <BreadcrumbRoot key="connections" link="/settings/connections">
                 Connections
               </BreadcrumbRoot>,
               <button
+                key="add-connection"
                 type="button"
                 className=""
                 onClick={() => setIsOpen(true)}
@@ -166,7 +167,8 @@ export function ConnectionsPage() {
               setEditedRow(val);
             }}
           />
-          <ConnectionForm
+
+          <ConnectionFormModal
             isOpen={isOpen}
             setIsOpen={setIsOpen}
             onConnectionSubmit={onSubmit}
