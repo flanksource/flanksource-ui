@@ -1,10 +1,12 @@
 import { CellContext, ColumnDef } from "@tanstack/react-table";
+import { useState } from "react";
 import { Team, User } from "../../api/types/users";
 import { DateCell } from "../../ui/table";
 import { Avatar } from "../Avatar";
 import { Badge } from "../Badge";
 import { Icon } from "../Icon";
 import JobHistoryStatusColumn from "../JobsHistory/JobHistoryStatusColumn";
+import { JobsHistoryDetails } from "../JobsHistory/JobsHistoryDetails";
 import { JobHistoryStatus } from "../JobsHistory/JobsHistoryTable";
 
 export const notificationEvents = [
@@ -90,14 +92,31 @@ export const notificationEvents = [
   }
 ].sort((a, b) => a.label.localeCompare(b.label));
 
-export function JobStatusColumn({ cell }: CellContext<Notification, any>) {
+export function StatusColumn({ cell }: CellContext<Notification, any>) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const value = cell.row.original.job_status;
 
-  return <JobHistoryStatusColumn status={value} />;
+  return (
+    <>
+      <JobHistoryStatusColumn
+        status={value}
+        onClick={() => setIsModalOpen(true)}
+      />
+      <JobsHistoryDetails
+        isModalOpen={isModalOpen}
+        setIsModalOpen={setIsModalOpen}
+        job={{
+          details: cell.row.original.job_details,
+          name: cell.row.original.job_name ?? cell.row.original.title
+        }}
+      />
+    </>
+  );
 }
 
 export type Notification = {
   id: string;
+  title: string;
   events: string[];
   template: string;
   filter?: string;
@@ -118,6 +137,10 @@ export type Notification = {
   person?: User;
   team?: Team;
   job_status?: JobHistoryStatus;
+  job_name?: string;
+  job_details?: {
+    errors?: string[];
+  };
 };
 
 export type NewNotification = Omit<
@@ -215,7 +238,7 @@ export const notificationsTableColumns: ColumnDef<Notification, any>[] = [
   {
     header: "Status",
     id: "job_status",
-    cell: JobStatusColumn
+    cell: StatusColumn
   },
   {
     header: "Created At",
