@@ -1,20 +1,22 @@
+import {
+  SortingState,
+  flexRender,
+  getCoreRowModel,
+  getExpandedRowModel,
+  getGroupedRowModel,
+  getSortedRowModel,
+  useReactTable
+} from "@tanstack/react-table";
+import clsx from "clsx";
 import React, { useEffect, useMemo, useState } from "react";
 import { TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti";
-import { useTable, useSortBy, useExpanded } from "react-table";
-import { getAggregatedGroupedChecks } from "./aggregate";
-import { getGroupedChecks } from "./grouping";
-import { getColumns, makeColumnsForPivot } from "./Columns";
-import {
-  decodeUrlSearchParams,
-  encodeObjectToUrlSearchParams,
-  useUpdateParams
-} from "./url";
-import { columnObject, firstColumns } from "./Columns/columns";
-import { prepareRows } from "./Rows/lib";
-import { useCheckSetEqualityForPreviousVsCurrent } from "../Hooks/useCheckSetEqualityForPreviousVsCurrent";
 import { useSearchParams } from "react-router-dom";
 import { HealthCheck } from "../../api/types/health";
-import clsx from "clsx";
+import { getCanaryTableColumns } from "./CanaryTableColumns";
+import { useCheckSetEqualityForPreviousVsCurrent } from "../Hooks/useCheckSetEqualityForPreviousVsCurrent";
+import { prepareRows } from "./Rows/lib";
+import { getAggregatedGroupedChecks } from "./aggregate";
+import { getGroupedChecks } from "./grouping";
 
 const styles = {
   outerDivClass: "border-l border-r border-gray-300 overflow-y-auto",
@@ -30,13 +32,6 @@ const styles = {
   tbodyDataClass: "whitespace-nowrap border-gray-300 border-b",
   expandArrowIconClass: "ml-6 flex"
 };
-
-const sortByValidValues = new Map([
-  ["name", null],
-  ["checkStatuses", null],
-  ["uptime", null],
-  ["latency", null]
-]);
 
 type CanaryChecksProps = {
   checks?: HealthCheck[];
@@ -82,7 +77,6 @@ export function CanaryTable({
   }, [params, checks, groupBy, groupSingleItems]);
 
   const { rows, meta } = useMemo(
-    // @ts-expect-error
     () => prepareRows({ tableData, hideNamespacePrefix, pivotBy, pivotLookup }),
     [hideNamespacePrefix, tableData, pivotBy, pivotLookup]
   );
@@ -95,33 +89,14 @@ export function CanaryTable({
     pivotBy != null &&
     pivotBy !== "none";
 
-  const columns = useMemo(() => {
-    if (shouldPivot) {
-      return makeColumnsForPivot({
-        pivotSet: meta.pivotSet,
-        pivotCellType,
-        firstColumns
-      });
-    }
-    return getColumns({
-      columnObject,
-      pivotCellType: null
-    });
-    // isNewPivotSet checks the old pivotSet against the new on, so it's a much better test
-    // than 'meta.pivotSet', which will probably be referentially new on every fetch of data.
-    // Testing the set directly meant we won't have to rebuild the columns, which is predicted to
-    // be an expensive operation.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pivotCellType, isNewPivotSet, pivotBy, pivotLookup]);
-
   return (
     <Table
       data={rows}
-      columns={columns}
       labels={labels}
       pivotCellType={shouldPivot ? pivotCellType : null}
-      onUnexpandableRowClick={onCheckClick}
+      onHealthCheckClick={onCheckClick}
       hasGrouping={groupBy !== "no-group"}
+      groupBy={groupBy}
       showNamespaceTags={showNamespaceTags}
       hideNamespacePrefix={hideNamespacePrefix}
       theadStyle={theadStyle}
@@ -132,155 +107,127 @@ export function CanaryTable({
 
 type TableProps = {
   data: any[];
-  columns: any[];
   labels?: string[];
   pivotCellType: string | null;
   hasGrouping: boolean;
-  onUnexpandableRowClick: (check: HealthCheck) => void;
+  onHealthCheckClick: (check: HealthCheck) => void;
   showNamespaceTags?: boolean;
   hideNamespacePrefix?: boolean;
   theadStyle?: React.CSSProperties;
+  groupBy?: string;
 };
 
 export function Table({
   data,
-  columns,
+
   labels,
   pivotCellType,
   hasGrouping = false,
-  onUnexpandableRowClick,
+  onHealthCheckClick,
   showNamespaceTags = false,
   hideNamespacePrefix = false,
   theadStyle = {},
+  groupBy = "canary_name",
   ...rest
 }: TableProps) {
+  const [params, setParams] = useSearchParams();
+
+  const sortByValue = params.get("sortBy") || "name";
+  const sortDesc = params.get("sortDesc") === "true" || false;
+
   const rowFinder = (row: any) => {
     const rowValues =
       row?.pivoted === true ? row[row.valueLookup] ?? null : row;
     return rowValues?.subRows || [];
   };
 
-  const {
-    state: tableState,
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    // @ts-expect-error
-    setSortBy,
-    prepareRow,
-    toggleHideColumn,
-    // @ts-expect-error
-    toggleRowExpanded
-  } = useTable(
-    {
-      columns,
-      data,
-      // @ts-expect-error
-      disableMultiSort: true,
-      autoResetSortBy: false,
-      autoResetExpanded: false,
-      getSubRows: rowFinder,
-      useControlledState: (state) =>
-        useMemo(
-          () => ({
-            ...state,
-            pivotCellType
-          }),
-          // eslint-disable-next-line react-hooks/exhaustive-deps
-          [state, pivotCellType]
-        )
-    },
-    useSortBy,
-    useExpanded
+  // ensure sorting works when state isn't managed by caller
+  const [sortBy, setSortBy] = useState<SortingState>();
+
+  useEffect(() => {
+    setSortBy([{ id: sortByValue, desc: sortDesc }]);
+  }, [setSortBy, sortByValue, sortDesc]);
+
+  const columns = useMemo(
+    () =>
+      getCanaryTableColumns({
+        showNamespaceTags,
+        hideNamespacePrefix
+      }),
+    []
   );
 
-  // @ts-expect-error
-  const tableSortState = tableState?.sortBy;
-
-  // Hide expander column if there is no grouping
-  useEffect(() => {
-    toggleHideColumn("expander", !hasGrouping);
-  }, [hasGrouping, toggleHideColumn]);
-
-  // Set table's sort state according to url params on page load or url change
-  useEffect(() => {
-    const searchParams = window.location.search;
-    const decodedParams = decodeUrlSearchParams(searchParams);
-    const { sortBy, sortDesc } = decodedParams;
-
-    // check for validity, else reset to default values
-    const sortByChecked = sortByValidValues.has(sortBy) ? sortBy : "name";
-    const sortDescChecked = typeof sortDesc === "boolean" ? sortDesc : false;
-
-    setSortBy([{ id: sortByChecked, desc: sortDescChecked }]);
-  }, [setSortBy]);
-
-  const updateParams = useUpdateParams();
-
-  // Table-state changes will trigger url changes
-  useEffect(() => {
-    const updateURLBySortState = (sortBy: string, sortDesc: boolean) => {
-      const searchParams = window.location.search;
-      const decodedParams = decodeUrlSearchParams(searchParams);
-
-      // check for validity, else reset to default values
-      const sortByChecked = sortByValidValues.has(sortBy) ? sortBy : "name";
-      const sortDescChecked = typeof sortDesc === "boolean" ? sortDesc : false;
-
-      const newFormState = {
-        ...decodedParams,
-        sortBy: sortByChecked,
-        sortDesc: sortDescChecked
-      };
-      const encoded = encodeObjectToUrlSearchParams(newFormState);
-      if (window.location.search !== `?${encoded}`) {
-        updateParams(newFormState);
+  const table = useReactTable<HealthCheck>({
+    columns: columns,
+    data,
+    enableMultiSort: false,
+    autoResetAll: false,
+    getSubRows: rowFinder,
+    getCoreRowModel: getCoreRowModel(),
+    getExpandedRowModel: hasGrouping ? getExpandedRowModel() : undefined,
+    getGroupedRowModel: hasGrouping ? getGroupedRowModel() : undefined,
+    getSortedRowModel: getSortedRowModel(),
+    enableSortingRemoval: true,
+    onSortingChange: (sorting) => {
+      if (typeof sorting === "function") {
+        const newSortBy = sorting(sortBy ?? []);
+        setSortBy(newSortBy);
+        if (newSortBy.length === 0) {
+          params.delete("sortBy");
+          params.delete("sortDesc");
+        } else {
+          params.set("sortBy", newSortBy[0].id);
+          params.set("sortDesc", newSortBy[0].desc.toString());
+        }
+        setParams(params);
+        return;
       }
-    };
-
-    if (tableSortState.length > 0) {
-      updateURLBySortState(tableSortState[0].id, tableSortState[0].desc);
+      setSortBy(sorting);
+      if (sorting.length === 0) {
+        params.delete("sortBy");
+        params.delete("sortDesc");
+      } else {
+        params.set("sortBy", sorting[0].id);
+        params.set("sortDesc", sorting[0].desc.toString());
+      }
+      setParams(params);
+    },
+    enableHiding: true,
+    state: {
+      columnVisibility: hasGrouping ? { expander: true } : undefined,
+      sorting: sortBy
     }
-  }, [tableSortState, updateParams]);
+  });
 
   return (
     <div className={styles.outerDivClass} {...rest}>
       <div className={styles.topBgClass} />
-      <table
-        className={styles.tableClass}
-        style={{ borderSpacing: "0" }}
-        {...getTableProps()}
-      >
+      <table className={styles.tableClass} style={{ borderSpacing: "0" }}>
         <thead className={styles.theadClass} style={theadStyle}>
-          {headerGroups.map((headerGroup) => (
-            <tr
-              className={styles.theadRowClass}
-              {...headerGroup.getHeaderGroupProps()}
-            >
+          {table.getHeaderGroups().map((headerGroup) => (
+            <tr className={styles.theadRowClass} key={headerGroup.id}>
               {headerGroup.headers.map((column) => (
                 <th
                   className={clsx(styles.theadHeaderClass)}
-                  // @ts-expect-error
-                  {...column.getHeaderProps(column.getSortByToggleProps())}
+                  key={column.id}
                   // Table header onClick sorting override:
                   // sortDesc cannot be null, only either true/false
-                  onClick={() =>
-                    // @ts-expect-error
-                    column.toggleSortBy(
-                      // @ts-expect-error
-                      column.isSortedDesc != null ? !column.isSortedDesc : false
-                    )
-                  }
+                  onClick={column.column.getToggleSortingHandler()}
                 >
-                  {/* @ts-expect-error */}
-                  <div className={clsx("flex select-none", column.cellClass)}>
-                    {column.render("Header")}
+                  <div
+                    className={clsx(
+                      "flex select-none",
+                      (column.column.columnDef?.meta as Record<string, string>)
+                        ?.cellClass
+                    )}
+                  >
+                    {flexRender(
+                      column.column.columnDef.header,
+                      column.getContext()
+                    )}
                     <span>
-                      {/* @ts-expect-error */}
-                      {column.isSorted ? (
-                        // @ts-expect-error
-                        column.isSortedDesc ? (
+                      {column.column.getIsSorted() ? (
+                        column.column.getIsSorted() ? (
                           <TiArrowSortedUp />
                         ) : (
                           <TiArrowSortedDown />
@@ -295,42 +242,36 @@ export function Table({
             </tr>
           ))}
         </thead>
-        <tbody className={styles.tbodyClass} {...getTableBodyProps()}>
-          {rows.length > 0 &&
-            rows.map((row) => {
-              prepareRow(row);
-              // @ts-expect-error
-              row.showNamespaceTags = showNamespaceTags;
-              // @ts-expect-error
-              row.hideNamespacePrefix = hideNamespacePrefix;
+        <tbody className={styles.tbodyClass}>
+          {table.getRowModel().rows.length > 0 &&
+            table.getRowModel().rows.map((row) => {
               return (
                 <tr
-                  // @ts-expect-error
                   key={row.id}
                   className={`${styles.tbodyRowClass} ${
-                    // @ts-expect-error
-                    row.canExpand ? styles.tbodyRowExpandableClass : ""
+                    row.getCanExpand() ? styles.tbodyRowExpandableClass : ""
                   }`}
                   style={{}}
                   onClick={
-                    // @ts-expect-error
-                    row.canExpand
-                      ? () => toggleRowExpanded(row.id)
-                      : () => onUnexpandableRowClick(row.original)
+                    row.getCanExpand()
+                      ? () => row.getToggleExpandedHandler()()
+                      : () => onHealthCheckClick(row.original)
                   }
-                  {...row.getRowProps()}
                 >
-                  {row.cells.map((cell) => (
+                  {row.getVisibleCells().map((cell) => (
                     <td
-                      // @ts-expect-error
-                      key={cell.column.Header}
+                      key={cell.column.id}
                       className={`${styles.tbodyDataClass} ${
-                        // @ts-expect-error
-                        cell.column.cellClass || ""
+                        cell.column || ""
+                      } ${
+                        (cell.column.columnDef?.meta as Record<string, any>)
+                          ?.cellClassName || ""
                       }`}
-                      {...cell.getCellProps()}
                     >
-                      {cell.render("Cell")}
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
                     </td>
                   ))}
                 </tr>
@@ -338,7 +279,7 @@ export function Table({
             })}
         </tbody>
       </table>
-      {rows.length <= 0 && (
+      {table.getRowModel().rows.length <= 0 && (
         <div className="flex items-center justify-center py-20 px-2  border-b border-gray-300 text-center text-gray-400">
           No data available
         </div>
