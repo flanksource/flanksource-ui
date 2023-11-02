@@ -106,7 +106,18 @@ export function getCanaryTableColumns({
         cellClassName: "w-28 overflow-hidden overflow-ellipsis relative"
       },
       enableSorting: true,
-      cell: ({ getValue }: CellContext<HealthCheck, any>) => {
+      cell: ({ getValue, row }: CellContext<HealthCheck, any>) => {
+        if (row.getCanExpand()) {
+          const subRows = row.subRows;
+          const passed = subRows.filter((r) => r.original.uptime.passed).length;
+
+          return (
+            <>
+              {passed}/{subRows.length}
+            </>
+          );
+        }
+
         const value = getValue();
         if (!value) {
           return null;

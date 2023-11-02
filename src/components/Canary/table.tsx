@@ -14,8 +14,6 @@ import { useSearchParams } from "react-router-dom";
 import { HealthCheck } from "../../api/types/health";
 import { getCanaryTableColumns } from "./CanaryTableColumns";
 import { useCheckSetEqualityForPreviousVsCurrent } from "../Hooks/useCheckSetEqualityForPreviousVsCurrent";
-import { getColumns, makeColumnsForPivot } from "./Columns";
-import { columnObject, firstColumns } from "./Columns/columns";
 import { prepareRows } from "./Rows/lib";
 import { getAggregatedGroupedChecks } from "./aggregate";
 import { getGroupedChecks } from "./grouping";
@@ -132,7 +130,6 @@ export function Table({
   groupBy = "canary_name",
   ...rest
 }: TableProps) {
-  console.log({ showNamespaceTags });
   const [params, setParams] = useSearchParams();
 
   const sortByValue = params.get("sortBy") || "name";
