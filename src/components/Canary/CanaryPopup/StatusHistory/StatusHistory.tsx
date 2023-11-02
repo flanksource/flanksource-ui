@@ -162,7 +162,10 @@ export function StatusHistory({
 
   return (
     <div
-      className={clsx("w-full flex flex-col flex-1 overflow-y-auto", className)}
+      className={clsx(
+        "w-full flex flex-col flex-1 overflow-y-auto bg-white",
+        className
+      )}
       {...props}
     >
       <StatusHistoryFilters onFiltersChanges={onFiltersChange} />
@@ -173,7 +176,7 @@ export function StatusHistory({
             columns={columns}
             data={statii}
             tableStyle={{ borderSpacing: "0" }}
-            className="flex-1"
+            className=""
             pagination={pagination}
             paginationClassName="px-2 pb-2"
             preferencesKey="health-check-status-list"

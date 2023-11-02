@@ -27,6 +27,7 @@ interface IModalProps {
   size: ModalSize;
   children: React.ReactNode;
   containerClassName?: string;
+  dialogClassName?: string;
 }
 
 export function Modal({
@@ -42,6 +43,7 @@ export function Modal({
   size,
   children,
   containerClassName = "overflow-auto max-h-full",
+  dialogClassName = "fixed z-50 inset-0 overflow-y-auto 2xl:my-20",
   ...rest
 }: IModalProps) {
   return (
@@ -50,7 +52,7 @@ export function Modal({
       <Dialog
         as="div"
         auto-reopen="true"
-        className="fixed z-50 inset-0 overflow-y-auto my-20"
+        className={dialogClassName}
         onClose={allowBackgroundClose ? () => onClose() : () => {}}
         {...rest}
       >

@@ -19,7 +19,7 @@ export default function Popover({
   children,
   placement = "right",
   className,
-  menuClass = "top-6",
+  menuClass = "top-6 w-56",
   toggle,
   autoCloseTimeInMS = 5000,
   ...props
@@ -99,7 +99,7 @@ export default function Popover({
         aria-orientation="vertical"
         aria-labelledby="menu-button"
         className={clsx(
-          "flex flex-col origin-top-right absolute w-96 z-50 divide-y divide-gray-100 rounded-md drop-shadow-xl bg-slate-50 ring-1 ring-black ring-opacity-5 focus:outline-none",
+          "flex flex-col origin-top-right absolute z-50 divide-y divide-gray-100 rounded-md drop-shadow-xl bg-slate-50 ring-1 ring-black ring-opacity-5 focus:outline-none",
           isPopoverOpen ? "display-block" : "hidden",
           placement === "right" ? "right-0" : "left-0",
           menuClass
