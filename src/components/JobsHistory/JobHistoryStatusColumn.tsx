@@ -4,9 +4,10 @@ import { FaDotCircle } from "react-icons/fa";
 
 type Props = {
   status?: JobHistoryStatus;
+  onClick?: () => void;
 };
 
-export default function JobHistoryStatusColumn({ status }: Props) {
+export default function JobHistoryStatusColumn({ status, onClick }: Props) {
   const className = useMemo(() => {
     if (status) {
       return classNameMaps.get(status);
@@ -18,9 +19,20 @@ export default function JobHistoryStatusColumn({ status }: Props) {
   }
 
   return (
-    <>
-      <FaDotCircle className={`inline ${className}`} />
-      <span className="ml-1">{status}</span>
-    </>
+    <div
+      className="flex flex-row gap-2"
+      role="button"
+      onClick={(e) => {
+        if (!onClick) {
+          return;
+        }
+        e.preventDefault();
+        e.stopPropagation();
+        onClick();
+      }}
+    >
+      <FaDotCircle className={`${className}`} />
+      <span className="">{status}</span>
+    </div>
   );
 }
