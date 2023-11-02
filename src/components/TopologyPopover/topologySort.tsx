@@ -63,9 +63,7 @@ export function getSortedTopology(
   sortBy: string,
   sortByType: string
 ) {
-  const topologyMap = new Map(topology.map((p) => [p.id, p]));
-
-  const updatedTopology = [...topologyMap.values()].sort((t1, t2) => {
+  const updatedTopology = topology.sort((t1, t2) => {
     let t1Value = getTopologyValue(t1, sortBy);
     let t2Value = getTopologyValue(t2, sortBy);
 
@@ -98,7 +96,6 @@ export function getSortedTopology(
   if (sortByType === "desc") {
     return updatedTopology.reverse();
   }
-
   return updatedTopology;
 }
 

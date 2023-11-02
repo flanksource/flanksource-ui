@@ -127,9 +127,9 @@ export function TopologyCard({
     return <TopologyCardSkeletonLoader />;
   }
 
-  topology.properties = topology.properties || [];
-  const properties = topology.properties.filter((i) => !i.headline);
-  const heading = topology.properties.filter((i) => i.headline);
+  const allProperties = topology.properties || [];
+  const properties = allProperties.filter((i) => !i.headline);
+  const heading = allProperties.filter((i) => i.headline);
 
   return (
     <div
