@@ -43,8 +43,11 @@ export function HealthPage({ url }: Props) {
           title={
             <BreadcrumbNav
               list={[
-                <BreadcrumbRoot link="/health">Health</BreadcrumbRoot>,
+                <BreadcrumbRoot key={"health"} link="/health">
+                  Health
+                </BreadcrumbRoot>,
                 <AddSchemaResourceModal
+                  key={"add-form"}
                   onClose={() => setTriggerRefresh(triggerRefresh + 1)}
                   resourceInfo={resourceInfo!}
                 />
@@ -57,7 +60,7 @@ export function HealthPage({ url }: Props) {
               isLoading={loading}
             />
           }
-          contentClass="p-0"
+          contentClass="flex flex-col h-full p-0"
         >
           <Canary
             url={url}

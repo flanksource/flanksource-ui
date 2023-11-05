@@ -364,7 +364,7 @@ export const LabelFilterDropdown = ({
       name={name}
       styles={{
         control: (styles) => ({ ...styles, minWidth: "200px" }),
-        menu: (styles) => ({ ...styles, zIndex: 5 }),
+        menuPortal: (base) => ({ ...base, zIndex: 9999 }),
         option: (styles) => ({
           ...styles,
           overflowX: "hidden",
@@ -385,6 +385,9 @@ export const LabelFilterDropdown = ({
       components={{ Option }}
       onChange={setSelected}
       customValueContainer={ConciseLabelsValueContainer}
+      menuPortalTarget={document.body}
+      menuPosition={"fixed"}
+      menuShouldBlockScroll={true}
       {...rest}
     />
   );
