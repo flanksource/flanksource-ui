@@ -1,7 +1,8 @@
-import FormikConnectionOptionsSwitchField from "./FormikConnectionOptionsSwitchField";
 import FormikCheckbox from "../Forms/Formik/FormikCheckbox";
+import { FormikCompactEnvVarSource } from "../Forms/Formik/FormikCompactEnvVarSource";
 import { FormikEnvVarSource } from "../Forms/Formik/FormikEnvVarSource";
 import FormikTextInput from "../Forms/Formik/FormikTextInput";
+import FormikConnectionOptionsSwitchField from "./FormikConnectionOptionsSwitchField";
 import { ConnectionFormFields } from "./connectionTypes";
 
 interface FieldViewProps {
@@ -46,7 +47,7 @@ export default function RenderConnectionFormFields({ field }: FieldViewProps) {
       return (
         <FormikEnvVarSource
           name={field.key}
-          label={field.label}
+          label={field.hideLabel ? undefined : field.label}
           variant={field.variant}
           hint={field.hint}
           required={field.required}
@@ -54,6 +55,17 @@ export default function RenderConnectionFormFields({ field }: FieldViewProps) {
       );
     case "switch":
       return <FormikConnectionOptionsSwitchField field={field} />;
+
+    case "authentication":
+      return (
+        <FormikCompactEnvVarSource
+          name={field.key}
+          label={field.hideLabel ? undefined : field.label}
+          variant={field.variant}
+          hint={field.hint}
+          required={field.required}
+        />
+      );
     default:
       return null;
   }

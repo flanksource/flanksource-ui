@@ -17,7 +17,7 @@ export default function FormikConnectionOptionsSwitchField({ field }: Props) {
     const firstField = field.options?.find((option) => {
       return option.fields?.find((field) => get(values, field.key));
     });
-    return firstField?.key ?? field.default ?? field.options?.[0]?.key;
+    return firstField?.key ?? "None";
   });
 
   if (!field.options) {
@@ -33,7 +33,7 @@ export default function FormikConnectionOptionsSwitchField({ field }: Props) {
       <label className="font-semibold text-sm">{field.label}</label>
       <div className="flex flex-row">
         <Switch
-          options={[...field.options?.map((option) => option.label)]}
+          options={["None", ...field.options?.map((option) => option.label)]}
           defaultValue="None"
           value={
             field.options?.find((option) => option.key === selectedGroup)?.label
@@ -47,12 +47,12 @@ export default function FormikConnectionOptionsSwitchField({ field }: Props) {
               setFieldValue(option.key, undefined);
             });
             setSelectedGroup(
-              field.options?.find((option) => option.label === v)?.key
+              field.options?.find((option) => option.label === v)?.key ?? "None"
             );
           }}
         />
       </div>
-      <div className="flex flex-col gap-4 overflow-y-auto px-4">
+      <div className="flex flex-col gap-4 overflow-y-auto px-2">
         {selectedField?.fields?.map((field) => (
           <RenderConnectionFormFields field={field} key={field.key} />
         ))}

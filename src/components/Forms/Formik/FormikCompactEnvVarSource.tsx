@@ -1,22 +1,16 @@
 import { useField } from "formik";
 import { useEffect, useState } from "react";
 import { Switch } from "../../Switch";
+import {
+  EnvVarSourceType,
+  FormikEnvVarSourceProps,
+  configmapValueRegex,
+  secretValueRegex
+} from "./FormikEnvVarSource";
 import FormikEnvVarK8SView from "./utils/FormikEnvVarK8SView";
 import FormikEnvVarStaticView from "./utils/FormikEnvVarStaticView";
 
-export type FormikEnvVarSourceProps = React.HTMLProps<
-  HTMLInputElement | HTMLTextAreaElement
-> & {
-  variant?: "small" | "large";
-  hint?: string;
-};
-
-export type EnvVarSourceType = "Static" | "Secret" | "ConfigMap";
-
-export const configmapValueRegex = /^configmap:\/\/(.+)?\/(.+)?/;
-export const secretValueRegex = /^secret:\/\/(.+)?\/(.+)?/;
-
-export function FormikEnvVarSource({
+export function FormikCompactEnvVarSource({
   className,
   variant = "small",
   name,
@@ -61,8 +55,9 @@ export function FormikEnvVarSource({
     if (field.value === getValue()) {
       return;
     }
-    let value = field.value?.match(configmapValueRegex);
-    value = value || field.value?.match(secretValueRegex);
+    let value =
+      field.value?.match(configmapValueRegex) ||
+      field.value?.match(secretValueRegex);
     if (value?.length === 3 && field.value?.includes("configmap")) {
       setData({
         static: "",
@@ -104,9 +99,31 @@ export function FormikEnvVarSource({
   };
 
   return (
-    <div className="flex flex-col space-y-2">
+    <div className="flex flex-col gap-2">
       <label className="font-semibold text-sm">{label}</label>
-      <div className="flex flex-col space-y-2">
+      <div className="flex flex-row gap-2">
+        <div className="w-full">
+          {type === "Static" ? (
+            <FormikEnvVarStaticView
+              name="name"
+              variant="small"
+              disabled={disabled}
+              readOnly={readOnly}
+              data={data}
+              setData={setData}
+            />
+          ) : (
+            <FormikEnvVarK8SView
+              prefix={prefix}
+              data={data}
+              setData={setData}
+              className="flex flex-row gap-2 items-center"
+            />
+          )}
+          {meta.touched && meta.error ? (
+            <p className="text-sm text-red-500 w-full py-1">{meta.error}</p>
+          ) : null}
+        </div>
         <Switch
           options={["Static", "Secret", "ConfigMap"]}
           defaultValue={"None"}
@@ -124,27 +141,6 @@ export function FormikEnvVarSource({
           }}
           className="w-[24rem]"
         />
-        <div className="w-full">
-          {type === "Static" ? (
-            <FormikEnvVarStaticView
-              name="name"
-              variant="small"
-              disabled={disabled}
-              readOnly={readOnly}
-              data={data}
-              setData={setData}
-            />
-          ) : (
-            <FormikEnvVarK8SView
-              prefix={prefix}
-              data={data}
-              setData={setData}
-            />
-          )}
-          {meta.touched && meta.error ? (
-            <p className="text-sm text-red-500 w-full py-1">{meta.error}</p>
-          ) : null}
-        </div>
       </div>
       {hint && <p className="text-sm text-gray-500 py-1">{hint}</p>}
     </div>

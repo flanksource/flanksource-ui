@@ -8,7 +8,8 @@ const enum ConnectionsFieldTypes {
   input = "input",
   numberInput = "numberInput",
   EnvVarSource = "EnvVarSource",
-  switch = "switch"
+  switch = "switch",
+  Authentication = "authentication"
 }
 
 type Variant = "small" | "large";
@@ -26,6 +27,7 @@ export type ConnectionFormFields = {
   required?: boolean;
   hint?: string;
   default?: boolean | number | string;
+  hideLabel?: boolean;
   options?: {
     label: string;
     key: string;
@@ -1838,27 +1840,28 @@ export const connectionTypes: ConnectionType[] = [
         default: "password",
         options: [
           {
-            label: "Password",
+            label: "Basic",
             key: "password",
             fields: [
               {
                 label: "Username",
                 key: "username",
-                type: ConnectionsFieldTypes.EnvVarSource
+                type: ConnectionsFieldTypes.Authentication
               },
               {
                 label: "Password",
                 key: "password",
-                type: ConnectionsFieldTypes.EnvVarSource
+                type: ConnectionsFieldTypes.Authentication
               }
             ]
           },
           {
-            label: "SSH Key",
+            label: "SSH",
             key: "certificate",
             fields: [
               {
                 label: "SSH Key",
+                hideLabel: true,
                 key: "certificate",
                 type: ConnectionsFieldTypes.EnvVarSource,
                 variant: variants.large
