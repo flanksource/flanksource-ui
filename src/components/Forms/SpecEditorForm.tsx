@@ -66,9 +66,11 @@ export default function SpecEditorForm({
   const isFieldSupportedByResourceType = useCallback(
     (fieldName: string) =>
       !!currentResourceFormFields.find(
-        (item) => item.name === fieldName && item.hidden !== true
+        (item) =>
+          item.name === fieldName &&
+          (item.hidden !== true || ConfigForm === null)
       ),
-    [currentResourceFormFields]
+    [ConfigForm, currentResourceFormFields]
   );
 
   const initialValues: Record<string, any> = {
