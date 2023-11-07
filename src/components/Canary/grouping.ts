@@ -36,7 +36,7 @@ export function getGroupedChecks(checks: HealthCheck[] = [], groupBy?: string) {
         const updatedCheck = {
           ...check,
           // if the name is a path, we want to show the last part of the path
-          name: value.split("/", 1)[1],
+          name: value.split("/").slice(1).join("/"),
           originalName: value
         };
         if (!current) {
