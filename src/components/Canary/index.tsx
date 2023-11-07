@@ -1,3 +1,5 @@
+import clsx from "clsx";
+import { debounce } from "lodash";
 import React, {
   useCallback,
   useEffect,
@@ -5,37 +7,34 @@ import React, {
   useRef,
   useState
 } from "react";
-import { debounce } from "lodash";
-import { useUpdateParams, decodeUrlSearchParams } from "./url";
-import { CanarySearchBar } from "./CanarySearchBar";
+import { useLocation, useSearchParams } from "react-router-dom";
+import { HealthChecksResponse } from "../../api/types/health";
+import { HEALTH_SETTINGS } from "../../constants";
+import { isCanaryUI } from "../../context/Environment";
+import { useHealthPageContext } from "../../context/HealthPageContext";
 import { CanaryInterfaceMinimal } from "../CanaryInterface/minimal";
 import { GroupByDropdown } from "../Dropdown/GroupByDropdown";
 import {
   DropdownStandaloneWrapper,
   DropdownStandaloneWrapperProps
 } from "../Dropdown/StandaloneWrapper";
+import { TabByDropdown } from "../Dropdown/TabByDropdown";
 import { TimeRange, timeRanges } from "../Dropdown/TimeRange";
 import { defaultTabSelections } from "../Dropdown/lib/lists";
-import { TabByDropdown } from "../Dropdown/TabByDropdown";
+import useRefreshRateFromLocalStorage from "../Hooks/useRefreshRateFromLocalStorage";
+import HealthPageSkeletonLoader from "../SkeletonLoader/HealthPageSkeletonLoader";
+import { StatCard } from "../StatCard";
 import { Toggle } from "../Toggle";
+import { TristateToggle } from "../TristateToggle";
+import { CanarySearchBar } from "./CanarySearchBar";
 import { LabelFilterDropdown } from "./FilterForm";
+import { isHealthy } from "./filter";
 import {
   getConciseLabelState,
   groupLabelsByKey,
   separateLabelsByBooleanType
 } from "./labels";
-import { TristateToggle } from "../TristateToggle";
-import { StatCard } from "../StatCard";
-import { isHealthy } from "./filter";
-import mixins from "../../utils/mixins.module.css";
-import { useHealthPageContext } from "../../context/HealthPageContext";
-import { isCanaryUI } from "../../context/Environment";
-import clsx from "clsx";
-import HealthPageSkeletonLoader from "../SkeletonLoader/HealthPageSkeletonLoader";
-import { HealthChecksResponse } from "../../api/types/health";
-import { useLocation, useSearchParams } from "react-router-dom";
-import useRefreshRateFromLocalStorage from "../Hooks/useRefreshRateFromLocalStorage";
-import { HEALTH_SETTINGS } from "../../constants";
+import { decodeUrlSearchParams, useUpdateParams } from "./url";
 
 const FilterKeyToLabelMap = {
   environment: "Environment",
@@ -57,7 +56,6 @@ const getPassingCount = (checks: any) => {
 
 type CanaryProps = {
   url?: string;
-  topLayoutOffset?: number;
   onLoading?: (loading: boolean) => void;
   /**
    * When this changes, refresh button has been clicked will be triggered immediately
@@ -67,7 +65,6 @@ type CanaryProps = {
 
 export function Canary({
   url = "/api/canary/api/summary",
-  topLayoutOffset = 65,
   triggerRefresh,
   onLoading = (_loading) => {}
 }: CanaryProps) {
@@ -220,14 +217,13 @@ export function Canary({
     <div
       className={clsx(
         "flex flex-row place-content-center w-full",
-        isCanaryUI ? " h-screen overflow-y-auto" : ""
+        isCanaryUI ? " h-screen overflow-y-auto" : "h-full overflow-y-auto"
       )}
     >
-      <SidebarSticky topHeight={topLayoutOffset}>
-        <div className="mb-4">
+      <SidebarSticky>
+        <div className="flex flex-col gap-4">
           <StatCard
             title="All Checks"
-            className="mb-4"
             customValue={
               <>
                 {checks?.length || 0}
@@ -246,7 +242,6 @@ export function Canary({
 
           <StatCard
             title="Filtered Checks"
-            className="mb-4"
             customValue={
               <>
                 {isFilterApplied ? filteredChecksLength : 0}
@@ -268,9 +263,7 @@ export function Canary({
             }
           />
         </div>
-        <SectionTitle className="mb-4 hidden">
-          Filter by Time Range
-        </SectionTitle>
+        <SectionTitle className="hidden">Filter by Time Range</SectionTitle>
         <div className="mb-4 mr-2 w-full hidden">
           <TimeRange
             name="time-range"
@@ -287,31 +280,26 @@ export function Canary({
             }}
           />
         </div>
-        <SectionTitle className="mb-4">Filter by Health</SectionTitle>
-        <div className="mb-6 flex items-center">
-          <div className="h-9 flex items-center">
-            <HidePassingToggle />
+        <div className="flex flex-col ">
+          <SectionTitle>Filter by Health</SectionTitle>
+          <div className="flex items-center">
+            <div className="flex items-center">
+              <HidePassingToggle />
+            </div>
+            <div className="text-sm text-gray-800 mb-0">Hide Passing</div>
           </div>
-          <div className="text-sm text-gray-800 mb-0">Hide Passing</div>
         </div>
-        <SectionTitle className="mb-5 flex justify-between items-center">
-          Filter by Label{" "}
-          {/* <button
-              type="button"
-              onClick={() => {
-                updateParams({ labels: {} });
-              }}
-              className="bg-gray-200 text-gray-500 font-semibold text-xs px-2 py-1 rounded-md"
-            >
-              Clear All
-            </button> */}
-        </SectionTitle>
-        <div className="mb-4 mr-2 w-full">
-          <LabelFilterList labels={filteredLabels} />
+        <div className="flex flex-col">
+          <SectionTitle className="mb-5 flex justify-between items-center">
+            Filter by Label
+          </SectionTitle>
+          <div className="flex flex-col w-full">
+            <LabelFilterList labels={filteredLabels} />
+          </div>
         </div>
       </SidebarSticky>
 
-      <div className="flex-grow p-6 max-w-7xl">
+      <div className="flex flex-col h-full flex-grow p-6 max-w-7xl">
         <div className="flex flex-wrap mb-2">
           <div className="flex-1">
             <CanarySearchBar
@@ -358,7 +346,7 @@ export function Canary({
             </div>
           </div>
         </div>
-        <div className="pb-4">
+        <div className="flex flex-col flex-1 pb-4">
           <CanaryInterfaceMinimal
             checks={checks ?? undefined}
             onLabelFiltersCallback={labelUpdateCallback}
@@ -641,7 +629,6 @@ function SectionTitle({
 type SidebarStickyProps = {
   className?: string;
   style?: React.CSSProperties;
-  topHeight?: number;
   children?: React.ReactNode;
 };
 
@@ -649,23 +636,18 @@ function SidebarSticky({
   className,
   style,
   children,
-  topHeight = 0,
   ...props
 }: SidebarStickyProps) {
-  const topHeightPx = `${isCanaryUI ? 0 : topHeight}px`;
   return (
     <div
-      className={className || "flex flex-col w-80 border-r"}
-      style={style || { minHeight: `calc(100vh -  ${topHeightPx})` }}
+      className={
+        className ||
+        "flex flex-col h-full overflow-y-auto overflow-x-hidden w-80 border-r gap-4"
+      }
       {...props}
     >
       <div
-        className={`h-full overflow-y-auto w-80 overflow-x-hidden p-4 ${mixins.appleScrollbar}`}
-        style={{
-          position: "fixed",
-          top: `${topHeightPx}`,
-          maxHeight: `calc(100vh - ${topHeightPx})`
-        }}
+        className={`flex flex-col flex-1 overflow-y-auto w-full overflow-x-hidden gap-4 p-4 pb-20`}
       >
         {children}
       </div>

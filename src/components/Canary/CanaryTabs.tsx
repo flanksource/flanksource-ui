@@ -163,11 +163,7 @@ export function CanaryTabs({
   }, [selectedTab, setTabSelection]);
 
   return (
-    <Tabs
-      contentClassName=""
-      activeTab={selectedTab}
-      onSelectTab={(tab) => setSelectedTab(tab)}
-    >
+    <Tabs activeTab={selectedTab} onSelectTab={(tab) => setSelectedTab(tab)}>
       {Object.values(tabs).map((item) => {
         return (
           <Tab key={item.label} label={item.label} value={item.value}>

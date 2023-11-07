@@ -25,6 +25,5 @@ const Template: ComponentStory<typeof Canary> = (arg) => <Canary {...arg} />;
 export const Variant1 = Template.bind({});
 
 Variant1.args = {
-  url: "/api/canary/api",
-  topLayoutOffset: 0
+  url: "/api/canary/api"
 };
