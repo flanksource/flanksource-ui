@@ -32,6 +32,10 @@ const columns: ColumnDef<Connection>[] = [
     cell: NameCell
   },
   {
+    header: "Namespace",
+    accessorKey: "namespace"
+  },
+  {
     header: "Type",
     accessorKey: "type"
   },

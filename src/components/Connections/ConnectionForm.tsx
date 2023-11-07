@@ -38,9 +38,13 @@ export function ConnectionForm({
       (item) => item.value === connectionType.value
     );
     if (connection) {
-      return connection.convertToFormSpecificValue
+      const res = connection.convertToFormSpecificValue
         ? connection.convertToFormSpecificValue(formValue as any)
         : formValue;
+      return {
+        ...res,
+        namespace: res?.namespace ?? "default"
+      };
     }
   }, [connectionType.value, formValue]);
 
@@ -70,20 +74,20 @@ export function ConnectionForm({
 
   return (
     <Formik
-      initialValues={
-        formInitialValue || {
-          name: "",
-          type: undefined,
-          url: "",
-          username: "",
-          password: "",
-          certificate: "",
-          domain: "",
-          region: "",
-          profile: "",
-          insecure_tls: false
-        }
-      }
+      initialValues={{
+        name: "",
+        type: undefined,
+        url: "",
+        username: "",
+        password: "",
+        certificate: "",
+        domain: "",
+        region: "",
+        profile: "",
+        insecure_tls: false,
+        namespace: "default",
+        ...formInitialValue
+      }}
       onSubmit={handleSubmit}
     >
       <Form className="flex flex-col flex-1 overflow-y-auto">

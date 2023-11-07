@@ -53,13 +53,14 @@ describe("ConnectionForm", () => {
       expect(onConnectionSubmit).toHaveBeenCalledWith({
         certificate: "test",
         name: "Test Connection",
-        password: undefined,
+        password: "",
         properties: {
           ref: "ref"
         },
         type: "git",
         url: "https://test.com",
-        username: undefined
+        username: "",
+        namespace: "default"
       });
     });
   });

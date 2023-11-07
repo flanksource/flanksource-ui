@@ -51,6 +51,7 @@ export type Connection = {
   workstation?: string;
   properties?: Record<string, any>;
   ref?: string;
+  namespace?: string;
 };
 
 type ConnectionFormProps = React.HTMLProps<HTMLDivElement> & {

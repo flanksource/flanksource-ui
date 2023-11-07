@@ -91,18 +91,29 @@ export type ConnectionType = {
   forNotification?: boolean;
 };
 
+export const commonConnectionFormFields: ConnectionFormFields[] = [
+  {
+    label: "Name",
+    key: "name",
+    type: ConnectionsFieldTypes.input,
+    required: true
+  },
+  {
+    label: "Namespace",
+    key: "namespace",
+    type: ConnectionsFieldTypes.input,
+    default: "default",
+    required: true
+  }
+];
+
 export const connectionTypes: ConnectionType[] = [
   {
     title: "Postgres",
     icon: "postgres",
     value: ConnectionValueType.Postgres,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: ConnectionsFieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "URL",
         key: "url",
@@ -128,12 +139,7 @@ export const connectionTypes: ConnectionType[] = [
     icon: "mysql",
     value: ConnectionValueType.MySQL,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: ConnectionsFieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "URL",
         key: "url",
@@ -159,12 +165,7 @@ export const connectionTypes: ConnectionType[] = [
     icon: "sqlserver",
     value: ConnectionValueType.SQLServer,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: ConnectionsFieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "URL",
         key: "url",
@@ -190,12 +191,7 @@ export const connectionTypes: ConnectionType[] = [
     icon: "http",
     value: ConnectionValueType.HTTP,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: ConnectionsFieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "URL",
         key: "url",
@@ -226,12 +222,7 @@ export const connectionTypes: ConnectionType[] = [
     icon: "prometheus",
     value: ConnectionValueType.Prometheus,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: ConnectionsFieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "URL",
         key: "url",
@@ -262,12 +253,7 @@ export const connectionTypes: ConnectionType[] = [
     icon: "elasticsearch",
     value: ConnectionValueType.ElasticSearch,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: ConnectionsFieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "URL",
         key: "url",
@@ -298,12 +284,7 @@ export const connectionTypes: ConnectionType[] = [
     icon: "mongo",
     value: ConnectionValueType.Mongo,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: ConnectionsFieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "URL",
         key: "url",
@@ -334,12 +315,7 @@ export const connectionTypes: ConnectionType[] = [
     icon: "ldap",
     value: ConnectionValueType.LDAP,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: ConnectionsFieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "URL",
         key: "url",
@@ -370,12 +346,7 @@ export const connectionTypes: ConnectionType[] = [
     icon: "redis",
     value: ConnectionValueType.Redis,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: ConnectionsFieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "Database",
         key: "db",
@@ -430,12 +401,7 @@ export const connectionTypes: ConnectionType[] = [
     value: ConnectionValueType.Windows,
     icon: <FaWindows className="w-5 h-5" />,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: ConnectionsFieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "Username",
         key: "username",
@@ -478,12 +444,7 @@ export const connectionTypes: ConnectionType[] = [
     value: ConnectionValueType.GCP,
     icon: <DiGoogleCloudPlatform className="w-6 h-6" />,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: ConnectionsFieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "Endpoint",
         key: "url",
@@ -504,12 +465,7 @@ export const connectionTypes: ConnectionType[] = [
     icon: "sftp",
     value: ConnectionValueType.SFTP,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: ConnectionsFieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "Host",
         key: "host",
@@ -558,12 +514,7 @@ export const connectionTypes: ConnectionType[] = [
     icon: "aws",
     value: ConnectionValueType.AWS,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: ConnectionsFieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "Region",
         key: "region",
@@ -620,12 +571,7 @@ export const connectionTypes: ConnectionType[] = [
     icon: "kubernetes",
     value: ConnectionValueType.Kubernetes,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: ConnectionsFieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "Certificate",
         key: "certificate",
@@ -640,12 +586,7 @@ export const connectionTypes: ConnectionType[] = [
     icon: "azure-devops",
     value: ConnectionValueType.AzureDevops,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: ConnectionsFieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "Organization",
         key: "username",
@@ -665,12 +606,7 @@ export const connectionTypes: ConnectionType[] = [
     icon: "azure",
     value: ConnectionValueType.Azure,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: ConnectionsFieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "Client ID",
         key: "username",
@@ -712,12 +648,7 @@ export const connectionTypes: ConnectionType[] = [
     icon: "github",
     value: ConnectionValueType.Github,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: ConnectionsFieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "Personal Access Token",
         key: "password",
@@ -731,12 +662,7 @@ export const connectionTypes: ConnectionType[] = [
     icon: "restic",
     value: ConnectionValueType.Restic,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: ConnectionsFieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "Password",
         key: "password",
@@ -790,12 +716,7 @@ export const connectionTypes: ConnectionType[] = [
     value: ConnectionValueType.SMB,
     hide: true,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: ConnectionsFieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "Username",
         key: "username",
@@ -859,12 +780,7 @@ export const connectionTypes: ConnectionType[] = [
     value: ConnectionValueType.JMeter,
     hide: true,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: ConnectionsFieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "Host",
         key: "url",
@@ -898,12 +814,7 @@ export const connectionTypes: ConnectionType[] = [
     icon: "dynatrace",
     value: ConnectionValueType.Dynatrace,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: ConnectionsFieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "Host",
         key: "url",
@@ -946,12 +857,7 @@ export const connectionTypes: ConnectionType[] = [
     icon: "discord",
     value: ConnectionValueType.Discord,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: ConnectionsFieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "Webhook ID",
         key: "username",
@@ -980,12 +886,7 @@ export const connectionTypes: ConnectionType[] = [
     icon: "email",
     value: ConnectionValueType.Email,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: ConnectionsFieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "Username",
         key: "username",
@@ -1081,12 +982,7 @@ export const connectionTypes: ConnectionType[] = [
     icon: "google-chat",
     value: ConnectionValueType.GoogleChat,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: ConnectionsFieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "Key",
         key: "username",
@@ -1130,12 +1026,7 @@ export const connectionTypes: ConnectionType[] = [
     icon: "ifttt",
     value: ConnectionValueType.IFTTT,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: ConnectionsFieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "Webhook ID",
         key: "username",
@@ -1157,12 +1048,7 @@ export const connectionTypes: ConnectionType[] = [
     icon: "mattermost",
     value: ConnectionValueType.Mattermost,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: ConnectionsFieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "Username",
         key: "username",
@@ -1218,12 +1104,7 @@ export const connectionTypes: ConnectionType[] = [
     value: ConnectionValueType.Matrix,
     icon: "matrix",
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: ConnectionsFieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "User",
         key: "username",
@@ -1276,12 +1157,7 @@ export const connectionTypes: ConnectionType[] = [
     value: ConnectionValueType.Ntfy,
     icon: "ntfy",
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: ConnectionsFieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "Username",
         key: "username",
@@ -1343,12 +1219,7 @@ export const connectionTypes: ConnectionType[] = [
     icon: "opsgenie",
     value: ConnectionValueType.OpsGenie,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: ConnectionsFieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "Host",
         key: "host",
@@ -1395,12 +1266,7 @@ export const connectionTypes: ConnectionType[] = [
     icon: "pushbullet",
     value: ConnectionValueType.Pushbullet,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: ConnectionsFieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "Token",
         key: "password",
@@ -1437,12 +1303,7 @@ export const connectionTypes: ConnectionType[] = [
     icon: "pushover",
     value: ConnectionValueType.Pushover,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: ConnectionsFieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "User",
         key: "username",
@@ -1471,12 +1332,7 @@ export const connectionTypes: ConnectionType[] = [
     icon: "rocket",
     value: ConnectionValueType.Rocketchat,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: ConnectionsFieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "Username",
         key: "user",
@@ -1544,12 +1400,7 @@ export const connectionTypes: ConnectionType[] = [
     icon: "slack",
     value: ConnectionValueType.Slack,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: ConnectionsFieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "Channel",
         key: "username",
@@ -1594,12 +1445,7 @@ export const connectionTypes: ConnectionType[] = [
     icon: "teams",
     value: ConnectionValueType.Teams,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: ConnectionsFieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "Group",
         key: "group",
@@ -1662,12 +1508,7 @@ export const connectionTypes: ConnectionType[] = [
     icon: "telegram",
     value: ConnectionValueType.Telegram,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: ConnectionsFieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "Token",
         key: "password",
@@ -1697,12 +1538,7 @@ export const connectionTypes: ConnectionType[] = [
     icon: "zulip",
     value: ConnectionValueType.ZulipChat,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: ConnectionsFieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "BotMail",
         key: "username",
@@ -1747,12 +1583,7 @@ export const connectionTypes: ConnectionType[] = [
     icon: "http",
     value: ConnectionValueType.GenericWebhook,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: ConnectionsFieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "URL",
         key: "username",
@@ -1821,12 +1652,7 @@ export const connectionTypes: ConnectionType[] = [
     icon: "git",
     value: ConnectionValueType.Git,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: ConnectionsFieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "URL",
         key: "url",
@@ -1888,6 +1714,7 @@ export const connectionTypes: ConnectionType[] = [
       return {
         name: data.name,
         url: data.url,
+        namespace: data.namespace,
         password: data.password,
         username: data.username,
         certificate: data.certificate,
