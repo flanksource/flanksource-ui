@@ -96,6 +96,8 @@ export function Tabs({
             onClick={tab.props?.onClick!}
           />
         ))}
+        {/* Add a phantom div to fill border */}
+        <div className="flex-1 border-b border-gray-300" />
       </div>
       <div className={contentClassName}>{content}</div>
     </>

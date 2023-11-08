@@ -164,13 +164,15 @@ export function CanaryTabs({
 
   return (
     <Tabs activeTab={selectedTab} onSelectTab={(tab) => setSelectedTab(tab)}>
-      {Object.values(tabs).map((item) => {
-        return (
-          <Tab key={item.label} label={item.label} value={item.value}>
-            {children}
-          </Tab>
-        );
-      })}
+      {Object.values(tabs)
+        .sort((v1, v2) => v1.label.localeCompare(v2.label))
+        .map((item) => {
+          return (
+            <Tab key={item.label} label={item.label} value={item.value}>
+              {children}
+            </Tab>
+          );
+        })}
     </Tabs>
   );
 }
