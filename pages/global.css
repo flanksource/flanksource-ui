@@ -35,18 +35,17 @@
 }
 
 @layer components {
-
   .form-label {
     @apply block text-sm font-semibold text-gray-700 mb-2;
   }
 
   .table-auto {
-    @apply shadow-lg   bg-white  rounded-md  py-2 px-4;
+    @apply shadow-lg   bg-white  rounded-md;
   }
 
   .table-auto tbody tr {
     @apply hover:bg-slate-50;
-    }
+  }
 
   .table-auto thead tr {
     border-bottom-width: 1px;
@@ -71,17 +70,16 @@
     @apply px-1 text-sm;
   }
 
-
   .btn-primary {
-    @apply inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none ;
+    @apply inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none;
   }
 
   .btn-white {
-    @apply inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-100 focus:outline-none ;
+    @apply inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-100 focus:outline-none;
   }
 
   .btn-danger {
-    @apply inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none ;
+    @apply inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none;
   }
 
   .btn-disabled {
@@ -89,7 +87,7 @@
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center border-none shadow-sm font-medium rounded-md text-blue-500 bg-blue-100 hover:bg-blue-200 focus:ring-offset-white focus:ring-blue-500 focus:outline-none ;
+    @apply inline-flex items-center justify-center border-none shadow-sm font-medium rounded-md text-blue-500 bg-blue-100 hover:bg-blue-200 focus:ring-offset-white focus:ring-blue-500 focus:outline-none;
   }
 
   .btn-secondary-disabled {
@@ -247,8 +245,6 @@
   }
 
   .menu-item {
-  @apply block w-full py-2 px-4  text-sm text-gray-700  hover:bg-gray-50 hover:text-gray-900 divide-gray-300 text-left;
+    @apply block w-full py-2 px-4  text-sm text-gray-700  hover:bg-gray-50 hover:text-gray-900 divide-gray-300 text-left;
   }
-
-
 }

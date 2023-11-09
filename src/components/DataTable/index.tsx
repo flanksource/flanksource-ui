@@ -268,19 +268,19 @@ export function DataTable<TableColumns, Data extends TableColumns>({
         <table
           className={clsx(
             className,
-            `w-full border border-gray-200 rounded-md`,
+            `w-full border border-t-0 border-gray-200 rounded-md border-separate`,
             stickyHead && "relative"
           )}
           style={tableStyle}
         >
           <thead
-            className={`bg-white rounded-md ${
-              stickyHead ? "sticky top-0 z-01" : ""
+            className={`bg-white border-gray-200 rounded-md ${
+              stickyHead ? "sticky top-[-0.5px] z-01" : ""
             }`}
           >
             {table.getHeaderGroups().map((headerGroup) => (
               <tr
-                className="border-b border-gray-200 uppercase bg-column-background rounded-t-md items-center"
+                className="uppercase bg-column-background rounded-t-md items-center border border-gray-200"
                 key={headerGroup.id}
               >
                 {headerGroup.headers.map((header, colIndex) =>
@@ -291,7 +291,7 @@ export function DataTable<TableColumns, Data extends TableColumns>({
                   colIndex === 1 ? null : (
                     <th
                       key={header.id}
-                      className={`${theadHeaderClass}${
+                      className={`border-t border-b border-gray-200 ${theadHeaderClass}${
                         header.column.getCanSort() ? " cursor-pointer" : ""
                       }`}
                       onClick={header.column.getToggleSortingHandler()}
