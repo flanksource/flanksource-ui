@@ -2,6 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 import { getAll } from "../../../api/schemaResources";
 import { toastError } from "../../Toast/toast";
 import FormikSelectDropdown from "./FormikSelectDropdown";
+import { Icon } from "../../Icon";
+import { Connection } from "../../Connections/ConnectionForm";
 
 type Props = {
   name: string;
@@ -24,13 +26,14 @@ export default function FormikConnectionField({
         api: "canary-checker",
         name: "Connections"
       });
-      return res.data ?? [];
+      return (res.data as Connection[]) ?? [];
     },
     select: (connections) => {
       return connections.map((connection) => {
         return {
           label: connection.name,
-          value: connection.id
+          value: connection.id!,
+          icon: <Icon className="h-5" name={connection.type} />
         };
       });
     },

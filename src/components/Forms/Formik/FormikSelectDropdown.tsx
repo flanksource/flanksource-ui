@@ -1,5 +1,5 @@
 import { useField } from "formik";
-import {
+import React, {
   ComponentProps,
   useCallback,
   useEffect,
@@ -7,10 +7,12 @@ import {
   useState
 } from "react";
 import Select from "react-select";
+import { components } from "react-select";
 
 type Option = {
   label: string;
   value: string;
+  icon?: React.ReactNode;
 };
 
 type Props = {
@@ -88,6 +90,32 @@ export default function FormikSelectDropdown({
         onFocus={(event) => {
           field.onBlur(event);
           setIsTouched(true);
+        }}
+        components={{
+          Option: ({ children, ...props }) => {
+            return (
+              <components.Option {...props}>
+                <div className="flex flex-row gap-2 items-center">
+                  {(props.data as any).icon && (
+                    <div>{(props.data as any).icon}</div>
+                  )}
+                  <div className="flex-1">{children}</div>
+                </div>
+              </components.Option>
+            );
+          },
+          SingleValue: ({ children, ...props }) => {
+            return (
+              <components.SingleValue {...props}>
+                <div className="flex flex-row gap-2 items-center">
+                  {(props.data as any).icon && (
+                    <div>{(props.data as any).icon}</div>
+                  )}
+                  <div className="flex-1">{children}</div>
+                </div>
+              </components.SingleValue>
+            );
+          }
         }}
         {...props}
       />
