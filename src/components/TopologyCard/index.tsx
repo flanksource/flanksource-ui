@@ -207,7 +207,7 @@ export function TopologyCard({
           <>
             {Boolean(properties.length) && (
               <CustomScroll
-                className="flex-1 py-4 pl-2"
+                className="flex-1 py-2 pl-2"
                 showMoreClass="text-xs linear-1.21rel mr-1 cursor-pointer"
                 maxHeight="200px"
                 minChildCount={6}
@@ -219,14 +219,14 @@ export function TopologyCard({
                     className={
                       index === topology.properties!.length - 1
                         ? "mb-0"
-                        : "mb-2.5"
+                        : "mb-1.5"
                     }
                   />
                 ))}
               </CustomScroll>
             )}
             <CustomScroll
-              className="flex-1 py-4 pl-2 pr-2 space-y-1.5"
+              className="flex-1 py-2 pl-2 pr-2 space-y-1.5"
               showMoreClass="text-xs linear-1.21rel mr-1 cursor-pointer"
               maxHeight="200px"
               minChildCount={5}
