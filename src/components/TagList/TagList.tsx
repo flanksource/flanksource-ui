@@ -1,11 +1,40 @@
 import clsx from "clsx";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { IoMdArrowDropdown, IoMdArrowDropright } from "react-icons/io";
 
 type TagEntry = {
   key: string;
   value: string;
 };
+
+/**
+ * Sort tags by account, namespace, name, and then the rest
+ */
+export function sortTags(tags: TagEntry[]) {
+  return tags.sort((a, b) => {
+    const aKey = a.key.toLowerCase();
+    const bKey = b.key.toLowerCase();
+    if (aKey === "account") {
+      return -1;
+    }
+    if (bKey === "account") {
+      return 1;
+    }
+    if (aKey === "namespace") {
+      return -1;
+    }
+    if (bKey === "namespace") {
+      return 1;
+    }
+    if (aKey === "name") {
+      return -1;
+    }
+    if (bKey === "name") {
+      return 1;
+    }
+    return aKey.localeCompare(bKey);
+  });
+}
 
 type TagListProps = React.HTMLProps<HTMLDivElement> & {
   tags: TagEntry[];
@@ -67,6 +96,8 @@ export function TagList({
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  const sortedTags = useMemo(() => sortTags(tags), [tags]);
+
   return (
     <div ref={outerContainerRef} className={className} {...rest}>
       {isOverflowing && (
@@ -98,7 +129,7 @@ export function TagList({
             : {}
         }
       >
-        {tags.map(({ key, value }) => (
+        {sortedTags.map(({ key, value }) => (
           <TagItem
             key={key}
             tag={{ key, value }}
