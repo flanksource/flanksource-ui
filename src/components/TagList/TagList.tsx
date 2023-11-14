@@ -39,24 +39,30 @@ export function sortTags(tags: TagEntry[]) {
 type TagListProps = React.HTMLProps<HTMLDivElement> & {
   tags: TagEntry[];
   minimumItemsToShow?: number;
+  childClassName?: string;
 };
 
 type TagItemProps = {
   containerWidth?: string;
+  className?: string;
   tag: {
     key: string;
     value: string;
   };
 };
 
-export function TagItem({ tag: { key, value }, containerWidth }: TagItemProps) {
+export function TagItem({
+  tag: { key, value },
+  containerWidth,
+  className = "bg-gray-200 text-gray-600 mx-1"
+}: TagItemProps) {
   return (
     <div
-      className="flex flex-row p-[0.15rem] bg-gray-200 rounded-md mx-1"
+      className={`flex flex-row p-[0.15rem] rounded-md ${className}`}
       data-tip={`${key}:${value}`}
     >
       <div
-        className="flex flex-row space-x-1 font-semibold p-[0.2rem] text-gray-600 text-xs truncate"
+        className="flex flex-row space-x-1 font-semibold p-[0.2rem]  text-xs whitespace-nowrap break-inside-avoid-column"
         style={containerWidth ? { width: containerWidth } : {}}
       >
         <span className="inline">{key}:</span>
@@ -70,6 +76,7 @@ export function TagList({
   tags,
   minimumItemsToShow = 1,
   className = `flex flex-row text-left items-start flex-1`,
+  childClassName = "bg-gray-200 text-gray-600 mx-1",
   ...rest
 }: TagListProps) {
   const [showAll, setShowAll] = useState(false);
@@ -133,6 +140,7 @@ export function TagList({
           <TagItem
             key={key}
             tag={{ key, value }}
+            className={childClassName}
             containerWidth={containerWidth}
           />
         ))}
