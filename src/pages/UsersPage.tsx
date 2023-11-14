@@ -57,6 +57,7 @@ export function UsersPage() {
       const userId = users.find((item) => item.email === val.email)?.id;
       if (userId) {
         await updateUserRole(userId, [val.role]);
+        return;
       }
       const userName = `${val.firstName} ${val.lastName}`;
       toastSuccess(`${userName} invited successfully`);
