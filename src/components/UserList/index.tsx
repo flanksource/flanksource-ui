@@ -8,8 +8,10 @@ import { tables } from "../../context/UserAccessContext/permissions";
 import { withAccessCheck } from "../AccessCheck/AccessCheck";
 import { DataTable } from "../DataTable";
 import { IconButton } from "../IconButton";
-import { Menu } from "../Menu";
 import { Age } from "../../ui/Age";
+import { Menu } from "@headlessui/react";
+import { DotsVerticalIcon } from "@heroicons/react/solid";
+import { Float } from "@headlessui-float/react";
 
 type UserListProps = {
   data: any[];
@@ -84,31 +86,39 @@ function ActionMenu({ deleteUser }: { deleteUser: () => void }) {
   return withAccessCheck(
     <div className="relative">
       <Menu>
-        <Menu.VerticalIconButton />
-        <Menu.Items className="w-48 right-16">
-          <Menu.Item
-            onClick={() => {
-              deleteUser();
-            }}
-          >
-            <IconButton
-              className="bg-transparent group-hover:inline-block z-5 mr-2"
-              ovalProps={{
-                stroke: "blue",
-                height: "18px",
-                width: "18px",
-                fill: "transparent"
+        <Float placement="bottom-start" offset={10} portal>
+          <Menu.Button className="p-0.5 min-w-7 rounded-full text-gray-400 hover:text-gray-500">
+            <DotsVerticalIcon className="h-6 w-6" />
+          </Menu.Button>
+          <Menu.Items className="w-48 bg-white divide-y divide-gray-100 rounded-md shadow-card  focus:outline-none z-10 ">
+            <Menu.Item
+              as="div"
+              className="flex items-center w-full text-gray-700 hover:bg-gray-200 p-3 cursor-pointer"
+              onClick={() => {
+                deleteUser();
               }}
-              icon={
-                <BsTrash
-                  className="text-gray-600 border-0 border-gray-200 border-l-1"
-                  size={18}
+            >
+              <>
+                <IconButton
+                  className="bg-transparent group-hover:inline-block z-5 mr-2"
+                  ovalProps={{
+                    stroke: "blue",
+                    height: "18px",
+                    width: "18px",
+                    fill: "transparent"
+                  }}
+                  icon={
+                    <BsTrash
+                      className="text-gray-600 border-0 border-gray-200 border-l-1"
+                      size={18}
+                    />
+                  }
                 />
-              }
-            />
-            Delete
-          </Menu.Item>
-        </Menu.Items>
+                Delete
+              </>
+            </Menu.Item>
+          </Menu.Items>
+        </Float>
       </Menu>
     </div>,
     tables.identities,
@@ -132,11 +142,11 @@ export function UserList({
       const result = await hasResourceAccess(tables.identities, "write");
       setCanDeleteUser(result);
     })();
-  }, [roles]);
+  }, [hasResourceAccess, roles]);
 
   const columns = useMemo(() => {
     return getColumns(deleteUser, canDeleteUser);
-  }, [canDeleteUser]);
+  }, [canDeleteUser, deleteUser]);
 
   return (
     <div className={clsx(className)} {...rest} ref={containerRef}>

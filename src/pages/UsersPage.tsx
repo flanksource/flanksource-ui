@@ -112,7 +112,9 @@ export function UsersPage() {
         title={
           <BreadcrumbNav
             list={[
-              <BreadcrumbRoot link="/settings/users">Users</BreadcrumbRoot>
+              <BreadcrumbRoot key="setting-users" link="/settings/users">
+                Users
+              </BreadcrumbRoot>
             ]}
           />
         }
