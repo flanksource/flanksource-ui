@@ -1,12 +1,16 @@
-import { useEffect, useRef, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useRef, useState } from "react";
 import { ImUserPlus } from "react-icons/im";
+import { MdAdminPanelSettings } from "react-icons/md";
 import {
+  deleteUser,
   getRegisteredUsers,
   inviteUser,
-  deleteUser,
   updateUserRole
 } from "../api/services/users";
 import { Modal } from "../components";
+import { AccessCheck } from "../components/AccessCheck/AccessCheck";
+import { BreadcrumbNav, BreadcrumbRoot } from "../components/BreadcrumbNav";
 import { ConfirmationPromptDialog } from "../components/Dialogs/ConfirmationPromptDialog";
 import { Head } from "../components/Head/Head";
 import {
@@ -14,28 +18,34 @@ import {
   InviteUserFormValue
 } from "../components/InviteUserForm/InviteUserForm";
 import { SearchLayout } from "../components/Layout";
-import { toastError, toastSuccess } from "../components/Toast/toast";
-import { UserList } from "../components/UserList";
-import { useLoader } from "../hooks";
-import { BreadcrumbNav, BreadcrumbRoot } from "../components/BreadcrumbNav";
-import { MdAdminPanelSettings } from "react-icons/md";
 import {
   ManageUserRoleValue,
   ManageUserRoles
 } from "../components/ManageUserRoles/ManageUserRoles";
-import { AccessCheck } from "../components/AccessCheck/AccessCheck";
+import { toastError, toastSuccess } from "../components/Toast/toast";
+import { UserList } from "../components/UserList";
 import { tables } from "../context/UserAccessContext/permissions";
-import { RegisteredUser } from "../api/types/users";
 
 export function UsersPage() {
-  const [users, setUsers] = useState<RegisteredUser[]>([]);
   const [openDeleteConfirmDialog, setOpenDeleteConfirmDialog] =
     useState<boolean>(false);
   const [deletedUserId, setDeletedUserId] = useState<string>();
   const [isOpen, setIsOpen] = useState(false);
   const [openRoleManageModal, setOpenRoleManageModal] = useState(false);
-  const { loading, setLoading, idle } = useLoader();
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const {
+    isLoading,
+    data: users = [],
+    refetch
+  } = useQuery({
+    queryKey: ["users", "list", "settings"],
+    queryFn: () => getRegisteredUsers(),
+    select: (data) => {
+      return data.data || [];
+    },
+    cacheTime: 0
+  });
 
   const onSubmit = async (val: InviteUserFormValue) => {
     try {
@@ -44,15 +54,15 @@ export function UsersPage() {
         lastName: val.lastName,
         email: val.email
       });
-      const users: RegisteredUser[] = await fetchUsersList();
       const userId = users.find((item) => item.email === val.email)?.id;
       if (userId) {
         await updateUserRole(userId, [val.role]);
+        return;
       }
       const userName = `${val.firstName} ${val.lastName}`;
       toastSuccess(`${userName} invited successfully`);
       setIsOpen(false);
-      fetchUsersList();
+      refetch();
     } catch (ex) {
       toastError(ex as any);
     }
@@ -64,25 +74,11 @@ export function UsersPage() {
       const user = users.find((item) => item.id === val.userId);
       toastSuccess(`${user!.name} role updated successfully`);
       setOpenRoleManageModal(false);
-      fetchUsersList();
+      refetch();
     } catch (ex) {
       toastError(ex as any);
     }
   };
-
-  async function fetchUsersList() {
-    let users: RegisteredUser[] = [];
-    setLoading(true);
-    try {
-      const { data } = await getRegisteredUsers();
-      users = data || [];
-      setUsers(data || []);
-    } catch (ex) {
-      toastError(ex as any);
-    }
-    setLoading(false);
-    return users;
-  }
 
   async function deleteUserAction(userId: string | undefined) {
     if (!userId) {
@@ -90,7 +86,7 @@ export function UsersPage() {
     }
     try {
       const { data } = await deleteUser(userId);
-      fetchUsersList();
+      refetch();
       if (data) {
         toastSuccess(`user deleted successfully`);
       }
@@ -100,11 +96,6 @@ export function UsersPage() {
     setOpenDeleteConfirmDialog(false);
   }
 
-  useEffect(() => {
-    fetchUsersList();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   return (
     <>
       <Head prefix="Users" />
@@ -112,15 +103,15 @@ export function UsersPage() {
         title={
           <BreadcrumbNav
             list={[
-              <BreadcrumbRoot link="/settings/users">Users</BreadcrumbRoot>
+              <BreadcrumbRoot key="setting-users" link="/settings/users">
+                Users
+              </BreadcrumbRoot>
             ]}
           />
         }
-        onRefresh={() => {
-          fetchUsersList();
-        }}
+        onRefresh={refetch}
         contentClass="p-0 h-full"
-        loading={loading}
+        loading={isLoading}
       >
         <div
           className="flex flex-col flex-1 p-6 pb-0 h-full max-w-screen-xl mx-auto"
@@ -151,7 +142,7 @@ export function UsersPage() {
           <UserList
             className="mt-6 overflow-y-hidden"
             data={users}
-            isLoading={loading || idle}
+            isLoading={isLoading}
             style={{
               height: `calc(100vh - ${
                 containerRef.current?.getBoundingClientRect()?.top ?? 0
