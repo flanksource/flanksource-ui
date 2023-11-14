@@ -11,10 +11,10 @@ import {
   UpdateVerificationFlowBody as SubmitSelfServiceVerificationFlowBody,
   UiNode
 } from "@ory/client";
-import { getNodeId } from "@ory/integrations/ui";
-import { isUiNodeInputAttributes } from "@ory/integrations/ui";
+import { getNodeId, isUiNodeInputAttributes } from "@ory/integrations/ui";
 import { Component, FormEvent } from "react";
 
+import FormSkeletonLoader from "../../SkeletonLoader/FormSkeletonLoader";
 import { Messages } from "./Messages";
 import { Node } from "./Node";
 
@@ -154,7 +154,7 @@ export class Flow<T extends Values> extends Component<Props<T>, State<T>> {
       //
       // Nodes have only one element? It is probably just the CSRF Token
       // and the filter did not match any elements!
-      return null;
+      return <FormSkeletonLoader />;
     }
 
     return (
