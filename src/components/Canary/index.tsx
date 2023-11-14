@@ -35,6 +35,8 @@ import {
   separateLabelsByBooleanType
 } from "./labels";
 import { decodeUrlSearchParams, useUpdateParams } from "./url";
+import { IconButton } from "../IconButton";
+import { FaFilter } from "react-icons/fa";
 
 const FilterKeyToLabelMap = {
   environment: "Environment",
@@ -74,6 +76,7 @@ export function Canary({
   const tabBy = searchParams.get("tabBy");
   const groupBy = searchParams.get("groupBy");
   const refreshInterval = useRefreshRateFromLocalStorage();
+  const [isMenuItemOpen, setIsMenuItemOpen] = useState(false);
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -217,10 +220,15 @@ export function Canary({
     <div
       className={clsx(
         "flex flex-row place-content-center w-full",
-        isCanaryUI ? " h-screen overflow-y-auto" : "h-full overflow-y-auto"
+        isCanaryUI
+          ? "h-screen min-w-[800px] overflow-auto"
+          : "h-full overflow-y-auto"
       )}
     >
-      <SidebarSticky>
+      <SidebarSticky
+        isMenuItemOpen={isMenuItemOpen}
+        setMenuItemOpen={setIsMenuItemOpen}
+      >
         <div className="flex flex-col gap-4">
           <StatCard
             title="All Checks"
@@ -299,8 +307,17 @@ export function Canary({
         </div>
       </SidebarSticky>
 
-      <div className="flex flex-col h-full flex-grow p-6 max-w-7xl">
+      <div className="flex flex-col h-full overflow-y-auto flex-grow p-6 max-w-7xl">
         <div className="flex flex-wrap mb-2">
+          <div className="w-auto flex items-center px-4 lg:hidden">
+            <IconButton
+              onClick={() => {
+                setIsMenuItemOpen((prev) => !prev);
+              }}
+              title="filter"
+              icon={<FaFilter />}
+            />
+          </div>
           <div className="flex-1">
             <CanarySearchBar
               onChange={(e) => handleSearch(e.target.value)}
@@ -630,20 +647,52 @@ type SidebarStickyProps = {
   className?: string;
   style?: React.CSSProperties;
   children?: React.ReactNode;
+  isMenuItemOpen?: boolean;
+  setMenuItemOpen?: (isOpen: boolean) => void;
 };
 
 function SidebarSticky({
   className,
   style,
   children,
+  isMenuItemOpen = false,
+  setMenuItemOpen = () => {},
   ...props
 }: SidebarStickyProps) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: any) {
+      if (ref.current && !ref.current.contains(event.target)) {
+        setMenuItemOpen(false);
+      }
+    }
+
+    function keyPress(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        setMenuItemOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", keyPress);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", keyPress);
+    };
+  }, [ref, setMenuItemOpen]);
+
   return (
     <div
-      className={
+      ref={ref}
+      className={clsx(
         className ||
-        "flex flex-col h-full overflow-y-auto overflow-x-hidden w-80 border-r gap-4"
-      }
+          "lg:flex lg:flex-col h-full overflow-y-auto overflow-x-hidden w-80 border-r gap-4",
+        // for mobile, float the sidebar on top of the content
+        "top-0 left-0 fixed z-50 bg-white shadow-md lg:static lg:shadow-none lg:bg-transparent lg:border-none lg:w-auto lg:h-auto lg:overflow-y-auto lg:overflow-x-hidden lg:flex lg:flex-col lg:gap-4",
+        // for mobile, hide the sidebar when the menu is closed
+        isMenuItemOpen ? "flex" : "hidden"
+      )}
       {...props}
     >
       <div
