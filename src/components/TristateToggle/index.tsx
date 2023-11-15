@@ -70,20 +70,23 @@ export function TristateToggle({
 
   return (
     <div className={`${className} flex`}>
-      <div className={`${style.toggle}`} style={{ backgroundColor: bgColor }}>
+      <div
+        className="flex items-center relative justify-center min-w-[66px] min-h-[24px] overflow-hidden rounded-[40px] duration-200"
+        style={{ backgroundColor: bgColor }}
+      >
         <button
           type="button"
           onClick={() => {
             setValue(-1);
             updateButton(stateValue);
           }}
-          className={`${style.button} ${style.buttonLeft}`}
+          className={`flex justify-center items-center w-[22px] h-full duration-100`}
           title={`Exclude ${label.label}`}
         >
           <BiX style={{ color: fgColor, marginLeft: "4px" }} />
         </button>
         <button
-          className={style.button}
+          className={`flex justify-center items-center w-[22px] h-full duration-100`}
           type="button"
           title={`Do not filter ${label.label}`}
           onClick={() => {
@@ -99,7 +102,7 @@ export function TristateToggle({
             setValue(1);
             updateButton(stateValue);
           }}
-          className={`${style.button} ${style.buttonLeft}`}
+          className={`flex justify-center items-center w-[22px] h-full duration-100`}
           title={`Include ${label.label}`}
         >
           <BiCheck style={{ color: fgColor, marginRight: "4px" }} />
