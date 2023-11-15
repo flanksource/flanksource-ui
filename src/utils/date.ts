@@ -238,3 +238,34 @@ export const dateSortHelper = (
   }
   return 0;
 };
+
+export function formatDuration(value: number): string {
+  const duration = dayjs.duration(value, "milliseconds");
+  const milliseconds = duration.asMilliseconds();
+  if (milliseconds < 1000) {
+    return `${milliseconds.toFixed(0)}ms`;
+  }
+  const seconds = duration.seconds();
+  const minutes = duration.minutes();
+  const hours = duration.hours();
+  const days = duration.days();
+  const parts = [];
+  if (days > 0) {
+    parts.push(`${days}d`);
+  }
+  if (hours > 0) {
+    parts.push(`${hours}h`);
+  }
+  if (minutes > 0) {
+    parts.push(`${minutes}m`);
+  }
+  if (seconds > 0) {
+    parts.push(`${seconds}s`);
+  }
+  const remainingMilliseconds = (milliseconds % 1000).toFixed(0);
+  // only show milliseconds if there is no other value
+  if (parseInt(remainingMilliseconds) > 0 && parts.length === 0) {
+    parts.push(`${remainingMilliseconds}ms`);
+  }
+  return parts.join("");
+}

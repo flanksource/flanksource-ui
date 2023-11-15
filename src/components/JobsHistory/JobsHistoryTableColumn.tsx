@@ -6,6 +6,7 @@ import { formatJobName } from "../../utils/common";
 import JobHistoryStatusColumn from "./JobHistoryStatusColumn";
 import { JobHistory } from "./JobsHistoryTable";
 import { DateCell } from "../../ui/table";
+import { formatDuration } from "../../utils/date";
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
@@ -51,7 +52,7 @@ export const JobsHistoryTableColumn: ColumnDef<JobHistory, any>[] = [
     size: 100,
     cell: ({ getValue }) => {
       const value = getValue<JobHistory["duration_millis"]>();
-      const readableTime = dayjs.duration(value, "milliseconds").humanize();
+      const readableTime = formatDuration(value);
       return <span>{readableTime}</span>;
     }
   },
