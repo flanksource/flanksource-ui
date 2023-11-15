@@ -67,12 +67,8 @@ export default function TopologyDetails({
         label: isEmpty(property.label) ? property.name : property.label,
         value: (
           <>
-            <Icon
-              className="pr-1 w-5"
-              name={property.icon}
-              secondary={property.name}
-            />
-            <FormatProperty property={property} />
+            <Icon className="pr-1 w-5" name={property.icon} />
+            <FormatProperty property={property} isSidebar />
           </>
         )
       });

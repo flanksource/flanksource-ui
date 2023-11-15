@@ -39,8 +39,7 @@ export const CardMetrics = ({
               <Icon name={item.icon} className="w-5" secondary={item.name} />
             )}
             <span>
-              {item.label ?? item.name}
-              {row && ":"}
+              {item.label ?? item.name} {row && ":"}
             </span>
           </h6>
           <span
