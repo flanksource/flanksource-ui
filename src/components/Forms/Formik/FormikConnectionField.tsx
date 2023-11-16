@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { getAll } from "../../../api/schemaResources";
+import { Connection } from "../../Connections/ConnectionFormModal";
+import { Icon } from "../../Icon";
 import { toastError } from "../../Toast/toast";
 import FormikSelectDropdown from "./FormikSelectDropdown";
-import { Icon } from "../../Icon";
-import { Connection } from "../../Connections/ConnectionForm";
 
 type Props = {
   name: string;
