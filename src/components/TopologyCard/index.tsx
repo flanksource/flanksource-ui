@@ -142,7 +142,7 @@ export function TopologyCard({
       {...selectionModeRootProps}
     >
       <div className="flex flex-row -mt-1 bg-white border-b flex-nowrap rounded-t-md">
-        <div className="flex gap-2 pr-1 pt-2.5 pb-3.5 pl-2 overflow-hidden">
+        <div className="flex flex-1 gap-2 pr-1 pt-2.5 pb-3.5 pl-2 overflow-hidden">
           <div className="text-gray-color m-auto mr-1.5 flex-initial max-w-1/4 leading-1.21rel">
             <h3 className="text-gray-color text-2xsi leading-1.21rel">
               <Icon name={topology.icon} className="h-6" />
@@ -150,7 +150,7 @@ export function TopologyCard({
           </div>
           <div className="flex flex-col flex-1 m-auto overflow-hidden">
             <div
-              className="font-bold overflow-hidden truncate align-middle text-15pxinrem leading-1.21rel"
+              className="font-bold overflow-hidden truncate text-ellipsis align-middle text-15pxinrem leading-1.21rel"
               title={topology.name}
             >
               {prepareTopologyLink(topology) && (

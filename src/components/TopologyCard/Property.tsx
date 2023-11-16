@@ -5,6 +5,7 @@ import { Age } from "../../ui/Age";
 import { isEmpty } from "../Canary/utils";
 import { Icon } from "../Icon";
 import {
+  FormatPropertyCPUMemory,
   FormatPropertyCurrency,
   FormatPropertyDefault,
   FormatPropertyURL
@@ -13,11 +14,13 @@ import {
 type FormatPropertyProps = {
   property: TopologyProperty;
   short?: boolean;
+  isSidebar?: boolean;
 };
 
 export function FormatProperty({
   property,
-  short = false
+  short = false,
+  isSidebar = false
 }: FormatPropertyProps) {
   if (property == null) {
     return null;
@@ -34,6 +37,12 @@ export function FormatProperty({
 
   if (property.type === "currency") {
     return <FormatPropertyCurrency property={property} />;
+  }
+
+  if (property.name === "cpu" || property.name === "memory") {
+    return (
+      <FormatPropertyCPUMemory property={property} isSidebar={isSidebar} />
+    );
   }
 
   return <FormatPropertyDefault property={property} short={short} />;

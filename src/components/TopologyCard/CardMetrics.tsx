@@ -34,13 +34,12 @@ export const CardMetrics = ({
             "flex-row items-center justify-center": row
           })}
         >
-          <h6 className={`space-x-2 ${labelClasses}`}>
+          <h6 className={`space-x-2 whitespace-nowrap  ${labelClasses}`}>
             {showLabelIcons && (
               <Icon name={item.icon} className="w-5" secondary={item.name} />
             )}
             <span>
-              {item.label ?? item.name}
-              {row && ":"}
+              {item.label ?? item.name} {row && ":"}
             </span>
           </h6>
           <span

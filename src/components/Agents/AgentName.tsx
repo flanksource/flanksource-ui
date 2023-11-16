@@ -19,5 +19,12 @@ export default function AgentName({ agentId }: TopologyCardAgentProps) {
     return null;
   }
 
-  return <Badge title={agent.description} text={agent.name} />;
+  return (
+    <Badge
+      colorClass="bg-gray-100 text-gray-800"
+      size="xs"
+      title={agent.description}
+      text={agent.name}
+    />
+  );
 }

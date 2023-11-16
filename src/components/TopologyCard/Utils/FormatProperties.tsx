@@ -3,10 +3,13 @@ import React, { useMemo, useState } from "react";
 import { formatBytes } from "../../../utils/common";
 import { isEmpty } from "lodash";
 import { TopologyProperty } from "../../../api/types/topology";
+import ProgressBar from "../../../ui/stats/ProgressBar";
+import clsx from "clsx";
 
 type FormatPropertyProps = {
   property?: TopologyProperty;
   short?: boolean;
+  isSidebar?: boolean;
 };
 
 export function FormatPropertyURL({ property }: FormatPropertyProps) {
@@ -72,6 +75,66 @@ function convertUnitsToDisplayValue(value: number, unit?: string) {
     return `${formatBytes(value, 1)}`;
   }
   return value;
+}
+
+export function FormatPropertyCPUMemory({
+  property,
+  isSidebar = false
+}: FormatPropertyProps) {
+  const derivedValue = useMemo(() => {
+    if (property == null) {
+      return undefined;
+    }
+    if (property.unit?.startsWith("milli")) {
+      return (Number(property.value) / 1000).toFixed(2);
+    }
+    // 1e9 is 1GB, if the value is greater than 1GB, show 1 decimal place
+    const decimalPlaces = Number(property.value) > 1e9 ? 1 : 0;
+    return formatBytes(Number(property.value), decimalPlaces);
+  }, [property]);
+
+  if (
+    !property ||
+    !property.value ||
+    (property?.name !== "cpu" && property?.name !== "memory")
+  ) {
+    return null;
+  }
+
+  const value = property.value;
+  const max = property.max;
+
+  const derivedMax = property.unit?.startsWith("milli")
+    ? (Number(property.max) / 1000).toFixed(2)
+    : formatBytes(Number(property.max), 1);
+
+  if (max) {
+    const percent = (Number(value) / Number(max)) * 100;
+    return (
+      <div
+        data-tip={`${derivedValue} of ${derivedMax} (${percent.toFixed(0)}%)`}
+        className="flex flex-col gap-1 h-auto items-center"
+      >
+        <div
+          className={clsx(
+            `text-xs text-ellipsis whitespace-nowrap w-full`,
+            isSidebar ? "text-left" : "text-center"
+          )}
+        >
+          {derivedValue}
+        </div>
+        <div className="block w-12">
+          <ProgressBar value={percent} />
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <span className="text-ellipsis whitespace-nowrap" data-tip={derivedValue}>
+      {derivedValue}
+    </span>
+  );
 }
 
 export function FormatPropertyDefault({
