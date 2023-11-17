@@ -1,6 +1,7 @@
 import { AxiosError } from "axios";
-import Router, { useRouter } from "next/router";
+import Router from "next/router";
 import { DependencyList, useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import ory from "./sdk";
 
 export const HandleError = (
@@ -171,7 +172,6 @@ export const HandleError = (
 export function useCreateLogoutHandler(deps?: DependencyList) {
   const [logoutToken, setLogoutToken] = useState<string>("");
   const handleError = HandleError();
-  const { push } = useRouter();
 
   useEffect(() => {
     ory
@@ -183,16 +183,26 @@ export function useCreateLogoutHandler(deps?: DependencyList) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 
-  return () => {
+  return (returnTo: string) => {
     if (logoutToken) {
       ory
         .updateLogoutFlow({
-          token: logoutToken
+          token: logoutToken,
+          returnTo: returnTo
         })
-        .then(() => push("/"))
+        .then(() => {
+          console.warn("Logout successful");
+          // this a workaround, react router and next router are not compatible
+          // and seem to be conflicting with each other, instead we do a full
+          // page reload, which is not ideal, but works for now
+          window.location.href = "/login?return_to=" + returnTo;
+        })
         .catch((error) => {
           console.error("Logout error:", error.message);
-          push("/");
+          // this a workaround, react router and next router are not compatible
+          // and seem to be conflicting with each other, instead we do a full
+          // page reload, which is not ideal, but works for now
+          window.location.href = "/login?return_to=" + returnTo;
         });
     }
   };

@@ -3,11 +3,24 @@
 
 import { NextRouter } from "next/router";
 
-export const SetUriFlow = (router: NextRouter, id: string) => {
+export const SetUriFlow = (
+  router: NextRouter,
+  id: string,
+  returnTo?: string
+) => {
   // Check that current query flow id does not match requested one - pushing will trigger useEffect if router bound
   if (router.query.flow === id) {
     return;
   }
 
-  router.push(`${router.pathname}?flow=${id}`, undefined, { shallow: true });
+  router.push(
+    `${router.pathname}`,
+    {
+      query: {
+        return_to: returnTo ? decodeURI(returnTo) : undefined,
+        flow: id
+      }
+    },
+    { shallow: true }
+  );
 };

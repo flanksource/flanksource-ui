@@ -4,18 +4,27 @@ import type { NextPage } from "next";
 import Link from "next/link";
 import Router, { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
-import { Flow, HandleError, useCreateLogoutHandler } from "../../ory";
+import { Flow, HandleError } from "../../ory";
 import { SetUriFlow } from "../../ory/helpers";
 import ory from "../../ory/sdk";
 
 const Login: NextPage = () => {
+  const [returnTo, setReturnTo] = useState<string | undefined>();
   const [flow, setFlow] = useState<LoginFlow>();
 
   const { query, push, isReady } = useRouter();
 
-  const returnTo = String(query.return_to || "");
-  console.log("Return to: " + returnTo);
+  const returnToFromQuery = (query.return_to as string) || "";
   const flowId = String(query.flow || "");
+
+  // If we have a return_to query parameter, we want to redirect the user to
+  // that URL after a successful login. if set, and return_to is empty, we don't
+  // overwrite it.
+  useEffect(() => {
+    if (returnToFromQuery && !returnTo) {
+      setReturnTo(returnToFromQuery);
+    }
+  }, [returnTo, returnToFromQuery]);
 
   // Refresh means we want to refresh the session. This is needed, for example, when we want to update the password
   // of a user.
@@ -54,15 +63,11 @@ const Login: NextPage = () => {
         })
         .then(({ data }) => {
           setFlow(data);
-          SetUriFlow(Router, data.id);
+          SetUriFlow(Router, data.id, returnTo);
         })
         .catch(handleError),
     [handleError]
   );
-
-  // This might be confusing, but we want to show the user an option
-  // to sign out if they are performing two-factor authentication!
-  const onLogout = useCreateLogoutHandler([aal, refresh]);
 
   useEffect(() => {
     if (!isReady) {
@@ -71,13 +76,13 @@ const Login: NextPage = () => {
 
     if (flowId) {
       getFlow(flowId).catch(() => {
-        createFlow(refresh, aal, returnTo);
+        createFlow(refresh, aal, returnTo ?? "/");
       });
       return;
     }
 
     // Otherwise we initialize it
-    createFlow(refresh, aal, returnTo);
+    createFlow(refresh, aal, returnTo ?? "/");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isReady]);
 
@@ -113,21 +118,13 @@ const Login: NextPage = () => {
         <div className="mt-8 bg-white pt-4 pb-8 px-4 shadow sm:rounded-lg sm:px-10">
           <Flow onSubmit={submitFlow} flow={flow} />
         </div>
-        {aal || refresh ? (
-          <div>
-            <div data-testid="logout-link" onClick={onLogout}>
-              Log out
+        <div className="mt-2">
+          <Link href="/recovery" passHref>
+            <div className="cursor-pointer font-medium text-blue-600 hover:text-blue-500">
+              Reset password
             </div>
-          </div>
-        ) : (
-          <div className="mt-2">
-            <Link href="/recovery" passHref>
-              <div className="cursor-pointer font-medium text-blue-600 hover:text-blue-500">
-                Reset password
-              </div>
-            </Link>
-          </div>
-        )}
+          </Link>
+        </div>
       </div>
     </div>
   );
