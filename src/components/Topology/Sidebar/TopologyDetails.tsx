@@ -3,17 +3,17 @@ import { isEmpty, map } from "lodash";
 import { useMemo } from "react";
 import { BsCardList } from "react-icons/bs";
 import { Link } from "react-router-dom";
-import { getComponentsTopology } from "../../api/services/topology";
-import { isCostsEmpty } from "../../api/types/configs";
-import { Topology } from "../../api/types/topology";
-import CollapsiblePanel from "../CollapsiblePanel";
-import ConfigCostValue from "../ConfigCosts/ConfigCostValue";
-import { DescriptionCard } from "../DescriptionCard";
-import EmptyState from "../EmptyState";
-import { Icon } from "../Icon";
-import Title from "../Title/title";
-import { FormatProperty } from "../TopologyCard/Property";
-import { TopologyLink } from "../TopologyLink";
+import { getComponentsTopology } from "../../../api/services/topology";
+import { isCostsEmpty } from "../../../api/types/configs";
+import { Topology } from "../../../api/types/topology";
+import CollapsiblePanel from "../../CollapsiblePanel";
+import ConfigCostValue from "../../ConfigCosts/ConfigCostValue";
+import { DescriptionCard } from "../../DescriptionCard";
+import EmptyState from "../../EmptyState";
+import { Icon } from "../../Icon";
+import Title from "../../Title/title";
+import { FormatProperty } from "../../TopologyCard/Property";
+import { TopologyLink } from "../../TopologyLink";
 
 type Props = {
   topology?: Topology;

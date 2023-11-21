@@ -4,16 +4,16 @@ import { BiHide, BiLink, BiShow, BiZoomIn } from "react-icons/bi";
 import { ImTree } from "react-icons/im";
 import { MdAlarmAdd, MdTableRows } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
-import useUpdateComponentMutation from "../../api/query-hooks/mutations/useUpdateComponentMutation";
-import { EvidenceType } from "../../api/types/evidence";
-import { Topology } from "../../api/types/topology";
-import { useFeatureFlagsContext } from "../../context/FeatureFlagsContext";
-import { features } from "../../services/permissions/features";
-import { ActionLink } from "../ActionLink/ActionLink";
-import { AttachEvidenceDialog } from "../AttachEvidenceDialog";
-import PlaybooksDropdownMenu from "../Playbooks/Runs/Submit/PlaybooksDropdownMenu";
-import TopologySnapshotModal from "../TopologyCard/TopologySnapshotModal";
-import { TopologyConfigLinkModal } from "../TopologyConfigLinkModal/TopologyConfigLinkModal";
+import useUpdateComponentMutation from "../../../api/query-hooks/mutations/useUpdateComponentMutation";
+import { EvidenceType } from "../../../api/types/evidence";
+import { Topology } from "../../../api/types/topology";
+import { useFeatureFlagsContext } from "../../../context/FeatureFlagsContext";
+import { features } from "../../../services/permissions/features";
+import { ActionLink } from "../../ActionLink/ActionLink";
+import { AttachEvidenceDialog } from "../../AttachEvidenceDialog";
+import PlaybooksDropdownMenu from "../../Playbooks/Runs/Submit/PlaybooksDropdownMenu";
+import TopologySnapshotModal from "../../TopologyCard/TopologySnapshotModal";
+import { TopologyConfigLinkModal } from "../../TopologyConfigLinkModal/TopologyConfigLinkModal";
 
 type TopologyActionItem = {
   label: string;

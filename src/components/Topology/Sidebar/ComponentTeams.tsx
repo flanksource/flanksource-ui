@@ -1,14 +1,14 @@
 import { AiOutlineTeam } from "react-icons/ai";
-import { useGetComponentsTeamQuery } from "../../api/query-hooks";
-import CollapsiblePanel from "../CollapsiblePanel";
-import EmptyState from "../EmptyState";
-import TextSkeletonLoader from "../SkeletonLoader/TextSkeletonLoader";
+import { useGetComponentsTeamQuery } from "../../../api/query-hooks";
+import CollapsiblePanel from "../../CollapsiblePanel";
+import EmptyState from "../../EmptyState";
+import TextSkeletonLoader from "../../SkeletonLoader/TextSkeletonLoader";
 import { useAtom } from "jotai";
-import { refreshButtonClickedTrigger } from "../SlidingSideBar";
+import { refreshButtonClickedTrigger } from "../../SlidingSideBar";
 import { useEffect } from "react";
-import Title from "../Title/title";
+import Title from "../../Title/title";
 import { ComponentTeamLink } from "./ComponentTeamLink";
-import PillBadge from "../Badge/PillBadge";
+import PillBadge from "../../Badge/PillBadge";
 
 type Props = {
   componentId: string;
