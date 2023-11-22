@@ -1,19 +1,20 @@
 import { useQuery } from "@tanstack/react-query";
-import { isEmpty, map } from "lodash";
 import { useMemo } from "react";
 import { BsCardList } from "react-icons/bs";
 import { Link } from "react-router-dom";
 import { getComponentsTopology } from "../../../api/services/topology";
 import { isCostsEmpty } from "../../../api/types/configs";
 import { Topology } from "../../../api/types/topology";
+import { Age } from "../../../ui/Age";
 import CollapsiblePanel from "../../CollapsiblePanel";
 import ConfigCostValue from "../../ConfigCosts/ConfigCostValue";
-import { DescriptionCard } from "../../DescriptionCard";
-import EmptyState from "../../EmptyState";
-import { Icon } from "../../Icon";
 import Title from "../../Title/title";
-import { FormatProperty } from "../../TopologyCard/Property";
+import { CardMetrics } from "../../TopologyCard/CardMetrics";
 import { TopologyLink } from "../../TopologyLink";
+import DisplayDetailsRow from "../../Utils/DisplayDetailsRow";
+import { DisplayGroupedProperties } from "../../Utils/DisplayGroupedProperties";
+import { formatTopologyProperties } from "./Utils/formatTopologyProperties";
+import { formatConfigTags } from "../../Configs/Sidebar/Utils/formatConfigTags";
 
 type Props = {
   topology?: Topology;
@@ -35,11 +36,13 @@ export default function TopologyDetails({
     select: (data) => data?.topologies
   });
 
-  const items = useMemo(() => {
+  const headlineProperties =
+    topology?.properties?.filter((property) => property.headline) ?? [];
+
+  const appendedDetails = useMemo(() => {
     if (topology == null) {
       return [];
     }
-
     const items = [];
 
     if (
@@ -53,6 +56,31 @@ export default function TopologyDetails({
       });
     }
 
+    if (topology.type) {
+      items.push({
+        label: "Type",
+        value: (
+          <>
+            {topology.type}
+            {data && (
+              <>
+                {" "}
+                by{" "}
+                <Link
+                  to={{
+                    pathname: `/settings/topologies/${data.id}`
+                  }}
+                  className="cursor-pointer text-blue-500 my-auto underline"
+                >
+                  {data.name}
+                </Link>
+              </>
+            )}
+          </>
+        )
+      });
+    }
+
     if (!isCostsEmpty(topology)) {
       items.push({
         label: "Costs",
@@ -60,56 +88,18 @@ export default function TopologyDetails({
       });
     }
 
-    const topologyProperties = topology?.properties ?? [];
-
-    for (var property of topologyProperties) {
-      items.push({
-        label: isEmpty(property.label) ? property.name : property.label,
-        value: (
-          <>
-            <Icon className="pr-1 w-5" name={property.icon} />
-            <FormatProperty property={property} isSidebar />
-          </>
-        )
-      });
-    }
-
-    if (topology.labels != null && Object.entries(topology.labels).length > 0) {
-      items.push({
-        label: "Labels",
-        value: (
-          <div className="flex flex-col">
-            {map(topology.labels, (v, k) => (
-              <div
-                data-tip={`${k}: ${v}`}
-                className="max-w-full overflow-hidden text-ellipsis  mb-1 rounded-md text-gray-600 font-semibold text-sm"
-                key={k}
-              >
-                {k}: <span className="text-sm font-light">{v}</span>
-              </div>
-            ))}
-          </div>
-        )
-      });
-    }
-
-    if (data != null) {
-      items.push({
-        label: "Topology",
-        value: (
-          <Link
-            to={{
-              pathname: `/settings/topologies/${data.id}`
-            }}
-            className="flex flex-nowrap hover:text-gray-500 my-auto"
-          >
-            {data.name}
-          </Link>
-        )
-      });
-    }
     return items;
   }, [data, refererId, topology]);
+
+  const formattedProperties = useMemo(() => {
+    return formatTopologyProperties(topology);
+  }, [topology]);
+
+  const formattedLabels = useMemo(() => {
+    return formatConfigTags({
+      tags: topology?.labels ?? []
+    });
+  }, [topology?.labels]);
 
   if (topology == null) {
     return null;
@@ -123,11 +113,60 @@ export default function TopologyDetails({
       isCollapsed={isCollapsed}
       onCollapsedStateChange={onCollapsedStateChange}
     >
-      {Boolean(items.length) ? (
-        <DescriptionCard items={items} labelStyle="top" />
-      ) : (
-        <EmptyState />
-      )}
+      <div className="flex flex-col  w-full gap-2">
+        {headlineProperties.length > 0 && (
+          <div className="flex flex-row gap-2 w-min py-2">
+            <CardMetrics items={headlineProperties} />
+          </div>
+        )}
+
+        {appendedDetails.length > 0 &&
+          appendedDetails.map((property) => (
+            <DisplayDetailsRow
+              items={[
+                {
+                  label: property.label,
+                  value: property.value
+                }
+              ]}
+              key={property.label}
+            />
+          ))}
+
+        <DisplayDetailsRow
+          items={[
+            {
+              label: "Created",
+              value: <Age from={topology.created_at} />
+            },
+            {
+              label: "Updated",
+              value: <Age from={topology.updated_at} />
+            },
+            ...(topology.deleted_at
+              ? [
+                  {
+                    label: "Deleted",
+                    value: <Age from={topology.deleted_at} />
+                  }
+                ]
+              : [])
+          ]}
+        />
+
+        <DisplayGroupedProperties items={formattedProperties} />
+
+        {formattedLabels.length > 0 && (
+          <div className="flex flex-col py-2">
+            <div className="text-sm font-semibold text-gray-600 border-b border-dashed border-gray-300 pb-1">
+              Labels
+            </div>
+            <div className="flex flex-col px-1 gap-2">
+              <DisplayGroupedProperties items={formattedLabels} />
+            </div>
+          </div>
+        )}
+      </div>
     </CollapsiblePanel>
   );
 }
