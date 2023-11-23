@@ -33,10 +33,10 @@ export interface Costs {
 
 export function isCostsEmpty(costs: Costs) {
   return (
-    costs.cost_per_minute === undefined &&
-    costs.cost_total_1d === undefined &&
-    costs.cost_total_7d === undefined &&
-    costs.cost_total_30d === undefined
+    !costs.cost_per_minute &&
+    !costs.cost_total_1d &&
+    !costs.cost_total_7d &&
+    !costs.cost_total_30d
   );
 }
 
