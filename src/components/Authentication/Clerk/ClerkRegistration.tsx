@@ -13,6 +13,7 @@ export default function ClerkRegistration() {
       <SignUp
         signInUrl="/login"
         afterSignUpUrl={`/${clerkUrls.createOrganization}?return_to=${redirectUrl}`}
+        afterSignInUrl={`/`}
       />
     </SignUpLayout>
   );

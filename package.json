@@ -9,7 +9,7 @@
   ],
   "dependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
-    "@clerk/nextjs": "^4.23.2",
+    "@clerk/nextjs": "^4.27.2",
     "@headlessui-float/react": "^0.11.4",
     "@headlessui/react": "^1.7.17",
     "@heroicons/react": "^1.0.3",
