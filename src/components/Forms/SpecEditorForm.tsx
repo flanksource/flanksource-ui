@@ -1,18 +1,18 @@
+import clsx from "clsx";
 import { Form, Formik } from "formik";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { Button } from "../Button";
-import { Tabs, Tab } from "../Tabs/Tabs";
-import { FormikCodeEditor } from "./Formik/FormikCodeEditor";
+import { Icon } from "../Icon";
+import DeleteResource from "../SchemaResourcePage/Delete/DeleteResource";
 import {
   SchemaResourceType,
   schemaResourceTypes
 } from "../SchemaResourcePage/resourceTypes";
-import FormikTextInput from "./Formik/FormikTextInput";
+import { Tab, Tabs } from "../Tabs/Tabs";
 import FormikAutocompleteDropdown from "./Formik/FormikAutocompleteDropdown";
+import { FormikCodeEditor } from "./Formik/FormikCodeEditor";
 import FormikIconPicker from "./Formik/FormikIconPicker";
-import DeleteResource from "../SchemaResourcePage/Delete/DeleteResource";
-import clsx from "clsx";
-import { Icon } from "../Icon";
+import FormikTextInput from "./Formik/FormikTextInput";
 
 type SpecEditorFormProps = {
   loadSpec: () => Record<string, any>;
@@ -206,8 +206,8 @@ export default function SpecEditorForm({
               )}
             </div>
           </div>
-          <div className="flex flex-row bg-gray-100 p-4">
-            <div className="flex flex-1 flex-row space-x-4 justify-end">
+          <div className="flex flex-row  bg-gray-100 p-4">
+            <div className="flex flex-1 flex-row items-center space-x-4 justify-end">
               {!!cantEditMessage && !canEdit && !!initialValues.id && (
                 <div className="flex items-center px-4 space-x-2 flex-1">
                   <Icon name="k8s" />

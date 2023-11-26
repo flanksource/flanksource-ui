@@ -1,8 +1,19 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/solid";
 import clsx from "clsx";
+import { atom, useAtom } from "jotai";
 import PropTypes from "prop-types";
 import React, { Fragment } from "react";
+import { IoMdHelp } from "react-icons/io";
+
+/**
+ *
+ * An atom that can be used to set the help link for a modal. This is used to
+ * display a help icon in the top right corner of the modal that links to the
+ * documentation for the modal.
+ *
+ */
+export const modalHelpLinkAtom = atom<string | undefined>(undefined);
 
 type ModalSize = "small" | "slightly-small" | "medium" | "large" | "full";
 
@@ -46,6 +57,8 @@ export function Modal({
   dialogClassName = "fixed z-50 inset-0 overflow-y-auto 2xl:my-20",
   ...rest
 }: IModalProps) {
+  const [helpLink] = useAtom(modalHelpLinkAtom);
+
   return (
     /* @ts-ignore */
     <Transition.Root show={open} as={Fragment}>
@@ -90,7 +103,7 @@ export function Modal({
                 modalClassMap[size]
               )}
             >
-              <div className="py-4 px-4 flex item-center rounded-t-lg justify-between bg-gray-100">
+              <div className="py-4 px-4 gap-2 flex item-center rounded-t-lg justify-between bg-gray-100">
                 <h1
                   className={clsx(
                     "font-semibold flex-1 overflow-x-auto text-lg",
@@ -99,6 +112,21 @@ export function Modal({
                 >
                   {title}
                 </h1>
+                {/*
+                If the modal has a help link, display a help icon in the top right
+                corner of the modal that links to the documentation for the modal.
+                */}
+                {helpLink && (
+                  <a
+                    title="Link to documentation"
+                    href={helpLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center text-gray-400 hover:text-gray-500 focus:outline-none"
+                  >
+                    <IoMdHelp size={22} className="inline-block" />
+                  </a>
+                )}
                 {/* top-right close button */}
                 {!hideCloseButton && (
                   <div className="flex pointer-events-none sm:pointer-events-auto">
