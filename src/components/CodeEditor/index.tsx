@@ -1,10 +1,12 @@
 import Editor, { useMonaco } from "@monaco-editor/react";
 import { useEffect, useRef } from "react";
-import { setDiagnosticsOptions } from "monaco-yaml";
+import { configureMonacoYaml } from "monaco-yaml";
 import * as monaco from "monaco-editor";
 import { loader } from "@monaco-editor/react";
 import YAML from "yaml";
 import githubLight from "monaco-themes/themes/GitHub Light.json";
+// @ts-ignore
+import * as worker from "monaco-yaml/yaml.worker";
 
 loader.config({ monaco });
 
@@ -49,7 +51,7 @@ window.MonacoEnvironment = {
           )
         );
       case "yaml":
-        return new Worker(new URL("monaco-yaml/yaml.worker", import.meta.url));
+        return new Worker(worker);
       default:
         throw new Error(`Unknown label ${label}`);
     }
@@ -84,7 +86,7 @@ export function CodeEditor({
     // default paste event handler type is just Event, which is inaccurate, hence we
     // are overriding it here, so we can use ClipboardEvent, which is more
     // accurate and allows us to access clipboardData safely
-    // @ts-expect-error
+    // @ts-ignore
     window.addEventListener("paste", (e: ClipboardEvent) => {
       if (editorWrapper.current?.id === document.activeElement?.id && monaco) {
         e.preventDefault();
@@ -118,8 +120,11 @@ export function CodeEditor({
     if (!schemaFilePrefix || language !== "yaml") {
       return;
     }
+    if (!monaco) {
+      return;
+    }
     const schemaFileName = `${schemaFilePrefix}.spec.schema.json`;
-    setDiagnosticsOptions({
+    configureMonacoYaml(monaco, {
       enableSchemaRequest: true,
       hover: true,
       completion: true,
@@ -134,7 +139,7 @@ export function CodeEditor({
         }
       ]
     });
-  }, [language, schemaFilePrefix]);
+  }, [language, monaco, schemaFilePrefix]);
 
   useEffect(() => {
     if (!monaco) {

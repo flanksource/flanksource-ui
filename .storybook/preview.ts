@@ -1,7 +1,7 @@
 import "!style-loader!css-loader!postcss-loader!tailwindcss/tailwind.css";
 import "tailwindcss/tailwind.css";
 import "../pages/global.css";
-import { RouterContext } from "next/dist/shared/lib/router-context";
+import { RouterContext } from "next/dist/shared/lib/router-context.shared-runtime";
 import { initialize, mswLoader } from "msw-storybook-addon";
 
 // Initialize MSW
