@@ -45,7 +45,8 @@ export default function HealthSpecEditor({
           configForm: HTTPHealthFormEditor,
           specsMapField: "http.0",
           rawSpecInput: false,
-          schemaFilePrefix: "canary"
+          schemaFilePrefix: "canary",
+          docsLink: "https://canarychecker.io/reference/http"
         },
         {
           name: "awsConfigRule",
@@ -60,7 +61,8 @@ export default function HealthSpecEditor({
           configForm: null,
           specsMapField: "awsConfigRule.0",
           rawSpecInput: true,
-          schemaFilePrefix: "canary"
+          schemaFilePrefix: "canary",
+          docsLink: "https://canarychecker.io/reference/aws-config-rule"
         },
         {
           name: "awsConfig",
@@ -75,7 +77,8 @@ export default function HealthSpecEditor({
           configForm: null,
           specsMapField: "awsConfig.0",
           rawSpecInput: true,
-          schemaFilePrefix: "canary"
+          schemaFilePrefix: "canary",
+          docsLink: "https://canarychecker.io/reference/aws-config"
         },
         {
           name: "github",
@@ -105,7 +108,8 @@ export default function HealthSpecEditor({
           configForm: null,
           specsMapField: "ec2.0",
           rawSpecInput: true,
-          schemaFilePrefix: "canary"
+          schemaFilePrefix: "canary",
+          docsLink: "https://canarychecker.io/reference/ec2"
         },
         {
           name: "ldap",
@@ -120,7 +124,8 @@ export default function HealthSpecEditor({
           configForm: null,
           specsMapField: "ldap.0",
           rawSpecInput: true,
-          schemaFilePrefix: "canary"
+          schemaFilePrefix: "canary",
+          docsLink: "https://canarychecker.io/reference/ldap"
         },
         {
           name: "pod",
@@ -135,7 +140,8 @@ export default function HealthSpecEditor({
           configForm: null,
           specsMapField: "pod.0",
           rawSpecInput: true,
-          schemaFilePrefix: "canary"
+          schemaFilePrefix: "canary",
+          docsLink: "https://canarychecker.io/reference/pod"
         },
         {
           name: "exec",
@@ -150,7 +156,8 @@ export default function HealthSpecEditor({
           configForm: ExecHealthFormEditor,
           specsMapField: "exec.0",
           rawSpecInput: false,
-          schemaFilePrefix: "canary"
+          schemaFilePrefix: "canary",
+          docsLink: "https://canarychecker.io/reference/exec"
         },
         {
           name: "alertManager",
@@ -165,7 +172,8 @@ export default function HealthSpecEditor({
           configForm: AlertmanagerHealthFormEditor,
           specsMapField: "alertManager.0",
           rawSpecInput: false,
-          schemaFilePrefix: "canary"
+          schemaFilePrefix: "canary",
+          docsLink: "https://canarychecker.io/reference/alert-manager"
         },
         {
           name: "cloudwatch",
@@ -180,7 +188,8 @@ export default function HealthSpecEditor({
           configForm: null,
           specsMapField: "cloudwatch.0",
           rawSpecInput: true,
-          schemaFilePrefix: "canary"
+          schemaFilePrefix: "canary",
+          docsLink: "https://canarychecker.io/reference/cloudwatch"
         },
         {
           name: "elasticsearch",
@@ -195,7 +204,8 @@ export default function HealthSpecEditor({
           configForm: ElasticsearchHealthFormEditor,
           specsMapField: "elasticsearch.0",
           rawSpecInput: false,
-          schemaFilePrefix: "canary"
+          schemaFilePrefix: "canary",
+          docsLink: "https://canarychecker.io/reference/elasticsearch"
         },
         {
           name: "redis",
@@ -210,7 +220,8 @@ export default function HealthSpecEditor({
           configForm: RedisHealthFormEditor,
           specsMapField: "redis.0",
           rawSpecInput: false,
-          schemaFilePrefix: "canary"
+          schemaFilePrefix: "canary",
+          docsLink: "https://canarychecker.io/reference/redis"
         },
         {
           name: "mongo",
@@ -225,7 +236,8 @@ export default function HealthSpecEditor({
           configForm: MongoHealthFormEditor,
           specsMapField: "mongo.0",
           rawSpecInput: false,
-          schemaFilePrefix: "canary"
+          schemaFilePrefix: "canary",
+          docsLink: "https://canarychecker.io/reference/mongo"
         },
         {
           name: "dns",
@@ -240,7 +252,8 @@ export default function HealthSpecEditor({
           configForm: null,
           specsMapField: "dns.0",
           rawSpecInput: true,
-          schemaFilePrefix: "canary"
+          schemaFilePrefix: "canary",
+          docsLink: "https://canarychecker.io/reference/dns"
         },
         {
           name: "ping",
@@ -254,7 +267,8 @@ export default function HealthSpecEditor({
           icon: "icmp",
           configForm: ICMPHealthFormEditor,
           specsMapField: "icmp.0",
-          schemaFilePrefix: "canary"
+          schemaFilePrefix: "canary",
+          docsLink: "https://canarychecker.io/reference/icmp"
         },
         {
           name: "gcs",
@@ -269,7 +283,8 @@ export default function HealthSpecEditor({
           configForm: null,
           specsMapField: "gcs.0",
           rawSpecInput: true,
-          schemaFilePrefix: "canary"
+          schemaFilePrefix: "canary",
+          docsLink: "https://canarychecker.io/reference/gcs-bucket"
         },
         {
           name: "s3",
@@ -284,7 +299,8 @@ export default function HealthSpecEditor({
           configForm: null,
           specsMapField: "s3.0",
           rawSpecInput: true,
-          schemaFilePrefix: "canary"
+          schemaFilePrefix: "canary",
+          docsLink: "https://canarychecker.io/reference/s3-bucket"
         },
         {
           name: "smb",
@@ -299,7 +315,8 @@ export default function HealthSpecEditor({
           configForm: null,
           specsMapField: "smb.0",
           rawSpecInput: true,
-          schemaFilePrefix: "canary"
+          schemaFilePrefix: "canary",
+          docsLink: "https://canarychecker.io/reference/smb"
         },
         {
           name: "sftp",
@@ -314,7 +331,8 @@ export default function HealthSpecEditor({
           configForm: null,
           specsMapField: "sftp.0",
           rawSpecInput: true,
-          schemaFilePrefix: "canary"
+          schemaFilePrefix: "canary",
+          docsLink: "https://canarychecker.io/reference/sftp"
         },
         {
           name: "folder",
@@ -329,7 +347,8 @@ export default function HealthSpecEditor({
           configForm: FolderHealthFormEditor,
           specsMapField: "folder.0",
           rawSpecInput: false,
-          schemaFilePrefix: "canary"
+          schemaFilePrefix: "canary",
+          docsLink: "https://canarychecker.io/reference/folder"
         },
         {
           name: "prometheus",
@@ -344,7 +363,8 @@ export default function HealthSpecEditor({
           configForm: null,
           specsMapField: "prometheus.0",
           rawSpecInput: true,
-          schemaFilePrefix: "canary"
+          schemaFilePrefix: "canary",
+          docsLink: "https://canarychecker.io/reference/prometheus"
         },
         {
           name: "kubernetes",
@@ -359,7 +379,8 @@ export default function HealthSpecEditor({
           configForm: null,
           specsMapField: "kubernetes.0",
           rawSpecInput: true,
-          schemaFilePrefix: "canary"
+          schemaFilePrefix: "canary",
+          docsLink: "https://canarychecker.io/reference/kubernetes"
         },
         {
           name: "sql",
@@ -374,7 +395,8 @@ export default function HealthSpecEditor({
           configForm: null,
           specsMapField: "sql.0",
           rawSpecInput: true,
-          schemaFilePrefix: "canary"
+          schemaFilePrefix: "canary",
+          docsLink: "https://canarychecker.io/reference/postgres"
         },
         {
           name: "configDB",
@@ -389,7 +411,8 @@ export default function HealthSpecEditor({
           configForm: null,
           specsMapField: "configDB.0",
           rawSpecInput: true,
-          schemaFilePrefix: "canary"
+          schemaFilePrefix: "canary",
+          docsLink: "https://canarychecker.io/reference/configdb"
         },
         {
           name: "azureDevops",
@@ -404,7 +427,8 @@ export default function HealthSpecEditor({
           configForm: null,
           specsMapField: "azureDevops.0",
           rawSpecInput: true,
-          schemaFilePrefix: "canary"
+          schemaFilePrefix: "canary",
+          docsLink: "https://canarychecker.io/reference/azure-devops"
         },
         {
           name: "jmeter",
@@ -419,7 +443,8 @@ export default function HealthSpecEditor({
           configForm: null,
           specsMapField: "jmeter.0",
           rawSpecInput: true,
-          schemaFilePrefix: "canary"
+          schemaFilePrefix: "canary",
+          docsLink: "https://canarychecker.io/reference/jmeter"
         },
         {
           name: "junit",
@@ -434,7 +459,8 @@ export default function HealthSpecEditor({
           configForm: null,
           specsMapField: "junit.0",
           rawSpecInput: true,
-          schemaFilePrefix: "canary"
+          schemaFilePrefix: "canary",
+          docsLink: "https://canarychecker.io/reference/junit"
         },
         {
           name: "dynatrace",
@@ -464,7 +490,8 @@ export default function HealthSpecEditor({
           configForm: null,
           specsMapField: "namespace.0",
           rawSpecInput: true,
-          schemaFilePrefix: "canary"
+          schemaFilePrefix: "canary",
+          docsLinks: "https://canarychecker.io/reference/kubernetes"
         },
         {
           name: "tcp",
@@ -479,7 +506,8 @@ export default function HealthSpecEditor({
           configForm: TCPHealthFormEditor,
           specsMapField: "tcp.0",
           rawSpecInput: false,
-          schemaFilePrefix: "canary"
+          schemaFilePrefix: "canary",
+          docsLink: "https://canarychecker.io/reference/tcp"
         },
         {
           name: "custom",

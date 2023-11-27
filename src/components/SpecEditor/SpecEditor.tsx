@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Icon } from "../Icon";
 import SpecEditorForm from "../Forms/SpecEditorForm";
 import { SchemaResourceType } from "../SchemaResourcePage/resourceTypes";
+import { useAtom } from "jotai";
+import { modalHelpLinkAtom } from "../Modal";
 
 export type SpecType = {
   name: string;
@@ -27,6 +29,7 @@ export type SpecType = {
   specsMapField: string;
   rawSpecInput?: boolean;
   schemaFilePrefix: "component" | "canary" | "system" | "scrape_config";
+  docsLink?: string;
 };
 
 type SpecEditorProps = {
@@ -46,6 +49,8 @@ export default function SpecEditor({
   canEdit = false,
   cantEditMessage
 }: SpecEditorProps) {
+  const [, setModalHelpLink] = useAtom(modalHelpLinkAtom);
+
   const [selectedSpecItem, setSelectedSpecItem] = useState<
     SpecType | undefined
   >(() => {
@@ -71,6 +76,11 @@ export default function SpecEditor({
     // to initiate a race condition
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [types]);
+
+  // when the selectedSpecItem changes, we need to update the modalHelpLink
+  useEffect(() => {
+    setModalHelpLink(selectedSpecItem?.docsLink);
+  }, [selectedSpecItem, setModalHelpLink]);
 
   return (
     <div className="flex flex-col w-full flex-1 h-full overflow-y-auto">
