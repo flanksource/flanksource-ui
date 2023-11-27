@@ -17,6 +17,7 @@ export type TopologyProperty = {
   value?: ValueType;
   unit?: string;
   color?: string;
+  namespace?: string;
 };
 
 export interface Topology extends Timestamped, CostsData, Agent, Namespaced {

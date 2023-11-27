@@ -1,12 +1,12 @@
 import { MdOutlineInsights } from "react-icons/md";
-import { useGetTopologyRelatedInsightsQuery } from "../../api/query-hooks";
-import PillBadge from "../Badge/PillBadge";
-import CollapsiblePanel from "../CollapsiblePanel";
-import InsightsDetails from "../Insights/Insights";
-import Title from "../Title/title";
+import { useGetTopologyRelatedInsightsQuery } from "../../../api/query-hooks";
+import PillBadge from "../../Badge/PillBadge";
+import CollapsiblePanel from "../../CollapsiblePanel";
+import InsightsDetails from "../../Insights/Insights";
+import Title from "../../Title/title";
 import { useAtom } from "jotai";
 import { useEffect } from "react";
-import { refreshButtonClickedTrigger } from "../SlidingSideBar";
+import { refreshButtonClickedTrigger } from "../../SlidingSideBar";
 
 type Props = {
   topologyId: string;

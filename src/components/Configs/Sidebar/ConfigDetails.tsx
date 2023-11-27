@@ -10,6 +10,8 @@ import DisplayDetailsRow from "../../Utils/DisplayDetailsRow";
 import { Age } from "../../../ui/Age";
 import ConfigCostValue from "../../ConfigCosts/ConfigCostValue";
 import { isCostsEmpty } from "../../../api/types/configs";
+import { formatConfigTags } from "./Utils/formatConfigTags";
+import { DisplayGroupedProperties } from "../../Utils/DisplayGroupedProperties";
 
 type Props = {
   configId: string;
@@ -29,37 +31,7 @@ export function ConfigDetails({
   } = useGetConfigByIdQuery(configId);
 
   const displayDetails = useMemo(() => {
-    if (configDetails) {
-      if (!configDetails.tags) {
-        return undefined;
-      }
-
-      const groupedTags = new Map<string, Record<string, any>[]>();
-
-      Object.entries(configDetails.tags)
-        .filter(([key]) => key.toLowerCase() !== "name")
-        .forEach(([key, value]) => {
-          // if we can't split key by slash, then we don't need to group the tags
-          if (key.split("/").length === 1) {
-            groupedTags.set(key, [
-              {
-                key: value
-              }
-            ]);
-            return;
-          }
-          const groupKey = key.split("/")[0];
-          const existingValues = groupedTags.get(groupKey) ?? [];
-          groupedTags.set(groupKey, [
-            ...existingValues,
-            {
-              [key.split("/").slice(1).join("/")]: value
-            }
-          ]);
-        });
-
-      return groupedTags;
-    }
+    return formatConfigTags(configDetails);
   }, [configDetails]);
 
   return (
@@ -90,7 +62,25 @@ export function ConfigDetails({
                 items={[
                   {
                     label: "Type",
-                    value: configDetails.type
+                    value: (
+                      <div className="whitespace-nowrap">
+                        {configDetails.type}
+                        {configDetails.config_scrapers && (
+                          <>
+                            {" "}
+                            by
+                            <Link
+                              to={{
+                                pathname: `/settings/config_scrapers/${configDetails.config_scrapers.id}`
+                              }}
+                              className="cursor-pointer text-blue-500 my-auto underline"
+                            >
+                              {configDetails.config_scrapers.name}
+                            </Link>
+                          </>
+                        )}
+                      </div>
+                    )
                   }
                 ]}
               />
@@ -98,32 +88,23 @@ export function ConfigDetails({
             <DisplayDetailsRow
               items={[
                 {
-                  label: "Created At",
+                  label: "Created",
                   value: <Age from={configDetails.created_at} />
                 },
                 {
-                  label: "Updated At",
+                  label: "Updated",
                   value: <Age from={configDetails.updated_at} />
-                }
+                },
+                ...(configDetails.deleted_at
+                  ? [
+                      {
+                        label: "Deleted",
+                        value: <Age from={configDetails.deleted_at} />
+                      }
+                    ]
+                  : [])
               ]}
             />
-
-            {configDetails.config_scrapers && (
-              <DisplayDetailsRow
-                items={[
-                  {
-                    label: "Scraper",
-                    value: (
-                      <Link
-                        to={`/settings/config_scrapers/${configDetails.config_scrapers.id}`}
-                      >
-                        {configDetails.config_scrapers.name}
-                      </Link>
-                    )
-                  }
-                ]}
-              />
-            )}
 
             {!isCostsEmpty(configDetails) && (
               <DisplayDetailsRow
@@ -136,57 +117,7 @@ export function ConfigDetails({
               />
             )}
 
-            {displayDetails &&
-              Object.entries(Object.fromEntries(displayDetails.entries())).map(
-                ([key, values]) => {
-                  if (values.length === 1) {
-                    return (
-                      <DisplayDetailsRow
-                        key={key}
-                        items={[
-                          {
-                            label: key,
-                            value: Object.values(values[0])[0]
-                          }
-                        ]}
-                      />
-                    );
-                  }
-                  return (
-                    <div key={key} className="flex flex-col gap-2">
-                      <label className="text-sm font-medium capitalize">
-                        {key}
-                      </label>
-                      <div className="flex flex-col gap-2 px-2">
-                        {values.map((k) =>
-                          Object.entries(k).map(([key, value]) => (
-                            <DisplayDetailsRow
-                              key={key}
-                              items={[
-                                {
-                                  label: key,
-                                  value: value
-                                }
-                              ]}
-                            />
-                          ))
-                        )}
-                      </div>
-                    </div>
-                  );
-                }
-              )}
-
-            {configDetails.deleted_at && (
-              <DisplayDetailsRow
-                items={[
-                  {
-                    label: "Deleted At",
-                    value: <Age from={configDetails.deleted_at} />
-                  }
-                ]}
-              />
-            )}
+            <DisplayGroupedProperties items={displayDetails} />
           </>
         ) : (
           <InfoMessage message="Details not found" />

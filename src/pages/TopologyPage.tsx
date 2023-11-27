@@ -18,7 +18,7 @@ import {
   getSortLabels,
   getSortedTopology
 } from "../components/TopologyPopover/topologySort";
-import TopologySidebar from "../components/TopologySidebar/TopologySidebar";
+import TopologySidebar from "../components/Topology/Sidebar/TopologySidebar";
 import { Topology } from "../api/types/topology";
 
 export const allOption = {

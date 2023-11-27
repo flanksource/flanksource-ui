@@ -30,8 +30,8 @@ export const CardMetrics = ({
         <div
           key={item.name}
           className={clsx(containerClasses, {
-            "flex-col": !row,
-            "flex-row items-center justify-center": row
+            "flex-col max-w-[15ch]": !row,
+            "flex-row items-center justify-center max-w-[15ch]": row
           })}
         >
           <h6 className={`space-x-2 whitespace-nowrap  ${labelClasses}`}>
