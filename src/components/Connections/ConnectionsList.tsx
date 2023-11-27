@@ -2,7 +2,7 @@ import { CellContext, ColumnDef } from "@tanstack/table-core";
 import clsx from "clsx";
 import { DataTable } from "../DataTable";
 import { Avatar } from "../Avatar";
-import { Connection } from "./ConnectionForm";
+import { Connection } from "./ConnectionFormModal";
 import { Icon } from "../Icon";
 import { DateCell } from "../../ui/table";
 
@@ -30,6 +30,10 @@ const columns: ColumnDef<Connection>[] = [
     header: "Name",
     accessorKey: "name",
     cell: NameCell
+  },
+  {
+    header: "Namespace",
+    accessorKey: "namespace"
   },
   {
     header: "Type",

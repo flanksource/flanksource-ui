@@ -1,14 +1,16 @@
 import { FaWindows } from "react-icons/fa";
 import { DiGoogleCloudPlatform } from "react-icons/di";
 import { stringSortHelper } from "../../utils/common";
-import { Connection } from "./ConnectionForm";
+import { Connection } from "./ConnectionFormModal";
 
-const fieldTypes = {
-  checkbox: "checkbox",
-  input: "input",
-  numberInput: "numberInput",
-  EnvVarSource: "EnvVarSource"
-};
+const enum ConnectionsFieldTypes {
+  checkbox = "checkbox",
+  input = "input",
+  numberInput = "numberInput",
+  EnvVarSource = "EnvVarSource",
+  switch = "switch",
+  Authentication = "authentication"
+}
 
 type Variant = "small" | "large";
 
@@ -17,14 +19,20 @@ const variants: { [key: string]: Variant } = {
   large: "large"
 };
 
-export type Field = {
+export type ConnectionFormFields = {
   label: string;
   key: string;
-  type: string;
+  type: ConnectionsFieldTypes;
   variant?: Variant;
   required?: boolean;
   hint?: string;
   default?: boolean | number | string;
+  hideLabel?: boolean;
+  options?: {
+    label: string;
+    key: string;
+    fields: Omit<ConnectionFormFields, "options">[];
+  }[];
 };
 
 export const enum ConnectionValueType {
@@ -74,7 +82,7 @@ export type ConnectionType = {
   title: string;
   value: ConnectionValueType;
   icon?: React.ReactNode | string | null;
-  fields: Field[];
+  fields: ConnectionFormFields[];
   convertToFormSpecificValue?: (data: Record<string, string>) => Connection;
   preSubmitConverter?: (data: Record<string, string>) => object;
   hide?: boolean;
@@ -83,34 +91,45 @@ export type ConnectionType = {
   forNotification?: boolean;
 };
 
+export const commonConnectionFormFields: ConnectionFormFields[] = [
+  {
+    label: "Name",
+    key: "name",
+    type: ConnectionsFieldTypes.input,
+    required: true
+  },
+  {
+    label: "Namespace",
+    key: "namespace",
+    type: ConnectionsFieldTypes.input,
+    default: "default",
+    required: true
+  }
+];
+
 export const connectionTypes: ConnectionType[] = [
   {
     title: "Postgres",
     icon: "postgres",
     value: ConnectionValueType.Postgres,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: fieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "URL",
         key: "url",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: true
       },
       {
         label: "Username",
         key: "username",
-        type: fieldTypes.EnvVarSource,
+        type: ConnectionsFieldTypes.EnvVarSource,
         required: true
       },
       {
         label: "Password",
         key: "password",
-        type: fieldTypes.EnvVarSource,
+        type: ConnectionsFieldTypes.EnvVarSource,
         required: true
       }
     ]
@@ -120,28 +139,23 @@ export const connectionTypes: ConnectionType[] = [
     icon: "mysql",
     value: ConnectionValueType.MySQL,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: fieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "URL",
         key: "url",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: true
       },
       {
         label: "Username",
         key: "username",
-        type: fieldTypes.EnvVarSource,
+        type: ConnectionsFieldTypes.EnvVarSource,
         required: true
       },
       {
         label: "Password",
         key: "password",
-        type: fieldTypes.EnvVarSource,
+        type: ConnectionsFieldTypes.EnvVarSource,
         required: true
       }
     ]
@@ -151,28 +165,23 @@ export const connectionTypes: ConnectionType[] = [
     icon: "sqlserver",
     value: ConnectionValueType.SQLServer,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: fieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "URL",
         key: "url",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: true
       },
       {
         label: "Username",
         key: "username",
-        type: fieldTypes.EnvVarSource,
+        type: ConnectionsFieldTypes.EnvVarSource,
         required: true
       },
       {
         label: "Password",
         key: "password",
-        type: fieldTypes.EnvVarSource,
+        type: ConnectionsFieldTypes.EnvVarSource,
         required: true
       }
     ]
@@ -182,34 +191,29 @@ export const connectionTypes: ConnectionType[] = [
     icon: "http",
     value: ConnectionValueType.HTTP,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: fieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "URL",
         key: "url",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: true
       },
       {
         label: "Username",
         key: "username",
-        type: fieldTypes.EnvVarSource,
+        type: ConnectionsFieldTypes.EnvVarSource,
         required: true
       },
       {
         label: "Password",
         key: "password",
-        type: fieldTypes.EnvVarSource,
+        type: ConnectionsFieldTypes.EnvVarSource,
         required: true
       },
       {
         label: "Insecure TLS",
         key: "insecure_tls",
-        type: fieldTypes.checkbox
+        type: ConnectionsFieldTypes.checkbox
       }
     ]
   },
@@ -218,34 +222,29 @@ export const connectionTypes: ConnectionType[] = [
     icon: "prometheus",
     value: ConnectionValueType.Prometheus,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: fieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "URL",
         key: "url",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: true
       },
       {
         label: "Username",
         key: "username",
-        type: fieldTypes.EnvVarSource,
+        type: ConnectionsFieldTypes.EnvVarSource,
         required: false
       },
       {
         label: "Password",
         key: "password",
-        type: fieldTypes.EnvVarSource,
+        type: ConnectionsFieldTypes.EnvVarSource,
         required: false
       },
       {
         label: "Insecure TLS",
         key: "insecure_tls",
-        type: fieldTypes.checkbox
+        type: ConnectionsFieldTypes.checkbox
       }
     ]
   },
@@ -254,34 +253,29 @@ export const connectionTypes: ConnectionType[] = [
     icon: "elasticsearch",
     value: ConnectionValueType.ElasticSearch,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: fieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "URL",
         key: "url",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: true
       },
       {
         label: "Username",
         key: "username",
-        type: fieldTypes.EnvVarSource,
+        type: ConnectionsFieldTypes.EnvVarSource,
         required: true
       },
       {
         label: "Password",
         key: "password",
-        type: fieldTypes.EnvVarSource,
+        type: ConnectionsFieldTypes.EnvVarSource,
         required: true
       },
       {
         label: "Insecure TLS",
         key: "insecure_tls",
-        type: fieldTypes.checkbox
+        type: ConnectionsFieldTypes.checkbox
       }
     ]
   },
@@ -290,34 +284,29 @@ export const connectionTypes: ConnectionType[] = [
     icon: "mongo",
     value: ConnectionValueType.Mongo,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: fieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "URL",
         key: "url",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: true
       },
       {
         label: "Username",
         key: "username",
-        type: fieldTypes.EnvVarSource,
+        type: ConnectionsFieldTypes.EnvVarSource,
         required: true
       },
       {
         label: "Password",
         key: "password",
-        type: fieldTypes.EnvVarSource,
+        type: ConnectionsFieldTypes.EnvVarSource,
         required: true
       },
       {
         label: "Insecure TLS",
         key: "insecure_tls",
-        type: fieldTypes.checkbox
+        type: ConnectionsFieldTypes.checkbox
       }
     ]
   },
@@ -326,34 +315,29 @@ export const connectionTypes: ConnectionType[] = [
     icon: "ldap",
     value: ConnectionValueType.LDAP,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: fieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "URL",
         key: "url",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: true
       },
       {
         label: "Username",
         key: "username",
-        type: fieldTypes.EnvVarSource,
+        type: ConnectionsFieldTypes.EnvVarSource,
         required: true
       },
       {
         label: "Password",
         key: "password",
-        type: fieldTypes.EnvVarSource,
+        type: ConnectionsFieldTypes.EnvVarSource,
         required: true
       },
       {
         label: "Insecure TLS",
         key: "insecure_tls",
-        type: fieldTypes.checkbox
+        type: ConnectionsFieldTypes.checkbox
       }
     ]
   },
@@ -362,46 +346,41 @@ export const connectionTypes: ConnectionType[] = [
     icon: "redis",
     value: ConnectionValueType.Redis,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: fieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "Database",
         key: "db",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: true
       },
       {
         label: "URL",
         key: "url",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: true
       },
       {
         label: "Username",
         key: "username",
-        type: fieldTypes.EnvVarSource,
+        type: ConnectionsFieldTypes.EnvVarSource,
         required: false
       },
       {
         label: "Password",
         key: "password",
-        type: fieldTypes.EnvVarSource,
+        type: ConnectionsFieldTypes.EnvVarSource,
         required: false
       },
       {
         label: "Insecure TLS",
         key: "insecure_tls",
-        type: fieldTypes.checkbox
+        type: ConnectionsFieldTypes.checkbox
       }
     ],
     convertToFormSpecificValue: (data: Record<string, any>) => {
       return {
         ...data,
-        db: data.properties?.db
+        db: data?.properties?.db
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
@@ -422,35 +401,30 @@ export const connectionTypes: ConnectionType[] = [
     value: ConnectionValueType.Windows,
     icon: <FaWindows className="w-5 h-5" />,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: fieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "Username",
         key: "username",
-        type: fieldTypes.EnvVarSource,
+        type: ConnectionsFieldTypes.EnvVarSource,
         required: true
       },
       {
         label: "Password",
         key: "password",
-        type: fieldTypes.EnvVarSource,
+        type: ConnectionsFieldTypes.EnvVarSource,
         required: true
       },
       {
         label: "Domain",
         key: "domain",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: false
       }
     ],
     convertToFormSpecificValue: (data: Record<string, any>) => {
       return {
         ...data,
-        domain: data.properties?.domain
+        domain: data?.properties?.domain
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
@@ -470,22 +444,17 @@ export const connectionTypes: ConnectionType[] = [
     value: ConnectionValueType.GCP,
     icon: <DiGoogleCloudPlatform className="w-6 h-6" />,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: fieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "Endpoint",
         key: "url",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: true
       },
       {
         label: "Certificate",
         key: "certificate",
-        type: fieldTypes.EnvVarSource,
+        type: ConnectionsFieldTypes.EnvVarSource,
         variant: variants.large,
         required: true
       }
@@ -496,34 +465,29 @@ export const connectionTypes: ConnectionType[] = [
     icon: "sftp",
     value: ConnectionValueType.SFTP,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: fieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "Host",
         key: "host",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: true
       },
       {
         label: "Username",
         key: "username",
-        type: fieldTypes.EnvVarSource,
+        type: ConnectionsFieldTypes.EnvVarSource,
         required: true
       },
       {
         label: "Password",
         key: "password",
-        type: fieldTypes.EnvVarSource,
+        type: ConnectionsFieldTypes.EnvVarSource,
         required: true
       },
       {
         label: "Port",
         key: "port",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: false
       }
     ],
@@ -550,48 +514,43 @@ export const connectionTypes: ConnectionType[] = [
     icon: "aws",
     value: ConnectionValueType.AWS,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: fieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "Region",
         key: "region",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: false
       },
       {
         label: "Profile",
         key: "profile",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: false
       },
       {
         label: "Access Key",
         key: "username",
-        type: fieldTypes.EnvVarSource,
+        type: ConnectionsFieldTypes.EnvVarSource,
         required: false
       },
       {
         label: "Secret Key",
         key: "password",
-        type: fieldTypes.EnvVarSource,
+        type: ConnectionsFieldTypes.EnvVarSource,
         required: false
       },
       {
         label: "Insecure TLS",
         key: "insecure_tls",
-        type: fieldTypes.checkbox
+        type: ConnectionsFieldTypes.checkbox
       }
     ],
     convertToFormSpecificValue: (data: Record<string, any>) => {
       return {
         ...data,
-        region: data.properties?.region,
-        profile: data.properties?.profile,
-        insecure_tls: data.properties?.insecureTLS === "true"
+        region: data?.properties?.region,
+        profile: data?.properties?.profile,
+        insecure_tls: data?.properties?.insecureTLS === "true"
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
@@ -612,16 +571,11 @@ export const connectionTypes: ConnectionType[] = [
     icon: "kubernetes",
     value: ConnectionValueType.Kubernetes,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: fieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "Certificate",
         key: "certificate",
-        type: fieldTypes.EnvVarSource,
+        type: ConnectionsFieldTypes.EnvVarSource,
         variant: variants.large,
         required: false
       }
@@ -632,22 +586,17 @@ export const connectionTypes: ConnectionType[] = [
     icon: "azure-devops",
     value: ConnectionValueType.AzureDevops,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: fieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "Organization",
         key: "username",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: true
       },
       {
         label: "Personal Access Token",
         key: "password",
-        type: fieldTypes.EnvVarSource,
+        type: ConnectionsFieldTypes.EnvVarSource,
         required: true
       }
     ]
@@ -657,35 +606,30 @@ export const connectionTypes: ConnectionType[] = [
     icon: "azure",
     value: ConnectionValueType.Azure,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: fieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "Client ID",
         key: "username",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: true
       },
       {
         label: "Client Secret",
         key: "password",
-        type: fieldTypes.EnvVarSource,
+        type: ConnectionsFieldTypes.EnvVarSource,
         required: true
       },
       {
         label: "Tenant ID",
         key: "tenant",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: true
       }
     ],
     convertToFormSpecificValue: (data: Record<string, any>) => {
       return {
         ...data,
-        tenant: data.properties?.tenant
+        tenant: data?.properties?.tenant
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
@@ -704,16 +648,11 @@ export const connectionTypes: ConnectionType[] = [
     icon: "github",
     value: ConnectionValueType.Github,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: fieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "Personal Access Token",
         key: "password",
-        type: fieldTypes.EnvVarSource,
+        type: ConnectionsFieldTypes.EnvVarSource,
         required: true
       }
     ]
@@ -723,40 +662,35 @@ export const connectionTypes: ConnectionType[] = [
     icon: "restic",
     value: ConnectionValueType.Restic,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: fieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "Password",
         key: "password",
-        type: fieldTypes.EnvVarSource,
+        type: ConnectionsFieldTypes.EnvVarSource,
         required: true
       },
       {
         label: "Repository URL",
         key: "url",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: true
       },
       {
         label: "AWS Connection Name",
         key: "awsConnectionName",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: true
       },
       {
         label: "Access Key",
         key: "accessKey",
-        type: fieldTypes.EnvVarSource,
+        type: ConnectionsFieldTypes.EnvVarSource,
         required: true
       },
       {
         label: "Secret Key",
         key: "secretKey",
-        type: fieldTypes.EnvVarSource,
+        type: ConnectionsFieldTypes.EnvVarSource,
         required: true
       }
     ],
@@ -782,53 +716,48 @@ export const connectionTypes: ConnectionType[] = [
     value: ConnectionValueType.SMB,
     hide: true,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: fieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "Username",
         key: "username",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: true
       },
       {
         label: "Password",
         key: "password",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: true
       },
       {
         label: "Workstation",
         key: "workstation",
-        type: fieldTypes.input
+        type: ConnectionsFieldTypes.input
       },
       {
         label: "Share name",
         key: "sharename",
-        type: fieldTypes.input
+        type: ConnectionsFieldTypes.input
       },
       {
         label: "Search path",
         key: "searchPath",
-        type: fieldTypes.input
+        type: ConnectionsFieldTypes.input
       },
       {
         label: "Port",
         key: "port",
-        type: fieldTypes.numberInput,
+        type: ConnectionsFieldTypes.numberInput,
         default: 445
       }
     ],
     convertToFormSpecificValue: (data: Record<string, any>) => {
       return {
         ...data,
-        workstation: data.properties?.workstation,
-        sharename: data.properties?.sharename,
-        searchPath: data.properties?.searchPath,
-        port: data.properties?.port
+        workstation: data?.properties?.workstation,
+        sharename: data?.properties?.sharename,
+        searchPath: data?.properties?.searchPath,
+        port: data?.properties?.port
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
@@ -851,28 +780,23 @@ export const connectionTypes: ConnectionType[] = [
     value: ConnectionValueType.JMeter,
     hide: true,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: fieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "Host",
         key: "url",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: true
       },
       {
         label: "Port",
         key: "port",
-        type: fieldTypes.numberInput
+        type: ConnectionsFieldTypes.numberInput
       }
     ],
     convertToFormSpecificValue: (data: Record<string, any>) => {
       return {
         ...data,
-        port: data.properties?.port
+        port: data?.properties?.port
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
@@ -890,35 +814,30 @@ export const connectionTypes: ConnectionType[] = [
     icon: "dynatrace",
     value: ConnectionValueType.Dynatrace,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: fieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "Host",
         key: "url",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: true
       },
       {
         label: "API Key",
         key: "password",
-        type: fieldTypes.EnvVarSource,
+        type: ConnectionsFieldTypes.EnvVarSource,
         required: true
       },
       {
         label: "Scheme",
         key: "scheme",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: true
       }
     ],
     convertToFormSpecificValue: (data: Record<string, any>) => {
       return {
         ...data,
-        scheme: data.properties?.scheme
+        scheme: data?.properties?.scheme
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
@@ -938,22 +857,17 @@ export const connectionTypes: ConnectionType[] = [
     icon: "discord",
     value: ConnectionValueType.Discord,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: fieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "Webhook ID",
         key: "username",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: true
       },
       {
         label: "Token",
         key: "password",
-        type: fieldTypes.EnvVarSource,
+        type: ConnectionsFieldTypes.EnvVarSource,
         required: true
       }
     ],
@@ -972,54 +886,49 @@ export const connectionTypes: ConnectionType[] = [
     icon: "email",
     value: ConnectionValueType.Email,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: fieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "Username",
         key: "username",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: true
       },
       {
         label: "Password",
         key: "password",
         hint: "SMTP server password or hash (for OAuth2)",
-        type: fieldTypes.EnvVarSource,
+        type: ConnectionsFieldTypes.EnvVarSource,
         required: true
       },
       {
         label: "From Address",
         key: "from",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: true
       },
       {
         label: "From Name",
         key: "fromName",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: true
       },
       {
         label: "Host",
         key: "host",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: true
       },
       {
         label: "Port",
         key: "port",
-        type: fieldTypes.numberInput,
+        type: ConnectionsFieldTypes.numberInput,
         default: 25,
         required: true
       },
       {
         label: "Encryption method",
         key: "encryptionMethod",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         hint: "None, ExplicitTLS, ImplicitTLS, Auto (default)",
         default: "Auto",
         required: true
@@ -1027,7 +936,7 @@ export const connectionTypes: ConnectionType[] = [
       {
         label: "SMTP authentication method",
         key: "authMethod",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         hint: "None, Plain, CRAMMD5, Unknown, OAuth2",
         default: "Unknown",
         required: true
@@ -1035,18 +944,18 @@ export const connectionTypes: ConnectionType[] = [
       {
         label: "Insecure TLS",
         key: "insecure_tls",
-        type: fieldTypes.checkbox
+        type: ConnectionsFieldTypes.checkbox
       }
     ],
     convertToFormSpecificValue: (data: Record<string, any>) => {
       return {
         ...data,
-        authMethod: data.properties?.authMethod,
-        encryptionMethod: data.properties?.encryptionMethod,
-        from: data.properties?.from,
-        fromName: data.properties?.fromName,
-        host: data.properties?.host,
-        port: data.properties?.port
+        authMethod: data?.properties?.authMethod,
+        encryptionMethod: data?.properties?.encryptionMethod,
+        from: data?.properties?.from,
+        fromName: data?.properties?.fromName,
+        host: data?.properties?.host,
+        port: data?.properties?.port
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
@@ -1073,35 +982,30 @@ export const connectionTypes: ConnectionType[] = [
     icon: "google-chat",
     value: ConnectionValueType.GoogleChat,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: fieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "Key",
         key: "username",
-        type: fieldTypes.EnvVarSource,
+        type: ConnectionsFieldTypes.EnvVarSource,
         required: true
       },
       {
         label: "Token",
         key: "password",
-        type: fieldTypes.EnvVarSource,
+        type: ConnectionsFieldTypes.EnvVarSource,
         required: true
       },
       {
         label: "Webhook Name",
         key: "webhook",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: true
       }
     ],
     convertToFormSpecificValue: (data: Record<string, any>) => {
       return {
         ...data,
-        webhook: data.properties?.webhook
+        webhook: data?.properties?.webhook
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
@@ -1122,16 +1026,11 @@ export const connectionTypes: ConnectionType[] = [
     icon: "ifttt",
     value: ConnectionValueType.IFTTT,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: fieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "Webhook ID",
         key: "username",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: true
       }
     ],
@@ -1149,46 +1048,41 @@ export const connectionTypes: ConnectionType[] = [
     icon: "mattermost",
     value: ConnectionValueType.Mattermost,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: fieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "Username",
         key: "username",
         hint: "Override webhook user",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: false
       },
       {
         label: "Host",
         key: "host",
         hint: "Mattermost server host (host:port)",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: true
       },
       {
         label: "Token",
         key: "password",
         hint: "Webhook token",
-        type: fieldTypes.EnvVarSource,
+        type: ConnectionsFieldTypes.EnvVarSource,
         required: true
       },
       {
         label: "Channel",
         key: "channel",
         hint: "Override webhook channel",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: false
       }
     ],
     convertToFormSpecificValue: (data: Record<string, any>) => {
       return {
         ...data,
-        host: data.properties?.host,
-        channel: data.properties?.channel
+        host: data?.properties?.host,
+        channel: data?.properties?.channel
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
@@ -1210,43 +1104,38 @@ export const connectionTypes: ConnectionType[] = [
     value: ConnectionValueType.Matrix,
     icon: "matrix",
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: fieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "User",
         key: "username",
         hint: "Username or empty when using access token",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: false
       },
       {
         label: "Password",
         key: "password",
         hint: "Password or access token",
-        type: fieldTypes.EnvVarSource,
+        type: ConnectionsFieldTypes.EnvVarSource,
         required: true
       },
       {
         label: "Host",
         key: "host",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: true
       },
       {
         label: "Insecure TLS",
         key: "insecure_tls",
-        type: fieldTypes.checkbox
+        type: ConnectionsFieldTypes.checkbox
       }
     ],
     convertToFormSpecificValue: (data: Record<string, any>) => {
       return {
         ...data,
-        host: data.properties?.host,
-        channel: data.properties?.channel
+        host: data?.properties?.host,
+        channel: data?.properties?.channel
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
@@ -1268,22 +1157,17 @@ export const connectionTypes: ConnectionType[] = [
     value: ConnectionValueType.Ntfy,
     icon: "ntfy",
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: fieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "Username",
         key: "username",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: false
       },
       {
         label: "Password",
         key: "password",
-        type: fieldTypes.EnvVarSource,
+        type: ConnectionsFieldTypes.EnvVarSource,
         required: false
       },
       {
@@ -1291,27 +1175,27 @@ export const connectionTypes: ConnectionType[] = [
         key: "host",
         hint: "Server hostname and port",
         default: "ntfy.sh",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: true
       },
       {
         label: "Topic",
         key: "topic",
         hint: "Target topic name",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: true
       },
       {
         label: "Insecure TLS",
         key: "insecure_tls",
-        type: fieldTypes.checkbox
+        type: ConnectionsFieldTypes.checkbox
       }
     ],
     convertToFormSpecificValue: (data: Record<string, any>) => {
       return {
         ...data,
-        host: data.properties?.host,
-        topic: data.properties?.topic
+        host: data?.properties?.host,
+        topic: data?.properties?.topic
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
@@ -1335,38 +1219,33 @@ export const connectionTypes: ConnectionType[] = [
     icon: "opsgenie",
     value: ConnectionValueType.OpsGenie,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: fieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "Host",
         key: "host",
         default: "api.opsgenie.com",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: true
       },
       {
         label: "Port",
         key: "port",
         default: 443,
-        type: fieldTypes.numberInput,
+        type: ConnectionsFieldTypes.numberInput,
         required: true
       },
       {
         label: "API Key",
         key: "password",
-        type: fieldTypes.EnvVarSource,
+        type: ConnectionsFieldTypes.EnvVarSource,
         required: true
       }
     ],
     convertToFormSpecificValue: (data: Record<string, any>) => {
       return {
         ...data,
-        host: data.properties?.host,
-        port: data.properties?.port
+        host: data?.properties?.host,
+        port: data?.properties?.port
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
@@ -1387,29 +1266,24 @@ export const connectionTypes: ConnectionType[] = [
     icon: "pushbullet",
     value: ConnectionValueType.Pushbullet,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: fieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "Token",
         key: "password",
-        type: fieldTypes.EnvVarSource,
+        type: ConnectionsFieldTypes.EnvVarSource,
         required: true
       },
       {
         label: "Targets",
         key: "targets",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: true
       }
     ],
     convertToFormSpecificValue: (data: Record<string, any>) => {
       return {
         ...data,
-        targets: data.properties?.targets
+        targets: data?.properties?.targets
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
@@ -1429,22 +1303,17 @@ export const connectionTypes: ConnectionType[] = [
     icon: "pushover",
     value: ConnectionValueType.Pushover,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: fieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "User",
         key: "username",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: true
       },
       {
         label: "Token",
         key: "password",
-        type: fieldTypes.EnvVarSource,
+        type: ConnectionsFieldTypes.EnvVarSource,
         required: true
       }
     ],
@@ -1463,56 +1332,51 @@ export const connectionTypes: ConnectionType[] = [
     icon: "rocket",
     value: ConnectionValueType.Rocketchat,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: fieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "Username",
         key: "user",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: false
       },
       {
         label: "Host",
         key: "host",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: true
       },
       {
         label: "Port",
         key: "port",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: true
       },
       {
         label: "Token A",
         key: "username",
-        type: fieldTypes.EnvVarSource,
+        type: ConnectionsFieldTypes.EnvVarSource,
         required: true
       },
       {
         label: "Token B",
         key: "password",
-        type: fieldTypes.EnvVarSource,
+        type: ConnectionsFieldTypes.EnvVarSource,
         required: true
       },
       {
         label: "Channel",
         key: "channel",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: true
       }
     ],
     convertToFormSpecificValue: (data: Record<string, any>) => {
       return {
         ...data,
-        host: data.properties?.host,
-        port: data.properties?.port,
-        user: data.properties?.user,
-        channel: data.properties?.channel
+        host: data?.properties?.host,
+        port: data?.properties?.port,
+        user: data?.properties?.user,
+        channel: data?.properties?.channel
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
@@ -1536,36 +1400,31 @@ export const connectionTypes: ConnectionType[] = [
     icon: "slack",
     value: ConnectionValueType.Slack,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: fieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "Channel",
         key: "username",
         hint: "Channel to send messages to in Cxxxxxxxxxx format",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: true
       },
       {
         label: "Bot Token",
         key: "password",
-        type: fieldTypes.EnvVarSource,
+        type: ConnectionsFieldTypes.EnvVarSource,
         required: true
       },
       {
         label: "Bot Name",
         key: "fromName",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: false
       }
     ],
     convertToFormSpecificValue: (data: Record<string, any>) => {
       return {
         ...data,
-        fromName: data.properties?.BotName
+        fromName: data?.properties?.BotName
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
@@ -1586,40 +1445,35 @@ export const connectionTypes: ConnectionType[] = [
     icon: "teams",
     value: ConnectionValueType.Teams,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: fieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "Group",
         key: "group",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: false
       },
       {
         label: "Tenant",
         key: "tenant",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: true
       },
       {
         label: "AltID",
         key: "altID",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: true
       },
       {
         label: "GroupOwner",
         key: "groupOwner",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: true
       },
       {
         label: "Host",
         key: "host",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         default: "outlook.office.com",
         required: true
       }
@@ -1627,11 +1481,11 @@ export const connectionTypes: ConnectionType[] = [
     convertToFormSpecificValue: (data: Record<string, any>) => {
       return {
         ...data,
-        group: data.properties?.group,
-        tenant: data.properties?.tenant,
-        altID: data.properties?.altID,
-        host: data.properties?.host,
-        groupOwner: data.properties?.groupOwner
+        group: data?.properties?.group,
+        tenant: data?.properties?.tenant,
+        altID: data?.properties?.altID,
+        host: data?.properties?.host,
+        groupOwner: data?.properties?.groupOwner
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
@@ -1654,23 +1508,18 @@ export const connectionTypes: ConnectionType[] = [
     icon: "telegram",
     value: ConnectionValueType.Telegram,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: fieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "Token",
         key: "password",
-        type: fieldTypes.EnvVarSource,
+        type: ConnectionsFieldTypes.EnvVarSource,
         required: true
       },
       {
         label: "Chats",
         hitns: "Chat IDs or Channel names (using @channel-name)",
         key: "username",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: true
       }
     ],
@@ -1689,36 +1538,31 @@ export const connectionTypes: ConnectionType[] = [
     icon: "zulip",
     value: ConnectionValueType.ZulipChat,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: fieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "BotMail",
         key: "username",
         hint: "Bot e-mail address",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: false
       },
       {
         label: "BotKey",
         key: "password",
-        type: fieldTypes.EnvVarSource,
+        type: ConnectionsFieldTypes.EnvVarSource,
         required: true
       },
       {
         label: "Host",
         key: "host",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: true
       }
     ],
     convertToFormSpecificValue: (data: Record<string, any>) => {
       return {
         ...data,
-        host: data.properties?.host
+        host: data?.properties?.host
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
@@ -1739,28 +1583,23 @@ export const connectionTypes: ConnectionType[] = [
     icon: "http",
     value: ConnectionValueType.GenericWebhook,
     fields: [
-      {
-        label: "Name",
-        key: "name",
-        type: fieldTypes.input,
-        required: true
-      },
+      ...commonConnectionFormFields,
       {
         label: "URL",
         key: "username",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: true
       },
       {
         label: "ContentType",
         default: "application/json",
         key: "contentType",
-        type: fieldTypes.input
+        type: ConnectionsFieldTypes.input
       },
       {
         label: "Request Method",
         key: "requestMethod",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         default: "POST",
         required: true
       },
@@ -1768,29 +1607,29 @@ export const connectionTypes: ConnectionType[] = [
         label: "Message Key",
         default: "message",
         key: "key",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: true
       },
       {
         label: "Title Key",
         default: "title",
         key: "titleKey",
-        type: fieldTypes.input,
+        type: ConnectionsFieldTypes.input,
         required: true
       },
       {
         label: "Insecure TLS",
         key: "insecure_tls",
-        type: fieldTypes.checkbox
+        type: ConnectionsFieldTypes.checkbox
       }
     ],
     convertToFormSpecificValue: (data: Record<string, any>) => {
       return {
         ...data,
-        contentType: data.properties?.contentType,
-        requestMethod: data.properties?.requestMethod,
-        key: data.properties?.key,
-        titleKey: data.properties?.titleKey
+        contentType: data?.properties?.contentType,
+        requestMethod: data?.properties?.requestMethod,
+        key: data?.properties?.key,
+        titleKey: data?.properties?.titleKey
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
@@ -1804,6 +1643,83 @@ export const connectionTypes: ConnectionType[] = [
           requestMethod: data.requestMethod,
           message: data.message,
           titleKey: data.titleKey
+        }
+      };
+    }
+  },
+  {
+    title: "Git",
+    icon: "git",
+    value: ConnectionValueType.Git,
+    fields: [
+      ...commonConnectionFormFields,
+      {
+        label: "URL",
+        key: "url",
+        type: ConnectionsFieldTypes.input,
+        required: true
+      },
+      {
+        label: "Authentication",
+        key: "authentication",
+        type: ConnectionsFieldTypes.switch,
+        default: "password",
+        options: [
+          {
+            label: "Basic",
+            key: "password",
+            fields: [
+              {
+                label: "Username",
+                key: "username",
+                type: ConnectionsFieldTypes.Authentication
+              },
+              {
+                label: "Password",
+                key: "password",
+                type: ConnectionsFieldTypes.Authentication
+              }
+            ]
+          },
+          {
+            label: "SSH",
+            key: "certificate",
+            fields: [
+              {
+                label: "SSH Key",
+                hideLabel: true,
+                key: "certificate",
+                type: ConnectionsFieldTypes.EnvVarSource,
+                variant: variants.large
+              }
+            ]
+          }
+        ]
+      },
+      {
+        label: "Ref",
+        default: "main",
+        key: "ref",
+        type: ConnectionsFieldTypes.input,
+        required: true
+      }
+    ],
+    convertToFormSpecificValue: (data: Record<string, any>) => {
+      return {
+        ...data,
+        ref: data?.properties?.ref ?? "ref"
+      } as Connection;
+    },
+    preSubmitConverter: (data: Record<string, string>) => {
+      return {
+        name: data.name,
+        url: data.url,
+        namespace: data.namespace,
+        password: data.password,
+        username: data.username,
+        certificate: data.certificate,
+        properties: {
+          ref: data.ref
         }
       };
     }
