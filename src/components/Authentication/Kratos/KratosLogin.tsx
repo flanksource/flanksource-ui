@@ -7,10 +7,15 @@ import { useCallback, useEffect, useState } from "react";
 import { Flow, HandleError } from "../../ory";
 import { SetUriFlow } from "../../ory/helpers";
 import ory from "../../ory/sdk";
+import FullPageSkeletonLoader from "../../SkeletonLoader/FullPageSkeletonLoader";
 
 const Login: NextPage = () => {
   const [returnTo, setReturnTo] = useState<string | undefined>();
   const [flow, setFlow] = useState<LoginFlow>();
+
+  // when login is successful, we set this to true and then show an animation as
+  // the user is redirected to the return_to URL.
+  const [loginSucccess, setLoginSuccess] = useState<boolean>(false);
 
   const { query, push, isReady } = useRouter();
 
@@ -19,7 +24,7 @@ const Login: NextPage = () => {
 
   // If we have a return_to query parameter, we want to redirect the user to
   // that URL after a successful login. if set, and return_to is empty, we don't
-  // overwrite it.
+  // overwrite it. This is a workaround for using both nextjs and react-router.
   useEffect(() => {
     if (returnToFromQuery && !returnTo) {
       setReturnTo(returnToFromQuery);
@@ -94,8 +99,14 @@ const Login: NextPage = () => {
       })
       // We logged in successfully! Let's bring the user home.
       .then(() => {
+        console.log("Login successful");
+        setLoginSuccess(true);
         push(returnTo || "/");
       });
+
+  if (loginSucccess) {
+    return <FullPageSkeletonLoader />;
+  }
 
   return (
     <div className="w-96">

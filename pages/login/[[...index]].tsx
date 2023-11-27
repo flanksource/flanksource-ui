@@ -11,7 +11,7 @@ export default function Signin() {
     <>
       <Head prefix="Sign in" />
       <div className="flex min-h-screen bg-gray-50 justify-center">
-        <div className="flex min-h-full flex-col justify-center pt-12 pb-28 sm:px-6 lg:px-8">
+        <div className="flex min-h-full flex-col justify-center">
           {authSystem === "kratos" && <KratosLogin />}
           {authSystem === "clerk" && <ClerkLogin />}
         </div>
