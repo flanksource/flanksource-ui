@@ -9,6 +9,7 @@ import FormikScheduleField from "../Formik/FormikScheduleField";
 import FormikTemplateFields from "../Formik/FormikTemplateFields";
 import FormikTextInput from "../Formik/FormikTextInput";
 import HTTPMethodFieldsGroup from "./HTTPMethodFieldsGroup";
+import FormikNumberInput from "../Formik/FormikNumberInput";
 
 type HTTPHealthFormEditorProps = {
   fieldName: string;
@@ -86,22 +87,23 @@ export function HTTPHealthFormEditor({
         label="Response Codes"
         name={`${fieldName}.responseCodes`}
       />
-      <FormikTextInput
+
+      <FormikNumberInput
         name={`${fieldName}.thresholdMillis`}
         label="Max Response Time (in millis)"
-        type="number"
         min={0}
       />
+
       <FormikTextInput
         name={`${fieldName}.responseContent`}
         label="Response Text (Exact Match)"
         hint="Exact response content expected to be returned by the endpoint"
       />
-      <FormikTextInput
+
+      <FormikNumberInput
         name={`${fieldName}.maxSSLExpiry`}
         label="Max SSL Expiry Age (days)"
         hint="Maximum number of days until the SSL Certificate expires."
-        type="number"
         min={0}
       />
 
