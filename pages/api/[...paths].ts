@@ -64,6 +64,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  console.log("Proxying request to backend");
   const target = await getTargetURL(req);
 
   if (!target) {
