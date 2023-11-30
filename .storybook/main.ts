@@ -16,7 +16,9 @@ export default {
     "@storybook/addon-links",
     "@storybook/addon-essentials",
     "@storybook/addon-interactions",
-    "storybook-addon-mock/register"
+    "storybook-addon-mock/register",
+    "@storybook/addon-styling-webpack",
+    "storybook-addon-react-router-v6"
   ],
   logLevel: "debug",
   docs: {
