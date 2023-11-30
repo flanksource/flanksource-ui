@@ -8,7 +8,8 @@ const enum ConnectionsFieldTypes {
   input = "input",
   numberInput = "numberInput",
   EnvVarSource = "EnvVarSource",
-  switch = "switch",
+  SwitchField = "SwitchField",
+  ConnectionSwitch = "ConnectionSwitch",
   Authentication = "authentication"
 }
 
@@ -28,6 +29,12 @@ export type ConnectionFormFields = {
   hint?: string;
   default?: boolean | number | string;
   hideLabel?: boolean;
+  switchFieldProps?: {
+    options: {
+      label: string;
+      key: string;
+    }[];
+  };
   options?: {
     label: string;
     key: string;
@@ -1665,8 +1672,20 @@ export const connectionTypes: ConnectionType[] = [
       {
         label: "Request Method",
         key: "requestMethod",
-        type: ConnectionsFieldTypes.input,
+        type: ConnectionsFieldTypes.SwitchField,
         default: "POST",
+        switchFieldProps: {
+          options: [
+            {
+              label: "POST",
+              key: "POST"
+            },
+            {
+              label: "GET",
+              key: "GET"
+            }
+          ]
+        },
         required: true
       },
       {
@@ -1728,7 +1747,7 @@ export const connectionTypes: ConnectionType[] = [
       {
         label: "Authentication",
         key: "authentication",
-        type: ConnectionsFieldTypes.switch,
+        type: ConnectionsFieldTypes.ConnectionSwitch,
         default: "password",
         options: [
           {
