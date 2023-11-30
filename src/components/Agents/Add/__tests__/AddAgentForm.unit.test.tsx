@@ -92,7 +92,10 @@ describe("AgentForm", () => {
     });
     userEvent.click(saveButton);
     await waitFor(() => {
-      expect(onSuccess).toHaveBeenCalledWith({ id: "123", ...agentData });
+      expect(onSuccess).toHaveBeenCalledWith(
+        expect.objectContaining({ id: "123", ...agentData }),
+        undefined
+      );
     });
   });
 

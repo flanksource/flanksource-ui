@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import { Form, Formik } from "formik";
+import { useState } from "react";
 import { FaSpinner } from "react-icons/fa";
 import {
   useAddAgentMutations,
@@ -7,6 +8,9 @@ import {
 } from "../../../api/query-hooks/mutations/useUpsertAgentMutations";
 import { GenerateAgent, GeneratedAgent } from "../../../api/services/agents";
 import { Button } from "../../Button";
+import FormikAutocompleteDropdown from "../../Forms/Formik/FormikAutocompleteDropdown";
+import FormikCheckbox from "../../Forms/Formik/FormikCheckbox";
+import FormikConfigFormFieldsArray from "../../Forms/Formik/FormikConfigFormFieldsArray";
 import FormikKeyValueMapField from "../../Forms/Formik/FormikKeyValueMapField";
 import FormikTextInput from "../../Forms/Formik/FormikTextInput";
 import { Modal } from "../../Modal";
@@ -14,10 +18,14 @@ import { toastError, toastSuccess } from "../../Toast/toast";
 import { Agent } from "../AgentPage";
 import DeleteAgentButton from "../DeleteAgentButton";
 
+export type AgentFormValues = GenerateAgent & {
+  kubernetes?: Record<string, any>;
+};
+
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-  onSuccess?: (agent: GeneratedAgent) => void;
+  onSuccess?: (agent: GeneratedAgent, formValues: AgentFormValues) => void;
   onUpdated?: (agent: Agent) => void;
   agent?: GenerateAgent & {
     id: string;
@@ -31,10 +39,12 @@ export default function AgentForm({
   onUpdated = () => {},
   agent
 }: Props) {
+  const [formValues, setFormValues] = useState<AgentFormValues>();
+
   const { mutate: addAgent, isLoading: isAdding } = useAddAgentMutations({
     onSuccess: (data) => {
       toastSuccess("Agent created");
-      onSuccess(data);
+      onSuccess(data, formValues!);
     },
     onError: (error) => {
       toastError(error.message);
@@ -54,6 +64,20 @@ export default function AgentForm({
 
   const isLoading = isAdding || isUpdating;
 
+  const handleSubmit = (values: AgentFormValues) => {
+    const { kubernetes, ...dbValues } = values;
+    const agentValues = {
+      ...dbValues,
+      kubernetes: kubernetes && !!kubernetes.enabled ? kubernetes : undefined
+    };
+    setFormValues(agentValues);
+    if (agent?.id) {
+      updateAgent({ ...dbValues, id: agent.id });
+      return;
+    }
+    addAgent(dbValues);
+  };
+
   return (
     <Modal
       title={agent?.id ? agent.name : "Create new agent"}
@@ -61,20 +85,18 @@ export default function AgentForm({
       open={isOpen}
       bodyClass="flex flex-col w-full flex-1 h-full overflow-y-auto"
     >
-      <Formik<GenerateAgent>
+      <Formik<AgentFormValues>
         initialValues={{
           name: agent?.name ?? "",
-          properties: agent?.properties ?? {}
-        }}
-        onSubmit={(value) => {
-          if (agent?.id) {
-            updateAgent({ ...value, id: agent.id });
-            return;
+          properties: agent?.properties ?? {},
+          kubernetes: {
+            interval: "30m"
           }
-          addAgent(value);
         }}
+        onSubmit={handleSubmit}
+        enableReinitialize
       >
-        {({ handleSubmit }) => (
+        {({ handleSubmit, values }) => (
           <Form
             className="flex flex-col flex-1 overflow-y-auto"
             onSubmit={handleSubmit}
@@ -92,6 +114,42 @@ export default function AgentForm({
                     name="properties"
                     label="Properties"
                   />
+                  <FormikCheckbox
+                    name="kubernetes.enabled"
+                    label="Kubernetes"
+                  />
+                  {Boolean(values.kubernetes?.enabled) === true && (
+                    <>
+                      <FormikAutocompleteDropdown
+                        options={[
+                          { label: "1m", value: "1m" },
+                          { label: "5m", value: "5m" },
+                          { label: "10m", value: "10m" },
+                          {
+                            label: "30m",
+                            value: "30m"
+                          },
+                          { label: "1h", value: "1h" },
+                          { label: "2h", value: "2h" },
+                          { label: "6h", value: "6h" },
+                          { label: "12h", value: "12h" },
+                          { label: "24h", value: "24h" }
+                        ]}
+                        name="kubernetes.interval"
+                        label="Scrape Interval"
+                      />
+                      <FormikConfigFormFieldsArray
+                        name={`kubernetes.exclusions`}
+                        label={"Exclusions"}
+                        fields={[
+                          {
+                            fieldComponent: FormikTextInput,
+                            name: `kubernetes.exclusions`
+                          }
+                        ]}
+                      />
+                    </>
+                  )}
                 </div>
               </div>
             </div>
