@@ -42,6 +42,14 @@ export function ConnectionForm({
       (item) => item.value === connectionType.value
     );
     if (connection) {
+      // if formValue is undefined, return default values, otherwise return
+      // formValue
+      if (!formValue) {
+        return connection.fields.reduce((acc, field) => {
+          acc[field.key] = field.default;
+          return acc;
+        }, {} as Record<string, any>);
+      }
       const res = connection.convertToFormSpecificValue
         ? connection.convertToFormSpecificValue(formValue as any)
         : formValue;

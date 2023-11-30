@@ -45,7 +45,7 @@ export function useComponentConfigRelationshipQuery({
               items.push(related);
             }
           });
-          items = items.sort((ent: ConfigItem) => (ent.deleted_at ? 1 : -1));
+          items = items.sort((ent) => (ent.deleted_at ? 1 : -1));
           return items;
         });
       }
