@@ -78,6 +78,16 @@ export default function RenderConnectionFormFields({ field }: FieldViewProps) {
           required={field.required}
         />
       );
+    case "GroupField":
+      return (
+        <div className="flex flex-row gap-2 ">
+          {field.groupFieldProps?.fields.map((f) => (
+            <div className="flex flex-col flex-1 gap-2" key={field.key}>
+              <RenderConnectionFormFields field={f} />
+            </div>
+          ))}
+        </div>
+      );
     default:
       return null;
   }

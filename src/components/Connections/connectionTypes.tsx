@@ -10,7 +10,8 @@ const enum ConnectionsFieldTypes {
   EnvVarSource = "EnvVarSource",
   SwitchField = "SwitchField",
   ConnectionSwitch = "ConnectionSwitch",
-  Authentication = "authentication"
+  Authentication = "authentication",
+  GroupField = "GroupField"
 }
 
 type Variant = "small" | "large";
@@ -34,6 +35,9 @@ export type ConnectionFormFields = {
       label: string;
       key: string;
     }[];
+  };
+  groupFieldProps?: {
+    fields: ConnectionFormFields[];
   };
   options?: {
     label: string;
@@ -961,17 +965,37 @@ export const connectionTypes: ConnectionType[] = [
     fields: [
       ...commonConnectionFormFields,
       {
+        label: "Host",
+        key: "host",
+        type: ConnectionsFieldTypes.GroupField,
+        groupFieldProps: {
+          fields: [
+            {
+              label: "Host",
+              key: "host",
+              type: ConnectionsFieldTypes.input,
+              required: true
+            },
+            {
+              label: "Port",
+              key: "port",
+              type: ConnectionsFieldTypes.numberInput,
+              required: true,
+              default: 587
+            }
+          ]
+        }
+      },
+      {
         label: "Username",
         key: "username",
-        type: ConnectionsFieldTypes.input,
-        required: true
+        type: ConnectionsFieldTypes.EnvVarSource
       },
       {
         label: "Password",
         key: "password",
         hint: "SMTP server password or hash (for OAuth2)",
-        type: ConnectionsFieldTypes.EnvVarSource,
-        required: true
+        type: ConnectionsFieldTypes.EnvVarSource
       },
       {
         label: "From Address",
@@ -986,31 +1010,60 @@ export const connectionTypes: ConnectionType[] = [
         required: true
       },
       {
-        label: "Host",
-        key: "host",
-        type: ConnectionsFieldTypes.input,
-        required: true
-      },
-      {
-        label: "Port",
-        key: "port",
-        type: ConnectionsFieldTypes.numberInput,
-        default: 25,
-        required: true
-      },
-      {
         label: "Encryption method",
         key: "encryptionMethod",
-        type: ConnectionsFieldTypes.input,
-        hint: "None, ExplicitTLS, ImplicitTLS, Auto (default)",
+        type: ConnectionsFieldTypes.SwitchField,
+        switchFieldProps: {
+          options: [
+            {
+              label: "None",
+              key: "None"
+            },
+            {
+              label: "ExplicitTLS",
+              key: "ExplicitTLS"
+            },
+            {
+              label: "ImplicitTLS",
+              key: "ImplicitTLS"
+            },
+            {
+              label: "Auto (default)",
+              key: "Auto"
+            }
+          ]
+        },
         default: "Auto",
         required: true
       },
       {
         label: "SMTP authentication method",
         key: "authMethod",
-        type: ConnectionsFieldTypes.input,
-        hint: "None, Plain, CRAMMD5, Unknown, OAuth2",
+        type: ConnectionsFieldTypes.SwitchField,
+        switchFieldProps: {
+          options: [
+            {
+              label: "None",
+              key: "None"
+            },
+            {
+              label: "Plain",
+              key: "Plain"
+            },
+            {
+              label: "CRAMMD5",
+              key: "CRAMMD5"
+            },
+            {
+              label: "Unknown",
+              key: "Unknown"
+            },
+            {
+              label: "OAuth2",
+              key: "OAuth2"
+            }
+          ]
+        },
         default: "Unknown",
         required: true
       },
