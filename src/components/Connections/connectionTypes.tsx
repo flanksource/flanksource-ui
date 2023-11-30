@@ -500,24 +500,27 @@ export const connectionTypes: ConnectionType[] = [
         label: "Port",
         key: "port",
         type: ConnectionsFieldTypes.input,
-        required: false
+        required: false,
+        default: 22
       }
     ],
     convertToFormSpecificValue: (data: Record<string, any>) => {
-      const regex = /(.+)?:(.+)?@(.+)?:(.+)/;
-      const result = data.url.replace("sftp://", "").match(regex) || [];
       return {
         ...data,
-        username: result[1],
-        password: result[2],
-        host: result[3],
-        port: result[4]
+        port: data.properties?.port ?? 4
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
       return {
+        ...data,
         name: data.name,
-        url: `sftp://${data.username}:${data.password}@${data.host}:${data.port}`
+        namespace: data.namespace,
+        url: data.host,
+        username: data.username,
+        password: data.password,
+        properties: {
+          port: data.port
+        }
       };
     }
   },
