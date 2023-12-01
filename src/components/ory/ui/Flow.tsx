@@ -11,10 +11,14 @@ import {
   UpdateVerificationFlowBody as SubmitSelfServiceVerificationFlowBody,
   UiNode
 } from "@ory/client";
-import { getNodeId } from "@ory/integrations/ui";
-import { isUiNodeInputAttributes } from "@ory/integrations/ui";
+import {
+  filterNodesByGroups,
+  getNodeId,
+  isUiNodeInputAttributes
+} from "@ory/integrations/ui";
 import { Component, FormEvent } from "react";
 
+import FormSkeletonLoader from "../../SkeletonLoader/FormSkeletonLoader";
 import { Messages } from "./Messages";
 import { Node } from "./Node";
 
@@ -154,44 +158,88 @@ export class Flow<T extends Values> extends Component<Props<T>, State<T>> {
       //
       // Nodes have only one element? It is probably just the CSRF Token
       // and the filter did not match any elements!
-      return null;
+      return <FormSkeletonLoader />;
     }
 
     return (
-      <form
-        className="space-y-8"
-        action={flow.ui.action}
-        method={flow.ui.method}
-        onSubmit={this.handleSubmit}
-      >
-        {!hideGlobalMessages ? <Messages messages={flow.ui.messages} /> : null}
-        {nodes.map((node, k) => {
-          const id = getNodeId(node) as keyof Values;
-          return (
-            <Node
-              key={`${id}-${k}`}
-              disabled={isLoading}
-              node={node}
-              value={values[id]}
-              dispatchSubmit={this.handleSubmit}
-              setValue={(value) =>
-                new Promise((resolve) => {
-                  this.setState(
-                    (state) => ({
-                      ...state,
-                      values: {
-                        ...state.values,
-                        [getNodeId(node)]: value
-                      }
-                    }),
-                    resolve
-                  );
-                })
-              }
-            />
-          );
-        })}
-      </form>
+      <div className="flex flex-col gap-2">
+        <form
+          className="space-y-8"
+          action={flow.ui.action}
+          method={flow.ui.method}
+          onSubmit={this.handleSubmit}
+        >
+          {!hideGlobalMessages ? (
+            <Messages messages={flow.ui.messages} />
+          ) : null}
+          {filterNodesByGroups({
+            nodes: nodes,
+            groups: ["default", "password"]
+          }).map((node, k) => {
+            const id = getNodeId(node) as keyof Values;
+            return (
+              <Node
+                key={`${id}-${k}`}
+                disabled={isLoading}
+                node={node}
+                value={values[id]}
+                dispatchSubmit={this.handleSubmit}
+                setValue={(value) =>
+                  new Promise((resolve) => {
+                    this.setState(
+                      (state) => ({
+                        ...state,
+                        values: {
+                          ...state.values,
+                          [getNodeId(node)]: value
+                        }
+                      }),
+                      resolve
+                    );
+                  })
+                }
+              />
+            );
+          })}
+        </form>
+
+        <hr className="border-gray-200 my-3" />
+
+        <form action={flow.ui.action} method={flow.ui.method}>
+          <div className="flex flex-col">
+            {filterNodesByGroups({
+              nodes: nodes,
+              groups: ["oidc"],
+              withoutDefaultGroup: true
+            }).map((node, k) => {
+              const id = getNodeId(node) as keyof Values;
+              return (
+                <Node
+                  key={`${id}-${k}`}
+                  disabled={isLoading}
+                  node={node}
+                  value={values[id]}
+                  dispatchSubmit={this.handleSubmit}
+                  setValue={(value) =>
+                    new Promise((resolve) => {
+                      this.setState(
+                        (state) => ({
+                          ...state,
+                          values: {
+                            ...state.values,
+                            [getNodeId(node)]: value
+                          }
+                        }),
+                        resolve
+                      );
+                    })
+                  }
+                />
+              );
+            })}
+          </div>
+        </form>
+      </div>
     );
   }
 }
