@@ -12,6 +12,7 @@ import ConnectionListView from "./ConnectionListView";
 export type Connection = {
   altID?: string;
   authMethod?: string;
+  bucket?: string;
   certificate?: string;
   channel?: string;
   checkIntegrity?: boolean;

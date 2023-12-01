@@ -37,6 +37,7 @@ export type ConnectionFormFields = {
 
 export const enum ConnectionValueType {
   AWS = "aws",
+  AWS_S3 = "aws_s3",
   Azure = "azure",
   AzureDevops = "azure_devops",
   Discord = "discord",
@@ -562,6 +563,71 @@ export const connectionTypes: ConnectionType[] = [
           region: data.region,
           profile: data.profile,
           insecureTLS: data.insecure_tls
+        }
+      };
+    }
+  },
+  {
+    title: "AWS S3",
+    icon: "aws-s3",
+    value: ConnectionValueType.AWS_S3,
+    fields: [
+      ...commonConnectionFormFields,
+      {
+        label: "Region",
+        key: "region",
+        type: ConnectionsFieldTypes.input,
+        required: false
+      },
+      {
+        label: "Profile",
+        key: "profile",
+        type: ConnectionsFieldTypes.input,
+        required: false
+      },
+      {
+        label: "Access Key",
+        key: "username",
+        type: ConnectionsFieldTypes.EnvVarSource,
+        required: false
+      },
+      {
+        label: "Secret Key",
+        key: "password",
+        type: ConnectionsFieldTypes.EnvVarSource,
+        required: false
+      },
+      {
+        label: "Insecure TLS",
+        key: "insecure_tls",
+        type: ConnectionsFieldTypes.checkbox
+      },
+      {
+        label: "Bucket",
+        key: "bucket",
+        type: ConnectionsFieldTypes.input,
+        required: true
+      }
+    ],
+    convertToFormSpecificValue: (data: Record<string, any>) => {
+      return {
+        ...data,
+        region: data?.properties?.region,
+        profile: data?.properties?.profile,
+        insecure_tls: data?.insecure_tls === true,
+        bucket: data?.properties?.bucket
+      } as Connection;
+    },
+    preSubmitConverter: (data: Record<string, string>) => {
+      return {
+        name: data.name,
+        username: data.username,
+        password: data.password,
+        insecure_tls: !!data.insecure_tls,
+        properties: {
+          region: data.region,
+          profile: data.profile,
+          bucket: data.bucket
         }
       };
     }
