@@ -793,41 +793,44 @@ export const connectionTypes: ConnectionType[] = [
     title: "SMB",
     icon: "smb",
     value: ConnectionValueType.SMB,
-    hide: true,
     fields: [
       ...commonConnectionFormFields,
       {
-        label: "Username",
-        key: "username",
+        label: "Server",
+        key: "server",
+        type: ConnectionsFieldTypes.GroupField,
+        groupFieldProps: {
+          fields: [
+            {
+              label: "Server",
+              key: "server",
+              type: ConnectionsFieldTypes.input,
+              required: true
+            },
+            {
+              label: "Port",
+              key: "port",
+              type: ConnectionsFieldTypes.numberInput,
+              default: 445
+            }
+          ]
+        }
+      },
+      {
+        label: "Share",
+        key: "share",
         type: ConnectionsFieldTypes.input,
         required: true
+      },
+      {
+        label: "Username",
+        key: "username",
+        type: ConnectionsFieldTypes.input
       },
       {
         label: "Password",
         key: "password",
-        type: ConnectionsFieldTypes.input,
-        required: true
-      },
-      {
-        label: "Workstation",
-        key: "workstation",
-        type: ConnectionsFieldTypes.input
-      },
-      {
-        label: "Share name",
-        key: "sharename",
-        type: ConnectionsFieldTypes.input
-      },
-      {
-        label: "Search path",
-        key: "searchPath",
-        type: ConnectionsFieldTypes.input
-      },
-      {
-        label: "Port",
-        key: "port",
-        type: ConnectionsFieldTypes.numberInput,
-        default: 445
+        type: ConnectionsFieldTypes.EnvVarSource
       }
     ],
     convertToFormSpecificValue: (data: Record<string, any>) => {
