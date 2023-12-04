@@ -37,7 +37,7 @@ export type ConnectionFormFields = {
     }[];
   };
   groupFieldProps?: {
-    fields: ConnectionFormFields[];
+    fields: Omit<ConnectionFormFields, "groupFieldProps">[];
   };
   options?: {
     label: string;
