@@ -6,7 +6,6 @@ import ConfigScrapperSpecEditor from "../SpecEditor/ConfigScrapperSpecEditor";
 import HealthSpecEditor from "../SpecEditor/HealthSpecEditor";
 import { SchemaResourceEdit } from "./SchemaResourceEdit";
 import { SchemaResourceType } from "./resourceTypes";
-import AddTopologyResource from "../Topology/Settings/AddTopologyResource";
 
 type Props = {
   resourceInfo: SchemaResourceType;
@@ -52,8 +51,6 @@ export default function AddSchemaResourceModal({
             onSubmit={(val) => createResource(val)}
             resourceInfo={resourceInfo}
           />
-        ) : resourceInfo.table === "topologies" ? (
-          <AddTopologyResource onSuccess={onClose} isModal />
         ) : (
           <SchemaResourceEdit
             isModal

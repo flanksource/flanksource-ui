@@ -8,6 +8,7 @@ import { BsLink, BsToggles } from "react-icons/bs";
 import { FaBell, FaTasks } from "react-icons/fa";
 import { HiUser } from "react-icons/hi";
 import { ImLifebuoy } from "react-icons/im";
+import { MdOutlineSupportAgent } from "react-icons/md";
 import { VscJson } from "react-icons/vsc";
 import {
   BrowserRouter,
@@ -19,6 +20,7 @@ import {
 import ReactTooltip from "react-tooltip";
 import { Canary } from "./components";
 import { withAccessCheck } from "./components/AccessCheck/AccessCheck";
+import AgentsPage from "./components/Agents/AgentPage";
 import AuthProviderWrapper from "./components/Authentication/AuthProviderWrapper";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { LogsIcon } from "./components/Icons/LogsIcon";
@@ -57,18 +59,16 @@ import { ConnectionsPage } from "./pages/Settings/ConnectionsPage";
 import { EventQueueStatusPage } from "./pages/Settings/EventQueueStatus";
 import { FeatureFlagsPage } from "./pages/Settings/FeatureFlagsPage";
 import { LogBackendsPage } from "./pages/Settings/LogBackendsPage";
-import { PlaybooksListPage } from "./pages/playbooks/PlaybooksList";
+import { TopologyCardPage } from "./pages/TopologyCard";
 import { UsersPage } from "./pages/UsersPage";
 import { ConfigDetailsInsightsPage } from "./pages/config/ConfigDetailsInsightsPage";
 import { ConfigInsightsPage } from "./pages/config/ConfigInsightsList";
 import { HealthPage } from "./pages/health";
 import PlaybookRunsPage from "./pages/playbooks/PlaybookRuns";
 import PlaybookRunsDetailsPage from "./pages/playbooks/PlaybookRunsDetails";
+import { PlaybooksListPage } from "./pages/playbooks/PlaybooksList";
 import { features } from "./services/permissions/features";
 import { stringSortHelper } from "./utils/common";
-import { MdOutlineSupportAgent } from "react-icons/md";
-import AgentsPage from "./components/Agents/AgentPage";
-import { TopologyCardPage } from "./pages/TopologyCard";
 
 export type NavigationItems = {
   name: string;
