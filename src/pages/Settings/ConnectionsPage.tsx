@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { AiFillPlusCircle } from "react-icons/ai";
 import {
@@ -49,62 +49,63 @@ export function ConnectionsPage() {
     }
   }
 
-  async function createConnection(data: Connection) {
-    try {
-      const response = await createResource(connectionsSchemaConnection, {
-        ...data,
-        created_by: user.user?.id
-      });
-      if (response?.data) {
+  const { isLoading: isCreatingConnection, mutate: createConnection } =
+    useMutation({
+      mutationFn: async (data: Connection) => {
+        const response = await createResource(connectionsSchemaConnection, {
+          ...data,
+          created_by: user.user?.id
+        });
+        return response?.data;
+      },
+      onSuccess: () => {
         refetch();
         setIsOpen(false);
-
         toastSuccess("Connection added successfully");
-        return;
+      },
+      onError: (ex) => {
+        toastError((ex as Error).message);
       }
-      toastError(response?.statusText);
-    } catch (ex) {
-      toastError((ex as Error).message);
-    }
-  }
+    });
 
-  async function updateConnection(data: Connection) {
-    try {
-      const response = await updateResource(connectionsSchemaConnection, {
-        ...data,
-        created_by: user.user?.id
-      });
-      if (response?.data) {
+  const { isLoading: isUpdatingConnection, mutate: updateConnection } =
+    useMutation({
+      mutationFn: async (data: Connection) => {
+        const response = await updateResource(connectionsSchemaConnection, {
+          ...data,
+          created_by: user.user?.id
+        });
+        return response?.data;
+      },
+      onSuccess: () => {
         refetch();
         setIsOpen(false);
         toastSuccess("Connection updated successfully");
-        return;
+      },
+      onError: (ex) => {
+        toastError((ex as Error).message);
       }
-      toastError(response?.statusText);
-    } catch (ex) {
-      toastError((ex as Error).message);
-    }
-  }
+    });
 
-  async function onDelete(data: Connection) {
-    try {
+  const { mutate: deleteConnection, isLoading: isDeleting } = useMutation({
+    mutationFn: async (data: Connection) => {
       const response = await deleteResource(
         connectionsSchemaConnection,
         data.id!
       );
-      setEditedRow(undefined);
-      if (response?.data) {
-        refetch();
-        setIsOpen(false);
-
-        toastSuccess("Connection removed successfully");
-        return;
-      }
-      toastError(response?.statusText);
-    } catch (ex) {
+      return response?.data;
+    },
+    onSuccess: () => {
+      refetch();
+      setIsOpen(false);
+      toastSuccess("Connection deleted successfully");
+    },
+    onError: (ex) => {
       toastError((ex as Error).message);
     }
-  }
+  });
+
+  const isSubmitting = isCreatingConnection || isUpdatingConnection;
 
   useEffect(() => {
     if (isOpen) {
@@ -140,9 +141,9 @@ export function ConnectionsPage() {
         contentClass="p-0 h-full"
         loading={loading}
       >
-        <div className="flex flex-col flex-1 px-6 pb-0 h-full max-w-screen-xl mx-auto">
+        <div className="flex flex-col px-6 pb-0 h-full max-w-screen-xl mx-auto overflow-y-auto">
           <ConnectionList
-            className="mt-6 overflow-y-hidden"
+            className="flex flex-col h-full py-1 mt-6 overflow-y-auto"
             data={connections ?? []}
             isLoading={loading}
             onRowClick={(val) => {
@@ -155,7 +156,9 @@ export function ConnectionsPage() {
             isOpen={isOpen}
             setIsOpen={setIsOpen}
             onConnectionSubmit={onSubmit}
-            onConnectionDelete={onDelete}
+            onConnectionDelete={(data) => deleteConnection(data)}
+            isSubmitting={isSubmitting}
+            isDeleting={isDeleting}
             formValue={editedRow}
             key={editedRow?.id || "connection-form"}
           />

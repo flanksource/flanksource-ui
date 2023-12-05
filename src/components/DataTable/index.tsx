@@ -259,7 +259,7 @@ export function DataTable<TableColumns, Data extends TableColumns>({
     <div className="flex flex-col flex-1 overflow-y-auto space-y-2 w-full h-full">
       <div
         ref={tableContainerRef}
-        className={clsx("flex flex-col flex-1 overflow-y-auto", className)}
+        className={clsx("flex flex-col flex-1 overflow-y-auto")}
         {...rest}
         onScroll={(e) => {
           setScrollTop((e.target as HTMLDivElement).scrollTop);

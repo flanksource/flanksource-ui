@@ -1,7 +1,5 @@
 import clsx from "clsx";
-import React, { useCallback, useState } from "react";
-import { Oval } from "react-loading-icons";
-import { Icon } from "../Icon";
+import React from "react";
 
 type Props = {
   text?: React.ReactNode;
@@ -20,6 +18,7 @@ export function Button({
   type = "button",
   ...props
 }: Props) {
+  console.log(icon);
   switch (size) {
     case "xs":
       className += " px-2.5 py-1.5 text-xs rounded";
@@ -40,37 +39,15 @@ export function Button({
       className += " px-3 py-2 text-sm  leading-4 rounded-md ";
   }
 
-  const [_icon, setIcon] = useState<React.ReactElement>(
-    // @ts-ignore:next-line
-    React.isValidElement(icon) ? icon : <Icon icon={icon} />
-  );
-  const [_className, setClassName] = useState(className);
-
-  const handleOnClick: React.MouseEventHandler<HTMLButtonElement> = useCallback(
-    (e) => {
-      const oldIcon = _icon;
-      // setText("Updating...");
-      setClassName("btn-disabled");
-      setIcon(<Oval width="18px" height="18px" color="white" />);
-
-      Promise.resolve(onClick(e)).finally(() => {
-        // setText(oldText);
-        setIcon(oldIcon);
-        setClassName(className);
-      });
-    },
-    [_icon, className, onClick]
-  );
-
   return (
     <button
       disabled={disabled}
       type={type}
-      onClick={handleOnClick}
-      className={clsx(_className, "space-x-2")}
+      onClick={onClick}
+      className={clsx(className, "space-x-2")}
       {...props}
     >
-      {_icon != null && _icon}
+      {icon}
       {text && <span>{text}</span>}
     </button>
   );

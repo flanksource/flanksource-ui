@@ -12,6 +12,7 @@ import ConnectionListView from "./ConnectionListView";
 export type Connection = {
   altID?: string;
   authMethod?: string;
+  bucket?: string;
   certificate?: string;
   channel?: string;
   checkIntegrity?: boolean;
@@ -57,9 +58,11 @@ export type Connection = {
 type ConnectionFormProps = React.HTMLProps<HTMLDivElement> & {
   isOpen: boolean;
   setIsOpen: (val: boolean) => void;
-  onConnectionSubmit: (data: Connection) => Promise<any>;
-  onConnectionDelete: (data: Connection) => Promise<any>;
+  onConnectionSubmit: (data: Connection) => void;
+  onConnectionDelete: (data: Connection) => void;
   formValue?: Connection;
+  isSubmitting?: boolean;
+  isDeleting?: boolean;
 };
 
 export default function ConnectionFormModal({
@@ -68,7 +71,9 @@ export default function ConnectionFormModal({
   setIsOpen,
   onConnectionSubmit,
   onConnectionDelete,
-  formValue
+  formValue,
+  isSubmitting = false,
+  isDeleting = false
 }: ConnectionFormProps) {
   const [connectionType, setConnectionType] = useState<
     ConnectionType | undefined
@@ -121,6 +126,8 @@ export default function ConnectionFormModal({
             onConnectionDelete={onConnectionDelete}
             formValue={formValue}
             className={className}
+            isSubmitting={isSubmitting}
+            isDeleting={isDeleting}
           />
         ) : (
           <ConnectionListView setConnectionType={setConnectionType} />

@@ -73,7 +73,6 @@ export function ConnectionList({
         data={data}
         tableStyle={{ borderSpacing: "0" }}
         isLoading={isLoading}
-        style={{ maxHeight: "calc(100vh - 12rem)" }}
         preferencesKey="connections-list"
         savePreferences={false}
         handleRowClick={(row) => onRowClick?.(row.original)}
