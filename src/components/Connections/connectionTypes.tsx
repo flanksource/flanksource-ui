@@ -512,7 +512,6 @@ export const connectionTypes: ConnectionType[] = [
     },
     preSubmitConverter: (data: Record<string, string>) => {
       return {
-        ...data,
         name: data.name,
         namespace: data.namespace,
         url: data.host,
@@ -1715,7 +1714,7 @@ export const connectionTypes: ConnectionType[] = [
       ...commonConnectionFormFields,
       {
         label: "URL",
-        key: "username",
+        key: "url",
         type: ConnectionsFieldTypes.input,
         required: true
       },
@@ -1782,7 +1781,7 @@ export const connectionTypes: ConnectionType[] = [
         properties: {
           contentType: data.contentType,
           requestMethod: data.requestMethod,
-          message: data.message,
+          key: data.key,
           titleKey: data.titleKey
         }
       };
