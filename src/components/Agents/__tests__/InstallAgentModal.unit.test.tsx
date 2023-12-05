@@ -57,7 +57,9 @@ describe("InstallAgentModal", () => {
     ).toMatchInlineSnapshot(`
       "helm repo add flanksource https://flanksource.github.io/charts
       helm repo update
-      helm install mc-agent flanksource/mission-control-agent -n "mission-control-agent"  --create-namespace --set upstream.createSecret=true --set upstream.host=https://testurl.com --set upstream.username=testuser --set upstream.password=testtoken"
+      helm install mc-agent flanksource/mission-control-agent -n "mission-control-agent" --create-namespace --set upstream.createSecret=true --set upstream.host=https://testurl.com --set upstream.username=testuser --set upstream.password=testtoken
+
+      "
     `);
   });
 

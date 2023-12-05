@@ -3,13 +3,25 @@ import { AiFillPlusCircle } from "react-icons/ai";
 import AgentForm from "./AddAgentForm";
 import { GeneratedAgent } from "../../../api/services/agents";
 import InstallAgentModal from "../InstallAgentModal";
+import { useSearchParams } from "react-router-dom";
 
 type Props = {
   refresh: () => void;
 };
 
 export default function AddAgent({ refresh }: Props) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const isModalOpen = searchParams.get("addAgent") === "true";
+  const setIsModalOpen = (isOpen: boolean) => {
+    if (isOpen) {
+      searchParams.set("addAgent", isOpen.toString());
+    } else {
+      searchParams.delete("addAgent");
+    }
+    setSearchParams(searchParams);
+  };
+
   const [isInstallModalOpen, setIsInstallModalOpen] = useState(false);
   const [generatedAgent, setGeneratedAgent] = useState<GeneratedAgent>();
 
