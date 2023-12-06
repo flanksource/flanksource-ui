@@ -128,7 +128,7 @@ export const TopologyDropdownMenu = ({
                         ? () => setIsDownloadComponentSnapshotModalOpen(true)
                         : label === "Link to Incident"
                         ? () => setAttachAsAsset(true)
-                        : label === "Link to config"
+                        : label === "Link to catalog"
                         ? () => setLinkToConfig(true)
                         : undefined
                     }
