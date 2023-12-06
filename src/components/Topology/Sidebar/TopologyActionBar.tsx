@@ -187,7 +187,7 @@ export const topologyActionItems: Readonly<TopologyActionItem>[] = [
     }
   },
   {
-    label: "Link to config",
+    label: "Link to catalog",
     icon: BiLink,
     isShown: () => true,
     ContainerComponent: function Container({
@@ -239,7 +239,7 @@ export default function TopologyActionBar({
         return setIsDownloadComponentSnapshotModalOpen(true);
       case "Link to Incident":
         return setAttachAsAsset(true);
-      case "Link to config":
+      case "Link to catalog":
         return setLinkToConfig(true);
       default:
         break;
