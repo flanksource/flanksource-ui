@@ -1,22 +1,22 @@
 import clsx from "clsx";
+import { useAtom } from "jotai";
 import { useEffect, useState } from "react";
-import { VscJson } from "react-icons/vsc";
 import { TbTrash, TbTrashOff } from "react-icons/tb";
+import { VscJson } from "react-icons/vsc";
 import ReactTooltip from "react-tooltip";
+import { useComponentConfigRelationshipQuery } from "../../api/query-hooks/useComponentConfigRelationshipQuery";
 import { removeManualComponentConfigRelationship } from "../../api/services/configs";
+import { Badge } from "../Badge";
 import CollapsiblePanel from "../CollapsiblePanel";
 import ConfigLink from "../ConfigLink/ConfigLink";
+import { ConfirmationPromptDialog } from "../Dialogs/ConfirmationPromptDialog";
 import EmptyState from "../EmptyState";
-import Title from "../Title/title";
-import { Badge } from "../Badge";
 import { IconButton } from "../IconButton";
 import TextSkeletonLoader from "../SkeletonLoader/TextSkeletonLoader";
-import { BsTrash } from "react-icons/bs";
-import { toastSuccess, toastError } from "../Toast/toast";
-import { useComponentConfigRelationshipQuery } from "../../api/query-hooks/useComponentConfigRelationshipQuery";
-import { ConfirmationPromptDialog } from "../Dialogs/ConfirmationPromptDialog";
-import { useAtom } from "jotai";
 import { refreshButtonClickedTrigger } from "../SlidingSideBar";
+import Title from "../Title/title";
+import { toastError, toastSuccess } from "../Toast/toast";
+import TopologyConfigsActionsDropdown from "../Topology/Sidebar/Utils/TopologyConfigsActionsDropdown";
 
 type Props = {
   topologyId?: string;
@@ -96,21 +96,9 @@ export function ConfigsList({
                 />
               )}
               {topologyId && (
-                <div className="flex flex-row justify-end items-center">
-                  <IconButton
-                    className="bg-transparent flex items-center"
-                    ovalProps={{
-                      stroke: "blue",
-                      height: "18px",
-                      width: "18px",
-                      fill: "transparent"
-                    }}
-                    icon={<BsTrash />}
-                    onClick={() => {
-                      setDeletedConfigLinkId(config.id);
-                    }}
-                  />
-                </div>
+                <TopologyConfigsActionsDropdown
+                  onUnlinkUser={() => setDeletedConfigLinkId(config.id)}
+                />
               )}
             </li>
           ))}
