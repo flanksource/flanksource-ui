@@ -23,6 +23,7 @@ import HealthSpecEditor from "../SpecEditor/HealthSpecEditor";
 import { Button } from "../Button";
 import DeleteResource from "./Delete/DeleteResource";
 import { HealthCheckEdit } from "../Canary/HealthCheckEdit";
+import EditTopologyResource from "../Topology/Settings/EditTopologyResource";
 
 const CodeEditor = dynamic(
   () => import("../CodeEditor").then((m) => m.CodeEditor),
@@ -230,6 +231,13 @@ export function SchemaResourceEdit({
                           onSubmit={(val) => doSubmit(val)}
                           resourceInfo={resourceInfo}
                           resourceValue={defaultValues}
+                        />
+                      </div>
+                    ) : table === "topologies" ? (
+                      <div className="flex-col flex flex-1 overflow-y-auto">
+                        <EditTopologyResource
+                          onSuccess={() => {}}
+                          topologyResource={defaultValues as any}
                         />
                       </div>
                     ) : (

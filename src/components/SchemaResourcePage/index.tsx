@@ -3,6 +3,7 @@ import { BreadcrumbNav, BreadcrumbRoot } from "../BreadcrumbNav";
 import ErrorPage from "../Errors/ErrorPage";
 import { Head } from "../Head/Head";
 import { SearchLayout } from "../Layout";
+import AddTopologyResourceModal from "../Topology/Settings/AddTopologyResourceModal";
 import AddSchemaResourceModal from "./AddSchemaResourceModal";
 import { SchemaResourceList } from "./SchemaResourceList";
 import { SchemaResourceType } from "./resourceTypes";
@@ -29,13 +30,28 @@ export function SchemaResourcePage({
         title={
           <BreadcrumbNav
             list={[
-              <BreadcrumbRoot link={`/settings/${resourceInfo.table}`}>
+              <BreadcrumbRoot
+                key="root"
+                link={`/settings/${resourceInfo.table}`}
+              >
                 {name}
               </BreadcrumbRoot>,
-              <AddSchemaResourceModal
-                onClose={() => refetch()}
-                resourceInfo={resourceInfo!}
-              />
+              // for topology, we want to show the add topology resource modal,
+              // which supports being linked to directly via the url
+              ...(resourceInfo.name === "Topology"
+                ? [
+                    <AddTopologyResourceModal
+                      key={"add-resource"}
+                      onClose={() => refetch()}
+                    />
+                  ]
+                : [
+                    <AddSchemaResourceModal
+                      key={"add-resource"}
+                      onClose={() => refetch()}
+                      resourceInfo={resourceInfo!}
+                    />
+                  ])
             ]}
           />
         }
