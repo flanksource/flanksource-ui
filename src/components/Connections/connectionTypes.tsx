@@ -8,8 +8,10 @@ const enum ConnectionsFieldTypes {
   input = "input",
   numberInput = "numberInput",
   EnvVarSource = "EnvVarSource",
-  switch = "switch",
-  Authentication = "authentication"
+  SwitchField = "SwitchField",
+  ConnectionSwitch = "ConnectionSwitch",
+  Authentication = "authentication",
+  GroupField = "GroupField"
 }
 
 type Variant = "small" | "large";
@@ -28,6 +30,15 @@ export type ConnectionFormFields = {
   hint?: string;
   default?: boolean | number | string;
   hideLabel?: boolean;
+  switchFieldProps?: {
+    options: {
+      label: string;
+      key: string;
+    }[];
+  };
+  groupFieldProps?: {
+    fields: Omit<ConnectionFormFields, "groupFieldProps">[];
+  };
   options?: {
     label: string;
     key: string;
@@ -489,24 +500,26 @@ export const connectionTypes: ConnectionType[] = [
         label: "Port",
         key: "port",
         type: ConnectionsFieldTypes.input,
-        required: false
+        required: false,
+        default: 22
       }
     ],
     convertToFormSpecificValue: (data: Record<string, any>) => {
-      const regex = /(.+)?:(.+)?@(.+)?:(.+)/;
-      const result = data.url.replace("sftp://", "").match(regex) || [];
       return {
         ...data,
-        username: result[1],
-        password: result[2],
-        host: result[3],
-        port: result[4]
+        port: data.properties?.port ?? 4
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
       return {
         name: data.name,
-        url: `sftp://${data.username}:${data.password}@${data.host}:${data.port}`
+        namespace: data.namespace,
+        url: data.host,
+        username: data.username,
+        password: data.password,
+        properties: {
+          port: data.port
+        }
       };
     }
   },
@@ -954,17 +967,37 @@ export const connectionTypes: ConnectionType[] = [
     fields: [
       ...commonConnectionFormFields,
       {
+        label: "Host",
+        key: "host",
+        type: ConnectionsFieldTypes.GroupField,
+        groupFieldProps: {
+          fields: [
+            {
+              label: "Host",
+              key: "host",
+              type: ConnectionsFieldTypes.input,
+              required: true
+            },
+            {
+              label: "Port",
+              key: "port",
+              type: ConnectionsFieldTypes.numberInput,
+              required: true,
+              default: 587
+            }
+          ]
+        }
+      },
+      {
         label: "Username",
         key: "username",
-        type: ConnectionsFieldTypes.input,
-        required: true
+        type: ConnectionsFieldTypes.EnvVarSource
       },
       {
         label: "Password",
         key: "password",
         hint: "SMTP server password or hash (for OAuth2)",
-        type: ConnectionsFieldTypes.EnvVarSource,
-        required: true
+        type: ConnectionsFieldTypes.EnvVarSource
       },
       {
         label: "From Address",
@@ -979,31 +1012,60 @@ export const connectionTypes: ConnectionType[] = [
         required: true
       },
       {
-        label: "Host",
-        key: "host",
-        type: ConnectionsFieldTypes.input,
-        required: true
-      },
-      {
-        label: "Port",
-        key: "port",
-        type: ConnectionsFieldTypes.numberInput,
-        default: 25,
-        required: true
-      },
-      {
         label: "Encryption method",
         key: "encryptionMethod",
-        type: ConnectionsFieldTypes.input,
-        hint: "None, ExplicitTLS, ImplicitTLS, Auto (default)",
+        type: ConnectionsFieldTypes.SwitchField,
+        switchFieldProps: {
+          options: [
+            {
+              label: "None",
+              key: "None"
+            },
+            {
+              label: "ExplicitTLS",
+              key: "ExplicitTLS"
+            },
+            {
+              label: "ImplicitTLS",
+              key: "ImplicitTLS"
+            },
+            {
+              label: "Auto (default)",
+              key: "Auto"
+            }
+          ]
+        },
         default: "Auto",
         required: true
       },
       {
         label: "SMTP authentication method",
         key: "authMethod",
-        type: ConnectionsFieldTypes.input,
-        hint: "None, Plain, CRAMMD5, Unknown, OAuth2",
+        type: ConnectionsFieldTypes.SwitchField,
+        switchFieldProps: {
+          options: [
+            {
+              label: "None",
+              key: "None"
+            },
+            {
+              label: "Plain",
+              key: "Plain"
+            },
+            {
+              label: "CRAMMD5",
+              key: "CRAMMD5"
+            },
+            {
+              label: "Unknown",
+              key: "Unknown"
+            },
+            {
+              label: "OAuth2",
+              key: "OAuth2"
+            }
+          ]
+        },
         default: "Unknown",
         required: true
       },
@@ -1652,7 +1714,7 @@ export const connectionTypes: ConnectionType[] = [
       ...commonConnectionFormFields,
       {
         label: "URL",
-        key: "username",
+        key: "url",
         type: ConnectionsFieldTypes.input,
         required: true
       },
@@ -1665,8 +1727,20 @@ export const connectionTypes: ConnectionType[] = [
       {
         label: "Request Method",
         key: "requestMethod",
-        type: ConnectionsFieldTypes.input,
+        type: ConnectionsFieldTypes.SwitchField,
         default: "POST",
+        switchFieldProps: {
+          options: [
+            {
+              label: "POST",
+              key: "POST"
+            },
+            {
+              label: "GET",
+              key: "GET"
+            }
+          ]
+        },
         required: true
       },
       {
@@ -1707,7 +1781,7 @@ export const connectionTypes: ConnectionType[] = [
         properties: {
           contentType: data.contentType,
           requestMethod: data.requestMethod,
-          message: data.message,
+          key: data.key,
           titleKey: data.titleKey
         }
       };
@@ -1728,7 +1802,7 @@ export const connectionTypes: ConnectionType[] = [
       {
         label: "Authentication",
         key: "authentication",
-        type: ConnectionsFieldTypes.switch,
+        type: ConnectionsFieldTypes.ConnectionSwitch,
         default: "password",
         options: [
           {
