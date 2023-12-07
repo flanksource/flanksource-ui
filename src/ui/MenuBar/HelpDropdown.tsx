@@ -1,34 +1,7 @@
 import { Menu, Transition } from "@headlessui/react";
 import { Fragment } from "react";
-import { IoIosChatbubbles } from "react-icons/io";
 import { IoHelpOutline } from "react-icons/io5";
-import { useIntercom } from "react-use-intercom";
 import { ClickableSvg } from "../../components/ClickableSvg/ClickableSvg";
-
-const isIntercomSetup = !!process.env.NEXT_PUBLIC_INTERCOM_APP_ID;
-
-function IntercomButton() {
-  const { boot, update } = useIntercom();
-
-  const showIntercom = () => {
-    boot();
-    update({
-      hideDefaultLauncher: false
-    });
-  };
-
-  return (
-    <Menu.Item>
-      <button
-        onClick={() => showIntercom()}
-        className="block py-2 px-4 space-x-2 text-sm text-gray-700  hover:bg-gray-50 hover:text-gray-900 border-0 border-b border-gray-200"
-      >
-        <IoIosChatbubbles size={20} className="inline-block" />
-        <span>Chat</span>
-      </button>
-    </Menu.Item>
-  );
-}
 
 export function HelpDropdown() {
   return (
@@ -61,7 +34,6 @@ export function HelpDropdown() {
               <span>Docs</span>
             </a>
           </Menu.Item>
-          {isIntercomSetup && <IntercomButton />}
         </Menu.Items>
       </Transition>
     </Menu>
