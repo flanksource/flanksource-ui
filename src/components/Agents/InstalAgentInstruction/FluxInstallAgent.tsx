@@ -64,9 +64,9 @@ spec:
         kind: HelmRepository
         name: flanksource
         namespace: mission-control
-      interval: ${kubeOptions?.interval}
   values:
     clusterName: ${agentFormValues?.name}
+    interval: ${kubeOptions?.interval}
   `;
 
   return (
