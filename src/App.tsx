@@ -69,6 +69,7 @@ import PlaybookRunsDetailsPage from "./pages/playbooks/PlaybookRunsDetails";
 import { PlaybooksListPage } from "./pages/playbooks/PlaybooksList";
 import { features } from "./services/permissions/features";
 import { stringSortHelper } from "./utils/common";
+import { Head } from "./components/Head/Head";
 
 export type NavigationItems = {
   name: string;
@@ -498,17 +499,20 @@ export function CanaryCheckerApp() {
   }
 
   return (
-    <BrowserRouter>
-      <Provider>
-        <FeatureFlagsContextProvider>
-          <HealthPageContextProvider>
-            <ReactTooltip />
-            <Canary url="/api/canary/api/summary" />
-            <ReactQueryDevtools initialIsOpen={false} />
-          </HealthPageContextProvider>
-        </FeatureFlagsContextProvider>
-      </Provider>
-    </BrowserRouter>
+    <>
+      <Head prefix={"Canary Checker"} suffix="" />
+      <BrowserRouter>
+        <Provider>
+          <FeatureFlagsContextProvider>
+            <HealthPageContextProvider>
+              <ReactTooltip />
+              <Canary url="/api/canary/api/summary" />
+              <ReactQueryDevtools initialIsOpen={false} />
+            </HealthPageContextProvider>
+          </FeatureFlagsContextProvider>
+        </Provider>
+      </BrowserRouter>
+    </>
   );
 }
 
@@ -542,26 +546,29 @@ function SidebarWrapper() {
 
 export function App() {
   return (
-    <BrowserRouter>
-      <Provider>
-        <AuthProviderWrapper>
-          <SetupIntercom>
-            <UserAccessStateContextProvider>
-              <FeatureFlagsContextProvider>
-                <HealthPageContextProvider>
-                  <ConfigPageContextProvider>
-                    <IncidentPageContextProvider>
-                      <ReactTooltip />
-                      <IncidentManagerRoutes sidebar={<SidebarWrapper />} />
-                      <ReactQueryDevtools initialIsOpen={false} />
-                    </IncidentPageContextProvider>
-                  </ConfigPageContextProvider>
-                </HealthPageContextProvider>
-              </FeatureFlagsContextProvider>
-            </UserAccessStateContextProvider>
-          </SetupIntercom>
-        </AuthProviderWrapper>
-      </Provider>
-    </BrowserRouter>
+    <>
+      <Head prefix={"Home"} />
+      <BrowserRouter>
+        <Provider>
+          <AuthProviderWrapper>
+            <SetupIntercom>
+              <UserAccessStateContextProvider>
+                <FeatureFlagsContextProvider>
+                  <HealthPageContextProvider>
+                    <ConfigPageContextProvider>
+                      <IncidentPageContextProvider>
+                        <ReactTooltip />
+                        <IncidentManagerRoutes sidebar={<SidebarWrapper />} />
+                        <ReactQueryDevtools initialIsOpen={false} />
+                      </IncidentPageContextProvider>
+                    </ConfigPageContextProvider>
+                  </HealthPageContextProvider>
+                </FeatureFlagsContextProvider>
+              </UserAccessStateContextProvider>
+            </SetupIntercom>
+          </AuthProviderWrapper>
+        </Provider>
+      </BrowserRouter>
+    </>
   );
 }
