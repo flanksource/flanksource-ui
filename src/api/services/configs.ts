@@ -1,3 +1,4 @@
+import { AnyMessageParams } from "yup/lib/types";
 import { Config, ConfigDB, IncidentCommander } from "../axios";
 import { resolve } from "../resolve";
 import { PaginationInfo } from "../types/common";
@@ -215,7 +216,8 @@ export const deleteConfigItem = (id: string) =>
 
 // Saved Queries
 
-export const getAllSavedQueries = () => resolve(ConfigDB.get(`/saved_query`));
+export const getAllSavedQueries = () =>
+  resolve(ConfigDB.get<AnyMessageParams>(`/saved_query`));
 
 export const getSavedQuery = (id: string) =>
   resolve(ConfigDB.get(`/saved_query?id=eq.${id}`));

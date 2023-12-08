@@ -107,7 +107,7 @@ const QueryBuilderFC: React.FC<QueryBuilderProps> = ({
   const fetchQueries = async () => {
     setLoading(true);
     try {
-      const result = await getAllSavedQueries();
+      const result = (await getAllSavedQueries()) as any;
       setQueryList(result?.data || []);
       setSelectedQuery(undefined);
     } catch (ex: any) {
