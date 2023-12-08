@@ -1,17 +1,30 @@
 import { useState } from "react";
 import { AiFillPlusCircle } from "react-icons/ai";
-import AgentForm from "./AddAgentForm";
+import AgentForm, { AgentFormValues } from "./AddAgentForm";
 import { GeneratedAgent } from "../../../api/services/agents";
-import InstallAgentModal from "../InstallAgentModal";
+import InstallAgentModal from "../InstalAgentInstruction/InstallAgentModal";
+import { useSearchParams } from "react-router-dom";
 
 type Props = {
   refresh: () => void;
 };
 
 export default function AddAgent({ refresh }: Props) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const isModalOpen = searchParams.get("addAgent") === "true";
+  const setIsModalOpen = (isOpen: boolean) => {
+    if (isOpen) {
+      searchParams.set("addAgent", isOpen.toString());
+    } else {
+      searchParams.delete("addAgent");
+    }
+    setSearchParams(searchParams);
+  };
+
   const [isInstallModalOpen, setIsInstallModalOpen] = useState(false);
   const [generatedAgent, setGeneratedAgent] = useState<GeneratedAgent>();
+  const [agentFormValues, setAgentFormValues] = useState<AgentFormValues>();
 
   return (
     <>
@@ -25,8 +38,9 @@ export default function AddAgent({ refresh }: Props) {
           refresh();
           return setIsModalOpen(false);
         }}
-        onSuccess={(agent) => {
+        onSuccess={(agent, formValues) => {
           setGeneratedAgent(agent);
+          setAgentFormValues(formValues);
           setIsModalOpen(false);
           setIsInstallModalOpen(true);
         }}
@@ -36,6 +50,7 @@ export default function AddAgent({ refresh }: Props) {
           isOpen={isInstallModalOpen}
           onClose={() => setIsInstallModalOpen(false)}
           generatedAgent={generatedAgent}
+          agentFormValues={agentFormValues}
         />
       )}
     </>

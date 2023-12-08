@@ -112,6 +112,7 @@ export function ConfigDetailsChanges({
           <div className="flex flex-row w-full gap-4">
             {properties.map((p) => (
               <div
+                key={p.label}
                 className={clsx(
                   "flex flex-col w-auto py-4 text-left gap-2",
                   p.label === "Source" ? "flex-1" : ""
@@ -193,13 +194,17 @@ export function ConfigDetailChangeModal({
         config && (
           <ModalTitleListItems
             items={[
-              <div className="flex flex-row gap-1 flex-shrink items-center">
+              <div
+                key={"config-details"}
+                className="flex flex-row gap-1 flex-shrink items-center"
+              >
                 <div className="block w-6 h-auto">
                   <ChangeIcon change={changeDetails} />
                 </div>
                 <span> {changeDetails?.change_type}</span>
               </div>,
               <ConfigLink
+                key={"config-link"}
                 className="text-blue-600 text-xl font-semibold whitespace-nowrap overflow-hidden overflow-ellipsis"
                 config={config}
               />

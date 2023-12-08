@@ -125,6 +125,7 @@ export function JSONViewer({
               return (
                 <JSONViewerLine
                   {...props}
+                  key={props.key}
                   style={{
                     ...style,
                     display: showLineNo ? "table-row" : "block",
