@@ -109,7 +109,19 @@ export function getCanaryTableColumns({
       cell: ({ getValue, row }: CellContext<HealthCheck, any>) => {
         if (row.getCanExpand()) {
           const subRows = row.subRows;
-          const passed = subRows.filter((r) => r.original.uptime.passed).length;
+          // we want to take those with only uptime passed, and leave out those
+          // with uptime failed
+          const passed = subRows.filter((subRow) => {
+            const value = subRow.original.uptime;
+            if (!value) {
+              return false;
+            }
+            const uptime = value.passed / (value.passed + value.failed);
+            if (uptime === 1) {
+              return true;
+            }
+            return false;
+          }).length;
 
           return (
             <>
