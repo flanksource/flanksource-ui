@@ -13,16 +13,24 @@ import TrivyConfigsFormEditor from "../Forms/Configs/TrivyConfigsFormEditor";
 import { SchemaResourceType } from "../SchemaResourcePage/resourceTypes";
 import SpecEditor, { SpecType } from "./SpecEditor";
 
+const resourceInfo: Pick<SchemaResourceType, "api" | "table" | "name"> = {
+  name: "Catalog Scraper",
+  api: "config-db",
+  table: "config_scrapers"
+};
+
 type ConfigScrapperSpecEditorProps = {
   resourceValue?: Record<string, any>;
   onSubmit?: (spec: Record<string, any>) => void;
-  resourceInfo: SchemaResourceType;
+  onBack?: () => void;
+  onDeleted?: () => void;
 };
 
 export default function ConfigScrapperSpecEditor({
   resourceValue,
   onSubmit = () => {},
-  resourceInfo
+  onBack,
+  onDeleted = () => {}
 }: ConfigScrapperSpecEditorProps) {
   const configTypes: SpecType[] = useMemo(
     () =>
@@ -212,11 +220,12 @@ export default function ConfigScrapperSpecEditor({
     [onSubmit, resourceValue]
   );
 
-  // there should only be one spec, so we can just grab the first key that isn't schedule
+  // there should only be one spec, so we can just grab the first key that isn't
+  // schedule, otherwise we'll just use custom
   const selectedSpec = resourceValue?.spec
     ? Object.keys(resourceValue?.spec).filter(
         (key) => key !== "schedule" && key !== "retention"
-      )[0]
+      )[0] ?? "custom"
     : undefined;
 
   const configCantEditMessage = useMemo(() => {
@@ -243,6 +252,8 @@ export default function ConfigScrapperSpecEditor({
       selectedSpec={selectedSpec}
       canEdit={canEdit}
       cantEditMessage={configCantEditMessage}
+      onBack={onBack}
+      onDeleted={onDeleted}
     />
   );
 }

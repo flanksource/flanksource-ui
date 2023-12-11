@@ -13,6 +13,7 @@ import { Tab, Tabs } from "../Tabs/Tabs";
 import FormikAutocompleteDropdown from "./Formik/FormikAutocompleteDropdown";
 import { FormikCodeEditor } from "./Formik/FormikCodeEditor";
 import FormikIconPicker from "./Formik/FormikIconPicker";
+import FormikKeyValueMapField from "./Formik/FormikKeyValueMapField";
 import FormikTextInput from "./Formik/FormikTextInput";
 
 type SpecEditorFormProps = {
@@ -21,9 +22,10 @@ type SpecEditorFormProps = {
   onBack: () => void;
   specFormat: "yaml" | "json";
   selectedSpec: SpecType;
-  resourceInfo: SchemaResourceType;
+  resourceInfo: Pick<SchemaResourceType, "api" | "table" | "name">;
   canEdit?: boolean;
   cantEditMessage?: React.ReactNode;
+  onDeleted: () => void;
 };
 
 export default function SpecEditorForm({
@@ -34,7 +36,8 @@ export default function SpecEditorForm({
   specFormat = "yaml",
   selectedSpec,
   canEdit = false,
-  cantEditMessage
+  cantEditMessage,
+  onDeleted = () => {}
 }: SpecEditorFormProps) {
   const formRef = useRef<HTMLFormElement>(null);
   const [activeTabs, setActiveTabs] = useState<"Form" | "Code">(
@@ -70,6 +73,9 @@ export default function SpecEditorForm({
     name: undefined,
     ...(isFieldSupportedByResourceType("namespace") && {
       namespace: "default"
+    }),
+    ...(isFieldSupportedByResourceType("source") && {
+      source: "UI"
     }),
     spec: {},
     ...(loadSpec ? loadSpec() : {})
@@ -107,7 +113,7 @@ export default function SpecEditorForm({
           className="flex flex-col flex-1 overflow-y-auto space-y-4"
           ref={formRef}
         >
-          <div className="flex flex-col flex-1 overflow-y-auto space-y-4 p-4">
+          <div className="flex flex-col flex-1 overflow-y-auto space-y-4 px-4 py-4">
             <div className="flex flex-col space-y-2">
               {isFieldSupportedByResourceType("name") && (
                 <FormikTextInput name="name" label="Name" required />
@@ -116,14 +122,19 @@ export default function SpecEditorForm({
                 <FormikIconPicker name="icon" label="Icon" />
               )}
               {isFieldSupportedByResourceType("labels") && (
-                <div className="flex flex-col space-y-2">
-                  <label className="form-label">Labels</label>
-                  <FormikCodeEditor
-                    fieldName="labels"
-                    format="json"
-                    className="h-[100px]"
-                  />
-                </div>
+                <FormikKeyValueMapField
+                  name="labels"
+                  label="Labels"
+                  outputJson
+                />
+              )}
+              {isFieldSupportedByResourceType("source") && (
+                <FormikTextInput
+                  name="source"
+                  label="Source"
+                  required
+                  readOnly
+                />
               )}
               {isFieldSupportedByResourceType("schedule") && (
                 <FormikAutocompleteDropdown
@@ -227,6 +238,7 @@ export default function SpecEditorForm({
                 <DeleteResource
                   resourceId={initialValues.id}
                   resourceInfo={resourceInfo}
+                  onDeleted={onDeleted}
                 />
               )}
 

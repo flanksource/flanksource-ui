@@ -1,3 +1,5 @@
+import { SchemaResourceI } from "@flanksource-ui/api/schemaResources";
+import { Button } from "@flanksource-ui/ui/Button";
 import clsx from "clsx";
 import { identity, pickBy } from "lodash";
 import dynamic from "next/dynamic";
@@ -5,8 +7,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { v4 } from "uuid";
 import YAML from "yaml";
-import { SchemaResourceI } from "../../api/schemaResources";
-import { Button } from "../../ui/Button";
 import AutoCompleteDropdown from "../AutoCompleteDropdown/AutoCompleteDropdown";
 import { HealthCheckEdit } from "../Canary/HealthCheckEdit";
 import { Head } from "../Head/Head";
@@ -17,7 +17,6 @@ import HealthSpecEditor from "../SpecEditor/HealthSpecEditor";
 import { Tab, Tabs } from "../Tabs/Tabs";
 import { TeamMembers } from "../TeamMembers/TeamMembers";
 import { TextInput } from "../TextInput";
-import EditTopologyResource from "../Topology/Settings/EditTopologyResource";
 import DeleteResource from "./Delete/DeleteResource";
 import {
   SchemaResourceJobsTab,
@@ -217,15 +216,7 @@ export function SchemaResourceEdit({
               >
                 <div className="flex flex-col flex-1 bg-white overflow-y-auto">
                   {hasSubNav("spec") &&
-                    (table === "config_scrapers" ? (
-                      <div className="flex-col flex flex-1 overflow-y-auto">
-                        <ConfigScrapperSpecEditor
-                          onSubmit={(val) => doSubmit(val)}
-                          resourceInfo={resourceInfo}
-                          resourceValue={defaultValues}
-                        />
-                      </div>
-                    ) : table === "canaries" && !source ? (
+                    (table === "canaries" && !source ? (
                       <div className="flex-col flex flex-1 overflow-y-auto">
                         <HealthSpecEditor
                           onSubmit={(val) => doSubmit(val)}
@@ -233,11 +224,16 @@ export function SchemaResourceEdit({
                           resourceValue={defaultValues}
                         />
                       </div>
-                    ) : table === "topologies" ? (
+                    ) : table === "config_scrapers" ? (
                       <div className="flex-col flex flex-1 overflow-y-auto">
-                        <EditTopologyResource
-                          onSuccess={() => {}}
-                          topologyResource={defaultValues as any}
+                        <ConfigScrapperSpecEditor
+                          onSubmit={(val) => doSubmit(val)}
+                          resourceValue={defaultValues}
+                          onDeleted={() => {
+                            if (onCancel) {
+                              onCancel();
+                            }
+                          }}
                         />
                       </div>
                     ) : (
@@ -451,6 +447,11 @@ export function SchemaResourceEdit({
                               <DeleteResource
                                 resourceId={id}
                                 resourceInfo={resourceInfo}
+                                onDeleted={() => {
+                                  if (onCancel) {
+                                    onCancel();
+                                  }
+                                }}
                               />
                             )}
 

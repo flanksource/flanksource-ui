@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { Formik, Form } from "formik";
+import { Form, Formik } from "formik";
 import FormikKeyValueMapField from "./../FormikKeyValueMapField";
 
 describe("FormikKeyValueMapField", () => {
@@ -118,6 +118,50 @@ describe("FormikKeyValueMapField", () => {
             newKey: "newValue",
             key2: "value2"
           }
+        },
+        expect.anything()
+      );
+    });
+  });
+
+  // support for JSON
+  it("updates the formik values when a key or value is changed and json is true", async () => {
+    const onSubmit = jest.fn();
+    render(
+      <Formik initialValues={initialValues} onSubmit={onSubmit}>
+        <Form>
+          <FormikKeyValueMapField name="myMap" label="My Map" outputJson />
+          <button type="submit">Submit</button>
+        </Form>
+      </Formik>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByDisplayValue("key1")).toBeInTheDocument();
+    });
+
+    const keyInput = screen.getByDisplayValue("key1");
+    fireEvent.change(keyInput, {
+      target: {
+        value: "newKey"
+      }
+    });
+    const valueInput = screen.getByDisplayValue("value1");
+    fireEvent.change(valueInput, {
+      target: {
+        value: "newValue"
+      }
+    });
+    const submitButton = screen.getByText("Submit");
+    userEvent.click(submitButton);
+
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledWith(
+        {
+          myMap: JSON.stringify({
+            newKey: "newValue",
+            key2: "value2"
+          })
         },
         expect.anything()
       );

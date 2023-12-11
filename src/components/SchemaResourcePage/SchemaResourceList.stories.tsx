@@ -21,6 +21,7 @@ const Template: ComponentStory<typeof SchemaResourceList> = (arg: any) => (
 );
 
 const genItem = (suffix: string): SchemaResourceWithJobStatus => ({
+  integration_type: "scrapers",
   name: `item ${suffix}`,
   spec: { a: suffix, b: 2 },
   created_at: "asd",

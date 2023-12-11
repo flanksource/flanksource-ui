@@ -1,6 +1,6 @@
 import { useMemo } from "react";
-import { JobHistoryStatus, classNameMaps } from "./JobsHistoryTable";
 import { FaDotCircle } from "react-icons/fa";
+import { JobHistoryStatus, classNameMaps } from "./JobsHistoryTable";
 
 type Props = {
   status?: JobHistoryStatus;
@@ -20,7 +20,7 @@ export default function JobHistoryStatusColumn({ status, onClick }: Props) {
 
   return (
     <div
-      className="flex flex-row gap-1 items-center"
+      className="flex flex-row gap-1 items-center lowercase"
       role="button"
       onClick={(e) => {
         if (!onClick) {

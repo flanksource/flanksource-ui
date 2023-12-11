@@ -21,13 +21,15 @@ type HealthSpecEditorProps = {
     [key: string]: any;
   };
   onSubmit?: (spec: Record<string, any>) => void;
+  onDeleted?: () => void;
   resourceInfo: SchemaResourceType;
 };
 
 export default function HealthSpecEditor({
   resourceValue,
   onSubmit = () => {},
-  resourceInfo
+  resourceInfo,
+  onDeleted
 }: HealthSpecEditorProps) {
   const configTypes: SpecType[] = useMemo(
     () =>
@@ -487,18 +489,23 @@ export default function HealthSpecEditor({
     [onSubmit, resourceValue]
   );
 
-  // there should only be one spec, so we can just grab the first key that isn't schedule
-  const selectedSpec = resourceValue?.spec
-    ? Object.keys(resourceValue?.spec).filter((key) => key !== "schedule")[0]
-    : undefined;
+  // there should only be one spec, so we can just grab the first key that isn't
+  // schedule, otherwise we'll just use custom
+  const selectedSpec =
+    (resourceValue?.spec
+      ? Object.keys(resourceValue?.spec).filter((key) => key !== "schedule")[0]
+      : undefined) ?? undefined;
 
   const canEdit = !!!resourceValue?.source;
 
+  console.log("resourceValue", resourceValue);
+
   return (
     <SpecEditor
+      onDeleted={onDeleted}
       types={configTypes}
       format="yaml"
-      selectedSpec={selectedSpec}
+      selectedSpec={resourceValue?.id ? selectedSpec ?? "custom" : undefined}
       resourceInfo={resourceInfo}
       canEdit={canEdit}
     />

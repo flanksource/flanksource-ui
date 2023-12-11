@@ -39,7 +39,14 @@ export type SchemaResourceType = {
     value: string;
   }[];
   fields: {
-    name: "name" | "spec" | "icon" | "labels" | "namespace" | "schedule";
+    name:
+      | "name"
+      | "spec"
+      | "icon"
+      | "labels"
+      | "namespace"
+      | "schedule"
+      | "source";
     default?: any;
     hidden?: boolean;
   }[];
@@ -138,6 +145,11 @@ export const schemaResourceTypes: SchemaResourceType[] = [
     fields: [
       {
         name: "name",
+        default: undefined,
+        hidden: false
+      },
+      {
+        name: "source",
         default: undefined,
         hidden: false
       },

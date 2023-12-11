@@ -14,7 +14,7 @@ export default function EditTopologyResource({
   isModal = false
 }: EditTopologyResourceProps) {
   return (
-    <div className="flex flex-col flex-1 p-2">
+    <div className="flex flex-col flex-1 p-2 overflow-y-clip">
       <TopologyResourceForm
         isModal={isModal}
         onSuccess={onSuccess}

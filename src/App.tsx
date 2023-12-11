@@ -26,6 +26,8 @@ import { ErrorBoundary } from "./components/ErrorBoundary";
 import { Head } from "./components/Head/Head";
 import { LogsIcon } from "./components/Icons/LogsIcon";
 import { TopologyIcon } from "./components/Icons/TopologyIcon";
+import EditIntegrationPage from "./components/Integrations/EditIntegrationPage";
+import IntegrationsPage from "./components/Integrations/IntegrationsPage";
 import BootIntercom from "./components/Intercom/BootIntercom";
 import JobsHistorySettingsPage from "./components/JobsHistory/JobsHistorySettingsPage";
 import { SidebarLayout } from "./components/Layout";
@@ -59,7 +61,6 @@ import {
 import { ConnectionsPage } from "./pages/Settings/ConnectionsPage";
 import { EventQueueStatusPage } from "./pages/Settings/EventQueueStatus";
 import { FeatureFlagsPage } from "./pages/Settings/FeatureFlagsPage";
-import { LogBackendsPage } from "./pages/Settings/LogBackendsPage";
 import { TopologyCardPage } from "./pages/TopologyCard";
 import { UsersPage } from "./pages/UsersPage";
 import { ConfigInsightsPage } from "./pages/config/ConfigInsightsList";
@@ -211,6 +212,13 @@ const settingsNav: SettingsNavigationItems = {
       featureName: features.agents,
       resourceName: tables.database
     }
+    // {
+    //   name: "Integrations",
+    //   href: "/settings/integrations",
+    //   icon: MdOutlineIntegrationInstructions,
+    //   featureName: features["settings.integrations"],
+    //   resourceName: tables.database
+    // }
   ].sort((v1, v2) => stringSortHelper(v1.name, v2.name))
 };
 
@@ -353,14 +361,6 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             "read"
           )}
         />
-        <Route
-          path="log-backends"
-          element={withAccessCheck(
-            <LogBackendsPage />,
-            tables.database,
-            "read"
-          )}
-        />
 
         <Route
           path="event-queue-status"
@@ -376,6 +376,14 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             index
             element={withAccessCheck(<AgentsPage />, tables.agents, "read")}
           />
+        </Route>
+
+        <Route path="integrations">
+          <Route index element={<IntegrationsPage />} />
+
+          <Route path=":type" caseSensitive>
+            <Route path=":id" element={<EditIntegrationPage />} />
+          </Route>
         </Route>
 
         {settingsNav.submenu

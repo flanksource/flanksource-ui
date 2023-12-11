@@ -67,7 +67,6 @@ export default function NotificationsForm({
                       name: "Notifications",
                       api: "config-db"
                     }}
-                    isModal
                     onDeleted={onDeleted}
                   />
                 )}

@@ -1,8 +1,8 @@
+import { useSettingsCreateResource } from "@flanksource-ui/api/query-hooks/mutations/useSettingsResourcesMutations";
+import { Modal } from "@flanksource-ui/ui/Modal";
 import { useState } from "react";
 import { AiFillPlusCircle } from "react-icons/ai";
-import { useSettingsCreateResource } from "../../api/query-hooks/mutations/useSettingsResourcesMutations";
-import { Modal } from "../../ui/Modal";
-import ConfigScrapperSpecEditor from "../SpecEditor/ConfigScrapperSpecEditor";
+import AddIntegrationModal from "../Integrations/Add/AddIntegrationModal";
 import HealthSpecEditor from "../SpecEditor/HealthSpecEditor";
 import { SchemaResourceEdit } from "./SchemaResourceEdit";
 import { SchemaResourceType } from "./resourceTypes";
@@ -25,6 +25,14 @@ export default function AddSchemaResourceModal({
     }
   );
 
+  if (
+    resourceInfo.table === "config_scrapers" ||
+    resourceInfo.table === "topologies" ||
+    resourceInfo.table === "logging_backends"
+  ) {
+    return <AddIntegrationModal refresh={onClose} />;
+  }
+
   return (
     <>
       <button type="button" className="" onClick={() => setModalIsOpen(true)}>
@@ -41,12 +49,7 @@ export default function AddSchemaResourceModal({
         size="full"
         title={`Add ${resourceInfo.name}`}
       >
-        {resourceInfo.table === "config_scrapers" ? (
-          <ConfigScrapperSpecEditor
-            onSubmit={(val) => createResource(val)}
-            resourceInfo={resourceInfo}
-          />
-        ) : resourceInfo.table === "canaries" ? (
+        {resourceInfo.table === "canaries" ? (
           <HealthSpecEditor
             onSubmit={(val) => createResource(val)}
             resourceInfo={resourceInfo}

@@ -50,7 +50,7 @@ export default function FormikConfigFormFieldsArray({
             {fieldValue &&
               fieldValue.length > 0 &&
               fieldValue.map((_: any, index: number) => (
-                <div className={className}>
+                <div className={className} key={index}>
                   {fields.length > 0 &&
                     fields.map(
                       ({
@@ -60,6 +60,7 @@ export default function FormikConfigFormFieldsArray({
                         className
                       }) => (
                         <Field
+                          key={fieldName}
                           name={
                             fields.length > 1
                               ? `${name}.${index}.${fieldName}`

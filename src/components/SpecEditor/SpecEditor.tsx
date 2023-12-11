@@ -1,8 +1,10 @@
+import { Button } from "@flanksource-ui/ui/Button";
+import { modalHelpLinkAtom } from "@flanksource-ui/ui/Modal";
 import { useAtom } from "jotai";
 import React, { useEffect, useState } from "react";
-import { modalHelpLinkAtom } from "../../ui/Modal";
 import SpecEditorForm from "../Forms/SpecEditorForm";
 import { Icon } from "../Icon";
+import { integrationsModalSubTitle } from "../Integrations/Add/AddIntegrationModal";
 import { SchemaResourceType } from "../SchemaResourcePage/resourceTypes";
 
 export type SpecTypeCommonFields = {
@@ -50,10 +52,12 @@ export type SpecType = SpecTypeInputForm | SpecTypeCode | SpecTypeCustom;
 type SpecEditorProps = {
   types: SpecType[];
   format?: "json" | "yaml";
-  resourceInfo: SchemaResourceType;
+  resourceInfo: Pick<SchemaResourceType, "api" | "table" | "name">;
   selectedSpec?: string;
   canEdit?: boolean;
   cantEditMessage?: React.ReactNode;
+  onBack?: () => void;
+  onDeleted?: () => void;
 };
 
 export default function SpecEditor({
@@ -62,9 +66,12 @@ export default function SpecEditor({
   resourceInfo,
   selectedSpec,
   canEdit = false,
-  cantEditMessage
+  cantEditMessage,
+  onBack,
+  onDeleted = () => {}
 }: SpecEditorProps) {
   const [, setModalHelpLink] = useAtom(modalHelpLinkAtom);
+  const [, setIntegrationsModalSubTitle] = useAtom(integrationsModalSubTitle);
 
   const [selectedSpecItem, setSelectedSpecItem] = useState<
     SpecType | undefined
@@ -107,30 +114,44 @@ export default function SpecEditor({
             resourceInfo={resourceInfo}
             canEdit={canEdit}
             cantEditMessage={cantEditMessage}
+            onDeleted={onDeleted}
           />
         </div>
       ) : (
-        <div className="flex flex-wrap p-2">
-          {types.map((type) => (
-            <div key={type.name} className="flex flex-col w-1/5 p-2">
-              <div
-                onClick={() => {
-                  setSelectedSpecItem(type);
-                  setModalHelpLink(type.docsLink);
-                }}
-                role={"button"}
-                className="flex flex-col items-center space-y-2 justify-center p-2 border border-gray-300 hover:border-blue-200 hover:bg-gray-100 rounded-md text-center h-20"
-                key={type.name}
-              >
-                {typeof type.icon === "string" ? (
-                  <Icon name={type.icon} className="w-5 h-5" />
-                ) : (
-                  <type.icon />
-                )}
-                <span>{type.label ?? type.name}</span>
+        <div className="flex flex-col gap-2">
+          <div className="flex flex-wrap p-2">
+            {types.map((type) => (
+              <div key={type.name} className="flex flex-col w-1/5 p-2">
+                <div
+                  onClick={() => {
+                    setSelectedSpecItem(type);
+                    setModalHelpLink(type.docsLink);
+                    setIntegrationsModalSubTitle(type.label ?? type.name);
+                  }}
+                  role={"button"}
+                  className="flex flex-col items-center space-y-2 justify-center p-2 border border-gray-300 hover:border-blue-200 hover:bg-gray-100 rounded-md text-center h-20"
+                  key={type.name}
+                >
+                  {typeof type.icon === "string" ? (
+                    <Icon name={type.icon} className="w-5 h-5" />
+                  ) : (
+                    <type.icon />
+                  )}
+                  <span>{type.label ?? type.name}</span>
+                </div>
               </div>
+            ))}
+          </div>
+          {onBack && (
+            <div className={`flex flex-row  bg-gray-100 p-4`}>
+              <Button
+                type="button"
+                text="Back"
+                className="btn-default btn-btn-secondary-base btn-secondary"
+                onClick={onBack}
+              />
             </div>
-          ))}
+          )}
         </div>
       )}
     </div>
