@@ -1,8 +1,8 @@
+import { Button } from "@flanksource-ui/ui/Button";
 import { useFormikContext } from "formik";
 import { get, set } from "lodash";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { FaPlus, FaTrash } from "react-icons/fa";
-import { Button } from "../../../ui/Button";
 import { TextInput } from "../../TextInput";
 
 type LocalStateValue = {
@@ -14,41 +14,65 @@ type Props = {
   name: string;
   label: string;
   hint?: string;
+  outputJson?: boolean;
 };
 
-export default function FormikKeyValueMapField({ name, label, hint }: Props) {
-  const [localValues, setLocalValue] = useState<LocalStateValue[]>([
-    { key: "", value: "" }
-  ]);
-
+export default function FormikKeyValueMapField({
+  name,
+  label,
+  hint,
+  outputJson = false
+}: Props) {
   const { values, setFieldValue } =
     useFormikContext<Record<string, Record<string, string>>>();
+
+  const [localValues, setLocalValues] = useState<LocalStateValue[]>([]);
 
   // on mount, set the local values to the formik values and set the formik
   // values to the local values on change
   useEffect(() => {
-    const localValues = Object.entries(get(values, name, {})).map(
-      ([key, value]) => ({ key, value })
-    );
-    setLocalValue(localValues);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    if (localValues.length === 0) {
+      const value = get(values, name, {});
+      // we need to account for the fact that the value could be a string or an
+      // object
+      const input: Record<string, string> =
+        typeof value === "string" ? JSON.parse(value) : value;
+      const localValues = Object.entries(input ?? {}).map(([key, value]) => ({
+        key,
+        value
+      }));
+      setLocalValues(localValues);
+    }
+  }, [localValues.length, name, values]);
 
-  useEffect(() => {
-    const formValue = {};
-    localValues.forEach(({ key, value }) => {
-      set(formValue, key, value);
-    });
-    setFieldValue(name, formValue);
-  }, [localValues, name, setFieldValue]);
+  const onValueChange = useCallback(
+    (value: LocalStateValue[]) => {
+      const formValue = {};
+      value.forEach(({ key, value }) => {
+        set(formValue, key, value);
+      });
+      setFieldValue(
+        name,
+        outputJson ? JSON.stringify(formValue ?? {}) : formValue
+      );
+    },
+    [name, outputJson, setFieldValue]
+  );
 
-  const handleRemove = (index: number) => {
-    setLocalValue((prev) => prev.filter((_, i) => i !== index));
-  };
+  const handleRemove = useCallback(
+    (index: number) => {
+      const newState = localValues.filter((_, i) => i !== index);
+      setLocalValues(newState);
+      onValueChange(newState);
+    },
+    [localValues, onValueChange]
+  );
 
-  const handleAdd = () => {
-    setLocalValue((prev) => [...prev, { key: "", value: "" }]);
-  };
+  const handleAdd = useCallback(() => {
+    const newState = [...localValues, { key: "", value: "" }];
+    setLocalValues(newState);
+    onValueChange(newState);
+  }, [localValues, onValueChange]);
 
   return (
     <div className="flex flex-col gap-2">
@@ -66,7 +90,8 @@ export default function FormikKeyValueMapField({ name, label, hint }: Props) {
                   }
                   return localValue;
                 });
-                setLocalValue(newLocalValues);
+                setLocalValues(newLocalValues);
+                onValueChange(newLocalValues);
               }}
               id={""}
             />
@@ -81,7 +106,8 @@ export default function FormikKeyValueMapField({ name, label, hint }: Props) {
                   }
                   return localValue;
                 });
-                setLocalValue(newLocalValues);
+                setLocalValues(newLocalValues);
+                onValueChange(newLocalValues);
               }}
               id={""}
             />

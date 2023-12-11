@@ -1,6 +1,5 @@
 import clsx from "clsx";
-import React from "react";
-import { useMemo } from "react";
+import React, { useMemo } from "react";
 
 function TabItem({
   label,

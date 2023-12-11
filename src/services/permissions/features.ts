@@ -19,7 +19,8 @@ export const features = {
   "settings.event_queue_status": "settings.event_queue_status",
   "settings.organization_profile": "settings.organization_profile",
   "settings.notifications": "settings.notifications",
-  "settings.playbooks": "settings.playbooks"
+  "settings.playbooks": "settings.playbooks",
+  "settings.integrations": "settings.integrations"
 } as const;
 
 export const featureToParentMap = {

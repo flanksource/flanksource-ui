@@ -28,7 +28,7 @@ export const Pagination = ({
   className
 }: PaginationProps) => {
   return (
-    <nav className={clsx("isolate rounded-md", className)}>
+    <nav className={clsx("isolate rounded-md px-4", className)}>
       <div className="inline-block pr-2">
         <div className="text-gray-700">
           <div className="inline-block pr-2 font-bold">

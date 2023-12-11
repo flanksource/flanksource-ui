@@ -1,21 +1,20 @@
+import { useSettingsDeleteResource } from "@flanksource-ui/api/query-hooks/mutations/useSettingsResourcesMutations";
+import { Button } from "@flanksource-ui/ui/Button";
 import { useCallback, useState } from "react";
 import { FaCircleNotch, FaTrash } from "react-icons/fa";
-import { useSettingsDeleteResource } from "../../../api/query-hooks/mutations/useSettingsResourcesMutations";
-import { Button } from "../../../ui/Button";
 import { ConfirmationPromptDialog } from "../../Dialogs/ConfirmationPromptDialog";
+import { toastSuccess } from "../../Toast/toast";
 import { SchemaResourceType } from "../resourceTypes";
 
 type DeleteResourceProps = {
   resourceId: string;
   resourceInfo: Pick<SchemaResourceType, "table" | "name" | "api">;
-  isModal?: boolean;
   onDeleted?: () => void;
 };
 
 export default function DeleteResource({
   resourceId,
   resourceInfo: { table, name: schemaResourceName, api },
-  isModal = false,
   onDeleted = () => {}
 }: DeleteResourceProps) {
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
@@ -26,7 +25,12 @@ export default function DeleteResource({
       name: schemaResourceName,
       api
     },
-    isModal
+    {
+      onSuccess: () => {
+        toastSuccess(`${schemaResourceName} deleted successfully`);
+        onDeleted();
+      }
+    }
   );
 
   const onDeleteResource = useCallback(() => {

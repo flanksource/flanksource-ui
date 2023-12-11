@@ -12,9 +12,9 @@ import {
 } from "../../../../api/query-hooks/mutations/useSettingsResourcesMutations";
 import { Button } from "../../../../ui/Button";
 import { FormikCodeEditor } from "../../../Forms/Formik/FormikCodeEditor";
+import FormikKeyValueMapField from "../../../Forms/Formik/FormikKeyValueMapField";
 import FormikTextInput from "../../../Forms/Formik/FormikTextInput";
 import DeleteResource from "../../../SchemaResourcePage/Delete/DeleteResource";
-import { schemaResourceTypes } from "../../../SchemaResourcePage/resourceTypes";
 import FormSkeletonLoader from "../../../SkeletonLoader/FormSkeletonLoader";
 import { createTopologyOptions } from "./AddTopologyOptionsList";
 
@@ -35,6 +35,12 @@ const selectedOptionToSpecMap = new Map<
     "https://raw.githubusercontent.com/flanksource/mission-control-registry/main/topologies/prometheus/prometheus.yaml"
   ]
 ]);
+
+const resourceInfo = {
+  name: "Topology",
+  api: "incident-commander",
+  table: "topologies"
+} as const;
 
 export type TopologyResource = {
   id: string;
@@ -68,9 +74,6 @@ export default function TopologyResourceForm({
   onSuccess = () => {},
   isModal = false
 }: TopologyResourceFormProps) {
-  const resourceInfo = schemaResourceTypes.find(
-    (item) => item.name === "Topology"
-  );
   const navigate = useNavigate();
 
   const { data: spec, isLoading: isLoadingSpec } = useQuery({
@@ -85,7 +88,7 @@ export default function TopologyResourceForm({
   });
 
   const { mutate: createResource, isLoading: isCreatingResource } =
-    useSettingsCreateResource(resourceInfo!, onSuccess);
+    useSettingsCreateResource(resourceInfo, onSuccess);
 
   const { mutate: updateResource, isLoading: isUpdatingResource } =
     useSettingsUpdateResource(resourceInfo!, topology, {
@@ -155,27 +158,18 @@ export default function TopologyResourceForm({
             className="flex flex-col flex-1 overflow-y-auto"
           >
             <div className="flex flex-col gap-4 p-4 overflow-y-auto flex-1">
-              <FormikTextInput
-                label="Name"
-                name="name"
-                placeholder="Topology name"
-              />
+              <FormikTextInput label="Name" name="name" />
               <FormikTextInput
                 label="Namespace"
                 name="namespace"
                 placeholder="Namespace"
                 defaultValue={"default"}
               />
-              <FormikCodeEditor
-                label="Labels"
-                fieldName="labels"
-                format="json"
-                className="flex flex-col h-[100px]"
-              />
+              <FormikKeyValueMapField label="Labels" name="labels" outputJson />
               <FormikCodeEditor
                 className={clsx(
                   "flex flex-col",
-                  isModal ? "h-[400px]" : "flex-1"
+                  isModal ? "h-[400px]" : "min-h-[400px] flex-1"
                 )}
                 label="Spec"
                 fieldName="spec"
@@ -197,11 +191,10 @@ export default function TopologyResourceForm({
                 {!!topology?.id && (
                   <DeleteResource
                     resourceId={topology?.id}
-                    resourceInfo={
-                      schemaResourceTypes.find(
-                        ({ name }) => name === "Topology"
-                      )!
-                    }
+                    resourceInfo={resourceInfo}
+                    onDeleted={() => {
+                      navigate(`/settings/integrations`);
+                    }}
                   />
                 )}
 

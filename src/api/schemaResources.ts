@@ -9,6 +9,7 @@ import {
 } from "../components/SchemaResourcePage/resourceTypes";
 import { AVATAR_INFO } from "../constants";
 import { CanaryCheckerDB, ConfigDB, IncidentCommander } from "./axios";
+import { resolve } from "./resolve";
 import { AgentItem } from "./types/common";
 import { ConfigItem } from "./types/configs";
 
@@ -33,6 +34,7 @@ export interface SchemaResourceI {
     avatar: string;
     name: string;
   };
+  integration_type: "scrapers" | "topologies" | "logging_backends";
 }
 
 export interface SchemaResourceWithJobStatus extends SchemaResourceI {
@@ -111,8 +113,10 @@ export const updateResource = (
   data: Record<string, any>
 ) => getBackend(api)?.patch(`/${table}?id=eq.${data?.id}`, data);
 
-export const getResource = ({ api, table }: SchemaApi, id: string) =>
-  getBackend(api)?.get<Record<string, any>[]>(`/${table}?id=eq.${id}`);
+export const getResource = (
+  { api, table }: Omit<SchemaApi, "name">,
+  id: string
+) => getBackend(api)?.get<SchemaResourceI[]>(`/${table}?id=eq.${id}`);
 
 export const deleteResource = ({ api, table }: SchemaApi, id: string) =>
   getBackend(api)?.patch(`/${table}?id=eq.${id}`, {
@@ -160,4 +164,26 @@ export async function getEventQueueStatus() {
     `event_queue_summary?order=last_failure.desc`
   );
   return res.data ?? [];
+}
+
+export async function getIntegrationsWithJobStatus(
+  pageIndex: number,
+  pageSize: number
+) {
+  const pagingParams = `&limit=${pageSize}&offset=${pageIndex * pageSize}`;
+
+  const res = await resolve(
+    CanaryCheckerDB.get<SchemaResourceWithJobStatus[] | null>(
+      // todo: add back created_by
+      `integrations_with_status?order=created_at.desc&select=*&deleted_at=is.null${pagingParams}`
+    )
+  );
+  return res;
+}
+
+export async function getIntegrationWithJobStatus(id: string) {
+  const res = await CanaryCheckerDB.get<SchemaResourceWithJobStatus[] | null>(
+    `integrations_with_status?order=created_at.desc&select=*&deleted_at=is.null&id=eq.${id}`
+  );
+  return res.data?.[0];
 }
