@@ -34,7 +34,7 @@ spec:
           image: {{ .Values.image.repositoryPrefix }}/{{- include "chart.fullname" .}}:{{ .Values.image.tag | default .Chart.AppVersion }}
           env:
           - name: ORY_KRATOS_URL
-            value: {{ .Values.oryKratosURL }}
+            value: {{ tpl .Values.oryKratosURL . }}
           - name: BACKEND_URL
             value: {{ .Values.backendURL | quote}}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
