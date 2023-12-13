@@ -1,11 +1,11 @@
+import { Float } from "@headlessui-float/react";
+import { Menu, Transition } from "@headlessui/react";
+import { ChevronDownIcon } from "@heroicons/react/solid";
 import { Fragment, useState } from "react";
 import { FaCog } from "react-icons/fa";
 import { useGetPlaybooksToRun } from "../../../../api/query-hooks/playbooks";
 import { RunnablePlaybook } from "../../../../api/types/playbooks";
 import SubmitPlaybookRunForm from "./SubmitPlaybookRunForm";
-
-import { Menu, Transition } from "@headlessui/react";
-import { ChevronDownIcon } from "@heroicons/react/solid";
 
 type PlaybooksDropdownMenuProps = {
   component_id?: string;
@@ -37,11 +37,10 @@ export default function PlaybooksDropdownMenu({
     return null;
   }
 
-  //nolint
   return (
     <div className="text-right">
       <Menu as="div" className="relative inline-block text-left">
-        <div>
+        <Float placement="bottom-end" portal>
           <Menu.Button className="btn-white">
             <FaCog className="mr-2 h-4 w-4 mt-0.5" />
             Playbooks
@@ -50,30 +49,31 @@ export default function PlaybooksDropdownMenu({
               aria-hidden="true"
             />
           </Menu.Button>
-        </div>
-        {/* @ts-ignore */}
-        <Transition
-          as={Fragment as any}
-          enter="transition ease-out duration-100"
-          enterFrom="transform opacity-0 scale-95"
-          enterTo="transform opacity-100 scale-100"
-          leave="transition ease-in duration-75"
-          leaveFrom="transform opacity-100 scale-100"
-          leaveTo="transform opacity-0 scale-95"
-        >
-          <Menu.Items className="menu-items">
-            {playbooks?.map((playbook) => (
-              <Menu.Item
-                as="button"
-                className="menu-item"
-                onClick={() => setSelectedPlaybookSpec(playbook)}
-                key={playbook.id}
-              >
-                {playbook.name}
-              </Menu.Item>
-            ))}
-          </Menu.Items>
-        </Transition>
+
+          {/* @ts-ignore */}
+          <Transition
+            as={Fragment as any}
+            enter="transition ease-out duration-100"
+            enterFrom="transform opacity-0 scale-95"
+            enterTo="transform opacity-100 scale-100"
+            leave="transition ease-in duration-75"
+            leaveFrom="transform opacity-100 scale-100"
+            leaveTo="transform opacity-0 scale-95"
+          >
+            <Menu.Items className="menu-items">
+              {playbooks?.map((playbook) => (
+                <Menu.Item
+                  as="button"
+                  className="menu-item"
+                  onClick={() => setSelectedPlaybookSpec(playbook)}
+                  key={playbook.id}
+                >
+                  {playbook.name}
+                </Menu.Item>
+              ))}
+            </Menu.Items>
+          </Transition>
+        </Float>
       </Menu>
       {selectedPlaybookSpec && (
         <SubmitPlaybookRunForm
