@@ -376,9 +376,7 @@ export function Canary({
 }
 
 export const LabelFilterList = ({ labels }: { labels: any }) => {
-  const [list, setList] = useState<Record<any, any>>({});
-
-  useEffect(() => {
+  const list: Record<string, any> = useMemo(() => {
     if (labels) {
       const [bl, nbl] = separateLabelsByBooleanType(Object.values(labels));
       const groupedNbl = groupLabelsByKey(nbl);
@@ -389,8 +387,9 @@ export const LabelFilterList = ({ labels }: { labels: any }) => {
           return acc;
         }, {});
       const mergedLabels = { ...keyedBl, ...groupedNbl };
-      setList(mergedLabels);
+      return mergedLabels;
     }
+    return {};
   }, [labels]);
 
   return (
@@ -484,6 +483,7 @@ export const MultiSelectLabelsDropdownStandalone = ({ labels = [] }) => {
   const [isFirstLoad, setIsFirstLoad] = useState(true);
   const [dropdownValue, setDropdownValue] = useState([]);
   const updateParams = useUpdateParams();
+
   const handleChange = useCallback(
     (selected: any, all: any) => {
       const { labels: urlLabelState } = decodeUrlSearchParams(
