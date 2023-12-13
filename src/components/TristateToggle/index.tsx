@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { BiCheck, BiX } from "react-icons/bi";
 import { BsDot } from "react-icons/bs";
 import style from "./index.module.css";
@@ -37,36 +37,43 @@ export function TristateToggle({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
 
-  useEffect(() => {
-    // trigger onChange callback on stateValue change
-    onChange(
-      typeof stateValue === "number" ? stateValue.toString() : stateValue
-    );
-    updateButton(stateValue);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stateValue]);
+  const updateButton = useCallback(
+    (stateValue: string | number) => {
+      // map and update position, bgColor, and tooltip text
+      let pos;
+      let colorIndex;
+      switch (+stateValue) {
+        case -1:
+          pos = "left";
+          colorIndex = 1;
+          break;
+        case 1:
+          pos = "right";
+          colorIndex = 2;
+          break;
+        default:
+          pos = undefined;
+          colorIndex = 0;
+      }
+      setPosition(pos);
+      setBgColor(colors[colorIndex]);
+      setFgColor(fgColors[colorIndex]);
+    },
+    [colors, fgColors]
+  );
 
-  function updateButton(stateValue: string | number) {
-    // map and update position, bgColor, and tooltip text
-    let pos;
-    let colorIndex;
-    switch (+stateValue) {
-      case -1:
-        pos = "left";
-        colorIndex = 1;
-        break;
-      case 1:
-        pos = "right";
-        colorIndex = 2;
-        break;
-      default:
-        pos = undefined;
-        colorIndex = 0;
-    }
-    setPosition(pos);
-    setBgColor(colors[colorIndex]);
-    setFgColor(fgColors[colorIndex]);
-  }
+  const toggleState = useCallback(
+    (value: string | number) => {
+      if (value === stateValue) {
+        setValue(0);
+      } else {
+        setValue(value);
+      }
+      onChange(typeof value === "number" ? value.toString() : value);
+      updateButton(value);
+    },
+    [onChange, stateValue, updateButton]
+  );
 
   return (
     <div className={`${className} flex`}>
@@ -77,8 +84,7 @@ export function TristateToggle({
         <button
           type="button"
           onClick={() => {
-            setValue(-1);
-            updateButton(stateValue);
+            toggleState(-1);
           }}
           className={`flex justify-center items-center w-[22px] h-full duration-100`}
           title={`Exclude ${label.label}`}
@@ -90,8 +96,7 @@ export function TristateToggle({
           type="button"
           title={`Do not filter ${label.label}`}
           onClick={() => {
-            setValue(0);
-            updateButton(stateValue);
+            toggleState(0);
           }}
         >
           <BsDot style={{ color: fgColor }} />
@@ -99,8 +104,7 @@ export function TristateToggle({
         <button
           type="button"
           onClick={() => {
-            setValue(1);
-            updateButton(stateValue);
+            toggleState(1);
           }}
           className={`flex justify-center items-center w-[22px] h-full duration-100`}
           title={`Include ${label.label}`}
