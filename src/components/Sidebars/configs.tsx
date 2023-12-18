@@ -125,11 +125,13 @@ export default function Configs({
   onCollapsedStateChange,
   ...props
 }: Props) {
+  const [hideDeletedConfigs, setHideDeletedConfigs] = useState(
+    () => props.hideDeletedConfigs ?? true
+  );
+
   const { data: configs = [] } = useComponentConfigRelationshipQuery({
-    ...props
-  });
-  const [hideDeletedConfigs, setHideDeletedConfigs] = useState(() => {
-    return props.hideDeletedConfigs;
+    ...props,
+    hideDeleted: hideDeletedConfigs
   });
 
   const TrashIconType = hideDeletedConfigs ? TbTrashOff : TbTrash;
