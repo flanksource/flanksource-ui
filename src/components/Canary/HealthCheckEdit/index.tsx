@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { FaEdit } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useCanaryCheckItemQuery } from "../../../api/query-hooks";
+import { SchemaResourceI } from "../../../api/schemaResources";
 import {
   getComponentTemplate,
   getTopology
@@ -11,7 +12,7 @@ import { Icon } from "../../Icon";
 import TextSkeletonLoader from "../../SkeletonLoader/TextSkeletonLoader";
 
 type HealthCheckEditComponentProps = {
-  check: Pick<HealthCheck, "source">;
+  check: Pick<SchemaResourceI, "source">;
 };
 
 function HealthCheckEditComponent({ check }: HealthCheckEditComponentProps) {

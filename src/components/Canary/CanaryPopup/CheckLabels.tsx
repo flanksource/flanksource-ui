@@ -64,6 +64,8 @@ export default function CheckLabels({ check }: Props) {
                   className="bg-blue-100 text-blue-800"
                   key={item.key}
                   tag={item}
+                  keyClassName="text-gray-500"
+                  valueClassName="text-gray-800"
                 />
               ))}
             </div>
@@ -83,6 +85,8 @@ export default function CheckLabels({ check }: Props) {
               tags={checkLabels}
               minimumItemsToShow={checkLabels.length}
               childClassName="bg-blue-100 text-blue-800"
+              keyClassName="text-gray-500"
+              valueClassName="text-gray-800"
             />
           </div>
         </div>

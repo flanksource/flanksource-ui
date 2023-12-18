@@ -34,7 +34,7 @@ export default function AgentName({
   return (
     <div className="flex items-center">
       <Badge
-        colorClass={className}
+        className={className}
         size={size}
         title={agent.description}
         text={agent.name}

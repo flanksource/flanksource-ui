@@ -1,4 +1,6 @@
+import { SchemaResourceI } from "../schemaResources";
 import { Agent, Avatar, Timestamped } from "../traits";
+import { AgentItem } from "./common";
 
 export interface HealthChecksResponse {
   duration: number;
@@ -21,7 +23,6 @@ export interface HealthCheck extends Timestamped, Avatar, Agent {
   checkStatuses: HealthCheckStatus[];
   lastRuntime: string;
   description?: string;
-  source?: string;
   spec?: any;
   icon?: string;
   endpoint?: string;
@@ -32,11 +33,14 @@ export interface HealthCheck extends Timestamped, Avatar, Agent {
   owner?: any;
   loading?: boolean;
   severity?: string;
+  next_runtime?: string;
+  agents?: AgentItem;
+  canaries?: SchemaResourceI;
 }
 
 export type HealthCheckSummary = Pick<
   HealthCheck,
-  "id" | "name" | "icon" | "type" | "status" | "severity"
+  "id" | "name" | "icon" | "type" | "status" | "severity" | "next_runtime"
 >;
 
 export interface HealthCheckStatus {
