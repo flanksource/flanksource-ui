@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { ConfigInsightsFilters } from "../../components/ConfigAnalysis/Filters/ConfigInsightsFilters";
-import ConfigInsightsList from "../../components/ConfigAnalysis/ConfigInsightsList";
-import { configTabsLists } from "../../components/ConfigsPage/ConfigTabsLinks";
+import { ConfigInsightsFilters } from "../../components/Configs/ConfigAnalysis/Filters/ConfigInsightsFilters";
+import ConfigInsightsList from "../../components/Configs/ConfigAnalysis/ConfigInsightsList";
+import { configTabsLists } from "../../components/Configs/ConfigsPage/ConfigTabsLinks";
 import { Head } from "../../components/Head/Head";
 import { SearchLayout } from "../../components/Layout";
 import TabbedLinks from "../../components/Tabs/TabbedLinks";

@@ -8,7 +8,7 @@ import TextSkeletonLoader from "../../SkeletonLoader/TextSkeletonLoader";
 import Title from "../../Title/title";
 import DisplayDetailsRow from "../../Utils/DisplayDetailsRow";
 import { Age } from "../../../ui/Age";
-import ConfigCostValue from "../../ConfigCosts/ConfigCostValue";
+import ConfigCostValue from "../ConfigCosts/ConfigCostValue";
 import { isCostsEmpty } from "../../../api/types/configs";
 import { formatConfigTags } from "./Utils/formatConfigTags";
 import { DisplayGroupedProperties } from "../../Utils/DisplayGroupedProperties";

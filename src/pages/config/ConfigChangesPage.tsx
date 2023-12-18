@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useGetAllConfigsChangesQuery } from "../../api/query-hooks";
-import { ConfigChangeHistory } from "../../components/ConfigChangeHistory";
-import { configTabsLists } from "../../components/ConfigsPage/ConfigTabsLinks";
+import { ConfigChangeHistory } from "../../components/Configs/Changes/ConfigChangeHistory";
+import { configTabsLists } from "../../components/Configs/ConfigsPage/ConfigTabsLinks";
 import { Head } from "../../components/Head/Head";
 import { InfoMessage } from "../../components/InfoMessage";
 import { SearchLayout } from "../../components/Layout";
@@ -9,7 +9,7 @@ import TabbedLinks from "../../components/Tabs/TabbedLinks";
 import { BreadcrumbNav, BreadcrumbRoot } from "../../components/BreadcrumbNav";
 import { useAtom } from "jotai";
 import { refreshButtonClickedTrigger } from "../../components/SlidingSideBar";
-import { ConfigChangeFilters } from "../../components/ConfigChangesFilters/ConfigChangesFilters";
+import { ConfigChangeFilters } from "../../components/Configs/Changes/ConfigChangesFilters/ConfigChangesFilters";
 import { useSearchParams } from "react-router-dom";
 
 export function ConfigChangesPage() {

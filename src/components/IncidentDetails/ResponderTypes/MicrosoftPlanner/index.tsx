@@ -7,7 +7,7 @@ import {
   UseFormSetValue
 } from "react-hook-form";
 import { searchConfigs } from "../../../../api/services/configs";
-import { ConfigItem } from "../../../ConfigItem";
+import { ConfigItem } from "../../../Configs/ConfigItem";
 import { TextInput } from "../../../TextInput";
 import { AddResponderFormValues } from "../../AddResponders/AddResponder";
 

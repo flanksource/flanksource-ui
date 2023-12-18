@@ -1,5 +1,5 @@
 import { isEmpty } from "lodash";
-import ConfigLink from "../../ConfigLink/ConfigLink";
+import ConfigLink from "../../Configs/ConfigLink/ConfigLink";
 import { CheckLink } from "../../HealthChecks/CheckLink";
 import { TopologyLink } from "../../TopologyLink";
 import { SubmitPlaybookRunFormValues } from "./Submit/SubmitPlaybookRunForm";

@@ -7,8 +7,8 @@ import { useGetConfigChangesById } from "../../api/query-hooks/useGetConfigChang
 import { ConfigChange } from "../../api/types/configs";
 import PillBadge from "../Badge/PillBadge";
 import CollapsiblePanel from "../CollapsiblePanel";
-import { ConfigDetailChangeModal } from "../ConfigDetailsChanges/ConfigDetailsChanges";
-import ConfigLink from "../ConfigLink/ConfigLink";
+import { ConfigDetailChangeModal } from "../Configs/Changes/ConfigDetailsChanges/ConfigDetailsChanges";
+import ConfigLink from "../Configs/ConfigLink/ConfigLink";
 import EmptyState from "../EmptyState";
 import { Icon } from "../Icon";
 import TextSkeletonLoader from "../SkeletonLoader/TextSkeletonLoader";

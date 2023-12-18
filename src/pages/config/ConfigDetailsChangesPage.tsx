@@ -6,9 +6,9 @@ import {
   useGetConfigChangesByConfigIdQuery
 } from "../../api/query-hooks";
 import { ConfigsDetailsBreadcrumbNav } from "../../components/BreadcrumbNav/ConfigsDetailsBreadCrumb";
-import { ConfigChangeHistory } from "../../components/ConfigChangeHistory";
+import { ConfigChangeHistory } from "../../components/Configs/Changes/ConfigChangeHistory";
 import ConfigSidebar from "../../components/Configs/Sidebar/ConfigSidebar";
-import { useConfigDetailsTabs } from "../../components/ConfigsPage/ConfigTabsLinks";
+import { useConfigDetailsTabs } from "../../components/Configs/ConfigsPage/ConfigTabsLinks";
 import { Head } from "../../components/Head/Head";
 import { InfoMessage } from "../../components/InfoMessage";
 import { SearchLayout } from "../../components/Layout";

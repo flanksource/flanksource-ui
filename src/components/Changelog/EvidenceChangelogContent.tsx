@@ -2,7 +2,7 @@ import {
   EvidenceWithEvidenceItems,
   EvidenceType
 } from "../../api/types/evidence";
-import ConfigInsightsIcon from "../ConfigInsightsIcon";
+import ConfigInsightsIcon from "../Configs/Insights/ConfigInsightsIcon";
 import { Icon } from "../Icon";
 
 type ChangelogEvidenceContentProps = {

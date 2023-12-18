@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { MdOutlineInsights } from "react-icons/md";
-import { InsightTypeToIcon } from "../ConfigInsightsIcon";
+import { InsightTypeToIcon } from "../Configs/Insights/ConfigInsightsIcon";
 import {
   StatusInfo,
   StatusLine,
