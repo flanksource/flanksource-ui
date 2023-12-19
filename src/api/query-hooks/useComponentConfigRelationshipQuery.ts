@@ -4,36 +4,40 @@ import { ConfigItem } from "../types/configs";
 
 export const componentConfigRelationshipQueryKey = ({
   topologyId,
-  configId
+  configId,
+  hideDeleted = true
 }: {
   topologyId?: string;
   configId?: string;
+  hideDeleted?: boolean;
 }) => {
   if (topologyId) {
-    return ["component", "config", "relationships", topologyId];
+    return ["component", "config", "relationships", topologyId, hideDeleted];
   }
-  return ["config", "relationships", configId];
+  return ["config", "relationships", configId, hideDeleted];
 };
 
 export function useComponentConfigRelationshipQuery({
   topologyId,
-  configId
+  configId,
+  hideDeleted = true
 }: {
   topologyId?: string;
   configId?: string;
+  hideDeleted?: boolean;
 }) {
   return useQuery(
-    componentConfigRelationshipQueryKey({ topologyId, configId }),
+    componentConfigRelationshipQueryKey({ topologyId, configId, hideDeleted }),
     () => {
       if (topologyId) {
-        return getConfigsBy({ topologyId })?.then((res) => {
+        return getConfigsBy({ topologyId, hideDeleted })?.then((res) => {
           return res?.data?.map((item) => {
             return item.configs as ConfigItem;
           });
         });
       }
       if (configId) {
-        return getConfigsBy({ configId })?.then((res) => {
+        return getConfigsBy({ configId, hideDeleted })?.then((res) => {
           let items: ConfigItem[] = [];
           res?.data?.forEach((item) => {
             const configs = item.configs as ConfigItem;

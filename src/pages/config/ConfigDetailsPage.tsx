@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { useGetConfigByIdQuery } from "../../api/query-hooks";
 import { ConfigsDetailsBreadcrumbNav } from "../../components/BreadcrumbNav/ConfigsDetailsBreadCrumb";
 import ConfigSidebar from "../../components/Configs/Sidebar/ConfigSidebar";
-import { useConfigDetailsTabs } from "../../components/ConfigsPage/ConfigTabsLinks";
+import { useConfigDetailsTabs } from "../../components/Configs/ConfigsPage/ConfigTabsLinks";
 import { Head } from "../../components/Head/Head";
 import { JSONViewer } from "../../components/JSONViewer";
 import { SearchLayout } from "../../components/Layout";

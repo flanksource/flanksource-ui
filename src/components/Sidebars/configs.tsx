@@ -8,7 +8,7 @@ import { useComponentConfigRelationshipQuery } from "../../api/query-hooks/useCo
 import { removeManualComponentConfigRelationship } from "../../api/services/configs";
 import { Badge } from "../Badge";
 import CollapsiblePanel from "../CollapsiblePanel";
-import ConfigLink from "../ConfigLink/ConfigLink";
+import ConfigLink from "../Configs/ConfigLink/ConfigLink";
 import { ConfirmationPromptDialog } from "../Dialogs/ConfirmationPromptDialog";
 import EmptyState from "../EmptyState";
 import { IconButton } from "../IconButton";
@@ -125,11 +125,13 @@ export default function Configs({
   onCollapsedStateChange,
   ...props
 }: Props) {
+  const [hideDeletedConfigs, setHideDeletedConfigs] = useState(
+    () => props.hideDeletedConfigs ?? true
+  );
+
   const { data: configs = [] } = useComponentConfigRelationshipQuery({
-    ...props
-  });
-  const [hideDeletedConfigs, setHideDeletedConfigs] = useState(() => {
-    return props.hideDeletedConfigs;
+    ...props,
+    hideDeleted: hideDeletedConfigs
   });
 
   const TrashIconType = hideDeletedConfigs ? TbTrashOff : TbTrash;

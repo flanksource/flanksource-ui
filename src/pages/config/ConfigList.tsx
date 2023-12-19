@@ -1,21 +1,21 @@
 import { useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import objectHash from "object-hash";
-import ConfigList from "../../components/ConfigList";
+import ConfigList from "../../components/Configs/ConfigList";
 import {
   useAllConfigsQuery,
   useConfigSummaryQuery
 } from "../../api/query-hooks";
 import { SearchLayout } from "../../components/Layout";
-import ConfigsListFilters from "../../components/ConfigsListFilters";
+import ConfigsListFilters from "../../components/Configs/ConfigsListFilters";
 import { Head } from "../../components/Head/Head";
 import TabbedLinks from "../../components/Tabs/TabbedLinks";
-import { configTabsLists } from "../../components/ConfigsPage/ConfigTabsLinks";
+import { configTabsLists } from "../../components/Configs/ConfigsPage/ConfigTabsLinks";
 import { BreadcrumbNav, BreadcrumbRoot } from "../../components/BreadcrumbNav";
 import { useAtom } from "jotai";
-import { areDeletedConfigsHidden } from "../../components/ConfigListToggledDeletedItems/ConfigListToggledDeletedItems";
+import { areDeletedConfigsHidden } from "../../components/Configs/ConfigListToggledDeletedItems/ConfigListToggledDeletedItems";
 import ConfigsTypeIcon from "../../components/Configs/ConfigsTypeIcon";
-import ConfigSummaryList from "../../components/ConfigSummary/ConfigSummaryList";
+import ConfigSummaryList from "../../components/Configs/ConfigSummary/ConfigSummaryList";
 
 export function ConfigListPage() {
   const [params] = useSearchParams();

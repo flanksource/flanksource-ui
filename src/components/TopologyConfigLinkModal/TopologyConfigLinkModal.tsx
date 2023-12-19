@@ -8,7 +8,7 @@ import {
 } from "../../api/services/configs";
 import { queryClient } from "../../query-client";
 import { delayedPromise, stringSortHelper } from "../../utils/common";
-import ConfigLink from "../ConfigLink/ConfigLink";
+import ConfigLink from "../Configs/ConfigLink/ConfigLink";
 import { DropdownWithActions } from "../Dropdown/DropdownWithActions";
 import { Modal } from "../Modal";
 import TextSkeletonLoader from "../SkeletonLoader/TextSkeletonLoader";

@@ -7,7 +7,7 @@ import { isCostsEmpty } from "../../../api/types/configs";
 import { Topology } from "../../../api/types/topology";
 import { Age } from "../../../ui/Age";
 import CollapsiblePanel from "../../CollapsiblePanel";
-import ConfigCostValue from "../../ConfigCosts/ConfigCostValue";
+import ConfigCostValue from "../../Configs/ConfigCosts/ConfigCostValue";
 import Title from "../../Title/title";
 import { CardMetrics } from "../../TopologyCard/CardMetrics";
 import { TopologyLink } from "../../TopologyLink";

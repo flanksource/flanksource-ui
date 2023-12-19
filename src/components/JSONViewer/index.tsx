@@ -111,7 +111,7 @@ export function JSONViewer({
   }, [convertToYaml, format]);
 
   return (
-    <div className="flex flex-col w-full relative">
+    <div className="flex flex-col w-full relative p-2">
       <Highlight
         {...defaultProps}
         code={codeForHighlight}
