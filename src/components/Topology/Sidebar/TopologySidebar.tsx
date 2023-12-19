@@ -4,7 +4,7 @@ import { PlaybookRunsSidePanel } from "../../Playbooks/Runs/PlaybookRunsSidePane
 import Configs from "../../Sidebars/configs";
 import Incidents from "../../Sidebars/incidents";
 import SlidingSideBar from "../../SlidingSideBar";
-import TopologyConfigChanges from "../../TopologyConfigChanges";
+import TopologyConfigChanges from "./TopologyConfigChanges";
 import TopologyDetails from "./TopologyDetails";
 import { ComponentTeams } from "./ComponentTeams";
 import TopologyActionBar from "./TopologyActionBar";

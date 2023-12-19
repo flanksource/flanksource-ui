@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import { Icon } from "../Icon";
-import { useComponentNameQuery } from "../../api/query-hooks";
+import { Icon } from "../../Icon";
+import { useComponentNameQuery } from "../../../api/query-hooks";
 
 export function TopologyLink({
   topologyId,

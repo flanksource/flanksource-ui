@@ -2,20 +2,20 @@ import { useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
 import { MouseEventHandler, useMemo } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
-import { getTopology } from "../../api/services/topology";
-import { Size } from "../../types";
-import AgentName from "../Agents/AgentName";
-import { CustomScroll } from "../CustomScroll";
-import { HealthChecksSummary } from "../HealthChecksSummary";
-import { HealthSummary } from "../HealthSummary";
-import { Icon } from "../Icon";
-import IncidentCardSummary from "../IncidentCardSummary";
-import TopologyCardSkeletonLoader from "../SkeletonLoader/TopologyCardSkeletonLoader";
+import { getTopology } from "../../../api/services/topology";
+import { Size } from "../../../types";
+import AgentName from "../../Agents/AgentName";
+import { CustomScroll } from "../../CustomScroll";
+import { HealthChecksSummary } from "../../HealthChecksSummary";
+import { HealthSummary } from "../../HealthSummary";
+import { Icon } from "../../Icon";
+import IncidentCardSummary from "../../IncidentCardSummary";
+import TopologyCardSkeletonLoader from "../../SkeletonLoader/TopologyCardSkeletonLoader";
 import { CardMetrics } from "./CardMetrics";
 import { Property } from "./Property";
 import { TopologyConfigAnalysisLine } from "./TopologyConfigAnalysisLine";
 import { TopologyDropdownMenu } from "./TopologyDropdownMenu";
-import { Topology } from "../../api/types/topology";
+import { Topology } from "../../../api/types/topology";
 
 export enum ComponentStatus {
   unhealthy = "unhealthy",

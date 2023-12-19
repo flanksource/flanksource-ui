@@ -10,14 +10,14 @@ import { SearchLayout } from "../components/Layout";
 import CardsSkeletonLoader from "../components/SkeletonLoader/CardsSkeletonLoader";
 import { refreshButtonClickedTrigger } from "../components/SlidingSideBar";
 import { toastError } from "../components/Toast/toast";
-import { TopologyBreadcrumbs } from "../components/TopologyBreadcrumbs";
-import { TopologyCard } from "../components/TopologyCard";
-import TopologyFilterBar from "../components/TopologyFilters/TopologyFilterBar";
-import { getCardWidth } from "../components/TopologyPopover/topologyPreference";
+import { TopologyBreadcrumbs } from "../components/Topology/TopologyBreadcrumbs";
+import { TopologyCard } from "../components/Topology/TopologyCard";
+import TopologyFilterBar from "../components/Topology/TopologyPage/TopologyFilterBar";
+import { getCardWidth } from "../components/Topology/TopologyPopover/topologyPreference";
 import {
   getSortLabels,
   getSortedTopology
-} from "../components/TopologyPopover/topologySort";
+} from "../components/Topology/TopologyPopover/topologySort";
 import TopologySidebar from "../components/Topology/Sidebar/TopologySidebar";
 import { Topology } from "../api/types/topology";
 

@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { getTopologySnapshot } from "../../api/services/topology";
+import { getTopologySnapshot } from "../../../api/services/topology";
 
 type DownloadFileProps = {
   topologyId: string;

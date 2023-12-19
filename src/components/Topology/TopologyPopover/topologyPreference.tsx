@@ -3,12 +3,12 @@ import { FaCog } from "react-icons/fa";
 
 import { CardWidth } from "../TopologyCard";
 
-import { useOnMouseActivity } from "../../hooks/useMouseActivity";
-import { Size } from "../../types";
-import { Toggle } from "../Toggle";
+import { useOnMouseActivity } from "../../../hooks/useMouseActivity";
+import { Size } from "../../../types";
+import { Toggle } from "../../Toggle";
 import { useSearchParams } from "react-router-dom";
 import { LegacyRef } from "react";
-import { ClickableSvg } from "../ClickableSvg/ClickableSvg";
+import { ClickableSvg } from "../../ClickableSvg/ClickableSvg";
 
 export function getCardWidth() {
   let value: any = localStorage.getItem("topology_card_width");

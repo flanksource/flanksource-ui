@@ -2,18 +2,18 @@ import dayjs from "dayjs";
 import { useAtom } from "jotai";
 import { useEffect, useState } from "react";
 import { GoDiff } from "react-icons/go";
-import { useComponentConfigChanges } from "../../api/query-hooks/useComponentConfigChanges";
-import { useGetConfigChangesById } from "../../api/query-hooks/useGetConfigChangesByConfigChangeIdQuery";
-import { ConfigChange } from "../../api/types/configs";
-import PillBadge from "../Badge/PillBadge";
-import CollapsiblePanel from "../CollapsiblePanel";
-import { ConfigDetailChangeModal } from "../Configs/Changes/ConfigDetailsChanges/ConfigDetailsChanges";
-import ConfigLink from "../Configs/ConfigLink/ConfigLink";
-import EmptyState from "../EmptyState";
-import { Icon } from "../Icon";
-import TextSkeletonLoader from "../SkeletonLoader/TextSkeletonLoader";
-import { refreshButtonClickedTrigger } from "../SlidingSideBar";
-import Title from "../Title/title";
+import { useComponentConfigChanges } from "../../../../api/query-hooks/useComponentConfigChanges";
+import { useGetConfigChangesById } from "../../../../api/query-hooks/useGetConfigChangesByConfigChangeIdQuery";
+import { ConfigChange } from "../../../../api/types/configs";
+import PillBadge from "../../../Badge/PillBadge";
+import CollapsiblePanel from "../../../CollapsiblePanel";
+import { ConfigDetailChangeModal } from "../../../Configs/Changes/ConfigDetailsChanges/ConfigDetailsChanges";
+import ConfigLink from "../../../Configs/ConfigLink/ConfigLink";
+import EmptyState from "../../../EmptyState";
+import { Icon } from "../../../Icon";
+import TextSkeletonLoader from "../../../SkeletonLoader/TextSkeletonLoader";
+import { refreshButtonClickedTrigger } from "../../../SlidingSideBar";
+import Title from "../../../Title/title";
 
 type Props = {
   topologyID: string;
@@ -47,7 +47,7 @@ export function TopologyConfigChanges({ topologyID }: Props) {
               <TextSkeletonLoader />
             ) : componentConfigChanges.length > 0 ? (
               componentConfigChanges.map((item) => (
-                <div className="flex flex-row text-sm mb-2">
+                <div className="flex flex-row text-sm mb-2" key={item.id}>
                   <ConfigLink config={item.config} />
                   &nbsp;/&nbsp;
                   <span

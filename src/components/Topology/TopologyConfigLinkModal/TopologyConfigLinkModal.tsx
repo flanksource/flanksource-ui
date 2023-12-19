@@ -1,23 +1,23 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
 import React, { useCallback, useMemo, useState } from "react";
-import { componentConfigRelationshipQueryKey } from "../../api/query-hooks/useComponentConfigRelationshipQuery";
+import { componentConfigRelationshipQueryKey } from "../../../api/query-hooks/useComponentConfigRelationshipQuery";
 import {
   addManualComponentConfigRelationship,
   getAllConfigsForSearchPurpose
-} from "../../api/services/configs";
-import { queryClient } from "../../query-client";
-import { delayedPromise, stringSortHelper } from "../../utils/common";
-import ConfigLink from "../Configs/ConfigLink/ConfigLink";
-import { DropdownWithActions } from "../Dropdown/DropdownWithActions";
-import { Modal } from "../Modal";
-import TextSkeletonLoader from "../SkeletonLoader/TextSkeletonLoader";
-import { toastError, toastSuccess } from "../Toast/toast";
+} from "../../../api/services/configs";
+import { queryClient } from "../../../query-client";
+import { delayedPromise, stringSortHelper } from "../../../utils/common";
+import ConfigLink from "../../Configs/ConfigLink/ConfigLink";
+import { DropdownWithActions } from "../../Dropdown/DropdownWithActions";
+import { Modal } from "../../Modal";
+import TextSkeletonLoader from "../../SkeletonLoader/TextSkeletonLoader";
+import { toastError, toastSuccess } from "../../Toast/toast";
 import { useAtom } from "jotai";
-import { refreshButtonClickedTrigger } from "../SlidingSideBar";
-import { Events, sendAnalyticEvent } from "../../services/analytics";
-import { ConfigItem } from "../../api/types/configs";
-import { Topology } from "../../api/types/topology";
+import { refreshButtonClickedTrigger } from "../../SlidingSideBar";
+import { Events, sendAnalyticEvent } from "../../../services/analytics";
+import { ConfigItem } from "../../../api/types/configs";
+import { Topology } from "../../../api/types/topology";
 
 type TopologyConfigLinkModalProps = {
   topology: Topology;

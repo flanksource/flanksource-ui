@@ -1,9 +1,9 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MemoryRouter } from "react-router-dom";
-import { Size } from "../../types";
+import { Size } from "../../../types";
 import { TopologyCard } from "./index";
-import { Topology } from "../../api/types/topology";
+import { Topology } from "../../../api/types/topology";
 
 const defaultQueryClient = new QueryClient();
 

@@ -29,7 +29,7 @@ import { IncidentSidebar } from "../../components/IncidentDetails/IncidentSideba
 import { SearchLayout } from "../../components/Layout";
 import IncidentDetailsPageSkeletonLoader from "../../components/SkeletonLoader/IncidentDetailsPageSkeletonLoader";
 import { Tab, Tabs } from "../../components/Tabs/Tabs";
-import { TopologyCard } from "../../components/TopologyCard";
+import { TopologyCard } from "../../components/Topology/TopologyCard";
 import { useIncidentState } from "../../store/incident.state";
 import { Size } from "../../types";
 

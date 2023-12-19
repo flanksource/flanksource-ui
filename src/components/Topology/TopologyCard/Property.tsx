@@ -1,9 +1,9 @@
 import clsx from "clsx";
-import { TopologyProperty } from "../../api/types/topology";
-import { NodePodPropToLabelMap } from "../../constants";
-import { Age } from "../../ui/Age";
-import { isEmpty } from "../Canary/utils";
-import { Icon } from "../Icon";
+import { TopologyProperty } from "../../../api/types/topology";
+import { NodePodPropToLabelMap } from "../../../constants";
+import { Age } from "../../../ui/Age";
+import { isEmpty } from "../../Canary/utils";
+import { Icon } from "../../Icon";
 import {
   FormatPropertyCPUMemory,
   FormatPropertyCurrency,
