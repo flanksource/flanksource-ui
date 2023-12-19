@@ -29,7 +29,7 @@ export default function AddTopologyResource({
   }, [selectedOption, setModalTitle]);
 
   return (
-    <div className="flex flex-col flex-1 gap-2">
+    <div className="flex flex-col flex-1 overflow-y-auto gap-2">
       {selectedOption ? (
         <TopologyResourceForm
           selectedOption={selectedOption}
