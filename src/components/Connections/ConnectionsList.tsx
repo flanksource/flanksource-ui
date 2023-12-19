@@ -5,6 +5,8 @@ import { Avatar } from "../Avatar";
 import { Connection } from "./ConnectionFormModal";
 import { Icon } from "../Icon";
 import { DateCell } from "../../ui/table";
+import { ConnectionValueType } from "./connectionTypes";
+import { useMemo } from "react";
 
 type ConnectionListProps = {
   data: Connection[];
@@ -13,9 +15,19 @@ type ConnectionListProps = {
 } & Omit<React.HTMLProps<HTMLDivElement>, "data">;
 
 const NameCell = ({ row, getValue }: CellContext<Connection, any>) => {
+  const icon = useMemo(() => {
+    if (row.original.type === ConnectionValueType.AWS_S3) {
+      return "aws-s3";
+    }
+    if (row.original.type === ConnectionValueType.GCP) {
+      return "gcp";
+    }
+    return row.original.type;
+  }, [row.original.type]);
+
   return (
     <div className="flex flex-row space-x-2 items-center">
-      <Icon name={row.original.type} />
+      <Icon name={icon} />
       <div>{getValue()}</div>
     </div>
   );
