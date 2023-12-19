@@ -48,7 +48,7 @@ export type ConnectionFormFields = {
 
 export const enum ConnectionValueType {
   AWS = "aws",
-  AWS_S3 = "aws_s3",
+  AWS_S3 = "s3",
   Azure = "azure",
   AzureDevops = "azure_devops",
   Discord = "discord",
