@@ -1,13 +1,10 @@
 import { IntercomProvider } from "react-use-intercom";
-import BootIntercom from "./BootIntercom";
 
 const INTERCOM_APP_ID = process.env.NEXT_PUBLIC_INTERCOM_APP_ID;
 
 function ProvideIntercom({ children }: Props) {
   return (
-    <IntercomProvider appId={INTERCOM_APP_ID!}>
-      <BootIntercom>{children}</BootIntercom>
-    </IntercomProvider>
+    <IntercomProvider appId={INTERCOM_APP_ID!}>{children}S</IntercomProvider>
   );
 }
 

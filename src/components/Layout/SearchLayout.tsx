@@ -1,3 +1,4 @@
+import { HelpDropdown } from "../../ui/MenuBar/HelpDropdown";
 import DashboardErrorBoundary from "../Errors/DashboardErrorBoundary";
 import { RefreshButton } from "../RefreshButton";
 import { UserProfileDropdown } from "../UserProfile/UserProfile";
@@ -26,7 +27,8 @@ export function SearchLayout({
           <div className="flex items-center">
             <div>{title}</div>
           </div>
-          <div className="ml-4 flex items-center md:ml-6">
+          <div className="ml-4 flex gap-2 items-center md:ml-6">
+            <HelpDropdown />
             {onRefresh && (
               <RefreshButton onClick={onRefresh} animate={loading} />
             )}

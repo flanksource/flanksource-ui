@@ -28,7 +28,11 @@ function BootIntercomForClerk({ children }: Props) {
         name: membership.organization.name
       }))
     });
-  }, [boot, clerkUser, user]);
+
+    return () => {
+      shutdown();
+    };
+  }, [boot, clerkUser, shutdown, user]);
 
   // on sign out, shutdown intercom
   useEffect(() => {
@@ -42,7 +46,7 @@ function BootIntercomForClerk({ children }: Props) {
 }
 
 function BootIntercomForKratos({ children }: Props) {
-  const { boot } = useIntercom();
+  const { boot, shutdown } = useIntercom();
   const { user } = useContextUser();
 
   useEffect(() => {
@@ -55,7 +59,11 @@ function BootIntercomForKratos({ children }: Props) {
         imageUrl: user?.avatar
       }
     });
-  }, [boot, user]);
+
+    return () => {
+      shutdown();
+    };
+  }, [boot, shutdown, user]);
 
   // eslint-disable-next-line react/jsx-no-useless-fragment
   return <>{children}</>;

@@ -1,5 +1,6 @@
 import { OrganizationSwitcher, UserButton } from "@clerk/nextjs";
 import { Loading } from "../../Loading";
+import { HelpDropdown } from "../../../ui/MenuBar/HelpDropdown";
 
 export default function InstanceCreationInProgress() {
   return (
@@ -14,9 +15,10 @@ export default function InstanceCreationInProgress() {
         <div className="w-full bg-gray-200 rounded-md h-12"></div>
       </div>
       <div className="flex flex-col flex-1 h-full">
-        <div className="flex flex-row h-auto w-full bg-gray-50 p-3 space-x-4 items-end border-b border-gray-300">
+        <div className="flex flex-row h-auto w-full bg-gray-50 p-3 gap-4 items-end border-b border-gray-300">
           <div className="w-36 bg-gray-200 h-full rounded-md animate-pulse"></div>
           <div className="flex-1"></div>
+          <HelpDropdown />
           <OrganizationSwitcher
             hidePersonal
             createOrganizationMode="modal"

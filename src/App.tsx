@@ -25,7 +25,7 @@ import AuthProviderWrapper from "./components/Authentication/AuthProviderWrapper
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { LogsIcon } from "./components/Icons/LogsIcon";
 import { TopologyIcon } from "./components/Icons/TopologyIcon";
-import SetupIntercom from "./components/Intercom/SetupIntercom";
+import BootIntercom from "./components/Intercom/BootIntercom";
 import JobsHistorySettingsPage from "./components/JobsHistory/JobsHistorySettingsPage";
 import { SidebarLayout } from "./components/Layout";
 import NotificationsPage from "./components/Notifications/NotificationsSettingsPage";
@@ -546,29 +546,26 @@ function SidebarWrapper() {
 
 export function App() {
   return (
-    <>
-      <Head prefix={"Home"} />
-      <BrowserRouter>
-        <Provider>
-          <AuthProviderWrapper>
-            <SetupIntercom>
-              <UserAccessStateContextProvider>
-                <FeatureFlagsContextProvider>
-                  <HealthPageContextProvider>
-                    <ConfigPageContextProvider>
-                      <IncidentPageContextProvider>
-                        <ReactTooltip />
-                        <IncidentManagerRoutes sidebar={<SidebarWrapper />} />
-                        <ReactQueryDevtools initialIsOpen={false} />
-                      </IncidentPageContextProvider>
-                    </ConfigPageContextProvider>
-                  </HealthPageContextProvider>
-                </FeatureFlagsContextProvider>
-              </UserAccessStateContextProvider>
-            </SetupIntercom>
-          </AuthProviderWrapper>
-        </Provider>
-      </BrowserRouter>
-    </>
+    <BrowserRouter>
+      <Provider>
+        <AuthProviderWrapper>
+          <BootIntercom>
+            <UserAccessStateContextProvider>
+              <FeatureFlagsContextProvider>
+                <HealthPageContextProvider>
+                  <ConfigPageContextProvider>
+                    <IncidentPageContextProvider>
+                      <ReactTooltip />
+                      <IncidentManagerRoutes sidebar={<SidebarWrapper />} />
+                      <ReactQueryDevtools initialIsOpen={false} />
+                    </IncidentPageContextProvider>
+                  </ConfigPageContextProvider>
+                </HealthPageContextProvider>
+              </FeatureFlagsContextProvider>
+            </UserAccessStateContextProvider>
+          </BootIntercom>
+        </AuthProviderWrapper>
+      </Provider>
+    </BrowserRouter>
   );
 }

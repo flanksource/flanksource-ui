@@ -6,6 +6,7 @@ import { AuthContext } from "../../../context";
 import ErrorPage from "../../Errors/ErrorPage";
 import FullPageSkeletonLoader from "../../SkeletonLoader/FullPageSkeletonLoader";
 import InstanceCreationInProgress from "./InstanceCreationInProgress";
+import BootIntercom from "../../Intercom/BootIntercom";
 
 type AuthProviderWrapperProps = {
   children: React.ReactNode;
@@ -37,7 +38,11 @@ export default function ClerkAuthContextProvider({
   // if the organization backend is not yet created, we need to wait for it to
   // be created before showing the UI
   if (!backendURL) {
-    return <InstanceCreationInProgress />;
+    return (
+      <BootIntercom>
+        <InstanceCreationInProgress />
+      </BootIntercom>
+    );
   }
 
   // if the organization backend returns a 404 or a 5xx error, we need to wait
@@ -47,7 +52,11 @@ export default function ClerkAuthContextProvider({
     (error.response?.status?.toString().startsWith("5") ||
       error?.response?.status === 404)
   ) {
-    return <InstanceCreationInProgress />;
+    return (
+      <BootIntercom>
+        <InstanceCreationInProgress />
+      </BootIntercom>
+    );
   }
 
   if (isLoading && !payload) {
