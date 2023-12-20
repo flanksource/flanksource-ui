@@ -21,7 +21,7 @@ import { Icon } from "../../Icon";
 import { CommentEvidence } from "../../IncidentDetails/DefinitionOfDone/EvidenceView";
 import { LogsTable } from "../../Logs/Table/LogsTable";
 import { Modal } from "../../Modal";
-import { TopologyCard } from "../../TopologyCard";
+import { TopologyCard } from "../../Topology/TopologyCard";
 import { Age } from "../../../ui/Age";
 import { ConfigAnalysis } from "../../../api/types/configs";
 import { Evidence, EvidenceType } from "../../../api/types/evidence";

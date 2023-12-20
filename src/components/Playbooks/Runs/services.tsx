@@ -1,7 +1,7 @@
 import { isEmpty } from "lodash";
 import ConfigLink from "../../Configs/ConfigLink/ConfigLink";
 import { CheckLink } from "../../HealthChecks/CheckLink";
-import { TopologyLink } from "../../TopologyLink";
+import { TopologyLink } from "../../Topology/TopologyLink";
 import { SubmitPlaybookRunFormValues } from "./Submit/SubmitPlaybookRunForm";
 
 export type ActionResource = {

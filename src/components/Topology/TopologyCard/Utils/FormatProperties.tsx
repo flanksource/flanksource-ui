@@ -1,9 +1,9 @@
 import { FiExternalLink } from "react-icons/fi";
 import React, { useMemo, useState } from "react";
-import { formatBytes } from "../../../utils/common";
+import { formatBytes } from "../../../../utils/common";
 import { isEmpty } from "lodash";
-import { TopologyProperty } from "../../../api/types/topology";
-import ProgressBar from "../../../ui/stats/ProgressBar";
+import { TopologyProperty } from "../../../../api/types/topology";
+import ProgressBar from "../../../../ui/stats/ProgressBar";
 import clsx from "clsx";
 
 type FormatPropertyProps = {

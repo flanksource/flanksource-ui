@@ -90,7 +90,9 @@ export default function TopologyResourceForm({
 
   const isLoading = isCreatingResource || isUpdatingResource;
 
-  const initialValues: TopologyResource = useMemo(() => {
+  const initialValues: Omit<TopologyResource, "id"> & {
+    id?: string;
+  } = useMemo(() => {
     if (topology) {
       return topology;
     }
@@ -98,16 +100,19 @@ export default function TopologyResourceForm({
     // todo: pull the specs for each option from the backend and use that to
     // determine the initial values for the spec field
     return {
-      id: "",
       name: "",
-      namespace: "",
+      namespace: "default",
       labels: {},
       spec: spec ?? {}
     };
   }, [spec, topology]);
 
   const handleSubmit = useCallback(
-    (values: TopologyResource) => {
+    (
+      values: Omit<TopologyResource, "id"> & {
+        id?: string;
+      }
+    ) => {
       if (topology) {
         updateResource(values);
       } else {

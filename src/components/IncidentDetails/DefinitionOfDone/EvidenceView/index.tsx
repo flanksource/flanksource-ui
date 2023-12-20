@@ -18,8 +18,8 @@ import {
 import { Icon } from "../../../Icon";
 import { ConfigIcon } from "../../../Icon/ConfigIcon";
 import TextSkeletonLoader from "../../../SkeletonLoader/TextSkeletonLoader";
-import { StatusStyles } from "../../../TopologyCard";
-import { CardMetrics } from "../../../TopologyCard/CardMetrics";
+import { StatusStyles } from "../../../Topology/TopologyCard";
+import { CardMetrics } from "../../../Topology/TopologyCard/CardMetrics";
 
 type EvidenceViewProps = Omit<React.HTMLProps<HTMLDivElement>, "size"> & {
   evidence: Evidence;

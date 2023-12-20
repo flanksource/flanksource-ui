@@ -14,7 +14,7 @@ import {
   BreadcrumbNav,
   BreadcrumbRoot
 } from "../components/BreadcrumbNav";
-import { TopologyLink } from "../components/TopologyLink";
+import { TopologyLink } from "../components/Topology/TopologyLink";
 import LogsFilterBar from "../components/FilterLogs/LogsFilterBar";
 
 export const logTypes = [

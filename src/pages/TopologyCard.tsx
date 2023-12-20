@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { getTopology } from "../api/services/topology";
-import { TopologyCard } from "../components/TopologyCard";
+import { TopologyCard } from "../components/Topology/TopologyCard";
 import { Head } from "../components/Head/Head";
 import { InfoMessage } from "../components/InfoMessage";
 

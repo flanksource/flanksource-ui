@@ -12,8 +12,8 @@ import { features } from "../../../services/permissions/features";
 import { ActionLink } from "../../ActionLink/ActionLink";
 import { AttachEvidenceDialog } from "../../AttachEvidenceDialog";
 import PlaybooksDropdownMenu from "../../Playbooks/Runs/Submit/PlaybooksDropdownMenu";
-import TopologySnapshotModal from "../../TopologyCard/TopologySnapshotModal";
-import { TopologyConfigLinkModal } from "../../TopologyConfigLinkModal/TopologyConfigLinkModal";
+import TopologySnapshotModal from "../TopologyCard/TopologySnapshotModal";
+import { TopologyConfigLinkModal } from "../TopologyConfigLinkModal/TopologyConfigLinkModal";
 
 type TopologyActionItem = {
   label: string;
