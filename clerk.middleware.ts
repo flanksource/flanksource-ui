@@ -26,10 +26,7 @@ export default authMiddleware({
   publicRoutes: ["/", "/login", "/registration"]
 });
 
-const isClerkyAuth = process.env.NEXT_PUBLIC_AUTH_IS_CLERK === "true";
-
 export const config = {
-  matcher: isClerkyAuth
-    ? ["/((?!.*\\..*|_next).*)", "/", "/(api|trpc)(.*)"]
-    : ["/no-paths-to-match"]
+  matcher: ["/((?!.*\\..*|_next).*)", "/", "/(api|trpc)(.*)"],
+  debug: true
 };
