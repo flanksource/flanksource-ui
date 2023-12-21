@@ -4,10 +4,11 @@ import type { NextPage } from "next";
 import Link from "next/link";
 import Router, { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
+import FullPageSkeletonLoader from "../../SkeletonLoader/FullPageSkeletonLoader";
+import { toastError } from "../../Toast/toast";
 import { Flow, HandleError } from "../../ory";
 import { SetUriFlow } from "../../ory/helpers";
 import ory from "../../ory/sdk";
-import FullPageSkeletonLoader from "../../SkeletonLoader/FullPageSkeletonLoader";
 
 const Login: NextPage = () => {
   const [returnTo, setReturnTo] = useState<string | undefined>();
@@ -102,6 +103,10 @@ const Login: NextPage = () => {
         console.log("Login successful");
         setLoginSuccess(true);
         push(returnTo || "/");
+      })
+      .catch((error) => {
+        console.error(error);
+        toastError((error as AxiosError).message);
       });
 
   if (loginSucccess) {
