@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { useIntercom } from "react-use-intercom";
 import { useUser as useContextUser } from "../../context";
 import useDetermineAuthSystem from "../Authentication/useDetermineAuthSystem";
+import { INTERCOM_APP_ID } from "./SetupIntercom";
 
 type Props = {
   children: React.ReactNode;
@@ -71,6 +72,14 @@ function BootIntercomForKratos({ children }: Props) {
 
 export default function BootIntercom({ children }: Props) {
   const authSystem = useDetermineAuthSystem();
+
+  const isIntercomAppIDset = Boolean(INTERCOM_APP_ID);
+
+  // if intercom app id is not set, don't boot intercom
+  if (!isIntercomAppIDset) {
+    // eslint-disable-next-line react/jsx-no-useless-fragment
+    return <>{children}</>;
+  }
 
   if (authSystem === "clerk") {
     return <BootIntercomForClerk>{children}</BootIntercomForClerk>;
