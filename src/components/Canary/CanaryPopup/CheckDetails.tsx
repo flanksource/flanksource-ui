@@ -19,6 +19,7 @@ import { StatusHistory } from "./StatusHistory/StatusHistory";
 import { calculateDefaultTimeRangeValue } from "./Utils/calculateDefaultTimeRangeValue";
 import { PopupTabs } from "./tabs";
 import { getUptimePercentage } from "./utils";
+import CheckRelationships from "./CheckRelationships";
 
 const CanaryStatusChart = React.lazy(() =>
   import("../CanaryStatusChart").then(({ CanaryStatusChart }) => ({
@@ -182,6 +183,11 @@ export function CheckDetails({ check, ...rest }: CheckDetailsProps) {
             specs: {
               label: "Spec",
               content: <CanaryCheckDetailsSpecTab check={check} />,
+              class: `flex-1 flex flex-col overflow-y-auto  border border-gray-300 ${mixins.appleScrollbar}`
+            },
+            related: {
+              label: "Relationships",
+              content: <CheckRelationships check={check} />,
               class: `flex-1 flex flex-col overflow-y-auto  border border-gray-300 ${mixins.appleScrollbar}`
             }
           }}

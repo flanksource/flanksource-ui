@@ -231,7 +231,7 @@ export const getHealthCheckSummary = async (id: string) => {
 export const getHealthCheckDetails = async (id: string) => {
   const res = await resolve<Omit<HealthCheck, "source">[] | null>(
     IncidentCommander.get(
-      `/checks?id=eq.${id}&select=*,canaries(id,name,source),agents(id, name)`
+      `/checks?id=eq.${id}&select=*,canaries(id,name,source),agents(id, name),components:check_component_relationships(components(id,name,icon)),configs:check_config_relationships(configs(id,name,type))`
     )
   );
   return res.data?.[0];

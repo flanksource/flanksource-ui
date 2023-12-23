@@ -1,6 +1,8 @@
 import { SchemaResourceI } from "../schemaResources";
 import { Agent, Avatar, Timestamped } from "../traits";
 import { AgentItem } from "./common";
+import { ConfigItem } from "./configs";
+import { Topology } from "./topology";
 
 export interface HealthChecksResponse {
   duration: number;
@@ -36,6 +38,12 @@ export interface HealthCheck extends Timestamped, Avatar, Agent {
   next_runtime?: string;
   agents?: AgentItem;
   canaries?: SchemaResourceI;
+  configs: {
+    configs: Pick<ConfigItem, "id" | "name" | "type">;
+  }[];
+  components?: {
+    components: Pick<Topology, "id" | "name" | "icon">;
+  }[];
 }
 
 export type HealthCheckSummary = Pick<
