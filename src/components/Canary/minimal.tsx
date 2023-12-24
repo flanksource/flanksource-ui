@@ -12,7 +12,7 @@ import { toastError } from "../Toast/toast";
 import { CheckDetails } from "./CanaryPopup/CheckDetails";
 import { CheckTitle } from "./CanaryPopup/CheckTitle";
 import { HealthCheckEdit } from "./HealthCheckEdit";
-import { CanaryCards } from "./card";
+import { CanaryCards } from "./CanaryCards";
 import { CanaryTable } from "./table";
 
 type MinimalCanaryFCProps = {
@@ -90,7 +90,7 @@ const MinimalCanaryFC = ({
   return (
     <>
       {layout === "card" ? (
-        <CanaryCards checks={checks} onClick={handleCheckSelect} />
+        <CanaryCards checks={checks!} onClick={handleCheckSelect} />
       ) : (
         <CanaryTable
           checks={checks}
