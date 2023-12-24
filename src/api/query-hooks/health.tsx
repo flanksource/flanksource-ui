@@ -25,6 +25,6 @@ export function useGetCheckDetails(checkId?: string) {
       const res = await getHealthCheckDetails(checkId!);
       return res;
     },
-    enabled: checkId !== undefined
+    enabled: !!checkId
   });
 }
