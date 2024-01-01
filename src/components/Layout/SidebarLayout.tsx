@@ -148,7 +148,7 @@ function SideNavGroup({
               featureName as unknown as keyof typeof features
             )
               ? withAccessCheck(
-                  <Menu.Item key={name}>
+                  <Menu.Item key={href}>
                     {({ active }) => (
                       <NavLink className="w-full" to={href}>
                         <NavItemWrapper active={active}>
@@ -245,6 +245,7 @@ function SideNav({
       {withAccessCheck(
         <div>
           <SideNavGroup
+            key={"settings"}
             {...settings}
             collapseSidebar={collapseSidebar}
             checkPath={checkPath}

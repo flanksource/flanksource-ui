@@ -68,7 +68,7 @@ export function ConfigDetails({
                         {configDetails.config_scrapers && (
                           <>
                             {" "}
-                            by
+                            by{" "}
                             <Link
                               to={{
                                 pathname: `/settings/config_scrapers/${configDetails.config_scrapers.id}`

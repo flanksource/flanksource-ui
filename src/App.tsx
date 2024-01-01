@@ -225,7 +225,6 @@ export function HealthRoutes({ sidebar }: { sidebar: ReactNode }) {
 export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
   const { featureFlagsLoaded } = useFeatureFlagsContext();
 
-  console.log(window.location.pathname);
   if (
     !featureFlagsLoaded &&
     !window.location.pathname.startsWith("/view/topology")

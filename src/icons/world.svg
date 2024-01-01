@@ -1,6 +1,1 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32" height="32" viewBox="0 0 32 32" version="1.1">
-<g id="surface1">
-<path style="fill:none;stroke-width:1.33333;stroke-linecap:round;stroke-linejoin:round;stroke:rgb(64.313728%,64.313728%,64.313728%);stroke-opacity:1;stroke-miterlimit:4;" d="M 13.000244 7 C 13.000244 10.313721 10.313721 13.000244 7 13.000244 M 13.000244 7 C 13.000244 3.686279 10.313721 0.999756 7 0.999756 M 13.000244 7 L 0.999756 7 M 7 13.000244 C 3.686279 13.000244 0.999756 10.313721 0.999756 7 M 7 13.000244 C 8.104004 13.000244 8.999512 10.313721 8.999512 7 C 8.999512 3.686279 8.104004 0.999756 7 0.999756 M 7 13.000244 C 5.895996 13.000244 5.000488 10.313721 5.000488 7 C 5.000488 3.686279 5.895996 0.999756 7 0.999756 M 0.999756 7 C 0.999756 3.686279 3.686279 0.999756 7 0.999756 " transform="matrix(2.285714,0,0,2.285714,0,0)"/>
-</g>
-</svg>
+<svg role="img" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M13 7a6 6 0 0 1-6 6m6-6a6 6 0 0 0-6-6m6 6H1m6 6a6 6 0 0 1-6-6m6 6c1.104 0 2-2.686 2-6s-.896-6-2-6m0 12c-1.104 0-2-2.686-2-6s.896-6 2-6M1 7a6 6 0 0 1 6-6" style="fill:none;stroke-width:1.33333;stroke-linecap:round;stroke-linejoin:round;stroke:rgb(64.313728%,64.313728%,64.313728%);stroke-opacity:1;stroke-miterlimit:4" transform="scale(2.28571)"/></svg>
