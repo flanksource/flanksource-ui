@@ -59,7 +59,9 @@ export function TopologyBreadcrumbs({
   return (
     <BreadcrumbNav
       list={[
-        <BreadcrumbRoot link="/topology">Dashboard</BreadcrumbRoot>,
+        <BreadcrumbRoot link="/topology" key="topology-dashboard">
+          Dashboard
+        </BreadcrumbRoot>,
         ...ids.map((id) => {
           return <TopologyBreadcrumbItem key={id} topologyId={id} />;
         })

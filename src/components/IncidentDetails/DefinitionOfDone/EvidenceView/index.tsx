@@ -5,7 +5,8 @@ import { BsFillCircleFill, BsPersonFill } from "react-icons/bs";
 import { Link } from "react-router-dom";
 import {
   useComponentNameQuery,
-  useConfigNameQuery
+  useConfigNameQuery,
+  useTopologyQuery
 } from "../../../../api/query-hooks";
 import { getCanaries } from "../../../../api/services/topology";
 import { Evidence, EvidenceType } from "../../../../api/types/evidence";
@@ -33,9 +34,8 @@ function TopologyEvidence({
   ...rest
 }: EvidenceViewProps) {
   const componentId = evidence?.component_id || evidence?.evidence?.id;
-  const { data: topology } = useComponentNameQuery(componentId, {
-    enabled: !!componentId
-  });
+
+  const { data: topology } = useTopologyQuery(componentId);
 
   const prepareTopologyLink = (topologyItem: { id: string }) => {
     return `/topology/${topologyItem.id}`;
@@ -101,9 +101,7 @@ function LogEvidence({
     data: comp,
     isFetching,
     isRefetching
-  } = useComponentNameQuery(evidence?.component_id, {
-    enabled: !!evidence?.component_id
-  });
+  } = useComponentNameQuery(evidence?.component_id);
 
   if (isFetching || isRefetching) {
     return <TextSkeletonLoader className="w-full" />;
