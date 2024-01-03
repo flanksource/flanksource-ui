@@ -10,8 +10,9 @@ function ConfigListNameCell({ row, getValue }: CellContext<ConfigItem, any>) {
 
   return (
     <div className="flex flex-row space-x-2 items-center">
-      <ConfigsTypeIcon config={{ type: configType }} showPrimaryIcon={false} />
-      <span className="truncate">{getValue()}</span>
+      <ConfigsTypeIcon config={{ type: configType }} showPrimaryIcon={false}>
+        <span>{getValue()}</span>
+      </ConfigsTypeIcon>
       {isDeleted && (
         <Badge text="deleted" colorClass="text-white bg-gray-400" />
       )}

@@ -44,16 +44,18 @@ export default function ConfigLink({
         }}
         className={clsx("flex flex-row gap-2", className)}
       >
-        <ConfigsTypeIcon config={data} />
-
-        <div className="overflow-hidden text-ellipsis flex-1">{data.name}</div>
+        <ConfigsTypeIcon config={data}>
+          <span className="overflow-hidden text-ellipsis flex-1">
+            {data.name}
+          </span>
+        </ConfigsTypeIcon>
       </Link>
     );
   }
   return (
     <div className={clsx("flex flex-row gap-1", className)}>
       <ConfigIcon config={data} />
-      <div className="overflow-hidden text-ellipsis text-sm">{data.name}</div>
+      <span className="overflow-hidden text-ellipsis text-sm">{data.name}</span>
     </div>
   );
 }
