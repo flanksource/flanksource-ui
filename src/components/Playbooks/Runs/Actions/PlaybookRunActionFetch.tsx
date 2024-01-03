@@ -15,7 +15,11 @@ export default function PlaybookRunActionFetch({ playbookRunActionId }: Props) {
   });
 
   if (isLoading || !action) {
-    return <Loading text="..." />;
+    return (
+      <div className="flex w-full h-full justify-center items-center">
+        <Loading text="Loading ..." />
+      </div>
+    );
   }
 
   return <PlaybooksRunActionsResults action={action} />;

@@ -18,7 +18,7 @@ type PlaybookRunActionsProps = {
 
 export default function PlaybookRunsActions({ data }: PlaybookRunActionsProps) {
   const [selectedAction, setSelectedAction] = useState<PlaybookRunAction>();
-  let resource = getResourceForRun(data);
+  const resource = getResourceForRun(data);
 
   return (
     <div className="flex flex-col flex-1 gap-6">
