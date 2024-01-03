@@ -199,7 +199,6 @@ export default function SpecEditorForm({
                     </div>
                   </Tab>
                   <Tab label="Code" value="Code">
-                    {/* confirm about this */}
                     <FormikCodeEditor format={specFormat} fieldName="spec" />
                   </Tab>
                 </Tabs>

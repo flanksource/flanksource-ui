@@ -46,11 +46,31 @@ export function FormikCodeEditor({
     }
   });
 
-  const { value: values } = field;
+  const { value: specFormValue } = field;
 
   // we want to debounce the code editor value so that we can avoid the code
   // editor jumping around when the user is typing
   const [codeEditorValue, setCodeEditorValue] = useState<string | undefined>();
+
+  // we want to set the value of the formik field to the internal state of the
+  // code editor, so that we can avoid the code editor jumping around when the
+  // user is typing
+  useEffect(() => {
+    if (!isEmpty(specFormValue)) {
+      if (format === "yaml" || format === "json") {
+        const value =
+          format === "yaml"
+            ? YAML.stringify(specFormValue, {
+                sortMapEntries: true
+              })
+            : JSON.stringify(specFormValue, null, 2);
+        setCodeEditorValue(value);
+      } else {
+        setCodeEditorValue(specFormValue);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [specFormValue]);
 
   const debouncedValues = useDebounce(codeEditorValue, 300);
 
@@ -80,19 +100,18 @@ export function FormikCodeEditor({
   // code editor when the user is typing, as this will cause the code editor to
   // jump around, and the user's cursor to jump around.
   const value = useMemo(() => {
-    if (!isEmpty(values)) {
+    if (!isEmpty(specFormValue)) {
       if (format === "yaml" || format === "json") {
         return format === "yaml"
-          ? YAML.stringify(values, {
+          ? YAML.stringify(specFormValue, {
               sortMapEntries: true
             })
-          : JSON.stringify(values, null, 2);
+          : JSON.stringify(specFormValue, null, 2);
       } else {
-        return values;
+        return specFormValue;
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [format, specFormValue]);
 
   return (
     <div className={className}>
