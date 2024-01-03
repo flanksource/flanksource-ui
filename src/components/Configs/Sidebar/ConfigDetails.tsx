@@ -95,7 +95,7 @@ export function ConfigDetails({
                             to={{
                               pathname: `/settings/config_scrapers/${configDetails.config_scrapers.id}`
                             }}
-                            className="cursor-pointer text-blue-500 my-auto underline whitespace-nowrap  text-ellipsis overflow-hidden relative"
+                            className="link whitespace-nowrap  text-ellipsis overflow-hidden relative"
                           >
                             {configDetails.config_scrapers.name}
                           </Link>

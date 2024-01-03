@@ -86,9 +86,8 @@
     @apply fill-gray-800
   }
 
-
   .link {
-    @apply underline text-blue-600 hover:text-blue-800 visited:text-blue-600
+    @apply text-blue-500 hover:text-blue-800 visited:text-blue-500 cursor-pointer
   }
 
   .btn-white {

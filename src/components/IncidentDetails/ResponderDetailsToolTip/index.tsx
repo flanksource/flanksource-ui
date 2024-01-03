@@ -151,7 +151,7 @@ export const ResponderDetailsToolTip = ({
                       {option?.link?.value ? (
                         <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                           <a
-                            className="underline text-blue-600 hover:text-blue-800 visited:text-blue-600"
+                            className="link"
                             href={option.link.value}
                             target="_blank"
                             rel="noopener noreferrer"
