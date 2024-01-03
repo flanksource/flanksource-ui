@@ -1,30 +1,44 @@
 import { useQuery } from "@tanstack/react-query";
 import { getAgentByID } from "../../api/services/agents";
 import { Badge } from "../Badge";
+import { ComponentProps } from "react";
+import { AgentItem } from "../../api/types/common";
 
 type TopologyCardAgentProps = {
+  agent?: AgentItem;
   agentId?: string;
+  className?: string;
+  size?: ComponentProps<typeof Badge>["size"];
 };
 
-export default function AgentName({ agentId }: TopologyCardAgentProps) {
-  const { data: agent } = useQuery(
+export default function AgentName({
+  agent: propAgent,
+  agentId,
+  className = "bg-gray-100 text-gray-800",
+  size = "xs"
+}: TopologyCardAgentProps) {
+  const { data: dbAgent } = useQuery(
     ["db", "agent", agentId],
     () => getAgentByID(agentId!),
     {
-      enabled: !!agentId && agentId !== "00000000-0000-0000-0000-000000000000"
+      enabled: !!agentId && propAgent === undefined
     }
   );
+
+  const agent = propAgent ?? dbAgent;
 
   if (!agent) {
     return null;
   }
 
   return (
-    <Badge
-      colorClass="bg-gray-100 text-gray-800"
-      size="xs"
-      title={agent.description}
-      text={agent.name}
-    />
+    <div className="flex items-center">
+      <Badge
+        className={className}
+        size={size}
+        title={agent.description}
+        text={agent.name}
+      />
+    </div>
   );
 }

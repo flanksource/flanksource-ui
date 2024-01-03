@@ -1,10 +1,9 @@
 import clsx from "clsx";
-import React, { useMemo } from "react";
+import React from "react";
 import { HealthCheck } from "../../../api/types/health";
-import { usePrevious } from "../../../utils/hooks";
+import AgentName from "../../Agents/AgentName";
 import { Badge } from "../../Badge";
 import { Icon } from "../../Icon";
-import AgentName from "../../Agents/AgentName";
 
 type CheckTitleProps = Omit<React.HTMLProps<HTMLDivElement>, "size"> & {
   check?: Partial<HealthCheck>;
@@ -17,13 +16,10 @@ export function CheckTitle({
   size = "large",
   ...rest
 }: CheckTitleProps) {
-  const prevCheck = usePrevious(check);
-  const validCheck = check || prevCheck;
-
   // todo: this is a hack to get the agent id from the check, before it gets
   // update to a check without the agent id
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const agentID = useMemo(() => check?.agent_id, []);
+  const agentID = check?.agent_id;
+  const namespace = check?.namespace;
 
   return (
     <div className={`flex flex-row items-center ${className}`} {...rest}>
@@ -34,49 +30,61 @@ export function CheckTitle({
         )}
       >
         <Icon
-          name={validCheck?.icon || validCheck?.type}
-          className={size === "large" ? "w-14 h-auto" : "w-6 h-auto"}
+          name={check?.icon || check?.type}
+          className={
+            size === "large"
+              ? "flex flex-row w-14 h-auto"
+              : "flex flex-row w-6 h-auto"
+          }
         />
       </div>
       <div
         className={clsx(
-          "flex flex-1 flex-row whitespace-nowrap overflow-ellipsis overflow-hidden",
+          "flex flex-1 flex-row whitespace-nowrap overflow-ellipsis overflow-hidden gap-1",
           size === "large" ? " mr-10" : ""
         )}
       >
-        <div className="flex flex-row flex-1 overflow-x-auto items-center">
+        <div className="flex flex-row overflow-x-auto items-center">
           <span
-            title={validCheck?.name}
+            title={check?.name}
             className={clsx(
-              "text-gray-800 flex-1 font-semibold whitespace-nowrap overflow-ellipsis overflow-hidden pr-4",
+              "text-gray-800 flex-1 font-semibold whitespace-nowrap overflow-ellipsis overflow-hidden pr-1",
               size === "large" ? "text-2xl" : ""
             )}
           >
-            {validCheck?.name}
+            {check?.name}
           </span>{" "}
           {size === "large" && (
             <span
               className="hidden sm:block "
-              title={`Namespace for ${validCheck?.name}`}
+              title={`Namespace for ${check?.name}`}
               style={{ paddingTop: "1px" }}
             >
-              <Badge text={validCheck?.namespace ?? ""} />
+              <Badge text={check?.namespace ?? ""} />
             </span>
           )}
         </div>
         <div
-          title={`Endpoint for ${validCheck?.name}`}
+          title={`Endpoint for ${check?.name}`}
           className="text-sm text-gray-400 mt-0.5 overflow-x-hidden overflow-ellipsis break-all"
         >
-          {validCheck?.endpoint}
+          {check?.endpoint}
         </div>
-        <span
-          className="block sm:hidden mt-2"
-          title={`Namespace for ${validCheck?.name}`}
+        <div
+          className="flex items-center"
+          title={`Namespace for ${check?.name}`}
         >
-          <Badge text={validCheck?.namespace ?? ""} />
-        </span>
-        <AgentName agentId={agentID} />
+          <Badge
+            className="bg-blue-100 text-blue-500"
+            text={namespace}
+            size="sm"
+          />
+        </div>
+        <AgentName
+          className="bg-blue-100 text-blue-500"
+          size="sm"
+          agentId={agentID}
+        />
       </div>
     </div>
   );

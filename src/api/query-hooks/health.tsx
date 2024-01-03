@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import { HealthCheck } from "../types/health";
 import { getStartValue } from "../../utils/common";
-import { getCanaryGraph } from "../services/topology";
+import { getCanaryGraph, getHealthCheckDetails } from "../services/topology";
+import { HealthCheck } from "../types/health";
 
 export function useCanaryGraphQuery(
   timeRange: string,
@@ -15,5 +15,16 @@ export function useCanaryGraphQuery(
     };
     const res = await getCanaryGraph(payload);
     return res.data ?? undefined;
+  });
+}
+
+export function useGetCheckDetails(checkId?: string) {
+  return useQuery({
+    queryKey: ["check", "details", checkId],
+    queryFn: async () => {
+      const res = await getHealthCheckDetails(checkId!);
+      return res;
+    },
+    enabled: !!checkId
   });
 }

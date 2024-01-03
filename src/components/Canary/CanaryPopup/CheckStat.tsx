@@ -26,7 +26,9 @@ export function CheckStat({
       className={`flex flex-col ${containerClassName} ${className}`}
       {...rest}
     >
-      <div className="text-sm font-medium text-gray-500">{title}</div>
+      {title && (
+        <div className="text-sm font-medium text-gray-500">{title}</div>
+      )}
       <div className={`flex ${valueContainerClassName}`}>
         <span className={`text-4xl font-bold ${valueClass}`}>{value}</span>
         {append}

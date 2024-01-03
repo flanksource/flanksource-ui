@@ -1,16 +1,16 @@
-import React, { useEffect, useMemo, useState } from "react";
 import { orderBy } from "lodash";
+import React, { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { HealthCheck } from "../../api/types/health";
 import { CanaryTabs, filterChecksByTabSelection } from "../Canary/CanaryTabs";
-import { MinimalCanary } from "../Canary/minimal";
+import { ChecksListing } from "../Canary/ChecksListing";
+import { CanarySorter } from "../Canary/data";
 import { filterChecks, filterChecksByText } from "../Canary/filter";
 import {
   filterChecksByLabels,
   getLabelFilters,
   getLabels
 } from "../Canary/labels";
-import { CanarySorter } from "../Canary/data";
-import { useSearchParams } from "react-router-dom";
-import { HealthCheck } from "../../api/types/health";
 
 type Props = {
   checks?: HealthCheck[];
@@ -87,7 +87,7 @@ const CanaryInterfaceMinimalFC = ({
       tabBy={searchParams.get("tabBy")!}
       setTabSelection={setSelectedTab}
     >
-      <MinimalCanary
+      <ChecksListing
         // tableHeadStyle={tableHeadStyle}
         checks={filteredChecks}
         selectedTab={selectedTab}

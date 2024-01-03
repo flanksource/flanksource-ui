@@ -40,6 +40,8 @@ type TagListProps = React.HTMLProps<HTMLDivElement> & {
   tags: TagEntry[];
   minimumItemsToShow?: number;
   childClassName?: string;
+  keyClassName?: string;
+  valueClassName?: string;
 };
 
 type TagItemProps = {
@@ -49,12 +51,16 @@ type TagItemProps = {
     key: string;
     value: string;
   };
+  keyClassName?: string;
+  valueClassName?: string;
 };
 
 export function TagItem({
   tag: { key, value },
   containerWidth,
-  className = "bg-gray-200 text-gray-600 mx-1"
+  className = "bg-gray-200 text-gray-600 mx-1",
+  keyClassName = "",
+  valueClassName = "font-light"
 }: TagItemProps) {
   return (
     <div
@@ -65,8 +71,8 @@ export function TagItem({
         className="flex flex-row space-x-1 font-semibold p-[0.2rem]  text-xs whitespace-nowrap break-inside-avoid-column"
         style={containerWidth ? { width: containerWidth } : {}}
       >
-        <span className="inline">{key}:</span>
-        <span className="inline font-light">{value}</span>
+        <span className={keyClassName}>{key}:</span>
+        <span className={valueClassName}>{value}</span>
       </div>
     </div>
   );
@@ -77,6 +83,8 @@ export function TagList({
   minimumItemsToShow = 1,
   className = `flex flex-row text-left items-start flex-1`,
   childClassName = "bg-gray-200 text-gray-600 mx-1",
+  keyClassName = "",
+  valueClassName = "font-light",
   ...rest
 }: TagListProps) {
   const [showAll, setShowAll] = useState(false);
@@ -142,6 +150,8 @@ export function TagList({
             tag={{ key, value }}
             className={childClassName}
             containerWidth={containerWidth}
+            keyClassName={keyClassName}
+            valueClassName={valueClassName}
           />
         ))}
       </div>

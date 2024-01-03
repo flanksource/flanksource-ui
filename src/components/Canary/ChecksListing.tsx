@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
-import { getCanaries } from "../../api/services/topology";
+import { useGetCheckDetails } from "../../api/query-hooks/health";
 import { EvidenceType } from "../../api/types/evidence";
 import { HealthCheck } from "../../api/types/health";
 import { isCanaryUI } from "../../context/Environment";
@@ -8,80 +8,45 @@ import AttachAsEvidenceButton from "../AttachEvidenceDialog/AttachAsEvidenceDial
 import { timeRanges } from "../Dropdown/TimeRange";
 import { Modal } from "../Modal";
 import PlaybooksDropdownMenu from "../Playbooks/Runs/Submit/PlaybooksDropdownMenu";
-import { toastError } from "../Toast/toast";
 import { CheckDetails } from "./CanaryPopup/CheckDetails";
 import { CheckTitle } from "./CanaryPopup/CheckTitle";
 import { HealthCheckEdit } from "./HealthCheckEdit";
-import { CanaryCards } from "./card";
+import { CanaryCards } from "./CanaryCards";
 import { CanaryTable } from "./table";
 
-type MinimalCanaryFCProps = {
+type ChecksListingProps = {
   checks?: HealthCheck[];
   labels?: any[];
   selectedTab?: string;
   tableHeadStyle?: any;
 };
 
-const MinimalCanaryFC = ({
+export function ChecksListing({
   checks,
   labels,
   selectedTab,
   tableHeadStyle = {}
-}: MinimalCanaryFCProps) => {
+}: ChecksListingProps) {
   const [searchParams, setSearchParams] = useSearchParams({
     layout: "table"
   });
 
-  const {
-    tabBy,
-    layout,
-    timeRange = timeRanges[1].value,
-    checkId
-  } = Object.fromEntries(searchParams.entries());
+  const tabBy = searchParams.get("tabBy");
+  const layout = searchParams.get("layout");
+  const timeRange = searchParams.get("timeRange") ?? timeRanges[1].value;
+  const checkId = searchParams.get("checkId") ?? undefined;
 
-  const [selectedCheck, setSelectedCheck] = useState<Partial<HealthCheck>>();
-  const [openChecksModal, setOpenChecksModal] = useState(false);
+  const { data: check } = useGetCheckDetails(checkId as string);
 
   const handleCheckSelect = useCallback(
     (check: Pick<HealthCheck, "id">) => {
-      setSelectedCheck({
-        ...check,
-        checkStatuses: undefined
-      });
-      setOpenChecksModal(true);
-      const payload = {
-        check: check.id,
-        includeMessages: false,
-        start: timeRange
-      };
-      getCanaries(payload)
-        .then((response) => {
-          if (!response.data?.checks?.[0]) {
-            toastError(`Failed to fetch checks data`);
-            return;
-          }
-          setSelectedCheck(response.data?.checks?.[0]);
-          setSearchParams({
-            ...Object.fromEntries(searchParams.entries()),
-            checkId: check.id,
-            timeRange
-          });
-        })
-        .catch((err) => {
-          toastError(err);
-        });
+      searchParams.set("checkId", check.id);
+      setSearchParams(searchParams);
     },
-    [searchParams, setSearchParams, timeRange]
+    [searchParams, setSearchParams]
   );
 
-  useEffect(() => {
-    if (checkId && !selectedCheck) {
-      handleCheckSelect({ id: checkId });
-    }
-  }, []);
-
   function clearCheck() {
-    setOpenChecksModal(false);
     searchParams.delete("checkId");
     searchParams.set("timeRange", "1h");
     setSearchParams(searchParams);
@@ -90,7 +55,7 @@ const MinimalCanaryFC = ({
   return (
     <>
       {layout === "card" ? (
-        <CanaryCards checks={checks} onClick={handleCheckSelect} />
+        <CanaryCards checks={checks!} onClick={handleCheckSelect} />
       ) : (
         <CanaryTable
           checks={checks}
@@ -108,36 +73,34 @@ const MinimalCanaryFC = ({
         />
       )}
       <Modal
-        open={openChecksModal}
+        open={!!check}
         onClose={() => clearCheck()}
-        title={<CheckTitle check={selectedCheck} size="" />}
+        title={<CheckTitle check={check} size="" />}
         size="full"
         containerClassName="flex flex-col h-full overflow-y-auto"
         bodyClass="flex flex-col flex-1 overflow-y-auto"
       >
         <div className="flex flex-col flex-1 overflow-y-auto px-4 py-4 mb-16">
           <CheckDetails
-            check={selectedCheck}
+            check={check}
             timeRange={timeRange}
             className={`flex flex-col overflow-y-auto flex-1`}
           />
           <div className="rounded-t-none  flex gap-2 bg-gray-100 px-8 py-4 justify-end absolute w-full bottom-0 left-0">
-            {selectedCheck?.canary_id && (
-              <HealthCheckEdit check={selectedCheck as HealthCheck} />
-            )}
+            {check?.canary_id && <HealthCheckEdit check={check} />}
             {!isCanaryUI && (
               <>
                 <div className="flex flex-col items-center ">
                   <PlaybooksDropdownMenu
                     className="btn-primary"
-                    check_id={selectedCheck?.id}
+                    check_id={checkId as string}
                   />
                 </div>
                 <div className="flex flex-col items-center py-1">
                   <AttachAsEvidenceButton
-                    check_id={selectedCheck?.id}
+                    check_id={checkId as string}
                     evidence={{
-                      check_id: selectedCheck?.id,
+                      check_id: checkId as string,
                       includeMessages: true,
                       start: timeRange
                     }}
@@ -155,6 +118,4 @@ const MinimalCanaryFC = ({
       </Modal>
     </>
   );
-};
-
-export const MinimalCanary = React.memo(MinimalCanaryFC);
+}

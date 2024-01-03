@@ -8,15 +8,19 @@ import {
   Snapshot
 } from "../axios";
 import { resolve } from "../resolve";
+import { SchemaResourceI } from "../schemaResources";
 import { PaginationInfo } from "../types/common";
 import {
   HealthCheck,
   HealthCheckStatus,
   HealthCheckSummary
 } from "../types/health";
-import { ComponentHealthCheckView, Topology } from "../types/topology";
-import { ComponentTeamItem } from "../types/topology";
-import { ComponentTemplateItem } from "../types/topology";
+import {
+  ComponentHealthCheckView,
+  ComponentTeamItem,
+  ComponentTemplateItem,
+  Topology
+} from "../types/topology";
 
 interface IParam {
   id?: string;
@@ -224,8 +228,17 @@ export const getHealthCheckSummary = async (id: string) => {
   return null;
 };
 
+export const getHealthCheckDetails = async (id: string) => {
+  const res = await resolve<Omit<HealthCheck, "source">[] | null>(
+    IncidentCommander.get(
+      `/checks?id=eq.${id}&select=*,canaries(id,name,source),agents(id, name),components:check_component_relationships(components(id,name,icon)),configs:check_config_relationships(configs(id,name,type))`
+    )
+  );
+  return res.data?.[0];
+};
+
 export const getHealthCheckItem = async (id: string) => {
-  const res = await IncidentCommander.get<HealthCheck[] | null>(
+  const res = await IncidentCommander.get<SchemaResourceI[] | null>(
     `/canaries?id=eq.${id}`
   );
   return res.data?.[0];

@@ -1,10 +1,14 @@
 import React from "react";
 import { GetName } from "./data";
 import { Title, StatusList } from "./renderers";
+import { HealthCheck } from "../../api/types/health";
 
-export function CanaryCards(props) {
-  const { checks, onClick } = props;
+type CanaryCardProps = {
+  checks: HealthCheck[];
+  onClick: (check: HealthCheck) => void;
+};
 
+export function CanaryCards({ checks, onClick }: CanaryCardProps) {
   return (
     <ul className={`mt-1 grid grid-cols-1 gap-1 sm:gap-2 `}>
       {checks.map((check) => (
