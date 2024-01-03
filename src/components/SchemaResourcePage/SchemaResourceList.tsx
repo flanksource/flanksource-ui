@@ -2,11 +2,12 @@ import clsx from "clsx";
 import { useNavigate } from "react-router-dom";
 import { SchemaResourceWithJobStatus } from "../../api/schemaResources";
 import { tables } from "../../context/UserAccessContext/permissions";
+import { Age } from "../../ui/Age";
+import AgentName from "../Agents/AgentName";
 import { Avatar } from "../Avatar";
 import { InfoMessage } from "../InfoMessage";
 import JobHistoryStatusColumn from "../JobsHistory/JobHistoryStatusColumn";
 import TableSkeletonLoader from "../SkeletonLoader/TableSkeletonLoader";
-import { Age } from "../../ui/Age";
 import ConfigScrapperIcon from "./ConfigScrapperIcon";
 interface Props {
   items: SchemaResourceWithJobStatus[];
@@ -36,6 +37,8 @@ export function SchemaResourceList({
               <HCell colSpan={2}>Name</HCell>
               <HCell>Source Config</HCell>
               {table === "canaries" && <HCell>Schedule</HCell>}
+              {table === "topologies" && <HCell colSpan={2}>namespace</HCell>}
+              {table === "topologies" && <HCell>Agent</HCell>}
               <HCell>Created At</HCell>
               <HCell>Updated At</HCell>
               <HCell>Job Status</HCell>
@@ -110,6 +113,8 @@ function SchemaResourceListItem({
   schedule,
   job_status,
   job_time_start,
+  namespace,
+  agent,
   spec
 }: SchemaResourceWithJobStatus & {
   baseUrl: string;
@@ -135,6 +140,12 @@ function SchemaResourceListItem({
         {!!source && <a href={`${source}`}>Link</a>}
       </Cell>
       {table === "canaries" && <Cell>{schedule}</Cell>}
+      {table === "topologies" && <Cell colSpan={2}>{namespace}</Cell>}
+      {table === "topologies" && (
+        <Cell>
+          <AgentName agent={agent} />
+        </Cell>
+      )}
       <Cell className="text-gray-500">
         <Age from={created_at} suffix={true} />
       </Cell>
