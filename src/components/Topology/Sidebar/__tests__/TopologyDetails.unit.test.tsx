@@ -8,6 +8,7 @@ import { MemoryRouter } from "react-router-dom";
 
 const mockDataComponent = {
   id: "component_UUID",
+  type: "mockType",
   topologies: {
     id: "topology_UUID",
     name: "topology_name"
@@ -29,7 +30,7 @@ const queryClient = new QueryClient();
 describe("TopologyDetails", () => {
   test("renders topology details correctly", async () => {
     const topology: Topology = {
-      type: "topology",
+      type: "mockType",
       id: "123",
       name: "Topology Name",
       properties: [
@@ -73,11 +74,9 @@ describe("TopologyDetails", () => {
       </QueryClientProvider>
     );
 
-    expect(
-      await screen.findByRole("link", { name: /topology_name/i })
-    ).toHaveAttribute(
+    expect(await screen.findByTestId("type-link")).toHaveAttribute(
       "href",
-      expect.stringContaining("/settings/topologies/topology_UUID")
+      expect.stringContaining("/topology?type=mockType")
     );
 
     // assert for created_at, updated_at, deleted_at

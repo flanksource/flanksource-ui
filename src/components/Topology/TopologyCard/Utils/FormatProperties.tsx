@@ -205,7 +205,10 @@ export function FormatPropertyDefault({
   }
 
   return (
-    <span data-tip={tooltip} className="overflow-ellipsis text-sm">
+    <span
+      data-tip={tooltip}
+      className=" text-ellipsis overflow-hidden relative whitespace-nowrap text-xs"
+    >
       {value}
     </span>
   );

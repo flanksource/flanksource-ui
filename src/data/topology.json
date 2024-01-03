@@ -1,0 +1,112 @@
+{
+  "id": "018b81ad-0206-8473-1282-014a3dd197c5",
+  "topology_id": "255b46d6-4099-4a59-bca0-7fe5fb43e6ea",
+  "agent_id": "00000000-0000-0000-0000-000000000000",
+  "external_id": "ip-10-0-5-38.eu-west-1.compute.internal",
+  "parent_id": "0189f817-9bc2-5061-ae51-258021e49c6a",
+  "name": "ip-10-0-5-38.eu-west-1.compute.internal",
+  "topology_type": "component",
+  "namespace": "canaries",
+  "labels": {
+    "alpha.eksctl.io/cluster-name": "mission-control-demo-cluster",
+    "alpha.eksctl.io/instance-id": "i-0a8afe9c8603decf4",
+    "alpha.eksctl.io/nodegroup-name": "ng1",
+    "namespace": "default",
+    "failure-domain.beta.kubernetes.io/region": "eu-west-1",
+    "failure-domain.beta.kubernetes.io/zone": "eu-west-1b",
+    "k8s.io/cloud-provider-aws": "bb78e8e9bd84a96617ea3d4a3054b166",
+    "kubernetes.io/arch": "amd64",
+    "kubernetes.io/hostname": "ip-10-0-5-38.eu-west-1.compute.internal",
+    "kubernetes.io/os": "linux",
+    "node-lifecycle": "on-demand",
+    "helm.toolkit.fluxcd.io/name": "n1",
+    "helm.toolkit.fluxcd.io/namespace": "ns",
+
+    "node.kubernetes.io/instance-type": "t3.xlarge",
+    "topology.ebs.csi.aws.com/zone": "eu-west-1b",
+    "topology.kubernetes.io/region": "eu-west-1",
+    "topology.kubernetes.io/zone": "eu-west-1b",
+    "cloudformation/stack-id": "123",
+    "cloudformation/name": "john"
+  },
+  "status": "warning",
+  "logs": [
+    {
+      "name": "Kubernetes"
+    }
+  ],
+  "schedule": "@every 10m",
+  "icon": "server",
+  "type": "KubernetesNode",
+  "selectors": [
+    {
+      "fieldSelector": "node=ip-10-0-5-38.eu-west-1.compute.internal"
+    }
+  ],
+  "configs": [
+    {
+      "type": "Kubernetes::Node",
+      "name": "ip-10-0-5-38.eu-west-1.compute.internal"
+    }
+  ],
+  "properties": [
+    {
+      "name": "cpu",
+      "headline": true,
+      "value": 270,
+      "unit": "millicores",
+      "max": 3920
+    },
+    {
+      "name": "memory",
+      "headline": true,
+      "value": 6146433433,
+      "unit": "bytes",
+      "max": 15528857600
+    },
+    {
+      "name": "ephemeral-storage",
+      "unit": "bytes",
+      "max": 76224326324
+    },
+    {
+      "name": "instance-type",
+      "text": "t3.xlarge"
+    },
+    {
+      "name": "zone",
+      "text": "eu-west-1b"
+    },
+    {
+      "name": "ami"
+    },
+    {
+      "name": "os",
+      "text": "Amazon Linux 2(amd64)"
+    },
+    {
+      "name": "kubeProxy",
+      "text": "v1.25.7-eks-a59e1f0"
+    },
+    {
+      "name": "kernel",
+      "text": "5.10.178-162.673.amzn2.x86_64"
+    },
+    {
+      "name": "containerRuntime",
+      "text": "containerd://1.6.19"
+    },
+    {
+      "name": "kubelet",
+      "text": "v1.25.7-eks-a59e1f0"
+    }
+  ],
+  "path": "0189f817-9bb9-a8bc-4a1e-c19830134576.0189f817-9bc2-5061-ae51-258021e49c6a",
+  "summary": {
+    "healthy": 58,
+    "unhealthy": 4
+  },
+  "is_leaf": false,
+  "created_at": "2023-10-30T17:41:21.030245Z",
+  "updated_at": "2023-11-28T14:55:58.798044Z"
+}

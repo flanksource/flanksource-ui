@@ -44,7 +44,10 @@ export function formatConfigTags(config?: Pick<ConfigItem, "tags">) {
   ]);
 
   Object.entries(config.tags)
-    .filter(([key]) => key.toLowerCase() !== "name")
+    .filter(
+      ([key]) =>
+        key.toLowerCase() !== "name" && key.toLowerCase() !== "namespace"
+    )
     .forEach(([key, value]) => {
       if (key.split(/[:/]/).length === 1) {
         const rowKey = rowKeysMaps.get(key) ?? key;
