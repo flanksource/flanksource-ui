@@ -26,8 +26,6 @@ export const aliases: IconMap = {
   "k8s-volumeattachment": "k8s-vol",
   "aws-elasticloadbalancing-loadbalancer": "aws-elb",
   "aws-elasticloadbalancingv2-loadbalancer": "aws-alb",
-  "aws-iam-user": "user",
-  "aws-iam-role": "aws-iam",
   "aws-instance": "aws-ec2-instance",
   "aws-region": "aws",
   "aws-s3-bucket": "aws-s3",

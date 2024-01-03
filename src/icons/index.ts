@@ -65,6 +65,8 @@ import aws_eni from "./aws-eni.svg";
 import aws_firewall_manager from "./aws-firewall-manager.svg";
 import aws_firewall from "./aws-firewall.svg";
 import aws_guard_duty from "./aws-guard-duty.svg";
+import aws_iam_role from "./aws-iam-role.svg";
+import aws_iam_sts from "./aws-iam-sts.svg";
 import aws_iam from "./aws-iam.svg";
 import aws_inspector from "./aws-inspector.svg";
 import aws_kms from "./aws-kms.svg";
@@ -603,6 +605,8 @@ export const Icons = {
   "aws-firewall-manager": aws_firewall_manager,
   "aws-firewall": aws_firewall,
   "aws-guard-duty": aws_guard_duty,
+  "aws-iam-role": aws_iam_role,
+  "aws-iam-sts": aws_iam_sts,
   "aws-iam": aws_iam,
   "aws-inspector": aws_inspector,
   "aws-kms": aws_kms,

@@ -1,1 +1,6 @@
-<svg role="img" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M13 7a6 6 0 0 1-6 6m6-6a6 6 0 0 0-6-6m6 6H1m6 6a6 6 0 0 1-6-6m6 6c1.104 0 2-2.686 2-6s-.896-6-2-6m0 12c-1.104 0-2-2.686-2-6s.896-6 2-6M1 7a6 6 0 0 1 6-6" style="fill:none;stroke-width:1.33333;stroke-linecap:round;stroke-linejoin:round;stroke:rgb(64.313728%,64.313728%,64.313728%);stroke-opacity:1;stroke-miterlimit:4" transform="scale(2.28571)"/></svg>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32" height="32" viewBox="0 0 32 32" version="1.1">
+<g id="surface1">
+<path style="fill:none;stroke-width:1.33333;stroke-linecap:round;stroke-linejoin:round;stroke:rgb(64.313728%,64.313728%,64.313728%);stroke-opacity:1;stroke-miterlimit:4;" d="M 13.000268 7.000013 C 13.000268 10.31374 10.31374 13.000268 7.000013 13.000268 M 13.000268 7.000013 C 13.000268 3.686286 10.31374 0.999758 7.000013 0.999758 M 13.000268 7.000013 L 0.999758 7.000013 M 7.000013 13.000268 C 3.686286 13.000268 0.999758 10.31374 0.999758 7.000013 M 7.000013 13.000268 C 8.104019 13.000268 8.999528 10.31374 8.999528 7.000013 C 8.999528 3.686286 8.104019 0.999758 7.000013 0.999758 M 7.000013 13.000268 C 5.896007 13.000268 5.000497 10.31374 5.000497 7.000013 C 5.000497 3.686286 5.896007 0.999758 7.000013 0.999758 M 0.999758 7.000013 C 0.999758 3.686286 3.686286 0.999758 7.000013 0.999758 " transform="matrix(2.28571,0,0,2.28571,0,0)"/>
+</g>
+</svg>

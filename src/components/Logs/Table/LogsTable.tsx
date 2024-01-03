@@ -165,7 +165,16 @@ export function LogsTable({
           cell: ({ cell }) => <LogsTableLabelsCell cell={cell} />
         }
       ] as Array<ColumnDef<LogItem>>,
-    [variant, viewOnly, columnSizes]
+    [
+      columnSizes?.Time?.size,
+      columnSizes?.Time?.maxSize,
+      columnSizes?.Message?.size,
+      columnSizes?.Labels?.size,
+      variant,
+      viewOnly,
+      lines,
+      componentId
+    ]
   );
 
   const table = useReactTable({

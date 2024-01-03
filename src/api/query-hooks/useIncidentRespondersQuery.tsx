@@ -38,7 +38,7 @@ export function useIncidentRespondersQuery(incidentId: string) {
                   return null;
                 }
                 return (
-                  <Icon className="inline-block h-5" name={item.team.icon} />
+                  <Icon className={"inline-block h-5"} name={item.team.icon!} />
                 );
               }
             : () => <Avatar user={item.person} />;

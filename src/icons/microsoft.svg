@@ -1,1 +1,9 @@
-<svg role="img" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h15.207v15.207H0Zm0 0" style="stroke:none;fill-rule:nonzero;fill:rgb(94.901961%,31.37255%,13.333334%);fill-opacity:1"/><path d="M16.793 0H32v15.207H16.793Zm0 0" style="stroke:none;fill-rule:nonzero;fill:rgb(49.803922%,72.941178%,0%);fill-opacity:1"/><path d="M0 16.793h15.207V32H0Zm0 0" style="stroke:none;fill-rule:nonzero;fill:rgb(0%,64.313728%,93.725491%);fill-opacity:1"/><path d="M16.793 16.793H32V32H16.793Zm0 0" style="stroke:none;fill-rule:nonzero;fill:rgb(100%,72.549021%,0%);fill-opacity:1"/></svg>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32" height="32" viewBox="0 0 32 32" version="1.1">
+<g id="surface1">
+<path style=" stroke:none;fill-rule:nonzero;fill:rgb(94.901961%,31.37255%,13.333334%);fill-opacity:1;" d="M 0 0 L 15.207031 0 L 15.207031 15.207031 L 0 15.207031 Z M 0 0 "/>
+<path style=" stroke:none;fill-rule:nonzero;fill:rgb(49.803922%,72.941178%,0%);fill-opacity:1;" d="M 16.792969 0 L 32 0 L 32 15.207031 L 16.792969 15.207031 Z M 16.792969 0 "/>
+<path style=" stroke:none;fill-rule:nonzero;fill:rgb(0%,64.313728%,93.725491%);fill-opacity:1;" d="M 0 16.792969 L 15.207031 16.792969 L 15.207031 32 L 0 32 Z M 0 16.792969 "/>
+<path style=" stroke:none;fill-rule:nonzero;fill:rgb(100%,72.549021%,0%);fill-opacity:1;" d="M 16.792969 16.792969 L 32 16.792969 L 32 32 L 16.792969 32 Z M 16.792969 16.792969 "/>
+</g>
+</svg>
