@@ -18,7 +18,6 @@ export function Button({
   type = "button",
   ...props
 }: Props) {
-  console.log(icon);
   switch (size) {
     case "xs":
       className += " px-2.5 py-1.5 text-xs rounded";
