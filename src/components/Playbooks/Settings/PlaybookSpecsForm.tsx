@@ -81,7 +81,7 @@ export default function PlaybookSpecsForm({
       onClose();
     },
     onError: (err: Error) => {
-      toastSuccess("Unable to delete playbook spec: " + err.message);
+      toastError("Unable to delete playbook spec: " + err.message);
     }
   });
 
