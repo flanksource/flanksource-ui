@@ -23,6 +23,7 @@ export type PlaybookRunAction = {
   result?: {
     stdout?: string;
     logs?: string;
+    stderr?: string;
     [key: string]: unknown;
   };
   error?: string;
