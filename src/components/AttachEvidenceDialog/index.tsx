@@ -330,10 +330,7 @@ export function AttachEvidenceDialog({
       toastSuccess(
         <div>
           Linked to{" "}
-          <Link
-            className="underline text-blue-600 hover:text-blue-800 visited:text-blue-600"
-            to={`/incidents/${incidentId}`}
-          >
+          <Link className="link" to={`/incidents/${incidentId}`}>
             {" "}
             incident
           </Link>{" "}

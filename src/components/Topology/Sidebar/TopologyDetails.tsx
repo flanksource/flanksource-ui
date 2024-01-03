@@ -146,7 +146,7 @@ export default function TopologyDetails({
                         to={{
                           pathname: `/settings/topologies/${topology.topology_id}`
                         }}
-                        className="cursor-pointer text-blue-500 my-auto underline"
+                        className="link my-auto"
                       >
                         topology
                       </Link>

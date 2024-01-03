@@ -21,8 +21,11 @@ export const Badge = React.memo(function ({
   colorClass = "bg-blue-100 text-blue-800",
   roundedClass = "rounded"
 }: BadgeProps) {
+  if (text == null || text === "") {
+    return null;
+  }
   const spanClassName =
-    size === "sm" ? "text-sm px-1 py-0.5" : "text-xs px-0.5";
+    size === "sm" ? "text-sm px-1 py-0.5" : "text-xs px-1 py-0.5";
   const svgClassName =
     size === "sm" ? "mr-1.5 h-2 w-2" : "-ml-0.5 mr-1.5 h-2 w-2";
 

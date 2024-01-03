@@ -17,13 +17,14 @@ export interface HealthCheck extends Timestamped, Avatar, Agent {
   type: string;
   name: string;
   canary_name: string;
+  canary_namesspace?: string;
   namespace: string;
   labels: HealthCheckLabels;
   Status: string;
   uptime: HealthCheckUptime;
   latency: HealthCheckLatency;
   checkStatuses: HealthCheckStatus[];
-  lastRuntime: string;
+  last_runtime: string;
   description?: string;
   spec?: any;
   icon?: string;
@@ -48,8 +49,9 @@ export interface HealthCheck extends Timestamped, Avatar, Agent {
 
 export type HealthCheckSummary = Pick<
   HealthCheck,
-  "id" | "name" | "icon" | "type" | "status" | "severity" | "next_runtime"
+  "id" | "name" | "icon" | "type" | "status" | "severity" | "next_runtime" | "created_at" | "last_runtime"
 >;
+
 
 export interface HealthCheckStatus {
   status: boolean;
