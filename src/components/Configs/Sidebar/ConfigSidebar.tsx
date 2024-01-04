@@ -1,8 +1,8 @@
 import { useParams } from "react-router-dom";
-import ConfigChanges from "../../Sidebars/ConfigChanges";
-import ConfigInsights from "../../Sidebars/ConfigInsights";
-import Configs from "../../Sidebars/configs";
-import Incidents from "../../Sidebars/incidents";
+import ConfigChanges from "./ConfigChanges";
+import ConfigInsights from "./ConfigInsights";
+import Configs from "./configs";
+import Incidents from "../../Incidents/Sidebars/incidents";
 import SlidingSideBar from "../../SlidingSideBar";
 import { ConfigDetails } from "./ConfigDetails";
 import ConfigActionBar from "./ConfigActionBar";

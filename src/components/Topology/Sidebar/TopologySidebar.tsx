@@ -1,8 +1,8 @@
 import { useCallback, useState } from "react";
 import { useParams } from "react-router-dom";
 import { PlaybookRunsSidePanel } from "../../Playbooks/Runs/PlaybookRunsSidePanel";
-import Configs from "../../Sidebars/configs";
-import Incidents from "../../Sidebars/incidents";
+import Configs from "../../Configs/Sidebar/configs";
+import Incidents from "../../Incidents/Sidebars/incidents";
 import SlidingSideBar from "../../SlidingSideBar";
 import TopologyConfigChanges from "./TopologyConfigChanges";
 import TopologyDetails from "./TopologyDetails";
