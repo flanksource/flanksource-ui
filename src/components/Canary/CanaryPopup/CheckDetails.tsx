@@ -20,6 +20,7 @@ import { calculateDefaultTimeRangeValue } from "./Utils/calculateDefaultTimeRang
 import { PopupTabs } from "./tabs";
 import { getUptimePercentage } from "./utils";
 import CheckRelationships from "./CheckRelationships";
+import { useSearchParams } from "react-router-dom";
 
 const CanaryStatusChart = React.lazy(() =>
   import("../CanaryStatusChart").then(({ CanaryStatusChart }) => ({
@@ -36,10 +37,15 @@ export function CheckDetails({ check, ...rest }: CheckDetailsProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const statsRef = useRef<HTMLDivElement>(null);
 
-  const timeRange = useMemo(
-    () => calculateDefaultTimeRangeValue(check),
-    [check]
-  );
+  const [searchParams] = useSearchParams({
+    timeRange: calculateDefaultTimeRangeValue(check)
+  });
+
+  const timeRange = useMemo(() => {
+    return (
+      searchParams.get("timeRange") ?? calculateDefaultTimeRangeValue(check)
+    );
+  }, [searchParams, check]);
 
   const { data } = useCanaryGraphQuery(timeRange, check);
 
