@@ -6,12 +6,14 @@ type PlaybookRunsActionItemProps = {
   action: PlaybookRunAction;
   onClick?: () => void;
   isSelected?: boolean;
+  stepNumber: number;
 };
 
 export default function PlaybookRunsActionItem({
   action,
   onClick = () => {},
-  isSelected = false
+  isSelected = false,
+  stepNumber
 }: PlaybookRunsActionItemProps) {
   return (
     <div
@@ -25,7 +27,7 @@ export default function PlaybookRunsActionItem({
       <div className="flex flex-col">
         <div className="flex flex-row gap-2 text-sm text-gray-600">
           <PlaybookStatusIcon status={action.status} />
-          {action.name}
+          {action.name || `Step ${stepNumber}`}
         </div>
         <div className={`text-xs flex flex-row gap-1 items-center`}></div>
       </div>

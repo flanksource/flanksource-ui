@@ -74,12 +74,13 @@ export default function PlaybookRunsActions({ data }: PlaybookRunActionsProps) {
             <div className="font-semibold text-gray-600">Actions</div>
           </div>
           <div className="flex flex-col flex-1 overflow-y-auto gap-2">
-            {data.actions.map((action) => (
+            {data.actions.map((action, index) => (
               <PlaybookRunsActionItem
                 isSelected={selectedAction?.id === action.id}
                 key={action.id}
                 action={action}
                 onClick={() => setSelectedAction(action)}
+                stepNumber={index + 1}
               />
             ))}
           </div>
