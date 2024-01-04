@@ -43,6 +43,11 @@ export function useGetPlaybooksToRun(
     {
       cacheTime: 0,
       staleTime: 0,
+      enabled:
+        // if any of the params are undefined, don't run the query
+        params.check_id !== undefined ||
+        params.component_id !== undefined ||
+        params.config_id !== undefined,
       ...options
     }
   );

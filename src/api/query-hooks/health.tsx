@@ -22,9 +22,10 @@ export function useGetCheckDetails(checkId?: string) {
   return useQuery({
     queryKey: ["check", "details", checkId],
     queryFn: async () => {
+      console.log("checkId", checkId);
       const res = await getHealthCheckDetails(checkId!);
       return res;
     },
-    enabled: !!checkId
+    enabled: checkId !== undefined
   });
 }
