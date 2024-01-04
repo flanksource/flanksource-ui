@@ -1,9 +1,8 @@
-import { Agent, CreatedAt, Avatar } from "../traits";
+import { Agent, Avatar, CreatedAt } from "../traits";
 import { ConfigItem } from "./configs";
-import { HealthCheck, HealthCheckSummary } from "./health";
+import { HealthCheckSummary } from "./health";
 import { Topology } from "./topology";
 import { User } from "./users";
-import { ElementType } from "react";
 
 export type PlaybookRunStatus =
   | "scheduled"
@@ -24,6 +23,7 @@ export type PlaybookRunAction = {
   result?: {
     stdout?: string;
     logs?: string;
+    stderr?: string;
     [key: string]: unknown;
   };
   error?: string;

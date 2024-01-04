@@ -29,7 +29,6 @@ export default function Age({
 
   let duration = dayjs.duration(_to.diff(_from));
 
-  console.log(from, to, duration);
   if (duration.asMilliseconds() < 1000) {
     return (
       <span title={_from.format()} className={className}>

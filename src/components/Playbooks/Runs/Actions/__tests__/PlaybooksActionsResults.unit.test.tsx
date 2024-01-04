@@ -29,12 +29,13 @@ describe("PlaybooksRunActionsResults", () => {
     ).toBeInTheDocument();
   });
 
-  it("applies the className prop to the pre element", () => {
-    const action = { result: { stdout: "Hello, world!" } };
-    render(
-      <PlaybooksRunActionsResults action={action} className="text-red-500" />
-    );
-    expect(screen.getByText("Hello, world!")).toHaveClass("text-red-500");
+  it("shows both stdout and stderr when both are present", () => {
+    const action = {
+      result: { stdout: "Hello, world!", stderr: "Goodbye, world!" }
+    };
+    render(<PlaybooksRunActionsResults action={action} />);
+    expect(screen.getByText("Hello, world!")).toBeInTheDocument();
+    expect(screen.getByText("Goodbye, world!")).toBeInTheDocument();
   });
 
   it("renders error when action has error", () => {

@@ -3,7 +3,10 @@ import { Age } from "../../../../ui/Age";
 import { PlaybookStatusIcon } from "../../../Icon/PlaybookStatusIcon";
 
 type PlaybookRunsActionItemProps = {
-  action: PlaybookRunAction;
+  action: Pick<
+    PlaybookRunAction,
+    "status" | "name" | "start_time" | "end_time" | "id"
+  >;
   onClick?: () => void;
   isSelected?: boolean;
   stepNumber: number;
