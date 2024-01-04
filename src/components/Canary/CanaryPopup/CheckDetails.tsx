@@ -145,7 +145,7 @@ export function CheckDetails({ check, ...rest }: CheckDetailsProps) {
               />
             </div>
             <div className="w-full h-52 overflow-visible">
-              <Suspense fallback={<div>Loading..</div>}>
+              <Suspense fallback={<div>Loading...</div>}>
                 <CanaryStatusChart timeRange={timeRange} check={check} />
               </Suspense>
             </div>
