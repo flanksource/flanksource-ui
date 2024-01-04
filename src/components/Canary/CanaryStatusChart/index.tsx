@@ -85,7 +85,7 @@ export function CanaryStatusChart({
   );
 
   // we need to list this up
-  const { data: graphData } = useCanaryGraphQuery(timeRange, check);
+  const { data: graphData, isLoading } = useCanaryGraphQuery(timeRange, check);
 
   const data = useMemo(() => (graphData?.status ?? []).reverse(), [graphData]);
 
@@ -94,8 +94,18 @@ export function CanaryStatusChart({
     setDateFormatFn(() => (date: string | Date) => updatedFormat(date));
   }, [timeRange]);
 
+  if (isLoading) {
+    return (
+      <Loading className="flex flex-1 h-full items-center justify-center" />
+    );
+  }
+
   if (!data?.length) {
-    return <Loading />;
+    return (
+      <div className="flex flex-1 h-full items-center justify-center text-gray-500 text-sm">
+        No data available
+      </div>
+    );
   }
 
   return (
