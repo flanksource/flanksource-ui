@@ -29,10 +29,14 @@ export function PlaybooksListPage() {
         title={
           <BreadcrumbNav
             list={[
-              <BreadcrumbRoot link="/settings/connections">
+              <BreadcrumbRoot
+                key={"playbook-root-item"}
+                link="/settings/connections"
+              >
                 Playbook
               </BreadcrumbRoot>,
               <button
+                key={"playbook-add-item-button"}
                 type="button"
                 className=""
                 onClick={() => {

@@ -7,17 +7,17 @@ import {
   deletePlaybookSpec,
   updatePlaybookSpec
 } from "../../../api/services/playbooks";
-import { useUser } from "../../../context";
-import { Button } from "../../Button";
-import { FormikCodeEditor } from "../../Forms/Formik/FormikCodeEditor";
-import FormikTextInput from "../../Forms/Formik/FormikTextInput";
-import { Modal } from "../../Modal";
-import { toastSuccess } from "../../Toast/toast";
 import {
   NewPlaybookSpec,
   PlaybookSpec,
   UpdatePlaybookSpec
 } from "../../../api/types/playbooks";
+import { useUser } from "../../../context";
+import { Button } from "../../Button";
+import { FormikCodeEditor } from "../../Forms/Formik/FormikCodeEditor";
+import FormikTextInput from "../../Forms/Formik/FormikTextInput";
+import { Modal } from "../../Modal";
+import { toastError, toastSuccess } from "../../Toast/toast";
 
 type PlaybookSpecsFormProps = {
   playbook?: PlaybookSpec;
@@ -81,7 +81,7 @@ export default function PlaybookSpecsForm({
       onClose();
     },
     onError: (err: Error) => {
-      toastSuccess("Unable to delete playbook spec: " + err.message);
+      toastError("Unable to delete playbook spec: " + err.message);
     }
   });
 

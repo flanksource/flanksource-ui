@@ -80,7 +80,7 @@ export default function SpecEditor({
   // when the selectedSpecItem changes, we need to update the modalHelpLink
   useEffect(() => {
     setModalHelpLink(selectedSpecItem?.docsLink);
-  }, [selectedSpecItem, setModalHelpLink]);
+  }, [selectedSpecItem?.docsLink, setModalHelpLink]);
 
   return (
     <div className="flex flex-col w-full flex-1 h-full overflow-y-auto">

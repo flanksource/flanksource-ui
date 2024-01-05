@@ -76,15 +76,19 @@ export default function PlaybookRunsPage() {
         title={
           <BreadcrumbNav
             list={[
-              <BreadcrumbRoot link="/playbooks">Playbooks</BreadcrumbRoot>,
+              <BreadcrumbRoot key={"playbooks"} link="/playbooks">
+                Playbooks
+              </BreadcrumbRoot>,
               ...(playbook
                 ? [
-                    <BreadcrumbChild link={`/playbooks}`}>
+                    <BreadcrumbChild key={"/playbooks"} link={`/playbooks}`}>
                       {playbook?.name}
                     </BreadcrumbChild>
                   ]
                 : []),
-              <BreadcrumbChild link="/playbooks/runs">Runs</BreadcrumbChild>
+              <BreadcrumbChild key={"/playbooks/runs"} link="/playbooks/runs">
+                Runs
+              </BreadcrumbChild>
             ]}
           />
         }
@@ -114,7 +118,7 @@ export default function PlaybookRunsPage() {
             </div>
           </div>
         </TabbedLinks>
-        {playbookId && (
+        {playbook && (
           <PlaybookSpecsForm
             isOpen={isEditPlaybookFormOpen}
             onClose={() => {
