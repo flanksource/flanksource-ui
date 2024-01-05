@@ -34,24 +34,33 @@ export default function PlaybookRunsDetailsPage() {
         title={
           <BreadcrumbNav
             list={[
-              <BreadcrumbRoot link="/playbooks">Playbooks</BreadcrumbRoot>,
+              <BreadcrumbRoot key={"/playbooks"} link="/playbooks">
+                Playbooks
+              </BreadcrumbRoot>,
               ...(playbookRun?.playbooks
                 ? [
                     <BreadcrumbChild
+                      key={`/playbooks/${playbookRun?.playbooks.id}`}
                       link={`/playbooks/${playbookRun?.playbooks.id}`}
                     >
                       {playbookRun?.playbooks.name}
                     </BreadcrumbChild>
                   ]
                 : []),
-              <BreadcrumbChild link="/playbooks/runs">Runs</BreadcrumbChild>,
+              <BreadcrumbChild key={`/playbooks/runs`} link="/playbooks/runs">
+                Runs
+              </BreadcrumbChild>,
               ...(playbookRun?.start_time
                 ? [
-                    <BreadcrumbChild>
+                    <BreadcrumbChild key={playbookRun.start_time}>
                       {relativeDateTime(playbookRun.start_time)}
                     </BreadcrumbChild>
                   ]
-                : [<BreadcrumbChild>{playbookRun?.id}</BreadcrumbChild>])
+                : [
+                    <BreadcrumbChild key={playbookRun?.id}>
+                      {playbookRun?.id}
+                    </BreadcrumbChild>
+                  ])
             ]}
           />
         }
