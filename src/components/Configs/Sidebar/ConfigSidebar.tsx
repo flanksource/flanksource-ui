@@ -1,13 +1,13 @@
-import { useParams } from "react-router-dom";
-import ConfigChanges from "./ConfigChanges";
-import ConfigInsights from "./ConfigInsights";
-import Configs from "./configs";
-import Incidents from "../../Incidents/Sidebars/incidents";
-import SlidingSideBar from "../../SlidingSideBar";
-import { ConfigDetails } from "./ConfigDetails";
-import ConfigActionBar from "./ConfigActionBar";
 import { useCallback, useState } from "react";
+import { useParams } from "react-router-dom";
+import Incidents from "../../Incidents/Sidebars/incidents";
 import { PlaybookRunsSidePanel } from "../../Playbooks/Runs/PlaybookRunsSidePanel";
+import SlidingSideBar from "../../SlidingSideBar";
+import ConfigActionBar from "./ConfigActionBar";
+import ConfigChanges from "./ConfigChanges";
+import { ConfigDetails } from "./ConfigDetails";
+import ConfigInsights from "./ConfigInsights";
+import ConfigsPanel from "./ConfigsPanel";
 
 type SidePanels =
   | "ConfigDetails"
@@ -79,7 +79,7 @@ export default function ConfigSidebar() {
           panelCollapsedStatusChange(status, "ConfigChanges")
         }
       />
-      <Configs
+      <ConfigsPanel
         configId={id}
         isCollapsed={openedPanel !== "Configs"}
         onCollapsedStateChange={(status) =>

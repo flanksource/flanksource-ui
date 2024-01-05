@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import { useParams } from "react-router-dom";
 import { PlaybookRunsSidePanel } from "../../Playbooks/Runs/PlaybookRunsSidePanel";
-import Configs from "../../Configs/Sidebar/configs";
+import ConfigsPanel from "../../Configs/Sidebar/ConfigsPanel";
 import Incidents from "../../Incidents/Sidebars/incidents";
 import SlidingSideBar from "../../SlidingSideBar";
 import TopologyConfigChanges from "./TopologyConfigChanges";
@@ -66,7 +66,7 @@ export default function TopologySidebar({
         topology={topology}
         refererId={refererId}
       />
-      <Configs
+      <ConfigsPanel
         topologyId={id}
         isCollapsed={openedPanel !== "Configs"}
         onCollapsedStateChange={(status) =>

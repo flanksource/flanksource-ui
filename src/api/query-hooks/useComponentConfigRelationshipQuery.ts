@@ -25,11 +25,13 @@ export function useComponentConfigRelationshipQuery({
   configId?: string;
   hideDeleted?: boolean;
 }) {
-  return useQuery(
-    componentConfigRelationshipQueryKey({ topologyId, configId, hideDeleted }),
-    () => getConfigsBy({ topologyId, configId, hideDeleted }),
-    {
-      enabled: !!topologyId || !!configId
-    }
-  );
+  return useQuery({
+    queryKey: componentConfigRelationshipQueryKey({
+      topologyId,
+      configId,
+      hideDeleted
+    }),
+    queryFn: () => getConfigsBy({ topologyId, configId, hideDeleted }),
+    enabled: !!topologyId || !!configId
+  });
 }

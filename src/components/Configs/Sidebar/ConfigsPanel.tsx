@@ -8,7 +8,6 @@ import { useComponentConfigRelationshipQuery } from "../../../api/query-hooks/us
 import { removeManualComponentConfigRelationship } from "../../../api/services/configs";
 import { Badge } from "../../Badge";
 import CollapsiblePanel from "../../CollapsiblePanel";
-import ConfigLink from "../ConfigLink/ConfigLink";
 import { ConfirmationPromptDialog } from "../../Dialogs/ConfirmationPromptDialog";
 import EmptyState from "../../EmptyState";
 import { IconButton } from "../../IconButton";
@@ -17,6 +16,7 @@ import { refreshButtonClickedTrigger } from "../../SlidingSideBar";
 import Title from "../../Title/title";
 import { toastError, toastSuccess } from "../../Toast/toast";
 import TopologyConfigsActionsDropdown from "../../Topology/Sidebar/Utils/TopologyConfigsActionsDropdown";
+import ConfigLink from "../ConfigLink/ConfigLink";
 
 type Props = {
   topologyId?: string;
@@ -26,7 +26,7 @@ type Props = {
   onCollapsedStateChange?: (isClosed: boolean) => void;
 };
 
-export function ConfigsList({
+export function ConfigsPanelList({
   topologyId,
   configId,
   hideDeletedConfigs
@@ -81,13 +81,21 @@ export function ConfigsList({
         <ol className="flex flex-col w-full overflow-x-hidden">
           {configs.map((config) => (
             <li
-              key={config.config_id}
+              key={
+                config.configs.id === configId
+                  ? config.related.id
+                  : config.configs.id
+              }
               className={clsx("p-1 relative flex flex-row flex-1", {
                 hidden: hideDeletedConfigs && config.deleted_at
               })}
             >
               <ConfigLink
-                config={config.configs}
+                config={
+                  config.configs.id === configId
+                    ? config.related
+                    : config.configs
+                }
                 className="overflow-hidden text-ellipsis flex-1 whitespace-nowrap"
               />
               {config.deleted_at && (
@@ -123,7 +131,7 @@ export function ConfigsList({
   );
 }
 
-export default function Configs({
+export default function ConfigsPanel({
   isCollapsed,
   onCollapsedStateChange,
   ...props
@@ -160,6 +168,7 @@ export default function Configs({
             className="w-5 h-5 flex items-center justify-center"
             roundedClass="rounded-full"
             text={configs?.length ?? 0}
+            title="Total catalog count"
           />
           <div className="flex grow text-right justify-center">
             <IconButton
@@ -180,7 +189,7 @@ export default function Configs({
       }
     >
       <div className="flex flex-col">
-        <ConfigsList {...{ ...props, hideDeletedConfigs }} />
+        <ConfigsPanelList {...{ ...props, hideDeletedConfigs }} />
       </div>
     </CollapsiblePanel>
   );
