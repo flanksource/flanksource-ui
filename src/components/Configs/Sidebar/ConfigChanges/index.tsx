@@ -1,16 +1,16 @@
 import { ColumnDef } from "@tanstack/table-core";
 import { useEffect, useMemo, useState } from "react";
-import { useGetConfigChangesByConfigIdQuery } from "../../../api/query-hooks";
-import { ConfigChange } from "../../../api/types/configs";
-import { CreatedAtCell } from "../../../ui/table/DateCells";
-import PillBadge from "../../Badge/PillBadge";
-import CollapsiblePanel from "../../CollapsiblePanel";
-import EmptyState from "../../EmptyState";
-import { Icon } from "../../Icon";
-import { InfiniteTable } from "../../InfiniteTable/InfiniteTable";
-import TextSkeletonLoader from "../../SkeletonLoader/TextSkeletonLoader";
-import Title from "../../Title/title";
-import { toastError } from "../../Toast/toast";
+import { useGetConfigChangesByConfigIdQuery } from "../../../../api/query-hooks";
+import { ConfigChange } from "../../../../api/types/configs";
+import { CreatedAtCell } from "../../../../ui/table/DateCells";
+import PillBadge from "../../../Badge/PillBadge";
+import CollapsiblePanel from "../../../CollapsiblePanel";
+import EmptyState from "../../../EmptyState";
+import { Icon } from "../../../Icon";
+import { InfiniteTable } from "../../../InfiniteTable/InfiniteTable";
+import TextSkeletonLoader from "../../../SkeletonLoader/TextSkeletonLoader";
+import Title from "../../../Title/title";
+import { toastError } from "../../../Toast/toast";
 import ConfigChangeNameCell from "./Cells/ConfigChangeNameCell";
 
 type Props = {

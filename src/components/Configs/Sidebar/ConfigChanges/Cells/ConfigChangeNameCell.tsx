@@ -1,7 +1,7 @@
 import { CellContext } from "@tanstack/react-table";
-import { ViewType } from "../../../../types";
-import { ConfigDetailsChanges } from "../../../Configs/Changes/ConfigDetailsChanges/ConfigDetailsChanges";
-import { ConfigChange } from "../../../../api/types/configs";
+import { ViewType } from "../../../../../types";
+import { ConfigDetailsChanges } from "../../../Changes/ConfigDetailsChanges/ConfigDetailsChanges";
+import { ConfigChange } from "../../../../../api/types/configs";
 
 export default function ConfigChangeNameCell({
   row,
