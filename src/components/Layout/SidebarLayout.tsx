@@ -2,7 +2,6 @@ import { Disclosure, Menu } from "@headlessui/react";
 import { ChevronUpIcon } from "@heroicons/react/outline";
 import clsx from "clsx";
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import { Toaster } from "react-hot-toast";
 import { IconType } from "react-icons";
 import { IoChevronForwardOutline } from "react-icons/io5";
 import { Link, NavLink, Outlet } from "react-router-dom";
@@ -12,11 +11,11 @@ import { $ArrayElemType } from "../../types/utility";
 import { AuthContext } from "../../context";
 import { useFeatureFlagsContext } from "../../context/FeatureFlagsContext";
 import { useOuterClick } from "../../lib/useOuterClick";
+import { features } from "../../services/permissions/features";
 import { getLocalItem, setLocalItem } from "../../utils/storage";
 import { withAccessCheck } from "../AccessCheck/AccessCheck";
 import { Icon } from "../Icon";
 import FullPageSkeletonLoader from "../SkeletonLoader/FullPageSkeletonLoader";
-import { features } from "../../services/permissions/features";
 
 interface Props {
   navigation: NavigationItems;
@@ -290,79 +289,76 @@ export function SidebarLayout({ navigation, settingsNav, checkPath }: Props) {
   }
 
   return (
-    <>
-      <Toaster position="top-right" reverseOrder={false} />
-      <div className="flex flex-row h-screen min-w-[1280px]">
+    <div className="flex flex-row h-screen min-w-[1280px]">
+      <div
+        className={clsx(
+          "transform duration-500 z-10 bg-gray-700 flex flex-col",
+          {
+            "w-56": !collapseSidebar,
+            "w-14": collapseSidebar
+          }
+        )}
+        ref={innerRef}
+      >
         <div
-          className={clsx(
-            "transform duration-500 z-10 bg-gray-700 flex flex-col",
-            {
-              "w-56": !collapseSidebar,
-              "w-14": collapseSidebar
-            }
-          )}
-          ref={innerRef}
+          className={clsx("flex flex-col h-full transform duration-500", {
+            "w-56": !collapseSidebar,
+            "w-14": collapseSidebar
+          })}
         >
-          <div
-            className={clsx("flex flex-col h-full transform duration-500", {
-              "w-56": !collapseSidebar,
-              "w-14": collapseSidebar
-            })}
+          <button
+            type="button"
+            className={clsx(
+              "absolute bg-white -right-6 top-20 border border-gray-300 rounded-full transform duration-500 m-2 p-1 hover:bg-gray-200",
+              { "rotate-180": !collapseSidebar }
+            )}
+            onClick={() => setCollapseSidebar((value) => !value)}
           >
-            <button
-              type="button"
-              className={clsx(
-                "absolute bg-white -right-6 top-20 border border-gray-300 rounded-full transform duration-500 m-2 p-1 hover:bg-gray-200",
-                { "rotate-180": !collapseSidebar }
-              )}
-              onClick={() => setCollapseSidebar((value) => !value)}
-            >
-              <IoChevronForwardOutline />
-            </button>
+            <IoChevronForwardOutline />
+          </button>
 
-            <Link
-              to={{
-                pathname: "/"
-              }}
-            >
-              {collapseSidebar ? (
-                <div className="flex border-b border-b-gray-500 h-16 shadow">
-                  <Icon
-                    name="mission-control-white"
-                    className="w-10 h-auto m-auto fill-white stroke-white"
-                  />
-                </div>
-              ) : (
-                <div className="p-3 pl-5 border-b border-b-gray-500 shadow">
-                  <Icon
-                    name="mission-control-logo-white"
-                    className="h-10 stroke-white"
-                  />
-                </div>
-              )}
-            </Link>
-
-            <div
-              className={clsx(
-                "flex flex-col flex-1 overflow-y-auto",
-                collapseSidebar ? "px-1" : "px-3"
-              )}
-            >
-              <div className="flex-grow mt-5 flex flex-col">
-                <SideNav
-                  navs={navigation}
-                  settings={settingsNav}
-                  collapseSidebar={collapseSidebar}
-                  checkPath={checkPath}
+          <Link
+            to={{
+              pathname: "/"
+            }}
+          >
+            {collapseSidebar ? (
+              <div className="flex border-b border-b-gray-500 h-16 shadow">
+                <Icon
+                  name="mission-control-white"
+                  className="w-10 h-auto m-auto fill-white stroke-white"
                 />
               </div>
+            ) : (
+              <div className="p-3 pl-5 border-b border-b-gray-500 shadow">
+                <Icon
+                  name="mission-control-logo-white"
+                  className="h-10 stroke-white"
+                />
+              </div>
+            )}
+          </Link>
+
+          <div
+            className={clsx(
+              "flex flex-col flex-1 overflow-y-auto",
+              collapseSidebar ? "px-1" : "px-3"
+            )}
+          >
+            <div className="flex-grow mt-5 flex flex-col">
+              <SideNav
+                navs={navigation}
+                settings={settingsNav}
+                collapseSidebar={collapseSidebar}
+                checkPath={checkPath}
+              />
             </div>
           </div>
         </div>
-        <div className="flex flex-col flex-1 h-screen overflow-auto bg-gray-50">
-          <Outlet />
-        </div>
       </div>
-    </>
+      <div className="flex flex-col flex-1 h-screen overflow-auto bg-gray-50">
+        <Outlet />
+      </div>
+    </div>
   );
 }

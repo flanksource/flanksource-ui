@@ -2,6 +2,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { QueryClientProvider } from "@tanstack/react-query";
 import type { AppProps } from "next/app";
 import React from "react";
+import { Toaster } from "react-hot-toast";
 import useDetermineAuthSystem from "../src/components/Authentication/useDetermineAuthSystem";
 import SetupIntercom from "../src/components/Intercom/SetupIntercom";
 import { queryClient } from "../src/query-client";
@@ -12,6 +13,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <Toaster position="top-right" reverseOrder={false} />
       <SetupIntercom>
         <div
           id="root"
