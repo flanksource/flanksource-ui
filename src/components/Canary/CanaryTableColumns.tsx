@@ -1,13 +1,13 @@
 import { CellContext, ColumnDef } from "@tanstack/react-table";
-import { HealthCheck } from "../../api/types/health";
 import { IoChevronForwardOutline } from "react-icons/io5";
+import { HealthCheck } from "../../api/types/health";
+import { Status } from "../Status";
 import {
   LastTransitionCell,
   LatencyCell,
   TitleCell,
   UptimeCell
 } from "./Columns";
-import { Status } from "../Status";
 
 function ExpandArrow({ row }: CellContext<HealthCheck, any>) {
   return row.getCanExpand() ? (
@@ -37,7 +37,7 @@ export function getCanaryTableColumns({
       id: "expander",
       cell: ExpandArrow,
       enableSorting: false,
-      meta: { cellClassName: "py-2" }
+      meta: { cellClassName: "py-2 w-8" }
     },
     {
       header: "Checks",
@@ -80,7 +80,7 @@ export function getCanaryTableColumns({
             <Status good={good} mixed={mixed} />
             <LastTransitionCell
               value={row.original.last_runtime}
-              min={1000 * 60 * 20 + 1}
+              min={1000 * 60 * 60 + 1}
             />
           </div>
         );

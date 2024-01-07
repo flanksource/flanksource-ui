@@ -1,34 +1,21 @@
 import { useMemo } from "react";
-import { useCanaryCheckItemQuery } from "../../../api/query-hooks";
 import { HealthCheck } from "../../../api/types/health";
 import { JSONViewer } from "../../JSONViewer";
-import { Loading } from "../../Loading";
 
 type CanaryCheckDetailsProps = {
-  check: Pick<Partial<HealthCheck>, "canary_id">;
+  check: Pick<Partial<HealthCheck>, "canary_id" | "spec">;
 };
 
 export function CanaryCheckDetailsSpecTab({ check }: CanaryCheckDetailsProps) {
-  const { isLoading, data: canaryCheck } = useCanaryCheckItemQuery(
-    check.canary_id!,
-    {
-      enabled: check.canary_id !== undefined
-    }
-  );
-
   const code = useMemo(() => {
-    if (!canaryCheck?.spec) {
+    if (!check?.spec) {
       return null;
     }
-    return JSON.stringify(canaryCheck.spec, null, 2);
-  }, [canaryCheck?.spec]);
-
-  if (isLoading) {
-    return <Loading text="Loading ..." />;
-  }
+    return JSON.stringify(check.spec, null, 2);
+  }, [check?.spec]);
 
   return (
-    <div key="specs" className="px-6 py-6">
+    <div key="specs">
       <JSONViewer
         code={code ?? ""}
         format={"json"}
