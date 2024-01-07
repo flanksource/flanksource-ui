@@ -1,10 +1,11 @@
-import { ImUngroup } from "react-icons/im";
-import { TiSortAlphabeticallyOutline } from "react-icons/ti";
-import { AiOutlineAlignLeft } from "react-icons/ai";
-import { getLabelSelections } from "./lib/lists";
-import { ReactSelectDropdown } from "../ReactSelectDropdown";
 import { ComponentProps } from "react";
+import { ImUngroup } from "react-icons/im";
+import { PiTextTBold } from "react-icons/pi";
+import { TbBox } from "react-icons/tb";
+import { TiSortAlphabeticallyOutline } from "react-icons/ti";
 import { HealthCheck } from "../../api/types/health";
+import { ReactSelectDropdown } from "../ReactSelectDropdown";
+import { getLabelSelections } from "./lib/lists";
 
 const defaultGroupSelections = {
   "no-group": {
@@ -37,11 +38,20 @@ const defaultGroupSelections = {
   description: {
     id: "description",
     name: "description",
-    icon: <AiOutlineAlignLeft />,
+    icon: <PiTextTBold />,
     description: "Description",
     value: "description",
     labelValue: null,
     key: "description"
+  },
+  type: {
+    id: "type",
+    name: "type",
+    icon: <TbBox />,
+    description: "Type",
+    value: "type",
+    labelValue: null,
+    key: "type"
   }
 };
 

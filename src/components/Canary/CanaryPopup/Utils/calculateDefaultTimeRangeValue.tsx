@@ -1,12 +1,11 @@
 import dayjs from "dayjs";
-import { HealthCheck } from "../../../../api/types/health";
+import { HealthCheckSummary } from "../../../../api/types/health";
 
 export function calculateDefaultTimeRangeValue(
-  validCheck: Pick<Partial<HealthCheck>, "lastRuntime"> | undefined
+  validCheck: HealthCheckSummary | undefined
 ) {
   // get time passed since last runtime
-  const lapsedTime = dayjs(validCheck?.lastRuntime!).diff(dayjs(), "minute");
-  console.log("lapsedTime", lapsedTime);
+  const lapsedTime = dayjs(validCheck?.last_runtime!).diff(dayjs(), "minute");
   // if passed time is less than 1 hour, use 1 hour time range
   if (lapsedTime < 60) {
     return "1h";
