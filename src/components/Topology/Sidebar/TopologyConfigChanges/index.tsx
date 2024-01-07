@@ -8,9 +8,9 @@ import { ConfigChange } from "../../../../api/types/configs";
 import PillBadge from "../../../Badge/PillBadge";
 import CollapsiblePanel from "../../../CollapsiblePanel";
 import { ConfigDetailChangeModal } from "../../../Configs/Changes/ConfigDetailsChanges/ConfigDetailsChanges";
-import ConfigLink from "../../../Configs/ConfigLink/ConfigLink";
 import EmptyState from "../../../EmptyState";
 import { Icon } from "../../../Icon";
+import { ConfigIcon } from "../../../Icon/ConfigIcon";
 import TextSkeletonLoader from "../../../SkeletonLoader/TextSkeletonLoader";
 import { refreshButtonClickedTrigger } from "../../../SlidingSideBar";
 import Title from "../../../Title/title";
@@ -42,30 +42,39 @@ export function TopologyConfigChanges({ topologyID }: Props) {
     <>
       <div className="flex flex-col ">
         <div className="flex flex-col">
-          <div className="flex flex-col pl-2">
+          <div className="flex flex-col overflow-ellipsis px-2 ">
             {isLoading ? (
               <TextSkeletonLoader />
             ) : componentConfigChanges.length > 0 ? (
               componentConfigChanges.map((item) => (
-                <div className="flex flex-row text-sm mb-2" key={item.id}>
-                  <ConfigLink config={item.config} />
-                  &nbsp;/&nbsp;
-                  <span
-                    role="button"
-                    onClick={() => {
-                      setSelectedConfigChanges(item);
-                      setOpen(true);
-                    }}
+                <div
+                  key={`change-${item.id}`}
+                  className="flex flex-row text-sm mb-2 hover:cursor-pointer hover:bg-zinc-100"
+                  onClick={() => {
+                    setSelectedConfigChanges(item);
+                    setOpen(true);
+                  }}
+                >
+                  <ConfigIcon config={item.config} />
+                  <div
+                    className="flex flex-row shrink overflow-ellipsis whitespace-nowrap  overflow-hidden"
+                    style={{ direction: "rtl" }}
                   >
-                    <Icon name={item.change_type} />
+                    <span className="overflow-ellipsis whitespace-nowrap overflow-hidden">
+                      {item.config?.name}
+                    </span>
+                  </div>
+                  &nbsp;/&nbsp;
+                  <Icon name={item.change_type} />
+                  <div className="pl-1 flex">
                     {item.summary ?? item.change_type}
-                  </span>
-                  <span
-                    className="text-right grow text-sm"
+                  </div>
+                  <div
+                    className="whitespace-nowrap grow text-right pl-2"
                     data-tip={item.created_at}
                   >
                     {dayjs(item.created_at).fromNow()}
-                  </span>
+                  </div>
                 </div>
               ))
             ) : (

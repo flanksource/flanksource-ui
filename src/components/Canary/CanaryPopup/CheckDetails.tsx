@@ -24,11 +24,11 @@ import { calculateDefaultTimeRangeValue } from "./Utils/calculateDefaultTimeRang
 import { PopupTabs } from "./tabs";
 import { getUptimePercentage } from "./utils";
 
-const Tall = ({ children }: { children?: React.ReactNode }) => {
+const Tall = ({ children }: { children: JSX.Element }) => {
   const isTall = useMediaQuery({ minHeight: 992 });
   return isTall ? children : null;
 };
-const Short = ({ children }: { children?: React.ReactNode }) => {
+const Short = ({ children }: { children: JSX.Element }) => {
   const isShort = useMediaQuery({ maxHeight: 992 });
   return isShort ? children : null;
 };
