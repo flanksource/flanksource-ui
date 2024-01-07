@@ -32,11 +32,12 @@ export function TopologyConfigChanges({ topologyID }: Props) {
       Pick<ConfigChange, "change_type" | "id" | "config_id" | "config">
     >();
 
-  const { data: changeDetails } = useGetConfigChangesById(
-    selectedConfigChange?.id!,
-    selectedConfigChange?.config_id!,
-    {}
-  );
+  const { data: changeDetails, isLoading: changesLoading } =
+    useGetConfigChangesById(
+      selectedConfigChange?.id!,
+      selectedConfigChange?.config_id!,
+      {}
+    );
 
   return (
     <>
@@ -51,8 +52,8 @@ export function TopologyConfigChanges({ topologyID }: Props) {
                   key={`change-${item.id}`}
                   className="flex flex-row text-sm mb-2 hover:cursor-pointer hover:bg-zinc-100"
                   onClick={() => {
-                    setSelectedConfigChanges(item);
                     setOpen(true);
+                    setSelectedConfigChanges(item);
                   }}
                 >
                   <ConfigIcon config={item.config} />
@@ -83,13 +84,13 @@ export function TopologyConfigChanges({ topologyID }: Props) {
           </div>
         </div>
       </div>
-      {changeDetails && (
-        <ConfigDetailChangeModal
-          open={open}
-          setOpen={setOpen}
-          changeDetails={changeDetails}
-        />
-      )}
+
+      <ConfigDetailChangeModal
+        open={open}
+        isLoading={changesLoading}
+        setOpen={setOpen}
+        changeDetails={changeDetails}
+      />
     </>
   );
 }
