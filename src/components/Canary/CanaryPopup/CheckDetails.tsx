@@ -1,26 +1,37 @@
 import React, { Suspense, useMemo, useRef } from "react";
+import { useMediaQuery } from "react-responsive";
+import { useSearchParams } from "react-router-dom";
 import { useCanaryGraphQuery } from "../../../api/query-hooks/health";
 import { HealthCheck } from "../../../api/types/health";
 import { isCanaryUI } from "../../../context/Environment";
+import { Age } from "../../../ui/Age";
 import {
   capitalizeFirstLetter,
   toFixedIfNecessary
 } from "../../../utils/common";
-import { relativeDateTime } from "../../../utils/date";
 import mixins from "../../../utils/mixins.module.css";
+import { Badge } from "../../Badge";
 import { DropdownStandaloneWrapper } from "../../Dropdown/StandaloneWrapper";
 import { TimeRange, timeRanges } from "../../Dropdown/TimeRange";
 import { Head } from "../../Head/Head";
 import { Duration } from "../renderers";
 import { CanaryCheckDetailsSpecTab } from "./CanaryCheckDetailsSpec";
 import CheckLabels from "./CheckLabels";
-import { CheckStat } from "./CheckStat";
+import CheckRelationships from "./CheckRelationships";
+import { Stat } from "../../../ui/stats";
 import { StatusHistory } from "./StatusHistory/StatusHistory";
 import { calculateDefaultTimeRangeValue } from "./Utils/calculateDefaultTimeRangeValue";
 import { PopupTabs } from "./tabs";
 import { getUptimePercentage } from "./utils";
-import CheckRelationships from "./CheckRelationships";
-import { useSearchParams } from "react-router-dom";
+
+const Tall = ({ children }: { children: JSX.Element }) => {
+  const isTall = useMediaQuery({ minHeight: 992 });
+  return isTall ? children : null;
+};
+const Short = ({ children }: { children: JSX.Element }) => {
+  const isShort = useMediaQuery({ maxHeight: 992 });
+  return isShort ? children : null;
+};
 
 const CanaryStatusChart = React.lazy(() =>
   import("../CanaryStatusChart").then(({ CanaryStatusChart }) => ({
@@ -28,15 +39,40 @@ const CanaryStatusChart = React.lazy(() =>
   }))
 );
 
+const CanaryChart = ({
+  timeRange,
+  check,
+  title = "",
+  height = "h-52"
+}: {
+  timeRange: string;
+  check: HealthCheck;
+  height: string;
+  title?: string;
+}) => {
+  return (
+    <>
+      <div className="flex justify-between items-center mb-2 pr-2">
+        {title !== "" && <span className="text-lg font-medium">{title}</span>}
+      </div>
+      <div className={`w-full ${height} overflow-visible`}>
+        <Suspense fallback={<div>Loading...</div>}>
+          <CanaryStatusChart timeRange={timeRange} check={check} />
+        </Suspense>
+      </div>
+    </>
+  );
+};
+
 type CheckDetailsProps = React.HTMLProps<HTMLDivElement> & {
-  check?: Partial<HealthCheck>;
+  check?: HealthCheck;
   timeRange: string;
 };
 
 export function CheckDetails({ check, ...rest }: CheckDetailsProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const statsRef = useRef<HTMLDivElement>(null);
-
+  const isShort = useMediaQuery({ maxHeight: 992 });
   const [searchParams] = useSearchParams({
     timeRange: calculateDefaultTimeRangeValue(check)
   });
@@ -48,12 +84,6 @@ export function CheckDetails({ check, ...rest }: CheckDetailsProps) {
   }, [searchParams, check]);
 
   const { data } = useCanaryGraphQuery(timeRange, check);
-
-  const lastRun = relativeDateTime(check?.lastRuntime!).replace(" ago", "");
-
-  const nextRun = check?.next_runtime
-    ? relativeDateTime(check?.next_runtime!).replace(" ago", "")
-    : "-";
 
   const uptimeValue = toFixedIfNecessary(
     getUptimePercentage(data)?.toString()!,
@@ -79,8 +109,8 @@ export function CheckDetails({ check, ...rest }: CheckDetailsProps) {
         <div className="flex flex-col" ref={statsRef}>
           <CheckLabels check={check} />
           <div className="flex flex-row flex-wrap">
-            <CheckStat
-              containerClassName="w-52 mb-4"
+            <Stat
+              containerClassName="w-44 mb-4"
               title="Uptime"
               value={
                 !Number.isNaN(uptimeValue)
@@ -101,62 +131,87 @@ export function CheckDetails({ check, ...rest }: CheckDetailsProps) {
                 )
               }
             />
-            <CheckStat
+            <Stat
               containerClassName="w-32 mb-4"
               title="Latency (95%)"
               value={<Duration ms={data?.latency?.p95} />}
             />
-            <CheckStat
+            <Stat
               containerClassName="w-32 mb-4"
               title="Latency  (97%)"
               value={<Duration ms={data?.latency?.p97} />}
             />
-            <CheckStat
+            <Stat
               containerClassName="w-32 mb-4"
               title="Latency  (99%)"
               value={<Duration ms={data?.latency?.p99} />}
             />
-            <CheckStat
+            <Stat
               containerClassName="w-32 mb-4"
               title="Severity"
               value={capitalizeFirstLetter(severityValue)}
             />
-            <CheckStat
-              containerClassName="w-32 mb-4"
+            <Stat
+              containerClassName="w-28 mb-4"
               title="Last Run"
               value={undefined}
               append={
                 <div className="flex flex-col justify-center">
-                  <span className="">
-                    <strong>{lastRun}</strong>{" "}
-                    <span className="text-xs font-normal">ago</span>
+                  <span className="text-sm">
+                    <Age from={check.last_runtime} suffix={true} />
                   </span>
-                  <span className="text-gray-400">
-                    <strong>{nextRun}</strong>{" "}
-                    <span className="text-xs font-normal">(next run)</span>
+                  <span className="text-sm font-medium text-gray-500 pt-1">
+                    Transitioned
+                  </span>
+                  <span className="text-sm">
+                    <Age from={check.last_transition_time} suffix={true} />{" "}
                   </span>
                 </div>
               }
             />
+
+            <Stat
+              containerClassName="w-24 mb-4"
+              title="Next Run"
+              value={undefined}
+              append={
+                <div className="flex flex-col justify-center">
+                  <span className="text-sm">
+                    <Age from={check.next_runtime} suffix={true} />
+                  </span>
+                </div>
+              }
+            />
+
+            <Stat
+              containerClassName="w-20 mb-4 pb-1"
+              title="Time Range"
+              value={undefined}
+              valueContainerClassName="mt-1"
+              append={
+                <DropdownStandaloneWrapper
+                  className="w-30"
+                  paramKey="timeRange"
+                  dropdownElem={<TimeRange name="time-range" />}
+                  defaultValue={timeRange ?? timeRanges[1].value}
+                  name="timeRange"
+                />
+              }
+            />
           </div>
-          <div className="mb-3">
-            <div className="flex justify-between items-center mb-2 pr-2">
-              <span className="text-lg font-medium">Health overview</span>
-              <DropdownStandaloneWrapper
-                className="w-48"
-                paramKey="timeRange"
-                dropdownElem={<TimeRange name="time-range" />}
-                defaultValue={timeRange ?? timeRanges[1].value}
-                name="timeRange"
+
+          <Tall>
+            <div className="mb-3">
+              <CanaryChart
+                title="Health Overview"
+                check={check}
+                timeRange={timeRange}
+                height="h-52"
               />
             </div>
-            <div className="w-full h-52 overflow-visible">
-              <Suspense fallback={<div>Loading...</div>}>
-                <CanaryStatusChart timeRange={timeRange} check={check} />
-              </Suspense>
-            </div>
-          </div>
+          </Tall>
         </div>
+
         <PopupTabs
           shareHeight={false}
           style={{
@@ -174,27 +229,41 @@ export function CheckDetails({ check, ...rest }: CheckDetailsProps) {
           }}
           tabs={{
             statusHistory: {
-              label: "Status history",
+              label: "History",
+              content: <StatusHistory timeRange={timeRange} check={check} />,
+              class: `flex-1 flex flex-col h-full`
+            },
+            graph: {
+              label: "Graph",
+              hidden: !isShort,
               content: (
-                <div
-                  key="status-history"
-                  className={`border border-b-0 border-gray-300 bg-white overflow-y-auto flex flex-col flex-1 relative -mb-px ${mixins.appleScrollbar}`}
-                >
-                  <StatusHistory timeRange={timeRange} check={check} />
-                </div>
+                <Short>
+                  <CanaryChart
+                    check={check}
+                    timeRange={timeRange}
+                    height="h-full"
+                  />
+                </Short>
               ),
-              class:
-                "flex-1 flex flex-col overflow-y-hidden border-b h-full border-gray-300"
+              class: `flex-1 flex flex-col overflow-y-auto   ${mixins.appleScrollbar}`
             },
             specs: {
               label: "Spec",
               content: <CanaryCheckDetailsSpecTab check={check} />,
-              class: `flex-1 flex flex-col overflow-y-auto  border border-gray-300 ${mixins.appleScrollbar}`
+              class: `flex-1 flex flex-col overflow-y-auto  ${mixins.appleScrollbar}`
             },
             related: {
-              label: "Relationships",
+              label: (
+                <>
+                  Relationships{" "}
+                  <Badge
+                    text={check.configs.length + (check.components.length ?? 0)}
+                    color="gray"
+                  />{" "}
+                </>
+              ),
               content: <CheckRelationships check={check} />,
-              class: `flex-1 flex flex-col overflow-y-auto  border border-gray-300 ${mixins.appleScrollbar}`
+              class: `flex-1 flex flex-col overflow-y-auto ${mixins.appleScrollbar}`
             }
           }}
         />

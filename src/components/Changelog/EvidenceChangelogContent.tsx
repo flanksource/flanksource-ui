@@ -22,7 +22,7 @@ const evidenceChangelogContent = new Map<
       }
       return (
         <>
-          <Icon icon={check.icon} name={check.name} />
+          <Icon name={check.icon} secondary={check.type} />
           {check.name}
         </>
       );
@@ -84,7 +84,7 @@ const evidenceChangelogContent = new Map<
       }
       return (
         <>
-          <Icon icon={topology.icon} name={topology.name} />
+          <Icon name={topology.icon} secondary={topology.type} />
           {topology.name}
         </>
       );

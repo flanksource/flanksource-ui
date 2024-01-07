@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32" height="32" viewBox="0 0 32 32" version="1.1">
+<defs>
+<linearGradient id="linear0" gradientUnits="userSpaceOnUse" x1="9" y1="6.88" x2="9" y2="20.450001" gradientTransform="matrix(1.777778,0,0,1.777778,0,0)">
+<stop offset="0.22" style="stop-color:rgb(19.607843%,83.137256%,96.078432%);stop-opacity:1;"/>
+<stop offset="1" style="stop-color:rgb(9.803922%,54.11765%,70.19608%);stop-opacity:1;"/>
+</linearGradient>
+<filter id="alpha" filterUnits="objectBoundingBox" x="0%" y="0%" width="100%" height="100%">
+  <feColorMatrix type="matrix" in="SourceGraphic" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0"/>
+</filter>
+<mask id="mask0">
+  <g filter="url(#alpha)">
+<rect x="0" y="0" width="32" height="32" style="fill:rgb(0%,0%,0%);fill-opacity:0.8;stroke:none;"/>
+  </g>
+</mask>
+<clipPath id="clip1">
+  <rect x="0" y="0" width="32" height="32"/>
+</clipPath>
+<g id="surface5" clip-path="url(#clip1)">
+<path style=" stroke:none;fill-rule:nonzero;fill:rgb(100%,100%,100%);fill-opacity:1;" d="M 16 16.300781 C 14.4375 16.300781 12.90625 15.851562 11.589844 15.003906 L 16 26.417969 L 20.335938 15.074219 C 19.039062 15.890625 17.535156 16.316406 16 16.300781 "/>
+</g>
+<linearGradient id="linear1" gradientUnits="userSpaceOnUse" x1="8.61" y1="-0.4" x2="9.6" y2="11.92" gradientTransform="matrix(1.777778,0,0,1.777778,0,0)">
+<stop offset="0.22" style="stop-color:rgb(19.607843%,83.137256%,96.078432%);stop-opacity:1;"/>
+<stop offset="1" style="stop-color:rgb(9.803922%,54.11765%,70.19608%);stop-opacity:1;"/>
+</linearGradient>
+</defs>
+<g id="surface1">
+<path style=" stroke:none;fill-rule:nonzero;fill:url(#linear0);" d="M 27.945312 32 C 29.371094 32 30.523438 30.847656 30.523438 29.421875 C 30.542969 29.324219 30.542969 29.21875 30.523438 29.121094 C 29.492188 20.996094 24.890625 14.382812 16 14.382812 C 7.109375 14.382812 2.382812 19.980469 1.476562 29.136719 C 1.402344 29.828125 1.605469 30.515625 2.042969 31.054688 C 2.480469 31.59375 3.113281 31.933594 3.804688 32 Z M 27.945312 32 "/>
+<use xlink:href="#surface5" mask="url(#mask0)"/>
+<path style=" stroke:none;fill-rule:nonzero;fill:url(#linear1);" d="M 16.019531 0 C 11.519531 0 7.875 3.644531 7.875 8.140625 C 7.875 12.640625 11.519531 16.285156 16.019531 16.285156 C 20.515625 16.285156 24.160156 12.640625 24.160156 8.140625 C 24.160156 3.644531 20.515625 0 16.019531 0 "/>
+</g>
+</svg>

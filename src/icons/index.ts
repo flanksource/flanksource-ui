@@ -1,17 +1,14 @@
 // this file is generated using make index.js
 import access_denied from "./access-denied.svg";
-import acr from "./acr.svg";
-import activemq_icon from "./activemq-icon.svg";
 import activemq from "./activemq.svg";
 import add_alarm from "./add-alarm.svg";
-import add_album from "./add-album.svg";
 import add_alert from "./add-alert.svg";
-import add_button from "./add-button.svg";
 import add_certificate from "./add-certificate.svg";
 import add_clock from "./add-clock.svg";
 import add_cloud from "./add-cloud.svg";
 import add_cost from "./add-cost.svg";
 import add_database from "./add-database.svg";
+import add_disk from "./add-disk.svg";
 import add_email from "./add-email.svg";
 import add_firewall from "./add-firewall.svg";
 import add_folder from "./add-folder.svg";
@@ -28,25 +25,32 @@ import add_snapshot from "./add-snapshot.svg";
 import add_tag from "./add-tag.svg";
 import add_ticket from "./add-ticket.svg";
 import add_user from "./add-user.svg";
-import aks from "./aks.svg";
+import add from "./add.svg";
 import alarm from "./alarm.svg";
 import alert from "./alert.svg";
 import ansible from "./ansible.svg";
-import apiconnect from "./apiconnect.svg";
 import archive from "./archive.svg";
 import argo from "./argo.svg";
 import artifact_registry from "./artifact-registry.svg";
+import aws_ack from "./aws-ack.svg";
 import aws_acm from "./aws-acm.svg";
 import aws_alb from "./aws-alb.svg";
 import aws_ami from "./aws-ami.svg";
+import aws_api_gateway from "./aws-api-gateway.svg";
 import aws_audit_manager from "./aws-audit-manager.svg";
+import aws_auto_scaling from "./aws-auto-scaling.svg";
 import aws_cloud_directory from "./aws-cloud-directory.svg";
+import aws_cloudformation from "./aws-cloudformation.svg";
+import aws_cloudfront from "./aws-cloudfront.svg";
 import aws_cloudtrail from "./aws-cloudtrail.svg";
+import aws_cloudwatch_alarm from "./aws-cloudwatch-alarm.svg";
+import aws_cloudwatch from "./aws-cloudwatch.svg";
 import aws_config from "./aws-config.svg";
 import aws_detective from "./aws-detective.svg";
 import aws_directory_service from "./aws-directory-service.svg";
 import aws_dnszone from "./aws-dnszone.svg";
 import aws_ebs_volume from "./aws-ebs-volume.svg";
+import aws_ec2_auto_scaling from "./aws-ec2-auto-scaling.svg";
 import aws_ec2_instance from "./aws-ec2-instance.svg";
 import aws_ec2_route_table from "./aws-ec2-route-table.svg";
 import aws_ec2_routetable from "./aws-ec2-routetable.svg";
@@ -55,11 +59,14 @@ import aws_ecr_repository from "./aws-ecr-repository.svg";
 import aws_ecr from "./aws-ecr.svg";
 import aws_efs from "./aws-efs.svg";
 import aws_eks_cluster from "./aws-eks-cluster.svg";
+import aws_elastic_ip from "./aws-elastic-ip.svg";
 import aws_elb from "./aws-elb.svg";
 import aws_eni from "./aws-eni.svg";
 import aws_firewall_manager from "./aws-firewall-manager.svg";
 import aws_firewall from "./aws-firewall.svg";
 import aws_guard_duty from "./aws-guard-duty.svg";
+import aws_iam_role from "./aws-iam-role.svg";
+import aws_iam_sts from "./aws-iam-sts.svg";
 import aws_iam from "./aws-iam.svg";
 import aws_inspector from "./aws-inspector.svg";
 import aws_kms from "./aws-kms.svg";
@@ -67,9 +74,9 @@ import aws_lambda from "./aws-lambda.svg";
 import aws_macie from "./aws-macie.svg";
 import aws_rds from "./aws-rds.svg";
 import aws_route53_hostedzone from "./aws-route53-hostedzone.svg";
-import aws_s3_bucket from "./aws-s3-bucket.svg";
 import aws_s3 from "./aws-s3.svg";
 import aws_secrets_manager from "./aws-secrets-manager.svg";
+import aws_security_group from "./aws-security-group.svg";
 import aws_ses from "./aws-ses.svg";
 import aws_shield from "./aws-shield.svg";
 import aws_sns from "./aws-sns.svg";
@@ -81,30 +88,64 @@ import aws_trusted_advisor from "./aws-trusted-advisor.svg";
 import aws_vpc from "./aws-vpc.svg";
 import aws_waf from "./aws-waf.svg";
 import aws from "./aws.svg";
+import azure_aci from "./azure-aci.svg";
 import azure_acl from "./azure-acl.svg";
+import azure_acr from "./azure-acr.svg";
+import azure_activity_log from "./azure-activity-log.svg";
+import azure_ad from "./azure-ad.svg";
+import azure_advisor from "./azure-advisor.svg";
+import azure_aks from "./azure-aks.svg";
+import azure_app_registration from "./azure-app-registration.svg";
 import azure_app_service from "./azure-app-service.svg";
+import azure_application_gateway from "./azure-application-gateway.svg";
+import azure_availability_set from "./azure-availability-set.svg";
+import azure_cosmos from "./azure-cosmos.svg";
 import azure_devops_pipeline from "./azure-devops-pipeline.svg";
 import azure_devops from "./azure-devops.svg";
-import azure_lb from "./azure-lb.svg";
+import azure_disk_snapshot from "./azure-disk-snapshot.svg";
+import azure_disk from "./azure-disk.svg";
+import azure_dns from "./azure-dns.svg";
+import azure_enterprise_app from "./azure-enterprise-app.svg";
+import azure_firewall from "./azure-firewall.svg";
+import azure_group from "./azure-group.svg";
+import azure_image from "./azure-image.svg";
+import azure_ip from "./azure-ip.svg";
+import azure_key_vaults from "./azure-key-vaults.svg";
+import azure_load_balancer from "./azure-load-balancer.svg";
+import azure_load_balancers from "./azure-load-balancers.svg";
 import azure_log_analytics from "./azure-log-analytics.svg";
+import azure_logic_app from "./azure-logic-app.svg";
+import azure_managed_identity from "./azure-managed-identity.svg";
 import azure_metrics from "./azure-metrics.svg";
+import azure_nat from "./azure-nat.svg";
+import azure_network_interface from "./azure-network-interface.svg";
+import azure_postgres from "./azure-postgres.svg";
+import azure_redis from "./azure-redis.svg";
+import azure_resource_group from "./azure-resource-group.svg";
+import azure_route_table from "./azure-route-table.svg";
 import azure_service_bus from "./azure-service-bus.svg";
 import azure_sql_server from "./azure-sql-server.svg";
-import azure_sql from "./azure-sql.svg";
+import azure_storage_container from "./azure-storage-container.svg";
+import azure_storage from "./azure-storage.svg";
 import azure_subscription from "./azure-subscription.svg";
+import azure_user from "./azure-user.svg";
+import azure_vm_scaleset from "./azure-vm-scaleset.svg";
+import azure_vm from "./azure-vm.svg";
 import azure_vnet from "./azure-vnet.svg";
+import azure_vpn from "./azure-vpn.svg";
 import azure from "./azure.svg";
 import badge from "./badge.svg";
 import ban from "./ban.svg";
-import bash from "./bash.svg";
+import bell_dark from "./bell-dark.svg";
+import bell from "./bell.svg";
 import bizagi from "./bizagi.svg";
-import bizagi_icon from "./bizagi_icon.svg";
 import block from "./block.svg";
 import brain from "./brain.svg";
 import broadcast from "./broadcast.svg";
 import broken_heart from "./broken-heart.svg";
 import ca from "./ca.svg";
 import cal from "./cal.svg";
+import calico from "./calico.svg";
 import canary_checker from "./canary-checker.svg";
 import cancel from "./cancel.svg";
 import cassandra from "./cassandra.svg";
@@ -115,6 +156,7 @@ import changes from "./changes.svg";
 import check_database from "./check-database.svg";
 import check_docker from "./check-docker.svg";
 import check from "./check.svg";
+import cilium from "./cilium.svg";
 import cisco from "./cisco.svg";
 import clock from "./clock.svg";
 import clone from "./clone.svg";
@@ -128,7 +170,6 @@ import cloudwatch_alarm from "./cloudwatch-alarm.svg";
 import cloudwatch_config from "./cloudwatch-config.svg";
 import cloudwatch from "./cloudwatch.svg";
 import cluster from "./cluster.svg";
-import cmd from "./cmd.svg";
 import cni from "./cni.svg";
 import cog from "./cog.svg";
 import compute_engine from "./compute-engine.svg";
@@ -140,19 +181,19 @@ import containerd from "./containerd.svg";
 import containerdPull from "./containerdPull.svg";
 import containerdPush from "./containerdPush.svg";
 import cpu from "./cpu.svg";
+import crossplane from "./crossplane.svg";
 import csi from "./csi.svg";
 import csv from "./csv.svg";
+import d365 from "./d365.svg";
 import database_fill_gear from "./database-fill-gear.svg";
 import database_fill from "./database-fill.svg";
 import database_plus from "./database-plus.svg";
 import database from "./database.svg";
-import database2 from "./database2.svg";
 import databases from "./databases.svg";
 import datadog from "./datadog.svg";
 import datapower_monitoring from "./datapower-monitoring.svg";
 import datapower_routing from "./datapower-routing.svg";
 import datapower_threat from "./datapower-threat.svg";
-import datapower from "./datapower.svg";
 import debian from "./debian.svg";
 import decrease from "./decrease.svg";
 import deployment_fail from "./deployment-fail.svg";
@@ -166,7 +207,6 @@ import disk_success from "./disk-success.svg";
 import disk from "./disk.svg";
 import django from "./django.svg";
 import dns from "./dns.svg";
-import docker_pull from "./docker-pull.svg";
 import docker from "./docker.svg";
 import dockerPull from "./dockerPull.svg";
 import dockerPush from "./dockerPush.svg";
@@ -198,9 +238,9 @@ import exchange from "./exchange.svg";
 import export_icon from "./export.svg";
 import filter from "./filter.svg";
 import fire from "./fire.svg";
+import firewall from "./firewall.svg";
 import flanksource_icon from "./flanksource-icon.svg";
 import flanksource from "./flanksource.svg";
-import fluentbit from "./fluentbit.svg";
 import fluentd from "./fluentd.svg";
 import flux from "./flux.svg";
 import folder_git from "./folder-git.svg";
@@ -208,11 +248,12 @@ import folder from "./folder.svg";
 import gcp_repos from "./gcp-repos.svg";
 import gcp from "./gcp.svg";
 import gcsBucket from "./gcsBucket.svg";
-import gilab from "./gilab.svg";
 import git_compare from "./git-compare.svg";
 import git_merge_queue from "./git-merge-queue.svg";
+import git_pr from "./git-pr.svg";
 import git from "./git.svg";
 import github from "./github.svg";
+import gitlab from "./gitlab.svg";
 import gke from "./gke.svg";
 import go from "./go.svg";
 import google_chat from "./google-chat.svg";
@@ -226,7 +267,6 @@ import haproxy from "./haproxy.svg";
 import harbor from "./harbor.svg";
 import hazelcast from "./hazelcast.svg";
 import health from "./health.svg";
-import healthy from "./healthy.svg";
 import heart from "./heart.svg";
 import helm from "./helm.svg";
 import hibernate from "./hibernate.svg";
@@ -251,17 +291,15 @@ import info from "./info.svg";
 import ini from "./ini.svg";
 import ip from "./ip.svg";
 import istio from "./istio.svg";
-import jaegar from "./jaegar.svg";
 import jaeger from "./jaeger.svg";
 import java from "./java.svg";
-import jira_color from "./jira-color.svg";
-import jira_logo from "./jira-logo.svg";
 import jira from "./jira.svg";
 import jmeter from "./jmeter.svg";
 import js from "./js.svg";
 import json from "./json.svg";
 import junit from "./junit.svg";
 import jwt from "./jwt.svg";
+import k3s from "./k3s.svg";
 import k6 from "./k6.svg";
 import k8s_clusterrole from "./k8s-clusterrole.svg";
 import k8s_clusterrolebinding from "./k8s-clusterrolebinding.svg";
@@ -271,12 +309,14 @@ import k8s_customresourcedefinition from "./k8s-customresourcedefinition.svg";
 import k8s_daemonset from "./k8s-daemonset.svg";
 import k8s_deployment from "./k8s-deployment.svg";
 import k8s_endpoint from "./k8s-endpoint.svg";
+import k8s_ep from "./k8s-ep.svg";
 import k8s_group from "./k8s-group.svg";
 import k8s_hpa from "./k8s-hpa.svg";
 import k8s_ingress from "./k8s-ingress.svg";
 import k8s_job from "./k8s-job.svg";
 import k8s_limits from "./k8s-limits.svg";
 import k8s_namespace from "./k8s-namespace.svg";
+import k8s_netpol from "./k8s-netpol.svg";
 import k8s_networkpolicy from "./k8s-networkpolicy.svg";
 import k8s_node from "./k8s-node.svg";
 import k8s_persistentvolume from "./k8s-persistentvolume.svg";
@@ -295,7 +335,6 @@ import k8s_storageclass from "./k8s-storageclass.svg";
 import k8s_user from "./k8s-user.svg";
 import k8s_vol from "./k8s-vol.svg";
 import k8s from "./k8s.svg";
-import kubernetes from "./kubernetes.svg";
 import kubescape from "./kubescape.svg";
 import kustomize from "./kustomize.svg";
 import ldap from "./ldap.svg";
@@ -308,6 +347,7 @@ import loadbalancer from "./loadbalancer.svg";
 import lock from "./lock.svg";
 import log from "./log.svg";
 import logic_apps from "./logic-apps.svg";
+import login from "./login.svg";
 import logout from "./logout.svg";
 import logs from "./logs.svg";
 import lua from "./lua.svg";
@@ -327,19 +367,16 @@ import mission_control_white from "./mission-control-white.svg";
 import mission_control from "./mission-control.svg";
 import mongo from "./mongo.svg";
 import mongodb from "./mongodb.svg";
+import mqtt from "./mqtt.svg";
 import msplanner from "./msplanner.svg";
-import mssql from "./mssql.svg";
 import multiple from "./multiple.svg";
 import mysql from "./mysql.svg";
-import mysql_logo from "./mysql_logo.svg";
 import namespace from "./namespace.svg";
-import namespaces from "./namespaces.svg";
 import network_card from "./network-card.svg";
 import network from "./network.svg";
 import newrelic from "./newrelic.svg";
 import nginx from "./nginx.svg";
 import nodejs from "./nodejs.svg";
-import nodes from "./nodes.svg";
 import npm from "./npm.svg";
 import ntfy from "./ntfy.svg";
 import o365 from "./o365.svg";
@@ -349,7 +386,6 @@ import on from "./on.svg";
 import opa from "./opa.svg";
 import openid from "./openid.svg";
 import opensearch from "./opensearch.svg";
-import opensearch_logo from "./opensearch_logo.svg";
 import openshift from "./openshift.svg";
 import opentelemetry from "./opentelemetry.svg";
 import operatorframework from "./operatorframework.svg";
@@ -371,7 +407,6 @@ import ping from "./ping.svg";
 import playwright from "./playwright.svg";
 import plus from "./plus.svg";
 import pod from "./pod.svg";
-import pods from "./pods.svg";
 import pom from "./pom.svg";
 import postgres from "./postgres.svg";
 import postman from "./postman.svg";
@@ -387,6 +422,7 @@ import recycle from "./recycle.svg";
 import redhat from "./redhat.svg";
 import redis from "./redis.svg";
 import reload from "./reload.svg";
+import remove_alarm from "./remove-alarm.svg";
 import remove_certificate from "./remove-certificate.svg";
 import remove_clock from "./remove-clock.svg";
 import remove_cloud from "./remove-cloud.svg";
@@ -416,8 +452,6 @@ import restrict from "./restrict.svg";
 import rocket from "./rocket.svg";
 import router from "./router.svg";
 import ruby from "./ruby.svg";
-import s3 from "./s3.svg";
-import s3Bucket from "./s3Bucket.svg";
 import save from "./save.svg";
 import scale_down from "./scale-down.svg";
 import scale_in from "./scale-in.svg";
@@ -472,7 +506,6 @@ import teams from "./teams.svg";
 import telegram from "./telegram.svg";
 import terraform from "./terraform.svg";
 import test from "./test.svg";
-import thousandeyes_logo from "./thousandeyes-logo.svg";
 import thousandeyes from "./thousandeyes.svg";
 import timezone from "./timezone.svg";
 import toggle_off from "./toggle-off.svg";
@@ -493,6 +526,7 @@ import up from "./up.svg";
 import upload from "./upload.svg";
 import user from "./user.svg";
 import vault from "./vault.svg";
+import vcluster from "./vcluster.svg";
 import vpn from "./vpn.svg";
 import vsphere from "./vsphere.svg";
 import wait_for_approval from "./wait-for-approval.svg";
@@ -506,18 +540,15 @@ import zulip from "./zulip.svg";
 
 export const Icons = {
   "access-denied": access_denied,
-  acr: acr,
-  "activemq-icon": activemq_icon,
   activemq: activemq,
   "add-alarm": add_alarm,
-  "add-album": add_album,
   "add-alert": add_alert,
-  "add-button": add_button,
   "add-certificate": add_certificate,
   "add-clock": add_clock,
   "add-cloud": add_cloud,
   "add-cost": add_cost,
   "add-database": add_database,
+  "add-disk": add_disk,
   "add-email": add_email,
   "add-firewall": add_firewall,
   "add-folder": add_folder,
@@ -534,25 +565,32 @@ export const Icons = {
   "add-tag": add_tag,
   "add-ticket": add_ticket,
   "add-user": add_user,
-  aks: aks,
+  add: add,
   alarm: alarm,
   alert: alert,
   ansible: ansible,
-  apiconnect: apiconnect,
   archive: archive,
   argo: argo,
   "artifact-registry": artifact_registry,
+  "aws-ack": aws_ack,
   "aws-acm": aws_acm,
   "aws-alb": aws_alb,
   "aws-ami": aws_ami,
+  "aws-api-gateway": aws_api_gateway,
   "aws-audit-manager": aws_audit_manager,
+  "aws-auto-scaling": aws_auto_scaling,
   "aws-cloud-directory": aws_cloud_directory,
+  "aws-cloudformation": aws_cloudformation,
+  "aws-cloudfront": aws_cloudfront,
   "aws-cloudtrail": aws_cloudtrail,
+  "aws-cloudwatch-alarm": aws_cloudwatch_alarm,
+  "aws-cloudwatch": aws_cloudwatch,
   "aws-config": aws_config,
   "aws-detective": aws_detective,
   "aws-directory-service": aws_directory_service,
   "aws-dnszone": aws_dnszone,
   "aws-ebs-volume": aws_ebs_volume,
+  "aws-ec2-auto-scaling": aws_ec2_auto_scaling,
   "aws-ec2-instance": aws_ec2_instance,
   "aws-ec2-route-table": aws_ec2_route_table,
   "aws-ec2-routetable": aws_ec2_routetable,
@@ -561,11 +599,14 @@ export const Icons = {
   "aws-ecr": aws_ecr,
   "aws-efs": aws_efs,
   "aws-eks-cluster": aws_eks_cluster,
+  "aws-elastic-ip": aws_elastic_ip,
   "aws-elb": aws_elb,
   "aws-eni": aws_eni,
   "aws-firewall-manager": aws_firewall_manager,
   "aws-firewall": aws_firewall,
   "aws-guard-duty": aws_guard_duty,
+  "aws-iam-role": aws_iam_role,
+  "aws-iam-sts": aws_iam_sts,
   "aws-iam": aws_iam,
   "aws-inspector": aws_inspector,
   "aws-kms": aws_kms,
@@ -573,9 +614,9 @@ export const Icons = {
   "aws-macie": aws_macie,
   "aws-rds": aws_rds,
   "aws-route53-hostedzone": aws_route53_hostedzone,
-  "aws-s3-bucket": aws_s3_bucket,
   "aws-s3": aws_s3,
   "aws-secrets-manager": aws_secrets_manager,
+  "aws-security-group": aws_security_group,
   "aws-ses": aws_ses,
   "aws-shield": aws_shield,
   "aws-sns": aws_sns,
@@ -587,30 +628,64 @@ export const Icons = {
   "aws-vpc": aws_vpc,
   "aws-waf": aws_waf,
   aws: aws,
+  "azure-aci": azure_aci,
   "azure-acl": azure_acl,
+  "azure-acr": azure_acr,
+  "azure-activity-log": azure_activity_log,
+  "azure-ad": azure_ad,
+  "azure-advisor": azure_advisor,
+  "azure-aks": azure_aks,
+  "azure-app-registration": azure_app_registration,
   "azure-app-service": azure_app_service,
+  "azure-application-gateway": azure_application_gateway,
+  "azure-availability-set": azure_availability_set,
+  "azure-cosmos": azure_cosmos,
   "azure-devops-pipeline": azure_devops_pipeline,
   "azure-devops": azure_devops,
-  "azure-lb": azure_lb,
+  "azure-disk-snapshot": azure_disk_snapshot,
+  "azure-disk": azure_disk,
+  "azure-dns": azure_dns,
+  "azure-enterprise-app": azure_enterprise_app,
+  "azure-firewall": azure_firewall,
+  "azure-group": azure_group,
+  "azure-image": azure_image,
+  "azure-ip": azure_ip,
+  "azure-key-vaults": azure_key_vaults,
+  "azure-load-balancer": azure_load_balancer,
+  "azure-load-balancers": azure_load_balancers,
   "azure-log-analytics": azure_log_analytics,
+  "azure-logic-app": azure_logic_app,
+  "azure-managed-identity": azure_managed_identity,
   "azure-metrics": azure_metrics,
+  "azure-nat": azure_nat,
+  "azure-network-interface": azure_network_interface,
+  "azure-postgres": azure_postgres,
+  "azure-redis": azure_redis,
+  "azure-resource-group": azure_resource_group,
+  "azure-route-table": azure_route_table,
   "azure-service-bus": azure_service_bus,
   "azure-sql-server": azure_sql_server,
-  "azure-sql": azure_sql,
+  "azure-storage-container": azure_storage_container,
+  "azure-storage": azure_storage,
   "azure-subscription": azure_subscription,
+  "azure-user": azure_user,
+  "azure-vm-scaleset": azure_vm_scaleset,
+  "azure-vm": azure_vm,
   "azure-vnet": azure_vnet,
+  "azure-vpn": azure_vpn,
   azure: azure,
   badge: badge,
   ban: ban,
-  bash: bash,
+  "bell-dark": bell_dark,
+  bell: bell,
   bizagi: bizagi,
-  bizagi_icon: bizagi_icon,
   block: block,
   brain: brain,
   broadcast: broadcast,
   "broken-heart": broken_heart,
   ca: ca,
   cal: cal,
+  calico: calico,
   "canary-checker": canary_checker,
   cancel: cancel,
   cassandra: cassandra,
@@ -621,6 +696,7 @@ export const Icons = {
   "check-database": check_database,
   "check-docker": check_docker,
   check: check,
+  cilium: cilium,
   cisco: cisco,
   clock: clock,
   clone: clone,
@@ -634,7 +710,6 @@ export const Icons = {
   "cloudwatch-config": cloudwatch_config,
   cloudwatch: cloudwatch,
   cluster: cluster,
-  cmd: cmd,
   cni: cni,
   cog: cog,
   "compute-engine": compute_engine,
@@ -646,19 +721,19 @@ export const Icons = {
   containerdPull: containerdPull,
   containerdPush: containerdPush,
   cpu: cpu,
+  crossplane: crossplane,
   csi: csi,
   csv: csv,
+  d365: d365,
   "database-fill-gear": database_fill_gear,
   "database-fill": database_fill,
   "database-plus": database_plus,
   database: database,
-  database2: database2,
   databases: databases,
   datadog: datadog,
   "datapower-monitoring": datapower_monitoring,
   "datapower-routing": datapower_routing,
   "datapower-threat": datapower_threat,
-  datapower: datapower,
   debian: debian,
   decrease: decrease,
   "deployment-fail": deployment_fail,
@@ -672,7 +747,6 @@ export const Icons = {
   disk: disk,
   django: django,
   dns: dns,
-  "docker-pull": docker_pull,
   docker: docker,
   dockerPull: dockerPull,
   dockerPush: dockerPush,
@@ -704,9 +778,9 @@ export const Icons = {
   export: export_icon,
   filter: filter,
   fire: fire,
+  firewall: firewall,
   "flanksource-icon": flanksource_icon,
   flanksource: flanksource,
-  fluentbit: fluentbit,
   fluentd: fluentd,
   flux: flux,
   "folder-git": folder_git,
@@ -714,11 +788,12 @@ export const Icons = {
   "gcp-repos": gcp_repos,
   gcp: gcp,
   gcsBucket: gcsBucket,
-  gilab: gilab,
   "git-compare": git_compare,
   "git-merge-queue": git_merge_queue,
+  "git-pr": git_pr,
   git: git,
   github: github,
+  gitlab: gitlab,
   gke: gke,
   go: go,
   "google-chat": google_chat,
@@ -732,7 +807,6 @@ export const Icons = {
   harbor: harbor,
   hazelcast: hazelcast,
   health: health,
-  healthy: healthy,
   heart: heart,
   helm: helm,
   hibernate: hibernate,
@@ -757,17 +831,15 @@ export const Icons = {
   ini: ini,
   ip: ip,
   istio: istio,
-  jaegar: jaegar,
   jaeger: jaeger,
   java: java,
-  "jira-color": jira_color,
-  "jira-logo": jira_logo,
   jira: jira,
   jmeter: jmeter,
   js: js,
   json: json,
   junit: junit,
   jwt: jwt,
+  k3s: k3s,
   k6: k6,
   "k8s-clusterrole": k8s_clusterrole,
   "k8s-clusterrolebinding": k8s_clusterrolebinding,
@@ -777,12 +849,14 @@ export const Icons = {
   "k8s-daemonset": k8s_daemonset,
   "k8s-deployment": k8s_deployment,
   "k8s-endpoint": k8s_endpoint,
+  "k8s-ep": k8s_ep,
   "k8s-group": k8s_group,
   "k8s-hpa": k8s_hpa,
   "k8s-ingress": k8s_ingress,
   "k8s-job": k8s_job,
   "k8s-limits": k8s_limits,
   "k8s-namespace": k8s_namespace,
+  "k8s-netpol": k8s_netpol,
   "k8s-networkpolicy": k8s_networkpolicy,
   "k8s-node": k8s_node,
   "k8s-persistentvolume": k8s_persistentvolume,
@@ -801,7 +875,6 @@ export const Icons = {
   "k8s-user": k8s_user,
   "k8s-vol": k8s_vol,
   k8s: k8s,
-  kubernetes: kubernetes,
   kubescape: kubescape,
   kustomize: kustomize,
   ldap: ldap,
@@ -814,6 +887,7 @@ export const Icons = {
   lock: lock,
   log: log,
   "logic-apps": logic_apps,
+  login: login,
   logout: logout,
   logs: logs,
   lua: lua,
@@ -833,19 +907,16 @@ export const Icons = {
   "mission-control": mission_control,
   mongo: mongo,
   mongodb: mongodb,
+  mqtt: mqtt,
   msplanner: msplanner,
-  mssql: mssql,
   multiple: multiple,
   mysql: mysql,
-  mysql_logo: mysql_logo,
   namespace: namespace,
-  namespaces: namespaces,
   "network-card": network_card,
   network: network,
   newrelic: newrelic,
   nginx: nginx,
   nodejs: nodejs,
-  nodes: nodes,
   npm: npm,
   ntfy: ntfy,
   o365: o365,
@@ -855,7 +926,6 @@ export const Icons = {
   opa: opa,
   openid: openid,
   opensearch: opensearch,
-  opensearch_logo: opensearch_logo,
   openshift: openshift,
   opentelemetry: opentelemetry,
   operatorframework: operatorframework,
@@ -877,7 +947,6 @@ export const Icons = {
   playwright: playwright,
   plus: plus,
   pod: pod,
-  pods: pods,
   pom: pom,
   postgres: postgres,
   postman: postman,
@@ -893,6 +962,7 @@ export const Icons = {
   redhat: redhat,
   redis: redis,
   reload: reload,
+  "remove-alarm": remove_alarm,
   "remove-certificate": remove_certificate,
   "remove-clock": remove_clock,
   "remove-cloud": remove_cloud,
@@ -922,8 +992,6 @@ export const Icons = {
   rocket: rocket,
   router: router,
   ruby: ruby,
-  s3: s3,
-  s3Bucket: s3Bucket,
   save: save,
   "scale-down": scale_down,
   "scale-in": scale_in,
@@ -978,7 +1046,6 @@ export const Icons = {
   telegram: telegram,
   terraform: terraform,
   test: test,
-  "thousandeyes-logo": thousandeyes_logo,
   thousandeyes: thousandeyes,
   timezone: timezone,
   "toggle-off": toggle_off,
@@ -999,6 +1066,7 @@ export const Icons = {
   upload: upload,
   user: user,
   vault: vault,
+  vcluster: vcluster,
   vpn: vpn,
   vsphere: vsphere,
   "wait-for-approval": wait_for_approval,

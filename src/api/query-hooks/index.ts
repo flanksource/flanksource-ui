@@ -21,7 +21,8 @@ import { LogsResponse, searchLogs, SearchLogsPayload } from "../services/logs";
 import {
   getComponentTeams,
   getHealthCheckItem,
-  getTopology,
+  getTopologyNameByID,
+  getTopologyByID,
   getTopologyComponentLabels,
   getTopologyComponents,
   getTopologyComponentsWithLogs
@@ -114,17 +115,29 @@ export const useComponentLabelsQuery = ({
   });
 };
 
+export const useTopologyQuery = (topologyId = "", { ...rest } = {}) => {
+  return useQuery(
+    ["topology", topologyId],
+    () => {
+      return getTopologyByID(topologyId).then((data) => {
+        return data.data.length > 0 ? data.data[0] : null;
+      });
+    },
+    {
+      ...rest
+    }
+  );
+};
+
 export const useComponentNameQuery = (
   topologyId = "",
-  { enabled = true, staleTime = defaultStaleTime, ...rest }
+  { enabled = true, staleTime = defaultStaleTime, ...rest } = {}
 ) => {
   return useQuery(
     ["topology", topologyId],
     () => {
-      return getTopology({
-        id: topologyId
-      }).then((data) => {
-        return data.components?.[0];
+      return getTopologyNameByID(topologyId).then((data) => {
+        return data.data.length > 0 ? data.data[0] : null;
       });
     },
     {

@@ -1,5 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
-<svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M4 9.00005L10.2 13.65C11.2667 14.45 12.7333 14.45 13.8 13.65L20 9" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M3 9.17681C3 8.45047 3.39378 7.78123 4.02871 7.42849L11.0287 3.5396C11.6328 3.20402 12.3672 3.20402 12.9713 3.5396L19.9713 7.42849C20.6062 7.78123 21 8.45047 21 9.17681V17C21 18.1046 20.1046 19 19 19H5C3.89543 19 3 18.1046 3 17V9.17681Z" stroke="#000000" stroke-width="2" stroke-linecap="round"/>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32" height="32" viewBox="0 0 32 32" version="1.1">
+<g id="surface1">
+<path style="fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:4;" d="M 3.999023 9 L 10.201172 13.649414 C 11.267578 14.449219 12.732422 14.449219 13.798828 13.649414 L 20.000977 9 " transform="matrix(1.333333,0,0,1.333333,0,0)"/>
+<path style="fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:4;" d="M 3 9.175781 C 3 8.449219 3.392578 7.78125 4.02832 7.426758 L 11.030273 3.539062 C 11.633789 3.205078 12.366211 3.205078 12.969727 3.539062 L 19.97168 7.426758 C 20.607422 7.78125 21 8.449219 21 9.175781 L 21 17.000977 C 21 18.105469 20.103516 18.999023 18.999023 18.999023 L 5.000977 18.999023 C 3.896484 18.999023 3 18.105469 3 17.000977 Z M 3 9.175781 " transform="matrix(1.333333,0,0,1.333333,0,0)"/>
+</g>
 </svg>

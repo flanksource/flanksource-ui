@@ -2,16 +2,17 @@ import { useMemo } from "react";
 import { FaTags } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useGetConfigByIdQuery } from "../../../api/query-hooks";
+import { isCostsEmpty } from "../../../api/types/configs";
+import { Age } from "../../../ui/Age";
 import CollapsiblePanel from "../../CollapsiblePanel";
 import { InfoMessage } from "../../InfoMessage";
 import TextSkeletonLoader from "../../SkeletonLoader/TextSkeletonLoader";
 import Title from "../../Title/title";
 import DisplayDetailsRow from "../../Utils/DisplayDetailsRow";
-import { Age } from "../../../ui/Age";
-import ConfigCostValue from "../ConfigCosts/ConfigCostValue";
-import { isCostsEmpty } from "../../../api/types/configs";
-import { formatConfigTags } from "./Utils/formatConfigTags";
 import { DisplayGroupedProperties } from "../../Utils/DisplayGroupedProperties";
+import ConfigCostValue from "../ConfigCosts/ConfigCostValue";
+import ConfigsTypeIcon from "../ConfigsTypeIcon";
+import { formatConfigTags } from "./Utils/formatConfigTags";
 
 type Props = {
   configId: string;
@@ -34,6 +35,7 @@ export function ConfigDetails({
     return formatConfigTags(configDetails);
   }, [configDetails]);
 
+  const namespace = configDetails?.tags?.["namespace"];
   return (
     <CollapsiblePanel
       isCollapsed={isCollapsed}
@@ -53,33 +55,26 @@ export function ConfigDetails({
               items={[
                 {
                   label: "Name",
-                  value: configDetails.name
+                  value: (
+                    <ConfigsTypeIcon config={configDetails}>
+                      {configDetails.name}
+                    </ConfigsTypeIcon>
+                  )
                 }
               ]}
             />
-            {configDetails.type && (
+            {namespace && (
               <DisplayDetailsRow
                 items={[
                   {
-                    label: "Type",
+                    label: "Namespace",
                     value: (
-                      <div className="whitespace-nowrap">
-                        {configDetails.type}
-                        {configDetails.config_scrapers && (
-                          <>
-                            {" "}
-                            by
-                            <Link
-                              to={{
-                                pathname: `/settings/config_scrapers/${configDetails.config_scrapers.id}`
-                              }}
-                              className="cursor-pointer text-blue-500 my-auto underline"
-                            >
-                              {configDetails.config_scrapers.name}
-                            </Link>
-                          </>
-                        )}
-                      </div>
+                      <Link
+                        className="link"
+                        to={`/catalog?tag=namespace__%3A__${namespace}`}
+                      >
+                        {namespace}
+                      </Link>
                     )
                   }
                 ]}
@@ -89,7 +84,25 @@ export function ConfigDetails({
               items={[
                 {
                   label: "Created",
-                  value: <Age from={configDetails.created_at} />
+                  value: (
+                    <>
+                      <Age from={configDetails.created_at} suffix={true} />
+                      {configDetails.config_scrapers && (
+                        <>
+                          {" "}
+                          by{" "}
+                          <Link
+                            to={{
+                              pathname: `/settings/config_scrapers/${configDetails.config_scrapers.id}`
+                            }}
+                            className="link whitespace-nowrap  text-ellipsis overflow-hidden relative"
+                          >
+                            {configDetails.config_scrapers.name}
+                          </Link>
+                        </>
+                      )}
+                    </>
+                  )
                 },
                 {
                   label: "Updated",

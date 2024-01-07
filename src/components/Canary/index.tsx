@@ -7,6 +7,7 @@ import React, {
   useRef,
   useState
 } from "react";
+import { FaFilter } from "react-icons/fa";
 import { useLocation, useSearchParams } from "react-router-dom";
 import { HealthChecksResponse } from "../../api/types/health";
 import { HEALTH_SETTINGS } from "../../constants";
@@ -22,6 +23,7 @@ import { TabByDropdown } from "../Dropdown/TabByDropdown";
 import { TimeRange, timeRanges } from "../Dropdown/TimeRange";
 import { defaultTabSelections } from "../Dropdown/lib/lists";
 import useRefreshRateFromLocalStorage from "../Hooks/useRefreshRateFromLocalStorage";
+import { IconButton } from "../IconButton";
 import HealthPageSkeletonLoader from "../SkeletonLoader/HealthPageSkeletonLoader";
 import { StatCard } from "../StatCard";
 import { Toggle } from "../Toggle";
@@ -35,16 +37,6 @@ import {
   separateLabelsByBooleanType
 } from "./labels";
 import { decodeUrlSearchParams, useUpdateParams } from "./url";
-import { IconButton } from "../IconButton";
-import { FaFilter } from "react-icons/fa";
-
-const FilterKeyToLabelMap = {
-  environment: "Environment",
-  severity: "Severity",
-  technology: "Technology",
-  app: "App",
-  "Expected-Fail": "Expected Fail"
-};
 
 const getPassingCount = (checks: any) => {
   let count = 0;
@@ -401,18 +393,14 @@ export const LabelFilterList = ({ labels }: { labels: any }) => {
             {labels.length > 1 ? (
               <>
                 <div className="text-xs whitespace-nowrap overflow-ellipsis w-full overflow-hidden mb-1 capitalize">
-                  {FilterKeyToLabelMap[
-                    labelKey as keyof typeof FilterKeyToLabelMap
-                  ] || labelKey}
+                  {labelKey}
                 </div>
                 <MultiSelectLabelsDropdownStandalone labels={labels} />
               </>
             ) : labels.length === 1 ? (
               <div className="flex w-full mb-3">
                 <div className="mr-3 w-full text-xs text-left text-gray-700 break-all overflow-ellipsis overflow-x-hidden flex items-center capitalize">
-                  {FilterKeyToLabelMap[
-                    labels[0].key as keyof typeof FilterKeyToLabelMap
-                  ] || labels[0].key}
+                  {labels[0].key}
                 </div>
                 <TristateLabelStandalone
                   label={labels[0]}

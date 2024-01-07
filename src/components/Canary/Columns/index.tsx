@@ -1,18 +1,18 @@
+import { CellContext } from "@tanstack/react-table";
+import clsx from "clsx";
+import dayjs from "dayjs";
+import { HealthCheck } from "../../../api/types/health";
+import { Badge } from "../../Badge";
+import { Status } from "../../Status";
+import { GetName } from "../data";
+import style from "../index.module.css";
+import { Duration, Percentage, StatusList, Title, empty } from "../renderers";
+import { removeNamespacePrefix } from "../utils";
 import {
   getHealthPercentageScore,
   getLatency,
   getUptimeScore
 } from "./sorting";
-import { Duration, Percentage, Title, empty, StatusList } from "../renderers";
-import { removeNamespacePrefix } from "../utils";
-import { GetName } from "../data";
-import { Badge } from "../../Badge";
-import style from "../index.module.css";
-import { Status } from "../../Status";
-import { dateDiff, relativeDateTime } from "../../../utils/date";
-import clsx from "clsx";
-import { CellContext } from "@tanstack/react-table";
-import { HealthCheck } from "../../../api/types/health";
 
 export function Cell({ state, value, row, column }: any) {
   const { pivotCellType } = state;
@@ -35,14 +35,13 @@ export function Cell({ state, value, row, column }: any) {
     if (typeof value === "object") {
       return <Status good={value.good} mixed={value.mixed} />;
     } else {
-      const date = new Date().toISOString().split(".")[0];
-      const lastRutime = row.original.last_runtime;
-      const showTime = dateDiff(date, lastRutime, "minute") > 15;
       return (
         <div className="items-center flex space-x-1">
           <Status good={value === "healthy"} />
-          {showTime &&
-            LastTransistionCell({ value: row.original.last_runtime })}
+          <LastTransitionCell
+            value={row.original.last_runtime}
+            min={1000 * 60 * 20 + 1}
+          />
         </div>
       );
     }
@@ -62,31 +61,30 @@ export function Cell({ state, value, row, column }: any) {
     if (value == null) {
       return empty;
     }
-    const newValue = value?.latency ?? value;
-    return LastTransistionCell({ value: newValue });
+    const newValue = value;
+    return LastTransitionCell({ value: newValue });
   }
   return null;
 }
 
-export function LastTransistionCell({ value }: any) {
-  const hasAgoString = relativeDateTime(value).indexOf("ago") > -1;
-  const hasYesterdayString = relativeDateTime(value).indexOf("yesterday") > -1;
+const day = 1000 * 60 * 60 * 24;
+export function LastTransitionCell({
+  value,
+  min = 0,
+  max = day * 7,
+  suffix = null
+}: any) {
+  let diff = dayjs().diff(dayjs.utc(value));
+  if (diff > max || diff <= min) {
+    return null;
+  }
   return (
     <>
       <span className="text-md">
-        {relativeDateTime(value)
-          .replace("ago", "")
-          .replace("yesterday", "")
-          .trim()}
+        {suffix}
+        {dayjs.duration(diff).humanize()}
       </span>
-      {hasAgoString && (
-        <span className="text-gray-500 text-light text-xs ml-0.5">ago</span>
-      )}
-      {hasYesterdayString && (
-        <span className="text-gray-500 text-light text-xs ml-0.5">
-          yesterday
-        </span>
-      )}
+      <span className="text-gray-500 text-light text-xs ml-0.5">ago</span>
     </>
   );
 }
@@ -124,33 +122,21 @@ export function TitleCell({
   if (hideNamespacePrefix) {
     title = removeNamespacePrefix(title, rowValues);
   }
-
   return (
-    <div className={clsx(style.checkTitleRow, "w-96")}>
+    <div className={clsx(style.checkTitleRow, "")}>
       <span
         className="flex flex-row items-center"
-        style={{
-          paddingLeft: `${row.depth * 1.1}rem`
-        }}
+        // FIXME: change the width of the cells causes the columns to resize which is distracting
+        // style={{
+        //   paddingLeft: `${row.depth * 1.1}rem`
+        // }}
       >
         <Title
           title={title}
           icon={rowValues.icon || rowValues.type}
           isDeleted={!!row.original.deleted_at}
         />
-        {row.getCanExpand() &&
-          rowValues.subRows &&
-          rowValues?.subRows.length > 1 && (
-            <span className="ml-1 flex items-center">
-              <Badge
-                className="ml-1"
-                colorClass="bg-gray-200 text-gray-800"
-                roundedClass="rounded-xl"
-                text={rowValues?.subRows.length}
-                size="xs"
-              />
-            </span>
-          )}
+
         {showNamespaceTags ? (
           rowValues.namespaces ? (
             <Badge

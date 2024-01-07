@@ -20,16 +20,23 @@ export type TopologyProperty = {
   namespace?: string;
 };
 
-export interface Topology extends Timestamped, CostsData, Agent, Namespaced {
+export interface Component extends Timestamped, Namespaced {
+  created_at?: string;
+  external_id?: string;
+  icon?: string;
   id: string;
   parent_id?: string;
+  path?: string;
   type?: string;
+  updated_at?: string;
+}
+
+export interface Topology extends Component, CostsData, Agent {
   title?: string;
   properties?: TopologyProperty[];
   components?: Topology[];
   labels?: Record<string, string>;
   path?: string;
-  icon?: string;
   text?: string;
   status?: string;
   status_reason?: string;

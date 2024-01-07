@@ -32,16 +32,20 @@ export function FormatProperty({
   }
 
   if (property.type === "url") {
-    return <FormatPropertyURL property={property} />;
+    return <FormatPropertyURL property={property} short={short} />;
   }
 
   if (property.type === "currency") {
-    return <FormatPropertyCurrency property={property} />;
+    return <FormatPropertyCurrency property={property} short={short} />;
   }
 
   if (property.name === "cpu" || property.name === "memory") {
     return (
-      <FormatPropertyCPUMemory property={property} isSidebar={isSidebar} />
+      <FormatPropertyCPUMemory
+        property={property}
+        isSidebar={isSidebar}
+        short={short}
+      />
     );
   }
 

@@ -1,20 +1,19 @@
-import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { BsCardList } from "react-icons/bs";
 import { Link } from "react-router-dom";
-import { getComponentsTopology } from "../../../api/services/topology";
 import { isCostsEmpty } from "../../../api/types/configs";
 import { Topology } from "../../../api/types/topology";
 import { Age } from "../../../ui/Age";
 import CollapsiblePanel from "../../CollapsiblePanel";
 import ConfigCostValue from "../../Configs/ConfigCosts/ConfigCostValue";
+import { formatConfigTags } from "../../Configs/Sidebar/Utils/formatConfigTags";
+import { Icon } from "../../Icon";
 import Title from "../../Title/title";
-import { CardMetrics } from "../TopologyCard/CardMetrics";
-import { TopologyLink } from "../TopologyLink";
 import DisplayDetailsRow from "../../Utils/DisplayDetailsRow";
 import { DisplayGroupedProperties } from "../../Utils/DisplayGroupedProperties";
+import { CardMetrics } from "../TopologyCard/CardMetrics";
+import { TopologyLink } from "../TopologyLink";
 import { formatTopologyProperties } from "./Utils/formatTopologyProperties";
-import { formatConfigTags } from "../../Configs/Sidebar/Utils/formatConfigTags";
 
 type Props = {
   topology?: Topology;
@@ -29,13 +28,6 @@ export default function TopologyDetails({
   isCollapsed = true,
   onCollapsedStateChange = () => {}
 }: Props) {
-  const { data } = useQuery({
-    queryFn: () => getComponentsTopology(topology!.id),
-    enabled: topology != null,
-    queryKey: ["components", "topology", topology?.id],
-    select: (data) => data?.topologies
-  });
-
   const headlineProperties =
     topology?.properties?.filter((property) => property.headline) ?? [];
 
@@ -45,6 +37,36 @@ export default function TopologyDetails({
     }
     const items = [];
 
+    items.push({
+      label: "Name",
+      value: (
+        <>
+          {(topology.type || topology.icon) && (
+            <Link
+              data-testid="type-link"
+              to={`/topology?type=${topology.type}`}
+              data-tooltip={topology.type}
+              className="cursor-pointer text-blue-500 my-auto underline"
+            >
+              <Icon
+                name={topology.icon}
+                secondary={topology.type}
+                className="mr-1 object-center h-5"
+              />
+            </Link>
+          )}
+          {topology.name}
+        </>
+      )
+    });
+
+    if (topology.labels && topology.labels["namespace"] != null) {
+      items.push({
+        label: "Namespace",
+        value: topology.labels["namespace"]
+      });
+      delete topology.labels["namespace"];
+    }
     if (
       refererId != null &&
       topology.parent_id != null &&
@@ -56,31 +78,6 @@ export default function TopologyDetails({
       });
     }
 
-    if (topology.type) {
-      items.push({
-        label: "Type",
-        value: (
-          <>
-            {topology.type}
-            {data && (
-              <>
-                {" "}
-                by{" "}
-                <Link
-                  to={{
-                    pathname: `/settings/topologies/${data.id}`
-                  }}
-                  className="cursor-pointer text-blue-500 my-auto underline"
-                >
-                  {data.name}
-                </Link>
-              </>
-            )}
-          </>
-        )
-      });
-    }
-
     if (!isCostsEmpty(topology)) {
       items.push({
         label: "Costs",
@@ -89,7 +86,7 @@ export default function TopologyDetails({
     }
 
     return items;
-  }, [data, refererId, topology]);
+  }, [refererId, topology]);
 
   const formattedProperties = useMemo(() => {
     return formatTopologyProperties(topology);
@@ -137,7 +134,26 @@ export default function TopologyDetails({
           items={[
             {
               label: "Created",
-              value: <Age from={topology.created_at} />
+              value: (
+                <>
+                  <Age from={topology.created_at} suffix={true} />
+                  {topology.topology_id && (
+                    <>
+                      {" "}
+                      by a{" "}
+                      <Link
+                        data-testid="settings-link"
+                        to={{
+                          pathname: `/settings/topologies/${topology.topology_id}`
+                        }}
+                        className="link my-auto"
+                      >
+                        topology
+                      </Link>
+                    </>
+                  )}
+                </>
+              )
             },
             {
               label: "Updated",
@@ -157,14 +173,7 @@ export default function TopologyDetails({
         <DisplayGroupedProperties items={formattedProperties} />
 
         {formattedLabels.length > 0 && (
-          <div className="flex flex-col py-2">
-            <div className="text-sm font-semibold text-gray-600 border-b border-dashed border-gray-300 pb-1">
-              Labels
-            </div>
-            <div className="flex flex-col px-1 gap-2">
-              <DisplayGroupedProperties items={formattedLabels} />
-            </div>
-          </div>
+          <DisplayGroupedProperties items={formattedLabels} />
         )}
       </div>
     </CollapsiblePanel>

@@ -28,7 +28,7 @@ export default function PlaybookRunsActions({ data }: PlaybookRunActionsProps) {
             label="Playbook"
             value={
               <Link
-                className="text-blue-500 hover:underline"
+                className="link"
                 to={`/playbooks/runs?playbook=${data.playbook_id}`}
               >
                 {data.playbooks?.name}

@@ -1,21 +1,22 @@
-import { BsGearFill, BsFlower2, BsGridFill, BsStack } from "react-icons/bs";
+import { BsFlower2, BsGearFill, BsGridFill, BsStack } from "react-icons/bs";
 import { useSearchParams } from "react-router-dom";
-import { SearchLayout } from "../components/Layout";
-import { TimeRange, timeRanges } from "../components/Dropdown/TimeRange";
-import { useQuery } from "@tanstack/react-query";
-import { DropdownStandaloneWrapper } from "../components/Dropdown/StandaloneWrapper";
-import { LogsTable } from "../components/Logs/Table/LogsTable";
-import useDebouncedValue from "../hooks/useDebounce";
-import { getTopologyComponentByID } from "../api/services/topology";
-import { Head } from "../components/Head/Head";
-import { useComponentGetLogsQuery } from "../api/query-hooks";
+import {
+  useComponentGetLogsQuery,
+  useComponentNameQuery
+} from "../api/query-hooks";
 import {
   BreadcrumbChild,
   BreadcrumbNav,
   BreadcrumbRoot
 } from "../components/BreadcrumbNav";
-import { TopologyLink } from "../components/Topology/TopologyLink";
+import { DropdownStandaloneWrapper } from "../components/Dropdown/StandaloneWrapper";
+import { TimeRange, timeRanges } from "../components/Dropdown/TimeRange";
 import LogsFilterBar from "../components/FilterLogs/LogsFilterBar";
+import { Head } from "../components/Head/Head";
+import { SearchLayout } from "../components/Layout";
+import { LogsTable } from "../components/Logs/Table/LogsTable";
+import { TopologyLink } from "../components/Topology/TopologyLink";
+import useDebouncedValue from "../hooks/useDebounce";
 
 export const logTypes = [
   {
@@ -42,24 +43,14 @@ export const logTypes = [
 
 export function LogsPage() {
   const [searchParams] = useSearchParams();
-
   const topologyId = searchParams.get("topologyId");
   const query = searchParams.get("query");
   const debouncedQueryValue = useDebouncedValue(query, 500);
   const logsSelector = searchParams.get("logsSelector");
 
-  const { data: topology } = useQuery(
-    ["components", "names", topologyId],
-    async () => {
-      if (topologyId) {
-        const data = await getTopologyComponentByID(topologyId);
-        return data;
-      }
-    },
-    {
-      enabled: !!topologyId
-    }
-  );
+  const { data: topology } = useComponentNameQuery(topologyId || "", {
+    enabled: topologyId != null
+  });
 
   const {
     isLoading,
@@ -87,7 +78,9 @@ export function LogsPage() {
         title={
           <BreadcrumbNav
             list={[
-              <BreadcrumbRoot link="/logs">Logs</BreadcrumbRoot>,
+              <BreadcrumbRoot link="/logs" key="/logs">
+                Logs
+              </BreadcrumbRoot>,
               topology?.name && (
                 <BreadcrumbChild>
                   <TopologyLink viewType="label" topologyId={topology.id} />

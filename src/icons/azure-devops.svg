@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="31.884616" height="32" viewBox="0 0 31.884616 32" version="1.1">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="31.885" height="32" viewBox="0 0 31.885 32" version="1.1">
 <defs>
-<linearGradient id="linear0" gradientUnits="userSpaceOnUse" x1="9" y1="16.969999" x2="9" y2="1.03" gradientTransform="matrix(1.923077,0,0,1.923077,-1.307692,-1.307692)">
+<linearGradient id="linear0" gradientUnits="userSpaceOnUse" x1="9" y1="16.969999" x2="9" y2="1.03" gradientTransform="matrix(1.92308,0,0,1.92308,-1.308,-1.308)">
 <stop offset="0" style="stop-color:rgb(0%,47.058824%,83.137256%);stop-opacity:1;"/>
 <stop offset="0.16" style="stop-color:rgb(7.450981%,50.196081%,85.490197%);stop-opacity:1;"/>
 <stop offset="0.53" style="stop-color:rgb(23.529412%,56.862748%,89.803922%);stop-opacity:1;"/>

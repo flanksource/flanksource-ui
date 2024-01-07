@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
-import { getAgentByID } from "../../api/services/agents";
-import { Badge } from "../Badge";
-import { ComponentProps } from "react";
+import React, { ComponentProps } from "react";
+import { getAgentByID, Local } from "../../api/services/agents";
 import { AgentItem } from "../../api/types/common";
+import { Badge } from "../Badge";
 
 type TopologyCardAgentProps = {
   agent?: AgentItem;
@@ -27,7 +27,7 @@ export default function AgentName({
 
   const agent = propAgent ?? dbAgent;
 
-  if (!agent) {
+  if (!agent || agent.id === Local) {
     return null;
   }
 

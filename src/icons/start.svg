@@ -1,5 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
-  <path fill-rule="evenodd"
-    d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z"
-    clip-rule="evenodd" />
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32" height="32" viewBox="0 0 32 32" version="1.1">
+<g id="surface1">
+<path style=" stroke:none;fill-rule:evenodd;fill:rgb(0%,0%,0%);fill-opacity:1;" d="M 6 7.539062 C 6 5.636719 8.039062 4.429688 9.707031 5.347656 L 25.09375 13.8125 C 26.820312 14.761719 26.820312 17.242188 25.09375 18.191406 L 9.707031 26.65625 C 8.039062 27.570312 6 26.367188 6 24.464844 Z M 6 7.539062 "/>
+</g>
 </svg>

@@ -13,7 +13,6 @@ import { TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti";
 import { useSearchParams } from "react-router-dom";
 import { HealthCheck } from "../../api/types/health";
 import { getCanaryTableColumns } from "./CanaryTableColumns";
-import { useCheckSetEqualityForPreviousVsCurrent } from "../Hooks/useCheckSetEqualityForPreviousVsCurrent";
 import { prepareRows } from "./Rows/lib";
 import { getAggregatedGroupedChecks } from "./aggregate";
 import { getGroupedChecks } from "./grouping";
@@ -25,12 +24,11 @@ const styles = {
   theadClass: "bg-white z-10 sticky top-0",
   theadRowClass: "z-10",
   theadHeaderClass:
-    "py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-300",
+    "py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-b border-gray-300",
   tbodyClass: "mt-4 rounded-md",
   tbodyRowClass: "border cursor-pointer",
   tbodyRowExpandableClass: "cursor-pointer",
-  tbodyDataClass: "whitespace-nowrap border-gray-300 border-b",
-  expandArrowIconClass: "ml-6 flex"
+  tbodyDataClass: "whitespace-nowrap border-gray-300 border-b"
 };
 
 type CanaryChecksProps = {
@@ -81,8 +79,6 @@ export function CanaryTable({
     [hideNamespacePrefix, tableData, pivotBy, pivotLookup]
   );
 
-  const isNewPivotSet = useCheckSetEqualityForPreviousVsCurrent(meta.pivotSet);
-
   const shouldPivot =
     pivotCellType != null &&
     pivotCellType !== "" &&
@@ -119,7 +115,6 @@ type TableProps = {
 
 export function Table({
   data,
-
   labels,
   pivotCellType,
   hasGrouping = false,
@@ -154,7 +149,7 @@ export function Table({
         showNamespaceTags,
         hideNamespacePrefix
       }),
-    []
+    [showNamespaceTags, hideNamespacePrefix]
   );
 
   const table = useReactTable<HealthCheck>({

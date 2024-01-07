@@ -49,10 +49,7 @@ export default function SubmitPlaybookRunForm({
     onSuccess: (run) => {
       toastSuccess(
         <>
-          <Link
-            className="underline text-blue-600 hover:text-blue-800 visited:text-blue-600"
-            to={`/playbooks/runs/${run.run_id}`}
-          >
+          <Link className="link" to={`/playbooks/runs/${run.run_id}`}>
             Playbook Run{" "}
           </Link>{" "}
           {" submitted successfully"}

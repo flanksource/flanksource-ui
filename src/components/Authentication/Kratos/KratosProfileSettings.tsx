@@ -119,11 +119,7 @@ function KratosProfileSettings() {
           className="p-2 h-auto m-auto rounded-8px w-48"
         />
         <div className="pb-2">
-          <Link
-            as="a"
-            href="/"
-            className="cursor-pointer font-medium text-blue-600 hover:text-blue-500"
-          >
+          <Link as="a" href="/" className="font-medium link">
             Go back
           </Link>
           <Messages messages={messages} />

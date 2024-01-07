@@ -1,5 +1,4 @@
 import { stringify } from "qs";
-import { TopologyComponentItem } from "../../components/FilterIncidents/FilterIncidentsByComponents";
 import { AVATAR_INFO, TimeRangeToMinutes } from "../../constants";
 import {
   CanaryChecker,
@@ -16,6 +15,7 @@ import {
   HealthCheckSummary
 } from "../types/health";
 import {
+  Component,
   ComponentHealthCheckView,
   ComponentTeamItem,
   ComponentTemplateItem,
@@ -167,9 +167,8 @@ export const getCheckStatuses = (
   if (duration) {
     queryString = `${queryString}&duration=gte.${duration}`;
   }
-  queryString = `${queryString}&limit=${pageSize}&offset=${
-    pageIndex * pageSize
-  }`;
+  queryString = `${queryString}&limit=${pageSize}&offset=${pageIndex * pageSize
+    }`;
   return resolve(
     CanaryCheckerDB.get<HealthCheckStatus[] | null>(
       `/check_statuses?${queryString}`,
@@ -183,22 +182,23 @@ export const getCheckStatuses = (
 };
 
 export const getTopologyComponents = () => {
-  return IncidentCommander.get<TopologyComponentItem[]>(
-    `/component_names?order=name.asc`
-  );
+  return IncidentCommander.get<Component[]>(`/component_names?order=name.asc`);
 };
 
 export const getTopologyComponentsWithLogs = () => {
-  return IncidentCommander.get<TopologyComponentItem[]>(
+  return IncidentCommander.get<Component[]>(
     `/components_with_logs?order=name.asc`
   );
 };
 
-export const getTopologyComponentByID = async (topologyID: string) => {
-  const res = await IncidentCommander.get<TopologyComponentItem[]>(
+export const getTopologyNameByID = (topologyID: string) => {
+  return IncidentCommander.get<Component[]>(
     `/component_names?id=eq.${topologyID}`
   );
-  return res.data[0];
+};
+
+export const getTopologyByID = async (topologyID: string) => {
+  return IncidentCommander.get<Topology[]>(`/components?id=eq.${topologyID}`);
 };
 
 export const getTopologyComponentLabels = () => {
@@ -206,9 +206,7 @@ export const getTopologyComponentLabels = () => {
 };
 
 export const getTopologyComponent = (id: string) => {
-  return IncidentCommander.get<TopologyComponentItem[]>(
-    `/component_names?id=eq.${id}`
-  );
+  return IncidentCommander.get<Component[]>(`/component_names?id=eq.${id}`);
 };
 
 export const getComponentTemplate = async (id: string) => {

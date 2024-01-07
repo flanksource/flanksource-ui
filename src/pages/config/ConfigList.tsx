@@ -111,10 +111,15 @@ export function ConfigListPage() {
         title={
           <BreadcrumbNav
             list={[
-              <BreadcrumbRoot link="/catalog">Catalog</BreadcrumbRoot>,
+              <BreadcrumbRoot link="/catalog" key={"/catalog"}>
+                Catalog
+              </BreadcrumbRoot>,
               ...(configType
                 ? [
-                    <BreadcrumbRoot link={`/catalog?type=${configType}`}>
+                    <BreadcrumbRoot
+                      link={`/catalog?type=${configType}`}
+                      key={configType}
+                    >
                       <ConfigsTypeIcon
                         config={{ type: configType }}
                         showSecondaryIcon

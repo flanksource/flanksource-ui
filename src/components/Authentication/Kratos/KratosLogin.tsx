@@ -131,9 +131,7 @@ const Login: NextPage = () => {
         </div>
         <div className="mt-2">
           <Link href="/recovery" passHref>
-            <div className="cursor-pointer font-medium text-blue-600 hover:text-blue-500">
-              Reset password
-            </div>
+            <div className="font-medium link">Reset password</div>
           </Link>
         </div>
       </div>

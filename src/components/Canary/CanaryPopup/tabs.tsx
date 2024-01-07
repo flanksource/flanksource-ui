@@ -5,7 +5,8 @@ type PopupTabsProps = React.HTMLProps<HTMLDivElement> & {
   tabs: Record<
     string,
     {
-      label: string;
+      label: string | React.ReactNode;
+      hidden?: boolean;
       content: React.ReactNode;
       class?: string;
     }
@@ -18,7 +19,7 @@ type PopupTabsProps = React.HTMLProps<HTMLDivElement> & {
 
 const buttonStyles = {
   line: {
-    container: "flex space-x-4 border-b border-gray-300",
+    container: "flex space-x-4 ",
     button: "border-b-2 font-medium text-sm py-2 px-1",
     active: "border-blue-500 text-blue-600",
     inactive:
@@ -26,7 +27,7 @@ const buttonStyles = {
     styles: {} as Record<string, any>
   },
   simple: {
-    container: "flex flex-wrap border-b border-gray-300 z-10",
+    container: "flex flex-wrap  z-10",
     button:
       "-mb-px z-10 bg-white px-4 py-2 font-medium text-sm rounded-t-md border-gray-300 hover:text-gray-900",
     active: "text-gray-900 border",
@@ -70,13 +71,16 @@ export function PopupTabs({
   return (
     <div {...rest}>
       <div
-        className={buttonStyles[variant as keyof typeof buttonStyles].container}
+        className={`${
+          buttonStyles[variant as keyof typeof buttonStyles].container
+        } pb-2`}
         aria-label="Tabs"
       >
         {Object.entries(tabs).map(([key, tab]) => (
           <button
             type="button"
             key={key}
+            hidden={tab.hidden}
             onClick={() => setSelected(key)}
             className={`${
               buttonStyles[variant as keyof typeof buttonStyles].button

@@ -74,6 +74,22 @@
     @apply inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none;
   }
 
+  .btn-icon {
+    @apply text-gray-600 hover:text-gray-900 inline-flex items-center justify-center px-0 pl-0 border-none text-sm font-medium bg-white focus:outline-none ;
+  }
+
+  .btn-icon > svg * {
+    @apply fill-gray-600
+  }
+
+  .btn-icon:hover > svg * {
+    @apply fill-gray-800
+  }
+
+  .link {
+    @apply text-blue-500 hover:text-blue-800 visited:text-blue-500 cursor-pointer
+  }
+
   .btn-white {
     @apply inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-100 focus:outline-none;
   }

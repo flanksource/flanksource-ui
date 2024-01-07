@@ -8,6 +8,7 @@ type ConfigIconProps = {
   showPrimaryIcon?: boolean;
   showSecondaryIcon?: boolean;
   showLabel?: boolean;
+  children?: React.ReactNode;
 };
 
 export default function ConfigsTypeIcon({
@@ -15,7 +16,8 @@ export default function ConfigsTypeIcon({
   className = "max-h-5 max-w-[1.25rem]",
   showPrimaryIcon = true,
   showSecondaryIcon = true,
-  showLabel = false
+  showLabel = false,
+  children
 }: ConfigIconProps) {
   const { type: configType } = config;
 
@@ -24,8 +26,7 @@ export default function ConfigsTypeIcon({
       return [configType, undefined];
     }
     const primaryIcon = configType?.split("::")[0];
-    const secondaryIcon = configType?.substring(configType.indexOf("::") + 2);
-
+    let secondaryIcon = configType;
     return [primaryIcon, secondaryIcon];
   }, [configType]);
 
@@ -52,7 +53,7 @@ export default function ConfigsTypeIcon({
           className={className}
         />
       )}
-      {showSecondaryIcon && (
+      {showSecondaryIcon && primaryIcon !== secondaryIcon && (
         <Icon
           name={secondaryIcon}
           secondary={secondaryIcon}
@@ -61,6 +62,7 @@ export default function ConfigsTypeIcon({
         />
       )}
       {showLabel && <span> {value}</span>}
+      {children}
     </span>
   );
 }

@@ -3,7 +3,11 @@ import { HealthCheck } from "../../api/types/health";
 
 // process table groupings, given a list of checks and a 'groupBy' object
 export function getGroupedChecks(checks: HealthCheck[] = [], groupBy?: string) {
-  if (groupBy === "description" || groupBy === "canary_name") {
+  if (
+    groupBy === "description" ||
+    groupBy === "canary_name" ||
+    groupBy === "type"
+  ) {
     const groupedChecks: Record<string, HealthCheck[]> = {};
     const groupNames: string[] = [];
     checks.forEach((check) => {

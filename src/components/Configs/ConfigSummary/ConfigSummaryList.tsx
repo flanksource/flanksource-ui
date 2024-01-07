@@ -30,9 +30,10 @@ function ConfigSummaryTypeCell({
 
   return (
     <span className="flex flex-nowrap gap-1">
-      <ConfigsTypeIcon config={{ type: configType }} />
-      <span className="pl-1"> {value}</span>
-      <Badge text={configCount} />
+      <ConfigsTypeIcon config={{ type: configType }}>
+        <span className="pl-1"> {value}</span>
+        <Badge text={configCount} />
+      </ConfigsTypeIcon>
     </span>
   );
 }
@@ -138,7 +139,7 @@ export default function ConfigSummaryList({
   return (
     <DataTable
       stickyHead
-      isVirtualized
+      // isVirtualized
       columns={configSummaryColumns}
       data={data}
       handleRowClick={handleRowClick}

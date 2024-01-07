@@ -4,6 +4,8 @@ import { AgentAPI, IncidentCommander } from "../axios";
 import { resolve } from "../resolve";
 import { AgentItem } from "../types/common";
 
+export const Local = "00000000-0000-0000-0000-000000000000";
+
 export const getAgentsList = async (
   params: {
     sortBy?: string;
@@ -71,6 +73,9 @@ export async function deleteAgent(id: string, cleanup: boolean = false) {
   return res.data;
 }
 export const getAgentByID = async (id: string) => {
+  if (id === Local) {
+    return null;
+  }
   const res = await IncidentCommander.get<AgentItem[] | null>(
     `/agents?select=id,name,description&id=eq.${id}`
   );

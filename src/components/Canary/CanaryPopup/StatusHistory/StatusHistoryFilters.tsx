@@ -56,7 +56,7 @@ export function StatusHistoryFilters(props: StatusHistoryFiltersProps) {
   const [selectedDuration, setSelectedDuration] = useState<string>("All");
 
   return (
-    <div className="flex flex-row space-x-4 p-2">
+    <div className="flex flex-row space-x-4 py-2">
       <ReactSelectDropdown
         items={statuses}
         name="status"

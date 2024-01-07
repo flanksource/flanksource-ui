@@ -27,13 +27,11 @@ const columns: ColumnDef<HealthCheckStatus, any>[] = [
       return <>{format(`${status.time} UTC`)}</>;
     },
     aggregatedCell: "",
-    size: 100,
     accessorKey: "time"
   },
   {
     header: "Duration",
     id: "duration",
-    size: 75,
     cell: function DurationCell({
       row,
       getValue
@@ -47,7 +45,7 @@ const columns: ColumnDef<HealthCheckStatus, any>[] = [
   {
     header: "Message",
     id: "message",
-    size: 325,
+    size: 550,
     cell: function MessageCell({ row }: CellContext<HealthCheckStatus, any>) {
       const status = row.original;
       return (
@@ -169,40 +167,19 @@ export function StatusHistory({
       {...props}
     >
       <StatusHistoryFilters onFiltersChanges={onFiltersChange} />
-      <div className="flex flex-col flex-1  overflow-y-auto">
-        {statii && statii.length > 0 ? (
-          <DataTable
-            stickyHead
-            columns={columns}
-            data={statii}
-            tableStyle={{ borderSpacing: "0" }}
-            className=""
-            pagination={pagination}
-            paginationClassName="px-2 pb-2"
-            preferencesKey="health-check-status-list"
-            savePreferences={false}
-          />
-        ) : isLoading ? (
-          <div
-            className={clsx(
-              "flex flex-col items-center justify-center text-gray-400 text-md flex-1",
-              className
-            )}
-            {...props}
-          >
-            <Loading />
-          </div>
-        ) : (
-          <div
-            className={clsx(
-              "flex flex-col items-center justify-center text-gray-400 text-md flex-1",
-              className
-            )}
-            {...props}
-          >
-            No status history available
-          </div>
-        )}
+      <div className="flex flex-col flex-1 overflow-y-auto ">
+        <DataTable
+          stickyHead
+          columns={columns}
+          data={statii}
+          isLoading={isLoading || pagination.loading}
+          tableStyle={{ borderSpacing: "0" }}
+          className=""
+          pagination={pagination}
+          paginationClassName="pb-2"
+          preferencesKey="health-check-status-list"
+          savePreferences={false}
+        />
       </div>
     </div>
   );
