@@ -4,6 +4,7 @@ type BadgeProps = {
   text: React.ReactNode;
   value?: string;
   size?: "xs" | "sm" | "md";
+  color?: "blue" | "gray";
   dot?: string;
   title?: string;
   className?: string;
@@ -17,13 +18,17 @@ export const Badge = React.memo(function ({
   size = "sm",
   dot,
   title,
+  color = "blue",
   className,
-  colorClass = "bg-blue-100 text-blue-800",
   roundedClass = "rounded"
 }: BadgeProps) {
   if (text == null || text === "") {
     return null;
   }
+  const colorClass =
+    color === "blue"
+      ? "bg-blue-100 text-blue-800"
+      : "bg-gray-100 text-gray-700";
   const spanClassName =
     size === "sm" ? "text-sm px-1 py-0.5" : "text-xs px-1 py-0.5";
   const svgClassName =
