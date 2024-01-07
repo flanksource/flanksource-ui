@@ -1,24 +1,24 @@
-import clsx from "clsx";
 import { useEffect, useMemo, useState } from "react";
 import ReactTooltip from "react-tooltip";
 import { useGetConfigChangesById } from "../../../../api/query-hooks/useGetConfigChangesByConfigChangeIdQuery";
 import { ConfigChange } from "../../../../api/types/configs";
+import { EvidenceType } from "../../../../api/types/evidence";
 import { User } from "../../../../api/types/users";
 import { ViewType } from "../../../../types";
-import { formatISODate } from "../../../../utils/date";
+import { Age } from "../../../../ui/Age";
+import { Stat } from "../../../../ui/stats/Stat";
 import AttachAsEvidenceButton from "../../../AttachEvidenceDialog/AttachAsEvidenceDialogButton";
 import { Avatar } from "../../../Avatar";
-import ConfigLink from "../../ConfigLink/ConfigLink";
 import { DiffRenderer } from "../../../DiffRenderer/DiffRenderer";
-import EmptyState from "../../../EmptyState";
+import { Icon } from "../../../Icon";
 import { ChangeIcon } from "../../../Icon/ChangeIcon";
 import { ConfigIcon } from "../../../Icon/ConfigIcon";
 import { JSONViewer } from "../../../JSONViewer";
+import { Loading } from "../../../Loading";
 import { Modal } from "../../../Modal";
 import ModalTitleListItems from "../../../Modal/ModalTitleListItems";
-import TextSkeletonLoader from "../../../SkeletonLoader/TextSkeletonLoader";
+import ConfigLink from "../../ConfigLink/ConfigLink";
 import ConfigChangeDetailSection from "./ConfigChangeDetailsSection";
-import { EvidenceType } from "../../../../api/types/evidence";
 
 type ConfigDetailsChangesProps = {
   id: string;
@@ -47,85 +47,71 @@ export function ConfigDetailsChanges({
   // the data from the API which is more detailed
   const changeDetails = useMemo(() => change ?? data, [change, data]);
 
-  const properties = useMemo(() => {
-    if (!changeDetails) {
-      return [];
-    }
-    return [
-      {
-        label: "Date",
-        value: formatISODate(changeDetails.created_at!)
-      },
-      {
-        label: "Created By",
-        value: (
-          // eslint-disable-next-line react/jsx-no-useless-fragment
-          <>
-            {changeDetails.created_by ? (
-              <Avatar
-                user={
-                  (changeDetails.created_by! as unknown as User) ??
-                  changeDetails.external_created_by
-                }
-              />
-            ) : (
-              <span>{changeDetails.external_created_by}</span>
-            )}
-          </>
-        )
-      },
-      {
-        label: "Source",
-        value: changeDetails.source || ""
-      }
-    ];
-  }, [changeDetails]);
-
   useEffect(() => {
     ReactTooltip.rebuild();
   });
 
-  if (!changeDetails && !isLoading) {
-    return <EmptyState />;
-  }
+  let icon = changeDetails?.source;
 
-  if (!changeDetails && isLoading) {
-    return (
-      <div className="flex flex-col w-full p-4 gap-2">
-        <TextSkeletonLoader className="w-full" />
-        <TextSkeletonLoader className="w-full" />
-        <TextSkeletonLoader className="w-full" />
-      </div>
-    );
+  if (icon?.startsWith("AWS::CloudTrail")) {
+    icon = "AWS::CloudTrail";
+  } else if (icon?.startsWith("kubernetes/")) {
+    icon = "Kubernetes";
   }
 
   return (
-    <div className="flex flex-col flex-1 overflow-y-auto cursor-pointer">
+    <div className="flex flex-col flex-1 overflow-y-auto">
       <ConfigDetailChangeModal
         // do not show modal if the config is not loaded
-        open={open && !isLoading}
+        isLoading={isLoading}
+        open={open}
         setOpen={setOpen}
         changeDetails={changeDetails}
       />
+
       {viewType === ViewType.detailed && (
-        <div className="flex flex-col flex-1 px-4 py-5 overflow-y-auto">
-          <div className="flex flex-row w-full gap-4">
-            {properties.map((p) => (
-              <div
-                key={p.label}
-                className={clsx(
-                  "flex flex-col w-auto py-4 text-left gap-2",
-                  p.label === "Source" ? "flex-1" : ""
-                )}
-              >
-                <div className="text-sm overflow-hidden truncate text-gray-500">
-                  {p.label}
-                </div>
-                <div className="flex justify-start break-all text-sm">
-                  {p.value}
-                </div>
-              </div>
-            ))}
+        <div className="flex flex-col flex-1 px-4 py-3 overflow-y-auto">
+          <div className="flex flex-row w-full gap-12">
+            <Stat
+              title="Date"
+              sizeStyle="sm"
+              value={<Age from={changeDetails?.created_at!} suffix={true} />}
+            />
+
+            <Stat
+              title="Source"
+              sizeStyle="sm"
+              value={
+                <>
+                  <Icon
+                    name={changeDetails?.source}
+                    secondary={icon}
+                    className="h-5 w-auto pr-1"
+                  />
+                  {changeDetails?.source}
+                </>
+              }
+            />
+
+            <Stat
+              title="Created By"
+              sizeStyle="sm"
+              value={
+                // eslint-disable-next-line react/jsx-no-useless-fragment
+                <>
+                  {changeDetails?.created_by ? (
+                    <Avatar
+                      user={
+                        (changeDetails.created_by! as unknown as User) ??
+                        changeDetails.external_created_by
+                      }
+                    />
+                  ) : (
+                    <span>{changeDetails?.external_created_by}</span>
+                  )}
+                </>
+              }
+            />
           </div>
           {changeDetails?.details && (
             <ConfigChangeDetailSection label="Details">
@@ -147,7 +133,7 @@ export function ConfigDetailsChanges({
           )}
           {changeDetails?.diff && (
             <ConfigChangeDetailSection label="Change">
-              <DiffRenderer diffText={changeDetails.diff} />
+              <DiffRenderer diffText={changeDetails!.diff!} />
             </ConfigChangeDetailSection>
           )}
         </div>
@@ -177,6 +163,7 @@ export function ConfigDetailsChanges({
 
 type ConfigDetailChangeModalProps = {
   open: boolean;
+  isLoading: boolean;
   setOpen: (val: boolean) => void;
   changeDetails?: ConfigChange;
 };
@@ -184,10 +171,10 @@ type ConfigDetailChangeModalProps = {
 export function ConfigDetailChangeModal({
   open,
   setOpen,
+  isLoading,
   changeDetails
 }: ConfigDetailChangeModalProps) {
   const config = useMemo(() => changeDetails?.config, [changeDetails]);
-
   return (
     <Modal
       title={
@@ -205,7 +192,7 @@ export function ConfigDetailChangeModal({
               </div>,
               <ConfigLink
                 key={"config-link"}
-                className="text-blue-600 text-xl font-semibold whitespace-nowrap overflow-hidden overflow-ellipsis"
+                className="link text-xl font-semibold whitespace-nowrap overflow-hidden overflow-ellipsis"
                 config={config}
               />
             ]}
@@ -223,7 +210,13 @@ export function ConfigDetailChangeModal({
       containerClassName="min-h-[15rem] h-auto max-h-full overflow-y-auto"
     >
       <div className="flex flex-col flex-1 overflow-y-auto">
-        {changeDetails?.config_id && (
+        {(isLoading || !changeDetails) && (
+          <div className="flex flex-col w-full h-full my-20 p-4 gap-2">
+            <Loading type="modal" />
+          </div>
+        )}
+
+        {!isLoading && changeDetails && changeDetails?.config_id && (
           <ConfigDetailsChanges
             configId={changeDetails.config_id}
             id={changeDetails.id}

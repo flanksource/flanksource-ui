@@ -35,7 +35,7 @@ export function ConfigDetails({
     return formatConfigTags(configDetails);
   }, [configDetails]);
 
-  var namespace = configDetails?.tags?.["namespace"];
+  const namespace = configDetails?.tags?.["namespace"];
   return (
     <CollapsiblePanel
       isCollapsed={isCollapsed}

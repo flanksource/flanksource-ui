@@ -18,7 +18,7 @@ import { Duration } from "../renderers";
 import { CanaryCheckDetailsSpecTab } from "./CanaryCheckDetailsSpec";
 import CheckLabels from "./CheckLabels";
 import CheckRelationships from "./CheckRelationships";
-import { CheckStat } from "./CheckStat";
+import { Stat } from "../../../ui/stats";
 import { StatusHistory } from "./StatusHistory/StatusHistory";
 import { calculateDefaultTimeRangeValue } from "./Utils/calculateDefaultTimeRangeValue";
 import { PopupTabs } from "./tabs";
@@ -109,7 +109,7 @@ export function CheckDetails({ check, ...rest }: CheckDetailsProps) {
         <div className="flex flex-col" ref={statsRef}>
           <CheckLabels check={check} />
           <div className="flex flex-row flex-wrap">
-            <CheckStat
+            <Stat
               containerClassName="w-44 mb-4"
               title="Uptime"
               value={
@@ -131,27 +131,27 @@ export function CheckDetails({ check, ...rest }: CheckDetailsProps) {
                 )
               }
             />
-            <CheckStat
+            <Stat
               containerClassName="w-32 mb-4"
               title="Latency (95%)"
               value={<Duration ms={data?.latency?.p95} />}
             />
-            <CheckStat
+            <Stat
               containerClassName="w-32 mb-4"
               title="Latency  (97%)"
               value={<Duration ms={data?.latency?.p97} />}
             />
-            <CheckStat
+            <Stat
               containerClassName="w-32 mb-4"
               title="Latency  (99%)"
               value={<Duration ms={data?.latency?.p99} />}
             />
-            <CheckStat
+            <Stat
               containerClassName="w-32 mb-4"
               title="Severity"
               value={capitalizeFirstLetter(severityValue)}
             />
-            <CheckStat
+            <Stat
               containerClassName="w-28 mb-4"
               title="Last Run"
               value={undefined}
@@ -170,7 +170,7 @@ export function CheckDetails({ check, ...rest }: CheckDetailsProps) {
               }
             />
 
-            <CheckStat
+            <Stat
               containerClassName="w-24 mb-4"
               title="Next Run"
               value={undefined}
@@ -183,7 +183,7 @@ export function CheckDetails({ check, ...rest }: CheckDetailsProps) {
               }
             />
 
-            <CheckStat
+            <Stat
               containerClassName="w-20 mb-4 pb-1"
               title="Time Range"
               value={undefined}

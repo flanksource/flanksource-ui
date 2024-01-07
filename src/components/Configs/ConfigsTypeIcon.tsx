@@ -21,7 +21,7 @@ export default function ConfigsTypeIcon({
 }: ConfigIconProps) {
   const { type: configType } = config;
 
-  let [primaryIcon, secondaryIcon] = useMemo(() => {
+  const [primaryIcon, secondaryIcon] = useMemo(() => {
     if (configType?.split("::").length === 1) {
       return [configType, undefined];
     }

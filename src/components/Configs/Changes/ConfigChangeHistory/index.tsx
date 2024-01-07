@@ -87,13 +87,14 @@ export function ConfigChangeHistory({
     useState<ConfigChange>();
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
-  const { data: configChange } = useGetConfigChangesById(
-    selectedConfigChange?.id!,
-    selectedConfigChange?.config_id!,
-    {
-      enabled: !!selectedConfigChange
-    }
-  );
+  const { data: configChange, isLoading: changeLoading } =
+    useGetConfigChangesById(
+      selectedConfigChange?.id!,
+      selectedConfigChange?.config_id!,
+      {
+        enabled: !!selectedConfigChange
+      }
+    );
 
   return (
     <>
@@ -106,7 +107,6 @@ export function ConfigChangeHistory({
         isVirtualized={false}
         tableStyle={tableStyle}
         pagination={pagination}
-        virtualizedRowEstimatedHeight={500}
         preferencesKey="config-change-history"
         savePreferences={false}
         handleRowClick={(row) => {
@@ -116,8 +116,11 @@ export function ConfigChangeHistory({
       />
       {configChange && (
         <ConfigDetailChangeModal
+          isLoading={changeLoading}
           open={modalIsOpen}
-          setOpen={setModalIsOpen}
+          setOpen={(open) => {
+            setModalIsOpen(open);
+          }}
           changeDetails={configChange}
         />
       )}

@@ -6,12 +6,10 @@ type ConfigChangeDetailSectionProps = {
 };
 
 export default function ConfigChangeDetailSection({
-  label,
   children
 }: ConfigChangeDetailSectionProps) {
   return (
-    <div className="flex flex-col flex-1 overflow-y-auto gap-2">
-      <span className="text-sm text-gray-500">{label}</span>
+    <div className="flex flex-col flex-1 overflow-y-auto mt-2">
       <div className="flex flex-col flex-1 overflow-y-auto w-full gap-4">
         <div
           className={clsx(

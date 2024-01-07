@@ -1,6 +1,6 @@
 import React from "react";
 
-type CheckDetailsProps = Omit<React.HTMLProps<HTMLDivElement>, "value"> & {
+type StatProps = Omit<React.HTMLProps<HTMLDivElement>, "value"> & {
   title: React.ReactNode;
   value: React.ReactNode;
   append?: React.ReactNode;
@@ -8,19 +8,21 @@ type CheckDetailsProps = Omit<React.HTMLProps<HTMLDivElement>, "value"> & {
   containerClassName?: string;
   valueContainerClassName?: string;
   valueClass?: string;
+  sizeStyle?: "sm" | "lg";
 };
 
-export function CheckStat({
+export function Stat({
   title,
   value,
   append,
   bottomAppend,
   containerClassName = "",
   valueContainerClassName = "",
-  valueClass,
+  valueClass = "",
+  sizeStyle = "lg",
   className,
   ...rest
-}: CheckDetailsProps) {
+}: StatProps) {
   if ((value === undefined || value === "") && append === undefined) {
     return null;
   }
@@ -33,7 +35,13 @@ export function CheckStat({
         <div className="text-sm font-medium text-gray-500">{title}</div>
       )}
       <div className={`flex ${valueContainerClassName}`}>
-        <span className={`text-4xl font-bold ${valueClass}`}>{value}</span>
+        <span
+          className={`${valueClass} ${
+            sizeStyle === "lg" ? "text-4xl font-bold" : "text-sm font-semibold"
+          }`}
+        >
+          {value}
+        </span>
         {append}
       </div>
       {bottomAppend}
