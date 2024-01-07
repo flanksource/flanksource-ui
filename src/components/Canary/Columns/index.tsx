@@ -68,14 +68,22 @@ export function Cell({ state, value, row, column }: any) {
 }
 
 const day = 1000 * 60 * 60 * 24;
-export function LastTransitionCell({ value, min = 0, max = day * 7 }: any) {
+export function LastTransitionCell({
+  value,
+  min = 0,
+  max = day * 7,
+  suffix = null
+}: any) {
   let diff = dayjs().diff(dayjs.utc(value));
   if (diff > max || diff <= min) {
     return null;
   }
   return (
     <>
-      <span className="text-md">{dayjs.duration(diff).humanize()}</span>
+      <span className="text-md">
+        {suffix}
+        {dayjs.duration(diff).humanize()}
+      </span>
       <span className="text-gray-500 text-light text-xs ml-0.5">ago</span>
     </>
   );
@@ -114,33 +122,21 @@ export function TitleCell({
   if (hideNamespacePrefix) {
     title = removeNamespacePrefix(title, rowValues);
   }
-
   return (
     <div className={clsx(style.checkTitleRow, "")}>
       <span
         className="flex flex-row items-center"
-        style={{
-          paddingLeft: `${row.depth * 1.1}rem`
-        }}
+        // FIXME: change the width of the cells causes the columns to resize which is distracting
+        // style={{
+        //   paddingLeft: `${row.depth * 1.1}rem`
+        // }}
       >
         <Title
           title={title}
           icon={rowValues.icon || rowValues.type}
           isDeleted={!!row.original.deleted_at}
         />
-        {row.getCanExpand() &&
-          rowValues.subRows &&
-          rowValues?.subRows.length > 1 && (
-            <span className="ml-1 flex items-center">
-              <Badge
-                className="ml-1"
-                colorClass="bg-gray-200 text-gray-800"
-                roundedClass="rounded-xl"
-                text={rowValues?.subRows.length}
-                size="xs"
-              />
-            </span>
-          )}
+
         {showNamespaceTags ? (
           rowValues.namespaces ? (
             <Badge

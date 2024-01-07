@@ -21,6 +21,9 @@ export function CheckStat({
   className,
   ...rest
 }: CheckDetailsProps) {
+  if ((value === undefined || value === "") && append === undefined) {
+    return null;
+  }
   return (
     <div
       className={`flex flex-col ${containerClassName} ${className}`}

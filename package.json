@@ -70,6 +70,7 @@
     "react-image": "^4.1.0",
     "react-loading-icons": "^1.0.8",
     "react-mentions": "^4.4.0",
+    "react-responsive": "^9.0.2",
     "react-router-dom": "^6.2.1",
     "react-select": "^5.7.4",
     "react-table": "^7.7.0",
@@ -121,7 +122,6 @@
     "launch:dev:incident-manager": "NODE_ENV=development APP_DEPLOYMENT=INCIDENT_MANAGER node scripts/serve-build.js",
     "svgo": "rm -rf src/icons/output; svgo -i src/icons/*.svg -o src/icons/output --config svgo.config.mjs",
     "svg-resize": "cd src/icons && bash resize.sh"
-
   },
   "husky": {
     "hooks": {
