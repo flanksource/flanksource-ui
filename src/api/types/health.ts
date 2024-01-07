@@ -37,21 +37,30 @@ export interface HealthCheck extends Timestamped, Avatar, Agent {
   loading?: boolean;
   severity?: string;
   next_runtime?: string;
+  last_transition_time?: string;
   agents?: AgentItem;
   canaries?: SchemaResourceI;
   configs: {
     configs: Pick<ConfigItem, "id" | "name" | "type">;
   }[];
-  components?: {
+  components: {
     components: Pick<Topology, "id" | "name" | "icon">;
   }[];
 }
 
 export type HealthCheckSummary = Pick<
   HealthCheck,
-  "id" | "name" | "icon" | "type" | "status" | "severity" | "next_runtime" | "created_at" | "last_runtime"
+  | "id"
+  | "name"
+  | "icon"
+  | "type"
+  | "status"
+  | "severity"
+  | "next_runtime"
+  | "created_at"
+  | "last_runtime"
+  | "last_transition_time"
 >;
-
 
 export interface HealthCheckStatus {
   status: boolean;

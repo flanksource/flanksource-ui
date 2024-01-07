@@ -28,8 +28,7 @@ const styles = {
   tbodyClass: "mt-4 rounded-md",
   tbodyRowClass: "border cursor-pointer",
   tbodyRowExpandableClass: "cursor-pointer",
-  tbodyDataClass: "whitespace-nowrap border-gray-300 border-b",
-  expandArrowIconClass: "ml-2 flex"
+  tbodyDataClass: "whitespace-nowrap border-gray-300 border-b"
 };
 
 type CanaryChecksProps = {
@@ -116,7 +115,6 @@ type TableProps = {
 
 export function Table({
   data,
-
   labels,
   pivotCellType,
   hasGrouping = false,
@@ -151,7 +149,7 @@ export function Table({
         showNamespaceTags,
         hideNamespacePrefix
       }),
-    []
+    [showNamespaceTags, hideNamespacePrefix]
   );
 
   const table = useReactTable<HealthCheck>({
