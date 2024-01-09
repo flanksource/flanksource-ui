@@ -33,6 +33,8 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: {{ .Values.image.repositoryPrefix }}/{{- include "chart.fullname" .}}:{{ .Values.image.tag | default .Chart.AppVersion }}
           env:
+          - name: HOSTNAME
+            value: "0.0.0.0"
           - name: ORY_KRATOS_URL
             value: {{ tpl .Values.oryKratosURL . }}
           - name: BACKEND_URL
