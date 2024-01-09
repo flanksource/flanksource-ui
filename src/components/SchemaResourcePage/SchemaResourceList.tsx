@@ -25,7 +25,7 @@ export function SchemaResourceList({
   isLoading
 }: Props) {
   return (
-    <div className="max-w-screen-xl mx-auto space-y-6 flex flex-col justify-center">
+    <div className="mx-auto space-y-6 flex flex-col justify-center">
       <div
         className="flex flex-col overflow-y-auto flex-1 w-full"
         style={{ maxHeight: "calc(100vh - 8rem)" }}
@@ -37,6 +37,7 @@ export function SchemaResourceList({
           <thead className={`rounded-md sticky top-0 z-01`}>
             <tr className="border-b border-gray-200 uppercase bg-column-background rounded-t-md items-center">
               <HCell colSpan={2}>Name</HCell>
+              <HCell colSpan={2}>Namespace</HCell>
               <HCell>Source Config</HCell>
               {table === "canaries" && <HCell>Schedule</HCell>}
               {table === "topologies" && <HCell colSpan={2}>namespace</HCell>}
@@ -45,6 +46,7 @@ export function SchemaResourceList({
               <HCell>Updated At</HCell>
               <HCell>Job Status</HCell>
               <HCell>Last Run</HCell>
+              <HCell>Last Failed</HCell>
               <HCell>Created By</HCell>
             </tr>
           </thead>
@@ -119,7 +121,9 @@ function SchemaResourceListItem({
   agent,
   spec,
   job_details,
-  job_name
+  job_name,
+  last_runtime,
+  namespace
 }: SchemaResourceWithJobStatus & {
   baseUrl: string;
   table: string;
@@ -141,6 +145,7 @@ function SchemaResourceListItem({
           <div> {name}</div>
         </div>
       </Cell>
+      <Cell colSpan={2}>{namespace}</Cell>
       <Cell className="shrink-0">
         {!!source && <a href={`${source}`}>Link</a>}
       </Cell>
@@ -172,6 +177,9 @@ function SchemaResourceListItem({
             name: job_name ?? name
           }}
         />
+      </Cell>
+      <Cell className="text-gray-500">
+        <Age from={last_runtime} suffix={true} />
       </Cell>
       <Cell className="text-gray-500">
         <Age from={job_time_start} suffix={true} />
