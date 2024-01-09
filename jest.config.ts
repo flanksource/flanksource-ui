@@ -14,4 +14,14 @@ const customJestConfig = {
   setupFiles: ["./jest.setup.ts"]
 };
 
-module.exports = createJestConfig(customJestConfig);
+async function jestConfig() {
+  const nextJestConfig = await createJestConfig(customJestConfig)();
+  // /node_modules/ is the first pattern
+  // we need to exclude yaml from being transformed, otherwise it will break
+  // our tests
+  // @ts-expect-error
+  nextJestConfig.transformIgnorePatterns[0] = "/node_modules/(?!yaml)/";
+  return nextJestConfig;
+}
+
+module.exports = jestConfig();
