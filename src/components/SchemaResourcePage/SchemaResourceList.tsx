@@ -1,4 +1,5 @@
 import clsx from "clsx";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { SchemaResourceWithJobStatus } from "../../api/schemaResources";
 import { tables } from "../../context/UserAccessContext/permissions";
@@ -7,10 +8,9 @@ import AgentName from "../Agents/AgentName";
 import { Avatar } from "../Avatar";
 import { InfoMessage } from "../InfoMessage";
 import JobHistoryStatusColumn from "../JobsHistory/JobHistoryStatusColumn";
+import { JobsHistoryDetails } from "../JobsHistory/JobsHistoryDetails";
 import TableSkeletonLoader from "../SkeletonLoader/TableSkeletonLoader";
 import ConfigScrapperIcon from "./ConfigScrapperIcon";
-import { useState } from "react";
-import { JobsHistoryDetails } from "../JobsHistory/JobsHistoryDetails";
 interface Props {
   items: SchemaResourceWithJobStatus[];
   baseUrl: string;
@@ -37,7 +37,6 @@ export function SchemaResourceList({
           <thead className={`rounded-md sticky top-0 z-01`}>
             <tr className="border-b border-gray-200 uppercase bg-column-background rounded-t-md items-center">
               <HCell colSpan={2}>Name</HCell>
-              <HCell colSpan={2}>Namespace</HCell>
               <HCell>Source Config</HCell>
               {table === "canaries" && <HCell>Schedule</HCell>}
               {table === "topologies" && <HCell colSpan={2}>namespace</HCell>}
@@ -56,7 +55,6 @@ export function SchemaResourceList({
                 table={table}
                 key={item.id}
                 {...item}
-                schedule={item.spec?.schedule}
                 baseUrl={baseUrl}
               />
             ))}
@@ -122,8 +120,7 @@ function SchemaResourceListItem({
   spec,
   job_details,
   job_name,
-  last_runtime,
-  namespace
+  last_runtime
 }: SchemaResourceWithJobStatus & {
   baseUrl: string;
   table: string;
@@ -145,7 +142,6 @@ function SchemaResourceListItem({
           <div> {name}</div>
         </div>
       </Cell>
-      <Cell colSpan={2}>{namespace}</Cell>
       <Cell className="shrink-0">
         {!!source && <a href={`${source}`}>Link</a>}
       </Cell>
