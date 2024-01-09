@@ -9,6 +9,8 @@ import { InfoMessage } from "../InfoMessage";
 import JobHistoryStatusColumn from "../JobsHistory/JobHistoryStatusColumn";
 import TableSkeletonLoader from "../SkeletonLoader/TableSkeletonLoader";
 import ConfigScrapperIcon from "./ConfigScrapperIcon";
+import { useState } from "react";
+import { JobsHistoryDetails } from "../JobsHistory/JobsHistoryDetails";
 interface Props {
   items: SchemaResourceWithJobStatus[];
   baseUrl: string;
@@ -115,13 +117,16 @@ function SchemaResourceListItem({
   job_time_start,
   namespace,
   agent,
-  spec
+  spec,
+  job_details,
+  job_name
 }: SchemaResourceWithJobStatus & {
   baseUrl: string;
   table: string;
 }) {
   const navigate = useNavigate();
   const navigateToDetails = (id: string) => navigate(`${baseUrl}/${id}`);
+  const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
 
   return (
     <tr
@@ -153,7 +158,20 @@ function SchemaResourceListItem({
         <Age from={updated_at} suffix={true} />
       </Cell>
       <Cell className="text-gray-500 lowercase space-x-2">
-        <JobHistoryStatusColumn status={job_status} />
+        <JobHistoryStatusColumn
+          status={job_status}
+          onClick={() => {
+            setIsErrorModalOpen(true);
+          }}
+        />
+        <JobsHistoryDetails
+          isModalOpen={isErrorModalOpen}
+          setIsModalOpen={setIsErrorModalOpen}
+          job={{
+            details: job_details,
+            name: job_name ?? name
+          }}
+        />
       </Cell>
       <Cell className="text-gray-500">
         <Age from={job_time_start} suffix={true} />
