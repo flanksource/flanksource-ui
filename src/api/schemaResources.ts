@@ -10,6 +10,7 @@ import {
 import { AVATAR_INFO } from "../constants";
 import { CanaryCheckerDB, ConfigDB, IncidentCommander } from "./axios";
 import { ConfigItem } from "./types/configs";
+import { AgentItem } from "./types/common";
 
 export interface SchemaResourceI {
   id: string;
@@ -25,6 +26,8 @@ export interface SchemaResourceI {
   source: string;
   created_at: string;
   updated_at: string;
+  agent_id?: string;
+  agent?: Pick<AgentItem, "id" | "name" | "description">;
   created_by?: {
     id: string;
     avatar: string;
@@ -81,7 +84,13 @@ export const getAll = ({
   if (endpoint) {
     const tableName = getTableName(table);
     const url = new URLSearchParams();
-    url.set("select", `*,created_by(${AVATAR_INFO})`);
+    url.set(
+      "select",
+      `*,created_by(${AVATAR_INFO})${
+        // we only need agent info for topologies, as for the time being
+        table === "topologies" ? `,agent:agent_id(id,name,description)` : ""
+      }`
+    );
     url.set("deleted_at", "is.null");
     url.set("order", "created_at.desc");
     url.set("limit", "100");
