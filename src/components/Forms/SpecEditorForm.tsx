@@ -199,7 +199,11 @@ export default function SpecEditorForm({
                     </div>
                   </Tab>
                   <Tab label="Code" value="Code">
-                    <FormikCodeEditor format={specFormat} fieldName="spec" />
+                    <FormikCodeEditor
+                      format={specFormat}
+                      fieldName="spec"
+                      schemaFilePrefix={schemaFilePrefix}
+                    />
                   </Tab>
                 </Tabs>
               )}
