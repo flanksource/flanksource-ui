@@ -1,7 +1,7 @@
 import { useField, useFormikContext } from "formik";
 import { isEmpty } from "lodash";
 import dynamic from "next/dynamic";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import YAML from "yaml";
 import useDebounce from "../../../hooks/useDebounce";
 
@@ -56,7 +56,9 @@ export function FormikCodeEditor({
   // code editor, so that we can avoid the code editor jumping around when the
   // user is typing
   useEffect(() => {
-    if (!isEmpty(specFormValue)) {
+    // only do this if the specFormValue is not empty and the codeEditorValue
+    // is undefined
+    if (!isEmpty(specFormValue) && codeEditorValue === undefined) {
       if (format === "yaml" || format === "json") {
         const value =
           format === "yaml"
@@ -65,6 +67,8 @@ export function FormikCodeEditor({
               })
             : JSON.stringify(specFormValue, null, 2);
         setCodeEditorValue(value);
+        // if format is not yaml or json, we just set the value to the
+        // specFormValue, without any formatting
       } else {
         setCodeEditorValue(specFormValue);
       }
@@ -74,6 +78,9 @@ export function FormikCodeEditor({
 
   const debouncedValues = useDebounce(codeEditorValue, 300);
 
+  // here, we format the internal state of the code editor value and set the
+  // formik field value to it, we want to do this so that we can avoid the code
+  // editor jumping around when the user is typing, due to formatting
   useEffect(() => {
     try {
       if (format === "yaml" || format === "json") {
@@ -95,24 +102,6 @@ export function FormikCodeEditor({
     }
   }, [debouncedValues, fieldName, format, setFieldValue]);
 
-  // we want to calculate the value of the code editor one way only, when the
-  // component is first rendered. We don't want to re-calculate the value of the
-  // code editor when the user is typing, as this will cause the code editor to
-  // jump around, and the user's cursor to jump around.
-  const value = useMemo(() => {
-    if (!isEmpty(specFormValue)) {
-      if (format === "yaml" || format === "json") {
-        return format === "yaml"
-          ? YAML.stringify(specFormValue, {
-              sortMapEntries: true
-            })
-          : JSON.stringify(specFormValue, null, 2);
-      } else {
-        return specFormValue;
-      }
-    }
-  }, [format, specFormValue]);
-
   return (
     <div className={className}>
       {label && (
@@ -128,7 +117,7 @@ export function FormikCodeEditor({
             setFieldValue(fieldName, undefined);
           }
         }}
-        value={value}
+        value={codeEditorValue}
         language={format}
         schemaFilePrefix={schemaFilePrefix}
         readOnly={disabled}
