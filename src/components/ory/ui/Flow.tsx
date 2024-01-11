@@ -205,7 +205,12 @@ export class Flow<T extends Values> extends Component<Props<T>, State<T>> {
               })}
             </form>
 
-            <hr className="border-gray-200 my-3" />
+            {/* Hide hr if we don't have an OIDC group */}
+            {filterNodesByGroups({
+              nodes: nodes,
+              groups: ["oidc"],
+              withoutDefaultGroup: true
+            }).length > 0 && <hr className="border-gray-200 my-3" />}
 
             <form action={flow.ui.action} method={flow.ui.method}>
               <div className="flex flex-col">
