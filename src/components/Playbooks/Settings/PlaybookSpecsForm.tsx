@@ -94,6 +94,8 @@ export default function PlaybookSpecsForm({
       }
       onClose={onClose}
       open={isOpen}
+      size="full"
+      containerClassName="h-full overflow-auto"
       bodyClass="flex flex-col w-full flex-1 h-full overflow-y-auto"
     >
       <Formik
@@ -119,14 +121,18 @@ export default function PlaybookSpecsForm({
             onSubmit={handleSubmit}
           >
             <div className={clsx("flex flex-col h-full my-2 overflow-y-auto")}>
-              <div className={clsx("flex flex-col px-2 mb-2 overflow-y-auto")}>
-                <div className="flex flex-col space-y-4 overflow-y-auto p-4">
+              <div
+                className={clsx(
+                  "flex flex-col flex-1 px-2 mb-2 overflow-y-auto"
+                )}
+              >
+                <div className="flex flex-col flex-1 space-y-4 overflow-y-auto p-4">
                   <FormikTextInput name="name" label="Name" required />
                   <FormikCodeEditor
                     fieldName="spec"
                     label="Spec"
                     format="yaml"
-                    className="flex flex-col h-[400px]"
+                    className="flex flex-col flex-1"
                     required
                   />
                 </div>
@@ -148,7 +154,7 @@ export default function PlaybookSpecsForm({
               <Button
                 type="submit"
                 text={playbook?.id ? "Update" : "Save"}
-                className="btn-primary"
+                className="btn-primary ml-auto"
               />
             </div>
           </Form>
