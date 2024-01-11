@@ -5,8 +5,6 @@ import * as monaco from "monaco-editor";
 import { loader } from "@monaco-editor/react";
 import YAML from "yaml";
 import githubLight from "monaco-themes/themes/GitHub Light.json";
-// @ts-ignore
-import * as worker from "monaco-yaml/yaml.worker";
 
 loader.config({ monaco });
 
@@ -50,8 +48,11 @@ window.MonacoEnvironment = {
             import.meta.url
           )
         );
+      // this is needed for next 14, but it doesn't work with next 13
+      // case "yaml":
+      //   return new Worker(worker);
       case "yaml":
-        return new Worker(worker);
+        return new Worker(new URL("monaco-yaml/yaml.worker", import.meta.url));
       default:
         throw new Error(`Unknown label ${label}`);
     }
