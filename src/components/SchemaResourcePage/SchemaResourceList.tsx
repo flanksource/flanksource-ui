@@ -41,11 +41,11 @@ export function SchemaResourceList({
               {table === "canaries" && <HCell>Schedule</HCell>}
               {table === "topologies" && <HCell colSpan={2}>namespace</HCell>}
               {table === "topologies" && <HCell>Agent</HCell>}
-              <HCell>Created At</HCell>
-              <HCell>Updated At</HCell>
               <HCell>Job Status</HCell>
               <HCell>Last Run</HCell>
               <HCell>Last Failed</HCell>
+              <HCell>Created At</HCell>
+              <HCell>Updated At</HCell>
               <HCell>Created By</HCell>
             </tr>
           </thead>
@@ -152,12 +152,7 @@ function SchemaResourceListItem({
           <AgentName agent={agent} />
         </Cell>
       )}
-      <Cell className="text-gray-500">
-        <Age from={created_at} suffix={true} />
-      </Cell>
-      <Cell className="text-gray-500">
-        <Age from={updated_at} suffix={true} />
-      </Cell>
+
       <Cell className="text-gray-500 lowercase space-x-2">
         <JobHistoryStatusColumn
           status={job_status}
@@ -179,6 +174,12 @@ function SchemaResourceListItem({
       </Cell>
       <Cell className="text-gray-500">
         <Age from={job_time_start} suffix={true} />
+      </Cell>
+      <Cell className="text-gray-500">
+        <Age from={created_at} suffix={true} />
+      </Cell>
+      <Cell className="text-gray-500">
+        <Age from={updated_at} suffix={true} />
       </Cell>
       <Cell className="text-gray-500">
         {created_by && <Avatar user={created_by} circular />}
