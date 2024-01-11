@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { SchemaResourceWithJobStatus } from "../../api/schemaResources";
 import { tables } from "../../context/UserAccessContext/permissions";
@@ -9,8 +9,11 @@ import { Avatar } from "../Avatar";
 import { InfoMessage } from "../InfoMessage";
 import JobHistoryStatusColumn from "../JobsHistory/JobHistoryStatusColumn";
 import { JobsHistoryDetails } from "../JobsHistory/JobsHistoryDetails";
+import Popover from "../Popover/Popover";
 import TableSkeletonLoader from "../SkeletonLoader/TableSkeletonLoader";
+import { TagItem, TagList } from "../TagList/TagList";
 import ConfigScrapperIcon from "./ConfigScrapperIcon";
+
 interface Props {
   items: SchemaResourceWithJobStatus[];
   baseUrl: string;
@@ -44,6 +47,7 @@ export function SchemaResourceList({
               <HCell>Job Status</HCell>
               <HCell>Last Run</HCell>
               <HCell>Last Failed</HCell>
+              <HCell colSpan={2}>Tags</HCell>
               <HCell>Created At</HCell>
               <HCell>Updated At</HCell>
               <HCell>Created By</HCell>
@@ -120,7 +124,8 @@ function SchemaResourceListItem({
   spec,
   job_details,
   job_name,
-  last_runtime
+  last_runtime,
+  labels
 }: SchemaResourceWithJobStatus & {
   baseUrl: string;
   table: string;
@@ -128,6 +133,13 @@ function SchemaResourceListItem({
   const navigate = useNavigate();
   const navigateToDetails = (id: string) => navigate(`${baseUrl}/${id}`);
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
+
+  const tags = useMemo(() => {
+    return Object.entries(labels ?? {}).map(([key, value]) => ({
+      key,
+      value
+    }));
+  }, [labels]);
 
   return (
     <tr
@@ -174,6 +186,37 @@ function SchemaResourceListItem({
       </Cell>
       <Cell className="text-gray-500">
         <Age from={job_time_start} suffix={true} />
+      </Cell>
+      <Cell colSpan={2} className="text-gray-500">
+        {tags.length > 0 && (
+          <Popover
+            toggle={
+              <div className="flex flex-row items-center">
+                <div className="flex-shrink overflow-x-hidden cursor-pointer">
+                  <TagItem tag={tags[0]!} />
+                </div>
+                {tags.length > 1 && (
+                  <div className="flex-shrink whitespace-nowrap space-x-2 underline decoration-solid justify-left text-xs cursor-pointer">
+                    +{tags.length - 1} more
+                  </div>
+                )}
+              </div>
+            }
+            title="Tags"
+            placement="left"
+            menuClass="top-8"
+          >
+            <div className="flex flex-col p-3">
+              <div className="flex flex-col items-stretch max-h-64 overflow-y-auto">
+                <TagList
+                  className="flex flex-col flex-1"
+                  tags={tags}
+                  minimumItemsToShow={tags.length}
+                />
+              </div>
+            </div>
+          </Popover>
+        )}
       </Cell>
       <Cell className="text-gray-500">
         <Age from={created_at} suffix={true} />
