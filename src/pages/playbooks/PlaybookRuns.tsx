@@ -81,7 +81,7 @@ export default function PlaybookRunsPage() {
               </BreadcrumbRoot>,
               ...(playbook
                 ? [
-                    <BreadcrumbChild key={"/playbooks"} link={`/playbooks}`}>
+                    <BreadcrumbChild key={"/playbooks"} link={`/playbooks`}>
                       {playbook?.name}
                     </BreadcrumbChild>
                   ]
