@@ -1,12 +1,12 @@
-import FormikTextInput from "../../../Forms/Formik/FormikTextInput";
 import { RunnablePlaybook } from "../../../../api/types/playbooks";
 import { ActionResource } from "../services";
+import PlaybookParamsFieldsRenderer from "./PlaybookParamsFieldsRenderer";
 
 export default function PlaybookRunParams({
   playbook,
   resource
 }: {
-  playbook: RunnablePlaybook;
+  playbook: Pick<RunnablePlaybook, "parameters">;
   resource?: ActionResource | null;
 }) {
   return (
@@ -23,11 +23,7 @@ export default function PlaybookRunParams({
       <div className="flex flex-col gap-2">
         {playbook.parameters && playbook.parameters.length > 0 ? (
           playbook.parameters.map((i) => (
-            <FormikTextInput
-              name={`params.${i.name}`}
-              label={i.label}
-              key={i.name}
-            />
+            <PlaybookParamsFieldsRenderer params={i} key={i.name} />
           ))
         ) : (
           <div className="text-gray-400">No parameters for this playbook.</div>

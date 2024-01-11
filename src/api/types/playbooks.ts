@@ -62,10 +62,82 @@ export type PlaybookSpec = {
   deleted_at?: string;
 };
 
-export type PlaybookParam = {
+export type PlaybookParamCommonFields = {
   name: string;
   label: string;
+  description?: string;
+  default?: string;
+  required?: boolean;
+  icon?: string;
 };
+
+type PlaybookParamListOptions = PlaybookParamCommonFields & {
+  type: "list";
+  properties?: {
+    // this is a list of options, e.g. a dropdown
+    options: {
+      label: string;
+      value: string;
+    }[];
+  };
+};
+
+type PlaybookParamTextOptions = PlaybookParamCommonFields & {
+  type: "text";
+  properties?: {
+    // for multiline text, we can use this, to make it a textarea, otherwise
+    // it's a single line input
+    multiline?: boolean;
+  };
+};
+
+export type PlaybookParamCodeEditor = PlaybookParamCommonFields & {
+  type: "code";
+  properties?: {
+    // We can have a single code type, then we can use this to determine the language
+    // e.g. yaml, json, toml, etc.
+    language?: string;
+  };
+};
+
+export type PlaybookParamCheckbox = PlaybookParamCommonFields & {
+  type: "checkbox";
+  // no properties, just a checkbox
+};
+
+export type PlaybookParamComponentConfig = PlaybookParamCommonFields & {
+  type: "component" | "config";
+  properties?: {
+    // filter by component type
+    filter: {
+      type: string;
+    };
+  };
+};
+
+export type PlaybookParamPeople = PlaybookParamCommonFields & {
+  type: "people";
+  properties?: {
+    // filter by role
+    role: string;
+  };
+};
+
+export type PlaybookParamTeam = PlaybookParamCommonFields & {
+  type: "team";
+  properties?: {
+    // think about this one
+  };
+};
+
+export type PlaybookParam =
+  | PlaybookParamListOptions
+  | PlaybookParamTextOptions
+  | PlaybookParamCodeEditor
+  | PlaybookParamCheckbox
+  | PlaybookParamComponentConfig
+  | PlaybookParamPeople
+  | PlaybookParamTeam;
 
 export type RunnablePlaybook = Omit<PlaybookSpec, "spec"> & {
   check_id?: string;

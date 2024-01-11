@@ -167,8 +167,9 @@ export const getCheckStatuses = (
   if (duration) {
     queryString = `${queryString}&duration=gte.${duration}`;
   }
-  queryString = `${queryString}&limit=${pageSize}&offset=${pageIndex * pageSize
-    }`;
+  queryString = `${queryString}&limit=${pageSize}&offset=${
+    pageIndex * pageSize
+  }`;
   return resolve(
     CanaryCheckerDB.get<HealthCheckStatus[] | null>(
       `/check_statuses?${queryString}`,
@@ -181,8 +182,10 @@ export const getCheckStatuses = (
   );
 };
 
-export const getTopologyComponents = () => {
-  return IncidentCommander.get<Component[]>(`/component_names?order=name.asc`);
+export const getTopologyComponents = (type?: string) => {
+  return IncidentCommander.get<Component[]>(
+    `/component_names?order=name.asc${type ? `&type=eq.${type}` : ""}`
+  );
 };
 
 export const getTopologyComponentsWithLogs = () => {

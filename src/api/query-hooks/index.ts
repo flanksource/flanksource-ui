@@ -48,19 +48,19 @@ export const useIncidentQuery = (id: string) => {
 
 export const useComponentsQuery = ({
   enabled = true,
-  staleTime = defaultStaleTime,
-  ...rest
+  type
+}: {
+  enabled?: boolean;
+  type?: string;
 }) => {
   return useQuery(
-    ["allcomponents"],
+    ["components", "names", type],
     async () => {
       const res = await getTopologyComponents();
       return res.data;
     },
     {
-      staleTime,
-      enabled,
-      ...rest
+      enabled
     }
   );
 };

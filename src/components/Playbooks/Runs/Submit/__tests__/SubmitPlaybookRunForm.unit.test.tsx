@@ -13,7 +13,8 @@ const playbook: RunnablePlaybook = {
   parameters: [
     {
       label: "Label",
-      name: "name"
+      name: "name",
+      type: "text"
     }
   ],
   created_at: "2021-09-01T00:00:00Z",
