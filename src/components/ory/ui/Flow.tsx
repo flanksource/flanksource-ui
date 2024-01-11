@@ -53,6 +53,7 @@ export type Props<T> = {
   onSubmit: (values: T) => Promise<void>;
   // Do not show the global messages. Useful when rendering them elsewhere.
   hideGlobalMessages?: boolean;
+  isLoginFlow?: boolean;
 };
 
 function emptyState<T>() {
@@ -163,55 +164,91 @@ export class Flow<T extends Values> extends Component<Props<T>, State<T>> {
 
     return (
       <div className="flex flex-col gap-2">
-        <form
-          className="space-y-8"
-          action={flow.ui.action}
-          method={flow.ui.method}
-          onSubmit={this.handleSubmit}
-        >
-          {!hideGlobalMessages ? (
-            <Messages messages={flow.ui.messages} />
-          ) : null}
-          {filterNodesByGroups({
-            nodes: nodes,
-            groups: ["default", "password"]
-          }).map((node, k) => {
-            const id = getNodeId(node) as keyof Values;
-            return (
-              <Node
-                key={`${id}-${k}`}
-                disabled={isLoading}
-                node={node}
-                value={values[id]}
-                dispatchSubmit={this.handleSubmit}
-                setValue={(value) =>
-                  new Promise((resolve) => {
-                    this.setState(
-                      (state) => ({
-                        ...state,
-                        values: {
-                          ...state.values,
-                          [getNodeId(node)]: value
-                        }
-                      }),
-                      resolve
-                    );
-                  })
-                }
-              />
-            );
-          })}
-        </form>
+        {!hideGlobalMessages ? <Messages messages={flow.ui.messages} /> : null}
 
-        <hr className="border-gray-200 my-3" />
+        {this.props.isLoginFlow ? (
+          <>
+            <form
+              className="space-y-8"
+              action={flow.ui.action}
+              method={flow.ui.method}
+              onSubmit={this.handleSubmit}
+            >
+              {filterNodesByGroups({
+                nodes: nodes,
+                groups: ["default", "password"]
+              }).map((node, k) => {
+                const id = getNodeId(node) as keyof Values;
+                return (
+                  <Node
+                    key={`${id}-${k}`}
+                    disabled={isLoading}
+                    node={node}
+                    value={values[id]}
+                    dispatchSubmit={this.handleSubmit}
+                    setValue={(value) =>
+                      new Promise((resolve) => {
+                        this.setState(
+                          (state) => ({
+                            ...state,
+                            values: {
+                              ...state.values,
+                              [getNodeId(node)]: value
+                            }
+                          }),
+                          resolve
+                        );
+                      })
+                    }
+                  />
+                );
+              })}
+            </form>
 
-        <form action={flow.ui.action} method={flow.ui.method}>
-          <div className="flex flex-col">
-            {filterNodesByGroups({
-              nodes: nodes,
-              groups: ["oidc"],
-              withoutDefaultGroup: true
-            }).map((node, k) => {
+            <hr className="border-gray-200 my-3" />
+
+            <form action={flow.ui.action} method={flow.ui.method}>
+              <div className="flex flex-col">
+                {filterNodesByGroups({
+                  nodes: nodes,
+                  groups: ["oidc"],
+                  withoutDefaultGroup: true
+                }).map((node, k) => {
+                  const id = getNodeId(node) as keyof Values;
+                  return (
+                    <Node
+                      key={`${id}-${k}`}
+                      disabled={isLoading}
+                      node={node}
+                      value={values[id]}
+                      dispatchSubmit={this.handleSubmit}
+                      setValue={(value) =>
+                        new Promise((resolve) => {
+                          this.setState(
+                            (state) => ({
+                              ...state,
+                              values: {
+                                ...state.values,
+                                [getNodeId(node)]: value
+                              }
+                            }),
+                            resolve
+                          );
+                        })
+                      }
+                    />
+                  );
+                })}
+              </div>
+            </form>
+          </>
+        ) : (
+          <form
+            action={flow.ui.action}
+            method={flow.ui.method}
+            className="flex flex-col gap-4"
+          >
+            {nodes.map((node, k) => {
               const id = getNodeId(node) as keyof Values;
               return (
                 <Node
@@ -237,8 +274,8 @@ export class Flow<T extends Values> extends Component<Props<T>, State<T>> {
                 />
               );
             })}
-          </div>
-        </form>
+          </form>
+        )}
       </div>
     );
   }

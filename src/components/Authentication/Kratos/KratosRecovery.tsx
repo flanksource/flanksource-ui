@@ -100,10 +100,12 @@ function KratosRecovery() {
                 <Flow onSubmit={onSubmit} flow={flow} />
               </div>
               <div className="mt-2">
-                <Link href="/" passHref>
-                  <a className="cursor-pointer font-medium text-blue-600 hover:text-blue-500">
-                    Go back
-                  </a>
+                <Link
+                  href="/"
+                  passHref
+                  className="cursor-pointer font-medium text-blue-600 hover:text-blue-500"
+                >
+                  Go back
                 </Link>
               </div>
             </div>
