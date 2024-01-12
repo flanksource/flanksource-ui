@@ -132,7 +132,7 @@ const Login: NextPage = () => {
           })()}
         </h2>
         <div className="mt-8 bg-white pt-4 pb-8 px-4 shadow sm:rounded-lg sm:px-10">
-          <Flow onSubmit={submitFlow} flow={flow} />
+          <Flow onSubmit={submitFlow} flow={flow} isLoginFlow />
         </div>
         <div className="mt-2">
           <Link href="/recovery" passHref>
