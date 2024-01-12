@@ -1,4 +1,5 @@
 import clsx from "clsx";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { SchemaResourceWithJobStatus } from "../../api/schemaResources";
 import { tables } from "../../context/UserAccessContext/permissions";
@@ -7,8 +8,12 @@ import AgentName from "../Agents/AgentName";
 import { Avatar } from "../Avatar";
 import { InfoMessage } from "../InfoMessage";
 import JobHistoryStatusColumn from "../JobsHistory/JobHistoryStatusColumn";
+import { JobsHistoryDetails } from "../JobsHistory/JobsHistoryDetails";
+import Popover from "../Popover/Popover";
 import TableSkeletonLoader from "../SkeletonLoader/TableSkeletonLoader";
+import { TagItem, TagList } from "../TagList/TagList";
 import ConfigScrapperIcon from "./ConfigScrapperIcon";
+
 interface Props {
   items: SchemaResourceWithJobStatus[];
   baseUrl: string;
@@ -23,7 +28,7 @@ export function SchemaResourceList({
   isLoading
 }: Props) {
   return (
-    <div className="max-w-screen-xl mx-auto space-y-6 flex flex-col justify-center">
+    <div className="mx-auto space-y-6 flex flex-col justify-center">
       <div
         className="flex flex-col overflow-y-auto flex-1 w-full"
         style={{ maxHeight: "calc(100vh - 8rem)" }}
@@ -39,10 +44,12 @@ export function SchemaResourceList({
               {table === "canaries" && <HCell>Schedule</HCell>}
               {table === "topologies" && <HCell colSpan={2}>namespace</HCell>}
               {table === "topologies" && <HCell>Agent</HCell>}
-              <HCell>Created At</HCell>
-              <HCell>Updated At</HCell>
               <HCell>Job Status</HCell>
               <HCell>Last Run</HCell>
+              <HCell>Last Failed</HCell>
+              <HCell colSpan={2}>Tags</HCell>
+              <HCell>Created At</HCell>
+              <HCell>Updated At</HCell>
               <HCell>Created By</HCell>
             </tr>
           </thead>
@@ -52,7 +59,6 @@ export function SchemaResourceList({
                 table={table}
                 key={item.id}
                 {...item}
-                schedule={item.spec?.schedule}
                 baseUrl={baseUrl}
               />
             ))}
@@ -115,13 +121,25 @@ function SchemaResourceListItem({
   job_time_start,
   namespace,
   agent,
-  spec
+  spec,
+  job_details,
+  job_name,
+  last_runtime,
+  labels
 }: SchemaResourceWithJobStatus & {
   baseUrl: string;
   table: string;
 }) {
   const navigate = useNavigate();
   const navigateToDetails = (id: string) => navigate(`${baseUrl}/${id}`);
+  const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
+
+  const tags = useMemo(() => {
+    return Object.entries(labels ?? {}).map(([key, value]) => ({
+      key,
+      value
+    }));
+  }, [labels]);
 
   return (
     <tr
@@ -146,17 +164,65 @@ function SchemaResourceListItem({
           <AgentName agent={agent} />
         </Cell>
       )}
+
+      <Cell className="text-gray-500 lowercase space-x-2">
+        <JobHistoryStatusColumn
+          status={job_status}
+          onClick={() => {
+            setIsErrorModalOpen(true);
+          }}
+        />
+        <JobsHistoryDetails
+          isModalOpen={isErrorModalOpen}
+          setIsModalOpen={setIsErrorModalOpen}
+          job={{
+            details: job_details,
+            name: job_name ?? name
+          }}
+        />
+      </Cell>
+      <Cell className="text-gray-500">
+        <Age from={last_runtime} suffix={true} />
+      </Cell>
+      <Cell className="text-gray-500">
+        <Age from={job_time_start} suffix={true} />
+      </Cell>
+      <Cell colSpan={2} className="text-gray-500">
+        {tags.length > 0 && (
+          <Popover
+            toggle={
+              <div className="flex flex-row items-center">
+                <div className="flex-shrink overflow-x-hidden cursor-pointer">
+                  <TagItem tag={tags[0]!} />
+                </div>
+                {tags.length > 1 && (
+                  <div className="flex-shrink whitespace-nowrap space-x-2 underline decoration-solid justify-left text-xs cursor-pointer">
+                    +{tags.length - 1} more
+                  </div>
+                )}
+              </div>
+            }
+            title="Tags"
+            placement="left"
+            menuClass="top-8"
+          >
+            <div className="flex flex-col p-3">
+              <div className="flex flex-col items-stretch max-h-64 overflow-y-auto">
+                <TagList
+                  className="flex flex-col flex-1"
+                  tags={tags}
+                  minimumItemsToShow={tags.length}
+                />
+              </div>
+            </div>
+          </Popover>
+        )}
+      </Cell>
       <Cell className="text-gray-500">
         <Age from={created_at} suffix={true} />
       </Cell>
       <Cell className="text-gray-500">
         <Age from={updated_at} suffix={true} />
-      </Cell>
-      <Cell className="text-gray-500 lowercase space-x-2">
-        <JobHistoryStatusColumn status={job_status} />
-      </Cell>
-      <Cell className="text-gray-500">
-        <Age from={job_time_start} suffix={true} />
       </Cell>
       <Cell className="text-gray-500">
         {created_by && <Avatar user={created_by} circular />}

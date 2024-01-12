@@ -20,7 +20,7 @@ export default function JobHistoryStatusColumn({ status, onClick }: Props) {
 
   return (
     <div
-      className="flex flex-row gap-2"
+      className="flex flex-row gap-1 items-center"
       role="button"
       onClick={(e) => {
         if (!onClick) {
