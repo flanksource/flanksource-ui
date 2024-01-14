@@ -11,6 +11,7 @@ type FormikConfigsDropdownProps = {
   filter?: {
     type: string;
   };
+  className?: string;
 };
 
 export default function FormikConfigsDropdown({
@@ -18,7 +19,8 @@ export default function FormikConfigsDropdown({
   label,
   required = false,
   hint,
-  filter
+  filter,
+  className = "flex flex-col space-y-2 py-2"
 }: FormikConfigsDropdownProps) {
   const { isLoading, data: configs } = useConfigAllList(filter?.type);
 
@@ -35,7 +37,7 @@ export default function FormikConfigsDropdown({
   return (
     <FormikSelectDropdown
       name={name}
-      className="h-full shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm border-gray-300 rounded-md"
+      className={className}
       options={options}
       label={label}
       isLoading={isLoading}

@@ -7,13 +7,15 @@ type FormikEventsDropdownProps = {
   label?: string;
   required?: boolean;
   hint?: string;
+  className?: string;
 };
 
 export default function FormikTeamsDropdown({
   name,
   label,
   required = false,
-  hint
+  hint,
+  className = "flex flex-col space-y-2 py-2"
 }: FormikEventsDropdownProps) {
   const { data: teams, isLoading } = useGetAllTeams();
 
@@ -29,7 +31,7 @@ export default function FormikTeamsDropdown({
   return (
     <FormikSelectDropdown
       name={name}
-      className="h-full shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm border-gray-300 rounded-md"
+      className={className}
       options={options}
       label={label}
       isLoading={isLoading}

@@ -29,6 +29,7 @@ export default function FormikSelectDropdown({
   required = false,
   hint,
   options,
+  className = "flex flex-col space-y-2 py-2",
   ...props
 }: Props) {
   const [isTouched, setIsTouched] = useState(false);
@@ -60,7 +61,7 @@ export default function FormikSelectDropdown({
   }, [isTouched, meta.initialTouched, meta.touched]);
 
   return (
-    <div className="flex flex-col space-y-2 py-2">
+    <div className={className}>
       {label && <label className="form-label">{label}</label>}
       <Select
         name={name}

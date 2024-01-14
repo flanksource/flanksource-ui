@@ -11,6 +11,7 @@ type FormikComponentsDropdownProps = {
   filter?: {
     type: string;
   };
+  className?: string;
 };
 
 export default function FormikComponentsDropdown({
@@ -18,7 +19,8 @@ export default function FormikComponentsDropdown({
   label,
   required = false,
   hint,
-  filter
+  filter,
+  className = "flex flex-col space-y-2 py-2"
 }: FormikComponentsDropdownProps) {
   const { isLoading, data: components } = useComponentsQuery({
     type: filter?.type
@@ -37,7 +39,7 @@ export default function FormikComponentsDropdown({
   return (
     <FormikSelectDropdown
       name={name}
-      className="h-full shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm border-gray-300 rounded-md"
+      className={className}
       options={options}
       label={label}
       isLoading={isLoading}
