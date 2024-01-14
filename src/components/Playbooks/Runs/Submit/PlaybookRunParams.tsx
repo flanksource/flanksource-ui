@@ -23,7 +23,16 @@ export default function PlaybookRunParams({
       <div className="flex flex-col gap-2">
         {playbook.parameters && playbook.parameters.length > 0 ? (
           playbook.parameters.map((i) => (
-            <PlaybookParamsFieldsRenderer params={i} key={i.name} />
+            <div className="flex flex-row gap-2 items-center" key={i.name}>
+              {i.type !== "checkbox" && (
+                <div className="w-36">
+                  <label className="form-label mb-0">{i.label}</label>
+                </div>
+              )}
+              <div className="flex flex-col flex-1">
+                <PlaybookParamsFieldsRenderer params={i} key={i.name} />
+              </div>
+            </div>
           ))
         ) : (
           <div className="text-gray-400">No parameters for this playbook.</div>
