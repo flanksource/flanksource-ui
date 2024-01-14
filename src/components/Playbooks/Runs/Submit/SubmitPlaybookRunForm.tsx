@@ -70,8 +70,6 @@ export default function SubmitPlaybookRunForm({
       open={isOpen}
       onClose={onClose}
       size="slightly-small"
-      // bodyClass=""
-      // containerClassName=""
     >
       <Formik
         initialValues={initialValues}
@@ -81,12 +79,15 @@ export default function SubmitPlaybookRunForm({
       >
         {({ values, handleSubmit }) => {
           return (
-            <Form onSubmit={handleSubmit} className="flex flex-col ">
-              <div className="flex flex-col gap-2">
+            <Form
+              onSubmit={handleSubmit}
+              className="flex flex-col overflow-y-auto"
+            >
+              <div className="flex flex-col gap-2 overflow-y-auto px-4">
                 <PlaybookRunParams playbook={playbook} resource={resource} />
               </div>
 
-              <div className="flex justify-end px-4 mx-[-30px] pr-[30px] rounded-b py-4 space-x-2 bg-slate-50  ring-1 ring-black/5 ">
+              <div className="flex justify-end p-4 rounded-b space-x-2 bg-slate-50  ring-1 ring-black/5 ">
                 <Button
                   disabled={values.id === undefined}
                   text="Run"

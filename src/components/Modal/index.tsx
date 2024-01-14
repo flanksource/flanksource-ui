@@ -44,7 +44,7 @@ interface IModalProps {
 export function Modal({
   title,
   titleClass,
-  bodyClass,
+  bodyClass = "flex flex-col flex-1 overflow-y-auto",
   footerClassName,
   actions,
   open,
@@ -145,7 +145,7 @@ export function Modal({
                 )}
               </div>
 
-              <div className={bodyClass ?? "px-8"}>{children}</div>
+              <div className={bodyClass}>{children}</div>
 
               {Boolean(actions?.length) && (
                 <div
