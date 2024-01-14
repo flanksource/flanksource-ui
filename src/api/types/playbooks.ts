@@ -54,7 +54,10 @@ export interface PlaybookRun extends CreatedAt, Avatar, Agent {
 export type PlaybookSpec = {
   id: string;
   name: string;
+  description?: string;
+  icon?: string;
   created_by?: User;
+  type: string;
   spec: any;
   source: "KubernetesCRD" | "ConfigFile" | "UI";
   created_at: string;
