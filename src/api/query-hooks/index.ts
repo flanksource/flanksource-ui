@@ -1,6 +1,7 @@
 import { useQuery, UseQueryOptions } from "@tanstack/react-query";
 import { CostsData } from "../../api/types/common";
 import { toastError } from "../../components/Toast/toast";
+import { getAllAgents } from "../services/agents";
 import {
   getAllChanges,
   getAllConfigsMatchingQuery,
@@ -21,16 +22,15 @@ import { LogsResponse, searchLogs, SearchLogsPayload } from "../services/logs";
 import {
   getComponentTeams,
   getHealthCheckItem,
-  getTopologyNameByID,
   getTopologyByID,
   getTopologyComponentLabels,
-  getTopologyComponents,
-  getTopologyComponentsWithLogs
+  getTopologyComponentsByTypes,
+  getTopologyComponentsWithLogs,
+  getTopologyNameByID
 } from "../services/topology";
-import { getAllAgents } from "../services/agents";
-import { ComponentTeamItem } from "../types/topology";
 import { getPersons, getVersionInfo } from "../services/users";
 import { IncidentHistory } from "../types/incident";
+import { ComponentTeamItem } from "../types/topology";
 
 const defaultStaleTime = 1000 * 60 * 5;
 
@@ -48,15 +48,15 @@ export const useIncidentQuery = (id: string) => {
 
 export const useComponentsQuery = ({
   enabled = true,
-  type
+  types
 }: {
   enabled?: boolean;
-  type?: string;
+  types?: string[];
 }) => {
   return useQuery(
-    ["components", "names", type],
+    ["components", "names", types],
     async () => {
-      const res = await getTopologyComponents();
+      const res = await getTopologyComponentsByTypes(types ?? []);
       return res.data;
     },
     {

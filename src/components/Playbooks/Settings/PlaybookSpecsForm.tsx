@@ -18,6 +18,7 @@ import { FormikCodeEditor } from "../../Forms/Formik/FormikCodeEditor";
 import FormikTextInput from "../../Forms/Formik/FormikTextInput";
 import { Modal } from "../../Modal";
 import { toastError, toastSuccess } from "../../Toast/toast";
+import PlaybookSpecModalTitle from "../PlaybookSpecModalTitle";
 
 type PlaybookSpecsFormProps = {
   playbook?: PlaybookSpec;
@@ -88,9 +89,10 @@ export default function PlaybookSpecsForm({
   return (
     <Modal
       title={
-        playbook
-          ? `Edit Playbook Spec: ${playbook.name}`
-          : "Create Playbook Spec"
+        <PlaybookSpecModalTitle
+          playbookSpec={playbook}
+          defaultTitle="Create Playbook Spec"
+        />
       }
       onClose={onClose}
       open={isOpen}
@@ -128,6 +130,7 @@ export default function PlaybookSpecsForm({
               >
                 <div className="flex flex-col flex-1 space-y-4 overflow-y-auto p-4">
                   <FormikTextInput name="name" label="Name" required />
+                  <FormikTextInput name="category" label="Category" />
                   <FormikCodeEditor
                     fieldName="spec"
                     label="Spec"

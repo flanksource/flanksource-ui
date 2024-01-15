@@ -17,11 +17,12 @@ export default function PlaybookParamsFieldsRenderer({
   params
 }: PlaybookParamsFieldsRendererProps) {
   const { type, name: fieldName, required, label } = params;
+
   switch (type) {
     case "code":
       return (
         <FormikCodeEditor
-          className="flex flex-col h-48"
+          className="flex flex-col h-72"
           format={params.properties?.language ?? "yaml"}
           fieldName={`params.${fieldName}`}
         />
@@ -60,7 +61,11 @@ export default function PlaybookParamsFieldsRenderer({
         <FormikComponentsDropdown
           name={`params.${fieldName}`}
           required={required}
-          filter={params.properties?.filter}
+          filter={{
+            types: params.properties?.filter.type
+              ? [params.properties?.filter.type]
+              : []
+          }}
         />
       );
     case "config":
@@ -68,7 +73,11 @@ export default function PlaybookParamsFieldsRenderer({
         <FormikConfigsDropdown
           name={`params.${fieldName}`}
           required={required}
-          filter={params.properties?.filter}
+          filter={{
+            types: params.properties?.filter.type
+              ? [params.properties?.filter.type]
+              : []
+          }}
         />
       );
     case "text":

@@ -9,7 +9,7 @@ type FormikConfigsDropdownProps = {
   required?: boolean;
   hint?: string;
   filter?: {
-    type: string;
+    types: string[];
   };
   className?: string;
 };
@@ -22,7 +22,7 @@ export default function FormikConfigsDropdown({
   filter,
   className = "flex flex-col space-y-2 py-2"
 }: FormikConfigsDropdownProps) {
-  const { isLoading, data: configs } = useConfigAllList(filter?.type);
+  const { isLoading, data: configs } = useConfigAllList(filter?.types ?? []);
 
   const options = useMemo(
     () =>

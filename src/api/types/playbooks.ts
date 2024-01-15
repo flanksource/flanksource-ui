@@ -57,7 +57,7 @@ export type PlaybookSpec = {
   description?: string;
   icon?: string;
   created_by?: User;
-  type: string;
+  category?: string;
   spec: any;
   source: "KubernetesCRD" | "ConfigFile" | "UI";
   created_at: string;

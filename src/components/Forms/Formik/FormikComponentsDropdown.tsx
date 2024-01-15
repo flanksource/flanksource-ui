@@ -9,7 +9,7 @@ type FormikComponentsDropdownProps = {
   required?: boolean;
   hint?: string;
   filter?: {
-    type: string;
+    types: string[];
   };
   className?: string;
 };
@@ -23,7 +23,7 @@ export default function FormikComponentsDropdown({
   className = "flex flex-col space-y-2 py-2"
 }: FormikComponentsDropdownProps) {
   const { isLoading, data: components } = useComponentsQuery({
-    type: filter?.type
+    types: filter?.types ?? []
   });
 
   const options = useMemo(
@@ -31,7 +31,7 @@ export default function FormikComponentsDropdown({
       components?.map((component) => ({
         label: component.name,
         value: component.id,
-        icon: <Icon name={component.icon} />
+        icon: <Icon name={component.icon} className="h-5 w-5" />
       })),
     [components]
   );

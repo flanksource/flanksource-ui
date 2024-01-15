@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { AiFillPlusCircle } from "react-icons/ai";
-import { useNavigate } from "react-router-dom";
 import { useGetAllPlaybookSpecs } from "../../api/query-hooks/playbooks";
 import { BreadcrumbNav, BreadcrumbRoot } from "../../components/BreadcrumbNav";
 import ErrorPage from "../../components/Errors/ErrorPage";
@@ -8,12 +7,11 @@ import { Head } from "../../components/Head/Head";
 import { SearchLayout } from "../../components/Layout";
 import { playbookRunsPageTabs } from "../../components/Playbooks/Runs/PlaybookRunsPageTabs";
 import PlaybookSpecsForm from "../../components/Playbooks/Settings/PlaybookSpecsForm";
-import PlaybookSpecsTable from "../../components/Playbooks/Settings/PlaybookSpecsTable";
+import PlaybookSpecsTable from "../../components/Playbooks/Settings/PlaybookSpecsList";
 import TabbedLinks from "../../components/Tabs/TabbedLinks";
 
 export function PlaybooksListPage() {
   const [isOpen, setIsOpen] = useState(false);
-  const navigate = useNavigate();
 
   const {
     isLoading,
@@ -53,17 +51,11 @@ export function PlaybooksListPage() {
         loading={isLoading}
       >
         <TabbedLinks tabLinks={playbookRunsPageTabs}>
-          <div className="flex flex-col flex-1 px-6 h-full max-w-screen-xl mx-auto">
+          <div className="flex flex-col flex-1 px-6 h-full w-full">
             {error && !playbooks ? (
               <ErrorPage error={error} />
             ) : (
-              <PlaybookSpecsTable
-                data={playbooks ?? []}
-                isLoading={isLoading}
-                onRowClick={(playbook) => {
-                  navigate(`/playbooks/runs?playbook=${playbook.id}`);
-                }}
-              />
+              <PlaybookSpecsTable data={playbooks ?? []} refetch={refetch} />
             )}
           </div>
         </TabbedLinks>
