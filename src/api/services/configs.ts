@@ -59,7 +59,9 @@ export const getConfigsByID = async (id: string) => {
 export const getAllChanges = (
   queryParams: Record<string, string | undefined>,
   pageIndex?: number,
-  pageSize?: number
+  pageSize?: number,
+  starts_at?: string,
+  ends_at?: string
 ) => {
   const pagingParams =
     pageIndex || pageSize
@@ -72,6 +74,11 @@ export const getAllChanges = (
       queryString += `&${queryKey}=eq.${queryParams[key]}`;
     }
   });
+
+  if (starts_at && ends_at) {
+    queryString += `&created_at=gte.${starts_at}&created_at=lte.${ends_at}`;
+  }
+
   return resolve(
     ConfigDB.get<ConfigChange[]>(
       `/config_changes?order=created_at.desc${pagingParams}&select=id,change_type,summary,source,created_at,config_id,config:config_names!inner(id,name,type)${queryString}`,
@@ -103,13 +110,26 @@ export const getConfigName = (id: string) =>
 export const getConfigChanges = (
   id: string,
   pageIndex?: number,
-  pageSize?: number
+  pageSize?: number,
+  starts_at?: string,
+  ends_at?: string,
+  severity?: string,
+  change_type?: string
 ) => {
   let paginationQueryParams = "";
   if (pageIndex !== undefined && pageSize !== undefined) {
     paginationQueryParams = `&limit=${pageSize}&offset=${
       pageIndex! * pageSize
     }`;
+  }
+  if (severity) {
+    paginationQueryParams += `&severity=eq.${severity}`;
+  }
+  if (change_type) {
+    paginationQueryParams += `&change_type=eq.${change_type}`;
+  }
+  if (starts_at && ends_at) {
+    paginationQueryParams += `&created_at=gte.${starts_at}&created_at=lte.${ends_at}`;
   }
   return resolve(
     ConfigDB.get<ConfigChange[]>(

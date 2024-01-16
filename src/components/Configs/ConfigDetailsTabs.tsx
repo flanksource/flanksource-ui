@@ -74,7 +74,7 @@ export function ConfigDetailsTabs({
             <TabbedLinks
               activeTabName={activeTabName}
               tabLinks={configTabList}
-              contentClassName="bg-white border border-t-0 border-gray-300 flex-1 p-2"
+              contentClassName="bg-white border border-t-0 border-gray-300 flex-1 p-2 overflow-y-auto"
             >
               {children}
             </TabbedLinks>

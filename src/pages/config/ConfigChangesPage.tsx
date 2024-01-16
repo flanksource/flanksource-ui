@@ -25,12 +25,14 @@ export function ConfigChangesPage() {
   const type = params.get("type") ?? undefined;
   const change_type = params.get("change_type") ?? undefined;
   const severity = params.get("severity") ?? undefined;
+  const starts_at = params.get("starts") ?? undefined;
+  const ends_at = params.get("ends") ?? undefined;
   const pageSize = +(params.get("pageSize") ?? itemsPerPage);
   const pageIndex = +(params.get("pageIndex") ?? 0);
   const page = pageIndex === 0 ? 0 : pageIndex - 1;
   const { data, isLoading, error, isRefetching, refetch } =
     useGetAllConfigsChangesQuery(
-      { type, change_type, severity },
+      { type, change_type, severity, starts_at, ends_at },
       page,
       pageSize,
       true
@@ -77,7 +79,10 @@ export function ConfigChangesPage() {
         title={
           <BreadcrumbNav
             list={[
-              <BreadcrumbRoot link="/catalog/changes">
+              <BreadcrumbRoot
+                link="/catalog/changes"
+                key="config-catalog-changes-root"
+              >
                 Catalog Changes
               </BreadcrumbRoot>
             ]}

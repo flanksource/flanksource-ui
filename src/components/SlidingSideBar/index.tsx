@@ -121,7 +121,7 @@ export default function SlidingSideBar({
           type="button"
           aria-label={open ? "Open Side Panel" : "Close Side Panel"}
           title={open ? "Open Side Panel" : "Close Side Panel"}
-          className="absolute z-[99999] text-xl bg-white -left-6 top-6 border border-gray-300 rounded-full transform duration-500 m-2 p-1 hover:bg-gray-200 rotate-180"
+          className="absolute z-[99999999] text-xl bg-white -left-6 top-6 border border-gray-300 rounded-full transform duration-500 m-2 p-1 hover:bg-gray-200 rotate-180"
           onClick={() => setOpen(!open)}
         >
           {open ? <IoChevronForwardOutline /> : <IoChevronBackOutline />}

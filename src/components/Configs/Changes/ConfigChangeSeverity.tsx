@@ -74,11 +74,12 @@ export function ConfigChangeSeverity({
       items={configChangeSeverity}
       name="severity"
       onChange={(value) => {
-        setParams({
-          ...Object.fromEntries(params),
-          [searchParamKey]: value ?? "",
-          ...paramsToReset
-        });
+        if (value === "All" || !value) {
+          params.delete(searchParamKey);
+        } else {
+          params.set(searchParamKey, value);
+        }
+        setParams(params);
         onChange(value);
       }}
       value={params.get(searchParamKey) ?? "All"}

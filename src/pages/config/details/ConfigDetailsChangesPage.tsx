@@ -1,9 +1,10 @@
 import { useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { useGetConfigChangesByConfigIdQuery } from "../../../api/query-hooks";
 import { ConfigChangeHistory } from "../../../components/Configs/Changes/ConfigChangeHistory";
 import { ConfigDetailsTabs } from "../../../components/Configs/ConfigDetailsTabs";
 import { InfoMessage } from "../../../components/InfoMessage";
+import { ConfigChangeFilters } from "../../../components/Configs/Changes/ConfigChangesFilters/ConfigChangesFilters";
 
 export function ConfigDetailsChangesPage() {
   const { id } = useParams();
@@ -12,13 +13,27 @@ export function ConfigDetailsChangesPage() {
     pageSize: 50
   });
 
+  const [params] = useSearchParams();
+  const change_type = params.get("change_type") ?? undefined;
+  const severity = params.get("severity") ?? undefined;
+  const starts_at = params.get("starts") ?? undefined;
+  const ends_at = params.get("ends") ?? undefined;
   const {
     data: historyData,
     isLoading,
     isRefetching,
     error,
     refetch
-  } = useGetConfigChangesByConfigIdQuery(id!, pageIndex, pageSize);
+  } = useGetConfigChangesByConfigIdQuery(
+    id!,
+    pageIndex,
+    pageSize,
+    true,
+    starts_at,
+    ends_at,
+    severity,
+    change_type
+  );
   const totalEntries = (historyData as any)?.totalEntries;
   const pageCount = totalEntries ? Math.ceil(totalEntries / pageSize) : -1;
 
@@ -50,13 +65,16 @@ export function ConfigDetailsChangesPage() {
       refetch={refetch}
       activeTabName="Changes"
     >
-      <div className={`flex flex-col flex-1 p-6 pb-0 h-full`}>
-        <div className="flex flex-col items-start overflow-y-auto">
-          <ConfigChangeHistory
-            data={historyData?.data ?? []}
-            isLoading={isLoading}
-            pagination={pagination}
-          />
+      <div className={`flex flex-col flex-1 h-full overflow-y-auto`}>
+        <div className="flex flex-col flex-1 items-start gap-2 overflow-y-auto">
+          <ConfigChangeFilters hideConfigTypeFilter />
+          <div className="flex flex-col flex-1 overflow-y-auto">
+            <ConfigChangeHistory
+              data={historyData?.data ?? []}
+              isLoading={isLoading}
+              pagination={pagination}
+            />
+          </div>
         </div>
       </div>
     </ConfigDetailsTabs>

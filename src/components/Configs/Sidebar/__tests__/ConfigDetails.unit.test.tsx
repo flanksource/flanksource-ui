@@ -7,7 +7,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MemoryRouter } from "react-router-dom";
 
 const server = setupServer(
-  rest.get("/api/db/config_items", (req, res, ctx) => {
+  rest.get("/api/db/config_detail", (req, res, ctx) => {
     return res(
       ctx.json([
         {
@@ -43,7 +43,7 @@ describe("ConfigDetails", () => {
     render(
       <MemoryRouter>
         <QueryClientProvider client={queryClient}>
-          <ConfigDetails configId={configId} isCollapsed={false} />
+          <ConfigDetails configId={configId} />
         </QueryClientProvider>
       </MemoryRouter>
     );
@@ -54,7 +54,7 @@ describe("ConfigDetails", () => {
     render(
       <MemoryRouter>
         <QueryClientProvider client={queryClient}>
-          <ConfigDetails configId={configId} isCollapsed={false} />
+          <ConfigDetails configId={configId} />
         </QueryClientProvider>
       </MemoryRouter>
     );

@@ -78,7 +78,7 @@ function NavItemWrapper(props: NavItemWrapperProps) {
       active || isActive
         ? "bg-gray-800 text-gray-100"
         : "text-gray-200 hover:bg-gray-800 hover:text-gray-100",
-      "group rounded-md py-1.5 px-2 flex items-center text-md font-medium",
+      "group rounded-md py-1.5 px-2 flex items-center text-base font-medium",
       className
     );
   return Component === "div" ? (
