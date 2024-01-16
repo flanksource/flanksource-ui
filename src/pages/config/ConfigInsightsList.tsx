@@ -1,7 +1,7 @@
 import { useAtom } from "jotai";
 import { useState } from "react";
 import { BreadcrumbNav, BreadcrumbRoot } from "../../components/BreadcrumbNav";
-import { configTabsLists } from "../../components/Configs/ConfigsPage/ConfigTabsLinks";
+import { configTabsLists } from "../../components/Configs/ConfigTabsLinks";
 import ConfigInsightsList from "../../components/Configs/Insights/ConfigInsightsList";
 import { ConfigInsightsFilters } from "../../components/Configs/Insights/Filters/ConfigInsightsFilters";
 import { Head } from "../../components/Head/Head";

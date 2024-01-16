@@ -10,7 +10,7 @@ import { SearchLayout } from "../../components/Layout";
 import ConfigsListFilters from "../../components/Configs/ConfigsListFilters";
 import { Head } from "../../components/Head/Head";
 import TabbedLinks from "../../components/Tabs/TabbedLinks";
-import { configTabsLists } from "../../components/Configs/ConfigsPage/ConfigTabsLinks";
+import { configTabsLists } from "../../components/Configs/ConfigTabsLinks";
 import { BreadcrumbNav, BreadcrumbRoot } from "../../components/BreadcrumbNav";
 import { useAtom } from "jotai";
 import { areDeletedConfigsHidden } from "../../components/Configs/ConfigListToggledDeletedItems/ConfigListToggledDeletedItems";

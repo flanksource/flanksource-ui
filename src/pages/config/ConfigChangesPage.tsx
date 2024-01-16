@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useGetAllConfigsChangesQuery } from "../../api/query-hooks";
 import { ConfigChangeHistory } from "../../components/Configs/Changes/ConfigChangeHistory";
-import { configTabsLists } from "../../components/Configs/ConfigsPage/ConfigTabsLinks";
+import { configTabsLists } from "../../components/Configs/ConfigTabsLinks";
 import { Head } from "../../components/Head/Head";
 import { InfoMessage } from "../../components/InfoMessage";
 import { SearchLayout } from "../../components/Layout";

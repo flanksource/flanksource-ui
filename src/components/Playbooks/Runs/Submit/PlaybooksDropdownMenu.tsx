@@ -38,7 +38,7 @@ export default function PlaybooksDropdownMenu({
   }
 
   return (
-    <div className="text-right">
+    <div className="text-right my-2">
       <Menu as="div" className="relative inline-block text-left">
         <Float placement="bottom-end" portal>
           <Menu.Button className="btn-white">

@@ -1,8 +1,8 @@
 import clsx from "clsx";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { atom, useAtom } from "jotai";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import { IoChevronBackOutline, IoChevronForwardOutline } from "react-icons/io5";
 import useRunTaskOnPropChange from "../../hooks/useRunTaskOnPropChange";
-import { atom } from "jotai";
 
 type Props = React.HTMLProps<HTMLDivElement> & {
   children?: React.ReactNode;
@@ -12,6 +12,7 @@ type Props = React.HTMLProps<HTMLDivElement> & {
 // when refresh button is clicked, we increment this to trigger refreshes in any
 // children listening in on this atom
 export const refreshButtonClickedTrigger = atom(0);
+const isSlidingSideBarOpenAtom = atom(false);
 
 export default function SlidingSideBar({
   children,
@@ -19,7 +20,7 @@ export default function SlidingSideBar({
   hideToggle,
   ...rest
 }: Props) {
-  const [open, setOpen] = useState<boolean>(false);
+  const [open, setOpen] = useAtom(isSlidingSideBarOpenAtom);
   const contentRef = useRef<HTMLDivElement>(null);
 
   function configureChildrenHeights() {
@@ -35,10 +36,11 @@ export default function SlidingSideBar({
       )
       .map((element) => element.clientHeight);
 
-    const totalHeightOfMinimizedChildren = collapsedChildren.reduce(
+    const totalHeightOfMinimizedChildren = collapsedChildren?.reduce(
       (acc, height) => {
         return acc + height;
-      }
+      },
+      0
     );
 
     [...contentRef.current?.children]
@@ -105,33 +107,34 @@ export default function SlidingSideBar({
   return (
     <div
       className={clsx(
-        `flex flex-col bg-white border-l border-gray-200 h-full overflow-y-auto px-4`,
-        open ? "w-3" : "w-[35rem]",
+        `flex flex-col bg-white border-l border-gray-200 h-full px-4`,
+        open && !hideToggle ? "w-3" : "w-[35rem]",
         className,
         !hideToggle ? "transform origin-right duration-500" : ""
       )}
       {...rest}
       style={{ paddingBottom: "64px" }}
     >
-      <div
-        className={`h-full flex flex-col space-y-2 pb-4 ${
-          open ? "hidden" : ""
-        }`}
-        ref={contentRef}
-      >
-        {children}
-      </div>
+      {/* todo: ensure button is over the content */}
       {!hideToggle && (
         <button
           type="button"
           aria-label={open ? "Open Side Panel" : "Close Side Panel"}
           title={open ? "Open Side Panel" : "Close Side Panel"}
-          className="absolute text-xl bg-white -left-6 top-6 border border-gray-300 rounded-full transform duration-500 m-2 p-1 hover:bg-gray-200 rotate-180"
+          className="absolute z-[99999] text-xl bg-white -left-6 top-6 border border-gray-300 rounded-full transform duration-500 m-2 p-1 hover:bg-gray-200 rotate-180"
           onClick={() => setOpen(!open)}
         >
           {open ? <IoChevronForwardOutline /> : <IoChevronBackOutline />}
         </button>
       )}
+      <div
+        className={`h-full flex flex-col space-y-2 pb-4 ${
+          open && !hideToggle ? "hidden" : ""
+        }`}
+        ref={contentRef}
+      >
+        {children}
+      </div>
     </div>
   );
 }

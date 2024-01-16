@@ -86,7 +86,7 @@ export const getAllChanges = (
 
 export const getConfig = (id: string) =>
   resolve<ConfigItem[]>(
-    ConfigDB.get(`/config_items?id=eq.${id}&select=*,config_scrapers(id,name)`)
+    ConfigDB.get(`/config_detail?id=eq.${id}&select=*,config_scrapers(id,name)`)
   );
 
 export type ConfigsTagList = {
@@ -173,6 +173,23 @@ export const getConfigsBy = ({
     data: [],
     error: null
   });
+};
+
+export const getDetailedConfigRelationships = ({
+  configId,
+  hideDeleted
+}: {
+  configId: string;
+  hideDeleted?: boolean;
+}) => {
+  const configFields = `id, type, changes, cost_per_minute, cost_total_1d, cost_total_7d, cost_total_30d, name, config_class, updated_at, created_at, tags, analysis, deleted_at`;
+  const deletedAt = hideDeleted ? `&deleted_at=is.null` : "";
+
+  return resolve(
+    ConfigDB.get<ConfigTypeRelationships[]>(
+      `/config_relationships?or=(related_id.eq.${configId},config_id.eq.${configId})&configs.order=name&select=*,configs:configs!config_relationships_config_id_fkey(${configFields}),related:configs!config_relationships_related_id_fkey(${configFields})${deletedAt}`
+    )
+  );
 };
 
 export const addManualComponentConfigRelationship = (
