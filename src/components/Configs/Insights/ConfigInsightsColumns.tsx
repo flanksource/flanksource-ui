@@ -1,7 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Link } from "react-router-dom";
 import { ConfigAnalysis, ConfigItem } from "../../../api/types/configs";
-import ConfigInsightsIcon from "../Insights/ConfigInsightsIcon";
+import ConfigInsightsIcon from "./ConfigInsightsIcon";
 import { ConfigIcon } from "../../Icon/ConfigIcon";
 import ConfigInsightsSeverityIcons from "./ConfigInsightsSeverityIcons";
 import { DateCell } from "../../../ui/table";

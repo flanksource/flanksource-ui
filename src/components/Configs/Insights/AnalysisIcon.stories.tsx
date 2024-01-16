@@ -1,5 +1,5 @@
 import { ComponentStory } from "@storybook/react";
-import ConfigInsightsIcon from "./index";
+import ConfigInsightsIcon from "./ConfigInsightsIcon";
 
 export default {
   title: "AnalysisIcon",

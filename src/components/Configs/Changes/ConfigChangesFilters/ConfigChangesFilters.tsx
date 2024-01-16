@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { ChangesTypesDropdown } from "../../../ChangesTypesDropdown/ChangeTypesDropdown";
 import { ConfigTypesDropdown } from "../../ConfigTypesDropdown";
-import { ConfigChangeSeverity } from "../ConfigChangeSeverity/ConfigChangeSeverity";
+import { ConfigChangeSeverity } from "../ConfigChangeSeverity";
 
 type ConfigChangeFiltersProps = React.HTMLProps<HTMLDivElement> & {
   paramsToReset?: Record<string, string>;

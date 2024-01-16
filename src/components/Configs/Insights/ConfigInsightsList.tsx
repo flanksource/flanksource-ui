@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useConfigInsightsQuery } from "../../../api/query-hooks/useConfigAnalysisQuery";
 import { ConfigAnalysis } from "../../../api/types/configs";
-import ConfigInsightsDetailsModal from "../ConfigAnalysisLink/ConfigInsightsDetailsModal";
+import ConfigInsightsDetailsModal from "./ConfigAnalysisLink/ConfigInsightsDetailsModal";
 import { DataTable } from "../../DataTable";
 import { InfoMessage } from "../../InfoMessage";
 import { ConfigInsightsColumns } from "./ConfigInsightsColumns";

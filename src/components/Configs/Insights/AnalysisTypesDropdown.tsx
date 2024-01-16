@@ -4,9 +4,9 @@ import { useSearchParams } from "react-router-dom";
 import {
   ConfigAnalysisTypeItem,
   getConfigsAnalysisTypesFilter
-} from "../../api/services/configs";
-import { Icon } from "../Icon";
-import { ReactSelectDropdown } from "../ReactSelectDropdown";
+} from "../../../api/services/configs";
+import { Icon } from "../../Icon";
+import { ReactSelectDropdown } from "../../ReactSelectDropdown";
 
 type Props = {
   onChange?: (value: string | undefined) => void;

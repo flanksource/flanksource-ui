@@ -1,13 +1,13 @@
+import { useAtom } from "jotai";
 import { useState } from "react";
-import { ConfigInsightsFilters } from "../../components/Configs/ConfigAnalysis/Filters/ConfigInsightsFilters";
-import ConfigInsightsList from "../../components/Configs/ConfigAnalysis/ConfigInsightsList";
+import { BreadcrumbNav, BreadcrumbRoot } from "../../components/BreadcrumbNav";
 import { configTabsLists } from "../../components/Configs/ConfigsPage/ConfigTabsLinks";
+import ConfigInsightsList from "../../components/Configs/Insights/ConfigInsightsList";
+import { ConfigInsightsFilters } from "../../components/Configs/Insights/Filters/ConfigInsightsFilters";
 import { Head } from "../../components/Head/Head";
 import { SearchLayout } from "../../components/Layout";
-import TabbedLinks from "../../components/Tabs/TabbedLinks";
-import { BreadcrumbNav, BreadcrumbRoot } from "../../components/BreadcrumbNav";
-import { useAtom } from "jotai";
 import { refreshButtonClickedTrigger } from "../../components/SlidingSideBar";
+import TabbedLinks from "../../components/Tabs/TabbedLinks";
 
 export function ConfigInsightsPage() {
   const [triggerRefresh, setRefreshButtonClickedTrigger] = useAtom(
@@ -22,7 +22,10 @@ export function ConfigInsightsPage() {
         title={
           <BreadcrumbNav
             list={[
-              <BreadcrumbRoot link="/catalog/insights">
+              <BreadcrumbRoot
+                link="/catalog/insights"
+                key="root-catalog-insights"
+              >
                 Catalog Insights
               </BreadcrumbRoot>
             ]}

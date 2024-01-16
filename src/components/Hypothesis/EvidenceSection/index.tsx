@@ -14,7 +14,7 @@ import { CheckDetails } from "../../Canary/CanaryPopup/CheckDetails";
 import { CheckTitle } from "../../Canary/CanaryPopup/CheckTitle";
 import { getUptimePercentage } from "../../Canary/CanaryPopup/utils";
 import { Duration, StatusList } from "../../Canary/renderers";
-import { ConfigAnalysisLink } from "../../Configs/ConfigAnalysisLink/ConfigAnalysisLink";
+import { ConfigAnalysisLink } from "../../Configs/Insights/ConfigAnalysisLink/ConfigAnalysisLink";
 import { ConfigDetailsChanges } from "../../Configs/Changes/ConfigDetailsChanges/ConfigDetailsChanges";
 import ConfigLink from "../../Configs/ConfigLink/ConfigLink";
 import { Icon } from "../../Icon";

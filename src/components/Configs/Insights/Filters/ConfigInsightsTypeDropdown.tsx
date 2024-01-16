@@ -1,6 +1,6 @@
 import React from "react";
 import { Control } from "react-hook-form";
-import ConfigInsightsIcon from "../../Insights/ConfigInsightsIcon";
+import ConfigInsightsIcon from "../ConfigInsightsIcon";
 import { defaultSelections } from "../../../Incidents/data";
 import { ReactSelectDropdown } from "../../../ReactSelectDropdown";
 

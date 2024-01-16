@@ -1,5 +1,5 @@
 import { useSearchParams } from "react-router-dom";
-import { ReactSelectDropdown } from "../../../ReactSelectDropdown";
+import { ReactSelectDropdown } from "../../ReactSelectDropdown";
 import {
   HiInformationCircle,
   HiOutlineChevronDoubleDown,
