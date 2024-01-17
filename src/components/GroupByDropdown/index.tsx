@@ -65,7 +65,7 @@ export default function GroupByDropdown({
   const groupByOptions = useMemo(() => {
     if (!allConfigs?.data) {
       return Object.values(items).sort((a, b) => {
-        return a.name.localeCompare(b.name);
+        return a.name?.localeCompare(b.name);
       });
     }
     const newItems = items;
@@ -86,7 +86,7 @@ export default function GroupByDropdown({
         });
     });
     return Object.values({ ...newItems }).sort((a, b) => {
-      return a.name.localeCompare(b.name);
+      return a.name?.localeCompare(b.name);
     });
   }, [allConfigs?.data]);
 
