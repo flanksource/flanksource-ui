@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
-import { getDetailedConfigRelationships } from "../../../api/services/configs";
-import { ConfigDetailsTabs } from "../../../components/Configs/ConfigDetailsTabs";
-import ConfigList from "../../../components/Configs/ConfigList";
+import { getDetailedConfigRelationships } from "@flanksource-ui/api/services/configs";
+import { ConfigDetailsTabs } from "@flanksource-ui/components/Configs/ConfigDetailsTabs";
+import ConfigList from "@flanksource-ui/components/Configs/ConfigList";
 
 export function ConfigDetailsRelationshipsPage() {
   const { id } = useParams();

@@ -1,15 +1,18 @@
-import { useEffect, useMemo, useState } from "react";
-import { useGetAllConfigsChangesQuery } from "../../api/query-hooks";
-import { ConfigChangeHistory } from "../../components/Configs/Changes/ConfigChangeHistory";
-import { configTabsLists } from "../../components/Configs/ConfigTabsLinks";
-import { Head } from "../../components/Head/Head";
-import { InfoMessage } from "../../components/InfoMessage";
-import { SearchLayout } from "../../components/Layout";
-import TabbedLinks from "../../components/Tabs/TabbedLinks";
-import { BreadcrumbNav, BreadcrumbRoot } from "../../components/BreadcrumbNav";
+import { useGetAllConfigsChangesQuery } from "@flanksource-ui/api/query-hooks";
+import {
+  BreadcrumbNav,
+  BreadcrumbRoot
+} from "@flanksource-ui/components/BreadcrumbNav";
+import { ConfigChangeHistory } from "@flanksource-ui/components/Configs/Changes/ConfigChangeHistory";
+import { ConfigChangeFilters } from "@flanksource-ui/components/Configs/Changes/ConfigChangesFilters/ConfigChangesFilters";
+import { configTabsLists } from "@flanksource-ui/components/Configs/ConfigTabsLinks";
+import { Head } from "@flanksource-ui/components/Head/Head";
+import { InfoMessage } from "@flanksource-ui/components/InfoMessage";
+import { SearchLayout } from "@flanksource-ui/components/Layout";
+import { refreshButtonClickedTrigger } from "@flanksource-ui/components/SlidingSideBar";
+import TabbedLinks from "@flanksource-ui/components/Tabs/TabbedLinks";
 import { useAtom } from "jotai";
-import { refreshButtonClickedTrigger } from "../../components/SlidingSideBar";
-import { ConfigChangeFilters } from "../../components/Configs/Changes/ConfigChangesFilters/ConfigChangesFilters";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
 export function ConfigChangesPage() {

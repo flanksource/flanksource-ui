@@ -1,13 +1,16 @@
+import {
+  BreadcrumbNav,
+  BreadcrumbRoot
+} from "@flanksource-ui/components/BreadcrumbNav";
+import { configTabsLists } from "@flanksource-ui/components/Configs/ConfigTabsLinks";
+import ConfigInsightsList from "@flanksource-ui/components/Configs/Insights/ConfigInsightsList";
+import { ConfigInsightsFilters } from "@flanksource-ui/components/Configs/Insights/Filters/ConfigInsightsFilters";
+import { Head } from "@flanksource-ui/components/Head/Head";
+import { SearchLayout } from "@flanksource-ui/components/Layout";
+import { refreshButtonClickedTrigger } from "@flanksource-ui/components/SlidingSideBar";
+import TabbedLinks from "@flanksource-ui/components/Tabs/TabbedLinks";
 import { useAtom } from "jotai";
 import { useState } from "react";
-import { BreadcrumbNav, BreadcrumbRoot } from "../../components/BreadcrumbNav";
-import { configTabsLists } from "../../components/Configs/ConfigTabsLinks";
-import ConfigInsightsList from "../../components/Configs/Insights/ConfigInsightsList";
-import { ConfigInsightsFilters } from "../../components/Configs/Insights/Filters/ConfigInsightsFilters";
-import { Head } from "../../components/Head/Head";
-import { SearchLayout } from "../../components/Layout";
-import { refreshButtonClickedTrigger } from "../../components/SlidingSideBar";
-import TabbedLinks from "../../components/Tabs/TabbedLinks";
 
 export function ConfigInsightsPage() {
   const [triggerRefresh, setRefreshButtonClickedTrigger] = useAtom(

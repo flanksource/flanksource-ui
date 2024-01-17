@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import { useGetConfigByIdQuery } from "../../../api/query-hooks";
-import { ConfigDetailsTabs } from "../../../components/Configs/ConfigDetailsTabs";
-import { JSONViewer } from "../../../components/JSONViewer";
-import { Loading } from "../../../components/Loading";
-import { usePartialUpdateSearchParams } from "../../../hooks/usePartialUpdateSearchParams";
-import useRunTaskOnPropChange from "../../../hooks/useRunTaskOnPropChange";
+import { useGetConfigByIdQuery } from "@flanksource-ui/api/query-hooks";
+import { ConfigDetailsTabs } from "@flanksource-ui/components/Configs/ConfigDetailsTabs";
+import { JSONViewer } from "@flanksource-ui/components/JSONViewer";
+import { Loading } from "@flanksource-ui/components/Loading";
+import { usePartialUpdateSearchParams } from "@flanksource-ui/hooks/usePartialUpdateSearchParams";
+import useRunTaskOnPropChange from "@flanksource-ui/hooks/useRunTaskOnPropChange";
 
 export function ConfigDetailsPage() {
   const { id } = useParams();

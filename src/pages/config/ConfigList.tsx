@@ -1,21 +1,24 @@
-import { useEffect, useMemo } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import objectHash from "object-hash";
-import ConfigList from "../../components/Configs/ConfigList";
 import {
   useAllConfigsQuery,
   useConfigSummaryQuery
-} from "../../api/query-hooks";
-import { SearchLayout } from "../../components/Layout";
-import ConfigsListFilters from "../../components/Configs/ConfigsListFilters";
-import { Head } from "../../components/Head/Head";
-import TabbedLinks from "../../components/Tabs/TabbedLinks";
-import { configTabsLists } from "../../components/Configs/ConfigTabsLinks";
-import { BreadcrumbNav, BreadcrumbRoot } from "../../components/BreadcrumbNav";
+} from "@flanksource-ui/api/query-hooks";
+import {
+  BreadcrumbNav,
+  BreadcrumbRoot
+} from "@flanksource-ui/components/BreadcrumbNav";
+import ConfigList from "@flanksource-ui/components/Configs/ConfigList";
+import { areDeletedConfigsHidden } from "@flanksource-ui/components/Configs/ConfigListToggledDeletedItems/ConfigListToggledDeletedItems";
+import ConfigSummaryList from "@flanksource-ui/components/Configs/ConfigSummary/ConfigSummaryList";
+import { configTabsLists } from "@flanksource-ui/components/Configs/ConfigTabsLinks";
+import ConfigsListFilters from "@flanksource-ui/components/Configs/ConfigsListFilters";
+import ConfigsTypeIcon from "@flanksource-ui/components/Configs/ConfigsTypeIcon";
+import { Head } from "@flanksource-ui/components/Head/Head";
+import { SearchLayout } from "@flanksource-ui/components/Layout";
+import TabbedLinks from "@flanksource-ui/components/Tabs/TabbedLinks";
 import { useAtom } from "jotai";
-import { areDeletedConfigsHidden } from "../../components/Configs/ConfigListToggledDeletedItems/ConfigListToggledDeletedItems";
-import ConfigsTypeIcon from "../../components/Configs/ConfigsTypeIcon";
-import ConfigSummaryList from "../../components/Configs/ConfigSummary/ConfigSummaryList";
+import objectHash from "object-hash";
+import { useEffect, useMemo } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 export function ConfigListPage() {
   const [params] = useSearchParams();

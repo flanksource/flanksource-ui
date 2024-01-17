@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getPlaybookRuns } from "../../../api/services/playbooks";
-import { ConfigDetailsTabs } from "../../../components/Configs/ConfigDetailsTabs";
-import PlaybookRunsTable from "../../../components/Playbooks/Runs/PlaybookRunsList";
+import { getPlaybookRuns } from "@flanksource-ui/api/services/playbooks";
+import { ConfigDetailsTabs } from "@flanksource-ui/components/Configs/ConfigDetailsTabs";
+import PlaybookRunsTable from "@flanksource-ui/components/Playbooks/Runs/PlaybookRunsList";
 
 export function ConfigDetailsPlaybooksPage() {
   const { id } = useParams();

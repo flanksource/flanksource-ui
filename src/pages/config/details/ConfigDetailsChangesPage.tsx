@@ -1,10 +1,10 @@
 import { useMemo, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
-import { useGetConfigChangesByConfigIdQuery } from "../../../api/query-hooks";
-import { ConfigChangeHistory } from "../../../components/Configs/Changes/ConfigChangeHistory";
-import { ConfigDetailsTabs } from "../../../components/Configs/ConfigDetailsTabs";
-import { InfoMessage } from "../../../components/InfoMessage";
-import { ConfigChangeFilters } from "../../../components/Configs/Changes/ConfigChangesFilters/ConfigChangesFilters";
+import { useGetConfigChangesByConfigIdQuery } from "@flanksource-ui/api/query-hooks";
+import { ConfigChangeHistory } from "@flanksource-ui/components/Configs/Changes/ConfigChangeHistory";
+import { ConfigDetailsTabs } from "@flanksource-ui/components/Configs/ConfigDetailsTabs";
+import { InfoMessage } from "@flanksource-ui/components/InfoMessage";
+import { ConfigChangeFilters } from "@flanksource-ui/components/Configs/Changes/ConfigChangesFilters/ConfigChangesFilters";
 
 export function ConfigDetailsChangesPage() {
   const { id } = useParams();
