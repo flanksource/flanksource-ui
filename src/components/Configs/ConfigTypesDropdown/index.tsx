@@ -52,7 +52,7 @@ export function ConfigTypesDropdown({ paramsToReset }: Props) {
     if (b.name === "All") {
       return 1;
     }
-    return a.name.localeCompare(b.name);
+    return a.name?.localeCompare(b.name);
   }
 
   const configItemsOptionsItems = useMemo(

@@ -32,7 +32,7 @@ export function sortTags(tags: TagEntry[]) {
     if (bKey === "name") {
       return 1;
     }
-    return aKey.localeCompare(bKey);
+    return aKey?.localeCompare(bKey);
   });
 }
 
