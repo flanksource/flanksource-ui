@@ -23,31 +23,42 @@ export default function PlaybookParamsFieldsRenderer({
         <FormikCodeEditor
           className="flex flex-col h-48"
           format={params.properties?.language ?? "yaml"}
-          fieldName={fieldName}
+          fieldName={`params.${fieldName}`}
         />
       );
     case "checkbox":
       return (
-        <FormikCheckbox label={label} name={fieldName} required={required} />
+        <FormikCheckbox
+          label={label}
+          name={`params.${fieldName}`}
+          required={required}
+        />
       );
 
     // todo: this needs options
     case "list":
       return (
         <FormikSelectDropdown
-          name={fieldName}
+          name={`params.${fieldName}`}
           required={required}
           options={params.properties?.options ?? []}
         />
       );
     case "team":
-      return <FormikTeamsDropdown name={fieldName} required={required} />;
+      return (
+        <FormikTeamsDropdown name={`params.${fieldName}`} required={required} />
+      );
     case "people":
-      return <FormikPeopleDropdown name={fieldName} required={required} />;
+      return (
+        <FormikPeopleDropdown
+          name={`params.${fieldName}`}
+          required={required}
+        />
+      );
     case "component":
       return (
         <FormikComponentsDropdown
-          name={fieldName}
+          name={`params.${fieldName}`}
           required={required}
           filter={params.properties?.filter}
         />
@@ -55,17 +66,23 @@ export default function PlaybookParamsFieldsRenderer({
     case "config":
       return (
         <FormikConfigsDropdown
-          name={fieldName}
+          name={`params.${fieldName}`}
           required={required}
           filter={params.properties?.filter}
         />
       );
     case "text":
       if (params.properties?.multiline) {
-        return <FormikTextArea name={fieldName} required={required} />;
+        return (
+          <FormikTextArea name={`params.${fieldName}`} required={required} />
+        );
       }
-      return <FormikTextInput name={fieldName} required={required} />;
+      return (
+        <FormikTextInput name={`params.${fieldName}`} required={required} />
+      );
     default:
-      return null;
+      return (
+        <FormikTextInput name={`params.${fieldName}`} required={required} />
+      );
   }
 }

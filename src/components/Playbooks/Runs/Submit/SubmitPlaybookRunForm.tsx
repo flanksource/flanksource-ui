@@ -1,13 +1,12 @@
 import { Form, Formik } from "formik";
 import { useMemo } from "react";
 import { useSubmitPlaybookRunMutation } from "../../../../api/query-hooks/playbooks";
+import { RunnablePlaybook } from "../../../../api/types/playbooks";
 import { Button } from "../../../Button";
 import { Modal } from "../../../Modal";
 import { toastError, toastSuccess } from "../../../Toast/toast";
-import PlaybookRunParams from "./PlaybookRunParams";
-import { RunnablePlaybook } from "../../../../api/types/playbooks";
-import { Link } from "react-router-dom";
 import { getResourceForRun } from "../services";
+import PlaybookRunParams from "./PlaybookRunParams";
 
 export type SubmitPlaybookRunFormValues = {
   // if this is present in the form, we show step to add params
@@ -49,10 +48,10 @@ export default function SubmitPlaybookRunForm({
     onSuccess: (run) => {
       toastSuccess(
         <>
-          <Link className="link" to={`/playbooks/runs/${run.run_id}`}>
-            Playbook Run{" "}
-          </Link>{" "}
-          {" submitted successfully"}
+          <a className="link mr-2" href={`/playbooks/runs/${run.run_id}`}>
+            Playbook Run
+          </a>{" "}
+          submitted successfully
         </>
       );
       onClose();
