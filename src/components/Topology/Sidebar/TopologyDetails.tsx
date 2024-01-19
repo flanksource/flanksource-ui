@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { BsCardList } from "react-icons/bs";
 import { Link } from "react-router-dom";
+import { useGetSettingsResourceDetails } from "../../../api/query-hooks/settingsResourcesHooks";
 import { isCostsEmpty } from "../../../api/types/configs";
 import { Topology } from "../../../api/types/topology";
 import { Age } from "../../../ui/Age";
@@ -30,6 +31,15 @@ export default function TopologyDetails({
 }: Props) {
   const headlineProperties =
     topology?.properties?.filter((property) => property.headline) ?? [];
+
+  const { data: topologySpec } = useGetSettingsResourceDetails(
+    {
+      api: "incident-commander",
+      name: "Topology",
+      table: "topologies"
+    },
+    topology?.topology_id
+  );
 
   const appendedDetails = useMemo(() => {
     if (topology == null) {
@@ -140,7 +150,7 @@ export default function TopologyDetails({
                   {topology.topology_id && (
                     <>
                       {" "}
-                      by a{" "}
+                      by{" "}
                       <Link
                         data-testid="settings-link"
                         to={{
@@ -148,7 +158,7 @@ export default function TopologyDetails({
                         }}
                         className="link my-auto"
                       >
-                        topology
+                        {topologySpec?.name ?? "a topology"}
                       </Link>
                     </>
                   )}
