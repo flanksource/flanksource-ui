@@ -92,11 +92,6 @@ export default function SpecEditor({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [types]);
 
-  // when the selectedSpecItem changes, we need to update the modalHelpLink
-  useEffect(() => {
-    setModalHelpLink(selectedSpecItem?.docsLink);
-  }, [selectedSpecItem?.docsLink, setModalHelpLink]);
-
   return (
     <div className="flex flex-col w-full flex-1 h-full overflow-y-auto">
       {selectedSpecItem ? (
@@ -119,7 +114,10 @@ export default function SpecEditor({
           {types.map((type) => (
             <div key={type.name} className="flex flex-col w-1/5 p-2">
               <div
-                onClick={() => setSelectedSpecItem(type)}
+                onClick={() => {
+                  setSelectedSpecItem(type);
+                  setModalHelpLink(type.docsLink);
+                }}
                 role={"button"}
                 className="flex flex-col items-center space-y-2 justify-center p-2 border border-gray-300 hover:border-blue-200 hover:bg-gray-100 rounded-md text-center h-20"
                 key={type.name}
