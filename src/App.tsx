@@ -70,6 +70,7 @@ import { PlaybooksListPage } from "./pages/playbooks/PlaybooksList";
 import { features } from "./services/permissions/features";
 import { stringSortHelper } from "./utils/common";
 import { Head } from "./components/Head/Head";
+import { Toaster } from "react-hot-toast";
 
 export type NavigationItems = {
   name: string;
@@ -501,6 +502,7 @@ export function CanaryCheckerApp() {
     <>
       <Head prefix={"Canary Checker"} suffix="" />
       <BrowserRouter>
+        <Toaster position="top-right" reverseOrder={false} />
         <Provider>
           <FeatureFlagsContextProvider>
             <HealthPageContextProvider>
@@ -547,6 +549,7 @@ export function App() {
   return (
     <BrowserRouter>
       <Provider>
+        <Toaster position="top-right" reverseOrder={false} />
         <AuthProviderWrapper>
           <BootIntercom>
             <UserAccessStateContextProvider>
