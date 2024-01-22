@@ -3,21 +3,23 @@ import { useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useConfigInsightsQuery } from "../../../api/query-hooks/useConfigAnalysisQuery";
 import { ConfigAnalysis } from "../../../api/types/configs";
-import ConfigInsightsDetailsModal from "./ConfigAnalysisLink/ConfigInsightsDetailsModal";
 import { DataTable } from "../../DataTable";
 import { InfoMessage } from "../../InfoMessage";
-import { ConfigInsightsColumns } from "./ConfigInsightsColumns";
+import ConfigInsightsDetailsModal from "./ConfigAnalysisLink/ConfigInsightsDetailsModal";
+import { ConfigInsightsColumns as configInsightsColumns } from "./ConfigInsightsColumns";
 
 type Props = {
   setIsLoading: (isLoading: boolean) => void;
   triggerRefresh: number;
   configId?: string;
+  columnsToHide?: string[];
 };
 
 export default function ConfigInsightsList({
   setIsLoading,
   triggerRefresh,
-  configId
+  configId,
+  columnsToHide = []
 }: Props) {
   const [params, setParams] = useSearchParams();
   const [clickedInsightItem, setClickedInsightItem] =
@@ -98,8 +100,6 @@ export default function ConfigInsightsList({
     };
   }, [pageIndex, pageSize, pageCount, isLoading, isRefetching]);
 
-  const columns = useMemo(() => ConfigInsightsColumns, []);
-
   return (
     // eslint-disable-next-line react/jsx-no-useless-fragment
     <>
@@ -107,12 +107,13 @@ export default function ConfigInsightsList({
         <InfoMessage message={error.message} />
       ) : (
         <DataTable
-          columns={columns}
+          columns={configInsightsColumns}
           data={configInsights}
           isLoading={isLoading}
           stickyHead
           pagination={pagination}
           tableSortByState={sortState}
+          hiddenColumns={columnsToHide}
           handleRowClick={(row) => {
             setClickedInsightItem(row.original);
             setIsInsightDetailsModalOpen(true);

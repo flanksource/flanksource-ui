@@ -1,10 +1,10 @@
-import { useAtom } from "jotai";
-import { useState } from "react";
-import { useParams } from "react-router-dom";
 import { ConfigDetailsTabs } from "@flanksource-ui/components/Configs/ConfigDetailsTabs";
 import ConfigInsightsList from "@flanksource-ui/components/Configs/Insights/ConfigInsightsList";
 import { ConfigInsightsFilters } from "@flanksource-ui/components/Configs/Insights/Filters/ConfigInsightsFilters";
 import { refreshButtonClickedTrigger } from "@flanksource-ui/components/SlidingSideBar";
+import { useAtom } from "jotai";
+import { useState } from "react";
+import { useParams } from "react-router-dom";
 
 export function ConfigDetailsInsightsPage() {
   const { id } = useParams();
@@ -31,6 +31,7 @@ export function ConfigDetailsInsightsPage() {
             setIsLoading={(isLoading) => setIsLoading(isLoading)}
             triggerRefresh={triggerRefresh}
             configId={id}
+            columnsToHide={["catalog"]}
           />
         </div>
       </div>

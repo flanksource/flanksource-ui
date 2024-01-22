@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { ChangesTypesDropdown } from "../../../ChangesTypesDropdown/ChangeTypesDropdown";
-import { ConfigTypesDropdown } from "../../ConfigTypesDropdown";
+import { ConfigTypesDropdown } from "../../ConfigsListFilters/ConfigTypesDropdown";
 import { ConfigChangeSeverity } from "../ConfigChangeSeverity";
 import ConfigChangesDateRangeFilter from "./ConfigChangesDateRangeFIlter";
 

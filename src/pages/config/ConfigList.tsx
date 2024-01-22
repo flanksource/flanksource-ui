@@ -17,7 +17,7 @@ import { SearchLayout } from "@flanksource-ui/components/Layout";
 import TabbedLinks from "@flanksource-ui/components/Tabs/TabbedLinks";
 import { useAtom } from "jotai";
 import objectHash from "object-hash";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 export function ConfigListPage() {
@@ -29,7 +29,6 @@ export function ConfigListPage() {
   const groupByProp = decodeURIComponent(params.get("groupByProp") ?? "");
   const sortBy = params.get("sortBy");
   const sortOrder = params.get("sortOrder");
-  const hideDeleted = params.get("hideDeleted");
   const [deletedConfigsHidden, setDeletedConfigsHidden] = useAtom(
     areDeletedConfigsHidden
   );
@@ -62,12 +61,6 @@ export function ConfigListPage() {
       enabled: !showConfigSummaryList
     }
   );
-
-  useEffect(() => {
-    if (hideDeleted) {
-      setDeletedConfigsHidden(hideDeleted);
-    }
-  }, [hideDeleted, setDeletedConfigsHidden]);
 
   const {
     isLoading: isLoadingSummary,

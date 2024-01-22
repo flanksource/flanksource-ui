@@ -3,7 +3,7 @@ import { Toggle } from "../../Toggle";
 import { useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 
-export const areDeletedConfigsHidden = atomWithStorage(
+export const areDeletedConfigsHidden = atomWithStorage<"yes" | "no">(
   "areDeletedConfigsHidden",
   "yes"
 );

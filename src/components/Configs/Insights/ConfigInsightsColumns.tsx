@@ -1,10 +1,10 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Link } from "react-router-dom";
 import { ConfigAnalysis, ConfigItem } from "../../../api/types/configs";
-import ConfigInsightsIcon from "./ConfigInsightsIcon";
-import { ConfigIcon } from "../../Icon/ConfigIcon";
-import ConfigInsightsSeverityIcons from "./ConfigInsightsSeverityIcons";
 import { DateCell } from "../../../ui/table";
+import { ConfigIcon } from "../../Icon/ConfigIcon";
+import ConfigInsightsIcon from "./ConfigInsightsIcon";
+import ConfigInsightsSeverityIcons from "./ConfigInsightsSeverityIcons";
 
 export const ConfigInsightsColumns: ColumnDef<
   ConfigAnalysis & { config?: ConfigItem },
@@ -12,8 +12,9 @@ export const ConfigInsightsColumns: ColumnDef<
 >[] = [
   {
     header: "Catalog",
-    id: "config",
+    id: "catalog",
     aggregatedCell: "",
+    enableHiding: true,
     size: 100,
     cell: ({ cell }) => {
       const config = cell.row.original.config;
