@@ -29,6 +29,7 @@ export default function FormikSelectDropdown({
   required = false,
   hint,
   options,
+  className = "flex flex-col space-y-2 py-2",
   ...props
 }: Props) {
   const [isTouched, setIsTouched] = useState(false);
@@ -60,7 +61,7 @@ export default function FormikSelectDropdown({
   }, [isTouched, meta.initialTouched, meta.touched]);
 
   return (
-    <div className="flex flex-col space-y-2 py-2">
+    <div className={className}>
       {label && <label className="form-label">{label}</label>}
       <Select
         name={name}
@@ -97,9 +98,12 @@ export default function FormikSelectDropdown({
               <components.Option {...props}>
                 <div className="flex flex-row gap-2 items-center">
                   {(props.data as any).icon && (
-                    <div>{(props.data as any).icon}</div>
+                    // eslint-disable-next-line react/jsx-no-useless-fragment
+                    <>{(props.data as any).icon}</>
                   )}
-                  <div className="flex-1">{children}</div>
+                  <div className="flex-1 whitespace-nowrap text-ellipsis break-before-all">
+                    {children}
+                  </div>
                 </div>
               </components.Option>
             );
@@ -109,9 +113,12 @@ export default function FormikSelectDropdown({
               <components.SingleValue {...props}>
                 <div className="flex flex-row gap-2 items-center">
                   {(props.data as any).icon && (
-                    <div>{(props.data as any).icon}</div>
+                    // eslint-disable-next-line react/jsx-no-useless-fragment
+                    <>{(props.data as any).icon}</>
                   )}
-                  <div className="flex-1">{children}</div>
+                  <div className="flex-1 whitespace-nowrap text-ellipsis break-after-all">
+                    {children}
+                  </div>
                 </div>
               </components.SingleValue>
             );

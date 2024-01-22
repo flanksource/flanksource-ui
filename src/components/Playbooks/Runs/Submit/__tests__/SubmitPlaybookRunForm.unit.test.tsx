@@ -31,6 +31,9 @@ global.ResizeObserver = jest.fn().mockImplementation(() => ({
 const server = setupServer(
   rest.post("/api/playbook/run", (req, res, ctx) => {
     return res(ctx.json(playbook));
+  }),
+  rest.get("/api/db/playbooks", (req, res, ctx) => {
+    return res(ctx.json(playbook));
   })
 );
 

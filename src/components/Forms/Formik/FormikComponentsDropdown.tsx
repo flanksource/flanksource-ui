@@ -9,8 +9,9 @@ type FormikComponentsDropdownProps = {
   required?: boolean;
   hint?: string;
   filter?: {
-    type: string;
+    types: string[];
   };
+  className?: string;
 };
 
 export default function FormikComponentsDropdown({
@@ -18,10 +19,11 @@ export default function FormikComponentsDropdown({
   label,
   required = false,
   hint,
-  filter
+  filter,
+  className = "flex flex-col space-y-2 py-2"
 }: FormikComponentsDropdownProps) {
   const { isLoading, data: components } = useComponentsQuery({
-    type: filter?.type
+    types: filter?.types ?? []
   });
 
   const options = useMemo(
@@ -29,7 +31,7 @@ export default function FormikComponentsDropdown({
       components?.map((component) => ({
         label: component.name,
         value: component.id,
-        icon: <Icon name={component.icon} />
+        icon: <Icon name={component.icon} className="h-5 w-5" />
       })),
     [components]
   );
@@ -37,7 +39,7 @@ export default function FormikComponentsDropdown({
   return (
     <FormikSelectDropdown
       name={name}
-      className="h-full shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm border-gray-300 rounded-md"
+      className={className}
       options={options}
       label={label}
       isLoading={isLoading}

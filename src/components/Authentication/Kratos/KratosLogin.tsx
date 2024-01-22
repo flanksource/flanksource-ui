@@ -4,6 +4,7 @@ import type { NextPage } from "next";
 import Link from "next/link";
 import Router, { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
+import { Toaster } from "react-hot-toast";
 import FullPageSkeletonLoader from "../../SkeletonLoader/FullPageSkeletonLoader";
 import { toastError } from "../../Toast/toast";
 import { Flow, HandleError } from "../../ory";
@@ -115,6 +116,7 @@ const Login: NextPage = () => {
 
   return (
     <div className="w-96">
+      <Toaster position="top-right" reverseOrder={false} />
       <div>
         <img
           alt="Mission Control"

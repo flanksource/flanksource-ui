@@ -44,7 +44,7 @@ interface IModalProps {
 export function Modal({
   title,
   titleClass,
-  bodyClass,
+  bodyClass = "flex flex-col flex-1 overflow-y-auto",
   footerClassName,
   actions,
   open,
@@ -54,7 +54,7 @@ export function Modal({
   size,
   children,
   containerClassName = "overflow-auto max-h-full",
-  dialogClassName = "fixed z-50 inset-0 overflow-y-auto min-h-2xl:my-20",
+  dialogClassName = "fixed z-50 inset-0 overflow-y-auto min-h-2xl:my-20 py-4",
   ...rest
 }: IModalProps) {
   const [helpLink] = useAtom(modalHelpLinkAtom);
@@ -145,7 +145,7 @@ export function Modal({
                 )}
               </div>
 
-              <div className={bodyClass ?? "px-8"}>{children}</div>
+              <div className={bodyClass}>{children}</div>
 
               {Boolean(actions?.length) && (
                 <div

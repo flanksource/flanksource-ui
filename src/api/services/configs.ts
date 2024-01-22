@@ -123,12 +123,12 @@ export const getConfigChanges = (
   );
 };
 
-export const getConfigList = (type?: string) => {
+export const getConfigListFilteredByType = (types: string[]) => {
   return resolve<Pick<ConfigItem, "id" | "name" | "config_class" | "type">[]>(
     ConfigDB.get(
-      `/config_item?select=id,name,type,config_class${
+      `/config_items?select=id,name,type,config_class${
         // if type is not provided, return all configs
-        type ? `&type=eq.${type}` : ""
+        types.length > 0 ? `&type=in.(${types.join(",")})` : ""
       }`
     )
   );

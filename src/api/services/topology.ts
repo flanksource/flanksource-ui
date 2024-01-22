@@ -182,9 +182,11 @@ export const getCheckStatuses = (
   );
 };
 
-export const getTopologyComponents = (type?: string) => {
+export const getTopologyComponentsByTypes = (types: string[]) => {
   return IncidentCommander.get<Component[]>(
-    `/component_names?order=name.asc${type ? `&type=eq.${type}` : ""}`
+    `/component_names?order=name.asc${
+      types.length > 0 ? `&type=in.(${types.join(",")})` : ""
+    }`
   );
 };
 
