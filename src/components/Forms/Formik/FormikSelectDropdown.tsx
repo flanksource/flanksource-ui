@@ -96,7 +96,7 @@ export default function FormikSelectDropdown({
           Option: ({ children, ...props }) => {
             return (
               <components.Option {...props}>
-                <div className="flex flex-row gap-2 items-center">
+                <div className="flex flex-row gap-2 items-center text-sm">
                   {(props.data as any).icon && (
                     // eslint-disable-next-line react/jsx-no-useless-fragment
                     <>{(props.data as any).icon}</>
