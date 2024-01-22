@@ -16,6 +16,7 @@ import PlaybookSpecModalTitle from "../../PlaybookSpecModalTitle";
 import { getResourceForRun } from "../services";
 import PlaybookRunParams from "./PlaybookRunParams";
 import PlaybookSelectResource from "./PlaybookSelectResource";
+import { AxiosError } from "axios";
 
 export type SubmitPlaybookRunFormValues = {
   // if this is present in the form, we show step to add params
@@ -74,7 +75,9 @@ export default function SubmitPlaybookRunForm({
       onClose();
     },
     onError: (error) => {
-      toastError(error.message);
+      const message =
+        ((error as AxiosError).response?.data as any)?.error ?? error.message;
+      toastError(message ?? error.message);
     }
   });
 
