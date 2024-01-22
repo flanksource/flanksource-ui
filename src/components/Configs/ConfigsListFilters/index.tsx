@@ -7,9 +7,9 @@ import { QueryBuilder } from "../../QueryBuilder";
 import { Switch } from "../../Switch";
 import { TextInputClearable } from "../../TextInputClearable";
 import GroupByDropdown from "../../GroupByDropdown";
-import { ConfigTagsDropdown } from "../ConfigTagsDropdown";
+import { ConfigTagsDropdown } from "./ConfigTagsDropdown";
 import { ConfigListToggledDeletedItems } from "../ConfigListToggledDeletedItems/ConfigListToggledDeletedItems";
-import { ConfigTypesDropdown } from "../ConfigTypesDropdown";
+import { ConfigTypesDropdown } from "./ConfigTypesDropdown";
 
 const ConfigFilterViewTypes = {
   basic: "Basic",
