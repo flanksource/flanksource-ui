@@ -1,8 +1,7 @@
-import { useContext, useMemo } from "react";
+import { useMemo } from "react";
 import { GeneratedAgent } from "../../../api/services/agents";
-import { AuthContext } from "../../../context";
-import { AgentFormValues } from "../Add/AddAgentForm";
 import CodeBlock from "../../CodeBlock/CodeBlock";
+import { AgentFormValues } from "../Add/AddAgentForm";
 
 type Props = {
   generatedAgent: GeneratedAgent;
@@ -13,7 +12,7 @@ export default function CLIInstallAgent({
   generatedAgent,
   agentFormValues
 }: Props) {
-  const { backendUrl } = useContext(AuthContext);
+  const baseUrl = window.location.origin;
 
   const kubeOptions = agentFormValues?.kubernetes;
 
@@ -43,13 +42,13 @@ helm repo update
 
 helm install mc-agent flanksource/mission-control-agent -n "mission-control-agent" \
 --set upstream.createSecret=true \
---set upstream.host=${backendUrl} \
+--set upstream.host=${baseUrl} \
 --set upstream.username=${generatedAgent.username} \
 --set upstream.password=${generatedAgent.access_token}
 
 helm install mc-agent flanksource/mission-control-agent -n "mission-control-agent" \
 --set upstream.createSecret=true \
---set upstream.host=${backendUrl} \
+--set upstream.host=${baseUrl} \
 --set upstream.username=${generatedAgent.username} \
 --set upstream.password=${generatedAgent.access_token}
 ${kubeOptionsString}
