@@ -24,9 +24,9 @@ export default function PlaybookSelectResource({
   return (
     <div className="flex flex-col my-2">
       {configTypes && (
-        <div className="flex flex-row gap-2 items-center">
+        <div className="flex flex-row gap-2">
           <div className="w-36">
-            <label htmlFor={`config_id`} className="form-label mb-0">
+            <label htmlFor={`config_id`} className="form-label mb-0 py-4">
               Catalog Item
             </label>
           </div>
@@ -42,9 +42,9 @@ export default function PlaybookSelectResource({
         </div>
       )}
       {componentTypes && (
-        <div className="flex flex-row gap-2 items-center">
+        <div className="flex flex-row gap-2">
           <div className="w-36">
-            <label htmlFor={`config_id`} className="form-label mb-0">
+            <label htmlFor={`config_id`} className="form-label mb-0 py-4">
               Component
             </label>
           </div>
