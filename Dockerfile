@@ -1,4 +1,4 @@
-FROM node:16 AS deps
+FROM node:16@sha256:f77a1aef2da8d83e45ec990f45df50f1a286c5fe8bbfb8c6e4246c6389705c0b AS deps
 WORKDIR /app
 
 # Install dependencies based on the preferred package manager
@@ -6,7 +6,7 @@ COPY package.json package-lock.json* ./
 RUN npm i
 
 # Rebuild the source code only when needed
-FROM node:16 AS builder
+FROM node:16@sha256:f77a1aef2da8d83e45ec990f45df50f1a286c5fe8bbfb8c6e4246c6389705c0b AS builder
 WORKDIR /app
 ARG APP_DEPLOYMENT=INCIDENT_MANAGER
 ARG WITHOUT_AUTH=false
@@ -28,7 +28,7 @@ RUN NEXT_STANDALONE_DEPLOYMENT=true npm run build
 RUN cp .next/routes-manifest.json .next/routes-manifest.orig.json
 
 # Production image, copy all the files and run next
-FROM node:16 AS runner
+FROM node:16@sha256:f77a1aef2da8d83e45ec990f45df50f1a286c5fe8bbfb8c6e4246c6389705c0b AS runner
 WORKDIR /app
 
 ENV NEXT_PUBLIC_APP_DEPLOYMENT=${APP_DEPLOYMENT}
