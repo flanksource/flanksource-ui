@@ -1,9 +1,10 @@
-import FormikTextInput from "../Formik/FormikTextInput";
 import FormikCheckbox from "../Formik/FormikCheckbox";
+import FormikCheckboxFieldsGroup from "../Formik/FormikCheckboxFieldsGroup";
 import FormikEnvVarConfigsFields from "../Formik/FormikConfigEnvVarFields";
 import FormikConfigFormFieldsArray from "../Formik/FormikConfigFormFieldsArray";
-import FormikCheckboxFieldsGroup from "../Formik/FormikCheckboxFieldsGroup";
 import FormikScheduleField from "../Formik/FormikScheduleField";
+import FormikTextInput from "../Formik/FormikTextInput";
+import ConfigRetentionSpec from "./ConfigRentionSpec";
 
 type AWSConfigsFormEditorProps = {
   fieldName: string;
@@ -145,6 +146,8 @@ export default function AWSConfigsFormEditor({
           />
         </div>
       </div>
+
+      <ConfigRetentionSpec fieldName={`${name}.retention`} />
     </>
   );
 }

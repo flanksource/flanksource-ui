@@ -1,8 +1,9 @@
-import FormikTextInput from "../Formik/FormikTextInput";
 import FormikCheckbox from "../Formik/FormikCheckbox";
+import { FormikCodeEditor } from "../Formik/FormikCodeEditor";
 import FormikConfigFormFieldsArray from "../Formik/FormikConfigFormFieldsArray";
 import FormikScheduleField from "../Formik/FormikScheduleField";
-import { FormikCodeEditor } from "../Formik/FormikCodeEditor";
+import FormikTextInput from "../Formik/FormikTextInput";
+import ConfigRetentionSpec from "./ConfigRentionSpec";
 
 type TrivyConfigsFormEditorProps = {
   fieldName: string;
@@ -42,8 +43,8 @@ export default function TrivyConfigsFormEditor({
               name: "ignoredLicenses"
             }
           ]}
-        />   
-   
+        />
+
         <FormikCheckbox
           name={`${fieldName}.licenseFull`}
           label="License Full"
@@ -112,6 +113,8 @@ export default function TrivyConfigsFormEditor({
           </div>
         </div>
       </div>
+
+      <ConfigRetentionSpec fieldName={`${name}.retention`} />
     </>
   );
 }

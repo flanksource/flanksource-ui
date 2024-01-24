@@ -1,8 +1,9 @@
-import FormikTextInput from "../Formik/FormikTextInput";
 import FormikConfigFormFieldsArray from "../Formik/FormikConfigFormFieldsArray";
-import FormikScheduleField from "../Formik/FormikScheduleField";
 import FormikConfigFormFormsArray from "../Formik/FormikConfigFormFormsArray";
+import FormikScheduleField from "../Formik/FormikScheduleField";
+import FormikTextInput from "../Formik/FormikTextInput";
 import FormikAdvancedScrapperFields from "../Formik/FormkiAdvancedScrapperFields";
+import ConfigRetentionSpec from "./ConfigRentionSpec";
 
 type KubernetesConfigsFileFormEditorProps = {
   fieldName: string;
@@ -78,6 +79,8 @@ export default function KubernetesFileConfigsFormEditor({
           <FormikAdvancedScrapperFields fieldName={fieldName} />
         </div>
       </div>
+
+      <ConfigRetentionSpec fieldName={`${name}.retention`} />
     </>
   );
 }

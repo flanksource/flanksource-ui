@@ -1,8 +1,9 @@
-import FormikTextInput from "../Formik/FormikTextInput";
 import FormikConfigFormFieldsArray from "../Formik/FormikConfigFormFieldsArray";
-import FormikScheduleField from "../Formik/FormikScheduleField";
-import FormikAdvancedScrapperFields from "../Formik/FormkiAdvancedScrapperFields";
 import FormikConnectionField from "../Formik/FormikConnectionField";
+import FormikScheduleField from "../Formik/FormikScheduleField";
+import FormikTextInput from "../Formik/FormikTextInput";
+import FormikAdvancedScrapperFields from "../Formik/FormkiAdvancedScrapperFields";
+import ConfigRetentionSpec from "./ConfigRentionSpec";
 
 type FileConfigsFormEditorProps = {
   fieldName: string;
@@ -62,6 +63,8 @@ export default function FileConfigsFormEditor({
           <FormikAdvancedScrapperFields fieldName={fieldName} />
         </div>
       </div>
+
+      <ConfigRetentionSpec fieldName={`${name}.retention`} />
     </>
   );
 }

@@ -1,9 +1,10 @@
-import FormikTextInput from "../Formik/FormikTextInput";
 import FormikCheckbox from "../Formik/FormikCheckbox";
+import FormikCheckboxFieldsGroup from "../Formik/FormikCheckboxFieldsGroup";
 import FormikEnvVarConfigsFields from "../Formik/FormikConfigEnvVarFields";
 import FormikConfigFormFieldsArray from "../Formik/FormikConfigFormFieldsArray";
-import FormikCheckboxFieldsGroup from "../Formik/FormikCheckboxFieldsGroup";
 import FormikScheduleField from "../Formik/FormikScheduleField";
+import FormikTextInput from "../Formik/FormikTextInput";
+import ConfigRetentionSpec from "./ConfigRentionSpec";
 
 type KubernetesConfigsFormEditorProps = {
   fieldName: string;
@@ -64,6 +65,8 @@ export default function KubernetesConfigsFormEditor({
       >
         <FormikEnvVarConfigsFields name={`${fieldName}.kubeconfig`} />
       </FormikCheckboxFieldsGroup>
+
+      <ConfigRetentionSpec fieldName={`${name}.retention`} />
     </>
   );
 }
