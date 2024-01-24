@@ -13,12 +13,15 @@ on:
       - "**/.prettierrc*"
       - "**/package.json"
       - "**/github/workflows/lint.yml"
+permissions:
+  contents: read
+
 jobs:
   eslint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@61b9e3751b92087fd0b06925ba6dd6314e06f089 # master
+      - uses: actions/setup-node@1a4442cacd436585916779262731d5b162bc6ec7 # v3.8.2
         with:
           node-version: 20
           cache: "npm"
