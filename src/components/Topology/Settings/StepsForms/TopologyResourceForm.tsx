@@ -3,6 +3,7 @@ import clsx from "clsx";
 import { Form, Formik } from "formik";
 import { useCallback, useMemo } from "react";
 import { FaSpinner } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import { TupleToUnion } from "type-fest";
 import { parse } from "yaml";
 import {
@@ -70,6 +71,7 @@ export default function TopologyResourceForm({
   const resourceInfo = schemaResourceTypes.find(
     (item) => item.name === "Topology"
   );
+  const navigate = useNavigate();
 
   const { data: spec, isLoading: isLoadingSpec } = useQuery({
     queryKey: ["Github", "mission-control-registry", selectedOption],
@@ -86,7 +88,11 @@ export default function TopologyResourceForm({
     useSettingsCreateResource(resourceInfo!, onSuccess);
 
   const { mutate: updateResource, isLoading: isUpdatingResource } =
-    useSettingsUpdateResource(resourceInfo!, topology, isModal);
+    useSettingsUpdateResource(resourceInfo!, topology, {
+      onSuccess: () => {
+        navigate(`/settings/integrations`);
+      }
+    });
 
   const isLoading = isCreatingResource || isUpdatingResource;
 
