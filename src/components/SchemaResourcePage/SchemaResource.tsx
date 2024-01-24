@@ -1,20 +1,22 @@
-import { useParams } from "react-router-dom";
-import { BreadcrumbNav } from "../BreadcrumbNav";
-import { SearchLayout } from "../Layout";
-import { SchemaResourceType } from "./resourceTypes";
-import { SchemaResourceEdit } from "./SchemaResourceEdit";
-import { useGetSettingsResourceDetails } from "../../api/query-hooks/settingsResourcesHooks";
-import { Head } from "../Head/Head";
+import { useNavigate, useParams } from "react-router-dom";
 import { useSettingsUpdateResource } from "../../api/query-hooks/mutations/useSettingsResourcesMutations";
-import ErrorPage from "../Errors/ErrorPage";
-import TableSkeletonLoader from "../SkeletonLoader/TableSkeletonLoader";
+import { useGetSettingsResourceDetails } from "../../api/query-hooks/settingsResourcesHooks";
+import { BreadcrumbNav } from "../BreadcrumbNav";
 import EmptyState from "../EmptyState";
+import ErrorPage from "../Errors/ErrorPage";
+import { Head } from "../Head/Head";
+import { SearchLayout } from "../Layout";
+import TableSkeletonLoader from "../SkeletonLoader/TableSkeletonLoader";
+import { SchemaResourceEdit } from "./SchemaResourceEdit";
+import { SchemaResourceType } from "./resourceTypes";
 
 export function SchemaResource({
   resourceInfo
 }: {
   resourceInfo: SchemaResourceType;
 }) {
+  const navigate = useNavigate();
+
   const { name } = resourceInfo;
   const { id } = useParams();
 
@@ -26,7 +28,12 @@ export function SchemaResource({
 
   const { mutateAsync: updateResource } = useSettingsUpdateResource(
     resourceInfo,
-    resource
+    resource,
+    {
+      onSuccess: () => {
+        navigate(`/settings/${resourceInfo.table}`);
+      }
+    }
   );
 
   return (

@@ -1,4 +1,8 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  UseMutationOptions,
+  useMutation,
+  useQueryClient
+} from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import {
   SchemaApi,
@@ -43,29 +47,26 @@ export const useSettingsDeleteResource = (
 export const useSettingsUpdateResource = (
   resourceInfo: Pick<SchemaResourceType, "api" | "table" | "name">,
   resource?: Record<string, any>,
-  isModal = false
+  options: Omit<
+    UseMutationOptions<void, any, Partial<SchemaResourceI>>,
+    "mutationFn"
+  > = {}
 ) => {
-  const navigate = useNavigate();
-
-  return useMutation(
-    async (props: Partial<SchemaResourceI>) => {
+  return useMutation({
+    mutationFn: async (props: Partial<SchemaResourceI>) => {
       await updateResource(resourceInfo, {
         ...resource,
         ...props
       });
     },
-    {
-      onSuccess: () => {
-        toastSuccess(`${resourceInfo.name} updated successfully`);
-        if (!isModal) {
-          navigate(`/settings/${resourceInfo.table}`);
-        }
-      },
-      onError: (ex: any) => {
-        toastError(ex);
-      }
-    }
-  );
+    onSuccess: () => {
+      toastSuccess(`${resourceInfo.name} updated successfully`);
+    },
+    onError: (ex: any) => {
+      toastError(ex);
+    },
+    ...options
+  });
 };
 
 export const useSettingsCreateResource = (

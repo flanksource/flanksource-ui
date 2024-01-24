@@ -29,7 +29,11 @@ export default function LogBackendsForm({
   const { mutate: updateLoggingBackend } = useSettingsUpdateResource(
     logsBackendSchemaAPI,
     undefined,
-    true
+    {
+      onSuccess: () => {
+        onUpdated();
+      }
+    }
   );
 
   const queryClient = useQueryClient();
