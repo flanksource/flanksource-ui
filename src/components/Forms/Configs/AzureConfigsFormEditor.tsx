@@ -1,8 +1,9 @@
-import FormikTextInput from "../Formik/FormikTextInput";
-import FormikConfigFormFieldsArray from "../Formik/FormikConfigFormFieldsArray";
-import FormikScheduleField from "../Formik/FormikScheduleField";
 import { FormikCodeEditor } from "../Formik/FormikCodeEditor";
+import FormikConfigFormFieldsArray from "../Formik/FormikConfigFormFieldsArray";
 import FormikConnectionField from "../Formik/FormikConnectionField";
+import FormikScheduleField from "../Formik/FormikScheduleField";
+import FormikTextInput from "../Formik/FormikTextInput";
+import ConfigRetentionSpec from "./ConfigRentionSpec";
 
 type AzureConfigsFormEditorProps = {
   fieldName: string;
@@ -55,6 +56,7 @@ export default function AzureConfigsFormEditor({
           }
         ]}
       />
+      <ConfigRetentionSpec fieldName={`${name}.retention`} />
     </>
   );
 }

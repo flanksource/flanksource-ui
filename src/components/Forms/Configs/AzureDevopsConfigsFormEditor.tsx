@@ -1,10 +1,10 @@
-import FormikTextInput from "../Formik/FormikTextInput";
-import FormikConfigFormFieldsArray from "../Formik/FormikConfigFormFieldsArray";
-import FormikScheduleField from "../Formik/FormikScheduleField";
-import FormikAdvancedScrapperFields from "../Formik/FormkiAdvancedScrapperFields";
-import FormikConnectionField from "../Formik/FormikConnectionField";
-import FormikEnvVarConfigsFields from "../Formik/FormikConfigEnvVarFields";
 import FormikCheckboxFieldsGroup from "../Formik/FormikCheckboxFieldsGroup";
+import FormikEnvVarConfigsFields from "../Formik/FormikConfigEnvVarFields";
+import FormikConfigFormFieldsArray from "../Formik/FormikConfigFormFieldsArray";
+import FormikConnectionField from "../Formik/FormikConnectionField";
+import FormikScheduleField from "../Formik/FormikScheduleField";
+import FormikTextInput from "../Formik/FormikTextInput";
+import ConfigRetentionSpec from "./ConfigRentionSpec";
 
 type AzureDevopsConfigsFormEditorProps = {
   fieldName: string;
@@ -61,6 +61,8 @@ export default function AzureDevopsConfigsFormEditor({
       />
 
       <FormikTextInput name={`${fieldName}.tags`} label="Tags" />
+
+      <ConfigRetentionSpec fieldName={`${name}.retention`} />
     </>
   );
 }

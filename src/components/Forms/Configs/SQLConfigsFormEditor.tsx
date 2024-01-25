@@ -1,10 +1,11 @@
-import FormikTextInput from "../Formik/FormikTextInput";
+import FormikCheckboxFieldsGroup from "../Formik/FormikCheckboxFieldsGroup";
 import FormikEnvVarConfigsFields from "../Formik/FormikConfigEnvVarFields";
 import FormikConfigFormFieldsArray from "../Formik/FormikConfigFormFieldsArray";
-import FormikCheckboxFieldsGroup from "../Formik/FormikCheckboxFieldsGroup";
+import FormikConnectionField from "../Formik/FormikConnectionField";
 import FormikScheduleField from "../Formik/FormikScheduleField";
 import FormikTextArea from "../Formik/FormikTextArea";
-import FormikConnectionField from "../Formik/FormikConnectionField";
+import FormikTextInput from "../Formik/FormikTextInput";
+import ConfigRetentionSpec from "./ConfigRentionSpec";
 
 type SQLConfigsFormEditorProps = {
   fieldName: string;
@@ -74,6 +75,8 @@ export default function SQLConfigsFormEditor({
           ]}
         />
       </div>
+
+      <ConfigRetentionSpec fieldName={`${name}.retention`} />
     </>
   );
 }

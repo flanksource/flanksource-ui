@@ -1,8 +1,9 @@
-import FormikTextInput from "../Formik/FormikTextInput";
 import FormikConfigFormFieldsArray from "../Formik/FormikConfigFormFieldsArray";
-import FormikScheduleField from "../Formik/FormikScheduleField";
-import FormikAdvancedScrapperFields from "../Formik/FormkiAdvancedScrapperFields";
 import FormikConnectionField from "../Formik/FormikConnectionField";
+import FormikScheduleField from "../Formik/FormikScheduleField";
+import FormikTextInput from "../Formik/FormikTextInput";
+import FormikAdvancedScrapperFields from "../Formik/FormkiAdvancedScrapperFields";
+import ConfigRetentionSpec from "./ConfigRentionSpec";
 
 type HttpConfigsFormEditorProps = {
   fieldName: string;
@@ -54,13 +55,13 @@ export default function HttpConfigsFormEditor({
       />
 
       <div className="flex flex-col space-y-2">
-        <label className="font-semibold text-sm">
-          Advanced Options
-        </label>
+        <label className="font-semibold text-sm">Advanced Options</label>
         <div className="flex flex-col p-4 space-y-2 border border-gray-200 rounded-md">
           <FormikAdvancedScrapperFields fieldName={fieldName} />
         </div>
       </div>
+
+      <ConfigRetentionSpec fieldName={`${name}.retention`} />
     </>
   );
 }
