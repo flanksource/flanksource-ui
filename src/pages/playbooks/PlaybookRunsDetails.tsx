@@ -10,6 +10,7 @@ import { Head } from "../../components/Head/Head";
 import { SearchLayout } from "../../components/Layout";
 import PlaybookRunsActions from "../../components/Playbooks/Runs/Actions/PlaybookRunsActions";
 import { playbookRunsPageTabs } from "../../components/Playbooks/Runs/PlaybookRunsPageTabs";
+import PlaybookSpecIcon from "../../components/Playbooks/Settings/PlaybookSpecIcon";
 import CardsSkeletonLoader from "../../components/SkeletonLoader/CardsSkeletonLoader";
 import TabbedLinks from "../../components/Tabs/TabbedLinks";
 import { relativeDateTime } from "../../utils/date";
@@ -43,7 +44,10 @@ export default function PlaybookRunsDetailsPage() {
                       key={`/playbooks/${playbookRun?.playbooks.id}`}
                       link={`/playbooks/${playbookRun?.playbooks.id}`}
                     >
-                      {playbookRun?.playbooks.name}
+                      <PlaybookSpecIcon
+                        playbook={playbookRun?.playbooks}
+                        showLabel
+                      />
                     </BreadcrumbChild>
                   ]
                 : []),

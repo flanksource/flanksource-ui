@@ -8,6 +8,7 @@ import { DateCell } from "../../../ui/table";
 import { Avatar } from "../../Avatar";
 import { DataTable, PaginationOptions } from "../../DataTable";
 import { Icon } from "../../Icon";
+import PlaybookSpecIcon from "../Settings/PlaybookSpecIcon";
 import { PlaybookStatusDescription } from "./PlaybookRunsStatus";
 
 const playbookRunsTableColumns: ColumnDef<PlaybookRun>[] = [
@@ -15,7 +16,7 @@ const playbookRunsTableColumns: ColumnDef<PlaybookRun>[] = [
     header: "Name",
     accessorKey: "name",
     cell: ({ row }) => {
-      return row.original.playbooks?.name;
+      return <PlaybookSpecIcon playbook={row.original.playbooks!} showLabel />;
     },
     size: 400
   },

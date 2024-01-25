@@ -5,6 +5,7 @@ import { Fragment, useState } from "react";
 import { FaCog } from "react-icons/fa";
 import { useGetPlaybooksToRun } from "../../../../api/query-hooks/playbooks";
 import { RunnablePlaybook } from "../../../../api/types/playbooks";
+import PlaybookSpecIcon from "../../Settings/PlaybookSpecIcon";
 import SubmitPlaybookRunForm from "./SubmitPlaybookRunForm";
 
 type PlaybooksDropdownMenuProps = {
@@ -20,8 +21,11 @@ export default function PlaybooksDropdownMenu({
   config_id,
   className = "text-sm btn-white"
 }: PlaybooksDropdownMenuProps) {
-  const [selectedPlaybookSpec, setSelectedPlaybookSpec] =
-    useState<RunnablePlaybook>();
+  const [selectedPlaybookSpec, setSelectedPlaybookSpec] = useState<
+    RunnablePlaybook & {
+      spec: any;
+    }
+  >();
 
   const {
     data: playbooks,
@@ -68,7 +72,7 @@ export default function PlaybooksDropdownMenu({
                   onClick={() => setSelectedPlaybookSpec(playbook)}
                   key={playbook.id}
                 >
-                  {playbook.name}
+                  <PlaybookSpecIcon playbook={playbook} showLabel />
                 </Menu.Item>
               ))}
             </Menu.Items>

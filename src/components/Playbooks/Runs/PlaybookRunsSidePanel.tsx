@@ -5,16 +5,17 @@ import { useEffect, useMemo, useState } from "react";
 import { AiOutlineTeam } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import { getPlaybookRuns } from "../../../api/services/playbooks";
+import { PlaybookRun } from "../../../api/types/playbooks";
+import { Age } from "../../../ui/Age";
 import PillBadge from "../../Badge/PillBadge";
 import CollapsiblePanel from "../../CollapsiblePanel";
 import EmptyState from "../../EmptyState";
+import { PlaybookStatusIcon } from "../../Icon/PlaybookStatusIcon";
 import { InfiniteTable } from "../../InfiniteTable/InfiniteTable";
 import TextSkeletonLoader from "../../SkeletonLoader/TextSkeletonLoader";
 import { refreshButtonClickedTrigger } from "../../SlidingSideBar";
 import Title from "../../Title/title";
-import { Age } from "../../../ui/Age";
-import { PlaybookRun } from "../../../api/types/playbooks";
-import { PlaybookStatusIcon } from "../../Icon/PlaybookStatusIcon";
+import PlaybookSpecIcon from "../Settings/PlaybookSpecIcon";
 
 type TopologySidePanelProps = {
   panelType: "topology";
@@ -37,11 +38,11 @@ const runsColumns: ColumnDef<PlaybookRun, any>[] = [
     id: "name",
     size: 80,
     cell: ({ row }) => {
-      const name = row.original.playbooks?.name;
       return (
-        <span>
-          <PlaybookStatusIcon status={row.original.status} /> {name}
-        </span>
+        <div className="flex flex-row gap-1">
+          <PlaybookStatusIcon status={row.original.status} />
+          <PlaybookSpecIcon playbook={row.original.playbooks!} showLabel />
+        </div>
       );
     }
   },

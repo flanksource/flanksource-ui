@@ -1,16 +1,17 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Avatar } from "../../../Avatar";
+import {
+  PlaybookRunAction,
+  PlaybookRunWithActions
+} from "../../../../api/types/playbooks";
 import { Age } from "../../../../ui/Age";
+import VerticalDescription from "../../../../ui/description/VerticalDescription";
+import { Avatar } from "../../../Avatar";
+import PlaybookSpecIcon from "../../Settings/PlaybookSpecIcon";
+import { getResourceForRun } from "../services";
 import { PlaybookStatusDescription } from "./../PlaybookRunsStatus";
 import PlaybookRunActionFetch from "./PlaybookRunActionFetch";
 import PlaybookRunsActionItem from "./PlaybookRunsActionItem";
-import {
-  PlaybookRunWithActions,
-  PlaybookRunAction
-} from "../../../../api/types/playbooks";
-import { getResourceForRun } from "../services";
-import VerticalDescription from "../../../../ui/description/VerticalDescription";
 
 type PlaybookRunActionsProps = {
   data: PlaybookRunWithActions;
@@ -31,7 +32,7 @@ export default function PlaybookRunsActions({ data }: PlaybookRunActionsProps) {
                 className="link"
                 to={`/playbooks/runs?playbook=${data.playbook_id}`}
               >
-                {data.playbooks?.name}
+                <PlaybookSpecIcon playbook={data.playbooks!} showLabel />
               </Link>
             }
           />

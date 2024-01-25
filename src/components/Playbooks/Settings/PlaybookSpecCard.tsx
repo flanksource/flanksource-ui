@@ -86,7 +86,6 @@ export default function PlaybookSpecCard({
       <SubmitPlaybookRunForm
         isOpen={isSubmitPlaybookRunFormOpen}
         onClose={() => setIsSubmitPlaybookRunFormOpen(false)}
-        playbookSpec={playbook}
         playbook={{
           ...playbook,
           parameters: playbook.spec.parameters ?? []

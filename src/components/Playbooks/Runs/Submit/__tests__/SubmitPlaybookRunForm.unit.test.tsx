@@ -3,10 +3,12 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { rest } from "msw";
 import { setupServer } from "msw/node";
-import SubmitPlaybookRunForm from "./../SubmitPlaybookRunForm";
 import { RunnablePlaybook } from "../../../../../api/types/playbooks";
+import SubmitPlaybookRunForm from "./../SubmitPlaybookRunForm";
 
-const playbook: RunnablePlaybook = {
+const playbook: RunnablePlaybook & {
+  spec: any;
+} = {
   id: "1",
   name: "Playbook 1",
   source: "UI",
@@ -18,7 +20,10 @@ const playbook: RunnablePlaybook = {
     }
   ],
   created_at: "2021-09-01T00:00:00Z",
-  updated_at: "2021-09-01T00:00:00Z"
+  updated_at: "2021-09-01T00:00:00Z",
+  spec: {
+    icon: "playbook.svg"
+  }
 };
 
 global.ResizeObserver = jest.fn().mockImplementation(() => ({

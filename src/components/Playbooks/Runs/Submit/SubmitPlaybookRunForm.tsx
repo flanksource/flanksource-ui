@@ -1,14 +1,9 @@
+import { AxiosError } from "axios";
 import { Form, Formik } from "formik";
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
-import {
-  useGetPlaybookSpecsDetails,
-  useSubmitPlaybookRunMutation
-} from "../../../../api/query-hooks/playbooks";
-import {
-  PlaybookSpec,
-  RunnablePlaybook
-} from "../../../../api/types/playbooks";
+import { useSubmitPlaybookRunMutation } from "../../../../api/query-hooks/playbooks";
+import { RunnablePlaybook } from "../../../../api/types/playbooks";
 import { Button } from "../../../Button";
 import { Modal } from "../../../Modal";
 import { toastError, toastSuccess } from "../../../Toast/toast";
@@ -16,7 +11,6 @@ import PlaybookSpecModalTitle from "../../PlaybookSpecModalTitle";
 import { getResourceForRun } from "../services";
 import PlaybookRunParams from "./PlaybookRunParams";
 import PlaybookSelectResource from "./PlaybookSelectResource";
-import { AxiosError } from "axios";
 
 export type SubmitPlaybookRunFormValues = {
   // if this is present in the form, we show step to add params
@@ -30,8 +24,9 @@ export type SubmitPlaybookRunFormValues = {
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-  playbook: RunnablePlaybook;
-  playbookSpec?: PlaybookSpec;
+  playbook: RunnablePlaybook & {
+    spec: any;
+  };
   checkId?: string;
   componentId?: string;
   configId?: string;
@@ -41,7 +36,6 @@ export default function SubmitPlaybookRunForm({
   isOpen,
   onClose,
   playbook,
-  playbookSpec: playbookSpecParam,
   checkId,
   componentId,
   configId
@@ -55,12 +49,6 @@ export default function SubmitPlaybookRunForm({
     }),
     [checkId, componentId, configId, playbook.id]
   );
-
-  const { data } = useGetPlaybookSpecsDetails(playbook.id, {
-    enabled: playbookSpecParam === undefined
-  });
-
-  const playbookSpec = playbookSpecParam ?? data;
 
   const { mutate: submitPlaybookRun } = useSubmitPlaybookRunMutation({
     onSuccess: (run) => {
@@ -87,7 +75,7 @@ export default function SubmitPlaybookRunForm({
     <Modal
       title={
         <PlaybookSpecModalTitle
-          playbookSpec={playbookSpec}
+          playbookSpec={playbook}
           defaultTitle={playbook.name ?? "Run Playbook"}
         />
       }
@@ -115,8 +103,8 @@ export default function SubmitPlaybookRunForm({
                   </div>
                 ) : (
                   // we need playbookSpec to render this, as it has filters
-                  playbookSpec && (
-                    <PlaybookSelectResource playbook={playbookSpec} />
+                  playbook.spec && (
+                    <PlaybookSelectResource playbook={playbook.spec} />
                   )
                 )}
                 <div className="border-b border-gray-200 mb-4 mt-2" />

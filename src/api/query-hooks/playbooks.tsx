@@ -8,6 +8,7 @@ import { SubmitPlaybookRunFormValues } from "../../components/Playbooks/Runs/Sub
 import {
   getAllPlaybooksSpecs,
   getPlaybookSpec,
+  getPlaybookSpecsByIDs,
   getPlaybookToRunForResource,
   submitPlaybookRun
 } from "../services/playbooks";
@@ -35,11 +36,33 @@ export type GetPlaybooksToRunParams = {
 
 export function useGetPlaybooksToRun(
   params: GetPlaybooksToRunParams,
-  options: UseQueryOptions<RunnablePlaybook[], Error> = {}
+  options: UseQueryOptions<
+    (RunnablePlaybook & {
+      spec: any;
+    })[],
+    Error
+  > = {}
 ) {
-  return useQuery<RunnablePlaybook[], Error>(
+  return useQuery<
+    (RunnablePlaybook & {
+      spec: any;
+    })[],
+    Error
+  >(
     ["playbooks", "run", params],
-    () => getPlaybookToRunForResource(params),
+    async () => {
+      const res = await getPlaybookToRunForResource(params);
+      const ids = res.map((playbook) => playbook.id);
+      // this is a bit of a hack, but we need to get the specs because that's
+      // where the icon is stored
+      const specs = await getPlaybookSpecsByIDs(ids);
+      return res.map((playbook) => ({
+        ...playbook,
+        spec: specs.find((spec) => spec.id === playbook.id)!.spec
+      })) as (RunnablePlaybook & {
+        spec: any;
+      })[];
+    },
     {
       cacheTime: 0,
       staleTime: 0,
