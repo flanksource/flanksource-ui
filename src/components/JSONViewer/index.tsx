@@ -1,10 +1,10 @@
 import Highlight, { Language, defaultProps } from "prism-react-renderer";
-import theme from "./theme";
 import { ComponentProps, useMemo } from "react";
 import { GoCopy } from "react-icons/go";
 import { parse, stringify } from "yaml";
 import { Button } from "../Button";
 import { useCopyToClipboard } from "../Hooks/useCopyToClipboard";
+import theme from "./theme";
 
 type RenderProps = Parameters<
   ComponentProps<typeof Highlight>["children"]
@@ -36,14 +36,11 @@ function JSONViewerLine({
       onKeyUp={onSelect}
     >
       {showLineNo && (
-        <span
-          className="text-gray-300 text-xs pr-3 select-none"
-          style={{ display: "table-cell" }}
-        >
+        <span className="text-gray-300 text-xs pr-3 select-none table-cell">
           {idx + 1}
         </span>
       )}
-      <span style={{ display: "table-cell" }}>
+      <span className="text-wrap break-all table-cell">
         {line.map((token, key) => (
           // key is in the getTokenProps responses. Disabling eslint to skip
           // check for explicit keys.
