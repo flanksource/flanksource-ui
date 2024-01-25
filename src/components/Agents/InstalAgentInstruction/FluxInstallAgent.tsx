@@ -1,6 +1,4 @@
-import { useContext } from "react";
 import { GeneratedAgent } from "../../../api/services/agents";
-import { AuthContext } from "../../../context";
 import { JSONViewer } from "../../JSONViewer";
 import { AgentFormValues } from "../Add/AddAgentForm";
 
@@ -13,7 +11,8 @@ export default function FluxInstallAgent({
   generatedAgent,
   agentFormValues
 }: Props) {
-  const { backendUrl } = useContext(AuthContext);
+  const baseUrl = window.location.origin;
+
   const kubeOptions = agentFormValues?.kubernetes;
 
   const yaml = `apiVersion: v1
@@ -47,7 +46,7 @@ spec:
   values:
     upstream:
       createSecret: true
-      host:  ${backendUrl}
+      host:  ${baseUrl}
       username: ${generatedAgent.username}
       password: ${generatedAgent.access_token}
 ---
