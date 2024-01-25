@@ -1,8 +1,8 @@
 import { CellContext } from "@tanstack/react-table";
 import React from "react";
-import { Badge } from "../../../Badge";
-import ConfigsTypeIcon from "../../ConfigsTypeIcon";
 import { ConfigItem } from "../../../../api/types/configs";
+import { Badge } from "../../../../ui/Badge";
+import ConfigsTypeIcon from "../../ConfigsTypeIcon";
 
 function ConfigListNameCell({ row, getValue }: CellContext<ConfigItem, any>) {
   const isDeleted = !!row.original.deleted_at;

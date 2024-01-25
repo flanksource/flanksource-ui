@@ -2,9 +2,9 @@ import { CellContext, ColumnDef } from "@tanstack/table-core";
 import clsx from "clsx";
 import { User } from "../../api/types/users";
 import { Property } from "../../services/permissions/permissionsService";
-import { Avatar } from "../Avatar";
-import { DataTable } from "../DataTable";
 import { Age } from "../../ui/Age";
+import { Avatar } from "../../ui/Avatar";
+import { DataTable } from "../DataTable";
 
 type FeatureFlagsListProps = {
   data: any[];

@@ -1,5 +1,5 @@
 import { Form, Formik } from "formik";
-import { Button } from "../Button";
+import { Button } from "../../ui/Button";
 import { FormikCodeEditor } from "../Forms/Formik/FormikCodeEditor";
 import FormikNotificationEventsDropdown from "../Forms/Formik/FormikNotificationEventsDropdown";
 import FormikNotificationsTemplateField from "../Forms/Formik/FormikNotificationsTemplateField";

@@ -2,9 +2,9 @@ import clsx from "clsx";
 import { useState } from "react";
 import { Evidence } from "../../../api/types/evidence";
 import { ViewType } from "../../../types";
+import { Modal } from "../../../ui/Modal";
 import { EvidenceItem } from "../../Hypothesis/EvidenceSection";
 import { InfoMessage } from "../../InfoMessage";
-import { Modal } from "../../Modal";
 import MultiSelectList from "../../MultiSelectList/MultiSelectList";
 
 type EvidenceSelectionModalProps = {

@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { GeneratedAgent } from "../../../api/services/agents";
-import CodeBlock from "../../CodeBlock/CodeBlock";
+import CodeBlock from "../../../ui/CodeBlock/CodeBlock";
 import { AgentFormValues } from "../Add/AddAgentForm";
 
 type Props = {

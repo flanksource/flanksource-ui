@@ -1,8 +1,8 @@
 import clsx from "clsx";
 import React from "react";
 import { HealthCheck } from "../../../api/types/health";
+import { Badge } from "../../../ui/Badge";
 import AgentName from "../../Agents/AgentName";
-import { Badge } from "../../Badge";
 import { Icon } from "../../Icon";
 
 type CheckTitleProps = Omit<React.HTMLProps<HTMLDivElement>, "size"> & {

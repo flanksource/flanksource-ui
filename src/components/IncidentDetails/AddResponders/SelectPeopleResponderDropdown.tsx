@@ -1,8 +1,8 @@
 import { useMemo } from "react";
-import { ReactSelectDropdown } from "../../ReactSelectDropdown";
 import { useGetAllPeople } from "../../../api/query-hooks/responders";
-import { Avatar } from "../../Avatar";
 import { User } from "../../../api/types/users";
+import { Avatar } from "../../../ui/Avatar";
+import { ReactSelectDropdown } from "../../ReactSelectDropdown";
 
 type SelectTeamResponderDropdownProps = {
   onChange?: (value: User | undefined) => void;

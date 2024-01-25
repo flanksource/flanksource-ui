@@ -1,10 +1,10 @@
 import { Menu, Transition } from "@headlessui/react";
+import { Fragment } from "react";
 import { FaUserAlt } from "react-icons/fa";
 import { useUser } from "../../../context";
-import { ClickableSvg } from "../../ClickableSvg/ClickableSvg";
+import { ClickableSvg } from "../../../ui/ClickableSvg/ClickableSvg";
 import { VersionInfo } from "../../VersionInfo/VersionInfo";
 import KratosLogoutButton from "./KratosLogoutButton";
-import { Fragment } from "react";
 
 export function KratosUserProfileDropdown() {
   const { user } = useUser();

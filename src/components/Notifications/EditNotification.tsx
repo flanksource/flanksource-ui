@@ -2,7 +2,7 @@ import {
   useGetNotificationsByIDQuery,
   useUpdateNotification
 } from "../../api/query-hooks/useNotificationsQuery";
-import { Modal } from "../Modal";
+import { Modal } from "../../ui/Modal";
 import NotificationsForm from "./NotificationsForm";
 import { Notification } from "./notificationsTableColumns";
 

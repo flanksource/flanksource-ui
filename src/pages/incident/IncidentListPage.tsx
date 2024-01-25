@@ -9,8 +9,8 @@ import { Head } from "../../components/Head/Head";
 import { IncidentCreate } from "../../components/Incidents/IncidentCreate";
 import { IncidentList } from "../../components/Incidents/IncidentList";
 import { SearchLayout } from "../../components/Layout";
-import { Modal } from "../../components/Modal";
 import IncidentListSkeletonLoader from "../../components/SkeletonLoader/IncidentListSkeletonLoader";
+import { Modal } from "../../ui/Modal";
 
 type IncidentFilters = {
   severity?: string;

@@ -1,7 +1,7 @@
 import { FaExclamationTriangle } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useConfigComponentsRelationshipQuery } from "../../../api/query-hooks/useConfigComponentsRelationshipQuery";
-import { CountBadge } from "../../Badge/CountBadge";
+import { CountBadge } from "../../../ui/Badge/CountBadge";
 import CollapsiblePanel from "../../CollapsiblePanel";
 import { Icon } from "../../Icon";
 import { TopologyIcon } from "../../Icons/TopologyIcon";

@@ -1,9 +1,9 @@
 import { CellContext, ColumnDef } from "@tanstack/react-table";
 import { useState } from "react";
 import { Team, User } from "../../api/types/users";
+import { Avatar } from "../../ui/Avatar";
+import { Badge } from "../../ui/Badge";
 import { DateCell } from "../../ui/table";
-import { Avatar } from "../Avatar";
-import { Badge } from "../Badge";
 import { Icon } from "../Icon";
 import JobHistoryStatusColumn from "../JobsHistory/JobHistoryStatusColumn";
 import { JobsHistoryDetails } from "../JobsHistory/JobsHistoryDetails";

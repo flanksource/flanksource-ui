@@ -3,7 +3,7 @@ import { useAtom } from "jotai";
 import { useEffect } from "react";
 import { AiFillHeart } from "react-icons/ai";
 import { getComponentChecks } from "../../../api/services/topology";
-import PillBadge from "../../Badge/PillBadge";
+import PillBadge from "../../../ui/Badge/PillBadge";
 import CollapsiblePanel from "../../CollapsiblePanel";
 import EmptyState from "../../EmptyState";
 import { CheckLink } from "../../HealthChecks/CheckLink";

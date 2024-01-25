@@ -6,8 +6,8 @@ import {
 } from "../../../api/types/hypothesis";
 import { hypothesisStatusDropdownOptions } from "../../../constants/hypothesisStatusOptions";
 import { useUser } from "../../../context";
+import { Modal } from "../../../ui/Modal";
 import { capitalizeFirstLetter } from "../../../utils/common";
-import { Modal } from "../../Modal";
 import { ReactSelectDropdown } from "../../ReactSelectDropdown";
 
 interface IProps {

@@ -13,10 +13,10 @@ import {
   UpdatePlaybookSpec
 } from "../../../api/types/playbooks";
 import { useUser } from "../../../context";
-import { Button } from "../../Button";
+import { Button } from "../../../ui/Button";
+import { Modal } from "../../../ui/Modal";
 import { FormikCodeEditor } from "../../Forms/Formik/FormikCodeEditor";
 import FormikTextInput from "../../Forms/Formik/FormikTextInput";
-import { Modal } from "../../Modal";
 import { toastError, toastSuccess } from "../../Toast/toast";
 import PlaybookSpecModalTitle from "../PlaybookSpecModalTitle";
 

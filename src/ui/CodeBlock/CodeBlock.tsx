@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { FaCopy } from "react-icons/fa";
+import { useCopyToClipboard } from "../../components/Hooks/useCopyToClipboard";
 import { Button } from "../Button";
-import { useCopyToClipboard } from "../Hooks/useCopyToClipboard";
 
 type Props = {
   code: string;

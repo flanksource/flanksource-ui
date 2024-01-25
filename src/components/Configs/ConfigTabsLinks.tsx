@@ -1,6 +1,6 @@
+import { Badge } from "@flanksource-ui/ui/Badge";
 import { useParams } from "react-router-dom";
 import { ConfigItem } from "../../api/types/configs";
-import { Badge } from "../Badge";
 
 export const configTabsLists = [
   { label: "Catalog", key: "Catalog", path: "/catalog" },

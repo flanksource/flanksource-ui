@@ -11,10 +11,14 @@ import {
 } from "react";
 import { Controller } from "react-hook-form";
 
-import Select, { SingleValue, StylesConfig } from "react-select";
-import { defaultTheme, components } from "react-select";
-import { Avatar } from "../Avatar";
+import Select, {
+  SingleValue,
+  StylesConfig,
+  components,
+  defaultTheme
+} from "react-select";
 import CreatableSelect from "react-select/creatable";
+import { Avatar } from "../../ui/Avatar";
 
 const { colors } = defaultTheme;
 

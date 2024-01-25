@@ -1,7 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { User } from "../../../api/types/users";
+import { Avatar } from "../../../ui/Avatar";
 import { DateCell } from "../../../ui/table";
-import { Avatar } from "../../Avatar";
 import { AgentSummary } from "../AgentPage";
 
 export const agentsTableColumns: ColumnDef<AgentSummary>[] = [

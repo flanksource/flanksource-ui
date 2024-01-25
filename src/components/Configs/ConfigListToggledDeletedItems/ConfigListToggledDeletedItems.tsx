@@ -1,6 +1,6 @@
 import { useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
-import Popover from "../../Popover/Popover";
+import Popover from "../../../ui/Popover/Popover";
 import { Toggle } from "../../Toggle";
 
 export const areDeletedConfigsHidden = atomWithStorage<"yes" | "no">(

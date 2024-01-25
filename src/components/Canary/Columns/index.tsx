@@ -2,7 +2,7 @@ import { CellContext } from "@tanstack/react-table";
 import clsx from "clsx";
 import dayjs from "dayjs";
 import { HealthCheck } from "../../../api/types/health";
-import { Badge } from "../../Badge";
+import { Badge } from "../../../ui/Badge";
 import { Status } from "../../Status";
 import { GetName } from "../data";
 import style from "../index.module.css";

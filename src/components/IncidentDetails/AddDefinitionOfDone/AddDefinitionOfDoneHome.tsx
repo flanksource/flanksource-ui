@@ -3,7 +3,7 @@ import { BsPersonFill } from "react-icons/bs";
 import { SiAutomattic } from "react-icons/si";
 import { Evidence } from "../../../api/types/evidence";
 import { Hypothesis } from "../../../api/types/hypothesis";
-import { Modal } from "../../Modal";
+import { Modal } from "../../../ui/Modal";
 import AddAutoDefinitionOfDoneStepper from "./AddAutoDefinitionOfDone";
 import AddManualDefinitionOfDone from "./AddManualDefinitionOfDone";
 

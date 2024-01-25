@@ -5,12 +5,13 @@ import { useCanaryGraphQuery } from "../../../api/query-hooks/health";
 import { HealthCheck } from "../../../api/types/health";
 import { isCanaryUI } from "../../../context/Environment";
 import { Age } from "../../../ui/Age";
+import { Badge } from "../../../ui/Badge";
+import { Stat } from "../../../ui/stats";
 import {
   capitalizeFirstLetter,
   toFixedIfNecessary
 } from "../../../utils/common";
 import mixins from "../../../utils/mixins.module.css";
-import { Badge } from "../../Badge";
 import { DropdownStandaloneWrapper } from "../../Dropdown/StandaloneWrapper";
 import { TimeRange, timeRanges } from "../../Dropdown/TimeRange";
 import { Head } from "../../Head/Head";
@@ -18,7 +19,6 @@ import { Duration } from "../renderers";
 import { CanaryCheckDetailsSpecTab } from "./CanaryCheckDetailsSpec";
 import CheckLabels from "./CheckLabels";
 import CheckRelationships from "./CheckRelationships";
-import { Stat } from "../../../ui/stats";
 import { StatusHistory } from "./StatusHistory/StatusHistory";
 import { calculateDefaultTimeRangeValue } from "./Utils/calculateDefaultTimeRangeValue";
 import { PopupTabs } from "./tabs";

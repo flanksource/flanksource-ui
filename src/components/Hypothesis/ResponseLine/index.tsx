@@ -2,17 +2,17 @@ import { useCallback, useMemo } from "react";
 import { BiCheck } from "react-icons/bi";
 import { BsTrash } from "react-icons/bs";
 import { IoMdRemoveCircle } from "react-icons/io";
+import { DateType } from "../../../api/types/common";
 import { Evidence } from "../../../api/types/evidence";
 import { Comment } from "../../../api/types/incident";
 import { UserWithTeam } from "../../../api/types/users";
 import { Age } from "../../../ui/Age";
-import { Avatar } from "../../Avatar";
+import { Avatar } from "../../../ui/Avatar";
+import { Menu } from "../../../ui/Menu";
 import { CommentText } from "../../Comment";
 import { Icon } from "../../Icon";
 import { IconButton } from "../../IconButton";
-import { Menu } from "../../Menu";
 import { EvidenceItem } from "../EvidenceSection";
-import { DateType } from "../../../api/types/common";
 
 interface IProps {
   created_by: UserWithTeam;

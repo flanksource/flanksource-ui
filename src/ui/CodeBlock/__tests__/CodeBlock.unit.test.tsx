@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import CodeBlock from "./../CodeBlock";
+import CodeBlock from "../CodeBlock";
 
 describe("CopyBlock", () => {
   const code = "console.log('Hello, world!');";

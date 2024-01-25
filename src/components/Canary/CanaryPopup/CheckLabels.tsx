@@ -1,6 +1,6 @@
 import { useLayoutEffect, useMemo, useState } from "react";
 import { HealthCheck } from "../../../api/types/health";
-import Popover from "../../Popover/Popover";
+import Popover from "../../../ui/Popover/Popover";
 import { TagItem, TagList } from "../../TagList/TagList";
 
 type Props = {

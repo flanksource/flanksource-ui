@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { GeneratedAgent } from "../../../api/services/agents";
-import { Button } from "../../Button";
-import { Modal } from "../../Modal";
+import { Button } from "../../../ui/Button";
+import { Modal } from "../../../ui/Modal";
 import { Tab, Tabs } from "../../Tabs/Tabs";
 import { AgentFormValues } from "../Add/AddAgentForm";
 import CLIInstallAgent from "./CLIInstallAgent";

@@ -5,8 +5,8 @@ import {
   IncidentSummary,
   Responder
 } from "../../../api/types/incident";
+import { Avatar } from "../../../ui/Avatar";
 import { DateCell } from "../../../ui/table";
-import { Avatar } from "../../Avatar";
 import { IncidentSeverityTag } from "../../IncidentSeverityTag";
 import { IncidentStatusTag } from "../../IncidentStatusTag";
 import { IncidentTypeTag } from "../../incidentTypeTag";

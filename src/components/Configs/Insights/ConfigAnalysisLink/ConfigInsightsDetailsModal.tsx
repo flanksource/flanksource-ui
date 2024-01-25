@@ -2,15 +2,15 @@ import { useQuery } from "@tanstack/react-query";
 import { sanitize } from "dompurify";
 import { useMemo } from "react";
 import { getConfigInsightsByID } from "../../../../api/services/configs";
+import { EvidenceType } from "../../../../api/types/evidence";
+import { Modal } from "../../../../ui/Modal";
+import ModalTitleListItems from "../../../../ui/Modal/ModalTitleListItems";
 import { formatISODate, isValidDate } from "../../../../utils/date";
 import AttachAsEvidenceButton from "../../../AttachEvidenceDialog/AttachAsEvidenceDialogButton";
-import ConfigInsightsIcon from "../ConfigInsightsIcon";
-import ConfigLink from "../../ConfigLink/ConfigLink";
 import { DescriptionCard } from "../../../DescriptionCard";
-import { Modal } from "../../../Modal";
 import TextSkeletonLoader from "../../../SkeletonLoader/TextSkeletonLoader";
-import ModalTitleListItems from "../../../Modal/ModalTitleListItems";
-import { EvidenceType } from "../../../../api/types/evidence";
+import ConfigLink from "../../ConfigLink/ConfigLink";
+import ConfigInsightsIcon from "../ConfigInsightsIcon";
 
 type Props = {
   id?: string;
@@ -78,13 +78,17 @@ export default function ConfigInsightsDetailsModal({
       title={
         <ModalTitleListItems
           items={[
-            <div className="flex flex-row flex-grow-0 gap-1 whitespace-nowrap items-center">
+            <div
+              className="flex flex-row flex-grow-0 gap-1 whitespace-nowrap items-center"
+              key={"analyzer"}
+            >
               <ConfigInsightsIcon analysis={configInsight} />
               <span>{configInsight.analyzer}</span>
             </div>,
             <ConfigLink
               className="text-blue-600 text-xl font-semibold whitespace-nowrap overflow-hidden overflow-ellipsis"
               config={configInsight.config}
+              key={"config"}
             />
           ]}
         />

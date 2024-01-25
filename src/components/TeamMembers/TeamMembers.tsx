@@ -8,16 +8,16 @@ import {
   removeUserFromTeam
 } from "../../api/services/teams";
 import { getPersons } from "../../api/services/users";
+import { User } from "../../api/types/users";
 import { useLoader } from "../../hooks";
-import { Avatar } from "../Avatar";
+import { Avatar } from "../../ui/Avatar";
+import { Menu } from "../../ui/Menu";
+import { Modal } from "../../ui/Modal";
 import EmptyState from "../EmptyState";
 import { IconButton } from "../IconButton";
-import { Menu } from "../Menu";
-import { Modal } from "../Modal";
 import MultiSelectList from "../MultiSelectList/MultiSelectList";
 import TableSkeletonLoader from "../SkeletonLoader/TableSkeletonLoader";
 import { toastError, toastSuccess } from "../Toast/toast";
-import { User } from "../../api/types/users";
 
 type TeamMembersProps = {
   teamId: string;

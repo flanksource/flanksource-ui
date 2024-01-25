@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
-import React, { ComponentProps } from "react";
+import { ComponentProps } from "react";
 import { getAgentByID, Local } from "../../api/services/agents";
 import { AgentItem } from "../../api/types/common";
-import { Badge } from "../Badge";
+import { Badge } from "../../ui/Badge";
 
 type TopologyCardAgentProps = {
   agent?: AgentItem;

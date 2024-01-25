@@ -1,6 +1,6 @@
-import React from "react";
 import clsx from "clsx";
-import { Tag } from "../Tag/Tag";
+import React from "react";
+import { Tag } from "../../components/Tag/Tag";
 
 const getBackgroundColorClass = (color?: string) => {
   switch (color) {

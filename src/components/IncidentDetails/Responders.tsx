@@ -1,19 +1,19 @@
+import { useMutation } from "@tanstack/react-query";
 import clsx from "clsx";
 import { useState } from "react";
 import { BsTrash } from "react-icons/bs";
+import { FaSpinner } from "react-icons/fa";
 import { useIncidentRespondersQuery } from "../../api/query-hooks/useIncidentRespondersQuery";
-import { Incident } from "../../api/types/incident";
 import { deleteResponder } from "../../api/services/responder";
-import { ClickableSvg } from "../ClickableSvg/ClickableSvg";
+import { Incident } from "../../api/types/incident";
+import { ClickableSvg } from "../../ui/ClickableSvg/ClickableSvg";
 import { ConfirmationPromptDialog } from "../Dialogs/ConfirmationPromptDialog";
 import { IconButton } from "../IconButton";
-import { toastSuccess, toastError } from "../Toast/toast";
+import { toastError, toastSuccess } from "../Toast/toast";
 import { AddResponder } from "./AddResponders/AddResponder";
 import { IncidentDetailsRow } from "./IncidentDetailsRow";
 import { ResponderDetailsDialog } from "./ResponderDetailsDialog";
 import { ResponderDetailsToolTip } from "./ResponderDetailsToolTip";
-import { useMutation } from "@tanstack/react-query";
-import { FaSpinner } from "react-icons/fa";
 
 type RespondersProps = React.HTMLProps<HTMLDivElement> & {
   incident: Incident;

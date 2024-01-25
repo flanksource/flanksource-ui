@@ -9,7 +9,7 @@ import {
   useSettingsCreateResource,
   useSettingsUpdateResource
 } from "../../../../api/query-hooks/mutations/useSettingsResourcesMutations";
-import { Button } from "../../../Button";
+import { Button } from "../../../../ui/Button";
 import { FormikCodeEditor } from "../../../Forms/Formik/FormikCodeEditor";
 import FormikTextInput from "../../../Forms/Formik/FormikTextInput";
 import DeleteResource from "../../../SchemaResourcePage/Delete/DeleteResource";

@@ -7,7 +7,7 @@ import { LegacyRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useOnMouseActivity } from "../../../hooks/useMouseActivity";
 import { Size } from "../../../types";
-import { ClickableSvg } from "../../ClickableSvg/ClickableSvg";
+import { ClickableSvg } from "../../../ui/ClickableSvg/ClickableSvg";
 import { Toggle } from "../../Toggle";
 
 export function getCardWidth() {

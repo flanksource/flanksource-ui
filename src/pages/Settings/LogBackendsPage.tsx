@@ -9,7 +9,7 @@ import { SearchLayout } from "../../components/Layout";
 import { LogBackends } from "../../components/LogBackends/LogBackends";
 import LogBackendsForm from "../../components/LogBackends/LogBackendsForm";
 import LogBackendsList from "../../components/LogBackends/LogBackendsList";
-import { Modal } from "../../components/Modal";
+import { Modal } from "../../ui/Modal";
 
 export function LogBackendsPage() {
   const [isOpen, setIsOpen] = useState(false);

@@ -1,6 +1,6 @@
 import { CellContext } from "@tanstack/react-table";
 import { User } from "../../api/types/users";
-import { Avatar } from "../../components/Avatar";
+import { Avatar } from "../Avatar";
 
 export function UserCell<T extends User>({
   row,

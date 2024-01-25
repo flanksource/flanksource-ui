@@ -1,7 +1,7 @@
 import { useField, useFormikContext } from "formik";
-import CheckboxCollapsibleGroup from "../../CheckboxCollapsibleGroup/CheckboxCollapsibleGroup";
-import { useEffect } from "react";
 import { get, isEmpty } from "lodash";
+import { useEffect } from "react";
+import CheckboxCollapsibleGroup from "../../../ui/CheckboxCollapsibleGroup/CheckboxCollapsibleGroup";
 
 type FormikCheckboxFieldsGroupProps = {
   name: string;

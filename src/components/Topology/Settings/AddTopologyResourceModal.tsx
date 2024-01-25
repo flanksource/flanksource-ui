@@ -1,8 +1,8 @@
+import { useState } from "react";
 import { AiFillPlusCircle } from "react-icons/ai";
 import { useSearchParams } from "react-router-dom";
+import { Modal } from "../../../ui/Modal";
 import AddTopologyResource from "./AddTopologyResource";
-import { Modal } from "../../Modal";
-import { useState } from "react";
 
 type Props = {
   onClose?: () => void;

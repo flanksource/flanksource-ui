@@ -1,8 +1,8 @@
 import { Cell } from "@tanstack/react-table";
 import dayjs from "dayjs";
 import LogItem from "../../../types/Logs";
+import Popover from "../../../ui/Popover/Popover";
 import { IndeterminateCheckbox } from "../../IndeterminateCheckbox/IndeterminateCheckbox";
-import Popover from "../../Popover/Popover";
 import { TagItem, TagList } from "../../TagList/TagList";
 
 export type LogsTableTimestampCellProps = React.HTMLProps<HTMLDivElement> & {
