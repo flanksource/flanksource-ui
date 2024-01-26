@@ -35,7 +35,7 @@ export function getSortLabels(topology: Topology[]) {
         labels[h.name] = true;
         currentSortLabels.push({
           id: defaultSortLabels.length + index,
-          value: (h.name ?? "").toLowerCase(),
+          value: `field:${(h.name ?? "").toLowerCase()}`,
           label: h.name ?? "",
           standard: false
         });
