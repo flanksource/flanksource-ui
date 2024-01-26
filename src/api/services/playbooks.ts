@@ -1,5 +1,5 @@
-import { SubmitPlaybookRunFormValues } from "../../components/Playbooks/Runs/Submit/SubmitPlaybookRunForm";
-import { AVATAR_INFO } from "../../constants";
+import { SubmitPlaybookRunFormValues } from "@flanksource-ui/components/Playbooks/Runs/Submit/SubmitPlaybookRunForm";
+import { AVATAR_INFO } from "@flanksource-ui/constants";
 import { ConfigDB, IncidentCommander, PlaybookAPI } from "../axios";
 import { GetPlaybooksToRunParams } from "../query-hooks/playbooks";
 import { resolve } from "../resolve";

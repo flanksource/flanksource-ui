@@ -1,19 +1,19 @@
-import { useQuery } from "@tanstack/react-query";
-import { useParams } from "react-router-dom";
-import { getPlaybookRun } from "../../api/services/playbooks";
+import { getPlaybookRun } from "@flanksource-ui/api/services/playbooks";
 import {
   BreadcrumbChild,
   BreadcrumbNav,
   BreadcrumbRoot
-} from "../../components/BreadcrumbNav";
-import { Head } from "../../components/Head/Head";
-import { SearchLayout } from "../../components/Layout";
-import PlaybookRunsActions from "../../components/Playbooks/Runs/Actions/PlaybookRunsActions";
-import { playbookRunsPageTabs } from "../../components/Playbooks/Runs/PlaybookRunsPageTabs";
-import PlaybookSpecIcon from "../../components/Playbooks/Settings/PlaybookSpecIcon";
-import CardsSkeletonLoader from "../../components/SkeletonLoader/CardsSkeletonLoader";
-import TabbedLinks from "../../components/Tabs/TabbedLinks";
-import { relativeDateTime } from "../../utils/date";
+} from "@flanksource-ui/components/BreadcrumbNav";
+import { Head } from "@flanksource-ui/components/Head/Head";
+import { SearchLayout } from "@flanksource-ui/components/Layout";
+import PlaybookRunsActions from "@flanksource-ui/components/Playbooks/Runs/Actions/PlaybookRunsActions";
+import { playbookRunsPageTabs } from "@flanksource-ui/components/Playbooks/Runs/PlaybookRunsPageTabs";
+import PlaybookSpecIcon from "@flanksource-ui/components/Playbooks/Settings/PlaybookSpecIcon";
+import CardsSkeletonLoader from "@flanksource-ui/components/SkeletonLoader/CardsSkeletonLoader";
+import TabbedLinks from "@flanksource-ui/components/Tabs/TabbedLinks";
+import { relativeDateTime } from "@flanksource-ui/utils/date";
+import { useQuery } from "@tanstack/react-query";
+import { useParams } from "react-router-dom";
 
 export default function PlaybookRunsDetailsPage() {
   const { id } = useParams();

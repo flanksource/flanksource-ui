@@ -1,12 +1,12 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
 import {
   PlaybookRunAction,
   PlaybookRunWithActions
-} from "../../../../api/types/playbooks";
-import { Age } from "../../../../ui/Age";
-import VerticalDescription from "../../../../ui/description/VerticalDescription";
-import { Avatar } from "../../../Avatar";
+} from "@flanksource-ui/api/types/playbooks";
+import { Avatar } from "@flanksource-ui/components/Avatar";
+import { Age } from "@flanksource-ui/ui/Age";
+import VerticalDescription from "@flanksource-ui/ui/description/VerticalDescription";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 import PlaybookSpecIcon from "../../Settings/PlaybookSpecIcon";
 import { getResourceForRun } from "../services";
 import { PlaybookStatusDescription } from "./../PlaybookRunsStatus";
