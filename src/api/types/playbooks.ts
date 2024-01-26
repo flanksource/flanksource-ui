@@ -65,6 +65,13 @@ export type PlaybookSpec = {
   deleted_at?: string;
 };
 
+export type PlaybookNames = {
+  id: string;
+  name: string;
+  icon?: string;
+  category?: string;
+};
+
 export type PlaybookParamCommonFields = {
   name: string;
   label: string;

@@ -1,10 +1,9 @@
+import useTimeRangeParams from "@flanksource-ui/ui/TimeRangePicker/useTimeRangeParams";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { FaEdit } from "react-icons/fa";
 import { useSearchParams } from "react-router-dom";
 import { useGetPlaybookSpecsDetails } from "../../api/query-hooks/playbooks";
 import { getPlaybookRuns } from "../../api/services/playbooks";
-import { Button } from "../../components";
 import {
   BreadcrumbChild,
   BreadcrumbNav,
@@ -12,6 +11,7 @@ import {
 } from "../../components/BreadcrumbNav";
 import { Head } from "../../components/Head/Head";
 import { SearchLayout } from "../../components/Layout";
+import PlaybookRunsFilterBar from "../../components/Playbooks/Runs/Filter/PlaybookRunsFilterBar";
 import PlaybookRunsTable from "../../components/Playbooks/Runs/PlaybookRunsList";
 import { playbookRunsPageTabs } from "../../components/Playbooks/Runs/PlaybookRunsPageTabs";
 import PlaybookSpecIcon from "../../components/Playbooks/Settings/PlaybookSpecIcon";
@@ -23,6 +23,9 @@ export default function PlaybookRunsPage() {
   const [searchParams] = useSearchParams();
 
   const playbookId = searchParams.get("playbook") ?? undefined;
+  const playbookStatus = searchParams.get("status") ?? undefined;
+
+  const { timeRangeAbsoluteValue: timeRange } = useTimeRangeParams();
 
   const [{ pageIndex, pageSize }, setPageState] = useState({
     pageIndex: 0,
@@ -34,12 +37,18 @@ export default function PlaybookRunsPage() {
     isLoading: isLoadingPlaybookRuns,
     refetch
   } = useQuery({
-    queryKey: ["playbookRuns", { pageIndex, pageSize, playbookId }],
+    queryKey: [
+      "playbookRuns",
+      { pageIndex, pageSize, playbookId, playbookStatus, timeRange }
+    ],
     queryFn: () =>
       getPlaybookRuns({
         pageIndex,
         pageSize,
-        playbookId
+        playbookId,
+        status: playbookStatus,
+        starts: timeRange?.from ?? undefined,
+        ends: timeRange?.to ?? undefined
       })
   });
 
@@ -99,17 +108,13 @@ export default function PlaybookRunsPage() {
       >
         <TabbedLinks tabLinks={playbookRunsPageTabs}>
           <div className={`flex flex-col max-w-screen-xl mx-auto h-full py-4`}>
-            {playbookId && (
-              <div className="flex flex-row justify-end w-full py-2 gap-2">
-                <Button
-                  text="Edit Playbook"
-                  className="btn-white"
-                  icon={<FaEdit />}
-                  disabled={isLoading}
-                  onClick={() => setIsEditPlaybookFormOpen(true)}
-                />
-              </div>
-            )}
+            <div className="flex flex-row justify-between w-full py-2 gap-2">
+              <PlaybookRunsFilterBar
+                isLoading={isLoading}
+                playbookId={playbookId}
+                setIsEditPlaybookFormOpen={setIsEditPlaybookFormOpen}
+              />
+            </div>
             <div className="flex flex-col flex-1">
               <PlaybookRunsTable
                 data={playbookRuns ?? []}

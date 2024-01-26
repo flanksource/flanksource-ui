@@ -5,6 +5,7 @@ import { GetPlaybooksToRunParams } from "../query-hooks/playbooks";
 import { resolve } from "../resolve";
 import {
   NewPlaybookSpec,
+  PlaybookNames,
   PlaybookRun,
   PlaybookRunAction,
   PlaybookRunWithActions,
@@ -16,6 +17,13 @@ import {
 export async function getAllPlaybooksSpecs() {
   const res = await IncidentCommander.get<PlaybookSpec[] | null>(
     `/playbooks?select=*,created_by(${AVATAR_INFO})&deleted_at=is.null&order=created_at.desc`
+  );
+  return res.data ?? [];
+}
+
+export async function getAllPlaybookNames() {
+  const res = await IncidentCommander.get<PlaybookNames[] | null>(
+    `/playbook_names?select=id,name,icon,category&order=name.asc`
   );
   return res.data ?? [];
 }
@@ -101,13 +109,19 @@ export async function getPlaybookRuns({
   configId,
   pageIndex,
   pageSize,
-  playbookId
+  playbookId,
+  status,
+  starts,
+  ends
 }: {
   componentId?: string;
   configId?: string;
   pageIndex: number;
   pageSize: number;
   playbookId?: string;
+  status?: string;
+  starts?: string;
+  ends?: string;
 }) {
   const componentParamString = componentId
     ? `&component_id=eq.${componentId}`
@@ -115,7 +129,14 @@ export async function getPlaybookRuns({
 
   const configParamString = configId ? `&config_id=eq.${configId}` : "";
 
+  const statusParamString = status ? `&status=eq.${status}` : "";
+
   const pagingParams = `&limit=${pageSize}&offset=${pageIndex * pageSize}`;
+
+  const dateFilter =
+    starts && ends
+      ? `&and=(start_time.gte.${starts},start_time.lte.${ends})`
+      : "";
 
   const playbookParamsString = playbookId
     ? `&playbook_id=eq.${playbookId}`
@@ -123,7 +144,7 @@ export async function getPlaybookRuns({
 
   const res = await resolve(
     ConfigDB.get<PlaybookRun[] | null>(
-      `/playbook_runs?select=*,playbooks(id,name,spec,icon),component:components(id,name,icon),check:checks(id,name,icon),config:config_items(id,name,type,config_class)&&order=created_at.desc${playbookParamsString}${componentParamString}&${configParamString}${pagingParams}}`,
+      `/playbook_runs?select=*,playbooks(id,name,spec,icon),component:components(id,name,icon),check:checks(id,name,icon),config:config_items(id,name,type,config_class)&&order=created_at.desc${playbookParamsString}${componentParamString}&${configParamString}${pagingParams}${statusParamString}${dateFilter}`,
       {
         headers: {
           Prefer: "count=exact"
