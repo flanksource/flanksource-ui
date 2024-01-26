@@ -1,16 +1,16 @@
 import { useQuery } from "@tanstack/react-query";
 import { sanitize } from "dompurify";
 import { useMemo } from "react";
-import { getConfigInsightsByID } from "../../../api/services/configs";
-import { formatISODate, isValidDate } from "../../../utils/date";
-import AttachAsEvidenceButton from "../../AttachEvidenceDialog/AttachAsEvidenceDialogButton";
-import ConfigInsightsIcon from "../Insights/ConfigInsightsIcon";
-import ConfigLink from "../ConfigLink/ConfigLink";
-import { DescriptionCard } from "../../DescriptionCard";
-import { Modal } from "../../Modal";
-import TextSkeletonLoader from "../../SkeletonLoader/TextSkeletonLoader";
-import ModalTitleListItems from "../../Modal/ModalTitleListItems";
-import { EvidenceType } from "../../../api/types/evidence";
+import { getConfigInsightsByID } from "../../../../api/services/configs";
+import { formatISODate, isValidDate } from "../../../../utils/date";
+import AttachAsEvidenceButton from "../../../AttachEvidenceDialog/AttachAsEvidenceDialogButton";
+import ConfigInsightsIcon from "../ConfigInsightsIcon";
+import ConfigLink from "../../ConfigLink/ConfigLink";
+import { DescriptionCard } from "../../../DescriptionCard";
+import { Modal } from "../../../Modal";
+import TextSkeletonLoader from "../../../SkeletonLoader/TextSkeletonLoader";
+import ModalTitleListItems from "../../../Modal/ModalTitleListItems";
+import { EvidenceType } from "../../../../api/types/evidence";
 
 type Props = {
   id?: string;

@@ -3,7 +3,7 @@ import { Icon } from ".";
 import { ConfigItem } from "../../api/types/configs";
 
 interface ConfigIconProps {
-  config?: ConfigItem;
+  config?: Pick<ConfigItem, "type" | "config_class">;
   children?: React.ReactNode;
   className?: string;
 }

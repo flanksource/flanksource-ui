@@ -12,7 +12,7 @@ function canonTags(
   return Object.fromEntries(tags.map((kv) => [kv["Key"], kv["Value"]]));
 }
 
-const data: ConfigItem[] = [
+const data: Omit<ConfigItem, "summary">[] = [
   {
     id: "018099cf-530e-5b8a-9e10-3e6bec11ab98",
     scraper_id: null,

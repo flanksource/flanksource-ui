@@ -22,7 +22,7 @@ const columns: ColumnDef<ConfigChange>[] = [
         </div>
       );
     },
-    maxSize: 40
+    maxSize: 70
   },
   {
     header: "Summary",
@@ -38,7 +38,7 @@ const columns: ColumnDef<ConfigChange>[] = [
     meta: {
       cellClassName: "text-ellipsis overflow-hidden"
     },
-    size: 48
+    size: 70
   },
   {
     header: "Created",

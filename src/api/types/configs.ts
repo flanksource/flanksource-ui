@@ -59,6 +59,12 @@ export interface ConfigItem extends Timestamped, Avatar, Agent, Costs {
     id: string;
     name: string;
   };
+  summary?: {
+    relationships?: number;
+    analysis?: number;
+    changes?: number;
+    playbook_runs?: number;
+  };
 }
 
 export interface ConfigTypeRelationships extends Timestamped {

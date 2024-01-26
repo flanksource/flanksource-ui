@@ -2,6 +2,7 @@ import { AdjustmentsIcon } from "@heroicons/react/solid";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Provider } from "jotai";
 import React, { ReactNode, useEffect, useState } from "react";
+import { Toaster } from "react-hot-toast";
 import { IconType } from "react-icons";
 import { AiFillHeart } from "react-icons/ai";
 import { BsLink, BsToggles } from "react-icons/bs";
@@ -23,6 +24,7 @@ import { withAccessCheck } from "./components/AccessCheck/AccessCheck";
 import AgentsPage from "./components/Agents/AgentPage";
 import AuthProviderWrapper from "./components/Authentication/AuthProviderWrapper";
 import { ErrorBoundary } from "./components/ErrorBoundary";
+import { Head } from "./components/Head/Head";
 import { LogsIcon } from "./components/Icons/LogsIcon";
 import { TopologyIcon } from "./components/Icons/TopologyIcon";
 import BootIntercom from "./components/Intercom/BootIntercom";
@@ -61,16 +63,16 @@ import { FeatureFlagsPage } from "./pages/Settings/FeatureFlagsPage";
 import { LogBackendsPage } from "./pages/Settings/LogBackendsPage";
 import { TopologyCardPage } from "./pages/TopologyCard";
 import { UsersPage } from "./pages/UsersPage";
-import { ConfigDetailsInsightsPage } from "./pages/config/ConfigDetailsInsightsPage";
 import { ConfigInsightsPage } from "./pages/config/ConfigInsightsList";
+import { ConfigDetailsInsightsPage } from "./pages/config/details/ConfigDetailsInsightsPage";
+import { ConfigDetailsPlaybooksPage } from "./pages/config/details/ConfigDetailsPlaybooks";
+import { ConfigDetailsRelationshipsPage } from "./pages/config/details/ConfigDetailsRelionshipsPage";
 import { HealthPage } from "./pages/health";
 import PlaybookRunsPage from "./pages/playbooks/PlaybookRuns";
 import PlaybookRunsDetailsPage from "./pages/playbooks/PlaybookRunsDetails";
 import { PlaybooksListPage } from "./pages/playbooks/PlaybooksList";
 import { features } from "./services/permissions/features";
 import { stringSortHelper } from "./utils/common";
-import { Head } from "./components/Head/Head";
-import { Toaster } from "react-hot-toast";
 
 export type NavigationItems = {
   name: string;
@@ -471,6 +473,22 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             path="insights"
             element={withAccessCheck(
               <ConfigDetailsInsightsPage />,
+              tables.database,
+              "read"
+            )}
+          />
+          <Route
+            path="relationships"
+            element={withAccessCheck(
+              <ConfigDetailsRelationshipsPage />,
+              tables.database,
+              "read"
+            )}
+          />
+          <Route
+            path="playbooks"
+            element={withAccessCheck(
+              <ConfigDetailsPlaybooksPage />,
               tables.database,
               "read"
             )}

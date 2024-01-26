@@ -7,7 +7,7 @@ import { GrIntegration, GrWorkshop } from "react-icons/gr";
 import { ImHeartBroken } from "react-icons/im";
 import { IoMdSpeedometer } from "react-icons/io";
 import { MdOutlineRecommend, MdSecurity } from "react-icons/md";
-import { ConfigAnalysis } from "../../../../api/types/configs";
+import { ConfigAnalysis } from "../../../api/types/configs";
 
 type Props = {
   analysis: Pick<ConfigAnalysis, "severity" | "analysis_type">;

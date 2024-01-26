@@ -1,16 +1,17 @@
 import { CellContext, ColumnDef, Row } from "@tanstack/react-table";
 import React from "react";
 import { ConfigAnalysisTypeItem } from "../../../api/services/configs";
-import { getTimeBucket, TIME_BUCKETS } from "../../../utils/date";
-import ConfigInsightsIcon from "../Insights/ConfigInsightsIcon";
+import { ConfigAnalysis, ConfigItem } from "../../../api/types/configs";
+import { TIME_BUCKETS, getTimeBucket } from "../../../utils/date";
 import { FormatCurrency } from "../../CostDetails/CostDetails";
+import ConfigsTypeIcon from "../ConfigsTypeIcon";
+import ConfigInsightsIcon from "../Insights/ConfigInsightsIcon";
 import ConfigListAnalysisCell from "./Cells/ConfigListAnalysisCell";
 import ConfigListChangeCell from "./Cells/ConfigListChangeCell";
 import ConfigListCostCell from "./Cells/ConfigListCostCell";
 import ConfigListDateCell from "./Cells/ConfigListDateCell";
 import ConfigListNameCell from "./Cells/ConfigListNameCell";
 import ConfigListTagsCell from "./Cells/ConfigListTagsCell";
-import { ConfigAnalysis, ConfigItem } from "../../../api/types/configs";
 
 function CountBadge({ value }: { value: number | undefined | null }) {
   if (!value) {
@@ -31,6 +32,15 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
     size: 270,
     enableGrouping: true,
     enableSorting: true
+  },
+  {
+    header: "Type",
+    accessorKey: "type",
+    size: 150,
+    enableHiding: true,
+    cell: ({ row }: CellContext<ConfigItem, any>) => {
+      return <ConfigsTypeIcon config={row.original} showLabel />;
+    }
   },
   {
     header: "Changes",

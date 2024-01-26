@@ -40,10 +40,12 @@ export function ConfigTagsDropdown({
       items={configTagItems}
       name="type"
       onChange={(value) => {
-        setParams({
-          ...Object.fromEntries(params),
-          [searchParamKey]: value ?? "All"
-        });
+        if (!value || value === "All") {
+          params.delete(searchParamKey);
+        } else {
+          params.set(searchParamKey, value);
+        }
+        setParams(params);
         onChange(value);
       }}
       value={params.get(searchParamKey) ?? "All"}

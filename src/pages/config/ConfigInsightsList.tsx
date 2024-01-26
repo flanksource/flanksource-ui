@@ -1,13 +1,16 @@
-import { useState } from "react";
-import { ConfigInsightsFilters } from "../../components/Configs/ConfigAnalysis/Filters/ConfigInsightsFilters";
-import ConfigInsightsList from "../../components/Configs/ConfigAnalysis/ConfigInsightsList";
-import { configTabsLists } from "../../components/Configs/ConfigsPage/ConfigTabsLinks";
-import { Head } from "../../components/Head/Head";
-import { SearchLayout } from "../../components/Layout";
-import TabbedLinks from "../../components/Tabs/TabbedLinks";
-import { BreadcrumbNav, BreadcrumbRoot } from "../../components/BreadcrumbNav";
+import {
+  BreadcrumbNav,
+  BreadcrumbRoot
+} from "@flanksource-ui/components/BreadcrumbNav";
+import { configTabsLists } from "@flanksource-ui/components/Configs/ConfigTabsLinks";
+import ConfigInsightsList from "@flanksource-ui/components/Configs/Insights/ConfigInsightsList";
+import { ConfigInsightsFilters } from "@flanksource-ui/components/Configs/Insights/Filters/ConfigInsightsFilters";
+import { Head } from "@flanksource-ui/components/Head/Head";
+import { SearchLayout } from "@flanksource-ui/components/Layout";
+import { refreshButtonClickedTrigger } from "@flanksource-ui/components/SlidingSideBar";
+import TabbedLinks from "@flanksource-ui/components/Tabs/TabbedLinks";
 import { useAtom } from "jotai";
-import { refreshButtonClickedTrigger } from "../../components/SlidingSideBar";
+import { useState } from "react";
 
 export function ConfigInsightsPage() {
   const [triggerRefresh, setRefreshButtonClickedTrigger] = useAtom(
@@ -22,7 +25,10 @@ export function ConfigInsightsPage() {
         title={
           <BreadcrumbNav
             list={[
-              <BreadcrumbRoot link="/catalog/insights">
+              <BreadcrumbRoot
+                link="/catalog/insights"
+                key="root-catalog-insights"
+              >
                 Catalog Insights
               </BreadcrumbRoot>
             ]}

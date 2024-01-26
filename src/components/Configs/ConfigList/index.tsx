@@ -1,5 +1,5 @@
 import { Row, SortingState, Updater } from "@tanstack/react-table";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { DataTable } from "../..";
 import { ConfigItem } from "../../../api/types/configs";
@@ -7,11 +7,17 @@ import { configListColumns } from "./ConfigListColumn";
 
 export interface Props {
   data: ConfigItem[];
-  handleRowClick: (row?: any) => void;
+  handleRowClick: (row: Row<ConfigItem>) => void;
   isLoading: boolean;
+  columnsToHide?: string[];
 }
 
-export default function ConfigList({ data, handleRowClick, isLoading }: Props) {
+export default function ConfigList({
+  data,
+  handleRowClick,
+  isLoading,
+  columnsToHide = ["type"]
+}: Props) {
   const [queryParams, setSearchParams] = useSearchParams({
     sortBy: "name",
     sortOrder: "asc",
@@ -88,15 +94,15 @@ export default function ConfigList({ data, handleRowClick, isLoading }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [groupByField]);
 
-  const setHiddenColumns = useCallback(() => {
-    const alwaysHiddenColumns = ["deleted_at"];
+  const hiddenColumns = useMemo(() => {
+    const alwaysHiddenColumns = ["deleted_at", ...columnsToHide];
     if (groupByField !== "changed" && groupByField !== "tags") {
       return [...alwaysHiddenColumns, "changed", "allTags"];
     } else if (groupByField === "tags") {
       return [...alwaysHiddenColumns, "changed"];
     }
     return [];
-  }, [groupByField]);
+  }, [groupByField, columnsToHide]);
 
   const determineRowClassNames = useCallback((row: Row<ConfigItem>) => {
     if (row.getIsGrouped()) {
@@ -133,7 +139,7 @@ export default function ConfigList({ data, handleRowClick, isLoading }: Props) {
           ? undefined
           : [groupByField]
       }
-      hiddenColumns={setHiddenColumns()}
+      hiddenColumns={hiddenColumns}
       className="max-w-full table-auto table-fixed"
       tableSortByState={sortBy}
       onTableSortByChanged={updateSortBy}
