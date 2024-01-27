@@ -47,7 +47,7 @@ spec:
     upstream:
       createSecret: true
       host:  ${baseUrl}
-      username: ${generatedAgent.username}
+      username: token
       password: ${generatedAgent.access_token}
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2beta1

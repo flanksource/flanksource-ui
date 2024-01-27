@@ -43,13 +43,13 @@ helm repo update
 helm install mc-agent flanksource/mission-control-agent -n "mission-control-agent" \
 --set upstream.createSecret=true \
 --set upstream.host=${baseUrl} \
---set upstream.username=${generatedAgent.username} \
+--set upstream.username=token \
 --set upstream.password=${generatedAgent.access_token}
 
 helm install mc-agent flanksource/mission-control-agent -n "mission-control-agent" \
 --set upstream.createSecret=true \
 --set upstream.host=${baseUrl} \
---set upstream.username=${generatedAgent.username} \
+--set upstream.username=token \
 --set upstream.password=${generatedAgent.access_token}
 ${kubeOptionsString}
 `}

@@ -44,9 +44,9 @@ describe("InstallAgentModal", () => {
 
       helm repo update
 
-      helm install mc-agent flanksource/mission-control-agent -n "mission-control-agent" --set upstream.createSecret=true --set upstream.host=http://localhost --set upstream.username=testuser --set upstream.password=testtoken
+      helm install mc-agent flanksource/mission-control-agent -n "mission-control-agent" --set upstream.createSecret=true --set upstream.host=http://localhost --set upstream.username=token --set upstream.password=testtoken
 
-      helm install mc-agent flanksource/mission-control-agent -n "mission-control-agent" --set upstream.createSecret=true --set upstream.host=http://localhost --set upstream.username=testuser --set upstream.password=testtoken
+      helm install mc-agent flanksource/mission-control-agent -n "mission-control-agent" --set upstream.createSecret=true --set upstream.host=http://localhost --set upstream.username=token --set upstream.password=testtoken
 
       "
     `);
