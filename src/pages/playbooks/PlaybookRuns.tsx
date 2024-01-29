@@ -1,6 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
+import { FaEdit } from "react-icons/fa";
+import { useSearchParams } from "react-router-dom";
+import { useGetPlaybookSpecsDetails } from "../../api/query-hooks/playbooks";
 import { getPlaybookRuns } from "../../api/services/playbooks";
+import { Button } from "../../components";
 import {
   BreadcrumbChild,
   BreadcrumbNav,
@@ -10,12 +14,9 @@ import { Head } from "../../components/Head/Head";
 import { SearchLayout } from "../../components/Layout";
 import PlaybookRunsTable from "../../components/Playbooks/Runs/PlaybookRunsList";
 import { playbookRunsPageTabs } from "../../components/Playbooks/Runs/PlaybookRunsPageTabs";
-import TabbedLinks from "../../components/Tabs/TabbedLinks";
-import { useSearchParams } from "react-router-dom";
-import { Button } from "../../components";
-import { FaEdit } from "react-icons/fa";
-import { useGetPlaybookSpecsDetails } from "../../api/query-hooks/playbooks";
+import PlaybookSpecIcon from "../../components/Playbooks/Settings/PlaybookSpecIcon";
 import PlaybookSpecsForm from "../../components/Playbooks/Settings/PlaybookSpecsForm";
+import TabbedLinks from "../../components/Tabs/TabbedLinks";
 
 export default function PlaybookRunsPage() {
   const [isEditPlaybookFormOpen, setIsEditPlaybookFormOpen] = useState(false);
@@ -82,7 +83,7 @@ export default function PlaybookRunsPage() {
               ...(playbook
                 ? [
                     <BreadcrumbChild key={"/playbooks"} link={`/playbooks`}>
-                      {playbook?.name}
+                      <PlaybookSpecIcon playbook={playbook} showLabel />
                     </BreadcrumbChild>
                   ]
                 : []),

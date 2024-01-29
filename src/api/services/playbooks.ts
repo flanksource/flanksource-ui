@@ -1,5 +1,5 @@
-import { SubmitPlaybookRunFormValues } from "../../components/Playbooks/Runs/Submit/SubmitPlaybookRunForm";
-import { AVATAR_INFO } from "../../constants";
+import { SubmitPlaybookRunFormValues } from "@flanksource-ui/components/Playbooks/Runs/Submit/SubmitPlaybookRunForm";
+import { AVATAR_INFO } from "@flanksource-ui/constants";
 import { ConfigDB, IncidentCommander, PlaybookAPI } from "../axios";
 import { GetPlaybooksToRunParams } from "../query-hooks/playbooks";
 import { resolve } from "../resolve";
@@ -27,6 +27,12 @@ export async function getPlaybookSpec(id: string) {
   return res.data?.[0] ?? undefined;
 }
 
+export async function getPlaybookSpecsByIDs(ids: string[]) {
+  const res = await IncidentCommander.get<
+    Pick<PlaybookSpec, "id" | "spec">[] | null
+  >(`/playbooks?id=in.(${ids.join(",")})&select=id,spec`);
+  return res.data ?? [];
+}
 export async function createPlaybookSpec(spec: NewPlaybookSpec) {
   const res = await IncidentCommander.post<PlaybookSpec>("/playbooks", spec);
   return res.data;
@@ -77,7 +83,8 @@ export async function getPlaybookToRunForResource(
 
 export async function getPlaybookRun(id: string) {
   const res = await IncidentCommander.get<PlaybookRunWithActions[] | null>(
-    `/playbook_runs?id=eq.${id}&select=*,created_by(${AVATAR_INFO}),playbooks(id,name),component:components(id,name,icon),actions:playbook_run_actions(id,name,status,start_time,end_time)`
+    // todo: use playbook names instead
+    `/playbook_runs?id=eq.${id}&select=*,created_by(${AVATAR_INFO}),playbooks(id,name,spec),component:components(id,name,icon),actions:playbook_run_actions(id,name,status,start_time,end_time)`
   );
   return res.data?.[0] ?? undefined;
 }
@@ -116,7 +123,7 @@ export async function getPlaybookRuns({
 
   const res = await resolve(
     ConfigDB.get<PlaybookRun[] | null>(
-      `/playbook_runs?select=*,playbooks(id,name),component:components(id,name,icon),check:checks(id,name,icon),config:config_items(id,name,type,config_class)&&order=created_at.desc${playbookParamsString}${componentParamString}&${configParamString}${pagingParams}}`,
+      `/playbook_runs?select=*,playbooks(id,name,spec,icon),component:components(id,name,icon),check:checks(id,name,icon),config:config_items(id,name,type,config_class)&&order=created_at.desc${playbookParamsString}${componentParamString}&${configParamString}${pagingParams}}`,
       {
         headers: {
           Prefer: "count=exact"

@@ -3,17 +3,22 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { rest } from "msw";
 import { setupServer } from "msw/node";
-import PlaybooksDropdownMenu from "../PlaybooksDropdownMenu";
 import { RunnablePlaybook } from "../../../../../api/types/playbooks";
+import PlaybooksDropdownMenu from "../PlaybooksDropdownMenu";
 
-const playbooks: RunnablePlaybook[] = [
+const playbooks: (RunnablePlaybook & {
+  spec: any;
+})[] = [
   {
     id: "1",
     name: "Playbook 1",
     created_at: "2021-09-01T00:00:00Z",
     source: "UI",
     parameters: [],
-    updated_at: "2021-09-01T00:00:00Z"
+    updated_at: "2021-09-01T00:00:00Z",
+    spec: {
+      icon: "playbook.svg"
+    }
   },
   {
     id: "2",
@@ -21,7 +26,10 @@ const playbooks: RunnablePlaybook[] = [
     created_at: "2021-09-01T00:00:00Z",
     source: "UI",
     parameters: [],
-    updated_at: "2021-09-01T00:00:00Z"
+    updated_at: "2021-09-01T00:00:00Z",
+    spec: {
+      icon: "playbook.svg"
+    }
   }
 ];
 
@@ -34,6 +42,9 @@ global.ResizeObserver = jest.fn().mockImplementation(() => ({
 // Define a mock server to handle PATCH requests
 const server = setupServer(
   rest.get("/api/playbook/list", (req, res, ctx) => {
+    return res(ctx.json(playbooks));
+  }),
+  rest.get("/api/db/playbooks", (req, res, ctx) => {
     return res(ctx.json(playbooks));
   })
 );
