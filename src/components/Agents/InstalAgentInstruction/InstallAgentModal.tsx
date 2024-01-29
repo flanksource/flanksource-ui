@@ -29,7 +29,7 @@ export default function InstallAgentModal({
       open={isOpen}
       bodyClass="flex flex-col w-full flex-1 h-full overflow-y-auto"
     >
-      <div className="flex flex-col gap-2 flex-1 p-4 overflow-y-auto">
+      <div className="flex flex-col gap-4 flex-1 p-4 overflow-y-auto">
         <div
           className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
           role="alert"
@@ -39,21 +39,25 @@ export default function InstallAgentModal({
             securely.
           </span>
         </div>
-
-        <Tabs activeTab={activeTab} onSelectTab={(v) => setActiveTab(v as any)}>
-          <Tab label="Helm CLI" value="cli">
-            <CLIInstallAgent
-              generatedAgent={generatedAgent}
-              agentFormValues={agentFormValues}
-            />
-          </Tab>
-          <Tab label="Flux" value="flux">
-            <FluxInstallAgent
-              generatedAgent={generatedAgent}
-              agentFormValues={agentFormValues}
-            />
-          </Tab>
-        </Tabs>
+        <div className="flex flex-col ">
+          <Tabs
+            activeTab={activeTab}
+            onSelectTab={(v) => setActiveTab(v as any)}
+          >
+            <Tab label="Helm CLI" value="cli">
+              <CLIInstallAgent
+                generatedAgent={generatedAgent}
+                agentFormValues={agentFormValues}
+              />
+            </Tab>
+            <Tab label="Flux" value="flux">
+              <FluxInstallAgent
+                generatedAgent={generatedAgent}
+                agentFormValues={agentFormValues}
+              />
+            </Tab>
+          </Tabs>
+        </div>
       </div>
       <div className="flex flex-row justify-end gap-4 p-4">
         <Button text="Close" onClick={onClose} />
