@@ -5,6 +5,7 @@ import {
 import { Avatar } from "@flanksource-ui/components/Avatar";
 import { Age } from "@flanksource-ui/ui/Age";
 import VerticalDescription from "@flanksource-ui/ui/description/VerticalDescription";
+import dayjs from "dayjs";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import PlaybookSpecIcon from "../../Settings/PlaybookSpecIcon";
@@ -45,6 +46,21 @@ export default function PlaybookRunsActions({ data }: PlaybookRunActionsProps) {
             label="Started"
             value={<Age from={data.start_time} suffix={true} />}
           />
+          {data.scheduled_time &&
+            // if scheduled time is in the future, show it, otherwise it's in
+            // the past and we don't need to show it here
+            dayjs().isBefore(dayjs(data.scheduled_time)) && (
+              <VerticalDescription
+                label="Scheduled"
+                value={
+                  <Age
+                    from={dayjs().toISOString()}
+                    to={data.scheduled_time}
+                    suffix={true}
+                  />
+                }
+              />
+            )}
           <VerticalDescription
             label="Duration"
             value={<Age from={data.start_time} to={data.end_time} />}
