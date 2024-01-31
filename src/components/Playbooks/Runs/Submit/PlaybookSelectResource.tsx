@@ -9,13 +9,9 @@ type PlaybookSelectResourceProps = {
 export default function PlaybookSelectResource({
   playbook
 }: PlaybookSelectResourceProps) {
-  const configTypes = (playbook.spec?.configs as { type: string }[])?.map(
-    (item) => item?.type
-  );
+  const configTypes = playbook.spec?.configs?.map((item) => item?.type);
 
-  const componentTypes = (playbook.spec?.components as { type: string }[])?.map(
-    (item) => item?.type
-  );
+  const componentTypes = playbook.spec?.components?.map((item) => item?.type);
 
   if (!configTypes && !componentTypes) {
     return null;
