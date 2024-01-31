@@ -92,7 +92,7 @@ export async function getPlaybookToRunForResource(
 export async function getPlaybookRun(id: string) {
   const res = await IncidentCommander.get<PlaybookRunWithActions[] | null>(
     // todo: use playbook names instead
-    `/playbook_runs?id=eq.${id}&select=*,created_by(${AVATAR_INFO}),playbooks(id,name,spec),component:components(id,name,icon),actions:playbook_run_actions(id,name,status,start_time,end_time)`
+    `/playbook_runs?id=eq.${id}&select=*,created_by(${AVATAR_INFO}),playbooks(id,name,spec),component:components(id,name,icon),actions:playbook_run_actions(id,name,status,start_time,end_time,scheduled_time)`
   );
   return res.data?.[0] ?? undefined;
 }

@@ -12,10 +12,18 @@ export type PlaybookRunStatus =
   | "failed"
   | "pending";
 
+export type PlaybookRunActionStatus =
+  | "completed"
+  | "failed"
+  | "running"
+  | "scheduled"
+  | "skipped"
+  | "sleeping";
+
 export type PlaybookRunAction = {
   id: string;
   name: string;
-  status: PlaybookRunStatus;
+  status: PlaybookRunActionStatus;
   playbook_run_id: string;
   start_time: string;
   scheduled_time?: string;
