@@ -113,7 +113,7 @@ export default function PlaybookRunsPage() {
             <div className="flex flex-col flex-1">
               <PlaybookRunsTable
                 data={playbookRuns ?? []}
-                isLoading={isLoading}
+                isLoading={isLoadingPlaybookRuns}
                 pagination={pagination}
               />
             </div>
