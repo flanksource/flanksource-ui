@@ -1,11 +1,11 @@
+import { useSubmitPlaybookRunMutation } from "@flanksource-ui/api/query-hooks/playbooks";
+import { RunnablePlaybook } from "@flanksource-ui/api/types/playbooks";
+import { Button } from "@flanksource-ui/ui/Button";
+import { Modal } from "@flanksource-ui/ui/Modal";
 import { AxiosError } from "axios";
 import { Form, Formik } from "formik";
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
-import { useSubmitPlaybookRunMutation } from "../../../../api/query-hooks/playbooks";
-import { RunnablePlaybook } from "../../../../api/types/playbooks";
-import { Button } from "../../../Button";
-import { Modal } from "../../../Modal";
 import { toastError, toastSuccess } from "../../../Toast/toast";
 import PlaybookSpecModalTitle from "../../PlaybookSpecModalTitle";
 import { getResourceForRun } from "../services";

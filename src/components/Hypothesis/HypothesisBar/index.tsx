@@ -1,8 +1,8 @@
 import { ChevronRightIcon } from "@heroicons/react/outline";
 import clsx from "clsx";
+import { useAtomValue, useSetAtom } from "jotai";
 import { debounce } from "lodash";
 import { useEffect, useMemo, useState } from "react";
-import { useAtomValue, useSetAtom } from "jotai";
 import { useForm } from "react-hook-form";
 import {
   BsBraces,
@@ -11,14 +11,14 @@ import {
 } from "react-icons/bs";
 import { IconBaseProps, IconType } from "react-icons/lib";
 import { VscTypeHierarchy } from "react-icons/vsc";
+import { EvidenceType } from "../../../api/types/evidence";
+import { Hypothesis } from "../../../api/types/hypothesis";
 import { HypothesisAPIs } from "../../../pages/incident/IncidentDetails";
-import { AvatarGroup } from "../../AvatarGroup";
+import { recentlyAddedHypothesisIdAtom } from "../../../store/hypothesis.state";
+import { AvatarGroup } from "../../../ui/AvatarGroup";
 import { EditableText } from "../../EditableText";
 import { HypothesisBarMenu } from "../HypothesisBarMenu";
 import { StatusDropdownContainer } from "../StatusDropdownContainer";
-import { recentlyAddedHypothesisIdAtom } from "../../../store/hypothesis.state";
-import { EvidenceType } from "../../../api/types/evidence";
-import { Hypothesis } from "../../../api/types/hypothesis";
 
 enum CommentInfo {
   Comment = "comment"

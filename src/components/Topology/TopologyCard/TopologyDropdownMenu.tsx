@@ -1,13 +1,13 @@
 import { CSSProperties, useCallback, useMemo, useState } from "react";
+import { EvidenceType } from "../../../api/types/evidence";
+import { Topology } from "../../../api/types/topology";
 import { useFeatureFlagsContext } from "../../../context/FeatureFlagsContext";
 import { features } from "../../../services/permissions/features";
+import { Menu } from "../../../ui/Menu";
 import { AttachEvidenceDialog } from "../../AttachEvidenceDialog";
-import { Menu } from "../../Menu";
+import { topologyActionItems } from "../Sidebar/TopologyActionBar";
 import { TopologyConfigLinkModal } from "../TopologyConfigLinkModal/TopologyConfigLinkModal";
 import TopologySnapshotModal from "./TopologySnapshotModal";
-import { Topology } from "../../../api/types/topology";
-import { EvidenceType } from "../../../api/types/evidence";
-import { topologyActionItems } from "../Sidebar/TopologyActionBar";
 
 type TopologyMenuItemProps = {
   onClick?: () => void;

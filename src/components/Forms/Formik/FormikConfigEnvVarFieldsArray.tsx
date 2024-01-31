@@ -1,8 +1,8 @@
-import { useFormikContext, FieldArray } from "formik";
-import { FaPlus, FaTrash } from "react-icons/fa";
-import { Button } from "../../Button";
+import { FieldArray, useFormikContext } from "formik";
 import { get } from "lodash";
-import React, { useMemo } from "react";
+import { useMemo } from "react";
+import { FaPlus, FaTrash } from "react-icons/fa";
+import { Button } from "../../../ui/Button";
 import FormikConfigEnvVarFields from "./FormikConfigEnvVarFields";
 
 type ConfigFormFieldProps = {

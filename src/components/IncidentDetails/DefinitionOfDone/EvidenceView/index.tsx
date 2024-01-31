@@ -11,7 +11,7 @@ import {
 import { getCanaries } from "../../../../api/services/topology";
 import { Evidence, EvidenceType } from "../../../../api/types/evidence";
 import { Size, ViewType } from "../../../../types";
-import { Badge } from "../../../Badge";
+import { Badge } from "../../../../ui/Badge";
 import {
   ConfigAnalysisEvidence,
   ConfigChangeEvidence

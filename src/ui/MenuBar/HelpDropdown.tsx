@@ -1,7 +1,7 @@
 import { Menu, Transition } from "@headlessui/react";
 import { Fragment } from "react";
 import { IoHelpOutline } from "react-icons/io5";
-import { ClickableSvg } from "../../components/ClickableSvg/ClickableSvg";
+import { ClickableSvg } from "../ClickableSvg/ClickableSvg";
 
 export function HelpDropdown() {
   return (

@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
+import { Modal } from "../../ui/Modal";
 import { Icon } from "../Icon";
-import { Modal } from "../Modal";
 import ConnectionForm from "./ConnectionForm";
+import ConnectionListView from "./ConnectionListView";
 import {
   ConnectionType,
   ConnectionValueType,
   connectionTypes
 } from "./connectionTypes";
-import ConnectionListView from "./ConnectionListView";
 
 export type Connection = {
   altID?: string;

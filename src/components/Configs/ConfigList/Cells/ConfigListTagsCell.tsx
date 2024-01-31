@@ -1,7 +1,7 @@
 import { CellContext } from "@tanstack/react-table";
 import { useSearchParams } from "react-router-dom";
 import { ConfigItem } from "../../../../api/types/configs";
-import Popover from "../../../Popover/Popover";
+import Popover from "../../../../ui/Popover/Popover";
 import { TagItem, TagList } from "../../../TagList/TagList";
 
 export default function ConfigListTagsCell({

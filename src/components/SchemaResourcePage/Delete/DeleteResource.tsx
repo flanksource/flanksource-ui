@@ -1,9 +1,9 @@
-import { FaCircleNotch, FaTrash } from "react-icons/fa";
-import { Button } from "../../Button";
-import { SchemaResourceType } from "../resourceTypes";
 import { useCallback, useState } from "react";
-import { ConfirmationPromptDialog } from "../../Dialogs/ConfirmationPromptDialog";
+import { FaCircleNotch, FaTrash } from "react-icons/fa";
 import { useSettingsDeleteResource } from "../../../api/query-hooks/mutations/useSettingsResourcesMutations";
+import { Button } from "../../../ui/Button";
+import { ConfirmationPromptDialog } from "../../Dialogs/ConfirmationPromptDialog";
+import { SchemaResourceType } from "../resourceTypes";
 
 type DeleteResourceProps = {
   resourceId: string;

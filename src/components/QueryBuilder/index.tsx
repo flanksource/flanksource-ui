@@ -19,8 +19,8 @@ import {
   updateSavedQuery
 } from "../../api/services/configs";
 import { useLoader } from "../../hooks";
-import { ClickableSvg } from "../ClickableSvg/ClickableSvg";
-import { Modal } from "../Modal";
+import { ClickableSvg } from "../../ui/ClickableSvg/ClickableSvg";
+import { Modal } from "../../ui/Modal";
 import { TextInputClearable } from "../TextInputClearable";
 import { TextWithDivider } from "../TextWithDivider";
 import { toastError, toastSuccess } from "../Toast/toast";

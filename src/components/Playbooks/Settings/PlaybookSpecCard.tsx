@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { deletePlaybookSpec } from "../../../api/services/playbooks";
 import { PlaybookSpec } from "../../../api/types/playbooks";
-import { Button } from "../../Button";
+import { Button } from "../../../ui/Button";
 import { Icon } from "../../Icon";
 import { toastError, toastSuccess } from "../../Toast/toast";
 import SubmitPlaybookRunForm from "../Runs/Submit/SubmitPlaybookRunForm";

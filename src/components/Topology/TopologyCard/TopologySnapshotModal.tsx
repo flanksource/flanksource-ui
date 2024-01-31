@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { useDownloadTopologySnapshot } from "./useDownloadTopologySnapshot";
-import { TimeRange, timeRanges } from "../../Dropdown/TimeRange";
-import { Modal } from "../../Modal";
-import { toastError } from "../../Toast/toast";
-import { Toggle } from "../../Toggle";
 import { FaDownload } from "react-icons/fa";
 import { Oval } from "react-loading-icons";
-import { Events, sendAnalyticEvent } from "../../../services/analytics";
 import { Topology } from "../../../api/types/topology";
+import { Events, sendAnalyticEvent } from "../../../services/analytics";
+import { Modal } from "../../../ui/Modal";
+import { TimeRange, timeRanges } from "../../Dropdown/TimeRange";
+import { toastError } from "../../Toast/toast";
+import { Toggle } from "../../Toggle";
+import { useDownloadTopologySnapshot } from "./useDownloadTopologySnapshot";
 
 type Props = {
   onCloseModal: () => void;

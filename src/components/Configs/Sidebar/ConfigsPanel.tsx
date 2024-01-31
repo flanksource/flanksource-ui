@@ -6,7 +6,7 @@ import { VscJson } from "react-icons/vsc";
 import ReactTooltip from "react-tooltip";
 import { useComponentConfigRelationshipQuery } from "../../../api/query-hooks/useComponentConfigRelationshipQuery";
 import { removeManualComponentConfigRelationship } from "../../../api/services/configs";
-import { Badge } from "../../Badge";
+import { Badge } from "../../../ui/Badge";
 import CollapsiblePanel from "../../CollapsiblePanel";
 import { ConfirmationPromptDialog } from "../../Dialogs/ConfirmationPromptDialog";
 import EmptyState from "../../EmptyState";

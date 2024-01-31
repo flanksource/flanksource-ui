@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { Icon } from "../Icon";
-import SpecEditorForm from "../Forms/SpecEditorForm";
-import { SchemaResourceType } from "../SchemaResourcePage/resourceTypes";
 import { useAtom } from "jotai";
-import { modalHelpLinkAtom } from "../Modal";
+import React, { useEffect, useState } from "react";
+import { modalHelpLinkAtom } from "../../ui/Modal";
+import SpecEditorForm from "../Forms/SpecEditorForm";
+import { Icon } from "../Icon";
+import { SchemaResourceType } from "../SchemaResourcePage/resourceTypes";
 
 export type SpecType = {
   name: string;

@@ -1,14 +1,14 @@
 import { CellContext, ColumnDef, Row } from "@tanstack/react-table";
-import { ConfigSummary } from "../../../api/types/configs";
-import { DataTable } from "../../DataTable";
-import ConfigInsightsIcon from "../Insights/ConfigInsightsIcon";
-import { CountBadge } from "../../Badge/CountBadge";
-import ConfigListCostCell from "../ConfigList/Cells/ConfigListCostCell";
 import { useCallback, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Badge } from "../../Badge";
-import ConfigsTypeIcon from "../ConfigsTypeIcon";
+import { ConfigSummary } from "../../../api/types/configs";
+import { Badge } from "../../../ui/Badge";
+import { CountBadge } from "../../../ui/Badge/CountBadge";
+import { DataTable } from "../../DataTable";
+import ConfigListCostCell from "../ConfigList/Cells/ConfigListCostCell";
 import ConfigListDateCell from "../ConfigList/Cells/ConfigListDateCell";
+import ConfigsTypeIcon from "../ConfigsTypeIcon";
+import ConfigInsightsIcon from "../Insights/ConfigInsightsIcon";
 
 function ConfigSummaryTypeCell({
   getValue,

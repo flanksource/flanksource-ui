@@ -4,12 +4,14 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import LoadingBar, { LoadingBarRef } from "react-top-loading-bar";
 import { getTopology } from "../api/services/topology";
+import { Topology } from "../api/types/topology";
 import { Head } from "../components/Head/Head";
 import { InfoMessage } from "../components/InfoMessage";
 import { SearchLayout } from "../components/Layout";
 import CardsSkeletonLoader from "../components/SkeletonLoader/CardsSkeletonLoader";
 import { refreshButtonClickedTrigger } from "../components/SlidingSideBar";
 import { toastError } from "../components/Toast/toast";
+import TopologySidebar from "../components/Topology/Sidebar/TopologySidebar";
 import { TopologyBreadcrumbs } from "../components/Topology/TopologyBreadcrumbs";
 import { TopologyCard } from "../components/Topology/TopologyCard";
 import TopologyFilterBar from "../components/Topology/TopologyPage/TopologyFilterBar";
@@ -18,8 +20,6 @@ import {
   getSortLabels,
   getSortedTopology
 } from "../components/Topology/TopologyPopover/topologySort";
-import TopologySidebar from "../components/Topology/Sidebar/TopologySidebar";
-import { Topology } from "../api/types/topology";
 
 export const allOption = {
   All: {
@@ -80,7 +80,6 @@ export function TopologyPage() {
   const refererId = searchParams.get("refererId") ?? undefined;
   const sortBy = searchParams.get("sortBy") ?? undefined;
   const sortOrder = searchParams.get("sortOrder") ?? undefined;
-  const hideFilters = searchParams.get("hideFilters") ?? undefined;
   const showHiddenComponents =
     searchParams.get("showHiddenComponents") ?? undefined;
 

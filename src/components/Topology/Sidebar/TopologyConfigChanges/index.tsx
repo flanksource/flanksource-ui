@@ -5,7 +5,7 @@ import { GoDiff } from "react-icons/go";
 import { useComponentConfigChanges } from "../../../../api/query-hooks/useComponentConfigChanges";
 import { useGetConfigChangesById } from "../../../../api/query-hooks/useGetConfigChangesByConfigChangeIdQuery";
 import { ConfigChange } from "../../../../api/types/configs";
-import PillBadge from "../../../Badge/PillBadge";
+import PillBadge from "../../../../ui/Badge/PillBadge";
 import CollapsiblePanel from "../../../CollapsiblePanel";
 import { ConfigDetailChangeModal } from "../../../Configs/Changes/ConfigDetailsChanges/ConfigDetailsChanges";
 import EmptyState from "../../../EmptyState";

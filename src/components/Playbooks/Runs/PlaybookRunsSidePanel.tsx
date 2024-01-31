@@ -1,13 +1,13 @@
+import { getPlaybookRuns } from "@flanksource-ui/api/services/playbooks";
+import { PlaybookRun } from "@flanksource-ui/api/types/playbooks";
+import { Age } from "@flanksource-ui/ui/Age";
+import PillBadge from "@flanksource-ui/ui/Badge/PillBadge";
 import { useQuery } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
 import { useAtom } from "jotai";
 import { useEffect, useMemo, useState } from "react";
 import { AiOutlineTeam } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
-import { getPlaybookRuns } from "../../../api/services/playbooks";
-import { PlaybookRun } from "../../../api/types/playbooks";
-import { Age } from "../../../ui/Age";
-import PillBadge from "../../Badge/PillBadge";
 import CollapsiblePanel from "../../CollapsiblePanel";
 import EmptyState from "../../EmptyState";
 import { PlaybookStatusIcon } from "../../Icon/PlaybookStatusIcon";

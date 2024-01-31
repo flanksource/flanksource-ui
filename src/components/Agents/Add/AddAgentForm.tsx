@@ -7,13 +7,13 @@ import {
   useUpdateAgentMutations
 } from "../../../api/query-hooks/mutations/useUpsertAgentMutations";
 import { GenerateAgent, GeneratedAgent } from "../../../api/services/agents";
-import { Button } from "../../Button";
+import { Button } from "../../../ui/Button";
+import { Modal } from "../../../ui/Modal";
 import FormikAutocompleteDropdown from "../../Forms/Formik/FormikAutocompleteDropdown";
 import FormikCheckbox from "../../Forms/Formik/FormikCheckbox";
 import FormikConfigFormFieldsArray from "../../Forms/Formik/FormikConfigFormFieldsArray";
 import FormikKeyValueMapField from "../../Forms/Formik/FormikKeyValueMapField";
 import FormikTextInput from "../../Forms/Formik/FormikTextInput";
-import { Modal } from "../../Modal";
 import { toastError, toastSuccess } from "../../Toast/toast";
 import { Agent } from "../AgentPage";
 import DeleteAgentButton from "../DeleteAgentButton";

@@ -21,12 +21,12 @@ import { IncidentSeverity, IncidentStatus } from "../../api/types/incident";
 import { useUser } from "../../context";
 import { Events, sendAnalyticEvent } from "../../services/analytics";
 import { IItem } from "../../types/IItem";
+import { Modal } from "../../ui/Modal";
 import { DropdownWithActions } from "../Dropdown/DropdownWithActions";
 import SelectDropdown from "../Dropdown/SelectDropdown";
 import { IncidentSeverityTag } from "../IncidentSeverityTag";
 import { IncidentStatusTag } from "../IncidentStatusTag";
 import { severityItems, typeItems } from "../Incidents/data";
-import { Modal } from "../Modal";
 import { TextInput } from "../TextInput";
 import { toastSuccess } from "../Toast/toast";
 

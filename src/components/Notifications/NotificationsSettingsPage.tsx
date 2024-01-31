@@ -5,10 +5,10 @@ import {
   useCreateNotification,
   useNotificationsSummaryQuery
 } from "../../api/query-hooks/useNotificationsQuery";
+import { Modal } from "../../ui/Modal";
 import { BreadcrumbNav, BreadcrumbRoot } from "../BreadcrumbNav";
 import { Head } from "../Head/Head";
 import { SearchLayout } from "../Layout";
-import { Modal } from "../Modal";
 import NotificationsForm from "./NotificationsForm";
 import NotificationsTable from "./NotificationsTable";
 import { Notification } from "./notificationsTableColumns";

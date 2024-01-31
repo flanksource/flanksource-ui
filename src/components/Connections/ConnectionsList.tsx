@@ -1,12 +1,12 @@
 import { CellContext, ColumnDef } from "@tanstack/table-core";
 import clsx from "clsx";
-import { DataTable } from "../DataTable";
-import { Avatar } from "../Avatar";
-import { Connection } from "./ConnectionFormModal";
-import { Icon } from "../Icon";
-import { DateCell } from "../../ui/table";
-import { ConnectionValueType } from "./connectionTypes";
 import { useMemo } from "react";
+import { Avatar } from "../../ui/Avatar";
+import { DateCell } from "../../ui/table";
+import { DataTable } from "../DataTable";
+import { Icon } from "../Icon";
+import { Connection } from "./ConnectionFormModal";
+import { ConnectionValueType } from "./connectionTypes";
 
 type ConnectionListProps = {
   data: Connection[];

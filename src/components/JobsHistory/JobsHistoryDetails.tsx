@@ -1,6 +1,6 @@
-import { Modal } from "../Modal";
-import { JobHistory } from "./JobsHistoryTable";
 import clsx from "clsx";
+import { Modal } from "../../ui/Modal";
+import { JobHistory } from "./JobsHistoryTable";
 
 interface CellProps {
   children: React.ReactNode;

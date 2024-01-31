@@ -5,8 +5,8 @@ import {
   IncidentStatus
 } from "../../api/types/incident";
 import { hypothesisStatusIconMap } from "../../constants/hypothesisStatusOptions";
-import { Avatar } from "../Avatar";
-import { Badge } from "../Badge";
+import { Avatar } from "../../ui/Avatar";
+import { Badge } from "../../ui/Badge";
 import { incidentStatusItems } from "../Incidents/data";
 import EvidenceChangelogContent from "./EvidenceChangelogContent";
 

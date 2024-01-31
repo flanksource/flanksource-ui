@@ -1,7 +1,7 @@
+import { useCallback, useState } from "react";
 import { FaCircleNotch, FaTrash } from "react-icons/fa";
 import { useDeleteAgentMutations } from "../../api/query-hooks/mutations/useUpsertAgentMutations";
-import { useState, useCallback } from "react";
-import { Button } from "../Button";
+import { Button } from "../../ui/Button";
 import { ConfirmationPromptDialog } from "../Dialogs/ConfirmationPromptDialog";
 import { toastError, toastSuccess } from "../Toast/toast";
 

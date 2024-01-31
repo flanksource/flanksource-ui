@@ -6,16 +6,16 @@ import { Link } from "react-router-dom";
 import { getIncidentsBy } from "../../../api/services/incident";
 import { useFeatureFlagsContext } from "../../../context/FeatureFlagsContext";
 import { features } from "../../../services/permissions/features";
-import PillBadge from "../../Badge/PillBadge";
+import { Age } from "../../../ui/Age";
+import PillBadge from "../../../ui/Badge/PillBadge";
 import CollapsiblePanel from "../../CollapsiblePanel";
 import { DetailsTable } from "../../DetailsTable/DetailsTable";
 import { IncidentStatusTag } from "../../IncidentStatusTag";
-import { typeItems } from "../data";
 import IncidentsFilterBar, { IncidentFilter } from "../../IncidentsFilterBar";
 import { refreshButtonClickedTrigger } from "../../SlidingSideBar";
 import Title from "../../Title/title";
-import { Age } from "../../../ui/Age";
 import { IncidentTypeIcon } from "../../incidentTypeTag";
+import { typeItems } from "../data";
 
 type Props = {
   topologyId?: string;

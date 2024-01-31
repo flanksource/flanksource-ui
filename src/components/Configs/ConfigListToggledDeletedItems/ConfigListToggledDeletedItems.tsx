@@ -1,7 +1,7 @@
-import Popover from "../../Popover/Popover";
-import { Toggle } from "../../Toggle";
 import { useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
+import Popover from "../../../ui/Popover/Popover";
+import { Toggle } from "../../Toggle";
 
 export const areDeletedConfigsHidden = atomWithStorage<"yes" | "no">(
   "areDeletedConfigsHidden",
@@ -15,7 +15,7 @@ export function ConfigListToggledDeletedItems() {
 
   return (
     <Popover className="flex items-center" title="Preferences">
-      <div className="flex items-center p-4">
+      <div className="flex items-center p-4 w-80">
         <Toggle
           onChange={(value) => {
             if (value) {

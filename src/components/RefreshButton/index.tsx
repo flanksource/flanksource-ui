@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { HiOutlineRefresh } from "react-icons/hi";
-import { ClickableSvg } from "../ClickableSvg/ClickableSvg";
+import { ClickableSvg } from "../../ui/ClickableSvg/ClickableSvg";
 
 interface IProps extends React.ComponentPropsWithoutRef<"button"> {
   onClick: () => void;

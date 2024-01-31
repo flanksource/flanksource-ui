@@ -6,26 +6,26 @@ import {
   useGetConfigInsight
 } from "../../../api/query-hooks";
 import { getCanaries } from "../../../api/services/topology";
+import { ConfigAnalysis } from "../../../api/types/configs";
+import { Evidence, EvidenceType } from "../../../api/types/evidence";
+import { Hypothesis } from "../../../api/types/hypothesis";
 import { Size, ViewType } from "../../../types";
+import { Age } from "../../../ui/Age";
+import { Button } from "../../../ui/Button";
+import { Modal } from "../../../ui/Modal";
 import { sanitizeHTMLContent, toFixedIfNecessary } from "../../../utils/common";
 import mixins from "../../../utils/mixins.module.css";
-import { Button } from "../../Button";
 import { CheckDetails } from "../../Canary/CanaryPopup/CheckDetails";
 import { CheckTitle } from "../../Canary/CanaryPopup/CheckTitle";
 import { getUptimePercentage } from "../../Canary/CanaryPopup/utils";
 import { Duration, StatusList } from "../../Canary/renderers";
-import { ConfigAnalysisLink } from "../../Configs/Insights/ConfigAnalysisLink/ConfigAnalysisLink";
 import { ConfigDetailsChanges } from "../../Configs/Changes/ConfigDetailsChanges/ConfigDetailsChanges";
 import ConfigLink from "../../Configs/ConfigLink/ConfigLink";
+import { ConfigAnalysisLink } from "../../Configs/Insights/ConfigAnalysisLink/ConfigAnalysisLink";
 import { Icon } from "../../Icon";
 import { CommentEvidence } from "../../IncidentDetails/DefinitionOfDone/EvidenceView";
 import { LogsTable } from "../../Logs/Table/LogsTable";
-import { Modal } from "../../Modal";
 import { TopologyCard } from "../../Topology/TopologyCard";
-import { Age } from "../../../ui/Age";
-import { ConfigAnalysis } from "../../../api/types/configs";
-import { Evidence, EvidenceType } from "../../../api/types/evidence";
-import { Hypothesis } from "../../../api/types/hypothesis";
 
 const ColumnSizes = {
   Time: {

@@ -7,22 +7,21 @@ import * as yup from "yup";
 import { createEvidence } from "../../../api/services/evidence";
 import { createHypothesisOld } from "../../../api/services/hypothesis";
 import { createIncident } from "../../../api/services/incident";
+import { Evidence, EvidenceType } from "../../../api/types/evidence";
+import { HypothesisStatus } from "../../../api/types/hypothesis";
+import {
+  Incident,
+  IncidentStatus,
+  NewIncident
+} from "../../../api/types/incident";
 import { useUser } from "../../../context";
 import { Events, sendAnalyticEvent } from "../../../services/analytics";
+import { Button } from "../../../ui/Button";
 import { severityOptions, typeOptions } from "../../AttachEvidenceDialog";
-import { Button } from "../../Button";
 import SelectDropdown from "../../Dropdown/SelectDropdown";
 import { TextInput } from "../../TextInput";
 import { toastError } from "../../Toast/toast";
 import { incidentStatusItems, severityItems } from "../data";
-import { Evidence } from "../../../api/types/evidence";
-import { HypothesisStatus } from "../../../api/types/hypothesis";
-import {
-  Incident,
-  NewIncident,
-  IncidentStatus
-} from "../../../api/types/incident";
-import { EvidenceType } from "../../../api/types/evidence";
 
 const incidentStatusOptions = Object.entries(incidentStatusItems).map(
   ([_, { value, description, icon }]) => ({

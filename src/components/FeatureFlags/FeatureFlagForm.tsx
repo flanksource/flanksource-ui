@@ -1,12 +1,12 @@
 import clsx from "clsx";
 import { Form, Formik } from "formik";
-import { Modal } from "../Modal";
-import { Property } from "../../services/permissions/permissionsService";
+import { FaTrash } from "react-icons/fa";
 import { featuresList } from "../../services/permissions/features";
+import { Property } from "../../services/permissions/permissionsService";
+import { Button } from "../../ui/Button";
+import { Modal } from "../../ui/Modal";
 import FormikSelect from "../Forms/Formik/FormikSelect";
 import { toastError } from "../Toast/toast";
-import { FaTrash } from "react-icons/fa";
-import { Button } from "../Button";
 
 type FeatureFlagFormProps = React.HTMLProps<HTMLDivElement> & {
   isOpen: boolean;

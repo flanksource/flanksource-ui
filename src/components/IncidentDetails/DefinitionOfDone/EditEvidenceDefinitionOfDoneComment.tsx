@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useUpdateEvidenceMutation } from "../../../api/query-hooks/mutations/evidence";
 import { Evidence } from "../../../api/types/evidence";
-import { Modal } from "../../Modal";
+import { Modal } from "../../../ui/Modal";
 import { ManualDoDInput } from "../AddDefinitionOfDone/AddManualDefinitionOfDone";
 
 type Props = {

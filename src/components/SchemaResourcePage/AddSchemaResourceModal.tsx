@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { AiFillPlusCircle } from "react-icons/ai";
 import { useSettingsCreateResource } from "../../api/query-hooks/mutations/useSettingsResourcesMutations";
-import { Modal } from "../Modal";
+import { Modal } from "../../ui/Modal";
 import ConfigScrapperSpecEditor from "../SpecEditor/ConfigScrapperSpecEditor";
 import HealthSpecEditor from "../SpecEditor/HealthSpecEditor";
 import { SchemaResourceEdit } from "./SchemaResourceEdit";

@@ -2,8 +2,8 @@ import {
   PlaybookRunAction,
   PlaybookRunWithActions
 } from "@flanksource-ui/api/types/playbooks";
-import { Avatar } from "@flanksource-ui/components/Avatar";
 import { Age } from "@flanksource-ui/ui/Age";
+import { Avatar } from "@flanksource-ui/ui/Avatar";
 import VerticalDescription from "@flanksource-ui/ui/description/VerticalDescription";
 import dayjs from "dayjs";
 import { useState } from "react";
