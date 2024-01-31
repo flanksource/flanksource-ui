@@ -1,46 +1,51 @@
 import clsx from "clsx";
-import { memo, useCallback, useEffect, useState } from "react";
-import { TimeRangeList } from "./TimeRangeList";
-import {
-  storage,
-  convertRangeValue,
-  isSupportedRelativeRange
-} from "./helpers";
+import { useAtom } from "jotai";
+import { atomWithStorage } from "jotai/utils";
+import { useCallback, useEffect, useState } from "react";
+import { formatTimeRange, isValidDate } from "../../utils/date";
 import { RecentlyRanges } from "./RecentlyRanges";
-import { RangeOption } from "./rangeOptions";
 import { TimePickerCalendar } from "./TimePickerCalendar";
 import { TimePickerInput } from "./TimePickerInput";
-import { FiAlertTriangle } from "react-icons/fi";
-import { formatISODate, isValidDate, formatTimeRange } from "../../utils/date";
+import { TimeRangeList } from "./TimeRangeList";
+import { convertRangeValue } from "./helpers";
+import { TimeRangeAbsoluteOption, TimeRangeOption } from "./rangeOptions";
+
+const recentlyUsedTimeRangesAtom = atomWithStorage<TimeRangeAbsoluteOption[]>(
+  "recentlyUsedTimeRanges",
+  []
+);
 
 type TimeRangePickerBodyProps = {
   isOpen: any;
   closePicker: any;
-  currentRange: any;
-  changeRangeValue: any;
+  currentRange?: TimeRangeOption;
+  changeRangeValue: (range: TimeRangeOption) => void;
   pickerRef: any;
 };
 
-const TimeRangePickerBodyFC = ({
+export function TimeRangePickerBody({
   isOpen,
   closePicker = () => {},
   currentRange,
   changeRangeValue = () => {},
   pickerRef
-}: TimeRangePickerBodyProps) => {
-  const [recentRanges, setRecentRanges] = useState(
-    storage.getItem("timePickerRanges") || []
-  );
+}: TimeRangePickerBodyProps) {
+  const [recentRanges, setRecentRanges] = useAtom(recentlyUsedTimeRangesAtom);
   const [showCalendar, setShowCalendar] = useState(false);
   const [calendarValue, setCalendarValue] = useState<Date>(new Date());
-  const [inputValueFrom, setInputValueFrom] = useState<string>(
-    formatDateValue(currentRange.from)
+  const [inputValueFrom, setInputValueFrom] = useState<string | undefined>(
+    () => {
+      if (currentRange?.type === "absolute") {
+        return formatDateValue(currentRange.from);
+      }
+    }
   );
-  const [inputValueTo, setInputValueTo] = useState(
-    formatDateValue(currentRange.to)
-  );
+  const [inputValueTo, setInputValueTo] = useState<string | undefined>(() => {
+    if (currentRange?.type === "absolute") {
+      return formatDateValue(currentRange.to);
+    }
+  });
   const [valueType, setValueType] = useState<"from" | "to">();
-  const [inputValueError, setInputValueError] = useState<string>();
   const [focusToInput, setFocusToInput] = useState<boolean>();
 
   function formatDateValue(val: string): string {
@@ -51,25 +56,24 @@ const TimeRangePickerBodyFC = ({
   }
 
   const changeRecentRangesList = useCallback(
-    (range: RangeOption) => {
-      if (
-        !recentRanges.find(
-          (el: RangeOption) =>
-            formatISODate(el.from) === formatISODate(range.from) &&
-            formatISODate(el.to) === formatISODate(range.to)
-        )
-      ) {
-        let newRanges;
-        if (recentRanges.length < 4) {
-          newRanges = [range, ...recentRanges];
-        } else {
-          newRanges = [range, ...recentRanges.slice(0, 3)];
-        }
-        setRecentRanges([...newRanges]);
-        storage.setItem("timePickerRanges", newRanges);
+    (range: TimeRangeOption) => {
+      if (range.type !== "absolute") {
+        return;
       }
+      // move the range to the top of the list, if it exists, otherwise add it to the top
+      setRecentRanges((prev) => [
+        range,
+        // remove the range if it exists in the list
+        ...prev
+          .filter(
+            (r) =>
+              `${formatTimeRange(r.from)} to ${formatTimeRange(r.to)}` !==
+              `${formatTimeRange(range.from)} to ${formatTimeRange(range.to)}`
+          )
+          .slice(0, 4)
+      ]);
     },
-    [recentRanges]
+    [setRecentRanges]
   );
 
   const onChangeCalendarValue = (value: Date) => {
@@ -89,34 +93,21 @@ const TimeRangePickerBodyFC = ({
   };
 
   const applyTimeRange = useCallback(
-    (range: RangeOption) => {
-      setInputValueError("");
-      if (isValidDate(range.from) && isValidDate(range.to)) {
-        changeRecentRangesList({
-          from: formatISODate(range.from),
-          to: formatISODate(range.to)
-        });
-        setShowCalendar(false);
-        closePicker();
-        setFocusToInput(false);
-        changeRangeValue({
-          from: formatISODate(range.from),
-          to: formatISODate(range.to)
-        });
-      } else if (isSupportedRelativeRange(range.from, range.to)) {
-        setShowCalendar(false);
-        closePicker();
-        setFocusToInput(false);
-        changeRangeValue(range);
-      } else {
-        setInputValueError("Please provide valid values");
+    (range: TimeRangeOption) => {
+      // if the range is not absolute, add it to the recent ranges list
+      if (range.type === "absolute") {
+        changeRecentRangesList(range);
       }
+      setShowCalendar(false);
+      closePicker();
+      setFocusToInput(false);
+      changeRangeValue(range);
     },
     [changeRangeValue, changeRecentRangesList, closePicker]
   );
 
   const confirmValidRange = useCallback(
-    (range: RangeOption) => {
+    (range: TimeRangeOption) => {
       applyTimeRange(range);
     },
     [applyTimeRange]
@@ -126,15 +117,18 @@ const TimeRangePickerBodyFC = ({
     setValueType(calendarFor);
     setShowCalendar((val) => !val);
     if (calendarFor === "from" && isValidDate(inputValueFrom)) {
-      setCalendarValue(convertRangeValue(inputValueFrom, "jsDate") as Date);
+      setCalendarValue(convertRangeValue(inputValueFrom!, "jsDate") as Date);
     } else if (calendarFor === "to" && isValidDate(inputValueTo)) {
-      setCalendarValue(convertRangeValue(inputValueTo, "jsDate") as Date);
+      setCalendarValue(convertRangeValue(inputValueTo!, "jsDate") as Date);
     }
   };
 
   useEffect(() => {
-    setInputValueFrom(formatDateValue(currentRange.from));
-    setInputValueTo(formatDateValue(currentRange.to));
+    // only update the input values if the range is absolute
+    if (currentRange?.type === "absolute") {
+      setInputValueFrom(formatDateValue(currentRange.from));
+      setInputValueTo(formatDateValue(currentRange.to));
+    }
   }, [currentRange]);
 
   const pickerLeft = pickerRef?.current?.getBoundingClientRect()?.left || 0;
@@ -195,23 +189,17 @@ const TimeRangePickerBodyFC = ({
                   focus={focusToInput}
                 />
               </div>
-              {inputValueError && (
-                <div className="relative flex items-center mt-1 text-red-500 text-xs font-medium rounded-sm pt-1 pb-1 px-2.5 z-0">
-                  <div className="mt-0.5 mr-1">
-                    <FiAlertTriangle />
-                  </div>
-                  <div>{inputValueError}</div>
-                </div>
-              )}
             </div>
             <div className="flex justify-end">
               <button
-                onClick={() =>
-                  confirmValidRange({
+                onClick={() => {
+                  return confirmValidRange({
+                    type: "absolute",
+                    display: "Custom",
                     from: inputValueFrom as string,
                     to: inputValueTo as string
-                  })
-                }
+                  });
+                }}
                 type="button"
                 className="inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-2 py-1 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-blue-500"
               >
@@ -236,6 +224,4 @@ const TimeRangePickerBodyFC = ({
       </div>
     </div>
   );
-};
-
-export const TimeRangePickerBody = memo(TimeRangePickerBodyFC);
+}
