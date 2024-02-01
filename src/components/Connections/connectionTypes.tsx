@@ -1,5 +1,5 @@
-import { FaWindows } from "react-icons/fa";
 import { DiGoogleCloudPlatform } from "react-icons/di";
+import { FaWindows } from "react-icons/fa";
 import { stringSortHelper } from "../../utils/common";
 import { Connection } from "./ConnectionFormModal";
 
@@ -87,7 +87,8 @@ export const enum ConnectionValueType {
   Telegram = "telegram",
   Webhook = "webhook",
   Windows = "windows",
-  ZulipChat = "zulip_chat"
+  ZulipChat = "zulip_chat",
+  Folder = "folder"
 }
 
 export type ConnectionType = {
@@ -1786,6 +1787,35 @@ export const connectionTypes: ConnectionType[] = [
           requestMethod: data.requestMethod,
           key: data.key,
           titleKey: data.titleKey
+        }
+      };
+    }
+  },
+  {
+    title: "Folder",
+    icon: "folder",
+    value: ConnectionValueType.Folder,
+    fields: [
+      ...commonConnectionFormFields,
+      {
+        label: "Path",
+        key: "path",
+        type: ConnectionsFieldTypes.input,
+        required: true
+      }
+    ],
+    convertToFormSpecificValue: (data: Record<string, any>) => {
+      return {
+        ...data,
+        path: data?.properties?.path
+      } as Connection;
+    },
+    preSubmitConverter: (data: Record<string, string>) => {
+      return {
+        name: data.name,
+        namespace: data.namespace,
+        properties: {
+          path: data.path
         }
       };
     }
