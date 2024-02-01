@@ -1,3 +1,7 @@
+import { HealthChecksResponse } from "@flanksource-ui/api/types/health";
+import { HEALTH_SETTINGS } from "@flanksource-ui/constants";
+import { isCanaryUI } from "@flanksource-ui/context/Environment";
+import { useHealthPageContext } from "@flanksource-ui/context/HealthPageContext";
 import clsx from "clsx";
 import { debounce } from "lodash";
 import React, {
@@ -9,10 +13,6 @@ import React, {
 } from "react";
 import { FaFilter } from "react-icons/fa";
 import { useLocation, useSearchParams } from "react-router-dom";
-import { HealthChecksResponse } from "../../api/types/health";
-import { HEALTH_SETTINGS } from "../../constants";
-import { isCanaryUI } from "../../context/Environment";
-import { useHealthPageContext } from "../../context/HealthPageContext";
 import { GroupByDropdown } from "../Dropdown/GroupByDropdown";
 import {
   DropdownStandaloneWrapper,

@@ -1,10 +1,10 @@
+import { getComponentChecks } from "@flanksource-ui/api/services/topology";
+import PillBadge from "@flanksource-ui/ui/Badge/PillBadge";
+import CollapsiblePanel from "@flanksource-ui/ui/CollapsiblePanel/CollapsiblePanel";
 import { useQuery } from "@tanstack/react-query";
 import { useAtom } from "jotai";
 import { useEffect } from "react";
 import { AiFillHeart } from "react-icons/ai";
-import { getComponentChecks } from "../../../api/services/topology";
-import PillBadge from "../../../ui/Badge/PillBadge";
-import CollapsiblePanel from "../../../ui/CollapsiblePanel/CollapsiblePanel";
 import { CheckLink } from "../../Canary/HealthChecks/CheckLink";
 import EmptyState from "../../EmptyState";
 import TextSkeletonLoader from "../../SkeletonLoader/TextSkeletonLoader";
