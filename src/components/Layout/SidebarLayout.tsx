@@ -1,3 +1,4 @@
+import { Float } from "@headlessui-float/react";
 import { Disclosure, Menu } from "@headlessui/react";
 import { ChevronUpIcon } from "@heroicons/react/outline";
 import clsx from "clsx";
@@ -6,12 +7,11 @@ import { IconType } from "react-icons";
 import { IoChevronForwardOutline } from "react-icons/io5";
 import { Link, NavLink, Outlet } from "react-router-dom";
 import { NavigationItems, SettingsNavigationItems } from "../../App";
-import { $ArrayElemType } from "../../types/utility";
-
 import { AuthContext } from "../../context";
 import { useFeatureFlagsContext } from "../../context/FeatureFlagsContext";
 import { useOuterClick } from "../../lib/useOuterClick";
 import { features } from "../../services/permissions/features";
+import { $ArrayElemType } from "../../types/utility";
 import { getLocalItem, setLocalItem } from "../../utils/storage";
 import { withAccessCheck } from "../AccessCheck/AccessCheck";
 import { Icon } from "../Icon";
@@ -135,37 +135,39 @@ function SideNavGroup({
   if (collapseSidebar) {
     return (
       <Menu as="div" className="relative">
-        <Menu.Button className="w-full">
-          <NavItemWrapper className="justify-center">
-            <NavLabel icon={icon} active={current} iconOnly name={name} />
-          </NavItemWrapper>
-        </Menu.Button>
+        <Float placement="top-start" portal>
+          <Menu.Button className="w-full">
+            <NavItemWrapper className="justify-center">
+              <NavLabel icon={icon} active={current} iconOnly name={name} />
+            </NavItemWrapper>
+          </Menu.Button>
 
-        <Menu.Items className="absolute border left-0 ml-12 w-48 shadow-md top-0 z-10 bg-gray-800 space-y-1">
-          {submenu.map(({ name, icon, href, featureName, resourceName }) => {
-            return !isFeatureDisabled(
-              featureName as unknown as keyof typeof features
-            )
-              ? withAccessCheck(
-                  <Menu.Item key={href}>
-                    {({ active }) => (
-                      <NavLink className="w-full" to={href}>
-                        <NavItemWrapper active={active}>
-                          <NavLabel
-                            icon={icon as IconType}
-                            active={active}
-                            name={name}
-                          />
-                        </NavItemWrapper>
-                      </NavLink>
-                    )}
-                  </Menu.Item>,
-                  resourceName,
-                  "read"
-                )
-              : null;
-          })}
-        </Menu.Items>
+          <Menu.Items className="absolute border left-0 ml-12 w-48 shadow-md top-0 z-10 bg-gray-800 space-y-1">
+            {submenu.map(({ name, icon, href, featureName, resourceName }) => {
+              return !isFeatureDisabled(
+                featureName as unknown as keyof typeof features
+              )
+                ? withAccessCheck(
+                    <Menu.Item key={href}>
+                      {({ active }) => (
+                        <NavLink className="w-full" to={href}>
+                          <NavItemWrapper active={active}>
+                            <NavLabel
+                              icon={icon as IconType}
+                              active={active}
+                              name={name}
+                            />
+                          </NavItemWrapper>
+                        </NavLink>
+                      )}
+                    </Menu.Item>,
+                    resourceName,
+                    "read"
+                  )
+                : null;
+            })}
+          </Menu.Items>
+        </Float>
       </Menu>
     );
   }
