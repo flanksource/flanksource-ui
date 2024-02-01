@@ -284,7 +284,7 @@ export function SidebarLayout({ navigation, settingsNav, checkPath }: Props) {
   }
 
   return (
-    <div className="flex flex-row h-screen min-w-[1280px]">
+    <div className="flex flex-row h-screen min-w-[800px]">
       <div
         className={clsx(
           "transform duration-500 z-10 bg-gray-700 flex flex-col",

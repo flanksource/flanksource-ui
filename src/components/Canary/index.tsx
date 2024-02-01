@@ -2,7 +2,9 @@ import { HealthChecksResponse } from "@flanksource-ui/api/types/health";
 import { HEALTH_SETTINGS } from "@flanksource-ui/constants";
 import { isCanaryUI } from "@flanksource-ui/context/Environment";
 import { useHealthPageContext } from "@flanksource-ui/context/HealthPageContext";
+import { XIcon } from "@heroicons/react/solid";
 import clsx from "clsx";
+import { useAtom } from "jotai";
 import { debounce } from "lodash";
 import React, {
   useCallback,
@@ -13,6 +15,7 @@ import React, {
 } from "react";
 import { FaFilter } from "react-icons/fa";
 import { useLocation, useSearchParams } from "react-router-dom";
+import { Badge } from "..";
 import { GroupByDropdown } from "../Dropdown/GroupByDropdown";
 import {
   DropdownStandaloneWrapper,
@@ -22,9 +25,8 @@ import { TabByDropdown } from "../Dropdown/TabByDropdown";
 import { TimeRange, timeRanges } from "../Dropdown/TimeRange";
 import { defaultTabSelections } from "../Dropdown/lib/lists";
 import useRefreshRateFromLocalStorage from "../Hooks/useRefreshRateFromLocalStorage";
-import { IconButton } from "../IconButton";
+import { isSidebarCollapsedAtom } from "../Layout/SidebarLayout";
 import HealthPageSkeletonLoader from "../SkeletonLoader/HealthPageSkeletonLoader";
-import { StatCard } from "../StatCard";
 import { Toggle } from "../Toggle";
 import { TristateToggle } from "../TristateToggle";
 import { CanaryInterfaceMinimal } from "./CanaryInterface";
@@ -70,10 +72,30 @@ export function Canary({
   const refreshInterval = useRefreshRateFromLocalStorage();
   const [isMenuItemOpen, setIsMenuItemOpen] = useState(false);
 
+  const totalLabelsApplied = useMemo(() => {
+    const labels =
+      (decodeUrlSearchParams(searchParams.toString()).labels as Record<
+        string,
+        "1" | "0" | "-1"
+      >) || {};
+    const initialCount = hidePassing === "true" ? 0 : 1;
+    const totalLabelsApplied = Object.entries(labels).reduce(
+      (acc, [key, value]) => {
+        if (value.toString() === "1" || value.toString() === "-1") {
+          acc += 1;
+        }
+
+        return acc;
+      },
+      initialCount
+    );
+    return totalLabelsApplied || 0;
+  }, [hidePassing, searchParams]);
+
   const [isLoading, setIsLoading] = useState(true);
 
   const {
-    healthState: { checks, filteredChecks, filteredLabels, passing },
+    healthState: { checks, filteredChecks, filteredLabels },
     setHealthState
   } = useHealthPageContext();
 
@@ -205,9 +227,6 @@ export function Canary({
     return <HealthPageSkeletonLoader showSidebar />;
   }
 
-  const filteredChecksLength = filteredChecks.length;
-  const isFilterApplied = filteredChecksLength !== checks?.length;
-
   return (
     <div
       className={clsx(
@@ -221,47 +240,17 @@ export function Canary({
         isMenuItemOpen={isMenuItemOpen}
         setMenuItemOpen={setIsMenuItemOpen}
       >
-        <div className="flex flex-col gap-4">
-          <StatCard
-            title="All Checks"
-            customValue={
-              <>
-                {checks?.length || 0}
-                <span className="text-xl font-light">
-                  {" "}
-                  (<span className="text-green-500">{passing.checks}</span>/
-                  <span className="text-red-500">
-                    {" "}
-                    {checks!.length - passing.checks}
-                  </span>
-                  )
-                </span>
-              </>
-            }
-          />
-
-          <StatCard
-            title="Filtered Checks"
-            customValue={
-              <>
-                {isFilterApplied ? filteredChecksLength : 0}
-                <span className="text-xl  font-light">
-                  {" "}
-                  (
-                  <span className="text-green-500">
-                    {isFilterApplied ? passing.filtered : 0}
-                  </span>
-                  /
-                  <span className="text-red-500">
-                    {isFilterApplied
-                      ? filteredChecksLength - passing.filtered
-                      : 0}
-                  </span>
-                  )
-                </span>
-              </>
-            }
-          />
+        <div className="flex flex-col absolute z-[9999999] top-5 right-3 2xl:hidden ">
+          <div className="flex items-center p-1 2xl:hidden  rounded-md">
+            <button
+              type="button"
+              className="text-gray-400 hover:text-gray-500 focus:outline-none"
+              onClick={() => setIsMenuItemOpen(false)}
+            >
+              <span className="sr-only">Close</span>
+              <XIcon className="fill-gray-400 w-6 h-6" aria-hidden="true" />
+            </button>
+          </div>
         </div>
         <SectionTitle className="hidden">Filter by Time Range</SectionTitle>
         <div className="mb-4 mr-2 w-full hidden">
@@ -299,18 +288,20 @@ export function Canary({
         </div>
       </SidebarSticky>
 
-      <div className="flex flex-col h-full overflow-y-auto flex-grow p-6 max-w-7xl">
-        <div className="flex flex-wrap mb-2">
-          <div className="w-auto flex items-center px-4 lg:hidden">
-            <IconButton
-              onClick={() => {
-                setIsMenuItemOpen((prev) => !prev);
-              }}
-              title="filter"
-              icon={<FaFilter />}
-            />
+      <div className="flex flex-col h-full overflow-y-auto flex-1 p-6">
+        <div className="flex flex-wrap items-center mb-2 gap-2">
+          <div
+            role="button"
+            title="Toggle filter menu"
+            onClick={() => {
+              setIsMenuItemOpen((prev) => !prev);
+            }}
+            className="flex relative items-center px-4 gap-1 2xl:hidden cursor-pointer"
+          >
+            <FaFilter />
+            <Badge text={totalLabelsApplied} />
           </div>
-          <div className="flex-1">
+          <div className="flex flex-col flex-1">
             <CanarySearchBar
               onChange={(e) => handleSearch(e.target.value)}
               onSubmit={(value) => handleSearch(value)}
@@ -322,38 +313,34 @@ export function Canary({
               defaultValue={searchParams.get("query") ?? ""}
             />
           </div>
-          <div className="flex-1 flex justify-end">
-            <div className="mb-2 mr-2">
-              <DropdownWrapper
-                dropdownElem={<GroupByDropdown name="groupBy" />}
-                name="groupBy"
-                checks={checks ?? []}
-                defaultValue="canary_name"
-                paramKey="groupBy"
-                className="w-64"
-                prefix={
-                  <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
-                    Group By:
-                  </div>
-                }
-              />
-            </div>
-            <div className="mb-2 mr-2">
-              <DropdownWrapper
-                dropdownElem={<TabByDropdown name="tabBy" />}
-                defaultValue={defaultTabSelections.namespace.value}
-                name="tabBy"
-                paramKey="tabBy"
-                checks={checks ?? []}
-                className="w-64"
-                prefix={
-                  <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
-                    Tab By:
-                  </div>
-                }
-              />
-            </div>
-          </div>
+
+          <DropdownWrapper
+            dropdownElem={<GroupByDropdown name="groupBy" />}
+            name="groupBy"
+            checks={checks ?? []}
+            defaultValue="canary_name"
+            paramKey="groupBy"
+            className="lg:w-64"
+            prefix={
+              <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
+                Group By:
+              </div>
+            }
+          />
+
+          <DropdownWrapper
+            dropdownElem={<TabByDropdown name="tabBy" />}
+            defaultValue={defaultTabSelections.namespace.value}
+            name="tabBy"
+            paramKey="tabBy"
+            checks={checks ?? []}
+            className="lg:w-64"
+            prefix={
+              <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
+                Tab By:
+              </div>
+            }
+          />
         </div>
         <div className="flex flex-col flex-1 pb-4">
           <CanaryInterfaceMinimal
@@ -647,6 +634,7 @@ function SidebarSticky({
   setMenuItemOpen = () => {},
   ...props
 }: SidebarStickyProps) {
+  const [isSidebarCollapsed] = useAtom(isSidebarCollapsedAtom);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -675,11 +663,17 @@ function SidebarSticky({
       ref={ref}
       className={clsx(
         className ||
-          "lg:flex lg:flex-col h-full overflow-y-auto overflow-x-hidden w-80 border-r gap-4",
+          "2xl:flex 2xl:flex-col h-full overflow-y-auto overflow-x-hidden w-80 border-r gap-4",
         // for mobile, float the sidebar on top of the content
-        "top-0 left-0 fixed z-50 bg-white shadow-md lg:static lg:shadow-none lg:bg-transparent lg:border-none lg:w-auto lg:h-auto lg:overflow-y-auto lg:overflow-x-hidden lg:flex lg:flex-col lg:gap-4",
+        "fixed z-[99999] bg-white shadow-md 2xl:static 2xl:shadow-none 2xl:bg-transparent 2xl:border-none 2xl:w-auto 2xl:h-auto 2xl:overflow-y-auto 2xl:overflow-x-hidden 2xl:flex 2xl:flex-col 2xl:gap-4",
         // for mobile, hide the sidebar when the menu is closed
-        isMenuItemOpen ? "flex" : "hidden"
+        isMenuItemOpen ? "flex" : "hidden",
+        // move sidebar if mission control UI
+        isCanaryUI
+          ? "top-0 left-0"
+          : isSidebarCollapsed
+          ? "top-16 left-14"
+          : "top-16 left-56"
       )}
       {...props}
     >

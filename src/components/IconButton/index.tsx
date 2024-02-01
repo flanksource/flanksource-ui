@@ -1,14 +1,14 @@
-import { useState } from "react";
 import clsx from "clsx";
+import { useState } from "react";
 import { Oval } from "react-loading-icons";
 
-interface Props {
+type Props = {
   className?: string;
   title?: string;
   icon?: React.ReactElement;
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void | Promise<void>;
   ovalProps?: React.SVGAttributes<SVGSVGElement>;
-}
+} & React.ButtonHTMLAttributes<HTMLButtonElement>;
 
 export const IconButton = ({
   className,
