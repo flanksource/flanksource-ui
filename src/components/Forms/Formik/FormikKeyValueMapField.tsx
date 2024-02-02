@@ -13,9 +13,10 @@ type LocalStateValue = {
 type Props = {
   name: string;
   label: string;
+  hint?: string;
 };
 
-export default function FormikKeyValueMapField({ name, label }: Props) {
+export default function FormikKeyValueMapField({ name, label, hint }: Props) {
   const [localValues, setLocalValue] = useState<LocalStateValue[]>([
     { key: "", value: "" }
   ]);
@@ -52,6 +53,7 @@ export default function FormikKeyValueMapField({ name, label }: Props) {
   return (
     <div className="flex flex-col gap-2">
       <label className="text-sm font-medium text-gray-700">{label}</label>
+      {hint && <p className="text-sm text-gray-500 py-1">{hint}</p>}
       <div className="flex flex-col gap-2">
         {localValues.map(({ value, key }, index: number) => (
           <div className="flex flex-row gap-2" key={index}>
