@@ -76,7 +76,7 @@ export const getAllChanges = (
   });
 
   if (starts_at && ends_at) {
-    queryString += `&created_at=gte.${starts_at}&created_at=lte.${ends_at}`;
+    queryString += `&and=(created_at.gte.${starts_at},created_at.lte.${ends_at})`;
   }
 
   return resolve(
@@ -129,7 +129,7 @@ export const getConfigChanges = (
     paginationQueryParams += `&change_type=eq.${change_type}`;
   }
   if (starts_at && ends_at) {
-    paginationQueryParams += `&created_at=gte.${starts_at}&created_at=lte.${ends_at}`;
+    paginationQueryParams += `&and=(created_at.gte.${starts_at},created_at.lte.${ends_at})`;
   }
   return resolve(
     ConfigDB.get<ConfigChange[]>(
