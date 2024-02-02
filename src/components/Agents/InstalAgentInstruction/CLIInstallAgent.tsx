@@ -17,11 +17,8 @@ helm install mc-agent flanksource/mission-control-agent -n "mission-control-agen
 
 {{#if kubeOptions}}
 helm install mc-agent-kubernetes flanksource/mission-control-kubernetes -n "mission-control-agent"  \\
-  --set scraper.name="{{agentFormValues.name}}" \\
-  --set scraper.interval="{{kubeOptions.interval}}" \\
-  {{#if kubeOptions.exclusions}}
-  --set scraper.exclusions.name={{kubeOptions.exclusions}}
-  {{/if}}
+  --set scraper.clusterName="{{agentFormValues.name}}" \\
+  --set scraper.interval="{{kubeOptions.interval}}"
 {{/if}}
 `;
 
@@ -58,7 +55,7 @@ export default function CLIInstallAgent({
   }, [agentFormValues, baseUrl, generatedAgent, kubeOptions]);
 
   return (
-    <div className="flex flex-col flex-1 p-4 gap-4 overflow-y-auto">
+    <div className="flex flex-col flex-1 p-2  gap-4 overflow-y-auto">
       <p>Copy the following command to install agent</p>
       <CodeBlock code={helmCommandTemplate} />
     </div>

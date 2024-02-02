@@ -35,7 +35,9 @@ export default function FormikTextInput({
   return (
     <div className={className}>
       {label && (
-        <label className="text-sm font-medium text-gray-700">{label}</label>
+        <label htmlFor={name} className="text-sm font-medium text-gray-700">
+          {label}
+        </label>
       )}
       {hint && hintPosition === "top" && (
         <p className="text-sm text-gray-500 py-1">{hint}</p>

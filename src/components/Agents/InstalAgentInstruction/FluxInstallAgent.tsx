@@ -56,12 +56,6 @@ spec:
   values:
     clusterName: "{{agentFormValues.name}}"
     interval: "{{kubeOptions.interval}}"
-{{#if kubeOptions.exclusions}}
-    exclusions:
-    {{#each kubeOptions.exclusions}}
-    - {{this}}
-    {{/each}}
-{{/if}}
 {{/if}}
   `;
 
@@ -98,7 +92,7 @@ export default function FluxInstallAgent({
   }, [agentFormValues, baseUrl, generatedAgent, kubeOptions]);
 
   return (
-    <div className="flex flex-col flex-1 p-4 gap-4 overflow-y-auto">
+    <div className="flex flex-col flex-1 border border-gray-200 rounded-md p-2 px-4 gap-4 overflow-y-auto">
       <JSONViewer code={yaml} format="yaml" showLineNo />
     </div>
   );

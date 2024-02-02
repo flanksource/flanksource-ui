@@ -96,9 +96,8 @@ describe("InstallAgentModal", () => {
         --create-namespace
 
       helm install mc-agent-kubernetes flanksource/mission-control-kubernetes -n "mission-control-agent"  \\
-        --set scraper.name="testname" \\
-        --set scraper.interval="1m" \\
-        --set scraper.exclusions.name={testexclusion1,testexclusion2}
+        --set scraper.clusterName="testname" \\
+        --set scraper.interval="1m"
       "
     `);
   });
