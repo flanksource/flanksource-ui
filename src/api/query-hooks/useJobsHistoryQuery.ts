@@ -31,7 +31,9 @@ export function useJobsHistoryForSettingQuery(
     name,
     status,
     sortBy,
-    sortOrder
+    sortOrder,
+    startsAt,
+    endsAt
   }: {
     pageIndex: number;
     pageSize: number;
@@ -41,6 +43,8 @@ export function useJobsHistoryForSettingQuery(
     status?: string;
     sortBy?: string;
     sortOrder?: string;
+    startsAt?: string;
+    endsAt?: string;
   },
   options?: UseQueryOptions<Response, Error>
 ) {
@@ -54,7 +58,9 @@ export function useJobsHistoryForSettingQuery(
       name,
       status,
       sortBy,
-      sortOrder
+      sortOrder,
+      startsAt,
+      endsAt
     ],
     () =>
       getJobsHistory(
@@ -65,7 +71,9 @@ export function useJobsHistoryForSettingQuery(
         name,
         status,
         sortBy,
-        sortOrder
+        sortOrder,
+        startsAt,
+        endsAt
       ),
     options
   );

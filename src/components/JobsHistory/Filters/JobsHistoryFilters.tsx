@@ -1,3 +1,5 @@
+import { TimeRangePicker } from "@flanksource-ui/ui/TimeRangePicker";
+import useTimeRangeParams from "@flanksource-ui/ui/TimeRangePicker/useTimeRangeParams";
 import { useSearchParams } from "react-router-dom";
 import { ReactSelectDropdown } from "../../ReactSelectDropdown";
 import JobHistoryNamesDropdown from "./JobHistoryNames";
@@ -57,6 +59,10 @@ export const jobHistoryResourceTypes = [
 export default function JobHistoryFilters() {
   const [searchParams, setSearchParams] = useSearchParams();
 
+  const { setTimeRangeParams, getTimeRangeFromUrl } = useTimeRangeParams();
+
+  const timeRangeValue = getTimeRangeFromUrl();
+
   const resourceType = searchParams.get("resource_type") ?? "";
   const status = searchParams.get("status") ?? "";
 
@@ -96,6 +102,16 @@ export default function JobHistoryFilters() {
             setSearchParams(searchParams);
           }}
           prefix="Status:"
+        />
+      </div>
+      <div className="flex flex-col">
+        <TimeRangePicker
+          onChange={(timeRange) => {
+            console.log("timeRange", timeRange);
+            setTimeRangeParams(timeRange);
+          }}
+          className="w-[35rem]"
+          value={timeRangeValue}
         />
       </div>
     </div>
