@@ -7,6 +7,7 @@ type FormikSelectDropdownProps = {
   required?: boolean;
   label?: string;
   hint?: string;
+  hintPosition?: "top" | "bottom";
   options: {
     value: string;
     label: string;
@@ -20,6 +21,7 @@ export default function FormikAutocompleteDropdown({
   label,
   options,
   hint,
+  hintPosition = "bottom",
   isClearable = true
 }: FormikSelectDropdownProps) {
   const [isTouched, setIsTouched] = useState(false);
@@ -45,6 +47,9 @@ export default function FormikAutocompleteDropdown({
   return (
     <div className="flex flex-col space-y-2 py-2">
       {label && <label className="form-label">{label}</label>}
+      {hint && hintPosition === "top" && (
+        <p className="text-sm text-gray-500">{hint}</p>
+      )}
       <CreatableSelect
         className="h-full shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm border-gray-300 rounded-md"
         onChange={(value) => {
@@ -68,8 +73,16 @@ export default function FormikAutocompleteDropdown({
         }}
         name={field.name}
         isClearable={isClearable && Boolean(field.value?.trim())}
+        menuPortalTarget={document.body}
+        styles={{
+          menuPortal: (base) => ({ ...base, zIndex: 9999 })
+        }}
+        menuPosition={"fixed"}
+        menuShouldBlockScroll={true}
       />
-      {hint && <p className="text-sm text-gray-500">{hint}</p>}
+      {hint && hintPosition === "bottom" && (
+        <p className="text-sm text-gray-500">{hint}</p>
+      )}
       {isTouched && meta.error ? (
         <p className="text-sm text-red-500 w-full py-1">{meta.error}</p>
       ) : null}
