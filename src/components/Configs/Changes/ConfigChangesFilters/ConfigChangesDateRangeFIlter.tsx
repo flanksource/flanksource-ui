@@ -1,29 +1,19 @@
-import { useSearchParams } from "react-router-dom";
-import DateTimeRangerPicker from "../../../../ui/Dates/DateTimeRangerPicker";
+import { TimeRangePicker } from "@flanksource-ui/ui/TimeRangePicker";
+import useTimeRangeParams from "@flanksource-ui/ui/TimeRangePicker/useTimeRangeParams";
 
 export default function ConfigChangesDateRangeFilter() {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const { setTimeRangeParams, getTimeRangeFromUrl } = useTimeRangeParams();
 
-  const starts = searchParams.get("starts") ?? undefined;
-  const ends = searchParams.get("ends") ?? undefined;
+  const timeRangeValue = getTimeRangeFromUrl();
 
   return (
-    <DateTimeRangerPicker
-      value={{
-        from: starts,
-        to: ends
+    <TimeRangePicker
+      onChange={(timeRange) => {
+        console.log("timeRange", timeRange);
+        setTimeRangeParams(timeRange);
       }}
-      label="Dates:"
-      onChange={(from, to) => {
-        if (from && to) {
-          searchParams.set("starts", from);
-          searchParams.set("ends", to);
-        } else {
-          searchParams.delete("starts");
-          searchParams.delete("ends");
-        }
-        setSearchParams(searchParams);
-      }}
+      className="w-[35rem]"
+      value={timeRangeValue}
     />
   );
 }
