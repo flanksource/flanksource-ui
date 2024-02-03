@@ -1,6 +1,5 @@
 import { useSearchParams } from "react-router-dom";
 import { ReactSelectDropdown } from "../../ReactSelectDropdown";
-import { JobHistory } from "../JobsHistoryTable";
 import JobHistoryNamesDropdown from "./JobHistoryNames";
 
 const statusOptions = {
@@ -55,15 +54,7 @@ export const jobHistoryResourceTypes = [
   }
 ];
 
-type JobHistoryFiltersProps = {
-  jobs: JobHistory[];
-  onFilterChange?: () => void;
-};
-
-export default function JobHistoryFilters({
-  jobs,
-  onFilterChange
-}: JobHistoryFiltersProps) {
+export default function JobHistoryFilters() {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const resourceType = searchParams.get("resource_type") ?? "";
@@ -81,12 +72,11 @@ export default function JobHistoryFilters({
           items={jobHistoryResourceTypes}
           className="inline-block p-3 w-auto max-w-[500px]"
           dropDownClassNames="w-auto max-w-[400px] left-0"
-          onChange={(val: any) => {
-            setSearchParams({
-              ...Object.fromEntries(searchParams),
-              resource_type: val
-            });
-            onFilterChange?.();
+          onChange={(val) => {
+            if (val && val !== "All") {
+              searchParams.set("resource_type", val);
+            }
+            setSearchParams(searchParams);
           }}
           prefix="Resource Type:"
         />
@@ -99,12 +89,11 @@ export default function JobHistoryFilters({
           items={statusOptions}
           className="inline-block p-3 w-auto max-w-[500px]"
           dropDownClassNames="w-auto max-w-[400px] left-0"
-          onChange={(val: any) => {
-            setSearchParams({
-              ...Object.fromEntries(searchParams),
-              status: val
-            });
-            onFilterChange?.();
+          onChange={(val) => {
+            if (val && val !== "All") {
+              searchParams.set("status", val);
+            }
+            setSearchParams(searchParams);
           }}
           prefix="Status:"
         />

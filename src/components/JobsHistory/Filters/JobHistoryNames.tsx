@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
+import { useSearchParams } from "react-router-dom";
 import { getJobsHistoryNames } from "../../../api/services/jobsHistory";
 import { ReactSelectDropdown, StateOption } from "../../ReactSelectDropdown";
-import { useSearchParams } from "react-router-dom";
 
 export default function JobHistoryNamesDropdown() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -35,11 +35,11 @@ export default function JobHistoryNamesDropdown() {
         items={[{ label: "All", value: "" }, ...jobNames]}
         className="inline-block p-3 w-auto max-w-[500px]"
         dropDownClassNames="w-auto max-w-[400px] left-0"
-        onChange={(val: any) => {
-          setSearchParams({
-            ...Object.fromEntries(searchParams),
-            name: val
-          });
+        onChange={(val) => {
+          if (val && val !== "All") {
+            searchParams.set("name", val);
+          }
+          setSearchParams(searchParams);
         }}
         prefix="Job Type:"
       />
