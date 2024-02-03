@@ -12,7 +12,8 @@ export const getJobsHistory = async (
   sortBy?: string,
   sortOrder?: string,
   startsAt?: string,
-  endsAt?: string
+  endsAt?: string,
+  duration?: number
 ) => {
   const pagingParams = `&limit=${pageSize}&offset=${pageIndex * pageSize}`;
 
@@ -30,6 +31,8 @@ export const getJobsHistory = async (
 
   const sortOrderParam = sortOrder ? `.${sortOrder}` : ".desc";
 
+  const durationParam = duration ? `&duration_millis=gte.${duration}` : "";
+
   const rangeParam =
     startsAt && endsAt
       ? `&and=(created_at.gt.${startsAt},created_at.lt.${endsAt})`
@@ -37,7 +40,7 @@ export const getJobsHistory = async (
 
   return resolve(
     IncidentCommander.get<JobHistory[] | null>(
-      `/job_history?&select=*${pagingParams}${resourceTypeParam}${resourceIdParam}${nameParam}${statusParam}${sortByParam}${sortOrderParam}${rangeParam}`,
+      `/job_history?&select=*${pagingParams}${resourceTypeParam}${resourceIdParam}${nameParam}${statusParam}${sortByParam}${sortOrderParam}${rangeParam}${durationParam}`,
       {
         headers: {
           Prefer: "count=exact"
