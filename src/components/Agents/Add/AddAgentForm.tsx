@@ -1,3 +1,4 @@
+import FormikSwitchField from "@flanksource-ui/components/Forms/Formik/FormikSwitchField";
 import clsx from "clsx";
 import { Form, Formik } from "formik";
 import { useState } from "react";
@@ -10,8 +11,6 @@ import { GenerateAgent, GeneratedAgent } from "../../../api/services/agents";
 import { Button } from "../../../ui/Button";
 import { Modal } from "../../../ui/Modal";
 import FormikAutocompleteDropdown from "../../Forms/Formik/FormikAutocompleteDropdown";
-import FormikCheckbox from "../../Forms/Formik/FormikCheckbox";
-import FormikConfigFormFieldsArray from "../../Forms/Formik/FormikConfigFormFieldsArray";
 import FormikKeyValueMapField from "../../Forms/Formik/FormikKeyValueMapField";
 import FormikTextInput from "../../Forms/Formik/FormikTextInput";
 import { toastError, toastSuccess } from "../../Toast/toast";
@@ -90,7 +89,8 @@ export default function AgentForm({
           name: agent?.name ?? "",
           properties: agent?.properties ?? {},
           kubernetes: {
-            interval: "30m"
+            interval: "30m",
+            enabled: false
           }
         }}
         onSubmit={handleSubmit}
@@ -109,46 +109,49 @@ export default function AgentForm({
                     name="name"
                     label="Name"
                     required
+                    hintPosition="top"
+                    hint="e.g. Cluster name, or if running a cluster per region/dc/account it can be the region name"
                   />
                   <FormikKeyValueMapField
+                    hint="Labels that are automatically added to all resources created by this agent"
                     name="properties"
                     label="Properties"
                   />
-                  <FormikCheckbox
+                  <FormikSwitchField
+                    options={[
+                      { label: "Enabled", key: true },
+                      { label: "Disabled", key: false }
+                    ]}
                     name="kubernetes.enabled"
-                    label="Kubernetes"
+                    label={
+                      <div className="flex flex-col w-full">
+                        <span>Kubernetes</span>
+                      </div>
+                    }
+                    hintPosition="top"
+                    hint="Scrapes built-in and custom resource definitions and creates catalog items and a topology from Cluster --> Namespace --> Pod"
                   />
                   {Boolean(values.kubernetes?.enabled) === true && (
-                    <>
-                      <FormikAutocompleteDropdown
-                        options={[
-                          { label: "1m", value: "1m" },
-                          { label: "5m", value: "5m" },
-                          { label: "10m", value: "10m" },
-                          {
-                            label: "30m",
-                            value: "30m"
-                          },
-                          { label: "1h", value: "1h" },
-                          { label: "2h", value: "2h" },
-                          { label: "6h", value: "6h" },
-                          { label: "12h", value: "12h" },
-                          { label: "24h", value: "24h" }
-                        ]}
-                        name="kubernetes.interval"
-                        label="Scrape Interval"
-                      />
-                      <FormikConfigFormFieldsArray
-                        name={`kubernetes.exclusions`}
-                        label={"Exclusions"}
-                        fields={[
-                          {
-                            fieldComponent: FormikTextInput,
-                            name: `kubernetes.exclusions`
-                          }
-                        ]}
-                      />
-                    </>
+                    <FormikAutocompleteDropdown
+                      options={[
+                        { label: "1m", value: "1m" },
+                        { label: "5m", value: "5m" },
+                        { label: "10m", value: "10m" },
+                        {
+                          label: "30m",
+                          value: "30m"
+                        },
+                        { label: "1h", value: "1h" },
+                        { label: "2h", value: "2h" },
+                        { label: "6h", value: "6h" },
+                        { label: "12h", value: "12h" },
+                        { label: "24h", value: "24h" }
+                      ]}
+                      name="kubernetes.interval"
+                      label="Scrape Interval"
+                      hintPosition="top"
+                      hint="How often to perform a full reconciliation of changes (in addition to real-time changes from Kubernetes events), set higher for larger clusters."
+                    />
                   )}
                 </div>
               </div>

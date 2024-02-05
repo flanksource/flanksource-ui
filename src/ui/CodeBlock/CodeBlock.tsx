@@ -22,7 +22,10 @@ export default function CodeBlock({
       <Button
         icon={<FaCopy />}
         title="Copy to clipboard"
-        className={clsx("bg-white  absolute right-4 top-4", "text-black")}
+        className={clsx(
+          "bg-white  absolute right-4 top-4 whitespace-pre-line",
+          "text-black"
+        )}
         onClick={() => {
           copyFn(`${code}`);
         }}
