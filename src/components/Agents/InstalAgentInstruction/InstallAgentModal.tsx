@@ -7,6 +7,20 @@ import { AgentFormValues } from "../Add/AddAgentForm";
 import CLIInstallAgent from "./CLIInstallAgent";
 import FluxInstallAgent from "./FluxInstallAgent";
 
+export function WarningBox() {
+  return (
+    <div
+      className="bg-yellow-100 border border-yellow-200 text-yellow-700 px-4 py-3 rounded relative"
+      role="alert"
+    >
+      <span className="block sm:inline">
+        Access token will be shown only once. Please copy it and store it
+        securely.
+      </span>
+    </div>
+  );
+}
+
 export function MoreInfoBox() {
   return (
     <div className="flex flex-col gap-2 px-2">
@@ -23,7 +37,7 @@ export function MoreInfoBox() {
         for more options on fine-tuning the import of Kubernetes resources.
       </p>
 
-      <strong>Next Steps</strong>
+      <h3 className="font-bold text-lg">Next Steps</h3>
 
       <ul className="list-disc px-6">
         <li>
@@ -92,6 +106,9 @@ export default function InstallAgentModal({
       bodyClass="flex flex-col w-full flex-1 h-full overflow-y-auto"
     >
       <div className="flex flex-col gap-4 flex-1 p-4 overflow-y-auto">
+        <h3 className="font-bold text-lg">
+          Install the Mission Control agent using instructions below
+        </h3>
         <div className="flex flex-col ">
           <Tabs
             activeTab={activeTab}
@@ -102,41 +119,22 @@ export default function InstallAgentModal({
               label="Helm CLI"
               value="cli"
             >
-              <div
-                className="bg-red-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded relative"
-                role="alert"
-              >
-                <span className="block sm:inline">
-                  Access token will be shown only once. Please copy it and store
-                  it securely.
-                </span>
-              </div>
               <CLIInstallAgent
                 generatedAgent={generatedAgent}
                 agentFormValues={agentFormValues}
               />
-              <MoreInfoBox />
+              <WarningBox />
             </Tab>
             <Tab className="flex flex-col gap-4 p-4" label="Flux" value="flux">
-              <div
-                className="bg-red-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded relative"
-                role="alert"
-              >
-                <span className="block sm:inline">
-                  Access token will be shown only once. Please copy it and store
-                  it securely.
-                </span>
-              </div>
-
               <FluxInstallAgent
                 generatedAgent={generatedAgent}
                 agentFormValues={agentFormValues}
               />
-
-              <MoreInfoBox />
+              <WarningBox />
             </Tab>
           </Tabs>
         </div>
+        <MoreInfoBox />
       </div>
       <div className="flex flex-row justify-end gap-4 p-4">
         <Button text="Close" onClick={onClose} />
