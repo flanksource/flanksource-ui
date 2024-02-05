@@ -1,7 +1,7 @@
+import { useComponentNameQuery } from "@flanksource-ui/api/query-hooks";
+import { Component, Topology } from "@flanksource-ui/api/types/topology";
 import { Link } from "react-router-dom";
 import { Icon } from "../../Icon";
-import { useComponentNameQuery } from "../../../api/query-hooks";
-import { Component, Topology } from "../../../api/types/topology";
 
 export function TopologyLink({
   topology,
@@ -63,7 +63,7 @@ function TopologyLinkLocal({
         to={{
           pathname: `/topology/${topology.id}`
         }}
-        className="flex flex-nowrap hover:text-gray-500 my-auto"
+        className="flex flex-row items-center hover:text-gray-500 my-auto"
       >
         <Icon name={topology.icon} className="mr-1 object-center h-5" />
         <span className={`text-${size}`}> {topology.name}</span>
