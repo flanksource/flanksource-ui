@@ -2,8 +2,8 @@ import Highlight, { Language, defaultProps } from "prism-react-renderer";
 import { ComponentProps, useMemo } from "react";
 import { GoCopy } from "react-icons/go";
 import { parse, stringify } from "yaml";
-import { Button } from "../../ui/Button";
-import { useCopyToClipboard } from "../Hooks/useCopyToClipboard";
+import { useCopyToClipboard } from "../../components/Hooks/useCopyToClipboard";
+import { Button } from "../Button";
 import theme from "./theme";
 
 type RenderProps = Parameters<

@@ -1,7 +1,7 @@
+import { GeneratedAgent } from "@flanksource-ui/api/services/agents";
+import { JSONViewer } from "@flanksource-ui/ui/JSONViewer";
 import Handlebars from "handlebars";
 import { useMemo } from "react";
-import { GeneratedAgent } from "../../../api/services/agents";
-import { JSONViewer } from "../../JSONViewer";
 import { AgentFormValues } from "../Add/AddAgentForm";
 
 const fluxTemplate = `apiVersion: v1
