@@ -1,7 +1,7 @@
+import { GeneratedAgent } from "@flanksource-ui/api/services/agents";
+import { JSONViewer } from "@flanksource-ui/ui/JSONViewer";
 import Handlebars from "handlebars";
 import { useMemo } from "react";
-import { GeneratedAgent } from "../../../api/services/agents";
-import { JSONViewer } from "../../JSONViewer";
 import { AgentFormValues } from "../Add/AddAgentForm";
 
 const fluxTemplate = `apiVersion: v1
@@ -92,7 +92,7 @@ export default function FluxInstallAgent({
   }, [agentFormValues, baseUrl, generatedAgent, kubeOptions]);
 
   return (
-    <div className="flex flex-col flex-1 border border-gray-200 rounded-md p-2 px-4 gap-4 overflow-y-auto">
+    <div className="flex flex-col flex-1 max-h-[30rem] border border-gray-200 rounded-md p-2 px-4 gap-4 overflow-y-auto">
       <JSONViewer code={yaml} format="yaml" showLineNo />
     </div>
   );

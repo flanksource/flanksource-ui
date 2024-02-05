@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { HealthCheck } from "../../../api/types/health";
-import { JSONViewer } from "../../JSONViewer";
+import { JSONViewer } from "../../../ui/JSONViewer";
 
 type CanaryCheckDetailsProps = {
   check: Pick<Partial<HealthCheck>, "canary_id" | "spec">;
