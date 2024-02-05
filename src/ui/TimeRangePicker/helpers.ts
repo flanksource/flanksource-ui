@@ -1,25 +1,11 @@
 import {
   dateDiff,
-  formatISODate,
   dateToJSDate,
+  formatISODate,
   isValidDate,
-  subtractDateFromNow,
-  formatTimeRange
+  subtractDateFromNow
 } from "../../utils/date";
 import { getLocalItem, setLocalItem } from "../../utils/storage";
-import { RangeOption, rangeOptionsCategories } from "./rangeOptions";
-
-export const isSupportedRelativeRange = (from: string, to: string): boolean => {
-  for (let i = 0; i < rangeOptionsCategories.length; i++) {
-    let options = rangeOptionsCategories[i].options;
-    for (let j = 0; j < options.length; j++) {
-      if (options[j].from === from && options[i].to === to) {
-        return true;
-      }
-    }
-  }
-  return false;
-};
 
 export const getIntervalData = (interval: string): [number, string] => {
   if (interval === "now") {
@@ -69,24 +55,6 @@ export const convertRangeValue = (
     return formatISODate(subtractDateFromNow(...getIntervalData(value)));
   }
   return dateToJSDate(subtractDateFromNow(...getIntervalData(value)));
-};
-
-export const createDisplayValue = (range: RangeOption) => {
-  let label;
-  rangeOptionsCategories.forEach((category) => {
-    category.options.forEach((option) => {
-      if (option.from === range.from && option.to === range.to) {
-        label = option.display;
-      }
-    });
-  });
-  if (label) {
-    return label;
-  }
-  if (range.from && range.to) {
-    return `${formatTimeRange(range.from)} to ${formatTimeRange(range.to)}`;
-  }
-  return "";
 };
 
 type DateOrString = Date | string;

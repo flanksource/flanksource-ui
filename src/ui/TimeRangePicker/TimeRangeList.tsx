@@ -1,35 +1,26 @@
 import clsx from "clsx";
-import { memo, useCallback } from "react";
-import {
-  RangeOption,
-  rangeOptionsCategories,
-  RangeOptionsCategory
-} from "./rangeOptions";
+import { TimeRangeOption, rangeOptionsCategories } from "./rangeOptions";
 
 type TimeRangeListProps = {
   closePicker: () => void;
-  currentRange: RangeOption;
-  changeRangeValue: (val: RangeOption) => void;
+  currentRange?: TimeRangeOption;
+  changeRangeValue: (val: TimeRangeOption) => void;
   setShowCalendar: (val: boolean) => void;
 } & React.HTMLProps<HTMLDivElement>;
 
-export const TimeRangeListFC = ({
+export function TimeRangeList({
   closePicker = () => {},
   currentRange,
   changeRangeValue = () => {},
   setShowCalendar = () => {},
   ...rest
-}: TimeRangeListProps) => {
-  const isChecked = (option: RangeOption, value: RangeOption) => {
-    return option?.from === value?.from && option?.to === value?.to;
+}: TimeRangeListProps) {
+  const isChecked = (option?: TimeRangeOption, value?: TimeRangeOption) => {
+    return option?.display === value?.display;
   };
 
-  const setOption = (option: RangeOption) => {
-    const { from, to } = option;
-    changeRangeValue({
-      from,
-      to
-    });
+  const setOption = (option: TimeRangeOption) => {
+    changeRangeValue(option);
     closePicker();
     setShowCalendar(false);
   };
@@ -75,6 +66,4 @@ export const TimeRangeListFC = ({
       })}
     </div>
   );
-};
-
-export const TimeRangeList = memo(TimeRangeListFC);
+}

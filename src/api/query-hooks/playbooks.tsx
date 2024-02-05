@@ -6,13 +6,18 @@ import {
 } from "@tanstack/react-query";
 import { SubmitPlaybookRunFormValues } from "../../components/Playbooks/Runs/Submit/SubmitPlaybookRunForm";
 import {
+  getAllPlaybookNames,
   getAllPlaybooksSpecs,
   getPlaybookSpec,
   getPlaybookSpecsByIDs,
   getPlaybookToRunForResource,
   submitPlaybookRun
 } from "../services/playbooks";
-import { PlaybookSpec, RunnablePlaybook } from "../types/playbooks";
+import {
+  PlaybookNames,
+  PlaybookSpec,
+  RunnablePlaybook
+} from "../types/playbooks";
 
 export function useGetAllPlaybookSpecs(
   options: UseQueryOptions<PlaybookSpec[], Error> = {}
@@ -26,6 +31,18 @@ export function useGetAllPlaybookSpecs(
       ...options
     }
   );
+}
+
+export function useGetPlaybookNames(
+  options: UseQueryOptions<PlaybookNames[], Error> = {}
+) {
+  return useQuery<PlaybookNames[], Error>({
+    queryKey: ["playbooks", "names"],
+    queryFn: getAllPlaybookNames,
+    cacheTime: 0,
+    staleTime: 0,
+    ...options
+  });
 }
 
 export type GetPlaybooksToRunParams = {

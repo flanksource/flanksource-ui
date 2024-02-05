@@ -22,6 +22,20 @@ export function useJobsHistoryQuery(
   );
 }
 
+type QueryInputType = {
+  pageIndex: number;
+  pageSize: number;
+  resourceType?: string;
+  resourceId?: string;
+  name?: string;
+  status?: string;
+  sortBy?: string;
+  sortOrder?: string;
+  startsAt?: string;
+  endsAt?: string;
+  duration?: number;
+};
+
 export function useJobsHistoryForSettingQuery(
   {
     pageIndex,
@@ -31,17 +45,11 @@ export function useJobsHistoryForSettingQuery(
     name,
     status,
     sortBy,
-    sortOrder
-  }: {
-    pageIndex: number;
-    pageSize: number;
-    resourceType?: string;
-    resourceId?: string;
-    name?: string;
-    status?: string;
-    sortBy?: string;
-    sortOrder?: string;
-  },
+    sortOrder,
+    startsAt,
+    endsAt,
+    duration
+  }: QueryInputType,
   options?: UseQueryOptions<Response, Error>
 ) {
   return useQuery<Response, Error>(
@@ -54,7 +62,10 @@ export function useJobsHistoryForSettingQuery(
       name,
       status,
       sortBy,
-      sortOrder
+      sortOrder,
+      startsAt,
+      endsAt,
+      duration
     ],
     () =>
       getJobsHistory(
@@ -65,7 +76,10 @@ export function useJobsHistoryForSettingQuery(
         name,
         status,
         sortBy,
-        sortOrder
+        sortOrder,
+        startsAt,
+        endsAt,
+        duration
       ),
     options
   );

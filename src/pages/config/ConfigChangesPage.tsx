@@ -11,11 +11,13 @@ import { InfoMessage } from "@flanksource-ui/components/InfoMessage";
 import { SearchLayout } from "@flanksource-ui/components/Layout";
 import { refreshButtonClickedTrigger } from "@flanksource-ui/components/SlidingSideBar";
 import TabbedLinks from "@flanksource-ui/components/Tabs/TabbedLinks";
+import useTimeRangeParams from "@flanksource-ui/ui/TimeRangePicker/useTimeRangeParams";
 import { useAtom } from "jotai";
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
 export function ConfigChangesPage() {
+  const { timeRangeAbsoluteValue } = useTimeRangeParams();
   const [, setRefreshButtonClickedTrigger] = useAtom(
     refreshButtonClickedTrigger
   );
@@ -28,8 +30,8 @@ export function ConfigChangesPage() {
   const type = params.get("type") ?? undefined;
   const change_type = params.get("change_type") ?? undefined;
   const severity = params.get("severity") ?? undefined;
-  const starts_at = params.get("starts") ?? undefined;
-  const ends_at = params.get("ends") ?? undefined;
+  const starts_at = timeRangeAbsoluteValue?.from ?? undefined;
+  const ends_at = timeRangeAbsoluteValue?.to ?? undefined;
   const pageSize = +(params.get("pageSize") ?? itemsPerPage);
   const pageIndex = +(params.get("pageIndex") ?? 0);
   const page = pageIndex === 0 ? 0 : pageIndex - 1;

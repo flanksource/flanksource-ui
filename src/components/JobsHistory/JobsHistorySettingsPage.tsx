@@ -1,20 +1,22 @@
+import useTimeRangeParams from "@flanksource-ui/ui/TimeRangePicker/useTimeRangeParams";
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import {
-  useJobsHistoryForSettingQuery,
-  useJobsHistoryQuery
-} from "../../api/query-hooks/useJobsHistoryQuery";
+import { useJobsHistoryForSettingQuery } from "../../api/query-hooks/useJobsHistoryQuery";
 import { BreadcrumbNav, BreadcrumbRoot } from "../BreadcrumbNav";
 import { Head } from "../Head/Head";
 import { SearchLayout } from "../Layout";
+import JobHistoryFilters, {
+  durationOptions
+} from "./Filters/JobsHistoryFilters";
 import JobsHistoryTable from "./JobsHistoryTable";
-import JobHistoryFilters from "./Filters/JobsHistoryFilters";
 
 export default function JobsHistorySettingsPage() {
   const [{ pageIndex, pageSize }, setPageState] = useState({
     pageIndex: 0,
     pageSize: 150
   });
+
+  const { timeRangeAbsoluteValue } = useTimeRangeParams();
 
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -23,6 +25,13 @@ export default function JobsHistorySettingsPage() {
   const sortBy = searchParams.get("sortBy") ?? "";
   const sortOrder = searchParams.get("sortOrder") ?? "desc";
   const status = searchParams.get("status") ?? "";
+  const durationParam = searchParams.get("duration") ?? undefined;
+  const duration = durationParam
+    ? durationOptions[durationParam].valueInMillis ?? undefined
+    : undefined;
+
+  const startsAt = timeRangeAbsoluteValue?.from ?? undefined;
+  const endsAt = timeRangeAbsoluteValue?.to ?? undefined;
 
   const { data, isLoading, refetch, isRefetching } =
     useJobsHistoryForSettingQuery(
@@ -33,14 +42,15 @@ export default function JobsHistorySettingsPage() {
         name,
         status,
         sortBy,
-        sortOrder
+        sortOrder,
+        startsAt,
+        endsAt,
+        duration
       },
       {
         keepPreviousData: true
       }
     );
-
-  const { data: fullJobs } = useJobsHistoryQuery(0, 1000000);
 
   const jobs = data?.data;
   const totalEntries = data?.totalEntries;
@@ -53,7 +63,9 @@ export default function JobsHistorySettingsPage() {
         title={
           <BreadcrumbNav
             list={[
-              <BreadcrumbRoot link="/settings/jobs">Job History</BreadcrumbRoot>
+              <BreadcrumbRoot key={"history"} link="/settings/jobs">
+                Job History
+              </BreadcrumbRoot>
             ]}
           />
         }
@@ -62,15 +74,7 @@ export default function JobsHistorySettingsPage() {
         loading={isLoading || isRefetching}
       >
         <div className="flex flex-col flex-1 p-6 pb-0 h-full w-full">
-          <JobHistoryFilters
-            jobs={fullJobs?.data ?? []}
-            onFilterChange={() => {
-              setPageState((state) => ({
-                ...state,
-                pageIndex: 0
-              }));
-            }}
-          />
+          <JobHistoryFilters />
 
           <JobsHistoryTable
             jobs={jobs ?? []}

@@ -1,25 +1,25 @@
+import clsx from "clsx";
+import { useEffect, useRef } from "react";
 import { FaRegCalendarAlt } from "react-icons/fa";
 import { FiAlertTriangle } from "react-icons/fi";
-import clsx from "clsx";
-import { memo, useEffect, useRef } from "react";
 
 type ShowCalendar = () => void;
 
 type TimePickerInputProps = {
-  inputValue: string;
+  inputValue?: string;
   setInputValue: (val: any) => void;
   showCalendar: ShowCalendar;
   error?: string | undefined;
   focus?: boolean;
 };
 
-export const TimePickerInputFC = ({
+export function TimePickerInput({
   inputValue = "",
   setInputValue = () => {},
   showCalendar = () => {},
   error = "",
   focus
-}: TimePickerInputProps) => {
+}: TimePickerInputProps) {
   const inputRef = useRef<HTMLInputElement>() as any;
 
   useEffect(() => {
@@ -60,6 +60,4 @@ export const TimePickerInputFC = ({
       )}
     </div>
   );
-};
-
-export const TimePickerInput = memo(TimePickerInputFC);
+}

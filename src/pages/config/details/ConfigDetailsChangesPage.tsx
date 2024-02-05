@@ -1,13 +1,15 @@
-import { useMemo, useState } from "react";
-import { useParams, useSearchParams } from "react-router-dom";
 import { useGetConfigChangesByConfigIdQuery } from "@flanksource-ui/api/query-hooks";
 import { ConfigChangeHistory } from "@flanksource-ui/components/Configs/Changes/ConfigChangeHistory";
+import { ConfigChangeFilters } from "@flanksource-ui/components/Configs/Changes/ConfigChangesFilters/ConfigChangesFilters";
 import { ConfigDetailsTabs } from "@flanksource-ui/components/Configs/ConfigDetailsTabs";
 import { InfoMessage } from "@flanksource-ui/components/InfoMessage";
-import { ConfigChangeFilters } from "@flanksource-ui/components/Configs/Changes/ConfigChangesFilters/ConfigChangesFilters";
+import useTimeRangeParams from "@flanksource-ui/ui/TimeRangePicker/useTimeRangeParams";
+import { useMemo, useState } from "react";
+import { useParams, useSearchParams } from "react-router-dom";
 
 export function ConfigDetailsChangesPage() {
   const { id } = useParams();
+  const { timeRangeAbsoluteValue } = useTimeRangeParams();
   const [{ pageIndex, pageSize }, setPageState] = useState({
     pageIndex: 0,
     pageSize: 50
@@ -16,8 +18,8 @@ export function ConfigDetailsChangesPage() {
   const [params] = useSearchParams();
   const change_type = params.get("change_type") ?? undefined;
   const severity = params.get("severity") ?? undefined;
-  const starts_at = params.get("starts") ?? undefined;
-  const ends_at = params.get("ends") ?? undefined;
+  const starts_at = timeRangeAbsoluteValue?.from ?? undefined;
+  const ends_at = timeRangeAbsoluteValue?.to ?? undefined;
   const {
     data: historyData,
     isLoading,
