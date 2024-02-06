@@ -1,5 +1,4 @@
 import clsx from "clsx";
-import { uniq } from "lodash";
 import { LegacyRef } from "react";
 import { BsSortDown, BsSortUp } from "react-icons/bs";
 import { useSearchParams } from "react-router-dom";
@@ -24,25 +23,26 @@ export const defaultSortLabels = [
 ];
 
 export function getSortLabels(topology: Topology[]) {
-  const currentSortLabels: typeof defaultSortLabels = [];
-  let labels: Record<string, boolean> = {};
+  const currentSortLabels = new Map<
+    string,
+    (typeof defaultSortLabels)[number]
+  >();
   topology?.forEach((t) => {
     t?.properties?.forEach((h, index) => {
-      if (!h.name) {
+      if (!h.name || currentSortLabels.has(h.name)) {
         return;
       }
-      if (h.headline && h.name && !labels[h.name]) {
-        labels[h.name] = true;
-        currentSortLabels.push({
+      if (h.headline && h.name) {
+        currentSortLabels.set(h.name, {
           id: defaultSortLabels.length + index,
-          value: (h.name ?? "").toLowerCase(),
+          value: `field:${h.name ?? ""}`,
           label: h.name ?? "",
           standard: false
         });
       }
     });
   });
-  return [...defaultSortLabels, ...uniq(currentSortLabels)];
+  return [...defaultSortLabels, ...Array.from(currentSortLabels.values())];
 }
 
 function getTopologyValue(t: Topology, sortBy: string) {
