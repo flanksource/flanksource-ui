@@ -8,7 +8,7 @@ import { useFeatureFlagsContext } from "../../../context/FeatureFlagsContext";
 import { features } from "../../../services/permissions/features";
 import { Age } from "../../../ui/Age";
 import PillBadge from "../../../ui/Badge/PillBadge";
-import CollapsiblePanel from "../../CollapsiblePanel";
+import CollapsiblePanel from "../../../ui/CollapsiblePanel/CollapsiblePanel";
 import { DetailsTable } from "../../DetailsTable/DetailsTable";
 import { IncidentStatusTag } from "../../IncidentStatusTag";
 import IncidentsFilterBar, { IncidentFilter } from "../../IncidentsFilterBar";

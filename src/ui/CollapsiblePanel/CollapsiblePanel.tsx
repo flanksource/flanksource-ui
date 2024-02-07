@@ -2,7 +2,7 @@ import { Transition } from "@headlessui/react";
 import clsx from "clsx";
 import { Fragment, useEffect, useState } from "react";
 import { IoChevronUpOutline } from "react-icons/io5";
-import { ClickableSvg } from "../../ui/ClickableSvg/ClickableSvg";
+import { ClickableSvg } from "../ClickableSvg/ClickableSvg";
 
 type Props = React.HTMLProps<HTMLDivElement> & {
   Header: React.ReactNode;

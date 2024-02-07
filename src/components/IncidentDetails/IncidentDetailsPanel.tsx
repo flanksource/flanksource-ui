@@ -3,17 +3,17 @@ import { debounce } from "lodash";
 import { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { BsCardList, BsShareFill } from "react-icons/bs";
-import CollapsiblePanel from "../CollapsiblePanel";
+import { Incident, IncidentPriority } from "../../api/types/incident";
+import { Age } from "../../ui/Age";
+import CollapsiblePanel from "../../ui/CollapsiblePanel/CollapsiblePanel";
 import IncidentTypeDropdown from "../Incidents/IncidentTypeDropdown";
 import { incidentStatusItems, typeItems } from "../Incidents/data";
 import { ReactSelectDropdown } from "../ReactSelectDropdown";
 import Title from "../Title/title";
-import { Age } from "../../ui/Age";
 import { IncidentDetailsRow } from "./IncidentDetailsRow";
 import { priorities } from "./IncidentSidebar";
 import { IncidentWorkflow } from "./IncidentWorkflow";
 import { Responders } from "./Responders";
-import { Incident, IncidentPriority } from "../../api/types/incident";
 
 type IncidentDetailsPanelProps = React.HTMLProps<HTMLDivElement> & {
   incident: Incident;

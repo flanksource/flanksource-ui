@@ -3,17 +3,17 @@ import { useEffect, useMemo, useState } from "react";
 import {
   useGetConfigInsights,
   useGetTopologyRelatedInsightsQuery
-} from "../../api/query-hooks";
-import { ConfigAnalysis } from "../../api/types/configs";
+} from "../../../../api/query-hooks";
+import { ConfigAnalysis } from "../../../../api/types/configs";
 import {
   sanitizeHTMLContent,
   sanitizeHTMLContentToText,
   truncateText
-} from "../../utils/common";
-import EmptyState from "../EmptyState";
-import { InfiniteTable } from "../InfiniteTable/InfiniteTable";
-import TextSkeletonLoader from "../SkeletonLoader/TextSkeletonLoader";
-import { toastError } from "../Toast/toast";
+} from "../../../../utils/common";
+import EmptyState from "../../../EmptyState";
+import { InfiniteTable } from "../../../InfiniteTable/InfiniteTable";
+import TextSkeletonLoader from "../../../SkeletonLoader/TextSkeletonLoader";
+import { toastError } from "../../../Toast/toast";
 import ConfigInsightAgeCell from "./cells/ConfigInsightAgeCell";
 import ConfigInsightNameCell from "./cells/ConfigInsightNameCell";
 

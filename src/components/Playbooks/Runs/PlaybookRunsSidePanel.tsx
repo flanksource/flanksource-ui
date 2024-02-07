@@ -8,7 +8,7 @@ import { useAtom } from "jotai";
 import { useEffect, useMemo, useState } from "react";
 import { AiOutlineTeam } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
-import CollapsiblePanel from "../../CollapsiblePanel";
+import CollapsiblePanel from "../../../ui/CollapsiblePanel/CollapsiblePanel";
 import EmptyState from "../../EmptyState";
 import { PlaybookStatusIcon } from "../../Icon/PlaybookStatusIcon";
 import { InfiniteTable } from "../../InfiniteTable/InfiniteTable";

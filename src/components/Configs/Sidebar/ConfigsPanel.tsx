@@ -7,7 +7,7 @@ import ReactTooltip from "react-tooltip";
 import { useComponentConfigRelationshipQuery } from "../../../api/query-hooks/useComponentConfigRelationshipQuery";
 import { removeManualComponentConfigRelationship } from "../../../api/services/configs";
 import { Badge } from "../../../ui/Badge";
-import CollapsiblePanel from "../../CollapsiblePanel";
+import CollapsiblePanel from "../../../ui/CollapsiblePanel/CollapsiblePanel";
 import { ConfirmationPromptDialog } from "../../Dialogs/ConfirmationPromptDialog";
 import EmptyState from "../../EmptyState";
 import { IconButton } from "../../IconButton";

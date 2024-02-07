@@ -5,7 +5,7 @@ import { useGetSettingsResourceDetails } from "../../../api/query-hooks/settings
 import { isCostsEmpty } from "../../../api/types/configs";
 import { Topology } from "../../../api/types/topology";
 import { Age } from "../../../ui/Age";
-import CollapsiblePanel from "../../CollapsiblePanel";
+import CollapsiblePanel from "../../../ui/CollapsiblePanel/CollapsiblePanel";
 import ConfigCostValue from "../../Configs/ConfigCosts/ConfigCostValue";
 import { formatConfigTags } from "../../Configs/Sidebar/Utils/formatConfigTags";
 import { Icon } from "../../Icon";

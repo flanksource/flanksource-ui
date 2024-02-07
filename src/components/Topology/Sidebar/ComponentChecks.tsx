@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { AiFillHeart } from "react-icons/ai";
 import { getComponentChecks } from "../../../api/services/topology";
 import PillBadge from "../../../ui/Badge/PillBadge";
-import CollapsiblePanel from "../../CollapsiblePanel";
+import CollapsiblePanel from "../../../ui/CollapsiblePanel/CollapsiblePanel";
 import EmptyState from "../../EmptyState";
 import { CheckLink } from "../../HealthChecks/CheckLink";
 import TextSkeletonLoader from "../../SkeletonLoader/TextSkeletonLoader";

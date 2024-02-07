@@ -6,7 +6,7 @@ import { useComponentConfigChanges } from "../../../../api/query-hooks/useCompon
 import { useGetConfigChangesById } from "../../../../api/query-hooks/useGetConfigChangesByConfigChangeIdQuery";
 import { ConfigChange } from "../../../../api/types/configs";
 import PillBadge from "../../../../ui/Badge/PillBadge";
-import CollapsiblePanel from "../../../CollapsiblePanel";
+import CollapsiblePanel from "../../../../ui/CollapsiblePanel/CollapsiblePanel";
 import { ConfigDetailChangeModal } from "../../../Configs/Changes/ConfigDetailsChanges/ConfigDetailsChanges";
 import EmptyState from "../../../EmptyState";
 import { Icon } from "../../../Icon";

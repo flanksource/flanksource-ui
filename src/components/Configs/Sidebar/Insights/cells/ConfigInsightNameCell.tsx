@@ -1,6 +1,6 @@
 import { CellContext } from "@tanstack/react-table";
-import { ConfigAnalysisLink } from "../../Configs/Insights/ConfigAnalysisLink/ConfigAnalysisLink";
-import { ConfigAnalysis } from "../../../api/types/configs";
+import { ConfigAnalysis } from "../../../../../api/types/configs";
+import { ConfigAnalysisLink } from "../../../Insights/ConfigAnalysisLink/ConfigAnalysisLink";
 
 export default function ConfigInsightNameCell({
   row,
