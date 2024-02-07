@@ -28,7 +28,7 @@ export function ConfigDetails({ configId }: Props) {
 
   const namespace = configDetails?.tags?.["namespace"];
   return (
-    <div className="flex flex-col space-y-2 py-2 max-w-full">
+    <div className="flex flex-col space-y-2 py-2 max-w-full overflow-y-auto flex-1">
       {isLoading ? (
         <TextSkeletonLoader />
       ) : configDetails && !error ? (
