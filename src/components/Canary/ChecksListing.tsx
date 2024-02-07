@@ -1,3 +1,4 @@
+import { atom, useAtom } from "jotai";
 import { useCallback, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useGetCheckDetails } from "../../api/query-hooks/health";
@@ -11,9 +12,12 @@ import { Loading } from "../Loading";
 import PlaybooksDropdownMenu from "../Playbooks/Runs/Submit/PlaybooksDropdownMenu";
 import { CanaryCards } from "./CanaryCards";
 import { CheckDetails } from "./CanaryPopup/CheckDetails";
+import CheckRunNow from "./CanaryPopup/CheckRunNow";
 import { CheckTitle } from "./CanaryPopup/CheckTitle";
 import { HealthCheckEdit } from "./HealthCheckEdit";
 import { CanaryTable } from "./table";
+
+export const refreshCheckModalAtomTrigger = atom(0);
 
 type ChecksListingProps = {
   checks?: HealthCheck[];
@@ -28,6 +32,7 @@ export function ChecksListing({
   selectedTab,
   tableHeadStyle = {}
 }: ChecksListingProps) {
+  const [, refreshCheckModal] = useAtom(refreshCheckModalAtomTrigger);
   const [searchParams, setSearchParams] = useSearchParams({
     layout: "table"
   });
@@ -37,7 +42,7 @@ export function ChecksListing({
   const timeRange = searchParams.get("timeRange") ?? timeRanges[1].value;
   const checkId = searchParams.get("checkId") ?? undefined;
 
-  const { data: check } = useGetCheckDetails(checkId as string);
+  const { data: check, refetch } = useGetCheckDetails(checkId as string);
   const [isOpen, setOpen] = useState(false);
 
   const handleCheckSelect = useCallback(
@@ -94,6 +99,13 @@ export function ChecksListing({
               />
               <div className="rounded-t-none  flex gap-2 bg-gray-100 px-8 py-4 justify-end absolute w-full bottom-0 left-0">
                 {check?.canary_id && <HealthCheckEdit check={check} />}
+                <CheckRunNow
+                  onSuccessfulRun={() => {
+                    refreshCheckModal((prev) => prev + 1);
+                    refetch();
+                  }}
+                  check={check}
+                />
                 {!isCanaryUI && (
                   <>
                     <div className="flex flex-col items-center ">

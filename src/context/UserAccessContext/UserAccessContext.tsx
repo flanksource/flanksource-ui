@@ -1,3 +1,4 @@
+import { Authorizer } from "casbin.js";
 import React, {
   createContext,
   useContext,
@@ -5,7 +6,6 @@ import React, {
   useMemo,
   useState
 } from "react";
-import { Authorizer } from "casbin.js";
 import { useUser } from "..";
 import { fetchPeopleRoles } from "../../api/services/users";
 import { permDefs } from "./permissions";
@@ -44,7 +44,7 @@ const initialState: UserAccessState = {
   hasAnyResourceAccess: (resourceNames, action) => Promise.resolve(false)
 };
 
-const UserAccessStateContext = createContext(initialState);
+export const UserAccessStateContext = createContext(initialState);
 
 export const UserAccessStateContextProvider = ({
   children

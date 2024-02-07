@@ -1,14 +1,15 @@
+import { CellContext, ColumnDef } from "@tanstack/react-table";
+import clsx from "clsx";
+import { useAtom } from "jotai";
 import React, { useEffect, useMemo, useState } from "react";
 import { format } from "timeago.js";
-import { CanaryStatus, Duration } from "../../renderers";
-import { HealthCheck, HealthCheckStatus } from "../../../../api/types/health";
-import { toastError } from "../../../Toast/toast";
-import { CellContext, ColumnDef } from "@tanstack/react-table";
-import { DataTable } from "../../../DataTable";
-import clsx from "clsx";
 import { useCheckStattiQuery } from "../../../../api/query-hooks/useCheckStattiQuery";
+import { HealthCheck, HealthCheckStatus } from "../../../../api/types/health";
+import { DataTable } from "../../../DataTable";
+import { toastError } from "../../../Toast/toast";
+import { refreshCheckModalAtomTrigger } from "../../ChecksListing";
+import { CanaryStatus, Duration } from "../../renderers";
 import { StatusHistoryFilters } from "./StatusHistoryFilters";
-import { Loading } from "../../../Loading";
 
 type StatusHistoryProps = React.HTMLProps<HTMLDivElement> & {
   check: Pick<Partial<HealthCheck>, "id" | "checkStatuses" | "description">;
@@ -73,6 +74,8 @@ export function StatusHistory({
   className,
   ...props
 }: StatusHistoryProps) {
+  const [refetchTrigger] = useAtom(refreshCheckModalAtomTrigger);
+
   const [{ pageIndex, pageSize }, setPageState] = useState({
     pageIndex: 0,
     pageSize: 50
@@ -82,7 +85,11 @@ export function StatusHistory({
     status: string | undefined;
   }>();
 
-  const { data: response, isLoading } = useCheckStattiQuery(
+  const {
+    data: response,
+    isLoading,
+    refetch
+  } = useCheckStattiQuery(
     {
       start: timeRange,
       checkId: check.id!,
@@ -94,6 +101,13 @@ export function StatusHistory({
       pageSize
     }
   );
+
+  // Refetch the data when the refetchTrigger changes
+  useEffect(() => {
+    if (refetchTrigger) {
+      refetch();
+    }
+  }, [refetch, refetchTrigger]);
 
   const statii = response?.data || [];
   const totalEntries = response?.totalEntries ?? 0;
