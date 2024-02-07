@@ -32,7 +32,7 @@ export default function CollapsiblePanel({
 
   return (
     <div
-      className={clsx("flex flex-col h-auto space-y-2", className)}
+      className={clsx("flex flex-col h-auto gap-2 py-1", className)}
       {...props}
       data-minimized={isCollapsed}
     >

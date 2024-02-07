@@ -113,7 +113,6 @@ export default function SlidingSideBar({
         !hideToggle ? "transform origin-right duration-500" : ""
       )}
       {...rest}
-      style={{ paddingBottom: "64px" }}
     >
       {/* todo: ensure button is over the content */}
       {!hideToggle && (
@@ -128,7 +127,7 @@ export default function SlidingSideBar({
         </button>
       )}
       <div
-        className={`h-full flex flex-col space-y-2 pb-4 ${
+        className={`flex flex-col h-full ${
           open && !hideToggle ? "hidden" : ""
         }`}
         ref={contentRef}
