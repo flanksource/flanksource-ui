@@ -17,7 +17,7 @@ export function getResourceForRun(
     return {
       id: data.component_id,
       label: "Component",
-      link: <TopologyLink topologyId={data.component_id} />
+      link: <TopologyLink topologyId={data.component_id} size="sm" />
     } as ActionResource;
   }
 

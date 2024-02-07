@@ -12,10 +12,18 @@ export type PlaybookRunStatus =
   | "failed"
   | "pending";
 
+export type PlaybookRunActionStatus =
+  | "completed"
+  | "failed"
+  | "running"
+  | "scheduled"
+  | "skipped"
+  | "sleeping";
+
 export type PlaybookRunAction = {
   id: string;
   name: string;
-  status: PlaybookRunStatus;
+  status: PlaybookRunActionStatus;
   playbook_run_id: string;
   start_time: string;
   scheduled_time?: string;
@@ -51,6 +59,11 @@ export interface PlaybookRun extends CreatedAt, Avatar, Agent {
   config?: Pick<ConfigItem, "id" | "name" | "type" | "config_class">;
 }
 
+type PlaybookSpecFilterType = {
+  type: string;
+  tags?: string[];
+};
+
 export type PlaybookSpec = {
   id: string;
   name: string;
@@ -58,7 +71,16 @@ export type PlaybookSpec = {
   icon?: string;
   created_by?: User;
   category?: string;
-  spec: any;
+  spec: {
+    actions?: Record<string, any>[];
+    configs?: PlaybookSpecFilterType[];
+    components?: PlaybookSpecFilterType[];
+    checks: PlaybookSpecFilterType[];
+    icons?: string;
+    parameters?: PlaybookParam[];
+    description?: string;
+    [key: string]: any;
+  };
   source: "KubernetesCRD" | "ConfigFile" | "UI";
   created_at: string;
   updated_at: string;

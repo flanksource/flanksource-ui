@@ -104,7 +104,7 @@ export default function SubmitPlaybookRunForm({
                 ) : (
                   // we need playbookSpec to render this, as it has filters
                   playbook.spec && (
-                    <PlaybookSelectResource playbook={playbook.spec} />
+                    <PlaybookSelectResource playbook={playbook} />
                   )
                 )}
                 <div className="border-b border-gray-200 mb-4 mt-2" />

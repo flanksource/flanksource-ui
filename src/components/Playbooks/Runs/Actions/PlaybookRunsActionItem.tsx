@@ -1,3 +1,7 @@
+import { relativeDateTime } from "@flanksource-ui/utils/date";
+import dayjs from "dayjs";
+import { useEffect } from "react";
+import ReactTooltip from "react-tooltip";
 import { PlaybookRunAction } from "../../../../api/types/playbooks";
 import { Age } from "../../../../ui/Age";
 import { PlaybookStatusIcon } from "../../../Icon/PlaybookStatusIcon";
@@ -5,7 +9,7 @@ import { PlaybookStatusIcon } from "../../../Icon/PlaybookStatusIcon";
 type PlaybookRunsActionItemProps = {
   action: Pick<
     PlaybookRunAction,
-    "status" | "name" | "start_time" | "end_time" | "id"
+    "status" | "name" | "start_time" | "end_time" | "id" | "scheduled_time"
   >;
   onClick?: () => void;
   isSelected?: boolean;
@@ -18,6 +22,10 @@ export default function PlaybookRunsActionItem({
   isSelected = false,
   stepNumber
 }: PlaybookRunsActionItemProps) {
+  useEffect(() => {
+    ReactTooltip.rebuild();
+  });
+
   return (
     <div
       role="button"
@@ -34,9 +42,20 @@ export default function PlaybookRunsActionItem({
         </div>
         <div className={`text-xs flex flex-row gap-1 items-center`}></div>
       </div>
-      <div className="flex flex-col">
+      <div className="flex flex-row gap-2">
         <div className="text-sm  text-gray-600">
-          <Age from={action.start_time} to={action.end_time} />
+          {action.status === "sleeping" ? (
+            <span
+              data-tip={`Scheduled to run in ${relativeDateTime(
+                dayjs().toISOString(),
+                action.scheduled_time
+              )}`}
+            >
+              -
+            </span>
+          ) : (
+            <Age from={action.start_time} to={action.end_time} />
+          )}
         </div>
       </div>
     </div>
