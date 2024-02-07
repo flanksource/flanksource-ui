@@ -5,9 +5,7 @@ import { useJobsHistoryForSettingQuery } from "../../api/query-hooks/useJobsHist
 import { BreadcrumbNav, BreadcrumbRoot } from "../BreadcrumbNav";
 import { Head } from "../Head/Head";
 import { SearchLayout } from "../Layout";
-import JobHistoryFilters, {
-  durationOptions
-} from "./Filters/JobsHistoryFilters";
+import JobHistoryFilters from "./Filters/JobsHistoryFilters";
 import JobsHistoryTable from "./JobsHistoryTable";
 
 export default function JobsHistorySettingsPage() {
@@ -25,10 +23,6 @@ export default function JobsHistorySettingsPage() {
   const sortBy = searchParams.get("sortBy") ?? "";
   const sortOrder = searchParams.get("sortOrder") ?? "desc";
   const status = searchParams.get("status") ?? "";
-  const durationParam = searchParams.get("duration") ?? undefined;
-  const duration = durationParam
-    ? durationOptions[durationParam].valueInMillis ?? undefined
-    : undefined;
 
   const startsAt = timeRangeAbsoluteValue?.from ?? undefined;
   const endsAt = timeRangeAbsoluteValue?.to ?? undefined;
@@ -44,8 +38,7 @@ export default function JobsHistorySettingsPage() {
         sortBy,
         sortOrder,
         startsAt,
-        endsAt,
-        duration
+        endsAt
       },
       {
         keepPreviousData: true
