@@ -1,5 +1,4 @@
 import {
-  RedirectToSignIn,
   useOrganization,
   useOrganizationList,
   useSession
@@ -52,17 +51,19 @@ export default function ClerkAuthSessionChecker({ children }: Props) {
     userMemberships?.count
   ]);
 
+  useEffect(() => {
+    if (isSessionLoaded && !isSignedIn) {
+      window.location.href = clerkUrls.login;
+      return;
+    }
+  }, [isSessionLoaded, isSignedIn, push]);
+
   if (!isOrganizationLoaded || !isSessionLoaded) {
     return <FullPageSkeletonLoader />;
   }
 
   if (isSessionLoaded && !isSignedIn) {
-    return (
-      <RedirectToSignIn
-        afterSignInUrl={"/"}
-        afterSignUpUrl={clerkUrls.createOrganization}
-      />
-    );
+    return <FullPageSkeletonLoader />;
   }
 
   // if the organization backend is not yet created, we need to wait for it to
