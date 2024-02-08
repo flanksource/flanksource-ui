@@ -16,24 +16,27 @@ import { Head } from "@flanksource-ui/components/Head/Head";
 import { SearchLayout } from "@flanksource-ui/components/Layout";
 import TabbedLinks from "@flanksource-ui/components/Tabs/TabbedLinks";
 import { useAtom } from "jotai";
+import { useParams } from "next/navigation";
 import objectHash from "object-hash";
 import { useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
+export type ConfigPagesPathParams = {
+  type?: string;
+};
+
 export function ConfigListPage() {
-  const [params] = useSearchParams();
+  const [searchParams] = useSearchParams();
+  const { type: configType } = useParams<ConfigPagesPathParams>();
   const navigate = useNavigate();
 
-  const search = params.get("search");
-  const tag = decodeURIComponent(params.get("tag") || "");
-  const groupByProp = decodeURIComponent(params.get("groupByProp") ?? "");
-  const sortBy = params.get("sortBy");
-  const sortOrder = params.get("sortOrder");
-  const [deletedConfigsHidden, setDeletedConfigsHidden] = useAtom(
-    areDeletedConfigsHidden
-  );
+  const search = searchParams.get("search");
+  const tag = decodeURIComponent(searchParams.get("tag") || "");
+  const groupByProp = decodeURIComponent(searchParams.get("groupByProp") ?? "");
+  const sortBy = searchParams.get("sortBy");
+  const sortOrder = searchParams.get("sortOrder");
+  const [deletedConfigsHidden] = useAtom(areDeletedConfigsHidden);
   const hideDeletedConfigs = deletedConfigsHidden === "yes";
-  const configType = params.get("type") ?? undefined;
 
   // Show summary if no search, tag or configType is provided
   const showConfigSummaryList = useMemo(
@@ -74,7 +77,7 @@ export function ConfigListPage() {
   const refetch = refetchSummary || isRefetchingConfigList;
 
   const configList = useMemo(() => {
-    if (params.get("query")) {
+    if (searchParams.get("query")) {
       return [];
     }
     if (!allConfigs?.data) {
@@ -91,7 +94,7 @@ export function ConfigListPage() {
         allTags: { ...item.tags }
       };
     });
-  }, [params, allConfigs, groupByProp]);
+  }, [searchParams, allConfigs, groupByProp]);
 
   const handleRowClick = (row?: { original?: { id: string } }) => {
     const id = row?.original?.id;

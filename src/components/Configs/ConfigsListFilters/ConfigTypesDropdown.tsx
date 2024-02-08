@@ -1,8 +1,11 @@
+import {
+  ConfigTypeItem,
+  getConfigsTypes
+} from "@flanksource-ui/api/services/configs";
+import { ReactSelectDropdown } from "@flanksource-ui/components/ReactSelectDropdown";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
-import { getConfigsTypes, ConfigTypeItem } from "../../../api/services/configs";
-import { ReactSelectDropdown } from "../../ReactSelectDropdown";
 import ConfigsTypeIcon from "../ConfigsTypeIcon";
 
 type Props = {

@@ -1,14 +1,13 @@
+import { useConfigPageContext } from "@flanksource-ui/context/ConfigPageContext";
 import { debounce } from "lodash";
-import React from "react";
-import { useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { useConfigPageContext } from "../../../context/ConfigPageContext";
+import GroupByDropdown from "../../GroupByDropdown";
 import { QueryBuilder } from "../../QueryBuilder";
 import { Switch } from "../../Switch";
 import { TextInputClearable } from "../../TextInputClearable";
-import GroupByDropdown from "../../GroupByDropdown";
-import { ConfigTagsDropdown } from "./ConfigTagsDropdown";
 import { ConfigListToggledDeletedItems } from "../ConfigListToggledDeletedItems/ConfigListToggledDeletedItems";
+import { ConfigTagsDropdown } from "./ConfigTagsDropdown";
 import { ConfigTypesDropdown } from "./ConfigTypesDropdown";
 
 const ConfigFilterViewTypes = {
