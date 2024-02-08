@@ -2,13 +2,12 @@ import {
   BreadcrumbNav,
   BreadcrumbRoot
 } from "@flanksource-ui/components/BreadcrumbNav";
-import { configTabsLists } from "@flanksource-ui/components/Configs/ConfigTabsLinks";
+import ConfigPageTabs from "@flanksource-ui/components/Configs/ConfigPageTabs";
 import ConfigInsightsList from "@flanksource-ui/components/Configs/Insights/ConfigInsightsList";
 import { ConfigInsightsFilters } from "@flanksource-ui/components/Configs/Insights/Filters/ConfigInsightsFilters";
 import { Head } from "@flanksource-ui/components/Head/Head";
 import { SearchLayout } from "@flanksource-ui/components/Layout";
 import { refreshButtonClickedTrigger } from "@flanksource-ui/components/SlidingSideBar";
-import TabbedLinks from "@flanksource-ui/components/Tabs/TabbedLinks";
 import { useAtom } from "jotai";
 import { useState } from "react";
 
@@ -38,21 +37,17 @@ export function ConfigInsightsPage() {
         loading={isLoading}
         contentClass="p-0 h-full"
       >
-        <div className={`flex flex-col h-full`}>
-          <TabbedLinks tabLinks={configTabsLists}>
-            <div className={`flex flex-col flex-1 h-full space-y-2`}>
-              <div className="flex flex-row items-center">
-                <ConfigInsightsFilters />
-              </div>
-              <div className="flex flex-col h-full overflow-y-hidden">
-                <ConfigInsightsList
-                  setIsLoading={(isLoading) => setIsLoading(isLoading)}
-                  triggerRefresh={triggerRefresh}
-                />
-              </div>
-            </div>
-          </TabbedLinks>
-        </div>
+        <ConfigPageTabs activeTab="Insights">
+          <div className="flex flex-row items-center">
+            <ConfigInsightsFilters />
+          </div>
+          <div className="flex flex-col h-full overflow-y-hidden">
+            <ConfigInsightsList
+              setIsLoading={(isLoading) => setIsLoading(isLoading)}
+              triggerRefresh={triggerRefresh}
+            />
+          </div>
+        </ConfigPageTabs>
       </SearchLayout>
     </>
   );

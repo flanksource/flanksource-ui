@@ -8,26 +8,19 @@ import {
 } from "@flanksource-ui/components/BreadcrumbNav";
 import ConfigList from "@flanksource-ui/components/Configs/ConfigList";
 import { areDeletedConfigsHidden } from "@flanksource-ui/components/Configs/ConfigListToggledDeletedItems/ConfigListToggledDeletedItems";
+import ConfigPageTabs from "@flanksource-ui/components/Configs/ConfigPageTabs";
 import ConfigSummaryList from "@flanksource-ui/components/Configs/ConfigSummary/ConfigSummaryList";
-import { configTabsLists } from "@flanksource-ui/components/Configs/ConfigTabsLinks";
 import ConfigsListFilters from "@flanksource-ui/components/Configs/ConfigsListFilters";
 import ConfigsTypeIcon from "@flanksource-ui/components/Configs/ConfigsTypeIcon";
 import { Head } from "@flanksource-ui/components/Head/Head";
 import { SearchLayout } from "@flanksource-ui/components/Layout";
-import TabbedLinks from "@flanksource-ui/components/Tabs/TabbedLinks";
 import { useAtom } from "jotai";
-import { useParams } from "next/navigation";
 import objectHash from "object-hash";
 import { useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-export type ConfigPagesPathParams = {
-  type?: string;
-};
-
 export function ConfigListPage() {
   const [searchParams] = useSearchParams();
-  const { type: configType } = useParams<ConfigPagesPathParams>();
   const navigate = useNavigate();
 
   const search = searchParams.get("search");
@@ -37,6 +30,7 @@ export function ConfigListPage() {
   const sortOrder = searchParams.get("sortOrder");
   const [deletedConfigsHidden] = useAtom(areDeletedConfigsHidden);
   const hideDeletedConfigs = deletedConfigsHidden === "yes";
+  const configType = searchParams.get("configType") ?? undefined;
 
   // Show summary if no search, tag or configType is provided
   const showConfigSummaryList = useMemo(
@@ -134,30 +128,26 @@ export function ConfigListPage() {
         loading={isLoading}
         contentClass="p-0 h-full"
       >
-        <div className={`flex flex-row h-full`}>
-          <TabbedLinks tabLinks={configTabsLists} activeTabName="Catalog">
-            <div className={`flex flex-col flex-1 h-full space-y-4`}>
-              <div className="flex flex-row items-center">
-                <ConfigsListFilters />
-              </div>
+        <ConfigPageTabs activeTab="Catalog">
+          <div className="flex flex-row items-center">
+            <ConfigsListFilters />
+          </div>
 
-              <div className="flex flex-col h-full overflow-y-hidden">
-                {showConfigSummaryList ? (
-                  <ConfigSummaryList
-                    isLoading={isLoadingSummary}
-                    data={configSummary}
-                  />
-                ) : (
-                  <ConfigList
-                    data={configList!}
-                    handleRowClick={handleRowClick}
-                    isLoading={isLoading}
-                  />
-                )}
-              </div>
-            </div>
-          </TabbedLinks>
-        </div>
+          <div className="flex flex-col h-full overflow-y-hidden">
+            {showConfigSummaryList ? (
+              <ConfigSummaryList
+                isLoading={isLoadingSummary}
+                data={configSummary}
+              />
+            ) : (
+              <ConfigList
+                data={configList!}
+                handleRowClick={handleRowClick}
+                isLoading={isLoading}
+              />
+            )}
+          </div>
+        </ConfigPageTabs>
       </SearchLayout>
     </>
   );

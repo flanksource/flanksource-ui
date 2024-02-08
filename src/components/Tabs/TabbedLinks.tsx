@@ -10,6 +10,7 @@ type RoutedTabsLinksProps = React.HTMLProps<HTMLDivElement> & {
   tabLinks: {
     label: React.ReactNode;
     path: string;
+    search?: string;
     key?: string;
   }[];
 };
@@ -35,7 +36,7 @@ export default function TabbedLinks({
         aria-label="Tabs"
         {...rest}
       >
-        {tabLinks.map(({ label, path, key }) => (
+        {tabLinks.map(({ label, path, key, search }) => (
           <NavLink
             className={({ isActive }) =>
               clsx(
@@ -46,7 +47,10 @@ export default function TabbedLinks({
               )
             }
             key={path}
-            to={path}
+            to={{
+              pathname: path,
+              search
+            }}
             end
           >
             {label}

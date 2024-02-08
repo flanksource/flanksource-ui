@@ -8,12 +8,15 @@ import { useCallback, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import ConfigsTypeIcon from "../ConfigsTypeIcon";
 
-type Props = {
-  paramsToReset?: Record<string, string | undefined>;
+type ConfigTypesDropdownProps = {
+  label?: string;
 };
 
-export function ConfigTypesDropdown({ paramsToReset }: Props) {
+export function ConfigTypesDropdown({
+  label = "Type:"
+}: ConfigTypesDropdownProps) {
   const [params, setParams] = useSearchParams();
+  const type = params.get("configType") ?? undefined;
 
   const { isLoading, data: configTypeOptions } = useQuery(
     ["db", "config_types"],
@@ -46,8 +49,6 @@ export function ConfigTypesDropdown({ paramsToReset }: Props) {
     }
   );
 
-  const type = params.get("type") ?? undefined;
-
   function sortOptions(a: { name: string }, b: { name: string }) {
     if (a.name === "All") {
       return -1;
@@ -76,12 +77,12 @@ export function ConfigTypesDropdown({ paramsToReset }: Props) {
     <ReactSelectDropdown
       isLoading={isLoading}
       items={configItemsOptionsItems}
-      name="type"
+      name="configType"
       onChange={(value) => {
         if (value === "All" || !value) {
-          params.delete("type");
+          params.delete("configType");
         } else {
-          params.set("type", value);
+          params.set("configType", value);
         }
         setParams(params);
       }}
@@ -91,7 +92,7 @@ export function ConfigTypesDropdown({ paramsToReset }: Props) {
       hideControlBorder
       prefix={
         <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
-          Type:
+          {label}
         </div>
       }
     />

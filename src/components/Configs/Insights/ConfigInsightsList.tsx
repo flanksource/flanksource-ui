@@ -30,6 +30,7 @@ export default function ConfigInsightsList({
   const status = params.get("status") ?? undefined;
   const severity = params.get("severity") ?? undefined;
   const type = params.get("type") ?? undefined;
+  const configType = params.get("configType") ?? undefined;
   const analyzer = params.get("analyzer") ?? undefined;
   const component = params.get("component") ?? undefined;
 
@@ -83,7 +84,13 @@ export default function ConfigInsightsList({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [triggerRefresh]);
 
-  const configInsights = data?.data || [];
+  const configInsights = useMemo(
+    () =>
+      (data?.data || []).filter(
+        (insight: ConfigAnalysis) => insight.config?.type === configType
+      ),
+    [data, configType]
+  );
 
   const totalEntries = (data as any)?.totalEntries;
   const pageCount = totalEntries ? Math.ceil(totalEntries / pageSize) : -1;

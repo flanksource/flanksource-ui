@@ -457,6 +457,7 @@ export const getAllConfigInsights = async (
     analyzer?: string;
     component?: string;
     configId?: string;
+    configType?: string;
   },
   sortBy: { sortBy?: string; sortOrder?: "asc" | "desc" },
   { pageIndex, pageSize }: PaginationInfo

@@ -5,12 +5,11 @@ import {
 } from "@flanksource-ui/components/BreadcrumbNav";
 import { ConfigChangeHistory } from "@flanksource-ui/components/Configs/Changes/ConfigChangeHistory";
 import { ConfigChangeFilters } from "@flanksource-ui/components/Configs/Changes/ConfigChangesFilters/ConfigChangesFilters";
-import { configTabsLists } from "@flanksource-ui/components/Configs/ConfigTabsLinks";
+import ConfigPageTabs from "@flanksource-ui/components/Configs/ConfigPageTabs";
 import { Head } from "@flanksource-ui/components/Head/Head";
 import { InfoMessage } from "@flanksource-ui/components/InfoMessage";
 import { SearchLayout } from "@flanksource-ui/components/Layout";
 import { refreshButtonClickedTrigger } from "@flanksource-ui/components/SlidingSideBar";
-import TabbedLinks from "@flanksource-ui/components/Tabs/TabbedLinks";
 import useTimeRangeParams from "@flanksource-ui/ui/TimeRangePicker/useTimeRangeParams";
 import { useAtom } from "jotai";
 import { useEffect, useMemo, useState } from "react";
@@ -27,7 +26,7 @@ export function ConfigChangesPage() {
     pageSize: itemsPerPage
   });
   const [params, setParams] = useSearchParams();
-  const type = params.get("type") ?? undefined;
+  const type = params.get("configType") ?? undefined;
   const change_type = params.get("change_type") ?? undefined;
   const severity = params.get("severity") ?? undefined;
   const starts_at = timeRangeAbsoluteValue?.from ?? undefined;
@@ -100,30 +99,26 @@ export function ConfigChangesPage() {
         loading={isLoading}
         contentClass="p-0 h-full"
       >
-        <div className={`flex flex-col h-full`}>
-          <TabbedLinks tabLinks={configTabsLists}>
-            <div className="flex flex-col gap-4 h-full overflow-y-hidden">
-              {error ? (
-                <InfoMessage message={errorMessage} />
-              ) : (
-                <>
-                  <ConfigChangeFilters
-                    paramsToReset={{
-                      pageIndex: "1",
-                      pageSize: itemsPerPage.toString()
-                    }}
-                  />
-                  <ConfigChangeHistory
-                    data={data?.data ?? []}
-                    isLoading={isLoading}
-                    linkConfig
-                    pagination={pagination}
-                  />
-                </>
-              )}
-            </div>
-          </TabbedLinks>
-        </div>
+        <ConfigPageTabs activeTab="Changes">
+          {error ? (
+            <InfoMessage message={errorMessage} />
+          ) : (
+            <>
+              <ConfigChangeFilters
+                paramsToReset={{
+                  pageIndex: "1",
+                  pageSize: itemsPerPage.toString()
+                }}
+              />
+              <ConfigChangeHistory
+                data={data?.data ?? []}
+                isLoading={isLoading}
+                linkConfig
+                pagination={pagination}
+              />
+            </>
+          )}
+        </ConfigPageTabs>
       </SearchLayout>
     </>
   );

@@ -17,9 +17,7 @@ export function ConfigChangeFilters({
 }: ConfigChangeFiltersProps) {
   return (
     <div className={clsx("flex flex-row gap-2", className)} {...props}>
-      {!hideConfigTypeFilter && (
-        <ConfigTypesDropdown paramsToReset={paramsToReset} />
-      )}
+      {!hideConfigTypeFilter && <ConfigTypesDropdown />}
       <ChangesTypesDropdown paramsToReset={paramsToReset} />
       <ConfigChangeSeverity paramsToReset={paramsToReset} />
       <ConfigChangesDateRangeFilter />
