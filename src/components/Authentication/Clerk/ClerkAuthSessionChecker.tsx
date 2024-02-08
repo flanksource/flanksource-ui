@@ -57,7 +57,12 @@ export default function ClerkAuthSessionChecker({ children }: Props) {
   }
 
   if (isSessionLoaded && !isSignedIn) {
-    return <RedirectToSignIn />;
+    return (
+      <RedirectToSignIn
+        afterSignInUrl={"/"}
+        afterSignUpUrl={clerkUrls.createOrganization}
+      />
+    );
   }
 
   // if the organization backend is not yet created, we need to wait for it to
