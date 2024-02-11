@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { rest } from "msw";
 import { setupServer } from "msw/node";
 import { MemoryRouter } from "react-router-dom";
-import GroupByDropdown from "./../index";
+import ConfigGroupByDropdown from "../ConfigGroupByDropdown";
 
 const server = setupServer(
   rest.get("/api/db/configs", (req, res, ctx) => {
@@ -42,7 +42,7 @@ describe("GroupByDropdown", () => {
     render(
       <MemoryRouter>
         <QueryClientProvider client={queryClient}>
-          <GroupByDropdown value="name" />
+          <ConfigGroupByDropdown value="name" />
         </QueryClientProvider>
       </MemoryRouter>
     );
@@ -56,7 +56,7 @@ describe("GroupByDropdown", () => {
     render(
       <MemoryRouter>
         <QueryClientProvider client={queryClient}>
-          <GroupByDropdown />
+          <ConfigGroupByDropdown />
         </QueryClientProvider>
       </MemoryRouter>
     );
@@ -77,7 +77,7 @@ describe("GroupByDropdown", () => {
     render(
       <MemoryRouter>
         <QueryClientProvider client={queryClient}>
-          <GroupByDropdown onChange={onChange} />
+          <ConfigGroupByDropdown onChange={onChange} />
         </QueryClientProvider>
       </MemoryRouter>
     );
