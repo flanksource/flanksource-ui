@@ -1,19 +1,22 @@
-import { Head } from "../../components/Head/Head";
-import { SearchLayout } from "../../components/Layout";
-import TableSkeletonLoader from "../../components/SkeletonLoader/TableSkeletonLoader";
-import { BreadcrumbNav, BreadcrumbRoot } from "../../components/BreadcrumbNav";
+import { getEventQueueStatus } from "@flanksource-ui/api/schemaResources";
+import {
+  BreadcrumbNav,
+  BreadcrumbRoot
+} from "@flanksource-ui/components/BreadcrumbNav";
+import ErrorPage from "@flanksource-ui/components/Errors/ErrorPage";
+import EventQueueStatusList from "@flanksource-ui/components/EventQueueStatus/EventQueueStatusList";
+import { EventQueueSummary } from "@flanksource-ui/components/EventQueueStatus/eventQueue";
+import { Head } from "@flanksource-ui/components/Head/Head";
+import { SearchLayout } from "@flanksource-ui/components/Layout";
+import TableSkeletonLoader from "@flanksource-ui/components/SkeletonLoader/TableSkeletonLoader";
 import { useQuery } from "@tanstack/react-query";
-import { getEventQueueStatus } from "../../api/schemaResources";
-import ErrorPage from "../../components/Errors/ErrorPage";
-import { EventQueueStatus } from "../../components/EventQueueStatus/eventQueue";
-import EventQueueStatusList from "../../components/EventQueueStatus/EventQueueStatusList";
 
 export function EventQueueStatusPage() {
   const { isLoading, data, refetch, error } = useQuery<
-    EventQueueStatus[],
+    EventQueueSummary[],
     Error
   >(
-    ["settings", "event_queue_status", "all"],
+    ["settings", "event_queue_summary", "all"],
     async () => getEventQueueStatus(),
     {
       cacheTime: 0,
@@ -28,8 +31,8 @@ export function EventQueueStatusPage() {
         title={
           <BreadcrumbNav
             list={[
-              <BreadcrumbRoot link="/settings/">
-                Event Queue Status
+              <BreadcrumbRoot link="/settings/" key={"settings-page"}>
+                Event Queue
               </BreadcrumbRoot>
             ]}
           />

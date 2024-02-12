@@ -1,15 +1,27 @@
+import { Modal } from "@flanksource-ui/ui/Modal";
+import { DateCell } from "@flanksource-ui/ui/table";
 import { ColumnDef } from "@tanstack/react-table";
 import { useState } from "react";
-import { Modal } from "../../ui/Modal";
-import { DateCell } from "../../ui/table";
 import { DataTable } from "../DataTable";
-import { EventQueueStatus } from "./eventQueue";
+import { EventQueueSummary } from "./eventQueue";
 
-const columns: ColumnDef<EventQueueStatus>[] = [
+const columns: ColumnDef<EventQueueSummary>[] = [
   {
-    header: "Table",
-    accessorKey: "table",
+    header: "Name",
+    accessorKey: "name",
     size: 200
+  },
+  {
+    header: "Pending Count",
+    accessorKey: "pending"
+  },
+  {
+    header: "Error Count",
+    accessorKey: "failed"
+  },
+  {
+    header: "Average Attempts",
+    accessorKey: "average_attempts"
   },
   {
     header: "First Failed At",
@@ -22,20 +34,11 @@ const columns: ColumnDef<EventQueueStatus>[] = [
     accessorKey: "last_failure",
     cell: DateCell,
     sortingFn: "datetime"
-  },
-
-  {
-    header: "Error Count",
-    accessorKey: "error_count"
-  },
-  {
-    header: "Average Attempts",
-    accessorKey: "average_attempts"
   }
 ];
 
 type EventQueueStatusListProps = {
-  data: EventQueueStatus[];
+  data: EventQueueSummary[];
   isLoading?: boolean;
   onUpdated?: () => void;
 } & Omit<React.HTMLProps<HTMLDivElement>, "data">;
@@ -46,7 +49,7 @@ export default function EventQueueStatusList({
   onUpdated = () => {},
   ...props
 }: EventQueueStatusListProps) {
-  const [selectedItem, setSelectedItem] = useState<EventQueueStatus>();
+  const [selectedItem, setSelectedItem] = useState<EventQueueSummary>();
 
   return (
     <div {...props}>
@@ -62,17 +65,19 @@ export default function EventQueueStatusList({
         handleRowClick={(row) => setSelectedItem(row.original)}
       />
 
-      <Modal
-        open={!!selectedItem}
-        onClose={() => setSelectedItem(undefined)}
-        title={`Most Common Error for ${selectedItem?.table}`}
-        bodyClass="flex flex-col flex-1 overflow-y-auto"
-        size="full"
-      >
-        <div className="flex flex-col flex-1">
-          <p> {selectedItem?.most_common_error}</p>
-        </div>
-      </Modal>
+      {
+        <Modal
+          open={!!selectedItem && !!selectedItem?.most_common_error}
+          onClose={() => setSelectedItem(undefined)}
+          title={`Most Common Error for ${selectedItem?.name}`}
+          bodyClass="flex flex-col flex-1 overflow-y-auto"
+          size="full"
+        >
+          <div className="flex flex-col flex-1">
+            <p> {selectedItem?.most_common_error}</p>
+          </div>
+        </Modal>
+      }
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import { AxiosResponse } from "axios";
-import { EventQueueStatus } from "../components/EventQueueStatus/eventQueue";
+import { EventQueueSummary } from "../components/EventQueueStatus/eventQueue";
 import { TopologyComponentItem } from "../components/FilterIncidents/FilterIncidentsByComponents";
 import { JobHistoryStatus } from "../components/JobsHistory/JobsHistoryTable";
 import { LogBackends } from "../components/LogBackends/LogBackends";
@@ -9,8 +9,8 @@ import {
 } from "../components/SchemaResourcePage/resourceTypes";
 import { AVATAR_INFO } from "../constants";
 import { CanaryCheckerDB, ConfigDB, IncidentCommander } from "./axios";
-import { ConfigItem } from "./types/configs";
 import { AgentItem } from "./types/common";
+import { ConfigItem } from "./types/configs";
 
 export interface SchemaResourceI {
   id: string;
@@ -156,8 +156,8 @@ export async function getLogsBackends() {
 }
 
 export async function getEventQueueStatus() {
-  const res = await CanaryCheckerDB.get<EventQueueStatus[] | null>(
-    `failed_push_queue?order=latest_failure.desc`
+  const res = await CanaryCheckerDB.get<EventQueueSummary[] | null>(
+    `event_queue_summary?order=last_failure.desc`
   );
   return res.data ?? [];
 }
