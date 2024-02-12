@@ -26,7 +26,7 @@ export default function ClerkOrganizationSwitcher() {
                 afterCreateOrganizationUrl={redirectUrl}
                 createOrganizationUrl={clerkUrls.createOrganization}
                 createOrganizationMode="navigation"
-                afterSwitchOrganizationUrl={redirectUrl}
+                afterSelectOrganizationUrl={redirectUrl}
                 hidePersonal
               />
             </div>
