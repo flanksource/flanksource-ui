@@ -135,6 +135,8 @@ export default function JobHistoryFilters() {
           onChange={(val) => {
             if (val && val !== "All") {
               searchParams.set("resource_type", val);
+            } else {
+              searchParams.delete("resource_type");
             }
             setSearchParams(searchParams);
           }}
@@ -152,6 +154,8 @@ export default function JobHistoryFilters() {
           onChange={(val) => {
             if (val && val !== "All") {
               searchParams.set("status", val);
+            } else {
+              searchParams.delete("status");
             }
             setSearchParams(searchParams);
           }}
