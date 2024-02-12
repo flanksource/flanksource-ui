@@ -3,6 +3,7 @@ import {
   useConfigSummaryQuery
 } from "@flanksource-ui/api/query-hooks";
 import {
+  BreadcrumbChild,
   BreadcrumbNav,
   BreadcrumbRoot
 } from "@flanksource-ui/components/BreadcrumbNav";
@@ -109,7 +110,7 @@ export function ConfigListPage() {
               </BreadcrumbRoot>,
               ...(configType
                 ? [
-                    <BreadcrumbRoot
+                    <BreadcrumbChild
                       link={`/catalog?type=${configType}`}
                       key={configType}
                     >
@@ -118,7 +119,7 @@ export function ConfigListPage() {
                         showSecondaryIcon
                         showLabel
                       />
-                    </BreadcrumbRoot>
+                    </BreadcrumbChild>
                   ]
                 : [])
             ]}

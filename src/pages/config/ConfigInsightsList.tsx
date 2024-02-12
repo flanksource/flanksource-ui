@@ -1,8 +1,10 @@
 import {
+  BreadcrumbChild,
   BreadcrumbNav,
   BreadcrumbRoot
 } from "@flanksource-ui/components/BreadcrumbNav";
 import ConfigPageTabs from "@flanksource-ui/components/Configs/ConfigPageTabs";
+import ConfigsTypeIcon from "@flanksource-ui/components/Configs/ConfigsTypeIcon";
 import ConfigInsightsList from "@flanksource-ui/components/Configs/Insights/ConfigInsightsList";
 import { ConfigInsightsFilters } from "@flanksource-ui/components/Configs/Insights/Filters/ConfigInsightsFilters";
 import { Head } from "@flanksource-ui/components/Head/Head";
@@ -10,8 +12,12 @@ import { SearchLayout } from "@flanksource-ui/components/Layout";
 import { refreshButtonClickedTrigger } from "@flanksource-ui/components/SlidingSideBar";
 import { useAtom } from "jotai";
 import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 export function ConfigInsightsPage() {
+  const [params] = useSearchParams();
+  const configType = params.get("configType") ?? undefined;
+
   const [triggerRefresh, setRefreshButtonClickedTrigger] = useAtom(
     refreshButtonClickedTrigger
   );
@@ -24,12 +30,23 @@ export function ConfigInsightsPage() {
         title={
           <BreadcrumbNav
             list={[
-              <BreadcrumbRoot
-                link="/catalog/insights"
-                key="root-catalog-insights"
-              >
+              <BreadcrumbRoot link="/catalog" key="root-catalog-insights">
                 Catalog Insights
-              </BreadcrumbRoot>
+              </BreadcrumbRoot>,
+              ...(configType
+                ? [
+                    <BreadcrumbChild
+                      link={`/catalog?type=${configType}`}
+                      key={configType}
+                    >
+                      <ConfigsTypeIcon
+                        config={{ type: configType }}
+                        showSecondaryIcon
+                        showLabel
+                      />
+                    </BreadcrumbChild>
+                  ]
+                : [])
             ]}
           />
         }

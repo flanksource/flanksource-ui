@@ -130,7 +130,7 @@ export default function ConfigSummaryList({
   const handleRowClick = useCallback(
     (row: Row<ConfigSummary>) => {
       const { type } = row.original;
-      params.set("type", type);
+      params.set("configType", type);
       setParams(params);
     },
     [params, setParams]

@@ -16,6 +16,7 @@ export function useConfigInsightsQuery(
     analyzer?: string;
     component?: string;
     configId?: string;
+    configType?: string;
   },
   sortBy: {
     sortBy?: string;
