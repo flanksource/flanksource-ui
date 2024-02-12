@@ -62,6 +62,7 @@ export function ConfigDetails({ configId }: Props) {
               ]}
             />
           )}
+
           <DisplayDetailsRow
             items={[
               {
@@ -98,6 +99,33 @@ export function ConfigDetails({ configId }: Props) {
                     }
                   ]
                 : [])
+            ]}
+          />
+
+          <DisplayDetailsRow
+            items={[
+              {
+                label: "Type",
+                value: (
+                  <Link
+                    to={{
+                      pathname: "/catalog",
+                      search: `type=${configDetails.type}`
+                    }}
+                  >
+                    <ConfigsTypeIcon
+                      config={configDetails}
+                      showLabel
+                      showPrimaryIcon
+                      showSecondaryIcon
+                    />
+                  </Link>
+                )
+              },
+              {
+                label: "Class",
+                value: configDetails.config_class
+              }
             ]}
           />
 
