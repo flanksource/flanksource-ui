@@ -2,17 +2,10 @@ import { createContext, useContext } from "react";
 import { User } from "../api/types/users";
 
 interface IAuthContext {
-  user: User;
+  user?: User;
   backendUrl?: string;
 }
 
-interface IInitialAuthContext {
-  user: null;
-  backendUrl?: string;
-}
-
-export const AuthContext = createContext<IAuthContext | IInitialAuthContext>({
-  user: null
-});
+export const AuthContext = createContext<IAuthContext>({});
 
 export const useUser = () => useContext(AuthContext);
