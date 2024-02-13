@@ -1,3 +1,5 @@
+import useDetermineAuthSystem from "@flanksource-ui/components/Authentication/useDetermineAuthSystem";
+import { useUser } from "@flanksource-ui/context";
 import Handlebars from "handlebars";
 import { useMemo } from "react";
 import { GeneratedAgent } from "../../../api/services/agents";
@@ -33,7 +35,12 @@ export default function CLIInstallAgent({
   generatedAgent,
   agentFormValues
 }: Props) {
-  const baseUrl = window.location.origin;
+  const { backendUrl } = useUser();
+  const authSystem = useDetermineAuthSystem();
+
+  // if we are on the SaaS platform, we need to use the backend URL from the user
+  // profile, not the current URL
+  const baseUrl = authSystem === "clerk" ? backendUrl : window.location.origin;
 
   const kubeOptions = agentFormValues?.kubernetes;
 
