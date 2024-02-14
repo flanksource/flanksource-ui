@@ -31,6 +31,12 @@ module.exports = {
       rules: {
         "import/no-anonymous-default-export": "off"
       }
+    },
+    {
+      files: ["./e2e/**/*.*"],
+      rules: {
+        "testing-library/prefer-screen-queries": "off"
+      }
     }
   ]
 };

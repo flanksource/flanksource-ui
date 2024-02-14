@@ -22,7 +22,10 @@ export default function FullPageSkeletonLoader() {
           {authSystem === "kratos" ? (
             <div className="h-12 w-12 bg-gray-300 rounded-full"></div>
           ) : (
-            <div className="h-12 flex flex-row gap-2 items-center">
+            <div
+              className="h-12 flex flex-row gap-2 items-center"
+              data-testid="open-user-button"
+            >
               <OrganizationSwitcher
                 hidePersonal
                 createOrganizationMode="modal"
