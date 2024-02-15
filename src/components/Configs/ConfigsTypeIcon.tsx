@@ -45,24 +45,26 @@ export default function ConfigsTypeIcon({
   }
 
   return (
-    <span className="flex flex-nowrap gap-1 items-center">
-      {showPrimaryIcon && (
-        <Icon
-          name={primaryIcon}
-          secondary={primaryIcon}
-          className={className}
-        />
-      )}
-      {showSecondaryIcon && primaryIcon !== secondaryIcon && (
-        <Icon
-          name={secondaryIcon}
-          secondary={secondaryIcon}
-          className={className}
-          prefix={showPrimaryIcon ? <span className="1">/</span> : undefined}
-        />
-      )}
+    <div className="block space-x-1">
+      <span className="space-x-1">
+        {showPrimaryIcon && (
+          <Icon
+            name={primaryIcon}
+            secondary={primaryIcon}
+            className={className}
+          />
+        )}
+        {showSecondaryIcon && primaryIcon !== secondaryIcon && (
+          <Icon
+            name={secondaryIcon}
+            secondary={secondaryIcon}
+            className={className}
+            prefix={showPrimaryIcon ? <span className="1">/</span> : undefined}
+          />
+        )}
+      </span>
       {showLabel && <span> {value}</span>}
-      {children}
-    </span>
+      {children && <span>{children}</span>}
+    </div>
   );
 }

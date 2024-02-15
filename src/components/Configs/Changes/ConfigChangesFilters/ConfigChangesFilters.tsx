@@ -1,7 +1,7 @@
 import clsx from "clsx";
-import { ChangesTypesDropdown } from "../../../ChangesTypesDropdown/ChangeTypesDropdown";
 import { ConfigTypesDropdown } from "../../ConfigsListFilters/ConfigTypesDropdown";
 import { ConfigChangeSeverity } from "../ConfigChangeSeverity";
+import { ChangesTypesDropdown } from "./ChangeTypesDropdown";
 import ConfigChangesDateRangeFilter from "./ConfigChangesDateRangeFIlter";
 
 type ConfigChangeFiltersProps = React.HTMLProps<HTMLDivElement> & {

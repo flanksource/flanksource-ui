@@ -3,8 +3,8 @@ import { useEffect } from "react";
 import { MdOutlineInsights } from "react-icons/md";
 import { useGetTopologyRelatedInsightsQuery } from "../../../api/query-hooks";
 import PillBadge from "../../../ui/Badge/PillBadge";
-import CollapsiblePanel from "../../CollapsiblePanel";
-import InsightsDetails from "../../Insights/Insights";
+import CollapsiblePanel from "../../../ui/CollapsiblePanel/CollapsiblePanel";
+import InsightsDetails from "../../Configs/Sidebar/Insights/Insights";
 import { refreshButtonClickedTrigger } from "../../SlidingSideBar";
 import Title from "../../Title/title";
 

@@ -5,7 +5,7 @@ import { useIncidentsHistoryQuery } from "../../api/query-hooks";
 import { useIncidentState } from "../../store/incident.state";
 import { CountBadge } from "../../ui/Badge/CountBadge";
 import { ClickableSvg } from "../../ui/ClickableSvg/ClickableSvg";
-import CollapsiblePanel from "../CollapsiblePanel";
+import CollapsiblePanel from "../../ui/CollapsiblePanel/CollapsiblePanel";
 import { Loading } from "../Loading";
 import Title from "../Title/title";
 import { VerticalSCrollView } from "../VerticalScrollView/VerticalScrollView";

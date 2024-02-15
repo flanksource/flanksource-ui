@@ -28,7 +28,7 @@ export function ConfigDetails({ configId }: Props) {
 
   const namespace = configDetails?.tags?.["namespace"];
   return (
-    <div className="flex flex-col space-y-2 py-2 max-w-full">
+    <div className="flex flex-col space-y-2 py-2 max-w-full overflow-y-auto flex-1">
       {isLoading ? (
         <TextSkeletonLoader />
       ) : configDetails && !error ? (
@@ -62,6 +62,7 @@ export function ConfigDetails({ configId }: Props) {
               ]}
             />
           )}
+
           <DisplayDetailsRow
             items={[
               {
@@ -98,6 +99,33 @@ export function ConfigDetails({ configId }: Props) {
                     }
                   ]
                 : [])
+            ]}
+          />
+
+          <DisplayDetailsRow
+            items={[
+              {
+                label: "Type",
+                value: (
+                  <Link
+                    to={{
+                      pathname: "/catalog",
+                      search: `type=${configDetails.type}`
+                    }}
+                  >
+                    <ConfigsTypeIcon
+                      config={configDetails}
+                      showLabel
+                      showPrimaryIcon
+                      showSecondaryIcon
+                    />
+                  </Link>
+                )
+              },
+              {
+                label: "Class",
+                value: configDetails.config_class
+              }
             ]}
           />
 

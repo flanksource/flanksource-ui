@@ -1,6 +1,6 @@
 import { CellContext } from "@tanstack/react-table";
-import { Age } from "../../../ui/Age";
-import { ConfigAnalysis } from "../../../api/types/configs";
+import { ConfigAnalysis } from "../../../../../api/types/configs";
+import { Age } from "../../../../../ui/Age";
 
 export default function ConfigInsightAgeCell({
   row,

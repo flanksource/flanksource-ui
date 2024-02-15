@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { AiOutlineTeam } from "react-icons/ai";
 import { useGetComponentsTeamQuery } from "../../../api/query-hooks";
 import PillBadge from "../../../ui/Badge/PillBadge";
-import CollapsiblePanel from "../../CollapsiblePanel";
+import CollapsiblePanel from "../../../ui/CollapsiblePanel/CollapsiblePanel";
 import EmptyState from "../../EmptyState";
 import TextSkeletonLoader from "../../SkeletonLoader/TextSkeletonLoader";
 import { refreshButtonClickedTrigger } from "../../SlidingSideBar";
