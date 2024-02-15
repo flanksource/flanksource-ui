@@ -118,7 +118,7 @@ export default function JobHistoryFilters() {
 
   const resourceType = searchParams.get("resource_type") ?? "";
   const status = searchParams.get("status") ?? "";
-  const duration = searchParams.get("duration") ?? "";
+  const duration = searchParams.get("runDuration") ?? "";
 
   return (
     <div className="flex flex-wrap py-4 gap-2">
@@ -135,6 +135,8 @@ export default function JobHistoryFilters() {
           onChange={(val) => {
             if (val && val !== "All") {
               searchParams.set("resource_type", val);
+            } else {
+              searchParams.delete("resource_type");
             }
             setSearchParams(searchParams);
           }}
@@ -152,6 +154,8 @@ export default function JobHistoryFilters() {
           onChange={(val) => {
             if (val && val !== "All") {
               searchParams.set("status", val);
+            } else {
+              searchParams.delete("status");
             }
             setSearchParams(searchParams);
           }}
@@ -168,9 +172,9 @@ export default function JobHistoryFilters() {
           dropDownClassNames="w-auto max-w-[400px] left-0"
           onChange={(val) => {
             if (val && val !== "None") {
-              searchParams.set("duration", val);
+              searchParams.set("runDuration", val);
             } else {
-              searchParams.delete("duration");
+              searchParams.delete("runDuration");
             }
             setSearchParams(searchParams);
           }}

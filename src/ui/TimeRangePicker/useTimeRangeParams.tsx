@@ -83,8 +83,12 @@ export default function useTimeRangeParams() {
   const timeRangeAbsoluteValue = useMemo(() => {
     const rangeType = params.get("rangeType");
     if (rangeType === "absolute") {
-      const from = params.get("from");
-      const to = params.get("to");
+      const from = params.get("from")
+        ? dayjs(params.get("from") as string).toISOString()
+        : undefined;
+      const to = params.get("to")
+        ? dayjs(params.get("to") as string).toISOString()
+        : undefined;
       return { from, to };
     }
     if (rangeType === "relative") {

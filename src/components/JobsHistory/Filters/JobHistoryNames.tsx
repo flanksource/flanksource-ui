@@ -38,6 +38,8 @@ export default function JobHistoryNamesDropdown() {
         onChange={(val) => {
           if (val && val !== "All") {
             searchParams.set("name", val);
+          } else {
+            searchParams.delete("name");
           }
           setSearchParams(searchParams);
         }}

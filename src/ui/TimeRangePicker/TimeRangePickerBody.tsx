@@ -2,6 +2,7 @@ import clsx from "clsx";
 import { useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import { useCallback, useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { formatTimeRange, isValidDate } from "../../utils/date";
 import { RecentlyRanges } from "./RecentlyRanges";
 import { TimePickerCalendar } from "./TimePickerCalendar";
@@ -30,6 +31,7 @@ export function TimeRangePickerBody({
   changeRangeValue = () => {},
   pickerRef
 }: TimeRangePickerBodyProps) {
+  const [params, setParams] = useSearchParams();
   const [recentRanges, setRecentRanges] = useAtom(recentlyUsedTimeRangesAtom);
   const [showCalendar, setShowCalendar] = useState(false);
   const [calendarValue, setCalendarValue] = useState<Date>(new Date());
@@ -54,6 +56,18 @@ export function TimeRangePickerBody({
     }
     return val;
   }
+
+  const clearFilter = useCallback(() => {
+    params.delete("from");
+    params.delete("to");
+    params.delete("duration");
+    params.delete("timeRange");
+    params.delete("rangeType");
+    params.delete("display");
+    setParams(params);
+    setShowCalendar(false);
+    closePicker();
+  }, [closePicker, params, setParams]);
 
   const changeRecentRangesList = useCallback(
     (range: TimeRangeOption) => {
@@ -190,15 +204,25 @@ export function TimeRangePickerBody({
                 />
               </div>
             </div>
-            <div className="flex justify-end">
+            <div className="flex gap-2 justify-end">
               <button
+                title="Clear Time Range"
+                className="inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-2 py-1 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-blue-500"
+                onClick={clearFilter}
+              >
+                Clear
+              </button>
+              <button
+                disabled={!inputValueFrom || !inputValueTo}
                 onClick={() => {
-                  return confirmValidRange({
-                    type: "absolute",
-                    display: "Custom",
-                    from: inputValueFrom as string,
-                    to: inputValueTo as string
-                  });
+                  if (inputValueFrom && inputValueTo) {
+                    confirmValidRange({
+                      type: "absolute",
+                      display: "Custom",
+                      from: inputValueFrom as string,
+                      to: inputValueTo as string
+                    });
+                  }
                 }}
                 type="button"
                 className="inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-2 py-1 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-blue-500"
