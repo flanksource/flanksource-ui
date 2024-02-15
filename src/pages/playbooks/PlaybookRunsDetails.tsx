@@ -42,7 +42,7 @@ export default function PlaybookRunsDetailsPage() {
                 ? [
                     <BreadcrumbChild
                       key={`/playbooks/${playbookRun?.playbooks.id}`}
-                      link={`/playbooks/${playbookRun?.playbooks.id}`}
+                      link={`/playbooks/runs?playbook=${playbookRun?.playbooks.id}`}
                     >
                       <PlaybookSpecIcon
                         playbook={playbookRun?.playbooks}
