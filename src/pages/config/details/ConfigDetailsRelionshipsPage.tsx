@@ -82,9 +82,11 @@ export function ConfigDetailsRelationshipsPage() {
               columnsToHide={[]}
               data={configItems ?? []}
               isLoading={isLoading}
+              groupBy="type"
               handleRowClick={(row) => {
                 navigate(`/catalog/${row.original.id}`);
               }}
+              expandAllRows
             />
           </div>
         </div>

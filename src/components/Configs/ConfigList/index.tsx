@@ -10,22 +10,26 @@ export interface Props {
   handleRowClick: (row: Row<ConfigItem>) => void;
   isLoading: boolean;
   columnsToHide?: string[];
+  groupBy?: string;
+  expandAllRows?: boolean;
 }
 
 export default function ConfigList({
   data,
   handleRowClick,
   isLoading,
-  columnsToHide = ["type"]
+  columnsToHide = ["type"],
+  groupBy,
+  expandAllRows = false
 }: Props) {
   const [queryParams, setSearchParams] = useSearchParams({
-    sortBy: "name",
+    sortBy: "type",
     sortOrder: "asc",
-    groupBy: "no_grouping"
+    groupBy: groupBy ?? "no_grouping"
   });
 
-  const groupByField = queryParams.get("groupBy") ?? "no_grouping";
-  const sortField = queryParams.get("sortBy");
+  const groupByField = queryParams.get("groupBy") ?? groupBy ?? "no_grouping";
+  const sortField = queryParams.get("sortBy") ?? "type";
 
   const isSortOrderDesc =
     queryParams.get("sortOrder") === "desc" ? true : false;
@@ -145,9 +149,9 @@ export default function ConfigList({
       onTableSortByChanged={updateSortBy}
       determineRowClassNamesCallback={determineRowClassNames}
       preferencesKey="config-list"
-      savePreferences
       virtualizedRowEstimatedHeight={37}
       overScan={20}
+      expandAllRows={expandAllRows}
     />
   );
 }

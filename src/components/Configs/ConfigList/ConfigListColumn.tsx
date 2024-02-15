@@ -37,6 +37,7 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
     header: "Type",
     accessorKey: "type",
     size: 150,
+    enableSorting: true,
     enableHiding: true,
     cell: ({ row }: CellContext<ConfigItem, any>) => {
       return <ConfigsTypeIcon config={row.original} showLabel />;
