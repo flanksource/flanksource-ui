@@ -132,14 +132,13 @@ export type SettingsNavigationItems = {
   icon: IconType;
   checkPath: boolean;
   submenu: (
-    | (SchemaResourceType & { href: string; roles?: string[] })
+    | (SchemaResourceType & { href: string })
     | {
         name: string;
         href: string;
         icon: React.ComponentType<{ className: string }>;
         featureName: string;
         resourceName: string;
-        roles?: string[];
       }
   )[];
 };
@@ -176,8 +175,7 @@ const settingsNav: SettingsNavigationItems = {
       href: "/settings/jobs",
       icon: FaTasks,
       featureName: features["settings.job_history"],
-      resourceName: tables.database,
-      roles: ["admin"]
+      resourceName: tables.database
     },
     {
       name: "Notifications",
@@ -191,8 +189,7 @@ const settingsNav: SettingsNavigationItems = {
       href: "/settings/feature-flags",
       icon: BsToggles,
       featureName: features["settings.feature_flags"],
-      resourceName: tables.database,
-      roles: ["admin"]
+      resourceName: tables.database
     },
     {
       name: "Log Backends",
@@ -213,8 +210,7 @@ const settingsNav: SettingsNavigationItems = {
       href: "/settings/agents",
       icon: MdOutlineSupportAgent,
       featureName: features.agents,
-      resourceName: tables.database,
-      roles: ["admin"]
+      resourceName: tables.database
     }
   ].sort((v1, v2) => stringSortHelper(v1.name, v2.name))
 };

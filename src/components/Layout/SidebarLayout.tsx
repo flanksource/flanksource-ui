@@ -1,15 +1,8 @@
-import { useUserAccessStateContext } from "@flanksource-ui/context/UserAccessContext/UserAccessContext";
 import { Float } from "@headlessui-float/react";
 import { Disclosure, Menu } from "@headlessui/react";
 import { ChevronUpIcon } from "@heroicons/react/outline";
 import clsx from "clsx";
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState
-} from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { IconType } from "react-icons";
 import { IoChevronForwardOutline } from "react-icons/io5";
 import { Link, NavLink, Outlet } from "react-router-dom";
@@ -139,21 +132,6 @@ function SideNavGroup({
 }) {
   const { isFeatureDisabled } = useFeatureFlagsContext();
 
-  const { roles } = useUserAccessStateContext();
-
-  const submenuFiltered = useMemo(
-    () =>
-      submenu.filter(({ featureName, roles: featureRoles }) => {
-        if (
-          isFeatureDisabled(featureName as unknown as keyof typeof features)
-        ) {
-          return false;
-        }
-        return !featureRoles?.every((role) => roles.includes(role));
-      }),
-    [submenu, isFeatureDisabled, roles]
-  );
-
   if (collapseSidebar) {
     return (
       <Menu as="div" className="relative">
@@ -165,24 +143,28 @@ function SideNavGroup({
           </Menu.Button>
 
           <Menu.Items className="absolute border left-0 ml-12 w-48 shadow-md top-0 z-10 bg-gray-800 space-y-1">
-            {submenuFiltered.map(({ name, icon, href, resourceName }) => {
-              return withAccessCheck(
-                <Menu.Item key={href}>
-                  {({ active }) => (
-                    <NavLink className="w-full" to={href}>
-                      <NavItemWrapper active={active}>
-                        <NavLabel
-                          icon={icon as IconType}
-                          active={active}
-                          name={name}
-                        />
-                      </NavItemWrapper>
-                    </NavLink>
-                  )}
-                </Menu.Item>,
-                resourceName,
-                "read"
-              );
+            {submenu.map(({ name, icon, href, featureName, resourceName }) => {
+              return !isFeatureDisabled(
+                featureName as unknown as keyof typeof features
+              )
+                ? withAccessCheck(
+                    <Menu.Item key={href}>
+                      {({ active }) => (
+                        <NavLink className="w-full" to={href}>
+                          <NavItemWrapper active={active}>
+                            <NavLabel
+                              icon={icon as IconType}
+                              active={active}
+                              name={name}
+                            />
+                          </NavItemWrapper>
+                        </NavLink>
+                      )}
+                    </Menu.Item>,
+                    resourceName,
+                    "read"
+                  )
+                : null;
             })}
           </Menu.Items>
         </Float>
@@ -212,17 +194,21 @@ function SideNavGroup({
             </NavItemWrapper>
           </Disclosure.Button>
           <Disclosure.Panel className="pl-4 space-y-1">
-            {submenuFiltered.map((item) => {
-              return withAccessCheck(
-                <SideNavItem
-                  key={item.name}
-                  {...item}
-                  collapseSidebar={false}
-                />,
-                item.resourceName,
-                "read"
-              );
-            })}
+            {submenu.map((item) =>
+              !isFeatureDisabled(
+                item.featureName as unknown as keyof typeof features
+              )
+                ? withAccessCheck(
+                    <SideNavItem
+                      key={item.name}
+                      {...item}
+                      collapseSidebar={false}
+                    />,
+                    item.resourceName,
+                    "read"
+                  )
+                : null
+            )}
           </Disclosure.Panel>
         </>
       )}
