@@ -1,4 +1,5 @@
-import React, { Suspense, useMemo, useRef } from "react";
+import { useAtom } from "jotai";
+import React, { Suspense, useEffect, useMemo, useRef } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useSearchParams } from "react-router-dom";
 import { useCanaryGraphQuery } from "../../../api/query-hooks/health";
@@ -15,6 +16,7 @@ import mixins from "../../../utils/mixins.module.css";
 import { DropdownStandaloneWrapper } from "../../Dropdown/StandaloneWrapper";
 import { TimeRange, timeRanges } from "../../Dropdown/TimeRange";
 import { Head } from "../../Head/Head";
+import { refreshCheckModalAtomTrigger } from "../ChecksListing";
 import { Duration } from "../renderers";
 import { CanaryCheckDetailsSpecTab } from "./CanaryCheckDetailsSpec";
 import CheckLabels from "./CheckLabels";
@@ -70,6 +72,7 @@ type CheckDetailsProps = React.HTMLProps<HTMLDivElement> & {
 };
 
 export function CheckDetails({ check, ...rest }: CheckDetailsProps) {
+  const [refetchTrigger] = useAtom(refreshCheckModalAtomTrigger);
   const containerRef = useRef<HTMLDivElement>(null);
   const statsRef = useRef<HTMLDivElement>(null);
   const isShort = useMediaQuery({ maxHeight: 992 });
@@ -83,7 +86,14 @@ export function CheckDetails({ check, ...rest }: CheckDetailsProps) {
     );
   }, [searchParams, check]);
 
-  const { data } = useCanaryGraphQuery(timeRange, check);
+  const { data, refetch } = useCanaryGraphQuery(timeRange, check);
+
+  // Refetch the data when the refetchTrigger changes
+  useEffect(() => {
+    if (refetchTrigger) {
+      refetch();
+    }
+  }, [refetch, refetchTrigger]);
 
   const uptimeValue = toFixedIfNecessary(
     getUptimePercentage(data)?.toString()!,

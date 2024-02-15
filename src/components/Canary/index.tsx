@@ -13,7 +13,6 @@ import { HealthChecksResponse } from "../../api/types/health";
 import { HEALTH_SETTINGS } from "../../constants";
 import { isCanaryUI } from "../../context/Environment";
 import { useHealthPageContext } from "../../context/HealthPageContext";
-import { CanaryInterfaceMinimal } from "../CanaryInterface/minimal";
 import { GroupByDropdown } from "../Dropdown/GroupByDropdown";
 import {
   DropdownStandaloneWrapper,
@@ -28,6 +27,7 @@ import HealthPageSkeletonLoader from "../SkeletonLoader/HealthPageSkeletonLoader
 import { StatCard } from "../StatCard";
 import { Toggle } from "../Toggle";
 import { TristateToggle } from "../TristateToggle";
+import { CanaryInterfaceMinimal } from "./CanaryInterface";
 import { CanarySearchBar } from "./CanarySearchBar";
 import { LabelFilterDropdown } from "./FilterForm";
 import { isHealthy } from "./filter";

@@ -151,6 +151,18 @@ export const getCanaries = async (
   return CanaryChecker.get<HealthCheckAPIResponse | null>(`/api?${query}`);
 };
 
+export type HealthCheckRunNowResponse = {
+  total: number;
+  failed: number;
+  success: number;
+  errors: {
+    [key: string]: string;
+  }[];
+};
+
+export const runHealthCheckNow = async (id: string) => {
+  return CanaryChecker.post<HealthCheckRunNowResponse>(`/run/check/${id}`);
+};
 export const getCheckStatuses = (
   checkId: string,
   start: string,
