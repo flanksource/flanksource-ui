@@ -5,17 +5,17 @@ plugins:
     - releaseRules:
         - { type: ci, release: false }
         - { type: style, release: false }
-        - { release: patch}
+        - { release: patch }
       parserOpts:
         noteKeywords:
           - MAJOR RELEASE
   - "@semantic-release/release-notes-generator"
   - - "@semantic-release/exec"
-    - prepareCmd: npm version ${nextRelease.version} --no-git-tag-version
+    - generateNotes: npm version ${nextRelease.version} --no-git-tag-version
   - - "@semantic-release/git"
     - assets: ["package.json"]
-    - message: "chore(release): ${nextRelease.version} [skip ci]"
+      message: "chore(release): ${nextRelease.version} [skip ci]"
   - - "@semantic-release/github"
-      # From: https://github.com/semantic-release/github/pull/487#issuecomment-1486298997  
+      # From: https://github.com/semantic-release/github/pull/487#issuecomment-1486298997
     - successComment: false
       failTitle: false
