@@ -1,7 +1,7 @@
+import { clerkClient } from "@clerk/nextjs";
 import { getAuth } from "@clerk/nextjs/server";
 import { NextApiRequest, NextApiResponse } from "next";
 import httpProxyMiddleware from "next-http-proxy-middleware";
-import { clerkClient } from "@clerk/nextjs";
 
 const API_URL = process.env.BACKEND_URL;
 const isCanary = process.env.NEXT_PUBLIC_APP_DEPLOYMENT === "CANARY_CHECKER";
@@ -75,6 +75,7 @@ export default async function handler(
 
   return httpProxyMiddleware(req, res, {
     target: target!,
+    xfwd: true,
     pathRewrite: [
       ...(isClerkAuth ? clerkBackendPathRewrites : kratosBackendPathRewrites)
     ]

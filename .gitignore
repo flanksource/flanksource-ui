@@ -38,3 +38,4 @@ tsconfig.tsbuildinfo
 # ignore middleware for now, as it is and instead, during build, rename
 # clerk.middleware.js to clerk.middleware.js
 middleware.ts
+.vercel
