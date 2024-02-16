@@ -19,7 +19,6 @@ jobs:
       - uses: cycjimmy/semantic-release-action@8e58d20d0f6c8773181f43eb74d6a05e3099571d # v3.4.2
         id: semantic
         with:
-          semantic_version: 22.0.12
           extra_plugins: |
             @semantic-release/exec
             @semantic-release/git
