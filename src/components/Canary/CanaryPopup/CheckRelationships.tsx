@@ -87,7 +87,7 @@ export default function CheckRelationships({ check }: CheckRelationshipsProps) {
     if (row.relationship === "component") {
       navigate(`/topology/${row.id}`);
     } else {
-      navigate(`/configs/${row.id}`);
+      navigate(`/catalog/${row.id}`);
     }
   };
 
