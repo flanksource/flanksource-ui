@@ -199,11 +199,21 @@ export default function ConfigScrapperSpecEditor({
       )[0]
     : undefined;
 
-  const configCantEditMessage = `CRD linked to ${
-    resourceValue?.namespace ? `${resourceValue.namespace}/` : ""
-  }${resourceValue?.name}.`;
+  const configCantEditMessage = useMemo(() => {
+    if (resourceValue?.source === "KubernetesCRD") {
+      return (
+        <>
+          <span> CRD linked to</span>{" "}
+          <span>
+            {resourceValue?.namespace ? <>{resourceValue.namespace}/</> : ""}
+            {resourceValue?.name}.
+          </span>
+        </>
+      );
+    }
+  }, [resourceValue?.name, resourceValue?.namespace, resourceValue?.source]);
 
-  const canEdit = !!!resourceValue?.source;
+  const canEdit = resourceValue?.source !== "KubernetesCRD";
 
   return (
     <SpecEditor

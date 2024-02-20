@@ -27,7 +27,7 @@ type SpecEditorFormProps = {
   schemaFilePrefix?: "component" | "canary" | "system" | "scrape_config";
   resourceInfo: SchemaResourceType;
   canEdit?: boolean;
-  cantEditMessage?: string;
+  cantEditMessage?: React.ReactNode;
 };
 
 export default function SpecEditorForm({

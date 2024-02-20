@@ -38,7 +38,7 @@ type SpecEditorProps = {
   resourceInfo: SchemaResourceType;
   selectedSpec?: string;
   canEdit?: boolean;
-  cantEditMessage?: string;
+  cantEditMessage?: React.ReactNode;
 };
 
 export default function SpecEditor({
