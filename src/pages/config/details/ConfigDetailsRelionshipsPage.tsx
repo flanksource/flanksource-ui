@@ -1,5 +1,5 @@
-import { getDetailedConfigRelationships } from "@flanksource-ui/api/services/configs";
-import { ConfigTypeRelationships } from "@flanksource-ui/api/types/configs";
+import { getAConfigRelationships } from "@flanksource-ui/api/services/configs";
+import { ConfigItem } from "@flanksource-ui/api/types/configs";
 import { ConfigDetailsTabs } from "@flanksource-ui/components/Configs/ConfigDetailsTabs";
 import ConfigList from "@flanksource-ui/components/Configs/ConfigList";
 import { areDeletedConfigsHidden } from "@flanksource-ui/components/Configs/ConfigListToggledDeletedItems/ConfigListToggledDeletedItems";
@@ -18,35 +18,31 @@ export function ConfigDetailsRelationshipsPage() {
 
   const hideDeleted = hideDeletedConfigs === "yes" ? true : false;
 
-  const type = searchParams.get("type") ?? undefined;
+  const configType = searchParams.get("configType") ?? undefined;
   const tag = searchParams.get("tag") ?? undefined;
+  const relationshipType =
+    (searchParams.get("relationshipType") as
+      | "all"
+      | "none"
+      | "incoming"
+      | "outgoing") ?? "none";
 
   const transformConfigRelationships = useCallback(
-    (configs: ConfigTypeRelationships[]) =>
-      configs
-        ?.map((item) => {
-          if (item.configs.id === id) {
-            return item.related;
-          }
-          return item.configs;
-        })
-        .filter((item) => {
-          if (type && item.type !== type) {
-            return false;
-          }
-          if (
-            tag &&
-            !(
-              Object.entries(item.tags!).map(
-                ([key, value]) => `${key}__:__${value}`
-              ) ?? []
-            )?.includes(tag)
-          ) {
-            return false;
-          }
-          return true;
-        }),
-    [id, tag, type]
+    (configs: ConfigItem[]) =>
+      configs.filter((item) => {
+        if (
+          tag &&
+          !(
+            Object.entries(item.tags!).map(
+              ([key, value]) => `${key}__:__${value}`
+            ) ?? []
+          )?.includes(tag)
+        ) {
+          return false;
+        }
+        return true;
+      }),
+    [tag]
   );
 
   const {
@@ -54,14 +50,26 @@ export function ConfigDetailsRelationshipsPage() {
     isLoading,
     refetch
   } = useQuery({
-    queryKey: ["config", "relationships", id, hideDeleted],
+    // we add type and tag to the queryKey so that the query is re-executed when
+    // the type or tag changes
+    queryKey: [
+      "config",
+      "relationships",
+      id,
+      hideDeleted,
+      tag,
+      configType,
+      relationshipType
+    ],
     queryFn: () =>
-      getDetailedConfigRelationships({
+      getAConfigRelationships({
         configId: id!,
+        type_filter: relationshipType,
+        configType: configType,
         hideDeleted: hideDeleted
       }),
     enabled: id !== undefined,
-    select: (res) => transformConfigRelationships(res.data ?? [])
+    select: (data) => transformConfigRelationships(data ?? [])
   });
 
   const navigate = useNavigate();

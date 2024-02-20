@@ -1,4 +1,4 @@
-import { Agent, CreatedAt, Avatar, Timestamped } from "../traits";
+import { Agent, Avatar, CreatedAt, Timestamped } from "../traits";
 
 export interface ConfigChange extends CreatedAt, Avatar {
   id: string;

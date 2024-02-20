@@ -1,13 +1,14 @@
+import { SortingState, Updater } from "@tanstack/react-table";
 import { ColumnDef } from "@tanstack/table-core";
 import { useState } from "react";
 import { useGetConfigChangesById } from "../../../../api/query-hooks/useGetConfigChangesByConfigChangeIdQuery";
-import { ConfigDetailChangeModal } from "../ConfigDetailsChanges/ConfigDetailsChanges";
-import ConfigLink from "../../ConfigLink/ConfigLink";
+import { ConfigChange } from "../../../../api/types/configs";
+import { DateCell } from "../../../../ui/table";
 import { PaginationOptions } from "../../../DataTable";
 import { ChangeIcon } from "../../../Icon/ChangeIcon";
 import { DataTable } from "../../../index";
-import { ConfigChange } from "../../../../api/types/configs";
-import { DateCell } from "../../../../ui/table";
+import ConfigLink from "../../ConfigLink/ConfigLink";
+import { ConfigDetailChangeModal } from "../ConfigDetailsChanges/ConfigDetailsChanges";
 
 const columns: ColumnDef<ConfigChange>[] = [
   {
@@ -56,11 +57,11 @@ const configLinkCol: ColumnDef<ConfigChange>[] = [
     header: "Catalog",
     accessorKey: "config_id",
     cell: function ConfigLinkCell({ row, column }) {
-      const config = row.original.config;
+      const config = row.original.config_id;
       if (!config) {
         return null;
       }
-      return <ConfigLink config={config} />;
+      return <ConfigLink configId={config} />;
     },
     size: 84
   }
@@ -73,6 +74,8 @@ type ConfigChangeHistoryProps = {
   className?: string;
   tableStyle?: React.CSSProperties;
   pagination?: PaginationOptions;
+  sortBy?: SortingState;
+  setSortBy?: (sort: Updater<SortingState>) => void;
 };
 
 export function ConfigChangeHistory({
@@ -81,7 +84,9 @@ export function ConfigChangeHistory({
   linkConfig,
   className = "table-auto table-fixed",
   pagination,
-  tableStyle
+  tableStyle,
+  sortBy,
+  setSortBy = () => {}
 }: ConfigChangeHistoryProps) {
   const [selectedConfigChange, setSelectedConfigChange] =
     useState<ConfigChange>();
@@ -109,6 +114,9 @@ export function ConfigChangeHistory({
         pagination={pagination}
         preferencesKey="config-change-history"
         savePreferences={false}
+        enableServerSideSorting
+        tableSortByState={sortBy}
+        onTableSortByChanged={setSortBy}
         handleRowClick={(row) => {
           setSelectedConfigChange(row.original);
           setModalIsOpen(true);
