@@ -148,6 +148,47 @@ export const getConfigChanges = (
   );
 };
 
+export const getConfigsRelatedChanges = async (
+  id: string,
+  type_filter = "downstream",
+  include_deleted_configs = false,
+  changeType?: string,
+  severity?: string,
+  starts_at?: string,
+  ends_at?: string,
+  sortBy?: string,
+  sortDirection?: "asc" | "desc"
+) => {
+  const changeTypeFilter = changeType ? `&change_type=eq.${changeType}` : "";
+  const severityFilter = severity ? `&severity=eq.${severity}` : "";
+
+  const dateFilter =
+    starts_at && ends_at
+      ? `&and=(created_at.gte.${starts_at},created_at.lte.${ends_at})`
+      : "";
+
+  const orderByString = sortBy
+    ? `&order=${sortBy}.${sortDirection ?? "desc"}`
+    : "&order=created_at.desc";
+
+  if (type_filter === "none") {
+    const res = await ConfigDB.get<ConfigChange[] | null>(
+      `/config_changes_items?config_id=eq.${id}${changeTypeFilter}${severityFilter}${dateFilter}${orderByString}&select=id,config_id,change_type,created_at,external_created_by,source,diff,details,patches,created_by,config:configs(id,name,type,config_class)`
+    );
+    return res.data || undefined;
+  }
+
+  const res = await ConfigDB.get<ConfigChange[]>(
+    `/rpc/related_changes_recursive?config_id=${id}&include_deleted_configs=${include_deleted_configs}&type_filter=${type_filter}${changeTypeFilter}${severityFilter}${dateFilter}${orderByString}`,
+    {
+      headers: {
+        Prefer: "count=exact"
+      }
+    }
+  );
+  return res.data ?? [];
+};
+
 export const getConfigListFilteredByType = (types: string[]) => {
   return resolve<Pick<ConfigItem, "id" | "name" | "config_class" | "type">[]>(
     ConfigDB.get(
@@ -200,21 +241,48 @@ export const getConfigsBy = ({
   });
 };
 
-export const getDetailedConfigRelationships = ({
-  configId,
-  hideDeleted
-}: {
+type GetAConfigRelationshipsParams = {
   configId: string;
   hideDeleted?: boolean;
-}) => {
-  const configFields = `id, type, changes, cost_per_minute, cost_total_1d, cost_total_7d, cost_total_30d, name, config_class, updated_at, created_at, tags, analysis, deleted_at`;
-  const deletedAt = hideDeleted ? `&deleted_at=is.null` : "";
+  configType?: string;
+  type_filter?: "all" | "none" | "incoming" | "outgoing";
+};
 
-  return resolve(
-    ConfigDB.get<ConfigTypeRelationships[]>(
-      `/config_relationships?or=(related_id.eq.${configId},config_id.eq.${configId})&configs.order=name&select=*,configs:configs!config_relationships_config_id_fkey(${configFields}),related:configs!config_relationships_related_id_fkey(${configFields})${deletedAt}`
-    )
+export const getAConfigRelationships = async ({
+  configId,
+  hideDeleted,
+  configType,
+  type_filter = "all"
+}: GetAConfigRelationshipsParams) => {
+  const configTypeFilter = configType ? `&type=eq.${configType}` : "";
+  // if type_filter is none, we need to fetch the related configs, otherwise we
+  // fetch the related configs using the related_configs_recursive function
+  if (type_filter === "none") {
+    const configFields = `id, type, changes, cost_per_minute, cost_total_1d, cost_total_7d, cost_total_30d, name, config_class, updated_at, created_at, tags, analysis, deleted_at`;
+    const deletedAt = hideDeleted ? `&deleted_at=is.null` : "";
+
+    const res = await ConfigDB.get<ConfigTypeRelationships[] | null>(
+      `/config_relationships?or=(related_id.eq.${configId},config_id.eq.${configId})&configs.order=name&select=*,configs:configs!config_relationships_config_id_fkey(${configFields}),related:configs!config_relationships_related_id_fkey(${configFields})${deletedAt}${configTypeFilter}`
+    );
+
+    return res.data?.map((item) => {
+      if (item.config_id === configId) {
+        return item.related;
+      }
+      return item.configs;
+    });
+  }
+
+  const res = await ConfigDB.get<
+    ({
+      relation: string;
+      relation_type: string;
+    } & ConfigItem)[]
+  >(
+    `/rpc/related_configs?config_id=${configId}&include_deleted_configs=${hideDeleted}&type_filter=${type_filter}${configTypeFilter}`
   );
+
+  return res.data ?? [];
 };
 
 export const addManualComponentConfigRelationship = (

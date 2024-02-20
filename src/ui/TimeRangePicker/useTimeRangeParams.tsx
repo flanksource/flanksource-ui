@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import { useCallback, useMemo } from "react";
-import { useSearchParams } from "react-router-dom";
+import { URLSearchParamsInit, useSearchParams } from "react-router-dom";
 import { parseDateMath } from "./parseDateMath";
 import {
   MappedOptionsDisplay,
@@ -18,8 +18,8 @@ import {
  * react-router-dom to manage the URL parameters.
  *
  */
-export default function useTimeRangeParams() {
-  const [params, setParams] = useSearchParams();
+export default function useTimeRangeParams(defaults?: URLSearchParamsInit) {
+  const [params, setParams] = useSearchParams(defaults);
 
   const setTimeRangeParams = useCallback(
     (range: TimeRangeOption) => {
