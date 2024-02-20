@@ -6,8 +6,7 @@ import React, {
   useMemo,
   useState
 } from "react";
-import Select from "react-select";
-import { components } from "react-select";
+import Select, { components } from "react-select";
 
 type Option = {
   label: string;
@@ -29,7 +28,7 @@ export default function FormikSelectDropdown({
   required = false,
   hint,
   options,
-  className = "flex flex-col space-y-2 py-2",
+  className = "flex flex-col py-2",
   ...props
 }: Props) {
   const [isTouched, setIsTouched] = useState(false);

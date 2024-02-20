@@ -1,7 +1,7 @@
 import { useField } from "formik";
 import React from "react";
-import { TextInput } from "../../TextInput";
 import { IconPicker } from "../../IconPicker";
+import { TextInput } from "../../TextInput";
 
 type FormikIconPickerProps = {
   name: string;
@@ -28,10 +28,7 @@ export default function FormikIconPicker({
   return (
     <div className={className}>
       {label && (
-        <label
-          htmlFor={name}
-          className="text-sm font-medium text-gray-700 mb-2"
-        >
+        <label htmlFor={name} className="text-sm font-medium text-gray-700">
           {label}
         </label>
       )}

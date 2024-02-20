@@ -24,9 +24,9 @@ export default function FormikMultiSelectListField({
 
   return (
     <div className={className}>
-      <label className="text-sm font-semibold">{label}</label>
+      <label className="text-sm">{label}</label>
       <CreatableSelect
-        className="h-full shadow-sm focus:ring-blue-500 focus:border-blue-500 py-2 sm:text-sm border-gray-300 rounded-md"
+        className="h-full shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm border-gray-300 rounded-md"
         isMulti
         options={[
           ...options.map((option) => ({ value: option, label: option }))

@@ -1,5 +1,4 @@
-import React from "react";
-import { HTMLInputTypeAttribute } from "react";
+import React, { HTMLInputTypeAttribute } from "react";
 
 interface IProps {
   label?: string;
@@ -42,7 +41,7 @@ export function TextInput({
             onEnter(e);
           }
         }}
-        className={`shadow-sm focus:ring-blue-500 focus:border-blue-500 py-2 sm:text-sm border-gray-300 rounded-md ${className}`}
+        className={`shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm border-gray-300 rounded-md ${className}`}
         {...rest}
       />
     </>
