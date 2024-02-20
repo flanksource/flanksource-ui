@@ -45,8 +45,8 @@ export default function ConfigsTypeIcon({
   }
 
   return (
-    <div className="block space-x-1">
-      <span className="space-x-1">
+    <span className="flex flex-row items-center gap-1">
+      <span className="flex flex-row items-center gap-1">
         {showPrimaryIcon && (
           <Icon
             name={primaryIcon}
@@ -65,6 +65,6 @@ export default function ConfigsTypeIcon({
       </span>
       {showLabel && <span> {value}</span>}
       {children && <span>{children}</span>}
-    </div>
+    </span>
   );
 }
