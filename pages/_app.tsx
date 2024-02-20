@@ -7,6 +7,9 @@ import SetupIntercom from "../src/components/Intercom/SetupIntercom";
 import { queryClient } from "../src/query-client";
 import "./global.css";
 
+const isClerkSatellite = process.env.NEXT_PUBLIC_CLERK_IS_SATELLITE === "true";
+const signInUrl = process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL;
+
 export default function MyApp({ Component, pageProps }: AppProps) {
   const authProvider = useDetermineAuthSystem();
 
@@ -19,7 +22,12 @@ export default function MyApp({ Component, pageProps }: AppProps) {
           suppressHydrationWarning
         >
           {authProvider === "clerk" ? (
-            <ClerkProvider {...pageProps}>
+            <ClerkProvider
+              isSatellite={isClerkSatellite}
+              // for satellite, we need to use the signInUrl as the signUpUrl
+              {...(signInUrl ? { signInUrl, signUpUrl: signInUrl } : {})}
+              {...pageProps}
+            >
               <Component {...pageProps} />
             </ClerkProvider>
           ) : (
