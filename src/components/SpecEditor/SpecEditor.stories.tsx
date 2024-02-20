@@ -6,6 +6,7 @@ import SpecEditor, { SpecType } from "./SpecEditor";
 
 const specTypes: SpecType[] = [
   {
+    type: "form",
     name: "kubernetes",
     updateSpec: (value: Record<string, any>) => {
       console.log(value);
@@ -17,6 +18,7 @@ const specTypes: SpecType[] = [
     schemaFilePrefix: "scrape_config"
   },
   {
+    type: "form",
     name: "aws",
     updateSpec: (value: Record<string, any>) => {
       console.log(value);

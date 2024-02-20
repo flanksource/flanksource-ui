@@ -5,13 +5,20 @@ import SpecEditorForm from "../Forms/SpecEditorForm";
 import { Icon } from "../Icon";
 import { SchemaResourceType } from "../SchemaResourcePage/resourceTypes";
 
-export type SpecType = {
+export type SpecTypeCommonFields = {
   name: string;
   label?: string;
+  description?: string;
   icon: string | React.FC;
   loadSpec: () => Record<string, any>;
   updateSpec: (spec: Record<string, any>) => void;
-  configForm: React.FC<{ fieldName: string; specsMapField: string }> | null;
+  schemaFilePrefix: "component" | "canary" | "system" | "scrape_config";
+  docsLink?: string;
+};
+
+export type SpecTypeInputForm = SpecTypeCommonFields & {
+  type: "form";
+  configForm: React.FC<{ fieldName: string; specsMapField: string }>;
   /**
    *
    * the field name is the name of the field in the spec that this config editor
@@ -27,10 +34,18 @@ export type SpecType = {
    *
    */
   specsMapField: string;
-  rawSpecInput?: boolean;
-  schemaFilePrefix: "component" | "canary" | "system" | "scrape_config";
-  docsLink?: string;
 };
+
+export type SpecTypeCode = SpecTypeCommonFields & {
+  type: "code";
+  specsMapField: string;
+};
+
+export type SpecTypeCustom = SpecTypeCommonFields & {
+  type: "custom";
+};
+
+export type SpecType = SpecTypeInputForm | SpecTypeCode | SpecTypeCustom;
 
 type SpecEditorProps = {
   types: SpecType[];
@@ -87,17 +102,14 @@ export default function SpecEditor({
       {selectedSpecItem ? (
         <div className="flex flex-col space-y-2 flex-1 overflow-y-auto">
           <SpecEditorForm
-            configForm={selectedSpecItem.configForm}
+            selectedSpec={selectedSpecItem}
             updateSpec={selectedSpecItem.updateSpec}
             onBack={() => {
               setSelectedSpecItem(undefined);
             }}
             loadSpec={selectedSpecItem.loadSpec}
-            rawSpecInput={selectedSpecItem.rawSpecInput}
             specFormat={format}
             resourceInfo={resourceInfo}
-            specsMapField={selectedSpecItem.specsMapField}
-            schemaFilePrefix={selectedSpecItem.schemaFilePrefix}
             canEdit={canEdit}
             cantEditMessage={cantEditMessage}
           />
