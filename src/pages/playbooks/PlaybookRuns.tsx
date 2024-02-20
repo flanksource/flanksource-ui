@@ -91,12 +91,15 @@ export default function PlaybookRunsPage() {
               </BreadcrumbRoot>,
               ...(playbook
                 ? [
-                    <BreadcrumbChild key={"/playbooks"} link={`/playbooks`}>
+                    <BreadcrumbChild
+                      key={"/playbooks"}
+                      link={`/playbooks/runs?playbook=${playbookId}`}
+                    >
                       <PlaybookSpecIcon playbook={playbook} showLabel />
                     </BreadcrumbChild>
                   ]
                 : []),
-              <BreadcrumbChild key={"/playbooks/runs"} link="/playbooks/runs">
+              <BreadcrumbChild key={"/playbooks/runs"} link={`/playbooks/runs`}>
                 Runs
               </BreadcrumbChild>
             ]}
