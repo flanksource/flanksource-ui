@@ -10,6 +10,7 @@
   "dependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@clerk/nextjs": "^4.29.6",
+    "@floating-ui/react": "^0.26.9",
     "@headlessui-float/react": "^0.11.4",
     "@headlessui/react": "^1.7.17",
     "@heroicons/react": "^1.0.3",
@@ -146,7 +147,6 @@
     ]
   },
   "devDependencies": {
-    "semantic-release": "^22.0.12",
     "@semantic-release/exec": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/npm": "^11.0.2",
@@ -189,6 +189,7 @@
     "postcss": "^8",
     "postcss-loader": "^7.0.1",
     "prettier": "^2.3.2",
+    "semantic-release": "^22.0.12",
     "source-map-explorer": "^2.5.2",
     "storybook": "^7.6.7",
     "storybook-addon-react-router-v6": "^2.0.10",

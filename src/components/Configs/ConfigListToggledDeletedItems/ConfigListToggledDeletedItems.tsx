@@ -14,20 +14,22 @@ export function ConfigListToggledDeletedItems() {
   );
 
   return (
-    <Popover className="flex items-center" title="Preferences">
-      <div className="flex items-center p-4 w-80">
-        <Toggle
-          onChange={(value) => {
-            if (value) {
-              setHideDeletedConfigs("yes");
-            } else {
-              setHideDeletedConfigs("no");
-            }
-          }}
-          label="Hide Deleted Catalog"
-          value={hideDeletedConfigs === "yes"}
-        />
-      </div>
-    </Popover>
+    <div className="flex flex-col items-center justify-center h-full">
+      <Popover className="flex flex-col items-center" title="Preferences">
+        <div className="flex items-center p-4 w-80">
+          <Toggle
+            onChange={(value) => {
+              if (value) {
+                setHideDeletedConfigs("yes");
+              } else {
+                setHideDeletedConfigs("no");
+              }
+            }}
+            label="Hide Deleted Catalog"
+            value={hideDeletedConfigs === "yes"}
+          />
+        </div>
+      </Popover>
+    </div>
   );
 }

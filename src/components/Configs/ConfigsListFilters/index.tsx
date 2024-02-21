@@ -34,7 +34,7 @@ function ConfigsListFilterControls() {
   }, []);
 
   return (
-    <div className="flex gap-2 mr-4">
+    <div className="flex flex-row items-center gap-2 mr-4">
       {configFilterView === ConfigFilterViewTypes.advanced ? (
         <QueryBuilder
           refreshConfigs={(e: any) => {
