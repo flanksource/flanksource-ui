@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { Form, Formik } from "formik";
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { Button } from "../../ui/Button";
 import { Icon } from "../Icon";
 import DeleteResource from "../SchemaResourcePage/Delete/DeleteResource";
@@ -8,6 +8,7 @@ import {
   SchemaResourceType,
   schemaResourceTypes
 } from "../SchemaResourcePage/resourceTypes";
+import { SpecType } from "../SpecEditor/SpecEditor";
 import { Tab, Tabs } from "../Tabs/Tabs";
 import FormikAutocompleteDropdown from "./Formik/FormikAutocompleteDropdown";
 import { FormikCodeEditor } from "./Formik/FormikCodeEditor";
@@ -19,15 +20,10 @@ type SpecEditorFormProps = {
   updateSpec: (spec: Record<string, any>) => void;
   onBack: () => void;
   specFormat: "yaml" | "json";
-  // if you want to pass in any props to the config form, you can use a wrapper
-  // component around the config form
-  configForm: React.FC<{ fieldName: string; specsMapField: string }> | null;
-  specsMapField: string;
-  rawSpecInput?: boolean;
-  schemaFilePrefix?: "component" | "canary" | "system" | "scrape_config";
+  selectedSpec: SpecType;
   resourceInfo: SchemaResourceType;
   canEdit?: boolean;
-  cantEditMessage?: string;
+  cantEditMessage?: React.ReactNode;
 };
 
 export default function SpecEditorForm({
@@ -36,16 +32,13 @@ export default function SpecEditorForm({
   updateSpec = () => {},
   onBack = () => {},
   specFormat = "yaml",
-  configForm: ConfigForm,
-  specsMapField: specFieldMapField,
-  rawSpecInput: showCodeEditorOnly = false,
-  schemaFilePrefix,
+  selectedSpec,
   canEdit = false,
   cantEditMessage
 }: SpecEditorFormProps) {
   const formRef = useRef<HTMLFormElement>(null);
   const [activeTabs, setActiveTabs] = useState<"Form" | "Code">(
-    showCodeEditorOnly ? "Code" : "Form"
+    selectedSpec.type !== "form" ? "Code" : "Form"
   );
 
   const currentResourceFormFields: Readonly<
@@ -68,9 +61,9 @@ export default function SpecEditorForm({
       !!currentResourceFormFields.find(
         (item) =>
           item.name === fieldName &&
-          (item.hidden !== true || ConfigForm === null)
+          (item.hidden !== true || selectedSpec.type !== "form")
       ),
-    [ConfigForm, currentResourceFormFields]
+    [currentResourceFormFields, selectedSpec.type]
   );
 
   const initialValues: Record<string, any> = {
@@ -98,6 +91,7 @@ export default function SpecEditorForm({
     <Formik
       initialValues={initialValues}
       onSubmit={(values) => {
+        console.log("submit", values);
         updateSpec(values);
       }}
       validateOnBlur
@@ -173,14 +167,18 @@ export default function SpecEditorForm({
               )}
             </div>
             <div className="flex flex-col py-2">
-              {showCodeEditorOnly ? (
+              {selectedSpec.type !== "form" ? (
                 <>
                   <label className="form-label">Specs</label>
                   <FormikCodeEditor
                     format={specFormat}
-                    // map to the spec field to the spec field in the resource
-                    fieldName={`spec.${specFieldMapField}`}
-                    schemaFilePrefix={schemaFilePrefix}
+                    fieldName={
+                      selectedSpec.type === "code"
+                        ? `spec.${selectedSpec.specsMapField}`
+                        : // if it's a custom spec, then the field name is `spec`
+                          `spec`
+                    }
+                    schemaFilePrefix={selectedSpec.schemaFilePrefix}
                   />
                 </>
               ) : (
@@ -190,19 +188,17 @@ export default function SpecEditorForm({
                 >
                   <Tab label="Form" value="Form">
                     <div className="flex flex-col space-y-4 p-4">
-                      {ConfigForm && (
-                        <ConfigForm
-                          fieldName="spec"
-                          specsMapField={specFieldMapField}
-                        />
-                      )}
+                      <selectedSpec.configForm
+                        fieldName="spec"
+                        specsMapField={selectedSpec.specsMapField}
+                      />
                     </div>
                   </Tab>
                   <Tab label="Code" value="Code">
                     <FormikCodeEditor
                       format={specFormat}
                       fieldName="spec"
-                      schemaFilePrefix={schemaFilePrefix}
+                      schemaFilePrefix={selectedSpec.schemaFilePrefix}
                     />
                   </Tab>
                 </Tabs>

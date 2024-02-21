@@ -1,12 +1,12 @@
 import { Story } from "@storybook/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React, { ComponentProps } from "react";
+import { MemoryRouter } from "react-router-dom";
+import { schemaResourceTypes } from "../SchemaResourcePage/resourceTypes";
 import AWSConfigsFormEditor from "./Configs/AWSConfigsFormEditor";
 import KubernetesConfigsFormEditor from "./Configs/KubernetesConfigsFormEditor";
-import SpecEditorForm from "./SpecEditorForm";
 import { HTTPHealthFormEditor } from "./Health/HTTPHealthFormEditor";
-import { MemoryRouter } from "react-router-dom";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { schemaResourceTypes } from "../SchemaResourcePage/resourceTypes";
+import SpecEditorForm from "./SpecEditorForm";
 
 const defaultQueryClient = new QueryClient();
 
@@ -38,7 +38,19 @@ KubernetesSpecEditorFormConfigs.args = {
   updateSpec(spec) {
     console.log(spec);
   },
-  configForm: KubernetesConfigsFormEditor,
+  selectedSpec: {
+    configForm: KubernetesConfigsFormEditor,
+    icon: "kubernetes",
+    label: "Kubernetes",
+    loadSpec: () => {
+      return {};
+    },
+    type: "form",
+    name: "kubernetes",
+    schemaFilePrefix: "scrape_config",
+    specsMapField: "kubernetes.0",
+    updateSpec: () => {}
+  },
   resourceInfo: schemaResourceTypes[2]
 };
 
@@ -50,7 +62,19 @@ AWSSpecEditorFormConfigs.args = {
   updateSpec(spec) {
     console.log(spec);
   },
-  configForm: AWSConfigsFormEditor,
+  selectedSpec: {
+    configForm: AWSConfigsFormEditor,
+    icon: "kubernetes",
+    label: "Kubernetes",
+    loadSpec: () => {
+      return {};
+    },
+    type: "form",
+    name: "kubernetes",
+    schemaFilePrefix: "scrape_config",
+    specsMapField: "kubernetes.0",
+    updateSpec: () => {}
+  },
   resourceInfo: schemaResourceTypes[2]
 };
 
@@ -62,6 +86,18 @@ HTTPHealthFormEditorConfigs.args = {
   updateSpec(spec) {
     console.log(spec);
   },
-  configForm: HTTPHealthFormEditor,
+  selectedSpec: {
+    configForm: HTTPHealthFormEditor,
+    icon: "kubernetes",
+    label: "Kubernetes",
+    loadSpec: () => {
+      return {};
+    },
+    type: "form",
+    name: "kubernetes",
+    schemaFilePrefix: "scrape_config",
+    specsMapField: "kubernetes.0",
+    updateSpec: () => {}
+  },
   resourceInfo: schemaResourceTypes.at(-1)
 };

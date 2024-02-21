@@ -45,8 +45,8 @@ export default function FormikAutocompleteDropdown({
   }, [isTouched, meta.initialTouched, meta.touched]);
 
   return (
-    <div className="flex flex-col space-y-2 py-2">
-      {label && <label className="form-label">{label}</label>}
+    <div className="flex flex-col">
+      {label && <label className="form-label mb-0">{label}</label>}
       {hint && hintPosition === "top" && (
         <p className="text-sm text-gray-500">{hint}</p>
       )}
