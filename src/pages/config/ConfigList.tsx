@@ -111,7 +111,7 @@ export function ConfigListPage() {
               ...(configType
                 ? [
                     <BreadcrumbChild
-                      link={`/catalog?type=${configType}`}
+                      link={`/catalog?configType=${configType}`}
                       key={configType}
                     >
                       <ConfigsTypeIcon
