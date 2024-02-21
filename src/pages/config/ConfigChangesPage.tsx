@@ -1,16 +1,17 @@
 import { useGetAllConfigsChangesQuery } from "@flanksource-ui/api/query-hooks";
 import {
+  BreadcrumbChild,
   BreadcrumbNav,
   BreadcrumbRoot
 } from "@flanksource-ui/components/BreadcrumbNav";
 import { ConfigChangeHistory } from "@flanksource-ui/components/Configs/Changes/ConfigChangeHistory";
 import { ConfigChangeFilters } from "@flanksource-ui/components/Configs/Changes/ConfigChangesFilters/ConfigChangesFilters";
-import { configTabsLists } from "@flanksource-ui/components/Configs/ConfigTabsLinks";
+import ConfigPageTabs from "@flanksource-ui/components/Configs/ConfigPageTabs";
+import ConfigsTypeIcon from "@flanksource-ui/components/Configs/ConfigsTypeIcon";
 import { Head } from "@flanksource-ui/components/Head/Head";
 import { InfoMessage } from "@flanksource-ui/components/InfoMessage";
 import { SearchLayout } from "@flanksource-ui/components/Layout";
 import { refreshButtonClickedTrigger } from "@flanksource-ui/components/SlidingSideBar";
-import TabbedLinks from "@flanksource-ui/components/Tabs/TabbedLinks";
 import useTimeRangeParams from "@flanksource-ui/ui/TimeRangePicker/useTimeRangeParams";
 import { useAtom } from "jotai";
 import { useEffect, useMemo, useState } from "react";
@@ -27,7 +28,7 @@ export function ConfigChangesPage() {
     pageSize: itemsPerPage
   });
   const [params, setParams] = useSearchParams();
-  const type = params.get("type") ?? undefined;
+  const config_type = params.get("configType") ?? undefined;
   const change_type = params.get("change_type") ?? undefined;
   const severity = params.get("severity") ?? undefined;
   const starts_at = timeRangeAbsoluteValue?.from ?? undefined;
@@ -37,7 +38,7 @@ export function ConfigChangesPage() {
   const page = pageIndex === 0 ? 0 : pageIndex - 1;
   const { data, isLoading, error, isRefetching, refetch } =
     useGetAllConfigsChangesQuery(
-      { type, change_type, severity, starts_at, ends_at },
+      { config_type, change_type, severity, starts_at, ends_at },
       page,
       pageSize,
       true
@@ -70,7 +71,7 @@ export function ConfigChangesPage() {
       pageIndex: 0,
       pageSize: itemsPerPage
     });
-  }, [change_type, severity, type]);
+  }, [change_type, severity]);
 
   const errorMessage =
     typeof error === "string"
@@ -89,7 +90,21 @@ export function ConfigChangesPage() {
                 key="config-catalog-changes-root"
               >
                 Catalog Changes
-              </BreadcrumbRoot>
+              </BreadcrumbRoot>,
+              ...(config_type
+                ? [
+                    <BreadcrumbChild
+                      link={`/catalog?type=${config_type}`}
+                      key={config_type}
+                    >
+                      <ConfigsTypeIcon
+                        config={{ type: config_type }}
+                        showSecondaryIcon
+                        showLabel
+                      />
+                    </BreadcrumbChild>
+                  ]
+                : [])
             ]}
           />
         }
@@ -100,30 +115,26 @@ export function ConfigChangesPage() {
         loading={isLoading}
         contentClass="p-0 h-full"
       >
-        <div className={`flex flex-col h-full`}>
-          <TabbedLinks tabLinks={configTabsLists}>
-            <div className="flex flex-col gap-4 h-full overflow-y-hidden">
-              {error ? (
-                <InfoMessage message={errorMessage} />
-              ) : (
-                <>
-                  <ConfigChangeFilters
-                    paramsToReset={{
-                      pageIndex: "1",
-                      pageSize: itemsPerPage.toString()
-                    }}
-                  />
-                  <ConfigChangeHistory
-                    data={data?.data ?? []}
-                    isLoading={isLoading}
-                    linkConfig
-                    pagination={pagination}
-                  />
-                </>
-              )}
-            </div>
-          </TabbedLinks>
-        </div>
+        <ConfigPageTabs activeTab="Changes">
+          {error ? (
+            <InfoMessage message={errorMessage} />
+          ) : (
+            <>
+              <ConfigChangeFilters
+                paramsToReset={{
+                  pageIndex: "1",
+                  pageSize: itemsPerPage.toString()
+                }}
+              />
+              <ConfigChangeHistory
+                data={data?.data ?? []}
+                isLoading={isLoading}
+                linkConfig
+                pagination={pagination}
+              />
+            </>
+          )}
+        </ConfigPageTabs>
       </SearchLayout>
     </>
   );

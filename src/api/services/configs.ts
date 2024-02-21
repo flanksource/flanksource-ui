@@ -81,7 +81,7 @@ export const getAllChanges = (
 
   return resolve(
     ConfigDB.get<ConfigChange[]>(
-      `/config_changes?order=created_at.desc${pagingParams}&select=id,change_type,summary,source,created_at,config_id,config:config_names!inner(id,name,type)${queryString}`,
+      `/config_changes_items?order=created_at.desc${pagingParams}&select=id,change_type,summary,source,created_at,config_id,config:config_names!inner(id,name,type)${queryString}`,
       {
         headers: {
           Prefer: "count=exact"
@@ -457,13 +457,15 @@ export const getAllConfigInsights = async (
     analyzer?: string;
     component?: string;
     configId?: string;
+    configType?: string;
   },
   sortBy: { sortBy?: string; sortOrder?: "asc" | "desc" },
   { pageIndex, pageSize }: PaginationInfo
 ) => {
   const pagingParams = `&limit=${pageSize}&offset=${pageIndex * pageSize}`;
 
-  const { status, type, severity, analyzer, component, configId } = queryParams;
+  const { status, type, severity, analyzer, component, configId, configType } =
+    queryParams;
 
   const params = {
     status: status && `&status=eq.${status}`,
@@ -471,7 +473,8 @@ export const getAllConfigInsights = async (
     severity: severity && `&severity=eq.${severity}`,
     analyzer: analyzer && `&analyzer=eq.${analyzer}`,
     component: component && `&component_id=eq.${component}`,
-    configId: configId && `&config_id=eq.${configId}`
+    configId: configId && `&config_id=eq.${configId}`,
+    configType: configType && `&config_type=eq.${configType}`
   };
 
   const queryParamsString = Object.values(params)
@@ -485,7 +488,7 @@ export const getAllConfigInsights = async (
 
   return resolve(
     ConfigDB.get<ConfigAnalysis[] | null>(
-      `/config_analysis?select=id,analysis_type,analyzer,severity,status,first_observed,last_observed,config:configs(id,name,config_class,type)${pagingParams}${queryParamsString}${sortString}`,
+      `/config_analysis_items?select=id,analysis_type,analyzer,severity,status,first_observed,last_observed,config:configs(id,name,config_class,type)${pagingParams}${queryParamsString}${sortString}`,
       {
         headers: {
           Prefer: "count=exact"

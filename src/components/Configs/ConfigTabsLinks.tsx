@@ -2,12 +2,6 @@ import { Badge } from "@flanksource-ui/ui/Badge";
 import { useParams } from "react-router-dom";
 import { ConfigItem } from "../../api/types/configs";
 
-export const configTabsLists = [
-  { label: "Catalog", key: "Catalog", path: "/catalog" },
-  { label: "Changes", key: "Changes", path: "/catalog/changes" },
-  { label: "Insights", key: "Insights", path: "/catalog/insights" }
-];
-
 export function useConfigDetailsTabs(countSummary?: ConfigItem["summary"]) {
   const { id } = useParams<{ id: string }>();
 

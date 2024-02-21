@@ -1,14 +1,13 @@
+import { useConfigPageContext } from "@flanksource-ui/context/ConfigPageContext";
 import { debounce } from "lodash";
-import React from "react";
-import { useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { useConfigPageContext } from "../../../context/ConfigPageContext";
 import { QueryBuilder } from "../../QueryBuilder";
 import { Switch } from "../../Switch";
 import { TextInputClearable } from "../../TextInputClearable";
-import GroupByDropdown from "../../GroupByDropdown";
-import { ConfigTagsDropdown } from "./ConfigTagsDropdown";
 import { ConfigListToggledDeletedItems } from "../ConfigListToggledDeletedItems/ConfigListToggledDeletedItems";
+import ConfigGroupByDropdown from "./ConfigGroupByDropdown";
+import { ConfigTagsDropdown } from "./ConfigTagsDropdown";
 import { ConfigTypesDropdown } from "./ConfigTypesDropdown";
 
 const ConfigFilterViewTypes = {
@@ -35,7 +34,7 @@ function ConfigsListFilterControls() {
   }, []);
 
   return (
-    <div className="flex space-x-2 mr-4">
+    <div className="flex gap-2 mr-4">
       {configFilterView === ConfigFilterViewTypes.advanced ? (
         <QueryBuilder
           refreshConfigs={(e: any) => {
@@ -51,7 +50,7 @@ function ConfigsListFilterControls() {
         <>
           <ConfigTypesDropdown />
 
-          <GroupByDropdown />
+          <ConfigGroupByDropdown />
 
           <ConfigTagsDropdown />
 

@@ -1,10 +1,11 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useSearchParams } from "react-router-dom";
-import ConfigInsightsTypeDropdown from "./ConfigInsightsTypeDropdown";
-import ConfigInsightsSeverityDropdown from "./ConfigInsightsSeverityDropdown";
-import ConfigInsightsAnalyzerDropdown from "./ConfigInsightsAnalyzerDropdown";
 import { ComponentNamesDropdown } from "../../../Dropdown/ComponentNamesDropdown";
+import { ConfigTypesDropdown } from "../../ConfigsListFilters/ConfigTypesDropdown";
+import ConfigInsightsAnalyzerDropdown from "./ConfigInsightsAnalyzerDropdown";
+import ConfigInsightsSeverityDropdown from "./ConfigInsightsSeverityDropdown";
+import ConfigInsightsTypeDropdown from "./ConfigInsightsTypeDropdown";
 
 export function ConfigInsightsFilters() {
   const [params, setParams] = useSearchParams();
@@ -48,9 +49,10 @@ export function ConfigInsightsFilters() {
   }, [watch, params, setParams]);
 
   return (
-    <div className="flex flex-row space-x-4 py-4 px-2">
+    <div className="flex flex-row gap-4 mr-4">
       <div className="flex items-center">
         <div className="flex flex-row gap-2 items-center">
+          <ConfigTypesDropdown label="Config Type:" />
           <ConfigInsightsTypeDropdown
             prefix="Type:"
             name="type"

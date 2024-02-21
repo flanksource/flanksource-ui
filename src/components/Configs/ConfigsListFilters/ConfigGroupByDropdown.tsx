@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 import { BiLabel } from "react-icons/bi";
 import { useSearchParams } from "react-router-dom";
-import { useAllConfigsQuery } from "../../api/query-hooks";
-import { ReactSelectDropdown } from "../ReactSelectDropdown";
+import { useAllConfigsQuery } from "../../../api/query-hooks";
+import { ReactSelectDropdown } from "../../ReactSelectDropdown";
 
 type ConfigGroupByDropdownProps = {
   onChange?: (value: string | undefined) => void;
@@ -48,7 +48,7 @@ const items: GroupOptionsType = {
   }
 };
 
-export default function GroupByDropdown({
+export default function ConfigGroupByDropdown({
   onChange = () => {},
   searchParamKey = "groupBy",
   value
