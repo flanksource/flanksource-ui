@@ -1,27 +1,27 @@
-import clsx from "clsx";
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti";
 import {
   ColumnDef,
   ExpandedState,
+  Row,
+  SortingState,
+  Updater,
+  VisibilityState,
   flexRender,
   getCoreRowModel,
   getExpandedRowModel,
   getGroupedRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  Row,
-  SortingState,
-  Updater,
-  useReactTable,
-  VisibilityState
+  useReactTable
 } from "@tanstack/react-table";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { DataTableRow } from "./DataTableRow";
-import { InfoMessage } from "../InfoMessage";
-import { Pagination, PaginationType } from "./Pagination/Pagination";
-import TableSkeletonLoader from "../SkeletonLoader/TableSkeletonLoader";
+import clsx from "clsx";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti";
 import usePreferences from "../../hooks/userPreferences";
+import { InfoMessage } from "../InfoMessage";
+import TableSkeletonLoader from "../SkeletonLoader/TableSkeletonLoader";
+import { DataTableRow } from "./DataTableRow";
+import { Pagination, PaginationType } from "./Pagination/Pagination";
 
 export type PaginationOptions = {
   setPagination: any;
@@ -98,6 +98,7 @@ type DataTableProps<TableColumns, Data extends TableColumns> = {
   determineRowClassNamesCallback?: (row: Row<TableColumns>) => string;
   pagination?: PaginationOptions;
   enableServerSideSorting?: boolean;
+  expandAllRows?: boolean;
 } & React.HTMLAttributes<HTMLTableElement>;
 
 type TablePreferences = {
@@ -132,6 +133,7 @@ export function DataTable<TableColumns, Data extends TableColumns>({
   preferencesKey = "",
   savePreferences = false,
   overScan = 10,
+  expandAllRows = false,
   ...rest
 }: DataTableProps<TableColumns, Data>) {
   const tableContainerRef = useRef<HTMLDivElement>(null);
@@ -163,7 +165,11 @@ export function DataTable<TableColumns, Data extends TableColumns>({
     columns,
     data,
     initialState: {
-      expanded: savePreferences ? preferences.expandedRows : {}
+      expanded: expandAllRows
+        ? true
+        : savePreferences
+        ? preferences.expandedRows
+        : undefined
     },
     state: {
       sorting: sortBy,
