@@ -3,12 +3,13 @@ import React from "react";
 import { ConfigAnalysisTypeItem } from "../../../api/services/configs";
 import { ConfigAnalysis, ConfigItem } from "../../../api/types/configs";
 import { TIME_BUCKETS, getTimeBucket } from "../../../utils/date";
-import { FormatCurrency } from "../../CostDetails/CostDetails";
 import ConfigsTypeIcon from "../ConfigsTypeIcon";
 import ConfigInsightsIcon from "../Insights/ConfigInsightsIcon";
 import ConfigListAnalysisCell from "./Cells/ConfigListAnalysisCell";
 import ConfigListChangeCell from "./Cells/ConfigListChangeCell";
-import ConfigListCostCell from "./Cells/ConfigListCostCell";
+import ConfigListCostCell, {
+  ConfigListCostAggregate
+} from "./Cells/ConfigListCostCell";
 import ConfigListDateCell from "./Cells/ConfigListDateCell";
 import ConfigListNameCell from "./Cells/ConfigListNameCell";
 import ConfigListTagsCell from "./Cells/ConfigListTagsCell";
@@ -90,11 +91,10 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
     header: () => <div>Cost</div>,
     accessorKey: "cost_total_1d",
     aggregationFn: "sum",
-    aggregatedCell: CostAggregate,
+    aggregatedCell: ConfigListCostAggregate,
     cell: ConfigListCostCell,
     maxSize: 60
   },
-
   // {
   //   header: "Agent",
   //   accessorKey: "agent",
@@ -199,11 +199,6 @@ function analysisAggregationFN(
     };
   });
   return data;
-}
-
-function CostAggregate({ getValue }: CellContext<ConfigItem, any>) {
-  const value = getValue<ConfigItem["cost_per_minute"]>();
-  return <FormatCurrency value={value} defaultValue="" hideMinimumValue />;
 }
 
 function changeColumnAccessorFN(row: any) {
