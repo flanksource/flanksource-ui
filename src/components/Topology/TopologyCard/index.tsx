@@ -3,6 +3,7 @@ import clsx from "clsx";
 import { MouseEventHandler, useMemo } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { getTopology } from "../../../api/services/topology";
+import { Topology } from "../../../api/types/topology";
 import { Size } from "../../../types";
 import AgentName from "../../Agents/AgentName";
 import { CustomScroll } from "../../CustomScroll";
@@ -15,7 +16,6 @@ import { CardMetrics } from "./CardMetrics";
 import { Property } from "./Property";
 import { TopologyConfigAnalysisLine } from "./TopologyConfigAnalysisLine";
 import { TopologyDropdownMenu } from "./TopologyDropdownMenu";
-import { Topology } from "../../../api/types/topology";
 
 export enum ComponentStatus {
   unhealthy = "unhealthy",
@@ -87,12 +87,14 @@ export function TopologyCard({
 
   const canShowChildHealth = () => {
     let totalCount = 0;
-    if (topology?.summary) {
-      topology.summary.healthy = topology.summary.healthy || 0;
-      topology.summary.unhealthy = topology.summary.unhealthy || 0;
-      topology.summary.warning = topology.summary.warning || 0;
-      Object.keys(topology.summary).forEach((key) => {
-        totalCount += topology.summary?.[key];
+    if (topology?.summary?.checks) {
+      topology.summary.checks.healthy = topology.summary.checks.healthy || 0;
+      topology.summary.checks.unhealthy =
+        topology.summary.checks.unhealthy || 0;
+      topology.summary.checks.warning = topology.summary.checks.warning || 0;
+      Object.keys(topology.summary.checks).forEach((key) => {
+        totalCount +=
+          topology.summary?.checks?.[key as keyof Topology["summary"]] || 0;
       });
     }
     return (
@@ -240,7 +242,10 @@ export function TopologyCard({
                   component={topology}
                 />
               )}
-              <HealthChecksSummary checks={topology?.checks} className="" />
+              <HealthChecksSummary
+                checks={topology?.summary?.checks}
+                className=""
+              />
               {topology?.id && <IncidentCardSummary topology={topology} />}
               {topology?.components?.map((component: any) => (
                 <HealthSummary

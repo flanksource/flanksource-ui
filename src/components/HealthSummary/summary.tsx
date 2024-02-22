@@ -1,10 +1,10 @@
 import { useMemo } from "react";
+import { Topology } from "../../api/types/topology";
 import {
   StatusInfo,
   StatusLine,
   StatusLineProps
 } from "../StatusLine/StatusLine";
-import { Topology } from "../../api/types/topology";
 
 type HealthSummaryProps = {
   component: Topology;
@@ -12,33 +12,33 @@ type HealthSummaryProps = {
   viewType?: "individual_level" | "children_level";
 } & React.HTMLProps<HTMLDivElement>;
 
-function getStatuses(summary?: { [key: string]: number }, url?: string) {
+function getStatuses(summary?: Topology["summary"], url?: string) {
   if (!summary) {
     return [];
   }
   const statuses: StatusInfo[] = [];
-  if (summary.healthy > 0) {
+  if (summary.healthy && summary.healthy > 0) {
     statuses.push({
       url: url ? `${url}?status=healthy` : "",
       label: summary.healthy.toString(),
       color: "green"
     });
   }
-  if (summary.unhealthy > 0) {
+  if (summary.unhealthy && summary.unhealthy > 0) {
     statuses.push({
       url: url ? `${url}?status=unhealthy` : "",
       label: summary.unhealthy.toString(),
       color: "red"
     });
   }
-  if (summary.warning > 0) {
+  if (summary.warning && summary.warning > 0) {
     statuses.push({
       url: url ? `${url}?status=warning` : "",
       label: summary.warning.toString(),
       color: "orange"
     });
   }
-  if (summary.unknown > 0) {
+  if (summary.unknown && summary.unknown > 0) {
     statuses.push({
       url: url ? `${url}?status=unknown` : "",
       label: summary.unknown.toString(),
@@ -67,9 +67,9 @@ export const HealthSummary = ({
       warning: 0
     };
     component.components?.forEach((component) => {
-      childrenSummary.healthy += component.summary?.healthy || 0;
-      childrenSummary.unhealthy += component.summary?.unhealthy || 0;
-      childrenSummary.warning += component.summary?.warning || 0;
+      childrenSummary.healthy += component.summary?.checks?.healthy || 0;
+      childrenSummary.unhealthy += component.summary?.checks?.unhealthy || 0;
+      childrenSummary.warning += component.summary?.checks?.warning || 0;
     });
     const noSummary = !(
       childrenSummary.healthy ||
