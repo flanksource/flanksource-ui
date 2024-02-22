@@ -1,6 +1,5 @@
 import { Agent, Namespaced, Timestamped } from "../traits";
-import { ValueType } from "./common";
-import { CostsData, Severity } from "./common";
+import { CostsData, Severity, ValueType } from "./common";
 import { HealthCheckSummary } from "./health";
 import { IncidentType } from "./incident";
 import { User } from "./users";
@@ -46,7 +45,15 @@ export interface Topology extends Component, CostsData, Agent {
   summary?: {
     incidents?: Record<IncidentType, Record<"High" | "Medium" | "Low", number>>;
     insights?: Record<IncidentType, Record<Severity, number | undefined>>;
-    [key: string]: any;
+    checks?: {
+      healthy: number;
+      warning: number;
+      unhealthy: number;
+    };
+    healthy?: number;
+    unknown?: number;
+    unhealthy?: number;
+    warning?: number;
   };
   logs?: {
     name: string;
@@ -55,11 +62,6 @@ export interface Topology extends Component, CostsData, Agent {
   children?: string[];
   is_leaf?: boolean;
   description?: string;
-  checks?: {
-    health: number;
-    warning: number;
-    unhealthy: number;
-  };
 }
 
 export type ComponentTeamItem = {

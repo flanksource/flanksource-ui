@@ -5,7 +5,7 @@ import { StatusLine, StatusLineProps } from "../StatusLine/StatusLine";
 type HealthChecksSummaryProps = React.HTMLProps<HTMLDivElement> & {
   target?: string;
   checks?: {
-    health: number;
+    healthy: number;
     warning: number;
     unhealthy: number;
   };
@@ -26,10 +26,10 @@ export function HealthChecksSummary({
       icon: <AiFillHeart className="inline-block h-3.5 w-3.5 mr-1" />,
       url: "/health",
       statuses: [
-        ...(checks.health > 0
+        ...(checks.healthy > 0
           ? [
               {
-                label: checks.health.toString(),
+                label: checks.healthy.toString(),
                 color: "green" as const
               }
             ]
