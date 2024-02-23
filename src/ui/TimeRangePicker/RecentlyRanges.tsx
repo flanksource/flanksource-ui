@@ -25,7 +25,7 @@ export function RecentlyRanges({
             key={`${formatTimeRange(range.from)} to ${formatTimeRange(
               range.to
             )}`}
-            className="hover:bg-gray-100 flex justify-between w-full cursor-pointer py-1.5 px-3 text-sm"
+            className="hover:bg-gray-100 flex text-left justify-between w-full cursor-pointer py-1.5 px-3 text-sm"
           >
             {`${formatTimeRange(range.from)} to ${formatTimeRange(range.to)}`}
           </button>
