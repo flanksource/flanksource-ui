@@ -21,15 +21,13 @@ type TimeRangePickerBodyProps = {
   closePicker: any;
   currentRange?: TimeRangeOption;
   changeRangeValue: (range: TimeRangeOption) => void;
-  pickerRef: any;
 };
 
 export function TimeRangePickerBody({
   isOpen,
   closePicker = () => {},
   currentRange,
-  changeRangeValue = () => {},
-  pickerRef
+  changeRangeValue = () => {}
 }: TimeRangePickerBodyProps) {
   const [params, setParams] = useSearchParams();
   const [recentRanges, setRecentRanges] = useAtom(recentlyUsedTimeRangesAtom);
@@ -145,21 +143,16 @@ export function TimeRangePickerBody({
     }
   }, [currentRange]);
 
-  const pickerLeft = pickerRef?.current?.getBoundingClientRect()?.left || 0;
-
   return (
     <div
       className={clsx(
-        "absolute right-0 mt-2 flex cursor-auto w-full max-h-96 rounded-md bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50 shadow-lg shadow-gray-200",
-        { "invisible opacity-0": !isOpen, "right-0": pickerLeft > 600 }
+        "flex cursor-auto w-full max-h-96 rounded-md py-2 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50 shadow-lg shadow-gray-200"
       )}
     >
       <div
         className={clsx(
           "absolute shadow-lg shadow-gray-200 z-50",
-          {
-            calendarRight: pickerLeft < 300
-          },
+
           showCalendar && isOpen ? "" : "invisible opacity-0"
         )}
       >
@@ -169,7 +162,7 @@ export function TimeRangePickerBody({
           setShowCalendar={setShowCalendar}
         />
       </div>
-      <div className="border-r border-gray-300 w-3.5/6 overflow-hidden">
+      <div className="border-r border-gray-300 w-3.5/6 px-1 overflow-hidden">
         <div className="p-3">
           <div className="text-gray-500 text-base sm:space-x-2 whitespace-nowrap font-semibold">
             Absolute time range
@@ -237,7 +230,7 @@ export function TimeRangePickerBody({
           applyTimeRange={applyTimeRange}
         />
       </div>
-      <div className="w-2.5/6 overflow-y-hidden">
+      <div className="w-auto overflow-y-hidden">
         <TimeRangeList
           className="overflow-y-auto h-full"
           closePicker={closePicker}

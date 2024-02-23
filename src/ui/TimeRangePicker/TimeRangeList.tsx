@@ -29,7 +29,7 @@ export function TimeRangeList({
     <div {...rest}>
       {rangeOptionsCategories.map((category, index) => {
         return (
-          <div key={category.name}>
+          <div className="px-4 text-left" key={category.name}>
             <div className="text-gray-500 text-base sm:space-x-2 pl-1 my-1 whitespace-nowrap font-semibold">
               {category.name}
             </div>
@@ -40,7 +40,7 @@ export function TimeRangeList({
                   onClick={() => setOption(option)}
                   key={option.display}
                   className={clsx(
-                    "option-item hover:bg-gray-100 flex justify-between items-center w-full",
+                    "option-item hover:bg-gray-100 flex justify-between items-center text-left w-full",
                     { "bg-gray-100": isChecked(option, currentRange) }
                   )}
                 >

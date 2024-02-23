@@ -1,5 +1,6 @@
+import { Popover } from "@headlessui/react";
 import clsx from "clsx";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { FiClock } from "react-icons/fi";
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
 import { TimeRangePickerBody } from "./TimeRangePickerBody";
@@ -16,12 +17,8 @@ type TimeRangePickerType = Omit<
 export function TimeRangePicker({
   onChange = () => {},
   value,
-  className = "w-fit",
-  ...rest
+  className = "w-fit"
 }: TimeRangePickerType) {
-  const [isPickerOpen, setIsPickerOpen] = useState(false);
-  const pickerRef = useRef<any>();
-
   const currentRange = useMemo((): TimeRangeOption | undefined => {
     return value;
   }, [value]);
@@ -39,18 +36,6 @@ export function TimeRangePicker({
     },
     [onChange]
   );
-
-  useEffect(() => {
-    const listener = (event: MouseEvent) => {
-      if (!pickerRef?.current?.contains(event.target)) {
-        setIsPickerOpen(false);
-      }
-    };
-    document.addEventListener("click", listener);
-    return () => {
-      document.removeEventListener("click", listener);
-    };
-  }, []);
 
   return (
     <>
@@ -155,43 +140,51 @@ export function TimeRangePicker({
           border-bottom-right-radius: 20px;
         }
       `}</style>
-      <div
-        className={clsx("relative text-sm", className)}
-        ref={pickerRef}
-        {...rest}
-      >
-        <button
+      <Popover className={clsx("relative text-sm", className)}>
+        <Popover.Button
           type="button"
           className="inline-flex rounded-md border border-gray-300 shadow-sm px-2 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
-          onClick={() => setIsPickerOpen((prevState) => !prevState)}
         >
-          <FiClock className="mt-1" />
-          {updateDisplayValue && (
-            <div className="ml-2 font-medium items-center">
-              <span>{updateDisplayValue}</span>
-            </div>
-          )}
-          {!updateDisplayValue && (
-            <div className="ml-2 font-medium items-center">
-              Please select time range
-            </div>
-          )}
-          <div
-            className={clsx("ml-2 mt-1", {
-              "rotate-180": isPickerOpen
-            })}
-          >
-            <MdOutlineKeyboardArrowDown />
-          </div>
-        </button>
-        <TimeRangePickerBody
-          pickerRef={pickerRef}
-          isOpen={isPickerOpen}
-          closePicker={() => setIsPickerOpen(false)}
-          currentRange={currentRange}
-          changeRangeValue={changeRangeValue}
-        />
-      </div>
+          {({ open }) => {
+            return (
+              <>
+                <FiClock className="mt-1" />
+                {updateDisplayValue && (
+                  <div className="ml-2 font-medium items-center">
+                    <span>{updateDisplayValue}</span>
+                  </div>
+                )}
+                {!updateDisplayValue && (
+                  <div className="ml-2 font-medium items-center">
+                    Please select time range
+                  </div>
+                )}
+                <div
+                  className={clsx("ml-2 mt-1", {
+                    "rotate-180": open
+                  })}
+                >
+                  <MdOutlineKeyboardArrowDown />
+                </div>
+              </>
+            );
+          }}
+        </Popover.Button>
+        <Popover.Panel
+          className={`absolute flex flex-col origin-top-right z-50 divide-y divide-gray-100 rounded-md drop-shadow-xl bg-slate-50 ring-1 ring-black ring-opacity-5 focus:outline-none`}
+        >
+          {({ open, close }) => {
+            return (
+              <TimeRangePickerBody
+                isOpen={open}
+                closePicker={() => close()}
+                currentRange={currentRange}
+                changeRangeValue={changeRangeValue}
+              />
+            );
+          }}
+        </Popover.Panel>
+      </Popover>
     </>
   );
 }
