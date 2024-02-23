@@ -1,8 +1,8 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import { CheckLink } from "./../CheckLink";
-import { HealthCheckSummary } from "../../../api/types/health";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { HealthCheckSummary } from "../../../../api/types/health";
+import { CheckLink } from "../CheckLink";
 
 let queryClient = new QueryClient({});
 describe("CheckLink", () => {
@@ -11,7 +11,8 @@ describe("CheckLink", () => {
     name: "Example Check",
     type: "example",
     status: "healthy",
-    severity: "critical"
+    severity: "critical",
+    last_runtime: new Date().toISOString()
   };
 
   it("renders with healthy status", async () => {
@@ -43,7 +44,8 @@ describe("CheckLink", () => {
       name: "Example Check",
       type: "example",
       status: "unhealthy",
-      severity: "critical"
+      severity: "critical",
+      last_runtime: new Date().toISOString()
     };
 
     render(
