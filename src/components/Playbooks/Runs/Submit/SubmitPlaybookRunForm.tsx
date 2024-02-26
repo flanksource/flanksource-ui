@@ -93,11 +93,12 @@ export default function SubmitPlaybookRunForm({
     >
       <Formik
         initialValues={initialValues}
+        validateOnMount
         onSubmit={(values) => {
           submitPlaybookRun(values as SubmitPlaybookRunFormValues);
         }}
       >
-        {({ values, handleSubmit }) => {
+        {({ values, handleSubmit, isValid }) => {
           return (
             <Form
               onSubmit={handleSubmit}
@@ -128,7 +129,7 @@ export default function SubmitPlaybookRunForm({
 
               <div className="flex justify-end p-4 rounded-b space-x-2 bg-slate-50  ring-1 ring-black/5 ">
                 <Button
-                  disabled={values.id === undefined}
+                  disabled={values.id === undefined || !isValid}
                   text="Run"
                   role="button"
                   type="submit"
