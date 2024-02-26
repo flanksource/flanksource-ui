@@ -1,3 +1,4 @@
+import { formatJobName } from "@flanksource-ui/utils/common";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "react-router-dom";
 import { getJobsHistoryNames } from "../../../api/services/jobsHistory";
@@ -16,7 +17,7 @@ export default function JobHistoryNamesDropdown() {
         return data.map(
           (job) =>
             ({
-              label: job.name,
+              label: formatJobName(job.name),
               value: job.name,
               id: job.name
             } as StateOption)
