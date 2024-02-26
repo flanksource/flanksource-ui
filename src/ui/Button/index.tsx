@@ -43,7 +43,11 @@ export function Button({
       disabled={disabled}
       type={type}
       onClick={onClick}
-      className={clsx(className, "space-x-2")}
+      className={clsx(
+        className,
+        "space-x-2",
+        disabled && "btn-disabled hover:btn-disabled cursor-not-allowed"
+      )}
       {...props}
     >
       {icon}
