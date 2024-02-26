@@ -7,9 +7,14 @@ import TextSkeletonLoader from "../SkeletonLoader/TextSkeletonLoader";
 type Props = {
   isLoading?: boolean;
   config?: ConfigItem;
+  children?: React.ReactNode;
 };
 
-export function ConfigsDetailsBreadcrumbNav({ isLoading, config }: Props) {
+export function ConfigsDetailsBreadcrumbNav({
+  isLoading,
+  config,
+  children
+}: Props) {
   return (
     <BreadcrumbNav
       list={[
@@ -27,13 +32,17 @@ export function ConfigsDetailsBreadcrumbNav({ isLoading, config }: Props) {
                   <ConfigsTypeIcon config={{ type: config?.type }} showLabel />
                 </span>
               </BreadcrumbChild>,
-              <BreadcrumbChild key="config-name">
+              <BreadcrumbChild
+                link={`/catalog/${config?.id}`}
+                key="config-name"
+              >
                 <span>
                   <ConfigIcon config={config!} className="h-5 mr-1" />
                   {config?.name}
                 </span>
               </BreadcrumbChild>
-            ])
+            ]),
+        ...(children ? [children] : [])
       ]}
     />
   );

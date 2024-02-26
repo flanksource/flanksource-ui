@@ -31,8 +31,11 @@ export function ConfigInsightsPage() {
           <BreadcrumbNav
             list={[
               <BreadcrumbRoot link="/catalog" key="root-catalog-insights">
-                Catalog Insights
+                Catalog
               </BreadcrumbRoot>,
+              <BreadcrumbChild link="/catalog/insights" key="insights">
+                Insights
+              </BreadcrumbChild>,
               ...(configType
                 ? [
                     <BreadcrumbChild
