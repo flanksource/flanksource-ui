@@ -104,11 +104,13 @@ export default function SubmitPlaybookRunForm({
               className="flex flex-col overflow-y-auto"
             >
               <div className="flex flex-col overflow-y-auto px-4 py-4">
-                <label className="form-label text-lg mb-0">Resource</label>
                 {resource ? (
-                  <div className="flex flex-col gap-2 mb-2">
-                    {resource.link}
-                  </div>
+                  <>
+                    <label className="form-label text-lg mb-0">Resource</label>
+                    <div className="flex flex-col gap-2 mb-2">
+                      {resource.link}
+                    </div>
+                  </>
                 ) : (
                   // we need playbookSpec to render this, as it has filters
                   playbook.spec && (

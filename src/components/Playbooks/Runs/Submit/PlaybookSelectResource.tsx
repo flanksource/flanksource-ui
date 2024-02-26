@@ -19,6 +19,7 @@ export default function PlaybookSelectResource({
 
   return (
     <div className="flex flex-col my-2">
+      <label className="form-label text-lg mb-0">Resource</label>
       {configTypes && (
         <div className="flex flex-row gap-2">
           <div className="w-36">
