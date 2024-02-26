@@ -2,11 +2,12 @@ import { ColumnDef } from "@tanstack/react-table";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { useSearchParams } from "react-router-dom";
+import { DateCell } from "../../ui/table";
 import { formatJobName } from "../../utils/common";
+import { formatDuration } from "../../utils/date";
 import JobHistoryStatusColumn from "./JobHistoryStatusColumn";
 import { JobHistory } from "./JobsHistoryTable";
-import { DateCell } from "../../ui/table";
-import { formatDuration } from "../../utils/date";
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
@@ -26,9 +27,22 @@ export const JobsHistoryTableColumn: ColumnDef<JobHistory, any>[] = [
     size: 200,
     enableSorting: false,
     cell: ({ getValue }) => {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const [params, setParams] = useSearchParams();
+
       const value = getValue<JobHistory["name"]>();
       const formattedName = formatJobName(value);
-      return <span>{formattedName}</span>;
+      return (
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+            params.set("name", value);
+            setParams(params);
+          }}
+        >
+          {formattedName}
+        </div>
+      );
     }
   },
   {
