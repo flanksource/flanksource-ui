@@ -4,7 +4,7 @@ import React from "react";
 type Props = {
   text?: React.ReactNode;
   icon?: React.ReactNode;
-  size?: "xs" | "sm" | "md" | "lg" | "xl";
+  size?: "xs" | "sm" | "md" | "lg" | "xl" | "none";
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => Promise<void> | void;
 } & React.ButtonHTMLAttributes<HTMLButtonElement>;
 
@@ -33,6 +33,9 @@ export function Button({
       break;
     case "xl":
       className += " px-6 py-3  text-base rounded-md ";
+      break;
+    case "none":
+      className += "";
       break;
     default:
       className += " px-3 py-2 text-sm  leading-4 rounded-md ";
