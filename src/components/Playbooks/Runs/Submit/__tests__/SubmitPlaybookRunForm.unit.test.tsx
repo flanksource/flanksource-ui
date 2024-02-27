@@ -39,6 +39,20 @@ const server = setupServer(
   }),
   rest.get("/api/db/playbooks", (req, res, ctx) => {
     return res(ctx.json(playbook));
+  }),
+  rest.post("/api/playbook/:id/params", (req, res, ctx) => {
+    return res(
+      ctx.json({
+        params: [
+          {
+            label: "Label",
+            name: "name",
+            type: "text",
+            default: "default"
+          }
+        ]
+      })
+    );
   })
 );
 
@@ -73,7 +87,10 @@ describe("SubmitPlaybookRunForm", () => {
       await screen.findByRole("heading", { level: 1, name: /Playbook 1/i })
     ).toBeInTheDocument();
 
-    expect(screen.getByLabelText("Label")).toBeInTheDocument();
+    expect(await screen.findByLabelText("Label")).toBeInTheDocument();
+
+    // The default value should be set
+    expect(screen.getByLabelText("Label")).toHaveValue("default");
 
     expect(screen.getByRole("button", { name: /Run/i })).toBeInTheDocument();
 
@@ -102,6 +119,8 @@ describe("SubmitPlaybookRunForm", () => {
     expect(
       await screen.findByRole("heading", { level: 1, name: /Playbook 1/i })
     ).toBeInTheDocument();
+
+    expect(await screen.findByLabelText("Label")).toBeInTheDocument();
 
     const input = screen.getByLabelText("Label");
 

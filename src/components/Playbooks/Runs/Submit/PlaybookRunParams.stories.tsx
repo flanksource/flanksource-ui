@@ -250,6 +250,102 @@ export default {
               }
             ])
           );
+        }),
+        rest.post("/api/playbook/:id/params", (req, res, ctx) => {
+          return res(
+            ctx.json({
+              params: [
+                {
+                  label: "Text Input (Default)",
+                  name: "text-input",
+                  type: "text"
+                },
+                {
+                  label: "Checkbox",
+                  name: "checkbox",
+                  type: "checkbox"
+                },
+                {
+                  label: "Teams Selector",
+                  name: "teams",
+                  type: "team"
+                },
+                {
+                  label: "People Selector",
+                  name: "people",
+                  type: "people",
+                  properties: {
+                    role: "admin"
+                  }
+                },
+                {
+                  label: "Component Selector",
+                  name: "component",
+                  type: "component",
+                  properties: {
+                    filter: {
+                      type: "KubernetesPod"
+                    }
+                  }
+                },
+                {
+                  label: "Configs Selector",
+                  name: "configs",
+                  type: "config",
+                  properties: {
+                    filter: {
+                      type: "Pod"
+                    }
+                  }
+                },
+                {
+                  label: "Code Editor (YAML)",
+                  name: "code-editor-yaml",
+                  type: "code",
+                  properties: {
+                    language: "yaml"
+                  }
+                },
+                {
+                  label: "Code Editor (JSON)",
+                  name: "code-editor-json",
+                  type: "code",
+                  properties: {
+                    language: "json"
+                  }
+                },
+                {
+                  label: "Textarea",
+                  name: "textarea",
+                  type: "text",
+                  properties: {
+                    multiline: true
+                  }
+                },
+                {
+                  label: "List",
+                  name: "list",
+                  type: "list",
+                  properties: {
+                    options: [
+                      {
+                        label: "Option 1",
+                        value: "option-1"
+                      },
+                      {
+                        label: "Option 2",
+                        value: "option-2"
+                      },
+                      {
+                        label: "Option 3",
+                        value: "option-3"
+                      }
+                    ]
+                  }
+                }
+              ]
+            })
+          );
         })
       ]
     }
@@ -260,8 +356,14 @@ const Template: StoryFn<typeof PlaybookRunParams> = (arg) => {
   return (
     <QueryClientProvider client={defaultQueryClient}>
       <div className="flex flex-col h-full gap-2 overflow-y-auto">
-        <Formik initialValues={{}} onSubmit={() => {}}>
-          <PlaybookRunParams {...arg} />
+        <Formik
+          initialValues={{
+            id: "123",
+            config_id: "123"
+          }}
+          onSubmit={() => {}}
+        >
+          <PlaybookRunParams />
         </Formik>
       </div>
     </QueryClientProvider>

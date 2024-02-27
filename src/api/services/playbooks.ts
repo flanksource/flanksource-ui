@@ -6,6 +6,7 @@ import { resolve } from "../resolve";
 import {
   NewPlaybookSpec,
   PlaybookNames,
+  PlaybookParam,
   PlaybookRun,
   PlaybookRunAction,
   PlaybookRunWithActions,
@@ -115,6 +116,30 @@ export async function getPlaybookRunActionById(id: string) {
     `/playbook_run_actions?id=eq.${id}&select=*`
   );
   return res.data?.[0] ?? undefined;
+}
+
+type getPlaybookParamsParams = {
+  playbookId: string;
+  component_id?: string;
+  config_id?: string;
+  check_id?: string;
+};
+
+export async function getPlaybookParams({
+  playbookId,
+  component_id,
+  config_id,
+  check_id
+}: getPlaybookParamsParams) {
+  const res = await PlaybookAPI.post<{
+    params: PlaybookParam[];
+  } | null>(`/${playbookId}/params`, {
+    id: playbookId,
+    ...(component_id && { component_id }),
+    ...(config_id && { config_id }),
+    ...(check_id && { check_id })
+  });
+  return res.data;
 }
 
 export async function getPlaybookRuns({
