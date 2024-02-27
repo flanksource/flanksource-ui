@@ -85,12 +85,15 @@ export function ConfigChangesPage() {
         title={
           <BreadcrumbNav
             list={[
-              <BreadcrumbRoot
-                link="/catalog/changes"
-                key="config-catalog-changes-root"
-              >
-                Catalog Changes
+              <BreadcrumbRoot link="/catalog" key="config-catalog-changes-root">
+                Catalog
               </BreadcrumbRoot>,
+              <BreadcrumbChild
+                link="/catalog/changes"
+                key="config-catalog-changes"
+              >
+                Changes
+              </BreadcrumbChild>,
               ...(config_type
                 ? [
                     <BreadcrumbChild
