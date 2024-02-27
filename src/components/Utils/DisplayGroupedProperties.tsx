@@ -23,12 +23,12 @@ export function DisplayGroupedProperties({ items }: Props) {
             key={property.label}
             className="flex flex-col space-y-2 py-1 max-w-full"
           >
-            <div className="text-sm text-gray-700  ">
+            <div className="text-sm text-gray-700 ">
               <span className="border-b border-dashed border-gray-500">
                 {property.label}
               </span>
             </div>
-            <div className="flex flex-col px-1.5 mx-2 gap-2  ">
+            <div className="flex flex-col px-1.5 mx-2 gap-2">
               {property.properties.map((property) => (
                 <DisplayDetailsRow
                   items={property.rowProperties}

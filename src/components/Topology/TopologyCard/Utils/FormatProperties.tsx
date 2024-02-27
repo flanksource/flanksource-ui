@@ -1,10 +1,11 @@
-import { FiExternalLink } from "react-icons/fi";
-import React, { useMemo, useState } from "react";
-import { formatBytes } from "../../../../utils/common";
+import clsx from "clsx";
 import { isEmpty } from "lodash";
+import React, { useEffect, useMemo, useState } from "react";
+import { FiExternalLink } from "react-icons/fi";
+import ReactTooltip from "react-tooltip";
 import { TopologyProperty } from "../../../../api/types/topology";
 import ProgressBar from "../../../../ui/stats/ProgressBar";
-import clsx from "clsx";
+import { formatBytes } from "../../../../utils/common";
 
 type FormatPropertyProps = {
   property?: TopologyProperty;
@@ -143,6 +144,10 @@ export function FormatPropertyDefault({
 }: FormatPropertyProps) {
   const [tooltip, setTooltip] = useState<string>();
 
+  useEffect(() => {
+    ReactTooltip.rebuild();
+  });
+
   const value = useMemo(() => {
     if (property == null) {
       return null;
@@ -205,11 +210,11 @@ export function FormatPropertyDefault({
   }
 
   return (
-    <span
-      data-tip={tooltip}
-      className=" text-ellipsis overflow-hidden relative whitespace-nowrap text-xs"
+    <p
+      data-tooltip-html={tooltip}
+      className={clsx("text-ellipsis overflow-hidden relative text-xs")}
     >
       {value}
-    </span>
+    </p>
   );
 }

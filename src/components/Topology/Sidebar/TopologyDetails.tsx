@@ -120,7 +120,7 @@ export default function TopologyDetails({
       isCollapsed={isCollapsed}
       onCollapsedStateChange={onCollapsedStateChange}
     >
-      <div className="flex flex-col  w-full gap-2">
+      <div className="flex flex-col overflow-x-hidden w-full gap-2">
         {headlineProperties.length > 0 && (
           <div className="flex flex-row gap-2 w-min py-2">
             <CardMetrics items={headlineProperties} />
