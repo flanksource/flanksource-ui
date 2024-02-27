@@ -37,7 +37,12 @@ function TopologyLinkRemote({
   viewType?: "link" | "label";
   size?: "xl" | "lg" | "md" | "sm" | "xs";
 }) {
-  const { data: component } = useComponentNameQuery(topologyId, {});
+  const { data: component, isLoading } = useComponentNameQuery(topologyId, {});
+
+  if (isLoading) {
+    return null;
+  }
+
   return (
     <TopologyLinkLocal topology={component} viewType={viewType} size={size} />
   );
