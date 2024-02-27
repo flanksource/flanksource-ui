@@ -40,15 +40,23 @@ export default function SubmitPlaybookRunForm({
   componentId,
   configId
 }: Props) {
-  const initialValues: Partial<SubmitPlaybookRunFormValues> = useMemo(
-    () => ({
+  const initialValues: Partial<SubmitPlaybookRunFormValues> = useMemo(() => {
+    const paramsDefaultValues = playbook.parameters?.reduce((acc, param) => {
+      if (param.default !== undefined) {
+        acc[param.name] = param.default;
+        return acc;
+      }
+      return acc;
+    }, {} as Record<string, any>);
+
+    return {
       id: playbook.id,
       component_id: componentId,
       check_id: checkId,
-      config_id: configId
-    }),
-    [checkId, componentId, configId, playbook.id]
-  );
+      config_id: configId,
+      params: paramsDefaultValues
+    };
+  }, [checkId, componentId, configId, playbook.id, playbook.parameters]);
 
   const { mutate: submitPlaybookRun } = useSubmitPlaybookRunMutation({
     onSuccess: (run) => {
@@ -85,22 +93,25 @@ export default function SubmitPlaybookRunForm({
     >
       <Formik
         initialValues={initialValues}
+        validateOnMount
         onSubmit={(values) => {
           submitPlaybookRun(values as SubmitPlaybookRunFormValues);
         }}
       >
-        {({ values, handleSubmit }) => {
+        {({ values, handleSubmit, isValid }) => {
           return (
             <Form
               onSubmit={handleSubmit}
               className="flex flex-col overflow-y-auto"
             >
               <div className="flex flex-col overflow-y-auto px-4 py-4">
-                <label className="form-label text-lg mb-0">Resource</label>
                 {resource ? (
-                  <div className="flex flex-col gap-2 mb-2">
-                    {resource.link}
-                  </div>
+                  <>
+                    <label className="form-label text-lg mb-0">Resource</label>
+                    <div className="flex flex-col gap-2 mb-2">
+                      {resource.link}
+                    </div>
+                  </>
                 ) : (
                   // we need playbookSpec to render this, as it has filters
                   playbook.spec && (
@@ -118,7 +129,7 @@ export default function SubmitPlaybookRunForm({
 
               <div className="flex justify-end p-4 rounded-b space-x-2 bg-slate-50  ring-1 ring-black/5 ">
                 <Button
-                  disabled={values.id === undefined}
+                  disabled={values.id === undefined || !isValid}
                   text="Run"
                   role="button"
                   type="submit"
