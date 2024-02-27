@@ -10,40 +10,10 @@ loader.config({ monaco });
 window.MonacoEnvironment = {
   getWorker(moduleId, label) {
     switch (label) {
-      case "editorWorkerService":
-        return new Worker(
-          new URL("monaco-editor/esm/vs/editor/editor.worker", import.meta.url)
-        );
-      case "css":
-      case "less":
-      case "scss":
-        return new Worker(
-          new URL(
-            "monaco-editor/esm/vs/language/css/css.worker",
-            import.meta.url
-          )
-        );
-      case "handlebars":
-      case "html":
-      case "razor":
-        return new Worker(
-          new URL(
-            "monaco-editor/esm/vs/language/html/html.worker",
-            import.meta.url
-          )
-        );
       case "json":
         return new Worker(
           new URL(
             "monaco-editor/esm/vs/language/json/json.worker",
-            import.meta.url
-          )
-        );
-      case "javascript":
-      case "typescript":
-        return new Worker(
-          new URL(
-            "monaco-editor/esm/vs/language/typescript/ts.worker",
             import.meta.url
           )
         );
@@ -118,9 +88,8 @@ export function CodeEditor({
       if (!schemaFilePrefix || language !== "yaml") {
         return;
       }
-      if (!monaco) {
-        return;
-      }
+
+      console.log("Setting up YAML schemas");
 
       // Define a new theme that is based on the GitHub Light theme
       monaco.editor.defineTheme("githubLight", githubLight as any);
