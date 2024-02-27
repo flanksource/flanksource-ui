@@ -76,7 +76,7 @@ export default function PlaybookRunsActions({ data }: PlaybookRunActionsProps) {
             <VerticalDescription
               label="Triggered By"
               value={
-                <div className="flex flex-row gap-2">
+                <div className="flex flex-row gap-2 items-center">
                   <Avatar user={data.created_by} />{" "}
                   <span>{data.created_by.name}</span>
                 </div>
