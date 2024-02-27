@@ -57,7 +57,8 @@ const config = {
   experimental: {
     // increase the default timeout for the proxy from 30s to 10m to allow for
     // long running requests to the backend
-    proxyTimeout: 1000 * 60 * 10
+    proxyTimeout: 1000 * 60 * 10,
+    esmExternals: "loose"
   },
   transpilePackages: ["monaco-editor"]
 };
