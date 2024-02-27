@@ -1,10 +1,10 @@
 import { useMemo } from "react";
-import { Topology } from "../../api/types/topology";
+import { Topology } from "../../../api/types/topology";
 import {
   StatusInfo,
   StatusLine,
   StatusLineProps
-} from "../StatusLine/StatusLine";
+} from "../../StatusLine/StatusLine";
 
 type HealthSummaryProps = {
   component: Topology;

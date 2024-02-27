@@ -1,6 +1,6 @@
 import { isEmpty } from "lodash";
+import { CheckLink } from "../../Canary/HealthChecks/CheckLink";
 import ConfigLink from "../../Configs/ConfigLink/ConfigLink";
-import { CheckLink } from "../../HealthChecks/CheckLink";
 import { TopologyLink } from "../../Topology/TopologyLink";
 import { SubmitPlaybookRunFormValues } from "./Submit/SubmitPlaybookRunForm";
 

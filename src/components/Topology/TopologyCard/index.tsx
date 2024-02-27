@@ -6,9 +6,9 @@ import { getTopology } from "../../../api/services/topology";
 import { Topology } from "../../../api/types/topology";
 import { Size } from "../../../types";
 import AgentName from "../../Agents/AgentName";
+import { HealthChecksSummary } from "../../Canary/HealthChecksSummary";
+import { HealthSummary } from "../../Canary/HealthSummary";
 import { CustomScroll } from "../../CustomScroll";
-import { HealthChecksSummary } from "../../HealthChecksSummary";
-import { HealthSummary } from "../../HealthSummary";
 import { Icon } from "../../Icon";
 import IncidentCardSummary from "../../IncidentCardSummary";
 import TopologyCardSkeletonLoader from "../../SkeletonLoader/TopologyCardSkeletonLoader";
@@ -124,6 +124,24 @@ export function TopologyCard({
         : ""
     }`;
   };
+
+  const sortedTopologyComponents = useMemo(
+    () =>
+      topology?.components?.sort((a, b) => {
+        // we want to move unhealthy components to the top, then warning, then healthy
+        if (a.status === "unhealthy" && b.status !== "unhealthy") {
+          return -1;
+        }
+        if (a.status === "warning" && b.status === "healthy") {
+          return -1;
+        }
+        if (a.status === "healthy" && b.status !== "healthy") {
+          return 1;
+        }
+        return 0;
+      }),
+    [topology?.components]
+  );
 
   if (topology == null) {
     return <TopologyCardSkeletonLoader />;
@@ -247,7 +265,7 @@ export function TopologyCard({
                 className=""
               />
               {topology?.id && <IncidentCardSummary topology={topology} />}
-              {topology?.components?.map((component: any) => (
+              {sortedTopologyComponents?.map((component: any) => (
                 <HealthSummary
                   className=""
                   target={target}

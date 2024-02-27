@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { getHealthCheckSummary } from "../../api/services/topology";
-import { HealthCheckSummary } from "../../api/types/health";
-import { Icon } from "../Icon";
-import { HealthCheckStatus } from "../Status/HealthCheckStatus";
+import { getHealthCheckSummary } from "../../../api/services/topology";
+import { HealthCheckSummary } from "../../../api/types/health";
+import { Icon } from "../../Icon";
+import { HealthCheckStatus } from "../../Status/HealthCheckStatus";
 
 type CheckLinkProps = {
   check?: HealthCheckSummary;
