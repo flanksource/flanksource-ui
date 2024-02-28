@@ -15,7 +15,7 @@ const specTypes: SpecType[] = [
     icon: "kubernetes",
     configForm: KubernetesConfigsFormEditor,
     specsMapField: "kubernetes.0",
-    schemaFilePrefix: "scrape_config"
+    schemaFileName: "config_kubernetes.schema.json"
   },
   {
     type: "form",
@@ -27,7 +27,7 @@ const specTypes: SpecType[] = [
     configForm: AWSConfigsFormEditor,
     icon: "aws",
     specsMapField: "aws.0",
-    schemaFilePrefix: "scrape_config"
+    schemaFileName: "config_aws.schema.json"
   }
 ];
 

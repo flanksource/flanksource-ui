@@ -47,7 +47,7 @@ KubernetesSpecEditorFormConfigs.args = {
     },
     type: "form",
     name: "kubernetes",
-    schemaFilePrefix: "scrape_config",
+    schemaFileName: undefined,
     specsMapField: "kubernetes.0",
     updateSpec: () => {}
   },
@@ -71,7 +71,7 @@ AWSSpecEditorFormConfigs.args = {
     },
     type: "form",
     name: "kubernetes",
-    schemaFilePrefix: "scrape_config",
+    schemaFileName: undefined,
     specsMapField: "kubernetes.0",
     updateSpec: () => {}
   },
@@ -95,7 +95,7 @@ HTTPHealthFormEditorConfigs.args = {
     },
     type: "form",
     name: "kubernetes",
-    schemaFilePrefix: "scrape_config",
+    schemaFileName: undefined,
     specsMapField: "kubernetes.0",
     updateSpec: () => {}
   },

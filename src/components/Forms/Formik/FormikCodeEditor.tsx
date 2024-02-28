@@ -16,7 +16,7 @@ type FormikCodeEditorProps = {
   format?: string;
   fieldName: string;
   className?: string;
-  schemaFilePrefix?: "component" | "canary" | "system" | "scrape_config";
+  schemaFileName?: string;
   labelClassName?: string;
   label?: string;
   disabled?: boolean;
@@ -26,7 +26,7 @@ type FormikCodeEditorProps = {
 export function FormikCodeEditor({
   format = "yaml",
   fieldName,
-  schemaFilePrefix,
+  schemaFileName,
   label,
   labelClassName,
   disabled,
@@ -119,7 +119,7 @@ export function FormikCodeEditor({
         }}
         value={codeEditorValue}
         language={format}
-        schemaFilePrefix={schemaFilePrefix}
+        schemaFileName={schemaFileName}
         readOnly={disabled}
       />
     </div>

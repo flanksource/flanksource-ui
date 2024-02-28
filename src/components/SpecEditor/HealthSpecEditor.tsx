@@ -46,7 +46,7 @@ export default function HealthSpecEditor({
             icon: "http",
             configForm: HTTPHealthFormEditor,
             specsMapField: "http.0",
-            schemaFilePrefix: "canary",
+            schemaFileName: "canary.spec.schema.json",
             docsLink: "https://canarychecker.io/reference/http"
           },
           {
@@ -61,7 +61,7 @@ export default function HealthSpecEditor({
             },
             icon: "aws",
             specsMapField: "awsConfigRule.0",
-            schemaFilePrefix: "canary",
+            schemaFileName: "canary.spec.schema.json",
             docsLink: "https://canarychecker.io/reference/aws-config-rule"
           },
           {
@@ -76,7 +76,7 @@ export default function HealthSpecEditor({
             },
             icon: "aws-config",
             specsMapField: "awsConfig.0",
-            schemaFilePrefix: "canary",
+            schemaFileName: "canary.spec.schema.json",
             docsLink: "https://canarychecker.io/reference/aws-config"
           },
           {
@@ -91,7 +91,7 @@ export default function HealthSpecEditor({
             },
             icon: "github",
             specsMapField: "github.0",
-            schemaFilePrefix: "canary"
+            schemaFileName: "canary.spec.schema.json"
           },
           {
             type: "code",
@@ -105,7 +105,7 @@ export default function HealthSpecEditor({
             },
             icon: "ec2",
             specsMapField: "ec2.0",
-            schemaFilePrefix: "canary",
+            schemaFileName: "canary.spec.schema.json",
             docsLink: "https://canarychecker.io/reference/ec2"
           },
           {
@@ -120,7 +120,7 @@ export default function HealthSpecEditor({
             },
             icon: "ldap",
             specsMapField: "ldap.0",
-            schemaFilePrefix: "canary",
+            schemaFileName: "canary.spec.schema.json",
             docsLink: "https://canarychecker.io/reference/ldap"
           },
           {
@@ -135,7 +135,7 @@ export default function HealthSpecEditor({
             },
             icon: "pod",
             specsMapField: "pod.0",
-            schemaFilePrefix: "canary",
+            schemaFileName: "canary.spec.schema.json",
             docsLink: "https://canarychecker.io/reference/pod"
           },
           {
@@ -151,7 +151,7 @@ export default function HealthSpecEditor({
             icon: "console",
             configForm: ExecHealthFormEditor,
             specsMapField: "exec.0",
-            schemaFilePrefix: "canary",
+            schemaFileName: "canary.spec.schema.json",
             docsLink: "https://canarychecker.io/reference/exec"
           },
           {
@@ -167,7 +167,7 @@ export default function HealthSpecEditor({
             icon: "alertManager",
             configForm: AlertmanagerHealthFormEditor,
             specsMapField: "alertManager.0",
-            schemaFilePrefix: "canary",
+            schemaFileName: "canary.spec.schema.json",
             docsLink: "https://canarychecker.io/reference/alert-manager"
           },
           {
@@ -182,7 +182,7 @@ export default function HealthSpecEditor({
             },
             icon: "cloudwatch",
             specsMapField: "cloudwatch.0",
-            schemaFilePrefix: "canary",
+            schemaFileName: "canary.spec.schema.json",
             docsLink: "https://canarychecker.io/reference/cloudwatch"
           },
           {
@@ -198,7 +198,7 @@ export default function HealthSpecEditor({
             icon: "elasticsearch",
             configForm: ElasticsearchHealthFormEditor,
             specsMapField: "elasticsearch.0",
-            schemaFilePrefix: "canary",
+            schemaFileName: "canary.spec.schema.json",
             docsLink: "https://canarychecker.io/reference/elasticsearch"
           },
           {
@@ -214,7 +214,7 @@ export default function HealthSpecEditor({
             icon: "redis",
             configForm: RedisHealthFormEditor,
             specsMapField: "redis.0",
-            schemaFilePrefix: "canary",
+            schemaFileName: "canary.spec.schema.json",
             docsLink: "https://canarychecker.io/reference/redis"
           },
           {
@@ -230,7 +230,7 @@ export default function HealthSpecEditor({
             icon: "mongo",
             configForm: MongoHealthFormEditor,
             specsMapField: "mongo.0",
-            schemaFilePrefix: "canary",
+            schemaFileName: "canary.spec.schema.json",
             docsLink: "https://canarychecker.io/reference/mongo"
           },
           {
@@ -245,7 +245,7 @@ export default function HealthSpecEditor({
             },
             icon: "dns",
             specsMapField: "dns.0",
-            schemaFilePrefix: "canary",
+            schemaFileName: "canary.spec.schema.json",
             docsLink: "https://canarychecker.io/reference/dns"
           },
           {
@@ -261,7 +261,7 @@ export default function HealthSpecEditor({
             icon: "icmp",
             configForm: ICMPHealthFormEditor,
             specsMapField: "icmp.0",
-            schemaFilePrefix: "canary",
+            schemaFileName: "canary.spec.schema.json",
             docsLink: "https://canarychecker.io/reference/icmp"
           },
           {
@@ -276,7 +276,7 @@ export default function HealthSpecEditor({
             },
             icon: "gcp",
             specsMapField: "gcs.0",
-            schemaFilePrefix: "canary",
+            schemaFileName: "canary.spec.schema.json",
             docsLink: "https://canarychecker.io/reference/gcs-bucket"
           },
           {
@@ -291,7 +291,7 @@ export default function HealthSpecEditor({
             },
             icon: "aws-s3-bucket",
             specsMapField: "s3.0",
-            schemaFilePrefix: "canary",
+            schemaFileName: "canary.spec.schema.json",
             docsLink: "https://canarychecker.io/reference/s3-bucket"
           },
           {
@@ -306,7 +306,7 @@ export default function HealthSpecEditor({
             },
             icon: "smb",
             specsMapField: "smb.0",
-            schemaFilePrefix: "canary",
+            schemaFileName: "canary.spec.schema.json",
             docsLink: "https://canarychecker.io/reference/smb"
           },
           {
@@ -321,7 +321,7 @@ export default function HealthSpecEditor({
             },
             icon: "sftp",
             specsMapField: "sftp.0",
-            schemaFilePrefix: "canary",
+            schemaFileName: "canary.spec.schema.json",
             docsLink: "https://canarychecker.io/reference/sftp"
           },
           {
@@ -337,7 +337,7 @@ export default function HealthSpecEditor({
             icon: "folder",
             configForm: FolderHealthFormEditor,
             specsMapField: "folder.0",
-            schemaFilePrefix: "canary",
+            schemaFileName: "canary.spec.schema.json",
             docsLink: "https://canarychecker.io/reference/folder"
           },
           {
@@ -352,7 +352,7 @@ export default function HealthSpecEditor({
             },
             icon: "prometheus",
             specsMapField: "prometheus.0",
-            schemaFilePrefix: "canary",
+            schemaFileName: "canary.spec.schema.json",
             docsLink: "https://canarychecker.io/reference/prometheus"
           },
           {
@@ -367,7 +367,7 @@ export default function HealthSpecEditor({
             },
             icon: "kubernetes",
             specsMapField: "kubernetes.0",
-            schemaFilePrefix: "canary",
+            schemaFileName: "canary.spec.schema.json",
             docsLink: "https://canarychecker.io/reference/kubernetes"
           },
           {
@@ -382,7 +382,7 @@ export default function HealthSpecEditor({
             },
             icon: "postgres",
             specsMapField: "sql.0",
-            schemaFilePrefix: "canary",
+            schemaFileName: "canary.spec.schema.json",
             docsLink: "https://canarychecker.io/reference/postgres"
           },
           {
@@ -397,7 +397,7 @@ export default function HealthSpecEditor({
             },
             icon: "config",
             specsMapField: "configDB.0",
-            schemaFilePrefix: "canary",
+            schemaFileName: "canary.spec.schema.json",
             docsLink: "https://canarychecker.io/reference/configdb"
           },
           {
@@ -412,7 +412,7 @@ export default function HealthSpecEditor({
             },
             icon: "azure-devops",
             specsMapField: "azureDevops.0",
-            schemaFilePrefix: "canary",
+            schemaFileName: "canary.spec.schema.json",
             docsLink: "https://canarychecker.io/reference/azure-devops"
           },
           {
@@ -427,7 +427,7 @@ export default function HealthSpecEditor({
             },
             icon: "jmeter",
             specsMapField: "jmeter.0",
-            schemaFilePrefix: "canary",
+            schemaFileName: "canary.spec.schema.json",
             docsLink: "https://canarychecker.io/reference/jmeter"
           },
           {
@@ -442,7 +442,7 @@ export default function HealthSpecEditor({
             },
             icon: "junit",
             specsMapField: "junit.0",
-            schemaFilePrefix: "canary",
+            schemaFileName: "canary.spec.schema.json",
             docsLink: "https://canarychecker.io/reference/junit"
           },
           {
@@ -457,7 +457,7 @@ export default function HealthSpecEditor({
             },
             icon: "dynatrace",
             specsMapField: "dynatrace.0",
-            schemaFilePrefix: "canary"
+            schemaFileName: "canary.spec.schema.json"
           },
           {
             type: "code",
@@ -471,7 +471,7 @@ export default function HealthSpecEditor({
             },
             icon: "namespace",
             specsMapField: "namespace.0",
-            schemaFilePrefix: "canary",
+            schemaFileName: "canary.spec.schema.json",
             docsLink: "https://canarychecker.io/reference/kubernetes"
           },
           {
@@ -487,7 +487,7 @@ export default function HealthSpecEditor({
             icon: "network",
             configForm: TCPHealthFormEditor,
             specsMapField: "tcp.0",
-            schemaFilePrefix: "canary",
+            schemaFileName: "canary.spec.schema.json",
             docsLink: "https://canarychecker.io/reference/tcp"
           },
           {
@@ -501,7 +501,7 @@ export default function HealthSpecEditor({
               return resourceValue ?? {};
             },
             icon: FaCog,
-            schemaFilePrefix: "canary"
+            schemaFileName: "canary.spec.schema.json"
           }
         ] satisfies SpecType[]
       ).sort((a, b) => a.label.localeCompare(b.label)),

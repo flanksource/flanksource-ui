@@ -12,7 +12,7 @@ export type SpecTypeCommonFields = {
   icon: string | React.FC;
   loadSpec: () => Record<string, any>;
   updateSpec: (spec: Record<string, any>) => void;
-  schemaFilePrefix: "component" | "canary" | "system" | "scrape_config";
+  schemaFileName: string | undefined;
   docsLink?: string;
 };
 

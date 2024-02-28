@@ -29,7 +29,7 @@ interface Props {
   value?: string;
   readOnly?: boolean;
   onChange: (value: string | undefined, viewUpdate: unknown) => void;
-  schemaFilePrefix?: "component" | "canary" | "system" | "scrape_config";
+  schemaFileName?: string;
   language?: string;
   extractYamlSpecFieldOnPaste?: boolean;
 }
@@ -38,7 +38,7 @@ export function CodeEditor({
   value,
   onChange,
   readOnly = false,
-  schemaFilePrefix,
+  schemaFileName,
   language,
   extractYamlSpecFieldOnPaste = false
 }: Props) {
@@ -84,7 +84,7 @@ export function CodeEditor({
   }, [language, extractYamlSpecFieldOnPaste, monaco]);
 
   useEffect(() => {
-    if (!schemaFilePrefix || language !== "yaml") {
+    if (!schemaFileName || language !== "yaml") {
       return;
     }
 
@@ -94,9 +94,6 @@ export function CodeEditor({
 
     // Define a new theme that is based on the GitHub Light theme
     monaco.editor.defineTheme("githubLight", githubLight as any);
-
-    // Load the schema file from the server
-    const schemaFileName = `${schemaFilePrefix}.spec.schema.json`;
 
     const { dispose } = configureMonacoYaml(monaco, {
       enableSchemaRequest: true,
@@ -117,7 +114,7 @@ export function CodeEditor({
     return () => {
       dispose();
     };
-  }, [language, monaco, schemaFilePrefix]);
+  }, [language, monaco, schemaFileName]);
 
   return (
     <Editor
