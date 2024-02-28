@@ -1,8 +1,8 @@
-import Editor, { Monaco, loader, useMonaco } from "@monaco-editor/react";
+import Editor, { loader, useMonaco } from "@monaco-editor/react";
 import * as monaco from "monaco-editor";
 import githubLight from "monaco-themes/themes/GitHub Light.json";
 import { configureMonacoYaml } from "monaco-yaml";
-import { useCallback, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import YAML from "yaml";
 
 loader.config({ monaco });
@@ -83,37 +83,41 @@ export function CodeEditor({
     };
   }, [language, extractYamlSpecFieldOnPaste, monaco]);
 
-  const setupYamlSchemas = useCallback(
-    (monaco: Monaco) => {
-      if (!schemaFilePrefix || language !== "yaml") {
-        return;
-      }
+  useEffect(() => {
+    if (!schemaFilePrefix || language !== "yaml") {
+      return;
+    }
 
-      console.log("Setting up YAML schemas");
+    if (!monaco) {
+      return;
+    }
 
-      // Define a new theme that is based on the GitHub Light theme
-      monaco.editor.defineTheme("githubLight", githubLight as any);
+    // Define a new theme that is based on the GitHub Light theme
+    monaco.editor.defineTheme("githubLight", githubLight as any);
 
-      // Load the schema file from the server
-      const schemaFileName = `${schemaFilePrefix}.spec.schema.json`;
-      configureMonacoYaml(monaco, {
-        enableSchemaRequest: true,
-        hover: true,
-        completion: true,
-        validate: true,
-        format: true,
-        schemas: [
-          {
-            // Our schema file will be loaded from the server
-            uri: `/api/schemas/${schemaFileName}`,
-            // Files to associate with our model, in this case everything
-            fileMatch: ["*"]
-          }
-        ]
-      });
-    },
-    [language, schemaFilePrefix]
-  );
+    // Load the schema file from the server
+    const schemaFileName = `${schemaFilePrefix}.spec.schema.json`;
+
+    const { dispose } = configureMonacoYaml(monaco, {
+      enableSchemaRequest: true,
+      hover: true,
+      completion: true,
+      validate: true,
+      format: true,
+      schemas: [
+        {
+          // Our schema file will be loaded from the server
+          uri: `/api/schemas/${schemaFileName}`,
+          // Files to associate with our model, in this case everything
+          fileMatch: ["*"]
+        }
+      ]
+    });
+
+    return () => {
+      dispose();
+    };
+  }, [language, monaco, schemaFilePrefix]);
 
   return (
     <Editor
@@ -123,7 +127,6 @@ export function CodeEditor({
       value={value}
       onChange={onChange}
       width="100%"
-      beforeMount={setupYamlSchemas}
       options={{
         renderLineHighlight: "none",
         readOnly,
