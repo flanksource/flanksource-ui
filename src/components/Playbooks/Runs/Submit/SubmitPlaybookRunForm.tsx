@@ -41,22 +41,14 @@ export default function SubmitPlaybookRunForm({
   configId
 }: Props) {
   const initialValues: Partial<SubmitPlaybookRunFormValues> = useMemo(() => {
-    const paramsDefaultValues = playbook.parameters?.reduce((acc, param) => {
-      if (param.default !== undefined) {
-        acc[param.name] = param.default;
-        return acc;
-      }
-      return acc;
-    }, {} as Record<string, any>);
-
     return {
       id: playbook.id,
       component_id: componentId,
       check_id: checkId,
       config_id: configId,
-      params: paramsDefaultValues
+      params: {}
     };
-  }, [checkId, componentId, configId, playbook.id, playbook.parameters]);
+  }, [checkId, componentId, configId, playbook.id]);
 
   const { mutate: submitPlaybookRun } = useSubmitPlaybookRunMutation({
     onSuccess: (run) => {
@@ -123,7 +115,7 @@ export default function SubmitPlaybookRunForm({
                   <label className="form-label text-lg mb-4">
                     Playbook Parameters
                   </label>
-                  <PlaybookRunParams playbook={playbook} />
+                  <PlaybookRunParams />
                 </div>
               </div>
 

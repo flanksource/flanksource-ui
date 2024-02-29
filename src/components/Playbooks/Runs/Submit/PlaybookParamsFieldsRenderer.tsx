@@ -17,7 +17,6 @@ export default function PlaybookParamsFieldsRenderer({
   params
 }: PlaybookParamsFieldsRendererProps) {
   const { type, name: fieldName, required, label } = params;
-
   switch (type) {
     case "code":
       return (
