@@ -1,8 +1,7 @@
 import { Auth, CanaryChecker, IncidentCommander, Rback } from "../axios";
 import { resolve } from "../resolve";
-import packageJson from "../../../package.json";
-import { PeopleRoles, RegisteredUser, User, NewUser } from "../types/users";
 import { VersionInfo } from "../types/common";
+import { NewUser, PeopleRoles, RegisteredUser, User } from "../types/users";
 
 export const getPerson = (id: string) =>
   resolve<User[]>(IncidentCommander.get<User[]>(`/people?id=eq.${id}`));
@@ -68,7 +67,6 @@ export const getVersionInfo = () =>
       const versionInfo: any = data.data || {};
       data.data = {
         ...versionInfo,
-        frontend: packageJson.version,
         backend: versionInfo.Version
       };
       return data;
