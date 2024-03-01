@@ -13,6 +13,7 @@ import { getResourceForRun } from "../services";
 import { PlaybookStatusDescription } from "./../PlaybookRunsStatus";
 import PlaybookRunActionFetch from "./PlaybookRunActionFetch";
 import PlaybookRunsActionItem from "./PlaybookRunsActionItem";
+import ShowPlaybookRunsParams from "./ShowParamaters/ShowPlaybookRunsParams";
 
 type PlaybookRunActionsProps = {
   data: PlaybookRunWithActions;
@@ -29,12 +30,15 @@ export default function PlaybookRunsActions({ data }: PlaybookRunActionsProps) {
           <VerticalDescription
             label="Playbook"
             value={
-              <Link
-                className="link"
-                to={`/playbooks/runs?playbook=${data.playbook_id}`}
-              >
-                <PlaybookSpecIcon playbook={data.playbooks!} showLabel />
-              </Link>
+              <>
+                <Link
+                  className="link"
+                  to={`/playbooks/runs?playbook=${data.playbook_id}`}
+                >
+                  <PlaybookSpecIcon playbook={data.playbooks!} showLabel />
+                </Link>
+                <ShowPlaybookRunsParams data={data} />
+              </>
             }
           />
 
@@ -76,7 +80,7 @@ export default function PlaybookRunsActions({ data }: PlaybookRunActionsProps) {
             <VerticalDescription
               label="Triggered By"
               value={
-                <div className="flex flex-row gap-2">
+                <div className="flex flex-row gap-2 items-center">
                   <Avatar user={data.created_by} />{" "}
                   <span>{data.created_by.name}</span>
                 </div>
