@@ -1,4 +1,5 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react";
+import { MemoryRouter } from "react-router-dom";
 import { TimeRangePicker } from "./index";
 import { TimeRangeOption } from "./rangeOptions";
 
@@ -15,7 +16,9 @@ export default {
 } as ComponentMeta<typeof TimeRangePicker>;
 
 const Template: ComponentStory<typeof TimeRangePicker> = () => (
-  <TimeRangePickerContainer />
+  <MemoryRouter>
+    <TimeRangePickerContainer />
+  </MemoryRouter>
 );
 
 export const Primary = Template.bind({});
