@@ -21,6 +21,7 @@ export default function PlaybookParamsFieldsRenderer({
     case "code":
       return (
         <FormikCodeEditor
+          saveAsString
           className="flex flex-col h-72"
           format={params.properties?.language ?? "yaml"}
           fieldName={`params.${fieldName}`}
