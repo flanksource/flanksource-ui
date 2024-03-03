@@ -85,7 +85,7 @@ export default function PlaybookRunParams() {
         {parameters && parameters.length > 0 ? (
           parameters.map((i) => (
             <div className="flex flex-row gap-2" key={i.name}>
-              {i.type !== "checkbox" && (
+              {i.type !== "checkbox" && i.label && (
                 <div className="w-36 py-2">
                   <label
                     htmlFor={`params.${i.name}`}
