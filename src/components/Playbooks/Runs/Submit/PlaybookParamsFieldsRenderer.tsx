@@ -9,6 +9,13 @@ import FormikTeamsDropdown from "../../../Forms/Formik/FormikTeamsDropdown";
 import FormikTextArea from "../../../Forms/Formik/FormikTextArea";
 import FormikTextInput from "../../../Forms/Formik/FormikTextInput";
 
+const sizeToClassName = new Map<"small" | "medium" | "large" | "full", string>([
+  ["small", "h-72"],
+  ["medium", "h-[min(36rem,calc(90vh))]"],
+  ["large", "h-[min(54rem,calc(90vh))]"],
+  ["full", "h-full"]
+]);
+
 type PlaybookParamsFieldsRendererProps = {
   params: PlaybookParam;
 };
@@ -19,10 +26,12 @@ export default function PlaybookParamsFieldsRenderer({
   const { type, name: fieldName, required, label } = params;
   switch (type) {
     case "code":
+      const size = params.properties?.size ?? "small";
+      const heightClassName = sizeToClassName.get(size);
       return (
         <FormikCodeEditor
           saveAsString
-          className="flex flex-col h-72"
+          className={`flex flex-col ${heightClassName}`}
           format={params.properties?.language ?? "yaml"}
           fieldName={`params.${fieldName}`}
         />
