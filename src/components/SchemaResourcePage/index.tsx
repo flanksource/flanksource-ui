@@ -27,6 +27,7 @@ export function SchemaResourcePage({
       <Head prefix={resourceInfo ? `Settings - ${resourceInfo.name}` : ""} />
       <SearchLayout
         loading={isLoading}
+        onRefresh={refetch}
         title={
           <BreadcrumbNav
             list={[
