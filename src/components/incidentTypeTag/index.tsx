@@ -1,3 +1,4 @@
+import { Tooltip } from "react-tooltip";
 import { typeItems } from "../Incidents/data";
 
 interface IProps {
@@ -13,9 +14,16 @@ export function IncidentTypeIcon({ type }: IProps) {
     return null;
   }
   return (
-    <div data-tip={text} className="my-auto w-4">
-      {icon}
-    </div>
+    <>
+      <div
+        data-tooltip-id="incident-icon-tooltip"
+        data-tooltip-content={text}
+        className="my-auto w-4"
+      >
+        {icon}
+      </div>
+      <Tooltip id="incident-icon-tooltip" />
+    </>
   );
 }
 

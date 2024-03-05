@@ -1,8 +1,8 @@
 import clsx from "clsx";
 import { isEmpty } from "lodash";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { FiExternalLink } from "react-icons/fi";
-import ReactTooltip from "react-tooltip";
+import { Tooltip } from "react-tooltip";
 import { TopologyProperty } from "../../../../api/types/topology";
 import ProgressBar from "../../../../ui/stats/ProgressBar";
 import { formatBytes } from "../../../../utils/common";
@@ -112,29 +112,42 @@ export function FormatPropertyCPUMemory({
   if (max) {
     const percent = (Number(value) / Number(max)) * 100;
     return (
-      <div
-        data-tip={`${derivedValue} of ${derivedMax} (${percent.toFixed(0)}%)`}
-        className="flex flex-col gap-1 h-auto items-center"
-      >
+      <>
         <div
-          className={clsx(
-            `text-xs text-ellipsis whitespace-nowrap w-full`,
-            isSidebar ? "text-left" : "text-center"
-          )}
+          data-tooltip-id="format-tooltip"
+          data-tooltip-content={`${derivedValue} of ${derivedMax} (${percent.toFixed(
+            0
+          )}%)`}
+          className="flex flex-col gap-1 h-auto items-center"
         >
-          {derivedValue}
+          <div
+            className={clsx(
+              `text-xs text-ellipsis whitespace-nowrap w-full`,
+              isSidebar ? "text-left" : "text-center"
+            )}
+          >
+            {derivedValue}
+          </div>
+          <div className="block w-12">
+            <ProgressBar value={percent} />
+          </div>
         </div>
-        <div className="block w-12">
-          <ProgressBar value={percent} />
-        </div>
-      </div>
+        <Tooltip id="format-tooltip" />
+      </>
     );
   }
 
   return (
-    <span className="text-ellipsis whitespace-nowrap" data-tip={derivedValue}>
-      {derivedValue}
-    </span>
+    <>
+      <span
+        className="text-ellipsis whitespace-nowrap"
+        data-tooltip-id="format-properties-tooltip"
+        data-tooltip-content={derivedValue}
+      >
+        {derivedValue}
+      </span>
+      <Tooltip id="format-properties-tooltip" />
+    </>
   );
 }
 
@@ -143,10 +156,6 @@ export function FormatPropertyDefault({
   short
 }: FormatPropertyProps) {
   const [tooltip, setTooltip] = useState<string>();
-
-  useEffect(() => {
-    ReactTooltip.rebuild();
-  });
 
   const value = useMemo(() => {
     if (property == null) {

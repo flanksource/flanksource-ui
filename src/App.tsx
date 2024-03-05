@@ -18,7 +18,6 @@ import {
   Routes,
   useLocation
 } from "react-router-dom";
-import ReactTooltip from "react-tooltip";
 import { Canary } from "./components";
 import { withAccessCheck } from "./components/AccessCheck/AccessCheck";
 import AgentsPage from "./components/Agents/AgentPage";
@@ -524,7 +523,6 @@ export function CanaryCheckerApp() {
         <Provider>
           <FeatureFlagsContextProvider>
             <HealthPageContextProvider>
-              <ReactTooltip />
               <Canary url="/api/canary/api/summary" />
               <ReactQueryDevtools initialIsOpen={false} />
             </HealthPageContextProvider>
@@ -575,7 +573,6 @@ export function App() {
                 <HealthPageContextProvider>
                   <ConfigPageContextProvider>
                     <IncidentPageContextProvider>
-                      <ReactTooltip />
                       <IncidentManagerRoutes sidebar={<SidebarWrapper />} />
                       <ReactQueryDevtools initialIsOpen={false} />
                     </IncidentPageContextProvider>

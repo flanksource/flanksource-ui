@@ -1,8 +1,7 @@
 import FormatDuration from "@flanksource-ui/ui/Dates/FormatDuration";
 import { relativeDateTime } from "@flanksource-ui/utils/date";
 import dayjs from "dayjs";
-import { useEffect } from "react";
-import ReactTooltip from "react-tooltip";
+import { Tooltip } from "react-tooltip";
 import { PlaybookRunAction } from "../../../../api/types/playbooks";
 import { PlaybookStatusIcon } from "../../../Icon/PlaybookStatusIcon";
 
@@ -22,10 +21,6 @@ export default function PlaybookRunsActionItem({
   isSelected = false,
   stepNumber
 }: PlaybookRunsActionItemProps) {
-  useEffect(() => {
-    ReactTooltip.rebuild();
-  });
-
   return (
     <div
       role="button"
@@ -46,7 +41,8 @@ export default function PlaybookRunsActionItem({
         <div className="text-sm  text-gray-600">
           {action.status === "sleeping" ? (
             <span
-              data-tip={`Scheduled to run in ${relativeDateTime(
+              data-tooltip-id="scheduled-tooltip"
+              data-tooltip-content={`Scheduled to run in ${relativeDateTime(
                 dayjs().toISOString(),
                 action.scheduled_time
               )}`}
@@ -60,6 +56,7 @@ export default function PlaybookRunsActionItem({
             />
           )}
         </div>
+        <Tooltip id="scheduled-tooltip" />
       </div>
     </div>
   );

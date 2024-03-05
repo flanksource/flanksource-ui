@@ -2,6 +2,7 @@ import dayjs from "dayjs";
 import { useAtom } from "jotai";
 import { useEffect, useState } from "react";
 import { GoDiff } from "react-icons/go";
+import { Tooltip } from "react-tooltip";
 import { useComponentConfigChanges } from "../../../../api/query-hooks/useComponentConfigChanges";
 import { useGetConfigChangesById } from "../../../../api/query-hooks/useGetConfigChangesByConfigChangeIdQuery";
 import { ConfigChange } from "../../../../api/types/configs";
@@ -72,10 +73,12 @@ export function TopologyConfigChanges({ topologyID }: Props) {
                   </div>
                   <div
                     className="whitespace-nowrap grow text-right pl-2"
-                    data-tip={item.created_at}
+                    data-tooltip-id="created_at_tooltip"
+                    data-tooltip-content={item.created_at?.toString()}
                   >
                     {dayjs(item.created_at).fromNow()}
                   </div>
+                  <Tooltip id="created_at_tooltip" />
                 </div>
               ))
             ) : (

@@ -3,7 +3,7 @@ import { useAtom } from "jotai";
 import { useEffect, useState } from "react";
 import { TbTrash, TbTrashOff } from "react-icons/tb";
 import { VscJson } from "react-icons/vsc";
-import ReactTooltip from "react-tooltip";
+import { Tooltip } from "react-tooltip";
 import { useComponentConfigRelationshipQuery } from "../../../api/query-hooks/useComponentConfigRelationshipQuery";
 import { removeManualComponentConfigRelationship } from "../../../api/services/configs";
 import { Badge } from "../../../ui/Badge";
@@ -153,10 +153,6 @@ export default function ConfigsPanel({
     setHideDeletedConfigs((state) => !state);
   };
 
-  useEffect(() => {
-    ReactTooltip.rebuild();
-  });
-
   return (
     <CollapsiblePanel
       onCollapsedStateChange={onCollapsedStateChange}
@@ -172,7 +168,8 @@ export default function ConfigsPanel({
           />
           <div className="flex grow text-right justify-center">
             <IconButton
-              data-tip={`${
+              data-tooltip-id="deleted-tooltip"
+              data-tooltip-content={`${
                 hideDeletedConfigs ? "Show" : "Hide"
               } deleted configs`}
               icon={
@@ -184,6 +181,7 @@ export default function ConfigsPanel({
               onClick={handleTrashIconClick}
               className="ml-2"
             />
+            <Tooltip id="deleted-tooltip" />
           </div>
         </div>
       }
