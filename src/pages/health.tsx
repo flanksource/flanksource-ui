@@ -33,7 +33,7 @@ export function HealthPage({ url }: Props) {
   });
 
   const {
-    healthState: { passing, checks }
+    healthState: { passing, checks, filteredChecks }
   } = useHealthPageContext();
 
   return (
@@ -64,7 +64,11 @@ export function HealthPage({ url }: Props) {
           extra={
             <div className="flex flex-row w-full items-center">
               <div className="flex-1 flex flex-row justify-center">
-                <CanaryStatsCards checks={checks ?? []} passing={passing} />
+                <CanaryStatsCards
+                  checks={checks ?? []}
+                  passing={passing}
+                  filteredChecks={filteredChecks}
+                />
               </div>
               <RefreshDropdown
                 onClick={() => setTriggerRefresh(triggerRefresh + 1)}
