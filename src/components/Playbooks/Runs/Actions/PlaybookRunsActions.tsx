@@ -4,6 +4,7 @@ import {
 } from "@flanksource-ui/api/types/playbooks";
 import { Age } from "@flanksource-ui/ui/Age";
 import { Avatar } from "@flanksource-ui/ui/Avatar";
+import FormatDuration from "@flanksource-ui/ui/Dates/FormatDuration";
 import VerticalDescription from "@flanksource-ui/ui/description/VerticalDescription";
 import dayjs from "dayjs";
 import { useState } from "react";
@@ -67,7 +68,12 @@ export default function PlaybookRunsActions({ data }: PlaybookRunActionsProps) {
             )}
           <VerticalDescription
             label="Duration"
-            value={<Age from={data.start_time} to={data.end_time} />}
+            value={
+              <FormatDuration
+                startTime={data.start_time}
+                endTime={data.end_time}
+              />
+            }
           />
           <VerticalDescription
             label="Queued"
