@@ -36,6 +36,7 @@ export default function PlaybookParamsFieldsRenderer({
           className={`flex flex-col ${heightClassName}`}
           format={params.properties?.language ?? "yaml"}
           fieldName={`params.${fieldName}`}
+          jsonSchemaUrl={params.properties?.jsonSchemaUrl}
         />
       );
     case "checkbox":

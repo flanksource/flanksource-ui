@@ -131,6 +131,7 @@ export type PlaybookParamCodeEditor = PlaybookParamCommonFields & {
     // e.g. yaml, json, toml, etc.
     language?: string;
     size: ModalSize;
+    jsonSchemaUrl?: string;
   };
 };
 
