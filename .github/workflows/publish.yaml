@@ -19,8 +19,16 @@ jobs:
       
       - uses: codfish/semantic-release-action@cbd853afe12037afb1306caca9d6b1ab6a58cf2a # v1.10.0
         id: semantic
+        with:
+          additional-packages: ['@semantic-release/git']
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Debug line
+      - run: echo "$OUTPUTS"
+        env:
+          OUTPUTS: ${{ toJson(steps.semantic.outputs) }}
+
 
   docker:
     needs: semantic-release
