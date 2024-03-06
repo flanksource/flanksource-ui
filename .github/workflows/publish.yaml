@@ -27,21 +27,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.FLANKBOT }}
 
-      # Debug line
-      - run: echo "$OUTPUTS"
-        env:
-          OUTPUTS: ${{ toJson(steps.semantic.outputs) }}
-
-  # Debug line
-  semantic-debug:
-    needs: semantic-release
-    runs-on: ubuntu-latest
-    steps:
-      - name: Output semantics
-        run: echo "${{ needs.semantic-release.outputs.new-release-published }}"
-      - name: Output semantics version
-        run: echo "${{ needs.semantic-release.outputs.release-version }}"
-
   docker:
     needs: semantic-release
     runs-on: ubuntu-latest
