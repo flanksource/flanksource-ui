@@ -21,6 +21,11 @@ type FormikCodeEditorProps = {
   label?: string;
   disabled?: boolean;
   required?: boolean;
+  /**
+   * If true, the value will be saved as a string, and not parsed as yaml or
+   * json before updating the formik field value
+   */
+  saveAsString?: boolean;
 };
 
 export function FormikCodeEditor({
@@ -31,7 +36,8 @@ export function FormikCodeEditor({
   labelClassName,
   disabled,
   className = "flex flex-col h-[min(1000px,calc(90vh))]",
-  required = false
+  required = false,
+  saveAsString = false
 }: FormikCodeEditorProps) {
   const { setFieldValue } = useFormikContext<Record<string, any>>();
 
@@ -83,7 +89,7 @@ export function FormikCodeEditor({
   // editor jumping around when the user is typing, due to formatting
   useEffect(() => {
     try {
-      if (format === "yaml" || format === "json") {
+      if ((format === "yaml" || format === "json") && !saveAsString) {
         if (debouncedValues) {
           setFieldValue(
             fieldName,
@@ -100,7 +106,7 @@ export function FormikCodeEditor({
     } catch (e) {
       // do nothing, we don't want to set the values if the user is typing
     }
-  }, [debouncedValues, fieldName, format, setFieldValue]);
+  }, [debouncedValues, fieldName, format, saveAsString, setFieldValue]);
 
   return (
     <div className={className}>
