@@ -7,8 +7,8 @@ jobs:
   semantic-release:
     runs-on: ubuntu-latest
     outputs:
-      release-version: ${{ steps.semantic.outputs.new_release_version }}
-      new-release-published: ${{ steps.semantic.outputs.new_release_published }}
+      release-version: ${{ steps.semantic.outputs.release-version }}
+      new-release-published: ${{ steps.semantic.outputs.new-release-published }}
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@eb238b55efaa70779f274895e782ed17c84f2895 # v2.6.1
