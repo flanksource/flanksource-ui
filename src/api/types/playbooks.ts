@@ -1,3 +1,4 @@
+import { ModalSize } from "@flanksource-ui/ui/Modal";
 import { Agent, Avatar, CreatedAt } from "../traits";
 import { ConfigItem } from "./configs";
 import { HealthCheckSummary } from "./health";
@@ -129,7 +130,7 @@ export type PlaybookParamCodeEditor = PlaybookParamCommonFields & {
     // We can have a single code type, then we can use this to determine the language
     // e.g. yaml, json, toml, etc.
     language?: string;
-    size: "small" | "medium" | "large" | "full";
+    size: ModalSize;
   };
 };
 

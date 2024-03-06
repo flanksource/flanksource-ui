@@ -1,3 +1,4 @@
+import { ModalSize } from "@flanksource-ui/ui/Modal";
 import { PlaybookParam } from "../../../../api/types/playbooks";
 import FormikCheckbox from "../../../Forms/Formik/FormikCheckbox";
 import { FormikCodeEditor } from "../../../Forms/Formik/FormikCodeEditor";
@@ -9,11 +10,12 @@ import FormikTeamsDropdown from "../../../Forms/Formik/FormikTeamsDropdown";
 import FormikTextArea from "../../../Forms/Formik/FormikTextArea";
 import FormikTextInput from "../../../Forms/Formik/FormikTextInput";
 
-const sizeToClassName = new Map<"small" | "medium" | "large" | "full", string>([
+const sizeToClassName = new Map<ModalSize, string>([
   ["small", "h-72"],
   ["medium", "h-[min(36rem,calc(90vh))]"],
   ["large", "h-[min(54rem,calc(90vh))]"],
-  ["full", "h-full"]
+  ["full", "h-[calc(90vh)]"],
+  ["slightly-small", "h-64"]
 ]);
 
 type PlaybookParamsFieldsRendererProps = {
