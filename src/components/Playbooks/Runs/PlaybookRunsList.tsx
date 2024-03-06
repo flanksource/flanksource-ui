@@ -1,9 +1,9 @@
+import FormatDuration from "@flanksource-ui/ui/Dates/FormatDuration";
 import { ColumnDef } from "@tanstack/react-table";
 import { useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { PlaybookRun, PlaybookRunStatus } from "../../../api/types/playbooks";
 import { User } from "../../../api/types/users";
-import { Age } from "../../../ui/Age";
 import { Avatar } from "../../../ui/Avatar";
 import { DateCell } from "../../../ui/table";
 import { DataTable, PaginationOptions } from "../../DataTable";
@@ -60,7 +60,12 @@ const playbookRunsTableColumns: ColumnDef<PlaybookRun>[] = [
     header: "Duration",
     accessorKey: "duration",
     cell: ({ row }) => {
-      return <Age from={row.original.start_time} to={row.original.end_time} />;
+      return (
+        <FormatDuration
+          startTime={row.original.start_time}
+          endTime={row.original.end_time}
+        />
+      );
     }
   },
   {

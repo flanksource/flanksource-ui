@@ -1,9 +1,9 @@
+import FormatDuration from "@flanksource-ui/ui/Dates/FormatDuration";
 import { relativeDateTime } from "@flanksource-ui/utils/date";
 import dayjs from "dayjs";
 import { useEffect } from "react";
 import ReactTooltip from "react-tooltip";
 import { PlaybookRunAction } from "../../../../api/types/playbooks";
-import { Age } from "../../../../ui/Age";
 import { PlaybookStatusIcon } from "../../../Icon/PlaybookStatusIcon";
 
 type PlaybookRunsActionItemProps = {
@@ -54,7 +54,10 @@ export default function PlaybookRunsActionItem({
               -
             </span>
           ) : (
-            <Age from={action.start_time} to={action.end_time} />
+            <FormatDuration
+              startTime={action.start_time}
+              endTime={action.end_time}
+            />
           )}
         </div>
       </div>
