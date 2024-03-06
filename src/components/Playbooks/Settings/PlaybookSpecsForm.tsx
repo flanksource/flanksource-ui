@@ -136,6 +136,7 @@ export default function PlaybookSpecsForm({
                     label="Spec"
                     format="yaml"
                     className="flex flex-col flex-1"
+                    jsonSchemaUrl="/api/schemas/playbook-spec.schema.json"
                     required
                   />
                 </div>
