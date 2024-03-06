@@ -45,7 +45,7 @@ export default function ConfigScrapperSpecEditor({
             icon: "kubernetes",
             configForm: KubernetesConfigsFormEditor,
             specsMapField: "kubernetes.0",
-            schemaFilePrefix: "scrape_config"
+            schemaFileName: "config_kubernetes.schema.json"
           },
           {
             type: "form",
@@ -60,7 +60,7 @@ export default function ConfigScrapperSpecEditor({
             icon: "azure",
             configForm: AzureConfigsFormEditor,
             specsMapField: "azure.0",
-            schemaFilePrefix: "scrape_config"
+            schemaFileName: "config_azure.schema.json"
           },
           {
             type: "form",
@@ -75,7 +75,7 @@ export default function ConfigScrapperSpecEditor({
             icon: "kubernetes",
             configForm: KubernetesFileConfigsFormEditor,
             specsMapField: "kubernetesFile.0",
-            schemaFilePrefix: "scrape_config"
+            schemaFileName: "config_kubernetesfile.schema.json"
           },
           {
             type: "form",
@@ -90,7 +90,7 @@ export default function ConfigScrapperSpecEditor({
             icon: "sql",
             configForm: SQLConfigsFormEditor,
             specsMapField: "sql.0",
-            schemaFilePrefix: "scrape_config"
+            schemaFileName: "config_sql.schema.json"
           },
           {
             type: "form",
@@ -105,7 +105,7 @@ export default function ConfigScrapperSpecEditor({
             icon: "trivy",
             configForm: TrivyConfigsFormEditor,
             specsMapField: "trivy.0",
-            schemaFilePrefix: "scrape_config"
+            schemaFileName: "config_trivy.schema.json"
           },
           {
             type: "form",
@@ -122,7 +122,7 @@ export default function ConfigScrapperSpecEditor({
             configForm: AWSConfigsFormEditor,
             icon: "aws",
             specsMapField: "aws.0",
-            schemaFilePrefix: "scrape_config"
+            schemaFileName: "config_aws.schema.json"
           },
           {
             type: "form",
@@ -137,7 +137,7 @@ export default function ConfigScrapperSpecEditor({
             icon: "folder",
             configForm: FileConfigsFormEditor,
             specsMapField: "file.0",
-            schemaFilePrefix: "scrape_config"
+            schemaFileName: "config_file.schema.json"
           },
           {
             type: "form",
@@ -152,7 +152,7 @@ export default function ConfigScrapperSpecEditor({
             icon: "git",
             configForm: GithubActionsConfigsFormEditor,
             specsMapField: "githubActions.0",
-            schemaFilePrefix: "scrape_config"
+            schemaFileName: "config_githubactions.schema.json"
           },
           {
             type: "form",
@@ -167,7 +167,7 @@ export default function ConfigScrapperSpecEditor({
             icon: "http",
             configForm: HttpConfigsFormEditor,
             specsMapField: "http.0",
-            schemaFilePrefix: "scrape_config"
+            schemaFileName: undefined
           },
           {
             type: "form",
@@ -182,7 +182,7 @@ export default function ConfigScrapperSpecEditor({
             icon: "azure-devops",
             configForm: AzureDevopsConfigsFormEditor,
             specsMapField: "azureDevops.0",
-            schemaFilePrefix: "scrape_config"
+            schemaFileName: "config_azuredevops.schema.json"
           },
           {
             type: "custom",
@@ -195,7 +195,7 @@ export default function ConfigScrapperSpecEditor({
               return resourceValue ?? {};
             },
             icon: FaCog,
-            schemaFilePrefix: "scrape_config"
+            schemaFileName: "scrape_config.spec.schema.json"
           }
         ] satisfies SpecType[]
       ).sort((a, b) => a.label.localeCompare(b.label)),

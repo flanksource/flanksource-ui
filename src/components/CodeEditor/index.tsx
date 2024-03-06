@@ -4,36 +4,12 @@ import githubLight from "monaco-themes/themes/GitHub Light.json";
 import { configureMonacoYaml } from "monaco-yaml";
 import { useEffect, useRef } from "react";
 import YAML from "yaml";
-// @ts-ignore
-import * as worker from "monaco-yaml/yaml.worker";
 
 loader.config({ monaco });
 
 window.MonacoEnvironment = {
   getWorker(moduleId, label) {
     switch (label) {
-      case "editorWorkerService":
-        return new Worker(
-          new URL("monaco-editor/esm/vs/editor/editor.worker", import.meta.url)
-        );
-      case "css":
-      case "less":
-      case "scss":
-        return new Worker(
-          new URL(
-            "monaco-editor/esm/vs/language/css/css.worker",
-            import.meta.url
-          )
-        );
-      case "handlebars":
-      case "html":
-      case "razor":
-        return new Worker(
-          new URL(
-            "monaco-editor/esm/vs/language/html/html.worker",
-            import.meta.url
-          )
-        );
       case "json":
         return new Worker(
           new URL(
@@ -41,17 +17,8 @@ window.MonacoEnvironment = {
             import.meta.url
           )
         );
-      case "javascript":
-      case "typescript":
-        return new Worker(
-          new URL(
-            "monaco-editor/esm/vs/language/typescript/ts.worker",
-            import.meta.url
-          )
-        );
-      // this is needed for next 14, but it doesn't work with next 13
       case "yaml":
-        return new Worker(worker);
+        return new Worker(new URL("monaco-yaml/yaml.worker", import.meta.url));
       default:
         throw new Error(`Unknown label ${label}`);
     }
@@ -62,7 +29,7 @@ interface Props {
   value?: string;
   readOnly?: boolean;
   onChange: (value: string | undefined, viewUpdate: unknown) => void;
-  schemaFilePrefix?: "component" | "canary" | "system" | "scrape_config";
+  schemaFileName?: string;
   language?: string;
   extractYamlSpecFieldOnPaste?: boolean;
 }
@@ -71,7 +38,7 @@ export function CodeEditor({
   value,
   onChange,
   readOnly = false,
-  schemaFilePrefix,
+  schemaFileName,
   language,
   extractYamlSpecFieldOnPaste = false
 }: Props) {
@@ -117,14 +84,18 @@ export function CodeEditor({
   }, [language, extractYamlSpecFieldOnPaste, monaco]);
 
   useEffect(() => {
-    if (!schemaFilePrefix || language !== "yaml") {
+    if (!schemaFileName || language !== "yaml") {
       return;
     }
+
     if (!monaco) {
       return;
     }
-    const schemaFileName = `${schemaFilePrefix}.spec.schema.json`;
-    configureMonacoYaml(monaco, {
+
+    // Define a new theme that is based on the GitHub Light theme
+    monaco.editor.defineTheme("githubLight", githubLight as any);
+
+    const { dispose } = configureMonacoYaml(monaco, {
       enableSchemaRequest: true,
       hover: true,
       completion: true,
@@ -139,15 +110,11 @@ export function CodeEditor({
         }
       ]
     });
-  }, [language, monaco, schemaFilePrefix]);
 
-  useEffect(() => {
-    if (!monaco) {
-      return;
-    }
-
-    monaco.editor.defineTheme("githubLight", githubLight as any);
-  }, [monaco]);
+    return () => {
+      dispose();
+    };
+  }, [language, monaco, schemaFileName]);
 
   return (
     <Editor

@@ -178,7 +178,7 @@ export default function SpecEditorForm({
                         : // if it's a custom spec, then the field name is `spec`
                           `spec`
                     }
-                    schemaFilePrefix={selectedSpec.schemaFilePrefix}
+                    schemaFileName={selectedSpec.schemaFileName}
                   />
                 </>
               ) : (
@@ -198,7 +198,7 @@ export default function SpecEditorForm({
                     <FormikCodeEditor
                       format={specFormat}
                       fieldName="spec"
-                      schemaFilePrefix={selectedSpec.schemaFilePrefix}
+                      schemaFileName={selectedSpec.schemaFileName}
                     />
                   </Tab>
                 </Tabs>

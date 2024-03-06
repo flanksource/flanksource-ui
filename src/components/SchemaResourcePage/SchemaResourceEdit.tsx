@@ -191,13 +191,13 @@ export function SchemaResourceEdit({
 
   const jsonSchemaFilePrefix = useMemo(() => {
     if (table === "config_scrapers") {
-      return "scrape_config";
+      return "config_scraper.spec.schema.json";
     }
     if (table === "topologies") {
-      return "component";
+      return "topology.spec.schema.json";
     }
     if (table === "canaries") {
-      return "canary";
+      return "canary.spec.schema.json";
     }
     return undefined;
   }, [table]);
@@ -432,7 +432,7 @@ export function SchemaResourceEdit({
                                   setCodeEditorValueOnChange("spec", val);
                                 }}
                                 language="yaml"
-                                schemaFilePrefix={jsonSchemaFilePrefix}
+                                schemaFileName={jsonSchemaFilePrefix}
                                 extractYamlSpecFieldOnPaste
                               />
                             </div>
