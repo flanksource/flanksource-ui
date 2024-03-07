@@ -4,7 +4,13 @@ import { useSearchParams } from "react-router-dom";
 import { getJobsHistoryNames } from "../../../api/services/jobsHistory";
 import { ReactSelectDropdown, StateOption } from "../../ReactSelectDropdown";
 
-export default function JobHistoryNamesDropdown() {
+type JobHistoryNamesDropdownProps = {
+  paramsToReset?: string[];
+};
+
+export default function JobHistoryNamesDropdown({
+  paramsToReset = ["pageIndex", "pageSize"]
+}: JobHistoryNamesDropdownProps) {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const name = searchParams.get("name") ?? "";
@@ -42,6 +48,7 @@ export default function JobHistoryNamesDropdown() {
           } else {
             searchParams.delete("name");
           }
+          paramsToReset.forEach((param) => searchParams.delete(param));
           setSearchParams(searchParams);
         }}
         prefix="Job Type:"

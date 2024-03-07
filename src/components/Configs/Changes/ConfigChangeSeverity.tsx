@@ -1,5 +1,3 @@
-import { useSearchParams } from "react-router-dom";
-import { ReactSelectDropdown } from "../../ReactSelectDropdown";
 import {
   HiInformationCircle,
   HiOutlineChevronDoubleDown,
@@ -7,11 +5,13 @@ import {
   HiOutlineChevronDown,
   HiOutlineMinus
 } from "react-icons/hi";
+import { useSearchParams } from "react-router-dom";
+import { ReactSelectDropdown } from "../../ReactSelectDropdown";
 
 type Props = {
   onChange?: (value: string | undefined) => void;
   searchParamKey?: string;
-  paramsToReset?: Record<string, string>;
+  paramsToReset?: string[];
   value?: string;
 };
 
@@ -62,7 +62,7 @@ export const configChangeSeverity = {
 export function ConfigChangeSeverity({
   onChange = () => {},
   searchParamKey = "severity",
-  paramsToReset = {},
+  paramsToReset = [],
   value
 }: Props) {
   const [params, setParams] = useSearchParams({
@@ -79,6 +79,7 @@ export function ConfigChangeSeverity({
         } else {
           params.set(searchParamKey, value);
         }
+        paramsToReset.forEach((param) => params.delete(param));
         setParams(params);
         onChange(value);
       }}

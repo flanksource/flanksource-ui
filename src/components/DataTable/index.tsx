@@ -1,6 +1,8 @@
 import {
   ColumnDef,
   ExpandedState,
+  OnChangeFn,
+  PaginationState,
   Row,
   SortingState,
   Updater,
@@ -24,7 +26,7 @@ import { DataTableRow } from "./DataTableRow";
 import { Pagination, PaginationType } from "./Pagination/Pagination";
 
 export type PaginationOptions = {
-  setPagination: any;
+  setPagination: OnChangeFn<PaginationState>;
   pageIndex: number;
   pageSize: number;
   pageCount: number;

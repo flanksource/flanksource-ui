@@ -7,7 +7,13 @@ import ConfigInsightsAnalyzerDropdown from "./ConfigInsightsAnalyzerDropdown";
 import ConfigInsightsSeverityDropdown from "./ConfigInsightsSeverityDropdown";
 import ConfigInsightsTypeDropdown from "./ConfigInsightsTypeDropdown";
 
-export function ConfigInsightsFilters() {
+type ConfigInsightsFiltersProps = {
+  paramsToReset?: string[];
+};
+
+export function ConfigInsightsFilters({
+  paramsToReset = ["pageIndex", "pageSize"]
+}: ConfigInsightsFiltersProps) {
   const [params, setParams] = useSearchParams();
 
   const severityURL = params.get("severity");
@@ -40,19 +46,23 @@ export function ConfigInsightsFilters() {
           params.delete(key);
         }
       });
+      paramsToReset.forEach((param) => params.delete(param));
       setParams(params, {
         replace: true
       });
     });
 
     return () => subscribe.unsubscribe();
-  }, [watch, params, setParams]);
+  }, [watch, params, setParams, paramsToReset]);
 
   return (
     <div className="flex flex-row gap-4 mr-4">
       <div className="flex items-center">
         <div className="flex flex-row gap-2 items-center">
-          <ConfigTypesDropdown label="Config Type:" />
+          <ConfigTypesDropdown
+            label="Config Type:"
+            paramsToReset={paramsToReset}
+          />
           <ConfigInsightsTypeDropdown
             prefix="Type:"
             name="type"

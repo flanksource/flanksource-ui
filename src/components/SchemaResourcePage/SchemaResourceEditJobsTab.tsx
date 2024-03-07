@@ -1,8 +1,8 @@
-import { useMemo, useState } from "react";
-import { useJobsHistoryForSettingQuery } from "../../api/query-hooks/useJobsHistoryQuery";
-import JobsHistoryTable from "../JobsHistory/JobsHistoryTable";
-import ErrorPage from "../Errors/ErrorPage";
+import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
+import { useJobsHistoryForSettingQuery } from "../../api/query-hooks/useJobsHistoryQuery";
+import ErrorPage from "../Errors/ErrorPage";
+import JobsHistoryTable from "../JobsHistory/JobsHistoryTable";
 
 type SchemaResourceJobsTabProps = {
   tableName: keyof typeof resourceTypeMap;
@@ -21,12 +21,10 @@ export function SchemaResourceJobsTab({
   resourceId,
   tableName
 }: SchemaResourceJobsTabProps) {
-  const [{ pageIndex, pageSize }, setPageState] = useState({
-    pageIndex: 0,
-    pageSize: 150
-  });
-
   const [searchParams, setSearchParams] = useSearchParams();
+
+  const pageIndex = parseInt(searchParams.get("pageIndex") ?? "0");
+  const pageSize = parseInt(searchParams.get("pageSize") ?? "150");
 
   const sortBy = searchParams.get("sortBy") ?? "";
   const sortOrder = searchParams.get("sortOrder") ?? "desc";
@@ -56,7 +54,6 @@ export function SchemaResourceJobsTab({
           pageCount={pageCount}
           pageIndex={pageIndex}
           pageSize={pageSize}
-          setPageState={setPageState}
           hiddenColumns={["resource_id", "resource_type"]}
           sortBy={sortBy}
           sortOrder={sortOrder}

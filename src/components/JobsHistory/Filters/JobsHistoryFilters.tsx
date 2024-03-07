@@ -109,7 +109,13 @@ export const jobHistoryResourceTypes = [
   }
 ];
 
-export default function JobHistoryFilters() {
+type JobHistoryFiltersProps = {
+  paramsToReset?: string[];
+};
+
+export default function JobHistoryFilters({
+  paramsToReset = ["pageIndex", "pageSize"]
+}: JobHistoryFiltersProps) {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const { setTimeRangeParams, getTimeRangeFromUrl } = useTimeRangeParams();
@@ -122,7 +128,7 @@ export default function JobHistoryFilters() {
 
   return (
     <div className="flex flex-wrap py-4 gap-2">
-      <JobHistoryNamesDropdown />
+      <JobHistoryNamesDropdown paramsToReset={paramsToReset} />
 
       <div className="flex flex-col">
         <ReactSelectDropdown
@@ -138,6 +144,7 @@ export default function JobHistoryFilters() {
             } else {
               searchParams.delete("resource_type");
             }
+            paramsToReset.forEach((param) => searchParams.delete(param));
             setSearchParams(searchParams);
           }}
           prefix="Resource Type:"
@@ -157,6 +164,7 @@ export default function JobHistoryFilters() {
             } else {
               searchParams.delete("status");
             }
+            paramsToReset.forEach((param) => searchParams.delete(param));
             setSearchParams(searchParams);
           }}
           prefix="Status:"
@@ -176,6 +184,7 @@ export default function JobHistoryFilters() {
             } else {
               searchParams.delete("runDuration");
             }
+            paramsToReset.forEach((param) => searchParams.delete(param));
             setSearchParams(searchParams);
           }}
           prefix="Duration:"
@@ -186,6 +195,8 @@ export default function JobHistoryFilters() {
           onChange={(timeRange) => {
             console.log("timeRange", timeRange);
             setTimeRangeParams(timeRange);
+            paramsToReset.forEach((param) => searchParams.delete(param));
+            setSearchParams(searchParams);
           }}
           className="w-[35rem]"
           value={timeRangeValue}
