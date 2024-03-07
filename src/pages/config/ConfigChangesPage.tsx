@@ -97,7 +97,7 @@ export function ConfigChangesPage() {
               ...(config_type
                 ? [
                     <BreadcrumbChild
-                      link={`/catalog?type=${config_type}`}
+                      link={`/catalog?configType=${config_type}`}
                       key={config_type}
                     >
                       <ConfigsTypeIcon

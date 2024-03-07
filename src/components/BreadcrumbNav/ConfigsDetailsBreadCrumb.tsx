@@ -26,7 +26,7 @@ export function ConfigsDetailsBreadcrumbNav({
           : [
               <BreadcrumbChild
                 key="config-type-crumb"
-                link={`/catalog?type=${config?.type}`}
+                link={`/catalog?configType=${config?.type}`}
               >
                 <span className="whitespace-nowrap">
                   <ConfigsTypeIcon config={{ type: config?.type }} showLabel />

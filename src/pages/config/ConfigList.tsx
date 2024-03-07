@@ -17,11 +17,11 @@ import { Head } from "@flanksource-ui/components/Head/Head";
 import { SearchLayout } from "@flanksource-ui/components/Layout";
 import { useAtom } from "jotai";
 import objectHash from "object-hash";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 export function ConfigListPage() {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
   const search = searchParams.get("search");
@@ -32,6 +32,19 @@ export function ConfigListPage() {
   const [deletedConfigsHidden] = useAtom(areDeletedConfigsHidden);
   const hideDeletedConfigs = deletedConfigsHidden === "yes";
   const configType = searchParams.get("configType") ?? undefined;
+  // we want to get type and redirect to configType
+  const type = searchParams.get("type") ?? undefined;
+
+  // Redirect to configType if type is provided, we are doing this to support
+  // old links that used type instead of configType and we are using configType
+  // for consistency between different catalog pages and avoid collisions
+  useEffect(() => {
+    if (type) {
+      searchParams.set("configType", type);
+      searchParams.delete("type");
+      setSearchParams(searchParams);
+    }
+  }, [searchParams, setSearchParams, type]);
 
   // Show summary if no search, tag or configType is provided
   const showConfigSummaryList = useMemo(
@@ -111,7 +124,7 @@ export function ConfigListPage() {
               ...(configType
                 ? [
                     <BreadcrumbChild
-                      link={`/catalog?type=${configType}`}
+                      link={`/catalog?configType=${configType}`}
                       key={configType}
                     >
                       <ConfigsTypeIcon
