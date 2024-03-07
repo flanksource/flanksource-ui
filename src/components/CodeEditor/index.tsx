@@ -29,7 +29,11 @@ interface Props {
   value?: string;
   readOnly?: boolean;
   onChange: (value: string | undefined, viewUpdate: unknown) => void;
+  /**
+   * @deprecated use "jsonSchemaUrl" instead, will be removed in the future
+   */
   schemaFileName?: string;
+  jsonSchemaUrl?: string;
   language?: string;
   extractYamlSpecFieldOnPaste?: boolean;
 }
@@ -39,6 +43,7 @@ export function CodeEditor({
   onChange,
   readOnly = false,
   schemaFileName,
+  jsonSchemaUrl,
   language,
   extractYamlSpecFieldOnPaste = false
 }: Props) {
@@ -83,8 +88,13 @@ export function CodeEditor({
     };
   }, [language, extractYamlSpecFieldOnPaste, monaco]);
 
+  // if we have a schema file, we will use the monaco-yaml plugin to enable
+  const schemaUrl =
+    jsonSchemaUrl ??
+    (schemaFileName ? `/api/schemas/${schemaFileName}` : undefined);
+
   useEffect(() => {
-    if (!schemaFileName || language !== "yaml") {
+    if (!schemaUrl || language !== "yaml") {
       return;
     }
 
@@ -104,7 +114,7 @@ export function CodeEditor({
       schemas: [
         {
           // Our schema file will be loaded from the server
-          uri: `/api/schemas/${schemaFileName}`,
+          uri: schemaUrl,
           // Files to associate with our model, in this case everything
           fileMatch: ["*"]
         }
@@ -114,7 +124,7 @@ export function CodeEditor({
     return () => {
       dispose();
     };
-  }, [language, monaco, schemaFileName]);
+  }, [jsonSchemaUrl, language, monaco, schemaUrl]);
 
   return (
     <Editor

@@ -1,9 +1,10 @@
 import { useSubmitPlaybookRunMutation } from "@flanksource-ui/api/query-hooks/playbooks";
 import { RunnablePlaybook } from "@flanksource-ui/api/types/playbooks";
 import { Button } from "@flanksource-ui/ui/Button";
-import { Modal } from "@flanksource-ui/ui/Modal";
+import { Modal, ModalSize } from "@flanksource-ui/ui/Modal";
 import { AxiosError } from "axios";
 import { Form, Formik } from "formik";
+import { atom, useAtom } from "jotai";
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { toastError, toastSuccess } from "../../../Toast/toast";
@@ -11,6 +12,15 @@ import PlaybookSpecModalTitle from "../../PlaybookSpecModalTitle";
 import { getResourceForRun } from "../services";
 import PlaybookRunParams from "./PlaybookRunParams";
 import PlaybookSelectResource from "./PlaybookSelectResource";
+
+type SubmitPlaybookRunFormModalSizes = {
+  width: ModalSize;
+  height: string;
+};
+
+export const submitPlaybookRunFormModalSizesAtom = atom<
+  SubmitPlaybookRunFormModalSizes | undefined
+>(undefined);
 
 export type SubmitPlaybookRunFormValues = {
   // if this is present in the form, we show step to add params
@@ -40,6 +50,10 @@ export default function SubmitPlaybookRunForm({
   componentId,
   configId
 }: Props) {
+  const [modalSize, setModalSize] = useAtom(
+    submitPlaybookRunFormModalSizesAtom
+  );
+
   const initialValues: Partial<SubmitPlaybookRunFormValues> = useMemo(() => {
     return {
       id: playbook.id,
@@ -80,8 +94,12 @@ export default function SubmitPlaybookRunForm({
         />
       }
       open={isOpen}
-      onClose={onClose}
-      size="medium"
+      onClose={() => {
+        onClose();
+        setModalSize(undefined);
+      }}
+      enforceSizeInHeight
+      size={modalSize?.width ?? "medium"}
     >
       <Formik
         initialValues={initialValues}
@@ -94,9 +112,9 @@ export default function SubmitPlaybookRunForm({
           return (
             <Form
               onSubmit={handleSubmit}
-              className="flex flex-col overflow-y-auto"
+              className="flex flex-col flex-1 overflow-y-auto"
             >
-              <div className="flex flex-col overflow-y-auto px-4 py-4">
+              <div className="flex flex-col overflow-y-auto px-4 py-4 flex-1">
                 {resource ? (
                   <>
                     <label className="form-label text-lg mb-0">Resource</label>

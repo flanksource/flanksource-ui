@@ -1,13 +1,21 @@
 import { getPlaybookParams } from "@flanksource-ui/api/services/playbooks";
-import { PlaybookParam } from "@flanksource-ui/api/types/playbooks";
+import {
+  PlaybookParam,
+  PlaybookParamCodeEditor
+} from "@flanksource-ui/api/types/playbooks";
 import FormSkeletonLoader from "@flanksource-ui/components/SkeletonLoader/FormSkeletonLoader";
 import { useQuery } from "@tanstack/react-query";
+import clsx from "clsx";
 import { useFormikContext } from "formik";
+import { useAtom } from "jotai/react";
 import { useEffect } from "react";
 import { FaExclamationTriangle } from "react-icons/fa";
 import YAML from "yaml";
 import PlaybookParamsFieldsRenderer from "./PlaybookParamsFieldsRenderer";
-import { SubmitPlaybookRunFormValues } from "./SubmitPlaybookRunForm";
+import {
+  SubmitPlaybookRunFormValues,
+  submitPlaybookRunFormModalSizesAtom
+} from "./SubmitPlaybookRunForm";
 
 function parseCodeDefaultValue(parameter: PlaybookParam) {
   if (parameter.type !== "code" || !parameter.default) {
@@ -24,6 +32,8 @@ function parseCodeDefaultValue(parameter: PlaybookParam) {
 }
 
 export default function PlaybookRunParams() {
+  const [, setModalSize] = useAtom(submitPlaybookRunFormModalSizesAtom);
+
   const { setFieldValue, values } =
     useFormikContext<SubmitPlaybookRunFormValues>();
 
@@ -50,6 +60,19 @@ export default function PlaybookRunParams() {
       }),
     enabled: !!componentId || !!configId || !!checkId
   });
+
+  // update modal size when params are loaded
+  useEffect(() => {
+    data?.params
+      .filter((param) => param.type === "code")
+      .forEach((param) => {
+        const size = (param as PlaybookParamCodeEditor).properties?.size;
+        if (size && size !== "medium") {
+          setModalSize({ width: size, height: "full" });
+          return;
+        }
+      });
+  }, [data, setModalSize]);
 
   // After the params are loaded, set the default values for the form
   useEffect(() => {
@@ -84,7 +107,13 @@ export default function PlaybookRunParams() {
       <div className="flex flex-col gap-2">
         {parameters && parameters.length > 0 ? (
           parameters.map((i) => (
-            <div className="flex flex-row gap-2" key={i.name}>
+            <div
+              className={clsx(
+                `flex gap-2`,
+                i.type === "checkbox" && i.label ? "flex-row" : "flex-col"
+              )}
+              key={i.name}
+            >
               {i.type !== "checkbox" && i.label && (
                 <div className="w-36 py-2">
                   <label

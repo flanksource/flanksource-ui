@@ -16,7 +16,16 @@ type FormikCodeEditorProps = {
   format?: string;
   fieldName: string;
   className?: string;
+  /**
+   * @deprecated use jsonSchemaUrl instead
+   */
   schemaFileName?: string;
+  /**
+   *
+   * The url to the json schema file for the code editor
+   *
+   */
+  jsonSchemaUrl?: string;
   labelClassName?: string;
   label?: string;
   disabled?: boolean;
@@ -32,6 +41,7 @@ export function FormikCodeEditor({
   format = "yaml",
   fieldName,
   schemaFileName,
+  jsonSchemaUrl,
   label,
   labelClassName,
   disabled,
@@ -126,6 +136,7 @@ export function FormikCodeEditor({
         value={codeEditorValue}
         language={format}
         schemaFileName={schemaFileName}
+        jsonSchemaUrl={jsonSchemaUrl}
         readOnly={disabled}
       />
     </div>

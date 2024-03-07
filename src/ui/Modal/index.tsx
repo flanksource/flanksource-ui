@@ -15,7 +15,12 @@ import { IoMdHelp } from "react-icons/io";
  */
 export const modalHelpLinkAtom = atom<string | undefined>(undefined);
 
-type ModalSize = "small" | "slightly-small" | "medium" | "large" | "full";
+export type ModalSize =
+  | "small"
+  | "slightly-small"
+  | "medium"
+  | "large"
+  | "full";
 
 const modalClassMap: { [k in ModalSize]: string } = {
   small: "max-w-md my-0 mx-2.5",
@@ -23,6 +28,14 @@ const modalClassMap: { [k in ModalSize]: string } = {
   medium: "max-w-5xl my-0 mx-4",
   large: "max-w-5xl my-0 mx-5",
   full: "max-w-5xl my-0 mx-5"
+};
+
+const modalClassHeightMap: { [k in ModalSize]: string } = {
+  small: "min-h-[30rem] h-auto",
+  "slightly-small": "min-h-1/4 h-auto max-h-full",
+  medium: "min-h-1/2 h-auto max-h-full",
+  large: "min-h-3/4 h-auto max-h-full",
+  full: "min-h-full h-auto max-h-full"
 };
 
 interface IModalProps {
@@ -36,6 +49,15 @@ interface IModalProps {
   allowBackgroundClose: boolean;
   hideCloseButton: boolean;
   size: ModalSize;
+
+  /**
+   *
+   * If true, the modal will enforce the height of the modal to be the same as
+   * the size. This is useful for modals that have a fixed height, such as
+   * modals that contain a code editor.
+   *
+   */
+  enforceSizeInHeight?: boolean;
   children: React.ReactNode;
   containerClassName?: string;
   dialogClassName?: string;
@@ -52,6 +74,7 @@ export function Modal({
   allowBackgroundClose,
   hideCloseButton,
   size,
+  enforceSizeInHeight = false,
   children,
   containerClassName = "overflow-auto max-h-full",
   dialogClassName = "fixed z-50 inset-0 overflow-y-auto min-h-2xl:my-20 py-4",
@@ -100,7 +123,8 @@ export function Modal({
               className={clsx(
                 "bg-white rounded-lg text-left shadow-xl transform transition-all w-full  flex flex-col",
                 containerClassName,
-                modalClassMap[size]
+                modalClassMap[size],
+                modalClassHeightMap[size]
               )}
             >
               <div className="py-4 px-4 gap-2 flex item-center rounded-t-lg justify-between bg-gray-100">
