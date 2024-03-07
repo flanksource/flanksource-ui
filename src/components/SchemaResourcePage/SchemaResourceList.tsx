@@ -28,11 +28,8 @@ export function SchemaResourceList({
   isLoading
 }: Props) {
   return (
-    <div className="mx-auto space-y-6 flex flex-col justify-center">
-      <div
-        className="flex flex-col overflow-y-auto flex-1 w-full"
-        style={{ maxHeight: "calc(100vh - 8rem)" }}
-      >
+    <div className="mx-auto space-y-6 flex flex-col flex-1 overflow-y-auto justify-center">
+      <div className="flex flex-col overflow-y-auto flex-1 w-full">
         <table
           className="table-auto table-fixed relative w-full border border-gray-200 rounded-md"
           aria-label="table"
@@ -146,12 +143,17 @@ function SchemaResourceListItem({
       className="last:border-b-0 border-b cursor-pointer"
       onClick={() => navigateToDetails(id)}
     >
-      <Cell colSpan={2} className="leading-5 text-gray-900 font-medium">
-        <div className="flex flex-row gap-2 items-center">
+      <Cell
+        colSpan={2}
+        className="leading-5 text-gray-900 font-medium overflow-hidden truncate"
+      >
+        <div className="flex flex-row w-full gap-2 items-center truncate">
           {table === tables.config_scrapers && (
             <ConfigScrapperIcon spec={spec} />
           )}
-          <div> {name}</div>
+          <div data-tip={name} className="block truncate">
+            {name}
+          </div>
         </div>
       </Cell>
       <Cell className="shrink-0">
