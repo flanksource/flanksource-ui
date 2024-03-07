@@ -122,6 +122,7 @@ function SchemaResourceListItem({
   job_details,
   job_name,
   last_runtime,
+  job_last_failed,
   labels
 }: SchemaResourceWithJobStatus & {
   baseUrl: string;
@@ -205,7 +206,7 @@ function SchemaResourceListItem({
         <Age from={last_runtime} suffix={true} />
       </Cell>
       <Cell className="text-gray-500">
-        <Age from={job_time_start} suffix={true} />
+        <Age from={job_last_failed} suffix={true} />
       </Cell>
       <Cell colSpan={2} className="text-gray-500">
         {tags.length > 0 && (
