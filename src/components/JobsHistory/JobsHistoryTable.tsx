@@ -1,6 +1,7 @@
 import { Row, SortingState, Updater } from "@tanstack/react-table";
 import { useCallback, useMemo, useState } from "react";
-import { DataTable } from "../DataTable";
+import { useSearchParams } from "react-router-dom";
+import { DataTable, PaginationOptions } from "../DataTable";
 import { JobsHistoryDetails } from "./JobsHistoryDetails";
 import { JobsHistoryTableColumn } from "./JobsHistoryTableColumn";
 
@@ -47,7 +48,6 @@ type JobsHistoryTableProps = {
   pageSize: number;
   sortBy: string;
   sortOrder: string;
-  setPageState?: (state: { pageIndex: number; pageSize: number }) => void;
   hiddenColumns?: string[];
   onSortByChanged?: (sortByState: Updater<SortingState>) => void;
 };
@@ -61,9 +61,9 @@ export default function JobsHistoryTable({
   hiddenColumns = [],
   sortBy,
   sortOrder,
-  onSortByChanged = () => {},
-  setPageState = () => {}
+  onSortByChanged = () => {}
 }: JobsHistoryTableProps) {
+  const [params, setParams] = useSearchParams();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedJob, setSelectedJob] = useState<JobHistory>();
   const tableSortByState = useMemo(() => {
@@ -75,9 +75,20 @@ export default function JobsHistoryTable({
     ];
   }, [sortBy, sortOrder]);
 
-  const pagination = useMemo(() => {
+  const pagination: PaginationOptions = useMemo(() => {
     return {
-      setPagination: setPageState,
+      setPagination: (updater) => {
+        const newParams =
+          typeof updater === "function"
+            ? updater({
+                pageIndex,
+                pageSize
+              })
+            : updater;
+        params.set("pageIndex", newParams.pageIndex.toString());
+        params.set("pageSize", newParams.pageSize.toString());
+        setParams(params);
+      },
       pageIndex,
       pageSize,
       pageCount,
@@ -85,7 +96,7 @@ export default function JobsHistoryTable({
       enable: true,
       loading: isLoading
     };
-  }, [setPageState, pageIndex, pageSize, pageCount, isLoading]);
+  }, [pageIndex, pageSize, pageCount, isLoading, params, setParams]);
 
   const columns = useMemo(() => JobsHistoryTableColumn, []);
 

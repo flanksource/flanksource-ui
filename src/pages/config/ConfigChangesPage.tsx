@@ -8,13 +8,14 @@ import { ConfigChangeHistory } from "@flanksource-ui/components/Configs/Changes/
 import { ConfigChangeFilters } from "@flanksource-ui/components/Configs/Changes/ConfigChangesFilters/ConfigChangesFilters";
 import ConfigPageTabs from "@flanksource-ui/components/Configs/ConfigPageTabs";
 import ConfigsTypeIcon from "@flanksource-ui/components/Configs/ConfigsTypeIcon";
+import { PaginationOptions } from "@flanksource-ui/components/DataTable";
 import { Head } from "@flanksource-ui/components/Head/Head";
 import { InfoMessage } from "@flanksource-ui/components/InfoMessage";
 import { SearchLayout } from "@flanksource-ui/components/Layout";
 import { refreshButtonClickedTrigger } from "@flanksource-ui/components/SlidingSideBar";
 import useTimeRangeParams from "@flanksource-ui/ui/TimeRangePicker/useTimeRangeParams";
 import { useAtom } from "jotai";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 
 export function ConfigChangesPage() {
@@ -23,10 +24,7 @@ export function ConfigChangesPage() {
     refreshButtonClickedTrigger
   );
   const itemsPerPage = 50;
-  const [pageState, setPageState] = useState({
-    pageIndex: 0,
-    pageSize: itemsPerPage
-  });
+
   const [params, setParams] = useSearchParams();
   const config_type = params.get("configType") ?? undefined;
   const change_type = params.get("change_type") ?? undefined;
@@ -34,8 +32,8 @@ export function ConfigChangesPage() {
   const starts_at = timeRangeAbsoluteValue?.from ?? undefined;
   const ends_at = timeRangeAbsoluteValue?.to ?? undefined;
   const pageSize = +(params.get("pageSize") ?? itemsPerPage);
-  const pageIndex = +(params.get("pageIndex") ?? 0);
-  const page = pageIndex === 0 ? 0 : pageIndex - 1;
+  const page = +(params.get("pageIndex") ?? 0);
+
   const { data, isLoading, error, isRefetching, refetch } =
     useGetAllConfigsChangesQuery(
       { config_type, change_type, severity, starts_at, ends_at },
@@ -47,8 +45,19 @@ export function ConfigChangesPage() {
   const pageCount = totalEntries ? Math.ceil(totalEntries / pageSize) : -1;
 
   const pagination = useMemo(() => {
-    return {
-      setPagination: setPageState,
+    const pagination: PaginationOptions = {
+      setPagination: (updater) => {
+        const newParams =
+          typeof updater === "function"
+            ? updater({
+                pageIndex: page,
+                pageSize
+              })
+            : updater;
+        params.set("pageIndex", newParams.pageIndex.toString());
+        params.set("pageSize", newParams.pageSize.toString());
+        setParams(params);
+      },
       pageIndex: page,
       pageSize,
       pageCount,
@@ -56,22 +65,8 @@ export function ConfigChangesPage() {
       enable: true,
       loading: isLoading || isRefetching
     };
-  }, [pageSize, pageCount, isLoading, isRefetching, page]);
-
-  useEffect(() => {
-    setParams({
-      ...Object.fromEntries(params),
-      pageIndex: ((pageState.pageIndex || 0) + 1).toString(),
-      pageSize: (pageState.pageSize || itemsPerPage).toString()
-    });
-  }, [pageState, params, setParams]);
-
-  useEffect(() => {
-    setPageState({
-      pageIndex: 0,
-      pageSize: itemsPerPage
-    });
-  }, [change_type, severity]);
+    return pagination;
+  }, [page, pageSize, pageCount, isLoading, isRefetching, params, setParams]);
 
   const errorMessage =
     typeof error === "string"
@@ -123,12 +118,7 @@ export function ConfigChangesPage() {
             <InfoMessage message={errorMessage} />
           ) : (
             <>
-              <ConfigChangeFilters
-                paramsToReset={{
-                  pageIndex: "1",
-                  pageSize: itemsPerPage.toString()
-                }}
-              />
+              <ConfigChangeFilters paramsToReset={["pageIndex", "pageSize"]} />
               <ConfigChangeHistory
                 data={data?.data ?? []}
                 isLoading={isLoading}

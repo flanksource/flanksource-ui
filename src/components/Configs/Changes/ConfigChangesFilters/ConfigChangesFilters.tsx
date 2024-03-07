@@ -5,7 +5,7 @@ import { ChangesTypesDropdown } from "./ChangeTypesDropdown";
 import ConfigChangesDateRangeFilter from "./ConfigChangesDateRangeFIlter";
 
 type ConfigChangeFiltersProps = React.HTMLProps<HTMLDivElement> & {
-  paramsToReset?: Record<string, string>;
+  paramsToReset?: string[];
   hideConfigTypeFilter?: boolean;
 };
 
@@ -17,10 +17,12 @@ export function ConfigChangeFilters({
 }: ConfigChangeFiltersProps) {
   return (
     <div className={clsx("flex flex-row gap-2", className)} {...props}>
-      {!hideConfigTypeFilter && <ConfigTypesDropdown />}
+      {!hideConfigTypeFilter && (
+        <ConfigTypesDropdown paramsToReset={paramsToReset} />
+      )}
       <ChangesTypesDropdown paramsToReset={paramsToReset} />
       <ConfigChangeSeverity paramsToReset={paramsToReset} />
-      <ConfigChangesDateRangeFilter />
+      <ConfigChangesDateRangeFilter paramsToReset={paramsToReset} />
     </div>
   );
 }

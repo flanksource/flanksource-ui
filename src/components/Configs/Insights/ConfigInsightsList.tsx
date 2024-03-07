@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useConfigInsightsQuery } from "../../../api/query-hooks/useConfigAnalysisQuery";
 import { ConfigAnalysis } from "../../../api/types/configs";
-import { DataTable } from "../../DataTable";
+import { DataTable, PaginationOptions } from "../../DataTable";
 import { InfoMessage } from "../../InfoMessage";
 import ConfigInsightsDetailsModal from "./ConfigAnalysisLink/ConfigInsightsDetailsModal";
 import { ConfigInsightsColumns as configInsightsColumns } from "./ConfigInsightsColumns";
@@ -33,6 +33,8 @@ export default function ConfigInsightsList({
   const configType = params.get("configType") ?? undefined;
   const analyzer = params.get("analyzer") ?? undefined;
   const component = params.get("component") ?? undefined;
+  const pageSize = +(params.get("pageSize") ?? 50);
+  const pageIndex = +(params.get("pageIndex") ?? 0);
 
   const sortState: SortingState = useMemo(() => {
     return [
@@ -46,11 +48,6 @@ export default function ConfigInsightsList({
         : [])
     ];
   }, [params]);
-
-  const [{ pageIndex, pageSize }, setPageState] = useState({
-    pageIndex: 0,
-    pageSize: 200
-  });
 
   const { data, isLoading, refetch, isRefetching, error } =
     useConfigInsightsQuery(
@@ -91,8 +88,19 @@ export default function ConfigInsightsList({
   const pageCount = totalEntries ? Math.ceil(totalEntries / pageSize) : -1;
 
   const pagination = useMemo(() => {
-    return {
-      setPagination: setPageState,
+    const pagination: PaginationOptions = {
+      setPagination: (updater) => {
+        const newParams =
+          typeof updater === "function"
+            ? updater({
+                pageIndex,
+                pageSize
+              })
+            : updater;
+        params.set("pageIndex", newParams.pageIndex.toString());
+        params.set("pageSize", newParams.pageSize.toString());
+        setParams(params);
+      },
       pageIndex,
       pageSize,
       pageCount,
@@ -100,7 +108,16 @@ export default function ConfigInsightsList({
       enable: true,
       loading: isLoading || isRefetching
     };
-  }, [pageIndex, pageSize, pageCount, isLoading, isRefetching]);
+    return pagination;
+  }, [
+    pageIndex,
+    pageSize,
+    pageCount,
+    isLoading,
+    isRefetching,
+    params,
+    setParams
+  ]);
 
   return (
     // eslint-disable-next-line react/jsx-no-useless-fragment

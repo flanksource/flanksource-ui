@@ -1,5 +1,4 @@
 import useTimeRangeParams from "@flanksource-ui/ui/TimeRangePicker/useTimeRangeParams";
-import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useJobsHistoryForSettingQuery } from "../../api/query-hooks/useJobsHistoryQuery";
 import { BreadcrumbNav, BreadcrumbRoot } from "../BreadcrumbNav";
@@ -11,14 +10,12 @@ import JobHistoryFilters, {
 import JobsHistoryTable from "./JobsHistoryTable";
 
 export default function JobsHistorySettingsPage() {
-  const [{ pageIndex, pageSize }, setPageState] = useState({
-    pageIndex: 0,
-    pageSize: 150
-  });
-
   const { timeRangeAbsoluteValue } = useTimeRangeParams();
 
   const [searchParams, setSearchParams] = useSearchParams();
+
+  const pageIndex = parseInt(searchParams.get("pageIndex") ?? "0");
+  const pageSize = parseInt(searchParams.get("pageSize") ?? "150");
 
   const name = searchParams.get("name") ?? "";
   const resourceType = searchParams.get("resource_type") ?? "";
@@ -81,7 +78,6 @@ export default function JobsHistorySettingsPage() {
             pageCount={pageCount}
             pageIndex={pageIndex}
             pageSize={pageSize}
-            setPageState={setPageState}
             sortBy={sortBy}
             sortOrder={sortOrder}
             onSortByChanged={(sortBy) => {

@@ -10,10 +10,12 @@ import ConfigsTypeIcon from "../ConfigsTypeIcon";
 
 type ConfigTypesDropdownProps = {
   label?: string;
+  paramsToReset?: string[];
 };
 
 export function ConfigTypesDropdown({
-  label = "Type:"
+  label = "Type:",
+  paramsToReset = []
 }: ConfigTypesDropdownProps) {
   const [params, setParams] = useSearchParams();
   const type = params.get("configType") ?? undefined;
@@ -84,6 +86,7 @@ export function ConfigTypesDropdown({
         } else {
           params.set("configType", value);
         }
+        paramsToReset.forEach((param) => params.delete(param));
         setParams(params);
       }}
       value={type ?? "All"}

@@ -11,14 +11,14 @@ import { ReactSelectDropdown } from "../../../ReactSelectDropdown";
 type Props = {
   onChange?: (value: string | undefined) => void;
   searchParamKey?: string;
-  paramsToReset?: Record<string, string>;
+  paramsToReset?: string[];
   value?: string;
 };
 
 export function ChangesTypesDropdown({
   onChange = () => {},
   searchParamKey = "change_type",
-  paramsToReset = {},
+  paramsToReset = [],
   value
 }: Props) {
   const { isLoading, data: configTypeOptions } = useQuery(
@@ -65,6 +65,7 @@ export function ChangesTypesDropdown({
         } else {
           params.set(searchParamKey, value);
         }
+        paramsToReset.forEach((param) => params.delete(param));
         setParams(params);
         onChange(value);
       }}
