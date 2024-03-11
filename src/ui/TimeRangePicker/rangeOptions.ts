@@ -1,9 +1,7 @@
-import dayjs from "dayjs";
-
 type TimeRangeRelativeOption = {
   type: "relative";
   display: string;
-  durationInSeconds: number;
+  range: string;
 };
 
 type TimeRangeMappedOption = {
@@ -37,82 +35,98 @@ export const rangeOptionsCategories: RangeOptionsCategory[] = [
       {
         type: "relative",
         display: "5 minutes",
-        durationInSeconds: dayjs.duration(5, "minute").asSeconds()
+
+        range: "now-5m"
       },
       {
         display: "15 minutes",
         type: "relative",
-        durationInSeconds: dayjs.duration(15, "minute").asSeconds()
+
+        range: "now-15m"
       },
       {
         display: "30 minutes",
         type: "relative",
-        durationInSeconds: dayjs.duration(30, "minute").asSeconds()
+
+        range: "now-30m"
       },
       {
         display: "1 hour",
         type: "relative",
-        durationInSeconds: dayjs.duration(1, "hour").asSeconds()
+
+        range: "now-1h"
       },
       {
         display: "3 hours",
         type: "relative",
-        durationInSeconds: dayjs.duration(3, "hour").asSeconds()
+
+        range: "now-3h"
       },
       {
         display: "6 hours",
         type: "relative",
-        durationInSeconds: dayjs.duration(6, "hour").asSeconds()
+
+        range: "now-6h"
       },
       {
         display: "12 hours",
         type: "relative",
-        durationInSeconds: dayjs.duration(12, "hour").asSeconds()
+
+        range: "now-12h"
       },
       {
         display: "24 hours",
         type: "relative",
-        durationInSeconds: dayjs.duration(24, "hour").asSeconds()
+
+        range: "now-24h"
       },
       {
         display: "2 days",
         type: "relative",
-        durationInSeconds: dayjs.duration(2, "day").asSeconds()
+
+        range: "now-2d"
       },
       {
         display: "7 days",
         type: "relative",
-        durationInSeconds: dayjs.duration(7, "day").asSeconds()
+
+        range: "now-7d"
       },
       {
         display: "30 days",
         type: "relative",
-        durationInSeconds: dayjs.duration(30, "day").asSeconds()
+
+        range: "now-30d"
       },
       {
         display: "90 days",
         type: "relative",
-        durationInSeconds: dayjs.duration(90, "day").asSeconds()
+
+        range: "now-90d"
       },
       {
         display: "6 months",
         type: "relative",
-        durationInSeconds: dayjs.duration(6, "month").asSeconds()
+
+        range: "now-6M"
       },
       {
         display: "1 year",
         type: "relative",
-        durationInSeconds: dayjs.duration(1, "year").asSeconds()
+
+        range: "now-1y"
       },
       {
         display: "2 year",
         type: "relative",
-        durationInSeconds: dayjs.duration(2, "year").asSeconds()
+
+        range: "now-2y"
       },
       {
         display: "5 year",
         type: "relative",
-        durationInSeconds: dayjs.duration(5, "year").asSeconds()
+
+        range: "now-5y"
       }
     ]
   },
@@ -205,99 +219,99 @@ export const mappedOptionsTimeRanges = new Map<
   [
     "Yesterday",
     () => ({
-      from: dayjs().subtract(1, "day").startOf("day").toISOString(),
-      to: dayjs().subtract(1, "day").endOf("day").toISOString()
+      from: "now-1d/d",
+      to: "now-1d/d"
     })
   ],
   [
     "Day before yesterday",
     () => ({
-      from: dayjs().subtract(2, "day").startOf("day").toISOString(),
-      to: dayjs().subtract(2, "day").endOf("day").toISOString()
+      from: "now-2d/d",
+      to: "now-2d/d"
     })
   ],
   [
     "This day last week",
     () => ({
-      from: dayjs().subtract(1, "week").startOf("day").toISOString(),
-      to: dayjs().subtract(1, "week").endOf("day").toISOString()
+      from: "now-7d/d",
+      to: "now-7d/d"
     })
   ],
   [
     "Previous week",
     () => ({
-      from: dayjs().subtract(1, "week").startOf("week").toISOString(),
-      to: dayjs().subtract(1, "week").endOf("week").toISOString()
+      from: "now-1w/w",
+      to: "now-1w/w"
     })
   ],
   [
     "Previous month",
     () => ({
-      from: dayjs().subtract(1, "month").startOf("month").toISOString(),
-      to: dayjs().subtract(1, "month").endOf("month").toISOString()
+      from: "now-1M/M",
+      to: "now-1M/M"
     })
   ],
   [
     "Previous year",
     () => ({
-      from: dayjs().subtract(1, "year").startOf("year").toISOString(),
-      to: dayjs().subtract(1, "year").endOf("year").toISOString()
+      from: "now-1y/y",
+      to: "now-1y/y"
     })
   ],
   [
     "Today",
     () => ({
-      from: dayjs().startOf("day").toISOString(),
-      to: dayjs().endOf("day").toISOString()
+      from: "now/d",
+      to: "now/d"
     })
   ],
   [
     "Today so far",
     () => ({
-      from: dayjs().startOf("day").toISOString(),
-      to: dayjs().toISOString()
+      from: "now",
+      to: "now"
     })
   ],
   [
     "This week",
     () => ({
-      from: dayjs().startOf("week").toISOString(),
-      to: dayjs().endOf("week").toISOString()
+      from: "now/w",
+      to: "now/w"
     })
   ],
   [
     "This week so far",
     () => ({
-      from: dayjs().startOf("week").toISOString(),
-      to: dayjs().toISOString()
+      from: "now/w",
+      to: "now"
     })
   ],
   [
     "This month",
     () => ({
-      from: dayjs().startOf("month").toISOString(),
-      to: dayjs().endOf("month").toISOString()
+      from: "now/M",
+      to: "now/M"
     })
   ],
   [
     "This month so far",
     () => ({
-      from: dayjs().startOf("month").toISOString(),
-      to: dayjs().toISOString()
+      from: "now/M",
+      to: "now"
     })
   ],
   [
     "This year",
     () => ({
-      from: dayjs().startOf("year").toISOString(),
-      to: dayjs().endOf("year").toISOString()
+      from: "now/y",
+      to: "now/y"
     })
   ],
   [
     "This year so far",
     () => ({
-      from: dayjs().startOf("year").toISOString(),
-      to: dayjs().toISOString()
+      from: "now/y",
+      to: "now"
     })
   ]
 ]);
@@ -306,11 +320,9 @@ export function timeRangeOptionsToAbsolute(
   input: TimeRangeOption
 ): Omit<TimeRangeAbsoluteOption, "type" | "display"> {
   if (input.type === "relative") {
-    const from = dayjs().subtract(input.durationInSeconds, "second");
-    const to = dayjs();
     return {
-      from: from.toISOString(),
-      to: to.toISOString()
+      from: input.range,
+      to: "now"
     };
   } else if (input.type === "mapped") {
     const timeRange = mappedOptionsTimeRanges.get(
