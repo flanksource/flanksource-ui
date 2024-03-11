@@ -59,6 +59,15 @@ export const Config = axios.create({
   }
 });
 
+export const Catalog = axios.create({
+  baseURL: `${API_BASE}/catalog`,
+  headers: {
+    Accept: "application/json",
+    Prefer: "return=representation",
+    "Content-Type": "application/json"
+  }
+});
+
 export const Snapshot = axios.create({
   baseURL: `${API_BASE}/snapshot`,
   headers: {

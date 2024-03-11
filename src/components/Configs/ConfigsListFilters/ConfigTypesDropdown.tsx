@@ -94,9 +94,7 @@ export function ConfigTypesDropdown({
       dropDownClassNames="w-auto max-w-[400px] left-0"
       hideControlBorder
       prefix={
-        <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
-          {label}
-        </div>
+        <div className="text-xs text-gray-500 whitespace-nowrap">{label}</div>
       }
     />
   );
