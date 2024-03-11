@@ -50,7 +50,7 @@ export default function HealthSpecEditor({
             docsLink: "https://canarychecker.io/reference/http"
           },
           {
-            type: "code",
+            type: "custom",
             name: "awsConfigRule",
             label: "AWS Config Rule",
             updateSpec: (value: Record<string, any>) => {
@@ -60,12 +60,11 @@ export default function HealthSpecEditor({
               return resourceValue ?? {};
             },
             icon: "aws",
-            specsMapField: "awsConfigRule.0",
             schemaFileName: "canary.spec.schema.json",
             docsLink: "https://canarychecker.io/reference/aws-config-rule"
           },
           {
-            type: "code",
+            type: "custom",
             name: "awsConfig",
             label: "AWS Config",
             updateSpec: (value: Record<string, any>) => {
@@ -75,12 +74,11 @@ export default function HealthSpecEditor({
               return resourceValue ?? {};
             },
             icon: "aws-config",
-            specsMapField: "awsConfig.0",
             schemaFileName: "canary.spec.schema.json",
             docsLink: "https://canarychecker.io/reference/aws-config"
           },
           {
-            type: "code",
+            type: "custom",
             name: "github",
             label: "GitHub",
             updateSpec: (value: Record<string, any>) => {
@@ -90,11 +88,10 @@ export default function HealthSpecEditor({
               return resourceValue ?? {};
             },
             icon: "github",
-            specsMapField: "github.0",
             schemaFileName: "canary.spec.schema.json"
           },
           {
-            type: "code",
+            type: "custom",
             name: "ec2",
             label: "EC2",
             updateSpec: (value: Record<string, any>) => {
@@ -104,12 +101,11 @@ export default function HealthSpecEditor({
               return resourceValue ?? {};
             },
             icon: "ec2",
-            specsMapField: "ec2.0",
             schemaFileName: "canary.spec.schema.json",
             docsLink: "https://canarychecker.io/reference/ec2"
           },
           {
-            type: "code",
+            type: "custom",
             name: "ldap",
             label: "LDAP",
             updateSpec: (value: Record<string, any>) => {
@@ -119,12 +115,11 @@ export default function HealthSpecEditor({
               return resourceValue ?? {};
             },
             icon: "ldap",
-            specsMapField: "ldap.0",
             schemaFileName: "canary.spec.schema.json",
             docsLink: "https://canarychecker.io/reference/ldap"
           },
           {
-            type: "code",
+            type: "custom",
             name: "pod",
             label: "Pod",
             updateSpec: (value: Record<string, any>) => {
@@ -134,7 +129,6 @@ export default function HealthSpecEditor({
               return resourceValue ?? {};
             },
             icon: "pod",
-            specsMapField: "pod.0",
             schemaFileName: "canary.spec.schema.json",
             docsLink: "https://canarychecker.io/reference/pod"
           },
@@ -171,7 +165,7 @@ export default function HealthSpecEditor({
             docsLink: "https://canarychecker.io/reference/alert-manager"
           },
           {
-            type: "code",
+            type: "custom",
             name: "cloudwatch",
             label: "Cloud Watch",
             updateSpec: (value: Record<string, any>) => {
@@ -181,7 +175,6 @@ export default function HealthSpecEditor({
               return resourceValue ?? {};
             },
             icon: "cloudwatch",
-            specsMapField: "cloudwatch.0",
             schemaFileName: "canary.spec.schema.json",
             docsLink: "https://canarychecker.io/reference/cloudwatch"
           },
@@ -234,7 +227,7 @@ export default function HealthSpecEditor({
             docsLink: "https://canarychecker.io/reference/mongo"
           },
           {
-            type: "code",
+            type: "custom",
             name: "dns",
             label: "DNS",
             updateSpec: (value: Record<string, any>) => {
@@ -244,7 +237,6 @@ export default function HealthSpecEditor({
               return resourceValue ?? {};
             },
             icon: "dns",
-            specsMapField: "dns.0",
             schemaFileName: "canary.spec.schema.json",
             docsLink: "https://canarychecker.io/reference/dns"
           },
@@ -265,7 +257,7 @@ export default function HealthSpecEditor({
             docsLink: "https://canarychecker.io/reference/icmp"
           },
           {
-            type: "code",
+            type: "custom",
             name: "gcs",
             label: "GCS",
             updateSpec: (value: Record<string, any>) => {
@@ -275,12 +267,11 @@ export default function HealthSpecEditor({
               return resourceValue ?? {};
             },
             icon: "gcp",
-            specsMapField: "gcs.0",
             schemaFileName: "canary.spec.schema.json",
             docsLink: "https://canarychecker.io/reference/gcs-bucket"
           },
           {
-            type: "code",
+            type: "custom",
             name: "s3",
             label: "AWS S3",
             updateSpec: (value: Record<string, any>) => {
@@ -290,12 +281,11 @@ export default function HealthSpecEditor({
               return resourceValue ?? {};
             },
             icon: "aws-s3-bucket",
-            specsMapField: "s3.0",
             schemaFileName: "canary.spec.schema.json",
             docsLink: "https://canarychecker.io/reference/s3-bucket"
           },
           {
-            type: "code",
+            type: "custom",
             name: "smb",
             label: "SMB",
             updateSpec: (value: Record<string, any>) => {
@@ -305,12 +295,11 @@ export default function HealthSpecEditor({
               return resourceValue ?? {};
             },
             icon: "smb",
-            specsMapField: "smb.0",
             schemaFileName: "canary.spec.schema.json",
             docsLink: "https://canarychecker.io/reference/smb"
           },
           {
-            type: "code",
+            type: "custom",
             name: "sftp",
             label: "SFTP",
             updateSpec: (value: Record<string, any>) => {
@@ -320,7 +309,6 @@ export default function HealthSpecEditor({
               return resourceValue ?? {};
             },
             icon: "sftp",
-            specsMapField: "sftp.0",
             schemaFileName: "canary.spec.schema.json",
             docsLink: "https://canarychecker.io/reference/sftp"
           },
@@ -341,7 +329,7 @@ export default function HealthSpecEditor({
             docsLink: "https://canarychecker.io/reference/folder"
           },
           {
-            type: "code",
+            type: "custom",
             name: "prometheus",
             label: "Prometheus",
             updateSpec: (value: Record<string, any>) => {
@@ -351,12 +339,11 @@ export default function HealthSpecEditor({
               return resourceValue ?? {};
             },
             icon: "prometheus",
-            specsMapField: "prometheus.0",
             schemaFileName: "canary.spec.schema.json",
             docsLink: "https://canarychecker.io/reference/prometheus"
           },
           {
-            type: "code",
+            type: "custom",
             name: "kubernetes",
             label: "Kubernetes",
             updateSpec: (value: Record<string, any>) => {
@@ -366,12 +353,11 @@ export default function HealthSpecEditor({
               return resourceValue ?? {};
             },
             icon: "kubernetes",
-            specsMapField: "kubernetes.0",
             schemaFileName: "canary.spec.schema.json",
             docsLink: "https://canarychecker.io/reference/kubernetes"
           },
           {
-            type: "code",
+            type: "custom",
             name: "sql",
             label: "SQL Query",
             updateSpec: (value: Record<string, any>) => {
@@ -381,12 +367,11 @@ export default function HealthSpecEditor({
               return resourceValue ?? {};
             },
             icon: "postgres",
-            specsMapField: "sql.0",
             schemaFileName: "canary.spec.schema.json",
             docsLink: "https://canarychecker.io/reference/postgres"
           },
           {
-            type: "code",
+            type: "custom",
             name: "configDB",
             label: "Mission Control Catalog",
             updateSpec: (value: Record<string, any>) => {
@@ -396,12 +381,11 @@ export default function HealthSpecEditor({
               return resourceValue ?? {};
             },
             icon: "config",
-            specsMapField: "configDB.0",
             schemaFileName: "canary.spec.schema.json",
             docsLink: "https://canarychecker.io/reference/configdb"
           },
           {
-            type: "code",
+            type: "custom",
             name: "azureDevops",
             label: "Azure DevOps",
             updateSpec: (value: Record<string, any>) => {
@@ -411,12 +395,11 @@ export default function HealthSpecEditor({
               return resourceValue ?? {};
             },
             icon: "azure-devops",
-            specsMapField: "azureDevops.0",
             schemaFileName: "canary.spec.schema.json",
             docsLink: "https://canarychecker.io/reference/azure-devops"
           },
           {
-            type: "code",
+            type: "custom",
             name: "jmeter",
             label: "JMeter",
             updateSpec: (value: Record<string, any>) => {
@@ -426,12 +409,11 @@ export default function HealthSpecEditor({
               return resourceValue ?? {};
             },
             icon: "jmeter",
-            specsMapField: "jmeter.0",
             schemaFileName: "canary.spec.schema.json",
             docsLink: "https://canarychecker.io/reference/jmeter"
           },
           {
-            type: "code",
+            type: "custom",
             name: "junit",
             label: "JUnit",
             updateSpec: (value: Record<string, any>) => {
@@ -441,12 +423,11 @@ export default function HealthSpecEditor({
               return resourceValue ?? {};
             },
             icon: "junit",
-            specsMapField: "junit.0",
             schemaFileName: "canary.spec.schema.json",
             docsLink: "https://canarychecker.io/reference/junit"
           },
           {
-            type: "code",
+            type: "custom",
             name: "dynatrace",
             label: "Dynatrace",
             updateSpec: (value: Record<string, any>) => {
@@ -456,11 +437,10 @@ export default function HealthSpecEditor({
               return resourceValue ?? {};
             },
             icon: "dynatrace",
-            specsMapField: "dynatrace.0",
             schemaFileName: "canary.spec.schema.json"
           },
           {
-            type: "code",
+            type: "custom",
             name: "namespace",
             label: "Kubernetes Namespace",
             updateSpec: (value: Record<string, any>) => {
@@ -470,7 +450,6 @@ export default function HealthSpecEditor({
               return resourceValue ?? {};
             },
             icon: "namespace",
-            specsMapField: "namespace.0",
             schemaFileName: "canary.spec.schema.json",
             docsLink: "https://canarychecker.io/reference/kubernetes"
           },
