@@ -16,7 +16,7 @@ export function ConfigRelatedChangesFilters({
     <div className={clsx("flex flex-row gap-2", className)}>
       <ChangesTypesDropdown />
       <ConfigChangeSeverity />
-      <ConfigRelationshipDropdown />
+      <ConfigRelationshipDropdown isConfigChanges />
       <ConfigChangesDateRangeFilter />
       <ConfigChangesToggledDeletedItems />
     </div>

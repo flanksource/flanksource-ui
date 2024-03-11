@@ -1,6 +1,6 @@
 import { tristateOutputToQueryFilterParam } from "@flanksource-ui/ui/TristateReactSelect/TristateReactSelect";
 import { AnyMessageParams } from "yup/lib/types";
-import { Config, ConfigDB, IncidentCommander } from "../axios";
+import { Catalog, Config, ConfigDB, IncidentCommander } from "../axios";
 import { resolve } from "../resolve";
 import { PaginationInfo } from "../types/common";
 import {
@@ -148,46 +148,87 @@ export const getConfigChanges = (
   );
 };
 
-export const getConfigsRelatedChanges = async (
-  id: string,
+type CatalogChangesSearchResponse = {
+  summary: Record<string, number>;
+  changes: ConfigChange[];
+  total: number;
+};
+
+type GetConfigsRelatedChangesParams = {
+  id: string;
+  type_filter: "all" | "upstream" | "downstream" | "none";
+  include_deleted_configs: boolean;
+  changeType?: string;
+  severity?: string;
+  from?: string;
+  to?: string;
+  configType?: string;
+  page?: string;
+  pageSize?: string;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
+};
+
+export async function getConfigsRelatedChanges({
+  id,
   type_filter = "downstream",
   include_deleted_configs = false,
-  changeType?: string,
-  severity?: string,
-  starts_at?: string,
-  ends_at?: string,
-  sortBy?: string,
-  sortDirection?: "asc" | "desc"
-) => {
-  const changeTypeFilter = changeType ? `&change_type=eq.${changeType}` : "";
-  const severityFilter = severity ? `&severity=eq.${severity}` : "";
-
-  const dateFilter =
-    starts_at && ends_at
-      ? `&and=(created_at.gte.${starts_at},created_at.lte.${ends_at})`
-      : "";
-
-  const orderByString = sortBy
-    ? `&order=${sortBy}.${sortDirection ?? "desc"}`
-    : "&order=created_at.desc";
-
-  if (type_filter === "none") {
-    const res = await ConfigDB.get<ConfigChange[] | null>(
-      `/config_changes_items?config_id=eq.${id}${changeTypeFilter}${severityFilter}${dateFilter}${orderByString}&select=id,config_id,change_type,created_at,external_created_by,source,diff,details,patches,created_by,config:configs(id,name,type,config_class)`
-    );
-    return res.data || undefined;
+  changeType,
+  severity,
+  from,
+  to,
+  configType,
+  page,
+  pageSize,
+  sortBy,
+  sortOrder
+}: GetConfigsRelatedChangesParams) {
+  const queryParams = new URLSearchParams();
+  queryParams.set("id", id);
+  if (configType && configType !== "all") {
+    queryParams.set("config_type", configType);
+  }
+  if (changeType && changeType !== "all") {
+    queryParams.set("type", changeType);
+  }
+  if (from) {
+    queryParams.set("from", from);
+  }
+  if (to) {
+    queryParams.set("to", to);
+  }
+  if (severity) {
+    queryParams.set("severity", severity);
+  }
+  if (page && pageSize) {
+    queryParams.set("page", page);
+    queryParams.set("page_size", pageSize);
+  }
+  if (sortBy) {
+    // for descending order, we need to add a "-" before the sortBy field
+    queryParams.set("sort_by", `${sortOrder === "desc" ? "-" : ""}${sortBy}`);
   }
 
-  const res = await ConfigDB.get<ConfigChange[]>(
-    `/rpc/related_changes_recursive?config_id=${id}&include_deleted_configs=${include_deleted_configs}&type_filter=${type_filter}${changeTypeFilter}${severityFilter}${dateFilter}${orderByString}`,
-    {
-      headers: {
-        Prefer: "count=exact"
-      }
-    }
+  queryParams.set(
+    "recursive",
+    type_filter === "all" || type_filter === "none" ? "all" : type_filter
+  );
+  if (severity) {
+    queryParams.set("severity", severity);
+  }
+  queryParams.set(
+    "include_deleted_configs",
+    include_deleted_configs.toString()
+  );
+
+  const queryString = queryParams.toString();
+  console.log(queryString);
+  const res = await Catalog.get<CatalogChangesSearchResponse>(
+    `/changes?${queryParams}`,
+    {}
   );
   return res.data ?? [];
-};
+}
 
 export const getConfigListFilteredByType = (types: string[]) => {
   return resolve<Pick<ConfigItem, "id" | "name" | "config_class" | "type">[]>(
@@ -279,7 +320,7 @@ export const getAConfigRelationships = async ({
       relation_type: string;
     } & ConfigItem)[]
   >(
-    `/rpc/related_configs?config_id=${configId}&include_deleted_configs=${hideDeleted}&type_filter=${type_filter}${configTypeFilter}`
+    `/rpc/related_configs_recursive?config_id=${configId}&include_deleted_configs=${hideDeleted}&type_filter=${type_filter}${configTypeFilter}`
   );
 
   return res.data ?? [];
