@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import { useCallback, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
+import { parseDateMath } from "./parseDateMath";
 import {
   MappedOptionsDisplay,
   TimeRangeOption,
@@ -37,7 +38,7 @@ export default function useTimeRangeParams() {
         params.set("to", range.to);
       }
       if (range.type === "relative") {
-        params.set("duration", range.durationInSeconds.toString());
+        params.set("range", range.range.toString());
       }
       if (range.type === "mapped") {
         params.set("timeRange", range.display);
@@ -62,12 +63,12 @@ export default function useTimeRangeParams() {
         } satisfies TimeRangeOption;
       }
       if (rangeType === "relative") {
-        const duration = params.get("duration");
-        if (duration) {
+        const range = params.get("range");
+        if (range) {
           return {
             type: rangeType,
             display: display as string,
-            durationInSeconds: parseInt(duration)
+            range: range?.toString()!
           } satisfies TimeRangeOption;
         }
       }
@@ -80,6 +81,55 @@ export default function useTimeRangeParams() {
       return undefined;
     }, [params]);
 
+  /**
+   *
+   * filterDateMath
+   *
+   * This will return the time range in the url as a date math expression (or as
+   * stored within the URL). This just a helper that makes it easier to consume
+   * the time range from the URL.
+   *
+   */
+  const timeRangeValue = useMemo(() => {
+    const rangeType = params.get("rangeType");
+    if (rangeType === "absolute") {
+      const from = params.get("from")
+        ? dayjs(params.get("from") as string).toISOString()
+        : undefined;
+      const to = params.get("to")
+        ? dayjs(params.get("to") as string).toISOString()
+        : undefined;
+      return { from, to };
+    }
+    if (rangeType === "relative") {
+      const range = params.get("range");
+      if (range) {
+        return {
+          from: range,
+          to: "now"
+        };
+      }
+    }
+    if (rangeType === "mapped") {
+      const display = (params.get("timeRange") ?? "") as MappedOptionsDisplay;
+      const timeRange = mappedOptionsTimeRanges.get(display);
+      if (timeRange) {
+        return timeRange();
+      } else {
+        console.error("Invalid mapped time range");
+      }
+    }
+  }, [params]);
+
+  /**
+   *
+   * useTimeRangeParams
+   *
+   * We are using datemath expressions to represent the time range in the URL.
+   * This isn't supported by some backends, specifically anything involving db
+   * queries, so we need to convert the datemath expressions to ISO strings.
+   *
+   */
   const timeRangeAbsoluteValue = useMemo(() => {
     const rangeType = params.get("rangeType");
     if (rangeType === "absolute") {
@@ -92,21 +142,26 @@ export default function useTimeRangeParams() {
       return { from, to };
     }
     if (rangeType === "relative") {
-      const duration = params.get("duration");
-      if (duration) {
+      const range = params.get("range");
+      if (range) {
         return {
-          from: dayjs().subtract(parseInt(duration), "seconds").toISOString(),
-          to: dayjs().toISOString()
+          // convert datemath to ISO string for absolute time range
+          from: parseDateMath(range, false),
+          to: dayjs().utc().toISOString()
         };
       } else {
-        throw new Error("Invalid relative time range");
+        console.error("Invalid relative time range");
       }
     }
     if (rangeType === "mapped") {
       const display = (params.get("timeRange") ?? "") as MappedOptionsDisplay;
-      const timeRange = mappedOptionsTimeRanges.get(display);
+      const timeRange = mappedOptionsTimeRanges.get(display)?.();
       if (timeRange) {
-        return timeRange();
+        // datemath should be converted to ISO string
+        return {
+          from: parseDateMath(timeRange.from, false),
+          to: parseDateMath(timeRange.to, false)
+        };
       } else {
         throw new Error("Invalid mapped time range");
       }
@@ -116,6 +171,7 @@ export default function useTimeRangeParams() {
   return {
     setTimeRangeParams,
     timeRangeAbsoluteValue,
-    getTimeRangeFromUrl
+    getTimeRangeFromUrl,
+    timeRangeValue
   };
 }
