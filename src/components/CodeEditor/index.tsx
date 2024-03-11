@@ -122,7 +122,10 @@ export function CodeEditor({
     });
 
     return () => {
-      dispose();
+      // dispose of the monaco-yaml plugin
+      if (monaco && dispose) {
+        dispose();
+      }
     };
   }, [jsonSchemaUrl, language, monaco, schemaUrl]);
 
