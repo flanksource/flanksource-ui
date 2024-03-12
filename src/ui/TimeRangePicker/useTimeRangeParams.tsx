@@ -22,7 +22,7 @@ export default function useTimeRangeParams(defaults?: URLSearchParamsInit) {
   const [params, setParams] = useSearchParams(defaults);
 
   const setTimeRangeParams = useCallback(
-    (range: TimeRangeOption) => {
+    (range: TimeRangeOption, paramsToReset: string[] = []) => {
       params.set("rangeType", range.type);
       params.set("display", range.display);
 
@@ -43,6 +43,7 @@ export default function useTimeRangeParams(defaults?: URLSearchParamsInit) {
       if (range.type === "mapped") {
         params.set("timeRange", range.display);
       }
+      paramsToReset.forEach((param) => params.delete(param));
       setParams(params);
     },
     [params, setParams]
