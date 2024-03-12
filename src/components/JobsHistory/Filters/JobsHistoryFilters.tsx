@@ -183,12 +183,7 @@ export default function JobHistoryFilters({
       </div>
       <div className="flex flex-col">
         <TimeRangePicker
-          onChange={(timeRange) => {
-            console.log("timeRange", timeRange);
-            setTimeRangeParams(timeRange);
-            paramsToReset.forEach((param) => searchParams.delete(param));
-            setSearchParams(searchParams);
-          }}
+          onChange={(timeRange) => setTimeRangeParams(timeRange, paramsToReset)}
           className="w-[35rem]"
           value={timeRangeValue}
         />
