@@ -1,5 +1,8 @@
 import { TimeRangePicker } from "@flanksource-ui/ui/TimeRangePicker";
 import useTimeRangeParams from "@flanksource-ui/ui/TimeRangePicker/useTimeRangeParams";
+import TristateReactSelect, {
+  TriStateOptions
+} from "@flanksource-ui/ui/TristateReactSelect/TristateReactSelect";
 import dayjs from "dayjs";
 import { useSearchParams } from "react-router-dom";
 import { ReactSelectDropdown, StateOption } from "../../ReactSelectDropdown";
@@ -57,12 +60,7 @@ export const durationOptions: Record<
   }
 };
 
-const statusOptions = {
-  all: {
-    id: "0",
-    label: "All",
-    value: ""
-  },
+const statusOptions: Record<string, TriStateOptions> = {
   finished: {
     id: "1",
     label: "Finished",
@@ -90,22 +88,21 @@ const statusOptions = {
   }
 };
 
-export const jobHistoryResourceTypes = [
-  {
-    label: "All",
-    value: ""
-  },
+export const jobHistoryResourceTypes: TriStateOptions[] = [
   {
     label: "Canary",
-    value: "canary"
+    value: "canary",
+    id: "canary"
   },
   {
     label: "Topology",
-    value: "topology"
+    value: "topology",
+    id: "topology"
   },
   {
     label: "Catalog Scraper",
-    value: "config_scraper"
+    value: "config_scraper",
+    id: "config_scrapper"
   }
 ];
 
@@ -116,7 +113,9 @@ type JobHistoryFiltersProps = {
 export default function JobHistoryFilters({
   paramsToReset = ["pageIndex", "pageSize"]
 }: JobHistoryFiltersProps) {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams({
+    status: "FINISHED:-1,SUCCESS:-1"
+  });
 
   const { setTimeRangeParams, getTimeRangeFromUrl } = useTimeRangeParams();
 
@@ -131,13 +130,9 @@ export default function JobHistoryFilters({
       <JobHistoryNamesDropdown paramsToReset={paramsToReset} />
 
       <div className="flex flex-col">
-        <ReactSelectDropdown
-          name="resource_type"
-          label=""
+        <TristateReactSelect
           value={resourceType}
-          items={jobHistoryResourceTypes}
-          className="inline-block p-3 w-auto max-w-[500px]"
-          dropDownClassNames="w-auto max-w-[400px] left-0"
+          options={jobHistoryResourceTypes}
           onChange={(val) => {
             if (val && val !== "All") {
               searchParams.set("resource_type", val);
@@ -147,17 +142,13 @@ export default function JobHistoryFilters({
             paramsToReset.forEach((param) => searchParams.delete(param));
             setSearchParams(searchParams);
           }}
-          prefix="Resource Type:"
+          label="Resource Type"
         />
       </div>
       <div className="flex flex-col">
-        <ReactSelectDropdown
-          name="status"
-          label=""
+        <TristateReactSelect
           value={status}
-          items={statusOptions}
-          className="inline-block p-3 w-auto max-w-[500px]"
-          dropDownClassNames="w-auto max-w-[400px] left-0"
+          options={Object.values(statusOptions)}
           onChange={(val) => {
             if (val && val !== "All") {
               searchParams.set("status", val);
@@ -167,7 +158,7 @@ export default function JobHistoryFilters({
             paramsToReset.forEach((param) => searchParams.delete(param));
             setSearchParams(searchParams);
           }}
-          prefix="Status:"
+          label="Status"
         />
       </div>
       <div className="flex flex-col">

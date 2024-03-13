@@ -26,7 +26,7 @@ import { Tooltip } from "react-tooltip";
 export type TriStateOptions = {
   id: string;
   label: string;
-  icon: any;
+  icon?: any;
   value: string;
 };
 
