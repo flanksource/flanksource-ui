@@ -1,18 +1,19 @@
-import { useQuery } from "@tanstack/react-query";
-import { useCallback, useMemo } from "react";
-import { useSearchParams } from "react-router-dom";
 import {
   ConfigChangesTypeItem,
   getConfigsChangesTypesFilter
-} from "../../../../api/services/configs";
-import { Icon } from "../../../Icon";
-import { ReactSelectDropdown } from "../../../ReactSelectDropdown";
+} from "@flanksource-ui/api/services/configs";
+import { Icon } from "@flanksource-ui/components/Icon";
+import TristateReactSelect, {
+  TriStateOptions
+} from "@flanksource-ui/ui/TristateReactSelect/TristateReactSelect";
+import { useQuery } from "@tanstack/react-query";
+import { useCallback } from "react";
+import { useSearchParams } from "react-router-dom";
 
 type Props = {
   onChange?: (value: string | undefined) => void;
   searchParamKey?: string;
   paramsToReset?: string[];
-  value?: string;
 };
 
 export function ChangesTypesDropdown({
@@ -20,63 +21,46 @@ export function ChangesTypesDropdown({
   searchParamKey = "changeType",
   paramsToReset = []
 }: Props) {
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const { isLoading, data: configTypeOptions } = useQuery(
     ["db", "changes_types"],
     getConfigsChangesTypesFilter,
     {
       select: useCallback((data: ConfigChangesTypeItem[] | null) => {
-        return data?.map(({ change_type }) => ({
-          id: change_type,
-          value: change_type,
-          description: change_type,
-          name: change_type,
-          icon: <Icon name={change_type} secondary={change_type} />
-        }));
+        return data?.map(
+          ({ change_type }) =>
+            ({
+              id: change_type,
+              label: change_type,
+              value: change_type,
+              icon: <Icon name={change_type} secondary={change_type} />
+            } satisfies TriStateOptions)
+        );
       }, [])
     }
   );
 
-  const configItemsOptionsItems = useMemo(
-    () => [
-      {
-        id: "All",
-        name: "All",
-        description: "All",
-        value: "All"
-      },
-      ...(configTypeOptions || [])
-    ],
-    [configTypeOptions]
-  );
+  const value = searchParams.get(searchParamKey) || undefined;
 
-  const [params, setParams] = useSearchParams({
-    ...(value && { [searchParamKey]: value })
-  });
+  const configItemsOptionsItems = configTypeOptions || [];
 
   return (
-    <ReactSelectDropdown
+    <TristateReactSelect
+      options={configItemsOptionsItems}
       isLoading={isLoading}
-      items={configItemsOptionsItems}
-      name="type"
+      value={value}
       onChange={(value) => {
-        if (value === "All" || !value) {
-          params.delete(searchParamKey);
+        if (value) {
+          searchParams.set(searchParamKey, value);
         } else {
-          params.set(searchParamKey, value);
+          searchParams.delete(searchParamKey);
         }
-        paramsToReset.forEach((param) => params.delete(param));
-        setParams(params);
+        paramsToReset.forEach((param) => searchParams.delete(param));
+        setSearchParams(searchParams);
         onChange(value);
       }}
-      value={params.get(searchParamKey) ?? "All"}
-      className="w-auto max-w-[400px]"
-      dropDownClassNames="w-auto max-w-[400px] left-0"
-      hideControlBorder
-      prefix={
-        <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
-          Change Type:
-        </div>
-      }
+      label="Change Type"
     />
   );
 }

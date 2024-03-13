@@ -1,3 +1,4 @@
+import { tristateOutputToQueryFilterParam } from "@flanksource-ui/ui/TristateReactSelect/TristateReactSelect";
 import { AnyMessageParams } from "yup/lib/types";
 import { Config, ConfigDB, IncidentCommander } from "../axios";
 import { resolve } from "../resolve";
@@ -69,6 +70,13 @@ export const getAllChanges = (
       : "";
   let queryString = "";
   Object.keys(queryParams).forEach((key) => {
+    if (key === "changeType" && queryParams[key]) {
+      queryString = tristateOutputToQueryFilterParam(
+        queryParams[key],
+        "change_type"
+      );
+      return;
+    }
     if (queryParams[key] && queryParams[key] !== "All") {
       const queryKey = key === "type" ? `config.type` : key;
       queryString += `&${queryKey}=eq.${queryParams[key]}`;
@@ -124,18 +132,6 @@ export const getConfigChanges = (
   }
   if (severity) {
     paginationQueryParams += `&severity=eq.${severity}`;
-  }
-  if (change_type) {
-    const changeTypeFilter = change_type
-      .split(",")
-      .map((type) => {
-        const [changeType, symbol] = type.split("1");
-        const symbolFilter = symbol.toString() === "-1" ? "!" : "";
-        return `${symbolFilter}${changeType}`;
-      })
-      .join(",");
-    console.log(changeTypeFilter);
-    paginationQueryParams += `&change_type.filter=${changeTypeFilter}`;
   }
   if (starts_at && ends_at) {
     paginationQueryParams += `&and=(created_at.gte.${starts_at},created_at.lte.${ends_at})`;

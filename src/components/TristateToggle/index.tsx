@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { BiCheck, BiX } from "react-icons/bi";
 import { BsDot } from "react-icons/bs";
 import style from "./index.module.css";
@@ -6,7 +6,7 @@ import style from "./index.module.css";
 type Props = {
   onChange: (value: string) => void;
   value: string | number;
-  label: Record<string, string>;
+  label?: Record<string, string>;
   labelClass?: string;
   hideLabel?: boolean;
   className?: string;
@@ -87,14 +87,14 @@ export function TristateToggle({
             toggleState(-1);
           }}
           className={`flex justify-center items-center w-[22px] h-full duration-100`}
-          title={`Exclude ${label.label}`}
+          title={`Exclude ${label?.label}`}
         >
           <BiX style={{ color: fgColor, marginLeft: "4px" }} />
         </button>
         <button
           className={`flex justify-center items-center w-[22px] h-full duration-100`}
           type="button"
-          title={`Do not filter ${label.label}`}
+          title={`Do not filter ${label?.label}`}
           onClick={() => {
             toggleState(0);
           }}
@@ -107,7 +107,7 @@ export function TristateToggle({
             toggleState(1);
           }}
           className={`flex justify-center items-center w-[22px] h-full duration-100`}
-          title={`Include ${label.label}`}
+          title={`Include ${label?.label}`}
         >
           <BiCheck style={{ color: fgColor, marginRight: "4px" }} />
         </button>
@@ -119,7 +119,7 @@ export function TristateToggle({
       </div>
       {states.map((state) => (
         <input
-          name={label.id}
+          name={label?.id}
           onChange={(target) => onChange(target.target.value)}
           className="hidden"
           key={state}
@@ -128,7 +128,7 @@ export function TristateToggle({
           checked={state === stateValue}
         />
       ))}
-      {label.label && !hideLabel && (
+      {label?.label && !hideLabel && (
         <span
           className={`${labelClass || "ml-3 text-xs text-left text-gray-700"}`}
         >
