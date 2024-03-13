@@ -60,8 +60,8 @@ export const getAllChanges = (
   queryParams: Record<string, string | undefined>,
   pageIndex?: number,
   pageSize?: number,
-  starts_at?: string,
-  ends_at?: string
+  startsAt?: string,
+  endsAt?: string
 ) => {
   const pagingParams =
     pageIndex || pageSize
@@ -75,8 +75,8 @@ export const getAllChanges = (
     }
   });
 
-  if (starts_at && ends_at) {
-    queryString += `&and=(created_at.gte.${starts_at},created_at.lte.${ends_at})`;
+  if (startsAt && endsAt) {
+    queryString += `&and=(created_at.gte.${startsAt},created_at.lte.${endsAt})`;
   }
 
   return resolve(
@@ -126,7 +126,16 @@ export const getConfigChanges = (
     paginationQueryParams += `&severity=eq.${severity}`;
   }
   if (change_type) {
-    paginationQueryParams += `&change_type=eq.${change_type}`;
+    const changeTypeFilter = change_type
+      .split(",")
+      .map((type) => {
+        const [changeType, symbol] = type.split("1");
+        const symbolFilter = symbol.toString() === "-1" ? "!" : "";
+        return `${symbolFilter}${changeType}`;
+      })
+      .join(",");
+    console.log(changeTypeFilter);
+    paginationQueryParams += `&change_type.filter=${changeTypeFilter}`;
   }
   if (starts_at && ends_at) {
     paginationQueryParams += `&and=(created_at.gte.${starts_at},created_at.lte.${ends_at})`;

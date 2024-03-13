@@ -17,9 +17,8 @@ type Props = {
 
 export function ChangesTypesDropdown({
   onChange = () => {},
-  searchParamKey = "change_type",
-  paramsToReset = [],
-  value
+  searchParamKey = "changeType",
+  paramsToReset = []
 }: Props) {
   const { isLoading, data: configTypeOptions } = useQuery(
     ["db", "changes_types"],
