@@ -26,17 +26,23 @@ export function ConfigChangesPage() {
   const itemsPerPage = 50;
 
   const [params, setParams] = useSearchParams();
-  const config_type = params.get("configType") ?? undefined;
-  const change_type = params.get("change_type") ?? undefined;
+  const configType = params.get("configType") ?? undefined;
+  const changeType = params.get("changeType") ?? undefined;
   const severity = params.get("severity") ?? undefined;
-  const starts_at = timeRangeAbsoluteValue?.from ?? undefined;
-  const ends_at = timeRangeAbsoluteValue?.to ?? undefined;
+  const startsAt = timeRangeAbsoluteValue?.from ?? undefined;
+  const endsAt = timeRangeAbsoluteValue?.to ?? undefined;
   const pageSize = +(params.get("pageSize") ?? itemsPerPage);
   const page = +(params.get("pageIndex") ?? 0);
 
   const { data, isLoading, error, isRefetching, refetch } =
     useGetAllConfigsChangesQuery(
-      { config_type, change_type, severity, starts_at, ends_at },
+      {
+        configType: configType,
+        severity,
+        startsAt: startsAt,
+        endsAt: endsAt,
+        changeType: changeType
+      },
       page,
       pageSize,
       true
@@ -89,14 +95,14 @@ export function ConfigChangesPage() {
               >
                 Changes
               </BreadcrumbChild>,
-              ...(config_type
+              ...(configType
                 ? [
                     <BreadcrumbChild
-                      link={`/catalog?configType=${config_type}`}
-                      key={config_type}
+                      link={`/catalog?configType=${configType}`}
+                      key={configType}
                     >
                       <ConfigsTypeIcon
-                        config={{ type: config_type }}
+                        config={{ type: configType }}
                         showSecondaryIcon
                         showLabel
                       />

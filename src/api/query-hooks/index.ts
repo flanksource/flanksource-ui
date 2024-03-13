@@ -321,16 +321,16 @@ export const useGetHypothesisQuery = (
 export function useGetAllConfigsChangesQuery(
   {
     severity,
-    config_type,
-    change_type,
-    starts_at,
-    ends_at
+    configType,
+    changeType,
+    startsAt,
+    endsAt
   }: {
     severity?: string;
-    config_type?: string;
-    change_type?: string;
-    starts_at?: string;
-    ends_at?: string;
+    configType?: string;
+    changeType?: string;
+    startsAt?: string;
+    endsAt?: string;
   },
   pageIndex?: number,
   pageSize?: number,
@@ -342,20 +342,20 @@ export function useGetAllConfigsChangesQuery(
       "changes",
       "all",
       severity,
-      config_type,
-      change_type,
+      configType,
+      changeType,
       pageIndex,
       pageSize,
-      starts_at,
-      ends_at
+      startsAt,
+      endsAt
     ],
     () =>
       getAllChanges(
-        { change_type, severity, config_type },
+        { changeType: changeType, severity, configType: configType },
         pageIndex,
         pageSize,
-        starts_at,
-        ends_at
+        startsAt,
+        endsAt
       ),
     {
       keepPreviousData
