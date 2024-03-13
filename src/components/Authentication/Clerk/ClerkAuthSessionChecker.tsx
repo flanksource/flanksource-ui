@@ -8,8 +8,8 @@ import { useEffect } from "react";
 import FullPageSkeletonLoader from "../../SkeletonLoader/FullPageSkeletonLoader";
 
 export const clerkUrls = {
-  login: "/login",
-  signUp: "/registration",
+  login: process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL ?? "/login",
+  signUp: process.env.NEXT_PUBLIC_CLERK_SIGN_UP_URL ?? "/registration",
   createOrganization: "/organizations/create",
   organizationSwitcher: "/organizations/switcher",
   organizationProfile: "/organizations/profile"
