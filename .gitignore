@@ -39,3 +39,7 @@ tsconfig.tsbuildinfo
 # clerk.middleware.js to clerk.middleware.js
 middleware.ts
 .vercel
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
