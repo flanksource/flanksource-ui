@@ -2,12 +2,13 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { QueryClientProvider } from "@tanstack/react-query";
 import type { AppProps } from "next/app";
 import React from "react";
-import useDetermineAuthSystem from "../src/components/Authentication/useDetermineAuthSystem";
+import useDetermineAuthSystem, {
+  isClerkSatellite
+} from "../src/components/Authentication/useDetermineAuthSystem";
 import SetupIntercom from "../src/components/Intercom/SetupIntercom";
 import { queryClient } from "../src/query-client";
 import "./global.css";
 
-const isClerkSatellite = process.env.NEXT_PUBLIC_CLERK_IS_SATELLITE === "true";
 const signInUrl = process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL;
 
 export default function MyApp({ Component, pageProps }: AppProps) {

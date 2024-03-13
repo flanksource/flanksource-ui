@@ -1,4 +1,5 @@
 import {
+  RedirectToSignIn,
   useOrganization,
   useOrganizationList,
   useSession
@@ -8,8 +9,8 @@ import { useEffect } from "react";
 import FullPageSkeletonLoader from "../../SkeletonLoader/FullPageSkeletonLoader";
 
 export const clerkUrls = {
-  login: "/login",
-  signUp: "/registration",
+  login: process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL ?? "/login",
+  signUp: process.env.NEXT_PUBLIC_CLERK_SIGN_UP_URL ?? "/registration",
   createOrganization: "/organizations/create",
   organizationSwitcher: "/organizations/switcher",
   organizationProfile: "/organizations/profile"
@@ -51,19 +52,13 @@ export default function ClerkAuthSessionChecker({ children }: Props) {
     userMemberships?.count
   ]);
 
-  useEffect(() => {
-    if (isSessionLoaded && !isSignedIn) {
-      window.location.href = clerkUrls.login;
-      return;
-    }
-  }, [isSessionLoaded, isSignedIn, push]);
-
   if (!isOrganizationLoaded || !isSessionLoaded) {
     return <FullPageSkeletonLoader />;
   }
 
   if (isSessionLoaded && !isSignedIn) {
-    return <FullPageSkeletonLoader />;
+    // if the user is not signed in, we should redirect them to the sign in page
+    return <RedirectToSignIn />;
   }
 
   // if the organization backend is not yet created, we need to wait for it to
